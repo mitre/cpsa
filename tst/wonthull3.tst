@@ -1,4 +1,4 @@
-(comment "CPSA 2.3.3")
+(comment "CPSA 2.4.0")
 (comment "All input read from wonthull3.scm")
 
 (defprotocol wonthull3 basic

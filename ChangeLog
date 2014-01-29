@@ -1,3 +1,9 @@
+2014-01-29  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Protocol.hs (Event): Added a state synchronization
+	event with syntax (sync t), for message t.  This change breaks
+	cpsaparameters.
+
 2014-01-07  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* cpsa.cabal (Version): Tagged as version 2.3.2

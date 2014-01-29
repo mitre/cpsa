@@ -38,25 +38,29 @@ addVars ts t = foldVars (flip adjoin) ts t
 
 data Event t
     = In !t                      -- Inbound message
-    | Out !t                     -- Outbound messasge
+    | Out !t                     -- Outbound message
+    | Sync !t                    -- State synchronization
       deriving (Show, Eq, Ord)
 
 -- Dispatch to function based on direction.
-evt :: (t -> a) -> (t -> a) -> Event t -> a
-evt inDir outDir evt =
+evt :: (t -> a) -> (t -> a) -> (t -> a) -> Event t -> a
+evt inDir outDir syncDir evt =
     case evt of
       In t -> inDir t
       Out t -> outDir t
+      Sync t -> syncDir t
 
 -- Extract the term in an event (evt id id).
 evtTerm :: Event t -> t
 evtTerm (In t) = t
 evtTerm (Out t) = t
+evtTerm (Sync t) = t
 
 -- Map the term in an event.
 evtMap :: (t -> t) -> Event t -> Event t
 evtMap f (In t) = In (f t)
 evtMap f (Out t) = Out (f t)
+evtMap f (Sync t) = Sync (f t)
 
 -- A trace is a list of events.  The terms in the trace are
 -- stored in causal order.
@@ -72,6 +76,7 @@ originates :: Algebra t p g s e c => t -> Trace t -> Bool
 originates _ [] = False         -- Term is not carried
 originates t (Out t' : c) = t `carriedBy` t' || originates t c
 originates t (In t' : c) = not (t `carriedBy` t') && originates t c
+originates t (Sync _ : c) = originates t c
 
 -- At what position does a term originate in a trace?
 originationPos :: Algebra t p g s e c => t -> Trace t -> Maybe Int
@@ -85,6 +90,8 @@ originationPos t c =
       loop pos (In t' : c)
           | t `carriedBy` t' = Nothing -- Term does not originate
           | otherwise = loop (pos + 1) c
+      loop pos (Sync _ : c) =
+        loop (pos + 1) c
 
 -- At what position is a term acquired in a trace?
 acquiredPos :: Algebra t p g s e c => t -> Trace t -> Maybe Int
@@ -99,6 +106,8 @@ acquiredPos t c =
       loop pos (Out t' : c)
           | t `occursIn` t' = Nothing   -- Term occurs in outbound term
           | otherwise = loop (pos + 1) c
+      loop pos (Sync _ : c) =
+        loop (pos + 1) c
 
 -- At what position do all of the variables in a term occur in a trace?
 usedPos :: Algebra t p g s e c => t -> Trace t -> Maybe Int
@@ -138,6 +147,12 @@ traceFlow (d : c) a = comb (traceFlow c) (evtFlow d) a
 evtFlow :: Algebra t p g s e c => Event t -> FlowRule t
 evtFlow (In t) = inFlow t
 evtFlow (Out t) = outFlow t
+evtFlow (Sync t) = syncFlow t
+
+-- A hack.
+
+syncFlow :: Algebra t p g s e c => t -> Flow t -> Set (Flow t)
+syncFlow _ f = S.singleton f
 
 -- Combine flow rules sequentially
 comb :: Algebra t p g s e c => FlowRule t -> FlowRule t -> FlowRule t

@@ -1,4 +1,4 @@
-(comment "CPSA 2.3.3")
+(comment "CPSA 2.4.0")
 (comment "All input read from dh_mim_hack.scm")
 
 (defprotocol dh_mim basic

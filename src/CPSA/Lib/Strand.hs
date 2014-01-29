@@ -183,6 +183,10 @@ bldInstance role trace gen =
           do
             env <- match t t' ge
             loop c c' env
+      loop (Sync t : c) (Sync t' : c') ge =
+          do
+            env <- match t t' ge
+            loop c c' env
       loop _ _ _ = []
 
 makeInstance :: Algebra t p g s e c => Role t -> e ->
@@ -601,6 +605,7 @@ pairWellOrdered :: Algebra t p g s e c => Edge t e -> Bool
 pairWellOrdered (n0, n1) =
     case (event n0, event n1) of
       (Out _, In _) -> True
+      (Sync _, Sync _) -> True
       _ -> False
 
 -- The terms used in the strands in this preskeleton.
@@ -768,6 +773,10 @@ jibeTraces (In t : c) (In t' : c') ge =
       env <- match t t' ge
       jibeTraces c c' env
 jibeTraces (Out t : c) (Out t' : c') ge =
+    do
+      env <- match t t' ge
+      jibeTraces c c' env
+jibeTraces (Sync t : c) (Sync t' : c') ge =
     do
       env <- match t t' ge
       jibeTraces c c' env
@@ -1056,6 +1065,7 @@ deOrig k u (s, i) =
 inbnd :: Algebra t p g s e c => Event t -> [t]
 inbnd (In t) = [t]
 inbnd (Out _) = []
+inbnd (Sync _) = []
 
 -- Order Enrichment
 
@@ -1127,6 +1137,8 @@ gainedPos t c =
       loop pos (In t' : c)
           | t `carriedBy` t' = Just pos -- Found it
           | otherwise = loop (pos + 1) c
+      loop pos (Sync _ : c) =
+        loop (pos + 1) c
 
 -- Redundant Strand Elimination (also known as pruning)
 
@@ -1195,6 +1207,10 @@ matchTraces (In t : c) (In t' : c') env =
       e <- match t t' env
       matchTraces c c' e
 matchTraces (Out t : c) (Out t' : c') env =
+    do
+      e <- match t t' env
+      matchTraces c c' e
+matchTraces (Sync t : c) (Sync t' : c') env =
     do
       e <- match t t' env
       matchTraces c c' e
@@ -1625,6 +1641,10 @@ unifyTraces (In t : c) (In t' : c') subst =
       s <- unify t t' subst
       unifyTraces c c' s
 unifyTraces (Out t : c) (Out t' : c') subst =
+    do
+      s <- unify t t' subst
+      unifyTraces c c' s
+unifyTraces (Sync t : c) (Sync t' : c') subst =
     do
       s <- unify t t' subst
       unifyTraces c c' s

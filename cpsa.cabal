@@ -1,5 +1,5 @@
 Name:			cpsa
-Version:		2.3.3
+Version:		2.4.0
 Maintainer:		ramsdell@mitre.org
 Cabal-Version:		>= 1.6
 License:		BSD3
@@ -73,6 +73,7 @@ Extra-Source-Files:
   tst/deorig_mesg.tst tst/deorig_simple.scm tst/deorig_simple.tst
   tst/DH_hack.scm tst/DH_hack.tst tst/ds-short.lisp tst/dy.lsp
   tst/dy.tst tst/encsig.scm tst/encsig.tst
+  tst/envelope.scm tst/envelope.tst
   tst/epmo_acctnum-key-hash.scm tst/epmo_acctnum-key-hash.tst
   tst/epmo_acctnum.lisp tst/epmo-hash.scm tst/epmo-hash.tst
   tst/epmo-key-hash.scm tst/epmo-key-hash.tst tst/epmo.scm

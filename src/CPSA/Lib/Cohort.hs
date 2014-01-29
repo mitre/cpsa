@@ -93,6 +93,7 @@ unrealized k =
       unrealizedInNode (acc, ns) n =
           case event n of
             Out _ -> (acc, ns)
+            Sync _ -> (acc, ns)
             In t ->
                 let ns' = addSendingBefore ns n
                     ts = S.map (evtTerm . event) ns' in
@@ -111,6 +112,7 @@ addSendingBefore s n =
       addIfSending s n =
           case event n of
             In _ -> s
+            Sync _ -> s
             Out _ -> S.insert n s
 
 -- Returns that atoms that cannot be guess when determining if a
@@ -164,8 +166,9 @@ solved ct pos eks escape k (s, p) subst =
     any (derivable a ts) eks
     where
       v = vertex k (s, p)       -- Look up vertex in k
-      t = evt id err (event v)  -- Term at v
-      err = const $ error "Cohort.solved: got an outbound term"
+      t = evt id erro errs (event v)  -- Term at v
+      erro = const $ error "Cohort.solved: got an outbound term"
+      errs = const $ error "Cohort.solved: got a state synchronization term"
       ct' = substitute subst ct -- Mapped critical term
       escape' = S.map (substitute subst) escape
       mappedTargetTerms = S.map (substitute subst) (targetTerms ct escape)
@@ -243,6 +246,7 @@ findTest mode k u a =
       loop (n : nodes) =
           case event n of
             Out _ -> loop nodes
+            Sync _ -> loop nodes
             In t ->
                 let ns = addSendingBefore S.empty n
                     ts = S.map (evtTerm . event) ns -- Public messages
@@ -445,6 +449,8 @@ transformingNode ct escape targets role subst =
       loop _ _ acc [] = acc
       loop ht past acc (In t : c) =
           loop (ht + 1) (In t : past) acc c
+      loop ht past acc (Sync t : c) =
+          loop (ht + 1) (Sync t : past) acc c
       loop ht past acc (Out t : c) =
           loop (ht + 1) (Out t : past) acc' c
           where

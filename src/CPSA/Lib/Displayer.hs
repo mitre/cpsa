@@ -64,6 +64,7 @@ displayTrace ctx trace =
     where
       displayDt (In t) = L () [S () "recv", displayTerm ctx t]
       displayDt (Out t) = L () [S () "send", displayTerm ctx t]
+      displayDt (Sync t) = L () [S () "sync", displayTerm ctx t]
 
 -- Display of preskeletons
 
