@@ -64,7 +64,7 @@ cloneId gen x = freshId gen (idName x)
 -- Operations:
 --   cat : mesg X mesg -> mesg               Pairing
 --   enc : mesg X mesg -> mesg               Encryption
---   hash : mesg X mesg -> mesg              Hashing
+--   hash : mesg -> mesg                     Hashing
 --   string : mesg                           Tag constants
 --   ltk : name X name -> skey               Long term shared key
 --   pubk : name -> akey                     Public key of principal
