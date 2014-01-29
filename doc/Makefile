@@ -61,7 +61,7 @@ $(SPEC).pdf:	$(MP_SRCS:.mp=-0.mps) $(TEX_SRCS) \
 
 CLEAN_FILES := $(PRIMER).pdf $(OVERVIEW).pdf $(SLIDES).pdf \
 		$(DESIGN).pdf $(SPEC).pdf \
-	$(wildcard *.log *.aux *.toc *.mps *.mpx) \
+	$(wildcard *.log *.aux *.toc *.mps *.mpx *.lot *.lof) \
 	$(wildcard *.bbl *.blg *.ind *.idx *.ilg *.out)
 
 clean:

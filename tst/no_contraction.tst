@@ -1,4 +1,4 @@
-(comment "CPSA 2.3.1")
+(comment "CPSA 2.3.3")
 (comment "All input read from no_contraction.scm")
 
 (defprotocol no-contraction basic
