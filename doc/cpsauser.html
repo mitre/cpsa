@@ -345,11 +345,11 @@ severe error that should be reported as a bug.</p>
 
 <h3 id="priority">Search order</h3>
 
-<p>In its analysis, CPSA will attempt to solve unrealized nodes until the 
-skeleton is realized, and then generalize until a shape is obtained.  When 
+<p>In its analysis, CPSA will attempt to solve unrealized nodes until the
+skeleton is realized, and then generalize until a shape is obtained.  When
 there are multiple unrealized nodes, by default, CPSA will chose the topmost,
 rightmost unrealized node among those unrealized nodes with maximum priority.
-The default priority of a node is 5, and higher numbers represent a higher 
+The default priority of a node is 5, and higher numbers represent a higher
 priority.  When a node has non-positive priority, it is left unsolved.</p>
 
 <p>In a role, in order to specify a priority for an event other than
@@ -358,7 +358,7 @@ form <code>(priority (<var>i</var> <var>p</var>))</code>,
 where <var>i</var> is the index of the event in the trace,
 and <var>p</var> is the priority.
 Priorities are inherited
-from roles, but may be overridden in a skeleton with a 
+from roles, but may be overridden in a skeleton with a
 <code>priority</code> comment of the form
 <code>(priority (<var>n</var> <var>p</var>))</code>,
 where <var>n</var> is a node.

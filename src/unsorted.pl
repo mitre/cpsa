@@ -8,7 +8,7 @@
 %% modify it under the terms of the BSD License as published by the
 %% University of California.
 
-:- module(unsorted, [to_unsorted/3, from_unsorted/3, 
+:- module(unsorted, [to_unsorted/3, from_unsorted/3,
                      unify/3, unify/4, subst/3]).
 
 :- use_module(cpsa).
@@ -174,7 +174,7 @@ occurs(Var, Var).
 occurs(Var, Term) :-
     Term =.. [_|Terms],
     occurs_list(Var, Terms).
-    
+
 occurs_list(Var, [Term|_]) :-
     occurs(Var, Term),
     !.
