@@ -1,0 +1,10 @@
+#! /bin/sh
+
+for f in tst/*.tst
+do
+    t=`awk '/\(defprotocol/ {print $2; exit}' $f`
+    if [ "X$f" != "Xtst/$t.tst" ]
+    then
+	echo $f $t
+    fi
+done

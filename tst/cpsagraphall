@@ -1,0 +1,12 @@
+#! /bin/sh
+
+# Graph all test output.
+
+PROG=../dist/build/cpsagraph/cpsagraph
+
+for i in *.txt
+do
+  o=`basename $i .txt`.svg
+  echo $PROG -o $o $i
+  $PROG -o $o $i
+done

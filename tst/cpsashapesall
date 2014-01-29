@@ -1,0 +1,15 @@
+#! /bin/sh
+
+# Find the shapes associated with all test output.
+
+PROG=../dist/build/cpsashapes/cpsashapes
+
+for i in *.txt
+do
+  if echo $i | grep -v shapes > /dev/null
+  then
+    o=`basename $i .txt`_shapes.txt
+    echo $PROG -o $o $i
+    $PROG -o $o $i
+  fi
+done

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+      "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>ffgg</title>
+  <meta name="generator" content="Amaya, see http://www.w3.org/Amaya/" />
+  <link rel="stylesheet" href="cpsaintro.css" type="text/css" />
+  <script type="application/ecmascript" src="slides.js">
+  </script>
+  <script type="application/ecmascript" src="navigation.js">
+  </script>
+</head>
+
+<body onload="init()">
+<h1 class="center">ffgg</h1>
+<ul>
+  <li>Protocol where A is the initiator and B is the responder, and
+    N<sub>1</sub> and N<sub>2</sub> are uniquely originating:
+    <ul>
+      <li>A-&gt;B: A</li>
+      <li>B-&gt;A: B, N<sub>1</sub>, N<sub>2</sub></li>
+      <li>A-&gt;B: A, {N<sub>1</sub>, N<sub>2</sub>, M}<sub>pub(B)</sub>
+        %{N<sub>1</sub>, X, Y}<sub>pub(B)</sub></li>
+      <li>B-&gt;A: B, N<sub>1</sub>, X, {X, Y,
+      N<sub>1</sub>}<sub>pub(B)</sub></li>
+    </ul>
+  </li>
+  <li>Point of view: responder with M uniquely originating, privk(B)
+    non-originating, and a listener for M</li>
+</ul>
+</body>
+</html>

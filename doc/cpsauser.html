@@ -1,0 +1,615 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type"
+  content="application/xhtml+xml; charset=UTF-8" />
+  <title>CPSA 2.3 User Guide</title>
+  <meta name="generator" content="Amaya 9.54, see http://www.w3.org/Amaya/" />
+  <style type="text/css">
+    h1 { text-align: center }
+    body { background: white; color: black }
+  </style>
+</head>
+
+<body>
+<h1>CPSA 2.3 User Guide</h1>
+
+<p>The Cryptographic Protocol Shapes Analyzer (CPSA) attempts to enumerate all
+essentially different executions possible for a cryptographic protocol. We call
+them the <i>shapes</i> of the protocol. Naturally occurring protocols have only
+finitely many, indeed very few shapes. Authentication and secrecy properties
+are easy to determine from them, as are attacks and anomalies.</p>
+
+<p>For each input problem, the CPSA program is given some initial
+behavior, and it discovers what shapes are compatible with
+it. Normally, the initial behavior is from the point of view of one
+participant. The analysis reveals what the other participants must
+have done, given the participant's view. The search is based on a
+high-level algorithm that was claimed to be complete, i.e. every shape
+can in fact be found in a finite number of steps. Further theoretical
+work showed classes of executions that are not found by the algorithm,
+however it also showed that every omitted execution requires an
+unnatural interpretation of a protocol's roles.  Hence the algorithm
+is complete relative to natural role semantics.</p>
+
+<p>The analyzer is designed to work well with other tools. S-expressions are
+used for both input and output. The analyzer reads all the problems in its
+input, writes out the solution to each problem, and then exits. This release
+contains seven tools. The <a href="#cpsagraph"><code>cpsagraph</code></a> program
+provides a visualization of answers using Scalable Vector Graphics (<a
+href="http://www.w3.org/Graphics/SVG/">SVG</a>). The <a
+href="#cpsashapes"><code>cpsashapes</code></a> program removes intermediate results
+from analyzer runs making the shapes easy to identify.
+The <a
+href="#cpsafiff"><code>cpsadiff</code></a> program compares CPSA output
+  files S-expression by S-expression, and prints the first skeleton
+  that differs.
+The <a href="#cpsalogic"><code>cpsalogic</code></a> program logical
+  formula that can be used to ensure security goals are achieved.
+The <a
+href="#cpsaannotations"><code>cpsaannotations</code></a> program uses protocol
+annotations to annotate shapes and generate protocol soundness obligations. The
+<a href="#cpsaparameters"><code>cpsaparameters</code></a> program detects some
+specification errors by performing a data flow analysis on protocol roles. The
+<a href="#cpsapp"><code>cpsapp</code></a> program pretty prints its input using a
+CPSA specific algorithm.</p>
+
+<p>The input syntax is essentially the same as the output syntax. A Lisp aware
+editor will pretty print input, and the output is pretty printed. We use Emacs'
+Scheme mode to prepare input. This document describes the syntax, but provides
+little assistance for its interpretation. See the CPSA Tutorial document for
+this information.</p>
+
+<p>The typical pattern of usage is to enter the set of problems to be analyzed
+into a file, in this example, <code>prob.scm</code>, analyze the problems, and if
+something interesting is produced, visualize the answers.</p>
+
+<blockquote>
+  <pre>$ cpsa +RTS -M512m -RTS -o prob.txt prob.scm
+$ cpsagraph -o prob.xhtml prob.txt
+$ firefox -remote "openFile(`pwd`/prob.xhtml)"</pre>
+</blockquote>
+
+<p>Often a summary of the analysis is more enlightening.</p>
+
+<blockquote>
+  <pre>$ cpsashapes -o prob_shapes.txt prob.txt
+$ cpsagraph -o prob_shapes.xhtml prob_shapes.txt
+$ firefox -remote "openFile(`pwd`/prob_shapes.xhtml)"</pre>
+</blockquote>
+
+<p id="make">The distribution comes with the
+file <a href="cpsa.mk"><code>cpsa.mk</code></a> for inclusion into your
+makefile. A sample makefile follows. If you cut-and-paste from a
+browser window, be sure to convert the leading spaces in the last line
+into a tab character.</p>
+
+<blockquote>
+  <pre>CPSAFLAGS = +RTS -M512m -RTS
+
+SRCS := $(wildcard *.scm) $(wildcard *.lsp)
+
+include cpsa.mk
+
+all:    $(SRCS:%.scm=%_shapes.xhtml) $(SRCS:%.scm=%.xhtml) \
+        $(SRCS:%.lsp=%_shapes.xhtml) $(SRCS:%.lsp=%.xhtml)
+
+clean:
+        -rm *.txt *.xhtml</pre>
+</blockquote>
+
+<p>The CPSA program
+  is <a href="http://www.gnu.org/software/emacs/">Emacs</a> friendly.
+  If you run the above <code>makefile</code> via &quot;<kbd>M-x
+  compile</kbd>&quot;, the results will be displayed in a buffer in
+  Compilation Mode.  The command &quot;<kbd>C-x `</kbd>&quot; will visit
+  the locus of the next error message or match (<code>next-error</code>)
+  in your CPSA input file.</p>
+
+<p>For platforms without GNU <code>make</code>, the Haskell program <a
+href="Make.hs"><code>Make.hs</code></a> can be loaded into a Haskell interpreter
+and perform a similar function. Users are expected to copy the makefile or the
+Haskell program into the directory containing a set of analysis problems, and
+then modify the file so it specifies the command line flags appropriate for the
+problems in the directory.</p>
+
+<h2>Syntax</h2>
+
+<p>The syntax is extensible. Association lists in which the key is always a
+symbol are allowed at various points in the grammar. Key-value pairs with
+unrecognized keys are ignored, and are available for use by other tools. On
+output, unrecognized key-value pairs are preserved when printing protocols, but
+elided when printing skeletons, with the exception of the <code>comment</code>
+key.</p>
+
+<p>The input is an option herald form followed by a sequence of
+protocol definitions and problem statements.
+A <a href="#usage">herald form</a> allows options normally specified
+on the command line to be specified within an input file.  A problem
+statement describes the initial behavior as a skeleton. The grammar
+for a protocol follows.</p>
+
+<blockquote>
+  <pre>PROTOCOL   ::= (defprotocol ID ALG ROLE+ PROT-ALIST)
+ID         ::= SYMBOL
+ALG        ::= SYMBOL
+ROLE       ::= (defrole ID VARS TRACE ROLE-ALIST)
+VARS       ::= (vars DECL*)
+DECL       ::= (ID+ SORT)
+TRACE      ::= (trace EVENT+)
+EVENT      ::= (send TERM) | (recv TERM)
+ROLE-ALIST ::= (non-orig POS-TERM*) ROLE-ALIST
+            |  (pen-non-orig POS-TERM*) ROLE-ALIST
+            |  (uniq-orig TERM*) ROLE-ALIST | ...
+            |  (priority NODE-INT*) SKEL-ALIST
+POS-TERM    ::= TERM | (INT TERM)
+PROT-ALIST ::= ...</pre>
+</blockquote>
+
+<p>The protocol <code>ID</code> is a symbol that names the protocol, and the role
+<code>ID</code> is a symbol that names the role. The <code>ALG</code> symbol identifies
+the algebra used by the protocol. For the Basic Cryptographic Algebra, the
+symbol is <code>basic</code>. The <code>var</code> form contains symbols that
+declare the sort of the variables used in this role. The set of sort
+symbols is algebra specific. The protocol association list has no
+predefined keys, while the role association list has three. The value
+associated with both of these keys must be atoms in the
+algebra. Each <code>non-orig</code> term must not be carried by any event
+in the role's trace, but each of its variables must occur in some
+term.  A role non-origination assumption of the form <code>(3 a)</code>
+asserts that atom <code>a</code> will not be mapped into an instance
+unless its height is greater than three.  For each <code>pen-non-orig</code>
+term, each of its variables must occur in some term, but unlike a
+non-origination assumption, the term may be carried.
+Each <code>uniq-orig</code> term must originate in the role's trace. Every
+non-atomic variable must be acquired by the role's trace.</p>
+
+<p>The structure of sorts and terms in the Basic Cryptographic Algebra
+follows.</p>
+
+<blockquote>
+  <pre>SORT ::= text | data | name | skey | akey | mesg
+TERM ::= ID | STRING | (cat TERM+) | (enc TERM+ TERM) | (hash TERM+)
+      |  (pubk ID) | (privk ID) | (invk ID) | (ltk ID ID)
+      |  (pubk STRING ID) | (privk STRING ID)</pre>
+</blockquote>
+
+<p>The form (<code>cat</code> a b c d e) is expands to (<code>cat</code> a (<code>cat</code>
+b (<code>cat</code> c (<code>cat</code> d e)))).</p>
+
+<p>A term in the Basic Crypto Algebra is an atom if it is variable of a sort
+other than <code>mesg</code>, or it if formed from one of the following operations:
+<code>pubk</code>, <code>privk</code>, <code>invk</code>, and <code>ltk</code>.</p>
+
+<blockquote>
+  <pre>SKELETON   ::= (defskeleton ID VARS STRAND+ SKEL-ALIST)
+STRAND     ::= (defstrand ID INT MAPLET*) | (deflistener TERM)
+MAPLET     ::= (TERM TERM)
+SKEL-ALIST ::= (non-orig TERM*) SKEL-ALIST
+            |  (pen-non-orig TERM*) SKEL-ALIST
+            |  (uniq-orig TERM*) SKEL-ALIST
+            |  (precedes NODE-PAIR*) SKEL-ALIST
+            |  (priority NODE-INT*) SKEL-ALIST | ...
+NODE-PAIR  ::= (NODE NODE)
+NODE       ::= (INT INT)</pre>
+</blockquote>
+
+<p>The <code>ID</code> in the skeleton form names a protocol. It refers to the last
+protocol definition of that name which precedes the skeleton form. The
+<code>ID</code> in the strand form names a role. The integer in the strand form
+gives the height of the strand. The sequence of pairs of terms in the strand
+form specify an environment used to construct the messages in a strand from its
+role's trace. The first term is interpreted using the role's variables and the
+second term uses the skeleton's variables. The environment used to produce the
+strand's trace is derived by matching the second term using the first term as a
+pattern.</p>
+
+<p>The first integer in a node identifies a strand, and the second one
+specifies the position of the node in the strand. Zero-based indexing is used.
+Zero identifies the first strand, and the first node in a strand has position
+zero.</p>
+
+<p>A variable may occur in more then one role within a protocol. The
+reader performs a renaming so as to ensure these occurrences do not
+overlap.  Furthermore, the maplets used to specify a strand need not
+specify how to map every role variable. The reader inserts missing
+mappings, and renames every skeleton variable that also occurs in a
+role of its protocol. The sort of every skeleton variable that occurs
+in the <code>non-orig</code>, <code>pen-non-orig</code>, or <code>uniq-orig</code>
+list or in a maplet must be declared.</p>
+
+<p>On output, key-value pairs are added to all skeleton's association list.
+Every skeleton in the output is labeled with a unique identifier with
+<code>(label INT)</code> A skeleton has <code>(parent INT)</code> if it is a member of
+the cohort of the identified parent. A skeleton has <code>(seen INT+)</code> when
+members of its cohort are isomorphic to previously seen skeletons. A skeleton
+lists its unrealized nodes with <code>(unrealized NODE*)</code>. The traces
+associated with each strand is given by the <code>(traces ...)</code> form.
+Finally, the operation used to derive this skeleton from its parent is recorded
+with <code>(operation TEST KIND TERM NODE TERM*)</code>, where <code>TEST</code> is the
+authentication test <code>encryption-test</code> or <code>nonce</code>, <code>KIND</code>
+is <code>(added-strand ID INT)</code>, <code>(contracted MAPLET*)</code>, or
+<code>(added-listener TERM)</code>, <code>TERM</code> is the critical term,
+<code>NODE</code> in the test node, and the remaining terms specify the escape set.
+When the operation kind is augmenting, the instance's role name and height are
+provided. For kind listening, a term is provided. For kind contracting, the
+substitution is provided. When a substitution refers to a variable not in the
+skeleton, its name is unpredictable. For generalization, the operation is
+recorded as <code>(operation generalization METHOD)</code>, where <code>METHOD</code>
+is one of <code>deleted NODE</code>, <code>weakened NODE-PAIR</code>, <code>separated
+TERM</code> and <code>forgot TERM</code>. Generalization is used to find shapes from
+realized skeletons. For shape collapsing, the operation is recorded as
+<code>(operation collapsed INT INT)</code>, where the two <code>INT</code>s identify
+the strands merged. Shape collapsing is used to find related shapes.</p>
+
+<h3>Macros and Includes</h3>
+
+<p>After reading the input, <code>cpsa</code> expands macros before in analyzing
+the results. A macro definition is a top-level form.</p>
+
+<blockquote>
+  <pre>(defmacro (NAME ARG*) BODY)</pre>
+</blockquote>
+
+<p>The <code>cpsa</code> program expands all calls to macros in non-macro defining
+S-expressions using the macros that have been defined previously. A macro
+definition can be used to expand a call if the first element of a list matches
+the name of the macro, and the length of the remaining elements in the list
+matches the length of the macro's argument list. When two macros definitions
+are applicable, the last definition takes precedence. The <code>cpsa</code> program
+omits macro definitions from its output.</p>
+
+<p>A source file can be included within another with the top-level
+include form,</p>
+
+<blockquote>
+  <pre>(include FILE)</pre>
+</blockquote>
+
+<p>where <code>FILE</code> is a string. The <code>cpsa</code> program
+includes files while it does macro expansion.</p>
+
+<h3 id="usage">Usage of CPSA</h3>
+
+<blockquote>
+  <pre>$ cpsa -h
+Usage: cpsa [OPTIONS] [FILE]
+  -o FILE    --output=FILE      output FILE
+  -l INT     --limit=INT        step count limit (default 2000)
+  -b INT     --bound=INT        strand count bound (default 8)
+  -m INT     --margin=INT       set output margin (default 72)
+  -e         --expand           expand macros only; don't analyze
+  -n         --noisochk         disable isomorphism checks
+  -c         --check-nonces     check nonces first
+  -t         --try-old-strands  try old strands first
+  -r         --reverse-nodes    try younger nodes first
+  -a STRING  --algebra=STRING   algebra (default basic)
+  -s         --show-algebras    show algebras
+  -h         --help             show help message
+  -v         --version          show version number</pre>
+</blockquote>
+
+<p>This program will abort if too many steps are taken. A skeleton is printed
+for each step taken by the program. The step count limit option is used to
+override the default step count limit. It will also abort when it detects a
+skeleton with too many strands. The strand count bound option is used to
+override the default strand count bound. Another way to limit resources used by
+the program is to limit the amount of memory it may use. The command-line
+option <code>+RTS -M512m -RTS</code> limits memory usage to 512m.</p>
+
+<p>The herald form can be used to specify options within a file.  The
+  grammar for a herald form follows, where <code>ALIST</code> is an
+  association list with symbols as keys.</p>
+
+<blockquote>
+  <pre>HERALD ::= (herald TITLE ALIST)
+TITLE  ::= SYMBOL | STRING</pre>
+</blockquote>
+
+<p>The title is used by <code>cpsagraph</code> when generating XHTML.
+  In the following example, the herald form specifies a strand bound
+  of 12 in a way that is equivalent to the command line
+  option <code>--bound=12</code>.</p>
+
+<blockquote>
+  <pre>(herald "Needham-Schroeder Public-Key Protocol" (bound 12))</pre>
+</blockquote>
+
+<p>The herald form is only interpreted by the <code>cpsa</code> program,
+  and is treated as a comment by all other programs.  In particular,
+  specifying a <code>margin</code> option effects <code>cpsa</code> only.</p>
+
+<p>For long running problems, SMP parallelism is available. For example, on a
+quad-core machine, we would probably use <code>+RTS -N4 -RTS</code>.</p>
+
+<p>In addition to the options provided on the command line or a herald
+  form, one can influence the order in which test nodes are sought.
+  When a role includes <code>(reverse-search)</code> in its association
+  list as a comment, the nodes in its instances will be searched in
+  reverse order.</p>
+
+<p>When run with isomorphism checks disabled (<code>--noisochk</code>), CPSA
+searches for realized skeletons, not shapes. It attempts to speed up analysis
+by not identifying duplicate skeletons or generalizing realized skeletons,
+however in many cases, run times increase. It is used when normal analysis
+takes too much time on the chance that avoiding the checks makes more progress.
+</p>
+
+<p>In no isomorphism checking mode output, every realized skeleton is labeled a
+shape even when it is not. This allows the extraction of every realized
+skeletons from the output using the <a
+href="#cpsashapes"><code>cpsashapes</code></a> program.</p>
+
+<p>An error message that begins with "No test for unrealized node" identifies a
+severe error that should be reported as a bug.</p>
+
+<h3 id="priority">Search order</h3>
+
+<p>In its analysis, CPSA will attempt to solve unrealized nodes until the 
+skeleton is realized, and then generalize until a shape is obtained.  When 
+there are multiple unrealized nodes, by default, CPSA will chose the topmost,
+rightmost unrealized node among those unrealized nodes with maximum priority.
+The default priority of a node is 5, and higher numbers represent a higher 
+priority.  When a node has non-positive priority, it is left unsolved.</p>
+
+<p>In a role, in order to specify a priority for an event other than
+the default, add a comment of the
+form <code>(priority (<var>i</var> <var>p</var>))</code>,
+where <var>i</var> is the index of the event in the trace,
+and <var>p</var> is the priority.
+Priorities are inherited
+from roles, but may be overridden in a skeleton with a 
+<code>priority</code> comment of the form
+<code>(priority (<var>n</var> <var>p</var>))</code>,
+where <var>n</var> is a node.
+
+<h2 id="cpsagraph">Visualization</h2>
+
+<p>The <code>cpsagraph</code> program produces a graphical rendering of the output
+or input of an analyzer using SVG. It is viewable only with a
+standards-compliant web browser such as FireFox.</p>
+
+<p>When applied to the output of CPSA, the program groups together all the
+skeletons related to each problem statement in the input. The program assembles
+the related skeletons into a directed acyclic graph using the parent identifier
+and renders it as a tree using SVG. Each vertex in the tree is the label added
+to the skeleton by the CPSA program. Click the label in the tree to view the
+skeleton. Hover over a node in a skeleton drawing to see the term associated
+with it. Hover over a role to see the mapping from role variables to skeleton
+variables.</p>
+
+<p>A node ordering edge in a skeleton drawing indicates that the message
+transmission at the source of the edge happened before message reception at the
+destination edge. The edge is solid if the transmitting term is syntactically
+identical to the receiving term, otherwise the edge is dashed. Thus in an
+algebra with a commutative operation <code>*</code>, the graphing program sometimes
+draws a dashed line between <code>(send (* a b))</code> and <code>(recv (* b
+a))</code>.</p>
+
+<p>In the tree drawing, the label of a shape is blue. For dead
+skeletons, the label is red, unless it has been seen before, in which
+case it is orange. Otherwise the label is green for skeletons seen
+before. Seen skeleton labels are rendered in an italic font.</p>
+
+<p>By the default, <code>cpsagraph</code> generates a view of CPSA S-expressions as
+a compound document that contains SVG within XHTML. This view integrates
+graphics with the input text.</p>
+
+<p>In compact mode, <code>cpsagraph</code> generates an SVG document. The tree is
+displayed immediately to the left of skeleton drawings. When there is more than
+one tree, the left-hand-side of the drawing contains a vertical listing of the
+trees. Compact mode output should never be used as a replacement for studying
+the text version of the output. The text version contains strictly more
+information, and should be displayed next to its graphical rendition.</p>
+
+<p>In LaTeX mode, <code>cpsagraph</code> generates LaTeX source. XY-pic is used for
+drawings of skeletons. The margin specified in <a
+href="cpsa.mk"><code>cpsa.mk</code></a> produces good results. </p>
+
+<h3>Usage</h3>
+
+<blockquote>
+  <pre>$ cpsagraph -h
+Usage: cpsagraph [OPTIONS] [FILE]
+  -o FILE  --output=FILE  output FILE
+  -x       --expanded     use expanded format (default)
+  -z       --zoom         enable diagram scaling
+  -t       --treeless     use treeless expanded format
+  -c       --compact      use compact format
+  -l       --latex        use LaTeX format
+  -m INT   --margin=INT   set output margin (default 72)
+  -i       --infix        output uses infix notation
+  -h       --help         show help message
+  -v       --version      show version number</pre>
+</blockquote>
+
+<h2 id="cpsadiff">Output Comparisons</h2>
+
+<p>The <code>cpsadiff</code> program compares CPSA output files
+S-expression by S-expression, and prints the first skeleton that
+differs.</p>
+
+<h3>Usage</h3>
+
+<blockquote>
+  <pre>$ cpsadiff -h
+Usage: cpsadiff [OPTIONS] OLD-FILE NEW-FILE
+  -o FILE  --output=FILE  output FILE
+  -m INT   --margin=INT   set output margin (default 72)
+  -h       --help         show help message
+  -v       --version      show version number</pre>
+</blockquote>
+
+<h2 id="cpsashapes">Shape Extraction</h2>
+
+<p>The <code>cpsashapes</code> program extracts the original problems and the
+shapes from the output of a CPSA run. The shapes are linked to their problem so
+the output can be graphed.</p>
+
+<h3>Usage</h3>
+
+<blockquote>
+  <pre>$ cpsashapes -h
+Usage: cpsashapes [OPTIONS] [FILE]
+  -o FILE  --output=FILE  output FILE
+  -m INT   --margin=INT   set output margin (default 72)
+  -h       --help         show help message
+  -v       --version      show version number</pre>
+</blockquote>
+
+<h2 id="cpsalogic">Formula Extraction</h2>
+
+<p>The <code>cpsalogic</code> program extracts a formula in the language
+  of order-sorted first-order logic for each problem and its shapes
+  from a CPSA run. The formula is called a shape analysis
+  sentence. The formula is satisfied in all realized skeletons when
+  CPSA finds all the shapes for the problem.</p>
+
+<h3>Usage</h3>
+
+<blockquote>
+  <pre>$ cpsalogic -h
+Usage: cpsalogic [OPTIONS] [FILE]
+  -o FILE    --output=FILE     output FILE
+  -m INT     --margin=INT      set output margin (default 72)
+  -a STRING  --algebra=STRING  algebra (default basic)
+  -s         --show-algebras   show algebras
+  -h         --help            show help message
+  -v         --version         show version number</pre>
+</blockquote>
+
+<h2 id="cpsaannotations">Annotations</h2>
+
+<p>The <code>cpsaannotations</code> program uses protocol annotations to annotate
+shapes and generate protocol soundness obligations.</p>
+
+<h3>Usage</h3>
+
+<blockquote>
+  <pre>$ cpsaannotations -h
+Usage: cpsashapes [OPTIONS] [FILE]
+  -o FILE    --output=FILE     output FILE
+  -m INT     --margin=INT      set output margin (default 72)
+  -a STRING  --algebra=STRING  algebra (default basic)
+  -s         --show-algebras   show algebras
+  -h         --help            show help message
+  -v         --version         show version number</pre>
+</blockquote>
+
+<h3>Syntax</h3>
+
+<p>To be analyzed, each role in a protocol must include an <code>annotations</code>
+form. The <code>TERM</code> is a role atom that when instantiated, is the name of a
+principal in the shape. What follows is sequences of pairs. The integer gives
+the position of the event in the trace that is annotated by the formula.
+Zero-based indexing is used.</p>
+
+<p>The language of formulas is order-sorted first-order logic extended
+with a modal says operator. Formula terms may include function symbols
+that are not part of a protocol's message signature.</p>
+
+<blockquote>
+  <pre>ANNOTATION ::= (annotations TERM (INT FORMULA)*)
+FORMULA    ::= (ID FTERM*) | (not FORMULA)
+            |  (and FORMULA*) | (or FORMULA*)
+            |  (implies FORMULA* FORMULA)
+            |  (iff FORMULA FORMULA)
+            |  (says TERM FORMULA)
+            |  (forall (DECL*) FORMULA)
+	    |  (exists (DECL*) FORMULA)
+FTERM      ::= TERM | (ID FTERM*)</pre>
+</blockquote>
+
+<p>Use <code>(and)</code> for truth and <code>(or)</code> for falsehood.</p>
+
+<h3>Output</h3>
+
+<p>On output, each shape contains an <code>annotations</code> form and a
+<code>obligations</code> form. The annotations form presents every non-trivial
+formula derived from the protocol. The obligations form presents every
+non-trivial soundness obligation.</p>
+
+<h2 id="cpsaparameters">Parameter Analysis</h2>
+
+<p>The parameters of a role are the atoms that are not acquired by the role's
+trace, but must be available before a complete execution of the trace is
+possible. This program computes sets of sets of parameters consistent with the
+role. If the expected parameter set is not a member, a specification error is
+indicated.</p>
+
+<h3>Usage</h3>
+
+<blockquote>
+  <pre>$ cpsaparameters -h
+Usage: cpsaparameters [OPTIONS] [FILE]
+  -o FILE    --output=FILE     output FILE
+  -m INT     --margin=INT      set output margin (default 72)
+  -a STRING  --algebra=STRING  algebra (default basic)
+  -s         --show-algebras   show algebras
+  -h         --help            show help message
+  -v         --version         show version number</pre>
+</blockquote>
+
+<h3>Output</h3>
+
+<p>On output, each role contains a <code>parameters</code> form with a list of sets
+of atoms.</p>
+
+<blockquote>
+  <pre>(defrole resp (vars (b a name) (n2 n1 text))
+  (trace
+    (recv (enc n1 a (pubk b)))
+    (send (enc n1 n2 (pubk a)))
+    (recv (enc n2 (pubk b))))
+  (parameters
+    (n2 n1 a (pubk b) (pubk a))
+    (n2 (privk b) (pubk a))))</pre>
+</blockquote>
+
+<p>In this example, the second parameter set is what is expected for a
+responder role in this version of the Needham-Schroeder protocol.</p>
+
+<p>Macro expansion is not performed by this program. Use the <code>-e</code> option
+with <code>cpsa</code> to preprocess input that contains macro definitions.</p>
+
+<h2 id="cpsapp">Pretty Printing</h2>
+
+<p>The <code>cpsapp</code> program program pretty prints its input using the CPSA
+specific algorithm.</p>
+
+<h3>Usage</h3>
+
+<blockquote>
+  <pre>$ cpsapp -h
+Usage: cpsapp [OPTIONS] [FILE]
+  -o FILE  --output=FILE  output FILE
+  -m INT   --margin=INT   set output margin (default 72)
+  -i       --infix        output uses infix notation
+  -j       --json         output uses JSON notation
+  -h       --help         show help message
+  -v       --version      show version number</pre>
+</blockquote>
+
+<h2>S-expressions</h2>
+
+<p>The S-expressions used are restricted so that most dialects of Lisp
+can read them, and characters within symbols and strings never need
+quoting. Every list is proper. An atom is either a symbol, an integer,
+or a string. The characters that make up a symbol are the letters, the
+digits, and the special characters in
+"<code>-*/&lt;=&gt;!?:$%_&amp;~^</code>". A symbol may not begin with a
+digit or a sign followed by a digit. The characters that make up a
+string are the printing characters omitting double quote and
+backslash. Double quotes delimit a string. A comment begins with a
+semicolon, or is an S-expression list at top-level that starts with
+the <code>comment</code> symbol. </p>
+
+<hr />
+
+<p>Copyright (c) 2009 The MITRE Corporation. Permission to copy without fee all
+or part of this material is granted provided that the copies are not made or
+distributed for direct commercial advantage, this copyright notice and the
+title of the publication and its date appear, and notice in given that copying
+is by permission of The MITRE Corporation.</p>
+</body>
+</html>

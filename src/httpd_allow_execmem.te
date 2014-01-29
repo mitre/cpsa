@@ -1,0 +1,23 @@
+policy_module(httpd_allow_execmem, 1.0)
+
+########################################
+#
+# Declarations
+#
+
+gen_tunable(httpd_allow_execmem,true)
+
+########################################
+#
+# Local policy
+#
+
+gen_require(`
+	type httpd_sys_script_t;
+')
+
+tunable_policy(`httpd_allow_execmem',`
+	# Allow making anonymous memory executable, e.g.
+	# for runtime-code generation or executable stack.
+	allow httpd_sys_script_t self:process execmem;
+')

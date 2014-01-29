@@ -1,0 +1,11 @@
+#! /bin/sh
+# replaces defpreskeleton with defskeleton
+
+for i
+do
+  if test -f "$i" -a -w "$i"
+  then
+    mv "$i" "$i".bak
+    sed 's/defpreskeleton/defskeleton/g' "$i".bak > "$i"
+  fi
+done

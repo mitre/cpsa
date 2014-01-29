@@ -1,0 +1,104 @@
+<project name="cpsaextras" default="all" basedir=".">
+
+<!-- Directory names -->
+<property name="src" value="src"/>
+<!-- Directory for Scala libraries -->
+<property name="lib" value="lib"/>
+<property name="build" value="build"/>
+<property name="dist" value="dist"/>
+<property name="api" value="api"/>
+
+<property name="proj" value="${ant.project.name}"/>
+<property name="version" value="0.0.0"/>
+<property name="pkg" value="${proj}"/>
+<!-- Name of version resource -->
+<property name="props" value="${src}/${proj}/version.properties"/>
+<!-- Name of Scala library -->
+<property name="library" value="${lib}/scala-library.jar"/>
+
+<!-- One usually need not change anything below this comment -->
+<!-- An exception might be the manifest in the jar task -->
+
+<target name="init">
+  <!-- Create the build directory structure used by compile -->
+  <mkdir dir="${build}"/>
+  <uptodate property="version_added" srcfile="build.xml"
+	    targetfile="${props}"/>
+  <path id="build.classpath">
+    <pathelement location="${build}"/>
+  </path>
+  <taskdef resource="scala/tools/ant/antlib.xml">
+    <classpath>
+      <pathelement location="${lib}/scala-compiler.jar"/>
+      <pathelement location="${lib}/scala-library.jar"/>
+    </classpath>
+  </taskdef>
+</target>
+
+<target name="version" depends="init" unless="version_added">
+  <propertyfile file="${props}">
+    <entry key="version" value="${version}" operation="="/>
+    <entry key="program" value="${proj}" operation="="/>
+  </propertyfile>
+  <unjar src="${library}" dest="${build}"/>
+</target>
+
+<target name="compile" depends="version">
+  <!-- Compile the scala code from ${src} into ${build} -->
+  <scalac srcdir="${src}" destdir="${build}" deprecation="on"
+	  classpathref="build.classpath"/>
+</target>
+
+<target name="resource" depends="init">
+  <!-- Copy resources from ${src} into ${build} -->
+  <copy todir="${build}">
+    <fileset dir="${src}">
+      <include name="**/*.properties"/>
+    </fileset>
+  </copy>
+  <!-- Copy the license into ${build} -->
+  <copy todir="${build}" file="license.txt"/>
+</target>
+
+<target name="all" depends="compile,version,resource">
+  <jar jarfile="${proj}.jar" basedir="${build}">
+    <manifest>
+      <attribute name="Main-Class" value="${pkg}.Main"/>
+      <attribute name="Specification-Title" value="${proj}"/>
+      <attribute name="Specification-Version" value="${version}"/>
+    </manifest>
+  </jar>
+</target>
+
+<target name="doc" depends="version">
+  <mkdir dir="${api}"/>
+  <scaladoc srcdir="${src}" destdir="${api}"
+	    classpathref="build.classpath">
+    <include name="**/*.scala"/>
+  </scaladoc>
+</target>
+
+<target name="dist" depends="all,doc">
+  <mkdir dir="${dist}/${proj}"/>
+  <copy todir="${dist}/${proj}">
+    <fileset dir=".">
+      <include name="${proj}.jar"/>
+      <include name="${lib}/"/>
+      <include name="${src}/**/*.scala"/>
+      <include name="${src}/**/*.properties"/>
+      <include name="${api}/"/>
+    </fileset>
+  </copy>
+  <zip zipfile="${proj}-${version}.zip" basedir="${dist}"/>
+</target>
+
+<target name="clean">
+  <!-- Delete the ${build} directory, the project jar file, -->
+  <!-- the version resource file, and the ${dist} and ${api} directories -->
+  <delete dir="${build}"/>
+  <delete file="${proj}.jar"/>
+  <delete file="${props}"/>
+  <delete dir="${api}"/>
+  <delete dir="${dist}"/>
+</target>
+</project>

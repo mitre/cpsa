@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+      "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>Carried Only Within</title>
+  <meta name="generator" content="Amaya, see http://www.w3.org/Amaya/" />
+  <link rel="stylesheet" href="cpsaintro.css" type="text/css" />
+  <script type="application/ecmascript" src="slides.js">
+  </script>
+  <script type="application/ecmascript" src="navigation.js">
+  </script>
+</head>
+
+<body onload="init()">
+<h1 class="center">Carried Only Within</h1>
+<ul>
+  <li>A term is carried by another term, if the possession of the right set
+    of keys allows the extraction of the term</li>
+  <li>Implementing carried only within
+    <pre>carriedOnlyWithin ::
+    Term t =&gt; t -&gt; S.Set t -&gt; t -&gt; Bool
+carriedOnlyWithin target escape term =
+    existsOnAllPathsToTarget
+        (flip S.member escape)
+        target term</pre>
+  </li>
+</ul>
+</body>
+</html>

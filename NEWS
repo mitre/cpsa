@@ -1,0 +1,764 @@
+CPSA NEWS -- history of user-visible changes.
+
+* Changes in version 2.3.2
+
+** Bug fixed in prover9
+   A bug was introduced in 2.3.1 that caused it to fail when the input
+   contains a tag.
+
+* Changes in version 2.3.1
+
+** Bug in priority ordering fixed.
+   This version reverses the sort predicate so that high numbered
+   priorities are considered first.  Nodes of priority zero will never
+   be solved.
+
+** This version fixes a bug in cohort filtering.
+   There may be changes to your output as the fix often produces more
+   skeletons.
+
+* Changes in version 2.3.0
+
+** Priorities for influencing search order added
+   The priority form in roles and skeletons allows the search to focus
+   on specific nodes of interest.
+
+** Role non-origination with position changed
+   A non-origination assumption of the form (3 a) now means the
+   assumption is add when the height of the strand is greater that 3.
+   It used to be added when the height of the strand is at least three.
+
+** Shape Analysis Sentence to Prover9 translator improved
+   Changed the formula translation algorithm so that predicates for
+   the sort declarations of variables are added to generated formulas.
+   Previously, the sort information was ignored.
+
+** Bug fixed in cpsaannotations
+
+* Changes in version 2.2.13
+
+** Better support for Cygwin users
+   Added optional extension for Cygwin users.  On Cygwin, put "export
+   EXE=.exe" in a startup file.
+
+** Bug fixed in src/perm.pl
+
+* Changes in version 2.2.12
+
+** Documentation improved
+   The introductory documentation has been improved and a set of
+   slides has been added that is aimed at new users.
+
+** JavaScript Object Notation (JSON) output supported
+   The CPSA pretty printer cpsapp produces JSON output when given the
+   -j or --json command-line option.  A CPSA string translates to a
+   JSON string in which the first and last characters are a double
+   quote.  A CPSA symbol translates directly to a JSON string.
+
+* Changes in version 2.2.11
+
+** Strand bounded runs produce more output
+   When a problem exceeds a strand bound, CPSA now produces every
+   skeleton within the strand bound before aborting.  Previously, it
+   would abort as soon as it produced one skeleton with too many
+   strands.  The output skeletons are no longer guaranteed to be
+   sequentially labeled when a strand bound violation occurs.
+
+** Include file support added
+   The CPSA preprocessor includes files as it expands macros.  The
+   syntax of the top-level include form is:
+
+       (include FILE)
+
+** The source file name is included as a comment in the output of CPSA
+
+* Changes in version 2.2.10
+
+** The Make.hs program now works with latest Haskell Platform
+   The imports have been changed so that it no longer uses the
+   haskell98 package, which is now hidden by default.
+
+* Changes in version 2.2.9
+
+** Penetrator non-origination assumptions added
+   Atoms declared to be pen-non-orig cannot be originated by the
+   adversary but can carried.  An atom assumed to be penetrator
+   non-originating can be used to model passwords and similar
+   concepts.  Several regular participants might know a password and
+   originate it in a run of a protocol, but an idealized password is
+   one the penetrator cannot guess.
+
+** Collapsing is performed before test solving
+   Previously, collapsing was performed on shapes and shapes that
+   could have been derived via a dead skeleton and collapsing where
+   missed.  For an example, see tst/preprocess.scm.
+
+** Disabling displacement option retired
+   The command-line option that disabled displacement has been removed.
+
+* Changes in version 2.2.8
+
+** Performance enhancement
+   In special circumstances, the generalization method called variable
+   separation takes too long.  A bound has been added that limits the
+   number of attempts to separate variables.  The result is CPSA may
+   report a skeleton is a shape when another is more general.
+
+** Pruning bug fixed
+   Pruning is never supposed to apply to strands in the image of the
+   point-of-view skeleton, but previous version did so.
+
+* Changes in version 2.2.7
+
+** A bug in the matcher in each algebra was repaired
+   There was a missing case involving asymmetric key inverse that
+   caused an erroneous matching failure.
+
+** Compiler warnings eliminated
+   The C preprocessor is now used to eliminate the warning that
+   the use of Data.Map.foldWithKey is deprecated while preserving the
+   ability to compile CPSA using GHC 6.x.
+
+** Diffie-Hellman algebra bug fixed
+   CPSA produces two listeners for the term (exp (exp (gen) x) y),
+   instead of one as it used to.  Test case tst/dhke.scm shows the bug
+   has been fixed.
+
+** Diffie-Hellman algebra documentation added
+   The document titled "Simple Diffie-Hellman Algebra" is in cpsasdha.pdf.
+
+* Changes in version 2.2.6
+
+** SVG tooltips work once again
+   The generated SVG diagrams display a tooltip for each role and node
+   in a skeleton.  The method used for specifying a tooltip stopped
+   working in recent versions of Firefox, so a new method was
+   implemented.  Tests show Chrome and IE 9 also now correctly display
+   tooltips.
+
+* Changes in version 2.2.5
+
+** Support for hashing added
+   Both the Basic and Diffie-Hellman term algebras have a new function
+   symbol hash that provides support for hashing.  The term (hash X)
+   is treated as a kind of encryption in which the term X is the
+   encryption key.
+
+* Changes in version 2.2.4
+
+** GHC link time option added
+   For GHC version 7.0.0 or greater, some runtime options used by CPSA
+   were turned off by default due to security concerns irrelevant to
+   CPSA.  The runtime options are now enabled.
+
+** Shape Analysis Sentences
+   The orig predicate was added to a description of a skeleton.
+   Without it, the important property of a shape analysis sentence
+   described in Theorem B.1 of The CPSA Specification does not hold.
+
+   Also, the Prolog program src/prover9.pl was added.  It translates
+   cpsalogic output into prover9 syntax.
+
+* Changes in version 2.2.3
+
+** New program added
+   The cpsalogic program extracts a formula in the language of
+   order-sorted first-order logic for each problem and its shapes from
+   a CPSA run. The formula is called a shape analysis sentence. The
+   formula is modeled by all realized skeletons when CPSA finds all
+   the shapes for the problem.  The sentence can be use with an
+   automated first-order theorem prover to verify security goals
+   associated with a protocol.
+
+   To support the cpsalogic program, cpsa was modified so that for
+   each shape, it prints a homomorphism from the point-of-view
+   skeleton to the shape.
+
+** Documentation updated
+   The CPSA Specification was extensively rewritten to improve
+   readability and reflect the current code base.  Appendix B was
+   added.  It describes the theory behind shape analysis sentences and
+   cpsalogic.
+
+   The CPSA Design was updated to reflect the current code base and a
+   section was added that describes the modules in the source code.
+
+** Pruning bug fixed
+   A coding error that lead to unjustified pruning has been fixed.
+
+* Changes in version 2.2.2
+
+** Completeness problem corrected
+   Added an new condition to the solved filter so that CPSA now finds
+   the shape in targetterms8.
+
+** Performance problem corrected
+   Corrected a memory consumption problem exhibited by Wang's Fair
+   Exchange Protocol.  Before the correction, CPSA used 1.9GB of
+   memory, afterwords, it uses 3MB.
+
+** Non-ASCII accepted as input
+   Non-ASCII letters are accepted as constituents of symbols and
+   strings.
+
+* Changes in version 2.2.1
+
+** Web graph output extension changed from .xml to .xhtml
+   Firefox works better with this file extension.
+
+** No HTML5 sliders
+   The zoom option for cpsagraph no longer generates HTML5 sliders due
+   to changes designed to make large documents load faster.
+
+** Program cpsagraph tree construction algorithm improved
+   The time and space used to form derivation trees has been reduced.
+
+** Treeless option added to cpsagraph
+   For input too large to process otherwise, option --treeless
+   generates an XHTML document without trees, and therefore uses less
+   memory.  It works as long as each skeleton in the input fits into
+   memory.  The default XHTML generator requires that all skeletons
+   fit in memory simultaneously.
+
+** Output bug in cpsadiff fixed
+   A bug in cpsadiff that caused it to fail to print all of its output
+   before it exited has been fixed.
+
+* Changes in version 2.2.0
+
+** Pruning reverted to CPSA 2.1.0 behavior
+   Pruning once again occurs after contractions and listener
+   augmentations.  We found examples where it is essential to prune
+   after a contraction.  We are exploring other ways of addressing the
+   completeness problems due to pruning.
+
+** Runtime options can be specified within a file
+   The herald form has been added.  It allows one to specify most of
+   the options currently specified on the command line within a file.
+   For example, to specify the option --bound=12 within a file, write:
+
+   (herald "Needham-Schroeder Public-Key Protocol" (bound 12))
+
+** Role annotation influences test node search algorithm
+   If a role includes (reverse-search) in its association list, the
+   order in which the nodes of a strand that is an instance of this
+   role is search for a test node will be reversed.  By default, CPSA
+   selects the earliest test node in a strand, but with this
+   annotation, it will select the latest one.
+
+** CPSA specific diff program added
+   The program cpsadiff has been added.  The program compares two CPSA
+   output files S-expression by S-expression, and prints the first
+   skeleton that differs.  For Windows users, there is now a diff
+   program available without installing MSYS or Cygwin.
+
+** Some programs gently handle incomplete S-expressions
+   When a CPSA run is aborted, it may produce an incomplete
+   S-expression.  The programs cpsagraph, cpsashapes, and cpsapp,
+   treat an incomplete S-expression as end-of-file, and print a
+   warning message.  This change makes it easier to analyze runs that
+   fail to terminate.
+
+** Blue marks realized reception nodes
+   The program cpsagraph uses the color blue to distinguish realized
+   reception nodes from transmission nodes.
+
+** Diagram scalers added
+   When viewing large outputs in cpsagraph's expanded format, by
+   supplying the --zoom option, one gets controls that allow SVG
+   diagrams to be scaled.
+
+* Changes in version 2.1.2
+
+** Displacement on by default
+Displacement is on by default and the sense of the -d switch has been
+changed.  It now disables displacement.
+
+** Diffie-Hellman support changed
+Previous support for Diffie-Hellman had serious problems for which we
+have no solutions at this time.  We recognize now that the concepts of
+unique origination and non-origination as currently defined do not fit
+in well with an implementation of Diffie-Hellman in which exponents
+are an Abelian group.
+
+For now, we provide simplified Diffie-Hellman support with an algebra
+that has an equation for the commutativity of exponents, but no other
+equation.
+
+	    (exp (exp (gen) x) y) = (exp (exp (gen) y) x)
+
+This algebra is an attempt to provide some kind of Diffie-Hellman
+support within the current framework while we search for the proper
+framework.
+
+* Changes in version 2.1.1
+
+** Graph program handles incomplete output
+The graph program no longer requires that every seen child mentioned
+in the output is in it.  Therefore, the program can handle output from
+some interrupted runs.
+
+** Pruning restriction
+We found examples in which pruning prevented us from finding some
+shapes.  Pruning is now performed only after augmentation, and only
+when the augmented strand is involved.
+
+** Compact output notation
+There is a new infix notation for XHTML and LaTeX output that is more
+compact, and hopefully more readable for large problems.  Enable it by
+specifying the -i flag when invoking cpsagraph or cpsapp.
+
+* Changes in version 2.1.0
+
+** Initial comments displayed
+The graph program displays the initial comments in an input file.
+
+** New command line options
+Four new command line options have been added:
+
+   -d         --displacement     enable displacement
+   -c         --check-nonces     check nonces first
+   -t         --try-old-strands  try old strands first
+   -r         --reverse-nodes    try old nodes first
+
+In rare cases, the use of one of these options may allow normal
+termination in a case in which CPSA aborts otherwise.
+
+** GHC 6.8 no longer supported
+Use GHC 6.10 or greater.
+
+** Bugs fixes
+Some minor bugs were fixed that mostly effect artificially generated
+protocols.
+
+* Changes in version 2.0.5
+
+** Performance enhanced
+A source of duplicated effort was removed that reduces the run time
+for analyzing the NSL5 protocol from about a day to about a minute!
+The enhancement doesn't seem to effect the run times of many other
+protocols.
+
+** Bugs fixes
+Some minor bugs were fixed, and there are now no tests in the test
+suite that shows that CPSA fails to find a shape in should.
+
+** CPSA theory document added
+A document on authentication tests has been added.  The document is
+not installed are the CPSA Specification and the CPSA Design documents.
+The sources for the document are provided, and must be built by typing
+make in the doc directory.
+
+* Changes in version 2.0.4
+
+** Input skeletons are no longer pruned
+
+** Bug in the acyclic graph checker fixed
+In rare cases, the buggy checker allowed skeletons with circular
+node orderings.
+
+* Changes in version 2.0.3
+
+** Generalization bug fixed
+A bug associated with origination assumption forgetting has been
+fixed.
+
+** SWI Prolog tools added
+Tools that allows CPSA to be manipulated in Prolog are in the src
+directory.  The tools include a pretty printer that uses the same
+algorithm as is used in the Haskell pretty printer.
+
+** Cabal description improved
+An expanded description of CPSA has been added to its cabal file.
+
+* Changes in version 2.0.2
+
+** Better message terms in graphs
+CPSA graph now uses the information in the traces comment when it's
+available when printing message terms.
+
+* Changes in version 2.0.1
+
+** Inherited unique origination bug fixed
+Added check that unique origination position is preserved by
+inheritance.
+
+** Variable printing improved
+Improved renaming algorithm used to avoid collisions while printing
+variables.
+
+* Changes in version 2.0.0
+
+** CPSA is an open source package
+
+** Better support for Diffie-Hellman
+Makefiles use the *.sch the extension for problems that use
+Diffie-Hellman.
+
+* Changes in version 1.5.5
+
+** Encryption tests solved before nonce tests
+CPSA now solves encryption tests before it tries nonce tests.
+Experiments have show this heuristic can lead to substantially smaller
+derivation trees in some cases, but in a few cases, derivation trees
+are slightly larger.
+
+** Better error messages for ill-formed roles and preskeletons
+CPSA generates a more informative message when a role or a preskeleton
+is not well-formed.
+
+* Changes in version 1.5.4
+
+** Pruning bug fixed
+A check that origination assumptions are honored by the homomorphisms
+associated with pruning was added.  As a result, cases in which
+erroneous pruning was performed have been eliminated.
+
+** Comments in skeletons are preserved
+The comment field in a skeleton given as input is included when it is
+printed.
+
+* Changes in version 1.5.3
+
+** Skeleton diagrams improved
+In a skeleton diagram, an edge between nodes that do not agree on
+their message is displayed with a dashed line.
+
+** Less general skeletons removed from cohort
+During contraction and regular augmentation, some skeletons that are
+less general than others are removed from consideration.  These
+skeletons contribute nothing new.
+
+* Changes in version 1.5.2
+
+** Pruning bug fixed
+Added the requirement to pruning that ordering relations associated
+with the more general (pruned) strand are implied by the less general
+strand.
+
+** Role non-orig length specification added
+Added support for delaying the inheritance of a role non-origination
+assumption by adding a length specification to role non-origination
+declarations.  The non-orig assumption is inherited when the strand
+meets the length requirement.
+
+* Changes in version 1.5.1
+
+** Generalization bug fixed
+CPSA no longer prunes while generalizing.
+
+** Change license to BSD
+
+* Changes in version 1.5.0
+
+** Diffie-Hellman algebra added
+This is an early access release of the Diffie-Hellman algebra.  Its
+signature is described in the CPSA User Guide.  It has only been
+tested on the example in tst/dh.lisp, and the output seems reasonable.
+
+** Keyword defpreskeleton changed to defskeleton
+Most often, the defpreskeleton form described a skeleton.  To reduce
+confusion, form has been renamed.  The CPSA program still accepts the
+old keyword.  A script that updates the keyword is in src/preskel.sh.
+
+* Changes in version 1.4.9
+This version is a bug fix and speed enhancement fix only.
+
+** Obscure display bug fixed
+
+** Role origination check bug fixed
+The origination check is now omitted when the inheriting strand is too
+short to inherit a unique origination assumption.
+
+** Role origination check bug fixed
+
+** Outer most encryptions preferred for encryption tests
+When choosing among encryptions for critical messages, CPSA prefers
+outer most encryptions over ones within another encryption.
+
+* Changes in version 1.4.8
+
+** Support for key usage added
+A name may be associated with more than one asymmetric key using the
+binary form of pubk, where the first argument is a quoted constant.
+For example, (pubk "sig" a) and (pubk "enc" a) can be used to describe
+name a's public signature and encryption key.
+
+** Progressive refinement technique described
+The advice section of the CPSA Primer describes the progressive
+refinement technique.
+
+* Changes in version 1.4.7
+
+** Unused role variables are silently ignored
+Unused role variables used to cause an error.  This behavior
+interfered with the practice of submitting output as input with small
+modifications.
+
+** Isomorphism check performance improved
+
+** Added an overview section to the CPSA Specification
+
+* Changes in version 1.4.6
+
+** Added no isomorphism checking mode (--noisochk)
+In noisochk mode, isomorphism checks are avoided by not identifying
+duplicate skeletons and by not generalizing realized skeletons.
+Isomorphism checks between two skeletons with a large number of
+strands can take a long time, so for some problems, CPSA runs faster
+in this mode.  Warning, in this mode, CPSA reports that each realized
+skeleton is a shape even when it is not one.  In this way, the
+cpsashapes program can be used to extract the realized skeletons from
+the run.
+
+** Added LaTeX output mode to cpsagraph
+The cpsagraph program generates LaTeX source that places S-expressions
+in verbatim environments and generates XY-pic diagrams of skeletons.
+The XHTML output should always be preferred, however, LaTeX output is
+useful when generating a report or a briefing on the results of using
+CPSA.
+
+** CPSA Primer updated
+The example output has been updated to reflect recent changes,
+numerous editorial improvements were made, and the advice section
+has been augmented with some recently learned tricks.
+
+** CPSA algorithm specified
+At last.  The CPSA Specification contains a specification of all of
+the parts of the CPSA algorithm.  In particular, a description of
+the augmentation algorithm is in writing.
+
+** CPSA Design rewritten
+Most of the material that was once duplicated in both The CPSA
+Specification and The CPSA Design has been purged from the design
+document.  The document now assumes its reader have already read The
+CPSA Specification.  As a result, it focuses solely on implementation
+issues, and leaves correctness issues to the specification.
+
+** Aborted output is no longer generalized
+CPSA will abort when a strand bound or a step count is exceeded.
+Since generalization involves isomorphism checks, the old abort
+implementation could take a very long time to finish.
+
+* Changes in version 1.4.5
+
+** CPSA macros expanded by cpsa program
+CPSA now expands macros rather than using a preprocessor for the task.
+The cpsapp program now just pretty prints its input.
+
+** Memory leak fixed
+Permutations no longer memoized--can cause excessive use of memory.
+
+** In rely/guarantee formulas, "t" and "f" are no longer keywords
+Use (and) for truth and (or) for falsehood.
+
+* Changes in version 1.4.4
+This is a correctness critical update to CPSA.
+
+** Shape search design error fixed.
+The shape search algorithm includes a new shape collapsing operation
+that allows CPSA to find shapes it used to miss.  The operation
+includes the symbol "collapsed" followed by the two strands that were
+merged.  The Otway-Rees example in tst/or.scm makes use of the new
+operation.
+
+** Pruning bug fixed.
+The pruning operation now uses a substitution that is idempotent for
+strands other than the pruned strand.
+
+** Specification document added.
+The sources to the CPSA document that specifies CPSA as a reduction
+system are now included and can be used to build doc/cpsaspec.pdf.
+
+** S-expression reader bug fixed.
+The S-expression reader now reads much larger input files.  This means
+cpsashapes can be used on larger files.
+
+** Multiprocessor enabled CPSA built by default.
+See the README for instructions on how to build CPSA when the parallel
+libraries are missing.
+
+* Changes in version 1.4.3
+
+** Improved performance due to better substitution data structure.
+
+** Corrected a bug in substitution associated with variables of sort mesg.
+The fix changes the output for tst/dy.scm.
+
+** Corrected a bug in substitution composition
+The fix changes the output for tst/dy.scm.
+
+** Corrected a bug that caused some valid generalizations to be rejected.
+
+** Sort "term" is no longer a synonym for "mesg".
+
+* Changes in version 1.4.2
+
+** Fixed a contraction and an augmentation bug.
+
+** The protocol specification checker cpsaparameters added.
+The cpsaparameters program detects some specification errors by
+performing a base term usage analysis.
+
+** Parallel search available on SMPs.
+Semi-explicit parallelism annotations were added to the CPSA search
+routine.  Enable with -fpar during configuration.
+
+** Pretty printer changed.
+All lists in a defrole and a defpreskeleton are now broken whenever
+one of them is.
+
+** Preskeletons	with no strands are detected, and an error is signaled.
+
+* Changes in version 1.4.1
+
+** The macro preprocessor cpsapp added.
+The preprocessor was added to ease the task of specifying protocols
+with reoccurring message patterns. It can also be used to pretty print
+cpsa input.
+
+** Base terms allowed as principals in annotations.
+Base terms as principals are now allowed so as to allow keys as
+principals.
+
+** Cohort filtering added.
+The cohort is now filtered so that every member is solved.  The
+filtering removes dead ends earlier in the computation.
+
+** Fixed a minimization bug.
+When separating a uniquely originating base term, either the term or
+its clone is uniquely originating.
+
+* Changes in version 1.4.0
+
+** Variable declaration syntax changed.
+More than one variable can be declared to be of a given sort in a
+single declaration form.
+
+** New sort added.
+The sort data was added, a sort that is similar to sort text.  The new
+sort can be used to partition nonce-like data from ordinary text-like
+data.  See tst/epmo.scm for an example of its use.
+
+** Sort symbol changed.
+The symbol used for the top sort has been changed from term to mesg.
+
+** Default output format for cpsagraph changed.
+The default output format for cpsagraph is now the expanded format.
+
+* Changes in version 1.3.2
+This is a bug fix only release.
+
+** Fixed a minimization bug.
+Use the transitive closure of the communication ordering before
+deleting a node.
+
+** Added new well-formed preskeleton check.
+Every uniquely originating role term mapped by in instance must be
+mapped to a term that originates on the instance's strand.
+
+* Changes in version 1.3.1
+This is a bug fix only release.
+
+** Bad listener augmentation bug fixed.
+Listeners are now added only for the decryption keys of the top most
+encryptions in the escape set.  This fixes a bug reported by Eric Bush.
+
+* Changes in version 1.3.0
+This release changes the external syntax and fixes bugs.
+
+** Encryption syntax simplified.
+To reduce clutter, when enc has more that two terms, a concatenation
+is added to all but the last term.
+
+** New name for document.
+The CPSA Tutorial was renamed to the CPSA Primer.
+
+** The cpsaannotations program has documentation.
+Preliminary documentation is in the CPSA User Guide.
+
+** A make system for Windows was added.
+The file doc/Make.hs allows the use of Windows without Cygwin or MinGW.
+
+** A strand augmentation bug was fixed.
+This change allows CPSA to find the flaw in the Dolev-Yao Example 1.3
+test case.
+
+** Assumption forgetting works again.
+This is a fix to a bug that was introduced in the previous release.
+
+** Isomorphism bug fixed.
+A strand permutation map was applied to the wrong ordering.
+
+* Changes in version 1.2.3
+This is a bug fix only release.
+
+** Illegal comments no longer generated.
+The comment generated for non-default strand bounded or step count
+limited runs contained an illegal character that has been removed.
+As a result, the graphing programs work again.
+
+** A substitution printing failure has been fix.
+
+** The augmentation bug fix in 1.2.2 had a problem that is now fixed.
+
+** Role variables in protocols are printing in the order they were read.
+In previous version, role variables were printed in reverse order.
+
+** Better title generated for the expanded view.
+The name of the first protocol is included in the title of the
+generated XML document.
+
+** Testing showed enabling multiprocess support gives no speedup.
+
+* Changes in version 1.2.2
+
+** This release fixes a bug.
+During augmentation, previously, when a role was searched for a
+transforming edge, only the shortest instance was returned as a
+candidate for augmentation.  Now all instances are returned.
+
+** Multiprocessor support is available.
+The README describes how to enable multiprocessor support.  This
+feature is untested.
+
+** Partial support for Rely-Guarantee annotations has been added.
+The cpsaannotations program annotates shapes when given an annotated
+protocol.  The is no documentation yet, but you can test it with:
+$ (cd tst; make epmo-accounts-nums_annotations.xml)
+
+* Changes in version 1.2.1
+
+** This is a bug fix release. There are no user-visible changes.
+
+* Changes in version 1.2.0
+
+** Tags are now non-atomic terms in the Basic Crypto Algebra.
+
+** The expanded view (-x) option is available as an output for cpsagraph.
+
+** Support for local installation was added.
+
+** A standard set of GNU Make rules was added.
+
+** Comments as S-expressions may appear at the file level of input.
+
+** The program cpsabasic was renamed to cpsa.
+
+** The --bound option to cpsa limits the number of strands in a skeleton.
+
+** The current shape search is known to be not complete. See tst/dy.scm.
+
+* Changes in version 1.1.0
+
+** Support for indeterminates was added to the Basic Crypto Algebra.
+Variables of sort term, also called indeterminates, are now available
+in the Basic Crypto Algebra.
+
+** The CPSA Tutorial was added.
+
+* Initial version released as version 1.0.0
+
+Local variables:
+mode:outline
+End:

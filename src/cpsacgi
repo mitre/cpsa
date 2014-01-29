@@ -1,0 +1,17 @@
+#! /bin/sh
+if test -e /tmp/cpsacgi
+then
+  echo Content-type: text/plain
+  echo
+  echo Server busy
+  exit 0
+fi
+
+trap '/bin/rm -f /tmp/cpsacgi; exit 1' 1 2 3 4 6 8 9 11 13 14 15
+echo $! > /tmp/cpsacgi
+
+# Run unlimited version of the script
+/usr/bin/python cpsacgi.py
+STATUS=$?
+/bin/rm -f /tmp/cpsacgi
+exit ${STATUS}

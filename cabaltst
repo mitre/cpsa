@@ -1,0 +1,9 @@
+#! /bin/sh
+
+CABAL=$(grep "\.tst" cpsa.cabal)
+TST=$(ls tst/*.tst)
+
+for f in ${CABAL} ${TST}
+do
+  echo $f
+done | grep "\.tst" | sort | uniq -u

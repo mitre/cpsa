@@ -1,0 +1,2356 @@
+\documentclass[12pt]{report}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{url}
+\usepackage[matrix,arrow,curve]{xy}
+\usepackage{makeidx}
+% Include this for a hyperlinked version of the document
+% \usepackage{hyperref}
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}[chapter]
+\newtheorem{thm}{Theorem}[chapter]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{conj}[thm]{Conjecture}
+\newtheorem{prop}[thm]{Proposition}
+\input{macros}
+
+\hyphenation{pro-to-skel-e-ton}
+\hyphenation{pro-to-role}
+
+% This environment is used for comments about this draft.
+\newenvironment{note}{\itshape\par}{}
+
+\newcommand{\inv}[1]{\ensuremath{\cn{inv}(#1)}}
+\newcommand{\gen}{\ensuremath{\cn{g}}}
+\newcommand{\expr}[2]{\ensuremath{{#1}^{#2}}}
+\newcommand{\bca}{\textsc{bca}}
+\newcommand{\alga}{\alg{A}}
+\newcommand{\tr}{\ensuremath{\mathfrak C}}
+\newcommand{\base}{\ensuremath{\mathfrak B}}
+\newcommand{\ints}{\ensuremath{\mathbb Z}}
+\newcommand{\solve}[1]{\stackrel{#1}{\longtwoheadrightarrow}}
+\newcommand{\outpred}{\fn{outpred}}
+\newcommand{\avoid}{\fn{avoid}}
+\newcommand{\dcmp}{\fn{dcmp}}
+\newcommand{\carpos}{\fn{carpos}}
+\newcommand{\esc}{\fn{esc}}
+\newcommand{\aug}{\fn{aug}}
+\newcommand{\crit}{\fn{crit}}
+\newcommand{\critpos}{\fn{critp}}
+\newcommand{\anc}{\fn{anc}}
+\newcommand{\mcow}{\fn{cow}}
+\newcommand{\mncow}{\fn{ncow}}
+\newcommand{\sdom}{\fn{Dom}}
+\newcommand{\sran}{\fn{Ran}}
+\newcommand{\svars}{\fn{Vars}}
+\newcommand{\evt}{\fn{evt}}
+\newcommand{\msg}{\fn{msg}}
+\newcommand{\role}{\mathsf{r}}
+\newcommand{\skel}{\mathsf{k}}
+\newcommand{\rl}{\fn{rl}}
+\newcommand{\inst}{\mathsf{i}}
+\newcommand{\nodes}{\fn{nodes}}
+\newcommand{\lsn}{\fn{lsn}}
+\newcommand{\init}{\fn{init}}
+\newcommand{\resp}{\fn{resp}}
+\newcommand{\form}{\mathcal{F}}
+\newcommand{\sent}{\mathcal{S}}
+
+\makeindex
+
+\title{The CPSA Specification:\\
+A Reduction System for Searching for Shapes in Cryptographic Protocols}
+\author{John D.~Ramsdell\qquad Joshua D.~Guttman\\
+  \quad Moses D.~Liskov\qquad Paul D.~Rowe\\
+  The MITRE Corporation\\ CPSA Version \version}
+
+\begin{document}
+\maketitle
+\cpsacopying
+
+\tableofcontents
+
+\begin{abstract}
+We describe a term reduction system that enumerates all essentially
+different executions possible for a cryptographic protocol.  We call
+them the \emph{shapes} of the protocol.  Naturally occurring protocols
+have only finitely many, indeed very few shapes.  Authentication and
+secrecy properties are easy to determine from them, as are attacks and
+anomalies.  Our Cryptographic Protocols Shapes Analyzer ({\cpsa})
+program is a direct implementation of the reduction system described
+within, and the form of the reduction system is partially determined
+by the implementation.
+\end{abstract}
+
+\chapter{Introduction}
+
+The Cryptographic Protocol Shapes Analyzer ({\cpsa}) attempts to
+enumerate all essentially different executions possible for a
+cryptographic protocol.  We call them the \emph{shapes} of the
+protocol.  Naturally occurring protocols have only finitely many,
+indeed very few shapes.  Authentication and secrecy properties are
+easy to determine from them, as are attacks and anomalies.
+
+The shapes analysis is performed within a pure Dolev-Yao model.  The
+{\cpsa} program reads a sequence of problem descriptions, and prints
+the steps it used to solve each problem.  For each input problem,
+{\cpsa} is given some initial behavior, and it descovers what shapes
+are compatible with it.  Normally, the initial behavior is from the
+point of view of one participant.  The analysis reveals what the other
+participants must have done, given the participant's view.
+
+This document specifies the {\cpsa} program using a term reduction
+system.  Chapter~\ref{chp:order-sorted mesg algs} describes message
+algebras as order-sorted quotient term algebras.
+Chapter~\ref{chp:strand spaces and bundles} presents an
+implementation-oriented view of strand spaces.
+Chapter~\ref{chp:adversary model} details the model of the adversary.
+The formal definition of a partial run of a protocol is called a
+skeleton, and is introduced in Chapter~\ref{chp:skeletons}.
+
+The term reduction systems used to specify the algorithm is presented
+in Chapter~\ref{chp:algorithms}, and the primitive reduction rules are
+in Chapter~\ref{chp:prim preskel ops}.  The rules used to transform
+terms called preskeletons into skeletons are in
+Chapter~\ref{chp:preskeleton reduction}.
+
+The algorithm used to model adversarial behavior is in
+Chapter~\ref{chp:penetrator derivable}.  The algorithms used to infer
+what else must have happened given a partial description of a run of
+a protocol as skeleton is in Chapters~\ref{chp:cow} and~\ref{chp:auth
+  tests}.  Chapters~\ref{chp:generalization} and~\ref{chp:collapsing}
+find most general descriptions of {\cpsa} answers---the shapes.
+Finally, Chapter~\ref{chp:skeleton reduction} assembles reduction
+rules into one system that specifies the {\cpsa} program.
+
+Appendix~\ref{chp:penetrator non-origination} describes an extension
+to Strand Space theory that models passwords and related concepts.
+Appendix~\ref{chp:traces} details the sense in which a protocol role
+can be viewed as an abstraction of a program.
+Appendix~\ref{chp:logic} describes a formula in the language of
+order-sorted first-order logic for each problem and its shapes found
+by {\cpsa}.  The formula is called a shape analysis sentence.  The
+formula is modeled by all skeletons that describe full runs of a
+protocol when {\cpsa} finds all the shapes for the problem.
+
+{\cpsa}'s search is based on a high-level algorithm that was claimed
+to be complete, i.e.\@ every shape can in fact be found in a finite
+number of steps~\cite{DoghmiGuttmanThayer07,Guttman11}.  Further
+theoretical work~\cite{cpsatheory11} showed classes of executions that
+are not found by the algorithm, however it also showed that every
+omitted execution requires an unnatural interpretation of a protocol's
+roles.  Hence the algorithm is complete relative to natural role
+semantics.  See~\cite[Appendix~B]{cpsaprimer09} for more on omitted
+executions.
+
+A {\cpsa} release includes two other documents, the {\cpsa}
+Design~\cite{cpsadesign09} and the {\cpsa} Primer~\cite{cpsaprimer09}.
+The design document describes details of the {\cpsa}
+implementation that would clutter this one.  It should be read by
+anyone interesting in reading and modifying the source code.  The
+{\cpsa} Primer provides an overview of {\cpsa}, and is worth
+reading before this document is approached.
+
+\section{Notation}\label{sec:notation}
+
+A finite sequence\index{sequence} is a function from an initial
+segment of the natural numbers.  The length of a sequence~$X$ is~$|X|$,
+and sequence~$X=\seq{X(0),\ldots,X(n-1)}$ for $n=|X|$.  Alternatively,
+$\seq{x_0,x_1,\ldots,x_{n-1}} =x_0\cons x_1\cons\ldots\cons
+x_{n-1}\cons\seq{}$.  If~$S$ is a set, then~$S^\ast$ is the set of finite
+sequences of~$S$, and~$S^+$ is the non-empty finite sequences of~$S$.
+The concatenation of sequences~$X_0$ and~$X_1$ is~$X_0\append X_1$.
+The prefix of sequence~$X$ of length~$n$ is~$\prefix{X}{n}$.
+
+Generally, when discussing terms, a lowercase Latin letter is used to
+denote a term, and an uppercase Latin letter is used to denote a set
+of terms or a sequence of terms.
+
+\chapter{Order-Sorted Message Algebras}\label{chp:order-sorted mesg algs}
+
+{\cpsa} models a message by an equivalence class of terms over a
+signature. A sort system is used to classify messages.  {\cpsa}
+depends on the sort system to allow it to treat a variable that
+represents an asymmetric key differently from a variable that
+represents an arbitrary message.  In particular, {\cpsa} uses
+order-sorted quotient term algebras~\cite{GoguenMeseguer92} for
+message algebras.  This formalism enables the use of well-known
+algorithms for unification and matching in the presences of equations
+and sorts~\cite[Chapter~8]{RobinsonVoronkov01}.
+
+This paper makes no attempt to provide a general introduction to
+order-sorted quotient term algebras.  We use a message algebra called
+the Basic Crypto Algebra (\bca), which is the main algebra used by
+{\cpsa}.
+
+\begin{figure}
+\begin{center}
+Sorts: \dom{name}, \dom{text}, \dom{data}, \dom{skey}, \dom{akey} $<$ \dom{mesg}\\[1ex]
+Base sorts: \dom{name}, \dom{text}, \dom{data}, \dom{skey}, \dom{akey}\\
+Carried positions: $\bullet$ denotes a carried position.\\[1ex]
+\begin{tabular}{@{}ll}
+$\enc{\bullet}{(\cdot)}\colon\dom{mesg}\times\dom{mesg}\rightarrow\dom{mesg}
+$&Encryption\\
+$\hash{(\cdot)}\colon\dom{mesg}\rightarrow\dom{mesg}
+$&Hashing\\
+$(\bullet,\bullet)\colon\dom{mesg}\times\dom{mesg}\rightarrow\dom{mesg}$
+&Pairing\\
+``\ldots''$\colon{}\dom{mesg}$& Tag constants\\
+$K_{(\cdot)}\colon\dom{name}\rightarrow\dom{akey}$
+&Public key of name\\
+$(\cdot)^{-1}\colon\dom{akey}\rightarrow\dom{akey}$
+&Inverse of key\\
+$\cn{ltk}(\cdot,\cdot)\colon\dom{name}\times\dom{name}\rightarrow\dom{skey}$
+& Long term key
+\end{tabular}\\[1ex]
+Equation: $(x^{-1})^{-1} \approx x$ for $x\colon\dom{akey}$
+\end{center}
+\caption{Basic Crypto Signature and Equation}\label{fig:bcs}
+\end{figure}
+
+There are six {\bca} sorts: $\dom{mesg}$, \index{sorts}the sort of
+all messages, $\dom{skey}$, the sort of symmetric keys,
+$\dom{akey}$, the sort of asymmetric keys, $\dom{name}$, the sort of
+participant names, and $\dom{text}$ and $\dom{data}$ for ordinary
+values.  Sort $\dom{mesg}$ is sometimes written as~$\top$ and the
+other sorts are called \index{base sorts}\emph{base sorts}.
+All base sorts are subsorts of $\dom{mesg}$.  The function
+symbols, or \index{operations}\emph{operations}, used to form terms
+are given by the signature in Figure~\ref{fig:bcs}.
+
+Each variable~$x$ used to form a term has a unique sort~$s$, written
+$x\colon s$.  Variable set~$X$\index{variable set} is an indexed set
+of sets of variables, $X_s=\{x\mid x\colon s\}$.  For {\bca},
+$X_{\dom{mesg}}$, $X_{\dom{skey}}$, $X_{\dom{akey}}$,
+$X_{\dom{name}}$, $X_{\dom{text}}$, and $X_{\dom{data}}$ partition
+the set of variables in~$X$.  By abuse of notation, at times, we
+write~$X$ for the set of variables in~$X$.
+
+\begin{figure}
+$$\begin{array}{r@{{}={}}l}
+\alga_{\dom{skey}}&\{\{x\}\mid x \in X_{\dom{skey}}\} \cup \{\{\cn{ltk}(a,b)\}\mid a \in X_{\dom{name}}, b \in X_{\dom{name}}\}\\
+\alga_{\dom{akey}}&\begin{array}[t]{@{}l}
+\{\{x^{-2n}\mid n\in\nat\}\mid x\in X_{\dom{akey}}\}\\
+\quad{}\cup\{\{x^{-2n-1}\mid n\in\nat\}\mid x\in X_{\dom{akey}}\}\\
+\quad{}\cup\{\{K_x^{-2n}\mid n\in\nat\}\mid x\in X_{\dom{name}}\}\\
+\quad{}\cup\{\{K_x^{-2n-1}\mid n\in\nat\}\mid x\in X_{\dom{name}}\}\\
+\end{array}\\
+\alga_{\dom{name}}&\{\{x\}\mid x \in X_{\dom{name}}\}\\
+\alga_{\dom{text}}&\{\{x\}\mid x \in X_{\dom{text}}\}\\
+\alga_{\dom{data}}&\{\{x\}\mid x \in X_{\dom{data}}\}\\
+\base&\alga_{\dom{skey}} \cup \alga_{\dom{akey}} \cup \alga_{\dom{name}} \cup \alga_{\dom{text}} \cup \alga_{\dom{data}}\\
+\alga^0&\base\cup \{\{x\}\mid x\in X_{\dom{mesg}}\} \cup
+\{\{x\}\mid x \hbox{ is a tag constant }\}\\
+\alga^{n+1}&\alga^n
+\begin{array}[t]{@{}l}
+{}\cup\{\{(t_0,t_1)\mid t_0\in T_0, t_1\in T_1\}\mid
+ T_0\in\alga^n,T_1\in\alga^n\}\\
+{}\cup\{\{\enc{t_0}{t_1}\mid t_0\in T_0, t_1\in T_1\}\mid
+ T_0\in\alga^n,T_1\in\alga^n\}\\
+{}\cup\{\{\hash{t}\mid t\in T\}\mid T\in\alga^n\}
+\end{array}\\
+\alga = \alga_{\dom{mesg}}&\bigcup_{n\in\nat}\alga^n
+\end{array}$$
+\caption{{\bca} Messages~$\alga$ and Atoms~$\base$}\label{fig:algebra}
+\end{figure}
+
+The Basic Crypto Quotient Term Algebra~$\alga$ generated by variable
+set~$X$ is displayed in Figure~\ref{fig:algebra}.  The union of the
+messages in~$\alga$ is set of terms generated by~$X$, and~$\alga$
+partitions the set of terms into a set of equivalence classes induced
+by the equations.  Terms~$t_0$ and~$t_1$ are equivalent, written
+$t_0\equiv t_1$, iff $t_0\in T\land t_1\in T$ for some $T\in\alga$.
+The canonical representative of a message is the $t$ in $\{t'\mid
+t'\equiv t\}$ with the fewest occurrences of the $(\cdot)^{-1}$
+operation.
+
+Keys, names, data, and texts in the algebra are called
+\index{atoms}\emph{atoms} and are members of~$\base$.  We write
+$t\colon B$ iff $\{t'\mid t'\equiv t\}\in\base$.  Note that encryption
+is defined with an encryption key of sort $\dom{mesg}$.  When the
+encryption key is of sort $\dom{akey}$ this is meant to model
+asymmetric encryption: otherwise, this models symmetric encryption.
+Note that even complex messages such as encryptions can be used as
+encryption keys in the symmetric sense.
+
+To find the decryption key associated with an encryption, one must
+exclude the case in which the key is a variable of sort \dom{mesg},
+as there is no way to determine if the encryption operation denotes
+symmetric or asymmetric encryption.  Therefore, the decryption
+key\index{inverse key} associated with encryption key~$t$
+is~$\fn{inv}(t)$.
+
+$$\fn{inv}(t) =\left\{
+\begin{array}{ll}
+\cn{invk}(t)&\mbox{if $t\colon\dom{akey}$;}\\
+\mbox{undefined}&\mbox{if $t$ is a variable of sort $\dom{mesg}$;}\\
+t&\mbox{otherwise.}
+\end{array}\right.$$
+
+An important property possessed by the algebra is that for all
+$T\in\alga$, if there are any encryptions in $T$ then all members of
+$T$ are encryptions.  As a result, a message can be identified as
+representing an encryption and if it is, decomposed into its plaintext
+and its decryption key.  This property is a consequence of the fact
+that equations relate atoms, not arbitrary messages.  A similar
+property holds for pairs and hashes.  A hash\index{hash} is treated as
+a kind of encryption in which the term that is hashed is the
+encryption key.
+
+We write $\alga_X$ when it is important to identify the variable
+set~$X$ that generates the algebra.  Given two variable sets~$X$
+and~$Y$, a \index{substitution}\emph{substitution} is an order-sorted
+map~$\sigma\colon X\rightarrow\alga_Y$ such that $\sigma(x)\neq x$ for
+only finitely many elements of~$X$.  For a substitution~$\sigma$, the
+\index{domain}\index{domain}\emph{domain} is the set of variables
+$\sdom(\sigma)=\{x\mid \sigma(x)\neq x\}$ and the
+\index{range}\emph{range} is the set $\sran(\sigma)=\{\sigma(x)\mid
+x\in\sdom(\sigma)\}$.  Substitution~$\sigma_0$ is \index{more general
+  substitution}\emph{more general than}~$\sigma_1$,
+written~$\sigma_0\unlhd\sigma_1$, if there exists a
+substitution~$\sigma_2$ such that
+$\all{x}\sigma_1(x)\equiv\sigma_2(\sigma_0(x))$.  Given a
+substitution~$\sigma\colon X\rightarrow\alga_Y$, the unique
+homomorphism\index{homomorphism!algebra} $\sigma^\ast\colon
+\alga_X\rightarrow\alga_Y$ induced by~$\sigma$ is also
+denoted~$\sigma$.
+
+A \index{position}\emph{position}~$p$ is a finite sequence of natural
+numbers.  The term in~$t$ that \emph{occurs at}~$p$, written~$t\termat
+p$, is:
+$$\begin{array}{l}
+t\termat\seq{}=t;\\
+(t_0,t_1)\termat i\cons p=t_i\termat p\mbox{ for $i\in\{0,1\}$};\\
+\enc{t_0}{t_1}\termat i\cons p=t_i\termat p\mbox{ for
+  $i\in\{0,1\}$};\\
+t^{-1}\termat 0\cons p=t\termat p.
+\end{array}$$
+A term~$t$ \index{occurs in}\emph{occurs in} term~$t'$ if $t=t'\termat
+p$ for some~$p$.  A message~$T$ \emph{occurs in} message~$T'$ if the
+canonical representative of~$T$ occurs in the canonical representative
+of~$T'$.
+
+A carried term is one that can be extracted from a message reception
+assuming plaintext is extractable from encryptions.  The positions at
+which term $t$ is carried in $t'$ is $\carpos(t,t')$\index{carried
+  positions}\index{carpos@\carpos}\label{def:carried positions},
+where
+$$\carpos(t,t')=\left\{
+\begin{array}{ll}
+\{\seq{}\}&\mbox{if $t'\equiv t$, else}\\
+\multicolumn{2}{l}{\{0\cons p \mid
+p\in\carpos(t,t_1)\}}\\
+& \mbox{if $t'=\enc{t_0}{t_1}$, else}\\
+\multicolumn{2}{l}{\{i\cons p \mid
+i\in\{0,1\}, p\in\carpos(t,t_i)\}} \\
+& \mbox{if $t'=(t_0,t_1)$ else}\\
+\emptyset&\mbox{otherwise.}
+\end{array}\right.$$
+
+Term~$t$ \index{carries}\emph{carries}~$t'$ if $\carpos(t',t)$ is not
+empty, and $t'\sqsubseteq t$ when~$t'$ is carried by~$t$.  Note that
+for all terms $t_0,t_1,t'_0,t'_1$, if $t_0\equiv t_1$ and $t'_0\equiv
+t'_1$, then $\carpos(t_0,t'_0)= \carpos(t_1,t'_1)$.  We write $t'
+\sqsubseteq_p t$ when $p \in \carpos(t',t)$ and $t \termat p \equiv
+t'$.
+
+In what follows, we will often conflate a term with the message of
+which it is a member, and use lowercase letters to denote both.
+
+\chapter{Strand Spaces and Bundles}\label{chp:strand spaces and bundles}
+
+When using strand space theory, one normally hypothesizes the
+existence of a single global strand space.  This is a very reasonable
+assumption for theoretical analysis, but from the point view of an
+implementer, it turns out that it is better to assume there are many
+local strand spaces and the design specification task is to describe
+the relations between these local spaces.  Our reformulation of strand
+space notation provides an implementation oriented way of describing
+the concept of a local strand space, and a direct link between from
+algorithm specification to the data structures used in the
+implementation.
+
+A run of a protocol is viewed as an exchange of messages by a finite
+set of local sessions of the protocol.  Each local session is called a
+\index{strand}\emph{strand}.  The behavior of a strand, its
+\index{trace}\emph{trace}, is a sequence of messaging events.  An
+\index{event}\emph{event} is either a message transmission or a
+reception.  Outbound message $t\in\alga_X$ is written as~$\outbnd t$,
+and inbound message~$t$ is written as~$\inbnd t$.  The set of traces
+over $\alga_X$ is $\tr_X=(\pm\alga_X)^+$.  A message
+\index{originates}\emph{originates} in a trace if it is carried by
+some event and the first event in which it is carried is outbound.  A
+message is \index{gained}\emph{gained} by a trace if it is carried by
+some event and the first event in which it is carried is inbound.  A
+message is \index{acquired}\emph{acquired} by a trace if it first
+occurs in a reception event and is also carried by that event.
+
+Abstractly, a strand space is a multiset of traces, but since we wish
+to name each element, a \index{strand space}\emph{strand
+  space}~$\Theta_X$ over algebra~$\alga_X$ is defined to be a sequence
+of traces in $\tr_X$.  A strand~$s$ is a member of the domain of
+$\Theta_X$, and its trace is $\Theta_X(s)$.  In a strand space, the
+elements of the generator set~$X$ denote atomic message elements, such
+as keys, and not composite messages, such as encryptions and pairs.
+\enlargethispage{3ex}
+Therefore, the sort of every variable in~$X$ is a base sort.
+
+Message events occur at nodes in a strand space.  For each strand~$s$,
+there is a node for every event in~$\Theta(s)$.  The
+\index{nodes}\emph{nodes} of strand space $\Theta$ are $\{(s,i)\mid
+s\in\sdom(\Theta), 0\leq i< |\Theta(s)|\}$, the event at a node is
+\index{evt@\evt}$\evt_\Theta(s,i)=\Theta(s)(i)$, and the message at a
+node is \index{msg@\msg}$\msg_\Theta(s,i) = m$ such that
+$\evt_\Theta(s,i) = \pm m$.  Just as a position names a subterm within
+another term, a strand names a trace within a strand space, and a node
+names an event in a strand space.  The relation~$\Rightarrow$ defined
+by $\{(s,i-1)\Rightarrow(s,i)\mid s\in\sdom(\Theta), 1\leq
+i<|\Theta(s)|\}$ is called the \index{strand succession}\emph{strand
+  succession relation}.
+
+A \index{bundle}\emph{bundle} in strand space $\Theta$ is a finite
+directed acyclic graph $\Upsilon(\Theta,\to)$, where the vertices are
+the nodes of $\Theta$, and an edge represents
+communication~($\rightarrow$) or strand succession~($\Rightarrow$).
+For \index{communication}communication, if $n_0\rightarrow n_1$, then
+there is a message~$t$ such that~$\evt_\Theta(n_0)=\outbnd t$
+and~$\evt_\Theta(n_1)=\inbnd t$.  For each reception node~$n_1$, there
+is a unique transmission node~$n_0$ with $n_0\rightarrow n_1$.
+
+Each acyclic graph has a transitive irreflexive relation~$\prec$ on
+its vertices.  The relation specifies the causal ordering of nodes in
+a bundle.  An transitive irreflexive binary relation is also called a
+\index{strict partial order}\index{partial order!strict}strict partial
+order.
+
+An atom \index{uniquely originates}\emph{uniquely originates} in a
+bundle if it originates in the trace of exactly one strand.  An atom
+is \index{non-originating}\emph{non-originating} in a bundle if it
+originates on no strand, but each of its variables occurs in some
+strand's trace.
+
+In a run of a protocol, the behavior of each strand is constrained by
+a role in a protocol.  Adversarial strands are constrained by roles as
+are non-adversarial strands.  A protorole over $\alga_Y$ is
+$\role_Y(C,N,U)$, where $C\in\tr_Y$, $N\subseteq\base_Y$, and
+$U\subseteq\base_Y$.  The trace of the role is~$C$, its
+non-origination assumptions are~$N$, and its unique origination
+assumptions are~$U$.  A protorole is a \index{role}\emph{role} if (1)
+$t\in N$ implies $t$ is not carried in $C$, and all variables in $N$
+occur in $C$, (2) $t\in U$ implies $t$ originates in $C$, (3) if
+variable~$x$ occurs in $C$ then $x$ is an atom or it is acquired in
+$C$, and (4) the trace of a role may not match the pattern
+$\seq{\inbnd t, \outbnd t,\ldots}$.  This is to ensure
+that listeners, which are introduced on Page~\pageref{def:listeners},
+cannot be confused with protocol constrained strands.
+A \index{protocol}\emph{protocol} is a set of roles.  Let
+\index{Vars@\svars}$\svars(P)$ be the set of variables that occur in
+the traces of the roles in protocol~$P$.
+
+A bundle~$\Upsilon(\Theta_X,\to)$ is a \index{run of
+  protocol}\emph{run of protocol} $P$ if there is a role mapping
+$\rl\colon\Theta_X\to P$ that satisfies properties for each
+$s\in\sdom(\Theta_X)$.  Assuming $\rl(s)=\role_Y(C,N,U)$ and $X$ and
+$Y$ share no variables, and let $h=|\Theta_X(s)|$, the properties are
+(1) $h\leq|C|$, (2) there is a
+homomorphism~$\sigma\colon\alga_Y\to\alga_X$ such that
+$\comp{\sigma}{\prefix{C}{h}}=\Theta_X(s)$, (3) $\sdom(\sigma)$ is the
+set of variables that occur in~$\prefix{C}{h}$, (4) if the variables
+in $t\in N$ occur in $\sdom(\sigma)$, then $\sigma(t)$ is
+non-originating in $\Upsilon(\Theta_X,\to)$, and (5) if $t\in U$
+originates at index~$i$ in~$C$, and $i<h$, then $\sigma(t)$
+uniquely originates in $\Upsilon(\Theta_X,\to)$ at node $(s,i)$.
+Origination assumptions in bundles specified by roles are called
+\index{inherited origination assumptions}\emph{inherited origination
+  assumptions}.
+
+\chapter{Adversary Model}\label{chp:adversary model}
+
+A fixed set of penetrator roles encodes the adversary model associated
+with a message algebra.  For the Basic Crypto Algebra, there are eight
+roles.  Each role makes no origination assumptions, and the trace of
+each role is given in Figure~\ref{fig:pen}.  The first line of the
+figure specifies many traces, one for each base sort, and a trace for
+each tag.
+
+\begin{figure}
+$$\begin{array}{lll}
+\mbox{Create}(z\colon B)&
+\seq{\outbnd z}&\seq{\outbnd\mbox{``\ldots''}}\\
+\mbox{Pair}(x,y\colon\top)&
+\seq{\inbnd x,\inbnd y,\outbnd(x, y)}&
+\seq{\inbnd(x, y),\outbnd x,\outbnd y}\\
+\mbox{Encrypt}(x,y\colon\top)&
+\seq{\inbnd x,\inbnd y,\outbnd\enc{x}{y}}&
+\seq{\inbnd\enc{x}{y},\inbnd \fn{inv}(y),\outbnd x}\\
+\mbox{Hash}(x\colon\top)&
+\seq{\inbnd x,\outbnd\hash{x}}
+\end{array}$$
+\caption{Basic Crypto Algebra Penetrator Role Traces}\label{fig:pen}
+\end{figure}
+
+A strand exhibits non-adversarial behavior when its role is not a
+penetrator role.  A non-adversarial strand is called a \index{regular
+  strand}\emph{regular} strand as is its role.
+
+The penetrator cannot use a non-originating atom to encrypt or decrypt
+a message, because every key it uses must be carried in a message.
+Consider a uniquely originating atom that originates on a regular
+strand.  The penetrator cannot make the atom using a create role,
+because the atom would originate in more than one trace.  Therefore,
+the penetrator can use a uniquely originating atom to encrypt or
+decrypt a message only if it is transmitted by a regular strand
+unprotected by encryption.
+
+\chapter{Skeletons}\label{chp:skeletons}
+
+The details of penetrator behavior are abstracted away when performing
+protocol analysis.  The abstracted description of a bundle is called a
+realized skeleton, which is defined using a protoskeleton.  A
+\emph{protoskeleton} over $\alga_X$ is
+$\skel_X(\rl,P,\Theta_X,\prec,N,U)$, where $\rl\colon\sdom(\Theta_X)\to P$ is
+a role map, the sets~$X$ and $\svars(P)$ are disjoint,
+$\Theta_X$ is a sequence of traces in $\tr_X$, $\prec$ is a relation
+on the nodes in $\Theta_X$, $N\subseteq\base_X$ are its
+non-origination assumptions, and $U\subseteq\base_X$ are its unique
+origination assumptions.  Unlike a strand space, the sort of a
+variable in~$X$ need not be a base sort.
+
+Assume the strands in bundle $\Upsilon(\Theta_X,\to)$ have been
+permuted so that regular strands precede penetrator strands in
+sequence~$\Theta_X$, and $\rl$ demonstrates the bundle is a run of
+protocol~$P$.  Let~$P'$ be~$P$ without penetrator roles.  Skeleton
+$\skel_X(\rl',P',\Theta'_X,\prec,N,U)$ \index{realized
+  skeleton}\index{skeleton!realized}\emph{realizes} the bundle if
+$\rl'$ and $\Theta'_X$ are the truncations of $\rl$ and $\Theta_X$
+respectively that omit penetrator strands from their domains, $\prec$
+is the transitive irreflexive relation associated with the bundle
+without penetrator nodes, $N$ is the set of non-originating atoms with
+variables that occur in $\Theta'_X$, and $U$ is the set of atoms that
+uniquely originate and are carried by some regular event.
+
+A protoskeleton $\skel_X(\rl,P,\Theta_X,\prec,N,U)$ is a
+\index{preskeleton}\emph{preskeleton} if the following properties hold.
+\begin{enumerate}
+\item Sequence $\rl$ demonstrates that the strands in $\sdom(\Theta_X)$
+  satisfy the conditions for being a part of a run of protocol~$P$.
+\item Relation $\prec$ is transitive, irreflexive, and includes the
+  strand succession relation $(\Rightarrow)$.
+\item If $n\prec n'$, then either $n\Rightarrow n'$,
+  $\evt_{\Theta_X}(n)=\outbnd t$ and   $\evt_{\Theta_X}(n')=\inbnd
+  t'$, or $n\prec n''\prec n'$ for some~$n''$.
+\item Each atom in $N$ is carried by no event, and each variable
+  in the atom occurs in some event.
+\item Each atom in $U$ is carried by some event.
+\item $N$ includes the non-originating atoms inherited from roles via
+  the role map.
+\item $U$ includes the uniquely originating atoms inherited from roles via
+  the role map.
+\end{enumerate}
+
+\begin{sloppypar}
+Let $\orig_k(t)$ be the set of nodes at which~$t$ originates in
+preskeleton~$k$, and~$\gain_k(t)$ be the set of nodes at which~$t$ is
+gained in~$k$.  Preskeleton $\skel_X(\rl,P,\Theta_X,\prec,N,U)$ is a
+\index{skeleton}\emph{skeleton} if each atom in $U$ originates on at
+most one strand, and the node of origination precedes each node that
+gains the atom, i.e.\@ for every~$t\in U$, $n_0\in\orig_k(t)$ and
+$n_1\in\gain_k(t)$ implies~$n_0\prec n_1$.
+\end{sloppypar}
+
+Let $k_0=\skel_X(rl_0,P,\Theta_0,\prec_0,N_0,U_0)$ and
+$k_1=\skel_Y(rl_1,P,\Theta_1,\prec_1,N_1,U_1)$ be preskeletons.  There
+is a \index{preskeleton
+  homomorphism}\index{homomorphism!preskeleton}\emph{preskeleton
+  homomorphism}\label{def:preskeleton homomorphism} from~$k_0$
+to~$k_1$ if~$\phi$ and~$\sigma$ are maps with the following
+properties:
+\begin{enumerate}
+\item $\phi$ maps strands of~$k_0$ into those of~$k_1$, and nodes as
+  $\phi((s,i))=(\phi(s),i)$, that is $\phi$ is in
+  $\sdom(\Theta_0)\to\sdom(\Theta_1)$;
+\item $\sigma\colon\alga_X\to\alga_Y$ is a message algebra homomorphism;
+\item $n\in\nodes(\Theta_0)$ implies
+  $\sigma(\evt_{\Theta_0}(n))=\evt_{\Theta_1}(\phi(n))$;
+\item $n_0\prec_0
+n_1$ implies $\phi(n_0)\prec_1\phi(n_1)$;
+\item $\sigma(N_0)\subseteq N_1$;
+\item $\sigma(U_0)\subseteq U_1$;
+\item $t\in U_0$ implies
+  $\phi(\orig_{k_0}(t))\subseteq\orig_{k_1}(\sigma(t))$.
+\end{enumerate}
+
+A homomorphism is \index{strandwise injective
+  homomorphism}\index{homomorphism!strandwise
+  injective}\emph{strandwise injective} if its strand map is
+injective.  Two preskeletons are isomorphic if they are related by
+\index{isomorphic preskeletons}\index{preskeletons!isomorphic}
+\label{def:isomorphic preskeletons}
+strandwise injective homomorphism in both directions.  A homomorphism
+is \index{nodewise isomorphic
+  homomorphism}\index{homomorphism!nodewise isomorphic}\emph{nodewise
+  isomorphic} if the strand map~$\phi$ implies a bijection on nodes,
+and $n_0\prec_1 n_1$ implies $\phi^{-1}(n_0)\prec_0\phi^{-1}(n_1)$.  A
+skeleton is \index{realized
+  skeleton}\index{skeleton!realized}\emph{realized} if there is a
+nodewise isomorphic homomorphism from it to a skeleton that realizes a
+bundle, and message component of the homomorphism is injective.
+
+Our formalism requires that every protocol include a
+listener\label{def:listeners} role\index{listener role} of the form:
+$\lsn(x\colon\top)=\role(\seq{\inbnd x,\outbnd
+  x},\emptyset,\emptyset)$.  Instances of this role are sometimes used
+to make penetrator derived messages visible in skeletons.  We say
+skeleton~$k$ \emph{realizes modulo listeners} bundle
+$\Upsilon(\Theta,\to) $ if~$k$ realizes $\Upsilon(\Theta',\to')$ and
+\hbox{$\Upsilon(\Theta,\to)$} is the result of removing listener
+strands, and adjusting the communication ordering $\to$ appropriately.
+
+The set of bundles denoted by preskeleton~$k$, $\sembrack{k}$, is:
+$$\sembrack{k} = \{\Upsilon\mid
+\mbox{$k\homomorphism{\phi,\sigma}k'$ and $k'$ realizes modulo
+  listeners $\Upsilon$}\}$$ A {\cpsa} algorithm is \emph{complete} if
+when given a preskeleton~$k$, either the algorithm diverges, or else it
+terminates and produces a finite set of realized skeletons~$K$, such
+that $\sembrack{k}=\bigcup_{k'\in K}\sembrack{k'}$.
+\label{def:preskeleton denotation}
+
+\section{Blanchet's Simple Example Protocol}\label{sec:blanchet's
+  simple example protocol}
+
+The following protocol is a simplified version of the Denning-Sacco
+key distribution protocol~\cite{DenningSacco81} due to Bruno Blanchet.
+$$\begin{array}{r@{{}:{}}l}
+A\to B&\enc{\enc{s}{a^{-1}}}{b}\\
+B\to A&\enc{d}{s}
+\end{array}$$
+Symmetric key~$s$ is freshly generated, asymmetric keys $a^{-1}$ and
+$b^{-1}$ are uncompromised, and the goal of the protocol is to keep
+data~$d$ secret.  The protocol was constructed with a known flaw for
+expository purposes.
+
+This {\cpsa} description of the protocol has an initiator and a
+responder role.
+$$\begin{array}{r@{{}={}}l}
+\init(a,b\colon\srt{A},s\colon\srt{S}, d\colon\srt{D})&
+\role(\seq{\outbnd\enc{\enc{s}{a^{-1}}}{b},\inbnd\enc{d}{s}},
+\emptyset,\emptyset)\\
+\resp(a,b\colon\srt{A},s\colon\srt{S}, d\colon\srt{D})&
+\role(\seq{\inbnd\enc{\enc{s}{a^{-1}}}{b},\outbnd\enc{d}{s}},
+\emptyset,\emptyset)
+\end{array}$$
+where we use~\srt{A} for sort \dom{akey}, \srt{S} for sort \dom{skey}, and
+\srt{D} for sort \dom{data} to save space.  The algebra for the initiator
+role is generated from $X$, where $X_{\srt{A}}=\{a,b\}$, $X_{\srt{S}}=\{s\}$,
+$X_{\srt{D}}=\{d\}$, $X_{\dom{text}}=\emptyset$, $X_{\dom{name}}=\emptyset$,
+and $X_\top=\emptyset$.
+
+An interesting point of view for analysis is to see if the
+authentication goals of the initiator are met.  To do so, we assume
+there was full length run of an initiator strand, and let {\cpsa}
+determine what else must have happened.  Let variable set $Y=a,b\colon
+\srt{A},s\colon\srt{S}, d\colon\srt{D}$.  The point-of-view skeleton is:
+$$\begin{array}{r@{}ll}
+\skel_Y(
+&\seq{\init(a_0,b_0,s_0,d_0)},
+&\mbox{Role map}\\
+&\{\init(a_0,b_0,s_0,d_0),\resp(a_1,b_1,s_1,d_1)\},
+&\mbox{Protocol}\\
+&\seq{\seq{\outbnd\enc{\enc{s}{a^{-1}}}{b},\inbnd\enc{d}{s}}},
+&\mbox{Traces}\\
+&\emptyset,
+&\mbox{Node orderings}\\
+&\{a^{-1},b^{-1}\},
+&\mbox{Non-origination}\\
+&\{s\})
+&\mbox{Unique origination}
+\end{array}$$
+where the variable set that generates the algebra for the initiator
+and responder roles have been renamed so as to avoid conflicts with
+the variable set~$Y$ used by the skeleton.
+
+The skeleton produced by {\cpsa} for this problem follows.  Notice
+that the two strands agree on the key~$b$ used in the outermost
+encryption of their first message, and indication that the
+authentication goals of the initiator are met.  See
+Figure~\ref{fig:blanchet's protocol} to see the structure of the shape.
+$$\begin{array}{r@{}ll}
+\skel_Y(
+&\seq{\init(a_0,b_0,s_0,d_0),\resp(a_1,b_1,s_1,d_1)},
+&\mbox{Role map}\\
+&\{\init(a_0,b_0,s_0,d_0),\resp(a_1,b_1,s_1,d_1)\},
+&\mbox{Protocol}\\
+&\langle\begin{array}[t]{@{}l}
+\seq{\outbnd\enc{\enc{s}{a^{-1}}}{b},\inbnd\enc{d}{s}},\\
+\seq{\inbnd\enc{\enc{s}{a^{-1}}}{b},\outbnd\enc{d}{s}}\rangle,
+\end{array}
+&\mbox{Traces}\\
+&\{(0,0)\prec(1,0),(1,1)\prec(0,1)\},
+&\mbox{Node orderings}\\
+&\{a^{-1},b^{-1}\},
+&\mbox{Non-origination}\\
+&\{s\})
+&\mbox{Unique origination}
+\end{array}$$
+The homomorphism from the point-of-view skeleton to the shape is
+$$(\seq{1},\{a\mapsto a, b\mapsto b, s\mapsto s, d\mapsto d\}).$$
+
+\begin{figure}
+\begin{center}
+\begin{tabular}{c@{\qquad}c}
+$\xymatrix{
+\txt{\strut init}&\txt{\strut resp}\\
+\bullet\ar@{=>}[d]\ar[r]&\bullet\ar@{=>}[d]\\
+\bullet&\bullet\ar[l]}$
+&
+$\xymatrix{
+\txt{\strut resp}&\txt{\strut init}\\
+\bullet\ar@{=>}[d]&\bullet\ar@{-->}[l]\\
+\bullet&}$
+\end{tabular}
+\end{center}
+\caption{Shapes for Blanchet's Protocol}\label{fig:blanchet's protocol}
+\end{figure}
+
+An analysis of the authentication goals for the responder shows the
+flaw built into the protocol.  To do the analysis, assume there was a
+full length run of a responder strand, and let {\cpsa} determine what
+else must have happened.  In this case, the point-of-view skeleton is:
+$$\begin{array}{r@{}ll}
+\skel_Y(
+&\seq{\resp(a_0,b_0,s_0,d_0)},
+&\mbox{Role map}\\
+&\{\init(a_0,b_0,s_0,d_0),\resp(a_1,b_1,s_1,d_1)\},
+&\mbox{Protocol}\\
+&\seq{\seq{\inbnd\enc{\enc{s}{a^{-1}}}{b},\outbnd\enc{d}{s}}},
+&\mbox{Traces}\\
+&\emptyset,
+&\mbox{Node orderings}\\
+&\{a^{-1},b^{-1}\},
+&\mbox{Non-origination}\\
+&\{s\})
+&\mbox{Unique origination}
+\end{array}$$
+
+The shape generated by {\cpsa} follows.  An early indication of a
+problem is the variable set for the shape has three asymmetric keys.
+Let variable set $Z=a,b,b'\colon\srt{A},s\colon\srt{S}, d\colon\srt{D}$.  The shape
+is:
+$$\begin{array}{r@{}ll}
+\skel_Z(
+&\seq{\resp(a_0,b_0,s_0,d_0),\init(a_1,b_1,s_1,d_1)},
+&\mbox{Role map}\\
+&\{\init(a_0,b_0,s_0,d_0),\resp(a_1,b_1,s_1,d_1)\},
+&\mbox{Protocol}\\
+&\langle\begin{array}[t]{@{}l}
+\seq{\inbnd\enc{\enc{s}{a^{-1}}}{b},\outbnd\enc{d}{s}},\\
+\seq{\outbnd\enc{\enc{s}{a^{-1}}}{b'}}\rangle,
+\end{array}
+&\begin{array}[t]{@{}l}
+\mbox{Traces}\\
+\mbox{\emph{Note key is $b'$ not $b$!}}
+\end{array}\\
+&\{(1,0)\prec(0,0)\},
+&\mbox{Node orderings}\\
+&\{a^{-1},b^{-1}\},
+&\mbox{Non-origination}\\
+&\{s\})
+&\mbox{Unique origination}
+\end{array}$$
+
+Notice that the two strands do not agree on the key used in the outermost
+encryption of their first message---an authentication failure.  To see
+that the authentication failure leads to the failure to protect the
+secrecy of data~$d$, the protocol is analyzed using the following
+point-of-view:
+$$\begin{array}{r@{}ll}
+\skel_Y(
+&\seq{\resp(a_0,b_0,s_0,d_0),\lsn(x)},
+&\mbox{Role map}\\
+&\{\init(a_0,b_0,s_0,d_0),\resp(a_1,b_1,s_1,d_1),\lsn(x)\},
+&\mbox{Protocol}\\
+&\seq{
+\seq{\inbnd\enc{\enc{s}{a^{-1}}}{b},\outbnd\enc{d}{s}},
+\seq{\inbnd d,\outbnd d}},
+&\mbox{Traces}\\
+&\{(0,1)\prec(1,0),
+&\mbox{Node orderings}\\
+&\{a^{-1},b^{-1}\},
+&\mbox{Non-origination}\\
+&\{s,d\})
+&\mbox{Unique origination}
+\end{array}$$
+
+{\cpsa} finds a shape that shows how data~$d$ is revealed to the adversary.
+
+\section{Dolev-Yao Example 1.3}
+
+The intended run of the protocol in the Dolev-Yao Example 1.3 is:
+$$\begin{array}{r@{{}:{}}l}
+A\to B&\enc{\enc{m}{b},a}{b}\\
+B\to A&\enc{\enc{m}{a},b}{a}
+\end{array}$$
+assuming text~$m$ is freshly generated, and asymmetric keys $a^{-1}$
+and $b^{-1}$ are uncompromised.
+
+The {\cpsa} description of the protocol also has an initiator and a
+responder role.
+$$\begin{array}{r@{{}={}}l}
+\init(a,b\colon\srt{A}, m\colon\srt{D})&
+\role(\seq{\outbnd\enc{\enc{m}{b},a}{b},\inbnd\enc{\enc{m}{a},b}{a}},
+\emptyset,\emptyset)\\
+\resp(a,b\colon\srt{A}, m\colon\top)&
+\role(\seq{\inbnd\enc{\enc{m}{b},a}{b},\outbnd\enc{\enc{m}{a},b}{a}},
+\emptyset,\emptyset)\\
+\end{array}$$
+
+An interesting point of view for analysis is to see if~$m$ is kept
+secret after the initiator sends its message.  Let variable set
+$Z=a,b\colon\srt{A}, m\colon\srt{D}$.  The initial scenario preskeleton is:
+$$\begin{array}{r@{}ll}
+\skel_Z(
+&\seq{\init(a_0,b_0,m_0),\lsn(x)},
+&\mbox{Role map}\\
+&\{\init(a_0,b_0,m_0),\resp(a_1,b_1,m_1),\lsn(x)\},
+&\mbox{Protocol}\\
+&\seq{\seq{\outbnd\enc{\enc{m}{b},a}{b}},\seq{\inbnd m}},
+&\mbox{Traces}\\
+&\emptyset,
+&\mbox{Node orderings}\\
+&\{a^{-1},b^{-1}\},
+&\mbox{Non-origination}\\
+&\{m\})
+&\mbox{Unique origination}
+\end{array}$$
+where the variable set that generates the algebra for the initiator
+role has been renamed so as to avoid conflicts with the variable set~$Z$
+used by the preskeleton.
+
+\begin{figure}
+$$\xymatrix{
+\txt{\strut init}&\txt{\strut }&\txt{\strut resp}&\txt{\strut resp}\\
+\bullet\ar[rrr]&&&\bullet\ar@{=>}[d]\\
+&&\bullet\ar@{=>}[d]&\bullet\ar@{-->}[l]\\
+&\bullet\ar@{=>}[d]&\bullet\ar@{-->}[l]&\\
+&\bullet&&}$$
+\caption{Dolev-Yao Example 1.3 Shape}\label{fig:dy shape}
+\end{figure}
+
+{\cpsa} determines $m$ is not kept secret by producing the shape in
+Figure~\ref{fig:dy shape}.  The added strands in the shape are
+instances of responder roles.  The strands in the shape are:
+$$\begin{array}{l}
+\seq{\outbnd\enc{\enc{m}{b},a}{b}}\\
+\seq{\inbnd m}\\
+\seq{\inbnd\enc{\enc{m}{b},a'}{b},\outbnd\enc{\enc{m}{a'},b}{a'}}\\
+\seq{\inbnd\enc{\enc{\enc{m}{b}, a}{b},a''}{b},
+\outbnd\enc{\enc{\enc{m}{b},a}{a''},b}{a''}}
+\end{array}$$
+The non-origination and unique origination assumptions are as they are
+in the initial scenario preskeleton.  An interesting exercise left for
+the reader is to produce a bundle that is realized by the shape.
+
+\section{Exercise}
+
+Consider the following roles.
+$$\begin{array}{r@{{}={}}l}
+\init(a,b\colon\srt{A})&\role(\seq{\outbnd(a,b),\inbnd(b,a)},
+\emptyset,\emptyset)\\
+\resp(a,b\colon\srt{A})&\role(\seq{\inbnd(a,b),\outbnd(b,a)},
+\emptyset,\emptyset)
+\end{array}$$
+Let $X=x,y\colon\srt{A}$ and
+$\begin{array}[t]{@{}r@{}l}
+k=\skel_X(
+&\seq{\init(a,b),\resp(a,b),\resp(a,b)},\\
+&\{\init(a,b),\resp(a,b)\},\\
+&\seq{\begin{array}[t]{@{}l}
+\seq{\outbnd(x,y),\inbnd(y,x)},\\
+\seq{\inbnd(x,y),\outbnd(y,x)},\\
+\seq{\inbnd(x,y),\outbnd(y,x)}},
+\end{array}\\
+&\mbox{Node ordering in Figure~\ref{fig:exercise}},\\
+&\emptyset,\\
+&\emptyset)
+\end{array}$
+
+\begin{figure}
+$$\xymatrix{
+\txt{\strut init}&\txt{\strut resp}&\txt{\strut resp}\\
+\bullet\ar@{=>}[d]\ar@/^/[rr]\ar[r]&\bullet\ar@{=>}[d]&\bullet\ar@{=>}[d]\\
+\bullet&\bullet\ar[l]&\bullet\ar@/^/[ll]}$$
+\caption{Exercise Skeleton}\label{fig:exercise}
+\end{figure}
+
+What is $\sembrack{k}$?
+
+One member is shown in Figure~\ref{fig:bundle}.
+
+\begin{figure}
+$$\begin{array}{ll}
+\mbox{init}&\seq{\outbnd(x,y),\inbnd(y,x)}\\
+\mbox{resp}&\seq{\inbnd(x,y),\outbnd(y,x)}\\
+\mbox{resp}&\seq{\inbnd(x,y),\outbnd(y,x)}\\
+\mbox{pair}&\seq{\inbnd(y,x),\inbnd(y,x),\outbnd((y,x),(y,x))}\\
+\mbox{sep}&\seq{\inbnd((y,x),(y,x)),\outbnd(y,x)}
+\end{array}$$
+
+$$\xymatrix{
+\txt{\strut init}&\txt{\strut resp}&\txt{\strut resp}&\txt{\strut pair}&\txt{\strut sep}\\
+\bullet\ar@{=>}[dddd]\ar@/^/[rr]\ar[r]&\bullet\ar@{=>}[d]&\bullet\ar@{=>}[d]&&\\
+&\bullet\ar@/_/[rrd]&\bullet\ar[r]&\bullet\ar@{=>}[d]&\\
+&&&\bullet\ar@{=>}[d]&\\
+&&&\bullet\ar[r]&\bullet\ar@{=>}[d]\\
+\bullet&&&&\bullet\ar[llll]}$$
+\caption{A Bundle Realized by the Example Skeleton}\label{fig:bundle}
+\end{figure}
+
+\section{External Syntax and Instances}\label{sec:instances}
+
+The external syntax used by {\cpsa} is a little different than what
+has been described here.  In the external syntax, the trace and the
+role associated with a strand is specified by an
+\index{instance}\emph{instance}.  An instance is of the form
+$\inst(r,h,\sigma)$, where~$r$ is a role, $h$ specifies the length of
+a trace instantiated from the role, and~$\sigma$ specifies how to
+instantiate the variables in the role to obtain the trace.  Thus when
+$r=\role_Y(C,N,U)$, the trace associated with $\inst(r,h,\sigma)$ is
+$\sigma\circ\prefix{C}{h}$.  An instance is well-formed if $1\leq
+h\leq|C|$, and $\sdom(\sigma)$ is the set of variables that occur
+in~$\prefix{C}{h}$.
+
+In the external syntax, the role map and sequence of traces are
+replaced by a sequence of instances.  So for preskeleton
+$\skel_X(\rl,P,\Theta_X,\prec,N,U)$, the external syntax is
+$\skel_X(P,I,\prec,N,U)$, where for each $s\in\sdom(\Theta_x)$,
+$I(s)=\inst(r,h,\sigma)$, $r=\rl(s)$, and the trace of
+$\inst(r,h,\sigma)$ is $\Theta_X(s)$.
+
+\chapter{Algorithms as Reduction Systems}\label{chp:algorithms}
+
+Algorithms in this paper are specified as abstract reduction
+systems~\cite[Chapter~2]{BaaderNipkow98}.  A reduction system is a
+pair $(A,\to)$, where reduction~$\to$ is a binary relation
+$\mathord{\to}\subseteq A\times A$.  Element $x\in A$ is a
+\index{normal form}\emph{normal form} if there is no~$y$ such that
+$x\to y$.  The transitive closure of~$\to$ is~$\to^+$.  The reflexive
+transitive closure of~$\to$ is~$\to^\ast$.  A reduction is confluent
+if $x\to^\ast y_0$ and $x\to^\ast y_1$ implies there is a~$z$ such
+that $y_0\to^\ast z$ and $y_1\to^\ast z$.  A reduction is terminating
+if there are no infinite descending chains.  A reduction is convergent
+if it is confluent and terminating.
+
+Let $\alg{K}$ be the set of preskeletons.  Algorithms are specified as
+reduction systems of the form $(\alg{K},\to)$, which are then used to
+specify a related setwise reduction system of the form
+$(\pow{\alg{K}},\mathord\twoheadrightarrow)$.  Setwise reduction
+systems are the ones with the interesting normal forms and confluence
+properties.  In a setwise reduction system, reduction rewrites one
+element of a set to a set of elements.
+
+\begin{defn}[Setwise Reduction System]
+The \emph{setwise reduction system}\index{setwise reduction system} of
+binary relation $\rightsquigarrow\subseteq\alg{K}\times\pow{\alg{K}}$
+is a reduction system $(\pow{\alg{K}},\twoheadrightarrow)$, where for
+each $K_0\in\pow{\alg{K}}$, $K_0\twoheadrightarrow K_1$ if for some
+$k_0\in K_0$, $k_0\rightsquigarrow K_2$, $K_1=K_2\cup
+(K_0\setminus\{k_0\})$, and $K_1\neq K_0$.
+\end{defn}
+
+The {\cpsa} algorithm will be specified as a setwise term reduction
+system, where the initial problem is given a singleton
+in~$\pow{\alg{K}}$, and the answers computed by an implementation of
+the algorithm are a normal form of the setwise reduction
+relation~$\twoheadrightarrow_k$ defined in Chapter~\ref{chp:skeleton
+  reduction}.
+
+In what follows the relation $k\rightsquigarrow K$ is defined in terms
+of $\to\subseteq\alg{K}\times\alg{K}$ by specifying
+$\{k\}\twoheadrightarrow K$ using~$\to$, so the $\rightsquigarrow$
+relation is not explicitly defined.
+
+We regard sets of preskeletons as factored by isomorphism, where each
+set has at most one representative of the equivalence class of
+isomorphic preskeletons.  The definition of isomorphic preskeletons
+is given on Page~\pageref{def:isomorphic preskeletons}.
+
+The {\cpsa} Design~\cite{cpsadesign09} describes an extension of a
+message algebra signature that models the data structures used in the
+{\cpsa} program.  The terms over the extended signature include ones
+that model preskeletons.  Sets of terms of sort preskeleton are the
+domain of our setwise reduction systems.
+
+\chapter{Primitive Preskeleton Operators}\label{chp:prim preskel ops}
+
+The are four primitive operators\index{operators} on preskeletons used
+by {\cpsa} to solve authentication tests.  Each operator is a partial
+map from preskeletons to preskeletons.
+
+\begin{defn}[Substitution Operator]\label{def:substitution operator}
+For order-sorted substitution~$\sigma\colon X\to\alg{A}_Y$,
+the operator~$\ops{S}_\sigma$ is:
+$$\begin{array}{l}
+\ops{S}_\sigma(\skel_X(\rl,P,\Theta_X,\prec,N,U)) = {}\\
+\quad\skel_Y(\rl,P,
+s\mapsto \comp\sigma{\Theta_X(s)},\prec,\sigma(N), \sigma(U))
+\end{array}$$
+\end{defn}
+
+For $k'=\ops{S}_\sigma(k)$, there is a homomorphism from~$k$ to~$k'$
+only if for all $t\in U_k$,
+$\orig_k(t)\subseteq\orig_{k'}(\sigma(t))$.  The structure preserving
+maps associated with the homomorphism are~$\idphi$ and~$\sigma$.
+
+\begin{defn}[Compression Operator]\label{def:compression operator}
+For distinct strands~$s$ and~$s'$, operator~$\ops{C}_{s,s'}$
+compresses strand~$s$ into~$s'$.
+$$\begin{array}{l}
+\ops{C}_{s,s'}(\skel_X(\rl,P,\Theta_X,\prec,N,U)) = {}\\
+\quad \skel_X(\comp\rl{\phi'_s},P,
+\comp{\Theta_X}{\phi'_s},\prec',N,U)
+\end{array}$$
+where
+$$\begin{array}{r@{}c@{}l}
+\phi'_s(j)&{}={}&\left\{
+\begin{array}{ll}
+j+1&\mbox{if $j\geq s$}\\
+j&\mbox{otherwise,}
+\end{array}\right.
+\end{array}$$
+relation $\prec'$ is the transitive closure of $\phi_{s,s'}(\prec)$, and
+$$\begin{array}{r@{}c@{}l}
+\phi_{s,s'}(j)&{}={}&\left\{
+\begin{array}{ll}
+\phi_s(s')&\mbox{if $j=s$}\\
+\phi_s(j)&\mbox{otherwise}
+\end{array}\right.\\
+\phi_s(j)&{}={}&\left\{
+\begin{array}{ll}
+j-1&\mbox{if $j>s$}\\
+j&\mbox{otherwise.}
+\end{array}\right.
+\end{array}$$
+\end{defn}
+
+The compression operator is only used when $\Theta_X(s)$ is a prefix
+of $\Theta_X(s')$, and when there is a homomorphism from~$k$ to
+$\ops{C}_{s,s'}(k)$.  The structure preserving maps associated with
+the homomorphism are~$\phi_{s,s'}$ and~$\idsigma$.  Note that the
+compression operator is defined only when relation~$\prec'$ is
+asymmetric, and that $\comp{\phi_{s,s'}}{\phi'_s}=\idphi$.
+
+\begin{defn}[Ordering Enrichment Operator]\label{def:order enrichment operator}
+Operator~$\ops{O}$ applied to~$k$ enriches~$\kprec{k}$ by adding all
+elements implied by unique origination.  That is $\ops{O}(k)=
+\skel_X(\rl,P,\Theta_X,\prec',N,U))$, where
+$k=\skel_X(\rl,P,\Theta_X,\prec,N,U)$ and $\prec'=
+(\prec\cup\{(n_0,n_1)\mid n_0\in\orig(k,t)\land
+n_1\in\gain(k,t)\})^\ast$.
+\end{defn}
+
+The ordering enrichment operator is total and idempotent.  The
+structure preserving maps associated with the operator's homomorphism
+are~$\idphi$ and~$\idsigma$, i.e.\ the homomorphism is an embedding.
+
+\begin{defn}[Augmentation Operator]\label{def:augmentation operator}
+For node~$n$, role~$r$, and trace~$C$, operator~$\ops{A}_{n,r,C}$ is:
+$$\begin{array}{l}
+\ops{A}_{n,r,C}(\skel_X(\rl,P,\Theta_X,\prec,N,U)) = {}\\
+\quad\skel_{X'}(\rl\append r,P,
+\Theta_X(s)\append C,\prec',N',U')
+\end{array}$$
+where $X'$ is $X$ extended to include the variables in~$C$,
+$\prec'$ is the minimal extension of $\prec$ such that
+$(|\Theta_X|+1,|C|)\prec' n$, $N'$ is $N$ extended with
+non-origination assumptions inherited from~$r$ by~$C$, and likewise
+for~$U'$.
+\end{defn}
+
+The structure preserving maps associated with the augmentation
+operator's homomorphism are~$\idphi$ and~$\idsigma$, i.e.\ the
+homomorphism is an embedding.
+
+\chapter{Reductions on Preskeletons}\label{chp:preskeleton reduction}
+
+This chapter describes the algorithm used to transform a preskeleton
+into a skeleton as a setwise term reduction system
+$(\alg{K},\twoheadrightarrow)$.  Recall that the relation
+$k\rightsquigarrow K$ in Chapter~\ref{chp:algorithms} is defined in
+terms of $\to\subseteq\alg{K}\times\alg{K}$ by specifying
+$\{k\}\twoheadrightarrow K$ using~$\to$.  Additionally, when
+$k=\skel(\rl,P,\Theta,\prec,N,U)$, $U_k$ is used to name~$U$, and so
+forth for other components of~$\skel$.
+
+If a preskeleton $k$ is not a skeleton, then it is either because some
+$t\in U_k$ actually originates at more than one node, or because for
+some $t\in U_k$, there is a node $n_1\in\gain_k(t)$, and a node
+$n_0\in\orig_k(t)$ such that $n_0\nprec_k n_1$.  A preskeleton in
+which an atom assumed to be uniquely originating originates more than
+once is simply expunged.  The second obstruction is resolved by
+enriching node orderings.  A \index{hulled
+  preskeleton}\index{preskeleton!hulled}\emph{hulled preskeleton} is a
+preskeleton in which every uniquely originating atom originates at
+most once, but it may lack some node orderings needed to be a
+skeleton.
+
+Skeletons may contain redundant strands.  After converting
+preskeletons to skeletons, a preskeleton reduction system may remove
+redundant strands using a process called \index{pruning}pruning.  A
+skeleton without any redundant strands is called a \index{pruned
+  skeleton}\index{skeleton!pruned}\emph{pruned skeleton}.
+
+\begin{defn}[Hulling Reduction]\label{def:hulling}
+A non-hulled preskeleton~$k$ is expunged.  The setwise hulling
+reduction rule is $\{k\}\setreduction{\ops{H}}\{\}$ when~$k$ is not
+hulled.
+\end{defn}
+
+\begin{defn}[Order Enrichment]
+Suppose hulled preskeleton~$k_0$ is not a skeleton.  Hulled
+preskeleton~$k_0$ reduces to skeleton~$k_1$ by order enrichment, written
+$k_0\reduction{\ops{O}}k_1$, iff~$k_1$ is the result of adding node
+orderings implied by origination.  That is,
+$\kprec{k_1}= (\kprec{k_0}\cup\{(n_0,n_1)\mid n_0\in\orig(k_0,t)\land
+n_1\in\gain(k_0,t)\})^\ast$.
+There is a homomorphism from~$k_0$ to~$k_1$ that is an embedding.  For
+the setwise order enrichment reduction,
+$\{k_0\}\setreduction{\ops{O}}\{k_1\mid k_0\reduction{\ops{O}}k_1\}$
+when $k_0$ is a hulled preskeleton that is not a skeleton.
+\end{defn}
+
+The pruning operator~$\ops{P}_s$ removes a \index{redundant
+  strands}redundant strand.  When a strand~$s$ is redundant, there is
+another strand~$s'$ that describes more specific behavior.
+Skeleton~$k_0$ has a redundant strand~$s$ if there is a skeleton~$k_1$
+such that
+$k_0\reduction{\ops{S}_\sigma}k\reduction{\ops{C}_{s,s'}}k_1$,
+$k_0\homomorphism{\phi,\sigma}k_1$, and
+$k_1\homomorphism{\phi',\sigma'}k_0$, where
+$\comp{\phi}{\phi'}=\idphi$ and
+$\comp{\sigma}{\sigma'}=\idsigma$.\footnote{In category theory,
+  $(\phi',\sigma')$ is a section of $(\phi,\sigma)$, and
+  $(\phi,\sigma)$ is a retraction of $(\phi',\sigma')$.}  In
+particular $\phi=\phi_{s,s'}$ and $\phi'=\phi'_s$ with~$\phi_{s,s'}$
+and~$\phi'_s$ as in Definition~\ref{def:compression operator}.  The
+bidirectional homomorphism requirement leads to the following
+definition.
+
+\begin{defn}[Pruning]\label{def:pruning}
+Suppose skeleton~$k_0$ has a redundant strand~$s$.  Then there exists
+a distinct strand~$s'$ that describes more specific behavior.
+Skeleton~$k_0$ reduces to skeleton~$k_1$ by pruning, written
+$k_0\reduction{\ops{P}_s}k_1$, iff there is a most general
+unifier~$\sigma$ such that $\sigma(\Theta_{k_0}(s)(j))\equiv
+\Theta_{k_0}(s')(j)$ for all $0\leq j<|\Theta_{k_0}(s)|$, no
+variable in $\sdom(\sigma)$ occurs in the trace of any strand other
+than~$s$, $\sigma$ is a renaming, $t\in U_{k_0}$ implies $\sigma(t)\in
+U_{k_0}$, $t\in N_{k_0}$ implies $\sigma(t)\in N_{k_0}$, there is
+a~$k$ such that
+$k_0\reduction{\ops{S}_\sigma}k\reduction{\ops{C}_{s,s'}}k_1$, there
+is a homomorphism from~$k_0$ to~$k_1$, and if
+$(s,p)\kprec{k_0}(s'',p'')$ then $(s',p)\kprec{k_0}(s'',p'')$, and if
+$(s'',p'')\kprec{k_0}(s,p)$ then $(s'',p'')\kprec{k_0}(s',p)$.  For
+the setwise pruning reduction,
+$\{k_0\}\setreduction{\ops{P}_s}\{k_1\mid
+k_0\reduction{\ops{P}_s}k_1\}$, when there is a $k_1$ such that
+$k_0\reduction{\ops{P}_s}k_1$.
+\end{defn}
+
+Note that for
+$k_0\reduction{\ops{S}_\sigma}k\reduction{\ops{C}_{s,s'}}k_1$, there
+is a homomorphism from~$k_0$ to~$k_1$ when there is one from~$k_0$
+to~$k$, i.e.\ when $\ops{S}_\sigma$ ensures that points of origination
+are preserved.
+
+There is one additional constraint on pruning recently identified.  In
+Chapter~\ref{chp:generalization} on generalization, a parameter to its
+reduction system is the point-of-view skeleton.  The point-of-view
+skeleton defines the problem to be solved by {\cpsa}.  A
+generalization step is valid only when there is a homomorphism from
+the point-of-view skeleton and the result of generalization.  To
+support generalization, {\cpsa} computes and stores the strand mapping
+part of a homomorphism from the point-of-view skeleton to every
+preskeleton derived from it.
+
+The addition constraint on pruning is this: no strand is considered
+redundant if it is in the image of the skeleton's strand map from its
+point-of-view skeleton.  Our notation for reductions that include
+pruning does not record the dependency of the relation on the
+point-of-view skeleton, but the notation in the chapter on generalization
+shows how it might be done.
+
+\iffalse
+\begin{defn}[Thinning]
+Two strands $s$ and $s'$ in a skeleton $k$ are \emph{effectively
+  equivalent} if $k$ with $s$ removed and $k$ with $s'$ removed are
+isomorphic.  We can define a different form of pruning based on this
+idea.  Skeleton $k_0$ reduces to skeleton $k_1$ by thinning, written
+$k_0\reduction{\ops{T}_s}k_1$, if and only if there exists a strand
+$s'$ that is effectively equivalent to $s$ in $k_0$ and $k_1$ is
+isomorphic to both $k_0$ with $s$ removed and $k_0$ with $s'$ removed.
+\end{defn}
+
+Thinning is not used yet.
+\fi
+
+\section{Reduction Systems}
+
+Notice that a setwise hulling reduction may produce the empty set, but
+a setwise order enrichment and pruning reduction never does.
+
+There are two preskeleton reduction systems, one with pruning, and one
+without.  For the one without, let reduction $\twoheadrightarrow=
+\bigcup_{s,s'}\setreduction{\ops{H}}\cup\setreduction{\ops{O}}$.
+
+\begin{defn}[Preskeleton Reduction System]
+Preskeleton~$k_0$ reduces to skeleton~$k_1$,
+written~$k_0\reduction{\fn{skel}}k_1$\index{skel@\fn{skel}}, if
+$\{k_0\}\twoheadrightarrow^\ast K$, $k_1\in K$, and~$K$ is a normal
+form of~$\twoheadrightarrow$.
+\end{defn}
+
+For each skeleton~$k$, $k\reduction{\fn{skel}}k$.
+
+When using pruning, let reduction $\twoheadrightarrow=
+\bigcup_{s,s'}\setreduction{\ops{H}}\cup\setreduction{\ops{O}}\cup
+\bigcup_s\setreduction{\ops{P}_s}$.
+
+\begin{defn}[Preskeleton Reduction System with Pruning]
+Preskeleton~$k_0$ reduces to pruned skeleton~$k_1$,
+written~$k_0\reduction{\fn{pskel}}k_1$\index{pskel@\fn{pskel}}, if
+$\{k_0\}\twoheadrightarrow^\ast K$, $k_1\in K$, and~$K$ is a normal
+form of~$\twoheadrightarrow$.
+\end{defn}
+
+For each pruned skeleton~$k$, $k\reduction{\fn{pskel}}k$.
+
+\chapter{Penetrator Derivable}\label{chp:penetrator derivable}
+
+For each algebra, the powers of the adversary are defined by a set of
+roles.  For the Basic Crypto Signature in Figure~\ref{fig:bcs}, the
+traces of the penetrator roles are in Figure~\ref{fig:pen traces}.
+Penetrator roles make no origination assumptions.
+
+\begin{figure}
+$$\begin{array}{l}
+\fn{base}(t)=\seq{\outbnd t},\mbox{ where $t$ is an atom}\\
+\fn{tag}(t)=\seq{\outbnd t},\mbox{ where $t$ is a tag}\\
+\fn{cat}(t_0,t_1)=\seq{\inbnd t_0,\inbnd t_1, \outbnd(t_0,
+  t_1)}\\
+\fn{sep}(t_0,t_1)=\seq{\inbnd(t_0, t_1),\outbnd
+    t_0,\outbnd t_1}\\
+\fn{enc}(t_0,t_1)=\seq{\inbnd t_0,\inbnd t_1,
+\outbnd\enc{t_0}{t_1}}\\
+\fn{dec}(t_0,t_1)=\seq{\inbnd\enc{t_0}{t_1},
+\inbnd t_2,\outbnd t_0},\mbox{ where $t_2=\fn{inv}(t_1)$}\\
+\fn{hash}(t)=\seq{\inbnd t,\outbnd\hash t}
+\end{array}$$
+\caption{Penetrator Traces}\label{fig:pen traces}
+\end{figure}
+
+The context in which penetrator strands appear determine the messages
+the adversary can derive.  The context includes previously sent
+messages and atoms it is forbidden to originate.  An atom that is
+assumed to be non-originating must be avoided as is a uniquely
+originating atom that is assumed to originate on a regular strand.
+
+The ternary relation \der{t}{T_p}{T_a} states that message~$t$ is
+penetrator derivable from previously sent messages~$T_p$ while
+avoiding atoms~$T_a$.  The relation is defined by a set of inference
+rules.  Most of the rules are justified by a penetrator role that when
+instantiated, derives a message in the conclusion of the rule.
+
+The first rule states that no additional penetrator behavior is required
+to derive~$t$ if it has been previously sent.
+$$\infer{t\in{T_p}}{\der{t}{T_p}{T_a}}$$
+
+A uniquely originating atom need not be avoided if it has been sent.
+\begin{equation}\label{eqn:avoid}
+\infer{\der{t}{T_p}{T_a}}%
+{\der{t}{\{t_0\}\cup T_p}{\{t_0\}\cup T_a}}
+\end{equation}
+
+There are two decomposition steps available to the penetrator.
+\begin{equation}\label{eqn:sep}
+\infer{\der{t}{\{t_0,t_1\}\cup T_p}{T_a}}%
+{\der{t}{\{(t_0,t_1)\}\cup T_p}{T_a}}\quad
+[\mbox{by $\fn{sep}(t_0,t_1)$}]
+\end{equation}
+\begin{equation}\label{eqn:dec}
+\infer{\der{\fn{inv}(t_1)}{T_p}{T_a}\qquad
+\der{t}{\{t_0,\enc{t_0}{t_1}\}\cup T_p}{T_a}}%
+{\der{t}{\{\enc{t_0}{t_1}\}\cup T_p}{T_a}}\quad
+[\mbox{by $\fn{dec}(t_0,t_1)$}]
+\end{equation}
+
+There are three constructive steps.
+$$\infer{\der{t_0}{T_p}{T_a}\qquad\der{t_1}{T_p}{T_a}}%
+{\der{(t_0,t_1)}{T_p}{T_a}}\quad
+[\mbox{by $\fn{cat}(t_0,t_1)$}]$$
+$$\infer{\der{t_0}{T_p}{T_a}\qquad\der{t_1}{T_p}{T_a}}%
+{\der{\enc{t_0}{t_1}}{T_p}{T_a}}\quad
+[\mbox{by $\fn{enc}(t_0,t_1)$}]$$
+$$\infer{\der{t}{T_p}{T_a}}%
+{\der{\hash{t}}{T_p}{T_a}}\quad
+[\mbox{by $\fn{hash}(t)$}]$$
+
+There are three rules for indivisible messages.
+$$\der{C_i}{T_p}{T_a}\quad
+[\mbox{by $\fn{tag}(C_i)$}]$$
+$$\infer{t\notin T_a\qquad\mbox{$t$ an atom}}%
+{\der{t}{T_p}{T_a}}\quad
+[\mbox{by $\fn{base}(t)$}]$$
+A non-base sorted variable is derivable in a bundle that instantiates
+it with any message other than an element of $X_\top$.
+$$\infer{t\in X_\top}{\der{t}{T_p}{T_a}}$$
+
+\begin{defn}[Outbound predecessors]
+The \index{outbound predecessors}\emph{outbound predecessors} of
+skeleton~$k$ at~$n$ is $\outpred(k,n)=\{\msg_k(n_0)\mid n_0 \kprec{k}
+n, n_0\mbox{~is transmitting}\}$.
+\end{defn}
+
+\begin{defn}[Avoidance Set]\label{def:avoid}
+The \index{avoidance set}\emph{avoidance set} of skeleton~$k$ is
+$\avoid(k)=N_k\cup\{t\mid t\in U_k\land|\orig_k(t)|=1\}$.
+\end{defn}
+
+An atom in $\avoid(k)$ is not available to the penetrator, except
+if it is exposed by a messages transmission.  Clearly, only uniquely
+originating atoms can be exposed.
+
+\begin{defn}[Derivable Before]\label{def:der}
+A message~$t$ is \index{derivable before}\emph{derivable before}
+reception node~$n$ in skeleton~$k$, written $\fn{der}(k,n,t)$, if
+$\der{t}{T_p}{T_a}$ where $T_p=\outpred(k,n)$ and $T_a=\avoid(k)$.
+\end{defn}
+
+\begin{defn}[Realized Node]
+A reception node~$n$ is \emph{realized} in skeleton~$k$ if
+$\msg_k(n)$ is derivable before~$n$ in~$k$.
+\end{defn}
+
+Notice that one can read off penetrator behavior from the proof tree
+used to demonstrate that $\msg_k(n)$ is derivable before~$n$
+in~$k$.  For example, if a decryption step is required by the proof,
+an instance of the penetrator's decryption role is indicated.  In a
+bundle, for a non-base sorted variable, there is a substitution that
+maps the variable to a message that is not a non-base sorted variable.
+The substitution determines the penetrator behavior associated with
+the variable.
+
+\begin{conj}[Realized Skeleton]
+A skeleton is realized if and only if all of its reception nodes are
+realized.
+\end{conj}
+
+\begin{proof}[Partial Proof]
+Given a skeleton~$k$ in which all of its reception nodes are realized,
+the combination of the regular behavior in the skeleton, the
+penetrator behavior specified by the proof trees used to demonstrate
+each node is realized, and a substitution for non-base sorted
+variables determines a bundle.  The skeleton of the bundle may have
+more non-originating atoms than is in $N_k$, however since the
+extra non-originating atoms are derivable by the bundle that
+realizes~$k$, the proof trees for those atoms specify any additional
+penetrator behavior required.
+
+The ``only if'' part of this proof has yet to be completed.
+\end{proof}
+
+\section{Implementation}\label{sec:derivable implementation}
+
+The derivable before a node predicate is implemented using auxiliary
+functions.
+
+\begin{defn}[Buildable]
+Message~$t$ is \index{buildable}\emph{buildable} from previously sent
+messages~$T_p$ while avoiding~$T_a$, written $\fn{bld}(t,T_p,T_a)$, if
+\der{t}{T_p}{T_a} without the use of Inference Rules \ref{eqn:avoid},
+\ref{eqn:sep}, and~\ref{eqn:dec}.
+\end{defn}
+
+Consider the following reduction system based on Inference Rules
+\ref{eqn:avoid}, \ref{eqn:sep}, and~\ref{eqn:dec}.
+$$\begin{array}{r@{}c@{}ll}
+\dctx{\{t\}\cup T_p}{T_a}&{}\to{}&\dctx{T_p}{T_a}\setminus\{t\}
+&\mbox{if $t$ is an atom or in $X_{\top}$}\\
+\dctx{\{(t_0,t_1)\}\cup T_p}{T_a}&{}\to{}
+&\dctx{\{t_0,t_1,(t_0,t_1)\}\cup T_p}{T_a}
+&\mbox{if $t_0,t_1\notin T_p$}\\
+\dctx{\{\enc{t_0}{t_1}\}\cup
+T_p}{T_a}&{}\to{}&\dctx{\{t_0,\enc{t_0}{t_1}\}\cup T_p}{T_a}
+&\mbox{if $t_0\notin T_p$ and}\\
+&&&\fn{bld}(\fn{inv}(t_1),T_p,T_a)
+\end{array}$$
+
+\begin{defn}[Decompose]
+Previously sent messages~$T_p$ and avoidance set~$T_a$
+\emph{decompose} to $T'_p,T'_a$, written
+$\fn{decompose}(T_p,T_a)=(T'_p,T'_a)$, if
+$\dctx{T_p}{T_a}\to^\ast\dctx{T'_p}{T'_a}$
+and $(T'_p,T'_a)$ is a normal form of reduction~$\to$.
+\end{defn}
+
+The penetrator derivable predicate $\der{t}{T_p}{T_a}$ is implemented as
+\begin{center}
+\begin{tabular}{l}
+$\der{t}{T_p}{T_a}={}$\\
+\quad\textbf{let} $T'_p, T'_a=\fn{decompose}(T_p,T_a)$ \textbf{in}\\
+\quad$\fn{bld}(t,T'_p,T'_a)$
+\end{tabular}
+\end{center}
+
+The decomposition at a node function is
+\begin{center}
+\begin{tabular}{l}
+$\fn{dcmp}(k,n)={}$\\
+\quad$\fn{decompose}(\outpred(k,n),\avoid(k))$
+\end{tabular}
+\end{center}
+
+The derivable before a node predicate is implemented as
+\begin{center}
+\begin{tabular}{l}
+$\fn{der}(k,n,t)={}$\\
+\quad\textbf{let} $T_p, T_a=\fn{dcmp}(k,n)$ \textbf{in}\\
+\quad$\fn{bld}(t,T_p,T_a)$
+\end{tabular}
+\end{center}
+
+\chapter{Carried Only Within}\label{chp:cow}
+
+A set of encryptions~$T_e$ protects critical message~$t$ in
+message~$t'$ if~$t$ is carried by~$t'$ only within a member of~$T_e$.
+The definition of the carried only within ({\cow}) relation to follow makes
+this concept precise.  The concept is used when solving authentication
+tests (Chapter~\ref{chp:auth tests}).
+
+\begin{defn}[Ancestors]
+Let $t'=t\termat p$.  The \index{ancestors}\emph{ancestors} of~$t'$
+in~$t$ at~$p$ is the set $\fn{anc}(t,p)=\{t\termat p'\mid \mbox{$p'$ a
+  proper prefix of~$p$}\}$.
+\end{defn}
+
+\begin{defn}[Carried Only Within]\label{def:cow}
+Message~$t$ is \index{carried only within}\emph{carried only within}
+set~$T_e$ in~$t'$ if for all \index{carried positions}carried
+positions~$p$ of~$t$ in~$t'$, there exists an
+ancestor~$t_a\in\fn{anc}(t',p)$ and $t_e\in T_e$ such that~$t_a\equiv
+t_e$.
+\end{defn}
+
+The function defines $\fn{carpos}(t,t')$ is defined on
+Page~\pageref{def:carried positions}, the set of positions at
+which~$t'$ carries~$t$.  The interface to each algebra exports
+\index{unify}$\fn{unify}_0$, where
+$$\fn{unify}_0(t,t',\sigma)=\{\sigma'\circ\sigma\mid
+\sigma'\in\fn{unify}(\sigma(t),\sigma(t'))\}.$$
+
+The details of a reduction on skeletons called a augmentation will be
+described in Section~\ref{sec:augmentation}.  In simplified form, for
+an augmentation, given~$t$,~$T_e$, and~$t'$, one must find all most
+general unifiers~$\sigma$ such that~$\sigma(t)$ is carried only within
+set~$\sigma(T_e)$ in~$\sigma(t')$.
+
+\begin{figure}
+\begin{center}
+\begin{tabular}{l}
+$\fn{cows}(t,T,t') ={}$\\
+\quad $\fn{cows}_0(t,T,t',\idsigma)$
+\quad --- $\idsigma$ is the identity
+subst \\
+\\
+$\fn{cows}_0(t,T,t',\sigma) ={}$\\
+\quad \textbf{if} $\sigma(t)$ is {\cow} $\sigma(T)$ at
+$\sigma(t')$ \textbf{then}\\
+\qquad $\{\sigma\}$\\
+\quad \textbf{else}\\
+\qquad\textbf{let}
+$S=\fn{fold}(t,T,t',\sigma)$
+\textbf{in}\\
+\qquad$\bigcup_{\sigma'\in S}
+\fn{cows}_0(t, T, t',\sigma')$\\
+\\
+$\fn{fold}(t,T,t',\sigma)={}$\\
+$\quad\{\sigma'\circ\sigma\mid\sigma'\in
+\fn{fold}_0(\sigma(T),\sigma(t'),\{\idsigma\},
+\fn{carpos}(\sigma(t),\sigma(t')))$\\
+\\
+$\fn{fold}_0(T,t',S,\{\})=S$\\
+$\fn{fold}_0(T,t',S,\seq{p}\append P)={}$\\
+\quad $\fn{fold}_0(T,t',\fn{solve}(\fn{anc}(t',p),T,S),P)$\\
+\\
+$\fn{solve}(T,T',S)={}$\\
+\quad$\{\sigma'\mid t\in T, t'\in T',
+\sigma\in S, \sigma'\in\fn{unify}_0(t,t',\sigma)\}$
+\end{tabular}
+\end{center}
+\caption{The \fn{cows} Function}\label{fig:cows}\index{cows@\fn{cows}}
+\end{figure}
+
+A carried only within solution cannot be directly computed using
+Definition~\ref{def:cow}.  Given terms~$t_a$ and~$t_e$, the
+$\fn{unify}_0$ function finds substitutions~$\sigma$ such
+$\sigma(t_a)\equiv \sigma(t_e)$, however, the carried positions
+$\fn{carpos}(\sigma(t),\sigma(t'))$, are used before the
+$\fn{unify}_0$ function computes the substitution~$\sigma$.
+Figure~\ref{fig:cows} displays the iterative procedure that breaks the
+cyclic dependencies.  Each step of the iteration improves an
+approximation of a solution to the problem.  The correctness of this
+function is shown in~\cite{algimpl11}, although for a version of the
+algorithm with the alternate definition for the function~$\fn{fold}$ in
+Figure~\ref{fig:fold}.
+
+\begin{figure}
+\begin{center}
+\begin{tabular}{l}
+$\fn{fold}(t,T,t',\sigma)={}$\\
+$\quad\fn{fold}_0(t,T,t',\sigma,\{\idsigma\},\fn{carpos}(\sigma(t), \sigma(t')))$\\
+\\
+$\fn{fold}_0(t,T,t',\sigma,S,\{\})=\{\sigma' \circ \sigma | \sigma' \in S\}$\\
+$\fn{fold}_0(t,T,t',\sigma,S,\seq{p} \append P)={}$\\
+\quad
+$\fn{fold}_0(t,T,t',\sigma,\fn{solve}(\fn{anc}(\sigma(t'),p),\sigma(T),S),P)$\\
+\end{tabular}
+\end{center}
+\caption{The Alternate \fn{fold} Function}\label{fig:fold}
+\end{figure}
+
+\chapter{Solving Authentication Tests}\label{chp:auth tests}
+
+\begin{defn}[Protectors]
+Let \fn{deriv} be a boolean valued function that determines if a
+message is derivable.  The encryptions that
+\index{protectors}protect~$t_c$ in~$t$ is
+$\fn{protectors}(\fn{deriv},t_c, t) = \fn{prot}(t)$ where
+$$\fn{prot}(t) =\left\{
+\begin{array}{ll}
+\mbox{undefined}&\mbox{if $t\equiv t_c$, else}\\
+\{\}&\mbox{if $t=\enc{t_0}{t_1}$ and $t_c$ is not carried by~$t_0$, else}\\
+\{\enc{t_0}{t_1}\}&
+\mbox{if $t=\enc{t_0}{t_1}$ and $\lnot\fn{deriv}(\fn{inv}(t_1))$, else}\\
+\fn{prot}(t_0)&\mbox{if $t=\enc{t_0}{t_1}$, else}\\
+\bigcup_{i<n}\fn{prot}(t_i)&\mbox{if $t=f(t_0,\ldots,t_{n-1})$ and~$t$
+  is not an atom, else}\\
+\{\}&\mbox{otherwise.}
+\end{array}\right.$$
+\end{defn}
+
+\begin{defn}[Escape Set]
+The \index{escape set}\emph{escape set} for message~$t_c$ at~$n$ in
+skeleton~$k$ is the set of encryptions $\fn{esc}(k,n,t_c)$ where
+$$\fn{esc}(k,n,t_c)=\{t_e\mid t_e\in\fn{protectors}(\lambda
+t\mathpunct.\fn{der}(k,n,t),t_c,t_o), t_o\in\outpred(k,n)\}$$
+and~$\fn{der}(k,n,t)$ is true when $t$ is derivable before~$n$ in~$k$
+(See Definition~\ref{def:der}).
+\end{defn}
+
+The $\fn{der}$ function is implemented as
+$\fn{der}(k,n,t)=\fn{bld}(t,T_p,T_a)$ where
+$(T_p,T_a)=\fn{dcmp}(k,n)$, so that~$T_p$ and~$T_a$ need not be
+recomputed.
+
+\begin{defn}[Critical Position]\label{def:critical position}
+Position~$p$ is a \index{critical position}\emph{critical position} of
+$t=\msg_k(n)$ if
+\begin{enumerate}
+\item $p$ is a carried position in~$t$,
+\item either $t\termat p\in U_k$, $t\termat p=\hash t_1$, or $t\termat
+  p=\enc{t_0}{t_1}$ and~$t_1$ is not derivable before~$n$ in~$k$,
+  \label{item:nonce or encryption}
+\item $\fn{esc}(k,n,t\termat p)$ is defined, and
+\item $\fn{anc}(t,p)\cap \fn{esc}(k,n,t\termat p)=\emptyset$.
+\end{enumerate}
+\end{defn}
+
+The message at a critical position is called an \emph{authentication
+  test}.  It is a \index{nonce test}\emph{nonce test} if the message
+is an atom, otherwise it is a \index{encryption test}\emph{encryption
+  test}.  (A hash\index{hash} is treated as a kind of encryption in
+which the term that is hashed is the encryption key.)  Observe that
+every critical message at a node in a skeleton is not derivable at the
+node.
+
+\begin{conj}
+A reception node is unrealized iff it has a critical position.
+\end{conj}
+
+\begin{defn}[Target Messages]
+Let $T_e$ be a set of messages, and~$t_c$ be a message.  The set of
+\index{target messages}\emph{target messages} is
+$$\fn{targ}(t_c,T_e)=\{t_c\}\cup\{t_t\mid t_e\in T_e,p\in\fn{carpos}(t_c, t_e),
+t_t\in\fn{anc}(t_e,p)\}\setminus T_e.$$
+\end{defn}
+
+\begin{defn}[Critical Position Solved]\label{def:critical position solved}
+Suppose~$p$ is a critical position at~$n_0$ in~$k_0$ and
+$k_0\homomorphism{\phi,\sigma}k_1$.  Let~$t_0=\msg_k(n)\termat p$,
+$t_1=\sigma(t_0)$, $T_0=\fn{esc}(k_0,n_0,t_0)$, $T_1=\sigma(T_0)$,
+$n_1=\phi(n_0)$, and~$t=\msg_{k_1}(n_1)$.  Critical position~$p$ is
+\index{solved critical position}\emph{solved} in~$k_1$ after~$k_0$
+at~$n_0$ if:
+\begin{enumerate}
+\item $\fn{anc}(t,p)\cap T_1\neq\emptyset$, or
+\item for some~$t_p\in\outpred(k_1,n_1)$, $t_1$ is not carried
+  only within~$T_1$ in~$t_p$, or
+\item
+  $\fn{targ}(t_1,\fn{esc}(k_1,n_1,t_1))\setminus\sigma(\fn{targ}(t_0,T_0))\neq\emptyset$
+  and there are variables in $k$'s protocol that are not atoms, or
+\item the decryption key of a member of~$T_1$ is derivable
+  before~$n_1$ in~$k_1$, or
+\item $t_1$ is an encryption and its encryption key is derivable
+  before~$n_1$ in~$k_1$.
+\end{enumerate}
+\end{defn}
+
+\section{Test Solving Steps}
+
+A step used to solve a test is a contraction
+(Definition~\ref{def:contraction}), a regular augmentation
+(Definition~\ref{def:regular augmentation}), a displacement
+(Definition~\ref{def:displacement}), or a listener augmentation
+(Definition~\ref{def:listener augmentation}).
+
+\begin{defn}[Contraction]\label{def:contraction}
+Let~$p$ be a critical position
+at~$n$ in~$k$, $t=\msg_k(n)$, and $T_e= \fn{esc}(k,n,t\termat p)$.
+Suppose there is a substitution~$\sigma$ such that for
+some~$t_a\in\fn{anc}(t,p)$, $t_e\in T_e$, $\sigma(t_a)=\sigma(t_e)$.
+Skeleton~$k_1$ is a \index{contraction}\emph{contraction} if
+$k\reduction{\ops{S}_\sigma}k_0\reduction{\fn{pskel}}k_1$.
+\end{defn}
+
+{\cpsa} computes a set of substitutions for each critical position, and
+then removes some substitutions to form a complete set of most
+general unifiers.  Only most general unifiers are used for
+contractions.
+
+\begin{defn}[Regular Augmentation]\label{def:regular augmentation}
+Suppose substitution~$\sigma$, non-listener role~$r$, and trace~$C$
+are selected as described in Section~\ref{sec:augmentation}.
+Skeleton~$k_2$ is a \index{regular augmentation}\emph{regular
+  augmentation} if
+$k\reduction{\ops{S}_\sigma}k_0\reduction{\ops{A}_{n,r,C}}k_1
+\reduction{\fn{pskel}}k_2$.
+\end{defn}
+
+\begin{defn}[Displacement]\label{def:displacement}
+Let substitution~$\sigma$, non-listener role~$r$, and trace~$C$ be
+selected as described in Section~\ref{sec:augmentation}, and there be
+a preskeleton~$k_1$ such that
+$k\reduction{\ops{S}_\sigma}k_0\reduction{\ops{A}_{n,r,C}}k_1$.
+Suppose there are strands~$s$ and~$s'$, where one of them is the newly
+created strand, and a most general unifier~$\sigma'$ such that
+$\sigma'(\Theta_{k_1}(s)(j))\equiv \sigma'(\Theta_{k_1}(s')(j))$ for
+$0\leq j<|\Theta_{k_1}(s)|$.  Skeleton~$k_4$ is a
+\index{displacement}\emph{displacement} if
+$k_1\reduction{\ops{S}_{\sigma'}}k_2\reduction{\ops{C}_{s,s'}}k_3
+\reduction{\fn{pskel}}k_4$.
+\end{defn}
+
+\begin{defn}[Listener Augmentation]\label{def:listener augmentation}
+Let~$p$ be a critical position at~$n$ in~$k$, $t_c=\msg_k(n)\termat
+p$, and $T_e= \fn{esc}(k,n,t_c)$.  For each $\enc{t_0}{t_1}\in T_e$,
+skeleton~$k_1$ is a \index{listener augmentation}\emph{listener
+  augmentation} if
+$k\reduction{\ops{A}_{n,\lsn,C}}k_0\reduction{\fn{pskel}}k_1$ and~$C$
+listens for $\fn{inv}(t_1)$,
+i.e.\ $C=\seq{\inbnd\fn{inv}(t_1),\outbnd\fn{inv}(t_1)}$.  If
+$t_c=\enc{t_0}{t_1}$, then skeleton~$k_1$ is a \emph{listener
+  augmentation} if
+$k\reduction{\ops{A}_{n,\lsn,C}}k_0\reduction{\fn{pskel}}k_1$ and
+$C=\seq{\inbnd t_1,\outbnd t_1}$.
+\end{defn}
+
+For regular augmentation and displacement, {\cpsa} removes solutions
+that lead to skeletons that are less general than other solutions,
+that is, when there is a homomorphism from a solution to the omitted
+solution.
+
+\begin{defn}[Cohort Member]\label{def:cohort member}
+For unrealized node~$n$ in a skeleton~$k_0$, and a position~$p$
+at~$n$, $k_0\reduction{n,p}k_1$ asserts that $k_1$ is a member of the
+\index{cohort}cohort of~$k_0$, where~$k_1$ is derived using
+contraction, regular augmentation, displacement, or listener
+augmentation, and~$p$ is solved in~$k_1$ after~$k_0$ at~$n$.  For the
+setwise cohort member reduction, $\{k_0\}\setreduction{n,p}\{k_1\mid
+k_0\reduction{n,p}k_1\}$, when~$n$ is unrealized in~$k_0$, and~$p$ is
+a critical position at~$n$.
+\end{defn}
+
+\begin{conj}[Critical Message Solved]
+If $k_0\reduction{n_0,p_0}k_1 \reduction{n_1,p_1}\ldots
+\reduction{n_{\ell-1},p_{\ell-1}}k_\ell$ is a sequence of cohort member
+reductions, then for positive~$\ell$,~$p_0$ is solved in~$k_\ell$
+after~$k_0$ at~$n_0$.
+\end{conj}
+
+\section{Augmentation}\label{sec:augmentation}
+
+Let~$t_c$ be the critical message that demonstrates~$n$ is a test node
+in skeleton~$k$.  For each triple~$(\sigma,r,C)$ that satisfies some
+properties, there is a potential regular augmentation
+with~$\comp{\reduction{\fn{pskel}}}%
+{\comp{\reduction{\ops{A}_{n,r,C}}}{\reduction{\ops{S}_\sigma}}}$.
+When successful, the message~$t$ in the last event of the added strand
+is outbound, carries~$\sigma(t_c)$, but~$\sigma(t_c)$ is not carried
+only within escape set~$\sigma(T_e)$ in~$t$, where
+$T_e=\fn{esc}(k,n,t_c)$, the escape set.  Moreover, for every other
+message~$t$ in the strand,~$\sigma(t_c)$ is carried only within escape
+set~$\sigma(T_e)$ in~$t$.  The last event in the strand is called a
+\index{transforming event}\emph{transforming event}, as this event no
+longer protects the critical message, but events that precede it do.
+
+{\cpsa} computes the parameters for a set of augmentation steps as
+follows.  Suppose skeleton~$k=\skel_X(\_,P,\_,\_,\_,\_)$.  First,
+compute the target messages, $T_t=\fn{targ}(t_c, T_e)$.  Next, for
+each non-listener role $\role(C_r,N_r,U_r)\in P$ and each index~$h$ where
+$C_r(h)=\outbnd t$, a transmission, do the following.
+
+\begin{description}
+\item[Create fresh variables:] Let~$\sigma_r$ be a sort preserving
+  variable renaming, where the domain is the variables that occur in
+  $\prefix{C_r}h$, and every variable in the range does not occur
+  in~$X$ or in~$P$.
+
+\item[Insert critical message:] For each message~$t'$ carried by~$t$,
+  and each~$t_t\in \fn{targ}(t_c, T_e)$, consider most general
+  unifiers~$\sigma'$ where, $\sigma'(t')=\sigma'(t_t)$ and
+  $\sigma_r\unlhd\sigma'$.  (In other words,
+  $\sigma'=\sigma_0\circ\sigma_r$ for some $\sigma_0$.)
+
+\item[Ensure previous events do not transform:] For each $\sigma'$,
+  find most general unifiers~$\sigma$ such that for $0\leq i<h$,
+  $\sigma(t_c)$ is carried only within $\sigma(T_e)$ at $\sigma(C(i))$
+  and $\sigma'\unlhd\sigma$.  The function \fn{cowt}, presented in
+  Figure~\ref{fig:cowt}, performs the explorations, producing the
+  substitutions $S'=\fn{cowt}(t_c,T_e,\prefix{C_r}{h},S)$.  Function
+  $\fn{fold}$ is defined in Figure~\ref{fig:cows}.  Let $S_{r,h}$ be
+  the set~$S'$ with non-most general unifiers removed.
+\item[Ensure last event transforms:] For each $\sigma\in S_{r,h}$, if
+  $\sigma(t_c)$ is not carried only with $\sigma(T_e)$ at
+  $\sigma(C(h))$, try augmenting with parameters $n$, $r$,
+  $\sigma\circ\prefix{C}{h}$, and~$\sigma$.
+\end{description}
+
+\begin{figure}
+\begin{center}
+\begin{tabular}{l}
+$\fn{cowt}(t,T,C,S) ={}$\\
+$\quad\bigcup_{\sigma\in S}\fn{cowt}_0(t,T,C,\sigma)$\\
+\\
+$\fn{cowt}_0(t,T,C,\sigma) ={}$\\
+\quad \textbf{if} $\all{t}\pm t\in C\to\sigma(t)$ is {\cow} $\sigma(T)$ at
+$\sigma(t')$ \textbf{then}\\
+\qquad $\{\sigma\}$\\
+\quad \textbf{else}\\
+\qquad$\fn{cowt}(t,T,C,\fn{foldn}(t, T, C, \{\sigma\}))$\\
+\\
+$\fn{foldn}(t,T,\seq{},S)=S$\\
+$\fn{foldn}(t,T,\seq{\pm t'}\append C,S)={}$\\
+$\quad\fn{foldn}(t,T,C,\bigcup_{\sigma\in S}\fn{fold}(t,T,t',\sigma))$
+\end{tabular}
+\end{center}
+\caption{The $\fn{cowt}$ Function}\label{fig:cowt}
+\end{figure}
+
+\begin{note}
+For target terms to be the reasonable set for insertion of the
+critical message, one must require that variables of sort message are
+acquired.  This fact needs to be explained and noted as another reason
+for the acquired variable constraint.
+\end{note}
+
+\chapter{Collapsing and Preconditioning}\label{chp:collapsing}
+
+The input preskeleton is preconditioned before it is subjected to
+authentication test solving.  The preskeleton is converted to a
+skeleton and then collapsing is applied so as to ensure all shapes are
+found.  Collapsing handles the case in which strands merged in the
+input lead to shapes.
+
+\begin{defn}[Collapsing]
+Let $k_0$ and $k_1$ be two skeletons such that there are two
+strands,~$s$ and~$s'$, and a most general unifier~$\sigma$ such that
+$\sigma(\Theta_{k_0}(s)(j))\equiv \sigma(\Theta_{k_0}(s')(j))$ for all
+$0\leq j<|\Theta_{k_0}(s)|$.  Then~$k_0$ \emph{collapses} to~$k_1$,
+written $k_0\reduction{\fn{clp}}k_1$, if
+$k_0\reduction{\ops{S}_\sigma}k\reduction{\ops{C}_{s,s'}}k'
+\reduction{\fn{skel}}k_1$.
+\end{defn}
+
+\begin{defn}[Preconditioning]
+For point-of-view preskeleton~$k_0$,~$k_0$ is preconditioned to~$k_1$,
+written $k_0\reduction{\fn{pre}}k_1$, if
+$k_0\reduction{\fn{skel}}k\mathbin{(\reduction{\fn{clp}})^\ast}k_1$.
+\end{defn}
+
+\chapter{Generalization}\label{chp:generalization}
+
+The cohort reduction system produces a set of realized skeletons.
+Generalization attempts to convert that set into a set of skeletons.
+Not all possible cases are implemented due to performance issues, so
+it is not uncommon to find a realized skeleton in the output of a run
+of {\cpsa} that is not a shape.
+
+\begin{conj}[Shape Completeness]
+Without generalization, {\cpsa} produces a complete set of shapes
+among the realized skeletons in its output.
+\end{conj}
+
+\begin{defn}[Generalize]
+A skeleton~$k_0$ \emph{generalizes}
+skeleton~$k_1$, written $k_1\reduction{<}_k k_0$, if
+both~$k_0$ and~$k_1$ are realized,~$k_0$ and~$k_1$ are not isomorphic,
+there is a homomorphism from a point-of-view skeleton~$k$ to~$k_0$, and
+a strandwise injective homomorphism $k_0\mapsto k_1$.
+\end{defn}
+
+If skeletons are allowed to be isomorphic, we
+write~$k_1\reduction{\leq}_k k_0$, and note that $\reduction{\leq}_k$
+defines a partial ordering.  Therefore, there are maximal elements in
+the partial ordering.  A shape associated with a preskeleton
+is a maximally generalized realized skeleton derived from the
+preskeleton.
+
+\begin{defn}[Shape]
+Let~$k_0$ be a preskeleton such that $k_0\reduction{\fn{pre}}k$ for
+some skeleton~$k$, and let~$k_1$ be a realized skeleton such that
+$k\mapsto k_1$.  Skeleton~$k_2$ is a \index{shape}\emph{shape}
+of~$k_0$ if $k_1\reduction{\leq}_k k_2$, and~$k_2$ is maximal among
+skeletons that generalize~$k_1$.
+\end{defn}
+
+There are four generalization reductions used to transform a realized
+skeleton into its shapes: deletion, weakening, forgetting, and
+separation.
+
+\begin{defn}[Deletion]
+Skeleton~$k_0$ \index{deletion}\emph{generalizes by deletion}
+skeleton~$k_1$, written $k_1\reduction{\ops{D}_n}_k k_0$, if
+$k_1\reduction{<}_k k_0$, $k_2\reduction{\fn{skel}}k_0$, and~$k_2$ is
+the result of deleting node~$n$ in~$k_1$ and all of the nodes that
+follow it in its strand.
+\end{defn}
+
+\begin{defn}[Weakening]
+Skeleton~$k_0$ \index{weakening}\emph{generalizes by weakening}
+skeleton~$k_1$, written $k_1\reduction{\ops{W}_{n,n'}}_k k_0$, if
+$k_1\reduction{<}_k k_0$, $k_2\reduction{\fn{skel}}k_0$, and~$k_2$
+is~$k_1$ except $\kprec{k_2}=(\kprec{k_1}\setminus\{(n,n')\})^\ast$.
+\end{defn}
+
+\begin{defn}[Forgetting]
+Skeleton~$k_0$ \index{forgetting}\emph{generalizes by origination
+  assumption forgetting} skeleton~$k_1$, written
+$k_1\reduction{\ops{F}_t}_k k_0$, if $k_1\reduction{<}_k k_0$,
+$k_2\reduction{\fn{skel}}k_0$, and~$k_2$ is~$k_1$ except
+$U_{k_2}=U_{k_1}\setminus\{t\}$ and $N_{k_2}=N_{k_1}\setminus\{t\}$.
+\end{defn}
+
+Sometimes a more general skeleton can be found by replacing some
+occurrences of one variable by a fresh variable.  For variable
+separation, the location of an occurrence of a variable is defined
+using a skeleton's instance.  Recall that in the external syntax,
+strand~$s$ in skeleton~$k$ is described by an instance of the form
+$\inst(r,h,\sigma)$.  (Instances are introduced in
+Section~\ref{sec:instances}.)
+
+\begin{defn}[Location]
+Variable~$x$ is at \emph{location} $(s,y,p)$ in~$k$ if
+the instance at $\Theta_k(s)$ is $\inst(r,h,\sigma)$ and
+$x=\sigma(y)\termat p$.
+\end{defn}
+
+\begin{defn}[Variable Separation]
+Skeleton~$k_0$ \index{variable separation}\emph{generalizes by
+  variable separation} skeleton~$k_1$, written
+$k_1\reduction{\ops{V}_t}_k k_0$, if $k_1\reduction{<}_k k_0$,
+$k_2\reduction{\fn{skel}}k_0$, and~$k_2$ is~$k_1$ except~$t$ is a
+variable that occurs in multiple locations in~$k_1$, and~$k_2$ is the
+result of replacing~$t$ with a variable~$t_0$ of the same sort at a
+proper subset of~$t$'s locations, where~$t_0$ occurs nowhere in~$k_1$.
+\end{defn}
+
+When separating a non-originating term, both the term and its clone
+are non-originating.  When separating a uniquely originating term,
+either the term or its clone is uniquely originating.
+
+\begin{note}
+What happens when separating~$t$ in~$k$ into~$t$ and~$t_0$, and
+$\cn{ltk}(t,t)\in N_k$?  Should a skeleton~$k_0$ with
+$\cn{ltk}(t,t_0)\in N_{k_0}$ be a candidate separation?
+Currently, only skeletons~$k_1$ with $\cn{ltk}(t,t)\in N_{k_1}$
+and $\cn{ltk}(t_0,t_0)\in N_{k_1}$ are considered.
+\end{note}
+
+\begin{defn}[Generalization]
+The reduction~$\reduction{\fn{gen}}_k
+=\bigcup_n\reduction{\ops{D}_n}_k\cup
+\bigcup_{n,n'}\reduction{\ops{W}_{n,n'}}_k\cup
+\bigcup_t\reduction{\ops{F}_t}_k\cup \bigcup_t\reduction{\ops{V}_t}_k$
+is the \emph{generalization} relation.  For the setwise generalization
+reduction, $\{k_0\}\setreduction{\fn{gen}}_k\{k_1\}$ when
+$k_0\reduction{\fn{gen}}_k k_1$.
+\end{defn}
+
+The fact that each generalization reduction replaces a singleton with
+just a singleton requires explanation.  It's simply a matter of
+performance.  If all possibilities are considered, {\cpsa} run time
+would become dominated by generalization.  Since generalization
+failures do not interfere with producing a complete description of the
+input, an approximation of the set of shapes is okay.
+
+\begin{conj}[Generalization]
+The relation~$\setreduction{\fn{gen}}_k$ is terminating.
+\end{conj}
+
+\section*{Discussion}
+In~\cite{DoghmiGuttmanThayer07}, the shapes of a point-of-view
+skeleton are said to be minimal, in the partial ordering induced by
+injective homomorphism, among all realized homomorphic images of the
+point-of-view skeleton.  Minimal corresponds to maximally generalized.
+The need for origination assumption forgetting was not known
+when~\cite{DoghmiGuttmanThayer07} was written.  Generalization by
+variable separation uses non-carried positions, and in particular,
+positions that traverse an atom edge.  Algebras in previous strand
+space papers have no concept of a position that traverses an atom
+edge, and therefore cannot be used to specify generalization by
+variable separation.
+
+Variable separation can be expensive when there are many possible ways
+to separate variables.  The implementation simply truncates the search
+when it grows too large.
+
+\chapter{Skeleton Reduction System}\label{chp:skeleton reduction}
+
+Let reduction
+$\twoheadrightarrow_k=(\setreduction{\fn{co}}\cup
+\setreduction{\fn{gen}}_k)^+$.  This reduction system specifies the
+{\cpsa} program.
+
+\begin{conj}
+The reduction~$\twoheadrightarrow_k$ is confluent.
+\end{conj}
+
+\begin{conj}[Soundness]\label{cnj:soundness}
+Let~$k_0$ be a preskeleton and~$k$ be an unrealized skeleton such that
+$k_0\reduction{\fn{pre}}k$.  Skeleton~$k_1$ is a shape of~$k_0$ if
+$\{k\}\twoheadrightarrow_k K$, $k_1\in K$, and~$K$ is a normal form.
+\end{conj}
+
+The set of bundles denoted by preskeleton~$k$, $\sembrack{k}$ is
+defined on Page~\pageref{def:preskeleton denotation}.
+
+\begin{conj}[Completeness]\label{cnj:completeness}
+Let~$k_0$ be a preskeleton and~$k$ be an unrealized skeleton such that
+$k_0\reduction{\fn{pre}}k$.  For all~$K$ such that $\{k\}\twoheadrightarrow_k
+K$, $\sembrack{k_0}=\bigcup_{k_1\in K}\sembrack{k_1}$.
+\end{conj}
+
+\chapter*{Acknowledgement}
+
+Carolyn Talcott and Leonard Monk provided valuable feedback on drafts
+of this document.
+
+\appendix
+
+\chapter{Penetrator Non-Origination Assumptions}\relax
+\label{chp:penetrator non-origination}
+
+Penetrator non-origination assumptions have been added as an extension
+to the basic strand space theory.  An atom is \index{penetrator
+  non-originating}\index{non-originating!penetrator}\emph{penetrator
+  non-originating} in a bundle if it originates on no penetrator
+strand, but each of its variables occurs in some strand's trace.
+
+Penetrator non-origination assumptions can be used to model
+passwords.  Several regular participants might know a password and
+originate it in a run of a protocol, but an idealized password is one
+the penetrator cannot guess.
+
+A penetrator non-originating atom is similar to a non-originating
+atom, except in that it can be carried.  There are two definitions
+that require change.  Penetrator non-originating atoms must be added
+to the avoidance set of Definition~\ref{def:avoid}.  When the message
+at a critical position is an atom (see Definition~\ref{def:critical
+  position}, Item~\ref{item:nonce or encryption}), instead of being
+uniquely originating, and can also be penetrator non-originating.
+
+\chapter{Programs Specified by a Role}\label{chp:traces}
+
+Given the definitions in Chapter~\ref{chp:strand spaces and bundles},
+a role can be viewed as an abstraction of a program, and a strand as
+an abstraction of a run of a program.  But what program is specified
+by a role?
+
+Consider a role that contains the event $\inbnd\enc{t_0}{t_1}$.  If
+the program has the decryption key~$\fn{inv}(t_1)$ before the message
+is received, the program could decrypt the message and extract~$t_0$.
+Alternatively, if the program has $\enc{t_0}{t_1}$, or has~$t_0$ and
+the encryption key~$t_1$, it might check to see if the received
+message is the same as the expected message, and abort the run if not.
+
+Here is an example of when the second behavior is desired.  In
+{\cpsa}, before hashing was part of the algebra, an encryption was
+used to represent hashing.  The hash of~$t$, $\#t$, expanded to
+$\enc{\mbox{``hash''},t}{h}$, where~$h$ was an asymmetric key known to
+all, but no one knew~$h^{-1}$.  The tag ``hash'' was added to the
+encryption so as to ensure a hash was never confused with other uses of
+encryption.
+
+A role does not specify a valid program if the only possible way of
+interpreting the event~$\inbnd\#t$ is by using~$h^{-1}$ to decrypt
+$\enc{\mbox{``hash''},t}{h}$.  The remainder of this section describes
+how this class of specification errors is detected for the Basic Crypto
+Algebra.
+
+The behaviors associated with a trace depend on the set of messages
+available initially.  The behaviors are specified by a data flow
+relation, $\flow{T_0}{C}{T_1}$.  For trace~$C$, the relation
+$\flow{T_0}{C}{T_1}$ asserts that when messages~$T_0$ are available
+initially, there is a behavior of~$C$ that produces messages~$T_1$.
+
+A derivation tree used to demonstrate $\flow{T_0}{C}{T_1}$ shows the steps
+that enable the flow of data.  The tree can be linearized, and thus
+specifies a sequential program that implements the role.
+
+The data flow relation is defined with the aid of a data flow relation
+for a sequence of events, $\flow{T_0}{C}{T_1}$.
+
+$$\flow{T}{\seq{}}{T}\qquad
+\infer{\flow{T_0}{\seq{\pm t}}{T}\quad\flow{T}{C}{T_1}}%
+{\flow{T_0}{\seq{\pm t}\append C}{T_1}}$$
+
+The $\flow{T_0}{\seq{\pm t}}{T_1}$ relation is defined using the
+$\flow{T_0}{C}{T_1}$ relation.  An outbound message can be formed if
+it is available initially
+$$\infer{t\in T}{\flow{T}{\seq{+t}}{T}}$$
+or if it can be formed by construction.
+$$\infer{\flow{T}{\seq{+t_1,\ldots,+t_{n}}}{T}}%
+{\flow{T}{\seq{+f(t_1,\ldots,t_{n})}}{T}}\quad
+\left[\begin{array}{l}
+f(t_1,\ldots,t_{n})\\
+\mbox{not an atom}
+\end{array}\right]$$
+
+An inbound message makes atoms and acquired variables available.
+$$\flow{T}{\seq{-t}}{T\cup\{t\}}\quad [\mbox{$t$ an atom or a variable}]$$
+When the decryption key is available, the contents of the encryption
+are also available.  Furthermore, the encryption can be sent in future
+messages without access to its encryption key.
+$$\infer{\flow{T_0}{\seq{+\fn{inv}(t_1)}}{T_0}\quad
+  \flow{T_0}{\seq{-t_0}}{T_1}}{\relax
+  \flow{T_0}{\seq{-\enc{t_0}{t_1}}}{T_1\cup\{\enc{t_0}{t_1}\}}}$$ A received
+encryption that can be sent ensures the encryption agrees with
+currently available terms and makes nothing new available.
+$$\infer{\flow{T}{\seq{+\enc{t_0}{t_1}}}{T}}{\relax
+  \flow{T}{\seq{-\enc{t_0}{t_1}}}{T}}$$
+
+Consider an operation $f$ other than the encryption operation.  The
+order in which messages that occur in a message constructed using~$f$
+are made available may determine if the decryption key of an
+encryption is available.  All possible orderings must be explored.
+Let~$\pi_n$ be a permutation on the domain of a sequence of
+length~$n$.
+$$\infer{\flow{T_0}{\seq{-t_1,\ldots,-t_{n}}\circ\pi_n}{T_1}}%
+{\flow{T_0}{\seq{-f(t_1,\ldots,t_{n})}}{T_1}}
+\left[\begin{array}{l}
+f(t_1,\ldots,t_{n})\\
+\mbox{not an atom}
+\end{array}\right]$$
+
+The data flow relation is used to find initial sets of atoms that are
+compatible with some behavior of a trace that produces messages.
+
+\begin{defn}[Trace Parameters]
+The set of atoms~$T_0$ are \index{parameters}\emph{parameters} of
+trace~$C$ if $\flow{T_0}{C}{T_1}$ for some~$T_1$, and~$T_0$ is
+minimal, that is for all~$T'_0$ such that $\flow{T'_0}{C}{T_1}$,
+$T'_0\not\subset T_0$.
+\end{defn}
+
+The role $\seq{\outbnd\enc{a,n}{K_b},\inbnd\enc{n}{K_a}}$ has two sets
+of parameters, $\{a,n,K_b,K^{-1}_a\}$ and $\{a,n,K_b,K_a\}$.  See
+Figure~\ref{fig:ambigrole} for two examples of programs that implement
+the role, using distinct parameter sets.
+
+\begin{figure}
+\begin{center}
+\begin{tabular}{l@{\hspace{8mm}}l}
+$\cn{proc}(a,n,K_b,K^{-1}_a)$ & $\cn{proc}(a,n,K_b,K_a)$\\
+$\quad \cn{send}(\enc{a,n}{K_b});$ & $\quad \cn{send}(\enc{a,n}{K_b});$\\
+$\quad x_0\gets \cn{recv}();$ & $\quad x_0\gets \cn{recv}();$\\
+$\quad x_1\gets \cn{decrypt}(x_0,K^{-1}_a);$ & $\quad x_1\gets \enc{n}{K_a};$\\
+$\quad x_1 \neq n \to \cn{fail};$ & $\quad x_0 \neq x_1 \to \cn{fail};$ \hspace{8mm}\\
+$\cn{end}$ & $\cn{end}$
+\end{tabular}
+\end{center}
+\label{fig:ambigrole}
+\caption{Two programs that implement the role $\seq{\outbnd\enc{a,n}{K_b},\inbnd\enc{n}{K_a}}$.}
+\end{figure}
+
+The {\cpsa} distribution contains a program that computes the set of
+parameters of a role.  It was used to find an error in a role's use of
+hashing as described at the beginning of this section.  The role in
+question is the verifier role that is part of an attestation
+protocol~\cite{CokerEtAl11}.  In an earlier version of the role,
+every set of parameters included the decryption key of the encryption
+used as a hash.  The role was so complicated that inspection did not
+reveal the error.
+
+Note that this section is specific to the basic crypto algebra in the
+sense that all non-atomic operations are assumed to be constructable,
+and encryption has the specific de-construction recipe shown.  Although
+carried positions were not mentioned in this section, the inference system
+specifies the same concept.  In fact, in future work we hope to show that
+the inference system is all one needs to define, and that which positions
+are carried, which are protected, and which sorts are atoms can be defined
+in terms of the inferences available.
+
+\chapter{Shape Analysis and First-Order Logic}\label{chp:logic}
+
+For each point-of-view skeleton and its shapes found by {\cpsa}, there
+is a formula in the language of order-sorted first-order logic called
+a \index{shape analysis sentence}\emph{shape analysis sentence,} often
+shortened to a shape sentence~\cite{ramsdell12}.  The sentence has a
+special form,
+$\all{X}(\Psi\supset\bigvee_i\some{Y_i}(\Delta_i\wedge\Phi_i))$,
+where~$\Psi$ and~$\Phi_i$ are conjunctions of atomic formulas and~$X$
+and~$Y_i$ are variable sets.  This fragment of first-order logic is
+called coherent logic.  Formula~$\Psi$ describes the point-of-view
+skeleton~$k_0$.  For each homomorphism to a shape,
+$k_0\homomorphism{\delta_i}k_i$, formula~$\Delta_i$ describes the
+structure preserving maps~$\delta_i$, and the shape~$k_i$ is described
+by~$\Phi_i$.
+
+An interpretation of a shape sentence is a skeleton.  If {\cpsa} finds
+all of the shapes and the homomorphisms associated with a
+point-of-view skeleton, the analysis' shape sentence is satisfied in
+all realized skeletons.  Shape sentences are closely related to
+security goals~\cite{guttman09}, and motivated by that work.
+
+\section{Shape Formulas}
+
+The signature for terms extends the one used for the underlying
+message algebra with a sort $\dom{nat}$, the sort of natural numbers,
+and two new operations, constant $\cn{zero}\colon\dom{nat}$, and the
+successor function $\cn{succ}\colon\dom{nat}\to\dom{nat}$.  The text
+uses the usual numerals for natural numbers.  Variables of this sort
+will range over strands.
+
+Shape formulas make use of protocol specific predicates and protocol
+independent predicates.  For each role $r=\role_Y(C,N,U)$ in
+protocol~$P$, there are protocol specific binary predicates
+$P[r,h,x]\colon\dom{nat}\times S$ for every $0\leq h<|C|$
+and~$x\colon\srt{S}$ that occurs in~$C|_h$.  The protocol independent
+predicate of arity four is $\cn{prec}\colon
+\dom{nat}\times\dom{nat}\times\dom{nat}\times\dom{nat}$.  The protocol
+independent unary predicates are $\cn{non}\colon B$ and
+$\cn{uniq}\colon B$ for each base sort~$B$, and the protocol
+independent ternary predicates are $\cn{orig}\colon
+B\times\dom{nat}\times\dom{nat}$.  The predicate \cn{false} has arity
+zero and, of course, equality is binary.
+
+We define~$\form(k)=(Y,\Phi)$, where~$\Phi$ is $k$'s skeleton formula,
+and~$Y$ is the formula's variable set.  Using the external syntax
+presented in Section~\ref{sec:instances}, let
+$k=\skel_X(P,I,\prec,N,U)$.  The variable set~$Y$ is~$X$ augmented
+with a variable~$z_s\colon\dom{nat}$ for each strand
+$s\in\sdom(I)$.  The formula~$\Phi$ is a conjunction of atomic
+formulas composed as follows.
+
+\begin{itemize}
+\item For each $s\in\sdom(I)$, let $I(s)=\inst(r,h,\sigma)$.  For
+  each variable $x\in\sdom(\sigma)$ and term $t=\sigma(x)$, assert
+  $P[r,h,x](z_s,t)$.
+\item For each $(s,i)\prec(s',i')$, assert
+  $\cn{prec}(z_s,i,z_{s'},i')$.
+\item For each $t\in N$, assert $\cn{non}(t)$.
+\item For each $t\in U$, assert $\cn{uniq}(t)$.
+\item For each $t\in U$ and $(s,i)\in\orig_k(t)$, assert
+  $\cn{orig}(t,z_s, i)$.
+\end{itemize}
+
+In the code that extracts a shape analysis sentence, the
+$\cn{prec}$ predicate is not asserted for strand succession, and
+only for communication when it is in the transitive reduction of
+the~$\prec$ relation.  The missing relations must be asserted as axioms
+for proper handling of a shape sentence.
+
+Given a set of homomorphisms $k_0\homomorphism{\delta_i}k_i$, its shape
+sentence is
+\begin{equation}
+\sent(k_0\homomorphism{\delta_i}k_i)=\all{X}(\Psi\supset
+\bigvee_i\some{Y_i}(\Delta_i\wedge\Phi_i)),\label{eq:shape sentence}
+\end{equation}
+where $\form(k_0)=(X,\Psi)$.  The same procedure produces~$Y_i$
+and~$\Phi_i$ for shape~$k_i$ with one proviso---the variables in
+$Y_i$ that also occur in~$X$ must be renamed to avoid trouble while
+encoding the structure preserving maps~$\delta_i$.
+
+\begin{figure}
+$$\begin{array}{l}
+\all{a_0,b_0\colon\srt{A}, s_0\colon\srt{S}, d_0\colon\srt{D}, z_0\colon\srt{N}}(\\
+\quad\init_{2,a}(z_0,a_0)\wedge
+\init_{2,b}(z_0,b_0)\wedge
+\init_{2,s}(z_0,s_0)\wedge
+\init_{2,d}(z_0,d_0)\wedge{}\\
+\quad\cn{non}(a_0^{-1})\wedge
+\cn{non}(b_0^{-1})\wedge
+\cn{uniq}(s_0)\wedge\cn{orig}(s_0,z_0,1)\\
+\quad\supset\\
+\quad\some{a_1,b_1\colon\srt{A}, s_1\colon\srt{S}, d_1\colon\srt{D}, z_1,z_2\colon
+  N}(\\
+\qquad z_0=z_1\wedge a_0=a_1\wedge b_0=b_1\wedge s_0=s_1\wedge d_0=d_1\wedge{}\\
+\qquad\init_{2,a}(z_1,a_1)\wedge
+\init_{2,b}(z_1,b_1)\wedge
+\init_{2,s}(z_1,s_1)\wedge
+\init_{2,d}(z_1,d_1)\wedge{}\\
+\qquad\resp_{2,a}(z_1,a_1)\wedge
+\resp_{2,b}(z_1,b_1)\wedge
+\resp_{2,s}(z_1,s_1)\wedge
+\resp_{2,d}(z_1,d_1)\wedge{}\\
+\qquad\cn{prec}(z_1,1,z_2,1)\wedge
+\cn{prec}(z_2,2,z_1,2)\wedge{}\\
+\qquad\cn{non}(a_1^{-1})\wedge
+\cn{non}(b_1^{-1})\wedge
+\cn{uniq}(s_1)\wedge\cn{orig}(s_1,z_1,1)))
+\end{array}$$
+\caption{A Shape Analysis Sentence for Blanchet's
+  Protocol}\label{fig:blanchet's shape analysis sentence}
+\end{figure}
+
+The structure preserving maps~$\delta_i=(\phi_i,\sigma_i)$ are encoded
+in~$\Delta_i$ by a conjunction of equalities.  Map~$\sigma_i$ is coded
+as equalities between a message algebra variable in the domain
+of~$\sigma_i$ and the term it maps to.  Map~$\phi_i$ is coded as
+equalities between strand variables in~$\Psi$ and strand variables
+in~$\Phi_i$.  Let~$Z$ be the sequence of strand variables freshly
+generated for~$k_0$, and~$Z_i$ be the ones generated for~$k_i$.  The
+strand mapping part of~$\Delta_i$ is
+$\bigwedge_{j\in\sdom(\Theta)}Z(j)=Z_i(\phi_i(j))$.
+
+The shape analysis sentence for the first analysis of Blanchet's
+Simple Example Protocol in Section~\ref{sec:blanchet's simple example
+  protocol} is displayed in Figure~\ref{fig:blanchet's shape analysis
+  sentence}.  The sort \dom{nat} is abbreviated as~\srt{N}, and the
+strand progress predicate $P[r,h,x](z,t)$ is written $r_{h,x}(z,t)$
+with the protocol left implicit.
+
+\section{Semantics of Shape Formulas}
+
+Let $k=\skel_X(\rl,P,\Theta,\prec,N,U)$.  The universe of discourse is
+$\alg{D}=\nat\cup\alga_X$.  When formula~$\Psi$ is satisfied in
+skeleton~$k$ with variable assignment $\alpha\colon Y\to \alg{D}$, we
+write $k,\alpha\models\Psi$.  When sentence~$\Sigma$ is satisfied in
+skeleton~$k$, we write $k\models\Sigma$.
+
+For each protocol specific predicate $P[r,h,x]$, $k,\alpha\models
+P[r,h,x](y,z)$ iff $\alpha(y)\in\nat$, $\alpha(z)\in\alga$, and with
+$\alpha(y)=s$ and $r=\role(C,N,U)$,
+
+\begin{enumerate}
+\item $s\in\sdom(\Theta)$,
+\item $h\in\sdom(\Theta(s))$, and
+\item $\prefix{\Theta(s)}{h}=\sigma\circ\{x\mapsto\alpha(z)\}\circ\prefix{C}{h}$
+  for some~$\sigma$.
+\end{enumerate}
+
+In an interpretation, $\rl(s)$ need not be~$r$.  The events that make
+up a strand's trace is all that matters.  The protocol specific
+predicate $P[r,h,x]$ is called a \index{strand progress
+  predicate}\emph{strand progress predicate}, because it asserts a
+strand is associated with an instance of role~$r$ of height at
+least~$h$.
+
+The interpretation of the protocol independent predicates is
+straightforward.
+\begin{itemize}
+\item $k,\alpha\models\cn{prec}(w,x,y,z)$ iff
+$(\alpha(w),\alpha(x))\prec(\alpha(y),\alpha(z))$.
+\item $k,\alpha\models\cn{non}(y)$ iff $\alpha(y)\in N$.
+\item $k,\alpha\models\cn{uniq}(y)$ iff $\alpha(y)\in U$.
+\item $k,\alpha\models\cn{orig}(x,y,z)$ iff $\alpha(x)\in U$ and
+  $(\alpha(y),\alpha(z))\in\orig_k(\alpha(x))$.
+\item $k,\alpha\models y=z$ iff $\alpha(y)=\alpha(z)$.
+\item $k,\alpha\not\models\cn{false}$.
+\end{itemize}
+
+\begin{thm}\label{thm:skeleton models}
+Let $\form(k_0)=(X,\Psi)$ and $\Phi=\some{X}\Psi$.  Formula~$\Phi$ is
+satisfied in~$k$ iff there is a homomorphism from~$k_0$ to
+$k$, i.e.\ $k\models\Phi$ iff
+$\some{\delta}k_0\homomorphism{\delta}k$.
+\end{thm}
+
+This theorem corrects the first of the two main results
+from~\cite{guttman09}, as that paper omits the \cn{orig} predicate.
+
+\begin{proof}
+For the forward direction, assume~$\alpha$ is a variable assignment
+for the variables in~$X$ such that $k,\alpha\models\Psi$, and let~$Z$
+be the sequence of strand variables constructed while
+generating~$\Psi$ from~$k_0$.  Then the pair of maps
+$\delta=(\comp{\alpha}{Z},\alpha)$ demonstrate a homomorphism from~$k_0$
+to~$k$, i.e.\ each item in the definition of a preskeleton
+homomorphism on Page~\pageref{def:preskeleton homomorphism} is
+satisfied.
+
+For the reverse direction, assume maps $\delta=(\phi,\sigma)$ are such
+that $k_0\homomorphism{\delta}k$.  Then the desired variable assigment is
+$$\alpha(x)=\left\{
+\begin{array}{ll}
+\phi(Z^{-1}(x))&x\in\sran(Z)\\
+\sigma(x)&x\in\sdom(\sigma).
+\end{array}\right.$$
+\end{proof}
+
+The set of bundles denoted by preskeleton~$k$, $\sembrack{k}$ is
+defined on Page~\pageref{def:preskeleton denotation}.
+
+\begin{thm}\label{thm:sentence implies}
+Let $k_0\homomorphism{\delta_i}k_i$ be a complete set of homomorphisms
+for shapes $k_i\in K$, and assume $\sembrack{k_0}=\bigcup_{k\in
+  K}\sembrack{k}$.  Then the shape analysis
+sentence~$\Sigma=\sent(k_0\homomorphism{\delta_i}k_i)$ is satisfied in
+all realized skeletons~$k$, i.e.\ $k\models\Sigma$.
+\end{thm}
+
+\begin{proof}
+Shapes are maximal among realized skeletons, so there is no realized
+skeleton in the image of~$k$ that is not in the image of one of the
+shapes.  Therefore, by Theorem~\ref{thm:skeleton models}, the negation
+of the hypothesis of the implication is satisfied in all realized
+skeletons that are not in the image of~$k_0$, and the disjunction is
+satisfied in the remaining realized skeletons.
+\end{proof}
+
+The security goals of a protocol can be formalized using the same
+language used to specify shape analysis sentences.  A security goal
+can express an authentication goal or a secrecy goal.
+
+Security goals and shape analysis sentences can be translated into the
+language of ordinary first-order logic and used with an automated
+first-order theorem prover.  If a theorem prover deduces security
+goal~$\Phi$ from shape analysis sentence~$\Sigma$, then $\Phi$ is
+satisfied in all realized skeletons.
+
+Security goals can be used to ensure essential properties of a
+protocol are preserved in the face of changes to the protocol.
+Suppose an initial version of a protocol is specified, and shape
+analysis sentences for it are produced.  The sentences can be edited
+to produce a formalization of security goals that should be preserved
+during any revision to the protocol.  After a revision, one can
+generate revised shape analysis sentences, and use them to make sure
+each security goal is still deducible.
+
+\bibliography{cpsa}
+\bibliographystyle{plain}
+
+\printindex
+
+\end{document}

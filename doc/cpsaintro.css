@@ -1,0 +1,36 @@
+.center {
+	text-align: center;
+}
+
+li {
+        margin: 1em 0em;
+}
+
+li.compact {
+        margin: 0em 0em;
+}
+
+#content {
+        position: absolute;
+        width: 80%;
+        height: auto;
+        top: 0;
+        right: 10%;
+        bottom: 10%;
+        left: 10%;
+}
+
+#footer {
+        position: absolute;
+	text-align: center;
+        width: 80%;
+        height: 10%;
+        top: auto;
+        right: 10%;
+        bottom: 0;
+        left: 10%;
+}
+
+#footer:after {
+	content: "The MITRE Corporation";
+}

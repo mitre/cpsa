@@ -1,0 +1,1552 @@
+\documentclass[12pt]{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage[matrix,arrow,curve]{xy}
+
+\title{CPSA Theory}
+\author{Moses D.~Liskov\and John D. Ramsdell\and Paul D.~Rowe\\
+  The MITRE Corporation\\ CPSA Version \version}
+
+\input{macros}
+
+\hyphenation{pro-to-skel-e-ton}
+\hyphenation{pro-to-role}
+
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}[section]
+\newtheorem{conj}{Conjecture}[section]
+\newtheorem{prop}{Proposition}[section]
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{lem}{Lemma}[section]
+
+\newcommand{\inv}[1]{\ensuremath{\cn{inv}(#1)}}
+\newcommand{\scap}[1]{\ensuremath{\mathop{\relax
+                    \smash{\mbox{\sc#1}}}\!\mathop{\vphantom{#1}}\nolimits}}
+\newcommand{\concat}{\append}
+\newcommand{\gen}{\ensuremath{\cn{g}}}
+\newcommand{\expr}[2]{\ensuremath{{#1}^{#2}}}
+\newcommand{\sca}{\textsc{sca}}
+\newcommand{\bca}{\textsc{bca}}
+\newcommand{\alga}{\alg{A}}
+\newcommand{\tr}{\ensuremath{\mathfrak C}}
+\newcommand{\base}{\ensuremath{\mathfrak B}}
+\newcommand{\ints}{\ensuremath{\mathbb Z}}
+\newcommand{\solve}[1]{\stackrel{#1}{\longtwoheadrightarrow}}
+\newcommand{\pubmsg}{\mathbf{P}}
+\newcommand{\excl}{\mathbf{X}}
+\newcommand{\transpred}{\mathbf{T}}
+\newcommand{\outpred}{\fn{outpred}}
+\newcommand{\avoid}{\fn{avoid}}
+\newcommand{\unique}{\fn{unique}}
+\newcommand{\non}{\fn{non}}
+\newcommand{\dcmp}{\fn{dcmp}}
+\newcommand{\carpos}{\fn{carpos}}
+\newcommand{\esc}{\fn{esc}}
+\newcommand{\aug}{\fn{aug}}
+\newcommand{\eo}{\fn{eo}}
+\newcommand{\ie}{\fn{ie}}
+\newcommand{\crit}{\fn{crit}}
+\newcommand{\critpos}{\fn{critp}}
+\newcommand{\anc}{\fn{anc}}
+\newcommand{\mcow}{\fn{cow}}
+\newcommand{\mncow}{\fn{ncow}}
+\newcommand{\sdom}{\fn{Dom}}
+\newcommand{\sran}{\fn{Ran}}
+\newcommand{\svars}{\fn{Vars}}
+\newcommand{\evt}{\fn{evt}}
+\newcommand{\msg}{\fn{msg}}
+\newcommand{\mesg}{\msg}
+\newcommand{\role}{\mathsf{r}}
+\newcommand{\skel}{\mathsf{k}}
+\newcommand{\rl}{\fn{rl}}
+\newcommand{\nodes}{\fn{nodes}}
+\newcommand{\lsn}{\fn{lsn}}
+\newcommand{\init}{\fn{init}}
+\newcommand{\resp}{\fn{resp}}
+%\newcommand{\pow}[1]{\wp(#1)}
+
+\begin{document}
+\maketitle
+\cpsacopying
+
+\emph{This is a draft and there is much that is missing.  We
+  expect this document is in for a big change.}
+
+{\cpsa} takes a partial description of a run of a protocol, and
+attempts to produce a compact description of all possible runs of the
+protocol compatible with the partial description.  Given a partial
+description, {\cpsa} uses an authentication test to infer what else
+must have happened, and thereby reduce the problem to finding possible
+runs starting with a set of more refined descriptions.  The goal of
+this document is to precisely describe authentication tests.
+
+The formal definition of a partial run of a protocol is called a
+skeleton, and is introduced in Section~\ref{sec:skeletons}.  To
+motivate the definition, Section~\ref{sec:order-sorted mesg algs}
+describes a simplified version of a message algebra used in {\cpsa}.
+Section~\ref{sec:strand spaces and bundles} describes a
+bundle~\cite{ThayerEtal99,GuttmanThayer02}, a model of asynchronous
+messages-passing that includes the behaviors of honest and adversarial
+participants.  It also introduces the notion of a protocol, and
+specifies what it means for a bundle to be a run of a protocol.
+
+Section~\ref{sec:adversary model} describes the capabilities of the
+adversary.  {\cpsa} does not explicitly represents adversarial
+behaviors.  Section~\ref{sec:skeletons} and Section~\ref{sec:pen deriv
+  mesgs} reveal the means by which the details of adversarial
+behavior are abstracted away.  Finally, Section~\ref{sec:auth tests}
+describes authentication tests.
+
+\section{Order-Sorted Message Algebras}\label{sec:order-sorted mesg algs}
+
+{\cpsa} models a message by an equivalence class of terms over a
+signature. A sort system is used to classify messages.  {\cpsa}
+depends on the sort system to allow it to treat a variable that
+represents an asymmetric key differently from a variable that
+represents an arbitrary message.  In particular, {\cpsa} uses
+order-sorted quotient term algebras~\cite{GoguenMeseguer92} for
+message algebras.  This formalism enables the use of well-known
+algorithms for unification and matching in the presences of equations
+and sorts~\cite[Chapter~8]{RobinsonVoronkov01}.
+
+This paper makes no attempt to provide a general introduction to
+order-sorted quotient term algebras.  We use a message algebra called
+the Basic Crypto Algebra (\bca), which is the main algebra used by
+{\cpsa}.
+
+\begin{figure}
+\begin{center}
+Sorts: \scap{name}, \scap{text}, \scap{data}, \scap{skey}, \scap{akey} $<$ \scap{mesg}\\[1ex]
+Base sorts: \scap{name}, \scap{text}, \scap{data}, \scap{skey}, \scap{akey}\\
+Carried positions: $\bullet$ denotes a carried position.\\[1ex]
+\begin{tabular}{@{}ll}
+$\enc{\bullet}{(\cdot)}\colon\scap{mesg}\times\scap{mesg}\rightarrow\scap{mesg}
+$&Encryption\\
+$(\bullet,\bullet)\colon\scap{mesg}\times\scap{mesg}\rightarrow\scap{mesg}$
+&Pairing\\
+``\ldots''$\colon{}\scap{mesg}$& Tag constants\\
+$K_{(\cdot)}\colon\scap{name}\rightarrow\scap{akey}$
+&Public key of name\\
+$(\cdot)^{-1}\colon\scap{akey}\rightarrow\scap{akey}$
+&Inverse of key\\
+$\cn{ltk}(\cdot,\cdot)\colon\scap{name}\times\scap{name}\rightarrow\scap{skey}$
+& Long term key
+\end{tabular}\\[1ex]
+Equation: $(x^{-1})^{-1} \approx x$ for $x\colon\scap{akey}$
+\end{center}
+\caption{Basic Crypto Signature and Equation}\label{fig:bcs}
+\end{figure}
+
+There are six {\bca} sorts: $\scap{mesg}$, the sort of all messages,
+$\scap{skey}$, the sort of symmetric keys, $\scap{akey}$, the sort of
+asymmetric keys, $\scap{name}$, the sort of participant names, and
+$\scap{text}$ and $\scap{data}$ for ordinary values.  All sorts are
+subsorts of $\scap{mesg}$.  The function symbols, or
+\emph{operations}, used to form terms are given by the signature in
+Figure~\ref{fig:bcs}.
+
+Each variable~$x$ used to form a term has a unique sort~$s$, written
+$x\colon s$.  Variable set~$X$ is an indexed set of sets of variables,
+$X_s=\{x\mid x\colon s\}$.  For {\bca}, $X_{\scap{mesg}}$,
+$X_{\scap{skey}}$, $X_{\scap{akey}}$, $X_{\scap{name}}$,
+$X_{\scap{text}}$, and $X_{\scap{data}}$ partition the set of
+variables in~$X$.  By abuse of notation, at times, we write~$X$ for
+the set of variables in~$X$.
+
+\begin{figure}
+$$\begin{array}{r@{{}={}}l}
+\alga_{\scap{skey}}&\{\{x\}\mid x \in X_{\scap{skey}}\} \cup \{\{\cn{ltk}(a,b)\}\mid a \in X_{\scap{name}}, b \in X_{\scap{name}}\}\\
+\alga_{\scap{akey}}&\begin{array}[t]{@{}l}
+\{\{x^{-2n}\mid n\in\nat\}\mid x\in X_{\scap{akey}}\}\\
+\quad{}\cup\{\{x^{-2n-1}\mid n\in\nat\}\mid x\in X_{\scap{akey}}\}\\
+\quad{}\cup\{\{K_x^{-2n}\mid n\in\nat\}\mid x\in X_{\scap{name}}\}\\
+\quad{}\cup\{\{K_x^{-2n-1}\mid n\in\nat\}\mid x\in X_{\scap{name}}\}\\
+\end{array}\\
+\alga_{\scap{name}}&\{\{x\}\mid x \in X_{\scap{name}}\}\\
+\alga_{\scap{text}}&\{\{x\}\mid x \in X_{\scap{text}}\}\\
+\alga_{\scap{data}}&\{\{x\}\mid x \in X_{\scap{data}}\}\\
+\scap{Tags}&\{\{x\}\mid x \hbox{ is a tag constant }\}\\
+\base&\alga_{\scap{skey}} \cup \alga_{\scap{akey}} \cup \alga_{\scap{name}} \cup \alga_{\scap{text}} \cup \alga_{\scap{data}}\\
+\alga^0&\base\cup \{\{x\}\mid x\in X_{\scap{mesg}}\} \cup \scap{Tags}\\
+\alga^{n+1}&\alga^n
+\begin{array}[t]{@{}l}
+{}\cup\{\{(t_0,t_1)\mid t_0\in T_0, t_1\in T_1\}\mid
+ T_0\in\alga^n,T_1\in\alga^n\}\\
+{}\cup\{\{\enc{t_0}{t_1}\mid t_0\in T_0, t_1\in T_1\}\mid
+ T_0\in\alga^n,T_1\in\alga^n\}
+\end{array}\\
+\alga = \alga_{\scap{mesg}}&\bigcup_{n\in\nat}\alga^n
+\end{array}$$
+\caption{{\bca} Messages~$\alga$ and Atoms~$\base$}\label{fig:algebra}
+\end{figure}
+
+The Basic Crypto Quotient Term Algebra~$\alga$ generated by variable
+set~$X$ is displayed in Figure~\ref{fig:algebra}.  The union of the
+messages in~$\alga$ is set of terms generated by~$X$, and~$\alga$
+partitions the set of terms into a set of equivalence classes induced
+by the equations.  Terms~$t_0$ and~$t_1$ are equivalent, written
+$t_0\equiv t_1$, iff $t_0\in T\land t_1\in T$ for some $T\in\alga$.
+The canonical representative of a message is the $t$ in $\{t'\mid
+t'\equiv t\}$ with the fewest occurrences of the $(\cdot)^{-1}$
+operation.
+
+Keys, names, data, and texts in the algebra are called \emph{atoms} and
+are members of~$\base$.  We write $t\colon\base$ iff $t\colon S$ for
+some $S \neq \scap{mesg}$.  Note that encryption is defined with an
+encryption key of sort $\scap{mesg}$.  When the encryption key is of sort
+$\scap{akey}$ this is meant to model asymmetric encryption: otherwise,
+this models symmetric encryption.  Note that even complex messages such
+as encryptions can be used as encryption keys in the symmetric sense.
+
+To find the decryption key associated with an encryption, one must
+exclude the case in which the key is a variable of sort \scap{mesg},
+as there is no way to determine if the encryption operation denotes
+symmetric or asymmetric encryption.  Therefore, the decryption key
+associated with encryption key~$t$ is~$\fn{inv}(t)$.
+
+$$\fn{inv}(t) =\left\{
+\begin{array}{ll}
+\cn{invk}(t)&\mbox{if $t\colon\scap{akey}$;}\\
+\mbox{undefined}&\mbox{if $t$ is a variable of sort $\top$;}\\
+t&\mbox{otherwise.}
+\end{array}\right.$$
+
+An important property possessed by the algebra is that for all $T\in\alga$,
+if there are any encryptions in $T$ then all members of $T$ are encryptions.
+As a result, a message can be identified as representing an encryption
+and if it is, decomposed into its plaintext and its decryption key.
+This property is a consequence of the fact that equations relate
+atoms, not arbitrary messages.  A similar property holds for pairs.
+
+We write $\alga_X$ when it is important to identify the variable
+set~$X$ that generates the algebra.  Given two variable sets~$X$
+and~$Y$, a \emph{substitution} is an order-sorted map~$\sigma\colon
+X\rightarrow\alga_Y$ such that $\sigma(x)\neq x$ for only finitely
+many elements of~$X$.  For a substitution~$\sigma$, the \emph{domain}
+is the set of variables $\sdom(\sigma)=\{x\mid \sigma(x)\neq x\}$ and
+the \emph{range} is the set $\sran(\sigma)=\{\sigma(x)\mid
+x\in\sdom(\sigma)\}$.  Substitution~$\sigma_0$ is \index{more general
+  substitution}\emph{more general than}~$\sigma_1$,
+written~$\sigma_0\unlhd\sigma_1$, if there exists a
+substitution~$\sigma_2$ such that
+$\all{x}\sigma_1(x)\equiv\sigma_2(\sigma_0(x))$.  Given a
+substitution~$\sigma\colon X\rightarrow\alga_Y$, the unique
+homomorphism $\sigma^\ast\colon \alga_X\rightarrow\alga_Y$ induced
+by~$\sigma$ is also denoted~$\sigma$.
+
+In what follows, a finite sequence is a function from an initial
+segment of the whole numbers.  The length of a sequence~$f$ is~$|f|$,
+and sequence~$f=\seq{f(1),\ldots,f(n)}$ for $n=|f|$.  Alternatively,
+$\seq{x_1,x_2,\ldots,x_n} =x_1\cons x_2\cons\ldots\cons
+x_n\cons\seq{}$.  If~$S$ is a set, then~$S^\ast$ is the set of finite
+sequences of~$S$, and~$S^+$ is the non-empty finite sequences of~$S$.
+
+The concatenation of sequences~$f_0$ and~$f_1$ is~$f_0\append f_1$.
+When the context distinguishes sequences and their elements, such as
+for sequences of integers, we often write $f_0\append 1 \append f_1$
+instead of $f_0\append\seq{1}\append f_1$.  The prefix of sequence~$f$
+of length~$n$ is~$\prefix{f}{n}$.
+
+A \emph{position}~$p$ is a finite sequence of whole numbers.  The
+term in~$t$ that \emph{occurs at}~$p$, written~$t\termat p$, is:
+$$\begin{array}{l}
+t\termat\seq{}=t;\\
+(t_1,t_2)\termat i\cons p=t_i\termat p\mbox{ for $i\in\{1,2\}$};\\
+\enc{t_1}{t_2}\termat i\cons p=t_i\termat p\mbox{ for
+  $i\in\{1,2\}$};\\
+t^{-1}\termat 1\cons p=t\termat p.
+\end{array}$$
+A term~$t$ \emph{occurs in} term~$t'$ if $t=t'\termat p$ for some~$p$.
+A message~$T$ \emph{occurs in} message~$T'$ if the canonical
+representative of~$T$ occurs in the canonical representative of~$T'$.
+
+A carried term is one that can be extracted from a message reception
+assuming plaintext is extractable from encryptions.  The
+positions at which term $t$ is carried in
+$t'$ is $\carpos(t,t')$, where
+$$\carpos(t,t')=\left\{
+\begin{array}{ll}
+\{\seq{}\}&\mbox{if $t'\equiv t$, else}\\
+\multicolumn{2}{l}{\{1\cons p \mid
+p\in\carpos(t,t_1)\}}\\
+& \mbox{if $t'=\enc{t_1}{t_2}$, else}\\
+\multicolumn{2}{l}{\{i\cons p \mid
+i\in\{1,2\}, p\in\carpos(t,t_i)\}} \\
+& \mbox{if $t'=(t_1,t_2)$ else}\\
+\emptyset&\mbox{otherwise.}
+\end{array}\right.$$
+
+Term~$t$ \emph{carries}~$t'$ if $\carpos(t',t)$ is not empty, and
+$t'\sqsubseteq t$ when~$t'$ is carried by~$t$.  Note that for all
+terms $t_0,t_1,t'_0,t'_1$, if $t_0\equiv t_1$ and $t'_0\equiv t'_1$,
+then $\carpos(t_0,t'_0)= \carpos(t_1,t'_1)$.  We write $t' \sqsubseteq_p t$
+when $p \in \carpos(t',t)$ and $t \termat p \equiv t'$.
+
+In what follows, we will often conflate a term with the message of
+which it is a member, and use lowercase letters to denote both.
+
+\section{Strand Spaces and Bundles}\label{sec:strand spaces and bundles}
+
+A run of a protocol is viewed as an exchange of messages by a finite
+set of local sessions of the protocol.  Each local session is called a
+\emph{strand}.  The behavior of a strand, its \emph{trace}, is a
+sequence of messaging events.  An \emph{event} is either a message
+transmission or a reception.  Outbound message $t\in\alga_X$ is
+written as~$\outbnd t$, and inbound message~$t$ is written as~$\inbnd
+t$.  The set of traces over $\alga_X$ is $\tr_X=(\pm\alga_X)^+$.  A
+message \emph{originates} in a trace if it is carried by some event
+and the first event in which it is carried is outbound.  A message is
+\emph{gained} by a trace if it is carried by some event and the first
+event in which it is carried is inbound.  A message is \emph{acquired}
+by a trace if it first occurs in a reception event and is also carried
+by that event.
+
+Abstractly, a strand space is a multiset of traces, but since we wish
+to name each element, a \emph{strand space}~$\Theta_X$ over
+algebra~$\alga_X$ is defined to be a sequence of traces in $\tr_X$.  A
+strand~$s$ is a member of the domain of $\Theta_X$, and its trace is
+$\Theta_X(s)$.  In a strand space, the elements of the generator
+set~$X$ denote atomic message elements, such as keys, and not
+composite messages, such as encryptions and pairs.  Therefore, the
+sort of every variable in~$X$ is a base sort.
+
+Message events occur at nodes in a strand space.  For each strand~$s$,
+there is a node for every event in~$\Theta(s)$.  The \emph{nodes} of
+strand space $\Theta$ are $\{(s,i)\mid s\in\sdom(\Theta), 1\leq i\leq
+|\Theta(s)|\}$, the event at a node is
+$\evt_\Theta(s,i)=\Theta(s)(i)$, and the message at a node is
+$\msg_\Theta(s,i) = m$ such that $\evt_\Theta(s,i) = \pm m$.  Just as
+a position names a subterm within another term, a strand names a trace
+within a strand space, and a node names an event in a strand space.
+The relation~$\Rightarrow$ defined by $\{(s,i)\Rightarrow(s,i+1)\mid
+s\in\sdom(\Theta), 1\leq i<|\Theta(s)|\}$ is called the \emph{strand
+  succession relation}.
+
+A \emph{bundle} in strand space $\Theta$ is a finite directed
+acyclic graph $\Upsilon(\Theta,\to)$, where the vertices are the nodes
+of $\Theta$, and an edge represents communication~($\rightarrow$) or
+strand succession~($\Rightarrow$).  For communication, if
+$n_0\rightarrow n_1$, then there is a message~$t$ such
+that~$\evt_\Theta(n_0)=\outbnd t$ and~$\evt_\Theta(n_1)=\inbnd t$.
+For each reception node~$n_1$, there is a unique transmission
+node~$n_0$ with $n_0\rightarrow n_1$.
+
+Each acyclic graph has a transitive asymmetric relation~$\prec$ on its
+vertices.  The relation specifies the causal ordering of nodes in a
+bundle.  Relation~$R$ on set~$S$ is \emph{asymmetric} iff
+$x\mathbin{R}y$ implies not $y\mathbin{R}x$ for all distinct $x,y \in
+S$.
+
+An atom \emph{uniquely originates} in a bundle if it originates in
+the trace of exactly one strand.  An atom is \emph{non-originating} in
+a bundle if it originates on no strand, but each of its variables
+occurs in some strand's trace.
+
+In a run of a protocol, the behavior of each strand is constrained by
+a role in a protocol.  Adversarial strands are constrained by roles as
+are non-adversarial strands.  A protorole over $\alga_Y$ is
+$\role_Y(C,N,U)$, where $C\in\tr_Y$, $N\subseteq\base_Y$, and
+$U\subseteq\base_Y$.  The trace of the role is~$C$, its
+non-origination assumptions are~$N$, and its unique origination
+assumptions are~$U$.  A protorole is a \emph{role} if (1) $t\in N$
+implies $t$ is not carried in $C$, and all variables in $N$ occur in
+$C$, (2) $t\in U$ implies $t$ originates in $C$, and (3) if
+variable~$x$ occurs in $C$ then $x$ is an atom or it is acquired in
+$C$.  A \emph{protocol} is a set of roles.  Let $\svars(P)$ be the set
+of variables that occur in the traces of the roles in protocol~$P$.
+
+A bundle~$\Upsilon(\Theta_X,\to)$ is a \emph{run of protocol} $P$ if
+there is a role mapping $\rl\colon\Theta_X\to P$ that satisfies
+properties for each $s\in\sdom(\Theta_X)$.  Assuming
+$\rl(s)=\role_Y(C,N,U)$ and $X$ and $Y$ share no variables, and let
+$h=|\Theta_X(s)|$, the properties are (1) $h\leq|C|$, (2) there is a
+homomorphism~$\sigma\colon\alga_Y\to\alga_X$ such that
+$\comp{\sigma}{\prefix{C}{h}}=\Theta_X(s)$, (3) $\sdom(\sigma)$ is the
+set of variables that occur in~$\prefix{C}{h}$, (4) if the variables
+in $t\in N$ occur in $\sdom(\sigma)$, then $\sigma(t)$ is
+non-originating in $\Upsilon(\Theta_X,\to)$, and (5) if $t\in U$
+originates at index~$i$ in~$C$, and $i\leq h$, then $\sigma(t)$
+uniquely originates in $\Upsilon(\Theta_X,\to)$ at node $(s,i)$.
+Origination assumptions in bundles specified by roles are called
+\emph{inherited origination assumptions}.
+
+\section{Adversary Model}\label{sec:adversary model}
+
+A fixed set of penetrator roles encodes the adversary model associated
+with a message algebra.  For the Basic Crypto Algebra, there are eight
+roles.  Each role makes no origination assumptions, and the trace of
+each role is given in Figure~\ref{fig:pen}.  The first line of the
+figure specifies five traces, one for base sort, and a trace for each
+tag.
+
+\begin{figure}
+$$\begin{array}{lll}
+\mbox{Create}(z\colon\base)&
+\seq{\outbnd z}&\seq{\outbnd\mbox{``\ldots''}}\\
+\mbox{Pair}(x,y\colon\scap{mesg})&
+\seq{\inbnd x,\inbnd y,\outbnd(x, y)}&
+\seq{\inbnd(x, y),\outbnd x,\outbnd y}\\
+\mbox{Encrypt}(x,y\colon\scap{mesg})&
+\seq{\inbnd x,\inbnd y,\outbnd\enc{x}{y}}&
+\seq{\inbnd\enc{x}{y},\inbnd \fn{inv}(y),\outbnd x}
+\end{array}$$
+\caption{Basic Crypto Algebra Penetrator Role Traces}\label{fig:pen}
+\end{figure}
+
+A strand exhibits non-adversarial behavior when its role is not a
+penetrator role.  A non-adversarial strand is called a \emph{regular}
+strand as is its role.
+
+The penetrator cannot use a non-originating atom to encrypt or decrypt
+a message, because every key it uses must be carried in a message.
+Consider a uniquely originating atom that originates on a regular
+strand.  The penetrator cannot make the atom using a create role,
+because the atom would originate at more than one node.  Therefore,
+the penetrator can use a uniquely originating atom to encrypt or
+decrypt a message only if it is transmitted by a regular strand
+unprotected by encryption.
+
+\section{Skeletons}\label{sec:skeletons}
+
+The details of penetrator behavior are abstracted away when performing
+protocol analysis.  The abstracted description of a bundle is called a
+realized skeleton, which is defined using a protoskeleton.  A
+\emph{protoskeleton} over $\alga_X$ is
+$\skel_X(\rl,P,\Theta_X,\prec,N,U)$, where $\rl\colon\Theta_X\to P$ is
+a role map, the sets~$X$ and~$\svars(P)$ are disjoint,
+$\Theta_X$ is a sequence of traces in $\tr_X$, $\prec$ is a relation
+on the nodes in $\Theta_X$, $N\subseteq\base_X$ are its
+non-origination assumptions, and $U\subseteq\base_X$ are its unique
+origination assumptions.  Unlike a strand space, the sort of a
+variable in~$X$ need not be a base sort.
+
+Assume the strands in bundle $\Upsilon(\Theta_X,\to)$ have been
+permuted so that regular strands precede penetrator strands in
+sequence~$\Theta_X$, and $\rl$ demonstrates the bundle is a run of
+protocol~$P$.  Let~$P'$ be~$P$ without penetrator roles.
+Skeleton $\skel_X(\rl',P',\Theta'_X,\prec,N,U)$
+\emph{realizes} the bundle if $\rl'$ and $\Theta'_X$ are the
+truncations of $\rl$ and $\Theta_X$ respectively that omit penetrator
+strands from their domains, $\prec$ is the transitive asymmetric
+relation associated with the bundle without penetrator nodes, $N$ is
+the set of non-originating atoms with variables that occur in
+$\Theta'_X$, and $U$ is the set of atoms that uniquely originate and
+are carried by some regular node.
+
+A protoskeleton $\skel_X(\rl,P,\Theta_X,\prec,N,U)$ is a
+\emph{preskeleton} if the following properties hold.
+\begin{enumerate}
+\item Sequence $\rl$ demonstrates that the strands in $\sdom(\Theta_X)$
+  satisfy the conditions for being a part of a run of protocol~$P$.
+\item Relation $\prec$ is transitive, asymmetric, and includes the
+  strand succession relation $(\Rightarrow)$.
+\item Each atom in $N$ is carried at no node, and each variable
+  in the atom occurs at some node.
+\item Each atom in $U$ is carried at some node.
+\item $N$ includes the non-originating atoms inherited from roles via
+  the role map.
+\item $U$ includes the uniquely originating atoms inherited from roles via
+  the role map.
+\end{enumerate}
+
+\begin{sloppypar}
+Let $\orig_k(t)$ be the set of nodes at which~$t$ originates in
+preskeleton~$k$, and~$\gain_k(t)$ be the set of nodes at which~$t$ is
+gained in~$k$.  Preskeleton $\skel_X(\rl,P,\Theta_X,\prec,N,U)$ is a
+\emph{skeleton} if each atom in $U$ originates on at most one strand,
+and the node of origination precedes each node that gains the atom,
+i.e.\@ for every~$t\in U$, $n_0\in\orig_k(t)$ and $n_1\in\gain_k(t)$
+implies~$n_0\prec n_1$.
+\end{sloppypar}
+
+Let $k_0=\skel_X(rl_0,P,\Theta_0,\prec_0,N_0,U_0)$ and
+$k_1=\skel_Y(rl_1,P,\Theta_1,\prec_1,N_1,U_1)$ be preskeletons.  There
+is a \emph{proto-homomorphism} from~$k_0$ to~$k_1$ if~$\phi$ and~$\sigma$ are
+maps with the following properties:
+\begin{enumerate}
+\item $\phi$ maps strands of~$k_0$ into those of~$k_1$, and nodes as
+  $\phi((s,p))=(\phi(s),p)$, that is $\phi$ is in
+  $\sdom(\Theta_0)\to\sdom(\Theta_1)$;
+\item $\sigma\colon\alga_X\to\alga_Y$ is a message algebra homomorphism;
+\item $n\in\nodes(\Theta_0)$ implies $\sigma(\evt_{\Theta_0}(n))=\evt_{\Theta_1}(\phi(n))$;
+\item $\sigma(N_0)\subseteq N_1$;
+\item $\sigma(U_0)\subseteq U_1$;
+\end{enumerate}
+
+A proto-homomorphism is \emph{structure-preserving} if $n_0\prec_0
+n_1$ implies $\phi(n_0)\prec_1\phi(n_1)$.  We write
+$k_0\homomorphism{\phi,\sigma}k_1$ when $(\phi,\sigma)$ is
+structure-preserving.  A proto-homomorphism is a \emph{preskeleton
+  homomorphism} if it is structure-preserving and also, $t\in U_0$
+implies $\phi(\orig_{k_0}(t))\subseteq\orig_{k_1}(\sigma(t))$, that
+is, the node at which each uniquely originating atom originates is
+preserved under homomorphism.
+
+A homomorphism is \emph{strandwise injective} if its strand map is
+injective.  Two preskeletons are isomorphic if they are related by
+strandwise injective homomorphism in both directions.  A homomorphism
+is \emph{nodewise isomorphic} if the strand map~$\phi$ implies a
+bijection on nodes, and $n_0\prec_1 n_1$ implies
+$\phi^{-1}(n_0)\prec_0\phi^{-1}(n_1)$.  A skeleton is \emph{realized}
+if there is a nodewise isomorphic homomorphism from it to a skeleton
+that realizes a bundle, and message component of the homomorphism
+is injective.
+
+Our formalism requires that every protocol include a listener role of
+the form: $\lsn(x\colon\top)=\role(\seq{\inbnd x,\outbnd
+  x},\emptyset,\emptyset)$.  Instances of this role are sometimes used
+to make penetrator derived messages visible in skeletons.  We say
+skeleton~$k$ \emph{realizes modulo listeners} bundle
+$\Upsilon(\Theta,\to) $ if~$k$ realizes $\Upsilon(\Theta',\to')$ and
+\hbox{$\Upsilon(\Theta,\to)$} is the result of removing full length listener
+strands, and adjusting the communication ordering $\to$ appropriately.
+
+The set of bundles denoted by preskeleton~$k$, $\sembrack{k}$, is:
+$$\sembrack{k_0} = \{\Upsilon\mid
+\mbox{$k_0\homomorphism{\phi,\sigma}k_1$ and $k_1$ realizes modulo
+  listeners $\Upsilon$}\}$$ A {\cpsa} algorithm is \emph{complete} if
+when given a preskeleton~$k_0$, either the algorithm diverges, or else it
+terminates and produces a finite set of realized skeletons~$K$, such
+that $\sembrack{k_0}=\bigcup_{k_1\in K}\sembrack{k_1}$.
+
+Let~$\longrightarrow$ be an irreflexive reduction relation on
+preskeletons.  The relation~$\longrightarrow$ is \emph{semantics
+  preserving} if $\sembrack{k_0}=\bigcup_{k_1\in\{k_1\mid
+  k_0\longrightarrow k_1\}}\sembrack{k_1}$.
+
+\subsection{Dolev-Yao Example 1.3}
+The example has an initiator and responder role.
+$$\begin{array}{r@{{}={}}l}
+\init(a,b\colon A, m\colon S)&
+\role(\seq{\outbnd\enc{\enc{m}{b},a}{b},\inbnd\enc{\enc{m}{a},b}{a}},
+\emptyset,\emptyset)\\
+\resp(a,b\colon A, m\colon\top)&
+\role(\seq{\inbnd\enc{\enc{m}{b},a}{b},\outbnd\enc{\enc{m}{a},b}{a}},
+\emptyset,\emptyset)\\
+\end{array}$$
+The algebra for the initiator is generated from $X$, where
+$X_\top=\emptyset$, $X_S=\{m\}$, and $X_A=\{a,b\}$, and the algebra
+for the responder is generated from $Y$, where $Y_\top=\{m\}$,
+$Y_S=\emptyset$, and $Y_A=\{a,b\}$,
+
+An interesting point of view for analysis is to see if~$m$ is kept
+secret after the initiator sends its message.  Let variable set
+$Z=a,b\colon A, m\colon S$.  The initial scenario preskeleton is:
+$$\begin{array}{r@{}ll}
+\skel_Z(
+&\seq{\init(a_0,b_0,m_0),\lsn(x)},
+&\mbox{Role map}\\
+&\{\init(a_0,b_0,m_0),\resp(a_1,b_1,m_1),\lsn(x)\},
+&\mbox{Protocol}\\
+&\seq{\seq{\outbnd\enc{\enc{m}{b},a}{b}},\seq{\inbnd m}},
+&\mbox{Strands}\\
+&\emptyset,
+&\mbox{Node orderings}\\
+&\{a^{-1},b^{-1}\},
+&\mbox{Non-origination}\\
+&\{m\})
+&\mbox{Unique origination}
+\end{array}$$
+where the variable set that generates the algebra for the initiator
+role has been renamed so as to avoid conflicts with the variable set~$Z$
+used by the preskeleton.
+
+\begin{figure}
+$$\xymatrix{
+\txt{\strut init}&\txt{\strut }&\txt{\strut resp}&\txt{\strut resp}\\
+\bullet\ar[rrr]&&&\bullet\ar@{=>}[d]\\
+&&\bullet\ar@{=>}[d]&\bullet\ar[l]\\
+&\bullet\ar@{=>}[d]&\bullet\ar[l]&\\
+&\bullet&&}$$
+\caption{Dolev-Yao Example 1.3 Shape}\label{fig:dy shape}
+\end{figure}
+
+{\cpsa} determines $m$ is not kept secret by producing the shape in
+Figure~\ref{fig:dy shape}.  The added strands in the shape are
+instances of responder roles.  The strands in the shape are:
+$$\begin{array}{l}
+\seq{\outbnd\enc{\enc{m}{b},a}{b}}\\
+\seq{\inbnd m}\\
+\seq{\inbnd\enc{\enc{m}{b},a'}{b},\outbnd\enc{\enc{m}{a'},b}{a'}}\\
+\seq{\inbnd\enc{\enc{\enc{m}{b}, a}{b},a''}{b},
+\outbnd\enc{\enc{\enc{m}{b},a}{a''},b}{a''}}
+\end{array}$$
+The non-origination and unique origination assumptions are as they are
+in the initial scenario preskeleton.  An interesting exercise left for
+the reader is to produce a bundle that is realized by the shape.
+
+\subsection{Exercise}
+
+Consider the following roles.
+$$\begin{array}{r@{{}={}}l}
+\init(a,b\colon A)&\role(\seq{\outbnd(a,b),\inbnd(b,a)},
+\emptyset,\emptyset)\\
+\resp(a,b\colon A)&\role(\seq{\inbnd(a,b),\outbnd(b,a)},
+\emptyset,\emptyset)
+\end{array}$$
+Let $X=x,y\colon A$ and
+$\begin{array}[t]{@{}r@{}l}
+k=\skel_X(
+&\seq{\init(a,b),\resp(a,b),\resp(a,b)},\\
+&\{\init(a,b),\resp(a,b)\},\\
+&\seq{\begin{array}[t]{@{}l}
+\seq{\outbnd(x,y),\inbnd(y,x)},\\
+\seq{\inbnd(x,y),\outbnd(y,x)},\\
+\seq{\inbnd(x,y),\outbnd(y,x)}},
+\end{array}\\
+&\mbox{Node ordering in Figure~\ref{fig:exercise}},\\
+&\emptyset,\\
+&\emptyset)
+\end{array}$
+
+\begin{figure}
+$$\xymatrix{
+\txt{\strut init}&\txt{\strut resp}&\txt{\strut resp}\\
+\bullet\ar@{=>}[d]\ar@/^/[rr]\ar[r]&\bullet\ar@{=>}[d]&\bullet\ar@{=>}[d]\\
+\bullet&\bullet\ar[l]&\bullet\ar@/^/[ll]}$$
+\caption{Exercise Skeleton}\label{fig:exercise}
+\end{figure}
+
+What is $\sembrack{k}$?
+
+One member is shown in Figure~\ref{fig:bundle}.
+
+\begin{figure}
+$$\begin{array}{ll}
+\mbox{init}&\seq{\outbnd(x,y),\inbnd(y,x)}\\
+\mbox{resp}&\seq{\inbnd(x,y),\outbnd(y,x)}\\
+\mbox{resp}&\seq{\inbnd(x,y),\outbnd(y,x)}\\
+\mbox{pair}&\seq{\inbnd(y,x),\inbnd(y,x),\outbnd((y,x),(y,x))}\\
+\mbox{sep}&\seq{\inbnd((y,x),(y,x)),\outbnd(y,x)}
+\end{array}$$
+
+$$\xymatrix{
+\txt{\strut init}&\txt{\strut resp}&\txt{\strut resp}&\txt{\strut pair}&\txt{\strut sep}\\
+\bullet\ar@{=>}[dddd]\ar@/^/[rr]\ar[r]&\bullet\ar@{=>}[d]&\bullet\ar@{=>}[d]&&\\
+&\bullet\ar@/_/[rrd]&\bullet\ar[r]&\bullet\ar@{=>}[d]&\\
+&&&\bullet\ar@{=>}[d]&\\
+&&&\bullet\ar[r]&\bullet\ar@{=>}[d]\\
+\bullet&&&&\bullet\ar[llll]}$$
+\caption{A Bundle Realized by the Example Skeleton}\label{fig:bundle}
+\end{figure}
+
+\section{Penetrator Derivable Messages}\label{sec:pen deriv mesgs}
+
+To simplify notation, we write~$U_k$ to refer to~$U$ when
+$k=\skel(\rl,P,\Theta,\prec,N,U)$, and similarly for the other
+components of preskeleton~$k$.
+
+This section specifies what the penetrator can derive in a skeleton at
+a given reception node.  In the section on the adversary model, it is
+explained why the penetrator cannot use create roles for atoms in the
+what is called the exclusion set~$\excl_k=N_k\cup\{t\mid t\in U_k,
+|\orig_k(t)|=1\}$.  At reception node~$n$, the messages available to
+the penetrator due to message transmissions in the past
+are~$\transpred_k(n)=\{t\mid n'\prec_k n, \evt_k(n')=\outbnd t\}$.
+Therefore, for an algebra generated by~$X$, the \emph{public messages}
+available to the penetrator at node~$n$ are
+$\pubmsg_k(n)=\transpred_k(n)\cup(\base\setminus\excl_k)\cup X_{\scap{mesg}} \cup \scap{Tags}$.
+
+The penetrator roles derive messages.
+$$\begin{array}{r@{{}={}}l}
+D^0(T)&T\\
+D^{n+1}(T)&\left\{\begin{array}{r@{{}\mid{}}l}
+(t_0,t_1)&t_0,t_1\in D^n(T)\\
+\enc{t_0}{t_1}&t_0,t_1\in D^n(T)\\
+t_0,t_1 &(t_0,t_1) \in D^n(T)\\
+t_0 & \enc{t_0}{t_1}, inv(t_1) \in D^n(T)
+\end{array}\right\}\\
+D(T)&\bigcup_{n\in\nat}D^n(T)
+\end{array}$$
+
+Here, $inv(t_1)$ is defined to be $t_1^{-1}$ if $t_1 : \scap{akey}$, and
+$inv(t_1)$ is otherwise defined to be $t_1$ so long as $t_1 \notin X_{\scap{mesg}}$.
+A message~$t$ is derivable from~$T$, written $T\vdash t$, if $t\in D(T)$.
+A message~$t$ is derivable at node~$n$ if $\pubmsg_k(n)\vdash t$.
+
+Sometimes we may be interested in separating the notion of available messages
+from the notion of the \emph{context}, which defines the set of derivable keys.
+$$\begin{array}{r@{{}={}}l}
+D^0(T,S)&T\\
+D^{n+1}(T,S)&\left\{\begin{array}{r@{{}\mid{}}l}
+(t_0,t_1)&t_0,t_1\in D^n(T,S)\\
+\enc{t_0}{t_1}&t_0,t_1\in D^n(T,S)\\
+t_0,t_1 &(t_0,t_1) \in D^n(T,S)\\
+t_0 & \enc{t_0}{t_1} \in D^n(T,S), S \vdash inv(t_1)
+\end{array}\right\}\\
+D(T,S)&\bigcup_{n\in\nat}D^n(T,S)
+\end{array}$$
+
+In what follows, we find it useful to discuss the ``minimum decryptions''
+available - that is, the messages we get by applying as much deconstruction as
+possible.  We also are sometimes interested in this calculation when the set
+of messages available for deriving keys is distinct from the set of available
+messages.  Let $\to$ be a reduction relation on pairs of sets of messages defined
+as follows:
+$$\begin{array}{r@{{}\to{}}ll}
+(\{(t_0,t_1)\}\cup T, S)&(\{t_0,t_1\}\cup T, S)\\
+(\{\enc{t_0}{t_1}\}\cup T, S)&(\{t_0,\enc{t_0}{t_1}\}\cup T, S)\\
+&\mbox{if $t_1^{-1}\in D(S)$ and $t_0\notin T$}
+\end{array}$$
+The minimum decryption set~$(M(T,S),S)$ is the normal form of relation~$\to$,
+i.e.\ $(T,S)\to^\ast (M(T,S),S)$ and there is no~$(T',S')$ such that $(M(T,S),S)\to(T',S')$.
+Define $M(T)$ to be $M(T,T)$, and define $M(t,S)$ to be $M(\{t\},S)$.
+
+\section{Authentication Tests}\label{sec:auth tests}
+
+In a realized skeleton, the message at every reception node is
+derivable, but this is not so for an unrealized skeleton.  A reception
+node that has a derivable message is called \emph{realized}, and
+{\cpsa} infers the existence of additional regular behavior by
+analyzing unrealized nodes.
+
+It does so by identifying a so called critical message, a message
+carried by the node's message.  The message is critical in the sense
+that the context in which it appears can only be explained by adding
+more regular strands, identifying messages, adding more constrains on
+node orderings, or various combinations of these actions.
+
+Consider a reception node~$n$ that receives $\enc{x}{k_0}$, where
+critical message~$x$ is a uniquely originating symmetric key,
+and~$k_0$ is an asymmetric key.  In this case, $x$ is being used as a
+nonce, and not for encryption, an artifact of algebra simplification.
+Assume that $\outbnd\enc{x}{k_1}$ is the only event that precedes~$n$,
+where~$k^{-1}_1$ is a non-originating asymmetric key.  Message
+$\enc{x}{k_0}$ is not derivable at~$n$, because
+$$\{\enc{x}{k_1}\}\cup(\base\setminus\{x,k^{-1}_1\})\cup
+X_{\scap{mesg}}\not\vdash\enc{x}{k_0}.$$ {\cpsa} might explain this reception
+by identifying messages~$k_0$ and~$k_1$, or it might add a strand that
+receives $\enc{x}{k_1}$ and transmits~$x$ before node~$n$ if a role
+permits this new behavior.
+
+A critical message might also be an encryption.  Continuing the
+previous example, suppose that~$k_0$ is non-originating, which makes
+$\enc{x}{k_0}$ into a critical message.  {\cpsa} might explain this
+reception by identifying messages~$k_0$ and~$k_1$, or it might add a
+strand that receives $\enc{x}{k_1}$ and transmits~$\enc{x}{k_0}$
+before node~$n$ if a role permits the new behavior.
+
+We proceed with making the definition of a critical message precise by
+first considering the contexts of interest in which a critical message
+appears.  For reception node~$n$, the contexts are encryptions derived
+from the public messages at~$n$, $\pubmsg(n)$, that contain the
+critical message.  Furthermore, the encryptions are members of the
+minimum decryption set~$M(\pubmsg(n))$ with underivable decryption
+keys.  The context is called an escape set.
+
+\begin{defn}[Escape Set]
+Let~$S$ and~$S'$ be sets of public messages.
+The \emph{escape set} for~$t$ in messages $S$ in context $S'$ is
+$E(S,S',t)=\{\enc{t_0}{t_1}\in M(S,S') \mid
+t\sqsubseteq t_0\wedge S\not\vdash t^{-1}_1\}$ when $t\notin M(S,S')$.
+Otherwise, $E(S,S',t) = \{t \}$.
+\end{defn}
+
+We use the notation $E(S,t)$ as shorthand for $E(S,S,t)$; normally,
+the context is the set of messages.
+
+The intuition is that, a message~$t_c$ that is carried by the message
+at~$n$ is critical when the contents of the escape set $E(\pubmsg_n(k),t_c)$
+cannot be used to derive~$\fn{mesg}(n)$.  To do so, the penetrator would have
+to decrypt a member of the escape set, which by definition it is not allowed
+to do.  A critical message is one that has escaped the protection of
+previously transmitted encryptions, and {\cpsa} infers more regular
+behavior in response.
+
+We continue with the task of with making the definition of a critical
+message precise by stating what it means for an escape set to protect
+a message.  Suppose~$t$ is carried by~$t'$, and~$S$ is a set of public
+messages.  Furthermore, suppose that at every carried position at
+which~$t$ is carried in~$t'$, a subterm containing~$t$ is a member of
+the escape set $E(S,t)$.  In this case, we say that term~$t$ is
+carried only within $E(S,t)$ in~$t'$, and observe that the subterm
+containing $t$ is derivable because every member of the escape set is
+derivable.  There is nothing about the fact that~$t'$ carries~$t$ that
+can be used to infer more regular behavior.  An essential property of
+a critical message is that it is not carried only with the escape set
+in the message received at an unrealized node.  The precise definition
+of carried only within follows.
+
+\begin{defn}[Ancestors]
+For $t'=t\termat p$, the \emph{ancestors} of~$t'$ in~$t$ at~$p$ is the
+set $\anc(t,p)=\{t\termat p'\mid \mbox{$p'$ a prefix
+  of~$p$}\}$.
+\end{defn}
+
+\begin{defn}[Carried Only Within]
+Term~$t$ is \emph{carried only within} $T$ in~$t'$, written
+$\mcow(t,T,t')$, if $p\in\carpos(t,t')$ implies
+$\anc(t',p)\cap T\neq\emptyset$. Term~$t$ \emph{escapes} $T$ in $t'$,
+written $\mncow(t,T,t')$, if
+$\lnot(\mcow(t,T,t'))$, and therefore $\mncow(t,T,t')=\some{p} \in
+\carpos(t,t')$ such that $\anc(t',p)\cap T=\emptyset$.
+\end{defn}
+
+\begin{lem}
+\label{lem:cowtrans}
+If for every $u \in U$ we have that $\mcow(t_c,T,u)$, and we have that $\mcow(t_c,U,t')$ then $\mcow(t_c,T,t')$
+\end{lem}
+
+\begin{proof}
+Let $p$ is a carried position of $t_c$ in $t'$.  There is some ancestor $u_e \in \anc(t',p)$ equivalent to
+a member of $U$.  This ancestor $u_e$ occurs at positions $p'$ in $t'$ where $p'$ is a prefix of $p$.  Let
+$p = p' \append p''$; then since $\mcow(t_c,T,u_e)$ there is an ancestor $t_e \in \anc(u_e, p'')$ equivalent
+to a member of $T$.  But $t_e \in \anc(t',p)$ so this occurrence of $t_c$ is carried within $T$.
+\end{proof}
+
+\begin{lem}
+\label{lem:escapesetcow}
+For any set of messages $S$, If $T_0 \subset T_1$ then for every $t_c$, for every $t \in E(S,T_0,t_c)$,
+$\mcow(t_c,E(S,T_1,t_c),t)$.
+\end{lem}
+
+\begin{proof}
+Let $t \in E(S,T_0,t_c)$ and let $p \in \fn{carpos}(t_c,t)$.  Note that $M(S,T_0) \subset D(S,T_1)$,
+since the enlarged context allows for possibly some more decryptions to be done, but all decryptions
+that can be done with the smaller context can still be done.
+
+If $t$ is an atom, it must be $t_c$, and therefore, $D(S,T_0) \vdash t_c$ so $D(S,T_1) \vdash t_c$,
+and $t_c$ is a (non-proper) ancestor of itself.
+
+Otherwise, $t = \enc{t_0}{t_1}$.  Since $t \in E(S,T_0,t_c)$, $t \in M(S,T_0)$ and thus $t \in M(S,T_1)$.
+If $T_1 \not\vdash t_1^{-1}$ then $t \in E(S,T_1,t_c)$ and so $p$ is carried within.  Otherwise,
+one of two cases must happen: (1) $\exists t' = \enc{t'_0}{t'_1}$ in $\anc(t,p)$ such that $T_1 \not\vdash
+{t'_1}^{-1}$ or (2) $t_c \in E(S,T_1,t_c)$.  In the latter case, $t_c \in \anc(t,p)$ so $p$ is carried within.
+In the former case, assume $t'$ is the largest such ancestor: then $t' \in E(S,T_1,t_c)$ and $t' \in \anc(t,p)$,
+so $p$ is carried within.
+\end{proof}
+
+In particular, the previous two lemmas imply that if $n' \prec n$ then for any set of messages $S$,
+and any $t_c$ and any $t'$, if $\mcow(t_c, E(S,\pubmsg_k(n'),t_c), t')$ then $\mcow(t_c, E(S,\pubmsg_k(n),t_c), t')$.
+
+\begin{lem}
+\label{lem:escapeset}
+Let $S$ be a set of available messages and let $t_c$ be a term such that either $t_c$ is an atom
+or $t_c = \enc{t_0}{t_1}$ with $S \not\vdash t_1$.  Then if $S \vdash t$ and $t_c \sqsubseteq t$,
+$\mcow(t_c,E(S,t_c),t)$.
+\end{lem}
+
+\begin{proof}
+If $t$ is an atom, it cannot be derived from terms not carrying it.
+If $t$ is an encryption, it can be derived from non-carrying terms
+only if its key is derivable.
+
+Suppose $t \in D^n(S)$; we prove the theorem by induction.  For $n =
+0$, $D^0(S) = M(S)$.  Suppose that $t_c \sqsubseteq_p t$.  Then
+consider $\anc(t,p)$---the
+encryptions on the path from $t_c$ to $t$, including $t_c$.  The
+minimal such encryption such that $t_1^{-1}$ is not derivable from $S$
+will be in $E(S,t_c)$.  Thus, any carried position of $t_c$ within $t$
+is carried within $E(S,t_c)$.
+
+Suppose $t \in D^n(S)$ but $t \notin D^{n-1}(S)$.  Then either $t =
+(t_0, t_1)$ where $t_0, t_1 \in D^{n-1}(S)$, or $t = \enc{t_0}{t_1}$
+where $t_0, t_1 \in D^{n-1}(S)$.  In the former case, we must have
+that if $t_c \sqsubseteq_p t$ then either $p = 1 \append p'$ and $t_c
+\sqsubseteq_{p'} t_0$, or $p = 2 \append p'$ and $t_c \sqsubseteq_{p'}
+t_1$.  In either case, there is some ancestor of $p$ which is an
+ancestor of $p'$ within $t_0$ or $t_1$, in $E(S,t_c)$ by inductive
+assumption.  The case for $t = \enc{t_0}{t_1}$ is similar but since
+only the plaintext of an encryption is carried, all carried positions
+are of the form $1 \append p'$ where $t_c \sqsubseteq_{p'} t_0$.
+\end{proof}
+
+\begin{defn}[Target terms]
+Let $T$ be a set of terms, and let $t_c$ be a term.  Then the
+set of {\em target terms} containing $t_c$ within $T$, denoted
+$\fn{targ}(t_c,T)$ is the set
+$\{t | \exists t' \in T: t_c \sqsubseteq t \sqsubseteq t'$ but $t \notin T\} \cup \{t_c\}$.
+\end{defn}
+
+A critical message may be either an atom or an encryption with an
+underivable encryption key.  A critical message cannot be derived from
+its subterms.  Here we define the notion of a critical position:
+
+\begin{defn}[Critical Position]
+Position $p$ is a \emph{critical position} of~$t$ in the context of
+public messages~$S$, written $p\in\critpos(S,t)$, iff
+\begin{enumerate}
+\item $p$ is a carried position in $t$
+\item $t \termat p$ is an atom or $t \termat p = \enc{t_0}{t_1}$ and $S \not\vdash t_1$, and
+\item $\anc(t,p) \cap E(S,t \termat p) = \emptyset$.
+\end{enumerate} \end{defn}
+
+\begin{thm}
+$S\vdash t$ iff $\critpos(S,t)=\emptyset$.
+\end{thm}
+
+A critical message is $t \termat p$ where $p$ is a critical position.
+A critical message that is an atom is called a \emph{nonce test}, and
+one that is an encryption is called an \emph{encryption test},  and
+both types of tests are called an \emph{authentication test}.
+
+\begin{defn}[Test Node]
+Node~$n$ is a \emph{test node} in~$k$ if
+$\evt_k(n)=\inbnd t$ and $\critpos(\pubmsg_k(n),t)\neq\emptyset.$
+\end{defn}
+
+{\cpsa} makes progress by solving a test.
+
+\begin{defn}[Critical Position Solved]\label{def:critical position solved}
+Suppose~$p$ is a critical
+position at~$n$ in~$k$, i.e.\ $\evt_k(n)=\inbnd t$ and
+$p\in\critpos(\pubmsg_k(n),t)$, and suppose
+$k\homomorphism{\phi,\sigma}k'$.  Let $T= E(\pubmsg_k(n),t \termat
+p)$, $T'=\sigma(T)$, $n'=\phi(n)$, and $t' = \msg_{k'}(n')$.
+Position~$p$ at~$n$ in~$k$ is \emph{solved} in~$k'$, written
+$k\solve{n,p}k'$, if there exists a $(\phi,\sigma)$ such that:
+\begin{enumerate}
+\item\label{enu:contract} $\anc(t',p) \cap T' \neq \emptyset$, or
+\item\label{enu:augment} for some $t_p\in\transpred_{k'}(n')$,
+$\mncow(t' \termat p,T',t_p)$, or
+\item[2a.]\label{enu:augment2}
+$\fn{targ}(t'_c,T') \setminus
+\sigma(\fn{targ}(t_c,T)) \neq \emptyset$ and
+there are variables in $k$'s protocol that are not atoms, or
+\item\label{enu:escape} for some $\enc{t_0}{t_1}\in T'$,
+$\pubmsg_{k'}(n')\vdash t_1^{-1}$, or
+\item\label{enu:crit} $t' \termat p=\enc{t_0}{t_1}$, and
+$\pubmsg_{k'}(n')\vdash t_1$.
+\end{enumerate}
+\end{defn}
+
+In words, {\cpsa} makes progress by a contraction
+(Item~\ref{enu:contract}), where messages are identified, an
+augmentation (Item~\ref{enu:augment}), where something is added to the
+escape set, or a listener augmentation (Item~\ref{enu:escape} and
+Item~\ref{enu:crit}), where an assumption about the lack of the
+derivability of a key is shown to be invalid.
+
+If solving a test is semantics preserving, and {\cpsa} produces a
+finite set of skeletons that preserve the semantics at every step,
+{\cpsa} will produce a set of realized skeletons that describe every
+possible bundle associated with an initial skeleton whenever {\cpsa}
+terminates.
+
+\begin{thm}
+For any skeleton $k$ with an unrealized node $n$ and a critical position
+$p$ at $n$ in $k$,
+$\sembrack{k}=\bigcup_{k'\in\{k'\mid k\solve{n,p}k'\}}\sembrack{k'}$.
+\end{thm}
+
+\begin{proof}
+Let $k$ be a skeleton in which $n$ is an unrealized node, and $t_c$ is a
+critical message at $n$ in $k$.  Let $t$ be the message at $n$.  Let $k'$ be the
+skeleton of a bundle such that $k \homomorphism{\phi,\sigma} k'$.
+Let $n' = \phi(n)$, let $t' = \sigma(t)$.
+Let $T = E(\pubmsg_k(n),t \termat p)$, and let $T' = \sigma(T)$.  Let $S' = \pubmsg_{k'}(n')$.
+
+Let $t_c = t \termat p$ and $t'_c = t' \termat p$.
+Because $k'$ is the skeleton of a bundle, there is no critical message at $n'$.  Therefore,
+$t'_c$ is not a critical message at $n'$ in $k'$.  That is, there is no position $p'$ such that
+$t' \termat p' = t'_c$ and $p'$ is a critical position at $n'$ in $k'$.
+
+If $t'_c = \enc{t_0}{t_1}$ and $S' \vdash t_1$ then by condition 4 of the solved definition,
+$k\solve{n,p}k'$.
+
+Otherwise, $\mcow(t'_c, E(S',t'_c), t')$.
+
+Suppose that $\forall t_e \in E(S',t'_c)$, $\mcow(t'_c, T', t_e)$.  Since we know $\mcow(t'_c, E(S', t'_c), t')$,
+by Lemma~\ref{lem:cowtrans}, $\mcow(t'_c, T', t')$.  Thus, since $t' \termat p = t'_c$, $\anc(t',p) \cap T' \neq \emptyset$
+and thus $k\solve{n,t_c}k'$ by condition (1) of the definition of solved.
+
+Otherwise, there is some $t_e \in E(S', t'_c)$ such that $\mncow(t'_c, T', t_e)$.  If $t_e$ is not an encryption,
+it must be that $E(S', t'_c) = \{ t'_c \}$ and that $t'_c$ is an atom.  In this case, note that $t'_c \in \excl_{k'}$
+because $t_c \in \excl_k$ and because $(\phi,\sigma)$ is a homomorphism.  Thus, regardless of whether $t_e$ is an
+encryption or not, $(\base\setminus\excl_k)\cup X_{\scap{mesg}} \not\vdash t_e$, but since $t_e \in E(S', t'_c)$, we know
+that $t_e \in M(S')$.  Therefore, $t_e$ can be derived from some public message.
+
+To make this precise, define $M_0(t_p,S')$ recursively as follows:
+
+\begin{itemize}
+\item $t_p \in M_0(t_p,S')$.
+\item If $\enc{t_0}{t_1} \in M_0(t_p,S')$ and $S' \vdash t_1^{-1}$ then $t_0 \in M_0(t_p,S')$.
+\item If $(t_0, t_1) \in M_0(t_p,S')$ then $t_0, t_1 \in M_0(t_p,S')$.
+\end{itemize}
+
+Then define $M(t_p,S')$ to be the all the non-pairs in $M_0(t_p,S')$.
+
+In other words, $M(t_p,S')$ is the portion of $M(S')$ derivable from $t_p$ using keys derivable from $S'$.  It is clear that
+$M(S') = M((\base\setminus\excl_k)\cup X_{\scap{mesg}}) \cup_{t_p \in \transpred_{k'}(n')} M(t_p,S')$.  So let $t_p$ be such that $t_e
+\in M(t_p,S')$.
+
+Define $q$ to be a position such that $t_p @ q = t_e$ and such that for every proper prefix $q''$ of $q$, either $t_p @ q''$
+is a pair, or $t_p @ q'' = \enc{t_0}{t_1}$ where $S' \vdash t_1^{-1}$ and where $q'' \frown 1$ is also a prefix of $q$.
+In other words, let $q$ be a position at which $t_e$ is carried in $t_p$ {\em and} derivable.  We know such a $q$ must exist
+because $t_e \in M(t_p,S')$.
+
+Since $\mncow(t'_c, T', t_e)$, let $q'$ be a carried position of $t'_c$ within $t_e$ such that no ancestor is in $T'$.  Consider
+position $q \append q'$.  If there is some position $q \append q''$ for $q''$ a prefix of $q'$ such that $t_p \termat q \append
+q''$ is in $T'$ then the same could be said of $t_e \termat q''$, but this would be a contradiction.  So either there is
+no ancestor in $\anc(t_p, q \append q')$ equivalent to a member of $T'$ (in which case $k\solve{n,p}k'$ by condition (2)
+of the definition of solved), or there is some position $q''$ such that $t_p \termat q''$ is equivalent to some $u \in T'$.
+By our choice of $q$, and by the fact that any such $u$ must necessarily be an encryption\footnote{The only case in which a
+value in $T'$ is not an encryption is when $t_c \in M(S)$ and $t_c$ is an atom, which we know is false here.}, it follows that
+$u = \enc{t_0}{t_1}$ where $S' \vdash t_1^{-1}$.  In this case, $k\solve{n,p}k'$ by condition (3) of the definition of solved.
+
+Thus allows us to conclude that for every bundle $\Upsilon$ denoted by $k$, there is a skeleton $k'$,
+namely, the skeleton of $\Upsilon$, such that $k\solve{n,t_c}k'$.  Since $\Upsilon$ is denoted by $k'$,
+this proves that $\sembrack{k} \subseteq \bigcup_{k'\in\{k'\mid k\solve{n,t_c}k'\}}\sembrack{k'}$.  The other direction
+is far simpler: we just note that for each $k'$ such that $k\solve{n,t_c}k'$, there is a homomorphism
+from $k$ to $k'$, so the set of bundles denoted by $k'$ is a subset of those denoted by $k$.  This completes the proof.
+
+\end{proof}
+
+\section{Test Solving Algorithm}
+
+This section describes the algorithm undertaken by CPSA in order to
+find realized skeletons that include the structural assumptions of the
+``point of view,'' the initial input.
+
+\subsection{Primitive Preskeleton Operators}
+
+The are four primitive operators on preskeletons used by {\cpsa} to
+solve authentication tests.  Each operator is a partial map from
+preskeletons to preskeletons.
+
+\begin{defn}[Substitution Operator]
+For order-sorted substitution~$\sigma\colon X\to\alg{A}_Y$,
+the operator~$\ops{S}_\sigma$ is:
+$$\begin{array}{l}
+\ops{S}_\sigma(\skel_X(\rl,P,\Theta_X,\prec,N,U)) = {}\\
+\quad\skel_Y(\rl,P,
+s\mapsto \comp\sigma{\Theta_X(s)},\prec,\sigma(N), \sigma(U))
+\end{array}$$
+\end{defn}
+
+For $k'=\ops{S}_\sigma(k)$, there is a homomorphism from~$k$ to~$k'$
+only if for all $t\in U_k$,
+$\orig_k(t)\subseteq\orig_{k'}(\sigma(t))$.  The structure preserving
+maps associated with the homomorphism are~$\idphi$ and~$\sigma$.
+
+\begin{defn}[Compression Operator]
+For distinct strands~$s$ and~$s'$, operator~$\ops{C}_{s,s'}$
+compresses strand~$s$ into~$s'$.
+$$\begin{array}{l}
+\ops{C}_{s,s'}(\skel_X(\rl,P,\Theta_X,\prec,N,U)) = {}\\
+\quad \skel_X(\comp\rl{\phi'_s},P,
+\comp{\Theta_X}{\phi'_s},\prec',N,U)
+\end{array}$$
+where
+$$\begin{array}{r@{}c@{}l}
+\phi'_s(j)&{}={}&\left\{
+\begin{array}{ll}
+j+1&\mbox{if $j\geq s$}\\
+j&\mbox{otherwise,}
+\end{array}\right.
+\end{array}$$
+relation $\prec'$ is the transitive closure of $\phi_{s,s'}(\prec)$, and
+$$\begin{array}{r@{}c@{}l}
+\phi_{s,s'}(j)&{}={}&\left\{
+\begin{array}{ll}
+\phi_s(s')&\mbox{if $j=s$}\\
+\phi_s(j)&\mbox{otherwise}
+\end{array}\right.\\
+\phi_s(j)&{}={}&\left\{
+\begin{array}{ll}
+j-1&\mbox{if $j>s$}\\
+j&\mbox{otherwise.}
+\end{array}\right.
+\end{array}$$
+\end{defn}
+
+The compression operator is only used when $\Theta_X(s)$ is a prefix
+of $\Theta_X(s')$, and when there is a homomorphism from~$k$ to
+$\ops{C}_{s,s'}(k)$.  The structure preserving maps associated with
+the homomorphism are~$\phi_{s,s'}$ and~$\idsigma$.  Note that the
+compression operator is defined only when relation~$\prec'$ is
+asymmetric, and that $\comp{\phi_{s,s'}}{\phi'_s}=\idphi$.
+
+\begin{defn}[Ordering Enrichment Operator]
+Operator~$\ops{E}(k)$ enriches~$\kprec{k}$ by adding all elements implied
+by unique origination.
+\end{defn}
+The ordering enrichment operator is total and idempotent.  The
+structure preserving maps associated with the operator's homomorphism
+are~$\idphi$ and~$\idsigma$, i.e.\ the homomorphism is an embedding.
+
+\begin{defn}[Augmentation Operator]
+For node~$n$, role~$r$, and trace~$C$, operator~$\ops{A}_{n,r,C}$ is:
+$$\begin{array}{l}
+\ops{A}_{n,r,C}(\skel_X(\rl,P,\Theta_X,\prec,N,U)) = {}\\
+\quad\skel_{X'}(\rl\append r,P,
+\Theta_X(s)\append C,\prec',N',U')
+\end{array}$$
+where $X'$ is $X$ extended to include the variables in~$C$,
+$\prec'$ is the minimal extension of $\prec$ such that
+$(|\Theta_X|+1,|C|)\prec' n$, $N'$ is $N$ extended with
+non-origination assumptions inherited from~$r$ by~$C$, and likewise
+for~$U'$.
+\end{defn}
+
+The structure preserving maps associated with the augmentation
+operator's homomorphism are~$\idphi$ and~$\idsigma$, i.e.\ the
+homomorphism is an embedding.
+
+\subsection{Test solving steps}
+
+Suppose~$k$ is a skeleton with a critical position~$p$ at node~$n$.
+Let $\inbnd t=\evt_k(n)$, $t_c=t\termat p$, and $T_e=E(\pubmsg_k(n),
+t_c)$.  Pre-skeletons $k'$ produced by the following steps make up the
+``pre-cohort'' $\mathcal{PC}_{k,n,p}$ of $k$ with respect to the test $(n,p)$.
+
+\begin{description}
+\item[Contraction:] $k'=\ops{S}_\sigma(k)$, where~$\sigma$
+  is a most general unifier such that for some $t_a\in\anc(t, p)$ and
+  $t_e\in T_e$, $\sigma(t_a)=\sigma(t_e)$.
+
+\item[Augmentation:] $k'=\ops{A}_{n, r,
+  C}(\ops{S}_\sigma(k))$, where $n$, $r$, $C$, and $\sigma$ are as
+  described in Section~\ref{sec:aug step}.
+
+\item[Displacement:] $k'=\ops{C}_{s,s'}(\ops{A}_{n, r,
+  C}(\ops{S}_\sigma(k)))$, where $n$, $r$, $C$, and $\sigma$ are as
+  described in Section~\ref{sec:aug step}, where $s$ and $s'$ are
+  the newly created strand and any other existing strand (where
+  $s'$ is the strand with greater height, if the heights are unequal).
+
+\item[Escape set listeners:] For $t_e\in T_e$, if $t_e=\enc{t_0}{t_1}$
+  and $C=\seq{\inbnd t_1^{-1},\outbnd t_1^{-1}}$ then
+  $k'=\ops{A}_{n, \lsn,C}(k)$.
+
+\item[Critical message listener:] If $t_c=\enc{t_0}{t_1}$ then
+  $k'=\ops{A}_{n, \lsn,\seq{\inbnd t_1,\outbnd t_1}}(k)$.
+\end{description}
+
+By definition, when $k\reduction{n,p}k'$, there is a
+homomorphism~$k\homomorphism{\phi,\sigma}k'$, where maps~$\phi$
+and~$\sigma$ are the composition of the maps from the steps used to
+perform a test solving reduction.  Since each operator does not ensure
+that the node at which each uniquely originating atom originates is
+preserved, skeletons that do not meet this requirement must be filter
+out.  To perform the filtering, the implementation computes~$\sigma$
+and~$\phi$.
+
+\begin{conj}[Authentication Solving Algorithm Complete]
+Suppose~$k$ is a skeleton with a critical position~$p$ at node~$n$,
+and~$p$ at~$n$ in~$k$ is solved in skeleton~$k'$, i.e.\ $k\solve{n,p}k'$.
+Then there exists a skeleton~$k''$, strand map~$\phi$, and
+substitution~$\sigma$ such that $k\reduction{n,p}k''$, and
+$k''\homomorphism{\phi,\sigma}k'$.
+\end{conj}
+
+The proof appears to be too hard.  Instead we focus on the following
+conjecture.
+
+\begin{defn}[Listener expanded bundle]
+Let bundle~$\Upsilon$ be a run of protocol.  Its \emph{listener
+  expanded bundle} is $\lsn(\Upsilon)$, which is~$\Upsilon$ after
+inserting a listener after every message transmitted by a non-listener
+strand.
+\end{defn}
+
+\begin{conj}
+Suppose~$k$ is a skeleton with a critical position~$p$ at node~$n$.
+For all $\Upsilon\in\sembrack{k}$ and the~$k'$ that
+realizes~$\lsn(\Upsilon)$, there exists a skeleton~$k''$, strand
+map~$\phi$, and substitution~$\sigma$ such that $k\reduction{n,p}k''$,
+and $k''\homomorphism{\phi,\sigma}k'$.
+\end{conj}
+
+\subsection{Hulling process}
+
+A preskeleton differs from a skeleton only in that in a skeleton,
+terms assumed to be uniquely originating originate at no more than
+one node, and that receptions of a uniquely originating term that
+originates need not be ordered after its unique point of origination.
+
+The process of hulling takes as input a quadruple $(k_0, k, \phi, \sigma)$
+where $k_0$ is a skeleton, $k$ is a preskeleton, and
+$k_0 \homomorphism{\phi,\sigma} k$, and outputs a set $\ops{H}(k_0, k, \phi,
+\sigma)$ of skeletons $k'$ such that for each $k'$ there is a $\phi', \sigma'$
+such that $k_0 \homomorphism{\phi' \circ \phi, \sigma' \circ \sigma} k'$, and
+such that for any $k''$ such that $k_0 \homomorphism{\phi'' \circ \phi, \sigma''
+\circ \sigma} k''$, this map factors through one of the skeletons and through
+its associated map in $\ops{H}(k_0, k, \phi, \sigma)$.
+
+$\ops{H}(k_0, k, \phi, \sigma)$ is produced from $k$ by iteratively
+resolving every instance of a uniquely originating term originating at more
+than one node, and then applying order enrichment.  A case of multi-origination
+can be resolved in one of two ways.  If $t$ originates on distinct strands
+$s$ and $s'$ where the height of $s'$ is no less than the height of $s$, then
+$k' = \ops{C}_{s,s'} (\ops{S}_\sigma (k))$ where $\sigma$ is a most general
+unifier of $\Theta_k(s)$ and $\Theta_k(s')$ is a {\em normal hulling}.
+If $t$ originates on distinct strands $s$ and $s'$ and $s'$ is not in the
+image of $k_0$, then $k' = \ops{S}_\sigma (k)$ where $\sigma$ is a most
+general algebra homomorphism such that $\sigma \circ \Theta_k(s')$
+does not originate $\sigma(t)$ (for instance, due to $\sigma(t)$ being
+received first), then $k'$ is a {\em de-origination}.
+
+\begin{thm}
+The process of computing $\ops{H}(k_0, k, \phi, \sigma)$ produces a
+hulling as defined above.
+\end{thm}
+
+{\em No proof yet.}
+
+\subsection{Pruning process}
+
+Let a {\em subskeleton} of a skeleton be defined as a subset of
+the strands.  Consider a skeleton $k$ along with a ``point of view''
+skeleton $k_0$ with $k_0 \homomorphism{\phi_0,\sigma_0} k$.
+
+Two subskeletons $S_0, S_1$ are {\em essentially identical} if:
+
+\begin{itemize}
+\item $|S_0| = |S_1$ and $S_0 \cap S_1 = \emptyset$
+\item $(S_0 \cup S_1) \cap \phi_0(k_0) = \emptyset$.
+\item There exists a bijection $\phi$ between $S_0$ and $S_1$
+such that for each $s \in S_0$, $\phi(s)$ is an instance of the same
+role as $s$ and has the same length as $s$.
+\item There is an algebra homomorphism $\sigma$ that is a renaming
+such that $\sigma(\evt(s,i)) = \evt(\phi(s),i)$.
+\item For all variables $v$ appearing in $k \setminus (S_0 \cup S_1)$,
+$\sigma$ is the identity on $v$.
+\item For any pair of nodes $(s,i), (s',i')$ in the first subskeleton,
+$(s,i) \prec (s',i')$ if and only if $(\phi(s),i) \prec (\phi(s'),i')$.
+\item For any pair of nodes $(s,i), (s',i')$ where $(s,i)$ is in the first
+subskeleton and $(s', i')$ is in neither subskeleton, $(s,i) \prec (s',i')
+\Leftrightarrow (\phi(s),i) \prec (s',i')$ and $(s',i') \prec (s,i)
+\Leftrightarrow (s',i') \prec (\phi(s),i)$.
+\end{itemize}
+
+CPSA ``prunes'' away essentially identical strands; in future
+versions, CPSA may be capable of pruning identical multi-strand subskeletons.
+
+When a skeleton $k$ has two essentially identical subskeletons $S_0, S_1$,
+there is a well-defined $\ops{P}_{S_0,S_1}(k)$ in which all of $S_1$ is
+simply removed from $k$.  Under some circumstances, there may be a homomorphism
+from $k$ to $\ops{P}_{S_0,S_1}(k)$ but in others there may not.  However, there
+will always be a homomorphism from $k_0$ to $\ops{P}_{S_0,S_1}$.
+
+%For preskeleton~$k=\skel(\_,\_,\Theta_k,\_,\_,U_k)$, assume
+%strands~$s$ and~$s'$ are distinct, and the height of~$s$ is
+%no greater than the height of~$s'$.  Operator
+%$\ops{P}_{s,s'}=\comp{\ops{C}_{s,s'}}{\ops{S}_\sigma}$ is a pruning
+%step if there is a sort preserving variable renaming~$\sigma$ such
+%that $\comp\sigma{\Theta_k(s)} = \prefix{\Theta_k(s')}{h}$ with
+%$h=|\Theta_k(s)|$, and two homomorphisms.  Let $k'=\ops{P}_{s,s'}(k)$
+%and $\phi=\phi_{s,s'}$.  The required homomorphisms are
+%$k\homomorphism{\phi,\sigma}k'$ and $k'\homomorphism{\phi',\sigma'}k$
+%such that $\phi\circ\phi'=\idphi$ and $\sigma\circ\sigma'=\idsigma$.
+
+\subsection{Augmentation}\label{sec:aug step}
+
+An augmentation step is used to add a strand to a skeleton.  An
+augmentation step has the form
+$\comp{\ops{A}_{n,r,C}}{\ops{S}_\sigma}$.  Suppose
+skeleton~$k=\skel_X(\_,P,\_,\_,\_,\_)$ has a critical position~$p$ at
+node~$n$, and $t_c=\msg_k(n)\termat p$ is the critical message.
+{\cpsa} computes the parameters for a set of augmentation steps as
+follows.  First, compute the target messages.  Let
+$T_e=E(\pubmsg_k(n), t_c)$.  The target messages are $\fn{targ}(t_c,
+T_e)$.  Next, for each $\role_Y(C,N,U)\in P$ and each index~$h$ where
+$C(h)=\outbnd t$, a transmission, do the following.
+\begin{description}
+\item[Create fresh variables:]
+Let~$\sigma_r$ be a sort preserving variable renaming,
+where the domain is the variables that occur in $\prefix C h$, and every
+variable in the range does not occur in~$X$ or~$\svars(P)$.
+
+\item[Insert critical message:] For each message~$t'$ carried by~$t$,
+  and each~$t_t\in \fn{targ}(t_c, T_e)$, consider most general unifiers~$\sigma'$
+  where, $\sigma'(t')=\sigma'(t_t)$ and $\sigma_r\unlhd\sigma'$.
+
+\item[Ensure previous events do not transform:] For each $\sigma'$, find
+  most general unifiers~$\sigma$ such that for $1\leq i<h$,
+  $\mcow(\sigma(t_c), \sigma(T_e), \sigma(C(i)))$ and
+  $\sigma'\unlhd\sigma$.  Let $S_{r,h}$ be a set of
+  substitutions~$\sigma$ with non-most general unifiers removed.
+
+\item[Ensure last event transforms:] For each $\sigma\in S_{r,h}$,
+if $\mncow(\sigma(t_c),\sigma(T_e),\sigma(C(h)))$, try
+augmenting with parameters $n$, $r$, $\sigma\circ\prefix{C}{h}$,
+and~$\sigma$.
+\end{description}
+
+\subsection{Preskeleton Reductions}
+
+Function~$\fn{skel}$ is a partial function that maps preskeletons to
+sets of pruned skeletons.  If given a preskeleton~$k$ where some uniquely
+originating atoms originate more than once, \fn{skel} applies hulling
+steps so as to eliminate uniquely originating atoms that originate
+more than once or is undefined.  Otherwise, it applies the ordering
+enrichment operator once to produce a skeleton.  Finally, it applies
+as many pruning steps as is possible to produce a skeleton that is
+pruned subject to restriction that only pairs of strands are
+considered.
+%The structure preserving maps associated with
+%function~$\fn{skel}$'s homomorphism are composed from the
+%structure preserving maps for the operators it uses.
+
+As remarked above, it may not always be the case that $k \homomorphism{\phi, \sigma} k'$
+where $k' \in \fn{skel}(k)$.
+
+\section{Completeness of CPSA}
+
+{\bf NOTE: This section is still an unstable draft!}
+
+In this section, we prove that the {\cpsa} cohort of finding regular and listener augmentations and contractions
+to solve a test is complete in the sense that if $k$ is a skeleton and $k\homomorphism{\phi,\sigma}k'$
+and $k\solve{n,p}k'$ then there is some $k''$ directly obtainable from $k$ and a factorization
+$k \homomorphism{\phi_0,\sigma_0} k'' \homomorphism{\phi_1,\sigma_1} k'$ such that $\phi = \phi_1 \circ \phi_0$
+and $\sigma = \sigma_1 \circ \sigma_0$.
+
+This would be the ideal theorem statement but we need to make the statement more complicated because of {\cpsa}'s
+use of listener augmentations which are not reflected in bundles.  So instead, we will have to prove that if
+$k$ is a skeleton that denotes a bundle $\Upsilon$, then there is some $k''$ directly obtainable from $k$ that
+denotes $\Upsilon$.  In order to relate this to the solved predicate, we make use of the theorem from the
+previous section, which states that if $k\homomorphism{\phi,\sigma}k'$ and $k'$ is realized, then $k\solve{n,p}k'$
+for any unrealized $n$ in $k$ with critical position $p$.  Let $k'$ be the skeleton of bundle $\Upsilon$.
+For the non-listener cases we will prove the homomorphism from $k$ to $k'$ factors through $k''$; for the listener
+cases, we will simply prove that $\Upsilon$ is still denoted by $k''$.
+
+Let $k$ be an unrealized skeleton and let $n$ be an unrealized node and $p$ be a critical position at that node.
+Let $\Upsilon(\Theta,\to)$ be a bundle denoted by $k$ and let $k'$ be the skeleton of that bundle.
+Note that $k\homomorphism{\phi,\sigma}k'$ and $k\solve{n,p}k'$.
+The proof proceeds by cases, corresponding to the conditions of the definition of solved.
+
+[Condition (1) of solved]: If $p'$ is a prefix of $p$ such that $t' \termat p' = t'_e \in T'$, then
+$\sigma$ is a unifier of $t \termat p'$ and $t_e$ where $\sigma(t_e) = t'_e$.  Specifically, let $k''$ be
+nodewise isomorphic to $k$, and let $\sigma_0$ be a most general unifier of $t_e$ and $t \termat p'$
+more general than $\sigma$ so that $\sigma = \sigma_1 \circ \sigma_0$.  Then let $\phi_0$ be the nodewise isomorphism
+and let $\phi_1 = \phi \circ \phi_0^{-1}$.  We have now specified $\sigma_0, \sigma_1, \phi_0, \phi_1$, and note
+that $\phi = \phi \circ \phi_0^{-1} \circ \phi_0$ and that $\sigma = \sigma_1 \circ \sigma_0$, which proves the
+factorization commutes.
+
+[Conditions (3) and (4) of solved]: If $\pubmsg_{k'}(n') \vdash {t'_1}^{-1}$ where $\enc{t'_0}{t'_1} \in T'$, a listener
+augmentation will serve as our intermediate step.  {\cpsa} attempts a listener augmentation for every decryption
+key associated with an encryption in its escape set; let $\enc{t_0}{t_1}$ be (one) preimage of $\enc{t'_0}{t'_1}$
+under $\sigma$ in the escape set $T$.  {\cpsa} will thus attempt a listener augmentation for $t_1^{-1}$.  Let $k''$ be defined to be
+$k$ with an additional listener for $t_1^{-1}$.  The map $\phi_0$ is nodewise injective with image that avoids the
+new listener, and the map $\sigma_0$ is the identity.  Let $k'_1$ be $k'$ with an additional listener for ${t'}_1^{-1}$,
+ordered immediately before $n'$ (that is, the listener nodes are previous to $n'$ and all nodes of $k'$ strictly
+previous to $n'$ are strictly previous to the first node of the listener.)  We can define a homomorphism from $k''$
+to $k'_1$, namely, $\phi_1,\sigma_1$ where $\sigma_1 = \sigma$ and where $\phi_1$ is defined to be $\phi \circ \phi_0^{-1}$
+for nodes in the image of $\phi_0$, with the two listener nodes mapping to the two listener nodes of $k'_1$.
+$k'_1$ will still be realized; the only new reception is for ${t'}_1^{-1}$ but we assumed that $\pubmsg_{k'}(n')
+\vdash {t'}_1^{-1}$ and all public messages sent before $n'$ are available before the listener reception since $n'$
+contains a reception event.
+
+In $\Upsilon(\Theta,\to)$, we must now insert the listener in a way compatible with $k'_1$, yet also keep
+the bundle property intact.  This may require one or more penetrator strands be added to produce ${t'}_1^{-1}$ if it
+was not already produced.  Let $\Theta',\to'$ be the extensions of $\Theta,\to$ to incorporate the listener
+strand and any necessary penetrator strands.  Then $k'_1$ realizes $\Upsilon(\Theta',\to')$ and so $k''$ realizes
+$\Upsilon(\Theta,\to)$ modulo listeners.
+
+If $t'_c = \enc{t'_0}{t'_1}$ and $\pubmsg_{k'}(n') \vdash t'_1$ then, again, we use a listener augmentation.  When
+the critical term is an encryption, {\cpsa} will attempt a listener augmentation for its encryption key.  In this case,
+if $t_c = \enc{t_0}{t_1}$, {\cpsa} will attempt a listener augmentation for $t_1$.  The rest of the argument for this case
+is effectively identical to the argument for condition (3), but the listener in $k''$ will be for $t_1$ rather than $t_1^{-1}$
+and the listener in $k'_1$ will be for $t'_1$ rather than ${t'}_1^{-1}$.
+
+[Condition (2) of solved]:  The proof of this case proceeds via the proof of two lemmas.  The first lemma proves that
+a good candidate augmentation exists, and the second lemma proves that this augmentation is successful, produces a distinct
+result from $k$, and covers $k'$.
+
+\begin{defn}
+Let $r = (C,N,U)$ be a role, $i$ be whole number, $pp$ be a position, and $tt$ be a term.  Then $(r,i,pp,tt)$ is an {\em augmentation
+candidate} for $(k,n,p)$ if:
+\begin{enumerate}
+\item $|C| \leq i$,
+\item Position $pp$ in $C(i)$ is a well-defined, carried position.
+\item $tt$ is either $t \termat p$ or a proper, carried subterm of an element of $E(\pubmsg_n(k),t \termat p)$ that carries $t \termat p$.
+\end{enumerate}
+\end{defn}
+
+\begin{defn}
+Let $k$ be an unrealized skeleton with unrealized node $n$ and critical position $p$.  Let $k'$ be a realized
+skeleton, and let $k \homomorphism{\phi,\sigma} k'$.  Then $(r,i,pp,tt)$ is a {\em solving augmentation
+candidate} for $(k,k',n,p,\phi,\sigma)$ if $(r,i,pp,tt)$ is an augmentation candidate for $(k,n,p)$, and
+\begin{enumerate}
+\item There is a send of a message $t'$ at a node $n' = (s, i)$ in $k'$ such
+that (1) $n' \prec \phi(n)$, (2) strand $\Theta'(s)$ is an instance of role $r$,
+(3) $t' \termat pp = \sigma(tt)$, and (4) if $t'' = \msg_k(s,j)$ for $j < i$ then $\mcow(t'_c,T',t'')$.
+\item There is some position $q$ such that $t'_c \sqsubseteq_{q} t'$ and such that (1) $\anc(t',q) \cap T' =
+\emptyset$ or (2) there exists some $q', q'': q' \append q''$ is a prefix of $q$ and $t' \termat q' \in T'$
+and $t' \termat q' \append q'' \in \fn{targ}(t'_c,T')$ but $t' \termat q' \append q'' \notin \sigma(\fn{targ}(t_c,T))$.
+\end{enumerate}
+\end{defn}
+
+\begin{lem}
+\label{lem:candidate}
+If $k\solve{n,p}k'$ via $k \homomorphism{\phi,\sigma}$ and only condition (2) of the solved predicate
+holds, then there exists a solving augmentation candidate for $(k,k',n,p,\phi,\sigma)$.
+\end{lem}
+
+\begin{proof}
+In order to concisely deal with similarities between more complex cases and simpler cases, we define several
+related sequences which become defined as needed.  Specifically, we define a sequence $T'_i$ of sets of terms,
+a sequence $t'_i$ of terms, sequences $p_i$ and $p'_i$ of positions, and a sequence $n_i$ of nodes, such that:
+
+\begin{itemize}
+\item $T'_i \subset T'$.
+\item For $i > 0$, $T'_i = \{t'_i\} \cup (E(\pubmsg_{k'}(n_i),\pubmsg_{k'}(n'),t'_c) \cap T'_{i-1})$.
+\item For $i > 0$,$p'_i$ is a prefix of $p_i$.
+\item For $i > 0$, $t'_c \sqsubseteq_{p_i} t'_i$ but $t'_i \termat p'_i \in \fn{targ}(t'_c, T')$ and $t'_i \termat p'_i \notin \sigma(\fn{targ}
+(t_c, T))$
+\item For $i \geq 0$, $n_{i+1} \preceq n_i$, and $n_0 \preceq n'$.
+\item $\mncow(t'_c, T'_i, \msg(n_i))$.
+\end{itemize}
+
+We let $T'_0 = T'$ and we let $n_0$ be the node preceding $n'$ transmitting the message $t_p$ such that $\mncow(t'_c,T',t_p)$.
+There is no need to define $t'_0, p_0,$ or $p'_0$ because no conditions are placed on them.
+
+Note that in fact $T'_i = \{t'_i\} \cup (E(\pubmsg_{k'}(n_i),\pubmsg_{k'}(n'),t'_c) \cap T')$, by repeated
+substitution of $T'_{i-1}$ coupled with the fact that these escape sets get smaller as $i$ grows.
+
+Since $T'$ is finite, we know that this sequence cannot be defined farther than $i = |T'|$.  Therefore, it suffices to prove
+that either we can find a solving augmentation candidate given a sequence of length $i$, or that we can extend the sequence
+while maintaining these properties.
+
+Recall that since for all $\enc{t_0}{t_1} \in T'$ we have that $\pubmsg_{k'}(n') \not\vdash t_1^{-1}$, and
+also if $t'_c$ is an encryption, its encryption key is not derivable from $\pubmsg_{k'}(n')$, we know that if
+$S$ is a set of messages such that for every $x \in S$ we have that $\mcow(t'_c,T'_i,x)$, then $S \vdash x'$ implies
+that $\mcow(t'_c,T',x')$.  Thus, for any reception node prior to $n'$ in $k'$, if the reception carries
+$t'_c$ not only within $T'_i$ then there is an earlier send node that carries $t'_c$ not only within $T'_i$; if the
+earliest such node is a reception, its message would not be derivable.
+
+Thus, for the message at any node $\preceq n_i$ in $k'$, if that message does not carry $t'_c$ only within $T'_i$, then
+either that node is a send, or there is an earlier node whose message does not carry $t'_c$ only within $T'$.  In other
+words, if such a message exists, we can find an ealiest transmission node $\nu_i$ sending $\tau_i$ such that $\mncow(t'_c, T',
+\tau_i)$ and for all $\tau$ sent earlier than $\nu_i$, $\mcow(t'_c, T', \tau)$.  Note that since $\mncow(t'_c, T'_i,
+\msg(n_i))$, there must exist some node $\nu_i$ such that (1) $\evt_{k'}(\nu_i) = +\tau_i$, (2) $\mncow(t'_c, T'_i, \tau_i)$, and
+(3) for all $\nu \prec \nu_i, \mcow(t'_c, T'_i, \msg(\nu))$.  In other words, $\nu_i$ is an earliest transmission node whose
+message carries $t'_c$ not only within $T'_i$.
+
+Since $k'$ is realized, we know that $\mcow(t'_c,E(\pubmsg_{k'}(\nu_i),t'_c),\tau_i)$ and therefore,
+$\mcow(t'_c,E(\pubmsg_{k'}(n_i),\pubmsg_{k'}(n'),t'_c),\tau_i)$ by Lemma~\ref{lem:escapesetcow}.  Since $\mncow(t'_c,T'_i,\tau_i)$,
+let $q$ be such that $t'_c \sqsubseteq_q \tau_i$ and $\anc(\tau_i, q) \cap T'_i = \emptyset$.  If such a $q$ exists such that
+$\anc(\tau_i, q) \cap T' = \emptyset$ then let $q$ have this property.  Let $t^\star \in \anc(\tau_i,q) \cap E(\pubmsg_{k'}(n_i),
+\pubmsg_{k'}(n'),t'_c)\setminus T'_i$, where $t^\star \in T'$ if such a $t^\star$ exists given our choice of $q$.
+If $t^\star \in T'$ then $t^\star = t_i$ (recall, $T'_i \setminus (T' \cap E(\pubmsg_{k'}(n_i),\pubmsg_{k'}(n'),t'_c)) = \{t'_i\}$).
+In such a case, assume without loss of generality that we can write $q = q' \concat p_i$ where $\tau_i \termat q' =
+t^\star$.\footnote{If not, write $q = q_0 \append q_1$ where $t' \termat q_0 = t^\star$ and
+$t'_c \sqsubseteq_{q_1} t^\star$.  Consider $q' = q_0 \append p_i$.  Then $t'_c \sqsubseteq_{q'} \tau_i$ and $t^\star \in
+\anc(\tau_i,q')$.}
+
+Note that $q$ satisfies condition (3) of a solving augmentation candidate, a condition which depends only on the transforming
+message, $\tau_i$.  If $t^\star \notin T'$ then it is because $\anc(\tau_i, q) \cap T' = \emptyset$.  Otherwise, $t^\star = t_i$,
+and $q \concat p'_i$ is the prefix required: $\tau_i \termat q' = t_i \in T'$ and $\tau_i \termat q' \concat p'_i = t_i \termat p'_i$
+is in $\fn{targ}(t'_c,T')$ but not in $\sigma(\fn{targ}(t_c,T))$.
+
+From here, we must identify our solving augmentation candidate or identify our extension of the sequence.
+
+Let $r_i = (C_i,N_i,U_i)$ be the role associated with $\nu_i$'s strand in $k'$ via its role map, and let $\nu_i = (s_i, h_i)$.
+We know that $\nu_i$ is a sending node, so let $t_r$ be such that $C(h_i) = +t_r$.  If $q$ is a well-defined position of
+$t_r$ then $(r_i,h_i,q,t_c)$ is a solving augmentation candidate.  (Proof omitted.)
+
+If not, then let $q'$ be the longest prefix of $q$ such that $q'$ is a well-defined position of $t_r$ (and let $q = q' \append
+q''$); then $t_r \termat q' = x$ where $x$ is of sort $\scap{mesg}$.  Since our protocol satisfies the acquired constraint
+there is an earlier message $C(h_{aq}) = -t_{aq}$ in which $x$ is acquired; let $p_{aq}$ be such that $x \sqsubseteq_{p_{aq}}
+t_{aq}$.  If $t'_{aq} = \msg(n'_{aq})$ where $n'_{aq} = (s_i, h_{aq})$ then we know that $t'_{aq} \termat (p_{aq} \append
+q'') = t'_c$ so there must be some ancestor $t'_e$ in $T'_i \cap \anc(t'_{aq},p_{aq}\append q'')$.  Specifically, let $t'_e$
+be the ancestor closest to $t'_{aq} \termat (p_{aq} \append q'')$ in $E(\pubmsg_{k'}(n'_{aq}),
+\pubmsg_{k'}(n'),t'_c)$.  We know there is some ancestor in $E(\pubmsg_{k'}(n'_{aq}),t'_c)$ because $k'$ is realized, and
+by Lemma~\ref{lem:escapesetcow} and Lemma~\ref{lem:cowtrans}, there is some ancestor in $E(\pubmsg_{k'}(n'_{aq}), \pubmsg_{k'}(n'),
+t'_c)$.  Given that there is at least one, we can without loss of generality pick the smallest as $t'_e$.
+
+Furthermore, $t'_e$ must appear at some position $p'_{aq}$ in $t'_{aq}$ which is a proper prefix of $p_{aq}$, otherwise, $t'_e$ would
+be in $\anc(t_p,q)$.  Let $p_{aq} = p'_{aq} \append p''_{aq}$.  If there is some target term $tt$ such that $\sigma(tt) = t'_e \termat p''_{aq}$
+then $(r_i,h_i,q',tt)$ is a solving augmentation candidate.  (Proof omitted.)
+
+Otherwise, for all $tt \in \fn{targ}(t_c,T)$, $\sigma(tt) \neq t'_e \termat p''_{aq}$.  Let $t'_{i+1} = t'_e$, let $p_{i+1} = p''_{aq}$, let
+$T'_{i+1} = (T'_i \setminus \{t'_e\}) \cap E(\pubmsg_{k'}(n'_{aq}),\pubmsg_{k'}(n'),t'_c)$,
+and let $n_{i+1}$ be some node $\preceq n'_{aq}$ such that $t'_e \in M(\fn{mesg}(n_{i+1}),\pubmsg_{k'}(n'))$; we know such a node
+exists because $t'_e \in E(\pubmsg_{k'}(n'_{aq}),\pubmsg_{k'}(n'),t'_c)$.  Then $\mncow(t'_c, T'_{i+1}, \fn{mesg}(n_{i+1})$ because
+$t'_e \in M(\fn{mesg}(n_{i+1})$ and $t'_e$ has at least one carried position of $t'_c$, namely $p''_{aq}$, that has no ancestor
+in $E(\pubmsg_{k'}(n'_{aq}),\pubmsg_{k'}(n'),t'_c)$.
+\end{proof}
+
+This establishes that a solving augmentation candidate exists.  Next we must prove that the existence of such an
+augmentation candidate implies a cohort member that we can factor through.
+
+\begin{lem}
+\label{lem:candidate works}
+If $(r,i,pp,tt)$ is a solving augmentation candidate for $(k,k',n,p,\phi,\sigma)$ then if
+$k'' = \aug(k,r,i,pp,tt)$ then there exist homomorphisms $(\phi', \sigma')$ and $(\phi'',\sigma'')$
+such that $k \homomorphism{\phi',\sigma'} k'' \homomorphism{\phi'',\sigma''} k'$ where $\phi = \phi''
+\circ \phi'$ and $\sigma = \sigma'' \circ \sigma'$, and $k''$ is not isomorphic to $k$.
+\end{lem}
+
+STOP READING HERE
+
+\begin{proof}
+
+In such cases, the map from $k$ to $k'$ filters through $k''$ which is the result of an augmentation
+followed by pruning.  To specify an augmentation operation, we must specify an $n$ which the new instance
+precedes, a role $r$, a trace $C$ (an instantiation of $r$ under some substitution up to some height) and
+a substitution $\sigma$ to apply in conjunection with the augmentation.  This produces a pre-skeleton $k''_0$
+and then $k''$ is the result of first hulling $k''_0$ and then pruning single strands.
+
+$n'$ will serve as the $n$ for the augmentation, and $r$ will be the role.
+
+In $k'$, there is a node $\nu = (s',i)$ such that $\nu \prec n'$ such that $\evt(\nu) = +\tau$ and $\tau
+\termat pp = \sigma(tt)$, and where $s$ is an instance of role $r$, and such that for all $j < i$,
+$\mcow(t'_c,T',\mesg_k(s,j))$.
+
+\noindent {\bf First step: adding a fresh instance}
+
+Let $k_0$ be the skeleton $\mathbb{A}_{n,r,C}(\mathbb{S}_{\idsigma}(k))$ where $C$ is a variable-disjoint
+renaming of the trace in $r$ up to the $i$th event.\footnote{We can see that $k_0$ is a skeleton because
+no origination of values already in $k$ changes, and because $C$ is consistent with the origination
+restrictions introduced.}  There is a homomorphism $k \homomorphism{\phi_0,\sigma_0} k_0$ with $\sigma_0 =
+\idsigma$ and $\phi_0$ being nodewise bijective.  In other words, $(\phi_0, \sigma_0)$ is an inclusion map.
+
+Furthermore, $(\phi,\sigma)$ factors through $(\phi_0,\sigma_0)$.  Let $\hat{\phi}$ be defined to be
+$\phi \circ \phi_0^{-1}$ for those nodes in the image of $\phi_0$.  Nodes not in the image of $\phi_0$ are
+the nodes in the additional strand introduced by the augmentation.  For such nodes $(s,i)$, $\hat{\phi}$
+maps them to $(s',i)$ in $k'$.  $\hat{\sigma}$ is defined to be $\sigma$ on all variables appearing in
+$\phi_0(k)$.  For the variables appearing outside the image of $\phi_0$, note that there is a renaming
+$\rho$ that maps the first $i$ events in the trace of $r$ to $C$ used in our augmentation, and there is a
+substitution $\sigma_r$, the instantiation map in $k'$, which unifies the first $i$ events in the trace of $r$
+with the first $i$ events in the strand $s'$ in $k'$.  (Specifically, let $\sigma_r$ be the full instantiation
+map for that strand, restricted to the variables that appear in the first $i$ events in the trace of $r$.)  Then
+$\hat{\sigma}$ on variables appearing outside the image of $\phi_0$ is $\sigma_r \circ \rho^{-1}$.
+
+\noindent {\bf Second step: placing the critical message}
+
+Let $t_r$ be the message sent in the $i$th node of the newly added strand in $k_0$.
+Note that $\hat{\sigma}$ unifies $t_r \termat pp$ with $tt$, because $\hat{\sigma}(t_r) = \tau$ and
+$\tau \termat pp = \hat{\sigma}(tt) = \sigma(tt)$.  Let $\sigma_1$ be a most general unifier of $t_r \termat pp$
+and $tt$ more general than $\hat{\sigma}$, and let $\hat{\sigma}_1$ be such that $\hat{\sigma} = \hat{\sigma}_1 \circ
+\sigma_1$.
+
+Consider $k_1 = \mathbb{S}_{\sigma_1}(k_0)$.  Let $\phi_1$ be the identity map.  Then $(\phi_1,\sigma_1)$ is a proto-homomorphism
+from $k_0$ into $k_1$.
+
+The second step in the augmentation is relies on parameters $(k,n,r,i,pp,tt)$ where $pp$, the {\em placement position}, is a well-defined
+position in $C(i)$, and where $tt$, the {\em target term}, is either $t \termat p$ where $t$ is the message to be received
+at node $n$, or a member of $\{tt | tt$ is a subterm of an element of $E(\pubmsg_k(n),t \termat p)\} \setminus E(\pubmsg_k(n),t
+\termat p)$.\footnote{Note that the latter will always include $t \termat p$ itself unless the escape set is empty.  It {\em is}
+possible for the escape set to be empty, in which case, explicitly specifying that $tt = t \termat p$ is necessary.}  Here, we
+seek to find a preskeleton $\aug_1(k,n,r,i,pp,tt)$ that has a new instance of role $r$ at height $i$, that is as fresh as possible,
+subject to the constraint that $t' \termat pp = tt$, where $t'$ is the message sent in the new instance at height $i$.
+
+We accomplish this, essentially, by considering $\aug_0(k,n,r,i)$ where $t'$ is the message sent in the new instance at height $i$,
+and finding $\sigma_1 \in \fn{unify}(t' \termat pp, tt)$ and then applying $\sigma_1$ to $\aug_0(k,n,r,i)$ to produce
+$\aug_1(k,n,r,i,pp,tt).$  This step can fail, if there is no unifier, or if $\aug_1(k,n,r,i,pp,tt)$ is not a preskeleton, or if the
+map $(\phi_1 \circ \phi_0, \sigma_1 \circ \sigma_0)$ is not a preskeleton homomorphism.\footnote{If,
+for instance, the unification requires identifying a variable occurring but not carried in $t' \termat pp$ with a term in $N(k)$, and
+that variable appears earlier in the instance in a carried position, $\aug_1$ would be a non-preskeleton.}
+
+However, if $k\homomorphism{\phi,\sigma}k'$ and $k'$ has a strand $s_r$ for which $|s_r| \geq i$, $rl(s_r) = r$, $(s_r,i) \prec \phi(n)$,
+and $t' \termat pp = \sigma(tt)$ where $t'$ is the message sent at $(s_r, i)$, then $(\phi,\sigma)$ always factors through $(\phi_1 \circ
+\phi_0, \sigma_1 \circ \sigma_0)$ and this step does not fail.
+
+\noindent {\bf Third step: ensuring carried-only-within}
+
+(complete me!)
+
+\end{proof}
+
+\section*{Acknowledgments}
+
+The presentation of penetrator derivable messages in
+Section~\ref{sec:pen deriv mesgs} is based on ideas by Javier Thayer.
+
+\bibliography{cpsa}
+\bibliographystyle{plain}
+
+\end{document}

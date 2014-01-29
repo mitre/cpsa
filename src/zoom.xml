@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+  <title>Zoom Test</title>
+  <style>
+    h1 { text-align: center }
+    body { background: white; color: black }
+  </style>
+  <script>
+<![CDATA[
+// Find the g element within a near by svg element and apply a transform
+function zoom(evt) {
+    var g = evt.target.parentNode.lastElementChild.firstElementChild;
+    g.setAttribute("transform", "scale("+evt.target.value+")");
+}
+]]>
+  </script>
+</head>
+<body>
+
+<h1>Zoom Test</h1>
+
+<div>
+  <select onchange="zoom(event)">
+    <option value="1.0">1.0</option>
+    <option value="0.8">0.8</option>
+    <option value="0.6">0.6</option>
+    <option value="0.4">0.4</option>
+    <option value="0.2">0.2</option>
+  </select>
+  <br/>
+  <svg height="100" xmlns="http://www.w3.org/2000/svg">
+    <g>
+      <circle id="redcircle" cx="50" cy="50" r="50" fill="red" />
+    </g>
+  </svg>
+</div>
+
+</body>
+</html>

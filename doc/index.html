@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+  <title>CPSA</title>
+  <meta name="generator" content="Amaya 9.54, see http://www.w3.org/Amaya/" />
+</head>
+
+<body>
+
+<p>[<a href="cpsauser.html">CPSA User Guide</a>]
+[<a href="cpsaprimer.pdf">CPSA Primer</a>]
+[<a href="cpsaoverview.pdf">CPSA Overview</a>]
+[<a href="cpsaintroslides.pdf">CPSA Introductory Slides</a>]</p>
+
+<h1>CPSA</h1>
+
+<p>The Cryptographic Protocol Shapes Analyzer (CPSA) attempts to enumerate all
+essentially different executions possible for a cryptographic protocol. We call
+them the <i>shapes</i> of the protocol. Naturally occurring protocols have only
+finitely many, indeed very few shapes. Authentication and secrecy properties
+are easy to determine from them, as are attacks and anomalies.</p>
+
+<p>CPSA comes with a user guide, a primer, an overview, and some slides.
+  The user guide provides usage information for each program in the
+  CPSA package.  The primer provides an English language description
+  of the CPSA algorithm and is the primary user documentation.  The
+  overview is another attack at user documentation and includes an
+  introduction to the Rely-Guarantee Method of demonstrating that a
+  protocol achieves its security goals.  This is an advanced technique
+  beginners should feel free to ignore.</p>
+
+<p>At this point, new users should open the
+  <a href="cpsaintroslides.pdf">introductory slides</a> and start
+  using CPSA by analyzing the protocols that come with this document.
+  Copy the contents of this directory to a place that allows it to be
+  modified.  In a Unix shell, type:</p>
+
+<blockquote>
+  <pre>$ echo build | ghci Make.hs</pre>
+</blockquote>
+
+<p>In Windows, click on <code>Make.hs</code> and type <code>build</code> at
+  the <code>GHCi</code> prompt <code>*Make&gt;</code>.
+  The <a href="cpsauser.html#make">CPSA User Guide</a> describes a
+  better way to analyze protocols when GNU Make is available.</p>
+
+<p>After running the analysis, you will note files with the extension
+<code>.xhtml</code>. These are XHTML/SVG compound documents that can be viewed by
+standards compliant browsers such as Firefox, Chrome, Safari, and
+later versions of Internet Explorer.  See the section
+on <a href="cpsauser.html#cpsagraph">visualization</a> in the user
+guide for help interpreting these documents.</p>
+
+<p>New users should study CPSA's analysis of the following protocols
+  in order, Blanchet (<code>blanchet.xhtml</code>), Needham-Schroeder
+  (<code>ns.xhtml</code>), Woo-Lam (<code>woolam.xhtml</code>), Yahalom
+  (<code>yahalom.xhtml</code>), ffgg (<code>ffgg.xhtml</code>), and finally
+  Otway-Rees (<code>or.xhtml</code>). When studying the full output,
+  simultaneously display the extracted shapes. The shapes file has an
+  extension of <code>_shapes.xhtml</code>.</p>
+
+<p>To make effective use of CPSA, new users should scan the
+  <a href="cpsauser.html">user guide</a> to get a flavor of its
+  contents, and then read the <a href="cpsaprimer.pdf">primer</a>.
+  The remainder of this document contains some usage tips to be read
+  after running CPSA and learning to understand its output.</p>
+
+<h2>Tips</h2>
+
+<p>Choose a small, simple protocol for your first analysis task. When analyzing
+complex protocols, analyze small parts of the protocol first, and then enrich
+the description of the problem. </p>
+
+<p>The source distribution contains additional programs and a test
+  suite with many examples.  The README in the top-level directory of
+  the source distribution contains the installation instructions and
+  is essential reading for its effective use.  Serious users should
+  favor the source distribution if on a Unix-like platform.</p>
+
+<p>Authentication tests guide the search for new skeletons in CPSA.
+  The authentication test solved at each step of the search is
+  described by the <code>operation</code> form in CPSA output.  When CPSA
+  generates unexpected output, find the first skeleton in the
+  derivation tree that exhibits the problem and read
+  the <code>operation</code> form to find out what happened.
+  Authentication tests are introduced in
+  the <a href="cpsaprimer.pdf">primer</a> and described in full
+  detail in the <a href="cpsaspec.pdf">The CPSA
+  Specification</a>.</p>
+
+<p>An origination assumption
+  (<code>non-orig</code>, <code>pen-non-orig</code>, and <code>unig-orig</code>),
+  can be specified in a role or in a skeleton.  Be sure to read the
+  advice in the <a href="cpsaprimer.pdf">primer</a> on the proper
+  placement of origination assumptions.</p>
+
+<p>Variables of sort message unify with any message.  See Otway-Rees
+  (<code>or.xhtml</code>) for an example of the use of variables of this
+  sort.</p>
+
+<p>A quoted string is a constant of sort message and is called a tag.
+  Tags can be used to distinguish messages that have similar
+  structure in the case where the implementation of the protocol
+  contains protections against message conflation.</p>
+
+<p>Lisp-like macros in <code>cpsa</code> input can be used to replace
+  multiple occurrences of a message with one named definition of it.
+  Macros are described in the <a href="cpsaprimer.pdf">primer</a>.</p>
+
+<p>When the <code>cpsagraph</code> program is given the <code>--zoom</code>
+  option, it produces diagrams that scale.  This is useful when
+  viewing large diagrams.</p>
+
+<p>When the <code>cpsapp</code> program is given the <code>--json</code>
+  option, it translates S-expressions into JavaScript Object
+  Notation.</p>
+
+<p>The <a href="cpsaspec.pdf">specification</a> describes the CPSA
+  algorithm as a term reduction system.
+  The <a href="cpsadesign.pdf">design</a> describes implementation
+  choices made and should be read when viewing the source code.</p>
+
+</body>
+</html>

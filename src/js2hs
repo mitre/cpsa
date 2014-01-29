@@ -1,0 +1,5 @@
+#! /bin/sh
+expand "$@" | sed 's/"/\\"/g' | awk '
+  BEGIN { print "    [\"<![CDATA[\"," }
+  { printf("     \"%s\",\n", $0) }
+  END { print "     \"]]>\"]" }'

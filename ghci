@@ -1,0 +1,3 @@
+:set -isrc:dist/build/autogen
+:set -fbreak-on-error
+:set args tst/dhke.scm

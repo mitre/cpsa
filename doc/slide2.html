@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+      "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>Needham-Schroeder</title>
+  <meta name="generator" content="Amaya, see http://www.w3.org/Amaya/" />
+  <link rel="stylesheet" href="cpsaintro.css" type="text/css" />
+  <script type="application/ecmascript" src="slides.js">
+  </script>
+  <script type="application/ecmascript" src="navigation.js">
+  </script>
+</head>
+
+<body onload="init()">
+<h1 class="center">Needham-Schroeder</h1>
+<ul>
+  <li>Protocol where A is the initiator and B is the responder:
+    <ul>
+      <li>A-&gt;B: {N<sub>A</sub>, A}<sub>pub(B)</sub></li>
+      <li>B-&gt;A: {N<sub>A</sub>, N<sub>B</sub>}<sub>pub(A)</sub></li>
+      <li>A-&gt;B: {N<sub>B</sub>}<sub>pub(B)</sub></li>
+    </ul>
+  </li>
+  <li>Point of view: responder with N<sub>B</sub> uniquely originating, and
+    privk(A) non-originating</li>
+</ul>
+</body>
+</html>

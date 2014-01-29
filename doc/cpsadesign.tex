@@ -1,0 +1,1290 @@
+\documentclass[12pt]{report}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{makeidx}
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}[chapter]
+\newtheorem{thm}{Theorem}[chapter]
+\newtheorem{lem}[thm]{Lemma}
+\input{macros}
+\newcommand{\gen}{\ensuremath{G}}
+
+\makeindex
+
+\title{CPSA Design}
+\author{John D.~Ramsdell\qquad Joshua D.~Guttman\\
+  The MITRE Corporation\\ CPSA Version \version}
+
+\begin{document}
+\maketitle
+\cpsacopying
+
+\tableofcontents
+
+\chapter{Introduction}
+
+The Cryptographic Protocol Shapes Analyzer ({\cpsa}) attempts to
+enumerate all essentially different executions possible for a
+cryptographic protocol.  We call them the \emph{shapes} of the
+protocol.  Naturally occurring protocols have only finitely many,
+indeed very few shapes.  Authentication and secrecy properties are
+easy to determine from them, as are attacks and anomalies.
+
+The shapes analysis is performed within a pure Dolev-Yao model.  The
+{\cpsa} program reads a sequence of problem descriptions, and prints
+the steps it used to solve each problem.  For each input problem,
+{\cpsa} is given some initial behavior, and it descovers what shapes
+are compatible with it.  Normally, the initial behavior is from the
+point of view of one participant.  The analysis reveals what the other
+participants must have done, given the participant's view.
+
+Ideally, if there is a finite number of shapes associated with a
+problem statement, {\cpsa} will find them given enough resources.  In
+other words, the search is complete, i.e.\ every shape can in fact be
+found in a finite number of steps.  The Completeness of
+{\cpsa}~\cite{cpsatheory11} contains a proof that the search algorithm
+is complete.
+
+A {\cpsa} release includes two other documents, The {\cpsa}
+Specification~\cite{cpsaspec09} and the {\cpsa}
+Primer~\cite{cpsaprimer09}.  The specification describes the {\cpsa}
+algorithm in a form that is closely related to its implementation.
+
+There are many design decisions that are not reflected in the
+specification.  Including these decisions in the specification would
+clutter the document.  The purpose of this document is to describe the
+key omitted design decisions and provide a link between the
+specification and the source code.  It assumes the specification has
+been thoroughly read.  Definitions are not reproduced, so the
+specification should be accessible when reading this document.  The
+{\cpsa} Primer provides an overview of {\cpsa}, and may be worth
+reading before this document is approached.
+
+\section{Notation}\label{sec:notation}
+
+Originally, the specification and the design were one and the same.
+Everything was specified in the design formalism.  After the split,
+the description of protocols and preskeletons diverged by omitting
+details in the design formalism in what is used for the specification
+formalism.
+
+The key difference between the two formalisms is the design formalism
+more directly models the Haskell data structures used in the {\cpsa}
+program.  An instance of a Haskell data structure is modeled as an
+element in an order-sorted term algebra~\cite{GoguenMeseguer92}.  The
+reduction systems in the specification translate to term reduction
+systems in the design.
+
+Unlike the specification, zero-based indexing\index{zero-based
+  indexing}\index{indexing, zero-based} is used though out this
+document and in the source code it describes.  In what follows, a
+finite sequence is a function from an initial segment of the natural
+numbers.  The length of a sequence~$f$ is~$|f|$, and
+sequence~$f=\seq{f(0),\ldots,f(n-1)}$ for $n=|f|$.  Alternatively,
+$\seq{x_0,x_1,\ldots,x_{n-1}} =x_0\cons x_1\cons\ldots\cons
+x_{n-1}\cons\seq{}$.  If~$S$ is a set, then~$S^\ast$ is the set of
+finite sequences of~$S$, and~$S^+$ is the non-empty finite sequences
+of~$S$.  The concatenation of sequences~$f$ and~$f'$ is~$f\append f'$.
+The prefix of sequence~$f$ of length~$n$ is~$\prefix{f}{n}$.
+
+Those familiar with literature on strand spaces might wonder why
+lowercase $k$ is used for skeletons rather than blackboard bold
+$\mathbb{A}$.  The notation used in the design document is motivated
+by the code, and~$k$ with and without decoration somehow became
+associated with preskeletons, probably because $p$, $r$, $t$, and $s$,
+were already in use.  Many other notational conventions are directly
+inspired by the code.
+
+In this document, lowercase Latin letters usually stand for terms, and
+uppercase Latin letters stand for sequences or sets of terms.
+
+\chapter{Messages}\label{cha:messages}
+
+The formalism used in the design and the specification for message
+algebras is the same, an order-sorted term algebra.  This chapter
+describes the relation between terms and the external syntax used by
+the {\cpsa} program for the Basic Crypto Algebra, and then describes
+the interface between the algebra module and the rest of the program.
+
+Table~\ref{tab:bca} presents a slightly modified signature for the
+Basic Crypto Algebra.  It specifies a syntax for operations that
+follows mathematical tradition, such as writing $K_A$ for
+$\cn{pubk}(A)$.  Tag constants are quoted strings.
+
+\begin{table}
+\begin{center}
+Base sort symbols: \dom{name}, \dom{text}, \dom{data}, \dom{skey},
+\dom{akey}\\
+Non-base sort symbol: \dom{mesg} \\[1ex]
+Subsorts: \dom{name}, \dom{text}, \dom{data}, \dom{akey},
+$\dom{skey}<\dom{mesg}$\\[1ex]
+\begin{tabular}{@{}ll}
+$\enc{\cdot}{(\cdot)}\colon\dom{mesg}\times\dom{mesg}\rightarrow\dom{mesg}$
+&Encryption\\
+$\#\colon\dom{mesg}\rightarrow\dom{mesg}$
+&Hashing\\
+$(\cdot,\cdot)\colon\dom{mesg}\times\dom{mesg}\rightarrow\dom{mesg}$
+&Pairing\\
+``\ldots''$\colon\dom{mesg}$& Tag constants\\
+$K_{(\cdot)}\colon\dom{name}\rightarrow\dom{akey}$
+&Public key of name\\
+$(\cdot)^{-1}\colon\dom{akey}\rightarrow\dom{akey}$
+&Inverse of asymmetric key\\
+$\cn{ltk}\colon\dom{name}\times\dom{name}\rightarrow\dom{skey}$
+& Long term shared key
+\end{tabular}\\[1ex]
+Axiom: $(x^{-1})^{-1}\approx x$ for $x\colon\dom{akey}$\\[1ex]
+\caption{Basic Crypto Signature}\label{tab:bca}
+\end{center}
+\end{table}
+
+For pairing, parentheses are omitted when the context permits, and
+comma is right associative.  Pairing was once called concatenation,
+hence the use of the symbol \texttt{cat} for pairing.
+
+In the actual implementation, binary operations for \cn{pubk} and
+\cn{privk} have been added.  The first argument is a name and the
+second argument is a tag.  This extension was added so as to model key
+usage, such as associating a signing and encryption key with a name.
+
+In the S-expression syntax used by the program, the simplest term is a
+variable, which syntactically is a \textsc{symbol} as described in
+Appendix~\ref{cha:bca syntax reference}.  Internally, each variable
+has a sort, so the sort of each variable in the input must be declared
+in a \texttt{vars} form, such as:
+$$\texttt{(vars (t text) (n name) (k akey))}.$$
+
+\begin{table}
+$$\begin{array}{r@{}c@{}l}
+\sembrack{\texttt{(pubk~}t\texttt{)}}&{}={}&K_{\sembrack{t}}\\
+\sembrack{\texttt{(privk~}t\texttt{)}}&{}={}&K_{\sembrack{t}}^{-1}\\
+\sembrack{\texttt{(invk~}t\texttt{)}}&{}={}&\sembrack{t}^{-1}\\
+\sembrack{\texttt{(ltk~}t_0~t_1\texttt{)}}&{}={}&
+\cn{ltk}(\sembrack{t_0},\sembrack{t_1})\\
+\sembrack{\texttt{"}\ldots\texttt{"}}&{}={}&\mbox{``\ldots''}\\
+\sembrack{\texttt{(enc~}t_0~\ldots~t_{n-1}~t_n\texttt{)}}&{}={}&
+\enc{\sembrack{\texttt{(cat~}t_0~\ldots~t_{n-1}\texttt{)}}}{\sembrack{t_n}}\\
+\sembrack{\texttt{(hash~}t_0~\ldots~t_{n-1}\texttt{)}}&{}={}&
+\hash{\sembrack{\texttt{(cat~}t_0~\ldots~t_{n-1}\texttt{)}}}\\
+\sembrack{\texttt{(cat~}t\texttt{)}}&{}={}&\sembrack{t}\\
+\sembrack{\texttt{(cat~}t_0~t_1~\ldots\texttt{)}}&{}={}&
+(\sembrack{t_0},\sembrack{\texttt{(cat~}t_1~\ldots\texttt{)}})
+
+\end{array}$$
+\caption{S-expression Terms}\label{tab:trans}
+\end{table}
+
+The translation of S-expression terms is given in
+Table~\ref{tab:trans}.  Figure~\ref{fig:ns responder} on
+Page~\pageref{fig:ns responder} contains examples of \textsc{bca}
+message terms.  Also see \textsc{term} in Table~\ref{tab:syntax},
+Appendix~\ref{cha:bca syntax reference}.
+
+The code that implements the Basic Crypto Algebra does not directly
+implement an order-sorted algebra.  Instead, it implements a
+many-sorted algebra and exports an order-sort algebra based on the
+implementation.  Appendix~\ref{cha:bca} provides the complete details
+of the implementation.
+
+\section{Algebra Interface}
+
+The details of each implementation of a {\cpsa} message algebra are
+hidden by an interface.  This section presents the view of a term
+algebra exposed by the interface.  Some aspects of the interface are
+omitted from this discussion.  For example, each implementation of an
+algebra must provide a means to read a term from an S-expression, and
+write a term as an S-expression.  Also omitted are functions in the
+interface that are specializations of a more general function added to
+enhance performance.
+
+Each algebra provides a predicate to determine if a term is a
+variable, and another to determine if a term is an atom.  A fresh
+variable generator is in the interface.  Given a generator state and a
+term, it produces a clone of the term in which the variables have been
+replaced with freshly generated ones.  It also returns the new
+generator state.
+
+\subsection{Equations}\label{sec:equations}
+
+An algebra reports answers to unification and matching problems by
+returning a sequence of order-sorted substitutions.  A
+different data structure is used for each problem, in this document
+indicated by using~$\sigma$ for answers to the unification problem of
+$\sigma(t_0)\equiv\sigma(t_1)$, and using~$\sigma_E$ for answers to the
+matching problem of $\sigma_E(t_0)\equiv t_1$.  As the typical case is for
+sets of equations to be solved, the unification and match functions
+have been designed to allow an incremental approach to solving the
+members of the set, by extending a substitution for one pair of
+equated terms.  They have the following signatures:
+$$\begin{array}{l}
+\fn{unify}\colon
+\mathcal{T}_\top(X)\times\mathcal{T}_\top(X)\times
+(X\rightarrow\mathcal{T}_\top(X))\rightarrow
+(X\rightarrow\mathcal{T}_\top(X))^\ast\\
+\fn{match}\colon
+\mathcal{T}_\top(X)\times\mathcal{T}_\top(Y)\times
+(X\rightarrow\mathcal{T}_\top(Y))\rightarrow
+(X\rightarrow\mathcal{T}_\top(Y))^\ast
+\end{array}$$
+
+An answer to the matching problem is called an
+\index{environment}\emph{environment}.  An environment differs from a
+substitution produced as an answer to a unification problem in that it
+may explicitly specify identity mappings, thus forbidding extensions
+to the environment that conflicts with these mappings.  This
+distinction is crucial for correctly answering matching problems by
+iteratively extending an environment.
+
+To support checks to see if terms are isomorphic via the match
+function, the algebra interface includes the \emph{match variable
+  renaming} predicate that tests an environment to see if it is a
+one-to-one variable-to-variable order sorted substitution.
+
+To support pruning, there is a function that given an environment and
+a term, determines if there are variables in the term that are in the
+domain of the environment.
+
+\subsection{Term Internals}\label{sec:term internals}
+
+The interface includes a function that returns the set of variables in
+a term, and a function that returns the terms carried by a term.
+Other subterms are accessed via position oriented
+functions.  Recall that a position is a finite sequence of natural
+numbers, and the message in~$t$ that occurs at~$p$, is
+written~$t\termat p$.  The interface includes a data type for a
+position that hides its implementation.  The interface also includes
+the ancestors function $\fn{anc}(t,p)$ and the carried positions
+function $\fn{carpos}(t,t')$ as defined in the specification.
+
+Each algebra provides a way to obtain a set of positions at which a
+subterm occurs within a term, and a way to replace the subterm at a
+given position with another term.  These functions are used to
+generalize by variable separation.
+
+\begin{defn}[All Positions]\index{all positions}
+Given a term~$t$, the set of positions at which~$t$ occurs in~$t'$ is
+$\fn{allpos}(t,t')$, where
+$$\fn{allpos}(t,t')=\left\{
+\begin{array}{ll}
+\{\seq{}\}&\mbox{if $t'\equiv t$, else}\\
+\multicolumn{2}{l}{\{\seq{i}\append p \mid
+p\in\fn{allpos}(t,t_i),i<n\}} \\
+& \mbox{if $t'=f(t_0,\ldots,t_{n-1})$, else}\\
+\{\}&\mbox{otherwise.}
+\end{array}\right.$$
+\end{defn}
+
+\begin{defn}[Replace]\index{replace}
+Given terms~$t$ and~$t'$, and position~$p$, the term that results from
+replacing the term at~$p$ with~$t$ in~$t'$, is
+$\fn{replace}(t,p,t')$, where
+$$\begin{array}{l}
+\fn{replace}(t,\seq{},t')=t;\\
+\fn{replace}(t,\seq{i}\append p,f(t_0,\ldots,t_{n-1}))=
+f(t'_0,\ldots,t'_{n-1})\mbox{ where}\\
+t'_j=\left\{
+\begin{array}{ll}
+\fn{replace}(t,p,t_i)&\mbox{if $i=j$;}\\
+t_j&\mbox{otherwise.}
+\end{array}\right.
+\end{array}$$
+\end{defn}
+
+\subsection{Encryptions and Derivations}\label{sec:encryptions}
+
+Finally, the remaining functions in the interface are the ones that
+expose the encryption oriented properties of terms.  The
+\emph{decryption key} function returns the key used to decrypt a term
+if it is an encryption, otherwise it returns an error indicator.  The
+\emph{encryptions} function returns the set of encryption terms
+carried by a term, each one paired with its encryption key.  {\cpsa}
+treats a hashed term as if it were an encryption in which the term
+that is hashed is the encryption key, so hashes with their content is
+also returned by this function.  The penetrator derivable function
+from the section in the specification of the same name is in the
+interface.  Given a derivable predicate that has been specialized with
+a given set of supported terms and a set of atoms to avoid, a target
+term, and a source term, the \emph{protectors} function returns an
+error indicator if the target is carried by the source outside of an
+encryption, where the derivable predicate is used to determine if a
+decryption key can be used to expose the target.  Otherwise, it
+returns a set of encryptions in the source that carry the target and
+have underivable decryption keys.  If two encryptions protect the
+target, only the outside one is returned.  The inside encryption is
+the one that is carried by the outside encryption.  Pseudo code for
+the decryption key and the protectors functions is in the
+specification.
+
+\chapter{Protocols and Preskeletons}\label{cha:prots and preskels}
+
+Terms over an order-sorted signature extended from a message signature
+describe key data structures in the {\cpsa} program.  Given a message
+signature that defines the sort \dom{mesg} and the atoms, the
+additional sorts and operations are in the {\cpsa} Signature in
+Table~\ref{tab:strands}.  The signature uses the sort $s~\dom{list}$
+for sequences of terms of sort~$s$, and the sort $s~\dom{set}$ for
+injective sequences of terms of sort~$s$.
+
+\begin{table}
+\begin{center}
+Additional sort symbols: \dom{atom}, \dom{evt}, \dom{role}, \dom{maplet},\\
+\dom{instance}, \dom{node}, \dom{ordering}, and \dom{preskel} \\[1ex]
+Subsorts: for each base sort $s, s < \dom{atom} < \dom{mesg}$\\[1ex]
+$\begin{array}{rl}
+\outbnd\colon\dom{mesg}\rightarrow\dom{evt}\hspace{2\arraycolsep}
+\inbnd\colon\dom{mesg}\rightarrow\dom{evt}&
+\cn{r}\colon\dom{evt}\dom{list}\times\dom{atom}\dom{set}\times
+\dom{atom}\dom{set}\rightarrow\dom{role}\\
+\cn{m}\colon\dom{mesg}\times\dom{mesg}\rightarrow\dom{maplet}&
+\cn{i}\colon\dom{role}\times\dom{nat}\times\dom{maplet}\dom{set}
+\rightarrow\dom{instance}\\
+\cn{n}\colon\dom{nat}\times\dom{nat}\rightarrow\dom{node}
+&\cn{o}\colon\dom{node}\times\dom{node}\rightarrow\dom{ordering}
+\end{array}$\\
+$\cn{k}\colon\dom{role}\dom{set}\times
+\dom{instance}\dom{list}\times
+\dom{ordering}\dom{set}\times\dom{atom}\dom{set}\times
+\dom{atom}\dom{set}\rightarrow\dom{preskel}$\\[1ex]
+\begin{tabular}{rl}
+\dom{mesg}& the sort of all messages (implementation of $\top$)\\
+\dom{atom}& the sort of all base sorted messages\\
+\dom{evt}& a transmission or reception event\\
+\dom{trace}& a sequence of events used in a role\\
+\dom{role}& a trace, a non-originating set, and a uniquely-originating
+set\\
+\dom{protocol}& a set of roles\\
+\dom{nat}& a natural number\\
+\dom{maplet}& a map from a role variable to a preskeleton term\\
+\dom{instance}& a strand's trace and inheritance as instantiated from a role\\
+\dom{node}& a pair of numbers, a strand identifier and a strand position\\
+\dom{ordering}&a causal ordering between a pair of nodes\\
+\dom{preskel}& a preskeleton
+\end{tabular}
+\end{center}
+\caption{{\cpsa} Signature}\label{tab:strands}
+\end{table}
+
+\begin{defn}[{\cpsa} Algebra]\label{def:cpsa algebra}
+\index{CPSA@{\cpsa} algebra} Algebra~$\alg{A}(X)$ is a \emph{{\cpsa}
+  algebra} if it is the order-sorted quotient term algebra generated
+by variable set~$X$, and~$X$ has the following property.  For each
+sort~$s$, $X_s$ is empty when~$s$ is \dom{atom}, \dom{evt},
+\dom{role}, \dom{maplet}, \dom{instance}, \dom{node}, \dom{ordering},
+and \dom{preskel}.
+\end{defn}
+
+Some of the terms over a {\cpsa} signature are not
+\index{well-formed}well-formed, and omitted from interpretation.  The
+text describing a term of a sort includes the conditions for it being
+well-formed.
+
+In what follows, the external syntax for protocols is presented, and
+later, its translation into terms over a {\cpsa} signature.  For
+preskeletons, the internal representation is presented first, followed
+by its external syntax.
+
+\section{Protocols}
+
+A protocol defines the patterns of allowed behavior for
+non-adversarial participants, called the \index{regular
+  participant}\emph{regular} participants.  The behavior of each
+regular participant is an instance of a protocol template, called a
+role.  Figure~\ref{fig:ns roles} displays the roles that make up the
+Needham-Schroeder protocol.
+
+\begin{figure}
+\begin{center}
+\includegraphics{cpsadiagrams-0.mps}\hfil
+\includegraphics{cpsadiagrams-1.mps}
+\caption{Needham-Schroeder Initiator and Responder Roles}
+\label{fig:ns roles}
+\end{center}
+\end{figure}
+
+In S-expression syntax, a protocol is a named set of roles and is
+defined by the \texttt{defprotocol} form.  See \textsc{protocol} in
+Table~\ref{tab:syntax}, Appendix~\ref{cha:bca syntax reference}.
+\begin{center}
+\begin{tabular}{l}
+\verb|(defprotocol ns basic|\\
+\verb|  (defrole init| \ldots\texttt{)}\\
+\verb|  (defrole resp| \ldots\texttt{))}
+\end{tabular}
+\end{center}
+
+The name of this protocol (\textsc{id}) is \texttt{ns}, and the second
+identifier (\textsc{alg}) names the message algebra in use.  The
+identifier for the Basic Crypto Algebra is \texttt{basic}.
+
+During the reading process, the appropriate algebra is implicitly
+bound to the internal representation of a protocol and many data
+structures derived from it.  The protocol name is used at read time to
+bind it with its usages, and for output and error messages, but is
+otherwise unused and thus omitted from the design specification. The
+internal representation of a \index{protocol}protocol is simply a set
+of roles---as a term of sort \dom{role~set} in Table~\ref{tab:strands}.
+
+The S-expression syntax for a role has a name, a declared set of
+variables, and a trace that provides a template for the behavior of
+its instances.  A trace is a non-empty sequence of
+events\index{event}, either a message transmission or a reception.  An
+outbound\index{outbound} term is \texttt{(send $t$)} and an
+inbound\index{inbound} message with term~$t$ is \texttt{(recv $t$)}.
+The translations of events are $\outbnd\sembrack{t}$ and
+$\inbnd\sembrack{t}$ respectively, where~$\sembrack{t}$ is the
+translation of the S-expression~$t$ into an term of sort~\dom{mesg} in
+Table~\ref{tab:strands}.  Needham-Schroeder responder's role in
+S-expression syntax is in Figure~\ref{fig:ns responder}.
+
+\begin{figure}
+\begin{quote}
+\begin{verbatim}
+(defrole resp (vars (b a name) (n2 n1 text))
+  (trace (recv (enc n1 a (pubk b)))
+         (send (enc n1 n2 (pubk a)))
+         (recv (enc n2 (pubk b)))))
+\end{verbatim}
+\end{quote}
+\caption{Needham-Schroeder Responder Role}
+\label{fig:ns responder}
+\end{figure}
+
+Some atoms in a role have special properties.  The atoms
+listed in the \texttt{non-orig} form are assumed to be
+non-originating, and those in the \texttt{uniq-orig} form are assumed
+to be uniquely originating.  The implications of these assumption is
+as in the specification.
+
+Internally, \index{role}role~$\cn{r}(C,N,U)$ has a trace~$C$, and two
+sets of atoms,~$N$ and~$U$.  The atoms in~$N$ are assumed to be
+non-originating, and the atoms in~$U$ are assumed to be uniquely
+originating.  As with protocols, the name is used during input and
+output, but omitted from this specification.
+
+A role is \index{well-formed role}well-formed if it satisfies the
+conditions listed for a role in the specification.  A protocol is
+well-formed if no variable occurs in more than one role.  The external
+syntax used by {\cpsa} uses variable renaming to create the illusion
+that the same variable may occur in two roles.  In the external
+syntax, two roles may share the same identifier.
+
+Associated with each protocol is an implicit role.  For some
+variable~$x$ of sort \dom{mesg}, that does not occur in any role in
+the protocol, there is a \label{def:listener
+  role}\index{listener role}\index{role!listener}\emph{listener role}
+of the form~$\fn{lsn} = \cn{r}(\seq{\inbnd x,\outbnd x}, \seq{},
+\seq{})$.  A listener role is used to assert that a term is not a
+secret.  In the implementation, the only difference between a listener
+role and non-listener roles is its name is the empty string, a fact
+used when printing.
+
+\section{Preskeletons}
+
+The other key {\cpsa} data structure is a preskeleton---see the~\cn{k}
+operation in Table~\ref{tab:strands}.  A preskeleton is used to encode
+classes of protocol executions, including its shapes, the answers
+produced by {\cpsa}.  One component of a preskeleton is its protocol,
+and one component is a set of strands.  There are more components, but
+the set's representation is presented next.
+
+As in the specification, a sequence of instances represents a set of
+strands.  The instance\index{instance} $\cn{i}(r,h,E)$ contains a
+role~$r$, a positive number~$h$ called its height, the length of the
+trace associated with the instance, and an
+environment\index{environment}~$E$, a term of sort \dom{maplet}
+\dom{set}.
+
+The environment~$E$ is well-formed if it represents the order-sorted
+substitution~$\sigma_E$ such that for every maplet $\cn{m}(x,y)$,
+$\sigma_E x=y$.  Note that~$x$ is always a variable, unlike its analog
+in the external syntax.  An instance is well-formed if its role is
+well-formed, its environment is well-formed, and its height is not
+greater that the length of its role's trace.
+
+The set of strands in a preskeleton is represented by a sequence of
+instances.  The identity of a strand\index{strand} is its position in
+the sequence, which is where the description of its trace is located.
+The \index{node}node $\cn{n}(s,p)$ is associated with the event
+at position~$p$ in strand~$s$'s trace.  In other words, if~$I$ is
+a sequence of instances, the event at $\cn{n}(s,p)$,
+\label{def:evt}written~$\fn{evt}(I,\cn{n}(s,p))$, is $\sigma_E(C(p))$, where
+$I(s)=\cn{i}(\cn{r}(C,N,U),h,E)$ and~$p<h\leq|C|$.  A node
+associated with an inbound term is a \index{reception
+  node}\emph{reception node}, and a node associated with an outbound
+term is a \index{transmission node}\emph{transmission node}.  The term
+stripped of its direction is written~$\fn{msg}(I,\cn{n}(s,p))$.  The
+set of nodes in sequence~$I$ is $\{\cn{n}(s,p) \mid s<|I|,
+I(s)=\cn{i}(r,h,E), p < h\}$.
+
+The preskeleton\index{preskeleton}~$\cn{k}(P,I,O,N,U)$ contains a
+protocol~$P$, a non-empty sequence of instances~$I$, a set of
+communication orderings~$O$, a set of non-originating
+terms\index{non-originating term}~$N$, and a set of uniquely
+originating terms~$U$.  The node
+ordering\index{ordering}\index{communication ordering} $o(n_0, n_1)$
+asserts that~$n_0$ precedes~$n_1$, that the event at~$n_0$ is
+outbound, the event at~$n_1$ is inbound, and~$n_0$ and~$n_1$
+are on different strands.  The atoms in~$N$ are assumed to be
+non-originating, and the atoms in~$U$ are assumed to be uniquely
+originating.
+
+Members of the set of communication orderings~$O$ relate nodes in
+differing strands.  There is an implied ordering of nodes within the
+same strand.  Strand succession orderings of the form
+$\cn{o}(\cn{n}(s, p-1), \cn{n}(s, p))$, where $0 < p < h$ and~$h$ is
+the height of strand~$s$ are implicit, and must not be in~$O$.
+\index{strand succession orderings}
+
+\index{graph!preskeleton}\index{preskeleton graph}
+Associated with each preskeleton~$k$ is a graph.  The vertices of the
+graph are the nodes of the instance sequence~$I$, and the edges are
+the reverse of the both communication ordering~$O$ and the implied
+strand succession orderings.  The edges are reversed because events in
+a node's past are of interest when analyzing a node.  When the graph
+is acyclic, the transitive irreflexive relation~$\kprec{k}$ of~$k$ is the
+transitive closure of the graph, and $n_0\kprec{k} n_1$ asserts that the
+message event at~$n_0$ precedes the one at~$n_1$.  (A preskeleton with
+a graph that contains cycles is not well-formed.)
+
+To be well-formed\index{well-formed preskeleton}, in addition to the
+requirements on communication orderings listed above, a preskeleton
+must satisfy the same conditions listed for a preskeleton in the
+specification.
+
+\begin{figure}
+\begin{center}
+\includegraphics{cpsadiagrams-4.mps}
+\caption{Needham-Schroeder Shape ($K^{-1}_A$ uncompromised, $N_2$ fresh)}
+\label{fig:ns shape}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+With $A,A',A'',B,B',B'',C\colon
+\dom{name},N_1,N_1',N_1'',N_2,N_2',N_2''\colon\dom{text}$:
+\end{center}
+$$
+\begin{array}{r@{}c@{}l}
+\fn{resp}&{}={}&\cn{r}(\fn{resp}_t, \seq{},\seq{})
+\mbox{ where}\\
+\fn{resp}_t&{}={}&\seq{
+\inbnd\enc{N_1,A}{K_B},
+\outbnd\enc{N_1,N_2}{K_A},
+\inbnd\enc{N_2}{K_B}}
+\end{array}
+$$
+
+$$
+\begin{array}{r@{}c@{}l}
+\fn{init}&{}={}&\cn{r}(\fn{init}_t, \seq{},\seq{})
+\mbox{ where}\\
+\fn{init}_t&{}={}&\seq{
+\outbnd\enc{N_1',A'}{K_{B'}},
+\inbnd\enc{N_1',N_2'}{K_{A'}},
+\outbnd\enc{N_2'}{K_{B'}}}
+\end{array}
+$$
+
+$$\begin{array}{r@{}c@{}l}
+\multicolumn{3}{l}{\cn{k}(\seq{\fn{resp},\fn{init}},
+I, O,\seq{K_{A''}^{-1}},\seq{N_2''})\mbox{ where}}\\
+I&{}={}&\langle\cn{i}(\fn{resp}, 3, E),
+\cn{i}(\fn{init}, 3, E')\rangle\\
+E&{}={}&\seq{\cn{m}(A,A''),\cn{m}(B,B''),
+\cn{m}(N_1,N_1''), \cn{m}(N_2,N_2'')}\\
+E'&{}={}&\seq{\cn{m}(A',A''),\cn{m}(B',C),
+\cn{m}(N_1',N_1''), \cn{m}(N_2',N_2'')}\\
+O&{}={}&\seq{\cn{o}(\cn{n}(0,1),\cn{n}(1,1)),
+\cn{o}(\cn{n}(1,2),\cn{n}(0,2))}
+\end{array}$$
+\caption{Needham-Schroeder Preskeleton}\label{fig:ns}
+\end{figure}
+
+A Needham-Schroeder shape in traditional Strand Space notation is in
+Figure~\ref{fig:ns shape}, and its representation using order-sorted
+terms is given in Figure~\ref{fig:ns}.
+
+\subsection{Preskeleton S-Expression Syntax}
+
+The \texttt{defskeleton} form in Table~\ref{tab:syntax},
+Appendix~\ref{cha:bca syntax reference} is used to specify a
+preskeleton in S-expression syntax.  (With the exception of the
+initial problem statement, a preskeleton is always a skeleton.)
+On output, a preskeleton Referring to
+Table~\ref{tab:syntax}, the \textsc{id} in the preskeleton form names
+a protocol.  It refers to the most recent protocol definition of that
+name which precedes the preskeleton form in the input.  The
+\textsc{id} in the \texttt{defstrand} form names a role.  The integer
+in the strand form gives the height of the strand.  The sequence of
+pairs of terms in the strand form specify an environment used to
+construct the events in a strand from its role's trace.  The
+first term is interpreted using the role's variables and the second
+term uses the preskeleton's variables.  The environment used to
+produce the strand's trace is derived by matching the second term
+using the first term as a pattern.  The \texttt{deflistener} form
+creates an instance of a listener role for the given term.
+
+The \texttt{precedes} form specifies members of the node relation.
+The first integer in a node identifies the strand using the order in
+which strands are defined in the \texttt{defskeleton} form.
+
+\begin{figure}
+\begin{quote}
+\begin{verbatim}
+(defskeleton ns (vars (n2 n1 text) (a b b-0 name))
+  (defstrand resp 3 (n2 n2) (n1 n1) (b b) (a a))
+  (defstrand init 3 (n1 n1) (n2 n2) (a a) (b b-0))
+  (precedes ((0 1) (1 1)) ((1 2) (0 2)))
+  (non-orig (privk a))
+  (uniq-orig n2))
+\end{verbatim}
+\end{quote}
+\caption{Needham-Schroeder \texttt{defskeleton}}\label{fig:defns}
+\end{figure}
+
+A variable may occur in more then one role within a protocol.  The
+reader performs a renaming so as to ensure these occurrences do not
+overlap.  Furthermore, the maplets used to specify a strand need not
+specify how to map every role variable.  The reader inserts missing
+mappings, and renames every preskeleton variable that also occurs in a
+role of its protocol.  The sort of every preskeleton variable that
+occurs in the \texttt{non-orig} or \texttt{uniq-orig} list or in a
+maplet must be declared, using the \texttt{vars} form.
+
+Needham-Schroeder shape in S-expression syntax is displayed in
+Figure~\ref{fig:defns}.  The effect of reader renaming is shown in
+Figure~\ref{fig:ns} by adding primes to variables.
+
+The \textsc{prot-alist}, \textsc{role-alist}, and \textsc{skel-alist}
+productions in Table~\ref{tab:syntax} are Lisp style association lists,
+that is, lists of key-value pairs, where every key is a symbol.
+Key-value pairs with unrecognized keys are ignored, and are available
+for use by other tools.  On output, unrecognized key-value pairs are
+preserved when printing protocols, but elided when printing
+preskeletons.
+
+See the {\cpsa} Primer for more examples of {\cpsa} external syntax.
+
+\section{Source Code}\label{sec:source code}
+
+Protocols, roles, and preskeletons have additional fields not
+documented here.  For example, each role and preskeleton keeps track
+of the variable set used to generate its message algebra, and the
+variable generator used to create fresh variables.  There is a name
+associated with each protocol and role.  Preskeletons have addition
+fields associated with generalization, as discussed in
+Section~\ref{sec:generalization}.
+
+\section{Specification}\label{sec:specification}
+
+There is a direct relationship between the protocols and roles in this
+specification, and protocols and roles as members of a {\cpsa} algebra
+(Definition~\ref{def:cpsa algebra}).  The relationship between
+preskeletons in the two documents requires explanation.  There are two
+significant differences.
+
+In this document and in the code, a strand is represented by the
+instance $\cn{i}(r,h,E)$, but in the specification, a strand is
+represented by a trace and a role.  These two representations are
+mathematically equivalent, as the trace of a strand can be computed
+from $r$,~$h$, and~$E$.  The code adds the trace to the fields of an
+instance.
+
+The second significant difference is that the precedes relation is
+represented by a list of ordered pairs in this document, but in the
+specification, the precedes relation is always irreflexive and
+transitive.  In the code, the transitive reduction is performed on the
+precedes relation, and the output always contains the fewest number of
+ordered pairs possible without changing the transitive closure of the
+precedes relation.
+
+\chapter{Reductions}\label{cha:reductions}
+
+This chapter describes the implementation-oriented refinements made to
+support reduction that are considered too detailed to be included in
+the specification.
+
+In the {\cpsa} implementation and the design formalism, every
+preskeleton includes a link to its protocol.  Two preskeletons are not
+related by a homomorphism unless they specify the same protocol.
+
+For each preskeleton~$k$, the implementation maintains an
+\index{origination map} \emph{origination map}, $\orig(k,t)$.  It maps
+each of the preskeleton's uniquely originating terms to the set of
+nodes at which it originates.  For hulled preskeletons, the range of
+this map must contain singleton sets or the empty set.  The
+origination map returns an error indicator when given a term not assumed
+to be uniquely originating, a feature used to check the
+implementation's consistency.
+
+Each preskeleton contains the state of a variable generator.  It's
+used to ensure a source of fresh variables for any preskeleton derived
+from it.
+
+\section{Preskeleton Reductions}\label{sec:preskeleton reductions}
+
+Given a well-formed preskeleton, an attempt is made to convert it into
+a set of skeletons.  This section describes a few implementation
+details omitted from the specification.
+
+The implementation uses sequences to represent some sets.  The
+function \index{nub}\fn{nub} removes duplicates from a sequence.
+
+\subsection{Substitution}
+
+The function~$\ops{S}_\sigma$ applies the order-sorted substitution~$\sigma$
+to a preskeleton.
+$$
+\begin{array}{r@{}c@{}l}
+\ops{S}_\sigma(\cn{k}(P, I, O, N, U))&{}={}&
+\cn{k}(P, \ops{S}_\sigma\circ I, O, \fn{nub}(\sigma\circ N),
+\fn{nub}(\sigma\circ U))\\
+\ops{S}_\sigma(\cn{i}(r,h,E))&{}={}&\cn{i}(r, h, \ops{S}_\sigma\circ E)\\
+\ops{S}_\sigma(\cn{m}(x,y))&{}={}&\cn{m}(x,\sigma(y))
+\end{array}
+$$
+
+The substitution specifies a homomorphism as long as it preserves the
+nodes at which each uniquely originating term originates.  In other
+words, its a homomorphism only if for each uniquely originating
+term~$t$ in~$k$, $\orig(k,t)\subseteq\orig(k', \sigma(t))$, where
+$k'=\ops{S}_\sigma(k)$.  The implicit homomorphism is
+$(\idphi,\sigma)$, where~$\idphi$ is the identity strand map for~$k$.
+
+\subsection{Compression}
+
+The function~$\ops{C}_{s,s'}$ compresses~$s$ into~$s'$ in a preskeleton.
+$$
+\begin{array}{r@{}c@{}l}
+\ops{C}_{s,s'}(\cn{k}(P, I, O, N, U))&{}={}&
+\cn{k}(P, I\circ\phi'_s, \ops{C}_{\phi}\circ O, N, U)\\
+\ops{C}_\phi(\cn{o}(n_0, n_1))&{}={}
+&\cn{o}(\ops{C}_\phi(n_0), \ops{C}_\phi(n_1))\\
+\ops{C}_\phi(\cn{n}(s, p))&{}={}&\cn{n}(\phi(s), p)\\
+\phi(j)=\phi_{s,s'}(j)&{}={}&\left\{
+\begin{array}{ll}
+\phi_s(s')&\mbox{if $j=s$}\\
+\phi_s(j)&\mbox{otherwise}
+\end{array}\right.\\
+\phi_s(j)&{}={}&\left\{
+\begin{array}{ll}
+j-1&\mbox{if $j>s$}\\
+j&\mbox{otherwise}
+\end{array}\right.\\
+\phi'_s(j)&{}={}&\left\{
+\begin{array}{ll}
+j+1&\mbox{if $j\geq s$}\\
+j&\mbox{otherwise}
+\end{array}\right.
+\end{array}
+$$ where the trace of~$I(s)$ is a prefix of the trace of~$I(s')$.
+Although not shown, orderings of the form
+$\cn{o}(\cn{n}(s,p),\cn{n}(s,p'))$ are removed from the ordering when
+$p<p'$, so they do not cause the output preskeleton to fail to be
+well-formed.  The implicit homomorphism is
+$(\phi_{s,s'},\idsigma)$, where~$\idsigma$ is the identity
+substitution.  Note that $\phi_{s,s'}\circ\phi'_s=\idsigma$.
+
+\subsection{Order Enrichment}
+
+The function~$\ops{O}$ performs order enrichment by adding a node
+orderings between the node at which a uniquely originating atom
+originates and the nodes at which it is gained.  A message is
+\emph{gained}\index{gained} by a trace if it is carried by some event
+and the first event in which it is carried is inbound.  Let $\gain(k,
+t)$ be the set of nodes in~$k$ at which~$t$ is gained.
+$$ \ops{O}(\cn{k}(P, I, O, N, U))=
+\cn{k}(P, I, \fn{nub}(O\append O'), N, U)$$
+where $O'=\{\cn{o}(n_0,n_1)\mid t\in U, n_0\in\orig(k,t),
+n_1\in\gain(k,t)\}$.  Order Enrichment specifies a homomorphism that
+is an embedding.
+
+\subsection{Transitive Reduction}
+
+The function~$\ops{R}$ performs a transitive reduction on a preskeleton's
+node relation.  The transitive reduction\index{transitive reduction}
+of an ordering is the minimal ordering such that both orderings have
+the same transitive closure.  Here, communication orderings implied by
+transitive closure are removed.
+
+The transitive reduction of a skeleton is isomorphic to the skeleton.
+The reduction is performed to speed up the code that checks for
+isomorphisms.  When two skeletons are transitively reduced, and
+isomorphic, they have the same number of communication orderings.
+
+In the implementation, transitive reduction is the last operation
+applied to a preskeleton during the process of converting a
+preskeleton into a pruned skeleton.  Isomorphism testing is only
+performed on pruned skeletons.
+
+\section{Augmentation}
+
+The function~$\ops{A}_{i,n}$ augments a preskeleton with a new strand.
+It appends the instance~$i$ to the sequence of instances, adds a node
+ordering, and adds atoms as specified by the role.  The function
+orders the last node in the strand before some node in the
+preskeleton.
+
+$$
+\begin{array}{r@{}c@{}l}
+\ops{A}_{i,n}(\cn{k}(P, I, O, N, U))&{}={}&
+\cn{k}(P, I\append\langle i\rangle,
+\langle \cn{o}(\cn{n}(|I|,h-1),n)
+\rangle \append O,N_1, U_1)\\
+i&{}={}&\cn{i}(\cn{r}(C,N_0,U_0),h,E)\\
+N_1&{}={}&\fn{nub}(N\append\sigma_e\circ N_0)\\
+U_1&{}={}&\fn{nub}(U\append\sigma_e\circ U_0)
+\end{array}
+$$ Although not shown, elements in~$N_1$ that contain a variable that
+does not occur in some event in the constructed preskeleton
+are dropped, as are elements in~$U_1$ that are not carried in some
+event in the constructed preskeleton.  As with the preskeleton
+reductions in Section~\ref{sec:preskeleton reductions}, it is
+straightforward to derive the homomorphism associated with a
+successful augmentation.
+
+\section{Generalization}\label{sec:generalization}
+
+The generalization process is the only part of the algorithm that
+requires non-isomorphic homomorphisms to be explicitly represented.
+To make this possible, every preskeleton contains two additional
+fields not yet described, a link to the point-of-view skeleton, and a
+{\pov} strand map.  The {\pov} strand map is the second component of
+the homomorphism from the point-of-view skeleton to the preskeleton.
+The first component can be generated via matching using the
+point-of-view skeleton.
+
+The {\pov} strand map is maintained by every reduction applied to a
+preskeleton.  The compression reduction is the only one that
+requires careful thought.
+
+\chapter{Search Strategy}\label{cha:search}
+
+The top-level loop maintains two sequences of skeletons, a to do list,
+and a set of skeletons that have already been seen.  When the to do
+list is empty, the loop exits.
+
+For each problem statement, {\cpsa} attempts the convert the
+preskeleton into a skeleton.  If the conversion fails, an error is
+signaled.  Otherwise, a search is started with the skeleton as the
+{\pov} skeleton of Section~\ref{sec:generalization}.  The top-level loop
+starts with the {\pov} skeleton as the single member of the to do
+list and the seen set.
+
+The following steps constitute one iteration of the top-level loop.
+The first skeleton on the to do list is removed and is the subject of
+the iteration.  If the skeleton is unrealized, contraction and
+augmentation are used to compute its cohort.  Otherwise, generalization
+reductions are tried in an effort to make one generalization step.
+The generated skeletons are the subject's children.  Each child that
+is isomorphic to a member of the seen set is dropped.  The other
+children are added to the seen set and to the end of the to do list.
+The final step in the iteration is to print the subject skeleton.
+
+When the subject in unrealized, the test node is selected as follows.
+The strands are considered in reverse order, and the first unrealized
+node in one of the strands is used as the test node.  By default, the
+program tries encryptions for critical messages before it tries atoms.
+The encryptions considered as critical messages are obtained using the
+\emph{encryptions} function in the algebra interface.
+
+\enlargethispage{\baselineskip}
+The search order can be modified by using command-line arguments or
+the \texttt{herald} form.  The option \texttt{--check-nonces} cause
+{\cpsa} to try atoms before encryptions.  Option
+\texttt{--try-old-strands} tries the strands in order.  Option
+\texttt{--reverse-nodes} tries nodes later in the strand first.
+
+\chapter{Haskell Modules}\label{cha:haskell modules}
+
+An overview of the modules that make up a \texttt{cpsa} program
+follows.
+
+\begin{description}
+\item[CPSA.Lib.Utilities:]
+Contains generic list functions and a function that determines if a
+graph has a cycle.
+\item[CPSA.Lib.SExpr:]
+A data structure for S-expressions, the ones that are called
+proper lists.
+\item[CPSA.Lib.Pretty:]
+A simple pretty printer.
+\item[CPSA.Lib.Printer:]
+A CPSA specific pretty printer using S-expressions.
+\item[CPSA.Lib.Notation:]
+A CPSA specific pretty printer using infix notation.
+\item[CPSA.Lib.Algebra:]
+Defines the interface to CPSA algebras.
+\item[CPSA.Lib.CPSA:] Exports the types and functions used to
+  construct an implementation of an algebra.
+\item[CPSA.Basic.Algebra:]
+Basic Crypto Algebra implementation.
+\item[CPSA.Lib.Entry:]
+Provides a common entry point for programs based on the CPSA library.
+\item[CPSA.Lib.Protocol:]
+Protocol data structures.
+\item[CPSA.Lib.Strand:]
+Instance and preskeleton data structures and support functions.
+\item[CPSA.Lib.Cohort:]
+Computes the cohort associated with a skeleton or its generalization.
+\item[CPSA.Lib.Reduction:]
+Term reduction for the CPSA solver.
+\item[CPSA.Lib.Expand:]
+Expands macros using definitions in the input.
+\item[CPSA.Lib.Loader:]
+Loads protocols and preskeletons from S-expressions.
+\item[CPSA.Lib.Displayer:]
+Displays protocols and preskeletons as S-expressions.
+\end{description}
+
+\chapter{Visualization}\label{cha:viz}
+
+This section describes the Causally Intuitive Preskeleton Layout
+algorithm used to generate visualizations of preskeletons.  The
+algorithm is simple to implement and explain, and because it is
+designed for preskeletons, it produces better results than is
+available from generic graph layout algorithms, such as the ones used
+by Graphviz~\cite{GansnerNorth00}.
+
+The preskeleton is prepared by performing a transitive reduction on
+its ordering relation.  Communication edges implied by transitive
+closure are removed.  The result is called a Hasse diagram.
+
+The Hasse diagram is created by considering each communication edge.
+If there is a path from its source to its destination that does not
+traverse the edge, the edge is deleted.
+
+To simplify the task, each strand is laid out vertically with early
+nodes above later ones.  The strands are horizontally placed in the
+same order as they appear in the preskeleton.  The spacing between
+successive nodes on a strand is the same, as is the horizontal spacing
+between strands.  The vertical position of a node is called its rank.
+
+Within this framework, the simplest layout algorithm is to use the
+position of the node in its strand as its rank.  When using this
+layout strategy, the only difficultly occurs when a node ordering
+arrow crosses over a node in an unrelated strand.  To avoid ambiguity,
+arrows that cross strands are curved.
+
+When using position based ranking, the result often contains upward
+sloping arrows.  Within a strand, no node that is after a node is
+above the node, but with upward sloping arrows, this property no
+longer holds.  The motivation for the Causally Intuitive Preskeleton
+Layout algorithm is that eliminating upward sloping arrows makes
+causal relations easier to grasp.
+
+The layout algorithm has two phases.  The first phase stretches
+strands so as to eliminate upwardly sloping arrows, and the second
+phase compresses them so as to eliminate some unnecessary stretching.
+Without phase two, some nodes early in a strand appear to be oddly
+separated from others in the strand.
+
+Each phase starts with a to do list containing every node in the
+preskeleton.  For each node in the to do list, if conditions are met,
+it updates the current node ranking and adds nodes to the to do list.
+The phase is finished when the to do list is empty.
+
+Phase I starts with the position based ranking~$r(s,p)=p$.  Let~$P(n)$
+be the set the predecessors of node~$n$, excluding the nodes on the
+strand of~$n$.  Let~$P_r(n)=\{r(n')\mid n'\in P(n)\}$ be the ranks
+of~$P(n)$.  The stretch rule is considered for each element in the
+to do list.
+
+The stretch rule applies to node~$n_1$ if $r(n_1)<h$, where
+$h=\max(\{r(n_1)\}\cup P_r(n_1))$.  In that case, the ranking is updated
+so that $r(n_1)=h$, and the linearize rule is applied to the next strand
+node if it exists.
+
+The linearize rule applies to node~$n_1$ if $r(n_1)\leq r(n_0)$,
+where~$n_0$ is the previous strand node.  In that case, the ranking is
+updated so that $r(n_1)=r(n_0)+1$, the to do list is augmented with
+elements in~$S(n_1)$, and the linearize rule is applied to the next
+strand node if it exists, where~$S(n)$ is the set the successors of
+node~$n$, excluding the nodes on the strand of~$n$.
+
+In phase II, the compress rule is considered for each element in the
+to do list.  It applies to node~$n_1$ with a next strand node of~$n_2$
+if $r(n_1)<h$, where $h=\min(\{r(n_2)-1)\}\cup S_r(n_1))$ and~$S_r(n)$
+is the ranks of~$S(n)$.  In that case, the ranking is updated so that
+$r(n_1)=h$, and the to do list is augmented with elements in~$P(n_1)$
+and the previous strand node of~$n_1$ if it exists.
+
+\chapter*{Acknowledgement}
+
+Carolyn Talcott provided valuable feedback on drafts of this document.
+
+\appendix
+
+\chapter{Basic Crypto Algebra Syntax Reference}\label{cha:bca syntax reference}
+
+\input{bcasyntax}
+
+\chapter{The Basic Crypto Many-Sorted Algebra}\label{cha:bca}
+
+The implementation uses a many-sorted algebra.  The many-sorted
+message algebra described here is a reduction of the order-sorted
+message algebra in Table~\ref{tab:bca} using the method described
+in~\cite[Section~4]{GoguenMeseguer92}.  The order-sorted message
+signature is reproduced in Table~\ref{tab:order-sorted} in a form that
+uses prefix notation for every term formed using an operation.  In the
+related many-sorted signature in Table~\ref{tab:many-sorted}, the
+inclusion function\index{inclusion function} symbols are \cn{text},
+\cn{data}, \cn{name}, \cn{skey}, and \cn{akey}.  Section~4 of the
+paper describes the sense in which algebras that model the many-sorted
+signature are essentially the same as the ones that model the
+order-sorted message signature.
+
+\begin{table}
+\begin{center}
+Base sort symbols: \dom{name}, \dom{text}, \dom{data}, \dom{skey},
+\dom{akey}\\
+Non-base sort symbol: \dom{mesg} \\[1ex]
+Subsorts: \dom{name}, \dom{text}, \dom{data}, \dom{akey},
+$\dom{skey}<\dom{mesg}$\\[1ex]
+$\cn{pubk}\colon\dom{name}\rightarrow\dom{akey}\quad
+\cn{invk}\colon\dom{akey}\rightarrow\dom{akey}\quad
+\cn{ltk}\colon\dom{name}\times\dom{name}\rightarrow\dom{skey}$\\
+$\cn{enc}\colon\dom{mesg}
+\times\dom{mesg}\rightarrow\dom{mesg}\quad
+\cn{hash}\colon\dom{mesg}\rightarrow\dom{mesg}$\\
+$\cn{cat}\colon\dom{mesg}
+\times\dom{mesg}\rightarrow\dom{mesg}\quad C_i\colon\dom{mesg}$\\[1ex]
+Axiom: $\cn{invk}(\cn{invk}(x))\approx x$ for $x\colon\dom{akey}$\\
+\caption{Basic Crypto Order-Sorted Signature}\label{tab:order-sorted}
+\end{center}
+\end{table}
+
+Terms are constructed from a set $I$ of identifiers\index{identifiers}
+and a set of functions symbols.  The symbols of arity one are
+\cn{text}, \cn{data}, \cn{name}, \cn{skey}, \cn{akey}, \cn{pubk},
+\cn{invk}, and \cn{hash}.  The symbols of arity two are \cn{ltk},
+\cn{cat}, and \cn{enc}.  The signature is given in
+Table~\ref{tab:many-sorted}.  Grammar rules define the terms used by
+this algebra.
+
+\begin{table}
+\begin{center}
+Sort symbols: \dom{name}, \dom{text}, \dom{data},
+\dom{skey}, \dom{akey}, and \dom{mesg}\\[1ex]
+$\cn{pubk}\colon\dom{name}\rightarrow\dom{akey}\quad
+\cn{invk}\colon\dom{akey}\rightarrow\dom{akey}\quad
+\cn{ltk}\colon\dom{name}\times\dom{name}\rightarrow\dom{skey}$\\
+$\cn{enc}\colon\dom{mesg}
+\times\dom{mesg}\rightarrow\dom{mesg}\quad
+\cn{hash}\colon\dom{mesg}
+\rightarrow\dom{mesg}$\\
+$\cn{cat}\colon\dom{mesg}
+\times\dom{mesg}\rightarrow\dom{mesg}\quad C_i\colon\dom{mesg}$\\
+$\cn{name}\colon\dom{name}\rightarrow\dom{mesg}\quad
+\cn{text}\colon\dom{text}\rightarrow\dom{mesg}\quad
+\cn{data}\colon\dom{data}\rightarrow\dom{mesg}$\\
+$\cn{skey}\colon\dom{skey}\rightarrow\dom{mesg}\quad
+\cn{akey}\colon\dom{skey}\rightarrow\dom{mesg}$\\[1ex]
+Axiom: $\cn{invk}(\cn{invk}(x))\approx x$ for $x\colon\dom{akey}$\\
+\caption{Basic Crypto Many-Sorted Signature}\label{tab:many-sorted}
+\end{center}
+\end{table}
+
+The set of asymmetric keys $K$ is defined as follows.
+$$ K \leftarrow I \mid \cn{pubk}(I) \mid \cn{invk}(I) \mid
+\cn{invk}(\cn{pubk}(I)) $$ The key $\cn{invk}(x)$ is the inverse of
+the asymmetric key~$x$, and $\cn{pubk}(x)$ is principal $x$'s public
+key.
+
+Each occurrence of an identifier in a term is associated with a sort
+symbol.  The context in which an identifier occurs determines the
+sort.  The sort symbols are \dom{text}, \dom{data}, \dom{name},
+\dom{akey}, \dom{skey}, and \dom{mesg}, where a name refers to a
+principal.  An identifier occurrence in an asymmetric key of the form
+$\cn{pubk}(x)$ has sort \dom{name}, otherwise it has sort \dom{akey}.
+
+The set of atoms $B$ is defined as follows.
+$$ B \leftarrow \cn{text}(I) \mid \cn{data}(I) \mid \cn{name}(I) \mid
+\cn{skey}(I)\mid \cn{skey}(\cn{ltk}(I, I)) \mid \cn{akey}(K) $$ The
+atom $\cn{skey}(\cn{ltk}(x, y))$ is a symmetric, long term key
+shared between two principals~$x$, and~$y$.  The occurrence of $x$ in
+$\cn{text}(x)$ has sort \dom{text}, sort \dom{data} for
+$\cn{data}(x)$, sort \dom{name} for $\cn{name}(x)$, and sort
+\dom{skey} for $\cn{skey}(x)$.  The occurrences of $x$ and $y$ in
+$\cn{skey}(\cn{ltk}(x,y))$ both have sort \dom{name}.
+
+The set of terms $T$ is defined as follows.
+$$ T \leftarrow I \mid B \mid Q \mid \cn{cat}(T, T) \mid \cn{enc}(T,
+T) \mid \cn{hash}(T)$$ where $Q$ is the set of tags, represented by
+quoted string literals.  The second argument in \cn{enc} is a term for
+a key.  A term of the form $x$ is called an indeterminate, and the
+identifier occurrence has sort~\dom{mesg}.
+
+The terms of interest are \index{well-formed term}well-formed.  A term
+is \emph{well-formed} if every occurrence of each identifier has the
+same sort.  An example of a non-well-formed term is
+$\cn{cat}(x,\cn{akey}(x))$ because the identifier $x$ occurs with two
+sorts, \dom{mesg} and \dom{akey}.  A pair of well-formed terms are
+\emph{compatible}\index{compatible terms} if every identifier that
+occurs in both terms occurs with the same sort.
+
+A term is a variable if it specifies an identifier and its sort.
+$$ V \leftarrow I \mid \cn{text}(I)  \mid \cn{data}(I) \mid \cn{name}(I) \mid
+\cn{skey}(I)\mid \cn{akey}(I) $$ When a term is well-formed, the same
+variable is associated every occurrence of an identifier in a term.
+
+\begin{figure}
+$$
+\begin{array}{l}
+\cn{unify}(\ell, t, t') = \cn{unify\_aux}(\ell,\cn{chase}(\ell, t),
+\cn{chase}(\ell, t'))
+\\
+\\\cn{chase}(\ell, x)=
+\\ \qquad\mbox{let }t=\cn{lookup}(x,\ell)\mbox{ in}
+\\ \qquad \mbox{if }x = t\mbox{ then }x
+\mbox{ else }\cn{chase}(\ell, t)
+\\\cn{chase}(\ell, \cn{invk}(t))=\cn{chase\_invk}(\ell, t)\hfill(!)
+\\\cn{chase}(\ell, t)=t
+\\
+\\\cn{chase\_invk}(\ell, x)=\hfill(!)
+\\ \qquad\mbox{let }t=\cn{lookup}(x,\ell)\mbox{ in}\hfill(!)
+\\ \qquad \mbox{if }x = t\mbox{ then }\cn{invk}(x)
+\mbox{ else }\cn{chase\_invk}(\ell, t)\hfill(!)
+\\\cn{chase\_invk}(\ell, \cn{invk}(t))=\cn{chase}(\ell, t)\hfill(!)
+\\\cn{chase\_invk}(\ell, t)=\cn{invk}(t)\hfill(!)
+\\
+\\\cn{lookup}(x,\seq{})=x
+\\\cn{lookup}(x,(y,t)\cons\ell)=
+\mbox{if }x=y\mbox{ then }t\mbox{ else }
+\cn{lookup}(x, \ell)
+\\
+\\\cn{unify\_aux}(\ell,x,x) =\ell
+\\\cn{unify\_aux}(\ell,x,t) =\mbox{if }\cn{occurs}(x, t)\mbox{ then raise failure else }
+(x,t)\cons\ell
+\\\cn{unify\_aux}(\ell,t,x) =\cn{unify\_aux}(\ell,x,t)
+\\\cn{unify\_aux}(\ell,\cn{invk}(x),\cn{pubk}(y)) =
+\cn{unify\_aux}(\ell, x, \cn{invk}(\cn{pubk}(y)))\hfill(!)
+\\\cn{unify\_aux}(\ell,\cn{pubk}(x),\cn{invk}(y)) =
+\cn{unify\_aux}(\ell, y, \cn{invk}(\cn{pubk}(x)))\hfill(!)
+\\\cn{unify\_aux}(\ell,f(t,\ldots),f(t',\ldots)) =
+\cn{unify\_list}(\ell,\seq{t,\ldots},\seq{t',\ldots})
+\\\cn{unify\_aux}(\ell,t,t') =\mbox{raise failure}
+\\
+\\\cn{unify\_list}(\ell,\seq{},\seq{}) =\ell
+\\\cn{unify\_list}(\ell,t\cons u,t'\cons u') =
+\cn{unify\_list}(\cn{unify}(\ell,t,t'), u, u')
+\\\cn{unify\_list}(\ell,u,u') =\mbox{raise failure}
+\end{array}
+$$
+\caption{Unifier}\label{fig:unifier}
+\end{figure}
+
+There are efficient ways of implementing unification for this algebra
+because there are efficient ways for implementing for unification in
+equational theories representable by a convergent term rewrite
+system~\cite{Fay79}. As long as terms are compatible, substitutions
+produced by unifiers map an identifier that occurs with a given sort to a
+term of the same sort.  Depending on the sort symbol, a substitution is
+limited to the following forms:
+$$
+\begin{array}{cllll}
+\dom{mesg}&I\mapsto I&I\mapsto B
+&I\mapsto\cn{cat}(T,T)&I\mapsto\cn{enc}(T,T)\ldots\\
+\dom{akey}&I\mapsto I&I\mapsto\cn{pubk}(I)
+&I\mapsto\cn{invk}(I)&I\mapsto\cn{invk}(\cn{pubk}(I))\\
+\dom{skey}&I\mapsto I&I\mapsto\cn{ltk}(I, I)\\
+\dom{text}&I\mapsto I\\
+\dom{data}&I\mapsto I\\
+\dom{name}&I\mapsto I
+\end{array}
+$$
+
+The current implementation uses an algorithm for unification without
+equations described by Laurence Paulson~\cite[Page~381]{Paulson91}
+with modifications to the unification functions as shown in
+Figure~\ref{fig:unifier}, where $e\cons\ell$ means
+$\seq{e}\append\ell$.  The function \cn{unify} calls \cn{unify\_aux}
+in the unmodified version.
+
+\begin{figure}
+$$
+\begin{array}{l}
+\cn{match}(\ell,x,t) =
+\\\qquad\mbox{if }\lnot\cn{bound}(x, \ell)\mbox{ then }(x,t)\cons\ell
+\\\qquad\mbox{else if } \cn{lookup}(x,\ell)= t\mbox{ then }\ell
+\\\qquad\mbox{else raise failure}
+\\\cn{match}(\ell,f(t,\ldots),f(t',\ldots)) =
+\cn{match\_list}(\ell,\seq{t,\ldots},\seq{t',\ldots})
+\\\cn{match}(\ell,\cn{invk}(t),t') = \cn{match}(\ell,t,\cn{invk}(t'))\hfill(!)
+\\\cn{match}(\ell,t,t') =\mbox{raise failure}
+\\
+\\\cn{bound}(x,\seq{})=\cn{false}
+\\\cn{bound}(x,(y,t)\cons\ell)=
+x=y\mbox{ or }\cn{bound}(x, \ell)
+\\
+\\\cn{match\_list}(\ell,\seq{},\seq{}) =\ell
+\\\cn{match\_list}(\ell,t\cons u,t'\cons u') =
+\cn{match\_list}(\cn{match}(\ell,t,t'), u, u')
+\\\cn{match\_list}(\ell,u,u') =\mbox{raise failure}
+\end{array}
+$$
+\caption{Matcher}\label{fig:matcher}
+\end{figure}
+
+\chapter{Diffie-Hellman}
+
+\begin{table}
+\begin{center}
+Base sort symbols: \dom{name}, \dom{text}, \dom{data}, \dom{skey},
+\dom{akey}, \dom{expn}\\
+Non-base sort symbols: \dom{mesg}, \dom{base} \\[1ex]
+Subsorts: \dom{name}, \dom{text}, \dom{data}, \dom{akey}, \dom{skey},
+\dom{expn}, $\dom{base}<\dom{mesg}$\\[1ex]
+\begin{tabular}{@{}ll}
+$\enc{\cdot}{(\cdot)}\colon\dom{mesg}\times\dom{mesg}\rightarrow\dom{mesg}$
+&Encryption\\
+$\#\colon\dom{mesg}\rightarrow\dom{mesg}$
+&Hashing\\
+$(\cdot,\cdot)\colon\dom{mesg}\times\dom{mesg}\rightarrow\dom{mesg}$
+&Pairing\\
+``\ldots''$\colon\dom{mesg}$& Tag constants\\
+$K_{(\cdot)}\colon\dom{name}\rightarrow\dom{akey}$
+&Public key of name\\
+$(\cdot)^{-1}\colon\dom{akey}\rightarrow\dom{akey}$
+&Inverse of asymmetric key\\
+$\cn{ltk}\colon\dom{name}\times\dom{name}\rightarrow\dom{skey}$
+& Long term shared key\\
+$\gen\colon\dom{base}$
+& Generator constant\\
+$(\cdot)^{(\cdot)}\colon\dom{base}\times\dom{expn}\rightarrow\dom{base}$
+& Exponentiation
+\end{tabular}\\[1ex]
+Axioms: $(x^{-1})^{-1}\approx x$ for $x\colon\dom{akey}$\\
+$(h^x)^y\approx (h^y)^x$ for $h\colon\dom{base}$ and
+$x,y\colon\dom{expn}$\\[1ex]
+\caption{Diffie-Hellman Signature}\label{tab:dh}
+\end{center}
+\end{table}
+
+Table~\ref{tab:dh} contains the signature used for Diffie-Hellman
+analysis.  In this algebra, there is an equation for the commutativity
+of exponents, but there is no equation for associativity.  Therefore,
+this algebra cannot be used to analyze group Diffie-Hellman protocols.
+
+The equation for exponentiation is $(h^x)^y\approx (h^y)^x$ for
+$h\colon\dom{base}$ and $x,y\colon\dom{expn}$.  Unification and
+matching in this algebra produce a finite number of most general
+unifiers, that is, the unification type is finitary.  For example,
+$\{x\mapsto u,y\mapsto v\}$ and $\{x\mapsto \gen^v,u\mapsto \gen^y\}$
+and unify $x^y$ and $u^v$.  Unification is finitary because of an
+approximation.  To unify $a^{xy}$ and~$b^{wz}$, we unify $a^{xy}$
+with~$\gen^{uv}$ and $\gen^{vu}$ with~$b^{wz}$, where~$u$ and~$v$ are
+freshly generated variables.  In other words, for the purpose of
+unification only, the equation for exponentiation is
+$(\gen^x)^y\approx (\gen^y)^x$.
+
+\bibliography{cpsa}
+\bibliographystyle{plain}
+
+\printindex
+
+\end{document}

@@ -1,0 +1,1775 @@
+2014-01-07  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 2.3.2
+
+2013-12-27  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/prover9.pl: Reverted to work with strings as tags fixing a
+	bug introduced in version 2.3.1.
+
+2013-12-14  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Extra-Source-Files):  Sorted the files.
+
+2013-10-15  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 2.3.1
+
+	* src/unsorted.pl: Added a missing occurs check and substitution.
+
+2013-10-11  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Cohort.hs (prioritizeVertices): Reversed the sort
+	predicate so that high numbered priorities are considered first.
+
+2013-10-09  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* tst/epmo_acctnum.lisp: Stopped running this example as part of
+	the standard test suite because it now takes nearly 5000 steps.
+
+	* src/CPSA/Lib/Algebra.hs: Removed moreGeneral because the mgs
+	filter alleviates the need for this function.
+
+2013-10-08  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/{Strand.hs,Cohort.hs} (mgs): Replaced filters with
+	a most general homomorphism filter.
+
+2013-10-05  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Cohort.hs (mga): Added a most general augmentation
+	filter as the MGU filter added to transformingNode did not remove
+	enough.
+
+2013-10-01  Moses D. Liskov  <mliskov@mitre.org>
+
+	* src/CPSA/Lib/Cohort.hs (transformingNode): Applied the MGU
+	filter to the result of just one carried binding, not all of them.
+
+2013-10-01  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Extra-Source-Files): Deleted Diffie-Hellman tests as
+	support for DH never worked.
+
+2013-09-23  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/sexpr.pl: Reverted back to the case in which tags are
+	encoded as SWI-Prolog strings.
+
+2013-09-11  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Algebra.hs: Removed heldBy from the interface.
+
+	* src/CPSA/*/*.hs: Removed contexts from all datatypes.  This
+	language extension is deprecated and will soon be removed.
+
+2013-09-09  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/DiffieHellman/Algebra.hs (groupChase):  Add missing
+	case of chasing though group variables.
+
+2013-07-23  John D. Ramsdell  <ramsdell@mitre.org>
+
+        * cpsa.cabal (Version):  Tagged as version 2.3.0
+
+	* src/CPSA/Lib/*.hs:  Added priorities to help guide the search.
+
+	* src/CPSA/Lib/Protocol.hs (mkRole): Positions are now used to
+	specify non-origination introductions rather than heights.
+
+	* doc/cpsaspec.tex: Reverted back to zero-based indexing.
+
+	* doc/cpsauser.tex: Removed Diffie-Hellman documentation as the
+	implementation of the algebra continues to have serious issues.
+
+2013-07-22  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Graph/Tree.hs (makeTree): Skeletons without children
+	that are not marked "empty cohort" are now counted as live.
+
+2013-06-13  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Algebra.hs: Added isMesgVar for acquires check.
+
+	* src/CPSA/Lib/Strand.hs (thinStrand, thinManyStrands):  Added
+	transitive reduction before thinning.
+
+	* src/CPSA/*/Algebra.hs:  Removed support for GHC 6.x.
+
+2013-04-23  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/prover9.pl: Removed erroneous quotes that were added to the
+	translation of constants.
+
+2013-04-10  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/prover9.pl: Changed the formula translation algorithm so
+	that predicates for the sort declarations of variables are added
+	to generated formulas.  Previously, the sort information was
+	ignored.
+
+2013-03-29  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/DiffieHellman/Algebra.hs (mgu): Changed so function
+	performs substitutions on all vars on LHS, not just the ones not
+	that were originally on the LHS.
+
+2013-03-12  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Annotations/Annotations.hs (obligation): Replaced an
+	irrefutable pattern that raised an exception with a maybeToList.
+
+2013-03-06  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/DiffieHellman/Algebra.hs (sLoad):  Added code that
+	allows testing of unification and matching in GHCi.
+
+2013-02-28  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/*.html:  Convert to HTML 5 mainly by eliminating the DOCTYPE
+	element.
+
+	* cpsa.cabal (Version):  Tagged as version 2.2.13
+
+2013-02-12  Paul D. Rowe  <prowe@mitre.org>
+
+	* src/perm.pl:  Fix permutation bug.
+
+2013-01-22  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* tst/Makefile ($EXE): Added optional extension for Cygwin users.
+	On Cygwin, put "export EXE=.exe" in a startup file.
+
+2012-11-13  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/cpsaspec.tex (chapter{Generalization}): Corrected the
+	definition of a location in the text describing variable
+	separation.
+
+2012-11-09  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version):  Tagged as version 2.2.12.
+
+2012-11-06  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/index.tex:  Added a section on useful tips.
+
+	* doc/cpsauser.tex:  Added description of Emacs Compilation Mode
+	support.
+
+2012-10-30  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/cpsaperm.scm: Added a Scheme program that renumbers the
+	strands in a skeleton while preserving all information in the
+	skeleton.
+
+2012-10-29  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/cpsaintroslides.tex:  Added introductory slides for new
+	users.
+
+2012-10-26  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/cpsa.pl: Added support for penetrator non-origination
+	assumptions.
+
+2012-10-25  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/perm.pl: Added a program that renumbers the strands within a
+	skeleton.  This program also strips the skeleton of non-essential
+	information.
+
+2012-10-02  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Pretty/Main.hs (pjson):  Added JSON output option.
+
+2012-08-24  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version):  Tagged as version 2.2.11.
+
+	* doc/cpsaprimer.tex (Appendix B): Added a discussion on shapes
+	that CPSA fails to find.  It explains that the missing shapes only
+	occur when interpreting roles unnaturally.
+
+	* tst/incompleteness_example.scm: Added the example used in the
+	primer that shows a shape CPSA fails to find.
+
+2012-08-22  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Expand.hs (include): Added a top-level form that
+	includes source file while performing macro expansion.
+
+2012-08-06  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Reduction.hs (breadth): Added comments describing
+	loop variables.
+
+	* src/CPSA/Lib/Strand.hs (skeletonize): Expunged hulling by
+	compression code.
+
+2012-08-03  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Reduction.hs (breadth,step): Added the tobig
+	variable so that all skeletons are produced that are below the
+	strand bound.
+
+	* src/CPSA/Lib/Main.hs (main,select,go): Added source file name to
+	"All input read" comment.
+
+2012-06-28  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version):  Tagged as version 2.2.10.
+
+	* src/CPSA/Lib/Entry.hs (tryIO): Made error option in return value
+	a string so that error messages are correctly parsed by Emacs.
+
+2012-06-06  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Entry.hs (tryIO): The use of System.IO.Error.try
+	has been deprecated, so CPSA.LIB.Entry now exports a replacement.
+
+2012-06-06  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* {doc,tst}/Make.hs: Changed imports so that ExitCode and system
+	come from System.Exit and System.process, not System, which is
+	part of the haskell98 package that is now hidden by default.
+
+2012-05-25  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version):  Tagged as version 2.2.9.
+
+	* src/CPSA/Lib/Reduction.hs (begin, search): Collapsing is
+	performed as a pre-processing stage before any tests are solved.
+	As a result, there is no need for hulling, and it has been
+	disabled.
+
+2012-05-24  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (augment): Removed the ability to turn
+	off displacement.
+
+	* src/CPSA/Lib/Strand.hs (augmentAndDisplace): Put skeletons
+	produced by displacement before the ones created by augmentation.
+
+2012-05-23  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/*.hs:  Added penetrator non-origination
+	assumptions (pen-non-orig).
+
+2012-05-22  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/SimpleDiffieHellman/Algebra.hs (normalize): Equality,
+	comparison, and substitution normalize exponentiated values.
+
+2012-05-21  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/SimpleDiffieHellman/Algebra.hs (idSubst, substChase):
+	Produce canonical form for double exponents.
+
+	* src/CPSA/SimpleDiffieHellman/Algebra.hs (equalTerm)
+	(compareTerm): Compare double exponents using lists for efficiency
+	and readability.
+
+2012-05-14  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/DiffieHellmanNoReciprocal/LinDiophEq.hs: Used the
+	method in the paper by Contejean and Devie for solving an
+	inhomogeneous equation using the algorithm for the homogeneous
+	equation solver.  The previous version buggy.
+
+2012-05-04  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Graph/SVG.hs (kbutton): In a tree drawing, the label of
+	a shape is now blue.
+
+2012-02-27  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version):  Tagged as version 2.2.8.
+
+2012-02-23  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (separateVariablesLimit): Added a hard
+	coded limit to the number of attempts to perform variable
+	separation during generalization.
+
+2012-02-22  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/cpsa.mk,doc/Make.hs: Removed rules for *.sch files.
+
+2012-02-02  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (usePrunedStrandNotInPOV): Turned this
+	flag on.  It never was supposed to be off except for when
+	experimenting.
+
+2012-02-01  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version):  Tagged as version 2.2.7.
+
+	* doc/cpsasdha.tex: Added a document describing the current
+	implementation of a Diffie-Hellman algebra.
+
+2012-01-25  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/*/Algebra.hs (encryptions): Used the C preprocessor to
+	all support for GHC 6.x while eliminating the annoying warnings
+	because Data.Map.foldWithKey has been deprecated in newer versions
+	of GHC.
+
+	* src/CPSA/Lib/Algebra.hs (encryptions): Changed the signature so
+	that an encryption returned by this function may have more than
+	one key used to prepare it as in the case of Diffie-Hellman
+	algebras.
+
+2011-12-20  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Basic/Algebra.hs (match): Handle algebra equation with
+	the rule match(invk(t), t', env) -> match(t, invk(t'), env) when
+	t' is not of the form invk(t").  Corrects a missing case in
+	previous algorithm.
+
+	* src/CPSA/Lib/Notation.hs (mesg): Print (hash a b ... z)
+	as #(a, b, ..., z).
+
+2011-12-09  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Graph/SVG.hs (tooltip): Display tool tips with
+	<g><title>TOOLTIP</title>...</g> instead of <a
+	xlink:title='MESSAGE'>...</a> so that tool tips work in Firefox
+	and Chrome again.
+
+	* cpsa.cabal (Version):  Tagged as version 2.2.6.
+
+2011-11-18  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* tst/deorig_mesg.scm (deorig-mesg):  Added an example showing
+	that variables of sort mesg make deorigination very hard.
+
+2011-11-07  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/*: Delete cpsatheory.tex, and replace references to it with
+	ones to the MTR "Completeness of CPSA".
+
+	* src/CPSA/Lib/Loader.hs (notListenerPrefix): Ensure each role
+	does not have the pattern <-t, +t, ...> so as to avoid confusion
+	with listeners.q
+
+2011-08-16  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version):  Tagged as version 2.2.5.
+
+2011-08-15  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/cpsa.pl: Changed the internal form so that compound terms
+	are represented as function symbols applied to terms, not as
+	S-expressions.
+
+2011-08-12  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/*: Updated documentation to reflect support for hashing.
+
+2011-08-11  Paul Rowe  <prowe@mitre.org>
+
+	* src/CPSA/Basic/Algebra.hs: Added support for hashing.
+
+2011-07-26  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (ksubst): Made the flag validate the
+	first argument.
+
+	* src/CPSA/Lib/Strand.hs (compress): Added a flag validate.  When
+	false, compression does not check for intrastrand orderings that
+	create cycles.  Used in thinning.
+
+2011-05-18  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version):  Tagged as version 2.2.4.
+
+2011-05-16  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/prover9.pl: Added a translator from cpsalogic output to
+	prover9 syntax.
+
+2011-05-13  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Reduction.hs (parMap): The option to compile CPSA
+	without using the parallel runtime has been removed.  The parallel
+	library comes with Haskell Platform, so it is always available
+	these days.
+
+	* cpsa.cabal (Executable cpsa): Added the GHC option -rtsopts when
+	the compiler is version 7.0.0 or greater.  In 7.0.0, needed
+	runtime option have been disabled for security reasons by default.
+
+2011-05-12  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Logic/Logic.hs (precForm): Shortened the predicate's
+	name from precedes to prec.
+
+	* src/CPSA/Logic/Logic.hs (origForm): Added the orig predicate
+	which asserts the node of origination for each uniquely originating
+	atom.
+
+	* src/CPSA/Lib/Reduction.hs (origs): Added nodes of origination
+	of uniquely originating atoms for POV and shapes for cpsalogic.
+
+	* src/CPSA/Lib/Reduction.hs (commentPreskel):  Rewrote this
+	function so as to make its much more understandable.
+
+2011-05-09  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/cpsaspec.tex: Added the orig predicate to shape analysis
+	sentences so that eliminate a counterexample to Conjecture B.1.
+	The addition of this predicate in necessary because with out it,
+	there is no way to ensure that skeletons that model a description
+	of a skeleton preserve nodes of origination of uniquely
+	originating atoms.
+
+2011-05-04  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version):  Tagged as version 2.2.3.
+
+2011-05-02  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/cpsaprimer.tex: Added sections on macros, cpsaparameters,
+	and cpsalogic.
+
+	* doc/cpsaspec.tex: Extensively rewritten to improve readability
+	and reflect the current code base.  Added Appendix B that
+	describes the theory behind shape analysis sentences and
+	cpsalogic.
+
+	* src/CPSA/Lib/Strand.hs (pruneStrand): Added check for
+	homomorphism.  This fix slightly reduces CPSA's ability to prune.
+	This problem was notice while rewriting The CPSA Specification.
+
+2011-04-25  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Reduction.hs (commentPreskel): The format of the
+	homomorphism comment in a shape changed to (maps (STRAND-MAP
+	SUBST) ...), where there may be more than one homomorphism.
+
+2011-04-18  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Logic/Logic.hs (logic): Added the cpsalogic program.
+	It extracts an axiom in the language of first-order logic for each
+	problem and its shapes from a CPSA run. The axiom is modeled by
+	all realized skeletons.
+
+2011-04-14  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Reduction.hs (commentPreskel): Added the
+	preskeleton symbol to input that is not the point-of-view
+	skeleton, but is the one used to generate it.
+
+2011-04-11  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Reduction.hs (commentPreskel): For each shape,
+	added the homomorphism from the POV skeleton to it as a comment
+	using the key map.  The format is (map STRAND-MAP SUBST...), where
+	there may be more than one substitution depending on the algebra.
+
+	* src/CPSA/Lib/Algebra.hs: Added displayEnv to a Context.
+
+2011-04-06  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/cpsadesign.tex: Updated to reflect the current code base.
+
+2011-03-29  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version):  Tagged as version 2.2.2.
+
+	* src/CPSA/Lib/Cohort.hs (cowt): Added a duplicate substitution
+	removal filter so as to resolve a large memory usage bug when
+	analyzing Wang's Fair Exchange Protocol.
+
+	* tst/wang.lisp ("Wang's Fair Exchange Protocol"): Added new
+	test.
+
+2011-03-22  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/cpsaprimer.tex: Added the hashed value as key idea:
+	(defmacro (hash x) (enc "hash" (cat "hash" x)))
+
+	* tst/epmo-key-hash.scm, tst/epmo_acctnum-key-hash.lsp: Variants
+	of epmo and empo_acctnum that use the hashed value as the key.
+
+2011-02-02  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Cohort.hs (solved): Disabled condition 2a for
+	protocols with role variables that are all atoms.  The use of
+	condition 2a is never fruitful in this case.
+
+2011-02-01  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Cohort.hs (solved): Added condition 2a to the
+	solved predicate so that CPSA now finds the shape in targetterms8.
+
+	* src/CPSA/Lib/Notation.hs (decl): The sort in a declaration is
+	now printed after the variables, as in "a, b: name".
+
+2010-12-27  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/SExpr.hs (abort): Close input handle when reporting
+	a failure.
+
+	* src/CPSA/Lib/SExpr.hs (isSym, isStr): Non-ASCII characters are
+	accepted as constituents of symbols and strings.
+
+2010-12-20  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version):  Tagged as version 2.2.1.
+
+2010-12-16  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Diff/Main.hs (showDiff): Closed output handle when a
+	difference is found so as to ensure the output is flushed before
+	exiting signaling failure.
+
+2010-12-15  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Graph/ExpandedView.hs (treelessView): Added
+	treelessView, an output format that just prints the skeletons.
+	It's meant to be used on cpsagraph input that is too large to
+	handle otherwise.
+
+2010-12-14  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Graph/Loader.hs (loadFirst, loadNext): The loader
+	returns one preskeleton per call, rather than returning the list
+	of all preskeletons in the input.  This allows modes of operation
+	in which only a small portion of the input is in memory at any one
+	time.
+
+2010-12-10  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/cpsa.mk, doc/Make.hs: Changed the extension associated with
+	cpsagraph output from .xml to .xhtml.
+
+	* doc/cpsa.mk, doc/Make.hs: Changed the extension associated with
+	cpsaparameters output from .params to _parameters.txt.
+
+2010-12-09  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Graph/Tree.hs: Dump commented out copy of the old
+	algorithm.
+
+	* src/CPSA/Graph/ExpandedView.hs (kdrawer): Replaced tree
+	sorting with a queue to produce a breadth first ordering of the
+	tree on output.  This change has a big impact on performance on
+	large inputs.
+
+2010-12-08  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Graph/ExpandedView.hs (zoomControl): Omit need to run a
+	script at load time by adding the attribute onchange="zoom(event)".
+
+2010-12-07  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Graph/ExpandedView.hs: Changed the scripting to better
+	support very large documents.  Instead of running a script to
+	insert the new control, this version builds the controls into the
+	document.  The script run a load time just registers event
+	handlers.
+
+	* src/CPSA/Graph/Tree.hs (forest): Changed data structures used to
+	form the forest so as to replace linear searches on lists with
+	binary searches on maps and sets.
+
+2010-12-01  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version):  Tagged as version 2.2.0.
+
+2010-11-29  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Graph/Preskeleton.hs (addNode): Use the color blue to
+	distinguish realized reception nodes from transmission nodes.
+
+	* src/CPSA/Lib/Strand.hs (augment): Removed hullForAugmentation.
+	Hulling is now always performed after contractions, regular
+	augmentations, and listener augmentations.
+
+2010-11-26  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Graph/*.hs: Added support for the cpsagraph option
+	--zoom.  This option adds support for SVG diagram scaling in
+	the expanded format, the one that generates an XML compound
+	document.  If the browser supports HTML5 sliders, cpsagraph
+	generates them, otherwise, it generates old style drop down lists.
+
+2010-11-19  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/*.scm: Updated examples to use herald forms.
+
+	* src/CPSA/Lib/Main.hs (getHerald): Added support for a herald
+	form that allows options specified on the command line to be
+	specified within an input file.
+
+	* src/CPSA/SimpleDiffieHellman/Algebra.hs (outFlow, inFlow):
+	Updated to handle (gen) and (exp h x).
+
+2010-11-16  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Cohort.hs (testStrand): Corrected a flaw in which
+	this function incorrectly computed the public messages available
+	at a node when the node ordering is reversed, such as when using
+	the -r option or a reverse-search role hint.
+
+2010-11-15  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Diff/Main.hs (main): Added cpsadiff, a program that
+	compares CPSA output files S-expression by S-expression, and
+	prints the first skeleton that differs.
+
+	* src/CPSA/Lib/Protocol.hs (Role):  Added the rsearch boolean that
+	is used to determine the order in which a strand is searched for a
+	test node.  The search is reversed if the role includes the
+	"reverse-search" key as one of its comments.
+
+	* src/CPSA/Lib/Entry.hs (gentlyReadSExpr): Added a version of the
+	S-expression reader that gently fails on error by printing the
+	error message to standard error and returning EOF.  Changed
+	cpsagraph, cpsashapes, and cpsapp to use this reader.  That way,
+	an aborted run can be processed by these programs.
+
+2010-11-05  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 2.1.2.
+
+	* src/CPSA/Lib/Main.hs (interp): Enabled displacement by default,
+	and changed the sense of the -d option.
+
+2010-10-25  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/SimpleDiffieHellman/Algebra.hs: Changed algebra
+	signature so that gen is a constant.
+
+2010-10-21  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (homomorphismFilter): Added a filter that
+	ensures there is a homomorphism from the parent to each member of
+	a cohort.
+
+2010-10-20  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (hullByDeOrigination): Added a mode to
+	hulling based on deorigination.
+
+2010-10-19  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/SimpleDiffieHellman/Algebra.hs (loadVar): For now,
+	variables of sort base are forbidden to deal with missing
+	contractions in the Diffie-Hellman Man-In-The-Middle example.
+
+2010-10-15  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/SimpleDiffieHellman/Algebra.hs: Made the Simple
+	Diffie-Hellman algebra what one gets where one requests the
+	algebra diffie-hellman.
+
+2010-10-14  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/{Basic,SimpleDiffieHellman}/Algebra.hs (places,
+	replace): Corrected these definitions so that they handle
+	occurrences of variables without a sort inclusion function.  For
+	example, the old version would not find I when in akey(invk(I))
+	when looking for the places at which akey(I) occurs.
+
+2010-10-13  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/SimpleDiffieHellman/Algebra.hs: Added an implementation
+	of the Simple Diffie-Hellman algebra, one that supports only
+	commutativity in exponents.
+
+	* src/CPSA/SimpleDiffieHellman/Algebra.hs (foldCarriedTerms,
+	carriedPlaces): Despite there names, these two functions follow
+	the definition of heldBy, not carriedBy.
+
+  	* src/CPSA/Lib/Protocol.hs (originates, originationPos): carriedBy
+	-> heldBy.
+
+	* src/CPSA/Lib/Cohort.hs (testNode): carriedBy -> heldBy.
+
+	* src/CPSA/Lib/Strand.hs (gainedPos, preskelWellFormed)
+	(deleteNodeRest): carriedBy -> heldBy.
+
+2010-10-12  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Algebra.hs: Changed the signature of unify and
+	match so they return a list rather than a Maybe.
+
+2010-10-06  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/DiffieHellman/Algebra.hs (specialize): Added code to
+	specialize an environment by mapping all generated variables to
+	one.  This is used when producing an environment for an instance.
+
+2010-10-04  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/DiffieHellman/Algebra.hs: Modified algebra so that
+	bases are no longer atoms, and implemented a more realistic
+	version of derivability.
+
+2010-10-02  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Algebra.hs: Added heldBy to support
+	Diffie-Hellman.
+
+2010-09-23  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Notation.hs (mesg): Use [x,y,..]k instead of
+	E(k;x,y,...).
+
+2010-09-17  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Graph/LaTeXView.hs (writeLnPreskel): Add Tree number
+	before printing a protocol.
+
+2010-09-10  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 2.1.1.
+
+	* src/CPSA/Graph/Tree.hs (assemble): To handle incomplete outputs,
+	assemble ignores unavailable seen children instead of signaling an
+	error.
+
+2010-08-24  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (augCollapses): Pruning is now performed
+	only after augmentation, and only when the augmented strand is
+	involved.
+
+2010-08-12  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Graph/LaTeXView.hs (matrix):  When drawing a skeleton,
+	communication edges between nodes with different messages is shown
+	with a dotted arrow as is already done for SVG diagrams.
+
+2010-08-09  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Notation.hs: Added an infix notation for XHTML and
+	LaTeX output.  Enable by specifying the -i flag when invoking
+	cpsagraph or cpsapp.
+
+2010-07-29  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 2.1.0.
+
+2010-07-23  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Cabal-Version): CPSA now assumes Cabal is version
+	1.6 or greater, and support for GHC 6.8 has been withdrawn.
+
+	* src/CPSA/Graph/Loader.hs (loadDefs): The graph program displays
+	the initial comments in an input file.
+
+2010-07-14  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Main.hs (options): Four new command line options
+	have been added:
+	  -d         --displacement     enable displacement
+	  -c         --check-nonces     check nonces first
+	  -t         --try-old-strands  try old strands first
+	  -r         --reverse-nodes    try old nodes first
+
+2010-07-09  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (contractAndOrder): Support for this
+	addition to authentication test solving has been removed.
+
+	* src/CPSA/Lib/Cohort.hs (contractions): Contraction has changed
+	so that it only solves the test for one position of the critical
+	message in the test node, not every position.  Previously, CPSA
+	was missing most general solutions due to contracting too many
+	positions at the same time.
+
+	* src/CPSA/Lib/Strand.hs (pruneStrands): The pruning condition now
+	checks to see that there is a variable renaming between the
+	preskeletons involved.  Previously, the only check ensured the map
+	was idempotent.
+
+2010-07-08  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Cohort.hs (useEcapeSetInTargetTerms): Added an
+	option to include the escape set in the set of target terms.
+
+2010-06-22  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (gainedPos): In a skeleton, a node with a
+	uniquely originating atom that is gained must be after the node of
+	origination.  It used to be that only nodes in which the atom is
+	acquired must have the ordering.
+
+2010-06-18  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 2.0.5.
+
+	* doc/cpsatheory.tex: Added theory document on authentication
+	tests.
+
+2010-06-11  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (augCollapses): Added a collapsing phase
+	after adding a strand so that hulling succeeds without when
+	origination points on augmented strands move.
+
+	* src/CPSA/Lib/Strand.hs (hull): Added a better algorithm for
+	finding pairs of strands to hull.
+
+2010-06-07  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Cohort.hs (cowt): As does cows, the cowt has to
+	iterate to ensure all places are considered.  This change fixes
+	the bug exposed by the tst/non_transforming.scm text case.
+
+2010-06-03  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Cohort.hs (transformingNode): Removed junk in
+	output by applying the mgu filter to more substitutions used to
+	construct augmentations.  This fix has a dramatic effect on
+	performance for the NSL4 and NSL5 test cases.
+
+2010-05-06  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Cohort.hs (cows): Update function to better match
+	correctness result in the upcoming algebra paper.
+
+2010-04-28  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 2.0.4.
+
+	* cpsa.cabal: Base versions are now base >= 3 &&< 5.
+
+2010-04-20  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (acyclicOrder): Fix acyclic check by
+	analyzing all edges in graph, not just communication edges.
+
+2010-04-15  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (firstSkeleton): Input skeletons are no
+	longer pruned.
+
+2010-03-30  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 2.0.3.
+
+	* src/CPSA/Lib/Cohort.hs (useEncryptionFirstOrder): Added switch
+	to determine critical message search order.
+
+	* src/CPSA/Lib/Strand.hs (skelNons, skelUniques): Use inheritRnon,
+	and inheritRunique for inherited origination assumptions.
+
+2010-03-27  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/pp.pl: Added an SWI-Prolog version of the pretty printer in
+	CPSA.Lib.Pretty.
+
+	* src/cpsa.pl: Added an SWI-Prolog version of the CPSA specific
+	pretty printer in CPSA.Lib.Printer and support for skeleton
+	transformations.
+
+2010-03-11  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 2.0.2.
+
+	* src/CPSA/Graph/Loader.hs (itrace): When computing the trace of
+	an instance, use the traces comment if it is available.
+
+2010-03-11  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 2.0.1.
+
+2010-03-10  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/cpsa.el: Added Emacs support for skeleton transformations.
+
+2010-03-07  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Basic/Algebra.hs (rootName):  Improved renaming
+	algorithm used to avoid collisions while printing variables.
+
+2010-03-05  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (roleOrigCheck): Added check that
+	unique origination position is preserved by inheritance.
+
+2010-03-04  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 2.0.0, the first release
+	for the public.
+
+2010-03-01  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/SExpr.hs (load): Load now returns one S-expression
+	per call.
+
+2010-02-19  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Loader.hs (loadPosBaseTerm): Added a missing check
+	that ensures a non-originating term at given length is an atom.
+
+	* doc/Make.hs (cpsa): Made *.sch the extension for problems
+	that use Diffie-Hellman.
+
+2010-02-15  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 1.5.5.
+
+	* src/CPSA/Lib/Loader.hs:  Added better error messages for roles
+	and preskeletons that are not well formed.
+
+2010-02-13  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Basic/Algebra.hs:  Enforce a canonical form for terms
+	so that term equality is just structural equality.
+
+2010-02-08  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Cohort.hs (testNode): Changed order in which
+	critical message are picked to look at encryption tests before
+	nonce tests.
+
+2010-02-05  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 1.5.4.
+
+2010-02-04  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (origCheck): For pruning, added a check
+	that insures that origination assumptions are honored by the
+	homomorphisms associated with pruning.
+
+2010-01-29  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/cpsauser.html (Visualization): Added a comment that notes
+	that cpsagraph draws dashed lines between nodes with terms that
+	are equivalent, but not syntactically identical.
+
+	* src/CPSA/Lib/Strand.hs (Preskel): Preskeletons retain a comment
+	that is given in the input.
+
+2010-01-21  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/cpsa.mk (%.sch): Added a rule that runs CPSA with the
+	Diffie-Hellman algebra for *.sch files.
+
+	* tst/completeness-test.scm: Added new example
+
+2010-01-07  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (copresentVertices): Fixed a bug, and now
+	contractions with ordering codes works, when
+	Cohort.useContractionsWithOrdering is True.
+
+2010-01-06  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 1.5.3.
+
+2009-12-21  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Cohort.hs (mgus): Enabled mgu filtering on
+	contractions and regular augmentation.
+
+2009-12-20  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Basic/Algebra.hs (moreGeneral): Original implementation
+	failed to consider variables in the range of the more general
+	substitution.
+
+2009-12-17  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Graph/Preskeleton.hs (addEdge): In a skeleton diagram,
+	an edge between nodes that do not agree on their message is
+	displayed with a dashed line.
+
+2009-11-16  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 1.5.2.
+
+2009-11-10  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (precedesCheck): Added the requirement to
+	pruning that ordering relations associated with the more
+	general (pruned) strand are implied by the less general strand.
+
+2009-10-31  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Protocol.hs (Role): Added support for delaying the
+	inheritance of a role non-origination assumption by adding a
+	length specification to role non-origination declarations.
+
+2009-10-26  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 1.5.1.
+
+2009-10-24  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Cohort.hs (specialization): Generalization no
+	longer uses pruning.
+
+2009-10-24  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* license.txt: Changed license to BSD.
+
+2009-10-15  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 1.5.0.
+
+2009-10-14  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/preskel.sh: Added a script to change defpreskeleton to
+	defskeleton.
+
+	* src/CPSA/Lib/Loader.hs (loadSExpr): Changed defpreskeleton
+	keyword to defskeleton.
+
+2009-10-10  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Extra-Source-Files): Added files left out of a
+	distribution so that the documentation compiles.
+
+	* {doc,tst}/README: Added a doc and tst read me
+
+2009-10-03  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (checkOrigs): Isomorphism orig check now
+	uses matching.  Isomorphism checking now works in diffie-hellman.
+
+2009-10-01  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Algebra.hs (encryptions): Encryptions that occur in
+	other encryption are now required to be later in the list.
+
+	* cpsa.cabal (Version): Tagged as version 1.4.9.
+
+2009-09-30  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (roleOrigCheck): Role origination check
+	is now omitted when the inheriting strand is too short to inherit
+	a unique origination assumption.
+
+2009-09-22  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Cohort.hs (useMguFilter): Turned off all mgu
+	filtering for contractions and augmentations.
+
+	* src/CPSA/Lib/Algebra.hs: Changed signature for unification and
+	matching so as to pass through a variable generator for
+	Diffie-Hellman.  Threaded the variable generator throughout the
+	library as needed.
+
+	* src/CPSA/Diffie-Hellman/Algebra.hs:  Added a module for
+	analyzing protocols that use Diffie-Hellman.  Its unifier and
+	matcher make use of fresh variable generation.
+
+2009-09-16  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Cohort.hs (mgus): Added a filter that removes
+	non-most general unifiers from a list of contractions after the
+	list has been filtered to ensure each member solves the test.  For
+	each role considered during augmentation, added a filter that
+	removes non-most general unifiers from the list of augmentations
+	after the list has been filtered to ensure each member solves the
+	test.
+
+2009-08-28  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Cohort.hs (testDestroyingContractions): Added a
+	filter that removes non-most general unifiers from the generated
+	list of potential contractions.
+
+2009-08-18  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Displayer.hs (displayOpTerm, displayOpTerms): Terms
+	in the operation field may contain variables not in the skeleton.
+	Two functions were added for printing terms is the operation
+	field.  These functions extend the display context as needed.
+
+2009-08-05  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 1.4.8.
+
+	* tst/{encsig.scm,sigenc.scm}: Added tests for labeled named akey
+	operations.
+
+2009-08-03  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Basic/Algebra.hs:  Added labeled named akey operations
+	(pubk STRING ID) and (privk STRING ID).
+
+2009-08-02  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Algebra.hs (lte):  Added more general substitution
+	predicate to the algebra interface.
+
+2009-07-24  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 1.4.7.
+
+	* src/CPSA/Lib/Strand.hs (permutations): Reversed the order in
+	which strands are matched, and found a big performance
+	improvement.
+
+	* src/CPSA/Lib/Loader.hs (loadRole): Unused variables in a role
+	are now silently dropped instead of causing an error message.
+
+2009-07-21  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (permutations): Intertwined the
+	computation of permutations with the substitutions that match
+	traces.
+
+2009-07-11  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 1.4.6.
+
+2009-07-08  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/cpsaprimer.tex (Section Advice): Added a description of how
+	to use CPSA for protocol design and made other improvements.
+
+2009-07-07  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Cohort.hs (maybeAug): Use a role's trace as a
+	template instead of generating a fresh instance for that purpose.
+
+2009-07-01  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Graph/LaTeXView.hs (latexView):
+
+2009-06-23  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Search.hs (solve): The top-level search loop is now
+	implemented in the IO monad using tail recursive functions so as to
+	ensure data is released when it should.
+
+2009-06-21  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Search.hs (solve): Added no isomorphism checking
+	mode (--noisochk).  In noisochk mode, isomorphism checks are
+	avoided by not identifying duplicate skeletons and by not
+	generalizing realized skeletons.
+
+	* src/CPSA/Lib/Search.hs (Params): Collected runtime parameters
+	into a record.
+
+	* src/CPSA/Lib/Search.hs (dump): Dump no longer generalizes
+	realized skeletons.  It just dumps them quickly.
+
+2009-06-19  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (generalize): Perform variable separation
+	last as it could take a long time.
+
+2009-06-17  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/cpsaprimer.tex: Updated the Needham-Schroeder example, added
+	the collapsing operation, and fix other minor problems.
+
+2009-06-14  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/cpsadesign.tex: This document was rewritten.  It now assumes
+	its reader have already read the CPSA specification
+	(doc/cpsaspec.tex).  As a result, it focuses on implementation
+	issues, and leaves correctness issues to the specification.
+
+2009-06-11  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (instRnon,instRunique): Filter
+	origination assumptions using the terms in the instance's trace.
+
+	* src/CPSA/Lib/Strand.hs (separateVariable): Don't memoize subsets
+	computation.  It causes memory problems when a large permutation
+	is used infrequently.
+
+2009-06-10  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 1.4.5.
+
+2009-05-29  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (isomorphic): Don't memoize
+	permutations--can cause excessive use of memory.
+
+2009-05-28  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Entry.hs: Code common to several programs has been
+	moved into the Entry module and shared.
+
+2009-05-27  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/{Search.hs,Expand.hs}: CPSA now expands macros
+	rather than using a preprocessor for the task.  The cpsapp program
+	now just pretty prints its input.
+
+	* src/CPSA/Pretty/Main.hs: The source for the cpsapp program has
+	moved into another directory as it no longer macro expands its
+	input.
+
+	* doc/cpsa.mk: Makefile no longer has preprocessor support.
+
+	* doc/cpsaoverview.tex: Add a short overview of CPSA.
+
+	* src/CPSA/Annotations/Formulas.hs (keywords): "t" and "f" are no
+	longer keywords in formulas.  Use (and) for truth and (or) for
+	falsehood.
+
+2009-05-22  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Macros/Main.hs (prettyPrint): Add -p option so that
+	cpsapp pretty prints without macro expansion.
+
+	* doc/cpsa.mk: Makefile now save preprocessor output.
+
+2009-05-12  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 1.4.4.
+
+	* cpsa.cabal (Flag par): Changed the default for the par flag to
+	true so that CPSA is compiled with multiprocessor support by
+	default.
+
+2009-05-11  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/SExpr.hs (Tokens): Added strictness annotations
+	that allows the reading of much larger input files and improves
+	performance.
+
+2009-05-10  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (collapse): Added the collapse operation
+	which applies to a shape.  It attempts to unify pairs of strands
+	and searches for shapes starting from the results.
+
+	* src/CPSA/Shapes/Shapes.hs (shapes): Reduced memory requirements
+	by use of shape notes and added support for output in which a
+	shape is a descendent of a shape.
+
+2009-05-09  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Search.hs (commentPreskel): Added a shape note to
+	be used by the cpsashapes program.
+
+2009-05-07  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (hull, enrich, prune): With the
+	correction of the pruning algorithm, the preskeleton reduction
+	rules are now applied in the order of hull, enrich, and then
+	prune.
+
+2009-05-05  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/cpsaspec.tex: Added the sources to the CPSA document that
+	specifies CPSA as a reduction system.
+
+2009-05-04  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (pruneStrands): The pruning operation
+	now uses a substitution that is idempotent for strands other than
+	the pruned strand.
+
+2009-04-29  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 1.4.3.
+
+	* src/CPSA/Lib/Cohort.hs (specialization): The homomorphism check
+	is applied to the preskeleton because it matches the strand
+	mapping.  This fixes a bug that reject some valid generalizations.
+
+2009-04-19  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Algebra.hs (Subst): A substitution is now required
+	to be ordered.
+
+	* src/CPSA/Basic/Algebra.hs (unifyChase): The exported version of
+	a substitution no longer requires chasing to find the canonical
+	representative of the equivalence class of variables determined to
+	be equal.  This means there is a canonical representation of an
+	external version of a substitution that is ordered.
+
+	* src/CPSA/Basic/Algebra.hs (substitute): Corrected a bug in
+	substitution associated with variables of sort mesg.  The
+	correction effects tst/dy.scm only.
+
+2009-04-18  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Basic/Algebra.hs (IdMap): Use Data.Map Id Term for
+	substitutions instead of association lists.
+
+	* src/CPSA/Basic/Algebra.hs (loadVar): Removed sort "term" as a
+	synonym for "mesg".
+
+2009-04-14  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Basic/Algebra.hs (compose):  Corrected a bug in the
+	code that removes the trivial bindings from s2 to form s4.  The
+	fix changes the output for tst/dy.scm.
+
+2009-03-30  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 1.4.2.
+
+2009-03-27  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Search.hs (parMap): Added support for SMP
+	parallelism.  To enable, configure with -fpar.
+
+2009-03-22  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Printer.hs: Added a CPSA specific pretty printer
+	and made it so that the roles in protocols are laid out using the
+	group layout.
+
+2009-03-03  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Pretty.hs (grp): Added support for the group layout
+	and used it for the top-level lists.
+
+2009-03-01  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Cohort.hs (unifyTerm): For contraction, the
+	unifyOnPaths function does not check to see if its result has the
+	desired properties and it turns out that sometimes it doesn't.
+	Now unifyTerm repeats its operations until the desired properties
+	hold.
+
+	* src/CPSA/Lib/Cohort.hs (unifyPast): For augmentation, the
+	original unifyPast failed to each to see if the final result has
+	the desired properties, and it turns out that sometimes it
+	doesn't.  Now unifyPast repeats its operations until the desired
+	properties hold.
+
+2009-02-23  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Loader.hs (loadInsts): Check for preskeletons
+	with no strands.
+
+2009-02-21  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Parameters/Main.hs,Flow.hs: Added a data flow analysis
+	of roles.
+
+2009-02-16  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 1.4.1.
+
+	* doc/*: Update document to reflect changes.
+
+2009-02-10  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Macros/*.hs: Added the macro preprocessor cpsapp.
+
+2009-02-08  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Annotations/Annotations.hs (loadFormulas): Allow base
+	terms as principals so as to allow keys as principals.
+
+2009-01-03  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (changeLocations): Changed variable
+	separation so that so that two candidates are generated for a
+	location configuration, one that maps the changes to uniques, and
+	the other does not.  This fixes a generalization bug.
+
+2009-01-31  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Cohort.hs (solved): The cohort is now filtered so
+	that every member is solved.
+
+2009-01-03  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (changeLocations): When separating a
+	uniquely originating base term, either the term or its clone is
+	uniquely originating.
+
+2008-12-28  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Basic/Algebra.hs (Symbol): Removed tag as a sort, and
+	made tags constants of sort mesg.
+
+2008-12-24  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Basic/Algebra.hs (matchVarRenaming): Use sets to
+	improve injective test.
+
+2008-12-09  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 1.4.0.
+
+2008-12-08  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Search.hs (nextState): Added the --dfs command line
+	option to allow the selection of depth first search.
+
+	* src/CPSA/Graph/SVG.hs (kbutton): Duplicate nodes are now
+	rendered in italic so as to make it easier to distinguish them
+	from tree nodes.
+
+	* src/CPSA/*/{Main.hs,Search.hs}: Added default option values to
+	command line help message.
+
+2008-12-03  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Basic/Algebra.hs: Allowed variable declaration forms to
+	declare more than one variable of a given sort.
+
+	* src/CPSA/Basic/Algebra.hs: Added the sort data, a second
+	sort similar to sort text.  The second sort can be used to
+	partition nonce-like data from ordinary text-like data.
+
+	* src/CPSA/Basic/Algebra.hs: Changed the symbol used for the top
+	sort from "term" to "mesg".
+
+	* src/CPSA/Lib/SExpr.hs (isStr): The characters that make up a
+	string are the ASCII printing characters omitting double quote and
+	backslash.
+
+2008-12-02  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Search.hs (nextState): Switched back to
+	breadth-first-search and removed support for parallelism.
+	Breadth-first-search makes it more likely shapes are printed in
+	ill-fated runs.
+
+	* src/CPSA/Graph/Main.hs (interp): Changed the default output
+	format to expanded format.
+
+2008-12-01  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 1.3.2.
+
+2008-11-30  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (roleOrigCheck): Added new well-formed
+	preskeleton check.  Every uniquely originating role term mapped by
+	an instance must be mapped to a term that originates on the
+	instance's strand.
+
+2008-11-19  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Search.hs (nextState): Switched to
+	depth-first-search by adding freshly generated skeletons to the
+	front of the to do list.
+
+	* src/CPSA/Lib/Strand.hs (isomorphic): Added same number of
+	variables in isomorphism check to speed it up.
+
+	* src/CPSA/Lib/Algebra.hs: (matchVarRenaming) The special purpose
+	renaming detector was eliminated in favor of using matching and
+	predicate that decides if a match is one-to-one and
+	variable-to-variable.
+
+2008-11-16  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (deleteNode): Use the transitive closure
+	of the communication ordering before deleting a node.  This change
+	fixes a minimization bug.
+
+2008-11-14  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 1.3.1.
+
+	* src/CPSA/Lib/Cohort.hs (addListeners):  Listeners are now added
+	only for the decryption keys of the top most encryptions in the
+	escape set.  This fixes a bug caused by adding listeners for
+	decryption keys of internal encryptions in the escape set.
+
+	* src/CPSA/Lib/Algebra.hs (decryptionKey):  Changed the name from
+	keysUsedBy to reflect the fact only the decryption key from the
+	top most encryption is returned.
+
+	* src/CPSA/Lib/Algebra.hs (protectors): Changed the name from
+	decrypts to better reflect the purpose of the function.
+
+2008-11-10  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Annotations/Annotations.hs (obligations): The alist key
+	theorems was replaced with obligations as it lists the formulas
+	one is obligated to show are theorems to show the protocol is
+	sound.
+
+2008-11-07  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 1.3.0.
+
+	* doc/cpsauser.html:  Added cpsaannotations documentation.
+
+2008-11-02  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/cpsadesign.tex: Added a complete draft of the algorithm part
+	of the design document.
+
+2008-10-27  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (deleteNode): When deleting a strand,
+	this function used to apply the inverse of the correct permutation
+	to the prob field, but now applies the correct permutation.
+
+2008-10-19  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Graph/Main.hs (options): Add --compact option to select
+	the use of the compact output format.
+
+2008-10-15  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Cohort.hs (targetTerms): Added term extraction from
+	the escape set for use as targets for binding with the carried
+	terms in an outbound when looking for a transforming node.  This
+	change allows CPSA to find the flaw in the Dolev-Yao Example 1.3
+	test case.
+
+2008-10-14  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Cohort.hs (augmentations): Changed the augmentation
+	algorithm to use foldCarriedTerms.
+
+	* src/cpsacgi.py: Added expanded graph output to the CGI script.
+	Added support for annotations.
+
+2008-10-13  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/cpsaprimer.tex: The CPSA Tutorial was renamed to the CPSA
+	Primer.
+
+2008-10-08  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (forgetAssumption): Fix a bug that allows
+	assumption forgetting to work again.
+
+2008-10-04  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Basic/Algebra.hs (loadEnc): When enc has more that two
+	terms, a concatenation is added to all but the last term.
+
+	* src/CPSA/Lib/Strand.hs (tryPerm): An isomorphism testing bug was
+	fixed.  The permutation map was applied to the wrong ordering.
+
+2008-10-03  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 1.2.3.
+
+	* src/CPSA/Graph/ExpandedView.hs (header): The title generated for
+	the expanded view now includes the name of the first protocol to
+	be graphed.
+
+	* src/CPSA/Lib/Search.hs (search): The comment generated for
+	non-default strand bounded or step count limited runs contained
+	an illegal character that has been removed.
+
+	* src/CPSA/Basic/Algebra.hs (displaySubst): This function displays
+	substitutions without requiring that the sort of every variable be
+	known.  The function that infers enough sort information to
+	perform the display was correct, thus fixing a reported bug.
+
+2008-09-30  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Algebra.hs (Context): Changed the interface to
+	contexts to allow them to be extended.  Also, eliminated
+	displayEnv from the Context type class.  It can be written using
+	other functions in the interface.
+
+2008-09-26  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Cohort.hs (transformingNode): The fix on the 22th
+	wasn't right, it unified on all outgoing terms.  The function now
+	unifies an outgoing term only when it is a transforming node.
+
+2008-09-24  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/*/*.hs:  Loading works with all monads.  With this
+	change, there is no longer a need for using the flexible instances
+	language extension.
+
+2008-09-23  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 1.2.2.
+
+2008-09-22  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Cabal-Version): Updated to use Cabal 1.2 section
+	syntax.
+
+	* src/CPSA/Lib/Cohort.hs (transformingNode): Changed the
+	augmentation algorithm so that it continues looking for more
+	transforming nodes farther down a trace after it finds one
+	transforming node.
+
+	* src/CPSA/Lib/Search.hs (par): Added HAVE_PAR preprocessor symbol
+	which should be defined when Control.Parallel is available.
+
+	* src/CPSA/*/*.hs:  A major code clean up was completed.
+
+2008-09-17  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (Gist): Created a data structure designed
+	to support only skeleton isomorphism checks, thus improving the
+	performance and memory requirements associated with the check.
+
+2008-09-15  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Annotations/*.hs: Added the cpsaannotations program
+	that propagates annotations on protocols to annotations on
+	realized skeletons.
+
+2008-09-06  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Main.hs (main): Algebras export a name and the
+	origin used to generate fresh variables.
+
+2008-08-29  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (weakenOrderings): Corrected a bug by
+	adding the strand succession edges before taking the transitive
+	closure.
+
+2008-08-25  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 1.2.1.
+
+2008-08-23  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (weakenOrderings): Changed the weakening
+	algorithm so as to use the transitive closure.  The result is all
+	possible weakenings are considered, and a reported bug was fixed.
+
+2008-08-19  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Graph/ExpandedView.hs (kdrawer): Added the definition
+	of the marker for arrow heads so that arrow heads now appear in
+	preskeleton drawings.
+
+2008-08-18  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 1.2.0.
+
+	* src/CPSA/Lib/Utilities.hs (permutations): Used permutations from
+	Haskell 1.3 as a model, and ensured the identity permutation is
+	the first one in the result.
+
+	* doc/cpsatutorial.tex, doc/cpsauser.html: Changed the
+	introductions to note that the search for shapes in the current
+	implementation is known to be not complete.  See tst/dy.scm.
+
+2008-08-11  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* tst/Makefile: Changed the file extensions to be consistent with
+	the ones used in doc/cpsa.mk.
+
+	* src/CPSA/Basic/Loader.hs: Added tags as non-atomic terms, and
+	removed tagged concatenation.
+
+	* src/CPSA/Graph/ExpandedView.hs: Added support for the expanded
+	view option (-x) in cpsagraph.
+
+2008-08-04  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal: Added support for local installation.
+
+	* doc/cpsa.mk: Added GNU Make rules for inclusion.
+
+	* src/CPSA/Lib/Search.hs: Reorganized search loop so that
+	S-expression printing is done outside the search code.
+
+	* src/CPSA/Lib/Search.hs: Modified the abort dump routine so that
+	it minimizes when it is asked to print a realized skeleton.
+
+2008-07-31  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/*/Loader.hs: Ignore top-level S-expression of the form
+	(comment S-EXP*) rather than signal an error so as to allow file
+	level comments as S-expressions.
+
+	* src/CPSA/*/*: Renamed cpsabasic to cpsa, as that program can now
+	provide support for more than one algebra.
+
+2008-07-28  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Algebra.hs: Added foldTerms to interface. It folds
+	a function through a term applying it to each term that occurs in
+	the term.
+
+2008-07-26  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Algebra.hs: Added carriedPlaces and ancestors to
+	the interface and moved existsOnAllPathsToTarget and
+	foldOnAllPathsToTarget to CPSA.Lib.Cohort as they no longer need
+	to be implemented by each algebra.
+
+2008-07-25  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/*/*.hs: Reorganized the algebra interface so that as
+	algebra exports an algebra specific protocol loader so as to allow
+	CPSA to handle more than one algebra at a time.  Algebras are now
+	linked into the program in CPSA.Lib.Main.
+
+2008-07-24  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Search.hs: Added the --bound option to limit the
+	number of strands in a skeleton.
+
+2008-07-15  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (validateSubst): Changed the result of a
+	failure to find a uniquely-originating atom to False rather than
+	an signaling an error.  The addition of unique origination
+	assumption forgetting makes this case no longer an error.
+
+2008-06-16  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Basic/Main.hs (compose): Use algorithm from Handbook of
+	Automated Reasoning, remembering to delete identity bindings.
+
+2008-06-05  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 1.1.0.
+
+	* doc/cpsadesign.tex: Added document status and other small
+	improvements in preparation for release.
+
+2008-05-27  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/strands.mp: Placed strand macros in a separate file.
+
+2008-05-23  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/httpd_allow_execmem.te: Added this SELinux refpolicy module
+	so as to allow Haskell to run as a CGI script.
+
+2008-05-22  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Displayer.hs (displayOperation): Changed the
+	wording for the operation used to derive a skeleton.
+
+2008-05-19  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/cpsa.{sh,py}: CGI scripts modified to work with SELinux.
+
+2008-05-13  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Shapes/Main.hs: Added output margin option.
+
+	* src/CPSA/Lib/Strand.hs (Method): Added a parameter to each
+	minimization method.
+
+2008-05-04  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (forgetAssumption): Added the
+	origination assumption forgetting minimization operation.
+
+2008-05-04  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Search.hs (options): Added output margin option.
+
+2008-04-30  Joshua D. Guttman  <guttman@mitre.org>
+
+	* src/CPSA/Basic/Main.hs: Re-enabled indeterminates
+
+2008-02-27  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Protocol.hs: Add a comment field in protocols and
+	roles.
+
+2008-02-20  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as 1.0.0, the initial release.

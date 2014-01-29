@@ -1,0 +1,395 @@
+\documentclass[landscape]{slides}
+\usepackage{mitreslides}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{alltt}
+\usepackage{url}
+%\usepackage{hyperref}
+
+\newcommand{\cpsa}{CPSA}
+\DeclareMathOperator{\domm}{\mathit{dom}}
+\newcommand{\cn}[1]{\ensuremath{\mathop{\relax
+                    \smash{\sf#1}}\!\mathop{\vphantom{#1}}\nolimits}}
+\newcommand{\dom}[1]{\ensuremath{\mathop{\relax
+                    \smash{\rm#1}}\!\mathop{\vphantom{#1}}\nolimits}}
+\newcommand{\fn}[1]{\ensuremath{\mathop{\relax
+                    \smash{\it#1}}\!\mathop{\vphantom{#1}}\nolimits}}
+\newcommand{\termalg}{\ensuremath{\mathfrak T}}
+\newcommand{\mesgalg}{\ensuremath{\mathfrak A}}
+\newcommand{\tr}{\ensuremath{\mathfrak C}}
+\newcommand{\ints}{\ensuremath{\mathbb Z}}
+\newcommand{\bundle}{\ensuremath{\mathcal{B}}}
+\newcommand{\nterm}[1]{\ensuremath{\langle\mathit{#1}\rangle}}
+\newcommand{\nterms}[1]{\ensuremath{\nterm{#1}^\ast}}
+\newcommand{\ntermp}[1]{\ensuremath{\nterm{#1}^+}}
+\newcommand{\ntermo}[1]{#1$^?$}
+\newcommand{\enc}[2]{\{\!|#1|\!\}_{#2}}
+\newcommand{\invk}[1]{{#1}^{-1}}
+\newcommand{\pubk}[1]{K_{#1}}
+\newcommand{\privk}[1]{K^{-1}_{#1}}
+\newcommand{\eqq}{\stackrel{?}{=}}
+\newcommand{\hash}[1]{\#(#1)}
+\newcommand{\inbnd}{\mathord -}
+\newcommand{\outbnd}{\mathord +}
+\newcommand{\cert}{\mathsf{cert}}
+\newcommand{\valid}{\mathsf{valid}}
+\newcommand{\data}{\mathsf{data}}
+\newcommand{\says}{\mathbin{\mathrm{says}}}
+\DeclareMathOperator{\ok}{\mathit{ok}}
+\DeclareMathOperator{\id}{\mathit{id}}
+\DeclareMathOperator{\resource}{\mathit{resource}}
+\DeclareMathOperator{\approved}{\mathit{approved}}
+\DeclareMathOperator{\ask}{\mathit{ask}}
+\DeclareMathOperator{\meas}{\mathit{meas}}
+\DeclareMathOperator{\verifier}{\mathit{verifier}}
+\DeclareMathOperator{\auth}{\mathit{auth}}
+\DeclareMathOperator{\epca}{\mathit{epca}}
+\DeclareMathOperator{\ltk}{\mathsf{ltk}}
+\newcommand{\ctosa}{\enc{R,A,K}{K_S}}
+\newcommand{\stova}{\enc{S,A,R,N_S}{K_V}}
+\newcommand{\ptova}{\enc{\cert,A,I,E}{\invk{K}_E}}
+\newcommand{\vtosa}{\enc{N_V,J,V,N_S,M}{K_S}}
+\newcommand{\stoca}{\enc{N_V,J,V,M}{K}}
+\newcommand{\ctoaa}{\enc{S, N_V,J,V,M,R}{\ltk(A,A)}}
+\newcommand{\atoca}{\enc{K',N_V,B}{\ltk(A,A)}}
+\newcommand{\blob}{\enc{K',S,J_O,M,P,
+\enc{\hash{\hash{A,V,N_V,J_O},M,P}}{\invk{}}}{K_V}}
+\newcommand{\vtosb}{\enc{\valid,N_S,K'}{K_S}}
+\newcommand{\stocb}{\enc{\data,D}{K'}}
+\newcommand{\seq}[1]{\langle#1\rangle}
+\newcommand{\append}{\mathbin{{}^\frown}}
+\newcommand{\flow}[3]{\ensuremath{#1,#2\rhd#3}}
+\newcommand{\infer}[2]{\begin{array}{c}#1\\\hline#2\end{array}}
+\newcommand{\inferb}[2]{\begin{array}[b]{c}#1\\\hline#2\end{array}}
+\newcommand{\infertwo}[3]{\inferb{#1\quad#2}{#3}}
+\newcommand{\termat}{\mathbin{@}}
+\newcommand{\all}[1]{\forall#1\mathpunct{.}}
+\newcommand{\some}[1]{\exists#1\mathpunct{.}}
+\newcommand{\idsigma}{\sigma_{\mathrm{id}}}
+
+\newenvironment{zitemize}
+{\begin{itemize}
+\setlength{\itemsep}{0em}
+\setlength{\topsep}{0em}
+\setlength{\partopsep}{0em}
+\setlength{\parsep}{0em}
+\setlength{\parskip}{0em}}%
+{\end{itemize}}
+
+\begin{document}
+
+\begin{titleslide}{Symbolic Cryptographic Protocol \\ Analysis using CPSA}
+%
+John D.~Ramsdell\\
+~\\
+The MITRE Corporation\\
+~\\
+October 2012
+\end{titleslide}
+
+\begin{mitreslide}{Cyptographic Protocol Shapes Analyzer}
+\begin{description}
+\item [Goal:] Protocol analysis using Dolev-Yao model
+\item [Foundation:] Strand Spaces
+\item [Distribution:] \url{http://hackage.haskell.org/package/cpsa}
+\item [Contributors:]
+  Joshua D. Guttman, John D. Ramsdell, Jon C. Herzog, Shaddin
+  F. Doghmi, F. Javier Thayer, Paul D. Rowe, and Moses D. Liskov
+\end{description}
+\end{mitreslide}
+
+\begin{note}
+  Pages of this form attempt to fill in the spoken part of a
+  class using these slides.
+
+  The Cryptographic Protocol Shapes Analyzer ({\cpsa}) attempts to
+  enumerate all essentially different executions possible for a
+  cryptographic protocol. We call them the \emph{shapes} of the
+  protocol. Naturally occurring protocols have only finitely many,
+  indeed very few shapes. Authentication and secrecy properties are
+  easy to determine from them, as are attacks and anomalies.
+
+  This presentation gives a very brief tour of the tool and how it is
+  used in practice.
+\end{note}
+
+\begin{mitreslide}{Anatomy of a CPSA Installation}
+\begin{zitemize}
+\item Programs
+\begin{zitemize}
+\item \texttt{cpsa}: main analysis tool
+\item \texttt{cpsashapes}: extracts shapes from \texttt{cpsa} output
+\item \texttt{cpsagraph}: visualize output using XHTML and SVG
+\item \texttt{cpsadiff}: compare two \texttt{cpsa} output files
+\item \texttt{cpsaannotations}: support rely-guarantee method
+\item \texttt{cpsalogic}: produce shape analysis sentences
+\item \texttt{cpsapp}: pretty print input and output
+\item Build tools: GNU makefile template and a Haskell script
+\end{zitemize}
+\item Documentation
+\begin{zitemize}
+\item User documentation: user guide, primer, and overview
+\item Sample input: Needham-Schroeder, Blanchet, Woo-Lam, Otway-Rees,
+  Yahalom, ffgg
+\end{zitemize}
+\end{zitemize}
+\end{mitreslide}
+
+\begin{note}
+  Although there are many programs in the {\cpsa} package, typical
+  usage is very simple.
+\end{note}
+
+\begin{mitreslide}{Using CPSA}
+\begin{itemize}
+\item With a text editor, user enters a description of a
+\begin{zitemize}
+\item protocol as a set of roles
+\item problem point-of-view\\ (what is assumed to have happened)
+\end{zitemize}
+\item User runs the tool (\texttt{\$ echo build | ghci Make.hs} \\
+  or on Windows, click on \texttt{Make.hs} and type \texttt{build})
+\item In a web browser, user views the output that shows
+\begin{zitemize}
+\item what else CPSA inferred must have happened, or
+\item all CPSA steps used to produce the answers
+\end{zitemize}
+\end{itemize}
+\end{mitreslide}
+
+\begin{note}
+  At this point, if you have not already done so, follow the
+  instructions in \url{index.html} and analyze the examples.  The rest
+  of these slides will focus on Blanchet's ``Simple Example
+  Protocol'', so open \url{blanchet.xhtml}.  Click on
+  Derivation Tree 9.
+\end{note}
+
+\begin{mitreslide}{Blanchet's ``Simple Example Protocol''}
+$$\begin{array}{r@{{}\colon{}}l}
+A\to B&\enc{\enc{S}{\privk{A}}}{\pubk{B}}\\
+B\to A&\enc{D}{S}
+\end{array}$$
+\begin{center}
+CPSA Style Roles \\[2ex]
+\begin{tabular}{c}
+Initiator ($\fn{init}$ role)\\[3ex]
+\includegraphics{blanchet-0.mps}
+\end{tabular}\hfil
+\begin{tabular}{c}
+Responder ($\fn{resp}$ role)\\[3ex]
+\includegraphics{blanchet-1.mps}
+\end{tabular}\\[3ex]
+\end{center}
+\end{mitreslide}
+
+\begin{note}
+  Blanchet's protocol has two steps.
+  Alice sends to Bob a freshly generated symmetric key~$S$ signed with Alice's
+  private key~$\privk{A}$ and then encrypted with Bob's public
+  key~$\pubk{B}$.  Bob sends data~$D$ encrypted with the symmetric key.
+
+  Locate the description of the protocol in \url{blanchet.xhtml} in
+  the third derivation tree.
+\end{note}
+
+\begin{mitreslide}{Blanchet Protocol in CPSA}
+\begin{quote}
+\begin{verbatim}
+(defprotocol blanchet basic
+  (defrole init
+    (vars (a b name) (s skey) (d data))
+    (trace
+     (send (enc (enc s (privk a)) (pubk b)))
+     (recv (enc d s))))
+  (defrole resp
+    (vars (a b name) (s skey) (d data))
+    (trace
+     (recv (enc (enc s (privk a)) (pubk b)))
+     (send (enc d s)))))
+\end{verbatim}
+\end{quote}
+\end{mitreslide}
+
+\begin{note}
+  Locate the description of scenario in \url{blanchet.xhtml} in
+  Derivation Tree 9.
+\end{note}
+
+\begin{mitreslide}{Blanchet Problem Statement}
+\begin{itemize}
+\item Analyze from the point-of-view of a full length responder
+\item Assume $\privk{B}$ is uncompromised
+\item Assume symmetric key~$S$ is freshly generated
+\hfill\raisebox{0ex}[0ex]{\includegraphics{blanchet-5.mps}}
+\end{itemize}
+\begin{quote}
+\begin{verbatim}
+(defskeleton blanchet
+  (vars (a b name) (s skey) (d data))
+  (defstrand resp 2 (a a) (b b) (s s) (d d))
+  (non-orig (privk b))
+  (uniq-orig s))
+\end{verbatim}
+\end{quote}
+\end{mitreslide}
+
+\begin{note}
+  {\cpsa} takes one step to find the shape associated with the scenario.
+  Locate the shape for the scenario in this derivation tree.
+\end{note}
+
+\begin{mitreslide}{Blanchet Shape}
+\begin{quote}
+\begin{alltt}
+(defskeleton blanchet
+  (vars (d data) (a b \textcolor{blue}{b-0} name) (s skey))
+  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (defstrand init 1 (a a) (b \textcolor{blue}{b-0}) (s s))
+  (precedes ((1 0) (0 0)))
+  (non-orig (privk a) (privk b))
+  (uniq-orig s)
+  ...)
+\end{alltt}
+\end{quote}
+\end{mitreslide}
+
+\begin{note}
+  Observe that the responder role variable \texttt{b} maps to skeleton
+  variable \texttt{b}, but the initiator role variable \texttt{b} maps
+  to skeleton variable \texttt{b\_0}.  The two strands disagree on
+  Bob's identity when agreement is expected.  The dotted line in
+  Skeleton 10 indicates the message transmitted differs from the one sent.
+
+  In the next slide, the traces show the implication of the
+  disagreement on the instantiations of variable \texttt{b}.
+\end{note}
+
+\begin{mitreslide}{Blanchet Shape with Traces}
+\begin{quote}
+\begin{alltt}
+(defskeleton blanchet
+  (vars (d data) (a b \textcolor{blue}{b-0} name) (s skey))
+  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (defstrand init 1 (a a) (b \textcolor{blue}{b-0}) (s s))
+  ...
+  (traces
+    ((recv (enc (enc s (privk a)) (pubk b)))
+     (send (enc d s)))
+    ((send (enc (enc s (privk a)) (pubk \textcolor{blue}{b-0})))))
+  ...)
+\end{alltt}
+\end{quote}
+\end{mitreslide}
+
+\begin{mitreslide}{Blanchet Shape}
+\begin{center}
+\includegraphics{blanchet-4.mps}
+\end{center}
+\begin{quote}
+\begin{alltt}
+(defskeleton blanchet
+  (vars (d data) (a b \textcolor{blue}{b-0} name) (s skey))
+  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (defstrand init 1 (a a) (b \textcolor{blue}{b-0}) (s s))
+  (precedes ((1 0) (0 0)))
+  ...)
+\end{alltt}
+\end{quote}
+\end{mitreslide}
+
+\begin{note}
+  The operation field describes the authentication test that was
+  solved to produce the shape.  Authentication tests are introduced in
+  \url{cpsaprimer.pdf}.
+\end{note}
+
+\begin{mitreslide}{Blanchet Shape with Operation}
+\begin{quote}
+\begin{alltt}
+(defskeleton blanchet
+  (vars (d data) (a b \textcolor{blue}{b-0} name) (s skey))
+  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (defstrand init 1 (a a) (b \textcolor{blue}{b-0}) (s s))
+  ...
+  (operation
+    encryption-test       ; Authentication test type
+    (added-strand init 1) ; Regular augmentation
+    (enc s (privk a))     ; Critical message
+    (0 0))                ; Test node
+  ...)
+\end{alltt}
+\end{quote}
+\end{mitreslide}
+
+\begin{note}
+  The operation field explains why {\cpsa} produced strands that do
+  not agree on the identity of \texttt{b}.  The critical message does
+  not refer to it, so there is nothing that forces agreement.
+
+  Navigate to Derivation Tree 23 in \url{blanchet.xhtml}.
+\end{note}
+
+\begin{mitreslide}{Corrected Blanchet Example Protocol}
+$$\begin{array}{r@{{}\colon{}}l}
+A\to B&\enc{\enc{S,B}{\privk{A}}}{\pubk{B}}\\
+B\to A&\enc{D}{S}
+\end{array}$$
+\begin{center}
+CPSA Style Roles \\[2ex]
+\begin{tabular}{c}
+Initiator ($\fn{init}$ role)\\[2ex]
+\includegraphics{blanchet-2.mps}
+\end{tabular}\hfil
+\begin{tabular}{c}
+Responder ($\fn{resp}$ role)\\[2ex]
+\includegraphics{blanchet-3.mps}
+\end{tabular}\\[3ex]
+\end{center}
+\end{mitreslide}
+
+\begin{mitreslide}{Corrected Blanchet Protocol in CPSA}
+\begin{quote}
+\begin{alltt}
+(defprotocol blanchet-fixed basic
+  (defrole init
+    (vars (a b name) (s skey) (d data))
+    (trace
+     (send (enc (enc s \textcolor{blue}{b} (privk a)) (pubk b)))
+     (recv (enc d s))))
+  (defrole resp
+    (vars (a b name) (s skey) (d data))
+    (trace
+     (recv (enc (enc s \textcolor{blue}{b} (privk a)) (pubk b)))
+     (send (enc d s)))))
+\end{alltt}
+\end{quote}
+\end{mitreslide}
+
+\begin{note}
+  The corrected protocol ensures the critical message refers to
+  \texttt{b}.  As a result, {\cpsa} infers the desired agreement.
+\end{note}
+
+\begin{mitreslide}{Corrected Blanchet Shape}
+\begin{quote}
+\begin{alltt}
+(defskeleton blanchet-fixed
+  (vars (d data) (a b name) (s skey))
+  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (defstrand init 1 (a a) (b b) (s s))
+  (precedes ((1 0) (0 0)))
+  (non-orig (privk a) (privk b))
+  (uniq-orig s)
+  (operation encryption-test
+    (added-strand init 1)
+    (enc s \textcolor{blue}{b} (privk a))   ; Critical message
+    (0 0))
+  ...)
+\end{alltt}
+\end{quote}
+\end{mitreslide}
+
+\end{document}

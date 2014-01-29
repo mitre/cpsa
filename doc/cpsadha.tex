@@ -1,0 +1,480 @@
+\documentclass[12pt]{article}
+\usepackage{url}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\input{macros}
+
+\title{Simple Diffie-Hellman Algebra}
+\author{John D. Ramsdell\\
+  The MITRE Corporation\\ CPSA Version \version}
+
+\hyphenation{pre-skel-e-ton}
+\hyphenation{pro-to-skel-e-ton}
+\hyphenation{pro-to-role}
+
+\newcommand{\sdha}{\textsc{sdha}}
+\newcommand{\gen}{\ensuremath{\cn{g}}}
+\newcommand{\svars}{\fn{Vars}}
+\newcommand{\sdom}{\fn{Dom}}
+\newcommand{\sran}{\fn{Ran}}
+\newcommand{\alga}{\alg{A}}
+\newcommand{\base}{\ensuremath{\mathfrak B}}
+\newcommand{\carpos}{\fn{carpos}}
+\newcommand{\tr}{\ensuremath{\mathfrak C}}
+\newcommand{\evt}{\fn{evt}}
+\newcommand{\mesg}{\fn{mesg}}
+\newcommand{\role}{\mathsf{r}}
+\newcommand{\rl}{\fn{rl}}
+\newcommand{\skel}{\mathsf{k}}
+\newcommand{\nodes}{\fn{nodes}}
+\newcommand{\lsn}{\fn{lsn}}
+\newcommand{\pubmsg}{\mathbf{P}}
+\newcommand{\excl}{\mathbf{X}}
+\newcommand{\transpred}{\mathbf{T}}
+\newcommand{\init}{\fn{init}}
+\newcommand{\resp}{\fn{resp}}
+
+\begin{document}
+\maketitle
+\cpsacopying
+
+\emph{The current attempts to support an algebra for Diffie-Hellman
+  are experimental and they all known to have flaws.}
+
+A natural way to model protocols that use Diffie-Hellman is with an
+algebra that includes a sort for exponents, one with members that form
+an Abelian group.  Implementation experiments have shown that it is
+difficult to implement such an algebra within the current {\cpsa}
+framework without significant revisions to {\cpsa}.
+
+This paper describes a simple Diffie-Hellman algebra in which the
+exponent is not an Abelian group.  Instead, the algebra only captures
+the commutative law of exponents.  The algebra requires few changes to
+the basic formalism used by {\cpsa}~\cite{cpsaspec09}.  An atom that
+originates in a trace need not be carried as long as it is in an
+exponent of something carried.  Similarly, in a skeleton, an atom
+assumed to be uniquely originating need not be carried as long as it
+is in an exponent of something carried. (See Section~\ref{sec:strand
+  spaces}).
+
+The trade-off for ease of implementation is a loss of coverage.
+Protocols that make use of the associativity or the inverses of
+exponents cannot be correctly analyzed using this algebra.  In
+particular, group Diffie-Hellman protocols typically cannot be
+handled.  {\cpsa} with the simple Diffie-Hellman algebra can analyze
+restricted Diffie-Hellman protocols, such as the basic Diffie-Hellman
+Key Exchange Protocol.  This protocol serves as an example in this
+paper.
+
+$$\begin{array}{r@{{}:{}}l}
+A\to B&\enc{\mbox{``i''}, \gen^x}{a^{-1}}\\
+B\to A&(\enc{\gen^y}{b^{-1}}, \enc{a, b}{\gen^{xy}})\\
+A\to B&\enc{\mbox{``i''}, a, b}{\gen^{xy}}
+\end{array}$$
+Alice~($A$) freshly generates an exponent~$x$, signs the exponentiated
+value with her private uncompromised asymmetric key $a^{-1}$, and
+sends it to Bob~($B$).  Bob freshly generates an exponent~$y$, signs
+the exponentiated value with his private uncompromised asymmetric key
+$b^{-1}$, and sends it to Alice along with the public signing keys
+encrypted with the newly generated symmetric key~$\gen^{xy}$.  Alice
+confirms the symmetric key by signing the public keys too.  Alice
+ensures her messages cannot be confused with Bob's by adding the tag
+constant ``i'' within her signed data.
+
+\begin{figure}
+\begingroup\footnotesize
+\begin{verbatim}
+(herald "Diffie-Hellman Key Exchange" (algebra diffie-hellman))
+
+(defprotocol dhke diffie-hellman
+  (defrole init (vars (a b akey) (x y expn))
+    (trace
+     (send (enc "i" (exp (gen) x) (invk a)))
+     (recv (cat (enc (exp (gen) y) (invk b))
+                (enc a b (exp (exp (gen) y) x))))
+     (send (enc "i" a b (exp (exp (gen) y) x))))
+    (uniq-orig  x))
+  (defrole resp (vars (a b akey) (x y expn))
+    (trace
+     (recv (enc "i" (exp (gen) x) (invk a)))
+     (send (cat (enc (exp (gen) y) (invk b))
+                (enc a b (exp (exp (gen) x) y))))
+     (recv (enc "i" a b (exp (exp (gen) x) y))))
+    (uniq-orig y)))
+
+(defskeleton dhke (vars (a b akey))
+  (defstrand resp 3 (a a) (b b))
+  (non-orig (invk a) (invk b)))
+
+ (defskeleton dhke (vars (a b akey))
+   (defstrand init 2 (a a) (b b))
+   (non-orig (invk a) (invk b)))
+\end{verbatim}
+\endgroup
+\caption{Diffie-Hellman Key Exchange {\cpsa} Input}\label{fig:dhke}
+\end{figure}
+
+The protocol in {\cpsa} syntax is presented in Figure~\ref{fig:dhke}.
+{\cpsa} concludes there is key agreement from the perspective of both
+Alice and Bob using this input.  Notice that $\gen^{xy}$ is written
+\texttt{(exp (exp (gen) x) y)}.  There is no multiplication is this
+algebra, and $\gen^{xy}$ is more accurately written as $(\gen^x)^y$.
+
+\section{Order-Sorted Message Algebra}\label{sec:order-sorted mesg algs}
+
+{\cpsa} models a message as an equivalence class of terms over a
+signature.  In particular, {\cpsa} uses order-sorted quotient term
+algebras~\cite{GoguenMeseguer92} for message algebras.  This formalism
+enables the use of well-known algorithms for unification and matching
+in the presence of equations~\cite[Chapter~8]{RobinsonVoronkov01}
+while providing a sort system for classifying messages.
+
+{\cpsa} provides a Diffie-Hellman algebra that extends the Basic
+Crypto Algebra with two new sorts, \texttt{base} and \texttt{expn},
+and two new operations, \texttt{(gen)}, a constant of sort
+\texttt{base} for exponentiation, and \texttt{(exp $G$ $X$)}, the
+exponentiation operation~\cite{cpsauser09}.
+
+\begin{figure}
+$$\begin{array}{ll@{{}\colon{}}ll}
+\mbox{Sorts:}&\multicolumn{3}{l}{\mbox{$\top$, \srt{D}, \srt{A}, \srt{S}, and \srt{E}}}\\
+\mbox{Subsorts:}&\multicolumn{3}{l}{\mbox{$\srt{D}<\top$,
+$\srt{A}<\top$, $\srt{S}<\top$, and $\srt{E}<\top$}}\\
+\mbox{Base Sorts:}&\multicolumn{3}{l}{\mbox{\srt{D}, \srt{A}, and \srt{E} (\srt{S} and
+$\top$ omitted)}}\\
+\mbox{Operations:}&(\cdot,\cdot)&\top\times\top\to\top& \mbox{Pairing}\\
+&\enc{\cdot}{(\cdot)}&\top\times\srt{S}\to\top& \mbox{Symmetric encryption}\\
+&\enc{\cdot}{(\cdot)}&\top\times\srt{A}\to\top& \mbox{Asymmetric encryption}\\
+&\mbox{``\ldots''}&\top&\mbox{Tag constants}\\
+&(\cdot)^{-1}&\srt{S}\to\srt{S}& \mbox{Symmetric key inverse}\\
+&(\cdot)^{-1}&\srt{A}\to\srt{A}& \mbox{Asymmetric key inverse}\\
+&\gen&\srt{S}&\mbox{Generator}\\
+&{(\cdot)}^{(\cdot)}&\srt{S}\times\srt{E}\to\srt{S}&\mbox{Exponentiation}\\
+\mbox{Equations:}&\multicolumn{3}{l}{(a^{-1})^{-1}\approx a\qquad
+  s^{-1}\approx s\qquad (h^x)^y\approx (h^y)^x}\\
+&\multicolumn{3}{l}{\mbox{where $a\colon\srt{A}$, $s,h\colon\srt{S}$, and $x,y\colon\srt{E}$}}
+\end{array}$$
+\caption{Simple Diffie-Hellman Algebra Signature and
+  Equations}\label{fig:dh signature}
+\end{figure}
+
+This paper presents a very simple message algebra for analyzing
+protocols using Diffie-Hellman, called the Simple Diffie-Hellman
+Algebra (\sdha), that suffices for this document.  There are five
+{\sdha} sorts: $\top$, the sort of all messages, and sorts for
+data~(\srt{D}), asymmetric keys~(\srt{A}), symmetric keys~(\srt{S}),
+and exponents~(\srt{E}).  Every symmetric key is a message (written
+$\srt{S}<\top$), and so forth for the other non-$\top$ sorts.  The
+operations used to form terms are given by the signature in
+Figure~\ref{fig:dh signature}.  Notice that the encryption and key
+inverse operations are overloaded.
+
+There are two equations in {\sdha} associated with key inverse.  For
+asymmetric key $a\colon\srt{A}$, $(a^{-1})^{-1}\approx a$, and for
+symmetric key $s\colon\srt{S}$, $s^{-1}\approx s$.  The equation for
+exponentiation is $(h^x)^y\approx (h^y)^x$, where $h\colon\srt{S}$ and
+$x,y\colon\srt{E}$.  Unification and matching in this algebra produce a
+finite number of most general unifiers, that is, the unification type
+is finitary.  For example, $\{x\mapsto u,y\mapsto v\}$ and $\{x\mapsto
+\gen^v,u\mapsto \gen^y\}$ unify $x^y$ and $u^v$.  Unification is
+finitary because of an approximation.  To unify $a^{xy}$ and~$b^{wz}$,
+we unify $a^{xy}$ with~$\gen^{uv}$ and $\gen^{vu}$ with~$b^{wz}$,
+where~$u$ and~$v$ are freshly generated variables.  In other words,
+for the purpose of unification only, the equation for exponentiation
+is $(\gen^x)^y\approx (\gen^y)^x$.  Expository Haskell code for
+unification and matching with just the equation for exponentiation is
+presented in Appendix~\ref{sec:haskell}.
+
+Origination assumption in roles and skeletons can only be applied to a
+subset of the messages of an algebra---the atoms.  In {\sdha},
+asymmetric keys and exponents are atoms, but symmetric keys are not.
+(Similarly, in the implemented Diffie-Hellman algebra, messages of
+sort \texttt{base} are not atoms.)
+
+A message~$t_0$ is \emph{carried by}~$t_1$, written $t_0\sqsubseteq
+t_1$ if~$t_0$ can be derived from~$t_1$ given the right set of keys,
+that is $\sqsubseteq$ is the smallest reflexive, transitive relation
+such that $t_0\sqsubseteq t_0$, $t_0\sqsubseteq (t_0, t_1)$,
+$t_1\sqsubseteq (t_0, t_1)$, and $t_0\sqsubseteq\enc{t_0}{t_1}$.
+
+The introduction of the Diffie-Hellman algebra requires a new relation
+on messages.  A message~$t_0$ is \emph{held by}~$t_1$, written
+$t_0\preceq t_1$ iff $t_1$ carries $t_0$ or $t_1$ is in the exponent
+of a carried term.  That is $\preceq$ is the smallest reflexive,
+transitive relation such that $t_0\preceq t_0$, $t_0\preceq (t_0,
+t_1)$, $t_1\preceq (t_0, t_1)$, $t_0\preceq\enc{t_0}{t_1}$,
+$t_1\preceq t_0^{t_1}$.
+
+\section{Strand Spaces}\label{sec:strand spaces}
+
+A run of a protocol is viewed as an exchange of messages by a finite
+set of local sessions of the protocol.  Each local session is called a
+\emph{strand}~\cite{ThayerEtal99}.  The behavior of a strand, its
+\emph{trace}, is a non-empty sequence of messaging events.  An
+\emph{event} is either a message transmission or a reception.  In the
+Basic Crypto Algebra, a message originates in a trace if it is carried
+by some event and the first event in which it is carried is a
+transmission.  For Diffie-Hellman, a message \emph{originates} in a
+trace if it is held by some event and the first event in which it is
+held is a transmission.
+
+A similar change was made for skeletons.  An atom assumed to be
+uniquely originating need only be held by some term within a skeleton,
+it no longer must be carried.
+
+\section{Derivable Messages}\label{sec:pen deriv mesgs}
+
+Suppose~$T$ is a set of messages.  Let $\to$ be a reduction relation
+on sets of messages defined as follows:
+$$\begin{array}{r@{{}\to{}}ll}
+\{(t_0,t_1)\}\cup T&\{t_0,t_1\}\cup T\\
+\{\enc{t_0}{t_1}\}\cup T&\{t_0,\enc{t_0}{t_1}\}\cup T
+&\mbox{if $t_1^{-1}\in D(T)$ and $t_0\notin T$}
+\end{array}$$
+The minimum decryption set~$M(T)$ is the normal form of relation~$\to$,
+i.e.\ $T\to^\ast M(T)$ and there is no~$T'$ such that $M(T)\to T'$.
+
+A message~$t$ is \emph{derivable} from~$T$, iff $t\in D(T)$, where
+$$\begin{array}{r@{{}={}}l}
+D^0&M(T)\\
+D^{n+1}&\left\{\begin{array}{c@{{}\mid{}}l}
+(x,y)&x,y\in D^n\\
+\enc{x}{y}&x,y\in D^n,y\colon\srt{A}\lor y\colon\srt{S}\\
+x^y& x,y\in D^n, x\colon\srt{S}, y\colon\srt{E}
+\end{array}\right\}\\
+D(T)&\bigcup_{n\in\nat}D^n
+\end{array}$$
+
+\section{Conclusion}
+
+In this algebra, one cannot analyze group Diffie-Hellman protocols, as
+they make use of the associativity of exponents.  On the other hand,
+this algebra appears to allow the analysis of the basic Diffie-Hellman
+Key Exchange.  In terms of implementation, allowances have to be made
+for the fact that unification may produce more than one most general
+unifier.
+
+\bibliography{cpsa}
+\bibliographystyle{plain}
+
+\appendix
+
+\section{Unification and Matching in Haskell}\label{sec:haskell}
+
+\begingroup\footnotesize
+\begin{verbatim}
+-- Unification and matching in a simple Diffie-Hellman algebra
+
+module SimpleDiffieHellman where
+
+-- Equational unification and matching in an algebra with the
+-- following equation is used to analyze protocols that make use of
+-- the Diffie-Hellman problem.
+--
+--      exp(exp(x, y), z) = exp(exp(x, z), y)
+--
+-- The module shows how to perform the unification and matching.
+
+import Char(isDigit, isAlpha)
+
+-- TERMS
+
+-- Variables are just integers so that it is easy to freshly generate
+-- them.
+
+type Var = Int
+
+data Term                       -- A term is
+    = V Var                     -- a variable, or a
+    | F String [Term]           -- function symbol and a list of terms
+
+-- Equality modulo the equation: exp(exp(x, y), z) = exp(exp(x, z), y).
+instance Eq Term where
+    (V x) == (V y) = x == y
+    (F "exp" [F "exp" [x, y], z]) == (F "exp" [F "exp" [x', y'], z']) =
+         x == x' && y == y' && z == z' ||
+         x == x' && y == z' && z == y'
+    (F sym ts) == (F sym' ts') = sym == sym' && ts == ts'
+    _ == _ = False
+
+-- SUBSTITUTIONS
+
+-- A substitution is a map from variables to terms
+type Subst = [(Var, Term)]
+
+-- Apply a substitution to a term
+subst :: Subst -> Term -> Term
+subst s (V x) =
+    case chase s (V x) of
+      V y -> V y
+      t -> subst s t
+subst s (F sym ts) =
+    F sym (map (subst s) ts)
+
+-- A substitution may contain an equivalence class of variables.  The
+-- chase function finds the canonical representitive of the
+-- equivalence class.
+chase :: Subst -> Term -> Term
+chase s (V x) =
+    case lookup x s of
+      Nothing -> V x
+      Just t -> chase s t
+chase _ t = t
+
+-- UNIFICATION
+
+-- This is the entry point
+unify :: Term -> Term -> [Subst]
+unify t t' =
+    unify0 t t' []
+
+-- Chase variables to start unifying two terms
+unify0 :: Term -> Term -> Subst -> [Subst]
+unify0 t t' s =
+    unify1 (chase s t) (chase s t') s
+
+-- Unification by case analysis
+unify1 :: Term -> Term -> Subst -> [Subst]
+unify1 (V x) (V y) s            -- Unify two variables
+    | x == y = [s]              -- Nothing to do
+    | x < y = [(y, V x) : s]    -- Substitute larger variable
+    | otherwise = [(x, V y) : s] -- in preference to a smaller one
+unify1 (V x) t s
+    | occurs x t = []           -- Fail when x is in t
+    | otherwise = [(x, t) : s]
+unify1 t t'@(V _) s =
+    unify1 t' t s
+-- Unify using the Diffie-Hellman equation.
+-- To make unification tractable, one makes use of the equation
+-- exp(exp(gen(), x), y) = exp(exp(gen(), y), x).
+unify1 (F "exp" ts@[u, v]) (F "exp" ts'@[u', v']) s =
+    unifyList ts ts' s ++     -- Ordinary unification
+    -- Add an instances of the equation, and unify on both sides
+    do
+      s' <- unifyList ts left s
+      unifyList ts' right s'
+    where
+      -- Generate a fresh variable by looking at the variables in use
+      var = nextVar ([u, v,  u', v'] ++ terms s) -- Include  substitution
+      var' = var + 1                -- Generate another variable
+      left = [F "exp" [F "gen" [], V var], V var'] -- One side of equation
+      right = [F "exp" [F "gen" [], V var'], V var] -- And the other
+unify1 (F sym ts) (F sym' ts') s -- Unify ordinary compound terms
+    | sym /= sym' = []           -- Fail on symbol clash
+    | otherwise = unifyList ts ts' s
+
+unifyList :: [Term] -> [Term] -> Subst -> [Subst]
+unifyList [] [] s = [s]
+unifyList (t:ts) (t':ts') s =
+    do
+      s <- unify0 t t' s
+      unifyList ts ts' s
+unifyList _ _ _ = []
+
+-- Find next unused variable in a list of terms
+nextVar :: [Term] -> Var
+nextVar [] = 0
+nextVar ts =
+    maximum (map nextVariable ts)
+    where
+      nextVariable (V x) = x + 1
+      nextVariable (F _ ts) = nextVar ts
+
+-- Returns the terms in a substitution.
+terms :: Subst -> [Term]
+terms s =
+    [ t' |
+      (x, t) <- s,
+      t' <- [V x, t] ]
+
+-- Does variable x occur in term t?
+occurs :: Var -> Term -> Bool
+occurs x (V y) = x == y
+occurs x (F _ ts) = any (occurs x) ts
+
+-- MATCHING
+
+-- This is the entry point
+match :: Term -> Term -> [Subst]
+match t t' =
+    match0 t t' []
+
+-- Matching by case analysis
+match0 :: Term -> Term -> Subst -> [Subst]
+match0 (V x) t s =
+    case lookup x s of
+      Nothing -> [(x, t) : s]
+      Just t' -> if t == t' then [s] else []
+-- Match using the Diffie-Hellman equation
+match0 (F "exp" [x, y]) (F "exp" [F "exp" [x', y'], z']) s =
+    matchList [x, y] [F "exp" [x', y'], z'] s ++
+    matchList [x, y] [F "exp" [x', z'], y'] s
+match0 (F sym ts) (F sym' ts') s
+    | sym /= sym' = []
+    | otherwise = matchList ts ts' s
+match0 _ _ _ = []
+
+matchList :: [Term] -> [Term] -> Subst -> [Subst]
+matchList [] [] s = [s]
+matchList (t:ts) (t':ts') s =
+    do
+      s <- match0 t t' s
+      matchList ts ts' s
+matchList _ _ _ = []
+
+-- TERM ORDERING
+
+instance Ord Term where
+    compare (V x) (V y) = compare x y
+    compare (F "exp" [F "exp" [x, y], z])
+            (F "exp" [F "exp" [x', y'], z']) =
+        case (compare y z, compare y' z') of
+          (GT, GT) -> compare [F "exp" [x, z], y] [F "exp" [x', z'], y']
+          (GT, _) -> compare [F "exp" [x, z], y] [F "exp" [x', y'], z']
+          (_, GT) -> compare [F "exp" [x, y], z] [F "exp" [x', z'], y']
+          _ -> compare [F "exp" [x, y], z] [F "exp" [x', y'], z']
+    compare (F sym ts) (F sym' ts') =
+        case compare sym sym' of
+          EQ -> compare ts ts'
+          c -> c
+    compare (V _) (F _ _) = LT
+    compare (F _ _) (V _) = GT
+
+-- TERM INPUT
+
+instance Read Term where
+    readsPrec _ s =
+        readTerm s
+        where
+          readTerm s =
+              [(V $ read (c:cs), t) | (c:cs, t) <- lex s,
+                                      isDigit c] ++
+              [(F (c:cs) ts, v)     | (c:cs, t) <- lex s,
+                                      isAlpha c,
+                                      ("(", u) <- lex t,
+                                      (ts, v) <- readArgs u]
+          readArgs s =
+              [([], t)              | (")", t) <- lex s] ++
+              [(x:xs, u)            | (x, t) <- reads s,
+                                      (xs, u) <- readRest t]
+          readRest s =
+              [([], t)              | (")", t) <- lex s] ++
+              [(x:xs, v)            | (",", t) <- lex s,
+                                      (x, u) <- reads t,
+                                      (xs, v) <- readRest u]
+
+-- TERM OUTPUT
+
+instance Show Term where
+    showsPrec _ (V x) =
+        shows x
+    showsPrec _ (F sym ts) =
+        showString sym . showChar '(' . showArgs ts
+        where
+          showArgs [] = showChar ')'
+          showArgs (x:xs) = shows x . showRest xs
+          showRest [] = showChar ')'
+          showRest (x:xs) = showChar ',' . shows x . showRest xs
+\end{verbatim}
+\endgroup
+\end{document}

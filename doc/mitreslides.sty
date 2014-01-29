@@ -1,0 +1,97 @@
+% mitreslides package for use with the slides class in LaTeX.
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{mitreslides}[2005/02/21]
+%
+% John D. Ramsdell
+%
+% Example file:
+%
+%	\documentclass[landscape]{slides}
+%	\usepackage{mitreslides}
+%       \renewcommand{\footercomment}{A Title}
+%	\begin{document}
+%	...
+%	\end{document}
+%
+% Defines environments: titleslide, mitreslide, and mitreoverlay
+%
+% The "slide" pagestyle is also defined.  It prints the slide
+% number, and the MITRE logo in the lower right corner.
+%
+% titleslide example:
+%
+%	\begin{titleslide}{A Briefing\\of Major Importance}
+%	R. J. Drofnats
+%
+%	30 Feb 93
+%	\end{titleslide}
+%
+%		The first argument is optional and is passed to
+%               the slide environment and is used for color slides.
+%		The second argument is the briefing title.
+%
+% mitreslide example:
+%
+%	\begin{mitreslide}{A Slide\\Title}
+%	...slide contents...
+%	\end{mitreslide}
+%
+%		The first argument is optional and is passed to
+%               the slide environment and is used for color slides.
+%               The second argument is the slide title.
+%
+% Set the footer comment with footercomment.
+% The options are, date, nopagenumbers, and marks.
+%
+% Initial code
+\RequirePackage{ifthen}
+\newboolean{date}                           % Show current date
+\newboolean{nopagenums}                     % Omit page numbers
+\newboolean{marks}                          % Show top marks
+% Declaration of options
+\DeclareOption{date}{\setboolean{date}{true}}
+\DeclareOption{nopagenums}{\setboolean{nopagenums}{true}}
+\DeclareOption{marks}{\setboolean{marks}{true}}
+%
+\ProcessOptions
+\RequirePackage{graphicx}
+% ----------- main code ----------------
+% Footer comment is empty by default.
+\newcommand{\footercomment}{}
+
+\ifthenelse{\boolean{date}}{%
+\newcommand{\show@date}{\the\year{/}\the\month{/}\the\day}%
+}{%
+\newcommand{\show@date}{}%
+}
+
+\ifthenelse{\boolean{nopagenums}}{%
+\newcommand{\show@slidenum}{\phantom{\theslide}}%
+}{%
+\newcommand{\show@slidenum}{\theslide}%
+}
+
+\ifthenelse{\boolean{marks}}{%
+\newcommand{\show@mark}{+}%
+}{%
+\newcommand{\show@mark}{\phantom{+}}%
+}
+%
+%        slide page style -- MITRE logo goes flush right
+\def\ps@slide{%
+\def\@oddfoot{{\tiny\show@slidenum\qquad\show@date\quad\footercomment}%
+\hfil\includegraphics{mitrelogo-0.mps}}
+\def\@oddhead{\show@mark\hfil\show@mark}
+\def\@evenfoot{\@oddfoot}
+\def\@evenhead{\@oddhead}}
+%
+%	\begin{mitreslide}[COLORS]{TITLE} ... \end{mitreslide}
+\newenvironment{mitreslide}[2][]%  Built on the slide environment.
+{\begin{slide}{#1}{\noindent\raggedright\Large#2\par}}%
+{\vfill\end{slide}}
+%
+%	\begin{titleslide}[COLORS]{TITLE} ... \end{titleslide}
+\newenvironment{titleslide}[2][]%
+{\begin{slide}{#1}\begin{center}{{\Large#2\par}}}%
+{\end{center}\end{slide}}

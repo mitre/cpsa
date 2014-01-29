@@ -1,0 +1,37 @@
+This directory contains CPSA documentation.
+
+* index.html: Documentation starting point with some useful tips.
+
+* cpsauser.html: CPSA User Guide, an essential reference document
+
+* cpsaprimer.pdf: CPSA Primer, an introduction to using CPSA
+
+* cpsaoverview.pdf: Another attempt at a gentle introduction to CPSA
+
+* cpsaspec.pdf: The CPSA Specification, a formal specification of the
+  algorithm
+
+* cpsadesign.pdf: CPSA Design, a description of implementation choices
+
+* cpsadha.pdf: Diffie-Hellman Algebra (an experiment with known flaws).
+
+To build the documentation, you need Metapost and XY-pic.  On Linux,
+Metapost is supplied via the package texlive-metapost, and XY-pic is
+supplied in package texlive-pictures.  On some older versions of
+Linux, you may also have to install texlive-context.
+
+If you want to build the documentation from the sources, and you don't
+have and want to install the cmarrows package for Metapost, comment
+out the line in cpsadiagrams.mp that loads cmstrands.
+
+diff -u -r1.4 cpsadiagrams.mp
+--- doc/cpsadiagrams.mp	9 Oct 2009 19:33:53 -0000	1.4
++++ doc/cpsadiagrams.mp	10 Oct 2009 11:59:38 -0000
+@@ -13,7 +13,7 @@
+
+ input strands;
+
+-input cmstrands;		% Use CM arrows
++% input cmstrands;		% Use CM arrows
+
+ picture node; node = btex $\bullet$ etex;
