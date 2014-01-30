@@ -1,3 +1,8 @@
+2014-01-30  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Graph/Preskeleton.hs (nodeColor): Neutral nodes are
+	displayed in green.
+
 2014-01-29  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Lib/Protocol.hs (Event): Added a state synchronization

@@ -60,7 +60,9 @@ addEdge conf rank src x1 y1 elements n =
 
 sameMsg :: Vertex -> Vertex -> Bool
 sameMsg src dest =
-    msg src == msg dest
+  case (dir src, dir dest) of
+    (OutDir, InDir) -> msg src == msg dest
+    _ -> False
 
 -- Add a strand node
 addNode :: Config -> Preskel -> Rank -> [Element] -> Vertex -> [Element]
@@ -72,10 +74,13 @@ addNode conf k rank elements node =
     maybe es' (addNode conf k rank es') (next node)
 
 nodeColor :: Preskel -> Vertex -> Maybe String
-nodeColor k node
-    | out node = Nothing        -- Transmission nodes are black
-    | elem node (maybe [] id (unrealized k)) = Just "red"
-    | otherwise = Just "blue"   -- Realized nodes are blue
+nodeColor k node =
+  case dir node of
+    OutDir -> Nothing           -- Transmission nodes are black
+    SyncDir -> Just "green"     -- State synchronization nodes are green
+    InDir
+      | elem node (maybe [] id (unrealized k)) -> Just "red"
+      | otherwise -> Just "blue" -- Realized nodes are blue
 
 -- Add role above a strand
 addRole :: Config -> [Element] -> Vertex -> [Element]

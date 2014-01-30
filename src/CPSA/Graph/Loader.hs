@@ -11,11 +11,11 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-module CPSA.Graph.Loader (Preskel, Vertex, protocol, role, env, inst,
-                          part, lastVertex, vertices, Node, vnode,
+module CPSA.Graph.Loader (Preskel, Dir (..), Vertex, protocol, role, env,
+                          inst, part, lastVertex, vertices, Node, vnode,
                           strands, label, parent, seen, unrealized, shape,
                           empty, protSrc, preskelSrc, initial, strand, pos,
-                          prev, next, msg, out, succs, preds,
+                          prev, next, msg, dir, succs, preds,
                           State, loadFirst, loadNext)
                           where
 
@@ -53,11 +53,15 @@ data Inst = Inst
       trace :: Trace }      -- Transmit or reception directed terms
     deriving Show
 
+data Dir = InDir
+         | OutDir
+         | SyncDir
+
 -- A vertex v contains the information associated with the node
 -- (strand v, pos v).
 data Vertex = Vertex
     { msg :: SExpr Pos,
-      out :: Bool,              -- Transmission node?
+      dir :: Dir,               -- Event direction
       inst :: Inst,
       prev :: Maybe Vertex,     -- Strand previous
       next :: Maybe Vertex,     -- Strand next
@@ -279,7 +283,7 @@ loadInsts s pos p tag revInsts _ xs =
               initial = map head nodes -- The first node in each strand
               nodes = [ [ Vertex {
                             msg = evtMsg evt,
-                            out = outbound evt,
+                            dir = evtDir evt,
                             inst = inst,
                             prev = getPrev (s, p),
                             next = getNext ht (s, p),
@@ -292,8 +296,9 @@ loadInsts s pos p tag revInsts _ xs =
                         let ht = length (trace inst) ]
               evtMsg (L _ [S _ _, t]) = t
               evtMsg x = x      -- Handle bad syntax
-              outbound (L _ [S _ "send", _]) = True
-              outbound _ = False
+              evtDir (L _ [S _ "send", _]) = OutDir
+              evtDir (L _ [S _ "sync", _]) = SyncDir
+              evtDir _ = InDir  -- Handle bad syntax
               getNode (s, p) = nodes !! s !! p
               getPrev (s, p)
                   | p > 0 = Just (getNode (s, p - 1))

@@ -2,7 +2,7 @@
 ;;; events.  This version of the protocol allows alice to extend an
 ;;; arbitrary value with the nonce, rather than the boot value.
 
-(herald "Envelope Protocol" (bound 20) (check-nonces))
+(herald "Envelope Protocol" (bound 20))
 
 ;;; Encoding of a PCR extend operation
 (defmacro (extend val old)
@@ -109,3 +109,24 @@
   (deflistener (refuse n pcr v k aik))
   (deflistener v)
   (defstrand alice 7 (n n) (pcr pcr) (v v) (k k) (aik aik)))
+
+(defskeleton envelope
+  (vars (pcr mesg) (n text) (v tne tno data) (esk1 esk skey)
+    (k aik tpmkey akey))
+  (deflistener (enc "quote" (hash "refuse" (hash n pcr)) (enc v k) aik))
+  (deflistener v)
+  (defstrand alice 7 (pcr pcr) (n n) (v v) (tne tne) (tno tno)
+    (esk1 esk1) (esk esk) (k k) (aik aik) (tpmkey tpmkey))
+  (defstrand tpm-create-key 2 (pcr (hash "obtain" (hash n pcr)))
+    (esk esk1) (k k) (aik aik))
+  (defstrand tpm-decrypt 4 (m v) (pcr (hash "obtain" (hash n pcr)))
+    (k k) (aik aik))
+  (defstrand tpm-quote 4 (nonce (enc v k))
+    (pcr (hash "refuse" (hash n pcr))) (aik aik))
+  (defstrand tpm-extend-enc 4 (value n)) ; Added
+  (defstrand tpm-extend-enc 4 (value n)) ; Added
+  (precedes ((6 3) (7 3)))               ; Added
+  (precedes ((2 4) (3 0)) ((2 6) (4 0)) ((2 6) (5 0)) ((3 1) (2 5))
+    ((4 3) (1 0)) ((5 3) (0 0)))
+  (non-orig esk1 aik (invk k) (invk tpmkey))
+  (uniq-orig n v tno esk k))
