@@ -146,7 +146,12 @@ data Instance t e = Instance
 
 type Strands = [Int]            -- [Strand height]
 
-type Trace = [Bool]             -- Directions of terms in trace
+data Dir = InDir
+         | OutDir
+         | SyncDir
+         deriving Eq
+
+type Trace = [Dir]              -- Directions of terms in trace
 
 type Node = (Int, Int)          -- (Strand, Position)
 
@@ -266,9 +271,10 @@ loadTrace :: Monad m => SExpr Pos -> m Trace
 loadTrace (L _ xs) = mapM loadDt xs
 loadTrace x = fail (shows (annotation x) "Malformed trace")
 
-loadDt :: Monad m => SExpr Pos -> m Bool
-loadDt (L _ [S _ "recv", _]) = return False
-loadDt (L _ [S _ "send", _]) = return True
+loadDt :: Monad m => SExpr Pos -> m Dir
+loadDt (L _ [S _ "recv", _]) = return InDir
+loadDt (L _ [S _ "send", _]) = return OutDir
+loadDt (L _ [S _ "sync", _]) = return SyncDir
 loadDt  (L pos [S _ dir, _]) =
     fail (shows pos $ "Unrecognized direction " ++ dir)
 loadDt x = fail (shows (annotation x) "Malformed direction")
@@ -408,10 +414,13 @@ orient :: [Trace] -> [Pair] -> [Pair]
 orient traces precedes =
     L.nub $ L.filter pred precedes
     where
-      pred (n0, n1) = out traces n0 && not (out traces n1)
+      pred (n0, n1) = outb traces n0 && inb traces n1
 
-out :: [Trace] -> Node -> Bool
-out traces (s, p) = traces !! s !! p
+outb :: [Trace] -> Node -> Bool
+outb traces (s, p) = OutDir == traces !! s !! p
+
+inb :: [Trace] -> Node -> Bool
+inb traces (s, p) = InDir == traces !! s !! p
 
 successors :: Strands -> [Pair]
 successors strands =
@@ -433,7 +442,8 @@ before pos k =
 
 alist :: [Trace] -> [Pair] -> [(Node, [Node])]
 alist traces precedes =
-    [ node (s, p) | (s, t) <- zip [0..] traces, (p, d) <- zip [0..] t, not d ]
+    [ node (s, p) | (s, t) <- zip [0..] traces, (p, d) <- zip [0..] t,
+                    InDir == d ]
     where
       node n = (n, L.sort (depends n))
       depends n = [ n0 | (n0, n1) <- precedes, n == n1 ]

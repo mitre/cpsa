@@ -1,7 +1,13 @@
 2014-01-30  John D. Ramsdell  <ramsdell@mitre.org>
 
+	* src/CPSA/Annotations/Annotations.hs (Dir): Added sync events.
+
+	* src/CPSA/Parameters/Flow.hs (loadEvt): Added sync events,
+	however, flow analysis with synchronization events is suspect.
+
 	* src/CPSA/Graph/Preskeleton.hs (nodeColor): Neutral nodes are
-	displayed in green.
+	now displayed in green, and edges involving neutral nodes are
+	always dashed.
 
 2014-01-29  John D. Ramsdell  <ramsdell@mitre.org>
 
