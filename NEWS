@@ -1,5 +1,11 @@
 CPSA NEWS -- history of user-visible changes.
 
+* Changes in version 2.4.0
+
+** State synchronization events added.
+   An event of the form (sync TERM) has been added to traces to
+   facilitate analyzing protocols that include long-term state.
+
 * Changes in version 2.3.2
 
 ** Bug fixed in prover9

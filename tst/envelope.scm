@@ -26,11 +26,9 @@
     (vars (nonce pcr mesg) (aik akey))
     (trace
      (recv (cat "quote" nonce))
-     (recv pcr)				; Fake event!
      (sync (cat "observe" pcr))
      (send (enc "quote" pcr nonce aik)))
-    (non-orig aik)
-    (priority (1 0)))			; Don't solve fake nodes
+    (non-orig aik))
 
   ;; The extend command occurs only within an encrypted session.  We
   ;; assume some session key already exists
@@ -110,6 +108,10 @@
   (deflistener v)
   (defstrand alice 7 (n n) (pcr pcr) (v v) (k k) (aik aik)))
 
+  ;; (defstrand tpm-extend-enc 4 (value n)) ; Added
+  ;; (defstrand tpm-extend-enc 4 (value n)) ; Added
+  ;; (precedes ((6 3) (7 3)))               ; Added
+
 (defskeleton envelope
   (vars (pcr mesg) (n text) (v tne tno data) (esk1 esk skey)
     (k aik tpmkey akey))
@@ -121,12 +123,12 @@
     (esk esk1) (k k) (aik aik))
   (defstrand tpm-decrypt 4 (m v) (pcr (hash "obtain" (hash n pcr)))
     (k k) (aik aik))
-  (defstrand tpm-quote 4 (nonce (enc v k))
+  (defstrand tpm-quote 3 (nonce (enc v k))
     (pcr (hash "refuse" (hash n pcr))) (aik aik))
   (defstrand tpm-extend-enc 4 (value n)) ; Added
   (defstrand tpm-extend-enc 4 (value n)) ; Added
   (precedes ((6 3) (7 3)))               ; Added
   (precedes ((2 4) (3 0)) ((2 6) (4 0)) ((2 6) (5 0)) ((3 1) (2 5))
-    ((4 3) (1 0)) ((5 3) (0 0)))
+    ((4 3) (1 0)) ((5 2) (0 0)))
   (non-orig esk1 aik (invk k) (invk tpmkey))
   (uniq-orig n v tno esk k))

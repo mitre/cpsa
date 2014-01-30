@@ -90,7 +90,7 @@ originationPos t c =
       loop pos (In t' : c)
           | t `carriedBy` t' = Nothing -- Term does not originate
           | otherwise = loop (pos + 1) c
-      loop pos (Sync _ : c) =
+      loop pos (Sync _ : c) =    -- Sync is just not like In???
         loop (pos + 1) c
 
 -- At what position is a term acquired in a trace?
@@ -106,8 +106,10 @@ acquiredPos t c =
       loop pos (Out t' : c)
           | t `occursIn` t' = Nothing   -- Term occurs in outbound term
           | otherwise = loop (pos + 1) c
-      loop pos (Sync _ : c) =
-        loop (pos + 1) c
+      loop pos (Sync t' : c)   -- Sync is just like In
+          | t `carriedBy` t' = Just pos -- Found it
+          | t `occursIn` t' = Nothing   -- Occurs but is not carried
+          | otherwise = loop (pos + 1) c
 
 -- At what position do all of the variables in a term occur in a trace?
 usedPos :: Algebra t p g s e c => t -> Trace t -> Maybe Int

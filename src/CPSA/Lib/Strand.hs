@@ -1137,8 +1137,9 @@ gainedPos t c =
       loop pos (In t' : c)
           | t `carriedBy` t' = Just pos -- Found it
           | otherwise = loop (pos + 1) c
-      loop pos (Sync _ : c) =
-        loop (pos + 1) c
+      loop pos (Sync t' : c)    -- Sync is just like In
+          | t `carriedBy` t' = Just pos -- Found it
+          | otherwise = loop (pos + 1) c
 
 -- Redundant Strand Elimination (also known as pruning)
 

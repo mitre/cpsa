@@ -6,7 +6,7 @@
 	however, flow analysis with synchronization events is suspect.
 
 	* src/CPSA/Graph/Preskeleton.hs (nodeColor): Neutral nodes are
-	now displayed in green, and edges involving neutral nodes are
+	now displayed in gray, and edges involving neutral nodes are
 	always dashed.
 
 2014-01-29  John D. Ramsdell  <ramsdell@mitre.org>
