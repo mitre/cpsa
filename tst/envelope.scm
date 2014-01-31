@@ -131,4 +131,9 @@
   (precedes ((2 4) (3 0)) ((2 6) (4 0)) ((2 6) (5 0)) ((3 1) (2 5))
     ((4 3) (1 0)) ((5 2) (0 0)))
   (non-orig esk1 aik (invk k) (invk tpmkey))
-  (uniq-orig n v tno esk k))
+  (uniq-orig n v tno esk k)
+  (comment
+   "Inferred strands and orderings from the Split State Lemma"
+   (defstrand tpm-extend-enc 4 (value n))
+   (defstrand tpm-extend-enc 4 (value n))
+   (precedes ((6 3) (7 3)))))

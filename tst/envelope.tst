@@ -381,6 +381,9 @@
   (non-orig esk1 aik (invk k) (invk tpmkey) (invk tpmkey-0)
     (invk tpmkey-1))
   (uniq-orig n v tno tne-0 tne-1 esk k)
+  (comment "Inferred strands and orderings from the Split State Lemma"
+    (defstrand tpm-extend-enc 4 (value n))
+    (defstrand tpm-extend-enc 4 (value n)) (precedes ((6 3) (7 3))))
   (traces
     ((recv (enc "quote" (hash "refuse" (hash n pcr)) (enc v k) aik))
       (send (enc "quote" (hash "refuse" (hash n pcr)) (enc v k) aik)))
