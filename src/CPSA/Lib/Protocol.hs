@@ -7,8 +7,8 @@
 -- University of California.
 
 module CPSA.Lib.Protocol (Event (..), evtTerm, evtMap, Trace, evt,
-    tterms, originates, originationPos, acquiredPos, usedPos, Role,
-    rname, rvars, rtrace, rnon, rpnon, runique, rcomment,
+    stripSync, tterms, originates, originationPos, acquiredPos, 
+    usedPos, Role, rname, rvars, rtrace, rnon, rpnon, runique, rcomment,
     rsearch, rnorig, rpnorig, ruorig, rpriority, mkRole, varSubset,
     varsInTerms, addVars, Prot, mkProt, pname, alg, pgen, roles,
     varsAllAtoms, pcomment, flow) where
@@ -65,6 +65,11 @@ evtMap f (Sync t) = Sync (f t)
 -- A trace is a list of events.  The terms in the trace are
 -- stored in causal order.
 type Trace t = [Event t]
+
+stripSync :: Trace t -> Trace t
+stripSync [] = []
+stripSync (Sync _:c) = stripSync c
+stripSync (e:c) = e:stripSync c
 
 -- The set of terms in a trace.
 tterms :: Eq t => Trace t -> [t]

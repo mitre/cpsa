@@ -455,7 +455,7 @@ transformingNode ct escape targets role subst =
           loop (ht + 1) (Out t : past) acc' c
           where
             substs = carriedBindings targets t subst
-            substs' = cowt ct escape past substs
+            substs' = cowt ct escape (stripSync past) substs
             acc' = maybeAug ct escape role ht substs' acc t
 
 -- Terms considered for binding with the carried terms in an outbound
