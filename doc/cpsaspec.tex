@@ -1140,19 +1140,29 @@ definition.
 \begin{defn}[Pruning]\label{def:pruning}
 Suppose skeleton~$k_0$ has a redundant strand~$s$.  Then there exists
 a distinct strand~$s'$ that describes more specific behavior.
-Skeleton~$k_0$ reduces to skeleton~$k_1$ by pruning, written
-$k_0\reduction{\ops{P}_s}k_1$, iff there is a most general
-unifier~$\sigma$ such that $\sigma(\Theta_{k_0}(s)(j))\equiv
-\Theta_{k_0}(s')(j)$ for all $0\leq j<|\Theta_{k_0}(s)|$, no
-variable in $\sdom(\sigma)$ occurs in the trace of any strand other
-than~$s$, $\sigma$ is a renaming, $t\in U_{k_0}$ implies $\sigma(t)\in
-U_{k_0}$, $t\in N_{k_0}$ implies $\sigma(t)\in N_{k_0}$, there is
-a~$k$ such that
-$k_0\reduction{\ops{S}_\sigma}k\reduction{\ops{C}_{s,s'}}k_1$, there
-is a homomorphism from~$k_0$ to~$k_1$, and if
-$(s,p)\kprec{k_0}(s'',p'')$ then $(s',p)\kprec{k_0}(s'',p'')$, and if
-$(s'',p'')\kprec{k_0}(s,p)$ then $(s'',p'')\kprec{k_0}(s',p)$.  For
-the setwise pruning reduction,
+
+Skeleton~$k_0$ \emph{reduces to} skeleton~$k_1$ by \emph{pruning},
+written $k_0\reduction{\ops{P}_s}k_1$, iff there is a most general
+unifier~$\sigma$ such that 
+%
+\begin{enumerate}
+  \item $\sigma(\Theta_{k_0}(s)(j))\equiv \Theta_{k_0}(s')(j)$ for all
+  $0\leq j<|\Theta_{k_0}(s)|$;
+  \item no variable in $\sdom(\sigma)$ occurs in the trace of any
+  strand other than~$s$;
+  \item $\sigma$ is a renaming;
+  \item $t\in U_{k_0}$ implies $\sigma(t)\in U_{k_0}$;
+  \item $t\in N_{k_0}$ implies $\sigma(t)\in N_{k_0}$;
+  \item there is a~$k$ such that
+  $k_0\reduction{\ops{S}_\sigma}k\reduction{\ops{C}_{s,s'}}k_1$;
+  \item there is a homomorphism from~$k_0$ to~$k_1$;
+  \item if $(s,p)\kprec{k_0}(s'',p'')$ then
+  $(s',p)\kprec{k_0}(s'',p'')$; and
+  \item if $(s'',p'')\kprec{k_0}(s,p)$ then
+  $(s'',p'')\kprec{k_0}(s',p)$.  
+\end{enumerate}
+%
+For the setwise pruning reduction,
 $\{k_0\}\setreduction{\ops{P}_s}\{k_1\mid
 k_0\reduction{\ops{P}_s}k_1\}$, when there is a $k_1$ such that
 $k_0\reduction{\ops{P}_s}k_1$.
