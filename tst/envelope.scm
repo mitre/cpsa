@@ -112,6 +112,7 @@
   ;; (defstrand tpm-extend-enc 4 (value n)) ; Added
   ;; (precedes ((6 3) (7 3)))               ; Added
 
+(comment
 (defskeleton envelope
   (vars (pcr mesg) (n text) (v tne tno data) (esk1 esk skey)
     (k aik tpmkey akey))
@@ -137,3 +138,4 @@
    (defstrand tpm-extend-enc 4 (value n))
    (defstrand tpm-extend-enc 4 (value n))
    (precedes ((6 3) (7 3)))))
+)

@@ -605,6 +605,7 @@ pairWellOrdered :: Algebra t p g s e c => Edge t e -> Bool
 pairWellOrdered (n0, n1) =
     case (event n0, event n1) of
       (Out _, In _) -> True
+      (Out _, Sync _) -> True
       (Sync _, Sync _) -> True
       _ -> False
 
@@ -1123,23 +1124,6 @@ addOrderings k orderings t =
                 case gainedPos t (trace (strandInst k s)) of
                   Nothing -> orderings
                   Just pos -> adjoin (n, (s, pos)) orderings
-
--- At what position is a term gained in a trace?
-gainedPos :: Algebra t p g s e c => t ->
-             Trace t -> Maybe Int
-gainedPos t c =
-    loop 0 c
-    where
-      loop _ [] = Nothing       -- Term is not carried
-      loop pos (Out t' : c)
-          | t `carriedBy` t' = Nothing -- Term is not gained
-          | otherwise = loop (pos + 1) c
-      loop pos (In t' : c)
-          | t `carriedBy` t' = Just pos -- Found it
-          | otherwise = loop (pos + 1) c
-      loop pos (Sync t' : c)    -- Sync is just like In
-          | t `carriedBy` t' = Just pos -- Found it
-          | otherwise = loop (pos + 1) c
 
 -- Redundant Strand Elimination (also known as pruning)
 

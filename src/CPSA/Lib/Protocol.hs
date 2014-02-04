@@ -7,7 +7,7 @@
 -- University of California.
 
 module CPSA.Lib.Protocol (Event (..), evtTerm, evtMap, Trace, evt,
-    stripSync, tterms, originates, originationPos, acquiredPos, 
+    stripSync, tterms, originates, originationPos, acquiredPos, gainedPos,
     usedPos, Role, rname, rvars, rtrace, rnon, rpnon, runique, rcomment,
     rsearch, rnorig, rpnorig, ruorig, rpriority, mkRole, varSubset,
     varsInTerms, addVars, Prot, mkProt, pname, alg, pgen, roles,
@@ -95,6 +95,9 @@ originationPos t c =
       loop pos (In t' : c)
           | t `carriedBy` t' = Nothing -- Term does not originate
           | otherwise = loop (pos + 1) c
+      -- loop pos (Sync t' : c)   -- Sync is just like In
+      --     | t `carriedBy` t' = Nothing -- Term does not originate
+      --     | otherwise = loop (pos + 1) c
       loop pos (Sync _ : c) =    -- Sync is just not like In???
         loop (pos + 1) c
 
@@ -114,6 +117,23 @@ acquiredPos t c =
       loop pos (Sync t' : c)   -- Sync is just like In
           | t `carriedBy` t' = Just pos -- Found it
           | t `occursIn` t' = Nothing   -- Occurs but is not carried
+          | otherwise = loop (pos + 1) c
+
+-- At what position is a term gained in a trace?
+gainedPos :: Algebra t p g s e c => t ->
+             Trace t -> Maybe Int
+gainedPos t c =
+    loop 0 c
+    where
+      loop _ [] = Nothing       -- Term is not carried
+      loop pos (Out t' : c)
+          | t `carriedBy` t' = Nothing -- Term is not gained
+          | otherwise = loop (pos + 1) c
+      loop pos (In t' : c)
+          | t `carriedBy` t' = Just pos -- Found it
+          | otherwise = loop (pos + 1) c
+      loop pos (Sync t' : c)    -- Sync is just like In
+          | t `carriedBy` t' = Just pos -- Found it
           | otherwise = loop (pos + 1) c
 
 -- At what position do all of the variables in a term occur in a trace?
@@ -154,12 +174,7 @@ traceFlow (d : c) a = comb (traceFlow c) (evtFlow d) a
 evtFlow :: Algebra t p g s e c => Event t -> FlowRule t
 evtFlow (In t) = inFlow t
 evtFlow (Out t) = outFlow t
-evtFlow (Sync t) = syncFlow t
-
--- A hack.
-
-syncFlow :: Algebra t p g s e c => t -> Flow t -> Set (Flow t)
-syncFlow _ f = S.singleton f
+evtFlow (Sync t) = inFlow t     -- Is this right?
 
 -- Combine flow rules sequentially
 comb :: Algebra t p g s e c => FlowRule t -> FlowRule t -> FlowRule t

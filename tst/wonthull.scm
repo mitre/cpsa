@@ -1,4 +1,4 @@
-(herald wonthull (bound 10))
+(herald wonthull (bound 9))
 
 ;;;  Wonthull:  Demonstrates a subtle incompleteness.
 ;;;

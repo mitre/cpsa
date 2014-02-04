@@ -43,3 +43,11 @@
   (vars (k skey))
   (deflistener k)
   (defstrand make 2 (k k)))
+
+(defskeleton wrap-decrypt
+  (vars (k k1 skey))
+  (deflistener k)
+  (defstrand make 2 (k k))
+  (defstrand wrap 4 (k0 k) (k1 k1))
+  (precedes ((1 1) (2 0)) ((2 3) (0 0)))
+  (pen-non-orig k1))
