@@ -72,7 +72,7 @@ zi inst =
 
 -- Enable thinning, else use pruning.
 useThinning :: Bool
-useThinning = False -- True
+useThinning = True -- False
 
 -- Do not do multistrand thinning.
 useSingleStrandThinning :: Bool
@@ -82,7 +82,7 @@ useSingleStrandThinning = False -- True
 -- Don't use de-origination without thinning although you may want to
 -- use thinning without de-origination.
 useDeOrigination :: Bool
-useDeOrigination = useThinning -- False
+useDeOrigination = False -- useThinning
 
 -- Sanity check: ensure no role variable occurs in a skeleton.
 useCheckVars :: Bool

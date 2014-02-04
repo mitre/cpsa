@@ -1,3 +1,8 @@
+2014-02-04  Ubuntu 13.10  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (useThinning): Set flag to True so as use
+	thinning by default.
+
 2014-01-30  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Annotations/Annotations.hs (Dir): Added sync events.
