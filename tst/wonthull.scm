@@ -1,3 +1,5 @@
+(herald wonthull (bound 10))
+
 ;;;  Wonthull:  Demonstrates a subtle incompleteness.
 ;;;
 ;;;  The second POV skeleton given is a shape not produced
