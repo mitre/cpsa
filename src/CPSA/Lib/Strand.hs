@@ -70,10 +70,6 @@ zi inst =
 
 -- Compile time switches for expermentation.
 
--- Enable thinning, else use pruning.
-useThinning :: Bool
-useThinning = True -- False
-
 -- Do not do multistrand thinning.
 useSingleStrandThinning :: Bool
 useSingleStrandThinning = False -- True
@@ -82,23 +78,17 @@ useSingleStrandThinning = False -- True
 -- Don't use de-origination without thinning although you may want to
 -- use thinning without de-origination.
 useDeOrigination :: Bool
-useDeOrigination = False -- useThinning
+useDeOrigination = False -- True
 
 -- Sanity check: ensure no role variable occurs in a skeleton.
 useCheckVars :: Bool
 useCheckVars = False
 
-usePruningDuringCollapsing :: Bool
-usePruningDuringCollapsing = False -- True
+useThinningDuringCollapsing :: Bool
+useThinningDuringCollapsing = False -- True
 
-usePruningWhileSolving :: Bool
-usePruningWhileSolving = True -- False
-
-useStrictPrecedesCheck :: Bool
-useStrictPrecedesCheck = False -- True
-
-usePruningUnboundCheck :: Bool
-usePruningUnboundCheck = False -- True
+useThinningWhileSolving :: Bool
+useThinningWhileSolving = True -- False
 
 useNoOrigPreservation :: Bool
 useNoOrigPreservation = False -- True
@@ -324,12 +314,6 @@ graph trace height insts pairs =
       enrich (s, i) ns
           | i > 0 = (s, i - 1) : ns
           | otherwise = ns
-
--- Does start node precede end node?
-graphPrecedes :: GraphNode e i -> GraphNode e i -> Bool
-graphPrecedes start end =
-    let predecessors = preds end in
-    any (== start) predecessors || any (graphPrecedes start) predecessors
 
 -- Compute the transitive reduction
 graphReduce :: [GraphEdge e i] -> [GraphEdge e i]
@@ -978,8 +962,7 @@ updatePriority :: [Sid] -> [(Node, Int)] -> [(Node, Int)]
 updatePriority mapping kpriority =
     map (\(n, i) -> (permuteNode mapping n, i)) kpriority
 
--- Purge a strand.  Used by thinning.  The same as pruning except
--- edges to the purged strand are forwarded as a first step.
+-- Purge a strand.  Used by thinning.
 purge :: Algebra t p g s e c => PRS t p g s e c ->
             Sid -> Sid -> [PRS t p g s e c]
 purge (k0, k, n, phi, hsubst) s s' =
@@ -987,7 +970,7 @@ purge (k0, k, n, phi, hsubst) s s' =
       let perm = updatePerm s s' (strandids k)
       orderings' <- normalizeOrderings False
                     (permuteOrderings perm
-                     (forward s (orderings k))) -- Pruning difference
+                     (forward s (orderings k)))
       let k' =
               newPreskel
               (gen k)
@@ -1019,11 +1002,11 @@ forward s orderings =
 -- This is the starting point of the Preskeleton Reduction System
 skeletonize :: Algebra t p g s e c => Bool -> PRS t p g s e c ->
                [PRS t p g s e c]
-skeletonize prune prs
-    | useDeOrigination = hull prune prs
+skeletonize thin prs
+    | useDeOrigination = hull thin prs
     -- Cull preskels with a unique origination assumption that is not unique
     | hasMultipleOrig prs = []  -- Usual case
-    | otherwise = enrich prune prs
+    | otherwise = enrich thin prs
 
 hasMultipleOrig :: Algebra t p g s e c => PRS t p g s e c -> Bool
 hasMultipleOrig prs =
@@ -1032,25 +1015,25 @@ hasMultipleOrig prs =
 -- Hulling or Ensuring Unique Origination
 hull :: Algebra t p g s e c => Bool -> PRS t p g s e c ->
         [PRS t p g s e c]
-hull prune prs =
+hull thin prs =
     loop (korig $ skel prs)
     where
       -- No uniques originate on more than one strand
-      loop [] = enrich prune prs
+      loop [] = enrich thin prs
       -- Found a pair that needs hulling
       loop ((u, (s, i) : (s', i') : _) : _) =
-              hullByDeOrigination prune prs u (s, i) (s', i')
+              hullByDeOrigination thin prs u (s, i) (s', i')
       loop(_ : orig) = loop orig
 
 -- De-Origination
 
 hullByDeOrigination :: Algebra t p g s e c => Bool -> PRS t p g s e c ->
                        t -> Node -> Node -> [PRS t p g s e c]
-hullByDeOrigination  prune prs u (s, i) (s', i') =
+hullByDeOrigination  thin prs u (s, i) (s', i') =
     do
       subst <- deOrig (skel prs) u (s, i) ++ deOrig (skel prs) u (s', i')
       prs <- ksubst False prs subst
-      hull prune prs
+      hull thin prs
 
 deOrig :: Algebra t p g s e c => Preskel t g s e -> t -> Node -> [(g, s)]
 deOrig k u (s, i) =
@@ -1068,10 +1051,10 @@ deOrig k u (s, i) =
 
 enrich :: Algebra t p g s e c => Bool -> PRS t p g s e c ->
           [PRS t p g s e c]
-enrich prune (k0, k, n, phi, hsubst) =
+enrich thin (k0, k, n, phi, hsubst) =
     let o = foldl (addOrderings k) (orderings k) (kunique k) in
     if length o == length (orderings k) then
-        maybePrune prune (k0, k, n, phi, hsubst) -- Nothing to add
+        maybeThin thin (k0, k, n, phi, hsubst) -- Nothing to add
     else
         do
           let k' =
@@ -1088,14 +1071,12 @@ enrich prune (k0, k, n, phi, hsubst) =
                   (prob k)
                   (pov k)
           k' <- wellFormedPreskel k'
-          maybePrune prune (k0, k', n, phi, hsubst)
+          maybeThin thin (k0, k', n, phi, hsubst)
 
-maybePrune :: Algebra t p g s e c => Bool -> PRS t p g s e c ->
+maybeThin :: Algebra t p g s e c => Bool -> PRS t p g s e c ->
               [PRS t p g s e c]
-maybePrune True prs
-  | useThinning = thin prs
-  | otherwise = prune prs
-maybePrune False prs = reduce prs
+maybeThin True prs = thin prs
+maybeThin False prs = reduce prs
 
 origNode :: Algebra t p g s e c => Preskel t g s e ->
             t -> Maybe Node
@@ -1118,65 +1099,6 @@ addOrderings k orderings t =
                 case gainedPos t (trace (strandInst k s)) of
                   Nothing -> orderings
                   Just pos -> adjoin (n, (s, pos)) orderings
-
--- Redundant Strand Elimination (also known as pruning)
-
-prune :: Algebra t p g s e c => PRS t p g s e c -> [PRS t p g s e c]
-prune prs =
-    pruneStrands prs (reverse $ strandids $ skel prs) (strandids $ skel prs)
-
-pruneStrands :: Algebra t p g s e c => PRS t p g s e c ->
-                [Sid] -> [Sid] -> [PRS t p g s e c]
-pruneStrands prs [] _ =
-    reduce prs                  -- No redundant strands found
-pruneStrands prs (_:ss) [] =
-    pruneStrands prs ss (strandids $ skel prs)
-pruneStrands prs (s:ss) (s':ss')
-    | s == s' = pruneStrands prs (s:ss) ss'
-    | otherwise =
-        case pruneStrand prs s s' of
-          [] -> pruneStrands prs (s:ss) ss'  -- Try next pair
-          prss ->                            -- Success
-              do
-                prs <- prss
-                prune prs
-
--- Strand s is redundant if there is an environment that maps
--- the trace of s into a prefix of the trace of s', but changes
--- no other traces in the preskeleton.
-pruneStrand :: Algebra t p g s e c => PRS t p g s e c ->
-               Sid -> Sid -> [PRS t p g s e c]
-pruneStrand prs s s' =
-    do
-      let k = skel prs
-      case elem s (prob k) && elem s' (prob k) of
-        True -> fail ""   -- Strands s and s' in image of POV skeleton
-        False -> return ()
-      env <- matchTraces
-             (trace (strandInst k s))
-             (trace (strandInst k s'))
-             (gen k, emptyEnv)
-      let ts = concatMap (tterms . trace) $ deleteNth s $ insts k
-      (gen', env') <- identityEnvFor env ts
-      case matchRenaming (gen', env') of
-        True -> return ()
-        False -> fail ""
-      case origCheck k env' of
-        True -> return ()
-        False -> fail ""
-      case all (precedesCheck k s s') (edges k) of
-        True -> return ()
-        False -> fail ""
-      case not useStrictPrecedesCheck ||
-           strictPrecedesCheck s s' (orderings k) &&
-           strictPrecedesCheck s' s (orderings k) of
-        True -> return ()
-        False -> fail ""
-      case not usePruningUnboundCheck || unboundCheck k s s' env' of
-        True -> return ()
-        False -> fail ""
-      prs <- ksubst True prs (gen', substitution env')
-      compress True prs s s'
 
 matchTraces :: Algebra t p g s e c => Trace t ->
                Trace t -> (g, e) -> [(g, e)]
@@ -1205,52 +1127,6 @@ origCheck k env =
           all (pred orig) orig
       pred set item =
           elem (instantiate env item) set
-
--- Ensure that if (s, p) precedes (s", p"), then (s', p) precedes (s", p")
--- and if (s", p") precedes (s, p), then (s", p") precedes (s', p)
-precedesCheck :: Algebra t p g s e c => Preskel t g s e ->
-                 Sid -> Sid -> Edge t e -> Bool
-precedesCheck k s s' (gn0, gn1)
-    | s == sid (strand gn0) = graphPrecedes (vertex k (s', pos gn0)) gn1
-    | s == sid (strand gn1) = graphPrecedes gn0 (vertex k (s', pos gn1))
-    | otherwise = True
-
--- Experiment
-strictPrecedesCheck :: Sid -> Sid -> [Pair] -> Bool
-strictPrecedesCheck s s' pairs =
-    all (flip elem pairs) before &&
-    all (flip elem pairs) after
-    where
-      before = [ (n0, (s', i1)) |
-                 (n0, (s1, i1)) <- pairs,
-                 s1 == s ]
-      after = [ ((s', i0), n1) |
-                 ((s0, i0), n1) <- pairs,
-                 s0 == s ]
-
--- Another experiment
-unboundCheck :: Algebra t p g s e c => Preskel t g s e ->
-              Sid -> Sid -> e -> Bool
-unboundCheck k s s' env =
-    all (flip S.member unbound) (map (instantiate env) (S.elems unbound))
-    where
-      -- The vars in s and s'
-      this = addIvars (addIvars S.empty (strandInst k s)) (strandInst k s')
-      -- The vars in strands other than s and s'
-      others = kvarsBut k s s'
-      unbound = S.difference this others
-
-kvarsBut :: Algebra t p g s e c => Preskel t g s e ->
-            Sid -> Sid -> Set t
-kvarsBut k s s' =
-    loop S.empty (insts k) 0
-    where
-      loop xs [] _ = xs
-      loop xs (i:is) s''
-          | s'' == s || s'' == s' =
-              loop xs is (s'' + 1)
-          | otherwise =
-              loop (addIvars xs i) is (s'' + 1)
 
 -- Thinning
 
@@ -1487,9 +1363,9 @@ validateMappingSubst k phi subst k' =
 -- afterwards.
 toSkeleton :: Algebra t p g s e c => Bool -> Preskel t g s e ->
               [Preskel t g s e]
-toSkeleton prune k =
+toSkeleton thin k =
     do
-      prs <- skeletonize prune (k, k, (0, 0), strandids k, emptySubst)
+      prs <- skeletonize thin (k, k, (0, 0), strandids k, emptySubst)
       (k', _, _, _) <- homomorphismFilter prs
       return k'
 
@@ -1501,7 +1377,7 @@ contract k n cause subst =
     do
       prs <- ksubst False (k, k { operation = Contracted emptySubst cause },
                            n, strandids k, emptySubst) subst
-      prs' <- skeletonize usePruningWhileSolving prs
+      prs' <- skeletonize useThinningWhileSolving prs
       homomorphismFilter prs'
 
 -- Regular Augmentation
@@ -1525,7 +1401,7 @@ augmentAndDisplace :: Algebra t p g s e c => Preskel t g s e ->
 augmentAndDisplace k0 n cause role subst inst =
     do
       prs <- substAndAugment k0 n cause role subst inst
-      augDisplace prs ++ skeletonize usePruningWhileSolving prs
+      augDisplace prs ++ skeletonize useThinningWhileSolving prs
 
 -- Apply the substitution and apply augmentation operator.
 substAndAugment :: Algebra t p g s e c => Preskel t g s e ->
@@ -1594,7 +1470,7 @@ augDisplaceStrands (k0, k, n, phi, hsubst) s s' =
       let op = addedToDisplaced (operation k) s s'
       prs <- ksubst False (k0, k { operation = op}, n, phi, hsubst) subst
       prs <- compress True prs s s'
-      skeletonize usePruningWhileSolving prs
+      skeletonize useThinningWhileSolving prs
 
 -- See if two strands unify.  They can be of differing heights.  The
 -- second strand returned may be longer.
@@ -1642,7 +1518,7 @@ addListener :: Algebra t p g s e c => Preskel t g s e -> Node ->
 addListener k n cause t =
     do
       k' <- wellFormedPreskel k'
-      prs <- skeletonize usePruningWhileSolving
+      prs <- skeletonize useThinningWhileSolving
              (k, k', n, strandids k, emptySubst)
       homomorphismFilter prs
     where
@@ -2065,5 +1941,5 @@ collapseStrands k s s' =
       prs <- ksubst False (k, k { operation = Collapsed s s' },
                            (0, 0), strandids k, emptySubst) subst
       prs <- compress True prs s s'
-      prs <- skeletonize usePruningDuringCollapsing prs
+      prs <- skeletonize useThinningDuringCollapsing prs
       return $ skel prs

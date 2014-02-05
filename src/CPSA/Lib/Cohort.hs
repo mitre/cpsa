@@ -67,9 +67,9 @@ useEcapeSetInTargetTerms = False -- True
 useSolvedFilter :: Bool
 useSolvedFilter = True -- False
 
--- Use pruning during generalization.
-usePruningDuringGeneralization :: Bool
-usePruningDuringGeneralization = False -- True
+-- Use thinning during generalization.
+useThinningDuringGeneralization :: Bool
+useThinningDuringGeneralization = False -- True
 
 -- Minimum priority to solve
 minPriority :: Int
@@ -570,7 +570,7 @@ specialization k k' mapping
     | not (preskelWellFormed k') = []
     | otherwise =
         do
-          k'' <- toSkeleton usePruningDuringGeneralization k'
+          k'' <- toSkeleton useThinningDuringGeneralization k'
           case realized k'' && not (isomorphic (gist k) (gist k'')) &&
                refines k'' (pov k'') (prob k'') &&
                refines k (Just k') mapping of
