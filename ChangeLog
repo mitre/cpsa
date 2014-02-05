@@ -1,4 +1,11 @@
-2014-02-04  Ubuntu 13.10  <ramsdell@mitre.org>
+2014-02-05  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs: Purged code for pruning.
+
+	* doc/cpsaspec.tex: Documented thinning and removed material on
+	pruning.
+
+2014-02-04  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Lib/Strand.hs (useThinning): Set flag to True so as use
 	thinning by default.
