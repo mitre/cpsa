@@ -1057,16 +1057,10 @@ deOrig k u (s, i) =
     [ (g, s) |
       let tr = trace $ strandInst k s,
       e <- take i tr,
-      t <- inbnd e,
+      t <- M.maybeToList $ inbnd e,
       subterm <- S.toList $ foldCarriedTerms (flip S.insert) S.empty t,
       (g, s) <- unify u subterm (gen k, emptySubst),
       not $ originates (substitute s u) (map (evtMap $ substitute s) tr) ]
-
--- Consider inbound messages only
-inbnd :: Algebra t p g s e c => Event t -> [t]
-inbnd (In t) = [t]
-inbnd (Out _) = []
-inbnd (Sync _) = []
 
 -- Order Enrichment
 

@@ -6,11 +6,13 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-module CPSA.Lib.Protocol (Event (..), evtTerm, evtMap, Trace, evt,
-    stripSync, tterms, originates, originationPos, acquiredPos, gainedPos,
-    usedPos, Role, rname, rvars, rtrace, rnon, rpnon, runique, rcomment,
+module CPSA.Lib.Protocol (Event (..), evtTerm, evtMap, evt, inbnd, outbnd,
+    Trace, stripSync, tterms, originates, 
+    originationPos, acquiredPos, gainedPos, usedPos, 
+    Role, rname, rvars, rtrace, rnon, rpnon, runique, rcomment,
     rsearch, rnorig, rpnorig, ruorig, rpriority, mkRole, varSubset,
-    varsInTerms, addVars, Prot, mkProt, pname, alg, pgen, roles,
+    varsInTerms, addVars, 
+    Prot, mkProt, pname, alg, pgen, roles, 
     varsAllAtoms, pcomment, flow) where
 
 import qualified Data.List as L
@@ -61,6 +63,16 @@ evtMap :: (t -> t) -> Event t -> Event t
 evtMap f (In t) = In (f t)
 evtMap f (Out t) = Out (f t)
 evtMap f (Sync t) = Sync (f t)
+
+-- Extract the term in an inbound event.
+inbnd :: Event t -> Maybe t
+inbnd (In t) = Just t
+inbnd _ = Nothing
+
+-- Extract the term in an outbound event.
+outbnd :: Event t -> Maybe t
+outbnd (Out t) = Just t
+outbnd _ = Nothing
 
 -- A trace is a list of events.  The terms in the trace are
 -- stored in causal order.

@@ -91,10 +91,9 @@ unrealized k =
       unrealizedInStrand acc s =
           fst $ foldl unrealizedInNode (acc, S.empty) (nodes s)
       unrealizedInNode (acc, ns) n =
-          case event n of
-            Out _ -> (acc, ns)
-            Sync _ -> (acc, ns)
-            In t ->
+          case inbnd $ event n of
+            Nothing -> (acc, ns)
+            Just t ->
                 let ns' = addSendingBefore ns n
                     ts = S.map (evtTerm . event) ns' in
                 case derivable a ts t of
@@ -110,10 +109,9 @@ addSendingBefore s n =
         | S.member n s = s
         | otherwise = addSendingBefore (addIfSending s n) n
       addIfSending s n =
-          case event n of
-            In _ -> s
-            Sync _ -> s
-            Out _ -> S.insert n s
+          case outbnd $ event n of
+            Nothing -> s
+            Just _ -> S.insert n s
 
 -- Returns that atoms that cannot be guess when determining if a
 -- term is derivable from some other terms, and the atoms that
@@ -244,10 +242,9 @@ findTest mode k u a =
     where
       loop [] = Nothing
       loop (n : nodes) =
-          case event n of
-            Out _ -> loop nodes
-            Sync _ -> loop nodes
-            In t ->
+          case inbnd $ event n of
+            Nothing -> loop nodes
+            Just t ->
                 let ns = addSendingBefore S.empty n
                     ts = S.map (evtTerm . event) ns -- Public messages
                     der = derivable a ts in -- Derivable before node
