@@ -1095,11 +1095,12 @@ preskeleton in which every uniquely originating atom originates at
 most once, but it may lack some node orderings needed to be a
 skeleton.
 
-Skeletons may contain redundant strands.  After converting
-preskeletons to skeletons, a preskeleton reduction system may remove
-redundant strands using a process called \index{pruning}pruning.  A
-skeleton without any redundant strands is called a \index{pruned
-  skeleton}\index{skeleton!pruned}\emph{pruned skeleton}.
+Skeletons may contain ``effectively equivalent'' strands.  After
+converting preskeletons to skeletons, a preskeleton reduction system
+may remove effectively equivalent strands using a process called
+\index{thinning}thinning.  A skeleton without any effectively
+equivalent strands is called a \index{thinned
+  skeleton}\index{skeleton!thinned}\emph{thinned skeleton}.
 
 \begin{defn}[Hulling Reduction]\label{def:hulling}
 A non-hulled preskeleton~$k$ is expunged.  The setwise hulling
@@ -1120,97 +1121,49 @@ $\{k_0\}\setreduction{\ops{O}}\{k_1\mid k_0\reduction{\ops{O}}k_1\}$
 when $k_0$ is a hulled preskeleton that is not a skeleton.
 \end{defn}
 
-The pruning operator~$\ops{P}_s$ removes a \index{redundant
-  strands}redundant strand.  When a strand~$s$ is redundant, there is
-another strand~$s'$ that describes more specific behavior.
-Skeleton~$k_0$ has a redundant strand~$s$ if there is a skeleton~$k_1$
-such that
-$k_0\reduction{\ops{S}_\sigma}k\reduction{\ops{C}_{s,s'}}k_1$,
-$k_0\homomorphism{\phi,\sigma}k_1$, and
-$k_1\homomorphism{\phi',\sigma'}k_0$, where
-$\comp{\phi}{\phi'}=\idphi$ and
-$\comp{\sigma}{\sigma'}=\idsigma$.\footnote{In category theory,
-  $(\phi',\sigma')$ is a section of $(\phi,\sigma)$, and
-  $(\phi,\sigma)$ is a retraction of $(\phi',\sigma')$.}  In
-particular $\phi=\phi_{s,s'}$ and $\phi'=\phi'_s$ with~$\phi_{s,s'}$
-and~$\phi'_s$ as in Definition~\ref{def:compression operator}.  The
-bidirectional homomorphism requirement leads to the following
-definition.
+The thinning operator~$\ops{T}_s$ removes an \index{effectively
+  equivalent strands}effectively equivalent strand.
 
-\begin{defn}[Pruning]\label{def:pruning}
-Suppose skeleton~$k_0$ has a redundant strand~$s$.  Then there exists
-a distinct strand~$s'$ that describes more specific behavior.
-
-Skeleton~$k_0$ \emph{reduces to} skeleton~$k_1$ by \emph{pruning},
-written $k_0\reduction{\ops{P}_s}k_1$, iff there is a most general
-unifier~$\sigma$ such that 
-%
-\begin{enumerate}
-  \item $\sigma(\Theta_{k_0}(s)(j))\equiv \Theta_{k_0}(s')(j)$ for all
-  $0\leq j<|\Theta_{k_0}(s)|$;
-  \item no variable in $\sdom(\sigma)$ occurs in the trace of any
-  strand other than~$s$;
-  \item $\sigma$ is a renaming;
-  \item $t\in U_{k_0}$ implies $\sigma(t)\in U_{k_0}$;
-  \item $t\in N_{k_0}$ implies $\sigma(t)\in N_{k_0}$;
-  \item there is a~$k$ such that
-  $k_0\reduction{\ops{S}_\sigma}k\reduction{\ops{C}_{s,s'}}k_1$;
-  \item there is a homomorphism from~$k_0$ to~$k_1$;
-  \item if $(s,p)\kprec{k_0}(s'',p'')$ then
-  $(s',p)\kprec{k_0}(s'',p'')$; and
-  \item if $(s'',p'')\kprec{k_0}(s,p)$ then
-  $(s'',p'')\kprec{k_0}(s',p)$.  
-\end{enumerate}
-%
-For the setwise pruning reduction,
-$\{k_0\}\setreduction{\ops{P}_s}\{k_1\mid
-k_0\reduction{\ops{P}_s}k_1\}$, when there is a $k_1$ such that
-$k_0\reduction{\ops{P}_s}k_1$.
-\end{defn}
-
-Note that for
-$k_0\reduction{\ops{S}_\sigma}k\reduction{\ops{C}_{s,s'}}k_1$, there
-is a homomorphism from~$k_0$ to~$k_1$ when there is one from~$k_0$
-to~$k$, i.e.\ when $\ops{S}_\sigma$ ensures that points of origination
-are preserved.
-
-There is one additional constraint on pruning recently identified.  In
-Chapter~\ref{chp:generalization} on generalization, a parameter to its
-reduction system is the point-of-view skeleton.  The point-of-view
-skeleton defines the problem to be solved by {\cpsa}.  A
-generalization step is valid only when there is a homomorphism from
-the point-of-view skeleton and the result of generalization.  To
-support generalization, {\cpsa} computes and stores the strand mapping
-part of a homomorphism from the point-of-view skeleton to every
-preskeleton derived from it.
-
-The addition constraint on pruning is this: no strand is considered
-redundant if it is in the image of the skeleton's strand map from its
-point-of-view skeleton.  Our notation for reductions that include
-pruning does not record the dependency of the relation on the
-point-of-view skeleton, but the notation in the chapter on generalization
-shows how it might be done.
-
-\iffalse
-\begin{defn}[Thinning]
+\begin{defn}[Thinning]\label{def:thinning}
 Two strands $s$ and $s'$ in a skeleton $k$ are \emph{effectively
   equivalent} if $k$ with $s$ removed and $k$ with $s'$ removed are
-isomorphic.  We can define a different form of pruning based on this
-idea.  Skeleton $k_0$ reduces to skeleton $k_1$ by thinning, written
-$k_0\reduction{\ops{T}_s}k_1$, if and only if there exists a strand
-$s'$ that is effectively equivalent to $s$ in $k_0$ and $k_1$ is
-isomorphic to both $k_0$ with $s$ removed and $k_0$ with $s'$ removed.
+isomorphic.  (Page~\pageref{def:isomorphic preskeletons} defines
+isomorphic skeletons.)  Skeleton $k_0$ reduces to skeleton $k_1$ by
+thinning, written $k_0\reduction{\ops{T}_s}k_1$, if and only if there
+exists a strand $s'$ that is effectively equivalent to $s$ in $k_0$
+and $k_1$ is isomorphic to both $k_0$ with $s$ removed and $k_0$ with
+$s'$ removed.  In detail, $k_0\reduction{\ops{T}_s}k_1$ if and only if
+there exists a strand $s'$ such that
+\begin{enumerate}
+\item strands $s$ and $s'$ are not in the image of~$k_0$'s
+  strand map from the point-of-view skeleton;
+\item $|\Theta_{k_0}(s)|=|\Theta_{k_0}(s')|$;
+\item there is a matcher~$\sigma$ such that
+  $\comp{\sigma}{\Theta_{k_0}(s)}\equiv \Theta_{k_0}(s')$;
+\item for all variables in $k_0$ after deleting~$s$,
+  matcher~$\sigma$ is the identity;
+\item matcher~$\sigma$ is a bijection, also called a renaming;
+\item $k_0\reduction{\ops{S}_\sigma}k\reduction{\ops{C}_{s,s'}}k_1$;
+\item $k_0\reduction{\ops{S}_\sigma}k\reduction{\ops{C}_{s',s}}k_2$;
+\item $k_1$ is isomorphic to $k_2$.
+\end{enumerate}
+
+For the setwise thinning reduction,
+$\{k_0\}\setreduction{\ops{T}_s}\{k_1\mid
+k_0\reduction{\ops{T}_s}k_1\}$, when there is a $k_1$ such that
+$k_0\reduction{\ops{T}_s}k_1$.
 \end{defn}
 
-Thinning is not used yet.
-\fi
+Thinning in {\cpsa} is also implemented for the case of sets of
+multiple strands rather than pairs of individual strands.  The
+correctness of thinning has yet to be demonstrated.
 
 \section{Reduction Systems}
 
 Notice that a setwise hulling reduction may produce the empty set, but
-a setwise order enrichment and pruning reduction never does.
+a setwise order enrichment and thinning reduction never does.
 
-There are two preskeleton reduction systems, one with pruning, and one
+There are two preskeleton reduction systems, one with thinning, and one
 without.  For the one without, let reduction $\twoheadrightarrow=
 \bigcup_{s,s'}\setreduction{\ops{H}}\cup\setreduction{\ops{O}}$.
 
@@ -1223,18 +1176,18 @@ form of~$\twoheadrightarrow$.
 
 For each skeleton~$k$, $k\reduction{\fn{skel}}k$.
 
-When using pruning, let reduction $\twoheadrightarrow=
+When using thinning, let reduction $\twoheadrightarrow=
 \bigcup_{s,s'}\setreduction{\ops{H}}\cup\setreduction{\ops{O}}\cup
-\bigcup_s\setreduction{\ops{P}_s}$.
+\bigcup_s\setreduction{\ops{T}_s}$.
 
-\begin{defn}[Preskeleton Reduction System with Pruning]
-Preskeleton~$k_0$ reduces to pruned skeleton~$k_1$,
-written~$k_0\reduction{\fn{pskel}}k_1$\index{pskel@\fn{pskel}}, if
+\begin{defn}[Preskeleton Reduction System with Thinning]
+Preskeleton~$k_0$ reduces to thinned skeleton~$k_1$,
+written~$k_0\reduction{\fn{tskel}}k_1$\index{tskel@\fn{tskel}}, if
 $\{k_0\}\twoheadrightarrow^\ast K$, $k_1\in K$, and~$K$ is a normal
 form of~$\twoheadrightarrow$.
 \end{defn}
 
-For each pruned skeleton~$k$, $k\reduction{\fn{pskel}}k$.
+For each thinned skeleton~$k$, $k\reduction{\fn{tskel}}k$.
 
 \chapter{Penetrator Derivable}\label{chp:penetrator derivable}
 
@@ -1630,7 +1583,7 @@ at~$n$ in~$k$, $t=\msg_k(n)$, and $T_e= \fn{esc}(k,n,t\termat p)$.
 Suppose there is a substitution~$\sigma$ such that for
 some~$t_a\in\fn{anc}(t,p)$, $t_e\in T_e$, $\sigma(t_a)=\sigma(t_e)$.
 Skeleton~$k_1$ is a \index{contraction}\emph{contraction} if
-$k\reduction{\ops{S}_\sigma}k_0\reduction{\fn{pskel}}k_1$.
+$k\reduction{\ops{S}_\sigma}k_0\reduction{\fn{tskel}}k_1$.
 \end{defn}
 
 {\cpsa} computes a set of substitutions for each critical position, and
@@ -1644,7 +1597,7 @@ are selected as described in Section~\ref{sec:augmentation}.
 Skeleton~$k_2$ is a \index{regular augmentation}\emph{regular
   augmentation} if
 $k\reduction{\ops{S}_\sigma}k_0\reduction{\ops{A}_{n,r,C}}k_1
-\reduction{\fn{pskel}}k_2$.
+\reduction{\fn{tskel}}k_2$.
 \end{defn}
 
 \begin{defn}[Displacement]\label{def:displacement}
@@ -1658,7 +1611,7 @@ $\sigma'(\Theta_{k_1}(s)(j))\equiv \sigma'(\Theta_{k_1}(s')(j))$ for
 $0\leq j<|\Theta_{k_1}(s)|$.  Skeleton~$k_4$ is a
 \index{displacement}\emph{displacement} if
 $k_1\reduction{\ops{S}_{\sigma'}}k_2\reduction{\ops{C}_{s,s'}}k_3
-\reduction{\fn{pskel}}k_4$.
+\reduction{\fn{tskel}}k_4$.
 \end{defn}
 
 \begin{defn}[Listener Augmentation]\label{def:listener augmentation}
@@ -1666,12 +1619,12 @@ Let~$p$ be a critical position at~$n$ in~$k$, $t_c=\msg_k(n)\termat
 p$, and $T_e= \fn{esc}(k,n,t_c)$.  For each $\enc{t_0}{t_1}\in T_e$,
 skeleton~$k_1$ is a \index{listener augmentation}\emph{listener
   augmentation} if
-$k\reduction{\ops{A}_{n,\lsn,C}}k_0\reduction{\fn{pskel}}k_1$ and~$C$
+$k\reduction{\ops{A}_{n,\lsn,C}}k_0\reduction{\fn{tskel}}k_1$ and~$C$
 listens for $\fn{inv}(t_1)$,
 i.e.\ $C=\seq{\inbnd\fn{inv}(t_1),\outbnd\fn{inv}(t_1)}$.  If
 $t_c=\enc{t_0}{t_1}$, then skeleton~$k_1$ is a \emph{listener
   augmentation} if
-$k\reduction{\ops{A}_{n,\lsn,C}}k_0\reduction{\fn{pskel}}k_1$ and
+$k\reduction{\ops{A}_{n,\lsn,C}}k_0\reduction{\fn{tskel}}k_1$ and
 $C=\seq{\inbnd t_1,\outbnd t_1}$.
 \end{defn}
 
@@ -1703,7 +1656,7 @@ after~$k_0$ at~$n_0$.
 Let~$t_c$ be the critical message that demonstrates~$n$ is a test node
 in skeleton~$k$.  For each triple~$(\sigma,r,C)$ that satisfies some
 properties, there is a potential regular augmentation
-with~$\comp{\reduction{\fn{pskel}}}%
+with~$\comp{\reduction{\fn{tskel}}}%
 {\comp{\reduction{\ops{A}_{n,r,C}}}{\reduction{\ops{S}_\sigma}}}$.
 When successful, the message~$t$ in the last event of the added strand
 is outbound, carries~$\sigma(t_c)$, but~$\sigma(t_c)$ is not carried

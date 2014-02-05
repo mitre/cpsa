@@ -852,9 +852,9 @@ skel (_, k, _, _, _) = k
 -- at which each maybe uniquely originating term originates are filter
 -- out.
 
-ksubst :: Algebra t p g s e c => Bool -> PRS t p g s e c ->
+ksubst :: Algebra t p g s e c => PRS t p g s e c ->
           (g, s) -> [PRS t p g s e c]
-ksubst validate (k0, k, n, phi, hsubst) (gen, subst) =
+ksubst (k0, k, n, phi, hsubst) (gen, subst) =
     do
       (gen', insts') <- foldMapM (substInst subst) gen (insts k)
       let non' = map (substitute subst) (knon k)
@@ -865,9 +865,7 @@ ksubst validate (k0, k, n, phi, hsubst) (gen, subst) =
                (orderings k) non' pnon' unique' (kpriority k)
                operation' (prob k) (pov k)
       k' <- wellFormedPreskel k'
-      case not validate || validateMappingSubst k0 phi subst k' of
-        True -> return (k0, k', n, phi, compose subst hsubst)
-        False -> fail ""
+      return (k0, k', n, phi, compose subst hsubst)
 
 -- Monad version of mapAccumR
 foldMapM :: Monad m => (a -> b -> m (a, c)) -> a -> [b] -> m (a, [c])
@@ -1032,7 +1030,7 @@ hullByDeOrigination :: Algebra t p g s e c => Bool -> PRS t p g s e c ->
 hullByDeOrigination  thin prs u (s, i) (s', i') =
     do
       subst <- deOrig (skel prs) u (s, i) ++ deOrig (skel prs) u (s', i')
-      prs <- ksubst False prs subst
+      prs <- ksubst prs subst
       hull thin prs
 
 deOrig :: Algebra t p g s e c => Preskel t g s e -> t -> Node -> [(g, s)]
@@ -1183,7 +1181,7 @@ thinStrand prs s s' =
           Just $ do
             e <- ges
             (gen, env) <- thinStrandCheck k s e
-            [ prs' | prs <- ksubst False prs (gen, substitution env),
+            [ prs' | prs <- ksubst prs (gen, substitution env),
                      prs <- reduce prs,
                      prs' <- purge prs s s',
                      prs'' <- purge prs s' s,
@@ -1258,7 +1256,7 @@ thinManyStrands prs ps =
     do
       let k = skel prs
       (gen, env) <- thinManyMatch k ps
-      [ prs' | prs <- ksubst False prs (gen, substitution env),
+      [ prs' | prs <- ksubst prs (gen, substitution env),
                prs <- reduce prs,
                prs' <- compressMany prs ps,
                prs'' <- compressMany prs (swap ps),
@@ -1375,8 +1373,8 @@ contract :: Algebra t p g s e c => Preskel t g s e -> Node ->
             Cause t -> (g, s) -> [Ans t p g s e c]
 contract k n cause subst =
     do
-      prs <- ksubst False (k, k { operation = Contracted emptySubst cause },
-                           n, strandids k, emptySubst) subst
+      prs <- ksubst (k, k { operation = Contracted emptySubst cause },
+                     n, strandids k, emptySubst) subst
       prs' <- skeletonize useThinningWhileSolving prs
       homomorphismFilter prs'
 
@@ -1410,8 +1408,8 @@ substAndAugment :: Algebra t p g s e c => Preskel t g s e ->
 substAndAugment k n cause role subst inst =
     do
       let operation' = AddedStrand (rname role) (height inst) cause
-      prs <- ksubst False (k, k { operation = operation' }, n,
-                           strandids k, emptySubst) subst
+      prs <- ksubst (k, k { operation = operation' }, n,
+                     strandids k, emptySubst) subst
       aug prs inst
 
 -- Apply the augmentation operator by adding an instance and one
@@ -1468,7 +1466,7 @@ augDisplaceStrands (k0, k, n, phi, hsubst) s s' =
     do
       (s, s', subst) <- unifyStrands k s s'
       let op = addedToDisplaced (operation k) s s'
-      prs <- ksubst False (k0, k { operation = op}, n, phi, hsubst) subst
+      prs <- ksubst (k0, k { operation = op}, n, phi, hsubst) subst
       prs <- compress True prs s s'
       skeletonize useThinningWhileSolving prs
 
@@ -1938,8 +1936,8 @@ collapseStrands :: Algebra t p g s e c => Preskel t g s e ->
 collapseStrands k s s' =
     do
       (s, s', subst) <- unifyStrands k s s'
-      prs <- ksubst False (k, k { operation = Collapsed s s' },
-                           (0, 0), strandids k, emptySubst) subst
+      prs <- ksubst (k, k { operation = Collapsed s s' },
+                     (0, 0), strandids k, emptySubst) subst
       prs <- compress True prs s s'
       prs <- skeletonize useThinningDuringCollapsing prs
       return $ skel prs
