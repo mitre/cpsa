@@ -7,12 +7,12 @@
 -- University of California.
 
 module CPSA.Lib.Protocol (Event (..), evtTerm, evtMap, evt, inbnd, outbnd,
-    Trace, stripSync, tterms, originates, 
-    originationPos, acquiredPos, gainedPos, usedPos, 
+    Trace, stripSync, tterms, originates,
+    originationPos, acquiredPos, gainedPos, usedPos,
     Role, rname, rvars, rtrace, rnon, rpnon, runique, rcomment,
     rsearch, rnorig, rpnorig, ruorig, rpriority, mkRole, varSubset,
-    varsInTerms, addVars, 
-    Prot, mkProt, pname, alg, pgen, roles, 
+    varsInTerms, addVars,
+    Prot, mkProt, pname, alg, pgen, roles,
     varsAllAtoms, pcomment, flow) where
 
 import qualified Data.List as L
