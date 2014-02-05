@@ -590,6 +590,7 @@ pairWellOrdered (n0, n1) =
     case (event n0, event n1) of
       (Out _, In _) -> True
       (Out _, Sync _) -> True
+      (Sync _, In _) -> True
       (Sync _, Sync _) -> True
       _ -> False
 
