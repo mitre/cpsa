@@ -2,7 +2,14 @@ CPSA NEWS -- history of user-visible changes.
 
 * Changes in version 2.4.0
 
-** State synchronization events added.
+** Thinning has replaced pruning
+   Pruning was shown to be incorrect, so it has been replaced by
+   thinning.  Two strands are said to be effectively equivalent if the
+   result of removing one is isomorphic to removing the other.
+   Thinning removes one of the strands.  CPSA also implements a
+   multi-strand version of this idea.
+
+** State synchronization events added
    An event of the form (sync TERM) has been added to traces to
    facilitate analyzing protocols that include long-term state.
 
@@ -14,12 +21,12 @@ CPSA NEWS -- history of user-visible changes.
 
 * Changes in version 2.3.1
 
-** Bug in priority ordering fixed.
+** Bug in priority ordering fixed
    This version reverses the sort predicate so that high numbered
    priorities are considered first.  Nodes of priority zero will never
    be solved.
 
-** This version fixes a bug in cohort filtering.
+** This version fixes a bug in cohort filtering
    There may be changes to your output as the fix often produces more
    skeletons.
 
