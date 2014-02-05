@@ -399,13 +399,89 @@
   (label 6)
   (parent 4)
   (unrealized (3 0))
-  (comment "1 in cohort - 1 not yet seen"))
+  (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton timestamping-service
   (vars (h h_1 t_1 l_1 h-0 text) (n n-0 data)
     (trent alice alice_1 alice-0 name))
   (defstrand client 2 (t_1 t_1) (l (hash alice_1 h_1 t_1 l_1)) (h h)
     (h_1 h_1) (n n) (alice alice) (alice_1 alice_1) (trent trent))
+  (defstrand origin 2 (h h) (h_1 h_1) (t_1 t_1) (l_1 l_1) (n n)
+    (alice alice) (alice_1 alice_1) (trent trent))
+  (defstrand big-bang 1 (n n) (trent trent))
+  (defstrand server 2
+    (t_1
+      (enc n alice h alice_1 h_1 t_1 (hash alice_1 h_1 t_1 l_1)
+        (privk trent))) (l_1 (hash alice_1 h_1 t_1 l_1)) (h h-0) (h_1 h)
+    (n n-0) (alice alice-0) (alice_1 alice) (trent trent))
+  (precedes ((1 1) (3 0)) ((2 0) (1 0)) ((3 1) (0 1)))
+  (non-orig (privk trent))
+  (uniq-orig n n-0)
+  (operation encryption-test (displaced 4 1 origin 2)
+    (enc alice h
+      (enc n alice h alice_1 h_1 t_1 (hash alice_1 h_1 t_1 l_1)
+        (privk trent)) (hash alice_1 h_1 t_1 l_1) (privk trent)) (3 0))
+  (traces
+    ((send (cat h alice))
+      (recv
+        (enc n alice h alice_1 h_1 t_1 (hash alice_1 h_1 t_1 l_1)
+          (privk trent))))
+    ((recv (enc (enc n (privk trent)) (pubk trent)))
+      (send
+        (enc
+          (enc alice h
+            (enc n alice h alice_1 h_1 t_1 (hash alice_1 h_1 t_1 l_1)
+              (privk trent)) (hash alice_1 h_1 t_1 l_1) (privk trent))
+          (pubk trent))))
+    ((send (enc (enc n (privk trent)) (pubk trent))))
+    ((recv
+       (cat
+         (enc
+           (enc alice h
+             (enc n alice h alice_1 h_1 t_1 (hash alice_1 h_1 t_1 l_1)
+               (privk trent)) (hash alice_1 h_1 t_1 l_1) (privk trent))
+           (pubk trent)) h-0 alice-0))
+      (send
+        (cat
+          (enc n-0 alice-0 h-0 alice h
+            (enc n alice h alice_1 h_1 t_1 (hash alice_1 h_1 t_1 l_1)
+              (privk trent))
+            (hash alice h
+              (enc n alice h alice_1 h_1 t_1 (hash alice_1 h_1 t_1 l_1)
+                (privk trent)) (hash alice_1 h_1 t_1 l_1))
+            (privk trent))
+          (enc
+            (enc
+              (hash alice-0 h-0
+                (enc n-0 alice-0 h-0 alice h
+                  (enc n alice h alice_1 h_1 t_1
+                    (hash alice_1 h_1 t_1 l_1) (privk trent))
+                  (hash alice h
+                    (enc n alice h alice_1 h_1 t_1
+                      (hash alice_1 h_1 t_1 l_1) (privk trent))
+                    (hash alice_1 h_1 t_1 l_1)) (privk trent))
+                (hash alice h
+                  (enc n alice h alice_1 h_1 t_1
+                    (hash alice_1 h_1 t_1 l_1) (privk trent))
+                  (hash alice_1 h_1 t_1 l_1))) (privk trent))
+            (pubk trent))))))
+  (label 7)
+  (parent 6)
+  (unrealized)
+  (shape)
+  (maps
+    ((0)
+      ((trent trent) (alice alice) (alice_1 alice_1) (n n) (h h)
+        (h_1 h_1) (t_1 t_1) (l (hash alice_1 h_1 t_1 l_1)))))
+  (origs (n-0 (3 1)) (n (2 0))))
+
+(defskeleton timestamping-service
+  (vars (h h_1 t_1 l_1 h-0 text) (n n-0 data)
+    (trent alice alice_1 alice-0 name))
+  (defstrand client 2 (t_1 t_1) (l (hash alice_1 h_1 t_1 l_1)) (h h)
+    (h_1 h_1) (n n) (alice alice) (alice_1 alice_1) (trent trent))
+  (defstrand origin 2 (h h) (h_1 h_1) (t_1 t_1) (l_1 l_1) (n n)
+    (alice alice) (alice_1 alice_1) (trent trent))
   (defstrand big-bang 1 (n n) (trent trent))
   (defstrand server 2
     (t_1
@@ -414,7 +490,8 @@
     (n n-0) (alice alice-0) (alice_1 alice) (trent trent))
   (defstrand origin 2 (h h) (h_1 h_1) (t_1 t_1) (l_1 l_1) (n n)
     (alice alice) (alice_1 alice_1) (trent trent))
-  (precedes ((1 0) (3 0)) ((2 1) (0 1)) ((3 1) (2 0)))
+  (precedes ((1 1) (0 1)) ((2 0) (1 0)) ((2 0) (4 0)) ((3 1) (0 1))
+    ((4 1) (3 0)))
   (non-orig (privk trent))
   (uniq-orig n n-0)
   (operation encryption-test (added-strand origin 2)
@@ -426,6 +503,13 @@
       (recv
         (enc n alice h alice_1 h_1 t_1 (hash alice_1 h_1 t_1 l_1)
           (privk trent))))
+    ((recv (enc (enc n (privk trent)) (pubk trent)))
+      (send
+        (enc
+          (enc alice h
+            (enc n alice h alice_1 h_1 t_1 (hash alice_1 h_1 t_1 l_1)
+              (privk trent)) (hash alice_1 h_1 t_1 l_1) (privk trent))
+          (pubk trent))))
     ((send (enc (enc n (privk trent)) (pubk trent))))
     ((recv
        (cat
@@ -465,14 +549,10 @@
             (enc n alice h alice_1 h_1 t_1 (hash alice_1 h_1 t_1 l_1)
               (privk trent)) (hash alice_1 h_1 t_1 l_1) (privk trent))
           (pubk trent)))))
-  (label 7)
+  (label 8)
   (parent 6)
+  (seen 7)
   (unrealized)
-  (shape)
-  (maps
-    ((0)
-      ((trent trent) (alice alice) (alice_1 alice_1) (n n) (h h)
-        (h_1 h_1) (t_1 t_1) (l (hash alice_1 h_1 t_1 l_1)))))
-  (origs (n-0 (2 1)) (n (1 0))))
+  (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

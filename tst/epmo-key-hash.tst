@@ -171,7 +171,7 @@
   (label 3)
   (parent 2)
   (unrealized (2 0))
-  (comment "1 in cohort - 1 not yet seen"))
+  (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo
   (vars (goods price text) (nb nc nm data) (b c m name))
@@ -209,6 +209,83 @@
       ((b b) (c c) (m m) (nb nb) (nc nc) (nm nm) (goods goods)
         (price price))))
   (origs (nc (0 0)) (nb (2 1)) (nm (1 1))))
+
+(defskeleton epmo
+  (vars (goods price text) (nb nc nm nm-0 data) (b c m name))
+  (defstrand customer 5 (goods goods) (price price) (nb nb) (nc nc)
+    (nm nm) (b b) (c c) (m m))
+  (defstrand merchant 2 (goods goods) (price price) (nc nc) (nm nm)
+    (c c) (m m))
+  (defstrand bank 2 (price price) (nc nc) (nm nm) (nb nb) (b b) (c c))
+  (defstrand merchant 2 (goods goods) (price price) (nc nc) (nm nm-0)
+    (c c) (m m))
+  (precedes ((0 0) (1 0)) ((0 0) (3 0)) ((1 1) (0 1)) ((1 1) (2 0))
+    ((2 1) (0 3)) ((3 1) (2 0)))
+  (non-orig (privk b) (privk c) (privk m))
+  (uniq-orig nb nc nm nm-0)
+  (operation nonce-test (added-strand merchant 2) nc (2 0)
+    (enc nc nm m goods price (pubk c)) (enc c nc goods price (pubk m)))
+  (traces
+    ((send (enc c nc goods price (pubk m)))
+      (recv (enc nc nm m goods price (pubk c)))
+      (send (enc c nc nm price (pubk b)))
+      (recv
+        (cat (enc (enc "hash" (cat c nc nb nm price)) (privk b))
+          (enc nc nb (pubk c))))
+      (send
+        (cat (enc (enc "hash" (cat c nc nb nm price)) (privk b)) nb)))
+    ((recv (enc c nc goods price (pubk m)))
+      (send (enc nc nm m goods price (pubk c))))
+    ((recv (enc c nc nm price (pubk b)))
+      (send
+        (cat (enc (enc "hash" (cat c nc nb nm price)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc goods price (pubk m)))
+      (send (enc nc nm-0 m goods price (pubk c)))))
+  (label 5)
+  (parent 3)
+  (unrealized (2 0))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton epmo
+  (vars (goods price text) (nb nc nm nm-0 data) (b c m name))
+  (defstrand customer 5 (goods goods) (price price) (nb nb) (nc nc)
+    (nm nm) (b b) (c c) (m m))
+  (defstrand merchant 2 (goods goods) (price price) (nc nc) (nm nm)
+    (c c) (m m))
+  (defstrand bank 2 (price price) (nc nc) (nm nm) (nb nb) (b b) (c c))
+  (defstrand merchant 2 (goods goods) (price price) (nc nc) (nm nm-0)
+    (c c) (m m))
+  (precedes ((0 0) (1 0)) ((0 0) (3 0)) ((0 2) (2 0)) ((1 1) (0 1))
+    ((2 1) (0 3)) ((3 1) (2 0)))
+  (non-orig (privk b) (privk c) (privk m))
+  (uniq-orig nb nc nm nm-0)
+  (operation nonce-test (displaced 4 0 customer 3) nc (2 0)
+    (enc nc nm m goods price (pubk c))
+    (enc nc nm-0 m goods price (pubk c))
+    (enc c nc goods price (pubk m)))
+  (traces
+    ((send (enc c nc goods price (pubk m)))
+      (recv (enc nc nm m goods price (pubk c)))
+      (send (enc c nc nm price (pubk b)))
+      (recv
+        (cat (enc (enc "hash" (cat c nc nb nm price)) (privk b))
+          (enc nc nb (pubk c))))
+      (send
+        (cat (enc (enc "hash" (cat c nc nb nm price)) (privk b)) nb)))
+    ((recv (enc c nc goods price (pubk m)))
+      (send (enc nc nm m goods price (pubk c))))
+    ((recv (enc c nc nm price (pubk b)))
+      (send
+        (cat (enc (enc "hash" (cat c nc nb nm price)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc goods price (pubk m)))
+      (send (enc nc nm-0 m goods price (pubk c)))))
+  (label 6)
+  (parent 5)
+  (seen 4)
+  (unrealized)
+  (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
 
@@ -287,7 +364,7 @@
         (cat (enc (enc "hash" (cat c nc nb nm price)) (privk b))
           (enc nc nb (pubk c))))
       (recv (enc (enc "hash" (cat b nb nm)) (privk m)))))
-  (label 5)
+  (label 7)
   (unrealized (0 2))
   (origs (nb (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
@@ -315,8 +392,8 @@
       (recv
         (cat (enc (enc "hash" (cat c-0 nc-0 nb nm price-0)) (privk b))
           nb)) (send (enc (enc "hash" (cat b nb nm)) (privk m)))))
-  (label 6)
-  (parent 5)
+  (label 8)
+  (parent 7)
   (unrealized (1 2))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -342,8 +419,8 @@
       (recv
         (cat (enc (enc "hash" (cat c nc nb nm price)) (privk b)) nb))
       (send (enc (enc "hash" (cat b nb nm)) (privk m)))))
-  (label 7)
-  (parent 6)
+  (label 9)
+  (parent 8)
   (unrealized (0 0) (1 2))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -382,8 +459,8 @@
       (send
         (cat (enc (enc "hash" (cat c nc nb nm-0 price-0)) (privk b-0))
           nb))))
-  (label 8)
-  (parent 7)
+  (label 10)
+  (parent 9)
   (unrealized (0 0) (2 3))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -421,8 +498,8 @@
       (send
         (cat (enc (enc "hash" (cat c nc nb nm price)) (privk b-0))
           nb))))
-  (label 9)
-  (parent 8)
+  (label 11)
+  (parent 10)
   (unrealized (0 0) (2 1))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -464,8 +541,8 @@
           nb)))
     ((recv (cat c nc nb nm-0 price-0))
       (send (cat c nc nb nm-0 price-0))))
-  (label 10)
-  (parent 8)
+  (label 12)
+  (parent 10)
   (unrealized (0 0) (3 0))
   (comment "empty cohort"))
 
@@ -503,8 +580,8 @@
       (send
         (cat (enc (enc "hash" (cat c nc nb nm price)) (privk b-0))
           nb))))
-  (label 11)
-  (parent 9)
+  (label 13)
+  (parent 11)
   (unrealized (0 0))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -542,8 +619,8 @@
       (send
         (cat (enc (enc "hash" (cat c nc nb nm price)) (privk b-0))
           nb))))
-  (label 12)
-  (parent 11)
+  (label 14)
+  (parent 13)
   (unrealized)
   (shape)
   (maps ((0) ((b b) (c c) (m m) (nc nc) (nm nm) (nb nb) (price price))))
@@ -626,7 +703,7 @@
       (recv
         (cat (enc (enc "hash" (cat c nc nb nm price)) (privk b)) nb))
       (send (enc (enc "hash" (cat b nb nm)) (privk m)))))
-  (label 13)
+  (label 15)
   (unrealized (0 2))
   (origs (nm (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
@@ -651,8 +728,8 @@
       (send
         (cat (enc (enc "hash" (cat c nc nb nm price)) (privk b))
           (enc nc nb (pubk c))))))
-  (label 14)
-  (parent 13)
+  (label 16)
+  (parent 15)
   (unrealized (0 2) (1 0))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -681,8 +758,8 @@
     ((send (enc c nc goods price (pubk m)))
       (recv (enc nc nm m goods price (pubk c)))
       (send (enc c nc nm price (pubk b-0)))))
-  (label 15)
-  (parent 14)
+  (label 17)
+  (parent 16)
   (unrealized (0 2))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -718,8 +795,8 @@
       (send
         (cat (enc (enc "hash" (cat c nc nb nm price)) (privk b-0))
           nb))))
-  (label 16)
-  (parent 15)
+  (label 18)
+  (parent 17)
   (unrealized)
   (shape)
   (maps
