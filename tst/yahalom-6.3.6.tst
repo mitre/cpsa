@@ -5,7 +5,7 @@
   (url "http://www.eecs.umich.edu/acal/swerve/docs/49-1.pdf")
   (bound 15))
 
-(comment "CPSA 2.4.0")
+(comment "CPSA 2.3.3")
 (comment "All input read from yahalom-6.3.6.scm")
 (comment "Strand count bounded at 15")
 

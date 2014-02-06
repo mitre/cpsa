@@ -1,3 +1,7 @@
+2014-02-06  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 2.3.3
+
 2014-02-05  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Lib/Strand.hs: Purged code for pruning.

@@ -1,6 +1,6 @@
 (herald dhca (algebra basic) (bound 12))
 
-(comment "CPSA 2.4.0")
+(comment "CPSA 2.3.3")
 (comment "All input read from dh-ca_hack.scm")
 (comment "Strand count bounded at 12")
 

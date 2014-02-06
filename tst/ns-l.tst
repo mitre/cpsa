@@ -1,7 +1,7 @@
 (herald "Needham-Schroeder-Low Public-Key Protocol"
   (comment "With deflistener's"))
 
-(comment "CPSA 2.4.0")
+(comment "CPSA 2.3.3")
 (comment "All input read from ns-l.scm")
 
 (defprotocol ns basic

@@ -11,7 +11,8 @@
 <p>[<a href="cpsauser.html">CPSA User Guide</a>]
 [<a href="cpsaprimer.pdf">CPSA Primer</a>]
 [<a href="cpsaoverview.pdf">CPSA Overview</a>]
-[<a href="cpsaintroslides.pdf">CPSA Introductory Slides</a>]</p>
+[<a href="cpsaintroslides.pdf">CPSA Introductory Slides</a>]
+[<a href="http://www.mitre.org/publications/technical-papers/completeness-of-cpsa">CPSA Correctness Proof</a>]</p>
 
 <h1>CPSA</h1>
 
@@ -115,6 +116,12 @@ the description of the problem. </p>
 <p>When the <code>cpsapp</code> program is given the <code>--json</code>
   option, it translates S-expressions into JavaScript Object
   Notation.</p>
+
+<p>The goal of CPSA is to automatically characterize the possible
+  executions of a protocol compatible with a specified partial
+  execution. There is a rigorous 
+  <a href="http://www.mitre.org/publications/technical-papers/completeness-of-cpsa">proof</a>
+  that the algorithm enumerates all of these characterizations.</p>
 
 <p>The <a href="cpsaspec.pdf">specification</a> describes the CPSA
   algorithm as a term reduction system.

@@ -1,7 +1,7 @@
 (herald bug_example (bound 10))
 
-(comment "CPSA 2.4.0")
-(comment "All input read from bug_example.lsp")
+(comment "CPSA 2.3.3")
+(comment "All input read from bug_example.scm")
 (comment "Strand count bounded at 10")
 
 (defprotocol bug_example basic
