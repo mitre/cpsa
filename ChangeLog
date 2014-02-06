@@ -10,23 +10,6 @@
 	* src/CPSA/Lib/Strand.hs (useThinning): Set flag to True so as use
 	thinning by default.
 
-2014-01-30  John D. Ramsdell  <ramsdell@mitre.org>
-
-	* src/CPSA/Annotations/Annotations.hs (Dir): Added sync events.
-
-	* src/CPSA/Parameters/Flow.hs (loadEvt): Added sync events,
-	however, flow analysis with synchronization events is suspect.
-
-	* src/CPSA/Graph/Preskeleton.hs (nodeColor): Neutral nodes are
-	now displayed in gray, and edges involving neutral nodes are
-	always dashed.
-
-2014-01-29  John D. Ramsdell  <ramsdell@mitre.org>
-
-	* src/CPSA/Lib/Protocol.hs (Event): Added a state synchronization
-	event with syntax (sync t), for message t.  This change breaks
-	cpsaparameters.
-
 2014-01-07  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* cpsa.cabal (Version): Tagged as version 2.3.2

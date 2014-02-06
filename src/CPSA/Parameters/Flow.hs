@@ -67,10 +67,6 @@ loadEvt vars (L _ [S _ "send", t]) =
     do
       t <- loadTerm vars t
       return (Out t)
-loadEvt vars (L _ [S _ "sync", t]) =
-    do
-      t <- loadTerm vars t
-      return (Sync t)
 loadEvt _ (L pos [S _ dir, _]) =
     fail (shows pos $ "Unrecognized direction " ++ dir)
 loadEvt _ x = fail (shows (annotation x) "Malformed direction")
@@ -91,5 +87,4 @@ addParams inits rest =
 stripEvt ::Monad m => SExpr Pos -> m (SExpr ())
 stripEvt (L _ [S _ "send", t]) = return (L () [S () "send", strip t])
 stripEvt (L _ [S _ "recv", t]) = return (L () [S () "recv", strip t])
-stripEvt (L _ [S _ "sync", t]) = return (L () [S () "sync", strip t])
 stripEvt x = fail (shows (annotation x) "Malformed direction")

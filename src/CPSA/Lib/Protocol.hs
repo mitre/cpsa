@@ -7,7 +7,7 @@
 -- University of California.
 
 module CPSA.Lib.Protocol (Event (..), evtTerm, evtMap, evt, inbnd, outbnd,
-    Trace, stripSync, tterms, originates,
+    Trace, tterms, originates,
     originationPos, acquiredPos, gainedPos, usedPos,
     Role, rname, rvars, rtrace, rnon, rpnon, runique, rcomment,
     rsearch, rnorig, rpnorig, ruorig, rpriority, mkRole, varSubset,
@@ -41,28 +41,24 @@ addVars ts t = foldVars (flip adjoin) ts t
 data Event t
     = In !t                      -- Inbound message
     | Out !t                     -- Outbound message
-    | Sync !t                    -- State synchronization
       deriving (Show, Eq, Ord)
 
 -- Dispatch to function based on direction.
-evt :: (t -> a) -> (t -> a) -> (t -> a) -> Event t -> a
-evt inDir outDir syncDir evt =
+evt :: (t -> a) -> (t -> a) -> Event t -> a
+evt inDir outDir evt =
     case evt of
       In t -> inDir t
       Out t -> outDir t
-      Sync t -> syncDir t
 
 -- Extract the term in an event (evt id id).
 evtTerm :: Event t -> t
 evtTerm (In t) = t
 evtTerm (Out t) = t
-evtTerm (Sync t) = t
 
 -- Map the term in an event.
 evtMap :: (t -> t) -> Event t -> Event t
 evtMap f (In t) = In (f t)
 evtMap f (Out t) = Out (f t)
-evtMap f (Sync t) = Sync (f t)
 
 -- Extract the term in an inbound event.
 inbnd :: Event t -> Maybe t
@@ -78,11 +74,6 @@ outbnd _ = Nothing
 -- stored in causal order.
 type Trace t = [Event t]
 
-stripSync :: Trace t -> Trace t
-stripSync [] = []
-stripSync (Sync _:c) = stripSync c
-stripSync (e:c) = e:stripSync c
-
 -- The set of terms in a trace.
 tterms :: Eq t => Trace t -> [t]
 tterms c =
@@ -93,7 +84,6 @@ originates :: Algebra t p g s e c => t -> Trace t -> Bool
 originates _ [] = False         -- Term is not carried
 originates t (Out t' : c) = t `carriedBy` t' || originates t c
 originates t (In t' : c) = not (t `carriedBy` t') && originates t c
-originates t (Sync _ : c) = originates t c
 
 -- At what position does a term originate in a trace?
 originationPos :: Algebra t p g s e c => t -> Trace t -> Maybe Int
@@ -107,11 +97,6 @@ originationPos t c =
       loop pos (In t' : c)
           | t `carriedBy` t' = Nothing -- Term does not originate
           | otherwise = loop (pos + 1) c
-      -- loop pos (Sync t' : c)   -- Sync is just like In
-      --     | t `carriedBy` t' = Nothing -- Term does not originate
-      --     | otherwise = loop (pos + 1) c
-      loop pos (Sync _ : c) =    -- Sync is just not like In???
-        loop (pos + 1) c
 
 -- At what position is a term acquired in a trace?
 acquiredPos :: Algebra t p g s e c => t -> Trace t -> Maybe Int
@@ -126,10 +111,6 @@ acquiredPos t c =
       loop pos (Out t' : c)
           | t `occursIn` t' = Nothing   -- Term occurs in outbound term
           | otherwise = loop (pos + 1) c
-      loop pos (Sync t' : c)   -- Sync is just like In
-          | t `carriedBy` t' = Just pos -- Found it
-          | t `occursIn` t' = Nothing   -- Occurs but is not carried
-          | otherwise = loop (pos + 1) c
 
 -- At what position is a term gained in a trace?
 gainedPos :: Algebra t p g s e c => t ->
@@ -142,9 +123,6 @@ gainedPos t c =
           | t `carriedBy` t' = Nothing -- Term is not gained
           | otherwise = loop (pos + 1) c
       loop pos (In t' : c)
-          | t `carriedBy` t' = Just pos -- Found it
-          | otherwise = loop (pos + 1) c
-      loop pos (Sync t' : c)    -- Sync is just like In
           | t `carriedBy` t' = Just pos -- Found it
           | otherwise = loop (pos + 1) c
 
@@ -186,7 +164,6 @@ traceFlow (d : c) a = comb (traceFlow c) (evtFlow d) a
 evtFlow :: Algebra t p g s e c => Event t -> FlowRule t
 evtFlow (In t) = inFlow t
 evtFlow (Out t) = outFlow t
-evtFlow (Sync t) = inFlow t     -- Is this right?
 
 -- Combine flow rules sequentially
 comb :: Algebra t p g s e c => FlowRule t -> FlowRule t -> FlowRule t

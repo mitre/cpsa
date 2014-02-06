@@ -9,10 +9,6 @@ CPSA NEWS -- history of user-visible changes.
    Thinning removes one of the strands.  CPSA also implements a
    multi-strand version of this idea.
 
-** State synchronization events added
-   An event of the form (sync TERM) has been added to traces to
-   facilitate analyzing protocols that include long-term state.
-
 * Changes in version 2.3.2
 
 ** Bug fixed in prover9

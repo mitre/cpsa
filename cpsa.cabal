@@ -73,7 +73,6 @@ Extra-Source-Files:
   tst/deorig_mesg.tst tst/deorig_simple.scm tst/deorig_simple.tst
   tst/DH_hack.scm tst/DH_hack.tst tst/ds-short.lisp tst/dy.lsp
   tst/dy.tst tst/encsig.scm tst/encsig.tst
-  tst/envelope.scm tst/envelope.tst
   tst/epmo_acctnum-key-hash.scm tst/epmo_acctnum-key-hash.tst
   tst/epmo_acctnum.lisp tst/epmo-hash.scm tst/epmo-hash.tst
   tst/epmo-key-hash.scm tst/epmo-key-hash.tst tst/epmo.scm
@@ -109,8 +108,7 @@ Extra-Source-Files:
   tst/wide-mouth-frog-scyther.tst tst/wide-mouth-frog.tst
   tst/wonthull2.scm tst/wonthull2.tst tst/wonthull3.scm
   tst/wonthull3.tst tst/wonthull.scm tst/wonthull.tst tst/woolam.scm
-  tst/woolam.tst tst/wrap_decrypt.lsp tst/wrap_decrypt.tst
-  tst/yahalom-6.3.6.scm tst/yahalom-6.3.6.tst
+  tst/woolam.tst tst/yahalom-6.3.6.scm tst/yahalom-6.3.6.tst
   tst/yahalom.scm tst/yahalom.tst
 
 -- Algebra implementations must import CPSA.Lib.CPSA.

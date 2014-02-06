@@ -137,7 +137,7 @@ ROLE       ::= (defrole ID VARS TRACE ROLE-ALIST)
 VARS       ::= (vars DECL*)
 DECL       ::= (ID+ SORT)
 TRACE      ::= (trace EVENT+)
-EVENT      ::= (send TERM) | (recv TERM) | (sync TERM)
+EVENT      ::= (send TERM) | (recv TERM)
 ROLE-ALIST ::= (non-orig POS-TERM*) ROLE-ALIST
             |  (pen-non-orig POS-TERM*) ROLE-ALIST
             |  (uniq-orig TERM*) ROLE-ALIST | ...

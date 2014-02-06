@@ -164,9 +164,8 @@ solved ct pos eks escape k (s, p) subst =
     any (derivable a ts) eks
     where
       v = vertex k (s, p)       -- Look up vertex in k
-      t = evt id erro errs (event v)  -- Term at v
+      t = evt id erro (event v)  -- Term at v
       erro = const $ error "Cohort.solved: got an outbound term"
-      errs = const $ error "Cohort.solved: got a state synchronization term"
       ct' = substitute subst ct -- Mapped critical term
       escape' = S.map (substitute subst) escape
       mappedTargetTerms = S.map (substitute subst) (targetTerms ct escape)
@@ -446,13 +445,11 @@ transformingNode ct escape targets role subst =
       loop _ _ acc [] = acc
       loop ht past acc (In t : c) =
           loop (ht + 1) (In t : past) acc c
-      loop ht past acc (Sync t : c) =
-          loop (ht + 1) (Sync t : past) acc c
       loop ht past acc (Out t : c) =
           loop (ht + 1) (Out t : past) acc' c
           where
             substs = carriedBindings targets t subst
-            substs' = cowt ct escape (stripSync past) substs
+            substs' = cowt ct escape past substs
             acc' = maybeAug ct escape role ht substs' acc t
 
 -- Terms considered for binding with the carried terms in an outbound
