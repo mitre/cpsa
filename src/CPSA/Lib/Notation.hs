@@ -149,6 +149,7 @@ trace indent x = generic indent x
 event :: Printer a
 event indent (L _ [S _ "send", x]) = blo 0 [str "+", mesg indent x]
 event indent (L _ [S _ "recv", x]) = blo 0 [str "-", mesg indent x]
+event indent (L _ [S _ "sync", x]) = blo 0 [str "!", mesg indent x]
 event indent x = generic indent x
 
 -- Print a term in the Basic Crypto Algebra in compact form.

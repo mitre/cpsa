@@ -1,6 +1,6 @@
 (herald "Needham-Schroeder Public-Key Protocol Variants")
 
-(comment "CPSA 2.3.3")
+(comment "CPSA 2.4.0")
 (comment "All input read from ns.scm")
 
 (defprotocol ns basic

@@ -247,6 +247,10 @@ loadEvt vars (L _ [S _ "send", t]) =
     do
       t <- loadTerm vars t
       return (Out t)
+loadEvt vars (L _ [S _ "sync", t]) =
+    do
+      t <- loadTerm vars t
+      return (Sync t)
 loadEvt _ (L pos [S _ dir, _]) =
     fail (shows pos $ "Unrecognized direction " ++ dir)
 loadEvt _ x = fail (shows (annotation x) "Malformed direction")
