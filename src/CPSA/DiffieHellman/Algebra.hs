@@ -1,8 +1,12 @@
--- Experimental Diffie-Hellman Algebra implementation
+-- Diffie-Hellman Algebra implementation
 
--- This module is an experimental version of Diffie-Hellman in which
--- exponents form an Abelian group.  There are many issues to be
--- resolved before this version of Diffie-Hellman can be used.
+-- FIX ME!!!
+-- This module is a version of Diffie-Hellman in which exponents form
+-- an Abelian group.  There are many issues to be resolved before this
+-- version of Diffie-Hellman can be used.
+
+-- FIX ME!!
+-- Add hash
 
 -- The module implements a many-sorted algebra, but is used as an
 -- order-sorted algebra.  It exports a name, and the origin used to
@@ -171,28 +175,42 @@ cloneId gen x = freshId gen (idName x)
 mash :: Gen -> Gen -> Gen
 mash (Gen i) (Gen j) = Gen (max i j)
 
--- A term in an Abelian group is a map from identifiers to non-zero integers.
+-- A term in an Abelian group is a map from identifiers to pairs of
+-- bools and non-zero integers.  The boolean is true if the variable
+-- is a basis element.
 
-type Group = Map Id Int
+type Coef = Int
+
+type Desc = (Bool, Coef)
+
+type Group = Map Id Desc
 
 isGroupVar :: Group -> Bool
 isGroupVar t =
-    M.size t == 1 && head (M.elems t) == 1
+    M.size t == 1 && snd (head (M.elems t)) == 1
 
--- Assumes isGroupVar t == True!
+isBasisVar :: Group -> Bool
+isBasisVar t =
+    M.size t == 1 && head (M.elems t) == (True, 1)
+
+-- Assumes isGroupVar t == True or isBasisVar t == True!
 getGroupVar :: Group -> Id
 getGroupVar x = head $ M.keys x
 
-groupVar :: Id -> Term
-groupVar x = G $ M.singleton x 1
+-- Create group var as a basis element if be is true
+groupVar :: Bool -> Id -> Term
+groupVar be x = G $ M.singleton x (be, 1)
+
+dMapCoef :: (Coef -> Coef) -> Desc -> Desc
+dMapCoef f (be, c) = (be, f c)
 
 invert :: Group -> Group
-invert t = M.map negate t
+invert t = M.map (dMapCoef negate) t
 
 expg :: Group -> Int -> Group
 expg _ 0 = M.empty
 expg t 1 = t
-expg t n = M.map (* n) t
+expg t n = M.map (dMapCoef (n *)) t
 
 mul :: Group -> Group -> Group
 mul t t' =
@@ -202,15 +220,24 @@ mul t t' =
           M.alter (g c) x t     -- variable x in t
       g c Nothing =             -- Variable x not currently mapped
           Just c                -- so add a mapping
-      g c (Just c')             -- Variable x maps to c'
-          | c + c' == 0 = Nothing     -- Delete the mapping
-          | otherwise = Just $ c + c' -- Adjust the mapping
+      g (b, c) (Just (b', c'))             -- Variable x maps to c'
+          | b /= b' = error "Algebra.mul: sort mismatch"
+          | c + c' == 0 = Nothing          -- Delete the mapping
+          | otherwise = Just $ (b, c + c') -- Adjust the mapping
 
-group :: [(Id, Int)] -> Group
-group assocs =
-    foldr f M.empty assocs
-    where
-      f (x, c) t = mul (expg (M.singleton x 1) c) t
+-- Why not replace M.assocs with M.toList elsewhere?
+
+type Maplet = (Id, Desc)
+
+mMapCoef :: (Coef -> Coef) -> Maplet -> Maplet
+mMapCoef f (x, (be, c)) = (x, (be, f c))
+
+mlGrp :: Maplet -> Group
+mlGrp (x, d) = M.singleton x d
+
+group :: [Maplet] -> Group
+group maplets =
+  M.fromList $ filter (\(_, (_, c)) -> c /= 0) maplets
 
 -- Function symbols--see foldVar to see the arity of each symbol.
 data Symbol
@@ -399,10 +426,10 @@ termWellFormed xts (F Base [t]) =
             termWellFormed xts (G t1)
       baseVarEnv _ _ = Nothing
 termWellFormed xts (G t) =
-    foldM expnVarEnv xts (M.keys t)
+    foldM expnVarEnv xts (M.assocs t)
     where
-      expnVarEnv xts x =
-          extendVarEnv xts x (groupVar x)
+      expnVarEnv xts (x, (be, _)) =
+          extendVarEnv xts x (groupVar be x)
 termWellFormed xts (C _) =
     Just xts                    -- Tags
 termWellFormed xts (F Cat [t0, t1]) =
@@ -430,16 +457,17 @@ isAtom (I _) = False
 isAtom (C _) = False
 isAtom (F s _) =
     s == Text || s == Data || s == Name || s == Skey || s == Akey
-isAtom (G _) = True
+isAtom (F Base [F Exp [F Genr [], G x]]) = isBasisVar x
+isAtom (G x) = isBasisVar x
+isAtom _ = False
 
 -- Does a term occur in another term?
+
+-- This function is always called with a variable that answers true to
+-- isAcquiredVar as its first argument, so the first case never gets used.
 occursIn :: Term -> Term -> Bool
 occursIn (G t) (G t') =
-    all f (M.assocs t)
-    where
-      f (x, n) =
-          let n' = M.findWithDefault 0 x t' in
-          n > 0 && n' >= n || n < 0 && n' <= n
+    t == t'
 occursIn t t' =
     t == t' ||
       case t' of
@@ -474,10 +502,10 @@ foldVars f acc (F Base [t]) =
           foldVars f (baseAddVars acc t0) (G t1)
       baseAddVars _ _ = error "Algebra.foldVars: Bad term"
 foldVars f acc (G t) =
-    foldl expnAddVars acc (M.keys t)
+    foldl expnAddVars acc (M.assocs t)
     where
-      expnAddVars acc x =
-          f acc (groupVar x)
+      expnAddVars acc (x, (be, _)) =
+          f acc (groupVar be x)
 foldVars _ acc (C _) = acc        -- Tags
 foldVars f acc (F Cat [t0, t1]) = -- Concatenation
     foldVars f (foldVars f acc t0) t1
@@ -520,58 +548,17 @@ buildable knowns unguessable term =
       ba t@(F Enc [t0, t1]) =
           S.member t knowns || ba t0 && ba t1
       ba (F Base [t]) = bb t
-      ba t = isAtom t && not (S.member t unguessable)
+      ba t = isAtom t && S.notMember t unguessable
       -- Buildable base term
       bb (I _) = True           -- A variable of sort base is always buildable
-      bb (F Genr []) = True     -- and so in the generator
+      bb (F Genr []) = True     -- and so is the generator
       bb t@(F Exp [t0, G t1]) =
           S.member (F Base [t]) knowns || ba t0 && be t1
       bb (_) = False
       -- Buildable exponent
       be t =
-          -- This is a hack.  One should really solve a
-          -- linear equation here
-          any (instOf $ stripExpn ids t) kns
-      -- Exponent variables with origination assumptions
-      ids = getExpnOrigAssumptions unguessable
-      -- Known exponent without non-known variables
-      kns = map (stripExpn ids) (getExpns knowns)
-
-getExpnOrigAssumptions :: Set Term -> [Id]
-getExpnOrigAssumptions terms =
-    concatMap f $ S.elems terms
-    where
-      f (G t) = M.keys t        -- This is an approximation
-      f _ = []
-
-stripExpn :: [Id] -> Group -> Group
-stripExpn ids grp =
-    foldl f grp $ M.keys grp
-    where
-      f grp key
-          | notElem key ids = M.delete key grp
-          | otherwise = grp
-
-getExpns :: Set Term -> [Group]
-getExpns terms =
-    foldl f [M.empty] $ S.elems terms
-    where
-      f a (G t) = t:a
-      f a _ = a
-
-termGen :: Group -> Gen
-termGen t =
-    Gen (1 + maxl (map idInt (M.keys t)))
-    where
-      idInt (Id (i, _)) = i
-      maxl [] = 0
-      maxl xs = maximum xs
-
-instOf :: Group -> Group -> Bool
-instOf grp pat =
-    maybe False (const True) (match (G pat) (G grp) (gen, emptyEnv))
-    where
-      gen = mash (termGen grp) (termGen pat)
+        all (\x -> S.notMember x unguessable) (groupVars t)
+      groupVars t = map (\(x, (be, _)) -> groupVar be x) (M.toList t)
 
 -- Compute the decomposition given some known terms and some unguessable
 -- atoms.  The code is quite tricky.  It iterates until the known
@@ -590,16 +577,10 @@ decompose knowns unguessable =
           | buildable knowns unguessable (inv t1) = -- Add plaintext
               loop unguessable (decat t0 knowns) old todo
           | otherwise = loop unguessable knowns old todo
-      -- New case here: don't delete exponentiated values
-      loop unguessable knowns old (F Base [F Exp [_, _]] : todo) =
-          loop unguessable knowns old todo
-      --  New case here: don't delete exponents that
-      -- aren't in unguessable
-      loop unguessable knowns old (t@(G _) : todo)
-          | S.notMember t unguessable =
-              loop unguessable knowns old todo
-      loop unguessable knowns old (t : todo) =
-          loop (S.delete t unguessable) (S.delete t knowns) old todo
+      loop unguessable knowns old (t : todo)
+          | isAtom t =
+              loop (S.delete t unguessable) (S.delete t knowns) old todo
+          | otherwise = loop unguessable knowns old todo
       -- Decat
       decat (F Cat [t0, t1]) s = decat t1 (decat t0 s)
       decat t s = S.insert t s
@@ -726,6 +707,7 @@ instance C.Term Term where
 newtype Place = Place [Int] deriving Show
 
 -- Returns the places a variable occurs within a term.
+-- Returns no places for group variables.
 places :: Term -> Term -> [Place]
 places var source =
     f [] [] source
@@ -734,26 +716,10 @@ places var source =
           | var == source = Place (reverse path) : paths
       f paths path (F _ u) =
           g paths path 0 u
-      f paths path (G t) =
-          groupPlaces (varId var) paths path 0 (linearize t)
       f paths _ _ = paths
       g paths _ _ [] = paths
       g paths path i (t : u) =
           g (f paths (i: path) t) path (i + 1) u
-
-linearize :: Group -> [Id]
-linearize t =
-    do
-      (x, n) <- M.assocs t
-      replicate (if n >= 0 then n else negate n) x
-
-groupPlaces ::  Id -> [Place] -> [Int] -> Int -> [Id] -> [Place]
-groupPlaces _ paths _ _ [] = paths
-groupPlaces x paths path i (y:ys) =
-    let paths' = if x == y then
-                     Place (reverse (i : path)) : paths
-                 else paths in
-    groupPlaces x paths' path (i + 1) ys
 
 -- Returns the places a term is carried by another term.
 carriedPlaces :: Term -> Term -> [Place]
@@ -766,8 +732,6 @@ carriedPlaces target source =
 	  f (f paths  (0 : path) t) (1 : path) t'
       f paths path (F Enc [t, _]) =
 	  f paths (0 : path) t
-      f paths path (F Base [F Exp [_, t]]) =
-	  f paths (1 : 0 : path) t
       f paths _ _ = paths
 
 -- Replace a variable within a term at a given place.
@@ -778,22 +742,8 @@ replace var (Place ints) source =
       loop [] _ = var
       loop (i : path) (F s u) =
           F s (C.replaceNth (loop path (u !! i)) i u)
-      loop [i] (G t) =
-          groupReplace (varId var) i (factors t)
+      loop _ (G _) = error "Algebra.replace: Path to expn"
       loop _ _ = error "Algebra.replace: Bad path to term"
-
-factors :: Group -> [(Id, Int)]
-factors t =
-    do
-      (x, n) <- M.assocs t
-      case n >= 0 of
-        True -> replicate n (x, 1)
-        False -> replicate (negate n) (x, -1)
-
-groupReplace :: Id -> Int -> [(Id, Int)] -> Term
-groupReplace x i factors =
-    let (_, n) = factors !! i in
-    G $ group $ C.replaceNth (x, n) i factors
 
 -- Return the ancestors of the term at the given place.
 ancestors :: Term -> Place -> [Term]
@@ -803,7 +753,6 @@ ancestors source (Place ints) =
       loop ts [] _ = ts
       loop ts (i: path) t@(F _ u) =
           loop (t : ts) path (u !! i)
-      loop ts [_] t@(G _) = t : ts
       loop _ _ _ = error "Algebra.ancestors: Bad path to term"
 
 instance C.Place Term Place where
@@ -839,12 +788,12 @@ clone gen t =
       cloneTermList (alist, gen, u) t =
           let (alist', gen', t') = cloneTerm (alist, gen) t in
           (alist', gen', t' : u)
-      cloneGroupList (alist, gen, ts) (x, n) =
+      cloneGroupList (alist, gen, ts) (x, (be, c)) =
           case lookup x alist of
-            Just y -> (alist, gen, (y, n) : ts)
+            Just y -> (alist, gen, (y, (be, c)) : ts)
             Nothing ->
                 let (gen', y) = cloneId gen x in
-                ((x, y) : alist, gen', (y, n) : ts)
+                ((x, y) : alist, gen', (y, (be, c)) : ts)
 
 instance C.Gen Term Gen where
     origin = origin
@@ -889,12 +838,12 @@ groupSubst :: IdMap -> Group -> Group
 groupSubst subst t =
     M.foldrWithKey f M.empty t
     where
-      f x n t =
-          mul (expg (groupLookup subst x) n) t
+      f x (be, c) t =
+          mul (expg (groupLookup subst be x) c) t
 
-groupLookup :: IdMap -> Id -> Group
-groupLookup subst x =
-    case M.findWithDefault (groupVar x) x subst of
+groupLookup :: IdMap -> Bool -> Id -> Group
+groupLookup subst be x =
+    case M.findWithDefault (groupVar be x) x subst of
       G t -> t
       w -> error ("Algebra.groupLookup: Bad substitution: " ++
                   show x ++ " -> " ++ show w)
@@ -916,12 +865,12 @@ showMap m =
 --
 -- 1.  ((exp h x) y) ==> (exp h (mul x y))
 -- 2.  (exp h (one)) ==> h
--- 3.  unify((exp(h, x)), (exp(h, y)), s) ==>
+-- 3.  unify((exp h x), (exp h y), s) ==>
 --         unify(x, y, s)
--- 4   unify((exp(h, x)), (exp((gen), y)), s) ==>
+-- 4   unify((exp h x), (exp (gen) y), s) ==>
 --         unify(h, (exp gen (mul y (rec x))), s)
--- 5.  unify((exp((gen), x)), (exp(h, y)), s) ==>
---         unify((exp(h, x)), (exp((gen), y)), s)
+-- 5.  unify((exp (gen) x), (exp h y), s) ==>
+--         unify((exp h x), (exp (gen) y), s)
 
 newtype Subst = Subst IdMap deriving (Eq, Ord)
 
@@ -1186,16 +1135,17 @@ merge t t' r =
     where
       (t0, t0') = loop (M.assocs t) ([], t')
       loop [] acc = acc
-      loop (p@(x, n) : t0) (t1, t1') =
+      loop (p@(x, (_, c)) : t0) (t1, t1') =
           case M.lookup x r of
             Nothing -> loop t0 (p : t1, t1')
             Just (G t) ->
-                loop t0 (t1, mul (expg t (negate n)) t1')
+                loop t0 (t1, mul (expg t (negate c)) t1')
             Just t ->
                 error $ "Algebra.merge: expecting an expn but got " ++ show t
 
 matchGroup ::  Group -> Group -> Set Id -> Gen -> Maybe (Set Id, Gen, IdMap)
-matchGroup t0 t1 v g =
+matchGroup t0 t1 v g = Nothing
+  {--
     case partition t0 t1 v of
       ([], []) -> return (v, g, emptyIdMap)
       ([], _) -> Nothing
@@ -1203,18 +1153,20 @@ matchGroup t0 t1 v g =
           do
             subst <- I.intLinEq (map snd t0, map snd t1)
             return $ mgu v (map fst t0) (map fst t1) subst g
+-}
 
-type Coeff = [(Id, Int)]
+type Coeff = [(Id, (Bool, Int))]
 
 -- Move variables on the RHS of the equation to the LHS
 partition ::  Group -> Group -> Set Id -> (Coeff, Coeff)
 partition t0 t1 v =
-    (v0 ++ map (\(x,n) -> (x, negate n)) v1, c1)
+    (v0 ++ map (\(x,(be,c)) -> (x, (be, negate c))) v1, c1)
     where
       v0 = M.assocs t0
       (v1, c1) = L.partition f (M.assocs t1)
       f (x, _) = S.member x v
 
+{--
 mgu :: Set Id -> [Id] -> [Id] -> I.Subst -> Gen -> (Set Id, Gen, IdMap)
 mgu v _ _ [] gen = (v, gen, emptyIdMap)
 mgu v vars syms subst gen =
@@ -1227,9 +1179,10 @@ mgu v vars syms subst gen =
             Just (factors, consts) ->
                 M.insert x (g factors consts) s
             Nothing ->
-                M.insert x (groupVar $ genSyms !! n) s
+                M.insert x (groupVar False $ genSyms !! n) s
       g factors consts =
           G $ group (zip genSyms factors ++ zip syms consts)
+-}
 
 genVars :: [Id] -> Int -> Gen -> (Gen, [Id])
 genVars [] _ _ =
@@ -1346,7 +1299,7 @@ matchRenaming (gen, Env (v, e)) =
     where
       nonGrp _ [] = True
       nonGrp s (I x:e) =
-          not (S.member x s) && nonGrp (S.insert x s) e
+          S.notMember x s && nonGrp (S.insert x s) e
       nonGrp s (G _:e) = nonGrp s e -- Check group bindings elsewhere
       nonGrp _ _ = False
       grp x (G t) map = M.insert x t map
@@ -1361,7 +1314,7 @@ groupMatchRenaming v gen map =
           | M.null t = False
           | isGroupVar t =
               let x = varId (G t) in
-              not (S.member x s) && loop (S.insert x s) ge
+              S.notMember x s && loop (S.insert x s) ge
           | otherwise = any (groupMatchElim v gen map t) (M.assocs t)
 
 groupMatchElim :: Set Id -> Gen -> Map Id Group -> Group -> (Id, Int) -> Bool
@@ -1420,7 +1373,8 @@ loadVar (gen, vars) (S pos name, S pos' sort) =
             "skey" -> return $ F Skey [t]
             "akey" -> return $ F Akey [t]
             "base" -> return $ F Base [t]
-            "expn" -> return $ groupVar x
+            "expn" -> return $ groupVar False x
+            "elem" -> return $ groupVar True x
             _ -> fail (shows pos' "Sort " ++ sort ++ " not recognized")
 loadVar _ (x,_) = fail (shows (annotation x) "Bad variable syntax")
 
@@ -1615,6 +1569,7 @@ displayVar ctx (F Skey [I x]) = displaySortId "skey" ctx x
 displayVar ctx (F Akey [I x]) = displaySortId "akey" ctx x
 displayVar ctx (F Base [I x]) = displaySortId "base" ctx x
 displayVar ctx t@(G x)
+    | isBasisVar x = displaySortId "elem" ctx (varId t)
     | isGroupVar x = displaySortId "expn" ctx (varId t)
 displayVar _ _ =
     error "Algebra.displayVar: term not a variable with its sort"
@@ -1689,6 +1644,14 @@ displayEnv ctx ctx' (Env (_, r)) =
     map (\(x, t) -> L () [displayTerm ctx x, displayTerm ctx' t]) r'
     where
       r' = map (\(x, t) -> (I x, inferSort t)) $ M.assocs r
+
+factors :: Group -> [(Id, Int)]
+factors t =
+    do
+      (x, (_, n)) <- M.assocs t
+      case n >= 0 of
+        True -> replicate n (x, 1)
+        False -> replicate (negate n) (x, -1)
 
 -- displaySubst c s displays a substitution s in context c, where some
 -- variables that occur in s might not be in c.  Enough sort
