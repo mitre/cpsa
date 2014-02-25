@@ -179,7 +179,7 @@ roleWellFormed role =
                        $ originates t (rtrace role)
       origVarCheck v =
           failwith (showString "variable " $ showst v " not acquired")
-                       $ not (isMesgVar v) ||
+                       $ not (isAcquiredVar v) ||
                          isJust (acquiredPos v (rtrace role))
 
 failwith :: Monad m => String -> Bool -> m ()

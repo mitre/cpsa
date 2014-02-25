@@ -1,3 +1,12 @@
+2014-02-25  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/DiffieHellman/Algebra.hs (isAcquiredVar): Changed the
+	definition so that both variables of sort base and sort mesg are
+	acquired.
+
+	* src/CPSA/Lib/Algebra.hs (Term): Renamed isMesgVar to
+	isAcquiredVar.
+
 2014-02-24  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* cpsa.cabal:  Expunged Simple Diffie-Hellman and

@@ -27,7 +27,7 @@ class (Term t, Place t p, Gen t g, Subst t g s,
 
 class (Ord t, Show t) => Term t where
     isVar :: t -> Bool          -- Is term a variable in the algebra?
-    isMesgVar :: t -> Bool      -- Is term a variable of sort mesg?
+    isAcquiredVar :: t -> Bool  -- Is term an acquired variable?
     isAtom :: t -> Bool       -- Is the sort of this term a base sort?
 
     -- Does a term occur in another term?

@@ -146,9 +146,9 @@ varId (F Skey [I x]) = x
 varId (F Akey [I x]) = x
 varId _ = error "Algebra.varId: term not a variable with its sort"
 
-isMesgVar :: Term -> Bool
-isMesgVar (I _) = True
-isMesgVar _ = False
+isAcquiredVar :: Term -> Bool
+isAcquiredVar (I _) = True
+isAcquiredVar _ = False
 
 -- A list of terms are well-formed if each one has the correct
 -- structure and every occurrence of an identifier in a term has the
@@ -431,7 +431,7 @@ inFlow t (initial, available) =
 
 instance C.Term Term where
     isVar = isVar
-    isMesgVar = isMesgVar
+    isAcquiredVar = isAcquiredVar
     isAtom = isAtom
     termsWellFormed = termsWellFormed
     occursIn = occursIn
