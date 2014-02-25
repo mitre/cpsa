@@ -309,7 +309,7 @@ buildable knowns unguessable term =
           S.member t knowns || ba t0 && ba t1
       ba t@(F Hash [t1]) =
           S.member t knowns || ba t1
-      ba t = isAtom t && not (S.member t unguessable)
+      ba t = isAtom t && S.notMember t unguessable
 
 -- Compute the decomposition given some known terms and some unguessable
 -- atoms.  The code is quite tricky.  It iterates until the known
@@ -779,7 +779,7 @@ matchRenaming (Env e) =
     where
       loop _ [] = True
       loop s (I x:e) =
-          not (S.member x s) && loop (S.insert x s) e
+          S.notMember x s && loop (S.insert x s) e
       loop _ _ = False
 
 instance C.Env Term Gen Subst Env where
