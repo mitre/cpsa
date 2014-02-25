@@ -14,14 +14,10 @@ import CPSA.Lib.Entry
 import CPSA.Logic.Logic
 import qualified CPSA.Basic.Algebra
 import qualified CPSA.DiffieHellman.Algebra
-import qualified CPSA.DiffieHellmanNoReciprocal.Algebra
-import qualified CPSA.SimpleDiffieHellman.Algebra
 
 -- Algebra names
 algs :: [String]
-algs = [CPSA.Basic.Algebra.name, CPSA.DiffieHellman.Algebra.name,
-        CPSA.DiffieHellmanNoReciprocal.Algebra.name,
-        CPSA.SimpleDiffieHellman.Algebra.name]
+algs = [CPSA.Basic.Algebra.name, CPSA.DiffieHellman.Algebra.name]
 
 main :: IO ()
 main =
@@ -38,13 +34,6 @@ main =
                  p ([], [])
           | alg == CPSA.DiffieHellman.Algebra.name ->
               go (step h alg CPSA.DiffieHellman.Algebra.origin margin)
-                 p ([], [])
-          | alg == CPSA.DiffieHellmanNoReciprocal.Algebra.name ->
-              go (step h alg
-                       CPSA.DiffieHellmanNoReciprocal.Algebra.origin margin)
-                 p ([], [])
-          | alg == CPSA.SimpleDiffieHellman.Algebra.name ->
-              go (step h alg CPSA.SimpleDiffieHellman.Algebra.origin margin)
                  p ([], [])
           | otherwise ->
                abort ("Bad algebra: " ++ alg)

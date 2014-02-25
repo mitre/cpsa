@@ -21,8 +21,6 @@ import CPSA.Lib.Expand
 import CPSA.Lib.Reduction
 import qualified CPSA.Basic.Algebra
 import qualified CPSA.DiffieHellman.Algebra
-import qualified CPSA.DiffieHellmanNoReciprocal.Algebra
-import qualified CPSA.SimpleDiffieHellman.Algebra
 
 -- Default limit on the number of steps used to solve one problem.
 defaultStepLimit :: Int
@@ -88,9 +86,7 @@ openInput _ =
 
 -- Algebra names
 algs :: [String]
-algs = [CPSA.Basic.Algebra.name, CPSA.DiffieHellman.Algebra.name,
-        CPSA.DiffieHellmanNoReciprocal.Algebra.name,
-        CPSA.SimpleDiffieHellman.Algebra.name]
+algs = [CPSA.Basic.Algebra.name, CPSA.DiffieHellman.Algebra.name]
 
 -- Select the algebra and go.
 select :: [String] -> Maybe (SExpr Pos) -> Options -> [SExpr Pos] -> IO ()
@@ -101,12 +97,6 @@ select files herald opts sexprs =
                   files herald opts sexprs
            | name == CPSA.DiffieHellman.Algebra.name ->
                go name CPSA.DiffieHellman.Algebra.origin
-                  files herald opts sexprs
-           | name == CPSA.DiffieHellmanNoReciprocal.Algebra.name ->
-               go name CPSA.DiffieHellmanNoReciprocal.Algebra.origin
-                  files herald opts sexprs
-           | name == CPSA.SimpleDiffieHellman.Algebra.name ->
-               go name CPSA.SimpleDiffieHellman.Algebra.origin
                   files herald opts sexprs
            | otherwise ->
                abort ("Bad algebra: " ++ name)

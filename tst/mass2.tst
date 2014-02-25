@@ -1,4 +1,4 @@
-(comment "CPSA 2.3.3")
+(comment "CPSA 2.3.4")
 (comment "All input read from mass2.lsp")
 
 (defprotocol mass2 basic

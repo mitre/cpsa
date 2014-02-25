@@ -138,7 +138,7 @@ gUnify t t' r@(g, _) = gRun g (F Cat [t, t']) (unify t t' r)
 --}
 
 name :: String
-name = "experimental-diffie-hellman"
+name = "diffie-hellman"
 
 -- An identifier
 

@@ -1,3 +1,8 @@
+2014-02-24  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal:  Expunged Simple Diffie-Hellman and
+	Diffie-Hellman No Reciprocal algebras.
+
 2014-02-06  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* cpsa.cabal (Version): Tagged as version 2.3.3
