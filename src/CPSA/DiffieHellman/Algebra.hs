@@ -31,7 +31,6 @@ import Data.Map (Map)
 import Data.Char (isDigit)
 import qualified CPSA.Lib.CPSA as C
 import CPSA.Lib.CPSA (SExpr(..), Pos, annotation)
--- import qualified CPSA.DiffieHellman.IntLinEq as I
 
 {-- Debugging support
 import System.IO.Unsafe
@@ -172,8 +171,10 @@ freshId (Gen (i)) name = (Gen (i + 1), Id (i, name))
 cloneId :: Gen -> Id -> (Gen, Id)
 cloneId gen x = freshId gen (idName x)
 
+{--
 mash :: Gen -> Gen -> Gen
 mash (Gen i) (Gen j) = Gen (max i j)
+-}
 
 -- A term in an Abelian group is a map from identifiers to pairs of
 -- bools and non-zero integers.  The boolean is true if the variable
@@ -232,12 +233,20 @@ type Maplet = (Id, Desc)
 mMapCoef :: (Coef -> Coef) -> Maplet -> Maplet
 mMapCoef f (x, (be, c)) = (x, (be, f c))
 
+mInverse :: [Maplet] -> [Maplet]
+mInverse maplets = map (mMapCoef negate) maplets
+
+{--
 mlGrp :: Maplet -> Group
 mlGrp (x, d) = M.singleton x d
+-}
+
+isMapletNonzero :: Maplet -> Bool
+isMapletNonzero (_, (_, c)) = c /= 0
 
 group :: [Maplet] -> Group
 group maplets =
-  M.fromList $ filter (\(_, (_, c)) -> c /= 0) maplets
+  M.fromList $ filter isMapletNonzero maplets
 
 -- Function symbols--see foldVar to see the arity of each symbol.
 data Symbol
@@ -901,6 +910,7 @@ compose (Subst s0) (Subst s1) =
 
 nonTrivialBinding :: Id -> Term -> Bool
 nonTrivialBinding x (I y) = x /= y
+nonTrivialBinding x (G y) | isGroupVar y = x /= getGroupVar y
 nonTrivialBinding _ _ = True
 
 -- During unification, variables determined to be equal are collected
@@ -1132,9 +1142,9 @@ matchLists (t : u) (t' : u') r =
     matchLists u u' r'
 matchLists _ _ _ = []
 
-matchGroup ::  Group -> Group -> Set Id -> Gen -> [(Set Id, Gen, IdMap)]
-matchGroup _ _ _ _ = []
-
+-- Merge the previous bindings in r into the current matching problem.
+-- For each maplet in t, if r contains a mapping, apply the mapping
+-- and move the result to the RHS.
 merge ::  Group -> Group -> IdMap -> (Group, Group)
 merge t t' r =
   (group t0, t0')
@@ -1142,67 +1152,107 @@ merge t t' r =
     (t0, t0') = loop (M.assocs t) ([], t')
     loop [] acc = acc
     loop (p@(x, (_, c)) : t0) (t1, t1') =
-        case M.lookup x r of
-          Nothing -> loop t0 (p : t1, t1')
-          Just (G t) ->
-              loop t0 (t1, mul (expg t (negate c)) t1')
-          Just t ->
-              error $ "Algebra.merge: expecting an expn but got " ++ show t
+      case M.lookup x r of
+        Nothing -> loop t0 (p : t1, t1')
+        Just (G t) ->
+          loop t0 (t1, mul (expg t (negate c)) t1')
+        Just t ->
+          error $ "Algebra.merge: expecting an expn but got " ++ show t
 
-{--
+-- Matching in a group
+
+-- t0 is the pattern
+-- t1 is the target term
+-- v is the set of previously freshly generated variables
+-- g is the generator
+
+-- Returns complete set of unifiers.  Each unifier include the set of
+-- variables fresh generated and a generator.
+
+-- Freshly generated variables are of sort expn.
+matchGroup ::  Group -> Group -> Set Id -> Gen -> [(Set Id, Gen, IdMap)]
+matchGroup t0 t1 v g =
   case partition t0 t1 v of
     ([], []) -> return (v, g, emptyIdMap)
-    ([], _) -> Nothing
-    (t0, t1) ->
-        do
-          subst <- I.intLinEq (map snd t0, map snd t1)
-          return $ mgu v (map fst t0) (map fst t1) subst g
--}
-
-type Coeff = [(Id, (Bool, Int))]
+    ([], _) -> []
+    (t0, t1) -> solve t0 t1 v g emptyIdMap
 
 -- Move variables on the RHS of the equation to the LHS
-partition ::  Group -> Group -> Set Id -> (Coeff, Coeff)
+-- Move variables of sort elem on the LHS to the RHS
+partition ::  Group -> Group -> Set Id -> ([Maplet], [Maplet])
 partition t0 t1 v =
-  (v0 ++ map (\(x,(be,c)) -> (x, (be, negate c))) v1, c1)
+  (v0 ++ mInverse v1, c1 ++ mInverse c0)
   where
-    v0 = M.assocs t0
-    (v1, c1) = L.partition f (M.assocs t1)
-    f (x, _) = S.member x v
+    (v0, c0) = L.partition f (M.assocs t0) -- Basis elements go in c0
+    f (_, (be, _)) = not be
+    (v1, c1) = L.partition g (M.assocs t1) -- Fresh variables go in v1
+    g (x, _) = S.member x v
 
-{--
-mgu :: Set Id -> [Id] -> [Id] -> I.Subst -> Gen -> (Set Id, Gen, IdMap)
-mgu v _ _ [] gen = (v, gen, emptyIdMap)
-mgu v vars syms subst gen =
-  (v', gen', foldl f emptyIdMap (zip vars [0..]))
-  where
-    (gen', genSyms) = genVars vars (length (fst (snd (head subst)))) gen
-    v' = foldl (flip S.insert) v genSyms
-    f s (x, n) =
-        case lookup n subst of
-          Just (factors, consts) ->
-              M.insert x (g factors consts) s
-          Nothing ->
-              M.insert x (groupVar False $ genSyms !! n) s
-    g factors consts =
-        G $ group (zip genSyms factors ++ zip syms consts)
--}
+solve ::  [Maplet] -> [Maplet] -> Set Id -> Gen ->
+          IdMap -> [(Set Id, Gen, IdMap)]
+solve t0 t1 v g r  =
+  let (x, ci, i) = smallest t0 in
+  case compare ci 0 of
+    GT -> solve1 x ci i t0 t1 v g r
+    LT -> solve1 x (-ci) i (mInverse t0) t1 v g r
+    EQ -> error "Algebra.solve: zero coefficient found"
 
-genVars :: [Id] -> Int -> Gen -> (Gen, [Id])
-genVars [] _ _ =
-  error "Algebra.genVars: no variables to clone"
---    let (g', id) = freshId g "dh" in
---    genVars [id] n g'
-genVars vars n g =
-  loop n vars (g, [])
+smallest :: [Maplet] -> (Id, Int, Int)
+smallest [] = error "Algebra.smallest given an empty list"
+smallest t =
+  loop (Id (0, "x")) 0 0 0 0 t
   where
-    loop n [] (g, ids) =
-         loop n vars (g, ids)
-    loop n (v:vs) (g, ids)
-        | n <= 0 = (g, ids)
-        | otherwise =
-            case cloneId g v of
-              (g, id) -> loop (n - 1) vs (g, id : ids)
+    loop v ci i _ _ [] = (v, ci, i)
+    loop v ci i a j ((x, (_, c)):t) =
+      if a < abs c then
+        loop x c j (abs c) (j + 1) t
+      else
+        loop v ci i a (j + 1) t
+
+solve1 :: Id -> Int -> Int -> [Maplet] -> [Maplet] -> Set Id -> Gen ->
+          IdMap -> [(Set Id, Gen, IdMap)]
+solve1 x 1 i t0 t1 v g r =      -- Solve for x and return answer
+  return (v, g, M.insert x t (eliminate x t r))
+  where
+    t = G $ group (t1 ++ (mInverse (omit i t0)))
+solve1 x ci i t0 t1 v g r
+  | divisible ci t0 =
+    if divisible ci t1 then
+      solve1 x 1 i (divide ci t0) (divide ci t1) v g r
+    else
+      []                        -- Fail
+  | otherwise =
+      solve t0' t1 (S.insert x' v) g' r'
+      where
+        (g', x') = cloneId g x
+        t = G $ group ((x', (False, 1)) :
+                       mInverse (divide ci (omit i t0)))
+        r' = M.insert x t (eliminate x t r)
+        t0' = (x', (False, ci)) : modulo ci t0
+
+eliminate :: Id -> Term -> IdMap -> IdMap
+eliminate x t r =
+  M.map (idSubst (M.singleton x t)) r
+
+omit :: Int -> [a] -> [a]
+omit 0 (_:l) = l
+omit n _ | n < 0 = error "Algebra.omit: negative number given to omit"
+omit n (_:l) = omit (n - 1) l
+omit _ [] = error "Algebra.omit: number given to omit too large"
+
+divisible :: Int -> [Maplet] -> Bool
+divisible ci t =
+  all (\(_, (_, c)) -> mod c ci == 0) t
+
+divide :: Int -> [Maplet] -> [Maplet]
+divide ci t = map (mMapCoef $ flip div ci) t
+
+modulo :: Int -> [Maplet] -> [Maplet]
+modulo ci t =
+  [(x, (be, c')) |
+   (x, (be, c)) <- t,
+   let c' = mod c ci,
+   c' /= 0]
 
 -- Does every varible in ts not occur in the domain of e?
 -- Trivial bindings in e are ignored.
@@ -1223,7 +1273,9 @@ allId f (G t) = all f (M.keys t)
 -- Eliminate all trivial bindings so that an environment can be used
 -- as a substitution.
 nonTrivialEnv :: GenEnv -> GenEnv
-nonTrivialEnv = id
+nonTrivialEnv (g, Env (v, r)) =
+  (g, Env (v, M.filterWithKey nonTrivialBinding r))
+
 {--
 nonTrivialEnv (g, Env (v, r)) =
   nonGroupEnv (M.assocs r) M.empty []
@@ -1233,10 +1285,11 @@ nonTrivialEnv (g, Env (v, r)) =
     nonGroupEnv ((x, I y):r) env grp
       | x == y = nonGroupEnv r env grp
     nonGroupEnv ((x, G y):r) env grp
-      | isGroupVar y && varId (G y) == x =
+      | isGroupVar y && getGroupVar y == x =
         nonGroupEnv r env grp
       | otherwise = nonGroupEnv r env ((x, y):grp)
-    nonGroupEnv ((x, y):r) env grp = nonGroupEnv r (M.insert x y env) grp
+    nonGroupEnv ((x, y):r) env grp =
+      nonGroupEnv r (M.insert x y env) grp
 
 groupEnv :: Gen -> Set Id -> IdMap -> [(Id, Group)] -> [(Id, Group)] -> GenEnv
 groupEnv g v env grp [] =
@@ -1251,9 +1304,18 @@ groupEnv g v env grp ((x, t):map)
             let grp' = L.delete (x, t) grp
                 grp'' = L.map (\(x, t) -> (x, groupSubst subst t)) grp' in
             groupEnv g' (S.union v' v) env grp'' grp''
+
+notGroupVarMap :: Id -> Group -> Bool
+notGroupVarMap x grp =
+  case M.lookup x t of
+    Nothing -> True
+    Just (_, (_, c)) -> c /= 1
+
 -}
 
 -- Specialize an environment by mapping the generated variables to one.
+-- FIX ME!!
+-- This has got to be bogus and should be eliminated
 specialize :: Env -> Env
 specialize (Env (v, r)) =
   Env (S.empty, M.foldrWithKey f M.empty r)
@@ -1300,6 +1362,21 @@ reify domain (Env (_, env)) =
 -- Ensure the range of an environment contains only variables and that
 -- the environment is injective.
 matchRenaming :: GenEnv -> Bool
+matchRenaming (_, Env (_, e)) =
+  loop S.empty $ M.elems e
+  where
+    loop _ [] = True
+    loop s (I x:e) =
+      S.notMember x s && loop (S.insert x s) e
+    loop s (G y:e) | isGroupVar y =
+      let x = getGroupVar y in
+      S.notMember x s && loop (S.insert x s) e
+    loop _ _ = False
+
+{--
+-- Ensure the range of an environment contains only variables and that
+-- the environment is injective.
+matchRenaming :: GenEnv -> Bool
 matchRenaming (gen, Env (v, e)) =
   nonGrp S.empty (M.elems e) &&
   groupMatchRenaming v gen (M.foldrWithKey grp M.empty e)
@@ -1310,7 +1387,7 @@ matchRenaming (gen, Env (v, e)) =
     nonGrp s (G _:e) = nonGrp s e -- Check group bindings elsewhere
     nonGrp _ _ = False
     grp x (G t) map = M.insert x t map
-    grp _ _ map = map
+    grp _ _ map = map           -- Get rid of non-group bindings
 
 groupMatchRenaming :: Set Id -> Gen -> Map Id Group -> Bool
 groupMatchRenaming v gen map =
@@ -1320,7 +1397,7 @@ groupMatchRenaming v gen map =
     loop s (t:ge)
       | M.null t = False
       | isGroupVar t =
-        let x = varId (G t) in
+        let x = getGroupVar t in
         S.notMember x s && loop (S.insert x s) ge
       | otherwise = any (groupMatchElim v gen map t) (M.assocs t)
 
@@ -1332,6 +1409,7 @@ groupMatchElim v gen ge t (x, (be, 1)) =
     f (v', gen', subst) =
       groupMatchRenaming (S.union v' v) gen' $ M.map (groupSubst subst) ge
 groupMatchElim _ _ _ _ _ = False
+-}
 
 instance C.Env Term Gen Subst Env where
   emptyEnv = emptyEnv
