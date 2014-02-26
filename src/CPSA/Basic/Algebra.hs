@@ -792,7 +792,6 @@ instance C.Env Term Gen Subst Env where
            [(g, e)]
        else
            []
-   specialize = id
    substitution = substitution
    reify = reify
    matchRenaming (_, e) = matchRenaming e

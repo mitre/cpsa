@@ -179,7 +179,7 @@ makeInstance :: Algebra t p g s e c => Role t -> e ->
                 Trace t -> Instance t e
 makeInstance role env trace =
     Instance { role = role,
-               env = specialize env,
+               env = env,
                trace = trace,
                height = length trace }
 

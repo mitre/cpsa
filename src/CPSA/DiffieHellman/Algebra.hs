@@ -1313,21 +1313,6 @@ notGroupVarMap x grp =
 
 -}
 
--- Specialize an environment by mapping the generated variables to one.
--- FIX ME!!
--- This has got to be bogus and should be eliminated
-specialize :: Env -> Env
-specialize (Env (v, r)) =
-  Env (S.empty, M.foldrWithKey f M.empty r)
-  where
-    f x t r = M.insert x (instantiate special t) r
-    -- Environment mapping generated variables to one
-    special = Env (S.empty, S.fold g M.empty v)
-    g x r = M.insert x (G M.empty) r
-
--- Cast an environment into a substitution by filtering out trivial
--- bindings.
-
 substitution :: Env -> Subst
 substitution (Env (_, r)) =
   Subst $ M.filterWithKey nonTrivialBinding r
@@ -1416,7 +1401,6 @@ instance C.Env Term Gen Subst Env where
   instantiate = instantiate
   match = match
   identityEnvFor = identityEnvFor
-  specialize = specialize
   substitution = substitution
   reify = reify
   matchRenaming = matchRenaming

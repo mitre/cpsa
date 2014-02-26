@@ -160,8 +160,6 @@ class (Term t, Gen t g, Subst t g s, Ord e, Show e) => Env t g s e
     -- Can environment be refined so it is the identity when applied
     -- to some terms?
     identityEnvFor :: (g, e) -> [t] -> [(g, e)]
-    -- specialize an environment by eliminating generated variables.
-    specialize :: e -> e
     -- Cast an environment into a substitution
     substitution :: e -> s
     -- Provide a concrete representation of an environment as an
