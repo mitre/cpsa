@@ -95,24 +95,24 @@ stringLoad s =
               Just x ->
                 loop h (x : xs)
 
-sLoad :: String -> Maybe [SExpr Pos]
+sLoad :: String -> [[SExpr Pos]]
 sLoad s =
-    unsafePerformIO (stringLoad s >>= return . Just)
+    [unsafePerformIO $ stringLoad s]
 
 -- Test unification
 
-iUnify :: String -> String -> String -> Maybe Subst
+iUnify :: String -> String -> String -> [Subst]
 iUnify vars t t' =
     iRun unify emptySubst vars t t'
 
 -- Test matching
 
-iMatch :: String -> String -> String -> Maybe Env
+iMatch :: String -> String -> String -> [Env]
 iMatch vars t t' =
     iRun match emptyEnv vars t t'
 
-iRun :: (Term -> Term -> (Gen, a) -> Maybe (Gen, a)) -> a ->
-        String -> String -> String -> Maybe a
+iRun :: (Term -> Term -> (Gen, a) -> [(Gen, a)]) -> a ->
+        String -> String -> String -> [a]
 iRun f mt vars t t' =
     do
       vars <- sLoad vars
@@ -133,10 +133,10 @@ gRun (Gen n) t a =
             Id (m, _) | m >= n -> error ("Bad gen " ++ show n)
             _ -> a
 
-gMatch :: Term -> Term -> GenEnv -> Maybe GenEnv
+gMatch :: Term -> Term -> GenEnv -> [GenEnv]
 gMatch t t' r@(g, _) = gRun g t' (match t t' r)
 
-gUnify :: Term -> Term -> GenSubst -> Maybe GenSubst
+gUnify :: Term -> Term -> GenSubst -> [GenSubst]
 gUnify t t' r@(g, _) = gRun g (F Cat [t, t']) (unify t t' r)
 --}
 
