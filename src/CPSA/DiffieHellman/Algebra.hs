@@ -1175,7 +1175,7 @@ matchGroup t0 t1 v g =
   case partition t0 t1 v of
     ([], []) -> return (v, g, emptyIdMap)
     ([], _) -> []
-    (t0, t1) -> solve t0 t1 v g emptyIdMap
+    (t0, t1) -> solve t0 t1 v g emptyIdMap (mkDecis t1)
 
 -- Move variables on the RHS of the equation to the LHS
 -- Move variables of sort elem on the LHS to the RHS
@@ -1189,12 +1189,12 @@ partition t0 t1 v =
     g (x, _) = S.member x v
 
 solve ::  [Maplet] -> [Maplet] -> Set Id -> Gen ->
-          IdMap -> [(Set Id, Gen, IdMap)]
-solve t0 t1 v g r  =
+          IdMap -> Decision -> [(Set Id, Gen, IdMap)]
+solve t0 t1 v g r d =
   let (x, ci, i) = smallest t0 in
   case compare ci 0 of
-    GT -> solve1 x ci i t0 t1 v g r
-    LT -> solve1 x (-ci) i (mInverse t0) t1 v g r
+    GT -> solve1 x ci i t0 t1 v g r d
+    LT -> solve1 x (-ci) i (mInverse t0) t1 v g r d
     EQ -> error "Algebra.solve: zero coefficient found"
 
 smallest :: [Maplet] -> (Id, Int, Int)
@@ -1210,19 +1210,19 @@ smallest t =
         loop v ci i a (j + 1) t
 
 solve1 :: Id -> Int -> Int -> [Maplet] -> [Maplet] -> Set Id -> Gen ->
-          IdMap -> [(Set Id, Gen, IdMap)]
-solve1 x 1 i t0 t1 v g r =      -- Solve for x and return answer
+          IdMap -> Decision -> [(Set Id, Gen, IdMap)]
+solve1 x 1 i t0 t1 v g r _ =    -- Solve for x and return answer
   return (v, g, M.insert x t (eliminate x t r))
   where
     t = G $ group (t1 ++ (mInverse (omit i t0)))
-solve1 x ci i t0 t1 v g r
+solve1 x ci i t0 t1 v g r d
   | divisible ci t0 =
     if divisible ci t1 then
-      solve1 x 1 i (divide ci t0) (divide ci t1) v g r
+      solve1 x 1 i (divide ci t0) (divide ci t1) v g r d
     else
-      []                        -- Fail
+      solve2 x ci i t0 t1 v g r d
   | otherwise =
-      solve t0' t1 (S.insert x' v) g' r'
+      solve t0' t1 (S.insert x' v) g' r' d
       where
         (g', x') = cloneId g x
         t = G $ group ((x', (False, 1)) :
@@ -1253,6 +1253,59 @@ modulo ci t =
    (x, (be, c)) <- t,
    let c' = mod c ci,
    c' /= 0]
+
+type Decision = Map Id (Set Id)
+
+mkDecis :: [Maplet] -> Decision
+mkDecis t =
+  L.foldl' f M.empty t
+  where
+    f d (x, (True, _)) = M.insert x S.empty d
+    f d (_, (False, _)) = d
+
+solve2 :: Id -> Int -> Int -> [Maplet] -> [Maplet] -> Set Id -> Gen ->
+          IdMap -> Decision -> [(Set Id, Gen, IdMap)]
+solve2 z ci i t0 t1 v g r d =
+  case nextDecis d of
+    [] -> []
+    ((x, y):_) ->
+      same ++ distinct
+      where
+        -- eliminate x
+        same = solve1 z ci i t0 t1' v g r' d'
+        t1' = identify x y t1
+        r' = M.insert x y' (eliminate x y' r)
+        y' = groupVar True y
+        d' = M.delete x (M.map f d)
+        f s
+          | S.member x s = S.insert y (S.delete x s)
+          | otherwise = s
+        distinct = solve2 z ci i t0 t1 v g r neq
+        neq = M.adjust (S.insert x) y (M.adjust (S.insert y) x d)
+
+nextDecis :: Decision -> [(Id, Id)]
+nextDecis d =
+  [(x, y) | x <- dom, y <- dom, x /= y, S.notMember y (get x d) ]
+  where
+    dom = M.keys d
+
+get :: Id -> Decision -> Set Id
+get x d =
+  case M.lookup x d of
+    Just y -> y
+    Nothing -> error "Algebra.nextDecis: bad lookup"
+
+identify :: Id -> Id -> [Maplet] -> [Maplet]
+identify x y t =
+  case lookup x t of
+    Nothing -> error "Algebra.identify: bad lookup"
+    Just (_, c) ->
+      filter f (map g t)
+      where
+        f (z, (_, c)) = z /= x && c /= 0
+        g m@(z, (be, d))
+          | z == y = (z, (be, c + d))
+          | otherwise = m
 
 -- Does every varible in ts not occur in the domain of e?
 -- Trivial bindings in e are ignored.
