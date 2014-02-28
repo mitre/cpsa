@@ -127,7 +127,6 @@ Executable cpsa
     CPSA.Lib.Algebra CPSA.Lib.Protocol CPSA.Lib.Strand CPSA.Lib.Loader
     CPSA.Lib.Displayer CPSA.Lib.Cohort CPSA.Lib.Expand CPSA.Lib.CPSA
     CPSA.Lib.Reduction CPSA.Basic.Algebra CPSA.DiffieHellman.Algebra
-    CPSA.DiffieHellman.IntLinEq
 
 Executable cpsagraph
   Main-Is:		CPSA/Graph/Main.hs
@@ -171,7 +170,6 @@ Executable cpsaannotations
     CPSA.Lib.Displayer CPSA.Lib.Cohort CPSA.Lib.CPSA
     CPSA.Annotations.Formulas CPSA.Annotations.Annotations
     CPSA.Basic.Algebra CPSA.DiffieHellman.Algebra
-    CPSA.DiffieHellman.IntLinEq
 
 Executable cpsaparameters
   Main-Is:		CPSA/Parameters/Main.hs
@@ -185,7 +183,6 @@ Executable cpsaparameters
     CPSA.Lib.Protocol CPSA.Lib.Strand CPSA.Lib.Loader
     CPSA.Lib.Displayer CPSA.Lib.Cohort CPSA.Lib.CPSA
     CPSA.Parameters.Flow CPSA.Basic.Algebra CPSA.DiffieHellman.Algebra
-    CPSA.DiffieHellman.IntLinEq
 
 Executable cpsapp
   Main-Is:		CPSA/Pretty/Main.hs
@@ -222,4 +219,3 @@ Executable cpsalogic
     CPSA.Lib.Displayer CPSA.Lib.Cohort CPSA.Lib.CPSA
     CPSA.Logic.Logic
     CPSA.Basic.Algebra CPSA.DiffieHellman.Algebra
-    CPSA.DiffieHellman.IntLinEq

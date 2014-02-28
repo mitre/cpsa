@@ -38,7 +38,7 @@
     (non-orig x)
     (uniq-orig n (exp (gen) x)))
   (defrole resp
-    (vars (h base) (x expn) (n text))
+    (vars (h base) (x elem) (n text))
     (trace
      (recv h)
      (send (exp (gen) x))

@@ -1174,22 +1174,47 @@ matchGroup ::  Group -> Group -> Set Id -> Gen -> [(Set Id, Gen, IdMap)]
 matchGroup t0 t1 v g =
   case partition t0 t1 v of
     ([], []) -> return (v, g, emptyIdMap)
-    ([], _) -> []
-    (t0, t1) -> solve t0 t1 v g emptyIdMap (mkDecis t1)
+    ([], t) -> constSolve t v g
+    (t0, t1) -> solve t0 t1 v g emptyIdMap mkDecis
 
 -- Move variables on the RHS of the equation to the LHS
 -- Move variables of sort elem on the LHS to the RHS
 partition ::  Group -> Group -> Set Id -> ([Maplet], [Maplet])
 partition t0 t1 v =
-  (v0 ++ mInverse v1, c1 ++ mInverse c0)
+  (M.assocs lhs, M.assocs rhs)
   where
-    (v0, c0) = L.partition f (M.assocs t0) -- Basis elements go in c0
-    f (_, (be, _)) = not be
-    (v1, c1) = L.partition g (M.assocs t1) -- Fresh variables go in v1
-    g (x, _) = S.member x v
+    (v1, c1) = M.partitionWithKey g t1 -- Fresh variables go in v1
+    g x _ = S.member x v
+    (v0, c0) = M.partition f t0        -- Basis elements go in c0
+    f (be, _) = not be
+    lhs = mul v0 (invert v1)
+    rhs = mul c1 (invert c0)
+
+constSolve :: [Maplet] -> Set Id -> Gen -> [(Set Id, Gen, IdMap)]
+constSolve t v g
+  | any (\(_, (be, _)) -> not be) t = []
+  | otherwise = constSolve1 t v g emptyIdMap mkDecis
+                
+constSolve1 :: [Maplet] -> Set Id -> Gen ->
+               IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
+constSolve1 [] v g r _ = return (v, g, r)
+constSolve1 t v g r d =
+  case nextDecis d t of
+    [] -> []
+    ((x, y):_) ->
+      distinct ++ identified
+      where
+        distinct = constSolve1 t v g r neq
+        neq = d {dist = (x, y):(y, x):dist d}
+        -- eliminate x
+        identified = constSolve1 t' v g r' d'
+        t' = identify x y t
+        r' = M.insert x y' (eliminate x y' r)
+        y' = groupVar True y
+        d' = d {same = (x, y):same d}
 
 solve ::  [Maplet] -> [Maplet] -> Set Id -> Gen ->
-          IdMap -> Decision -> [(Set Id, Gen, IdMap)]
+          IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
 solve t0 t1 v g r d =
   let (x, ci, i) = smallest t0 in
   case compare ci 0 of
@@ -1210,7 +1235,7 @@ smallest t =
         loop v ci i a (j + 1) t
 
 solve1 :: Id -> Int -> Int -> [Maplet] -> [Maplet] -> Set Id -> Gen ->
-          IdMap -> Decision -> [(Set Id, Gen, IdMap)]
+          IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
 solve1 x 1 i t0 t1 v g r _ =    -- Solve for x and return answer
   return (v, g, M.insert x t (eliminate x t r))
   where
@@ -1254,51 +1279,62 @@ modulo ci t =
    let c' = mod c ci,
    c' /= 0]
 
-type Decision = Map Id (Set Id)
+data Decision t = Decision
+  { same :: [(t, t)],
+    dist :: [(t, t)] }
+  deriving Show
 
-mkDecis :: [Maplet] -> Decision
-mkDecis t =
-  L.foldl' f M.empty t
-  where
-    f d (x, (True, _)) = M.insert x S.empty d
-    f d (_, (False, _)) = d
+mkDecis :: Decision Id
+mkDecis =
+  Decision {
+    same = [],
+    dist = [] }
 
 solve2 :: Id -> Int -> Int -> [Maplet] -> [Maplet] -> Set Id -> Gen ->
-          IdMap -> Decision -> [(Set Id, Gen, IdMap)]
+          IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
 solve2 z ci i t0 t1 v g r d =
-  case nextDecis d of
+  case nextDecis d t1 of
     [] -> []
     ((x, y):_) ->
-      same ++ distinct
+      distinct ++ identified
       where
+        distinct = solve2 z ci i t0 t1 v g r neq
+        neq = d {dist = (x, y):(y, x):dist d}
         -- eliminate x
-        same = solve1 z ci i t0 t1' v g r' d'
+        identified = solve1 z ci i t0 t1' v g r' d'
         t1' = identify x y t1
         r' = M.insert x y' (eliminate x y' r)
         y' = groupVar True y
-        d' = M.delete x (M.map f d)
-        f s
-          | S.member x s = S.insert y (S.delete x s)
-          | otherwise = s
-        distinct = solve2 z ci i t0 t1 v g r neq
-        neq = M.adjust (S.insert x) y (M.adjust (S.insert y) x d)
+        d' = d {same = (x, y):same d}
 
-nextDecis :: Decision -> [(Id, Id)]
-nextDecis d =
-  [(x, y) | x <- dom, y <- dom, x /= y, S.notMember y (get x d) ]
+nextDecis :: Decision Id -> [Maplet] -> [(Id, Id)]
+nextDecis d t =
+  [(x, y) | x <- vars, y <- vars, x < y,
+    not $ decided d x y]
   where
-    dom = M.keys d
+    vars = foldr f [] t
+    f (x, (True, _)) v = x:v
+    f (_, (False, _)) v = v
+    decided d x y =
+      u == v ||
+      any f (dist d)
+      where
+        u = chase x
+        v = chase y
+        f (w, z) = chase w == u && chase z == v
+        chase = listChase (same d)
 
-get :: Id -> Decision -> Set Id
-get x d =
-  case M.lookup x d of
-    Just y -> y
-    Nothing -> error "Algebra.nextDecis: bad lookup"
+listChase :: Eq t => [(t, t)] -> t -> t
+listChase d x =
+  case lookup x d of
+    Nothing -> x
+    Just y -> listChase d y
 
 identify :: Id -> Id -> [Maplet] -> [Maplet]
 identify x y t =
   case lookup x t of
-    Nothing -> error "Algebra.identify: bad lookup"
+    Nothing -> error ("Algebra.identify: bad lookup of " ++ show x
+                      ++ " in " ++ show t)
     Just (_, c) ->
       filter f (map g t)
       where
@@ -1378,7 +1414,7 @@ reify domain (Env (_, env)) =
   map (loop domain) $ M.assocs env
   where
     loop [] (x, _) =
-      error $ "Algebra.reify: variable missing from domain " ++ idName x
+      error $ "Algebra.reify: variable missing from domain " ++ idName x ++ "\n" ++ show domain ++ "\n" ++ show env
     loop (I x : _) (y, t)
       | x == y = (I x, t)
     loop (F Text [I x] : _) (y, t)
@@ -1394,7 +1430,7 @@ reify domain (Env (_, env)) =
     loop (F Base [I x] : _) (y, t)
       | x == y = (F Base [I x], F Base [t])
     loop (G x : _) (y, G t)
-      | isGroupVar x && varId (G x) == y = (G x, G t)
+      | isGroupVar x && getGroupVar x == y = (G x, G t)
     loop (_ : domain) pair = loop domain pair
 
 -- Ensure the range of an environment contains only variables and that
