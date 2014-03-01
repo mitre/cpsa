@@ -1017,9 +1017,23 @@ unifyTermLists _ _ _ = []
 unifyGroup :: Group -> Group -> GenSubst -> [GenSubst]
 unifyGroup t0 t1 (g, Subst s) =
   do
-    (_, g', s') <- matchGroup (groupSubst s $ mul t0 $ invert t1)
-                   M.empty S.empty g
+    (_, g', s') <- unifyGroup1 (groupSubst s $ mul t0 $ invert t1) g
     return (g', Subst $ M.union s' s)
+
+unifyGroup1 :: Group -> Gen -> [(Set Id, Gen, IdMap)]
+unifyGroup1 t g =
+  case unifyPartition t of
+    ([], []) -> return (S.empty, g, emptyIdMap)
+    ([], t) -> constSolve t S.empty g emptyIdMap
+    (t0, t1) -> solve t0 t1 S.empty g emptyIdMap mkDecis
+
+-- Move variables of sort elem on the LHS to the RHS
+unifyPartition ::  Group -> ([Maplet], [Maplet])
+unifyPartition t =
+  (v, map (mMapCoef negate) c)
+  where
+    (v, c) = L.partition f (M.assocs t)
+    f (_, (be, _)) = not be
 
 -- The exported unifier converts the internal representation of a
 -- substitution into the external form using chaseMap.
@@ -1169,13 +1183,24 @@ merge t t' r =
 -- Returns complete set of unifiers.  Each unifier include the set of
 -- variables fresh generated and a generator.
 
--- Freshly generated variables are of sort expn.
 matchGroup ::  Group -> Group -> Set Id -> Gen -> [(Set Id, Gen, IdMap)]
 matchGroup t0 t1 v g =
-  case partition t0 t1 v of
-    ([], []) -> return (v, g, emptyIdMap)
-    ([], t) -> constSolve t v g
-    (t0, t1) -> solve t0 t1 v g emptyIdMap mkDecis
+  let (v', g', r) = genVars v g t0 in
+  case partition (groupSubst r t0) t1 v' of
+    ([], []) -> return (v', g', r)
+    ([], t) -> constSolve t v' g' r
+    (t0, t1) -> solve t0 t1 v' g' r mkDecis
+                  
+genVars :: Set Id -> Gen -> Group -> (Set Id, Gen, IdMap)
+genVars v g t = 
+  M.foldlWithKey genVar (v, g, emptyIdMap) t
+  where
+    genVar (v, g, r) x (be, _) 
+      | S.member x v = (v, g, r)
+      | otherwise =
+        (S.insert x' v, g', M.insert x (groupVar be x') r)
+        where
+          (g', x') = cloneId g x
 
 -- Move variables on the RHS of the equation to the LHS
 -- Move variables of sort elem on the LHS to the RHS
@@ -1190,10 +1215,10 @@ partition t0 t1 v =
     lhs = mul v0 (invert v1)
     rhs = mul c1 (invert c0)
 
-constSolve :: [Maplet] -> Set Id -> Gen -> [(Set Id, Gen, IdMap)]
-constSolve t v g
+constSolve :: [Maplet] -> Set Id -> Gen -> IdMap -> [(Set Id, Gen, IdMap)]
+constSolve t v g r
   | any (\(_, (be, _)) -> not be) t = []
-  | otherwise = constSolve1 t v g emptyIdMap mkDecis
+  | otherwise = constSolve1 t v g r mkDecis
                 
 constSolve1 :: [Maplet] -> Set Id -> Gen ->
                IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
@@ -1293,7 +1318,7 @@ mkDecis =
 solve2 :: Id -> Int -> Int -> [Maplet] -> [Maplet] -> Set Id -> Gen ->
           IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
 solve2 z ci i t0 t1 v g r d =
-  case nextDecis d t1 of
+  case orientDecis v $ nextDecis d t1 of
     [] -> []
     ((x, y):_) ->
       distinct ++ identified
@@ -1323,6 +1348,14 @@ nextDecis d t =
         v = chase y
         f (w, z) = chase w == u && chase z == v
         chase = listChase (same d)
+        
+orientDecis :: Set Id -> [(Id, Id)] -> [(Id, Id)]
+orientDecis v undecided = 
+  map f undecided
+  where
+    f (x, y) 
+      | S.member y v = (y, x)
+      | otherwise = (x, y)
 
 listChase :: Eq t => [(t, t)] -> t -> t
 listChase d x =
@@ -1414,7 +1447,7 @@ reify domain (Env (_, env)) =
   map (loop domain) $ M.assocs env
   where
     loop [] (x, _) =
-      error $ "Algebra.reify: variable missing from domain " ++ idName x ++ "\n" ++ show domain ++ "\n" ++ show env
+      error $ "Algebra.reify: variable missing from domain " ++ idName x
     loop (I x : _) (y, t)
       | x == y = (I x, t)
     loop (F Text [I x] : _) (y, t)
