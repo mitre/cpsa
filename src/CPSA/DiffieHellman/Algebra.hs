@@ -1024,7 +1024,7 @@ unifyGroup1 :: Group -> Gen -> [(Set Id, Gen, IdMap)]
 unifyGroup1 t g =
   case unifyPartition t of
     ([], []) -> return (S.empty, g, emptyIdMap)
-    ([], t) -> constSolve t S.empty g emptyIdMap
+    ([], t) -> constSolve t S.empty g emptyIdMap mkDecis
     (t0, t1) -> solve t0 t1 S.empty g emptyIdMap mkDecis
 
 -- Move variables of sort elem on the LHS to the RHS
@@ -1185,11 +1185,12 @@ merge t t' r =
 
 matchGroup ::  Group -> Group -> Set Id -> Gen -> [(Set Id, Gen, IdMap)]
 matchGroup t0 t1 v g =
-  let (v', g', r) = genVars v g t0 in
+  let (v', g', r) = genVars v g t0
+      d = mkInitMatchDecis t1 in
   case partition (groupSubst r t0) t1 v' of
     ([], []) -> return (v', g', r)
-    ([], t) -> constSolve t v' g' r
-    (t0, t1) -> solve t0 t1 v' g' r mkDecis
+    ([], t) -> constSolve t v' g' r d
+    (t0, t1) -> solve t0 t1 v' g' r d
                   
 genVars :: Set Id -> Gen -> Group -> (Set Id, Gen, IdMap)
 genVars v g t = 
@@ -1201,6 +1202,12 @@ genVars v g t =
         (S.insert x' v, g', M.insert x (groupVar be x') r)
         where
           (g', x') = cloneId g x
+          
+mkInitMatchDecis :: Group -> Decision Id
+mkInitMatchDecis t =
+  mkDecis { dist = [(x, y) | x <- v, y <- v, x /= y] }
+  where 
+    v = [x | (x, (be, _)) <- M.assocs t, be]
 
 -- Move variables on the RHS of the equation to the LHS
 -- Move variables of sort elem on the LHS to the RHS
@@ -1215,16 +1222,17 @@ partition t0 t1 v =
     lhs = mul v0 (invert v1)
     rhs = mul c1 (invert c0)
 
-constSolve :: [Maplet] -> Set Id -> Gen -> IdMap -> [(Set Id, Gen, IdMap)]
-constSolve t v g r
+constSolve :: [Maplet] -> Set Id -> Gen -> IdMap ->
+              Decision Id -> [(Set Id, Gen, IdMap)]
+constSolve t v g r d
   | any (\(_, (be, _)) -> not be) t = []
-  | otherwise = constSolve1 t v g r mkDecis
+  | otherwise = constSolve1 t v g r d
                 
 constSolve1 :: [Maplet] -> Set Id -> Gen ->
                IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
 constSolve1 [] v g r _ = return (v, g, r)
 constSolve1 t v g r d =
-  case nextDecis d t of
+  case orientDecis v $ nextDecis d t of
     [] -> []
     ((x, y):_) ->
       distinct ++ identified
@@ -1447,7 +1455,8 @@ reify domain (Env (_, env)) =
   map (loop domain) $ M.assocs env
   where
     loop [] (x, _) =
-      error $ "Algebra.reify: variable missing from domain " ++ idName x
+      error $ "Algebra.reify: variable missing from domain " ++ idName x 
+      ++ "\n" ++ show domain ++ "\n" ++ show env
     loop (I x : _) (y, t)
       | x == y = (I x, t)
     loop (F Text [I x] : _) (y, t)
