@@ -171,11 +171,6 @@ freshId (Gen (i)) name = (Gen (i + 1), Id (i, name))
 cloneId :: Gen -> Id -> (Gen, Id)
 cloneId gen x = freshId gen (idName x)
 
-{--
-mash :: Gen -> Gen -> Gen
-mash (Gen i) (Gen j) = Gen (max i j)
--}
-
 -- A term in an Abelian group is a map from identifiers to pairs of
 -- bools and non-zero integers.  The boolean is true if the variable
 -- is a basis element.
@@ -1159,13 +1154,27 @@ matchLists _ _ _ = []
 matchGroup ::  Group -> Group -> Set Id -> Gen ->
                IdMap -> [(Set Id, Gen, IdMap)]
 matchGroup t0 t1 v g r =
-  let t0' = groupSubst r t0     -- Apply subst to LHS
+  let (t0', t1') = merge t0 t1 r       -- Apply subst to LHS
       (v', g', r') = genVars v g t0' r -- Gen vars for non-fresh vars
-      d = mkInitMatchDecis t1 in
-  case partition (groupSubst r' t0') t1 v' of -- Subst out non-gen vars
+      d = mkInitMatchDecis t1' in
+  case partition t0' t1' v' of
     ([], []) -> return (v', g', r')
     ([], t) -> constSolve t v' g' r' d
     (t0, t1) -> solve t0 t1 v' g' r' d
+
+merge ::  Group -> Group -> IdMap -> (Group, Group)
+merge t t' r =
+    (group t0, t0')
+    where
+      (t0, t0') = loop (M.assocs t) ([], t')
+      loop [] acc = acc
+      loop (p@(x, (_, c)) : t0) (t1, t1') =
+          case M.lookup x r of
+            Nothing -> loop t0 (p : t1, t1')
+            Just (G t) ->
+                loop t0 (t1, mul (expg t (negate c)) t1')
+            Just t ->
+                error $ "Algebra.merge: expecting an expn but got " ++ show t
 
 -- Generate vars for each non-fleshly generated vars
 genVars :: Set Id -> Gen -> Group -> IdMap -> (Set Id, Gen, IdMap)
@@ -1345,7 +1354,7 @@ orientDecis v undecided =
   map f undecided
   where
     f (x, y)
-      | S.member y v = (y, x)
+      | S.notMember x v = (y, x)
       | otherwise = (x, y)
 
 listChase :: Eq t => [(t, t)] -> t -> t
@@ -1438,9 +1447,8 @@ reify domain (Env (_, env)) =
   map (loop domain) $ M.assocs env
   where
     loop [] (x, _) =
---      error $ "Algebra.reify: variable missing from domain " ++ idName x
-      error $ "Algebra.reify: variable missing from domain " ++ show x
-      ++ "\n" ++ show domain ++ "\n" ++ show env
+      error $ "Algebra.reify: variable missing from domain " ++ idName x
+      ++ "=" ++ show x ++ "\n" ++ show domain ++ "\n" ++ show env
     loop (I x : _) (y, t)
       | x == y = (I x, t)
     loop (F Text [I x] : _) (y, t)
