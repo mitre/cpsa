@@ -1448,7 +1448,7 @@ reify domain (Env (_, env)) =
   where
     loop [] (x, _) =
       error $ "Algebra.reify: variable missing from domain " ++ idName x
-      ++ "=" ++ show x ++ "\n" ++ show domain ++ "\n" ++ show env
+      ++ " = " ++ show x ++ "\n" ++ show domain ++ "\n" ++ show env
     loop (I x : _) (y, t)
       | x == y = (I x, t)
     loop (F Text [I x] : _) (y, t)
@@ -1565,8 +1565,8 @@ loadVar (gen, vars) (S pos name, S pos' sort) =
         "skey" -> return $ F Skey [t]
         "akey" -> return $ F Akey [t]
         "base" -> return $ F Base [t]
-        "expn" -> return $ groupVar False x
-        "elem" -> return $ groupVar True x
+        "expr" -> return $ groupVar False x
+        "expn" -> return $ groupVar True x
         _ -> fail (shows pos' "Sort " ++ sort ++ " not recognized")
 loadVar _ (x,_) = fail (shows (annotation x) "Bad variable syntax")
 
@@ -1761,8 +1761,8 @@ displayVar ctx (F Skey [I x]) = displaySortId "skey" ctx x
 displayVar ctx (F Akey [I x]) = displaySortId "akey" ctx x
 displayVar ctx (F Base [I x]) = displaySortId "base" ctx x
 displayVar ctx t@(G x)
-  | isBasisVar x = displaySortId "elem" ctx (varId t)
-  | isGroupVar x = displaySortId "expn" ctx (varId t)
+  | isBasisVar x = displaySortId "expn" ctx (varId t)
+  | isGroupVar x = displaySortId "expr" ctx (varId t)
 displayVar _ _ =
   error "Algebra.displayVar: term not a variable with its sort"
 

@@ -5,14 +5,14 @@
 ;; (exp (gen) y) x).
 
 (defprotocol dhke diffie-hellman
-  (defrole init (vars (a b name) (h base) (x elem))
+  (defrole init (vars (a b name) (h base) (x expn))
     (trace
      (send (enc "i" (exp (gen) x) (privk a)))
      (recv (cat (enc h (privk b)) (enc a b (exp h x))))
      (send (enc "i" a b (exp h x))))
     (non-orig x)
     (uniq-orig (exp (gen) x)))
-  (defrole resp (vars (a b name) (h base) (x elem))
+  (defrole resp (vars (a b name) (h base) (x expn))
     (trace
      (recv (enc "i" h (privk a)))
      (send (cat (enc (exp (gen) x) (privk b)) (enc a b (exp h x))))
@@ -30,7 +30,7 @@
 
 (defprotocol dh-mim diffie-hellman
   (defrole init
-    (vars (h base) (x elem) (n text))
+    (vars (h base) (x expn) (n text))
     (trace
      (send (exp (gen) x))
      (recv h)
@@ -38,7 +38,7 @@
     (non-orig x)
     (uniq-orig n (exp (gen) x)))
   (defrole resp
-    (vars (h base) (x elem) (n text))
+    (vars (h base) (x expn) (n text))
     (trace
      (recv h)
      (send (exp (gen) x))
