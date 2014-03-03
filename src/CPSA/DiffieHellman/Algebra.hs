@@ -374,6 +374,10 @@ isAcquiredVar (I _) = True
 isAcquiredVar (F Base [I _]) = True
 isAcquiredVar _ = False
 
+isGroup :: Term -> Bool
+isGroup (G _) = True
+isGroup _ = False
+
 -- A list of terms are well-formed if each one has the correct
 -- structure and every occurrence of an identifier in a term has the
 -- same sort.  Variable environments are used to check the sort
@@ -1017,23 +1021,9 @@ unifyTermLists _ _ _ = []
 unifyGroup :: Group -> Group -> GenSubst -> [GenSubst]
 unifyGroup t0 t1 (g, Subst s) =
   do
-    (_, g', s') <- unifyGroup1 (groupSubst s $ mul t0 $ invert t1) g
-    return (g', Subst $ M.union s' s)
-
-unifyGroup1 :: Group -> Gen -> [(Set Id, Gen, IdMap)]
-unifyGroup1 t g =
-  case unifyPartition t of
-    ([], []) -> return (S.empty, g, emptyIdMap)
-    ([], t) -> constSolve t S.empty g emptyIdMap mkDecis
-    (t0, t1) -> solve t0 t1 S.empty g emptyIdMap mkDecis
-
--- Move variables of sort elem on the LHS to the RHS
-unifyPartition ::  Group -> ([Maplet], [Maplet])
-unifyPartition t =
-  (v, map (mMapCoef negate) c)
-  where
-    (v, c) = L.partition f (M.assocs t)
-    f (_, (be, _)) = not be
+    let (grp, nongrp) = M.partition isGroup s
+    (_, g', s') <- matchGroup (mul t0 (invert t1)) M.empty S.empty g grp
+    return (g', Subst $ M.union s' nongrp)
 
 -- The exported unifier converts the internal representation of a
 -- substitution into the external form using chaseMap.
@@ -1133,9 +1123,9 @@ match (F Invk [t]) t' r =
   match t (F Invk [t']) r
 match (G t) (G t') (g, Env (v, r)) =
   do
-    let (t0, t0') = merge t t' r
-    (v, g, r') <- matchGroup t0 t0' v g
-    return (g, Env (v, M.union r' r))
+    let (grp, nongrp) = M.partition isGroup r
+    (v', g', r') <- matchGroup t t' v g grp
+    return (g', Env (v', M.union r' nongrp))
 match _ _ _ = []
 
 matchExp ::  Term -> Group -> Term -> Group -> GenEnv -> [GenEnv]
@@ -1156,23 +1146,6 @@ matchLists (t : u) (t' : u') r =
     matchLists u u' r'
 matchLists _ _ _ = []
 
--- Merge the previous bindings in r into the current matching problem.
--- For each maplet in t, if r contains a mapping, apply the mapping
--- and move the result to the RHS.
-merge ::  Group -> Group -> IdMap -> (Group, Group)
-merge t t' r =
-  (group t0, t0')
-  where
-    (t0, t0') = loop (M.assocs t) ([], t')
-    loop [] acc = acc
-    loop (p@(x, (_, c)) : t0) (t1, t1') =
-      case M.lookup x r of
-        Nothing -> loop t0 (p : t1, t1')
-        Just (G t) ->
-          loop t0 (t1, mul (expg t (negate c)) t1')
-        Just t ->
-          error $ "Algebra.merge: expecting an expn but got " ++ show t
-
 -- Matching in a group
 
 -- t0 is the pattern
@@ -1183,33 +1156,37 @@ merge t t' r =
 -- Returns complete set of unifiers.  Each unifier include the set of
 -- variables fresh generated and a generator.
 
-matchGroup ::  Group -> Group -> Set Id -> Gen -> [(Set Id, Gen, IdMap)]
-matchGroup t0 t1 v g =
-  let (v', g', r) = genVars v g t0
+matchGroup ::  Group -> Group -> Set Id -> Gen ->
+               IdMap -> [(Set Id, Gen, IdMap)]
+matchGroup t0 t1 v g r =
+  let t0' = groupSubst r t0     -- Apply subst to LHS
+      (v', g', r') = genVars v g t0' r -- Gen vars for non-fresh vars
       d = mkInitMatchDecis t1 in
-  case partition (groupSubst r t0) t1 v' of
-    ([], []) -> return (v', g', r)
-    ([], t) -> constSolve t v' g' r d
-    (t0, t1) -> solve t0 t1 v' g' r d
-                  
-genVars :: Set Id -> Gen -> Group -> (Set Id, Gen, IdMap)
-genVars v g t = 
-  M.foldlWithKey genVar (v, g, emptyIdMap) t
+  case partition (groupSubst r' t0') t1 v' of -- Subst out non-gen vars
+    ([], []) -> return (v', g', r')
+    ([], t) -> constSolve t v' g' r' d
+    (t0, t1) -> solve t0 t1 v' g' r' d
+
+-- Generate vars for each non-fleshly generated vars
+genVars :: Set Id -> Gen -> Group -> IdMap -> (Set Id, Gen, IdMap)
+genVars v g t r =
+  M.foldlWithKey genVar (v, g, r) t
   where
-    genVar (v, g, r) x (be, _) 
-      | S.member x v = (v, g, r)
-      | otherwise =
+    genVar (v, g, r) x (be, _)
+      | S.member x v = (v, g, r) -- Var already freshly generated
+      | otherwise =              -- Make clone
         (S.insert x' v, g', M.insert x (groupVar be x') r)
         where
           (g', x') = cloneId g x
-          
+
+-- Ensure bases elements in t are never identified
 mkInitMatchDecis :: Group -> Decision Id
 mkInitMatchDecis t =
   mkDecis { dist = [(x, y) | x <- v, y <- v, x /= y] }
-  where 
+  where
     v = [x | (x, (be, _)) <- M.assocs t, be]
 
--- Move variables on the RHS of the equation to the LHS
+-- Move fresh variables on the RHS of the equation to the LHS
 -- Move variables of sort elem on the LHS to the RHS
 partition ::  Group -> Group -> Set Id -> ([Maplet], [Maplet])
 partition t0 t1 v =
@@ -1222,39 +1199,44 @@ partition t0 t1 v =
     lhs = mul v0 (invert v1)
     rhs = mul c1 (invert c0)
 
+-- Solve equation when there are no variables of sort expn on LHS.
+-- Treat all variables as constants.
 constSolve :: [Maplet] -> Set Id -> Gen -> IdMap ->
               Decision Id -> [(Set Id, Gen, IdMap)]
 constSolve t v g r d
-  | any (\(_, (be, _)) -> not be) t = []
-  | otherwise = constSolve1 t v g r d
-                
+  | any (\(_, (be, _)) -> not be) t = [] -- Fail expn var is on RHS
+  | otherwise = constSolve1 t v g r d    -- All vars are elem
+
 constSolve1 :: [Maplet] -> Set Id -> Gen ->
                IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
 constSolve1 [] v g r _ = return (v, g, r)
 constSolve1 t v g r d =
   case orientDecis v $ nextDecis d t of
-    [] -> []
-    ((x, y):_) ->
+    [] -> []                    -- All decisons already made
+    ((x, y):_) ->               -- Pick first undecided pair
       distinct ++ identified
       where
         distinct = constSolve1 t v g r neq
-        neq = d {dist = (x, y):(y, x):dist d}
+        neq = d {dist = (x, y):(y, x):dist d} -- Add new constraints
         -- eliminate x
-        identified = constSolve1 t' v g r' d'
-        t' = identify x y t
-        r' = M.insert x y' (eliminate x y' r)
+        identified = constSolve1 t' v' g r' d'
+        t' = identify x y t     -- Equate x y in t
+        v' = S.delete x v       -- Eliminate x in v
+        r' = eliminate x y' r   -- And in r
         y' = groupVar True y
-        d' = d {same = (x, y):same d}
+        d' = d {same = (x, y):same d} -- And note decision
 
+-- Solve when variables of sort expn are on LHS
 solve ::  [Maplet] -> [Maplet] -> Set Id -> Gen ->
           IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
 solve t0 t1 v g r d =
   let (x, ci, i) = smallest t0 in
   case compare ci 0 of
     GT -> solve1 x ci i t0 t1 v g r d
-    LT -> solve1 x (-ci) i (mInverse t0) t1 v g r d
+    LT -> solve1 x (-ci) i (mInverse t0) (mInverse t1) v g r d
     EQ -> error "Algebra.solve: zero coefficient found"
 
+-- Find smallest coefficient in absolute value
 smallest :: [Maplet] -> (Id, Int, Int)
 smallest [] = error "Algebra.smallest given an empty list"
 smallest t =
@@ -1270,7 +1252,7 @@ smallest t =
 solve1 :: Id -> Int -> Int -> [Maplet] -> [Maplet] -> Set Id -> Gen ->
           IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
 solve1 x 1 i t0 t1 v g r _ =    -- Solve for x and return answer
-  return (v, g, M.insert x t (eliminate x t r))
+  return (S.delete x v, g, eliminate x t r)
   where
     t = G $ group (t1 ++ (mInverse (omit i t0)))
 solve1 x ci i t0 t1 v g r d
@@ -1280,12 +1262,12 @@ solve1 x ci i t0 t1 v g r d
     else
       solve2 x ci i t0 t1 v g r d
   | otherwise =
-      solve t0' t1 (S.insert x' v) g' r' d
+      solve t0' t1 (S.insert x' $ S.delete x v) g' r' d
       where
         (g', x') = cloneId g x
         t = G $ group ((x', (False, 1)) :
                        mInverse (divide ci (omit i t0)))
-        r' = M.insert x t (eliminate x t r)
+        r' = eliminate x t r
         t0' = (x', (False, ci)) : modulo ci t0
 
 eliminate :: Id -> Term -> IdMap -> IdMap
@@ -1356,12 +1338,12 @@ nextDecis d t =
         v = chase y
         f (w, z) = chase w == u && chase z == v
         chase = listChase (same d)
-        
+
 orientDecis :: Set Id -> [(Id, Id)] -> [(Id, Id)]
-orientDecis v undecided = 
+orientDecis v undecided =
   map f undecided
   where
-    f (x, y) 
+    f (x, y)
       | S.member y v = (y, x)
       | otherwise = (x, y)
 
@@ -1455,7 +1437,8 @@ reify domain (Env (_, env)) =
   map (loop domain) $ M.assocs env
   where
     loop [] (x, _) =
-      error $ "Algebra.reify: variable missing from domain " ++ idName x 
+--      error $ "Algebra.reify: variable missing from domain " ++ idName x
+      error $ "Algebra.reify: variable missing from domain " ++ show x
       ++ "\n" ++ show domain ++ "\n" ++ show env
     loop (I x : _) (y, t)
       | x == y = (I x, t)
