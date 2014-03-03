@@ -1316,9 +1316,10 @@ solve2 z ci i t0 t1 v g r d =
         distinct = solve2 z ci i t0 t1 v g r neq
         neq = d {dist = (x, y):(y, x):dist d}
         -- eliminate x
-        identified = solve1 z ci i t0 t1' v g r' d'
-        t1' = identify x y t1
-        r' = M.insert x y' (eliminate x y' r)
+        identified = solve1 z ci i t0 t1' v' g r' d'
+        t1' = identify x y t1   -- Equate x y in t1
+        v' = S.delete x v       -- Eliminate x in v
+        r' = eliminate x y' r   -- And in r
         y' = groupVar True y
         d' = d {same = (x, y):same d}
 
