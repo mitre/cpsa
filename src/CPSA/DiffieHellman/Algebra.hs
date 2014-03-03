@@ -1017,7 +1017,8 @@ unifyGroup :: Group -> Group -> GenSubst -> [GenSubst]
 unifyGroup t0 t1 (g, Subst s) =
   do
     let (grp, nongrp) = M.partition isGroup s
-    (_, g', s') <- matchGroup (mul t0 (invert t1)) M.empty S.empty g grp
+    let t = groupSubst s (mul t0 (invert t1))
+    (_, g', s') <- matchGroup t M.empty S.empty g grp
     return (g', Subst $ M.union s' nongrp)
 
 -- The exported unifier converts the internal representation of a
