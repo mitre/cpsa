@@ -1,0 +1,9 @@
+#! /bin/sh
+TARGET=dhke.xhtml
+cd tst
+if test $# -eq 0
+then
+    exec make "${TARGET}"
+else
+    exec make "$@"
+fi
