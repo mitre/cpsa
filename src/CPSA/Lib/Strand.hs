@@ -27,7 +27,7 @@ import CPSA.Lib.SExpr
 import CPSA.Lib.Algebra
 import CPSA.Lib.Protocol
 
---
+{--
 import System.IO.Unsafe
 import Control.Exception (try)
 import System.IO.Error (ioeGetErrorString)

@@ -434,9 +434,9 @@ termWellFormed xts (F Base [t]) =
         termWellFormed xts (G t1)
     baseVarEnv _ _ = Nothing
 termWellFormed xts (G t) =
-  foldM expnVarEnv xts (M.assocs t)
+  foldM exprVarEnv xts (M.assocs t)
   where
-    expnVarEnv xts (x, (be, _)) =
+    exprVarEnv xts (x, (be, _)) =
       extendVarEnv xts x (groupVar be x)
 termWellFormed xts (C _) =
   Just xts                      -- Tags
@@ -509,9 +509,9 @@ foldVars f acc (F Base [t]) =
       foldVars f (baseAddVars acc t0) (G t1)
     baseAddVars _ _ = error "Algebra.foldVars: Bad term"
 foldVars f acc (G t) =
-  M.foldlWithKey expnAddVars acc t
+  M.foldlWithKey exprAddVars acc t
   where
-    expnAddVars acc x (be, _) =
+    exprAddVars acc x (be, _) =
       f acc (groupVar be x)
 foldVars _ acc (C _) = acc        -- Tags
 foldVars f acc (F Cat [t0, t1]) = -- Concatenation
@@ -749,7 +749,7 @@ replace var (Place ints) source =
     loop [] _ = var
     loop (i : path) (F s u) =
       F s (C.replaceNth (loop path (u !! i)) i u)
-    loop _ (G _) = error "Algebra.replace: Path to expn"
+    loop _ (G _) = error "Algebra.replace: Path to expr"
     loop _ _ = error "Algebra.replace: Bad path to term"
 
 -- Return the ancestors of the term at the given place.
@@ -868,7 +868,7 @@ showMap m =
 
 -- The rewrite rules used are:
 --
--- (vars (h base) (x y expn))
+-- (vars (h base) (x y expr))
 --
 -- 1.  ((exp h x) y) ==> (exp h (mul x y))
 -- 2.  (exp h (one)) ==> h
@@ -1158,7 +1158,7 @@ matchGroup t0 t1 v g r =
   let (t0', t1') = merge t0 t1 r       -- Apply subst to LHS
       (v', g', r') = genVars v g t0' r -- Gen vars for non-fresh vars
       d = mkInitMatchDecis t1' in
-  case partition t0' t1' v' of
+  case partition (groupSubst r' t0') t1' v' of
     ([], []) -> return (v', g', r')
     ([], t) -> constSolve t v' g' r' d
     (t0, t1) -> solve t0 t1 v' g' r' d
@@ -1175,7 +1175,7 @@ merge t t' r =
             Just (G t) ->
                 loop t0 (t1, mul (expg t (negate c)) t1')
             Just t ->
-                error $ "Algebra.merge: expecting an expn but got " ++ show t
+                error $ "Algebra.merge: expecting an expr but got " ++ show t
 
 -- Generate vars for each non-fleshly generated vars
 genVars :: Set Id -> Gen -> Group -> IdMap -> (Set Id, Gen, IdMap)
@@ -1209,12 +1209,12 @@ partition t0 t1 v =
     lhs = mul v0 (invert v1)
     rhs = mul c1 (invert c0)
 
--- Solve equation when there are no variables of sort expn on LHS.
+-- Solve equation when there are no variables of sort expr on LHS.
 -- Treat all variables as constants.
 constSolve :: [Maplet] -> Set Id -> Gen -> IdMap ->
               Decision Id -> [(Set Id, Gen, IdMap)]
 constSolve t v g r d
-  | any (\(_, (be, _)) -> not be) t = [] -- Fail expn var is on RHS
+  | any (\(_, (be, _)) -> not be) t = [] -- Fail expr var is on RHS
   | otherwise = constSolve1 t v g r d    -- All vars are elem
 
 constSolve1 :: [Maplet] -> Set Id -> Gen ->
@@ -1236,7 +1236,7 @@ constSolve1 t v g r d =
         y' = groupVar True y
         d' = d {same = (x, y):same d} -- And note decision
 
--- Solve when variables of sort expn are on LHS
+-- Solve when variables of sort expr are on LHS
 solve ::  [Maplet] -> [Maplet] -> Set Id -> Gen ->
           IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
 solve t0 t1 v g r d =
@@ -1670,7 +1670,7 @@ loadExp :: Monad m => LoadFunction m
 loadExp _ vars [x, x'] =
   do
     t <- loadBase vars x
-    t' <- loadExpn vars x'
+    t' <- loadExpr vars x'
     return $ F Base [idSubst emptyIdMap $ F Exp [t, G t']]
 loadExp pos _ _ = fail (shows pos "Malformed exp")
 
@@ -1682,13 +1682,13 @@ loadBase vars x =
       F Base [t] -> return t
       _ -> fail (shows (annotation x) "Malformed base")
 
-loadExpn :: Monad m => [Term] -> SExpr Pos -> m Group
-loadExpn vars x =
+loadExpr :: Monad m => [Term] -> SExpr Pos -> m Group
+loadExpr vars x =
   do
     t <- loadTerm vars x
     case t of
       G t -> return t
-      _ -> fail (shows (annotation x) "Malformed expn")
+      _ -> fail (shows (annotation x) "Malformed expr")
 
 loadOne :: Monad m => LoadFunction m
 loadOne _ _ [] =
@@ -1698,7 +1698,7 @@ loadOne pos _ _ = fail (shows pos "Malformed one")
 loadRec :: Monad m => LoadFunction m
 loadRec _ vars [x] =
   do
-    t <- loadExpn vars x
+    t <- loadExpr vars x
     return $ G $ invert t
 loadRec pos _ _ = fail (shows pos "Malformed rec")
 
@@ -1710,7 +1710,7 @@ loadMul _ vars xs =
   where
     f acc x =
       do
-        t <- loadExpn vars x
+        t <- loadExpr vars x
         return $ mul t acc
 
 -- Term constructors: cat enc
@@ -1806,9 +1806,9 @@ displayTerm ctx (F Base [t]) =
       L () [S () "exp", displayBase t0, displayTerm ctx (G t1)]
     displayBase t = error ("Algebra.displayBase: Bad term " ++ show t)
 displayTerm ctx (G t) =
-  displayExpn t
+  displayExpr t
   where
-    displayExpn t
+    displayExpr t
       | M.null t = L () [S () "one"]
       | otherwise =
         case factors t of
