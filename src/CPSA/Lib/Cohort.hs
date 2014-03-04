@@ -18,7 +18,6 @@ import CPSA.Lib.Strand
 
 {-- Debugging support
 import System.IO.Unsafe
-import qualified CPSA.Lib.Utilities as U
 
 z :: Show a => a -> b -> b
 z x y = unsafePerformIO (print x >> return y)

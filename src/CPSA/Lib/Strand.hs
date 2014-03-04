@@ -29,6 +29,9 @@ import CPSA.Lib.Protocol
 
 {--
 import System.IO.Unsafe
+import Control.Exception (try)
+import System.IO.Error (ioeGetErrorString)
+
 z :: Show a => a -> b -> b
 z x y = unsafePerformIO (print x >> return y)
 
@@ -64,6 +67,16 @@ zi inst =
       f (x, t) = (displayTerm (context domain) x,
                   displayTerm (context range) t)
       context ts = addToContext emptyContext ts
+
+zv :: Algebra t p g s e c => Preskel t g s e -> String
+zv k =
+  unsafePerformIO $ do
+    y <- try $ verbosePreskelWellFormed k
+    case y of
+      Right x ->
+        return "preskel well formed"
+      Left err ->
+        return $ ioeGetErrorString err
 
 -- Also see showst
 --}
