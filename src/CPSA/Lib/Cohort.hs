@@ -258,7 +258,9 @@ testNode :: Algebra t p g s e c => Mode -> Preskel t g s e ->
 testNode mode k u ts derivable n t =
     loop cts
     where
-      loop [] = error ("Cohort.testNode missing test at " ++ show n)
+      loop [] = error (
+        "Cohort.testNode missing test at " ++ show n
+        ++ "\n" ++ show t ++ "\n" ++ show u)
       loop ((ct, eks) : cts) =
           case escapeSet ts derivable ct of
             Nothing -> loop cts

@@ -459,7 +459,6 @@ doubleTermWellFormed xts t0 t1 =
     xts <- termWellFormed xts t0
     termWellFormed xts t1
 
--- Is the sort of the term a base sort?
 isAtom :: Term -> Bool
 isAtom (I _) = False
 isAtom (C _) = False
@@ -526,8 +525,6 @@ foldCarriedTerms f acc t@(F Cat [t0, t1]) = -- Concatenation
   foldCarriedTerms f (foldCarriedTerms f (f acc t) t0) t1
 foldCarriedTerms f acc t@(F Enc [t0, _]) = -- Encryption
   foldCarriedTerms f (f acc t) t0
-foldCarriedTerms f acc t@(F Base [F Exp [_, t1]]) = -- Exponents
-  f (f acc t) t1
 foldCarriedTerms f acc t = f acc t     -- atoms and tags
 
 -- Is a term carried by another term?
@@ -609,8 +606,6 @@ encryptions t =
       loop t' (loop t acc)
     loop t@(F Enc [t', t'']) acc =
       loop t' (adjoin (t, [t'']) acc)
-    loop t@(F Base [F Exp [_, t'']]) acc =
-      adjoin (t, [t'']) acc
     loop _ acc = acc
     adjoin x xs
       | x `elem` xs = xs
@@ -637,8 +632,6 @@ protectors derivable target source =
           Just (S.insert t acc)
       else
         Just acc
-    bare t@(F Base [F Exp [_, t'']]) acc
-      | target == t'' = Just (S.insert t acc)
     bare _ acc = Just acc
 
 -- Support for data flow analysis of traces.  A flow rule maps an
