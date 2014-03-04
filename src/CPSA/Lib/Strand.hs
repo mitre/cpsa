@@ -73,7 +73,7 @@ zv k =
   unsafePerformIO $ do
     y <- try $ verbosePreskelWellFormed k
     case y of
-      Right x ->
+      Right _ ->
         return "preskel well formed"
       Left err ->
         return $ ioeGetErrorString err

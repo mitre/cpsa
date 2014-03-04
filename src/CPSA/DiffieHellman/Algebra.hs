@@ -509,9 +509,9 @@ foldVars f acc (F Base [t]) =
       foldVars f (baseAddVars acc t0) (G t1)
     baseAddVars _ _ = error "Algebra.foldVars: Bad term"
 foldVars f acc (G t) =
-  foldl expnAddVars acc (M.assocs t)
+  M.foldlWithKey expnAddVars acc t
   where
-    expnAddVars acc (x, (be, _)) =
+    expnAddVars acc x (be, _) =
       f acc (groupVar be x)
 foldVars _ acc (C _) = acc        -- Tags
 foldVars f acc (F Cat [t0, t1]) = -- Concatenation
@@ -790,12 +790,12 @@ clone gen t =
           (alist', gen', F sym $ reverse u')
         G t ->
           let (alist', gen', ts) =
-                foldl cloneGroupList (alist, gen, []) (M.assocs t) in
+                M.foldlWithKey cloneGroupList (alist, gen, []) t in
           (alist', gen', G $ group ts)
     cloneTermList (alist, gen, u) t =
       let (alist', gen', t') = cloneTerm (alist, gen) t in
       (alist', gen', t' : u)
-    cloneGroupList (alist, gen, ts) (x, (be, c)) =
+    cloneGroupList (alist, gen, ts) x (be, c) =
       case lookup x alist of
         Just y -> (alist, gen, (y, (be, c)) : ts)
         Nothing ->
