@@ -258,6 +258,7 @@ data Symbol
     | Exp                       -- Exponentiation function symbol
     | Cat                       -- Term concatenation
     | Enc                       -- Encryption
+    | Hash                      -- Hashing
       deriving (Show, Eq, Ord, Enum, Bounded)
 
 -- A Basic Crypto Algebra Term
@@ -444,6 +445,8 @@ termWellFormed xts (F Cat [t0, t1]) =
   doubleTermWellFormed xts t0 t1 -- Concatenation
 termWellFormed xts (F Enc [t0, t1]) =
   doubleTermWellFormed xts t0 t1 -- Encryption
+termWellFormed xts (F Hash [t])     =
+  termWellFormed xts t          -- Hashing
 termWellFormed _ _ = Nothing
 
 -- Extend when sorts agree
@@ -517,6 +520,8 @@ foldVars f acc (F Cat [t0, t1]) = -- Concatenation
   foldVars f (foldVars f acc t0) t1
 foldVars f acc (F Enc [t0, t1]) = -- Encryption
   foldVars f (foldVars f acc t0) t1
+foldVars f acc (F Hash [t])     = -- Hashing
+  foldVars f acc t
 foldVars _ _ t = error $ "Algebra.foldVars: Bad term " ++ show t
 
 -- Fold f through a term applying it to each term that is carried by the term.
@@ -551,6 +556,8 @@ buildable knowns unguessable term =
       ba t0 && ba t1
     ba t@(F Enc [t0, t1]) =
       S.member t knowns || ba t0 && ba t1
+    ba t@(F Hash [t1]) =
+      S.member t knowns || ba t1
     ba (F Base [t]) = bb t
     ba t = isAtom t && S.notMember t unguessable
     -- Buildable base term
@@ -597,7 +604,8 @@ inv (I _) = error "Algebra.inv: Cannot invert a variable of sort mesg"
 inv t = t
 
 -- Extracts every encryption that is carried by a term along with its
--- encryption key.
+-- encryption key.  Note that a hash is treated as a kind of
+-- encryption in which the term that is hashed is the encryption key.
 encryptions :: Term -> [(Term, [Term])]
 encryptions t =
   reverse $ loop t []
@@ -606,6 +614,8 @@ encryptions t =
       loop t' (loop t acc)
     loop t@(F Enc [t', t'']) acc =
       loop t' (adjoin (t, [t'']) acc)
+    loop t@(F Hash [t']) acc =
+      adjoin (t, [t']) acc
     loop _ acc = acc
     adjoin x xs
       | x `elem` xs = xs
@@ -656,6 +666,8 @@ outFlow (F Cat [t0, t1]) a =    -- Construct non-atoms
   comb (outFlow t1) (outFlow t0) a
 outFlow (F Enc [t0, t1]) a =
   comb (outFlow t1) (outFlow t0) a
+outFlow (F Hash [t]) a =
+    outFlow t a
 outFlow t (initial, available) = -- Don't look inside atoms
   S.singleton (S.insert t initial, S.insert t available)
 
@@ -672,6 +684,8 @@ inFlow t@(F Enc [t0, t1]) (initial, available) =
   (comb (inFlow t0) (outFlow (inv t1)) a)
   where                       -- Derive decryption key first
     a = (initial, S.insert t available)
+inFlow (F Hash [t0]) (initial, available) =
+    outFlow t0 (initial, available)
 inFlow t (initial, available) =
   S.singleton (initial, S.insert t available)
 
@@ -1611,6 +1625,7 @@ loadDispatch =
   ,("mul", loadMul)
   ,("cat", loadCat)
   ,("enc", loadEnc)
+  ,("hash", loadHash)
   ]
 
 -- Atom constructors: pubk privk invk ltk
@@ -1731,6 +1746,13 @@ splitLast x xs =
     loop z x [] = (reverse z, x)
     loop z x (y : ys) = loop (x : z) y ys
 
+loadHash :: Monad m => LoadFunction m
+loadHash _ vars (l : ls) =
+   do
+     ts <- mapM (loadTerm vars) (l : ls)
+     return $ F Hash [foldr1 (\a b -> F Cat [a, b]) ts]
+loadHash pos _ _ = fail (shows pos "Malformed hash")
+
 -- Term specific displaying functions
 
 newtype Context = Context [(Id, String)] deriving Show
@@ -1815,6 +1837,8 @@ displayTerm ctx (F Cat [t0, t1]) =
   L () (S () "cat" : displayTerm ctx t0 : displayList ctx t1)
 displayTerm ctx (F Enc [t0, t1]) =
   L () (S () "enc" : displayEnc ctx t0 t1)
+displayTerm ctx (F Hash [t]) =
+    L () (S () "hash" : displayList ctx t)
 displayTerm _ t = error ("Algebra.displayTerm: Bad term " ++ show t)
 
 displayList :: Context -> Term -> [SExpr ()]
