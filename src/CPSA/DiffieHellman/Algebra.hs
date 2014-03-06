@@ -465,7 +465,7 @@ doubleTermWellFormed xts t0 t1 =
 isAtom :: Term -> Bool
 isAtom (I _) = False
 isAtom (C _) = False
-isAtom (F Base [F Exp [F Genr [], G x]]) = isBasisVar x
+-- isAtom (F Base [F Exp [F Genr [], G x]]) = isBasisVar x
 isAtom (F s _) =
   s == Text || s == Data || s == Name || s == Skey || s == Akey
 isAtom (G x) = isBasisVar x
@@ -588,6 +588,11 @@ decompose knowns unguessable =
       | buildable knowns unguessable (inv t1) = -- Add plaintext
         loop unguessable (decat t0 knowns) old todo
       | otherwise = loop unguessable knowns old todo
+    loop unguessable knowns old (G t : todo)
+      | hasFluff unguessable t =
+        loop unguessable 
+        (S.insert (defluff unguessable t) (S.delete (G t) knowns))
+        old todo
     loop unguessable knowns old (t : todo)
       | isAtom t =
         loop (S.delete t unguessable) (S.delete t knowns) old todo
@@ -603,6 +608,19 @@ inv (F Akey [t]) = F Akey [F Invk [t]]
 inv (I _) = error "Algebra.inv: Cannot invert a variable of sort mesg"
 inv t = t
 
+hasFluff :: Set Term -> Group -> Bool
+hasFluff a t =
+  any f (M.assocs t)
+  where
+    f (x, d) = fluff a x d
+    
+fluff :: Set Term -> Id -> Desc -> Bool
+fluff a x (be, _) = not be || S.notMember (groupVar be x) a
+    
+defluff :: Set Term -> Group -> Term
+defluff a t =
+  G $ M.filterWithKey (\x d -> not $ fluff a x d) t
+
 -- Extracts every encryption that is carried by a term along with its
 -- encryption key.  Note that a hash is treated as a kind of
 -- encryption in which the term that is hashed is the encryption key.
@@ -616,10 +634,17 @@ encryptions t =
       loop t' (adjoin (t, [t'']) acc)
     loop t@(F Hash [t']) acc =
       adjoin (t, [t']) acc
+    loop t@(F Base [F Exp [F Genr [], G t']]) acc
+      | M.size t' > 1 && length (basis t') > 0 =
+      adjoin (t, basis t') acc
     loop _ acc = acc
     adjoin x xs
       | x `elem` xs = xs
       | otherwise = x : xs
+                    
+basis :: Group -> [Term]
+basis t =
+  [groupVar True x | (x, (be, _)) <- M.assocs t, be]
 
 -- Returns the encryptions that carry the target.  If the target is
 -- carried outside all encryptions, or is exposed because a decription

@@ -11,14 +11,16 @@
      (recv (cat (enc h (privk b)) (enc a b (exp h x))))
      (send (enc "i" a b (exp h x))))
     (non-orig x)
-    (uniq-orig (exp (gen) x)))
+;    (uniq-orig (exp (gen) x))
+    )
   (defrole resp (vars (a b name) (h base) (y expn))
     (trace
      (recv (enc "i" h (privk a)))
      (send (cat (enc (exp (gen) y) (privk b)) (enc a b (exp h y))))
      (recv (enc "i" a b (exp h y))))
     (non-orig y)
-    (uniq-orig (exp (gen) y))))
+;    (uniq-orig (exp (gen) y))
+    ))
 
 (defskeleton dhke (vars (a b name))
   (defstrand resp 3 (a a) (b b))
@@ -36,7 +38,8 @@
      (recv h)
      (send (enc n (exp h x))))
     (non-orig x)
-    (uniq-orig n (exp (gen) x)))
+;    (uniq-orig n (exp (gen) x))
+    )
   (defrole resp
     (vars (h base) (y expn) (n text))
     (trace
@@ -44,7 +47,8 @@
      (send (exp (gen) y))
      (recv (enc n (exp h y))))
     (non-orig y)
-    (uniq-orig (exp (gen) y)))
+;    (uniq-orig (exp (gen) y))
+    )
   (comment "Diffie-Hellman without signatures"
 	   "has a man-in-the-middle attack"))
 
