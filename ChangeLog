@@ -1,3 +1,11 @@
+2014-03-07  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/DiffieHellman/Algebra.hs: Changed the sort structure
+	of exponents.  The sort of exponents is now expr, and there is as
+	subsort for basis elements called expn.  Unification and matching
+	have been change so as to respect this sort structure.  This
+	change allows CPSA to solve Diffie-Hellman key exchange.
+
 2014-02-26  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Lib/Algebra.hs (specialize): Expunged specialize from

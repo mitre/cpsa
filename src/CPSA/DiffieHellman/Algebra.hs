@@ -465,7 +465,7 @@ doubleTermWellFormed xts t0 t1 =
 isAtom :: Term -> Bool
 isAtom (I _) = False
 isAtom (C _) = False
--- isAtom (F Base [F Exp [F Genr [], G x]]) = isBasisVar x
+isAtom (F Base [F Exp [F Genr [], G x]]) = isBasisVar x
 isAtom (F s _) =
   s == Text || s == Data || s == Name || s == Skey || s == Akey
 isAtom (G x) = isBasisVar x
@@ -558,7 +558,8 @@ buildable knowns unguessable term =
       S.member t knowns || ba t0 && ba t1
     ba t@(F Hash [t1]) =
       S.member t knowns || ba t1
-    ba (F Base [t]) = bb t
+    ba t@(F Base [t']) 
+      | S.member t knowns || bb t' = True
     ba t = isAtom t && S.notMember t unguessable
     -- Buildable base term
     bb (I _) = True     -- A variable of sort base is always buildable
@@ -639,10 +640,9 @@ encryptions t =
       loop t' (adjoin (t, [t'']) acc)
     loop t@(F Hash [t']) acc =
       adjoin (t, [t']) acc
-    loop t@(F Base [F Exp [F Genr [], G t']]) acc
-      | M.size t' > 1 && length (basis t') > 0 =
-        adjoin (t, basis t') acc
-      | otherwise = acc
+    -- loop t@(F Base [F Exp [F Genr [], G t']]) acc
+    --   | length (basis t') > 0 =
+    --     adjoin (t, basis t') acc
     loop t@(F Base [F Exp [_, G t']]) acc
       | length (basis t') > 0 =
       adjoin (t, basis t') acc

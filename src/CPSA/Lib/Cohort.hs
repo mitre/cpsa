@@ -259,8 +259,7 @@ testNode mode k u ts derivable n t =
     loop cts
     where
       loop [] = error (
-        "Cohort.testNode missing test at " ++ show n
-        ++ "\n" ++ show t ++ "\n" ++ show u)
+        "Cohort.testNode missing test at " ++ show n ++ "\n" ++ show t)
       loop ((ct, eks) : cts) =
           case escapeSet ts derivable ct of
             Nothing -> loop cts
