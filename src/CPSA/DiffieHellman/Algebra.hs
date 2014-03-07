@@ -563,13 +563,18 @@ buildable knowns unguessable term =
     -- Buildable base term
     bb (I _) = True     -- A variable of sort base is always buildable
     bb (F Genr []) = True       -- and so is the generator
-    bb t@(F Exp [t0, G t1]) =
-      S.member (F Base [t]) knowns || ba t0 && be t1
+    bb t@(F Exp [t0, G t1])
+      | hasFluff unguessable t1 = -- Expunge guessable part
+        bb (F Exp [t0, defluff unguessable t1])
+      | otherwise =
+        S.member (F Base [t]) knowns || ba t0 && be t1
     bb (_) = False
     -- Buildable exponent
-    be t =
+    be t =                      -- Is this needed after defluffing?
       all (\x -> S.notMember x unguessable) (groupVars t)
     groupVars t = map (\(x, (be, _)) -> groupVar be x) (M.toList t)
+    -- Perhaps be should be
+    -- be t = M.size = 0           --  Just check for one
 
 -- Compute the decomposition given some known terms and some unguessable
 -- atoms.  The code is quite tricky.  It iterates until the known
@@ -636,6 +641,10 @@ encryptions t =
       adjoin (t, [t']) acc
     loop t@(F Base [F Exp [F Genr [], G t']]) acc
       | M.size t' > 1 && length (basis t') > 0 =
+        adjoin (t, basis t') acc
+      | otherwise = acc
+    loop t@(F Base [F Exp [_, G t']]) acc
+      | length (basis t') > 0 =
       adjoin (t, basis t') acc
     loop _ acc = acc
     adjoin x xs
