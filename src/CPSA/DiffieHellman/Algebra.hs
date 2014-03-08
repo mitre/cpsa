@@ -1,22 +1,94 @@
 -- Diffie-Hellman Algebra implementation
 
--- FIX ME!!!
--- This module is a version of Diffie-Hellman in which exponents form
--- an Abelian group.  There are many issues to be resolved before this
--- version of Diffie-Hellman can be used.
+-- This module implements a version of Diffie-Hellman in which
+-- exponents form a free Abelian group.  It uses the basis elements as
+-- atoms principle.
 
--- FIX ME!!
--- Add hash
+-- Copyright (c) 2009, 2014 The MITRE Corporation
+--
+-- This program is free software: you can redistribute it and/or
+-- modify it under the terms of the BSD License as published by the
+-- University of California.
+
+--------------------------------------------------------------------
 
 -- The module implements a many-sorted algebra, but is used as an
 -- order-sorted algebra.  It exports a name, and the origin used to
 -- generate variables.
 
--- Copyright (c) 2009 The MITRE Corporation
+-- The Diffie-Hellman Order-Sorted Signature is
+
+-- Sorts: mesg, text, data, name, skey, akey, 
+--        string, base, expr, and expn
 --
--- This program is free software: you can redistribute it and/or
--- modify it under the terms of the BSD License as published by the
--- University of California.
+-- Subsorts: text, data, name, skey, akey, 
+--           base, expr < mesg and expn < expr
+--
+-- Operations:
+--   cat : mesg X mesg -> mesg               Pairing
+--   enc : mesg X mesg -> mesg               Encryption
+--   hash : mesg -> mesg                     Hashing
+--   string : mesg                           Tag constants
+--   ltk : name X name -> skey               Long term shared key
+--   pubk : name -> akey                     Public key of principal
+--   pubk : string X name -> akey            Tagged public key of principal
+--   invk : akey -> akey                     Inverse of asymmetric key
+--   gen : base                              DH generator
+--   exp : base X expr -> base               Exponentiation
+--   mul : expr X expr -> expr               Group operation
+--   rec : expr -> expr                      Group inverse
+--   one : expr                              Group identity
+--
+-- Atoms: messages of sort text, data, name, skey, akey, and expn, and
+--        messages of the form (exp (gen) x) where x is of sort expn.  
+
+-- A free Abelian group has a set of basis elements, and the sort expn
+-- is the sort for basis elements.  Limiting the atoms associated with
+-- an exponent to basis elements is the basis elements as atoms
+-- principle.  This principle enables CPSA to correctly handle
+-- origination assumptions.
+
+-- Variables of sort string are forbidden.
+
+-- The implementation exploits the isomorphism between order-sorted
+-- algebras and many-sorted algebras by adding inclusion operations to
+-- produce an equivalent Diffie-Hellman Many-Sorted Signature.  There
+-- is an inclusion operation for each subsort of mesg.  Diffie-Hellman
+-- exponents are handled specially using a canonical representation as
+-- monomials.
+
+-- Sorts: mesg, text, data, name, skey, akey, 
+--        string, base, expr, and expn
+--
+-- Operations:
+--   cat : mesg X mesg -> mesg               Pairing
+--   enc : mesg X mesg -> mesg               Encryption
+--   hash : mesg -> mesg                     Hashing
+--   string : mesg                           Tag constants
+--   ltk : name X name -> skey               Long term shared key
+--   pubk : name -> akey                     Public key of principal
+--   pubk : string X name -> akey            Tagged public key of principal
+--   invk : akey -> akey                     Inverse of asymmetric key
+--   text : text -> mesg                     Sort text inclusion
+--   data : data -> mesg                     Sort date inclusion
+--   name : name -> mesg                     Sort name inclusion
+--   skey : skey -> mesg                     Sort skey inclusion
+--   akey : akey -> mesg                     Sort akey inclusion
+--   base : base -> mesg                     Sort base inclusion
+--
+--  A message of sort expr, a monomial, is represented by a map from
+--  identifiers to descriptions.  A description is a pair consisting
+--  of a flag saying if the variable is of sort expn or expr, and a
+--  non-zero integer.  For t of sort expr, the monomial associated
+--  with t is
+--
+--      x1 ^ c1 * x2 ^ c2 * ... * xn ^ cn 
+-- 
+-- for all xi in the domain of t and t(xi) = (_, ci).
+
+-- In both algebras, invk(invk(t)) = t for all t of sort akey,
+-- (exp h (one)) = h, (exp (exp h x) y) = (exp h (mul x y)), and
+-- the Abelian group axioms hold.
 
 {-# LANGUAGE MultiParamTypeClasses #-}
 
@@ -231,11 +303,6 @@ mMapCoef f (x, (be, c)) = (x, (be, f c))
 mInverse :: [Maplet] -> [Maplet]
 mInverse maplets = map (mMapCoef negate) maplets
 
-{--
-mlGrp :: Maplet -> Group
-mlGrp (x, d) = M.singleton x d
--}
-
 isMapletNonzero :: Maplet -> Bool
 isMapletNonzero (_, (_, c)) = c /= 0
 
@@ -261,7 +328,7 @@ data Symbol
     | Hash                      -- Hashing
       deriving (Show, Eq, Ord, Enum, Bounded)
 
--- A Basic Crypto Algebra Term
+-- A Diffie-Hellman Algebra Term
 
 data Term
     = I !Id
@@ -342,7 +409,7 @@ instance Ord Term where
 -- a term is well-formed.  The context of an occurrence of an identifier
 -- determines its sort.  A term that contains just an identifier and its
 -- sort information is called a variable.  The sort of a variable is
--- one of mesg, text, data, name, skey, akey, base, or expn.
+-- one of mesg, text, data, name, skey, akey, base, expr, or expn.
 
 -- Terms that represent variables.
 isVar :: Term -> Bool
@@ -462,6 +529,8 @@ doubleTermWellFormed xts t0 t1 =
     xts <- termWellFormed xts t0
     termWellFormed xts t1
 
+-- Atoms are terms the adversary can create modulo origination
+-- assumptions.
 isAtom :: Term -> Bool
 isAtom (I _) = False
 isAtom (C _) = False
@@ -560,6 +629,10 @@ buildable knowns unguessable term =
       S.member t knowns || ba t1
     ba t@(F Base [t']) 
       | S.member t knowns || bb t' = True
+    ba t@(G t') 
+      | hasFluff unguessable t' = -- Expunge guessable part
+        ba (defluff unguessable t')
+      | S.member t knowns || M.null t' = True
     ba t = isAtom t && S.notMember t unguessable
     -- Buildable base term
     bb (I _) = True     -- A variable of sort base is always buildable
@@ -568,14 +641,8 @@ buildable knowns unguessable term =
       | hasFluff unguessable t1 = -- Expunge guessable part
         bb (F Exp [t0, defluff unguessable t1])
       | otherwise =
-        S.member (F Base [t]) knowns || ba t0 && be t1
+        S.member (F Base [t]) knowns || M.null t1 && ba t0
     bb (_) = False
-    -- Buildable exponent
-    be t =                      -- Is this needed after defluffing?
-      all (\x -> S.notMember x unguessable) (groupVars t)
-    groupVars t = map (\(x, (be, _)) -> groupVar be x) (M.toList t)
-    -- Perhaps be should be
-    -- be t = M.size = 0           --  Just check for one
 
 -- Compute the decomposition given some known terms and some unguessable
 -- atoms.  The code is quite tricky.  It iterates until the known
@@ -599,6 +666,13 @@ decompose knowns unguessable =
         loop unguessable 
         (S.insert (defluff unguessable t) (S.delete (G t) knowns))
         old todo
+    loop unguessable knowns old (t@(F Base [F Exp [t0, G t1]]) : todo)
+      | hasFluff unguessable t1 = -- Expunge guessable part
+        loop unguessable 
+        (S.insert (F Base [F Exp [t0, t1']]) (S.delete t knowns))
+        old todo
+      where
+        t1' = defluff unguessable t1
     loop unguessable knowns old (t : todo)
       | isAtom t =
         loop (S.delete t unguessable) (S.delete t knowns) old todo
@@ -614,6 +688,8 @@ inv (F Akey [t]) = F Akey [F Invk [t]]
 inv (I _) = error "Algebra.inv: Cannot invert a variable of sort mesg"
 inv t = t
 
+-- Does a group term have a variable of sort expr or a variable not in
+-- the avoidance set a?
 hasFluff :: Set Term -> Group -> Bool
 hasFluff a t =
   any f (M.assocs t)
@@ -623,6 +699,7 @@ hasFluff a t =
 fluff :: Set Term -> Id -> Desc -> Bool
 fluff a x (be, _) = not be || S.notMember (groupVar be x) a
     
+-- Remove fluff from a group term
 defluff :: Set Term -> Group -> Term
 defluff a t =
   G $ M.filterWithKey (\x d -> not $ fluff a x d) t
@@ -640,17 +717,16 @@ encryptions t =
       loop t' (adjoin (t, [t'']) acc)
     loop t@(F Hash [t']) acc =
       adjoin (t, [t']) acc
-    -- loop t@(F Base [F Exp [F Genr [], G t']]) acc
-    --   | length (basis t') > 0 =
-    --     adjoin (t, basis t') acc
-    loop t@(F Base [F Exp [_, G t']]) acc
-      | length (basis t') > 0 =
+    -- loop t@(F Base [F Exp [F Genr [], G t']]) acc =
+    --   adjoin (t, basis t') acc
+    loop t@(F Base [F Exp [_, G t']]) acc =
       adjoin (t, basis t') acc
     loop _ acc = acc
     adjoin x xs
       | x `elem` xs = xs
       | otherwise = x : xs
                     
+-- The basis variables is a group term
 basis :: Group -> [Term]
 basis t =
   [groupVar True x | (x, (be, _)) <- M.assocs t, be]
@@ -677,6 +753,8 @@ protectors derivable target source =
       else
         Just acc
     bare _ acc = Just acc
+    
+-- FIX ME!  Needs updating for Diffie-Hellman
 
 -- Support for data flow analysis of traces.  A flow rule maps an
 -- initial set of atoms and a set of available terms to sets of pairs
@@ -1201,7 +1279,7 @@ matchGroup t0 t1 v g r =
       d = mkInitMatchDecis t1' in
   case partition (groupSubst r' t0') t1' v' of
     ([], []) -> return (v', g', r')
-    ([], t) -> constSolve t v' g' r' d
+    ([], t) -> constSolve t v' g' r' d -- No variables of sort expr here
     (t0, t1) -> solve t0 t1 v' g' r' d
 
 merge ::  Group -> Group -> IdMap -> (Group, Group)
@@ -1238,7 +1316,7 @@ mkInitMatchDecis t =
     v = [x | (x, (be, _)) <- M.assocs t, be]
 
 -- Move fresh variables on the RHS of the equation to the LHS
--- Move variables of sort elem on the LHS to the RHS
+-- Move variables of sort expn on the LHS to the RHS
 partition ::  Group -> Group -> Set Id -> ([Maplet], [Maplet])
 partition t0 t1 v =
   (M.assocs lhs, M.assocs rhs)
@@ -1256,14 +1334,14 @@ constSolve :: [Maplet] -> Set Id -> Gen -> IdMap ->
               Decision Id -> [(Set Id, Gen, IdMap)]
 constSolve t v g r d
   | any (\(_, (be, _)) -> not be) t = [] -- Fail expr var is on RHS
-  | otherwise = constSolve1 t v g r d    -- All vars are elem
+  | otherwise = constSolve1 t v g r d    -- All vars are expn
 
 constSolve1 :: [Maplet] -> Set Id -> Gen ->
                IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
 constSolve1 [] v g r _ = return (v, g, r)
 constSolve1 t v g r d =
   case orientDecis v $ nextDecis d t of
-    [] -> []                    -- All decisons already made
+    [] -> []                    -- All decisions already made
     ((x, y):_) ->               -- Pick first undecided pair
       distinct ++ identified
       where
@@ -1308,11 +1386,11 @@ solve1 x 1 i t0 t1 v g r _ =    -- Solve for x and return answer
     t = G $ group (t1 ++ (mInverse (omit i t0)))
 solve1 x ci i t0 t1 v g r d
   | divisible ci t0 =
-    if divisible ci t1 then
+    if divisible ci t1 then     -- Solution found
       solve1 x 1 i (divide ci t0) (divide ci t1) v g r d
-    else
+    else         -- No possible solution without identifying variables
       solve2 x ci i t0 t1 v g r d
-  | otherwise =
+  | otherwise =                 -- Eliminate x in favor of x'
       solve t0' t1 (S.insert x' $ S.delete x v) g' r' d
       where
         (g', x') = cloneId g x
@@ -1345,17 +1423,21 @@ modulo ci t =
    let c' = mod c ci,
    c' /= 0]
 
+-- A set of decisions records variables that have been identified and
+-- those that are distinct.
 data Decision t = Decision
   { same :: [(t, t)],
     dist :: [(t, t)] }
   deriving Show
 
+-- Create an initial set of decisions
 mkDecis :: Decision Id
 mkDecis =
   Decision {
     same = [],
     dist = [] }
 
+-- Explore two choices as to whether to identify a pair of variables.
 solve2 :: Id -> Int -> Int -> [Maplet] -> [Maplet] -> Set Id -> Gen ->
           IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
 solve2 z ci i t0 t1 v g r d =

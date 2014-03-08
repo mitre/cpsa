@@ -10,6 +10,52 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
+--------------------------------------------------------------------
+
+-- The Basic Crypto Order-Sorted Signature is
+
+-- Sorts: mesg, text, data, name, skey, akey, and string
+--
+-- Subsorts: text, data, name, skey, akey < mesg
+--
+-- Operations:
+--   cat : mesg X mesg -> mesg               Pairing
+--   enc : mesg X mesg -> mesg               Encryption
+--   hash : mesg -> mesg                     Hashing
+--   string : mesg                           Tag constants
+--   ltk : name X name -> skey               Long term shared key
+--   pubk : name -> akey                     Public key of principal
+--   pubk : string X name -> akey            Tagged public key of principal
+--   invk : akey -> akey                     Inverse of asymmetric key
+--
+-- Atoms: messages of sort text, data, name, skey, and akey.
+
+-- Variables of sort string are forbidden.
+
+-- The implementation exploits the isomorphism between order-sorted
+-- algebras and many-sorted algebras by adding inclusion operations to
+-- produce an equivalent Basic Crypto Many-Sorted Signature.  There is
+-- an inclusion operation for each subsort of mesg.
+
+-- Sorts: mesg, text, data, name, skey, akey, and string
+--
+-- Operations:
+--   cat : mesg X mesg -> mesg               Pairing
+--   enc : mesg X mesg -> mesg               Encryption
+--   hash : mesg -> mesg                     Hashing
+--   string : mesg                           Tag constants
+--   ltk : name X name -> skey               Long term shared key
+--   pubk : name -> akey                     Public key of principal
+--   pubk : string X name -> akey            Tagged public key of principal
+--   invk : akey -> akey                     Inverse of asymmetric key
+--   text : text -> mesg                     Sort text inclusion
+--   data : data -> mesg                     Sort date inclusion
+--   name : name -> mesg                     Sort name inclusion
+--   skey : skey -> mesg                     Sort skey inclusion
+--   akey : akey -> mesg                     Sort akey inclusion
+
+-- In both algebras, invk(invk(t)) = t for all t of sort akey
+
 {-# LANGUAGE MultiParamTypeClasses #-}
 
 module CPSA.Basic.Algebra (name, origin) where
@@ -54,48 +100,6 @@ freshId (Gen (i)) name = (Gen (i + 1), Id (i, name))
 
 cloneId :: Gen -> Id -> (Gen, Id)
 cloneId gen x = freshId gen (idName x)
-
--- The Basic Crypto Order-Sorted Signature is
-
--- Sorts: mesg, text, data, name, skey, akey, and string
---
--- Subsorts: text, data, name, skey, akey < mesg
---
--- Operations:
---   cat : mesg X mesg -> mesg               Pairing
---   enc : mesg X mesg -> mesg               Encryption
---   hash : mesg -> mesg                     Hashing
---   string : mesg                           Tag constants
---   ltk : name X name -> skey               Long term shared key
---   pubk : name -> akey                     Public key of principal
---   pubk : string X name -> akey            Tagged public key of principal
---   invk : akey -> akey                     Inverse of asymmetric key
-
--- Variables of sort string are forbidden.
-
--- The implementation exploits the isomorphism between order-sorted
--- algebras and many-sorted algebras by adding inclusion operations to
--- produce an equivalent Basic Crypto Many-Sorted Signature.  There is
--- an inclusion operation for each subsort of mesg.
-
--- Sorts: mesg, text, data, name, skey, akey, and string
---
--- Operations:
---   cat : mesg X mesg -> mesg               Pairing
---   enc : mesg X mesg -> mesg               Encryption
---   hash : mesg -> mesg                     Hashing
---   string : mesg                           Tag constants
---   ltk : name X name -> skey               Long term shared key
---   pubk : name -> akey                     Public key of principal
---   pubk : string X name -> akey            Tagged public key of principal
---   invk : akey -> akey                     Inverse of asymmetric key
---   text : text -> mesg                     Sort text inclusion
---   data : data -> mesg                     Sort date inclusion
---   name : name -> mesg                     Sort name inclusion
---   skey : skey -> mesg                     Sort skey inclusion
---   akey : akey -> mesg                     Sort akey inclusion
-
--- In both algebras, invk(invk(t)) = t for all t of sort akey
 
 -- Operations other than the tag constant constructor
 data Symbol
