@@ -632,7 +632,7 @@ buildable knowns unguessable term =
     ba t@(G t') 
       | hasFluff unguessable t' = -- Expunge guessable part
         ba (defluff unguessable t')
-      | S.member t knowns || M.null t' = True
+      | S.member t knowns || M.null t' = True -- t known or is one
     ba t = isAtom t && S.notMember t unguessable
     -- Buildable base term
     bb (I _) = True     -- A variable of sort base is always buildable
@@ -640,8 +640,8 @@ buildable knowns unguessable term =
     bb t@(F Exp [t0, G t1])
       | hasFluff unguessable t1 = -- Expunge guessable part
         bb (F Exp [t0, defluff unguessable t1])
-      | otherwise =
-        S.member (F Base [t]) knowns || M.null t1 && ba t0
+      | otherwise =          -- t known or base and exponent buildable
+        S.member (F Base [t]) knowns || ba (G t1) && ba t0
     bb (_) = False
 
 -- Compute the decomposition given some known terms and some unguessable
@@ -662,11 +662,17 @@ decompose knowns unguessable =
         loop unguessable (decat t0 knowns) old todo
       | otherwise = loop unguessable knowns old todo
     loop unguessable knowns old (G t : todo)
+      | M.null t = 
+        loop unguessable (S.delete (G t) knowns) old todo
       | hasFluff unguessable t =
-        loop unguessable 
+        loop unguessable
         (S.insert (defluff unguessable t) (S.delete (G t) knowns))
         old todo
     loop unguessable knowns old (t@(F Base [F Exp [t0, G t1]]) : todo)
+      | M.null t1 =
+        loop unguessable 
+        (S.insert (F Base [t0]) (S.delete t knowns))
+        old todo
       | hasFluff unguessable t1 = -- Expunge guessable part
         loop unguessable 
         (S.insert (F Base [F Exp [t0, t1']]) (S.delete t knowns))

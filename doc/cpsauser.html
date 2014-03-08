@@ -149,7 +149,8 @@ PROT-ALIST ::= ...</pre>
 <p>The protocol <code>ID</code> is a symbol that names the protocol, and the role
 <code>ID</code> is a symbol that names the role. The <code>ALG</code> symbol identifies
 the algebra used by the protocol. For the Basic Cryptographic Algebra, the
-symbol is <code>basic</code>. The <code>var</code> form contains symbols that
+symbol is <code>basic</code>. For the Diffie-Hellman Algebra, the symbol is
+<code>diffie-hellman</code>. The <code>var</code> form contains symbols that
 declare the sort of the variables used in this role. The set of sort
 symbols is algebra specific. The protocol association list has no
 predefined keys, while the role association list has three. The value
@@ -241,6 +242,31 @@ TERM</code> and <code>forgot TERM</code>. Generalization is used to find shapes 
 realized skeletons. For shape collapsing, the operation is recorded as
 <code>(operation collapsed INT INT)</code>, where the two <code>INT</code>s identify
 the strands merged. Shape collapsing is used to find related shapes.</p>
+
+<p>The Diffie-Hellman Algebra adds sorts and terms as follows.</p>
+
+<blockquote>
+  <pre>SORT ::= ... | base | expn | expr
+TERM ::= ... | (gen) | (exp TERM EXPR)
+EXPR ::= (mul EXPR EXPR) | (rec EXPR) | (one)</pre>
+</blockquote>
+
+<p>Sort <code>expn</code> is a subsort of <code>expr</code> and
+sorts <code>expr</code> and <code>base</code> are subsorts
+of <code>mesg</code>.</p>
+
+<p>The exponent of a Diffie-Hellman value is a free Abelian group.
+  Its basis elements are in sort <code>expn</code>.  The basis
+  elements are the atoms of the group.  For the Diffie-Hellman
+  algebra as a whole, the atoms the ones in the Basis Cryptographic
+  Algebra augmented with variables of sort <code>expn</code> and
+  terms of the form <code>(exp (gen) x)</code>,
+  where <code>x</code> is a variable of sort <code>expn</code>.</p>
+
+<p>The axioms for Diffie-Hellman values are the usual ones for an
+  Abelian group for terms of sort <code>expr</code>.  For terms of
+  sort <code>base</code>, <code>(exp h (one)) = h</code> and 
+<code>(exp (exp h x) y) = (exp h (mul x y)</code>.
 
 <h3>Macros and Includes</h3>
 
