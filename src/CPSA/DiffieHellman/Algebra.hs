@@ -703,7 +703,7 @@ hasFluff a t =
     f (x, d) = fluff a x d
 
 fluff :: Set Term -> Id -> Desc -> Bool
-fluff a x (be, _) = not be || S.notMember (groupVar be x) a
+fluff a x (be, _) = be && S.notMember (groupVar be x) a
 
 -- Remove fluff from a group term
 defluff :: Set Term -> Group -> Term
