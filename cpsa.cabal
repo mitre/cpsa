@@ -47,7 +47,7 @@ Build-Type:		Simple
 Data-Files:
   index.html readme.html cpsauser.html cpsa.mk Make.hs cpsaprimer.pdf
   cpsaoverview.pdf cpsaintroslides.pdf cpsaspec.pdf cpsadesign.pdf
-  ffgg.scm ns.scm blanchet.scm or.scm woolam.scm yahalom.scm
+  ffgg.scm ns.scm blanchet.scm or.scm woolam.scm yahalom.scm dhke.scm
 Data-Dir:	    	doc
 Extra-Source-Files:
   Makefile ChangeLog README NEWS ghci cpsatst setup.bat
