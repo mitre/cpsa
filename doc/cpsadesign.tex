@@ -1236,9 +1236,10 @@ $$
 \begin{center}
 Base sort symbols: \dom{name}, \dom{text}, \dom{data}, \dom{skey},
 \dom{akey}, \dom{expn}\\
-Non-base sort symbols: \dom{mesg}, \dom{base} \\[1ex]
+Non-base sort symbols: \dom{mesg}, \dom{base}, \dom{expr} \\[1ex]
 Subsorts: \dom{name}, \dom{text}, \dom{data}, \dom{akey}, \dom{skey},
-\dom{expn}, $\dom{base}<\dom{mesg}$\\[1ex]
+\dom{expr}, $\dom{base}<\dom{mesg}$,
+$\dom{expn}<\dom{expr}$\\[1ex]
 \begin{tabular}{@{}ll}
 $\enc{\cdot}{(\cdot)}\colon\dom{mesg}\times\dom{mesg}\rightarrow\dom{mesg}$
 &Encryption\\
@@ -1255,32 +1256,27 @@ $\cn{ltk}\colon\dom{name}\times\dom{name}\rightarrow\dom{skey}$
 & Long term shared key\\
 $\gen\colon\dom{base}$
 & Generator constant\\
-$(\cdot)^{(\cdot)}\colon\dom{base}\times\dom{expn}\rightarrow\dom{base}$
-& Exponentiation
+$(\cdot)^{(\cdot)}\colon\dom{base}\times\dom{expr}\rightarrow\dom{base}$
+& Exponentiation\\
+$(\cdot\cdot)\colon\dom{expr}\times\dom{expr}\rightarrow\dom{expr}$
+& Group operation\\
+$(1/\cdot)\colon\dom{expr}\rightarrow\dom{expr}$
+& Group inverse\\
+$1\colon\dom{expr}$
+& Group identity
 \end{tabular}\\[1ex]
 Axioms: $(x^{-1})^{-1}\approx x$ for $x\colon\dom{akey}$\\
-$(h^x)^y\approx (h^y)^x$ for $h\colon\dom{base}$ and
-$x,y\colon\dom{expn}$\\[1ex]
+$1x\approx x$, $x(1/x)\approx 1$, $xy\approx yx$, $x(yz)=(xy)z$,\\
+$h^1=h$, and $(h^x)^y=h^{xy}$ for $h\colon\dom{base}$ and
+$x,y,z\colon\dom{expr}$
+\\[1ex]
 \caption{Diffie-Hellman Signature}\label{tab:dh}
 \end{center}
 \end{table}
 
 Table~\ref{tab:dh} contains the signature used for Diffie-Hellman
-analysis.  In this algebra, there is an equation for the commutativity
-of exponents, but there is no equation for associativity.  Therefore,
-this algebra cannot be used to analyze group Diffie-Hellman protocols.
-
-The equation for exponentiation is $(h^x)^y\approx (h^y)^x$ for
-$h\colon\dom{base}$ and $x,y\colon\dom{expn}$.  Unification and
-matching in this algebra produce a finite number of most general
-unifiers, that is, the unification type is finitary.  For example,
-$\{x\mapsto u,y\mapsto v\}$ and $\{x\mapsto \gen^v,u\mapsto \gen^y\}$
-and unify $x^y$ and $u^v$.  Unification is finitary because of an
-approximation.  To unify $a^{xy}$ and~$b^{wz}$, we unify $a^{xy}$
-with~$\gen^{uv}$ and $\gen^{vu}$ with~$b^{wz}$, where~$u$ and~$v$ are
-freshly generated variables.  In other words, for the purpose of
-unification only, the equation for exponentiation is
-$(\gen^x)^y\approx (\gen^y)^x$.
+analysis.  In this algebra, messages of the form $\gen^x$ for
+$x\colon\dom{expn}$ are also atoms.
 
 \bibliography{cpsa}
 \bibliographystyle{plain}
