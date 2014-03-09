@@ -18,10 +18,10 @@
 
 -- The Diffie-Hellman Order-Sorted Signature is
 
--- Sorts: mesg, text, data, name, skey, akey, 
+-- Sorts: mesg, text, data, name, skey, akey,
 --        string, base, expr, and expn
 --
--- Subsorts: text, data, name, skey, akey, 
+-- Subsorts: text, data, name, skey, akey,
 --           base, expr < mesg and expn < expr
 --
 -- Operations:
@@ -40,7 +40,7 @@
 --   one : expr                              Group identity
 --
 -- Atoms: messages of sort text, data, name, skey, akey, and expn, and
---        messages of the form (exp (gen) x) where x is of sort expn.  
+--        messages of the form (exp (gen) x) where x is of sort expn.
 
 -- A free Abelian group has a set of basis elements, and the sort expn
 -- is the sort for basis elements.  Limiting the atoms associated with
@@ -57,7 +57,7 @@
 -- exponents are handled specially using a canonical representation as
 -- monomials.
 
--- Sorts: mesg, text, data, name, skey, akey, 
+-- Sorts: mesg, text, data, name, skey, akey,
 --        string, base, expr, and expn
 --
 -- Operations:
@@ -82,8 +82,8 @@
 --  non-zero integer.  For t of sort expr, the monomial associated
 --  with t is
 --
---      x1 ^ c1 * x2 ^ c2 * ... * xn ^ cn 
--- 
+--      x1 ^ c1 * x2 ^ c2 * ... * xn ^ cn
+--
 -- for all xi in the domain of t and t(xi) = (_, ci).
 
 -- In both algebras, invk(invk(t)) = t for all t of sort akey,
@@ -627,9 +627,9 @@ buildable knowns unguessable term =
       S.member t knowns || ba t0 && ba t1
     ba t@(F Hash [t1]) =
       S.member t knowns || ba t1
-    ba t@(F Base [t']) 
+    ba t@(F Base [t'])
       | S.member t knowns || bb t' = True
-    ba t@(G t') 
+    ba t@(G t')
       | hasFluff unguessable t' = -- Expunge guessable part
         ba (defluff unguessable t')
       | S.member t knowns || M.null t' = True -- t known or is one
@@ -662,7 +662,7 @@ decompose knowns unguessable =
         loop unguessable (decat t0 knowns) old todo
       | otherwise = loop unguessable knowns old todo
     loop unguessable knowns old (G t : todo)
-      | M.null t = 
+      | M.null t =
         loop unguessable (S.delete (G t) knowns) old todo
       | hasFluff unguessable t =
         loop unguessable
@@ -670,11 +670,11 @@ decompose knowns unguessable =
         old todo
     loop unguessable knowns old (t@(F Base [F Exp [t0, G t1]]) : todo)
       | M.null t1 =
-        loop unguessable 
+        loop unguessable
         (S.insert (F Base [t0]) (S.delete t knowns))
         old todo
       | hasFluff unguessable t1 = -- Expunge guessable part
-        loop unguessable 
+        loop unguessable
         (S.insert (F Base [F Exp [t0, t1']]) (S.delete t knowns))
         old todo
       where
@@ -701,10 +701,10 @@ hasFluff a t =
   any f (M.assocs t)
   where
     f (x, d) = fluff a x d
-    
+
 fluff :: Set Term -> Id -> Desc -> Bool
 fluff a x (be, _) = not be || S.notMember (groupVar be x) a
-    
+
 -- Remove fluff from a group term
 defluff :: Set Term -> Group -> Term
 defluff a t =
@@ -731,7 +731,7 @@ encryptions t =
     adjoin x xs
       | x `elem` xs = xs
       | otherwise = x : xs
-                    
+
 -- The basis variables is a group term
 basis :: Group -> [Term]
 basis t =
@@ -759,7 +759,7 @@ protectors derivable target source =
       else
         Just acc
     bare _ acc = Just acc
-    
+
 -- FIX ME!  Needs updating for Diffie-Hellman
 
 -- Support for data flow analysis of traces.  A flow rule maps an
@@ -1282,12 +1282,13 @@ matchGroup ::  Group -> Group -> Set Id -> Gen ->
 matchGroup t0 t1 v g r =
   let (t0', t1') = merge t0 t1 r       -- Apply subst to LHS
       (v', g', r') = genVars v g t0' r -- Gen vars for non-fresh vars
-      d = mkInitMatchDecis t1' in
+      d = mkInitMatchDecis t1' in      -- Ensure expns on RHS stay distinct
   case partition (groupSubst r' t0') t1' v' of
     ([], []) -> return (v', g', r')
     ([], t) -> constSolve t v' g' r' d -- No variables of sort expr here
     (t0, t1) -> solve t0 t1 v' g' r' d
 
+-- Apply subst to LHS and add results to RHS
 merge ::  Group -> Group -> IdMap -> (Group, Group)
 merge t t' r =
     (group t0, t0')
@@ -1313,6 +1314,20 @@ genVars v g t r =
         (S.insert x' v, g', M.insert x (groupVar be x') r)
         where
           (g', x') = cloneId g x
+
+-- A set of decisions records expn variables that have been identified
+-- and those that are distinct.
+data Decision t = Decision
+  { same :: [(t, t)],
+    dist :: [(t, t)] }
+  deriving Show
+
+-- Create an initial set of decisions
+mkDecis :: Decision Id
+mkDecis =
+  Decision {
+    same = [],
+    dist = [] }
 
 -- Ensure bases elements in t are never identified
 mkInitMatchDecis :: Group -> Decision Id
@@ -1361,17 +1376,119 @@ constSolve1 t v g r d =
         y' = groupVar True y
         d' = d {same = (x, y):same d} -- And note decision
 
--- Solve when variables of sort expr are on LHS
+-- Find a pair of variables for which no decision has been made.
+nextDecis :: Decision Id -> [Maplet] -> [(Id, Id)]
+nextDecis d t =
+  [(x, y) | x <- vars, y <- vars, x < y,
+    not $ decided d x y]
+  where
+    vars = foldr f [] t
+    f (x, (True, _)) v = x:v
+    f (_, (False, _)) v = v
+    decided d x y =             -- Is x and y decided?
+      u == v ||
+      any f (dist d)
+      where
+        u = chase x       -- Find canonical representitive for x and y
+        v = chase y
+        f (w, z) = chase w == u && chase z == v
+        chase = listChase (same d)
+
+-- Find canonical representive of the set of identified variables.
+listChase :: Eq t => [(t, t)] -> t -> t
+listChase d x =
+  case lookup x d of
+    Nothing -> x
+    Just y -> listChase d y
+
+-- Ensure first var in pair is in v.
+orientDecis :: Set Id -> [(Id, Id)] -> [(Id, Id)]
+orientDecis v undecided =
+  map f undecided
+  where
+    f (x, y)
+      | S.notMember x v = (y, x)
+      | otherwise = (x, y)
+
+-- Modify t by replacing x by y.
+identify :: Id -> Id -> [Maplet] -> [Maplet]
+identify x y t =
+  case lookup x t of
+    Nothing -> error ("Algebra.identify: bad lookup of " ++ show x
+                      ++ " in " ++ show t)
+    Just (_, c) ->
+      filter f (map g t)
+      where
+        f (z, (_, c)) = z /= x && c /= 0
+        g m@(z, (be, d))
+          | z == y = (z, (be, c + d))
+          | otherwise = m
+
+-- Solve when variables of sort expr are on LHS.  This involves
+-- solving using the group axioms.  The algorithm for matching in the
+-- group without added constant symbols is the same as the one for
+-- unification with constant symbols.
+--
+-- For this description, additive notation is used for the group.  To
+-- show sums, we write
+--
+--     sum[i] c[i]*x[i] for c[0]*x[0] + c[1]*x[1] + ... + c[n-1]*x[n-1].
+--
+-- The unification problem is to solve
+--
+--     sum[i] c[i]*x[i] = sum[j] d[j]*y[j]
+--
+-- where x[i] is a variable and y[j] is a constant symbol.
+--
+-- The algorithm used to find solutions is described in Vol. 2 of The
+-- Art of Computer Programming / Seminumerical Alorithms, 2nd Ed.,
+-- 1981, by Donald E. Knuth, pg. 327.
+--
+-- The algorithm's initial values are the linear equation (c,d) and an
+-- empty substitution s.
+--
+-- 1.  Let c[i] be the smallest non-zero coefficient in absolute value.
+--
+-- 2.  If c[i] < 0, multiply c and d by -1 and goto step 1.
+--
+-- 3.  If c[i] = 1, a general solution of the following form has been
+-- found:
+--
+--       x[i] = sum[j] -c'[j]*x[j] + d[k] for all k
+--
+--  where c' is c with c'[i] = 0.  Use the equation to eliminate x[i]
+--  from the range of the current substitution s.  If variable x[i] is
+--  in the original equation, add the mapping to substitution s.
+--
+-- 4.  If c[i] divides every coefficient in c,
+--
+--     * if c[i] divides every constant in d, divide c and d by c[i]
+--       and goto step 3,
+--
+--     * otherwise fail because there is no solution.  In this case
+--       expn vars must be identified.
+--
+-- 5.  Otherwise, eliminate x[i] as above in favor of freshly created
+-- variable x[n], where n is the length of c.
+--
+--      x[n] = sum[j] (c[j] div c[i] * x[j])
+--
+-- Goto step 1 and solve the equation:
+--
+--      c[i]*x[n] + sum[j] (c[j] mod c[i])*x[j] = d[k] for all k
+
 solve ::  [Maplet] -> [Maplet] -> Set Id -> Gen ->
           IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
 solve t0 t1 v g r d =
-  let (x, ci, i) = smallest t0 in
-  case compare ci 0 of
-    GT -> solve1 x ci i t0 t1 v g r d
-    LT -> solve1 x (-ci) i (mInverse t0) (mInverse t1) v g r d
+  let (x, ci, i) = smallest t0 in -- ci is the smallest coefficient,
+  case compare ci 0 of            -- x is its variable, i its position
+    GT -> agSolve x ci i t0 t1 v g r d
+    LT -> agSolve x (-ci) i (mInverse t0) (mInverse t1) v g r d -- Step 2
     EQ -> error "Algebra.solve: zero coefficient found"
 
--- Find smallest coefficient in absolute value
+-- Find the factor with smallest coefficient in absolute value.
+-- Returns the variable, the coefficient, and the position within the
+-- list.
 smallest :: [Maplet] -> (Id, Int, Int)
 smallest [] = error "Algebra.smallest given an empty list"
 smallest t =
@@ -1384,19 +1501,20 @@ smallest t =
       else
         loop v ci i a (j + 1) t
 
-solve1 :: Id -> Int -> Int -> [Maplet] -> [Maplet] -> Set Id -> Gen ->
+-- The group axioms are abbreviated by AG.
+agSolve :: Id -> Int -> Int -> [Maplet] -> [Maplet] -> Set Id -> Gen ->
           IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
-solve1 x 1 i t0 t1 v g r _ =    -- Solve for x and return answer
-  return (S.delete x v, g, eliminate x t r)
+agSolve x 1 i t0 t1 v g r _ =    -- Solve for x and return answer
+  return (S.delete x v, g, eliminate x t r) -- Step 3
   where
     t = G $ group (t1 ++ (mInverse (omit i t0)))
-solve1 x ci i t0 t1 v g r d
-  | divisible ci t0 =
+agSolve x ci i t0 t1 v g r d
+  | divisible ci t0 =           -- Step 4
     if divisible ci t1 then     -- Solution found
-      solve1 x 1 i (divide ci t0) (divide ci t1) v g r d
+      agSolve x 1 i (divide ci t0) (divide ci t1) v g r d
     else         -- No possible solution without identifying variables
-      solve2 x ci i t0 t1 v g r d
-  | otherwise =                 -- Eliminate x in favor of x'
+      identSolve x ci i t0 t1 v g r d
+  | otherwise =                 -- Step 5, eliminate x in favor of x'
       solve t0' t1 (S.insert x' $ S.delete x v) g' r' d
       where
         (g', x') = cloneId g x
@@ -1429,82 +1547,24 @@ modulo ci t =
    let c' = mod c ci,
    c' /= 0]
 
--- A set of decisions records variables that have been identified and
--- those that are distinct.
-data Decision t = Decision
-  { same :: [(t, t)],
-    dist :: [(t, t)] }
-  deriving Show
-
--- Create an initial set of decisions
-mkDecis :: Decision Id
-mkDecis =
-  Decision {
-    same = [],
-    dist = [] }
-
 -- Explore two choices as to whether to identify a pair of variables.
-solve2 :: Id -> Int -> Int -> [Maplet] -> [Maplet] -> Set Id -> Gen ->
-          IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
-solve2 z ci i t0 t1 v g r d =
+identSolve :: Id -> Int -> Int -> [Maplet] -> [Maplet] -> Set Id -> Gen ->
+              IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
+identSolve z ci i t0 t1 v g r d =
   case orientDecis v $ nextDecis d t1 of
     [] -> []
     ((x, y):_) ->
       distinct ++ identified
       where
-        distinct = solve2 z ci i t0 t1 v g r neq
+        distinct = identSolve z ci i t0 t1 v g r neq
         neq = d {dist = (x, y):(y, x):dist d}
         -- eliminate x
-        identified = solve1 z ci i t0 t1' v' g r' d'
+        identified = agSolve z ci i t0 t1' v' g r' d'
         t1' = identify x y t1   -- Equate x y in t1
         v' = S.delete x v       -- Eliminate x in v
         r' = eliminate x y' r   -- And in r
         y' = groupVar True y
         d' = d {same = (x, y):same d}
-
-nextDecis :: Decision Id -> [Maplet] -> [(Id, Id)]
-nextDecis d t =
-  [(x, y) | x <- vars, y <- vars, x < y,
-    not $ decided d x y]
-  where
-    vars = foldr f [] t
-    f (x, (True, _)) v = x:v
-    f (_, (False, _)) v = v
-    decided d x y =
-      u == v ||
-      any f (dist d)
-      where
-        u = chase x
-        v = chase y
-        f (w, z) = chase w == u && chase z == v
-        chase = listChase (same d)
-
-orientDecis :: Set Id -> [(Id, Id)] -> [(Id, Id)]
-orientDecis v undecided =
-  map f undecided
-  where
-    f (x, y)
-      | S.notMember x v = (y, x)
-      | otherwise = (x, y)
-
-listChase :: Eq t => [(t, t)] -> t -> t
-listChase d x =
-  case lookup x d of
-    Nothing -> x
-    Just y -> listChase d y
-
-identify :: Id -> Id -> [Maplet] -> [Maplet]
-identify x y t =
-  case lookup x t of
-    Nothing -> error ("Algebra.identify: bad lookup of " ++ show x
-                      ++ " in " ++ show t)
-    Just (_, c) ->
-      filter f (map g t)
-      where
-        f (z, (_, c)) = z /= x && c /= 0
-        g m@(z, (be, d))
-          | z == y = (z, (be, c + d))
-          | otherwise = m
 
 -- Does every varible in ts not occur in the domain of e?
 -- Trivial bindings in e are ignored.
