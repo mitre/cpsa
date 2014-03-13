@@ -140,8 +140,8 @@ TRACE      ::= (trace EVENT+)
 EVENT      ::= (send TERM) | (recv TERM)
 ROLE-ALIST ::= (non-orig POS-TERM*) ROLE-ALIST
             |  (pen-non-orig POS-TERM*) ROLE-ALIST
-            |  (uniq-orig TERM*) ROLE-ALIST | ...
-            |  (priority NODE-INT*) SKEL-ALIST
+            |  (uniq-orig TERM*) ROLE-ALIST
+            |  (priority POS-INT*) ROLE-ALIST | ...
 POS-TERM    ::= TERM | (INT TERM)
 PROT-ALIST ::= ...</pre>
 </blockquote>
