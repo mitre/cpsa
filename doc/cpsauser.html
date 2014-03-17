@@ -140,8 +140,8 @@ TRACE      ::= (trace EVENT+)
 EVENT      ::= (send TERM) | (recv TERM)
 ROLE-ALIST ::= (non-orig POS-TERM*) ROLE-ALIST
             |  (pen-non-orig POS-TERM*) ROLE-ALIST
-            |  (uniq-orig TERM*) ROLE-ALIST | ...
-            |  (priority NODE-INT*) SKEL-ALIST
+            |  (uniq-orig TERM*) ROLE-ALIST
+            |  (priority POS-INT*) ROLE-ALIST | ...
 POS-TERM    ::= TERM | (INT TERM)
 PROT-ALIST ::= ...</pre>
 </blockquote>
@@ -243,6 +243,8 @@ realized skeletons. For shape collapsing, the operation is recorded as
 <code>(operation collapsed INT INT)</code>, where the two <code>INT</code>s identify
 the strands merged. Shape collapsing is used to find related shapes.</p>
 
+<p><em>Diffie-Hellman support is experimental.</em></p>
+
 <p>The Diffie-Hellman Algebra adds sorts and terms as follows.</p>
 
 <blockquote>
@@ -266,7 +268,7 @@ of <code>mesg</code>.</p>
 <p>The axioms for Diffie-Hellman values are the usual ones for an
   Abelian group for terms of sort <code>expr</code>.  For terms of
   sort <code>base</code>, <code>(exp h (one)) = h</code> and 
-<code>(exp (exp h x) y) = (exp h (mul x y)</code>.
+<code>(exp (exp h x) y) = (exp h (mul x y)</code>.</p>
 
 <h3>Macros and Includes</h3>
 
@@ -387,7 +389,7 @@ Priorities are inherited
 from roles, but may be overridden in a skeleton with a
 <code>priority</code> comment of the form
 <code>(priority (<var>n</var> <var>p</var>))</code>,
-where <var>n</var> is a node.
+where <var>n</var> is a node.</p>
 
 <h2 id="cpsagraph">Visualization</h2>
 
