@@ -261,6 +261,10 @@ isBasisVar :: Group -> Bool
 isBasisVar t =
   M.size t == 1 && head (M.elems t) == (True, 1)
 
+isExprVar :: Group -> Bool
+isExprVar t =
+  M.size t == 1 && head (M.elems t) == (False, 1)
+
 -- Assumes isGroupVar t == True or isBasisVar t == True!
 getGroupVar :: Group -> Id
 getGroupVar x = head $ M.keys x
@@ -435,6 +439,7 @@ varId _ = error "Algebra.varId: term not a variable with its sort"
 isAcquiredVar :: Term -> Bool
 isAcquiredVar (I _) = True
 isAcquiredVar (F Base [I _]) = True
+isAcquiredVar (G x) = isExprVar x
 isAcquiredVar _ = False
 
 isGroup :: Term -> Bool
