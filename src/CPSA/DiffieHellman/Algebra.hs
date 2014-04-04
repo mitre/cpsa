@@ -442,10 +442,6 @@ isAcquiredVar (F Base [I _]) = True
 isAcquiredVar (G x) = isExprVar x
 isAcquiredVar _ = False
 
-isGroup :: Term -> Bool
-isGroup (G _) = True
-isGroup _ = False
-
 -- A list of terms are well-formed if each one has the correct
 -- structure and every occurrence of an identifier in a term has the
 -- same sort.  Variable environments are used to check the sort
@@ -1147,10 +1143,9 @@ unifyTermLists _ _ _ = []
 unifyGroup :: Group -> Group -> GenSubst -> [GenSubst]
 unifyGroup t0 t1 (g, Subst s) =
   do
-    let (grp, nongrp) = M.partition isGroup s
     let t = groupSubst s (mul t0 (invert t1))
-    (_, g', s') <- matchGroup t M.empty S.empty g grp
-    return (g', Subst $ M.union s' nongrp)
+    (_, g', s') <- matchGroup t M.empty S.empty g s
+    return (g', Subst s')
 
 -- The exported unifier converts the internal representation of a
 -- substitution into the external form using chaseMap.
@@ -1250,9 +1245,8 @@ match (F Invk [t]) t' r =
   match t (F Invk [t']) r
 match (G t) (G t') (g, Env (v, r)) =
   do
-    let (grp, nongrp) = M.partition isGroup r
-    (v', g', r') <- matchGroup t t' v g grp
-    return (g', Env (v', M.union r' nongrp))
+    (v', g', r') <- matchGroup t t' v g r
+    return (g', Env(v', r'))
 match _ _ _ = []
 
 matchExp ::  Term -> Group -> Term -> Group -> GenEnv -> [GenEnv]
