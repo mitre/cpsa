@@ -1308,12 +1308,10 @@ genVars :: Set Id -> Gen -> Group -> IdMap -> (Set Id, Gen, IdMap)
 genVars v g t r =
   M.foldlWithKey genVar (v, g, r) t
   where
-    genVar (v, g, r) x (be, _)
-      | S.member x v = (v, g, r) -- Var already freshly generated
-      | otherwise =              -- Make clone
-        (S.insert x' v, g', M.insert x (groupVar be x') r)
-        where
-          (g', x') = cloneId g x
+    genVar (v, g, r) x (be, _) =
+      (S.insert x' v, g', M.insert x (groupVar be x') r)
+      where
+        (g', x') = cloneId g x
 
 -- A set of decisions records expn variables that have been identified
 -- and those that are distinct.
@@ -1521,7 +1519,7 @@ agSolve x ci i t0 t1 v g r d
         t = G $ group ((x', (False, 1)) :
                        mInverse (divide ci (omit i t0)))
         r' = eliminate x t r
-        t0' = (x', (False, ci)) : modulo ci t0
+        t0' = (x', (False, ci)) : modulo ci (omit i t0)
 
 eliminate :: Id -> Term -> IdMap -> IdMap
 eliminate x t r =
