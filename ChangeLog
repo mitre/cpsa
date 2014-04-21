@@ -1,3 +1,12 @@
+2014-04-21  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/DiffieHellman/Algebra.hs (agSolve): Added missing omit
+	when generating new equation.
+
+	* src/CPSA/DiffieHellman/Algebra.hs (genVars): Removed code that
+	conditionally generates new variables because the condition was
+	not reliable.
+
 2014-03-07  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/DiffieHellman/Algebra.hs: Changed the sort structure
