@@ -288,8 +288,9 @@ macro's argument list. When two macros definitions are applicable, the
 last definition takes precedence. The <code>cpsa</code> program omits
 macro definitions from its output.</p>
 
-<p>After expanding a list, elements of the list of the form (^ ...)
-  are spliced into the output.  Thus <code>(a ^(b c) d)</code> becomes
+<p>After expanding a list, elements of the list of the
+  form <code>(^</code> ...<code>)</code> are spliced into the output.
+  Thus <code>(a ^(b c) d)</code> becomes
   <code>(a b c d)</code> after macro expansion.</p>
 
 <p>A source file can be included within another with the top-level
