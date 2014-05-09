@@ -106,7 +106,7 @@ expandAll macs sexpr =
         L pos xs ->             -- Expand elements of list
             do
               xs <- mapM (expandAll macs) xs
-              return (L pos xs)
+              return (L pos (splice xs))
         _ -> return sexpr
 
 -- Expand one S-expression limiting the number of expansions.
@@ -145,3 +145,14 @@ subst env sexpr@(S _ sym) =
 subst env (L pos sexprs) =
     L pos (map (subst env) sexprs)
 subst _ sexpr = sexpr
+
+-- Splice sexprs that start with splice symbol.  The splice symbol is ^.
+
+splice :: [SExpr Pos] -> [SExpr Pos]
+splice [] = []
+splice ((L _ (S _ "^":xs)):ys) =
+   loop xs ys
+   where
+     loop [] ys = splice ys
+     loop (x:xs) ys = x:(loop xs ys)
+splice (x:xs) = x:splice xs

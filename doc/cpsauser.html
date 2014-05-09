@@ -272,20 +272,26 @@ of <code>mesg</code>.</p>
 
 <h3>Macros and Includes</h3>
 
-<p>After reading the input, <code>cpsa</code> expands macros before in analyzing
+<p>After reading the input, <code>cpsa</code> expands macros before analyzing
 the results. A macro definition is a top-level form.</p>
 
 <blockquote>
   <pre>(defmacro (NAME ARG*) BODY)</pre>
 </blockquote>
 
-<p>The <code>cpsa</code> program expands all calls to macros in non-macro defining
-S-expressions using the macros that have been defined previously. A macro
-definition can be used to expand a call if the first element of a list matches
-the name of the macro, and the length of the remaining elements in the list
-matches the length of the macro's argument list. When two macros definitions
-are applicable, the last definition takes precedence. The <code>cpsa</code> program
-omits macro definitions from its output.</p>
+<p>The <code>cpsa</code> program expands all calls to macros in
+non-macro defining S-expressions using the macros that have been
+defined previously. A macro definition can be used to expand a call if
+the first element of a list matches the name of the macro, and the
+length of the remaining elements in the list matches the length of the
+macro's argument list. When two macros definitions are applicable, the
+last definition takes precedence. The <code>cpsa</code> program omits
+macro definitions from its output.</p>
+
+<p>After expanding a list, elements of the list of the
+  form <code>(^</code> ...<code>)</code> are spliced into the output.
+  Thus <code>(a ^(b c) d)</code> becomes
+  <code>(a b c d)</code> after macro expansion.</p>
 
 <p>A source file can be included within another with the top-level
 include form,</p>
