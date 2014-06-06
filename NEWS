@@ -1,5 +1,17 @@
 CPSA NEWS -- history of user-visible changes.
 
+* Changes in version 2.3.4
+
+** Splicing added to macros
+
+   The macro expander supports splicing.  The splicing character is
+   '^'.  Example: (a ^(b c) d) becomes (a b c d) after macro
+   expansion.
+
+** Diffie-Hellman algebra is disabled
+   The implementation has never worked well enough to be anything but
+   experimental, so it is now enabled via a compile-time switch.
+
 * Changes in version 2.3.3
 
 ** Thinning has replaced pruning
