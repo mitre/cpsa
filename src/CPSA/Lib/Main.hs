@@ -22,6 +22,14 @@ import CPSA.Lib.Reduction
 import qualified CPSA.Basic.Algebra
 import qualified CPSA.DiffieHellman.Algebra
 
+-- Compile time switches for expermentation.
+
+-- Allow users to try experimental Diffie-Hellman algebra?
+useDiffieHellman :: Bool
+useDiffieHellman = False -- True
+
+-- Load default options
+
 -- Default limit on the number of steps used to solve one problem.
 defaultStepLimit :: Int
 defaultStepLimit = optLimit defaultOptions
@@ -84,9 +92,13 @@ openInput _ =
 
 -- Algebra specific section
 
--- Algebra names
+-- Algebra names -- omit Diffie-Hellman for releases until it works
 algs :: [String]
-algs = [CPSA.Basic.Algebra.name, CPSA.DiffieHellman.Algebra.name]
+algs =
+  if useDiffieHellman then
+    [CPSA.Basic.Algebra.name, CPSA.DiffieHellman.Algebra.name]
+  else
+    [CPSA.Basic.Algebra.name]
 
 -- Select the algebra and go.
 select :: [String] -> Maybe (SExpr Pos) -> Options -> [SExpr Pos] -> IO ()

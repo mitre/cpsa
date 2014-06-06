@@ -1,3 +1,14 @@
+2014-06-06  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 2.3.4
+
+	* doc/cpsauser.html:  Commented out Diffie-Hellman algebra
+	description.
+
+	* src/CPSA/Lib/Main.hs (useDiffieHellman): Added a compile time
+	switch that is used to disable the Diffie-Hellman algebra in a
+	release.
+
 2014-04-30  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Lib/Expand.hs:  Added splicing to the macro expander.
