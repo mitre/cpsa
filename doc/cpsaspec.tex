@@ -2074,12 +2074,12 @@ the inference system is all one needs to define, and that which positions
 are carried, which are protected, and which sorts are atoms can be defined
 in terms of the inferences available.
 
-\chapter{Shape Analysis and First-Order Logic}\label{chp:logic}
+\chapter{Shape Analysis Sentences}\label{chp:logic}
 
 For each point-of-view skeleton and its shapes found by {\cpsa}, there
 is a formula in the language of order-sorted first-order logic called
 a \index{shape analysis sentence}\emph{shape analysis sentence,} often
-shortened to a shape sentence~\cite{ramsdell12}.  The sentence has a
+shortened to a shape sentence.  The sentence has a
 special form,
 $\all{X}(\Psi\supset\bigvee_i\some{Y_i}(\Delta_i\wedge\Phi_i))$,
 where~$\Psi$ and~$\Phi_i$ are conjunctions of atomic formulas and~$X$
@@ -2094,7 +2094,9 @@ An interpretation of a shape sentence is a skeleton.  If {\cpsa} finds
 all of the shapes and the homomorphisms associated with a
 point-of-view skeleton, the analysis' shape sentence is satisfied in
 all realized skeletons.  Shape sentences are closely related to
-security goals~\cite{guttman09}, and motivated by that work.
+security goals~\cite{guttman09}, and were motivated by that work.
+This material was extracted from~\cite{ramsdell12}, the paper that
+introduced shape analysis sentences.
 
 \section{Shape Formulas}
 
