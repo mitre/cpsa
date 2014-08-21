@@ -51,8 +51,13 @@ href="#cpsaannotations"><code>cpsaannotations</code></a> program uses protocol
 annotations to annotate shapes and generate protocol soundness obligations. The
 <a href="#cpsaparameters"><code>cpsaparameters</code></a> program detects some
 specification errors by performing a data flow analysis on protocol roles. The
-<a href="#cpsapp"><code>cpsapp</code></a> program pretty prints its input using a
-CPSA specific algorithm.</p>
+<a href="#cpsapp"><code>cpsapp</code></a> program pretty prints its
+input using a CPSA specific algorithm.  It also translates
+S-Expressions into JavaScript Object Notation
+(<a href="http://json.org">JSON</a>) to ease processing in other
+languages.  The
+<a href="#cpsajson"><code>cpsajson</code></a> program translates JSON
+encoded CPSA into CPSA S-Expressions.</p>
 
 <p>The input syntax is essentially the same as the output syntax. A Lisp aware
 editor will pretty print input, and the output is pretty printed. We use Emacs'
@@ -270,7 +275,7 @@ of <code>mesg</code>.</p>
 
 <p>The axioms for Diffie-Hellman values are the usual ones for an
   Abelian group for terms of sort <code>expr</code>.  For terms of
-  sort <code>base</code>, <code>(exp h (one)) = h</code> and 
+  sort <code>base</code>, <code>(exp h (one)) = h</code> and
 <code>(exp (exp h x) y) = (exp h (mul x y)</code>.</p>
 
 -->
@@ -613,8 +618,10 @@ with <code>cpsa</code> to preprocess input that contains macro definitions.</p>
 
 <h2 id="cpsapp">Pretty Printing</h2>
 
-<p>The <code>cpsapp</code> program program pretty prints its input using the CPSA
-specific algorithm.</p>
+<p>The <code>cpsapp</code> program program pretty prints its input
+using the CPSA specific algorithm.  It also translates S-Expressions
+into JavaScript Object Notation (<a href="http://json.org">JSON</a>)
+to ease processing in other languages.</p>
 
 <h3>Usage</h3>
 
@@ -629,6 +636,23 @@ Usage: cpsapp [OPTIONS] [FILE]
   -v       --version      show version number</pre>
 </blockquote>
 
+<h2 id="cpsajson">JSON to S-Expression Translation</h2>
+
+<p>The <code>cpsajson</code> program translates JSON encoded CPSA into
+CPSA S-Expressions.</p>
+
+<h3>Usage</h3>
+
+<blockquote>
+  <pre>$ cpsajson -h
+Usage: cpsajson [OPTIONS] [FILE]
+  -o FILE  --output=FILE  output FILE
+  -m INT   --margin=INT   set output margin (default 72)
+  -i       --infix        output uses infix notation
+  -h       --help         show help message
+  -v       --version      show version number</pre>
+</blockquote>
+
 <h2>S-expressions</h2>
 
 <p>The S-expressions used are restricted so that most dialects of Lisp
@@ -636,7 +660,7 @@ can read them, and characters within symbols and strings never need
 quoting. Every list is proper. An atom is either a symbol, an integer,
 or a string. The characters that make up a symbol are the letters, the
 digits, and the special characters in
-"<code>-*/&lt;=&gt;!?:$%_&amp;~^</code>". A symbol may not begin with a
+"<code>+-*/&lt;=&gt;!?:$%_&amp;~^</code>". A symbol may not begin with a
 digit or a sign followed by a digit. The characters that make up a
 string are the printing characters omitting double quote and
 backslash. Double quotes delimit a string. A comment begins with a

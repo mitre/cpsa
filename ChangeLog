@@ -1,3 +1,10 @@
+2014-08-21  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/JSON/Main.hs: Added the program cpsajson that
+	translates JSON encoded CPSA into CPSA S-Expressions.  It expects
+	the JSON input to follow the conventions of the JSON produced by
+	the cpsapp program when given the -j option.
+
 2014-06-06  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* cpsa.cabal (Version): Tagged as version 2.3.4
