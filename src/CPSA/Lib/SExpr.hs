@@ -246,7 +246,10 @@ numOrSym p l c pos s =
         Nothing ->
             symbol p l c pos s
         Just ch | isDigit ch ->
-            number p l c pos s
+            if s == "+" then
+              number p l c pos []
+            else
+              number p l c pos s
         Just _ ->
             symbol p l c pos s
 

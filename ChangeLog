@@ -5,6 +5,10 @@
 	the JSON input to follow the conventions of the JSON produced by
 	the cpsapp program when given the -j option.
 
+	* src/CPSA/Lib/SExpr.hs (numOrSym): Enabled parsing a number with
+	a plus sign by removing the sign before translating the string of
+	digits into a number.
+
 2014-06-06  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* cpsa.cabal (Version): Tagged as version 2.3.4
