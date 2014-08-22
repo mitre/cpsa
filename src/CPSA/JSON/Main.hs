@@ -9,7 +9,7 @@
 module Main (main) where
 
 import Numeric
-import Data.Char (isSpace, isDigit, isAlphaNum, isPrint)
+import Data.Char (isSpace, isDigit, isPrint)
 import System.IO
 import System.Environment
 import System.Console.GetOpt
@@ -235,9 +235,9 @@ scan h =
 skip :: Handle -> Char -> IO (Token)
 skip h ',' = scan h             -- Treat comma as white space
 skip h ch | isSpace ch  = scan h
-skip h '[' =
+skip _ '[' =
     return Lparen
-skip h ']' =
+skip _ ']' =
     return Rparen
 skip h ch =
     atom h ch
@@ -248,7 +248,7 @@ atom h '"' = string h []
 atom h '+' = sign h True
 atom h '-' = sign h False
 atom h ch | isDigit ch = number h [ch]
-atom h _ = abort "Bad char in atom"
+atom _ _ = abort "Bad char in atom"
 
 -- Scan a quoted string of characters
 string :: Handle -> String -> IO (Token)

@@ -1,5 +1,14 @@
 CPSA NEWS -- history of user-visible changes.
 
+* Changes in version 2.3.5
+
+** Added a translator from JSON to CPSA S-Expressions
+
+   When given the -j option, the program cpsapp translates
+   S-Expressions into JavaScript Object Notation (JSON) to ease
+   processing in other languages.  The new program cpsajson translates
+   JSON encoded CPSA into CPSA S-Expressions.
+
 * Changes in version 2.3.4
 
 ** Splicing added to macros
