@@ -1,3 +1,8 @@
+2014-08-23  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/readcpsajson.py (readcpsajson): Added a reader in Python for
+	JSON produced by CPSA's pretty printer program cpsapp -j.
+
 2014-08-21  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/JSON/Main.hs: Added the program cpsajson that
