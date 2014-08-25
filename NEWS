@@ -9,6 +9,10 @@ CPSA NEWS -- history of user-visible changes.
    processing in other languages.  The new program cpsajson translates
    JSON encoded CPSA into CPSA S-Expressions.
 
+   An example of using JSON for input and output in Python is in
+   src/split.pl.  This program copies the skeletons in a CPSA source
+   file into separate files.
+
 * Changes in version 2.3.4
 
 ** Splicing added to macros
