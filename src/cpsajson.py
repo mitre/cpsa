@@ -5,7 +5,7 @@ import json
 
 # Read a file containing a sequence of json objects produced by cpsa's
 # pretty printer.  Assumes each object is terminated by a blank line.
-def readcpsajson(f):
+def load(f):
     xs = []                     # List of objects read
     buf = ""
     while True:
