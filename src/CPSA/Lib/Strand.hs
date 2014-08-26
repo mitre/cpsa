@@ -188,8 +188,7 @@ bldInstance role trace gen =
             loop c c' env
       loop _ _ _ = []
 
-makeInstance :: Algebra t p g s e c => Role t -> e ->
-                Trace t -> Instance t e
+makeInstance :: Role t -> e -> Trace t -> Instance t e
 makeInstance role env trace =
     Instance { role = role,
                env = env,
@@ -602,11 +601,11 @@ pairWellOrdered (n0, n1) =
 
 -- The terms used in the strands in this preskeleton.
 -- Should this return a set, or a multiset?
-kterms :: Algebra t p g s e c => Preskel t g s e -> [t]
+kterms :: Eq t => Preskel t g s e -> [t]
 kterms k = iterms (insts k)
 
 -- The terms used in a list of instances.
-iterms :: Algebra t p g s e c => [Instance t e] -> [t]
+iterms :: Eq t => [Instance t e] -> [t]
 iterms insts =
     foldl addSTerms [] insts
     where
