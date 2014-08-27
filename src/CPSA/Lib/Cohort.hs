@@ -94,7 +94,7 @@ unrealized k =
             Nothing -> (acc, ns)
             Just t ->
                 let ns' = addSendingBefore ns n
-                    ts = S.map (evtTerm . event) ns' in
+                    ts = termsInNodes ns' in
                 case derivable a ts t of
                   True -> (acc, ns')
                   False -> (graphNode n : acc, ns')
@@ -111,6 +111,10 @@ addSendingBefore s n =
           case outbnd $ event n of
             Nothing -> s
             Just _ -> S.insert n s
+
+termsInNodes :: Algebra t p g s e c => Set (Vertex t e) -> Set t
+termsInNodes ns =
+  S.map (evtTerm . event) ns
 
 -- Returns that atoms that cannot be guess when determining if a
 -- term is derivable from some other terms, and the atoms that
@@ -170,7 +174,7 @@ solved ct pos eks escape k (s, p) subst =
       mappedTargetTerms = S.map (substitute subst) (targetTerms ct escape)
       targetTermsDiff = S.difference (targetTerms ct' escape') mappedTargetTerms
       vs = addSendingBefore S.empty v
-      ts = S.map (evtTerm . event) vs -- Outbound predecessors
+      ts = termsInNodes  vs     -- Outbound predecessors
       (a, _) = avoid k
 
 maybeSolved :: Algebra t p g s e c => t -> p -> [t] -> Set t ->
@@ -244,7 +248,7 @@ findTest mode k u a =
             Nothing -> loop nodes
             Just t ->
                 let ns = addSendingBefore S.empty n
-                    ts = S.map (evtTerm . event) ns -- Public messages
+                    ts = termsInNodes ns    -- Public messages
                     der = derivable a ts in -- Derivable before node
                 if der t then
                     loop nodes

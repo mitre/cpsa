@@ -224,7 +224,7 @@ addIvars s i =
 listenerTerm :: Algebra t p g s e c => Instance t e -> Maybe t
 listenerTerm inst =
     case rname (role inst) of
-      "" -> Just $ evtTerm (trace inst !! 0) -- Get first term in trace
+      "" -> inbnd (trace inst !! 0) -- Get first term in trace
       _ -> Nothing              -- Not a listener strand
 
 -- Nodes, Pairs, and Graphs
@@ -607,10 +607,7 @@ kterms k = iterms (insts k)
 -- The terms used in a list of instances.
 iterms :: Eq t => [Instance t e] -> [t]
 iterms insts =
-    foldl addSTerms [] insts
-    where
-      addSTerms ts s =
-          foldl (flip $ adjoin . evtTerm) ts (trace s)
+  L.nub [evtTerm evt | i <- insts, evt <- trace i]
 
 -- The node orderings form an acyclic order if there are no cycles.
 -- Use depth first search to detect cycles.  A graph with no node with
