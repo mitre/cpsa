@@ -66,9 +66,9 @@ decls_as_pairs([d(Sort, Vars)|Decls], VarMap) :-
 
 decl_as_pairs([], _, Decls, VarMap) :-
     decls_as_pairs(Decls, VarMap).
-decl_as_pairs(_, mesg, Decls, VarMap) :-
+decl_as_pairs([Var|Vars], mesg, Decls, [(Var, Var)|VarMap]) :-
     !,
-    decls_as_pairs(Decls, VarMap).
+    decl_as_pairs(Vars, mesg, Decls, VarMap).
 decl_as_pairs([Var|Vars], Sort, Decls, [(Var, Term)|VarMap]) :-
     Term =.. [Sort, Var],
     decl_as_pairs(Vars, Sort, Decls, VarMap).

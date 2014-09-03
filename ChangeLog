@@ -1,3 +1,8 @@
+2014-09-02  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/unsorted.pl (decl_as_pairs):  Fixed bug in the case of
+	variables of sort mesg.
+
 2014-08-25  John D.  Ramsdell  <ramsdell@mitre.org>
 
 	* src/split.py: Added the skeleton split program that copies the
