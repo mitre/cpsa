@@ -1,4 +1,4 @@
-(comment "CPSA 2.3.4")
+(comment "CPSA 2.3.5")
 (comment "All input read from weird.scm")
 
 (defprotocol weird basic

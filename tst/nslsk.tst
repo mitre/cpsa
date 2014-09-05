@@ -1,6 +1,6 @@
 (herald "Needham-Schroeder-Lowe Protocol with symmetric encryption")
 
-(comment "CPSA 2.3.4")
+(comment "CPSA 2.3.5")
 (comment "All input read from nslsk.scm")
 
 (defprotocol nslsk basic

@@ -1,6 +1,6 @@
 (herald "Example 1.3 from 1983 Dolev-Yao Paper")
 
-(comment "CPSA 2.3.4")
+(comment "CPSA 2.3.5")
 (comment "All input read from dy.lsp")
 
 (defprotocol dy basic

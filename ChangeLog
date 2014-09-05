@@ -1,3 +1,8 @@
+2014-09-05  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 2.3.5
+
+
 2014-09-02  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/unsorted.pl (decl_as_pairs):  Fixed bug in the case of
