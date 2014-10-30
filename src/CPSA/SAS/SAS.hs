@@ -8,6 +8,7 @@
 
 module CPSA.SAS.SAS (Prot, Preskel, State, sas) where
 
+import Control.Monad (foldM)
 import qualified Data.List as L
 import qualified Data.Map as M
 import CPSA.Lib.CPSA
@@ -177,14 +178,20 @@ type VM t = M.Map Node t
 type GVM g t = (g, VM t)
 
 addVar :: (Algebra t p g s e c, Monad m) =>
-          Pos -> GVM g t -> Node -> m (GVM g t, t)
+          Pos -> GVM g t -> Node -> m (GVM g t)
 addVar pos (gen, vm) n =
   case M.lookup n vm of
-    Just t -> return ((gen, vm), t)
+    Just _ -> return (gen, vm)
     Nothing ->
       do
         (gen, t) <- makeVar pos gen root -- Make the variable
-        return ((gen, M.insert n t vm), t)
+        return (gen, M.insert n t vm)
+
+lookup :: Monad m => Node -> VM t -> m t
+lookup n vm =
+  case M.lookup n vm of
+    Just t -> return t
+    Nothing -> fail ("SAS.lookup: cannot find " ++ show n)
 
 -- Find a protocol
 
@@ -225,11 +232,12 @@ data Preskel t g c = Preskel
       isSkeleton :: Bool,
       isShape :: !Bool,         -- Always looked at, so make it strict
       homomorphisms :: [SExpr Pos], -- Loaded later
+      varmap :: VM t,
       kctx :: c }
 
 loadPreskel :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g c ->
                g -> c -> [SExpr Pos] -> m (Preskel t g c)
-loadPreskel _ prot gen ctx (S _ _ : L _ (S _ "vars" : vars) : xs) =
+loadPreskel pos prot gen ctx (S _ _ : L _ (S _ "vars" : vars) : xs) =
     do
       (gen, kvars) <- loadVars gen vars
       insts <- loadInsts prot kvars [] xs
@@ -238,7 +246,8 @@ loadPreskel _ prot gen ctx (S _ _ : L _ (S _ "vars" : vars) : xs) =
       nons <- loadBaseTerms kvars (assoc nonOrigKey xs)
       uniqs <- loadBaseTerms kvars (assoc uniqOrigKey xs)
       origs <- loadOrigs kvars heights (assoc origsKey xs)
-      let kctx = addToContext ctx kvars
+      (gen, varmap) <- makeVarmap pos gen heights orderings origs
+      let kctx = addToContext ctx (kvars ++ M.elems varmap)
       return (Preskel { protocol = prot,
                         kgen = gen,
                         kvars = kvars,
@@ -250,6 +259,7 @@ loadPreskel _ prot gen ctx (S _ _ : L _ (S _ "vars" : vars) : xs) =
                         isSkeleton = not $ hasKey preskeletonKey xs,
                         isShape = hasKey shapeKey xs,
                         homomorphisms = assoc mapsKey xs,
+                        varmap = varmap,
                         kctx = kctx })
 loadPreskel pos _ _ _ _ = fail (shows pos "Malformed skeleton")
 
@@ -406,6 +416,21 @@ loadMap _ _ x = fail (shows (annotation x) "Malformed map")
 loadPerm :: Monad m => SExpr Pos -> m Int
 loadPerm (N _ n) | n >= 0 = return n
 loadPerm x = fail (shows (annotation x) "Expecting a natural number")
+
+makeVarmap :: (Algebra t p g s e c, Monad m) => Pos ->
+              g -> Strands -> [Pair] -> [(t, Node)] -> m (GVM g t)
+makeVarmap pos g heights orderings origs =
+  do
+    gvm <- foldM fht (g, M.empty) (zip [0..] heights)
+    gvm <- foldM fodr gvm orderings
+    foldM forg  gvm origs
+  where
+    fht gvm (s, h) = addVar pos gvm (s, h - 1)
+    fodr gvm (n0, n1) =
+      do
+        gvm <- addVar pos gvm n0
+        addVar pos gvm n1
+    forg gvm (_, n) = addVar pos gvm n
 
 -- Association lists
 
