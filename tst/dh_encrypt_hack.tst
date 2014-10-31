@@ -1,6 +1,6 @@
 (herald dhencrypt (algebra basic))
 
-(comment "CPSA 2.3.5")
+(comment "CPSA 2.4.0")
 (comment "All input read from dh_encrypt_hack.scm")
 
 (defprotocol dhencrypt basic

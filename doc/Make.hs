@@ -152,7 +152,7 @@ shapesRule =
            inputExt = cpsaExt,
            outputExt = shapesRoot ++ cpsaExt }
 
--- Sas Rule
+-- SAS Rule
 
 sas :: FilePath -> IO ()
 sas root =

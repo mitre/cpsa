@@ -657,4 +657,3 @@ imply :: SExpr () -> SExpr () -> SExpr ()
 imply (L () [S () "and"]) consequence = consequence
 imply antecedent consequence =
     L () [S () "implies", antecedent, consequence]
-

@@ -1,6 +1,6 @@
 -- A simple, CPSA specific make system
 
-module Make (cpsa, shapes, logic, annos, params, cleanse, get, set,
+module Make (cpsa, shapes, sas, annos, params, cleanse, get, set,
              build, clean, roots) where
 
 {- Place a copy of this source file in the directory used to store
@@ -23,10 +23,10 @@ For a shapes only version of the analysis, type:
 
 If successful, the shapes are in the file prob_shapes.xhtml.
 
-*Make> logic "prob"
+*Make> sas "prob"
 
 If successful, the shape analysis sentences are in the file
-prob_logic.text.
+prob_sas.text.
 
 When the protocol is annotated with rely-guarantee formulas, type:
 
@@ -152,19 +152,19 @@ shapesRule =
            inputExt = cpsaExt,
            outputExt = shapesRoot ++ cpsaExt }
 
--- Logic Rule
+-- SAS Rule
 
-logic :: FilePath -> IO ()
-logic root =
+sas :: FilePath -> IO ()
+sas root =
     do
       cpsaBasic root            -- Run CPSA if need be
-      make logicRule root
+      make sasRule root
 
-logicRule :: Rule
-logicRule =
-    Rule { prog = "cpsalogic",
+sasRule :: Rule
+sasRule =
+    Rule { prog = "cpsasas",
            inputExt = cpsaExt,
-           outputExt = logicExt }
+           outputExt = sasExt }
 
 -- Annotations Rule
 
@@ -203,7 +203,7 @@ cleanse root =
       rm $ root ++ graphExt
       rm $ root ++ shapesRoot ++ cpsaExt
       rm $ root ++ shapesRoot ++ graphExt
-      rm $ root ++ logicExt
+      rm $ root ++ sasExt
       rm $ root ++ annosRoot ++ cpsaExt
       rm $ root ++ annosRoot ++ graphExt
       rm $ root ++ paramsRoot ++ cpsaExt
@@ -219,8 +219,8 @@ cpsaExt = ".txt"
 shapesRoot :: String
 shapesRoot = "_shapes"
 
-logicExt :: String
-logicExt = "_logic.text"
+sasExt :: String
+sasExt = "_sas.text"
 
 annosRoot :: String
 annosRoot = "_annotations"

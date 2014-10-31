@@ -1,3 +1,12 @@
+2014-10-31  John D. Ramsdell  <ramsdell@.mitre.org>
+
+	* cpsasas: Added a program that produces shape analysis sentences
+	using the goal language used with protocol transformations.  This
+	language is superior to the one used by the cpsalogic program.
+
+	* cpsalogic: Removed this program as it has been replaced with
+	cpsasas.
+
 2014-09-05  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* cpsa.cabal (Version): Tagged as version 2.3.5

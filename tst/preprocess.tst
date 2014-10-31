@@ -1,6 +1,6 @@
 (herald "Pre-processing test example: modified NS with two responders")
 
-(comment "CPSA 2.3.5")
+(comment "CPSA 2.4.0")
 (comment "All input read from preprocess.scm")
 
 (defprotocol ns basic

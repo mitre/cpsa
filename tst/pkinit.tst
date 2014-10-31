@@ -1,6 +1,6 @@
 (herald "Kerberos PK init")
 
-(comment "CPSA 2.3.5")
+(comment "CPSA 2.4.0")
 (comment "All input read from pkinit.scm")
 
 (defprotocol pkinit basic

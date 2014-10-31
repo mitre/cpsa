@@ -1,6 +1,6 @@
 (herald "DH Hack" (bound 15))
 
-(comment "CPSA 2.3.5")
+(comment "CPSA 2.4.0")
 (comment "All input read from DH_hack.scm")
 (comment "Strand count bounded at 15")
 
