@@ -2,7 +2,7 @@
 
 %% CPSA tools in Prolog
 
-%% Translates the output of the cpsalogic program into the syntax of
+%% Translates the output of the cpsasas program into the syntax of
 %% Prover9.
 
 %% Known to work in SWI-Prolog, but not with GNU Prolog.
@@ -18,7 +18,7 @@
 :- use_module(pp).
 :- use_module(sexpr).
 
-%% prover9(+In, +Out) Translates cpsalogic program output in file In,
+%% prover9(+In, +Out) Translates cpsasas program output in file In,
 %% into the syntax of Prover9 and places it in file Out.
 prover9(In, Out) :-
 	sexpr:read_sexpr_list(In, Forms),

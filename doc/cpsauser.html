@@ -44,7 +44,7 @@ The <a
 href="#cpsafiff"><code>cpsadiff</code></a> program compares CPSA output
   files S-expression by S-expression, and prints the first skeleton
   that differs.
-The <a href="#cpsalogic"><code>cpsalogic</code></a> program logical
+The <a href="#cpsasas"><code>cpsasas</code></a> program logical
   formula that can be used to ensure security goals are achieved.
 The <a
 href="#cpsaannotations"><code>cpsaannotations</code></a> program uses protocol
@@ -501,9 +501,9 @@ Usage: cpsashapes [OPTIONS] [FILE]
   -v       --version      show version number</pre>
 </blockquote>
 
-<h2 id="cpsalogic">Formula Extraction</h2>
+<h2 id="cpsasas">Formula Extraction</h2>
 
-<p>The <code>cpsalogic</code> program extracts a formula in the language
+<p>The <code>cpsasas</code> program extracts a formula in the language
   of order-sorted first-order logic for each problem and its shapes
   from a CPSA run. The formula is called a shape analysis
   sentence. The formula is satisfied in all realized skeletons when
@@ -512,8 +512,8 @@ Usage: cpsashapes [OPTIONS] [FILE]
 <h3>Usage</h3>
 
 <blockquote>
-  <pre>$ cpsalogic -h
-Usage: cpsalogic [OPTIONS] [FILE]
+  <pre>$ cpsasas -h
+Usage: cpsasas [OPTIONS] [FILE]
   -o FILE    --output=FILE     output FILE
   -m INT     --margin=INT      set output margin (default 72)
   -a STRING  --algebra=STRING  algebra (default basic)

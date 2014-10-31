@@ -7,7 +7,7 @@ TSTS	:= $(patsubst %.scm,%.txt,$(wildcard *.scm)) \
 CPSA	= ../dist/build/cpsa/cpsa$(EXE)
 DIFF	= ../dist/build/cpsadiff/cpsadiff$(EXE)
 SHAPES	= ../dist/build/cpsashapes/cpsashapes$(EXE)
-LOGIC	= ../dist/build/cpsalogic/cpsalogic$(EXE)
+SAS	= ../dist/build/cpsasas/cpsasas$(EXE)
 ANNOTATIONS = ../dist/build/cpsaannotations/cpsaannotations$(EXE)
 GRAPH	= ../dist/build/cpsagraph/cpsagraph$(EXE)
 CPSAFLAGS = +RTS -M512m -RTS
@@ -29,8 +29,8 @@ CPSAFLAGS = +RTS -M512m -RTS
 	$(SHAPES) $(SHAPESFLAGS) -o $@ $<
 
 # Extract shape analysis sentences
-%_logic.text:	%.txt
-	$(LOGIC) $(LOGICFLAGS) -o $@ $<
+%_sas.text:	%.txt
+	$(SAS) $(SASFLAGS) -o $@ $<
 
 # Annotate shapes
 %_annotations.txt:	%_shapes.txt

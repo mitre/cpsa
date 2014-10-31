@@ -16,8 +16,8 @@
 	cpsashapes $(SHAPESFLAGS) -o $@ $<
 
 # Extract shape analysis sentences
-%_logic.text:	%.txt
-	cpsalogic $(LOGICFLAGS) -o $@ $<
+%_sas.text:	%.txt
+	cpsasas $(SASFLAGS) -o $@ $<
 
 # Annotate shapes
 %_annotations.txt:	%_shapes.txt
