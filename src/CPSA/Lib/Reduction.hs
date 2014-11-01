@@ -341,15 +341,15 @@ commentPreskel lk seen unrealized shape msg =
     addKeyValues "unrealized" (map displayNode $ L.sort unrealized) $
     condAddKeyValues "shape" shape [] $
     -- Structure preserving maps
-    -- Added for cpsalogic program
+    -- Added for cpsasas program
     condAddKeyValues "maps" shape (maps k) $
     -- Nodes of origination
-    -- Added for cpsalogic program
+    -- Added for cpsasas program
     condAddKeyValues "origs" (starter k || shape) (origs k) $
     -- Messages
     case msg of
       "" -> []
-      -- Preskeleton key added for cpsalogic program
+      -- Preskeleton key added for cpsasas program
       "Not a skeleton" -> addKeyValues "preskeleton" [] [comment msg]
       _ -> [comment msg]
     where

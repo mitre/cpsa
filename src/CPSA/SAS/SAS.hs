@@ -47,8 +47,11 @@ loadPOV _ _ ps (L pos (S _ "defskeleton" : xs)) =
       p <- findProt pos ps xs
       k <- loadPreskel pos p (pgen p) emptyContext xs
       case (isSkeleton k, isShape k) of
-        (True, False) -> return ((ps, [k]), Nothing) -- Found POV
-        _ -> return ((ps, []), Nothing)              -- Not POV
+        (True, False) ->
+          do                    -- Found POV
+            origCheck pos k     -- Ensure uniqs originate
+            return ((ps, [k]), Nothing)
+        _ -> return ((ps, []), Nothing) -- Not POV
 loadPOV _ _ ps _ = return ((ps, []), Nothing)
 
 loadOtherPreskel :: (Algebra t p g s e c, Monad m) => String -> g ->
@@ -65,9 +68,24 @@ loadOtherPreskel _ _ ps ks (L pos (S _ "defskeleton" : xs)) =
       let c = kctx (last ks)    -- distinct from the ones in the POV
       k <- loadPreskel pos p g c xs
       case isShape k of
-        True -> return ((ps, k : ks), Nothing) -- Found shape
+        True ->
+          do                    -- Found shape
+            origCheck pos k     -- Ensure uniqs originate
+            return ((ps, k : ks), Nothing)
         False -> return ((ps, ks), Nothing) -- Found intermediate skeleton
 loadOtherPreskel _ _ ps ks _ = return ((ps, ks), Nothing)
+
+-- Ensure every uniq originates
+origCheck :: (Algebra t p g s e c, Monad m) =>
+             Pos -> Preskel t g c -> m ()
+origCheck pos k =
+  mapM_ f (uniqs k)
+  where
+    f t | any (\(t', _) -> t == t') (origs k) = return ()
+        | otherwise =
+      fail (shows pos "Uniq " ++ u ++ " has no origination point")
+      where
+        u = pp 0 0 (displayTerm (kctx k) t)
 
 -- Load a protocol
 
@@ -227,7 +245,8 @@ data Preskel t g c = Preskel
       insts :: [Instance t c],
       orderings :: [Pair],
       nons :: [t],
-      uniqs :: [(t, Node)],
+      uniqs :: [t],
+      origs :: [(t, Node)],
       isSkeleton :: Bool,
       isShape :: !Bool,         -- Always looked at, so make it strict
       homomorphisms :: [SExpr Pos], -- Loaded later
@@ -247,14 +266,14 @@ loadPreskel pos prot gen ctx (S _ _ : L _ (S _ "vars" : vars) : xs) =
       origs <- loadOrigs kvars heights (assoc origsKey xs)
       (gen, varmap) <- makeVarmap pos gen heights orderings origs
       let kctx = addToContext ctx (kvars ++ M.elems varmap)
-      origCheck pos kctx uniqs origs
       return (Preskel { protocol = prot,
                         kgen = gen,
                         kvars = kvars,
                         insts = insts,
                         orderings = orderings,
                         nons = nons,
-                        uniqs = origs,
+                        uniqs = uniqs,
+                        origs = origs,
                         isSkeleton = not $ hasKey preskeletonKey xs,
                         isShape = hasKey shapeKey xs,
                         homomorphisms = assoc mapsKey xs,
@@ -430,18 +449,6 @@ displayEq :: Algebra t p g s e c => c -> (t, t) -> SExpr ()
 displayEq ctx (x, y) =
     L () [S () "equal", displayTerm ctx x, displayTerm ctx y]
 
--- Ensure every uniq originates
-origCheck :: (Algebra t p g s e c, Monad m) =>
-             Pos -> c -> [t] -> [(t, Node)] -> m ()
-origCheck pos ctx uniqs origs =
-  mapM_ f uniqs
-  where
-    f t | any (\(t', _) -> t == t') origs = return ()
-        | otherwise =
-      fail (shows pos "Uniq " ++ u ++ " has no origination point")
-      where
-        u = pp 0 0 (displayTerm ctx t)
-
 -- Collect all the relevant nodes and make a variable for each one.
 makeVarmap :: (Algebra t p g s e c, Monad m) => Pos ->
               g -> Strands -> [Pair] -> [(t, Node)] -> m (GVM g t)
@@ -534,7 +541,7 @@ skel k =
               map (precForm k) (orderings k) ++
               sprecForms k ++
               map (unary "non" $ kctx k) (nons k) ++
-              map (uniqForm k) (uniqs k))
+              map (uniqForm k) (origs k))
 
 listMap :: ([SExpr ()] -> [SExpr ()]) -> [SExpr ()] -> [SExpr ()]
 listMap _ [] = []
@@ -583,16 +590,19 @@ precForm k (n, n') =
           displayNodeVar k n']
 
 -- Creates the atomic formulas used to describe the strand node orderings
+-- Must compute the transitive reduction of the within strand orderings
 sprecForms :: Algebra t p g s e c => Preskel t g c -> [SExpr ()]
 sprecForms k =
-    map (sprecForm k)
-    [((s, i), (s, i')) |
-     (s, i) <- n,
-     (s', i') <- n,
-     s == s',
-     i < i']
+    map (sprecForm k) ps
     where
-      n = M.keys $ varmap k
+      ns = M.keys $ varmap k    -- The set of nodes
+      ss = L.sort $ L.nub $ map fst ns -- The ordered set of strands
+      idx = [(s, is) | s <- ss,        -- The per strand indices
+                       let is = L.sort [i | (s', i) <- ns, s' == s]]
+      ps = concatMap f idx
+      f (_, []) = error "SAS.sprecForms: Bad index entry"
+      f (_, [_]) = []
+      f (s, i:i':is) = ((s, i), (s, i')):f(s, i':is)
 
 -- Creates the atomic formula used to describe a strand node ordering
 sprecForm :: Algebra t p g s e c => Preskel t g c -> Pair -> SExpr ()
