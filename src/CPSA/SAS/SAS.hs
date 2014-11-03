@@ -45,7 +45,7 @@ loadPOV name origin ps (L pos (S _ "defprotocol" : xs)) =
 loadPOV _ _ ps (L pos (S _ "defskeleton" : xs)) =
     do
       p <- findProt pos ps xs
-      k <- loadPreskel pos p (pgen p) emptyContext xs
+      k <- loadPreskel pos p (pgen p) xs
       case (isSkeleton k, isShape k) of
         (True, False) ->
           do                    -- Found POV
@@ -64,9 +64,8 @@ loadOtherPreskel name origin ps ks (L pos (S _ "defprotocol" : xs)) =
 loadOtherPreskel _ _ ps ks (L pos (S _ "defskeleton" : xs)) =
     do
       p <- findProt pos ps xs
-      let g = kgen (last ks)    -- Make sure vars in skeleton are
-      let c = kctx (last ks)    -- distinct from the ones in the POV
-      k <- loadPreskel pos p g c xs
+      let g = kgen (last ks)      -- Make sure vars in skeleton are
+      k <- loadPreskel pos p g xs -- distinct from the ones in the POV
       case isShape k of
         True ->
           do                    -- Found shape
@@ -85,7 +84,8 @@ origCheck pos k =
         | otherwise =
       fail (shows pos "Uniq " ++ u ++ " has no origination point")
       where
-        u = pp 0 0 (displayTerm (kctx k) t)
+        u = pp 0 0 (displayTerm ctx t)
+        ctx = addToContext emptyContext (kvars k)
 
 -- Load a protocol
 
@@ -250,12 +250,11 @@ data Preskel t g c = Preskel
       isSkeleton :: Bool,
       isShape :: !Bool,         -- Always looked at, so make it strict
       homomorphisms :: [SExpr Pos], -- Loaded later
-      varmap :: VM t,
-      kctx :: c }
+      varmap :: VM t }
 
 loadPreskel :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g c ->
-               g -> c -> [SExpr Pos] -> m (Preskel t g c)
-loadPreskel pos prot gen ctx (S _ _ : L _ (S _ "vars" : vars) : xs) =
+               g -> [SExpr Pos] -> m (Preskel t g c)
+loadPreskel pos prot gen (S _ _ : L _ (S _ "vars" : vars) : xs) =
     do
       (gen, kvars) <- loadVars gen vars
       insts <- loadInsts prot kvars [] xs
@@ -265,7 +264,6 @@ loadPreskel pos prot gen ctx (S _ _ : L _ (S _ "vars" : vars) : xs) =
       uniqs <- loadBaseTerms kvars (assoc uniqOrigKey xs)
       origs <- loadOrigs kvars heights (assoc origsKey xs)
       (gen, varmap) <- makeVarmap pos gen heights orderings origs
-      let kctx = addToContext ctx (kvars ++ M.elems varmap)
       return (Preskel { protocol = prot,
                         kgen = gen,
                         kvars = kvars,
@@ -277,9 +275,8 @@ loadPreskel pos prot gen ctx (S _ _ : L _ (S _ "vars" : vars) : xs) =
                         isSkeleton = not $ hasKey preskeletonKey xs,
                         isShape = hasKey shapeKey xs,
                         homomorphisms = assoc mapsKey xs,
-                        varmap = varmap,
-                        kctx = kctx })
-loadPreskel pos _ _ _ _ = fail (shows pos "Malformed skeleton")
+                        varmap = varmap})
+loadPreskel pos _ _ _ = fail (shows pos "Malformed skeleton")
 
 loadInsts :: (Algebra t p g s e c, Monad m) => Prot t g c ->
              [t] -> [Instance t c] -> [SExpr Pos] -> m [Instance t c]
@@ -416,22 +413,22 @@ loadOrig _ _ x =
 -- A homomorphism is a list of length two, a strand map as a list of
 -- natural numbers, and a substition.
 
+type Homo t = ([(t, t)], [(t, t)])
+
 loadMaps :: (Algebra t p g s e c, Monad m) => Preskel t g c ->
-            Preskel t g c -> [SExpr Pos] -> m [[SExpr ()]]
+            Preskel t g c -> [SExpr Pos] -> m [Homo t]
 loadMaps pov k maps =
     mapM (loadMap pov k) maps
 
 loadMap :: (Algebra t p g s e c, Monad m) => Preskel t g c ->
-            Preskel t g c -> SExpr Pos -> m [SExpr ()]
+            Preskel t g c -> SExpr Pos -> m (Homo t)
 loadMap pov k (L _ [L _ strandMap, L _ algebraMap]) =
     do
       perm <- mapM loadPerm strandMap -- Load the strand map
       let nh = map (loadNodeEq k perm) (M.assocs $ varmap pov)
-      let nodeEqs = map (displayEq $ kctx k) nh
       -- Load the algebra part of the homomorphism
       ah <- mapM (loadMaplet (kvars k) (kvars pov)) algebraMap
-      let algEqs = map (displayEq $ kctx k) ah
-      return (nodeEqs ++ algEqs)
+      return (nh, ah)
 loadMap _ _ x = fail (shows (annotation x) "Malformed map")
 
 loadPerm :: Monad m => SExpr Pos -> m Int
@@ -444,10 +441,6 @@ loadNodeEq :: Algebra t p g s e c => Preskel t g c ->
               [Int] -> (Node, t) -> (t, t)
 loadNodeEq k perm ((s, i), v) =
   (v, nlookup (perm !! s, i) (varmap k))
-
-displayEq :: Algebra t p g s e c => c -> (t, t) -> SExpr ()
-displayEq ctx (x, y) =
-    L () [S () "equal", displayTerm ctx x, displayTerm ctx y]
 
 -- Collect all the relevant nodes and make a variable for each one.
 makeVarmap :: (Algebra t p g s e c, Monad m) => Pos ->
@@ -507,6 +500,23 @@ uniqOrigKey = "uniq-orig"
 origsKey :: String
 origsKey = "origs"
 
+type Analysis t g c = (Preskel t g c, [(Homo t, Preskel t g c)])
+
+loadAnalysis :: (Algebra t p g s e c, Monad m) => Preskel t g c ->
+                [Preskel t g c] -> m (Analysis t g c)
+loadAnalysis pov ks =
+  do
+    shapes <- mapM f ks
+    return (pov, concat shapes)
+  where
+    f k =
+      case null $ homomorphisms k of
+        True -> fail "No homomorphism for shape"
+        False ->
+            do
+              hs <- loadMaps pov k (homomorphisms k)
+              return [(h, k) | h <- hs]
+
 -- Formula printing
 
 displayFormula :: (Algebra t p g s e c, Monad m) =>
@@ -516,33 +526,34 @@ displayFormula ps [] =
     return ((ps, []), Nothing)
 displayFormula ps (k : ks) =
     do
-      sexpr <- form k ks
-      return ((ps, []), Just sexpr)
+      analysis <- loadAnalysis k ks
+      return ((ps, []), Just $ form analysis)
 
-form :: (Algebra t p g s e c, Monad m) => Preskel t g c ->
-        [Preskel t g c] -> m (SExpr ())
-form k ks =                     -- k is the POV skeleton
-    do                          -- ks is the list of shapes
-      (vars, conj) <- skel k
-      disj <- mapM (shape k) ks
-      return $ quantify "forall" vars
-                 (imply (conjoin conj) (disjoin disj))
+form :: Algebra t p g s e c => Analysis t g c -> SExpr ()
+form (pov, shapes) =
+  let (c, vars, conj) = skel emptyContext pov in
+  let disj = map (shape c) shapes in
+  quantify "forall" vars (imply (conjoin conj) (disjoin disj))
 
 -- Convert one skeleton into a declaration and a conjunction.  The
--- declaration is used as the bound variables in a quantifier.
-skel :: (Algebra t p g s e c, Monad m) => Preskel t g c ->
-        m ([SExpr ()], [SExpr ()])
-skel k =
-    do
-      let vars = displayVars (kctx k) (kvars k)
-      let nodes = displayVars (kctx k) (M.elems $ varmap k)
-      return (vars ++ listMap node nodes,
-              map (strandForm k) (zip [0..] $ insts k) ++
-              map (precForm k) (orderings k) ++
-              sprecForms k ++
-              map (unary "non" $ kctx k) (nons k) ++
-              map (uniqForm k) (origs k))
+-- declaration is used as the bound variables in a quantifier.  The
+-- context is extended so it can be used as input for another
+-- skeleton.
+skel :: Algebra t p g s e c => c -> Preskel t g c ->
+        (c, [SExpr ()], [SExpr ()])
+skel ctx k =
+  let vars = kvars k ++ (M.elems $ varmap k) in
+  let kctx = addToContext ctx vars in
+  let nodes = displayVars kctx (M.elems $ varmap k) in
+  (kctx,
+   displayVars kctx (kvars k) ++ listMap node nodes,
+   map (strandForm kctx k) (zip [0..] $ insts k) ++
+   map (precForm kctx k) (orderings k) ++
+   sprecForms kctx k ++
+   map (unary "non" kctx) (nons k) ++
+   map (uniqForm kctx k) (origs k))
 
+-- map through lists in an S-Expression.
 listMap :: ([SExpr ()] -> [SExpr ()]) -> [SExpr ()] -> [SExpr ()]
 listMap _ [] = []
 listMap f (L () xs : ys) = L () (f xs) : listMap f ys
@@ -555,17 +566,18 @@ node [_] = [S () "node"]
 node (v : vs) = v : node vs
 
 -- Print a node's variable
-displayNodeVar :: Algebra t p g s e c => Preskel t g c -> Node -> SExpr ()
-displayNodeVar k n =
-  displayTerm (kctx k) $ nlookup n (varmap k)
+displayNodeVar :: Algebra t p g s e c => c -> Preskel t g c ->
+                  Node -> SExpr ()
+displayNodeVar ctx k n =
+  displayTerm ctx $ nlookup n (varmap k)
 
 -- Creates the atomic formulas used to describe an instance of a role
-strandForm :: Algebra t p g s e c => Preskel t g c ->
+strandForm :: Algebra t p g s e c => c -> Preskel t g c ->
               (Int, Instance t c) -> SExpr ()
-strandForm k (s, inst) =
+strandForm c k (s, inst) =
     conjoin (sp : map f (env inst))
     where
-      n = displayNodeVar k (s, height inst - 1)
+      n = displayNodeVar c k (s, height inst - 1)
       sp =
         L () [S () "p",
               Q () $ rname $ role inst, -- Name of the role
@@ -576,24 +588,24 @@ strandForm k (s, inst) =
                 Q () $ rname $ role inst, -- Name of the role
                 quote $ displayTerm (ctx $ role inst) x,
                 n,
-                displayTerm (kctx k) t]
+                displayTerm c t]
 
 quote :: SExpr () -> SExpr ()
 quote (S () str) = Q () str
 quote x = x
 
 -- Creates the atomic formula used to describe a node ordering relation
-precForm :: Algebra t p g s e c => Preskel t g c -> Pair -> SExpr ()
-precForm k (n, n') =
+precForm :: Algebra t p g s e c => c -> Preskel t g c -> Pair -> SExpr ()
+precForm c k (n, n') =
     L () [S () "prec",
-          displayNodeVar k n,
-          displayNodeVar k n']
+          displayNodeVar c k n,
+          displayNodeVar c k n']
 
 -- Creates the atomic formulas used to describe the strand node orderings
 -- Must compute the transitive reduction of the within strand orderings
-sprecForms :: Algebra t p g s e c => Preskel t g c -> [SExpr ()]
-sprecForms k =
-    map (sprecForm k) ps
+sprecForms :: Algebra t p g s e c => c -> Preskel t g c -> [SExpr ()]
+sprecForms c k =
+    map (sprecForm c k) ps
     where
       ns = M.keys $ varmap k    -- The set of nodes
       ss = L.sort $ L.nub $ map fst ns -- The ordered set of strands
@@ -605,34 +617,32 @@ sprecForms k =
       f (s, i:i':is) = ((s, i), (s, i')):f(s, i':is)
 
 -- Creates the atomic formula used to describe a strand node ordering
-sprecForm :: Algebra t p g s e c => Preskel t g c -> Pair -> SExpr ()
-sprecForm k (n, n') =
+sprecForm :: Algebra t p g s e c => c -> Preskel t g c -> Pair -> SExpr ()
+sprecForm c k (n, n') =
     L () [S () "sprec",
-          displayNodeVar k n,
-          displayNodeVar k n']
+          displayNodeVar c k n,
+          displayNodeVar c k n']
 
-uniqForm :: Algebra t p g s e c => Preskel t g c ->
+uniqForm :: Algebra t p g s e c => c -> Preskel t g c ->
             (t, Node) -> SExpr ()
-uniqForm k (t, n) =
+uniqForm c k (t, n) =
     L () [S () "uniq",
-          displayTerm (kctx k) t,
-          displayNodeVar k n]
+          displayTerm c t,
+          displayNodeVar c k n]
 
 -- Creates a formula associated with a shape.  It is a disjunction of
 -- existentially quantified formulas that describe the homomorphism
 -- and the shape as a skeleton.
-shape :: (Algebra t p g s e c, Monad m) => Preskel t g c ->
-         Preskel t g c -> m (SExpr ())
-shape pov k =
-    do
-      (vars, conj) <- skel k
-      case null $ homomorphisms k of
-        True -> fail "No homomorphism for shape"
-        False ->
-            do
-              hs <- loadMaps pov k (homomorphisms k)
-              let xs = [quantify "exists" vars $ conjoin (h ++ conj) | h <- hs]
-              return $ disjoin xs
+shape :: Algebra t p g s e c => c -> (Homo t, Preskel t g c) -> SExpr ()
+shape c ((nh, ah), shape) =
+  let (ctx, vars, conj) = skel c shape in
+  let n = map (displayEq ctx) nh in
+  let a = map (displayEq ctx) ah in
+  quantify "exists" vars (conjoin (n ++ a ++ conj))
+
+displayEq :: Algebra t p g s e c => c -> (t, t) -> SExpr ()
+displayEq ctx (x, y) =
+    L () [S () "equal", displayTerm ctx x, displayTerm ctx y]
 
 -- Formula primitives
 
