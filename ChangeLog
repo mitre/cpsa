@@ -1,3 +1,9 @@
+2014-11-04  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/SAS/SAS.hs (reduce): Added a function that eliminates
+	trivial homomorphism equations by substituting equivalent
+	variables and simplifying.
+
 2014-10-31  John D. Ramsdell  <ramsdell@.mitre.org>
 
 	* cpsasas: Added a program that produces shape analysis sentences
