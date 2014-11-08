@@ -638,7 +638,7 @@ skel ctx k =
   let nodes = displayVars kctx (knodes k) in
   (kctx,
    displayVars kctx (kvars k) ++ listMap node nodes,
-   map (strandForm kctx) (zip (strands k) $ insts k) ++
+   map (strandForm kctx k) (zip (strands k) $ insts k) ++
    map (precForm kctx) (orderings k) ++
    map (sprecForm kctx) (succs k) ++
    map (unary "non" kctx) (nons k) ++
@@ -657,19 +657,22 @@ node [_] = [S () "node"]
 node (v : vs) = v : node vs
 
 -- Creates the atomic formulas used to describe an instance of a role
-strandForm :: Algebra t p g s e c => c -> (t, Instance t c) -> SExpr ()
-strandForm c (s, inst) =
+strandForm :: Algebra t p g s e c => c -> Preskel t g c ->
+              (t, Instance t c) -> SExpr ()
+strandForm c k (s, inst) =
     conjoin (sp : map f (env inst))
     where
       n = displayTerm c s
       sp =
         L () [S () "p",
-              Q () $ rname $ role inst, -- Name of the role
+              Q () $ pname $ protocol k, -- Name of the protocol
+              Q () $ rname $ role inst,  -- Name of the role
               N () $ height inst - 1,
               n]
       f (x, t) =
           L () [S () "p",
-                Q () $ rname $ role inst, -- Name of the role
+                Q () $ pname $ protocol k, -- Name of the protocol
+                Q () $ rname $ role inst,  -- Name of the role
                 quote $ displayTerm (ctx $ role inst) x,
                 n,
                 displayTerm c t]
