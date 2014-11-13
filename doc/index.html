@@ -114,13 +114,16 @@ the description of the problem. </p>
   option, it produces diagrams that scale.  This is useful when
   viewing large diagrams.</p>
 
-<p>When the <code>cpsapp</code> program is given the <code>--json</code>
-  option, it translates S-expressions into JavaScript Object
-  Notation.</p>
+<p>When the <code>cpsapp</code> program is given
+  the <code>--json</code> option, it translates S-expressions into
+  JavaScript Object Notation (JSON).  The <code>cpsajson</code>
+  program translates JSON into S-expressions.  These two programs
+  makes it easy to manipulate CPSA input and output using Python or
+  other languages with JSON libraries.</p>
 
 <p>The goal of CPSA is to automatically characterize the possible
   executions of a protocol compatible with a specified partial
-  execution. There is a rigorous 
+  execution. There is a rigorous
   <a href="http://www.mitre.org/publications/technical-papers/completeness-of-cpsa">proof</a>
   that the algorithm enumerates all of these characterizations.</p>
 

@@ -2077,241 +2077,202 @@ in terms of the inferences available.
 \chapter{Shape Analysis Sentences}\label{chp:logic}
 
 For each point-of-view skeleton and its shapes found by {\cpsa}, there
-is a formula in the language of order-sorted first-order logic called
-a \index{shape analysis sentence}\emph{shape analysis sentence,} often
-shortened to a shape sentence.  The sentence has a
-special form,
+is a formula in a language of order-sorted first-order logic called
+a \index{shape analysis sentence}\emph{shape analysis sentence}.  The
+sentence has a special form,
 $\all{X}(\Psi\supset\bigvee_i\some{Y_i}(\Delta_i\wedge\Phi_i))$,
-where~$\Psi$ and~$\Phi_i$ are conjunctions of atomic formulas and~$X$
-and~$Y_i$ are variable sets.  This fragment of first-order logic is
-called coherent logic.  Formula~$\Psi$ describes the point-of-view
-skeleton~$k_0$.  For each homomorphism to a shape,
+where~$\Psi$, $\Delta_i$, and~$\Phi_i$ are conjunctions of atomic
+formulas and~$X$ and~$Y_i$ are variable sets.  This fragment of
+first-order logic is called coherent logic.  Formula~$\Psi$ describes
+the point-of-view skeleton~$k_0$.  For each homomorphism to a shape,
 $k_0\homomorphism{\delta_i}k_i$, formula~$\Delta_i$ describes the
 structure preserving maps~$\delta_i$, and the shape~$k_i$ is described
 by~$\Phi_i$.
 
-An interpretation of a shape sentence is a skeleton.  If {\cpsa} finds
-all of the shapes and the homomorphisms associated with a
-point-of-view skeleton, the analysis' shape sentence is satisfied in
-all realized skeletons.  Shape sentences are closely related to
-security goals~\cite{guttman09}, and were motivated by that work.
-This material was extracted from~\cite{ramsdell12}, the paper that
+An interpretation of a shape analysis sentence is a skeleton.  If
+{\cpsa} finds all of the shapes and the homomorphisms associated with
+a point-of-view skeleton, the analysis' sentence is satisfied in all
+realized skeletons.  Let~$\Sigma$ be a shape analysis sentence
+and~$\Psi$ be a security goal.  If $\Sigma\supset\Psi$ is a theorem in
+order-sorted first-order logic, then~$\Psi$ is satisfied in all
+realized skeletons and its protocol achieves this goal.
+
+Shape analysis sentences are closely related to security goals
+in~\cite{guttman09}, and were motivated by that work.  This material
+was extracted from~\cite[Appendix~B]{ramsdell12}, the paper that
 introduced shape analysis sentences.
 
-\section{Shape Formulas}
+\section{Security Goals}
 
 The signature for terms extends the one used for the underlying
-message algebra with a sort $\dom{nat}$, the sort of natural numbers,
-and two new operations, constant $\cn{zero}\colon\dom{nat}$, and the
-successor function $\cn{succ}\colon\dom{nat}\to\dom{nat}$.  The text
-uses the usual numerals for natural numbers.  Variables of this sort
-will range over strands.
+message algebra with one new sort \dom{node}, the sort of nodes.  Sort
+\dom{node} has no subsorting relations with any other sort symbol.
 
-Shape formulas make use of protocol specific predicates and protocol
-independent predicates.  For each role $r=\role_Y(C,N,U)$ in
-protocol~$P$, there are protocol specific binary predicates
-$P[r,h,x]\colon\dom{nat}\times S$ for every $0\leq h<|C|$
-and~$x\colon\srt{S}$ that occurs in~$C|_h$.  The protocol independent
-predicate of arity four is $\cn{prec}\colon
-\dom{nat}\times\dom{nat}\times\dom{nat}\times\dom{nat}$.  The protocol
-independent unary predicates are $\cn{non}\colon B$ and
-$\cn{uniq}\colon B$ for each base sort~$B$, and the protocol
-independent ternary predicates are $\cn{orig}\colon
-B\times\dom{nat}\times\dom{nat}$.  The predicate \cn{false} has arity
-zero and, of course, equality is binary.
+Security goals make use of protocol specific and protocol independent
+predicates.  For each role $\role_Y(C,N,U)\in P$ and $i<|C|$, there is
+a protocol specific unary position predicate $P[r,i]:\dom{node}$.  For
+each role~$\role_Y(C,N,U)\in P$ and variable~$x:S$ that occurs in~$C$,
+there is a protocol specific binary parameter predicate
+$P[r,x]:\dom{node}\times{}S$.  The protocol independent unary
+predicates are $\mathsf{non}: B$ for each base sort~$B$.  The
+remaining protocol independent predicates are binary, and are
+$\mathsf{uniq}: B\times\dom{node}$,
+$\mathsf{sprec}:\dom{node}\times\dom{node}$,
+$\mathsf{prec}:\dom{node}\times\dom{node}$, and equality.
 
-We define~$\form(k)=(Y,\Phi)$, where~$\Phi$ is $k$'s skeleton formula,
-and~$Y$ is the formula's variable set.  Using the external syntax
-presented in Section~\ref{sec:instances}, let
-$k=\skel_X(P,I,\prec,N,U)$.  The variable set~$Y$ is~$X$ augmented
-with a variable~$z_s\colon\dom{nat}$ for each strand
-$s\in\sdom(I)$.  The formula~$\Phi$ is a conjunction of atomic
-formulas composed as follows.
+Soon we define~$\form(k)=(Y,\Phi)$, where~$\Phi$ is $k$'s skeleton
+formula, and~$Y$ is the formula's variable set, but first we define
+the relevant nodes of a skeleton~$N$.  Let $k=\skel_X(P,I,\prec,N,U)$
+and let~$\prec^-$ be the transitive reduction of~$\prec$.  Recall
+that~$\Theta_X$ is the strand space defined by~$I$, see
+Section~\ref{sec:instances}.  The \emph{relevant nodes} of~$k$ are
+$N=N_s\cup N_\prec\cup N_u$ where
 
+\[\renewcommand{\arraystretch}{1.5}
+\begin{array}{r@{{}={}}l}
+  N_s&\{(s,i)\mid s\in\sdom(\Theta_X)\land
+  i=|\Theta_X(s)|-1\}\\
+
+  N_\prec&\{(s,i)\mid
+  \renewcommand{\arraystretch}{1}
+  \begin{array}[t]{@{}l}
+    (s',i')\in\nodes(\Theta_X)\land s\neq s'\\
+    \quad\land((s,i)\prec^- (s',i')\lor(s',i')\prec^-(s,i))\}
+  \end{array}\\
+
+  N_u&\{(s,i)\mid t\in U,(s,i)\in\orig_k(t)\}
+\end{array}\]
+
+For~$\form(k)=(Y,\Phi)$, the variable set~$Y$ is~$X$ augmented with a
+fresh variable of sort~\dom{node} for each node in~$N$, and let $v(n)$ be
+the variable associated with node~$n$.
+
+The formula~$\Phi$ is a conjunction of atomic formulas composed as
+follows.
 \begin{itemize}
-\item For each $s\in\sdom(I)$, let $I(s)=\inst(r,h,\sigma)$.  For
-  each variable $x\in\sdom(\sigma)$ and term $t=\sigma(x)$, assert
-  $P[r,h,x](z_s,t)$.
-\item For each $(s,i)\prec(s',i')$, assert
-  $\cn{prec}(z_s,i,z_{s'},i')$.
+\item For each $(s,i)\in N$, assert $P[r,i](v(s,i))$,
+  where $I(s)=\cn{i}(r,h,\sigma$).
+\item For each $s\in\sdom(I)$, let
+  $I(s)=\cn{i}(r,h,\sigma)$.  For each variable
+  $x\in\svars(\prefix{r^c}{h})$ and term $t=\sigma(x)$, assert
+  $P[r,x](v(s,h-1),t)$,
+  where $r^c=C$ when $r=\role(C,N,U)$.
+\item For each $(s,i),(s,i')\in N$ such that $i<i'$, assert
+  $\cn{sprec}(v(s,i),v(s,i'))$.
+\item For each $(s,i)\prec^-(s',i')$ such that $s\neq s'$, assert
+  $\cn{prec}(v(s,i),v(s',i'))$.
 \item For each $t\in N$, assert $\cn{non}(t)$.
-\item For each $t\in U$, assert $\cn{uniq}(t)$.
-\item For each $t\in U$ and $(s,i)\in\orig_k(t)$, assert
-  $\cn{orig}(t,z_s, i)$.
+\item For each $t\in U$ and node~$n$ such that
+  $n\in\orig_k(t)$, assert $\cn{uniq}(t,v(n))$.
 \end{itemize}
 
-In the code that extracts a shape analysis sentence, the
-$\cn{prec}$ predicate is not asserted for strand succession, and
-only for communication when it is in the transitive reduction of
-the~$\prec$ relation.  The missing relations must be asserted as axioms
-for proper handling of a shape sentence.
-
-Given a set of homomorphisms $k_0\homomorphism{\delta_i}k_i$, its shape
-sentence is
-\begin{equation}
-\sent(k_0\homomorphism{\delta_i}k_i)=\all{X}(\Psi\supset
-\bigvee_i\some{Y_i}(\Delta_i\wedge\Phi_i)),\label{eq:shape sentence}
+Given a set of homomorphisms $\delta_i\colon k_0\mapsto k_i$, its shape
+analysis sentence is
+\begin{equation}\label{eqn:node-oriented shape sentence}
+\sent(\delta_i\colon k_0\mapsto k_i)=\all{X_0}(\Phi_0\supset
+\bigvee_i\some{X_i}(\Delta_i\wedge\Phi_i)),
 \end{equation}
-where $\form(k_0)=(X,\Psi)$.  The same procedure produces~$Y_i$
+where $\form(k_0)=(X_0,\Phi_0)$.  The same procedure produces~$X_i$
 and~$\Phi_i$ for shape~$k_i$ with one proviso---the variables in
-$Y_i$ that also occur in~$X$ must be renamed to avoid trouble while
+$X_i$ that also occur in~$X_0$ must be renamed to avoid trouble while
 encoding the structure preserving maps~$\delta_i$.
-
-\begin{figure}
-$$\begin{array}{l}
-\all{a_0,b_0\colon\srt{A}, s_0\colon\srt{S}, d_0\colon\srt{D}, z_0\colon\srt{N}}(\\
-\quad\init_{2,a}(z_0,a_0)\wedge
-\init_{2,b}(z_0,b_0)\wedge
-\init_{2,s}(z_0,s_0)\wedge
-\init_{2,d}(z_0,d_0)\wedge{}\\
-\quad\cn{non}(a_0^{-1})\wedge
-\cn{non}(b_0^{-1})\wedge
-\cn{uniq}(s_0)\wedge\cn{orig}(s_0,z_0,1)\\
-\quad\supset\\
-\quad\some{a_1,b_1\colon\srt{A}, s_1\colon\srt{S}, d_1\colon\srt{D}, z_1,z_2\colon
-  N}(\\
-\qquad z_0=z_1\wedge a_0=a_1\wedge b_0=b_1\wedge s_0=s_1\wedge d_0=d_1\wedge{}\\
-\qquad\init_{2,a}(z_1,a_1)\wedge
-\init_{2,b}(z_1,b_1)\wedge
-\init_{2,s}(z_1,s_1)\wedge
-\init_{2,d}(z_1,d_1)\wedge{}\\
-\qquad\resp_{2,a}(z_1,a_1)\wedge
-\resp_{2,b}(z_1,b_1)\wedge
-\resp_{2,s}(z_1,s_1)\wedge
-\resp_{2,d}(z_1,d_1)\wedge{}\\
-\qquad\cn{prec}(z_1,1,z_2,1)\wedge
-\cn{prec}(z_2,2,z_1,2)\wedge{}\\
-\qquad\cn{non}(a_1^{-1})\wedge
-\cn{non}(b_1^{-1})\wedge
-\cn{uniq}(s_1)\wedge\cn{orig}(s_1,z_1,1)))
-\end{array}$$
-\caption{A Shape Analysis Sentence for Blanchet's
-  Protocol}\label{fig:blanchet's shape analysis sentence}
-\end{figure}
 
 The structure preserving maps~$\delta_i=(\phi_i,\sigma_i)$ are encoded
 in~$\Delta_i$ by a conjunction of equalities.  Map~$\sigma_i$ is coded
 as equalities between a message algebra variable in the domain
 of~$\sigma_i$ and the term it maps to.  Map~$\phi_i$ is coded as
-equalities between strand variables in~$\Psi$ and strand variables
-in~$\Phi_i$.  Let~$Z$ be the sequence of strand variables freshly
-generated for~$k_0$, and~$Z_i$ be the ones generated for~$k_i$.  The
+equalities between node variables in~$\Phi_0$ and node variables
+in~$\Phi_i$.  Let~$v_0$ be the node variables freshly generated
+for~$k_0$, and~$v_i$ be the ones generated for~$k_i$.  The
 strand mapping part of~$\Delta_i$ is
-$\bigwedge_{j\in\sdom(\Theta)}Z(j)=Z_i(\phi_i(j))$.
+\[\bigwedge_{(s,j)\in\sdom(v_0)}v_0(s,j)=v_i(\phi_i(s),j).\]
 
-The shape analysis sentence for the first analysis of Blanchet's
+\begin{figure}
+$$\begin{array}{l}
+\all{a_0,b_0\colon\srt{A}, s_0\colon\srt{S}, d_0\colon\srt{D}, n_0\colon\srt{N}}(\\
+\quad\resp_1(n_0)\wedge\resp_{a}(n_0,a_0)\wedge
+\resp_{b}(n_0,b_0)\\
+\qquad{}\wedge
+\resp_{s}(n_0,s_0)\wedge
+\resp_{d}(n_0,d_0)\\
+\qquad{}\wedge\cn{non}(a_0^{-1})\wedge
+\cn{non}(b_0^{-1})\\
+\quad\supset\\
+\quad\some{a_1,b_1,b_2\colon\srt{A}, s_1\colon\srt{S},
+  d_1\colon\srt{D}, n_1,n_2,n_3\colon
+ \srt{N}}(\\
+\qquad n_0=n_1\wedge a_0=a_1\wedge b_0=b_1\wedge s_0=s_1\wedge
+d_0=d_1\\
+\qquad\quad\wedge\resp_1(n_1)\wedge
+\resp_{a}(n_1,a_1)\wedge
+\resp_{b}(n_1,b_1)\\
+\qquad\quad\wedge
+\resp_{s}(n_1,s_1)\wedge
+\resp_{d}(n_1,d_1)\wedge\resp_0(n_2)\\
+\qquad\quad\wedge\init_0(n_3)\wedge\init_a(n_3,a_1)\wedge
+\init_b(n_3,b_2)\wedge
+\init_s(n_3,s_1)\\
+\qquad\quad\wedge\cn{uniq}(s_1,n_2)\wedge
+\cn{prec}(n_3,n_2)\wedge\cn{sprec}(n_2,n_1)\\
+\qquad\quad\wedge\cn{non}(a_1^{-1})\wedge
+\cn{non}(b_1^{-1})))
+\end{array}$$
+\caption{Shape Analysis Sentence for Blanchet's
+  Protocol}\label{fig:blanchet's shape analysis sentence}
+\end{figure}
+
+The shape analysis sentence for the second analysis of Blanchet's
 Simple Example Protocol in Section~\ref{sec:blanchet's simple example
   protocol} is displayed in Figure~\ref{fig:blanchet's shape analysis
-  sentence}.  The sort \dom{nat} is abbreviated as~\srt{N}, and the
-strand progress predicate $P[r,h,x](z,t)$ is written $r_{h,x}(z,t)$
-with the protocol left implicit.
+  sentence}.  The sort \dom{node} is abbreviated as~\srt{N}, and the
+parameter predicate $P[r,x](z,t)$ is written $r_x(z,t)$ with the
+protocol left implicit.
 
-\section{Semantics of Shape Formulas}
+\paragraph{Semantics of Skeleton Formulas.}
 
-Let $k=\skel_X(\rl,P,\Theta,\prec,N,U)$.  The universe of discourse is
-$\alg{D}=\nat\cup\alga_X$.  When formula~$\Psi$ is satisfied in
-skeleton~$k$ with variable assignment $\alpha\colon Y\to \alg{D}$, we
-write $k,\alpha\models\Psi$.  When sentence~$\Sigma$ is satisfied in
-skeleton~$k$, we write $k\models\Sigma$.
+Let $k=\skel_X(P,I,\prec,N,U)$.  The universe of
+discourse is $\alg{D}=(\nat\times\nat)\cup\alga_X$.  When
+formula~$\Phi$ is satisfied in skeleton~$k$ with variable
+assignment $\alpha\colon Y\to \alg{D}$, we write
+$k,\alpha\models\Phi$.  We write~$\bar\alpha$ when~$\alpha$ is
+extended to terms in the obvious way.  When sentence~$\Gamma$ is
+satisfied in skeleton~$k$, we write $k\models\Gamma$.
 
-For each protocol specific predicate $P[r,h,x]$, $k,\alpha\models
-P[r,h,x](y,z)$ iff $\alpha(y)\in\nat$, $\alpha(z)\in\alga$, and with
-$\alpha(y)=s$ and $r=\role(C,N,U)$,
+\begin{itemize}
+\item $k,\alpha\models P[r,i](y)$ iff $\alpha(y)\in\nodes(\Theta_X)$,
+  $\alpha(y)=(s,i)$, and for some~$\sigma$,
+  \[\prefix{\Theta_X(s)}{i+1}=\sigma\circ\prefix{r^c}{i+1}.\]
 
-\begin{enumerate}
-\item $s\in\sdom(\Theta)$,
-\item $h\in\sdom(\Theta(s))$, and
-\item $\prefix{\Theta(s)}{h}=\sigma\circ\{x\mapsto\alpha(z)\}\circ\prefix{C}{h}$
-  for some~$\sigma$.
-\end{enumerate}
-
-In an interpretation, $\rl(s)$ need not be~$r$.  The events that make
-up a strand's trace is all that matters.  The protocol specific
-predicate $P[r,h,x]$ is called a \index{strand progress
-  predicate}\emph{strand progress predicate}, because it asserts a
-strand is associated with an instance of role~$r$ of height at
-least~$h$.
+\item $k,\alpha\models P[r,x](y,t)$ iff
+  $\alpha(y)\in\nodes(\Theta_X)$, $\bar\alpha(t)\in\alga_X$, and with
+  $\alpha(y)=(s, i)$ and for some~$\sigma$ with $\sigma(x)=\bar\alpha(t)$,
+  \[\prefix{\Theta_X(s)}{i+1}=\sigma\circ\prefix{r^c}{i+1}.\]
+\end{itemize}
 
 The interpretation of the protocol independent predicates is
 straightforward.
 \begin{itemize}
-\item $k,\alpha\models\cn{prec}(w,x,y,z)$ iff
-$(\alpha(w),\alpha(x))\prec(\alpha(y),\alpha(z))$.
-\item $k,\alpha\models\cn{non}(y)$ iff $\alpha(y)\in N$.
-\item $k,\alpha\models\cn{uniq}(y)$ iff $\alpha(y)\in U$.
-\item $k,\alpha\models\cn{orig}(x,y,z)$ iff $\alpha(x)\in U$ and
-  $(\alpha(y),\alpha(z))\in\orig_k(\alpha(x))$.
-\item $k,\alpha\models y=z$ iff $\alpha(y)=\alpha(z)$.
-\item $k,\alpha\not\models\cn{false}$.
+\item $k,\alpha\models\cn{prec}(y,z)$ iff
+  $\alpha(y)\prec\alpha(z)$.
+\item $k,\alpha\models\cn{sprec}(y,z)$ iff $\alpha(y)\prec\alpha(z)$,
+  $\alpha(y)=(s,i)$, and $\alpha(z)=(s,i')$.
+\item $k,\alpha\models\cn{non}(t)$ iff $\bar\alpha(t)\in\nu$.
+\item $k,\alpha\models\cn{uniq}(t,y)$ iff $\bar\alpha(t)\in\upsilon$ and
+  $\alpha(y)\in\orig_k(\bar\alpha(t))$.
+\item $k,\alpha\models y=z$ iff $\bar\alpha(y)=\bar\alpha(z)$.
 \end{itemize}
 
-\begin{thm}\label{thm:skeleton models}
-Let $\form(k_0)=(X,\Psi)$ and $\Phi=\some{X}\Psi$.  Formula~$\Phi$ is
-satisfied in~$k$ iff there is a homomorphism from~$k_0$ to
-$k$, i.e.\ $k\models\Phi$ iff
-$\some{\delta}k_0\homomorphism{\delta}k$.
-\end{thm}
+Let~$\Sigma$ be a shape analysis sentence and~$\Psi$ be a security
+goal.  If $\Sigma\supset\Psi$ is a theorem in order-sorted first-order
+logic, then~$\Psi$ is satisfied in all realized skeletons and its
+protocol achieves this goal.
 
-This theorem corrects the first of the two main results
-from~\cite{guttman09}, as that paper omits the \cn{orig} predicate.
-
-\begin{proof}
-For the forward direction, assume~$\alpha$ is a variable assignment
-for the variables in~$X$ such that $k,\alpha\models\Psi$, and let~$Z$
-be the sequence of strand variables constructed while
-generating~$\Psi$ from~$k_0$.  Then the pair of maps
-$\delta=(\comp{\alpha}{Z},\alpha)$ demonstrate a homomorphism from~$k_0$
-to~$k$, i.e.\ each item in the definition of a preskeleton
-homomorphism on Page~\pageref{def:preskeleton homomorphism} is
-satisfied.
-
-For the reverse direction, assume maps $\delta=(\phi,\sigma)$ are such
-that $k_0\homomorphism{\delta}k$.  Then the desired variable assigment is
-$$\alpha(x)=\left\{
-\begin{array}{ll}
-\phi(Z^{-1}(x))&x\in\sran(Z)\\
-\sigma(x)&x\in\sdom(\sigma).
-\end{array}\right.$$
-\end{proof}
-
-The set of bundles denoted by preskeleton~$k$, $\sembrack{k}$ is
-defined on Page~\pageref{def:preskeleton denotation}.
-
-\begin{thm}\label{thm:sentence implies}
-Let $k_0\homomorphism{\delta_i}k_i$ be a complete set of homomorphisms
-for shapes $k_i\in K$, and assume $\sembrack{k_0}=\bigcup_{k\in
-  K}\sembrack{k}$.  Then the shape analysis
-sentence~$\Sigma=\sent(k_0\homomorphism{\delta_i}k_i)$ is satisfied in
-all realized skeletons~$k$, i.e.\ $k\models\Sigma$.
-\end{thm}
-
-\begin{proof}
-Shapes are maximal among realized skeletons, so there is no realized
-skeleton in the image of~$k$ that is not in the image of one of the
-shapes.  Therefore, by Theorem~\ref{thm:skeleton models}, the negation
-of the hypothesis of the implication is satisfied in all realized
-skeletons that are not in the image of~$k_0$, and the disjunction is
-satisfied in the remaining realized skeletons.
-\end{proof}
-
-The security goals of a protocol can be formalized using the same
-language used to specify shape analysis sentences.  A security goal
-can express an authentication goal or a secrecy goal.
-
-Security goals and shape analysis sentences can be translated into the
-language of ordinary first-order logic and used with an automated
-first-order theorem prover.  If a theorem prover deduces security
-goal~$\Phi$ from shape analysis sentence~$\Sigma$, then $\Phi$ is
-satisfied in all realized skeletons.
-
-Security goals can be used to ensure essential properties of a
-protocol are preserved in the face of changes to the protocol.
-Suppose an initial version of a protocol is specified, and shape
-analysis sentences for it are produced.  The sentences can be edited
-to produce a formalization of security goals that should be preserved
-during any revision to the protocol.  After a revision, one can
-generate revised shape analysis sentences, and use them to make sure
-each security goal is still deducible.
+Since $\prec$ is transitive, transitivity of \fn{prec} can be used to
+prove a protocol achieves a goal.  That is,
+\[\cn{prec}(x,y)
+\land\cn{prec}(y,z)\supset
+\cn{prec}(x,z).\]
+Furthermore, $\cn{sprec}(x,y)\supset\cn{prec}(x,y)$.
 
 \bibliography{cpsa}
 \bibliographystyle{plain}
