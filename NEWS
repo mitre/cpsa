@@ -1,5 +1,24 @@
 CPSA NEWS -- history of user-visible changes.
 
+* Changes in version 2.4.0
+
+** Added program cpsasas
+   The cpsasas program extracts a formula in the language of
+   order-sorted first-order logic for each problem and its shapes from
+   a CPSA run. The formula is called a shape analysis sentence. The
+   formula is modeled by all realized skeletons when CPSA finds all
+   the shapes for the problem.  The sentence can be use with an
+   automated first-order theorem prover to verify security goals
+   associated with a protocol.
+
+   This formula extractor uses a node-oriented language, rather than a
+   strand-orient language.  The new language integrates well with
+   other work on security goals and better supports protocol
+   transformations.
+
+** Program cpsalogic removed
+   The strand-oriented formula extractor has been removed.
+
 * Changes in version 2.3.5
 
 ** Added a translator from JSON to CPSA S-Expressions

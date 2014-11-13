@@ -1,3 +1,8 @@
+2014-11-13  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/cpsaspec.tex: Updated the appendix of shape analysis
+	sentences to agree with what is produced by cpsasas.
+
 2014-11-04  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/SAS/SAS.hs (reduce): Added a function that eliminates
