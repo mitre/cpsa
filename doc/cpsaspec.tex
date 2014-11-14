@@ -2150,7 +2150,7 @@ the variable associated with node~$n$.
 The formula~$\Phi$ is a conjunction of atomic formulas composed as
 follows.
 \begin{itemize}
-\item For each $(s,i)\in N$, assert $P[r,i](v(s,i))$,
+\item For each $(s,i)\in N_s$, assert $P[r,i](v(s,i))$,
   where $I(s)=\cn{i}(r,h,\sigma$).
 \item For each $s\in\sdom(I)$, let
   $I(s)=\cn{i}(r,h,\sigma)$.  For each variable
@@ -2242,6 +2242,7 @@ satisfied in skeleton~$k$, we write $k\models\Gamma$.
 \item $k,\alpha\models P[r,i](y)$ iff $\alpha(y)\in\nodes(\Theta_X)$,
   $\alpha(y)=(s,i)$, and for some~$\sigma$,
   \[\prefix{\Theta_X(s)}{i+1}=\sigma\circ\prefix{r^c}{i+1}.\]
+  Recall $r^c=C$ when $r=\role(C,N,U)$.
 
 \item $k,\alpha\models P[r,x](y,t)$ iff
   $\alpha(y)\in\nodes(\Theta_X)$, $\bar\alpha(t)\in\alga_X$, and with
