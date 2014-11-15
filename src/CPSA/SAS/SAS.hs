@@ -602,7 +602,8 @@ mapSkel env pov k =
       succs = mapPair (instantiate env) (succs k),
       nons = map (instantiate env) (nons k),
       uniqs = map (instantiate env) (uniqs k),
-      origs = mapPair (instantiate env) (origs k) }
+      origs = mapPair (instantiate env) (origs k),
+      varmap = M.map (instantiate env) (varmap k) }
   where
     vs = map (instantiate env) (kvars k)
     ns = map (instantiate env) (knodes k)
@@ -638,6 +639,7 @@ skel ctx k =
   let nodes = displayVars kctx (knodes k) in
   (kctx,
    displayVars kctx (kvars k) ++ listMap node nodes,
+   map (nodeForm kctx k) (M.assocs (varmap k)) ++
    map (strandForm kctx k) (zip (strands k) $ insts k) ++
    map (precForm kctx) (orderings k) ++
    map (sprecForm kctx) (succs k) ++
@@ -657,29 +659,34 @@ node [_] = [S () "node"]
 node (v : vs) = v : node vs
 
 -- Creates the atomic formulas used to describe an instance of a role
+nodeForm :: Algebra t p g s e c => c -> Preskel t g c ->
+            (Node, t) -> SExpr ()
+nodeForm c k ((s, i), n) =
+    L () [S () "p",
+          Q () $ pname $ protocol k, -- Name of the protocol
+          Q () $ rname $ role inst,  -- Name of the role
+          N () $ i,
+          displayTerm c n]
+    where
+      inst = insts k !! s
+
+quote :: SExpr () -> SExpr ()
+quote (S () str) = Q () str
+quote x = x
+
+-- Creates the atomic formulas used to describe an instance of a role
 strandForm :: Algebra t p g s e c => c -> Preskel t g c ->
               (t, Instance t c) -> SExpr ()
 strandForm c k (s, inst) =
-    conjoin (sp : map f (env inst))
+    conjoin (map f (env inst))
     where
-      n = displayTerm c s
-      sp =
-        L () [S () "p",
-              Q () $ pname $ protocol k, -- Name of the protocol
-              Q () $ rname $ role inst,  -- Name of the role
-              N () $ height inst - 1,
-              n]
       f (x, t) =
           L () [S () "p",
                 Q () $ pname $ protocol k, -- Name of the protocol
                 Q () $ rname $ role inst,  -- Name of the role
                 quote $ displayTerm (ctx $ role inst) x,
-                n,
+                displayTerm c s,
                 displayTerm c t]
-
-quote :: SExpr () -> SExpr ()
-quote (S () str) = Q () str
-quote x = x
 
 -- Creates the atomic formula used to describe a node ordering relation
 precForm :: Algebra t p g s e c => c -> (t, t) -> SExpr ()

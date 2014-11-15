@@ -1,3 +1,8 @@
+2014-11-15  John D.  Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/SAS/SAS.hs (nodeForm): Fixed bug where some role
+	predicates were mistakenly omitted.
+
 2014-11-13  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* doc/cpsaspec.tex: Updated the appendix of shape analysis
