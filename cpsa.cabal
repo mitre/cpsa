@@ -110,7 +110,7 @@ Extra-Source-Files:
   tst/wonthull2.scm tst/wonthull2.tst tst/wonthull3.scm
   tst/wonthull3.tst tst/wonthull.scm tst/wonthull.tst tst/woolam.scm
   tst/woolam.tst tst/yahalom-6.3.6.scm tst/yahalom-6.3.6.tst
-  tst/yahalom.scm tst/yahalom.tst
+  tst/yahalom.scm tst/yahalom.tst tst/unilateral.scm tst/unilateral.tst
 
 -- Algebra implementations must import CPSA.Lib.CPSA.
 -- Tools may additionally import CPSA.Lib.Entry.
