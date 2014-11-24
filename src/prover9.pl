@@ -7,6 +7,15 @@
 
 %% Known to work in SWI-Prolog, but not with GNU Prolog.
 
+%% To handle the subsort relations of the message algebra, add the
+%% following axioms.
+
+%%    all T (akey(T) -> mesg(T)).
+%%    all T (skey(T) -> mesg(T)).
+%%    all T (name(T) -> mesg(T)).
+%%    all T (teTt(T) -> mesg(T)).
+%%    all T (name(T) -> mesg(T)).
+
 %% Copyright (c) 2011 The MITRE Corporation
 %%
 %% This program is free software: you can redistribute it and/or
@@ -144,9 +153,6 @@ decl([Var|Decl], Sort, [(Var,Sort)|SVars], End) :-
 	decl(Decl, Sort, SVars, End).
 
 quantifier_preds([], [], []).
-quantifier_preds([(Var,mesg)|SVars], [Var|Vars], Preds) :-
-        !,
-        quantifier_preds(SVars, Vars, Preds).
 quantifier_preds([(Var,Sort)|SVars], [Var|Vars], [[Sort, Var]|Preds]) :-
         quantifier_preds(SVars, Vars, Preds).
 

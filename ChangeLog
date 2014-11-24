@@ -1,3 +1,11 @@
+2014-11-24  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/prover9.pl: Added missing mesg predicates in output.
+
+2014-11-17  John D.  Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 2.4.0
+
 2014-11-15  John D.  Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/SAS/SAS.hs (nodeForm): Fixed bug where some role
@@ -26,7 +34,6 @@
 2014-09-05  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* cpsa.cabal (Version): Tagged as version 2.3.5
-
 
 2014-09-02  John D. Ramsdell  <ramsdell@mitre.org>
 
