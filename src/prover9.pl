@@ -13,7 +13,7 @@
 %%    all T (akey(T) -> mesg(T)).
 %%    all T (skey(T) -> mesg(T)).
 %%    all T (name(T) -> mesg(T)).
-%%    all T (teTt(T) -> mesg(T)).
+%%    all T (text(T) -> mesg(T)).
 %%    all T (name(T) -> mesg(T)).
 
 %% Copyright (c) 2011 The MITRE Corporation
