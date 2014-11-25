@@ -61,9 +61,9 @@ Extra-Source-Files:
   src/cpsa2svg src/cpsa.el src/httpd_allow_execmem.te src/cpsaperm.scm
   src/cpsaops.scm src/preskel src/cpsa.pl src/unsorted.pl src/pp.pl
   src/sexpr.pl src/perm.pl src/prover9.pl src/zoom.js src/js2hs
-  src/ghcmemlimit build.xml src/cpsaextras/Main.scala
-  src/cpsaextras/Pretty.scala src/cpsaextras/Printer.scala
-  src/cpsaextras/SExpr.scala
+  src/ghcmemlimit build.xml src/scala/Main.scala
+  src/scala/Pretty.scala src/scala/Printer.scala
+  src/scala/SExpr.scala
   tst/README tst/Makefile tst/Make.hs tst/checktst tst/cpsagraphall
   tst/cpsashapesall 
   tst/blanchet.scm tst/blanchet.tst tst/completeness-test.scm
