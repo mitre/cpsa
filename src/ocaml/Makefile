@@ -1,7 +1,7 @@
-OCFLAGS	= -verbose 0
+OCFLAGS	= -classic-display
 OCB	= ocamlbuild
 SRCS	= $(wildcard *.ml *.mli *.mly *.mll)
-TARGETS	= _build/cpsa.cma
+TARGETS	= cpsa.top
 
 all:	$(TARGETS)
 
