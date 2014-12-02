@@ -6,7 +6,7 @@ TARGETS	= cpsa.top
 all:	$(TARGETS)
 
 $(TARGETS):	$(SRCS)
-	for i in $(notdir $(TARGETS)); do $(OCB) $(OCFLAGS) "$$i"; done
+	$(OCB) $(OCFLAGS) $(notdir $@)
 
 clean:
 	$(OCB) $(OCFLAGS) -clean
