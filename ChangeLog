@@ -1,3 +1,8 @@
+2015-03-17  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/SAS/SAS.hs (displayEq): Use = for function symbol
+	instead of equal.
+
 2014-11-24  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/prover9.pl: Added missing mesg predicates in output.

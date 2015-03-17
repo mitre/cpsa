@@ -711,7 +711,7 @@ shape c pov ((nh, ah), shape) =
   quantify "exists" vars (conjoin (n ++ a ++ (conj L.\\ pov)))
 
 displayEq :: Algebra t p g s e c => c -> (t, t) -> SExpr ()
-displayEq = binary "equal"
+displayEq = binary "="
 
 -- Formula primitives
 
