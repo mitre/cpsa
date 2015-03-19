@@ -26,6 +26,7 @@ import CPSA.Lib.Utilities
 import CPSA.Lib.SExpr
 import CPSA.Lib.Algebra
 import CPSA.Lib.Protocol
+import CPSA.Lib.Goal
 
 {--
 import System.IO.Unsafe
@@ -355,11 +356,23 @@ graphClose orderings =
           | otherwise = inner (p : orderings) True pairs rest
       sameStrands (n0, n1) = strand n0 == strand n1
 
+-- Shared part of preskeletons
+
+data Shared t g = Shared
+    { prot  :: Prot t g,
+      goals :: [Goal t] }
+
+instance (Show t, Show g) => Show (Shared t g) where
+    showsPrec _ s = shows (prot s)
+
+protocol :: Preskel t g s e -> Prot t g
+protocol k = prot $ shared k
+
 -- Preskeletons
 
 data Preskel t g s e = Preskel
     { gen :: !g,
-      protocol :: Prot t g,
+      shared :: Shared t g,
       insts :: ![Instance t e],
       strands :: ![Strand t e],
       orderings :: ![Pair],
@@ -428,14 +441,15 @@ data Operation t s
 -- Create a preskeleton.  The point of view field is not filled in.
 -- This version is exported for use by the loader.  This preskeleton
 -- must be consumed by firstSkeleton.
-mkPreskel :: Algebra t p g s e c => g -> Prot t g ->
+mkPreskel :: Algebra t p g s e c => g -> Prot t g -> [Goal t] ->
              [Instance t e] -> [Pair] -> [t] -> [t] -> [t] ->
              [(Node, Int)] -> [SExpr ()] -> Preskel t g s e
-mkPreskel gen protocol insts orderings non pnon unique prio comment =
+mkPreskel gen protocol gs insts orderings non pnon unique prio comment =
     k { kcomment = comment }
     where
-      k = newPreskel gen protocol insts orderings non pnon
+      k = newPreskel gen shared insts orderings non pnon
           unique prio New prob Nothing
+      shared = Shared { prot = protocol, goals = gs }
       prob = strandids k        -- Fixed point on k is okay.
 
 -- Strand functions
@@ -461,11 +475,11 @@ firstSkeleton k =
 -- preds field of each instance in this function.  The maybe uniquely
 -- originating term data is also filled in.  This version is used
 -- within this module.
-newPreskel :: Algebra t p g s e c => g -> Prot t g ->
+newPreskel :: Algebra t p g s e c => g -> Shared t g ->
              [Instance t e] -> [Pair] -> [t] -> [t] -> [t] ->
              [(Node, Int)] -> Operation t s -> [Sid] ->
              Maybe (Preskel t g s e) -> Preskel t g s e
-newPreskel gen protocol insts orderings non pnon unique prio oper prob pov =
+newPreskel gen shared insts orderings non pnon unique prio oper prob pov =
     let orderings' = L.nub orderings
         unique' = L.nub unique
         g = graph trace height insts orderings'
@@ -474,7 +488,7 @@ newPreskel gen protocol insts orderings non pnon unique prio oper prob pov =
         orig = map (originationNodes strands) unique'
         tc = filter pairWellOrdered (graphClose $ graphEdges strands)
         k = Preskel { gen = gen,
-                      protocol = protocol,
+                      shared = shared,
                       insts = insts,
                       strands = strands,
                       orderings = orderings',
@@ -860,7 +874,7 @@ ksubst (k0, k, n, phi, hsubst) (gen, subst) =
       let pnon' = map (substitute subst) (kpnon k)
       let unique' = map (substitute subst) (kunique k)
       let operation' = substOper subst (operation k)
-      let k' = newPreskel gen' (protocol k) insts'
+      let k' = newPreskel gen' (shared k) insts'
                (orderings k) non' pnon' unique' (kpriority k)
                operation' (prob k) (pov k)
       k' <- wellFormedPreskel k'
@@ -911,7 +925,7 @@ compress validate (k0, k, n, phi, hsubst) s s' =
       let k' =
               newPreskel
               (gen k)
-              (protocol k)
+              (shared k)
               (deleteNth s (insts k))
               orderings'
               (knon k)
@@ -971,7 +985,7 @@ purge (k0, k, n, phi, hsubst) s s' =
       let k' =
               newPreskel
               (gen k)
-              (protocol k)
+              (shared k)
               (deleteNth s (insts k))
               orderings'
               (knon k)
@@ -1057,7 +1071,7 @@ enrich thin (k0, k, n, phi, hsubst) =
           let k' =
                   newPreskel
                   (gen k)
-                  (protocol k)
+                  (shared k)
                   (insts k)
                   o
                   (knon k)
@@ -1313,7 +1327,7 @@ reduce (k0, k, n, phi, hsubst) =
           let k' =
                   newPreskel
                   (gen k)
-                  (protocol k)
+                  (shared k)
                   (insts k)
                   o
                   (knon k)
@@ -1419,7 +1433,7 @@ aug (k0, k, n, phi, hsubst) inst =
       let non' = inheritRnon inst ++ (knon k)
       let pnon' = inheritRpnon inst ++ (kpnon k)
       let unique' = inheritRunique inst ++ (kunique k)
-      let k' = newPreskel (gen k) (protocol k) insts'
+      let k' = newPreskel (gen k) (shared k) insts'
            orderings' non' pnon' unique' (kpriority k)
            (operation k) (prob k) (pov k)
       k' <- wellFormedPreskel k'
@@ -1511,7 +1525,7 @@ addListener k n cause t =
              (k, k', n, strandids k, emptySubst)
       homomorphismFilter prs
     where
-      k' = newPreskel gen' (protocol k) insts' orderings' (knon k)
+      k' = newPreskel gen' (shared k) insts' orderings' (knon k)
            (kpnon k) (kunique k) (kpriority k)
            (AddedListener t cause) (prob k) (pov k)
       (gen', inst) = mkListener (gen k) t
@@ -1660,7 +1674,7 @@ deleteNodeRest :: Algebra t p g s e c => Preskel t g s e ->
                   g -> Node -> [Instance t e] -> [Pair] ->
                   [Sid] -> Preskel t g s e
 deleteNodeRest k gen n insts' orderings prob =
-    newPreskel gen (protocol k) insts' orderings non' pnon' unique'
+    newPreskel gen (shared k) insts' orderings non' pnon' unique'
                    prio' (Generalized (Deleted n)) prob (pov k)
     where
       -- Drop nons that aren't mentioned anywhere
@@ -1703,7 +1717,7 @@ weaken :: Algebra t p g s e c => Preskel t g s e ->
 weaken k p orderings =
     addIdentity k'
     where
-      k' = newPreskel (gen k) (protocol k) (insts k)
+      k' = newPreskel (gen k) (shared k) (insts k)
            orderings (knon k) (kpnon k) (kunique k) (kpriority k)
            (Generalized (Weakened p)) (prob k) (pov k)
 
@@ -1862,9 +1876,9 @@ changeLocations :: Algebra t p g s e c => Preskel t g s e ->
 changeLocations k env gen t locs =
     [addIdentity k0, addIdentity k1]
     where
-      k0 = newPreskel gen' (protocol k) insts' (orderings k) non pnon unique0
+      k0 = newPreskel gen' (shared k) insts' (orderings k) non pnon unique0
            (kpriority k) (Generalized (Separated t)) (prob k) (pov k)
-      k1 = newPreskel gen' (protocol k) insts' (orderings k) non pnon unique1
+      k1 = newPreskel gen' (shared k) insts' (orderings k) non pnon unique1
            (kpriority k) (Generalized (Separated t)) (prob k) (pov k)
       (gen', insts') = changeStrands locs t gen (strands k)
       non = knon k ++ map (instantiate env) (knon k)

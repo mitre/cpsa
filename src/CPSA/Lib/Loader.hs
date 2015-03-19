@@ -15,6 +15,7 @@ import CPSA.Lib.Utilities
 import CPSA.Lib.SExpr
 import CPSA.Lib.Algebra
 import CPSA.Lib.Protocol
+import CPSA.Lib.Goal
 import CPSA.Lib.Strand
 
 {--
@@ -335,19 +336,23 @@ loadInsts top p kvars gen insts (L pos (S _ "deflistener" : x) : xs) =
 loadInsts top p kvars gen insts xs =
     do
       _ <- alist [] xs          -- Check syntax of xs
-      loadRest top kvars p gen (reverse insts) order nr ar ur pl kcomment
+      (gen, gs) <- loadGoals top p gen goals
+      loadRest top kvars p gen gs (reverse insts) order nr ar ur pl kcomment
     where
       order = assoc "precedes" xs
       nr = assoc "non-orig" xs
       ar = assoc "pen-non-orig" xs
       ur = assoc "uniq-orig" xs
       pl = assoc "priority" xs
-      comment = assoc "comment" xs
+      goals = assoc "goals" xs
       kcomment =
-          if null comment then
-              []
-          else
-              [L () (S () "comment" : map strip comment)]
+        loadComment "goals" goals ++
+        loadComment "comment" (assoc "comment" xs)
+
+loadComment :: String -> [SExpr Pos] -> [SExpr ()]
+loadComment _ [] = []
+loadComment key comment =
+  [L () (S () key : map strip comment)]
 
 loadInst :: (Algebra t p g s e c, Monad m) => Pos ->
             Prot t g -> [t] -> g -> String -> Int ->
@@ -390,10 +395,10 @@ loadListener kvars gen x =
       return (mkListener gen t)
 
 loadRest :: (Algebra t p g s e c, Monad m) => Pos -> [t] ->
-            Prot t g -> g -> [Instance t e] ->
+            Prot t g -> g -> [Goal t] -> [Instance t e] ->
             [SExpr Pos] -> [SExpr Pos] -> [SExpr Pos] -> [SExpr Pos] ->
             [SExpr Pos] -> [SExpr ()] -> m (Preskel t g s e)
-loadRest pos vars p gen insts orderings nr ar ur pl comment =
+loadRest pos vars p gen gs insts orderings nr ar ur pl comment =
     do
       case null insts of
         True -> fail (shows pos "No strands")
@@ -405,7 +410,7 @@ loadRest pos vars p gen insts orderings nr ar ur pl comment =
       ur <- loadBaseTerms vars ur
       let (nr', ar', ur') = foldl addInstOrigs (nr, ar, ur) insts
       prios <- mapM (loadPriorities heights) pl
-      let k = mkPreskel gen p insts o nr' ar' ur' prios comment
+      let k = mkPreskel gen p gs insts o nr' ar' ur' prios comment
       case termsWellFormed $ nr' ++ ar' ++ ur' ++ kterms k of
         False -> fail (shows pos "Terms in skeleton not well formed")
         True -> return ()
@@ -465,3 +470,9 @@ addInstOrigs (nr, ar, ur) i =
     (foldl (flip adjoin) nr $ inheritRnon i,
      foldl (flip adjoin) ar $ inheritRpnon i,
      foldl (flip adjoin) ur $ inheritRunique i)
+
+-- Security Goals
+
+loadGoals :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
+             g -> [SExpr Pos] -> m (g, [Goal t])
+loadGoals _ _ g _ = return (g, [])
