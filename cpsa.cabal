@@ -125,9 +125,10 @@ Executable cpsa
   Other-Modules:
     Paths_cpsa CPSA.Lib.Vector CPSA.Lib.Utilities CPSA.Lib.Pretty
     CPSA.Lib.SExpr CPSA.Lib.Printer CPSA.Lib.Notation CPSA.Lib.Entry
-    CPSA.Lib.Algebra CPSA.Lib.Protocol CPSA.Lib.Strand CPSA.Lib.Loader
-    CPSA.Lib.Displayer CPSA.Lib.Cohort CPSA.Lib.Expand CPSA.Lib.CPSA
-    CPSA.Lib.Reduction CPSA.Basic.Algebra CPSA.DiffieHellman.Algebra
+    CPSA.Lib.Algebra CPSA.Lib.Protocol CPSA.Lib.Goal CPSA.Lib.Strand
+    CPSA.Lib.Loader CPSA.Lib.Displayer CPSA.Lib.Cohort CPSA.Lib.Expand
+    CPSA.Lib.CPSA CPSA.Lib.Reduction CPSA.Basic.Algebra
+    CPSA.DiffieHellman.Algebra
 
 Executable cpsagraph
   Main-Is:		CPSA/Graph/Main.hs
