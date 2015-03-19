@@ -1,3 +1,12 @@
+2015-03-19  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/SAS/SAS.hs (form): Changed the format of a shape
+	analysis sentences.  Instead of a bare formula, the formula is
+	wrapped in a defsas form, as in (defsas PROT SAS).  Removed the
+	protocol from role position predicates and parameter predicates.
+	Replaced function symbols uniq and sprec with uniq-at and str-prec
+	respectively.
+
 2015-03-17  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/SAS/SAS.hs (displayEq): Use = for function symbol

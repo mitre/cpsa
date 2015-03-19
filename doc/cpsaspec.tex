@@ -2116,8 +2116,8 @@ there is a protocol specific binary parameter predicate
 $P[r,x]:\dom{node}\times{}S$.  The protocol independent unary
 predicates are $\mathsf{non}: B$ for each base sort~$B$.  The
 remaining protocol independent predicates are binary, and are
-$\mathsf{uniq}: B\times\dom{node}$,
-$\mathsf{sprec}:\dom{node}\times\dom{node}$,
+$\mathsf{\uniqat}: B\times\dom{node}$,
+$\mathsf{\strprec}:\dom{node}\times\dom{node}$,
 $\mathsf{prec}:\dom{node}\times\dom{node}$, and equality.
 
 Soon we define~$\form(k)=(Y,\Phi)$, where~$\Phi$ is $k$'s skeleton
@@ -2158,12 +2158,12 @@ follows.
   $P[r,x](v(s,h-1),t)$,
   where $r^c=C$ when $r=\role(C,N,U)$.
 \item For each $(s,i),(s,i')\in N$ such that $i<i'$, assert
-  $\cn{sprec}(v(s,i),v(s,i'))$.
+  $\cn{\strprec}(v(s,i),v(s,i'))$.
 \item For each $(s,i)\prec^-(s',i')$ such that $s\neq s'$, assert
   $\cn{prec}(v(s,i),v(s',i'))$.
 \item For each $t\in N$, assert $\cn{non}(t)$.
 \item For each $t\in U$ and node~$n$ such that
-  $n\in\orig_k(t)$, assert $\cn{uniq}(t,v(n))$.
+  $n\in\orig_k(t)$, assert $\cn{\uniqat}(t,v(n))$.
 \end{itemize}
 
 Given a set of homomorphisms $\delta_i\colon k_0\mapsto k_i$, its shape
@@ -2212,8 +2212,8 @@ d_0=d_1\\
 \qquad\quad\wedge\init_0(n_3)\wedge\init_a(n_3,a_1)\wedge
 \init_b(n_3,b_2)\wedge
 \init_s(n_3,s_1)\\
-\qquad\quad\wedge\cn{uniq}(s_1,n_2)\wedge
-\cn{prec}(n_3,n_2)\wedge\cn{sprec}(n_2,n_1)\\
+\qquad\quad\wedge\cn{\uniqat}(s_1,n_2)\wedge
+\cn{prec}(n_3,n_2)\wedge\cn{\strprec}(n_2,n_1)\\
 \qquad\quad\wedge\cn{non}(a_1^{-1})\wedge
 \cn{non}(b_1^{-1})))
 \end{array}$$
@@ -2255,10 +2255,10 @@ straightforward.
 \begin{itemize}
 \item $k,\alpha\models\cn{prec}(y,z)$ iff
   $\alpha(y)\prec\alpha(z)$.
-\item $k,\alpha\models\cn{sprec}(y,z)$ iff $\alpha(y)\prec\alpha(z)$,
+\item $k,\alpha\models\cn{\strprec}(y,z)$ iff $\alpha(y)\prec\alpha(z)$,
   $\alpha(y)=(s,i)$, and $\alpha(z)=(s,i')$.
 \item $k,\alpha\models\cn{non}(t)$ iff $\bar\alpha(t)\in\nu$.
-\item $k,\alpha\models\cn{uniq}(t,y)$ iff $\bar\alpha(t)\in\upsilon$ and
+\item $k,\alpha\models\cn{\uniqat}(t,y)$ iff $\bar\alpha(t)\in\upsilon$ and
   $\alpha(y)\in\orig_k(\bar\alpha(t))$.
 \item $k,\alpha\models y=z$ iff $\bar\alpha(y)=\bar\alpha(z)$.
 \end{itemize}
@@ -2273,7 +2273,7 @@ prove a protocol achieves a goal.  That is,
 \[\cn{prec}(x,y)
 \land\cn{prec}(y,z)\supset
 \cn{prec}(x,z).\]
-Furthermore, $\cn{sprec}(x,y)\supset\cn{prec}(x,y)$.
+Furthermore, $\cn{\strprec}(x,y)\supset\cn{prec}(x,y)$.
 
 \bibliography{cpsa}
 \bibliographystyle{plain}

@@ -37,7 +37,7 @@ prover9(In, Out) :-
 
 %% Ignore all forms except the ones that start with forall.
 top_forms_pp(_, []).
-top_forms_pp(Out, [[forall|Rest]|Forms]) :-
+top_forms_pp(Out, [[defsas, _, [forall|Rest]]|Forms]) :-
 	!,
 	form_to_pretty([forall|Rest], Pretty),
 	pp:pr(Out, 72, Pretty),

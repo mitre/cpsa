@@ -625,7 +625,8 @@ form :: Algebra t p g s e c => Analysis t g c -> SExpr ()
 form (pov, shapes) =
   let (c, vars, conj) = skel emptyContext pov in
   let disj = map (shape c conj) shapes in
-  quantify "forall" vars (imply (conjoin conj) (disjoin disj))
+  L () [S () "defsas", S () (pname $ protocol pov), -- Name of protocol
+        quantify "forall" vars (imply (conjoin conj) (disjoin disj))]
 
 -- Convert one skeleton into a declaration and a conjunction.  The
 -- declaration is used as the bound variables in a quantifier.  The
@@ -640,7 +641,7 @@ skel ctx k =
   (kctx,
    displayVars kctx (kvars k) ++ listMap node nodes,
    map (nodeForm kctx k) (M.assocs (varmap k)) ++
-   map (strandForm kctx k) (zip (strands k) $ insts k) ++
+   map (strandForm kctx) (zip (strands k) $ insts k) ++
    map (precForm kctx) (orderings k) ++
    map (sprecForm kctx) (succs k) ++
    map (unary "non" kctx) (nons k) ++
@@ -663,7 +664,6 @@ nodeForm :: Algebra t p g s e c => c -> Preskel t g c ->
             (Node, t) -> SExpr ()
 nodeForm c k ((s, i), n) =
     L () [S () "p",
-          Q () $ pname $ protocol k, -- Name of the protocol
           Q () $ rname $ role inst,  -- Name of the role
           N () $ i,
           displayTerm c n]
@@ -675,14 +675,12 @@ quote (S () str) = Q () str
 quote x = x
 
 -- Creates the atomic formulas used to describe an instance of a role
-strandForm :: Algebra t p g s e c => c -> Preskel t g c ->
-              (t, Instance t c) -> SExpr ()
-strandForm c k (s, inst) =
+strandForm :: Algebra t p g s e c => c -> (t, Instance t c) -> SExpr ()
+strandForm c (s, inst) =
     conjoin (map f (env inst))
     where
       f (x, t) =
           L () [S () "p",
-                Q () $ pname $ protocol k, -- Name of the protocol
                 Q () $ rname $ role inst,  -- Name of the role
                 quote $ displayTerm (ctx $ role inst) x,
                 displayTerm c s,
@@ -694,10 +692,10 @@ precForm = binary "prec"
 
 -- Creates the atomic formula used to describe a strand node ordering
 sprecForm :: Algebra t p g s e c => c -> (t, t) -> SExpr ()
-sprecForm = binary "sprec"
+sprecForm = binary "str-prec"
 
 uniqForm :: Algebra t p g s e c => c -> (t, t) -> SExpr ()
-uniqForm = binary "uniq"
+uniqForm = binary "uniq-at"
 
 -- Creates a formula associated with a shape.  It is a disjunction of
 -- existentially quantified formulas that describe the homomorphism
