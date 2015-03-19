@@ -1,7 +1,7 @@
 (herald "The ffgg Protocol"
   (comment "From A Necessarily Parallel Attack by Jon K. Millen"))
 
-(comment "CPSA 2.4.0")
+(comment "CPSA 2.4.1")
 (comment "All input read from ffgg.scm")
 
 (defprotocol ffgg basic

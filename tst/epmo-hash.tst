@@ -1,7 +1,7 @@
 (herald "Electronic Purchase with Money Order Protocol with Key Hashing"
   (comment "Annotated with trust management formulas"))
 
-(comment "CPSA 2.4.0")
+(comment "CPSA 2.4.1")
 (comment "All input read from epmo-hash.scm")
 
 (defprotocol epmo basic

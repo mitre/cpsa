@@ -1,6 +1,6 @@
 (herald "Distributed Authentication Security Service Protocol Variants")
 
-(comment "CPSA 2.4.0")
+(comment "CPSA 2.4.1")
 (comment "All input read from dass_simple.scm")
 
 (defprotocol dass-simple basic
