@@ -4,6 +4,10 @@
 -- order-sorted algebra.  It exports a name, and the origin used to
 -- generate variables.
 
+-- To support security goals, the message algebra has been augmented
+-- with support for variables of sort node and pairs of integers.  The
+-- constructor D is used as N is taken for numbers in S-Expressions.
+
 -- Copyright (c) 2009 The MITRE Corporation
 --
 -- This program is free software: you can redistribute it and/or
@@ -122,6 +126,8 @@ data Term
     = I !Id
     | C !String                 -- Tag constants
     | F !Symbol ![Term]
+    | D !Id                     -- Node variable
+    | P (Int, Int)              -- Node constant
       deriving (Show, Eq, Ord)
 
 -- In this algebra (F Invk [F Invk [t]]) == t is an axiom
@@ -132,13 +138,18 @@ data Term
 -- sort information is called a variable.  The sort of a variable is
 -- one of mesg, text, data, name, skey, and akey.
 
--- Terms that represent variables.
+-- Terms that represent algebra variables.
 isVar :: Term -> Bool
 isVar (I _) = True           -- Sort: mesg
 isVar (F s [I _]) =
     -- Sorts: text, data, name, skey, and akey
     s == Text || s == Data || s == Name || s == Skey || s == Akey
 isVar _ = False
+
+-- Note that isVar of (D _) is false.
+isNodeVar :: Term -> Bool
+isNodeVar (D _) = True
+isNodeVar _ = False
 
 -- Extract the identifier from a variable
 varId :: Term -> Id
@@ -148,6 +159,7 @@ varId (F Data [I x]) = x
 varId (F Name [I x]) = x
 varId (F Skey [I x]) = x
 varId (F Akey [I x]) = x
+varId (D x) = x
 varId _ = error "Algebra.varId: term not a variable with its sort"
 
 isAcquiredVar :: Term -> Bool
@@ -246,6 +258,8 @@ isAtom (I _) = False
 isAtom (C _) = False
 isAtom (F s _) =
     s == Text || s == Data || s == Name || s == Skey || s == Akey
+isAtom (D _) = False
+isAtom (P _) = False
 
 -- Does a term occur in another term?
 occursIn :: Term -> Term -> Bool
@@ -437,6 +451,7 @@ instance C.Term Term where
     isVar = isVar
     isAcquiredVar = isAcquiredVar
     isAtom = isAtom
+    isNodeVar = isNodeVar
     termsWellFormed = termsWellFormed
     occursIn = occursIn
     foldVars = foldVars
@@ -534,6 +549,13 @@ clone gen t =
                 let (alist', gen', u') =
                         foldl cloneTermList (alist, gen, []) u in
                 (alist', gen', F sym $ reverse u')
+            D x ->              -- identifiers to identifier.
+                case lookup x alist of
+                  Just y -> (alist, gen, D y)
+                  Nothing ->
+                      let (gen', y) = cloneId gen x in
+                      ((x, y) : alist, gen', D y)
+            P p -> (alist, gen, P p)
       cloneTermList (alist, gen, u) t =
           let (alist', gen', t') = cloneTerm (alist, gen) t in
           (alist', gen', t' : u)
@@ -561,6 +583,9 @@ idSubst subst (F Invk [t]) =
       t -> F Invk [t]
 idSubst subst (F s u) =
     F s (map (idSubst subst) u)
+idSubst subst (D x) =
+    M.findWithDefault (D x) x subst
+idSubst _ t@(P _) = t
 
 -- Unification and substitution
 
@@ -606,6 +631,10 @@ chase (Subst s) (I x) =
     case M.lookup x s of
       Nothing -> I x
       Just t -> chase (Subst s) t
+chase (Subst s) (D x) =
+    case M.lookup x s of
+      Nothing -> D x
+      Just t -> chase (Subst s) t
 chase s (F Invk [t]) = chaseInvk s t
 chase _ t = t
 
@@ -622,6 +651,8 @@ occurs :: Id -> Term -> Bool
 occurs x (I y) = x == y
 occurs _ (C _) = False
 occurs x (F _ u) = any (occurs x) u
+occurs x (D y) = x == y
+occurs _ (P _) = False
 
 unifyChase :: Term -> Term -> Subst -> Maybe Subst
 unifyChase t t' s = unifyTerms (chase s t) (chase s t') s
@@ -647,6 +678,15 @@ unifyTerms (F Pubk [C c, I x]) (F Invk [I y]) s =
     unifyTerms (I y) (F Invk [F Pubk [C c, I x]]) s
 unifyTerms (F sym u) (F sym' u') s
     | sym == sym' = unifyTermLists u u' s
+    | otherwise = Nothing
+unifyTerms (D x) (D y) (Subst s)
+    | x == y = Just (Subst s)
+    | otherwise = Just (Subst $ M.insert x (D y) s)
+unifyTerms (D x) (P p) (Subst s) =
+    Just (Subst $ M.insert x (P p) s)
+unifyTerms t (D x) s = unifyTerms (D x) t s
+unifyTerms (P p) (P p') s
+    | p == p' = Just s
     | otherwise = Nothing
 unifyTerms _ _ _ = Nothing
 
@@ -684,6 +724,8 @@ substChase subst t =
             t -> F Invk [t]
       F s u ->
           F s (map (substChase subst) u)
+      t@(D _) -> t
+      t@(P _) -> t
 
 instance C.Subst Term Gen Subst where
    emptySubst = emptySubst
@@ -720,6 +762,11 @@ match (F s u) (F s' u') r
     | s == s' = matchLists u u' r
 match (F Invk [t]) t' r =
     match t (F Invk [t']) r
+match (D x) t (Env r) =
+    case M.lookup x r of
+      Nothing -> Just $ Env $ M.insert x t r
+      Just t' -> if t == t' then Just $ Env r else Nothing
+match (P p) (P p') r = if p == p' then Just r else Nothing
 match _ _ _ = Nothing
 
 matchLists :: [Term] -> [Term] -> Env -> Maybe Env
@@ -744,6 +791,8 @@ allId :: (Id -> Bool) -> Term -> Bool
 allId f (I x) = f x
 allId _ (C _) = True
 allId f (F _ u) = all (allId f) u
+allId f (D x) = f x
+allId _ (P _) = True
 
 -- Cast an environment into a substitution by filtering out trivial
 -- bindings.
@@ -773,6 +822,8 @@ reify domain (Env env) =
           | x == y = (F Skey [I x], F Skey [t])
       loop (F Akey [I x] : _) (y, t)
           | x == y = (F Akey [I x], F Akey [t])
+      loop (D x : _) (y, t)
+          | x == y = (D x, t)
       loop (_ : domain) pair = loop domain pair
 
 -- Ensure the range of an environment contains only variables and that
@@ -785,6 +836,15 @@ matchRenaming (Env e) =
       loop s (I x:e) =
           S.notMember x s && loop (S.insert x s) e
       loop _ _ = False
+
+nodeMatch ::  Term -> (Int, Int) -> Env -> Maybe Env
+nodeMatch t p env = match t (P p) env
+
+nodeLookup :: Env -> Term -> Maybe (Int, Int)
+nodeLookup env t =
+  case instantiate env t of
+    P p -> Just p
+    _ -> Nothing
 
 instance C.Env Term Gen Subst Env where
    emptyEnv = emptyEnv
@@ -799,6 +859,9 @@ instance C.Env Term Gen Subst Env where
    substitution = substitution
    reify = reify
    matchRenaming (_, e) = matchRenaming e
+   nodeMatch t t' (g, e) =
+       maybe [] (\e -> [(g, e)]) $ nodeMatch t t' e
+   nodeLookup = nodeLookup
 
 -- Term specific loading functions
 
@@ -824,17 +887,18 @@ loadVar (gen, vars) (S pos name, S pos' sort) =
       Left _ ->
           do
             let (gen', x) = freshId gen name
-            p <- mkVar (I x)
+            p <- mkVar x
             return (gen', p : vars)
     where
-      mkVar t =
+      mkVar x =
           case sort of
-            "mesg" -> return t
-            "text" -> return $ F Text [t]
-            "data" -> return $ F Data [t]
-            "name" -> return $ F Name [t]
-            "skey" -> return $ F Skey [t]
-            "akey" -> return $ F Akey [t]
+            "mesg" -> return (I x)
+            "text" -> return $ F Text [I x]
+            "data" -> return $ F Data [I x]
+            "name" -> return $ F Name [I x]
+            "skey" -> return $ F Skey [I x]
+            "akey" -> return $ F Akey [I x]
+            "node" -> return (D x)
             _ -> fail (shows pos' "Sort " ++ sort ++ " not recognized")
 loadVar _ (x,_) = fail (shows (annotation x) "Bad variable syntax")
 
@@ -976,6 +1040,7 @@ displayVar ctx (F Data [I x]) = displaySortId "data" ctx x
 displayVar ctx (F Name [I x]) = displaySortId "name" ctx x
 displayVar ctx (F Skey [I x]) = displaySortId "skey" ctx x
 displayVar ctx (F Akey [I x]) = displaySortId "akey" ctx x
+displayVar ctx (D x) = displaySortId "node" ctx x
 displayVar _ _ =
     error "Algebra.displayVar: term not a variable with its sort"
 
@@ -1015,6 +1080,8 @@ displayTerm ctx (F Enc [t0, t1]) =
     L () (S () "enc" : displayEnc ctx t0 t1)
 displayTerm ctx (F Hash [t]) =
     L () (S () "hash" : displayList ctx t)
+displayTerm ctx (D x) = displayId ctx x
+displayTerm _ (P (z, i)) = L () [N () z, N () i]
 displayTerm _ t = error ("Algebra.displayTerm: Bad term " ++ show t)
 
 displayList :: Context -> Term -> [SExpr ()]

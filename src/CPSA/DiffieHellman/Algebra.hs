@@ -813,6 +813,7 @@ instance C.Term Term where
   isVar = isVar
   isAcquiredVar = isAcquiredVar
   isAtom = isAtom
+  isNodeVar _ = error "Algebra.isNodeVar: no support for nodes"
   termsWellFormed = termsWellFormed
   occursIn = occursIn
   foldVars = foldVars
@@ -1715,6 +1716,8 @@ instance C.Env Term Gen Subst Env where
   substitution = substitution
   reify = reify
   matchRenaming = matchRenaming
+  nodeMatch _ _ _ = error "Algebra.nodeMatch: no support for nodes"
+  nodeLookup _ _ = error "Algebra.nodeMatch: no support for nodes"
 
 -- Term specific loading functions
 

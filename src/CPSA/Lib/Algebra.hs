@@ -26,9 +26,15 @@ class (Term t, Place t p, Gen t g, Subst t g s,
 -- Terms
 
 class (Ord t, Show t) => Term t where
-    isVar :: t -> Bool          -- Is term a variable in the algebra?
+
+  -- These predicates succeed only on terms in the message algebra.
+    isVar :: t -> Bool          -- Is term a variable in the message algebra?
     isAcquiredVar :: t -> Bool  -- Is term an acquired variable?
     isAtom :: t -> Bool       -- Is the sort of this term a base sort?
+
+    -- Extension for security goals, a predicate that succeeds only
+    -- when applied to node variables.
+    isNodeVar :: t -> Bool
 
     -- Does a term occur in another term?
     occursIn :: t -> t -> Bool
@@ -169,6 +175,12 @@ class (Term t, Gen t g, Subst t g s, Ord e, Show e) => Env t g s e
     -- Is match a one-to-one variable-to-variable map?  This function
     -- is used while testing if two skeletons are isomorphic.
     matchRenaming :: (g, e) -> Bool
+    -- Extensions for security goals: node match.  To succeed, the
+    -- term must be a variable of sort node.
+    nodeMatch :: t -> (Int, Int) -> (g, e) -> [(g, e)]
+    -- Node lookup.  If t is a node variable and is bound to a pair in
+    -- e, then return the pair, otherwise return nothing.
+    nodeLookup :: e -> t -> Maybe (Int, Int)
 
 -- Display contexts--maps from variables to their printed representation.
 
