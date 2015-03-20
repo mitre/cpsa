@@ -17,6 +17,7 @@ import CPSA.Lib.Algebra
 import CPSA.Lib.Protocol
 import CPSA.Lib.Goal
 import CPSA.Lib.Strand
+import CPSA.Lib.GoalLoader
 
 {--
 import System.IO.Unsafe
@@ -471,8 +472,13 @@ addInstOrigs (nr, ar, ur) i =
      foldl (flip adjoin) ar $ inheritRpnon i,
      foldl (flip adjoin) ur $ inheritRunique i)
 
--- Security Goals
+-- Security goals
 
 loadGoals :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
              g -> [SExpr Pos] -> m (g, [Goal t])
-loadGoals _ _ g _ = return (g, [])
+loadGoals _ _ g [] = return (g, [])
+loadGoals pos prot g (x : xs) =
+  do
+    (g, goal) <- loadSentence pos prot g x
+    (g, goals) <- loadGoals pos prot g xs
+    return (g, goal : goals)
