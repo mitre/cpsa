@@ -72,6 +72,7 @@
   (parent 1)
   (unrealized)
   (shape)
+  (satisfies-all-goals)
   (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
   (origs (n1 (0 0))))
 
@@ -132,6 +133,7 @@
   (parent 3)
   (unrealized)
   (shape)
+  (satisfies-all-goals)
   (maps ((0) ((a a) (n2 n2) (b b) (n1 n1))))
   (origs (n2 (0 1))))
 
@@ -192,6 +194,7 @@
   (parent 5)
   (unrealized)
   (shape)
+  (satisfies-all-goals)
   (maps ((0) ((a a) (n2 n2) (b b) (n1 n1))))
   (origs (n2 (0 1))))
 
@@ -327,6 +330,7 @@
   (parent 10)
   (unrealized)
   (shape)
+  (satisfies-all-goals)
   (maps ((0 0) ((a a) (b b) (n1 n1) (n1-0 n1) (n2 n2) (n2-0 n2))))
   (origs (n1 (0 0))))
 

@@ -1,3 +1,10 @@
+2015-03-20  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/{Goal,Strand,Loader}.hs: Added goal loading and
+	satisfaction checking.  When a shape satisfies all goals in a
+	point-of-view skeleton, the shape is annotated with
+	(satifies-all-goals).
+
 2015-03-19  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Basic/Algebra.hs (Term): Added node variables and

@@ -1947,7 +1947,160 @@ collapseStrands k s s' =
       prs <- skeletonize useThinningDuringCollapsing prs
       return $ skel prs
 
--- Security goals
+-- Security goals: satisfaction of atomic formulas
+
+type Sem t g s e = Preskel t g s e -> (g, e) -> [(g, e)]
+
+satisfy :: Algebra t p g s e c => AForm t -> Sem t g s e
+satisfy (Equals t t') = geq t t'
+satisfy (Non t) = ggnon t
+satisfy (Pnon t) = ggpnon t
+satisfy (UniqAt t n) = guniqAt t n
+satisfy (StrPrec n n') = gstrPrec n n'
+satisfy (Prec n n') = gprec n n'
+satisfy (RolePred r i n) = grole r i n
+satisfy (ParamPred r v n t) = gparam r v n t
+
+-- Equality This isn't right.  Suppose t is a compound term which has
+-- some unbound variable.  Need static role specific check to
+-- eliminate this case.
+geq :: Algebra t p g s e c => t -> t -> Sem t g s e
+geq t t' _ (g, e)
+  | t == ti = error ("Strand.geq: " ++ show t ++ " unbound")
+  | t' == ti' = error ("Strand.geq: " ++ show t' ++ " unbound")
+  | ti == ti' = [(g, e)]
+  | otherwise = []
+  where
+    ti = instantiate e t
+    ti' = instantiate e t'
+
+-- Non-origination
+ggnon :: Algebra t p g s e c => t -> Sem t g s e
+ggnon t k e =
+  do
+    t' <- knon k
+    match t t' e
+
+-- Penetrator non-origination
+ggpnon :: Algebra t p g s e c => t -> Sem t g s e
+ggpnon t k e =
+  do
+    t' <- kpnon k
+    match t t' e
+
+-- Unique origination at a node
+guniqAt :: Algebra t p g s e c => t -> t -> Sem t g s e
+guniqAt t n k e =
+  do
+    (t', ls) <- korig k
+    case ls of
+      [l] ->
+        do
+          e <- match t t' e
+          nodeMatch n l e
+      _ -> []
+
+inSkel :: Algebra t p g s e c => Preskel t g s e -> (Int, Int) -> Bool
+inSkel k (s, i) =
+  s >= 0 && s < nstrands k && i >= 0 && i < height (insts k !! s)
+
+strandPrec :: Node -> Node -> Bool
+strandPrec (s, i) (s', i')
+  | s == s' && i < i' = True
+  | otherwise = False
+
+-- Within strand node precedes
+gstrPrec :: Algebra t p g s e c => t -> t -> Sem t g s e
+gstrPrec n n' k (g, e) =
+  case (nodeLookup e n, nodeLookup e n') of
+    (Just p, Just p')
+      | inSkel k p && inSkel k p' && strandPrec p p' -> [(g, e)]
+    (Just _, Just _) -> []
+    (_, Just _) ->
+      error ("Strand.gstrPrec: node " ++ show n ++ " unbound")
+    _ ->
+      error ("Strand.gstrPrec: node " ++ show n' ++ " unbound")
+
+-- Node precedes
+-- This should look at the transitive closure of the ordering graph.
+gprec :: Algebra t p g s e c => t -> t -> Sem t g s e
+gprec n n' k (g, e) =
+  case (nodeLookup e n, nodeLookup e n') of
+    (Just p, Just p')
+      | inSkel k p && inSkel k p' &&
+        (strandPrec p p' || elem (p, p') (tc k)) -> [(g, e)]
+    (Just _, Just _) -> []
+    (_, Just _) ->
+      error ("Strand.gstrPrec: node " ++ show n ++ " unbound")
+    _ ->
+      error ("Strand.gstrPrec: node " ++ show n' ++ " unbound")
+
+-- Role predicate
+-- r and i determine the predicate, which has arity one.
+grole :: Algebra t p g s e c => Role t -> Int -> t -> Sem t g s e
+grole r i n k (g, e) =
+  case nodeLookup e n of
+    Nothing ->
+      do
+        (z, inst) <- zip [0..] $ insts k
+        case () of
+          _ | i >= height inst -> []
+            | rname (role inst) == rname r -> nodeMatch n (z, i) (g, e)
+            | otherwise ->      -- See if z could have been an instance of r
+              case bldInstance r (take (i + 1) $ trace inst) g of
+                [] -> []
+                _ -> nodeMatch n (z, i) (g, e)
+    Just (z, j) | z < nstrands k && i == j ->
+      let inst = insts k !! z in
+      case () of
+        _ | i >= height inst -> []
+          | rname (role inst) == rname r -> [(g, e)]
+          | otherwise ->
+            case bldInstance r (take (i + 1) $ trace inst) g of
+              [] -> []
+              _ -> [(g, e)]
+    _ -> []
+
+-- Parameter predicate
+
+-- r and t determine the predicate, which has arity two.  t must be
+-- a variable declared in role r.
+gparam :: Algebra t p g s e c => Role t -> t -> t -> t -> Sem t g s e
+gparam r t n t' k (g, e) =
+  case nodeLookup e n of
+    Just (z, i) | z < nstrands k  ->
+      let inst = insts k !! z in
+      case () of
+        _ | i >= height inst -> []
+          | rname (role inst) == rname r ->
+            match t' (instantiate (env inst) t) (g, e)
+          | otherwise ->
+              do
+                (g, inst) <- bldInstance r (take (i + 1) $ trace inst) g
+                match t' (instantiate (env inst) t) (g, e)
+    Nothing -> error ("Strand.gparam: node " ++ show n ++ " unbound")
+    _ -> []
+
+-- Conjunction
+
+conjoin :: Algebra t p g s e c => [AForm t] -> Sem t g s e
+conjoin [] _ e = [e]
+conjoin (a: as) k e =
+  do
+    e <- satisfy a k e
+    conjoin as k e
+
+-- Satisfaction
+
+goalSat :: Algebra t p g s e c => Preskel t g s e -> Goal t -> Bool
+goalSat k g =
+  all conclusion $ conjoin (antec g) k (gen k, emptyEnv)
+  where
+    conclusion e = any (disjunct e) $ concl g
+    disjunct e a = not . null $ conjoin a k e
 
 sat :: Algebra t p g s e c => Preskel t g s e -> Bool
-sat _ = False
+sat k =
+  case goals $ shared k of
+    [] -> False
+    gs -> all (goalSat k) gs
