@@ -78,6 +78,7 @@ Extra-Source-Files:
   tst/epmo_acctnum.lisp tst/epmo-hash.scm tst/epmo-hash.tst
   tst/epmo-key-hash.scm tst/epmo-key-hash.tst tst/epmo.scm
   tst/epmo.tst tst/ffgg.scm tst/ffgg.tst tst/fragile_pruning.scm
+  tst/goals.scm tst/goals.tst
   tst/fragile_pruning.tst tst/hashtest-key-hash.scm
   tst/hashtest-key-hash.tst tst/hashtest.scm tst/hashtest.tst
   tst/incompleteness_example.scm tst/incompleteness_example.tst

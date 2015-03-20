@@ -494,7 +494,7 @@ loadImplication :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
                    g -> [t] -> SExpr Pos -> m (g, Goal t)
 loadImplication _ prot g vars (L pos [S _ "implies", a, c]) =
   do
-    (g, antec) <- loadRoleSpecific pos prot g vars a
+    (g, antec) <- loadRoleSpecific pos prot g vars vars a
     (g, concl) <- loadConclusion pos prot g vars c
     return (g, Goal { antec = antec, concl = concl })
 loadImplication pos _ _ _ _ = fail (shows pos "Bad goal implication")
@@ -522,17 +522,17 @@ loadExistential :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
 loadExistential _ prot g vars (L pos [S _ "exists", L _ vs, x]) =
   do
     (g, evars) <- loadVars g vs
-    loadRoleSpecific pos prot g (evars ++ vars) x
+    loadRoleSpecific pos prot g (evars ++ vars) evars x
 loadExistential pos prot g vars x =
-  loadRoleSpecific pos prot g vars x
+  loadRoleSpecific pos prot g vars [] x
 
 loadRoleSpecific :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
-                    g -> [t] -> SExpr Pos -> m (g, [AForm t])
-loadRoleSpecific pos prot g vars x =
+                    g -> [t] -> [t] -> SExpr Pos -> m (g, [AForm t])
+loadRoleSpecific pos prot g vars unbound x =
   do
     (g, as) <- loadConjunction pos prot vars g x
     let as' = L.sortBy (\(_, x) (_, y) -> aFormOrder x y) as
-    unbound <- foldM roleSpecific vars as'
+    unbound <- foldM roleSpecific unbound as'
     case unbound of
       [] -> return (g, map snd as')
       (v : _) -> fail (shows (annotation x) (showst v " not used"))

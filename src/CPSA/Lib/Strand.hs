@@ -15,7 +15,7 @@ module CPSA.Lib.Strand (Instance, mkInstance, bldInstance, mkListener,
     graphNode, strands, vertex, Gist, gist, isomorphic, contract, augment,
     inheritRnon, inheritRpnon, inheritRunique, addListener, Cause
     (..), Direction (..), Method (..), Operation (..), operation,
-    prob, homomorphism, toSkeleton, generalize, collapse) where
+    prob, homomorphism, toSkeleton, generalize, collapse, sat) where
 
 import Control.Monad
 import qualified Data.List as L
@@ -1946,3 +1946,8 @@ collapseStrands k s s' =
       prs <- compress True prs s s'
       prs <- skeletonize useThinningDuringCollapsing prs
       return $ skel prs
+
+-- Security goals
+
+sat :: Algebra t p g s e c => Preskel t g s e -> Bool
+sat _ = False

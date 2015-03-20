@@ -340,6 +340,7 @@ commentPreskel lk seen unrealized shape msg =
                      (map (N ()) (L.sort (L.nub seen))) $
     addKeyValues "unrealized" (map displayNode $ L.sort unrealized) $
     condAddKeyValues "shape" shape [] $
+    condAddKeyValues "satisfies-all-goals" (shape && sat k) [] $
     -- Structure preserving maps
     -- Added for cpsasas program
     condAddKeyValues "maps" shape (maps k) $
