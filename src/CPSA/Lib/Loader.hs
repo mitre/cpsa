@@ -496,7 +496,7 @@ loadImplication _ prot g vars (L pos [S _ "implies", a, c]) =
   do
     (g, antec) <- loadRoleSpecific pos prot g vars vars a
     (g, concl) <- loadConclusion pos prot g vars c
-    return (g, Goal { antec = antec, concl = concl })
+    return (g, Goal { uvars = vars, antec = antec, concl = concl })
 loadImplication pos _ _ _ _ = fail (shows pos "Bad goal implication")
 
 loadConclusion :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->

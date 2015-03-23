@@ -291,6 +291,7 @@ foldVars f acc (F Enc [t0, t1]) = -- Encryption
     foldVars f (foldVars f acc t0) t1
 foldVars f acc (F Hash [t])     = -- Hashing
     foldVars f acc t
+foldVars f acc t@(D _) = f acc t          -- Node variable
 foldVars _ _ t = error $ "Algebra.foldVars: Bad term " ++ show t
 
 -- Fold f through a term applying it to each term that is carried by the term.

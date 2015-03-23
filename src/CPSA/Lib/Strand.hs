@@ -8,7 +8,7 @@
 
 module CPSA.Lib.Strand (Instance, mkInstance, bldInstance, mkListener,
     role, env, trace, height, listenerTerm, Sid, Node, mkPreskel,
-    firstSkeleton, Pair, Preskel, gen, protocol, insts, orderings,
+    firstSkeleton, Pair, Preskel, gen, protocol, kgoals, insts, orderings,
     pov, knon, kpnon, kunique, korig, kpriority, kcomment, nstrands, kvars,
     strandids, kterms, uniqOrig, preskelWellFormed, verbosePreskelWellFormed,
     Strand, inst, sid, nodes, Vertex, strand, pos, preds, event,
@@ -367,6 +367,9 @@ instance (Show t, Show g) => Show (Shared t g) where
 
 protocol :: Preskel t g s e -> Prot t g
 protocol k = prot $ shared k
+
+kgoals :: Preskel t g s e -> [Goal t]
+kgoals k = goals $ shared k
 
 -- Preskeletons
 
@@ -2092,15 +2095,18 @@ conjoin (a: as) k e =
 
 -- Satisfaction
 
-goalSat :: Algebra t p g s e c => Preskel t g s e -> Goal t -> Bool
+-- Returns the environments that show satifaction of the antecedent
+-- but fail to be extendable to show satifaction of one of the
+-- conclusions.
+goalSat :: Algebra t p g s e c => Preskel t g s e -> Goal t -> (Goal t, [e])
 goalSat k g =
-  all conclusion $ conjoin (antec g) k (gen k, emptyEnv)
+  (g, [ e |
+        (gen, e) <- conjoin (antec g) k (gen k, emptyEnv),
+        conclusion (gen, e) ])
   where
-    conclusion e = any (disjunct e) $ concl g
-    disjunct e a = not . null $ conjoin a k e
+    conclusion e = all (disjunct e) $ concl g
+    disjunct e a = null $ conjoin a k e
 
-sat :: Algebra t p g s e c => Preskel t g s e -> Bool
+sat :: Algebra t p g s e c => Preskel t g s e -> [(Goal t, [e])]
 sat k =
-  case goals $ shared k of
-    [] -> False
-    gs -> all (goalSat k) gs
+  map (goalSat k) (kgoals k)

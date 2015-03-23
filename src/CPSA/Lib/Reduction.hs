@@ -18,6 +18,7 @@ import CPSA.Lib.Utilities
 import CPSA.Lib.SExpr
 import CPSA.Lib.Entry
 import CPSA.Lib.Algebra
+import CPSA.Lib.Goal
 import CPSA.Lib.Strand
 import CPSA.Lib.Cohort
 import CPSA.Lib.Displayer
@@ -340,7 +341,8 @@ commentPreskel lk seen unrealized shape msg =
                      (map (N ()) (L.sort (L.nub seen))) $
     addKeyValues "unrealized" (map displayNode $ L.sort unrealized) $
     condAddKeyValues "shape" shape [] $
-    condAddKeyValues "satisfies-all-goals" (shape && sat k) [] $
+    condAddKeyValues "satisfies" (shape && (not $ null $ kgoals k))
+    (satisfies k) $
     -- Structure preserving maps
     -- Added for cpsasas program
     condAddKeyValues "maps" shape (maps k) $
@@ -376,6 +378,16 @@ maybeAddVKeyValues _ _ Nothing rest =
     rest
 maybeAddVKeyValues key f (Just x) rest =
     addKeyValues key (f x) rest
+
+-- Variable assignments and security goals
+
+satisfies :: Algebra t p g s e c => Preskel t g s e -> [SExpr ()]
+satisfies k =
+  map f (sat k) where
+    f (_, []) = S () "yes"
+    f (g, e : _) =
+      L () (S () "no" : displayEnv (ctx $ uvars g) (ctx $ kvars k) e)
+    ctx ts = addToContext emptyContext ts
 
 -- Prints structure preserving maps (homomorphisms)
 maps :: Algebra t p g s e c => Preskel t g s e -> [SExpr ()]

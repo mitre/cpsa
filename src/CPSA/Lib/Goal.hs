@@ -23,7 +23,8 @@ data AForm t
   deriving Show
 
 data Goal t
-  = Goal { antec :: [AForm t],    -- Antecedent
+  = Goal { uvars :: [t],          -- Universally quantified variables
+           antec :: [AForm t],    -- Antecedent
            concl :: [[AForm t]] } -- Conclusion
 
 -- Ordering used to sort by constructor order.
