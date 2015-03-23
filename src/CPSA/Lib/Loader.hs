@@ -17,6 +17,7 @@ import CPSA.Lib.Algebra
 import CPSA.Lib.Protocol
 import CPSA.Lib.Goal
 import CPSA.Lib.Strand
+import CPSA.Lib.Characteristic
 
 {--
 import System.IO.Unsafe
@@ -45,6 +46,10 @@ loadSExpr nom origin (ps, ks) (L pos (S _ "defprotocol" : xs)) =
 loadSExpr _ _ (ps, ks) (L pos (S _ "defskeleton" : xs)) =
     do
       k <- findPreskel pos ps xs
+      return (ps, k : ks)
+loadSExpr _ _ (ps, ks) (L pos (S _ "defgoal" : xs)) =
+    do
+      k <- findGoal pos ps xs
       return (ps, k : ks)
 loadSExpr nom origin (ps, ks) (L pos (S pos' "defpreskeleton" : xs)) =
     loadSExpr nom origin (ps, ks) (L pos (S pos' "defskeleton" : xs))
@@ -473,6 +478,23 @@ addInstOrigs (nr, ar, ur) i =
 
 -- Security goals
 
+-- Load a defgoal form
+findGoal :: (Algebra t p g s e c, Monad m) => Pos ->
+            [Prot t g] -> [SExpr Pos] -> m (Preskel t g s e)
+findGoal pos ps (S _ name : x : xs) =
+    case L.find (\p -> name == pname p) ps of
+      Nothing -> fail (shows pos $ "Protocol " ++ name ++ " unknown")
+      Just p ->
+        do
+          (g, goal) <- loadSentence pos p (pgen p) x
+          _ <- alist [] xs          -- Check syntax of xs
+          let kcomment = loadComment "comment" (assoc "comment" xs)
+          -- Make and return the characteristic skeleton of a security goal
+          characteristic pos p g goal kcomment
+findGoal pos _ _ = fail (shows pos "Malformed goal")
+
+--- Load a sequence of security goals
+
 loadGoals :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
              g -> [SExpr Pos] -> m (g, [Goal t])
 loadGoals _ _ g [] = return (g, [])
@@ -482,6 +504,8 @@ loadGoals pos prot g (x : xs) =
     (g, goals) <- loadGoals pos prot g xs
     return (g, goal : goals)
 
+-- Load a single security goal, a universally quantified formula
+
 loadSentence :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
                 g -> SExpr Pos -> m (g, Goal t)
 loadSentence _ prot g (L pos [S _ "forall", L _ vs, x]) =
@@ -489,6 +513,8 @@ loadSentence _ prot g (L pos [S _ "forall", L _ vs, x]) =
     (g, vars) <- loadVars g vs
     loadImplication pos prot g vars x
 loadSentence pos _ _ _ = fail (shows pos "Bad goal sentence")
+
+-- Load the top-level implication of a security goal
 
 loadImplication :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
                    g -> [t] -> SExpr Pos -> m (g, Goal t)
@@ -498,6 +524,9 @@ loadImplication _ prot g vars (L pos [S _ "implies", a, c]) =
     (g, concl) <- loadConclusion pos prot g vars c
     return (g, Goal { uvars = vars, antec = antec, concl = concl })
 loadImplication pos _ _ _ _ = fail (shows pos "Bad goal implication")
+
+-- The conclusion must be a disjunction.  Each disjunct may introduce
+-- existentially quantified variables.
 
 loadConclusion :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
                   g -> [t] -> SExpr Pos -> m (g, [[AForm t]])
@@ -526,6 +555,9 @@ loadExistential _ prot g vars (L pos [S _ "exists", L _ vs, x]) =
 loadExistential pos prot g vars x =
   loadRoleSpecific pos prot g vars [] x
 
+--- Load a conjunction of atomic formulas and ensure the formula is
+--- role specific.
+
 loadRoleSpecific :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
                     g -> [t] -> [t] -> SExpr Pos -> m (g, [AForm t])
 loadRoleSpecific pos prot g vars unbound x =
@@ -536,6 +568,8 @@ loadRoleSpecific pos prot g vars unbound x =
     case unbound of
       [] -> return (g, map snd as')
       (v : _) -> fail (shows (annotation x) (showst v " not used"))
+
+-- Load a conjunction of atomic formulas
 
 loadConjunction :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
                    [t] -> g -> SExpr Pos -> m (g, [(Pos, AForm t)])
@@ -555,6 +589,8 @@ loadConjuncts top p kvars g (x : xs) rest =
     (g, pos, a) <- loadPrimary top p kvars g x
     loadConjuncts top p kvars g xs ((pos, a) : rest)
 
+-- Load the atomic formulas
+    
 loadPrimary :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
                [t] -> g -> SExpr Pos -> m (g, Pos, AForm t)
 loadPrimary _ _ kvars g (L pos [S _ "=", x, y]) =
@@ -603,6 +639,8 @@ loadPrimary _ p kvars g (L pos [S _ "p", Q _ name, Q var x, y, z]) =
       True -> return (g, pos, ParamPred r v n t)
 loadPrimary pos _ _ _ _ = fail (shows pos "Bad formula")
 
+-- Load a term and make sure it has sort node
+
 loadNodeTerm :: (Algebra t p g s e c, Monad m) => [t] -> g ->
                 SExpr Pos -> m (g, t)
 loadNodeTerm ts g x =
@@ -611,6 +649,8 @@ loadNodeTerm ts g x =
     case isNodeVar t of
       True -> return (g, t)
       False -> fail (shows (annotation x) "Expecting a node variable")
+
+-- Load a term and make sure it does not have sort node
 
 loadAlgTerm :: (Algebra t p g s e c, Monad m) => [t] -> SExpr Pos -> m t
 loadAlgTerm _ x@(L _ [N _ _, N _ _]) =
@@ -637,6 +677,8 @@ termVars t = addVars [] t
 allBound :: Algebra t p g s e c => [t] -> t -> Bool
 allBound unbound t =
   L.all (flip L.notElem unbound) (termVars t)
+
+-- Returns variables in unbound that are not role specific
 
 roleSpecific :: (Algebra t p g s e c, Monad m) =>
                 [t] -> (Pos, AForm t) -> m [t]

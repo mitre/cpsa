@@ -1954,6 +1954,8 @@ collapseStrands k s s' =
 
 type Sem t g s e = Preskel t g s e -> (g, e) -> [(g, e)]
 
+-- Extends an environment (a variable assignment) according to the
+-- given atomic formula.
 satisfy :: Algebra t p g s e c => AForm t -> Sem t g s e
 satisfy (Equals t t') = geq t t'
 satisfy (Non t) = ggnon t
