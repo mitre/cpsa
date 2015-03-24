@@ -488,7 +488,9 @@ findGoal pos ps (S _ name : x : xs) =
         do
           (g, goal) <- loadSentence pos p (pgen p) x
           _ <- alist [] xs          -- Check syntax of xs
-          let kcomment = loadComment "comment" (assoc "comment" xs)
+          let kcomment =
+                loadComment "goals" [x] ++
+                loadComment "comment" (assoc "comment" xs)
           -- Make and return the characteristic skeleton of a security goal
           characteristic pos p g goal kcomment
 findGoal pos _ _ = fail (shows pos "Malformed goal")
@@ -511,7 +513,7 @@ loadSentence :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
 loadSentence _ prot g (L pos [S _ "forall", L _ vs, x]) =
   do
     (g, vars) <- loadVars g vs
-    loadImplication pos prot g vars x
+    loadImplication pos prot g (L.nub vars) x
 loadSentence pos _ _ _ = fail (shows pos "Bad goal sentence")
 
 -- Load the top-level implication of a security goal
