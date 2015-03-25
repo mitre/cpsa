@@ -10,6 +10,7 @@ module CPSA.Lib.Characteristic (characteristic) where
 
 import Control.Monad
 import qualified Data.List as L
+import CPSA.Lib.Utilities
 import CPSA.Lib.SExpr
 import CPSA.Lib.Algebra
 import CPSA.Lib.Protocol
@@ -27,18 +28,18 @@ z x y = unsafePerformIO (print x >> return y)
 -- function extracts the anecedent and univesally quantified variable.
 characteristic :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
                   g -> Goal t -> [SExpr ()] -> m (Preskel t g s e)
-characteristic pos prot g goal kcomment =
-  equalsForm pos prot g (uvars goal) (antec goal) kcomment
+characteristic pos prot g goal comment =
+  equalsForm pos prot goal g (uvars goal) (antec goal) comment
 
 -- Checks for equals in an antecedent and fails if it finds one.  One
 -- could use unification to solve the equality, and then apply the
 -- result to the remaining parts of the formula.
-equalsForm :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
-           g -> [t] -> [AForm t] -> [SExpr ()] -> m (Preskel t g s e)
-equalsForm pos _ _ _ as _ | any isEquals as =
+equalsForm :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g -> Goal t ->
+              g -> [t] -> [AForm t] -> [SExpr ()] -> m (Preskel t g s e)
+equalsForm pos _ _ _ _ as _ | any isEquals as =
   fail (shows pos "Equals not allowed in antecedent")
-equalsForm pos prot g vars as kcomment =
-  splitForm pos prot g vars as kcomment
+equalsForm pos prot goal g vars as comment =
+  splitForm pos prot goal g vars as comment
 
 isEquals :: AForm t -> Bool
 isEquals (Equals _ _) = True
@@ -48,15 +49,17 @@ isEquals _ = False
 -- The instance formulas are used to generate the skeleton's
 -- instances, and the skeleton formulas generate the rest.  Make the
 -- instances, and then make the rest.
-splitForm :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
+splitForm :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g -> Goal t ->
            g -> [t] -> [AForm t] -> [SExpr ()] -> m (Preskel t g s e)
-splitForm pos prot g vars as kcomment =
+splitForm pos prot goal g vars as comment =
   do
     (nmap, g, insts) <- mkInsts pos g is
-    mkSkel pos prot g vars insts ks kcomment
+    mkSkel pos prot goal g vars insts ks comment
   where                         -- is is the instance formulas and
     (is, ks) = L.partition instForm as -- ks is the skeleton formulas
 
+-- Instance formulas are role predicates, parameter predicates, and
+-- strand prec.
 instForm :: AForm t -> Bool
 instForm (RolePred _ _ _) = True
 instForm (ParamPred _ _ _ _) = True
@@ -165,6 +168,39 @@ nodeMap nri nss =
     let (_, i) = nriLookup n nri ]
     
 mkSkel :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
-          g -> [t] -> [Instance t e] -> [AForm t] ->
+          Goal t -> g -> [t] -> [Instance t e] -> [AForm t] ->
           [SExpr ()] -> m (Preskel t g s e)
-mkSkel _ _ _ _ _ _ = fail "bla"
+mkSkel pos p gl g vars insts as comment =
+  do
+    let o = []
+    let nr = []
+    let ar = []
+    let ur = []
+    let (nr', ar', ur') = foldl addInstOrigs (nr, ar, ur) insts
+    let prios = []
+    let k = mkPreskel g p [gl] insts o nr' ar' ur' prios comment
+    case termsWellFormed $ nr' ++ ar' ++ ur' ++ kterms k of
+      False -> fail (shows pos "Terms in skeleton not well formed")
+      True -> return ()
+    case verbosePreskelWellFormed k of
+      Return () -> return k
+      Fail msg -> fail $ shows pos
+                  $ showString "Skeleton not well formed: " msg
+
+data ReturnFail a
+    = Return a
+    | Fail String
+
+instance Monad ReturnFail where
+    return = Return
+    Fail l >>= _ = Fail l
+    Return r >>= k = k r
+    fail s = Fail s
+
+addInstOrigs :: Algebra t p g s e c => ([t], [t], [t]) ->
+                Instance t e -> ([t], [t], [t])
+addInstOrigs (nr, ar, ur) i =
+    (foldl (flip adjoin) nr $ inheritRnon i,
+     foldl (flip adjoin) ar $ inheritRpnon i,
+     foldl (flip adjoin) ur $ inheritRunique i)
+
