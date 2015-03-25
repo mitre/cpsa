@@ -608,6 +608,10 @@ loadPrimary _ _ kvars g (L pos [S _ "pnon", x]) =
   do
     t <- loadAlgTerm kvars x
     return (g, pos, Pnon t)
+loadPrimary _ _ kvars g (L pos [S _ "uniq", x]) =
+  do
+    t <- loadAlgTerm kvars x
+    return (g, pos, Uniq t)
 loadPrimary _ _ kvars g (L pos [S _ "uniq-at", x, y]) =
   do
     t <- loadAlgTerm kvars x
@@ -701,6 +705,9 @@ roleSpecific unbound (pos, Non t)
 roleSpecific unbound (pos, Pnon t)
   | allBound unbound t = return unbound
   | otherwise = fail (shows pos "Unbound variable in pnon")
+roleSpecific unbound (pos, Uniq t)
+  | allBound unbound t = return unbound
+  | otherwise = fail (shows pos "Unbound variable in uniq")
 roleSpecific unbound (pos, UniqAt t n)
   | allBound unbound t && L.notElem n unbound = return unbound
   | otherwise = fail (shows pos "Unbound variable in uniq-at")

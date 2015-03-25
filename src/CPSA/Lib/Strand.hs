@@ -1960,6 +1960,7 @@ satisfy :: Algebra t p g s e c => AForm t -> Sem t g s e
 satisfy (Equals t t') = geq t t'
 satisfy (Non t) = ggnon t
 satisfy (Pnon t) = ggpnon t
+satisfy (Uniq t) = gguniq t
 satisfy (UniqAt t n) = guniqAt t n
 satisfy (StrPrec n n') = gstrPrec n n'
 satisfy (Prec n n') = gprec n n'
@@ -1991,6 +1992,13 @@ ggpnon :: Algebra t p g s e c => t -> Sem t g s e
 ggpnon t k e =
   do
     t' <- kpnon k
+    match t t' e
+
+-- Unique origination
+gguniq :: Algebra t p g s e c => t -> Sem t g s e
+gguniq t k e =
+  do
+    t' <- kunique k
     match t t' e
 
 -- Unique origination at a node
