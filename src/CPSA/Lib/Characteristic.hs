@@ -52,7 +52,7 @@ splitForm :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
            g -> [t] -> [AForm t] -> [SExpr ()] -> m (Preskel t g s e)
 splitForm pos prot g vars as kcomment =
   do
-    insts <- mkInsts pos prot g vars is
+    (nmap, g, insts) <- mkInsts pos g is
     mkSkel pos prot g vars insts ks kcomment
   where                         -- is is the instance formulas and
     (is, ks) = L.partition instForm as -- ks is the skeleton formulas
@@ -63,57 +63,107 @@ instForm (ParamPred _ _ _ _) = True
 instForm (StrPrec _ _) = True
 instForm _ = False
 
-mkInsts :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
-           g -> [t] -> [AForm t] -> m [Instance t e]
-mkInsts _ _ _ _ _ = fail "bla"
+mkInsts :: (Algebra t p g s e c, Monad m) => Pos -> g ->
+           [AForm t] -> m ([(t, Node)], g, [Instance t e])
+mkInsts pos g as =
+  do
+    nri <- nodeRoleIndex pos as
+    nss <- binNodes pos nri as
+    (g, insts) <- foldInsts pos g as nri nss
+    return (nodeMap nri nss, g, insts)
 
--- Extracts the nodes from a list of variables.
-nodes :: Algebra t p g s e c => [t] -> [t]
-nodes vars = filter isNodeVar vars
+type RoleIndex t = (Role t, Int)
 
--- Computes a map from nodes to indices
-nodeIndices :: (Eq t, Monad m) => Pos -> [t] -> [AForm t] -> m [(t, Int)]
-nodeIndices pos nodes as =
-  mapM f nodes
+-- Computes a map from nodes to role-index pairs
+nodeRoleIndex :: (Eq t, Monad m) => Pos -> [AForm t] -> m [(t, RoleIndex t)]
+nodeRoleIndex pos as =
+  foldM f [] as
   where
-    f n =
-      do
-        i <- findNodeIndex pos n as
-        return (n, i)
+    f nri (RolePred r i n) =
+      case lookup n nri of
+        Nothing -> return ((n, (r, i)) : nri)
+        Just _ -> fail (shows pos
+                        "Node occurs in more than one role predicate")
+    f nri _ = return nri
 
--- Find a node's index, and check for inconsistencies.
-findNodeIndex :: (Eq t, Monad m) => Pos -> t -> [AForm t] -> m Int
-findNodeIndex pos _ [] = fail (shows pos "Missing node index")
-findNodeIndex pos n (RolePred _ i n' : as) | n == n' =
-  checkNodeIndex pos n i as
-findNodeIndex pos n (_ : as) =
-  findNodeIndex pos n as
+nriLookup :: Eq t => t -> [(t, RoleIndex t)] -> RoleIndex t
+nriLookup n nri =
+  case lookup n nri of
+    Just ri -> ri
+    Nothing -> error "Characteristic.nriLookup: Bad lookup"
 
--- Check for inconsistencies.
-checkNodeIndex :: (Eq t, Monad m) => Pos -> t -> Int -> [AForm t] -> m Int
-checkNodeIndex _ _ i [] = return i
-checkNodeIndex pos n i (RolePred _ i' n' : _) | n == n' && i /= i' =
-  fail (shows pos "Incompatible node index")
-checkNodeIndex pos n i (_ : as) =
-  checkNodeIndex pos n i as
-
-binNodes :: (Eq t, Monad m) => Pos -> [t] -> [(t, Int)] ->
+binNodes :: (Eq t, Monad m) => Pos -> [(t, RoleIndex t)] ->
             [AForm t] -> m [[t]]
-binNodes pos nodes ni as =
-  foldM f (map (\x -> [x]) nodes) as
+binNodes pos nri as =
+  foldM f (map (\(x, _) -> [x]) nri) as
   where
-    f ns (StrPrec n n') =
-      case (lookup n ni, lookup n' ni) of
-        (Just i, Just i')
-          | i >= i' ->
-            fail (shows pos "Bad str-prec")
-          | otherwise -> return $ merge n n' ns
-        _ -> fail (shows pos "Bad lookup for str-prec")
-    f ns _ = return ns
+    f nss (StrPrec n n')
+      | i >= i' || rname r /= rname r' =
+        fail (shows pos "Bad str-prec")
+      | otherwise = return $ merge n n' nss
+      where
+        (r, i) = nriLookup n nri
+        (r', i') = nriLookup n' nri
+    f nss _ = return nss
 
 merge :: Eq t => t -> t -> [[t]] -> [[t]]
-merge _ _ _ = []
+merge n n' nss =
+  (ns ++ ns') : L.delete ns (L.delete ns' nss)
+  where
+    ns = findl n nss
+    ns' = findl n' nss
 
+findl :: Eq t => t -> [[t]] -> [t]
+findl n nss =
+  case L.find (elem n) nss of
+    Just ns -> ns
+    Nothing -> error "Characteristic.findl: cannot find a node"
+
+foldInsts :: (Algebra t p g s e c, Monad m) => Pos -> g -> [AForm t] ->
+             [(t, RoleIndex t)] -> [[t]] -> m (g, [Instance t e])
+foldInsts _ g _ _ [] = return (g, [])
+foldInsts pos g as nri (ns : nss) =
+  do
+    (g, inst) <- mkInst pos g as nri ns
+    (g, insts) <- foldInsts pos g as nri nss
+    return (g, inst : insts)
+
+mkInst :: (Algebra t p g s e c, Monad m) => Pos -> g -> [AForm t] ->
+          [(t, RoleIndex t)] -> [t] -> m (g, Instance t e)
+mkInst _ _ _ _ [] = error "Characteristic.mkInst: no nodes"
+mkInst pos g as nri (n : ns)
+  | h < 1 || h > length (rtrace r) =
+    fail (shows pos "Bad height")
+  | otherwise =
+      do
+        (g, env) <- foldM (mkMaplet pos r (n : ns)) (g, emptyEnv) as
+        return (mkInstance g r env h)
+  where
+    (r, i) = nriLookup n nri
+    -- The height (1 + max index)
+    h = 1 + foldr f i ns
+    f n i = max i (snd $ nriLookup n nri)
+
+mkMaplet :: (Algebra t p g s e c, Monad m) => Pos -> Role t ->
+            [t] -> (g, e) -> AForm t -> m (g, e)
+mkMaplet pos role ns env (ParamPred r v n t)
+  | elem n ns =
+    if rname role == rname r then
+      case match v t env of
+        env : _ -> return env
+        [] -> fail (shows pos "Domain does not match range")
+    else
+      fail (shows pos
+            "Role in parameter pred differs from role position pred")
+mkMaplet _ _ _ env _ = return env
+
+nodeMap :: Eq t => [(t, RoleIndex t)] -> [[t]] -> [(t, Node)]
+nodeMap nri nss =
+  [ (n, (z, i)) |
+    (z, ns) <- zip [0..] nss,
+    n <- ns,
+    let (_, i) = nriLookup n nri ]
+    
 mkSkel :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
           g -> [t] -> [Instance t e] -> [AForm t] ->
           [SExpr ()] -> m (Preskel t g s e)
