@@ -31,17 +31,17 @@ type Conj t = [(Pos, AForm t)]
 characteristic :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
                   Goal t -> g -> Conj t -> [SExpr ()] -> m (Preskel t g s e)
 characteristic pos prot goal g antec comment =
-  equalsForm pos prot goal g (uvars goal) antec comment
+  equalsForm pos prot goal g antec comment
 
 -- Checks for equals in an antecedent and fails if it finds one.  One
 -- could use unification to solve the equality, and then apply the
 -- result to the remaining parts of the formula.
-equalsForm :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g -> Goal t ->
-              g -> [t] -> Conj t -> [SExpr ()] -> m (Preskel t g s e)
-equalsForm pos _ _ _ _ as _ | any isEquals as =
+equalsForm :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
+              Goal t -> g -> Conj t -> [SExpr ()] -> m (Preskel t g s e)
+equalsForm pos _ _ _ as _ | any isEquals as =
   fail (shows pos "Equals not allowed in antecedent")
-equalsForm pos prot goal g vars as comment =
-  splitForm pos prot goal g vars as comment
+equalsForm pos prot goal g as comment =
+  splitForm pos prot goal g as comment
 
 isEquals :: (Pos, AForm t) -> Bool
 isEquals (_, Equals _ _) = True
@@ -51,12 +51,12 @@ isEquals _ = False
 -- The instance formulas are used to generate the skeleton's
 -- instances, and the skeleton formulas generate the rest.  Make the
 -- instances, and then make the rest.
-splitForm :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g -> Goal t ->
-           g -> [t] -> Conj t -> [SExpr ()] -> m (Preskel t g s e)
-splitForm pos prot goal g vars as comment =
+splitForm :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
+             Goal t -> g -> Conj t -> [SExpr ()] -> m (Preskel t g s e)
+splitForm pos prot goal g as comment =
   do
     (nmap, g, insts) <- mkInsts g is
-    mkSkel pos prot goal nmap g vars insts ks comment
+    mkSkel pos prot goal nmap g insts ks comment
   where                         -- is is the instance formulas and
     (is, ks) = L.partition instForm as -- ks is the skeleton formulas
 
@@ -158,11 +158,12 @@ mkInst g as nri (n : ns)
     h = 1 + foldr f i ns
     f n i = max i (snd $ nriLookup n nri)
 
+-- Add match from a maplet
 mkMaplet :: (Algebra t p g s e c, Monad m) => Role t ->
             [t] -> (g, e) -> (Pos, AForm t) -> m (g, e)
 mkMaplet role ns env (pos, ParamPred r v n t)
   | elem n ns =
-    if rname role == rname r then -- Ensure role match the one 
+    if rname role == rname r then -- Ensure role match the one
       case match v t env of       -- used to create instance
         env : _ -> return env
         [] -> fail (shows pos "Domain does not match range")
@@ -188,11 +189,11 @@ nMapLookup n nmap =
     Nothing -> error "Characteristic.nMapLookup: Bad lookup"
 
 -- Create a skeleton given a list of instances
-    
+
 mkSkel :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
-          Goal t -> [(t, Node)] -> g -> [t] -> [Instance t e] ->
+          Goal t -> [(t, Node)] -> g -> [Instance t e] ->
           Conj t -> [SExpr ()] -> m (Preskel t g s e)
-mkSkel pos p gl nmap g vars insts as comment =
+mkSkel pos p gl nmap g insts as comment =
   do
     let o = foldr (mkPrec nmap) [] as
     let nr = foldr mkNon [] as
@@ -238,6 +239,10 @@ mkUniq _ ts = ts
 
 checkUniqAt :: (Algebra t p g s e c, Monad m) => [(t, Node)] ->
                Preskel t g s e -> (Pos, AForm t) -> m ()
-checkUniqAt nmap k (pos, UniqAt t n) = return ()
---  case korig
+checkUniqAt nmap k (pos, UniqAt t n) =
+  case lookup t $ korig k of
+    Nothing -> fail (shows pos "Atom not unique at node")
+    Just ns
+      | elem (nMapLookup n nmap) ns -> return ()
+      | otherwise -> fail (shows pos "Atom not unique at node")
 checkUniqAt _ _ _ = return ()

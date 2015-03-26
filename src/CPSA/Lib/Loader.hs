@@ -586,7 +586,7 @@ loadConjuncts top p kvars g (x : xs) rest =
     loadConjuncts top p kvars g xs ((pos, a) : rest)
 
 -- Load the atomic formulas
-    
+
 loadPrimary :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
                [t] -> g -> SExpr Pos -> m (g, Pos, AForm t)
 loadPrimary _ _ kvars g (L pos [S _ "=", x, y]) =
