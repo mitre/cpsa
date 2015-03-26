@@ -32,12 +32,31 @@
 		 (str-prec nu no)
 		 (non (privk a))
 		 (non (privk b))
-		 (uniq-at (privk a) nu))
+		 (uniq-at n1 nu))
 	    (exists ((na nb node))
 		    (and (p "init" 2 na)
 			 (p "resp" 1 nb)
 			 (p "init" "b" na b)
 			 (p "resp" "b" nb b))))))
+  (comment "Initiator point-of-view"))
+
+(defgoal ns
+  (forall ((a b name) (n1 text) (no nu node))
+	  (implies
+	   (and (p "init" 2 no)
+		(p "init" "a" no a)
+		(p "init" "b" no b)
+		(p "init" "n1" no n1)
+		(p "init" 0 nu)
+		(str-prec nu no)
+		(non (privk a))
+		(non (privk b))
+		(uniq-at n1 nu))
+	   (exists ((na nb node))
+		   (and (p "init" 2 na)
+			(p "resp" 1 nb)
+			(p "init" "b" na b)
+			(p "resp" "b" nb b)))))
   (comment "Initiator point-of-view"))
 
 ;;; The responder point-of-view

@@ -121,19 +121,9 @@ loadRole gen pos (S _ name :
       prios <- mapM (loadRolePriority (length c)) (assoc "priority" rest)
       let r = mkRole name vs c ns as us comment prios reverseSearch
       case roleWellFormed r of
-        Return () -> return (gen, r)
-        Fail msg -> fail (shows pos $ showString "Role not well formed: " msg)
+        Right () -> return (gen, r)
+        Left msg -> fail (shows pos $ showString "Role not well formed: " msg)
 loadRole _ pos _ = fail (shows pos "Malformed role")
-
-data ReturnFail a
-    = Return a
-    | Fail String
-
-instance Monad ReturnFail where
-    return = Return
-    Fail l >>= _ = Fail l
-    Return r >>= k = k r
-    fail s = Fail s
 
 loadRolePriority :: Monad m => Int -> SExpr Pos -> m (Int, Int)
 loadRolePriority n (L _ [N _ i, N _ p])
@@ -420,8 +410,8 @@ loadRest pos vars p gen gs insts orderings nr ar ur pl comment =
         False -> fail (shows pos "Terms in skeleton not well formed")
         True -> return ()
       case verbosePreskelWellFormed k of
-        Return () -> return k
-        Fail msg -> fail $ shows pos
+        Right () -> return k
+        Left msg -> fail $ shows pos
                     $ showString "Skeleton not well formed: " msg
 
 loadOrderings :: Monad m => [Int] -> [SExpr Pos] -> m [Pair]
@@ -486,13 +476,13 @@ findGoal pos ps (S _ name : x : xs) =
       Nothing -> fail (shows pos $ "Protocol " ++ name ++ " unknown")
       Just p ->
         do
-          (g, goal) <- loadSentence pos p (pgen p) x
+          (g, goal, antec) <- loadSentence pos p (pgen p) x
           _ <- alist [] xs          -- Check syntax of xs
           let kcomment =
                 loadComment "goals" [x] ++
                 loadComment "comment" (assoc "comment" xs)
           -- Make and return the characteristic skeleton of a security goal
-          characteristic pos p g goal kcomment
+          characteristic pos p goal g antec kcomment
 findGoal pos _ _ = fail (shows pos "Malformed goal")
 
 --- Load a sequence of security goals
@@ -502,14 +492,15 @@ loadGoals :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
 loadGoals _ _ g [] = return (g, [])
 loadGoals pos prot g (x : xs) =
   do
-    (g, goal) <- loadSentence pos prot g x
+    (g, goal, _) <- loadSentence pos prot g x
     (g, goals) <- loadGoals pos prot g xs
     return (g, goal : goals)
 
 -- Load a single security goal, a universally quantified formula
+-- Returns the goal and the antecedent with position information.
 
 loadSentence :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
-                g -> SExpr Pos -> m (g, Goal t)
+                g -> SExpr Pos -> m (g, Goal t, Conj t)
 loadSentence _ prot g (L pos [S _ "forall", L _ vs, x]) =
   do
     (g, vars) <- loadVars g vs
@@ -519,19 +510,23 @@ loadSentence pos _ _ _ = fail (shows pos "Bad goal sentence")
 -- Load the top-level implication of a security goal
 
 loadImplication :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
-                   g -> [t] -> SExpr Pos -> m (g, Goal t)
+                   g -> [t] -> SExpr Pos -> m (g, Goal t, Conj t)
 loadImplication _ prot g vars (L pos [S _ "implies", a, c]) =
   do
     (g, antec) <- loadRoleSpecific pos prot g vars vars a
     (g, concl) <- loadConclusion pos prot g vars c
-    return (g, Goal { uvars = vars, antec = antec, concl = concl })
+    let goal =
+          Goal { uvars = vars,
+                 antec = map snd antec,
+                 concl = map (map snd) concl }
+    return (g, goal, antec)
 loadImplication pos _ _ _ _ = fail (shows pos "Bad goal implication")
 
 -- The conclusion must be a disjunction.  Each disjunct may introduce
 -- existentially quantified variables.
 
 loadConclusion :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
-                  g -> [t] -> SExpr Pos -> m (g, [[AForm t]])
+                  g -> [t] -> SExpr Pos -> m (g, [Conj t])
 loadConclusion _ _ g _ (L _ [S _ "false"]) = return (g, [])
 loadConclusion _ prot g vars (L pos (S _ "or" : xs)) =
   loadDisjuncts pos prot g vars xs []
@@ -541,7 +536,7 @@ loadConclusion pos prot g vars x =
     return (g, [a])
 
 loadDisjuncts :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
-                 g -> [t] -> [SExpr Pos] -> [[AForm t]] -> m (g, [[AForm t]])
+                 g -> [t] -> [SExpr Pos] -> [Conj t] -> m (g, [Conj t])
 loadDisjuncts _ _ g _ [] rest = return (g, reverse rest)
 loadDisjuncts pos prot g vars (x : xs) rest =
   do
@@ -549,7 +544,7 @@ loadDisjuncts pos prot g vars (x : xs) rest =
     loadDisjuncts pos prot g vars xs (a : rest)
 
 loadExistential :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
-                   g -> [t] -> SExpr Pos -> m (g, [AForm t])
+                   g -> [t] -> SExpr Pos -> m (g, Conj t)
 loadExistential _ prot g vars (L pos [S _ "exists", L _ vs, x]) =
   do
     (g, evars) <- loadVars g vs
@@ -561,20 +556,20 @@ loadExistential pos prot g vars x =
 --- role specific.
 
 loadRoleSpecific :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
-                    g -> [t] -> [t] -> SExpr Pos -> m (g, [AForm t])
+                    g -> [t] -> [t] -> SExpr Pos -> m (g, Conj t)
 loadRoleSpecific pos prot g vars unbound x =
   do
     (g, as) <- loadConjunction pos prot vars g x
     let as' = L.sortBy (\(_, x) (_, y) -> aFormOrder x y) as
     unbound <- foldM roleSpecific unbound as'
     case unbound of
-      [] -> return (g, map snd as')
+      [] -> return (g, as')
       (v : _) -> fail (shows (annotation x) (showst v " not used"))
 
 -- Load a conjunction of atomic formulas
 
 loadConjunction :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
-                   [t] -> g -> SExpr Pos -> m (g, [(Pos, AForm t)])
+                   [t] -> g -> SExpr Pos -> m (g, Conj t)
 loadConjunction _ p kvars g (L pos (S _ "and" : xs)) =
   loadConjuncts pos p kvars g xs []
 loadConjunction top p kvars g x =
@@ -583,8 +578,7 @@ loadConjunction top p kvars g x =
     return (g, [(pos, a)])
 
 loadConjuncts :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
-                 [t] -> g -> [SExpr Pos] -> [(Pos, AForm t)] ->
-                 m (g, [(Pos, AForm t)])
+                 [t] -> g -> [SExpr Pos] -> Conj t -> m (g, Conj t)
 loadConjuncts _ _ _ g [] rest = return (g, reverse rest)
 loadConjuncts top p kvars g (x : xs) rest =
   do
