@@ -248,6 +248,7 @@ data Preskel t g c = Preskel
       orderings :: [(t, t)],
       succs :: [(t, t)],
       nons :: [t],
+      pnons :: [t],
       uniqs :: [t],
       origs :: [(t, t)],
       isSkeleton :: Bool,
@@ -264,6 +265,7 @@ loadPreskel pos prot gen (S _ _ : L _ (S _ "vars" : vars) : xs) =
       let heights = map height insts
       orderings <- loadOrderings heights (assoc precedesKey xs)
       nons <- loadBaseTerms kvars (assoc nonOrigKey xs)
+      pnons <- loadBaseTerms kvars (assoc pnonOrigKey xs)
       uniqs <- loadBaseTerms kvars (assoc uniqOrigKey xs)
       origs <- loadOrigs kvars heights (assoc origsKey xs)
       let strands = map (\(s, h) -> (s, h - 1)) (zip [0..] heights)
@@ -279,6 +281,7 @@ loadPreskel pos prot gen (S _ _ : L _ (S _ "vars" : vars) : xs) =
                         orderings = map f orderings,
                         succs = loadSuccs varmap,
                         nons = nons,
+                        pnons = pnons,
                         uniqs = uniqs,
                         origs = map g origs,
                         isSkeleton = not $ hasKey preskeletonKey xs,
@@ -516,6 +519,10 @@ precedesKey = "precedes"
 nonOrigKey :: String
 nonOrigKey = "non-orig"
 
+-- The key used in preskeletons for penetrator non-originating atoms
+pnonOrigKey :: String
+pnonOrigKey = "pen-non-orig"
+
 -- The key used in preskeletons for uniquely originating atoms
 uniqOrigKey :: String
 uniqOrigKey = "uniq-orig"
@@ -601,6 +608,7 @@ mapSkel env pov k =
       orderings = mapPair (instantiate env) (orderings k),
       succs = mapPair (instantiate env) (succs k),
       nons = map (instantiate env) (nons k),
+      pnons = map (instantiate env) (pnons k),
       uniqs = map (instantiate env) (uniqs k),
       origs = mapPair (instantiate env) (origs k),
       varmap = M.map (instantiate env) (varmap k) }
@@ -645,6 +653,7 @@ skel ctx k =
    map (precForm kctx) (orderings k) ++
    map (sprecForm kctx) (succs k) ++
    map (unary "non" kctx) (nons k) ++
+   map (unary "pnon" kctx) (pnons k) ++
    map (uniqForm kctx) (origs k))
 
 -- map through lists in an S-Expression.

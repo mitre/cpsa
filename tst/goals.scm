@@ -1,4 +1,4 @@
-(herald "Needham-Schroeder Public-Key Protocol Variants")
+(herald goals)
 
 (defprotocol ns basic
   (defrole init
