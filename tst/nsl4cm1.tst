@@ -1,6 +1,6 @@
 (herald "Four Party Needham-Schroeder-Lowe Protocol")
 
-(comment "CPSA 2.4.1")
+(comment "CPSA 2.5.0")
 (comment "All input read from nsl4cm1.lsp")
 
 (defprotocol nsl4cm basic

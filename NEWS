@@ -1,5 +1,21 @@
 CPSA NEWS -- history of user-visible changes.
 
+* Changes in version 2.5.0
+
+** Added support for security goals
+   In CPSA, a security goal is expressed as a sentence in first-order
+   logic.  It asserts that if some properties hold for a skeleton, then
+   some other properties must hold for all shapes computed by CPSA
+   starting with the skeleton.  Security goals can be used to state
+   authentication and secrecy goals of a protocol.
+   
+   Security goals have been integrated into the main CPSA program.
+   The new defgoal form can be used to pose an analysis problem by a
+   sentence instead of a skeleton.  CPSA extracts a point-of-view
+   skeleton from the antecedent of the formula and then analyzes it.
+   When it prints a shape, it checks to see if the shape satisfies the
+   conclusion of the security goal.
+
 * Changes in version 2.4.0
 
 ** Added program cpsasas

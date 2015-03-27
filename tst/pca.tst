@@ -1,7 +1,7 @@
 (herald "Privacy Certificate Authority" (bound 15)
   (comment "Generation of an Attestation Identity Certificate"))
 
-(comment "CPSA 2.4.1")
+(comment "CPSA 2.5.0")
 (comment "All input read from pca.scm")
 (comment "Strand count bounded at 15")
 
