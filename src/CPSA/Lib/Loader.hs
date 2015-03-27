@@ -477,13 +477,25 @@ findGoal pos ps (S _ name : x : xs) =
       Just p ->
         do
           (g, goal, antec) <- loadSentence pos p (pgen p) x
-          _ <- alist [] xs          -- Check syntax of xs
+          let (gs, xs') = findAlist xs
+          (g, goals) <- loadGoals pos p g gs
+          _ <- alist [] xs'          -- Check syntax of xs
           let kcomment =
-                loadComment "goals" [x] ++
-                loadComment "comment" (assoc "comment" xs)
+                loadComment "goals" gs ++
+                loadComment "comment" (assoc "comment" xs')
           -- Make and return the characteristic skeleton of a security goal
-          characteristic pos p goal g antec kcomment
+          characteristic pos p (goal : goals) g antec kcomment
 findGoal pos _ _ = fail (shows pos "Malformed goal")
+
+-- Separate argument into goals and any remaining elements of an
+-- association list.
+findAlist :: [SExpr Pos] -> ([SExpr Pos], [SExpr Pos])
+findAlist [] = ([], [])
+findAlist (x@(L _ (S _ "forall" : _)) : xs) =
+  (x : gs, xs')
+  where
+    (gs, xs') = findAlist xs
+findAlist xs = ([], xs)
 
 --- Load a sequence of security goals
 

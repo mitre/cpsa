@@ -29,19 +29,19 @@ type Conj t = [(Pos, AForm t)]
 -- goal, and a skeleton comment and makes a skeleton or fails.  This
 -- function extracts the anecedent and univesally quantified variable.
 characteristic :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
-                  Goal t -> g -> Conj t -> [SExpr ()] -> m (Preskel t g s e)
-characteristic pos prot goal g antec comment =
-  equalsForm pos prot goal g antec comment
+                  [Goal t] -> g -> Conj t -> [SExpr ()] -> m (Preskel t g s e)
+characteristic pos prot goals g antec comment =
+  equalsForm pos prot goals g antec comment
 
 -- Checks for equals in an antecedent and fails if it finds one.  One
 -- could use unification to solve the equality, and then apply the
 -- result to the remaining parts of the formula.
 equalsForm :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
-              Goal t -> g -> Conj t -> [SExpr ()] -> m (Preskel t g s e)
+              [Goal t] -> g -> Conj t -> [SExpr ()] -> m (Preskel t g s e)
 equalsForm pos _ _ _ as _ | any isEquals as =
   fail (shows pos "Equals not allowed in antecedent")
-equalsForm pos prot goal g as comment =
-  splitForm pos prot goal g as comment
+equalsForm pos prot goals g as comment =
+  splitForm pos prot goals g as comment
 
 isEquals :: (Pos, AForm t) -> Bool
 isEquals (_, Equals _ _) = True
@@ -52,11 +52,11 @@ isEquals _ = False
 -- instances, and the skeleton formulas generate the rest.  Make the
 -- instances, and then make the rest.
 splitForm :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
-             Goal t -> g -> Conj t -> [SExpr ()] -> m (Preskel t g s e)
-splitForm pos prot goal g as comment =
+             [Goal t] -> g -> Conj t -> [SExpr ()] -> m (Preskel t g s e)
+splitForm pos prot goals g as comment =
   do
     (nmap, g, insts) <- mkInsts g is
-    mkSkel pos prot goal nmap g insts ks comment
+    mkSkel pos prot goals nmap g insts ks comment
   where                         -- is is the instance formulas and
     (is, ks) = L.partition instForm as -- ks is the skeleton formulas
 
@@ -191,9 +191,9 @@ nMapLookup n nmap =
 -- Create a skeleton given a list of instances
 
 mkSkel :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
-          Goal t -> [(t, Node)] -> g -> [Instance t e] ->
+          [Goal t] -> [(t, Node)] -> g -> [Instance t e] ->
           Conj t -> [SExpr ()] -> m (Preskel t g s e)
-mkSkel pos p gl nmap g insts as comment =
+mkSkel pos p goals nmap g insts as comment =
   do
     let o = foldr (mkPrec nmap) [] as
     let nr = foldr mkNon [] as
@@ -201,7 +201,7 @@ mkSkel pos p gl nmap g insts as comment =
     let ur = foldr mkUniq [] as
     let (nr', ar', ur') = foldl addInstOrigs (nr, ar, ur) insts
     let prios = []
-    let k = mkPreskel g p [gl] insts o nr' ar' ur' prios comment
+    let k = mkPreskel g p goals insts o nr' ar' ur' prios comment
     mapM_ (checkUniqAt nmap k) as
     case termsWellFormed $ nr' ++ ar' ++ ur' ++ kterms k of
       False -> fail (shows pos "Terms in skeleton not well formed")

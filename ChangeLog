@@ -1,5 +1,8 @@
 2015-03-27  John D. Ramsdell  <ramsdell@mitre.org>
 
+	* src/CPSA/Lib/Loader.hs (findGoal): Allow more than one sentence
+	in a defgoal.
+
 	* src/CPSA/SAS/SAS.hs (Preskel): Added pnon predicate symbol.
 
 	* src/CPSA/Lib/Strand.hs (toSkeleton): Added hulling to the
