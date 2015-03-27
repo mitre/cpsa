@@ -1375,7 +1375,7 @@ toSkeleton :: Algebra t p g s e c => Bool -> Preskel t g s e ->
               [Preskel t g s e]
 toSkeleton thin k =
     do
-      prs <- skeletonize thin (k, k, (0, 0), strandids k, emptySubst)
+      prs <- hull thin (k, k, (0, 0), strandids k, emptySubst)
       (k', _, _, _) <- homomorphismFilter prs
       return k'
 

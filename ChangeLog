@@ -1,3 +1,22 @@
+2015-03-27  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (toSkeleton):  Forced hulling on the
+	input skeleton.
+
+2015-03-26  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/{Characteristic,Strand,Loader}.hs: Added new
+	toplevel form: defgoal.  The characteristic skeleton of the
+	antecedent in the goal is extracted and used as the initial
+	skeleton.
+
+2015-03-24  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/{Reduction,Strand,Loader}.hs: Made it so that when a
+	shape does not satisfy a goal, an environment showing why is
+	printed.  For each goal, the output is yes when the goal is
+	satisfied or (no (VAR VAL)...).
+
 2015-03-20  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Lib/{Goal,Strand,Loader}.hs: Added goal loading and
