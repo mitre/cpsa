@@ -47,3 +47,46 @@
         (and (p "resp" 0 z-0) (p "init" 0 z-1) (p "init" "n" z-1 n)
           (p "init" "k" z-1 k-0) (prec z-1 z-0) (str-prec z-0 z)
           (uniq-at n z-1))))))
+
+;;; Unilateral authentication from ISO/IEC JTC 1/SC 27/WG 2 N1050
+
+(defprotocol iso-unilateral basic
+  (defrole resp
+    (vars (na nb t1 t2 t3 text) (b name))
+    (trace
+     (recv (cat nb t1))
+     (send (cat na nb b t3 (enc na nb b t2 (privk b)))))
+    (uniq-orig na))
+  (defrole init
+    (vars (na nb t1 t2 t3 text) (b name))
+    (trace
+     (send (cat nb t1))
+     (recv (cat na nb b t3 (enc na nb b t2 (privk b)))))
+    (uniq-orig nb))
+  (comment "Two pass authentication"))
+
+(defskeleton iso-unilateral
+  (vars (b name))
+  (defstrand init 2 (b b))
+  (non-orig (privk b)))
+
+;;; Same as above, but also checking to see if there was agreement.
+(defgoal iso-unilateral
+  (forall ((b name) (z node))
+    (implies
+     (and (p "init" 1 z)
+	  (p "init" "b" z b)
+	  (non (privk b)))
+      (exists ((y node))
+	      (and (p "resp" 1 y)
+		   (p "resp" "b" y b))))))
+
+;;; Silly example.  Of course the shape produced does not satisfy this
+;;; goal!
+(defgoal iso-unilateral
+  (forall ((b name) (z node))
+    (implies
+     (and (p "init" 1 z)
+	  (p "init" "b" z b)
+	  (non (privk b)))
+     (false))))
