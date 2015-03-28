@@ -46,8 +46,9 @@ Category:		Cryptography
 Build-Type:		Simple
 Data-Files:
   index.html readme.html cpsauser.html cpsa.mk Make.hs cpsaprimer.pdf
-  cpsaoverview.pdf cpsaintroslides.pdf cpsaspec.pdf cpsadesign.pdf
-  ffgg.scm ns.scm blanchet.scm or.scm woolam.scm yahalom.scm
+  cpsagoals.pdf cpsaoverview.pdf cpsaintroslides.pdf cpsaspec.pdf
+  cpsadesign.pdf ffgg.scm ns.scm blanchet.scm or.scm woolam.scm
+  yahalom.scm goals.scm
 Data-Dir:	    	doc
 Extra-Source-Files:
   Makefile ChangeLog README NEWS ghci cpsatst setup.bat
@@ -78,23 +79,23 @@ Extra-Source-Files:
   tst/epmo_acctnum.lisp tst/epmo-hash.scm tst/epmo-hash.tst
   tst/epmo-key-hash.scm tst/epmo-key-hash.tst tst/epmo.scm
   tst/epmo.tst tst/ffgg.scm tst/ffgg.tst tst/fragile_pruning.scm
-  tst/goals.scm tst/goals.tst
-  tst/fragile_pruning.tst tst/hashtest-key-hash.scm
-  tst/hashtest-key-hash.tst tst/hashtest.scm tst/hashtest.tst
-  tst/incompleteness_example.scm tst/incompleteness_example.tst
-  tst/isoreject.scm tst/isoreject.tst tst/kelly1.scm tst/kelly1.tst
-  tst/kelly64.lisp tst/kerb5.lisp tst/kerberos.scm tst/kerberos.tst
-  tst/mass2.lsp tst/mass2.tst tst/mass.lsp tst/mass.tst
-  tst/missing_contraction.scm tst/missing_contraction.tst
-  tst/neuman-stubblebine-alt.lisp tst/neuman-stubblebine-reauth.lisp
-  tst/neuman-stubblebine-reauth.lsp tst/neuman-stubblebine-reauth.tst
-  tst/neuman-stubblebine.scm tst/neuman-stubblebine.tst
-  tst/no_contraction.scm tst/no_contraction.tst tst/nonaug-prune.scm
-  tst/nonaug-prune.tst tst/non_transforming.scm
-  tst/non_transforming.tst tst/nsl3.scm tst/nsl3.tst tst/nsl4cm1.lsp
-  tst/nsl4cm1.tst tst/nsl4.lisp tst/nsl4resp2.lisp tst/nsl5i.lisp
-  tst/nsl5.lisp tst/ns-l.scm tst/nslsk.scm tst/nslsk.tst tst/ns-l.tst
-  tst/ns.scm tst/ns.tst tst/or.scm tst/or.tst tst/pca.scm tst/pca.tst
+  tst/fragile_pruning.tst tst/goals.scm tst/goals.tst
+  tst/hashtest-key-hash.scm tst/hashtest-key-hash.tst tst/hashtest.scm
+  tst/hashtest.tst tst/incompleteness_example.scm
+  tst/incompleteness_example.tst tst/isoreject.scm tst/isoreject.tst
+  tst/kelly1.scm tst/kelly1.tst tst/kelly64.lisp tst/kerb5.lisp
+  tst/kerberos.scm tst/kerberos.tst tst/mass2.lsp tst/mass2.tst
+  tst/mass.lsp tst/mass.tst tst/missing_contraction.scm
+  tst/missing_contraction.tst tst/neuman-stubblebine-alt.lisp
+  tst/neuman-stubblebine-reauth.lisp tst/neuman-stubblebine-reauth.lsp
+  tst/neuman-stubblebine-reauth.tst tst/neuman-stubblebine.scm
+  tst/neuman-stubblebine.tst tst/no_contraction.scm
+  tst/no_contraction.tst tst/nonaug-prune.scm tst/nonaug-prune.tst
+  tst/non_transforming.scm tst/non_transforming.tst tst/nsl3.scm
+  tst/nsl3.tst tst/nsl4cm1.lsp tst/nsl4cm1.tst tst/nsl4.lisp
+  tst/nsl4resp2.lisp tst/nsl5i.lisp tst/nsl5.lisp tst/ns-l.scm
+  tst/nslsk.scm tst/nslsk.tst tst/ns-l.tst tst/ns.scm tst/ns.tst
+  tst/or.scm tst/or.tst tst/pca.scm tst/pca.tst
   tst/pen-non-orig-test.scm tst/pen-non-orig-test.tst tst/pkinit.scm
   tst/pkinit.tst tst/preprocess.scm tst/preprocess.tst tst/print.scm
   tst/print.tst tst/pruning1.scm tst/pruning1.tst tst/sigenc.scm
@@ -111,7 +112,8 @@ Extra-Source-Files:
   tst/wonthull2.scm tst/wonthull2.tst tst/wonthull3.scm
   tst/wonthull3.tst tst/wonthull.scm tst/wonthull.tst tst/woolam.scm
   tst/woolam.tst tst/yahalom-6.3.6.scm tst/yahalom-6.3.6.tst
-  tst/yahalom.scm tst/yahalom.tst tst/unilateral.scm tst/unilateral.tst
+  tst/yahalom.scm tst/yahalom.tst tst/unilateral.scm
+  tst/unilateral.tst
 
 -- Algebra implementations must import CPSA.Lib.CPSA.
 -- Tools may additionally import CPSA.Lib.Entry.
