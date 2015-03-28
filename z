@@ -1,5 +1,5 @@
 #! /bin/sh
-TARGET=dhke.xhtml
+TARGET=goals.xhtml
 cd tst
 if test $# -eq 0
 then

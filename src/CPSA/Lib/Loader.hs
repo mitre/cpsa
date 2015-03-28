@@ -481,7 +481,7 @@ findGoal pos ps (S _ name : x : xs) =
           (g, goals) <- loadGoals pos p g gs
           _ <- alist [] xs'          -- Check syntax of xs
           let kcomment =
-                loadComment "goals" gs ++
+                loadComment "goals" (x : gs) ++
                 loadComment "comment" (assoc "comment" xs')
           -- Make and return the characteristic skeleton of a security goal
           characteristic pos p (goal : goals) g antec kcomment
