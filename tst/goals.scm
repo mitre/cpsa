@@ -11,9 +11,9 @@
       (send (enc n (pubk a)))
       (recv n)))
   (defrole resp
-     (vars (b name) (n text))
+     (vars (a name) (n text))
      (trace
-      (recv (enc n (pubk b)))
+      (recv (enc n (pubk a)))
       (send n))))
 
 (defgoal unilateral
@@ -28,7 +28,7 @@
 	   (exists ((z1 node))
 		   (and
 		    (p "resp" 1 z1)
-		    (p "resp" "b" z1 a)))))
+		    (p "resp" "a" z1 a)))))
   (comment "Authentication goal"))
 
 (defprotocol ns basic
@@ -39,7 +39,7 @@
      (recv (enc n1 n2 (pubk a)))
      (send (enc n2 (pubk b)))))
   (defrole resp
-    (vars (b a name) (n2 n1 text))
+    (vars (a b name) (n1 n2 text))
     (trace
      (recv (enc n1 a (pubk b)))
      (send (enc n1 n2 (pubk a)))
@@ -63,10 +63,9 @@
 		    (p "resp" "b" z1 a)))))
   (comment "Initiator authentication goal")
   (comment "Same as unilateral goal under the predicate mapping:")
-  (comment (p "init" 1) "->" (p "init" 1) "and")
   (comment (p "init" "n") "->" (p "init" "n1") "and")
   (comment (p "init" "a") "->" (p "init" "b") "and")
-  (comment (p "resp" 1) "->" (p "resp" 1)))
+  (comment (p "resp" "a") "->" (p "resp" "b")))
   
 ;;; Does responder satisfy the unilateral authentication goal?
 
@@ -81,14 +80,77 @@
 	    (uniq n))
 	   (exists ((z1 node))
 		   (and
-		    (p "resp" 2 z1)
-		    (p "resp" "a" z1 a)))))
+		    (p "init" 2 z1)
+		    (p "init" "a" z1 a)))))
   (comment "Responder authentication goal")
   (comment "Same as unilateral goal under the predicate mapping:")
   (comment (p "init" 1) "->" (p "resp" 2) "and")
   (comment (p "init" "n") "->" (p "resp" "n2") "and")
   (comment (p "init" "a") "->" (p "resp" "a") "and")
-  (comment (p "resp" 1) "->" (p "init" 2)))
+  (comment (p "resp" 1) "->" (p "init" 2) "and")
+  (comment (p "resp" "a") "->" (p "init" "a")))
+
+(defgoal ns
+  (forall ((a b name) (n text) (z0 node))
+	  (implies
+	   (and 
+	    (p "init" 1 z0)
+	    (p "init" "n1" z0 n)
+	    (p "init" "a" z0 a)
+	    (p "init" "b" z0 b)
+	    (non (privk a))
+	    (non (privk b))
+	    (uniq n))
+	   (exists ((z1 node))
+		   (and
+		    (p "resp" 1 z1)
+		    (p "resp" "b" z1 b)))))
+  (forall ((a b name) (n text) (z0 node))
+	  (implies
+	   (and 
+	    (p "init" 1 z0)
+	    (p "init" "n1" z0 n)
+	    (p "init" "a" z0 a)
+	    (p "init" "b" z0 b)
+	    (non (privk a))
+	    (non (privk b))
+	    (uniq n))
+	   (exists ((z1 node))
+		   (and
+		    (p "resp" 1 z1)
+		    (p "resp" "a" z1 a)))))
+  (comment "Double initiator authentication goal"))
+  
+(defgoal ns
+  (forall ((a b name) (n text) (z0 node))
+	  (implies
+	   (and 
+	    (p "resp" 2 z0)
+	    (p "resp" "n2" z0 n)
+	    (p "resp" "a" z0 a)
+	    (p "resp" "b" z0 b)
+	    (non (privk a))
+	    (non (privk b))
+	    (uniq n))
+	   (exists ((z1 node))
+		   (and
+		    (p "init" 2 z1)
+		    (p "init" "a" z1 a)))))
+  (forall ((a b name) (n text) (z0 node))
+	  (implies
+	   (and 
+	    (p "resp" 2 z0)
+	    (p "resp" "n2" z0 n)
+	    (p "resp" "a" z0 a)
+	    (p "resp" "b" z0 b)
+	    (non (privk a))
+	    (non (privk b))
+	    (uniq n))
+	   (exists ((z1 node))
+		   (and
+		    (p "init" 2 z1)
+		    (p "init" "b" z1 b)))))
+  (comment "Double responder authentication goal"))
 
 ;;; Old stuff
 
