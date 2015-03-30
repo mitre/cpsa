@@ -649,6 +649,10 @@ loadPrimary _ p kvars g (L pos [S _ "p", Q _ name, Q var x, y, z]) =
     case isVar v of
       False -> fail (shows pos "Bad parameter -- not a variable")
       True -> return (g, pos, ParamPred r v n t)
+loadPrimary _ _ _ _ (L pos (S _ "p" : Q _ name : _)) =
+  fail (shows pos ("Bad role specific formula for role " ++ name))
+loadPrimary _ _ _ _ (L pos (S _ pred : _)) =
+  fail (shows pos ("Bad formula for predicate " ++ pred))
 loadPrimary pos _ _ _ _ = fail (shows pos "Bad formula")
 
 -- Load a term and make sure it has sort node
