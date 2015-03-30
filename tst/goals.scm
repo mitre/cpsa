@@ -1,5 +1,36 @@
 (herald goals)
 
+;;; Some authentication goals
+
+;;; Unilateral authentication
+
+(defprotocol unilateral basic
+  (defrole init
+     (vars (a name) (n text))
+     (trace
+      (send (enc n (pubk a)))
+      (recv n)))
+  (defrole resp
+     (vars (b name) (n text))
+     (trace
+      (recv (enc n (pubk b)))
+      (send n))))
+
+(defgoal unilateral
+  (forall ((a name) (n text) (z0 node))
+	  (implies
+	   (and 
+	    (p "init" 1 z0)
+	    (p "init" "n" z0 n)
+	    (p "init" "a" z0 a)
+	    (non (privk a))
+	    (uniq n))
+	   (exists ((z1 node))
+		   (and
+		    (p "resp" 1 z1)
+		    (p "resp" "b" z1 a)))))
+  (comment "Authentication goal"))
+
 (defprotocol ns basic
   (defrole init
     (vars (a b name) (n1 n2 text))
@@ -13,7 +44,53 @@
      (recv (enc n1 a (pubk b)))
      (send (enc n1 n2 (pubk a)))
      (recv (enc n2 (pubk b)))))
-  (comment "Needham-Schroeder with no role origination assumptions"))
+  (comment "Needham-Schroeder"))
+
+;;; Does initiator satisfy the unilateral authentication goal?
+
+(defgoal ns
+  (forall ((a name) (n text) (z0 node))
+	  (implies
+	   (and 
+	    (p "init" 1 z0)
+	    (p "init" "n1" z0 n)
+	    (p "init" "b" z0 a)
+	    (non (privk a))
+	    (uniq n))
+	   (exists ((z1 node))
+		   (and
+		    (p "resp" 1 z1)
+		    (p "resp" "b" z1 a)))))
+  (comment "Initiator authentication goal")
+  (comment "Same as unilateral goal under the predicate mapping:")
+  (comment (p "init" 1) "->" (p "init" 1) "and")
+  (comment (p "init" "n") "->" (p "init" "n1") "and")
+  (comment (p "init" "a") "->" (p "init" "b") "and")
+  (comment (p "resp" 1) "->" (p "resp" 1)))
+  
+;;; Does responder satisfy the unilateral authentication goal?
+
+(defgoal ns
+  (forall ((a name) (n text) (z0 node))
+	  (implies
+	   (and 
+	    (p "resp" 2 z0)
+	    (p "resp" "n2" z0 n)
+	    (p "resp" "a" z0 a)
+	    (non (privk a))
+	    (uniq n))
+	   (exists ((z1 node))
+		   (and
+		    (p "resp" 2 z1)
+		    (p "resp" "a" z1 a)))))
+  (comment "Responder authentication goal")
+  (comment "Same as unilateral goal under the predicate mapping:")
+  (comment (p "init" 1) "->" (p "resp" 2) "and")
+  (comment (p "init" "n") "->" (p "resp" "n2") "and")
+  (comment (p "init" "a") "->" (p "resp" "a") "and")
+  (comment (p "resp" 1) "->" (p "init" 2)))
+
+;;; Old stuff
 
 ;;; The initiator point-of-view
 (defskeleton ns
