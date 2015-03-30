@@ -1,3 +1,10 @@
+2015-03-30  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/SAS/SAS.hs (loadPOV, loadOtherPreskel): Flushed the
+	check that an atom assumed to uniquely originate must originate in
+	a skeleton.  In this case, cpsasas generates a uniq assertion
+	rather than a uniq-at assertion.
+
 2015-03-27  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Lib/Loader.hs (findGoal): Allow more than one sentence

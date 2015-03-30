@@ -48,9 +48,7 @@ loadPOV _ _ ps (L pos (S _ "defskeleton" : xs)) =
       k <- loadPreskel pos p (pgen p) xs
       case (isSkeleton k, isShape k) of
         (True, False) ->
-          do                    -- Found POV
-            origCheck pos k     -- Ensure uniqs originate
-            return ((ps, [k]), Nothing)
+          return ((ps, [k]), Nothing) -- Found POV
         _ -> return ((ps, []), Nothing) -- Not POV
 loadPOV _ _ ps _ = return ((ps, []), Nothing)
 
@@ -67,25 +65,9 @@ loadOtherPreskel _ _ ps ks (L pos (S _ "defskeleton" : xs)) =
       let g = kgen (last ks)      -- Make sure vars in skeleton are
       k <- loadPreskel pos p g xs -- distinct from the ones in the POV
       case isShape k of
-        True ->
-          do                    -- Found shape
-            origCheck pos k     -- Ensure uniqs originate
-            return ((ps, k : ks), Nothing)
+        True -> return ((ps, k : ks), Nothing) -- Found shape
         False -> return ((ps, ks), Nothing) -- Found intermediate skeleton
 loadOtherPreskel _ _ ps ks _ = return ((ps, ks), Nothing)
-
--- Ensure every uniq originates
-origCheck :: (Algebra t p g s e c, Monad m) =>
-             Pos -> Preskel t g c -> m ()
-origCheck pos k =
-  mapM_ f (uniqs k)
-  where
-    f t | any (\(t', _) -> t == t') (origs k) = return ()
-        | otherwise =
-      fail (shows pos "Uniq " ++ u ++ " has no origination point")
-      where
-        u = pp 0 0 (displayTerm ctx t)
-        ctx = addToContext emptyContext (kvars k)
 
 -- Load a protocol
 
@@ -654,7 +636,8 @@ skel ctx k =
    map (sprecForm kctx) (succs k) ++
    map (unary "non" kctx) (nons k) ++
    map (unary "pnon" kctx) (pnons k) ++
-   map (uniqForm kctx) (origs k))
+   map (unary "uniq" kctx) (noOrigUniqs k) ++
+   map (uniqAtForm kctx) (origs k))
 
 -- map through lists in an S-Expression.
 listMap :: ([SExpr ()] -> [SExpr ()]) -> [SExpr ()] -> [SExpr ()]
@@ -703,8 +686,15 @@ precForm = binary "prec"
 sprecForm :: Algebra t p g s e c => c -> (t, t) -> SExpr ()
 sprecForm = binary "str-prec"
 
-uniqForm :: Algebra t p g s e c => c -> (t, t) -> SExpr ()
-uniqForm = binary "uniq-at"
+uniqAtForm :: Algebra t p g s e c => c -> (t, t) -> SExpr ()
+uniqAtForm = binary "uniq-at"
+
+-- Returns the uniqs that do not originate in k.
+noOrigUniqs :: Algebra t p g s e c => Preskel t g c -> [t]
+noOrigUniqs k =
+  [ t | t <- uniqs k, all (f t) (origs k) ]
+  where
+    f t (t', _) = t /= t'
 
 -- Creates a formula associated with a shape.  It is a disjunction of
 -- existentially quantified formulas that describe the homomorphism

@@ -2114,9 +2114,9 @@ a protocol specific unary position predicate $P[r,i]:\dom{node}$.  For
 each role~$\role_Y(C,N,U)\in P$ and variable~$x:S$ that occurs in~$C$,
 there is a protocol specific binary parameter predicate
 $P[r,x]:\dom{node}\times{}S$.  The protocol independent unary
-predicates are $\mathsf{non}: B$ for each base sort~$B$.  The
-remaining protocol independent predicates are binary, and are
-$\mathsf{\uniqat}: B\times\dom{node}$,
+predicates are $\mathsf{non}: B$ and $\mathsf{uniq}: B$ for each base
+sort~$B$.  The remaining protocol independent predicates are binary,
+and are $\mathsf{\uniqat}: B\times\dom{node}$,
 $\mathsf{\strprec}:\dom{node}\times\dom{node}$,
 $\mathsf{prec}:\dom{node}\times\dom{node}$, and equality.
 
@@ -2164,6 +2164,8 @@ follows.
 \item For each $t\in N$, assert $\cn{non}(t)$.
 \item For each $t\in U$ and node~$n$ such that
   $n\in\orig_k(t)$, assert $\cn{\uniqat}(t,v(n))$.
+\item For each $t\in U$ without a point of origination in~$k$, assert
+  $\cn{uniq}(t)$.
 \end{itemize}
 
 Given a set of homomorphisms $\delta_i\colon k_0\mapsto k_i$, its shape
@@ -2258,6 +2260,7 @@ straightforward.
 \item $k,\alpha\models\cn{\strprec}(y,z)$ iff $\alpha(y)\prec\alpha(z)$,
   $\alpha(y)=(s,i)$, and $\alpha(z)=(s,i')$.
 \item $k,\alpha\models\cn{non}(t)$ iff $\bar\alpha(t)\in\nu$.
+\item $k,\alpha\models\cn{uniq}(t)$ iff $\bar\alpha(t)\in\upsilon$.
 \item $k,\alpha\models\cn{\uniqat}(t,y)$ iff $\bar\alpha(t)\in\upsilon$ and
   $\alpha(y)\in\orig_k(\bar\alpha(t))$.
 \item $k,\alpha\models y=z$ iff $\bar\alpha(y)=\bar\alpha(z)$.
