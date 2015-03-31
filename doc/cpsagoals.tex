@@ -9,8 +9,8 @@
 
 \makeindex
 
-\title{Security Goals and CPSA}
-\author{John D.~Ramsdell\qquad Joshua D.~Guttman\\
+\title{CPSA and Formal Security Goals}
+\author{John D.~Ramsdell\\
   The MITRE Corporation\\ CPSA Version \version}
 
 \begin{document}
@@ -25,7 +25,41 @@
 
 \newpage
 
-\section{Introduction}\nocite{Ramsdell12}
+\nocite{Ramsdell12,GuttmanLiskovRowe14,Guttman14}
+
+\section{Introduction}
+
+\begin{sloppypar}
+Analyzing a cryptographic protocol means finding out what security
+properties---essentially, authentication and secrecy properties---are
+true in all its possible executions.
+\end{sloppypar}
+
+Given a protocol definition and some assumptions about executions,
+{\cpsa} attempts to produce descriptions of all possible executions of
+the protocol compatible with the assumptions.  Naturally, there are
+infinitely many possible executions of a useful protocol, since
+different participants can run it with varying parameters, and the
+participants can run it repeatedly.
+
+However, for many naturally occurring protocols, there are only
+finitely many of these runs that are essentially different.  Indeed,
+there are frequently very few, often just one or two, even in cases
+where the protocol is flawed.  We call these essentially different
+executions the \emph{shapes} of the protocol.  Authentication and
+secrecy properties are easy to ``read off'' from the shapes, as are
+attacks and anomalies, according to the introduction in the {\cpsa}
+Primer~\cite{cpsaprimer09}.
+
+But how easy is it to read off authentication and secrecy properties?
+What precisely is it that an expert sees?  This paper describes
+{\cpsa}'s support for reasoning about security goals using first-order
+logic.  With security goals expressed in first-order logic, intuition
+is replaced by model-finding and theorem-proving.
+
+\section{Overview}
+
+\emph{Description of workflow.}
 
 \bibliography{cpsa}
 \bibliographystyle{plain}

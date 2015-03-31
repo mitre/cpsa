@@ -8,6 +8,9 @@ This directory contains CPSA documentation.
 
 * cpsaoverview.pdf: Another attempt at a gentle introduction to CPSA
 
+* cpsagoals.pdf: CPSA and Formal Security Goals, an introduction
+  reasoning about security goals using first-order logic.
+
 * cpsaspec.pdf: The CPSA Specification, a formal specification of the
   algorithm
 
