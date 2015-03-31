@@ -48,6 +48,8 @@
 
 ;;; Does initiator satisfy the unilateral authentication goal?
 
+;;; Note that the goal requires translation of some of the role
+;;; specific predicates.
 (defgoal ns
   (forall ((a name) (n text) (z0 node))
 	  (implies

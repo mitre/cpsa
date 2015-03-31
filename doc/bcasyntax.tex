@@ -1,14 +1,18 @@
 The complete syntax for the analyzer using the Basic Crypto Algebra is
-shown in Table~\ref{tab:syntax}.  The start grammar symbol is
-\textsc{file}, and the terminal grammar symbols are: \textsc{(, ),
-  symbol, string, integer,} and the constants set in typewriter font.
+shown in Tables~\ref{tab:syntax} and~\ref{tab:goal}.  The start
+grammar symbol is \textsc{file}, and the terminal grammar symbols
+are: \textsc{(, ), symbol, string, integer,} and the constants set in
+typewriter font.  The language used for stating security goals is in
+Table~\ref{tab:goal}.  The goal language adds the sort
+symbol \texttt{node}.
 
 The \textsc{alist}, \textsc{prot-alist}, \textsc{role-alist},
-and \textsc{skel-alist} productions are Lisp style association lists,
-that is, lists of key-value pairs, where every key is a symbol.
-Key-value pairs with unrecognized keys are ignored, and are available
-for use by other tools.  On output, unrecognized key-value pairs are
-preserved when printing protocols, but elided when printing skeletons.
+\textsc{skel-alist}, and \textsc{goal-alist} productions are
+Lisp style association lists, that is, lists of key-value pairs, where
+every key is a symbol.  Key-value pairs with unrecognized keys are
+ignored, and are available for use by other tools.  On output,
+unrecognized key-value pairs are preserved when printing protocols,
+but elided when printing skeletons.
 
 \begin{table}
 \newcommand{\sym}[1]{\textup{\texttt{#1}}}
@@ -19,7 +23,7 @@ file&$\leftarrow$&herald?~form+
 (\sym{herald}~title~alist)
 \\title&$\leftarrow$&$\mbox{symbol}\mid\mbox{string}$
 \\form&$\leftarrow$&
-$\mbox{comment}\mid\mbox{protocol}\mid\mbox{skeleton}$
+$\mbox{comment}\mid\mbox{protocol}\mid\mbox{skeleton}\mid\mbox{goal}$
 \\ comment&$\leftarrow$&
 (\sym{comment}~\ldots)
 \\ protocol&$\leftarrow$&
@@ -71,6 +75,30 @@ $\mbox{id}\mid(\sym{pubk}\mbox{ id})
 \end{tabular}
 \end{center}
 \caption{{\cpsa} Syntax}\label{tab:syntax}
+\end{table}
+
+\begin{table}
+\newcommand{\sym}[1]{\textup{\texttt{#1}}}
+\begin{center}\scshape
+\begin{tabular}{rcl}
+goal&$\leftarrow$&
+(\sym{defgoal} id sentence+ goal-alist)
+\\ sentence&$\leftarrow$&(\sym{forall} (decl$\ast$) implication)
+\\ implication&$\leftarrow$&
+(\sym{implies} \mbox{antecedent} \mbox{conclusion})
+\\ conclusion&$\leftarrow$&$(\sym{false})\mid\mbox{existential}\ast$
+\\ existential&$\leftarrow$&(\sym{exists}
+(decls$\ast$) antecedent $\mid$ antecedent
+\\ antecedent&$\leftarrow$& atomic$\ast$
+\\ atomic&$\leftarrow$&(\sym{p} string integer node)
+\\ &$\mid$&(\sym{p} string string node term)
+\\ &$\mid$&(\sym{str-prec} node node) $\mid$ (\sym{prec} node node)
+\\ &$\mid$&(\sym{non} term) $\mid$ (\sym{pnon} term) $\mid$ (\sym{uniq} term)
+\\ &$\mid$&(\sym{uniq-at} term node) $\mid$ (= term term)
+\\ node&$\leftarrow$& id
+\end{tabular}
+\end{center}
+\caption{{\cpsa} Syntax Continued}\label{tab:goal}
 \end{table}
 
 The contents of a file can be interpreted as a sequence of
