@@ -25,8 +25,6 @@
 
 \newpage
 
-\nocite{Ramsdell12,GuttmanLiskovRowe14,Guttman14}
-
 \section{Introduction}
 
 \begin{sloppypar}
@@ -55,11 +53,56 @@ But how easy is it to read off authentication and secrecy properties?
 What precisely is it that an expert sees?  This paper describes
 {\cpsa}'s support for reasoning about security goals using first-order
 logic.  With security goals expressed in first-order logic, intuition
-is replaced by model-finding and theorem-proving.
+is replaced by satisfaction-checking and theorem-proving.
 
-\section{Overview}
+The {\cpsa} Primer~\cite{cpsaprimer09} is a prerequisite for reading
+this paper.  In particular, the analysis of the Needham-Schroeder
+protocol in Section~10 is enriched with security goals in the body of
+this paper.
 
-\emph{Description of workflow.}
+The paper has three main sections.  Section~\ref{sec:sas} introduces
+the syntax and semantics of formal security goals using shape analysis
+sentences.  A shape analysis sentence expresses all that can be
+learned from a run of {\cpsa} in our language of security goals.  If a
+security goal can be derived from a shape analysis sentence, then the
+protocol achieves the security goal, that is, the goal is true in all
+executions of the protocol.
+
+Theorem-proving is inconvenient.  Section~\ref{sec:posing} explains
+how to annotate an input skeleton with a security goal.  For each
+shape that {\cpsa} finds, it uses the semantics of the goal language
+to determine if the goal is true in all executions described by the
+shape.  If the goal has a certain form, the truth of the goal can be
+extended to all executions.
+
+Section~\ref{sec:specifying} presents the top-level \texttt{defgoal}
+form that specifies a security goal for a protocol.  {\cpsa} extracts
+an input skeleton from the goal, and then annotates the input skeleton
+with the goal.  {\cpsa} processes this input skeleton as described in
+Section~\ref{sec:posing}.  The derived skeleton has the property that
+when the goal is true in all executions described by all of its shapes,
+it is true of all executions of the protocol.
+
+The theoretical foundation of this approach to security goals appears
+in~\cite{Guttman14}.  Section~\ref{sec:sas} ends with a discussion on
+the differences between the two goal languages.  Shape analysis
+sentences were introduced in~\cite{Ramsdell12}.  The practical use of
+security goals in protocol standardization is described
+in~\cite{GuttmanLiskovRowe14}.  The precise semantics of the goal
+language is in~\cite{cpsaspec09}.
+
+The distribution in which this paper is included contains the sample
+input {\cpsa} file \texttt{goals.scm}.  It contains the examples in
+this paper.  You are encouraged to run the examples and examine the
+output while reading this paper.
+
+\section{Shape Analysis Sentences}\label{sec:sas}
+
+\section{Posing Goals in an Input Skeleton}\label{sec:posing}
+
+\section{Specifying an Input Skeleton by a Goal}\label{sec:specifying}
+
+\section{Conclusion}\label{sec:conclusion}
 
 \bibliography{cpsa}
 \bibliographystyle{plain}
