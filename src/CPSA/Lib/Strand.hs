@@ -88,12 +88,6 @@ zv k =
 useSingleStrandThinning :: Bool
 useSingleStrandThinning = False -- True
 
--- Enable de-origination.
--- Don't use de-origination without thinning although you may want to
--- use thinning without de-origination.
-useDeOrigination :: Bool
-useDeOrigination = False -- True
-
 -- Sanity check: ensure no role variable occurs in a skeleton.
 useCheckVars :: Bool
 useCheckVars = False
@@ -1017,8 +1011,6 @@ forward s orderings =
 skeletonize :: Algebra t p g s e c => Bool -> PRS t p g s e c ->
                [PRS t p g s e c]
 skeletonize thin prs
-    | useDeOrigination = hull thin prs
-    -- Cull preskels with a unique origination assumption that is not unique
     | hasMultipleOrig prs = []  -- Usual case
     | otherwise = enrich thin prs
 
@@ -1035,29 +1027,13 @@ hull thin prs =
       -- No uniques originate on more than one strand
       loop [] = enrich thin prs
       -- Found a pair that needs hulling
-      loop ((u, (s, i) : (s', i') : _) : _) =
-              hullByDeOrigination thin prs u (s, i) (s', i')
+      loop ((_, (s, _) : (s', _) : _) : _) =
+        do
+          (s'', s''', subst) <- unifyStrands (skel prs) s s'
+          prs <- ksubst prs subst
+          prs' <- compress False prs s'' s'''
+          hull thin prs'
       loop(_ : orig) = loop orig
-
--- De-Origination
-
-hullByDeOrigination :: Algebra t p g s e c => Bool -> PRS t p g s e c ->
-                       t -> Node -> Node -> [PRS t p g s e c]
-hullByDeOrigination  thin prs u (s, i) (s', i') =
-    do
-      subst <- deOrig (skel prs) u (s, i) ++ deOrig (skel prs) u (s', i')
-      prs <- ksubst prs subst
-      hull thin prs
-
-deOrig :: Algebra t p g s e c => Preskel t g s e -> t -> Node -> [(g, s)]
-deOrig k u (s, i) =
-    [ (g, s) |
-      let tr = trace $ strandInst k s,
-      e <- take i tr,
-      t <- M.maybeToList $ inbnd e,
-      subterm <- S.toList $ foldCarriedTerms (flip S.insert) S.empty t,
-      (g, s) <- unify u subterm (gen k, emptySubst),
-      not $ originates (substitute s u) (map (evtMap $ substitute s) tr) ]
 
 -- Order Enrichment
 

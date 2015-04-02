@@ -32,6 +32,15 @@
   (uniq-orig n1 n1-0)
   (comment "Double initiator point-of-view"))
 
+;;; Double initiator point-of-view, same nonce
+(defskeleton ns
+  (vars (a b name) (n1 text))
+  (defstrand init 3 (a a) (b b) (n1 n1))
+  (defstrand init 3 (a a) (b b) (n1 n1))
+  (non-orig (privk b) (privk a))
+  (uniq-orig n1)
+  (comment "Double initiator point-of-view, same nonce"))
+
 ;;; The responder point-of-view
 (defskeleton ns
   (vars (a name) (n2 text))

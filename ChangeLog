@@ -1,5 +1,9 @@
 2015-04-02  John D. Ramsdell  <ramsdell@mitre.org>
 
+	* src/CPSA/Lib/Strand.hs (hull): Removed the hulling by
+	deorigination mode and returned to the hulling by compression
+	algorithm.  Hulling is only used on the initial preskeleton.
+
 	* src/CPSA/SAS/SAS.hs (form): Changed the output form from defsas
 	to defgoal.
 
