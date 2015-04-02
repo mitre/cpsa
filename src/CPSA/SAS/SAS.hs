@@ -615,7 +615,7 @@ form :: Algebra t p g s e c => Analysis t g c -> SExpr ()
 form (pov, shapes) =
   let (c, vars, conj) = skel emptyContext pov in
   let disj = map (shape c conj) shapes in
-  L () [S () "defsas", S () (pname $ protocol pov), -- Name of protocol
+  L () [S () "defgoal", S () (pname $ protocol pov), -- Name of protocol
         quantify "forall" vars (imply (conjoin conj) (disjoin disj))]
 
 -- Convert one skeleton into a declaration and a conjunction.  The

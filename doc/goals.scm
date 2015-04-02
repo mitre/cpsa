@@ -1,5 +1,7 @@
 (herald goals)
 
+;;; Needham-Schroeder from Section 10 of the CPSA Primer
+
 (defprotocol ns basic
   (defrole init
     (vars (a b name) (n1 n2 text))
@@ -15,7 +17,14 @@
      (recv (enc n2 (pubk b)))))
   (comment "Needham-Schroeder with no role origination assumptions"))
 
-;;; The initiator point-of-view
+;;; The initiator point of view
+(defskeleton ns
+  (vars (a b name) (n1 text))
+  (defstrand init 3 (a a) (b b) (n1 n1))
+  (non-orig (privk b) (privk a))
+  (uniq-orig n1)
+  (comment "Initiator point of view"))
+
 (defskeleton ns
   (vars (a b name) (n1 text))
   (defstrand init 3 (a a) (b b) (n1 n1))
@@ -38,7 +47,7 @@
 			 (p "resp" 1 nb)
 			 (p "init" "b" na b)
 			 (p "resp" "b" nb b))))))
-  (comment "Initiator point-of-view"))
+  (comment "Initiator point of view"))
 
 (defgoal ns
   (forall ((a b name) (n1 text) (no nu node))
@@ -57,9 +66,9 @@
 			(p "resp" 1 nb)
 			(p "init" "b" na b)
 			(p "resp" "b" nb b)))))
-  (comment "Initiator point-of-view"))
+  (comment "Initiator point of view"))
 
-;;; The responder point-of-view
+;;; The responder point of view
 (defskeleton ns
   (vars (a name) (n2 text))
   (defstrand resp 3 (a a) (n2 n2))
@@ -76,9 +85,9 @@
           (p "init" "n2" z-2 n2) (p "init" "a" z-2 a)
           (p "init" "b" z-2 b-0) (prec z z-1) (prec z-2 z-0)
           (str-prec z-1 z-2))))))
-  (comment "Responder point-of-view"))
+  (comment "Responder point of view"))
 
-;;; The responder point-of-view
+;;; The responder point of view
 (defskeleton ns
   (vars (a name) (n2 text))
   (defstrand resp 3 (a a) (n2 n2))
@@ -95,9 +104,9 @@
           (p "init" "n2" z-2 n2) (p "init" "a" z-2 a)
           (p "init" "b" z-2 b-0) (prec z z-1) (prec z-2 z-0)
           (str-prec z-1 z-2))))))
-  (comment "Responder point-of-view"))
+  (comment "Responder point of view"))
 
-;;; Double initiator point-of-view
+;;; Double initiator point of view
 (defskeleton ns
   (vars (a b name) (n1 n1-0 text))
   (defstrand init 3 (a a) (b b) (n1 n1))
@@ -115,7 +124,7 @@
 		 (str-prec z-1 z-2) (non (privk a)) (non (privk b))
 		 (uniq-at n1 z) (uniq-at n1-0 z-1))
 	    (= z-1 z))))
-  (comment "Double initiator point-of-view"))
+  (comment "Double initiator point of view"))
 
 ;;; Needham-Schroeder Protocol with origination assumptions on roles
 ;;; This
@@ -139,12 +148,12 @@
     (uniq-orig n2))
   (comment "Needham-Schroeder with role assumptions that are too strong"))
 
-;;; The initiator point-of-view
+;;; The initiator point of view
 (defskeleton ns-role-origs
   (vars)
   (defstrand init 3))
 
-;;; The responder point-of-view
+;;; The responder point of view
 (defskeleton ns-role-origs
   (vars)
   (defstrand resp 3))
@@ -204,7 +213,7 @@
      (recv (enc n2 (pubk b)))))
   (comment "Needham-Schroeder-Lowe with untyped nonces"))
 
-;;; The responder point-of-view
+;;; The responder point of view
 (defskeleton nsl-typeless
   (vars (a b name) (n2 text))
   (defstrand resp 2 (a a) (n2 n2) (b b))
