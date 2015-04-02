@@ -186,13 +186,45 @@ conjunctions of atomic formulas.  \sym{(false)} is a synonym for
   \\ concl&$\leftarrow$&(\sym{false})
   $\mid$ existl $\mid$ (\sym{or} existl$\ast)$
   \\ existl&$\leftarrow$&(\sym{exists}
-  (decl$\ast$) antec $\mid$ antec
+  (decl$\ast$) antec) $\mid$ antec
   \end{tabular}
 \end{center}
 
 Variables are declared as they are for roles and skeletons with one
 exception, there is a new sort symbol \sym{node}.  Notice that in the
-sentence, variables \sym{z} and \sym{z-0} have sort \sym{node}.
+sentence, variables \sym{z} and \sym{z-0} have sort \sym{node}.  Every
+universally quantified variable must occur in the antecedent of the
+implication.
+
+In a shape analysis sentence, the antecedent encodes the input
+skeleton, and each disjunct in the conclusion encodes a shape.
+We focus on the antecedent.  In this example,
+
+\begin{quote}
+\begin{verbatim}
+(defstrand init 3 (a a) (b b) (n1 n1) (n2 n2))
+\end{verbatim}
+\end{quote}
+is encoded as
+\begin{quote}
+\begin{verbatim}
+(and (p "init" 2 z-0)
+     (p "init" "a" z-0 a) (p "init" "b" z-0 b)
+     (p "init" "n1" z-0 n1) (p "init" "n2" z-0 n2))
+\end{verbatim}
+\end{quote}
+
+Our aim now is to specify how to decide if a security goal is true in
+all possible executions of a protocol.  A skeleton defines a set of
+executions that contain the skeleton's structure.  We say a skeleton
+\emph{satisfies} a formula if the formula is true in all executions
+that contain the skeleton's structure.  To decide if a skeleton
+satisfies a formula, we decide if it satisfies each of its atomic
+formulas, and combine the results using the rules of first-order
+logic.
+
+Atomic formula \texttt{(p "init" 2 z-0)} is called a role-position
+predicate.  
 
 \section{Posing Goals in an Input Skeleton}\label{sec:posing}
 
