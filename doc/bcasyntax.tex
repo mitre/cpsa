@@ -90,13 +90,16 @@ goal&$\leftarrow$&
    $\mid$ existential $\mid$ (\sym{or} existential$\ast)$
 \\ existential&$\leftarrow$&(\sym{exists}
 (decl$\ast$) antecedent) $\mid$ antecedent
-\\ antecedent&$\leftarrow$& atomic$\ast$
-\\ atomic&$\leftarrow$&(\sym{p} string integer node)
-\\ &$\mid$&(\sym{p} string string node term)
+\\ antecedent&$\leftarrow$& atomic $\mid$ (\sym{and} atomic$\ast$)
+\\ atomic&$\leftarrow$&(\sym{p} roleid pos node)
+\\ &$\mid$&(\sym{p} roleid param node term)
 \\ &$\mid$&(\sym{str-prec} node node) $\mid$ (\sym{prec} node node)
 \\ &$\mid$&(\sym{non} term) $\mid$ (\sym{pnon} term) $\mid$ (\sym{uniq} term)
 \\ &$\mid$&(\sym{uniq-at} term node) $\mid$ (= term term)
+\\ roleid&$\leftarrow$& string
+\\ pos&$\leftarrow$& integer
 \\ node&$\leftarrow$& id
+\\ param&$\leftarrow$& string
 \end{tabular}
 \end{center}
 \caption{{\cpsa} Syntax Continued}\label{tab:goal}

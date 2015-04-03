@@ -99,22 +99,13 @@ output while reading this paper.
 \section{Shape Analysis Sentences}\label{sec:sas}
 %% Use a margin width of 62 for S-expressions
 
-The easiest way to get started with security goals is to use the
-\texttt{cpsasas} program to generate a goal.  Recall the analysis of
-the Needham-Schroeder Protocol in~\cite[Section~10]{cpsaprimer09}.
-The roles are displayed in Figure~\ref{fig:ns roles}.
-
 \begin{figure}
 \begin{center}
 \includegraphics{cpsadiagrams-0.mps}\hfil
-\includegraphics{cpsadiagrams-1.mps}
-\caption{Needham-Schroeder Initiator and Responder Roles}
-\label{fig:ns roles}
+\includegraphics{cpsadiagrams-1.mps}\\
 \end{center}
-\end{figure}
-
-An S-expression version of Figure~\ref{fig:ns roles} follows.
-
+\begin{center}
+\begin{minipage}{3in}
 \begin{verbatim}
 (defprotocol ns basic
   (defrole init
@@ -130,32 +121,33 @@ An S-expression version of Figure~\ref{fig:ns roles} follows.
      (send (enc n1 n2 (pubk a)))
      (recv (enc n2 (pubk b))))))
 \end{verbatim}
+\end{minipage}
+\end{center}
+\caption{Needham-Schroeder Initiator and Responder Roles}
+\label{fig:ns roles}
+\end{figure}
 
-The protocol is analyzed from the point of view of a complete run of
-one instance of an initiator role.
-
+\begin{figure}
 \begin{verbatim}
-(defskeleton ns
+(defskeleton ns            ; Input skeleton
   (vars (a b name) (n1 text))
   (defstrand init 3 (a a) (b b) (n1 n1))
   (non-orig (privk b) (privk a))
   (uniq-orig n1))
 \end{verbatim}
-
-This {\cpsa} input is at the beginning of the sample file
-\texttt{goals.scm}.  To generate a security goal from the initiator
-point of view with \texttt{ghci} and \texttt{Make.hs}, type
-\begin{quote}
+\begin{center}
+\includegraphics{cpsadiagrams-5.mps}
+\end{center}
 \begin{verbatim}
-$ ghci Make.hs
-*Make> sas "goals"
-\end{verbatim}
-\end{quote}
-When using GNU make, type ``\texttt{make goals\_sas.text}''.  The
-resulting shape analysis sentence follows.
+(defskeleton ns            ; Shape
+  (vars (n1 n2 text) (a b name))
+  (defstrand init 3 (n1 n1) (n2 n2) (a a) (b b))
+  (defstrand resp 2 (n2 n2) (n1 n1) (b b) (a a))
+  (precedes ((0 0) (1 0)) ((1 1) (0 1)))
+  (non-orig (privk b) (privk a))
+  (uniq-orig n1))
 
-\begin{verbatim}
-(defgoal ns
+(defgoal ns                ; Shape analysis sentence
   (forall ((n1 n2 text) (a b name) (z z-0 node))
     (implies
       (and (p "init" 0 z) (p "init" 2 z-0)
@@ -171,6 +163,40 @@ resulting shape analysis sentence follows.
           (str-prec z z-1) (str-prec z-1 z-0)
           (str-prec z-2 z-3))))))
 \end{verbatim}
+\caption{Needham-Schroeder Initiator Point of View}
+\label{fig:ns init}
+\end{figure}
+
+The easiest way to get started with security goals is to use the
+\texttt{cpsasas} program to generate a goal.  Recall the analysis of
+the Needham-Schroeder Protocol in~\cite[Section~10]{cpsaprimer09}.
+The roles are displayed in Figure~\ref{fig:ns roles}.
+
+The protocol is analyzed from the point of view of a complete run of
+one instance of an initiator role.
+
+\begin{quote}
+\begin{verbatim}
+(defskeleton ns
+  (vars (a b name) (n1 text))
+  (defstrand init 3 (a a) (b b) (n1 n1))
+  (non-orig (privk b) (privk a))
+  (uniq-orig n1))
+\end{verbatim}
+\end{quote}
+
+This {\cpsa} input is at the beginning of the sample file
+\texttt{goals.scm}.  To generate a security goal from the initiator
+point of view with \texttt{ghci} and \texttt{Make.hs}, type
+\begin{quote}
+\begin{verbatim}
+$ ghci Make.hs
+*Make> sas "goals"
+\end{verbatim}
+\end{quote}
+When using GNU make, type ``\texttt{make goals\_sas.text}''.  The
+resulting shape analysis and its sentence is displayed in
+Figure~\ref{fig:ns init}.
 
 The sentence has a form shared by all security goals.  It is a
 universally quantified implication.  The antecedent is a conjunction
@@ -187,14 +213,43 @@ conjunctions of atomic formulas.  \sym{(false)} is a synonym for
   $\mid$ existl $\mid$ (\sym{or} existl$\ast)$
   \\ existl&$\leftarrow$&(\sym{exists}
   (decl$\ast$) antec) $\mid$ antec
+  \\ antec&$\leftarrow$&atomic $\mid$ (\sym{and} atomic$\ast$)
   \end{tabular}
 \end{center}
+The predicate symbols used to construct an atomic formula
+(\textsc{atomic}) are listed in Table~\ref{tab:predicates}.
 
 Variables are declared as they are for roles and skeletons with one
 exception, there is a new sort symbol \sym{node}.  Notice that in the
 sentence, variables \sym{z} and \sym{z-0} have sort \sym{node}.  Every
 universally quantified variable must occur in the antecedent of the
 implication.
+
+\begin{table}
+\begin{center}
+  \begin{tabular}{lcl}
+    Symbol & Sort & Description\\
+    \hline
+    \scshape\sym{p} role pos & \dom{node} & \mbox{Role position} \\
+    \scshape\sym{p} role param & $\dom{node}\times\dom{mesg}$
+    & \mbox{Role parameter} \\
+    \sym{str-prec}& $\dom{node}\times\dom{node}$
+    & \mbox{Precedes on strand} \\
+    \sym{prec}& $\dom{node}\times\dom{node}$
+    & \mbox{Precedes} \\
+    \sym{non}& \dom{atom}
+    & \mbox{Non-origination} \\
+    \sym{pnon}& \dom{atom}
+    & \mbox{Penetrator non-origination} \\
+    \sym{uniq}& \dom{atom}
+    & \mbox{Unique origination} \\
+    \sym{uniq-at}& $\dom{atom}\times\dom{node}$
+    & \mbox{Unique origination at node} \\
+    $=$ & $\dom{all}\times\dom{all}$ & Equality
+  \end{tabular}
+\end{center}
+\caption{Predicates}\label{tab:predicates}
+\end{table}
 
 In a shape analysis sentence, the antecedent encodes the input
 skeleton, and each disjunct in the conclusion encodes a shape.
@@ -223,8 +278,106 @@ satisfies a formula, we decide if it satisfies each of its atomic
 formulas, and combine the results using the rules of first-order
 logic.
 
-Atomic formula \texttt{(p "init" 2 z-0)} is called a role-position
-predicate.  
+Atomic formula \texttt{(p "init" 2 z-0)} is called a role position
+formula.  A skeleton~$k$ satisfies the formula if \texttt{z-0} maps to
+a node $n=(s,2)$ in~$k$ such that
+\begin{enumerate}
+\item the trace of strand~$s$ in~$k$ has a length greater than 2, and
+\item the trace when truncated to length 3 is an instance of the init
+  role.
+\end{enumerate}
+Consider the shape in Figure~\ref{fig:ns
+  init}.  It satisfies \texttt{(p "init" 2 z-0)} when \texttt{z-0}
+maps to $(0,2)$.
+
+Atomic formula \texttt{(p "init" "a" z-0 a)} is called a role
+parameter formula.  A skeleton~$k$ satisfies the formula if
+\texttt{z-0} maps to a node $n=(s,i)$ in~$k$ and \texttt{a} maps to a
+message algebra term~$t$ in~$k$ such that
+\begin{enumerate}
+\item the trace of strand~$s$ in~$k$ has a length greater than~$i$,
+\item the trace truncated to length $i+1$ is an instance of the
+  init role, and
+\item the truncated trace is compatible with mapping the init role's
+  \texttt{"a"} parameter to~$t$.
+\end{enumerate}
+The shape in Figure~\ref{fig:ns init} satisfies \texttt{(p "init" "a"
+  z-0 a)} when \texttt{z-0} maps to $(0,2)$ and \texttt{a} maps to the
+message algebra term \texttt{a}.
+
+Collectively, a skeleton satisfies the formula
+\begin{quote}
+\begin{verbatim}
+(and (p "init" 2 z-0)
+     (p "init" "a" z-0 a) (p "init" "b" z-0 b)
+     (p "init" "n1" z-0 n1) (p "init" "n2" z-0 n2))
+\end{verbatim}
+\end{quote}
+if the skeleton contains the structure specified by
+\begin{quote}
+\begin{verbatim}
+(defstrand init 3 (a a) (b b) (n1 n1) (n2 n2))
+\end{verbatim}
+\end{quote}
+
+The input skeleton in Figure~\ref{fig:ns init} contains three
+origination assumptions.  The assumption on \texttt{(privk b)} is
+encoded as \texttt{(non (privk b))}.  A skeleton~$k$ satisfies the
+formula if \texttt{b} maps to a message algebra term~$t$ in~$k$ such
+that~$k$ assumes that~$t$ is non-originating.
+
+The origination assumption on \texttt{n1} is encoded as
+\texttt{(uniq-at n1 z)}.  The \texttt{cpsasas} program notices that
+\texttt{n1} originates at $(0,0)$ in the input strand.  We require
+that any skeleton that satisfies the formula contains this structure.
+That is, it is not enough that every skeleton that satisfies the
+formula has a corresponding uniquely originating atom, but that atom
+must originate at a particular position and on a particular strand.
+Therefore, \texttt{cpsasas} adds \texttt{(p "init" 0 z)} and
+\texttt{(str-prec z z-0)}.  The first formula asserts that \texttt{z}
+is at the first position of a strand, and the second formula asserts
+that \texttt{z} is before \texttt{z-0} and on the same strand.
+
+Putting it all together, the mapping
+\[\{\mathtt{n1}\mapsto\mathtt{n1},
+\mathtt{n2}\mapsto\mathtt{n2},
+\mathtt{a}\mapsto\mathtt{a},
+\mathtt{b}\mapsto\mathtt{b},
+\mathtt{z}\mapsto(0,0),
+\mbox{\tt z-0}\mapsto(0,2)\}\]
+shows that the shape in Figure~\ref{fig:ns init} satisfies the
+antecedent of the shape analysis sentence.
+
+The shape has two node orderings, \texttt{((0 0) (1 0))} and
+\texttt{((1 1) (0 1))}.  The second ordering is encoded as
+\begin{quote}
+\begin{verbatim}
+(and (p "init" 1 z-1) (p "resp" 1 z-3) (prec z-3 z-1))
+\end{verbatim}
+\end{quote}
+The two role position formulas assert that \texttt{z-1} and
+\texttt{z-3} are located at the second position of a strand, and the
+\texttt{prec} formula asserts that \texttt{z-3} is before
+\texttt{z-1}.  Any skeleton that satisfies the conjunction must
+contain this structure.
+
+A shape analysis sentences asserts that either a skeleton does not
+satisfy its antecedent or it satisfies one or more of the disjuncts in
+its conclusion.  {\cpsa} has been designed so that this assertion is
+true.  Therefore, every shape analysis sentence is true in all
+executions.
+
+A security goal is true in all executions if it can be derived from a
+shape analysis sentence~\cite{Ramsdell12}.  {\cpsa} comes with a
+Prolog program that translates shape analysis sentences into Prover9
+syntax~\cite{prover9}.  Prover9 can then be used to perform the
+required theorem-proving.
+
+In practice, theorem-proving using shape analysis sentences is rarely
+employed.  It's clumsy and it requires too much expertise.  And there
+is a better way, via satisfaction-checking.  This is the subject of
+the next section.  The main use of \texttt{cpsasas} is for generating
+a formula that is edited to become a desired security goal.
 
 \section{Posing Goals in an Input Skeleton}\label{sec:posing}
 
