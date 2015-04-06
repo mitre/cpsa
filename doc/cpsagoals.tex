@@ -54,6 +54,14 @@ What precisely is it that an expert sees?  This paper describes
 logic.  With security goals expressed in first-order logic, intuition
 is replaced by satisfaction-checking and theorem-proving.
 
+This treatment of security goals relies heavily on a branch of
+first-order logic called model theory.  It deals with the relationship
+between descriptions in first-order languages and the structures that
+satisfy these descriptions.  In our case, the structures are skeletons
+that denote a collection of executions of a protocol.  This paper
+attempts to describe the language of security goals and its
+structures without requiring the reader to have studied model theory.
+
 The {\cpsa} Primer~\cite{cpsaprimer09} is a prerequisite for reading
 this paper.  In particular, the analysis of the Needham-Schroeder
 protocol in Section~10 is enriched with security goals in the body of
@@ -82,14 +90,15 @@ Section~\ref{sec:posing}.  The derived skeleton has the property that
 when the goal is true in all executions described by all of its shapes,
 it is true of all executions of the protocol.
 
-The theoretical foundation of this approach to security goals appears
-in~\cite{Guttman14}.  Section~\ref{sec:sas} ends with a discussion on
-the differences between the two goal languages.  Shape analysis
-sentences were introduced in~\cite{Ramsdell12}.  A practical use of
-security goals in protocol standardization is described
-in~\cite{GuttmanLiskovRowe14}.  The precise semantics of the goal
-language is in~\cite{cpsaspec09}.  The syntax of security goals
-appears in~\cite[Table~2]{cpsaprimer09}.
+The model theoretical foundation of this approach to security goals
+appears in~\cite{Guttman14}.  The language of security goals differs
+slightly from what is present here.  Section~\ref{sec:specifying}
+contains a discussion on the differences between the two goal
+languages.  Shape analysis sentences were introduced
+in~\cite{Ramsdell12}.  A practical use of security goals in protocol
+standardization is described in~\cite{GuttmanLiskovRowe14}.  The
+precise semantics of the goal language is in~\cite{cpsaspec09}.  The
+syntax of security goals appears in~\cite[Table~2]{cpsaprimer09}.
 
 The distribution in which this paper is included contains the sample
 input {\cpsa} file \texttt{goals.scm}.  It contains the examples in
@@ -379,9 +388,13 @@ is a better way, via satisfaction-checking.  This is the subject of
 the next section.  The main use of \texttt{cpsasas} is for generating
 a formula that is edited to become a desired security goal.
 
-\section{Posing Goals in an Input Skeleton}\label{sec:posing}
-
 \section{Specifying an Input Skeleton by a Goal}\label{sec:specifying}
+
+\emph{protocol transformations}
+
+\emph{Restricting parameter preds to apply to atoms instead of all messages}
+
+\section{Posing Goals in an Input Skeleton}\label{sec:posing}
 
 \section{Conclusion}\label{sec:conclusion}
 
