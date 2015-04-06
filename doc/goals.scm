@@ -1,5 +1,7 @@
 (herald goals)
 
+;;; Section 1 --- Examples from CPSA and Formal Security Goals
+
 ;;; Needham-Schroeder from Section 10 of the CPSA Primer
 
 (defprotocol ns basic
@@ -23,7 +25,193 @@
   (defstrand init 3 (a a) (b b) (n1 n1))
   (non-orig (privk b) (privk a))
   (uniq-orig n1)
+  (goals
+   (forall ((n1 n2 text) (a b name) (z z-0 node))
+    (implies
+      (and (p "init" 0 z) (p "init" 2 z-0)
+        (p "init" "n1" z-0 n1) (p "init" "n2" z-0 n2)
+        (p "init" "a" z-0 a) (p "init" "b" z-0 b)
+        (str-prec z z-0) (non (privk a)) (non (privk b))
+        (uniq-at n1 z))
+      (exists ((z-1 z-2 z-3 node))
+        (and (p "init" 1 z-1) (p "resp" 0 z-2)
+          (p "resp" 1 z-3) (p "resp" "n2" z-3 n2)
+          (p "resp" "n1" z-3 n1) (p "resp" "b" z-3 b)
+          (p "resp" "a" z-3 a) (prec z z-2) (prec z-3 z-1)
+          (str-prec z z-1) (str-prec z-1 z-0)
+          (str-prec z-2 z-3))))))
   (comment "Initiator point of view"))
+
+(defskeleton ns
+  (vars (a name) (n2 text))
+  (defstrand resp 3 (a a) (n2 n2))
+  (non-orig (privk a))
+  (uniq-orig n2)
+  (goals
+   (forall ((n1 n2 text) (a b name) (z z-0 node))
+    (implies
+      (and (p "init" 0 z) (p "init" 2 z-0)
+        (p "init" "n1" z-0 n1) (p "init" "n2" z-0 n2)
+        (p "init" "a" z-0 a) (p "init" "b" z-0 b)
+        (str-prec z z-0) (non (privk a)) (non (privk b))
+        (uniq-at n1 z))
+      (exists ((z-1 z-2 z-3 node))
+        (and (p "init" 1 z-1) (p "resp" 0 z-2)
+          (p "resp" 1 z-3) (p "resp" "n2" z-3 n2)
+          (p "resp" "n1" z-3 n1) (p "resp" "b" z-3 b)
+          (p "resp" "a" z-3 a) (prec z z-2) (prec z-3 z-1)
+          (str-prec z z-1) (str-prec z-1 z-0)
+          (str-prec z-2 z-3))))))
+  (comment "Responder point of view"))
+
+(defskeleton ns
+  (vars (a name) (n2 text))
+  (defstrand resp 3 (a a) (n2 n2))
+  (non-orig (privk a))
+  (uniq-orig n2)
+  (goals
+   (forall ((n1 n2 text) (a b name) (z z-0 node))
+    (implies
+      (and (p "init" 0 z) (p "init" 2 z-0)
+        (p "init" "n1" z-0 n1) (p "init" "n2" z-0 n2)
+        (p "init" "a" z-0 a) (p "init" "b" z-0 b)
+        (str-prec z z-0) (non (privk a)) (non (privk b))
+        (uniq-at n1 z))
+      (false))))
+  (comment "Responder point of view with false as the conclusion"))
+
+(defskeleton ns
+  (vars (a b name) (n1 text))
+  (defstrand init 3 (a a) (b b) (n1 n1))
+  (non-orig (privk b) (privk a))
+  (uniq-orig n1)
+  (goals
+   (forall ((n1 n2 text) (a b name) (z z-0 node))
+    (implies
+      (and (p "init" 0 z) (p "init" 2 z-0)
+        (p "init" "n1" z-0 n1) (p "init" "n2" z-0 n2)
+        (p "init" "a" z-0 a) (p "init" "b" z-0 b)
+        (str-prec z z-0) (non (privk a)) (non (privk b))
+        (uniq-at n1 z))
+      (false))))
+  (comment "Initiator point of view with false as the conclusion"))
+
+(defgoal ns
+  (forall ((a b name) (n text) (z0 node))
+    (implies
+     (and 
+      (p "init" 1 z0) (p "init" "n1" z0 n)
+      (p "init" "a" z0 a) (p "init" "b" z0 b)
+      (non (privk a)) (non (privk b)) (uniq n))
+     (exists ((z1 node))
+      (and (p "resp" 1 z1) (p "resp" "b" z1 b)))))
+  (forall ((a b name) (n text) (z0 node))
+   (implies
+     (and 
+      (p "init" 1 z0) (p "init" "n1" z0 n)
+      (p "init" "a" z0 a) (p "init" "b" z0 b)
+      (non (privk a)) (non (privk b)) (uniq n))
+     (exists ((z1 node))
+      (and (p "resp" 1 z1) (p "resp" "a" z1 a)))))
+  (comment "Two initiator authentication goals"))
+
+(defgoal ns
+  (forall ((a b name) (n text) (z0 node))
+   (implies
+    (and 
+     (p "resp" 2 z0) (p "resp" "n2" z0 n)
+     (p "resp" "a" z0 a) (p "resp" "b" z0 b)
+     (non (privk a)) (non (privk b)) (uniq n))
+    (exists ((z1 node))
+     (and (p "init" 2 z1) (p "init" "a" z1 a)))))
+  (forall ((a b name) (n text) (z0 node))
+   (implies
+    (and 
+     (p "resp" 2 z0) (p "resp" "n2" z0 n)
+     (p "resp" "a" z0 a) (p "resp" "b" z0 b)
+     (non (privk a)) (non (privk b)) (uniq n))
+    (exists ((z1 node))
+     (and (p "init" 2 z1) (p "init" "b" z1 b)))))
+  (comment "Two responder authentication goals"))
+
+(defprotocol unilateral basic
+  (defrole init
+     (vars (a name) (n text))
+     (trace
+      (send (enc n (pubk a)))
+      (recv n)))
+  (defrole resp
+     (vars (a name) (n text))
+     (trace
+      (recv (enc n (pubk a)))
+      (send n))))
+
+(defgoal unilateral
+  (forall ((a name) (n text)
+           (z0 node))
+   (implies
+    (and (p "init" 1 z0)
+     (p "init" "n" z0 n)
+     (p "init" "a" z0 a)
+     (non (privk a)) (uniq n))
+    (exists ((z1 node))
+     (and (p "resp" 1 z1) 
+      (p "resp" "a" z1 a))))))
+
+;;; Does initiator satisfy the unilateral authentication goal?
+
+;;; Note that the goal requires translation of some of the role
+;;; specific predicates.
+(defgoal ns
+  (forall ((a name) (n text) (z0 node))
+   (implies
+    (and (p "init" 1 z0) (p "init" "n1" z0 n)
+     (p "init" "b" z0 a) (non (privk a)) (uniq n))
+    (exists ((z1 node))
+     (and (p "resp" 1 z1) (p "resp" "b" z1 a)))))
+  (comment "Initiator authentication goal")
+  (comment "Same as unilateral goal under the predicate mapping:")
+  (comment (p "init" "n") "->" (p "init" "n1") "and")
+  (comment (p "init" "a") "->" (p "init" "b") "and")
+  (comment (p "resp" "a") "->" (p "resp" "b")))
+  
+;;; Does responder satisfy the unilateral authentication goal?
+
+(defgoal ns
+  (forall ((a name) (n text) (z0 node))
+   (implies
+    (and (p "resp" 2 z0) (p "resp" "n2" z0 n)
+     (p "resp" "a" z0 a) (non (privk a)) (uniq n))
+    (exists ((z1 node))
+     (and (p "init" 2 z1) (p "init" "a" z1 a)))))
+  (comment "Responder authentication goal")
+  (comment "Same as unilateral goal under the predicate mapping:")
+  (comment (p "init" 1) "->" (p "resp" 2) "and")
+  (comment (p "init" "n") "->" (p "resp" "n2") "and")
+  (comment (p "init" "a") "->" (p "resp" "a") "and")
+  (comment (p "resp" 1) "->" (p "init" 2) "and")
+  (comment (p "resp" "a") "->" (p "init" "a")))
+
+;;; Section 2 --- Additional Examples
+
+;;; The shape analysis sentence as input (kind of useless)
+
+(defgoal ns                ; Shape analysis sentence
+  (forall ((n1 n2 text) (a b name) (z z-0 node))
+    (implies
+      (and (p "init" 0 z) (p "init" 2 z-0)
+        (p "init" "n1" z-0 n1) (p "init" "n2" z-0 n2)
+        (p "init" "a" z-0 a) (p "init" "b" z-0 b)
+        (str-prec z z-0) (non (privk a)) (non (privk b))
+        (uniq-at n1 z))
+      (exists ((z-1 z-2 z-3 node))
+        (and (p "init" 1 z-1) (p "resp" 0 z-2)
+          (p "resp" 1 z-3) (p "resp" "n2" z-3 n2)
+          (p "resp" "n1" z-3 n1) (p "resp" "b" z-3 b)
+          (p "resp" "a" z-3 a) (prec z z-2) (prec z-3 z-1)
+          (str-prec z z-1) (str-prec z-1 z-0)
+          (str-prec z-2 z-3)))))
+  (comment "Shape analysis sentence"))
 
 (defskeleton ns
   (vars (a b name) (n1 text))
@@ -32,40 +220,40 @@
   (uniq-orig n1)
   (goals
    (forall ((a b name) (n1 text) (no nu node))
-	   (implies
-	    (and (p "init" 2 no)
-		 (p "init" "a" no a)
-		 (p "init" "b" no b)
-		 (p "init" "n1" no n1)
-		 (p "init" 0 nu)
-		 (str-prec nu no)
-		 (non (privk a))
-		 (non (privk b))
-		 (uniq-at n1 nu))
-	    (exists ((na nb node))
-		    (and (p "init" 2 na)
-			 (p "resp" 1 nb)
-			 (p "init" "b" na b)
-			 (p "resp" "b" nb b))))))
+           (implies
+            (and (p "init" 2 no)
+                 (p "init" "a" no a)
+                 (p "init" "b" no b)
+                 (p "init" "n1" no n1)
+                 (p "init" 0 nu)
+                 (str-prec nu no)
+                 (non (privk a))
+                 (non (privk b))
+                 (uniq-at n1 nu))
+            (exists ((na nb node))
+                    (and (p "init" 2 na)
+                         (p "resp" 1 nb)
+                         (p "init" "b" na b)
+                         (p "resp" "b" nb b))))))
   (comment "Initiator point of view"))
 
 (defgoal ns
   (forall ((a b name) (n1 text) (no nu node))
-	  (implies
-	   (and (p "init" 2 no)
-		(p "init" "a" no a)
-		(p "init" "b" no b)
-		(p "init" "n1" no n1)
-		(p "init" 0 nu)
-		(str-prec nu no)
-		(non (privk a))
-		(non (privk b))
-		(uniq-at n1 nu))
-	   (exists ((na nb node))
-		   (and (p "init" 2 na)
-			(p "resp" 1 nb)
-			(p "init" "b" na b)
-			(p "resp" "b" nb b)))))
+          (implies
+           (and (p "init" 2 no)
+                (p "init" "a" no a)
+                (p "init" "b" no b)
+                (p "init" "n1" no n1)
+                (p "init" 0 nu)
+                (str-prec nu no)
+                (non (privk a))
+                (non (privk b))
+                (uniq-at n1 nu))
+           (exists ((na nb node))
+                   (and (p "init" 2 na)
+                        (p "resp" 1 nb)
+                        (p "init" "b" na b)
+                        (p "resp" "b" nb b)))))
   (comment "Initiator point of view"))
 
 ;;; The responder point of view
@@ -115,15 +303,15 @@
   (uniq-orig n1 n1-0)
   (goals
    (forall ((n1 n1-0 n2 n2-0 text) (a b name) (z z-0 z-1 z-2 node))
-	   (implies
-	    (and (p "init" 0 z) (p "init" 2 z-0) (p "init" 0 z-1)
-		 (p "init" 2 z-2) (p "init" "n1" z-0 n1) (p "init" "n2" z-0 n2)
-		 (p "init" "a" z-0 a) (p "init" "b" z-0 b)
-		 (p "init" "n1" z-2 n1-0) (p "init" "n2" z-2 n2-0)
-		 (p "init" "a" z-2 a) (p "init" "b" z-2 b) (str-prec z z-0)
-		 (str-prec z-1 z-2) (non (privk a)) (non (privk b))
-		 (uniq-at n1 z) (uniq-at n1-0 z-1))
-	    (= z-1 z))))
+           (implies
+            (and (p "init" 0 z) (p "init" 2 z-0) (p "init" 0 z-1)
+                 (p "init" 2 z-2) (p "init" "n1" z-0 n1) (p "init" "n2" z-0 n2)
+                 (p "init" "a" z-0 a) (p "init" "b" z-0 b)
+                 (p "init" "n1" z-2 n1-0) (p "init" "n2" z-2 n2-0)
+                 (p "init" "a" z-2 a) (p "init" "b" z-2 b) (str-prec z z-0)
+                 (str-prec z-1 z-2) (non (privk a)) (non (privk b))
+                 (uniq-at n1 z) (uniq-at n1-0 z-1))
+            (= z-1 z))))
   (comment "Double initiator point of view"))
 
 ;;; Needham-Schroeder Protocol with origination assumptions on roles
