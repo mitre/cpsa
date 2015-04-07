@@ -66,7 +66,7 @@ structures without requiring the reader to have studied model theory.
 
 The {\cpsa} Primer~\cite{cpsaprimer09} is a prerequisite for reading
 this paper.  In particular, the analysis of the Needham-Schroeder
-protocol in Section~10 is enriched with security goals in the body of
+Protocol in Section~10 is enriched with security goals in the body of
 this paper.
 
 The paper has three main sections.  Section~\ref{sec:sas} introduces
@@ -91,6 +91,9 @@ with the goal.  {\cpsa} processes this input skeleton as described in
 Section~\ref{sec:posing}.  The derived skeleton has the property that
 when the goal is true in all executions described by all of its shapes,
 it is true of all executions of the protocol.
+
+Section~\ref{sec:comparing} shows how to use security goals to make
+comparison about the relative strengths of protocols.
 
 The model theoretical foundation of this approach to security goals
 appears in~\cite{Guttman14}.  The language of security goals differs
@@ -449,7 +452,7 @@ When {\cpsa} performs a shape analysis, every shape it generates
 refines the input skeleton.  Skeleton refinement is defined
 in~\cite[Section~6]{cpsaprimer09}, but roughly speaking, skeleton~$A$
 refines skeleton~$B$ if~$A$ contains the structure of skeleton~$B$.
-  
+
 Shape analysis sentences have the property that every skeleton that
 refines its input skeleton satisfies its antecedent.  A skeleton with
 this property is called the \emph{characteristic skeleton} of the
@@ -503,7 +506,7 @@ can be used to add a comment.
 \caption{Two Initiator Authentication Goals}\label{fig:ns init goals}
 \end{figure}
 
-Consider the task of determining if the Needham-Schroeder protocol
+Consider the task of determining if the Needham-Schroeder Protocol
 achieves various authentication goals.  From the point of view of an
 initiator run, let's see if the strands agree on their names.
 Figure~\ref{fig:ns init goals} shows the input.  The first goal checks
@@ -563,6 +566,38 @@ does not satisfy the goal.
 
 \section{Comparing Protocols with Security Goals}\label{sec:comparing}
 
+We conclude with an example of using {\cpsa}'s support for security
+goals to compare the strength of protocols as described
+in~\cite{GuttmanLiskovRowe14}.  The strength comparison paper uses
+security goals as defined in~\cite{Guttman14}.  We call the goal
+language in~\cite{Guttman14} the \emph{restricted} goal language for
+reasons that will become apparent later.
+
+The restricted goal language and the {\cpsa} goal language are very
+similar, indeed, the restricted goal language motivated the {\cpsa}
+language.  The two languages differ in several small ways.  For
+example, node orderings are specified using the \texttt{preceq} in the
+restricted goal language, but since {\cpsa} implements a strict
+partial ordering among nodes, its goal language uses \texttt{prec}.
+Also, role position and role parameter predicates are assigned a
+symbol.  The use of a well chosen mnemonic symbol makes formulas
+easier to understand.
+
+The essential difference between the two languages is in the sort
+of role parameter predicates.  In the restricted language, the message
+term is restricted to be an atom.
+\begin{center}
+  \begin{tabular}{ccc}
+    Symbol & Restricted & \cpsa\\
+    \hline
+    \scshape\sym{p} role param &
+    $\dom{node}\times\dom{atom}$ &
+    $\dom{node}\times\dom{mesg}$
+  \end{tabular}
+\end{center}
+This restriction is enforced so that protocols can be compared without
+exposing the encryption and pairing structure that makes up messages.
+
 \begin{figure}
 \begin{minipage}{2.7in}
 \begin{verbatim}
@@ -590,18 +625,79 @@ does not satisfy the goal.
      (p "init" "a" z0 a)
      (non (privk a)) (uniq n))
     (exists ((z1 node))
-     (and (p "resp" 1 z1) 
+     (and (p "resp" 1 z1)
       (p "resp" "a" z1 a))))))
 \end{verbatim}
 \end{minipage}
 \caption{Unilateral Protocol and Authentication Goal}\label{fig:unilateral}
 \end{figure}
 
-\emph{protocol transformations}
+Our example focuses on unilateral authentication.  The protocol and
+its goal is displayed in Figure~\ref{fig:unilateral}.  When given as
+input, {\cpsa} verifies that the goal is true in all executions of
+the protocol.
 
-\emph{Restricting parameter preds to apply to atoms instead of all messages}
+\begin{figure}
+\begin{quote}
+\begin{verbatim}
+(defgoal ns
+  (forall ((a name) (n text) (z0 node))
+   (implies
+    (and (p "init" 1 z0) (p "init" "n1" z0 n)
+     (p "init" "b" z0 a) (non (privk a)) (uniq n))
+    (exists ((z1 node))
+     (and (p "resp" 1 z1) (p "resp" "b" z1 a))))))
+\end{verbatim}
+\end{quote}
+\caption{Translated Unilateral Goal for the
+  Initiator}\label{fig:unilateral ns init}
+\end{figure}
 
-\section{Conclusion}\label{sec:conclusion}
+Let's compare this protocol with Needham-Schroeder.  Consider the goal
+in Figure~\ref{fig:unilateral ns init}.  This goal is the result of
+translating the Unilateral role position and parameter predicates as
+follows.
+\begin{center}
+\begin{tabular}{l@{$\quad\rightarrow\quad$}l}
+  \texttt{p "init" "n"}&\texttt{p "init" "n1"}\\
+  \texttt{p "init" "a"}&\texttt{p "init" "b"}\\
+  \texttt{p "resp" "a"}&\texttt{p "resp" "b"}
+\end{tabular}
+\end{center}
+When given Figure~\ref{fig:unilateral ns init} as input, {\cpsa}
+verifies that the goal is true in all executions of the protocol.
+
+\begin{figure}
+\begin{quote}
+\begin{verbatim}
+(defgoal ns
+  (forall ((a name) (n text) (z0 node))
+   (implies
+    (and (p "resp" 2 z0) (p "resp" "n2" z0 n)
+     (p "resp" "a" z0 a) (non (privk a)) (uniq n))
+    (exists ((z1 node))
+     (and (p "init" 2 z1) (p "init" "a" z1 a)))))
+\end{verbatim}
+\end{quote}
+\caption{Translated Unilateral Goal for the
+  Responder}\label{fig:unilateral ns resp}
+\end{figure}
+
+There is another way to translate the Unilateral goal.
+\begin{center}
+\begin{tabular}{l@{$\quad\rightarrow\quad$}l}
+  \texttt{p "init" 1}&\texttt{p "resp" "2"}\\
+  \texttt{p "init" "n"}&\texttt{p "resp" "n2"}\\
+  \texttt{p "init" "a"}&\texttt{p "resp" "a"}\\
+  \texttt{p "resp" "1"}&\texttt{p "init" "2"}\\
+  \texttt{p "resp" "a"}&\texttt{p "init" "a"}
+\end{tabular}
+\end{center}
+When given Figure~\ref{fig:unilateral ns resp} as input, {\cpsa}
+verifies that the goal is true in all executions of the protocol.
+
+{\cpsa} has demonstrated two ways in which Needham-Schroeder achieves
+the goals of the Unilateral Protocol.
 
 \bibliography{cpsa}
 \bibliographystyle{plain}

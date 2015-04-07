@@ -99,7 +99,7 @@
 (defgoal ns
   (forall ((a b name) (n text) (z0 node))
     (implies
-     (and 
+     (and
       (p "init" 1 z0) (p "init" "n1" z0 n)
       (p "init" "a" z0 a) (p "init" "b" z0 b)
       (non (privk a)) (non (privk b)) (uniq n))
@@ -107,7 +107,7 @@
       (and (p "resp" 1 z1) (p "resp" "b" z1 b)))))
   (forall ((a b name) (n text) (z0 node))
    (implies
-     (and 
+     (and
       (p "init" 1 z0) (p "init" "n1" z0 n)
       (p "init" "a" z0 a) (p "init" "b" z0 b)
       (non (privk a)) (non (privk b)) (uniq n))
@@ -118,7 +118,7 @@
 (defgoal ns
   (forall ((a b name) (n text) (z0 node))
    (implies
-    (and 
+    (and
      (p "resp" 2 z0) (p "resp" "n2" z0 n)
      (p "resp" "a" z0 a) (p "resp" "b" z0 b)
      (non (privk a)) (non (privk b)) (uniq n))
@@ -126,7 +126,7 @@
      (and (p "init" 2 z1) (p "init" "a" z1 a)))))
   (forall ((a b name) (n text) (z0 node))
    (implies
-    (and 
+    (and
      (p "resp" 2 z0) (p "resp" "n2" z0 n)
      (p "resp" "a" z0 a) (p "resp" "b" z0 b)
      (non (privk a)) (non (privk b)) (uniq n))
@@ -155,7 +155,7 @@
      (p "init" "a" z0 a)
      (non (privk a)) (uniq n))
     (exists ((z1 node))
-     (and (p "resp" 1 z1) 
+     (and (p "resp" 1 z1)
       (p "resp" "a" z1 a))))))
 
 ;;; Does initiator satisfy the unilateral authentication goal?
@@ -174,7 +174,7 @@
   (comment (p "init" "n") "->" (p "init" "n1") "and")
   (comment (p "init" "a") "->" (p "init" "b") "and")
   (comment (p "resp" "a") "->" (p "resp" "b")))
-  
+
 ;;; Does responder satisfy the unilateral authentication goal?
 
 (defgoal ns
