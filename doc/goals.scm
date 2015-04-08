@@ -19,27 +19,11 @@
      (recv (enc n2 (pubk b)))))
   (comment "Needham-Schroeder with no role origination assumptions"))
 
-;;; The initiator point of view
 (defskeleton ns
   (vars (a b name) (n1 text))
   (defstrand init 3 (a a) (b b) (n1 n1))
   (non-orig (privk b) (privk a))
   (uniq-orig n1)
-  (goals
-   (forall ((n1 n2 text) (a b name) (z z-0 node))
-    (implies
-      (and (p "init" 0 z) (p "init" 2 z-0)
-        (p "init" "n1" z-0 n1) (p "init" "n2" z-0 n2)
-        (p "init" "a" z-0 a) (p "init" "b" z-0 b)
-        (str-prec z z-0) (non (privk a)) (non (privk b))
-        (uniq-at n1 z))
-      (exists ((z-1 z-2 z-3 node))
-        (and (p "init" 1 z-1) (p "resp" 0 z-2)
-          (p "resp" 1 z-3) (p "resp" "n2" z-3 n2)
-          (p "resp" "n1" z-3 n1) (p "resp" "b" z-3 b)
-          (p "resp" "a" z-3 a) (prec z z-2) (prec z-3 z-1)
-          (str-prec z z-1) (str-prec z-1 z-0)
-          (str-prec z-2 z-3))))))
   (comment "Initiator point of view"))
 
 (defskeleton ns
@@ -62,7 +46,7 @@
           (p "resp" "a" z-3 a) (prec z z-2) (prec z-3 z-1)
           (str-prec z z-1) (str-prec z-1 z-0)
           (str-prec z-2 z-3))))))
-  (comment "Responder point of view"))
+  (comment "Responder point of view with SAS"))
 
 (defskeleton ns
   (vars (a name) (n2 text))
@@ -144,7 +128,8 @@
      (vars (a name) (n text))
      (trace
       (recv (enc n (pubk a)))
-      (send n))))
+      (send n)))
+  (comment "Unilateral authentication"))
 
 (defgoal unilateral
   (forall ((a name) (n text)
@@ -156,7 +141,8 @@
      (non (privk a)) (uniq n))
     (exists ((z1 node))
      (and (p "resp" 1 z1)
-      (p "resp" "a" z1 a))))))
+      (p "resp" "a" z1 a)))))
+  (comment "Unilateral authentication goal"))
 
 ;;; Does initiator satisfy the unilateral authentication goal?
 
@@ -213,87 +199,6 @@
           (str-prec z-2 z-3)))))
   (comment "Shape analysis sentence"))
 
-(defskeleton ns
-  (vars (a b name) (n1 text))
-  (defstrand init 3 (a a) (b b) (n1 n1))
-  (non-orig (privk b) (privk a))
-  (uniq-orig n1)
-  (goals
-   (forall ((a b name) (n1 text) (no nu node))
-           (implies
-            (and (p "init" 2 no)
-                 (p "init" "a" no a)
-                 (p "init" "b" no b)
-                 (p "init" "n1" no n1)
-                 (p "init" 0 nu)
-                 (str-prec nu no)
-                 (non (privk a))
-                 (non (privk b))
-                 (uniq-at n1 nu))
-            (exists ((na nb node))
-                    (and (p "init" 2 na)
-                         (p "resp" 1 nb)
-                         (p "init" "b" na b)
-                         (p "resp" "b" nb b))))))
-  (comment "Initiator point of view"))
-
-(defgoal ns
-  (forall ((a b name) (n1 text) (no nu node))
-          (implies
-           (and (p "init" 2 no)
-                (p "init" "a" no a)
-                (p "init" "b" no b)
-                (p "init" "n1" no n1)
-                (p "init" 0 nu)
-                (str-prec nu no)
-                (non (privk a))
-                (non (privk b))
-                (uniq-at n1 nu))
-           (exists ((na nb node))
-                   (and (p "init" 2 na)
-                        (p "resp" 1 nb)
-                        (p "init" "b" na b)
-                        (p "resp" "b" nb b)))))
-  (comment "Initiator point of view"))
-
-;;; The responder point of view
-(defskeleton ns
-  (vars (a name) (n2 text))
-  (defstrand resp 3 (a a) (n2 n2))
-  (non-orig (privk a))
-  (uniq-orig n2)
-  (goals
-  (forall ((n2 n1 text) (a b name) (z z-0 node))
-    (implies
-      (and (p "resp" 1 z) (p "resp" 2 z-0) (p "resp" "n2" z-0 n2)
-        (p "resp" "n1" z-0 n1) (p "resp" "b" z-0 b) (p "resp" "a" z-0 a)
-        (str-prec z z-0) (non (privk a)) (uniq-at n2 z))
-      (exists ((b-0 name) (z-1 z-2 node))
-        (and (p "init" 1 z-1) (p "init" 2 z-2) (p "init" "n1" z-2 n1)
-          (p "init" "n2" z-2 n2) (p "init" "a" z-2 a)
-          (p "init" "b" z-2 b-0) (prec z z-1) (prec z-2 z-0)
-          (str-prec z-1 z-2))))))
-  (comment "Responder point of view"))
-
-;;; The responder point of view
-(defskeleton ns
-  (vars (a name) (n2 text))
-  (defstrand resp 3 (a a) (n2 n2))
-  (non-orig (privk a))
-  (uniq-orig n2)
-  (goals
-   (forall ((n2 n1 text) (a b name) (z z-0 node))
-    (implies
-      (and (p "resp" 1 z) (p "resp" 2 z-0) (p "resp" "n2" z-0 n2)
-        (p "resp" "n1" z-0 n1) (p "resp" "b" z-0 b) (p "resp" "a" z-0 a)
-        (str-prec z z-0) (non (privk a)) (uniq-at n2 z))
-      (exists ((b-0 name) (z-1 z-2 node))
-        (and (p "init" 1 z-1) (p "init" 2 z-2) (p "init" "n1" z-2 n1)
-          (p "init" "n2" z-2 n2) (p "init" "a" z-2 a)
-          (p "init" "b" z-2 b-0) (prec z z-1) (prec z-2 z-0)
-          (str-prec z-1 z-2))))))
-  (comment "Responder point of view"))
-
 ;;; Double initiator point of view
 (defskeleton ns
   (vars (a b name) (n1 n1-0 text))
@@ -303,19 +208,19 @@
   (uniq-orig n1 n1-0)
   (goals
    (forall ((n1 n1-0 n2 n2-0 text) (a b name) (z z-0 z-1 z-2 node))
-           (implies
-            (and (p "init" 0 z) (p "init" 2 z-0) (p "init" 0 z-1)
-                 (p "init" 2 z-2) (p "init" "n1" z-0 n1) (p "init" "n2" z-0 n2)
-                 (p "init" "a" z-0 a) (p "init" "b" z-0 b)
-                 (p "init" "n1" z-2 n1-0) (p "init" "n2" z-2 n2-0)
-                 (p "init" "a" z-2 a) (p "init" "b" z-2 b) (str-prec z z-0)
-                 (str-prec z-1 z-2) (non (privk a)) (non (privk b))
-                 (uniq-at n1 z) (uniq-at n1-0 z-1))
-            (= z-1 z))))
+    (implies
+     (and
+      (p "init" 0 z) (p "init" 2 z-0) (p "init" 0 z-1)
+      (p "init" 2 z-2) (p "init" "n1" z-0 n1) (p "init" "n2" z-0 n2)
+      (p "init" "a" z-0 a) (p "init" "b" z-0 b)
+      (p "init" "n1" z-2 n1-0) (p "init" "n2" z-2 n2-0)
+      (p "init" "a" z-2 a) (p "init" "b" z-2 b) (str-prec z z-0)
+      (str-prec z-1 z-2) (non (privk a)) (non (privk b))
+      (uniq-at n1 z) (uniq-at n1-0 z-1))
+     (= z-1 z))))
   (comment "Double initiator point of view"))
 
 ;;; Needham-Schroeder Protocol with origination assumptions on roles
-;;; This
 
 (defprotocol ns-role-origs basic
   (defrole init

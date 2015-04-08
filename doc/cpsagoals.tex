@@ -69,7 +69,7 @@ this paper.  In particular, the analysis of the Needham-Schroeder
 Protocol in Section~10 is enriched with security goals in the body of
 this paper.
 
-The paper has three main sections.  Section~\ref{sec:sas} introduces
+The paper has four main sections.  Section~\ref{sec:sas} introduces
 the syntax and semantics of formal security goals using shape analysis
 sentences.  A shape analysis sentence expresses all that can be
 learned from a run of {\cpsa} in our language of security goals.  If a
@@ -93,7 +93,7 @@ when the goal is true in all executions described by all of its shapes,
 it is true of all executions of the protocol.
 
 Section~\ref{sec:comparing} shows how to use security goals to make
-comparison about the relative strengths of protocols.
+comparisons about the relative strengths of protocols.
 
 The model theoretical foundation of this approach to security goals
 appears in~\cite{Guttman14}.  The language of security goals differs
@@ -230,14 +230,29 @@ conjunctions of atomic formulas.  \sym{(false)} is a synonym for
   \\ antec&$\leftarrow$&atomic $\mid$ (\sym{and} atomic$\ast$)
   \end{tabular}
 \end{center}
-The predicate symbols used to construct an atomic formula
-(\textsc{atomic}) are listed in Table~\ref{tab:predicates}.
 
 Variables are declared as they are for roles and skeletons with one
 exception, there is a new sort symbol \sym{node}.  Notice that in the
 sentence, variables \sym{z} and \sym{z-0} have sort \sym{node}.  Every
 universally quantified variable must occur in the antecedent of the
 implication.
+
+The predicates used to construct an atomic formula (\textsc{atomic})
+are listed in Table~\ref{tab:predicates}.  The first line gives the
+syntax of a role position predicate.  It contains three tokens,
+\texttt{p}, a string that names a role, and an integer that specifies
+a position within the trace of the role.  That is, for role~$r$ with a
+trace of length~$n$, there are~$n$ role position predicates,
+\mbox{\texttt{p} $r$ $i$}, for $0\leq i < n$.  The second line gives
+the syntax of a role parameter predicate.  It contains three tokens,
+\texttt{p}, a string that names a role, and a string that names a role
+variable.  For role~$r$, there is role parameter predicate for each
+variable declared by~$r$.
+
+When a variable of sort \sym{node} occurs in a formula, its position
+must be specified using a role position formula.  When an algebra
+variable occurs in formula, its association with the parameter of some
+role must be specified using a role parameter formula.
 
 \begin{table}
 \begin{center}
@@ -598,6 +613,14 @@ term is restricted to be an atom.
 This restriction is enforced so that protocols can be compared without
 exposing the encryption and pairing structure that makes up messages.
 
+Our example focuses on unilateral authentication.  To best understand
+this example, process the sample file \texttt{goal.scm} with {\cpsa}
+and display its output in a browser.
+
+The protocol and its goal is shown in Figure~\ref{fig:unilateral}.
+When given as input, {\cpsa} verifies that the goal is true in all
+executions of the protocol.
+
 \begin{figure}
 \begin{minipage}{2.7in}
 \begin{verbatim}
@@ -632,11 +655,6 @@ exposing the encryption and pairing structure that makes up messages.
 \caption{Unilateral Protocol and Authentication Goal}\label{fig:unilateral}
 \end{figure}
 
-Our example focuses on unilateral authentication.  The protocol and
-its goal is displayed in Figure~\ref{fig:unilateral}.  When given as
-input, {\cpsa} verifies that the goal is true in all executions of
-the protocol.
-
 \begin{figure}
 \begin{quote}
 \begin{verbatim}
@@ -653,20 +671,6 @@ the protocol.
   Initiator}\label{fig:unilateral ns init}
 \end{figure}
 
-Let's compare this protocol with Needham-Schroeder.  Consider the goal
-in Figure~\ref{fig:unilateral ns init}.  This goal is the result of
-translating the Unilateral role position and parameter predicates as
-follows.
-\begin{center}
-\begin{tabular}{l@{$\quad\rightarrow\quad$}l}
-  \texttt{p "init" "n"}&\texttt{p "init" "n1"}\\
-  \texttt{p "init" "a"}&\texttt{p "init" "b"}\\
-  \texttt{p "resp" "a"}&\texttt{p "resp" "b"}
-\end{tabular}
-\end{center}
-When given Figure~\ref{fig:unilateral ns init} as input, {\cpsa}
-verifies that the goal is true in all executions of the protocol.
-
 \begin{figure}
 \begin{quote}
 \begin{verbatim}
@@ -682,6 +686,20 @@ verifies that the goal is true in all executions of the protocol.
 \caption{Translated Unilateral Goal for the
   Responder}\label{fig:unilateral ns resp}
 \end{figure}
+
+Let's compare this protocol with Needham-Schroeder.  Consider the goal
+in Figure~\ref{fig:unilateral ns init}.  This goal is the result of
+translating the Unilateral role position and parameter predicates as
+follows.
+\begin{center}
+\begin{tabular}{l@{$\quad\rightarrow\quad$}l}
+  \texttt{p "init" "n"}&\texttt{p "init" "n1"}\\
+  \texttt{p "init" "a"}&\texttt{p "init" "b"}\\
+  \texttt{p "resp" "a"}&\texttt{p "resp" "b"}
+\end{tabular}
+\end{center}
+When given Figure~\ref{fig:unilateral ns init} as input, {\cpsa}
+verifies that the goal is true in all executions of the protocol.
 
 There is another way to translate the Unilateral goal.
 \begin{center}
