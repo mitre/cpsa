@@ -12,7 +12,7 @@ module CPSA.Lib.Protocol (Event (..), evtTerm, evtMap, evt, inbnd, outbnd,
     Role, rname, rvars, rtrace, rnon, rpnon, runique, rcomment,
     rsearch, rnorig, rpnorig, ruorig, rpriority, mkRole, varSubset,
     varsInTerms, addVars,
-    Prot, mkProt, pname, alg, pgen, roles,
+    Prot, mkProt, pname, alg, pgen, roles, listenerRole,
     varsAllAtoms, pcomment, flow) where
 
 import qualified Data.List as L
@@ -251,17 +251,18 @@ data Prot t g
     = Prot { pname :: !String,  -- Name of the protocol
              alg :: !String,    -- Name of the algebra
              pgen :: !g,        -- Initial variable generator
-             roles :: ![Role t],
+             roles :: ![Role t], -- Non-listener roles of a protocol
+             listenerRole :: Role t,
              varsAllAtoms :: !Bool,   -- Are all role variables atoms?
              pcomment :: [SExpr ()] }  -- Comments from the input
     deriving Show
 
 -- Callers should ensure every role has a distinct name.
 mkProt :: Algebra t p g s e c => String -> String ->
-          g -> [Role t] -> [SExpr ()] -> Prot t g
-mkProt name alg gen roles comment =
-    Prot { pname = name, alg = alg, pgen = gen,
-           roles = roles, pcomment = comment,
+          g -> [Role t] -> Role t -> [SExpr ()] -> Prot t g
+mkProt name alg gen roles lrole comment =
+    Prot { pname = name, alg = alg, pgen = gen, roles = roles,
+           listenerRole = lrole, pcomment = comment,
            varsAllAtoms = all roleVarsAllAtoms roles }
     where
       roleVarsAllAtoms role = all isAtom (rvars role)

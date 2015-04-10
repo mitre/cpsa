@@ -220,6 +220,31 @@
      (= z-1 z))))
   (comment "Double initiator point of view"))
 
+(defprotocol nsl-typeless basic
+  (defrole init
+    (vars (a b name) (n1 text) (n2 mesg))
+    (trace
+     (send (enc a n1 (pubk b)))
+     (recv (enc n1 n2 b (pubk a)))
+     (send (enc n2 (pubk b)))))
+  (defrole resp
+    (vars (b a name) (n2 text) (n1 mesg))
+    (trace
+     (recv (enc a n1 (pubk b)))
+     (send (enc n1 n2 b (pubk a)))
+     (recv (enc n2 (pubk b)))))
+  (comment "Needham-Schroeder-Lowe with untyped nonces"))
+
+;;; The responder point of view
+(defgoal nsl-typeless
+  (forall ((n2 text) (a b name) (z z-0 node))
+    (implies
+      (and (p "resp" 1 z) (p "" 0 z-0)
+        (p "resp" "n2" z n2) (p "resp" "b" z b) (p "resp" "a" z a)
+        (p "" "x" z-0 n2) (non (privk a)) (non (privk b)) (uniq n2))
+      (false)))
+  (comment "Shows typeflaw in typeless NSL"))
+
 ;;; Needham-Schroeder Protocol with origination assumptions on roles
 
 (defprotocol ns-role-origs basic
@@ -290,27 +315,3 @@
   (non-orig (privk a))
   (uniq-orig n1)
   (precedes ((1 1) (0 1))))
-
-(defprotocol nsl-typeless basic
-  (defrole init
-    (vars (a b name) (n1 text) (n2 mesg))
-    (trace
-     (send (enc a n1 (pubk b)))
-     (recv (enc n1 n2 b (pubk a)))
-     (send (enc n2 (pubk b)))))
-  (defrole resp
-    (vars (b a name) (n2 text) (n1 mesg))
-    (trace
-     (recv (enc a n1 (pubk b)))
-     (send (enc n1 n2 b (pubk a)))
-     (recv (enc n2 (pubk b)))))
-  (comment "Needham-Schroeder-Lowe with untyped nonces"))
-
-;;; The responder point of view
-(defskeleton nsl-typeless
-  (vars (a b name) (n2 text))
-  (defstrand resp 2 (a a) (n2 n2) (b b))
-  (deflistener n2)
-  (non-orig (privk a) (privk b))
-  (uniq-orig n2)
-  (comment "Shows typeflaw in typeless NSL"))

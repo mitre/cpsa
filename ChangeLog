@@ -1,3 +1,10 @@
+2015-04-10  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (mkListener): The role used for listener
+	strands is now the one stored in the protocol.  It has a single
+	variable x of sort mesg as its set of variables.  This change
+	enables satisfaction checking on skeleton that include listeners.
+
 2015-04-02  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Lib/Strand.hs (hull): Removed the hulling by
@@ -36,8 +43,8 @@
 
 2015-03-24  John D. Ramsdell  <ramsdell@mitre.org>
 
-	* src/CPSA/Lib/{Reduction,Strand,Loader}.hs: Made it so that when a
-	shape does not satisfy a goal, an environment showing why is
+	* src/CPSA/Lib/{Reduction,Strand,Loader}.hs: Made it so that when
+	a shape does not satisfy a goal, an environment showing why is
 	printed.  For each goal, the output is yes when the goal is
 	satisfied or (no (VAR VAL)...).
 

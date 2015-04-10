@@ -190,24 +190,12 @@ makeInstance role env trace =
                trace = trace,
                height = length trace }
 
--- This is the only place a role is generated with an empty name.
--- This is what marks a strand as a listener.
-mkListener :: Algebra t p g s e c => g -> t ->
+mkListener :: Algebra t p g s e c => Prot t g -> g -> t ->
               (g, Instance t e)
-mkListener gen term =
-    (gen'', Instance { role = mkRole "" vars [In rterm, Out rterm]
-                              [] [] [] [] [] False,
-                       env = env,
-                       trace = [In term, Out term],
-                       height = 2 })
-    where
-      (gen', rterm) = clone gen term -- Make role term
-      vars = addVars [] rterm        -- Collect vars in role term
-      (gen'', env) =
-          case match rterm term (gen', emptyEnv) of
-            (gen'', env) : _ -> (gen'', env)
-            [] -> error msg
-      msg = "Strand.mkListener: cannot generate an environment."
+mkListener p gen term =
+    case bldInstance (listenerRole p) [In term, Out term] gen of
+      [x] -> x
+      _ -> error "Strand.mkListener: Cannot build an instance of a listener"
 
 -- Add to set s the variables that are in the range of instance i
 addIvars :: Algebra t p g s e c => Set t -> Instance t e -> Set t
@@ -1507,7 +1495,7 @@ addListener k n cause t =
       k' = newPreskel gen' (shared k) insts' orderings' (knon k)
            (kpnon k) (kunique k) (kpriority k)
            (AddedListener t cause) (prob k) (pov k)
-      (gen', inst) = mkListener (gen k) t
+      (gen', inst) = mkListener (protocol k) (gen k) t
       insts' = insts k ++ [inst]
       pair = ((length (insts k), 1), n)
       orderings' = pair : orderings k

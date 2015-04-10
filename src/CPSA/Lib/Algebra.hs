@@ -139,7 +139,7 @@ class (Term t, Show g) => Gen t g | t -> g, g -> t where
 
     -- Given a generator, load a list of variables or return an error
     -- message.  Each element of the list is an identifier and a sort.
-    -- The varibles are returned in the reverse order.
+    -- The variables are returned in the reverse order.
     loadVars :: Monad m => g -> [SExpr Pos] -> m (g, [t])
 
 -- Substitutions

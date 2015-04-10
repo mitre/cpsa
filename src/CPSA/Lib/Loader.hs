@@ -68,7 +68,8 @@ loadProt nom origin pos (S _ name : S _ alg : x : xs)
         do
           (gen, rs, comment) <- loadRoles origin (x : xs)
           -- Check for duplicate role names
-          validate (mkProt name alg gen rs comment) rs
+          (gen, r) <- mkListenerRole pos gen
+          validate (mkProt name alg gen rs r comment) rs
     where
       validate prot [] = return prot
       validate prot (r : rs) =
@@ -187,6 +188,14 @@ failwith msg test =
 showst :: Algebra t p g s e c => t -> ShowS
 showst t =
     shows $ displayTerm (addToContext emptyContext [t]) t
+
+-- This is the only place a role is generated with an empty name.
+-- This is what marks a strand as a listener.
+mkListenerRole :: (Algebra t p g s e c, Monad m) => Pos -> g -> m (g, Role t)
+mkListenerRole pos g =
+  do
+    (g, [x]) <- loadVars g [L pos [S pos "x", S pos "mesg"]]
+    return (g, mkRole "" [x] [In x, Out x] [] [] [] [] [] False)
 
 -- Ensure a trace is not a prefix of a listener
 notListenerPrefix :: Algebra t p g s e c => Trace t -> Bool
@@ -324,7 +333,7 @@ loadInsts top p kvars gen insts (L pos (S _ "deflistener" : x) : xs) =
     case x of
       [term] ->
           do
-            (gen, i) <- loadListener kvars gen term
+            (gen, i) <- loadListener p kvars gen term
             loadInsts top p kvars gen (i : insts) xs
       _ ->
           fail (shows pos "Malformed deflistener")
@@ -365,6 +374,8 @@ loadInst pos p kvars gen role height env =
 
 lookupRole :: (Algebra t p g s e c, Monad m) => Pos ->
               Prot t g -> String -> m (Role t)
+lookupRole _ p role  | role == "" =
+    return $ listenerRole p
 lookupRole pos p role =
     case L.find (\r -> role == rname r) (roles p) of
       Nothing ->
@@ -382,12 +393,12 @@ loadMaplet kvars vars env (L pos [domain, range]) =
         [] -> fail (shows pos "Domain does not match range")
 loadMaplet _ _ _ x = fail (shows (annotation x) "Malformed maplet")
 
-loadListener :: (Algebra t p g s e c, Monad m) => [t] -> g ->
-                SExpr Pos -> m (g, Instance t e)
-loadListener kvars gen x =
+loadListener :: (Algebra t p g s e c, Monad m) => Prot t g ->
+                [t] -> g -> SExpr Pos -> m (g, Instance t e)
+loadListener p kvars gen x =
     do
-      t <- loadTerm kvars x
-      return (mkListener gen t)
+     t <- loadTerm kvars x
+     return $ mkListener p gen t
 
 loadRest :: (Algebra t p g s e c, Monad m) => Pos -> [t] ->
             Prot t g -> g -> [Goal t] -> [Instance t e] ->
