@@ -59,11 +59,13 @@ languages.  The
 <a href="#cpsajson"><code>cpsajson</code></a> program translates JSON
 encoded CPSA into CPSA S-Expressions.</p>
 
-<p>The input syntax is essentially the same as the output syntax. A Lisp aware
-editor will pretty print input, and the output is pretty printed. We use Emacs'
-Scheme mode to prepare input. This document describes the syntax, but provides
-little assistance for its interpretation. See the CPSA Tutorial document for
-this information.</p>
+<p>The input syntax is essentially the same as the output syntax. A
+  Lisp aware editor will pretty print input, and the output is pretty
+  printed. We use Emacs' Scheme mode to prepare input. This document
+  describes the syntax, but provides little assistance for its
+  interpretation. See the <a href="cpsaprimer.pdf">CPSA Primer</a> and
+  <a href="cpsagoals.pdf">CPSA and Formal Security Goals</a> for more
+  information.</p>
 
 <p>The typical pattern of usage is to enter the set of problems to be analyzed
 into a file, in this example, <code>prob.scm</code>, analyze the problems, and if
@@ -131,8 +133,12 @@ key.</p>
 protocol definitions and problem statements.
 A <a href="#usage">herald form</a> allows options normally specified
 on the command line to be specified within an input file.  A problem
-statement describes the initial behavior as a skeleton. The grammar
-for a protocol follows.</p>
+statement describes the initial behavior as a skeleton or a security
+goal.</p>
+
+<h3>Protocols</h3>
+
+<p>The grammar for a protocol follows.</p>
 
 <blockquote>
   <pre>PROTOCOL   ::= (defprotocol ID ALG ROLE+ PROT-ALIST)
@@ -189,6 +195,8 @@ b (<code>cat</code> c (<code>cat</code> d e)))).</p>
 <p>A term in the Basic Crypto Algebra is an atom if it is variable of a sort
 other than <code>mesg</code>, or it if formed from one of the following operations:
 <code>pubk</code>, <code>privk</code>, <code>invk</code>, and <code>ltk</code>.</p>
+
+<h3>Skeletons</h3>
 
 <blockquote>
   <pre>SKELETON   ::= (defskeleton ID VARS STRAND+ SKEL-ALIST)
@@ -280,6 +288,45 @@ of <code>mesg</code>.</p>
 <code>(exp (exp h x) y) = (exp h (mul x y)</code>.</p>
 
 -->
+
+<h3>Security Goals</h3>
+
+<p>Another way to specify a problem statement is with a security
+  goal. A security goal a sentence in first-order logic.  It asserts
+  that if some properties hold for a skeleton, then some other
+  properties must hold for all shapes computed by CPSA starting with
+  the skeleton.  Security goals can be used to formally state
+  authentication and secrecy goals of a protocol.</p>
+
+<p>The <code>defgoal</code> form can be used to pose an analysis
+  problem by a sentence instead of a skeleton.  CPSA extracts a
+  point-of-view skeleton from the antecedent of the formula and then
+  analyzes it.  When it prints a shape, it checks to see if the shape
+  satisfies the conclusion of the security goal.  See
+  <a href="cpsagoals.pdf">CPSA and Formal Security Goals</a> for
+  details.</p>
+
+<p>To be precise, a security goal is an order-sorted first-order logic
+  sentence in a restricted from.  The set of sort symbols available
+  for use in a <code>DECL</code> is the ones provided by the message
+  algebra augmented with the symbol <code>node</code>.  The form of a
+  sentence is restricted by the syntax that follows.</p>
+
+<blockquote>
+  <pre>GOAL        ::= (defgoal ID SENTENCE+ GOAL-ALIST)
+SENTENCE    ::= (forall (DECL*) (implies ANTECEDENT CONCLUSION))
+CONCLUSION  ::= (false) | EXISTENTIAL | (or EXISTENTIAL*)
+EXISTENTIAL ::= (exists (DECL*) ANTECEDENT) | ANTECEDENT
+ANTECEDENT  ::= ATOMIC | (and ATOMIC*)
+ATOMIC      ::= (p ROLEID POS NVAR) | (p ROLEID PARAM NVAR TERM)
+             |  (str-prec NVAR NVAR) | (prec NVAR NVAR)
+             |  (non TERM) | (pnon TERM) | (uniq TERM)
+             |  (uniq-at TERM NVAR) | (= TERM TERM)
+ROLEID      ::= STRING
+POS         ::= INT
+NVAR        ::= ID
+PARAM       ::= STRING</pre>
+</blockquote>
 
 <h3>Macros and Includes</h3>
 

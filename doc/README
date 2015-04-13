@@ -9,14 +9,12 @@ This directory contains CPSA documentation.
 * cpsaoverview.pdf: Another attempt at a gentle introduction to CPSA
 
 * cpsagoals.pdf: CPSA and Formal Security Goals, an introduction
-  reasoning about security goals using first-order logic.
+  to reasoning about security goals using first-order logic.
 
 * cpsaspec.pdf: The CPSA Specification, a formal specification of the
   algorithm
 
 * cpsadesign.pdf: CPSA Design, a description of implementation choices
-
-* cpsadha.pdf: Diffie-Hellman Algebra (an experiment with known flaws).
 
 To build the documentation, you need Metapost and XY-pic.  On Linux,
 Metapost is supplied via the package texlive-metapost, and XY-pic is
