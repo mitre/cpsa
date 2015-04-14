@@ -527,7 +527,7 @@ loadSentence :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
 loadSentence _ prot g (L pos [S _ "forall", L _ vs, x]) =
   do
     (g, vars) <- loadVars g vs
-    loadImplication pos prot g (L.nub vars) x
+    loadImplication pos prot g (L.nub $ reverse vars) x
 loadSentence pos _ _ _ = fail (shows pos "Bad goal sentence")
 
 -- Load the top-level implication of a security goal
@@ -571,7 +571,7 @@ loadExistential :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
 loadExistential _ prot g vars (L pos [S _ "exists", L _ vs, x]) =
   do
     (g, evars) <- loadVars g vs
-    loadRoleSpecific pos prot g (evars ++ vars) evars x
+    loadRoleSpecific pos prot g (reverse evars ++ vars) evars x
 loadExistential pos prot g vars x =
   loadRoleSpecific pos prot g vars [] x
 

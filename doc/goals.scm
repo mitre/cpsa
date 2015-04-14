@@ -19,6 +19,22 @@
      (recv (enc n2 (pubk b)))))
   (comment "Needham-Schroeder with no role origination assumptions"))
 
+(defgoal ns
+  (forall ((a b name) (n1 text) (z0 node))
+    (implies
+     (and
+      (p "init" 2 z0) (p "init" "n1" z0 n1)
+      (p "init" "a" z0 a) (p "init" "b" z0 b)
+      (non (privk b)) (uniq n1))
+     (exists ((z1 node))
+      (and (p "resp" 1 z1) (p "resp" "b" z1 b))))))
+
+;;; ---------------------------------------------------------------
+
+;;; Old Section 1 --- Examples from CPSA and Formal Security Goals
+
+;;; Needham-Schroeder from Section 10 of the CPSA Primer
+
 (defskeleton ns
   (vars (a b name) (n1 text))
   (defstrand init 3 (a a) (b b) (n1 n1))

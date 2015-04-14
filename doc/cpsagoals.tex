@@ -54,7 +54,10 @@ But how easy is it to read off authentication and secrecy properties?
 What precisely is it that an expert sees?  This paper describes
 {\cpsa}'s support for reasoning about security goals using first-order
 logic.  With security goals expressed in first-order logic, intuition
-is replaced by satisfaction-checking and theorem-proving.
+is replaced by determining if a formula is true in all executions of
+the protocol.
+
+\emph{Something about the benefits of first-order logic goes here.}
 
 This treatment of security goals relies heavily on a branch of
 first-order logic called model theory.  It deals with the relationship
@@ -64,43 +67,11 @@ that denote a collection of executions of a protocol.  This paper
 attempts to describe the language of security goals and its
 structures without requiring the reader to have studied model theory.
 
-The {\cpsa} Primer~\cite{cpsaprimer09} is a prerequisite for reading
-this paper.  In particular, the analysis of the Needham-Schroeder
-Protocol in Section~10 is enriched with security goals in the body of
-this paper.
-
-The paper has four main sections.  Section~\ref{sec:sas} introduces
-the syntax and semantics of formal security goals using shape analysis
-sentences.  A shape analysis sentence expresses all that can be
-learned from a run of {\cpsa} in our language of security goals.  If a
-security goal can be derived from a shape analysis sentence, then the
-protocol achieves the security goal, that is, the goal is true in all
-executions of the protocol.
-
-Theorem-proving is inconvenient.  Section~\ref{sec:posing} explains
-how to annotate an input skeleton with a security goal.  For each
-shape that {\cpsa} finds, it uses the semantics of the goal language
-to determine if the goal is true in all executions described by the
-shape.  If the goal has a certain form, the truth of the goal can be
-extended to all executions.
-
-Section~\ref{sec:specifying} presents the top-level \texttt{defgoal}
-form that specifies a security goal for a protocol.  {\cpsa} extracts
-an input skeleton from the goal, and then annotates the input skeleton
-with the goal.  {\cpsa} processes this input skeleton as described in
-Section~\ref{sec:posing}.  The derived skeleton has the property that
-when the goal is true in all executions described by all of its shapes,
-it is true of all executions of the protocol.
-
-Section~\ref{sec:comparing} shows how to use security goals to make
-comparisons about the relative strengths of protocols.
-
 The model theoretical foundation of this approach to security goals
 appears in~\cite{Guttman14}.  The language of security goals differs
 slightly from what is present here.  Section~\ref{sec:comparing}
 contains a discussion on the differences between the two goal
-languages.  Shape analysis sentences were introduced
-in~\cite{Ramsdell12}.  A practical use of security goals in protocol
+languages.  A practical use of security goals in protocol
 standardization is described in~\cite{GuttmanLiskovRowe14}.  The
 precise semantics of the goal language is in~\cite{cpsaspec09}.  The
 syntax of security goals appears in~\cite[Table~2]{cpsaprimer09}.
@@ -110,7 +81,6 @@ input {\cpsa} file \texttt{goals.scm}.  It contains the examples in
 this paper.  You are encouraged to run the examples and examine the
 output while reading this paper.
 
-\section{Shape Analysis Sentences}\label{sec:sas}
 %% Use a margin width of 62 for S-expressions
 
 \begin{figure}
@@ -143,82 +113,68 @@ output while reading this paper.
 
 \begin{figure}
 \begin{verbatim}
-(defskeleton ns            ; Input skeleton
-  (vars (a b name) (n1 text))
-  (defstrand init 3 (a a) (b b) (n1 n1))
-  (non-orig (privk b) (privk a))
+(defgoal ns                ; Goal
+  (forall ((a b name) (n1 text) (z0 node))
+    (implies
+     (and (p "init" 2 z0) (p "init" "n1" z0 n1)
+      (p "init" "a" z0 a) (p "init" "b" z0 b)
+      (non (privk b)) (uniq n1))
+     (exists ((z1 node))
+      (and (p "resp" 1 z1) (p "resp" "b" z1 b))))))
+
+(defskeleton ns            ; Point of view skeleton
+  (vars (a b name) (n1 n2 text))
+  (defstrand init 3 (a a) (b b) (n1 n1) (n2 n2))
+  (non-orig (privk b))
   (uniq-orig n1))
 \end{verbatim}
 \begin{center}
-\includegraphics{cpsadiagrams-5.mps}
+\includegraphics{cpsadiagrams-9.mps}
 \end{center}
 \begin{verbatim}
 (defskeleton ns            ; Shape
   (vars (n1 n2 text) (a b name))
   (defstrand init 3 (n1 n1) (n2 n2) (a a) (b b))
-  (defstrand resp 2 (n2 n2) (n1 n1) (b b) (a a))
+  (defstrand resp 2 (n2 n2-0) (n1 n1) (b b) (a a))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
-  (non-orig (privk b) (privk a))
-  (uniq-orig n1))
-
-(defgoal ns                ; Shape analysis sentence
-  (forall ((n1 n2 text) (a b name) (z z-0 node))
-    (implies
-      (and (p "init" 0 z) (p "init" 2 z-0)
-        (p "init" "n1" z-0 n1) (p "init" "n2" z-0 n2)
-        (p "init" "a" z-0 a) (p "init" "b" z-0 b)
-        (str-prec z z-0) (non (privk a)) (non (privk b))
-        (uniq-at n1 z))
-      (exists ((z-1 z-2 z-3 node))
-        (and (p "init" 1 z-1) (p "resp" 0 z-2)
-          (p "resp" 1 z-3) (p "resp" "n2" z-3 n2)
-          (p "resp" "n1" z-3 n1) (p "resp" "b" z-3 b)
-          (p "resp" "a" z-3 a) (prec z z-2) (prec z-3 z-1)
-          (str-prec z z-1) (str-prec z-1 z-0)
-          (str-prec z-2 z-3))))))
+  (non-orig (privk b))
+  (uniq-orig n1)
+  (satisfied yes))
 \end{verbatim}
 \caption{Needham-Schroeder Initiator Point of View}
 \label{fig:ns init}
 \end{figure}
 
-The easiest way to get started with security goals is to use the
-\texttt{cpsasas} program to generate a goal.  Recall the analysis of
-the Needham-Schroeder Protocol in~\cite[Section~10]{cpsaprimer09}.
-The roles are displayed in Figure~\ref{fig:ns roles}.
+The {\cpsa} Primer~\cite{cpsaprimer09} is a prerequisite for reading
+this paper.  In particular, the Needham-Schroeder Protocol in
+Section~10 is reanalyzed using security goals here.  The roles are
+displayed in Figure~\ref{fig:ns roles}.
 
 The protocol is analyzed from the point of view of a complete run of
-one instance of an initiator role.
+one instance of the initiator role.  The input security goal, followed
+by the point of view skeleton it generates and the shape produced by
+{\cpsa}, are shown in Figure~\ref{fig:ns init}.  The syntax and
+semantics of the goal will be explained later.  Roughly speaking, it
+asserts that if a realized skeleton contains a full length initiator
+strand, its private key is uncompromised, and it uniquely generates
+\texttt{n1}, then the skeleton will contain a responder strand that
+agrees with the initiator on the name \texttt{b}.  The shape produced
+by {\cpsa} contains the annotation \texttt{(satisfies yes)}.  This
+indicates that its structure satisfies the description given by the
+security goal.  It will be explained later why the properties of
+{\cpsa} allows us to conclude that this goal is true in all executions
+of the protocol, and therefore conclude that the Needham-Schroeder
+protocol achieves this authentication goal.
 
-\begin{quote}
-\begin{verbatim}
-(defskeleton ns
-  (vars (a b name) (n1 text))
-  (defstrand init 3 (a a) (b b) (n1 n1))
-  (non-orig (privk b) (privk a))
-  (uniq-orig n1))
-\end{verbatim}
-\end{quote}
+\section{Syntax}\label{sec:syntax}
 
-This {\cpsa} input is at the beginning of the sample file
-\texttt{goals.scm}.  To generate a security goal from the initiator
-point of view with \texttt{ghci} and \texttt{Make.hs}, type
-\begin{quote}
-\begin{verbatim}
-$ ghci Make.hs
-*Make> sas "goals"
-\end{verbatim}
-\end{quote}
-When using GNU make, type ``\texttt{make goals\_sas.text}''.  The
-resulting shape analysis and its sentence is displayed in
-Figure~\ref{fig:ns init}.
-
-The sentence has a form shared by all security goals.  It is a
-universally quantified implication.  The antecedent is a conjunction
-of atomic formulas.  For this sentence, the conclusion is an
-existentially quantified conjunction of atomic formulas, but in
-general, the conclusion is a disjunction of existentially quantified
-conjunctions of atomic formulas.  \sym{(false)} is a synonym for
-\sym{(or)}.
+The sentence in Figure~\ref{fig:ns init} has a form shared by all
+security goals.  It is a universally quantified implication.  The
+antecedent is a conjunction of atomic formulas.  For this sentence,
+the conclusion is an existentially quantified conjunction of atomic
+formulas, but in general, the conclusion is a disjunction of
+existentially quantified conjunctions of atomic formulas.
+\sym{(false)} is a synonym for \sym{(or)}.
 
 \begin{center}\scshape
   \begin{tabular}{rcl}
@@ -279,6 +235,10 @@ role must be specified using a role parameter formula.
 \end{center}
 \caption{Predicates}\label{tab:predicates}
 \end{table}
+
+\section{Semantics}\label{sec:semantics}
+
+\emph{What to do here?}
 
 In a shape analysis sentence, the antecedent encodes the input
 skeleton, and each disjunct in the conclusion encodes a shape.
