@@ -289,7 +289,7 @@ of <code>mesg</code>.</p>
 
 -->
 
-<h3>Security Goals</h3>
+<h3>First-order Logic and Security Goals</h3>
 
 <p>Another way to specify a problem statement is with a security
   goal. A security goal a sentence in first-order logic.  It asserts
@@ -298,11 +298,11 @@ of <code>mesg</code>.</p>
   the skeleton.  Security goals can be used to formally state
   authentication and secrecy goals of a protocol.</p>
 
-<p>The <code>defgoal</code> form can be used to pose an analysis
-  problem by a sentence instead of a skeleton.  CPSA extracts a
-  point-of-view skeleton from the antecedent of the formula and then
-  analyzes it.  When it prints a shape, it checks to see if the shape
-  satisfies the conclusion of the security goal.  See
+<p>The <code>defgoal</code> form is used to pose an analysis problem
+  with a sentence instead of a skeleton.  CPSA extracts a point-of-view
+  skeleton from the antecedent of the formula and then analyzes it.
+  When it prints a shape, it checks to see if the shape satisfies the
+  conclusion of the security goal.  See
   <a href="cpsagoals.pdf">CPSA and Formal Security Goals</a> for
   details.</p>
 

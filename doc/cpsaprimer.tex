@@ -1098,6 +1098,22 @@ exhausted its to do list.
 (comment "Nothing left to do")
 \end{verbatim}
 
+\section{First-Order Logic and Security Goals}\label{sec:security goals}
+
+Another way to specify a problem statement is with a security goal. A
+security goal a sentence in first-order logic.  It asserts that if
+some properties hold for a skeleton, then some other properties must
+hold for all shapes computed by CPSA starting with the skeleton.
+Security goals can be used to formally state authentication and
+secrecy goals of a protocol.
+
+The \texttt{defgoal} form is used to pose an analysis problem with a
+sentence instead of a skeleton.  CPSA extracts a point-of-view
+skeleton from the antecedent of the formula and then analyzes it.
+When it prints a shape, it checks to see if the shape satisfies the
+conclusion of the security goal.  See~\cite{cpsagoals09} for details.
+The grammar of security goals is in Table~\ref{tab:goal}.
+
 \section{Macros}\label{sec:macros}
 
 After reading the input, {\cpsa} expands macros before in analyzing
