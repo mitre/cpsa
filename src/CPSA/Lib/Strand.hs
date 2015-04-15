@@ -2004,13 +2004,15 @@ gprec :: Algebra t p g s e c => t -> t -> Sem t g s e
 gprec n n' k (g, e) =
   case (nodeLookup e n, nodeLookup e n') of
     (Just p, Just p')
-      | inSkel k p && inSkel k p' &&
-        (strandPrec p p' || elem (p, p') (tc k)) -> [(g, e)]
+      | inSkel k p && inSkel k p' && 
+        (strandPrec p p' || elem (p, p') tc) -> [(g, e)]
     (Just _, Just _) -> []
     (_, Just _) ->
       error ("Strand.gstrPrec: node " ++ show n ++ " unbound")
     _ ->
       error ("Strand.gstrPrec: node " ++ show n' ++ " unbound")
+  where
+    tc = map graphPair $ graphClose $ graphEdges $ strands k
 
 -- Role predicate
 -- r and i determine the predicate, which has arity one.

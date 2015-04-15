@@ -168,17 +168,19 @@ protocol achieves this authentication goal.
 
 \section{Syntax}\label{sec:syntax}
 
-The sentence in Figure~\ref{fig:ns init} has a form shared by all
-security goals.  It is a universally quantified implication.  The
-antecedent is a conjunction of atomic formulas.  For this sentence,
-the conclusion is an existentially quantified conjunction of atomic
-formulas, but in general, the conclusion is a disjunction of
-existentially quantified conjunctions of atomic formulas.
-\sym{(false)} is a synonym for \sym{(or)}.
+To be precise, a security goal is an order-sorted first-order logic
+sentence in a restricted form.  The sentence in Figure~\ref{fig:ns
+  init} has the form shared by all security goals.  It is a universally
+quantified implication.  The antecedent is a conjunction of atomic
+formulas.  For this sentence, the conclusion is an existentially
+quantified conjunction of atomic formulas, but in general, the
+conclusion is a disjunction of existentially quantified conjunctions
+of atomic formulas.  \sym{(false)} is a synonym for \sym{(or)}.
 
 \begin{center}\scshape
   \begin{tabular}{rcl}
-  sent&$\leftarrow$&(\sym{forall} (decl$\ast$) (\sym{implies} antec concl))
+  goal&$\leftarrow$&(\sym{defgoal} prot sent$+$ comments)
+  \\ sent&$\leftarrow$&(\sym{forall} (decl$\ast$) (\sym{implies} antec concl))
   \\ concl&$\leftarrow$&(\sym{false})
   $\mid$ existl $\mid$ (\sym{or} existl$\ast)$
   \\ existl&$\leftarrow$&(\sym{exists}
@@ -238,25 +240,29 @@ role must be specified using a role parameter formula.
 
 \section{Semantics}\label{sec:semantics}
 
-\emph{What to do here?}
-
-In a shape analysis sentence, the antecedent encodes the input
-skeleton, and each disjunct in the conclusion encodes a shape.
-We focus on the antecedent.  In this example,
+In a \texttt{defgoal} sentence, the antecedent specifies the point of
+view skeleton.  We focus on the antecedent.  In the example,
 
 \begin{quote}
 \begin{verbatim}
 (defstrand init 3 (a a) (b b) (n1 n1) (n2 n2))
 \end{verbatim}
 \end{quote}
-is encoded as
+is extracted from
 \begin{quote}
 \begin{verbatim}
-(and (p "init" 2 z-0)
-     (p "init" "a" z-0 a) (p "init" "b" z-0 b)
-     (p "init" "n1" z-0 n1) (p "init" "n2" z-0 n2))
+(and (p "init" 2 z0) (p "init" "n1" z0 n1)
+     (p "init" "a" z0 a) (p "init" "b" z0 b)).
 \end{verbatim}
 \end{quote}
+Notice that {\cpsa} adds a binding for \texttt{n2} just as it does
+had 
+\begin{quote}
+\begin{verbatim}
+(defstrand init 3 (a a) (b b) (n1 n1))
+\end{verbatim}
+\end{quote}
+been given as input.
 
 Our aim now is to specify how to decide if a security goal is true in
 all possible executions of a protocol.  A skeleton defines a set of
@@ -267,21 +273,20 @@ satisfies a formula, we decide if it satisfies each of its atomic
 formulas, and combine the results using the rules of first-order
 logic.
 
-Atomic formula \texttt{(p "init" 2 z-0)} is called a role position
-formula.  A skeleton~$k$ satisfies the formula if \texttt{z-0} maps to
+Atomic formula \texttt{(p "init" 2 z0)} is called a role position
+formula.  A skeleton~$k$ satisfies the formula if \texttt{z0} maps to
 a node $n=(s,2)$ in~$k$ such that
 \begin{enumerate}
 \item the trace of strand~$s$ in~$k$ has a length greater than 2, and
 \item the trace when truncated to length 3 is an instance of the init
   role.
 \end{enumerate}
-Consider the shape in Figure~\ref{fig:ns
-  init}.  It satisfies \texttt{(p "init" 2 z-0)} when \texttt{z-0}
-maps to $(0,2)$.
+Consider the shape in Figure~\ref{fig:ns init}.  It satisfies
+\texttt{(p "init" 2 z0)} when \texttt{z0} maps to $(0,2)$.
 
-Atomic formula \texttt{(p "init" "a" z-0 a)} is called a role
+Atomic formula \texttt{(p "init" "n1" z0 n1)} is called a role
 parameter formula.  A skeleton~$k$ satisfies the formula if
-\texttt{z-0} maps to a node $n=(s,i)$ in~$k$ and \texttt{a} maps to a
+\texttt{z0} maps to a node $n=(s,i)$ in~$k$ and \texttt{n1} maps to a
 message algebra term~$t$ in~$k$ such that
 \begin{enumerate}
 \item the trace of strand~$s$ in~$k$ has a length greater than~$i$,
@@ -290,16 +295,16 @@ message algebra term~$t$ in~$k$ such that
 \item the truncated trace is compatible with mapping the init role's
   \texttt{"a"} parameter to~$t$.
 \end{enumerate}
-The shape in Figure~\ref{fig:ns init} satisfies \texttt{(p "init" "a"
-  z-0 a)} when \texttt{z-0} maps to $(0,2)$ and \texttt{a} maps to the
-message algebra term \texttt{a}.
+The shape in Figure~\ref{fig:ns init} satisfies \texttt{(p "init" "n1"
+  z0 n1)} when \texttt{z0} maps to $(0,2)$ and \texttt{n1} maps to the
+message algebra term \texttt{n1}.
 
 Collectively, a skeleton satisfies the formula
 \begin{quote}
 \begin{verbatim}
-(and (p "init" 2 z-0)
-     (p "init" "a" z-0 a) (p "init" "b" z-0 b)
-     (p "init" "n1" z-0 n1) (p "init" "n2" z-0 n2))
+(and (p "init" 2 z0)
+     (p "init" "a" z0 a) (p "init" "b" z0 b)
+     (p "init" "n1" z0 n1) (p "init" "n2" z0 n2))
 \end{verbatim}
 \end{quote}
 if the skeleton contains the structure specified by
@@ -309,33 +314,31 @@ if the skeleton contains the structure specified by
 \end{verbatim}
 \end{quote}
 
-The input skeleton in Figure~\ref{fig:ns init} contains three
-origination assumptions.  The assumption on \texttt{(privk b)} is
-encoded as \texttt{(non (privk b))}.  A skeleton~$k$ satisfies the
-formula if \texttt{b} maps to a message algebra term~$t$ in~$k$ such
-that~$k$ assumes that~$t$ is non-originating.
-
-The origination assumption on \texttt{n1} is encoded as
-\texttt{(uniq-at n1 z)}.  The \texttt{cpsasas} program notices that
-\texttt{n1} originates at $(0,0)$ in the input strand.  We require
-that any skeleton that satisfies the formula contains this structure.
-That is, it is not enough that every skeleton that satisfies the
-formula has a corresponding uniquely originating atom, but that atom
-must originate at a particular position and on a particular strand.
-Therefore, \texttt{cpsasas} adds \texttt{(p "init" 0 z)} and
-\texttt{(str-prec z z-0)}.  The first formula asserts that \texttt{z}
-is at the first position of a strand, and the second formula asserts
-that \texttt{z} is before \texttt{z-0} and on the same strand.
+The antecedent in Figure~\ref{fig:ns init} contains two origination
+assertions.  The formula \texttt{(non (privk b))} is extracted as
+\texttt{(privk b)}.  A skeleton~$k$ satisfies the formula if
+\texttt{b} maps to a message algebra term~$t$ in~$k$ such that~$k$
+assumes that~$t$ is non-originating.  The unique origination formula for
+\texttt{n1} is similarly extracted.
 
 Putting it all together, the mapping
 \[\{\mathtt{n1}\mapsto\mathtt{n1},
-\mathtt{n2}\mapsto\mathtt{n2},
-\mathtt{a}\mapsto\mathtt{a},
-\mathtt{b}\mapsto\mathtt{b},
-\mathtt{z}\mapsto(0,0),
-\mbox{\tt z-0}\mapsto(0,2)\}\]
-shows that the shape in Figure~\ref{fig:ns init} satisfies the
-antecedent of the shape analysis sentence.
+\mathtt{n2}\mapsto\mathtt{n2}, \mathtt{a}\mapsto\mathtt{a},
+\mathtt{b}\mapsto\mathtt{b},\mbox{\tt z0}\mapsto(0,2)\}\] shows that
+the shape in Figure~\ref{fig:ns init} satisfies the antecedent of the
+security goal.
+
+\emph{explain uniq-at}
+
+\emph{explain prec and str-prec}
+
+Assuming the declarations \texttt{()} the shape in Figure~\ref{fig:ns
+  init} could have been extracted from
+\begin{quote}
+\begin{verbatim}
+Bla
+\end{verbatim}
+\end{quote}
 
 The shape has two node orderings, \texttt{((0 0) (1 0))} and
 \texttt{((1 1) (0 1))}.  The second ordering is encoded as
@@ -367,6 +370,17 @@ employed.  It's clumsy and it requires too much expertise.  And there
 is a better way, via satisfaction-checking.  This is the subject of
 the next section.  The main use of \texttt{cpsasas} is for generating
 a formula that is edited to become a desired security goal.
+
+\texttt{(uniq-at n1 z)}.  The \texttt{cpsasas} program notices that
+\texttt{n1} originates at $(0,0)$ in the input strand.  We require
+that any skeleton that satisfies the formula contains this structure.
+That is, it is not enough that every skeleton that satisfies the
+formula has a corresponding uniquely originating atom, but that atom
+must originate at a particular position and on a particular strand.
+Therefore, \texttt{cpsasas} adds \texttt{(p "init" 0 z)} and
+\texttt{(str-prec z z-0)}.  The first formula asserts that \texttt{z}
+is at the first position of a strand, and the second formula asserts
+that \texttt{z} is before \texttt{z-0} and on the same strand.
 
 \section{Posing Goals in an Input Skeleton}\label{sec:posing}
 

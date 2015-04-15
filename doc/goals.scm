@@ -29,6 +29,16 @@
      (exists ((z1 node))
       (and (p "resp" 1 z1) (p "resp" "b" z1 b))))))
 
+(defgoal ns
+  (forall ((a b name) (n1 text) (z0 node))
+    (implies
+     (and
+      (p "init" 2 z0) (p "init" "n1" z0 n1)
+      (p "init" "a" z0 a) (p "init" "b" z0 b)
+      (non (privk b)) (uniq n1))
+     (exists ((z1 node))
+      (and (p "resp" 1 z1) (prec z1 z0))))))
+
 ;;; ---------------------------------------------------------------
 
 ;;; Old Section 1 --- Examples from CPSA and Formal Security Goals
