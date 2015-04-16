@@ -20,24 +20,87 @@
   (comment "Needham-Schroeder with no role origination assumptions"))
 
 (defgoal ns
-  (forall ((a b name) (n1 text) (z0 node))
+  (forall ((b name) (n1 text) (z0 node))
     (implies
-     (and
-      (p "init" 2 z0) (p "init" "n1" z0 n1)
-      (p "init" "a" z0 a) (p "init" "b" z0 b)
+     (and (p "init" 2 z0)
+      (p "init" "n1" z0 n1) (p "init" "b" z0 b)
       (non (privk b)) (uniq n1))
      (exists ((z1 node))
-      (and (p "resp" 1 z1) (p "resp" "b" z1 b))))))
+	     (and (p "resp" 1 z1) (p "resp" "b" z1 b)))))
+  (comment "Initiator point of view")
+  (comment "Authentication goal: agreement on name b"))
 
 (defgoal ns
-  (forall ((a b name) (n1 text) (z0 node))
+  (forall ((b name) (n1 text) (z0 node))
+    (implies
+     (and (p "init" 2 z0)
+      (p "init" "n1" z0 n1) (p "init" "b" z0 b)
+      (non (privk b)) (uniq n1))
+     (exists ((z1 node))
+	     (and (p "resp" 1 z1) (p "resp" "b" z1 b)
+	      (prec z1 z0)))))
+  (comment "Prec example"))
+
+(defgoal ns
+  (forall ((a b name) (n2 text) (z0 node))
+    (implies
+     (and (p "resp" 2 z0) (p "resp" "n2" z0 n2)
+      (p "resp" "a" z0 a) (p "resp" "b" z0 b)
+      (non (privk a)) (uniq n2))
+     (exists ((z1 node))
+      (and (p "init" 1 z1) (p "init" "b" z1 b)))))
+  (comment "Responder point of view")
+  (comment "Failed authentication goal: agreement on name b"))
+
+(defprotocol nsl basic
+  (defrole init
+    (vars (a b name) (n1 n2 text))
+    (trace
+     (send (enc n1 a (pubk b)))
+     (recv (enc n1 n2 b (pubk a)))
+     (send (enc n2 (pubk b)))))
+  (defrole resp
+    (vars (b a name) (n2 n1 text))
+    (trace
+     (recv (enc n1 a (pubk b)))
+     (send (enc n1 n2 b (pubk a)))
+     (recv (enc n2 (pubk b)))))
+  (comment "Needham-Schroeder-Lowe with no role origination assumptions"))
+
+(defgoal nsl
+  (forall ((a b name) (n2 text) (z0 node))
+    (implies
+     (and (p "resp" 2 z0) (p "resp" "n2" z0 n2)
+      (p "resp" "a" z0 a) (p "resp" "b" z0 b)
+      (non (privk a)) (uniq n2))
+     (exists ((z1 node))
+      (and (p "init" 1 z1) (p "init" "b" z1 b)))))
+  (comment "Responder point of view")
+  (comment "Authentication goal: agreement on name b"))
+
+(defgoal ns
+  (forall ((a b name) (n1 text) (z0 z1 node))
     (implies
      (and
       (p "init" 2 z0) (p "init" "n1" z0 n1)
       (p "init" "a" z0 a) (p "init" "b" z0 b)
-      (non (privk b)) (uniq n1))
-     (exists ((z1 node))
-      (and (p "resp" 1 z1) (prec z1 z0))))))
+      (p "" 0 z1) (p "" "x" z1 n1)
+      (non (privk a)) (non (privk b)) (uniq n1))
+     (false)))
+  (comment "Initiator point of view")
+  (comment "Secrecy goal: nonce n1 not revealed"))
+
+(defgoal ns
+  (forall ((a b name) (n2 text) (z0 z1 node))
+    (implies
+     (and
+      (p "resp" 2 z0) (p "resp" "n2" z0 n2)
+      (p "resp" "a" z0 a) (p "resp" "b" z0 b)
+      (p "" 0 z1) (p "" "x" z1 n2)
+      (non (privk a)) (non (privk b)) (uniq n2))
+     (false)))
+  (comment "Responder point of view")
+  (comment "Failed secrecy goal: nonce n2 not revealed"))
 
 ;;; ---------------------------------------------------------------
 

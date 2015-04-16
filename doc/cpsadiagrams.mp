@@ -242,7 +242,7 @@ endfig;
 beginfig(9);
   % Strand for principal A
   strand.a(3, origin, delta, btex $\mathstrut\mathit{init}$ etex, node);
-
+  
   % Strand for principal B
   strand.b(2, w + a2.c, delta, btex $\mathstrut\mathit{resp}$ etex, node);
 
@@ -268,18 +268,19 @@ beginfig(9);
   drawmsg(a3.e -- (beta * xpart o2.w, ypart a3.c));
 endfig;
 
-beginfig(9);
+beginfig(10);
   % Strand for principal A
-  strand.a(3, origin, delta, btex $\mathstrut\mathit{init}$ etex, node);
-
+  strand.a(3, origin, delta, btex $\mathstrut\mathit{resp}$ etex, node);
+  
   % Strand for principal B
-  strand.b(2, w + a2.c, delta, btex $\mathstrut\mathit{resp}$ etex, node);
+  strand.b(3, w, delta, btex $\mathstrut\mathit{init}$ etex, node);
 
   % Centered ordering symbols
   boxit.o1(btex $\prec$ etex); o1.c = .5[a1.c, b1.c];
-  boxit.o2(btex $\succ$ etex); o2.c = .5[a2.c, b2.c];
+  boxit.o2(btex $\prec$ etex); o2.c = .5[a2.c, b2.c];
+  boxit.o3(btex $\succ$ etex); o3.c = .5[a3.c, b3.c];
 
-  for i = 1 upto 2:
+  for i = 1 upto 3:
     draw pic o[i];
   endfor;
 
@@ -289,9 +290,9 @@ beginfig(9);
   label.top(btex $\enc{N_1, A}{K_B}$ etex, alpha[b1.w, o1.e]);
   drawmsg(o1.e -- b1.w);
   label.top(btex $\enc{N_1, N_2}{K_A}$ etex, alpha[a2.e, o2.w]);
-  drawmsg(o2.w -- a2.e);
-  label.top(btex $\enc{N_1, N_2'}{K_A}$ etex, alpha[b2.w, o2.e]);
-  drawmsg(b2.w -- o2.e);
+  drawmsg(a2.e -- o2.w);
+  label.top(btex $\enc{N_1, N_2}{K_A}$ etex, alpha[b2.w, o2.e]);
+  drawmsg(o2.e -- b2.w);
   label.top(btex $\enc{N_2}{K_B}$ etex,
     alpha[a3.e, (xpart o2.w, ypart a3.c)]);
   drawmsg(a3.e -- (beta * xpart o2.w, ypart a3.c));

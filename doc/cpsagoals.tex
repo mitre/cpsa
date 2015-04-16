@@ -68,13 +68,10 @@ attempts to describe the language of security goals and its
 structures without requiring the reader to have studied model theory.
 
 The model theoretical foundation of this approach to security goals
-appears in~\cite{Guttman14}.  The language of security goals differs
-slightly from what is present here.  Section~\ref{sec:comparing}
-contains a discussion on the differences between the two goal
-languages.  A practical use of security goals in protocol
-standardization is described in~\cite{GuttmanLiskovRowe14}.  The
-precise semantics of the goal language is in~\cite{cpsaspec09}.  The
-syntax of security goals appears in~\cite[Table~2]{cpsaprimer09}.
+appears in~\cite{Guttman14}.  A practical use of security goals in
+protocol standardization is described in~\cite{GuttmanLiskovRowe14}.
+The precise semantics of the goal language is in~\cite{cpsaspec09}.
+The syntax of security goals appears in~\cite[Table~2]{cpsaprimer09}.
 
 The distribution in which this paper is included contains the sample
 input {\cpsa} file \texttt{goals.scm}.  It contains the examples in
@@ -114,10 +111,10 @@ output while reading this paper.
 \begin{figure}
 \begin{verbatim}
 (defgoal ns                ; Goal
-  (forall ((a b name) (n1 text) (z0 node))
+  (forall ((b name) (n1 text) (z0 node))
     (implies
-     (and (p "init" 2 z0) (p "init" "n1" z0 n1)
-      (p "init" "a" z0 a) (p "init" "b" z0 b)
+     (and (p "init" 2 z0)
+      (p "init" "n1" z0 n1) (p "init" "b" z0 b)
       (non (privk b)) (uniq n1))
      (exists ((z1 node))
       (and (p "resp" 1 z1) (p "resp" "b" z1 b))))))
@@ -207,6 +204,10 @@ the syntax of a role parameter predicate.  It contains three tokens,
 variable.  For role~$r$, there is role parameter predicate for each
 variable declared by~$r$.
 
+The empty string names the listener role of a protocol.  The role
+has the variable \texttt{x} of sort \texttt{mesg} as its only role
+variable.  There are two positions in the listener role.
+
 When a variable of sort \sym{node} occurs in a formula, its position
 must be specified using a role position formula.  When an algebra
 variable occurs in formula, its association with the parameter of some
@@ -251,15 +252,15 @@ view skeleton.  We focus on the antecedent.  In the example,
 is extracted from
 \begin{quote}
 \begin{verbatim}
-(and (p "init" 2 z0) (p "init" "n1" z0 n1)
-     (p "init" "a" z0 a) (p "init" "b" z0 b)).
+(and (p "init" 2 z0)
+  (p "init" "n1" z0 n1) (p "init" "b" z0 b)).
 \end{verbatim}
 \end{quote}
-Notice that {\cpsa} adds a binding for \texttt{n2} just as it does
-had 
+Notice that {\cpsa} adds a binding for \texttt{a} and \texttt{n2} just
+as it does had
 \begin{quote}
 \begin{verbatim}
-(defstrand init 3 (a a) (b b) (n1 n1))
+(defstrand init 3 (b b) (n1 n1))
 \end{verbatim}
 \end{quote}
 been given as input.
@@ -310,7 +311,7 @@ Collectively, a skeleton satisfies the formula
 if the skeleton contains the structure specified by
 \begin{quote}
 \begin{verbatim}
-(defstrand init 3 (a a) (b b) (n1 n1) (n2 n2))
+(defstrand init 3 (a a) (b b) (n1 n1) (n2 n2)).
 \end{verbatim}
 \end{quote}
 
@@ -328,109 +329,27 @@ Putting it all together, the mapping
 the shape in Figure~\ref{fig:ns init} satisfies the antecedent of the
 security goal.
 
-\emph{explain uniq-at}
+The \texttt{prec} predicate is used to assert a node precedes another
+node.  The conclusion in Figure~\ref{fig:ns init} with \texttt{(prec
+  z1 z0)} added is satisfied by the shape using the mapping $\mbox{\tt
+  z0}\mapsto(0,2)$ and $\mbox{\tt z1}\mapsto(1,1)$.
 
-\emph{explain prec and str-prec}
+The \texttt{str-prec} predicate is used to assert a node precedes another
+node and that both are on the same strand.
 
-Assuming the declarations \texttt{()} the shape in Figure~\ref{fig:ns
-  init} could have been extracted from
+The \texttt{uniq-at} predicate is used to assert not only that an atom
+uniquely originates, but also the node at which it originates.  It is
+typically used in conjunction with a \texttt{str-prec} formula.  In
+the Figure~\ref{fig:ns init} goal, the \texttt{(uniq n1)} formula
+could have been replaced by
 \begin{quote}
 \begin{verbatim}
-Bla
+(p "init" 0 z2) (str-prec z2 z0) (uniq-at n1 z2),
 \end{verbatim}
 \end{quote}
-
-The shape has two node orderings, \texttt{((0 0) (1 0))} and
-\texttt{((1 1) (0 1))}.  The second ordering is encoded as
-\begin{quote}
-\begin{verbatim}
-(and (p "init" 1 z-1) (p "resp" 1 z-3) (prec z-3 z-1))
-\end{verbatim}
-\end{quote}
-The two role position formulas assert that \texttt{z-1} and
-\texttt{z-3} are located at the second position of a strand, and the
-\texttt{prec} formula asserts that \texttt{z-3} is before
-\texttt{z-1}.  Any skeleton that satisfies the conjunction must
-contain this structure.
-
-A shape analysis sentences asserts that either a skeleton does not
-satisfy its antecedent or it satisfies one or more of the disjuncts in
-its conclusion.  {\cpsa} has been designed so that this assertion is
-true.  Therefore, every shape analysis sentence is true in all
-executions.
-
-A security goal is true in all executions if it can be derived from a
-shape analysis sentence~\cite{Ramsdell12}.  {\cpsa} comes with a
-Prolog program that translates shape analysis sentences into Prover9
-syntax~\cite{prover9}.  Prover9 can then be used to perform the
-required theorem-proving.
-
-In practice, theorem-proving using shape analysis sentences is rarely
-employed.  It's clumsy and it requires too much expertise.  And there
-is a better way, via satisfaction-checking.  This is the subject of
-the next section.  The main use of \texttt{cpsasas} is for generating
-a formula that is edited to become a desired security goal.
-
-\texttt{(uniq-at n1 z)}.  The \texttt{cpsasas} program notices that
-\texttt{n1} originates at $(0,0)$ in the input strand.  We require
-that any skeleton that satisfies the formula contains this structure.
-That is, it is not enough that every skeleton that satisfies the
-formula has a corresponding uniquely originating atom, but that atom
-must originate at a particular position and on a particular strand.
-Therefore, \texttt{cpsasas} adds \texttt{(p "init" 0 z)} and
-\texttt{(str-prec z z-0)}.  The first formula asserts that \texttt{z}
-is at the first position of a strand, and the second formula asserts
-that \texttt{z} is before \texttt{z-0} and on the same strand.
-
-\section{Posing Goals in an Input Skeleton}\label{sec:posing}
-
-{\cpsa} performs satisfaction-checking when an input goal in annotated
-with one or more security goals.  The annotation uses the
-\texttt{goals} key.
-
-\begin{quote}
-  \begin{alltt}
-(defskeleton
-   \ldots
-   (goals \textsc{sent\ensuremath{+}}))
-  \end{alltt}
-\end{quote}
-
-When the input skeleton in Figure~\ref{fig:ns init} is annotated with
-its shape analysis sentence, {\cpsa} will check if the generated shape
-satisfies the goal.  Of course, it will be, so {\cpsa} adds
-\texttt{(satisfies yes)} to the shape to indicate that the shape
-satisfies the goal.
-
-Consider an analysis of Needham-Schroeder from the responder point of view.
-\begin{quote}
-  \begin{alltt}
-(defskeleton ns
-  (vars (a name) (n2 text))
-  (defstrand resp 3 (a a) (n2 n2))
-  (non-orig (privk a))
-  (uniq-orig n2)
-  (goals \(\Phi\)))
-  \end{alltt}
-\end{quote}
-where \(\Phi\) is the shape analysis sentence in Figure~\ref{fig:ns
-  init}.  {\cpsa} will report that the generated shape satisfies the
-goal because it does not satisfy the antecedent of~\(\Phi\).
-
-Consider the goal \(\Psi\) which is~\(\Phi\) with the conclusion replaced
-by \texttt{(false)}.  The responder point of view shape satisfies this
-goal, but the initiator point of view shape does not.  In this case,
-{\cpsa} annotates the shape with
-\begin{quote}
-\begin{verbatim}
-(satisfies (no (n1 n1) (n2 n2) (a a) (b b)
-               (z (0 0)) (z-0 (0 2))))
-\end{verbatim}
-\end{quote}
-The output shows a variable mapping for a shape that satisfies the
-antecedent of the goal but does not satisfy its conclusion.
-
-\section{Specifying an Input Skeleton by a Goal}\label{sec:specifying}
+where \texttt{z2} has sort \texttt{node}.  The extracted point-of-view
+skeleton is the same.  Of course, an error is raised if the
+role position formula is replaced by \texttt{(p "init" 1 z2)}.
 
 Recall that our aim in analyzing a protocol is to find out what
 security goals are true in all of its possible executions.  We are
@@ -442,10 +361,10 @@ refines the input skeleton.  Skeleton refinement is defined
 in~\cite[Section~6]{cpsaprimer09}, but roughly speaking, skeleton~$A$
 refines skeleton~$B$ if~$A$ contains the structure of skeleton~$B$.
 
-Shape analysis sentences have the property that every skeleton that
-refines its input skeleton satisfies its antecedent.  A skeleton with
-this property is called the \emph{characteristic skeleton} of the
-antecedent.
+The skeleton~$k_0$ extracted from the antecedent of a security goal
+has the property that every skeleton than refines~$k_0$ satisfies the
+antecedent.  A skeleton with this property is called the
+\emph{characteristic skeleton} of the antecedent.
 
 Given a goal~\(\Phi\), consider a shape analysis starting from the
 characteristic skeleton~$k_0$ of its antecedent.  Assume {\cpsa} finds
@@ -457,137 +376,111 @@ is a characteristic skeleton, each~$k_i$ satisfies the antecedent
 of~$\Phi$.  Therefore,~$\Phi$ is true in all executions of the
 protocol and maximally informative.
 
-{\cpsa} provides a means for constructing a characteristic skeleton
-from a security goal using the top-level \texttt{defgoal} form.
+\section{Examples}\label{sec:examples}
 
-\begin{center}\scshape
-  \begin{tabular}{rcl}
-  goal&$\leftarrow$&(\sym{defgoal} prot sent$+$ goal-alist)
-  \end{tabular}
+This section contains examples of both authentication and secrecy
+goals.  The first example shows the feedback the user receives when a
+shape does not satisfy a security goal.  The second example shows how
+to use a listener to state a secrecy goal.
+
+\subsection{Needham-Schroeder Responder}\label{sec:ns resp}
+
+\begin{figure}
+\begin{verbatim}
+(defgoal ns                ; Goal
+  (forall ((a b name) (n2 text) (z0 node))
+    (implies
+     (and (p "resp" 2 z0) (p "resp" "n2" z0 n2)
+      (p "resp" "a" z0 a) (p "resp" "b" z0 b)
+      (non (privk a)) (uniq n2))
+     (exists ((z1 node))
+      (and (p "init" 1 z1) (p "init" "b" z1 b)))))
+
+(defskeleton ns            ; Point of view skeleton
+  (vars (a b name) (n1 n2 text))
+  (defstrand init 3 (a a) (b b) (n1 n1) (n2 n2))
+  (non-orig (privk a))
+  (uniq-orig n2))
+\end{verbatim}
+\begin{center}
+\includegraphics{cpsadiagrams-10.mps}
 \end{center}
+\begin{verbatim}
+(defskeleton ns            ; Shape
+  (vars (n1 n2 text) (a b b-0 name))
+  (defstrand resp 3 (n2 n2) (n1 n1) (b b) (a a))
+  (defstrand init 3 (n1 n1) (n2 n2) (a a) (b b-0))
+  (non-orig (privk a))
+  (uniq-orig n2)
+  (satisfies (no (a a) (b b) (n2 n2) (z0 (0 2))))
+\end{verbatim}
+\caption{Needham-Schroeder Responder Point of View}
+\label{fig:ns resp}
+\end{figure}
 
-When {\cpsa} reads a \texttt{defgoal} form, it extracts the
-characteristic skeleton from the antecedent of the first goal, and
-adds all the goals as \texttt{goals} annotation.  It then processes
-the skeleton as described in Section~\ref{sec:posing}.  The goal alist
-can be used to add a comment.
+Figure~\ref{fig:ns resp} contains an analysis of Needham-Schroeder
+from the point of view of a complete run of the responder under the
+assumption that the responder's private key is uncompromised and the
+nonce it generates uniquely originates.
+
+The conclusion of the goal asserts that in an execution compatible
+with the point of view, there must be an initiator strand that agrees
+with the responder strand on the name \texttt{b}.  The shape produced
+by {\cpsa} is a counterexample to this assertion.  Because of this,
+{\cpsa} annotates the shape with
+\begin{quote}
+\begin{verbatim}
+(satisfies (no (a a) (b b) (n2 n2) (z0 (0 2))).
+\end{verbatim}
+\end{quote}
+The annotation includes a variable mapping for the shape that
+satisfies the antecedent of the goal but does not satisfy its
+conclusion.  The mapping \texttt{(b b)} is the reason the shape does
+not satisfy the goal.
+
+Galvin Lowe identified this authentication failure in
+Needham-Schroeder and provided a fix.  In the Needham-Schroeder-Lowe
+Protocol, the name \texttt{b} is included within the encryption in second
+message of both roles.  With this modification, the shape found by
+{\cpsa} satisfies the security goal in Figure~\ref{fig:ns resp}, so
+Needham-Schroeder-Lowe achieves this authentication goal.
+
+\subsection{A Needham-Schroeder Secrecy Goal}\label{sec:secrecy goal}
 
 \begin{figure}
 \begin{quote}
 \begin{verbatim}
 (defgoal ns
-  (forall ((a b name) (n text) (z0 node))
+  (forall ((a b name) (n1 text) (z0 z1 node))
     (implies
-     (and (p "init" 1 z0) (p "init" "n1" z0 n)
+     (and (p "init" 2 z0) (p "init" "n1" z0 n1)
       (p "init" "a" z0 a) (p "init" "b" z0 b)
-      (non (privk a)) (non (privk b)) (uniq n))
-     (exists ((z1 node))
-      (and (p "resp" 1 z1) (p "resp" "b" z1 b)))))
-  (forall ((a b name) (n text) (z0 node))
-   (implies
-     (and (p "init" 1 z0) (p "init" "n1" z0 n)
-      (p "init" "a" z0 a) (p "init" "b" z0 b)
-      (non (privk a)) (non (privk b)) (uniq n))
-     (exists ((z1 node))
-      (and (p "resp" 1 z1) (p "resp" "a" z1 a))))))
+      (p "" 0 z1) (p "" "x" z1 n1)    ; Listener
+      (non (privk a)) (non (privk b)) (uniq n1))
+     (false))))
 \end{verbatim}
 \end{quote}
-\caption{Two Initiator Authentication Goals}\label{fig:ns init goals}
+\caption{Needham-Schroeder Secrecy Goal}\label{fig:ns secrecy}
 \end{figure}
 
-Consider the task of determining if the Needham-Schroeder Protocol
-achieves various authentication goals.  From the point of view of an
-initiator run, let's see if the strands agree on their names.
-Figure~\ref{fig:ns init goals} shows the input.  The first goal checks
-to see if the strands agree on the \texttt{a} parameter and the second
-goal checks to see if the strands agree on the \texttt{b} parameter.
-The antecedent of both goals is copied from the shape analysis
-sentence in Figure~\ref{fig:ns init}.  The antecedent has been
-simplified by omitting the node at which \texttt{n} originates and
-instead asserts just \texttt{(uniq n)}.  The input skeleton generated
-is the same as the one in Figure~\ref{fig:ns init}.  The shape
-produced by {\cpsa} includes the annotation \texttt{(satisfies yes
-  yes)} stating that both goals are achieved.
-
-\begin{figure}
+Figure~\ref{fig:ns secrecy} contains an analysis of Needham-Schroeder
+from the point of view of a complete run of the initiator under the
+assumption that the responder's and its peer's private key are
+uncompromised and the nonce~\texttt{n1} it generates uniquely
+originates.  Futhermore, the point of view asserts that nonce is
+leaked using a listener.
 \begin{quote}
 \begin{verbatim}
-(defgoal ns             ; Input
-  (forall ((a b name) (n text) (z0 node))
-   (implies
-    (and (p "resp" 2 z0) (p "resp" "n2" z0 n)
-     (p "resp" "a" z0 a) (p "resp" "b" z0 b)
-     (non (privk a)) (non (privk b)) (uniq n))
-    (exists ((z1 node))
-     (and (p "init" 2 z1) (p "init" "a" z1 a)))))
-  (forall ((a b name) (n text) (z0 node))
-   (implies
-    (and (p "resp" 2 z0) (p "resp" "n2" z0 n)
-     (p "resp" "a" z0 a) (p "resp" "b" z0 b)
-     (non (privk a)) (non (privk b)) (uniq n))
-    (exists ((z1 node))
-     (and (p "init" 2 z1) (p "init" "b" z1 b))))))
-
-(defskeleton ns         ; Shape
-  (vars (n n1 text) (a b b-0 name))
-  (defstrand resp 3 (n2 n) (n1 n1) (b b) (a a))
-  (defstrand init 3 (n1 n1) (n2 n) (a a) (b b-0))
-  (precedes ((0 1) (1 1)) ((1 2) (0 2)))
-  (non-orig (privk a) (privk b))
-  (uniq-orig n)
-  (satisfies yes (no (a a) (b b) (n n) (z0 (0 2)))))
+(p "" 0 z1) (p "" "x" z1 n1)    ; Listener
 \end{verbatim}
 \end{quote}
-\caption{Two Responder Authentication Goals}\label{fig:ns resp goals}
-\end{figure}
 
-Let's see if the strands agree on their names from the point of view
-of a responder run.  Figure~\ref{fig:ns resp goals} shows the input
-and the shape.  The first goal checks to see if the strands agree on
-the \texttt{a} parameter and the second goal checks to see if the
-strands agree on the \texttt{b} parameter.  The shape produced by
-{\cpsa} includes the annotation \texttt{(satisfies yes (no (a a) (b b)
-  (n n) (z0 (0 2))))} stating that the second goal is not achieved.
-The output includes a variable mapping for the shape that
-satisfies the antecedent of the goal but does not satisfy its
-conclusion.  The mapping \texttt{(b b)} is the reason the shape
-does not satisfy the goal.
+{\cpsa} finds no shapes, so Needham-Schroeder achieves this secrecy
+goal and does not leak~\texttt{n1}.
 
-\section{Comparing Protocols with Security Goals}\label{sec:comparing}
+\subsection{Unilateral Authentication}\label{sec:unilateral}
 
-We conclude with an example of using {\cpsa}'s support for security
-goals to compare the strength of protocols as described
-in~\cite{GuttmanLiskovRowe14}.  The strength comparison paper uses
-security goals as defined in~\cite{Guttman14}.  We call the goal
-language in~\cite{Guttman14} the \emph{restricted} goal language for
-reasons that will become apparent later.
-
-The restricted goal language and the {\cpsa} goal language are very
-similar, indeed, the restricted goal language motivated the {\cpsa}
-language.  The two languages differ in several small ways.  For
-example, node orderings are specified using the \texttt{preceq} in the
-restricted goal language, but since {\cpsa} implements a strict
-partial ordering among nodes, its goal language uses \texttt{prec}.
-Also, role position and role parameter predicates are assigned a
-symbol.  The use of a well chosen mnemonic symbol makes formulas
-easier to understand.
-
-The essential difference between the two languages is in the sort
-of role parameter predicates.  In the restricted language, the message
-term is restricted to be an atom.
-\begin{center}
-  \begin{tabular}{ccc}
-    Symbol & Restricted & \cpsa\\
-    \hline
-    \scshape\sym{p} role param &
-    $\dom{node}\times\dom{atom}$ &
-    $\dom{node}\times\dom{mesg}$
-  \end{tabular}
-\end{center}
-This restriction is enforced so that protocols can be compared without
-exposing the encryption and pairing structure that makes up messages.
-
-Our example focuses on unilateral authentication.  To best understand
+This example focuses on unilateral authentication.  To best visualize
 this example, process the sample file \texttt{goal.scm} with {\cpsa}
 and display its output in a browser.
 
@@ -690,6 +583,117 @@ verifies that the goal is true in all executions of the protocol.
 
 {\cpsa} has demonstrated two ways in which Needham-Schroeder achieves
 the goals of the Unilateral Protocol.
+
+\section{The Whole Story}\label{sec:whole story}
+
+The examples in the previous section demonstrate the typical way
+security goals are used in {\cpsa}.  However, there are more features
+that may be useful.
+
+A \texttt{defgoal} form may contain more than one sentence.  See
+Figure~\ref{fig:ns init goals} for an example.  When presented with
+more than one sentence, {\cpsa} extracts the point of view skeleton
+from the first sentenc.  It is wise to ensure that the antecedent in
+every sentence is identical.  If {\cpsa} tests goal
+satisfaction\marginpar{Fix this!}
+starting with a skeleton that is not the characteristic skeleton, one
+cannot always extend the result to make a conclusion about the truth
+of the goal in all executions.
+
+\begin{figure}
+\begin{quote}
+\begin{verbatim}
+(defgoal ns
+  (forall ((a b name) (n text) (z0 node))
+    (implies
+     (and (p "init" 1 z0) (p "init" "n1" z0 n)
+      (p "init" "a" z0 a) (p "init" "b" z0 b)
+      (non (privk a)) (non (privk b)) (uniq n))
+     (exists ((z1 node))
+      (and (p "resp" 1 z1) (p "resp" "b" z1 b)))))
+  (forall ((a b name) (n text) (z0 node))
+   (implies
+     (and (p "init" 1 z0) (p "init" "n1" z0 n)
+      (p "init" "a" z0 a) (p "init" "b" z0 b)
+      (non (privk a)) (non (privk b)) (uniq n))
+     (exists ((z1 node))
+      (and (p "resp" 1 z1) (p "resp" "a" z1 a))))))
+\end{verbatim}
+\end{quote}
+\caption{Two Initiator Authentication Goals}\label{fig:ns init goals}
+\end{figure}
+
+{\cpsa} performs satisfaction-checking when an input skeleton in annotated
+with one or more security goals.  The annotation uses the
+\texttt{goals} key.
+
+\begin{quote}
+  \begin{alltt}
+(defskeleton
+   \ldots
+   (goals \textsc{sent\ensuremath{+}}))
+  \end{alltt}
+\end{quote}
+
+
+\subsection{Shape Analysis Sentences}\label{sec:sas}
+
+A shape analysis sentence expresses all that can be learned from a run
+of {\cpsa} as a security goal.  If a security goal can be derived from
+a shape analysis sentence, then the protocol achieves the security
+goal, that is, the goal is true in all executions of the protocol.
+
+Consider the first example in this paper (Figure~\ref{fig:ns init},
+which is in the sample file \texttt{goals.scm}.  To generate a
+maximally informative security goal from the initiator point of view
+with \texttt{ghci} and \texttt{Make.hs}, type
+\begin{quote}
+\begin{verbatim}
+$ ghci Make.hs
+*Make> sas "goals"
+\end{verbatim}
+\end{quote}
+When using GNU make, type ``\texttt{make goals\_sas.text}''.  The
+resulting shape analysis and its sentence is displayed in
+Figure~\ref{fig:ns sas}.
+
+\begin{figure}
+\begin{verbatim}
+(defgoal ns
+  (forall ((n1 n2 text) (b a name) (z z-0 node))
+    (implies
+      (and (p "init" 0 z) (p "init" 2 z-0)
+        (p "init" "n1" z-0 n1) (p "init" "n2" z-0 n2)
+        (p "init" "a" z-0 a) (p "init" "b" z-0 b)
+        (str-prec z z-0) (non (privk b)) (uniq-at n1 z))
+      (exists ((n2-0 text) (z-1 z-2 z-3 node))
+        (and (p "init" 1 z-1) (p "resp" 0 z-2)
+          (p "resp" 1 z-3) (p "resp" "n2" z-3 n2-0)
+          (p "resp" "n1" z-3 n1) (p "resp" "b" z-3 b)
+          (p "resp" "a" z-3 a) (prec z z-2) (prec z-3 z-1)
+          (str-prec z z-1) (str-prec z-1 z-0)
+          (str-prec z-2 z-3))))))
+\end{verbatim}
+\caption{Initiator Shape Analysis Sentence}\label{fig:ns sas}
+\end{figure}
+
+A shape analysis sentences asserts that either a skeleton does not
+satisfy its antecedent or it satisfies one or more of the disjuncts in
+its conclusion.  {\cpsa} has been designed so that this assertion is
+true.  Therefore, every shape analysis sentence is true in all
+executions.
+
+A security goal is true in all executions if it can be derived from a
+shape analysis sentence~\cite{Ramsdell12}.  {\cpsa} comes with a
+Prolog program that translates shape analysis sentences into Prover9
+syntax~\cite{prover9}.  Prover9 can then be used to perform the
+required theorem-proving.
+
+In practice, theorem-proving using shape analysis sentences is rarely
+employed.  It's clumsy and it requires too much expertise.  The main
+use of \texttt{cpsasas} is for generating a formula that is edited to
+become a desired security goal.
+
 
 \bibliography{cpsa}
 \bibliographystyle{plain}
