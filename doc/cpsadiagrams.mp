@@ -73,11 +73,11 @@ beginfig(2);
   strand.b(3, .5w, delta, btex $\mathstrut\mathit{resp}$ etex, node);
 
   % Messages and arrows
-  label.top(btex $\enc{N_1, A}{K_B}$ etex, .5[a1.e, b1.w]);
+  label.top(btex $\enc{N_1, A}{K_B}$ etex, .5[a1.c, b1.c]);
   drawmsg(a1.e -- b1.w);
-  label.top(btex $\enc{N_1, N_2}{K_A}$ etex, .5[a2.e, b2.w]);
+  label.top(btex $\enc{N_1, N_2}{K_A}$ etex, .5[a2.c, b2.c]);
   drawmsg(b2.w -- a2.e);
-  label.top(btex $\enc{N_2}{K_B}$ etex, .5[a3.e, b3.w]);
+  label.top(btex $\enc{N_2}{K_B}$ etex, .5[a3.c, b3.c]);
   drawmsg(a3.e -- b3.w);
 endfig;
 
@@ -125,15 +125,15 @@ beginfig(3);
   drawsucc(b1.s -- b2.n);
   drawsucc(b2.s -- b3.n);
 
-  label.top(btex $\enc{N_1, A}{K_P}$ etex, .5[a1.e, p1.w]);
+  label.top(btex $\enc{N_1, A}{K_P}$ etex, .5[a1.c, p1.c]);
   drawmsg(a1.e -- p1.w);
-  label.top(btex $\enc{N_1, A}{K_B}$ etex, .5[p2.e, b1.w]);
+  label.top(btex $\enc{N_1, A}{K_B}$ etex, .5[p2.c, b1.c]);
   drawmsg(p2.e -- b1.w);
-  label.top(btex $\enc{N_1, N_2}{K_A}$ etex, .75[b2.w, a2.e]);
+  label.top(btex $\enc{N_1, N_2}{K_A}$ etex, .75[b2.c, a2.c]);
   drawmsg(b2.w -- a2.e);
-  label.top(btex $\enc{N_2}{K_P}$ etex, .5[a3.e, p3.w]);
+  label.top(btex $\enc{N_2}{K_P}$ etex, .5[a3.c, p3.c]);
   drawmsg(a3.e -- p3.w);
-  label.top(btex $\enc{N_2}{K_B}$ etex, .5[p4.e, b3.w]);
+  label.top(btex $\enc{N_2}{K_B}$ etex, .5[p4.c, b3.c]);
   drawmsg(p4.e -- b3.w);
 endfig;
 
@@ -156,17 +156,17 @@ beginfig(4);
   endfor;
 
   % Messages and arrows
-  label.top(btex $\enc{N_1, A}{K_C}$ etex, alpha[a1.e, o1.w]);
+  label.top(btex $\enc{N_1, A}{K_C}$ etex, alpha[a1.c, o1.c]);
   drawmsg(a1.e -- beta[a1.e,o1.w]); % Shortened arrow
-  label.top(btex $\enc{N_1, A}{K_B}$ etex, alpha[b1.w, o1.e]);
+  label.top(btex $\enc{N_1, A}{K_B}$ etex, alpha[b1.c, o1.c]);
   drawmsg(beta[b1.w,o1.e] -- b1.w); % Shortened arrow
-  label.top(btex $\enc{N_1, N_2}{K_A}$ etex, alpha[a2.e, o2.w]);
+  label.top(btex $\enc{N_1, N_2}{K_A}$ etex, alpha[a2.c, o2.c]);
   drawmsg(o2.w -- a2.e);
-  label.top(btex $\enc{N_1, N_2}{K_A}$ etex, alpha[b2.w, o2.e]);
+  label.top(btex $\enc{N_1, N_2}{K_A}$ etex, alpha[b2.c, o2.c]);
   drawmsg(b2.w -- o2.e);
-  label.top(btex $\enc{N_2}{K_C}$ etex, alpha[a3.e, o3.w]);
+  label.top(btex $\enc{N_2}{K_C}$ etex, alpha[a3.c, o3.c]);
   drawmsg(a3.e -- o3.w);
-  label.top(btex $\enc{N_2}{K_B}$ etex, alpha[b3.w, o3.e]);
+  label.top(btex $\enc{N_2}{K_B}$ etex, alpha[b3.c, o3.c]);
   drawmsg(o3.e -- b3.w);
 endfig;
 
@@ -186,17 +186,17 @@ beginfig(5);
   endfor;
 
   % Messages and arrows
-  label.top(btex $\enc{N_1, A}{K_B}$ etex, alpha[a1.e, o1.w]);
+  label.top(btex $\enc{N_1, A}{K_B}$ etex, alpha[a1.c, o1.c]);
   drawmsg(a1.e -- o1.w);
-  label.top(btex $\enc{N_1, A}{K_B}$ etex, alpha[b1.w, o1.e]);
+  label.top(btex $\enc{N_1, A}{K_B}$ etex, alpha[b1.c, o1.c]);
   drawmsg(o1.e -- b1.w);
-  label.top(btex $\enc{N_1, N_2}{K_A}$ etex, alpha[a2.e, o2.w]);
+  label.top(btex $\enc{N_1, N_2}{K_A}$ etex, alpha[a2.c, o2.c]);
   drawmsg(o2.w -- a2.e);
-  label.top(btex $\enc{N_1, N_2}{K_A}$ etex, alpha[b2.w, o2.e]);
+  label.top(btex $\enc{N_1, N_2}{K_A}$ etex, alpha[b2.c, o2.c]);
   drawmsg(b2.w -- o2.e);
   label.top(btex $\enc{N_2}{K_B}$ etex,
-    alpha[a3.e, (xpart o2.w, ypart a3.c)]);
-  drawmsg(a3.e -- (beta * xpart o2.w, ypart a3.c));
+    alpha[a3.c, (xpart o2.c, ypart a3.c)]);
+  drawmsg(a3.c -- (beta * xpart o2.c, ypart a3.c));
 endfig;
 
 % Incompleteness example
@@ -233,9 +233,9 @@ beginfig(8);
   strand.b(2, .5w, delta, btex $\mathstrut\mathit{resp}$ etex, node);
 
   % Messages and arrows
-  label.top(btex $\enc{N}{K}$ etex, .5[a1.e, b1.w]);
+  label.top(btex $\enc{N}{K}$ etex, .5[a1.c, b1.c]);
   drawmsg(a1.e -- b1.w);
-  label.top(btex $N$ etex, .5[a2.e, b2.w]);
+  label.top(btex $N$ etex, .5[a2.c, b2.c]);
   drawmsg(b2.w -- a2.e);
 endfig;
 
@@ -255,16 +255,16 @@ beginfig(9);
   endfor;
 
   % Messages and arrows
-  label.top(btex $\enc{N_1, A}{K_B}$ etex, alpha[a1.e, o1.w]);
+  label.top(btex $\enc{N_1, A}{K_B}$ etex, alpha[a1.c, o1.c]);
   drawmsg(a1.e -- o1.w);
-  label.top(btex $\enc{N_1, A}{K_B}$ etex, alpha[b1.w, o1.e]);
+  label.top(btex $\enc{N_1, A}{K_B}$ etex, alpha[b1.c, o1.c]);
   drawmsg(o1.e -- b1.w);
-  label.top(btex $\enc{N_1, N_2}{K_A}$ etex, alpha[a2.e, o2.w]);
+  label.top(btex $\enc{N_1, N_2}{K_A}$ etex, alpha[a2.c, o2.c]);
   drawmsg(o2.w -- a2.e);
-  label.top(btex $\enc{N_1, N_2'}{K_A}$ etex, alpha[b2.w, o2.e]);
+  label.top(btex $\enc{N_1, N_2'}{K_A}$ etex, alpha[b2.c, o2.c]);
   drawmsg(b2.w -- o2.e);
   label.top(btex $\enc{N_2}{K_B}$ etex,
-    alpha[a3.e, (xpart o2.w, ypart a3.c)]);
+    alpha[a3.c, (xpart o2.c, ypart a3.c)]);
   drawmsg(a3.e -- (beta * xpart o2.w, ypart a3.c));
 endfig;
 
@@ -290,13 +290,13 @@ beginfig(10);
   label.top(btex $\enc{N_1, A}{K_{B'}}$ etex,
       alpha[b1.c, (xpart o2.c, ypart b1.c)]);
   drawmsg((1-beta)[(xpart o2.e, ypart b1.c), b1.w] -- b1.w);
-  label.top(btex $\enc{N_1, N_2}{K_A}$ etex, alpha[a2.e, o2.w]);
+  label.top(btex $\enc{N_1, N_2}{K_A}$ etex, alpha[a2.c, o2.c]);
   drawmsg(a2.e -- o2.w);
-  label.top(btex $\enc{N_1, N_2}{K_A}$ etex, alpha[b2.w, o2.e]);
+  label.top(btex $\enc{N_1, N_2}{K_A}$ etex, alpha[b2.c, o2.c]);
   drawmsg(o2.e -- b2.w);
-  label.top(btex $\enc{N_2}{K_B}$ etex, alpha[a3.e, o3.w]);
+  label.top(btex $\enc{N_2}{K_B}$ etex, alpha[a3.c, o3.c]);
   drawmsg(o3.w -- a3.e);
-  label.top(btex $\enc{N_2}{K_{B'}}$ etex, alpha[b3.w, o3.e]);
+  label.top(btex $\enc{N_2}{K_{B'}}$ etex, alpha[b3.c, o3.c]);
   drawmsg(b3.w -- o3.e);
 
 endfig;
