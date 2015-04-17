@@ -41,7 +41,8 @@ $(PRIMER).pdf:	$(MP_SRCS:.mp=-0.mps) $(TEX_SRCS) \
 	if test -f $(PRIMER).idx; then $(MAKE) $(PRIMER).ind; fi
 	pdflatex $(PRIMER).tex
 
-$(GOALS).pdf: $(MP_SRCS:.mp=-0.mps) $(GOALS).tex $(GOALS).bbl
+$(GOALS).pdf: $(MP_SRCS:.mp=-0.mps) $(TEX_SRCS) \
+		$(GOALS).tex $(GOALS).bbl
 	if test ! -f $(GOALS).aux; then pdflatex $(GOALS).tex; fi
 	pdflatex $(GOALS).tex
 

@@ -70,8 +70,9 @@ structures without requiring the reader to have studied model theory.
 The model theoretical foundation of this approach to security goals
 appears in~\cite{Guttman14}.  A practical use of security goals in
 protocol standardization is described in~\cite{GuttmanLiskovRowe14}.
-The precise semantics of the goal language is in~\cite{cpsaspec09}.
-The syntax of security goals appears in~\cite[Table~2]{cpsaprimer09}.
+The precise semantics of the goal language is
+in~\cite[Appendix~C]{cpsaspec09}.  The syntax of security goals
+appears in~\cite[Table~2]{cpsaprimer09}.
 
 The distribution in which this paper is included contains the sample
 input {\cpsa} file \texttt{goals.scm}.  It contains the examples in
@@ -188,7 +189,7 @@ of atomic formulas.  \sym{(false)} is a synonym for \sym{(or)}.
 
 Variables are declared as they are for roles and skeletons with one
 exception, there is a new sort symbol \sym{node}.  Notice that in the
-sentence, variables \sym{z} and \sym{z-0} have sort \sym{node}.  Every
+sentence, variables \sym{z0} and \sym{z1} have sort \sym{node}.  Every
 universally quantified variable must occur in the antecedent of the
 implication.
 
@@ -294,7 +295,7 @@ message algebra term~$t$ in~$k$ such that
 \item the trace truncated to length $i+1$ is an instance of the
   init role, and
 \item the truncated trace is compatible with mapping the init role's
-  \texttt{"a"} parameter to~$t$.
+  \texttt{"n1"} parameter to~$t$.
 \end{enumerate}
 The shape in Figure~\ref{fig:ns init} satisfies \texttt{(p "init" "n1"
   z0 n1)} when \texttt{z0} maps to $(0,2)$ and \texttt{n1} maps to the
@@ -410,6 +411,7 @@ to use a listener to state a secrecy goal.
   (vars (n1 n2 text) (a b b-0 name))
   (defstrand resp 3 (n2 n2) (n1 n1) (b b) (a a))
   (defstrand init 3 (n1 n1) (n2 n2) (a a) (b b-0))
+  (precedes ((0 1) (1 1)) ((1 2) (0 2)))
   (non-orig (privk a))
   (uniq-orig n2)
   (satisfies (no (a a) (b b) (n2 n2) (z0 (0 2))))
@@ -467,7 +469,7 @@ Figure~\ref{fig:ns secrecy} contains an analysis of Needham-Schroeder
 from the point of view of a complete run of the initiator under the
 assumption that the responder's and its peer's private key are
 uncompromised and the nonce~\texttt{n1} it generates uniquely
-originates.  Futhermore, the point of view asserts that nonce is
+originates.  Futhermore, the point of view asserts that the nonce is
 leaked using a listener.
 \begin{quote}
 \begin{verbatim}
@@ -485,8 +487,12 @@ this example, process the sample file \texttt{goal.scm} with {\cpsa}
 and display its output in a browser.
 
 The protocol and its goal is shown in Figure~\ref{fig:unilateral}.
-When given as input, {\cpsa} verifies that the goal is true in all
-executions of the protocol.
+The goal asserts that if a realized skeleton contains a full length
+initiator strand that uniquely generates \texttt{n1}, and
+peer~\texttt{a}'s private key is uncompromised, then the skeleton will
+contain a responder strand that agrees with the initiator on the
+name~\texttt{a}.  When given as input, {\cpsa} verifies that the goal
+is true in all executions of the protocol.
 
 \begin{figure}
 \begin{minipage}{2.7in}
@@ -554,10 +560,14 @@ executions of the protocol.
   Responder}\label{fig:unilateral ns resp}
 \end{figure}
 
-Let's compare this protocol with Needham-Schroeder.  Consider the goal
-in Figure~\ref{fig:unilateral ns init}.  This goal is the result of
-translating the Unilateral role position and parameter predicates as
-follows.
+In Section~\ref{sec:ns resp}, a goal written for the Needham-Schroeder
+Protocol was reused to analyze the Needham-Schroeder-Lowe Protocol.
+We now use the unilateral authentication goal to analyze
+Needham-Schroeder.
+
+Consider the goal in Figure~\ref{fig:unilateral ns init}.  This goal
+is the result of translating the Unilateral role position and
+parameter predicates as follows.
 \begin{center}
 \begin{tabular}{l@{$\quad\rightarrow\quad$}l}
   \texttt{p "init" "n"}&\texttt{p "init" "n1"}\\
@@ -587,18 +597,21 @@ the goals of the Unilateral Protocol.
 \section{The Whole Story}\label{sec:whole story}
 
 The examples in the previous section demonstrate the typical way
-security goals are used in {\cpsa}.  However, there are more features
-that may be useful.
+security goals are analyzed with in {\cpsa}.  However, there are more
+features that may be useful.
 
 A \texttt{defgoal} form may contain more than one sentence.  See
 Figure~\ref{fig:ns init goals} for an example.  When presented with
 more than one sentence, {\cpsa} extracts the point of view skeleton
-from the first sentenc.  It is wise to ensure that the antecedent in
-every sentence is identical.  If {\cpsa} tests goal
-satisfaction\marginpar{Fix this!}
-starting with a skeleton that is not the characteristic skeleton, one
-cannot always extend the result to make a conclusion about the truth
-of the goal in all executions.
+from the first sentence.
+
+It is wise to ensure that the antecedent in every sentence is
+identical.  When {\cpsa} performs satisfaction-checking on
+sentence~$\Phi$, it only determines if each shape it finds is
+satisfied.  If the point of view skeleton in not the characteristic
+skeleton of the antecedent of~$\Phi$, the fact that all skeletons
+satisfy~$\Phi$ cannot be used to conclude that~$\Phi$ is true in all
+executions of the protocol.
 
 \begin{figure}
 \begin{quote}
@@ -635,6 +648,9 @@ with one or more security goals.  The annotation uses the
   \end{alltt}
 \end{quote}
 
+The program \texttt{cpsasas}, discussed in the next section, can be
+used to generate an formula with an antecedent such that the input
+skeleton is the characteristic skeleton of the antecedent.
 
 \subsection{Shape Analysis Sentences}\label{sec:sas}
 
@@ -643,10 +659,12 @@ of {\cpsa} as a security goal.  If a security goal can be derived from
 a shape analysis sentence, then the protocol achieves the security
 goal, that is, the goal is true in all executions of the protocol.
 
-Consider the first example in this paper (Figure~\ref{fig:ns init},
-which is in the sample file \texttt{goals.scm}.  To generate a
-maximally informative security goal from the initiator point of view
-with \texttt{ghci} and \texttt{Make.hs}, type
+The program \texttt{cpsasas} extracts shape analysis sentences from
+the output of {\cpsa}.  Consider the first example in this paper
+(Figure~\ref{fig:ns init}), which is in the sample file
+\texttt{goals.scm}.  To generate a maximally informative security goal
+from the initiator point of view with \texttt{ghci} and
+\texttt{Make.hs}, type
 \begin{quote}
 \begin{verbatim}
 $ ghci Make.hs
@@ -654,8 +672,8 @@ $ ghci Make.hs
 \end{verbatim}
 \end{quote}
 When using GNU make, type ``\texttt{make goals\_sas.text}''.  The
-resulting shape analysis and its sentence is displayed in
-Figure~\ref{fig:ns sas}.
+resulting shape analysis sentence is displayed in Figure~\ref{fig:ns
+  sas}.
 
 \begin{figure}
 \begin{verbatim}
@@ -677,11 +695,11 @@ Figure~\ref{fig:ns sas}.
 \caption{Initiator Shape Analysis Sentence}\label{fig:ns sas}
 \end{figure}
 
-A shape analysis sentences asserts that either a skeleton does not
-satisfy its antecedent or it satisfies one or more of the disjuncts in
-its conclusion.  {\cpsa} has been designed so that this assertion is
-true.  Therefore, every shape analysis sentence is true in all
-executions.
+A shape analysis sentences asserts that either a realized skeleton
+does not satisfy its antecedent or it satisfies one or more of the
+disjuncts in its conclusion.  {\cpsa} has been designed so that this
+assertion is true.  Therefore, every shape analysis sentence is true
+in all executions.
 
 A security goal is true in all executions if it can be derived from a
 shape analysis sentence~\cite{Ramsdell12}.  {\cpsa} comes with a
@@ -693,7 +711,6 @@ In practice, theorem-proving using shape analysis sentences is rarely
 employed.  It's clumsy and it requires too much expertise.  The main
 use of \texttt{cpsasas} is for generating a formula that is edited to
 become a desired security goal.
-
 
 \bibliography{cpsa}
 \bibliographystyle{plain}
