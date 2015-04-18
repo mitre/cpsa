@@ -91,15 +91,15 @@
 
 (defprotocol unilateral basic
   (defrole init
-     (vars (a name) (n text))
-     (trace
-      (send (enc n (pubk a)))
-      (recv n)))
+    (vars (a name) (n text))
+    (trace
+     (send (enc n (pubk a)))
+     (recv n)))
   (defrole resp
-     (vars (a name) (n text))
-     (trace
-      (recv (enc n (pubk a)))
-      (send n)))
+    (vars (a name) (n text))
+    (trace
+     (recv (enc n (pubk a)))
+     (send n)))
   (comment "Unilateral authentication"))
 
 (defgoal unilateral

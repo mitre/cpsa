@@ -499,15 +499,15 @@ is true in all executions of the protocol.
 \begin{verbatim}
 (defprotocol unilateral basic
   (defrole init
-     (vars (a name) (n text))
-     (trace
-      (send (enc n (pubk a)))
-      (recv n)))
+    (vars (a name) (n text))
+    (trace
+     (send (enc n (pubk a)))
+     (recv n)))
   (defrole resp
-     (vars (a name) (n text))
-     (trace
-      (recv (enc n (pubk a)))
-      (send n))))
+    (vars (a name) (n text))
+    (trace
+     (recv (enc n (pubk a)))
+     (send n))))
 \end{verbatim}
 \end{minipage}\hfil
 \begin{minipage}{3.0in}
@@ -597,7 +597,7 @@ the goals of the Unilateral Protocol.
 \section{The Whole Story}\label{sec:whole story}
 
 The examples in the previous section demonstrate the typical way
-security goals are analyzed with in {\cpsa}.  However, there are more
+security goals are analyzed with {\cpsa}.  However, there are more
 features that may be useful.
 
 A \texttt{defgoal} form may contain more than one sentence.  See
