@@ -117,7 +117,7 @@ Extra-Source-Files:
 
 Source-Repository head
   type:     git
-  location: https://github.com/ramsdell/cpsa.git
+  location: git://github.com/ramsdell/cpsa.git
 
 -- Algebra implementations must import CPSA.Lib.CPSA.
 -- Tools may additionally import CPSA.Lib.Entry.
