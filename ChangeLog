@@ -1,3 +1,7 @@
+2015-04-20  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Source-Repository): Added github source repository.
+
 2015-04-10  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Lib/Strand.hs (mkListener): The role used for listener

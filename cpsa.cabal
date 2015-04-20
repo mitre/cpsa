@@ -115,6 +115,10 @@ Extra-Source-Files:
   tst/yahalom.scm tst/yahalom.tst tst/unilateral.scm
   tst/unilateral.tst
 
+Source-Repository head
+  type:     git
+  location: https://github.com/ramsdell/cpsa.git
+
 -- Algebra implementations must import CPSA.Lib.CPSA.
 -- Tools may additionally import CPSA.Lib.Entry.
 -- No other modules in CPSA.Lib should be imported by applications.
