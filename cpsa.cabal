@@ -116,8 +116,8 @@ Extra-Source-Files:
   tst/unilateral.tst
 
 Source-Repository head
-  type:     git
-  location: git://github.com/ramsdell/cpsa.git
+  Type:     git
+  Location: git://github.com/ramsdell/cpsa.git
 
 -- Algebra implementations must import CPSA.Lib.CPSA.
 -- Tools may additionally import CPSA.Lib.Entry.
