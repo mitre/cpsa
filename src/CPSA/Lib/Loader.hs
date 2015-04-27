@@ -127,6 +127,7 @@ loadRole gen pos (S _ name :
         Fail msg -> fail (shows pos $ showString "Role not well formed: " msg)
 loadRole _ pos _ = fail (shows pos "Malformed role")
 
+-- Like Either String but with fail method defined
 data ReturnFail a
     = Return a
     | Fail String
