@@ -1,3 +1,9 @@
+2015-04-27  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Loader.hs (ReturnFail): Added ReturnFail Monad so
+	that fail is correctly handled.  Added Functor and Applicative
+	instance to support GHC 7.10 base library.
+
 2015-04-20  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* cpsa.cabal (Source-Repository): Added github source repository.

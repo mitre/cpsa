@@ -9,6 +9,7 @@
 module CPSA.Lib.Loader (loadSExprs) where
 
 import Control.Monad
+import Control.Applicative
 import qualified Data.List as L
 import Data.Maybe (isJust)
 import CPSA.Lib.Utilities
@@ -122,9 +123,28 @@ loadRole gen pos (S _ name :
       prios <- mapM (loadRolePriority (length c)) (assoc "priority" rest)
       let r = mkRole name vs c ns as us comment prios reverseSearch
       case roleWellFormed r of
-        Right () -> return (gen, r)
-        Left msg -> fail (shows pos $ showString "Role not well formed: " msg)
+        Return () -> return (gen, r)
+        Fail msg -> fail (shows pos $ showString "Role not well formed: " msg)
 loadRole _ pos _ = fail (shows pos "Malformed role")
+
+data ReturnFail a
+    = Return a
+    | Fail String
+
+instance Functor (ReturnFail) where
+    fmap _ (Fail x) = Fail x
+    fmap f (Return y) = Return (f y)
+
+instance Applicative (ReturnFail) where
+    pure          = Return
+    Fail e <*> _ = Fail e
+    Return f <*> r = fmap f r
+
+instance Monad ReturnFail where
+    return = Return
+    Fail l >>= _ = Fail l
+    Return r >>= k = k r
+    fail s = Fail s
 
 loadRolePriority :: Monad m => Int -> SExpr Pos -> m (Int, Int)
 loadRolePriority n (L _ [N _ i, N _ p])
@@ -421,8 +441,8 @@ loadRest pos vars p gen gs insts orderings nr ar ur pl comment =
         False -> fail (shows pos "Terms in skeleton not well formed")
         True -> return ()
       case verbosePreskelWellFormed k of
-        Right () -> return k
-        Left msg -> fail $ shows pos
+        Return () -> return k
+        Fail msg -> fail $ shows pos
                     $ showString "Skeleton not well formed: " msg
 
 loadOrderings :: Monad m => [Int] -> [SExpr Pos] -> m [Pair]
