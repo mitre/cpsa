@@ -1,7 +1,7 @@
 (herald "DHKE using penetrator non-origination assuptions"
   (algebra diffie-hellman))
 
-(comment "CPSA 2.3.4")
+(comment "CPSA 2.5.0")
 (comment "All input read from dhke_pen_non.scm")
 
 (defprotocol dhke diffie-hellman

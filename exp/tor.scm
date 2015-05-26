@@ -13,14 +13,15 @@
      (send (enc (exp (gen) x) (pubk b)))
      (recv (cat (exp (gen) y) (hash (cat (exp (exp (gen) x) y)))))
      (send (enc n (exp (exp (gen) y) x))))
-    (uniq-orig x n))
+    (pen-non-orig x)
+    (uniq-orig n))
   (defrole resp
     (vars (x y expn) (b name) (n text) (kh akey))
     (trace
      (recv (enc (exp (gen) x) (pubk b)))
      (send (cat (exp (gen) y) (hash (cat (exp (exp (gen) x) y)))))
      (recv (enc n (exp (exp (gen) x) y))))
-    (uniq-orig y)))
+    (pen-non-orig y)))
 
 (defskeleton tor
   (vars (b name) (n text))

@@ -20,8 +20,8 @@
     (trace
      (send (enc (exp (gen) z) subject (privk ca)) ))
     (non-orig z))
-  (comment "A diffie-hellman exchange which uses a certificate
-    authority to certify long-term DH values.")
+  (comment "A diffie-hellman exchange which uses a certificate"
+    "authority to certify long-term DH values.")
 )
 
 (defskeleton dhca
@@ -41,6 +41,6 @@
   (defstrand init 4 (x x) (h (exp (gen) y)) (ca ca) (a a) (b b) (n n))
   (defstrand resp 4 (y y) (h (exp (gen) x)) (ca ca) (a a) (b b) (n n))
 (uniq-orig n)
-(comment "point of view in which init and resp each complete and
-    they agree on the relevant parameters.")
+(comment "point of view in which init and resp each complete and"
+    "they agree on the relevant parameters.")
 )

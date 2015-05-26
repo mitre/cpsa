@@ -33,7 +33,7 @@
   (comment "Initiator point-of-view"))
 
 ;;; The responder point-of-view
-(defskeleton ns
+(defskeleton dhnsl
   (vars (a b name) (h1 base) (y z expn))
   (defstrand resp 3 (a a) (b b) (h1 h1) (y y) (z z))
   (non-orig (privk a))
