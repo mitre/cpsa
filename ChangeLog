@@ -1,3 +1,8 @@
+2015-06-18  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/cpsaprimer.tex: Repaired small errors in response to a
+	review of this document.
+
 2015-05-21  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* cpsa.cabal (Version): Tagged as version 2.5.0
