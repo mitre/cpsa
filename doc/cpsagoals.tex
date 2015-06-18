@@ -168,12 +168,13 @@ protocol achieves this authentication goal.
 
 To be precise, a security goal is an order-sorted first-order logic
 sentence in a restricted form.  The sentence in Figure~\ref{fig:ns
-  init} has the form shared by all security goals.  It is a universally
-quantified implication.  The antecedent is a conjunction of atomic
-formulas.  For this sentence, the conclusion is an existentially
-quantified conjunction of atomic formulas, but in general, the
-conclusion is a disjunction of existentially quantified conjunctions
-of atomic formulas.  \sym{(false)} is a synonym for \sym{(or)}.
+  init} has the form shared by all security goals.  It is a
+universally quantified implication.  The antecedent is a conjunction
+of atomic formulas.  For this sentence, the conclusion is an
+existentially quantified conjunction of atomic formulas, but in
+general, the conclusion is a disjunction of existentially quantified
+conjunctions of atomic formulas.  In what follows, \sym{(false)} is a
+synonym for \sym{(or)}.
 
 \begin{center}\scshape
   \begin{tabular}{rcl}
@@ -194,16 +195,29 @@ universally quantified variable must occur in the antecedent of the
 implication.
 
 The predicates used to construct an atomic formula (\textsc{atomic})
-are listed in Table~\ref{tab:predicates}.  The first line gives the
-syntax of a role position predicate.  It contains three tokens,
-\texttt{p}, a string that names a role, and an integer that specifies
-a position within the trace of the role.  That is, for role~$r$ with a
-trace of length~$n$, there are~$n$ role position predicates,
-\mbox{\texttt{p} $r$ $i$}, for $0\leq i < n$.  The second line gives
-the syntax of a role parameter predicate.  It contains three tokens,
-\texttt{p}, a string that names a role, and a string that names a role
-variable.  For role~$r$, there is role parameter predicate for each
-variable declared by~$r$.
+are listed in Table~\ref{tab:predicates}.  There are two classes of
+predicates, protocol specific and protocol independent predicates, and
+two kinds of protocol specific predicates, role position and role
+parameter predicates.  Protocol specific predicates are distinguished
+from protocol independent predicates by being composed of three
+tokens, the first of which is \texttt{p}.
+
+The first line of the table gives the syntax of a role position
+predicate.  It contains three tokens, \texttt{p}, a string that names
+a role, and an integer that specifies a position within the trace of
+the role.  That is, for role~$r$ with a trace of length~$n$, there
+are~$n$ role position predicates, \mbox{\texttt{p} $r$ $i$}, for
+$0\leq i < n$.  Thus \verb|(p "init" 2 z0)| is an atomic formula using
+the role position predicate for position 2 in the \texttt{init} role
+of the protocol in Figure~\ref{fig:ns roles}.
+
+The second line gives the syntax of a role parameter predicate.  It
+contains three tokens, \texttt{p}, a string that names a role, and a
+string that names a role variable.  For role~$r$, there is role
+parameter predicate for each variable declared by~$r$.  Thus
+\verb|(p "init" 2 "n1" z0 n1)| is an atomic formula using the role
+parameter predicate for parameter \text{n1} in the \texttt{init} role
+of the protocol.
 
 The empty string names the listener role of a protocol.  The role
 has the variable \texttt{x} of sort \texttt{mesg} as its only role
@@ -437,8 +451,9 @@ by {\cpsa} is a counterexample to this assertion.  Because of this,
 \end{quote}
 The annotation includes a variable mapping for the shape that
 satisfies the antecedent of the goal but does not satisfy its
-conclusion.  The mapping \texttt{(b b)} is the reason the shape does
-not satisfy the goal.
+conclusion.  The reason the shape does not satisfy the goal is because
+the mapping \texttt{(b b)} maps the initiator's \texttt{b} parameter
+to \texttt{b}, not \texttt{b-0} as is required to model the shape.
 
 Galvin Lowe identified this authentication failure in
 Needham-Schroeder and provided a fix.  In the Needham-Schroeder-Lowe
@@ -467,7 +482,7 @@ Needham-Schroeder-Lowe achieves this authentication goal.
 
 Figure~\ref{fig:ns secrecy} contains an analysis of Needham-Schroeder
 from the point of view of a complete run of the initiator under the
-assumption that the responder's and its peer's private key are
+assumption that the responder's and its peer's private keys are
 uncompromised and the nonce~\texttt{n1} it generates uniquely
 originates.  Futhermore, the point of view asserts that the nonce is
 leaked using a listener.
@@ -486,7 +501,7 @@ This example focuses on unilateral authentication.  To best visualize
 this example, process the sample file \texttt{goal.scm} with {\cpsa}
 and display its output in a browser.
 
-The protocol and its goal is shown in Figure~\ref{fig:unilateral}.
+The protocol and its goal are shown in Figure~\ref{fig:unilateral}.
 The goal asserts that if a realized skeleton contains a full length
 initiator strand that uniquely generates \texttt{n1}, and
 peer~\texttt{a}'s private key is uncompromised, then the skeleton will
@@ -594,7 +609,7 @@ verifies that the goal is true in all executions of the protocol.
 {\cpsa} has demonstrated two ways in which Needham-Schroeder achieves
 the goals of the Unilateral Protocol.
 
-\section{The Whole Story}\label{sec:whole story}
+\section{The Rest of the Story}\label{sec:whole story}
 
 The examples in the previous section demonstrate the typical way
 security goals are analyzed with {\cpsa}.  However, there are more
@@ -608,7 +623,7 @@ from the first sentence.
 It is wise to ensure that the antecedent in every sentence is
 identical.  When {\cpsa} performs satisfaction-checking on
 sentence~$\Phi$, it only determines if each shape it finds is
-satisfied.  If the point of view skeleton in not the characteristic
+satisfied.  If the point of view skeleton is not the characteristic
 skeleton of the antecedent of~$\Phi$, the fact that all skeletons
 satisfy~$\Phi$ cannot be used to conclude that~$\Phi$ is true in all
 executions of the protocol.
@@ -649,7 +664,7 @@ with one or more security goals.  The annotation uses the
 \end{quote}
 
 The program \texttt{cpsasas}, discussed in the next section, can be
-used to generate an formula with an antecedent such that the input
+used to generate a formula with an antecedent such that the input
 skeleton is the characteristic skeleton of the antecedent.
 
 \subsection{Shape Analysis Sentences}\label{sec:sas}
