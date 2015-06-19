@@ -221,7 +221,7 @@ Responder ($\fn{resp}$ role)\\[3ex]
 \begin{mitreslide}{Blanchet Problem Statement}
 \begin{itemize}
 \item Analyze from the point-of-view of a full length responder
-\item Assume $\privk{B}$ is uncompromised
+\item Assume $\privk{A}$ and $\privk{B}$ are uncompromised
 \item Assume symmetric key~$S$ is freshly generated
 \hfill\raisebox{0ex}[0ex]{\includegraphics{blanchet-5.mps}}
 \end{itemize}
@@ -230,7 +230,7 @@ Responder ($\fn{resp}$ role)\\[3ex]
 (defskeleton blanchet
   (vars (a b name) (s skey) (d data))
   (defstrand resp 2 (a a) (b b) (s s) (d d))
-  (non-orig (privk b))
+  (non-orig (privk a) (privk b))
   (uniq-orig s))
 \end{verbatim}
 \end{quote}
