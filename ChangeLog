@@ -1,3 +1,9 @@
+2015-06-25  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (geq): Removed dynamic role specific test
+	because it erroneously reports violations.  The existing static
+	role specific test correctly does the job.
+
 2015-06-18  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* doc/{cpsaprimer,cpsagoals}.tex: Repaired errors and made

@@ -1931,13 +1931,10 @@ satisfy (Prec n n') = gprec n n'
 satisfy (RolePred r i n) = grole r i n
 satisfy (ParamPred r v n t) = gparam r v n t
 
--- Equality This isn't right.  Suppose t is a compound term which has
--- some unbound variable.  Need static role specific check to
--- eliminate this case.
+-- Equality assumes there has been a static role specific check to
+-- eliminate error cases.
 geq :: Algebra t p g s e c => t -> t -> Sem t g s e
 geq t t' _ (g, e)
-  | t == ti = error ("Strand.geq: " ++ show t ++ " unbound")
-  | t' == ti' = error ("Strand.geq: " ++ show t' ++ " unbound")
   | ti == ti' = [(g, e)]
   | otherwise = []
   where
