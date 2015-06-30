@@ -36,7 +36,7 @@ class (Ord t, Show t) => Term t where
     -- when applied to node variables.
     isNodeVar :: t -> Bool
 
-    -- Does a term occur in another term?
+    -- Does a variable occur in a term?
     occursIn :: t -> t -> Bool
 
     -- Check to see if a list of terms is well-formed.

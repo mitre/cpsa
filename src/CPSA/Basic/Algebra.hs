@@ -261,13 +261,17 @@ isAtom (F s _) =
 isAtom (D _) = False
 isAtom (P _) = False
 
--- Does a term occur in another term?
+-- Does a variable occur in a term?
 occursIn :: Term -> Term -> Bool
-occursIn t t' =
-    t == t' ||
+occursIn t t' | isVar t =
+  recur (I $ varId t) t'
+  where
+    recur t t' =
+      t == t' ||
       case t' of
-        F _ u -> any (occursIn t) u
+        F _ u -> any (recur t) u
         _ -> False
+occursIn t _ = error $ "Algebra.occursIn: Bad variable " ++ show t
 
 -- Fold f through a term applying it to each variable in the term.
 foldVars :: (a -> Term -> a) -> a -> Term -> a

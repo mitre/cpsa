@@ -540,18 +540,20 @@ isAtom (F s _) =
   s == Text || s == Data || s == Name || s == Skey || s == Akey
 isAtom (G x) = isBasisVar x
 
--- Does a term occur in another term?
+-- Does a variable occur in a term?
 
 -- This function is always called with a variable that answers true to
--- isAcquiredVar as its first argument, so the first case never gets used.
+-- isAcquiredVar as its first argument.
 occursIn :: Term -> Term -> Bool
-occursIn (G t) (G t') =
-  t == t'
-occursIn t t' =
-  t == t' ||
-  case t' of
-    F _ u -> any (occursIn t) u
-    _ -> False
+occursIn t t' | isVar t =
+  recur (I $ varId t) t'
+  where 
+    recur t t' =
+      t == t' ||
+      case t' of
+        F _ u -> any (recur t) u
+        _ -> False
+occursIn t _ = error $ "Algebra.occursIn: Bad variable " ++ show t
 
 -- Fold f through a term applying it to each variable in the term.
 foldVars :: (a -> Term -> a) -> a -> Term -> a
