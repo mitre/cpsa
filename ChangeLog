@@ -1,9 +1,10 @@
-2015-06-30  John D. Ramsdell  <ramsdell@gootoo.mitre.org>
+2015-06-30  John D. Ramsdell  <ramsdell@mitre.org>
 
-	* src/CPSA/Basic/Algebra.hs (occursIn):  Restricted first argument
+	* src/CPSA/Basic/Algebra.hs (occursIn): Restricted first argument
 	of occursIn to variables as the implementation returns incorrect
-	answers for other cases.  The code was call with a variable in its
-	first argument, so this correction does not change any results.
+	answers for other cases.  The code was called with a variable in
+	its first argument, so this correction does not change any
+	results.
 
 2015-06-25  John D. Ramsdell  <ramsdell@mitre.org>
 
