@@ -210,8 +210,8 @@ step p h ks m oseen n seen todo tobig (Reduct lk size cols kids dups : reducts)
         do
           let ns = unrealized (content lk)
           let shape = null ns
-          wrt p h  (commentPreskel lk [] ns shape
-                    (if shape then "" else "empty cohort"))
+          wrt p h (commentPreskel lk [] ns shape
+                   (if shape then "" else "empty cohort"))
           step p h ks m oseen n seen todo tobig reducts
     | otherwise =
         do
@@ -221,7 +221,7 @@ step p h ks m oseen n seen todo tobig (Reduct lk size cols kids dups : reducts)
           let u = size - length dups'
           let msg = shows size $ showString " in cohort - " $
                          shows u " not yet seen"
-          wrt p h  (commentPreskel lk (reverse dups') ns cols msg)
+          wrt p h (commentPreskel lk (reverse dups') ns cols msg)
           step p h ks m oseen n' seen' todo' tobig reducts
 
 -- Expands one branch in the derivation tree.

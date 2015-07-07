@@ -547,7 +547,7 @@ isAtom (G x) = isBasisVar x
 occursIn :: Term -> Term -> Bool
 occursIn t t' | isVar t =
   recur (I $ varId t) t'
-  where 
+  where
     recur t t' =
       t == t' ||
       case t' of

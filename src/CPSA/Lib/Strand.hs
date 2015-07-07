@@ -2001,7 +2001,7 @@ gprec :: Algebra t p g s e c => t -> t -> Sem t g s e
 gprec n n' k (g, e) =
   case (nodeLookup e n, nodeLookup e n') of
     (Just p, Just p')
-      | inSkel k p && inSkel k p' && 
+      | inSkel k p && inSkel k p' &&
         (strandPrec p p' || elem (p, p') tc) -> [(g, e)]
     (Just _, Just _) -> []
     (_, Just _) ->
