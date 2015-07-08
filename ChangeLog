@@ -1,3 +1,7 @@
+2015-07-08  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 2.5.1
+
 2015-06-30  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Basic/Algebra.hs (occursIn): Restricted first argument

@@ -1,6 +1,6 @@
 (herald "Hashtest")
 
-(comment "CPSA 2.5.0")
+(comment "CPSA 2.5.1")
 (comment "All input read from hashtest-key-hash.scm")
 
 (defprotocol hashtest basic

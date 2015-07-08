@@ -1,4 +1,4 @@
-(comment "CPSA 2.5.0")
+(comment "CPSA 2.5.1")
 (comment "All input read from targetterms2.scm")
 
 (defprotocol targetterms2 basic
