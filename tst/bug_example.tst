@@ -1,6 +1,6 @@
 (herald bug_example (bound 10))
 
-(comment "CPSA 2.5.1")
+(comment "CPSA 2.5.2")
 (comment "All input read from bug_example.scm")
 (comment "Strand count bounded at 10")
 

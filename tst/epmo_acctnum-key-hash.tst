@@ -2,7 +2,7 @@
   "Electronic Purchase with Money Order Protocol Variant with Key Hashing"
   (comment "This version includes account numbers in exchanges"))
 
-(comment "CPSA 2.5.1")
+(comment "CPSA 2.5.2")
 (comment "All input read from epmo_acctnum-key-hash.scm")
 
 (defprotocol epmo_acctnum basic

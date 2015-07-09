@@ -1,28 +1,12 @@
 CPSA: A Crptographic Protocol Shapes Analyzer
 
-This program has been built and tested using the Glasgow Haskell
-Compiler (GHC), which is available for Linux, Macs, and Windows.  If
-possible, install Haskell Platform from <http://haskell.org> or from
-an operating system specific source.  If the Internet is available,
-install CPSA with:
+This program has been built and tested using Haskell Platform.
+It is available from <http://haskell.org> or from
+an operating system specific source.
 
 $ cabal install cpsa
 
-Find the documentation directory by typing "cpsa -h" in a command
-shell, and view index.html in a browser.
-
-Cabal installation options are listed with:
-
-$ cabal help install
-
 INSTALLING FROM A TARBALL
-
-If Haskell Platform is not available, install GHC and its parallel
-library, and then follow one of these operating system specific
-instructions.  For example, to install on older Debian-based systems,
-ones that have only GHC 6, try:
-
-$ sudo apt-get install ghc6 libghc6-parallel-dev
 
 QUICK START (Linux)
 
@@ -62,10 +46,10 @@ $ open $HOME/share/cpsa-X.Y.Z/doc/cpsauser.html
 
 QUICK START (Windows)
 
-Unless you are using Cygwin or MinGW, the cabal install above is your
-best bet.  The software has been tested on a Windows system on which
-neither MinGW or Cygwin has been installed.  Install GHC and then run
-the "setup.bat" batch file with administrator privileges.
+With Cygwin or MinGW, the installation is similar to the Linux
+install.  The software has been tested on a Windows system on which
+neither MinGW or Cygwin has been installed.  Install Haskell Platform
+and then run the "setup.bat" batch file with administrator privileges.
 
 If you do not have administrator privileges, run:
 
@@ -149,29 +133,6 @@ On Linux, the GHC runtime can request so much memory that thrashing
 results.  The script in src/ghcmemlimit sets an environment variable
 that limits memory to the amount of free and reclaimable memory on
 your machine.
-
-WEB CPSA
-
-To make CPSA service available:
-
-(1) Install the four programs into the CGI bin directory.
-
-(2) Change directory to the src directory, and copy cpsacgi and
-cpsacgi.py into the CGI bin directory.
-
-(3) Copy index.html, ../doc/cpsauser.html, and ../doc/cpsaprimer.pdf
-into your choice of the web document directory.
-
-(4) Make an examples directory in the web document directory.
-
-(5) Copy ../tst/*.scm into the examples directory.
-
-SELINUX
-
-You must modify the default policy to allow unconfined executables to
-make their heap memory executable, has CPSA is written in Haskell, and
-its runtime puts executable code in its heap.  The policy module is in
-src/httpd_allow_execmem.te.
 
 KNOWN BUGS
 

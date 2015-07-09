@@ -1,7 +1,7 @@
 (herald "Diffie-Hellman enhanced Needham-Schroeder-Lowe Protocol"
   (algebra basic))
 
-(comment "CPSA 2.5.1")
+(comment "CPSA 2.5.2")
 (comment "All input read from dhnsl_hack.scm")
 
 (defprotocol dhnsl basic
