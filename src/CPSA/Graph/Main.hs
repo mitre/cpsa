@@ -25,6 +25,7 @@ data Params = Params
     { file :: Maybe FilePath,   -- Nothing specifies standard output
       format :: Format,         -- Output format
       prefix :: Bool,           -- Use prefix notation?
+      purgeTraces :: Bool,      -- Purge traces?
       scripted :: Bool,         -- Use scripting?
       margin :: Int }           -- Output line length
     deriving Show
@@ -53,7 +54,8 @@ loadAll p params =
               h <- outputHandle (file params)
               hPutStrLn h "<?xml version=\"1.0\"?>"
               hPutStrLn h ("<!-- " ++ cpsaVersion ++ " -->")
-              let conf = config (prefix params) (scripted params)
+              let conf = config (prefix params) (purgeTraces params)
+                         (scripted params)
               case format params of
                 XHTML -> expandedView h (conf False)
                          (margin params) cmts preskels
@@ -92,7 +94,8 @@ treeless p params =
               h <- outputHandle (file params)
               hPutStrLn h "<?xml version=\"1.0\"?>"
               hPutStrLn h ("<!-- " ++ cpsaVersion ++ " -->")
-              let conf = config (prefix params) (scripted params) False
+              let conf = config (prefix params) (purgeTraces params)
+                         (scripted params) False
               ans <- tryIO (treelessView h conf (margin params)
                                          cmts preskel state)
               case ans of
@@ -111,7 +114,8 @@ latex p params =
               h <- outputHandle (file params)
               hPutStrLn h "\\documentclass[12pt]{article}"
               hPutStrLn h ("% " ++ cpsaVersion)
-              let conf = config (prefix params) (scripted params) False
+              let conf = config (prefix params) (purgeTraces params)
+                         (scripted params) False
               let pp = printer conf
               ans <- tryIO (latexView h (margin params) pp cmts preskel state)
               case ans of
@@ -124,11 +128,12 @@ data Flag
     | Info                      -- Version information
     | Expanded                  -- Select expanded format in XHTML
     | Treeless                  -- Select treeless expanded format in XHTML
-    | Scripted                  -- Ensable scripting
+    | Scripted                  -- Enable scripting
     | Compact                   -- Select compact format in SVG
     | Text                      -- Select text format in LaTeX
     | Margin String             -- Output line length
     | InfixFlag                 -- Select output notation
+    | PurgeFlag                 -- Enable purging of traces
     | Output String             -- Output file name
       deriving Show
 
@@ -149,6 +154,7 @@ options =
       Option ['m'] ["margin"]   (ReqArg Margin "INT")
       ("set output margin (default " ++ show defaultMargin ++ ")"),
       Option ['i'] ["infix"]    (NoArg InfixFlag) "output uses infix notation",
+      Option ['p'] ["purge-traces"] (NoArg PurgeFlag)  "purge traces",
       Option ['h'] ["help"]     (NoArg Help)           "show help message",
       Option ['v'] ["version"]  (NoArg Info)           "show version number" ]
 
@@ -158,6 +164,7 @@ interp flags =
     loop flags (Params { file = Nothing, -- By default, no output file
                          format = XHTML, -- and use expanded format
                          prefix = True,
+                         purgeTraces = False,
                          scripted = False,
                          margin = defaultMargin })
     where
@@ -177,6 +184,8 @@ interp flags =
           loop flags $ params { format = LaTeX }
       loop (InfixFlag : flags) params =
           loop flags $ params { prefix = False }
+      loop (PurgeFlag : flags) params =
+          loop flags $ params { purgeTraces = True }
       loop (Margin value : flags) params =
           case readDec value of
             [(margin, "")] ->
@@ -199,8 +208,8 @@ interp flags =
 -- Default configuration.  The lengths are in points, however the more
 -- natural choice is a font relative unit of length such as ems,
 -- however FireFox doesn't support these units yet.
-config :: Bool -> Bool -> Bool -> Config
-config prefix scripts compact =
+config :: Bool -> Bool -> Bool -> Bool -> Config
+config prefix purge scripts compact =
     Config { units = "pt",
              font = font,
              stroke = 0.08 * font,
@@ -217,6 +226,7 @@ config prefix scripts compact =
              br = 0.50 * font,
              compact = compact,
              notation = if prefix then Prefix else Infix,
+             purge = purge,
              scripts = scripts }
     where
       font = 12

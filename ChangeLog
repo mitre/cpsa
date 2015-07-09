@@ -1,3 +1,9 @@
+2015-07-09  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Graph/ExpandedView.hs (purgeTraces): Added -p flag to
+	the graph program.  When present, the graph program purges traces
+	in skeletons it prints.
+
 2015-07-08  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* cpsa.cabal (Version): Tagged as version 2.5.1

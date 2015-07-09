@@ -170,7 +170,7 @@ kdrawer h conf margin pp tid (t:ts) =
       hPutStrLn h ""
       let (width, height, es) = skel conf k
       hPutStrLn h $ show $ docRoot conf width height (defs conf : es)
-      hPutSExpr h margin pp (preskelSrc k)
+      hPutSExpr h margin pp (purgeTraces conf $ preskelSrc k)
       -- Use a breadth first ordering by appending children to the queue
       kdrawer h conf margin pp tid (ts ++ children t)
 
@@ -199,6 +199,19 @@ hPutSExpr h margin pp sexpr =
 -- S-expression pretty print parameters
 indent :: Int
 indent = 2
+
+purgeTraces :: Config -> SExpr Pos -> SExpr Pos
+purgeTraces conf x | purge conf =
+  strip "traces" x
+purgeTraces _ x = x
+
+strip :: String -> SExpr Pos -> SExpr Pos
+strip key (L p xs) =
+  L p (filter f xs)
+  where
+    f (L _ (S _ s : _)) | s == key = False
+    f _ = True
+strip _ x = x
 
 -- Encoded from src/zoom.js using src/js2hs
 javascript :: [String]
@@ -239,7 +252,7 @@ body h conf margin pp k s =
       hPutStrLn h ""
       let (width, height, es) = skel conf k
       hPutStrLn h $ show $ docRoot conf width height (defs conf : es)
-      hPutSExpr h margin pp (preskelSrc k)
+      hPutSExpr h margin pp (purgeTraces conf $ preskelSrc k)
       n <- loadNext s
       case n of
         Nothing ->              -- EOF

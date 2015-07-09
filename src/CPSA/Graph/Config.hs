@@ -27,6 +27,7 @@ data Config = Config
       br :: Float,              -- Bullet radius
       compact :: Bool,          -- Generate compact format
       notation :: Notation,     -- Select notation
+      purge :: Bool,            -- Enable purging of traces
       scripts :: Bool }         -- Enable scripting
     deriving (Show, Read)
 
