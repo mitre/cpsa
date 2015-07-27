@@ -3,6 +3,8 @@
 	* README: Updated to reflect that Haskell Platform should always
 	be used.
 
+	* cpsa.cabal (Version): Tagged as version 2.5.2
+
 2015-07-09  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Graph/ExpandedView.hs (purgeTraces): Added -p flag to
