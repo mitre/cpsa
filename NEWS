@@ -7,6 +7,9 @@ CPSA NEWS -- history of user-visible changes.
    to be printed without their traces.  This saves on clutter when
    traces are large and unused.
 
+** Updated README to reflect that Haskell Platform should always be used.
+   It's available everywhere now.
+
 * Changes in version 2.5.1
 
 ** CPSA Goals document updated
