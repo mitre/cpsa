@@ -1,5 +1,5 @@
 Name:			cpsa
-Version:		2.5.2
+Version:		2.5.3
 Maintainer:		ramsdell@mitre.org
 Cabal-Version:		>= 1.6
 License:		BSD3
@@ -92,7 +92,7 @@ Extra-Source-Files:
   tst/neuman-stubblebine.tst tst/no_contraction.scm
   tst/no_contraction.tst tst/nonaug-prune.scm tst/nonaug-prune.tst
   tst/non_transforming.scm tst/non_transforming.tst tst/nsl3.scm
-  tst/nsl3.tst tst/nsl4cm1.lsp tst/nsl4cm1.tst tst/nsl4.lisp
+  tst/nsl3.tst tst/nsl4cm1.lisp tst/nsl4.lisp
   tst/nsl4resp2.lisp tst/nsl5i.lisp tst/nsl5.lisp tst/ns-l.scm
   tst/nslsk.scm tst/nslsk.tst tst/ns-l.tst tst/ns.scm tst/ns.tst
   tst/or.scm tst/or.tst tst/pca.scm tst/pca.tst

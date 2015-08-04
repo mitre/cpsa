@@ -1132,6 +1132,10 @@ list. When two macros definitions are applicable, the last definition
 takes precedence. The {\cpsa} program omits macro definitions from its
 output.
 
+After expanding a list, elements of the list of the form
+\verb|(^ |$\cdots$\verb| )| are spliced into the output.  Thus
+\verb|(a ^(b c) d)| becomes \verb|(a b c d)| after macro expansion.
+
 \section{Includes}\label{sec:include}
 
 While performing macro expansion, {\cpsa} includes other source files

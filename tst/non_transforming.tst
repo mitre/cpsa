@@ -1,4 +1,4 @@
-(comment "CPSA 2.5.2")
+(comment "CPSA 2.5.3")
 (comment "All input read from non_transforming.scm")
 
 (defprotocol non_transforming basic

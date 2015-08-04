@@ -1,3 +1,8 @@
+2015-08-04  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/cpsaprimer.tex (section{Macros}\label{sec:macros}):  Added
+	text describing splicing.
+
 2015-07-27  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* README: Updated to reflect that Haskell Platform should always
