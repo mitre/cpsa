@@ -377,8 +377,8 @@ in~\cite[Section~6]{cpsaprimer09}, but roughly speaking, skeleton~$A$
 refines skeleton~$B$ if~$A$ contains the structure of skeleton~$B$.
 
 The skeleton~$k_0$ extracted from the antecedent of a security goal
-has the property that every skeleton than refines~$k_0$ satisfies the
-antecedent.  A skeleton with this property is called the
+has the property that a skeleton refines~$k_0$ if and only if it
+satisfies the antecedent.  A skeleton with this property is called the
 \emph{characteristic skeleton} of the antecedent.
 
 Given a goal~\(\Phi\), consider a shape analysis starting from the
@@ -388,8 +388,9 @@ satisfies~$\Phi$.  Consider the executions that contain the structure
 in~$k_0$.  {\cpsa} tells us that each execution is in the executions
 that contain the structure of some~$k_i$.  Furthermore, because~$k_0$
 is a characteristic skeleton, each~$k_i$ satisfies the antecedent
-of~$\Phi$.  Therefore,~$\Phi$ is true in all executions of the
-protocol and maximally informative.
+of~$\Phi$.  Executions that do not contain the structure in~$k_0$ do
+not satisfy the antecedent.  Therefore,~$\Phi$ is true in all
+executions of the protocol and maximally informative.
 
 \section{Examples}\label{sec:examples}
 
