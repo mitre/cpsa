@@ -174,7 +174,7 @@ of atomic formulas.  For this sentence, the conclusion is an
 existentially quantified conjunction of atomic formulas, but in
 general, the conclusion is a disjunction of existentially quantified
 conjunctions of atomic formulas.  In what follows, \sym{(false)} is a
-synonym for \sym{(or)}.
+synonym for the empty disjunction, \sym{(or)}.
 
 \begin{center}\scshape
   \begin{tabular}{rcl}
@@ -215,7 +215,7 @@ The second line gives the syntax of a role parameter predicate.  It
 contains three tokens, \texttt{p}, a string that names a role, and a
 string that names a role variable.  For role~$r$, there is role
 parameter predicate for each variable declared by~$r$.  Thus
-\verb|(p "init" 2 "n1" z0 n1)| is an atomic formula using the role
+\verb|(p "init" "n1" z0 n1)| is an atomic formula using the role
 parameter predicate for parameter \text{n1} in the \texttt{init} role
 of the protocol.
 
@@ -225,8 +225,8 @@ variable.  There are two positions in the listener role.
 
 When a variable of sort \sym{node} occurs in a formula, its position
 must be specified using a role position formula.  When an algebra
-variable occurs in formula, its association with the parameter of some
-role must be specified using a role parameter formula.
+variable occurs in a formula, its association with the parameter of
+some role must be specified using a role parameter formula.
 
 \begin{table}
 \begin{center}
