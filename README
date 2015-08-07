@@ -1,8 +1,9 @@
 CPSA: A Crptographic Protocol Shapes Analyzer
 
 This program has been built and tested using Haskell Platform.
-It is available from <http://haskell.org> or from
-an operating system specific source.
+It is available from <http://haskell.org> or from an operating
+system specific source.  The name of the Linux package is usually
+haskell-platform.
 
 $ cabal update
 $ cabal install cpsa
