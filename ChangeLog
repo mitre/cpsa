@@ -1,3 +1,7 @@
+2015-08-07  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/cpsagoals.tex: Corrected the definition of satisfaction.
+
 2015-08-06  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* doc/cpsagoals.tex: Made minor fixes due to another review.  Also

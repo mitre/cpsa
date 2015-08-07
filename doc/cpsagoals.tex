@@ -221,7 +221,8 @@ of the protocol.
 
 The empty string names the listener role of a protocol.  The role
 has the variable \texttt{x} of sort \texttt{mesg} as its only role
-variable.  There are two positions in the listener role.
+variable.  There are two positions in the listener role.  Its trace is
+\texttt{(trace (recv x) (send x))}.
 
 When a variable of sort \sym{node} occurs in a formula, its position
 must be specified using a role position formula.  When an algebra
@@ -283,8 +284,8 @@ been given as input.
 Our aim now is to specify how to decide if a security goal is true in
 all possible executions of a protocol.  A skeleton defines a set of
 executions that contain the skeleton's structure.  We say a skeleton
-\emph{satisfies} a formula if the formula is true in all executions
-that contain the skeleton's structure.  To decide if a skeleton
+\emph{satisfies} a formula if the skeleton contains all of the
+structure specified by the formula.  To decide if a skeleton
 satisfies a formula, we decide if it satisfies each of its atomic
 formulas, and combine the results using the rules of first-order
 logic.
@@ -373,8 +374,9 @@ satisfies a goal, it is true in every execution.
 
 When {\cpsa} performs a shape analysis, every shape it generates
 refines the input skeleton.  Skeleton refinement is defined
-in~\cite[Section~6]{cpsaprimer09}, but roughly speaking, skeleton~$A$
-refines skeleton~$B$ if~$A$ contains the structure of skeleton~$B$.
+in~\cite[Section~6]{cpsaprimer09}.  The definition makes precise the
+notion of structure containment, as skeleton~$A$ refines skeleton~$B$
+if and only if~$A$ contains the structure of skeleton~$B$.
 
 The skeleton~$k_0$ extracted from the antecedent of a security goal
 has the property that a skeleton refines~$k_0$ if and only if it
