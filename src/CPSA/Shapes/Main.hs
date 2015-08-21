@@ -31,28 +31,28 @@ go f p a =
     loop a
     where
       loop a =
-          do
-            x <- gentlyReadSExpr p
-            case x of
-              Nothing ->
-                  return ()
-              Just sexpr ->
-                  do
-                    a <- f a sexpr
-                    loop a
+	  do
+	    x <- gentlyReadSExpr p
+	    case x of
+	      Nothing ->
+		  return ()
+	      Just sexpr ->
+		  do
+		    a <- f a sexpr
+		    loop a
 
 step :: Handle -> Int -> Map -> SExpr Pos -> IO Map
 step output margin acc sexpr =
     do
       x <- tryIO (shape acc sexpr)
       case x of
-        Right (acc, sexpr) ->
-            case sexpr of
-              Nothing ->
-                  return acc
-              Just sexpr ->
-                  do
-                    writeLnSEexpr output margin sexpr
-                    return acc
-        Left err ->
-            abort (show err)
+	Right (acc, sexpr) ->
+	    case sexpr of
+	      Nothing ->
+		  return acc
+	      Just sexpr ->
+		  do
+		    writeLnSEexpr output margin sexpr
+		    return acc
+	Left err ->
+	    abort (show err)

@@ -26,8 +26,8 @@ root = "z"
 type State t g c = ([Prot t g c], [Preskel t g c])
 
 sas :: (Algebra t p g s e c, Monad m) => String -> g ->
-         State t g c -> Maybe (SExpr Pos) ->
-         m (State t g c, Maybe (SExpr ()))
+	 State t g c -> Maybe (SExpr Pos) ->
+	 m (State t g c, Maybe (SExpr ()))
 sas _ _ (ps, ks) Nothing =    -- Nothing signifies end-of-file
     displayFormula ps (reverse ks)
 sas name gen (ps, []) (Just sexpr) = -- Looking for POV skeleton
@@ -36,8 +36,8 @@ sas name gen (ps, ks) (Just sexpr) = -- Looking for shapes
     loadOtherPreskel name gen ps ks sexpr
 
 loadPOV :: (Algebra t p g s e c, Monad m) => String -> g ->
-           [Prot t g c] -> SExpr Pos ->
-           m (State t g c, Maybe (SExpr ()))
+	   [Prot t g c] -> SExpr Pos ->
+	   m (State t g c, Maybe (SExpr ()))
 loadPOV name origin ps (L pos (S _ "defprotocol" : xs)) =
     do
       p <- loadProt name origin pos xs
@@ -47,14 +47,14 @@ loadPOV _ _ ps (L pos (S _ "defskeleton" : xs)) =
       p <- findProt pos ps xs
       k <- loadPreskel pos p (pgen p) xs
       case (isSkeleton k, isShape k) of
-        (True, False) ->
-          return ((ps, [k]), Nothing) -- Found POV
-        _ -> return ((ps, []), Nothing) -- Not POV
+	(True, False) ->
+	  return ((ps, [k]), Nothing) -- Found POV
+	_ -> return ((ps, []), Nothing) -- Not POV
 loadPOV _ _ ps _ = return ((ps, []), Nothing)
 
 loadOtherPreskel :: (Algebra t p g s e c, Monad m) => String -> g ->
-                    [Prot t g c] -> [Preskel t g c] ->
-                    SExpr Pos -> m (State t g c, Maybe (SExpr ()))
+		    [Prot t g c] -> [Preskel t g c] ->
+		    SExpr Pos -> m (State t g c, Maybe (SExpr ()))
 loadOtherPreskel name origin ps ks (L pos (S _ "defprotocol" : xs)) =
     do                     -- Found next protocol.  Print this formula
       p <- loadProt name origin pos xs
@@ -65,8 +65,8 @@ loadOtherPreskel _ _ ps ks (L pos (S _ "defskeleton" : xs)) =
       let g = kgen (last ks)      -- Make sure vars in skeleton are
       k <- loadPreskel pos p g xs -- distinct from the ones in the POV
       case isShape k of
-        True -> return ((ps, k : ks), Nothing) -- Found shape
-        False -> return ((ps, ks), Nothing) -- Found intermediate skeleton
+	True -> return ((ps, k : ks), Nothing) -- Found shape
+	False -> return ((ps, ks), Nothing) -- Found intermediate skeleton
 loadOtherPreskel _ _ ps ks _ = return ((ps, ks), Nothing)
 
 -- Load a protocol
@@ -91,15 +91,15 @@ data Role t c = Role
 -- Load a protocol.  On success, returns a Prot record.
 
 loadProt :: (Algebra t p g s e c, Monad m) => String -> g ->
-            Pos -> [SExpr Pos] -> m (Prot t g c)
+	    Pos -> [SExpr Pos] -> m (Prot t g c)
 loadProt nom origin pos (S _ name : S _ alg : x : xs)
     | alg /= nom =
-        fail (shows pos $ "Expecting terms in algebra " ++ nom)
+	fail (shows pos $ "Expecting terms in algebra " ++ nom)
     | otherwise =
-        do
-          (gen, rs) <- loadRoles origin (x : xs)
-          (gen', r) <- makeListenerRole pos gen
-          return (Prot { pname = name, pgen = gen', roles = r : rs })
+	do
+	  (gen, rs) <- loadRoles origin (x : xs)
+	  (gen', r) <- makeListenerRole pos gen
+	  return (Prot { pname = name, pgen = gen', roles = r : rs })
 loadProt _ _ pos _ =
     fail (shows pos "Malformed protocol")
 
@@ -109,7 +109,7 @@ loadProt _ _ pos _ =
 -- its roles.
 
 loadRoles :: (Algebra t p g s e c, Monad m) => g ->
-             [SExpr Pos] -> m (g, [Role t c])
+	     [SExpr Pos] -> m (g, [Role t c])
 loadRoles origin xs =
     mapAccumLM loadRole origin $ stripComments xs
 
@@ -131,12 +131,12 @@ mapAccumLM f z (x : xs) =
       return (z'', y : ys)
 
 loadRole :: (Algebra t p g s e c, Monad m) => g ->
-            SExpr Pos -> m (g, Role t c)
+	    SExpr Pos -> m (g, Role t c)
 loadRole gen (L _ (S _ "defrole" :
-                     S _ name :
-	             L _ (S _ "vars" : vars) :
-                     L _ (S _ "trace" : _ : _) :
-                     _)) =
+		     S _ name :
+		     L _ (S _ "vars" : vars) :
+		     L _ (S _ "trace" : _ : _) :
+		     _)) =
     do
       (gen, vars) <- loadVars gen vars
       let ctx = addToContext emptyContext vars
@@ -151,7 +151,7 @@ listenerName :: String
 listenerName = ""
 
 makeListenerRole :: (Algebra t p g s e c, Monad m) => Pos -> g ->
-                    m (g, Role t c)
+		    m (g, Role t c)
 makeListenerRole pos gen =
     do
       (gen', t) <- makeVar pos gen "x"
@@ -165,8 +165,8 @@ makeVar pos gen name =
     do
       (gen', ts) <- loadVars gen [L pos [S pos name, S pos "mesg"]]
       case ts of
-        [t] -> return (gen', t)
-        _ -> fail (shows pos "Bad variable generation")
+	[t] -> return (gen', t)
+	_ -> fail (shows pos "Bad variable generation")
 
 -- Node to variable maps
 
@@ -179,14 +179,14 @@ type GVM g t = (g, VM t)
 
 -- Add a variable for a node if the mapping does not already exist.
 addVar :: (Algebra t p g s e c, Monad m) =>
-          Pos -> GVM g t -> Node -> m (GVM g t)
+	  Pos -> GVM g t -> Node -> m (GVM g t)
 addVar pos (gen, vm) n =
   case M.lookup n vm of
     Just _ -> return (gen, vm)
     Nothing ->
       do
-        (gen, t) <- makeVar pos gen root -- Make the variable
-        return (gen, M.insert n t vm)
+	(gen, t) <- makeVar pos gen root -- Make the variable
+	return (gen, M.insert n t vm)
 
 -- Node lookup assumes a node will always be found.
 nlookup :: Node -> VM t -> t
@@ -198,7 +198,7 @@ nlookup n vm =
 -- Find a protocol
 
 findProt :: (Algebra t p g s e c, Monad m) => Pos ->
-            [Prot t g c] -> [SExpr Pos] -> m (Prot t g c)
+	    [Prot t g c] -> [SExpr Pos] -> m (Prot t g c)
 findProt pos ps (S _ name : _) =
     case L.find (\p -> name == pname p) ps of
       Nothing -> fail (shows pos $ "Protocol " ++ name ++ " unknown")
@@ -239,7 +239,7 @@ data Preskel t g c = Preskel
       varmap :: VM t }
 
 loadPreskel :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g c ->
-               g -> [SExpr Pos] -> m (Preskel t g c)
+	       g -> [SExpr Pos] -> m (Preskel t g c)
 loadPreskel pos prot gen (S _ _ : L _ (S _ "vars" : vars) : xs) =
     do
       (gen, kvars) <- loadVars gen vars
@@ -255,63 +255,63 @@ loadPreskel pos prot gen (S _ _ : L _ (S _ "vars" : vars) : xs) =
       let f (n0, n1) = (nlookup n0 varmap, nlookup n1 varmap)
       let g (t, n) = (t, nlookup n varmap)
       return (Preskel { protocol = prot,
-                        kgen = gen,
-                        kvars = kvars,
-                        knodes = M.elems varmap,
-                        insts = insts,
-                        strands = map (flip nlookup varmap) strands,
-                        orderings = map f orderings,
-                        succs = loadSuccs varmap,
-                        nons = nons,
-                        pnons = pnons,
-                        uniqs = uniqs,
-                        origs = map g origs,
-                        isSkeleton = not $ hasKey preskeletonKey xs,
-                        isShape = hasKey shapeKey xs,
-                        homomorphisms = assoc mapsKey xs,
-                        varmap = varmap})
+			kgen = gen,
+			kvars = kvars,
+			knodes = M.elems varmap,
+			insts = insts,
+			strands = map (flip nlookup varmap) strands,
+			orderings = map f orderings,
+			succs = loadSuccs varmap,
+			nons = nons,
+			pnons = pnons,
+			uniqs = uniqs,
+			origs = map g origs,
+			isSkeleton = not $ hasKey preskeletonKey xs,
+			isShape = hasKey shapeKey xs,
+			homomorphisms = assoc mapsKey xs,
+			varmap = varmap})
 loadPreskel pos _ _ _ = fail (shows pos "Malformed skeleton")
 
 loadInsts :: (Algebra t p g s e c, Monad m) => Prot t g c ->
-             [t] -> [Instance t c] -> [SExpr Pos] -> m [Instance t c]
+	     [t] -> [Instance t c] -> [SExpr Pos] -> m [Instance t c]
 loadInsts prot kvars insts (L pos (S _ "defstrand" : x) : xs) =
     case x of
       S _ role : N _ height : env ->
-          do
-            i <- loadInst pos prot kvars role height env
-            loadInsts prot kvars (i : insts) xs
+	  do
+	    i <- loadInst pos prot kvars role height env
+	    loadInsts prot kvars (i : insts) xs
       _ ->
-          fail (shows pos "Malformed defstrand")
+	  fail (shows pos "Malformed defstrand")
 loadInsts prot kvars insts (L pos (S _ "deflistener" : x) : xs) =
     case x of
       [term] ->
-          do
-            i <- loadListener pos prot kvars term
-            loadInsts prot kvars (i : insts) xs
+	  do
+	    i <- loadListener pos prot kvars term
+	    loadInsts prot kvars (i : insts) xs
       _ ->
-          fail (shows pos "Malformed deflistener")
+	  fail (shows pos "Malformed deflistener")
 loadInsts _ _ insts _ =
     return (reverse insts)
 
 loadInst :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g c ->
-            [t] -> String -> Int -> [SExpr Pos] -> m (Instance t c)
+	    [t] -> String -> Int -> [SExpr Pos] -> m (Instance t c)
 loadInst pos prot kvars role height env =
     do
       r <- lookupRole pos prot role
       env <- mapM (loadMaplet kvars (vars r)) env
       return (Instance { pos = pos, role = r,
-                         env = env, height = height })
+			 env = env, height = height })
 
 lookupRole :: (Algebra t p g s e c, Monad m) => Pos ->
-              Prot t g c -> String -> m (Role t c)
+	      Prot t g c -> String -> m (Role t c)
 lookupRole pos prot role =
     case L.find (\r -> role == rname r) (roles prot) of
       Nothing ->
-          fail (shows pos $ "Role " ++ role ++ " not found in " ++ pname prot)
+	  fail (shows pos $ "Role " ++ role ++ " not found in " ++ pname prot)
       Just r -> return r
 
 loadMaplet :: (Algebra t p g s e c, Monad m) =>
-              [t] -> [t] -> SExpr Pos -> m (t, t)
+	      [t] -> [t] -> SExpr Pos -> m (t, t)
 loadMaplet kvars vars (L _ [domain, range]) =
     do
       t <- loadTerm vars domain
@@ -320,13 +320,13 @@ loadMaplet kvars vars (L _ [domain, range]) =
 loadMaplet _ _ x = fail (shows (annotation x) "Malformed maplet")
 
 loadListener :: (Algebra t p g s e c, Monad m) => Pos ->
-                Prot t g c -> [t] -> SExpr Pos -> m (Instance t c)
+		Prot t g c -> [t] -> SExpr Pos -> m (Instance t c)
 loadListener pos prot kvars x =
     do
       r <- lookupRole pos prot listenerName
       t <- loadTerm kvars x
       return (Instance { pos = pos, role = r,
-                         env = [(head $ vars r, t)], height = 2 })
+			 env = [(head $ vars r, t)], height = 2 })
 
 -- Load the node orderings
 
@@ -344,8 +344,8 @@ loadPair heights (L pos [x0, x1]) =
       n0 <- loadNode heights x0
       n1 <- loadNode heights x1
       case sameStrands n0 n1 of  -- Same strand
-        True -> fail (shows pos "Malformed pair -- nodes in same strand")
-        False -> return (n0, n1)
+	True -> fail (shows pos "Malformed pair -- nodes in same strand")
+	False -> return (n0, n1)
     where
       sameStrands (s0, _) (s1, _) = s0 == s1
 loadPair _ x = fail (shows (annotation x) "Malformed pair")
@@ -355,15 +355,15 @@ loadNode heights (L pos [N _ s, N _ p])
     | s < 0 = fail (shows pos "Negative strand in node")
     | p < 0 = fail (shows pos "Negative position in node")
     | otherwise =
-        case height heights s of
-          Nothing -> fail (shows pos "Bad strand in node")
-          Just h | p < h -> return (s, p)
-          _ -> fail (shows pos "Bad position in node")
+	case height heights s of
+	  Nothing -> fail (shows pos "Bad strand in node")
+	  Just h | p < h -> return (s, p)
+	  _ -> fail (shows pos "Bad position in node")
     where
       height [] _ = Nothing
       height (x: xs) s          -- Assume s non-negative
-          | s == 0 = Just x
-          | otherwise = height xs (s - 1)
+	  | s == 0 = Just x
+	  | otherwise = height xs (s - 1)
 loadNode _ x = fail (shows (annotation x) "Malformed node")
 
 loadBaseTerms :: (Algebra t p g s e c, Monad m) => [t] -> [SExpr Pos] -> m [t]
@@ -379,8 +379,8 @@ loadBaseTerm vars x =
     do
       t <- loadTerm vars x
       case isAtom t of
-        True -> return t
-        False -> fail (shows (annotation x) "Expecting an atom")
+	True -> return t
+	False -> fail (shows (annotation x) "Expecting an atom")
 
 -- Creates the atomic formulas used to describe the strand node orderings
 -- Must compute the transitive reduction of the within strand orderings
@@ -391,14 +391,14 @@ loadSuccs varmap =
       ns = M.keys varmap               -- The set of nodes
       ss = L.sort $ L.nub $ map fst ns -- The ordered set of strands
       idx = [(s, is) | s <- ss,        -- The per strand indices
-                       let is = L.sort [i | (s', i) <- ns, s' == s]]
+		       let is = L.sort [i | (s', i) <- ns, s' == s]]
       f (_, []) = error "SAS.loadSuccs: Bad index entry"
       f (_, [_]) = []
       f (s, i:i':is) =
-        (nlookup (s, i) varmap, nlookup (s, i') varmap):f(s, i':is)
+	(nlookup (s, i) varmap, nlookup (s, i') varmap):f(s, i':is)
 
 loadOrigs :: (Algebra t p g s e c, Monad m) => [t] -> Strands ->
-             [SExpr Pos] -> m [(t, Node)]
+	     [SExpr Pos] -> m [(t, Node)]
 loadOrigs _ _ [] = return []
 loadOrigs vars heights (x : xs) =
     do
@@ -407,7 +407,7 @@ loadOrigs vars heights (x : xs) =
       return (adjoin o os)
 
 loadOrig :: (Algebra t p g s e c, Monad m) => [t] -> Strands ->
-            SExpr Pos -> m (t, Node)
+	    SExpr Pos -> m (t, Node)
 loadOrig vars heights (L _ [x, y]) =
     do
       t <- loadTerm vars x
@@ -425,12 +425,12 @@ loadOrig _ _ x =
 type Homo t = ([(t, t)], [(t, t)])
 
 loadMaps :: (Algebra t p g s e c, Monad m) => Preskel t g c ->
-            Preskel t g c -> [SExpr Pos] -> m [Homo t]
+	    Preskel t g c -> [SExpr Pos] -> m [Homo t]
 loadMaps pov k maps =
     mapM (loadMap pov k) maps
 
 loadMap :: (Algebra t p g s e c, Monad m) => Preskel t g c ->
-            Preskel t g c -> SExpr Pos -> m (Homo t)
+	    Preskel t g c -> SExpr Pos -> m (Homo t)
 loadMap pov k (L _ [L _ strandMap, L _ algebraMap]) =
     do
       perm <- mapM loadPerm strandMap -- Load the strand map
@@ -447,13 +447,13 @@ loadPerm x = fail (shows (annotation x) "Expecting a natural number")
 -- Applies a strand permutation to a node.
 -- Hope the strand map is valid, or !! will blow up.
 loadNodeEq :: Algebra t p g s e c => Preskel t g c ->
-              [Int] -> (Node, t) -> (t, t)
+	      [Int] -> (Node, t) -> (t, t)
 loadNodeEq k perm ((s, i), v) =
   (v, nlookup (perm !! s, i) (varmap k))
 
 -- Collect all the relevant nodes and make a variable for each one.
 makeVarmap :: (Algebra t p g s e c, Monad m) => Pos ->
-              g -> [Node] -> [Pair] -> [(t, Node)] -> m (GVM g t)
+	      g -> [Node] -> [Pair] -> [(t, Node)] -> m (GVM g t)
 makeVarmap pos g strands orderings origs =
   do
     gvm <- foldM fht (g, M.empty) strands
@@ -463,8 +463,8 @@ makeVarmap pos g strands orderings origs =
     fht gvm n = addVar pos gvm n
     fodr gvm (n0, n1) =
       do
-        gvm <- addVar pos gvm n0
-        addVar pos gvm n1
+	gvm <- addVar pos gvm n0
+	addVar pos gvm n1
     forg gvm (_, n) = addVar pos gvm n
 
 -- Association lists
@@ -516,7 +516,7 @@ origsKey = "origs"
 type Analysis t g c = (Preskel t g c, [(Homo t, Preskel t g c)])
 
 loadAnalysis :: (Algebra t p g s e c, Monad m) => Preskel t g c ->
-                [Preskel t g c] -> m (Analysis t g c)
+		[Preskel t g c] -> m (Analysis t g c)
 loadAnalysis pov ks =
   do
     shapes <- mapM f ks
@@ -524,11 +524,11 @@ loadAnalysis pov ks =
   where
     f k =
       case null $ homomorphisms k of
-        True -> fail "No homomorphism for shape"
-        False ->
-            do
-              hs <- loadMaps pov k (homomorphisms k)
-              return [(h, k) | h <- hs]
+	True -> fail "No homomorphism for shape"
+	False ->
+	    do
+	      hs <- loadMaps pov k (homomorphisms k)
+	      return [(h, k) | h <- hs]
 
 -- Eliminate trivial homomorphisms by substituting for the equality
 -- throughout the analysis.
@@ -538,7 +538,7 @@ reduce (pov, shapes) =
   (pov, map (reduceShape pov) shapes)
 
 reduceShape :: Algebra t p g s e c => Preskel t g c ->
-               (Homo t, Preskel t g c) -> (Homo t, Preskel t g c)
+	       (Homo t, Preskel t g c) -> (Homo t, Preskel t g c)
 reduceShape pov (homo, k) =
   (mapHomo env homo, mapSkel env pov k)
   where
@@ -570,9 +570,9 @@ mapHomo env (a, n) =
   (f a, f n)
   where
     f eqs = [(p, t1) |
-             (p, t0) <- eqs,
-             let t1 = instantiate env t0,
-             p /= t1]
+	     (p, t0) <- eqs,
+	     let t1 = instantiate env t0,
+	     p /= t1]
 
 mapInst :: Algebra t p g s e c => e -> Instance t c -> Instance t c
 mapInst e inst =
@@ -581,7 +581,7 @@ mapInst e inst =
     f (p, x) = (p, instantiate e x)
 
 mapSkel :: Algebra t p g s e c => e -> Preskel t g c ->
-           Preskel t g c -> Preskel t g c
+	   Preskel t g c -> Preskel t g c
 mapSkel env pov k =
   k { kvars = vs L.\\ kvars pov, -- Delete redundant POV variables
       knodes = ns L.\\ knodes pov,
@@ -602,8 +602,8 @@ mapSkel env pov k =
 -- Formula printing
 
 displayFormula :: (Algebra t p g s e c, Monad m) =>
-                  [Prot t g c] -> [Preskel t g c] ->
-                  m (State t g c, Maybe (SExpr ()))
+		  [Prot t g c] -> [Preskel t g c] ->
+		  m (State t g c, Maybe (SExpr ()))
 displayFormula ps [] =
     return ((ps, []), Nothing)
 displayFormula ps (k : ks) =
@@ -616,14 +616,14 @@ form (pov, shapes) =
   let (c, vars, conj) = skel emptyContext pov in
   let disj = map (shape c conj) shapes in
   L () [S () "defgoal", S () (pname $ protocol pov), -- Name of protocol
-        quantify "forall" vars (imply (conjoin conj) (disjoin disj))]
+	quantify "forall" vars (imply (conjoin conj) (disjoin disj))]
 
 -- Convert one skeleton into a declaration and a conjunction.  The
 -- declaration is used as the bound variables in a quantifier.  The
 -- context is extended so it can be used as input for another
 -- skeleton.
 skel :: Algebra t p g s e c => c -> Preskel t g c ->
-        (c, [SExpr ()], [SExpr ()])
+	(c, [SExpr ()], [SExpr ()])
 skel ctx k =
   let vars = kvars k ++ knodes k in
   let kctx = addToContext ctx vars in
@@ -653,12 +653,12 @@ node (v : vs) = v : node vs
 
 -- Creates the atomic formulas used to describe an instance of a role
 nodeForm :: Algebra t p g s e c => c -> Preskel t g c ->
-            (Node, t) -> SExpr ()
+	    (Node, t) -> SExpr ()
 nodeForm c k ((s, i), n) =
     L () [S () "p",
-          Q () $ rname $ role inst,  -- Name of the role
-          N () $ i,
-          displayTerm c n]
+	  Q () $ rname $ role inst,  -- Name of the role
+	  N () $ i,
+	  displayTerm c n]
     where
       inst = insts k !! s
 
@@ -672,11 +672,11 @@ strandForm c (s, inst) =
     conjoin (map f (env inst))
     where
       f (x, t) =
-          L () [S () "p",
-                Q () $ rname $ role inst,  -- Name of the role
-                quote $ displayTerm (ctx $ role inst) x,
-                displayTerm c s,
-                displayTerm c t]
+	  L () [S () "p",
+		Q () $ rname $ role inst,  -- Name of the role
+		quote $ displayTerm (ctx $ role inst) x,
+		displayTerm c s,
+		displayTerm c t]
 
 -- Creates the atomic formula used to describe a node ordering relation
 precForm :: Algebra t p g s e c => c -> (t, t) -> SExpr ()
@@ -700,7 +700,7 @@ noOrigUniqs k =
 -- existentially quantified formulas that describe the homomorphism
 -- and the shape as a skeleton.
 shape :: Algebra t p g s e c => c -> [SExpr ()] ->
-         (Homo t, Preskel t g c) -> SExpr ()
+	 (Homo t, Preskel t g c) -> SExpr ()
 shape c pov ((nh, ah), shape) =
   let (ctx, vars, conj) = skel c shape in
   let n = map (displayEq ctx) nh in

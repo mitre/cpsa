@@ -29,14 +29,14 @@ main =
       writeComment h margin cpsaVersion
       writeComment h margin "Coherent logic"
       case () of
-        _ | alg == CPSA.Basic.Algebra.name ->
-              go (step h alg CPSA.Basic.Algebra.origin margin)
-                 p ([], [])
-          | alg == CPSA.DiffieHellman.Algebra.name ->
-              go (step h alg CPSA.DiffieHellman.Algebra.origin margin)
-                 p ([], [])
-          | otherwise ->
-               abort ("Bad algebra: " ++ alg)
+	_ | alg == CPSA.Basic.Algebra.name ->
+	      go (step h alg CPSA.Basic.Algebra.origin margin)
+		 p ([], [])
+	  | alg == CPSA.DiffieHellman.Algebra.name ->
+	      go (step h alg CPSA.DiffieHellman.Algebra.origin margin)
+		 p ([], [])
+	  | otherwise ->
+	       abort ("Bad algebra: " ++ alg)
       hClose h
 
 go :: (a -> Maybe (SExpr Pos) -> IO a) -> PosHandle -> a -> IO ()
@@ -44,41 +44,41 @@ go f p a =
     loop a
     where
       loop a =
-          do
-            x <- readSExpr p
-            case x of
-              Nothing ->
-                  do
-                    _ <- f a x
-                    return ()
-              Just _ ->
-                  do
-                    a <- f a x
-                    loop a
+	  do
+	    x <- readSExpr p
+	    case x of
+	      Nothing ->
+		  do
+		    _ <- f a x
+		    return ()
+	      Just _ ->
+		  do
+		    a <- f a x
+		    loop a
 
 step :: Algebra t p g s e c => Handle ->
-        String -> g -> Int -> State t g c ->
-        Maybe (SExpr Pos) -> IO (State t g c)
+	String -> g -> Int -> State t g c ->
+	Maybe (SExpr Pos) -> IO (State t g c)
 step output _ _ margin state@([], []) (Just sexpr@(L _ (S _ cmt : _)))
      | cmt == "herald" || cmt == "comment" =
-         do
-           writeLnSEexpr output margin sexpr
-           return state
+	 do
+	   writeLnSEexpr output margin sexpr
+	   return state
 step output name origin margin state sexpr =
     do
       x <- tryIO (sas name origin state sexpr)
       case x of
-        Right (acc, Nothing) ->
-            after output margin acc sexpr
-        Right (acc, Just x) ->
-            do
-              writeLnSEexpr output margin x
-              after output margin acc sexpr
-        Left err ->
-            abort (show err)
+	Right (acc, Nothing) ->
+	    after output margin acc sexpr
+	Right (acc, Just x) ->
+	    do
+	      writeLnSEexpr output margin x
+	      after output margin acc sexpr
+	Left err ->
+	    abort (show err)
 
 after :: Algebra t p g s e c => Handle -> Int -> State t g c ->
-         Maybe (SExpr Pos) -> IO (State t g c)
+	 Maybe (SExpr Pos) -> IO (State t g c)
 after output margin state (Just sexpr@(L _ (S _ "defprotocol" : _))) =
     do
       writeLnSEexpr output margin sexpr

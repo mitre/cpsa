@@ -25,17 +25,17 @@ main =
       (flags, files) <- opts options argv
       params <- interp flags
       case files of
-        [oldName, newName] ->
-            do
-              oldFile <- openFile oldName ReadMode
-              old <- posHandle oldName oldFile
-              newFile <- openFile newName ReadMode
-              new <- posHandle newName newFile
-              go params old new
-        _ ->
-            do
-              msg <- use options []
-              abort msg
+	[oldName, newName] ->
+	    do
+	      oldFile <- openFile oldName ReadMode
+	      old <- posHandle oldName oldFile
+	      newFile <- openFile newName ReadMode
+	      new <- posHandle newName newFile
+	      go params old new
+	_ ->
+	    do
+	      msg <- use options []
+	      abort msg
 
 go :: Params -> PosHandle -> PosHandle -> IO ()
 go params old new =
@@ -43,30 +43,30 @@ go params old new =
       o <- readSkel old
       n <- readSkel new
       case (o, n) of
-        (Nothing, Nothing) -> return ()
-        (Just o, Just n) | o == n -> go params old new
-        _ -> showDiff params o n
+	(Nothing, Nothing) -> return ()
+	(Just o, Just n) | o == n -> go params old new
+	_ -> showDiff params o n
 
 showDiff :: Params -> Maybe (SExpr Pos) -> Maybe (SExpr Pos) -> IO ()
 showDiff params o n =
     do
       out <- outputHandle (file params)
       case o of
-        Just o ->
-            do
-              hPutStrLn out ("<<< " ++ show (annotation o))
-              writeSkel params out o
-              hPutStrLn out "<<<"
-        _ ->
-            return ()
+	Just o ->
+	    do
+	      hPutStrLn out ("<<< " ++ show (annotation o))
+	      writeSkel params out o
+	      hPutStrLn out "<<<"
+	_ ->
+	    return ()
       case n of
-        Just n ->
-            do
-              hPutStrLn out (">>> " ++ show (annotation n))
-              writeSkel params out n
-              hPutStrLn out ">>>"
-        _ ->
-            return ()
+	Just n ->
+	    do
+	      hPutStrLn out (">>> " ++ show (annotation n))
+	      writeSkel params out n
+	      hPutStrLn out ">>>"
+	_ ->
+	    return ()
       hClose out
       exitFailure
 
@@ -81,13 +81,13 @@ readSkel p =
     do
       input <- gentlyReadSExpr p
       case input of
-        Nothing -> return input
-        Just x ->
-            case x of
-              L _ (S _ "defskeleton" : _) ->
-                  return input
-              _ ->
-                  readSkel p
+	Nothing -> return input
+	Just x ->
+	    case x of
+	      L _ (S _ "defskeleton" : _) ->
+		  return input
+	      _ ->
+		  readSkel p
 
 -- Runtime parameters
 
@@ -123,9 +123,9 @@ opts options argv =
     case getOpt RequireOrder options argv of
       (o, n, []) -> return (o, n)
       (_, _, errs) ->
-          do
-            msg <- use options errs
-            abort msg
+	  do
+	    msg <- use options errs
+	    abort msg
 
 use :: [OptDescr a] -> [String] -> IO String  -- Return usage string
 use options errs =
@@ -140,27 +140,27 @@ use options errs =
 interp :: [Flag] -> IO Params
 interp flags =
     loop flags (Params { file = Nothing, -- By default, no output file
-                         margin = defaultMargin })
+			 margin = defaultMargin })
     where
       loop [] params = return params
       loop (Output name : flags) params
-          | file params == Nothing =
-              loop flags $ params { file = Just name }
+	  | file params == Nothing =
+	      loop flags $ params { file = Just name }
       loop (Margin value : flags) params =
-          case readDec value of
-            [(margin, "")] ->
-                loop flags $ params { margin = margin }
-            _ ->
-                do
-                  msg <- use options ["Bad value for margin\n"]
-                  abort msg
+	  case readDec value of
+	    [(margin, "")] ->
+		loop flags $ params { margin = margin }
+	    _ ->
+		do
+		  msg <- use options ["Bad value for margin\n"]
+		  abort msg
       loop (Info : _) _ =
-          success cpsaVersion
+	  success cpsaVersion
       loop (Help : _) _ =
-          do                    -- Show help then exit with success
-            msg <- use options []
-            success msg
+	  do                    -- Show help then exit with success
+	    msg <- use options []
+	    success msg
       loop _ _ =
-           do                   -- Show help then exit with failure
-             msg <- use options ["Bad option combination\n"]
-             abort msg
+	   do                   -- Show help then exit with failure
+	     msg <- use options ["Bad option combination\n"]
+	     abort msg

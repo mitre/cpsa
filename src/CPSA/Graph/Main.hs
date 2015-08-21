@@ -37,9 +37,9 @@ main =
     do
       (p, params) <- start options interp
       case format params of
-        TreelessXHTML -> treeless p params
-        LaTeX -> latex p params
-        _ -> loadAll p params
+	TreelessXHTML -> treeless p params
+	LaTeX -> latex p params
+	_ -> loadAll p params
 
 -- Load all preskeletons before generating any output.
 -- Don't use these graphing methods if your input is large.
@@ -48,19 +48,19 @@ loadAll p params =
     do
       preskels <- tryIO (loadDefs p)
       case preskels of
-        Left err -> abort (show err)
-        Right (cmts, preskels) ->
-            do
-              h <- outputHandle (file params)
-              hPutStrLn h "<?xml version=\"1.0\"?>"
-              hPutStrLn h ("<!-- " ++ cpsaVersion ++ " -->")
-              let conf = config (prefix params) (purgeTraces params)
-                         (scripted params)
-              case format params of
-                XHTML -> expandedView h (conf False)
-                         (margin params) cmts preskels
-                SVG -> compactView h (conf True) preskels
-                _ -> error "Bad case in main"
+	Left err -> abort (show err)
+	Right (cmts, preskels) ->
+	    do
+	      h <- outputHandle (file params)
+	      hPutStrLn h "<?xml version=\"1.0\"?>"
+	      hPutStrLn h ("<!-- " ++ cpsaVersion ++ " -->")
+	      let conf = config (prefix params) (purgeTraces params)
+			 (scripted params)
+	      case format params of
+		XHTML -> expandedView h (conf False)
+			 (margin params) cmts preskels
+		SVG -> compactView h (conf True) preskels
+		_ -> error "Bad case in main"
 
 -- Load comments and preskeletons
 loadDefs :: PosHandle -> IO ([SExpr Pos], [Preskel])
@@ -71,13 +71,13 @@ loadDefs h =
       return (cmts, ks)
     where
       loop ks s =
-          do
-            n <- loadNext s
-            case n of
-              Nothing ->        -- EOF
-                  return $ reverse ks
-              Just (k, s) ->
-                  loop (k:ks) s
+	  do
+	    n <- loadNext s
+	    case n of
+	      Nothing ->        -- EOF
+		  return $ reverse ks
+	      Just (k, s) ->
+		  loop (k:ks) s
 
 -- XHTML graphing for very large files.
 -- Treeless loads one S-expression at a time, processes it, prints the
@@ -88,19 +88,19 @@ treeless p params =
     do
       preskel <- tryIO (loadFirst p)
       case preskel of
-        Left err -> abort (show err)
-        Right (cmts, preskel, state) ->
-            do
-              h <- outputHandle (file params)
-              hPutStrLn h "<?xml version=\"1.0\"?>"
-              hPutStrLn h ("<!-- " ++ cpsaVersion ++ " -->")
-              let conf = config (prefix params) (purgeTraces params)
-                         (scripted params) False
-              ans <- tryIO (treelessView h conf (margin params)
-                                         cmts preskel state)
-              case ans of
-                Left err -> abort (show err)
-                Right () -> return ()
+	Left err -> abort (show err)
+	Right (cmts, preskel, state) ->
+	    do
+	      h <- outputHandle (file params)
+	      hPutStrLn h "<?xml version=\"1.0\"?>"
+	      hPutStrLn h ("<!-- " ++ cpsaVersion ++ " -->")
+	      let conf = config (prefix params) (purgeTraces params)
+			 (scripted params) False
+	      ans <- tryIO (treelessView h conf (margin params)
+					 cmts preskel state)
+	      case ans of
+		Left err -> abort (show err)
+		Right () -> return ()
 
 -- LaTeX graphing.
 latex :: PosHandle -> Params -> IO ()
@@ -108,19 +108,19 @@ latex p params =
     do
       preskel <- tryIO (loadFirst p)
       case preskel of
-        Left err -> abort (show err)
-        Right (cmts, preskel, state) ->
-            do
-              h <- outputHandle (file params)
-              hPutStrLn h "\\documentclass[12pt]{article}"
-              hPutStrLn h ("% " ++ cpsaVersion)
-              let conf = config (prefix params) (purgeTraces params)
-                         (scripted params) False
-              let pp = printer conf
-              ans <- tryIO (latexView h (margin params) pp cmts preskel state)
-              case ans of
-                Left err -> abort (show err)
-                Right () -> return ()
+	Left err -> abort (show err)
+	Right (cmts, preskel, state) ->
+	    do
+	      h <- outputHandle (file params)
+	      hPutStrLn h "\\documentclass[12pt]{article}"
+	      hPutStrLn h ("% " ++ cpsaVersion)
+	      let conf = config (prefix params) (purgeTraces params)
+			 (scripted params) False
+	      let pp = printer conf
+	      ans <- tryIO (latexView h (margin params) pp cmts preskel state)
+	      case ans of
+		Left err -> abort (show err)
+		Right () -> return ()
 
 -- Command line option flags
 data Flag
@@ -162,48 +162,48 @@ options =
 interp :: [Flag] -> IO Params
 interp flags =
     loop flags (Params { file = Nothing, -- By default, no output file
-                         format = XHTML, -- and use expanded format
-                         prefix = True,
-                         purgeTraces = False,
-                         scripted = False,
-                         margin = defaultMargin })
+			 format = XHTML, -- and use expanded format
+			 prefix = True,
+			 purgeTraces = False,
+			 scripted = False,
+			 margin = defaultMargin })
     where
       loop [] params = return params
       loop (Output name : flags) params
-          | file params == Nothing =
-              loop flags $ params { file = Just name }
+	  | file params == Nothing =
+	      loop flags $ params { file = Just name }
       loop (Expanded : flags) params =
-          loop flags $ params { format = XHTML }
+	  loop flags $ params { format = XHTML }
       loop (Treeless : flags) params =
-          loop flags $ params { format = TreelessXHTML }
+	  loop flags $ params { format = TreelessXHTML }
       loop (Scripted : flags) params =
-          loop flags $ params { scripted = True }
+	  loop flags $ params { scripted = True }
       loop (Compact : flags) params =
-          loop flags $ params { format = SVG }
+	  loop flags $ params { format = SVG }
       loop (Text : flags) params =
-          loop flags $ params { format = LaTeX }
+	  loop flags $ params { format = LaTeX }
       loop (InfixFlag : flags) params =
-          loop flags $ params { prefix = False }
+	  loop flags $ params { prefix = False }
       loop (PurgeFlag : flags) params =
-          loop flags $ params { purgeTraces = True }
+	  loop flags $ params { purgeTraces = True }
       loop (Margin value : flags) params =
-          case readDec value of
-            [(margin, "")] ->
-                loop flags $ params { margin = margin }
-            _ ->
-                do
-                  msg <- usage options ["Bad value for margin\n"]
-                  abort msg
+	  case readDec value of
+	    [(margin, "")] ->
+		loop flags $ params { margin = margin }
+	    _ ->
+		do
+		  msg <- usage options ["Bad value for margin\n"]
+		  abort msg
       loop (Info : _) _ =
-          success cpsaVersion
+	  success cpsaVersion
       loop (Help : _) _ =
-          do                    -- Show help then exit with success
-            msg <- usage options []
-            success msg
+	  do                    -- Show help then exit with success
+	    msg <- usage options []
+	    success msg
       loop _ _ =
-           do                   -- Show help then exit with failure
-             msg <- usage options ["Bad option combination\n"]
-             abort msg
+	   do                   -- Show help then exit with failure
+	     msg <- usage options ["Bad option combination\n"]
+	     abort msg
 
 -- Default configuration.  The lengths are in points, however the more
 -- natural choice is a font relative unit of length such as ems,
@@ -211,22 +211,22 @@ interp flags =
 config :: Bool -> Bool -> Bool -> Bool -> Config
 config prefix purge scripts compact =
     Config { units = "pt",
-             font = font,
-             stroke = 0.08 * font,
-             dash = 0.50 * font,
-             gap = 0.20 * font,
-             tx = 4.16 * font,
-             ty = 6.25 * font,
-             ta = 1.75 * font,
-             td = 1.16 * font,
-             dx = 8.33 * font,
-             dy = 6.25 * font,
-             mx = 3.33 * font,
-             my = 3.33 * font,
-             br = 0.50 * font,
-             compact = compact,
-             notation = if prefix then Prefix else Infix,
-             purge = purge,
-             scripts = scripts }
+	     font = font,
+	     stroke = 0.08 * font,
+	     dash = 0.50 * font,
+	     gap = 0.20 * font,
+	     tx = 4.16 * font,
+	     ty = 6.25 * font,
+	     ta = 1.75 * font,
+	     td = 1.16 * font,
+	     dx = 8.33 * font,
+	     dy = 6.25 * font,
+	     mx = 3.33 * font,
+	     my = 3.33 * font,
+	     br = 0.50 * font,
+	     compact = compact,
+	     notation = if prefix then Prefix else Infix,
+	     purge = purge,
+	     scripts = scripts }
     where
       font = 12

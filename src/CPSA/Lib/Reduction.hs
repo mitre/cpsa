@@ -37,8 +37,8 @@ wrt p h sexpr =
 -- A labeled and linked preskeleton
 data LPreskel t g s e
     = LPreskel { content :: Preskel t g s e,
-                 label :: Int,
-                 parent :: Maybe (LPreskel t g s e) }
+		 label :: Int,
+		 parent :: Maybe (LPreskel t g s e) }
       deriving Show
 
 -- A skeleton that has been seen before need not be reanalyzed.
@@ -51,7 +51,7 @@ type IPreskel t g s e = (Gist t g, Int)
 -- Is the skeleton summarized by gist g isomorphic to one with the
 -- given label?
 wasSeen :: Algebra t p g s e c => Gist t g ->
-           IPreskel t g s e -> Bool
+	   IPreskel t g s e -> Bool
 wasSeen g (g', _) = isomorphic g g'
 
 -- A seen history as a list.
@@ -64,12 +64,12 @@ hist ik = Seen [ik]
 
 -- Add an element to the seen history.
 remember :: Algebra t p g s e c => IPreskel t g s e ->
-            Seen t g s e -> Seen t g s e
+	    Seen t g s e -> Seen t g s e
 remember ik (Seen seen) = Seen (ik : seen)
 
 -- Find an element of the seen history that satisfies a predicate.
 recall :: Algebra t p g s e c => (IPreskel t g s e -> Bool) ->
-          Seen t g s e -> Maybe (IPreskel t g s e)
+	  Seen t g s e -> Maybe (IPreskel t g s e)
 recall f (Seen seen) = L.find f seen
 
 -- Create an empty seen history
@@ -78,7 +78,7 @@ void = Seen []
 
 -- Merge two seen histories.
 merge :: Algebra t p g s e c => Seen t g s e ->
-         Seen t g s e -> Seen t g s e
+	 Seen t g s e -> Seen t g s e
 merge (Seen xs) (Seen ys) = Seen (xs ++ ys)
 
 -- Contains the result of applying the cohort reduction rule.  The
@@ -104,63 +104,63 @@ parMap = map
 
 -- Entry point for analysis
 solve :: Algebra t p g s e c => Options -> Handle ->
-         [Preskel t g s e] -> Int -> IO ()
+	 [Preskel t g s e] -> Int -> IO ()
 solve _ h [] _ =                -- Done
     hClose h
 solve p h (k : ks) n =
     do
       wrt p h (displayProt (protocol k)) -- show protocol
       case firstSkeleton k of
-        [] ->                  -- Input cannot be made into a skeleton
-            do
-              let lk = LPreskel k n Nothing
-              wrt p h (commentPreskel lk [] (unrealized k) False
-                       "Input cannot be made into a skeleton--nothing to do")
-              solve p h ks (n + 1)
-        [k'] ->
-            if isomorphic (gist k) (gist k') then -- Input was a skeleton
-                let lk' = LPreskel k' n Nothing in
-                begin p h ks (n + optLimit p) (n + 1)
-                         (hist (gist k', n)) [lk']
-            else                -- Input was not a skeleton
-                do
-                  let lk = LPreskel k n Nothing
-                  wrt p h (commentPreskel lk [] (unrealized k) False
-                           "Not a skeleton")
-                  let lk' = LPreskel k' (n + 1) (Just lk)
-                  begin p h ks (n + optLimit p) (n + 2)
-                           (hist (gist k', n + 1))  [lk']
-        _ -> error "Main.solve: can't handle more than one skeleton"
+	[] ->                  -- Input cannot be made into a skeleton
+	    do
+	      let lk = LPreskel k n Nothing
+	      wrt p h (commentPreskel lk [] (unrealized k) False
+		       "Input cannot be made into a skeleton--nothing to do")
+	      solve p h ks (n + 1)
+	[k'] ->
+	    if isomorphic (gist k) (gist k') then -- Input was a skeleton
+		let lk' = LPreskel k' n Nothing in
+		begin p h ks (n + optLimit p) (n + 1)
+			 (hist (gist k', n)) [lk']
+	    else                -- Input was not a skeleton
+		do
+		  let lk = LPreskel k n Nothing
+		  wrt p h (commentPreskel lk [] (unrealized k) False
+			   "Not a skeleton")
+		  let lk' = LPreskel k' (n + 1) (Just lk)
+		  begin p h ks (n + optLimit p) (n + 2)
+			   (hist (gist k', n + 1))  [lk']
+	_ -> error "Main.solve: can't handle more than one skeleton"
 
 -- Begin by collapsing the point-of-view skeleton as much as possible.
 begin :: Algebra t p g s e c => Options -> Handle ->
-         [Preskel t g s e] -> Int -> Int -> Seen t g s e ->
-         [LPreskel t g s e] -> IO ()
+	 [Preskel t g s e] -> Int -> Int -> Seen t g s e ->
+	 [LPreskel t g s e] -> IO ()
 begin p h ks m n seen todo =
     search p h ks m n seen todo []
 
 -- Apply collapse until all possibilities are exhausted.
 search :: Algebra t p g s e c => Options -> Handle ->
-            [Preskel t g s e] -> Int -> Int -> Seen t g s e ->
-            [LPreskel t g s e] -> [LPreskel t g s e] -> IO ()
+	    [Preskel t g s e] -> Int -> Int -> Seen t g s e ->
+	    [LPreskel t g s e] -> [LPreskel t g s e] -> IO ()
 search p h ks m n seen [] done =
     mode p h ks m n seen (reverse done)
 search p h ks m n seen (lk:todo) done =
     do
       let kids = collapse (content lk)
       let (n', seen', todo', _) =
-              foldl (next lk) (n, seen, todo, []) kids
+	      foldl (next lk) (n, seen, todo, []) kids
       search p h ks m n' seen' todo' (lk:done)
 
 -- Select reduction mode, noIsoChk or normal
 mode :: Algebra t p g s e c => Options -> Handle ->
-        [Preskel t g s e] -> Int -> Int -> Seen t g s e ->
-        [LPreskel t g s e] -> IO ()
+	[Preskel t g s e] -> Int -> Int -> Seen t g s e ->
+	[LPreskel t g s e] -> IO ()
 mode p h ks m n seen todo =
     if optNoIsoChk p then
-        fast p h ks m n todo     -- Peform no isomorphism checks
+	fast p h ks m n todo     -- Peform no isomorphism checks
     else
-        breadth p h ks m n seen todo []
+	breadth p h ks m n seen todo []
 
 -- The main loop is implemented using breadth and step.  Tail calls
 -- are used to ensure they do not add to the control stack.
@@ -177,8 +177,8 @@ mode p h ks m n seen todo =
 -- todo holds unreduced skeletons
 -- tobig holds skeletons that have exceed the strand bound.
 breadth :: Algebra t p g s e c => Options -> Handle ->
-           [Preskel t g s e] -> Int -> Int -> Seen t g s e ->
-           [LPreskel t g s e] -> [LPreskel t g s e] -> IO ()
+	   [Preskel t g s e] -> Int -> Int -> Seen t g s e ->
+	   [LPreskel t g s e] -> [LPreskel t g s e] -> IO ()
 breadth p h ks _ n _ [] [] =       -- Empty todo list and tobig list
     do
       wrt p h (comment "Nothing left to do")
@@ -192,56 +192,56 @@ breadth p h ks m n seen todo tobig =
 
 -- Function step handles one skeleton in one level of the tree.
 step :: Algebra t p g s e c => Options -> Handle ->
-        [Preskel t g s e] -> Int -> Seen t g s e -> Int ->
-        Seen t g s e -> [LPreskel t g s e] ->
-        [LPreskel t g s e] -> [Reduct t g s e] -> IO ()
+	[Preskel t g s e] -> Int -> Seen t g s e -> Int ->
+	Seen t g s e -> [LPreskel t g s e] ->
+	[LPreskel t g s e] -> [Reduct t g s e] -> IO ()
 step p h ks m oseen n seen todo tobig [] = -- Empty reducts
     breadth p h ks m n (merge seen oseen) (reverse todo) tobig
 step p h _ m _ n _ todo tobig reducts
     | n > m =                   -- Check step count
-        do
-          wrt p h (comment "Step limit exceeded--aborting run")
-          dump p h (mktodo reducts todo tobig) "Step limit exceeded"
+	do
+	  wrt p h (comment "Step limit exceeded--aborting run")
+	  dump p h (mktodo reducts todo tobig) "Step limit exceeded"
 step p h ks m oseen n seen todo tobig (Reduct lk _ _  _  _ : reducts)
     | nstrands (content lk) >= optBound p = -- Check strand count
-        step p h ks m oseen n seen todo (lk : tobig) reducts
+	step p h ks m oseen n seen todo (lk : tobig) reducts
 step p h ks m oseen n seen todo tobig (Reduct lk size cols kids dups : reducts)
     | size <= 0 =               -- Interpret empty reducts
-        do
-          let ns = unrealized (content lk)
-          let shape = null ns
-          wrt p h (commentPreskel lk [] ns shape
-                   (if shape then "" else "empty cohort"))
-          step p h ks m oseen n seen todo tobig reducts
+	do
+	  let ns = unrealized (content lk)
+	  let shape = null ns
+	  wrt p h (commentPreskel lk [] ns shape
+		   (if shape then "" else "empty cohort"))
+	  step p h ks m oseen n seen todo tobig reducts
     | otherwise =
-        do
-          let (n', seen', todo', dups') =
-                  foldl (next lk) (n, seen, todo, dups) kids
-          let ns = unrealized (content lk)
-          let u = size - length dups'
-          let msg = shows size $ showString " in cohort - " $
-                         shows u " not yet seen"
-          wrt p h (commentPreskel lk (reverse dups') ns cols msg)
-          step p h ks m oseen n' seen' todo' tobig reducts
+	do
+	  let (n', seen', todo', dups') =
+		  foldl (next lk) (n, seen, todo, dups) kids
+	  let ns = unrealized (content lk)
+	  let u = size - length dups'
+	  let msg = shows size $ showString " in cohort - " $
+			 shows u " not yet seen"
+	  wrt p h (commentPreskel lk (reverse dups') ns cols msg)
+	  step p h ks m oseen n' seen' todo' tobig reducts
 
 -- Expands one branch in the derivation tree.
 branch :: Algebra t p g s e c => Options -> Seen t g s e ->
-          LPreskel t g s e -> Reduct t g s e
+	  LPreskel t g s e -> Reduct t g s e
 branch p seen lk =
     Reduct lk (length kids) cols
-               (seqList $ reverse unseen) (seqList dups)
+	       (seqList $ reverse unseen) (seqList dups)
     where
       kids = reduce (mkMode p) (content lk)
       cols = all collapsed kids
       (unseen, dups) =
-          foldl (duplicates seen) ([], []) kids
+	  foldl (duplicates seen) ([], []) kids
 
 mkMode :: Options -> Mode
 mkMode p =
     Mode { noGeneralization = optNoIsoChk p,
-           nonceFirstOrder = optCheckNoncesFirst p,
-           visitOldStrandsFirst = optTryOldStrandsFirst p,
-           reverseNodeOrder = optTryYoungNodesFirst p}
+	   nonceFirstOrder = optCheckNoncesFirst p,
+	   visitOldStrandsFirst = optTryOldStrandsFirst p,
+	   reverseNodeOrder = optTryYoungNodesFirst p}
 
 -- Is preskeleton the result of a collapsing operation?
 collapsed :: Algebra t p g s e c => Preskel t g s e -> Bool
@@ -251,8 +251,8 @@ collapsed k =
       _ -> False
 
 duplicates :: Algebra t p g s e c => Seen t g s e ->
-              ([Preskel t g s e], [Int]) ->
-                  Preskel t g s e -> ([Preskel t g s e], [Int])
+	      ([Preskel t g s e], [Int]) ->
+		  Preskel t g s e -> ([Preskel t g s e], [Int])
 duplicates seen (unseen, dups) kid =
     case recall (wasSeen $ gist kid) seen of
       Just (_, label) -> (unseen, label : dups)
@@ -260,8 +260,8 @@ duplicates seen (unseen, dups) kid =
 
 -- Make a todo list for dump
 mktodo :: Algebra t p g s e c => [Reduct t g s e] ->
-          [LPreskel t g s e] -> [LPreskel t g s e] ->
-          [LPreskel t g s e]
+	  [LPreskel t g s e] -> [LPreskel t g s e] ->
+	  [LPreskel t g s e]
 mktodo reducts todo tobig =
     map (\(Reduct lk _ _ _ _) -> lk) reducts ++ reverse todo ++ reverse tobig
 
@@ -270,36 +270,36 @@ type Next t p g s e c =
 
 -- Update state variables used by step.
 next :: Algebra t p g s e c => LPreskel t g s e ->
-        Next t p g s e c -> Preskel t g s e ->
-        Next t p g s e c
+	Next t p g s e c -> Preskel t g s e ->
+	Next t p g s e c
 next p (n, seen, todo, dups) k =
     let g = gist k in
     case recall (wasSeen g) seen of
       Just (_, label) ->
-          (n, seen, todo, label : dups)
+	  (n, seen, todo, label : dups)
       Nothing ->
-          (n + 1, remember (g, n) seen, lk : todo, dups)
-          where
-            lk = LPreskel k n (Just p) -- Label a preskeleton here
+	  (n + 1, remember (g, n) seen, lk : todo, dups)
+	  where
+	    lk = LPreskel k n (Just p) -- Label a preskeleton here
 
 -- This function reduces without checking for isomorphisms
 fast :: Algebra t p g s e c => Options -> Handle ->
-        [Preskel t g s e] -> Int -> Int ->
-        [LPreskel t g s e] -> IO ()
+	[Preskel t g s e] -> Int -> Int ->
+	[LPreskel t g s e] -> IO ()
 fast p h ks _ n [] =            -- Empty todo list
     do
       wrt p h (comment "Nothing left to do")
       solve p h ks n
 fast p h _ m n todo
     | n > m =                   -- Check step count
-        do
-          wrt p h (comment "Step limit exceeded--aborting run")
-          dump p h todo "Step limit exceeded"
+	do
+	  wrt p h (comment "Step limit exceeded--aborting run")
+	  dump p h todo "Step limit exceeded"
 fast p h _ _ _ todo@(lk : _)
     | nstrands (content lk) >= optBound p = -- Check strand count
-        do
-          wrt p h (comment "Strand bound exceeded--aborting run")
-          dump p h todo "Strand bound exceeded"
+	do
+	  wrt p h (comment "Strand bound exceeded--aborting run")
+	  dump p h todo "Strand bound exceeded"
 fast p h ks m n (lk : todo) =
     do
       let ns = unrealized (content lk)
@@ -310,14 +310,14 @@ fast p h ks m n (lk : todo) =
       fast p h ks m n' (todo ++ reverse todo')
 
 children :: Algebra t p g s e c => LPreskel t g s e ->
-            (Int, [LPreskel t g s e]) ->
-            Preskel t g s e -> (Int, [LPreskel t g s e])
+	    (Int, [LPreskel t g s e]) ->
+	    Preskel t g s e -> (Int, [LPreskel t g s e])
 children p (n, todo) k =        -- Label a preskeleton here
     (n + 1, LPreskel k n (Just p) : todo)
 
 -- Print partial results in a form that works with analysis tools
 dump :: Algebra t p g s e c => Options -> Handle ->
-        [LPreskel t g s e] -> String -> IO ()
+	[LPreskel t g s e] -> String -> IO ()
 dump _ h [] msg =
     do
       hClose h
@@ -332,13 +332,13 @@ dump p h (lk : lks) msg =
 -- to some members of this skeleton's cohort, and a list of unrealized
 -- nodes.  If it's a shape, note this fact.  Add a comment if present.
 commentPreskel :: Algebra t p g s e c => LPreskel t g s e ->
-                  [Int] -> [Node] -> Bool -> String -> SExpr ()
+		  [Int] -> [Node] -> Bool -> String -> SExpr ()
 commentPreskel lk seen unrealized shape msg =
     displayPreskel k $
     addKeyValues "label" [N () (label lk)] $
     maybeAddVKeyValues "parent" (\p -> [N () (label p)]) (parent lk) $
     condAddKeyValues "seen" (not $ null seen)
-                     (map (N ()) (L.sort (L.nub seen))) $
+		     (map (N ()) (L.sort (L.nub seen))) $
     addKeyValues "unrealized" (map displayNode $ L.sort unrealized) $
     condAddKeyValues "shape" shape [] $
     condAddKeyValues "satisfies" (shape && (not $ null $ kgoals k))
@@ -358,9 +358,9 @@ commentPreskel lk seen unrealized shape msg =
     where
       k = content lk
       starter k =               -- True for the POV skeleton and
-          case pov k of         -- just a few others
-            Nothing -> False
-            Just k' -> nstrands k == nstrands k'
+	  case pov k of         -- just a few others
+	    Nothing -> False
+	    Just k' -> nstrands k == nstrands k'
 
 addKeyValues :: String -> [SExpr ()] -> [SExpr ()] -> [SExpr ()]
 addKeyValues key values rest =
@@ -373,7 +373,7 @@ condAddKeyValues key True values rest =
     addKeyValues key values rest
 
 maybeAddVKeyValues :: String -> (a -> [SExpr ()]) -> Maybe a ->
-                      [SExpr ()] -> [SExpr ()]
+		      [SExpr ()] -> [SExpr ()]
 maybeAddVKeyValues _ _ Nothing rest =
     rest
 maybeAddVKeyValues key f (Just x) rest =
@@ -397,10 +397,10 @@ maps k =
       amap strands env = L () [L () strands, L () env]
       strandMap k = map (N ()) (prob k)
       envMaps k =
-          case pov k of
-            Nothing -> []
-            Just k' ->
-                map (displayEnv (ctx k') (ctx k)) (homomorphism k' k (prob k))
+	  case pov k of
+	    Nothing -> []
+	    Just k' ->
+		map (displayEnv (ctx k') (ctx k)) (homomorphism k' k (prob k))
       ctx k = addToContext emptyContext (kvars k)
 
 -- Prints the nodes of origination for each uniquely originating atom

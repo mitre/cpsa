@@ -32,12 +32,12 @@ main =
       writeComment h margin cpsaVersion
       writeComment h margin "Protocols annotated with their parameters"
       case () of
-        _ | alg == CPSA.Basic.Algebra.name ->
-              go (step h alg CPSA.Basic.Algebra.origin margin) p
-          | alg == CPSA.DiffieHellman.Algebra.name ->
-              go (step h alg CPSA.DiffieHellman.Algebra.origin margin) p
-          | otherwise ->
-               abort ("Bad algebra: " ++ alg)
+	_ | alg == CPSA.Basic.Algebra.name ->
+	      go (step h alg CPSA.Basic.Algebra.origin margin) p
+	  | alg == CPSA.DiffieHellman.Algebra.name ->
+	      go (step h alg CPSA.DiffieHellman.Algebra.origin margin) p
+	  | otherwise ->
+	       abort ("Bad algebra: " ++ alg)
       hClose h
 
 go :: (SExpr Pos -> IO ()) -> PosHandle -> IO ()
@@ -45,23 +45,23 @@ go f p =
     loop
     where
       loop =
-          do
-            x <- readSExpr p
-            case x of
-              Nothing ->
-                  return ()
-              Just sexpr ->
-                  do
-                    f sexpr
-                    loop
+	  do
+	    x <- readSExpr p
+	    case x of
+	      Nothing ->
+		  return ()
+	      Just sexpr ->
+		  do
+		    f sexpr
+		    loop
 
 step :: Algebra t p g s e c => Handle ->
-        String -> g -> Int -> SExpr Pos -> IO ()
+	String -> g -> Int -> SExpr Pos -> IO ()
 step output name origin margin sexpr =
     do
       sexpr <- tryIO (dataFlow name origin sexpr)
       case sexpr of
-        Right sexpr ->
-            writeLnSEexpr output margin sexpr
-        Left err ->
-            abort (show err)
+	Right sexpr ->
+	    writeLnSEexpr output margin sexpr
+	Left err ->
+	    abort (show err)

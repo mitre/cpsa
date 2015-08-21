@@ -159,13 +159,13 @@ stringLoad s =
       loop h []
     where
       loop h xs =
-          do
-            x <- C.load h
-            case x of
-              Nothing ->
-                return $ reverse xs
-              Just x ->
-                loop h (x : xs)
+	  do
+	    x <- C.load h
+	    case x of
+	      Nothing ->
+		return $ reverse xs
+	      Just x ->
+		loop h (x : xs)
 
 sLoad :: String -> [[SExpr Pos]]
 sLoad s =
@@ -184,7 +184,7 @@ iMatch vars t t' =
     iRun match emptyEnv vars t t'
 
 iRun :: (Term -> Term -> (Gen, a) -> [(Gen, a)]) -> a ->
-        String -> String -> String -> [a]
+	String -> String -> String -> [a]
 iRun f mt vars t t' =
     do
       vars <- sLoad vars
@@ -201,9 +201,9 @@ gRun (Gen n) t a =
     foldVars f a t
     where
       f a t =
-          case varId t of
-            Id (m, _) | m >= n -> error ("Bad gen " ++ show n)
-            _ -> a
+	  case varId t of
+	    Id (m, _) | m >= n -> error ("Bad gen " ++ show n)
+	    _ -> a
 
 gMatch :: Term -> Term -> GenEnv -> [GenEnv]
 gMatch t t' r@(g, _) = gRun g t' (match t t' r)
@@ -457,8 +457,8 @@ termsWellFormed u =
     loop _ [] = True
     loop env (t : u) =
       case termWellFormed env t of
-        Nothing -> False
-        Just env' -> loop env' u
+	Nothing -> False
+	Just env' -> loop env' u
 
 newtype VarEnv = VarEnv (Map Id Term) deriving Show
 
@@ -499,8 +499,8 @@ termWellFormed xts (F Base [t]) =
       Just xts
     baseVarEnv xts (F Exp [t0, G t1]) =
       do
-        xts <- baseVarEnv xts t0
-        termWellFormed xts (G t1)
+	xts <- baseVarEnv xts t0
+	termWellFormed xts (G t1)
     baseVarEnv _ _ = Nothing
 termWellFormed xts (G t) =
   foldM exprVarEnv xts (M.assocs t)
@@ -551,8 +551,8 @@ occursIn t t' | isVar t =
     recur t t' =
       t == t' ||
       case t' of
-        F _ u -> any (recur t) u
-        _ -> False
+	F _ u -> any (recur t) u
+	_ -> False
 occursIn t _ = error $ "Algebra.occursIn: Bad variable " ++ show t
 
 -- Fold f through a term applying it to each variable in the term.
@@ -634,7 +634,7 @@ buildable knowns unguessable term =
       | S.member t knowns || bb t' = True
     ba t@(G t')
       | hasFluff unguessable t' = -- Expunge guessable part
-        ba (defluff unguessable t')
+	ba (defluff unguessable t')
       | S.member t knowns || M.null t' = True -- t known or is one
     ba t = isAtom t && S.notMember t unguessable
     -- Buildable base term
@@ -642,9 +642,9 @@ buildable knowns unguessable term =
     bb (F Genr []) = True       -- and so is the generator
     bb t@(F Exp [t0, G t1])
       | hasFluff unguessable t1 = -- Expunge guessable part
-        bb (F Exp [t0, defluff unguessable t1])
+	bb (F Exp [t0, defluff unguessable t1])
       | otherwise =          -- t known or base and exponent buildable
-        S.member (F Base [t]) knowns || ba (G t1) && ba t0
+	S.member (F Base [t]) knowns || ba (G t1) && ba t0
     bb (_) = False
 
 -- Compute the decomposition given some known terms and some unguessable
@@ -662,29 +662,29 @@ decompose knowns unguessable =
       loop unguessable (decat t (S.delete t knowns)) old todo
     loop unguessable knowns old ((F Enc [t0, t1]) : todo)
       | buildable knowns unguessable (inv t1) = -- Add plaintext
-        loop unguessable (decat t0 knowns) old todo
+	loop unguessable (decat t0 knowns) old todo
       | otherwise = loop unguessable knowns old todo
     loop unguessable knowns old (G t : todo)
       | M.null t =
-        loop unguessable (S.delete (G t) knowns) old todo
+	loop unguessable (S.delete (G t) knowns) old todo
       | hasFluff unguessable t =
-        loop unguessable
-        (S.insert (defluff unguessable t) (S.delete (G t) knowns))
-        old todo
+	loop unguessable
+	(S.insert (defluff unguessable t) (S.delete (G t) knowns))
+	old todo
     loop unguessable knowns old (t@(F Base [F Exp [t0, G t1]]) : todo)
       | M.null t1 =
-        loop unguessable
-        (S.insert (F Base [t0]) (S.delete t knowns))
-        old todo
+	loop unguessable
+	(S.insert (F Base [t0]) (S.delete t knowns))
+	old todo
       | hasFluff unguessable t1 = -- Expunge guessable part
-        loop unguessable
-        (S.insert (F Base [F Exp [t0, t1']]) (S.delete t knowns))
-        old todo
+	loop unguessable
+	(S.insert (F Base [F Exp [t0, t1']]) (S.delete t knowns))
+	old todo
       where
-        t1' = defluff unguessable t1
+	t1' = defluff unguessable t1
     loop unguessable knowns old (t : todo)
       | isAtom t =
-        loop (S.delete t unguessable) (S.delete t knowns) old todo
+	loop (S.delete t unguessable) (S.delete t knowns) old todo
       | otherwise = loop unguessable knowns old todo
     -- Decat
     decat (F Cat [t0, t1]) s = decat t1 (decat t0 s)
@@ -756,12 +756,12 @@ protectors derivable target source =
       maybe Nothing (bare t') (bare t acc)
     bare t@(F Enc [t', key]) acc =
       if target `carriedBy` t' then
-        if derivable (inv key) then
-          bare t' acc
-        else
-          Just (S.insert t acc)
+	if derivable (inv key) then
+	  bare t' acc
+	else
+	  Just (S.insert t acc)
       else
-        Just acc
+	Just acc
     bare _ acc = Just acc
 
 -- FIX ME!  Needs updating for Diffie-Hellman
@@ -907,30 +907,30 @@ clone gen t =
     (_, gen', t') = cloneTerm ([], gen) t
     cloneTerm (alist, gen) t =
       case t of                 -- The association list maps
-        I x ->                  -- identifiers to identifier.
-          case lookup x alist of
-            Just y -> (alist, gen, I y)
-            Nothing ->
-              let (gen', y) = cloneId gen x in
-              ((x, y) : alist, gen', I y)
-        C c -> (alist, gen, C c)
-        F sym u ->
-          let (alist', gen', u') =
-                foldl cloneTermList (alist, gen, []) u in
-          (alist', gen', F sym $ reverse u')
-        G t ->
-          let (alist', gen', ts) =
-                M.foldlWithKey cloneGroupList (alist, gen, []) t in
-          (alist', gen', G $ group ts)
+	I x ->                  -- identifiers to identifier.
+	  case lookup x alist of
+	    Just y -> (alist, gen, I y)
+	    Nothing ->
+	      let (gen', y) = cloneId gen x in
+	      ((x, y) : alist, gen', I y)
+	C c -> (alist, gen, C c)
+	F sym u ->
+	  let (alist', gen', u') =
+		foldl cloneTermList (alist, gen, []) u in
+	  (alist', gen', F sym $ reverse u')
+	G t ->
+	  let (alist', gen', ts) =
+		M.foldlWithKey cloneGroupList (alist, gen, []) t in
+	  (alist', gen', G $ group ts)
     cloneTermList (alist, gen, u) t =
       let (alist', gen', t') = cloneTerm (alist, gen) t in
       (alist', gen', t' : u)
     cloneGroupList (alist, gen, ts) x (be, c) =
       case lookup x alist of
-        Just y -> (alist, gen, (y, (be, c)) : ts)
-        Nothing ->
-          let (gen', y) = cloneId gen x in
-          ((x, y) : alist, gen', (y, (be, c)) : ts)
+	Just y -> (alist, gen, (y, (be, c)) : ts)
+	Nothing ->
+	  let (gen', y) = cloneId gen x in
+	  ((x, y) : alist, gen', (y, (be, c)) : ts)
 
 instance C.Gen Term Gen where
   origin = origin
@@ -957,8 +957,8 @@ idSubst subst (F Exp [t0, G t1]) =
   case idSubst subst t0 of    -- (exp (exp g x) y) = (exp g (mul x y))
     F Exp [t0', G t1'] ->
       case mul t1' $ groupSubst subst t1 of
-        t2 | M.null t2 -> t0'
-           | otherwise -> F Exp [t0', G t2]
+	t2 | M.null t2 -> t0'
+	   | otherwise -> F Exp [t0', G t2]
     t -> expSubst subst t t1
 idSubst subst (F s u) =
   F s (map (idSubst subst) u)
@@ -969,7 +969,7 @@ expSubst :: IdMap -> Term -> Group -> Term
 expSubst subst t0 t1 =
   case groupSubst subst t1 of
     t1' | M.null t1' -> t0    -- (exp g (one)) = g
-        | otherwise -> F Exp [t0, G t1']
+	| otherwise -> F Exp [t0, G t1']
 
 groupSubst :: IdMap -> Group -> Group
 groupSubst subst t =
@@ -983,7 +983,7 @@ groupLookup subst be x =
   case M.findWithDefault (groupVar be x) x subst of
     G t -> t
     w -> error ("Algebra.groupLookup: Bad substitution: " ++
-                show x ++ " -> " ++ show w)
+		show x ++ " -> " ++ show w)
 
 showMap :: (Show a, Show b) => Map a b -> ShowS
 showMap m =
@@ -1128,9 +1128,9 @@ unifyExp (I x) t1 (F Genr []) t1' (g, Subst s)
     [(g, Subst $ M.insert x (F Genr []) s)]
   | otherwise =
     [(g, Subst (M.insert
-                x
-                (F Exp [F Genr [], G $ mul t1' (invert t1)])
-                s))]
+		x
+		(F Exp [F Genr [], G $ mul t1' (invert t1)])
+		s))]
 unifyExp (F Genr []) t1 (I x) t1' s =
   unifyExp (I x) t1' (F Genr []) t1 s
 unifyExp _ _ _ _ _ = []
@@ -1173,25 +1173,25 @@ substChase subst t =
     t@(I _) -> t
     t@(C _) -> t
     F Invk [t] ->
-        case substChase subst t of
-          F Invk [t] -> t           -- Apply axiom
-          t -> F Invk [t]
+	case substChase subst t of
+	  F Invk [t] -> t           -- Apply axiom
+	  t -> F Invk [t]
     F Exp [t0, G t1] ->
-        case substChase subst t0 of
-          F Exp [t0', G t1'] ->
-            case mul t1' $ groupChase subst t1 of
-              t2 | M.null t2 -> t0'
-                 | otherwise -> F Exp [t0', G t2]
-          t -> expChase subst t t1
+	case substChase subst t0 of
+	  F Exp [t0', G t1'] ->
+	    case mul t1' $ groupChase subst t1 of
+	      t2 | M.null t2 -> t0'
+		 | otherwise -> F Exp [t0', G t2]
+	  t -> expChase subst t t1
     F s u ->
-        F s (map (substChase subst) u)
+	F s (map (substChase subst) u)
     G t -> G $ groupChase subst t
 
 expChase :: Subst -> Term -> Group -> Term
 expChase subst t0 t1 =
   case groupChase subst t1 of
     t1' | M.null t1' -> t0
-        | otherwise -> F Exp [t0, G t1']
+	| otherwise -> F Exp [t0, G t1']
 
 groupChase :: Subst -> Group -> Group
 groupChase (Subst subst) t = groupSubst subst t
@@ -1256,7 +1256,7 @@ matchExp ::  Term -> Group -> Term -> Group -> GenEnv -> [GenEnv]
 matchExp (I x) t1 t0' t1' r@(_, Env (_, e)) =
   case M.lookup x e of
     Just (F Exp [t0'', G t1''])
-        | t0' == t0'' -> match (G t1) (G (mul t1' (invert t1''))) r
+	| t0' == t0'' -> match (G t1) (G (mul t1' (invert t1''))) r
     _ -> matchLists [I x, G t1] [t0', G t1'] r
 matchExp (F Genr []) t1 t0' t1' r =
   matchLists [F Genr [], G t1] [t0', G t1'] r
@@ -1281,7 +1281,7 @@ matchLists _ _ _ = []
 -- variables fresh generated and a generator.
 
 matchGroup ::  Group -> Group -> Set Id -> Gen ->
-               IdMap -> [(Set Id, Gen, IdMap)]
+	       IdMap -> [(Set Id, Gen, IdMap)]
 matchGroup t0 t1 v g r =
   let (t0', t1') = merge t0 t1 r       -- Apply subst to LHS
       (v', g', r') = genVars v g t0' r -- Gen vars for non-fresh vars
@@ -1299,12 +1299,12 @@ merge t t' r =
       (t0, t0') = loop (M.assocs t) ([], t')
       loop [] acc = acc
       loop (p@(x, (_, c)) : t0) (t1, t1') =
-          case M.lookup x r of
-            Nothing -> loop t0 (p : t1, t1')
-            Just (G t) ->
-                loop t0 (t1, mul (expg t (negate c)) t1')
-            Just t ->
-                error $ "Algebra.merge: expecting an expr but got " ++ show t
+	  case M.lookup x r of
+	    Nothing -> loop t0 (p : t1, t1')
+	    Just (G t) ->
+		loop t0 (t1, mul (expg t (negate c)) t1')
+	    Just t ->
+		error $ "Algebra.merge: expecting an expr but got " ++ show t
 
 -- Generate vars for each non-fleshly generated vars
 genVars :: Set Id -> Gen -> Group -> IdMap -> (Set Id, Gen, IdMap)
@@ -1314,7 +1314,7 @@ genVars v g t r =
     genVar (v, g, r) x (be, _) =
       (S.insert x' v, g', M.insert x (groupVar be x') r)
       where
-        (g', x') = cloneId g x
+	(g', x') = cloneId g x
 
 -- A set of decisions records expn variables that have been identified
 -- and those that are distinct.
@@ -1353,13 +1353,13 @@ partition t0 t1 v =
 -- Solve equation when there are no variables of sort expr on LHS.
 -- Treat all variables as constants.
 constSolve :: [Maplet] -> Set Id -> Gen -> IdMap ->
-              Decision Id -> [(Set Id, Gen, IdMap)]
+	      Decision Id -> [(Set Id, Gen, IdMap)]
 constSolve t v g r d
   | any (\(_, (be, _)) -> not be) t = [] -- Fail expr var is on RHS
   | otherwise = constSolve1 t v g r d    -- All vars are expn
 
 constSolve1 :: [Maplet] -> Set Id -> Gen ->
-               IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
+	       IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
 constSolve1 [] v g r _ = return (v, g, r)
 constSolve1 t v g r d =
   case orientDecis v $ nextDecis d t of
@@ -1367,15 +1367,15 @@ constSolve1 t v g r d =
     ((x, y):_) ->               -- Pick first undecided pair
       distinct ++ identified
       where
-        distinct = constSolve1 t v g r neq
-        neq = d {dist = (x, y):(y, x):dist d} -- Add new constraints
-        -- eliminate x
-        identified = constSolve1 t' v' g r' d'
-        t' = identify x y t     -- Equate x y in t
-        v' = S.delete x v       -- Eliminate x in v
-        r' = eliminate x y' r   -- And in r
-        y' = groupVar True y
-        d' = d {same = (x, y):same d} -- And note decision
+	distinct = constSolve1 t v g r neq
+	neq = d {dist = (x, y):(y, x):dist d} -- Add new constraints
+	-- eliminate x
+	identified = constSolve1 t' v' g r' d'
+	t' = identify x y t     -- Equate x y in t
+	v' = S.delete x v       -- Eliminate x in v
+	r' = eliminate x y' r   -- And in r
+	y' = groupVar True y
+	d' = d {same = (x, y):same d} -- And note decision
 
 -- Find a pair of variables for which no decision has been made.
 nextDecis :: Decision Id -> [Maplet] -> [(Id, Id)]
@@ -1390,10 +1390,10 @@ nextDecis d t =
       u == v ||
       any f (dist d)
       where
-        u = chase x       -- Find canonical representitive for x and y
-        v = chase y
-        f (w, z) = chase w == u && chase z == v
-        chase = listChase (same d)
+	u = chase x       -- Find canonical representitive for x and y
+	v = chase y
+	f (w, z) = chase w == u && chase z == v
+	chase = listChase (same d)
 
 -- Find canonical representive of the set of identified variables.
 listChase :: Eq t => [(t, t)] -> t -> t
@@ -1416,14 +1416,14 @@ identify :: Id -> Id -> [Maplet] -> [Maplet]
 identify x y t =
   case lookup x t of
     Nothing -> error ("Algebra.identify: bad lookup of " ++ show x
-                      ++ " in " ++ show t)
+		      ++ " in " ++ show t)
     Just (_, c) ->
       filter f (map g t)
       where
-        f (z, (_, c)) = z /= x && c /= 0
-        g m@(z, (be, d))
-          | z == y = (z, (be, c + d))
-          | otherwise = m
+	f (z, (_, c)) = z /= x && c /= 0
+	g m@(z, (be, d))
+	  | z == y = (z, (be, c + d))
+	  | otherwise = m
 
 -- Solve when variables of sort expr are on LHS.  This involves
 -- solving using the group axioms.  The algorithm for matching in the
@@ -1479,7 +1479,7 @@ identify x y t =
 --      c[i]*x[n] + sum[j] (c[j] mod c[i])*x[j] = d[k] for all k
 
 solve ::  [Maplet] -> [Maplet] -> Set Id -> Gen ->
-          IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
+	  IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
 solve t0 t1 v g r d =
   let (x, ci, i) = smallest t0 in -- ci is the smallest coefficient,
   case compare ci 0 of            -- x is its variable, i its position
@@ -1498,13 +1498,13 @@ smallest t =
     loop v ci i _ _ [] = (v, ci, i)
     loop v ci i a j ((x, (_, c)):t) =
       if a < abs c then
-        loop x c j (abs c) (j + 1) t
+	loop x c j (abs c) (j + 1) t
       else
-        loop v ci i a (j + 1) t
+	loop v ci i a (j + 1) t
 
 -- The group axioms are abbreviated by AG.
 agSolve :: Id -> Int -> Int -> [Maplet] -> [Maplet] -> Set Id -> Gen ->
-          IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
+	  IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
 agSolve x 1 i t0 t1 v g r _ =    -- Solve for x and return answer
   return (S.delete x v, g, eliminate x t r) -- Step 3
   where
@@ -1518,11 +1518,11 @@ agSolve x ci i t0 t1 v g r d
   | otherwise =                 -- Step 5, eliminate x in favor of x'
       solve t0' t1 (S.insert x' $ S.delete x v) g' r' d
       where
-        (g', x') = cloneId g x
-        t = G $ group ((x', (False, 1)) :
-                       mInverse (divide ci (omit i t0)))
-        r' = eliminate x t r
-        t0' = (x', (False, ci)) : modulo ci (omit i t0)
+	(g', x') = cloneId g x
+	t = G $ group ((x', (False, 1)) :
+		       mInverse (divide ci (omit i t0)))
+	r' = eliminate x t r
+	t0' = (x', (False, ci)) : modulo ci (omit i t0)
 
 eliminate :: Id -> Term -> IdMap -> IdMap
 eliminate x t r =
@@ -1550,22 +1550,22 @@ modulo ci t =
 
 -- Explore two choices as to whether to identify a pair of variables.
 identSolve :: Id -> Int -> Int -> [Maplet] -> [Maplet] -> Set Id -> Gen ->
-              IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
+	      IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
 identSolve z ci i t0 t1 v g r d =
   case orientDecis v $ nextDecis d t1 of
     [] -> []
     ((x, y):_) ->
       distinct ++ identified
       where
-        distinct = identSolve z ci i t0 t1 v g r neq
-        neq = d {dist = (x, y):(y, x):dist d}
-        -- eliminate x
-        identified = agSolve z ci i t0 t1' v' g r' d'
-        t1' = identify x y t1   -- Equate x y in t1
-        v' = S.delete x v       -- Eliminate x in v
-        r' = eliminate x y' r   -- And in r
-        y' = groupVar True y
-        d' = d {same = (x, y):same d}
+	distinct = identSolve z ci i t0 t1 v g r neq
+	neq = d {dist = (x, y):(y, x):dist d}
+	-- eliminate x
+	identified = agSolve z ci i t0 t1' v' g r' d'
+	t1' = identify x y t1   -- Equate x y in t1
+	v' = S.delete x v       -- Eliminate x in v
+	r' = eliminate x y' r   -- And in r
+	y' = groupVar True y
+	d' = d {same = (x, y):same d}
 
 -- Does every varible in ts not occur in the domain of e?
 -- Trivial bindings in e are ignored.
@@ -1599,7 +1599,7 @@ nonTrivialEnv (g, Env (v, r)) =
       | x == y = nonGroupEnv r env grp
     nonGroupEnv ((x, G y):r) env grp
       | isGroupVar y && getGroupVar y == x =
-        nonGroupEnv r env grp
+	nonGroupEnv r env grp
       | otherwise = nonGroupEnv r env ((x, y):grp)
     nonGroupEnv ((x, y):r) env grp =
       nonGroupEnv r (M.insert x y env) grp
@@ -1612,11 +1612,11 @@ groupEnv g v env grp ((x, t):map)
   | otherwise =
       let (t0, t1) = partition M.empty (mul t (M.singleton x (-1))) v in
       case matchGroup (group t0) (group t1) S.empty g of
-        Nothing -> groupEnv g v env grp map
-        Just (v', g', subst) ->
-            let grp' = L.delete (x, t) grp
-                grp'' = L.map (\(x, t) -> (x, groupSubst subst t)) grp' in
-            groupEnv g' (S.union v' v) env grp'' grp''
+	Nothing -> groupEnv g v env grp map
+	Just (v', g', subst) ->
+	    let grp' = L.delete (x, t) grp
+		grp'' = L.map (\(x, t) -> (x, groupSubst subst t)) grp' in
+	    groupEnv g' (S.union v' v) env grp'' grp''
 
 notGroupVarMap :: Id -> Group -> Bool
 notGroupVarMap x grp =
@@ -1696,8 +1696,8 @@ groupMatchRenaming v gen map =
     loop s (t:ge)
       | M.null t = False
       | isGroupVar t =
-        let x = getGroupVar t in
-        S.notMember x s && loop (S.insert x s) ge
+	let x = getGroupVar t in
+	S.notMember x s && loop (S.insert x s) ge
       | otherwise = any (groupMatchElim v gen map t) (M.assocs t)
 
 groupMatchElim :: Set Id -> Gen -> Map Id Group -> Group -> Maplet -> Bool
@@ -1737,30 +1737,30 @@ loadVarPair (L _ (x:xs)) =
 loadVarPair x = fail (shows (annotation x) "Bad variable declaration")
 
 loadVar :: Monad m => (Gen, [Term]) -> (SExpr Pos, SExpr Pos) ->
-           m (Gen, [Term])
+	   m (Gen, [Term])
 loadVar (gen, vars) (S pos name, S pos' sort) =
   case loadLookup pos vars name of
     Right _ ->
       fail (shows pos "Duplicate variable declaration for " ++ name)
     Left _ ->
       do
-        let (gen', x) = freshId gen name
-        p <- mkVar x
-        return (gen', p : vars)
+	let (gen', x) = freshId gen name
+	p <- mkVar x
+	return (gen', p : vars)
   where
     mkVar x =
       let t = I x in
       case sort of
-        "mesg" -> return t
-        "text" -> return $ F Text [t]
-        "data" -> return $ F Data [t]
-        "name" -> return $ F Name [t]
-        "skey" -> return $ F Skey [t]
-        "akey" -> return $ F Akey [t]
-        "base" -> return $ F Base [t]
-        "expr" -> return $ groupVar False x
-        "expn" -> return $ groupVar True x
-        _ -> fail (shows pos' "Sort " ++ sort ++ " not recognized")
+	"mesg" -> return t
+	"text" -> return $ F Text [t]
+	"data" -> return $ F Data [t]
+	"name" -> return $ F Name [t]
+	"skey" -> return $ F Skey [t]
+	"akey" -> return $ F Akey [t]
+	"base" -> return $ F Base [t]
+	"expr" -> return $ groupVar False x
+	"expn" -> return $ groupVar True x
+	_ -> fail (shows pos' "Sort " ++ sort ++ " not recognized")
 loadVar _ (x,_) = fail (shows (annotation x) "Bad variable syntax")
 
 loadLookup :: Pos -> [Term] -> String -> Either String Term
@@ -1903,8 +1903,8 @@ loadMul _ vars xs =
   where
     f acc x =
       do
-        t <- loadExpr vars x
-        return $ mul t acc
+	t <- loadExpr vars x
+	return $ mul t acc
 
 -- Term constructors: cat enc
 
@@ -2011,9 +2011,9 @@ displayTerm ctx (G t) =
     displayExpr t
       | M.null t = L () [S () "one"]
       | otherwise =
-        case factors t of
-          [f] -> displayFactor f
-          fs -> L () (S () "mul" : map displayFactor fs)
+	case factors t of
+	  [f] -> displayFactor f
+	  fs -> L () (S () "mul" : map displayFactor fs)
     displayFactor (x, n)
       | n >= 0 = displayId ctx x
       | otherwise = L () [S () "rec", displayId ctx x]
@@ -2108,9 +2108,9 @@ genName ctx name =
     loop n =
       let name' = revapp root (show n) in
       if hasName ctx name' then
-        loop (n + 1)
+	loop (n + 1)
       else
-        name'
+	name'
     revapp [] s = s
     revapp (c : cs) s = revapp cs (c : s)
 

@@ -32,7 +32,7 @@ main =
       (p, params) <- start options interp
       h <- outputHandle $ file params
       let printer = if json params then pjson
-                    else if prefix params then pp else printItem
+		    else if prefix params then pp else printItem
       go (writeCpsaLn (printer (margin params) indent) h) p
       hClose h
 
@@ -47,15 +47,15 @@ go f p =
     loop
     where
       loop =
-          do
-            x <- gentlyReadSExpr p
-            case x of
-              Nothing ->
-                  return ()
-              Just sexpr ->
-                  do
-                    f sexpr
-                    loop
+	  do
+	    x <- gentlyReadSExpr p
+	    case x of
+	      Nothing ->
+		  return ()
+	      Just sexpr ->
+		  do
+		    f sexpr
+		    loop
 
 -- Command line option flags
 data Flag
@@ -84,46 +84,46 @@ options =
 interp :: [Flag] -> IO Params
 interp flags =
     loop flags (Params { file = Nothing, -- By default, no output file
-                         prefix = True,
-                         json = False,
-                         margin = defaultMargin })
+			 prefix = True,
+			 json = False,
+			 margin = defaultMargin })
     where
       loop [] params = return params
       loop (Output name : flags) params
-          | file params == Nothing =
-              loop flags $ params { file = Just name }
+	  | file params == Nothing =
+	      loop flags $ params { file = Just name }
       loop (Infix : flags) params =
-          if json params then
-            do
-              msg <- usage options ["Bad option combination\n"]
-              abort msg
-          else
-            loop flags $ params { prefix = False }
+	  if json params then
+	    do
+	      msg <- usage options ["Bad option combination\n"]
+	      abort msg
+	  else
+	    loop flags $ params { prefix = False }
       loop (Json : flags) params =
-          if not (prefix params) then
-            do
-              msg <- usage options ["Bad option combination\n"]
-              abort msg
-          else
-            loop flags $ params { json = True }
+	  if not (prefix params) then
+	    do
+	      msg <- usage options ["Bad option combination\n"]
+	      abort msg
+	  else
+	    loop flags $ params { json = True }
       loop (Margin value : flags) params =
-          case readDec value of
-            [(margin, "")] ->
-                loop flags $ params { margin = margin }
-            _ ->
-                do
-                  msg <- usage options ["Bad value for margin\n"]
-                  abort msg
+	  case readDec value of
+	    [(margin, "")] ->
+		loop flags $ params { margin = margin }
+	    _ ->
+		do
+		  msg <- usage options ["Bad value for margin\n"]
+		  abort msg
       loop (Info : _) _ =
-          success cpsaVersion
+	  success cpsaVersion
       loop (Help : _) _ =
-          do                    -- Show help then exit with success
-            msg <- usage options []
-            success msg
+	  do                    -- Show help then exit with success
+	    msg <- usage options []
+	    success msg
       loop _ _ =
-           do                   -- Show help then exit with failure
-             msg <- usage options ["Bad option combination\n"]
-             abort msg
+	   do                   -- Show help then exit with failure
+	     msg <- usage options ["Bad option combination\n"]
+	     abort msg
 
 -- A simple JSON pretty printer using only block style breaks.
 -- A quoted string is distinguished from a symbol by

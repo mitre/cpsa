@@ -73,14 +73,14 @@ dfs adj nodes =
     where
       (_, alist, _) = foldl' po (0, [], S.empty) nodes
       po a@(num, alist, seen) node
-         | S.member node seen = a
-         | otherwise =
-             (num' + 1, (node, num') : alist', seen'')
-             where  -- Search is postorder because nodes at the end of
-               (num', alist', seen'') = -- edges are explored before
-                   foldl' po (num, alist, seen') nodes' -- the node
-               seen' = S.insert node seen -- Insert node as soon as
-               nodes' = adj node          -- it's seen
+	 | S.member node seen = a
+	 | otherwise =
+	     (num' + 1, (node, num') : alist', seen'')
+	     where  -- Search is postorder because nodes at the end of
+	       (num', alist', seen'') = -- edges are explored before
+		   foldl' po (num, alist, seen') nodes' -- the node
+	       seen' = S.insert node seen -- Insert node as soon as
+	       nodes' = adj node          -- it's seen
 
 -- Is edge a back edge, meaning a cycle has been found?  If an edge
 -- contains a node that is not in the alist, it means it was not

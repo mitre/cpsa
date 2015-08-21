@@ -40,15 +40,15 @@ instance Ord a => Ord (Vector a) where
 
 instance Show a => Show (Vector a) where
     showsPrec p (Vector a)
-        = showParen (p > vecPrec)
-          (showString "vector " .
-           showsPrec (vecPrec + 1) (elems a))
+	= showParen (p > vecPrec)
+	  (showString "vector " .
+	   showsPrec (vecPrec + 1) (elems a))
 
 instance Read a => Read (Vector a) where
     readsPrec p = readParen (p > vecPrec)
-          (\r -> [ (vector vs, t) |
-                   ("vector", s) <- lex r,
-                   (vs, t)       <- readsPrec (vecPrec + 1) s])
+	  (\r -> [ (vector vs, t) |
+		   ("vector", s) <- lex r,
+		   (vs, t)       <- readsPrec (vecPrec + 1) s])
 
 -- Precedence of the 'vector' function is that of application itself
 vecPrec :: Int

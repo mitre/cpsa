@@ -53,7 +53,7 @@ dim conf strands maxRank =
 
 -- Add a cross strand arrow
 addEdge :: Config -> Rank -> Vertex -> Float -> Float ->
-           [Element] -> Vertex -> [Element]
+	   [Element] -> Vertex -> [Element]
 addEdge conf rank src x1 y1 elements n =
     let (x2, y2) = npos conf rank (vnode n) in
     arrow conf (sameMsg src n) x1 y1 x2 y2 : elements
@@ -68,9 +68,9 @@ sameMsg src dest =
 addNode :: Config -> Preskel -> Rank -> [Element] -> Vertex -> [Element]
 addNode conf k rank elements node =
     let (x, y) = npos conf rank (vnode node)
-        bullet = circ conf (nodeColor k node) x y
-        es = tooltip (showMsg conf $ msg node) [bullet] : elements
-        es' = foldl (addEdge conf rank node x y) es (succs node) in
+	bullet = circ conf (nodeColor k node) x y
+	es = tooltip (showMsg conf $ msg node) [bullet] : elements
+	es' = foldl (addEdge conf rank node x y) es (succs node) in
     maybe es' (addNode conf k rank es') (next node)
 
 nodeColor :: Preskel -> Vertex -> Maybe String
@@ -86,9 +86,9 @@ nodeColor k node =
 addRole :: Config -> [Element] -> Vertex -> [Element]
 addRole conf es node =
     if null r then
-        es
+	es
     else
-        tooltip (showEnv conf e) [text conf x y r] : es
+	tooltip (showEnv conf e) [text conf x y r] : es
     where
       r = role node
       e = env node
@@ -114,10 +114,10 @@ title conf k =
       content = protocol k ++ " " ++ show (label k)
       header = text conf (w / 2) y (content ++ annotation)
       annotation =
-          case unrealized k of
-            Nothing -> ""
-            Just [] -> " (realized)"
-            _ -> ""
+	  case unrealized k of
+	    Nothing -> ""
+	    Just [] -> " (realized)"
+	    _ -> ""
 
 -- Draw a preskeleton
 skel :: Config -> Preskel -> (Float, Float, [Element])

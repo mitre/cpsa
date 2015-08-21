@@ -11,6 +11,7 @@ module CPSA.Annotations.Formulas (Formula, truth, true, says, implies,
     displayFormula) where
 
 import Control.Monad
+import Control.Applicative
 import qualified Data.Set as S
 import CPSA.Lib.CPSA
 
@@ -128,7 +129,7 @@ tinstantiate env (Application sym ts) =
 -- symbols, or predicate symbols.
 keywords :: [String]
 keywords = ["forall", "exists", "says", "not",
-            "or", "and", "implies", "iff"]
+	    "or", "and", "implies", "iff"]
 
 -- Load a formula.  The vars list is the list of variables that are in
 -- scope.  The variable generator for the algebra is threaded through
@@ -136,12 +137,12 @@ keywords = ["forall", "exists", "says", "not",
 -- once, and no free variable is bound within a formula.  Use
 -- loadDecls to ensure vars are not keywords.
 loadFormula :: (Algebra t p g s e c, Monad m) => [t] -> g ->
-               SExpr Pos -> m (g, Formula t)
+	       SExpr Pos -> m (g, Formula t)
 loadFormula vars gen (L _ (S _ pred : xs)) -- Atomic formula
     | notElem pred keywords =
-        do
-          fs <- loadFTerms vars xs
-          return (gen, Predicate pred fs)
+	do
+	  fs <- loadFTerms vars xs
+	  return (gen, Predicate pred fs)
 loadFormula vars gen (L _ (S _ "or" : xs)) = -- Disjunction
     do
       (gen', ts) <- mapAccumLM (loadFormula vars) gen xs
@@ -160,8 +161,8 @@ loadFormula vars gen (L _ (S _ "implies" : x : xs)) = -- Implication
       return (gen', Implies ts)
 loadFormula vars gen (L pos [S pos' "iff", x, y]) = -- If and only if
     loadFormula vars gen (L pos [S pos' "and",
-                                 L pos [S pos' "implies", x, y],
-                                 L pos [S pos' "implies", y, x]])
+				 L pos [S pos' "implies", x, y],
+				 L pos [S pos' "implies", y, x]])
 loadFormula vars gen (L _ [S _ "says", x, y]) = -- Says modal operator
     do
       t <- loadTerm vars x
@@ -177,6 +178,15 @@ loadFormula _ _ x =
 data EitherS a
     = RightS a
     | LeftS String
+
+instance Functor (EitherS) where
+    fmap _ (LeftS x) = LeftS x
+    fmap f (RightS y) = RightS (f y)
+
+instance Applicative (EitherS) where
+    pure          = RightS
+    LeftS e <*> _ = LeftS e
+    RightS f <*> r = fmap f r
 
 instance Monad EitherS where
     return = RightS
@@ -210,32 +220,32 @@ RightS r >>= k ==> k r
 -}
 
 loadFTerms :: (Algebra t p g s e c, Monad m) => [t] ->
-              [SExpr Pos] -> m [FTerm t]
+	      [SExpr Pos] -> m [FTerm t]
 loadFTerms vars xs =
     foldM f [] (reverse xs)
     where
       f acc x =
-          case loadFTerm vars x of
-            RightS t -> return (t : acc)
-            LeftS msg -> fail msg
+	  case loadFTerm vars x of
+	    RightS t -> return (t : acc)
+	    LeftS msg -> fail msg
 
 -- Load a formula term
 loadFTerm :: Algebra t p g s e c => [t] -> SExpr Pos ->
-             EitherS (FTerm t)
+	     EitherS (FTerm t)
 loadFTerm vars x =
     case loadTerm vars x of
       RightS t -> return (AlgTerm t)
       LeftS msg ->              -- If x is not an algebra term
-          case x of             -- see if it's an application
-            L _ (S pos fun : xs)
-                | elem fun keywords ->
-                    LeftS (shows pos $
-                           "Keyword " ++ fun ++ " used as a function")
-                | otherwise ->
-                 case mapM (loadFTerm vars) xs of
-                   RightS ts -> RightS (Application fun ts)
-                   LeftS _ -> LeftS msg
-            _ -> LeftS msg
+	  case x of             -- see if it's an application
+	    L _ (S pos fun : xs)
+		| elem fun keywords ->
+		    LeftS (shows pos $
+			   "Keyword " ++ fun ++ " used as a function")
+		| otherwise ->
+		 case mapM (loadFTerm vars) xs of
+		   RightS ts -> RightS (Application fun ts)
+		   LeftS _ -> LeftS msg
+	    _ -> LeftS msg
 
 -- A monad version of map accumulation from the left
 mapAccumLM :: Monad m => (a -> b -> m (a, c)) -> a -> [b] -> m (a, [c])
@@ -251,9 +261,9 @@ mapAccumLM f z (x : xs) =
 -- reverse order, so list append is the correct way to extend the list
 -- of variables that are in scope.
 loadQuantified :: (Algebra t p g s e c, Monad m) =>
-                  ([t] -> Formula t -> Formula t) ->
-                  [t] -> g -> [SExpr Pos] -> SExpr Pos ->
-                  m (g, Formula t)
+		  ([t] -> Formula t -> Formula t) ->
+		  [t] -> g -> [SExpr Pos] -> SExpr Pos ->
+		  m (g, Formula t)
 loadQuantified build vars gen decls body =
     do
       (gen', vars') <- loadDecls gen decls
@@ -261,7 +271,7 @@ loadQuantified build vars gen decls body =
       return (gen'', build (reverse vars') f)
 
 loadDecls :: (Algebra t p g s e c, Monad m) => g ->
-             [SExpr Pos] -> m (g, [t])
+	     [SExpr Pos] -> m (g, [t])
 loadDecls gen decls =
     do
       mapM_ checkDecl decls     -- Check for keywords
@@ -271,12 +281,12 @@ loadDecls gen decls =
 checkDecl :: Monad m => SExpr Pos -> m ()
 checkDecl (L _ (S pos sym : _))
     | elem sym keywords =
-        fail (shows pos "Keyword " ++ sym ++ " used as a variable")
+	fail (shows pos "Keyword " ++ sym ++ " used as a variable")
 checkDecl _ = return ()
 
 -- Display a formula
 displayFormula :: Algebra t p g s e c => [t] ->
-                  Formula t -> SExpr ()
+		  Formula t -> SExpr ()
 displayFormula vars form =
     displayForm ctx' form
     where                       -- Add quantified vars last so they are

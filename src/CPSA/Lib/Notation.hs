@@ -27,7 +27,7 @@ printEnv margin indent sexpr =
     pr margin (env indent sexpr) ""
     where
       env indent (L _ xs) = blo indent $ str "(" : aft "," ")"
-                           ( map (maplet indent) xs)
+			   ( map (maplet indent) xs)
       env indent x = generic indent x
 
 type Printer a = Int -> SExpr a -> Pretty
@@ -39,7 +39,7 @@ item indent (L _ (S _ "comment" : xs)) =
 item indent (L _ (S _ "defprotocol" : S _ name : S _ alg : body)) =
     protocol indent name alg body
 item indent (L _ (S _ "defskeleton" : S _ name :
-                  L _ (S _ "vars" : decls) : body)) =
+		  L _ (S _ "vars" : decls) : body)) =
     skeleton indent name decls body
 item indent x = generic indent x
 
@@ -73,7 +73,7 @@ skeleton indent name decls body =
     where
       start = str ("skel " ++ name ++ "(")
       header = blo (2 * indent) $ start : aft ";" ") {"
-               (map (decl indent) decls)
+	       (map (decl indent) decls)
 
 -- A vars list is written with the sort first, followed by the variables.
 -- Thus ((a b text) (k skey)) => (text a, b; skey k)
@@ -100,8 +100,8 @@ alist :: Printer a
 alist _ (L _ [S _ key]) =
     str (key ++ ";")
 alist indent (L _ (S _ "defrole" : S _ name :
-                   L _ (S _ "vars" : decls) :
-                   L a (S _ "trace" : trace) : body)) =
+		   L _ (S _ "vars" : decls) :
+		   L a (S _ "trace" : trace) : body)) =
     role indent name decls (L a trace) body
 alist indent (L _ (S _ "defstrand" : S _ name : N _ height : env)) =
     strand indent name height (map (maplet indent) env)
@@ -109,19 +109,19 @@ alist indent x@(L _ (S _ "operation" : _)) =
     operation indent x
 alist indent x@(L _ (S _ key : _))
       | key == "annotations" || key == "obligations" =
-          annotations indent x
+	  annotations indent x
 alist indent (L _ (S _ key : xs))
       | key == "non-orig" || key == "uniq-orig" ||
-        key == "deflistener" || key == "parameters" =
-          values indent mesg key xs
+	key == "deflistener" || key == "parameters" =
+	  values indent mesg key xs
       | key == "precedes" =
-          values indent order key xs
+	  values indent order key xs
       | key == "unrealized" =
-          values indent node key xs
+	  values indent node key xs
       | key == "traces" =
-          grp indent $ str key : brk 1 : aft "," ";" (map (trace indent) xs)
+	  grp indent $ str key : brk 1 : aft "," ";" (map (trace indent) xs)
       | otherwise =
-          values indent generic key xs
+	  values indent generic key xs
 alist indent x = generic indent x
 
 -- Show the values associated with a key using the given printer.
@@ -136,7 +136,7 @@ role indent name decls tr body =
     where
       start = str ("role " ++ name ++ "(")
       header = blo (2 * indent) $ start : aft ";" ") {"
-               (map (decl indent) decls)
+	       (map (decl indent) decls)
       rest = trace indent tr : map (alist indent) body
 
 -- Print a trace
@@ -170,17 +170,17 @@ mesg indent (L a (S b "privk" : xs)) =
     mesg indent (L a [S b "invk", L a (S b "pubk" : xs)])
 mesg indent (L _ (S _ name : xs))
      | name == "cat" =
-         fun indent "" args
+	 fun indent "" args
      | name == "hash" =
-         fun indent "#" args
+	 fun indent "#" args
      | name == "pubk" =
-         fun indent "K" args
+	 fun indent "K" args
      | name == "invk" =
-         fun indent "I" args
+	 fun indent "I" args
      | name == "ltk" =
-         fun indent "S" args
+	 fun indent "S" args
      | otherwise =
-         fun indent name args
+	 fun indent name args
      where
        args = map (mesg indent) xs
 mesg indent (L _ xs@[N _ _, _]) =
@@ -229,16 +229,16 @@ strand indent role height env =
 -- Print an operation
 operation :: Printer a
 operation indent (L _ (S _ "operation" : S _ direction : op :
-                       critical : test : escape))
+		       critical : test : escape))
     | direction == "encryption-test" || direction == "nonce-test" =
       blo indent $ aft "" ";" body
       where
-        body =  [str "operation", str direction, solve indent op,
-                 mesg indent critical, node indent test, set]
-        set = blo 1 $ str "{" : aft "," "}" (map (mesg indent) escape)
+	body =  [str "operation", str direction, solve indent op,
+		 mesg indent critical, node indent test, set]
+	set = blo 1 $ str "{" : aft "," "}" (map (mesg indent) escape)
 operation indent (L _ (S _ "operation" : S _ "generalization" : desc)) =
     blo indent $ aft "" ";" [str "operation", str "generalization",
-                             generalization indent desc]
+			     generalization indent desc]
 operation indent (L _ (S _ "operation" : xs)) =
     blo indent $ aft "" ";" $ str "operation" : (map (generic indent) xs)
 operation indent x = generic indent x
@@ -273,23 +273,23 @@ generalization indent xs =
 -- Print an annotation
 annotations :: Printer a
 annotations indent (L _ (S _ key :
-                         (xs@(L _ (L _ [N _ _, N _ _] : _) : _)))) =
+			 (xs@(L _ (L _ [N _ _, N _ _] : _) : _)))) =
     grp indent $ str key : brk 1 : aft "," ";" (map (obligation indent) xs)
 annotations indent (L _ (S _ key : term : formulas)) =
     blo indent $ str key : brk 1 : mesg indent term :
-        str "," : brk 1 : aft "," ";" (map (numform indent) formulas)
+	str "," : brk 1 : aft "," ";" (map (numform indent) formulas)
 annotations indent x = generic indent x
 
 numform :: Printer a
 numform indent (L _ [n@(N _ _), f]) =
     blo indent [str "(", mesg indent n, str ",", brk 1,
-                form indent f, str ")"]
+		form indent f, str ")"]
 numform indent x = generic indent x
 
 obligation :: Printer a
 obligation indent (L _ [n, term, formula]) =
     blo indent [str "[", node indent n, str ",", brk 1, mesg indent term,
-                str ",", brk 1, form indent formula, str "]"]
+		str ",", brk 1, form indent formula, str "]"]
 obligation indent x = generic indent x
 
 -- Print a formula
@@ -300,7 +300,7 @@ form indent (L _ (S _ "implies" : xs@(_:_:_:_))) =
     grp 0 [lhs, brk 1, str "implies", brk 1, mesg indent concl]
     where
       lhs = grp indent $ str "and(" : brk 0 :
-            aft "," ")" (map (mesg indent) hypoth)
+	    aft "," ")" (map (mesg indent) hypoth)
       (concl, hypoth) = rotate xs
 form indent x =
     mesg indent x

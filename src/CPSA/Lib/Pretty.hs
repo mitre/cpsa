@@ -93,33 +93,33 @@ pr margin e s =
 -- adds content to the front of the given string.
 
 printing :: Int -> [Pretty] -> Int -> Int -> Bool ->
-            (Int, String) -> (Int, String)
+	    (Int, String) -> (Int, String)
 printing _ [] _ _ _ p = p
 printing margin (e:es) blockspace after force (space, s) =
     (space1, s1)
     where
       (space2, s1) =            -- Result of first item
-          case e of
-            Str str ->          -- Place a string
-                 (space - length str, showString str s2)
-            Brk n ->            -- Place breakable space
-                 if not force && n + breakdist es after <= space then
-                     blanks n (space, s2) -- Don't break
-                 else
-                     (space3, showChar '\n' s3) -- Break
-                     where
-                       (space3, s3) =
-                           blanks (margin - blockspace) (margin, s2)
-            Blo bes indent _ -> -- Place a block
-                 printing margin bes (space - indent)
-                    (breakdist es after) False (space, s2)
-            Grp bes indent n -> -- Place a group
-                 printing margin bes (space - indent)
-                    dist (n + dist > space) (space, s2)
-                where
-                  dist = breakdist es after
+	  case e of
+	    Str str ->          -- Place a string
+		 (space - length str, showString str s2)
+	    Brk n ->            -- Place breakable space
+		 if not force && n + breakdist es after <= space then
+		     blanks n (space, s2) -- Don't break
+		 else
+		     (space3, showChar '\n' s3) -- Break
+		     where
+		       (space3, s3) =
+			   blanks (margin - blockspace) (margin, s2)
+	    Blo bes indent _ -> -- Place a block
+		 printing margin bes (space - indent)
+		    (breakdist es after) False (space, s2)
+	    Grp bes indent n -> -- Place a group
+		 printing margin bes (space - indent)
+		    dist (n + dist > space) (space, s2)
+		where
+		  dist = breakdist es after
       (space1, s2) =            -- Result of the remaining items
-          printing margin es blockspace after force (space2, s)
+	  printing margin es blockspace after force (space2, s)
 
 -- Find the distance to the nearest breakable space.
 breakdist :: [Pretty] -> Int -> Int
