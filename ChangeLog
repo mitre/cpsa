@@ -1,3 +1,10 @@
+2015-08-21  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/*/*.h:  Removed leading tabs.
+
+	* src/CPSA/Annotations/Formulas.hs (EitherS): Made EitherS an
+	instance of Applicative.
+
 2015-08-07  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* doc/cpsagoals.tex: Corrected the definition of satisfaction.
