@@ -54,29 +54,29 @@ main =
       sexprs <- readSExprs p
       let herald = getHerald sexprs
       alist <- case herald of
-		 Nothing -> return []
-		 Just sexpr -> getAlist sexpr
+                 Nothing -> return []
+                 Just sexpr -> getAlist sexpr
       heraldFlags <- getAlistOpts alist
       forM_ heraldFlags checkHeraldFlag
       opts <- interp algs defaultOptions heraldFlags
       opts <- interp algs opts flags
       sexprs <- tryIO (expand sexprs) -- Expand macros
       case sexprs of
-	Left err -> abort err
-	Right sexprs ->
-	    if optAnalyze opts then
-		select files herald opts sexprs
-	    else
-		prettyPrint opts sexprs
+        Left err -> abort err
+        Right sexprs ->
+            if optAnalyze opts then
+                select files herald opts sexprs
+            else
+                prettyPrint opts sexprs
 
 opts :: [OptDescr a] -> [String] -> IO ([a], [String])
 opts options argv =
     case getOpt RequireOrder options argv of
       (o, n, []) -> return (o, n)
       (_, _, errs) ->
-	  do
-	    msg <- usage options errs
-	    abort msg
+          do
+            msg <- usage options errs
+            abort msg
 
 openInput :: [String] -> IO PosHandle
 openInput [file] =
@@ -105,13 +105,13 @@ select :: [String] -> Maybe (SExpr Pos) -> Options -> [SExpr Pos] -> IO ()
 select files herald opts sexprs =
     case optAlg opts of
       name | name == CPSA.Basic.Algebra.name ->
-	       go name CPSA.Basic.Algebra.origin
-		  files herald opts sexprs
-	   | name == CPSA.DiffieHellman.Algebra.name ->
-	       go name CPSA.DiffieHellman.Algebra.origin
-		  files herald opts sexprs
-	   | otherwise ->
-	       abort ("Bad algebra: " ++ name)
+               go name CPSA.Basic.Algebra.origin
+                  files herald opts sexprs
+           | name == CPSA.DiffieHellman.Algebra.name ->
+               go name CPSA.DiffieHellman.Algebra.origin
+                  files herald opts sexprs
+           | otherwise ->
+               abort ("Bad algebra: " ++ name)
 
 -- Load protocols and preskeletons and print run time information
 go :: Algebra t p g s e c => String -> g -> [String] ->
@@ -120,45 +120,45 @@ go name origin files herald opts sexprs =
     do
       preskels <- tryIO (loadSExprs name origin sexprs)
       case preskels of          -- Load protocols and preskeletons
-	Left err -> abort err
-	Right preskels ->
-	    do
-	      h <- outputHandle (optFile opts)
-	      let m = optMargin opts
-	      -- Print herald
-	      case herald of
-		Nothing -> return ()
-		Just sexpr ->
-		    do
-		      writeSExpr h m sexpr
-		      hPutStrLn h ""
-	      -- Print run time information
-	      writeComment h m cpsaVersion
-	      case files of
-		[file] -> writeComment h m $ "All input read from " ++ file
-		_ -> writeComment h m "All input read"
-	      case optNoIsoChk opts of
-		True -> writeComment h m "Isomorphism checking disabled"
-		False -> return ()
-	      case optLimit opts /= defaultStepLimit of
-		True -> writeComment h m $
-			"Step count limited to " ++ show (optLimit opts)
-		False -> return ()
-	      case optBound opts /= defaultStrandBound of
-		True -> writeComment h m $
-			"Strand count bounded at " ++ show (optBound opts)
-		False -> return ()
-	      case optCheckNoncesFirst opts of
-		True -> writeComment h m "Nonces checked first"
-		False -> return ()
-	      case optTryOldStrandsFirst opts of
-		True -> writeComment h m "Old strands tried first"
-		False -> return ()
-	      case optTryYoungNodesFirst opts of
-		True -> writeComment h m "Younger nodes tried first"
-		False -> return ()
-	      -- Analyze
-	      solve opts h preskels 0
+        Left err -> abort err
+        Right preskels ->
+            do
+              h <- outputHandle (optFile opts)
+              let m = optMargin opts
+              -- Print herald
+              case herald of
+                Nothing -> return ()
+                Just sexpr ->
+                    do
+                      writeSExpr h m sexpr
+                      hPutStrLn h ""
+              -- Print run time information
+              writeComment h m cpsaVersion
+              case files of
+                [file] -> writeComment h m $ "All input read from " ++ file
+                _ -> writeComment h m "All input read"
+              case optNoIsoChk opts of
+                True -> writeComment h m "Isomorphism checking disabled"
+                False -> return ()
+              case optLimit opts /= defaultStepLimit of
+                True -> writeComment h m $
+                        "Step count limited to " ++ show (optLimit opts)
+                False -> return ()
+              case optBound opts /= defaultStrandBound of
+                True -> writeComment h m $
+                        "Strand count bounded at " ++ show (optBound opts)
+                False -> return ()
+              case optCheckNoncesFirst opts of
+                True -> writeComment h m "Nonces checked first"
+                False -> return ()
+              case optTryOldStrandsFirst opts of
+                True -> writeComment h m "Old strands tried first"
+                False -> return ()
+              case optTryYoungNodesFirst opts of
+                True -> writeComment h m "Younger nodes tried first"
+                False -> return ()
+              -- Analyze
+              solve opts h preskels 0
 
 -- Just pretty the expanded macros
 prettyPrint :: Options -> [SExpr a] -> IO ()
@@ -221,58 +221,58 @@ interp algs opts flags =
     where
       loop [] opts = return opts
       loop (Output name : flags) opts
-	  | optFile opts == Nothing =
-	      loop flags $ opts { optFile = Just name }
+          | optFile opts == Nothing =
+              loop flags $ opts { optFile = Just name }
       loop (Limit value : flags) opts =
-	  case readDec value of
-	    [(limit, "")] ->
-		loop flags $ opts { optLimit = limit }
-	    _ ->
-		do
-		  msg <- usage options ["Bad value for step limit\n"]
-		  abort msg
+          case readDec value of
+            [(limit, "")] ->
+                loop flags $ opts { optLimit = limit }
+            _ ->
+                do
+                  msg <- usage options ["Bad value for step limit\n"]
+                  abort msg
       loop (Bound value : flags) opts =
-	  case readDec value of
-	    [(bound, "")] ->
-		loop flags $ opts { optBound = bound }
-	    _ ->
-		do
-		  msg <- usage options ["Bad value for strand bound\n"]
-		  abort msg
+          case readDec value of
+            [(bound, "")] ->
+                loop flags $ opts { optBound = bound }
+            _ ->
+                do
+                  msg <- usage options ["Bad value for strand bound\n"]
+                  abort msg
       loop (Margin value : flags) opts =
-	  case readDec value of
-	    [(margin, "")] ->
-		loop flags $ opts { optMargin = margin }
-	    _ ->
-		do
-		  msg <- usage options ["Bad value for margin\n"]
-		  abort msg
+          case readDec value of
+            [(margin, "")] ->
+                loop flags $ opts { optMargin = margin }
+            _ ->
+                do
+                  msg <- usage options ["Bad value for margin\n"]
+                  abort msg
       loop (Expand : flags) opts =
-	  loop flags $ opts { optAnalyze = False }
+          loop flags $ opts { optAnalyze = False }
       loop (NoIsoChk : flags) opts =
-	  loop flags $ opts { optNoIsoChk = True }
+          loop flags $ opts { optNoIsoChk = True }
       loop (CheckNoncesFirst : flags) opts =
-	  loop flags $ opts { optCheckNoncesFirst = True }
+          loop flags $ opts { optCheckNoncesFirst = True }
       loop (TryOldStrandsFirst : flags) opts =
-	  loop flags $ opts { optTryOldStrandsFirst = True }
+          loop flags $ opts { optTryOldStrandsFirst = True }
       loop (TryYoungNodesFirst : flags) opts =
-	  loop flags $ opts { optTryYoungNodesFirst = True }
+          loop flags $ opts { optTryYoungNodesFirst = True }
       loop (Algebra name : flags) opts
-	  | elem name algs = loop flags $ opts { optAlg = name }
-	  | otherwise =
-	      abort ("Algebra " ++ name ++ " not one of\n" ++ unlines algs)
+          | elem name algs = loop flags $ opts { optAlg = name }
+          | otherwise =
+              abort ("Algebra " ++ name ++ " not one of\n" ++ unlines algs)
       loop (Algebras : _) _ =
-	  success $ unlines algs
+          success $ unlines algs
       loop (Help : _) _ =
-	  do                    -- Show help then exit with success
-	    msg <- usage options []
-	    success msg
+          do                    -- Show help then exit with success
+            msg <- usage options []
+            success msg
       loop (Info : _) _ =
-	  success cpsaVersion
+          success cpsaVersion
       loop _ _ =
-	   do                   -- Show help then exit with failure
-	     msg <- usage options ["Bad option combination\n"]
-	     abort msg
+           do                   -- Show help then exit with failure
+             msg <- usage options ["Bad option combination\n"]
+             abort msg
 
 -- Herald form
 
@@ -296,28 +296,28 @@ getAlistOpts alist =
     loop alist []
     where
       loop [] flags =
-	  return $ reverse flags
+          return $ reverse flags
       loop ((L _ (S _ key : vals)) : alist) flags =
-	  do
-	    flag <- flagOf key vals
-	    case flag of
-	      Nothing -> loop alist flags -- Ignore unrecognized keys
-	      Just flag -> loop alist (flag : flags)
+          do
+            flag <- flagOf key vals
+            case flag of
+              Nothing -> loop alist flags -- Ignore unrecognized keys
+              Just flag -> loop alist (flag : flags)
       loop _ _ =
-	  do
-	     msg <- usage options ["Bad herald form\n"]
-	     abort msg
+          do
+             msg <- usage options ["Bad herald form\n"]
+             abort msg
 
 flagOf :: String -> [SExpr Pos] -> IO (Maybe Flag)
 flagOf key vals =
     do
       let opt = findOpt key
       case opt of
-	Nothing -> return Nothing
-	Just opt ->
-	    do
-	      flag <- interpAssoc key opt vals
-	      return $ Just flag
+        Nothing -> return Nothing
+        Just opt ->
+            do
+              flag <- interpAssoc key opt vals
+              return $ Just flag
 
 findOpt :: String -> Maybe (OptDescr Flag)
 findOpt key =
@@ -325,8 +325,8 @@ findOpt key =
     where
       loop [] = Nothing
       loop (opt@(Option _ keys _ _) : options)
-	   | elem key keys = Just opt
-	   | otherwise = loop options
+           | elem key keys = Just opt
+           | otherwise = loop options
 
 interpAssoc :: String -> OptDescr Flag -> [SExpr Pos] -> IO Flag
 interpAssoc _ (Option _ _ (NoArg flag) _) [] =

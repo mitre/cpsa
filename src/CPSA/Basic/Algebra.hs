@@ -180,9 +180,9 @@ termsWellFormed u =
     where
       loop _ [] = True
       loop env (t : u) =
-	  case termWellFormed env t of
-	    Nothing -> False
-	    Just env' -> loop env' u
+          case termWellFormed env t of
+            Nothing -> False
+            Just env' -> loop env' u
 
 newtype VarEnv = VarEnv (Map Id Term) deriving Show
 
@@ -269,8 +269,8 @@ occursIn t t' | isVar t =
     recur t t' =
       t == t' ||
       case t' of
-	F _ u -> any (recur t) u
-	_ -> False
+        F _ u -> any (recur t) u
+        _ -> False
 occursIn t _ = error $ "Algebra.occursIn: Bad variable " ++ show t
 
 -- Fold f through a term applying it to each variable in the term.
@@ -311,9 +311,9 @@ carriedBy :: Term -> Term -> Bool
 carriedBy t t' =
     t == t' ||
       case t' of
-	F Cat [t0, t1] -> carriedBy t t0 || carriedBy t t1
-	F Enc [t0, _] -> carriedBy t t0
-	_ -> False
+        F Cat [t0, t1] -> carriedBy t t0 || carriedBy t t1
+        F Enc [t0, _] -> carriedBy t t0
+        _ -> False
 
 -- The key used to decrypt an encrypted term, otherwise Nothing.
 decryptionKey :: Term -> Maybe Term
@@ -327,11 +327,11 @@ buildable knowns unguessable term =
       ba (I _) = True           -- A mesg sorted variable is always buildable
       ba (C _) = True           -- and so is a tag
       ba (F Cat [t0, t1]) =
-	  ba t0 && ba t1
+          ba t0 && ba t1
       ba t@(F Enc [t0, t1]) =
-	  S.member t knowns || ba t0 && ba t1
+          S.member t knowns || ba t0 && ba t1
       ba t@(F Hash [t1]) =
-	  S.member t knowns || ba t1
+          S.member t knowns || ba t1
       ba t = isAtom t && S.notMember t unguessable
 
 -- Compute the decomposition given some known terms and some unguessable
@@ -343,18 +343,18 @@ decompose knowns unguessable =
     loop unguessable knowns S.empty []
     where
       loop unguessable knowns old []
-	  | old == knowns = (knowns, unguessable) -- Done
-	  | otherwise = loop unguessable knowns knowns (S.elems knowns)
+          | old == knowns = (knowns, unguessable) -- Done
+          | otherwise = loop unguessable knowns knowns (S.elems knowns)
       loop unguessable knowns old (t@(F Cat _) : todo) =
-	  loop unguessable (decat t (S.delete t knowns)) old todo
+          loop unguessable (decat t (S.delete t knowns)) old todo
       loop unguessable knowns old ((F Enc [t0, t1]) : todo)
-	  | buildable knowns unguessable (inv t1) = -- Add plaintext
-	      loop unguessable (decat t0 knowns) old todo
-	  | otherwise = loop unguessable knowns old todo
+          | buildable knowns unguessable (inv t1) = -- Add plaintext
+              loop unguessable (decat t0 knowns) old todo
+          | otherwise = loop unguessable knowns old todo
       loop unguessable knowns old ((F Hash [_]) : todo) =
-	  loop unguessable knowns old todo -- Hash can't be decomposed
+          loop unguessable knowns old todo -- Hash can't be decomposed
       loop unguessable knowns old (t : todo) =
-	  loop (S.delete t unguessable) (S.delete t knowns) old todo
+          loop (S.delete t unguessable) (S.delete t knowns) old todo
       -- Decat
       decat (F Cat [t0, t1]) s = decat t1 (decat t0 s)
       decat t s = S.insert t s
@@ -374,15 +374,15 @@ encryptions t =
     reverse $ loop t []
     where
       loop (F Cat [t, t']) acc =
-	  loop t' (loop t acc)
+          loop t' (loop t acc)
       loop t@(F Enc [t', t'']) acc =
-	  loop t' (adjoin (t, [t'']) acc)
+          loop t' (adjoin (t, [t'']) acc)
       loop t@(F Hash [t']) acc =
-	  adjoin (t, [t']) acc
+          adjoin (t, [t']) acc
       loop _ acc = acc
       adjoin x xs
-	  | x `elem` xs = xs
-	  | otherwise = x : xs
+          | x `elem` xs = xs
+          | otherwise = x : xs
 
 -- Returns the encryptions that carry the target.  If the target is
 -- carried outside all encryptions, or is exposed because a decription
@@ -394,17 +394,17 @@ protectors derivable target source =
       return $ S.elems ts
     where
       bare source _
-	   | source == target = Nothing
+           | source == target = Nothing
       bare (F Cat [t, t']) acc =
-	  maybe Nothing (bare t') (bare t acc)
+          maybe Nothing (bare t') (bare t acc)
       bare t@(F Enc [t', key]) acc =
-	  if target `carriedBy` t' then
-	      if derivable (inv key) then
-		  bare t' acc
-	      else
-		  Just (S.insert t acc)
-	  else
-	      Just acc
+          if target `carriedBy` t' then
+              if derivable (inv key) then
+                  bare t' acc
+              else
+                  Just (S.insert t acc)
+          else
+              Just acc
       bare _ acc = Just acc
 
 -- Support for data flow analysis of traces.  A flow rule maps an
@@ -439,12 +439,12 @@ inFlow :: Term -> FlowRule
 inFlow (C _) a = S.singleton a
 inFlow (F Cat [t0, t1]) a =     -- Try to receive components
     S.union                     -- in both orders
-	 (comb (inFlow t1) (inFlow t0) a)
-	 (comb (inFlow t0) (inFlow t1) a)
+         (comb (inFlow t1) (inFlow t0) a)
+         (comb (inFlow t0) (inFlow t1) a)
 inFlow t@(F Enc [t0, t1]) (initial, available) =
     S.union
-	 (outFlow t (initial, available)) -- Encryption can be built
-	 (comb (inFlow t0) (outFlow (inv t1)) a) -- or decrypted
+         (outFlow t (initial, available)) -- Encryption can be built
+         (comb (inFlow t0) (outFlow (inv t1)) a) -- or decrypted
     where                       -- Derive decryption key first
       a = (initial, S.insert t available)
 inFlow (F Hash [t0]) (initial, available) =
@@ -487,13 +487,13 @@ places target source =
     f [] [] source
     where
       f paths path source
-	  | I (varId target) == source = Place (reverse path) : paths
+          | I (varId target) == source = Place (reverse path) : paths
       f paths path (F _ u) =
-	  g paths path 0 u
+          g paths path 0 u
       f paths _ _ = paths
       g paths _ _ [] = paths
       g paths path i (t : u) =
-	  g (f paths (i: path) t) path (i + 1) u
+          g (f paths (i: path) t) path (i + 1) u
 
 -- Replace a variable within a term at a given place.
 replace :: Term -> Place -> Term -> Term
@@ -502,7 +502,7 @@ replace target (Place ints) source =
     where
       loop [] _ = I (varId target)
       loop (i : path) (F s u) =
-	  F s (C.replaceNth (loop path (u !! i)) i u)
+          F s (C.replaceNth (loop path (u !! i)) i u)
       loop _ _ = error "Algebra.replace: Bad path to variable"
 
 -- Returns the places a term is carried by another term.
@@ -511,11 +511,11 @@ carriedPlaces target source =
     f [] [] source
     where
       f paths path source
-	  | target == source = Place (reverse path) : paths
+          | target == source = Place (reverse path) : paths
       f paths path (F Cat [t, t']) =
-	  f (f paths  (0 : path) t) (1 : path) t'
+          f (f paths  (0 : path) t) (1 : path) t'
       f paths path (F Enc [t, _]) =
-	  f paths (0 : path) t
+          f paths (0 : path) t
       f paths _ _ = paths
 
 -- Return the ancestors of the term at the given place.
@@ -525,7 +525,7 @@ ancestors source (Place ints) =
     where
       loop ts [] _ = ts
       loop ts (i: path) t@(F _ u) =
-	  loop (t : ts) path (u !! i)
+          loop (t : ts) path (u !! i)
       loop _ _ _ = error "Algebra.ancestors: Bad path to term"
 
 instance C.Place Term Place where
@@ -542,28 +542,28 @@ clone gen t =
     where
       (_, gen', t') = cloneTerm ([], gen) t
       cloneTerm (alist, gen) t =
-	  case t of             -- The association list maps
-	    I x ->              -- identifiers to identifier.
-		case lookup x alist of
-		  Just y -> (alist, gen, I y)
-		  Nothing ->
-		      let (gen', y) = cloneId gen x in
-		      ((x, y) : alist, gen', I y)
-	    C c -> (alist, gen, C c)
-	    F sym u ->
-		let (alist', gen', u') =
-			foldl cloneTermList (alist, gen, []) u in
-		(alist', gen', F sym $ reverse u')
-	    D x ->              -- identifiers to identifier.
-		case lookup x alist of
-		  Just y -> (alist, gen, D y)
-		  Nothing ->
-		      let (gen', y) = cloneId gen x in
-		      ((x, y) : alist, gen', D y)
-	    P p -> (alist, gen, P p)
+          case t of             -- The association list maps
+            I x ->              -- identifiers to identifier.
+                case lookup x alist of
+                  Just y -> (alist, gen, I y)
+                  Nothing ->
+                      let (gen', y) = cloneId gen x in
+                      ((x, y) : alist, gen', I y)
+            C c -> (alist, gen, C c)
+            F sym u ->
+                let (alist', gen', u') =
+                        foldl cloneTermList (alist, gen, []) u in
+                (alist', gen', F sym $ reverse u')
+            D x ->              -- identifiers to identifier.
+                case lookup x alist of
+                  Just y -> (alist, gen, D y)
+                  Nothing ->
+                      let (gen', y) = cloneId gen x in
+                      ((x, y) : alist, gen', D y)
+            P p -> (alist, gen, P p)
       cloneTermList (alist, gen, u) t =
-	  let (alist', gen', t') = cloneTerm (alist, gen) t in
-	  (alist', gen', t' : u)
+          let (alist', gen', t') = cloneTerm (alist, gen) t in
+          (alist', gen', t' : u)
 
 instance C.Gen Term Gen where
     origin = origin
@@ -616,7 +616,7 @@ substitute (Subst s) t =
 compose :: Subst -> Subst -> Subst
 compose (Subst s0) (Subst s1) =
     let s2 = M.map (substitute (Subst s0)) s1        -- Step 1
-	s4 = M.filterWithKey nonTrivialBinding s2 in -- Step 3
+        s4 = M.filterWithKey nonTrivialBinding s2 in -- Step 3
     Subst (M.union s4 s0)       -- Steps 2 and 4, union is left-biased
 
 nonTrivialBinding :: Id -> Term -> Bool
@@ -724,11 +724,11 @@ substChase subst t =
       t@(I _) -> t
       t@(C _) -> t
       F Invk [t] ->
-	  case substChase subst t of
-	    F Invk [t] -> t           -- Apply axiom
-	    t -> F Invk [t]
+          case substChase subst t of
+            F Invk [t] -> t           -- Apply axiom
+            t -> F Invk [t]
       F s u ->
-	  F s (map (substChase subst) u)
+          F s (map (substChase subst) u)
       t@(D _) -> t
       t@(P _) -> t
 
@@ -788,8 +788,8 @@ identityEnvFor (Env r) ts =
     where
       dom = M.foldrWithKey f S.empty r -- The domain of r
       f x (I y) dom
-	  | x == y = dom        -- Ignore trivial bindings
-	  | otherwise = S.insert x dom
+          | x == y = dom        -- Ignore trivial bindings
+          | otherwise = S.insert x dom
       f x _ dom = S.insert x dom
 
 allId :: (Id -> Bool) -> Term -> Bool
@@ -814,21 +814,21 @@ reify domain (Env env) =
     map (loop domain) $ M.assocs env
     where
       loop [] (x, _) =
-	  error $ "Algebra.reify: variable missing from domain " ++ idName x
+          error $ "Algebra.reify: variable missing from domain " ++ idName x
       loop (I x : _) (y, t)
-	  | x == y = (I x, t)
+          | x == y = (I x, t)
       loop (F Text [I x] : _) (y, t)
-	  | x == y = (F Text [I x], F Text [t])
+          | x == y = (F Text [I x], F Text [t])
       loop (F Data [I x] : _) (y, t)
-	  | x == y = (F Data [I x], F Data [t])
+          | x == y = (F Data [I x], F Data [t])
       loop (F Name [I x] : _) (y, t)
-	  | x == y = (F Name [I x], F Name [t])
+          | x == y = (F Name [I x], F Name [t])
       loop (F Skey [I x] : _) (y, t)
-	  | x == y = (F Skey [I x], F Skey [t])
+          | x == y = (F Skey [I x], F Skey [t])
       loop (F Akey [I x] : _) (y, t)
-	  | x == y = (F Akey [I x], F Akey [t])
+          | x == y = (F Akey [I x], F Akey [t])
       loop (D x : _) (y, t)
-	  | x == y = (D x, t)
+          | x == y = (D x, t)
       loop (_ : domain) pair = loop domain pair
 
 -- Ensure the range of an environment contains only variables and that
@@ -839,7 +839,7 @@ matchRenaming (Env e) =
     where
       loop _ [] = True
       loop s (I x:e) =
-	  S.notMember x s && loop (S.insert x s) e
+          S.notMember x s && loop (S.insert x s) e
       loop _ _ = False
 
 nodeMatch ::  Term -> (Int, Int) -> Env -> Maybe Env
@@ -858,9 +858,9 @@ instance C.Env Term Gen Subst Env where
        maybe [] (\e -> [(g, e)]) $ match t t' e
    identityEnvFor (g, e) ts =
        if identityEnvFor e ts then
-	   [(g, e)]
+           [(g, e)]
        else
-	   []
+           []
    substitution = substitution
    reify = reify
    matchRenaming (_, e) = matchRenaming e
@@ -884,27 +884,27 @@ loadVarPair (L _ (x:xs)) =
 loadVarPair x = fail (shows (annotation x) "Bad variable declaration")
 
 loadVar :: Monad m => (Gen, [Term]) -> (SExpr Pos, SExpr Pos) ->
-	   m (Gen, [Term])
+           m (Gen, [Term])
 loadVar (gen, vars) (S pos name, S pos' sort) =
     case loadLookup pos vars name of
       Right _ ->
-	  fail (shows pos "Duplicate variable declaration for " ++ name)
+          fail (shows pos "Duplicate variable declaration for " ++ name)
       Left _ ->
-	  do
-	    let (gen', x) = freshId gen name
-	    p <- mkVar x
-	    return (gen', p : vars)
+          do
+            let (gen', x) = freshId gen name
+            p <- mkVar x
+            return (gen', p : vars)
     where
       mkVar x =
-	  case sort of
-	    "mesg" -> return (I x)
-	    "text" -> return $ F Text [I x]
-	    "data" -> return $ F Data [I x]
-	    "name" -> return $ F Name [I x]
-	    "skey" -> return $ F Skey [I x]
-	    "akey" -> return $ F Akey [I x]
-	    "node" -> return (D x)
-	    _ -> fail (shows pos' "Sort " ++ sort ++ " not recognized")
+          case sort of
+            "mesg" -> return (I x)
+            "text" -> return $ F Text [I x]
+            "data" -> return $ F Data [I x]
+            "name" -> return $ F Name [I x]
+            "skey" -> return $ F Skey [I x]
+            "akey" -> return $ F Akey [I x]
+            "node" -> return (D x)
+            _ -> fail (shows pos' "Sort " ++ sort ++ " not recognized")
 loadVar _ (x,_) = fail (shows (annotation x) "Bad variable syntax")
 
 loadLookup :: Pos -> [Term] -> String -> Either String Term
@@ -1035,8 +1035,8 @@ displayVars ctx vars =
     where
       loop t vs [] = [L () (reverse (t:vs))]
       loop t vs ((v',t'):xs)
-	  | t == t' = loop t (v':vs) xs
-	  | otherwise = L () (reverse (t:vs)):loop t' [v'] xs
+          | t == t' = loop t (v':vs) xs
+          | otherwise = L () (reverse (t:vs)):loop t' [v'] xs
 
 displayVar :: Context -> Term -> (SExpr (), SExpr ())
 displayVar ctx (I x) = displaySortId "mesg" ctx x
@@ -1056,8 +1056,8 @@ displayId :: Context -> Id -> SExpr ()
 displayId (Context ctx) x =
     case lookup x ctx of
       Nothing ->
-	  let msg = idName x ++ " in a display context" in
-	  error $ "Algebra.displayId: Cannot find variable " ++ msg
+          let msg = idName x ++ " in a display context" in
+          error $ "Algebra.displayId: Cannot find variable " ++ msg
       Just name -> S () name
 
 displayTerm :: Context -> Term -> SExpr ()
@@ -1076,7 +1076,7 @@ displayTerm ctx (F Akey [t]) =
       F Pubk [C c, I x] -> L () [S () "pubk", Q () c, displayId ctx x]
       F Invk [F Pubk [I x]] -> L () [S () "privk", displayId ctx x]
       F Invk [F Pubk [C c, I x]] ->
-	  L () [S () "privk", Q () c, displayId ctx x]
+          L () [S () "privk", Q () c, displayId ctx x]
       _ -> error ("Algebra.displayAkey: Bad term " ++ show t)
 displayTerm _ (C t) = Q () t
 displayTerm ctx (F Cat [t0, t1]) =
@@ -1131,14 +1131,14 @@ addToContext ctx u =
 varContext :: Context -> Term -> Context
 varContext ctx t =
     let x = varId t
-	name = rootName $ idName x in
+        name = rootName $ idName x in
     if hasId ctx x then
-	ctx
+        ctx
     else
-	if hasName ctx name then
-	    extendContext ctx x (genName ctx name)
-	else
-	    extendContext ctx x name
+        if hasName ctx name then
+            extendContext ctx x (genName ctx name)
+        else
+            extendContext ctx x name
 
 hasId :: Context -> Id -> Bool
 hasId (Context ctx) id =
@@ -1159,11 +1159,11 @@ genName ctx name =
       root = '-' : reverse name
       loop :: Int -> String
       loop n =
-	  let name' = revapp root (show n) in
-	  if hasName ctx name' then
-	      loop (n + 1)
-	  else
-	      name'
+          let name' = revapp root (show n) in
+          if hasName ctx name' then
+              loop (n + 1)
+          else
+              name'
       revapp [] s = s
       revapp (c : cs) s = revapp cs (c : s)
 
@@ -1173,12 +1173,12 @@ rootName name =
     where
       noHyphen _ [] = name
       noHyphen i (c : s)
-	  | c == '-' = hyphen i (i + 1) s
-	  | otherwise = noHyphen (i + 1) s
+          | c == '-' = hyphen i (i + 1) s
+          | otherwise = noHyphen (i + 1) s
       hyphen i _ [] = rootName $ take i name
       hyphen i j (c : s)
-	  | isDigit c  = hyphen i (j + 1) s
-	  | otherwise = noHyphen j (c : s)
+          | isDigit c  = hyphen i (j + 1) s
+          | otherwise = noHyphen j (c : s)
 
 instance C.Context Term Gen Subst Env Context where
     emptyContext = emptyContext

@@ -52,25 +52,25 @@ circ conf color x y =
     where
       dims = [("cx", showL x), ("cy", showL y), ("r", showL (br conf))]
       style =
-	  case color of
-	    Nothing -> []
-	    Just color -> [("style", props [("fill", color)])]
+          case color of
+            Nothing -> []
+            Just color -> [("style", props [("fill", color)])]
 
 rect :: Config -> Float -> Float -> Float -> Float -> Element
 rect conf x y w h =
     ec "rect" [("x", showL x), ("y", showL y),
-	       ("width", showL w), ("height", showL h),
-	       ("style", props style)] []
+               ("width", showL w), ("height", showL h),
+               ("style", props style)] []
     where
       style = [("fill", "none"), ("stroke", "black"),
-	       ("stroke-width", showL (stroke conf))]
+               ("stroke-width", showL (stroke conf))]
 
 -- Gray line
 line :: Config -> Float -> Float -> Float -> Float -> Element
 line conf x1 y1 x2 y2 =
     ec "line" [("x1", showL x1), ("y1", showL y1),
-	       ("x2", showL x2), ("y2", showL y2),
-	       ("style", props style)] []
+               ("x2", showL x2), ("y2", showL y2),
+               ("style", props style)] []
     where
       style = [("stroke-width", showL (stroke conf)), ("stroke", "gray")]
 
@@ -81,21 +81,21 @@ arrow conf solid x1 y1 x3 y3 =
     where
       (x2, y2) = shorten (br conf) x1 y1 x3 y3
       path = showString "M " $
-	     showsL x1 $ showChar ' ' $ showsL y1 $ showString " Q " $
-	     showsL xq $ showChar ' ' $ showsL yq $ showChar ' ' $
-	     showsL x2 $ showChar ' ' $ showL y2
+             showsL x1 $ showChar ' ' $ showsL y1 $ showString " Q " $
+             showsL xq $ showChar ' ' $ showsL yq $ showChar ' ' $
+             showsL x2 $ showChar ' ' $ showL y2
       xq = (x1 + x2) / 2
       yq = (y1 + y2 - delta) / 2
       delta = if abs (x1 - x2) > dx conf then dy conf else 0
       style = if solid then solidStyle else dashedStyle
       solidStyle =
-	  [("stroke-width", showL (stroke conf)),
-	   ("stroke", "black"),
-	   ("marker-end", "url(#arrow)"),
-	   ("fill", "none")]
+          [("stroke-width", showL (stroke conf)),
+           ("stroke", "black"),
+           ("marker-end", "url(#arrow)"),
+           ("fill", "none")]
       dashedStyle = ("stroke-dasharray",
-		     showsL (dash conf) $ showString "," $ showL (gap conf))
-		    : solidStyle
+                     showsL (dash conf) $ showString "," $ showL (gap conf))
+                    : solidStyle
 
 data ButtonKind
     = AliveTree                 -- tree node is alive
@@ -110,7 +110,7 @@ kbutton conf x y kind label =
     mc "text" attrs (show label)
     where
       attrs = [("x", showL x), ("y", showL y), ("style", props style),
-	       ("onclick", onclick conf label)]
+               ("onclick", onclick conf label)]
       style = italic kind [("text-anchor", "middle"), ("fill", color kind)]
       color AliveTree = "black"
       color Shape = "blue"
@@ -126,9 +126,9 @@ kbutton conf x y kind label =
 onclick :: Config -> Int -> String
 onclick conf label =
     if compact conf then
-	showString "showk(evt, \"" $ kid $ shows label "\")"
+        showString "showk(evt, \"" $ kid $ shows label "\")"
     else
-	showString "window.open(\"#" $ kid $ shows label "\", \"_self\")"
+        showString "window.open(\"#" $ kid $ shows label "\", \"_self\")"
 
 -- A button that displays a tree and its first preskeleton
 tbutton :: Config -> Float -> Float -> Int -> Element
@@ -136,10 +136,10 @@ tbutton _ x y label =
     mc "text" attrs (content [])
     where
       attrs = [("x", showL x), ("y", showL y),
-	       ("style", style), ("onclick", script)]
+               ("style", style), ("onclick", script)]
       style = props [("text-anchor", "middle")]
       script = showString "showt(evt, \"" $ tid $ content $
-	       showString "\", \"" $ kid $ content "\")"
+               showString "\", \"" $ kid $ content "\")"
       content = shows label
 
 -- Tree identifier
@@ -182,9 +182,9 @@ defs _ =
     ec "defs" [] [marker]
     where
       marker =
-	  ec "marker"
-		 [("id", "arrow"), ("orient", "auto"),
-		  ("markerWidth", "5"), ("markerHeight", "10"),
-		  ("refX", "5"), ("refY", "5")] [path]
+          ec "marker"
+                 [("id", "arrow"), ("orient", "auto"),
+                  ("markerWidth", "5"), ("markerHeight", "10"),
+                  ("refX", "5"), ("refY", "5")] [path]
       path = ec "path" [("d", "M 0 0 5 5 0 10"), ("style", props style)] []
       style = [("stroke-width", "2"), ("fill", "none"), ("stroke", "black")]

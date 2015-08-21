@@ -92,11 +92,11 @@ originationPos t c =
     where
       loop _ [] = Nothing       -- Term is not carried
       loop pos (Out t' : c)
-	  | t `carriedBy` t' = Just pos -- Found it
-	  | otherwise = loop (pos + 1) c
+          | t `carriedBy` t' = Just pos -- Found it
+          | otherwise = loop (pos + 1) c
       loop pos (In t' : c)
-	  | t `carriedBy` t' = Nothing -- Term does not originate
-	  | otherwise = loop (pos + 1) c
+          | t `carriedBy` t' = Nothing -- Term does not originate
+          | otherwise = loop (pos + 1) c
 
 -- At what position is a term acquired in a trace?
 acquiredPos :: Algebra t p g s e c => t -> Trace t -> Maybe Int
@@ -105,26 +105,26 @@ acquiredPos t c =
     where
       loop _ [] = Nothing       -- Term does not occur
       loop pos (In t' : c)
-	  | t `carriedBy` t' = Just pos -- Found it
-	  | t `occursIn` t' = Nothing   -- Occurs but is not carried
-	  | otherwise = loop (pos + 1) c
+          | t `carriedBy` t' = Just pos -- Found it
+          | t `occursIn` t' = Nothing   -- Occurs but is not carried
+          | otherwise = loop (pos + 1) c
       loop pos (Out t' : c)
-	  | t `occursIn` t' = Nothing   -- Term occurs in outbound term
-	  | otherwise = loop (pos + 1) c
+          | t `occursIn` t' = Nothing   -- Term occurs in outbound term
+          | otherwise = loop (pos + 1) c
 
 -- At what position is a term gained in a trace?
 gainedPos :: Algebra t p g s e c => t ->
-	     Trace t -> Maybe Int
+             Trace t -> Maybe Int
 gainedPos t c =
     loop 0 c
     where
       loop _ [] = Nothing       -- Term is not carried
       loop pos (Out t' : c)
-	  | t `carriedBy` t' = Nothing -- Term is not gained
-	  | otherwise = loop (pos + 1) c
+          | t `carriedBy` t' = Nothing -- Term is not gained
+          | otherwise = loop (pos + 1) c
       loop pos (In t' : c)
-	  | t `carriedBy` t' = Just pos -- Found it
-	  | otherwise = loop (pos + 1) c
+          | t `carriedBy` t' = Just pos -- Found it
+          | otherwise = loop (pos + 1) c
 
 -- At what position do all of the variables in a term occur in a trace?
 usedPos :: Algebra t p g s e c => t -> Trace t -> Maybe Int
@@ -133,10 +133,10 @@ usedPos t c =
     where
       loop _ _ [] = Nothing
       loop pos vars (e : c) =
-	  let vars' = [ x | x <- vars, notElem x (varsInTerms [evtTerm e]) ] in
-	  case vars' of
-	    [] -> Just pos
-	    _ -> loop (pos + 1) vars' c
+          let vars' = [ x | x <- vars, notElem x (varsInTerms [evtTerm e]) ] in
+          case vars' of
+            [] -> Just pos
+            _ -> loop (pos + 1) vars' c
 
 -- Data flow analysis of a trace.
 
@@ -174,7 +174,7 @@ comb f g x =
 data Role t = Role
     { rname :: !String,
       rvars :: ![t],            -- Set of role variables
-				-- Events in causal order
+                                -- Events in causal order
       rtrace :: ![Event t],
       -- Set of non-originating atoms, possibly with a trace length
       rnon :: ![(Maybe Int, t)], -- that says when to inherit the atom
@@ -199,70 +199,70 @@ defaultPriority = 5
 
 -- Create a role
 mkRole :: Algebra t p g s e c => String -> [t] -> Trace t ->
-	  [(Maybe Int, t)] -> [(Maybe Int, t)] -> [t] ->
-	  [SExpr ()] -> [(Int, Int)] -> Bool -> Role t
+          [(Maybe Int, t)] -> [(Maybe Int, t)] -> [t] ->
+          [SExpr ()] -> [(Int, Int)] -> Bool -> Role t
 mkRole name vars trace non pnon unique comment priority rev =
     Role { rname = name,
-	   rvars = L.nub vars,  -- Every variable here must
-	   rtrace = trace,      -- occur in the trace.
-	   rnon = non,
-	   rpnon = pnon,
-	   runique = L.nub unique,
-	   rcomment = comment,
-	   rnorig = map addNonOrig $ nonNub non,
-	   rpnorig = map addNonOrig $ nonNub pnon,
-	   ruorig = map addUniqueOrig $ L.nub unique,
-	   rpriority = addDefaultPrio priority,
-	   rsearch = rev
-	 }
+           rvars = L.nub vars,  -- Every variable here must
+           rtrace = trace,      -- occur in the trace.
+           rnon = non,
+           rpnon = pnon,
+           runique = L.nub unique,
+           rcomment = comment,
+           rnorig = map addNonOrig $ nonNub non,
+           rpnorig = map addNonOrig $ nonNub pnon,
+           ruorig = map addUniqueOrig $ L.nub unique,
+           rpriority = addDefaultPrio priority,
+           rsearch = rev
+         }
     where
       addUniqueOrig t =
-	  case originationPos t trace of
-	    Just p -> (t, p)
-	    Nothing -> error "Protocol.mkRole: Atom does not uniquely originate"
+          case originationPos t trace of
+            Just p -> (t, p)
+            Nothing -> error "Protocol.mkRole: Atom does not uniquely originate"
       addNonOrig (len, t) =
-	  case usedPos t trace of
-	    Nothing -> error "Protocol.mkRole: Atom variables not in trace"
-	    Just p ->
-		case len of
-		  Nothing -> (t, p)
-		  Just len | len >= p -> (t, len)
-			   | otherwise -> error msg
-	  where
-	    msg = "Protocol.mkRole: Position for atom too early in trace"
+          case usedPos t trace of
+            Nothing -> error "Protocol.mkRole: Atom variables not in trace"
+            Just p ->
+                case len of
+                  Nothing -> (t, p)
+                  Just len | len >= p -> (t, len)
+                           | otherwise -> error msg
+          where
+            msg = "Protocol.mkRole: Position for atom too early in trace"
       -- Drop non-origination assumptions for the same atom.
       nonNub nons =
-	  reverse $ foldl f [] nons
-	  where
-	    f acc non@(_, t)
-		| any (\(_, t') -> t == t') acc = acc
-		| otherwise = non : acc
+          reverse $ foldl f [] nons
+          where
+            f acc non@(_, t)
+                | any (\(_, t') -> t == t') acc = acc
+                | otherwise = non : acc
       addDefaultPrio priority =
-	  map f (nats $ length trace)
-	  where
-	    f n =
-	      case lookup n priority of
-		Nothing -> defaultPriority
-		Just p -> p
+          map f (nats $ length trace)
+          where
+            f n =
+              case lookup n priority of
+                Nothing -> defaultPriority
+                Just p -> p
 
 -- Protocols
 
 data Prot t g
     = Prot { pname :: !String,  -- Name of the protocol
-	     alg :: !String,    -- Name of the algebra
-	     pgen :: !g,        -- Initial variable generator
-	     roles :: ![Role t], -- Non-listener roles of a protocol
-	     listenerRole :: Role t,
-	     varsAllAtoms :: !Bool,   -- Are all role variables atoms?
-	     pcomment :: [SExpr ()] }  -- Comments from the input
+             alg :: !String,    -- Name of the algebra
+             pgen :: !g,        -- Initial variable generator
+             roles :: ![Role t], -- Non-listener roles of a protocol
+             listenerRole :: Role t,
+             varsAllAtoms :: !Bool,   -- Are all role variables atoms?
+             pcomment :: [SExpr ()] }  -- Comments from the input
     deriving Show
 
 -- Callers should ensure every role has a distinct name.
 mkProt :: Algebra t p g s e c => String -> String ->
-	  g -> [Role t] -> Role t -> [SExpr ()] -> Prot t g
+          g -> [Role t] -> Role t -> [SExpr ()] -> Prot t g
 mkProt name alg gen roles lrole comment =
     Prot { pname = name, alg = alg, pgen = gen, roles = roles,
-	   listenerRole = lrole, pcomment = comment,
-	   varsAllAtoms = all roleVarsAllAtoms roles }
+           listenerRole = lrole, pcomment = comment,
+           varsAllAtoms = all roleVarsAllAtoms roles }
     where
       roleVarsAllAtoms role = all isAtom (rvars role)

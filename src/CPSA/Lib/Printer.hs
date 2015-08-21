@@ -32,7 +32,7 @@ pretty indent (L _ (x@(S _ "defprotocol") : xs)) =
       loop es (x@(Q _ _):xs) = loop (block indent x : brk 1 : es) xs
       loop es (x@(N _ _):xs) = loop (block indent x : str " " : es) xs
       loop es (x@(L _ (S _ "defrole": _)):xs) =
-	  loop (group indent x : brk 1 : es) xs
+          loop (group indent x : brk 1 : es) xs
       loop es (x@(L _ _):xs) = loop (block indent x : brk 1 : es) xs
 pretty indent x@(L _ (S _ "defmacro" : _)) = block indent x
 pretty indent x@(L _ (S _ "herald" : _)) = block indent x

@@ -45,16 +45,16 @@ instance Ord Tree where
 makeTree :: Preskel -> [Tree] -> [Tree] -> Tree
 makeTree k kids dups =
     Tree { vertex = k,
-	   children = seqList kids,
-	   duplicates = seqList dups,
-	   alive = live kids dups,
-	   width = x kids dups,
-	   height = y kids dups }
+           children = seqList kids,
+           duplicates = seqList dups,
+           alive = live kids dups,
+           width = x kids dups,
+           height = y kids dups }
     where
       live kids dups =
-	  maybe True null (unrealized k) ||
-	  null kids && null dups && not (empty k) ||
-	  any alive kids || any alive dups
+          maybe True null (unrealized k) ||
+          null kids && null dups && not (empty k) ||
+          any alive kids || any alive dups
       x [] [] = 1
       -- The width of a duplicate is one
       x kids dups = sum (map width kids) + length dups
@@ -71,9 +71,9 @@ forest ks =
     map setLiveness (reverse (foldl' f [] ks))
     where
       f ts k
-	| parent k == Nothing = -- Found tree root
-	    assemble (childMap ks) k : ts
-	| otherwise = ts        -- Otherwise skip k
+        | parent k == Nothing = -- Found tree root
+            assemble (childMap ks) k : ts
+        | otherwise = ts        -- Otherwise skip k
 
 -- A child map maps a label to a preskeleton and a list of its
 -- childnen.  The map is derived by looking at the parent field.  The
@@ -83,14 +83,14 @@ childMap ks =
     foldl' child M.empty ks
     where
       child cm k =
-	  case parent k of
-	    Nothing -> cm'
-	    Just p ->
-		M.adjust addChild p cm'
-	  where
-	    cm' = M.insert (label k) (k, []) cm
-	    addChild (k', children) =
-		(k', k : children)
+          case parent k of
+            Nothing -> cm'
+            Just p ->
+                M.adjust addChild p cm'
+          where
+            cm' = M.insert (label k) (k, []) cm
+            addChild (k', children) =
+                (k', k : children)
 
 -- Assemble preskeletons into a tree
 assemble :: Map Int (Preskel, [Preskel]) -> Preskel -> Tree
@@ -98,13 +98,13 @@ assemble table k =
     makeTree k (kids k) (dups k)
     where
       kids k =
-	  case M.lookup (label k) table of
-	    Nothing -> []       -- This should never happen
-	    Just (_, ks) -> map (assemble table) (reverse ks)
+          case M.lookup (label k) table of
+            Nothing -> []       -- This should never happen
+            Just (_, ks) -> map (assemble table) (reverse ks)
       dups k =
-	  [ makeTree k' [] []   -- Make an empty tree for a duplicate
-	    | tag <- seen k,
-	      k' <- maybe [] (\(k, _) -> [k]) (M.lookup tag table) ]
+          [ makeTree k' [] []   -- Make an empty tree for a duplicate
+            | tag <- seen k,
+              k' <- maybe [] (\(k, _) -> [k]) (M.lookup tag table) ]
 
 -- Set the alive flag in each preskeleton.
 setLiveness :: Tree -> Tree
@@ -119,40 +119,40 @@ live t =
     loop (init S.empty t)
     where
       decend ks t =
-	  let ks' = foldl' decend ks (kids t) in
-	  if S.member (vertex t) ks' || dead ks' t then
-	      ks'
-	  else
-	      S.insert (vertex t) ks'
+          let ks' = foldl' decend ks (kids t) in
+          if S.member (vertex t) ks' || dead ks' t then
+              ks'
+          else
+              S.insert (vertex t) ks'
       dead ks t =
-	  all (not . (flip S.member ks) . vertex) (kids t)
+          all (not . (flip S.member ks) . vertex) (kids t)
       kids t = duplicates t ++ children t
       loop old =
-	  let new = decend old t in
-	  if S.size new == S.size old then
-	      old
-	  else
-	      loop new
+          let new = decend old t in
+          if S.size new == S.size old then
+              old
+          else
+              loop new
       init ks t =
-	  foldl' init (live ks t) (children t)
-	  where
-	    live ks t
-		 | alive t = S.insert (vertex t) ks
-		 | otherwise = ks
+          foldl' init (live ks t) (children t)
+          where
+            live ks t
+                 | alive t = S.insert (vertex t) ks
+                 | otherwise = ks
 
 updateLiveness :: Set Preskel -> Tree -> Tree
 updateLiveness live t =
     t { children = map (updateLiveness live) (children t),
-	duplicates = map (updateLiveness live) (duplicates t),
-	alive = S.member (vertex t) live }
+        duplicates = map (updateLiveness live) (duplicates t),
+        alive = S.member (vertex t) live }
 
 -- Draw tree view of preskeleton relations
 tree :: Config -> Tree -> (Float, Float, [Element])
 tree conf t =
     if compact conf then
-	vtree conf t
+        vtree conf t
     else
-	htree conf t
+        htree conf t
 
 -- Draw a vertical tree
 vtree :: Config -> Tree -> (Float, Float, [Element])
@@ -165,16 +165,16 @@ vtree conf t =
       y = my conf
       top = [button conf x y False t]
       loop :: Float -> Float -> Bool -> (Float, [Element]) ->
-	      Tree -> (Float, [Element])
+              Tree -> (Float, [Element])
       loop x1 y1 dup (w, es) t =
-	  (w + tx conf + tw, es')
-	  where
-	    x2 = w + tw / 2
-	    y2 = y1 + ty conf
-	    es'' = button conf x2 y2 dup t :
-		   line conf x1 (y1 + td conf) x2 (y2 - ta conf) : es
-	    es' = snd $ folddup (loop x2 y2) (w, es'') t
-	    tw = tx conf * fromIntegral (width t - 1)
+          (w + tx conf + tw, es')
+          where
+            x2 = w + tw / 2
+            y2 = y1 + ty conf
+            es'' = button conf x2 y2 dup t :
+                   line conf x1 (y1 + td conf) x2 (y2 - ta conf) : es
+            es' = snd $ folddup (loop x2 y2) (w, es'') t
+            tw = tx conf * fromIntegral (width t - 1)
       w = 2 * mx conf + tw                       -- Diagram width
       h = 2 * my conf + th                       -- Diagram height
 
@@ -189,16 +189,16 @@ htree conf t =
       y = my conf + th / 2
       top = [button conf x (y - td conf) False t]
       loop :: Float -> Float -> Bool -> (Float, [Element]) ->
-	      Tree -> (Float, [Element])
+              Tree -> (Float, [Element])
       loop x1 y1 dup (h, es) t =
-	  (h + ty conf + th, es')
-	  where
-	    x2 = x1 + tx conf
-	    y2 = h + th / 2
-	    es'' = button conf x2 (y2 - td conf) dup t :
-		   line conf x1 y1 x2 y2 : es
-	    es' = snd $ folddup (loop x2 y2) (h, es'') t
-	    th = ty conf * fromIntegral (width t - 1)
+          (h + ty conf + th, es')
+          where
+            x2 = x1 + tx conf
+            y2 = h + th / 2
+            es'' = button conf x2 (y2 - td conf) dup t :
+                   line conf x1 y1 x2 y2 : es
+            es' = snd $ folddup (loop x2 y2) (h, es'') t
+            th = ty conf * fromIntegral (width t - 1)
       w = 2 * mx conf + tw                       -- Diagram width
       h = 2 * my conf + th                       -- Diagram height
 
@@ -211,8 +211,8 @@ button conf x y dup t =
     kbutton conf x y kind (label (vertex t))
     where
       kind =
-	  case (alive t, dup) of
-	    (True, False) -> if shape (vertex t) then Shape else AliveTree
-	    (True, True) -> AliveDup
-	    (False, False) -> DeadTree
-	    (False, True) -> DeadDup
+          case (alive t, dup) of
+            (True, False) -> if shape (vertex t) then Shape else AliveTree
+            (True, True) -> AliveDup
+            (False, False) -> DeadTree
+            (False, True) -> DeadDup

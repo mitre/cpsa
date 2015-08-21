@@ -28,7 +28,7 @@ expand sexprs =
       return (reverse sexprs)
 
 expandSExpr :: Int -> ([Macro], [SExpr Pos]) -> SExpr Pos ->
-	       IO ([Macro], [SExpr Pos])
+               IO ([Macro], [SExpr Pos])
 expandSExpr _ (macs, sexprs) (L pos (S _ "defmacro" : xs)) =
     do                          -- Process a macro definition
       mac <- defmacro pos xs
@@ -46,30 +46,30 @@ expandSExpr _ (macs, sexprs) sexpr =
 -- The include form is processed here.
 
 include :: Int -> ([Macro], [SExpr Pos]) -> Pos -> String ->
-	   IO ([Macro], [SExpr Pos])
+           IO ([Macro], [SExpr Pos])
 include bound (macs, sexprs) pos file =
     do
       input <- tryIO (openFile file ReadMode)
       case input of
-	Left err -> fail (shows pos ("File " ++ file ++ ": " ++ err))
-	Right input ->
-	  do
-	    p <- posHandle file input
-	    incsexprs <- readSExprs p
-	    foldM (expandSExpr bound) (macs, sexprs) incsexprs
+        Left err -> fail (shows pos ("File " ++ file ++ ": " ++ err))
+        Right input ->
+          do
+            p <- posHandle file input
+            incsexprs <- readSExprs p
+            foldM (expandSExpr bound) (macs, sexprs) incsexprs
 
 readSExprs :: PosHandle -> IO [SExpr Pos]
 readSExprs p =
     loop []
     where
       loop xs =
-	  do
-	    x <- readSExpr p
-	    case x of
-	      Nothing ->
-		  return $ reverse xs
-	      Just x ->
-		  loop (x:xs)
+          do
+            x <- readSExpr p
+            case x of
+              Nothing ->
+                  return $ reverse xs
+              Just x ->
+                  loop (x:xs)
 
 -- A macro definition is of the form:
 --
@@ -88,8 +88,8 @@ defmacro _ [L _ (name : args), body] =
       name <- symbol name
       args <- mapM symbol args
       return $ Macro { name = name,
-		       args = args,
-		       body = body}
+                       args = args,
+                       body = body}
 defmacro pos _ = fail (shows pos "Malformed macro")
 
 symbol :: Monad m => SExpr Pos -> m String
@@ -103,16 +103,16 @@ expandAll macs sexpr =
     do
       sexpr <- macroExpand macs (annotation sexpr) limit sexpr
       case sexpr of
-	L pos xs ->             -- Expand elements of list
-	    do
-	      xs <- mapM (expandAll macs) xs
-	      return (L pos (splice xs))
-	_ -> return sexpr
+        L pos xs ->             -- Expand elements of list
+            do
+              xs <- mapM (expandAll macs) xs
+              return (L pos (splice xs))
+        _ -> return sexpr
 
 -- Expand one S-expression limiting the number of expansions.
 
 macroExpand :: Monad m => [Macro] -> Pos ->  Int ->
-	       SExpr Pos -> m (SExpr Pos)
+               SExpr Pos -> m (SExpr Pos)
 macroExpand _ pos limit _
     | limit <= 0 = fail (shows pos "Expansion limit exceded")
 macroExpand macs pos limit sexpr@(L _ (S _ sym : xs)) =
@@ -127,9 +127,9 @@ macroExpand1 :: [Macro] -> String -> [SExpr Pos] -> Maybe (SExpr Pos)
 macroExpand1 [] _ _ = Nothing
 macroExpand1 (mac : macs) sym xs
     | name mac == sym && length (args mac) == length xs =
-	Just (apply mac xs)
+        Just (apply mac xs)
     | otherwise =
-	macroExpand1 macs sym xs
+        macroExpand1 macs sym xs
 
 -- Apply a macro to some parameters
 

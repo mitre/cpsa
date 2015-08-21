@@ -8,7 +8,7 @@
 -- University of California.
 
 module CPSA.Lib.SExpr (SExpr(..), showQuoted, annotation, Pos,
-		       PosHandle, posHandle, load) where
+                       PosHandle, posHandle, load) where
 
 import Data.Char (isSpace, isDigit, isAlphaNum, isPrint)
 import Data.IORef (IORef, newIORef, readIORef, writeIORef)
@@ -37,10 +37,10 @@ instance Show (SExpr a) where
     showsPrec _ (N _ n) = shows n
     showsPrec _ (L _ []) = showString "()"
     showsPrec _ (L _ (x:xs)) =
-	showChar '(' . shows x . showl xs . showChar ')'
-	where
-	  showl [] = id
-	  showl (x:xs) = showChar ' ' . shows x . showl xs
+        showChar '(' . shows x . showl xs . showChar ')'
+        where
+          showl [] = id
+          showl (x:xs) = showChar ' ' . shows x . showl xs
 
 showQuoted :: String -> ShowS
 showQuoted s = showChar '"' . showString s . showChar '"'
@@ -61,15 +61,15 @@ data Pos = Pos { file :: !String, line :: !Int, column :: !Int }
 -- Show a position in a form Emacs can read.
 instance Show Pos where
     showsPrec _ pos = showString (file pos) .
-		      showString ":" .
-		      shows (line pos) .
-		      showString ":" .
-		      shows (column pos) .
-		      showString ": "
+                      showString ":" .
+                      shows (line pos) .
+                      showString ":" .
+                      shows (column pos) .
+                      showString ": "
 
 -- Bind a position to a handle
 data PosHandle = PosHandle { pHandle :: Handle, pFile :: String,
-			     pPosition :: IORef (Int, Int) }
+                             pPosition :: IORef (Int, Int) }
 
 posHandle :: FilePath -> Handle -> IO PosHandle
 posHandle file handle =
@@ -95,39 +95,39 @@ load p =
       (l, c) <- readIORef $ pPosition p
       (l, c, t) <- scan p l c
       case t of
-	Atom x ->
-	    do
-	      setPosHandle p l c
-	      return $ Just x
-	Lparen pos ->
-	    do
-	      (l, c, x) <- list p pos l c []
-	      setPosHandle p l c
-	      return $ Just x
-	Rparen pos ->
-	    abort p (shows pos "Close of unopened list")
-	Eof ->
-	    do
-	      hClose $ pHandle p
-	      return Nothing
+        Atom x ->
+            do
+              setPosHandle p l c
+              return $ Just x
+        Lparen pos ->
+            do
+              (l, c, x) <- list p pos l c []
+              setPosHandle p l c
+              return $ Just x
+        Rparen pos ->
+            abort p (shows pos "Close of unopened list")
+        Eof ->
+            do
+              hClose $ pHandle p
+              return Nothing
 
 -- A recursive decent parser
 list :: PosHandle -> Pos -> Int -> Int -> [SExpr Pos] ->
-	IO (Int, Int, SExpr Pos)
+        IO (Int, Int, SExpr Pos)
 list p pos l c xs =
     do
       (l, c, t) <- scan p l c
       case t of
-	Rparen _ ->
-	    return (l, c, L pos (seqrev xs))
-	Atom x ->
-	    list p pos l c (x : xs)
-	Lparen pos' ->
-	    do
-	      (l, c, x) <- list p pos' l c []
-	      list p pos l c (x : xs)
-	Eof ->
-	    abort p (shows pos "Unexpected end of input in list")
+        Rparen _ ->
+            return (l, c, L pos (seqrev xs))
+        Atom x ->
+            list p pos l c (x : xs)
+        Lparen pos' ->
+            do
+              (l, c, x) <- list p pos' l c []
+              list p pos l c (x : xs)
+        Eof ->
+            abort p (shows pos "Unexpected end of input in list")
 
 -- Read the next character returning Nothing on EOF
 get :: PosHandle -> IO (Maybe Char)
@@ -136,12 +136,12 @@ get p =
       let h = pHandle p
       eof <- hIsEOF h
       case eof of
-	True ->
-	    return Nothing
-	False ->
-	    do
-	      ch <- hGetChar h
-	      return $ Just ch
+        True ->
+            return Nothing
+        False ->
+            do
+              ch <- hGetChar h
+              return $ Just ch
 
 -- Peek at the next character returning Nothing on EOF
 peek :: PosHandle -> IO (Maybe Char)
@@ -150,12 +150,12 @@ peek p =
       let h = pHandle p
       eof <- hIsEOF h
       case eof of
-	True ->
-	    return Nothing
-	False ->
-	    do
-	      ch <- hLookAhead h
-	      return $ Just ch
+        True ->
+            return Nothing
+        False ->
+            do
+              ch <- hLookAhead h
+              return $ Just ch
 
 -- Return the next token and update line and column information
 scan :: PosHandle -> Int -> Int -> IO (Int, Int, Token)
@@ -163,10 +163,10 @@ scan p l c =
     do
       ch <- get p
       case ch of
-	Nothing ->
-	    return (l, c, Eof)
-	Just ch ->
-	    skip p l c ch
+        Nothing ->
+            return (l, c, Eof)
+        Just ch ->
+            skip p l c ch
 
 -- Skip whitespace and then handle first character of a token
 skip :: PosHandle -> Int -> Int -> Char -> IO (Int, Int, Token)
@@ -190,12 +190,12 @@ comment p l c =
     do
       ch <- get p
       case ch of
-	Nothing ->
-	    return (l, c, Eof)
-	Just '\n' ->
-	    scan p (l + 1) 1
-	Just _ ->
-	    comment p l (c + 1)
+        Nothing ->
+            return (l, c, Eof)
+        Just '\n' ->
+            scan p (l + 1) 1
+        Just _ ->
+            comment p l (c + 1)
 
 -- Scan a string, number, or a symbol
 atom :: PosHandle -> Int -> Int -> Pos -> Char -> IO (Int, Int, Token)
@@ -211,14 +211,14 @@ string p l c pos s =
     do
       ch <- get p
       case ch of
-	Nothing ->
-	    abort p (shows pos "End of input in string")
-	Just '"' ->
-	    return (l, c + 1, Atom (Q pos (seqrev s)))
-	Just ch | isStr ch ->
-	    string p l (c + 1) pos (ch : s)
-	Just _ ->
-	    abort p (shows pos "Bad char for string")
+        Nothing ->
+            abort p (shows pos "End of input in string")
+        Just '"' ->
+            return (l, c + 1, Atom (Q pos (seqrev s)))
+        Just ch | isStr ch ->
+            string p l (c + 1) pos (ch : s)
+        Just _ ->
+            abort p (shows pos "Bad char for string")
 
 -- Scan a sequence of digits
 number :: PosHandle -> Int -> Int -> Pos -> String -> IO (Int, Int, Token)
@@ -226,16 +226,16 @@ number p l c pos s =
     do
       ch <- peek p
       case ch of
-	Nothing ->
-	    return (l, c, Atom (N pos (read (seqrev s))))
-	Just ch | isDigit ch ->
-	    do
-	      _ <- hGetChar $ pHandle p
-	      number p l (c + 1) pos (ch : s)
-	Just ch | isSym ch ->
-	    abort p (shows pos "Bad char after number")
-	Just _ ->
-	    return (l, c, Atom (N pos (read (seqrev s))))
+        Nothing ->
+            return (l, c, Atom (N pos (read (seqrev s))))
+        Just ch | isDigit ch ->
+            do
+              _ <- hGetChar $ pHandle p
+              number p l (c + 1) pos (ch : s)
+        Just ch | isSym ch ->
+            abort p (shows pos "Bad char after number")
+        Just _ ->
+            return (l, c, Atom (N pos (read (seqrev s))))
 
 -- Scan a number that starts with a sign or a symbol
 numOrSym :: PosHandle -> Int -> Int -> Pos -> String -> IO (Int, Int, Token)
@@ -243,15 +243,15 @@ numOrSym p l c pos s =
     do
       ch <- peek p
       case ch of
-	Nothing ->
-	    symbol p l c pos s
-	Just ch | isDigit ch ->
-	    if s == "+" then
-	      number p l c pos []
-	    else
-	      number p l c pos s
-	Just _ ->
-	    symbol p l c pos s
+        Nothing ->
+            symbol p l c pos s
+        Just ch | isDigit ch ->
+            if s == "+" then
+              number p l c pos []
+            else
+              number p l c pos s
+        Just _ ->
+            symbol p l c pos s
 
 -- Scan a symbol
 symbol :: PosHandle -> Int -> Int -> Pos -> String -> IO (Int, Int, Token)
@@ -259,14 +259,14 @@ symbol p l c pos s =
     do
       ch <- peek p
       case ch of
-	Nothing ->
-	    return (l, c, Atom (S pos (seqrev s)))
-	Just ch | isSym ch ->
-	    do
-	      _ <- hGetChar $ pHandle p
-	      symbol p l (c + 1) pos (ch : s)
-	Just _ ->
-	    return (l, c, Atom (S pos (seqrev s)))
+        Nothing ->
+            return (l, c, Atom (S pos (seqrev s)))
+        Just ch | isSym ch ->
+            do
+              _ <- hGetChar $ pHandle p
+              symbol p l (c + 1) pos (ch : s)
+        Just _ ->
+            return (l, c, Atom (S pos (seqrev s)))
 
 -- A reverse that evaluates the list elements.
 seqrev :: [a] -> [a]

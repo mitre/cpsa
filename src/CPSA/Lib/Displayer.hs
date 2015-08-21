@@ -27,13 +27,13 @@ displayProt p =
 displayRole :: Algebra t p g s e c => Role t -> SExpr ()
 displayRole r =
     L () (S () "defrole" :
-	  S () (rname r) :
-	  L () (S () "vars" : displayVars ctx vars) :
-	  L () (S () "trace" : displayTrace ctx (rtrace r)) :
-	  displayOptional "non-orig" (displayLenTerms ctx (rnon r))
-	  (displayOptional "pen-non-orig" (displayLenTerms ctx (rpnon r))
-	   (displayOptional "uniq-orig" (displayTerms ctx (runique r))
-	   (rcomment r))))
+          S () (rname r) :
+          L () (S () "vars" : displayVars ctx vars) :
+          L () (S () "trace" : displayTrace ctx (rtrace r)) :
+          displayOptional "non-orig" (displayLenTerms ctx (rnon r))
+          (displayOptional "pen-non-orig" (displayLenTerms ctx (rpnon r))
+           (displayOptional "uniq-orig" (displayTerms ctx (runique r))
+           (rcomment r))))
     where
       ctx = varsContext vars
       vars = rvars r
@@ -58,7 +58,7 @@ displayOptional key value rest =
     L () (S () key : value) : rest
 
 displayTrace :: Algebra t p g s e c => c ->
-		Trace t -> [SExpr ()]
+                Trace t -> [SExpr ()]
 displayTrace ctx trace =
     map displayDt trace
     where
@@ -68,12 +68,12 @@ displayTrace ctx trace =
 -- Display of preskeletons
 
 displayPreskel :: Algebra t p g s e c => Preskel t g s e ->
-		  [SExpr ()] -> SExpr ()
+                  [SExpr ()] -> SExpr ()
 displayPreskel k rest =
     L () (S () "defskeleton" :
-	  S () (pname (protocol k)) :
-	  L () (S () "vars" : displayVars ctx vars) :
-	  foldr f (displayRest k ctx rest) (insts k))
+          S () (pname (protocol k)) :
+          L () (S () "vars" : displayVars ctx vars) :
+          foldr f (displayRest k ctx rest) (insts k))
     where
       ctx = varsContext vars
       vars = kvars k
@@ -81,16 +81,16 @@ displayPreskel k rest =
 
 -- Display the remainder of a preskeleton
 displayRest :: Algebra t p g s e c => Preskel t g s e ->
-	       c -> [SExpr ()] -> [SExpr ()]
+               c -> [SExpr ()] -> [SExpr ()]
 displayRest k ctx rest =
     displayOptional "precedes" (displayOrdering (orderings k))
      (displayOptional "non-orig" (displayTerms ctx (knon k))
       (displayOptional "pen-non-orig" (displayTerms ctx (kpnon k))
        (displayOptional "uniq-orig" (displayTerms ctx (kunique k))
-	(displayOptional "priority" priorities
-	 (kcomment k ++
-	  (displayOperation k ctx
-	   (displayOptional "traces" traces rest)))))))
+        (displayOptional "priority" priorities
+         (kcomment k ++
+          (displayOperation k ctx
+           (displayOptional "traces" traces rest)))))))
     where
       priorities = map displayPriority (kpriority k)
       traces = map (L () . displayTrace ctx . trace) (insts k)
@@ -100,20 +100,20 @@ displayPriority (n, p) =
     L () [displayNode n, N () p]
 
 displayInst :: Algebra t p g s e c => c ->
-	       Instance t e -> SExpr ()
+               Instance t e -> SExpr ()
 displayInst ctx s =
     case listenerTerm s of
       Just t -> L () [S () "deflistener", displayTerm ctx t]
       Nothing ->
-	  L () (S () "defstrand" :
-		S () (rname r) :
-		N () (height s) :
-		map (displayMaplet rctx ctx) maplets)
-	  where
-	    r = role s
-	    domain = rvars r
-	    maplets = L.sort (reify domain (env s))
-	    rctx = varsContext domain
+          L () (S () "defstrand" :
+                S () (rname r) :
+                N () (height s) :
+                map (displayMaplet rctx ctx) maplets)
+          where
+            r = role s
+            domain = rvars r
+            maplets = L.sort (reify domain (env s))
+            rctx = varsContext domain
 
 displayMaplet :: Algebra t p g s e c => c -> c -> (t, t) -> SExpr ()
 displayMaplet domain range (x, t)=
@@ -132,46 +132,46 @@ displayNode (s, p) = L () [N () s, N () p]
 
 -- Display the reason the preskeleton was created
 displayOperation :: Algebra t p g s e c => Preskel t g s e ->
-		    c -> [SExpr ()] -> [SExpr ()]
+                    c -> [SExpr ()] -> [SExpr ()]
 displayOperation k ctx rest =
     case operation k of
       New -> rest
       Contracted subst cause ->
-	  let substitution = displaySubst ctx subst in
-	  displayCause (L () (S () "contracted" : substitution)) cause
+          let substitution = displaySubst ctx subst in
+          displayCause (L () (S () "contracted" : substitution)) cause
       Displaced s s' role height cause ->
-	  displayCause
-	  (L () [S () "displaced", N () s, N () s', S () role, N () height])
-	  cause
+          displayCause
+          (L () [S () "displaced", N () s, N () s', S () role, N () height])
+          cause
       AddedStrand role height cause ->
-	  displayCause
-	  (L () [S () "added-strand", S () role, N () height]) cause
+          displayCause
+          (L () [S () "added-strand", S () role, N () height]) cause
       AddedListener t cause ->
-	  displayCause (L () [S () "added-listener", displayOpTerm ctx t]) cause
+          displayCause (L () [S () "added-listener", displayOpTerm ctx t]) cause
       Generalized method ->
-	  let desc = displayMethod ctx method in
-	  L () (S () "operation" : S () "generalization" : desc) : rest
+          let desc = displayMethod ctx method in
+          L () (S () "operation" : S () "generalization" : desc) : rest
       Collapsed s s' ->
-	  let desc = [N () s, N () s'] in
-	  L () (S () "operation" : S () "collapsed" : desc) : rest
+          let desc = [N () s, N () s'] in
+          L () (S () "operation" : S () "collapsed" : desc) : rest
     where
       displayCause op (Cause dir node critical escape) =
-	  L () (S () "operation" :
-		displayDirection dir :
-		op :
-		displayOpTerm ctx critical :
-		displayNode node :
-		displayOpTerms ctx (S.toList escape)) : rest
+          L () (S () "operation" :
+                displayDirection dir :
+                op :
+                displayOpTerm ctx critical :
+                displayNode node :
+                displayOpTerms ctx (S.toList escape)) : rest
       displayDirection Encryption = S () "encryption-test"
       displayDirection Nonce = S () "nonce-test"
       displayMethod _ (Deleted node) =
-	  [S () "deleted", displayNode node]
+          [S () "deleted", displayNode node]
       displayMethod _ (Weakened (n0, n1)) =
-	  [S () "weakened", L () [displayNode n0, displayNode n1] ]
+          [S () "weakened", L () [displayNode n0, displayNode n1] ]
       displayMethod ctx (Separated t) =
-	  [S () "separated", displayOpTerm ctx t]
+          [S () "separated", displayOpTerm ctx t]
       displayMethod ctx (Forgot t) =
-	  [S () "forgot", displayOpTerm ctx t]
+          [S () "forgot", displayOpTerm ctx t]
 
 -- Terms in the operation field may contain variables not in the skeleton
 displayOpTerm :: Algebra t p g s e c => c -> t -> SExpr ()

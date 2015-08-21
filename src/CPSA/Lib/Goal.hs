@@ -25,8 +25,8 @@ data AForm t
 
 data Goal t
   = Goal { uvars :: [t],          -- Universally quantified variables
-	   antec :: [AForm t],    -- Antecedent
-	   concl :: [[AForm t]] } -- Conclusion
+           antec :: [AForm t],    -- Antecedent
+           concl :: [[AForm t]] } -- Conclusion
 
 -- Ordering used to sort by constructor order.
 aFormOrder :: AForm t -> AForm t -> Ordering

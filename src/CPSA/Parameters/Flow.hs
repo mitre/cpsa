@@ -11,18 +11,18 @@ module CPSA.Parameters.Flow (dataFlow) where
 import CPSA.Lib.CPSA
 
 dataFlow :: (Algebra t p g s e c, Monad m) => String -> g ->
-	    SExpr Pos -> m (SExpr ())
+            SExpr Pos -> m (SExpr ())
 dataFlow nom origin (L pos (S _ "defprotocol" :
-			    S _ name :
-			    S _ alg :
-			    xs))
+                            S _ name :
+                            S _ alg :
+                            xs))
     | nom == alg =
-	do
-	  xs <- mapM (mapRole origin) xs
-	  return (L () (S () "defprotocol" :
-			S () name :
-			S () alg :
-			xs))
+        do
+          xs <- mapM (mapRole origin) xs
+          return (L () (S () "defprotocol" :
+                        S () name :
+                        S () alg :
+                        xs))
     | otherwise = fail (shows pos $ "Expecting terms in algebra " ++ nom)
 dataFlow _ _ x = return (strip x)
 
@@ -35,30 +35,30 @@ strip (N _ n) = N () n
 strip (L _ l) = L () (map strip l)
 
 mapRole :: (Algebra t p g s e c, Monad m) => g ->
-	   SExpr Pos -> m (SExpr ())
+           SExpr Pos -> m (SExpr ())
 mapRole gen (L _ (S _ "defrole" :
-		  S _ name :
-		  L _ (S _ "vars" : vars) :
-		  L _ (S _ "trace" : trace) :
-		  rest)) =
+                  S _ name :
+                  L _ (S _ "vars" : vars) :
+                  L _ (S _ "trace" : trace) :
+                  rest)) =
     do
       (_, vs) <- loadVars gen vars
       c <- loadTrace vs trace
       let rest' = addParams (displayParams vs (flow c)) (map strip rest)
       trace <- mapM stripEvt trace
       return (L () (S () "defrole" :
-		    S () name :
-		    L () (S () "vars" : map strip vars) :
-		    L () (S () "trace" : trace) :
-		    rest'))
+                    S () name :
+                    L () (S () "vars" : map strip vars) :
+                    L () (S () "trace" : trace) :
+                    rest'))
 mapRole _ x = return (strip x)
 
 loadTrace :: (Algebra t p g s e c, Monad m) => [t] ->
-	     [SExpr Pos] -> m [Event t]
+             [SExpr Pos] -> m [Event t]
 loadTrace vars xs = mapM (loadEvt vars) xs
 
 loadEvt :: (Algebra t p g s e c, Monad m) => [t] ->
-	  SExpr Pos -> m (Event t)
+          SExpr Pos -> m (Event t)
 loadEvt vars (L _ [S _ "recv", t]) =
     do
       t <- loadTerm vars t

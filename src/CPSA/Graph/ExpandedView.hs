@@ -28,12 +28,12 @@ expandedView h conf margin cmts ks =
       let pp = printer conf
       comments h margin pp cmts
       case forest ks of
-	[t] ->
-	    tdrawer h conf margin pp False t
-	f ->
-	    do
-	      toc h f
-	      mapM_ (tdrawer h conf margin pp True) f
+        [t] ->
+            tdrawer h conf margin pp False t
+        f ->
+            do
+              toc h f
+              mapM_ (tdrawer h conf margin pp True) f
       hPutList h closer
       hClose h
 
@@ -108,12 +108,12 @@ docRoot conf w h es =
     ec "div" [] div
     where
       attrs = [("class", "diagram"),
-	       ("width", showL w ++ units conf),
-	       ("height", showL h ++ units conf),
-	       ("xmlns", "http://www.w3.org/2000/svg"),
-	       ("version", "1.1"),
-	       ("viewBox", viewbox),
-	       ("font-size", showL (font conf))]
+               ("width", showL w ++ units conf),
+               ("height", showL h ++ units conf),
+               ("xmlns", "http://www.w3.org/2000/svg"),
+               ("version", "1.1"),
+               ("viewBox", viewbox),
+               ("font-size", showL (font conf))]
       viewbox = "0 0 " ++ showL w ++ " " ++ showL h
       svg = ec "svg" attrs (if scripts conf then [ec "g" [] es] else es)
       div = if scripts conf then [zoomControl, br, svg] else [svg]
@@ -123,10 +123,10 @@ zoomControl :: Element
 zoomControl =
     ec "select" [("onchange", "zoom(event)")]
        [mc "option" [("value", "1.0")] "1.0",
-	mc "option" [("value", "0.8")] "0.8",
-	mc "option" [("value", "0.6")] "0.6",
-	mc "option" [("value", "0.4")] "0.4",
-	mc "option" [("value", "0.2")] "0.2"]
+        mc "option" [("value", "0.8")] "0.8",
+        mc "option" [("value", "0.6")] "0.6",
+        mc "option" [("value", "0.4")] "0.4",
+        mc "option" [("value", "0.2")] "0.2"]
 
 -- Draws one tree
 tdrawer :: Handle -> Config -> Int -> Printer Pos -> Bool -> Tree -> IO ()
@@ -136,8 +136,8 @@ tdrawer h conf margin pp toc t =
       let id = label (vertex t)
       hPutStr h $ "<p id=\"" ++ treeid id ++ "\">Tree"
       case toc of
-	True -> anchor h (\_ -> topid) id
-	False -> hPutStr h $ " " ++ show id
+        True -> anchor h (\_ -> topid) id
+        False -> hPutStr h $ " " ++ show id
       hPutStrLn h ".</p>"
       hPutStrLn h ""
       let (width, height, es) = tree conf t
@@ -159,11 +159,11 @@ kdrawer h conf margin pp tid (t:ts) =
       hPutStr h $ "<p id=\"" ++ itemid id ++ "\">Item"
       anchor h (\_ -> treeid tid) id
       case parent k of
-	Nothing -> return ()
-	Just p ->
-	    do
-	      hPutStr h ", Parent:"
-	      anchor h itemid p
+        Nothing -> return ()
+        Just p ->
+            do
+              hPutStr h ", Parent:"
+              anchor h itemid p
       titledList h "Child" "Children" $ map (label . vertex) (children t)
       titledList h "Seen Child" "Seen Children" $ seen k
       hPutStrLn h ".</p>"
@@ -229,7 +229,7 @@ javascript =
 -- Treeless View -- fast because we don't generated derivation trees.
 
 treelessView :: Handle -> Config -> Int -> [SExpr Pos] ->
-		Preskel -> State -> IO ()
+                Preskel -> State -> IO ()
 treelessView h conf margin cmts k s =
     do
       hPutList h (header (scripts conf) cmts [k])
@@ -241,12 +241,12 @@ body :: Handle -> Config -> Int -> Printer Pos -> Preskel -> State -> IO ()
 body h conf margin pp k s =
     do
       case parent k of
-	Nothing ->
-	    do
-	      hPutStrLn h ""
-	      hPutStrLn h $ show $ mc "p" [] ("Tree " ++ show (label k))
-	      hPutSExpr h margin pp (protSrc k)
-	Just _ -> return ()
+        Nothing ->
+            do
+              hPutStrLn h ""
+              hPutStrLn h $ show $ mc "p" [] ("Tree " ++ show (label k))
+              hPutSExpr h margin pp (protSrc k)
+        Just _ -> return ()
       hPutStrLn h ""
       hPutStrLn h $ show $ mc "p" [] ("Item " ++ show (label k))
       hPutStrLn h ""
@@ -255,9 +255,9 @@ body h conf margin pp k s =
       hPutSExpr h margin pp (purgeTraces conf $ preskelSrc k)
       n <- loadNext s
       case n of
-	Nothing ->              -- EOF
-	    do
-	      hPutList h closer
-	      hClose h
-	Just (k, s) ->
-	    body h conf margin pp k s
+        Nothing ->              -- EOF
+            do
+              hPutList h closer
+              hClose h
+        Just (k, s) ->
+            body h conf margin pp k s

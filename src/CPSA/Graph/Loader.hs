@@ -12,12 +12,12 @@
 -- University of California.
 
 module CPSA.Graph.Loader (Preskel, Dir (..), Vertex, protocol, role, env,
-			  inst, part, lastVertex, vertices, Node, vnode,
-			  strands, label, parent, seen, unrealized, shape,
-			  empty, protSrc, preskelSrc, initial, strand, pos,
-			  prev, next, msg, dir, succs, preds,
-			  State, loadFirst, loadNext)
-			  where
+                          inst, part, lastVertex, vertices, Node, vnode,
+                          strands, label, parent, seen, unrealized, shape,
+                          empty, protSrc, preskelSrc, initial, strand, pos,
+                          prev, next, msg, dir, succs, preds,
+                          State, loadFirst, loadNext)
+                          where
 
 import qualified Data.List as L
 import Control.Monad
@@ -29,7 +29,7 @@ import CPSA.Lib.Entry (gentlyReadSExpr)
 data Preskel = Preskel
     { protocol :: String,       -- Name of the protocol
       label :: Int,             -- Label from the input or generated
-				-- by the loader
+                                -- by the loader
       parent :: Maybe Int,      -- Parent from the input
       seen :: [Int], -- Seen preskeletons isomorphic to cohort members
       strands :: Int,           -- Number of strands
@@ -54,8 +54,8 @@ data Inst = Inst
     deriving Show
 
 data Dir = InDir
-	 | OutDir
-	 | SyncDir
+         | OutDir
+         | SyncDir
 
 -- A vertex v contains the information associated with the node
 -- (strand v, pos v).
@@ -78,8 +78,8 @@ instance Ord Vertex where
 
 instance Show Vertex where
     showsPrec _ n = let (s, p) = (strand n, pos n) in
-		    showChar '(' . shows s . showString ", " .
-		    shows p . showChar ')'
+                    showChar '(' . shows s . showString ", " .
+                    shows p . showChar ')'
 
 -- Returns the role associated with the node
 role :: Vertex -> String
@@ -143,19 +143,19 @@ loadComments h cmts =
     do
       x <- gentlyReadSExpr h
       case x of
-	Nothing -> fail "Empty input"
-	Just x ->
-	    case x of
-	      cmt@(L _ (S _ "comment" : _)) ->
-		  loadComments h (cmt:cmts)
-	      cmt@(L _ (S _ "herald" : _)) ->
-		  loadComments h (cmt:cmts)
-	      _ ->
-		  do
-		    n <- loadSExpr (State (h, 0, [])) x
-		    case n of
-		      Nothing -> fail "Empty input"
-		      Just (p, s) -> return (reverse cmts, p, s)
+        Nothing -> fail "Empty input"
+        Just x ->
+            case x of
+              cmt@(L _ (S _ "comment" : _)) ->
+                  loadComments h (cmt:cmts)
+              cmt@(L _ (S _ "herald" : _)) ->
+                  loadComments h (cmt:cmts)
+              _ ->
+                  do
+                    n <- loadSExpr (State (h, 0, [])) x
+                    case n of
+                      Nothing -> fail "Empty input"
+                      Just (p, s) -> return (reverse cmts, p, s)
 
 -- Load the next preskeleton or return Nothing on EOF
 loadNext :: State -> IO (Maybe (Preskel, State))
@@ -163,8 +163,8 @@ loadNext s@(State (h, _, _)) =
     do
       x <- gentlyReadSExpr h
       case x of
-	Nothing -> return Nothing
-	Just x -> loadSExpr s x
+        Nothing -> return Nothing
+        Just x -> loadSExpr s x
 
 -- Load from one S-expression
 loadSExpr :: State -> SExpr Pos -> IO (Maybe (Preskel, State))
@@ -183,7 +183,7 @@ loadSExpr _ x = fail (shows (annotation x) "Malformed input")
 -- Protocols
 
 loadProt :: Monad m => SExpr Pos -> Pos -> [SExpr Pos] ->
-	    m (String, Protocol)
+            m (String, Protocol)
 loadProt x _ (S _ name : S _ _ : xs) =
     do
       roles <- loadRoles xs
@@ -200,51 +200,51 @@ loadRoles _ = return []
 
 loadRole :: Monad m => Pos -> [SExpr Pos] -> m (String, Trace)
 loadRole _ (S _ name :
-	    L _ (S _ "vars" : _) :
-	    L _ (S _ "trace" : trace) : _) = return (name, trace)
+            L _ (S _ "vars" : _) :
+            L _ (S _ "trace" : trace) : _) = return (name, trace)
 loadRole pos _ = fail (shows pos "Malformed role")
 
 -- Preskeletons
 
 loadPreskel :: Monad m => SExpr Pos -> Pos -> [(String, Protocol)] ->
-	       Int -> [SExpr Pos] -> m Preskel
+               Int -> [SExpr Pos] -> m Preskel
 loadPreskel s pos ps tag (S _ name : (L _ (S _ "vars" : _)) : xs) =
     case lookup name ps of
       Nothing -> fail (shows pos $ "Protocol " ++ name ++ " unknown")
       Just p ->
-	  do
-	    alist xs            -- Ensure alist syntax
-	    let cs = case assoc "traces" xs of
-		       Nothing -> []
-		       Just cs -> cs
-	    loadInsts s pos p tag [] cs xs
+          do
+            alist xs            -- Ensure alist syntax
+            let cs = case assoc "traces" xs of
+                       Nothing -> []
+                       Just cs -> cs
+            loadInsts s pos p tag [] cs xs
 loadPreskel _ pos _ _ _ = fail (shows pos "Malformed skeleton")
 
 loadInsts :: Monad m => SExpr Pos -> Pos -> Protocol -> Int ->
-	     [Inst] -> [SExpr Pos] -> [SExpr Pos] -> m Preskel
+             [Inst] -> [SExpr Pos] -> [SExpr Pos] -> m Preskel
 loadInsts s top p tag insts cs (L pos (S _ "defstrand" : x) : xs) =
     case x of
       S _ role : N _ height : env ->
-	  do
-	    let (c, cs') = case cs of
-		      L _ c : cs' -> (c, cs')
-		      _ -> ([], [])
-	    i <- loadInst pos p c role height env
-	    loadInsts s top p tag (i : insts) cs' xs
+          do
+            let (c, cs') = case cs of
+                      L _ c : cs' -> (c, cs')
+                      _ -> ([], [])
+            i <- loadInst pos p c role height env
+            loadInsts s top p tag (i : insts) cs' xs
       _ ->
-	  fail (shows pos "Malformed defstrand")
+          fail (shows pos "Malformed defstrand")
 loadInsts s top p tag insts cs (L pos (S _ "deflistener" : x) : xs) =
     case x of
       [term] ->
-	  let e0 = L pos [S pos "recv", term] in
-	  let e1 = L pos [S pos "send", term] in
-	  let i = Inst { part = "", mapping = L pos [], trace = [e0, e1] } in
-	  let (_, cs') = case cs of
-			   L _ c : cs' -> (c, cs')
-			   _ -> ([], []) in
-	  loadInsts s top p tag (i : insts) cs' xs
+          let e0 = L pos [S pos "recv", term] in
+          let e1 = L pos [S pos "send", term] in
+          let i = Inst { part = "", mapping = L pos [], trace = [e0, e1] } in
+          let (_, cs') = case cs of
+                           L _ c : cs' -> (c, cs')
+                           _ -> ([], []) in
+          loadInsts s top p tag (i : insts) cs' xs
       _ ->
-	  fail (shows pos "Malformed deflistener")
+          fail (shows pos "Malformed deflistener")
 loadInsts s pos p tag revInsts _ xs =
     do
       label <- nassoc "label" xs
@@ -252,8 +252,8 @@ loadInsts s pos p tag revInsts _ xs =
       seen <- nsassoc "seen" xs
       let insts = reverse revInsts
       case null insts of
-	True -> fail (shows pos "No strands")
-	False -> return ()
+        True -> fail (shows pos "No strands")
+        False -> return ()
       let heights = map (length . trace) insts
       unrealized <- loadNodes heights (assoc "unrealized" xs)
       let shape = maybe False (const True) (assoc "shape" xs)
@@ -264,52 +264,52 @@ loadInsts s pos p tag revInsts _ xs =
       let pairs' = reduce graph pairs
       let strands = length insts
       let nodes = [(s, p) | s <- nats strands,
-			    p <- nats $ heights !! s]
+                            p <- nats $ heights !! s]
       case isAcyclic graph nodes of
-	False -> fail (shows pos "Cycle found")
-	True ->
-	    return Preskel { protocol = name p,
-			     label = maybe tag id label,
-			     parent  = parent,
-			     seen = maybe [] (L.sort . L.nub) seen,
-			     strands = strands,
-			     initial = initial,
-			     unrealized = unrealized',
-			     shape = shape,
-			     empty = empty,
-			     protSrc = src p,
-			     preskelSrc = s }
-	    where
-	      initial = map head nodes -- The first node in each strand
-	      nodes = [ [ Vertex {
-			    msg = evtMsg evt,
-			    dir = evtDir evt,
-			    inst = inst,
-			    prev = getPrev (s, p),
-			    next = getNext ht (s, p),
-			    preds = getPreds (s, p),
-			    succs = getSuccs (s, p),
-			    strand = s,
-			    pos = p } |
-			  (p, evt) <- zip [0..] (trace inst) ] |
-			(s, inst) <- zip [0..] insts,
-			let ht = length (trace inst) ]
-	      evtMsg (L _ [S _ _, t]) = t
-	      evtMsg x = x      -- Handle bad syntax
-	      evtDir (L _ [S _ "send", _]) = OutDir
-	      evtDir (L _ [S _ "sync", _]) = SyncDir
-	      evtDir _ = InDir  -- Handle bad syntax
-	      getNode (s, p) = nodes !! s !! p
-	      getPrev (s, p)
-		  | p > 0 = Just (getNode (s, p - 1))
-		  | otherwise = Nothing
-	      getNext ht (s, p)
-		  | p + 1 < ht= Just (getNode (s, p + 1))
-		  | otherwise = Nothing
-	      getPreds n = [ getNode n0 | (n0, n1) <- pairs', n == n1 ]
-	      getSuccs n = [ getNode n1 | (n0, n1) <- pairs', n == n0 ]
-	      unrealized' =
-		  maybe Nothing (Just . map getNode) unrealized
+        False -> fail (shows pos "Cycle found")
+        True ->
+            return Preskel { protocol = name p,
+                             label = maybe tag id label,
+                             parent  = parent,
+                             seen = maybe [] (L.sort . L.nub) seen,
+                             strands = strands,
+                             initial = initial,
+                             unrealized = unrealized',
+                             shape = shape,
+                             empty = empty,
+                             protSrc = src p,
+                             preskelSrc = s }
+            where
+              initial = map head nodes -- The first node in each strand
+              nodes = [ [ Vertex {
+                            msg = evtMsg evt,
+                            dir = evtDir evt,
+                            inst = inst,
+                            prev = getPrev (s, p),
+                            next = getNext ht (s, p),
+                            preds = getPreds (s, p),
+                            succs = getSuccs (s, p),
+                            strand = s,
+                            pos = p } |
+                          (p, evt) <- zip [0..] (trace inst) ] |
+                        (s, inst) <- zip [0..] insts,
+                        let ht = length (trace inst) ]
+              evtMsg (L _ [S _ _, t]) = t
+              evtMsg x = x      -- Handle bad syntax
+              evtDir (L _ [S _ "send", _]) = OutDir
+              evtDir (L _ [S _ "sync", _]) = SyncDir
+              evtDir _ = InDir  -- Handle bad syntax
+              getNode (s, p) = nodes !! s !! p
+              getPrev (s, p)
+                  | p > 0 = Just (getNode (s, p - 1))
+                  | otherwise = Nothing
+              getNext ht (s, p)
+                  | p + 1 < ht= Just (getNode (s, p + 1))
+                  | otherwise = Nothing
+              getPreds n = [ getNode n0 | (n0, n1) <- pairs', n == n1 ]
+              getSuccs n = [ getNode n1 | (n0, n1) <- pairs', n == n0 ]
+              unrealized' =
+                  maybe Nothing (Just . map getNode) unrealized
 
 -- Construct an adjacency representation of the ordering relation.
 -- The first argument is a list giving the length of each strand.
@@ -321,8 +321,8 @@ adj strands orderings (s, p) =
       entry n = enrich n [ n0 | (n0, n1) <- orderings, n1 == n ]
       -- add strand succession edges
       enrich (s, p) ns
-	  | p > 0 = (s, p - 1) : ns
-	  | otherwise = ns
+          | p > 0 = (s, p - 1) : ns
+          | otherwise = ns
 
 -- Transitive Reduction
 
@@ -334,32 +334,32 @@ reduce graph orderings =
     filter essential orderings
     where
       essential (src, dst) =
-	  loop dst (L.delete dst (graph src)) [src]
+          loop dst (L.delete dst (graph src)) [src]
       loop _ [] _ = True        -- No other path found
       loop dst (n : ns) seen
-	  | n == dst = False    -- There is another path
-	  | elem n seen = loop dst ns seen
-	  | otherwise = loop dst (graph n ++ ns) (n : seen)
+          | n == dst = False    -- There is another path
+          | elem n seen = loop dst ns seen
+          | otherwise = loop dst (graph n ++ ns) (n : seen)
 
 -- Instances
 
 loadInst :: Monad m => Pos -> Protocol -> [SExpr Pos] -> String ->
-	    Int -> [SExpr Pos] -> m Inst
+            Int -> [SExpr Pos] -> m Inst
 loadInst pos p c role ht env =
     case lookup role (roles p) of
       Nothing ->
-	  fail (shows pos $ "Role " ++ role ++ " not found in " ++ name p)
+          fail (shows pos $ "Role " ++ role ++ " not found in " ++ name p)
       Just trace ->
-	  case ht < 1 || ht > length trace of
-	    True -> fail (shows pos "Bad height")
-	    False ->
-		do
-		  let mapping = L pos env
-		  env <- loadMaplet env
-		  let evts = itrace env c (take ht trace)
-		  return Inst { part = role,
-				mapping = mapping,
-				trace = evts }
+          case ht < 1 || ht > length trace of
+            True -> fail (shows pos "Bad height")
+            False ->
+                do
+                  let mapping = L pos env
+                  env <- loadMaplet env
+                  let evts = itrace env c (take ht trace)
+                  return Inst { part = role,
+                                mapping = mapping,
+                                trace = evts }
 
 -- Compute an instance's trace, using the traces output where possible.
 itrace :: [(String, SExpr Pos)] -> [SExpr Pos] -> Trace -> Trace
@@ -397,8 +397,8 @@ assoc key alist =
     loop alist Nothing
     where
       loop ((L _ (S _ head : tail)) : rest) vals
-	  | key == head = loop rest (extend tail vals)
-	  | otherwise = loop rest vals
+          | key == head = loop rest (extend tail vals)
+          | otherwise = loop rest vals
       loop _ vals = vals
       extend x Nothing = Just x
       extend x (Just y) = Just (x ++ y)
@@ -413,17 +413,17 @@ qassoc key xs =
     Just vals ->
       concatMap f vals
       where
-	f (Q _ s) = [s]
-	f _ = []
+        f (Q _ s) = [s]
+        f _ = []
 
 nassoc :: Monad m => String -> [SExpr Pos] -> m (Maybe Int)
 nassoc key xs =
     case assoc key xs of
       Nothing -> return Nothing
       Just [val] ->
-	  do
-	    ns <- num val
-	    return (Just ns)
+          do
+            ns <- num val
+            return (Just ns)
       Just (x:_) -> fail (shows (annotation x) "Expecting one number")
       Just [] -> fail (shows (annotation (head xs)) "Expecting one number")
 
@@ -436,18 +436,18 @@ nsassoc key xs =
     case assoc key xs of
       Nothing -> return Nothing
       Just val ->
-	  do
-	    ns <- mapM num val
-	    return (Just ns)
+          do
+            ns <- mapM num val
+            return (Just ns)
 
 loadOrderings :: Monad m => [Int] -> [SExpr Pos] -> m [Pair]
 loadOrderings heights x =
     foldM f [] x
     where
       f ns x =
-	  do
-	    np <- loadPair heights x
-	    return (adjoin np ns)
+          do
+            np <- loadPair heights x
+            return (adjoin np ns)
 
 loadPair :: Monad m => [Int] -> SExpr Pos -> m Pair
 loadPair heights (L pos [x0, x1]) =
@@ -455,8 +455,8 @@ loadPair heights (L pos [x0, x1]) =
       n0 <- loadNode heights x0
       n1 <- loadNode heights x1
       case sameStrands n0 n1 of  -- Same strand
-	True -> fail (shows pos "Malformed pair -- nodes in same strand")
-	False -> return (n0, n1)
+        True -> fail (shows pos "Malformed pair -- nodes in same strand")
+        False -> return (n0, n1)
     where
       sameStrands (s0, _) (s1, _) = s0 == s1
 loadPair _ x = fail (shows (annotation x) "Malformed pair")
@@ -466,15 +466,15 @@ loadNode heights (L pos [N _ s, N _ p])
     | s < 0 = fail (shows pos "Negative strand in node")
     | p < 0 = fail (shows pos "Negative position in node")
     | otherwise =
-	case height heights s of
-	  Nothing -> fail (shows pos "Bad strand in node")
-	  Just h | p < h -> return (s, p)
-	  _ -> fail (shows pos "Bad position in node")
+        case height heights s of
+          Nothing -> fail (shows pos "Bad strand in node")
+          Just h | p < h -> return (s, p)
+          _ -> fail (shows pos "Bad position in node")
     where
       height [] _ = Nothing
       height (x: xs) s          -- Assume s non-negative
-	  | s == 0 = Just x
-	  | otherwise = height xs (s - 1)
+          | s == 0 = Just x
+          | otherwise = height xs (s - 1)
 loadNode _ x = fail (shows (annotation x) "Malformed node")
 
 loadNodes :: Monad m => [Int] -> Maybe [SExpr Pos] -> m (Maybe [Node])

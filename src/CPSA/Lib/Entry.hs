@@ -7,11 +7,11 @@
 -- University of California.
 
 module CPSA.Lib.Entry (start, usage, abort, success, Options(..),
-		       defaultOptions, algOptions, algInterp,
-		       filterOptions, filterInterp, readSExpr,
-		       gentlyReadSExpr, outputHandle, writeSExpr,
-		       writeLnSEexpr, cpsaVersion, comment,
-		       writeComment, tryIO) where
+                       defaultOptions, algOptions, algInterp,
+                       filterOptions, filterInterp, readSExpr,
+                       gentlyReadSExpr, outputHandle, writeSExpr,
+                       writeLnSEexpr, cpsaVersion, comment,
+                       writeComment, tryIO) where
 
 import Numeric
 import Control.Exception (try)
@@ -42,9 +42,9 @@ opts options argv =
     case getOpt RequireOrder options argv of
       (o, n, []) -> return (o, n)
       (_, _, errs) ->
-	  do
-	    msg <- usage options errs
-	    abort msg
+          do
+            msg <- usage options errs
+            abort msg
 
 openInput ::  [OptDescr a] -> [String] -> IO PosHandle
 openInput _ [file] =
@@ -128,37 +128,37 @@ data Params = Params
 algInterp :: String -> [String] -> [Flag] -> IO (Maybe FilePath, String, Int)
 algInterp alg algs flags =
     loop flags (Params { file = Nothing, alg = alg,
-			 margin = optMargin defaultOptions })
+                         margin = optMargin defaultOptions })
     where
       loop [] (Params { file = file, alg = alg, margin = margin}) =
-	  return (file, alg, margin)
+          return (file, alg, margin)
       loop (Output name : flags)  params
-	  | file params == Nothing =
-	      loop flags $ params { file = Just name }
+          | file params == Nothing =
+              loop flags $ params { file = Just name }
       loop (Margin value : flags) params =
-	  case readDec value of
-	    [(margin, "")] ->
-		loop flags $ params { margin = margin }
-	    _ ->
-		do
-		  msg <- usage (algOptions alg) ["Bad value for margin\n"]
-		  abort msg
+          case readDec value of
+            [(margin, "")] ->
+                loop flags $ params { margin = margin }
+            _ ->
+                do
+                  msg <- usage (algOptions alg) ["Bad value for margin\n"]
+                  abort msg
       loop (Algebra name : flags) params
-	  | elem name algs = loop flags $ params { alg = name }
-	  | otherwise =
-	      abort ("Algebra " ++ name ++ " not one of\n" ++ unlines algs)
+          | elem name algs = loop flags $ params { alg = name }
+          | otherwise =
+              abort ("Algebra " ++ name ++ " not one of\n" ++ unlines algs)
       loop (Algebras : _) _ =
-	  success $ unlines algs
+          success $ unlines algs
       loop (Info : _) _ =
-	  success cpsaVersion
+          success cpsaVersion
       loop (Help : _) _ =
-	  do                    -- Show help then exit with success
-	    msg <- usage (algOptions alg) []
-	    success msg
+          do                    -- Show help then exit with success
+            msg <- usage (algOptions alg) []
+            success msg
       loop _ _ =
-	   do                   -- Show help then exit with failure
-	     msg <- usage (algOptions alg) ["Bad option combination\n"]
-	     abort msg
+           do                   -- Show help then exit with failure
+             msg <- usage (algOptions alg) ["Bad option combination\n"]
+             abort msg
 
 filterOptions :: [OptDescr Flag]
 filterOptions =
@@ -174,27 +174,27 @@ filterInterp flags =
     loop flags Nothing (optMargin defaultOptions)
     where
       loop [] file margin =
-	  return (file, margin)
+          return (file, margin)
       loop (Output name : flags) Nothing margin =
-	  loop flags (Just name) margin
+          loop flags (Just name) margin
       loop (Margin value : flags) file _ =
-	  case readDec value of
-	    [(margin, "")] ->
-		loop flags file margin
-	    _ ->
-		do
-		  msg <- usage filterOptions ["Bad value for margin\n"]
-		  abort msg
+          case readDec value of
+            [(margin, "")] ->
+                loop flags file margin
+            _ ->
+                do
+                  msg <- usage filterOptions ["Bad value for margin\n"]
+                  abort msg
       loop (Info : _) _ _ =
-	  success cpsaVersion
+          success cpsaVersion
       loop (Help : _) _ _ =
-	  do                    -- Show help then exit with success
-	    msg <- usage filterOptions []
-	    success msg
+          do                    -- Show help then exit with success
+            msg <- usage filterOptions []
+            success msg
       loop _ _ _ =
-	   do                   -- Show help then exit with failure
-	     msg <- usage filterOptions ["Bad option combination\n"]
-	     abort msg
+           do                   -- Show help then exit with failure
+             msg <- usage filterOptions ["Bad option combination\n"]
+             abort msg
 
 -- Contruct the output handle specified by the command line.
 outputHandle :: Maybe FilePath -> IO (Handle)
@@ -246,10 +246,10 @@ readSExpr p =
     do
       x <- tryIO (load p)
       case x of
-	Right x ->
-	    return x
-	Left err ->
-	    abort err
+        Right x ->
+            return x
+        Left err ->
+            abort err
 
 -- Read an S-expression, and gently fail on error by printing the
 -- error message to standard error and returning EOF.
@@ -258,12 +258,12 @@ gentlyReadSExpr p =
     do
       x <- tryIO (load p)
       case x of
-	Right x ->
-	    return x
-	Left err ->
-	    do
-	      hPutStrLn stderr (show err)
-	      return Nothing
+        Right x ->
+            return x
+        Left err ->
+            do
+              hPutStrLn stderr (show err)
+              return Nothing
 
 -- Exception handling for IO errors
 tryIO :: IO a -> IO (Either String a)
@@ -271,7 +271,7 @@ tryIO x =
     do
       y <- try x
       case y of
-	Right x ->
-	    return (Right x)
-	Left err ->
-	    return (Left (ioeGetErrorString err))
+        Right x ->
+            return (Right x)
+        Left err ->
+            return (Left (ioeGetErrorString err))

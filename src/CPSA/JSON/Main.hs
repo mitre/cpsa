@@ -47,15 +47,15 @@ go f p =
     loop
     where
       loop =
-	  do
-	    x <- jRead p
-	    case x of
-	      Nothing ->
-		  return ()
-	      Just sexpr ->
-		  do
-		    f sexpr
-		    loop
+          do
+            x <- jRead p
+            case x of
+              Nothing ->
+                  return ()
+              Just sexpr ->
+                  do
+                    f sexpr
+                    loop
 
 -- Command line option flags
 data Flag
@@ -82,33 +82,33 @@ options =
 interp :: [Flag] -> IO Params
 interp flags =
     loop flags (Params { file = Nothing, -- By default, no output file
-			 prefix = True,
-			 margin = defaultMargin })
+                         prefix = True,
+                         margin = defaultMargin })
     where
       loop [] params = return params
       loop (Output name : flags) params
-	  | file params == Nothing =
-	      loop flags $ params { file = Just name }
+          | file params == Nothing =
+              loop flags $ params { file = Just name }
       loop (Infix : flags) params =
-	  loop flags $ params { prefix = False }
+          loop flags $ params { prefix = False }
       loop (Margin value : flags) params =
-	  case readDec value of
-	    [(margin, "")] ->
-		loop flags $ params { margin = margin }
-	    _ ->
-		do
-		  msg <- usage options ["Bad value for margin\n"]
-		  abort msg
+          case readDec value of
+            [(margin, "")] ->
+                loop flags $ params { margin = margin }
+            _ ->
+                do
+                  msg <- usage options ["Bad value for margin\n"]
+                  abort msg
       loop (Info : _) _ =
-	  success cpsaVersion
+          success cpsaVersion
       loop (Help : _) _ =
-	  do                    -- Show help then exit with success
-	    msg <- usage options []
-	    success msg
+          do                    -- Show help then exit with success
+            msg <- usage options []
+            success msg
       loop _ _ =
-	   do                   -- Show help then exit with failure
-	     msg <- usage options ["Bad option combination\n"]
-	     abort msg
+           do                   -- Show help then exit with failure
+             msg <- usage options ["Bad option combination\n"]
+             abort msg
 
 -- Returns the input S-expression and an interpretation of the command
 -- line options.
@@ -126,9 +126,9 @@ opts options argv =
     case getOpt RequireOrder options argv of
       (o, n, []) -> return (o, n)
       (_, _, errs) ->
-	  do
-	    msg <- usage options errs
-	    abort msg
+          do
+            msg <- usage options errs
+            abort msg
 
 openInput ::  [OptDescr a] -> [String] -> IO Handle
 openInput _ [file] =
@@ -146,10 +146,10 @@ jRead p =
     do
       x <- tryIO (jLoad p)
       case x of
-	Right x ->
-	    return x
-	Left err ->
-	    abort err
+        Right x ->
+            return x
+        Left err ->
+            abort err
 
 -- The result of scanning is a token.
 data Token
@@ -164,18 +164,18 @@ jLoad h =
     do
       t <- scan h
       case t of
-	Atom x ->
-	    return $ Just x
-	Lparen ->
-	    do
-	      x <- list h []
-	      return $ Just x
-	Rparen ->
-	    abort "Close of unopened list"
-	Eof ->
-	    do
-	      hClose h
-	      return Nothing
+        Atom x ->
+            return $ Just x
+        Lparen ->
+            do
+              x <- list h []
+              return $ Just x
+        Rparen ->
+            abort "Close of unopened list"
+        Eof ->
+            do
+              hClose h
+              return Nothing
 
 -- A recursive decent parser
 list :: Handle -> [SExpr ()] -> IO (SExpr ())
@@ -183,16 +183,16 @@ list h xs =
     do
       t <- scan h
       case t of
-	Rparen ->
-	    return (L () (seqrev xs))
-	Atom x ->
-	    list h (x : xs)
-	Lparen ->
-	    do
-	      x <- list h []
-	      list h (x : xs)
-	Eof ->
-	    abort "Unexpected end of input in list"
+        Rparen ->
+            return (L () (seqrev xs))
+        Atom x ->
+            list h (x : xs)
+        Lparen ->
+            do
+              x <- list h []
+              list h (x : xs)
+        Eof ->
+            abort "Unexpected end of input in list"
 
 -- Read the next character returning Nothing on EOF
 get :: Handle -> IO (Maybe Char)
@@ -200,12 +200,12 @@ get h =
     do
       eof <- hIsEOF h
       case eof of
-	True ->
-	    return Nothing
-	False ->
-	    do
-	      ch <- hGetChar h
-	      return $ Just ch
+        True ->
+            return Nothing
+        False ->
+            do
+              ch <- hGetChar h
+              return $ Just ch
 
 -- Peek at the next character returning Nothing on EOF
 peek :: Handle -> IO (Maybe Char)
@@ -213,12 +213,12 @@ peek h =
     do
       eof <- hIsEOF h
       case eof of
-	True ->
-	    return Nothing
-	False ->
-	    do
-	      ch <- hLookAhead h
-	      return $ Just ch
+        True ->
+            return Nothing
+        False ->
+            do
+              ch <- hLookAhead h
+              return $ Just ch
 
 -- Return the next token
 scan :: Handle -> IO (Token)
@@ -226,10 +226,10 @@ scan h =
     do
       ch <- get h
       case ch of
-	Nothing ->
-	    return Eof
-	Just ch ->
-	    skip h ch
+        Nothing ->
+            return Eof
+        Just ch ->
+            skip h ch
 
 -- Skip whitespace and then handle first character of a token
 skip :: Handle -> Char -> IO (Token)
@@ -256,16 +256,16 @@ string h s =
     do
       ch <- get h
       case ch of
-	Nothing ->
-	    abort "End of input in string"
-	Just '"' ->
-	    symOrStr s
-	Just '\\' ->
-	    quote h s
-	Just ch | isPrint ch ->
-	    string h (ch : s)
-	Just _ ->
-	    abort "Bad char for string"
+        Nothing ->
+            abort "End of input in string"
+        Just '"' ->
+            symOrStr s
+        Just '\\' ->
+            quote h s
+        Just ch | isPrint ch ->
+            string h (ch : s)
+        Just _ ->
+            abort "Bad char for string"
 
 -- Handle backslash in string
 quote :: Handle -> String -> IO (Token)
@@ -273,12 +273,12 @@ quote h s =
     do
       ch <- get h
       case ch of
-	Nothing ->
-	    abort "End of input in string"
-	Just ch | isPrint ch ->
-	    string h (ch : s)
-	Just _ ->
-	    abort "Bad char for string"
+        Nothing ->
+            abort "End of input in string"
+        Just ch | isPrint ch ->
+            string h (ch : s)
+        Just _ ->
+            abort "Bad char for string"
 
 -- Is string a symbol or a quoted string?
 symOrStr :: String -> IO (Token)
@@ -302,14 +302,14 @@ number h s =
     do
       ch <- peek h
       case ch of
-	Nothing ->
-	    return (Atom (N () (read (seqrev s))))
-	Just ch | isDigit ch ->
-	    do
-	      _ <- hGetChar h
-	      number h (ch : s)
-	Just _ ->
-	    return (Atom (N () (read (seqrev s))))
+        Nothing ->
+            return (Atom (N () (read (seqrev s))))
+        Just ch | isDigit ch ->
+            do
+              _ <- hGetChar h
+              number h (ch : s)
+        Just _ ->
+            return (Atom (N () (read (seqrev s))))
 
 -- Scan a number that starts with a sign
 sign :: Handle -> Bool -> IO (Token)
@@ -317,10 +317,10 @@ sign h plus =
     do
       ch <- get h
       case ch of
-	Nothing ->
-	    abort "Sign followed by EOF"
-	Just ch | isDigit ch ->
-	    let s = if plus then [ch] else [ch, '-'] in
-	    number h s
-	Just _ ->
-	    abort "Sign not followed by a digit"
+        Nothing ->
+            abort "Sign followed by EOF"
+        Just ch | isDigit ch ->
+            let s = if plus then [ch] else [ch, '-'] in
+            number h s
+        Just _ ->
+            abort "Sign not followed by a digit"

@@ -32,12 +32,12 @@ main =
       writeComment h margin cpsaVersion
       writeComment h margin "Annotated skeletons"
       case () of
-	_ | alg == CPSA.Basic.Algebra.name ->
-	      go (step h alg CPSA.Basic.Algebra.origin margin) p []
-	  | alg == CPSA.DiffieHellman.Algebra.name ->
-	      go (step h alg CPSA.DiffieHellman.Algebra.origin margin) p []
-	  | otherwise ->
-	       abort ("Bad algebra: " ++ alg)
+        _ | alg == CPSA.Basic.Algebra.name ->
+              go (step h alg CPSA.Basic.Algebra.origin margin) p []
+          | alg == CPSA.DiffieHellman.Algebra.name ->
+              go (step h alg CPSA.DiffieHellman.Algebra.origin margin) p []
+          | otherwise ->
+               abort ("Bad algebra: " ++ alg)
       hClose h
 
 go :: (a -> SExpr Pos -> IO a) -> PosHandle -> a -> IO ()
@@ -45,26 +45,26 @@ go f p a =
     loop a
     where
       loop a =
-	  do
-	    x <- readSExpr p
-	    case x of
-	      Nothing ->
-		  return ()
-	      Just sexpr ->
-		  do
-		    a <- f a sexpr
-		    loop a
+          do
+            x <- readSExpr p
+            case x of
+              Nothing ->
+                  return ()
+              Just sexpr ->
+                  do
+                    a <- f a sexpr
+                    loop a
 
 step :: Algebra t p g s e c => Handle ->
-	String -> g -> Int -> [Prot t g] ->
-	SExpr Pos -> IO [Prot t g]
+        String -> g -> Int -> [Prot t g] ->
+        SExpr Pos -> IO [Prot t g]
 step output name origin margin ps sexpr =
     do
       x <- tryIO (annotations name origin ps sexpr)
       case x of
-	Right (ps, sexpr) ->
-	    do
-	      writeLnSEexpr output margin sexpr
-	      return ps
-	Left err ->
-	    abort (show err)
+        Right (ps, sexpr) ->
+            do
+              writeLnSEexpr output margin sexpr
+              return ps
+        Left err ->
+            abort (show err)

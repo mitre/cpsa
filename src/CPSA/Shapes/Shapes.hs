@@ -32,25 +32,25 @@ shape map x@(L _ (S _ "defskeleton" : _ : _ : strands)) =
     where
       xs = findAList strands   -- Association list part of preskeleton
       checkLabel Nothing =
-	  return (map, Just x) -- Not labeled, just add it to the answers
+          return (map, Just x) -- Not labeled, just add it to the answers
       checkLabel (Just label) =
-	  do                    -- Found a label
-	    parent <- nassoc "parent" xs
-	    checkParent label parent
+          do                    -- Found a label
+            parent <- nassoc "parent" xs
+            checkParent label parent
       checkParent label Nothing = -- Point of view preskeleton
-	  return (I.singleton label label, Just $ reparent label x)
+          return (I.singleton label label, Just $ reparent label x)
       checkParent label (Just parent) = -- Descendent of POV
-	  lookupParent label $ I.lookup parent map
+          lookupParent label $ I.lookup parent map
       lookupParent _ Nothing =
-	  fail "parent unknown"
+          fail "parent unknown"
       lookupParent label (Just ancestor) =
-	  -- Ancestor is the label of POV preskeleton or of a shape
-	  let shape = maybe False (const True) (assoc "shape" xs) in
-	  if shape then
-	      return (I.insert label label map,
-		      Just $ reparent ancestor x)
-	  else                  -- Drop S-expression here
-	      return (I.insert label ancestor map, Nothing)
+          -- Ancestor is the label of POV preskeleton or of a shape
+          let shape = maybe False (const True) (assoc "shape" xs) in
+          if shape then
+              return (I.insert label label map,
+                      Just $ reparent ancestor x)
+          else                  -- Drop S-expression here
+              return (I.insert label ancestor map, Nothing)
 shape map x = return (map, Just x)
 
 findAList :: [SExpr Pos] -> [SExpr Pos]
@@ -64,8 +64,8 @@ assoc key alist =
     loop alist Nothing
     where
       loop ((L _ (S _ head : tail)) : rest) vals
-	  | key == head = loop rest (extend tail vals)
-	  | otherwise = loop rest vals
+          | key == head = loop rest (extend tail vals)
+          | otherwise = loop rest vals
       loop _ vals = vals
       extend x Nothing = Just x
       extend x (Just y) = Just (x ++ y)
@@ -76,9 +76,9 @@ nassoc key xs =
     case assoc key xs of
       Nothing -> return Nothing
       Just [val] ->
-	  do
-	    ns <- num val
-	    return (Just ns)
+          do
+            ns <- num val
+            return (Just ns)
       Just (x:_) -> fail (shows (annotation x) "Expecting one number")
       Just [] -> fail (shows (annotation (head xs)) "Expecting one number")
 
