@@ -1,5 +1,12 @@
 CPSA NEWS -- history of user-visible changes.
 
+* Changes in version 2.5.3
+
+** Corrected errors in the documentation on security goals.
+
+** Enabled compilation using GHC 7.10 by making some monads
+   applicative.
+
 * Changes in version 2.5.2
 
 ** Added an option to purge traces in skeletons while graphing
