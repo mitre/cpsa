@@ -5,6 +5,8 @@
 	* src/CPSA/Annotations/Formulas.hs (EitherS): Made EitherS an
 	instance of Applicative.
 
+	* cpsa.cabal (Version): Tagged as version 2.5.3
+
 2015-08-07  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* doc/cpsagoals.tex: Corrected the definition of satisfaction.
