@@ -1,3 +1,7 @@
+2015-10-02  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/{index,cpsauser}.html: Added width limit of 48em.
+
 2015-08-21  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/*/*.h:  Removed leading tabs.
