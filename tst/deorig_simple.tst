@@ -1,6 +1,6 @@
 (herald deorig-simple)
 
-(comment "CPSA 2.5.3")
+(comment "CPSA 2.5.4")
 (comment "All input read from deorig_simple.scm")
 
 (defprotocol deorig-simple basic

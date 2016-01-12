@@ -1,5 +1,5 @@
 Name:			cpsa
-Version:		2.5.3
+Version:		2.5.4
 Maintainer:		ramsdell@mitre.org
 Cabal-Version:		>= 1.6
 License:		BSD3
@@ -41,7 +41,8 @@ Description:
   The theory and algorithm used by CPSA was developed with the help of
   Joshua D. Guttman, John D. Ramsdell, Jon C. Herzog, Shaddin
   F. Doghmi, F. Javier Thayer, Paul D. Rowe, and Moses D. Liskov.
-  John D. Ramsdell implemented the algorithm in Haskell.
+  John D. Ramsdell implemented the algorithm in Haskell.  CPSA was
+  designed and implemented at The MITRE Corporation.
 Category:		Cryptography
 Build-Type:		Simple
 Data-Files:
