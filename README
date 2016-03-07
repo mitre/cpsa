@@ -5,11 +5,6 @@ It is available from <http://haskell.org> or from an operating
 system specific source.  The name of the Linux package is usually
 haskell-platform.
 
-$ cabal update
-$ cabal install cpsa
-: Documentation and samples are in the directory given by
-$ cpsa -h
-
 INSTALLING FROM A TARBALL
 
 QUICK START (Linux)
