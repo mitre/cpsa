@@ -741,28 +741,19 @@ basis :: Group -> [Term]
 basis t =
   [groupVar True x | (x, (be, _)) <- M.assocs t, be]
 
--- Returns the encryptions that carry the target.  If the target is
--- carried outside all encryptions, or is exposed because a decription
--- key is derivable, Nothing is returned.
-protectors :: (Term -> Bool) -> Term -> Term -> Maybe [Term]
-protectors derivable target source =
-  do
-    ts <- bare source S.empty
-    return $ S.elems ts
-  where
-    bare source _
-      | source == target = Nothing
-    bare (F Cat [t, t']) acc =
-      maybe Nothing (bare t') (bare t acc)
-    bare t@(F Enc [t', key]) acc =
-      if target `carriedBy` t' then
-        if derivable (inv key) then
-          bare t' acc
-        else
-          Just (S.insert t acc)
-      else
-        Just acc
-    bare _ acc = Just acc
+-- FIX ME!  Needs updating for Diffie-Hellman
+
+escapeSet :: Set Term -> Set Term -> Term -> Maybe (Set Term)
+escapeSet ts a ct =
+    if buildable ts a ct then
+        Nothing
+    else
+        Just $ S.filter f ts
+        where
+          f (F Enc [t, key]) =
+              carriedBy ct t &&
+              not (buildable ts a (inv key))
+          f _ = False
 
 -- FIX ME!  Needs updating for Diffie-Hellman
 
@@ -825,7 +816,7 @@ instance C.Term Term where
   decompose = decompose
   buildable = buildable
   encryptions = encryptions
-  protectors = protectors
+  escapeSet = escapeSet
   outFlow = outFlow
   inFlow = inFlow
   loadTerm = loadTerm

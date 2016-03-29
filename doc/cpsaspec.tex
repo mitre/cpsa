@@ -1349,7 +1349,7 @@ T_p}{T_a}&{}\to{}&\dctx{\{t_0,\enc{t_0}{t_1}\}\cup T_p}{T_a}
 &&&\fn{bld}(\fn{inv}(t_1),T_p,T_a)
 \end{array}$$
 
-\begin{defn}[Decompose]
+\begin{defn}[Decompose]\label{def:decompose}
 Previously sent messages~$T_p$ and avoidance set~$T_a$
 \emph{decompose} to $T'_p,T'_a$, written
 $\fn{decompose}(T_p,T_a)=(T'_p,T'_a)$, if
@@ -1485,36 +1485,20 @@ $\fn{fold}_0(t,T,t',\sigma,\fn{solve}(\fn{anc}(\sigma(t'),p),\sigma(T),S),P)$\\
 \chapter{Solving Authentication Tests}\label{chp:auth tests}
 
 \begin{defn}[Protectors]
-Let \fn{deriv} be a boolean valued function that determines if a
-message is derivable.  The encryptions that
-\index{protectors}protect~$t_c$ in~$t$ is
-$\fn{protectors}(\fn{deriv},t_c, t) = \fn{prot}(t)$ where
-$$\fn{prot}(t) =\left\{
-\begin{array}{ll}
-\mbox{undefined}&\mbox{if $t\equiv t_c$, else}\\
-\{\}&\mbox{if $t=\enc{t_0}{t_1}$ and $t_c$ is not carried by~$t_0$, else}\\
-\{\enc{t_0}{t_1}\}&
-\mbox{if $t=\enc{t_0}{t_1}$ and $\lnot\fn{deriv}(\fn{inv}(t_1))$, else}\\
-\fn{prot}(t_0)&\mbox{if $t=\enc{t_0}{t_1}$, else}\\
-\bigcup_{i<n}\fn{prot}(t_i)&\mbox{if $t=f(t_0,\ldots,t_{n-1})$ and~$t$
-  is not an atom, else}\\
-\{\}&\mbox{otherwise.}
-\end{array}\right.$$
+The \index{protectors}protectors of~$t$ are encryptions that carry~$t$
+and cannot be decrypted.  Function $\fn{prot}(T_p,T_a,t)$ is undefined
+if $\fn{bld}(t,T_p,T_a)$, otherwise
+\[\fn{prot}(T_p,T_a,t)=\{\enc{t_0}{t_1}\in T_p\mid
+\mbox{$t_0$ carries $t$ and }\lnot\fn{bld}(\fn{inv}(t_1),T_p,T_a)\}\]
 \end{defn}
 
 \begin{defn}[Escape Set]
 The \index{escape set}\emph{escape set} for message~$t_c$ at~$n$ in
-skeleton~$k$ is the set of encryptions $\fn{esc}(k,n,t_c)$ where
-$$\fn{esc}(k,n,t_c)=\{t_e\mid t_e\in\fn{protectors}(\lambda
-t\mathpunct.\fn{der}(k,n,t),t_c,t_o), t_o\in\outpred(k,n)\}$$
-and~$\fn{der}(k,n,t)$ is true when $t$ is derivable before~$n$ in~$k$
-(See Definition~\ref{def:der}).
+skeleton~$k$ is the set of encryptions
+$\fn{esc}(k,n,t_c)=\fn{prot}(t_c,T_p,T_a)$ where
+$(T_p,T_a)=\fn{dcmp}(k,n)$ (See Definition~\ref{def:decompose}).  It
+is undefined when~$t_c$ is derivable in~$k$ at~$n$.
 \end{defn}
-
-The $\fn{der}$ function is implemented as
-$\fn{der}(k,n,t)=\fn{bld}(t,T_p,T_a)$ where
-$(T_p,T_a)=\fn{dcmp}(k,n)$, so that~$T_p$ and~$T_a$ need not be
-recomputed.
 
 \begin{defn}[Critical Position]\label{def:critical position}
 Position~$p$ is a \index{critical position}\emph{critical position} of

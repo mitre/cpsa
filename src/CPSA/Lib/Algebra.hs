@@ -77,16 +77,12 @@ class (Ord t, Show t) => Term t where
     -- later in the list.
     encryptions :: t -> [(t,[t])]
 
-    -- protectors derivable target source returns Nothing if target is
-    -- carried by the source outside of an encryption, where derivable
-    -- is used to determine if a decryption key can be used to expose
-    -- the target.  Otherwise, it returns the list of encryptions in
-    -- the source that carry the target and have underivable
-    -- decryption keys, with duplicates eliminated.  If two
-    -- encryptions protect the target, only the outside one is
-    -- returned.  The inside encryption is the one that is carried by
-    -- the outside encryption.
-    protectors :: (t -> Bool) -> t -> t -> Maybe [t]
+    -- Assume (ts, a) is the output of decomposable, that is ts is a
+    -- set of encriptions and a is the reduced avoidance set.
+    -- escapeSet ts a ct = Nothing if buildable ts a ct = True.
+    -- Otherwise, escapeSet ts a ct = Just es, where es is the escape
+    -- set.
+    escapeSet :: Set t -> Set t -> t -> Maybe (Set t)
 
     -- The next two functions are used to perform a dataflow analysis
     -- of a trace.  The analysis finds minimal sets of atoms that

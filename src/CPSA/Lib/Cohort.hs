@@ -8,7 +8,6 @@
 
 module CPSA.Lib.Cohort (Mode(..), reduce, unrealized) where
 
-import Control.Monad
 import qualified Data.Set as S
 import Data.Set (Set)
 import qualified Data.List as L
@@ -249,23 +248,23 @@ findTest mode k u a =
             Just t ->
                 let ns = addSendingBefore S.empty n
                     ts = termsInNodes ns    -- Public messages
-                    der = derivable a ts in -- Derivable before node
-                if der t then
+                    (ts', a') = decompose ts a in
+                if buildable ts' a' t then
                     loop nodes
                 else
-                    Just $ testNode mode k u ts der (graphNode n) t
+                    Just $ testNode mode k u ts' a' (graphNode n) t
 
 -- Look for a critical term that makes this node a test node.
 testNode :: Algebra t p g s e c => Mode -> Preskel t g s e ->
-            [t] -> Set t -> (t -> Bool) -> Node -> t ->
+            [t] -> Set t -> Set t -> Node -> t ->
             [Preskel t g s e]
-testNode mode k u ts derivable n t =
+testNode mode k u ts a n t =
     loop cts
     where
       loop [] = error (
         "Cohort.testNode missing test at " ++ show n ++ "\n" ++ show t)
       loop ((ct, eks) : cts) =
-          case escapeSet ts derivable ct of
+          case escapeSet ts a ct of
             Nothing -> loop cts
             Just escape ->
                 places (carriedPlaces ct t)
@@ -285,18 +284,7 @@ testNode mode k u ts derivable n t =
       g (_, []) = False         -- An encryption test must have
       g _ = True                -- at least one non-derivable key
       -- Dump derivable encryption keys
-      h (ct, eks) = (ct, filter (not . derivable) eks)
-
--- Compute the escape set
-escapeSet :: Algebra t p g s e c => Set t ->
-             (t -> Bool) -> t -> Maybe (Set t)
-escapeSet ts derivable ct =
-    foldM f S.empty (S.toList ts)
-    where
-      f e t =
-          do
-            es <- protectors derivable ct t
-            return (foldl (flip S.insert) e es)
+      h (ct, eks) = (ct, filter (not . buildable ts a) eks)
 
 carriedOnlyWithin :: Algebra t p g s e c => t -> Set t -> t -> Bool
 carriedOnlyWithin target escape source =
