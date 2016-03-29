@@ -85,7 +85,7 @@ merge (Seen xs) (Seen ys) = Seen (xs ++ ys)
 -- last position is used to hold the reverse of the labels of the
 -- seen children
 data Reduct t g s e  =
-    Reduct !(LPreskel t g s e) !Int !Bool ![Preskel t g s e] ![Int]
+    Reduct !(LPreskel t g s e) !Int ![Preskel t g s e] ![Int]
 
 parMap :: (a -> b) -> [a] -> [b]
 parMap _ [] = []
@@ -202,10 +202,10 @@ step p h _ m _ n _ todo tobig reducts
         do
           wrt p h (comment "Step limit exceeded--aborting run")
           dump p h (mktodo reducts todo tobig) "Step limit exceeded"
-step p h ks m oseen n seen todo tobig (Reduct lk _ _  _  _ : reducts)
+step p h ks m oseen n seen todo tobig (Reduct lk _ _  _  : reducts)
     | nstrands (content lk) >= optBound p = -- Check strand count
         step p h ks m oseen n seen todo (lk : tobig) reducts
-step p h ks m oseen n seen todo tobig (Reduct lk size cols kids dups : reducts)
+step p h ks m oseen n seen todo tobig (Reduct lk size kids dups : reducts)
     | size <= 0 =               -- Interpret empty reducts
         do
           let ns = unrealized (content lk)
@@ -221,18 +221,17 @@ step p h ks m oseen n seen todo tobig (Reduct lk size cols kids dups : reducts)
           let u = size - length dups'
           let msg = shows size $ showString " in cohort - " $
                          shows u " not yet seen"
-          wrt p h (commentPreskel lk (reverse dups') ns cols msg)
+          wrt p h (commentPreskel lk (reverse dups') ns False msg)
           step p h ks m oseen n' seen' todo' tobig reducts
 
 -- Expands one branch in the derivation tree.
 branch :: Algebra t p g s e c => Options -> Seen t g s e ->
           LPreskel t g s e -> Reduct t g s e
 branch p seen lk =
-    Reduct lk (length kids) cols
+    Reduct lk (length kids)
                (seqList $ reverse unseen) (seqList dups)
     where
       kids = reduce (mkMode p) (content lk)
-      cols = all collapsed kids
       (unseen, dups) =
           foldl (duplicates seen) ([], []) kids
 
@@ -242,13 +241,6 @@ mkMode p =
            nonceFirstOrder = optCheckNoncesFirst p,
            visitOldStrandsFirst = optTryOldStrandsFirst p,
            reverseNodeOrder = optTryYoungNodesFirst p}
-
--- Is preskeleton the result of a collapsing operation?
-collapsed :: Algebra t p g s e c => Preskel t g s e -> Bool
-collapsed k =
-    case operation k of
-      Collapsed _ _ -> True
-      _ -> False
 
 duplicates :: Algebra t p g s e c => Seen t g s e ->
               ([Preskel t g s e], [Int]) ->
@@ -263,7 +255,7 @@ mktodo :: Algebra t p g s e c => [Reduct t g s e] ->
           [LPreskel t g s e] -> [LPreskel t g s e] ->
           [LPreskel t g s e]
 mktodo reducts todo tobig =
-    map (\(Reduct lk _ _ _ _) -> lk) reducts ++ reverse todo ++ reverse tobig
+    map (\(Reduct lk _ _ _) -> lk) reducts ++ reverse todo ++ reverse tobig
 
 type Next t p g s e c =
     (Int, Seen t g s e, [LPreskel t g s e], [Int])
