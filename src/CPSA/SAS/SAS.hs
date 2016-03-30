@@ -46,7 +46,7 @@ loadPOV _ _ ps (L pos (S _ "defskeleton" : xs)) =
     do
       p <- findProt pos ps xs
       k <- loadPreskel pos p (pgen p) xs
-      case (isSkeleton k, isShape k) of
+      case (isSkeleton k, isFringe k) of
         (True, False) ->
           return ((ps, [k]), Nothing) -- Found POV
         _ -> return ((ps, []), Nothing) -- Not POV
@@ -64,7 +64,7 @@ loadOtherPreskel _ _ ps ks (L pos (S _ "defskeleton" : xs)) =
       p <- findProt pos ps xs
       let g = kgen (last ks)      -- Make sure vars in skeleton are
       k <- loadPreskel pos p g xs -- distinct from the ones in the POV
-      case isShape k of
+      case isFringe k of
         True -> return ((ps, k : ks), Nothing) -- Found shape
         False -> return ((ps, ks), Nothing) -- Found intermediate skeleton
 loadOtherPreskel _ _ ps ks _ = return ((ps, ks), Nothing)
@@ -234,7 +234,7 @@ data Preskel t g c = Preskel
       uniqs :: [t],
       origs :: [(t, t)],
       isSkeleton :: Bool,
-      isShape :: !Bool,         -- Always looked at, so make it strict
+      isFringe :: !Bool,         -- Always looked at, so make it strict
       homomorphisms :: [SExpr Pos], -- Loaded later
       varmap :: VM t }
 
@@ -267,7 +267,7 @@ loadPreskel pos prot gen (S _ _ : L _ (S _ "vars" : vars) : xs) =
                         uniqs = uniqs,
                         origs = map g origs,
                         isSkeleton = not $ hasKey preskeletonKey xs,
-                        isShape = hasKey shapeKey xs,
+                        isFringe = hasKey shapeKey xs || hasKey fringeKey xs,
                         homomorphisms = assoc mapsKey xs,
                         varmap = varmap})
 loadPreskel pos _ _ _ = fail (shows pos "Malformed skeleton")
@@ -488,6 +488,10 @@ preskeletonKey = "preskeleton"
 -- The key used to identify a shape
 shapeKey :: String
 shapeKey = "shape"
+
+-- The key used to identify a non-shape fringe
+fringeKey :: String
+fringeKey = "fringe"
 
 -- The key used to extract the list of homomorphisms
 mapsKey :: String
