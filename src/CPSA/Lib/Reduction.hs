@@ -38,8 +38,14 @@ wrt p h sexpr =
 data LPreskel t g s e
     = LPreskel { content :: Preskel t g s e,
                  label :: Int,
+                 depth :: Int,
                  parent :: Maybe (LPreskel t g s e) }
       deriving Show
+
+withParent :: Algebra t p g s e c => Preskel t g s e ->
+              Int ->  LPreskel t g s e -> LPreskel t g s e
+withParent k label parent =
+    LPreskel k label (1 + depth parent) (Just parent)
 
 -- A skeleton that has been seen before need not be reanalyzed.
 -- Instead, one looks up the label of the skeleton seen before, and
@@ -103,6 +109,7 @@ parMap = map
 -}
 
 -- Entry point for analysis
+-- n is the step count
 solve :: Algebra t p g s e c => Options -> Handle ->
          [Preskel t g s e] -> Int -> IO ()
 solve _ h [] _ =                -- Done
@@ -113,21 +120,21 @@ solve p h (k : ks) n =
       case firstSkeleton k of
         [] ->                  -- Input cannot be made into a skeleton
             do
-              let lk = LPreskel k n Nothing
+              let lk = LPreskel k n 0 Nothing
               wrt p h (commentPreskel lk [] (unrealized k) False
                        "Input cannot be made into a skeleton--nothing to do")
               solve p h ks (n + 1)
         [k'] ->
             if isomorphic (gist k) (gist k') then -- Input was a skeleton
-                let lk' = LPreskel k' n Nothing in
+                let lk' = LPreskel k' n 0 Nothing in
                 begin p h ks (n + optLimit p) (n + 1)
                          (hist (gist k', n)) [lk']
             else                -- Input was not a skeleton
                 do
-                  let lk = LPreskel k n Nothing
+                  let lk = LPreskel k n (-1) Nothing
                   wrt p h (commentPreskel lk [] (unrealized k) False
                            "Not a skeleton")
-                  let lk' = LPreskel k' (n + 1) (Just lk)
+                  let lk' = withParent k' (n + 1) lk
                   begin p h ks (n + optLimit p) (n + 2)
                            (hist (gist k', n + 1))  [lk']
         _ -> error "Main.solve: can't handle more than one skeleton"
@@ -213,6 +220,11 @@ step p h ks m oseen n seen todo tobig (Reduct lk size kids dups : reducts)
           wrt p h (commentPreskel lk [] ns shape
                    (if shape then "" else "empty cohort"))
           step p h ks m oseen n seen todo tobig reducts
+    | depth lk >= optDepth p =
+        do
+          let ns = unrealized (content lk)
+          wrt p h (commentPreskel lk [] ns False "aborted")
+          step p h ks m oseen n seen todo tobig reducts
     | otherwise =
         do
           let (n', seen', todo', dups') =
@@ -272,7 +284,7 @@ next p (n, seen, todo, dups) k =
       Nothing ->
           (n + 1, remember (g, n) seen, lk : todo, dups)
           where
-            lk = LPreskel k n (Just p) -- Label a preskeleton here
+            lk = withParent k n p -- Label a preskeleton here
 
 -- This function reduces without checking for isomorphisms
 fast :: Algebra t p g s e c => Options -> Handle ->
@@ -305,7 +317,7 @@ children :: Algebra t p g s e c => LPreskel t g s e ->
             (Int, [LPreskel t g s e]) ->
             Preskel t g s e -> (Int, [LPreskel t g s e])
 children p (n, todo) k =        -- Label a preskeleton here
-    (n + 1, LPreskel k n (Just p) : todo)
+    (n + 1, withParent k n p : todo)
 
 -- Print partial results in a form that works with analysis tools
 dump :: Algebra t p g s e c => Options -> Handle ->

@@ -38,6 +38,10 @@ defaultStepLimit = optLimit defaultOptions
 defaultStrandBound :: Int
 defaultStrandBound = optBound defaultOptions
 
+-- Default limit on the number of depths is a skeleton.
+defaultDepthBound :: Int
+defaultDepthBound = optDepth defaultOptions
+
 -- Default algebra
 defaultAlgebra :: String
 defaultAlgebra = optAlg defaultOptions
@@ -148,6 +152,10 @@ go name origin files herald opts sexprs =
                 True -> writeComment h m $
                         "Strand count bounded at " ++ show (optBound opts)
                 False -> return ()
+              case optDepth opts /= defaultDepthBound of
+                True -> writeComment h m $
+                        "Tree depth bounded at " ++ show (optDepth opts)
+                False -> return ()
               case optCheckNoncesFirst opts of
                 True -> writeComment h m "Nonces checked first"
                 False -> return ()
@@ -177,6 +185,7 @@ data Flag
     = Output String             -- Output file name
     | Limit String              -- Step count limit
     | Bound String              -- Strand count bound
+    | Depth String              -- Tree depth bound
     | Margin String             -- Output line length
     | Expand                    -- Expand macros only
     | NoIsoChk                  -- Disable isomorphism checks
@@ -196,6 +205,8 @@ options =
       ("step count limit (default " ++ show defaultStepLimit ++ ")"),
       Option ['b'] ["bound"]    (ReqArg Bound "INT")
       ("strand count bound (default " ++ show defaultStrandBound ++ ")"),
+      Option ['d'] ["depth"]    (ReqArg Depth "INT")
+      ("tree depth bound (default " ++ show defaultDepthBound ++ ")"),
       Option ['m'] ["margin"]   (ReqArg Margin "INT")
       ("set output margin (default " ++ show (optMargin defaultOptions) ++ ")"),
       Option ['e'] ["expand"]   (NoArg Expand)
@@ -238,6 +249,14 @@ interp algs opts flags =
             _ ->
                 do
                   msg <- usage options ["Bad value for strand bound\n"]
+                  abort msg
+      loop (Depth value : flags) opts =
+          case readDec value of
+            [(depth, "")] ->
+                loop flags $ opts { optDepth = depth }
+            _ ->
+                do
+                  msg <- usage options ["Bad value for depth bound\n"]
                   abort msg
       loop (Margin value : flags) opts =
           case readDec value of

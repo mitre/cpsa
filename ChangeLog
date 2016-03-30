@@ -1,5 +1,8 @@
 2016-03-29  John D. Ramsdell  <ramsdell@mitre.org>
 
+	* src/CPSA/Lib/Reduction.hs (LPreskel): Added a depth field, so
+	that CPSA aborts when the depth of one branch exceeds a bound.
+
 	* src/CPSA/Lib/Algebra.hs: Add escapeSet to Term class and remove
 	protectors, thus computing the escape set in a more
 	straightforward way.

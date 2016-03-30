@@ -79,6 +79,7 @@ data Options = Options {
       optTryYoungNodesFirst :: Bool, -- True when visiting young nodes first
       optLimit :: Int,          -- Step count limit
       optBound :: Int,          -- Strand cound bound
+      optDepth :: Int,          -- Tree depth bound
       optMargin :: Int,         -- Output line length
       optIndent :: Int }        -- Pretty printing indent
     deriving Show
@@ -94,6 +95,7 @@ defaultOptions = Options {
   optTryYoungNodesFirst = False,
   optLimit = 2000,
   optBound = 8,
+  optDepth = 32,
   optMargin = 72,
   optIndent = 2 }
 

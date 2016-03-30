@@ -373,6 +373,7 @@ Usage: cpsa [OPTIONS] [FILE]
   -o FILE    --output=FILE      output FILE
   -l INT     --limit=INT        step count limit (default 2000)
   -b INT     --bound=INT        strand count bound (default 8)
+  -d INT     --depth=INT        tree depth bound (default 32)
   -m INT     --margin=INT       set output margin (default 72)
   -e         --expand           expand macros only; don't analyze
   -n         --noisochk         disable isomorphism checks
@@ -385,12 +386,14 @@ Usage: cpsa [OPTIONS] [FILE]
   -v         --version          show version number</pre>
 </blockquote>
 
-<p>This program will abort if too many steps are taken. A skeleton is printed
-for each step taken by the program. The step count limit option is used to
-override the default step count limit. It will also abort when it detects a
-skeleton with too many strands. The strand count bound option is used to
-override the default strand count bound. Another way to limit resources used by
-the program is to limit the amount of memory it may use. The command-line
+<p>This program will abort if too many steps are taken. A skeleton is
+printed for each step taken by the program. The step count limit
+option is used to override the default step count limit. It will also
+abort when it detects a skeleton with too many strands. The strand
+count bound option is used to override the default strand count
+bound. The tree depth bound option is used to override the default
+tree depth bound.  Another way to limit resources used by the program
+is to limit the amount of memory it may use. The command-line
 option <code>+RTS -M512m -RTS</code> limits memory usage to 512m.</p>
 
 <p>The herald form can be used to specify options within a file.  The
