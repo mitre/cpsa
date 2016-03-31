@@ -4,7 +4,7 @@
 	cpassas makes use of depth limited output.  When a tree depth
 	limit is exceeded, a fringe labeled skeleton is printed.  cpsasas
 	produces a sentence with a right-hand-side that encodes both the
-	shapes and the fringe.  Thus, when cpsa is running the a tree
+	shapes and the fringe.  Thus, when cpsa is running with a tree
 	depth limit of one, cpsasas computes a cohort analysis sentence.
 
 2016-03-29  John D. Ramsdell  <ramsdell@mitre.org>
