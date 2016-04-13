@@ -11,29 +11,26 @@ module Main (main) where
 import Numeric
 import System.IO
 import System.Console.GetOpt
-import CPSA.Lib.CPSA
+import CPSA.Lib.SExpr
+import CPSA.Lib.Printer (pp)
+import CPSA.Lib.Pretty
 import CPSA.Lib.Entry
 
 -- Runtime parameters
 
 data Params = Params
     { file :: Maybe FilePath,   -- Nothing specifies standard output
-      prefix :: Bool,           -- Use prefix notation?
       json :: Bool,             -- Use JSON notation?
       margin :: Int }           -- Output line length
     deriving Show
-
-indent :: Int
-indent = optIndent defaultOptions
 
 main :: IO ()
 main =
     do
       (p, params) <- start options interp
       h <- outputHandle $ file params
-      let printer = if json params then pjson
-                    else if prefix params then pp else printItem
-      go (writeCpsaLn (printer (margin params) indent) h) p
+      let printer = if json params then pjson else pp
+      go (writeCpsaLn (printer (margin params) defaultIndent) h) p
       hClose h
 
 writeCpsaLn :: (SExpr a -> String) -> Handle -> SExpr a -> IO ()
@@ -67,15 +64,11 @@ data Flag
     | Output String             -- Output file name
       deriving Show
 
-defaultMargin :: Int
-defaultMargin = optMargin defaultOptions
-
 options :: [OptDescr Flag]
 options =
     [ Option ['o'] ["output"]   (ReqArg Output "FILE") "output FILE",
       Option ['m'] ["margin"]   (ReqArg Margin "INT")
       ("set output margin (default " ++ show defaultMargin ++ ")"),
-      Option ['i'] ["infix"]    (NoArg Infix)  "output uses infix notation",
       Option ['j'] ["json"]     (NoArg Json)   "output uses JSON notation",
       Option ['h'] ["help"]     (NoArg Help)           "show help message",
       Option ['v'] ["version"]  (NoArg Info)           "show version number" ]
@@ -84,7 +77,6 @@ options =
 interp :: [Flag] -> IO Params
 interp flags =
     loop flags (Params { file = Nothing, -- By default, no output file
-                         prefix = True,
                          json = False,
                          margin = defaultMargin })
     where
@@ -92,20 +84,8 @@ interp flags =
       loop (Output name : flags) params
           | file params == Nothing =
               loop flags $ params { file = Just name }
-      loop (Infix : flags) params =
-          if json params then
-            do
-              msg <- usage options ["Bad option combination\n"]
-              abort msg
-          else
-            loop flags $ params { prefix = False }
       loop (Json : flags) params =
-          if not (prefix params) then
-            do
-              msg <- usage options ["Bad option combination\n"]
-              abort msg
-          else
-            loop flags $ params { json = True }
+          loop flags $ params { json = True }
       loop (Margin value : flags) params =
           case readDec value of
             [(margin, "")] ->

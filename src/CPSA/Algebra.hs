@@ -62,7 +62,7 @@
 
 {-# LANGUAGE MultiParamTypeClasses #-}
 
-module CPSA.Basic.Algebra (name, origin) where
+module CPSA.Algebra (name, origin) where
 
 import Control.Monad (foldM)
 import qualified Data.List as L

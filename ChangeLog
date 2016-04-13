@@ -2,8 +2,8 @@
 
 	* cpsa4.cabal (Version): Updated version number to 4.0.0.
 
-	* Made it so that cpsa4diff, cpsa4shapes, and cpsa4graph do not
-	rely on CPSA.Lib.Algebra.
+	* Made it so that cpsa4diff, cpsa4shapes, cpsa4graph, cpsa4pp, and
+	cpsa4json do not rely on CPSA.Lib.Algebra.
 
 	* src/CPSA/Graph/Main.hs: Purged support for infix notation.
 

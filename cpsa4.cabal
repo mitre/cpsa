@@ -171,3 +171,23 @@ Executable cpsa4shapes
   Other-Modules:
     Paths_cpsa CPSA.Lib.SExpr CPSA.Lib.Pretty CPSA.Lib.Printer
     CPSA.Lib.Entry CPSA.Shapes.Shapes
+
+Executable cpsa4pp
+  Main-Is:		CPSA/Pretty/Main.hs
+  Build-Depends:	base, containers
+  GHC-Options:
+    -Wall -fno-warn-name-shadowing -fwarn-unused-imports
+  Hs-Source-Dirs:	src
+  Other-Modules:
+    Paths_cpsa CPSA.Lib.Pretty CPSA.Lib.SExpr
+    CPSA.Lib.Printer CPSA.Lib.Entry
+
+Executable cpsa4json
+  Main-Is:		CPSA/JSON/Main.hs
+  Build-Depends:	base, containers
+  GHC-Options:
+    -Wall -fno-warn-name-shadowing -fwarn-unused-imports
+  Hs-Source-Dirs:	src
+  Other-Modules:
+    Paths_cpsa CPSA.Lib.Pretty CPSA.Lib.SExpr
+    CPSA.Lib.Printer CPSA.Lib.Entry
