@@ -11,7 +11,7 @@
 
 module CPSA.Graph.XMLOutput (Attribute, Element, mc, ec, props) where
 
-import CPSA.Lib.CPSA
+import CPSA.Lib.Pretty
 
 type Attribute = (String, String)
 

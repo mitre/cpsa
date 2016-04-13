@@ -9,7 +9,8 @@
 module CPSA.Graph.LaTeXView (latexView) where
 
 import System.IO
-import CPSA.Lib.CPSA (nats, SExpr, Pos)
+import CPSA.Lib.Utilities (nats)
+import CPSA.Lib.SExpr (SExpr, Pos)
 import CPSA.Graph.Loader
 import CPSA.Graph.Layout
 

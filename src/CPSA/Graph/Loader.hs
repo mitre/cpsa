@@ -21,7 +21,8 @@ module CPSA.Graph.Loader (Preskel, Dir (..), Vertex, protocol, role, env,
 
 import qualified Data.List as L
 import Control.Monad
-import CPSA.Lib.CPSA
+import CPSA.Lib.SExpr
+import CPSA.Lib.Utilities
 import CPSA.Lib.Entry (gentlyReadSExpr)
 
 -- A view of protocols and preskeletons designed for display.

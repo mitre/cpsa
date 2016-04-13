@@ -15,7 +15,8 @@ import System.Environment
 import System.Console.GetOpt
 import System.Exit
 import Paths_cpsa
-import CPSA.Lib.CPSA
+import CPSA.Lib.SExpr
+import CPSA.Lib.Printer (pp)
 import CPSA.Lib.Entry
 
 main :: IO ()
@@ -97,7 +98,7 @@ data Params = Params
     deriving Show
 
 indent :: Int
-indent = optIndent defaultOptions
+indent = defaultIndent
 
 -- Command line option flags
 data Flag
@@ -106,9 +107,6 @@ data Flag
     | Margin String             -- Output line length
     | Output String             -- Output file name
       deriving Show
-
-defaultMargin :: Int
-defaultMargin = optMargin defaultOptions
 
 options :: [OptDescr Flag]
 options =

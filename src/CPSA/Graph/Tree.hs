@@ -13,7 +13,7 @@ import Data.Map (Map)
 import Data.List (foldl')
 import qualified Data.Set as S
 import Data.Set (Set)
-import CPSA.Lib.CPSA (seqList)
+import CPSA.Lib.Utilities (seqList)
 import CPSA.Graph.XMLOutput
 import CPSA.Graph.Config
 import CPSA.Graph.SVG

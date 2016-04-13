@@ -11,7 +11,8 @@ module CPSA.Graph.ExpandedView (expandedView, treelessView) where
 
 import Data.List (intersperse)
 import System.IO
-import CPSA.Lib.CPSA
+import CPSA.Lib.SExpr
+import CPSA.Lib.Printer (pp)
 import CPSA.Graph.XMLOutput
 import CPSA.Graph.Config
 import CPSA.Graph.SVG
@@ -25,7 +26,6 @@ expandedView :: Handle -> Config -> Int -> [SExpr Pos] -> [Preskel] -> IO ()
 expandedView h conf margin cmts ks =
     do
       hPutList h (header (scripts conf) cmts ks)
-      let pp = printer conf
       comments h margin pp cmts
       case forest ks of
         [t] ->
@@ -233,7 +233,6 @@ treelessView :: Handle -> Config -> Int -> [SExpr Pos] ->
 treelessView h conf margin cmts k s =
     do
       hPutList h (header (scripts conf) cmts [k])
-      let pp = printer conf
       comments h margin pp cmts
       body h conf margin pp k s
 

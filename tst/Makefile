@@ -4,12 +4,11 @@
 
 TSTS	:= $(patsubst %.scm,%.txt,$(wildcard *.scm)) \
 		$(patsubst %.lsp,%.txt,$(wildcard *.lsp))
-CPSA	= ../dist/build/cpsa/cpsa$(EXE)
-DIFF	= ../dist/build/cpsadiff/cpsadiff$(EXE)
-SHAPES	= ../dist/build/cpsashapes/cpsashapes$(EXE)
-SAS	= ../dist/build/cpsasas/cpsasas$(EXE)
-ANNOTATIONS = ../dist/build/cpsaannotations/cpsaannotations$(EXE)
-GRAPH	= ../dist/build/cpsagraph/cpsagraph$(EXE)
+CPSA	= ../dist/build/cpsa/cpsa4$(EXE)
+DIFF	= ../dist/build/cpsadiff/cpsa4diff$(EXE)
+SHAPES	= ../dist/build/cpsashapes/cpsa4shapes$(EXE)
+SAS	= ../dist/build/cpsasas/cpsa4sas$(EXE)
+GRAPH	= ../dist/build/cpsagraph/cpsa4graph$(EXE)
 CPSAFLAGS = +RTS -M512m -RTS
 
 # The expected answers are in files with the .tst extension.
@@ -32,10 +31,6 @@ CPSAFLAGS = +RTS -M512m -RTS
 %_sas.text:	%.txt
 	$(SAS) $(SASFLAGS) -o $@ $<
 
-# Annotate shapes
-%_annotations.txt:	%_shapes.txt
-	$(ANNOTATIONS) $(ANNOTATIONSFLAGS) -o $@ $<
-
 # Visualize output
 %.svg:		%.txt
 	$(GRAPH) -c -o $@ $<
@@ -44,7 +39,7 @@ CPSAFLAGS = +RTS -M512m -RTS
 %.xhtml:	%.txt
 	$(GRAPH) $(GRAPHFLAGS) -o $@ $<
 
-.PRECIOUS:	%.txt %_shapes.txt %_annotations.txt
+.PRECIOUS:	%.txt %_shapes.txt
 
 all:	$(patsubst %.txt,%.xhtml,$(TSTS)) \
 		$(patsubst %.txt,%_shapes.xhtml,$(TSTS))

@@ -1,5 +1,5 @@
 Name:			cpsa
-Version:		2.5.4
+Version:		4.0.0
 Maintainer:		ramsdell@mitre.org
 Cabal-Version:		>= 1.6
 License:		BSD3
@@ -46,7 +46,7 @@ Description:
 Category:		Cryptography
 Build-Type:		Simple
 Data-Files:
-  index.html readme.html cpsauser.html cpsa.mk Make.hs cpsaprimer.pdf
+  index.html readme.html cpsauser.html cpsa4.mk Make4.hs cpsaprimer.pdf
   cpsagoals.pdf cpsaoverview.pdf cpsaintroslides.pdf cpsaspec.pdf
   cpsadesign.pdf ffgg.scm ns.scm blanchet.scm or.scm woolam.scm
   yahalom.scm goals.scm
@@ -124,120 +124,50 @@ Source-Repository head
 -- Tools may additionally import CPSA.Lib.Entry.
 -- No other modules in CPSA.Lib should be imported by applications.
 
-Executable cpsa
-  Main-Is:		CPSA/Lib/Main.hs
-  Build-Depends:	base >= 3 && < 5, containers, parallel
-  GHC-Options:
-    -Wall -fno-warn-name-shadowing -fwarn-unused-imports -threaded -rtsopts
-  Hs-Source-Dirs:	src
-  Other-Modules:
-    Paths_cpsa CPSA.Lib.Vector CPSA.Lib.Utilities CPSA.Lib.Pretty
-    CPSA.Lib.SExpr CPSA.Lib.Printer CPSA.Lib.Notation CPSA.Lib.Entry
-    CPSA.Lib.Algebra CPSA.Lib.Protocol CPSA.Lib.Goal CPSA.Lib.Strand
-    CPSA.Lib.Characteristic CPSA.Lib.Loader CPSA.Lib.Displayer
-    CPSA.Lib.Cohort CPSA.Lib.Expand CPSA.Lib.CPSA CPSA.Lib.Reduction
-    CPSA.Basic.Algebra CPSA.DiffieHellman.Algebra
-
-Executable cpsagraph
-  Main-Is:		CPSA/Graph/Main.hs
-  Build-Depends:	base >= 3 && < 5, containers
-  GHC-Options:
-    -Wall -fno-warn-name-shadowing -fwarn-unused-imports
-  Hs-Source-Dirs:	src
-  Other-Modules:
-    Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.Pretty CPSA.Lib.SExpr
-    CPSA.Lib.Printer CPSA.Lib.Notation CPSA.Lib.Entry CPSA.Lib.Algebra
-    CPSA.Lib.Protocol CPSA.Lib.Strand CPSA.Lib.Loader
-    CPSA.Lib.Displayer CPSA.Lib.Cohort CPSA.Lib.CPSA
-    CPSA.Graph.XMLOutput CPSA.Graph.Config CPSA.Graph.SVG
-    CPSA.Graph.Loader CPSA.Graph.Preskeleton CPSA.Graph.Layout
-    CPSA.Graph.Tree CPSA.Graph.CompactView CPSA.Graph.ExpandedView
-    CPSA.Graph.LaTeXView
-
-Executable cpsashapes
-  Main-Is:		CPSA/Shapes/Main.hs
-  Build-Depends:	base >= 3 && < 5, containers
-  GHC-Options:
-    -Wall -fno-warn-name-shadowing -fwarn-unused-imports
-  Hs-Source-Dirs:	src
-  Other-Modules:
-    Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.Pretty CPSA.Lib.SExpr
-    CPSA.Lib.Printer CPSA.Lib.Notation CPSA.Lib.Entry CPSA.Lib.Algebra
-    CPSA.Lib.Protocol CPSA.Lib.Strand CPSA.Lib.Loader
-    CPSA.Lib.Displayer CPSA.Lib.Cohort CPSA.Lib.CPSA
-    CPSA.Shapes.Shapes
-
-Executable cpsaannotations
-  Main-Is:		CPSA/Annotations/Main.hs
-  Build-Depends:	base >= 3 && < 5, containers
-  GHC-Options:
-    -Wall -fno-warn-name-shadowing -fwarn-unused-imports
-  Hs-Source-Dirs:	src
-  Other-Modules:
-    Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.Pretty CPSA.Lib.SExpr
-    CPSA.Lib.Printer CPSA.Lib.Notation CPSA.Lib.Entry CPSA.Lib.Algebra
-    CPSA.Lib.Protocol CPSA.Lib.Strand CPSA.Lib.Loader
-    CPSA.Lib.Displayer CPSA.Lib.Cohort CPSA.Lib.CPSA
-    CPSA.Annotations.Formulas CPSA.Annotations.Annotations
-    CPSA.Basic.Algebra CPSA.DiffieHellman.Algebra
-
-Executable cpsaparameters
-  Main-Is:		CPSA/Parameters/Main.hs
-  Build-Depends:	base >= 3 && < 5, containers
-  GHC-Options:
-    -Wall -fno-warn-name-shadowing -fwarn-unused-imports
-  Hs-Source-Dirs:	src
-  Other-Modules:
-    Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.Pretty CPSA.Lib.SExpr
-    CPSA.Lib.Printer CPSA.Lib.Notation CPSA.Lib.Entry CPSA.Lib.Algebra
-    CPSA.Lib.Protocol CPSA.Lib.Strand CPSA.Lib.Loader
-    CPSA.Lib.Displayer CPSA.Lib.Cohort CPSA.Lib.CPSA
-    CPSA.Parameters.Flow CPSA.Basic.Algebra CPSA.DiffieHellman.Algebra
-
-Executable cpsapp
-  Main-Is:		CPSA/Pretty/Main.hs
-  Build-Depends:	base >= 3 && < 5, containers
-  GHC-Options:
-    -Wall -fno-warn-name-shadowing -fwarn-unused-imports
-  Hs-Source-Dirs:	src
-  Other-Modules:
-    Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.Pretty CPSA.Lib.SExpr
-    CPSA.Lib.Printer CPSA.Lib.Notation CPSA.Lib.Entry CPSA.Lib.Algebra
-    CPSA.Lib.Protocol CPSA.Lib.Strand CPSA.Lib.Loader
-    CPSA.Lib.Displayer CPSA.Lib.Cohort CPSA.Lib.CPSA
-
-Executable cpsajson
-  Main-Is:		CPSA/JSON/Main.hs
-  Build-Depends:	base >= 3 && < 5, containers
-  GHC-Options:
-    -Wall -fno-warn-name-shadowing -fwarn-unused-imports
-  Hs-Source-Dirs:	src
-  Other-Modules:
-    Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.Pretty CPSA.Lib.SExpr
-    CPSA.Lib.Printer CPSA.Lib.Notation CPSA.Lib.Entry CPSA.Lib.Algebra
-    CPSA.Lib.Protocol CPSA.Lib.Strand CPSA.Lib.Loader
-    CPSA.Lib.Displayer CPSA.Lib.Cohort CPSA.Lib.CPSA
+-- Executable cpsa
+--   Main-Is:		CPSA/Lib/Main.hs
+--   Build-Depends:	base >= 3 && < 5, containers, parallel
+--   GHC-Options:
+--     -Wall -fno-warn-name-shadowing -fwarn-unused-imports -threaded -rtsopts
+--   Hs-Source-Dirs:	src
+--   Other-Modules:
+--     Paths_cpsa CPSA.Lib.Vector CPSA.Lib.Utilities CPSA.Lib.Pretty
+--     CPSA.Lib.SExpr CPSA.Lib.Printer CPSA.Lib.Notation CPSA.Lib.Entry
+--     CPSA.Lib.Algebra CPSA.Lib.Protocol CPSA.Lib.Goal CPSA.Lib.Strand
+--     CPSA.Lib.Characteristic CPSA.Lib.Loader CPSA.Lib.Displayer
+--     CPSA.Lib.Cohort CPSA.Lib.Expand CPSA.Lib.CPSA CPSA.Lib.Reduction
+--     CPSA.Basic.Algebra CPSA.DiffieHellman.Algebra
 
 Executable cpsadiff
   Main-Is:		CPSA/Diff/Main.hs
-  Build-Depends:	base >= 3 && < 5, containers
+  Build-Depends:	base, containers
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
   Hs-Source-Dirs:	src
   Other-Modules:
     Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.Pretty CPSA.Lib.SExpr
-    CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Lib.Algebra CPSA.Lib.CPSA
+    CPSA.Lib.Printer CPSA.Lib.Entry
 
-Executable cpsasas
-  Main-Is:		CPSA/SAS/Main.hs
-  Build-Depends:	base >= 3 && < 5, containers
+Executable cpsa4graph
+  Main-Is:		CPSA/Graph/Main.hs
+  Build-Depends:	base, containers
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
   Hs-Source-Dirs:	src
   Other-Modules:
     Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.Pretty CPSA.Lib.SExpr
-    CPSA.Lib.Printer CPSA.Lib.Notation CPSA.Lib.Entry CPSA.Lib.Algebra
-    CPSA.Lib.Protocol CPSA.Lib.Strand CPSA.Lib.Loader
-    CPSA.Lib.Displayer CPSA.Lib.Cohort CPSA.Lib.CPSA
-    CPSA.SAS.SAS
-    CPSA.Basic.Algebra CPSA.DiffieHellman.Algebra
+    CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Graph.XMLOutput
+    CPSA.Graph.Config CPSA.Graph.SVG CPSA.Graph.Loader
+    CPSA.Graph.Preskeleton CPSA.Graph.Layout CPSA.Graph.Tree
+    CPSA.Graph.CompactView CPSA.Graph.ExpandedView
+    CPSA.Graph.LaTeXView
+
+Executable cpsa4shapes
+  Main-Is:		CPSA/Shapes/Main.hs
+  Build-Depends:	base, containers
+  GHC-Options:
+    -Wall -fno-warn-name-shadowing -fwarn-unused-imports
+  Hs-Source-Dirs:	src
+  Other-Modules:
+    Paths_cpsa CPSA.Lib.SExpr CPSA.Lib.Pretty CPSA.Lib.Printer
+    CPSA.Lib.Entry CPSA.Shapes.Shapes

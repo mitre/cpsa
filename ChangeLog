@@ -1,3 +1,12 @@
+2016-04-13  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa4.cabal (Version): Updated version number to 4.0.0.
+
+	* Made it so that cpsa4diff, cpsa4shapes, and cpsa4graph do not
+	rely on CPSA.Lib.Algebra.
+
+	* src/CPSA/Graph/Main.hs: Purged support for infix notation.
+
 2016-03-30  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/SAS/SAS.hs: Added support for fringe skeletons so that

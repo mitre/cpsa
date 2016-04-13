@@ -8,30 +8,11 @@
 
 module CPSA.Graph.Preskeleton (skel) where
 
-import CPSA.Lib.CPSA (SExpr, printMsg, printEnv)
 import CPSA.Graph.XMLOutput
 import CPSA.Graph.Config
 import CPSA.Graph.SVG
 import CPSA.Graph.Loader
 import CPSA.Graph.Layout
-
-showMsg :: Config -> SExpr a -> String
-showMsg conf x =
-    case notation conf of
-      Prefix -> show x
-      Infix -> printMsg margin indent x
-
-showEnv :: Config -> SExpr a -> String
-showEnv conf x =
-    case notation conf of
-      Prefix -> show x
-      Infix -> printEnv margin indent x
-
-margin :: Int
-margin = 1024
-
-indent :: Int
-indent = 0
 
 -- Compute a node's position.
 npos :: Config -> Rank -> Node -> (Float, Float)
@@ -69,7 +50,7 @@ addNode :: Config -> Preskel -> Rank -> [Element] -> Vertex -> [Element]
 addNode conf k rank elements node =
     let (x, y) = npos conf rank (vnode node)
         bullet = circ conf (nodeColor k node) x y
-        es = tooltip (showMsg conf $ msg node) [bullet] : elements
+        es = tooltip (show $ msg node) [bullet] : elements
         es' = foldl (addEdge conf rank node x y) es (succs node) in
     maybe es' (addNode conf k rank es') (next node)
 
@@ -88,7 +69,7 @@ addRole conf es node =
     if null r then
         es
     else
-        tooltip (showEnv conf e) [text conf x y r] : es
+        tooltip (show e) [text conf x y r] : es
     where
       r = role node
       e = env node

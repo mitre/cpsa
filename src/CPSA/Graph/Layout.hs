@@ -9,7 +9,7 @@
 module CPSA.Graph.Layout (Node, vnode, Rank, layout, maxRank) where
 
 import qualified Data.List as L
-import CPSA.Lib.CPSA (adjoin)
+import CPSA.Lib.Utilities (adjoin)
 import CPSA.Graph.Loader
 
 -- The node's rank determines its vertical position.

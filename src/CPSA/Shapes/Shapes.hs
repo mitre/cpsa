@@ -10,7 +10,7 @@ module CPSA.Shapes.Shapes (Map, empty, shape) where
 
 import qualified Data.IntMap as I
 import Data.IntMap (IntMap)
-import CPSA.Lib.CPSA
+import CPSA.Lib.SExpr
 
 -- An int map is used to bind a skeleton to its parent.
 
