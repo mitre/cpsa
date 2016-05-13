@@ -60,9 +60,55 @@
 
 -- In both algebras, invk(invk(t)) = t for all t of sort akey
 
-{-# LANGUAGE MultiParamTypeClasses #-}
+module CPSA.Algebra (name, origin, clone, loadVars,
 
-module CPSA.Algebra (name, origin) where
+    Term,
+    isVar,
+    isAcquiredVar,
+    isAtom,
+    isNodeVar,
+    termsWellFormed,
+    occursIn,
+    foldVars,
+    foldCarriedTerms,
+    carriedBy,
+    decryptionKey,
+    decompose,
+    buildable,
+    encryptions,
+    escapeSet,
+    loadTerm,
+
+    Place,
+    places,
+    carriedPlaces,
+    replace,
+    ancestors,
+
+    Subst,
+    emptySubst,
+    substitute,
+    unify,
+    compose,
+
+    Env,
+    emptyEnv,
+    instantiate,
+    match,
+    identityEnvFor,
+    substitution,
+    reify,
+    matchRenaming,
+    nodeMatch,
+    nodeLookup,
+
+    Context,
+    emptyContext,
+    addToContext,
+    displayVars,
+    displayTerm,
+    displayEnv,
+    displaySubst) where
 
 import Control.Monad (foldM)
 import qualified Data.List as L
@@ -71,8 +117,8 @@ import Data.Set (Set)
 import qualified Data.Map as M
 import Data.Map (Map)
 import Data.Char (isDigit)
-import qualified CPSA.Lib.CPSA as C
-import CPSA.Lib.CPSA (SExpr(..), Pos, annotation)
+import CPSA.Lib.Utilities (replaceNth)
+import CPSA.Lib.SExpr (SExpr(..), Pos, annotation)
 
 name :: String
 name = "basic"
@@ -396,70 +442,6 @@ escapeSet ts a ct =
               not (buildable ts a (inv key))
           f _ = False
 
--- Support for data flow analysis of traces.  A flow rule maps an
--- initial set of atoms and a set of available terms to sets of pairs
--- of the same sets.
-type FlowRule = (Set Term, Set Term) -> Set (Set Term, Set Term)
-
--- Combine flow rules sequentially.
-comb :: FlowRule -> FlowRule -> FlowRule
-comb f g x =
-    S.fold h S.empty (g x)
-    where
-      h a s = S.union (f a) s
-
--- Analyze a term as a sent term.
-outFlow :: Term -> FlowRule
-outFlow t a@(_, available)
-    | S.member t available = S.singleton a
-outFlow (I _) _ = S.empty
-outFlow (C _) a = S.singleton a
-outFlow (F Cat [t0, t1]) a =    -- Construct non-atoms
-    comb (outFlow t1) (outFlow t0) a
-outFlow (F Enc [t0, t1]) a =
-    comb (outFlow t1) (outFlow t0) a
-outFlow (F Hash [t]) a =
-    outFlow t a
-outFlow t (initial, available) = -- Don't look inside atoms
-    S.singleton (S.insert t initial, S.insert t available)
-
--- Analyze a term as a received term.
-inFlow :: Term -> FlowRule
-inFlow (C _) a = S.singleton a
-inFlow (F Cat [t0, t1]) a =     -- Try to receive components
-    S.union                     -- in both orders
-         (comb (inFlow t1) (inFlow t0) a)
-         (comb (inFlow t0) (inFlow t1) a)
-inFlow t@(F Enc [t0, t1]) (initial, available) =
-    S.union
-         (outFlow t (initial, available)) -- Encryption can be built
-         (comb (inFlow t0) (outFlow (inv t1)) a) -- or decrypted
-    where                       -- Derive decryption key first
-      a = (initial, S.insert t available)
-inFlow (F Hash [t0]) (initial, available) =
-    outFlow t0 (initial, available)
-inFlow t (initial, available) =
-    S.singleton (initial, S.insert t available)
-
-instance C.Term Term where
-    isVar = isVar
-    isAcquiredVar = isAcquiredVar
-    isAtom = isAtom
-    isNodeVar = isNodeVar
-    termsWellFormed = termsWellFormed
-    occursIn = occursIn
-    foldVars = foldVars
-    foldCarriedTerms = foldCarriedTerms
-    carriedBy = carriedBy
-    decryptionKey = decryptionKey
-    decompose = decompose
-    buildable = buildable
-    encryptions = encryptions
-    escapeSet = escapeSet
-    outFlow = outFlow
-    inFlow = inFlow
-    loadTerm = loadTerm
-
 -- Places
 
 -- A place names a one subterm within a term.  It is a list of
@@ -491,7 +473,7 @@ replace target (Place ints) source =
     where
       loop [] _ = I (varId target)
       loop (i : path) (F s u) =
-          F s (C.replaceNth (loop path (u !! i)) i u)
+          F s (replaceNth (loop path (u !! i)) i u)
       loop _ _ = error "Algebra.replace: Bad path to variable"
 
 -- Returns the places a term is carried by another term.
@@ -516,12 +498,6 @@ ancestors source (Place ints) =
       loop ts (i: path) t@(F _ u) =
           loop (t : ts) path (u !! i)
       loop _ _ _ = error "Algebra.ancestors: Bad path to term"
-
-instance C.Place Term Place where
-    places = places
-    carriedPlaces = carriedPlaces
-    replace = replace
-    ancestors = ancestors
 
 -- Rename the identifiers in a term.  Gen keeps the state of the
 -- renamer.  (Question: should alist be replaced by a Map?)
@@ -553,11 +529,6 @@ clone gen t =
       cloneTermList (alist, gen, u) t =
           let (alist', gen', t') = cloneTerm (alist, gen) t in
           (alist', gen', t' : u)
-
-instance C.Gen Term Gen where
-    origin = origin
-    clone = clone
-    loadVars = loadVars
 
 -- Functions used in both unification and matching
 
@@ -721,13 +692,6 @@ substChase subst t =
       t@(D _) -> t
       t@(P _) -> t
 
-instance C.Subst Term Gen Subst where
-   emptySubst = emptySubst
-   substitute = substitute
-   unify t t' (g, s) =
-       maybe [] (\s -> [(g, s)]) $ unify t t' s
-   compose = compose
-
 -- Matching and instantiation
 
 newtype Env = Env IdMap deriving (Eq, Ord, Show)
@@ -839,23 +803,6 @@ nodeLookup env t =
   case instantiate env t of
     P p -> Just p
     _ -> Nothing
-
-instance C.Env Term Gen Subst Env where
-   emptyEnv = emptyEnv
-   instantiate = instantiate
-   match t t' (g, e) =
-       maybe [] (\e -> [(g, e)]) $ match t t' e
-   identityEnvFor (g, e) ts =
-       if identityEnvFor e ts then
-           [(g, e)]
-       else
-           []
-   substitution = substitution
-   reify = reify
-   matchRenaming (_, e) = matchRenaming e
-   nodeMatch t t' (g, e) =
-       maybe [] (\e -> [(g, e)]) $ nodeMatch t t' e
-   nodeLookup = nodeLookup
 
 -- Term specific loading functions
 
@@ -1169,12 +1116,3 @@ rootName name =
           | isDigit c  = hyphen i (j + 1) s
           | otherwise = noHyphen j (c : s)
 
-instance C.Context Term Gen Subst Env Context where
-    emptyContext = emptyContext
-    addToContext = addToContext
-    displayVars = displayVars
-    displayTerm = displayTerm
-    displayEnv = displayEnv
-    displaySubst = displaySubst
-
-instance C.Algebra Term Place Gen Subst Env Context

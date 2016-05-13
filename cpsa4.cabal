@@ -120,6 +120,13 @@ Source-Repository head
   Type:     git
   Location: git://github.com/ramsdell/cpsa.git
 
+Library
+  Build-Depends:	base, containers
+  Exposed-Modules:	CPSA.Algebra CPSA.Traces
+  Hs-Source-Dirs:	src
+  GHC-Options:
+    -Wall -fno-warn-name-shadowing -fwarn-unused-imports
+
 -- Algebra implementations must import CPSA.Lib.CPSA.
 -- Tools may additionally import CPSA.Lib.Entry.
 -- No other modules in CPSA.Lib should be imported by applications.
@@ -138,7 +145,7 @@ Source-Repository head
 --     CPSA.Lib.Cohort CPSA.Lib.Expand CPSA.Lib.CPSA CPSA.Lib.Reduction
 --     CPSA.Basic.Algebra CPSA.DiffieHellman.Algebra
 
-Executable cpsadiff
+Executable cpsa4diff
   Main-Is:		CPSA/Diff/Main.hs
   Build-Depends:	base, containers
   GHC-Options:
