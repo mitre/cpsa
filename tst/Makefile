@@ -4,11 +4,11 @@
 
 TSTS	:= $(patsubst %.scm,%.txt,$(wildcard *.scm)) \
 		$(patsubst %.lsp,%.txt,$(wildcard *.lsp))
-CPSA	= ../dist/build/cpsa/cpsa4$(EXE)
-DIFF	= ../dist/build/cpsadiff/cpsa4diff$(EXE)
-SHAPES	= ../dist/build/cpsashapes/cpsa4shapes$(EXE)
-SAS	= ../dist/build/cpsasas/cpsa4sas$(EXE)
-GRAPH	= ../dist/build/cpsagraph/cpsa4graph$(EXE)
+CPSA	= ../dist/build/cpsa4/cpsa4$(EXE)
+DIFF	= ../dist/build/cpsa4diff/cpsa4diff$(EXE)
+SHAPES	= ../dist/build/cpsa4shapes/cpsa4shapes$(EXE)
+SAS	= ../dist/build/cpsa4sas/cpsa4sas$(EXE)
+GRAPH	= ../dist/build/cpsa4graph/cpsa4graph$(EXE)
 CPSAFLAGS = +RTS -M512m -RTS
 
 # The expected answers are in files with the .tst extension.

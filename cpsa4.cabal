@@ -120,7 +120,7 @@ Source-Repository head
   Type:     git
   Location: git://github.com/ramsdell/cpsa.git
 
-Executable cpsa
+Executable cpsa4
   Main-Is:		CPSA/Lib/Main.hs
   Build-Depends:	base >= 3 && < 5, containers, parallel
   GHC-Options:
