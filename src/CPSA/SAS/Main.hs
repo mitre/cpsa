@@ -11,13 +11,13 @@ module Main (main) where
 import System.IO
 import CPSA.Lib.CPSA
 import CPSA.Lib.Entry
+import CPSA.Lib.Options
 import CPSA.SAS.SAS
 import qualified CPSA.Basic.Algebra
-import qualified CPSA.DiffieHellman.Algebra
 
 -- Algebra names
 algs :: [String]
-algs = [CPSA.Basic.Algebra.name, CPSA.DiffieHellman.Algebra.name]
+algs = [CPSA.Basic.Algebra.name]
 
 main :: IO ()
 main =
@@ -31,9 +31,6 @@ main =
       case () of
         _ | alg == CPSA.Basic.Algebra.name ->
               go (step h alg CPSA.Basic.Algebra.origin margin)
-                 p ([], [])
-          | alg == CPSA.DiffieHellman.Algebra.name ->
-              go (step h alg CPSA.DiffieHellman.Algebra.origin margin)
                  p ([], [])
           | otherwise ->
                abort ("Bad algebra: " ++ alg)
