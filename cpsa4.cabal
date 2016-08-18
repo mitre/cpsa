@@ -120,30 +120,19 @@ Source-Repository head
   Type:     git
   Location: git://github.com/ramsdell/cpsa.git
 
-Library
-  Build-Depends:	base, containers
-  Exposed-Modules:	CPSA.Algebra CPSA.Traces
-  Hs-Source-Dirs:	src
+Executable cpsa
+  Main-Is:		CPSA/Lib/Main.hs
+  Build-Depends:	base >= 3 && < 5, containers, parallel
   GHC-Options:
-    -Wall -fno-warn-name-shadowing -fwarn-unused-imports
-
--- Algebra implementations must import CPSA.Lib.CPSA.
--- Tools may additionally import CPSA.Lib.Entry.
--- No other modules in CPSA.Lib should be imported by applications.
-
--- Executable cpsa
---   Main-Is:		CPSA/Lib/Main.hs
---   Build-Depends:	base >= 3 && < 5, containers, parallel
---   GHC-Options:
---     -Wall -fno-warn-name-shadowing -fwarn-unused-imports -threaded -rtsopts
---   Hs-Source-Dirs:	src
---   Other-Modules:
---     Paths_cpsa CPSA.Lib.Vector CPSA.Lib.Utilities CPSA.Lib.Pretty
---     CPSA.Lib.SExpr CPSA.Lib.Printer CPSA.Lib.Notation CPSA.Lib.Entry
---     CPSA.Lib.Algebra CPSA.Lib.Protocol CPSA.Lib.Goal CPSA.Lib.Strand
---     CPSA.Lib.Characteristic CPSA.Lib.Loader CPSA.Lib.Displayer
---     CPSA.Lib.Cohort CPSA.Lib.Expand CPSA.Lib.CPSA CPSA.Lib.Reduction
---     CPSA.Basic.Algebra CPSA.DiffieHellman.Algebra
+    -Wall -fno-warn-name-shadowing -fwarn-unused-imports -threaded -rtsopts
+  Hs-Source-Dirs:	src
+  Other-Modules:
+    Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.Pretty
+    CPSA.Lib.SExpr CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Lib.Options
+    CPSA.Lib.Algebra CPSA.Lib.Protocol CPSA.Lib.Goal CPSA.Lib.Strand
+    CPSA.Lib.Characteristic CPSA.Lib.Loader CPSA.Lib.Displayer
+    CPSA.Lib.Cohort CPSA.Lib.Expand CPSA.Lib.CPSA CPSA.Lib.Reduction
+    CPSA.Basic.Algebra
 
 Executable cpsa4diff
   Main-Is:		CPSA/Diff/Main.hs

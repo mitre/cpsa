@@ -9,7 +9,7 @@
 module CPSA.Lib.Loader (loadSExprs) where
 
 import Control.Monad
-import Control.Applicative
+import Control.Applicative ()
 import qualified Data.List as L
 import Data.Maybe (isJust)
 import CPSA.Lib.Utilities

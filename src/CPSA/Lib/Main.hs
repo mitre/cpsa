@@ -15,18 +15,14 @@ import System.Environment
 import System.Console.GetOpt
 import CPSA.Lib.SExpr
 import CPSA.Lib.Entry
+import CPSA.Lib.Options
 import CPSA.Lib.Algebra
 import CPSA.Lib.Loader
 import CPSA.Lib.Expand
 import CPSA.Lib.Reduction
 import qualified CPSA.Basic.Algebra
-import qualified CPSA.DiffieHellman.Algebra
 
 -- Compile time switches for expermentation.
-
--- Allow users to try experimental Diffie-Hellman algebra?
-useDiffieHellman :: Bool
-useDiffieHellman = False -- True
 
 -- Load default options
 
@@ -98,11 +94,7 @@ openInput _ =
 
 -- Algebra names -- omit Diffie-Hellman for releases until it works
 algs :: [String]
-algs =
-  if useDiffieHellman then
-    [CPSA.Basic.Algebra.name, CPSA.DiffieHellman.Algebra.name]
-  else
-    [CPSA.Basic.Algebra.name]
+algs = [CPSA.Basic.Algebra.name]
 
 -- Select the algebra and go.
 select :: [String] -> Maybe (SExpr Pos) -> Options -> [SExpr Pos] -> IO ()
@@ -110,9 +102,6 @@ select files herald opts sexprs =
     case optAlg opts of
       name | name == CPSA.Basic.Algebra.name ->
                go name CPSA.Basic.Algebra.origin
-                  files herald opts sexprs
-           | name == CPSA.DiffieHellman.Algebra.name ->
-               go name CPSA.DiffieHellman.Algebra.origin
                   files herald opts sexprs
            | otherwise ->
                abort ("Bad algebra: " ++ name)
