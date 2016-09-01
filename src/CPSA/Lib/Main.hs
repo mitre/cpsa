@@ -165,7 +165,7 @@ prettyPrint opts sexprs =
       h <- outputHandle (optFile opts)
       writeComment h m cpsaVersion
       writeComment h m "Expanded macros"
-      mapM_ (writeLnSEexpr h m) sexprs
+      mapM_ (writeLnSExpr h m) sexprs
       hClose h
       return ()
 

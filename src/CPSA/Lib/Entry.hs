@@ -9,7 +9,7 @@
 module CPSA.Lib.Entry (start, usage, abort, success, defaultMargin,
                        defaultIndent, filterOptions, filterInterp,
                        readSExpr, gentlyReadSExpr, outputHandle,
-                       writeSExpr, writeLnSEexpr, cpsaVersion, comment,
+                       writeSExpr, writeLnSExpr, cpsaVersion, comment,
                        writeComment, tryIO) where
 
 import Numeric
@@ -139,8 +139,8 @@ writeSExpr :: Handle -> Int -> SExpr a -> IO ()
 writeSExpr h margin sexpr =
     hPutStrLn h (pp margin defaultIndent sexpr)
 
-writeLnSEexpr :: Handle -> Int -> SExpr a -> IO ()
-writeLnSEexpr h margin sexpr =
+writeLnSExpr :: Handle -> Int -> SExpr a -> IO ()
+writeLnSExpr h margin sexpr =
     do
       hPutStrLn h ""
       writeSExpr h margin sexpr

@@ -52,7 +52,7 @@ step output margin acc sexpr =
                   return acc
               Just sexpr ->
                   do
-                    writeLnSEexpr output margin sexpr
+                    writeLnSExpr output margin sexpr
                     return acc
         Left err ->
             abort (show err)

@@ -32,7 +32,7 @@ useFlush = False                -- True
 wrt :: Options -> Handle -> SExpr a -> IO ()
 wrt p h sexpr =
     do
-      writeLnSEexpr h (optMargin p) sexpr
+      writeLnSExpr h (optMargin p) sexpr
       if useFlush then hFlush h else return ()
 
 -- A labeled and linked preskeleton

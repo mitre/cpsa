@@ -59,7 +59,7 @@ step :: Algebra t p g s e c => Handle ->
 step output _ _ margin state@([], []) (Just sexpr@(L _ (S _ cmt : _)))
      | cmt == "herald" || cmt == "comment" =
          do
-           writeLnSEexpr output margin sexpr
+           writeLnSExpr output margin sexpr
            return state
 step output name origin margin state sexpr =
     do
@@ -69,7 +69,7 @@ step output name origin margin state sexpr =
             after output margin acc sexpr
         Right (acc, Just x) ->
             do
-              writeLnSEexpr output margin x
+              writeLnSExpr output margin x
               after output margin acc sexpr
         Left err ->
             abort (show err)
@@ -78,7 +78,7 @@ after :: Algebra t p g s e c => Handle -> Int -> State t g c ->
          Maybe (SExpr Pos) -> IO (State t g c)
 after output margin state (Just sexpr@(L _ (S _ "defprotocol" : _))) =
     do
-      writeLnSEexpr output margin sexpr
+      writeLnSExpr output margin sexpr
       return state
 after _ _ state _ =
     return state
