@@ -13,11 +13,9 @@ module CPSA.Lib.Protocol (Event (..), evtTerm, evtMap, evt, inbnd, outbnd,
     rsearch, rnorig, rpnorig, ruorig, rpriority, mkRole, varSubset,
     varsInTerms, addVars,
     Prot, mkProt, pname, alg, pgen, roles, listenerRole,
-    varsAllAtoms, pcomment, flow) where
+    varsAllAtoms, pcomment) where
 
 import qualified Data.List as L
-import qualified Data.Set as S
-import Data.Set (Set)
 import CPSA.Lib.Utilities
 import CPSA.Lib.SExpr
 import CPSA.Lib.Algebra
@@ -25,68 +23,68 @@ import CPSA.Lib.Algebra
 -- Useful operations on variables
 
 -- Are the vars in ts a subset of the ones in ts'?
-varSubset :: Algebra t p g s e c => [t] -> [t] -> Bool
+varSubset :: [Term] -> [Term] -> Bool
 varSubset ts ts' =
     all (flip elem (varsInTerms ts')) (varsInTerms ts)
 
-varsInTerms :: Algebra t p g s e c => [t] -> [t]
+varsInTerms :: [Term] -> [Term]
 varsInTerms ts =
     foldl addVars [] ts
 
-addVars :: Algebra t p g s e c => [t] -> t -> [t]
+addVars :: [Term] -> Term -> [Term]
 addVars ts t = foldVars (flip adjoin) ts t
 
 -- Message events and traces
 
-data Event t
-    = In !t                      -- Inbound message
-    | Out !t                     -- Outbound message
+data Event
+    = In !Term                  -- Inbound message
+    | Out !Term                 -- Outbound message
       deriving (Show, Eq, Ord)
 
 -- Dispatch to function based on direction.
-evt :: (t -> a) -> (t -> a) -> Event t -> a
+evt :: (Term -> a) -> (Term -> a) -> Event -> a
 evt inDir outDir evt =
     case evt of
       In t -> inDir t
       Out t -> outDir t
 
 -- Extract the term in an event (evt id id).
-evtTerm :: Event t -> t
+evtTerm :: Event -> Term
 evtTerm (In t) = t
 evtTerm (Out t) = t
 
 -- Map the term in an event.
-evtMap :: (t -> t) -> Event t -> Event t
+evtMap :: (Term -> Term) -> Event -> Event
 evtMap f (In t) = In (f t)
 evtMap f (Out t) = Out (f t)
 
 -- Extract the term in an inbound event.
-inbnd :: Event t -> Maybe t
+inbnd :: Event -> Maybe Term
 inbnd (In t) = Just t
 inbnd _ = Nothing
 
 -- Extract the term in an outbound event.
-outbnd :: Event t -> Maybe t
+outbnd :: Event -> Maybe Term
 outbnd (Out t) = Just t
 outbnd _ = Nothing
 
 -- A trace is a list of events.  The terms in the trace are
 -- stored in causal order.
-type Trace t = [Event t]
+type Trace = [Event]
 
 -- The set of terms in a trace.
-tterms :: Eq t => Trace t -> [t]
+tterms :: Trace -> [Term]
 tterms c =
     foldl (\ts evt -> adjoin (evtTerm evt) ts) [] c
 
 -- Is the term carried by an event, and is the first one outgoing?
-originates :: Algebra t p g s e c => t -> Trace t -> Bool
+originates :: Term -> Trace -> Bool
 originates _ [] = False         -- Term is not carried
 originates t (Out t' : c) = t `carriedBy` t' || originates t c
 originates t (In t' : c) = not (t `carriedBy` t') && originates t c
 
 -- At what position does a term originate in a trace?
-originationPos :: Algebra t p g s e c => t -> Trace t -> Maybe Int
+originationPos :: Term -> Trace -> Maybe Int
 originationPos t c =
     loop 0 c
     where
@@ -99,7 +97,7 @@ originationPos t c =
           | otherwise = loop (pos + 1) c
 
 -- At what position is a term acquired in a trace?
-acquiredPos :: Algebra t p g s e c => t -> Trace t -> Maybe Int
+acquiredPos :: Term -> Trace -> Maybe Int
 acquiredPos t c =
     loop 0 c
     where
@@ -113,8 +111,7 @@ acquiredPos t c =
           | otherwise = loop (pos + 1) c
 
 -- At what position is a term gained in a trace?
-gainedPos :: Algebra t p g s e c => t ->
-             Trace t -> Maybe Int
+gainedPos :: Term -> Trace -> Maybe Int
 gainedPos t c =
     loop 0 c
     where
@@ -127,7 +124,7 @@ gainedPos t c =
           | otherwise = loop (pos + 1) c
 
 -- At what position do all of the variables in a term occur in a trace?
-usedPos :: Algebra t p g s e c => t -> Trace t -> Maybe Int
+usedPos :: Term -> Trace -> Maybe Int
 usedPos t c =
     loop 0 (varsInTerms [t]) c
     where
@@ -138,53 +135,20 @@ usedPos t c =
             [] -> Just pos
             _ -> loop (pos + 1) vars' c
 
--- Data flow analysis of a trace.
-
--- Return the minimal sets of parameters computed using traceFlow
-flow :: Algebra t p g s e c => Trace t -> [[t]]
-flow c =
-    toList $ filter minimal inits
-    where
-      inits = S.toList $ S.map fst $ traceFlow c (S.empty, S.empty)
-      -- Is init minimal among sets in inits?
-      minimal init = all (not . flip S.isProperSubsetOf init) inits
-      -- Convert sets to lists and sort everything
-      toList s = L.sort $ map (L.sort . S.toList) $ s
-
--- A flow rule maps an initial set of atoms and a set of available
--- terms to sets of pairs of the same sets.
-type FlowRule t = (Set t, Set t) -> Set (Set t, Set t)
-
--- Analyze events in a trace sequentially
-traceFlow :: Algebra t p g s e c => Trace t -> FlowRule t
-traceFlow [] a = S.singleton a
-traceFlow (d : c) a = comb (traceFlow c) (evtFlow d) a
-
--- Dispatch to algebra specific data flow routines
-evtFlow :: Algebra t p g s e c => Event t -> FlowRule t
-evtFlow (In t) = inFlow t
-evtFlow (Out t) = outFlow t
-
--- Combine flow rules sequentially
-comb :: Algebra t p g s e c => FlowRule t -> FlowRule t -> FlowRule t
-comb f g x =
-    S.fold h S.empty (g x)
-    where h a s = S.union (f a) s
-
-data Role t = Role
+data Role = Role
     { rname :: !String,
-      rvars :: ![t],            -- Set of role variables
+      rvars :: ![Term],         -- Set of role variables
                                 -- Events in causal order
-      rtrace :: ![Event t],
+      rtrace :: ![Event],
       -- Set of non-originating atoms, possibly with a trace length
-      rnon :: ![(Maybe Int, t)], -- that says when to inherit the atom
-      rpnon :: ![(Maybe Int, t)], -- that says when to inherit the atom
-      runique :: ![t],          -- Set of uniquely originating atoms
+      rnon :: ![(Maybe Int, Term)], -- that says when to inherit the atom
+      rpnon :: ![(Maybe Int, Term)], -- that says when to inherit the atom
+      runique :: ![Term],       -- Set of uniquely originating atoms
       rcomment :: [SExpr ()],   -- Comments from the input
       rsearch :: Bool, -- True when suggesting reverse test node search
-      rnorig :: [(t, Int)],     -- Nons plus origination position
-      rpnorig :: [(t, Int)], -- Penetrator nons plus origination position
-      ruorig :: [(t, Int)],     -- Uniques plus origination position
+      rnorig :: [(Term, Int)],  -- Nons plus origination position
+      rpnorig :: [(Term, Int)], -- Penetrator nons plus origination position
+      ruorig :: [(Term, Int)],  -- Uniques plus origination position
       rpriority :: [Int] }      -- List of all priorities
     deriving Show
 
@@ -198,9 +162,9 @@ defaultPriority = 5
 -- contain duplicate terms.
 
 -- Create a role
-mkRole :: Algebra t p g s e c => String -> [t] -> Trace t ->
-          [(Maybe Int, t)] -> [(Maybe Int, t)] -> [t] ->
-          [SExpr ()] -> [(Int, Int)] -> Bool -> Role t
+mkRole :: String -> [Term] -> Trace ->
+          [(Maybe Int, Term)] -> [(Maybe Int, Term)] -> [Term] ->
+          [SExpr ()] -> [(Int, Int)] -> Bool -> Role
 mkRole name vars trace non pnon unique comment priority rev =
     Role { rname = name,
            rvars = L.nub vars,  -- Every variable here must
@@ -247,19 +211,19 @@ mkRole name vars trace non pnon unique comment priority rev =
 
 -- Protocols
 
-data Prot t g
+data Prot
     = Prot { pname :: !String,  -- Name of the protocol
              alg :: !String,    -- Name of the algebra
-             pgen :: !g,        -- Initial variable generator
-             roles :: ![Role t], -- Non-listener roles of a protocol
-             listenerRole :: Role t,
+             pgen :: !Gen,      -- Initial variable generator
+             roles :: ![Role], -- Non-listener roles of a protocol
+             listenerRole :: Role,
              varsAllAtoms :: !Bool,   -- Are all role variables atoms?
              pcomment :: [SExpr ()] }  -- Comments from the input
     deriving Show
 
 -- Callers should ensure every role has a distinct name.
-mkProt :: Algebra t p g s e c => String -> String ->
-          g -> [Role t] -> Role t -> [SExpr ()] -> Prot t g
+mkProt :: String -> String -> Gen ->
+          [Role] -> Role -> [SExpr ()] -> Prot
 mkProt name alg gen roles lrole comment =
     Prot { pname = name, alg = alg, pgen = gen, roles = roles,
            listenerRole = lrole, pcomment = comment,

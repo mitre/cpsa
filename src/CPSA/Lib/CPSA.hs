@@ -22,7 +22,7 @@ module CPSA.Lib.CPSA (module CPSA.Lib.Utilities,
                       module CPSA.Lib.Pretty,
                       module CPSA.Lib.Printer,
                       module CPSA.Lib.Algebra,
-                      Event (..), flow) where
+                      Event (..)) where
 
 import CPSA.Lib.Utilities
 import CPSA.Lib.SExpr
@@ -30,4 +30,4 @@ import CPSA.Lib.Pretty
 import CPSA.Lib.Printer
 import CPSA.Lib.Algebra
 
-import CPSA.Lib.Protocol(Event (..), flow)
+import CPSA.Lib.Protocol(Event (..))

@@ -36,15 +36,14 @@ wrt p h sexpr =
       if useFlush then hFlush h else return ()
 
 -- A labeled and linked preskeleton
-data LPreskel t g s e
-    = LPreskel { content :: Preskel t g s e,
+data LPreskel
+    = LPreskel { content :: Preskel,
                  label :: Int,
                  depth :: Int,
-                 parent :: Maybe (LPreskel t g s e) }
+                 parent :: Maybe LPreskel }
       deriving Show
 
-withParent :: Algebra t p g s e c => Preskel t g s e ->
-              Int ->  LPreskel t g s e -> LPreskel t g s e
+withParent :: Preskel -> Int ->  LPreskel -> LPreskel
 withParent k label parent =
     LPreskel k label (1 + depth parent) (Just parent)
 
@@ -53,46 +52,42 @@ withParent k label parent =
 -- returns it.  What follows is the data structure used to store
 -- information in the seen history used for the isomorphism check.
 -- The integer is the label of the seen skeleton.
-type IPreskel t g s e = (Gist t g, Int)
+type IPreskel = (Gist, Int)
 
 -- Is the skeleton summarized by gist g isomorphic to one with the
 -- given label?
-wasSeen :: Algebra t p g s e c => Gist t g ->
-           IPreskel t g s e -> Bool
+wasSeen :: Gist -> IPreskel -> Bool
 wasSeen g (g', _) = isomorphic g g'
 
 -- A seen history as a list.
 
-newtype Seen t g s e = Seen [IPreskel t g s e]
+newtype Seen = Seen [IPreskel]
 
 -- Create a singleton seen history
-hist :: Algebra t p g s e c => IPreskel t g s e -> Seen t g s e
+hist :: IPreskel -> Seen
 hist ik = Seen [ik]
 
 -- Add an element to the seen history.
-remember :: Algebra t p g s e c => IPreskel t g s e ->
-            Seen t g s e -> Seen t g s e
+remember :: IPreskel -> Seen -> Seen
 remember ik (Seen seen) = Seen (ik : seen)
 
 -- Find an element of the seen history that satisfies a predicate.
-recall :: Algebra t p g s e c => (IPreskel t g s e -> Bool) ->
-          Seen t g s e -> Maybe (IPreskel t g s e)
+recall :: (IPreskel -> Bool) -> Seen -> Maybe (IPreskel)
 recall f (Seen seen) = L.find f seen
 
 -- Create an empty seen history
-void :: Algebra t p g s e c => Seen t g s e
+void :: Seen
 void = Seen []
 
 -- Merge two seen histories.
-merge :: Algebra t p g s e c => Seen t g s e ->
-         Seen t g s e -> Seen t g s e
+merge :: Seen -> Seen -> Seen
 merge (Seen xs) (Seen ys) = Seen (xs ++ ys)
 
 -- Contains the result of applying the cohort reduction rule.  The
 -- last position is used to hold the reverse of the labels of the
 -- seen children
 data Reduct t g s e  =
-    Reduct !(LPreskel t g s e) !Int ![Preskel t g s e] ![Int]
+    Reduct !(LPreskel) !Int ![Preskel] ![Int]
 
 parMap :: (a -> b) -> [a] -> [b]
 parMap _ [] = []
@@ -111,8 +106,7 @@ parMap = map
 
 -- Entry point for analysis
 -- n is the step count
-solve :: Algebra t p g s e c => Options -> Handle ->
-         [Preskel t g s e] -> Int -> IO ()
+solve :: Options -> Handle -> [Preskel] -> Int -> IO ()
 solve _ h [] _ =                -- Done
     hClose h
 solve p h (k : ks) n =
@@ -141,16 +135,14 @@ solve p h (k : ks) n =
         _ -> error "Main.solve: can't handle more than one skeleton"
 
 -- Begin by collapsing the point-of-view skeleton as much as possible.
-begin :: Algebra t p g s e c => Options -> Handle ->
-         [Preskel t g s e] -> Int -> Int -> Seen t g s e ->
-         [LPreskel t g s e] -> IO ()
+begin :: Options -> Handle -> [Preskel] -> Int -> Int -> Seen ->
+         [LPreskel] -> IO ()
 begin p h ks m n seen todo =
     search p h ks m n seen todo []
 
 -- Apply collapse until all possibilities are exhausted.
-search :: Algebra t p g s e c => Options -> Handle ->
-            [Preskel t g s e] -> Int -> Int -> Seen t g s e ->
-            [LPreskel t g s e] -> [LPreskel t g s e] -> IO ()
+search :: Options -> Handle -> [Preskel] -> Int -> Int -> Seen ->
+            [LPreskel] -> [LPreskel] -> IO ()
 search p h ks m n seen [] done =
     mode p h ks m n seen (reverse done)
 search p h ks m n seen (lk:todo) done =
@@ -161,9 +153,8 @@ search p h ks m n seen (lk:todo) done =
       search p h ks m n' seen' todo' (lk:done)
 
 -- Select reduction mode, noIsoChk or normal
-mode :: Algebra t p g s e c => Options -> Handle ->
-        [Preskel t g s e] -> Int -> Int -> Seen t g s e ->
-        [LPreskel t g s e] -> IO ()
+mode :: Options -> Handle -> [Preskel] -> Int -> Int -> Seen ->
+        [LPreskel] -> IO ()
 mode p h ks m n seen todo =
     if optNoIsoChk p then
         fast p h ks m n todo     -- Peform no isomorphism checks
@@ -184,9 +175,8 @@ mode p h ks m n seen todo =
 -- seen holds the gists of seen skeletons
 -- todo holds unreduced skeletons
 -- tobig holds skeletons that have exceed the strand bound.
-breadth :: Algebra t p g s e c => Options -> Handle ->
-           [Preskel t g s e] -> Int -> Int -> Seen t g s e ->
-           [LPreskel t g s e] -> [LPreskel t g s e] -> IO ()
+breadth :: Options -> Handle -> [Preskel] -> Int -> Int -> Seen ->
+           [LPreskel] -> [LPreskel] -> IO ()
 breadth p h ks _ n _ [] [] =       -- Empty todo list and tobig list
     do
       wrt p h (comment "Nothing left to do")
@@ -199,10 +189,8 @@ breadth p h ks m n seen todo tobig =
     step p h ks m seen n void [] tobig (parMap (branch p seen) todo)
 
 -- Function step handles one skeleton in one level of the tree.
-step :: Algebra t p g s e c => Options -> Handle ->
-        [Preskel t g s e] -> Int -> Seen t g s e -> Int ->
-        Seen t g s e -> [LPreskel t g s e] ->
-        [LPreskel t g s e] -> [Reduct t g s e] -> IO ()
+step :: Options -> Handle -> [Preskel] -> Int -> Seen -> Int ->
+        Seen -> [LPreskel] -> [LPreskel] -> [Reduct t g s e] -> IO ()
 step p h ks m oseen n seen todo tobig [] = -- Empty reducts
     breadth p h ks m n (merge seen oseen) (reverse todo) tobig
 step p h _ m _ n _ todo tobig reducts
@@ -239,8 +227,7 @@ step p h ks m oseen n seen todo tobig (Reduct lk size kids dups : reducts)
           step p h ks m oseen n' seen' todo' tobig reducts
 
 -- Expands one branch in the derivation tree.
-branch :: Algebra t p g s e c => Options -> Seen t g s e ->
-          LPreskel t g s e -> Reduct t g s e
+branch :: Options -> Seen -> LPreskel -> Reduct t g s e
 branch p seen lk =
     Reduct lk (length kids)
                (seqList $ reverse unseen) (seqList dups)
@@ -256,28 +243,21 @@ mkMode p =
            visitOldStrandsFirst = optTryOldStrandsFirst p,
            reverseNodeOrder = optTryYoungNodesFirst p}
 
-duplicates :: Algebra t p g s e c => Seen t g s e ->
-              ([Preskel t g s e], [Int]) ->
-                  Preskel t g s e -> ([Preskel t g s e], [Int])
+duplicates :: Seen -> ([Preskel], [Int]) -> Preskel -> ([Preskel], [Int])
 duplicates seen (unseen, dups) kid =
     case recall (wasSeen $ gist kid) seen of
       Just (_, label) -> (unseen, label : dups)
       Nothing -> (kid : unseen, dups)
 
 -- Make a todo list for dump
-mktodo :: Algebra t p g s e c => [Reduct t g s e] ->
-          [LPreskel t g s e] -> [LPreskel t g s e] ->
-          [LPreskel t g s e]
+mktodo :: [Reduct t g s e] -> [LPreskel] -> [LPreskel] -> [LPreskel]
 mktodo reducts todo tobig =
     map (\(Reduct lk _ _ _) -> lk) reducts ++ reverse todo ++ reverse tobig
 
-type Next t p g s e c =
-    (Int, Seen t g s e, [LPreskel t g s e], [Int])
+type Next = (Int, Seen, [LPreskel], [Int])
 
 -- Update state variables used by step.
-next :: Algebra t p g s e c => LPreskel t g s e ->
-        Next t p g s e c -> Preskel t g s e ->
-        Next t p g s e c
+next :: LPreskel -> Next -> Preskel -> Next
 next p (n, seen, todo, dups) k =
     let g = gist k in
     case recall (wasSeen g) seen of
@@ -289,9 +269,7 @@ next p (n, seen, todo, dups) k =
             lk = withParent k n p -- Label a preskeleton here
 
 -- This function reduces without checking for isomorphisms
-fast :: Algebra t p g s e c => Options -> Handle ->
-        [Preskel t g s e] -> Int -> Int ->
-        [LPreskel t g s e] -> IO ()
+fast :: Options -> Handle -> [Preskel] -> Int -> Int -> [LPreskel] -> IO ()
 fast p h ks _ n [] =            -- Empty todo list
     do
       wrt p h (comment "Nothing left to do")
@@ -316,15 +294,12 @@ fast p h ks m n (lk : todo) =
       let (n', todo') = foldl (children lk) (n, []) ks'
       fast p h ks m n' (todo ++ reverse todo')
 
-children :: Algebra t p g s e c => LPreskel t g s e ->
-            (Int, [LPreskel t g s e]) ->
-            Preskel t g s e -> (Int, [LPreskel t g s e])
+children :: LPreskel -> (Int, [LPreskel]) -> Preskel -> (Int, [LPreskel])
 children p (n, todo) k =        -- Label a preskeleton here
     (n + 1, withParent k n p : todo)
 
 -- Print partial results in a form that works with analysis tools
-dump :: Algebra t p g s e c => Options -> Handle ->
-        [LPreskel t g s e] -> String -> IO ()
+dump :: Options -> Handle -> [LPreskel] -> String -> IO ()
 dump _ h [] msg =
     do
       hClose h
@@ -338,8 +313,7 @@ dump p h (lk : lks) msg =
 -- Add a label, maybe a parent, a list of seen preskeletons isomorphic
 -- to some members of this skeleton's cohort, and a list of unrealized
 -- nodes.  If it's a shape, note this fact.  Add a comment if present.
-commentPreskel :: Algebra t p g s e c => LPreskel t g s e ->
-                  [Int] -> [Node] -> Kind -> String -> SExpr ()
+commentPreskel :: LPreskel -> [Int] -> [Node] -> Kind -> String -> SExpr ()
 commentPreskel lk seen unrealized kind msg =
     displayPreskel k $
     addKeyValues "label" [N () (label lk)] $
@@ -400,7 +374,7 @@ addKindKey Fringe xs = addKeyValues "fringe" [] xs
 
 -- Variable assignments and security goals
 
-satisfies :: Algebra t p g s e c => Preskel t g s e -> [SExpr ()]
+satisfies :: Preskel -> [SExpr ()]
 satisfies k =
   map f (sat k) where
     f (_, []) = S () "yes"
@@ -409,7 +383,7 @@ satisfies k =
     ctx ts = addToContext emptyContext ts
 
 -- Prints structure preserving maps (homomorphisms)
-maps :: Algebra t p g s e c => Preskel t g s e -> [SExpr ()]
+maps :: Preskel -> [SExpr ()]
 maps k =
     map (amap $ strandMap k) (envMaps k)
     where
@@ -423,7 +397,7 @@ maps k =
       ctx k = addToContext emptyContext (kvars k)
 
 -- Prints the nodes of origination for each uniquely originating atom
-origs :: Algebra t p g s e c => Preskel t g s e -> [SExpr ()]
+origs :: Preskel -> [SExpr ()]
 origs k =
     [ L () [displayTerm ctx t, displayNode n]
       | (t, ns) <- korig k, n <- ns ]

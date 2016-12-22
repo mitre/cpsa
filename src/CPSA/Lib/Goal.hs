@@ -8,28 +8,29 @@
 
 module CPSA.Lib.Goal where
 
+import CPSA.Lib.Algebra
 import CPSA.Lib.Protocol
 
 -- Syntax for the atomic formulas
-data AForm t
-  = RolePred (Role t) Int t
-  | ParamPred (Role t) t t t
-  | StrPrec t t
-  | Prec t t
-  | Non t
-  | Pnon t
-  | Uniq t
-  | UniqAt t t
-  | Equals t t
+data AForm
+  = RolePred Role Int Term
+  | ParamPred Role Term Term Term
+  | StrPrec Term Term
+  | Prec Term Term
+  | Non Term
+  | Pnon Term
+  | Uniq Term
+  | UniqAt Term Term
+  | Equals Term Term
   deriving Show
 
-data Goal t
-  = Goal { uvars :: [t],          -- Universally quantified variables
-           antec :: [AForm t],    -- Antecedent
-           concl :: [[AForm t]] } -- Conclusion
+data Goal
+  = Goal { uvars :: [Term],          -- Universally quantified variables
+           antec :: [AForm],         -- Antecedent
+           concl :: [[AForm]] }      -- Conclusion
 
 -- Ordering used to sort by constructor order.
-aFormOrder :: AForm t -> AForm t -> Ordering
+aFormOrder :: AForm -> AForm -> Ordering
 aFormOrder (RolePred _ _ _) (RolePred _ _ _) = EQ
 aFormOrder (RolePred _ _ _) (ParamPred _ _ _ _) = LT
 aFormOrder (RolePred _ _ _) (StrPrec _ _) = LT

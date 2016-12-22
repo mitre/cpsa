@@ -11,7 +11,7 @@ module CPSA.Lib.Expand (expand, readSExprs) where
 import Control.Monad
 import System.IO (openFile, IOMode (ReadMode))
 import CPSA.Lib.Entry (readSExpr, tryIO)
-import CPSA.Lib.CPSA
+import CPSA.Lib.SExpr
 
 -- The macroexpand loop limit
 limit :: Int

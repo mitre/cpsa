@@ -23,27 +23,27 @@ z :: Show a => a -> b -> b
 z x y = unsafePerformIO (print x >> return y)
 --}
 
-type Conj t = [(Pos, AForm t)]
+type Conj = [(Pos, AForm)]
 
 -- Entry point.  Takes a position, a protocol, a variable generator, a
 -- goal, and a skeleton comment and makes a skeleton or fails.  This
 -- function extracts the anecedent and univesally quantified variable.
-characteristic :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
-                  [Goal t] -> g -> Conj t -> [SExpr ()] -> m (Preskel t g s e)
+characteristic :: Monad m => Pos -> Prot -> [Goal] -> Gen ->
+                  Conj -> [SExpr ()] -> m Preskel
 characteristic pos prot goals g antec comment =
   equalsForm pos prot goals g antec comment
 
 -- Checks for equals in an antecedent and fails if it finds one.  One
 -- could use unification to solve the equality, and then apply the
 -- result to the remaining parts of the formula.
-equalsForm :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
-              [Goal t] -> g -> Conj t -> [SExpr ()] -> m (Preskel t g s e)
+equalsForm :: Monad m => Pos -> Prot -> [Goal] -> Gen ->
+              Conj -> [SExpr ()] -> m Preskel
 equalsForm pos _ _ _ as _ | any isEquals as =
   fail (shows pos "Equals not allowed in antecedent")
 equalsForm pos prot goals g as comment =
   splitForm pos prot goals g as comment
 
-isEquals :: (Pos, AForm t) -> Bool
+isEquals :: (Pos, AForm) -> Bool
 isEquals (_, Equals _ _) = True
 isEquals _ = False
 
@@ -51,8 +51,8 @@ isEquals _ = False
 -- The instance formulas are used to generate the skeleton's
 -- instances, and the skeleton formulas generate the rest.  Make the
 -- instances, and then make the rest.
-splitForm :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
-             [Goal t] -> g -> Conj t -> [SExpr ()] -> m (Preskel t g s e)
+splitForm :: Monad m => Pos -> Prot -> [Goal] -> Gen ->
+             Conj -> [SExpr ()] -> m Preskel
 splitForm pos prot goals g as comment =
   do
     (nmap, g, insts) <- mkInsts g is
@@ -62,7 +62,7 @@ splitForm pos prot goals g as comment =
 
 -- Instance formulas are role predicates, parameter predicates, and
 -- strand prec.
-instForm :: (Pos, AForm t) -> Bool
+instForm :: (Pos, AForm) -> Bool
 instForm (_, RolePred _ _ _) = True
 instForm (_, ParamPred _ _ _ _) = True
 instForm (_, StrPrec _ _) = True
@@ -70,8 +70,7 @@ instForm _ = False
 
 -- Make the instances from the instance predicates
 
-mkInsts :: (Algebra t p g s e c, Monad m) => g -> Conj t ->
-           m ([(t, Node)], g, [Instance t e])
+mkInsts :: Monad m => Gen -> Conj -> m ([(Term, Node)], Gen, [Instance])
 mkInsts g as =
   do
     nri <- nodeRoleIndex as     -- Compute index and role of each node
@@ -79,10 +78,10 @@ mkInsts g as =
     (g, insts) <- foldInsts g as nri nss -- Construct instances
     return (nodeMap nri nss, g, insts) -- Construct node map for later use
 
-type RoleIndex t = (Role t, Int)
+type RoleIndex = (Role, Int)
 
 -- Computes a map from nodes to role-index pairs
-nodeRoleIndex :: (Eq t, Monad m) => Conj t -> m [(t, RoleIndex t)]
+nodeRoleIndex :: Monad m => Conj -> m [(Term, RoleIndex)]
 nodeRoleIndex as =
   foldM f [] as
   where
@@ -94,7 +93,7 @@ nodeRoleIndex as =
     f nri _ = return nri
 
 -- Use this lookup when lookup must succeed.
-nriLookup :: Eq t => t -> [(t, RoleIndex t)] -> RoleIndex t
+nriLookup :: Term -> [(Term, RoleIndex)] -> RoleIndex
 nriLookup n nri =
   case lookup n nri of
     Just ri -> ri
@@ -102,7 +101,7 @@ nriLookup n nri =
 
 --- Use str-prec to collect the nodes on the same strand.  Check to
 --- make sure the role associated with nodes is the same.
-binNodes :: (Eq t, Monad m) => [(t, RoleIndex t)] -> Conj t -> m [[t]]
+binNodes :: Monad m => [(Term, RoleIndex)] -> Conj -> m [[Term]]
 binNodes nri as =
   foldM f (map (\(x, _) -> [x]) nri) as
   where
@@ -131,8 +130,8 @@ findl n nss =
     Nothing -> error "Characteristic.findl: cannot find a node"
 
 -- Construct instances
-foldInsts :: (Algebra t p g s e c, Monad m) => g -> Conj t ->
-             [(t, RoleIndex t)] -> [[t]] -> m (g, [Instance t e])
+foldInsts :: Monad m => Gen -> Conj -> [(Term, RoleIndex)] ->
+             [[Term]] -> m (Gen, [Instance])
 foldInsts g _ _ [] = return (g, [])
 foldInsts g as nri (ns : nss) =
   do
@@ -142,8 +141,8 @@ foldInsts g as nri (ns : nss) =
 
 -- Construct an instance by extracting maplets from the parameter
 -- predicates with nodes associated with the strand.
-mkInst :: (Algebra t p g s e c, Monad m) => g -> Conj t ->
-          [(t, RoleIndex t)] -> [t] -> m (g, Instance t e)
+mkInst :: Monad m => Gen -> Conj -> [(Term, RoleIndex)] ->
+          [Term] -> m (Gen, Instance)
 mkInst _ _ _ [] = error "Characteristic.mkInst: no nodes"
 mkInst g as nri (n : ns)
   | h < 1 || h > length (rtrace r) = -- Checked by the the loader
@@ -159,8 +158,8 @@ mkInst g as nri (n : ns)
     f n i = max i (snd $ nriLookup n nri)
 
 -- Add match from a maplet
-mkMaplet :: (Algebra t p g s e c, Monad m) => Role t ->
-            [t] -> (g, e) -> (Pos, AForm t) -> m (g, e)
+mkMaplet :: Monad m => Role -> [Term] -> (Gen, Env) ->
+            (Pos, AForm) -> m (Gen, Env)
 mkMaplet role ns env (pos, ParamPred r v n t)
   | elem n ns =
     if rname role == rname r then -- Ensure role match the one
@@ -173,7 +172,7 @@ mkMaplet role ns env (pos, ParamPred r v n t)
 mkMaplet _ _ env _ = return env
 
 -- Generate a map from node variables to node constants.
-nodeMap :: Eq t => [(t, RoleIndex t)] -> [[t]] -> [(t, Node)]
+nodeMap :: [(Term, RoleIndex)] -> [[Term]] -> [(Term, Node)]
 nodeMap nri nss =
   [ (n, (z, i)) |
     (z, ns) <- zip [0..] nss,
@@ -182,7 +181,7 @@ nodeMap nri nss =
 
 -- Use this lookup when lookup must succeed, that is when loader makes
 -- the check.
-nMapLookup :: Eq t => t -> [(t, Node)] -> Node
+nMapLookup :: Term -> [(Term, Node)] -> Node
 nMapLookup n nmap =
   case lookup n nmap of
     Just n -> n
@@ -190,9 +189,8 @@ nMapLookup n nmap =
 
 -- Create a skeleton given a list of instances
 
-mkSkel :: (Algebra t p g s e c, Monad m) => Pos -> Prot t g ->
-          [Goal t] -> [(t, Node)] -> g -> [Instance t e] ->
-          Conj t -> [SExpr ()] -> m (Preskel t g s e)
+mkSkel :: Monad m => Pos -> Prot -> [Goal] -> [(Term, Node)] ->
+          Gen -> [Instance] -> Conj -> [SExpr ()] -> m Preskel
 mkSkel pos p goals nmap g insts as comment =
   do
     let o = foldr (mkPrec nmap) [] as
@@ -211,34 +209,32 @@ mkSkel pos p goals nmap g insts as comment =
       Left msg -> fail $ shows pos
                   $ showString "Skeleton not well formed: " msg
 
-addInstOrigs :: Algebra t p g s e c => ([t], [t], [t]) ->
-                Instance t e -> ([t], [t], [t])
+addInstOrigs :: ([Term], [Term], [Term]) ->
+                Instance -> ([Term], [Term], [Term])
 addInstOrigs (nr, ar, ur) i =
     (foldl (flip adjoin) nr $ inheritRnon i,
      foldl (flip adjoin) ar $ inheritRpnon i,
      foldl (flip adjoin) ur $ inheritRunique i)
 
-mkPrec :: Eq t => [(t, (Int, Int))] ->
-          (Pos, AForm t) -> [Pair] -> [Pair]
+mkPrec :: [(Term, (Int, Int))] -> (Pos, AForm) -> [Pair] -> [Pair]
 mkPrec nmap (_, Prec n n') o =
   (nMapLookup n nmap, nMapLookup n' nmap) : o
 mkPrec _ _ o = o
 
-mkNon :: (Pos, AForm t) -> [t] -> [t]
+mkNon :: (Pos, AForm) -> [Term] -> [Term]
 mkNon (_, Non t) ts = t : ts
 mkNon _ ts = ts
 
-mkPnon :: (Pos, AForm t) -> [t] -> [t]
+mkPnon :: (Pos, AForm) -> [Term] -> [Term]
 mkPnon (_, Pnon t) ts = t : ts
 mkPnon _ ts = ts
 
-mkUniq :: (Pos, AForm t) -> [t] -> [t]
+mkUniq :: (Pos, AForm) -> [Term] -> [Term]
 mkUniq (_, Uniq t) ts = t : ts
 mkUniq (_, UniqAt t _) ts = t : ts
 mkUniq _ ts = ts
 
-checkUniqAt :: (Algebra t p g s e c, Monad m) => [(t, Node)] ->
-               Preskel t g s e -> (Pos, AForm t) -> m ()
+checkUniqAt :: Monad m => [(Term, Node)] -> Preskel -> (Pos, AForm) -> m ()
 checkUniqAt nmap k (pos, UniqAt t n) =
   case lookup t $ korig k of
     Nothing -> fail (shows pos "Atom not unique at node")

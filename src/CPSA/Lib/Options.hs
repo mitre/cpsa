@@ -4,8 +4,7 @@ module CPSA.Lib.Options (Options(..), defaultOptions,
 import Numeric
 import System.Console.GetOpt
 import CPSA.Lib.Entry
-import qualified CPSA.Basic.Algebra
-
+import qualified CPSA.Lib.Algebra
 
 -- CPSA options and default values
 
@@ -27,7 +26,7 @@ data Options = Options {
 defaultOptions :: Options
 defaultOptions = Options {
   optFile = Nothing,
-  optAlg = CPSA.Basic.Algebra.name,
+  optAlg = CPSA.Lib.Algebra.name,
   optAnalyze = True,
   optNoIsoChk = False,
   optCheckNoncesFirst = False,

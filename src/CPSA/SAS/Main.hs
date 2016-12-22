@@ -13,24 +13,24 @@ import CPSA.Lib.CPSA
 import CPSA.Lib.Entry
 import CPSA.Lib.Options
 import CPSA.SAS.SAS
-import qualified CPSA.Basic.Algebra
+import qualified CPSA.Lib.Algebra
 
 -- Algebra names
 algs :: [String]
-algs = [CPSA.Basic.Algebra.name]
+algs = [CPSA.Lib.Algebra.name]
 
 main :: IO ()
 main =
     do
-      let options = algOptions CPSA.Basic.Algebra.name
-      let interp = algInterp CPSA.Basic.Algebra.name algs
+      let options = algOptions CPSA.Lib.Algebra.name
+      let interp = algInterp CPSA.Lib.Algebra.name algs
       (p, (output, alg, margin)) <- start options interp
       h <- outputHandle output
       writeComment h margin cpsaVersion
       writeComment h margin "Coherent logic"
       case () of
-        _ | alg == CPSA.Basic.Algebra.name ->
-              go (step h alg CPSA.Basic.Algebra.origin margin)
+        _ | alg == CPSA.Lib.Algebra.name ->
+              go (step h alg CPSA.Lib.Algebra.origin margin)
                  p ([], [])
           | otherwise ->
                abort ("Bad algebra: " ++ alg)
@@ -53,9 +53,8 @@ go f p a =
                     a <- f a x
                     loop a
 
-step :: Algebra t p g s e c => Handle ->
-        String -> g -> Int -> State t g c ->
-        Maybe (SExpr Pos) -> IO (State t g c)
+step :: Handle -> String -> Gen -> Int -> State ->
+        Maybe (SExpr Pos) -> IO State
 step output _ _ margin state@([], []) (Just sexpr@(L _ (S _ cmt : _)))
      | cmt == "herald" || cmt == "comment" =
          do
@@ -74,8 +73,7 @@ step output name origin margin state sexpr =
         Left err ->
             abort (show err)
 
-after :: Algebra t p g s e c => Handle -> Int -> State t g c ->
-         Maybe (SExpr Pos) -> IO (State t g c)
+after :: Handle -> Int -> State -> Maybe (SExpr Pos) -> IO State
 after output margin state (Just sexpr@(L _ (S _ "defprotocol" : _))) =
     do
       writeLnSExpr output margin sexpr

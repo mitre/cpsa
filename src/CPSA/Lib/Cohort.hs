@@ -32,17 +32,17 @@ zf :: Show a => a -> Bool -> Bool
 zf x False = z x False
 zf _ y = y
 
-zt :: Algebra t p g s e c => t -> String
+zt :: Algebra t p g s e c => [Term] -> String
 zt t =
     show (displayTerm (addToContext emptyContext [t]) t)
 
-zs :: Algebra t p g s e c => Set t -> String
+zs :: Algebra t p g s e c => Set [Term] -> String
 zs s =
     show $ map (displayTerm (addToContext emptyContext ts)) ts
     where
       ts = S.toList s
 
-zi :: Algebra t p g s e c => Instance t e -> String
+zi :: Algebra t p g s e c => Instance -> String
 zi inst =
     show (map f e)
     where
@@ -75,13 +75,13 @@ minPriority = 1
 
 -- Penetrator derivable predicate and checking for unrealized skeletons.
 
-derivable :: Algebra t p g s e c => Set t -> Set t -> t -> Bool
+derivable :: Set Term -> Set Term -> Term -> Bool
 derivable avoid sent term =
     let (knowns, unknowns) = decompose sent avoid in
     buildable knowns unknowns term
 
 -- Returns the nodes in a preskeleton that are not realized.
-unrealized :: Algebra t p g s e c => Preskel t g s e -> [Node]
+unrealized :: Preskel -> [Node]
 unrealized k =
     foldl unrealizedInStrand [] (strands k)
     where
@@ -98,8 +98,7 @@ unrealized k =
                   True -> (acc, ns')
                   False -> (graphNode n : acc, ns')
 
-addSendingBefore :: Algebra t p g s e c => Set (Vertex t e) ->
-                    Vertex t e  -> Set (Vertex t e)
+addSendingBefore :: Set Vertex -> Vertex -> Set Vertex
 addSendingBefore s n =
     foldl addSending s (preds n)
     where
@@ -111,14 +110,14 @@ addSendingBefore s n =
             Nothing -> s
             Just _ -> S.insert n s
 
-termsInNodes :: Algebra t p g s e c => Set (Vertex t e) -> Set t
+termsInNodes :: Set Vertex -> Set Term
 termsInNodes ns =
   S.map (evtTerm . event) ns
 
 -- Returns that atoms that cannot be guess when determining if a
 -- term is derivable from some other terms, and the atoms that
 -- uniquely originate in this skeleton.
-avoid :: Algebra t p g s e c => Preskel t g s e -> (Set t, [t])
+avoid :: Preskel -> (Set Term, [Term])
 avoid k =
     (S.unions [ns, as, us], L.nub ((kpnon k) ++ u))
     where
@@ -151,8 +150,8 @@ avoid k =
 -- k      = k
 -- (s, p) = v and n
 -- subst  = sigma
-solved :: Algebra t p g s e c => t -> p -> [t] -> Set t ->
-          Preskel t g s e -> Node -> s -> Bool
+solved :: Term -> Place -> [Term] -> Set Term ->
+          Preskel -> Node -> Subst -> Bool
 solved ct pos eks escape k (s, p) subst =
     -- Condition 1
     isAncestorInSet escape' t pos ||
@@ -176,8 +175,8 @@ solved ct pos eks escape k (s, p) subst =
       ts = termsInNodes  vs     -- Outbound predecessors
       (a, _) = avoid k
 
-maybeSolved :: Algebra t p g s e c => t -> p -> [t] -> Set t ->
-               Preskel t g s e -> Node -> s -> Bool
+maybeSolved :: Term -> Place -> [Term] -> Set Term ->
+               Preskel -> Node -> Subst -> Bool
 maybeSolved ct pos eks escape k n subst =
     not useSolvedFilter || solved ct pos eks escape k n subst
 
@@ -191,8 +190,7 @@ data Mode = Mode
 -- Abort if there is an unrealized node without a test, otherwise
 -- return a list of skeletons that solve one test.  If the skeleton is
 -- realized, try to generalize it, but only when noIsoChk is false.
-reduce :: Algebra t p g s e c => Mode -> Preskel t g s e ->
-          [Preskel t g s e]
+reduce :: Mode -> Preskel -> [Preskel]
 reduce mode k =
     maybe (whenRealized k) id (findTest mode k u a)
     where
@@ -200,8 +198,7 @@ reduce mode k =
       whenRealized k =
           if noGeneralization mode then [] else maximize k
 
-prioritizeVertices :: Algebra t p g s e c => Preskel t g s e ->
-                      [Vertex t e] -> [Vertex t e]
+prioritizeVertices :: Preskel -> [Vertex] -> [Vertex]
 prioritizeVertices k vs =
      map fst $ filter keep $ L.sortBy prios $ map addPrio vs
      where
@@ -209,14 +206,13 @@ prioritizeVertices k vs =
        prios (_, p) (_, p') = compare p' p
        keep (_, p) = p >= minPriority
 
-priority :: Algebra t p g s e c => Preskel t g s e -> Node -> Int
+priority :: Preskel -> Node -> Int
 priority k (s, i) =
   case lookup (s, i) (kpriority k) of
     Just p -> p
     Nothing -> rpriority (role $ insts k !! s) !! i
 
-nodeOrder :: Algebra t p g s e c => Mode ->
-             Preskel t g s e -> [Vertex t e]
+nodeOrder :: Mode -> Preskel -> [Vertex]
 nodeOrder mode k =
     concatMap (nodeVisitOrder mode) (strandVisitOrder mode (strands  k))
 
@@ -227,8 +223,7 @@ strandVisitOrder mode ss =
     else
         reverse ss     -- Visit recently added strands first (default)
 
-nodeVisitOrder :: Algebra t p g s e c => Mode ->
-                  Strand t e -> [Vertex t e]
+nodeVisitOrder :: Mode -> Strand -> [Vertex]
 nodeVisitOrder mode s =
     if reverseNodeOrder mode == rsearch (role $ inst s) then
         nodes s                -- Visit earliest nodes first (default)
@@ -236,8 +231,7 @@ nodeVisitOrder mode s =
         reverse $ nodes s       -- Visit latest nodes first
 
 -- Look for a test node in a strand
-findTest :: Algebra t p g s e c => Mode -> Preskel t g s e ->
-              [t] -> Set t -> Maybe [Preskel t g s e]
+findTest :: Mode -> Preskel -> [Term] -> Set Term -> Maybe [Preskel]
 findTest mode k u a =
     loop (prioritizeVertices k $ nodeOrder mode k)
     where
@@ -255,9 +249,8 @@ findTest mode k u a =
                     Just $ testNode mode k u ts' a' (graphNode n) t
 
 -- Look for a critical term that makes this node a test node.
-testNode :: Algebra t p g s e c => Mode -> Preskel t g s e ->
-            [t] -> Set t -> Set t -> Node -> t ->
-            [Preskel t g s e]
+testNode :: Mode -> Preskel -> [Term] -> Set Term -> Set Term ->
+            Node -> Term -> [Preskel]
 testNode mode k u ts a n t =
     loop cts
     where
@@ -286,22 +279,21 @@ testNode mode k u ts a n t =
       -- Dump derivable encryption keys
       h (ct, eks) = (ct, filter (not . buildable ts a) eks)
 
-carriedOnlyWithin :: Algebra t p g s e c => t -> Set t -> t -> Bool
+carriedOnlyWithin :: Term -> Set Term -> Term -> Bool
 carriedOnlyWithin target escape source =
     all (isAncestorInSet escape source) (carriedPlaces target source)
 
 -- isAncestorInSet set source position is true if there is one ancestor of
 -- source at position that is in the set.
-isAncestorInSet :: Algebra t p g s e c => Set t -> t -> p -> Bool
+isAncestorInSet :: Set Term -> Term -> Place -> Bool
 isAncestorInSet set source position =
     any (flip S.member set) (ancestors source position)
 
 -- Solve critical message at position pos at node n.
 -- ct = t @ pos
 -- t  = msg(k, n)
-solveNode :: Algebra t p g s e c => Preskel t g s e ->
-             t -> p -> [t] -> Node -> t -> Set t ->
-             [Preskel t g s e]
+solveNode :: Preskel -> Term -> Place -> [Term] -> Node -> Term ->
+             Set Term -> [Preskel]
 solveNode k ct pos eks n t escape =
     mgs $ cons ++ augs ++ lsns
     where
@@ -312,7 +304,7 @@ solveNode k ct pos eks n t escape =
 
 -- Filter out all but the skeletons with the most general homomorphisms.
 
-mgs :: Algebra t p g s e c => [(Preskel t g s e, [Sid])] -> [Preskel t g s e]
+mgs :: [(Preskel, [Sid])] -> [Preskel]
 mgs cohort =
   reverse $ map fst $ loop cohort []
   where
@@ -351,9 +343,8 @@ perms alist range (s:domain) =
 -- Contractions
 
 -- Contract the critical message at the given position.
-contractions :: Algebra t p g s e c => Preskel t g s e ->
-                t -> p -> [t] -> Node -> t -> Set t ->
-                Cause t -> [(Preskel t g s e, [Sid])]
+contractions :: Preskel -> Term -> Place -> [Term] -> Node -> Term ->
+                Set Term -> Cause -> [(Preskel, [Sid])]
 contractions k ct pos eks n t escape cause =
     [ (k, phi) |
           let anc = ancestors t pos,
@@ -361,14 +352,13 @@ contractions k ct pos eks n t escape cause =
           (k, n, phi, subst') <- contract k n cause subst,
           maybeSolved ct pos eks escape k n subst' ]
 
-solve :: Algebra t p g s e c => Set t -> [t] -> (g, s) -> [(g, s)]
+solve :: Set Term -> [Term] -> (Gen, Subst) -> [(Gen, Subst)]
 solve escape ancestors subst =
     [ s | e <- S.toList escape,
           a <- ancestors,
           s <- unify a e subst ]
 
-carriedOnlyWithinAtSubst :: Algebra t p g s e c =>
-                            t -> Set t -> t -> (g, s) -> Bool
+carriedOnlyWithinAtSubst :: Term -> Set Term -> Term -> (Gen, Subst) -> Bool
 carriedOnlyWithinAtSubst  ct escape t (_, subst) =
     carriedOnlyWithin ct' escape' t'
     where
@@ -376,7 +366,7 @@ carriedOnlyWithinAtSubst  ct escape t (_, subst) =
       escape' = S.map (substitute subst) escape
       t' = substitute subst t
 
-fold :: Algebra t p g s e c => t -> Set t -> t -> (g, s) -> [(g, s)]
+fold :: Term -> Set Term -> Term -> (Gen, Subst) -> [(Gen, Subst)]
 fold ct escape t (gen, subst) =
     [ (gen', compose subst' subst) |
       (gen', subst') <- foldl f [(gen, emptySubst)] (carriedPlaces ct' t') ]
@@ -393,18 +383,16 @@ dir _ = Encryption
 
 -- Augmentations
 
-augmentations :: Algebra t p g s e c => Preskel t g s e ->
-                t -> p -> [t] -> Node -> Set t ->
-                Cause t -> [(Preskel t g s e, [Sid])]
+augmentations :: Preskel -> Term -> Place -> [Term] -> Node -> Set Term ->
+                 Cause -> [(Preskel, [Sid])]
 augmentations k ct pos eks n escape cause =
     [ k' | r <- roles (protocol k),
            k' <- roleAugs k ct pos eks n escape cause targets r ]
     where
       targets = S.toList (targetTerms ct escape)
 
-roleAugs :: Algebra t p g s e c => Preskel t g s e ->
-            t -> p -> [t] -> Node -> Set t -> Cause t ->
-            [t] -> Role t -> [(Preskel t g s e, [Sid])]
+roleAugs :: Preskel -> Term -> Place -> [Term] -> Node -> Set Term ->
+            Cause -> [Term] -> Role -> [(Preskel, [Sid])]
 roleAugs k ct pos eks n escape cause targets role =
     [ (k', phi) |
            (subst', inst) <-
@@ -416,7 +404,7 @@ roleAugs k ct pos eks n escape cause targets role =
       subst = cloneRoleVars (gen k) role
 
 -- Generate a fresh set of role variables
-cloneRoleVars :: Algebra t p g s e c => g -> Role t -> (g, s)
+cloneRoleVars :: Gen -> Role -> (Gen, Subst)
 cloneRoleVars gen role =
     grow (rvars role) gen emptyEnv
     where
@@ -427,9 +415,8 @@ cloneRoleVars gen role =
             (gen'', env') : _ -> grow ts gen'' env'
             [] -> error "Cohort.grow: Internal error"
 
-transformingNode :: Algebra t p g s e c => t -> Set t ->
-                    [t] -> Role t -> (g, s) ->
-                    [((g, s), Instance t e)]
+transformingNode :: Term -> Set Term -> [Term] -> Role ->
+                    (Gen, Subst) -> [((Gen, Subst), Instance)]
 transformingNode ct escape targets role subst =
     loop 1 [] [] (rtrace role)
     where
@@ -446,7 +433,7 @@ transformingNode ct escape targets role subst =
 
 -- Terms considered for binding with the carried terms in an outbound
 -- term.
-targetTerms :: Algebra t p g s e c => t -> Set t -> Set t
+targetTerms :: Term -> Set Term -> Set Term
 targetTerms ct escape =
     if useEcapeSetInTargetTerms then
        targetTermsWithEscapeSet
@@ -459,7 +446,7 @@ targetTerms ct escape =
                 (concatMap (ancestors t) (carriedPlaces ct t))
 
 -- Find bindings for terms in the test.
-carriedBindings :: Algebra t p g s e c => [t] -> t -> (g, s) -> [(g, s)]
+carriedBindings :: [Term] -> Term -> (Gen, Subst) -> [(Gen, Subst)]
 carriedBindings targets outbound subst =
     [ s |
       subterm <- S.toList (foldCarriedTerms (flip S.insert) S.empty outbound),
@@ -468,8 +455,7 @@ carriedBindings targets outbound subst =
 
 -- Ensure the critical term is carried only within the escape set of
 -- every term in the past using fold from cows.
-cowt :: Algebra t p g s e c => t -> Set t ->
-        Trace t -> [(g, s)] -> [(g, s)]
+cowt :: Term -> Set Term -> Trace -> [(Gen, Subst)] -> [(Gen, Subst)]
 cowt ct escape c substs =
     nubSnd $ concatMap (cowt0 ct escape c) substs
 
@@ -479,8 +465,7 @@ nubSnd substs =
     L.nubBy (\(_, s) (_, s') -> s == s') substs
 
 -- Handle one substitution at a time.
-cowt0 :: Algebra t p g s e c => t -> Set t ->
-         Trace t -> (g, s) -> [(g, s)]
+cowt0 :: Term -> Set Term -> Trace -> (Gen, Subst) -> [(Gen, Subst)]
 cowt0 ct escape c subst =
     if all (f subst) c then     -- Substitution works
         [subst]
@@ -491,8 +476,7 @@ cowt0 ct escape c subst =
           carriedOnlyWithinAtSubst ct escape (evtTerm evt) subst
 
 -- Apply fold to each message in the trace.
-foldn :: Algebra t p g s e c => t -> Set t ->
-         Trace t -> [(g, s)] -> [(g, s)]
+foldn :: Term -> Set Term -> Trace -> [(Gen, Subst)] -> [(Gen, Subst)]
 foldn _ _ [] substs = substs
 foldn ct escape (evt : c) substs =
     foldn ct escape c (concatMap (fold ct escape (evtTerm evt)) substs)
@@ -500,10 +484,9 @@ foldn ct escape (evt : c) substs =
 -- If the outbound term is carried only within, no transforming node
 -- was found, otherwise, add a candidate augmentation to the
 -- accumulator.
-maybeAug :: Algebra t p g s e c => t -> Set t ->
-            Role t -> Int -> [(g, s)] ->
-            [((g, s), Instance t e)] -> t ->
-            [((g, s), Instance t e)]
+maybeAug :: Term -> Set Term -> Role -> Int -> [(Gen, Subst)] ->
+            [((Gen, Subst), Instance)] -> Term ->
+            [((Gen, Subst), Instance)]
 maybeAug ct escape role ht substs acc t =
     foldl f acc $ L.filter testNotSolved substs
     where
@@ -521,16 +504,15 @@ maybeAug ct escape role ht substs acc t =
 
 -- Listener augmentations
 
-addListeners :: Algebra t p g s e c => Preskel t g s e ->
-                t -> p -> [t] -> Node -> t -> Set t ->
-                Cause t -> [(Preskel t g s e, [Sid])]
+addListeners :: Preskel -> Term -> Place -> [Term] -> Node -> Term ->
+                Set Term -> Cause -> [(Preskel, [Sid])]
 addListeners k ct pos eks n t escape cause =
     [ (k', phi) |
            t' <- filter (/= t) (S.toList (escapeKeys eks escape)),
            (k', n', phi, subst) <- addListener k n cause t',
            maybeSolved ct pos eks escape k' n' subst ]
 
-escapeKeys :: Algebra t p g s e c => [t] -> Set t -> Set t
+escapeKeys :: [Term] -> Set Term -> Set Term
 escapeKeys eks escape =
     S.fold f es escape
     where
@@ -539,8 +521,7 @@ escapeKeys eks escape =
 
 -- Maximize a realized skeleton if possible
 
-maximize :: Algebra t p g s e c => Preskel t g s e ->
-            [Preskel t g s e]
+maximize :: Preskel -> [Preskel]
 maximize k =
     take 1 gens                 -- Return at most the first answer
     where
@@ -552,9 +533,7 @@ maximize k =
 -- preskeleton k' using the given strand mapping.  Returns the
 -- skeleton associated with k' if it refines k.
 
-specialization :: Algebra t p g s e c => Preskel t g s e ->
-                  Preskel t g s e -> [Sid] ->
-                  [Preskel t g s e]
+specialization :: Preskel -> Preskel -> [Sid] -> [Preskel]
 specialization k k' mapping
     | not (preskelWellFormed k') = []
     | otherwise =

@@ -17,14 +17,14 @@ import CPSA.Lib.Strand
 
 -- Display of protocols
 
-displayProt :: Algebra t p g s e c => Prot t g -> SExpr ()
+displayProt :: Prot -> SExpr ()
 displayProt p =
     L () (S () "defprotocol" : S () (pname p) : S () (alg p) : rs)
     where
       rs = foldl f (pcomment p) (reverse (roles p))
       f rs r = displayRole r : rs
 
-displayRole :: Algebra t p g s e c => Role t -> SExpr ()
+displayRole :: Role -> SExpr ()
 displayRole r =
     L () (S () "defrole" :
           S () (rname r) :
@@ -38,17 +38,17 @@ displayRole r =
       ctx = varsContext vars
       vars = rvars r
 
-varsContext :: Algebra t p g s e c => [t] -> c
+varsContext :: [Term] -> Context
 varsContext vars =
     addToContext emptyContext vars
 
-displayTerms :: Algebra t p g s e c => c -> [t] -> [SExpr ()]
+displayTerms :: Context -> [Term] -> [SExpr ()]
 displayTerms ctx ts = map (displayTerm ctx) (L.sort ts)
 
-displayLenTerms :: Algebra t p g s e c => c -> [(Maybe Int, t)] -> [SExpr ()]
+displayLenTerms :: Context -> [(Maybe Int, Term)] -> [SExpr ()]
 displayLenTerms ctx ts = map (displayLenTerm ctx) (L.sort ts)
 
-displayLenTerm :: Algebra t p g s e c => c -> (Maybe Int, t) -> SExpr ()
+displayLenTerm :: Context -> (Maybe Int, Term) -> SExpr ()
 displayLenTerm ctx (Nothing, t) = displayTerm ctx t
 displayLenTerm ctx (Just len, t) = L () [N () len, displayTerm ctx t]
 
@@ -57,8 +57,7 @@ displayOptional _ [] rest = rest
 displayOptional key value rest =
     L () (S () key : value) : rest
 
-displayTrace :: Algebra t p g s e c => c ->
-                Trace t -> [SExpr ()]
+displayTrace :: Context -> Trace -> [SExpr ()]
 displayTrace ctx trace =
     map displayDt trace
     where
@@ -67,8 +66,7 @@ displayTrace ctx trace =
 
 -- Display of preskeletons
 
-displayPreskel :: Algebra t p g s e c => Preskel t g s e ->
-                  [SExpr ()] -> SExpr ()
+displayPreskel :: Preskel -> [SExpr ()] -> SExpr ()
 displayPreskel k rest =
     L () (S () "defskeleton" :
           S () (pname (protocol k)) :
@@ -80,8 +78,7 @@ displayPreskel k rest =
       f i rest = displayInst ctx i : rest
 
 -- Display the remainder of a preskeleton
-displayRest :: Algebra t p g s e c => Preskel t g s e ->
-               c -> [SExpr ()] -> [SExpr ()]
+displayRest :: Preskel -> Context -> [SExpr ()] -> [SExpr ()]
 displayRest k ctx rest =
     displayOptional "precedes" (displayOrdering (orderings k))
      (displayOptional "non-orig" (displayTerms ctx (knon k))
@@ -99,8 +96,7 @@ displayPriority :: (Node, Int) -> SExpr ()
 displayPriority (n, p) =
     L () [displayNode n, N () p]
 
-displayInst :: Algebra t p g s e c => c ->
-               Instance t e -> SExpr ()
+displayInst :: Context -> Instance -> SExpr ()
 displayInst ctx s =
     case listenerTerm s of
       Just t -> L () [S () "deflistener", displayTerm ctx t]
@@ -115,7 +111,7 @@ displayInst ctx s =
             maplets = L.sort (reify domain (env s))
             rctx = varsContext domain
 
-displayMaplet :: Algebra t p g s e c => c -> c -> (t, t) -> SExpr ()
+displayMaplet :: Context -> Context -> (Term, Term) -> SExpr ()
 displayMaplet domain range (x, t)=
     L () [displayTerm domain x, displayTerm range t]
 
@@ -131,8 +127,7 @@ displayNode :: Node -> SExpr ()
 displayNode (s, p) = L () [N () s, N () p]
 
 -- Display the reason the preskeleton was created
-displayOperation :: Algebra t p g s e c => Preskel t g s e ->
-                    c -> [SExpr ()] -> [SExpr ()]
+displayOperation :: Preskel -> Context -> [SExpr ()] -> [SExpr ()]
 displayOperation k ctx rest =
     case operation k of
       New -> rest
@@ -174,8 +169,8 @@ displayOperation k ctx rest =
           [S () "forgot", displayOpTerm ctx t]
 
 -- Terms in the operation field may contain variables not in the skeleton
-displayOpTerm :: Algebra t p g s e c => c -> t -> SExpr ()
+displayOpTerm :: Context -> Term -> SExpr ()
 displayOpTerm ctx t = displayTerm (addToContext ctx [t]) t
 
-displayOpTerms :: Algebra t p g s e c => c -> [t] -> [SExpr ()]
+displayOpTerms :: Context -> [Term] -> [SExpr ()]
 displayOpTerms ctx ts = map (displayTerm (addToContext ctx ts)) (L.sort ts)

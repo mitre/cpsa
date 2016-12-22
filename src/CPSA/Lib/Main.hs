@@ -20,7 +20,6 @@ import CPSA.Lib.Algebra
 import CPSA.Lib.Loader
 import CPSA.Lib.Expand
 import CPSA.Lib.Reduction
-import qualified CPSA.Basic.Algebra
 
 -- Compile time switches for expermentation.
 
@@ -94,21 +93,21 @@ openInput _ =
 
 -- Algebra names -- omit Diffie-Hellman for releases until it works
 algs :: [String]
-algs = [CPSA.Basic.Algebra.name]
+algs = [CPSA.Lib.Algebra.name]
 
 -- Select the algebra and go.
 select :: [String] -> Maybe (SExpr Pos) -> Options -> [SExpr Pos] -> IO ()
 select files herald opts sexprs =
     case optAlg opts of
-      name | name == CPSA.Basic.Algebra.name ->
-               go name CPSA.Basic.Algebra.origin
+      name | name == CPSA.Lib.Algebra.name ->
+               go name CPSA.Lib.Algebra.origin
                   files herald opts sexprs
            | otherwise ->
                abort ("Bad algebra: " ++ name)
 
 -- Load protocols and preskeletons and print run time information
-go :: Algebra t p g s e c => String -> g -> [String] ->
-      Maybe (SExpr Pos) -> Options -> [SExpr Pos] -> IO ()
+go :: String -> Gen -> [String] -> Maybe (SExpr Pos) ->
+      Options -> [SExpr Pos] -> IO ()
 go name origin files herald opts sexprs =
     do
       preskels <- tryIO (loadSExprs name origin sexprs)
