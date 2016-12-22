@@ -1,0 +1,36 @@
+commit 11d31d17ffaf78a72b014d4dc12be883befdf38d
+Author: John D. Ramsdell <ramsdell@mitre.org>
+Date:   Wed Dec 21 11:07:06 2016 -0500
+
+    fix condition 4 in solve filter
+
+commit d017aaa14235bd20d1f7e4b42642da44722624e9
+Author: John D. Ramsdell <ramsdell@mitre.org>
+Date:   Thu Nov 3 08:23:14 2016 -0400
+
+    read invk (pubk ...)
+
+commit b0a96f89de51e4e811af321bab5ffc81f1edd51f
+Author: John D. Ramsdell <ramsdell@mitre.org>
+Date:   Tue Oct 4 13:12:03 2016 -0400
+
+    Make isomorphism check work in presence of asymmetric keys
+
+commit b2aa1cd8ed37c53c90feb43f25dd96ec4af7f18c
+Author: John D. Ramsdell <ramsdell@mitre.org>
+Date:   Mon Oct 3 10:22:52 2016 -0400
+
+    better detection of bad variable declarations
+
+commit 6ab8a09c485adea02c9e0e9452117c57bebd2e7c
+Author: John D. Ramsdell <ramsdell@mitre.org>
+Date:   Mon Oct 3 09:49:55 2016 -0400
+
+    add reflect protocol
+
+commit 243c84528d4652035acdc1f319befbf49126f49c
+Author: John D. Ramsdell <ramsdell@mitre.org>
+Date:   Tue Sep 27 09:46:34 2016 -0400
+
+    code cleanup: better version of mkVar for loadVar
+
