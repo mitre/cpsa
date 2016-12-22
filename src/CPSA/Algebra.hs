@@ -814,8 +814,8 @@ loadVars gen sexprs =
       return (g, reverse vars)
 
 loadVarPair :: Monad m => SExpr Pos -> m [(SExpr Pos, SExpr Pos)]
-loadVarPair (L _ (x:xs)) =
-    let (t:vs) = reverse (x:xs) in
+loadVarPair (L _ (x:y:xs)) =
+    let (t:vs) = reverse (x:y:xs) in
     return [(v,t) | v <- reverse vs]
 loadVarPair x = fail (shows (annotation x) "Bad variable declaration")
 
