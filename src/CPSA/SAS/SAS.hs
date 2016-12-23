@@ -13,7 +13,7 @@ import qualified Data.List as L
 import qualified Data.Map as M
 import CPSA.Lib.Utilities
 import CPSA.Lib.SExpr
-import CPSA.Lib.Algebra
+import CPSA.Algebra
 
 {--
 import System.IO.Unsafe

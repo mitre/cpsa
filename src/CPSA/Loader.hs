@@ -6,7 +6,7 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-module CPSA.Lib.Loader (loadSExprs) where
+module CPSA.Loader (loadSExprs) where
 
 import Control.Monad
 import Control.Applicative ()
@@ -14,11 +14,11 @@ import qualified Data.List as L
 import Data.Maybe (isJust)
 import CPSA.Lib.Utilities
 import CPSA.Lib.SExpr
-import CPSA.Lib.Algebra
-import CPSA.Lib.Protocol
-import CPSA.Lib.Goal
-import CPSA.Lib.Strand
-import CPSA.Lib.Characteristic
+import CPSA.Algebra
+import CPSA.Protocol
+import CPSA.Goal
+import CPSA.Strand
+import CPSA.Characteristic
 
 {--
 import System.IO.Unsafe

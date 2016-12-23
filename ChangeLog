@@ -1,5 +1,8 @@
 2016-12-23  John D. Ramsdell  <ramsdell@mitre.org>
 
+	* cpsa4.cabal: Reorganized source directory structure.  CPSA
+	specific modules are now in src/CPSA.
+
 	* src/CPSA/Lib/Cohort.hs (solved): In Condition 5, applied
 	substitutions to the encryption keys before testing for
 	derivability.

@@ -60,7 +60,12 @@
 
 -- In both algebras, invk(invk(t)) = t for all t of sort akey
 
-module CPSA.Algebra (name, origin, clone, loadVars,
+module CPSA.Algebra (name,
+
+    Gen,
+    origin,
+    clone,
+    loadVars,
 
     Term,
     isVar,
@@ -664,11 +669,15 @@ unifyTermLists _ _ _ = Nothing
 -- The exported unifier converts the internal representation of a
 -- substitution into the external form using chaseMap.
 
-unify :: Term -> Term -> Subst -> Maybe Subst
-unify t t' s =
+unifyI :: Term -> Term -> Subst -> Maybe Subst
+unifyI t t' s =
     do
       s <- unifyChase t t' s
       return $ chaseMap s
+
+unify :: Term -> Term -> (Gen, Subst) -> [(Gen, Subst)]
+unify t t' (g, s) =
+       maybe [] (\s -> [(g, s)]) $ unifyI t t' s
 
 -- Apply the chasing version of substitution to the range of s.
 
@@ -708,35 +717,47 @@ instantiate (Env r) t = idSubst r t
 
 -- Matching
 
+match ::  Term -> Term -> (Gen, Env) -> [(Gen, Env)]
+match t t' (g, e) =
+  maybe [] (\e -> [(g, e)]) $ matchI t t' e
+
 -- The matcher has the property that when pattern P and term T match
 -- then instantiate (match P T emptyEnv) P = T.
-match ::  Term -> Term -> Env -> Maybe Env
-match (I x) t (Env r) =
+matchI ::  Term -> Term -> Env -> Maybe Env
+matchI (I x) t (Env r) =
     case M.lookup x r of
       Nothing -> Just $ Env $ M.insert x t r
       Just t' -> if t == t' then Just $ Env r else Nothing
-match (C c) (C c') r = if c == c' then Just r else Nothing
-match (F s u) (F s' u') r
+matchI (C c) (C c') r = if c == c' then Just r else Nothing
+matchI (F s u) (F s' u') r
     | s == s' = matchLists u u' r
-match (F Invk [t]) t' r =
-    match t (F Invk [t']) r
-match (D x) t (Env r) =
+matchI (F Invk [t]) t' r =
+    matchI t (F Invk [t']) r
+matchI (D x) t (Env r) =
     case M.lookup x r of
       Nothing -> Just $ Env $ M.insert x t r
       Just t' -> if t == t' then Just $ Env r else Nothing
-match (P p) (P p') r = if p == p' then Just r else Nothing
-match _ _ _ = Nothing
+matchI (P p) (P p') r = if p == p' then Just r else Nothing
+matchI _ _ _ = Nothing
 
 matchLists :: [Term] -> [Term] -> Env -> Maybe Env
 matchLists [] [] r = Just r
 matchLists (t : u) (t' : u') r =
-    maybe Nothing (matchLists u u') (match t t' r)
+    maybe Nothing (matchLists u u') (matchI t t' r)
 matchLists _ _ _ = Nothing
 
 -- Does every varible in ts not occur in the domain of e?
 -- Trivial bindings in e are ignored.
-identityEnvFor :: Env -> [Term] -> Bool
-identityEnvFor (Env r) ts =
+
+identityEnvFor :: (Gen, Env) -> [Term] -> [(Gen, Env)]
+identityEnvFor (g, e) ts =
+  if identityEnvForI e ts then
+    [(g, e)]
+  else
+    []
+
+identityEnvForI :: Env -> [Term] -> Bool
+identityEnvForI (Env r) ts =
     all (allId $ flip S.notMember dom) ts
     where
       dom = M.foldrWithKey f S.empty r -- The domain of r
@@ -786,17 +807,24 @@ reify domain (Env env) =
 
 -- Ensure the range of an environment contains only variables and that
 -- the environment is injective.
-matchRenaming :: Env -> Bool
-matchRenaming (Env e) =
+-- Bug fix: Allow (invk x) in the range too.
+matchRenaming :: (Gen, Env) -> Bool
+matchRenaming (_, Env e) =
     loop S.empty $ M.elems e
     where
       loop _ [] = True
       loop s (I x:e) =
           S.notMember x s && loop (S.insert x s) e
+      loop s (F Invk [I x]:e) =
+          not (S.member x s) && loop (S.insert x s) e
       loop _ _ = False
 
-nodeMatch ::  Term -> (Int, Int) -> Env -> Maybe Env
-nodeMatch t p env = match t (P p) env
+nodeMatch ::  Term -> (Int, Int) -> (Gen, Env) -> [(Gen, Env)]
+nodeMatch t t' (g, e) =
+       maybe [] (\e -> [(g, e)]) $ nodeMatchI t t' e
+
+nodeMatchI ::  Term -> (Int, Int) -> Env -> Maybe Env
+nodeMatchI t p env = matchI t (P p) env
 
 nodeLookup :: Env -> Term -> Maybe (Int, Int)
 nodeLookup env t =
@@ -828,20 +856,20 @@ loadVar (gen, vars) (S pos name, S pos' sort) =
       Left _ ->
           do
             let (gen', x) = freshId gen name
-            p <- mkVar x
+            p <- mkVar pos' sort x
             return (gen', p : vars)
-    where
-      mkVar x =
-          case sort of
-            "mesg" -> return (I x)
-            "text" -> return $ F Text [I x]
-            "data" -> return $ F Data [I x]
-            "name" -> return $ F Name [I x]
-            "skey" -> return $ F Skey [I x]
-            "akey" -> return $ F Akey [I x]
-            "node" -> return (D x)
-            _ -> fail (shows pos' "Sort " ++ sort ++ " not recognized")
 loadVar _ (x,_) = fail (shows (annotation x) "Bad variable syntax")
+
+mkVar :: Monad m => Pos -> String -> Id -> m Term
+mkVar pos sort x
+  | sort == "mesg" = return $ I x
+  | sort == "text" = return $ F Text [I x]
+  | sort == "data" = return $ F Data [I x]
+  | sort == "name" = return $ F Name [I x]
+  | sort == "skey" = return $ F Skey [I x]
+  | sort == "akey" = return $ F Akey [I x]
+  | sort == "node" = return $ D x
+  | otherwise = fail (shows pos "Sort " ++ sort ++ " not recognized")
 
 loadLookup :: Pos -> [Term] -> String -> Either String Term
 loadLookup pos [] name = Left (shows pos $ "Identifier " ++ name ++ " unknown")
@@ -917,6 +945,16 @@ loadInvk _ vars [S pos s] =
     do
       t <- loadLookupAkey pos vars s
       return $ F Akey [F Invk [I $ varId t]]
+loadInvk _ vars [L _ [S _ pubk, S pos s]]
+  | pubk == "pubk" =
+    do
+      t <- loadLookupName pos vars s
+      return $ F Akey [F Invk [F Pubk [I $ varId t]]]
+loadInvk _ vars [L _ [S _ pubk, Q _ c, S pos s]]
+  | pubk == "pubk" =
+    do
+      t <- loadLookupName pos vars s
+      return $ F Akey [F Invk [F Pubk [C c, I $ varId t]]]
 loadInvk pos _ _ = fail (shows pos "Malformed invk")
 
 loadLtk :: Monad m => LoadFunction m
@@ -1115,4 +1153,3 @@ rootName name =
       hyphen i j (c : s)
           | isDigit c  = hyphen i (j + 1) s
           | otherwise = noHyphen j (c : s)
-

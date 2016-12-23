@@ -10,9 +10,9 @@ module Main (main) where
 
 import System.IO
 import CPSA.Lib.SExpr
-import CPSA.Lib.Algebra
+import CPSA.Algebra
 import CPSA.Lib.Entry
-import CPSA.Lib.Options
+import CPSA.Options
 import CPSA.SAS.SAS
 
 -- Algebra names

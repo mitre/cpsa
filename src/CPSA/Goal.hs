@@ -6,10 +6,10 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-module CPSA.Lib.Goal where
+module CPSA.Goal where
 
-import CPSA.Lib.Algebra
-import CPSA.Lib.Protocol
+import CPSA.Algebra
+import CPSA.Protocol
 
 -- Syntax for the atomic formulas
 data AForm

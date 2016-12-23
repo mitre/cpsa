@@ -6,16 +6,16 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-module CPSA.Lib.Characteristic (Conj, characteristic) where
+module CPSA.Characteristic (Conj, characteristic) where
 
 import Control.Monad
 import qualified Data.List as L
 import CPSA.Lib.Utilities
 import CPSA.Lib.SExpr
-import CPSA.Lib.Algebra
-import CPSA.Lib.Protocol
-import CPSA.Lib.Goal
-import CPSA.Lib.Strand
+import CPSA.Algebra
+import CPSA.Protocol
+import CPSA.Goal
+import CPSA.Strand
 
 {--
 import System.IO.Unsafe

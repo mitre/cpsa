@@ -9,7 +9,7 @@
 -- Provides the top-level search loop, which implements term reduction
 -- on skeletos.
 
-module CPSA.Lib.Reduction (solve) where
+module CPSA.Reduction (solve) where
 
 import System.IO
 import Control.Parallel
@@ -17,12 +17,12 @@ import qualified Data.List as L
 import CPSA.Lib.Utilities
 import CPSA.Lib.SExpr
 import CPSA.Lib.Entry
-import CPSA.Lib.Options
-import CPSA.Lib.Algebra
-import CPSA.Lib.Goal
-import CPSA.Lib.Strand
-import CPSA.Lib.Cohort
-import CPSA.Lib.Displayer
+import CPSA.Options
+import CPSA.Algebra
+import CPSA.Goal
+import CPSA.Strand
+import CPSA.Cohort
+import CPSA.Displayer
 
 -- Set when debugging an exception so that buffered results get out.
 useFlush :: Bool

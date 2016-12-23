@@ -15,11 +15,11 @@ import System.Environment
 import System.Console.GetOpt
 import CPSA.Lib.SExpr
 import CPSA.Lib.Entry
-import CPSA.Lib.Options
-import CPSA.Lib.Algebra
-import CPSA.Lib.Loader
+import CPSA.Options
+import CPSA.Algebra
+import CPSA.Loader
 import CPSA.Lib.Expand
-import CPSA.Lib.Reduction
+import CPSA.Reduction
 
 -- Compile time switches for expermentation.
 

@@ -6,14 +6,14 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-module CPSA.Lib.Displayer (displayProt, displayPreskel, displayNode) where
+module CPSA.Displayer (displayProt, displayPreskel, displayNode) where
 
 import qualified Data.List as L
 import qualified Data.Set as S
 import CPSA.Lib.SExpr
-import CPSA.Lib.Algebra
-import CPSA.Lib.Protocol
-import CPSA.Lib.Strand
+import CPSA.Algebra
+import CPSA.Protocol
+import CPSA.Strand
 
 -- Display of protocols
 

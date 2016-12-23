@@ -6,7 +6,7 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-module CPSA.Lib.Strand (Instance, mkInstance, bldInstance, mkListener,
+module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     role, env, trace, height, listenerTerm, Sid, Node, mkPreskel,
     firstSkeleton, Pair, Preskel, gen, protocol, kgoals, insts, orderings,
     pov, knon, kpnon, kunique, korig, kpriority, kcomment, nstrands, kvars,
@@ -24,9 +24,9 @@ import Data.Set (Set)
 import qualified Data.Maybe as M
 import CPSA.Lib.Utilities
 import CPSA.Lib.SExpr
-import CPSA.Lib.Algebra
-import CPSA.Lib.Protocol
-import CPSA.Lib.Goal
+import CPSA.Algebra
+import CPSA.Protocol
+import CPSA.Goal
 
 {--
 import System.IO.Unsafe

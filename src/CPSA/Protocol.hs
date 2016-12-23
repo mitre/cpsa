@@ -6,7 +6,7 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-module CPSA.Lib.Protocol (Event (..), evtTerm, evtMap, evt, inbnd, outbnd,
+module CPSA.Protocol (Event (..), evtTerm, evtMap, evt, inbnd, outbnd,
     Trace, tterms, originates,
     originationPos, acquiredPos, gainedPos, usedPos,
     Role, rname, rvars, rtrace, rnon, rpnon, runique, rcomment,
@@ -18,7 +18,7 @@ module CPSA.Lib.Protocol (Event (..), evtTerm, evtMap, evt, inbnd, outbnd,
 import qualified Data.List as L
 import CPSA.Lib.Utilities
 import CPSA.Lib.SExpr
-import CPSA.Lib.Algebra
+import CPSA.Algebra
 
 -- Useful operations on variables
 

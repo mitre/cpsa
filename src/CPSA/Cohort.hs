@@ -6,14 +6,14 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-module CPSA.Lib.Cohort (Mode(..), reduce, unrealized) where
+module CPSA.Cohort (Mode(..), reduce, unrealized) where
 
 import qualified Data.Set as S
 import Data.Set (Set)
 import qualified Data.List as L
-import CPSA.Lib.Algebra
-import CPSA.Lib.Protocol
-import CPSA.Lib.Strand
+import CPSA.Algebra
+import CPSA.Protocol
+import CPSA.Strand
 
 {-- Debugging support
 import System.IO.Unsafe
