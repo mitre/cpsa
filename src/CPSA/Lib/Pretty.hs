@@ -1,10 +1,21 @@
--- A simple pretty printer.
+{-|
+Module:      CPSA.Lib.Pretty
+Description: A simple pretty printer
+Copyright:   (c) 2009 The MITRE Corporation
+License:     BSD
 
--- The alogithm is by Lawrence C. Paulson, who simplified an algorithm
--- by Derek C. Oppen.
+This module contains a simple pretty printer.
+The alogithm is by Lawrence C. Paulson, who simplified an algorithm
+by Derek C. Oppen.  This
 
--- Derek C. Oppen, Prettyprinting, ACM Transactions on Programming
--- Languages and Systems, Vol 2, No. 4, October 1980, Pages 465-483.
+Derek C. Oppen, Prettyprinting, ACM Transactions on Programming
+Languages and Systems, Vol 2, No. 4, October 1980, Pages 465-483.
+
+The code is base on the ML Programs from Chapter 8 of
+ML for the Working Programmer, 2nd edition
+by Lawrence C. Paulson, Computer Laboratory, University of Cambridge.
+(Cambridge University Press, 1996)
+-}
 
 -- Copyright (c) 2009 The MITRE Corporation
 --
@@ -38,8 +49,9 @@ these programs or functions.
 
 --}
 
-module CPSA.Lib.Pretty (Pretty, pr, str, brk, blo, grp) where
+module CPSA.Lib.Pretty (Pretty, str, brk, blo, grp, pr) where
 
+-- | Pretty printing expressions
 data Pretty
     = Str !String
     | Brk !Int                  -- Int is the number of breakable spaces
@@ -49,22 +61,25 @@ data Pretty
 
 -- Constructors
 
--- Strings
+-- | 'str' @s@ creates an expression containing string @s@.
 str :: String -> Pretty
 str = Str
 
--- Break points
+-- | 'brk' @l@ creates a break of length @l@.  If no break is required
+-- then @l@ spaces are printed.
 brk :: Int -> Pretty
 brk = Brk
 
--- Indentation blocks
--- If the line is too long, not all breaks must be used
+-- | 'blo' @i@ @es@ creates a block contaning expressions @es@, and
+-- specifies the current indentation will be increased by @i@.  If the
+-- line is too long, the minimum number of breaks will be used.
 blo :: Int -> [Pretty] -> Pretty
 blo indent es =
     Blo es indent (len es 0)
 
--- Indentation groups
--- If the line is too long, all breaks are used
+-- | 'grp' @i@ @es@ creates a block contaning expressions @es@, and
+-- specifies the current indentation will be increased by @i@.  If the
+-- line is too long, all breaks will be used.
 grp :: Int -> [Pretty] -> Pretty
 grp indent es =
     Grp es indent (len es 0)
@@ -81,6 +96,7 @@ size (Grp _ _ n) = n
 
 -- Pretty prints the constructed object
 
+-- | 'pr' @m@ @e@ pretty prints expression @e@ with right margin @m@.
 pr :: Int -> Pretty -> ShowS
 pr margin e s =
     s1

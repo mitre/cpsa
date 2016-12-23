@@ -1,4 +1,28 @@
--- Expands macros using definitions in the input.
+{-|
+Module:      CPSA.Lib.Expand
+Description: Macros
+Copyright:   (c) 2009 The MITRE Corporation
+License:     BSD
+
+Expand macros using definitions in the input.
+
+A macro definition has the form:
+
+@
+   (defmacro (NAME ARG*) BODY)
+@
+
+where @NAME@ and each @ARG@ is a symbol.
+
+The contents of a file can be included with:
+
+@
+   (include FILE)
+@
+
+where @FILE@ is a quoted string containing a file path.
+
+-}
 
 -- Copyright (c) 2009 The MITRE Corporation
 --
@@ -10,8 +34,8 @@ module CPSA.Lib.Expand (expand, readSExprs) where
 
 import Control.Monad
 import System.IO (openFile, IOMode (ReadMode))
-import CPSA.Lib.Entry (readSExpr, tryIO)
 import CPSA.Lib.SExpr
+import CPSA.Lib.Entry (readSExpr, tryIO)
 
 -- The macroexpand loop limit
 limit :: Int
@@ -21,6 +45,7 @@ limit = 1000
 bound :: Int
 bound = 16
 
+-- | Expand the macros in the input.
 expand :: [SExpr Pos] -> IO [SExpr Pos]
 expand sexprs =
     do
@@ -58,6 +83,7 @@ include bound (macs, sexprs) pos file =
             incsexprs <- readSExprs p
             foldM (expandSExpr bound) (macs, sexprs) incsexprs
 
+-- | Read all the S-expressions available from a handle.
 readSExprs :: PosHandle -> IO [SExpr Pos]
 readSExprs p =
     loop []

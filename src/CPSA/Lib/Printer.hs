@@ -1,4 +1,16 @@
--- A CPSA specific pretty printer using S-expressions.
+{-|
+Module:      CPSA.Lib.Printer
+Description: A CPSA specific pretty printer using S-expressions
+Copyright:   (c) 2009 The MITRE Corporation
+License:     BSD
+
+A CPSA specific pretty printer using S-expressions.
+The pretty printer indents a constant amount for each list.  The
+top-level lists are laid out specially.  Whenever some breaks
+occur, all breaks are forced.  Also, breaks are only placed before
+strings and lists.  CPSA protocols are handled specially.  Each
+defrole is handled as are top-level lists.
+-}
 
 -- Copyright (c) 2009 The MITRE Corporation
 --
@@ -11,7 +23,8 @@ module CPSA.Lib.Printer (pp) where
 import CPSA.Lib.Pretty
 import CPSA.Lib.SExpr
 
--- Pretty printer within specified margin.
+-- | Pretty printer that when given a margin, an indent, and an
+-- S-expression produces a pretty printed result as a string.
 pp :: Int -> Int -> SExpr a -> String
 pp margin indent sexpr =
     pr margin (pretty indent sexpr) ""

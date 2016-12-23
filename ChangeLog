@@ -1,5 +1,7 @@
 2016-12-23  John D. Ramsdell  <ramsdell@mitre.org>
 
+	* src/CPSA/Lib/*.hs: Added Haddock comments.
+
 	* cpsa4.cabal: Reorganized source directory structure.  CPSA
 	specific modules are now in src/CPSA.
 
