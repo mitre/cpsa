@@ -853,20 +853,20 @@ loadVar (gen, vars) (S pos name, S pos' sort) =
       Left _ ->
           do
             let (gen', x) = freshId gen name
-            p <- mkVar x
+            p <- mkVar pos' sort x
             return (gen', p : vars)
-    where
-      mkVar x =
-          case sort of
-            "mesg" -> return (I x)
-            "text" -> return $ F Text [I x]
-            "data" -> return $ F Data [I x]
-            "name" -> return $ F Name [I x]
-            "skey" -> return $ F Skey [I x]
-            "akey" -> return $ F Akey [I x]
-            "node" -> return (D x)
-            _ -> fail (shows pos' "Sort " ++ sort ++ " not recognized")
 loadVar _ (x,_) = fail (shows (annotation x) "Bad variable syntax")
+
+mkVar :: Monad m => Pos -> String -> Id -> m Term
+mkVar pos sort x
+  | sort == "mesg" = return $ I x
+  | sort == "text" = return $ F Text [I x]
+  | sort == "data" = return $ F Data [I x]
+  | sort == "name" = return $ F Name [I x]
+  | sort == "skey" = return $ F Skey [I x]
+  | sort == "akey" = return $ F Akey [I x]
+  | sort == "node" = return $ D x
+  | otherwise = fail (shows pos "Sort " ++ sort ++ " not recognized")
 
 loadLookup :: Pos -> [Term] -> String -> Either String Term
 loadLookup pos [] name = Left (shows pos $ "Identifier " ++ name ++ " unknown")

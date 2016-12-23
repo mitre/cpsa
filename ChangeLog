@@ -1,5 +1,9 @@
 2016-12-23  John D. Ramsdell  <ramsdell@mitre.org>
 
+	* src/CPSA/Lib/Algebra.hs (mkVar): code cleanup: better version of
+	mkVar for loadVar
+
+
 	* Enabled compilation using GHC 8.01 by removing the Algebra
 	class.
 
