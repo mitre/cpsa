@@ -807,6 +807,7 @@ reify domain (Env env) =
 
 -- Ensure the range of an environment contains only variables and that
 -- the environment is injective.
+-- Bug fix: Allow (invk x) in the range too.
 matchRenaming :: (Gen, Env) -> Bool
 matchRenaming (_, Env e) =
     loop S.empty $ M.elems e
@@ -814,6 +815,8 @@ matchRenaming (_, Env e) =
       loop _ [] = True
       loop s (I x:e) =
           S.notMember x s && loop (S.insert x s) e
+      loop s (F Invk [I x]:e) =
+          not (S.member x s) && loop (S.insert x s) e
       loop _ _ = False
 
 nodeMatch ::  Term -> (Int, Int) -> (Gen, Env) -> [(Gen, Env)]
@@ -942,6 +945,16 @@ loadInvk _ vars [S pos s] =
     do
       t <- loadLookupAkey pos vars s
       return $ F Akey [F Invk [I $ varId t]]
+loadInvk _ vars [L _ [S _ pubk, S pos s]]
+  | pubk == "pubk" =
+    do
+      t <- loadLookupName pos vars s
+      return $ F Akey [F Invk [F Pubk [I $ varId t]]]
+loadInvk _ vars [L _ [S _ pubk, Q _ c, S pos s]]
+  | pubk == "pubk" =
+    do
+      t <- loadLookupName pos vars s
+      return $ F Akey [F Invk [F Pubk [C c, I $ varId t]]]
 loadInvk pos _ _ = fail (shows pos "Malformed invk")
 
 loadLtk :: Monad m => LoadFunction m

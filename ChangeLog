@@ -1,8 +1,19 @@
 2016-12-23  John D. Ramsdell  <ramsdell@mitre.org>
 
+	* src/CPSA/Lib/Cohort.hs (solved): In Condition 5, applied
+	substitutions to the encryption keys before testing for
+	derivability.
+
+	* src/CPSA/Lib/Algebra.hs (matchRenaming): Made isomorphism check
+	work in presence of asymmetric keys.
+
+	* src/CPSA/Lib/Algebra.hs (loadInvk): Enabled reading of invk
+	(pubk ...).
+
+	* tst/reflect.scm: Added reflect protocol example.
+
 	* src/CPSA/Lib/Algebra.hs (mkVar): code cleanup: better version of
 	mkVar for loadVar
-
 
 	* Enabled compilation using GHC 8.01 by removing the Algebra
 	class.

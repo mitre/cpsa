@@ -1,7 +1,7 @@
 (herald incompleteness-example
   (comment "Shows a shape not found by CPSA"))
 
-(comment "CPSA 2.5.4")
+(comment "CPSA 4.0.0")
 (comment "All input read from incompleteness_example.scm")
 
 (defprotocol incompleteness-example basic

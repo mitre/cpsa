@@ -162,7 +162,8 @@ solved ct pos eks escape k (s, p) subst =
     -- Condition 4
     any (maybe False (derivable a ts) . decryptionKey) (S.toList escape') ||
     -- Condition 5
-    any (derivable a ts) eks
+    -- Bug fix: apply subst to eks
+    any (derivable a ts) (map (substitute subst) eks)
     where
       v = vertex k (s, p)       -- Look up vertex in k
       t = evt id erro (event v)  -- Term at v
