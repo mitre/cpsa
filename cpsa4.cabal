@@ -131,7 +131,7 @@ Executable cpsa4
     CPSA.Lib.SExpr CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Lib.Options
     CPSA.Lib.Algebra CPSA.Lib.Protocol CPSA.Lib.Goal CPSA.Lib.Strand
     CPSA.Lib.Characteristic CPSA.Lib.Loader CPSA.Lib.Displayer
-    CPSA.Lib.Cohort CPSA.Lib.Expand CPSA.Lib.CPSA CPSA.Lib.Reduction
+    CPSA.Lib.Cohort CPSA.Lib.Expand CPSA.Lib.Reduction
 
 Executable cpsasas
   Main-Is:		CPSA/SAS/Main.hs
@@ -143,8 +143,7 @@ Executable cpsasas
     Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.Pretty CPSA.Lib.SExpr
     CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Lib.Algebra
     CPSA.Lib.Protocol CPSA.Lib.Strand CPSA.Lib.Loader
-    CPSA.Lib.Displayer CPSA.Lib.Cohort CPSA.Lib.CPSA
-    CPSA.SAS.SAS
+    CPSA.Lib.Displayer CPSA.Lib.Cohort CPSA.SAS.SAS
 
 Executable cpsa4diff
   Main-Is:		CPSA/Diff/Main.hs

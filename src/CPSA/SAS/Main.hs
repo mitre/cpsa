@@ -9,28 +9,28 @@
 module Main (main) where
 
 import System.IO
-import CPSA.Lib.CPSA
+import CPSA.Lib.SExpr
+import CPSA.Lib.Algebra
 import CPSA.Lib.Entry
 import CPSA.Lib.Options
 import CPSA.SAS.SAS
-import qualified CPSA.Lib.Algebra
 
 -- Algebra names
 algs :: [String]
-algs = [CPSA.Lib.Algebra.name]
+algs = [name]
 
 main :: IO ()
 main =
     do
-      let options = algOptions CPSA.Lib.Algebra.name
-      let interp = algInterp CPSA.Lib.Algebra.name algs
+      let options = algOptions name
+      let interp = algInterp name algs
       (p, (output, alg, margin)) <- start options interp
       h <- outputHandle output
       writeComment h margin cpsaVersion
       writeComment h margin "Coherent logic"
       case () of
-        _ | alg == CPSA.Lib.Algebra.name ->
-              go (step h alg CPSA.Lib.Algebra.origin margin)
+        _ | alg == name ->
+              go (step h alg origin margin)
                  p ([], [])
           | otherwise ->
                abort ("Bad algebra: " ++ alg)

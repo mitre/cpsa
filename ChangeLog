@@ -1,3 +1,10 @@
+2016-12-23  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* Enabled compilation using GHC 8.01 by removing the Algebra
+	class.
+
+	* Purged programs cpsaannotations and cpsaparameters.
+
 2016-04-13  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* cpsa4.cabal (Version): Updated version number to 4.0.0.

@@ -11,7 +11,9 @@ module CPSA.SAS.SAS (Prot, Preskel, State, sas) where
 import Control.Monad (foldM)
 import qualified Data.List as L
 import qualified Data.Map as M
-import CPSA.Lib.CPSA
+import CPSA.Lib.Utilities
+import CPSA.Lib.SExpr
+import CPSA.Lib.Algebra
 
 {--
 import System.IO.Unsafe
