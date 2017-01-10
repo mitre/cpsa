@@ -60,109 +60,58 @@ splitForm pos prot goals g as comment =
   where                         -- is is the instance formulas and
     (is, ks) = L.partition instForm as -- ks is the skeleton formulas
 
--- Instance formulas are role predicates, parameter predicates, and
--- strand prec.
+-- Instance formulas are role length and parameter predicates.
 instForm :: (Pos, AForm) -> Bool
-instForm (_, RolePred _ _ _) = True
-instForm (_, ParamPred _ _ _ _) = True
-instForm (_, StrPrec _ _) = True
+instForm (_, Length _ _ _) = True
+instForm (_, Param _ _ _ _ _) = True
 instForm _ = False
 
 -- Make the instances from the instance predicates
 
-mkInsts :: Monad m => Gen -> Conj -> m ([(Term, Node)], Gen, [Instance])
+mkInsts :: Monad m => Gen -> Conj -> m ([(Term, Sid)], Gen, [Instance])
 mkInsts g as =
   do
-    nri <- nodeRoleIndex as     -- Compute index and role of each node
-    nss <- binNodes nri as      -- Collect nodes on the same strand
-    (g, insts) <- foldInsts g as nri nss -- Construct instances
-    return (nodeMap nri nss, g, insts) -- Construct node map for later use
+    srl <- strdRoleLength as    -- Compute role-length of each strand
+    (g, insts) <- foldInsts g as srl -- Construct instances
+    let strdMap = zip (map fst srl) [0..] -- Construct strand map
+    return (strdMap, g, insts) -- Construct node map for later use
 
-type RoleIndex = (Role, Int)
-
--- Computes a map from nodes to role-index pairs
-nodeRoleIndex :: Monad m => Conj -> m [(Term, RoleIndex)]
-nodeRoleIndex as =
+-- Computes a map from strands to roles and lengths
+strdRoleLength :: Monad m => Conj -> m [(Term, (Role, Int))]
+strdRoleLength as =
   foldM f [] as
   where
-    f nri (pos, RolePred r i n) =
-      case lookup n nri of
-        Nothing -> return ((n, (r, i)) : nri)
+    f srl (pos, Length r z h) =
+      case lookup z srl of
+        Nothing -> return ((z, (r, h)) : srl)
         Just _ -> fail (shows pos
-                        "Node occurs in more than one role predicate")
-    f nri _ = return nri
-
--- Use this lookup when lookup must succeed.
-nriLookup :: Term -> [(Term, RoleIndex)] -> RoleIndex
-nriLookup n nri =
-  case lookup n nri of
-    Just ri -> ri
-    Nothing -> error "Characteristic.nriLookup: Bad lookup"
-
---- Use str-prec to collect the nodes on the same strand.  Check to
---- make sure the role associated with nodes is the same.
-binNodes :: Monad m => [(Term, RoleIndex)] -> Conj -> m [[Term]]
-binNodes nri as =
-  foldM f (map (\(x, _) -> [x]) nri) as
-  where
-    f nss (pos, StrPrec n n')
-      | i >= i' || rname r /= rname r' =
-        fail (shows pos "Bad str-prec")
-      | otherwise = return $ merge n n' nss
-      where
-        (r, i) = nriLookup n nri
-        (r', i') = nriLookup n' nri
-    f nss _ = return nss
-
--- Merge two sets of nodes and delete the old sets
-merge :: Eq t => t -> t -> [[t]] -> [[t]]
-merge n n' nss =
-  (ns ++ ns') : L.delete ns (L.delete ns' nss)
-  where
-    ns = findl n nss
-    ns' = findl n' nss
-
--- Find a set containing node n
-findl :: Eq t => t -> [[t]] -> [t]
-findl n nss =
-  case L.find (elem n) nss of
-    Just ns -> ns
-    Nothing -> error "Characteristic.findl: cannot find a node"
+                        "Strand occurs in more than one role predicate")
+    f srl _ = return srl
 
 -- Construct instances
-foldInsts :: Monad m => Gen -> Conj -> [(Term, RoleIndex)] ->
-             [[Term]] -> m (Gen, [Instance])
-foldInsts g _ _ [] = return (g, [])
-foldInsts g as nri (ns : nss) =
+foldInsts :: Monad m => Gen -> Conj -> [(Term, (Role, Int))] ->
+             m (Gen, [Instance])
+foldInsts g _ [] = return (g, [])
+foldInsts g as ((z, (r, h)) : srs) =
   do
-    (g, inst) <- mkInst g as nri ns
-    (g, insts) <- foldInsts g as nri nss
+    (g, inst) <- mkInst g as z r h
+    (g, insts) <- foldInsts g as srs
     return (g, inst : insts)
 
 -- Construct an instance by extracting maplets from the parameter
--- predicates with nodes associated with the strand.
-mkInst :: Monad m => Gen -> Conj -> [(Term, RoleIndex)] ->
-          [Term] -> m (Gen, Instance)
-mkInst _ _ _ [] = error "Characteristic.mkInst: no nodes"
-mkInst g as nri (n : ns)
-  | h < 1 || h > length (rtrace r) = -- Checked by the the loader
-    error "Character.mkInst: Bad height"
-  | otherwise =
-      do
-        (g, env) <- foldM (mkMaplet r (n : ns)) (g, emptyEnv) as
-        return (mkInstance g r env h)
-  where
-    (r, i) = nriLookup n nri
-    -- The height (1 + max index)
-    h = 1 + foldr f i ns
-    f n i = max i (snd $ nriLookup n nri)
+-- predicates associated with the strand.
+mkInst :: Monad m => Gen -> Conj -> Term -> Role -> Int -> m (Gen, Instance)
+mkInst g as z r h =
+  do
+    (g, env) <- foldM (mkMaplet r z) (g, emptyEnv) as
+    return (mkInstance g r env h)
 
 -- Add match from a maplet
-mkMaplet :: Monad m => Role -> [Term] -> (Gen, Env) ->
+mkMaplet :: Monad m => Role -> Term -> (Gen, Env) ->
             (Pos, AForm) -> m (Gen, Env)
-mkMaplet role ns env (pos, ParamPred r v n t)
-  | elem n ns =
-    if rname role == rname r then -- Ensure role match the one
+mkMaplet role z env (pos, Param r v _ z' t)
+  | z == z' =
+    if rname role == rname r then -- Ensure role matches the one
       case match v t env of       -- used to create instance
         env : _ -> return env
         [] -> fail (shows pos "Domain does not match range")
@@ -171,25 +120,17 @@ mkMaplet role ns env (pos, ParamPred r v n t)
             "Role in parameter pred differs from role position pred")
 mkMaplet _ _ env _ = return env
 
--- Generate a map from node variables to node constants.
-nodeMap :: [(Term, RoleIndex)] -> [[Term]] -> [(Term, Node)]
-nodeMap nri nss =
-  [ (n, (z, i)) |
-    (z, ns) <- zip [0..] nss,
-    n <- ns,
-    let (_, i) = nriLookup n nri ]
-
 -- Use this lookup when lookup must succeed, that is when loader makes
 -- the check.
-nMapLookup :: Term -> [(Term, Node)] -> Node
-nMapLookup n nmap =
-  case lookup n nmap of
-    Just n -> n
+nMapLookup :: (Term, Int) -> [(Term, Sid)] -> Node
+nMapLookup (z, i) nmap =
+  case lookup z nmap of
+    Just s -> (s, i)
     Nothing -> error "Characteristic.nMapLookup: Bad lookup"
 
 -- Create a skeleton given a list of instances
 
-mkSkel :: Monad m => Pos -> Prot -> [Goal] -> [(Term, Node)] ->
+mkSkel :: Monad m => Pos -> Prot -> [Goal] -> [(Term, Sid)] ->
           Gen -> [Instance] -> Conj -> [SExpr ()] -> m Preskel
 mkSkel pos p goals nmap g insts as comment =
   do
@@ -216,7 +157,7 @@ addInstOrigs (nr, ar, ur) i =
      foldl (flip adjoin) ar $ inheritRpnon i,
      foldl (flip adjoin) ur $ inheritRunique i)
 
-mkPrec :: [(Term, (Int, Int))] -> (Pos, AForm) -> [Pair] -> [Pair]
+mkPrec :: [(Term, Sid)] -> (Pos, AForm) -> [Pair] -> [Pair]
 mkPrec nmap (_, Prec n n') o =
   (nMapLookup n nmap, nMapLookup n' nmap) : o
 mkPrec _ _ o = o
@@ -234,7 +175,7 @@ mkUniq (_, Uniq t) ts = t : ts
 mkUniq (_, UniqAt t _) ts = t : ts
 mkUniq _ ts = ts
 
-checkUniqAt :: Monad m => [(Term, Node)] -> Preskel -> (Pos, AForm) -> m ()
+checkUniqAt :: Monad m => [(Term, Sid)] -> Preskel -> (Pos, AForm) -> m ()
 checkUniqAt nmap k (pos, UniqAt t n) =
   case lookup t $ korig k of
     Nothing -> fail (shows pos "Atom not unique at node")

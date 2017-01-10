@@ -11,7 +11,7 @@ module CPSA.Protocol (Event (..), evtTerm, evtMap, evt, inbnd, outbnd,
     originationPos, acquiredPos, gainedPos, usedPos,
     Role, rname, rvars, rtrace, rnon, rpnon, runique, rcomment,
     rsearch, rnorig, rpnorig, ruorig, rpriority, mkRole, varSubset,
-    varsInTerms, addVars,
+    varsInTerms, addVars, firstOccurs,
     Prot, mkProt, pname, alg, pgen, roles, listenerRole,
     varsAllAtoms, pcomment) where
 
@@ -155,6 +155,17 @@ data Role = Role
 defaultPriority :: Int
 defaultPriority = 5
 
+-- | Compute the index of the first event at which the given variable
+-- occurs in a trace.
+firstOccursAt :: Term -> Trace -> Maybe Int
+firstOccursAt t c =
+    loop 0 c
+    where
+      loop _ [] = Nothing
+      loop i (e : c)
+          | occursIn t (evtTerm e) = Just i
+          | otherwise = loop (i + 1) c
+
 -- The empty role name is used with listener strands.  All roles in a
 -- protocol must have a name with more than one character.
 
@@ -208,6 +219,9 @@ mkRole name vars trace non pnon unique comment priority rev =
               case lookup n priority of
                 Nothing -> defaultPriority
                 Just p -> p
+
+firstOccurs :: Term -> Role -> Maybe Int
+firstOccurs v r = firstOccursAt v (rtrace r)
 
 -- Protocols
 

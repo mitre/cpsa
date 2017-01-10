@@ -443,11 +443,9 @@ loadPair heights (L pos [x0, x1]) =
     do
       n0 <- loadNode heights x0
       n1 <- loadNode heights x1
-      case sameStrands n0 n1 of  -- Same strand
+      case fst n0 == fst n1 of  -- Same strand
         True -> fail (shows pos "Malformed pair -- nodes in same strand")
         False -> return (n0, n1)
-    where
-      sameStrands (s0, _) (s1, _) = s0 == s1
 loadPair _ x = fail (shows (annotation x) "Malformed pair")
 
 loadNode :: Monad m => [Int] -> SExpr Pos -> m Node
@@ -538,7 +536,7 @@ loadImplication :: Monad m => Pos -> Prot -> Gen -> [Term] ->
                    SExpr Pos -> m (Gen, Goal, Conj)
 loadImplication _ prot g vars (L pos [S _ "implies", a, c]) =
   do
-    (g, antec) <- loadRoleSpecific pos prot g vars vars a
+    antec <- loadRoleSpecific pos prot vars vars a
     (g, concl) <- loadConclusion pos prot g vars c
     let goal =
           Goal { uvars = vars,
@@ -573,128 +571,134 @@ loadExistential :: Monad m => Pos -> Prot -> Gen -> [Term] ->
 loadExistential _ prot g vars (L pos [S _ "exists", L _ vs, x]) =
   do
     (g, evars) <- loadVars g vs
-    loadRoleSpecific pos prot g (reverse evars ++ vars) evars x
+    as <- loadRoleSpecific pos prot (reverse evars ++ vars) evars x
+    return (g, as)
 loadExistential pos prot g vars x =
-  loadRoleSpecific pos prot g vars [] x
+  do
+    as <- loadRoleSpecific pos prot vars [] x
+    return (g, as)
 
 --- Load a conjunction of atomic formulas and ensure the formula is
 --- role specific.
 
-loadRoleSpecific :: Monad m => Pos -> Prot -> Gen ->
-                    [Term] -> [Term] -> SExpr Pos -> m (Gen, Conj)
-loadRoleSpecific pos prot g vars unbound x =
+loadRoleSpecific :: Monad m => Pos -> Prot -> [Term] ->
+                    [Term] -> SExpr Pos -> m Conj
+loadRoleSpecific pos prot vars unbound x =
   do
-    (g, as) <- loadConjunction pos prot vars g x
+    as <- loadConjunction pos prot vars x
     let as' = L.sortBy (\(_, x) (_, y) -> aFormOrder x y) as
     unbound <- foldM roleSpecific unbound as'
     case unbound of
-      [] -> return (g, as')
+      [] -> return as'
       (v : _) -> fail (shows (annotation x) (showst v " not used"))
 
 -- Load a conjunction of atomic formulas
 
 loadConjunction :: Monad m => Pos -> Prot -> [Term] ->
-                   Gen -> SExpr Pos -> m (Gen, Conj)
-loadConjunction _ p kvars g (L pos (S _ "and" : xs)) =
-  loadConjuncts pos p kvars g xs []
-loadConjunction top p kvars g x =
+                   SExpr Pos -> m Conj
+loadConjunction _ p kvars (L pos (S _ "and" : xs)) =
+  loadConjuncts pos p kvars xs []
+loadConjunction top p kvars x =
   do
-    (g, pos, a) <- loadPrimary top p kvars g x
-    return (g, [(pos, a)])
+    (pos, a) <- loadPrimary top p kvars x
+    return [(pos, a)]
 
-loadConjuncts :: Monad m => Pos -> Prot -> [Term] -> Gen ->
-                 [SExpr Pos] -> Conj -> m (Gen, Conj)
-loadConjuncts _ _ _ g [] rest = return (g, reverse rest)
-loadConjuncts top p kvars g (x : xs) rest =
+loadConjuncts :: Monad m => Pos -> Prot -> [Term] ->
+                 [SExpr Pos] -> Conj -> m Conj
+loadConjuncts _ _ _ [] rest = return (reverse rest)
+loadConjuncts top p kvars (x : xs) rest =
   do
-    (g, pos, a) <- loadPrimary top p kvars g x
-    loadConjuncts top p kvars g xs ((pos, a) : rest)
+    (pos, a) <- loadPrimary top p kvars x
+    loadConjuncts top p kvars xs ((pos, a) : rest)
 
 -- Load the atomic formulas
 
-loadPrimary :: Monad m => Pos -> Prot -> [Term] -> Gen ->
-               SExpr Pos -> m (Gen, Pos, AForm)
-loadPrimary _ _ kvars g (L pos [S _ "=", x, y]) =
+loadPrimary :: Monad m => Pos -> Prot -> [Term] ->
+               SExpr Pos -> m (Pos, AForm)
+loadPrimary _ _ kvars (L pos [S _ "=", x, y]) =
   do
-    (g, t) <- loadSgTerm kvars g x
-    (g, t') <- loadSgTerm kvars g y
-    return (g, pos, Equals t t')
-loadPrimary _ _ kvars g (L pos [S _ "non", x]) =
-  do
-    t <- loadAlgTerm kvars x
-    return (g, pos, Non t)
-loadPrimary _ _ kvars g (L pos [S _ "pnon", x]) =
+    t <- loadTerm kvars x
+    t' <- loadTerm kvars y
+    return (pos, Equals t t')
+loadPrimary _ _ kvars (L pos [S _ "non", x]) =
   do
     t <- loadAlgTerm kvars x
-    return (g, pos, Pnon t)
-loadPrimary _ _ kvars g (L pos [S _ "uniq", x]) =
+    return (pos, Non t)
+loadPrimary _ _ kvars (L pos [S _ "pnon", x]) =
   do
     t <- loadAlgTerm kvars x
-    return (g, pos, Uniq t)
-loadPrimary _ _ kvars g (L pos [S _ "uniq-at", x, y]) =
+    return (pos, Pnon t)
+loadPrimary _ _ kvars (L pos [S _ "uniq", x]) =
   do
     t <- loadAlgTerm kvars x
-    (g, t') <- loadNodeTerm kvars g y
-    return (g, pos, UniqAt t t')
-loadPrimary _ _ kvars g (L pos [S _ "str-prec", x, y]) =
+    return (pos, Uniq t)
+loadPrimary _ _ kvars (L pos [S _ "uniq-at", x, y, z]) =
   do
-    (g, t) <- loadNodeTerm kvars g x
-    (g, t') <- loadNodeTerm kvars g y
-    return (g, pos, StrPrec t t')
-loadPrimary _ _ kvars g (L pos [S _ "prec", x, y]) =
+    t <- loadAlgTerm kvars x
+    t' <- loadNodeTerm kvars y z
+    return (pos, UniqAt t t')
+loadPrimary _ _ kvars (L pos [S _ "prec", w, x, y, z]) =
   do
-    (g, t) <- loadNodeTerm kvars g x
-    (g, t') <- loadNodeTerm kvars g y
-    return (g, pos, Prec t t')
-loadPrimary _ p kvars g (L pos [S _ "p", Q _ name, N _ i, x]) =
+    t <- loadNodeTerm kvars w x
+    t' <- loadNodeTerm kvars y z
+    case fst t == fst t' of
+      True -> fail (shows pos "Malformed pair -- nodes in same strand")
+      False -> return (pos, Prec t t')
+loadPrimary _ p kvars (L pos [S _ "p", Q _ name, x, N _ h]) =
   do
     r <- lookupRole pos p name
-    (g, t) <- loadNodeTerm kvars g x
-    case i < 0 || i >= length (rtrace r) of
-      True -> fail (shows pos "Bad index")
-      False -> return (g, pos, RolePred r i t)
-loadPrimary _ p kvars g (L pos [S _ "p", Q _ name, Q var x, y, z]) =
+    t <- loadStrdTerm kvars x
+    case h <= 0 || h > length (rtrace r) of
+      True -> fail (shows pos "Bad length")
+      False -> return (pos, Length r t h)
+loadPrimary _ p kvars (L pos [S _ "p", Q _ name, Q var x, y, z]) =
   do
     r <- lookupRole pos p name
     v <- loadAlgTerm (rvars r) (S var x)
-    (g, n) <- loadNodeTerm kvars g y
+    s <- loadStrdTerm kvars y
     t <- loadAlgTerm kvars z
     case isVar v of
       False -> fail (shows pos "Bad parameter -- not a variable")
-      True -> return (g, pos, ParamPred r v n t)
-loadPrimary _ _ _ _ (L pos (S _ "p" : Q _ name : _)) =
+      True ->
+        case firstOccurs v r of
+          Just i -> return (pos, Param r v i s t)
+          Nothing ->
+            fail (shows pos ("parameter " ++ x ++ " not in role " ++ name))
+loadPrimary _ _ _ (L pos (S _ "p" : Q _ name : _)) =
   fail (shows pos ("Bad role specific formula for role " ++ name))
-loadPrimary _ _ _ _ (L pos (S _ pred : _)) =
+loadPrimary _ _ _ (L pos (S _ pred : _)) =
   fail (shows pos ("Bad formula for predicate " ++ pred))
-loadPrimary pos _ _ _ _ = fail (shows pos "Bad formula")
+loadPrimary pos _ _ _ = fail (shows pos "Bad formula")
 
--- Load a term and make sure it has sort node
-
-loadNodeTerm :: Monad m => [Term] -> Gen -> SExpr Pos -> m (Gen, Term)
-loadNodeTerm ts g x =
-  do
-    (g, t) <- loadSgTerm ts g x
-    case isNodeVar t of
-      True -> return (g, t)
-      False -> fail (shows (annotation x) "Expecting a node variable")
-
--- Load a term and make sure it does not have sort node
+-- Load a term and make sure it does not have sort strd
 
 loadAlgTerm :: Monad m => [Term] -> SExpr Pos -> m Term
-loadAlgTerm _ x@(L _ [N _ _, N _ _]) =
-  fail (shows (annotation x) "Expecting an algebra term")
 loadAlgTerm ts x =
   do
     t <- loadTerm ts x
-    case isNodeVar t of
+    case isStrdVar t of
       True -> fail (shows (annotation x) "Expecting an algebra term")
       False -> return t
 
-loadSgTerm :: Monad m => [Term] -> Gen -> SExpr Pos -> m (Gen, Term)
-loadSgTerm ts g x =
+-- Load a term and make sure it has sort strd
+
+loadStrdTerm :: Monad m => [Term] -> SExpr Pos -> m Term
+loadStrdTerm ts x =
   do
     t <- loadTerm ts x
-    return (g, t)
+    case isStrdVar t of
+      True -> return t
+      False -> fail (shows (annotation x) "Expecting a strand variable")
+
+-- Load a term and make sure it describes a node
+
+loadNodeTerm :: Monad m => [Term] -> SExpr Pos -> SExpr Pos -> m NodeTerm
+loadNodeTerm ts x (N _ i) | i >= 0 =
+  do
+    t <- loadStrdTerm ts x
+    return (t, i)
+loadNodeTerm _ _ y =
+  fail (shows (annotation y) "Expecting an integer")
 
 -- Role specific check
 
@@ -708,16 +712,13 @@ allBound unbound t =
 -- Returns variables in unbound that are not role specific
 
 roleSpecific :: Monad m => [Term] -> (Pos, AForm) -> m [Term]
-roleSpecific unbound (_, RolePred _ _ n) =
-  return $ L.delete n unbound
-roleSpecific unbound (pos, ParamPred _ _ n t)
-  | L.notElem n unbound = return $ unbound L.\\ termVars t
+roleSpecific unbound (_, Length _ z _) =
+  return $ L.delete z unbound
+roleSpecific unbound (pos, Param _ _ _ z t)
+  | L.notElem z unbound = return $ unbound L.\\ termVars t
   | otherwise = fail (shows pos "Unbound variable in parameter predicate")
-roleSpecific unbound (pos, StrPrec n n')
-  | L.notElem n unbound && L.notElem n' unbound = return unbound
-  | otherwise = fail (shows pos "Unbound variable in str-prec")
-roleSpecific unbound (pos, Prec n n')
-  | L.notElem n unbound && L.notElem n' unbound = return unbound
+roleSpecific unbound (pos, Prec (z, _) (z', _))
+  | L.notElem z unbound && L.notElem z' unbound = return unbound
   | otherwise = fail (shows pos "Unbound variable in prec")
 roleSpecific unbound (pos, Non t)
   | allBound unbound t = return unbound
@@ -728,15 +729,15 @@ roleSpecific unbound (pos, Pnon t)
 roleSpecific unbound (pos, Uniq t)
   | allBound unbound t = return unbound
   | otherwise = fail (shows pos "Unbound variable in uniq")
-roleSpecific unbound (pos, UniqAt t n)
-  | allBound unbound t && L.notElem n unbound = return unbound
+roleSpecific unbound (pos, UniqAt t (z, _))
+  | allBound unbound t && L.notElem z unbound = return unbound
   | otherwise = fail (shows pos "Unbound variable in uniq-at")
 roleSpecific unbound (pos, Equals t t')
-  | isNodeVar t && isNodeVar t' =
+  | isStrdVar t && isStrdVar t' =
     case L.notElem t unbound && L.notElem t' unbound of
       True -> return unbound
       False -> fail (shows pos "Unbound variable in equals")
-  | isNodeVar t = fail (shows pos "Type mismatch in equals")
-  | isNodeVar t' = fail (shows pos "Type mismatch in equals")
+  | isStrdVar t = fail (shows pos "Type mismatch in equals")
+  | isStrdVar t' = fail (shows pos "Type mismatch in equals")
   | allBound unbound t && allBound unbound t' = return unbound
   | otherwise = fail (shows pos "Unbound variable in equals")

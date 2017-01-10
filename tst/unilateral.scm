@@ -28,25 +28,22 @@
 ;;; taken from the output of cpsasas.
 
 (defgoal unilateral
-  (forall ((n text) (k akey) (z z-0 node))
+  (forall ((n text) (k akey) (z strd))
     (implies
-      (and (p "init" 0 z) (p "init" 1 z-0) (p "init" "n" z-0 n)
-        (p "init" "k" z-0 k) (str-prec z z-0) (non (invk k))
-        (uniq-at n z))
-      (exists ((z-1 z-2 node))
-        (and (p "resp" 0 z-1) (p "resp" 1 z-2) (p "resp" "n" z-2 n)
-          (p "resp" "k" z-2 k) (prec z z-1) (prec z-2 z-0)
-          (str-prec z-1 z-2))))))
+      (and (p "init" z 2) (p "init" "n" z n) (p "init" "k" z k)
+        (non (invk k)) (uniq-at n z 0))
+      (exists ((z-0 strd))
+        (and (p "resp" z-0 2) (p "resp" "n" z-0 n) (p "resp" "k" z-0 k)
+          (prec z 0 z-0 0) (prec z-0 1 z 1))))))
 
 (defgoal unilateral
-  (forall ((n text) (k akey) (z node))
+  (forall ((n text) (k akey) (z strd))
     (implies
-      (and (p "resp" 1 z) (p "resp" "n" z n) (p "resp" "k" z k)
+      (and (p "resp" z 2) (p "resp" "n" z n) (p "resp" "k" z k)
         (non (invk k)) (pnon n))
-      (exists ((k-0 akey) (z-0 z-1 node))
-        (and (p "resp" 0 z-0) (p "init" 0 z-1) (p "init" "n" z-1 n)
-          (p "init" "k" z-1 k-0) (prec z-1 z-0) (str-prec z-0 z)
-          (uniq-at n z-1))))))
+      (exists ((k-0 akey) (z-0 strd))
+        (and (p "init" z-0 1) (p "init" "n" z-0 n)
+          (p "init" "k" z-0 k-0) (prec z-0 0 z 0) (uniq-at n z-0 0))))))
 
 ;;; Unilateral authentication from ISO/IEC JTC 1/SC 27/WG 2 N1050
 
@@ -72,21 +69,21 @@
 
 ;;; Same as above, but also checking to see if there was agreement.
 (defgoal iso-unilateral
-  (forall ((b name) (z node))
+  (forall ((b name) (z strd))
     (implies
-     (and (p "init" 1 z)
+     (and (p "init" z 2)
 	  (p "init" "b" z b)
 	  (non (privk b)))
-      (exists ((y node))
-	      (and (p "resp" 1 y)
+      (exists ((y strd))
+	      (and (p "resp" y 2)
 		   (p "resp" "b" y b))))))
 
 ;;; Silly example.  Of course the shape produced does not satisfy this
 ;;; goal!
 (defgoal iso-unilateral
-  (forall ((b name) (z node))
+  (forall ((b name) (z strd))
     (implies
-     (and (p "init" 1 z)
+     (and (p "init" z 2)
 	  (p "init" "b" z b)
 	  (non (privk b)))
      (false))))

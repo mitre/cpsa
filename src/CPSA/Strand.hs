@@ -1842,10 +1842,9 @@ satisfy (Non t) = ggnon t
 satisfy (Pnon t) = ggpnon t
 satisfy (Uniq t) = gguniq t
 satisfy (UniqAt t n) = guniqAt t n
-satisfy (StrPrec n n') = gstrPrec n n'
 satisfy (Prec n n') = gprec n n'
-satisfy (RolePred r i n) = grole r i n
-satisfy (ParamPred r v n t) = gparam r v n t
+satisfy (Length r z h) = glength r z h
+satisfy (Param r v i z t) = gparam r v i z t
 
 -- Equality assumes there has been a static role specific check to
 -- eliminate error cases.
@@ -1879,15 +1878,15 @@ gguniq t k e =
     match t t' e
 
 -- Unique origination at a node
-guniqAt :: Term -> Term -> Sem
-guniqAt t n k e =
+guniqAt :: Term -> NodeTerm -> Sem
+guniqAt t (z, i) k e =
   do
     (t', ls) <- korig k
     case ls of
-      [l] ->
+      [(z', i')] | i == i' ->
         do
           e <- match t t' e
-          nodeMatch n l e
+          strdMatch z z' e
       _ -> []
 
 inSkel :: Preskel -> (Int, Int) -> Bool
@@ -1899,21 +1898,9 @@ strandPrec (s, i) (s', i')
   | s == s' && i < i' = True
   | otherwise = False
 
--- Within strand node precedes
-gstrPrec :: Term -> Term -> Sem
-gstrPrec n n' k (g, e) =
-  case (nodeLookup e n, nodeLookup e n') of
-    (Just p, Just p')
-      | inSkel k p && inSkel k p' && strandPrec p p' -> [(g, e)]
-    (Just _, Just _) -> []
-    (_, Just _) ->
-      error ("Strand.gstrPrec: node " ++ show n ++ " unbound")
-    _ ->
-      error ("Strand.gstrPrec: node " ++ show n' ++ " unbound")
-
 -- Node precedes
 -- This should look at the transitive closure of the ordering graph.
-gprec :: Term -> Term -> Sem
+gprec :: NodeTerm -> NodeTerm -> Sem
 gprec n n' k (g, e) =
   case (nodeLookup e n, nodeLookup e n') of
     (Just p, Just p')
@@ -1927,41 +1914,48 @@ gprec n n' k (g, e) =
   where
     tc = map graphPair $ graphClose $ graphEdges $ strands k
 
--- Role predicate
--- r and i determine the predicate, which has arity one.
-grole :: Role -> Int -> Term -> Sem
-grole r i n k (g, e) =
-  case nodeLookup e n of
+nodeLookup :: Env -> NodeTerm -> Maybe Node
+nodeLookup e (z, i) =
+  do
+    s <- strdLookup e z
+    return (s, i)
+
+-- Role length predicate
+-- r determines the predicate, which has arity two.
+glength :: Role -> Term -> Int -> Sem
+glength r z h k (g, e) =
+  case strdLookup e z of
     Nothing ->
       do
-        (z, inst) <- zip [0..] $ insts k
+        (s, inst) <- zip [0..] $ insts k
         case () of
-          _ | i >= height inst -> []
-            | rname (role inst) == rname r -> nodeMatch n (z, i) (g, e)
+          _ | h > height inst -> []
+            | rname (role inst) == rname r -> strdMatch z s (g, e)
             | otherwise ->      -- See if z could have been an instance of r
-              case bldInstance r (take (i + 1) $ trace inst) g of
+              case bldInstance r (take h $ trace inst) g of
                 [] -> []
-                _ -> nodeMatch n (z, i) (g, e)
-    Just (z, j) | z < nstrands k && i == j ->
-      let inst = insts k !! z in
+                _ -> strdMatch z s (g, e)
+    Just s | s < nstrands k ->
+      let inst = insts k !! s in
       case () of
-        _ | i >= height inst -> []
+        _ | h > height inst -> []
           | rname (role inst) == rname r -> [(g, e)]
           | otherwise ->
-            case bldInstance r (take (i + 1) $ trace inst) g of
+            case bldInstance r (take h $ trace inst) g of
               [] -> []
               _ -> [(g, e)]
     _ -> []
 
 -- Parameter predicate
 
--- r and t determine the predicate, which has arity two.  t must be
--- a variable declared in role r.
-gparam :: Role -> Term -> Term -> Term -> Sem
-gparam r t n t' k (g, e) =
-  case nodeLookup e n of
-    Just (z, i) | z < nstrands k  ->
-      let inst = insts k !! z in
+-- r and t determine the predicate, which has arity two.  t must be a
+-- variable declared in role r. i is the index of the first occurrence
+-- of t.
+gparam :: Role -> Term -> Int -> Term -> Term -> Sem
+gparam r t i z t' k (g, e) =
+  case strdLookup e z of
+    Just s | s < nstrands k  ->
+      let inst = insts k !! s in
       case () of
         _ | i >= height inst -> []
           | rname (role inst) == rname r ->
@@ -1970,7 +1964,7 @@ gparam r t n t' k (g, e) =
               do
                 (g, inst) <- bldInstance r (take (i + 1) $ trace inst) g
                 match t' (instantiate (env inst) t) (g, e)
-    Nothing -> error ("Strand.gparam: node " ++ show n ++ " unbound")
+    Nothing -> error ("Strand.gparam: strand " ++ show z ++ " unbound")
     _ -> []
 
 -- Conjunction

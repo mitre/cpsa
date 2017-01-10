@@ -1,3 +1,7 @@
+2017-01-09  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* Changed the goal language to one that is strand-oriented.
+
 2016-12-23  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Lib/*.hs: Added Haddock comments.

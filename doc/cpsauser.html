@@ -309,7 +309,7 @@ of <code>mesg</code>.</p>
 <p>To be precise, a security goal is an order-sorted first-order logic
   sentence in a restricted form.  The set of sort symbols available
   for use in a <code>DECL</code> is the ones provided by the message
-  algebra augmented with the symbol <code>node</code>.  The form of a
+  algebra augmented with the symbol <code>strd</code>.  The form of a
   sentence is restricted by the syntax that follows.</p>
 
 <blockquote>
@@ -318,13 +318,13 @@ SENTENCE    ::= (forall (DECL*) (implies ANTECEDENT CONCLUSION))
 CONCLUSION  ::= (false) | EXISTENTIAL | (or EXISTENTIAL*)
 EXISTENTIAL ::= (exists (DECL*) ANTECEDENT) | ANTECEDENT
 ANTECEDENT  ::= ATOMIC | (and ATOMIC*)
-ATOMIC      ::= (p ROLEID POS NVAR) | (p ROLEID PARAM NVAR TERM)
-             |  (str-prec NVAR NVAR) | (prec NVAR NVAR)
-             |  (non TERM) | (pnon TERM) | (uniq TERM)
-             |  (uniq-at TERM NVAR) | (= TERM TERM)
+ATOMIC      ::= (p ROLEID SVAR HGT) | (p ROLEID PARAM SVAR TERM)
+             |  (prec SVAR POS SVAR POS) | (non TERM) | (pnon TERM)
+             |  (uniq TERM) | (uniq-at TERM SVAR POS) | (= TERM TERM)
 ROLEID      ::= STRING
+HGT         ::= INT
 POS         ::= INT
-NVAR        ::= ID
+SVAR        ::= ID
 PARAM       ::= STRING</pre>
 </blockquote>
 

@@ -2,6 +2,8 @@ CPSA NEWS -- history of user-visible changes.
 
 * Changes in version 4.0.0
 
+** Changed the goal language to one that is strand-oriented.
+
 ** Enabled compilation using GHC 8.01 by removing the Algebra class.
 
 ** Purged cpsaannotations and cpsaparameters.

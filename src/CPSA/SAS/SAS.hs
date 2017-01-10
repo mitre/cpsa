@@ -224,6 +224,7 @@ data Preskel = Preskel
       kvars :: [Term],            -- Algebra variables
       kstrands :: [Term],         -- Strand variables
       insts :: [Instance],
+      strands :: [Term],        -- A variable for each instance
       orderings :: [((Term, Int), (Term, Int))],
       nons :: [Term],
       pnons :: [Term],
@@ -253,6 +254,7 @@ loadPreskel pos prot gen (S _ _ : L _ (S _ "vars" : vars) : xs) =
                         kvars = kvars,
                         kstrands = M.elems varmap,
                         insts = insts,
+                        strands = M.elems varmap,
                         orderings = map f orderings,
                         nons = nons,
                         pnons = pnons,
@@ -502,7 +504,7 @@ reduceShape :: Preskel -> (Hom, Preskel) -> (Hom, Preskel)
 reduceShape pov (homo, k) =
   (mapHom env homo, mapSkel env pov k)
   where
-    env = snd $head $ homoEnv (kgen k) homo
+    env = snd $ head $ homoEnv (kgen k) homo
 
 -- Compute a substition for equalities that equate two variables
 -- of the same sort.
@@ -545,6 +547,7 @@ mapSkel env pov k =
   k { kvars = vs L.\\ kvars pov, -- Delete redundant POV variables
       kstrands = zs L.\\ kstrands pov,
       insts = map (mapInst env) (insts k),
+      strands = zs,
       orderings = mapPair (instantiate env) (orderings k),
       nons = map (instantiate env) (nons k),
       pnons = map (instantiate env) (pnons k),
@@ -588,7 +591,7 @@ skel ctx k =
   (kctx,
    displayVars kctx (kvars k) ++ listMap strd strds,
    map (lengthForm kctx k) (M.assocs (varmap k)) ++
-   map (paramForm kctx) (zip (kstrands k) $ insts k) ++
+   map (paramForm kctx) (zip (strands k) $ insts k) ++
    map (precForm kctx) (orderings k) ++
    map (unary "non" kctx) (nons k) ++
    map (unary "pnon" kctx) (pnons k) ++
@@ -654,7 +657,7 @@ shape :: Context -> [SExpr ()] -> (Hom, Preskel) -> SExpr ()
 shape c pov ((nh, ah), shape) =
   let (ctx, vars, conj) = skel c shape in
   let n = map (displayEq ctx) nh in
-  let a = map (displayEq ctx) ah in
+  let a = map (displayEq ctx) ah in -- List diff on S-Exprs
   quantify "exists" vars (conjoin (n ++ a ++ (conj L.\\ pov)))
 
 displayEq :: Context -> (Term, Term) -> SExpr ()
