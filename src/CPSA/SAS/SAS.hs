@@ -16,9 +16,14 @@ import CPSA.Lib.SExpr
 import CPSA.Algebra
 
 {--
+import System.IO
+import System.Exit
 import System.IO.Unsafe
 z :: Show a => a -> b -> b
-z x y = unsafePerformIO (print x >> return y)
+z x y = unsafePerformIO (print x >> hFlush stdout >> exitFailure >> return y)
+
+zz :: Show a => a -> a
+zz x = z x x
 --}
 
 -- The root used for generated node names.
@@ -591,7 +596,7 @@ skel ctx k =
   (kctx,
    displayVars kctx (kvars k) ++ listMap strd strds,
    map (lengthForm kctx k) (M.assocs (varmap k)) ++
-   map (paramForm kctx) (zip (strands k) $ insts k) ++
+   concatMap (paramForm kctx) (zip (strands k) $ insts k) ++
    map (precForm kctx) (orderings k) ++
    map (unary "non" kctx) (nons k) ++
    map (unary "pnon" kctx) (pnons k) ++
@@ -625,9 +630,9 @@ quote (S () str) = Q () str
 quote x = x
 
 -- Creates the atomic formulas used to describe an instance of a role
-paramForm :: Context -> (Term, Instance) -> SExpr ()
+paramForm :: Context -> (Term, Instance) -> [SExpr ()]
 paramForm c (z, inst) =
-    conjoin (map f (env inst))
+    map f (env inst)
     where
       f (x, t) =
           L () [S () "p",

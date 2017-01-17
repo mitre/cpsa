@@ -1,3 +1,8 @@
+2017-01-17  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/SAS/SAS.hs (paramForm): Remove conjoin and use
+	concatMap when creating a characteristic skeleton.
+
 2017-01-09  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* Changed the goal language to one that is strand-oriented.
