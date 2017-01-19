@@ -1,3 +1,9 @@
+2017-01-19  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Characteristic.hs (strdRoleLength): Allowed two role
+	length atoms with the same strand as long as they agree on the
+	role.
+
 2017-01-17  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/SAS/SAS.hs (paramForm): Remove conjoin and use

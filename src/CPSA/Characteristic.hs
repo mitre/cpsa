@@ -84,8 +84,12 @@ strdRoleLength as =
     f srl (pos, Length r z h) =
       case lookup z srl of
         Nothing -> return ((z, (r, h)) : srl)
-        Just _ -> fail (shows pos
-                        "Strand occurs in more than one role predicate")
+        Just (r', h')
+          | rname r' /= rname r ->
+            fail (shows pos
+                  "Strand occurs in more than one role length atom")
+          | h <= h' -> return srl -- Use original binding
+          | otherwise -> return ((z, (r, h)) : srl)
     f srl _ = return srl
 
 -- Construct instances
