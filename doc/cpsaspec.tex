@@ -2060,8 +2060,6 @@ in terms of the inferences available.
 
 \chapter{Shape Analysis Sentences}\label{chp:logic}
 
-\emph{This chapter is out of date.  A strand-oriented logic is now used.}
-
 For each point-of-view skeleton and its shapes found by {\cpsa}, there
 is a formula in a language of order-sorted first-order logic called
 a \index{shape analysis sentence}\emph{shape analysis sentence}.  The
@@ -2085,71 +2083,50 @@ realized skeletons and its protocol achieves this goal.
 
 Shape analysis sentences are closely related to security goals
 in~\cite{guttman09}, and were motivated by that work.  This material
-was extracted from~\cite[Appendix~B]{ramsdell12}, the paper that
-introduced shape analysis sentences.
+was extracted from~\cite{ramsdell12}, the paper that introduced shape
+analysis sentences.
 
 \section{Security Goals}
 
 The signature for terms extends the one used for the underlying
-message algebra with one new sort \dom{node}, the sort of nodes.  Sort
-\dom{node} has no subsorting relations with any other sort symbol.
+message algebra with \dom{strd}, the sort of strands and sort
+\dom{indx} for natural numbers.  There is a zero constant and a
+successor function for the natural numbers, however, we write those
+terms using the usual numerals.
 
 Security goals make use of protocol specific and protocol independent
-predicates.  For each role $\role_Y(C,N,U)\in P$ and $i<|C|$, there is
-a protocol specific unary position predicate $P[r,i]:\dom{node}$.  For
-each role~$\role_Y(C,N,U)\in P$ and variable~$x:S$ that occurs in~$C$,
-there is a protocol specific binary parameter predicate
-$P[r,x]:\dom{node}\times{}S$.  The protocol independent unary
-predicates are $\mathsf{non}: B$ and $\mathsf{uniq}: B$ for each base
-sort~$B$.  The remaining protocol independent predicates are binary,
-and are $\mathsf{\uniqat}: B\times\dom{node}$,
-$\mathsf{\strprec}:\dom{node}\times\dom{node}$,
-$\mathsf{prec}:\dom{node}\times\dom{node}$, and equality.
+predicates.  For each role $r\in P$, there is a protocol specific
+binary strand length predicate $P[r]:\dom{strd}\times\dom{indx}$.  For
+each role $\role_Y(C,N,U)\in P$ and variable~$x:S$ that occurs in~$C$,
+there is a protocol specific binary strand parameter predicate
+$P[r,x]:\dom{strd}\times{}S$.  The remaining predicates are protocol
+independent.  The unary predicates are $\mathsf{non}: B$ and
+$\mathsf{uniq}: B$ for each base sort~$B$.  The binary predicate is
+equality.  The ternary predicate is $\mathsf{\uniqat}:
+B\times\dom{strd}\times\dom{indx}$.  The quaternary predicate is
+$\mathsf{prec}:\dom{node}\times\dom{indx}\times\dom{node}\times\dom{indx}$.
 
-Soon we define~$\form(k)=(Y,\Phi)$, where~$\Phi$ is $k$'s skeleton
-formula, and~$Y$ is the formula's variable set, but first we define
-the relevant nodes of a skeleton~$N$.  Let $k=\skel_X(P,I,\prec,N,U)$
-and let~$\prec^-$ be the transitive reduction of~$\prec$.  Recall
-that~$\Theta_X$ is the strand space defined by~$I$, see
-Section~\ref{sec:instances}.  The \emph{relevant nodes} of~$k$ are
-$N=N_s\cup N_\prec\cup N_u$ where
-
-\[\renewcommand{\arraystretch}{1.5}
-\begin{array}{r@{{}={}}l}
-  N_s&\{(s,i)\mid s\in\sdom(\Theta_X)\land
-  i=|\Theta_X(s)|-1\}\\
-
-  N_\prec&\{(s,i)\mid
-  \renewcommand{\arraystretch}{1}
-  \begin{array}[t]{@{}l}
-    (s',i')\in\nodes(\Theta_X)\land s\neq s'\\
-    \quad\land((s,i)\prec^- (s',i')\lor(s',i')\prec^-(s,i))\}
-  \end{array}\\
-
-  N_u&\{(s,i)\mid t\in U,(s,i)\in\orig_k(t)\}
-\end{array}\]
-
-For~$\form(k)=(Y,\Phi)$, the variable set~$Y$ is~$X$ augmented with a
-fresh variable of sort~\dom{node} for each node in~$N$, and let $v(n)$ be
-the variable associated with node~$n$.
+Let $k=\skel_X(P,I,\prec,N,U)$ and let~$\prec^-$ be the transitive
+reduction of~$\prec$.  Recall that~$\Theta_X$ is the strand space
+defined by~$I$, see Section~\ref{sec:instances}.  We
+define~$\form(k)=(Y,\Phi)$, where~$\Phi$ is $k$'s skeleton formula,
+and~$Y$ is the formula's variable set.  For~$\form(k)=(Y,\Phi)$, the
+variable set~$Y$ is~$X$ augmented with a fresh variable of
+sort~\dom{strd} for each strand in~$k$.  Let $Z(s)$ be the strand
+variable associated with strand $s\in\sdom(I)$.
 
 The formula~$\Phi$ is a conjunction of atomic formulas composed as
 follows.
 \begin{itemize}
-\item For each $(s,i)\in N$, assert $P[r,i](v(s,i))$,
-  where $I(s)=\cn{i}(r,h,\sigma$).
-\item For each $s\in\sdom(I)$, let
-  $I(s)=\cn{i}(r,h,\sigma)$.  For each variable
-  $x\in\svars(\prefix{r^c}{h})$ and term $t=\sigma(x)$, assert
-  $P[r,x](v(s,h-1),t)$,
-  where $r^c=C$ when $r=\role(C,N,U)$.
-\item For each $(s,i),(s,i')\in N$ such that $i<i'$, assert
-  $\cn{\strprec}(v(s,i),v(s,i'))$.
+\item For each $s\in\sdom(I)$, let $I(s)=\cn{i}(r,h,\sigma)$ and
+  $z=Z(s)$.  Assert $P[r](z,h)$.  Let $r=\role(C,N,U)$.  For each
+  variable $x\in\svars(\prefix{C}{h})$ and term $t=\sigma(x)$, assert
+  $P[r,x](z,t)$.
 \item For each $(s,i)\prec^-(s',i')$ such that $s\neq s'$, assert
-  $\cn{prec}(v(s,i),v(s',i'))$.
+  $\cn{prec}(Z(s),i,Z(s'),i')$.
 \item For each $t\in N$, assert $\cn{non}(t)$.
-\item For each $t\in U$ and node~$n$ such that
-  $n\in\orig_k(t)$, assert $\cn{\uniqat}(t,v(n))$.
+\item For each $t\in U$ and $(s,i)\in\orig_k(t)$, assert
+  $\cn{\uniqat}(t,Z(s),i)$.
 \item For each $t\in U$ without a point of origination in~$k$, assert
   $\cn{uniq}(t)$.
 \end{itemize}
@@ -2169,39 +2146,40 @@ The structure preserving maps~$\delta_i=(\phi_i,\sigma_i)$ are encoded
 in~$\Delta_i$ by a conjunction of equalities.  Map~$\sigma_i$ is coded
 as equalities between a message algebra variable in the domain
 of~$\sigma_i$ and the term it maps to.  Map~$\phi_i$ is coded as
-equalities between node variables in~$\Phi_0$ and node variables
-in~$\Phi_i$.  Let~$v_0$ be the node variables freshly generated
-for~$k_0$, and~$v_i$ be the ones generated for~$k_i$.  The
+equalities between strand variables in~$\Phi_0$ and strand variables
+in~$\Phi_i$.  Let~$Z_0$ be the strand variables freshly generated
+for~$k_0$, and~$Z_i$ be the ones generated for~$k_i$.  The
 strand mapping part of~$\Delta_i$ is
-\[\bigwedge_{(s,j)\in\sdom(v_0)}v_0(s,j)=v_i(\phi_i(s),j).\]
+\[\bigwedge_{s\in\sdom(Z_0)}Z_0(s)=Z_i(\phi_i(s)).\]
 
 \begin{figure}
 $$\begin{array}{l}
-\all{a_0,b_0\colon\srt{A}, s_0\colon\srt{S}, d_0\colon\srt{D}, n_0\colon\srt{N}}(\\
-\quad\resp_1(n_0)\wedge\resp_{a}(n_0,a_0)\wedge
-\resp_{b}(n_0,b_0)\\
+\all{a_0,b_0\colon\srt{A}, s_0\colon\srt{S}, d_0\colon\srt{D},
+z_0\colon\srt{Z}}(\\
+\quad\resp(z_0,2)\wedge\resp_{a}(z_0,a_0)\wedge
+\resp_{b}(z_0,b_0)\\
 \qquad{}\wedge
-\resp_{s}(n_0,s_0)\wedge
-\resp_{d}(n_0,d_0)\\
+\resp_{s}(z_0,s_0)\wedge
+\resp_{d}(z_0,d_0)\\
 \qquad{}\wedge\cn{non}(a_0^{-1})\wedge
 \cn{non}(b_0^{-1})\\
 \quad\supset\\
 \quad\some{a_1,b_1,b_2\colon\srt{A}, s_1\colon\srt{S},
-  d_1\colon\srt{D}, n_1,n_2,n_3\colon
- \srt{N}}(\\
-\qquad n_0=n_1\wedge a_0=a_1\wedge b_0=b_1\wedge s_0=s_1\wedge
+  d_1\colon\srt{D}, z_1,z_2\colon
+ \srt{Z}}(\\
+\qquad z_0=z_1\wedge a_0=a_1\wedge b_0=b_1\wedge s_0=s_1\wedge
 d_0=d_1\\
-\qquad\quad\wedge\resp_1(n_1)\wedge
-\resp_{a}(n_1,a_1)\wedge
-\resp_{b}(n_1,b_1)\\
+\qquad\quad\wedge\resp(z_1,2)\wedge
+\resp_{a}(z_1,a_1)\wedge
+\resp_{b}(z_1,b_1)\\
 \qquad\quad\wedge
-\resp_{s}(n_1,s_1)\wedge
-\resp_{d}(n_1,d_1)\wedge\resp_0(n_2)\\
-\qquad\quad\wedge\init_0(n_3)\wedge\init_a(n_3,a_1)\wedge
-\init_b(n_3,b_2)\wedge
-\init_s(n_3,s_1)\\
-\qquad\quad\wedge\cn{\uniqat}(s_1,n_2)\wedge
-\cn{prec}(n_3,n_2)\wedge\cn{\strprec}(n_2,n_1)\\
+\resp_{s}(z_1,s_1)\wedge
+\resp_{d}(z_1,d_1)\\
+\qquad\quad\wedge\init(z_2,1)\wedge\init_a(z_2,a_1)\wedge
+\init_b(z_2,b_2)\wedge
+\init_s(z_2,s_1)\\
+\qquad\quad\wedge\cn{\uniqat}(s_1,z_2,0)\wedge
+\cn{prec}(z_2,0,z_1,0)\\
 \qquad\quad\wedge\cn{non}(a_1^{-1})\wedge
 \cn{non}(b_1^{-1})))
 \end{array}$$
@@ -2212,43 +2190,44 @@ d_0=d_1\\
 The shape analysis sentence for the second analysis of Blanchet's
 Simple Example Protocol in Section~\ref{sec:blanchet's simple example
   protocol} is displayed in Figure~\ref{fig:blanchet's shape analysis
-  sentence}.  The sort \dom{node} is abbreviated as~\srt{N}, and the
-parameter predicate $P[r,x](z,t)$ is written $r_x(z,t)$ with the
+  sentence}.  The sort \dom{strd} is abbreviated as~\srt{Z}, the
+strand length predicate $P[r](z,h)$ is written $r(z,h)$, and the
+strand parameter predicate $P[r,x](z,t)$ is written $r_x(z,t)$ with the
 protocol left implicit.
 
 \paragraph{Semantics of Skeleton Formulas.}
 
-Let $k=\skel_X(P,I,\prec,N,U)$.  The universe of
-discourse is $\alg{D}=(\nat\times\nat)\cup\alga_X$.  When
-formula~$\Phi$ is satisfied in skeleton~$k$ with variable
-assignment $\alpha\colon Y\to \alg{D}$, we write
-$k,\alpha\models\Phi$.  We write~$\bar\alpha$ when~$\alpha$ is
+Let $k=\skel_X(P,I,\prec,N,U)$.  The universe of discourse is
+$\alg{D}=\nat\cup\alga_X$.  When formula~$\Phi$ is satisfied in
+skeleton~$k$ with variable assignment $\alpha\colon Y\to \alg{D}$, we
+write $k,\alpha\models\Phi$.  We write~$\bar\alpha$ when~$\alpha$ is
 extended to terms in the obvious way.  When sentence~$\Gamma$ is
 satisfied in skeleton~$k$, we write $k\models\Gamma$.
 
 \begin{itemize}
-\item $k,\alpha\models P[r,i](y)$ iff $\alpha(y)\in\nodes(\Theta_X)$,
-  $\alpha(y)=(s,i)$, and for some~$\sigma$,
-  \[\prefix{\Theta_X(s)}{i+1}=\sigma\circ\prefix{r^c}{i+1}.\]
-  Recall $r^c=C$ when $r=\role(C,N,U)$.
+\item $k,\alpha\models P[r](y, z)$ iff $\alpha(y)\in\sdom(\Theta_X)$,
+  $\alpha(z)\in\nat$,
+  $\alpha(y)=s$, $\alpha(z)=h$, and for some~$\sigma$,
+  \[\prefix{\Theta_X(s)}{h}=\sigma\circ\prefix{C}{h}\]
+  when $r=\role(C,N,U)$ and $1\leq h\leq|C|$.
 
 \item $k,\alpha\models P[r,x](y,t)$ iff
-  $\alpha(y)\in\nodes(\Theta_X)$, $\bar\alpha(t)\in\alga_X$, and with
-  $\alpha(y)=(s, i)$ and for some~$\sigma$ with $\sigma(x)=\bar\alpha(t)$,
-  \[\prefix{\Theta_X(s)}{i+1}=\sigma\circ\prefix{r^c}{i+1}.\]
+  $\alpha(y)\in\sdom(\Theta_X)$, $\bar\alpha(t)\in\alga_X$, and with
+  $\alpha(y)=s$ and for some~$\sigma$ with $\sigma(x)=\bar\alpha(t)$,
+  \[\prefix{\Theta_X(s)}{i+1}=\sigma\circ\prefix{C}{i+1}\]
+  when $r=\role(C,N,U)$ and $i$ is the position at which $x$ first
+  occurs in $C$.
 \end{itemize}
 
 The interpretation of the protocol independent predicates is
 straightforward.
 \begin{itemize}
-\item $k,\alpha\models\cn{prec}(y,z)$ iff
-  $\alpha(y)\prec\alpha(z)$.
-\item $k,\alpha\models\cn{\strprec}(y,z)$ iff $\alpha(y)\prec\alpha(z)$,
-  $\alpha(y)=(s,i)$, and $\alpha(z)=(s,i')$.
+\item $k,\alpha\models\cn{prec}(w,x,y,z)$ iff
+  $(\alpha(w),\alpha(x))\prec(\alpha(y),\alpha(z))$.
 \item $k,\alpha\models\cn{non}(t)$ iff $\bar\alpha(t)\in\nu$.
 \item $k,\alpha\models\cn{uniq}(t)$ iff $\bar\alpha(t)\in\upsilon$.
-\item $k,\alpha\models\cn{\uniqat}(t,y)$ iff $\bar\alpha(t)\in\upsilon$ and
-  $\alpha(y)\in\orig_k(\bar\alpha(t))$.
+\item $k,\alpha\models\cn{\uniqat}(t,y,z)$ iff $\bar\alpha(t)\in\upsilon$ and
+  $(\alpha(y),\alpha(z)),\in\orig_k(\bar\alpha(t))$.
 \item $k,\alpha\models y=z$ iff $\bar\alpha(y)=\bar\alpha(z)$.
 \end{itemize}
 
@@ -2256,13 +2235,6 @@ Let~$\Sigma$ be a shape analysis sentence and~$\Psi$ be a security
 goal.  If $\Sigma\supset\Psi$ is a theorem in order-sorted first-order
 logic, then~$\Psi$ is satisfied in all realized skeletons and its
 protocol achieves this goal.
-
-Since $\prec$ is transitive, transitivity of \fn{prec} can be used to
-prove a protocol achieves a goal.  That is,
-\[\cn{prec}(x,y)
-\land\cn{prec}(y,z)\supset
-\cn{prec}(x,z).\]
-Furthermore, $\cn{\strprec}(x,y)\supset\cn{prec}(x,y)$.
 
 \bibliography{cpsa}
 \bibliographystyle{plain}

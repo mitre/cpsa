@@ -1,3 +1,8 @@
+2017-01-22  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/cpsaspec.tex (chapter{Shape Analysis Sentence}): Update
+	chapter for the strand-oriented logic language.
+
 2017-01-19  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Characteristic.hs (strdRoleLength): Allowed two role
