@@ -1,3 +1,10 @@
+2017-01-27  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/cpsagoals.tex: Updated document for the strand-oriented
+	logic language.
+
+	* cpsa.cabal (Version): Tagged as version 4.0.0
+
 2017-01-22  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* doc/cpsaspec.tex (chapter{Shape Analysis Sentence}): Update
