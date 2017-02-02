@@ -955,6 +955,23 @@ loadInvk _ vars [L _ [S _ pubk, Q _ c, S pos s]]
     do
       t <- loadLookupName pos vars s
       return $ F Akey [F Invk [F Pubk [C c, I $ varId t]]]
+loadInvk _ vars [L _ [S _ privk, S pos s]]
+  | privk == "privk" =
+    do
+      t <- loadLookupName pos vars s
+      return $ F Akey [F Pubk [I $ varId t]]
+loadInvk _ vars [L _ [S _ privk, Q _ c, S pos s]]
+  | privk == "privk" =
+    do
+      t <- loadLookupName pos vars s
+      return $ F Akey [F Pubk [C c, I $ varId t]]
+loadInvk _ vars [L _ [S _ invk, t]]
+  | invk == "invk" =
+    do
+      a <- loadTerm vars t
+      case a of
+        F Akey _ -> return a
+        _ -> fail (shows (annotation t) "Expecting an akey")
 loadInvk pos _ _ = fail (shows pos "Malformed invk")
 
 loadLtk :: Monad m => LoadFunction m

@@ -1,3 +1,8 @@
+2017-02-02  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Algebra.hs (loadInvk): Added support for reading (invk
+	(privk ...)) and (invk (invk ...)).
+
 2017-01-27  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* doc/cpsagoals.tex: Updated document for the strand-oriented
