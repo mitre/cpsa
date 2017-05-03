@@ -1133,14 +1133,11 @@ there exists a strand $s'$ such that
 \begin{enumerate}
 \item strands $s$ and $s'$ are not in the image of~$k_0$'s
   strand map from the point-of-view skeleton;
-\item $|\Theta_{k_0}(s)|=|\Theta_{k_0}(s')|$;
-\item there is a matcher~$\sigma$ such that
-  $\comp{\sigma}{\Theta_{k_0}(s)}\equiv \Theta_{k_0}(s')$;
-\item for all variables in $k_0$ with~$s$ removed,
-  matcher~$\sigma$ is the identity;
-\item matcher~$\sigma$ is a bijection, also called a renaming;
-\item $k_0\reduction{\ops{S}_\sigma}k\reduction{\ops{C}_{s,s'}}k_1$;
-\item $k_0\reduction{\ops{S}_\sigma}k\reduction{\ops{C}_{s',s}}k_2$;
+\item $\Theta_{k_0}(s)$ is isomorphic to $\Theta_{k_0}(s')$;
+\item let $k_1$ be $k_0$ with strand~$s$ removed, along with
+  extraneous origination assumptions; 
+\item let $k_2$ be $k_0$ with strand~$s'$ removed, along with
+  extraneous origination assumptions;
 \item $k_1$ is isomorphic to $k_2$.
 \end{enumerate}
 

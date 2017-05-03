@@ -58,7 +58,7 @@ zt _ y = y
 zl :: Show a => [a] -> [a]
 zl a = z (length a) a
 
-zi :: Algebra t p g s e c => Instance t e -> String
+zi :: Instance -> String
 zi inst =
     show (map f e)
     where
@@ -69,7 +69,7 @@ zi inst =
                   displayTerm (context range) t)
       context ts = addToContext emptyContext ts
 
-zv :: Algebra t p g s e c => Preskel t g s e -> String
+zv :: Preskel -> String
 zv k =
   unsafePerformIO $ do
     y <- try $ verbosePreskelWellFormed k
@@ -718,22 +718,24 @@ isomorphic g g' =
 
 -- Extend a permutation while extending a substitution
 -- Extend by matching later strands first
-permutations :: Gist -> Gist -> [((Gen, Env), [Sid])]
+permutations :: Gist -> Gist -> [((Gen, Env), (Gen, Env), [Sid])]
 permutations g g' =
     map rev $ perms (ggen g', emptyEnv)
+                    (ggen g, emptyEnv)
                     (reverse $ gtraces g)
                     (reverse $ nats $ ntraces g)
     where
-      perms env [] [] = [(env, [])]
-      perms env ((h, c):hcs) xs =
-          [ (env'', x:ys) |
+      perms env renv [] [] = [(env, renv, [])]
+      perms env renv ((h, c):hcs) xs =
+          [ (env'', renv'', x:ys) |
             x <- xs,
             let (h', c') = gtraces g' !! x,
             h == h',
             env' <- jibeTraces c c' env,
-            (env'', ys) <- perms env' hcs (L.delete x xs) ]
-      perms _ _ _ = error "Strand.permutations: lists not same length"
-      rev (env, xs) = (env, reverse xs)
+            renv' <- jibeTraces c' c renv,
+            (env'', renv'', ys) <- perms env' renv' hcs (L.delete x xs) ]
+      perms _ _ _ _ = error "Strand.permutations: lists not same length"
+      rev (env, renv, xs) = (env, renv, reverse xs)
 
 -- Length of matched traces must agree.
 jibeTraces :: Trace -> Trace -> (Gen, Env) -> [(Gen, Env)]
@@ -773,9 +775,10 @@ permutations n =
       interleave x (y:ys) = (x:y:ys) : map (y:) (interleave x ys)
 -}
 
-tryPerm :: Gist -> Gist -> ((Gen, Env), [Sid]) -> Bool
-tryPerm g g' (env, perm) =
+tryPerm :: Gist -> Gist -> ((Gen, Env), (Gen, Env), [Sid]) -> Bool
+tryPerm g g' (env, renv, perm) =
     checkOrigs g g' env &&
+    checkOrigs g' g renv &&
     containsMapped (permutePair perm) (gorderings g') (gorderings g)
 
 -- containsMapped f xs ys is true when list xs contains each element
@@ -796,8 +799,7 @@ checkOrigs g g' env =
          [ env''' |
            env' <- checkOrig env (gnon g) (gnon g'),
            env'' <- checkOrig env' (gpnon g) (gpnon g'),
-           env''' <- checkOrig env'' (gunique g) (gunique g'),
-           matchRenaming env''' ])
+           env''' <- checkOrig env'' (gunique g) (gunique g')])
 
 -- Try all permutations as done above
 checkOrig :: (Gen, Env) -> [Term] -> [Term] -> [(Gen, Env)]
@@ -932,7 +934,7 @@ updatePriority :: [Sid] -> [(Node, Int)] -> [(Node, Int)]
 updatePriority mapping kpriority =
     map (\(n, i) -> (permuteNode mapping n, i)) kpriority
 
--- Purge a strand.  Used by thinning.
+-- Purge strand s.  Used by thinning.  Expects s and s' to be isomorphic.
 purge :: PRS -> Sid -> Sid -> [PRS]
 purge (k0, k, n, phi, hsubst) s s' =
     do
@@ -953,7 +955,7 @@ purge (k0, k, n, phi, hsubst) s s' =
               (operation k)
               (updateProb perm (prob k))
               (pov k)
-      k'' <- wellFormedPreskel k'
+      k'' <- wellFormedPreskel $ soothPreskel k'
       return (k0, k'', permuteNode perm n, map (perm !!) phi, hsubst)
 
 -- Forward orderings from strand s
@@ -967,6 +969,26 @@ forward s orderings =
                        s3 == s0 && i0 >= i3]
           | s1 == s = []        -- Dump edges to strand s
           | otherwise = [p]     -- Pass thru other edges
+
+-- Remove bad origination assumptions
+soothPreskel :: Preskel -> Preskel
+soothPreskel k =
+  newPreskel
+  (gen k)
+  (shared k)
+  (insts k)
+  (orderings k)
+  (filter varCheck $ knon k)
+  (filter varCheck $ kpnon k)
+  (filter uniqueCheck $ kunique k)
+  (kpriority k)
+  (operation k)
+  (prob k)
+  (pov k)
+  where
+    terms = kterms k
+    varCheck t = varSubset [t] terms
+    uniqueCheck t = any (carriedBy t) terms
 
 -- This is the starting point of the Preskeleton Reduction System
 skeletonize :: Bool -> PRS -> [PRS]
@@ -1057,21 +1079,12 @@ matchTraces (Out t : c) (Out t' : c') env =
       matchTraces c c' e
 matchTraces _ _ _ = []
 
--- Make sure a substitution does not take a unique out of the set of
--- uniques, and the same for nons and pnons.
-origCheck :: Preskel -> Env -> Bool
-origCheck k env =
-    check (kunique k) && check (knon k) && check (kpnon k)
-    where
-      check orig =
-          all (pred orig) orig
-      pred set item =
-          elem (instantiate env item) set
-
 -- Thinning
 
 thin :: PRS -> [PRS]
 thin prs =
+  do
+    prs <- reduce prs
     thinStrands prs [] $ reverse ss
     where                       -- Remove strands in image of POV
       ss = filter (\s -> notElem s (prob $ skel prs)) (strandids $ skel prs)
@@ -1085,7 +1098,7 @@ thin prs =
 thinStrands :: PRS -> [(Sid, Sid)] -> [Sid] -> [PRS]
 thinStrands prs ps [] =         -- All strands analyzied
     case multiPairs ps of       -- Generate multipairs
-      [] -> reduce prs
+      [] -> [prs]
       mps -> thinMany prs mps   -- Try multistrand thinning
 thinStrands prs ps (s:ss) =
   thinStrandPairs prs ps s ss ss
@@ -1114,41 +1127,23 @@ thinStrandPairs prs ps s ss (s':ss') =
 thinStrand :: PRS -> Sid -> Sid -> Maybe [PRS]
 thinStrand prs s s' =
     let k = skel prs in
-    case thinStrandMatch k s s' (gen k, emptyEnv) of
-      [] -> Nothing
-      ges ->
-          Just $ do
-            e <- ges
-            (gen, env) <- thinStrandCheck k s e
-            [ prs' | prs <- ksubst prs (gen, substitution env),
-                     prs <- reduce prs,
-                     prs' <- purge prs s s',
-                     prs'' <- purge prs s' s,
-                     isomorphic (gist (skel prs')) (gist (skel prs''))]
+    case thinStrandMatch k s s' of
+      False -> Nothing
+      True ->
+        Just [ prs' | prs' <- purge prs s s',
+                      prs'' <- purge prs s' s,
+                      isomorphic (gist (skel prs')) (gist (skel prs''))]
 
 -- See if two strands match.
-thinStrandMatch :: Preskel -> Sid -> Sid -> (Gen, Env) -> [(Gen, Env)]
-thinStrandMatch k s s' env =
-  do
-    let i = strandInst k s
-    let i' = strandInst k s'
-    case height i /= height i' of
-      True -> fail ""
-      False -> return ()
-    matchTraces (trace i) (trace i') env
-
--- Do the identity, renaming, and origination check.
-thinStrandCheck :: Preskel -> Sid -> (Gen, Env) -> [(Gen, Env)]
-thinStrandCheck k s env =
-  do
-    let ts = concatMap (tterms . trace) $ deleteNth s $ insts k
-    (gen', env') <- identityEnvFor env ts
-    case matchRenaming (gen', env') of
-      True -> return ()
-      False -> fail ""
-    case origCheck k env' of
-      True -> return (gen', env')
-      False -> fail ""
+thinStrandMatch :: Preskel -> Sid -> Sid -> Bool
+thinStrandMatch k s s' =
+  height i == height i'
+  && not (null $ matchTraces (trace i) (trace i') env)
+  && not (null $ matchTraces (trace i') (trace i) env)
+  where
+    i = strandInst k s
+    i' = strandInst k s'
+    env = (gen k, emptyEnv)
 
 -- Multistrand thinning
 
@@ -1188,37 +1183,9 @@ thinMany prs (ps:mps) =
 
 thinManyStrands :: PRS -> [(Sid, Sid)] -> [PRS]
 thinManyStrands prs ps =
-    do
-      let k = skel prs
-      (gen, env) <- thinManyMatch k ps
-      [ prs' | prs <- ksubst prs (gen, substitution env),
-               prs <- reduce prs,
-               prs' <- compressMany prs ps,
-               prs'' <- compressMany prs (swap ps),
-               isomorphic (gist (skel prs')) (gist (skel prs''))]
-
-thinManyMatch :: Preskel -> [(Sid, Sid)] -> [(Gen, Env)]
-thinManyMatch k ps =
-    do
-      let f e (s, s') = thinStrandMatch k s s' e
-      env <- foldM f (gen k, emptyEnv) ps
-      let ss = concatMap (\(s, s') -> [s, s']) ps
-      let ts = concatMap (tterms . trace) $ deleteMany ss $ insts k
-      (gen', env') <- identityEnvFor env ts
-      case matchRenaming (gen', env') of
-        True -> return ()
-        False -> fail ""
-      case origCheck k env' of
-        True -> return (gen', env')
-        False -> fail ""
-
-deleteMany :: [Int] -> [a] -> [a]
-deleteMany nums xs =
-    loop 0 xs
-    where
-      loop _ [] = []
-      loop n (x:xs) | elem n nums = loop (n + 1) xs
-                    | otherwise = x : loop (n + 1) xs
+  [ prs' | prs' <- compressMany prs ps,
+           prs'' <- compressMany prs (swap ps),
+           isomorphic (gist (skel prs')) (gist (skel prs''))]
 
 compressMany :: PRS -> [(Sid, Sid)] -> [PRS]
 compressMany prs [] = [prs]

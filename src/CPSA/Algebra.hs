@@ -100,10 +100,8 @@ module CPSA.Algebra (name,
     emptyEnv,
     instantiate,
     match,
-    identityEnvFor,
     substitution,
     reify,
-    matchRenaming,
     strdMatch,
     strdLookup,
 
@@ -746,33 +744,6 @@ matchLists (t : u) (t' : u') r =
     maybe Nothing (matchLists u u') (matchI t t' r)
 matchLists _ _ _ = Nothing
 
--- Does every varible in ts not occur in the domain of e?
--- Trivial bindings in e are ignored.
-
-identityEnvFor :: (Gen, Env) -> [Term] -> [(Gen, Env)]
-identityEnvFor (g, e) ts =
-  if identityEnvForI e ts then
-    [(g, e)]
-  else
-    []
-
-identityEnvForI :: Env -> [Term] -> Bool
-identityEnvForI (Env r) ts =
-    all (allId $ flip S.notMember dom) ts
-    where
-      dom = M.foldrWithKey f S.empty r -- The domain of r
-      f x (I y) dom
-          | x == y = dom        -- Ignore trivial bindings
-          | otherwise = S.insert x dom
-      f x _ dom = S.insert x dom
-
-allId :: (Id -> Bool) -> Term -> Bool
-allId f (I x) = f x
-allId _ (C _) = True
-allId f (F _ u) = all (allId f) u
-allId f (D x) = f x
-allId _ (Z _) = True
-
 -- Cast an environment into a substitution by filtering out trivial
 -- bindings.
 
@@ -804,20 +775,6 @@ reify domain (Env env) =
       loop (D x : _) (y, t)
           | x == y = (D x, t)
       loop (_ : domain) pair = loop domain pair
-
--- Ensure the range of an environment contains only variables and that
--- the environment is injective.
--- Bug fix: Allow (invk x) in the range too.
-matchRenaming :: (Gen, Env) -> Bool
-matchRenaming (_, Env e) =
-    loop S.empty $ M.elems e
-    where
-      loop _ [] = True
-      loop s (I x:e) =
-          S.notMember x s && loop (S.insert x s) e
-      loop s (F Invk [I x]:e) =
-          not (S.member x s) && loop (S.insert x s) e
-      loop _ _ = False
 
 strdMatch ::  Term -> Int -> (Gen, Env) -> [(Gen, Env)]
 strdMatch t t' (g, e) =

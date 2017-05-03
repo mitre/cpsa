@@ -1,3 +1,11 @@
+2017-05-03  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Strand.hs (soothPreskel): Modified isomorphism check
+	and thinning so that it no longer uses matchRenaming and
+	identityEnvFor, which have been removed from the algebra module.
+	The new version of thinning follows the definition of thinning
+	more closely, and the spec has been updated to reflect the change.
+
 2017-02-02  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Algebra.hs (loadInvk): Added support for reading (invk
