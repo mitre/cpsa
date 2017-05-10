@@ -720,11 +720,12 @@ isomorphic g g' =
 -- Extend by matching later strands first
 permutations :: Gist -> Gist -> [((Gen, Env), (Gen, Env), [Sid])]
 permutations g g' =
-    map rev $ perms (ggen g', emptyEnv)
-                    (ggen g, emptyEnv)
+    map rev $ perms (gg, emptyEnv)
+                    (gg, emptyEnv)
                     (reverse $ gtraces g)
                     (reverse $ nats $ ntraces g)
     where
+      gg = gmerge (ggen g) (ggen g')
       perms env renv [] [] = [(env, renv, [])]
       perms env renv ((h, c):hcs) xs =
           [ (env'', renv'', x:ys) |
@@ -955,7 +956,7 @@ purge (k0, k, n, phi, hsubst) s s' =
               (operation k)
               (updateProb perm (prob k))
               (pov k)
-      k'' <- wellFormedPreskel $ soothPreskel k'
+      k'' <- wellFormedPreskel $ soothePreskel k'
       return (k0, k'', permuteNode perm n, map (perm !!) phi, hsubst)
 
 -- Forward orderings from strand s
@@ -971,8 +972,8 @@ forward s orderings =
           | otherwise = [p]     -- Pass thru other edges
 
 -- Remove bad origination assumptions
-soothPreskel :: Preskel -> Preskel
-soothPreskel k =
+soothePreskel :: Preskel -> Preskel
+soothePreskel k =
   newPreskel
   (gen k)
   (shared k)
@@ -1427,7 +1428,9 @@ homomorphism k k' mapping =
 
 findReplacement :: Preskel -> Preskel -> [Sid] -> [(Gen, Env)]
 findReplacement k k' mapping =
-    foldM (matchStrand k k' mapping) (gen k', emptyEnv) (strandids k)
+    foldM (matchStrand k k' mapping) (gg, emptyEnv) (strandids k)
+    where
+      gg = gmerge (gen k) (gen k')
 
 matchStrand :: Preskel -> Preskel -> [Sid] -> (Gen, Env) -> Sid -> [(Gen, Env)]
 matchStrand k k' mapping env s =

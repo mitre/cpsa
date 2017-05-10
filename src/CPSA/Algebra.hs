@@ -64,6 +64,7 @@ module CPSA.Algebra (name,
 
     Gen,
     origin,
+    gmerge,
     clone,
     loadVars,
 
@@ -148,8 +149,11 @@ newtype Gen = Gen (Integer) deriving Show
 origin :: Gen
 origin = Gen (0)
 
+gmerge :: Gen -> Gen -> Gen
+gmerge (Gen i) (Gen j) = Gen $ max i j
+
 freshId :: Gen -> String -> (Gen, Id)
-freshId (Gen (i)) name = (Gen (i + 1), Id (i, name))
+freshId (Gen i) name = (Gen (i + 1), Id (i, name))
 
 cloneId :: Gen -> Id -> (Gen, Id)
 cloneId gen x = freshId gen (idName x)
@@ -300,6 +304,16 @@ doubleTermWellFormed xts t0 t1 =
     do
       xts <- termWellFormed xts t0
       termWellFormed xts t1
+
+{-
+-- Is there an identifier incompatible with gen?
+badGen :: Gen -> Term -> Bool
+badGen (Gen g) t =
+  foldVars f False t
+  where
+    f b t = b || i >= g
+      where Id (i, _) = varId t
+--}
 
 -- Is the sort of the term a base sort?
 isAtom :: Term -> Bool
@@ -675,7 +689,16 @@ unifyI t t' s =
 
 unify :: Term -> Term -> (Gen, Subst) -> [(Gen, Subst)]
 unify t t' (g, s) =
-       maybe [] (\s -> [(g, s)]) $ unifyI t t' s
+  maybe [] (\s -> [(g, s)]) $ unifyI t t' s
+
+-- unify :: Term -> Term -> (Gen, Subst) -> [(Gen, Subst)]
+-- unify t t' (g, s)
+--   | badGen g t =
+--       error ("unify: " ++ show g ++ ": " ++ show t)
+--   | badGen g t' =
+--       error ("unify: " ++ show g ++ ": " ++ show t')
+--   | otherwise =
+--       maybe [] (\s -> [(g, s)]) $ unifyI t t' s
 
 -- Apply the chasing version of substitution to the range of s.
 
@@ -718,6 +741,15 @@ instantiate (Env r) t = idSubst r t
 match ::  Term -> Term -> (Gen, Env) -> [(Gen, Env)]
 match t t' (g, e) =
   maybe [] (\e -> [(g, e)]) $ matchI t t' e
+
+-- match ::  Term -> Term -> (Gen, Env) -> [(Gen, Env)]
+-- match x y e@(g, e)
+--   | badGen g x =
+--       error ("match: " ++ show g ++ ": " ++ show x)
+--   | badGen g y =
+--       error ("match: " ++ show g ++ ": " ++ show y)
+--   | otherwise =
+--       maybe [] (\e -> [(g, e)]) $ matchI t t' e
 
 -- The matcher has the property that when pattern P and term T match
 -- then instantiate (match P T emptyEnv) P = T.

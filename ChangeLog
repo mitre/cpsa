@@ -1,3 +1,9 @@
+2017-05-10  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Strand.hs (findReplacement, permutations): Merge
+	generators so that no variable in a term has an identifier that is
+	greater than or equal to the generator.
+
 2017-05-03  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Strand.hs (soothPreskel): Modified isomorphism check
