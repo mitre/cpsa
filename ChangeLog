@@ -1,3 +1,8 @@
+2017-05-16  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Algebra.hs (displaySubst): Removed erroneous
+	substitution to fix substitution displaying.
+
 2017-05-10  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Strand.hs (findReplacement, permutations): Merge

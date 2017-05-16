@@ -1087,10 +1087,10 @@ displayEnv ctx ctx' (Env r) =
 -- variables that occur in s might not be in c.  Enough sort
 -- inference is performed so as to allow the extension of the context.
 displaySubst :: Context -> Subst -> [SExpr ()]
-displaySubst ctx s@(Subst r) =
+displaySubst ctx (Subst r) =
     map (\(x, t) -> L () [displayTerm ctx' x, displayTerm ctx' t]) r'
     where
-      r' = map (\(x, t) -> (I x, inferSort (substitute s t))) $ M.assocs r
+      r' = map (\(x, t) -> (I x, inferSort t)) $ M.assocs r
       ctx' = foldl (\ctx (x, t) -> addToContext ctx [x, t]) ctx r'
 
 inferSort :: Term -> Term
