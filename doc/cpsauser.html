@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv="content-type"
   content="application/xhtml+xml; charset=UTF-8" />
-  <title>CPSA 2.5 User Guide</title>
+  <title>CPSA 4.0 User Guide</title>
   <meta name="generator" content="Amaya 9.54, see http://www.w3.org/Amaya/" />
   <style type="text/css">
     h1 { text-align: center }
@@ -12,7 +12,7 @@
 </head>
 
 <body>
-<h1>CPSA 2.5 User Guide</h1>
+<h1>CPSA 4.0 User Guide</h1>
 
 <p>The Cryptographic Protocol Shapes Analyzer (CPSA) attempts to enumerate all
 essentially different executions possible for a cryptographic protocol. We call
@@ -41,16 +41,12 @@ href="http://www.w3.org/Graphics/SVG/">SVG</a>). The <a
 href="#cpsashapes"><code>cpsashapes</code></a> program removes intermediate results
 from analyzer runs making the shapes easy to identify.
 The <a
-href="#cpsafiff"><code>cpsadiff</code></a> program compares CPSA output
+href="#cpsadiff"><code>cpsadiff</code></a> program compares CPSA output
   files S-expression by S-expression, and prints the first skeleton
   that differs.
 The <a href="#cpsasas"><code>cpsasas</code></a> program logical
   formula that can be used to ensure security goals are achieved.
-The <a
-href="#cpsaannotations"><code>cpsaannotations</code></a> program uses protocol
-annotations to annotate shapes and generate protocol soundness obligations. The
-<a href="#cpsaparameters"><code>cpsaparameters</code></a> program detects some
-specification errors by performing a data flow analysis on protocol roles. The
+The
 <a href="#cpsapp"><code>cpsapp</code></a> program pretty prints its
 input using a CPSA specific algorithm.  It also translates
 S-Expressions into JavaScript Object Notation
@@ -561,9 +557,10 @@ Usage: cpsashapes [OPTIONS] [FILE]
 
 <p>The <code>cpsasas</code> program extracts a formula in the language
   of order-sorted first-order logic for each problem and its shapes
-  from a CPSA run. The formula is called a shape analysis
-  sentence. The formula is satisfied in all realized skeletons when
-  CPSA finds all the shapes for the problem.</p>
+  from a CPSA run. The formula is called a
+  <a href="https://arxiv.org/abs/1204.0480">shape analysis
+  sentence</a>. The formula is satisfied in all realized skeletons
+  when CPSA finds all the shapes for the problem.</p>
 
 <h3>Usage</h3>
 
@@ -577,100 +574,6 @@ Usage: cpsasas [OPTIONS] [FILE]
   -h         --help            show help message
   -v         --version         show version number</pre>
 </blockquote>
-
-<h2 id="cpsaannotations">Annotations</h2>
-
-<p>The <code>cpsaannotations</code> program uses protocol annotations to annotate
-shapes and generate protocol soundness obligations.</p>
-
-<h3>Usage</h3>
-
-<blockquote>
-  <pre>$ cpsaannotations -h
-Usage: cpsashapes [OPTIONS] [FILE]
-  -o FILE    --output=FILE     output FILE
-  -m INT     --margin=INT      set output margin (default 72)
-  -a STRING  --algebra=STRING  algebra (default basic)
-  -s         --show-algebras   show algebras
-  -h         --help            show help message
-  -v         --version         show version number</pre>
-</blockquote>
-
-<h3>Syntax</h3>
-
-<p>To be analyzed, each role in a protocol must include an <code>annotations</code>
-form. The <code>TERM</code> is a role atom that when instantiated, is the name of a
-principal in the shape. What follows is sequences of pairs. The integer gives
-the position of the event in the trace that is annotated by the formula.
-Zero-based indexing is used.</p>
-
-<p>The language of formulas is order-sorted first-order logic extended
-with a modal says operator. Formula terms may include function symbols
-that are not part of a protocol's message signature.</p>
-
-<blockquote>
-  <pre>ANNOTATION ::= (annotations TERM (INT FORMULA)*)
-FORMULA    ::= (ID FTERM*) | (not FORMULA)
-            |  (and FORMULA*) | (or FORMULA*)
-            |  (implies FORMULA* FORMULA)
-            |  (iff FORMULA FORMULA)
-            |  (says TERM FORMULA)
-            |  (forall (DECL*) FORMULA)
-	    |  (exists (DECL*) FORMULA)
-FTERM      ::= TERM | (ID FTERM*)</pre>
-</blockquote>
-
-<p>Use <code>(and)</code> for truth and <code>(or)</code> for falsehood.</p>
-
-<h3>Output</h3>
-
-<p>On output, each shape contains an <code>annotations</code> form and a
-<code>obligations</code> form. The annotations form presents every non-trivial
-formula derived from the protocol. The obligations form presents every
-non-trivial soundness obligation.</p>
-
-<h2 id="cpsaparameters">Parameter Analysis</h2>
-
-<p>The parameters of a role are the atoms that are not acquired by the role's
-trace, but must be available before a complete execution of the trace is
-possible. This program computes sets of sets of parameters consistent with the
-role. If the expected parameter set is not a member, a specification error is
-indicated.</p>
-
-<h3>Usage</h3>
-
-<blockquote>
-  <pre>$ cpsaparameters -h
-Usage: cpsaparameters [OPTIONS] [FILE]
-  -o FILE    --output=FILE     output FILE
-  -m INT     --margin=INT      set output margin (default 72)
-  -a STRING  --algebra=STRING  algebra (default basic)
-  -s         --show-algebras   show algebras
-  -h         --help            show help message
-  -v         --version         show version number</pre>
-</blockquote>
-
-<h3>Output</h3>
-
-<p>On output, each role contains a <code>parameters</code> form with a list of sets
-of atoms.</p>
-
-<blockquote>
-  <pre>(defrole resp (vars (b a name) (n2 n1 text))
-  (trace
-    (recv (enc n1 a (pubk b)))
-    (send (enc n1 n2 (pubk a)))
-    (recv (enc n2 (pubk b))))
-  (parameters
-    (n2 n1 a (pubk b) (pubk a))
-    (n2 (privk b) (pubk a))))</pre>
-</blockquote>
-
-<p>In this example, the second parameter set is what is expected for a
-responder role in this version of the Needham-Schroeder protocol.</p>
-
-<p>Macro expansion is not performed by this program. Use the <code>-e</code> option
-with <code>cpsa</code> to preprocess input that contains macro definitions.</p>
 
 <h2 id="cpsapp">Pretty Printing</h2>
 
@@ -725,7 +628,7 @@ the <code>comment</code> symbol. </p>
 
 <hr />
 
-<p>Copyright (c) 2009 The MITRE Corporation. Permission to copy without fee all
+<p>Copyright (c) 2017 The MITRE Corporation. Permission to copy without fee all
 or part of this material is granted provided that the copies are not made or
 distributed for direct commercial advantage, this copyright notice and the
 title of the publication and its date appear, and notice in given that copying

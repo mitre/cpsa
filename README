@@ -1,4 +1,32 @@
-CPSA: A Crptographic Protocol Shapes Analyzer
+CPSA4: Crptographic Protocol Shapes Analyzer Version 4
+
+The Cryptographic Protocol Shapes Analyzer (CPSA) attempts to
+enumerate all essentially different executions possible for a
+cryptographic protocol. We call them the shapes of the
+protocol. Naturally occurring protocols have only finitely many,
+indeed very few shapes. Authentication and secrecy properties are easy
+to determine from them, as are attacks and anomalies.
+
+For each input problem, the CPSA program is given some initial
+behavior, and it discovers what shapes are compatible with
+it. Normally, the initial behavior is from the point of view of one
+participant. The analysis reveals what the other participants must
+have done, given the participant's view. The search is based on a
+high-level algorithm that was claimed to be complete, i.e. every shape
+can in fact be found in a finite number of steps. Further theoretical
+work showed classes of executions that are not found by the algorithm,
+however it also showed that every omitted execution requires an
+unnatural interpretation of a protocol's roles.  Hence the algorithm
+is complete relative to natural role semantics.
+
+CPSA4 is based on a refactoring of CPSA2.  It is destinct from CPSA2
+and CPSA3 in that it uses a different security goal language, the
+strand-oriented language described in "Deducing Security Goals From
+Shape Analysis Sentences" <https://arxiv.org/abs/1204.0480>.  The size
+of the formulas expressed in the strand-oriented language is typically
+smaller than the ones produced using the previous language, an
+important property when the formulas are used to interact with theorem
+provers and proof assistants.
 
 This program has been built and tested using Haskell Platform.
 It is available from <http://haskell.org> or from an operating
@@ -14,15 +42,15 @@ $ make
 $ make install
 
 : To analyze a protocol you have put in prob.scm type:
-$ cpsa -o prob.txt prob.scm
-$ cpsagraph -o prob.xhtml prob.txt
+$ cpsa4 -o prob.txt prob.scm
+$ cpsa4graph -o prob.xhtml prob.txt
 $ firefox -remote "openFile(`pwd`/prob.xhtml)"
 
 : Documentation and samples are in the directory given by
-$ cpsa -h
+$ cpsa4 -h
 
 : To view the user guide:
-$ firefox -remote "openFile($HOME/share/cpsa-X.Y.Z/doc/cpsauser.html)"
+$ firefox -remote "openFile($HOME/share/cpsa4-X.Y.Z/doc/cpsauser.html)"
 : where X.Y.Z is the CPSA version number.
 
 QUICK START (Mac)
@@ -32,15 +60,15 @@ $ make
 $ make install
 
 : To analyze a protocol you have put in prob.scm type:
-$ cpsa -o prob.txt prob.scm
-$ cpsagraph -o prob.xhtml prob.txt
+$ cpsa4 -o prob.txt prob.scm
+$ cpsa4graph -o prob.xhtml prob.txt
 $ open prob.xhtml
 
 : Documentation and samples are in the directory given by
 $ cpsa -h
 
 : To view the user guide:
-$ open $HOME/share/cpsa-X.Y.Z/doc/cpsauser.html
+$ open $HOME/share/cpsa4-X.Y.Z/doc/cpsauser.html
 : where X.Y.Z is the CPSA version number.
 
 QUICK START (Windows)
@@ -59,7 +87,7 @@ C:\...> runghc Setup.hs install
 and place DIRECTORY\bin on your path.
 
 Documentation and samples are in the directory given by
-C:\...> cpsa -h
+C:\...> cpsa4 -h
 
 The installed programs can be run from the command prompt or via a
 batch file.  Alternatively, copy doc/Make.hs into the directory
@@ -68,10 +96,10 @@ interpreter.  Read the source for usage instructions.
 
 MAKEFILE
 
-The file $HOME/share/cpsa-X.Y.Z/doc/cpsa.mk contains useful GNU Make
+The file $HOME/share/cpsa4-X.Y.Z/doc/cpsa4.mk contains useful GNU Make
 rules for inclusion, where X.Y.Z is CPSA version number.
 
-Alternatively, copy the file Make.hs in the same directory into the
+Alternatively, copy the file Make4.hs in the same directory into the
 directory containing your CPSA problem statements.  The source file
 has usage instructions.
 
