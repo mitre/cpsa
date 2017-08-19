@@ -1,3 +1,7 @@
+2017-08-18  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* Updated README and doc/cpsauser.html.
+
 2017-05-16  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Algebra.hs (displaySubst): Removed erroneous
