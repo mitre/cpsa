@@ -142,8 +142,9 @@ Executable cpsa4sas
   Hs-Source-Dirs:	src
   Other-Modules:
     Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.Pretty CPSA.Lib.SExpr
-    CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Algebra CPSA.Protocol
-    CPSA.Strand CPSA.Loader CPSA.Displayer CPSA.Cohort CPSA.SAS.SAS
+    CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Options CPSA.Algebra
+    CPSA.Protocol CPSA.Goal CPSA.Strand CPSA.Characteristic
+    CPSA.Loader CPSA.Displayer CPSA.Cohort CPSA.SAS.SAS
 
 Executable cpsa4diff
   Main-Is:		CPSA/Diff/Main.hs
