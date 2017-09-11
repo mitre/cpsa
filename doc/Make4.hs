@@ -28,16 +28,6 @@ If successful, the shapes are in the file prob_shapes.xhtml.
 If successful, the shape analysis sentences are in the file
 prob_sas.text.
 
-When the protocol is annotated with rely-guarantee formulas, type:
-
-*Make> annos "prob"
-
-If successful, the annotated shapes are in the file prob_annotations.xhtml.
-
-*Make> params "prob"
-
-If successful, roles with parameter descriptions are in prob_parameters.txt.
-
 To remove the files generated from source files, type:
 
 *Make> cleanse "prob"

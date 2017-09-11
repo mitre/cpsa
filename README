@@ -76,21 +76,19 @@ QUICK START (Windows)
 With Cygwin or MinGW, the installation is similar to the Linux
 install.  The software has been tested on a Windows system on which
 neither MinGW or Cygwin has been installed.  Install Haskell Platform
-and then run the "setup.bat" batch file with administrator privileges.
+Core and then run:
 
-If you do not have administrator privileges, run:
-
-C:\...> runghc Setup.hs configure --user --prefix="DIRECTORY"
-C:\...> runghc Setup.hs build
-C:\...> runghc Setup.hs install
-
-and place DIRECTORY\bin on your path.
+C:\...> cabal update
+C:\...> cabal install parallel
+C:\...> cabal configure
+C:\...> cabal build
+C:\...> cabal install
 
 Documentation and samples are in the directory given by
 C:\...> cpsa4 -h
 
 The installed programs can be run from the command prompt or via a
-batch file.  Alternatively, copy doc/Make.hs into the directory
+batch file.  Alternatively, copy doc/Make4.hs into the directory
 containing your CPSA problem statements, and load it into a Haskell
 interpreter.  Read the source for usage instructions.
 
