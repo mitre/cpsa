@@ -1,6 +1,6 @@
 -- A simple, CPSA specific make system
 
-module Make (cpsa, shapes, sas, annos, params, cleanse, get, set,
+module Make (cpsa, shapes, sas, cleanse, get, set,
              build, clean, roots) where
 
 {- Place a copy of this source file in the directory used to store

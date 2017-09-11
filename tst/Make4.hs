@@ -1,6 +1,6 @@
 -- A simple, CPSA specific make system
 
-module Make (cpsa, shapes, sas, annos, params, cleanse, get, set,
+module Make (cpsa, shapes, sas, cleanse, get, set,
              build, clean, roots) where
 
 {- Place a copy of this source file in the directory used to store
@@ -110,7 +110,7 @@ graph root =
 
 graphRule :: Rule
 graphRule =
-    Rule { prog = "cpsagraph" ++ graphFlags,
+    Rule { prog = "cpsa4graph" ++ graphFlags,
            inputExt = cpsaExt,
            outputExt = graphExt }
 
@@ -133,7 +133,7 @@ cpsaBasic root =
 
 cpsaBasicRule :: String -> Rule
 cpsaBasicRule flags =
-    Rule { prog = "cpsa " ++ flags,
+    Rule { prog = "cpsa4 " ++ flags,
            inputExt = sourceBasicExt,
            outputExt = cpsaExt }
 
@@ -148,7 +148,7 @@ shapes root =
 
 shapesRule :: Rule
 shapesRule =
-    Rule { prog = "cpsashapes",
+    Rule { prog = "cpsa4shapes",
            inputExt = cpsaExt,
            outputExt = shapesRoot ++ cpsaExt }
 
@@ -162,37 +162,9 @@ sas root =
 
 sasRule :: Rule
 sasRule =
-    Rule { prog = "cpsasas",
+    Rule { prog = "cpsa4sas",
            inputExt = cpsaExt,
            outputExt = sasExt }
-
--- Annotations Rule
-
-annos :: FilePath -> IO ()
-annos root =
-    do
-      cpsa root                 -- Run CPSA and make shapes
-      make annosRule root
-      graph $ root ++ annosRoot
-
-annosRule :: Rule
-annosRule =
-    Rule { prog = "cpsaannotations",
-           inputExt = shapesRoot ++ cpsaExt,
-           outputExt = annosRoot ++ cpsaExt }
-
--- Parameters Rule
-
-params :: FilePath -> IO ()
-params root =
-     do
-       make cpsaparametersRule root
-
-cpsaparametersRule :: Rule
-cpsaparametersRule =
-    Rule { prog = "cpsaparameters",
-    	   inputExt = sourceBasicExt,
-	   outputExt = paramsRoot ++ cpsaExt }
 
 -- Clean generated files
 
@@ -204,9 +176,6 @@ cleanse root =
       rm $ root ++ shapesRoot ++ cpsaExt
       rm $ root ++ shapesRoot ++ graphExt
       rm $ root ++ sasExt
-      rm $ root ++ annosRoot ++ cpsaExt
-      rm $ root ++ annosRoot ++ graphExt
-      rm $ root ++ paramsRoot ++ cpsaExt
 
 -- File Extensions
 
@@ -221,12 +190,6 @@ shapesRoot = "_shapes"
 
 sasExt :: String
 sasExt = "_sas.text"
-
-annosRoot :: String
-annosRoot = "_annotations"
-
-paramsRoot :: String
-paramsRoot = "_parameters"
 
 graphExt :: String
 graphExt = ".xhtml"
