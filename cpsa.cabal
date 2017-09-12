@@ -66,7 +66,7 @@ Extra-Source-Files:
   src/ghcmemlimit build.xml src/scala/Main.scala
   src/scala/Pretty.scala src/scala/Printer.scala
   src/scala/SExpr.scala
-  tst/README tst/Makefile tst/Make.hs tst/checktst tst/cpsagraphall
+  tst/README tst/Makefile tst/Make4.hs tst/checktst tst/cpsagraphall
   tst/cpsashapesall 
   tst/blanchet.scm tst/blanchet.tst tst/completeness-test.scm
   tst/completeness-test.tst tst/crushing.tst tst/crushing.tst
