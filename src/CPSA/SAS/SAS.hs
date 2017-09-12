@@ -6,7 +6,7 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-module CPSA.SAS.SAS (Prot, Preskel, State, sas) where
+module CPSA.SAS.SAS (State, sas) where
 
 import Control.Monad (foldM)
 import qualified Data.List as L
