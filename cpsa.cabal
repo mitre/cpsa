@@ -67,7 +67,8 @@ Extra-Source-Files:
   src/scala/Pretty.scala src/scala/Printer.scala
   src/scala/SExpr.scala
   tst/README tst/Makefile tst/Make4.hs tst/checktst tst/cpsagraphall
-  tst/cpsashapesall tst/aik.scm tst/aik.tst tst/blanchet.scm
+  tst/cpsashapesall tst/graphtst tst/updatetst
+  tst/aik.scm tst/aik.tst tst/blanchet.scm
   tst/blanchet.tst tst/completeness-test.scm tst/completeness-test.tst
   tst/crushing.tst tst/crushing.tst tst/dass.lisp tst/dass-mod.lisp
   tst/dass_simple.scm tst/dass_simple.tst tst/denning-sacco.scm
@@ -104,7 +105,7 @@ Extra-Source-Files:
   tst/targetterms2.tst tst/targetterms6.scm tst/targetterms6.tst
   tst/targetterms8.scm tst/targetterms8.tst tst/timestamping.scm
   tst/timestamping.tst tst/tnsl5.lisp tst/uncarried_keys.scm
-  tst/uncarried_keys.tst tst/uo.scm tst/uo.tst tst/updatetst
+  tst/uncarried_keys.tst tst/uo.scm tst/uo.tst
   tst/wang-hash.scm tst/wang-hash.tst tst/wang-key-hash.scm
   tst/wang-key-hash.tst tst/wang.lisp tst/weird.scm tst/weird.tst
   tst/wide-mouth-frog.lsp tst/wide-mouth-frog-scyther.lsp
