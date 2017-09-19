@@ -271,7 +271,7 @@ loadEvt vars (L _ [S _ "send", t]) =
       return (Out t)
 loadEvt _ (L pos [S _ dir, _]) =
     fail (shows pos $ "Unrecognized direction " ++ dir)
-loadEvt _ x = fail (shows (annotation x) "Malformed direction")
+loadEvt _ x = fail (shows (annotation x) "Malformed event")
 
 loadBaseTerms :: Monad m => [Term] -> [SExpr Pos] -> m [Term]
 loadBaseTerms _ [] = return []
