@@ -84,13 +84,23 @@ displayRest k ctx rest =
      (displayOptional "non-orig" (displayTerms ctx (knon k))
       (displayOptional "pen-non-orig" (displayTerms ctx (kpnon k))
        (displayOptional "uniq-orig" (displayTerms ctx (kunique k))
-        (displayOptional "priority" priorities
-         (kcomment k ++
-          (displayOperation k ctx
-           (displayOptional "traces" traces rest)))))))
+        (displayOptional "facts" (map (displayFact ctx) (kfacts k))
+         (displayOptional "priority" priorities
+          (kcomment k ++
+           (displayOperation k ctx
+            (displayOptional "traces" traces rest))))))))
     where
       priorities = map displayPriority (kpriority k)
       traces = map (L () . displayTrace ctx . trace) (insts k)
+
+displayFact :: Context -> Fact -> SExpr ()
+displayFact ctx (Fact name fs) =
+  L () (S () name : map (displayFterm ctx) fs)
+
+displayFterm :: Context -> Fterm -> SExpr ()
+displayFterm _ (Fsid s) = N () s
+displayFterm _ (Fnode n) = displayNode n
+displayFterm ctx (Fterm t) = displayTerm ctx t
 
 displayPriority :: (Node, Int) -> SExpr ()
 displayPriority (n, p) =

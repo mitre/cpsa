@@ -20,10 +20,16 @@ data AForm
   | Pnon Term
   | Uniq Term
   | UniqAt Term NodeTerm
+  | AFact String [FactTerm]
   | Equals Term Term
   deriving Show
 
 type NodeTerm = (Term, Int)
+
+data FactTerm
+  = FactNode NodeTerm
+  | FactTerm Term
+  deriving Show
 
 data Goal
   = Goal { uvars :: [Term],          -- Universally quantified variables
@@ -39,6 +45,7 @@ aFormOrder (Length _ _ _) (Non _) = LT
 aFormOrder (Length _ _ _) (Pnon _) = LT
 aFormOrder (Length _ _ _) (Uniq _) = LT
 aFormOrder (Length _ _ _) (UniqAt _ _) = LT
+aFormOrder (Length _ _ _) (AFact _ _) = LT
 aFormOrder (Length _ _ _) (Equals _ _) = LT
 aFormOrder (Param _ _ _ _ _) (Length _ _ _) = GT
 aFormOrder (Param _ _ _ _ _) (Param _ _ _ _ _) = EQ
@@ -47,6 +54,7 @@ aFormOrder (Param _ _ _ _ _) (Non _) = LT
 aFormOrder (Param _ _ _ _ _) (Pnon _) = LT
 aFormOrder (Param _ _ _ _ _) (Uniq _) = LT
 aFormOrder (Param _ _ _ _ _) (UniqAt _ _) = LT
+aFormOrder (Param _ _ _ _ _) (AFact _ _) = LT
 aFormOrder (Param _ _ _ _ _) (Equals _ _) = LT
 aFormOrder (Prec _ _) (Length _ _ _) = GT
 aFormOrder (Prec _ _) (Param _ _ _ _ _) = GT
@@ -55,6 +63,7 @@ aFormOrder (Prec _ _) (Non _) = LT
 aFormOrder (Prec _ _) (Pnon _) = LT
 aFormOrder (Prec _ _) (Uniq _) = LT
 aFormOrder (Prec _ _) (UniqAt _ _) = LT
+aFormOrder (Prec _ _) (AFact _ _) = LT
 aFormOrder (Prec _ _) (Equals _ _) = LT
 aFormOrder (Non _) (Length _ _ _) = GT
 aFormOrder (Non _) (Param _ _ _ _ _) = GT
@@ -63,6 +72,7 @@ aFormOrder (Non _) (Non _) = EQ
 aFormOrder (Non _) (Pnon _) = LT
 aFormOrder (Non _) (Uniq _) = LT
 aFormOrder (Non _) (UniqAt _ _) = LT
+aFormOrder (Non _) (AFact _ _) = LT
 aFormOrder (Non _) (Equals _ _) = LT
 aFormOrder (Pnon _) (Length _ _ _) = GT
 aFormOrder (Pnon _) (Param _ _ _ _ _) = GT
@@ -71,6 +81,7 @@ aFormOrder (Pnon _) (Non _) = GT
 aFormOrder (Pnon _) (Pnon _) = EQ
 aFormOrder (Pnon _) (Uniq _) = LT
 aFormOrder (Pnon _) (UniqAt _ _) = LT
+aFormOrder (Pnon _) (AFact _ _) = LT
 aFormOrder (Pnon _) (Equals _ _) = LT
 aFormOrder (Uniq _) (Length _ _ _) = GT
 aFormOrder (Uniq _) (Param _ _ _ _ _) = GT
@@ -79,6 +90,7 @@ aFormOrder (Uniq _) (Non _) = GT
 aFormOrder (Uniq _) (Pnon _) = GT
 aFormOrder (Uniq _) (Uniq _) = EQ
 aFormOrder (Uniq _) (UniqAt _ _) = LT
+aFormOrder (Uniq _) (AFact _ _) = LT
 aFormOrder (Uniq _) (Equals _ _) = LT
 aFormOrder (UniqAt _ _) (Length _ _ _) = GT
 aFormOrder (UniqAt _ _) (Param _ _ _ _ _) = GT
@@ -87,7 +99,17 @@ aFormOrder (UniqAt _ _) (Non _) = GT
 aFormOrder (UniqAt _ _) (Pnon _) = GT
 aFormOrder (UniqAt _ _) (Uniq _) = GT
 aFormOrder (UniqAt _ _) (UniqAt _ _) = EQ
+aFormOrder (UniqAt _ _) (AFact _ _) = LT
 aFormOrder (UniqAt _ _) (Equals _ _) = LT
+aFormOrder (AFact _ _) (Length _ _ _) = GT
+aFormOrder (AFact _ _) (Param _ _ _ _ _) = GT
+aFormOrder (AFact _ _) (Prec _ _) = GT
+aFormOrder (AFact _ _) (Non _) = GT
+aFormOrder (AFact _ _) (Pnon _) = GT
+aFormOrder (AFact _ _) (Uniq _) = GT
+aFormOrder (AFact _ _) (UniqAt _ _) = GT
+aFormOrder (AFact _ _) (AFact _ _) = EQ
+aFormOrder (AFact _ _) (Equals _ _) = LT
 aFormOrder (Equals _ _) (Length _ _ _) = GT
 aFormOrder (Equals _ _) (Param _ _ _ _ _) = GT
 aFormOrder (Equals _ _) (Prec _ _) = GT
@@ -95,4 +117,5 @@ aFormOrder (Equals _ _) (Non _) = GT
 aFormOrder (Equals _ _) (Pnon _) = GT
 aFormOrder (Equals _ _) (Uniq _) = GT
 aFormOrder (Equals _ _) (UniqAt _ _) = GT
+aFormOrder (Equals _ _) (AFact _ _) = GT
 aFormOrder (Equals _ _) (Equals _ _) = EQ

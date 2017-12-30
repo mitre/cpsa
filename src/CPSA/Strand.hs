@@ -9,13 +9,15 @@
 module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     role, env, trace, height, listenerTerm, Sid, Node, mkPreskel,
     firstSkeleton, Pair, Preskel, gen, protocol, kgoals, insts, orderings,
-    pov, knon, kpnon, kunique, korig, kpriority, kcomment, nstrands, kvars,
-    strandids, kterms, uniqOrig, preskelWellFormed, verbosePreskelWellFormed,
-    Strand, inst, sid, nodes, Vertex, strand, pos, preds, event,
-    graphNode, strands, vertex, Gist, gist, isomorphic, contract, augment,
+    pov, knon, kpnon, kunique, kfacts, korig, kpriority, kcomment, nstrands,
+    kvars, strandids, kterms, uniqOrig, preskelWellFormed,
+    verbosePreskelWellFormed, Strand, inst, sid, nodes,
+    Vertex, strand, pos, preds, event, graphNode, strands, vertex,
+    Gist, gist, isomorphic, contract, augment,
     inheritRnon, inheritRpnon, inheritRunique, addListener, Cause
     (..), Direction (..), Method (..), Operation (..), operation,
-    prob, homomorphism, toSkeleton, generalize, collapse, sat) where
+    prob, homomorphism, toSkeleton, generalize, collapse, sat,
+    Fterm (..), Fact (..)) where
 
 import Control.Monad
 import qualified Data.List as L
@@ -362,6 +364,7 @@ data Preskel = Preskel
       knon :: ![Term],            -- A list of atoms
       kpnon :: ![Term],           -- A list of atoms
       kunique :: ![Term],         -- A list of atoms
+      kfacts :: ![Fact],          -- A list of facts
       kpriority :: [(Node, Int)], -- Override node priority
       kcomment :: [SExpr ()],   -- Comments from the input
       korig :: ![(Term, [Node])], -- This is an association list with a
@@ -422,12 +425,12 @@ data Operation
 -- must be consumed by firstSkeleton.
 mkPreskel :: Gen -> Prot -> [Goal] ->
              [Instance] -> [Pair] -> [Term] -> [Term] -> [Term] ->
-             [(Node, Int)] -> [SExpr ()] -> Preskel
-mkPreskel gen protocol gs insts orderings non pnon unique prio comment =
+             [Fact] -> [(Node, Int)] -> [SExpr ()] -> Preskel
+mkPreskel gen protocol gs insts orderings non pnon unique facts prio comment =
     k { kcomment = comment }
     where
       k = newPreskel gen shared insts orderings non pnon
-          unique prio New prob Nothing
+          unique facts prio New prob Nothing
       shared = Shared { prot = protocol, goals = gs }
       prob = strandids k        -- Fixed point on k is okay.
 
@@ -454,11 +457,12 @@ firstSkeleton k =
 -- within this module.
 newPreskel :: Gen -> Shared ->
              [Instance] -> [Pair] -> [Term] -> [Term] -> [Term] ->
-             [(Node, Int)] -> Operation -> [Sid] ->
+             [Fact] -> [(Node, Int)] -> Operation -> [Sid] ->
              Maybe Preskel -> Preskel
-newPreskel gen shared insts orderings non pnon unique prio oper prob pov =
+newPreskel gen shared insts orderings non pnon unique facts prio oper prob pov =
     let orderings' = L.nub orderings
         unique' = L.nub unique
+        facts' = L.nub facts
         g = graph trace height insts orderings'
         strands = gstrands g
         edges = gedges g
@@ -473,6 +477,7 @@ newPreskel gen shared insts orderings non pnon unique prio oper prob pov =
                       knon = L.nub non,
                       kpnon = L.nub pnon,
                       kunique = unique',
+                      kfacts = facts',
                       kpriority = prio,
                       kcomment = [],
                       korig = orig,
@@ -658,12 +663,14 @@ data Gist = Gist
       gnon :: [Term],    -- A list of non-originating terms
       gpnon :: [Term],   -- A list of penetrator non-originating terms
       gunique :: [Term], -- A list of uniquely-originating terms
+      gfacts :: [Fact],  -- A list of facts
       nvars :: !Int,     -- Number of variables
       ntraces :: !Int,   -- Number of traces
       norderings :: !Int,       -- Number of orderings
-      nnon :: !Int,             -- Number of non-originating terms
+      nnon :: !Int,      -- Number of non-originating terms
       npnon :: !Int,     -- Number of penetrator non-originating terms
-      nunique :: !Int }        -- Number of uniquely-originating terms
+      nunique :: !Int,   -- Number of uniquely-originating terms
+      nfacts :: !Int }   -- Number of facts
     deriving Show
 
 gist :: Preskel -> Gist
@@ -674,18 +681,21 @@ gist k =
            gnon = gnon,
            gpnon = gpnon,
            gunique = gunique,
+           gfacts = gfacts,
            nvars = length (kvars k),
            ntraces = length gtraces,
            norderings = length gorderings,
            nnon = length gnon,
            npnon = length gpnon,
-           nunique = length gunique }
+           nunique = length gunique,
+           nfacts = length gfacts }
     where
       gtraces = map (\i -> (height i, trace i)) (insts k)
       gorderings = orderings k
       gnon = knon k
       gpnon = kpnon k
       gunique = kunique k
+      gfacts = kfacts k
 
 -- Test to see if two preskeletons are isomorphic
 
@@ -694,6 +704,7 @@ gist k =
 -- 2. The same number of strands
 -- 3. The same number of node orderings
 -- 4. The same number of terms in knon and kunique
+-- 5. The same number of facts
 
 -- Next compute the plausible permutations and substitutions.
 
@@ -714,6 +725,7 @@ isomorphic g g' =
     nnon g == nnon g' &&
     npnon g == npnon g' &&
     nunique g == nunique g' &&
+    nfacts g == nfacts g' &&
     any (tryPerm g g') (permutations g g')
 
 -- Extend a permutation while extending a substitution
@@ -780,6 +792,7 @@ tryPerm :: Gist -> Gist -> ((Gen, Env), (Gen, Env), [Sid]) -> Bool
 tryPerm g g' (env, renv, perm) =
     checkOrigs g g' env &&
     checkOrigs g' g renv &&
+    checkFacts g g' env perm &&
     containsMapped (permutePair perm) (gorderings g') (gorderings g)
 
 -- containsMapped f xs ys is true when list xs contains each element
@@ -793,6 +806,12 @@ permutePair perm (n, n') = (permuteNode perm n, permuteNode perm n')
 
 permuteNode :: [Sid] -> Node -> Node
 permuteNode perm (strand, pos) = (perm !! strand, pos)
+
+checkFacts :: Gist -> Gist -> (Gen, Env) -> [Sid] -> Bool
+checkFacts g g' (_, e) perm =
+  all f (gfacts g)
+  where
+    f fact = elem (instUpdateFact e (perm !!) fact) (gfacts g')
 
 checkOrigs :: Gist -> Gist -> (Gen, Env) -> Bool
 checkOrigs g g' env =
@@ -841,9 +860,10 @@ ksubst (k0, k, n, phi, hsubst) (gen, subst) =
       let non' = map (substitute subst) (knon k)
       let pnon' = map (substitute subst) (kpnon k)
       let unique' = map (substitute subst) (kunique k)
+      let facts' = map (substFact subst) (kfacts k)
       let operation' = substOper subst (operation k)
       let k' = newPreskel gen' (shared k) insts'
-               (orderings k) non' pnon' unique' (kpriority k)
+               (orderings k) non' pnon' unique' facts' (kpriority k)
                operation' (prob k) (pov k)
       k' <- wellFormedPreskel k'
       return (k0, k', n, phi, compose subst hsubst)
@@ -893,6 +913,7 @@ compress validate (k0, k, n, phi, hsubst) s s' =
               (knon k)
               (kpnon k)
               (kunique k)
+              (map (updateFact $ updateStrand s s') (kfacts k))
               (updatePriority perm (kpriority k))
               (operation k)
               (updateProb perm (prob k))
@@ -952,6 +973,7 @@ purge (k0, k, n, phi, hsubst) s s' =
               (knon k)
               (kpnon k)
               (kunique k)
+              (map (updateFact $ updateStrand s s') (kfacts k))
               (updatePriority perm (kpriority k))
               (operation k)
               (updateProb perm (prob k))
@@ -982,6 +1004,7 @@ soothePreskel k =
   (filter varCheck $ knon k)
   (filter varCheck $ kpnon k)
   (filter uniqueCheck $ kunique k)
+  (kfacts k)
   (kpriority k)
   (operation k)
   (prob k)
@@ -1037,6 +1060,7 @@ enrich thin (k0, k, n, phi, hsubst) =
                   (knon k)
                   (kpnon k)
                   (kunique k)
+                  (kfacts k)
                   (kpriority k)
                   (operation k)
                   (prob k)
@@ -1225,6 +1249,7 @@ reduce (k0, k, n, phi, hsubst) =
                   (knon k)
                   (kpnon k)
                   (kunique k)
+                  (kfacts k)
                   (kpriority k)
                   (operation k)
                   (prob k)
@@ -1318,7 +1343,7 @@ aug (k0, k, n, phi, hsubst) inst =
       let pnon' = inheritRpnon inst ++ (kpnon k)
       let unique' = inheritRunique inst ++ (kunique k)
       let k' = newPreskel (gen k) (shared k) insts'
-           orderings' non' pnon' unique' (kpriority k)
+           orderings' non' pnon' unique' (kfacts k) (kpriority k)
            (operation k) (prob k) (pov k)
       k' <- wellFormedPreskel k'
       return (k0, k', n, phi, hsubst)
@@ -1405,7 +1430,7 @@ addListener k n cause t =
       homomorphismFilter prs
     where
       k' = newPreskel gen' (shared k) insts' orderings' (knon k)
-           (kpnon k) (kunique k) (kpriority k)
+           (kpnon k) (kunique k) (kfacts k) (kpriority k)
            (AddedListener t cause) (prob k) (pov k)
       (gen', inst) = mkListener (protocol k) (gen k) t
       insts' = insts k ++ [inst]
@@ -1443,6 +1468,8 @@ validateEnv k k' mapping env =
     all (flip elem (knon k')) (map (instantiate env) (knon k)) &&
     all (flip elem (kpnon k')) (map (instantiate env) (kpnon k)) &&
     all (flip elem (kunique k')) (map (instantiate env) (kunique k)) &&
+    all (flip elem (kfacts k'))
+    (map (instUpdateFact env (mapping !!)) (kfacts k)) &&
     validateEnvOrig k k' mapping env &&
     all (flip elem (tc k')) (permuteOrderings mapping (orderings k))
 
@@ -1546,7 +1573,7 @@ deleteNodeRest :: Preskel -> Gen -> Node -> [Instance] -> [Pair] ->
                   [Sid] -> Preskel
 deleteNodeRest k gen n insts' orderings prob =
     newPreskel gen (shared k) insts' orderings non' pnon' unique'
-                   prio' (Generalized (Deleted n)) prob (pov k)
+    (kfacts k) prio' (Generalized (Deleted n)) prob (pov k)
     where
       -- Drop nons that aren't mentioned anywhere
       non' = filter mentionedIn (knon k)
@@ -1585,8 +1612,8 @@ weaken :: Preskel -> Pair -> [Pair] -> Candidate
 weaken k p orderings =
     addIdentity k'
     where
-      k' = newPreskel (gen k) (shared k) (insts k)
-           orderings (knon k) (kpnon k) (kunique k) (kpriority k)
+      k' = newPreskel (gen k) (shared k) (insts k) orderings
+           (knon k) (kpnon k) (kunique k) (kfacts k) (kpriority k)
            (Generalized (Weakened p)) (prob k) (pov k)
 
 -- Origination assumption forgetting
@@ -1735,9 +1762,9 @@ changeLocations k env gen t locs =
     [addIdentity k0, addIdentity k1]
     where
       k0 = newPreskel gen' (shared k) insts' (orderings k) non pnon unique0
-           (kpriority k) (Generalized (Separated t)) (prob k) (pov k)
+           (kfacts k) (kpriority k) (Generalized (Separated t)) (prob k) (pov k)
       k1 = newPreskel gen' (shared k) insts' (orderings k) non pnon unique1
-           (kpriority k) (Generalized (Separated t)) (prob k) (pov k)
+           (kfacts k) (kpriority k) (Generalized (Separated t)) (prob k) (pov k)
       (gen', insts') = changeStrands locs t gen (strands k)
       non = knon k ++ map (instantiate env) (knon k)
       pnon = kpnon k ++ map (instantiate env) (kpnon k)
@@ -1808,6 +1835,7 @@ type Sem = Preskel -> (Gen, Env) -> [(Gen, Env)]
 -- given atomic formula.
 satisfy :: AForm -> Sem
 satisfy (Equals t t') = geq t t'
+satisfy (AFact name fs) = gafact name fs
 satisfy (Non t) = ggnon t
 satisfy (Pnon t) = ggpnon t
 satisfy (Uniq t) = gguniq t
@@ -1825,6 +1853,34 @@ geq t t' _ (g, e)
   where
     ti = instantiate e t
     ti' = instantiate e t'
+
+-- Facts
+gafact :: String -> [FactTerm] -> Sem
+gafact name fs k e =
+  do
+    f <- kfacts k
+    case f of
+      Fact name' ts
+        | name == name' ->
+          fmatchList fs ts e
+        | otherwise -> []
+
+fmatchList :: [FactTerm] -> [Fterm] -> (Gen, Env) -> [(Gen, Env)]
+fmatchList [] [] e = [e]
+fmatchList (f : fs) (t : ts) e =
+  do
+    e <- fmatch f t e
+    fmatchList fs ts e
+fmatchList _ _ _ = []
+
+fmatch :: FactTerm -> Fterm -> (Gen, Env) -> [(Gen, Env)]
+fmatch (FactNode (z, j)) (Fnode (s, i)) e
+  | j == i = strdMatch z s e
+fmatch (FactTerm z) (Fsid s) e =
+  strdMatch z s e
+fmatch (FactTerm t) (Fterm t') e =
+  match t t' e
+fmatch _ _ _ = []
 
 -- Non-origination
 ggnon :: Term -> Sem
@@ -1963,3 +2019,38 @@ goalSat k g =
 sat :: Preskel -> [(Goal, [Env])]
 sat k =
   map (goalSat k) (kgoals k)
+
+-- Facts
+
+data Fterm
+  = Fsid Sid
+  | Fnode Node
+  | Fterm Term
+  deriving (Eq, Show)
+
+data Fact
+  = Fact String [Fterm]
+  deriving (Eq, Show)
+
+substFterm :: Subst -> Fterm -> Fterm
+substFterm s (Fterm t) = Fterm $ substitute s t
+substFterm _ t = t
+
+substFact :: Subst -> Fact -> Fact
+substFact s (Fact name fs) = Fact name $ map (substFterm s) fs
+
+updateFterm :: (Sid -> Sid) -> Fterm -> Fterm
+updateFterm f (Fsid s) = Fsid $ f s
+updateFterm f (Fnode (s, i)) = Fnode (f s, i)
+updateFterm _ t = t
+
+updateFact :: (Sid -> Sid) -> Fact -> Fact
+updateFact f (Fact name fs) = Fact name $ map (updateFterm f) fs
+
+instUpdateFterm :: Env -> (Sid -> Sid) -> Fterm -> Fterm
+instUpdateFterm _ f (Fsid s) = Fsid $ f s
+instUpdateFterm _ f (Fnode (s, i)) = Fnode (f s, i)
+instUpdateFterm e _ (Fterm t) = Fterm $ instantiate e t
+
+instUpdateFact :: Env -> (Sid -> Sid) -> Fact -> Fact
+instUpdateFact e f (Fact name fs) = Fact name $ map (instUpdateFterm e f) fs

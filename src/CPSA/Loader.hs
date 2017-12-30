@@ -351,12 +351,13 @@ loadInsts top p kvars gen insts xs =
     do
       _ <- alist [] xs          -- Check syntax of xs
       (gen, gs) <- loadGoals top p gen goals
-      loadRest top kvars p gen gs (reverse insts) order nr ar ur pl kcomment
+      loadRest top kvars p gen gs (reverse insts) order nr ar ur fs pl kcomment
     where
       order = assoc "precedes" xs
       nr = assoc "non-orig" xs
       ar = assoc "pen-non-orig" xs
       ur = assoc "uniq-orig" xs
+      fs = assoc "facts" xs
       pl = assoc "priority" xs
       goals = assoc "goals" xs
       kcomment =
@@ -410,8 +411,9 @@ loadListener p kvars gen x =
 
 loadRest :: Monad m => Pos -> [Term] -> Prot -> Gen -> [Goal] ->
             [Instance] -> [SExpr Pos] -> [SExpr Pos] -> [SExpr Pos] ->
-            [SExpr Pos] -> [SExpr Pos] -> [SExpr ()] -> m Preskel
-loadRest pos vars p gen gs insts orderings nr ar ur pl comment =
+            [SExpr Pos] -> [SExpr Pos] -> [SExpr Pos] ->
+            [SExpr ()] -> m Preskel
+loadRest pos vars p gen gs insts orderings nr ar ur fs pl comment =
     do
       case null insts of
         True -> fail (shows pos "No strands")
@@ -421,9 +423,10 @@ loadRest pos vars p gen gs insts orderings nr ar ur pl comment =
       nr <- loadBaseTerms vars nr
       ar <- loadBaseTerms vars ar
       ur <- loadBaseTerms vars ur
+      fs <- mapM (loadFact heights vars) fs
       let (nr', ar', ur') = foldl addInstOrigs (nr, ar, ur) insts
       prios <- mapM (loadPriorities heights) pl
-      let k = mkPreskel gen p gs insts o nr' ar' ur' prios comment
+      let k = mkPreskel gen p gs insts o nr' ar' ur' fs prios comment
       case termsWellFormed $ nr' ++ ar' ++ ur' ++ kterms k of
         False -> fail (shows pos "Terms in skeleton not well formed")
         True -> return ()
@@ -466,6 +469,27 @@ loadNode heights (L pos [N _ s, N _ p])
           | s == 0 = Just x
           | otherwise = height xs (s - 1)
 loadNode _ x = fail (shows (annotation x) "Malformed node")
+
+loadFact :: Monad m => [Int] -> [Term] -> SExpr Pos -> m Fact
+loadFact heights vars (L _ (S _ name : fs)) =
+  do
+    fs <- mapM (loadFterm heights vars) fs
+    return $ Fact name fs
+loadFact _ _ x =
+  fail (shows (annotation x) "Malformed fact")
+
+loadFterm :: Monad m => [Int] -> [Term] -> SExpr Pos -> m Fterm
+loadFterm heights _ (N pos s)
+  | 0 <= s && s < length heights = return $ Fsid s
+  | otherwise = fail (shows pos ("Bad strand in fact: " ++ show s))
+loadFterm heights _ x@(L _ [N _ _, N _ _]) =
+  do
+    n <- loadNode heights x
+    return $ Fnode n
+loadFterm _ vars x =
+  do
+    t <- loadTerm vars x
+    return $ Fterm t
 
 loadPriorities :: Monad m => [Int] -> SExpr Pos -> m (Node, Int)
 loadPriorities heights (L _ [x, N _ p]) =
@@ -712,6 +736,10 @@ allBound :: [Term] -> Term -> Bool
 allBound unbound t =
   L.all (flip L.notElem unbound) (termVars t)
 
+allFBound :: [Term] -> FactTerm -> Bool
+allFBound unbound (FactNode (z, _)) = L.notElem z unbound
+allFBound unbound (FactTerm t) = allBound unbound t
+
 -- Returns variables in unbound that are not role specific
 
 roleSpecific :: Monad m => [Term] -> (Pos, AForm) -> m [Term]
@@ -735,6 +763,9 @@ roleSpecific unbound (pos, Uniq t)
 roleSpecific unbound (pos, UniqAt t (z, _))
   | allBound unbound t && L.notElem z unbound = return unbound
   | otherwise = fail (shows pos "Unbound variable in uniq-at")
+roleSpecific unbound (pos, AFact _ fs)
+  | all (allFBound unbound) fs = return unbound
+  | otherwise = fail (shows pos "Unbound variable in fact")
 roleSpecific unbound (pos, Equals t t')
   | isStrdVar t && isStrdVar t' =
     case L.notElem t unbound && L.notElem t' unbound of

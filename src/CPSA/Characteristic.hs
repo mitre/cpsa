@@ -143,8 +143,9 @@ mkSkel pos p goals nmap g insts as comment =
     let ar = foldr mkPnon [] as
     let ur = foldr mkUniq [] as
     let (nr', ar', ur') = foldl addInstOrigs (nr, ar, ur) insts
+    let fs = foldr (mkFact nmap) [] as
     let prios = []
-    let k = mkPreskel g p goals insts o nr' ar' ur' prios comment
+    let k = mkPreskel g p goals insts o nr' ar' ur' fs prios comment
     mapM_ (checkUniqAt nmap k) as
     case termsWellFormed $ nr' ++ ar' ++ ur' ++ kterms k of
       False -> fail (shows pos "Terms in skeleton not well formed")
@@ -178,6 +179,17 @@ mkUniq :: (Pos, AForm) -> [Term] -> [Term]
 mkUniq (_, Uniq t) ts = t : ts
 mkUniq (_, UniqAt t _) ts = t : ts
 mkUniq _ ts = ts
+
+mkFact :: [(Term, Sid)] -> (Pos, AForm) -> [Fact] -> [Fact]
+mkFact nmap (_, AFact name fs) ts =
+  Fact name (map f fs) : ts
+  where
+    f (FactNode n) = Fnode $ nMapLookup n nmap
+    f (FactTerm t) =
+      case lookup t nmap of
+        Just s -> Fsid s
+        Nothing -> Fterm t
+mkFact _ _ ts = ts
 
 checkUniqAt :: Monad m => [(Term, Sid)] -> Preskel -> (Pos, AForm) -> m ()
 checkUniqAt nmap k (pos, UniqAt t n) =
