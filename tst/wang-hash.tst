@@ -1,6 +1,6 @@
 (herald "Wang's Fair Exchange Protocol" (bound 10))
 
-(comment "CPSA 4.0.0")
+(comment "CPSA 4.1.0")
 (comment "All input read from wang-hash.scm")
 (comment "Strand count bounded at 10")
 
