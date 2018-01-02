@@ -65,7 +65,7 @@ $ cpsa4graph -o prob.xhtml prob.txt
 $ open prob.xhtml
 
 : Documentation and samples are in the directory given by
-$ cpsa -h
+$ cpsa4 -h
 
 : To view the user guide:
 $ open $HOME/share/cpsa4-X.Y.Z/doc/cpsauser.html

@@ -97,10 +97,10 @@ displayFact :: Context -> Fact -> SExpr ()
 displayFact ctx (Fact name fs) =
   L () (S () name : map (displayFterm ctx) fs)
 
-displayFterm :: Context -> Fterm -> SExpr ()
-displayFterm _ (Fsid s) = N () s
-displayFterm _ (Fnode n) = displayNode n
-displayFterm ctx (Fterm t) = displayTerm ctx t
+displayFterm :: Context -> FTerm -> SExpr ()
+displayFterm _ (FSid s) = N () s
+displayFterm _ (FNode n) = displayNode n
+displayFterm ctx (FTerm t) = displayTerm ctx t
 
 displayPriority :: (Node, Int) -> SExpr ()
 displayPriority (n, p) =

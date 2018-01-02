@@ -1,3 +1,8 @@
+2017-12-30  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Strand.hs (Fact): Added facts to skeletons and the goal
+	language.
+
 2017-08-18  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* Updated README and doc/cpsauser.html.

@@ -184,11 +184,11 @@ mkFact :: [(Term, Sid)] -> (Pos, AForm) -> [Fact] -> [Fact]
 mkFact nmap (_, AFact name fs) ts =
   Fact name (map f fs) : ts
   where
-    f (FactNode n) = Fnode $ nMapLookup n nmap
+    f (FactNode n) = FNode $ nMapLookup n nmap
     f (FactTerm t) =
       case lookup t nmap of
-        Just s -> Fsid s
-        Nothing -> Fterm t
+        Just s -> FSid s
+        Nothing -> FTerm t
 mkFact _ _ ts = ts
 
 checkUniqAt :: Monad m => [(Term, Sid)] -> Preskel -> (Pos, AForm) -> m ()

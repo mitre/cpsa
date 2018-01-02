@@ -17,7 +17,7 @@ module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     inheritRnon, inheritRpnon, inheritRunique, addListener, Cause
     (..), Direction (..), Method (..), Operation (..), operation,
     prob, homomorphism, toSkeleton, generalize, collapse, sat,
-    Fterm (..), Fact (..)) where
+    FTerm (..), Fact (..)) where
 
 import Control.Monad
 import qualified Data.List as L
@@ -1865,7 +1865,7 @@ gafact name fs k e =
           fmatchList fs ts e
         | otherwise -> []
 
-fmatchList :: [FactTerm] -> [Fterm] -> (Gen, Env) -> [(Gen, Env)]
+fmatchList :: [FactTerm] -> [FTerm] -> (Gen, Env) -> [(Gen, Env)]
 fmatchList [] [] e = [e]
 fmatchList (f : fs) (t : ts) e =
   do
@@ -1873,12 +1873,12 @@ fmatchList (f : fs) (t : ts) e =
     fmatchList fs ts e
 fmatchList _ _ _ = []
 
-fmatch :: FactTerm -> Fterm -> (Gen, Env) -> [(Gen, Env)]
-fmatch (FactNode (z, j)) (Fnode (s, i)) e
+fmatch :: FactTerm -> FTerm -> (Gen, Env) -> [(Gen, Env)]
+fmatch (FactNode (z, j)) (FNode (s, i)) e
   | j == i = strdMatch z s e
-fmatch (FactTerm z) (Fsid s) e =
+fmatch (FactTerm z) (FSid s) e =
   strdMatch z s e
-fmatch (FactTerm t) (Fterm t') e =
+fmatch (FactTerm t) (FTerm t') e =
   match t t' e
 fmatch _ _ _ = []
 
@@ -2022,35 +2022,35 @@ sat k =
 
 -- Facts
 
-data Fterm
-  = Fsid Sid
-  | Fnode Node
-  | Fterm Term
+data FTerm
+  = FSid Sid
+  | FNode Node
+  | FTerm Term
   deriving (Eq, Show)
 
 data Fact
-  = Fact String [Fterm]
+  = Fact String [FTerm]
   deriving (Eq, Show)
 
-substFterm :: Subst -> Fterm -> Fterm
-substFterm s (Fterm t) = Fterm $ substitute s t
-substFterm _ t = t
+substFTerm :: Subst -> FTerm -> FTerm
+substFTerm s (FTerm t) = FTerm $ substitute s t
+substFTerm _ t = t
 
 substFact :: Subst -> Fact -> Fact
-substFact s (Fact name fs) = Fact name $ map (substFterm s) fs
+substFact s (Fact name fs) = Fact name $ map (substFTerm s) fs
 
-updateFterm :: (Sid -> Sid) -> Fterm -> Fterm
-updateFterm f (Fsid s) = Fsid $ f s
-updateFterm f (Fnode (s, i)) = Fnode (f s, i)
-updateFterm _ t = t
+updateFTerm :: (Sid -> Sid) -> FTerm -> FTerm
+updateFTerm f (FSid s) = FSid $ f s
+updateFTerm f (FNode (s, i)) = FNode (f s, i)
+updateFTerm _ t = t
 
 updateFact :: (Sid -> Sid) -> Fact -> Fact
-updateFact f (Fact name fs) = Fact name $ map (updateFterm f) fs
+updateFact f (Fact name fs) = Fact name $ map (updateFTerm f) fs
 
-instUpdateFterm :: Env -> (Sid -> Sid) -> Fterm -> Fterm
-instUpdateFterm _ f (Fsid s) = Fsid $ f s
-instUpdateFterm _ f (Fnode (s, i)) = Fnode (f s, i)
-instUpdateFterm e _ (Fterm t) = Fterm $ instantiate e t
+instUpdateFTerm :: Env -> (Sid -> Sid) -> FTerm -> FTerm
+instUpdateFTerm _ f (FSid s) = FSid $ f s
+instUpdateFTerm _ f (FNode (s, i)) = FNode (f s, i)
+instUpdateFTerm e _ (FTerm t) = FTerm $ instantiate e t
 
 instUpdateFact :: Env -> (Sid -> Sid) -> Fact -> Fact
-instUpdateFact e f (Fact name fs) = Fact name $ map (instUpdateFterm e f) fs
+instUpdateFact e f (Fact name fs) = Fact name $ map (instUpdateFTerm e f) fs

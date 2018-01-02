@@ -478,18 +478,18 @@ loadFact heights vars (L _ (S _ name : fs)) =
 loadFact _ _ x =
   fail (shows (annotation x) "Malformed fact")
 
-loadFterm :: Monad m => [Int] -> [Term] -> SExpr Pos -> m Fterm
+loadFterm :: Monad m => [Int] -> [Term] -> SExpr Pos -> m FTerm
 loadFterm heights _ (N pos s)
-  | 0 <= s && s < length heights = return $ Fsid s
+  | 0 <= s && s < length heights = return $ FSid s
   | otherwise = fail (shows pos ("Bad strand in fact: " ++ show s))
 loadFterm heights _ x@(L _ [N _ _, N _ _]) =
   do
     n <- loadNode heights x
-    return $ Fnode n
+    return $ FNode n
 loadFterm _ vars x =
   do
     t <- loadTerm vars x
-    return $ Fterm t
+    return $ FTerm t
 
 loadPriorities :: Monad m => [Int] -> SExpr Pos -> m (Node, Int)
 loadPriorities heights (L _ [x, N _ p]) =
@@ -664,6 +664,10 @@ loadPrimary _ _ kvars (L pos [S _ "uniq-at", x, y, z]) =
     t <- loadAlgTerm kvars x
     t' <- loadNodeTerm kvars y z
     return (pos, UniqAt t t')
+loadPrimary _ _ kvars (L pos (S _ "fact" : S _ name : fs)) =
+  do
+    fs <- mapM (loadFactTerm kvars) fs
+    return (pos, AFact name fs)
 loadPrimary _ _ kvars (L pos [S _ "prec", w, x, y, z]) =
   do
     t <- loadNodeTerm kvars w x
@@ -726,6 +730,18 @@ loadNodeTerm ts x (N _ i) | i >= 0 =
     return (t, i)
 loadNodeTerm _ _ y =
   fail (shows (annotation y) "Expecting an integer")
+
+-- Load a formula term (FTerm)
+
+loadFactTerm :: Monad m => [Term] -> SExpr Pos -> m FactTerm
+loadFactTerm ts (L _ [s, i@(N _ _)]) =
+  do
+    n <- loadNodeTerm ts s i
+    return $ FactNode n
+loadFactTerm ts x =
+  do
+    t <- loadTerm ts x
+    return $ FactTerm t
 
 -- Role specific check
 
