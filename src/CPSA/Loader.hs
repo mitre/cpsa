@@ -67,10 +67,11 @@ loadProt nom origin pos (S _ name : S _ alg : x : xs)
         fail (shows pos $ "Expecting terms in algebra " ++ nom)
     | otherwise =
         do
-          (gen, rs, comment) <- loadRoles origin (x : xs)
-          -- Check for duplicate role names
+          (gen, rs, rest) <- loadRoles origin (x : xs)
           (gen, r) <- mkListenerRole pos gen
-          validate (mkProt name alg gen rs r comment) rs
+          -- Check for duplicate role names
+          (rules, comment) <- loadRules rs rest
+          validate (mkProt name alg gen rs r rules comment) rs
     where
       validate prot [] = return prot
       validate prot (r : rs) =
@@ -82,16 +83,14 @@ loadProt nom origin pos (S _ name : S _ alg : x : xs)
                 fail (shows pos msg)
 loadProt _ _ pos _ = fail (shows pos "Malformed protocol")
 
-loadRoles :: Monad m => Gen -> [SExpr Pos] -> m (Gen, [Role], [SExpr ()])
+loadRoles :: Monad m => Gen -> [SExpr Pos] -> m (Gen, [Role], [SExpr Pos])
 loadRoles gen (L pos (S _ "defrole" : x) : xs) =
     do
       (gen, r) <- loadRole gen pos x
       (gen, rs, comment) <- loadRoles gen xs
       return (gen, r : rs, comment)
-loadRoles gen xs =
-    do
-      comment <- alist [] xs    -- Ensure remaining is an alist
-      return (gen, [], comment)
+loadRoles gen comment =
+    return (gen, [], comment)
 
 loadRole :: Monad m => Gen -> Pos -> [SExpr Pos] -> m (Gen, Role)
 loadRole gen pos (S _ name :
@@ -220,6 +219,147 @@ mkListenerRole pos g =
 notListenerPrefix :: Trace -> Bool
 notListenerPrefix (In t : Out t' : _) | t == t' = False
 notListenerPrefix _ = True
+
+-- Protocol Rules
+
+loadRules :: Monad m => [Role] -> [SExpr Pos] -> m ([Rule], [SExpr ()])
+loadRules rs (L pos (S _ "defrule" : x) : xs) =
+    do
+      r <- loadRule rs pos x
+      (rs, comment) <- loadRules rs xs
+      return (r : rs, comment)
+loadRules _ xs =
+    do
+      comment <- alist [] xs    -- Ensure remaining is an alist
+      return ([], comment)
+
+loadRule :: Monad m => [Role] -> Pos -> [SExpr Pos] -> m Rule
+loadRule rs pos (S _ name : xs) =
+  loadUImplies rs pos name xs
+loadRule _ pos _ =
+  fail (shows pos "Malformed rule")
+
+loadUImplies :: Monad m => [Role] -> Pos -> String ->
+                [SExpr Pos] -> m Rule
+loadUImplies rs _ name (L _ [S _ "implies", antec, concl] : cmt) =
+  do
+    antec <- loadUConj rs name antec
+    concl <- loadUDisj rs name concl
+    return $ Rule { uname = name,
+                    uantec = antec,
+                    uconcl = concl,
+                    ucomment = map strip cmt }
+loadUImplies _ pos name _ =
+  fail (shows pos ("Expecting implies in rule: " ++ name))
+
+loadUDisj :: Monad m => [Role] -> String -> SExpr Pos -> m [[UForm]]
+loadUDisj _ _ (L _ [S _ "false"]) =
+  return []
+loadUDisj rs name (L _ (S _ "or" : xs)) =
+  mapM (loadUConj rs name) xs
+loadUDisj rs name x =
+  do
+    conj <- loadUConj rs name x
+    return [conj]
+
+loadUConj :: Monad m => [Role] -> String -> SExpr Pos -> m [UForm]
+loadUConj _ name (L pos [S _ "and"]) =
+  fail (shows pos ("Malformed and in role: " ++ name))
+loadUConj rs name (L _ (S _ "and" : xs)) =
+  mapM (loadUForm rs name) xs
+loadUConj rs name x =
+  do
+    form <- loadUForm rs name x
+    return [form]
+
+loadUForm :: Monad m => [Role] -> String -> SExpr Pos -> m UForm
+loadUForm rs _
+  (L _ [S _ "p", Q pos r, S _ var, N _ n])
+  | n >= 0 =
+    do
+      r <- lookForRole rs name pos r
+      return $ ULen r var n
+loadUForm rs name
+  (L _ [S _ "p", Q pos r, Q p var, S _ strd, t]) =
+  do
+    r <- lookForRole rs name pos r
+    v <- loadAlgTerm (rvars r) (S p var)
+    t <- loadUAlgTerm t
+    case firstOccurs v r of
+      Just i -> return (UParam r v i strd t)
+      Nothing -> fail (shows p ("Parameter " ++ var ++
+                                " not in role " ++ rname r))
+loadUForm _ _
+  (L _ [S _ "prec", n1, n2]) =
+  do
+    n1 <- loadNodeUTerm n1
+    n2 <- loadNodeUTerm n2
+    return $ UPrec n1 n2
+loadUForm _ _
+  (L _ [S _ "non", t]) =
+  do
+    t <- loadUAlgTerm t
+    return $ UNon t
+loadUForm _ _
+  (L _ [S _ "pnon", t]) =
+  do
+    t <- loadUAlgTerm t
+    return $ UPnon t
+loadUForm _ _
+  (L _ [S _ "uniq", t]) =
+  do
+    t <- loadUAlgTerm t
+    return $ UUniq t
+loadUForm _ _
+  (L _ [S _ "uniq-at", t, n]) =
+  do
+    t <- loadUAlgTerm t
+    n <- loadNodeUTerm n
+    return $ UUniqAt t n
+loadUForm _ _
+  (L _ (S _ "fact" : S _ name : fs)) =
+  do
+    fs <- mapM loadUTerm fs
+    return $ UFact name fs
+loadUForm _ _
+  (L _ [S _ "=", t1, t2]) =
+  do
+    t1 <- loadUTerm t1
+    t2 <- loadUTerm t2
+    return $ UEquals t1 t2
+loadUForm _ name xs =
+  fail (shows (annotation xs) "Unrecognized atomic formula in: " ++ name)
+
+lookForRole :: Monad m => [Role] -> String -> Pos -> String -> m Role
+lookForRole rs name pos var =
+  case L.find (\r -> var == rname r) rs of
+    Just r -> return r
+    Nothing ->
+      fail (shows pos ("Role in length predicate not found in role: "
+                       ++ name))
+
+loadUTerm :: Monad m => SExpr Pos -> m UTerm
+loadUTerm (S _ var) = return $ UVar var
+loadUTerm (L _ [S _ var, N _ num])
+  | num >= 0 = return $ UNode (var, num)
+loadUTerm (L _ [S _ "invk", S _ var]) = return $ UInv var
+loadUTerm x = fail (shows (annotation x) "Bad term")
+
+loadUAlgTerm :: Monad m => SExpr Pos -> m UTerm
+loadUAlgTerm x =
+  do
+    t <- loadUTerm x
+    case t of
+      UNode _ -> fail (shows (annotation x) "Not expecting a node")
+      _ -> return t
+
+loadNodeUTerm :: Monad m => SExpr Pos -> m NodeUTerm
+loadNodeUTerm x =
+  do
+    t <- loadUTerm x
+    case t of
+      UNode n -> return n
+      _ -> fail (shows (annotation x) "Expecting a node")
 
 -- Association lists
 

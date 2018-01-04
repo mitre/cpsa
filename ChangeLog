@@ -1,3 +1,8 @@
+2018-01-04  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Loader.hs (loadConclusion): Added false as an alias for
+	(or) in the goal language.
+
 2017-12-30  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Strand.hs (Fact): Added facts to skeletons and the goal

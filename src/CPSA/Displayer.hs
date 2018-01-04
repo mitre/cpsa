@@ -21,8 +21,63 @@ displayProt :: Prot -> SExpr ()
 displayProt p =
     L () (S () "defprotocol" : S () (pname p) : S () (alg p) : rs)
     where
-      rs = foldl f (pcomment p) (reverse (roles p))
+      rs = foldl f (map displayRule (rules p) ++ pcomment p)
+                   (reverse (roles p))
       f rs r = displayRole r : rs
+
+displayRule :: Rule -> SExpr ()
+displayRule r =
+  L () (S () "defrule" :
+        S () (uname r) :
+        L () [S () "implies",
+              displayConj (uantec r),
+              displayDisj (uconcl r)] :
+        ucomment r)
+
+displayDisj :: [[UForm]] -> SExpr ()
+displayDisj [] = error "DisplayDisj: no conclusion"
+displayDisj [conj] = displayConj conj
+displayDisj disj =
+  L () (S () "or" : map displayConj disj)
+
+displayConj :: [UForm] -> SExpr ()
+displayConj [] = L () [S () "false"]
+displayConj [form] = displayForm form
+displayConj forms = L () (S () "and" : map displayForm forms)
+
+displayForm :: UForm -> SExpr ()
+displayForm (ULen r s l) =
+  L () [S () "p", Q () (rname r), S () s, N () l]
+displayForm (UParam r p _ s t) =
+  L () [S () "p", Q () (rname r), displayParam r p,
+        S () s, displayUTerm t]
+displayForm (UPrec n1 n2) =
+  L () [S () "prec", displayUTerm (UNode n1), displayUTerm (UNode n2)]
+displayForm (UNon t) =
+  L () [S () "non", displayUTerm t]
+displayForm (UPnon t) =
+  L () [S () "pnon", displayUTerm t]
+displayForm (UUniq t) =
+  L () [S () "uniq", displayUTerm t]
+displayForm (UUniqAt t n) =
+  L () [S () "uniq-at", displayUTerm t, displayUTerm (UNode n)]
+displayForm (UFact name fs) =
+  L () (S () "fact" : S () name : map displayUTerm fs)
+displayForm (UEquals t1 t2) =
+  L () [S () "=", displayUTerm t1, displayUTerm t2]
+
+displayParam :: Role -> Term -> SExpr ()
+displayParam r t =
+  case displayTerm (varsContext (rvars r)) t of
+    S () var -> Q () var
+    _ -> error "displayParam: bad parameter"
+
+displayUTerm :: UTerm -> SExpr ()
+displayUTerm (UVar v) = S () v
+displayUTerm (UInv v) = L () [S () "invk", S () v]
+displayUTerm (UNode (v, i)) = L () [S () v, N () i]
+
+-- Display of roles
 
 displayRole :: Role -> SExpr ()
 displayRole r =

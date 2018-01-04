@@ -1,5 +1,5 @@
 #! /bin/sh
-TARGET=goals.xhtml
+TARGET=doorsep.xhtml
 cd tst
 if test $# -eq 0
 then

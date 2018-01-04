@@ -12,7 +12,8 @@ module CPSA.Protocol (Event (..), evtTerm, evtMap, evt, inbnd, outbnd,
     Role, rname, rvars, rtrace, rnon, rpnon, runique, rcomment,
     rsearch, rnorig, rpnorig, ruorig, rpriority, mkRole, varSubset,
     varsInTerms, addVars, firstOccurs,
-    Prot, mkProt, pname, alg, pgen, roles, listenerRole,
+    UVar, NodeUTerm, UTerm (..), UForm (..), Rule (..),
+    Prot, mkProt, pname, alg, pgen, roles, rules, listenerRole,
     varsAllAtoms, pcomment) where
 
 import qualified Data.List as L
@@ -223,6 +224,126 @@ mkRole name vars trace non pnon unique comment priority rev =
 firstOccurs :: Term -> Role -> Maybe Int
 firstOccurs v r = firstOccursAt v (rtrace r)
 
+-- Protocol Rules
+
+-- This is an unsorted logic
+
+type UVar = String
+
+type NodeUTerm = (UVar, Int)
+
+data UTerm
+  = UVar UVar                   -- Strand and term variable
+  | UInv UVar                   -- Inverse key term
+  | UNode NodeUTerm             -- Nodes -- var must be strand var
+  deriving Show
+
+-- Syntax for the atomic unsorted formulas
+data UForm
+  = ULen Role UVar Int
+  | UParam Role Term Int UVar UTerm -- role param first-occurs strand value
+  | UPrec NodeUTerm NodeUTerm
+  | UNon UTerm
+  | UPnon UTerm
+  | UUniq UTerm
+  | UUniqAt UTerm NodeUTerm
+  | UFact String [UTerm]
+  | UEquals UTerm UTerm
+  deriving Show
+
+data Rule
+  = Rule { uname :: String,      -- Rule name
+           uantec :: [UForm],    -- Antecedent
+           uconcl :: [[UForm]],  -- Conclusion (null is false)
+           ucomment :: [SExpr ()] }
+  deriving Show
+
+{-
+-- Ordering used to sort by constructor order.
+uFormOrder :: UForm -> UForm -> Ordering
+uFormOrder (ULen _ _ _) (ULen _ _ _) = EQ
+uFormOrder (ULen _ _ _) (UParam _ _ _ _ _) = LT
+uFormOrder (ULen _ _ _) (UPrec _ _) = LT
+uFormOrder (ULen _ _ _) (UNon _) = LT
+uFormOrder (ULen _ _ _) (UPnon _) = LT
+uFormOrder (ULen _ _ _) (UUniq _) = LT
+uFormOrder (ULen _ _ _) (UUniqAt _ _) = LT
+uFormOrder (ULen _ _ _) (UFact _ _) = LT
+uFormOrder (ULen _ _ _) (UEquals _ _) = LT
+uFormOrder (UParam _ _ _ _ _) (ULen _ _ _) = GT
+uFormOrder (UParam _ _ _ _ _) (UParam _ _ _ _ _) = EQ
+uFormOrder (UParam _ _ _ _ _) (UPrec _ _) = LT
+uFormOrder (UParam _ _ _ _ _) (UNon _) = LT
+uFormOrder (UParam _ _ _ _ _) (UPnon _) = LT
+uFormOrder (UParam _ _ _ _ _) (UUniq _) = LT
+uFormOrder (UParam _ _ _ _ _) (UUniqAt _ _) = LT
+uFormOrder (UParam _ _ _ _ _) (UFact _ _) = LT
+uFormOrder (UParam _ _ _ _ _) (UEquals _ _) = LT
+uFormOrder (UPrec _ _) (ULen _ _ _) = GT
+uFormOrder (UPrec _ _) (UParam _ _ _ _ _) = GT
+uFormOrder (UPrec _ _) (UPrec _ _) = EQ
+uFormOrder (UPrec _ _) (UNon _) = LT
+uFormOrder (UPrec _ _) (UPnon _) = LT
+uFormOrder (UPrec _ _) (UUniq _) = LT
+uFormOrder (UPrec _ _) (UUniqAt _ _) = LT
+uFormOrder (UPrec _ _) (UFact _ _) = LT
+uFormOrder (UPrec _ _) (UEquals _ _) = LT
+uFormOrder (UNon _) (ULen _ _ _) = GT
+uFormOrder (UNon _) (UParam _ _ _ _ _) = GT
+uFormOrder (UNon _) (UPrec _ _) = GT
+uFormOrder (UNon _) (UNon _) = EQ
+uFormOrder (UNon _) (UPnon _) = LT
+uFormOrder (UNon _) (UUniq _) = LT
+uFormOrder (UNon _) (UUniqAt _ _) = LT
+uFormOrder (UNon _) (UFact _ _) = LT
+uFormOrder (UNon _) (UEquals _ _) = LT
+uFormOrder (UPnon _) (ULen _ _ _) = GT
+uFormOrder (UPnon _) (UParam _ _ _ _ _) = GT
+uFormOrder (UPnon _) (UPrec _ _) = GT
+uFormOrder (UPnon _) (UNon _) = GT
+uFormOrder (UPnon _) (UPnon _) = EQ
+uFormOrder (UPnon _) (UUniq _) = LT
+uFormOrder (UPnon _) (UUniqAt _ _) = LT
+uFormOrder (UPnon _) (UFact _ _) = LT
+uFormOrder (UPnon _) (UEquals _ _) = LT
+uFormOrder (UUniq _) (ULen _ _ _) = GT
+uFormOrder (UUniq _) (UParam _ _ _ _ _) = GT
+uFormOrder (UUniq _) (UPrec _ _) = GT
+uFormOrder (UUniq _) (UNon _) = GT
+uFormOrder (UUniq _) (UPnon _) = GT
+uFormOrder (UUniq _) (UUniq _) = EQ
+uFormOrder (UUniq _) (UUniqAt _ _) = LT
+uFormOrder (UUniq _) (UFact _ _) = LT
+uFormOrder (UUniq _) (UEquals _ _) = LT
+uFormOrder (UUniqAt _ _) (ULen _ _ _) = GT
+uFormOrder (UUniqAt _ _) (UParam _ _ _ _ _) = GT
+uFormOrder (UUniqAt _ _) (UPrec _ _) = GT
+uFormOrder (UUniqAt _ _) (UNon _) = GT
+uFormOrder (UUniqAt _ _) (UPnon _) = GT
+uFormOrder (UUniqAt _ _) (UUniq _) = GT
+uFormOrder (UUniqAt _ _) (UUniqAt _ _) = EQ
+uFormOrder (UUniqAt _ _) (UFact _ _) = LT
+uFormOrder (UUniqAt _ _) (UEquals _ _) = LT
+uFormOrder (UFact _ _) (ULen _ _ _) = GT
+uFormOrder (UFact _ _) (UParam _ _ _ _ _) = GT
+uFormOrder (UFact _ _) (UPrec _ _) = GT
+uFormOrder (UFact _ _) (UNon _) = GT
+uFormOrder (UFact _ _) (UPnon _) = GT
+uFormOrder (UFact _ _) (UUniq _) = GT
+uFormOrder (UFact _ _) (UUniqAt _ _) = GT
+uFormOrder (UFact _ _) (UFact _ _) = EQ
+uFormOrder (UFact _ _) (UEquals _ _) = LT
+uFormOrder (UEquals _ _) (ULen _ _ _) = GT
+uFormOrder (UEquals _ _) (UParam _ _ _ _ _) = GT
+uFormOrder (UEquals _ _) (UPrec _ _) = GT
+uFormOrder (UEquals _ _) (UNon _) = GT
+uFormOrder (UEquals _ _) (UPnon _) = GT
+uFormOrder (UEquals _ _) (UUniq _) = GT
+uFormOrder (UEquals _ _) (UUniqAt _ _) = GT
+uFormOrder (UEquals _ _) (UFact _ _) = GT
+uFormOrder (UEquals _ _) (UEquals _ _) = EQ
+-}
+
 -- Protocols
 
 data Prot
@@ -231,16 +352,17 @@ data Prot
              pgen :: !Gen,      -- Initial variable generator
              roles :: ![Role], -- Non-listener roles of a protocol
              listenerRole :: Role,
+             rules :: ![Rule],  -- Protocol rules
              varsAllAtoms :: !Bool,   -- Are all role variables atoms?
              pcomment :: [SExpr ()] }  -- Comments from the input
     deriving Show
 
 -- Callers should ensure every role has a distinct name.
 mkProt :: String -> String -> Gen ->
-          [Role] -> Role -> [SExpr ()] -> Prot
-mkProt name alg gen roles lrole comment =
+          [Role] -> Role -> [Rule] -> [SExpr ()] -> Prot
+mkProt name alg gen roles lrole rules comment =
     Prot { pname = name, alg = alg, pgen = gen, roles = roles,
-           listenerRole = lrole, pcomment = comment,
+           listenerRole = lrole, rules = rules, pcomment = comment,
            varsAllAtoms = all roleVarsAllAtoms roles }
     where
       roleVarsAllAtoms role = all isAtom (rvars role)

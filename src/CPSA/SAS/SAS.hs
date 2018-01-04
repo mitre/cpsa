@@ -692,6 +692,7 @@ quantify name vars form =
 conjoin :: [SExpr ()] -> SExpr ()
 conjoin conjuncts =
     case concatMap f conjuncts of
+      [] -> L () [S () "false"]
       [x] -> x
       xs -> L () (S () "and" : xs)
     where
