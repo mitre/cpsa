@@ -1,3 +1,8 @@
+2018-01-06  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Loader.hs: Adapted ReturnFail for when fail is no
+	longer a method of Monad by using Control.Monad.Fail.
+
 2018-01-04  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Loader.hs (loadConclusion): Added false as an alias for
