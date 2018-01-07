@@ -8,7 +8,6 @@
 
 module CPSA.Loader (loadSExprs) where
 
-import qualified Control.Monad.Fail as Fail
 import Control.Monad
 import Control.Applicative ()
 import qualified Data.List as L
@@ -143,9 +142,6 @@ instance Monad ReturnFail where
     return = Return
     Fail l >>= _ = Fail l
     Return r >>= k = k r
-    fail = Fail.fail
-
-instance Fail.MonadFail ReturnFail where
     fail s = Fail s
 
 loadRolePriority :: Monad m => Int -> SExpr Pos -> m (Int, Int)
