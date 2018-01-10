@@ -1,6 +1,6 @@
 2018-01-10  John D. Ramsdell  <ramsdell@mitre.org>
 
-	* doc/cpsauser.html (Skeletons): Added a description of the
+	* doc/{cpsauser.html,cpsaprimer.tex}: Added a description of the
 	displaced test kind in the operation field.
 
 2018-01-04  John D. Ramsdell  <ramsdell@mitre.org>
