@@ -241,11 +241,19 @@ associated with each strand is given by the <code>(traces ...)</code> form.
 Finally, the operation used to derive this skeleton from its parent is recorded
 with <code>(operation TEST KIND TERM NODE TERM*)</code>, where <code>TEST</code> is the
 authentication test <code>encryption-test</code> or <code>nonce</code>, <code>KIND</code>
-is <code>(added-strand ID INT)</code>, <code>(contracted MAPLET*)</code>, or
-<code>(added-listener TERM)</code>, <code>TERM</code> is the critical term,
-<code>NODE</code> in the test node, and the remaining terms specify the escape set.
+is <code>(added-strand ID INT)</code>, 
+<code>(displaced INT INT ID INT)</code>,
+<code>(contracted MAPLET*)</code>, 
+<code>(added-listener TERM)</code>, or
+<code>TERM</code> is the critical term,
+<code>NODE</code> in the test node,
+and the remaining terms specify the escape set.
 When the operation kind is augmenting, the instance's role name and height are
-provided. For kind listening, a term is provided. For kind contracting, the
+provided.
+For kind displacing, the first number is the strand being merged, the
+second number is the strand it was merged into, and the remaining give
+the new instance's role name and height.
+For kind listening, a term is provided. For kind contracting, the
 substitution is provided. When a substitution refers to a variable not in the
 skeleton, its name is unpredictable. For generalization, the operation is
 recorded as <code>(operation generalization METHOD)</code>, where <code>METHOD</code>
