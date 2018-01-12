@@ -1,3 +1,8 @@
+2018-01-12  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Loader.hs (mkListenerRole): Changed do pattern to be
+	irrefutable.
+
 2018-01-10  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* doc/{cpsauser.html,cpsaprimer.tex}: Added a description of the

@@ -129,20 +129,19 @@ data ReturnFail a
     = Return a
     | Fail String
 
-instance Functor (ReturnFail) where
-    fmap _ (Fail x) = Fail x
+instance Functor ReturnFail where
+    fmap _ (Fail x)   = Fail x
     fmap f (Return y) = Return (f y)
 
-instance Applicative (ReturnFail) where
-    pure          = Return
-    Fail e <*> _ = Fail e
+instance Applicative ReturnFail where
+    pure           = Return
+    Fail e <*> _   = Fail e
     Return f <*> r = fmap f r
 
 instance Monad ReturnFail where
-    return = Return
-    Fail l >>= _ = Fail l
+    Fail l >>= _   = Fail l
     Return r >>= k = k r
-    fail s = Fail s
+    fail s         = Fail s     -- This must be removed eventually
 
 loadRolePriority :: Monad m => Int -> SExpr Pos -> m (Int, Int)
 loadRolePriority n (L _ [N _ i, N _ p])
@@ -212,8 +211,10 @@ showst t =
 mkListenerRole :: Monad m => Pos -> Gen -> m (Gen, Role)
 mkListenerRole pos g =
   do
-    (g, [x]) <- loadVars g [L pos [S pos "x", S pos "mesg"]]
-    return (g, mkRole "" [x] [In x, Out x] [] [] [] [] [] False)
+    (g, xs) <- loadVars g [L pos [S pos "x", S pos "mesg"]]
+    case xs of
+      [x] -> return (g, mkRole "" [x] [In x, Out x] [] [] [] [] [] False)
+      _ -> fail "mkListenerRole: expecting one variable"
 
 -- Ensure a trace is not a prefix of a listener
 notListenerPrefix :: Trace -> Bool
