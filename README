@@ -29,9 +29,9 @@ important property when the formulas are used to interact with theorem
 provers and proof assistants.
 
 CPSA4 also adds rules and facts.  Rules are associated with protocols,
-and facts are associated wih skeletons.  A rule is a geometric formula
-that is used as a rewrite rule, and a fact is a named relation between
-values.
+and facts are associated with skeletons.  A rule is a geometric
+formula that is used as a rewrite rule, and a fact is a named relation
+between values.
 
 This program has been built and tested using Haskell Platform.
 It is available from <http://haskell.org> or from an operating

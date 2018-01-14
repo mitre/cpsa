@@ -206,7 +206,7 @@ SKEL-ALIST ::= (non-orig TERM*) SKEL-ALIST
             |  (pen-non-orig TERM*) SKEL-ALIST
             |  (uniq-orig TERM*) SKEL-ALIST
             |  (precedes NODE-PAIR*) SKEL-ALIST
-            |  (facts FACTS*) SKEL-ALIST | ...
+            |  (facts FACTS*) SKEL-ALIST
             |  (priority NODE-INT*) SKEL-ALIST | ...
 NODE-PAIR  ::= (NODE NODE)
 NODE       ::= (INT INT)
@@ -316,7 +316,8 @@ VAR         ::= SYMBOL
 HGT         ::= INT
 PARAM       ::= STRING
 UTERM       ::= VAR | (invk VAR) | (VAR POS)
-POS         ::= INT</pre>
+POS         ::= INT
+RULE-ALIST  ::= ...</pre>
 </blockquote>
 
 <p>A rule is an implication in which the antecedent is a conjunction
@@ -355,7 +356,7 @@ POS         ::= INT</pre>
   nodes.  Formula <code>(non t)</code> asserts <code>t</code> is
   assumed to be non-originating in the skeleton.
   Predicates <code>pnon</code> and <code>uniq</code> have similar
-  interpretations. The formula <code>(fact "foo" (s 1) (invk t))</code>
+  interpretations. The formula <code>(fact foo (s 1) (invk t))</code>
   asserts the skeleton contains a fact called <code>foo</code>
   relating a node to the inverse of some term.  The formula <code>(= s
   t)</code> asserts that <code>s</code> and <code>t</code> refer to

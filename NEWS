@@ -3,7 +3,7 @@ CPSA NEWS -- history of user-visible changes.
 * Changes in version 4.1.0
 
 ** Added rules and facts.  Rules are associated with protocols, and
-   facts are associated wih skeletons.  A rule is a geometric formula
+   facts are associated with skeletons.  A rule is a geometric formula
    that is used as a rewrite rule, and a fact is a named relation
    between values.
 
