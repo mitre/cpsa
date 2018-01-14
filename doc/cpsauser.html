@@ -137,7 +137,7 @@ goal.</p>
 <p>The grammar for a protocol follows.</p>
 
 <blockquote>
-  <pre>PROTOCOL   ::= (defprotocol ID ALG ROLE+ PROT-ALIST)
+  <pre>PROTOCOL   ::= (defprotocol ID ALG ROLE+ RULE* PROT-ALIST)
 ID         ::= SYMBOL
 ALG        ::= SYMBOL
 ROLE       ::= (defrole ID VARS TRACE ROLE-ALIST)
@@ -149,10 +149,13 @@ ROLE-ALIST ::= (non-orig POS-TERM*) ROLE-ALIST
             |  (pen-non-orig POS-TERM*) ROLE-ALIST
             |  (uniq-orig TERM*) ROLE-ALIST
             |  (priority POS-INT*) ROLE-ALIST | ...
-POS-TERM    ::= TERM | (INT TERM)
+POS-TERM   ::= TERM | (INT TERM)
 POS-INT    ::= (INT INT)
 PROT-ALIST ::= ...</pre>
 </blockquote>
+
+<p>The syntax for <code>SORT</code>, <code>TERM</code>,
+  and <code>RULE</code> will be presented later.</p>
 
 <p>The protocol <code>ID</code> is a symbol that names the protocol, and the role
 <code>ID</code> is a symbol that names the role. The <code>ALG</code> symbol identifies
@@ -190,7 +193,8 @@ b (<code>cat</code> c (<code>cat</code> d e)))).</p>
 
 <p>A term in the Basic Crypto Algebra is an atom if it is variable of a sort
 other than <code>mesg</code>, or it if formed from one of the following operations:
-<code>pubk</code>, <code>privk</code>, <code>invk</code>, and <code>ltk</code>.</p>
+<code>pubk</code>, <code>privk</code>, <code>invk</code>,
+and <code>ltk</code>.</p>
 
 <h3>Skeletons</h3>
 
@@ -202,9 +206,12 @@ SKEL-ALIST ::= (non-orig TERM*) SKEL-ALIST
             |  (pen-non-orig TERM*) SKEL-ALIST
             |  (uniq-orig TERM*) SKEL-ALIST
             |  (precedes NODE-PAIR*) SKEL-ALIST
+            |  (facts FACTS*) SKEL-ALIST | ...
             |  (priority NODE-INT*) SKEL-ALIST | ...
 NODE-PAIR  ::= (NODE NODE)
-NODE       ::= (INT INT)</pre>
+NODE       ::= (INT INT)
+FACT       ::= (SYMBOL FTERM*)
+FTERM      ::= TERM | INT | NODE</pre>
 </blockquote>
 
 <p>The <code>ID</code> in the skeleton form names a protocol. It refers to the last
@@ -292,6 +299,100 @@ of <code>mesg</code>.</p>
 <code>(exp (exp h x) y) = (exp h (mul x y)</code>.</p>
 
 -->
+
+<h3>Rules</h3>
+
+<p>The syntax of a rule follows.</p>
+<blockquote>
+  <pre>RULE        ::= (defrule ID FORMULA RULE-ALIST)
+FORMULA     ::= (implies CONJUNCT DISJUNCT))
+DISJUNCT    ::= (false) | CONJUNCT | (or CONJUNCT*)
+CONJUNCT    ::= ATOMIC | (and ATOMIC+)
+ATOMIC      ::= (p ROLEID VAR HGT) | (p ROLEID PARAM VAR UTERM)
+             |  (prec (VAR POS) (VAR POS)) | (non UTERM) | (pnon UTERM)
+             |  (uniq UTERM) | (fact SYMBOL UTERM*) | (= UTERM UTERM)
+ROLEID      ::= STRING
+VAR         ::= SYMBOL
+HGT         ::= INT
+PARAM       ::= STRING
+UTERM       ::= VAR | (invk VAR) | (VAR POS)
+POS         ::= INT</pre>
+</blockquote>
+
+<p>A rule is an implication in which the antecedent is a conjunction
+  of atomic formulas, and the conclusion is a disjunction of
+  conjunctions of atomic formulas.  A rule of the form</p>
+
+<blockquote>
+  (<code>implies</code> A (<code>or</code> B C...))
+</blockquote>
+
+<p>encodes the first-order sentence</p>
+
+<blockquote>
+  (<code>forall</code> (Avars) (<code>implies</code> A
+  (<code>or</code> (<code>exists</code> (Bvars) B)
+  (<code>exists</code> (Cvars) C)...)))
+</blockquote>
+
+<p>where Avars is the variables that occur in A, Bvars are the
+  variables that occur in B but not in A, Cvars are the variables that
+  occur in C but not in A, and so on.  This kind of formula is called
+  a geometric sentence.</p>
+
+<p>A formula asserts that a skeleton has some property.  The
+  formula <code>(p "init" s 3)</code> asserts that
+  strand <code>s</code> in the skeleton is an instance of
+  an <code>init</code> role and is of length 3 or greater.  The
+  formula <code>(p "init" "x" s y)</code> asserts that
+  strand <code>s</code> is an instance of an
+  <code>init</code> role and is of a length that is great enough so
+  that role parameter <code>x</code> occurs in the role, and the role
+  parameter <code>x</code> is instantiated to become
+  term <code>y</code>.  Formula <code>(prec (x 2) (y 1))</code>
+  asserts that for some strands <code>x</code> and <code>y</code> in
+  the skeleton, the precedence relation contains the mentioned pair of
+  nodes.  Formula <code>(non t)</code> asserts <code>t</code> is
+  assumed to be non-originating in the skeleton.
+  Predicates <code>pnon</code> and <code>uniq</code> have similar
+  interpretations. The formula <code>(fact "foo" (s 1) (invk t))</code>
+  asserts the skeleton contains a fact called <code>foo</code>
+  relating a node to the inverse of some term.  The formula <code>(= s
+  t)</code> asserts that <code>s</code> and <code>t</code> refer to
+  the same object in the skeleton.</p>
+
+<p>A protocol with a rule follows.</p>
+
+</blockquote>
+<pre>(defprotocol doorsep basic
+  (defrole person
+    (vars (d p akey) (k skey) (t text))
+    (trace
+     (send (enc (enc k (invk p)) d))
+     (recv (enc t k))
+     (send t)))
+  (defrole door
+    (vars (d p akey) (k skey) (t text))
+    (trace
+     (recv (enc (enc k (invk p)) d))
+     (send (enc t k))
+     (recv t)))
+  (defrule trust
+    (implies
+     (and (p "person" z 1)
+	  (p "person" "p" z p)
+	  (p "person" "d" z d)
+	  (non (invk p)))
+     (non (invk d)))
+    (comment "The trust rule"))
+  (comment "Doorsep protocol using unnamed asymmetric keys"))
+
+(defskeleton doorsep
+  (vars (p akey))
+  (defstrand door 3 (p p))
+  (non-orig (invk p))
+  (comment "Analyze from the doors's perspective"))</pre>
+</blockquote>
 
 <h3>First-order Logic and Security Goals</h3>
 

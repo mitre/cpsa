@@ -241,12 +241,12 @@ data UTerm
 -- Syntax for the atomic unsorted formulas
 data UForm
   = ULen Role UVar Int
-  | UParam Role Term Int UVar UTerm -- role param first-occurs strand value
+    -- role param first-occurs-height strand value
+  | UParam Role Term Int UVar UTerm
   | UPrec NodeUTerm NodeUTerm
   | UNon UTerm
   | UPnon UTerm
   | UUniq UTerm
-  | UUniqAt UTerm NodeUTerm
   | UFact String [UTerm]
   | UEquals UTerm UTerm
   deriving Show

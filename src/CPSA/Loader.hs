@@ -276,7 +276,7 @@ loadUConj rs name x =
 loadUForm :: Monad m => [Role] -> String -> SExpr Pos -> m UForm
 loadUForm rs _
   (L _ [S _ "p", Q pos r, S _ var, N _ n])
-  | n >= 0 =
+  | n > 0 =
     do
       r <- lookForRole rs name pos r
       return $ ULen r var n
@@ -287,7 +287,7 @@ loadUForm rs name
     v <- loadAlgTerm (rvars r) (S p var)
     t <- loadUAlgTerm t
     case firstOccurs v r of
-      Just i -> return (UParam r v i strd t)
+      Just i -> return (UParam r v (i + 1) strd t)
       Nothing -> fail (shows p ("Parameter " ++ var ++
                                 " not in role " ++ rname r))
 loadUForm _ _
@@ -311,12 +311,6 @@ loadUForm _ _
   do
     t <- loadUAlgTerm t
     return $ UUniq t
-loadUForm _ _
-  (L _ [S _ "uniq-at", t, n]) =
-  do
-    t <- loadUAlgTerm t
-    n <- loadNodeUTerm n
-    return $ UUniqAt t n
 loadUForm _ _
   (L _ (S _ "fact" : S _ name : fs)) =
   do

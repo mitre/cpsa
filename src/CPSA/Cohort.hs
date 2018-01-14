@@ -193,7 +193,7 @@ data Mode = Mode
 -- realized, try to generalize it, but only when noIsoChk is false.
 reduce :: Mode -> Preskel -> [Preskel]
 reduce mode k =
-    maybe (whenRealized k) id (findTest mode k u a)
+    concatMap simplify $ maybe (whenRealized k) id (findTest mode k u a)
     where
       (a, u) = avoid k
       whenRealized k =

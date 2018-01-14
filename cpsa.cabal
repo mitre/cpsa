@@ -115,7 +115,7 @@ Extra-Source-Files:
   tst/woolam.tst tst/yahalom-6.3.6.scm tst/yahalom-6.3.6.tst
   tst/yahalom.scm tst/yahalom.tst tst/unilateral.scm
   tst/unilateral.tst tst/doorsep2invk.scm tst/doorsep2invk.tst
-  tst/doorsep.scm tst/doorsep.tst
+  tst/doorsep.scm tst/doorsep.tst tst/facts.scm tst/facts.tst
   tst/reflect.scm tst/reflect.tst tst/ab.tst tst/abc.tst
   tst/bug_example.tst tst/dh-ca_hack.tst tst/dh_encrypt_hack.tst
   tst/dh_mim_hack.tst tst/dhnsl_hack.tst tst/epmo_acctnum.tst

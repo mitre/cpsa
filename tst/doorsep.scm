@@ -21,10 +21,10 @@
 	  (non (invk p)))
      (non (invk d)))
     (comment "The trust rule"))
-  (comment "Doorsep's protocol using unnamed asymmetric keys"))
+  (comment "Doorsep protocol using unnamed asymmetric keys"))
 
 (defskeleton doorsep
-  (vars (d p akey) (k skey) (t text))
+  (vars (p akey))
   (defstrand door 3 (p p))
   (non-orig (invk p))
   (comment "Analyze from the doors's perspective"))

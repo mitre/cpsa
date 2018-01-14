@@ -59,8 +59,6 @@ displayForm (UPnon t) =
   L () [S () "pnon", displayUTerm t]
 displayForm (UUniq t) =
   L () [S () "uniq", displayUTerm t]
-displayForm (UUniqAt t n) =
-  L () [S () "uniq-at", displayUTerm t, displayUTerm (UNode n)]
 displayForm (UFact name fs) =
   L () (S () "fact" : S () name : map displayUTerm fs)
 displayForm (UEquals t1 t2) =

@@ -1,3 +1,10 @@
+2018-01-13  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/*.hs: Added rules to protocols enabling rewriting based
+	on geometric formulas.
+
+	* doc/cpsauser.html: Added a description of rules and facts.
+
 2018-01-12  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Loader.hs (mkListenerRole): Changed do pattern to be

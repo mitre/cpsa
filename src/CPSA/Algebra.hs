@@ -84,6 +84,7 @@ module CPSA.Algebra (name,
     encryptions,
     escapeSet,
     loadTerm,
+    inv,
 
     Place,
     places,
