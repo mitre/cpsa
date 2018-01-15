@@ -52,13 +52,14 @@ Data-Files:
   yahalom.scm goals.scm
 Data-Dir:	    	doc
 Extra-Source-Files:
-  Makefile ChangeLog README NEWS ghci cpsatst setup.bat
-  doc/README doc/Makefile doc/macros.tex doc/cpsaprimer.tex
-  doc/cpsagoals.tex doc/bcasyntax.tex doc/cpsaintroslides.tex
-  doc/mitreslides.sty doc/cpsaspec.tex doc/cpsadesign.tex
-  doc/cpsaoverview.tex doc/cpsadiagrams.mp doc/strands.mp
-  doc/cmstrands.mp doc/carriers.mp doc/termtree.mp doc/blanchet.mp
-  doc/mitrelogo.mp doc/cpsa.bib doc/SDAG.lhs
+  Makefile ChangeLog README NEWS ghci cpsatst setup.bat doc/README
+  doc/src/Makefile doc/src/macros.tex doc/src/cpsaprimer.tex
+  doc/src/cpsagoals.tex doc/src/bcasyntax.tex
+  doc/src/cpsaintroslides.tex doc/src/mitreslides.sty
+  doc/src/cpsaspec.tex doc/src/cpsadesign.tex doc/src/cpsaoverview.tex
+  doc/src/cpsadiagrams.mp doc/src/strands.mp doc/src/cmstrands.mp
+  doc/src/carriers.mp doc/src/termtree.mp doc/src/blanchet.mp
+  doc/src/mitrelogo.mp doc/src/cpsa.bib doc/SDAG.lhs
   src/index.html src/cpsacgi src/cpsacgi.py src/cpsajson.py src/split.py
   src/cpsa2svg src/cpsa.el src/httpd_allow_execmem.te src/cpsaperm.scm
   src/cpsaops.scm src/preskel src/cpsa.pl src/unsorted.pl src/pp.pl

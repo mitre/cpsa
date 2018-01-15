@@ -1,7 +1,0 @@
-#! /bin/sh
-
-# Old way for old versions of MetaPost:
-# MPINPUTS=.:../cmarrows: make -f mphack.mk "$@"
-
-# New way that just adds directory for cmarrows
-MPINPUTS=.:../cmarrows: make "$@"

@@ -1,3 +1,7 @@
+2018-01-14  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/{*.tex,*.mp,Makefile}: Moved LaTeX sources to doc/src.
+
 2018-01-13  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/*.hs: Added rules to protocols enabling rewriting based

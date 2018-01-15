@@ -1,0 +1,4 @@
+#! /bin/sh
+
+# Adds cmarrows when it is missing
+MPINPUTS=.:../cmarrows: make "$@"
