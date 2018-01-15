@@ -84,7 +84,7 @@ module CPSA.Algebra (name,
     encryptions,
     escapeSet,
     loadTerm,
-    inv,
+    invk,
 
     Place,
     places,
@@ -427,8 +427,18 @@ decompose knowns unguessable =
 inv :: Term -> Term
 inv (F Akey [F Invk [t]]) = F Akey [t]
 inv (F Akey [t]) = F Akey [F Invk [t]]
+inv t@(F _ _) = t
 inv (I _) = error "Algebra.inv: Cannot invert a variable of sort mesg"
-inv t = t
+inv (C _) = error "Algebra.inv: Cannot invert a tag constant"
+inv (D _) = error "Algebra.inv: Cannot invert a variable of sort strd"
+inv (Z _) = error "Algebra.inv: Cannot invert a strd constant"
+
+-- Inverts an asymmetric key as a partial function
+invk :: Term -> Maybe Term
+invk (F Akey [F Invk [t]]) = Just $ F Akey [t]
+invk (F Akey [t]) = Just $ F Akey [F Invk [t]]
+invk t@(F _ _) = Just t
+invk _ = Nothing
 
 -- Extracts every encryption that is carried by a term along with its
 -- encryption key.  Note that a hash is treated as a kind of
