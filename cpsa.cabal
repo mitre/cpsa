@@ -120,7 +120,7 @@ Extra-Source-Files:
   tst/reflect.scm tst/reflect.tst tst/ab.tst tst/abc.tst
   tst/bug_example.tst tst/dh-ca_hack.tst tst/dh_encrypt_hack.tst
   tst/dh_mim_hack.tst tst/dhnsl_hack.tst tst/epmo_acctnum.tst
-  tst/thisthat.tst
+  tst/thisthat.tst tst/attest.scm tst/attest.tst
                    
 Source-Repository head
   Type:     git

@@ -35,13 +35,13 @@ displayRule r =
         ucomment r)
 
 displayDisj :: [[UForm]] -> SExpr ()
-displayDisj [] = error "DisplayDisj: no conclusion"
+displayDisj [] = L () [S () "false"]
 displayDisj [conj] = displayConj conj
 displayDisj disj =
   L () (S () "or" : map displayConj disj)
 
 displayConj :: [UForm] -> SExpr ()
-displayConj [] = L () [S () "false"]
+displayConj [] = error "DisplayConj: empty conjunct"
 displayConj [form] = displayForm form
 displayConj forms = L () (S () "and" : map displayForm forms)
 
