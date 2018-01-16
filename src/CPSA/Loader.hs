@@ -251,7 +251,7 @@ loadUImplies rs _ name (L _ [S _ "implies", antec, concl] : cmt) =
                     uconcl = concl,
                     ucomment = map strip cmt }
 loadUImplies _ pos name _ =
-  fail (shows pos ("Expecting implies in rule: " ++ name))
+  fail (shows pos ("In rule " ++ name ++ ", expecting implies"))
 
 loadUDisj :: Monad m => [Role] -> String -> SExpr Pos -> m [[UForm]]
 loadUDisj _ _ (L _ [S _ "false"]) =
@@ -265,7 +265,7 @@ loadUDisj rs name x =
 
 loadUConj :: Monad m => [Role] -> String -> SExpr Pos -> m [UForm]
 loadUConj _ name (L pos [S _ "and"]) =
-  fail (shows pos ("Malformed and in role: " ++ name))
+  fail (shows pos ("In rule " ++ name ++ ", malformed and"))
 loadUConj rs name (L _ (S _ "and" : xs)) =
   mapM (loadUForm rs name) xs
 loadUConj rs name x =
@@ -322,22 +322,37 @@ loadUForm _ _
     t1 <- loadUTerm t1
     t2 <- loadUTerm t2
     return $ UEquals t1 t2
+loadUForm _ name (L pos (S _ "p" : Q _ r : Q _ var : _)) =
+  fail (shows pos "In rule " ++ name ++
+        ", malformed parameter predicate for role " ++ r ++
+        " and parameter " ++ var) 
+loadUForm _ name (L pos (S _ "p" : Q _ r : _)) =
+  fail (shows pos "In rule " ++ name ++
+        ", malformed role length predicate for role " ++ r)
+loadUForm _ name (L pos (S _ pred : _)) =
+  fail (shows pos "In rule " ++ name ++
+        ", predicate " ++ pred ++ " unrecognized or formula malformed")
 loadUForm _ name xs =
-  fail (shows (annotation xs) "Unrecognized atomic formula in: " ++ name)
+  fail (shows (annotation xs) "In rule " ++ name ++
+        ", malformed formula")
 
 lookForRole :: Monad m => [Role] -> String -> Pos -> String -> m Role
 lookForRole rs name pos var =
   case L.find (\r -> var == rname r) rs of
     Just r -> return r
     Nothing ->
-      fail (shows pos ("Role in length predicate not found in role: "
-                       ++ name))
+      fail (shows pos ("In rule " ++ name ++
+                       ", role " ++ var ++ " not found"))
 
 loadUTerm :: Monad m => SExpr Pos -> m UTerm
 loadUTerm (S _ var) = return $ UVar var
 loadUTerm (L _ [S _ var, N _ num])
   | num >= 0 = return $ UNode (var, num)
 loadUTerm (L _ [S _ "invk", S _ var]) = return $ UInv var
+loadUTerm (L pos (_ : N _ _ : _)) =
+  fail (shows pos "Bad node term")
+loadUTerm (L pos (S _ fun : _)) =
+  fail (shows pos "Bad function application with " ++ fun)
 loadUTerm x = fail (shows (annotation x) "Bad term")
 
 loadUAlgTerm :: Monad m => SExpr Pos -> m UTerm

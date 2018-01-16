@@ -1,3 +1,8 @@
+2018-01-15  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Loader.hs (loadUForm,loadUTerm): Improved loader error
+	messages for rules.
+
 2018-01-14  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* doc/{*.tex,*.mp,Makefile}: Moved LaTeX sources to doc/src.
