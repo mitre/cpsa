@@ -94,7 +94,7 @@
 	  (p "init" "a" i a)
 	  (prec (r 1) (i 1))
 	  (prec (i 2) (r 2))))
-    (comment "Unilateral goal under the predicate mapping:")
+    (comment "Unilateral sas under the predicate mapping:")
     (comment (p "init" 2) "->" (p "resp" 3) "and")
     (comment (p "init" "n") "->" (p "resp" "nb") "and")
     (comment (p "init" "a") "->" (p "resp" "a") "and")
