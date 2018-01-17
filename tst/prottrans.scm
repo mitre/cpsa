@@ -75,14 +75,14 @@
      (recv (enc na a b))
      (send (enc na nb a))
      (recv (enc nb b))))
-  (defrule test
-    (implies
-     (and (p "resp" r 3)
-	  (p "resp" "nb" r nb)
-	  (p "resp" "a" r a)
-	  (non (invk a))
-	  (uniq nb))
-     (fact test r)))
+  ;; (defrule test
+  ;;   (implies
+  ;;    (and (p "resp" r 3)
+  ;; 	  (p "resp" "nb" r nb)
+  ;; 	  (p "resp" "a" r a)
+  ;; 	  (non (invk a))
+  ;; 	  (uniq nb))
+  ;;    (fact test r)))
   (defrule unilateral
     (implies
      (and (p "resp" r 3)
