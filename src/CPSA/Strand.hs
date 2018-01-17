@@ -17,7 +17,7 @@ module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     inheritRnon, inheritRpnon, inheritRunique, addListener, Cause
     (..), Direction (..), Method (..), Operation (..), operation,
     prob, homomorphism, toSkeleton, generalize, collapse, sat,
-    FTerm (..), Fact (..), simplify) where
+    FTerm (..), Fact (..), simplify, rewrite) where
 
 import Control.Monad
 import qualified Data.List as L

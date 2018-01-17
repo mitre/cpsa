@@ -147,9 +147,13 @@ search p h ks m n seen [] done =
     mode p h ks m n seen (reverse done)
 search p h ks m n seen (lk:todo) done =
     do
+      let rewrites =
+            case rewrite $ content lk of
+              Nothing -> []
+              Just ks -> ks
       let kids = concatMap simplify (collapse $ content lk)
       let (n', seen', todo', _) =
-              foldl (next lk) (n, seen, todo, []) kids
+              foldl (next lk) (n, seen, todo, []) (rewrites ++ kids)
       search p h ks m n' seen' todo' (lk:done)
 
 -- Select reduction mode, noIsoChk or normal

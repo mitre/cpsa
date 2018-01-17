@@ -157,6 +157,7 @@
     (implies
       (and (p "resp" r 3) (p "resp" "nb" r nb) (p "resp" "a" r a)
         (non (invk a)) (uniq nb)) (fact test r)))
+  (defrule toy (implies (p "resp" r 1) (fact test r)))
   (defrule unilateral
     (implies
       (and (p "resp" r 3) (p "resp" "nb" r nb) (p "resp" "a" r a)
@@ -184,6 +185,24 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns-with-rule
+  (vars (nb na na-0 nb-0 text) (a b b-0 akey))
+  (defstrand resp 3 (nb nb) (na na) (b b) (a a))
+  (defstrand init 3 (na na-0) (nb nb-0) (a a) (b b-0))
+  (precedes ((0 1) (1 1)) ((1 2) (0 2)))
+  (non-orig (invk a))
+  (uniq-orig nb)
+  (facts (test 0))
+  (rule unilateral)
+  (traces ((recv (enc na a b)) (send (enc na nb a)) (recv (enc nb b)))
+    ((send (enc na-0 a b-0)) (recv (enc na-0 nb-0 a))
+      (send (enc nb-0 b-0))))
+  (label 8)
+  (parent 7)
+  (seen 9)
+  (unrealized (0 2))
+  (comment "2 in cohort - 1 not yet seen"))
+
+(defskeleton ns-with-rule
   (vars (nb na text) (a b b-0 akey))
   (defstrand resp 3 (nb nb) (na na) (b b) (a a))
   (defstrand init 3 (na na) (nb nb) (a a) (b b-0))
@@ -195,11 +214,31 @@
   (operation nonce-test (added-strand init 3) nb (0 2) (enc na nb a))
   (traces ((recv (enc na a b)) (send (enc na nb a)) (recv (enc nb b)))
     ((send (enc na a b-0)) (recv (enc na nb a)) (send (enc nb b-0))))
-  (label 8)
+  (label 9)
   (parent 7)
   (unrealized)
   (shape)
   (maps ((0) ((a a) (nb nb) (b b) (na na))))
   (origs (nb (0 1))))
+
+(defskeleton ns-with-rule
+  (vars (nb na na-0 nb-0 text) (a b b-0 b-1 akey))
+  (defstrand resp 3 (nb nb) (na na) (b b) (a a))
+  (defstrand init 3 (na na-0) (nb nb-0) (a a) (b b-0))
+  (defstrand init 3 (na na) (nb nb) (a a) (b b-1))
+  (precedes ((0 1) (1 1)) ((0 1) (2 1)) ((1 2) (0 2)) ((2 2) (0 2)))
+  (non-orig (invk a))
+  (uniq-orig nb)
+  (facts (test 0))
+  (operation nonce-test (added-strand init 3) nb (0 2) (enc na nb a))
+  (traces ((recv (enc na a b)) (send (enc na nb a)) (recv (enc nb b)))
+    ((send (enc na-0 a b-0)) (recv (enc na-0 nb-0 a))
+      (send (enc nb-0 b-0)))
+    ((send (enc na a b-1)) (recv (enc na nb a)) (send (enc nb b-1))))
+  (label 10)
+  (parent 8)
+  (seen 9)
+  (unrealized)
+  (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
