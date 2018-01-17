@@ -123,7 +123,7 @@ solve p h (k : ks) n =
             if isomorphic (gist k) (gist k') then -- Input was a skeleton
                 let lk' = LPreskel k' n 0 Nothing in
                 begin p h ks (n + optLimit p) (n + 1)
-                         (hist (gist k', n)) [lk']
+                         (hist (gist k', n)) lk'
             else                -- Input was not a skeleton
                 do
                   let lk = LPreskel k n (-1) Nothing
@@ -131,14 +131,23 @@ solve p h (k : ks) n =
                            "Not a skeleton")
                   let lk' = withParent k' (n + 1) lk
                   begin p h ks (n + optLimit p) (n + 2)
-                           (hist (gist k', n + 1))  [lk']
+                           (hist (gist k', n + 1))  lk'
         _ -> error "Main.solve: can't handle more than one skeleton"
 
--- Begin by collapsing the point-of-view skeleton as much as possible.
+-- Begin by applying rules as much as possible.
 begin :: Options -> Handle -> [Preskel] -> Int -> Int -> Seen ->
-         [LPreskel] -> IO ()
-begin p h ks m n seen todo =
-    search p h ks m n seen todo []
+         LPreskel -> IO ()
+begin p h ks m n seen lk =
+  let k = content lk in
+  case rewrite k of
+    Nothing -> search p h ks m n seen [lk] []
+    Just kids ->
+      do
+        wrt p h (commentPreskel lk [] (unrealized k) Ordinary
+                  "Not in theory")
+        let (n', seen', todo', _) =
+              foldl (next lk) (n, seen, [], []) kids
+        search p h ks m n' seen' todo' []
 
 -- Apply collapse until all possibilities are exhausted.
 search :: Options -> Handle -> [Preskel] -> Int -> Int -> Seen ->
@@ -147,13 +156,9 @@ search p h ks m n seen [] done =
     mode p h ks m n seen (reverse done)
 search p h ks m n seen (lk:todo) done =
     do
-      let rewrites =
-            case rewrite $ content lk of
-              Nothing -> []
-              Just ks -> ks
       let kids = concatMap simplify (collapse $ content lk)
       let (n', seen', todo', _) =
-              foldl (next lk) (n, seen, todo, []) (rewrites ++ kids)
+              foldl (next lk) (n, seen, todo, []) kids
       search p h ks m n' seen' todo' (lk:done)
 
 -- Select reduction mode, noIsoChk or normal

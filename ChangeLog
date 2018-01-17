@@ -1,3 +1,9 @@
+2018-01-17  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Reduction.hs (begin): Start up an analysis by applying
+	rules as much as possible.  Also, added protocol transformations
+	test case.
+
 2018-01-15  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Loader.hs (loadUForm,loadUTerm): Improved loader error
