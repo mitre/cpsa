@@ -121,7 +121,8 @@ Extra-Source-Files:
   tst/bug_example.tst tst/dh-ca_hack.tst tst/dh_encrypt_hack.tst
   tst/dh_mim_hack.tst tst/dhnsl_hack.tst tst/epmo_acctnum.tst
   tst/thisthat.tst tst/attest.scm tst/attest.tst
-                   
+  tst/prottrans.scm tst/prottrans.tst
+
 Source-Repository head
   Type:     git
   Location: git://github.com/ramsdell/cpsa.git

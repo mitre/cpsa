@@ -147,7 +147,7 @@ search p h ks m n seen [] done =
     mode p h ks m n seen (reverse done)
 search p h ks m n seen (lk:todo) done =
     do
-      let kids = collapse (content lk)
+      let kids = concatMap simplify (collapse $ content lk)
       let (n', seen', todo', _) =
               foldl (next lk) (n, seen, todo, []) kids
       search p h ks m n' seen' todo' (lk:done)

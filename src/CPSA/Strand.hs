@@ -2129,7 +2129,7 @@ rewrite k =
             else                -- Found an applicable rule
               Just $ doRewrites prules k r vas'
 
--- Repeatly applies rules until no rule applies.
+-- Repeatedly applies rules until no rule applies.
 doRewrites :: [Rule] -> Preskel -> Rule -> [Assign] -> [Preskel]
 doRewrites rules k r vas =
   foldl f [] (doRewrite k r vas)
@@ -2503,7 +2503,7 @@ uMatchForm _ name (UEquals t0 t1) va =
   case (uLookup t0 va, uLookup t1 va) of
     (Just t0, Just t1) | t0 == t1 -> [va]
                        | otherwise -> []
-    _ -> error ("In rule " ++ name ++ ", cannot bindings in equality")
+    _ -> error ("In rule " ++ name ++ ", cannot find binding in equality")
 
 -- Match a role's trace with a strand's trace.
 uMatchRoleTrace :: Preskel -> Role -> Int -> Int -> [(Gen, Env)]
