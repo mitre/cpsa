@@ -489,6 +489,10 @@ newPreskel gen shared insts orderings non pnon unique facts prio oper prob pov =
         if useCheckVars then
             checkVars k
         else k
+{-
+          if chkFacts k then k
+          else k
+-}
 
 checkVars :: Preskel -> Preskel
 checkVars k =
@@ -533,6 +537,7 @@ preskelWellFormed k =
     all nonCheck (knon k) &&
     all uniqueCheck (kunique k) &&
     wellOrdered k && acyclicOrder k &&
+    {- chkFacts k && -}
     roleOrigCheck k
     where
       terms = kterms k
@@ -647,8 +652,8 @@ roleOrigCheck k =
 
 -- To meet this requirement, a list of skeletons that have been seen
 -- is maintained.  Before a skeleton is put on a to do list for
--- analysis, it is checked to see if it is ismorphic to one already
--- seen.  If so, the results of the analysis for the ismorphic
+-- analysis, it is checked to see if it is isomorphic to one already
+-- seen.  If so, the results of the analysis for the isomorphic
 -- skeleton is used instead of putting the skeleton on the to do list.
 
 -- Once a skeleton has been printed, the only reason for saving it is
@@ -1530,6 +1535,9 @@ deleteNode k n
           let mapping = deleteNth s (strandids k)
           let k' = deleteNodeRest k (gen k) (s, p) (deleteNth s (insts k))
                    (deleteOrderings s (tc k)) (updatePerm s s (prob k))
+                   (map
+                     (updateFact (updateStrand s s))
+                     (deleteFacts s $ kfacts k))
           return (k', mapping)
     | otherwise =
         do
@@ -1537,7 +1545,7 @@ deleteNode k n
           let i = inst (strand n)
           (gen', i') <- bldInstance (role i) (take p (trace i)) (gen k)
           let k' = deleteNodeRest k gen' (s, p) (replaceNth i' s (insts k))
-                   (shortenOrderings (s, p) (tc k)) (prob k)
+                   (shortenOrderings (s, p) (tc k)) (prob k) (kfacts k)
           return (k', mapping)
     where
       p = pos n
@@ -1570,10 +1578,10 @@ shortenOrderings (s, i) ps =
           | otherwise = [p]
 
 deleteNodeRest :: Preskel -> Gen -> Node -> [Instance] -> [Pair] ->
-                  [Sid] -> Preskel
-deleteNodeRest k gen n insts' orderings prob =
+                  [Sid] -> [Fact] -> Preskel
+deleteNodeRest k gen n insts' orderings prob facts =
     newPreskel gen (shared k) insts' orderings non' pnon' unique'
-    (kfacts k) prio' (Generalized (Deleted n)) prob (pov k)
+    facts prio' (Generalized (Deleted n)) prob (pov k)
     where
       -- Drop nons that aren't mentioned anywhere
       non' = filter mentionedIn (knon k)
@@ -1587,6 +1595,16 @@ deleteNodeRest k gen n insts' orderings prob =
       prio' = filter within (kpriority k)
       within ((s, i), _) =
         s < fst n || s == fst n && i < snd n
+
+deleteFacts :: Sid -> [Fact] -> [Fact]
+deleteFacts s facts =
+  filter f facts
+  where
+    f (Fact _ ft) =
+      all g ft
+    g (FSid s') = s /= s'
+    g (FNode (s', _)) = s /= s'
+    g (FTerm _) = True
 
 -- Node ordering weakening
 
@@ -1764,7 +1782,7 @@ changeLocations k env gen t locs =
       k0 = newPreskel gen' (shared k) insts' (orderings k) non pnon unique0
            (kfacts k) (kpriority k) (Generalized (Separated t)) (prob k) (pov k)
       k1 = newPreskel gen' (shared k) insts' (orderings k) non pnon unique1
-           (kfacts k) (kpriority k) (Generalized (Separated t)) (prob k) (pov k)
+           facts (kpriority k) (Generalized (Separated t)) (prob k) (pov k)
       (gen', insts') = changeStrands locs t gen (strands k)
       non = knon k ++ map (instantiate env) (knon k)
       pnon = kpnon k ++ map (instantiate env) (kpnon k)
@@ -1772,6 +1790,7 @@ changeLocations k env gen t locs =
       unique1 = map (instantiate env) (kunique k) ++ unique'
       -- Ensure all role unique assumptions are in.
       unique' = concatMap inheritRunique insts'
+      facts = map (instFact env) (kfacts k)
 
 changeStrands :: [Location] -> Term -> Gen -> [Strand] -> (Gen, [Instance])
 changeStrands locs copy gen strands =
@@ -2039,6 +2058,13 @@ substFTerm _ t = t
 substFact :: Subst -> Fact -> Fact
 substFact s (Fact name fs) = Fact name $ map (substFTerm s) fs
 
+instFTerm :: Env -> FTerm -> FTerm
+instFTerm s (FTerm t) = FTerm $ instantiate s t
+instFTerm _ t = t
+
+instFact :: Env -> Fact -> Fact
+instFact s (Fact name fs) = Fact name $ map (instFTerm s) fs
+
 updateFTerm :: (Sid -> Sid) -> FTerm -> FTerm
 updateFTerm f (FSid s) = FSid $ f s
 updateFTerm f (FNode (s, i)) = FNode (f s, i)
@@ -2059,6 +2085,32 @@ instUpdateFTerm e _ (FTerm t) = FTerm $ instantiate e t
 
 instUpdateFact :: Env -> (Sid -> Sid) -> Fact -> Fact
 instUpdateFact e f (Fact name fs) = Fact name $ map (instUpdateFTerm e f) fs
+
+{-
+chkFacts :: Preskel -> Bool
+chkFacts k =
+  all checkFact (kfacts k)
+  where
+    checkFact (Fact _ ft) =
+      all checkFTerm ft
+    checkFTerm (FSid s) =
+      s < nstrands k
+    checkFTerm (FNode (s, _)) =
+      s < nstrands k
+    checkFTerm (FTerm _) = True
+
+-- Use this to find bad fact updates.
+chkFacts :: Preskel -> Bool
+chkFacts k =
+  all checkFact (kfacts k)
+  where
+    checkFact (Fact _ ft) =
+      all checkFTerm ft
+    checkFTerm (FSid s) | s >= nstrands k = error "Bad strand in fact"
+    checkFTerm (FNode (s, _)) | s >= nstrands k = error "Bad node in fact"
+    checkFTerm _ = True
+
+-}
 
 {- Rules
 
@@ -2354,7 +2406,7 @@ doForm name (k, va) (UEquals t0 t1) =
           (FTerm t, FTerm t') -> uUnify k va t t'
           _ -> []
     _ -> []
-  
+
 -- Just add a strand cloned from a role.
 -- The length must be greater than one.
 addStrand :: Preskel -> Role -> Int -> Preskel

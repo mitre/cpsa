@@ -155,16 +155,17 @@
     (trace (recv (enc na a b)) (send (enc na nb a)) (recv (enc nb b))))
   (defrule unilateral
     (implies
-      (and (p "resp" r 3) (p "resp" "nb" r nb) (p "resp" "a" r a)
+      (and (p "resp" r 3) (p "resp" "a" r a) (p "resp" "nb" r nb)
         (non (invk a)) (uniq nb))
       (and (p "init" i 3) (p "init" "a" i a) (prec (r 1) (i 1))
         (prec (i 2) (r 2))))
     (comment "Unilateral sas under the predicate mapping:")
     (comment (p "init" 2) "->" (p "resp" 3) "and")
     (comment (p "init" "n") "->" (p "resp" "nb") "and")
-    (comment (p "init" "a") "->" (p "resp" "a") "and")
+    (comment (p "init" "k") "->" (p "resp" "a") "and")
     (comment (p "resp" 2) "->" (p "init" 3) "and")
-    (comment (p "resp" "a") "->" (p "init" "a")))
+    (comment (p "resp" "n") "->" (p "init" "nb"))
+    (comment (p "resp" "k") "->" (p "init" "a")))
   (comment "Needham-Schroeder with rule"))
 
 (defskeleton ns-with-rule
