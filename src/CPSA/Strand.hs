@@ -2264,6 +2264,7 @@ doForm name (k, va) (UPrec (s0, i0) (s1, i1)) =
   case (lookup s0 va, lookup s1 va) of
     (Just (FSid s0), Just (FSid s1))
       | elem ((s0, i0), (s1, i1)) tc -> [(k, va)]
+      | badIndex k s0 i0 || badIndex k s1 i1 -> []
       | otherwise ->
         do                      -- Add one ordering
           orderings' <- normalizeOrderings True
@@ -2408,6 +2409,10 @@ doForm name (k, va) (UEquals t0 t1) =
           (FTerm t, FTerm t') -> uUnify k va t t'
           _ -> []
     _ -> []
+
+badIndex :: Preskel -> Sid -> Int -> Bool
+badIndex k s i =
+  i >= height (strandInst k s)
 
 -- Just add a strand cloned from a role.
 -- The length must be greater than one.

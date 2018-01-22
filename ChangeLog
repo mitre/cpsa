@@ -4,6 +4,9 @@
 	of prec relation instead of just the contents of the ordering
 	field.  Otherwise, rules can loop.
 
+	* src/CPSA/Strand.hs (doForm): In case of UPrec, fail when strand
+	index is too large, instead of raising an error.
+
 2018-01-17  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Strand.hs (deleteNode): Update facts correctly when
