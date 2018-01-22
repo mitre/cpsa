@@ -1,3 +1,9 @@
+2018-01-22  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Strand.hs (doForm, uMatchForm): Use transitive closure
+	of prec relation instead of just the contents of the ordering
+	field.  Otherwise, rules can loop.
+
 2018-01-17  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Strand.hs (deleteNode): Update facts correctly when

@@ -92,7 +92,7 @@
 	  (uniq nb))
      (and (p "init" i 3)
 	  (p "init" "a" i a)
-;	  (p "init" "nb" i nb)
+	  (p "init" "nb" i nb)
 	  (prec (r 1) (i 1))
 	  (prec (i 2) (r 2))))
     (comment "Unilateral sas under the predicate mapping:")

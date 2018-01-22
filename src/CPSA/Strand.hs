@@ -2263,7 +2263,7 @@ doForm name (k, va) (UParam r p l s t) =
 doForm name (k, va) (UPrec (s0, i0) (s1, i1)) =
   case (lookup s0 va, lookup s1 va) of
     (Just (FSid s0), Just (FSid s1))
-      | elem ((s0, i0), (s1, i1)) (orderings k) -> [(k, va)]
+      | elem ((s0, i0), (s1, i1)) tc -> [(k, va)]
       | otherwise ->
         do                      -- Add one ordering
           orderings' <- normalizeOrderings True
@@ -2280,6 +2280,8 @@ doForm name (k, va) (UPrec (s0, i0) (s1, i1)) =
     (_, Nothing) ->
       error ("In rule " ++ name ++
              ", precidence did not get a strand for " ++ s1)
+  where
+    tc = map graphPair $ graphClose $ graphEdges $ strands k
 doForm name (k, va) (UNon (UVar v)) =
   case lookup v va of
     Just (FTerm ft)
@@ -2530,7 +2532,7 @@ uMatchForm k _ (UParam r p l v t) va =
     uMatchTerm t (FTerm $ instantiate env p) va
 uMatchForm k _ (UPrec n0 n1) va =
   do
-    (n2, n3) <- orderings k
+    (n2, n3) <- map graphPair $ graphClose $ graphEdges $ strands k
     va <- uMatchTerm (UNode n0) (FNode n2) va
     uMatchTerm (UNode n1) (FNode n3) va
 uMatchForm k _ (UNon f) va=
