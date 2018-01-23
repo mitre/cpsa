@@ -307,8 +307,8 @@ of <code>mesg</code>.</p>
   <pre>RULE        ::= (defrule ID FORMULA RULE-ALIST)
 FORMULA     ::= (implies CONJUNCT DISJUNCT))
 DISJUNCT    ::= (false) | CONJUNCT | (or CONJUNCT*)
-CONJUNCT    ::= ATOMIC | (and ATOMIC+)
-ATOMIC      ::= (p ROLEID VAR HGT) | (p ROLEID PARAM VAR UTERM)
+CONJUNCT    ::= ATOM | (and ATOM+)
+ATOM        ::= (p ROLEID VAR HGT) | (p ROLEID PARAM VAR UTERM)
              |  (prec (VAR POS) (VAR POS)) | (non UTERM) | (pnon UTERM)
              |  (uniq UTERM) | (fact SYMBOL UTERM*) | (= UTERM UTERM)
 ROLEID      ::= STRING
@@ -352,15 +352,15 @@ RULE-ALIST  ::= ...</pre>
   parameter <code>x</code> is instantiated to become
   term <code>y</code>.  Formula <code>(prec (x 2) (y 1))</code>
   asserts that for some strands <code>x</code> and <code>y</code> in
-  the skeleton, the precedence relation contains the mentioned pair of
-  nodes.  Formula <code>(non t)</code> asserts <code>t</code> is
-  assumed to be non-originating in the skeleton.
-  Predicates <code>pnon</code> and <code>uniq</code> have similar
-  interpretations. The formula <code>(fact foo (s 1) (invk t))</code>
-  asserts the skeleton contains a fact called <code>foo</code>
-  relating a node to the inverse of some term.  The formula <code>(= s
-  t)</code> asserts that <code>s</code> and <code>t</code> refer to
-  the same object in the skeleton.</p>
+  the skeleton, the transitive closure of the precedence relation
+  contains the mentioned pair of nodes.  Formula <code>(non t)</code>
+  asserts <code>t</code> is assumed to be non-originating in the
+  skeleton.  Predicates <code>pnon</code> and <code>uniq</code> have
+  similar interpretations. The formula <code>(fact foo (s 1) (invk
+  t))</code> asserts the skeleton contains a fact
+  called <code>foo</code> relating a node to the inverse of some term.
+  The formula <code>(= s t)</code> asserts that <code>s</code>
+  and <code>t</code> refer to the same object in the skeleton.</p>
 
 <p>A protocol with a rule follows.</p>
 

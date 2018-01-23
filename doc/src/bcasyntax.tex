@@ -27,7 +27,7 @@ $\mbox{comment}\mid\mbox{protocol}\mid\mbox{skeleton}\mid\mbox{goal}$
 \\ comment&$\leftarrow$&
 (\sym{comment}~\ldots)
 \\ protocol&$\leftarrow$&
-(\sym{defprotocol} id alg role+ prot-alist)
+(\sym{defprotocol} id alg role+ rule$\ast$ prot-alist)
 \\ id&$\leftarrow$&symbol
 \\ alg&$\leftarrow$&symbol
 \\ role&$\leftarrow$&
@@ -55,8 +55,33 @@ $\mbox{id}\mid(\sym{pubk}\mbox{ id})
 \\ &$\mid$&$(\sym{pen-non-orig}\mbox{ ht-term}\ast)\mbox{ role-alist}$
 \\ &$\mid$&$(\sym{uniq-orig}\mbox{ term}\ast)\mbox{ role-alist}\mid\ldots$
 \\ ht-term&$\leftarrow$&term${}\mid{}$(integer term)
+\\ rule&$\leftarrow$&
+(\sym{defrule} id formula rule-alist)
+\\ formula&$\leftarrow$&
+(\sym{implies} conjunct disjunct)
+\\ disjunct&$\leftarrow$&
+$(\sym{false})\mid\mbox{conjunct}\mid(\sym{or}\mbox{ conjunct}\ast)$
+\\ conjunct&$\leftarrow$&
+$\mbox{atom}\mid(\sym{and}\mbox{ atom}+)$
+\\ atom&$\leftarrow$&(\sym{p} roleid var hgt)
+\\ &$\mid$&(\sym{p} roleid param var term)
+\\ &$\mid$&(\sym{prec} (var pos) (var pos))
+\\ &$\mid$&(\sym{non} uterm) $\mid$ (\sym{pnon} uterm) $\mid$ (\sym{uniq} uterm)
+\\ &$\mid$&(\sym{fact} symbol uterm$\ast$) $\mid$ (= uterm uterm)
+\\ var&$\leftarrow$& id
+\\ uterm&$\leftarrow$&var $\mid$ (\sym{invk} var) $\mid$ (var pos)
+\\ rule-alist&$\leftarrow$&$\ldots$
 \\ prot-alist&$\leftarrow$&$\ldots$
-\\ skeleton&$\leftarrow$&
+\end{tabular}
+\end{center}
+\caption{{\cpsa} Syntax}\label{tab:syntax}
+\end{table}
+
+\begin{table}
+\newcommand{\sym}[1]{\textup{\texttt{#1}}}
+\begin{center}\scshape
+\begin{tabular}{rcl}
+   skeleton&$\leftarrow$&
 (\sym{defskeleton} id vars
 \\ &&\qquad strand+ skel-alist)
 \\ strand&$\leftarrow$&
@@ -67,21 +92,16 @@ $\mbox{id}\mid(\sym{pubk}\mbox{ id})
 \\ skel-alist&$\leftarrow$&$(\sym{non-orig}\mbox{ term}\ast)\mbox{ skel-alist}$
 \\ &$\mid$&$(\sym{pen-non-orig}\mbox{ term}\ast)\mbox{ skel-alist}$
 \\ &$\mid$&$(\sym{uniq-orig}\mbox{ term}\ast)\mbox{ skel-alist}$
+\\ &$\mid$&$(\sym{facts}\mbox{ fact$\ast$})\mbox{ skel-alist}$
 \\ &$\mid$&$(\sym{precedes}\mbox{ node-pair}\ast)\mbox{ skel-alist}\mid\ldots$
 \\ node-pair&$\leftarrow$&
 (node node)
 \\ node&$\leftarrow$&
 (integer integer)
-\end{tabular}
-\end{center}
-\caption{{\cpsa} Syntax}\label{tab:syntax}
-\end{table}
-
-\begin{table}
-\newcommand{\sym}[1]{\textup{\texttt{#1}}}
-\begin{center}\scshape
-\begin{tabular}{rcl}
-goal&$\leftarrow$&
+\\ fact&$\leftarrow$&(symbol fterm$\ast$)
+\\ fterm&$\leftarrow$&term $\mid$ integer $\mid$ node
+\\
+\\ goal&$\leftarrow$&
 (\sym{defgoal} id sentence+ goal-alist)
 \\ sentence&$\leftarrow$&(\sym{forall} (decl$\ast$) implication)
 \\ implication&$\leftarrow$&
@@ -91,14 +111,15 @@ goal&$\leftarrow$&
 \\ existential&$\leftarrow$&(\sym{exists}
 (decl$\ast$) antecedent) $\mid$ antecedent
 \\ antecedent&$\leftarrow$& atomic $\mid$ (\sym{and} atomic$\ast$)
-\\ atomic&$\leftarrow$&(\sym{p} roleid pos nvar)
-\\ &$\mid$&(\sym{p} roleid param nvar term)
-\\ &$\mid$&(\sym{str-prec} nvar nvar) $\mid$ (\sym{prec} nvar nvar)
+\\ atomic&$\leftarrow$&(\sym{p} roleid svar hgt)
+\\ &$\mid$&(\sym{p} roleid param svar term)
+\\ &$\mid$&(\sym{prec} svar pos svar pos)
 \\ &$\mid$&(\sym{non} term) $\mid$ (\sym{pnon} term) $\mid$ (\sym{uniq} term)
-\\ &$\mid$&(\sym{uniq-at} term nvar) $\mid$ (= term term)
+\\ &$\mid$&(\sym{uniq-at} term svar pos) $\mid$ (= term term)
 \\ roleid&$\leftarrow$& string
+\\ hgt&$\leftarrow$& integer
 \\ pos&$\leftarrow$& integer
-\\ nvar&$\leftarrow$& id
+\\ svar&$\leftarrow$& id
 \\ param&$\leftarrow$& string
 \end{tabular}
 \end{center}

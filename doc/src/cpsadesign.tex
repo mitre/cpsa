@@ -915,33 +915,27 @@ proper lists.
 A simple pretty printer.
 \item[CPSA.Lib.Printer:]
 A CPSA specific pretty printer using S-expressions.
-\item[CPSA.Lib.Notation:]
-A CPSA specific pretty printer using infix notation.
-\item[CPSA.Lib.Algebra:]
-Defines the interface to CPSA algebras.
-\item[CPSA.Lib.CPSA:] Exports the types and functions used to
-  construct an implementation of an algebra.
-\item[CPSA.Basic.Algebra:]
-Basic Crypto Algebra implementation.
-\item[CPSA.Lib.Entry:]
-Provides a common entry point for programs based on the CPSA library.
-\item[CPSA.Lib.Protocol:]
-Protocol data structures.
-\item[CPSA.Lib.Goal:]
-Security goal data structures.
-\item[CPSA.Lib.Strand:]
-Instance and preskeleton data structures and support functions.
-\item[CPSA.Lib.Characteristic:]
-Produces the characteristic skeleton of the antecedent of a goal.
-\item[CPSA.Lib.Cohort:]
-Computes the cohort associated with a skeleton or its generalization.
-\item[CPSA.Lib.Reduction:]
-Term reduction for the CPSA solver.
 \item[CPSA.Lib.Expand:]
 Expands macros using definitions in the input.
-\item[CPSA.Lib.Loader:]
+\item[CPSA.Lib.Entry:]
+Provides a common entry point for programs based on the CPSA library.
+\item[CPSA.Algebra:]
+Basic Crypto Algebra implementation.
+\item[CPSA.Protocol:]
+Protocol data structures.
+\item[CPSA.Goal:]
+Security goal data structures.
+\item[CPSA.Strand:]
+Instance and preskeleton data structures and support functions.
+\item[CPSA.Characteristic:]
+Produces the characteristic skeleton of the antecedent of a goal.
+\item[CPSA.Cohort:]
+Computes the cohort associated with a skeleton or its generalization.
+\item[CPSA.Reduction:]
+Term reduction for the CPSA solver.
+\item[CPSA.Loader:]
 Loads protocols, preskeletons, and goals from S-expressions.
-\item[CPSA.Lib.Displayer:]
+\item[CPSA.Displayer:]
 Displays protocols and preskeletons as S-expressions.
 \end{description}
 
@@ -1233,54 +1227,6 @@ x=y\mbox{ or }\cn{bound}(x, \ell)
 $$
 \caption{Matcher}\label{fig:matcher}
 \end{figure}
-
-\chapter{Diffie-Hellman}
-
-\begin{table}
-\begin{center}
-Base sort symbols: \dom{name}, \dom{text}, \dom{data}, \dom{skey},
-\dom{akey}, \dom{expn}\\
-Non-base sort symbols: \dom{mesg}, \dom{base}, \dom{expr} \\[1ex]
-Subsorts: \dom{name}, \dom{text}, \dom{data}, \dom{akey}, \dom{skey},
-\dom{expr}, $\dom{base}<\dom{mesg}$,
-$\dom{expn}<\dom{expr}$\\[1ex]
-\begin{tabular}{@{}ll}
-$\enc{\cdot}{(\cdot)}\colon\dom{mesg}\times\dom{mesg}\rightarrow\dom{mesg}$
-&Encryption\\
-$\#\colon\dom{mesg}\rightarrow\dom{mesg}$
-&Hashing\\
-$(\cdot,\cdot)\colon\dom{mesg}\times\dom{mesg}\rightarrow\dom{mesg}$
-&Pairing\\
-``\ldots''$\colon\dom{mesg}$& Tag constants\\
-$K_{(\cdot)}\colon\dom{name}\rightarrow\dom{akey}$
-&Public key of name\\
-$(\cdot)^{-1}\colon\dom{akey}\rightarrow\dom{akey}$
-&Inverse of asymmetric key\\
-$\cn{ltk}\colon\dom{name}\times\dom{name}\rightarrow\dom{skey}$
-& Long term shared key\\
-$\gen\colon\dom{base}$
-& Generator constant\\
-$(\cdot)^{(\cdot)}\colon\dom{base}\times\dom{expr}\rightarrow\dom{base}$
-& Exponentiation\\
-$(\cdot\cdot)\colon\dom{expr}\times\dom{expr}\rightarrow\dom{expr}$
-& Group operation\\
-$(1/\cdot)\colon\dom{expr}\rightarrow\dom{expr}$
-& Group inverse\\
-$1\colon\dom{expr}$
-& Group identity
-\end{tabular}\\[1ex]
-Axioms: $(x^{-1})^{-1}\approx x$ for $x\colon\dom{akey}$\\
-$1x\approx x$, $x(1/x)\approx 1$, $xy\approx yx$, $x(yz)=(xy)z$,\\
-$h^1=h$, and $(h^x)^y=h^{xy}$ for $h\colon\dom{base}$ and
-$x,y,z\colon\dom{expr}$
-\\[1ex]
-\caption{Diffie-Hellman Signature}\label{tab:dh}
-\end{center}
-\end{table}
-
-Table~\ref{tab:dh} contains the signature used for Diffie-Hellman
-analysis.  In this algebra, messages of the form $\gen^x$ for
-$x\colon\dom{expn}$ are also atoms.
 
 \bibliography{cpsa}
 \bibliographystyle{plain}
