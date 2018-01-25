@@ -46,10 +46,11 @@ Description:
 Category:		Cryptography
 Build-Type:		Simple
 Data-Files:
-  index.html readme.html cpsauser.html cpsa4.mk Make4.hs cpsaprimer.pdf
-  cpsagoals.pdf cpsaoverview.pdf cpsaintroslides.pdf cpsaspec.pdf
-  cpsadesign.pdf ffgg.scm ns.scm blanchet.scm or.scm woolam.scm
-  yahalom.scm goals.scm
+  index.html cpsalogo.svg readme.html cpsauser.html cpsa4.mk Make4.hs
+  cpsaprimer.pdf cpsagoals.pdf cpsaoverview.pdf cpsaintroslides.pdf
+  cpsaspec.pdf cpsadesign.pdf ffgg.scm ns.scm blanchet.scm or.scm
+  woolam.scm yahalom.scm goals.scm
+           
 Data-Dir:	    	doc
 Extra-Source-Files:
   Makefile ChangeLog README NEWS ghci cpsatst setup.bat doc/README
@@ -59,7 +60,7 @@ Extra-Source-Files:
   doc/src/cpsaspec.tex doc/src/cpsadesign.tex doc/src/cpsaoverview.tex
   doc/src/cpsadiagrams.mp doc/src/strands.mp doc/src/cmstrands.mp
   doc/src/carriers.mp doc/src/termtree.mp doc/src/blanchet.mp
-  doc/src/mitrelogo.mp doc/src/cpsa.bib doc/SDAG.lhs
+  doc/src/mitrelogo.mp doc/src/cpsa.bib doc/SDAG.lhs doc/cpsalogo.mp
   src/index.html src/cpsacgi src/cpsacgi.py src/cpsajson.py src/split.py
   src/cpsa2svg src/cpsa.el src/httpd_allow_execmem.te src/cpsaperm.scm
   src/cpsaops.scm src/preskel src/cpsa.pl src/unsorted.pl src/pp.pl
