@@ -1,8 +1,3 @@
-2018-01-26  John D. Ramsdell  <ramsdell@mitre.org>
-
-	* src/CPSA/Lib/SExpr.hs (isStr): Added spaces chars to characters
-	allowed in strings.
-
 2018-01-22  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Strand.hs (doForm, uMatchForm): Use transitive closure
