@@ -322,11 +322,12 @@ isSym '~' = True
 isSym '^' = True
 isSym c = isAlphaNum c
 
--- A string is made from printable characters.
+-- A string is made from printable characters and white space.
+-- Omit " and \ so that the code works with many readers.
 isStr :: Char -> Bool
 isStr '"' = False
 isStr '\\' = False
-isStr c = isPrint c
+isStr c = isPrint c || isSpace c
 
 -- Close input handle and then report failure
 abort :: PosHandle -> String -> IO a
