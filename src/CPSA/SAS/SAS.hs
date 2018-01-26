@@ -221,6 +221,12 @@ type Node = (Strand, Int)       -- (Strand, Position)
 
 type Pair = (Node, Node)        -- Precedes relation
 
+type Fact = (String, [FTerm])
+
+data FTerm
+  = FTerm Term
+  | FNode Term Int
+
 data Preskel = Preskel
     { protocol :: Prot,
       kgen :: Gen,                -- Final generator
@@ -233,6 +239,7 @@ data Preskel = Preskel
       pnons :: [Term],
       uniqs :: [Term],
       origs :: [(Term, (Term, Int))],
+      facts :: [Fact],
       isSkeleton :: Bool,
       isFringe :: !Bool,         -- Always looked at, so make it strict
       homomorphisms :: [SExpr Pos], -- Loaded later
@@ -250,6 +257,7 @@ loadPreskel pos prot gen (S _ _ : L _ (S _ "vars" : vars) : xs) =
       uniqs <- loadBaseTerms kvars (assoc uniqOrigKey xs)
       origs <- loadOrigs kvars heights (assoc origsKey xs)
       (gen, varmap) <- makeVarmap pos gen [0..(length insts)-1]
+      facts <- mapM (loadFact kvars varmap) (assoc factsKey xs)
       let f (n0, n1) = (nlookup n0 varmap, nlookup n1 varmap)
       let g (t, n) = (t, nlookup n varmap)
       return (Preskel { protocol = prot,
@@ -263,6 +271,7 @@ loadPreskel pos prot gen (S _ _ : L _ (S _ "vars" : vars) : xs) =
                         pnons = pnons,
                         uniqs = uniqs,
                         origs = map g origs,
+                        facts = facts,
                         isSkeleton = not $ hasKey preskeletonKey xs,
                         isFringe = hasKey shapeKey xs || hasKey fringeKey xs,
                         homomorphisms = assoc mapsKey xs,
@@ -398,6 +407,28 @@ makeVarmap :: Monad m => Pos -> Gen -> [Strand] -> m GVM
 makeVarmap pos g strands =
   foldM (addVar pos) (g, M.empty) strands
 
+loadFact :: Monad m => [Term] -> VM -> SExpr Pos -> m Fact
+loadFact vars varmap (L _ (S _ name : ft)) =
+  do
+    ft <- mapM (loadFactTerm vars varmap) ft
+    return (name, ft)
+loadFact _ _ x =
+  fail (shows (annotation x) "Malformed fact")
+
+loadFactTerm :: Monad m => [Term] -> VM -> SExpr Pos -> m FTerm
+loadFactTerm _ varmap (N pos z) =
+  case M.lookup z varmap of
+    Just t -> return $ FTerm t
+    Nothing -> fail $ shows pos ("Bad strand in fact: " ++ show z)
+loadFactTerm _ varmap (L _ [N pos z, N _ i]) =
+  case M.lookup z varmap of
+    Just t -> return $ FNode t i
+    Nothing -> fail  $ shows pos ("Bad strand in fact: " ++ show z)
+loadFactTerm vars _ x =
+  do
+    t <- loadTerm vars x
+    return $ FTerm t
+
 -- Homomorphisms
 
 -- The maps entry in a preskeleton contains a list of homomorphisms.
@@ -480,6 +511,10 @@ uniqOrigKey = "uniq-orig"
 origsKey :: String
 origsKey = "origs"
 
+-- The key used to extract facts
+factsKey :: String
+factsKey = "facts"
+
 type Analysis = (Preskel, [(Hom, Preskel)])
 
 loadAnalysis :: Monad m => Preskel -> [Preskel] -> m (Analysis)
@@ -556,6 +591,7 @@ mapSkel env pov k =
       pnons = map (instantiate env) (pnons k),
       uniqs = map (instantiate env) (uniqs k),
       origs = mapOrig (instantiate env) (origs k),
+      facts = mapFact (instantiate env) (facts k),
       varmap = M.map (instantiate env) (varmap k) }
   where
     vs = map (instantiate env) (kvars k)
@@ -563,6 +599,9 @@ mapSkel env pov k =
     mapNode f (z, i) = (f z, i)
     mapPair f l = map (\(a, b) -> (mapNode f a, mapNode f b)) l
     mapOrig f l = map (\(a, b) -> (f a, mapNode f b)) l
+    mapFact f l = map (\(name, ft) -> (name, map (mapFTerm f) ft)) l
+    mapFTerm f (FTerm t) = FTerm $ f t
+    mapFTerm f (FNode t i) = FNode (f t) i
 
 -- Formula printing
 
@@ -599,7 +638,8 @@ skel ctx k =
    map (unary "non" kctx) (nons k) ++
    map (unary "pnon" kctx) (pnons k) ++
    map (unary "uniq" kctx) (noOrigUniqs k) ++
-   map (uniqAtForm kctx) (origs k))
+   map (uniqAtForm kctx) (origs k) ++
+   map (factForm kctx) (facts k))
 
 -- map through lists in an S-Expression.
 listMap :: ([SExpr ()] -> [SExpr ()]) -> [SExpr ()] -> [SExpr ()]
@@ -645,6 +685,16 @@ precForm = quaternary "prec"
 
 uniqAtForm :: Context -> (Term, (Term, Int)) -> SExpr ()
 uniqAtForm = ternary "uniq-at"
+
+factForm :: Context -> (String, [FTerm]) -> SExpr ()
+factForm c (name, ft) =
+  L () (S () "fact" : S () name : map (factTermForm c) ft)
+
+factTermForm :: Context -> FTerm -> SExpr ()
+factTermForm c (FTerm t) =
+  displayTerm c t
+factTermForm c (FNode t i) =
+  L () [displayTerm c t, N () i]
 
 -- Returns the uniqs that do not originate in k.
 noOrigUniqs :: Preskel -> [Term]
