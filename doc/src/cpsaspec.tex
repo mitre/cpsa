@@ -2270,39 +2270,6 @@ predicates are $\cn{non}$ and $\cn{uniq}$.  The binary predicates are
 $\cn{prec}$ and equality (=).  The fact predicate occurs at many
 arities.
 
-\iffalse
-If $|\rho|$ is the length
-of role~$\rho$'s trace, there are $|\rho|$ unary length predicate
-symbols $L_\rho^\ell$, with $0<\ell\leq|\rho|$.  Formula
-$L_\rho^\ell(s)$ asserts about skeleton~$k$ that $s$ is a strand of
-length at least~$\ell$ and it is an instance of role~$\rho$ after
-truncating its length to~$\ell$.
-
-Each algebra variable that occurs in a role is called a parameter.
-Let $o(\rho,x)$ be the length of the smallest prefix of the role's
-trace that contains~$x$.  There is a binary predicate symbol
-$P_\rho^x$ for each parameter~$x$ in~$\rho$.  Formula $P_\rho^x(s,t)$
-asserts about skeleton~$k$ that
-\begin{enumerate}
-\item $s$ is a strand of length at least~$o(\rho,x)$;
-\item $s$ is an instance of role~$\rho$ after truncating its length
-  to~$o(\rho,x)$; and
-\item the strand instantiates $x$ as~$t$.
-\end{enumerate}
-
-The remaining predicate symbols are the same for all protocols.
-Formula $\cn{prec}(u,v)$ asserts that~$u$ and~$v$ are nodes of
-skeleton~$k$ and $u\prec v$.  In practice, since the rule terms must
-denote nodes, uses of the $\cn{prec}$ symbol always have the form
-$\cn{prec}(n_i(s),n_j(t))$, where $s$ and $t$ are variables.  Formulas
-$\cn{non}(t)$, $\cn{pnon}(t)$, and $\cn{uniq}(t)$, assert $t$ is
-non-originating in~$k$, penetrator non-originating in~$k$, and
-uniquely originating in~$t$ respectively.  Formula
-$\cn{fact}(\fn{name},t_1,t_2,\ldots,t_n)$ asserts that
-$(\fn{name},\seq{t_1,t_2,\ldots,t_n})$ is a fact in~$k$.  Finally, $t_1
-= t_2$ asserts equality.
-\fi
-
 \paragraph{Semantics of Rule Formulas.}
 
 Let $k=\skel_X(P,I,\prec,N,U,F)$ and $\Theta_X$ be its strand space.
