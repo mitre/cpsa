@@ -842,7 +842,7 @@ loadPrimary _ p kvars (L pos [S _ "p", Q _ name, Q var x, y, z]) =
       False -> fail (shows pos "Bad parameter -- not a variable")
       True ->
         case firstOccurs v r of
-          Just i -> return (pos, Param r v i s t)
+          Just i -> return (pos, Param r v (i + 1) s t)
           Nothing ->
             fail (shows pos ("parameter " ++ x ++ " not in role " ++ name))
 loadPrimary _ _ _ (L pos (S _ "p" : Q _ name : _)) =

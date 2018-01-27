@@ -2002,12 +2002,12 @@ gparam r t i z t' k (g, e) =
     Just s | s < nstrands k  ->
       let inst = insts k !! s in
       case () of
-        _ | i >= height inst -> []
+        _ | i > height inst -> []
           | rname (role inst) == rname r ->
             match t' (instantiate (env inst) t) (g, e)
           | otherwise ->
               do
-                (g, inst) <- bldInstance r (take (i + 1) $ trace inst) g
+                (g, inst) <- bldInstance r (take i $ trace inst) g
                 match t' (instantiate (env inst) t) (g, e)
     Nothing -> error ("Strand.gparam: strand " ++ show z ++ " unbound")
     _ -> []

@@ -14,7 +14,7 @@ import CPSA.Protocol
 -- Syntax for the atomic formulas
 data AForm
   = Length Role Term Int
-  | Param Role Term Int Term Term -- role param first-occurs strand value
+  | Param Role Term Int Term Term -- role param first-height strand value
   | Prec NodeTerm NodeTerm
   | Non Term
   | Pnon Term
