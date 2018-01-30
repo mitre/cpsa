@@ -2204,12 +2204,13 @@ $r_x(z,t)$ with the protocol left implicit.
 \paragraph{Semantics of Skeleton Formulas.}
 
 Let $k=\skel_X(P,I,\prec,N,U)$ and $\Theta_X$ be its strand space.
-The universe of discourse is $\alg{D}=\sdom{\Theta_X}\cup\alga_X$.
-When formula~$\Phi$ is satisfied in skeleton~$k$ with variable
-assignment $\alpha\colon Y\to \alg{D}$, we write
-$k,\alpha\models\Phi$.  We write~$\bar\alpha$ when~$\alpha$ is
-extended to terms in the obvious way.  When sentence~$\Gamma$ is
-satisfied in skeleton~$k$, we write $k\models\Gamma$.
+When formula~$\Phi$ is satisfied in skeleton~$k$ with order-sorted
+variable assignment $\alpha$, we write $k,\alpha\models\Phi$.  For
+$x:S\in X$, $\alpha(x)$ is in the carrier set of $\alga_X$ for
+sort~$S$.  For $x:\srt{Z}$, $\alpha(x)\in\sdom(\Theta_X)$.  We
+write~$\bar\alpha$ when~$\alpha$ is extended to terms in the obvious
+way.  When sentence~$\Sigma$ is satisfied in skeleton~$k$, we write
+$k\models\Sigma$.
 
 \begin{itemize}
 \item $k,\alpha\models P[r,h](z)$ iff $h\leq|\Theta_X(s)|$, and for
