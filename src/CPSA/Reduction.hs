@@ -19,7 +19,7 @@ import CPSA.Lib.SExpr
 import CPSA.Lib.Entry
 import CPSA.Options
 import CPSA.Algebra
-import CPSA.Goal
+import CPSA.Protocol
 import CPSA.Strand
 import CPSA.Cohort
 import CPSA.Displayer

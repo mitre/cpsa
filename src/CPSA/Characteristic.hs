@@ -14,7 +14,6 @@ import CPSA.Lib.Utilities
 import CPSA.Lib.SExpr
 import CPSA.Algebra
 import CPSA.Protocol
-import CPSA.Goal
 import CPSA.Strand
 
 {--

@@ -352,14 +352,15 @@ foldVars f acc (F Akey [F Pubk [I x]]) = f acc (F Name [I x])
 foldVars f acc (F Akey [F Pubk [C _, I x]]) = f acc (F Name [I x])
 foldVars f acc (F Akey [F Invk [F Pubk [I x]]]) = f acc (F Name [I x])
 foldVars f acc (F Akey [F Invk [F Pubk [C _, I x]]]) = f acc (F Name [I x])
-foldVars _ acc (C _) = acc        -- Tags
-foldVars f acc (F Cat [t0, t1]) = -- Concatenation
+foldVars _ acc (C _) = acc                -- Tags
+foldVars f acc (F Cat [t0, t1]) =         -- Concatenation
     foldVars f (foldVars f acc t0) t1
-foldVars f acc (F Enc [t0, t1]) = -- Encryption
+foldVars f acc (F Enc [t0, t1]) =         -- Encryption
     foldVars f (foldVars f acc t0) t1
-foldVars f acc (F Hash [t])     = -- Hashing
+foldVars f acc (F Hash [t]) =             -- Hashing
     foldVars f acc t
 foldVars f acc t@(D _) = f acc t          -- Strd variable
+foldVars _ acc (Z _) = acc                -- Strd constant
 foldVars _ _ t = error $ "Algebra.foldVars: Bad term " ++ show t
 
 -- Fold f through a term applying it to each term that is carried by the term.

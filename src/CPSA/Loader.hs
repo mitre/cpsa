@@ -16,7 +16,6 @@ import CPSA.Lib.Utilities
 import CPSA.Lib.SExpr
 import CPSA.Algebra
 import CPSA.Protocol
-import CPSA.Goal
 import CPSA.Strand
 import CPSA.Characteristic
 
@@ -665,7 +664,7 @@ findGoal pos ps (S _ name : x : xs) =
       Nothing -> fail (shows pos $ "Protocol " ++ name ++ " unknown")
       Just p ->
         do
-          (g, goal, antec) <- loadSentence pos p (pgen p) x
+          (g, goal, antec) <- loadSentence RoleSpec pos p (pgen p) x
           let (gs, xs') = findAlist xs
           (g, goals) <- loadGoals pos p g gs
           _ <- alist [] xs'          -- Check syntax of xs
@@ -692,81 +691,93 @@ loadGoals :: Monad m => Pos -> Prot -> Gen -> [SExpr Pos] -> m (Gen, [Goal])
 loadGoals _ _ g [] = return (g, [])
 loadGoals pos prot g (x : xs) =
   do
-    (g, goal, _) <- loadSentence pos prot g x
+    (g, goal, _) <- loadSentence RoleSpec pos prot g x
     (g, goals) <- loadGoals pos prot g xs
     return (g, goal : goals)
+
+data Mode
+  = RoleSpec
+  | UnusedVars
 
 -- Load a single security goal, a universally quantified formula
 -- Returns the goal and the antecedent with position information.
 
-loadSentence :: Monad m => Pos -> Prot -> Gen ->
+loadSentence :: Monad m => Mode -> Pos -> Prot -> Gen ->
                 SExpr Pos -> m (Gen, Goal, Conj)
-loadSentence _ prot g (L pos [S _ "forall", L _ vs, x]) =
+loadSentence md _ prot g (L pos [S _ "forall", L _ vs, x]) =
   do
     (g, vars) <- loadVars g vs
-    loadImplication pos prot g (L.nub $ reverse vars) x
-loadSentence pos _ _ _ = fail (shows pos "Bad goal sentence")
+    loadImplication md pos prot g (L.nub $ reverse vars) x
+loadSentence _ pos _ _ _ = fail (shows pos "Bad goal sentence")
 
 -- Load the top-level implication of a security goal
 
-loadImplication :: Monad m => Pos -> Prot -> Gen -> [Term] ->
+loadImplication :: Monad m => Mode -> Pos -> Prot -> Gen -> [Term] ->
                    SExpr Pos -> m (Gen, Goal, Conj)
-loadImplication _ prot g vars (L pos [S _ "implies", a, c]) =
+loadImplication md _ prot g vars (L pos [S _ "implies", a, c]) =
   do
-    antec <- loadRoleSpecific pos prot vars vars a
-    (g, concl) <- loadConclusion pos prot g vars c
+    antec <- loadRoleSpecific md pos prot vars vars a
+    (g, concl) <- loadConclusion md pos prot g vars c
     let goal =
           Goal { uvars = vars,
                  antec = map snd antec,
                  concl = map (map snd) concl }
     return (g, goal, antec)
-loadImplication pos _ _ _ _ = fail (shows pos "Bad goal implication")
+loadImplication _ pos _ _ _ _ = fail (shows pos "Bad goal implication")
 
 -- The conclusion must be a disjunction.  Each disjunct may introduce
 -- existentially quantified variables.
 
-loadConclusion :: Monad m => Pos -> Prot -> Gen -> [Term] ->
+loadConclusion :: Monad m => Mode -> Pos -> Prot -> Gen -> [Term] ->
                   SExpr Pos -> m (Gen, [Conj])
-loadConclusion _ _ g _ (L _ [S _ "false"]) = return (g, [])
-loadConclusion _ prot g vars (L pos (S _ "or" : xs)) =
-  loadDisjuncts pos prot g vars xs []
-loadConclusion pos prot g vars x =
+loadConclusion _ _ _ g _ (L _ [S _ "false"]) = return (g, [])
+loadConclusion md _ prot g vars (L pos (S _ "or" : xs)) =
+  loadDisjuncts md pos prot g vars xs []
+loadConclusion md pos prot g vars x =
   do
-    (g, a) <- loadExistential pos prot g vars x
+    (g, a) <- loadExistential md pos prot g vars x
     return (g, [a])
 
-loadDisjuncts :: Monad m => Pos -> Prot -> Gen -> [Term] ->
+loadDisjuncts :: Monad m => Mode -> Pos -> Prot -> Gen -> [Term] ->
                  [SExpr Pos] -> [Conj] -> m (Gen, [Conj])
-loadDisjuncts _ _ g _ [] rest = return (g, reverse rest)
-loadDisjuncts pos prot g vars (x : xs) rest =
+loadDisjuncts _ _ _ g _ [] rest = return (g, reverse rest)
+loadDisjuncts md pos prot g vars (x : xs) rest =
   do
-    (g, a) <- loadExistential pos prot g vars x
-    loadDisjuncts pos prot g vars xs (a : rest)
+    (g, a) <- loadExistential md pos prot g vars x
+    loadDisjuncts md pos prot g vars xs (a : rest)
 
-loadExistential :: Monad m => Pos -> Prot -> Gen -> [Term] ->
+loadExistential :: Monad m => Mode -> Pos -> Prot -> Gen -> [Term] ->
                    SExpr Pos -> m (Gen, Conj)
-loadExistential _ prot g vars (L pos [S _ "exists", L _ vs, x]) =
+loadExistential md _ prot g vars (L pos [S _ "exists", L _ vs, x]) =
   do
     (g, evars) <- loadVars g vs
-    as <- loadRoleSpecific pos prot (reverse evars ++ vars) evars x
+    as <- loadRoleSpecific md pos prot (reverse evars ++ vars) evars x
     return (g, as)
-loadExistential pos prot g vars x =
+loadExistential md pos prot g vars x =
   do
-    as <- loadRoleSpecific pos prot vars [] x
+    as <- loadRoleSpecific md pos prot vars [] x
     return (g, as)
 
 --- Load a conjunction of atomic formulas and ensure the formula is
---- role specific.
+--- role specific or that all declared variables are used.
 
-loadRoleSpecific :: Monad m => Pos -> Prot -> [Term] ->
+loadRoleSpecific :: Monad m => Mode -> Pos -> Prot -> [Term] ->
                     [Term] -> SExpr Pos -> m Conj
-loadRoleSpecific pos prot vars unbound x =
+loadRoleSpecific RoleSpec pos prot vars unbound x =
   do
     as <- loadConjunction pos prot vars x
     let as' = L.sortBy (\(_, x) (_, y) -> aFormOrder x y) as
     unbound <- foldM roleSpecific unbound as'
     case unbound of
       [] -> return as'
+      (v : _) -> fail (shows (annotation x) (showst v " not used"))
+loadRoleSpecific UnusedVars pos prot vars _ x =
+  do
+    as <- loadConjunction pos prot vars x
+    -- Compute the free variables in the conjunction
+    let f vars (_, form) = aFreeVars vars form
+    case vars L.\\ foldl f [] as of
+      [] -> return as
       (v : _) -> fail (shows (annotation x) (showst v " not used"))
 
 -- Load a conjunction of atomic formulas
