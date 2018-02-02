@@ -31,12 +31,14 @@
      (send k))
     (comment "Fake door"))
   (defrule yes
-    (implies
-     (and (p "appraise" z 2)
-	  (p "appraise" "a" z a)
-	  (non (invk a)))
-     (and (p "appraise" "d" z d)
-	  (non (invk d))))
+    (forall ((z strd) (a akey))
+	    (implies
+	     (and (p "appraise" z 2)
+		  (p "appraise" "a" z a)
+		  (non (invk a)))
+	     (exists ((d akey))
+		     (and (p "appraise" "d" z d)
+			  (non (invk d))))))
     (comment "Appraisal succeeded"))
   (comment "Door attestations protocol"))
 
@@ -77,20 +79,23 @@
      (send k))
     (comment "Fake door"))
   (defrule yes
-    (implies
-     (and (p "appraise" z 2)
-	  (p "appraise" "a" z a)
-	  (non (invk a)))
-     (and (p "appraise" "d" z d)
-	  (non (invk d))))
+    (forall ((z strd) (a akey))
+	    (implies
+	     (and (p "appraise" z 2)
+		  (p "appraise" "a" z a)
+		  (non (invk a)))
+	     (exists ((d akey))
+		     (and (p "appraise" "d" z d)
+			  (non (invk d))))))
     (comment "Appraisal succeeded"))
   (defrule trust
-    (implies
-     (and (p "appraise" z 2)
-	  (p "appraise" "d" z d)
-	  (p "squealer" w 2)
-	  (p "squealer" "d" w d))
-     (false))
+    (forall ((z w strd) (d akey))
+	    (implies
+	     (and (p "appraise" z 2)
+		  (p "appraise" "d" z d)
+		  (p "squealer" w 2)
+		  (p "squealer" "d" w d))
+	     (false)))
     (comment "Squealer prohibited due to attestation"))
   (comment "Door attestations protocol with attestation"))
 

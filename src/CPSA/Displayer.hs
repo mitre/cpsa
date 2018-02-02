@@ -28,41 +28,68 @@ displayProt p =
 displayRule :: Rule -> SExpr ()
 displayRule r =
   L () (S () "defrule" :
-        S () (uname r) :
-        L () [S () "implies",
-              displayConj (uantec r),
-              displayDisj (uconcl r)] :
-        ucomment r)
+        S () (rlname r) :
+        displayGoal (rlgoal r) :
+        rlcomment r)
 
-displayDisj :: [[UForm]] -> SExpr ()
-displayDisj [] = L () [S () "false"]
-displayDisj [conj] = displayConj conj
-displayDisj disj =
-  L () (S () "or" : map displayConj disj)
+displayGoal :: Goal -> SExpr ()
+displayGoal g =
+  L () [S () "forall",
+        L () (displayVars ctx vars),
+        displayImpl ctx g]
+  where
+    ctx = varsContext vars
+    vars = uvars g
 
-displayConj :: [UForm] -> SExpr ()
-displayConj [] = error "DisplayConj: empty conjunct"
-displayConj [form] = displayForm form
-displayConj forms = L () (S () "and" : map displayForm forms)
+displayImpl :: Context -> Goal -> SExpr ()
+displayImpl ctx g =
+  L () [S () "implies",
+        displayConj ctx (antec g),
+        displayDisj ctx (zip (evars g) (concl g)) ]
 
-displayForm :: UForm -> SExpr ()
-displayForm (ULen r s l) =
-  L () [S () "p", Q () (rname r), S () s, N () l]
-displayForm (UParam r p _ s t) =
+displayDisj :: Context -> [([Term], [AForm])] -> SExpr ()
+displayDisj _ [] = L () [S () "false"]
+displayDisj ctx [conj] = displayExistential ctx conj
+displayDisj ctx disj =
+  L () (S () "or" : map (displayExistential ctx) disj)
+
+displayExistential :: Context -> ([Term], [AForm]) -> SExpr ()
+displayExistential ctx ([], conj) =
+  displayConj ctx conj
+displayExistential ctx (evars, conj) =
+  L () [S () "exists",
+        L () (displayVars ctx' evars),
+        displayConj ctx' conj]
+  where
+    ctx' = addToContext ctx evars
+
+displayConj :: Context -> [AForm] -> SExpr ()
+displayConj _ [] = error "DisplayConj: empty conjunct"
+displayConj ctx [form] = displayForm ctx form
+displayConj ctx forms = L () (S () "and" : map (displayForm ctx) forms)
+
+displayForm :: Context -> AForm -> SExpr ()
+displayForm ctx (Length r s l) =
+  L () [S () "p", Q () (rname r), displayTerm ctx  s, N () l]
+displayForm ctx (Param r p _ s t) =
   L () [S () "p", Q () (rname r), displayParam r p,
-        S () s, displayUTerm t]
-displayForm (UPrec n1 n2) =
-  L () [S () "prec", displayUTerm (UNode n1), displayUTerm (UNode n2)]
-displayForm (UNon t) =
-  L () [S () "non", displayUTerm t]
-displayForm (UPnon t) =
-  L () [S () "pnon", displayUTerm t]
-displayForm (UUniq t) =
-  L () [S () "uniq", displayUTerm t]
-displayForm (UFact name fs) =
-  L () (S () "fact" : S () name : map displayUTerm fs)
-displayForm (UEquals t1 t2) =
-  L () [S () "=", displayUTerm t1, displayUTerm t2]
+        displayTerm ctx s, displayTerm ctx t]
+displayForm ctx (Prec (x, i) (y, j)) =
+  L () [S () "prec", displayTerm ctx x, N () i,
+        displayTerm ctx y, N () j]
+displayForm ctx (Non t) =
+  L () [S () "non", displayTerm ctx t]
+displayForm ctx (Pnon t) =
+  L () [S () "pnon", displayTerm ctx t]
+displayForm ctx (Uniq t) =
+  L () [S () "uniq", displayTerm ctx t]
+displayForm ctx (UniqAt t (s, i)) =
+  L () [S () "uniq-at", displayTerm ctx t,
+        displayTerm ctx s, N () i]
+displayForm ctx (AFact name fs) =
+  L () (S () "fact" : S () name : map (displayFactTerm ctx) fs)
+displayForm ctx (Equals t1 t2) =
+  L () [S () "=", displayTerm ctx t1, displayTerm ctx t2]
 
 displayParam :: Role -> Term -> SExpr ()
 displayParam r t =
@@ -70,10 +97,10 @@ displayParam r t =
     S () var -> Q () var
     _ -> error "displayParam: bad parameter"
 
-displayUTerm :: UTerm -> SExpr ()
-displayUTerm (UVar v) = S () v
-displayUTerm (UInv v) = L () [S () "invk", S () v]
-displayUTerm (UNode (v, i)) = L () [S () v, N () i]
+displayFactTerm :: Context -> FactTerm -> SExpr ()
+displayFactTerm ctx (FactNode (s, i)) =
+  L () [displayTerm ctx s, N () i]
+displayFactTerm ctx (FactTerm t) = displayTerm ctx t
 
 -- Display of roles
 

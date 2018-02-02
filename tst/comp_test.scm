@@ -105,14 +105,18 @@
      (recv (enc y n i a (enc a b i ssn c) c))
      (send y)))
   (defrule src
-    (implies
-     (and (p "qn" z 2) (p "qn" "i" z i) (p "qn" "ssn" z ssn)
-	  (p "qn" "k" z k) (p "qn" "a" z a) (p "qn" "b" z b)
-	  (p "qn" "c" z c) (non (invk a)) (non (invk b)) (non (invk c))
-	  (uniq k))
-     (and (p "an" z-0 4) (p "an" "x" z-0 x) (p "an" "i" z-0 i)
-	  (p "an" "k" z-0 k) (p "an" "a" z-0 a) (p "an" "b" z-0 b)
-	  (p "an" "c" z-0 c) (prec (z 0) (z-0 0)) (prec (z-0 3) (z 1))))))
+    (forall ((z strd) (i ssn text) (k skey) (a b c akey))
+	    (implies
+	     (and (p "qn" z 2) (p "qn" "i" z i) (p "qn" "ssn" z ssn)
+		  (p "qn" "k" z k) (p "qn" "a" z a) (p "qn" "b" z b)
+		  (p "qn" "c" z c) (non (invk a)) (non (invk b)) (non (invk c))
+		  (uniq k))
+	     (exists ((z-0 strd) (x mesg))
+		     (and (p "an" z-0 4) (p "an" "x" z-0 x)
+			  (p "an" "i" z-0 i) (p "an" "k" z-0 k)
+			  (p "an" "a" z-0 a) (p "an" "b" z-0 b)
+			  (p "an" "c" z-0 c) (prec z 0 z-0 0)
+			  (prec z-0 3 z 1)))))))
 
 (defskeleton main-ex-src
   (vars (a b c akey))

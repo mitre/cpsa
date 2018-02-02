@@ -12,8 +12,8 @@ module CPSA.Protocol (Event (..), evtTerm, evtMap, evt, inbnd, outbnd,
     Role, rname, rvars, rtrace, rnon, rpnon, runique, rcomment,
     rsearch, rnorig, rpnorig, ruorig, rpriority, mkRole, varSubset,
     varsInTerms, addVars, firstOccurs,
-    UVar, NodeUTerm, UTerm (..), UForm (..), Rule (..),
-    AForm (..), NodeTerm, FactTerm (..), Goal (..), aFormOrder, aFreeVars,
+    AForm (..), NodeTerm, FactTerm (..), Goal (..),
+    aFormOrder, aFreeVars, Rule (..),
     Prot, mkProt, pname, alg, pgen, roles, rules, listenerRole,
     varsAllAtoms, pcomment) where
 
@@ -250,7 +250,9 @@ data FactTerm
 data Goal
   = Goal { uvars :: [Term],          -- Universally quantified variables
            antec :: [AForm],         -- Antecedent
+           evars :: [[Term]],        -- Existentially quantified variables
            concl :: [[AForm]] }      -- Conclusion
+    deriving Show
 
 -- Ordering used to sort by constructor order.
 aFormOrder :: AForm -> AForm -> Ordering
@@ -351,6 +353,12 @@ aFreeVars vars (AFact _ ft) =
     f vars (FactTerm t) = addVars vars t
 aFreeVars vars (Equals x y) = addVars (addVars vars x) y
 
+data Rule
+  = Rule { rlname :: String,    -- Name of rule
+           rlgoal :: Goal,      -- Sentence
+           rlcomment :: [SExpr ()] }
+    deriving Show
+
 -- Protocols
 
 data Prot
@@ -373,37 +381,3 @@ mkProt name alg gen roles lrole rules comment =
            varsAllAtoms = all roleVarsAllAtoms roles }
     where
       roleVarsAllAtoms role = all isAtom (rvars role)
-
--- Protocol Rules
-
--- This is an unsorted logic
-
-type UVar = String
-
-type NodeUTerm = (UVar, Int)
-
-data UTerm
-  = UVar UVar                   -- Strand and term variable
-  | UInv UVar                   -- Inverse key term
-  | UNode NodeUTerm             -- Nodes -- var must be strand var
-  deriving Show
-
--- Syntax for the atomic unsorted formulas
-data UForm
-  = ULen Role UVar Int
-    -- role param first-occurs-height strand value
-  | UParam Role Term Int UVar UTerm
-  | UPrec NodeUTerm NodeUTerm
-  | UNon UTerm
-  | UPnon UTerm
-  | UUniq UTerm
-  | UFact String [UTerm]
-  | UEquals UTerm UTerm
-  deriving Show
-
-data Rule
-  = Rule { uname :: String,      -- Rule name
-           uantec :: [UForm],    -- Antecedent
-           uconcl :: [[UForm]],  -- Conclusion (null is false)
-           ucomment :: [SExpr ()] }
-  deriving Show

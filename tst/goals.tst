@@ -1077,7 +1077,7 @@
   (parent 41)
   (unrealized)
   (shape)
-  (satisfies (no (n2 n2) (a a) (b b) (z-0 1) (z 0)))
+  (satisfies (no (n2 n2) (a a) (b b) (z 1) (z-0 0)))
   (maps ((0 1) ((n2 n2) (a a) (b b) (n1 a-0))))
   (origs (n2 (1 1))))
 

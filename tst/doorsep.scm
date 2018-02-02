@@ -14,12 +14,13 @@
      (send (enc t k))
      (recv t)))
   (defrule trust
-    (implies
-     (and (p "person" z 1)
-	  (p "person" "p" z p)
-	  (p "person" "d" z d)
-	  (non (invk p)))
-     (non (invk d)))
+    (forall ((z strd) (p d akey))
+	    (implies
+	     (and (p "person" z 1)
+		  (p "person" "p" z p)
+		  (p "person" "d" z d)
+		  (non (invk p)))
+	     (non (invk d))))
     (comment "The trust rule"))
   (comment "Doorsep protocol using unnamed asymmetric keys"))
 

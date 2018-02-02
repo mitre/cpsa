@@ -2072,10 +2072,12 @@ updateFTerm _ t = t
 updateFact :: (Sid -> Sid) -> Fact -> Fact
 updateFact f (Fact name fs) = Fact name $ map (updateFTerm f) fs
 
+{-
 substUpdateFTerm :: Subst -> (Sid -> Sid) -> FTerm -> FTerm
 substUpdateFTerm _ f (FSid s) = FSid $ f s
 substUpdateFTerm _ f (FNode (s, i)) = FNode (f s, i)
 substUpdateFTerm e _ (FTerm t) = FTerm $ substitute e t
+-}
 
 instUpdateFTerm :: Env -> (Sid -> Sid) -> FTerm -> FTerm
 instUpdateFTerm _ f (FSid s) = FSid $ f s
@@ -2139,6 +2141,20 @@ F ::= (p "role" V I)		-- role name, strand var, length
 
 -- Variables are unsorted.  A variable assignment is a map from
 -- variables (UVars) to fact terms.
+
+-- Try simplifying k if possible
+simplify :: Preskel -> [Preskel]
+simplify k =
+  case rewrite k of
+    Nothing -> [k]
+    Just ks -> ks
+
+-- Try all rules associated with the protocol of k.  Return nothing if
+-- no rule applies, otherwise return the replacements.
+rewrite :: Preskel -> Maybe [Preskel]
+rewrite _ = Nothing
+
+{-
 
 type Assign = [(UVar, FTerm)]
 
@@ -2628,3 +2644,4 @@ uLookup (UNode (v, i)) va =
     case s of
       FSid s -> return $ FNode (s, i)
       _ -> Nothing
+-}
