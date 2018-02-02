@@ -119,3 +119,18 @@ aFormOrder (Equals _ _) (Uniq _) = GT
 aFormOrder (Equals _ _) (UniqAt _ _) = GT
 aFormOrder (Equals _ _) (AFact _ _) = GT
 aFormOrder (Equals _ _) (Equals _ _) = EQ
+
+aFreeVars :: [Term] -> AForm -> [Term]
+aFreeVars vars (Length _ z _) = addVars vars z
+aFreeVars vars (Param _ _ _ z t) = addVars (addVars vars z) t
+aFreeVars vars (Prec (x, _) (y, _)) = addVars (addVars vars x) y
+aFreeVars vars (Non t) = addVars vars t
+aFreeVars vars (Pnon t) = addVars vars t
+aFreeVars vars (Uniq t) = addVars vars t
+aFreeVars vars (UniqAt t (z, _)) = addVars (addVars vars t) z
+aFreeVars vars (AFact _ ft) =
+  foldl f vars ft
+  where
+    f vars (FactNode (z, _)) = addVars vars z
+    f vars (FactTerm t) = addVars vars t
+aFreeVars vars (Equals x y) = addVars (addVars vars x) y
