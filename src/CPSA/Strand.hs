@@ -1845,199 +1845,6 @@ collapseStrands k s s' =
       prs <- skeletonize useThinningDuringCollapsing prs
       return $ skel prs
 
--- Security goals: satisfaction of atomic formulas
-
-type Sem = Preskel -> (Gen, Env) -> [(Gen, Env)]
-
--- Extends an environment (a variable assignment) according to the
--- given atomic formula.
-satisfy :: AForm -> Sem
-satisfy (Equals t t') = geq t t'
-satisfy (AFact name fs) = gafact name fs
-satisfy (Non t) = ggnon t
-satisfy (Pnon t) = ggpnon t
-satisfy (Uniq t) = gguniq t
-satisfy (UniqAt t n) = guniqAt t n
-satisfy (Prec n n') = gprec n n'
-satisfy (Length r z h) = glength r z h
-satisfy (Param r v i z t) = gparam r v i z t
-
--- Equality assumes there has been a static role specific check to
--- eliminate error cases.
-geq :: Term -> Term -> Sem
-geq t t' _ (g, e)
-  | ti == ti' = [(g, e)]
-  | otherwise = []
-  where
-    ti = instantiate e t
-    ti' = instantiate e t'
-
--- Facts
-gafact :: String -> [FactTerm] -> Sem
-gafact name fs k e =
-  do
-    f <- kfacts k
-    case f of
-      Fact name' ts
-        | name == name' ->
-          fmatchList fs ts e
-        | otherwise -> []
-
-fmatchList :: [FactTerm] -> [FTerm] -> (Gen, Env) -> [(Gen, Env)]
-fmatchList [] [] e = [e]
-fmatchList (f : fs) (t : ts) e =
-  do
-    e <- fmatch f t e
-    fmatchList fs ts e
-fmatchList _ _ _ = []
-
-fmatch :: FactTerm -> FTerm -> (Gen, Env) -> [(Gen, Env)]
-fmatch (FactNode (z, j)) (FNode (s, i)) e
-  | j == i = strdMatch z s e
-fmatch (FactTerm z) (FSid s) e =
-  strdMatch z s e
-fmatch (FactTerm t) (FTerm t') e =
-  match t t' e
-fmatch _ _ _ = []
-
--- Non-origination
-ggnon :: Term -> Sem
-ggnon t k e =
-  do
-    t' <- knon k
-    match t t' e
-
--- Penetrator non-origination
-ggpnon :: Term -> Sem
-ggpnon t k e =
-  do
-    t' <- kpnon k
-    match t t' e
-
--- Unique origination
-gguniq :: Term -> Sem
-gguniq t k e =
-  do
-    t' <- kunique k
-    match t t' e
-
--- Unique origination at a node
-guniqAt :: Term -> NodeTerm -> Sem
-guniqAt t (z, i) k e =
-  do
-    (t', ls) <- korig k
-    case ls of
-      [(z', i')] | i == i' ->
-        do
-          e <- match t t' e
-          strdMatch z z' e
-      _ -> []
-
-inSkel :: Preskel -> (Int, Int) -> Bool
-inSkel k (s, i) =
-  s >= 0 && s < nstrands k && i >= 0 && i < height (insts k !! s)
-
-strandPrec :: Node -> Node -> Bool
-strandPrec (s, i) (s', i')
-  | s == s' && i < i' = True
-  | otherwise = False
-
--- Node precedes
--- This should look at the transitive closure of the ordering graph.
-gprec :: NodeTerm -> NodeTerm -> Sem
-gprec n n' k (g, e) =
-  case (nodeLookup e n, nodeLookup e n') of
-    (Just p, Just p')
-      | inSkel k p && inSkel k p' &&
-        (strandPrec p p' || elem (p, p') tc) -> [(g, e)]
-    (Just _, Just _) -> []
-    (_, Just _) ->
-      error ("Strand.gstrPrec: node " ++ show n ++ " unbound")
-    _ ->
-      error ("Strand.gstrPrec: node " ++ show n' ++ " unbound")
-  where
-    tc = map graphPair $ graphClose $ graphEdges $ strands k
-
-nodeLookup :: Env -> NodeTerm -> Maybe Node
-nodeLookup e (z, i) =
-  do
-    s <- strdLookup e z
-    return (s, i)
-
--- Role length predicate
--- r determines the predicate, which has arity two.
-glength :: Role -> Term -> Int -> Sem
-glength r z h k (g, e) =
-  case strdLookup e z of
-    Nothing ->
-      do
-        (s, inst) <- zip [0..] $ insts k
-        case () of
-          _ | h > height inst -> []
-            | rname (role inst) == rname r -> strdMatch z s (g, e)
-            | otherwise ->      -- See if z could have been an instance of r
-              case bldInstance r (take h $ trace inst) g of
-                [] -> []
-                _ -> strdMatch z s (g, e)
-    Just s | s < nstrands k ->
-      let inst = insts k !! s in
-      case () of
-        _ | h > height inst -> []
-          | rname (role inst) == rname r -> [(g, e)]
-          | otherwise ->
-            case bldInstance r (take h $ trace inst) g of
-              [] -> []
-              _ -> [(g, e)]
-    _ -> []
-
--- Parameter predicate
-
--- r and t determine the predicate, which has arity two.  t must be a
--- variable declared in role r. i is the index of the first occurrence
--- of t.
-gparam :: Role -> Term -> Int -> Term -> Term -> Sem
-gparam r t i z t' k (g, e) =
-  case strdLookup e z of
-    Just s | s < nstrands k  ->
-      let inst = insts k !! s in
-      case () of
-        _ | i > height inst -> []
-          | rname (role inst) == rname r ->
-            match t' (instantiate (env inst) t) (g, e)
-          | otherwise ->
-              do
-                (g, inst) <- bldInstance r (take i $ trace inst) g
-                match t' (instantiate (env inst) t) (g, e)
-    Nothing -> error ("Strand.gparam: strand " ++ show z ++ " unbound")
-    _ -> []
-
--- Conjunction
-
-conjoin :: [AForm] -> Sem
-conjoin [] _ e = [e]
-conjoin (a: as) k e =
-  do
-    e <- satisfy a k e
-    conjoin as k e
-
--- Satisfaction
-
--- Returns the environments that show satifaction of the antecedent
--- but fail to be extendable to show satifaction of one of the
--- conclusions.
-goalSat :: Preskel -> Goal -> (Goal, [Env])
-goalSat k g =
-  (g, [ e |
-        (gen, e) <- conjoin (antec g) k (gen k, emptyEnv),
-        conclusion (gen, e) ])
-  where
-    conclusion e = all (disjunct e) $ concl g
-    disjunct e a = null $ conjoin a k e
-
-sat :: Preskel -> [(Goal, [Env])]
-sat k =
-  map (goalSat k) (kgoals k)
-
 -- Facts
 
 data FTerm
@@ -2112,6 +1919,205 @@ chkFacts k =
     checkFTerm _ = True
 
 -}
+
+-- Security goals: satisfaction of atomic formulas
+
+-- Returns the environments that show satifaction of the antecedent
+-- but fail to be extendable to show satifaction of one of the
+-- conclusions.
+goalSat :: Preskel -> Goal -> (Goal, [Env])
+goalSat k g =
+  (g, [ e |
+        (gen, e) <- conjoin (antec g) k (gen k, emptyEnv),
+        conclusion (gen, e) ])
+  where
+    conclusion e = all (disjunct e) $ concl g
+    disjunct e a = null $ conjoin a k e
+
+sat :: Preskel -> [(Goal, [Env])]
+sat k =
+  map (goalSat k) (kgoals k)
+
+-- Conjunction
+
+type Sem = Preskel -> (Gen, Env) -> [(Gen, Env)]
+
+conjoin :: [AForm] -> Sem
+conjoin [] _ e = [e]
+conjoin (a: as) k e =
+  do
+    e <- satisfy a k e
+    conjoin as k e
+
+-- Extends an environment (a variable assignment) according to the
+-- given atomic formula.
+satisfy :: AForm -> Sem
+satisfy (Length r z h) = glength r z h
+satisfy (Param r v i z t) = gparam r v i z t
+satisfy (Prec n n') = gprec n n'
+satisfy (Non t) = ggnon t
+satisfy (Pnon t) = ggpnon t
+satisfy (Uniq t) = gguniq t
+satisfy (UniqAt t n) = guniqAt t n
+satisfy (AFact name fs) = gafact name fs
+satisfy (Equals t t') = geq t t'
+
+-- Role length predicate
+-- r and h determine the predicate, which has arity one.
+glength :: Role -> Term -> Int -> Sem
+glength r z h k (g, e) =
+  case strdLookup e z of
+    Nothing ->
+      do
+        (s, inst) <- zip [0..] $ insts k
+        case () of
+          _ | h > height inst -> []
+            | rname (role inst) == rname r -> strdMatch z s (g, e)
+            | otherwise ->      -- See if z could have been an instance of r
+              case bldInstance r (take h $ trace inst) g of
+                [] -> []
+                _ -> strdMatch z s (g, e)
+    Just s | s < nstrands k ->
+      let inst = insts k !! s in
+      case () of
+        _ | h > height inst -> []
+          | rname (role inst) == rname r -> [(g, e)]
+          | otherwise ->
+            case bldInstance r (take h $ trace inst) g of
+              [] -> []
+              _ -> [(g, e)]
+    _ -> []
+
+-- Parameter predicate
+
+-- r and t determine the predicate, which has arity two.  t must be a
+-- variable declared in role r. h is the length of the smallest prefix
+-- of the role's trace that contains t.
+gparam :: Role -> Term -> Int -> Term -> Term -> Sem
+gparam r t h z t' k (g, e) =
+  case strdLookup e z of
+    Just s | s < nstrands k  ->
+      let inst = insts k !! s in
+      case () of
+        _ | h > height inst -> []
+          | rname (role inst) == rname r ->
+            match t' (instantiate (env inst) t) (g, e)
+          | otherwise ->
+              do
+                (g, inst) <- bldInstance r (take h $ trace inst) g
+                match t' (instantiate (env inst) t) (g, e)
+    Nothing -> error ("Strand.gparam: strand " ++ show z ++ " unbound")
+    _ -> []
+
+-- Node precedes
+-- This looks at the transitive closure of the ordering graph.
+gprec :: NodeTerm -> NodeTerm -> Sem
+gprec n n' k (g, e) =
+  case (nodeLookup e n, nodeLookup e n') of
+    (Just p, Just p')
+      | inSkel k p && inSkel k p' &&
+        (strandPrec p p' || elem (p, p') tc) -> [(g, e)]
+    _ ->
+      do
+        (p, p') <- tc
+        (g, e) <- nodeMatch n p (g, e)
+        nodeMatch n' p' (g, e)
+  where
+    tc = map graphPair $ graphClose $ graphEdges $ strands k
+
+inSkel :: Preskel -> (Int, Int) -> Bool
+inSkel k (s, i) =
+  s >= 0 && s < nstrands k && i >= 0 && i < height (insts k !! s)
+
+strandPrec :: Node -> Node -> Bool
+strandPrec (s, i) (s', i')
+  | s == s' && i < i' = True
+  | otherwise = False
+
+nodeLookup :: Env -> NodeTerm -> Maybe Node
+nodeLookup e (z, i) =
+  do
+    s <- strdLookup e z
+    return (s, i)
+
+nodeMatch :: NodeTerm -> Node -> (Gen, Env) -> [(Gen, Env)]
+nodeMatch (z, i) (s, j) e
+  | i == j = strdMatch z s e
+  | otherwise = []
+
+-- Non-origination
+ggnon :: Term -> Sem
+ggnon t k e =
+  do
+    t' <- knon k
+    match t t' e
+
+-- Penetrator non-origination
+ggpnon :: Term -> Sem
+ggpnon t k e =
+  do
+    t' <- kpnon k
+    match t t' e
+
+-- Unique origination
+gguniq :: Term -> Sem
+gguniq t k e =
+  do
+    t' <- kunique k
+    match t t' e
+
+-- Unique origination at a node
+guniqAt :: Term -> NodeTerm -> Sem
+guniqAt t (z, i) k e =
+  do
+    (t', ls) <- korig k
+    case ls of
+      [(s, j)] | i == j ->
+        do
+          e <- match t t' e
+          strdMatch z s e
+      _ -> []
+
+-- Facts
+gafact :: String -> [FactTerm] -> Sem
+gafact name fs k e =
+  do
+    Fact name' ts <- kfacts k
+    case name == name' of
+      True -> fmatchList fs ts e
+      False -> []
+
+fmatchList :: [FactTerm] -> [FTerm] -> (Gen, Env) -> [(Gen, Env)]
+fmatchList [] [] e = [e]
+fmatchList (f : fs) (t : ts) e =
+  do
+    e <- fmatch f t e
+    fmatchList fs ts e
+fmatchList _ _ _ = []
+
+fmatch :: FactTerm -> FTerm -> (Gen, Env) -> [(Gen, Env)]
+fmatch (FactNode (z, j)) (FNode (s, i)) e
+  | j == i = strdMatch z s e
+fmatch (FactTerm z) (FSid s) e =
+  strdMatch z s e
+fmatch (FactTerm t) (FTerm t') e =
+  match t t' e
+fmatch _ _ _ = []
+
+-- Equality
+geq :: Term -> Term -> Sem
+geq t t' _ (g, e)
+  -- Ensure all variables in t and t' are in the domain of e.
+  -- This always happens for goals because they must be role specific
+  -- but it is not always true for rules.
+  | not (matched e t) || not (matched e t') =
+      error ("In a rule equality check, " ++
+             "cannot find a binding for some variable")
+  | ti == ti' = [(g, e)]
+  | otherwise = []
+  where
+    ti = instantiate e t
+    ti' = instantiate e t'
 
 {- Rules
 

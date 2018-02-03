@@ -84,7 +84,6 @@ module CPSA.Algebra (name,
     encryptions,
     escapeSet,
     loadTerm,
-    invk,
 
     Place,
     places,
@@ -101,6 +100,7 @@ module CPSA.Algebra (name,
     Env,
     emptyEnv,
     instantiate,
+    matched,
     match,
     substitution,
     reify,
@@ -434,13 +434,6 @@ inv (C _) = error "Algebra.inv: Cannot invert a tag constant"
 inv (D _) = error "Algebra.inv: Cannot invert a variable of sort strd"
 inv (Z _) = error "Algebra.inv: Cannot invert a strd constant"
 
--- Inverts an asymmetric key as a partial function
-invk :: Term -> Maybe Term
-invk (F Akey [F Invk [t]]) = Just $ F Akey [t]
-invk (F Akey [t]) = Just $ F Akey [F Invk [t]]
-invk t@(F _ _) = Just t
-invk _ = Nothing
-
 -- Extracts every encryption that is carried by a term along with its
 -- encryption key.  Note that a hash is treated as a kind of
 -- encryption in which the term that is hashed is the encryption key.
@@ -580,6 +573,15 @@ idSubst subst (F s u) =
 idSubst subst (D x) =
     M.findWithDefault (D x) x subst
 idSubst _ t@(Z _) = t
+
+-- Is every variable in a term a key in the map?
+idMapped :: IdMap -> Term -> Bool
+idMapped subst (I x) = M.member x subst
+idMapped _ (C _) = True
+idMapped subst (F _ u) =
+    all (idMapped subst) u
+idMapped subst (D x) = M.member x subst
+idMapped _ (Z _) = True
 
 -- Unification and substitution
 
@@ -747,6 +749,10 @@ emptyEnv = Env emptyIdMap
 -- Apply a substitution created my matching
 instantiate :: Env -> Term -> Term
 instantiate (Env r) t = idSubst r t
+
+-- Is every variable in t in the domain of r?
+matched :: Env -> Term -> Bool
+matched (Env r) t = idMapped r t
 
 -- Matching
 
