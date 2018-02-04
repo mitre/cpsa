@@ -528,14 +528,16 @@
     (vars (a b c akey) (i ssn y n text))
     (trace (recv (enc y n i a (enc a b i ssn c) c)) (send y)))
   (defrule src
-    (implies
-      (and (p "qn" z 2) (p "qn" "i" z i) (p "qn" "ssn" z ssn)
-        (p "qn" "k" z k) (p "qn" "a" z a) (p "qn" "b" z b)
-        (p "qn" "c" z c) (non (invk a)) (non (invk b)) (non (invk c))
-        (uniq k))
-      (and (p "an" z-0 4) (p "an" "x" z-0 x) (p "an" "i" z-0 i)
-        (p "an" "k" z-0 k) (p "an" "a" z-0 a) (p "an" "b" z-0 b)
-        (p "an" "c" z-0 c) (prec (z 0) (z-0 0)) (prec (z-0 3) (z 1))))))
+    (forall ((z strd) (i ssn text) (k skey) (a b c akey))
+      (implies
+        (and (p "qn" z 2) (p "qn" "i" z i) (p "qn" "ssn" z ssn)
+          (p "qn" "k" z k) (p "qn" "a" z a) (p "qn" "b" z b)
+          (p "qn" "c" z c) (non (invk a)) (non (invk b)) (non (invk c))
+          (uniq k))
+        (exists ((z-0 strd) (x mesg))
+          (and (p "an" z-0 4) (p "an" "x" z-0 x) (p "an" "i" z-0 i)
+            (p "an" "k" z-0 k) (p "an" "a" z-0 a) (p "an" "b" z-0 b)
+            (p "an" "c" z-0 c) (prec z 0 z-0 0) (prec z-0 3 z 1)))))))
 
 (defskeleton main-ex-tgt-rule
   (vars (i ssn text) (k skey) (a b c akey))
@@ -548,7 +550,43 @@
   (label 20)
   (unrealized (0 1))
   (origs (k (0 0)))
-  (comment "Not in theory"))
+  (comment "2 in cohort - 2 not yet seen"))
+
+(defskeleton main-ex-tgt-rule
+  (vars (x mesg) (i ssn i-0 y n text) (k skey) (a b c c-0 akey))
+  (defstrand qn 2 (i i) (ssn ssn) (k k) (a a) (b b) (c c))
+  (defstrand an 4 (x x) (i i-0) (y y) (n n) (k k) (a a) (b b) (c c-0))
+  (precedes ((0 0) (1 0)) ((1 3) (0 1)))
+  (non-orig (invk a) (invk b) (invk c))
+  (uniq-orig y n k)
+  (operation encryption-test (added-strand an 4) (enc "sorry" a b k)
+    (0 1))
+  (traces
+    ((send (cat i a (enc (enc k b c i (invk a)) b) (enc a b i ssn c)))
+      (recv (enc "sorry" a b k)))
+    ((recv (cat i-0 a (enc (enc k b c-0 i-0 (invk a)) b) x))
+      (send (enc y n i-0 a x c-0)) (recv n) (send (enc "sorry" a b k))))
+  (label 21)
+  (parent 20)
+  (unrealized (1 0))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton main-ex-tgt-rule
+  (vars (i ssn text) (k skey) (a b c akey))
+  (defstrand qn 2 (i i) (ssn ssn) (k k) (a a) (b b) (c c))
+  (deflistener k)
+  (precedes ((0 0) (1 0)) ((1 1) (0 1)))
+  (non-orig (invk a) (invk b) (invk c))
+  (uniq-orig k)
+  (operation encryption-test (added-listener k) (enc "sorry" a b k)
+    (0 1))
+  (traces
+    ((send (cat i a (enc (enc k b c i (invk a)) b) (enc a b i ssn c)))
+      (recv (enc "sorry" a b k))) ((recv k) (send k)))
+  (label 22)
+  (parent 20)
+  (unrealized (1 0))
+  (comment "empty cohort"))
 
 (defskeleton main-ex-tgt-rule
   (vars (x mesg) (i ssn y n text) (k skey) (a b c akey))
@@ -557,14 +595,15 @@
   (precedes ((0 0) (1 0)) ((1 3) (0 1)))
   (non-orig (invk a) (invk b) (invk c))
   (uniq-orig y n k)
-  (rule src)
+  (operation encryption-test (displaced 2 0 qy 1)
+    (enc k b c-0 i-0 (invk a)) (1 0))
   (traces
     ((send (cat i a (enc (enc k b c i (invk a)) b) (enc a b i ssn c)))
       (recv (enc "sorry" a b k)))
     ((recv (cat i a (enc (enc k b c i (invk a)) b) x))
       (send (enc y n i a x c)) (recv n) (send (enc "sorry" a b k))))
-  (label 21)
-  (parent 20)
+  (label 23)
+  (parent 21)
   (unrealized (1 2))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -587,11 +626,11 @@
       (send (enc y n i a (enc a b-0 i ssn-0 c) c)) (recv n)
       (send (enc "sorry" a b k)))
     ((recv (enc y n i a (enc a b-0 i ssn-0 c) c)) (send n)))
-  (label 22)
-  (parent 21)
+  (label 24)
+  (parent 23)
   (unrealized)
   (shape)
   (maps ((0) ((a a) (b b) (c c) (i i) (ssn ssn) (k k))))
-  (origs (y (1 1)) (n (1 1)) (k (0 0))))
+  (origs (k (0 0)) (y (1 1)) (n (1 1))))
 
 (comment "Nothing left to do")

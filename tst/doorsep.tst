@@ -11,9 +11,10 @@
     (vars (d p akey) (k skey) (t text))
     (trace (recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t)))
   (defrule trust
-    (implies
-      (and (p "person" z 1) (p "person" "p" z p) (p "person" "d" z d)
-        (non (invk p))) (non (invk d))) (comment "The trust rule"))
+    (forall ((z strd) (p d akey))
+      (implies
+        (and (p "person" z 1) (p "person" "p" z p) (p "person" "d" z d)
+          (non (invk p))) (non (invk d)))) (comment "The trust rule"))
   (comment "Doorsep protocol using unnamed asymmetric keys"))
 
 (defskeleton doorsep
@@ -32,32 +33,16 @@
   (defstrand door 3 (t t) (k k) (d d) (p p))
   (defstrand person 1 (k k) (d d-0) (p p))
   (precedes ((1 0) (0 0)))
-  (non-orig (invk p) (invk d-0))
-  (rule trust)
+  (non-orig (invk p))
   (operation encryption-test (added-strand person 1) (enc k (invk p))
     (0 0))
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
     ((send (enc (enc k (invk p)) d-0))))
   (label 1)
   (parent 0)
-  (seen 1)
-  (unrealized (0 0))
-  (comment "2 in cohort - 1 not yet seen"))
-
-(defskeleton doorsep
-  (vars (t text) (k skey) (p d akey))
-  (defstrand door 3 (t t) (k k) (d d) (p p))
-  (defstrand person 1 (k k) (d d) (p p))
-  (precedes ((1 0) (0 0)))
-  (non-orig (invk p) (invk d))
-  (operation encryption-test (contracted (d-0 d)) (enc k (invk p)) (0 0)
-    (enc (enc k (invk p)) d))
-  (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
-    ((send (enc (enc k (invk p)) d))))
-  (label 2)
-  (parent 1)
-  (seen 2)
   (unrealized)
-  (comment "1 in cohort - 0 not yet seen"))
+  (shape)
+  (maps ((0) ((p p) (d d) (k k) (t t))))
+  (origs))
 
 (comment "Nothing left to do")

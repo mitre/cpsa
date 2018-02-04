@@ -702,7 +702,9 @@ loadPrimary _ _ kvars (L pos [S _ "=", x, y]) =
   do
     t <- loadTerm kvars x
     t' <- loadTerm kvars y
-    return (pos, Equals t t')
+    case isStrdVar t == isStrdVar t' of
+      True -> return (pos, Equals t t')
+      False -> fail (shows pos "Sort mismatch in equality")
 loadPrimary _ _ kvars (L pos [S _ "non", x]) =
   do
     t <- loadAlgTerm kvars x

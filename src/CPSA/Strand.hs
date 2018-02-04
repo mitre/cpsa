@@ -2119,6 +2119,96 @@ geq t t' _ (g, e)
     ti = instantiate e t
     ti' = instantiate e t'
 
+-- Rules
+
+-- Try simplifying k if possible
+simplify :: Preskel -> [Preskel]
+simplify k =
+  case rewrite k of
+    Nothing -> [k]
+    Just ks -> ks
+
+-- Try all rules associated with the protocol of k.  Return nothing if
+-- no rule applies, otherwise return the replacements.
+rewrite :: Preskel -> Maybe [Preskel]
+rewrite k =
+  loop prules
+  where
+    prules = rules $ protocol k
+    loop [] = Nothing           -- No rules apply
+    loop (r : rs) =
+      let vas = tryRule k r in
+        if null vas then
+          loop rs               -- Rule does not apply
+        else
+          Just $ doRewrites prules k r vas
+
+-- Returns the environments that show satifaction of the antecedent
+-- but fail to be extendable to show satifaction of one of the
+-- conclusions.
+tryRule :: Preskel -> Rule -> [(Gen, Env)]
+tryRule k r =
+  [(g, e) | (g, e) <- conjoin (antec $ rlgoal r) k (gen k, emptyEnv),
+            conclusion (g, e) ]
+  where
+    conclusion e = all (disjunct e) $ concl $ rlgoal r
+    disjunct e a = null $ conjoin a k e
+
+-- Repeatedly applies rules until no rule applies.
+doRewrites :: [Rule] -> Preskel -> Rule -> [(Gen, Env)] -> [Preskel]
+doRewrites rules k r vas =
+  concatMap f (doRewrite k r vas)
+  where
+    f k = loop rules
+      where
+        loop [] = [k]           -- No rules apply
+        loop (r : rs) =
+          let vas = tryRule k r in
+            if null vas then
+              loop rs           -- Rule does not apply
+            else
+              doRewrites rules k r vas
+
+-- Apply rewrite rule at all assignments
+doRewrite :: Preskel -> Rule -> [(Gen, Env)] -> [Preskel]
+doRewrite k r vas =
+  concatMap (doRewriteOne k r) vas
+
+-- Apply rewrite rule at one assignment
+doRewriteOne :: Preskel -> Rule -> (Gen, Env) -> [Preskel]
+doRewriteOne k r e =
+  do
+    cl <- concl $ rlgoal r
+    (k, _) <- doConj (rlname r) cl k e
+    k <- toSkeleton True k
+    return $ f k                -- Add comment about rule application
+  where f k = k { kcomment =
+                  L () [S () "rule", S () (rlname r)] :
+                  kcomment k }
+
+type Rewrite = Preskel -> (Gen, Env) -> [(Preskel, (Gen, Env))]
+
+doConj :: String -> [AForm] -> Rewrite
+doConj _ [] k e = [(k, e)]
+doConj rule (f : fs) k e =
+  do
+    (k, e) <- rwt rule f k e
+    doConj rule fs k e
+
+rwt :: String -> AForm -> Rewrite
+{-
+rwt rule (Length r z h) = rlength r z h
+rwt rule (Param r v i z t) = rparam r v i z t
+rwt rule (Prec n n') = rprec n n'
+rwt rule (Non t) = rgnon t
+rwt rule (Pnon t) = rgpnon t
+rwt rule (Uniq t) = rguniq t
+rwt rule (UniqAt t n) = runiqAt t n
+rwt rule (AFact name fs) = rafact name fs
+rwt rule (Equals t t') = req t t'
+-}
+rwt _ _ _ _ = []
+
 {- Rules
 
 The language is unsorted.
@@ -2147,18 +2237,6 @@ F ::= (p "role" V I)		-- role name, strand var, length
 
 -- Variables are unsorted.  A variable assignment is a map from
 -- variables (UVars) to fact terms.
-
--- Try simplifying k if possible
-simplify :: Preskel -> [Preskel]
-simplify k =
-  case rewrite k of
-    Nothing -> [k]
-    Just ks -> ks
-
--- Try all rules associated with the protocol of k.  Return nothing if
--- no rule applies, otherwise return the replacements.
-rewrite :: Preskel -> Maybe [Preskel]
-rewrite _ = Nothing
 
 {-
 
