@@ -1879,13 +1879,6 @@ updateFTerm _ t = t
 updateFact :: (Sid -> Sid) -> Fact -> Fact
 updateFact f (Fact name fs) = Fact name $ map (updateFTerm f) fs
 
-{-
-substUpdateFTerm :: Subst -> (Sid -> Sid) -> FTerm -> FTerm
-substUpdateFTerm _ f (FSid s) = FSid $ f s
-substUpdateFTerm _ f (FNode (s, i)) = FNode (f s, i)
-substUpdateFTerm e _ (FTerm t) = FTerm $ substitute e t
--}
-
 instUpdateFTerm :: Env -> (Sid -> Sid) -> FTerm -> FTerm
 instUpdateFTerm _ f (FSid s) = FSid $ f s
 instUpdateFTerm _ f (FNode (s, i)) = FNode (f s, i)
@@ -2196,347 +2189,61 @@ doConj rule (f : fs) k e =
     doConj rule fs k e
 
 rwt :: String -> AForm -> Rewrite
-{-
-rwt rule (Length r z h) = rlength r z h
-rwt rule (Param r v i z t) = rparam r v i z t
-rwt rule (Prec n n') = rprec n n'
-rwt rule (Non t) = rgnon t
-rwt rule (Pnon t) = rgpnon t
-rwt rule (Uniq t) = rguniq t
-rwt rule (UniqAt t n) = runiqAt t n
-rwt rule (AFact name fs) = rafact name fs
-rwt rule (Equals t t') = req t t'
--}
-rwt _ _ _ _ = []
+rwt _ (Length r z h) = rlength r z h
+rwt rule (Param r v i z t) = rparam rule r v i z t
+rwt rule (Prec n n') = rprec rule n n'
+rwt rule (Non t) = rlnon rule t
+rwt rule (Pnon t) = rlpnon rule t
+rwt rule (Uniq t) = rluniq rule t
+rwt rule (UniqAt t n) = runiqAt rule t n
+rwt rule (AFact name fs) = rafact rule name fs
+rwt rule (Equals t t') = req rule t t'
 
-{- Rules
-
-The language is unsorted.
-
-Syntax:
-
-V ::= variables
-
-I ::= natural numbers
-
-Terms are variables, nodes, or inverse applied to a variable
-
-T ::= V | (V I) | (invk V)
-
-Formulas
-
-F ::= (p "role" V I)		-- role name, strand var, length
-   |  (p "role" "param" V T)	-- role name, param name, strand var, value
-   |  (prec T T)                -- node, node
-   |  (non T)                   -- value (V or (invk V))
-   |  (pnon T)                  -- value
-   |  (uniq T)			-- value
-   |  (fact "name" T*)		-- whatever...
-   |  (= T T)
- -}
-
--- Variables are unsorted.  A variable assignment is a map from
--- variables (UVars) to fact terms.
-
-{-
-
-type Assign = [(UVar, FTerm)]
-
-substUpdateAssign :: Subst -> (Sid -> Sid) -> Assign -> Assign
-substUpdateAssign subst perm va =
-  map f va
-  where
-    f (v, ft) = (v, substUpdateFTerm subst perm ft)
-
-substAssign :: Subst -> Assign -> Assign
-substAssign subst va =
-  map f va
-  where
-    f (v, ft) = (v, substFTerm subst ft)
-
--- Try simplifying k if possible
-simplify :: Preskel -> [Preskel]
-simplify k =
-  case rewrite k of
-    Nothing -> [k]
-    Just ks -> ks
-
--- Try all rules associated with the protocol of k.  Return nothing if
--- no rule applies, otherwise return the replacements.
-rewrite :: Preskel -> Maybe [Preskel]
-rewrite k =
-  loop prules
-  where
-    prules = rules $ protocol k
-    loop [] = Nothing           -- No rules apply
-    loop (r : rs) =
-      let vas = tryAnte k r in
-        if null vas then
-          loop rs               -- Rule does not match
-        else
-          let vas' = tryConcl k r vas in
-            if null vas' then   -- k satisfies r
-              loop rs
-            else                -- Found an applicable rule
-              Just $ doRewrites prules k r vas'
-
--- Repeatedly applies rules until no rule applies.
-doRewrites :: [Rule] -> Preskel -> Rule -> [Assign] -> [Preskel]
-doRewrites rules k r vas =
-  foldl f [] (doRewrite k r vas)
-  where
-    f acc k = loop rules
-     where
-      loop [] = k : acc         -- No rules apply
-      loop (r : rs) =
-        let vas = tryAnte k r in
-          if null vas then
-            loop rs             -- Rule does not match
-          else
-            let vas' = tryConcl k r vas in
-              if null vas' then -- k satisfies r
-                loop rs
-              else              -- Found an applicable rule
-                doRewrites rules k r vas' ++ acc
-
--- Apply rewrite rule at all assignments
-doRewrite :: Preskel -> Rule -> [Assign] -> [Preskel]
-doRewrite k r vas =
-  concatMap (doRewriteA k r) vas
-
--- Apply rewrite rule at one assignment
-doRewriteA :: Preskel -> Rule -> Assign -> [Preskel]
-
-doRewriteA k r va =
-  do
-    concl <- uconcl r
-    (k, _) <- foldM (doForm $ uname r) (k, va) concl
-    k <- toSkeleton True k
-    return $ f k                -- Add comment about rule application
-  where f k = k { kcomment =
-                  L () [S () "rule", S () (uname r)] :
-                  kcomment k }
-
-doForm :: String -> (Preskel, Assign) -> UForm -> [(Preskel, Assign)]
-doForm _ _ (ULen r _ l) | length (rtrace r) < l = []
-doForm _ (k, va) (ULen r v l) =
-  case lookup v va of
-    Nothing ->
-      (k', va') : concatMap f (nats s)
-      where
-        s = nstrands k
-        k' = addStrand k r l
-        va' = (v, FSid s) : va
-        f s' = uDisplace (k', va') s s'
-    Just (FSid s) ->
-      uDisplace (addStrand k r l, va) (nstrands k) s
-    Just _ -> []
-doForm name (k, va) (UParam r p l s t) =
-  case lookup s va of
-    Just (FSid s)
-      | height (strandInst k s) < l -> []
-      | otherwise ->
-        case t of
-          UVar v ->
-            case lookup v va of
-              Nothing -> [(k, (v, FTerm t') : va)]
-              Just (FTerm ft) -> uUnify k va t' ft
-              _ -> []
-          UInv v ->
-            case invk t' of
-              Nothing -> []
-              Just t' ->
-                case lookup v va of
-                  Nothing -> [(k, (v, FTerm t') : va)]
-                  Just (FTerm ft) -> uUnify k va t' ft
-                  _ -> []
-          UNode _ -> []
-      where
-        inst = strandInst k s
-        t' = instantiate (env inst) p
-    Just _ -> []
-    _ ->
-      error ("In rule " ++ name ++
-             ", parameter predicate for " ++ rname r ++
-             " did not get a strand for " ++ s)
-doForm name (k, va) (UPrec (s0, i0) (s1, i1)) =
-  case (lookup s0 va, lookup s1 va) of
-    (Just (FSid s0), Just (FSid s1))
-      | elem ((s0, i0), (s1, i1)) tc -> [(k, va)]
-      | badIndex k s0 i0 || badIndex k s1 i1 -> []
-      | otherwise ->
-        do                      -- Add one ordering
-          orderings' <- normalizeOrderings True
-                        (((s0, i0), (s1, i1)) : orderings k)
-          let k' = newPreskel
-                  (gen k) (shared k) (insts k) orderings'
-                  (knon k) (kpnon k) (kunique k) (kfacts k)
-                  (kpriority k) (operation k) (prob k) (pov k)
-          return (k', va)
-    (Just _, Just _) -> []
-    (Nothing, _) ->
-      error ("In rule " ++ name ++
-             ", precidence did not get a strand for " ++ s0)
-    (_, Nothing) ->
-      error ("In rule " ++ name ++
-             ", precidence did not get a strand for " ++ s1)
-  where
-    tc = map graphPair $ graphClose $ graphEdges $ strands k
-doForm name (k, va) (UNon (UVar v)) =
-  case lookup v va of
-    Just (FTerm ft)
-      | elem ft (knon k) -> [(k, va)]
-      | otherwise ->
-        [(k', va)]
+rlength :: Role -> Term -> Int -> Rewrite
+rlength r z h k (g, e)
+  | length (rtrace r) < h = []
+  | otherwise =
+    case strdLookup e z of
+      Just s ->                 -- Try to displace
+        rDisplace e k' ns s
         where
-          k' = newPreskel
-                  (gen k) (shared k) (insts k) (orderings k)
-                  (ft : knon k) (kpnon k) (kunique k) (kfacts k)
-                  (kpriority k) (operation k) (prob k) (pov k)
-    Just _ -> []
-    Nothing ->
-      error ("In rule " ++ name ++
-             ", non did not get a term for " ++ v)
-doForm name (k, va) (UNon (UInv v)) =
-  case lookup v va of
-    Just (FTerm ft) ->
-      case invk ft of
-        Nothing -> []
-        Just ft
-          | elem ft (knon k) -> [(k, va)]
-          | otherwise ->
-            [(k', va)]
-          where
-            k' = newPreskel
-                 (gen k) (shared k) (insts k) (orderings k)
-                 (ft : knon k) (kpnon k) (kunique k) (kfacts k)
-                 (kpriority k) (operation k) (prob k) (pov k)
-    Just _ -> []
-    Nothing ->
-      error ("In rule " ++ name ++
-             ", non did not get a term for " ++ v)
-doForm _ _ (UNon (UNode _)) = []
-doForm name (k, va) (UPnon (UVar v)) =
-  case lookup v va of
-    Just (FTerm ft)
-      | elem ft (kpnon k) -> [(k, va)]
-      | otherwise ->
-        [(k', va)]
-        where
-          k' = newPreskel
-               (gen k) (shared k) (insts k) (orderings k)
-               (knon k) (ft : kpnon k) (kunique k) (kfacts k)
-               (kpriority k) (operation k) (prob k) (pov k)
-    Just _ -> []
-    Nothing ->
-      error ("In rule " ++ name ++
-             ", pnon did not get a term for " ++ v)
-doForm name (k, va) (UPnon (UInv v)) =
-  case lookup v va of
-    Just (FTerm ft) ->
-      case invk ft of
-        Nothing -> []
-        Just ft
-          | elem ft (kpnon k) -> [(k, va)]
-          | otherwise ->
-            [(k', va)]
-          where
-            k' = newPreskel
-                 (gen k) (shared k) (insts k) (orderings k)
-                 (knon k) (ft : kpnon k) (kunique k) (kfacts k)
-                 (kpriority k) (operation k) (prob k) (pov k)
-    Just _ -> []
-    Nothing ->
-      error ("In rule " ++ name ++
-             ", pnon did not get a term for " ++ v)
-doForm _ _ (UPnon (UNode _)) = []
-doForm name (k, va) (UUniq (UVar v)) =
-  case lookup v va of
-    Just (FTerm ft)
-      | elem ft (kunique k) -> [(k, va)]
-      | otherwise ->
-        [(k', va)]
-        where
-          k' = newPreskel
-               (gen k) (shared k) (insts k) (orderings k)
-               (knon k) (kpnon k) (ft : kunique k) (kfacts k)
-               (kpriority k) (operation k) (prob k) (pov k)
-    Just _ -> []
-    Nothing ->
-      error ("In rule " ++ name ++
-             ", uniq did not get a term for " ++ v)
-doForm name (k, va) (UUniq (UInv v)) =
-  case lookup v va of
-    Just (FTerm ft) ->
-      case invk ft of
-        Nothing -> []
-        Just ft
-          | elem ft (kunique k) -> [(k, va)]
-          | otherwise ->
-            [(k', va)]
-          where
-            k' = newPreskel
-                 (gen k) (shared k) (insts k) (orderings k)
-                 (knon k) (kpnon k) (ft : kunique k) (kfacts k)
-                 (kpriority k) (operation k) (prob k) (pov k)
-    Just _ -> []
-    Nothing ->
-      error ("In rule " ++ name ++
-             ", uniq did not get a term for " ++ v)
-doForm _ _ (UUniq (UNode _)) = []
-doForm rn (k, va) (UFact name uts) =
-  case mapM (uFactLookup rn va) uts of
-    Nothing -> []
-    Just fts
-      | elem fact (kfacts k) -> [(k, va)]
-      | otherwise -> [(k', va)]
-      where
-        fact = Fact name fts
-        k' = newPreskel
-             (gen k) (shared k) (insts k) (orderings k)
-             (knon k) (kpnon k) (kunique k) (fact : kfacts k)
-             (kpriority k) (operation k) (prob k) (pov k)
-doForm name (k, va) (UEquals t0 t1) =
-  case (uFactLookup name va t0, uFactLookup name va t1) of
-    (Just ft0, Just ft1)
-      | ft0 == ft1 -> [(k, va)]
-      | otherwise ->
-        case (ft0, ft1) of
-          (FSid s, FSid s') -> uDisplace (k, va) s s'
-          (FNode (s, i), FNode (s', i'))
-            | i == i' -> uDisplace (k, va) s s'
-          (FTerm t, FTerm t') -> uUnify k va t t'
-          _ -> []
-    _ -> []
-
-badIndex :: Preskel -> Sid -> Int -> Bool
-badIndex k s i =
-  i >= height (strandInst k s)
+          k' = addStrand g k r h
+          ns = nstrands k
+      Nothing ->                -- Try to augment
+        do                      -- and displace everywhere
+          let ns = nstrands k
+          (g, e) <- strdMatch z ns (g, e)
+          let k' = addStrand g k r h
+          let f s' = rDisplace e k' ns s'
+          (k', (gen k', e)) : concatMap f (nats ns)
 
 -- Just add a strand cloned from a role.
 -- The length must be greater than one.
-addStrand :: Preskel -> Role -> Int -> Preskel
-addStrand k r l =
-  newPreskel g (shared k) insts'
+addStrand :: Gen -> Preskel -> Role -> Int -> Preskel
+addStrand g k r h =
+  newPreskel g' (shared k) insts'
   (orderings k) non' pnon' unique' (kfacts k) (kpriority k)
-           (operation k) (prob k) (pov k)
+  (operation k) (prob k) (pov k)
   where
-    (g, inst) = mkInstance (gen k) r emptyEnv l -- Create instance
+    (g', inst) = mkInstance g r emptyEnv h -- Create instance
     insts' = (insts k) ++ [inst]
     non' = inheritRnon inst ++ (knon k)
     pnon' = inheritRpnon inst ++ (kpnon k)
     unique' = inheritRunique inst ++ (kunique k)
 
-uDisplace :: (Preskel, Assign) -> Sid -> Sid -> [(Preskel, Assign)]
-uDisplace (k, va) s s' =
+rDisplace :: Env -> Preskel -> Sid -> Sid -> [(Preskel, (Gen, Env))]
+rDisplace e k s s' | s == s' = [(k, (gen k, e))]
+rDisplace e k s s' =
   do
     (s, s', subst) <- unifyStrands k s s'
-    k <- uSubst k subst
-    k <- uCompress k s s'
-    return (k, substUpdateAssign (snd subst) (updateStrand s s') va)
+    k <- rSubst k subst
+    k <- rCompress k s s'
+    return (k, (gen k, strdUpdate
+                       (substUpdate e (snd subst))
+                       (updateStrand s s')))
 
-uSubst :: Preskel -> (Gen, Subst) -> [Preskel]
-uSubst k (gen, subst) =
+rSubst :: Preskel -> (Gen, Subst) -> [Preskel]
+rSubst k (gen, subst) =
     do
       (gen', insts') <- foldMapM (substInst subst) gen (insts k)
       let non' = map (substitute subst) (knon k)
@@ -2549,8 +2256,8 @@ uSubst k (gen, subst) =
         (orderings k) non' pnon' unique' facts' (kpriority k)
         operation' (prob k) (pov k)
 
-uCompress :: Preskel -> Sid -> Sid -> [Preskel]
-uCompress k s s' =
+rCompress :: Preskel -> Sid -> Sid -> [Preskel]
+rCompress k s s' =
     do
       let perm = updatePerm s s' (strandids k)
       orderings' <- normalizeOrderings True
@@ -2570,162 +2277,205 @@ uCompress k s s' =
         (updateProb perm (prob k))
         (pov k)
 
-uUnify :: Preskel -> Assign -> Term -> Term -> [(Preskel, Assign)]
-uUnify k va t0 t1 =
-  do
-    subst <- unify t0 t1 (gen k, emptySubst)
-    k <- uSubst k subst
-    return (k, substAssign (snd subst) va)
-
-uFactLookup :: String -> Assign -> UTerm -> Maybe FTerm
-uFactLookup name va (UVar v) =
-  case lookup v va of
-    Just ft -> Just ft
-    Nothing -> error ("In rule " ++ name ++
-                      ", no binding for " ++ v)
-uFactLookup name va (UInv v) =
-  case lookup v va of
-    Just (FTerm ft) ->
-      do
-        ft <- invk ft
-        return $ FTerm ft
-    Just _ -> Nothing
-    Nothing -> error ("In rule " ++ name ++
-                      ", no binding for " ++ v)
-uFactLookup name va (UNode (v, i)) =
-  case lookup v va of
-    Just (FSid s) -> Just $ FNode (s, i)
-    Just _ -> Nothing
-    Nothing -> error ("In rule " ++ name ++
-                      ", no binding for " ++ v)
-
--- Find ways to match the antecedent of a rule
-tryAnte :: Preskel -> Rule -> [Assign]
-tryAnte k r =
-  uMatchConj k (uname r) (uantec r) []
-
--- Filter out assignments that satisfy a conclusion
-tryConcl :: Preskel -> Rule -> [Assign] -> [Assign]
-tryConcl k r vas =
-  filter f vas
-  where
-    f va = all (g va) (uconcl r)
-    g va conj = null $ uMatchConj k (uname r) conj va
-
--- Match a conjuction
-uMatchConj :: Preskel -> String -> [UForm] -> Assign -> [Assign]
-uMatchConj _ _ [] va = [va]
-uMatchConj k name (u : us) va =
-  do
-    va <- uMatchForm k name u va
-    uMatchConj k name us va
-
--- Match a formula
-uMatchForm :: Preskel -> String -> UForm -> Assign -> [Assign]
-uMatchForm k _ (ULen r v l) va =
-  do
-    s <- nats $ nstrands k
-    va <- uMatchTerm (UVar v) (FSid s) va
-    _ <- uMatchRoleTrace k r l s
-    return va
-uMatchForm k _ (UParam r p l v t) va =
-  do
-    s <- nats $ nstrands k
-    va <- uMatchTerm (UVar v) (FSid s) va
-    (_, env) <- uMatchRoleTrace k r l s
-    uMatchTerm t (FTerm $ instantiate env p) va
-uMatchForm k _ (UPrec n0 n1) va =
-  do
-    (n2, n3) <- map graphPair $ graphClose $ graphEdges $ strands k
-    va <- uMatchTerm (UNode n0) (FNode n2) va
-    uMatchTerm (UNode n1) (FNode n3) va
-uMatchForm k _ (UNon f) va=
-  do
-    t <- knon k
-    uMatchTerm f (FTerm t) va
-uMatchForm k _ (UPnon f) va =
-  do
-    t <- kpnon k
-    uMatchTerm f (FTerm t) va
-uMatchForm k _ (UUniq f) va =
-  do
-    t <- kunique k
-    uMatchTerm f (FTerm t) va
-uMatchForm k _ (UFact name us) va =
-  do
-    Fact n fs <- kfacts k
-    case n == name of
-      False -> []
-      True -> uMatchTerms us fs va
-uMatchForm _ name (UEquals t0 t1) va =
-  case (uLookup t0 va, uLookup t1 va) of
-    (Just t0, Just t1) | t0 == t1 -> [va]
-                       | otherwise -> []
-    _ -> error ("In rule " ++ name ++ ", cannot find binding in equality")
-
--- Match a role's trace with a strand's trace.
-uMatchRoleTrace :: Preskel -> Role -> Int -> Int -> [(Gen, Env)]
-uMatchRoleTrace k r l s =
-  case l <= length tr of
-    False -> []
-    True -> uMatchTraces (rtrace r) (take l tr) (gen k, emptyEnv)
-  where tr = trace (strandInst k s)
-
--- match traces where the target can be shorter
-uMatchTraces :: Trace -> Trace -> (Gen, Env) -> [(Gen, Env)]
-uMatchTraces _ [] env = [env]    -- Target can be shorter
-uMatchTraces (In t : c) (In t' : c') env =
-    do
-      e <- match t t' env
-      uMatchTraces c c' e
-uMatchTraces (Out t : c) (Out t' : c') env =
-    do
-      e <- match t t' env
-      uMatchTraces c c' e
-uMatchTraces _ _ _ = []
-
--- Match a unsorted term with a fact term
-uMatchTerm :: UTerm -> FTerm -> Assign -> [Assign]
-uMatchTerm (UVar v) f va =
-  case lookup v va of
-    Nothing -> [(v, f) : va]
-    Just f' | f == f' -> [va]
-            | otherwise -> []
-uMatchTerm (UInv v) (FTerm t) va =
-  case invk t of
-    Nothing -> []
-    Just t ->
-      case lookup v va of
-        Nothing -> [(v, FTerm t) : va]
-        Just (FTerm t') | t == t' -> [va]
-        _ -> []
-uMatchTerm (UNode (s, i)) (FNode (s', i')) va
-  | i == i' = uMatchTerm (UVar s) (FSid s') va
-uMatchTerm _ _ _ = []
-
-uMatchTerms :: [UTerm] -> [FTerm] -> Assign -> [Assign]
-uMatchTerms [] [] va = [va]
-uMatchTerms (u : us) (f : fs) va =
-  do
-    va <- uMatchTerm u f va
-    uMatchTerms us fs va
-uMatchTerms _ _ _ = []
-
-uLookup :: UTerm -> Assign -> Maybe FTerm
-uLookup (UVar v) va = lookup v va
-uLookup (UInv v) va =
-  do
-    t <- lookup v va
-    case t of
-      FTerm t ->
+rparam :: String -> Role -> Term -> Int -> Term -> Term -> Rewrite
+rparam name r v h z t k (g, e) =
+  case strdLookup e z of
+    Just s
+      | height inst < h -> []
+      | rname (role inst) == rname r ->
+        rParam k (g, e) t t'
+      | otherwise ->
         do
-          t <- invk t
-          return $ FTerm t
-      _ -> Nothing
-uLookup (UNode (v, i)) va =
+          (k, (g, e)) <- rDisplace e k' ns s
+          rParam k (g, e) t t'
+      where
+        inst = strandInst k s
+        t' = instantiate (env inst) v
+        k' = addStrand g k r h
+        ns = nstrands k
+    Nothing ->
+      error ("In rule " ++ name ++ ", parameter predicate for " ++
+             rname r ++ " did not get a strand")
+
+rParam :: Preskel -> (Gen, Env) -> Term -> Term -> [(Preskel, (Gen, Env))]
+rParam k (g, e) t t' =
+  case matched e t of
+    False ->
+      do
+        (g, e) <- match t t' (g, e)
+        return (k, (g, e))
+    True ->
+      rUnify k (g, e) (instantiate e t) t'
+
+rUnify :: Preskel -> (Gen, Env) -> Term -> Term -> [(Preskel, (Gen, Env))]
+rUnify k (g, e) t t' =
   do
-    s <- lookup v va
-    case s of
-      FSid s -> return $ FNode (s, i)
-      _ -> Nothing
+    subst <- unify t t' (g, emptySubst)
+    k <- rSubst k subst
+    return (k, (gen k, substUpdate e (snd subst)))
+
+rprec :: String -> NodeTerm -> NodeTerm -> Rewrite
+rprec name (z, i) (z', i') k (g, e) =
+  case (strdLookup e z, strdLookup e z') of
+    (Just s, Just s')
+      | elem ((s, i), (s', i')) tc -> [(k, (g, e))]
+      | badIndex k s i || badIndex k s' i' -> []
+      | otherwise ->
+        do                      -- Add one ordering
+          orderings' <- normalizeOrderings True
+                        (((s, i), (s', i')) : orderings k)
+          let k' = newPreskel
+                  g (shared k) (insts k) orderings'
+                  (knon k) (kpnon k) (kunique k) (kfacts k)
+                  (kpriority k) (operation k) (prob k) (pov k)
+          return (k', (gen k, e))
+    _ ->
+      error ("In rule " ++ name ++ ", precidence did not get a strand")
+  where
+    tc = map graphPair $ graphClose $ graphEdges $ strands k
+
+badIndex :: Preskel -> Sid -> Int -> Bool
+badIndex k s i =
+  i >= height (strandInst k s)
+
+rlnon :: String -> Term -> Rewrite
+rlnon name t k (g, e) =
+  case matched e t of
+    True
+      | elem t' (knon k) -> [(k, (g, e))]
+      | not $ isAtom t' -> []
+      | otherwise ->
+        [(k', (g, e))]
+        where
+          k' = newPreskel
+                  g (shared k) (insts k) (orderings k)
+                  (t' : knon k) (kpnon k) (kunique k) (kfacts k)
+                  (kpriority k) (operation k) (prob k) (pov k)
+    False ->
+      error ("In rule " ++ name ++ ", non did not get a term")
+  where
+    t' = instantiate e t
+
+rlpnon :: String -> Term -> Rewrite
+rlpnon name t k (g, e) =
+  case matched e t of
+    True
+      | elem t' (kpnon k) -> [(k, (g, e))]
+      | not $ isAtom t' -> []
+      | otherwise ->
+        [(k', (g, e))]
+        where
+          k' = newPreskel
+                  g (shared k) (insts k) (orderings k)
+                  (knon k) (t' : kpnon k) (kunique k) (kfacts k)
+                  (kpriority k) (operation k) (prob k) (pov k)
+    False ->
+      error ("In rule " ++ name ++ ", pnon did not get a term")
+  where
+    t' = instantiate e t
+
+rluniq :: String -> Term -> Rewrite
+rluniq name t k (g, e) =
+  case matched e t of
+    True
+      | elem t' (knon k) -> [(k, (g, e))]
+      | not $ isAtom t' -> []
+      | otherwise ->
+        [(k', (g, e))]
+        where
+          k' = newPreskel
+                  g (shared k) (insts k) (orderings k)
+                  (knon k) (kpnon k) (t' : kunique k) (kfacts k)
+                  (kpriority k) (operation k) (prob k) (pov k)
+    False ->
+      error ("In rule " ++ name ++ ", uniq did not get a term")
+  where
+    t' = instantiate e t
+
+runiqAt :: String -> Term -> NodeTerm -> Rewrite
+runiqAt name t (z, i) k (g, e) =
+  case (matched e t, strdLookup e z) of
+    (True, Just s)
+      | elem (t', [(s, i)]) (korig k) -> [(k, (g, e))]
+      | not $ isAtom t' -> []
+      | otherwise ->
+        if elem (t', [(s, i)]) (korig k) then
+          [(k', (g, e))]
+        else
+          []
+        where
+          k' = newPreskel
+                  g (shared k) (insts k) (orderings k)
+                  (knon k) (kpnon k) (t' : kunique k) (kfacts k)
+                  (kpriority k) (operation k) (prob k) (pov k)
+    (False, _) ->
+      error ("In rule " ++ name ++ ", uniq-at did not get a term")
+    (_, Nothing) ->
+      error ("In rule " ++ name ++ ", uniq-at did not get a strand")
+  where
+    t' = instantiate e t
+
+rafact :: String -> String -> [FactTerm] -> Rewrite
+rafact rule name fts k (g, e)
+  | elem fact (kfacts k) = [(k, (g, e))]
+  | otherwise = [(k', (gen k', e))]
+  where
+    fts' = map (rFactLookup rule e) fts
+    fact = Fact name fts'
+    k' = newPreskel
+         g (shared k) (insts k) (orderings k)
+         (knon k) (kpnon k) (kunique k) (fact : kfacts k)
+         (kpriority k) (operation k) (prob k) (pov k)
+
+rFactLookup :: String -> Env -> FactTerm -> FTerm
+rFactLookup name e (FactNode (z, i)) =
+  case strdLookup e z of
+    Just s -> FNode (s, i)
+    Nothing ->
+      error ("In rule " ++ name ++ ": fact did not get a strand")
+rFactLookup name e (FactTerm t)
+  | isStrdVar t =
+    case strdLookup e t of
+      Just s -> FSid s
+      Nothing ->
+        error ("In rule " ++ name ++ ": fact did not get a strand")
+  | matched e t = FTerm $ instantiate e t
+  | otherwise =
+      error ("In rule " ++ name ++ ": fact did not get a term")
+
+{-
+doForm rn (k, va) (UFact name uts) =
+  case mapM (uFactLookup rn va) uts of
+    Nothing -> []
+    Just fts
+      | elem fact (kfacts k) -> [(k, va)]
+      | otherwise -> [(k', va)]
+      where
+        fact = Fact name fts
+        k' = newPreskel
+             (gen k) (shared k) (insts k) (orderings k)
+             (knon k) (kpnon k) (kunique k) (fact : kfacts k)
+             (kpriority k) (operation k) (prob k) (pov k)
 -}
+
+req :: String -> Term -> Term -> Rewrite
+req name x y k (g, e)
+  | isStrdVar x =
+    case (strdLookup e x, strdLookup e y) of
+      (Just s, Just t)
+        | s == t -> [(k, (g, e))]
+        | otherwise ->
+          rDisplace e (k {gen = g})  s t
+      _ ->
+        error ("In rule " ++ name ++ ", = did not get a strand")
+  | otherwise =
+    case (matched e x, matched e y) of
+      (True, True)
+        | u == v -> [(k, (g, e))]
+        | otherwise ->
+          rUnify k (g, e) u v
+      _ ->
+        error ("In rule " ++ name ++ ", = did not get a term")
+    where
+      u = instantiate e x
+      v = instantiate e y

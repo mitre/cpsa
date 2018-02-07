@@ -104,8 +104,10 @@ module CPSA.Algebra (name,
     match,
     substitution,
     reify,
+    substUpdate,
     strdMatch,
     strdLookup,
+    strdUpdate,
 
     Context,
     emptyContext,
@@ -754,6 +756,11 @@ instantiate (Env r) t = idSubst r t
 matched :: Env -> Term -> Bool
 matched (Env r) t = idMapped r t
 
+-- Apply a substitution to the range of an environment
+substUpdate :: Env -> Subst -> Env
+substUpdate (Env r) s =
+  Env $ M.map (substitute s) r
+
 -- Matching
 
 match ::  Term -> Term -> (Gen, Env) -> [(Gen, Env)]
@@ -838,6 +845,13 @@ strdLookup env t =
   case instantiate env t of
     Z p -> Just p
     _ -> Nothing
+
+strdUpdate :: Env -> (Int -> Int) -> Env
+strdUpdate (Env e) f =
+  Env $ M.map h e
+  where
+    h (Z z) = Z $ f z
+    h t = t
 
 -- Term specific loading functions
 

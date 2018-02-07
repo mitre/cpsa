@@ -1,3 +1,10 @@
+2018-02-07  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/{Strand.hs,...}: Replaced unsorted rule language with
+	one that use the security goal language.  This means a rule can
+	refer to all of the function symbols provided by the message
+	algebra.
+
 2018-01-26  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/SAS/SAS.hs (Preskel): Added support for facts in shape

@@ -151,11 +151,13 @@ ROLE-ALIST ::= (non-orig POS-TERM*) ROLE-ALIST
             |  (priority POS-INT*) ROLE-ALIST | ...
 POS-TERM   ::= TERM | (INT TERM)
 POS-INT    ::= (INT INT)
+RULE       ::= (defrule ID SENTENCE RULE-ALIST)
+RULE-ALIST ::= ...
 PROT-ALIST ::= ...</pre>
 </blockquote>
 
 <p>The syntax for <code>SORT</code>, <code>TERM</code>,
-  and <code>RULE</code> will be presented later.</p>
+  and <code>SENTENCE</code> will be presented later.</p>
 
 <p>The protocol <code>ID</code> is a symbol that names the protocol, and the role
 <code>ID</code> is a symbol that names the role. The <code>ALG</code> symbol identifies
@@ -248,9 +250,9 @@ associated with each strand is given by the <code>(traces ...)</code> form.
 Finally, the operation used to derive this skeleton from its parent is recorded
 with <code>(operation TEST KIND TERM NODE TERM*)</code>, where <code>TEST</code> is the
 authentication test <code>encryption-test</code> or <code>nonce</code>, <code>KIND</code>
-is <code>(added-strand ID INT)</code>, 
+is <code>(added-strand ID INT)</code>,
 <code>(displaced INT INT ID INT)</code>,
-<code>(contracted MAPLET*)</code>, 
+<code>(contracted MAPLET*)</code>,
 <code>(added-listener TERM)</code>, or
 <code>TERM</code> is the critical term,
 <code>NODE</code> in the test node,
@@ -300,101 +302,6 @@ of <code>mesg</code>.</p>
 
 -->
 
-<h3>Rules</h3>
-
-<p>The syntax of a rule follows.</p>
-<blockquote>
-  <pre>RULE        ::= (defrule ID FORMULA RULE-ALIST)
-FORMULA     ::= (implies CONJUNCT DISJUNCT))
-DISJUNCT    ::= (false) | CONJUNCT | (or CONJUNCT*)
-CONJUNCT    ::= ATOM | (and ATOM+)
-ATOM        ::= (p ROLEID VAR HGT) | (p ROLEID PARAM VAR UTERM)
-             |  (prec (VAR POS) (VAR POS)) | (non UTERM) | (pnon UTERM)
-             |  (uniq UTERM) | (fact SYMBOL UTERM*) | (= UTERM UTERM)
-ROLEID      ::= STRING
-VAR         ::= SYMBOL
-HGT         ::= INT
-PARAM       ::= STRING
-UTERM       ::= VAR | (invk VAR) | (VAR POS)
-POS         ::= INT
-RULE-ALIST  ::= ...</pre>
-</blockquote>
-
-<p>A rule is an implication in which the antecedent is a conjunction
-  of atomic formulas, and the conclusion is a disjunction of
-  conjunctions of atomic formulas.  A rule of the form</p>
-
-<blockquote>
-  (<code>implies</code> A (<code>or</code> B C...))
-</blockquote>
-
-<p>encodes the first-order sentence</p>
-
-<blockquote>
-  (<code>forall</code> (Avars) (<code>implies</code> A
-  (<code>or</code> (<code>exists</code> (Bvars) B)
-  (<code>exists</code> (Cvars) C)...)))
-</blockquote>
-
-<p>where Avars is the variables that occur in A, Bvars are the
-  variables that occur in B but not in A, Cvars are the variables that
-  occur in C but not in A, and so on.  This kind of formula is called
-  a geometric sentence.</p>
-
-<p>A formula asserts that a skeleton has some property.  The
-  formula <code>(p "init" s 3)</code> asserts that
-  strand <code>s</code> in the skeleton is an instance of
-  an <code>init</code> role and is of length 3 or greater.  The
-  formula <code>(p "init" "x" s y)</code> asserts that
-  strand <code>s</code> is an instance of an
-  <code>init</code> role and is of a length that is great enough so
-  that role parameter <code>x</code> occurs in the role, and the role
-  parameter <code>x</code> is instantiated to become
-  term <code>y</code>.  Formula <code>(prec (x 2) (y 1))</code>
-  asserts that for some strands <code>x</code> and <code>y</code> in
-  the skeleton, the transitive closure of the precedence relation
-  contains the mentioned pair of nodes.  Formula <code>(non t)</code>
-  asserts <code>t</code> is assumed to be non-originating in the
-  skeleton.  Predicates <code>pnon</code> and <code>uniq</code> have
-  similar interpretations. The formula <code>(fact foo (s 1) (invk
-  t))</code> asserts the skeleton contains a fact
-  called <code>foo</code> relating a node to the inverse of some term.
-  The formula <code>(= s t)</code> asserts that <code>s</code>
-  and <code>t</code> refer to the same object in the skeleton.</p>
-
-<p>A protocol with a rule follows.</p>
-
-</blockquote>
-<pre>(defprotocol doorsep basic
-  (defrole person
-    (vars (d p akey) (k skey) (t text))
-    (trace
-     (send (enc (enc k (invk p)) d))
-     (recv (enc t k))
-     (send t)))
-  (defrole door
-    (vars (d p akey) (k skey) (t text))
-    (trace
-     (recv (enc (enc k (invk p)) d))
-     (send (enc t k))
-     (recv t)))
-  (defrule trust
-    (implies
-     (and (p "person" z 1)
-	  (p "person" "p" z p)
-	  (p "person" "d" z d)
-	  (non (invk p)))
-     (non (invk d)))
-    (comment "The trust rule"))
-  (comment "Doorsep protocol using unnamed asymmetric keys"))
-
-(defskeleton doorsep
-  (vars (p akey))
-  (defstrand door 3 (p p))
-  (non-orig (invk p))
-  (comment "Analyze from the doors's perspective"))</pre>
-</blockquote>
-
 <h3>First-order Logic and Security Goals</h3>
 
 <p>Another way to specify a problem statement is with a security
@@ -423,7 +330,7 @@ RULE-ALIST  ::= ...</pre>
 SENTENCE    ::= (forall (DECL*) (implies ANTECEDENT CONCLUSION))
 CONCLUSION  ::= (false) | EXISTENTIAL | (or EXISTENTIAL*)
 EXISTENTIAL ::= (exists (DECL*) ANTECEDENT) | ANTECEDENT
-ANTECEDENT  ::= ATOMIC | (and ATOMIC*)
+ANTECEDENT  ::= ATOMIC | (and ATOMIC+)
 ATOMIC      ::= (p ROLEID SVAR HGT) | (p ROLEID PARAM SVAR TERM)
              |  (prec SVAR POS SVAR POS) | (non TERM) | (pnon TERM)
              |  (uniq TERM) | (uniq-at TERM SVAR POS) | (= TERM TERM)
@@ -434,9 +341,77 @@ SVAR        ::= ID
 PARAM       ::= STRING</pre>
 </blockquote>
 
+<p>An atomic formula asserts that a skeleton has some property.  The
+  formula <code>(p "init" s 3)</code> asserts that
+  strand <code>s</code> in the skeleton is an instance of
+  an <code>init</code> role and is of length 3 or greater.  The
+  formula <code>(p "init" "x" s y)</code> asserts that
+  strand <code>s</code> is an instance of an
+  <code>init</code> role and is of a length that is great enough so
+  that role parameter <code>x</code> occurs in the role, and the role
+  parameter <code>x</code> is instantiated to become
+  term <code>y</code>.  Formula <code>(prec (x 2) (y 1))</code>
+  asserts that for some strands <code>x</code> and <code>y</code> in
+  the skeleton, the transitive closure of the precedence relation
+  contains the mentioned pair of nodes.  Formula <code>(non t)</code>
+  asserts <code>t</code> is assumed to be non-originating in the
+  skeleton.  Predicates <code>pnon</code> and <code>uniq</code> have
+  similar interpretations. The formula <code>(fact foo (s 1) (invk
+  t))</code> asserts the skeleton contains a fact
+  called <code>foo</code> relating a node to the inverse of some term.
+  The formula <code>(= s t)</code> asserts that <code>s</code>
+  and <code>t</code> refer to the same object in the skeleton.</p>
+
 <p>The empty string names the listener role of a protocol.  The
   role has the variable <code>x</code> of sort <code>mesg</code>
   as its only role variable. There are two positions in the listener role.</p>
+
+<h3>Rules</h3>
+
+<p>Each protocol may include a small collection of rules.  A rule is
+  written using the language of security goals.</>
+
+<p>A rule is an axiom added to a protocol.  CPSA uses the axiom as a
+  rewrite rule to derive zero or more new skeletons from a skeleton
+  produced after each analysis step.  A protocol with a rule
+  follows.</p>
+
+</blockquote>
+<pre>(defprotocol doorsep basic
+  (defrole person
+    (vars (d p akey) (k skey) (t text))
+    (trace
+     (send (enc (enc k (invk p)) d))
+     (recv (enc t k))
+     (send t)))
+  (defrole door
+    (vars (d p akey) (k skey) (t text))
+    (trace
+     (recv (enc (enc k (invk p)) d))
+     (send (enc t k))
+     (recv t)))
+  (defrule trust
+    (forall ((z strd) (p d akey))
+	    (implies
+	     (and (p "person" z 1)
+		  (p "person" "p" z p)
+		  (p "person" "d" z d)
+		  (non (invk p)))
+	     (non (invk d))))
+    (comment "The trust rule"))
+  (comment "Doorsep protocol using unnamed asymmetric keys"))
+
+(defskeleton doorsep
+  (vars (p akey))
+  (defstrand door 3 (p p))
+  (non-orig (invk p))
+  (comment "Analyze from the doors's perspective"))</pre>
+</blockquote>
+
+<p>The trust rule states that when CPSA finds a person strand of
+  length at least one, and the inverse of it's <code>p</code>
+  parameter is non-originating, CPSA should assume the inverse of
+  its' <code>d</code> parameter is non-originating.</p>
 
 <h3>Macros and Includes</h3>
 

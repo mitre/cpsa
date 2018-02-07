@@ -2240,6 +2240,8 @@ protocol achieves this goal.
 
 \chapter{Facts and Rules}\label{chp:facts and rules}
 
+Support for facts and rules was introduced in version 4.1 of {\cpsa}.
+
 Each skeleton includes a small database of facts.  A fact is a named
 relation among fact terms.  A fact term\index{fact term} is either a
 strand of the skeleton, a node, or an algebra term.  For example, in
@@ -2247,76 +2249,10 @@ skeleton~$k$, a user may want to note that strand 0 owns the private
 key for~$a$ by asserting fact $(\cn{owns},\seq{0, a^{-1}})$.
 
 Each protocol includes a small collection of rules.  A rule is a
-formula in first-order logic with partial functions.  The formula is a
-sentence of the form
-$\all{\vec{x}}(\Psi\supset\bigvee_i\some{\vec{y_i}}\Phi_i)$,
-where~$\Psi$ and~$\Phi_i$ are conjunctions of atomic formulas,
-$\vec{x}$ is the set of variables that occur in~$\Phi$, and
-$\vec{y_i}$ is the set of variables that occur in~$\Phi_i$ but do not
-occur in~$\Psi$.  Unlike the goal language in
-Section~\ref{sec:security goals}, variables in the rule language are
-unsorted.
-
-A rule is an axiom added to a protocol.  {\cpsa} uses the axiom as a
-rewrite rule to derive zero or more new skeletons from a skeleton
-produced during a cohort step.
-
-The language used for a rule is determined by its protocol~$P$.
-Suppose~$m$ is the length of the longest role trace in~$P$.  There are
-function symbols~$n_i$ of arity one for $0\leq i<m$, and function
-symbol $(\cdot)^{-1}$ of arity one.  When defined, $n_i$ maps a
-strand~$s$ to node $(s,i)$, and when~$t$ is an algebra term, $t^{-1}$
-is its inverse.  A rule term is either a variable, $n_i$ applied to a
-variable, or inverse applied to a variable.
-
-For each role $\role_Y(C,N,U)\in P$ there are two kinds of predicate
-symbols, length predicates and parameter predicates.  There is a unary
-length predicate $P[r,h]$ for each $0<h\leq|C|$.  For each role
-parameter $x\in Y$, there is a binary parameter predicate $P[r,x]$.
-The remaining predicate symbols are protocol independent.  The unary
-predicates are $\cn{non}$ and $\cn{uniq}$.  The binary predicates are
-$\cn{prec}$ and equality (=).  The fact predicate occurs at many
-arities.
-
-\paragraph{Semantics of Rule Formulas.}
-
-Let $k=\skel_X(P,I,\prec,N,U,F)$ and $\Theta_X$ be its strand space.
-The universe of discourse is $\alg{D}=\sdom(\Theta_X)\cup\alga_X$.
-Let~$V$ be the set of rule variables.  When formula~$\Phi$ is
-satisfied in skeleton~$k$ with variable assignment $\alpha\colon V\to
-\alg{D}$, we write $k,\alpha\models\Phi$.  We write~$\bar\alpha$
-when~$\alpha$ is extended to rule terms in the obvious way.  The range
-of $\bar\alpha$ is the set of fact terms in~$k$.  When
-sentence~$\Gamma$ is satisfied in skeleton~$k$, we write
-$k\models\Gamma$.
-
-\begin{itemize}
-\item $k,\alpha\models P[r,h](y)$ iff $\bar\alpha(y)\in\sdom(\Theta_X)$,
-  $\bar\alpha(y)=s$, and for some~$\sigma$,
-  \[\prefix{\Theta_X(s)}{h}=\sigma\circ\prefix{C}{h}\]
-  when $r=\role(C,N,U)$ and $1\leq h\leq|C|$.
-
-\item $k,\alpha\models P[r,x](y,t)$ iff
-  $\bar\alpha(y)\in\sdom(\Theta_X)$, $\bar\alpha(t)\in\alga_X$, and with
-  $\bar\alpha(y)=s$ and for some~$\sigma$ with $\sigma(x)=\bar\alpha(t)$,
-  \[\prefix{\Theta_X(s)}{h}=\sigma\circ\prefix{C}{h}\]
-  when $r=\role(C,N,U)$ and $h$ is the smallest $\ell$ such that
-  $\prefix{C}{\ell}$ contains~$x$.
-\end{itemize}
-
-The interpretation of the protocol independent predicates is
-straightforward.
-\begin{itemize}
-\item $k,\alpha\models\cn{prec}(x, y)$ iff
-  $\bar\alpha(x),\bar\alpha(y)\in\nodes(\Theta_X)$ and
-  $\bar\alpha(x)\prec\bar\alpha(y)$.
-\item $k,\alpha\models\cn{non}(t)$ iff $\bar\alpha(t)\in N$.
-\item $k,\alpha\models\cn{uniq}(t)$ iff $\bar\alpha(t)\in U$.
-\item $k,\alpha\models\cn{fact}(\fn{name}, t_1,\ldots,t_n)$ iff
-  $(\fn{name},\seq{\bar\alpha(t_1),\ldots,\bar\alpha(t_n)})
-  \in F$.
-\item $k,\alpha\models y=z$ iff $\bar\alpha(y)=\bar\alpha(z)$.
-\end{itemize}
+sentence in the goal language presented in Section~\ref{sec:security
+  goals}.  A rule is an axiom added to a protocol.  {\cpsa} uses the
+axiom as a rewrite rule to derive zero or more new skeletons from a
+skeleton produced during a cohort step.
 
 \bibliography{cpsa}
 \bibliographystyle{plain}

@@ -56,20 +56,7 @@ $\mbox{id}\mid(\sym{pubk}\mbox{ id})
 \\ &$\mid$&$(\sym{uniq-orig}\mbox{ term}\ast)\mbox{ role-alist}\mid\ldots$
 \\ ht-term&$\leftarrow$&term${}\mid{}$(integer term)
 \\ rule&$\leftarrow$&
-(\sym{defrule} id formula rule-alist)
-\\ formula&$\leftarrow$&
-(\sym{implies} conjunct disjunct)
-\\ disjunct&$\leftarrow$&
-$(\sym{false})\mid\mbox{conjunct}\mid(\sym{or}\mbox{ conjunct}\ast)$
-\\ conjunct&$\leftarrow$&
-$\mbox{atom}\mid(\sym{and}\mbox{ atom}+)$
-\\ atom&$\leftarrow$&(\sym{p} roleid var hgt)
-\\ &$\mid$&(\sym{p} roleid param var term)
-\\ &$\mid$&(\sym{prec} (var pos) (var pos))
-\\ &$\mid$&(\sym{non} uterm) $\mid$ (\sym{pnon} uterm) $\mid$ (\sym{uniq} uterm)
-\\ &$\mid$&(\sym{fact} symbol uterm$\ast$) $\mid$ (= uterm uterm)
-\\ var&$\leftarrow$& id
-\\ uterm&$\leftarrow$&var $\mid$ (\sym{invk} var) $\mid$ (var pos)
+(\sym{defrule} id sentence rule-alist)
 \\ rule-alist&$\leftarrow$&$\ldots$
 \\ prot-alist&$\leftarrow$&$\ldots$
 \end{tabular}
