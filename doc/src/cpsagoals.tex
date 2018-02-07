@@ -8,7 +8,7 @@
 
 \newcommand{\sym}[1]{\textup{\texttt{#1}}}
 
-\title{CPSA and Formal Security Goals}
+\title{CPSA Security Goals and Rules}
 \author{John D.~Ramsdell\\
   The MITRE Corporation\\ CPSA Version \version}
 
@@ -183,7 +183,7 @@ synonym for the empty disjunction, \sym{(or)}.
   $\mid$ existl $\mid$ (\sym{or} existl$\ast)$
   \\ existl&$\leftarrow$&(\sym{exists}
   (decl$\ast$) antec) $\mid$ antec
-  \\ antec&$\leftarrow$&atomic $\mid$ (\sym{and} atomic$\ast$)
+  \\ antec&$\leftarrow$&atomic $\mid$ (\sym{and} atomic+)
   \end{tabular}
 \end{center}
 
@@ -598,6 +598,66 @@ theorem-proving using shape analysis sentences is rarely employed.
 It's clumsy and it requires too much expertise.  The main use of
 \texttt{cpsasas} is for generating a formula that is edited to become
 a desired security goal.
+
+\section{Rules}\label{sec: rules}
+
+Support for rules was introduced in version 4.1 of {\cpsa}.
+
+\begin{figure}
+\begin{verbatim}
+(defprotocol doorsep basic
+  (defrole person
+    (vars (d p akey) (k skey) (t text))
+    (trace
+     (send (enc (enc k (invk p)) d))
+     (recv (enc t k))
+     (send t)))
+  (defrole door
+    (vars (d p akey) (k skey) (t text))
+    (trace
+     (recv (enc (enc k (invk p)) d))
+     (send (enc t k))
+     (recv t)))
+  (defrule trust
+    (forall ((z strd) (p d akey))
+            (implies
+             (and (p "person" z 1)
+                  (p "person" "p" z p)
+                  (p "person" "d" z d)
+                  (non (invk p)))
+             (non (invk d))))
+    (comment "The trust rule"))
+  (comment "Doorsep protocol using unnamed asymmetric keys"))
+
+(defskeleton doorsep
+  (vars (p akey))
+  (defstrand door 3 (p p))
+  (non-orig (invk p))
+  (comment "Analyze from the doors's perspective"))
+\end{verbatim}
+\caption{Door Simple Example Protocol}\label{fig:doorsep}
+\end{figure}
+
+Each protocol includes a small collection of rules.  A rule is a
+sentence in the goal language presented in Section~\ref{sec:syntax}.
+Rules are defined after the roles of a protocol are defined.  The
+syntax of a rule follows.
+
+\begin{center}\scshape
+  \begin{tabular}{rcl}
+    rule&$\leftarrow$&(\sym{defrule} name sent comments)
+  \end{tabular}
+\end{center}
+
+A rule is an axiom added to a protocol.  {\cpsa} uses the axiom as a
+rewrite rule to derive zero or more new skeletons from a skeleton
+produced during a step.  An example of a protocol with a rule is in
+Figure~\ref{fig:doorsep}.
+
+The trust rule states that when CPSA finds a person strand of length
+at least one, and the inverse of it's \texttt{p} parameter is
+non-originating, CPSA should assume the inverse of it's \texttt{d}
+parameter is non-originating.
 
 \bibliography{cpsa}
 \bibliographystyle{plain}

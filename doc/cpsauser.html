@@ -392,12 +392,12 @@ PARAM       ::= STRING</pre>
      (recv t)))
   (defrule trust
     (forall ((z strd) (p d akey))
-	    (implies
-	     (and (p "person" z 1)
-		  (p "person" "p" z p)
-		  (p "person" "d" z d)
-		  (non (invk p)))
-	     (non (invk d))))
+            (implies
+             (and (p "person" z 1)
+                  (p "person" "p" z p)
+                  (p "person" "d" z d)
+                  (non (invk p)))
+             (non (invk d))))
     (comment "The trust rule"))
   (comment "Doorsep protocol using unnamed asymmetric keys"))
 
@@ -411,7 +411,7 @@ PARAM       ::= STRING</pre>
 <p>The trust rule states that when CPSA finds a person strand of
   length at least one, and the inverse of it's <code>p</code>
   parameter is non-originating, CPSA should assume the inverse of
-  its' <code>d</code> parameter is non-originating.</p>
+  it's <code>d</code> parameter is non-originating.</p>
 
 <h3>Macros and Includes</h3>
 

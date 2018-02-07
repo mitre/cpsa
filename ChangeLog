@@ -1,7 +1,10 @@
 2018-02-07  John D. Ramsdell  <ramsdell@mitre.org>
 
+	* doc/src/cpsagoals.tex (section{Rules}):  Added a description of
+	rules and the DoorSEP example.
+
 	* src/CPSA/{Strand.hs,...}: Replaced unsorted rule language with
-	one that use the security goal language.  This means a rule can
+	one that uses the security goal language.  This means a rule can
 	refer to all of the function symbols provided by the message
 	algebra.
 
