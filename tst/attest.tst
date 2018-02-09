@@ -119,9 +119,10 @@
     ((recv (enc (enc k (invk p)) d)) (send (enc t k))))
   (label 4)
   (parent 2)
-  (seen 4)
   (unrealized)
-  (comment "1 in cohort - 0 not yet seen"))
+  (shape)
+  (maps ((0) ((p p) (a a) (d d) (k k) (n n) (t t))))
+  (origs (t (2 1)) (k (0 2)) (n (0 0))))
 
 (defskeleton attest-door
   (vars (n t text) (k skey) (p a d d-0 p-0 akey))
@@ -184,9 +185,10 @@
     ((recv (enc (enc k (invk p)) d)) (send k)))
   (label 7)
   (parent 5)
-  (seen 7)
   (unrealized)
-  (comment "1 in cohort - 0 not yet seen"))
+  (shape)
+  (maps ((0) ((p p) (a a) (d d) (k k) (n n) (t t))))
+  (origs (k (0 2)) (n (0 0))))
 
 (defskeleton attest-door
   (vars (n t text) (k skey) (p a d akey))
@@ -204,9 +206,10 @@
     ((recv (enc (enc k (invk p)) d)) (send k)))
   (label 8)
   (parent 6)
-  (seen 8)
   (unrealized)
-  (comment "1 in cohort - 0 not yet seen"))
+  (shape)
+  (maps ((0) ((p p) (a a) (d d) (k k) (n n) (t t))))
+  (origs (k (0 2)) (n (0 0))))
 
 (comment "Nothing left to do")
 
@@ -332,8 +335,9 @@
     ((recv (enc (enc k (invk p)) d)) (send (enc t k))))
   (label 13)
   (parent 11)
-  (seen 13)
   (unrealized)
-  (comment "1 in cohort - 0 not yet seen"))
+  (shape)
+  (maps ((0) ((p p) (a a) (d d) (k k) (n n) (t t))))
+  (origs (t (2 1)) (k (0 2)) (n (0 0))))
 
 (comment "Nothing left to do")

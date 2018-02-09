@@ -191,13 +191,23 @@ data Mode = Mode
 -- Abort if there is an unrealized node without a test, otherwise
 -- return a list of skeletons that solve one test.  If the skeleton is
 -- realized, try to generalize it, but only when noIsoChk is false.
+-- After all of that, apply rewrite rule and filter output that makes
+-- no progress.
 reduce :: Mode -> Preskel -> [Preskel]
 reduce mode k =
-    concatMap simplify $ maybe (whenRealized k) id (findTest mode k u a)
+    filterSame k $ concatMap simplify ks -- Apply rewrites
     where
+      ks = maybe (whenRealized k) id (findTest mode k u a) -- Normal cohort
       (a, u) = avoid k
       whenRealized k =
           if noGeneralization mode then [] else maximize k
+
+-- Filter out skeletons in ks that are isomorphic to k.
+filterSame :: Preskel -> [Preskel] -> [Preskel]
+filterSame k ks =
+  filter f ks
+  where
+    f k' = not $ isomorphic (gist k) (gist k')
 
 prioritizeVertices :: Preskel -> [Vertex] -> [Vertex]
 prioritizeVertices k vs =

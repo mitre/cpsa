@@ -41,9 +41,8 @@
     ((send (enc (enc k (invk p)) d-0))))
   (label 1)
   (parent 0)
-  (seen 1)
   (unrealized (0 0))
-  (comment "2 in cohort - 1 not yet seen"))
+  (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton doorsep
   (vars (t text) (k skey) (p d akey))
@@ -57,8 +56,9 @@
     ((send (enc (enc k (invk p)) d))))
   (label 2)
   (parent 1)
-  (seen 2)
   (unrealized)
-  (comment "1 in cohort - 0 not yet seen"))
+  (shape)
+  (maps ((0) ((p p) (d d) (k k) (t t))))
+  (origs))
 
 (comment "Nothing left to do")
