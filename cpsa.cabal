@@ -49,7 +49,7 @@ Data-Files:
   index.html cpsalogo.svg readme.html cpsauser.html cpsa4.mk Make4.hs
   cpsaprimer.pdf cpsagoals.pdf cpsaoverview.pdf cpsaintroslides.pdf
   cpsaspec.pdf cpsadesign.pdf ffgg.scm ns.scm blanchet.scm or.scm
-  woolam.scm yahalom.scm goals.scm
+  woolam.scm yahalom.scm goals.scm rule.scm
            
 Data-Dir:	    	doc
 Extra-Source-Files:
@@ -122,7 +122,7 @@ Extra-Source-Files:
   tst/bug_example.tst tst/dh-ca_hack.tst tst/dh_encrypt_hack.tst
   tst/dh_mim_hack.tst tst/dhnsl_hack.tst tst/epmo_acctnum.tst
   tst/thisthat.tst tst/attest.scm tst/attest.tst
-  tst/prottrans.scm tst/prottrans.tst
+  tst/prottrans.scm tst/prottrans.tst tst/neq_test.scm tst/neq_test.tst
 
 Source-Repository head
   Type:     git

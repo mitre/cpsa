@@ -659,6 +659,50 @@ at least one, and the inverse of it's \texttt{p} parameter is
 non-originating, CPSA should assume the inverse of it's \texttt{d}
 parameter is non-originating.
 
+\subsection{Facts}\label{sec:facts}
+Each skeleton includes a small database of facts.  A fact is a named
+relation among fact terms.  A fact term\index{fact term} is either a
+strand of the skeleton, a node, or an algebra term.  A set of facts is
+defined anywhere after strands are defined using the \sym{facts} form.
+The syntax of facts follows.
+
+\begin{center}\scshape
+  \begin{tabular}{rcl}
+    facts&$\leftarrow$&(\sym{facts} fact$\ast$) \\
+    fact&$\leftarrow$&(symbol fterm$\ast$) \\
+    fterm&$\leftarrow$&mesg $\mid$ nat $\mid$ (nat nat)
+  \end{tabular}
+\end{center}
+
+For example, in a skeleton, a user may want to note that strand 0 owns
+the private key for~\texttt{a} by assuming.
+
+\begin{center}
+  \verb|(facts (owns 0 (privk a)))|
+\end{center}
+
+Facts are most useful when combined with rules.  Here is an example of
+their combination.  Suppose a point of view skeleton has two names,
+\texttt{a} and~\texttt{b}, and the problem is modeling a situation in
+which the two names are known to differ.  To enforce this constraint, add
+\begin{center}
+  \verb|(facts (neq a b))|
+\end{center}
+to the point of view skeleton and the \texttt{neq} rule below to the
+protocol.
+
+%below, eliminates skeletons that
+%violate the constraint.
+\begin{quote}
+\begin{verbatim}
+(defrule neq
+  (forall ((a mesg))
+    (implies
+      (fact neq a a)
+      (false))))
+\end{verbatim}
+\end{quote}
+
 \bibliography{cpsa}
 \bibliographystyle{plain}
 
