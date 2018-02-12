@@ -507,10 +507,6 @@ loadFterm :: Monad m => [Int] -> [Term] -> SExpr Pos -> m FTerm
 loadFterm heights _ (N pos s)
   | 0 <= s && s < length heights = return $ FSid s
   | otherwise = fail (shows pos ("Bad strand in fact: " ++ show s))
-loadFterm heights _ x@(L _ [N _ _, N _ _]) =
-  do
-    n <- loadNode heights x
-    return $ FNode n
 loadFterm _ vars x =
   do
     t <- loadTerm vars x
@@ -724,7 +720,7 @@ loadPrimary _ _ kvars (L pos [S _ "uniq-at", x, y, z]) =
     return (pos, UniqAt t t')
 loadPrimary _ _ kvars (L pos (S _ "fact" : S _ name : fs)) =
   do
-    fs <- mapM (loadFactTerm kvars) fs
+    fs <- mapM (loadTerm kvars) fs
     return (pos, AFact name fs)
 loadPrimary _ _ kvars (L pos [S _ "prec", w, x, y, z]) =
   do
@@ -789,18 +785,6 @@ loadNodeTerm ts x (N _ i) | i >= 0 =
 loadNodeTerm _ _ y =
   fail (shows (annotation y) "Expecting an integer")
 
--- Load a formula term (FTerm)
-
-loadFactTerm :: Monad m => [Term] -> SExpr Pos -> m FactTerm
-loadFactTerm ts (L _ [s, i@(N _ _)]) =
-  do
-    n <- loadNodeTerm ts s i
-    return $ FactNode n
-loadFactTerm ts x =
-  do
-    t <- loadTerm ts x
-    return $ FactTerm t
-
 -- Role specific check
 
 termVars :: Term -> [Term]
@@ -809,10 +793,6 @@ termVars t = addVars [] t
 allBound :: [Term] -> Term -> Bool
 allBound unbound t =
   L.all (flip L.notElem unbound) (termVars t)
-
-allFBound :: [Term] -> FactTerm -> Bool
-allFBound unbound (FactNode (z, _)) = L.notElem z unbound
-allFBound unbound (FactTerm t) = allBound unbound t
 
 -- Returns variables in unbound that are not role specific
 
@@ -838,7 +818,7 @@ roleSpecific unbound (pos, UniqAt t (z, _))
   | allBound unbound t && L.notElem z unbound = return unbound
   | otherwise = fail (shows pos "Unbound variable in uniq-at")
 roleSpecific unbound (pos, AFact _ fs)
-  | all (allFBound unbound) fs = return unbound
+  | all (allBound unbound) fs = return unbound
   | otherwise = fail (shows pos "Unbound variable in fact")
 roleSpecific unbound (pos, Equals t t')
   | isStrdVar t && isStrdVar t' =

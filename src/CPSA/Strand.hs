@@ -1602,7 +1602,6 @@ deleteFacts s facts =
     f (Fact _ ft) =
       all g ft
     g (FSid s') = s /= s'
-    g (FNode (s', _)) = s /= s'
     g (FTerm _) = True
 
 -- Node ordering weakening
@@ -1849,7 +1848,6 @@ collapseStrands k s s' =
 
 data FTerm
   = FSid Sid
-  | FNode Node
   | FTerm Term
   deriving (Eq, Show)
 
@@ -1873,7 +1871,6 @@ instFact s (Fact name fs) = Fact name $ map (instFTerm s) fs
 
 updateFTerm :: (Sid -> Sid) -> FTerm -> FTerm
 updateFTerm f (FSid s) = FSid $ f s
-updateFTerm f (FNode (s, i)) = FNode (f s, i)
 updateFTerm _ t = t
 
 updateFact :: (Sid -> Sid) -> Fact -> Fact
@@ -1881,7 +1878,6 @@ updateFact f (Fact name fs) = Fact name $ map (updateFTerm f) fs
 
 instUpdateFTerm :: Env -> (Sid -> Sid) -> FTerm -> FTerm
 instUpdateFTerm _ f (FSid s) = FSid $ f s
-instUpdateFTerm _ f (FNode (s, i)) = FNode (f s, i)
 instUpdateFTerm e _ (FTerm t) = FTerm $ instantiate e t
 
 instUpdateFact :: Env -> (Sid -> Sid) -> Fact -> Fact
@@ -2072,7 +2068,7 @@ guniqAt t (z, i) k e =
       _ -> []
 
 -- Facts
-gafact :: String -> [FactTerm] -> Sem
+gafact :: String -> [Term] -> Sem
 gafact name fs k e =
   do
     Fact name' ts <- kfacts k
@@ -2080,7 +2076,7 @@ gafact name fs k e =
       True -> fmatchList fs ts e
       False -> []
 
-fmatchList :: [FactTerm] -> [FTerm] -> (Gen, Env) -> [(Gen, Env)]
+fmatchList :: [Term] -> [FTerm] -> (Gen, Env) -> [(Gen, Env)]
 fmatchList [] [] e = [e]
 fmatchList (f : fs) (t : ts) e =
   do
@@ -2088,14 +2084,11 @@ fmatchList (f : fs) (t : ts) e =
     fmatchList fs ts e
 fmatchList _ _ _ = []
 
-fmatch :: FactTerm -> FTerm -> (Gen, Env) -> [(Gen, Env)]
-fmatch (FactNode (z, j)) (FNode (s, i)) e
-  | j == i = strdMatch z s e
-fmatch (FactTerm z) (FSid s) e =
+fmatch :: Term -> FTerm -> (Gen, Env) -> [(Gen, Env)]
+fmatch z (FSid s) e =
   strdMatch z s e
-fmatch (FactTerm t) (FTerm t') e =
+fmatch t (FTerm t') e =
   match t t' e
-fmatch _ _ _ = []
 
 -- Equality
 geq :: Term -> Term -> Sem
@@ -2415,7 +2408,7 @@ runiqAt name t (z, i) k (g, e) =
   where
     t' = instantiate e t
 
-rafact :: String -> String -> [FactTerm] -> Rewrite
+rafact :: String -> String -> [Term] -> Rewrite
 rafact rule name fts k (g, e)
   | elem fact (kfacts k) = [(k, (g, e))]
   | otherwise = [(k', (gen k', e))]
@@ -2427,13 +2420,8 @@ rafact rule name fts k (g, e)
          (knon k) (kpnon k) (kunique k) (fact : kfacts k)
          (kpriority k) (operation k) (prob k) (pov k)
 
-rFactLookup :: String -> Env -> FactTerm -> FTerm
-rFactLookup name e (FactNode (z, i)) =
-  case strdLookup e z of
-    Just s -> FNode (s, i)
-    Nothing ->
-      error ("In rule " ++ name ++ ": fact did not get a strand")
-rFactLookup name e (FactTerm t)
+rFactLookup :: String -> Env -> Term -> FTerm
+rFactLookup name e t
   | isStrdVar t =
     case strdLookup e t of
       Just s -> FSid s
@@ -2442,21 +2430,6 @@ rFactLookup name e (FactTerm t)
   | matched e t = FTerm $ instantiate e t
   | otherwise =
       error ("In rule " ++ name ++ ": fact did not get a term")
-
-{-
-doForm rn (k, va) (UFact name uts) =
-  case mapM (uFactLookup rn va) uts of
-    Nothing -> []
-    Just fts
-      | elem fact (kfacts k) -> [(k, va)]
-      | otherwise -> [(k', va)]
-      where
-        fact = Fact name fts
-        k' = newPreskel
-             (gen k) (shared k) (insts k) (orderings k)
-             (knon k) (kpnon k) (kunique k) (fact : kfacts k)
-             (kpriority k) (operation k) (prob k) (pov k)
--}
 
 req :: String -> Term -> Term -> Rewrite
 req name x y k (g, e)

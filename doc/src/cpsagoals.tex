@@ -662,7 +662,7 @@ parameter is non-originating.
 \subsection{Facts}\label{sec:facts}
 Each skeleton includes a small database of facts.  A fact is a named
 relation among fact terms.  A fact term\index{fact term} is either a
-strand of the skeleton, a node, or an algebra term.  A set of facts is
+strand of the skeleton or an algebra term.  A set of facts is
 defined anywhere after strands are defined using the \sym{facts} form.
 The syntax of facts follows.
 
@@ -670,7 +670,7 @@ The syntax of facts follows.
   \begin{tabular}{rcl}
     facts&$\leftarrow$&(\sym{facts} fact$\ast$) \\
     fact&$\leftarrow$&(symbol fterm$\ast$) \\
-    fterm&$\leftarrow$&mesg $\mid$ nat $\mid$ (nat nat)
+    fterm&$\leftarrow$&mesg $\mid$ nat
   \end{tabular}
 \end{center}
 

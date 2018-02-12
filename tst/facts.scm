@@ -19,7 +19,7 @@
    (vars (k akey))
    (defstrand init 2 (k k))
    (non-orig (invk k))
-   (facts (foo (0 1) k)
+   (facts (foo 0 k)
 	  (bar 0 (invk k))))
 
 (defskeleton unilateral
@@ -36,7 +36,7 @@
     (implies
       (and (p "init" z 2) (p "init" "n" z n) (p "init" "k" z k)
         (non (invk k)) (uniq-at n z 0)
-	(fact foo (z 1) k)
+	(fact foo z k)
 	(fact bar z (invk k)))
       (exists ((z-0 strd))
         (and (p "resp" z-0 2) (p "resp" "n" z-0 n) (p "resp" "k" z-0 k)

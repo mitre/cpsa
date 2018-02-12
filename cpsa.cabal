@@ -49,7 +49,7 @@ Data-Files:
   index.html cpsalogo.svg readme.html cpsauser.html cpsa4.mk Make4.hs
   cpsaprimer.pdf cpsagoals.pdf cpsaoverview.pdf cpsaintroslides.pdf
   cpsaspec.pdf cpsadesign.pdf ffgg.scm ns.scm blanchet.scm or.scm
-  woolam.scm yahalom.scm goals.scm rule.scm
+  woolam.scm yahalom.scm goals.scm rules.scm
            
 Data-Dir:	    	doc
 Extra-Source-Files:

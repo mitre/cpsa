@@ -1,3 +1,7 @@
+2018-02-12  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* Many files:  Removed support for nodes in facts.
+
 2018-02-09  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Cohort.hs (filterSame):  Added a filter that removes

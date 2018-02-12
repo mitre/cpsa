@@ -87,7 +87,7 @@ displayForm ctx (UniqAt t (s, i)) =
   L () [S () "uniq-at", displayTerm ctx t,
         displayTerm ctx s, N () i]
 displayForm ctx (AFact name fs) =
-  L () (S () "fact" : S () name : map (displayFactTerm ctx) fs)
+  L () (S () "fact" : S () name : map (displayTerm ctx) fs)
 displayForm ctx (Equals t1 t2) =
   L () [S () "=", displayTerm ctx t1, displayTerm ctx t2]
 
@@ -96,11 +96,6 @@ displayParam r t =
   case displayTerm (varsContext (rvars r)) t of
     S () var -> Q () var
     _ -> error "displayParam: bad parameter"
-
-displayFactTerm :: Context -> FactTerm -> SExpr ()
-displayFactTerm ctx (FactNode (s, i)) =
-  L () [displayTerm ctx s, N () i]
-displayFactTerm ctx (FactTerm t) = displayTerm ctx t
 
 -- Display of roles
 
@@ -179,7 +174,6 @@ displayFact ctx (Fact name fs) =
 
 displayFterm :: Context -> FTerm -> SExpr ()
 displayFterm _ (FSid s) = N () s
-displayFterm _ (FNode n) = displayNode n
 displayFterm ctx (FTerm t) = displayTerm ctx t
 
 displayPriority :: (Node, Int) -> SExpr ()

@@ -85,8 +85,8 @@ $\mbox{id}\mid(\sym{pubk}\mbox{ id})
 (node node)
 \\ node&$\leftarrow$&
 (integer integer)
-\\ fact&$\leftarrow$&(symbol fterm$\ast$)
-\\ fterm&$\leftarrow$&term $\mid$ integer $\mid$ node
+\\ fact&$\leftarrow$&(id fterm$\ast$)
+\\ fterm&$\leftarrow$&term $\mid$ integer
 \\
 \\ goal&$\leftarrow$&
 (\sym{defgoal} id sentence+ goal-alist)
@@ -101,8 +101,9 @@ $\mbox{id}\mid(\sym{pubk}\mbox{ id})
 \\ atomic&$\leftarrow$&(\sym{p} roleid svar hgt)
 \\ &$\mid$&(\sym{p} roleid param svar term)
 \\ &$\mid$&(\sym{prec} svar pos svar pos)
-\\ &$\mid$&(\sym{non} term) $\mid$ (\sym{pnon} term) $\mid$ (\sym{uniq} term)
-\\ &$\mid$&(\sym{uniq-at} term svar pos) $\mid$ (= term term)
+\\ &$\mid$&(\sym{non} term) $\mid$ (\sym{pnon} term)
+\\ &$\mid$&(\sym{uniq} term) $\mid$ (\sym{uniq-at} term svar pos) 
+\\ &$\mid$&(\sym{fact} id term$\ast$) $\mid$ (= term term)
 \\ roleid&$\leftarrow$& string
 \\ hgt&$\leftarrow$& integer
 \\ pos&$\leftarrow$& integer

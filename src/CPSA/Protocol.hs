@@ -12,7 +12,7 @@ module CPSA.Protocol (Event (..), evtTerm, evtMap, evt, inbnd, outbnd,
     Role, rname, rvars, rtrace, rnon, rpnon, runique, rcomment,
     rsearch, rnorig, rpnorig, ruorig, rpriority, mkRole, varSubset,
     varsInTerms, addVars, firstOccurs,
-    AForm (..), NodeTerm, FactTerm (..), Goal (..),
+    AForm (..), NodeTerm, Goal (..),
     aFormOrder, aFreeVars, Rule (..),
     Prot, mkProt, pname, alg, pgen, roles, rules, listenerRole,
     varsAllAtoms, pcomment) where
@@ -236,16 +236,11 @@ data AForm
   | Pnon Term
   | Uniq Term
   | UniqAt Term NodeTerm
-  | AFact String [FactTerm]
+  | AFact String [Term]
   | Equals Term Term
   deriving Show
 
 type NodeTerm = (Term, Int)
-
-data FactTerm
-  = FactNode NodeTerm
-  | FactTerm Term
-  deriving Show
 
 data Goal
   = Goal { uvars :: [Term],          -- Universally quantified variables
@@ -346,11 +341,7 @@ aFreeVars vars (Non t) = addVars vars t
 aFreeVars vars (Pnon t) = addVars vars t
 aFreeVars vars (Uniq t) = addVars vars t
 aFreeVars vars (UniqAt t (z, _)) = addVars (addVars vars t) z
-aFreeVars vars (AFact _ ft) =
-  foldl f vars ft
-  where
-    f vars (FactNode (z, _)) = addVars vars z
-    f vars (FactTerm t) = addVars vars t
+aFreeVars vars (AFact _ ft) = foldl addVars vars ft
 aFreeVars vars (Equals x y) = addVars (addVars vars x) y
 
 data Rule

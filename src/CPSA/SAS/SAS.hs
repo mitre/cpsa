@@ -221,11 +221,7 @@ type Node = (Strand, Int)       -- (Strand, Position)
 
 type Pair = (Node, Node)        -- Precedes relation
 
-type Fact = (String, [FTerm])
-
-data FTerm
-  = FTerm Term
-  | FNode Term Int
+type Fact = (String, [Term])
 
 data Preskel = Preskel
     { protocol :: Prot,
@@ -415,19 +411,13 @@ loadFact vars varmap (L _ (S _ name : ft)) =
 loadFact _ _ x =
   fail (shows (annotation x) "Malformed fact")
 
-loadFactTerm :: Monad m => [Term] -> VM -> SExpr Pos -> m FTerm
+loadFactTerm :: Monad m => [Term] -> VM -> SExpr Pos -> m Term
 loadFactTerm _ varmap (N pos z) =
   case M.lookup z varmap of
-    Just t -> return $ FTerm t
+    Just t -> return t
     Nothing -> fail $ shows pos ("Bad strand in fact: " ++ show z)
-loadFactTerm _ varmap (L _ [N pos z, N _ i]) =
-  case M.lookup z varmap of
-    Just t -> return $ FNode t i
-    Nothing -> fail  $ shows pos ("Bad strand in fact: " ++ show z)
 loadFactTerm vars _ x =
-  do
-    t <- loadTerm vars x
-    return $ FTerm t
+  loadTerm vars x
 
 -- Homomorphisms
 
@@ -599,9 +589,7 @@ mapSkel env pov k =
     mapNode f (z, i) = (f z, i)
     mapPair f l = map (\(a, b) -> (mapNode f a, mapNode f b)) l
     mapOrig f l = map (\(a, b) -> (f a, mapNode f b)) l
-    mapFact f l = map (\(name, ft) -> (name, map (mapFTerm f) ft)) l
-    mapFTerm f (FTerm t) = FTerm $ f t
-    mapFTerm f (FNode t i) = FNode (f t) i
+    mapFact f l = map (\(name, ft) -> (name, map f ft)) l
 
 -- Formula printing
 
@@ -686,15 +674,9 @@ precForm = quaternary "prec"
 uniqAtForm :: Context -> (Term, (Term, Int)) -> SExpr ()
 uniqAtForm = ternary "uniq-at"
 
-factForm :: Context -> (String, [FTerm]) -> SExpr ()
+factForm :: Context -> (String, [Term]) -> SExpr ()
 factForm c (name, ft) =
-  L () (S () "fact" : S () name : map (factTermForm c) ft)
-
-factTermForm :: Context -> FTerm -> SExpr ()
-factTermForm c (FTerm t) =
-  displayTerm c t
-factTermForm c (FNode t i) =
-  L () [displayTerm c t, N () i]
+  L () (S () "fact" : S () name : map (displayTerm c) ft)
 
 -- Returns the uniqs that do not originate in k.
 noOrigUniqs :: Preskel -> [Term]
@@ -742,7 +724,6 @@ quantify name vars form =
 conjoin :: [SExpr ()] -> SExpr ()
 conjoin conjuncts =
     case concatMap f conjuncts of
-      [] -> L () [S () "false"]
       [x] -> x
       xs -> L () (S () "and" : xs)
     where
@@ -752,6 +733,7 @@ conjoin conjuncts =
 disjoin :: [SExpr ()] -> SExpr ()
 disjoin conjuncts =
     case concatMap f conjuncts of
+      [] -> L () [S () "false"]
       [x] -> x
       xs -> L () (S () "or" : xs)
     where

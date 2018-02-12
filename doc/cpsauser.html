@@ -212,8 +212,8 @@ SKEL-ALIST ::= (non-orig TERM*) SKEL-ALIST
             |  (priority NODE-INT*) SKEL-ALIST | ...
 NODE-PAIR  ::= (NODE NODE)
 NODE       ::= (INT INT)
-FACT       ::= (SYMBOL FTERM*)
-FTERM      ::= TERM | INT | NODE</pre>
+FACT       ::= (ID FTERM*)
+FTERM      ::= TERM | INT</pre>
 </blockquote>
 
 <p>The <code>ID</code> in the skeleton form names a protocol. It refers to the last
@@ -333,7 +333,8 @@ EXISTENTIAL ::= (exists (DECL*) ANTECEDENT) | ANTECEDENT
 ANTECEDENT  ::= ATOMIC | (and ATOMIC+)
 ATOMIC      ::= (p ROLEID SVAR HGT) | (p ROLEID PARAM SVAR TERM)
              |  (prec SVAR POS SVAR POS) | (non TERM) | (pnon TERM)
-             |  (uniq TERM) | (uniq-at TERM SVAR POS) | (= TERM TERM)
+             |  (uniq TERM) | (uniq-at TERM SVAR POS)
+             |  (fact ID TERM*) | (= TERM TERM)
 ROLEID      ::= STRING
 HGT         ::= INT
 POS         ::= INT
@@ -356,9 +357,9 @@ PARAM       ::= STRING</pre>
   contains the mentioned pair of nodes.  Formula <code>(non t)</code>
   asserts <code>t</code> is assumed to be non-originating in the
   skeleton.  Predicates <code>pnon</code> and <code>uniq</code> have
-  similar interpretations. The formula <code>(fact foo (s 1) (invk
+  similar interpretations. The formula <code>(fact foo s (invk
   t))</code> asserts the skeleton contains a fact
-  called <code>foo</code> relating a node to the inverse of some term.
+  called <code>foo</code> relating a strand to the inverse of some term.
   The formula <code>(= s t)</code> asserts that <code>s</code>
   and <code>t</code> refer to the same object in the skeleton.</p>
 

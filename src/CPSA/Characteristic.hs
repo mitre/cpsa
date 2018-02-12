@@ -183,8 +183,7 @@ mkFact :: [(Term, Sid)] -> (Pos, AForm) -> [Fact] -> [Fact]
 mkFact nmap (_, AFact name fs) ts =
   Fact name (map f fs) : ts
   where
-    f (FactNode n) = FNode $ nMapLookup n nmap
-    f (FactTerm t) =
+    f t =
       case lookup t nmap of
         Just s -> FSid s
         Nothing -> FTerm t
