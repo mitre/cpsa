@@ -73,8 +73,8 @@ A role has the form:
 \quad (trace \ntermp{event})
 \quad \ntermo{(non-orig \nterms{non})}
 \quad \ntermo{(pen-non-orig \nterms{non})}
-\quad \ntermo{(uniq-orig \nterms{atom})}
-\quad \nterm{annos})
+\quad \ntermo{(uniq-orig \nterms{atom})}\iffalse
+\quad \nterm{annos}\fi)
 
 \nterm{non} ::= \nterm{atom} | (\nterm{height} \nterm{atom})
 \end{alltt}
@@ -294,6 +294,8 @@ to test for compromise of a term.  The term is protected if the
 resulting skeleton is unrealizable.  Otherwise, CPSA will find a shape
 that shows how the adversary accesses~$t$.
 
+% Annotations are gone now.
+\iffalse
 \section{Annotations}
 
 To be analyzed, each role in a protocol must include an
@@ -336,6 +338,7 @@ On output, each shape contains an \texttt{annotations} form and an
 non-trivial formula derived from the protocol. The obligations form
 presents every non-trivial formula that must be true if the shape is
 sound.
+\fi
 
 \bibliography{cpsa}
 \bibliographystyle{plain}

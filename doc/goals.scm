@@ -1,6 +1,6 @@
 (herald goals)
 
-;;; Section 1 --- Examples from CPSA and Formal Security Goals
+;;; Section 1 --- Examples from CPSA Security Goals and Rules
 
 ;;; Needham-Schroeder from Section 10 of the CPSA Primer
 

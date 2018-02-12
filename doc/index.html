@@ -15,8 +15,7 @@
 
 <p>[<a href="cpsauser.html">CPSA User Guide</a>]
 [<a href="cpsaprimer.pdf">CPSA Primer</a>]
-[<a href="cpsagoals.pdf">CPSA and Formal Security Goals</a>]
-[<a href="cpsaoverview.pdf">CPSA Overview</a>]
+[<a href="cpsagoals.pdf">CPSA Security Goals and Rules</a>]
 [<a href="cpsaintroslides.pdf">CPSA Introductory Slides</a>]
 [<a href="http://www.mitre.org/publications/technical-papers/completeness-of-cpsa">CPSA Correctness Proof</a>]</p>
 
@@ -29,14 +28,11 @@
   indeed very few shapes. Authentication and secrecy properties are
   easy to determine from them, as are attacks and anomalies.</p>
 
-<p>CPSA comes with a user guide, a primer, an overview, and some slides.
-  The user guide provides usage information for each program in the
-  CPSA package.  The primer provides an English language description
-  of the CPSA algorithm and is the primary user documentation.  The
-  overview is another attack at user documentation and includes an
-  introduction to the Rely-Guarantee Method of demonstrating that a
-  protocol achieves its security goals.  This is an advanced technique
-  beginners should feel free to ignore.</p>
+<p>CPSA comes with a user guide, a primer, goal documentation, and
+  some slides.  The user guide provides usage information for each
+  program in the CPSA package.  The primer provides an English
+  language description of the CPSA algorithm and is the primary user
+  documentation.</p>
 
 <p>At this point, new users should open the
   <a href="cpsaintroslides.pdf">introductory slides</a> and start
@@ -55,8 +51,7 @@
 
 <p>After running the analysis, you will note files with the extension
   <code>.xhtml</code>. These are XHTML/SVG compound documents that can
-  be viewed by standards compliant browsers such as Firefox, Chrome,
-  Safari, and later versions of Internet Explorer.  See the section
+  be viewed by standards compliant browsers. See the section
   on <a href="cpsauser.html#cpsagraph">visualization</a> in the user
   guide for help interpreting these documents.</p>
 
@@ -71,9 +66,9 @@
 
 <p>An analysis of Needham-Schroeder
   using <a href="cpsagoals.pdf">security goals</a> is
-  in <code>goals.xhtml</code>.  An example of the use of rules and
-  facts is in <code>rules.xhtml</code>.  These examples can safely be
-  ignored by new users.</p>
+  in <code>goals.xhtml</code>.  Examples of using the security goal
+  language for rewrite rules is in <code>rules.xhtml</code>.  These
+  examples can safely be ignored by new users.</p>
 
 <p>To make effective use of CPSA, new users should scan the
   <a href="cpsauser.html">user guide</a> to get a flavor of its
@@ -133,9 +128,10 @@
   some other properties must hold for all shapes computed by CPSA
   starting with the skeleton.  Security goals can be used to state
   authentication and secrecy goals of a protocol.  See
-  <a href="cpsagoals.pdf">CPSA and Formal Security Goals</a>.  An
+  <a href="cpsagoals.pdf">CPSA Security Goals and Rules</a>.  An
   analysis of Needham-Schroeder using first-order logic is
-  in <code>goals.xhtml</code>.</p>
+  in <code>goals.xhtml</code>.  Examples of using the security goal
+  language for rewrite rules is in <code>rules.xhtml</code>.</p>
 
 <p>When the <code>cpsapp</code> program is given
   the <code>--json</code> option, it translates S-expressions into
