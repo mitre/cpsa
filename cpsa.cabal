@@ -47,9 +47,9 @@ Category:		Cryptography
 Build-Type:		Simple
 Data-Files:
   index.html cpsalogo.svg readme.html cpsauser.html cpsa4.mk Make4.hs
-  cpsaprimer.pdf cpsagoals.pdf cpsaoverview.pdf cpsaintroslides.pdf
-  cpsaspec.pdf cpsadesign.pdf ffgg.scm ns.scm blanchet.scm or.scm
-  woolam.scm yahalom.scm goals.scm rules.scm
+  cpsaprimer.pdf cpsagoals.pdf cpsaintroslides.pdf cpsaspec.pdf
+  cpsadesign.pdf ffgg.scm ns.scm blanchet.scm or.scm woolam.scm
+  yahalom.scm goals.scm rules.scm
            
 Data-Dir:	    	doc
 Extra-Source-Files:
@@ -57,7 +57,7 @@ Extra-Source-Files:
   doc/src/Makefile doc/src/macros.tex doc/src/cpsaprimer.tex
   doc/src/cpsagoals.tex doc/src/bcasyntax.tex
   doc/src/cpsaintroslides.tex doc/src/mitreslides.sty
-  doc/src/cpsaspec.tex doc/src/cpsadesign.tex doc/src/cpsaoverview.tex
+  doc/src/cpsaspec.tex doc/src/cpsadesign.tex
   doc/src/cpsadiagrams.mp doc/src/strands.mp doc/src/cmstrands.mp
   doc/src/carriers.mp doc/src/termtree.mp doc/src/blanchet.mp
   doc/src/mitrelogo.mp doc/src/cpsa.bib doc/SDAG.lhs doc/cpsalogo.mp

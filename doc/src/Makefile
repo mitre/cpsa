@@ -11,7 +11,6 @@ SHELL = /bin/sh
 
 PRIMER = cpsaprimer
 GOALS = cpsagoals
-OVERVIEW = cpsaoverview
 SLIDES = cpsaintroslides
 DESIGN = cpsadesign
 SPEC = cpsaspec
@@ -32,8 +31,7 @@ MP_SRCS	= cpsadiagrams.mp carriers.mp termtree.mp blanchet.mp mitrelogo.mp
 %.ind:	%.idx
 	makeindex $*
 
-all:	$(PRIMER).pdf $(GOALS).pdf $(OVERVIEW).pdf \
-		$(SLIDES).pdf $(DESIGN).pdf $(SPEC).pdf
+all:	$(PRIMER).pdf $(GOALS).pdf $(SLIDES).pdf $(DESIGN).pdf $(SPEC).pdf
 
 $(PRIMER).pdf:	$(MP_SRCS:.mp=-0.mps) $(TEX_SRCS) \
 		 $(PRIMER).tex $(PRIMER).bbl
@@ -45,10 +43,6 @@ $(GOALS).pdf: $(MP_SRCS:.mp=-0.mps) $(TEX_SRCS) \
 		$(GOALS).tex $(GOALS).bbl
 	if test ! -f $(GOALS).aux; then pdflatex $(GOALS).tex; fi
 	pdflatex $(GOALS).tex
-
-$(OVERVIEW).pdf: $(OVERVIEW).tex $(OVERVIEW).bbl
-	if test ! -f $(OVERVIEW).aux; then pdflatex $(OVERVIEW).tex; fi
-	pdflatex $(OVERVIEW).tex
 
 $(SLIDES).pdf:	$(MP_SRCS:.mp=-0.mps) $(SLIDES).tex
 	pdflatex $(SLIDES).tex
@@ -65,8 +59,8 @@ $(SPEC).pdf:	$(MP_SRCS:.mp=-0.mps) $(TEX_SRCS) \
 	if test -f $(SPEC).idx; then $(MAKE) $(SPEC).ind; fi
 	pdflatex $(SPEC).tex
 
-CLEAN_FILES := $(PRIMER).pdf $(GOALS).pdf $(OVERVIEW).pdf \
-		$(SLIDES).pdf $(DESIGN).pdf $(SPEC).pdf \
+CLEAN_FILES := $(PRIMER).pdf $(GOALS).pdf $(SLIDES).pdf \
+               $(DESIGN).pdf $(SPEC).pdf \
 	$(wildcard *.log *.aux *.toc *.mps *.mpx *.lot *.lof) \
 	$(wildcard *.bbl *.blg *.ind *.idx *.ilg *.out)
 

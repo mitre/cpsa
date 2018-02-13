@@ -1,3 +1,7 @@
+2018-02-13  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Data-Files): Removed the overview document.
+
 2018-02-12  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* Many files:  Removed support for nodes in facts.
