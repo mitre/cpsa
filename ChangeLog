@@ -1,3 +1,8 @@
+2018-03-20  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* tst/fluffy_draft03_gske.scm (fluffy-rule): Added fluffy example
+	with some rules.
+
 2018-02-14  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* cpsa.cabal (Version):  Tagged as version 4.1.0
