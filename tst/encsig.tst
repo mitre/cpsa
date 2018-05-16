@@ -1,7 +1,7 @@
 (herald "Encrypted Signed Message Example"
   (comment "Shows examples of key usage of asymmetric keys"))
 
-(comment "CPSA 4.1.0")
+(comment "CPSA 4.1.1")
 (comment "All input read from encsig.scm")
 
 (defprotocol mult-keys-enc-sig basic

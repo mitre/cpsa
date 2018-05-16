@@ -1,7 +1,7 @@
 (herald "Wide-Mouth Frog Protocol from Scyther"
   (comment "This protocol has an infinite number of shapes"))
 
-(comment "CPSA 4.1.0")
+(comment "CPSA 4.1.1")
 (comment "All input read from wide-mouth-frog-scyther.lsp")
 
 (defprotocol wide-mouth-frog basic
