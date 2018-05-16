@@ -1,5 +1,9 @@
 CPSA NEWS -- history of user-visible changes.
 
+* Changes in version 4.1.1
+
+** This is a bug fix release.  There are no user visible changes.
+
 * Changes in version 4.1.0
 
 ** Added rules and facts.  Rules are associated with protocols, and

@@ -2166,6 +2166,7 @@ doRewriteOne k r e =
   do
     cl <- concl $ rlgoal r
     (k, _) <- doConj (rlname r) cl k e
+    k <- wellFormedPreskel k
     k <- toSkeleton True k
     return $ f k                -- Add comment about rule application
   where f k = k { kcomment =

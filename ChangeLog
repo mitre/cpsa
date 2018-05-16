@@ -1,3 +1,9 @@
+2018-05-15  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Strand.hs (doRewriteOne):  Ensured that the skeletons
+	produced by rule application are well-formed.  When rules produce
+	non well-formed skeletons, havoc ensues.
+
 2018-03-20  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* tst/fluffy_draft03_gske.scm (fluffy-rule): Added fluffy example
