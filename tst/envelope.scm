@@ -94,6 +94,29 @@
      (send (enc v k)))
     (uniq-orig n v)
     (non-orig aik esk))
+
+  (defrule ordered-extends
+    (forall ((y z strd) (pcrkey skey))
+	    (implies
+	     (and (p "tpm-extend" y 3)
+		  (p "tpm-extend" z 3)
+		  (p "tpm-extend" "pcrkey" y pcrkey)
+		  (p "tpm-extend" "pcrkey" z pcrkey))
+	     (or (= y z)
+		 (prec y 2 z 3)
+		 (prec z 2 y 3)))))
+
+  (defrule esk-same-as-pcrkey
+    (forall ((y z strd) (esk pcrkey pcrkey-0 skey))
+	    (implies
+	     (and (p "tpm-extend-enc" y 3)
+		  (p "tpm-extend-enc" z 3)
+		  (p "tpm-extend-enc" "esk" y esk)
+		  (p "tpm-extend-enc" "esk" z esk)
+		  (p "tpm-extend-enc" "pcrkey" y pcrkey)
+		  (p "tpm-extend-enc" "pcrkey" z pcrkey-0))
+	     (= pcrkey pcrkey-0))))
+		  
   )
 
 ;(comment
