@@ -93,7 +93,8 @@
      (recv (enc "created" k (hash (hash "0" n) "obtain") aik))
      (send (enc v k)))
     (uniq-orig n v)
-    (non-orig aik esk)))
+    (non-orig aik esk))
+  )
 
 ;(comment
 (defskeleton envelope

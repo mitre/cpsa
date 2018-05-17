@@ -25,7 +25,6 @@
   (defstrand resp 5 (a a) (s s))
   (non-orig (ltk a s)))
 
-
 (defprotocol woolam-msg basic
   (defrole init (vars (a s name) (n text))
     (trace
