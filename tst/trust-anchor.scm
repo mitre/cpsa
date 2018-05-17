@@ -3,7 +3,7 @@
 
 (defprotocol trust-anchor basic
   ;;; trust-anchor property guarantees non
-  (defule trust-anchor-inverse-is-non
+  (defrule trust-anchor-inverse-is-non
     (forall ((k akey))
 	    (implies (fact trust-anchor k)
 		     (non (invk k))))))

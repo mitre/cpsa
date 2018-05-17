@@ -5,7 +5,7 @@
 (comment "All input read from trust-anchor.scm")
 
 (defprotocol trust-anchor basic
-  (defule trust-anchor-inverse-is-non
+  (defrule trust-anchor-inverse-is-non
     (forall ((k akey)) (implies (fact trust-anchor k) (non (invk k))))))
 
 (defskeleton trust-anchor
@@ -23,7 +23,7 @@
 (comment "Nothing left to do")
 
 (defprotocol trust-anchor basic
-  (defule trust-anchor-inverse-is-non
+  (defrule trust-anchor-inverse-is-non
     (forall ((k akey)) (implies (fact trust-anchor k) (non (invk k))))))
 
 (defskeleton trust-anchor
@@ -35,8 +35,22 @@
       (send (enc f (pubk f) (privk ca)))))
   (label 1)
   (unrealized)
-  (shape)
-  (maps ((0) ((f f) (ca ca))))
-  (origs))
+  (origs)
+  (comment "Not in theory"))
+
+(defskeleton trust-anchor
+  (vars (f ca name))
+  (deflistener (enc f (pubk f) (privk ca)))
+  (non-orig (privk ca))
+  (facts (trust-anchor (pubk ca)))
+  (rule trust-anchor-inverse-is-non)
+  (traces
+    ((recv (enc f (pubk f) (privk ca)))
+      (send (enc f (pubk f) (privk ca)))))
+  (label 2)
+  (parent 1)
+  (unrealized (0 0))
+  (origs)
+  (comment "empty cohort"))
 
 (comment "Nothing left to do")
