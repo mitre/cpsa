@@ -1,3 +1,9 @@
+2018-05-21  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Strand.hs (changeLocations,deleteNodeRest): Flushed
+	facts that referred to variables that no long exists a skeleton's
+	instances.
+
 2018-05-15  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Strand.hs (doRewriteOne):  Ensured that the skeletons

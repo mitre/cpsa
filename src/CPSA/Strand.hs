@@ -91,7 +91,7 @@ useSingleStrandThinning = False -- True
 
 -- Sanity check: ensure no role variable occurs in a skeleton.
 useCheckVars :: Bool
-useCheckVars = False
+useCheckVars = False -- True
 
 useThinningDuringCollapsing :: Bool
 useThinningDuringCollapsing = False -- True
@@ -1580,7 +1580,7 @@ deleteNodeRest :: Preskel -> Gen -> Node -> [Instance] -> [Pair] ->
                   [Sid] -> [Fact] -> Preskel
 deleteNodeRest k gen n insts' orderings prob facts =
     newPreskel gen (shared k) insts' orderings non' pnon' unique'
-    facts prio' (Generalized (Deleted n)) prob (pov k)
+    facts' prio' (Generalized (Deleted n)) prob (pov k)
     where
       -- Drop nons that aren't mentioned anywhere
       non' = filter mentionedIn (knon k)
@@ -1590,6 +1590,8 @@ deleteNodeRest k gen n insts' orderings prob facts =
       -- Drop uniques that aren't carried anywhere
       unique' = filter carriedIn (kunique k)
       carriedIn t = any (carriedBy t) terms
+      -- Drop facts that have unused variables
+      facts' = cleansFacts terms facts
       -- Drop unused priorities
       prio' = filter within (kpriority k)
       within ((s, i), _) =
@@ -1778,7 +1780,7 @@ changeLocations k env gen t locs =
     [addIdentity k0, addIdentity k1]
     where
       k0 = newPreskel gen' (shared k) insts' (orderings k) non pnon unique0
-           (kfacts k) (kpriority k) (Generalized (Separated t)) (prob k) (pov k)
+           facts' (kpriority k) (Generalized (Separated t)) (prob k) (pov k)
       k1 = newPreskel gen' (shared k) insts' (orderings k) non pnon unique1
            facts (kpriority k) (Generalized (Separated t)) (prob k) (pov k)
       (gen', insts') = changeStrands locs t gen (strands k)
@@ -1788,7 +1790,9 @@ changeLocations k env gen t locs =
       unique1 = map (instantiate env) (kunique k) ++ unique'
       -- Ensure all role unique assumptions are in.
       unique' = concatMap inheritRunique insts'
-      facts = map (instFact env) (kfacts k)
+      vars = instvars insts'
+      facts' = cleansFacts vars (kfacts k)
+      facts = cleansFacts vars (map (instFact env) (kfacts k))
 
 changeStrands :: [Location] -> Term -> Gen -> [Strand] -> (Gen, [Instance])
 changeStrands locs copy gen strands =
@@ -1882,6 +1886,40 @@ instUpdateFTerm e _ (FTerm t) = FTerm $ instantiate e t
 
 instUpdateFact :: Env -> (Sid -> Sid) -> Fact -> Fact
 instUpdateFact e f (Fact name fs) = Fact name $ map (instUpdateFTerm e f) fs
+
+-- Is all of the fact's variables in a list of variables?
+
+factVarsElem :: [Term] -> Fact -> Bool
+factVarsElem vs (Fact _ ts) =
+  all f ts
+  where
+    f (FSid _) = True
+    f (FTerm t) = all (\v -> elem v vs) (varsInTerms [t])
+
+cleansFacts :: [Term] -> [Fact] -> [Fact]
+cleansFacts vs facts =
+  L.filter (factVarsElem vs) facts
+
+instvars :: [Instance] -> [Term]
+instvars insts =
+    S.elems $ foldl addIvars S.empty insts
+
+{-- For debugging
+factVars :: Fact -> [Term] -> [Term]
+factVars (Fact _ ts) vs =
+  foldr f vs ts
+  where
+    f (FSid _) vs = vs
+    f (FTerm t) vs = addVars vs t
+
+chkFVars :: Preskel -> Preskel
+chkFVars k =
+  foldl f k (foldr factVars [] (kfacts k))
+  where
+    f k v
+      | elem v (kvars k) = k
+      | otherwise = error ("Bad var in fact " ++ show v)
+--}
 
 {-
 chkFacts :: Preskel -> Bool
