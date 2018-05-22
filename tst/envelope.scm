@@ -1,4 +1,4 @@
-(herald "Envelope Protocol" (bound 50))
+(herald "Envelope Protocol" (bound 12))
 
 ;; This is the refusal token
 (defmacro (refuse n v k aik)
