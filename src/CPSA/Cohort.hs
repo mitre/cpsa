@@ -69,6 +69,9 @@ useSolvedFilter = True -- False
 useThinningDuringGeneralization :: Bool
 useThinningDuringGeneralization = False -- True
 
+omitGeneralization :: Bool
+omitGeneralization = False -- True
+
 -- Minimum priority to solve
 minPriority :: Int
 minPriority = 1
@@ -200,7 +203,10 @@ reduce mode k =
       ks = maybe (whenRealized k) id (findTest mode k u a) -- Normal cohort
       (a, u) = avoid k
       whenRealized k =
-          if noGeneralization mode then [] else maximize k
+          if omitGeneralization || noGeneralization mode then
+            []
+          else
+            maximize k
 
 -- Filter out skeletons in ks that are isomorphic to k.
 filterSame :: Preskel -> [Preskel] -> [Preskel]
