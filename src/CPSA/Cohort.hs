@@ -536,15 +536,21 @@ escapeKeys eks escape =
       f e s = maybe s (flip S.insert s) (decryptionKey e)
       es = S.fromList eks
 
--- Maximize a realized skeleton if possible
+-- Maximize a realized skeleton if possible.  Do not consider
+-- generalizations that fail to satisfy the rules of the skeleton's
+-- protocol.
 
 maximize :: Preskel -> [Preskel]
 maximize k =
-    take 1 gens                 -- Return at most the first answer
+    take 1 (filter f gens)      -- Return at most the first answer
     where
       gens = do
         (k', mapping) <- generalize k -- Generalize generates candidates
         specialization k k' mapping   -- Test a candidate
+      f k =
+        case rewrite k of
+          Nothing -> True
+          _ -> False
 
 -- Test to see if realized skeleton k is a specialization of
 -- preskeleton k' using the given strand mapping.  Returns the

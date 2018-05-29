@@ -1,3 +1,9 @@
+2018-05-29  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Cohort.hs (maximize): Eliminated generalizations that
+	fail to satisfy the rules of the skeleton's protocol.  Otherwise,
+	generalizations can undo the effects of applying rules.
+
 2018-05-21  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Strand.hs (changeLocations,deleteNodeRest): Flushed
