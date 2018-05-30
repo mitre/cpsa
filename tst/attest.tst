@@ -185,10 +185,9 @@
     ((recv (enc (enc k (invk p)) d)) (send k)))
   (label 7)
   (parent 5)
+  (seen 8)
   (unrealized)
-  (shape)
-  (maps ((0) ((p p) (a a) (d d) (k k) (n n) (t t))))
-  (origs (k (0 2)) (n (0 0))))
+  (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton attest-door
   (vars (n t text) (k skey) (p a d akey))
