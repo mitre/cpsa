@@ -144,7 +144,7 @@ begin p h ks m n seen lk =
     Just kids ->
       do
         wrt p h (commentPreskel lk [] (unrealized k) Ordinary
-                  "Not in theory")
+                  "Not closed under rules")
         let (n', seen', todo', _) =
               foldl (next lk) (n, seen, [], []) kids
         search p h ks m n' seen' todo' []

@@ -550,7 +550,7 @@
   (label 20)
   (unrealized (0 1))
   (origs (k (0 0)))
-  (comment "Not in theory"))
+  (comment "Not closed under rules"))
 
 (defskeleton main-ex-tgt-rule
   (vars (x mesg) (ssn i y n text) (k skey) (a b c akey))

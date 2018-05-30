@@ -180,7 +180,7 @@
   (label 7)
   (unrealized (0 2))
   (origs (nb (0 1)))
-  (comment "Not in theory"))
+  (comment "Not closed under rules"))
 
 (defskeleton ns-with-rule
   (vars (na na-0 nb text) (b a b-0 akey))

@@ -36,7 +36,7 @@
   (label 1)
   (unrealized)
   (origs)
-  (comment "Not in theory"))
+  (comment "Not closed under rules"))
 
 (defskeleton trust-anchor
   (vars (f ca name))

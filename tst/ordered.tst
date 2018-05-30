@@ -22,7 +22,7 @@
   (label 0)
   (unrealized)
   (origs)
-  (comment "Not in theory"))
+  (comment "Not closed under rules"))
 
 (defskeleton ordered
   (vars (a b text) (k k-0 akey))

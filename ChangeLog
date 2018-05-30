@@ -1,3 +1,8 @@
+2018-05-30  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Reduction.hs (begin): Change "Not in theory" message to
+	"Not closed under rules".
+
 2018-05-29  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Cohort.hs (maximize): Eliminated generalizations that
