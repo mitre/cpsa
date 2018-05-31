@@ -4,12 +4,16 @@
 \usepackage{url}
 \usepackage{graphicx}
 \usepackage{alltt}
+\usepackage[matrix,arrow,curve]{xy}
 \input{macros}
 
 \newcommand{\sym}[1]{\textup{\texttt{#1}}}
+\newcommand{\iv}[1]{\ensuremath{{#1}^{-1}}}
+
+\newtheorem{axiom}{Trust Assumption}
 
 \title{CPSA Security Goals and Rules}
-\author{John D.~Ramsdell\\
+\author{Joshua D. Guttman and John D.~Ramsdell\\
   The MITRE Corporation\\ CPSA Version \version}
 
 \begin{document}
@@ -405,7 +409,7 @@ to use a listener to state a secrecy goal.
 
 (defskeleton ns            ; Point of view skeleton
   (vars (a b name) (n1 n2 text))
-  (defstrand init 3 (a a) (b b) (n1 n1) (n2 n2))
+  (defstrand resp 3 (a a) (b b) (n1 n1) (n2 n2))
   (non-orig (privk a))
   (uniq-orig n2))
 \end{verbatim}
@@ -603,41 +607,6 @@ a desired security goal.
 
 Support for rules was introduced in version 4.1 of {\cpsa}.
 
-\begin{figure}
-\begin{verbatim}
-(defprotocol doorsep basic
-  (defrole person
-    (vars (d p akey) (k skey) (t text))
-    (trace
-     (send (enc (enc k (invk p)) d))
-     (recv (enc t k))
-     (send t)))
-  (defrole door
-    (vars (d p akey) (k skey) (t text))
-    (trace
-     (recv (enc (enc k (invk p)) d))
-     (send (enc t k))
-     (recv t)))
-  (defrule trust
-    (forall ((z strd) (p d akey))
-            (implies
-             (and (p "person" z 1)
-                  (p "person" "p" z p)
-                  (p "person" "d" z d)
-                  (non (invk p)))
-             (non (invk d))))
-    (comment "The trust rule"))
-  (comment "Doorsep protocol using unnamed asymmetric keys"))
-
-(defskeleton doorsep
-  (vars (p akey))
-  (defstrand door 3 (p p))
-  (non-orig (invk p))
-  (comment "Analyze from the doors's perspective"))
-\end{verbatim}
-\caption{Door Simple Example Protocol}\label{fig:doorsep}
-\end{figure}
-
 Each protocol includes a small collection of rules.  A rule is a
 sentence in the goal language presented in Section~\ref{sec:syntax}.
 Rules are defined after the roles of a protocol are defined.  The
@@ -652,7 +621,7 @@ syntax of a rule follows.
 A rule is an axiom added to a protocol.  {\cpsa} uses the axiom as a
 rewrite rule to derive zero or more new skeletons from a skeleton
 produced during a step.  An example of a protocol with a rule is in
-Figure~\ref{fig:doorsep}.
+Figure~\ref{fig:doorsep} on Page~\pageref{fig:doorsep}.
 
 The trust rule states that when CPSA finds a person strand of length
 at least one, and the inverse of it's \texttt{p} parameter is
@@ -702,6 +671,166 @@ protocol.
       (false))))
 \end{verbatim}
 \end{quote}
+
+\subsection{DoorSEP}
+
+\begin{sloppypar}
+As a motivating scenario consider the Door Simple Example Protocol
+(DoorSEP), derived from an expository protocol that was designed to
+have a weakness.  Despite this, the protocol achieves the needs of an
+application, given a trust assumption.
+\end{sloppypar}
+
+Imagine a door~$D$ which is equipped with a badge reader, and a
+person~$P$ equipped with a badge.  When the person swipes the badge,
+the protocol executes.  Principals such as doors or persons are
+identified by the public parts of their key pairs, with \iv{D} and
+\iv{P} being the corresponding private keys.  We write \enc{M}{K} for
+the encryption of message~$M$ with key~$K$.  We represent digital
+signatures $\enc{M}{\iv{P}}$ as if they were the result of encrypting
+with $P$'s private key.
+
+$P$ initiates the exchange by creating a fresh symmetric key~$K$,
+signing it, and sending it to the door $D$ encrypted with the door's
+public key.  $D$ extracts the symmetric key after checking the
+signature, freshly generates a token~$T$, and sends it---encrypted
+with the symmetric key---back to $P$.  $P$ demonstrates they are
+authorized to enter by decrypting the token and sending it as
+plaintext to the door.  The two roles of DoorSEP are shown in
+Fig.~\ref{fig:doorsep protocol}, where each vertical column displays
+the behavior of one of the roles.  The \cpsa4 encoding of the roles is
+in Figure~\ref{fig:doorsep}.
+
+\begin{figure}[tb]
+  \[\begin{array}[c]{rc@{\qquad\qquad}cl}
+      & \mbox{person}
+      &\mbox{door}
+      &\\
+      \begin{array}[c]{r} ~ \\ ~ \\
+        \mbox{Fresh: $K$}
+      \end{array}
+      & \xymatrix@R=2mm@C=7em{
+      \bullet\ar@{=>}[d]\ar[r]^{\enc{\enc{K}{\iv{P}}}{D}}
+      &\\
+      \bullet\ar@{=>}[d]& \ar[l]_{\enc{T}{K}}\\
+      \bullet \ar[r]^T & }
+      &
+        \xymatrix@R=2mm@C=7em{
+        \ar[r]^{\enc{\enc{K}{\iv{P}}}{D}}    &\bullet\ar@{=>}[d]\\
+      &\bullet\ar@{=>}[d] \ar[l]_{\enc{T}{K}}\\
+      \ar[r]^T      &\bullet}
+      &
+        \begin{array}[c]{r} ~ \\ ~ \\
+          \mbox{Fresh: $T$}
+        \end{array}
+  \end{array}\]
+  \caption{DoorSEP Protocol}\label{fig:doorsep protocol}
+\end{figure}
+
+%   \[
+%   \begin{array}{l@{{}:{}}l}
+%     P\to D & \enc{\enc{K}{\iv{P}}}{D}\\
+%     D\to P & \enc{T}{K}\\
+%     P\to D & T.
+%   \end{array}
+%   \]
+
+{\cpsa} finds an undesirable execution of DoorSEP.  Assume the
+person's private key \iv{P} is uncompromised and the door has received
+the token it sent out.  Then {\cpsa} finds that~$P$ freshly created
+the symmetric key~$K$.  However, nothing ensures that the person meant
+to open door $D$.  If $P$ ever initiates a run with a compromised
+door~$C$, the adversary can perform a man-in-the-middle attack,
+decrypting using the compromised key $C^{-1}$ and re-encrypting with
+$D$'s public key, as elided in the $\cdots$ in Fig.~\ref{fig:doorsep
+  first shape}.  To verify this result with \cpsa4, remove the trust
+axiom in the doorsep protocol in \texttt{doc/rules.scm} and run \cpsa4.
+%
+\begin{figure}[tb]
+  \[\xymatrix@R=2mm@C=7em{
+    \txt{\strut person}&&\txt{\strut door}\\
+    \bullet \ar[r]^{\enc{\enc{K}{\iv{P}}}{C}} & \cdots\ar[r]^{\enc{\enc{K}{\iv{P}}}{D}} &
+    \bullet\ar@{=>}[d] \\
+    & \null &   \bullet\ar@{=>}[d]\ar[l]_{\enc{T}{K}}\\
+    &\null\ar[r]^T & \bullet}\]
+  \begin{center}
+    Uncompromised: $P\quad$ Fresh: $K, T$
+  \end{center}
+  \caption{DoorSEP Weakness}\label{fig:doorsep first shape}
+\end{figure}
+%
+%   \[
+%   \begin{array}{l@{{}:{}}l}
+%     P\to A & \enc{\enc{K}{\iv{P}}}{C}\\
+%     A\to D & \enc{\enc{K}{\iv{P}}}{D}\\
+%     D\to A & \enc{T}{K}\\
+%     A\to D & T.
+%   \end{array}
+%   \]
+%
+Thus, without additional assumptions, the door cannot authenticate the
+person requesting entry.
+
+\begin{figure}
+\begin{verbatim}
+(defprotocol doorsep basic
+  (defrole person
+    (vars (d p akey) (k skey) (t text))
+    (trace
+     (send (enc (enc k (invk p)) d))
+     (recv (enc t k))
+     (send t)))
+  (defrole door
+    (vars (d p akey) (k skey) (t text))
+    (trace
+     (recv (enc (enc k (invk p)) d))
+     (send (enc t k))
+     (recv t)))
+  (defrule trust
+    (forall ((z strd) (p d akey))
+            (implies
+             (and (p "person" z 1)
+                  (p "person" "p" z p)
+                  (p "person" "d" z d)
+                  (non (invk p)))
+             (non (invk d))))
+    (comment "The trust rule"))
+  (comment "Doorsep protocol using unnamed asymmetric keys"))
+
+(defskeleton doorsep
+  (vars (p akey))
+  (defstrand door 3 (p p))
+  (non-orig (invk p))
+  (comment "Analyze from the doors's perspective"))
+\end{verbatim}
+\caption{Door Simple Example Protocol}\label{fig:doorsep}
+\end{figure}
+
+But possibly we can trust the person to swipe her badge only in front
+of doors our organization controls.  And we can we ensure that our
+doors have uncompromised private keys.  If so, then the adversary
+cannot exercise the flaw.
+
+We regard this as a \emph{trust assumption}, and we can express it as
+an axiom:
+%
+\begin{axiom}\label{axiom:trust assumption}
+  If an uncompromised signing key ${\iv{P}}$ is used to prepare an
+  instance of the first DoorSEP message, then its owning principal has
+  ensured that the selected door $D$ has an uncompromised private key.
+\end{axiom}
+%
+The responsibility for ensuring the truth of this axiom may be split
+between $P$ and the organization controlling $D$.  $P$ makes sure to
+swipe her badge only at legitimate doors of the organization's
+buildings.  The organization maintains a security posture that
+protects the corresponding private keys.
+
+\medskip\noindent\textbf{Is DoorSEP good enough}, assuming the trust
+axiom?  Add the trust axiom back to the doorsep protocol in
+\texttt{doc/rules.scm} and see.  You should find that the protocol
+does its job; namely, ensuring that the door opens only when an
+authorized person requests it to open.
 
 \bibliography{cpsa}
 \bibliographystyle{plain}

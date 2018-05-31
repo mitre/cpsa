@@ -1,3 +1,7 @@
+2018-05-31  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/src/cpsagoals.tex: Added DoorSEP explanation as Section 6.2.
+
 2018-05-30  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Reduction.hs (begin): Change "Not in theory" message to
