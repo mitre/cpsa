@@ -2431,10 +2431,7 @@ runiqAt name t (z, i) k (g, e) =
       | elem (t', [(s, i)]) (korig k) -> [(k, (g, e))]
       | not $ isAtom t' -> []
       | otherwise ->
-        if elem (t', [(s, i)]) (korig k) then
-          [(k', (g, e))]
-        else
-          []
+        [(k', (g, e))]
         where
           k' = newPreskel
                   g (shared k) (insts k) (orderings k)

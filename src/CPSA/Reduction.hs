@@ -131,7 +131,7 @@ solve p h (k : ks) n =
                            "Not a skeleton")
                   let lk' = withParent k' (n + 1) lk
                   begin p h ks (n + optLimit p) (n + 2)
-                           (hist (gist k', n + 1))  lk'
+                           (hist (gist k', n + 1)) lk'
         _ -> error "Main.solve: can't handle more than one skeleton"
 
 -- Begin by applying rules as much as possible.

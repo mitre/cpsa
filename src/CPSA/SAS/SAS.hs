@@ -18,7 +18,7 @@ import CPSA.Algebra
 {--
 import System.IO.Unsafe
 z :: Show a => a -> b -> b
-z x y = unsafePerformIO (print x return y)
+z x y = unsafePerformIO (print x >> return y)
 
 zz :: Show a => a -> a
 zz x = z x x

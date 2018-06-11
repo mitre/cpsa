@@ -630,7 +630,6 @@ loadExistential md _ prot g vars (L pos [S _ "exists", L _ vs, x]) =
 loadExistential md pos prot g vars x =
   do
     as <- loadCheckedConj md pos prot vars [] x
-
     return (g, ([], as))
 
 -- Load a conjunction and check the result as determined by the mode
