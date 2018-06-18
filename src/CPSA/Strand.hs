@@ -2023,6 +2023,20 @@ glength r z h k (g, e) =
 gparam :: Role -> Term -> Int -> Term -> Term -> Sem
 gparam r t h z t' k (g, e) =
   case strdLookup e z of
+    Nothing ->
+      do
+        (s, inst) <- zip [0..] $ insts k
+        case () of
+          _ | h > height inst -> []
+            | rname (role inst) == rname r ->
+              do
+                ge <- strdMatch z s (g, e)
+                match t' (instantiate (env inst) t) ge
+            | otherwise ->      -- See if z could have been an instance of r
+                do
+                  (g, inst) <- bldInstance r (take h $ trace inst) g
+                  ge <- strdMatch z s (g, e)
+                  match t' (instantiate (env inst) t) ge
     Just s | s < nstrands k  ->
       let inst = insts k !! s in
       case () of
@@ -2033,7 +2047,6 @@ gparam r t h z t' k (g, e) =
               do
                 (g, inst) <- bldInstance r (take h $ trace inst) g
                 match t' (instantiate (env inst) t) (g, e)
-    Nothing -> error ("Strand.gparam: strand " ++ show z ++ " unbound")
     _ -> []
 
 -- Node precedes

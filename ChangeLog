@@ -1,3 +1,9 @@
+2018-06-18  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Strand.hs (gparam): Added support for binding the
+	strand variable in gparam as opposed to relying on it being bound
+	by a role length predicate.
+
 2018-06-11  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* cpsa.cabal (Version):  Tagged as version 4.1.1

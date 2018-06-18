@@ -125,6 +125,7 @@ Extra-Source-Files:
   tst/prottrans.scm tst/prottrans.tst tst/neq_test.scm tst/neq_test.tst
   tst/fluffy_draft03_gske.scm tst/fluffy_draft03_gske.tst
   tst/envelope.scm tst/envelope.tst tst/expand.scm tst/expand.tst
+  tst/role_uniq.scm tst/role_uniq.tst
 
 Source-Repository head
   Type:     git
