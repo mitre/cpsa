@@ -749,7 +749,7 @@ loadPrimary _ p kvars (L pos [S _ "p", Q _ name, Q var x, y, z]) =
           Nothing ->
             fail (shows pos ("parameter " ++ x ++ " not in role " ++ name))
 loadPrimary _ _ _ (L pos (S _ "p" : Q _ name : _)) =
-  fail (shows pos ("Bad role specific formula for role " ++ name))
+  fail (shows pos ("Bad protocol specific formula for role " ++ name))
 loadPrimary _ _ _ (L pos (S _ pred : _)) =
   fail (shows pos ("Bad formula for predicate " ++ pred))
 loadPrimary pos _ _ _ = fail (shows pos "Bad formula")
