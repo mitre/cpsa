@@ -589,7 +589,7 @@ loadImplication :: Monad m => Mode -> Pos -> Prot -> Gen -> [Term] ->
 loadImplication md _ prot g vars (L pos [S _ "implies", a, c]) =
   do
     antec <- loadCheckedConj md pos prot vars vars a
-    (g, vc) <- loadConclusion md pos prot g vars c
+    (g, vc) <- loadConclusion pos prot g vars c
     let (evars, concl) = unzip vc
     let goal =
           Goal { uvars = vars,
@@ -602,34 +602,34 @@ loadImplication _ pos _ _ _ _ = fail (shows pos "Bad goal implication")
 -- The conclusion must be a disjunction.  Each disjunct may introduce
 -- existentially quantified variables.
 
-loadConclusion :: Monad m => Mode -> Pos -> Prot -> Gen -> [Term] ->
+loadConclusion :: Monad m => Pos -> Prot -> Gen -> [Term] ->
                   SExpr Pos -> m (Gen, [([Term], Conj)])
-loadConclusion _ _ _ g _ (L _ [S _ "false"]) = return (g, [])
-loadConclusion md _ prot g vars (L pos (S _ "or" : xs)) =
-  loadDisjuncts md pos prot g vars xs []
-loadConclusion md pos prot g vars x =
+loadConclusion _ _ g _ (L _ [S _ "false"]) = return (g, [])
+loadConclusion _ prot g vars (L pos (S _ "or" : xs)) =
+  loadDisjuncts pos prot g vars xs []
+loadConclusion pos prot g vars x =
   do
-    (g, a) <- loadExistential md pos prot g vars x
+    (g, a) <- loadExistential pos prot g vars x
     return (g, [a])
 
-loadDisjuncts :: Monad m => Mode -> Pos -> Prot -> Gen -> [Term] ->
+loadDisjuncts :: Monad m => Pos -> Prot -> Gen -> [Term] ->
                  [SExpr Pos] -> [([Term], Conj)] -> m (Gen, [([Term], Conj)])
-loadDisjuncts _ _ _ g _ [] rest = return (g, reverse rest)
-loadDisjuncts md pos prot g vars (x : xs) rest =
+loadDisjuncts _ _ g _ [] rest = return (g, reverse rest)
+loadDisjuncts pos prot g vars (x : xs) rest =
   do
-    (g, a) <- loadExistential md pos prot g vars x
-    loadDisjuncts md pos prot g vars xs (a : rest)
+    (g, a) <- loadExistential pos prot g vars x
+    loadDisjuncts pos prot g vars xs (a : rest)
 
-loadExistential :: Monad m => Mode -> Pos -> Prot -> Gen -> [Term] ->
+loadExistential :: Monad m => Pos -> Prot -> Gen -> [Term] ->
                    SExpr Pos -> m (Gen, ([Term], Conj))
-loadExistential md _ prot g vars (L pos [S _ "exists", L _ vs, x]) =
+loadExistential _ prot g vars (L pos [S _ "exists", L _ vs, x]) =
   do
     (g, evars) <- loadVars g vs
-    as <- loadCheckedConj md pos prot (evars ++ vars) evars x
+    as <- loadCheckedConj RoleSpec pos prot (evars ++ vars) evars x
     return (g, (evars, as))
-loadExistential md pos prot g vars x =
+loadExistential pos prot g vars x =
   do
-    as <- loadCheckedConj md pos prot vars [] x
+    as <- loadCheckedConj RoleSpec pos prot vars [] x
     return (g, ([], as))
 
 -- Load a conjunction and check the result as determined by the mode

@@ -1,3 +1,10 @@
+2018-08-06  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Loader.hs (loadConclusion):  Removed mode flag as
+	this routine should always be using mode RoleSpec.  This resolves
+	a bug in which CPSA could not load a Shape Analysis Sentence as
+	rule because equality was before the protocol specific formulas.
+
 2018-06-18  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Strand.hs (gparam): Added support for binding the
