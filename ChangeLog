@@ -1,3 +1,10 @@
+2018-08-20  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Strand.hs (soothePreskel): Made soothe cleans facts.
+
+	* src/CPSA/Strand.hs (tryPerm): Added case for reverse match of
+	facts.
+
 2018-08-06  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Lib/Loader.hs (loadConclusion):  Removed mode flag as

@@ -797,6 +797,7 @@ tryPerm g g' (env, renv, perm) =
     checkOrigs g g' env &&
     checkOrigs g' g renv &&
     checkFacts g g' env perm &&
+    checkFacts g' g renv perm &&
     containsMapped (permutePair perm) (gorderings g') (gorderings g)
 
 -- containsMapped f xs ys is true when list xs contains each element
@@ -997,7 +998,7 @@ forward s orderings =
           | s1 == s = []        -- Dump edges to strand s
           | otherwise = [p]     -- Pass thru other edges
 
--- Remove bad origination assumptions
+-- Remove bad origination assumptions and facts
 soothePreskel :: Preskel -> Preskel
 soothePreskel k =
   newPreskel
@@ -1008,7 +1009,7 @@ soothePreskel k =
   (filter varCheck $ knon k)
   (filter varCheck $ kpnon k)
   (filter uniqueCheck $ kunique k)
-  (kfacts k)
+  (cleansFacts (kvars k) (kfacts k))
   (kpriority k)
   (operation k)
   (prob k)
