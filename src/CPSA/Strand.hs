@@ -2383,7 +2383,7 @@ rprec name (z, i) (z', i') k (g, e) =
                   (kpriority k) (operation k) (prob k) (pov k)
           return (k', (gen k, e))
     _ ->
-      error ("In rule " ++ name ++ ", precidence did not get a strand")
+      error ("In rule " ++ name ++ ", precedence did not get a strand")
   where
     tc = map graphPair $ graphClose $ graphEdges $ strands k
 
