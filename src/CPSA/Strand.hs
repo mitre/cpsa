@@ -2179,7 +2179,7 @@ rewrite k =
         if null vas then
           loop rs               -- Rule does not apply
         else
-          Just $ doRewrites prules k r vas
+          Just $ doRewrites 0 prules k r vas
 
 -- Returns the environments that show satifaction of the antecedent
 -- but fail to be extendable to show satifaction of one of the
@@ -2192,9 +2192,16 @@ tryRule k r =
     conclusion e = all (disjunct e) $ concl $ rlgoal r
     disjunct e a = null $ conjoin a k e
 
+ruleLimit :: Int
+ruleLimit = 500
+
 -- Repeatedly applies rules until no rule applies.
-doRewrites :: [Rule] -> Preskel -> Rule -> [(Gen, Env)] -> [Preskel]
-doRewrites rules k r vas =
+doRewrites :: Int -> [Rule] -> Preskel -> Rule -> [(Gen, Env)] -> [Preskel]
+doRewrites lim _ _ _ _
+  | lim >= ruleLimit =
+    error ("Aborting after applying " ++ show ruleLimit ++
+           " rules and more are applicable")
+doRewrites lim rules k r vas =
   concatMap f (doRewrite k r vas)
   where
     f k = loop rules
@@ -2205,7 +2212,7 @@ doRewrites rules k r vas =
             if null vas then
               loop rs           -- Rule does not apply
             else
-              doRewrites rules k r vas
+              doRewrites (lim + 1) rules k r vas
 
 -- Apply rewrite rule at all assignments
 doRewrite :: Preskel -> Rule -> [(Gen, Env)] -> [Preskel]

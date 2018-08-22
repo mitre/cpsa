@@ -1,3 +1,8 @@
+2018-08-22  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Strand.hs (doRewrites): Added a limit on the number of
+	rules that can be applied after solving an authentication test.
+
 2018-08-20  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Strand.hs (soothePreskel): Made soothe cleans facts.
