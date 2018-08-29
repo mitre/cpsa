@@ -215,7 +215,7 @@ mkListenerRole pos g =
     (g, xs) <- loadVars g [L pos [S pos "x", S pos "mesg"]]
     case xs of
       [x] -> return (g, mkRole "" [x] [In x, Out x] [] [] [] [] [] False)
-      _ -> fail "mkListenerRole: expecting one variable"
+      _ -> fail (shows pos "mkListenerRole: expecting one variable")
 
 -- Ensure a trace is not a prefix of a listener
 notListenerPrefix :: Trace -> Bool
