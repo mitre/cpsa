@@ -1,6 +1,14 @@
+# OCaml Makefile that relies on ocamlbuild
+#
+# Type "make cpsa.d.otarget" to make a debugable executable
+#
+# Enable warnings by adding to OCFLAGS: -cflags "-w +A-4"
+
 OCFLAGS	= -classic-display -use-ocamlfind -cflags "-w +A-4"
 OCB	= ocamlbuild
-TARGET	= cpsa.otarget
+# Define DEBUG during development
+# DEBUG	= d.
+TARGET	= cpsa.$(DEBUG)otarget
 
 all:	
 	$(OCB) $(OCFLAGS) $(TARGET)

@@ -1,0 +1,2 @@
+This director contains ocaml code for reading and writing cpsa
+S-expressions.  See sexpr.mli for exported functions.
