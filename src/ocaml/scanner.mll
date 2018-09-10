@@ -1,5 +1,5 @@
 {
-open Parser
+open Reader
 open Lexing
 
 let incr_linenum lexbuf =

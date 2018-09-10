@@ -1,12 +1,17 @@
-OCFLAGS	= -classic-display
+OCFLAGS	= -classic-display -use-ocamlfind -cflags "-w +A-4"
 OCB	= ocamlbuild
-SRCS	= $(wildcard *.ml *.mli *.mly *.mll)
-TARGETS	= cpsa.top
+TARGET	= cpsa.otarget
 
-all:	$(TARGETS)
-
-$(TARGETS):	$(SRCS)
-	$(OCB) $(OCFLAGS) $(notdir $@)
+all:	
+	$(OCB) $(OCFLAGS) $(TARGET)
 
 clean:
 	$(OCB) $(OCFLAGS) -clean
+
+Makefile:
+	@echo make $@
+
+%:	force
+	$(OCB) $(OCFLAGS) $@
+
+.PHONY:	all clean force

@@ -9,11 +9,11 @@ let annotation = function
 
 let read_sexpr ch =
   let lexbuf = Lexing.from_channel ch in
-  Parser.top Lexer.token lexbuf
+  Reader.top Scanner.token lexbuf
 
 let read_sexpr_from_string ch =
   let lexbuf = Lexing.from_string ch in
-  Parser.one Lexer.token lexbuf
+  Reader.one Scanner.token lexbuf
 
 let rec sexpr_printer f x =
   match x with
