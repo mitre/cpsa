@@ -10,7 +10,7 @@ OCB	= ocamlbuild
 # DEBUG	= d.
 TARGET	= cpsa.$(DEBUG)otarget
 
-all:	
+all:
 	$(OCB) $(OCFLAGS) $(TARGET)
 
 clean:
