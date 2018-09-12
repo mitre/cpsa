@@ -14,7 +14,7 @@ file is specified on the command line as
 {[    $ prog -o OUTPUT INPUT]}
 
 where standard input is used when [INPUT] is omitted, and standard
-output used when [-o OUTPUT] is omitted.
+output is used when [-o OUTPUT] is omitted.
 
 Function [f] is invoked in a context that catches {!exception:Failure}
 exceptions, prints the failure message to standard error, and then

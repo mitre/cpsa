@@ -89,7 +89,7 @@ val strip : 'a sexpr -> unit sexpr
     list of values associated with a key is the result of appending
     all interior lists that are headed by the key after removing the
     key.  Thus, the list of values [(a b c d)] is associated with key
-    [k] in the followig association list
+    [k] in the following association list
 
 {[    ((k a b)
      (x y z)
