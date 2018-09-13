@@ -57,7 +57,11 @@ let start run =
     let (in_name, in_ch) =
     match !input with
     | "" -> ("", stdin)
-    | f -> (f, open_in f) in
+    | f ->
+       try
+         (f, open_in f)
+       with Sys_error s -> failwith s
+    in
     go run in_name in_ch !output
 
 let main run =
