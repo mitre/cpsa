@@ -1,9 +1,3 @@
-2018-09-13  John D. Ramsdell  <ramsdell@mitre.org>
-
-	* src/CPSA/Lib/Expand.hs (macroExpand):  Made macro application
-	fail when a macro is applied to the wrong number of arguments.
-	Previously, the macro would silently fail to apply.
-
 2018-08-22  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Strand.hs (doRewrites): Added a limit on the number of

@@ -34,7 +34,6 @@ module CPSA.Lib.Expand (expand, readSExprs) where
 
 import Control.Monad
 import System.IO (openFile, IOMode (ReadMode))
-import Data.List (find)
 import CPSA.Lib.SExpr
 import CPSA.Lib.Entry (readSExpr, tryIO)
 
@@ -143,14 +142,20 @@ macroExpand :: Monad m => [Macro] -> Pos ->  Int ->
 macroExpand _ pos limit _
     | limit <= 0 = fail (shows pos "Expansion limit exceeded")
 macroExpand macs pos limit sexpr@(L _ (S _ sym : xs)) =
-    case find (\ mac -> name mac == sym) macs of
-      Nothing -> return sexpr
-      Just mac ->
-        if length (args mac) == length xs then
-          macroExpand macs pos (limit - 1) (apply mac xs)
-        else
-          fail (shows pos ("Wrong number of args applied to: " ++ name mac))
+    case macroExpand1 macs sym xs of
+      Nothing -> return sexpr   -- Nothing to do
+      Just sexpr -> macroExpand macs pos (limit - 1) sexpr
 macroExpand _ _ _ sexpr = return sexpr
+
+-- Expand one macro call or return Nothing
+
+macroExpand1 :: [Macro] -> String -> [SExpr Pos] -> Maybe (SExpr Pos)
+macroExpand1 [] _ _ = Nothing
+macroExpand1 (mac : macs) sym xs
+    | name mac == sym && length (args mac) == length xs =
+        Just (apply mac xs)
+    | otherwise =
+        macroExpand1 macs sym xs
 
 -- Apply a macro to some parameters
 

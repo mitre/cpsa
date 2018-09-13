@@ -51,17 +51,21 @@ let rec zip xs ys =
   | (x :: xs, y :: ys) -> (x, y) :: zip xs ys
   | _ -> []
 
-let apply mac pos args =
-  if List.length mac.args = List.length args then
-    subst (zip mac.args args) mac.body
-  else
-    failwith_msg pos ("Wrong number of args applied to: " ^ mac.name)
+let apply mac args =
+  subst (zip mac.args args) mac.body
+
+let rec expand_one macs sym xs =
+  match macs with
+  | [] -> None
+  | mac :: _ when mac.name = sym &&
+                       List.length mac.args = List.length xs ->
+     Some (apply mac xs)
+  | _ :: macs -> expand_one macs sym xs
 
 let rec limited_expand macs pos limit = function
   | L (_, S (_, sym) :: xs) as x when limit > 0 ->
-     (match List.find_opt (fun mac -> mac.name = sym) macs with
-      | Some mac ->
-         limited_expand macs pos (limit - 1) (apply mac pos xs)
+     (match expand_one macs sym xs with
+      | Some y -> limited_expand macs pos (limit - 1) y
       | None -> x)
   | _ when limit <= 0 ->
      failwith_msg pos "Expansion limit exceeded"
