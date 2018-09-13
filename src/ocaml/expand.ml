@@ -91,8 +91,13 @@ let rec expand_all macs x =
      L (pos, splice ys)
   | x -> x
 
+let need_newline = ref false
+
 let expand o macs x =
-  print_sexpr o (expand_all macs x)
+  if !need_newline
+  then print_newline ();
+  print_sexpr o (expand_all macs x);
+  need_newline := true
 
 (**** Include the contents of a file ****)
 
