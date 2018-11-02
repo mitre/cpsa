@@ -25,9 +25,9 @@ let go run f i ofile =
 
 (* Command-line processing using Arg *)
 
-and help    = ref false
-and output  = ref ""
-and input   = ref ""
+let help    = ref false
+let output  = ref ""
+let input   = ref ""
 
 let usage =
   "Usage: " ^ Sys.argv.(0) ^ " [OPTIONS] [INPUT]\n" ^
