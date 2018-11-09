@@ -350,7 +350,7 @@ commentPreskel lk seen unrealized kind msg =
       k = content lk
       starter k =               -- True for the POV skeleton and
           case pov k of         -- just a few others
-            Nothing -> False
+            Nothing -> True
             Just k' -> nstrands k == nstrands k'
 
 addKeyValues :: String -> [SExpr ()] -> [SExpr ()] -> [SExpr ()]
