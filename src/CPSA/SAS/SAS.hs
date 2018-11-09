@@ -49,9 +49,8 @@ loadPOV _ _ ps (L pos (S _ "defskeleton" : xs)) =
     do
       p <- findProt pos ps xs
       k <- loadPreskel pos p (pgen p) xs
-      case (isSkeleton k, isFringe k) of
-        (True, False) ->
-          return ((ps, [k]), Nothing) -- Found POV
+      case isFringe k of
+        False -> return ((ps, [k]), Nothing) -- Found POV
         _ -> return ((ps, []), Nothing) -- Not POV
 loadPOV _ _ ps _ = return ((ps, []), Nothing)
 
@@ -236,7 +235,6 @@ data Preskel = Preskel
       uniqs :: [Term],
       origs :: [(Term, (Term, Int))],
       facts :: [Fact],
-      isSkeleton :: Bool,
       isFringe :: !Bool,         -- Always looked at, so make it strict
       homomorphisms :: [SExpr Pos], -- Loaded later
       varmap :: VM }
@@ -268,7 +266,6 @@ loadPreskel pos prot gen (S _ _ : L _ (S _ "vars" : vars) : xs) =
                         uniqs = uniqs,
                         origs = map g origs,
                         facts = facts,
-                        isSkeleton = not $ hasKey preskeletonKey xs,
                         isFringe = hasKey shapeKey xs || hasKey fringeKey xs,
                         homomorphisms = assoc mapsKey xs,
                         varmap = varmap})
@@ -464,10 +461,6 @@ keyPred _ _ = False
 
 hasKey :: String -> [SExpr a] -> Bool
 hasKey key alist = any (keyPred key) alist
-
--- The key used to identify a non-skeleton
-preskeletonKey :: String
-preskeletonKey = "preskeleton"
 
 -- The key used to identify a shape
 shapeKey :: String

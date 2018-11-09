@@ -1,3 +1,8 @@
+2018-11-09  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/SAS/SAS.hs (loadPOV): Use a preskeleton as a POV
+	instead of insisting on using a skeleton.
+
 2018-08-22  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Strand.hs (doRewrites): Added a limit on the number of
