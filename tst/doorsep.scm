@@ -6,13 +6,15 @@
     (trace
      (send (enc (enc k (invk p)) d))
      (recv (enc t k))
-     (send t)))
+     (send t))
+    (uniq-orig k))
   (defrole door
     (vars (d p akey) (k skey) (t text))
     (trace
      (recv (enc (enc k (invk p)) d))
      (send (enc t k))
-     (recv t)))
+     (recv t))
+    (uniq-orig t))
   (defrule trust
     (forall ((z strd) (p d akey))
 	    (implies

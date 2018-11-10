@@ -6,10 +6,12 @@
 (defprotocol doorsep basic
   (defrole person
     (vars (d p akey) (k skey) (t text))
-    (trace (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t)))
+    (trace (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t))
+    (uniq-orig k))
   (defrole door
     (vars (d p akey) (k skey) (t text))
-    (trace (recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t)))
+    (trace (recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
+    (uniq-orig t))
   (defrule trust
     (forall ((z strd) (p d akey))
       (implies
@@ -21,11 +23,12 @@
   (vars (t text) (k skey) (p d akey))
   (defstrand door 3 (t t) (k k) (d d) (p p))
   (non-orig (invk p))
+  (uniq-orig t)
   (comment "Analyze from the doors's perspective")
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t)))
   (label 0)
   (unrealized (0 0))
-  (origs)
+  (origs (t (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton doorsep
@@ -34,6 +37,7 @@
   (defstrand person 1 (k k) (d d-0) (p p))
   (precedes ((1 0) (0 0)))
   (non-orig (invk p) (invk d-0))
+  (uniq-orig t k)
   (rule trust)
   (operation encryption-test (added-strand person 1) (enc k (invk p))
     (0 0))
@@ -41,7 +45,7 @@
     ((send (enc (enc k (invk p)) d-0))))
   (label 1)
   (parent 0)
-  (unrealized (0 0))
+  (unrealized (0 0) (0 2))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton doorsep
@@ -50,15 +54,47 @@
   (defstrand person 1 (k k) (d d) (p p))
   (precedes ((1 0) (0 0)))
   (non-orig (invk p) (invk d))
+  (uniq-orig t k)
   (operation encryption-test (contracted (d-0 d)) (enc k (invk p)) (0 0)
     (enc (enc k (invk p)) d))
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
     ((send (enc (enc k (invk p)) d))))
   (label 2)
   (parent 1)
+  (unrealized (0 2))
+  (comment "2 in cohort - 2 not yet seen"))
+
+(defskeleton doorsep
+  (vars (t text) (k skey) (d p akey))
+  (defstrand door 3 (t t) (k k) (d d) (p p))
+  (defstrand person 3 (t t) (k k) (d d) (p p))
+  (precedes ((0 1) (1 1)) ((1 0) (0 0)) ((1 2) (0 2)))
+  (non-orig (invk d) (invk p))
+  (uniq-orig t k)
+  (operation nonce-test (displaced 1 2 person 3) t (0 2) (enc t k))
+  (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
+    ((send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t)))
+  (label 3)
+  (parent 2)
   (unrealized)
   (shape)
   (maps ((0) ((p p) (d d) (k k) (t t))))
-  (origs))
+  (origs (k (1 0)) (t (0 1))))
+
+(defskeleton doorsep
+  (vars (t text) (k skey) (p d akey))
+  (defstrand door 3 (t t) (k k) (d d) (p p))
+  (defstrand person 1 (k k) (d d) (p p))
+  (deflistener k)
+  (precedes ((1 0) (0 0)) ((1 0) (2 0)) ((2 1) (0 2)))
+  (non-orig (invk p) (invk d))
+  (uniq-orig t k)
+  (operation nonce-test (added-listener k) t (0 2) (enc t k))
+  (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
+    ((send (enc (enc k (invk p)) d))) ((recv k) (send k)))
+  (label 4)
+  (parent 2)
+  (unrealized (2 0))
+  (comment "empty cohort"))
 
 (comment "Nothing left to do")
