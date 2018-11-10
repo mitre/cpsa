@@ -33,6 +33,7 @@
       (recv (enc n2p n3 (pubk b)))))
   (label 0)
   (unrealized (0 1) (1 0) (1 2) (2 0) (2 2))
+  (origs (n3 (2 1)) (n2p (2 1)) (n3p (1 1)) (n2 (1 1)) (n1 (0 0)))
   (preskeleton)
   (comment "Not a skeleton"))
 

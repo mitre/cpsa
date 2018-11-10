@@ -78,6 +78,7 @@
     ((recv (enc a m (pubk c))) (send (enc a m (pubk c)))))
   (label 3)
   (unrealized (1 0))
+  (origs (m (0 0)))
   (preskeleton)
   (comment "Not a skeleton"))
 

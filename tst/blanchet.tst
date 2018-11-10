@@ -232,6 +232,7 @@
     ((recv d) (send d)))
   (label 11)
   (unrealized (0 0) (1 0))
+  (origs (d (0 1)))
   (preskeleton)
   (comment "Not a skeleton"))
 
@@ -499,6 +500,7 @@
     ((recv d) (send d)))
   (label 25)
   (unrealized (0 0) (1 0))
+  (origs (d (0 1)))
   (preskeleton)
   (comment "Not a skeleton"))
 
@@ -766,6 +768,7 @@
     ((recv d) (send d)))
   (label 39)
   (unrealized (0 0) (1 0))
+  (origs (d (0 1)))
   (preskeleton)
   (comment "Not a skeleton"))
 

@@ -259,6 +259,7 @@
       (send (enc n2 (pubk b)))))
   (label 8)
   (unrealized (0 0) (1 1))
+  (origs (n1 (1 0)))
   (preskeleton)
   (comment "Not a skeleton"))
 
@@ -745,6 +746,7 @@
       (recv (enc n2 (pubk b)))))
   (label 28)
   (unrealized (0 0) (1 2))
+  (origs (n2 (1 1)))
   (preskeleton)
   (comment "Not a skeleton"))
 
@@ -1022,6 +1024,7 @@
     ((recv (enc a n1 (pubk b))) (send (enc n1 n2 b (pubk a)))))
   (label 40)
   (unrealized (0 0))
+  (origs (n2 (1 1)))
   (preskeleton)
   (comment "Not a skeleton"))
 

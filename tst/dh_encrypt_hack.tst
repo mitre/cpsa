@@ -262,6 +262,7 @@
       (recv (enc "check" n (enc "dh" gx gy dhkey-0)))))
   (label 10)
   (unrealized (0 1) (1 2))
+  (origs (n (1 1)) (gy (1 1)))
   (preskeleton)
   (comment "Not a skeleton"))
 

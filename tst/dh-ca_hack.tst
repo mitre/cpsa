@@ -1669,6 +1669,7 @@
       (recv (enc "check" n (enc "dh" h gy dhkey)))) ((recv n) (send n)))
   (label 56)
   (unrealized (0 0) (0 1) (0 3) (1 0))
+  (origs (n (0 2)))
   (preskeleton)
   (comment "Not a skeleton"))
 
@@ -2017,6 +2018,7 @@
       (recv (enc "check" n (enc "dh" gx gy dhkey)))))
   (label 68)
   (unrealized (0 0) (0 2) (1 0) (1 1) (1 3))
+  (origs (n (1 2)))
   (preskeleton)
   (comment "Not a skeleton"))
 

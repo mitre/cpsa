@@ -63,6 +63,7 @@
       (send (enc v k))))
   (label 0)
   (unrealized (0 0) (1 2))
+  (origs (v (1 3)) (n (1 0)))
   (preskeleton)
   (comment "Not a skeleton"))
 
@@ -578,6 +579,7 @@
       (send (enc v k))))
   (label 15)
   (unrealized (0 0) (1 2))
+  (origs (v (1 3)) (n (1 0)))
   (preskeleton)
   (comment "Not a skeleton"))
 
@@ -1104,6 +1106,7 @@
       (send (enc v k))))
   (label 29)
   (unrealized (0 0) (1 0) (2 2))
+  (origs (v (2 3)) (n (2 0)))
   (preskeleton)
   (comment "Not a skeleton"))
 
@@ -2388,6 +2391,7 @@
       (send (enc v k))))
   (label 56)
   (unrealized (0 0) (1 2))
+  (origs (v (1 3)) (n (1 0)))
   (preskeleton)
   (comment "Not a skeleton"))
 
@@ -2873,6 +2877,7 @@
       (send (enc v k))))
   (label 70)
   (unrealized (0 0) (1 2))
+  (origs (v (1 3)) (n (1 0)))
   (preskeleton)
   (comment "Not a skeleton"))
 
@@ -3366,6 +3371,7 @@
       (send (enc v k))))
   (label 83)
   (unrealized (0 0) (1 0) (2 2))
+  (origs (v (2 3)) (n (2 0)))
   (preskeleton)
   (comment "Not a skeleton"))
 
@@ -4436,6 +4442,7 @@
       (send (enc v k))))
   (label 106)
   (unrealized (0 0) (1 2))
+  (origs (v (1 3)) (n (1 0)))
   (preskeleton)
   (comment "Not a skeleton"))
 
@@ -4930,6 +4937,7 @@
       (send (enc v k))))
   (label 120)
   (unrealized (0 0) (1 2))
+  (origs (v (1 3)) (n (1 0)))
   (preskeleton)
   (comment "Not a skeleton"))
 
@@ -5432,6 +5440,7 @@
       (send (enc v k))))
   (label 133)
   (unrealized (0 0) (1 0) (2 2))
+  (origs (v (2 3)) (n (2 0)))
   (preskeleton)
   (comment "Not a skeleton"))
 

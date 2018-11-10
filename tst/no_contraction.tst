@@ -19,6 +19,7 @@
     ((send (enc (enc n (privk a-0)) (pubk b)))))
   (label 0)
   (unrealized (0 0))
+  (origs (n (1 0)))
   (preskeleton)
   (comment "Not a skeleton"))
 
