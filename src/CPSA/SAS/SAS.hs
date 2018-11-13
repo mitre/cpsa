@@ -432,7 +432,7 @@ loadMap :: Monad m => Preskel -> Preskel -> SExpr Pos -> m Hom
 loadMap pov k (L _ [L _ strandMap, L _ algebraMap]) =
     do
       perm <- mapM loadPerm strandMap -- Load the strand map
-      let nh = map (loadStrandEq k perm) (M.assocs $ varmap pov)
+      nh <- mapM (loadStrandEq k perm) (M.assocs $ varmap pov)
       -- Load the algebra part of the homomorphism
       ah <- mapM (loadMaplet (kvars k) (kvars pov)) algebraMap
       return (nh, ah)
@@ -443,10 +443,16 @@ loadPerm (N _ n) | n >= 0 = return n
 loadPerm x = fail (shows (annotation x) "Expecting a natural number")
 
 -- Applies a strand permutation to a strand.
--- Hope the strand map is valid, or !! will blow up.
-loadStrandEq :: Preskel -> [Int] -> (Strand, Term) -> (Term, Term)
+loadStrandEq :: Monad m => Preskel -> [Int] -> (Strand, Term) -> m (Term, Term)
 loadStrandEq k perm (z, v) =
-  (v, slookup (perm !! z) (varmap k))
+  do
+    z <- index perm z
+    return (v, slookup z (varmap k))
+
+index :: Monad m => [a] -> Int -> m a
+index (x : _) 0 = return x
+index (_ : xs) i | i > 0 = index xs (i - 1)
+index _ _ = fail "Bad strand map"
 
 -- Association lists
 

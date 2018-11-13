@@ -1,3 +1,10 @@
+2018-11-13  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Strand.hs (firstSkeleton): Added a field pprob to
+	Preskel and use it record the strand map from a preskeleton to the
+	first skeleton.  This is used when printing the strand map of a
+	skeleton on the fringe.
+
 2018-11-09  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/SAS/SAS.hs (loadPOV): Use a preskeleton as a POV

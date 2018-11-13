@@ -397,7 +397,8 @@ maps k =
     map (amap $ strandMap k) (envMaps k)
     where
       amap strands env = L () [L () strands, L () env]
-      strandMap k = map (N ()) (prob k)
+      strandMap k = map (N ()) (map f (pprob k))
+      f s = prob k !! s
       envMaps k =
           case pov k of
             Nothing -> []
