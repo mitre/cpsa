@@ -295,7 +295,7 @@
   (parent 12)
   (unrealized)
   (shape)
-  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
+  (maps ((0 0) ((a a) (b b) (n1 n1) (n2 n2))))
   (origs (n1 (0 0))))
 
 (comment "Nothing left to do")
