@@ -1,3 +1,8 @@
+2018-11-19  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Printer.hs (formula):  Added special pretty
+	printing rules for formulas in defgoal and defrule.
+
 2018-11-13  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Strand.hs (firstSkeleton): Added a field pprob to
