@@ -231,8 +231,11 @@ loadRules prot g (L pos (S _ "defrule" : x) : xs) =
       (g, r) <- loadRule prot g pos x
       (g, rs, comment) <- loadRules prot g xs
       return (g, r : rs, comment)
+loadRules _ _ (L pos (S _ "defrole" : S _ name : _) : _) =
+    fail (shows pos ("defrole " ++ name ++ " misplaced"))
 loadRules _ g xs =
     do
+      badKey ["defrole", "defrule"] xs
       comment <- alist [] xs    -- Ensure remaining is an alist
       return (g, [], comment)
 
@@ -281,6 +284,14 @@ hasKey key alist =
     where
       f (L _ (S _ head : _)) = head == key
       f _ = False
+
+-- Complain if alist has a bad key
+badKey :: Monad m => [String] -> [SExpr Pos] -> m ()
+badKey keys (L _ (S pos key : _) : xs)
+    | elem key keys =
+      fail (shows pos ("Misplaced key " ++ key))
+    | otherwise = badKey keys xs
+badKey _ _ = return ()
 
 loadTrace :: Monad m => [Term] -> [SExpr Pos] -> m Trace
 loadTrace vars xs = mapM (loadEvt vars) xs
@@ -374,6 +385,7 @@ loadInsts top p kvars gen insts (L pos (S _ "deflistener" : x) : xs) =
           fail (shows pos "Malformed deflistener")
 loadInsts top p kvars gen insts xs =
     do
+      badKey ["defstrand", "deflistener"] xs
       _ <- alist [] xs          -- Check syntax of xs
       (gen, gs) <- loadGoals top p gen goals
       loadRest top kvars p gen gs (reverse insts) order nr ar ur fs pl kcomment
