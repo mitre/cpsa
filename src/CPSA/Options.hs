@@ -34,7 +34,7 @@ defaultOptions = Options {
   optTryYoungNodesFirst = False,
   optLimit = 2000,
   optBound = 8,
-  optDepth = 32,
+  optDepth = 0,                 -- Infinite
   optMargin = 72,
   optIndent = 2 }
 

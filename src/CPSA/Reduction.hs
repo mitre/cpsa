@@ -219,7 +219,7 @@ step p h ks m oseen n seen todo tobig (Reduct lk size kids dups : reducts)
             True -> wrt p h (commentPreskel lk [] ns Shape "")
             False -> wrt p h (commentPreskel lk [] ns Ordinary "empty cohort")
           step p h ks m oseen n seen todo tobig reducts
-    | depth lk >= optDepth p =
+    | optDepth p > 0 && depth lk >= optDepth p =
         do
           let ns = unrealized (content lk)
           wrt p h (commentPreskel lk [] ns Fringe "")
