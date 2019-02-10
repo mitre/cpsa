@@ -6,12 +6,12 @@ License:     BSD
 
 This module contains a simple pretty printer.
 The alogithm is by Lawrence C. Paulson, who simplified an algorithm
-by Derek C. Oppen.  This
+by Derek C. Oppen.
 
 Derek C. Oppen, Prettyprinting, ACM Transactions on Programming
 Languages and Systems, Vol 2, No. 4, October 1980, Pages 465-483.
 
-The code is base on the ML Programs from Chapter 8 of
+The code is based on the ML Programs from Chapter 8 of
 ML for the Working Programmer, 2nd edition
 by Lawrence C. Paulson, Computer Laboratory, University of Cambridge.
 (Cambridge University Press, 1996)
