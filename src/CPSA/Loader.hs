@@ -289,7 +289,7 @@ hasKey key alist =
 badKey :: Monad m => [String] -> [SExpr Pos] -> m ()
 badKey keys (L _ (S pos key : _) : xs)
     | elem key keys =
-      fail (shows pos ("Misplaced key " ++ key))
+      fail (shows pos (key ++ " declaration too late in enclosing form"))
     | otherwise = badKey keys xs
 badKey _ _ = return ()
 
