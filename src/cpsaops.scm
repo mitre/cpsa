@@ -1,7 +1,4 @@
-#!/usr/bin/guile \
--e main -s
-!#
-;;; For an R6RS script, add an import statement.
+#! /usr/bin/env scheme-r7rs
 
 ;; This program simply extracts the operation form in a skeleton
 ;; and prints it.
@@ -45,7 +42,7 @@
 
 (define (filter)
   (do ((form (read) (read)))
-      ((eof-object? form))
+      ((eof-object? form) 0)
     (consume form)))
 
 ;;; A file description is #f for the standard port, or a file name
@@ -92,11 +89,10 @@
 	   (display-error "bad args")))))
 
 (define (display-help)
-  (display-error "cpsaops [-h] [-o FILE] [FILE]"))
+  (display-error "cpsaops [-h] [-o FILE] [FILE]")
+  0)
 
 (define (display-error obj)
-  (display obj (current-error-port))
-  (newline (current-error-port)))
-
-;;; For an R6RS script, add the following:
-;;; (main (command-line))
+ (display obj (current-error-port))
+  (newline (current-error-port))
+  1)
