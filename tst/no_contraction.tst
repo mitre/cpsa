@@ -19,8 +19,8 @@
     ((send (enc (enc n (privk a-0)) (pubk b)))))
   (label 0)
   (unrealized (0 0))
-  (origs (n (1 0)))
   (preskeleton)
+  (origs (n (1 0)))
   (comment "Not a skeleton"))
 
 (defskeleton no-contraction

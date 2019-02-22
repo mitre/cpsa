@@ -63,8 +63,8 @@
       (send (enc v k))))
   (label 0)
   (unrealized (0 0) (1 2))
-  (origs (v (1 3)) (n (1 0)))
   (preskeleton)
+  (origs (v (1 3)) (n (1 0)))
   (comment "Not a skeleton"))
 
 (defskeleton envelope
@@ -252,6 +252,7 @@
   (label 7)
   (parent 5)
   (unrealized (4 0) (4 1))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -283,6 +284,7 @@
   (label 8)
   (parent 5)
   (unrealized (4 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -320,6 +322,7 @@
   (label 9)
   (parent 6)
   (unrealized (5 0) (5 1))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -394,6 +397,7 @@
   (label 11)
   (parent 6)
   (unrealized (4 1) (5 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -514,6 +518,7 @@
   (label 14)
   (parent 12)
   (unrealized (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -579,8 +584,8 @@
       (send (enc v k))))
   (label 15)
   (unrealized (0 0) (1 2))
-  (origs (v (1 3)) (n (1 0)))
   (preskeleton)
+  (origs (v (1 3)) (n (1 0)))
   (comment "Not a skeleton"))
 
 (defskeleton envelope
@@ -756,6 +761,7 @@
   (label 21)
   (parent 19)
   (unrealized (4 0) (4 1))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -790,6 +796,7 @@
   (label 22)
   (parent 19)
   (unrealized (3 1) (4 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -830,6 +837,7 @@
   (label 23)
   (parent 20)
   (unrealized (5 0) (5 1))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -910,6 +918,7 @@
   (label 25)
   (parent 20)
   (unrealized (4 1) (5 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -1039,6 +1048,7 @@
   (label 28)
   (parent 26)
   (unrealized (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -1106,8 +1116,8 @@
       (send (enc v k))))
   (label 29)
   (unrealized (0 0) (1 0) (2 2))
-  (origs (v (2 3)) (n (2 0)))
   (preskeleton)
+  (origs (v (2 3)) (n (2 0)))
   (comment "Not a skeleton"))
 
 (defskeleton envelope
@@ -1325,6 +1335,7 @@
   (label 36)
   (parent 34)
   (unrealized (0 0) (5 0) (5 1))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -1360,6 +1371,7 @@
   (label 37)
   (parent 34)
   (unrealized (0 0) (5 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -1401,6 +1413,7 @@
   (label 38)
   (parent 35)
   (unrealized (0 0) (6 0) (6 1))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -1483,6 +1496,7 @@
   (label 40)
   (parent 35)
   (unrealized (0 0) (5 1) (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -1615,6 +1629,7 @@
   (label 43)
   (parent 41)
   (unrealized (0 0) (7 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -1778,6 +1793,7 @@
   (label 46)
   (parent 44)
   (unrealized (9 0) (9 1))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -1831,6 +1847,7 @@
   (label 47)
   (parent 44)
   (unrealized (8 1) (9 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -1892,6 +1909,7 @@
   (label 48)
   (parent 45)
   (unrealized (10 0) (10 1))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -2069,6 +2087,7 @@
   (label 51)
   (parent 45)
   (unrealized (9 1) (10 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -2321,6 +2340,7 @@
   (label 55)
   (parent 52)
   (unrealized (11 0))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -2391,8 +2411,8 @@
       (send (enc v k))))
   (label 56)
   (unrealized (0 0) (1 2))
-  (origs (v (1 3)) (n (1 0)))
   (preskeleton)
+  (origs (v (1 3)) (n (1 0)))
   (comment "Not a skeleton"))
 
 (defskeleton envelope
@@ -2580,6 +2600,7 @@
   (label 63)
   (parent 61)
   (unrealized (4 0) (4 1))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -2611,6 +2632,7 @@
   (label 64)
   (parent 61)
   (unrealized (4 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -2685,6 +2707,7 @@
   (label 66)
   (parent 62)
   (unrealized (4 1) (5 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -2805,6 +2828,7 @@
   (label 69)
   (parent 67)
   (unrealized (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -2877,8 +2901,8 @@
       (send (enc v k))))
   (label 70)
   (unrealized (0 0) (1 2))
-  (origs (v (1 3)) (n (1 0)))
   (preskeleton)
+  (origs (v (1 3)) (n (1 0)))
   (comment "Not a skeleton"))
 
 (defskeleton envelope
@@ -3054,6 +3078,7 @@
   (label 76)
   (parent 74)
   (unrealized (4 0) (4 1))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -3088,6 +3113,7 @@
   (label 77)
   (parent 74)
   (unrealized (3 1) (4 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -3168,6 +3194,7 @@
   (label 79)
   (parent 75)
   (unrealized (4 1) (5 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -3297,6 +3324,7 @@
   (label 82)
   (parent 80)
   (unrealized (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -3371,8 +3399,8 @@
       (send (enc v k))))
   (label 83)
   (unrealized (0 0) (1 0) (2 2))
-  (origs (v (2 3)) (n (2 0)))
   (preskeleton)
+  (origs (v (2 3)) (n (2 0)))
   (comment "Not a skeleton"))
 
 (defskeleton envelope
@@ -3590,6 +3618,7 @@
   (label 90)
   (parent 88)
   (unrealized (0 0) (5 0) (5 1))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -3625,6 +3654,7 @@
   (label 91)
   (parent 88)
   (unrealized (0 0) (5 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -3707,6 +3737,7 @@
   (label 93)
   (parent 89)
   (unrealized (0 0) (5 1) (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -3839,6 +3870,7 @@
   (label 96)
   (parent 94)
   (unrealized (0 0) (7 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -4002,6 +4034,7 @@
   (label 99)
   (parent 97)
   (unrealized (9 0) (9 1))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -4055,6 +4088,7 @@
   (label 100)
   (parent 97)
   (unrealized (8 1) (9 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -4174,6 +4208,7 @@
   (label 102)
   (parent 98)
   (unrealized (9 1) (10 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -4363,6 +4398,7 @@
   (label 105)
   (parent 103)
   (unrealized (11 0))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -4442,8 +4478,8 @@
       (send (enc v k))))
   (label 106)
   (unrealized (0 0) (1 2))
-  (origs (v (1 3)) (n (1 0)))
   (preskeleton)
+  (origs (v (1 3)) (n (1 0)))
   (comment "Not a skeleton"))
 
 (defskeleton envelope
@@ -4631,6 +4667,7 @@
   (label 113)
   (parent 111)
   (unrealized (4 0) (4 1))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -4662,6 +4699,7 @@
   (label 114)
   (parent 111)
   (unrealized (4 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -4736,6 +4774,7 @@
   (label 116)
   (parent 112)
   (unrealized (4 1) (5 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -4856,6 +4895,7 @@
   (label 119)
   (parent 117)
   (unrealized (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -4937,8 +4977,8 @@
       (send (enc v k))))
   (label 120)
   (unrealized (0 0) (1 2))
-  (origs (v (1 3)) (n (1 0)))
   (preskeleton)
+  (origs (v (1 3)) (n (1 0)))
   (comment "Not a skeleton"))
 
 (defskeleton envelope
@@ -5114,6 +5154,7 @@
   (label 126)
   (parent 124)
   (unrealized (4 0) (4 1))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -5148,6 +5189,7 @@
   (label 127)
   (parent 124)
   (unrealized (3 1) (4 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -5228,6 +5270,7 @@
   (label 129)
   (parent 125)
   (unrealized (4 1) (5 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -5357,6 +5400,7 @@
   (label 132)
   (parent 130)
   (unrealized (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -5440,8 +5484,8 @@
       (send (enc v k))))
   (label 133)
   (unrealized (0 0) (1 0) (2 2))
-  (origs (v (2 3)) (n (2 0)))
   (preskeleton)
+  (origs (v (2 3)) (n (2 0)))
   (comment "Not a skeleton"))
 
 (defskeleton envelope
@@ -5659,6 +5703,7 @@
   (label 140)
   (parent 138)
   (unrealized (0 0) (5 0) (5 1))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -5694,6 +5739,7 @@
   (label 141)
   (parent 138)
   (unrealized (0 0) (5 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -5776,6 +5822,7 @@
   (label 143)
   (parent 139)
   (unrealized (0 0) (5 1) (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -5908,6 +5955,7 @@
   (label 146)
   (parent 144)
   (unrealized (0 0) (7 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -6071,6 +6119,7 @@
   (label 149)
   (parent 147)
   (unrealized (9 0) (9 1))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -6124,6 +6173,7 @@
   (label 150)
   (parent 147)
   (unrealized (8 1) (9 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -6185,6 +6235,7 @@
   (label 151)
   (parent 148)
   (unrealized (10 0) (10 1))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -6243,6 +6294,7 @@
   (label 152)
   (parent 148)
   (unrealized (9 1) (10 0))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

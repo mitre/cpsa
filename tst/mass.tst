@@ -566,6 +566,7 @@
   (label 19)
   (parent 17)
   (unrealized)
+  (aborted)
   (comment "aborted"))
 
 (defskeleton mass
@@ -604,4 +605,5 @@
   (label 20)
   (parent 17)
   (unrealized (7 2))
+  (aborted)
   (comment "aborted"))

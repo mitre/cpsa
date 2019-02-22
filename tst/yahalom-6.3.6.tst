@@ -157,6 +157,7 @@
   (label 5)
   (parent 4)
   (unrealized (0 2) (1 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton yahalom
@@ -179,6 +180,7 @@
   (label 6)
   (parent 4)
   (unrealized (0 2) (1 0))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -315,6 +317,7 @@
   (label 12)
   (parent 9)
   (unrealized (0 2) (2 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton yahalom
@@ -363,6 +366,7 @@
   (label 14)
   (parent 10)
   (unrealized (0 2) (3 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton yahalom
@@ -543,6 +547,7 @@
   (label 20)
   (parent 16)
   (unrealized (4 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton yahalom
@@ -680,6 +685,7 @@
   (label 24)
   (parent 19)
   (unrealized (5 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton yahalom
@@ -756,6 +762,7 @@
   (label 26)
   (parent 22)
   (unrealized (2 1) (5 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton yahalom
@@ -834,6 +841,7 @@
   (label 28)
   (parent 23)
   (unrealized (3 1) (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton yahalom
@@ -875,6 +883,7 @@
   (label 29)
   (parent 25)
   (unrealized (2 1) (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton yahalom
@@ -918,6 +927,7 @@
   (label 30)
   (parent 27)
   (unrealized (3 1) (7 0))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

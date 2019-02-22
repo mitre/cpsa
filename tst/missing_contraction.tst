@@ -78,8 +78,8 @@
     ((recv (enc a m (pubk c))) (send (enc a m (pubk c)))))
   (label 3)
   (unrealized (1 0))
-  (origs (m (0 0)))
   (preskeleton)
+  (origs (m (0 0)))
   (comment "Not a skeleton"))
 
 (defskeleton missing-contraction

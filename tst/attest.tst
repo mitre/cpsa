@@ -242,7 +242,8 @@
     (forall ((z w strd) (d akey))
       (implies
         (and (p "appraise" z 2) (p "appraise" "d" z d)
-          (p "squealer" w 2) (p "squealer" "d" w d)) (false)))
+          (p "squealer" w 2) (p "squealer" "d" w d))
+        (false)))
     (comment "Squealer prohibited due to attestation"))
   (comment "Door attestations protocol with attestation"))
 
@@ -315,6 +316,7 @@
   (label 12)
   (parent 10)
   (unrealized (2 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton attest-door-trust

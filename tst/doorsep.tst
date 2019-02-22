@@ -16,7 +16,9 @@
     (forall ((z strd) (p d akey))
       (implies
         (and (p "person" z 1) (p "person" "p" z p) (p "person" "d" z d)
-          (non (invk p))) (non (invk d)))) (comment "The trust rule"))
+          (non (invk p)))
+        (non (invk d))))
+    (comment "The trust rule"))
   (comment "Doorsep protocol using unnamed asymmetric keys"))
 
 (defskeleton doorsep
@@ -95,6 +97,7 @@
   (label 4)
   (parent 2)
   (unrealized (2 0))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

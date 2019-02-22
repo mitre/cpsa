@@ -131,6 +131,7 @@
   (label 5)
   (parent 3)
   (unrealized (0 2))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton thisthat
@@ -151,6 +152,7 @@
   (label 6)
   (parent 3)
   (unrealized (0 2))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton thisthat
@@ -216,6 +218,7 @@
   (label 9)
   (parent 7)
   (unrealized (0 2))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton thisthat
@@ -239,6 +242,7 @@
   (label 10)
   (parent 7)
   (unrealized (0 2))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton thisthat
@@ -309,6 +313,7 @@
   (label 13)
   (parent 11)
   (unrealized (0 2))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton thisthat
@@ -333,6 +338,7 @@
   (label 14)
   (parent 11)
   (unrealized (0 2))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton thisthat
@@ -383,6 +389,7 @@
   (label 16)
   (parent 12)
   (unrealized (0 2))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

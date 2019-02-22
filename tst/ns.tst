@@ -242,8 +242,8 @@
       (send (enc n2-0 (pubk b)))))
   (label 10)
   (unrealized)
-  (origs (n1 (1 0)) (n1 (0 0)))
   (preskeleton)
+  (origs (n1 (1 0)) (n1 (0 0)))
   (comment "Not a skeleton"))
 
 (defskeleton ns
@@ -648,8 +648,8 @@
     ((recv n2) (send n2)))
   (label 28)
   (unrealized (1 0))
-  (origs (n2 (0 1)))
   (preskeleton)
+  (origs (n2 (0 1)))
   (comment "Not a skeleton"))
 
 (defskeleton nsl-typeless
@@ -684,6 +684,7 @@
   (label 30)
   (parent 29)
   (unrealized (1 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton nsl-typeless

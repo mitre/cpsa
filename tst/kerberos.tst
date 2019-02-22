@@ -124,6 +124,7 @@
   (label 4)
   (parent 1)
   (unrealized (2 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton kerberos
@@ -173,6 +174,7 @@
   (label 6)
   (parent 2)
   (unrealized (2 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton kerberos
@@ -258,6 +260,7 @@
   (label 9)
   (parent 3)
   (unrealized (3 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton kerberos
@@ -343,6 +346,7 @@
   (label 12)
   (parent 5)
   (unrealized (3 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton kerberos
@@ -769,6 +773,7 @@
   (label 27)
   (parent 24)
   (unrealized (2 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton kerberos
@@ -815,6 +820,7 @@
   (label 29)
   (parent 25)
   (unrealized (2 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton kerberos

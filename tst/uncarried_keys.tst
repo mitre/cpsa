@@ -126,6 +126,7 @@
   (label 5)
   (parent 1)
   (unrealized (2 0))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

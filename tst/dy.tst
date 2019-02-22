@@ -6061,6 +6061,7 @@
   (label 42)
   (parent 22)
   (unrealized)
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -6100,6 +6101,7 @@
   (label 44)
   (parent 22)
   (unrealized (6 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -6139,6 +6141,7 @@
   (label 56)
   (parent 32)
   (unrealized (6 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -6178,6 +6181,7 @@
   (label 58)
   (parent 32)
   (unrealized (6 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -6217,6 +6221,7 @@
   (label 63)
   (parent 39)
   (unrealized)
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -6256,6 +6261,7 @@
   (label 64)
   (parent 39)
   (unrealized (5 0) (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -6295,6 +6301,7 @@
   (label 70)
   (parent 49)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -6334,6 +6341,7 @@
   (label 76)
   (parent 51)
   (unrealized (5 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -6373,6 +6381,7 @@
   (label 78)
   (parent 51)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -6412,6 +6421,7 @@
   (label 82)
   (parent 55)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -6451,6 +6461,7 @@
   (label 84)
   (parent 57)
   (unrealized (6 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -6490,6 +6501,7 @@
   (label 86)
   (parent 57)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -6529,6 +6541,7 @@
   (label 95)
   (parent 67)
   (unrealized)
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -6568,6 +6581,7 @@
   (label 97)
   (parent 67)
   (unrealized (6 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -6607,6 +6621,7 @@
   (label 102)
   (parent 69)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -6646,6 +6661,7 @@
   (label 103)
   (parent 69)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -6685,6 +6701,7 @@
   (label 111)
   (parent 73)
   (unrealized (6 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -6724,6 +6741,7 @@
   (label 113)
   (parent 73)
   (unrealized)
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -6763,6 +6781,7 @@
   (label 116)
   (parent 74)
   (unrealized)
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -6802,6 +6821,7 @@
   (label 117)
   (parent 74)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -6841,6 +6861,7 @@
   (label 121)
   (parent 75)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -6880,6 +6901,7 @@
   (label 122)
   (parent 75)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -6919,6 +6941,7 @@
   (label 126)
   (parent 81)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -6958,6 +6981,7 @@
   (label 127)
   (parent 81)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -6997,6 +7021,7 @@
   (label 130)
   (parent 83)
   (unrealized)
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -7036,6 +7061,7 @@
   (label 132)
   (parent 83)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -7075,6 +7101,7 @@
   (label 137)
   (parent 91)
   (unrealized (6 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -7114,6 +7141,7 @@
   (label 139)
   (parent 91)
   (unrealized)
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -7153,6 +7181,7 @@
   (label 142)
   (parent 92)
   (unrealized)
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -7192,6 +7221,7 @@
   (label 143)
   (parent 92)
   (unrealized (6 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -7231,6 +7261,7 @@
   (label 148)
   (parent 96)
   (unrealized)
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -7270,6 +7301,7 @@
   (label 151)
   (parent 96)
   (unrealized (6 0) (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -7309,6 +7341,7 @@
   (label 157)
   (parent 108)
   (unrealized (6 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -7348,6 +7381,7 @@
   (label 159)
   (parent 108)
   (unrealized (6 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -7387,6 +7421,7 @@
   (label 162)
   (parent 110)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -7426,6 +7461,7 @@
   (label 177)
   (parent 140)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -7465,6 +7501,7 @@
   (label 178)
   (parent 140)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -7504,6 +7541,7 @@
   (label 184)
   (parent 146)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -7543,6 +7581,7 @@
   (label 185)
   (parent 146)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -7582,6 +7621,7 @@
   (label 190)
   (parent 150)
   (unrealized)
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -7621,6 +7661,7 @@
   (label 191)
   (parent 150)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -7660,6 +7701,7 @@
   (label 196)
   (parent 156)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -7699,6 +7741,7 @@
   (label 217)
   (parent 195)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton dy
@@ -7738,4 +7781,5 @@
   (label 218)
   (parent 195)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))

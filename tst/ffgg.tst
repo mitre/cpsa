@@ -28,8 +28,8 @@
       (recv (cat n1 x (enc x y n1 (pubk b))))) ((recv m) (send m)))
   (label 0)
   (unrealized (1 0))
-  (origs (m (0 2)))
   (preskeleton)
+  (origs (m (0 2)))
   (comment "Not a skeleton"))
 
 (defskeleton ffgg

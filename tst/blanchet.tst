@@ -53,6 +53,7 @@
   (label 2)
   (parent 0)
   (unrealized (1 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton blanchet
@@ -129,6 +130,7 @@
   (label 6)
   (parent 4)
   (unrealized (2 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton blanchet
@@ -167,6 +169,7 @@
   (label 8)
   (parent 7)
   (unrealized (3 0))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -232,8 +235,8 @@
     ((recv d) (send d)))
   (label 11)
   (unrealized (0 0) (1 0))
-  (origs (d (0 1)))
   (preskeleton)
+  (origs (d (0 1)))
   (comment "Not a skeleton"))
 
 (defskeleton blanchet
@@ -321,6 +324,7 @@
   (label 16)
   (parent 14)
   (unrealized (1 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton blanchet-akey
@@ -397,6 +401,7 @@
   (label 20)
   (parent 18)
   (unrealized (2 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton blanchet-akey
@@ -435,6 +440,7 @@
   (label 22)
   (parent 21)
   (unrealized (3 0))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -500,8 +506,8 @@
     ((recv d) (send d)))
   (label 25)
   (unrealized (0 0) (1 0))
-  (origs (d (0 1)))
   (preskeleton)
+  (origs (d (0 1)))
   (comment "Not a skeleton"))
 
 (defskeleton blanchet-akey
@@ -589,6 +595,7 @@
   (label 30)
   (parent 28)
   (unrealized (1 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton blanchet-fixed
@@ -665,6 +672,7 @@
   (label 34)
   (parent 32)
   (unrealized (2 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton blanchet-fixed
@@ -703,6 +711,7 @@
   (label 36)
   (parent 35)
   (unrealized (3 0))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -768,8 +777,8 @@
     ((recv d) (send d)))
   (label 39)
   (unrealized (0 0) (1 0))
-  (origs (d (0 1)))
   (preskeleton)
+  (origs (d (0 1)))
   (comment "Not a skeleton"))
 
 (defskeleton blanchet-fixed
@@ -820,6 +829,7 @@
   (label 42)
   (parent 41)
   (unrealized (3 0))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

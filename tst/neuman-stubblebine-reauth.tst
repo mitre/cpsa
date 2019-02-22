@@ -248,6 +248,7 @@
   (label 7)
   (parent 2)
   (unrealized (0 2) (3 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -391,6 +392,7 @@
   (label 11)
   (parent 3)
   (unrealized (0 2) (4 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -813,6 +815,7 @@
   (label 23)
   (parent 13)
   (unrealized (0 2) (4 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -991,6 +994,7 @@
   (label 28)
   (parent 14)
   (unrealized (4 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1231,6 +1235,7 @@
   (label 34)
   (parent 16)
   (unrealized (0 2) (5 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1455,6 +1460,7 @@
   (label 40)
   (parent 18)
   (unrealized (4 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1675,6 +1681,7 @@
   (label 46)
   (parent 21)
   (unrealized (4 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -2219,6 +2226,7 @@
   (label 60)
   (parent 35)
   (unrealized (5 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -2258,6 +2266,7 @@
   (label 61)
   (parent 36)
   (unrealized (4 1))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -2595,6 +2604,7 @@
   (label 69)
   (parent 42)
   (unrealized (0 2) (5 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -2918,6 +2928,7 @@
   (label 77)
   (parent 47)
   (unrealized (5 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -3165,6 +3176,7 @@
   (label 83)
   (parent 49)
   (unrealized (5 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -3371,6 +3383,7 @@
   (label 88)
   (parent 51)
   (unrealized (5 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -3652,6 +3665,7 @@
   (label 94)
   (parent 53)
   (unrealized (0 2) (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -3808,6 +3822,7 @@
   (label 98)
   (parent 54)
   (unrealized (5 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -4196,6 +4211,7 @@
   (label 107)
   (parent 62)
   (unrealized (5 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -4420,6 +4436,7 @@
   (label 112)
   (parent 64)
   (unrealized (5 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -4686,6 +4703,7 @@
   (label 118)
   (parent 67)
   (unrealized (5 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -4944,6 +4962,7 @@
   (label 124)
   (parent 71)
   (unrealized (5 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -5924,6 +5943,7 @@
   (label 146)
   (parent 99)
   (unrealized (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -6195,6 +6215,7 @@
   (label 152)
   (parent 101)
   (unrealized (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -6242,6 +6263,7 @@
   (label 153)
   (parent 103)
   (unrealized (5 1))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -6382,6 +6404,7 @@
   (label 156)
   (parent 108)
   (unrealized (5 1))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -6769,6 +6792,7 @@
   (label 164)
   (parent 114)
   (unrealized (0 2) (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -7146,6 +7170,7 @@
   (label 172)
   (parent 119)
   (unrealized (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -7613,6 +7638,7 @@
   (label 182)
   (parent 126)
   (unrealized (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -7904,6 +7930,7 @@
   (label 188)
   (parent 129)
   (unrealized (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -8192,6 +8219,7 @@
   (label 194)
   (parent 132)
   (unrealized (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -8431,6 +8459,7 @@
   (label 199)
   (parent 134)
   (unrealized (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -8718,6 +8747,7 @@
   (label 209)
   (parent 137)
   (unrealized (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -8996,6 +9026,7 @@
   (label 215)
   (parent 140)
   (unrealized (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -9540,6 +9571,7 @@
   (label 226)
   (parent 154)
   (unrealized (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -9843,6 +9875,7 @@
   (label 232)
   (parent 157)
   (unrealized (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -10098,6 +10131,7 @@
   (label 237)
   (parent 159)
   (unrealized (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -10401,6 +10435,7 @@
   (label 243)
   (parent 162)
   (unrealized (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -10747,6 +10782,7 @@
   (label 250)
   (parent 166)
   (unrealized (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -11146,6 +11182,7 @@
   (label 258)
   (parent 174)
   (unrealized (6 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -12511,6 +12548,7 @@
   (label 297)
   (parent 222)
   (unrealized (6 1))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -12673,6 +12711,7 @@
   (label 300)
   (parent 228)
   (unrealized (6 1))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -12832,6 +12871,7 @@
   (label 303)
   (parent 233)
   (unrealized (6 1))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -15341,6 +15381,7 @@
   (label 201)
   (parent 136)
   (unrealized (0 2) (7 1))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -15398,6 +15439,7 @@
   (label 202)
   (parent 136)
   (unrealized (0 2) (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -15453,6 +15495,7 @@
   (label 204)
   (parent 136)
   (unrealized (0 2) (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -15504,6 +15547,7 @@
   (label 205)
   (parent 136)
   (unrealized (0 2) (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -15557,6 +15601,7 @@
   (label 276)
   (parent 210)
   (unrealized (7 1))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -15610,6 +15655,7 @@
   (label 277)
   (parent 210)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -15662,6 +15708,7 @@
   (label 279)
   (parent 210)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -15709,6 +15756,7 @@
   (label 280)
   (parent 210)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -15762,6 +15810,7 @@
   (label 285)
   (parent 217)
   (unrealized (7 1))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -15815,6 +15864,7 @@
   (label 286)
   (parent 217)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -15866,6 +15916,7 @@
   (label 289)
   (parent 217)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -15914,6 +15965,7 @@
   (label 290)
   (parent 217)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -15968,6 +16020,7 @@
   (label 292)
   (parent 220)
   (unrealized (7 1))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16022,6 +16075,7 @@
   (label 293)
   (parent 220)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16074,6 +16128,7 @@
   (label 295)
   (parent 220)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16122,6 +16177,7 @@
   (label 296)
   (parent 220)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16182,6 +16238,7 @@
   (label 307)
   (parent 239)
   (unrealized (0 2) (7 1))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16242,6 +16299,7 @@
   (label 308)
   (parent 239)
   (unrealized (0 2) (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16300,6 +16358,7 @@
   (label 310)
   (parent 239)
   (unrealized (0 2) (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16354,6 +16413,7 @@
   (label 311)
   (parent 239)
   (unrealized (0 2) (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16411,6 +16471,7 @@
   (label 315)
   (parent 244)
   (unrealized (7 1))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16468,6 +16529,7 @@
   (label 316)
   (parent 244)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16524,6 +16586,7 @@
   (label 318)
   (parent 244)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16575,6 +16638,7 @@
   (label 319)
   (parent 244)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16632,6 +16696,7 @@
   (label 324)
   (parent 252)
   (unrealized (7 1))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16689,6 +16754,7 @@
   (label 326)
   (parent 252)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16744,6 +16810,7 @@
   (label 329)
   (parent 252)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16796,6 +16863,7 @@
   (label 330)
   (parent 252)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16853,6 +16921,7 @@
   (label 335)
   (parent 260)
   (unrealized (7 1))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16910,6 +16979,7 @@
   (label 336)
   (parent 260)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16965,6 +17035,7 @@
   (label 339)
   (parent 260)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17016,6 +17087,7 @@
   (label 340)
   (parent 260)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17073,6 +17145,7 @@
   (label 342)
   (parent 263)
   (unrealized (7 1))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17130,6 +17203,7 @@
   (label 343)
   (parent 263)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17185,6 +17259,7 @@
   (label 345)
   (parent 263)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17236,6 +17311,7 @@
   (label 346)
   (parent 263)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17293,6 +17369,7 @@
   (label 348)
   (parent 266)
   (unrealized (7 1))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17349,6 +17426,7 @@
   (label 349)
   (parent 266)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17403,6 +17481,7 @@
   (label 351)
   (parent 266)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17454,6 +17533,7 @@
   (label 352)
   (parent 266)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17510,6 +17590,7 @@
   (label 355)
   (parent 269)
   (unrealized (7 1))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17565,6 +17646,7 @@
   (label 356)
   (parent 269)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17618,6 +17700,7 @@
   (label 358)
   (parent 269)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17669,6 +17752,7 @@
   (label 359)
   (parent 269)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17725,6 +17809,7 @@
   (label 360)
   (parent 271)
   (unrealized (7 1))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17780,6 +17865,7 @@
   (label 361)
   (parent 271)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17834,6 +17920,7 @@
   (label 363)
   (parent 271)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17885,6 +17972,7 @@
   (label 364)
   (parent 271)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17940,6 +18028,7 @@
   (label 365)
   (parent 272)
   (unrealized (7 1))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17994,6 +18083,7 @@
   (label 366)
   (parent 272)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18047,6 +18137,7 @@
   (label 367)
   (parent 272)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18096,6 +18187,7 @@
   (label 368)
   (parent 272)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18151,6 +18243,7 @@
   (label 370)
   (parent 274)
   (unrealized (7 1))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18205,6 +18298,7 @@
   (label 372)
   (parent 274)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18257,6 +18351,7 @@
   (label 373)
   (parent 274)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18307,6 +18402,7 @@
   (label 374)
   (parent 274)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18362,6 +18458,7 @@
   (label 376)
   (parent 282)
   (unrealized (7 1))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18416,6 +18513,7 @@
   (label 377)
   (parent 282)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18468,6 +18566,7 @@
   (label 378)
   (parent 282)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18517,6 +18616,7 @@
   (label 379)
   (parent 282)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18578,6 +18678,7 @@
   (label 380)
   (parent 298)
   (unrealized (7 1))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18638,6 +18739,7 @@
   (label 381)
   (parent 298)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18696,6 +18798,7 @@
   (label 383)
   (parent 298)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18751,6 +18854,7 @@
   (label 384)
   (parent 298)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18811,6 +18915,7 @@
   (label 386)
   (parent 301)
   (unrealized (7 1))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18870,6 +18975,7 @@
   (label 387)
   (parent 301)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18927,6 +19033,7 @@
   (label 389)
   (parent 301)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18981,6 +19088,7 @@
   (label 390)
   (parent 301)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19041,6 +19149,7 @@
   (label 392)
   (parent 304)
   (unrealized (7 1))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19100,6 +19209,7 @@
   (label 394)
   (parent 304)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19157,6 +19267,7 @@
   (label 396)
   (parent 304)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19212,6 +19323,7 @@
   (label 397)
   (parent 304)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19272,6 +19384,7 @@
   (label 398)
   (parent 306)
   (unrealized (7 1))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19331,6 +19444,7 @@
   (label 399)
   (parent 306)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19389,6 +19503,7 @@
   (label 401)
   (parent 306)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19444,6 +19559,7 @@
   (label 402)
   (parent 306)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19503,6 +19619,7 @@
   (label 403)
   (parent 309)
   (unrealized (7 1))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19561,6 +19678,7 @@
   (label 404)
   (parent 309)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19618,6 +19736,7 @@
   (label 405)
   (parent 309)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19671,6 +19790,7 @@
   (label 406)
   (parent 309)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19730,6 +19850,7 @@
   (label 408)
   (parent 313)
   (unrealized (7 1))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19788,6 +19909,7 @@
   (label 411)
   (parent 313)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19844,6 +19966,7 @@
   (label 412)
   (parent 313)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19898,6 +20021,7 @@
   (label 413)
   (parent 313)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19957,6 +20081,7 @@
   (label 415)
   (parent 321)
   (unrealized (7 1))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -20015,6 +20140,7 @@
   (label 417)
   (parent 321)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -20071,6 +20197,7 @@
   (label 418)
   (parent 321)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -20124,6 +20251,7 @@
   (label 419)
   (parent 321)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -20183,6 +20311,7 @@
   (label 421)
   (parent 332)
   (unrealized (7 1))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -20241,6 +20370,7 @@
   (label 422)
   (parent 332)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -20297,6 +20427,7 @@
   (label 423)
   (parent 332)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -20350,4 +20481,5 @@
   (label 424)
   (parent 332)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))

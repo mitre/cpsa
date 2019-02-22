@@ -262,8 +262,8 @@
       (recv (enc "check" n (enc "dh" gx gy dhkey-0)))))
   (label 10)
   (unrealized (0 1) (1 2))
-  (origs (n (1 1)) (gy (1 1)))
   (preskeleton)
+  (origs (n (1 1)) (gy (1 1)))
   (comment "Not a skeleton"))
 
 (defskeleton dhencrypt
@@ -340,6 +340,7 @@
   (label 14)
   (parent 11)
   (unrealized (0 1) (2 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton dhencrypt
@@ -384,6 +385,7 @@
   (label 16)
   (parent 13)
   (unrealized (0 1) (3 0))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

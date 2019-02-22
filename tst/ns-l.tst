@@ -27,8 +27,8 @@
       (send (enc n2 (pubk b)))) ((recv n1) (send n1)))
   (label 0)
   (unrealized (0 1) (1 0))
-  (origs (n1 (0 0)))
   (preskeleton)
+  (origs (n1 (0 0)))
   (comment "Not a skeleton"))
 
 (defskeleton ns
@@ -105,6 +105,7 @@
   (label 4)
   (parent 3)
   (unrealized (0 1) (1 0))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -132,8 +133,8 @@
       (recv (enc n2 (pubk b)))) ((recv n2) (send n2)))
   (label 5)
   (unrealized (0 2) (1 0))
-  (origs (n2 (0 1)))
   (preskeleton)
+  (origs (n2 (0 1)))
   (comment "Not a skeleton"))
 
 (defskeleton ns

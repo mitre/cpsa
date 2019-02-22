@@ -153,6 +153,7 @@
   (label 5)
   (parent 2)
   (unrealized (2 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton dhca
@@ -202,6 +203,7 @@
   (label 7)
   (parent 3)
   (unrealized (3 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton dhca
@@ -939,6 +941,7 @@
   (label 33)
   (parent 30)
   (unrealized (2 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton dhca
@@ -993,6 +996,7 @@
   (label 35)
   (parent 31)
   (unrealized (3 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton dhca
@@ -1669,8 +1673,8 @@
       (recv (enc "check" n (enc "dh" h gy dhkey)))) ((recv n) (send n)))
   (label 56)
   (unrealized (0 0) (0 1) (0 3) (1 0))
-  (origs (n (0 2)))
   (preskeleton)
+  (origs (n (0 2)))
   (comment "Not a skeleton"))
 
 (defskeleton dhca
@@ -1794,6 +1798,7 @@
   (label 61)
   (parent 59)
   (unrealized (0 0) (0 1) (0 3))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton dhca
@@ -1904,6 +1909,7 @@
   (label 65)
   (parent 62)
   (unrealized (0 1) (0 3))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton dhca
@@ -1934,6 +1940,7 @@
   (label 66)
   (parent 63)
   (unrealized (0 0) (0 1) (0 3) (4 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton dhca
@@ -1968,6 +1975,7 @@
   (label 67)
   (parent 64)
   (unrealized (0 0) (0 1) (0 3) (5 0))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -2018,8 +2026,8 @@
       (recv (enc "check" n (enc "dh" gx gy dhkey)))))
   (label 68)
   (unrealized (0 0) (0 2) (1 0) (1 1) (1 3))
-  (origs (n (1 2)))
   (preskeleton)
+  (origs (n (1 2)))
   (comment "Not a skeleton"))
 
 (defskeleton dhca
@@ -2217,6 +2225,7 @@
   (label 75)
   (parent 71)
   (unrealized (0 0) (3 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton dhca
@@ -2312,6 +2321,7 @@
   (label 78)
   (parent 72)
   (unrealized (0 0) (4 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton dhca

@@ -85,6 +85,7 @@
   (label 2)
   (parent 0)
   (unrealized (1 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton main-ex-src
@@ -178,6 +179,7 @@
   (label 6)
   (parent 4)
   (unrealized (1 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton main-ex-src
@@ -280,6 +282,7 @@
   (label 10)
   (parent 8)
   (unrealized (1 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton main-ex-tgt
@@ -406,6 +409,7 @@
   (label 15)
   (parent 13)
   (unrealized (1 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton main-ex-tgt

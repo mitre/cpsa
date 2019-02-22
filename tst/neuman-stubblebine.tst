@@ -228,6 +228,7 @@
   (label 8)
   (parent 5)
   (unrealized (2 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine
@@ -284,6 +285,7 @@
   (label 10)
   (parent 6)
   (unrealized (3 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine

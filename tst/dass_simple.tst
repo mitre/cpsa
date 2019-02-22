@@ -72,6 +72,7 @@
   (label 2)
   (parent 0)
   (unrealized (1 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton dass-simple
@@ -117,6 +118,7 @@
   (label 4)
   (parent 1)
   (unrealized (2 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton dass-simple
@@ -213,6 +215,7 @@
   (label 8)
   (parent 6)
   (unrealized (1 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton dass+
@@ -258,6 +261,7 @@
   (label 10)
   (parent 7)
   (unrealized (1 0) (2 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton dass+

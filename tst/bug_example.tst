@@ -57,6 +57,7 @@
   (label 2)
   (parent 0)
   (unrealized (1 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton bug_example
@@ -114,6 +115,7 @@
   (label 5)
   (parent 1)
   (unrealized (2 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton bug_example
@@ -158,6 +160,7 @@
   (label 7)
   (parent 4)
   (unrealized (3 0))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -218,6 +221,7 @@
   (label 10)
   (parent 8)
   (unrealized (1 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton bug_example
@@ -273,6 +277,7 @@
   (label 13)
   (parent 9)
   (unrealized (2 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton bug_example
@@ -317,6 +322,7 @@
   (label 15)
   (parent 12)
   (unrealized (3 0))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

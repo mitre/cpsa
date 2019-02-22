@@ -57,6 +57,7 @@
   (traces ((send (cat n1 (enc n1 n2 k))) (recv n2)))
   (label 2)
   (unrealized (0 1))
+  (dead)
   (origs (n2 (0 0)) (n1 (0 0)))
   (comment "empty cohort"))
 

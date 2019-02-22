@@ -482,6 +482,7 @@
   (label 17)
   (parent 16)
   (unrealized)
+  (aborted)
   (comment "aborted"))
 
 (defskeleton wide-mouth-frog
@@ -521,4 +522,5 @@
   (label 18)
   (parent 16)
   (unrealized (7 0))
+  (aborted)
   (comment "aborted"))

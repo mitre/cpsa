@@ -389,6 +389,7 @@
   (label 14)
   (parent 11)
   (unrealized (4 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton DH_hack
@@ -414,6 +415,7 @@
   (label 15)
   (parent 12)
   (unrealized (4 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton DH_hack
@@ -439,6 +441,7 @@
   (label 16)
   (parent 12)
   (unrealized (4 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton DH_hack
@@ -497,6 +500,7 @@
   (label 18)
   (parent 17)
   (unrealized (5 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton DH_hack
@@ -527,6 +531,7 @@
   (label 19)
   (parent 17)
   (unrealized (5 0))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -687,6 +692,7 @@
   (label 25)
   (parent 22)
   (unrealized (4 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton DH_hack

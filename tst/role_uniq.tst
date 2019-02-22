@@ -53,6 +53,7 @@
   (label 2)
   (parent 0)
   (unrealized (1 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton blanchet
@@ -179,6 +180,7 @@
   (label 9)
   (parent 7)
   (unrealized (1 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton blanchet

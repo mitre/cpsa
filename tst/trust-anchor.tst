@@ -17,6 +17,7 @@
       (send (enc f (pubk f) (privk ca)))))
   (label 0)
   (unrealized (0 0))
+  (dead)
   (origs)
   (comment "empty cohort"))
 
@@ -50,6 +51,7 @@
   (label 2)
   (parent 1)
   (unrealized (0 0))
+  (dead)
   (origs)
   (comment "empty cohort"))
 

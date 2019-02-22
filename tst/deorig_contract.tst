@@ -35,6 +35,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 2))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

@@ -21,6 +21,7 @@
   (traces ((send (enc x k)) (recv x)))
   (label 0)
   (unrealized (0 1))
+  (dead)
   (origs (x (0 0)))
   (comment "empty cohort"))
 

@@ -514,6 +514,7 @@
   (label 12)
   (parent 10)
   (unrealized (0 0) (3 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton epmo

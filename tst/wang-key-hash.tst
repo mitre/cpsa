@@ -519,8 +519,8 @@
            (privk "sign" a))))) ((recv m) (send m)))
   (label 0)
   (unrealized (1 0))
-  (origs (m (0 0)) (k (0 0)))
   (preskeleton)
+  (origs (m (0 0)) (k (0 0)))
   (comment "Not a skeleton"))
 
 (defskeleton wang
@@ -1399,8 +1399,8 @@
            (privk "sign" a))))) ((recv k) (send k)))
   (label 7)
   (unrealized (1 0))
-  (origs (m (0 0)) (k (0 0)))
   (preskeleton)
+  (origs (m (0 0)) (k (0 0)))
   (comment "Not a skeleton"))
 
 (defskeleton wang

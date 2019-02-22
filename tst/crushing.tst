@@ -254,6 +254,7 @@
   (label 10)
   (parent 5)
   (unrealized (3 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton crushing
@@ -280,6 +281,7 @@
   (label 11)
   (parent 6)
   (unrealized (3 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton crushing
@@ -306,6 +308,7 @@
   (label 12)
   (parent 7)
   (unrealized (3 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton crushing
@@ -335,6 +338,7 @@
   (label 13)
   (parent 8)
   (unrealized (4 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton crushing

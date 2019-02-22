@@ -38,6 +38,7 @@
   (label 1)
   (parent 0)
   (unrealized (1 0))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton ab
@@ -53,6 +54,7 @@
   (label 2)
   (parent 0)
   (unrealized (1 0))
+  (dead)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

@@ -307,6 +307,7 @@
   (label 11)
   (parent 8)
   (unrealized (1 1))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton dhnsl
@@ -403,6 +404,7 @@
   (label 15)
   (parent 12)
   (unrealized (1 1))
+  (dead)
   (comment "empty cohort"))
 
 (defskeleton dhnsl

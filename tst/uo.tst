@@ -13,8 +13,8 @@
   (traces ((send n)) ((send (enc m n)) (recv n)))
   (label 0)
   (unrealized (1 1))
-  (origs (n (0 0)))
   (preskeleton)
+  (origs (n (0 0)))
   (comment "Not a skeleton"))
 
 (defskeleton uniq-orig
