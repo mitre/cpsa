@@ -116,7 +116,7 @@ solve p h (k : ks) n =
         [] ->                  -- Input cannot be made into a skeleton
             do
               let lk = LPreskel k n 0 Nothing
-              wrt p h (commentPreskel lk [] (unrealized k) Ordinary
+              wrt p h (commentPreskel lk [] (unrealized k) Ordinary Nada
                        "Input cannot be made into a skeleton--nothing to do")
               solve p h ks (n + 1)
         [k'] ->
@@ -128,7 +128,7 @@ solve p h (k : ks) n =
                 do
                   let lk = LPreskel k n (-1) Nothing
                   wrt p h (commentPreskel lk [] (unrealized k) Ordinary
-                           "Not a skeleton")
+                           Preskeleton "Not a skeleton")
                   let lk' = withParent k' (n + 1) lk
                   begin p h ks (n + optLimit p) (n + 2)
                            (hist (gist k', n + 1)) lk'
@@ -144,7 +144,7 @@ begin p h ks m n seen lk =
     Just kids ->
       do
         wrt p h (commentPreskel lk [] (unrealized k) Ordinary
-                  "Not closed under rules")
+                  Nada "Not closed under rules")
         let (n', seen', todo', _) =
               foldl (next lk) (n, seen, [], []) kids
         search p h ks m n' seen' todo' []
@@ -216,13 +216,14 @@ step p h ks m oseen n seen todo tobig (Reduct lk size kids dups : reducts)
           let ns = unrealized (content lk)
           let shape = null ns
           case shape of
-            True -> wrt p h (commentPreskel lk [] ns Shape "")
-            False -> wrt p h (commentPreskel lk [] ns Ordinary "empty cohort")
+            True -> wrt p h (commentPreskel lk [] ns Shape Nada "")
+            False ->
+              wrt p h (commentPreskel lk [] ns Ordinary Dead "empty cohort")
           step p h ks m oseen n seen todo tobig reducts
     | optDepth p > 0 && depth lk >= optDepth p =
         do
           let ns = unrealized (content lk)
-          wrt p h (commentPreskel lk [] ns Fringe "")
+          wrt p h (commentPreskel lk [] ns Fringe Nada "")
           step p h ks m oseen n seen todo tobig reducts
     | otherwise =
         do
@@ -232,7 +233,7 @@ step p h ks m oseen n seen todo tobig (Reduct lk size kids dups : reducts)
           let u = size - length dups'
           let msg = shows size $ showString " in cohort - " $
                          shows u " not yet seen"
-          wrt p h (commentPreskel lk (reverse dups') ns Ordinary msg)
+          wrt p h (commentPreskel lk (reverse dups') ns Ordinary Nada msg)
           step p h ks m oseen n' seen' todo' tobig reducts
 
 -- Expands one branch in the derivation tree.
@@ -299,7 +300,7 @@ fast p h ks m n (lk : todo) =
       let ks' = reduce (mkMode p) (content lk)
       let msg = show (length ks') ++ " in cohort"
       let shape = if null ns then Shape else Ordinary
-      wrt p h (commentPreskel lk [] ns shape msg)
+      wrt p h (commentPreskel lk [] ns shape Nada msg)
       let (n', todo') = foldl (children lk) (n, []) ks'
       fast p h ks m n' (todo ++ reverse todo')
 
@@ -316,21 +317,22 @@ dump _ h [] msg =
 dump p h (lk : lks) msg =
     do
       let ns = unrealized $ content lk
-      wrt p h (commentPreskel lk [] ns Ordinary "aborted")
+      wrt p h (commentPreskel lk [] ns Aborted Nada "aborted")
       dump p h lks msg
 
 -- Add a label, maybe a parent, a list of seen preskeletons isomorphic
 -- to some members of this skeleton's cohort, and a list of unrealized
 -- nodes.  If it's a shape, note this fact.  Add a comment if present.
-commentPreskel :: LPreskel -> [Int] -> [Node] -> Kind -> String -> SExpr ()
-commentPreskel lk seen unrealized kind msg =
+commentPreskel :: LPreskel -> [Int] -> [Node] -> Kind ->
+                  Anno -> String -> SExpr ()
+commentPreskel lk seen unrealized kind anno msg =
     displayPreskel k $
     addKeyValues "label" [N () (label lk)] $
     maybeAddVKeyValues "parent" (\p -> [N () (label p)]) (parent lk) $
     condAddKeyValues "seen" (not $ null seen)
                      (map (N ()) (L.sort (L.nub seen))) $
     addKeyValues "unrealized" (map displayNode $ L.sort unrealized) $
-    addKindKey kind $
+    addKindKey kind $ addAnnoKey anno $
     condAddKeyValues "satisfies" (kind == Shape && (not $ null $ kgoals k))
     (satisfies k) $
     -- Structure preserving maps
@@ -342,11 +344,9 @@ commentPreskel lk seen unrealized kind msg =
     -- Messages
     case msg of
       "" -> []
-      -- Preskeleton key added for cpsasas program
-      "Not a skeleton" -> addKeyValues "preskeleton" [] [comment msg]
       _ -> [comment msg]
     where
-      fringe = kind /= Ordinary
+      fringe = isFringe kind
       k = content lk
       starter k =               -- True for the POV skeleton and
           case pov k of         -- just a few others
@@ -374,12 +374,33 @@ data Kind
     = Ordinary
     | Shape
     | Fringe
+    | Aborted
       deriving (Eq, Show)
 
 addKindKey :: Kind -> [SExpr ()] -> [SExpr ()]
 addKindKey Ordinary xs = xs
 addKindKey Shape xs = addKeyValues "shape" [] xs
 addKindKey Fringe xs = addKeyValues "fringe" [] xs
+addKindKey Aborted xs = addKeyValues "aborted" [] xs
+
+isFringe :: Kind -> Bool
+isFringe Ordinary = False
+isFringe Shape = True
+isFringe Fringe = True
+isFringe Aborted = False
+
+-- Skeleton annotations
+data Anno
+  = Nada
+  | Preskeleton
+  | SatisfiesAll
+  | Dead
+
+addAnnoKey :: Anno -> [SExpr ()] -> [SExpr ()]
+addAnnoKey Nada xs = xs
+addAnnoKey Preskeleton xs = addKeyValues "preskeleton" [] xs
+addAnnoKey SatisfiesAll xs = addKeyValues "satisfies-all" [] xs
+addAnnoKey Dead xs = addKeyValues "dead" [] xs
 
 -- Variable assignments and security goals
 

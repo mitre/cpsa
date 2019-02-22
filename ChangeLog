@@ -1,3 +1,10 @@
+2019-02-22  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Reduction.hs (addAnnoKey):  Added structured
+	annotations to skeleton output to facilitate post processing
+	programs besides cpsagraph.  The new keys are (aborted),
+	(satisfied-all), and (dead).
+
 2019-02-04  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Reduction.hs (step): Changed default depth bound to
