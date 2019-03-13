@@ -150,12 +150,12 @@ avoid k =
 -- pos    = p
 -- ek     = encription key if ct is an encyption else nothing
 -- escape = esc(k, v, t)
--- k      = k
--- (s, p) = v and n
+-- k      = k'
+-- n      = v
 -- subst  = sigma
 solved :: Term -> Place -> [Term] -> Set Term ->
           Preskel -> Node -> Subst -> Bool
-solved ct pos eks escape k (s, p) subst =
+solved ct pos eks escape k n subst =
     -- Condition 1
     isAncestorInSet escape' t pos ||
     -- Condition 2
@@ -168,7 +168,7 @@ solved ct pos eks escape k (s, p) subst =
     -- Bug fix: apply subst to eks
     any (derivable a ts) (map (substitute subst) eks)
     where
-      v = vertex k (s, p)       -- Look up vertex in k
+      v = vertex k n            -- Look up vertex in k
       t = evt id erro (event v)  -- Term at v
       erro = const $ error "Cohort.solved: got an outbound term"
       ct' = substitute subst ct -- Mapped critical term

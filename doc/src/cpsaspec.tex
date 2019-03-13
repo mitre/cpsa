@@ -1493,9 +1493,9 @@ $(T_p,T_a)=\fn{dcmp}(k,n)$ (See Definition~\ref{def:decompose}).  It
 is undefined when~$t_c$ is derivable in~$k$ at~$n$.
 \end{defn}
 
-\begin{defn}[Critical Position]\label{def:critical position}
-Position~$p$ is a \index{critical position}\emph{critical position} of
-$t=\msg_k(n)$ if
+\begin{defn}[Critical Position, Critical Message]\label{def:critical position}
+  Position~$p$ is a \index{critical position}\emph{critical position}
+  at $n$ in $k$ if for $t=\msg_k(n)$
 \begin{enumerate}
 \item $p$ is a carried position in~$t$,
 \item either $t\termat p\in U_k$, $t\termat p=\hash t_1$, or $t\termat
@@ -1504,15 +1504,21 @@ $t=\msg_k(n)$ if
 \item $\fn{esc}(k,n,t\termat p)$ is defined, and
 \item $\fn{anc}(t,p)\cap \fn{esc}(k,n,t\termat p)=\emptyset$.
 \end{enumerate}
+The message at a critical position is called a \emph{critical message.}
 \end{defn}
 
-The message at a critical position is called an \emph{authentication
-  test}.  It is a \index{nonce test}\emph{nonce test} if the message
-is an atom, otherwise it is a \index{encryption test}\emph{encryption
-  test}.  (A hash\index{hash} is treated as a kind of encryption in
-which the term that is hashed is the encryption key.)  Observe that
-every critical message at a node in a skeleton is not derivable at the
-node.
+\begin{defn}[Authentication Test]\label{def:authentication test}
+  The triple $(k,n,p)$ is an \index{authentication
+    test}\emph{authentication test} iff $p$ is a critical position at
+  $n$ in $k$.
+\end{defn}
+
+An authentication test is a \index{nonce test}\emph{nonce test} if the
+critical message is an atom, otherwise it is an \index{encryption
+  test}\emph{encryption test}.  (A hash\index{hash} is treated as a
+kind of encryption in which the term that is hashed is the encryption
+key.)  Observe that every critical message at a node in a skeleton is
+not derivable at the node.
 
 \begin{conj}
 A reception node is unrealized iff it has a critical position.
@@ -1526,23 +1532,22 @@ t_t\in\fn{anc}(t_e,p)\}\setminus T_e.$$
 \end{defn}
 
 \begin{defn}[Critical Position Solved]\label{def:critical position solved}
-Suppose~$p$ is a critical position at~$n_0$ in~$k_0$ and
-$k_0\homomorphism{\phi,\sigma}k_1$.  Let~$t_0=\msg_k(n)\termat p$,
-$t_1=\sigma(t_0)$, $T_0=\fn{esc}(k_0,n_0,t_0)$, $T_1=\sigma(T_0)$,
-$n_1=\phi(n_0)$, and~$t=\msg_{k_1}(n_1)$.  Critical position~$p$ is
+Suppose~$p$ is a critical position at~$n$ in~$k_0$ and
+$k_0\homomorphism{\phi,\sigma}k_1$.  Let~$t=\msg_{k_0}(n)\termat p$,
+ and $T=\fn{esc}(k_0,n,t)$.  Critical position~$p$ is
 \index{solved critical position}\emph{solved} in~$k_1$ after~$k_0$
-at~$n_0$ if:
+at~$n$ if:
 \begin{enumerate}
-\item $\fn{anc}(t,p)\cap T_1\neq\emptyset$, or
-\item for some~$t_p\in\outpred(k_1,n_1)$, $t_1$ is not carried
-  only within~$T_1$ in~$t_p$, or
+\item $\fn{anc}(\msg_{k_1}(\phi(n)),p)\cap\sigma(T_1)\neq\emptyset$, or
+\item for some~$t_p\in\outpred(k_1,\phi(n))$, $\sigma(t)$ is not carried
+  only within~$\sigma(T)$ in~$t_p$, or
 \item
-  $\fn{targ}(t_1,\fn{esc}(k_1,n_1,t_1))\setminus\sigma(\fn{targ}(t_0,T_0))\neq\emptyset$
+  $\fn{targ}(\sigma(t),\sigma(T))\setminus\sigma(\fn{targ}(t,T))\neq\emptyset$
   and there are variables in $k$'s protocol that are not atoms, or
-\item the decryption key of a member of~$T_1$ is derivable
-  before~$n_1$ in~$k_1$, or
-\item $t_1$ is an encryption and its encryption key is derivable
-  before~$n_1$ in~$k_1$.
+\item the decryption key of a member of~$\sigma(T)$ is derivable
+  before~$\phi(n)$ in~$k_1$, or
+\item $\sigma(t)$ is an encryption and its encryption key is derivable
+  before~$\phi(n)$ in~$k_1$.
 \end{enumerate}
 \end{defn}
 

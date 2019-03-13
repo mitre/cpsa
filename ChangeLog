@@ -1,3 +1,8 @@
+2019-03-13  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* doc/src/cpsaspec.tex (Critical Position Solved): Corrected item
+	3 in the definition and improved its presentation.
+
 2019-02-22  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Reduction.hs (addAnnoKey):  Added structured
