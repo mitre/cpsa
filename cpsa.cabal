@@ -61,13 +61,18 @@ Extra-Source-Files:
   doc/src/cpsadiagrams.mp doc/src/strands.mp doc/src/cmstrands.mp
   doc/src/carriers.mp doc/src/termtree.mp doc/src/blanchet.mp
   doc/src/mitrelogo.mp doc/src/cpsa.bib doc/SDAG.lhs doc/cpsalogo.mp
-  src/index.html src/cpsacgi src/cpsacgi.py src/cpsajson.py src/split.py
-  src/cpsa2svg src/cpsa.el src/httpd_allow_execmem.te src/cpsaperm.scm
-  src/cpsaops.scm src/preskel src/cpsa.pl src/unsorted.pl src/pp.pl
-  src/sexpr.pl src/perm.pl src/prover9.pl src/zoom.js src/js2hs
-  src/ghcmemlimit build.xml src/scala/Main.scala
-  src/scala/Pretty.scala src/scala/Printer.scala
-  src/scala/SExpr.scala
+  src/index.html src/cpsacgi src/cpsacgi.py src/cpsajson.py
+  src/split.py src/cpsa2svg src/cpsa.el src/httpd_allow_execmem.te
+  src/cpsaperm.scm src/cpsaops.scm src/preskel src/cpsa.pl
+  src/unsorted.pl src/pp.pl src/sexpr.pl src/perm.pl src/prover9.pl
+  src/zoom.js src/js2hs src/ghcmemlimit build.xml src/scala/Main.scala
+  src/scala/Pretty.scala src/scala/Printer.scala src/scala/SExpr.scala
+  src/ocaml/Makefile src/ocaml/README src/ocaml/cpsa.d.itarget
+  src/ocaml/cpsa.itarget src/ocaml/cpsa.mllib src/ocaml/cpsa.mltop
+  src/ocaml/cpsa.odocl src/ocaml/expand.ml src/ocaml/main.ml
+  src/ocaml/main.mli src/ocaml/pp.ml src/ocaml/reader.ml
+  src/ocaml/reader.mli src/ocaml/scanner.mll src/ocaml/sexpr.ml
+  src/ocaml/sexpr.mli src/ocaml/sexpr_type.ml
   tst/README tst/Makefile tst/Make4.hs tst/checktst tst/cpsagraphall
   tst/cpsashapesall tst/graphtst tst/updatetst
   tst/aik.scm tst/aik.tst tst/blanchet.scm

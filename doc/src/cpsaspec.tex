@@ -31,7 +31,7 @@
 \newcommand{\base}{\ensuremath{\mathfrak B}}
 \newcommand{\ints}{\ensuremath{\mathbb Z}}
 \newcommand{\solve}[1]{\stackrel{#1}{\longtwoheadrightarrow}}
-\newcommand{\outpred}{\fn{outpred}}
+\newcommand{\pubmsg}{\fn{pubmsg}}
 \newcommand{\avoid}{\fn{avoid}}
 \newcommand{\dcmp}{\fn{dcmp}}
 \newcommand{\carpos}{\fn{carpos}}
@@ -1193,7 +1193,7 @@ Penetrator roles make no origination assumptions.
 $$\begin{array}{l}
 \fn{base}(t)=\seq{\outbnd t},\mbox{ where $t$ is an atom}\\
 \fn{tag}(t)=\seq{\outbnd t},\mbox{ where $t$ is a tag}\\
-\fn{cat}(t_0,t_1)=\seq{\inbnd t_0,\inbnd t_1, \outbnd(t_0,
+\fn{pair}(t_0,t_1)=\seq{\inbnd t_0,\inbnd t_1, \outbnd(t_0,
   t_1)}\\
 \fn{sep}(t_0,t_1)=\seq{\inbnd(t_0, t_1),\outbnd
     t_0,\outbnd t_1}\\
@@ -1220,51 +1220,60 @@ instantiated, derives a message in the conclusion of the rule.
 
 The first rule states that no additional penetrator behavior is required
 to derive~$t$ if it has been previously sent.
-$$\infer{t\in{T_p}}{\der{t}{T_p}{T_a}}$$
-
-A uniquely originating atom need not be avoided if it has been sent.
-\begin{equation}\label{eqn:avoid}
-\infer{\der{t}{T_p}{T_a}}%
-{\der{t}{\{t_0\}\cup T_p}{\{t_0\}\cup T_a}}
+\begin{equation}
+  \infer{t\in{T_p}}{\der{t}{T_p}{T_a}}
 \end{equation}
-
-There are two decomposition steps available to the penetrator.
-\begin{equation}\label{eqn:sep}
-\infer{\der{t}{\{t_0,t_1\}\cup T_p}{T_a}}%
-{\der{t}{\{(t_0,t_1)\}\cup T_p}{T_a}}\quad
-[\mbox{by $\fn{sep}(t_0,t_1)$}]
+%
+By $\fn{base}(t)$:
+\begin{equation}\label{eqn:base}
+  \infer{\mbox{$t$ an atom}\qquad t\notin T_a}{\der{t}{T_p}{T_a}}
 \end{equation}
+%
+By $\fn{tag}(\mbox{``\ldots''})$:
+\begin{equation}\label{eqn:tag}
+  \der{\mbox{``\ldots''}}{T_p}{t_a}
+\end{equation}
+%
+By $\fn{pair}(t_0,t_1)$:
+\begin{equation}\label{eqn:pair}
+  \infer{\der{t_0}{T_p}{T_a}\qquad\der{t_1}{T_p}{T_a}}
+        {\der{(t_0,t_1)}{T_p}{T_a}}
+\end{equation}
+%
+By $\fn{sep}(t_0,t_1)$:
+\begin{equation}\label{eqn:sep0}
+  \infer{\der{(t_0,t_1)}{T_p}{T_a}}{\der{t_0}{T_p}{T_a}}
+\end{equation}
+%
+By $\fn{sep}(t_0,t_1)$:
+\begin{equation}\label{eqn:sep1}
+  \infer{\der{(t_0,t_1)}{T_p}{T_a}}{\der{t_1}{T_p}{T_a}}
+\end{equation}
+%
+By $\fn{enc}(t,k)$:
+\begin{equation}\label{eqn:enc}
+  \infer{\der{t}{T_p}{T_a}\qquad\der{k}{T_p}{T_a}}{\der{\enc{t}{k}}{T_p}{T_a}}
+\end{equation}
+%
+By $\fn{dec}(t,k)$:
 \begin{equation}\label{eqn:dec}
-\infer{\der{\fn{inv}(t_1)}{T_p}{T_a}\qquad
-\der{t}{\{t_0,\enc{t_0}{t_1}\}\cup T_p}{T_a}}%
-{\der{t}{\{\enc{t_0}{t_1}\}\cup T_p}{T_a}}\quad
-[\mbox{by $\fn{dec}(t_0,t_1)$}]
+  \infer{\der{\enc{t}{k}}{T_p}{T_a}\qquad\der{\fn{inv}{k}}{T_p}{T_a}}{\der{t}{T_p}{T_a}}
 \end{equation}
-
-There are three constructive steps.
-$$\infer{\der{t_0}{T_p}{T_a}\qquad\der{t_1}{T_p}{T_a}}%
-{\der{(t_0,t_1)}{T_p}{T_a}}\quad
-[\mbox{by $\fn{cat}(t_0,t_1)$}]$$
-$$\infer{\der{t_0}{T_p}{T_a}\qquad\der{t_1}{T_p}{T_a}}%
-{\der{\enc{t_0}{t_1}}{T_p}{T_a}}\quad
-[\mbox{by $\fn{enc}(t_0,t_1)$}]$$
-$$\infer{\der{t}{T_p}{T_a}}%
-{\der{\hash{t}}{T_p}{T_a}}\quad
-[\mbox{by $\fn{hash}(t)$}]$$
-
-There are three rules for indivisible messages.
-$$\der{C_i}{T_p}{T_a}\quad
-[\mbox{by $\fn{tag}(C_i)$}]$$
-$$\infer{t\notin T_a\qquad\mbox{$t$ an atom}}%
-{\der{t}{T_p}{T_a}}\quad
-[\mbox{by $\fn{base}(t)$}]$$
+%
+By $\fn{hash}(t)$:
+\begin{equation}\label{eqn:hash}
+  \infer{\der{t}{T_p}{T_a}\qquad\der{k}{T_p}{T_a}}{\der{\hash{t}}{T_p}{T_a}}
+\end{equation}
+%
 A non-base sorted variable is derivable in a bundle that instantiates
 it with any message other than an element of $X_\top$.
-$$\infer{t\in X_\top}{\der{t}{T_p}{T_a}}$$
+\begin{equation}\label{eqn:top}
+  \infer{t\in X_\top}{\der{t}{T_p}{T_a}}
+\end{equation}
 
-\begin{defn}[Outbound predecessors]
-The \index{outbound predecessors}\emph{outbound predecessors} of
-skeleton~$k$ at~$n$ is $\outpred(k,n)=\{\msg_k(n_0)\mid n_0 \kprec{k}
+\begin{defn}[Public Messages]
+The \index{public messages}\emph{public messages} of
+skeleton~$k$ at~$n$ is $\pubmsg(k,n)=\{\msg_k(n_0)\mid n_0 \kprec{k}
 n, n_0\mbox{~is transmitting}\}$.
 \end{defn}
 
@@ -1280,7 +1289,7 @@ originating atoms can be exposed.
 \begin{defn}[Derivable Before]\label{def:der}
 A message~$t$ is \index{derivable before}\emph{derivable before}
 reception node~$n$ in skeleton~$k$, written $\fn{der}(k,n,t)$, if
-$\der{t}{T_p}{T_a}$ where $T_p=\outpred(k,n)$ and $T_a=\avoid(k)$.
+$\der{t}{T_p}{T_a}$ where $T_p=\pubmsg(k,n)$ and $T_a=\avoid(k)$.
 \end{defn}
 
 \begin{defn}[Realized Node]
@@ -1324,18 +1333,20 @@ functions.
 \begin{defn}[Buildable]
 Message~$t$ is \index{buildable}\emph{buildable} from previously sent
 messages~$T_p$ while avoiding~$T_a$, written $\fn{bld}(t,T_p,T_a)$, if
-\der{t}{T_p}{T_a} without the use of Inference Rules \ref{eqn:avoid},
-\ref{eqn:sep}, and~\ref{eqn:dec}.
+\der{t}{T_p}{T_a} without the use of Inference Rules \ref{eqn:sep0},
+\ref{eqn:sep1}, and~\ref{eqn:dec}.
 \end{defn}
 
 Consider the following reduction system based on Inference Rules
-\ref{eqn:avoid}, \ref{eqn:sep}, and~\ref{eqn:dec}.
+\ref{eqn:sep0}, \ref{eqn:top}, \ref{eqn:sep1}, and~\ref{eqn:dec}.
 $$\begin{array}{r@{}c@{}ll}
-\dctx{\{t\}\cup T_p}{T_a}&{}\to{}&\dctx{T_p}{T_a}\setminus\{t\}
-&\mbox{if $t$ is an atom or in $X_{\top}$}\\
+\dctx{T_p}{T_a}&{}\to{}&\dctx{T_p}{T_a\setminus\{t\}}
+&\mbox{if $t\in T_p$ and $t\in T_a$}\\
+\dctx{T_p}{T_a}&{}\to{}&\dctx{T_p\setminus\{x\}}{T_a}
+&\mbox{if $x\in T_p$ and $x\in X_{\top}$}\\
 \dctx{\{(t_0,t_1)\}\cup T_p}{T_a}&{}\to{}
 &\dctx{\{t_0,t_1,(t_0,t_1)\}\cup T_p}{T_a}
-&\mbox{if $t_0,t_1\notin T_p$}\\
+&\mbox{if $t_0$ or $t_1\notin T_p$}\\
 \dctx{\{\enc{t_0}{t_1}\}\cup
 T_p}{T_a}&{}\to{}&\dctx{\{t_0,\enc{t_0}{t_1}\}\cup T_p}{T_a}
 &\mbox{if $t_0\notin T_p$ and}\\
@@ -1363,7 +1374,7 @@ The decomposition at a node function is
 \begin{center}
 \begin{tabular}{l}
 $\fn{dcmp}(k,n)={}$\\
-\quad$\fn{decompose}(\outpred(k,n),\avoid(k))$
+\quad$\fn{decompose}(\pubmsg(k,n),\avoid(k))$
 \end{tabular}
 \end{center}
 
@@ -1498,10 +1509,10 @@ is undefined when~$t_c$ is derivable in~$k$ at~$n$.
   at $n$ in $k$ if for $t=\msg_k(n)$
 \begin{enumerate}
 \item $p$ is a carried position in~$t$,
+\item $t\termat p$ is not derivable before $n$ in $\skel$,
 \item either $t\termat p\in U_k$, $t\termat p=\hash t_1$, or $t\termat
-  p=\enc{t_0}{t_1}$ and~$t_1$ is not derivable before~$n$ in~$k$,
+  p=\enc{t_0}{t_1}$ and~$t_1$ is not derivable before~$n$ in~$k$, and
   \label{item:nonce or encryption}
-\item $\fn{esc}(k,n,t\termat p)$ is defined, and
 \item $\fn{anc}(t,p)\cap \fn{esc}(k,n,t\termat p)=\emptyset$.
 \end{enumerate}
 The message at a critical position is called a \emph{critical message.}
@@ -1510,7 +1521,7 @@ The message at a critical position is called a \emph{critical message.}
 \begin{defn}[Authentication Test]\label{def:authentication test}
   The triple $(k,n,p)$ is an \index{authentication
     test}\emph{authentication test} iff $p$ is a critical position at
-  $n$ in $k$.
+  reception node $n$ in $k$.
 \end{defn}
 
 An authentication test is a \index{nonce test}\emph{nonce test} if the
@@ -1539,7 +1550,7 @@ $k_0\homomorphism{\phi,\sigma}k_1$.  Let~$t=\msg_{k_0}(n)\termat p$,
 at~$n$ if:
 \begin{enumerate}
 \item $\fn{anc}(\msg_{k_1}(\phi(n)),p)\cap\sigma(T_1)\neq\emptyset$, or
-\item for some~$t_p\in\outpred(k_1,\phi(n))$, $\sigma(t)$ is not carried
+\item for some~$t_p\in\pubmsg(k_1,\phi(n))$, $\sigma(t)$ is not carried
   only within~$\sigma(T)$ in~$t_p$, or
 \item
   $\fn{targ}(\sigma(t),\sigma(T))\setminus\sigma(\fn{targ}(t,T))\neq\emptyset$
