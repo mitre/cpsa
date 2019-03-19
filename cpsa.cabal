@@ -108,7 +108,8 @@ Extra-Source-Files:
   tst/pkinit.tst tst/preprocess.scm tst/preprocess.tst tst/print.scm
   tst/print.tst tst/pruning1.scm tst/pruning1.tst tst/sigenc.scm
   tst/sigenc.tst tst/sorted_epmo_acctnum.scm
-  tst/sorted_epmo_acctnum.tst tst/targetterms2.scm
+  tst/sorted_epmo_acctnum.tst tst/targetterms1.scm
+  tst/targetterms1.tst tst/targetterms2.scm
   tst/targetterms2.tst tst/targetterms6.scm tst/targetterms6.tst
   tst/targetterms8.scm tst/targetterms8.tst tst/timestamping.scm
   tst/timestamping.tst tst/tnsl5.lisp tst/uncarried_keys.scm

@@ -1549,16 +1549,17 @@ $k_0\homomorphism{\phi,\sigma}k_1$.  Let~$t=\msg_{k_0}(n)\termat p$,
 \index{solved critical position}\emph{solved} in~$k_1$ after~$k_0$
 at~$n$ if:
 \begin{enumerate}
-\item $\fn{anc}(\msg_{k_1}(\phi(n)),p)\cap\sigma(T_1)\neq\emptyset$, or
-\item for some~$t_p\in\pubmsg(k_1,\phi(n))$, $\sigma(t)$ is not carried
-  only within~$\sigma(T)$ in~$t_p$, or
-\item
+\item\label{item:anc}
+  $\fn{anc}(\msg_{k_1}(\phi(n)),p)\cap\sigma(T)\neq\emptyset$, or
+\item\label{item:aug} for some~$t_p\in\pubmsg(k_1,\phi(n))$,
+  $\sigma(t)$ is not carried only within~$\sigma(T)$ in~$t_p$, or
+\item\label{item:targs}
   $\fn{targ}(\sigma(t),\sigma(T))\setminus\sigma(\fn{targ}(t,T))\neq\emptyset$
   and there are variables in $k$'s protocol that are not atoms, or
-\item the decryption key of a member of~$\sigma(T)$ is derivable
-  before~$\phi(n)$ in~$k_1$, or
-\item $\sigma(t)$ is an encryption and its encryption key is derivable
-  before~$\phi(n)$ in~$k_1$.
+\item\label{item:dec} the decryption key of a member of~$\sigma(T)$ is
+  derivable before~$\phi(n)$ in~$k_1$, or
+\item\label{item:enc} $\sigma(t)$ is an encryption and its encryption
+  key is derivable before~$\phi(n)$ in~$k_1$.
 \end{enumerate}
 \end{defn}
 
@@ -1719,6 +1720,68 @@ critical message, one must require that variables of sort message are
 acquired.  This fact needs to be explained and noted as another reason
 for the acquired variable constraint.
 \end{note}
+
+\iffalse
+The following example shows the need for Item~\ref{item:targs} in the
+definition of a solved critical position.  The protocol has two roles.
+
+\[\begin{array}{r@{{}={}}l}
+\init(a\colon\srt{N},n_1,n_2\colon\srt{D},k\colon\srt{A})&
+\role(\seq{\outbnd\enc{n_1,\enc{a,n_2}{k}}{k},\inbnd\enc{a,n_1}{k}},
+\emptyset,\emptyset)\\
+\resp(n_1\colon\srt{D},m\colon\top,k\colon\srt{A})&
+\role(\seq{\inbnd\enc{n_1,\enc{m}{k}}{k},\outbnd\enc{m}{k}},
+\emptyset,\emptyset)
+\end{array}\]
+where we use~\srt{N} for sort \dom{name}, \srt{D} for sort \dom{data}
+\srt{A} for sort \dom{akey}, and $\top$ for sort \dom{mesg} to save
+space.  Notice the responder declares $m$ to be of sort \dom{mesg}.
+
+The point-of-view skeleton $k_0$ is:
+\[\begin{array}{r@{}ll}
+\skel_Y(
+&\seq{\init(a',n'_1, n'_2,k')}
+&\mbox{Role map}\\
+&\{\init(a',n'_1, n'_2,k'),\resp(n''_1,m'',k'')\},
+&\mbox{Protocol}\\
+&\seq{\seq{\outbnd\enc{n_1,\enc{a,n_2}{k}}{k},\inbnd\enc{a,n_1}{k}}},
+&\mbox{Traces}\\
+&\emptyset,
+&\mbox{Node orderings}\\
+&\{k^{-1}\},
+&\mbox{Non-origination}\\
+&\{n_1\})
+&\mbox{Unique origination}
+\end{array}\]
+where $Y=a\colon\srt{N},n_1,n_2\colon\srt{D},k\colon\srt{A}$.
+
+{\cpsa} finds the nonce test $(k_0,(0,1),\seq{0,1})$ with critical
+message $n_1$.  The escape set $E=\fn{esc}(k_0, (0,1), n_1) =
+\{\enc{n_1,\enc{a,n_2}{k}}{k}\}$.
+
+{\cpsa} solves this test to produce skeleton $k_1$ with a displacement
+that simply equates $n_1$ and $n_2$.  Thus,
+$k_0\homomorphism{\phi,\sigma}k_1$ where $\phi=\seq{0}$ and
+$\sigma=\{n_1\mapsto n_2\}$.
+
+Consider Definition~\ref{def:critical position solved}, the definition
+of critical position solved.  Item~\ref{item:anc} does not apply
+because an ancestor of the image of the critical position does not
+match~$E$.  Item~\ref{item:aug} does not apply because
+$(k_1,(0,1),\seq{0,1})$ is a nonce test.  Item~\ref{item:dec} does not
+apply because the key that protects the member of the escape set is
+non-originating.  Finally, Item~\ref{item:enc} does not apply because
+the critical message is not an encryption.
+
+Item~\ref{item:targs} applies in this example because
+\[\begin{array}{r@{{}={}}l}
+\fn{targs}(n_1,E) & \{n_1,(n_1,\enc{a,n_2}{k})\}\\
+\fn{targs}(\sigma(n_1),\sigma(E))&\{n_2,(n_2,\enc{a,n_2}{k}),(a,n_2)\}.
+\end{array}\]
+so
+$\fn{targs}(\sigma(n_1),\sigma(E))\setminus\sigma(\fn{targs}(n_1,E))=\{(a,
+n_2)\}$.
+\fi
 
 \chapter{Collapsing and Preconditioning}\label{chp:collapsing}
 
