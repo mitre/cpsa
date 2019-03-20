@@ -1721,7 +1721,6 @@ acquired.  This fact needs to be explained and noted as another reason
 for the acquired variable constraint.
 \end{note}
 
-\iffalse
 The following example shows the need for Item~\ref{item:targs} in the
 definition of a solved critical position.  The protocol has two roles.
 
@@ -1781,7 +1780,13 @@ Item~\ref{item:targs} applies in this example because
 so
 $\fn{targs}(\sigma(n_1),\sigma(E))\setminus\sigma(\fn{targs}(n_1,E))=\{(a,
 n_2)\}$.
-\fi
+
+Once $n_1$ and $n_2$ have been equated, {\cpsa} easily finds the one
+shape by adding a responder instance.  The shape corresponds to a
+rather odd use of the initiator role.  The instance of that role picks
+a fresh value for $n_1$ and then makes use of that value for its $n_2$
+parameter.  See Appendix~\ref{chp:traces} for more on the relation
+between roles and the programs they specify.
 
 \chapter{Collapsing and Preconditioning}\label{chp:collapsing}
 
