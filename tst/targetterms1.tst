@@ -7,7 +7,7 @@
     (trace (send (enc n1 (enc a n2 k) k)) (recv (enc a n1 k))))
   (defrole resp
     (vars (n1 text) (m mesg) (k akey))
-    (trace (recv (enc n1 (enc m k) k)) (send (enc m k)))))
+    (trace (recv (enc n1 m k)) (send m))))
 
 (defskeleton targetterms
   (vars (n1 n2 text) (a skey) (k akey))
@@ -37,7 +37,7 @@
 (defskeleton targetterms
   (vars (n2 text) (a skey) (k akey))
   (defstrand init 2 (n1 n2) (n2 n2) (a a) (k k))
-  (defstrand resp 2 (m (cat a n2)) (n1 n2) (k k))
+  (defstrand resp 2 (m (enc a n2 k)) (n1 n2) (k k))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk k))
   (uniq-orig n2)

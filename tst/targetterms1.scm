@@ -11,8 +11,8 @@
 
   (defrole resp (vars (n1 text) (m mesg) (k akey))
     (trace
-     (recv (enc n1 (enc m k) k))
-     (send (enc m k)))))
+     (recv (enc n1 m k))
+     (send m))))
 
 (defskeleton targetterms
   (vars (n1 text) (k akey))
