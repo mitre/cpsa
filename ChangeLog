@@ -1,3 +1,9 @@
+2019-04-03  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Strand.hs (verbosePreskelWellFormed):  Added a check
+	that ensures the every variable that occurs in a fact also occurs
+	in some strand.
+
 2019-03-13  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* doc/src/cpsaspec.tex (Critical Position Solved): Corrected item
