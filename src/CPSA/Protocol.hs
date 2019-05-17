@@ -245,7 +245,8 @@ type NodeTerm = (Term, Int)
 data Goal
   = Goal { uvars :: [Term],          -- Universally quantified variables
            antec :: [AForm],         -- Antecedent
-           evars :: [[Term]],        -- Existentially quantified variables
+           -- Consequent with existentially quantified variables
+           consq :: [([Term], [AForm])],
            concl :: [[AForm]] }      -- Conclusion
     deriving Show
 

@@ -2241,14 +2241,25 @@ doRewrite k r vas =
 doRewriteOne :: Preskel -> Rule -> (Gen, Env) -> [Preskel]
 doRewriteOne k r e =
   do
-    cl <- concl $ rlgoal r
-    (k, _) <- doConj (rlname r) cl k e
+    (evars, cl) <- consq $ rlgoal r
+    let e' = foldl fresh e evars
+    (k, _) <- doConj (rlname r) cl k e'
     k <- wellFormedPreskel k
     k <- toSkeleton True k
     return $ f k                -- Add comment about rule application
   where f k = k { kcomment =
                   L () [S () "rule", S () (rlname r)] :
                   kcomment k }
+
+fresh :: (Gen, Env) -> Term -> (Gen, Env)
+fresh (g, e) t
+  | isStrdVar t = (g, e)
+  | otherwise =
+      case match t t' (g', e) of
+        e' : _ -> e'
+        [] -> error "Strand.fresh: Cannot match logical variable to clone"
+    where
+      (g', t') = clone g t
 
 type Rewrite = Preskel -> (Gen, Env) -> [(Preskel, (Gen, Env))]
 
@@ -2355,29 +2366,29 @@ rparam name r v h z t k (g, e) =
     Just s
       | height inst < h -> []
       | rname (role inst) == rname r ->
-        rParam k (g, e) t t'
+        rParam name k (g, e) t t'
       | otherwise ->
         do
           (k, (g, e)) <- rDisplace e k' ns s
-          rParam k (g, e) t t'
+          rParam name k (g, e) t t'
       where
         inst = strandInst k s
         t' = instantiate (env inst) v
         k' = addStrand g k r h
         ns = nstrands k
     Nothing ->
-      error ("In rule " ++ name ++ ", parameter predicate for " ++
-             rname r ++ " did not get a strand")
+      error ("In rule " ++ name ++
+             ", parameter predicate did not get a strand")
 
-rParam :: Preskel -> (Gen, Env) -> Term -> Term -> [(Preskel, (Gen, Env))]
-rParam k (g, e) t t' =
+rParam :: String -> Preskel -> (Gen, Env) ->
+          Term -> Term -> [(Preskel, (Gen, Env))]
+rParam name k (g, e) t t' =
   case matched e t of
-    False ->
-      do
-        (g, e) <- match t t' (g, e)
-        return (k, (g, e))
     True ->
       rUnify k (g, e) (instantiate e t) t'
+    False ->
+      error ("In rule " ++ name ++
+             ", parameter predicate did not get a value")
 
 rUnify :: Preskel -> (Gen, Env) -> Term -> Term -> [(Preskel, (Gen, Env))]
 rUnify k (g, e) t t' =

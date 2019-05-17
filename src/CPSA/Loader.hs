@@ -602,12 +602,13 @@ loadImplication md _ prot g vars (L pos [S _ "implies", a, c]) =
   do
     antec <- loadCheckedConj md pos prot vars vars a
     (g, vc) <- loadConclusion pos prot g vars c
-    let (evars, concl) = unzip vc
+    let f (evars, form) = (evars, map snd form)
+    let consq = map f vc        -- Expunge position info
     let goal =
           Goal { uvars = vars,
                  antec = map snd antec,
-                 evars = evars,
-                 concl = map (map snd) concl }
+                 consq = consq,
+                 concl = map snd consq }
     return (g, goal, antec)
 loadImplication _ pos _ _ _ _ = fail (shows pos "Bad goal implication")
 

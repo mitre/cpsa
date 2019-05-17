@@ -45,7 +45,7 @@ displayImpl :: Context -> Goal -> SExpr ()
 displayImpl ctx g =
   L () [S () "implies",
         displayConj ctx (antec g),
-        displayDisj ctx (zip (evars g) (concl g)) ]
+        displayDisj ctx (consq g) ]
 
 displayDisj :: Context -> [([Term], [AForm])] -> SExpr ()
 displayDisj _ [] = L () [S () "false"]
