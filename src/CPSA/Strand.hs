@@ -805,8 +805,11 @@ tryPerm g g' (env, renv, perm) =
     checkOrigs g g' env &&
     checkOrigs g' g renv &&
     checkFacts g g' env perm &&
-    checkFacts g' g renv perm &&
+    checkFacts g' g renv (invperm perm) &&
     containsMapped (permutePair perm) (gorderings g') (gorderings g)
+
+invperm :: [Int] -> [Int]
+invperm p = map snd (L.sortOn fst (zip p [0..]))
 
 -- containsMapped f xs ys is true when list xs contains each element
 -- in ys after being mapped with function f.

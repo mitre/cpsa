@@ -1,3 +1,8 @@
+2019-05-20  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Strand.hs (tryPerm):  Fixed bug in isomorphism
+	checking.  Second check of facts used wrong permutation.
+
 2019-05-17  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Strand.hs (doRewriteOne):  Values associated with
