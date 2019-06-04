@@ -19,6 +19,7 @@ import cpsajson
 def main():
     if len(sys.argv) != 2:      # Ensure one file name supplied
         print("Usage: " + sys.argv[0] + " file")
+        sys.exit(1)
     fname = sys.argv[1]
     (root, ext) = os.path.splitext(fname)
     f = open(fname, 'r')

@@ -1,3 +1,8 @@
+2019-06-04  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Reduction.hs (begin): Reversed todo list after running
+	rules so as to get the output order correct.
+
 2019-05-20  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Strand.hs (tryPerm):  Fixed bug in isomorphism

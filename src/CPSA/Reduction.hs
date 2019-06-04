@@ -147,7 +147,7 @@ begin p h ks m n seen lk =
                   Nada "Not closed under rules")
         let (n', seen', todo', _) =
               foldl (next lk) (n, seen, [], []) kids
-        search p h ks m n' seen' todo' []
+        search p h ks m n' seen' (reverse todo') []
 
 -- Apply collapse until all possibilities are exhausted.
 search :: Options -> Handle -> [Preskel] -> Int -> Int -> Seen ->
