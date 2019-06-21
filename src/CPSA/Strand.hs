@@ -702,12 +702,23 @@ gist k =
            nunique = length gunique,
            nfacts = length gfacts }
     where
-      gtraces = map (\i -> (height i, trace i)) (insts k)
+      gtraces = map f (insts k)
+      -- Old: f i = (height i, trace i)
+      f i =
+        (brief c, c)
+        where c = trace i
       gorderings = orderings k
       gnon = knon k
       gpnon = kpnon k
       gunique = kunique k
       gfacts = kfacts k
+
+-- Summarize a trace so that two traces don't match unless they have
+-- the same number.  The summary used to be the height of the trace.
+brief :: Trace -> Int
+brief [] = 0
+brief (In _ : c) = 1 + 3 * brief c
+brief (Out _ : c) = 2 + 3 * brief c
 
 -- Test to see if two preskeletons are isomorphic
 
