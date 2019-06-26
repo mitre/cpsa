@@ -1,3 +1,8 @@
+2019-06-26  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/Strand.hs (multiset): Use multisets of trace briefs
+	to reduce the number of full permutation isomorphism checks.
+
 2019-06-21  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Strand.hs (brief): Added a summary of trace that

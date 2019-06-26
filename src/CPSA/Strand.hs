@@ -678,6 +678,7 @@ data Gist = Gist
       gfacts :: [Fact],  -- A list of facts
       nvars :: !Int,     -- Number of variables
       ntraces :: !Int,   -- Number of traces
+      briefs :: [(Int, Int)],   -- Multiset of trace briefs
       norderings :: !Int,       -- Number of orderings
       nnon :: !Int,      -- Number of non-originating terms
       npnon :: !Int,     -- Number of penetrator non-originating terms
@@ -696,6 +697,7 @@ gist k =
            gfacts = gfacts,
            nvars = length (kvars k),
            ntraces = length gtraces,
+           briefs = multiset (map fst gtraces),
            norderings = length gorderings,
            nnon = length gnon,
            npnon = length gpnon,
@@ -719,6 +721,20 @@ brief :: Trace -> Int
 brief [] = 0
 brief (In _ : c) = 1 + 3 * brief c
 brief (Out _ : c) = 2 + 3 * brief c
+
+-- Convert a list of integers into a sorted multiset representation.
+-- The output is a list of pairs, (i, n). Integer n gives the
+-- multiplity of integer i in the input list.  List is sorted based on
+-- the first element in each pair.
+multiset :: [Int] -> [(Int, Int)]
+multiset brf =
+  L.foldl insert [] brf
+  where
+    insert [] b = [(b, 1)]
+    insert ((k, n) : brf) b
+      | k == b = (k, n + 1) : brf
+      | k > b = (b, 1) : (k, n) : brf
+      | otherwise = (k, n) : insert brf b
 
 -- Test to see if two preskeletons are isomorphic
 
@@ -744,6 +760,7 @@ isomorphic :: Gist -> Gist -> Bool
 isomorphic g g' =
     nvars g == nvars g' &&
     ntraces g == ntraces g' &&
+    briefs g == briefs g' &&
     norderings g == norderings g' &&
     nnon g == nnon g' &&
     npnon g == npnon g' &&
