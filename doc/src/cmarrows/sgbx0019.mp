@@ -39,7 +39,7 @@ vardef setup_righthalfarrow (expr source_file, cmdname) =
     "fudge           :=" & decimal fudge & ";" &
     "crisp#          :=" & decimal crisp# & ";" &
     "hair#           :=" & decimal hair# & ";")
-      
+
     save prevpen;
     prevpen:=savepen;
 
@@ -48,7 +48,7 @@ vardef setup_righthalfarrow (expr source_file, cmdname) =
             y[], y[]', y[]l, y[]'l, y[]r, y[]'r;
     save spread, w;
     numeric spread, w;
-  
+
     if crisp#>fudge*hair#:
       crisp#:=fudge*hair#;
     fi
@@ -64,7 +64,7 @@ vardef setup_righthalfarrow (expr source_file, cmdname) =
     x3=x4=x0-4u#-eps;
     penpos5(rule_thickness#, angle(z4-z0)); z5l=z0;
     penpos6(rule_thickness#, angle(z3-z0)); z6l=z0;
-    save t; numeric t; 
+    save t; numeric t;
     save pq; path pq;    pq = z4l..{2(x0-x4),y0-y4}z6r;
     t=xpart(pq intersectiontimes ((0,y2l)--(w,y2l))); x2=xpart point t of pq;
     z9=.2[.5[z3,z4],z0];
@@ -80,7 +80,7 @@ vardef setup_righthalfarrow (expr source_file, cmdname) =
            z_6 = z_5 transformed T;)
       T
     enddef;
-  
+
     save T;   transform T;
     save tt;  numeric tt;  tt  = arctime(arclength apth - (x0-x9)) of apth;
     save ttt; numeric ttt; ttt = arctime(arclength apth - (x0-x2)) of apth;
@@ -99,7 +99,7 @@ vardef setup_righthalfarrow (expr source_file, cmdname) =
 	           length (z3r..{2(x0-x3),y0-y3}z5l)) of pq --cycle)
       transformed T
     enddef;
-    
+
     if     arclength apth = 0:
       T:=identity reflectedabout(z0+(-1pt,0),z0)
                   shifted (point (length apth) of apth - z0);
@@ -134,7 +134,7 @@ vardef setup_righthalfarrow (expr source_file, cmdname) =
     if arclength apth > x0-x2: draw subpath(0,ttt) of apth
       withpen pencircle scaled rule_thickness# text_;
     fi
-  
+
     pickup prevpen;
 
   enddef;

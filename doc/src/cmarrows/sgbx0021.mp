@@ -36,7 +36,7 @@ vardef setup_shortaxisarrow(expr source_file, cmdname) =
     "asc_height#     :=" & decimal asc_height# & ";" &
     "eps             :=" & decimal eps & ";" &
     "monospace       :=" & if monospace: "true" else: "false" fi & ";")
-  
+
     save prevpen;
     prevpen:=savepen;
 
@@ -45,7 +45,7 @@ vardef setup_shortaxisarrow(expr source_file, cmdname) =
             y[], y[]', y[]l, y[]'l, y[]r, y[]'r;
     save spread, w;
     numeric spread, w;
-  
+
     pickup pencircle scaled rule_thickness#;
 
     spread = math_spread[.45x_height#, .55x_height#];
@@ -62,7 +62,7 @@ vardef setup_shortaxisarrow(expr source_file, cmdname) =
     save pp; path pp; pp=z4l{z9-z4}..z6r;
     save t; numeric t;
     t=xpart(pp intersectiontimes ((0,y2l)--(w,y2l))); x2=xpart point t of pp;
-   
+
     save mapto, n;
     vardef mapto(text t) =
       hide(numeric n; n:=0;
@@ -74,7 +74,7 @@ vardef setup_shortaxisarrow(expr source_file, cmdname) =
            z_6 = z_5 transformed T;)
       T
     enddef;
-  
+
     save T;   transform T;
     save tt;  numeric tt;  tt  = arctime(arclength apth - (x5l-x2)) of apth;
     save ttt; numeric ttt; ttt = arctime(arclength apth - (x5l-x3)) of apth;
@@ -87,7 +87,7 @@ vardef setup_shortaxisarrow(expr source_file, cmdname) =
 	              (point s of pp -- point s of pp + (2rule_thickness#,0))))
 	of (z0..{z4-z9}z4r)--subpath(s,t) of pp--z2l) transformed T
     enddef;
-    
+
     if   arclength apth = 0:
       T:=identity shifted (point (length apth) of apth - z0);
     elseif arclength apth < x0-x3l:
@@ -99,11 +99,11 @@ vardef setup_shortaxisarrow(expr source_file, cmdname) =
                z2,
                point tt of apth,
                (x3,y9)-(0,3rule_thickness#),
-               point ttt of apth - 
+               point ttt of apth -
                      3rule_thickness#*(unitvector (direction tt of apth)
                                                   rotated 90));
     fi
-					      
+
     save f,s;
     vardef f(expr s) =
       length(point s of (pp transformed T) - point tt of apth)
@@ -121,7 +121,7 @@ vardef setup_shortaxisarrow(expr source_file, cmdname) =
 
     pp := (z3l{z9-z3}..z5r);
     save pq; path pq; pq := (z3r{z9-z3}..z0);
-    
+
     save left_texarrowhead, pb;
     vardef left_texarrowhead(expr T, s) =
       (z2r--subpath(t,s) of pp
@@ -141,7 +141,7 @@ vardef setup_shortaxisarrow(expr source_file, cmdname) =
                z2,
                point tt of apth,
                (x3,y9)+(0,3rule_thickness#),
-               point ttt of apth + 
+               point ttt of apth +
                      3rule_thickness#*(unitvector (direction tt of apth)
                                                   rotated 90));
     fi
@@ -166,7 +166,7 @@ vardef setup_shortaxisarrow(expr source_file, cmdname) =
       draw subpath(0,tt) of apth withpen pencircle scaled 1.25rule_thickness#
            text_;
     fi
-  
+
     pickup prevpen;
 
   enddef;

@@ -36,7 +36,7 @@ vardef setup_parallelarrows (expr source_file, cmdname) =
     "eps             :=" & decimal eps & ";" &
     "fudge           :=" & decimal fudge & ";" &
     "crisp#          :=" & decimal crisp# & ";" &
-    "hair#           :=" & decimal hair# & ";")    
+    "hair#           :=" & decimal hair# & ";")
 
     save prevpen;
     prevpen:=savepen;
@@ -47,7 +47,7 @@ vardef setup_parallelarrows (expr source_file, cmdname) =
 
     save spread, w;
     numeric spread, w;
-  
+
     if crisp#>fudge*hair#:
       crisp#:=fudge*hair#;
     fi
@@ -55,7 +55,7 @@ vardef setup_parallelarrows (expr source_file, cmdname) =
 
     spread = math_spread[.45x_height#, .55x_height#];
     w = 18u#;
-  
+
     penpos1(rule_thickness#, 90); penpos2(rule_thickness#, 90);
     penpos3(bar#, 0);             penpos4(bar#, 0);
     y0=y1=y2=math_axis#; x1-.5rule_thickness#=u#; rt x0=w-u#;
@@ -64,18 +64,18 @@ vardef setup_parallelarrows (expr source_file, cmdname) =
     penpos5(bar#, angle(z4-z0)); z5l=z0;
     penpos6(bar#, angle(z3-z0)); z6l=z0;
     z9=.381966[.5[z3,z4],z0];
-  
+
     save pp; path pp;   pp = z4l{z9-z4}..z6r;
     save t; numeric t;  t = xpart(pp intersectiontimes ((0,y2l)--(w,y2l)));
     x2=xpart point t of pp;
-  
+
     save texarrowhead;
     vardef texarrowhead(expr T) =
       filldraw (z0..{z4-z9}z4r--subpath(0,t) of pp
                 --z2l--z2r--subpath(t,0) of (z3l{z9-z3}..z5r)
                 --z3r{z9-z3}..z0 & cycle) transformed T text_;
     enddef;
-  
+
     save mapto, n;
     vardef mapto(text t) =
       hide(numeric n; n:=0;
@@ -87,7 +87,7 @@ vardef setup_parallelarrows (expr source_file, cmdname) =
            z_6 = z_5 transformed T;)
       T
     enddef;
-  
+
     save tt;  numeric tt;  tt  = arctime(arclength apth - (x0-x3l)) of apth;
     save ttt; numeric ttt; ttt = arctime(arclength apth - (x0-x2)) of apth;
 
@@ -97,34 +97,34 @@ vardef setup_parallelarrows (expr source_file, cmdname) =
       numeric s, stp; stp:=(arclength ppp) div 5pt;
                       if stp=0: stp:=1; fi
                       stp:=(arclength ppp)/stp;
-  
+
       if stp>0:
       draw for s=0 step stp until arclength ppp - stp:
-             point (arctime s of ppp) of ppp + 
-             (.24asc_height#+eps)*(unitvector direction (arctime s of ppp) 
+             point (arctime s of ppp) of ppp +
+             (.24asc_height#+eps)*(unitvector direction (arctime s of ppp)
                                                         of ppp rotated 90)
              {direction (arctime s of ppp) of ppp}..
            endfor
            {direction (length ppp) of ppp}
-           point (length ppp) of ppp + 
-           (.24asc_height#+eps)*(unitvector direction (length ppp) 
+           point (length ppp) of ppp +
+           (.24asc_height#+eps)*(unitvector direction (length ppp)
 	                                                of ppp rotated 90)
 	   withpen pencircle scaled rule_thickness# text_;
-  
+
       draw for s=0 step stp until arclength ppp - stp:
-             point (arctime s of ppp) of ppp - 
-             (.24asc_height#+eps)*(unitvector direction (arctime s of ppp) 
+             point (arctime s of ppp) of ppp -
+             (.24asc_height#+eps)*(unitvector direction (arctime s of ppp)
                                                         of ppp rotated 90)
              {direction (arctime s of ppp) of ppp}..
            endfor
            {direction (length ppp) of ppp}
-           point (length ppp) of ppp - 
-           (.24asc_height#+eps)*(unitvector direction (length ppp) 
+           point (length ppp) of ppp -
+           (.24asc_height#+eps)*(unitvector direction (length ppp)
 	                                                of ppp rotated 90)
 	   withpen pencircle scaled rule_thickness# text_;
       fi
     enddef;
-  
+
     if arclength apth > x0-x2: parallelline subpath(0,ttt) of apth; fi
 
     save T; transform T;
@@ -138,7 +138,7 @@ vardef setup_parallelarrows (expr source_file, cmdname) =
                     (unitvector (direction (length apth) of apth) rotated 90));
     else:
       T:=mapto(z0,
-               point (length apth) of apth + 
+               point (length apth) of apth +
                  (.24asc_height#+eps)*
                      (unitvector (direction (length apth) of apth) rotated 90),
                z2,
@@ -160,7 +160,7 @@ vardef setup_parallelarrows (expr source_file, cmdname) =
                    (unitvector (direction (length apth) of apth) rotated -90));
     else:
       T:=mapto(z0,
-               point (length apth) of apth - 
+               point (length apth) of apth -
                  (.24asc_height#+eps)*
                      (unitvector (direction (length apth) of apth) rotated 90),
                z2,
@@ -171,9 +171,9 @@ vardef setup_parallelarrows (expr source_file, cmdname) =
                point tt of apth);
     fi
     texarrowhead(T);
-  
+
     pickup prevpen;
-  
+
   enddef;
 
 enddef;

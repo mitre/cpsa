@@ -39,7 +39,7 @@ vardef setup_doublearrow (expr source_file, cmdname) =
     "fudge           :=" & decimal fudge & ";" &
     "crisp#          :=" & decimal crisp# & ";" &
     "hair#           :=" & decimal hair# & ";")
-    
+
     save prevpen;
     prevpen:=savepen;
 
@@ -48,7 +48,7 @@ vardef setup_doublearrow (expr source_file, cmdname) =
             y[], y[]', y[]l, y[]'l, y[]r, y[]'r;
     save spread, w;
     numeric spread, w;
-  
+
     if crisp#>fudge*hair#:
       crisp#:=fudge*hair#;
     fi
@@ -56,17 +56,17 @@ vardef setup_doublearrow (expr source_file, cmdname) =
 
     spread = math_spread[.45x_height#,.55x_height#];
     w:=18u#;
-  
+
     lft x1 = u#-eps; x2=x1; x7=x8=w-x1;
     y1=y7; y2=y8; y1-y2=spread; .5[y1,y2]=math_axis#;
-  
+
     rt x0 = w-u#+eps; y0 = math_axis#;
     penpos3(rule_thickness#,0); penpos4(rule_thickness#,0);
     y3-y1 = y2-y4 = .24asc_height#+eps; x3=x4=x0-6u#-eps;
     penpos5(rule_thickness#, angle(z4-z0)); z5l=z0;
     penpos6(rule_thickness#, angle(z3-z0)); z6l=z0;
     z9 = .381966[.5[z3,z4],z0];
-  
+
     save pp;
     path pp;     pp = z4l{z9-z4}..z6r;
     save t;
@@ -77,7 +77,7 @@ vardef setup_doublearrow (expr source_file, cmdname) =
                                                   --(w,y2+rule_thickness#/2)));
     save qq;
     path qq;     qq = z3l{z9-z3}..z5r;
-  
+
     save parallelline;
     vardef parallelline expr ppp =
       save s, stp;
@@ -87,31 +87,31 @@ vardef setup_doublearrow (expr source_file, cmdname) =
 
       if stp > 0:
       draw for s=0 step stp until arclength ppp - stp:
-             point (arctime s of ppp) of ppp + 
+             point (arctime s of ppp) of ppp +
              spread/2*
                  (unitvector direction (arctime s of ppp) of ppp rotated 90)
              {direction (arctime s of ppp) of ppp}..
            endfor
            {direction (length ppp) of ppp}
-           point (length ppp) of ppp + 
+           point (length ppp) of ppp +
            spread/2*
 	      (unitvector direction (length ppp) of ppp rotated 90)
 	   withpen pencircle scaled rule_thickness# text_;
-  
+
       draw for s=0 step stp until arclength ppp - stp:
-             point (arctime s of ppp) of ppp - 
+             point (arctime s of ppp) of ppp -
              spread/2*
                  (unitvector direction (arctime s of ppp) of ppp rotated 90)
              {direction (arctime s of ppp) of ppp}..
            endfor
            {direction (length ppp) of ppp}
-           point (length ppp) of ppp - 
+           point (length ppp) of ppp -
            spread/2*
 	      (unitvector direction (length ppp) of ppp rotated 90)
 	   withpen pencircle scaled rule_thickness# text_;
       fi
     enddef;
-  
+
     save mapto, n;
     vardef mapto(text t) =
       hide(numeric n; n:=0;
@@ -122,8 +122,8 @@ vardef setup_doublearrow (expr source_file, cmdname) =
            z_4 = z_3 transformed T;
            z_6 = z_5 transformed T;)
       T
-    enddef;  
-  
+    enddef;
+
     % Draw the arrow head
 
     save doublearrowhead;
@@ -142,7 +142,7 @@ vardef setup_doublearrow (expr source_file, cmdname) =
 	 of (z3r{z9-z3}..z0)
        & cycle) transformed T
     enddef;
-   
+
     save T; transform T;
     save tt;
     tt = arctime (arclength apth - (x0 - xpart point t1 of pp)) of apth;
@@ -157,10 +157,10 @@ vardef setup_doublearrow (expr source_file, cmdname) =
              z0,
              point (length apth) of apth,
              point t1 of pp + (0,rule_thickness#/2),
-             point tt of apth + 
+             point tt of apth +
                    spread/2*(unitvector direction tt of apth rotated 90),
              point t1 of qq - (0,rule_thickness#/2),
-             point tt of apth - 
+             point tt of apth -
                    spread/2*(unitvector direction tt of apth rotated 90));
     fi
 
@@ -174,24 +174,24 @@ vardef setup_doublearrow (expr source_file, cmdname) =
     if f(0) or (arclength apth < x0-x3l): s := 0;
     else:    s := solve f(length pp, 0);
     fi
-    
+
     vardef f(expr ss) =
       length(point ss of (qq transformed T) - point ttt of apth)
       < length(point 0 of qq - z9)
     enddef;
 
     if f(0) or (arclength apth < x0-x3l): ss := 0;
-    else:    ss := solve f(length qq, 0); 
+    else:    ss := solve f(length qq, 0);
     fi
-    
+
     filldraw doublearrowhead(T,s,ss) text_;
 
-    % Draw the path     
-    
+    % Draw the path
+
     if arclength apth > (x0-xpart(point t1 of pp)):
       parallelline (subpath(0,tt) of apth);
     fi
-      
+
     pickup prevpen;
 
   enddef;

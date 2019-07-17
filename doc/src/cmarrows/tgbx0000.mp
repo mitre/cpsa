@@ -10,13 +10,13 @@
 % Maintainer of this work is Tommy Ekola.  The Base Interpreter is
 % MetaPost.
 
-save 
-font_identifier, 
-cmbase, 
+save
+font_identifier,
+cmbase,
 font_size,
 
-u, 
-width_adj, 
+u,
+width_adj,
 serif_fit,
 cap_serif_fit,
 letter_fit,
@@ -95,6 +95,3 @@ vardef font_size expr g = designsize = g enddef;
 boolean square_dots, hefty, serifs, monospace, variant_g, low_asterisk,
         math_fitting;
 pt#:=1pt;
-
-
-

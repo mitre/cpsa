@@ -39,14 +39,14 @@ vardef setup_twowayarrow (expr source_file, cmdname) =
     "hair#           :=" & decimal hair# & ";")
 
     save prevpen;
-    prevpen:=savepen;  
-  
+    prevpen:=savepen;
+
     save x,y;
     numeric x[], x[]', x[]l, x[]'l, x[]r, x[]'r,
             y[], y[]', y[]l, y[]'l, y[]r, y[]'r;
     save spread, w;
     numeric spread, w;
-  
+
     if crisp#>fudge*hair#:
       crisp#:=fudge*hair#;
     fi
@@ -54,7 +54,7 @@ vardef setup_twowayarrow (expr source_file, cmdname) =
 
     spread = math_spread[.45x_height#, .55x_height#];
     w = 18u#;
-  
+
     penpos1(rule_thickness#, 90); penpos2(rule_thickness#, 90);
     penpos3(rule_thickness#,  0); penpos4(rule_thickness#,  0);
     y0=y1=y2=math_axis#; x1-.5rule_thickness#=u#; rt x0=w-u#;
@@ -63,11 +63,11 @@ vardef setup_twowayarrow (expr source_file, cmdname) =
     penpos5(rule_thickness#, angle(z4-z0)); z5l=z0;
     penpos6(rule_thickness#, angle(z3-z0)); z6l=z0;
     z9=.2[.5[z3,z4],z0];
-  
+
     save pp; path pp;   pp = z4l{z9-z4}..z6r;
     save t; numeric t;  t = xpart(pp intersectiontimes ((0,y2l)--(w,y2l)));
     x2=xpart point t of pp;
-  
+
     save mapto, n;
     vardef mapto(text t) =
       hide(numeric n; n:=0;
@@ -79,7 +79,7 @@ vardef setup_twowayarrow (expr source_file, cmdname) =
            z_6 = z_5 transformed T;)
       T
     enddef;
-  
+
     save T;   transform T;
     save tt;  numeric tt;  tt  = arctime(arclength apth - (x0-x9)) of apth;
     save ttt; numeric ttt; ttt = arctime(arclength apth - (x0-x2)) of apth;
@@ -94,7 +94,7 @@ vardef setup_twowayarrow (expr source_file, cmdname) =
 	              (point s of pp -- point s of pp + (2rule_thickness#,0))))
 	of (z0..{z4-z9}z4r)--subpath(s,t) of pp--z2l) transformed T
     enddef;
-    
+
     if   arclength apth = 0:
       T:=identity shifted (point (length apth) of apth - z0);
     elseif arclength apth < x0-x3l:
@@ -107,7 +107,7 @@ vardef setup_twowayarrow (expr source_file, cmdname) =
                point ttt of apth,
                z9-(0,3rule_thickness#),
                point tt of apth - 3rule_thickness#
-                                   *(unitvector (direction tt of apth) 
+                                   *(unitvector (direction tt of apth)
                                    rotated 90));
     fi
 
@@ -122,7 +122,7 @@ vardef setup_twowayarrow (expr source_file, cmdname) =
     fi
 
     path pa;
-    pa := right_texarrowhead(T,s);		     
+    pa := right_texarrowhead(T,s);
 
     if     arclength apth = 0:
       T:=identity reflectedabout ((x0,y3),(x0,y4))
@@ -152,13 +152,13 @@ vardef setup_twowayarrow (expr source_file, cmdname) =
     fi
 
     save pc; path pc;
-    pc := right_texarrowhead(T,s);		     
-    
+    pc := right_texarrowhead(T,s);
+
     % Draw the left part of the arrow head
 
     pp := (z3l{z9-z3}..z5r);
     save pq; path pq; pq := (z3r{z9-z3}..z0);
-    
+
     save left_texarrowhead, pb;
     vardef left_texarrowhead(expr T, s) =
       (z2r--subpath(t,s) of pp
@@ -166,7 +166,7 @@ vardef setup_twowayarrow (expr source_file, cmdname) =
 	            (point s of pp -- point s of pp + (2rule_thickness#,0)))
 	          ,length pq) of pq) transformed T
     enddef;
-    
+
     if   arclength apth = 0:
       T:=identity shifted (point (length apth) of apth - z0);
     elseif arclength apth < x0-x3l:
@@ -179,7 +179,7 @@ vardef setup_twowayarrow (expr source_file, cmdname) =
                point ttt of apth,
                z9+(0,3rule_thickness#),
                point tt of apth + 3rule_thickness#
-                                   *(unitvector (direction tt of apth) 
+                                   *(unitvector (direction tt of apth)
                                    rotated 90));
     fi
 
@@ -223,7 +223,7 @@ vardef setup_twowayarrow (expr source_file, cmdname) =
     fi
 
     save pd; path pd;
-    pd := left_texarrowhead(T,s);		     
+    pd := left_texarrowhead(T,s);
 
     filldraw pa--pb--cycle text_;
     filldraw pc--pd--cycle text_;
@@ -232,7 +232,7 @@ vardef setup_twowayarrow (expr source_file, cmdname) =
       draw subpath(sss,ttt) of apth withpen pencircle scaled rule_thickness#
            text_;
     fi
-	 
+
     pickup prevpen;
 
   enddef;

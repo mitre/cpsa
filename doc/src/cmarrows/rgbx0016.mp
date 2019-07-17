@@ -38,8 +38,8 @@ vardef setup_paralleloppositerighthalfarrows (expr source_file, cmdname) =
     "monospace       :=" & if monospace: "true" else: "false" fi & ";" &
     "fudge           :=" & decimal fudge & ";" &
     "crisp#          :=" & decimal crisp# & ";" &
-    "hair#           :=" & decimal hair# & ";")    
-  
+    "hair#           :=" & decimal hair# & ";")
+
     save prevpen;
     prevpen:=savepen;
 
@@ -48,7 +48,7 @@ vardef setup_paralleloppositerighthalfarrows (expr source_file, cmdname) =
             y[], y[]', y[]l, y[]'l, y[]r, y[]'r;
     save spread, w;
     numeric spread, w;
-  
+
     if crisp#>fudge*hair#:
       crisp#:=fudge*hair#;
     fi
@@ -64,7 +64,7 @@ vardef setup_paralleloppositerighthalfarrows (expr source_file, cmdname) =
     x3=x4=x0-4u#-eps;
     penpos5(rule_thickness#, angle(z4-z0)); z5l=z0;
     penpos6(rule_thickness#, angle(z3-z0)); z6l=z0;
-    save t; numeric t; 
+    save t; numeric t;
     save pq; path pq;    pq = z4l..{2(x0-x4),y0-y4}z6r;
     t=xpart(pq intersectiontimes ((0,y2l)--(w,y2l))); x2=xpart point t of pq;
     z9=.2[.5[z3,z4],z0];
@@ -75,38 +75,38 @@ vardef setup_paralleloppositerighthalfarrows (expr source_file, cmdname) =
       numeric s, stp; stp:=(arclength pppp) div 5pt;
                       if stp=0: stp:=1; fi
                       stp:=(arclength pppp)/stp;
-  
+
       if stp > 0:
       for s=0 step stp until arclength pppp - stp:
-             point (arctime s of pppp) of pppp + 
-             spread/2*(unitvector direction (arctime s of pppp) 
+             point (arctime s of pppp) of pppp +
+             spread/2*(unitvector direction (arctime s of pppp)
                                             of pppp rotated -90)
              {direction (arctime s of pppp) of pppp}..
            endfor
            {direction (length pppp) of pppp}
-           point (length pppp) of pppp + 
-           spread/2*(unitvector direction (length pppp) 
+           point (length pppp) of pppp +
+           spread/2*(unitvector direction (length pppp)
 	     of pppp rotated -90)
       fi
     enddef;
-  
+
     save parallellineleft;
     vardef parallellineleft expr pppp =
       save s, stp;
       numeric s, stp; stp:=(arclength pppp) div 5pt;
                       if stp=0: stp:=1; fi
                       stp:=(arclength pppp)/stp;
-  
+
       if stp>0:
       for s=0 step stp until arclength pppp - stp:
-             point (arctime s of pppp) of pppp + 
-             spread/2*(unitvector direction (arctime s of pppp) 
+             point (arctime s of pppp) of pppp +
+             spread/2*(unitvector direction (arctime s of pppp)
                                             of pppp rotated 90)
              {direction (arctime s of pppp) of pppp}..
            endfor
            {direction (length pppp) of pppp}
            point (length pppp) of pppp +
-           spread/2*(unitvector direction (length pppp) 
+           spread/2*(unitvector direction (length pppp)
 	     of pppp rotated 90)
       fi
     enddef;
@@ -139,7 +139,7 @@ vardef setup_paralleloppositerighthalfarrows (expr source_file, cmdname) =
     enddef;
 
     % Draw the half arrows
-    
+
     save pa, pb, T, tt, ttt;
 
     save p_left;  path p_left;  p_left  = parallellineleft apth;

@@ -35,7 +35,7 @@ vardef setup_extensiblebrace (expr source_file, cmdname) =
     "eps             := " & decimal eps & ";" &
     "fine#           := " & decimal fine# & ";" &
     "fudge           := " & decimal fudge & ";" &
-  
+
     % Time for middle piece
 
     "save st; numeric st;" &
@@ -51,9 +51,9 @@ vardef setup_extensiblebrace (expr source_file, cmdname) =
     save dh; numeric dh; dh:=0.6designsize;
     save dw; numeric dw; dw:=curve#-stem#;
     save d; numeric d;  d :=1.5dh;
-    save min_breadth; numeric min_breadth#; 
+    save min_breadth; numeric min_breadth#;
            min_breadth#:=rule_thickness#+0.6dw;
-    save heavy_rule_thickness; numeric heavy_rule_thickness#; 
+    save heavy_rule_thickness; numeric heavy_rule_thickness#;
            heavy_rule_thickness#:=3rule_thickness#;
 
     save x,y;
@@ -64,7 +64,7 @@ vardef setup_extensiblebrace (expr source_file, cmdname) =
       fine#:=fudge*hair#;
     fi
     pickup if fine#=0: nullpen else: pencircle scaled fine# fi;
-	    
+
     penpos7(min_breadth#,0); penpos7'(min_breadth#,0);
     penpos6(heavy_rule_thickness#,0);
     rt x7r = rt x7'r = w-1.5u#+.5min_breadth#;
@@ -85,7 +85,7 @@ vardef setup_extensiblebrace (expr source_file, cmdname) =
     y4'-y5=(h+2d+2eps)/4;
     y4-y4'=min_breadth#-fine#; y4=0;
     lft x3l = .5w-.5heavy_rule_thickness#;
-    y3-y4 = (h+2d+2eps)/4; 
+    y3-y4 = (h+2d+2eps)/4;
 
     save mapto, n;
     vardef mapto(text t) =
@@ -98,7 +98,7 @@ vardef setup_extensiblebrace (expr source_file, cmdname) =
            z_6 = z_5 transformed T;)
       T
     enddef;
-  
+
     % The bottom part of the brace
 
     save bottom_part;
@@ -114,11 +114,11 @@ vardef setup_extensiblebrace (expr source_file, cmdname) =
                              *(unitvector (direction s of apth) rotated 90)))
       < ((d/2) ++ (.5w-1.5u#+.5min_breadth#))
     enddef;
-  
-    save tolerence; tolerence := epsilon;
-    save s; numeric s; 
 
-    save T; transform T; % transform for the bottom part 
+    save tolerence; tolerence := epsilon;
+    save s; numeric s;
+
+    save T; transform T; % transform for the bottom part
     if arclength apth = 0:
       T:=identity shifted (point (length apth) of apth - z7r);
     elseif arclength apth < y1-y2+y3-y5+y6-y7:
@@ -131,15 +131,15 @@ vardef setup_extensiblebrace (expr source_file, cmdname) =
 	       +abs(x7r-x6r)*(unitvector (point (length apth) of apth -
 		                          point 0 of apth) rotated 90),
                z7r,
-               point 0 of apth);		      
+               point 0 of apth);
     else:
       s := solve f(0,length apth);
       T := mapto(z6l,
-                 point s of apth 
+                 point s of apth
                           +(.5w-1.5u#+.5min_breadth#+.5heavy_rule_thickness#)
                              *(unitvector (direction s of apth) rotated 90),
                  z6r,
-                 point s of apth 
+                 point s of apth
                           +(.5w-1.5u#+.5min_breadth#-.5heavy_rule_thickness#)
                              *(unitvector (direction s of apth) rotated 90),
                  z7r,
@@ -149,7 +149,7 @@ vardef setup_extensiblebrace (expr source_file, cmdname) =
 
     % The top part of the brace
 
-    save top_part;  
+    save top_part;
     vardef top_part(expr T) =
       filldraw (z1l{3(x2l-x1l),y2-y1}...{down}z2l
                 --z2r{up}...{3(x1r-x2r),y1'-y2}z1'r--z1r--cycle)
@@ -158,13 +158,13 @@ vardef setup_extensiblebrace (expr source_file, cmdname) =
 
     save g;
     vardef g(expr t) =
-      abs(point (length apth) of apth 
+      abs(point (length apth) of apth
                             - (point t of apth + (.5w-1.5u#+.5min_breadth#)
                              *(unitvector (direction t of apth) rotated 90)))
       < ((d/2) ++ (.5w-1.5u#+.5min_breadth#))
     enddef;
-  
-    save t; numeric t; 
+
+    save t; numeric t;
 
     transform T; % transform the top part
     if arclength apth = 0:
@@ -180,14 +180,14 @@ vardef setup_extensiblebrace (expr source_file, cmdname) =
 		                           point 0 of apth) rotated 90),
                  z1r,
                  point (length apth) of apth);
-    else:    
+    else:
       t := solve g(length apth,0);
       T := mapto(z2l,
-                 point t of apth 
+                 point t of apth
                       +(.5w-1.5u#+.5min_breadth#+.5heavy_rule_thickness#)
                              *(unitvector (direction t of apth) rotated 90),
                  z2r,
-                 point t of apth 
+                 point t of apth
                       +(.5w-1.5u#+.5min_breadth#-.5heavy_rule_thickness#)
                              *(unitvector (direction t of apth) rotated 90),
                  z1r,
@@ -211,8 +211,8 @@ vardef setup_extensiblebrace (expr source_file, cmdname) =
                              *(unitvector (direction ss of apth) rotated 90)))
       > ((h+2d+2eps)/4+(min_breadth#-fine#)/2) ++ (.5w-1.5u#-.5min_breadth#)
     enddef;
-  
-    save ss; numeric ss; 
+
+    save ss; numeric ss;
 
     if arclength apth = 0:
       T:=identity shifted (point (length apth) of apth - z4'l);
@@ -226,7 +226,7 @@ vardef setup_extensiblebrace (expr source_file, cmdname) =
               .25[point 0 of apth, point (length apth) of apth]+
               abs(x1r-x5l)*(unitvector (point (length apth) of apth -
 		                        point 0 of apth) rotated 90),
-              z5r,          
+              z5r,
               .25[point 0 of apth, point (length apth) of apth]+
               abs(x1r-x5r)*(unitvector (point (length apth) of apth -
 		                        point 0 of apth) rotated 90));
@@ -236,18 +236,18 @@ vardef setup_extensiblebrace (expr source_file, cmdname) =
                point st of apth
                +(w-3u#)*(unitvector (direction st of apth) rotated 90),
                z5l,
-               point ss of apth 
+               point ss of apth
                       +(.5w-1.5u#+.5min_breadth#+.5heavy_rule_thickness#)
                             *(unitvector (direction ss of apth) rotated 90),
-               z5r,          
-               point ss of apth 
+               z5r,
+               point ss of apth
                       +(.5w-1.5u#+.5min_breadth#-.5heavy_rule_thickness#)
                             *(unitvector (direction ss of apth) rotated 90));
     fi
-			  
+
     save pb; path pb;
     pb:=middle_part_bottom(T);
-  
+
     % The upper part of the middle piece
 
     save middle_part_top;
@@ -264,9 +264,9 @@ vardef setup_extensiblebrace (expr source_file, cmdname) =
                              *(unitvector (direction tt of apth) rotated 90)))
       > ((h+2d+2eps)/4+(min_breadth#-fine#)/2) ++ (.5w-1.5u#-.5min_breadth#)
     enddef;
-  
-    save tt; numeric tt; 
-    
+
+    save tt; numeric tt;
+
     if arclength apth = 0:
       T:=identity shifted (point (length apth) of apth - z4l);
     elseif arclength apth < y1-y2+y3-y5+y6-y7:
@@ -279,7 +279,7 @@ vardef setup_extensiblebrace (expr source_file, cmdname) =
               .75[point 0 of apth, point (length apth) of apth]+
               abs(x1r-x3l)*(unitvector (point (length apth) of apth -
 		                        point 0 of apth) rotated 90),
-              z3r,          
+              z3r,
               .75[point 0 of apth, point (length apth) of apth]+
               abs(x1r-x3r)*(unitvector (point (length apth) of apth -
 		                        point 0 of apth) rotated 90));
@@ -289,30 +289,30 @@ vardef setup_extensiblebrace (expr source_file, cmdname) =
                  point st of apth
                  +(w-3u#)*(unitvector (direction st of apth) rotated 90),
                  z3l,
-                 point tt of apth 
+                 point tt of apth
                        +(.5w-1.5u#+.5min_breadth#+.5heavy_rule_thickness#)
                               *(unitvector (direction tt of apth) rotated 90),
                  z3r,
-                 point tt of apth 
+                 point tt of apth
                        +(.5w-1.5u#+.5min_breadth#-.5heavy_rule_thickness#)
                               *(unitvector (direction tt of apth) rotated 90));
     fi
-			    
+
     save ptt; path ptt;
     ptt:=middle_part_top(T);
-  
+
     filldraw pb--ptt--cycle text_;
-  
+
     % The extension parts
 
-    save extension_part;  
+    save extension_part;
     vardef extension_part(expr ss,tt) =
       numeric    stp; stp:=(ss-tt) div 5pt;
                       if stp=0: stp:=1; fi
                       stp:=(ss-tt)/stp;
-  
+
       pickup pencircle scaled (heavy_rule_thickness#+fine#);
-  
+
       if stp>0:
       draw for uu=ss step stp until tt-stp:
         point uu of apth + (.5w-1.5u#+.5min_breadth#)
@@ -324,13 +324,13 @@ vardef setup_extensiblebrace (expr source_file, cmdname) =
                          *(unitvector (direction tt of apth) rotated 90) text_;
       fi
     enddef;
-  
+
     if arclength apth > y1-y2+y3-y5+y6-y7:
       extension_part(s,ss); extension_part(tt,t);
     fi
-      
+
     pickup prevpen;
-  
+
   enddef;
-  
+
 enddef;

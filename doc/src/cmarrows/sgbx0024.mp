@@ -38,7 +38,7 @@ vardef setup_tripplearrow (expr source_file, cmdname) =
     "monospace       :=" & if monospace: "true" else: "false" fi & ";" &
     "fudge           :=" & decimal fudge & ";" &
     "crisp#          :=" & decimal crisp# & ";" &
-    "hair#           :=" & decimal hair# & ";")    
+    "hair#           :=" & decimal hair# & ";")
 
     save prevpen;
     prevpen:=savepen;
@@ -48,7 +48,7 @@ vardef setup_tripplearrow (expr source_file, cmdname) =
             y[], y[]', y[]l, y[]'l, y[]r, y[]'r;
     save spread, w;
     numeric spread, w;
-  
+
     if crisp#>fudge*hair#:
       crisp#:=fudge*hair#;
     fi
@@ -87,32 +87,32 @@ vardef setup_tripplearrow (expr source_file, cmdname) =
       numeric s, stp; stp:=(arclength ppp) div 5pt;
                       if stp=0: stp:=1; fi
                       stp:=(arclength ppp)/stp;
-  
+
       if stp > 0:
       draw for s=0 step stp until arclength ppp - stp:
-             point (arctime s of ppp) of ppp + 
+             point (arctime s of ppp) of ppp +
              spread*(unitvector direction (arctime s of ppp) of ppp rotated 90)
              {direction (arctime s of ppp) of ppp}..
            endfor
            {direction (length ppp) of ppp}
-           point (length ppp) of ppp + 
+           point (length ppp) of ppp +
            spread*(unitvector direction (length ppp) of ppp rotated 90)
 	   withpen pencircle scaled rule_thickness#
 	   text_;
-  
+
       draw for s=0 step stp until arclength ppp - stp:
-             point (arctime s of ppp) of ppp - 
+             point (arctime s of ppp) of ppp -
              spread*(unitvector direction (arctime s of ppp) of ppp rotated 90)
              {direction (arctime s of ppp) of ppp}..
            endfor
            {direction (length ppp) of ppp}
-           point (length ppp) of ppp - 
+           point (length ppp) of ppp -
            spread*(unitvector direction (length ppp) of ppp rotated 90)
 	   withpen pencircle scaled rule_thickness#
 	   text_;
       fi
     enddef;
-  
+
     save mapto, n;
     vardef mapto(text t) =
       hide(numeric n; n:=0;
@@ -123,8 +123,8 @@ vardef setup_tripplearrow (expr source_file, cmdname) =
            z_4 = z_3 transformed T;
            z_6 = z_5 transformed T;)
       T
-    enddef;  
-    
+    enddef;
+
     % Draw the arrow head
 
     save tripplearrowhead;
@@ -143,7 +143,7 @@ vardef setup_tripplearrow (expr source_file, cmdname) =
 	   of (z3r{z9-z3}..z0)
 	   & cycle) transformed T
     enddef;
-       
+
     save T; transform T;
     save tt;
     tt  = arctime (arclength apth - (x0 - xpart point t1 of pp)) of apth;
@@ -159,13 +159,13 @@ vardef setup_tripplearrow (expr source_file, cmdname) =
       T := mapto(z2,
                  point ttt of apth,
                  point t1 of pp + (0,rule_thickness#/2),
-                 point tt of apth + 
+                 point tt of apth +
                        spread*(unitvector direction tt of apth rotated 90),
                  point t1 of qq - (0,rule_thickness#/2),
-                 point tt of apth - 
+                 point tt of apth -
                        spread*(unitvector direction tt of apth rotated 90));
     fi
-    
+
     save f,s,ss;
     ttt := arctime(arclength apth - (x0-x9)) of apth;
     vardef f(expr s) =
@@ -187,9 +187,9 @@ vardef setup_tripplearrow (expr source_file, cmdname) =
     fi
 
     filldraw tripplearrowhead(T,s,ss) text_;
-    
+
     % Draw the path
-    
+
     ttt := arctime (arclength apth - (x0 - x2)) of apth;
     if arclength apth > x0 - xpart(point t1 of pp):
       parallelline (subpath(0,tt) of apth);
@@ -205,7 +205,3 @@ vardef setup_tripplearrow (expr source_file, cmdname) =
   enddef;
 
 enddef;
-
-
-
-

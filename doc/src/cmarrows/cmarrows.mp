@@ -22,13 +22,13 @@ vardef setup_cmarrows(text argument_list) =
 
   save arrow_name, brace_name, parameter_file, macro_name;
   string arrow_name, brace_name, parameter_file, macro_name;
-  
+
   argument_list;
-  
+
   if not known arrow_name:
     arrow_name := brace_name;
-  fi  
-  
+  fi
+
   if     arrow_name="Bigbrace"           : sfile = "tgbx0001.mp";
   elseif arrow_name="Biggbrace"          : sfile = "tgbx0002.mp";
   elseif arrow_name="bigbrace"           : sfile = "tgbx0003.mp";
@@ -62,7 +62,7 @@ vardef setup_cmarrows(text argument_list) =
 
   scantokens ("input " & sfile);
 
-  scantokens ("setup_" & arrow_name & "(" & 
+  scantokens ("setup_" & arrow_name & "(" &
       ditto & parameter_file & ditto & "," &
       ditto & macro_name & ditto & ");" );
 

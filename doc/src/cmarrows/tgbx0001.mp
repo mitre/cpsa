@@ -35,7 +35,7 @@ vardef setup_Bigbrace (expr source_file, cmdname) =
     "eps             := " & decimal eps & ";" &
     "fine#           := " & decimal fine# & ";" &
     "fudge           := " & decimal fudge & ";" &
-  
+
     % Time for middle piece
 
     "save st; numeric st;" &
@@ -52,7 +52,7 @@ vardef setup_Bigbrace (expr source_file, cmdname) =
     save dw; numeric dw; dw:=curve#-stem#;
     save d; numeric d;  d :=3dh-rule_thickness#;
     save bold; numeric bold; bold:=curve#;
-    save min_breadth; numeric min_breadth; 
+    save min_breadth; numeric min_breadth;
            min_breadth:=rule_thickness#;
     save max_breadth; numeric max_breadth;
            max_breadth:=.5[stem#,bold];
@@ -65,7 +65,7 @@ vardef setup_Bigbrace (expr source_file, cmdname) =
       fine# := fudge*hair#;
     fi
     pickup if fine#=0: nullpen else: pencircle scaled fine# fi;
-	    
+
     forsuffixes $ = 1,1',4,4',7,7': penpos$(min_breadth,0); endfor
     forsuffixes $ = 2,3,5,6: penpos$(max_breadth,0); endfor
     x2=x3=x5=x6; x1=x1'=x7=x7'=w-x4=w-x4';
@@ -101,7 +101,7 @@ vardef setup_Bigbrace (expr source_file, cmdname) =
                              *(unitvector (direction s of apth) rotated 90)))
       < abs(z7 - z6)
     enddef;
-  
+
     save tolerence; tolerence := epsilon;
     save s; numeric s;
 
@@ -118,25 +118,25 @@ vardef setup_Bigbrace (expr source_file, cmdname) =
 	       +abs(x7r-x6r)*(unitvector (point (length apth) of apth -
 		                          point 0 of apth) rotated 90),
                z7r,
-               point 0 of apth);		      
+               point 0 of apth);
     else:
       s := solve f(0,length apth);
       T := mapto(z6l,
-                 point s of apth 
+                 point s of apth
                              +abs(x7r-x6l)
                                 *(unitvector (direction s of apth) rotated 90),
                  z6r,
-                 point s of apth 
+                 point s of apth
                              +abs(x7r-x6r)
                                 *(unitvector (direction s of apth) rotated 90),
                  z7r,
                  point 0 of apth);
     fi
     bottom_part(T);
-  
+
     % The top part of the brace
 
-    save top_part;  
+    save top_part;
     vardef top_part(expr T) =
       filldraw (z1l{3(x2l-x1l),y2-y1}...{down}z2l
                 --z2r{up}...{3(x1r-x2r),y1'-y2}z1'r--z1r--cycle)
@@ -145,14 +145,14 @@ vardef setup_Bigbrace (expr source_file, cmdname) =
 
     save g;
     vardef g(expr t) =
-      abs(point (length apth) of apth 
+      abs(point (length apth) of apth
                             - (point t of apth + abs(x1r-x2)
                              *(unitvector (direction t of apth) rotated 90)))
       < abs(z1r-z2)
     enddef;
-  
-    save t; numeric t; 
-  
+
+    save t; numeric t;
+
     transform T; % transform the top part
     if arclength apth = 0:
       T:=identity shifted (point (length apth) of apth - z1r);
@@ -167,14 +167,14 @@ vardef setup_Bigbrace (expr source_file, cmdname) =
 		                           point 0 of apth) rotated 90),
                  z1r,
                  point (length apth) of apth);
-    else:    
+    else:
       t := solve g(length apth,0);
       T := mapto(z2l,
-                 point t of apth 
+                 point t of apth
                          +abs(x1r-x2l)
                                 *(unitvector (direction t of apth) rotated 90),
                  z2r,
-                 point t of apth 
+                 point t of apth
                          +abs(x1r-x2r)
                                 *(unitvector (direction t of apth) rotated 90),
                  z1r,
@@ -198,7 +198,7 @@ vardef setup_Bigbrace (expr source_file, cmdname) =
                              *(unitvector (direction ss of apth) rotated 90)))
       > abs(z4-z5)
     enddef;
-  
+
     save ss; numeric ss;
 
     if arclength apth = 0:
@@ -213,7 +213,7 @@ vardef setup_Bigbrace (expr source_file, cmdname) =
               .25[point 0 of apth, point (length apth) of apth]+
               abs(x1r-x5l)*(unitvector (point (length apth) of apth -
 		                        point 0 of apth) rotated 90),
-              z5r,          
+              z5r,
               .25[point 0 of apth, point (length apth) of apth]+
               abs(x1r-x5r)*(unitvector (point (length apth) of apth -
 		                        point 0 of apth) rotated 90));
@@ -224,18 +224,18 @@ vardef setup_Bigbrace (expr source_file, cmdname) =
                +abs(x1r-.5[x4r,x4'r])
                    *(unitvector (direction st of apth) rotated 90),
               z5l,
-              point ss of apth 
+              point ss of apth
                         +abs(x1r-x5l)
                               *(unitvector (direction ss of apth) rotated 90),
-              z5r,          
-              point ss of apth 
+              z5r,
+              point ss of apth
                         +abs(x1r-x5r)
                               *(unitvector (direction ss of apth) rotated 90));
     fi
-			    
+
     save pb; path pb;
     pb:=middle_part_bottom(T);
-  
+
     % The upper part of the middle piece
 
     save middle_part_top;
@@ -252,9 +252,9 @@ vardef setup_Bigbrace (expr source_file, cmdname) =
                              *(unitvector (direction tt of apth) rotated 90)))
       > abs(z3-z4)
     enddef;
-  
-    save tt; numeric tt; 
-    
+
+    save tt; numeric tt;
+
     if arclength apth = 0:
       T:=identity shifted (point (length apth) of apth - z4l);
     elseif arclength apth < y1-y2+y3-y5+y6-y7:
@@ -267,7 +267,7 @@ vardef setup_Bigbrace (expr source_file, cmdname) =
               .75[point 0 of apth, point (length apth) of apth]+
               abs(x1r-x3l)*(unitvector (point (length apth) of apth -
 		                        point 0 of apth) rotated 90),
-              z3r,          
+              z3r,
               .75[point 0 of apth, point (length apth) of apth]+
               abs(x1r-x3r)*(unitvector (point (length apth) of apth -
 		                        point 0 of apth) rotated 90));
@@ -278,23 +278,23 @@ vardef setup_Bigbrace (expr source_file, cmdname) =
                  +abs(x1r-.5[x4r,x4'r])
                      *(unitvector (direction st of apth) rotated 90),
                 z3l,
-                point tt of apth 
+                point tt of apth
                          +abs(x1r-x3l)
                              *(unitvector (direction tt of apth) rotated 90),
                 z3r,
-                point tt of apth 
+                point tt of apth
                          +abs(x1r-x3r)
                              *(unitvector (direction tt of apth) rotated 90));
     fi
-			   
+
     save ptt; path ptt;
     ptt:=middle_part_top(T);
-  
+
     filldraw pb--ptt--cycle text_;
-  
+
     % The extension parts
 
-    save extension_part, stp;  
+    save extension_part, stp;
     vardef extension_part(expr ss,tt) =
       numeric    stp; stp:=(ss-tt) div 5pt;
                       if stp=0: stp:=1; fi
@@ -313,14 +313,13 @@ vardef setup_Bigbrace (expr source_file, cmdname) =
                          *(unitvector (direction tt of apth) rotated 90) text_;
       fi
     enddef;
-  
+
     if arclength apth > y1-y2+y3-y5+y6-y7:
       extension_part(s,ss); extension_part(tt,t);
     fi
-    
+
     pickup prevpen;
 
   enddef;
-  
-enddef;
 
+enddef;

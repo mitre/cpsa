@@ -37,16 +37,16 @@ vardef setup_twoheadarrow (expr source_file, cmdname) =
     "fudge           :=" & decimal fudge & ";" &
     "crisp#          :=" & decimal crisp# & ";" &
     "hair#           :=" & decimal hair# & ";")
-      
+
     save prevpen;
     prevpen:=savepen;
-  
+
     save x,y;
     numeric x[], x[]', x[]l, x[]'l, x[]r, x[]'r,
             y[], y[]', y[]l, y[]'l, y[]r, y[]'r;
     save spread, w;
     numeric spread, w;
-  
+
     if crisp#>fudge*hair#:
       crisp#:=fudge*hair#;
     fi
@@ -54,7 +54,7 @@ vardef setup_twoheadarrow (expr source_file, cmdname) =
 
     spread = math_spread[.45x_height#, .55x_height#];
     w = 18u#;
-  
+
     penpos1(rule_thickness#, 90); penpos2(rule_thickness#, 90);
     penpos3(bar#, 0);            penpos4(bar#, 0);
     y0=y1=y2=math_axis#; x1-.5rule_thickness#=u#; rt x0=w-u#;
@@ -63,18 +63,18 @@ vardef setup_twoheadarrow (expr source_file, cmdname) =
     penpos5(bar#, angle(z4-z0)); z5l=z0;
     penpos6(bar#, angle(z3-z0)); z6l=z0;
     z9=.381966[.5[z3,z4],z0];
-  
+
     save pp; path pp;   pp = z4l{z9-z4}..z6r;
     save t; numeric t;  t = xpart(pp intersectiontimes ((0,y2l)--(w,y2l)));
     x2=xpart point t of pp;
-  
+
     save texarrowhead;
     vardef texarrowhead(expr T) =
       filldraw (z0..{z4-z9}z4r--subpath(0,t) of pp
                 --z2l--z2r--subpath(t,0) of (z3l{z9-z3}..z5r)
                 --z3r{z9-z3}..z0 & cycle) transformed T text_;
     enddef;
-  
+
     save mapto, n;
     vardef mapto(text t) =
       hide(numeric n; n:=0;
@@ -86,7 +86,7 @@ vardef setup_twoheadarrow (expr source_file, cmdname) =
            z_6 = z_5 transformed T;)
       T
     enddef;
-  
+
     save T;   transform T;
     save tt;  numeric tt;  tt  = arctime(arclength apth - (x0-x9)) of apth;
     save ttt; numeric ttt; ttt = arctime(arclength apth - (x0-x2)) of apth;
@@ -109,7 +109,7 @@ vardef setup_twoheadarrow (expr source_file, cmdname) =
                z9+(0,3rule_thickness#),
                point tt of apth + 3rule_thickness#*
                     (unitvector (direction tt of apth) rotated 90));
-    fi           
+    fi
     texarrowhead(T);
 
     tt :=arctime(arclength apth - (x0-x9) + (x3l-x0)) of apth;
@@ -134,7 +134,7 @@ vardef setup_twoheadarrow (expr source_file, cmdname) =
     texarrowhead(T);
 
     pickup prevpen;
-  
+
   enddef;
 
-enddef;  
+enddef;

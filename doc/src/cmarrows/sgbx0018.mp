@@ -38,8 +38,8 @@ vardef setup_oldtexarrow (expr source_file, cmdname) =
     "monospace       :=" & if monospace: "true" else: "false" fi & ";" &
     "fudge           :=" & decimal fudge & ";" &
     "crisp#          :=" & decimal crisp# & ";" &
-    "hair#           :=" & decimal hair# & ";")    
-  
+    "hair#           :=" & decimal hair# & ";")
+
     save prevpen;
     prevpen:=savepen;
 
@@ -48,7 +48,7 @@ vardef setup_oldtexarrow (expr source_file, cmdname) =
             y[], y[]', y[]l, y[]'l, y[]r, y[]'r;
     save spread, w;
     numeric spread, w;
-  
+
     if crisp#>fudge*hair#:
       crisp#:=fudge*hair#;
     fi
@@ -56,7 +56,7 @@ vardef setup_oldtexarrow (expr source_file, cmdname) =
 
     spread = math_spread[.45x_height#, .55x_height#];
     w = 18u#;
-  
+
     penpos1(rule_thickness#, 90); penpos2(rule_thickness#, 90);
     penpos3(bar#, 0);             penpos4(bar#, 0);
     y0=y1=y2=math_axis#; x1-.5rule_thickness#=u#; rt x0=w-u#;
@@ -65,11 +65,11 @@ vardef setup_oldtexarrow (expr source_file, cmdname) =
     penpos5(bar#, angle(z4-z0)); z5l=z0;
     penpos6(bar#, angle(z3-z0)); z6l=z0;
     z9=.381966[.5[z3,z4],z0];
-  
+
     save pp; path pp;   pp = z4l{z9-z4}..z6r;
     save t; numeric t;  t = xpart(pp intersectiontimes ((0,y2l)--(w,y2l)));
     x2=xpart point t of pp;
-  
+
     save mapto, n;
     vardef mapto(text t) =
       hide(numeric n; n:=0;
@@ -81,7 +81,7 @@ vardef setup_oldtexarrow (expr source_file, cmdname) =
            z_6 = z_5 transformed T;)
       T
     enddef;
-  
+
     save T;   transform T;
     save tt;  numeric tt;  tt  = arctime(arclength apth - (x0-x9)) of apth;
     save ttt; numeric ttt; ttt = arctime(arclength apth - (x0-x2)) of apth;
@@ -94,7 +94,7 @@ vardef setup_oldtexarrow (expr source_file, cmdname) =
 	              (point s of pp -- point s of pp + (2rule_thickness#,0))))
 	of (z0..{z4-z9}z4r)--subpath(s,t) of pp--z2l) transformed T
     enddef;
-  
+
     if   arclength apth = 0:
       T:=identity shifted (point (length apth) of apth - z0);
     elseif arclength apth < x0-x3l:
@@ -106,11 +106,11 @@ vardef setup_oldtexarrow (expr source_file, cmdname) =
                z2,
                point ttt of apth,
                z9+(0,3rule_thickness#),
-               point tt of apth + 
-                     3rule_thickness#*(unitvector (direction tt of apth) 
+               point tt of apth +
+                     3rule_thickness#*(unitvector (direction tt of apth)
                                        rotated 90));
     fi
-				 
+
     save f,s;
     vardef f(expr s) =
       length(point s of (pp transformed T) - point tt of apth)
@@ -122,13 +122,13 @@ vardef setup_oldtexarrow (expr source_file, cmdname) =
     fi
 
     path pa;
-    pa := right_texarrowhead(T,s);		     
+    pa := right_texarrowhead(T,s);
 
     % Draw the left half of the arrow head
 
     pp := (z3l{z9-z3}..z5r);
     save pq; path pq; pq := (z3r{z9-z3}..z0);
-    
+
     save left_texarrowhead, pb;
     vardef left_texarrowhead(expr T, s) =
       (z2r--subpath(t,s) of pp
@@ -136,7 +136,7 @@ vardef setup_oldtexarrow (expr source_file, cmdname) =
 	            (point s of pp -- point s of pp + (2rule_thickness#,0)))
 	          ,length pq) of pq) transformed T
     enddef;
-    
+
     if   arclength apth = 0:
       T:=identity shifted (point (length apth) of apth - z0);
     elseif arclength apth < x0-x3l:
@@ -149,7 +149,7 @@ vardef setup_oldtexarrow (expr source_file, cmdname) =
                point ttt of apth,
                z9+(0,3rule_thickness#),
                point tt of apth + 3rule_thickness#
-                                   *(unitvector (direction tt of apth) 
+                                   *(unitvector (direction tt of apth)
                                    rotated 90));
     fi
 
@@ -167,7 +167,7 @@ vardef setup_oldtexarrow (expr source_file, cmdname) =
 
     filldraw pa--pb--cycle text_;
 
-    % Draw the path    
+    % Draw the path
 
     if arclength apth > x0-x2:
       draw subpath(0,ttt) of apth withpen pencircle scaled rule_thickness#

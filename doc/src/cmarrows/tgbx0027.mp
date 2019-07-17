@@ -22,9 +22,9 @@ vardef setup_paren (expr source_file, cmdname) =
 
   expandafter vardef scantokens (cmdname & "__tgbxww " & "(expr apth) " &
     "text text_ = " &
-  
+
     "save u, designsize, curve, stem, rule_thickness, eps, fine, " &
-    "     fudge, hair;" &  
+    "     fudge, hair;" &
 
     "u#              := " & decimal u# & ";" &
     "designsize      := " & decimal designsize & ";" &
@@ -35,7 +35,7 @@ vardef setup_paren (expr source_file, cmdname) =
     "fine#           := " & decimal fine# & ";" &
     "fudge           := " & decimal fudge & ";" &
     "hair#           := " & decimal hair# & ";" &
-  
+
     % Time for middle piece
 
     "save st; numeric st;" &
@@ -52,13 +52,13 @@ vardef setup_paren (expr source_file, cmdname) =
     save dw; numeric dw; dw:=curve#-stem#;
     save d; numeric d;  d :=1.5dh;
     save bold;  numeric bold;  bold := curve#;
-    save min_breadth; numeric min_breadth; 
+    save min_breadth; numeric min_breadth;
            min_breadth:=rule_thickness#+0.6dw;
-    save max_breadth; numeric max_breadth; 
+    save max_breadth; numeric max_breadth;
            max_breadth:=bold+2dw;
-    save heavy_rule_thickness; numeric heavy_rule_thickness#; 
+    save heavy_rule_thickness; numeric heavy_rule_thickness#;
            heavy_rule_thickness#:=3rule_thickness#;
-           
+
     save x,y;
     numeric x[],x[]',x[]l,x[]'l,x[]r,x[]'r,
             y[],y[]',y[]l,y[]'l,y[]r,y[]'r;
@@ -67,7 +67,7 @@ vardef setup_paren (expr source_file, cmdname) =
       fine# := fudge*hair#;
     fi
     pickup if fine#=0: nullpen else: pencircle scaled fine# fi;
-	    
+
     penpos3(min_breadth,0);  penpos4(max_breadth,0);
     rt x3r = w-1.25u#+0.5min_breadth;  lft x4l = 1.25u#;
     bot y3=-d;  y4=h;
@@ -183,15 +183,15 @@ vardef setup_paren (expr source_file, cmdname) =
     top_part(T);
 
     %  The extension part
-    
-    save extension_part;  
+
+    save extension_part;
     vardef extension_part(expr ss,tt) =
       numeric    stp; stp:=(ss-tt) div 5pt;
                       if stp=0: stp:=1; fi
                       stp:=(ss-tt)/stp;
-  
+
       pickup pencircle scaled heavy_rule_thickness#;
-  
+
       if stp>0:
       draw for uu=ss step stp until tt-stp:
         point uu of apth + (w-2.5u#+.5min_breadth)
@@ -203,14 +203,13 @@ vardef setup_paren (expr source_file, cmdname) =
                          *(unitvector (direction tt of apth) rotated 90) text_;
       fi
     enddef;
-  
+
     if arclength apth > y1-y2+y4-y3:
       extension_part(s,t);
     fi
 
     pickup prevpen;
-    
+
   enddef;
-  
+
 enddef;
-    
