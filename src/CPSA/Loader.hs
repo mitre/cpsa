@@ -105,11 +105,17 @@ loadRole gen pos (S _ name :
       n <- loadPosBaseTerms vars (assoc "non-orig" rest)
       a <- loadPosBaseTerms vars (assoc "pen-non-orig" rest)
       u <- loadBaseTerms vars (assoc "uniq-orig" rest)
-      comment <- alist ["non-orig", "pen-non-orig", "uniq-orig"] rest
+      d <- loadBaseTerms vars (assoc "cnfd" rest)
+      h <- loadBaseTerms vars (assoc "auth" rest)
+      let keys = ["non-orig", "pen-non-orig", "uniq-orig", "cnfd", "auth"]
+      comment <- alist keys rest
       let reverseSearch = hasKey "reverse-search" rest
       let ts = tterms c
       case termsWellFormed (map snd n ++ map snd a ++ u ++ ts) of
         False -> fail (shows pos "Terms in role not well formed")
+        True -> return ()
+      case L.all isChan (d ++ h) of
+        False -> fail (shows pos "Bad channel in role")
         True -> return ()
       -- Drop unused variable declarations
       let vs = L.filter (\v->elem v (varsInTerms ts)) vars
@@ -120,7 +126,7 @@ loadRole gen pos (S _ name :
       -- Drop runiques that refer to unused variable declarations
       let us = L.filter (varsSeen vs) u
       prios <- mapM (loadRolePriority (length c)) (assoc "priority" rest)
-      let r = mkRole name vs c ns as us comment prios reverseSearch
+      let r = mkRole name vs c ns as us d h comment prios reverseSearch
       case roleWellFormed r of
         Return () -> return (gen, r)
         Fail msg -> fail (shows pos $ showString "Role not well formed: " msg)
@@ -216,7 +222,7 @@ mkListenerRole pos g =
     (g, xs) <- loadVars g [L pos [S pos "x", S pos "mesg"]]
     case xs of
       [x] -> return (g, mkRole "" [x] [In $ Plain x, Out $ Plain x]
-                        [] [] [] [] [] False)
+                        [] [] [] [] [] [] [] False)
       _ -> fail (shows pos "mkListenerRole: expecting one variable")
 
 -- Ensure a trace is not a prefix of a listener
@@ -408,12 +414,15 @@ loadInsts top p kvars gen insts xs =
       badKey ["defstrand", "deflistener"] xs
       _ <- alist [] xs          -- Check syntax of xs
       (gen, gs) <- loadGoals top p gen goals
-      loadRest top kvars p gen gs (reverse insts) order nr ar ur fs pl kcomment
+      loadRest top kvars p gen gs (reverse insts)
+        order nr ar ur cn au fs pl kcomment
     where
       order = assoc "precedes" xs
       nr = assoc "non-orig" xs
       ar = assoc "pen-non-orig" xs
       ur = assoc "uniq-orig" xs
+      cn = assoc "cnfd" xs
+      au = assoc "auth" xs
       fs = assoc "facts" xs
       pl = assoc "priority" xs
       goals = assoc "goals" xs
@@ -469,8 +478,8 @@ loadListener p kvars gen x =
 loadRest :: Monad m => Pos -> [Term] -> Prot -> Gen -> [Goal] ->
             [Instance] -> [SExpr Pos] -> [SExpr Pos] -> [SExpr Pos] ->
             [SExpr Pos] -> [SExpr Pos] -> [SExpr Pos] ->
-            [SExpr ()] -> m Preskel
-loadRest pos vars p gen gs insts orderings nr ar ur fs pl comment =
+            [SExpr Pos] -> [SExpr Pos] -> [SExpr ()] -> m Preskel
+loadRest pos vars p gen gs insts orderings nr ar ur cn au fs pl comment =
     do
       case null insts of
         True -> fail (shows pos "No strands")
@@ -480,12 +489,17 @@ loadRest pos vars p gen gs insts orderings nr ar ur fs pl comment =
       nr <- loadBaseTerms vars nr
       ar <- loadBaseTerms vars ar
       ur <- loadBaseTerms vars ur
+      cn <- loadBaseTerms vars cn
+      au <- loadBaseTerms vars au
       fs <- mapM (loadFact heights vars) fs
       let (nr', ar', ur') = foldl addInstOrigs (nr, ar, ur) insts
       prios <- mapM (loadPriorities heights) pl
-      let k = mkPreskel gen p gs insts o nr' ar' ur' fs prios comment
+      let k = mkPreskel gen p gs insts o nr' ar' ur' cn au fs prios comment
       case termsWellFormed $ nr' ++ ar' ++ ur' ++ kterms k of
         False -> fail (shows pos "Terms in skeleton not well formed")
+        True -> return ()
+      case L.all isChan (cn ++ au) of
+        False -> fail (shows pos "Bad channel in role")
         True -> return ()
       case verbosePreskelWellFormed k of
         Return () -> return k

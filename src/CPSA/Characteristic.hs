@@ -144,7 +144,7 @@ mkSkel pos p goals nmap g insts as comment =
     let (nr', ar', ur') = foldl addInstOrigs (nr, ar, ur) insts
     let fs = foldr (mkFact nmap) [] as
     let prios = []
-    let k = mkPreskel g p goals insts o nr' ar' ur' fs prios comment
+    let k = mkPreskel g p goals insts o nr' ar' ur' [] [] fs prios comment
     mapM_ (checkUniqAt nmap k) as
     case termsWellFormed $ nr' ++ ar' ++ ur' ++ kterms k of
       False -> fail (shows pos "Terms in skeleton not well formed")

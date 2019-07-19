@@ -109,7 +109,9 @@ displayRole r =
           displayOptional "non-orig" (displayLenTerms ctx (rnon r))
           (displayOptional "pen-non-orig" (displayLenTerms ctx (rpnon r))
            (displayOptional "uniq-orig" (displayTerms ctx (runique r))
-           (rcomment r))))
+            (displayOptional "cnfd" (displayTerms ctx (rcnfd r))
+             (displayOptional "auth" (displayTerms ctx (rauth r))
+              (rcomment r))))))
     where
       ctx = varsContext vars
       vars = rvars r
@@ -166,11 +168,13 @@ displayRest k ctx rest =
      (displayOptional "non-orig" (displayTerms ctx (knon k))
       (displayOptional "pen-non-orig" (displayTerms ctx (kpnon k))
        (displayOptional "uniq-orig" (displayTerms ctx (kunique k))
-        (displayOptional "facts" (map (displayFact ctx) (kfacts k))
-         (displayOptional "priority" priorities
-          (kcomment k ++
-           (displayOperation k ctx
-            (displayOptional "traces" traces rest))))))))
+        (displayOptional "cnfd" (displayTerms ctx (kcnfd k))
+         (displayOptional "auth" (displayTerms ctx (kauth k))
+          (displayOptional "facts" (map (displayFact ctx) (kfacts k))
+           (displayOptional "priority" priorities
+            (kcomment k ++
+             (displayOperation k ctx
+              (displayOptional "traces" traces rest))))))))))
     where
       priorities = map displayPriority (kpriority k)
       traces = map (L () . displayTrace ctx . trace) (insts k)

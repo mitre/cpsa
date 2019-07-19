@@ -6,12 +6,12 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-module CPSA.Protocol (Event (..), evtTerm, evtMap, evt, inbnd, outbnd,
+module CPSA.Protocol (Event (..), evtTerm, evtChan, evtMap, evt, inbnd, outbnd,
     Trace, tterms, originates,
     originationPos, acquiredPos, gainedPos, usedPos,
-    Role, rname, rvars, rtrace, rnon, rpnon, runique, rcomment,
-    rsearch, rnorig, rpnorig, ruorig, rpriority, mkRole, varSubset,
-    varsInTerms, addVars, firstOccurs,
+    Role, rname, rvars, rtrace, rnon, rpnon, runique, rcnfd, rauth, rcomment,
+    rsearch, rnorig, rpnorig, ruorig, rpcnfd, rpauth, rpriority, mkRole,
+    varSubset, varsInTerms, addVars, firstOccurs,
     AForm (..), NodeTerm, Goal (..),
     aFormOrder, aFreeVars, Rule (..),
     Prot, mkProt, pname, alg, pgen, roles, rules, listenerRole,
@@ -55,6 +55,11 @@ evt inDir outDir evt =
 evtTerm :: Event -> Term
 evtTerm (In t) = cmTerm t
 evtTerm (Out t) = cmTerm t
+
+-- Extract the channel in an event.
+evtChan :: Event -> Maybe Term
+evtChan (In t) = cmChan t
+evtChan (Out t) = cmChan t
 
 -- Map the term in an event.
 evtMap :: (Term -> Term) -> Event -> Event
@@ -138,6 +143,19 @@ usedPos t c =
             [] -> Just pos
             _ -> loop (pos + 1) vars' c
 
+-- At what position is a channel in a trace?
+chanPos :: Term -> Trace -> Maybe Int
+chanPos t c =
+    loop 0 c
+    where
+      loop _ [] = Nothing       -- Channel is not in trace
+      loop pos (Out t' : c)
+          | Just t == cmChan t' = Just pos
+          | otherwise = loop (pos + 1) c
+      loop pos (In t' : c)
+          | Just t == cmChan t' = Just pos
+          | otherwise = loop (pos + 1) c
+
 data Role = Role
     { rname :: !String,
       rvars :: ![Term],         -- Set of role variables
@@ -147,11 +165,15 @@ data Role = Role
       rnon :: ![(Maybe Int, Term)], -- that says when to inherit the atom
       rpnon :: ![(Maybe Int, Term)], -- that says when to inherit the atom
       runique :: ![Term],       -- Set of uniquely originating atoms
+      rcnfd :: ![Term],         -- Confidential channels
+      rauth :: ![Term],         -- Authenticated channels
       rcomment :: [SExpr ()],   -- Comments from the input
       rsearch :: Bool, -- True when suggesting reverse test node search
       rnorig :: [(Term, Int)],  -- Nons plus origination position
       rpnorig :: [(Term, Int)], -- Penetrator nons plus origination position
       ruorig :: [(Term, Int)],  -- Uniques plus origination position
+      rpcnfd :: [(Term, Int)],  -- Confidentials plus origination position
+      rpauth :: [(Term, Int)],  -- Authenticated plus origination position
       rpriority :: [Int] }      -- List of all priorities
     deriving Show
 
@@ -177,19 +199,23 @@ firstOccursAt t c =
 
 -- Create a role
 mkRole :: String -> [Term] -> Trace ->
-          [(Maybe Int, Term)] -> [(Maybe Int, Term)] -> [Term] ->
-          [SExpr ()] -> [(Int, Int)] -> Bool -> Role
-mkRole name vars trace non pnon unique comment priority rev =
+          [(Maybe Int, Term)] -> [(Maybe Int, Term)] -> [Term] -> [Term] ->
+          [Term] -> [SExpr ()] -> [(Int, Int)] -> Bool -> Role
+mkRole name vars trace non pnon unique cnfd auth comment priority rev =
     Role { rname = name,
            rvars = L.nub vars,  -- Every variable here must
            rtrace = trace,      -- occur in the trace.
            rnon = non,
            rpnon = pnon,
            runique = L.nub unique,
+           rcnfd = L.nub cnfd,
+           rauth = L.nub auth,
            rcomment = comment,
            rnorig = map addNonOrig $ nonNub non,
            rpnorig = map addNonOrig $ nonNub pnon,
            ruorig = map addUniqueOrig $ L.nub unique,
+           rpcnfd = map addChanPos $ L.nub cnfd,
+           rpauth = map addChanPos $ L.nub auth,
            rpriority = addDefaultPrio priority,
            rsearch = rev
          }
@@ -208,6 +234,10 @@ mkRole name vars trace non pnon unique comment priority rev =
                            | otherwise -> error msg
           where
             msg = "Protocol.mkRole: Position for atom too early in trace"
+      addChanPos t =
+        case chanPos t trace of
+          Just p -> (t, p)
+          Nothing -> error "Protocol.mkRole: Channel not in trace"
       -- Drop non-origination assumptions for the same atom.
       nonNub nons =
           reverse $ foldl f [] nons
