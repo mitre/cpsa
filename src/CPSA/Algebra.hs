@@ -224,6 +224,7 @@ varId (F Data [I x]) = x
 varId (F Name [I x]) = x
 varId (F Skey [I x]) = x
 varId (F Akey [I x]) = x
+varId (F Chan [I x]) = x
 varId (D x) = x
 varId _ = error "Algebra.varId: term not a variable with its sort"
 
@@ -841,6 +842,8 @@ reify domain (Env env) =
           | x == y = (F Skey [I x], F Skey [t])
       loop (F Akey [I x] : _) (y, t)
           | x == y = (F Akey [I x], F Akey [t])
+      loop (F Chan [I x] : _) (y, t)
+          | x == y = (F Chan [I x], F Chan [t])
       loop (D x : _) (y, t)
           | x == y = (D x, t)
       loop (_ : domain) pair = loop domain pair

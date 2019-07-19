@@ -6,18 +6,19 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-module CPSA.Protocol (Event (..), evtTerm, evtChan, evtMap, evt, inbnd, outbnd,
-    Trace, tterms, originates,
+module CPSA.Protocol (Event (..), evtTerm, evtChan, evtMap, evt,
+    inbnd, outbnd, Trace, tterms, originates,
     originationPos, acquiredPos, gainedPos, usedPos,
     Role, rname, rvars, rtrace, rnon, rpnon, runique, rcnfd, rauth, rcomment,
     rsearch, rnorig, rpnorig, ruorig, rpcnfd, rpauth, rpriority, mkRole,
-    varSubset, varsInTerms, addVars, firstOccurs,
+    tchans, varSubset, varsInTerms, addVars, firstOccurs,
     AForm (..), NodeTerm, Goal (..),
     aFormOrder, aFreeVars, Rule (..),
     Prot, mkProt, pname, alg, pgen, roles, rules, listenerRole,
     varsAllAtoms, pcomment) where
 
 import qualified Data.List as L
+import qualified Data.Maybe as M
 import CPSA.Lib.Utilities
 import CPSA.Lib.SExpr
 import CPSA.Algebra
@@ -84,6 +85,11 @@ type Trace = [Event]
 tterms :: Trace -> [Term]
 tterms c =
     foldl (\ts evt -> adjoin (evtTerm evt) ts) [] c
+
+-- The set of channels in a term
+tchans :: Trace -> [Term]
+tchans c =
+  L.nub $ M.catMaybes (map evtChan c)
 
 -- Is the term carried by an event, and is the first one outgoing?
 originates :: Term -> Trace -> Bool

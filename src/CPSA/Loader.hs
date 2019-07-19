@@ -118,7 +118,8 @@ loadRole gen pos (S _ name :
         False -> fail (shows pos "Bad channel in role")
         True -> return ()
       -- Drop unused variable declarations
-      let vs = L.filter (\v->elem v (varsInTerms ts)) vars
+      let f v = elem v (varsInTerms ts) || elem v (tchans c)
+      let vs = L.filter f vars
       -- Drop rnons that refer to unused variable declarations
       let ns = L.filter (varsSeen vs . snd) n
       -- Drop rpnons that refer to unused variable declarations
