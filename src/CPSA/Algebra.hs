@@ -335,7 +335,8 @@ isAtom :: Term -> Bool
 isAtom (I _) = False
 isAtom (C _) = False
 isAtom (F s _) =
-    s == Text || s == Data || s == Name || s == Skey || s == Akey
+    s == Text || s == Data || s == Name
+    || s == Skey || s == Akey || s == Chan
 isAtom (D _) = False
 isAtom (Z _) = False
 

@@ -105,9 +105,9 @@ loadRole gen pos (S _ name :
       n <- loadPosBaseTerms vars (assoc "non-orig" rest)
       a <- loadPosBaseTerms vars (assoc "pen-non-orig" rest)
       u <- loadBaseTerms vars (assoc "uniq-orig" rest)
-      d <- loadBaseTerms vars (assoc "cnfd" rest)
+      d <- loadBaseTerms vars (assoc "conf" rest)
       h <- loadBaseTerms vars (assoc "auth" rest)
-      let keys = ["non-orig", "pen-non-orig", "uniq-orig", "cnfd", "auth"]
+      let keys = ["non-orig", "pen-non-orig", "uniq-orig", "conf", "auth"]
       comment <- alist keys rest
       let reverseSearch = hasKey "reverse-search" rest
       let ts = tterms c
@@ -422,7 +422,7 @@ loadInsts top p kvars gen insts xs =
       nr = assoc "non-orig" xs
       ar = assoc "pen-non-orig" xs
       ur = assoc "uniq-orig" xs
-      cn = assoc "cnfd" xs
+      cn = assoc "conf" xs
       au = assoc "auth" xs
       fs = assoc "facts" xs
       pl = assoc "priority" xs
@@ -493,13 +493,14 @@ loadRest pos vars p gen gs insts orderings nr ar ur cn au fs pl comment =
       cn <- loadBaseTerms vars cn
       au <- loadBaseTerms vars au
       fs <- mapM (loadFact heights vars) fs
-      let (nr', ar', ur') = foldl addInstOrigs (nr, ar, ur) insts
+      let (nr', ar', ur', cn', au') =
+            foldl addInstOrigs (nr, ar, ur, cn, au) insts
       prios <- mapM (loadPriorities heights) pl
-      let k = mkPreskel gen p gs insts o nr' ar' ur' cn au fs prios comment
+      let k = mkPreskel gen p gs insts o nr' ar' ur' cn' au' fs prios comment
       case termsWellFormed $ nr' ++ ar' ++ ur' ++ kterms k of
         False -> fail (shows pos "Terms in skeleton not well formed")
         True -> return ()
-      case L.all isChan (cn ++ au) of
+      case L.all isChan (cn' ++ au') of
         False -> fail (shows pos "Bad channel in role")
         True -> return ()
       case verbosePreskelWellFormed k of
@@ -567,12 +568,14 @@ loadPriorities heights (L _ [x, N _ p]) =
 loadPriorities _ x =
     fail (shows (annotation x) "Malformed priority")
 
-addInstOrigs :: ([Term], [Term], [Term]) -> Instance ->
-                ([Term], [Term], [Term])
-addInstOrigs (nr, ar, ur) i =
+addInstOrigs :: ([Term], [Term], [Term], [Term], [Term]) -> Instance ->
+                ([Term], [Term], [Term], [Term], [Term])
+addInstOrigs (nr, ar, ur, cn, au) i =
     (foldl (flip adjoin) nr $ inheritRnon i,
      foldl (flip adjoin) ar $ inheritRpnon i,
-     foldl (flip adjoin) ur $ inheritRunique i)
+     foldl (flip adjoin) ur $ inheritRunique i,
+     foldl (flip adjoin) cn $ inheritRconf i,
+     foldl (flip adjoin) au $ inheritRauth i)
 
 -- Security goals
 

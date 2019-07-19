@@ -9,8 +9,8 @@
 module CPSA.Protocol (Event (..), evtTerm, evtChan, evtMap, evt,
     inbnd, outbnd, Trace, tterms, originates,
     originationPos, acquiredPos, gainedPos, usedPos,
-    Role, rname, rvars, rtrace, rnon, rpnon, runique, rcnfd, rauth, rcomment,
-    rsearch, rnorig, rpnorig, ruorig, rpcnfd, rpauth, rpriority, mkRole,
+    Role, rname, rvars, rtrace, rnon, rpnon, runique, rconf, rauth, rcomment,
+    rsearch, rnorig, rpnorig, ruorig, rpconf, rpauth, rpriority, mkRole,
     tchans, varSubset, varsInTerms, addVars, firstOccurs,
     AForm (..), NodeTerm, Goal (..),
     aFormOrder, aFreeVars, Rule (..),
@@ -171,14 +171,14 @@ data Role = Role
       rnon :: ![(Maybe Int, Term)], -- that says when to inherit the atom
       rpnon :: ![(Maybe Int, Term)], -- that says when to inherit the atom
       runique :: ![Term],       -- Set of uniquely originating atoms
-      rcnfd :: ![Term],         -- Confidential channels
+      rconf :: ![Term],         -- Confidential channels
       rauth :: ![Term],         -- Authenticated channels
       rcomment :: [SExpr ()],   -- Comments from the input
       rsearch :: Bool, -- True when suggesting reverse test node search
       rnorig :: [(Term, Int)],  -- Nons plus origination position
       rpnorig :: [(Term, Int)], -- Penetrator nons plus origination position
       ruorig :: [(Term, Int)],  -- Uniques plus origination position
-      rpcnfd :: [(Term, Int)],  -- Confidentials plus origination position
+      rpconf :: [(Term, Int)],  -- Confidentials plus origination position
       rpauth :: [(Term, Int)],  -- Authenticated plus origination position
       rpriority :: [Int] }      -- List of all priorities
     deriving Show
@@ -207,20 +207,20 @@ firstOccursAt t c =
 mkRole :: String -> [Term] -> Trace ->
           [(Maybe Int, Term)] -> [(Maybe Int, Term)] -> [Term] -> [Term] ->
           [Term] -> [SExpr ()] -> [(Int, Int)] -> Bool -> Role
-mkRole name vars trace non pnon unique cnfd auth comment priority rev =
+mkRole name vars trace non pnon unique conf auth comment priority rev =
     Role { rname = name,
            rvars = L.nub vars,  -- Every variable here must
            rtrace = trace,      -- occur in the trace.
            rnon = non,
            rpnon = pnon,
            runique = L.nub unique,
-           rcnfd = L.nub cnfd,
+           rconf = L.nub conf,
            rauth = L.nub auth,
            rcomment = comment,
            rnorig = map addNonOrig $ nonNub non,
            rpnorig = map addNonOrig $ nonNub pnon,
            ruorig = map addUniqueOrig $ L.nub unique,
-           rpcnfd = map addChanPos $ L.nub cnfd,
+           rpconf = map addChanPos $ L.nub conf,
            rpauth = map addChanPos $ L.nub auth,
            rpriority = addDefaultPrio priority,
            rsearch = rev

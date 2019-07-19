@@ -16,6 +16,15 @@ import CPSA.Channel
 import CPSA.Protocol
 import CPSA.Strand
 
+{--
+import System.IO.Unsafe
+z :: Show a => a -> b -> b
+z x y = unsafePerformIO (print x >> return y)
+
+zz :: Show a => a -> a
+zz x = z x x
+--}
+
 -- Display of protocols
 
 displayProt :: Prot -> SExpr ()
@@ -109,7 +118,7 @@ displayRole r =
           displayOptional "non-orig" (displayLenTerms ctx (rnon r))
           (displayOptional "pen-non-orig" (displayLenTerms ctx (rpnon r))
            (displayOptional "uniq-orig" (displayTerms ctx (runique r))
-            (displayOptional "cnfd" (displayTerms ctx (rcnfd r))
+            (displayOptional "conf" (displayTerms ctx (rconf r))
              (displayOptional "auth" (displayTerms ctx (rauth r))
               (rcomment r))))))
     where
@@ -168,7 +177,7 @@ displayRest k ctx rest =
      (displayOptional "non-orig" (displayTerms ctx (knon k))
       (displayOptional "pen-non-orig" (displayTerms ctx (kpnon k))
        (displayOptional "uniq-orig" (displayTerms ctx (kunique k))
-        (displayOptional "cnfd" (displayTerms ctx (kcnfd k))
+        (displayOptional "conf" (displayTerms ctx (kconf k))
          (displayOptional "auth" (displayTerms ctx (kauth k))
           (displayOptional "facts" (map (displayFact ctx) (kfacts k))
            (displayOptional "priority" priorities

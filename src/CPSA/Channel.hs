@@ -33,10 +33,10 @@ cmChan :: ChMsg -> Maybe Term
 cmChan (Plain _) = Nothing
 cmChan (ChMsg ch _) = Just ch
 
--- Map term in channel message
+-- Map term and the channel if its there in channel message
 cmMap :: (Term -> Term) -> ChMsg -> ChMsg
 cmMap f (Plain  t) = Plain $ f t
-cmMap f (ChMsg ch t) = ChMsg ch (f t)
+cmMap f (ChMsg ch t) = ChMsg (f ch) (f t)
 
 -- Matching
 
