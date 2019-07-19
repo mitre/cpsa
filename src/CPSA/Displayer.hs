@@ -12,6 +12,7 @@ import qualified Data.List as L
 import qualified Data.Set as S
 import CPSA.Lib.SExpr
 import CPSA.Algebra
+import CPSA.Channel
 import CPSA.Protocol
 import CPSA.Strand
 
@@ -136,8 +137,14 @@ displayTrace :: Context -> Trace -> [SExpr ()]
 displayTrace ctx trace =
     map displayDt trace
     where
-      displayDt (In t) = L () [S () "recv", displayTerm ctx t]
-      displayDt (Out t) = L () [S () "send", displayTerm ctx t]
+      displayDt (In (Plain t)) =
+        L () [S () "recv", displayTerm ctx t]
+      displayDt (In (ChMsg ch t)) =
+        L () [S () "recv", displayTerm ctx ch, displayTerm ctx t]
+      displayDt (Out (Plain t)) =
+        L () [S () "send", displayTerm ctx t]
+      displayDt (Out (ChMsg ch t)) =
+        L () [S () "send", displayTerm ctx ch, displayTerm ctx t]
 
 -- Display of preskeletons
 

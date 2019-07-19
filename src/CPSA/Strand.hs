@@ -27,6 +27,7 @@ import qualified Data.Maybe as M
 import CPSA.Lib.Utilities
 import CPSA.Lib.SExpr
 import CPSA.Algebra
+import CPSA.Channel
 import CPSA.Protocol
 
 {--
@@ -174,11 +175,11 @@ bldInstance role trace gen =
           [(gen, makeInstance role env trace)]
       loop (In t : c) (In t' : c') ge =
           do
-            env <- match t t' ge
+            env <- cmMatch t t' ge
             loop c c' env
       loop (Out t : c) (Out t' : c') ge =
           do
-            env <- match t t' ge
+            env <- cmMatch t t' ge
             loop c c' env
       loop _ _ _ = []
 
@@ -191,7 +192,7 @@ makeInstance role env trace =
 
 mkListener :: Prot -> Gen -> Term -> (Gen, Instance)
 mkListener p gen term =
-    case bldInstance (listenerRole p) [In term, Out term] gen of
+    case bldInstance (listenerRole p) [In $ Plain term, Out $ Plain term] gen of
       [x] -> x
       _ -> error "Strand.mkListener: Cannot build an instance of a listener"
 
@@ -205,7 +206,12 @@ addIvars s i =
 listenerTerm :: Instance -> Maybe Term
 listenerTerm inst =
     case rname (role inst) of
-      "" -> inbnd (trace inst !! 0) -- Get first term in trace
+      "" ->
+        do
+          cm <- inbnd (trace inst !! 0) -- Get first term in trace
+          case cm of
+            Plain t -> Just t
+            ChMsg _ _ -> Nothing
       _ -> Nothing              -- Not a listener strand
 
 -- Nodes, Pairs, and Graphs
@@ -795,11 +801,11 @@ jibeTraces :: Trace -> Trace -> (Gen, Env) -> [(Gen, Env)]
 jibeTraces [] [] ge = [ge]
 jibeTraces (In t : c) (In t' : c') ge =
     do
-      env <- match t t' ge
+      env <- cmMatch t t' ge
       jibeTraces c c' env
 jibeTraces (Out t : c) (Out t' : c') ge =
     do
-      env <- match t t' ge
+      env <- cmMatch t t' ge
       jibeTraces c c' env
 jibeTraces _ _ _ = []
 
@@ -1144,11 +1150,11 @@ matchTraces :: Trace -> Trace -> (Gen, Env) -> [(Gen, Env)]
 matchTraces [] _ env = [env]    -- Pattern can be shorter
 matchTraces (In t : c) (In t' : c') env =
     do
-      e <- match t t' env
+      e <- cmMatch t t' env
       matchTraces c c' e
 matchTraces (Out t : c) (Out t' : c') env =
     do
-      e <- match t t' env
+      e <- cmMatch t t' env
       matchTraces c c' e
 matchTraces _ _ _ = []
 
@@ -1455,11 +1461,11 @@ unifyTraces :: Trace -> Trace -> (Gen, Subst) -> [(Gen, Subst)]
 unifyTraces [] _ subst = [subst]
 unifyTraces (In t : c) (In t' : c') subst =
     do
-      s <- unify t t' subst
+      s <- cmUnify t t' subst
       unifyTraces c c' s
 unifyTraces (Out t : c) (Out t' : c') subst =
     do
-      s <- unify t t' subst
+      s <- cmUnify t t' subst
       unifyTraces c c' s
 unifyTraces _ _ _ = []
 

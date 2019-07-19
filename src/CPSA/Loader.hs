@@ -15,6 +15,7 @@ import Data.Maybe (isJust)
 import CPSA.Lib.Utilities
 import CPSA.Lib.SExpr
 import CPSA.Algebra
+import CPSA.Channel
 import CPSA.Protocol
 import CPSA.Strand
 import CPSA.Characteristic
@@ -214,7 +215,8 @@ mkListenerRole pos g =
   do
     (g, xs) <- loadVars g [L pos [S pos "x", S pos "mesg"]]
     case xs of
-      [x] -> return (g, mkRole "" [x] [In x, Out x] [] [] [] [] [] False)
+      [x] -> return (g, mkRole "" [x] [In $ Plain x, Out $ Plain x]
+                        [] [] [] [] [] False)
       _ -> fail (shows pos "mkListenerRole: expecting one variable")
 
 -- Ensure a trace is not a prefix of a listener
@@ -300,14 +302,32 @@ loadEvt :: Monad m => [Term] -> SExpr Pos -> m Event
 loadEvt vars (L _ [S _ "recv", t]) =
     do
       t <- loadTerm vars t
-      return (In t)
+      return (In $ Plain t)
+loadEvt vars (L _ [S _ "recv", ch, t]) =
+    do
+      ch <- loadChan vars ch
+      t <- loadTerm vars t
+      return (In $ ChMsg ch t)
 loadEvt vars (L _ [S _ "send", t]) =
     do
       t <- loadTerm vars t
-      return (Out t)
+      return (Out $ Plain t)
+loadEvt vars (L _ [S _ "send", ch, t]) =
+    do
+      ch <- loadChan vars ch
+      t <- loadTerm vars t
+      return (Out $ ChMsg ch t)
 loadEvt _ (L pos [S _ dir, _]) =
     fail (shows pos $ "Unrecognized direction " ++ dir)
 loadEvt _ x = fail (shows (annotation x) "Malformed event")
+
+loadChan :: Monad m => [Term] -> SExpr Pos -> m Term
+loadChan vars x =
+  do
+    ch <- loadTerm vars x
+    case isChan ch of
+      True -> return ch
+      False -> fail (shows (annotation x) "Expecting a channel")
 
 loadBaseTerms :: Monad m => [Term] -> [SExpr Pos] -> m [Term]
 loadBaseTerms _ [] = return []

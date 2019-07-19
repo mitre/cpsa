@@ -146,7 +146,7 @@ Executable cpsa4
   Other-Modules:
     Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.Pretty CPSA.Lib.SExpr
     CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Options CPSA.Algebra
-    CPSA.Protocol CPSA.Strand CPSA.Characteristic
+    CPSA.Protocol CPSA.Strand CPSA.Characteristic CPSA.Channel
     CPSA.Loader CPSA.Displayer CPSA.Cohort CPSA.Lib.Expand
     CPSA.Reduction
 

@@ -18,9 +18,9 @@
 
 -- The Basic Crypto Order-Sorted Signature is
 
--- Sorts: mesg, text, data, name, skey, akey, and string
+-- Sorts: mesg, text, data, name, skey, akey, chan, and string
 --
--- Subsorts: text, data, name, skey, akey < mesg
+-- Subsorts: text, data, name, skey, akey, chan < mesg
 --
 -- Operations:
 --   cat : mesg X mesg -> mesg               Pairing
@@ -32,7 +32,7 @@
 --   pubk : string X name -> akey            Tagged public key of principal
 --   invk : akey -> akey                     Inverse of asymmetric key
 --
--- Atoms: messages of sort text, data, name, skey, and akey.
+-- Atoms: messages of sort text, data, name, skey, akey, and chan.
 
 -- Variables of sort string are forbidden.
 
@@ -41,7 +41,7 @@
 -- produce an equivalent Basic Crypto Many-Sorted Signature.  There is
 -- an inclusion operation for each subsort of mesg.
 
--- Sorts: mesg, text, data, name, skey, akey, and string
+-- Sorts: mesg, text, data, name, skey, akey, chan, and string
 --
 -- Operations:
 --   cat : mesg X mesg -> mesg               Pairing
@@ -57,6 +57,7 @@
 --   name : name -> mesg                     Sort name inclusion
 --   skey : skey -> mesg                     Sort skey inclusion
 --   akey : akey -> mesg                     Sort akey inclusion
+--   chan : chan -> mesg                     Sort chan inclusion
 
 -- In both algebras, invk(invk(t)) = t for all t of sort akey
 
@@ -73,6 +74,7 @@ module CPSA.Algebra (name,
     isAcquiredVar,
     isAtom,
     isStrdVar,
+    isChan,
     termsWellFormed,
     occursIn,
     foldVars,
@@ -171,6 +173,7 @@ data Symbol
     | Akey                      -- Asymmetric key
     | Invk                      -- Inverse of asymmetric key
     | Pubk                      -- Public asymmetric key of a principal
+    | Chan                      -- Channel
     | Cat                       -- Term concatenation (Pairing really)
     | Enc                       -- Encryption
     | Hash                      -- Hashing
@@ -198,9 +201,15 @@ data Term
 isVar :: Term -> Bool
 isVar (I _) = True           -- Sort: mesg
 isVar (F s [I _]) =
-    -- Sorts: text, data, name, skey, and akey
-    s == Text || s == Data || s == Name || s == Skey || s == Akey
+    -- Sorts: text, data, name, skey, akey, and chan
+    s == Text || s == Data || s == Name
+    || s == Skey || s == Akey || s == Chan
 isVar _ = False
+
+-- Is term a channel variable
+isChan :: Term -> Bool
+isChan (F Chan [I _]) = True
+isChan _ = False
 
 -- Note that isVar of (D _) is false.
 isStrdVar :: Term -> Bool
@@ -260,6 +269,8 @@ emptyVarEnv = VarEnv M.empty
 --        |  skey(I) | skey(ltk(I, I)) | akey(K)
 --
 --     K ::= I | pubk(I) | invk(I) | invk(pubk(I))
+
+-- Note that a channel variable is not considered a well formed term.
 
 -- termWellFormed checks the structure and sort condition.
 termWellFormed :: VarEnv -> Term -> Maybe VarEnv
@@ -354,6 +365,7 @@ foldVars f acc (F Akey [F Pubk [I x]]) = f acc (F Name [I x])
 foldVars f acc (F Akey [F Pubk [C _, I x]]) = f acc (F Name [I x])
 foldVars f acc (F Akey [F Invk [F Pubk [I x]]]) = f acc (F Name [I x])
 foldVars f acc (F Akey [F Invk [F Pubk [C _, I x]]]) = f acc (F Name [I x])
+foldVars f acc t@(F Chan [I _]) = f acc t -- Channels
 foldVars _ acc (C _) = acc                -- Tags
 foldVars f acc (F Cat [t0, t1]) =         -- Concatenation
     foldVars f (foldVars f acc t0) t1
@@ -889,6 +901,7 @@ mkVar pos sort x
   | sort == "name" = return $ F Name [I x]
   | sort == "skey" = return $ F Skey [I x]
   | sort == "akey" = return $ F Akey [I x]
+  | sort == "chan" = return $ F Chan [I x]
   | sort == "strd" = return $ D x
   | otherwise = fail (shows pos "Sort " ++ sort ++ " not recognized")
 
@@ -1057,6 +1070,7 @@ displayVar ctx (F Data [I x]) = displaySortId "data" ctx x
 displayVar ctx (F Name [I x]) = displaySortId "name" ctx x
 displayVar ctx (F Skey [I x]) = displaySortId "skey" ctx x
 displayVar ctx (F Akey [I x]) = displaySortId "akey" ctx x
+displayVar ctx (F Chan [I x]) = displaySortId "chan" ctx x
 displayVar ctx (D x) = displaySortId "strd" ctx x
 displayVar _ _ =
     error "Algebra.displayVar: term not a variable with its sort"
@@ -1090,6 +1104,7 @@ displayTerm ctx (F Akey [t]) =
       F Invk [F Pubk [C c, I x]] ->
           L () [S () "privk", Q () c, displayId ctx x]
       _ -> error ("Algebra.displayAkey: Bad term " ++ show t)
+displayTerm ctx (F Chan [I x]) = displayId ctx x
 displayTerm _ (C t) = Q () t
 displayTerm ctx (F Cat [t0, t1]) =
     L () (S () "cat" : displayTerm ctx t0 : displayList ctx t1)

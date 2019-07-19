@@ -12,6 +12,7 @@ import qualified Data.Set as S
 import Data.Set (Set)
 import qualified Data.List as L
 import CPSA.Algebra
+import CPSA.Channel
 import CPSA.Protocol
 import CPSA.Strand
 
@@ -97,7 +98,7 @@ unrealized k =
             Just t ->
                 let ns' = addSendingBefore ns n
                     ts = termsInNodes ns' in
-                case derivable a ts t of
+                case derivable a ts $ cmTerm t of
                   True -> (acc, ns')
                   False -> (graphNode n : acc, ns')
 
@@ -260,10 +261,10 @@ findTest mode k u a =
                 let ns = addSendingBefore S.empty n
                     ts = termsInNodes ns    -- Public messages
                     (ts', a') = decompose ts a in
-                if buildable ts' a' t then
+                if buildable ts' a' $ cmTerm t then
                     loop nodes
                 else
-                    Just $ testNode mode k u ts' a' (graphNode n) t
+                    Just $ testNode mode k u ts' a' (graphNode n) $ cmTerm t
 
 -- Look for a critical term that makes this node a test node.
 testNode :: Mode -> Preskel -> [Term] -> Set Term -> Set Term ->
@@ -444,9 +445,9 @@ transformingNode ct escape targets role subst =
       loop ht past acc (Out t : c) =
           loop (ht + 1) (Out t : past) acc' c
           where
-            substs = carriedBindings targets t subst
+            substs = carriedBindings targets (cmTerm t) subst
             substs' = cowt ct escape past substs
-            acc' = maybeAug ct escape role ht substs' acc t
+            acc' = maybeAug ct escape role ht substs' acc $ cmTerm t
 
 -- Terms considered for binding with the carried terms in an outbound
 -- term.

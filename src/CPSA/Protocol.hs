@@ -21,6 +21,7 @@ import qualified Data.List as L
 import CPSA.Lib.Utilities
 import CPSA.Lib.SExpr
 import CPSA.Algebra
+import CPSA.Channel
 
 -- Useful operations on variables
 
@@ -39,34 +40,34 @@ addVars ts t = foldVars (flip adjoin) ts t
 -- Message events and traces
 
 data Event
-    = In !Term                  -- Inbound message
-    | Out !Term                 -- Outbound message
+    = In !ChMsg                 -- Inbound message
+    | Out !ChMsg                -- Outbound message
       deriving (Show, Eq, Ord)
 
 -- Dispatch to function based on direction.
 evt :: (Term -> a) -> (Term -> a) -> Event -> a
 evt inDir outDir evt =
     case evt of
-      In t -> inDir t
-      Out t -> outDir t
+      In t -> inDir $ cmTerm t
+      Out t -> outDir $ cmTerm t
 
 -- Extract the term in an event (evt id id).
 evtTerm :: Event -> Term
-evtTerm (In t) = t
-evtTerm (Out t) = t
+evtTerm (In t) = cmTerm t
+evtTerm (Out t) = cmTerm t
 
 -- Map the term in an event.
 evtMap :: (Term -> Term) -> Event -> Event
-evtMap f (In t) = In (f t)
-evtMap f (Out t) = Out (f t)
+evtMap f (In t) = In (cmMap f t)
+evtMap f (Out t) = Out (cmMap f t)
 
--- Extract the term in an inbound event.
-inbnd :: Event -> Maybe Term
+-- Extract the channel message in an inbound event.
+inbnd :: Event -> Maybe ChMsg
 inbnd (In t) = Just t
 inbnd _ = Nothing
 
--- Extract the term in an outbound event.
-outbnd :: Event -> Maybe Term
+-- Extract the channel message in an outbound event.
+outbnd :: Event -> Maybe ChMsg
 outbnd (Out t) = Just t
 outbnd _ = Nothing
 
@@ -82,8 +83,8 @@ tterms c =
 -- Is the term carried by an event, and is the first one outgoing?
 originates :: Term -> Trace -> Bool
 originates _ [] = False         -- Term is not carried
-originates t (Out t' : c) = t `carriedBy` t' || originates t c
-originates t (In t' : c) = not (t `carriedBy` t') && originates t c
+originates t (Out t' : c) = t `carriedBy` cmTerm t' || originates t c
+originates t (In t' : c) = not (t `carriedBy` cmTerm t') && originates t c
 
 -- At what position does a term originate in a trace?
 originationPos :: Term -> Trace -> Maybe Int
@@ -92,10 +93,10 @@ originationPos t c =
     where
       loop _ [] = Nothing       -- Term is not carried
       loop pos (Out t' : c)
-          | t `carriedBy` t' = Just pos -- Found it
+          | t `carriedBy` cmTerm t' = Just pos -- Found it
           | otherwise = loop (pos + 1) c
       loop pos (In t' : c)
-          | t `carriedBy` t' = Nothing -- Term does not originate
+          | t `carriedBy` cmTerm t' = Nothing -- Term does not originate
           | otherwise = loop (pos + 1) c
 
 -- At what position is a term acquired in a trace?
@@ -105,11 +106,11 @@ acquiredPos t c =
     where
       loop _ [] = Nothing       -- Term does not occur
       loop pos (In t' : c)
-          | t `carriedBy` t' = Just pos -- Found it
-          | t `occursIn` t' = Nothing   -- Occurs but is not carried
+          | t `carriedBy` cmTerm t' = Just pos -- Found it
+          | t `occursIn` cmTerm t' = Nothing   -- Occurs but is not carried
           | otherwise = loop (pos + 1) c
       loop pos (Out t' : c)
-          | t `occursIn` t' = Nothing   -- Term occurs in outbound term
+          | t `occursIn` cmTerm t' = Nothing   -- Term occurs in outbound term
           | otherwise = loop (pos + 1) c
 
 -- At what position is a term gained in a trace?
@@ -119,10 +120,10 @@ gainedPos t c =
     where
       loop _ [] = Nothing       -- Term is not carried
       loop pos (Out t' : c)
-          | t `carriedBy` t' = Nothing -- Term is not gained
+          | t `carriedBy` cmTerm t' = Nothing -- Term is not gained
           | otherwise = loop (pos + 1) c
       loop pos (In t' : c)
-          | t `carriedBy` t' = Just pos -- Found it
+          | t `carriedBy` cmTerm t' = Just pos -- Found it
           | otherwise = loop (pos + 1) c
 
 -- At what position do all of the variables in a term occur in a trace?
