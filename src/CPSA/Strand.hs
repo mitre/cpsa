@@ -12,6 +12,7 @@ module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     pov, knon, kpnon, kunique, kconf, kauth, kfacts, korig,
     kpriority, kcomment, nstrands,
     kvars, strandids, kterms, kchans, uniqOrig, preskelWellFormed,
+    confCm, authCm,
     verbosePreskelWellFormed, Strand, inst, sid, nodes,
     Vertex, strand, pos, preds, event, graphNode, strands, vertex,
     Gist, gist, isomorphic, contract, augment,
@@ -668,6 +669,19 @@ roleOrigCheck k =
                 Nothing -> True     -- role term not mapped
                 Just ns -> any (\(s, i)-> sid strand == s && i == pos) ns
           | otherwise = True
+
+-- Channel functions
+confCm :: Preskel -> ChMsg -> Bool
+confCm k e =
+  case cmChan e of
+    Just ch -> elem ch (kconf k)
+    Nothing -> False
+
+authCm :: Preskel -> ChMsg -> Bool
+authCm k e =
+  case cmChan e of
+    Just ch -> elem ch (kauth k)
+    Nothing -> False
 
 -- Isomorphism Check
 

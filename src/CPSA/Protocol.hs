@@ -6,7 +6,7 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-module CPSA.Protocol (Event (..), evtTerm, evtChan, evtMap, evt,
+module CPSA.Protocol (Event (..), evtCm, evtTerm, evtChan, evtMap, evt,
     inbnd, outbnd, Trace, tterms, originates,
     originationPos, acquiredPos, gainedPos, usedPos,
     Role, rname, rvars, rtrace, rnon, rpnon, runique, rconf, rauth, rcomment,
@@ -44,6 +44,11 @@ data Event
     = In !ChMsg                 -- Inbound message
     | Out !ChMsg                -- Outbound message
       deriving (Show, Eq, Ord)
+
+-- Extract the channel message
+evtCm :: Event -> ChMsg
+evtCm (In t) =  t
+evtCm (Out t) = t
 
 -- Dispatch to function based on direction.
 evt :: (Term -> a) -> (Term -> a) -> Event -> a

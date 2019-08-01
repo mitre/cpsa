@@ -96,11 +96,19 @@ unrealized k =
           case inbnd $ event n of
             Nothing -> (acc, ns)
             Just t ->
-                let ns' = addSendingBefore ns n
-                    ts = termsInNodes ns' in
-                case derivable a ts $ cmTerm t of
-                  True -> (acc, ns')
-                  False -> (graphNode n : acc, ns')
+              if authCm k t then -- If channel message is authenticated
+                if S.member t (cmsInNodes ns') then -- found match
+                  (acc, ns')
+                else
+                  (graphNode n : acc, ns')
+              else              -- See if it is derivable
+                if derivable a ts $ cmTerm t then
+                  (acc, ns')
+                else
+                  (graphNode n : acc, ns')
+              where
+                ns' = addSendingBefore ns n
+                ts = termsInNodes k ns'
 
 addSendingBefore :: Set Vertex -> Vertex -> Set Vertex
 addSendingBefore s n =
@@ -114,9 +122,19 @@ addSendingBefore s n =
             Nothing -> s
             Just _ -> S.insert n s
 
-termsInNodes :: Set Vertex -> Set Term
-termsInNodes ns =
-  S.map (evtTerm . event) ns
+cmsInNodes :: Set Vertex -> Set ChMsg
+cmsInNodes ns =
+  S.map (evtCm . event) ns
+
+-- Find public messages excluding terms sent on confidential channels
+termsInNodes :: Preskel -> Set Vertex -> Set Term
+termsInNodes k ns =
+  S.map cmTerm (S.filter (not . confCm k) $ cmsInNodes ns)
+
+-- Find confidential channel messages
+confsInNodes :: Preskel -> Set Vertex -> Set ChMsg
+confsInNodes k ns =
+  S.filter (confCm k) $ cmsInNodes ns
 
 -- Returns that atoms that cannot be guess when determining if a
 -- term is derivable from some other terms, and the atoms that
@@ -177,7 +195,7 @@ solved ct pos eks escape k n subst =
       mappedTargetTerms = S.map (substitute subst) (targetTerms ct escape)
       targetTermsDiff = S.difference (targetTerms ct' escape') mappedTargetTerms
       vs = addSendingBefore S.empty v
-      ts = termsInNodes  vs     -- Outbound predecessors
+      ts = termsInNodes k vs     -- Outbound predecessors !!! JDR
       (a, _) = avoid k
 
 maybeSolved :: Term -> Place -> [Term] -> Set Term ->
@@ -258,18 +276,30 @@ findTest mode k u a =
           case inbnd $ event n of
             Nothing -> loop nodes
             Just t ->
-                let ns = addSendingBefore S.empty n
-                    ts = termsInNodes ns    -- Public messages
-                    (ts', a') = decompose ts a in
-                if buildable ts' a' $ cmTerm t then
-                    loop nodes
+              if authCm k t then -- If channel message is authenticated
+                if S.member t (cmsInNodes ns) then -- found match
+                  loop nodes
                 else
-                    Just $ testNode mode k u ts' a' (graphNode n) $ cmTerm t
+                  Just $ chanTestNode k (graphNode n) t
+              else
+                if buildable ts' a' $ cmTerm t then
+                  loop nodes
+                else
+                  Just $ testNode mode k u cms ts' a' (graphNode n) t
+              where
+                ns = addSendingBefore S.empty n
+                ts = termsInNodes k ns    -- Public messages
+                (ts', a') = decompose ts a
+                cms = confsInNodes k ns
 
 -- Look for a critical term that makes this node a test node.
-testNode :: Mode -> Preskel -> [Term] -> Set Term -> Set Term ->
-            Node -> Term -> [Preskel]
-testNode mode k u ts a n t =
+chanTestNode :: Preskel -> Node -> ChMsg -> [Preskel]
+chanTestNode _ _ _ = []
+
+-- Look for a critical term that makes this node a test node.
+testNode :: Mode -> Preskel -> [Term] -> Set ChMsg -> Set Term ->
+            Set Term -> Node -> ChMsg -> [Preskel]
+testNode mode k u cms ts a n cm =
     loop cts
     where
       loop [] = error (
@@ -283,7 +313,9 @@ testNode mode k u ts a n t =
                   places [] = loop cts -- Find position at which
                   places (p : ps)      -- ct has escaped
                       | isAncestorInSet escape t p = places ps
-                      | otherwise = solveNode k ct p eks n t escape
+                      | otherwise = solveNode k ct p eks n cm cmEscape
+                  cmEscape = S.union (S.map Plain escape) cms
+      t = cmTerm cm
       cts =                     -- Potential critical messages
           if nonceFirstOrder mode then
               map f (filter (flip carriedBy t) u) ++
@@ -310,15 +342,18 @@ isAncestorInSet set source position =
 -- Solve critical message at position pos at node n.
 -- ct = t @ pos
 -- t  = msg(k, n)
-solveNode :: Preskel -> Term -> Place -> [Term] -> Node -> Term ->
-             Set Term -> [Preskel]
-solveNode k ct pos eks n t escape =
+solveNode :: Preskel -> Term -> Place -> [Term] -> Node -> ChMsg ->
+             Set ChMsg -> [Preskel]
+solveNode k ct pos eks n cm cmEscape =
     mgs $ cons ++ augs ++ lsns
     where
       cons = contractions k ct pos eks n t escape cause
       augs = augmentations k ct pos eks n escape cause
       lsns = addListeners k ct pos eks n t escape cause
       cause = Cause (dir eks) n ct escape
+      -- HACKS
+      t = cmTerm cm
+      escape = S.map cmTerm cmEscape -- Wrong!
 
 -- Filter out all but the skeletons with the most general homomorphisms.
 
