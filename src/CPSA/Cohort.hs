@@ -58,8 +58,8 @@ zi inst =
 -- Compile time switches for expermentation.
 
 -- Include the escape set in the set of target terms
-useEcapeSetInTargetTerms :: Bool
-useEcapeSetInTargetTerms = False -- True
+useEscapeSetInTargetTerms :: Bool
+useEscapeSetInTargetTerms = False -- True
 
 -- Filter a cohort for skeletons that solve the test.  Turn off only
 -- to debug the other parts of the test solving algorithm.
@@ -313,8 +313,10 @@ testNode mode k u cms ts a n cm =
                   places [] = loop cts -- Find position at which
                   places (p : ps)      -- ct has escaped
                       | isAncestorInSet escape t p = places ps
-                      | otherwise = solveNode k ct p eks n cm cmEscape
-                  cmEscape = S.union (S.map Plain escape) cms
+                      | otherwise = solveNode k ct p eks n cm escape cms
+                  cmEscape = S.union (S.map Plain escape)
+                             (S.filter (carriedBy ct . cmTerm) cms)
+
       t = cmTerm cm
       cts =                     -- Potential critical messages
           if nonceFirstOrder mode then
@@ -343,8 +345,8 @@ isAncestorInSet set source position =
 -- ct = t @ pos
 -- t  = msg(k, n)
 solveNode :: Preskel -> Term -> Place -> [Term] -> Node -> ChMsg ->
-             Set ChMsg -> [Preskel]
-solveNode k ct pos eks n cm cmEscape =
+             Set Term -> Set ChMsg -> [Preskel]
+solveNode k ct pos eks n cm escape cms =
     mgs $ cons ++ augs ++ lsns
     where
       cons = contractions k ct pos eks n t escape cause
@@ -353,7 +355,10 @@ solveNode k ct pos eks n cm cmEscape =
       cause = Cause (dir eks) n ct escape
       -- HACKS
       t = cmTerm cm
-      escape = S.map cmTerm cmEscape -- Wrong!
+      cmEscape = S.union (S.map Plain escape)
+                 (S.filter (carriedBy ct . cmTerm) cms)
+
+-- For contractions, add cmAncestors
 
 -- Filter out all but the skeletons with the most general homomorphisms.
 
@@ -488,7 +493,7 @@ transformingNode ct escape targets role subst =
 -- term.
 targetTerms :: Term -> Set Term -> Set Term
 targetTerms ct escape =
-    if useEcapeSetInTargetTerms then
+    if useEscapeSetInTargetTerms then
        targetTermsWithEscapeSet
     else
        S.difference targetTermsWithEscapeSet escape

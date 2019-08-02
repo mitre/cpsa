@@ -7,7 +7,8 @@
 -- University of California.
 
 module CPSA.Channel (ChMsg (..), cmTerm, cmChan, cmMap,
-                     cmMatch, cmUnify) where
+                     cmMatch, cmUnify,
+                     cmCarriedPlaces, cmAncestors) where
 
 import CPSA.Algebra
 
@@ -59,3 +60,22 @@ cmUnify (ChMsg ch t) (ChMsg ch' t') gs =
     gs <- unify ch ch' gs
     unify t t' gs
 cmUnify _ _ _ = []
+
+-- Carried places
+
+cmCarriedPlaces :: Term -> ChMsg -> [Place]
+cmCarriedPlaces ct (Plain t) =
+  map (prefix 0) (carriedPlaces ct t)
+cmCarriedPlaces ct (ChMsg _ t) =
+  map (prefix 1) (carriedPlaces ct t)
+
+prefix :: Int -> Place -> Place
+prefix n (Place p) = Place (n : p)
+
+cmAncestors :: ChMsg -> Place -> [ChMsg]
+cmAncestors _ (Place []) = []
+cmAncestors cm@(Plain t) (Place (0 : path)) =
+  cm : map Plain (ancestors t (Place path))
+cmAncestors cm@(ChMsg _ t) (Place (1 : path)) =
+  cm : map Plain (ancestors t (Place path))
+cmAncestors _ _ = error "Channel.cmAncestors: Bad path to term"

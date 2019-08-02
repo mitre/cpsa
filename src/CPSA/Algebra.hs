@@ -87,7 +87,7 @@ module CPSA.Algebra (name,
     escapeSet,
     loadTerm,
 
-    Place,
+    Place (..),
     places,
     carriedPlaces,
     replace,
