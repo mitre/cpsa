@@ -6,9 +6,14 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-module CPSA.Channel (ChMsg (..), cmTerm, cmChan, cmMap,
-                     cmMatch, cmUnify,
-                     cmCarriedPlaces, cmAncestors) where
+module CPSA.Channel (ChMsg (..), cmTerm, cmTerms, cmMap, cmChan,
+                     cmMatch, cmUnify, cmtSubstitute,
+                     cmFoldCarriedTerms,
+                     CMT (..),
+                     cmtMap, cmtTerms, cmtUnify,
+                     cmtAncestors, cmSubstitute,
+                     cmtCarriedPlaces,
+                    ) where
 
 import CPSA.Algebra
 
@@ -28,6 +33,11 @@ data ChMsg
 cmTerm :: ChMsg -> Term
 cmTerm (Plain t) = t
 cmTerm (ChMsg _ t) = t
+
+-- Get terms in channel message as a list
+cmTerms :: ChMsg -> [Term]
+cmTerms (Plain t) = [t]
+cmTerms (ChMsg ch t) = [ch, t]
 
 -- Get channel message channel
 cmChan :: ChMsg -> Maybe Term
@@ -61,21 +71,72 @@ cmUnify (ChMsg ch t) (ChMsg ch' t') gs =
     unify t t' gs
 cmUnify _ _ _ = []
 
+cmSubstitute :: Subst -> ChMsg -> ChMsg
+cmSubstitute subst t = cmMap (substitute subst) t
+
+cmFoldCarriedTerms :: (a -> CMT -> a) -> a -> ChMsg -> a
+cmFoldCarriedTerms f acc cm@(ChMsg _ t) =
+  foldCarriedTerms g (f acc (CM cm)) t
+  where
+    g acc t = f acc (TM t)
+cmFoldCarriedTerms f acc (Plain t) =
+  foldCarriedTerms g acc t
+  where
+    g acc t = f acc (TM t)
+
+-- Channel messages or internal terms
+
+data CMT
+  = TM Term
+  | CM ChMsg
+  deriving (Show, Eq, Ord)
+
+-- Map term and the channel if its there in channel message
+cmtMap :: (Term -> Term) -> CMT -> CMT
+cmtMap f (CM t) = CM $ cmMap f t
+cmtMap f (TM t) = TM $ f t
+
+cmtTerms :: CMT -> [Term]
+cmtTerms (CM cm) = cmTerms cm
+cmtTerms (TM t) = [t]
+
+cmtUnify :: CMT -> CMT -> (Gen, Subst) -> [(Gen, Subst)]
+cmtUnify (CM t) (CM t') gs = cmUnify t t' gs
+cmtUnify (TM t) (TM t') gs = unify t t' gs
+cmtUnify _ _ _ = []
+
 -- Carried places
 
-cmCarriedPlaces :: Term -> ChMsg -> [Place]
-cmCarriedPlaces ct (Plain t) =
+cmtCarriedPlaces :: CMT -> ChMsg -> [Place]
+cmtCarriedPlaces (TM ct) (Plain t) =
   map (prefix 0) (carriedPlaces ct t)
-cmCarriedPlaces ct (ChMsg _ t) =
+cmtCarriedPlaces (TM ct) (ChMsg _ t) =
   map (prefix 1) (carriedPlaces ct t)
+cmtCarriedPlaces (CM ct) cm
+  | ct == cm = [Place []]
+cmtCarriedPlaces _ _ = []
 
 prefix :: Int -> Place -> Place
 prefix n (Place p) = Place (n : p)
 
-cmAncestors :: ChMsg -> Place -> [ChMsg]
+cmtAncestors :: ChMsg -> Place -> [CMT]
+cmtAncestors _ (Place []) = []
+cmtAncestors cm@(Plain t) (Place (0 : path)) =
+  CM cm : map TM (ancestors t (Place path))
+cmtAncestors cm@(ChMsg _ t) (Place (1 : path)) =
+  CM cm : map TM (ancestors t (Place path))
+cmtAncestors _ _ = error "Channel.cmtAncestors: Bad path to term"
+
+{-
+cmAncestors :: ChMsg -> Place -> [CMT]
+cmAncestors ::
 cmAncestors _ (Place []) = []
 cmAncestors cm@(Plain t) (Place (0 : path)) =
   cm : map Plain (ancestors t (Place path))
 cmAncestors cm@(ChMsg _ t) (Place (1 : path)) =
   cm : map Plain (ancestors t (Place path))
 cmAncestors _ _ = error "Channel.cmAncestors: Bad path to term"
+-}
+
+cmtSubstitute :: Subst -> CMT -> CMT
+cmtSubstitute subst t = cmtMap (substitute subst) t

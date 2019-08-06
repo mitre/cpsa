@@ -33,17 +33,17 @@ zf :: Show a => a -> Bool -> Bool
 zf x False = z x False
 zf _ y = y
 
-zt :: Algebra t p g s e c => [Term] -> String
+zt :: Term -> String
 zt t =
     show (displayTerm (addToContext emptyContext [t]) t)
 
-zs :: Algebra t p g s e c => Set [Term] -> String
+zs :: Set Term -> String
 zs s =
     show $ map (displayTerm (addToContext emptyContext ts)) ts
     where
       ts = S.toList s
 
-zi :: Algebra t p g s e c => Instance -> String
+zi :: Instance -> String
 zi inst =
     show (map f e)
     where
@@ -172,33 +172,35 @@ avoid k =
 -- k      = k'
 -- n      = v
 -- subst  = sigma
-solved :: Term -> Place -> [Term] -> Set Term ->
+solved :: CMT -> Place -> [Term] -> Set CMT ->
           Preskel -> Node -> Subst -> Bool
 solved ct pos eks escape k n subst =
     -- Condition 1
     isAncestorInSet escape' t pos ||
     -- Condition 2
-    any (not . carriedOnlyWithin ct' escape') (S.toList ts) ||
+    any (not . carriedOnlyWithin ct' escape') (S.toList $ cmsInNodes vs) ||
     -- Condition 3
     not (varsAllAtoms (protocol k)) && not (S.null targetTermsDiff) ||
     -- Condition 4
-    any (maybe False (derivable a ts) . decryptionKey) (S.toList escape') ||
+    any (maybe False (derivable a ts) . decryptionKey) (S.toList encs) ||
     -- Condition 5
     -- Bug fix: apply subst to eks
     any (derivable a ts) (map (substitute subst) eks)
     where
       v = vertex k n            -- Look up vertex in k
-      t = evt id erro (event v)  -- Term at v
-      erro = const $ error "Cohort.solved: got an outbound term"
-      ct' = substitute subst ct -- Mapped critical term
-      escape' = S.map (substitute subst) escape
-      mappedTargetTerms = S.map (substitute subst) (targetTerms ct escape)
+      t = evtCm (event v)       -- Term at v
+      ct' = cmtSubstitute subst ct -- Mapped critical term
+      escape' = S.map (cmtSubstitute subst) escape
+      mappedTargetTerms = S.map (cmtSubstitute subst) (targetTerms ct escape)
       targetTermsDiff = S.difference (targetTerms ct' escape') mappedTargetTerms
       vs = addSendingBefore S.empty v
       ts = termsInNodes k vs     -- Outbound predecessors !!! JDR
       (a, _) = avoid k
+      encs = S.fold f S.empty escape'
+      f (CM _) ts = ts
+      f (TM t) ts = S.insert t ts
 
-maybeSolved :: Term -> Place -> [Term] -> Set Term ->
+maybeSolved :: CMT -> Place -> [Term] -> Set CMT ->
                Preskel -> Node -> Subst -> Bool
 maybeSolved ct pos eks escape k n subst =
     not useSolvedFilter || solved ct pos eks escape k n subst
@@ -280,7 +282,7 @@ findTest mode k u a =
                 if S.member t (cmsInNodes ns) then -- found match
                   loop nodes
                 else
-                  Just $ chanTestNode k (graphNode n) t
+                  Just $ chanSolveNode k (graphNode n) t
               else
                 if buildable ts' a' $ cmTerm t then
                   loop nodes
@@ -293,72 +295,77 @@ findTest mode k u a =
                 cms = confsInNodes k ns
 
 -- Look for a critical term that makes this node a test node.
-chanTestNode :: Preskel -> Node -> ChMsg -> [Preskel]
-chanTestNode _ _ _ = []
-
--- Look for a critical term that makes this node a test node.
 testNode :: Mode -> Preskel -> [Term] -> Set ChMsg -> Set Term ->
             Set Term -> Node -> ChMsg -> [Preskel]
 testNode mode k u cms ts a n cm =
-    loop cts
-    where
-      loop [] = error (
-        "Cohort.testNode missing test at " ++ show n ++ "\n" ++ show t)
-      loop ((ct, eks) : cts) =
-          case escapeSet ts a ct of
-            Nothing -> loop cts
-            Just escape ->
-                places (carriedPlaces ct t)
-                where
-                  places [] = loop cts -- Find position at which
-                  places (p : ps)      -- ct has escaped
-                      | isAncestorInSet escape t p = places ps
-                      | otherwise = solveNode k ct p eks n cm escape cms
-                  cmEscape = S.union (S.map Plain escape)
-                             (S.filter (carriedBy ct . cmTerm) cms)
+  loop $ potentialCriticalMessages mode u ts a $ cmTerm cm
+  where
+    loop [] = error (
+      "Cohort.testNode missing test at " ++ show n ++ "\n" ++ show cm)
+    loop ((ct, eks) : cts) =
+      case escapeSet ts a ct of
+        Nothing -> loop cts
+        Just esc ->
+          places (cmtCarriedPlaces (TM ct) cm)
+          where
+            places [] = loop cts  -- Find position at which
+            places (p : ps)       -- ct has escaped
+              | isAncestorInSet escape cm p = places ps
+              | otherwise = solveNode k (TM ct) p eks n cm escape
+            escape = S.union    -- The escape set has type CMT
+                     (S.map TM esc)
+                     (S.map CM (S.filter (carriedBy ct . cmTerm) cms))
 
-      t = cmTerm cm
-      cts =                     -- Potential critical messages
-          if nonceFirstOrder mode then
-              map f (filter (flip carriedBy t) u) ++
-              filter g (map h (encryptions t))
-          else
-              filter g (map h (encryptions t)) ++
-              map f (filter (flip carriedBy t) u)
-      f ct = (ct, [])           -- A nonce tests has no eks
-      g (_, []) = False         -- An encryption test must have
-      g _ = True                -- at least one non-derivable key
-      -- Dump derivable encryption keys
-      h (ct, eks) = (ct, filter (not . buildable ts a) eks)
+potentialCriticalMessages :: Mode -> [Term] -> Set Term ->
+                             Set Term -> Term -> [(Term, [Term])]
+potentialCriticalMessages mode u ts a t =
+  if nonceFirstOrder mode then
+    map f (filter (flip carriedBy t) u) ++
+    filter g (map h (encryptions t))
+  else
+    filter g (map h (encryptions t)) ++
+    map f (filter (flip carriedBy t) u)
+  where
+    f ct = (ct, [])             -- A nonce tests has no eks
+    g (_, []) = False           -- An encryption test must have
+    g _ = True                  -- at least one non-derivable key
+    -- Dump derivable encryption keys
+    h (ct, eks) = (ct, filter (not . buildable ts a) eks)
 
-carriedOnlyWithin :: Term -> Set Term -> Term -> Bool
+carriedOnlyWithin :: CMT -> Set CMT -> ChMsg -> Bool
 carriedOnlyWithin target escape source =
-    all (isAncestorInSet escape source) (carriedPlaces target source)
+    all (isAncestorInSet escape source) (cmtCarriedPlaces target source)
 
 -- isAncestorInSet set source position is true if there is one ancestor of
 -- source at position that is in the set.
-isAncestorInSet :: Set Term -> Term -> Place -> Bool
+isAncestorInSet :: Set CMT -> ChMsg -> Place -> Bool
 isAncestorInSet set source position =
-    any (flip S.member set) (ancestors source position)
+    any (flip S.member set) (cmtAncestors source position)
 
 -- Solve critical message at position pos at node n.
 -- ct = t @ pos
 -- t  = msg(k, n)
-solveNode :: Preskel -> Term -> Place -> [Term] -> Node -> ChMsg ->
-             Set Term -> Set ChMsg -> [Preskel]
-solveNode k ct pos eks n cm escape cms =
+solveNode :: Preskel -> CMT -> Place -> [Term] -> Node ->
+             ChMsg -> Set CMT -> [Preskel]
+-- solveNode _ _ _ _ _ _ _ = []
+solveNode k ct pos eks n t escape =
     mgs $ cons ++ augs ++ lsns
     where
       cons = contractions k ct pos eks n t escape cause
       augs = augmentations k ct pos eks n escape cause
       lsns = addListeners k ct pos eks n t escape cause
       cause = Cause (dir eks) n ct escape
-      -- HACKS
-      t = cmTerm cm
-      cmEscape = S.union (S.map Plain escape)
-                 (S.filter (carriedBy ct . cmTerm) cms)
 
--- For contractions, add cmAncestors
+-- Authenticated channel message is the critical value
+chanSolveNode :: Preskel -> Node -> ChMsg -> [Preskel]
+chanSolveNode k n ct =
+  mgs $ augmentations k t pos eks n escape cause
+  where
+    t = CM ct
+    pos = Place []
+    eks = []
+    escape = S.empty
+    cause = Cause (dir eks) n t escape
 
 -- Filter out all but the skeletons with the most general homomorphisms.
 
@@ -401,39 +408,39 @@ perms alist range (s:domain) =
 -- Contractions
 
 -- Contract the critical message at the given position.
-contractions :: Preskel -> Term -> Place -> [Term] -> Node -> Term ->
-                Set Term -> Cause -> [(Preskel, [Sid])]
+contractions :: Preskel -> CMT -> Place -> [Term] -> Node -> ChMsg ->
+                Set CMT -> Cause -> [(Preskel, [Sid])]
 contractions k ct pos eks n t escape cause =
     [ (k, phi) |
-          let anc = ancestors t pos,
+          let anc = cmtAncestors t pos,
           subst <- solve escape anc (gen k, emptySubst),
           (k, n, phi, subst') <- contract k n cause subst,
           maybeSolved ct pos eks escape k n subst' ]
 
-solve :: Set Term -> [Term] -> (Gen, Subst) -> [(Gen, Subst)]
+solve :: Set CMT -> [CMT] -> (Gen, Subst) -> [(Gen, Subst)]
 solve escape ancestors subst =
     [ s | e <- S.toList escape,
           a <- ancestors,
-          s <- unify a e subst ]
+          s <- cmtUnify a e subst ]
 
-carriedOnlyWithinAtSubst :: Term -> Set Term -> Term -> (Gen, Subst) -> Bool
+carriedOnlyWithinAtSubst :: CMT -> Set CMT -> ChMsg -> (Gen, Subst) -> Bool
 carriedOnlyWithinAtSubst  ct escape t (_, subst) =
     carriedOnlyWithin ct' escape' t'
     where
-      ct' = substitute subst ct
-      escape' = S.map (substitute subst) escape
-      t' = substitute subst t
+      ct' = cmtSubstitute subst ct
+      escape' = S.map (cmtSubstitute subst) escape
+      t' = cmSubstitute subst t
 
-fold :: Term -> Set Term -> Term -> (Gen, Subst) -> [(Gen, Subst)]
+fold :: CMT -> Set CMT -> ChMsg -> (Gen, Subst) -> [(Gen, Subst)]
 fold ct escape t (gen, subst) =
     [ (gen', compose subst' subst) |
-      (gen', subst') <- foldl f [(gen, emptySubst)] (carriedPlaces ct' t') ]
+      (gen', subst') <- foldl f [(gen, emptySubst)] (cmtCarriedPlaces ct' t') ]
     where
-      ct' = substitute subst ct
-      escape' = S.map (substitute subst) escape
-      t' = substitute subst t
+      ct' = cmtSubstitute subst ct
+      escape' = S.map (cmtSubstitute subst) escape
+      t' = cmSubstitute subst t
       f substs p =
-          [ s | subst <- substs, s <- solve escape' (ancestors t' p) subst ]
+          [ s | subst <- substs, s <- solve escape' (cmtAncestors t' p) subst ]
 
 dir :: [a] -> Direction
 dir [] = Nonce
@@ -441,16 +448,16 @@ dir _ = Encryption
 
 -- Augmentations
 
-augmentations :: Preskel -> Term -> Place -> [Term] -> Node -> Set Term ->
-                 Cause -> [(Preskel, [Sid])]
+augmentations :: Preskel -> CMT -> Place -> [Term] -> Node ->
+                 Set CMT -> Cause -> [(Preskel, [Sid])]
 augmentations k ct pos eks n escape cause =
     [ k' | r <- roles (protocol k),
            k' <- roleAugs k ct pos eks n escape cause targets r ]
     where
       targets = S.toList (targetTerms ct escape)
 
-roleAugs :: Preskel -> Term -> Place -> [Term] -> Node -> Set Term ->
-            Cause -> [Term] -> Role -> [(Preskel, [Sid])]
+roleAugs :: Preskel -> CMT -> Place -> [Term] -> Node -> Set CMT ->
+            Cause -> [CMT] -> Role -> [(Preskel, [Sid])]
 roleAugs k ct pos eks n escape cause targets role =
     [ (k', phi) |
            (subst', inst) <-
@@ -473,7 +480,7 @@ cloneRoleVars gen role =
             (gen'', env') : _ -> grow ts gen'' env'
             [] -> error "Cohort.grow: Internal error"
 
-transformingNode :: Term -> Set Term -> [Term] -> Role ->
+transformingNode :: CMT -> Set CMT -> [CMT] -> Role ->
                     (Gen, Subst) -> [((Gen, Subst), Instance)]
 transformingNode ct escape targets role subst =
     loop 1 [] [] (rtrace role)
@@ -485,13 +492,13 @@ transformingNode ct escape targets role subst =
       loop ht past acc (Out t : c) =
           loop (ht + 1) (Out t : past) acc' c
           where
-            substs = carriedBindings targets (cmTerm t) subst
+            substs = carriedBindings targets t subst
             substs' = cowt ct escape past substs
-            acc' = maybeAug ct escape role ht substs' acc $ cmTerm t
+            acc' = maybeAug ct escape role ht substs' acc t
 
 -- Terms considered for binding with the carried terms in an outbound
 -- term.
-targetTerms :: Term -> Set Term -> Set Term
+targetTerms :: CMT -> Set CMT -> Set CMT
 targetTerms ct escape =
     if useEscapeSetInTargetTerms then
        targetTermsWithEscapeSet
@@ -499,21 +506,29 @@ targetTerms ct escape =
        S.difference targetTermsWithEscapeSet escape
     where
       targetTermsWithEscapeSet = S.fold f (S.singleton ct) escape
-      f t ts =
+      f (CM t) ts =
           foldl (flip S.insert) ts
-                (concatMap (ancestors t) (carriedPlaces ct t))
+                (concatMap (cmtAncestors t) (cmtCarriedPlaces ct t))
+      f (TM t) ts =
+        case ct of
+          CM _ -> ts
+          TM ct ->
+            foldl (flip S.insert) ts
+                  (map TM $ concatMap (ancestors t) (carriedPlaces ct t))
+
+--- JDR !!!
 
 -- Find bindings for terms in the test.
-carriedBindings :: [Term] -> Term -> (Gen, Subst) -> [(Gen, Subst)]
+carriedBindings :: [CMT] -> ChMsg -> (Gen, Subst) -> [(Gen, Subst)]
 carriedBindings targets outbound subst =
     [ s |
-      subterm <- S.toList (foldCarriedTerms (flip S.insert) S.empty outbound),
+      subterm <- S.toList (cmFoldCarriedTerms (flip S.insert) S.empty outbound),
       target <- targets,
-      s <- unify subterm target subst ]
+      s <- cmtUnify subterm target subst ]
 
 -- Ensure the critical term is carried only within the escape set of
 -- every term in the past using fold from cows.
-cowt :: Term -> Set Term -> Trace -> [(Gen, Subst)] -> [(Gen, Subst)]
+cowt :: CMT -> Set CMT -> Trace -> [(Gen, Subst)] -> [(Gen, Subst)]
 cowt ct escape c substs =
     nubSnd $ concatMap (cowt0 ct escape c) substs
 
@@ -523,7 +538,7 @@ nubSnd substs =
     L.nubBy (\(_, s) (_, s') -> s == s') substs
 
 -- Handle one substitution at a time.
-cowt0 :: Term -> Set Term -> Trace -> (Gen, Subst) -> [(Gen, Subst)]
+cowt0 :: CMT -> Set CMT -> Trace -> (Gen, Subst) -> [(Gen, Subst)]
 cowt0 ct escape c subst =
     if all (f subst) c then     -- Substitution works
         [subst]
@@ -531,28 +546,28 @@ cowt0 ct escape c subst =
         cowt ct escape c (foldn ct escape c [subst])
     where
       f subst evt =
-          carriedOnlyWithinAtSubst ct escape (evtTerm evt) subst
+          carriedOnlyWithinAtSubst ct escape (evtCm evt) subst
 
 -- Apply fold to each message in the trace.
-foldn :: Term -> Set Term -> Trace -> [(Gen, Subst)] -> [(Gen, Subst)]
+foldn :: CMT -> Set CMT -> Trace -> [(Gen, Subst)] -> [(Gen, Subst)]
 foldn _ _ [] substs = substs
 foldn ct escape (evt : c) substs =
-    foldn ct escape c (concatMap (fold ct escape (evtTerm evt)) substs)
+    foldn ct escape c (concatMap (fold ct escape (evtCm evt)) substs)
 
 -- If the outbound term is carried only within, no transforming node
 -- was found, otherwise, add a candidate augmentation to the
 -- accumulator.
-maybeAug :: Term -> Set Term -> Role -> Int -> [(Gen, Subst)] ->
-            [((Gen, Subst), Instance)] -> Term ->
+maybeAug :: CMT -> Set CMT -> Role -> Int -> [(Gen, Subst)] ->
+            [((Gen, Subst), Instance)] -> ChMsg ->
             [((Gen, Subst), Instance)]
 maybeAug ct escape role ht substs acc t =
     foldl f acc $ L.filter testNotSolved substs
     where
       testNotSolved (_, subst) =
           not $ carriedOnlyWithin
-                  (substitute subst ct)
-                  (S.map (substitute subst) escape)
-                  (substitute subst t)
+                  (cmtSubstitute subst ct)
+                  (S.map (cmtSubstitute subst) escape)
+                  (cmSubstitute subst t)
       f acc (gen, subst) =
           case bldInstance role itrace gen of
             (gen, inst) : _ -> ((gen, subst), inst) : acc
@@ -562,19 +577,23 @@ maybeAug ct escape role ht substs acc t =
 
 -- Listener augmentations
 
-addListeners :: Preskel -> Term -> Place -> [Term] -> Node -> Term ->
-                Set Term -> Cause -> [(Preskel, [Sid])]
+addListeners :: Preskel -> CMT -> Place -> [Term] -> Node -> ChMsg ->
+                Set CMT -> Cause -> [(Preskel, [Sid])]
 addListeners k ct pos eks n t escape cause =
     [ (k', phi) |
-           t' <- filter (/= t) (S.toList (escapeKeys eks escape)),
+           t' <- filter (f t) (S.toList (escapeKeys eks escape)),
            (k', n', phi, subst) <- addListener k n cause t',
            maybeSolved ct pos eks escape k' n' subst ]
+    where
+      f (ChMsg _ _) _ = True
+      f (Plain t) t' = t /= t'
 
-escapeKeys :: [Term] -> Set Term -> Set Term
+escapeKeys :: [Term] -> Set CMT -> Set Term
 escapeKeys eks escape =
     S.fold f es escape
     where
-      f e s = maybe s (flip S.insert s) (decryptionKey e)
+      f (TM e) s = maybe s (flip S.insert s) (decryptionKey e)
+      f (CM _) s = s
       es = S.fromList eks
 
 -- Maximize a realized skeleton if possible.  Do not consider

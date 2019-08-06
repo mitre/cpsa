@@ -246,7 +246,8 @@ displayOperation k ctx rest =
           displayCause
           (L () [S () "added-strand", S () role, N () height]) cause
       AddedListener t cause ->
-          displayCause (L () [S () "added-listener", displayOpTerm ctx t]) cause
+          displayCause
+          (L () [S () "added-listener", displayOpCmt ctx $ CM $ Plain t]) cause
       Generalized method ->
           let desc = displayMethod ctx method in
           L () (S () "operation" : S () "generalization" : desc) : rest
@@ -258,9 +259,9 @@ displayOperation k ctx rest =
           L () (S () "operation" :
                 displayDirection dir :
                 op :
-                displayOpTerm ctx critical :
+                displayOpCmt ctx critical :
                 displayNode node :
-                displayOpTerms ctx (S.toList escape)) : rest
+                displayOpCmts ctx (S.toList escape)) : rest
       displayDirection Encryption = S () "encryption-test"
       displayDirection Nonce = S () "nonce-test"
       displayMethod _ (Deleted node) =
@@ -268,13 +269,22 @@ displayOperation k ctx rest =
       displayMethod _ (Weakened (n0, n1)) =
           [S () "weakened", L () [displayNode n0, displayNode n1] ]
       displayMethod ctx (Separated t) =
-          [S () "separated", displayOpTerm ctx t]
+          [S () "separated", displayOpCmt ctx $ TM t]
       displayMethod ctx (Forgot t) =
-          [S () "forgot", displayOpTerm ctx t]
+          [S () "forgot", displayOpCmt ctx $ TM t]
 
 -- Terms in the operation field may contain variables not in the skeleton
-displayOpTerm :: Context -> Term -> SExpr ()
-displayOpTerm ctx t = displayTerm (addToContext ctx [t]) t
+displayOpCmt :: Context -> CMT -> SExpr ()
+displayOpCmt ctx cm = displayCmt (addToContext ctx $ cmtTerms cm) cm
 
-displayOpTerms :: Context -> [Term] -> [SExpr ()]
-displayOpTerms ctx ts = map (displayTerm (addToContext ctx ts)) (L.sort ts)
+displayOpCmts :: Context -> [CMT] -> [SExpr ()]
+displayOpCmts ctx ts =
+  map (displayCmt $ addToContext ctx ts') (L.sort ts)
+  where
+    ts' = concatMap cmtTerms ts
+
+displayCmt :: Context -> CMT -> SExpr ()
+displayCmt ctx (CM (Plain t)) = displayTerm ctx t
+displayCmt ctx (CM (ChMsg ch t)) =
+  L () [S () "ch-msg", displayTerm ctx ch, displayTerm ctx t]
+displayCmt ctx (TM t) = displayTerm ctx t

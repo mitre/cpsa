@@ -405,7 +405,7 @@ type Edge = GraphEdge Event Instance
 -- preskeletons.
 
 data Cause
-    = Cause Direction Node Term (Set Term)
+    = Cause Direction Node CMT (Set CMT)
     deriving Show
 
 data Direction = Encryption | Nonce deriving Show
@@ -414,7 +414,8 @@ data Method
     = Deleted Node
     | Weakened Pair
     | Separated Term
-    | Forgot Term deriving Show
+    | Forgot Term
+    deriving Show
 
 -- The operation used to generate the preskeleteton is either new via
 -- the loader, a contraction, a regular augmentation, a listener
@@ -976,7 +977,7 @@ substOper _ m@(Collapsed _ _) = m
 
 substCause :: Subst -> Cause -> Cause
 substCause subst (Cause dir n t escape) =
-    Cause dir n (substitute subst t) (S.map (substitute subst) escape)
+    Cause dir n (cmtSubstitute subst t) (S.map (cmtSubstitute subst) escape)
 
 -- A compression (s is to be eliminated)
 compress :: Bool -> PRS -> Sid -> Sid -> [PRS]
