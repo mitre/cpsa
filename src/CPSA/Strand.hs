@@ -1859,6 +1859,7 @@ instAssocs i =
 -- For each variable, generate candidates by generating a fresh
 -- variable for subsets of the locations associated with the variable.
 separateVariable :: Preskel -> [(Term, Location)] -> Term -> [Candidate]
+separateVariable _ _ t | isChan t = [] -- Ignore channels
 separateVariable k ps t =
     sepVar (locsFor ps t)
     where
