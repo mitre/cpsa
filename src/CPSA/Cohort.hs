@@ -96,16 +96,20 @@ unrealized k =
           case inbnd $ event n of
             Nothing -> (acc, ns)
             Just t ->
-              if authCm k t then -- If channel message is authenticated
-                if S.member t (cmsInNodes ns') then -- found match
-                  (acc, ns')
-                else
-                  (graphNode n : acc, ns')
-              else              -- See if it is derivable
-                if derivable a ts $ cmTerm t then
-                  (acc, ns')
-                else
-                  (graphNode n : acc, ns')
+              case () of
+                _ | S.member t (cmsInNodes ns') ->
+                      -- if channel message send, node realized
+                      (acc, ns')
+                  | authCm k t ->
+                      -- If channel message is authenticated
+                      -- the channel message is a critical value
+                      (graphNode n : acc, ns')
+                  | derivable ts a (cmTerm t) ->
+                      -- If derivable, node realized
+                      (acc, ns')
+                  | otherwise ->
+                      -- a term is a critical value
+                      (graphNode n : acc, ns')
               where
                 ns' = addSendingBefore ns n
                 ts = termsInNodes k ns'
@@ -278,16 +282,20 @@ findTest mode k u a =
           case inbnd $ event n of
             Nothing -> loop nodes
             Just t ->
-              if authCm k t then -- If channel message is authenticated
-                if S.member t (cmsInNodes ns) then -- found match
-                  loop nodes
-                else
-                  Just $ chanSolveNode k (graphNode n) t
-              else
-                if buildable ts' a' $ cmTerm t then
-                  loop nodes
-                else
-                  Just $ testNode mode k u cms ts' a' (graphNode n) t
+              case () of
+                _ | S.member t (cmsInNodes ns) ->
+                      -- if channel message send, node realized
+                      loop nodes
+                  | authCm k t ->
+                      -- If channel message is authenticated
+                      -- the channel message is a critical value
+                      Just $ chanSolveNode k (graphNode n) t
+                  | buildable ts' a' (cmTerm t) ->
+                      -- If derivable, node realized
+                      loop nodes
+                  | otherwise ->
+                      -- a term is a critical value
+                      Just $ testNode mode k u cms ts' a' (graphNode n) t
               where
                 ns = addSendingBefore S.empty n
                 ts = termsInNodes k ns    -- Public messages
