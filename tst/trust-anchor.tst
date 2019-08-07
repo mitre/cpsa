@@ -1,7 +1,7 @@
 (herald trust-anchor
   (comment "Tests rule application on initial skeleton"))
 
-(comment "CPSA 4.1.2")
+(comment "CPSA 4.2.0")
 (comment "All input read from trust-anchor.scm")
 
 (defprotocol trust-anchor basic

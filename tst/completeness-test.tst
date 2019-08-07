@@ -1,4 +1,4 @@
-(comment "CPSA 4.1.2")
+(comment "CPSA 4.2.0")
 (comment "All input read from completeness-test.scm")
 
 (defprotocol completeness-test basic

@@ -1,6 +1,6 @@
 (herald "Yahalom Protocol Without Forwarding" (bound 15))
 
-(comment "CPSA 4.1.2")
+(comment "CPSA 4.2.0")
 (comment "All input read from yahalom.scm")
 (comment "Strand count bounded at 15")
 
