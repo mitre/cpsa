@@ -234,6 +234,8 @@ data Preskel = Preskel
       pnons :: [Term],
       uniqs :: [Term],
       origs :: [(Term, (Term, Int))],
+      auths :: [Term],
+      confs :: [Term],
       facts :: [Fact],
       isFringe :: !Bool,         -- Always looked at, so make it strict
       homomorphisms :: [SExpr Pos], -- Loaded later
@@ -250,6 +252,8 @@ loadPreskel pos prot gen (S _ _ : L _ (S _ "vars" : vars) : xs) =
       pnons <- loadBaseTerms kvars (assoc pnonOrigKey xs)
       uniqs <- loadBaseTerms kvars (assoc uniqOrigKey xs)
       origs <- loadOrigs kvars heights (assoc origsKey xs)
+      auths <- loadBaseTerms kvars (assoc authKey xs)
+      confs <- loadBaseTerms kvars (assoc confKey xs)
       (gen, varmap) <- makeVarmap pos gen [0..(length insts)-1]
       facts <- mapM (loadFact kvars varmap) (assoc factsKey xs)
       let f (n0, n1) = (nlookup n0 varmap, nlookup n1 varmap)
@@ -265,6 +269,8 @@ loadPreskel pos prot gen (S _ _ : L _ (S _ "vars" : vars) : xs) =
                         pnons = pnons,
                         uniqs = uniqs,
                         origs = map g origs,
+                        auths = auths,
+                        confs = confs,
                         facts = facts,
                         isFringe = hasKey shapeKey xs || hasKey fringeKey xs,
                         homomorphisms = assoc mapsKey xs,
@@ -496,6 +502,14 @@ pnonOrigKey = "pen-non-orig"
 uniqOrigKey :: String
 uniqOrigKey = "uniq-orig"
 
+-- The key used in preskeletons for authenticated channels
+authKey :: String
+authKey = "auth"
+
+-- The key used in preskeletons for confidential channels
+confKey :: String
+confKey = "conf"
+
 -- The key used to extract the nodes of origination
 origsKey :: String
 origsKey = "origs"
@@ -580,6 +594,8 @@ mapSkel env pov k =
       pnons = map (instantiate env) (pnons k),
       uniqs = map (instantiate env) (uniqs k),
       origs = mapOrig (instantiate env) (origs k),
+      auths = map (instantiate env) (auths k),
+      confs = map (instantiate env) (confs k),
       facts = mapFact (instantiate env) (facts k),
       varmap = M.map (instantiate env) (varmap k) }
   where
@@ -626,6 +642,8 @@ skel ctx k =
    map (unary "pnon" kctx) (pnons k) ++
    map (unary "uniq" kctx) (noOrigUniqs k) ++
    map (uniqAtForm kctx) (origs k) ++
+   map (unary "auth" kctx) (auths k) ++
+   map (unary "conf" kctx) (confs k) ++
    map (factForm kctx) (facts k))
 
 -- map through lists in an S-Expression.
