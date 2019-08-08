@@ -186,8 +186,9 @@ displayRest k ctx rest =
           (displayOptional "facts" (map (displayFact ctx) (kfacts k))
            (displayOptional "priority" priorities
             (kcomment k ++
-             (displayOperation k ctx
-              (displayOptional "traces" traces rest))))))))))
+             (displayOptional "rule" (map (S ()) (krules k))
+              (displayOperation k ctx
+               (displayOptional "traces" traces rest)))))))))))
     where
       priorities = map displayPriority (kpriority k)
       traces = map (L () . displayTrace ctx . trace) (insts k)

@@ -18,8 +18,8 @@ module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     Gist, gist, isomorphic, contract, augment,
     inheritRnon, inheritRpnon, inheritRunique, inheritRconf, inheritRauth,
     addListener, Cause (..), Direction (..), Method (..), Operation (..),
-    operation, pprob, prob, homomorphism, toSkeleton, generalize, collapse,
-    sat, FTerm (..), Fact (..), simplify, rewrite) where
+    operation, krules, pprob, prob, homomorphism, toSkeleton, generalize,
+    collapse, sat, FTerm (..), Fact (..), simplify, rewrite) where
 
 import Control.Monad
 import qualified Data.List as L
@@ -387,6 +387,7 @@ data Preskel = Preskel
       tc :: [Pair],             -- Transitive closure of orderings
                                 -- Used only during generalization
       operation :: Operation,
+      krules :: [String],    -- Applied rule names
       pprob :: [Sid],        -- strand map from preskel to first skeleton
       prob :: [Sid] }        -- A map from the strands in the original
     deriving Show               -- problem statement, the pov, into
@@ -442,7 +443,7 @@ mkPreskel gen protocol gs insts orderings non pnon
     k { kcomment = comment }
     where
       k = newPreskel gen shared insts orderings non pnon
-          unique conf auth facts prio New prob prob Nothing
+          unique conf auth facts prio New [] prob prob Nothing
       shared = Shared { prot = protocol, goals = gs }
       prob = strandids k        -- Fixed point on k is okay.
 
@@ -469,10 +470,10 @@ firstSkeleton k =
 -- within this module.
 newPreskel :: Gen -> Shared ->
              [Instance] -> [Pair] -> [Term] -> [Term] -> [Term] ->
-             [Term] -> [Term] -> [Fact] -> [(Node, Int)] ->
-             Operation -> [Sid] -> [Sid] -> Maybe Preskel -> Preskel
+             [Term] -> [Term] -> [Fact] -> [(Node, Int)] -> Operation ->
+             [String] -> [Sid] -> [Sid] -> Maybe Preskel -> Preskel
 newPreskel gen shared insts orderings non pnon unique conf auth facts
-           prio oper pprob prob pov =
+           prio oper rules pprob prob pov =
     let orderings' = L.nub orderings
         unique' = L.nub unique
         facts' = L.nub facts
@@ -499,6 +500,7 @@ newPreskel gen shared insts orderings non pnon unique conf auth facts
                       tc = map graphPair tc,
                       strandids = nats (length insts),
                       operation = oper,
+                      krules = rules,
                       pprob = pprob,
                       prob = prob,
                       pov = pov } in
@@ -946,7 +948,7 @@ ksubst (k0, k, n, phi, hsubst) (gen, subst) =
       let operation' = substOper subst (operation k)
       let k' = newPreskel gen' (shared k) insts'
                (orderings k) non' pnon' unique' conf' auth' facts'
-               (kpriority k) operation' (pprob k) (prob k) (pov k)
+               (kpriority k) operation' (krules k) (pprob k) (prob k) (pov k)
       k' <- wellFormedPreskel k'
       return (k0, k', n, phi, compose subst hsubst)
 
@@ -1000,6 +1002,7 @@ compress validate (k0, k, n, phi, hsubst) s s' =
               (map (updateFact $ updateStrand s s') (kfacts k))
               (updatePriority perm (kpriority k))
               (operation k)
+              (krules k)
               (pprob k)
               (updateProb perm (prob k))
               (pov k)
@@ -1063,6 +1066,7 @@ purge (k0, k, n, phi, hsubst) s s' =
               (map (updateFact $ updateStrand s s') (kfacts k))
               (updatePriority perm (kpriority k))
               (operation k)
+              (krules k)
               (pprob k)
               (updateProb perm (prob k))
               (pov k)
@@ -1097,6 +1101,7 @@ soothePreskel k =
   (cleansFacts (kvars k) (kfacts k))
   (kpriority k)
   (operation k)
+  (krules k)
   (pprob k)
   (prob k)
   (pov k)
@@ -1156,6 +1161,7 @@ enrich thin (k0, k, n, phi, hsubst) =
                   (kfacts k)
                   (kpriority k)
                   (operation k)
+                  (krules k)
                   (pprob k)
                   (prob k)
                   (pov k)
@@ -1348,6 +1354,7 @@ reduce (k0, k, n, phi, hsubst) =
                   (kfacts k)
                   (kpriority k)
                   (operation k)
+                  (krules k)
                   (pprob k)
                   (prob k)
                   (pov k)
@@ -1392,7 +1399,8 @@ toSkeleton thin k =
 contract :: Preskel -> Node -> Cause -> (Gen, Subst) -> [Ans]
 contract k n cause subst =
     do
-      prs <- ksubst (k, k { operation = Contracted emptySubst cause },
+      prs <- ksubst (k, k { operation = Contracted emptySubst cause,
+                            krules = [] },
                      n, strandids k, emptySubst) subst
       prs' <- skeletonize useThinningWhileSolving prs
       homomorphismFilter prs'
@@ -1424,7 +1432,8 @@ substAndAugment :: Preskel -> Node -> Cause -> Role ->
 substAndAugment k n cause role subst inst =
     do
       let operation' = AddedStrand (rname role) (height inst) cause
-      prs <- ksubst (k, k { operation = operation' }, n,
+      prs <- ksubst (k, k { operation = operation',
+                            krules = [] }, n,
                      strandids k, emptySubst) subst
       aug prs inst
 
@@ -1442,8 +1451,8 @@ aug (k0, k, n, phi, hsubst) inst =
       let conf' = inheritRconf inst ++ (kconf k)
       let auth' = inheritRauth inst ++ (kauth k)
       let k' = newPreskel (gen k) (shared k) insts'
-           orderings' non' pnon' unique' conf' auth' (kfacts k)
-           (kpriority k) (operation k) (pprob k) (prob k) (pov k)
+           orderings' non' pnon' unique' conf' auth' (kfacts k) (kpriority k)
+           (operation k) (krules k) (pprob k) (prob k) (pov k)
       k' <- wellFormedPreskel k'
       return (k0, k', n, phi, hsubst)
 
@@ -1492,7 +1501,8 @@ augDisplaceStrands (k0, k, n, phi, hsubst) s s' =
     do
       (s, s', subst) <- unifyStrands k s s'
       let op = addedToDisplaced (operation k) s s'
-      prs <- ksubst (k0, k { operation = op}, n, phi, hsubst) subst
+      prs <- ksubst (k0, k { operation = op, krules = [] },
+                     n, phi, hsubst) subst
       prs <- compress True prs s s'
       skeletonize useThinningWhileSolving prs
 
@@ -1540,7 +1550,7 @@ addListener k n cause t =
     where
       k' = newPreskel gen' (shared k) insts' orderings' (knon k)
            (kpnon k) (kunique k) (kconf k) (kauth k) (kfacts k) (kpriority k)
-           (AddedListener t cause) (pprob k) (prob k) (pov k)
+           (AddedListener t cause) [] (pprob k) (prob k) (pov k)
       (gen', inst) = mkListener (protocol k) (gen k) t
       insts' = insts k ++ [inst]
       pair = ((length (insts k), 1), n)
@@ -1685,7 +1695,7 @@ deleteNodeRest :: Preskel -> Gen -> Node -> [Instance] -> [Pair] ->
                   [Sid] -> [Fact] -> Preskel
 deleteNodeRest k gen n insts' orderings prob facts =
     newPreskel gen (shared k) insts' orderings non' pnon' unique' conf'
-    auth' facts' prio' (Generalized (Deleted n)) (pprob k) prob (pov k)
+    auth' facts' prio' (Generalized (Deleted n)) [] (pprob k) prob (pov k)
     where
       -- Drop nons that aren't mentioned anywhere
       non' = filter mentionedIn (knon k)
@@ -1741,7 +1751,7 @@ weaken k p orderings =
     where
       k' = newPreskel (gen k) (shared k) (insts k) orderings (knon k)
            (kpnon k) (kunique k) (kconf k) (kauth k) (kfacts k) (kpriority k)
-           (Generalized (Weakened p)) (pprob k) (prob k) (pov k)
+           (Generalized (Weakened p)) [] (pprob k) (prob k) (pov k)
 
 -- Origination assumption forgetting
 
@@ -1760,7 +1770,7 @@ forgetNonTerm k =
     where
       delNon t =
           k { knon = L.delete t (knon k),
-              operation = Generalized (Forgot t) }
+              operation = Generalized (Forgot t), krules = [] }
 
 skelNons :: Preskel -> [Term]
 skelNons k =
@@ -1776,7 +1786,7 @@ forgetPnonTerm k =
     where
       delPnon t =
           k { kpnon = L.delete t (kpnon k),
-              operation = Generalized (Forgot t) }
+              operation = Generalized (Forgot t), krules = [] }
 
 skelPnons :: Preskel -> [Term]
 skelPnons k =
@@ -1792,7 +1802,7 @@ forgetUniqueTerm k =
     where
       delUniq t =
           k { kunique = L.delete t (kunique k),
-              operation = Generalized (Forgot t) }
+              operation = Generalized (Forgot t), krules = [] }
 
 skelUniques :: Preskel -> [Term]
 skelUniques k =
@@ -1891,10 +1901,10 @@ changeLocations k env gen t locs =
     where
       k0 = newPreskel gen' (shared k) insts' (orderings k) non pnon unique0
            (kconf k) (kauth k) facts' (kpriority k) (Generalized (Separated t))
-           (pprob k) (prob k) (pov k)
+           [] (pprob k) (prob k) (pov k)
       k1 = newPreskel gen' (shared k) insts' (orderings k) non pnon unique1
            (kconf k) (kauth k) facts (kpriority k) (Generalized (Separated t))
-           (pprob k) (prob k) (pov k)
+           [] (pprob k) (prob k) (pov k)
       (gen', insts') = changeStrands locs t gen (strands k)
       non = knon k ++ map (instantiate env) (knon k)
       pnon = kpnon k ++ map (instantiate env) (kpnon k)
@@ -1954,7 +1964,7 @@ collapseStrands :: Preskel -> Sid -> Sid -> [Preskel]
 collapseStrands k s s' =
     do
       (s, s', subst) <- unifyStrands k s s'
-      prs <- ksubst (k, k { operation = Collapsed s s' },
+      prs <- ksubst (k, k { operation = Collapsed s s', krules = [] },
                      (0, 0), strandids k, emptySubst) subst
       prs <- compress True prs s s'
       prs <- skeletonize useThinningDuringCollapsing prs
@@ -2358,10 +2368,8 @@ doRewriteOne k r e =
     (k, _) <- doConj (rlname r) cl k e'
     k <- wellFormedPreskel k
     k <- toSkeleton True k
-    return $ f k                -- Add comment about rule application
-  where f k = k { kcomment =
-                  L () [S () "rule", S () (rlname r)] :
-                  kcomment k }
+    return $ f k                -- Add rule name
+  where f k = k { krules = rlname r : krules k }
 
 fresh :: (Gen, Env) -> Term -> (Gen, Env)
 fresh (g, e) t
@@ -2419,7 +2427,7 @@ addStrand :: Gen -> Preskel -> Role -> Int -> Preskel
 addStrand g k r h =
   newPreskel g' (shared k) insts'
   (orderings k) non' pnon' unique' conf' auth' (kfacts k)
-  (kpriority k) (operation k) (pprob k) (prob k) (pov k)
+  (kpriority k) (operation k) (krules k) (pprob k) (prob k) (pov k)
   where
     (g', inst) = mkInstance g r emptyEnv h -- Create instance
     insts' = (insts k) ++ [inst]
@@ -2454,7 +2462,7 @@ rSubst k (gen, subst) =
       return $
         newPreskel gen' (shared k) insts' (orderings k)
         non' pnon' unique' conf' auth' facts' (kpriority k)
-        operation' (pprob k) (prob k) (pov k)
+        operation' (krules k) (pprob k) (prob k) (pov k)
 
 rCompress :: Preskel -> Sid -> Sid -> [Preskel]
 rCompress k s s' =
@@ -2476,6 +2484,7 @@ rCompress k s s' =
         (map (updateFact $ updateStrand s s') (kfacts k))
         (updatePriority perm (kpriority k))
         (operation k)
+        (krules k)
         (pprob k)
         (updateProb perm (prob k))
         (pov k)
@@ -2529,8 +2538,8 @@ rprec name (z, i) (z', i') k (g, e) =
                         (((s, i), (s', i')) : orderings k)
           let k' = newPreskel
                   g (shared k) (insts k) orderings' (knon k) (kpnon k)
-                  (kunique k) (kconf k) (kauth k) (kfacts k)
-                  (kpriority k) (operation k) (pprob k) (prob k) (pov k)
+                  (kunique k) (kconf k) (kauth k) (kfacts k) (kpriority k)
+                  (operation k) (krules k) (pprob k) (prob k) (pov k)
           return (k', (gen k, e))
     _ ->
       error ("In rule " ++ name ++ ", precedence did not get a strand")
@@ -2553,7 +2562,8 @@ rlnon name t k (g, e) =
           k' = newPreskel
                   g (shared k) (insts k) (orderings k) (t' : knon k)
                   (kpnon k) (kunique k) (kconf k) (kauth k) (kfacts k)
-                  (kpriority k) (operation k) (pprob k) (prob k) (pov k)
+                  (kpriority k) (operation k) (krules k) (pprob k)
+                  (prob k) (pov k)
     False ->
       error ("In rule " ++ name ++ ", non did not get a term")
   where
@@ -2571,7 +2581,8 @@ rlpnon name t k (g, e) =
           k' = newPreskel
                   g (shared k) (insts k) (orderings k) (knon k)
                   (t' : kpnon k) (kunique k) (kconf k) (kauth k) (kfacts k)
-                  (kpriority k) (operation k) (pprob k) (prob k) (pov k)
+                  (kpriority k) (operation k) (krules k) (pprob k)
+                  (prob k) (pov k)
     False ->
       error ("In rule " ++ name ++ ", pnon did not get a term")
   where
@@ -2589,7 +2600,8 @@ rluniq name t k (g, e) =
           k' = newPreskel
                   g (shared k) (insts k) (orderings k) (knon k) (kpnon k)
                   (t' : kunique k) (kconf k) (kauth k) (kfacts k)
-                  (kpriority k) (operation k) (pprob k) (prob k) (pov k)
+                  (kpriority k) (operation k) (krules k) (pprob k)
+                  (prob k) (pov k)
     False ->
       error ("In rule " ++ name ++ ", uniq did not get a term")
   where
@@ -2607,7 +2619,8 @@ runiqAt name t (z, i) k (g, e) =
           k' = newPreskel
                   g (shared k) (insts k) (orderings k) (knon k) (kpnon k)
                   (t' : kunique k) (kconf k) (kauth k) (kfacts k)
-                  (kpriority k) (operation k) (pprob k) (prob k) (pov k)
+                  (kpriority k) (operation k) (krules k) (pprob k)
+                  (prob k) (pov k)
     (False, _) ->
       error ("In rule " ++ name ++ ", uniq-at did not get a term")
     (_, Nothing) ->
@@ -2627,7 +2640,8 @@ rlconf name t k (g, e) =
           k' = newPreskel
                   g (shared k) (insts k) (orderings k) (knon k)
                   (kpnon k) (kunique k) (t': kconf k) (kauth k) (kfacts k)
-                  (kpriority k) (operation k) (pprob k) (prob k) (pov k)
+                  (kpriority k) (operation k) (krules k) (pprob k)
+                  (prob k) (pov k)
     False ->
       error ("In rule " ++ name ++ ", conf did not get a term")
   where
@@ -2645,7 +2659,8 @@ rlauth name t k (g, e) =
           k' = newPreskel
                   g (shared k) (insts k) (orderings k) (knon k)
                   (kpnon k) (kunique k) (kconf k) (t' : kauth k) (kfacts k)
-                  (kpriority k) (operation k) (pprob k) (prob k) (pov k)
+                  (kpriority k) (operation k) (krules k) (pprob k)
+                  (prob k) (pov k)
     False ->
       error ("In rule " ++ name ++ ", auth did not get a term")
   where
@@ -2661,7 +2676,7 @@ rafact rule name fts k (g, e)
     k' = newPreskel
          g (shared k) (insts k) (orderings k) (knon k) (kpnon k)
          (kunique k) (kconf k) (kauth k) (fact : kfacts k)
-         (kpriority k) (operation k) (pprob k) (prob k) (pov k)
+         (kpriority k) (operation k) (krules k) (pprob k) (prob k) (pov k)
 
 rFactLookup :: String -> Env -> Term -> FTerm
 rFactLookup name e t

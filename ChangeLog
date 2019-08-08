@@ -1,3 +1,8 @@
+2019-08-08  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Strand.hs (krules): Added a filed in Preskel that
+	tracks the names of applied rules.
+
 2019-06-26  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Lib/Strand.hs (multiset): Used multisets of trace
