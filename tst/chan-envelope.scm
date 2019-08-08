@@ -184,7 +184,7 @@
 		 (prec y 2 z 3)
 		 (prec z 2 y 3)))))
 
-  (defrule esk-same-as-pcrkey
+  (defrule esk-same-as-chan
     (forall ((y z strd) (esk skey) (c c-0 chan))
 	    (implies
 	     (and (p "tpm-extend-enc" y 3)

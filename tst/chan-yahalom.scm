@@ -32,7 +32,7 @@
   (defstrand resp 4 (a a) (b b) (n-b n-b) (k k) (ch1 ch1) (ch2 ch2))
   (deflistener k)
   (conf ch1 ch2)
-  (auth ch2) 
+  (auth ch2)
   (uniq-orig n-b))
 
 (defskeleton yahalom
@@ -40,6 +40,3 @@
   (defstrand init 3 (ch ch))
   (auth ch)
   (conf ch))
-
-
-
