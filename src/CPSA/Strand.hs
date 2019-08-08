@@ -2101,6 +2101,8 @@ satisfy (Non t) = ggnon t
 satisfy (Pnon t) = ggpnon t
 satisfy (Uniq t) = gguniq t
 satisfy (UniqAt t n) = guniqAt t n
+satisfy (Conf t) = ggconf t
+satisfy (Auth t) = ggauth t
 satisfy (AFact name fs) = gafact name fs
 satisfy (Equals t t') = geq t t'
 
@@ -2232,6 +2234,20 @@ guniqAt t (z, i) k e =
           e <- match t t' e
           strdMatch z s e
       _ -> []
+
+-- Confidential channel
+ggconf :: Term -> Sem
+ggconf t k e =
+  do
+    t' <- kconf k
+    match t t' e
+
+-- Autheticated channel
+ggauth :: Term -> Sem
+ggauth t k e =
+  do
+    t' <- kauth k
+    match t t' e
 
 -- Facts
 gafact :: String -> [Term] -> Sem
@@ -2374,6 +2390,8 @@ rwt rule (Non t) = rlnon rule t
 rwt rule (Pnon t) = rlpnon rule t
 rwt rule (Uniq t) = rluniq rule t
 rwt rule (UniqAt t n) = runiqAt rule t n
+rwt rule (Conf t) = rlconf rule t
+rwt rule (Auth t) = rlauth rule t
 rwt rule (AFact name fs) = rafact rule name fs
 rwt rule (Equals t t') = req rule t t'
 
@@ -2594,6 +2612,42 @@ runiqAt name t (z, i) k (g, e) =
       error ("In rule " ++ name ++ ", uniq-at did not get a term")
     (_, Nothing) ->
       error ("In rule " ++ name ++ ", uniq-at did not get a strand")
+  where
+    t' = instantiate e t
+
+rlconf :: String -> Term -> Rewrite
+rlconf name t k (g, e) =
+  case matched e t of
+    True
+      | elem t' (kconf k) -> [(k, (g, e))]
+      | not $ isAtom t' -> []
+      | otherwise ->
+        [(k', (g, e))]
+        where
+          k' = newPreskel
+                  g (shared k) (insts k) (orderings k) (knon k)
+                  (kpnon k) (kunique k) (t': kconf k) (kauth k) (kfacts k)
+                  (kpriority k) (operation k) (pprob k) (prob k) (pov k)
+    False ->
+      error ("In rule " ++ name ++ ", conf did not get a term")
+  where
+    t' = instantiate e t
+
+rlauth :: String -> Term -> Rewrite
+rlauth name t k (g, e) =
+  case matched e t of
+    True
+      | elem t' (kauth k) -> [(k, (g, e))]
+      | not $ isAtom t' -> []
+      | otherwise ->
+        [(k', (g, e))]
+        where
+          k' = newPreskel
+                  g (shared k) (insts k) (orderings k) (knon k)
+                  (kpnon k) (kunique k) (kconf k) (t' : kauth k) (kfacts k)
+                  (kpriority k) (operation k) (pprob k) (prob k) (pov k)
+    False ->
+      error ("In rule " ++ name ++ ", auth did not get a term")
   where
     t' = instantiate e t
 

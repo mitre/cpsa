@@ -141,10 +141,13 @@ mkSkel pos p goals nmap g insts as comment =
     let nr = foldr mkNon [] as
     let ar = foldr mkPnon [] as
     let ur = foldr mkUniq [] as
-    let (nr', ar', ur') = foldl addInstOrigs (nr, ar, ur) insts
+    let cf = foldr mkConf [] as
+    let au = foldr mkAuth [] as
+    let (nr', ar', ur', cf', au') =
+          foldl addInstOrigs (nr, ar, ur, cf, au) insts
     let fs = foldr (mkFact nmap) [] as
     let prios = []
-    let k = mkPreskel g p goals insts o nr' ar' ur' [] [] fs prios comment
+    let k = mkPreskel g p goals insts o nr' ar' ur' cf' au' fs prios comment
     mapM_ (checkUniqAt nmap k) as
     case termsWellFormed $ nr' ++ ar' ++ ur' ++ kterms k of
       False -> fail (shows pos "Terms in skeleton not well formed")
@@ -154,12 +157,14 @@ mkSkel pos p goals nmap g insts as comment =
       Left msg -> fail $ shows pos
                   $ showString "Skeleton not well formed: " msg
 
-addInstOrigs :: ([Term], [Term], [Term]) ->
-                Instance -> ([Term], [Term], [Term])
-addInstOrigs (nr, ar, ur) i =
+addInstOrigs :: ([Term], [Term], [Term], [Term], [Term]) ->
+                Instance -> ([Term], [Term], [Term], [Term], [Term])
+addInstOrigs (nr, ar, ur, cf, au) i =
     (foldl (flip adjoin) nr $ inheritRnon i,
      foldl (flip adjoin) ar $ inheritRpnon i,
-     foldl (flip adjoin) ur $ inheritRunique i)
+     foldl (flip adjoin) ur $ inheritRunique i,
+     foldl (flip adjoin) au $ inheritRconf i,
+     foldl (flip adjoin) cf $ inheritRauth i)
 
 mkPrec :: [(Term, Sid)] -> (Pos, AForm) -> [Pair] -> [Pair]
 mkPrec nmap (_, Prec n n') o =
@@ -178,6 +183,14 @@ mkUniq :: (Pos, AForm) -> [Term] -> [Term]
 mkUniq (_, Uniq t) ts = t : ts
 mkUniq (_, UniqAt t _) ts = t : ts
 mkUniq _ ts = ts
+
+mkConf :: (Pos, AForm) -> [Term] -> [Term]
+mkConf (_, Conf t) ts = t : ts
+mkConf _ ts = ts
+
+mkAuth :: (Pos, AForm) -> [Term] -> [Term]
+mkAuth (_, Auth t) ts = t : ts
+mkAuth _ ts = ts
 
 mkFact :: [(Term, Sid)] -> (Pos, AForm) -> [Fact] -> [Fact]
 mkFact nmap (_, AFact name fs) ts =

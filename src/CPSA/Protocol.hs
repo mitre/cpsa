@@ -278,6 +278,8 @@ data AForm
   | Pnon Term
   | Uniq Term
   | UniqAt Term NodeTerm
+  | Conf Term
+  | Auth Term
   | AFact String [Term]
   | Equals Term Term
   deriving Show
@@ -301,6 +303,8 @@ aFormOrder (Length _ _ _) (Non _) = LT
 aFormOrder (Length _ _ _) (Pnon _) = LT
 aFormOrder (Length _ _ _) (Uniq _) = LT
 aFormOrder (Length _ _ _) (UniqAt _ _) = LT
+aFormOrder (Length _ _ _) (Conf _ ) = LT
+aFormOrder (Length _ _ _) (Auth _) = LT
 aFormOrder (Length _ _ _) (AFact _ _) = LT
 aFormOrder (Length _ _ _) (Equals _ _) = LT
 aFormOrder (Param _ _ _ _ _) (Length _ _ _) = GT
@@ -310,6 +314,8 @@ aFormOrder (Param _ _ _ _ _) (Non _) = LT
 aFormOrder (Param _ _ _ _ _) (Pnon _) = LT
 aFormOrder (Param _ _ _ _ _) (Uniq _) = LT
 aFormOrder (Param _ _ _ _ _) (UniqAt _ _) = LT
+aFormOrder (Param _ _ _ _ _) (Conf _ ) = LT
+aFormOrder (Param _ _ _ _ _) (Auth _) = LT
 aFormOrder (Param _ _ _ _ _) (AFact _ _) = LT
 aFormOrder (Param _ _ _ _ _) (Equals _ _) = LT
 aFormOrder (Prec _ _) (Length _ _ _) = GT
@@ -319,6 +325,8 @@ aFormOrder (Prec _ _) (Non _) = LT
 aFormOrder (Prec _ _) (Pnon _) = LT
 aFormOrder (Prec _ _) (Uniq _) = LT
 aFormOrder (Prec _ _) (UniqAt _ _) = LT
+aFormOrder (Prec _ _) (Conf _ ) = LT
+aFormOrder (Prec _ _) (Auth _) = LT
 aFormOrder (Prec _ _) (AFact _ _) = LT
 aFormOrder (Prec _ _) (Equals _ _) = LT
 aFormOrder (Non _) (Length _ _ _) = GT
@@ -328,6 +336,8 @@ aFormOrder (Non _) (Non _) = EQ
 aFormOrder (Non _) (Pnon _) = LT
 aFormOrder (Non _) (Uniq _) = LT
 aFormOrder (Non _) (UniqAt _ _) = LT
+aFormOrder (Non _) (Conf _ ) = LT
+aFormOrder (Non _) (Auth _) = LT
 aFormOrder (Non _) (AFact _ _) = LT
 aFormOrder (Non _) (Equals _ _) = LT
 aFormOrder (Pnon _) (Length _ _ _) = GT
@@ -337,6 +347,8 @@ aFormOrder (Pnon _) (Non _) = GT
 aFormOrder (Pnon _) (Pnon _) = EQ
 aFormOrder (Pnon _) (Uniq _) = LT
 aFormOrder (Pnon _) (UniqAt _ _) = LT
+aFormOrder (Pnon _) (Conf _ ) = LT
+aFormOrder (Pnon _) (Auth _) = LT
 aFormOrder (Pnon _) (AFact _ _) = LT
 aFormOrder (Pnon _) (Equals _ _) = LT
 aFormOrder (Uniq _) (Length _ _ _) = GT
@@ -346,6 +358,8 @@ aFormOrder (Uniq _) (Non _) = GT
 aFormOrder (Uniq _) (Pnon _) = GT
 aFormOrder (Uniq _) (Uniq _) = EQ
 aFormOrder (Uniq _) (UniqAt _ _) = LT
+aFormOrder (Uniq _) (Conf _ ) = LT
+aFormOrder (Uniq _) (Auth _) = LT
 aFormOrder (Uniq _) (AFact _ _) = LT
 aFormOrder (Uniq _) (Equals _ _) = LT
 aFormOrder (UniqAt _ _) (Length _ _ _) = GT
@@ -355,8 +369,32 @@ aFormOrder (UniqAt _ _) (Non _) = GT
 aFormOrder (UniqAt _ _) (Pnon _) = GT
 aFormOrder (UniqAt _ _) (Uniq _) = GT
 aFormOrder (UniqAt _ _) (UniqAt _ _) = EQ
+aFormOrder (UniqAt _ _) (Conf _ ) = LT
+aFormOrder (UniqAt _ _) (Auth _) = LT
 aFormOrder (UniqAt _ _) (AFact _ _) = LT
 aFormOrder (UniqAt _ _) (Equals _ _) = LT
+aFormOrder (Conf _ ) (Length _ _ _) = GT
+aFormOrder (Conf _ ) (Param _ _ _ _ _) = GT
+aFormOrder (Conf _ ) (Prec _ _) = GT
+aFormOrder (Conf _ ) (Non _) = GT
+aFormOrder (Conf _ ) (Pnon _) = GT
+aFormOrder (Conf _ ) (Uniq _) = GT
+aFormOrder (Conf _ ) (UniqAt _ _) = GT
+aFormOrder (Conf _ ) (Conf _ ) = EQ
+aFormOrder (Conf _ ) (Auth _) = LT
+aFormOrder (Conf _ ) (AFact _ _) = LT
+aFormOrder (Conf _ ) (Equals _ _) = LT
+aFormOrder (Auth _) (Length _ _ _) = GT
+aFormOrder (Auth _) (Param _ _ _ _ _) = GT
+aFormOrder (Auth _) (Prec _ _) = GT
+aFormOrder (Auth _) (Non _) = GT
+aFormOrder (Auth _) (Pnon _) = GT
+aFormOrder (Auth _) (Uniq _) = GT
+aFormOrder (Auth _) (UniqAt _ _) = GT
+aFormOrder (Auth _) (Conf _ ) = GT
+aFormOrder (Auth _) (Auth _) = EQ
+aFormOrder (Auth _) (AFact _ _) = LT
+aFormOrder (Auth _) (Equals _ _) = LT
 aFormOrder (AFact _ _) (Length _ _ _) = GT
 aFormOrder (AFact _ _) (Param _ _ _ _ _) = GT
 aFormOrder (AFact _ _) (Prec _ _) = GT
@@ -364,6 +402,8 @@ aFormOrder (AFact _ _) (Non _) = GT
 aFormOrder (AFact _ _) (Pnon _) = GT
 aFormOrder (AFact _ _) (Uniq _) = GT
 aFormOrder (AFact _ _) (UniqAt _ _) = GT
+aFormOrder (AFact _ _) (Conf _ ) = GT
+aFormOrder (AFact _ _) (Auth _) = GT
 aFormOrder (AFact _ _) (AFact _ _) = EQ
 aFormOrder (AFact _ _) (Equals _ _) = LT
 aFormOrder (Equals _ _) (Length _ _ _) = GT
@@ -373,6 +413,8 @@ aFormOrder (Equals _ _) (Non _) = GT
 aFormOrder (Equals _ _) (Pnon _) = GT
 aFormOrder (Equals _ _) (Uniq _) = GT
 aFormOrder (Equals _ _) (UniqAt _ _) = GT
+aFormOrder (Equals _ _) (Conf _ ) = GT
+aFormOrder (Equals _ _) (Auth _) = GT
 aFormOrder (Equals _ _) (AFact _ _) = GT
 aFormOrder (Equals _ _) (Equals _ _) = EQ
 
@@ -384,6 +426,8 @@ aFreeVars vars (Non t) = addVars vars t
 aFreeVars vars (Pnon t) = addVars vars t
 aFreeVars vars (Uniq t) = addVars vars t
 aFreeVars vars (UniqAt t (z, _)) = addVars (addVars vars t) z
+aFreeVars vars (Conf t) = addVars vars t
+aFreeVars vars (Auth t) = addVars vars t
 aFreeVars vars (AFact _ ft) = foldl addVars vars ft
 aFreeVars vars (Equals x y) = addVars (addVars vars x) y
 
@@ -415,3 +459,44 @@ mkProt name alg gen roles lrole rules comment =
            varsAllAtoms = all roleVarsAllAtoms roles }
     where
       roleVarsAllAtoms role = all isAtom (rvars role)
+
+{- aFormOrder generator
+
+-- Generate the aFormOrder relation from a list of constructors
+
+module Main (main) where
+
+main :: IO ()
+main =
+  mapM_ putStrLn $ map output comps
+
+-- Format output
+output :: (String, String, String) -> String
+output (x, y, c) =
+  "aFormOrder (" ++ x ++ ") (" ++ y ++ ") = " ++ c
+
+-- Compute comparisons
+comps :: [(String, String, String)]
+comps = [ (x, y, show $ compare i j) |
+          (x, i) <- pairs,
+          (y, j) <- pairs ]
+
+-- Add in list position
+pairs :: [(String, Int)]
+pairs = zip constrs [0..]
+
+-- Constructors
+constrs :: [String]
+constrs = [
+  "Length _ _ _",
+  "Param _ _ _ _ _",
+  "Prec _ _",
+  "Non _",
+  "Pnon _",
+  "Uniq _",
+  "UniqAt _ _",
+  "Conf _ ",
+  "Auth _",
+  "AFact _ _",
+  "Equals _ _" ]
+-}

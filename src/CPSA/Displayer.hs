@@ -96,6 +96,10 @@ displayForm ctx (Uniq t) =
 displayForm ctx (UniqAt t (s, i)) =
   L () [S () "uniq-at", displayTerm ctx t,
         displayTerm ctx s, N () i]
+displayForm ctx (Conf t) =
+  L () [S () "conf", displayTerm ctx t]
+displayForm ctx (Auth t) =
+  L () [S () "auth", displayTerm ctx t]
 displayForm ctx (AFact name fs) =
   L () (S () "fact" : S () name : map (displayTerm ctx) fs)
 displayForm ctx (Equals t1 t2) =

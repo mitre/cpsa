@@ -768,6 +768,14 @@ loadPrimary _ _ kvars (L pos [S _ "uniq-at", x, y, z]) =
     t <- loadAlgTerm kvars x
     t' <- loadNodeTerm kvars y z
     return (pos, UniqAt t t')
+loadPrimary _ _ kvars (L pos [S _ "conf", x]) =
+  do
+    t <- loadChanTerm kvars x
+    return (pos, Conf t)
+loadPrimary _ _ kvars (L pos [S _ "auth", x]) =
+  do
+    t <- loadChanTerm kvars x
+    return (pos, Auth t)
 loadPrimary _ _ kvars (L pos (S _ "fact" : S _ name : fs)) =
   do
     fs <- mapM (loadTerm kvars) fs
@@ -805,15 +813,24 @@ loadPrimary _ _ _ (L pos (S _ pred : _)) =
   fail (shows pos ("Bad formula for predicate " ++ pred))
 loadPrimary pos _ _ _ = fail (shows pos "Bad formula")
 
--- Load a term and make sure it does not have sort strd
+-- Load a term and make sure it does not have sort strd or chan
 
 loadAlgTerm :: Monad m => [Term] -> SExpr Pos -> m Term
 loadAlgTerm ts x =
   do
     t <- loadTerm ts x
-    case isStrdVar t of
+    case isStrdVar t || isChan t of
       True -> fail (shows (annotation x) "Expecting an algebra term")
       False -> return t
+-- Load a term and make sure it does not have sort strd
+
+loadChanTerm :: Monad m => [Term] -> SExpr Pos -> m Term
+loadChanTerm ts x =
+  do
+    t <- loadTerm ts x
+    case isChan t of
+      True -> return t
+      False -> fail (shows (annotation x) "Expecting a channel variable")
 
 -- Load a term and make sure it has sort strd
 
@@ -867,6 +884,12 @@ roleSpecific unbound (pos, Uniq t)
 roleSpecific unbound (pos, UniqAt t (z, _))
   | allBound unbound t && L.notElem z unbound = return unbound
   | otherwise = fail (shows pos "Unbound variable in uniq-at")
+roleSpecific unbound (pos, Conf t)
+  | allBound unbound t = return unbound
+  | otherwise = fail (shows pos "Unbound variable in conf")
+roleSpecific unbound (pos, Auth t)
+  | allBound unbound t = return unbound
+  | otherwise = fail (shows pos "Unbound variable in auth")
 roleSpecific unbound (pos, AFact _ fs)
   | all (allBound unbound) fs = return unbound
   | otherwise = fail (shows pos "Unbound variable in fact")
