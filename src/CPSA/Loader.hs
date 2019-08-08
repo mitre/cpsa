@@ -797,9 +797,9 @@ loadPrimary _ p kvars (L pos [S _ "p", Q _ name, x, N _ h]) =
 loadPrimary _ p kvars (L pos [S _ "p", Q _ name, Q var x, y, z]) =
   do
     r <- lookupRole pos p name
-    v <- loadAlgTerm (rvars r) (S var x)
+    v <- loadAlgChanTerm (rvars r) (S var x)
     s <- loadStrdTerm kvars y
-    t <- loadAlgTerm kvars z
+    t <- loadAlgChanTerm kvars z
     case isVar v of
       False -> fail (shows pos "Bad parameter -- not a variable")
       True ->
@@ -823,6 +823,17 @@ loadAlgTerm ts x =
       True -> fail (shows (annotation x) "Expecting an algebra term")
       False -> return t
 -- Load a term and make sure it does not have sort strd
+
+loadAlgChanTerm :: Monad m => [Term] -> SExpr Pos -> m Term
+loadAlgChanTerm ts x =
+  do
+    t <- loadTerm ts x
+    case isStrdVar t of
+      True -> fail (shows (annotation x)
+                    "Expecting an algebra term or a channel")
+      False -> return t
+
+-- Load a term and make sure it has sort chan
 
 loadChanTerm :: Monad m => [Term] -> SExpr Pos -> m Term
 loadChanTerm ts x =

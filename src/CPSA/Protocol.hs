@@ -199,7 +199,7 @@ firstOccursAt t c =
     where
       loop _ [] = Nothing
       loop i (e : c)
-          | occursIn t (evtTerm e) = Just i
+          | any (occursIn t) (cmTerms $ evtCm e) = Just i
           | otherwise = loop (i + 1) c
 
 -- The empty role name is used with listener strands.  All roles in a
