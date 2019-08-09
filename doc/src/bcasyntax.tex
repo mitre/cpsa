@@ -38,10 +38,10 @@ $\mbox{comment}\mid\mbox{protocol}\mid\mbox{skeleton}\mid\mbox{goal}$
 (id+ sort)
 \\ sort&$\leftarrow$&
 $\sym{text} \mid \sym{data} \mid \sym{name} \mid \sym{skey}
-\mid \sym{akey}\mid\sym{mesg}$
+\mid \sym{akey}\mid\sym{mesg}\mid\sym{chan}$
 \\ trace&$\leftarrow$&(\sym{trace} event+)
 \\ event&$\leftarrow$&
-$(\sym{send}\mbox{ term})\mid(\sym{recv}\mbox{ term})$
+$(\sym{send}\mbox{ id? term})\mid(\sym{recv}\mbox{ id? term})$
 \\ term&$\leftarrow$&
 $\mbox{id}\mid\mbox{akey}\mid(\sym{ltk}\mbox{ id id})\mid\mbox{string}\mid(\sym{cat}\mbox{ term+})$
 \\ &$\mid$&$(\sym{enc}\mbox{ term+ term})\mid(\sym{hash}\mbox{ term+})$
@@ -54,7 +54,9 @@ $\mbox{id}\mid(\sym{invk}\mbox{ id})
 \\ role-alist&$\leftarrow$&$
 (\sym{non-orig}\mbox{ ht-term}\ast)\mbox{ role-alist}$
 \\ &$\mid$&$(\sym{pen-non-orig}\mbox{ ht-term}\ast)\mbox{ role-alist}$
-\\ &$\mid$&$(\sym{uniq-orig}\mbox{ term}\ast)\mbox{ role-alist}\mid\ldots$
+\\ &$\mid$&$(\sym{uniq-orig}\mbox{ term}\ast)\mbox{ role-alist}$
+\\ &$\mid$&$(\sym{conf}\mbox{ id}\ast)\mbox{ role-alist}$
+\\ &$\mid$&$(\sym{auth}\mbox{ id}\ast)\mbox{ role-alist}$
 \\ ht-term&$\leftarrow$&term${}\mid{}$(integer term)
 \\ rule&$\leftarrow$&
 (\sym{defrule} id sentence rule-alist)
@@ -80,6 +82,8 @@ $\mbox{id}\mid(\sym{invk}\mbox{ id})
 \\ skel-alist&$\leftarrow$&$(\sym{non-orig}\mbox{ term}\ast)\mbox{ skel-alist}$
 \\ &$\mid$&$(\sym{pen-non-orig}\mbox{ term}\ast)\mbox{ skel-alist}$
 \\ &$\mid$&$(\sym{uniq-orig}\mbox{ term}\ast)\mbox{ skel-alist}$
+\\ &$\mid$&$(\sym{conf}\mbox{ id}\ast)\mbox{ skel-alist}$
+\\ &$\mid$&$(\sym{auth}\mbox{ id}\ast)\mbox{ skel-alist}$
 \\ &$\mid$&$(\sym{facts}\mbox{ fact$\ast$})\mbox{ skel-alist}$
 \\ &$\mid$&$(\sym{precedes}\mbox{ node-pair}\ast)\mbox{ skel-alist}\mid\ldots$
 \\ node-pair&$\leftarrow$&
@@ -104,6 +108,7 @@ $\mbox{id}\mid(\sym{invk}\mbox{ id})
 \\ &$\mid$&(\sym{prec} svar pos svar pos)
 \\ &$\mid$&(\sym{non} term) $\mid$ (\sym{pnon} term)
 \\ &$\mid$&(\sym{uniq} term) $\mid$ (\sym{uniq-at} term svar pos)
+\\ &$\mid$&(\sym{conf} id) $\mid$ (\sym{auth} id)
 \\ &$\mid$&(\sym{fact} id term$\ast$) $\mid$ (= term term)
 \\ roleid&$\leftarrow$& string
 \\ hgt&$\leftarrow$& integer

@@ -1,7 +1,7 @@
 (herald perrig-song)
 
 (comment "CPSA 4.2.0")
-(comment "All input read from perrig-song.scm")
+(comment "All input read from chan-perrig-song.scm")
 
 (defprotocol perrig-song basic
   (defrole init
@@ -29,8 +29,8 @@
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (uniq-orig na)
   (auth c)
-  (operation nonce-test (added-strand resp 2) (ch-msg c (cat na nb a b))
-    (0 1))
+  (operation channel-test (added-strand resp 2)
+    (ch-msg c (cat na nb a b)) (0 1))
   (traces ((send na) (recv c (cat na nb a b)))
     ((recv na) (send c (cat na nb a b))))
   (label 1)

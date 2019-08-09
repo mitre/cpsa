@@ -283,7 +283,7 @@
   (uniq-orig n-b k)
   (conf ch1 ch2 ch3)
   (auth ch2)
-  (operation nonce-test (added-strand serv 3) (ch-msg ch2 (cat a b k))
+  (operation channel-test (added-strand serv 3) (ch-msg ch2 (cat a b k))
     (0 2))
   (traces
     ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
@@ -361,7 +361,7 @@
   (uniq-orig k)
   (conf ch)
   (auth ch)
-  (operation nonce-test (added-strand serv 2)
+  (operation channel-test (added-strand serv 2)
     (ch-msg ch (cat a b k n-a n-b)) (0 1))
   (traces
     ((send (cat a n-a)) (recv ch (cat a b k n-a n-b))

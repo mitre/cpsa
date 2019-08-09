@@ -269,6 +269,7 @@ displayOperation k ctx rest =
                 displayOpCmts ctx (S.toList escape)) : rest
       displayDirection Encryption = S () "encryption-test"
       displayDirection Nonce = S () "nonce-test"
+      displayDirection Channel = S () "channel-test"
       displayMethod _ (Deleted node) =
           [S () "deleted", displayNode node]
       displayMethod _ (Weakened (n0, n1)) =

@@ -409,7 +409,7 @@ data Cause
     = Cause Direction Node CMT (Set CMT)
     deriving Show
 
-data Direction = Encryption | Nonce deriving Show
+data Direction = Encryption | Nonce | Channel deriving Show
 
 data Method
     = Deleted Node

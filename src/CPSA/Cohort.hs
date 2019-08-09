@@ -373,7 +373,7 @@ chanSolveNode k n ct =
     pos = Place []
     eks = []
     escape = S.empty
-    cause = Cause (dir eks) n t escape
+    cause = Cause Channel n t escape
 
 -- Filter out all but the skeletons with the most general homomorphisms.
 

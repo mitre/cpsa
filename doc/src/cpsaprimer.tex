@@ -285,6 +285,13 @@ responder's role in S-expression syntax is in Figure~\ref{fig:ns
 \label{fig:ns responder}
 \end{figure}
 
+A message may optionally be transferred on a channel using the syntax
+\texttt{(send $c$ $t$)} and \texttt{(recv $c$ $t$)}, where $c$ is a
+variable of sort \dom{chan}.  A channel may be \index{authenticated
+  channel}authenticated or \index{confidential channel}confidential or
+both.  The semantics of using channels for messaging will be explained
+in the next section.
+
 Zero-based indexing\index{zero-based indexing}\index{indexing,
   zero-based} is used though out this document and in the source code
 it describes.  Within the document, a finite sequence is a function
@@ -304,9 +311,11 @@ inbound term and is also carried by that term.
 Some atoms in a role have special properties.  An atom may be declared
 to be non-originating with the \texttt{non-orig} form or the
 \texttt{pen-non-orig} form and uniquely originating with the
-\texttt{uniq-orig} form.  The declarations make assertions about
-instances of a role, assertions that will be defined after role
-instantiation is explained.
+\texttt{uniq-orig} form.  A channel variable may be declared to be
+authenticated with the \texttt{auth} form, and confidential with the
+\texttt{conf} form.  The declarations make assertions about instances
+of a role, assertions that will be defined after role instantiation is
+explained.
 
 Every variable that occurs in each term declared to be non-originating
 must occur in some term in the trace, and the term must not be carried
@@ -440,7 +449,9 @@ adversary can also concatenate two messages, or separate the pieces of
 a concatenated message.  Since a penetrator strand that encrypts or
 decrypts must receive the key as one of its inputs, keys used by the
 adversary---compromised keys---have always been transmitted by some
-participant.
+participant.  The adversary may transmit a message on a channel when
+the channel is not authenticated, and the adversary may receive a
+message on a channel when the channel is not confidential.
 
 Figure~\ref{fig:ns penetrated} shows a penetrated execution of the
 Needham-Schroeder Protocol.  Strand space theory would decompose the
@@ -464,6 +475,11 @@ executions include only ones in which some terms are uniquely
 originating---each term's provenance is one node.  Implementations of
 these protocols can ensure unique origination of a term by freshly
 generating a nonce for the component of the message it represents.
+
+A channel is \index{authenticated channel}\emph{authenticated} if
+only regular strands transmit messages on it.
+A channel is \index{confidential channel}\emph{confidential} if
+only regular strands receive messages on it.
 
 Occasionally, protocol roles designate some terms to be
 non-originating or uniquely originating.  Consider the prefix of the
@@ -502,9 +518,10 @@ term.  Two nodes are related if the transmitting node precedes the
 reception node, as an execution it represents may include nodes
 between the related transmission and reception nodes.
 
-The final three additional components of a skeleton are a set of
-non-originating terms, a set of penetrator non-originating terms, and
-a set of uniquely originating terms.  To be a skeleton, each uniquely
+The final five additional components of a skeleton are a set of
+non-originating terms, a set of penetrator non-originating terms,
+a set of uniquely originating terms, a set of authenticated channels,
+and a set of confidential channels.  To be a skeleton, each uniquely
 originating term must originate in at most one strand in the skeleton,
 and each non-originating term must never be carried by some event in
 the skeleton and every variable that occurs in the term must occur in
@@ -525,6 +542,8 @@ representation of a skeleton.
    (non-orig \ldots)     ; Non-originating terms
    (pen-non-orig \ldots) ; Penetrator non-originating terms
    (uniq-orig \ldots))   ; Uniquely originating terms
+   (auth \ldots))        ; Authenticated channels
+   (conf \ldots))        ; Confidential channels
 \end{alltt}
 \end{quote}
 \caption{Components of Skeletons}\label{fig:skeleton}
@@ -651,16 +670,16 @@ one indication that a strand is an instance of a listener role.
 
 Authentication tests~\cite{GuttmanThayer02} guide the search for
 skeletons that refine one with an unrealized node into ones in which
-it is realized.  There are two types of authentication tests, nonce
-and encryption tests.  In both cases, an unrealized node is selected,
-called the \index{test node}\emph{test node.}  A term carried by the
-inbound message at the test node is identified as the \index{critical
-  term}\emph{critical term.}  A critical term is one that occurs in a
-message context, the construction of which cannot be explained by the
-regular behavior in the current skeleton or by penetrator behavior.
-An authentication test determines the additional regular behavior
-required to refine a skeleton into ones in which the test node is
-realized.
+it is realized.  There are three types of authentication tests, nonce,
+encryption, and channel tests.  In all cases, an unrealized node is
+selected, called the \index{test node}\emph{test node.}  A term
+carried by the inbound message at the test node is identified as the
+\index{critical term}\emph{critical term.}  A critical term is one
+that occurs in a message context, the construction of which cannot be
+explained by the regular behavior in the current skeleton or by
+penetrator behavior.  An authentication test determines the additional
+regular behavior required to refine a skeleton into ones in which the
+test node is realized.
 
 The critical term in a nonce test is a uniquely originating term, the
 nonce.  It is freshly generated by one regular participant in each run
@@ -714,6 +733,10 @@ the methods used to refine skeletons with nonce tests apply.
 Additionally, an instance of a listener role listening for the
 critical term's encryption key is added.  If the resulting skeleton
 is not dead, the encryption can be explained by penetrator behavior.
+
+The critical term in a channel test is an authenticated channel and a
+term.  {\cpsa} uses regular augmentation to create a matching
+term transmitted on the channel.
 
 \section{Generalization}
 
@@ -802,8 +825,9 @@ overlap.  Furthermore, the maplets used to specify a strand need not
 specify how to map every role variable.  The reader inserts missing
 mappings, and renames every skeleton variable that also occurs in a
 role of its protocol.  The sort of every skeleton variable that occurs
-in the \texttt{non-orig}, \texttt{pen-non-orig}, or \texttt{uniq-orig}
-list or in a maplet must be declared, using the \texttt{vars} form.
+in the \texttt{non-orig}, \texttt{pen-non-orig}, \texttt{uniq-orig},
+\texttt{auth}, or \texttt{conf} lists or in a maplet must be declared,
+using the \texttt{vars} form.
 
 The \textsc{prot-alist}, \textsc{role-alist}, and \textsc{skel-alist}
 productions are Lisp style association lists, that is, lists of
@@ -958,7 +982,9 @@ unrealized.
 The operation used to derive a skeleton is recorded with
 \index{operation}\texttt{(operation~}\textsc{test kind term node
   term$\ast$}\texttt{)}, where \textsc{test} is the authentication
-test \texttt{encryption-test} or \texttt{nonce-test}, \textsc{kind} is
+test \texttt{encryption-test}, \texttt{nonce-test}, or
+\texttt{channel-test},
+\textsc{kind} is
 \texttt{(added-strand} \textsc{id} \textsc{integer}\texttt{)},
 \texttt{(displaced} \textsc{integer} \textsc{integer} \textsc{id} \textsc{integer}\texttt{)},
 \texttt{(contracted} \textsc{maplet$\ast$}\texttt{)}, or
