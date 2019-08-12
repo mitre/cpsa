@@ -27,11 +27,15 @@
 \newcommand{\expr}[2]{\ensuremath{{#1}^{#2}}}
 \newcommand{\bca}{\textsc{bca}}
 \newcommand{\alga}{\alg{A}}
+\newcommand{\algbara}{\bar{\alg{A}}}
 \newcommand{\tr}{\ensuremath{\mathfrak C}}
 \newcommand{\base}{\ensuremath{\mathfrak B}}
 \newcommand{\ints}{\ensuremath{\mathbb Z}}
 \newcommand{\solve}[1]{\stackrel{#1}{\longtwoheadrightarrow}}
+\newcommand{\pubchmsg}{\fn{pubchmsg}}
 \newcommand{\pubmsg}{\fn{pubmsg}}
+\newcommand{\auth}{\fn{auth}}
+\newcommand{\conf}{\fn{conf}}
 \newcommand{\avoid}{\fn{avoid}}
 \newcommand{\dcmp}{\fn{dcmp}}
 \newcommand{\carpos}{\fn{carpos}}
@@ -359,6 +363,36 @@ t'$.
 In what follows, we will often conflate a term with the message of
 which it is a member, and use lowercase letters to denote both.
 
+\section{Channel Messages}\index{channel message}
+
+As of {\cpsa} version 4.2, messages can optionally be transported on a
+channel.  For $t\in\alga_X$, a plain message is written $[t]$, and
+when the message is bound to channel~$c$, it is written $[c,t]$.
+
+The channel message algebra adds two sorts to the underlying message
+algebra, \dom{chan} and \dom{chmsg}, and two operations to the
+signature:
+\[\begin{array}{r@{{}:{}}ll}
+   [\cdot]&\dom{mesg}\rightarrow\dom{chmsg}&\mbox{Plain message}\\ \relax
+   [\cdot,\cdot]&\dom{chan}\times\dom{mesg}\rightarrow\dom{chmsg}
+   &\mbox{Channel message}
+\end{array}\]
+Let $X$ be a {\bca} variable set, and $\bar X$ be a variable set that
+adds channel variables to $X$.  If $\alga_X$ is the algebra associated
+with sort \dom{mesg}, then $\algbara_{\bar X}$ is the algebra
+associated with sort \dom{chmsg}, the Basic Crypto Channel Algebra
+generated from $\bar X$.
+
+Positions are extended to channel messages as follows:
+\[\begin{array}{l}
+m\termat\seq{}=m;\\ \relax
+[t]\termat 0\cons p=t\termat p;\\ \relax
+[c,t]\termat 1\cons p=t\termat p.
+\end{array}\]
+The set of carried positions is extended to channel messages in the
+obvious way.  The plain message $[t]$ will often be written as $t$
+when the context disambiguates the reference.
+
 \chapter{Strand Spaces and Bundles}\label{chp:strand spaces and bundles}
 
 When using strand space theory, one normally hypothesizes the
@@ -377,19 +411,20 @@ set of local sessions of the protocol.  Each local session is called a
 \index{strand}\emph{strand}.  The behavior of a strand, its
 \index{trace}\emph{trace}, is a sequence of messaging events.  An
 \index{event}\emph{event} is either a message transmission or a
-reception.  Outbound message $t\in\alga_X$ is written as~$\outbnd t$,
-and inbound message~$t$ is written as~$\inbnd t$.  The set of traces
-over $\alga_X$ is $\tr_X=(\pm\alga_X)^+$.  A message
-\index{originates}\emph{originates} in a trace if it is carried by
-some event and the first event in which it is carried is outbound.  A
-message is \index{gained}\emph{gained} by a trace if it is carried by
-some event and the first event in which it is carried is inbound.  A
-message is \index{acquired}\emph{acquired} by a trace if it first
-occurs in a reception event and is also carried by that event.
+reception.  Outbound channel message $t\in\algbara_X$ is written
+as~$\outbnd t$, and inbound channel message~$t$ is written as~$\inbnd
+t$.  The set of traces over $\algbara_X$ is $\tr_X=(\pm\algbara_X)^+$.  A
+message \index{originates}\emph{originates} in a trace if it is
+carried by some event and the first event in which it is carried is
+outbound.  A message is \index{gained}\emph{gained} by a trace if it
+is carried by some event and the first event in which it is carried is
+inbound.  A message is \index{acquired}\emph{acquired} by a trace if
+it first occurs in a reception event and is also carried by that
+event.
 
 Abstractly, a strand space is a multiset of traces, but since we wish
 to name each element, a \index{strand space}\emph{strand
-  space}~$\Theta_X$ over algebra~$\alga_X$ is defined to be a sequence
+  space}~$\Theta_X$ over algebra~$\algbara_X$ is defined to be a sequence
 of traces in $\tr_X$.  A strand~$s$ is a member of the domain of
 $\Theta_X$, and its trace is $\Theta_X(s)$.
 
@@ -425,11 +460,19 @@ An atom \index{uniquely originates}\emph{uniquely originates} in a
 bundle if it originates in the trace of exactly one strand.  An atom
 is \index{non-originating}\emph{non-originating} in a bundle if it
 originates on no strand, but each of its variables occurs in some
-strand's trace.
+strand's trace.  A channel is \index{authenticated
+  channel}\emph{authenticated} if only regular strands in a bundle use
+it to transmit messages.  A channel is \index{confidential
+  channel}\emph{confidential} if only regular strands in a bundle use
+it to receive messages.
 
 In a run of a protocol, the behavior of each strand is constrained by
 a role in a protocol.  Adversarial strands are constrained by roles as
-are non-adversarial strands.  A protorole over $\alga_Y$ is
+are non-adversarial strands.  What follows is the definition of a role
+before channels and channel messages were introduced into {\cpsa},
+followed by a discussion of the additions caused by channels.
+
+A protorole over $\algbara_Y$ is
 $\role_Y(C,N,U)$, where $C\in\tr_Y$, $N\subseteq\base_Y$, and
 $U\subseteq\base_Y$.  The trace of the role is~$C$, its
 non-origination assumptions are~$N$, and its unique origination
@@ -451,7 +494,7 @@ $\rl\colon\Theta_X\to P$ that satisfies properties for each
 $s\in\sdom(\Theta_X)$.  Assuming $\rl(s)=\role_Y(C,N,U)$ and $X$ and
 $Y$ share no variables, and let $h=|\Theta_X(s)|$, the properties are
 (1) $h\leq|C|$, (2) there is a
-homomorphism~$\sigma\colon\alga_Y\to\alga_X$ such that
+homomorphism~$\sigma\colon\algbara_Y\to\algbara_X$ such that
 $\comp{\sigma}{\prefix{C}{h}}=\Theta_X(s)$, (3) $\sdom(\sigma)$ is the
 set of variables that occur in~$\prefix{C}{h}$, (4) if the variables
 in $t\in N$ occur in $\sdom(\sigma)$, then $\sigma(t)$ is
@@ -462,10 +505,15 @@ Origination assumptions in bundles specified by roles are called
 \index{inherited origination assumptions}\emph{inherited origination
   assumptions}.
 
+The introduction of channels adds two new fields to a role, a set of
+channels assumed to be authenticated, and a set of channels assumed to
+be confidential.  For a bundle to be a run of a protocol, the
+inherited channel assumptions must be honored by the bundle.
+
 \chapter{Adversary Model}\label{chp:adversary model}
 
 A fixed set of penetrator roles encodes the adversary model associated
-with a message algebra.  For the Basic Crypto Algebra, there are eight
+with a message algebra.  For the Basic Crypto Algebra, there are nine
 roles.  Each role makes no origination assumptions, and the trace of
 each role is given in Figure~\ref{fig:pen}.  The first line of the
 figure specifies many traces, one for each base sort, and a trace for
@@ -482,7 +530,9 @@ $$\begin{array}{lll}
 \seq{\inbnd x,\inbnd y,\outbnd\enc{x}{y}}&
 \seq{\inbnd\enc{x}{y},\inbnd \fn{inv}(y),\outbnd x}\\
 \mbox{Hash}(x\colon\top)&
-\seq{\inbnd x,\outbnd\hash{x}}
+\seq{\inbnd x,\outbnd\hash{x}}\\
+\mbox{Chan}(c\colon\mathit{Ch},x\colon\top)
+&\seq{\inbnd x, \outbnd[c,x]}&\seq{\inbnd[c,x],\outbnd x}
 \end{array}$$
 \caption{Basic Crypto Algebra Penetrator Role Traces}\label{fig:pen}
 \end{figure}
@@ -500,12 +550,16 @@ the penetrator can use a uniquely originating atom to encrypt or
 decrypt a message only if it is transmitted by a regular strand
 unprotected by encryption.
 
+When a channel is authenticated, the penetrator cannot send a message
+on it.  When a channel is confidential, the penetrator cannot receive
+a message on it.
+
 \chapter{Skeletons}\label{chp:skeletons}
 
 The details of penetrator behavior are abstracted away when performing
 protocol analysis.  The abstracted description of a bundle is called a
 realized skeleton, which is defined using a protoskeleton.  A
-\emph{protoskeleton} over $\alga_X$ is
+\emph{protoskeleton} over $\algbara_X$ is
 $\skel_X(\rl,P,\Theta_X,\prec,N,U)$, where $\rl\colon\sdom(\Theta_X)\to P$ is
 a role map, the sets~$X$ and $\svars(P)$ are disjoint,
 $\Theta_X$ is a sequence of traces in $\tr_X$, $\prec$ is a relation
@@ -513,6 +567,12 @@ on the nodes in $\Theta_X$, $N\subseteq\base_X$ are its
 non-origination assumptions, and $U\subseteq\base_X$ are its unique
 origination assumptions.  Unlike a strand space, the sort of a
 variable in~$X$ need not be a base sort.
+
+The introduction of channels adds two new fields to a skeleton, a set
+of channels assumed to be authenticated, and a set of channels assumed
+to be confidential.  The implications of the additions is
+straightforward, and we simply retain the original description of
+skeletons.
 
 Assume the strands in bundle $\Upsilon(\Theta_X,\to)$ have been
 permuted so that regular strands precede penetrator strands in
@@ -567,7 +627,7 @@ properties:
 \item $\phi$ maps strands of~$k_0$ into those of~$k_1$, and nodes as
   $\phi((s,i))=(\phi(s),i)$, that is $\phi$ is in
   $\sdom(\Theta_0)\to\sdom(\Theta_1)$;
-\item $\sigma\colon\alga_X\to\alga_Y$ is a message algebra homomorphism;
+\item $\sigma\colon\algbara_X\to\algbara_Y$ is a message algebra homomorphism;
 \item $n\in\nodes(\Theta_0)$ implies
   $\sigma(\evt_{\Theta_0}(n))=\evt_{\Theta_1}(\phi(n))$;
 \item $n_0\prec_0
@@ -1190,19 +1250,21 @@ traces of the penetrator roles are in Figure~\ref{fig:pen traces}.
 Penetrator roles make no origination assumptions.
 
 \begin{figure}
-$$\begin{array}{l}
-\fn{base}(t)=\seq{\outbnd t},\mbox{ where $t$ is an atom}\\
-\fn{tag}(t)=\seq{\outbnd t},\mbox{ where $t$ is a tag}\\
-\fn{pair}(t_0,t_1)=\seq{\inbnd t_0,\inbnd t_1, \outbnd(t_0,
+\[\begin{array}{r@{{}={}}l}
+\fn{base}(t)&\seq{\outbnd t},\mbox{ where $t$ is an atom}\\
+\fn{tag}(t)&\seq{\outbnd t},\mbox{ where $t$ is a tag}\\
+\fn{pair}(t_0,t_1)&\seq{\inbnd t_0,\inbnd t_1, \outbnd(t_0,
   t_1)}\\
-\fn{sep}(t_0,t_1)=\seq{\inbnd(t_0, t_1),\outbnd
+\fn{sep}(t_0,t_1)&\seq{\inbnd(t_0, t_1),\outbnd
     t_0,\outbnd t_1}\\
-\fn{enc}(t_0,t_1)=\seq{\inbnd t_0,\inbnd t_1,
+\fn{enc}(t_0,t_1)&\seq{\inbnd t_0,\inbnd t_1,
 \outbnd\enc{t_0}{t_1}}\\
-\fn{dec}(t_0,t_1)=\seq{\inbnd\enc{t_0}{t_1},
+\fn{dec}(t_0,t_1)&\seq{\inbnd\enc{t_0}{t_1},
 \inbnd t_2,\outbnd t_0},\mbox{ where $t_2=\fn{inv}(t_1)$}\\
-\fn{hash}(t)=\seq{\inbnd t,\outbnd\hash t}
-\end{array}$$
+\fn{hash}(t)&\seq{\inbnd t,\outbnd\hash t}\\
+\fn{put}(c,t)&\seq{\inbnd t, \outbnd[c,t]}\\
+\fn{take}(c,t)&\seq{\inbnd[c,t], \outbnd t}
+\end{array}\]
 \caption{Penetrator Traces}\label{fig:pen traces}
 \end{figure}
 
@@ -1216,7 +1278,9 @@ The ternary relation \der{t}{T_p}{T_a} states that message~$t$ is
 penetrator derivable from previously sent messages~$T_p$ while
 avoiding atoms~$T_a$.  The relation is defined by a set of inference
 rules.  Most of the rules are justified by a penetrator role that when
-instantiated, derives a message in the conclusion of the rule.
+instantiated, derives a message in the conclusion of the rule.  Note
+there are no rules that pertain to channel messages.  Channel messages
+are handled elsewhere.
 
 The first rule states that no additional penetrator behavior is required
 to derive~$t$ if it has been previously sent.
@@ -1265,16 +1329,36 @@ By $\fn{hash}(t)$:
   \infer{\der{t}{T_p}{T_a}\qquad\der{k}{T_p}{T_a}}{\der{\hash{t}}{T_p}{T_a}}
 \end{equation}
 %
+%% By $\fn{put}(c,t)$:
+%% \begin{equation}\label{eqn:put}
+%%   \infer{\der{t}{T_p}{T_a}\qquad\mbox{$c$ not authenticated}}%
+%%         {\der{[c,t]}{T_p}{T_a}}
+%% \end{equation}
+%% %
+%% By $\fn{take}(c,t)$:
+%% \begin{equation}\label{eqn:take}
+%%   \infer{\der{[c,t]}{T_p}{T_a}\qquad\mbox{$c$ not confidential}}%
+%%         {\der{t}{T_p}{T_a}}
+%% \end{equation}
+%% %
 A non-base sorted variable is derivable in a bundle that instantiates
 it with any message other than an element of $X_\top$.
 \begin{equation}\label{eqn:top}
   \infer{t\in X_\top}{\der{t}{T_p}{T_a}}
 \end{equation}
 
+\begin{defn}[Public Channel Messages]
+The \index{public channel messages}\emph{public channel messages} of
+skeleton~$k$ at~$n$ is $\pubchmsg(k,n)=\{\msg_k(n_0)\mid n_0 \kprec{k}
+n, n_0\mbox{~is transmitting}\}$.
+\end{defn}
+
 \begin{defn}[Public Messages]
 The \index{public messages}\emph{public messages} of
-skeleton~$k$ at~$n$ is $\pubmsg(k,n)=\{\msg_k(n_0)\mid n_0 \kprec{k}
-n, n_0\mbox{~is transmitting}\}$.
+skeleton~$k$ at~$n$ is \[\pubmsg(k,n)=\{t\mid [t]\in P\}\cup
+\{t\mid[c,t]\in P\land c\notin \conf(k)\},\] where $P=\pubchmsg(k, n)$,
+and $\conf(k)$ is the set of channels assumed to be confidential in~$k$.
+
 \end{defn}
 
 \begin{defn}[Avoidance Set]\label{def:avoid}
@@ -1287,9 +1371,16 @@ if it is exposed by a messages transmission.  Clearly, only uniquely
 originating atoms can be exposed.
 
 \begin{defn}[Derivable Before]\label{def:der}
-A message~$t$ is \index{derivable before}\emph{derivable before}
-reception node~$n$ in skeleton~$k$, written $\fn{der}(k,n,t)$, if
-$\der{t}{T_p}{T_a}$ where $T_p=\pubmsg(k,n)$ and $T_a=\avoid(k)$.
+A channel message~$m$ is \index{derivable before}\emph{derivable
+  before} reception node~$n$ in skeleton~$k$, written
+$\fn{der}(k,n,t)$, if
+\begin{enumerate}
+\item $m\in\pubchmsg(k,n)$,
+\item $m=[t]$ and $\der{t}{T_p}{T_a}$, or
+\item $m=[c,t]$, $c\notin\auth{k}$, and $\der{t}{T_p}{T_a}$,
+\end{enumerate}
+where $T_p=\pubmsg(k,n)$, $T_a=\avoid(k)$, and $\auth(k)$ is the set
+of channels assumed to be authenticated in~$k$.
 \end{defn}
 
 \begin{defn}[Realized Node]
@@ -1415,6 +1506,13 @@ which~$t'$ carries~$t$.  The interface to each algebra exports
 \index{unify}$\fn{unify}_0$, where
 $$\fn{unify}_0(t,t',\sigma)=\{\sigma'\circ\sigma\mid
 \sigma'\in\fn{unify}(\sigma(t),\sigma(t'))\}.$$
+Unification is extended to channel messages as:
+\[\begin{array}{l}
+\fn{unify_0}([t],[t'],\sigma)=\fn{unify_0}(t,t',\sigma)\\
+\fn{unify_0}([c,t],[c',t'],\sigma)=\\
+\qquad\{\sigma''\mid\sigma'\in\fn{unify_0}(c,c',\sigma)\land
+\sigma''\in\fn{unify_0}(t,t',\sigma')\}
+\end{array}\]
 
 The details of a reduction on skeletons called a augmentation will be
 described in Section~\ref{sec:augmentation}.  In simplified form, for
@@ -1500,19 +1598,27 @@ if $\fn{bld}(t,T_p,T_a)$, otherwise
 The \index{escape set}\emph{escape set} for message~$t_c$ at~$n$ in
 skeleton~$k$ is the set of encryptions
 $\fn{esc}(k,n,t_c)=\fn{prot}(t_c,T_p,T_a)$ where
-$(T_p,T_a)=\fn{dcmp}(k,n)$ (See Definition~\ref{def:decompose}).  It
-is undefined when~$t_c$ is derivable in~$k$ at~$n$.
+$(T_p,T_a)=\fn{dcmp}(k,n)$ (See Definition~\ref{def:decompose}) union
+with the set of public channel messages with confidential channels
+that carry~$t_c$.  It is undefined when~$t_c$ is derivable in~$k$
+at~$n$.
 \end{defn}
 
 \begin{defn}[Critical Position, Critical Message]\label{def:critical position}
   Position~$p$ is a \index{critical position}\emph{critical position}
-  at $n$ in $k$ if for $t=\msg_k(n)$
+  at $n$ in $k$ if for $m=\msg_k(n)$
 \begin{enumerate}
-\item $p$ is a carried position in~$t$,
-\item $t\termat p$ is not derivable before $n$ in $\skel$,
-\item either $t\termat p\in U_k$, $t\termat p=\hash t_1$, or $t\termat
-  p=\enc{t_0}{t_1}$ and~$t_1$ is not derivable before~$n$ in~$k$, and
-  \label{item:nonce or encryption}
+\item $p$ is a carried position in~$m$,
+\item $m\termat p$ is not derivable before $n$ in $\skel$,
+\item either
+  \begin{enumerate}
+  \item $m\termat p\in U_k$,
+  \item $m\termat p=\hash t_1$,
+  \item $m\termat p=\enc{t_0}{t_1}$ and~$t_1$ is not derivable
+    before~$n$ in~$k$, or
+  \item $m=[c,t]$, $p=\seq{}$, and $c\in\auth(k)$.
+  \end{enumerate}
+  \label{item:nonce, encryption, or channel}
 \item $\fn{anc}(t,p)\cap \fn{esc}(k,n,t\termat p)=\emptyset$.
 \end{enumerate}
 The message at a critical position is called a \emph{critical message.}
@@ -1525,11 +1631,12 @@ The message at a critical position is called a \emph{critical message.}
 \end{defn}
 
 An authentication test is a \index{nonce test}\emph{nonce test} if the
-critical message is an atom, otherwise it is an \index{encryption
-  test}\emph{encryption test}.  (A hash\index{hash} is treated as a
-kind of encryption in which the term that is hashed is the encryption
-key.)  Observe that every critical message at a node in a skeleton is
-not derivable at the node.
+critical message is an atom, it is a \index{channel test}\emph{channel
+  test} if the critical message is a channel message, otherwise it is
+an \index{encryption test}\emph{encryption test}.  (A hash\index{hash}
+is treated as a kind of encryption in which the term that is hashed is
+the encryption key.)  Observe that every critical message at a node in
+a skeleton is not derivable at the node.
 
 \begin{conj}
 A reception node is unrealized iff it has a critical position.
@@ -1551,7 +1658,7 @@ at~$n$ if:
 \begin{enumerate}
 \item\label{item:anc}
   $\fn{anc}(\msg_{k_1}(\phi(n)),p)\cap\sigma(T)\neq\emptyset$, or
-\item\label{item:aug} for some~$t_p\in\pubmsg(k_1,\phi(n))$,
+\item\label{item:aug} for some~$t_p\in\pubchmsg(k_1,\phi(n))$,
   $\sigma(t)$ is not carried only within~$\sigma(T)$ in~$t_p$, or
 \item\label{item:targs}
   $\fn{targ}(\sigma(t),\sigma(T))\setminus\sigma(\fn{targ}(t,T))\neq\emptyset$
@@ -1947,7 +2054,8 @@ variable separation.
 
 Variable separation can be expensive when there are many possible ways
 to separate variables.  The implementation simply truncates the search
-when it grows too large.
+when it grows too large.  The current implementation never attempts to
+separate channel variables.
 
 \chapter{Skeleton Reduction System}\label{chp:skeleton reduction}
 
@@ -2001,7 +2109,7 @@ atom, except in that it can be carried.  There are two definitions
 that require change.  Penetrator non-originating atoms must be added
 to the avoidance set of Definition~\ref{def:avoid}.  When the message
 at a critical position is an atom (see Definition~\ref{def:critical
-  position}, Item~\ref{item:nonce or encryption}), instead of being
+  position}, Item~\ref{item:nonce, encryption, or channel}), instead of being
 uniquely originating, and can also be penetrator non-originating.
 
 \chapter{Programs Specified by a Role}\label{chp:traces}
@@ -2290,7 +2398,7 @@ $r_x(z,t)$ with the protocol left implicit.
 Let $k=\skel_X(P,I,\prec,N,U)$ and $\Theta_X$ be its strand space.
 When formula~$\Phi$ is satisfied in skeleton~$k$ with order-sorted
 variable assignment $\alpha$, we write $k,\alpha\models\Phi$.  For
-$x:S\in X$, $\alpha(x)$ is in the carrier set of $\alga_X$ for
+$x:S\in X$, $\alpha(x)$ is in the carrier set of $\algbara_X$ for
 sort~$S$.  For $x:\srt{Z}$, $\alpha(x)\in\sdom(\Theta_X)$.  We
 write~$\bar\alpha$ when~$\alpha$ is extended to terms in the obvious
 way.  When sentence~$\Sigma$ is satisfied in skeleton~$k$, we write
@@ -2321,6 +2429,16 @@ Let~$\Sigma$ be a shape analysis sentence and~$\Psi$ be a security
 goal.  If $\Sigma\supset\Psi$ is a theorem in order-sorted first-order
 logic, then~$\Psi$ is satisfied in all realized skeletons and its
 protocol achieves this goal.
+
+\paragraph{Channel Formulas.}
+
+This appendix has not been updated to reflect the inclusion of
+channels into {\cpsa}, but the changes made are straightforward.
+There are two new unary predicate symbols, \cn{auth} and \cn{conf}, that
+are similar to \cn{non} except their argument must be a variable of sort
+\dom{chan}.  For skeleton $k$ and variable assignment $\alpha$,
+$\cn{auth}(c)$ is satisfied iff $\alpha(c)\in\auth(k)$, and
+$\cn{conf}(c)$ is satisfied iff $\alpha(c)\in\conf(k)$.
 
 \chapter{Facts and Rules}\label{chp:facts and rules}
 

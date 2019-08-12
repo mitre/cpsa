@@ -1,16 +1,24 @@
 CPSA NEWS -- history of user-visible changes.
 
+* Changes in version 4.2.0
+
+** Added support for messages on channels.
+   A message can now be sent on a channel.  A channel can be either
+   authenticated, confidential, or both.  Channels provide a direct
+   implementation of behavior that was prevously simulated with
+   encryption in a bulky, awkard way.
+
 * Changes in version 4.1.1
 
 ** This is a bug fix release.  There are no user visible changes.
 
 * Changes in version 4.1.0
 
-** Added rules and facts.  Rules are associated with protocols, and
-   facts are associated with skeletons.  A rule is a geometric formula
-   that is used as a rewrite rule, and a fact is a named relation
-   between values.  See cpsagoal.pdf for a description of rules and
-   facts.
+** Added rules and facts.
+   Rules are associated with protocols, and facts are associated with
+   skeletons.  A rule is a geometric formula that is used as a rewrite
+   rule, and a fact is a named relation between values.  See
+   cpsagoal.pdf for a description of rules and facts.
 
 * Changes in version 4.0.0
 
