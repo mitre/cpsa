@@ -32,7 +32,7 @@
 \newcommand{\base}{\ensuremath{\mathfrak B}}
 \newcommand{\ints}{\ensuremath{\mathbb Z}}
 \newcommand{\solve}[1]{\stackrel{#1}{\longtwoheadrightarrow}}
-\newcommand{\pubchmsg}{\fn{pubchmsg}}
+\newcommand{\sntchmsg}{\fn{sntchmsg}}
 \newcommand{\pubmsg}{\fn{pubmsg}}
 \newcommand{\auth}{\fn{auth}}
 \newcommand{\conf}{\fn{conf}}
@@ -411,9 +411,9 @@ set of local sessions of the protocol.  Each local session is called a
 \index{strand}\emph{strand}.  The behavior of a strand, its
 \index{trace}\emph{trace}, is a sequence of messaging events.  An
 \index{event}\emph{event} is either a message transmission or a
-reception.  Outbound channel message $t\in\algbara_X$ is written
-as~$\outbnd t$, and inbound channel message~$t$ is written as~$\inbnd
-t$.  The set of traces over $\algbara_X$ is $\tr_X=(\pm\algbara_X)^+$.  A
+reception.  Outbound channel message $m\in\algbara_X$ is written
+as~$\outbnd m$, and inbound channel message~$m$ is written as~$\inbnd
+m$.  The set of traces over $\algbara_X$ is $\tr_X=(\pm\algbara_X)^+$.  A
 message \index{originates}\emph{originates} in a trace if it is
 carried by some event and the first event in which it is carried is
 outbound.  A message is \index{gained}\emph{gained} by a trace if it
@@ -446,8 +446,8 @@ directed acyclic graph $\Upsilon(\Theta,\to)$, where the vertices are
 the nodes of $\Theta$, and an edge represents
 communication~($\rightarrow$) or strand succession~($\Rightarrow$).
 For \index{communication}communication, if $n_0\rightarrow n_1$, then
-there is a message~$t$ such that~$\evt_\Theta(n_0)=\outbnd t$
-and~$\evt_\Theta(n_1)=\inbnd t$.  For each reception node~$n_1$, there
+there is a channel message~$m$ such that~$\evt_\Theta(n_0)=\outbnd m$
+and~$\evt_\Theta(n_1)=\inbnd m$.  For each reception node~$n_1$, there
 is a unique transmission node~$n_0$ with $n_0\rightarrow n_1$.
 
 Each acyclic graph has a transitive irreflexive relation~$\prec$ on
@@ -481,7 +481,7 @@ $t\in N$ implies $t$ is not carried in $C$, and all variables in $N$
 occur in $C$, (2) $t\in U$ implies $t$ originates in $C$, (3) if
 variable~$x$ occurs in $C$ then $x$ is an atom or it is acquired in
 $C$, and (4) the trace of a role may not match the pattern
-$\seq{\inbnd t, \outbnd t,\ldots}$.  This is to ensure
+$\seq{\inbnd m, \outbnd m,\ldots}$.  This is to ensure
 that listeners, which are introduced on Page~\pageref{def:listeners},
 cannot be confused with protocol constrained strands.
 A \index{protocol}\emph{protocol} is a set of roles.  Let
@@ -1347,16 +1347,16 @@ it with any message other than an element of $X_\top$.
   \infer{t\in X_\top}{\der{t}{T_p}{T_a}}
 \end{equation}
 
-\begin{defn}[Public Channel Messages]
-The \index{public channel messages}\emph{public channel messages} of
-skeleton~$k$ at~$n$ is $\pubchmsg(k,n)=\{\msg_k(n_0)\mid n_0 \kprec{k}
+\begin{defn}[Sent Channel Messages]
+The \index{sent channel messages}\emph{sent channel messages} of
+skeleton~$k$ at~$n$ is $\sntchmsg(k,n)=\{\msg_k(n_0)\mid n_0 \kprec{k}
 n, n_0\mbox{~is transmitting}\}$.
 \end{defn}
 
 \begin{defn}[Public Messages]
 The \index{public messages}\emph{public messages} of
-skeleton~$k$ at~$n$ is \[\pubmsg(k,n)=\{t\mid [t]\in P\}\cup
-\{t\mid[c,t]\in P\land c\notin \conf(k)\},\] where $P=\pubchmsg(k, n)$,
+skeleton~$k$ at~$n$ is \[\pubmsg(k,n)=\{t\mid [t]\in M\}\cup
+\{t\mid[c,t]\in M\land c\notin \conf(k)\},\] where $M=\sntchmsg(k, n)$,
 and $\conf(k)$ is the set of channels assumed to be confidential in~$k$.
 
 \end{defn}
@@ -1375,7 +1375,7 @@ A channel message~$m$ is \index{derivable before}\emph{derivable
   before} reception node~$n$ in skeleton~$k$, written
 $\fn{der}(k,n,t)$, if
 \begin{enumerate}
-\item $m\in\pubchmsg(k,n)$,
+\item $m\in\sntchmsg(k,n)$,
 \item $m=[t]$ and $\der{t}{T_p}{T_a}$, or
 \item $m=[c,t]$, $c\notin\auth{k}$, and $\der{t}{T_p}{T_a}$,
 \end{enumerate}
@@ -1596,10 +1596,10 @@ if $\fn{bld}(t,T_p,T_a)$, otherwise
 
 \begin{defn}[Escape Set]
 The \index{escape set}\emph{escape set} for message~$t_c$ at~$n$ in
-skeleton~$k$ is the set of encryptions
-$\fn{esc}(k,n,t_c)=\fn{prot}(t_c,T_p,T_a)$ where
-$(T_p,T_a)=\fn{dcmp}(k,n)$ (See Definition~\ref{def:decompose}) union
-with the set of public channel messages with confidential channels
+skeleton~$k$, $\fn{esc}(k,n,t_c)$, contains encryptions and channel
+messages.  Function $\fn{esc}(k,n,t_c)=\fn{prot}(t_c,T_p,T_a)\cup M$,
+where $(T_p,T_a)=\fn{dcmp}(k,n)$ (See Definition~\ref{def:decompose}),
+and $M$ is the set of sent channel messages with confidential channels
 that carry~$t_c$.  It is undefined when~$t_c$ is derivable in~$k$
 at~$n$.
 \end{defn}
@@ -1658,7 +1658,7 @@ at~$n$ if:
 \begin{enumerate}
 \item\label{item:anc}
   $\fn{anc}(\msg_{k_1}(\phi(n)),p)\cap\sigma(T)\neq\emptyset$, or
-\item\label{item:aug} for some~$t_p\in\pubchmsg(k_1,\phi(n))$,
+\item\label{item:aug} for some~$t_p\in\sntchmsg(k_1,\phi(n))$,
   $\sigma(t)$ is not carried only within~$\sigma(T)$ in~$t_p$, or
 \item\label{item:targs}
   $\fn{targ}(\sigma(t),\sigma(T))\setminus\sigma(\fn{targ}(t,T))\neq\emptyset$

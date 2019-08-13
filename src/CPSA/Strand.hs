@@ -554,6 +554,8 @@ preskelWellFormed k =
     varSubset (kpnon k) terms &&
     all nonCheck (knon k) &&
     all uniqueCheck (kunique k) &&
+    all chanCheck (kconf k) &&
+    all chanCheck (kauth k) &&
     all factCheck (kfacts k) &&
     wellOrdered k && acyclicOrder k &&
     roleOrigCheck k
@@ -561,6 +563,7 @@ preskelWellFormed k =
       terms = kterms k
       nonCheck t = all (not . carriedBy t) terms
       uniqueCheck t = any (carriedBy t) terms
+      chanCheck c = elem c (kvars k)
       factCheck f = factVarsElem (kvars k) f
 
 -- Do notation friendly preskeleton well formed check.
@@ -580,6 +583,8 @@ verbosePreskelWellFormed k =
                    $ varSubset (kpnon k) terms
       mapM_ nonCheck $ knon k
       mapM_ uniqueCheck $ kunique k
+      mapM_ confCheck $ kconf k
+      mapM_ authCheck $ kauth k
       mapM_ factCheck $ kfacts k
       failwith "ordered pairs not well formed" $ wellOrdered k
       failwith "cycle found in ordered pairs" $ acyclicOrder k
@@ -593,6 +598,14 @@ verbosePreskelWellFormed k =
       uniqueCheck t =
           failwith (showString "uniq-orig " $ showst t " not carried")
                        $ any (carriedBy t) terms
+      confCheck c =
+        failwith (showString "confidential channel "
+                  $ showst c " not in some strand")
+                 $ elem c (kvars k)
+      authCheck c =
+        failwith (showString "authenticated channel "
+                  $ showst c " not in some strand")
+                 $ elem c (kvars k)
       factCheck f =
           failwith ("a fact var in " ++  factPred f ++ " not in some strand")
                        $ factVarsElem (kvars k) f
