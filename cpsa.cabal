@@ -132,6 +132,9 @@ Extra-Source-Files:
   tst/fluffy_draft03_gske.scm tst/fluffy_draft03_gske.tst
   tst/envelope.scm tst/envelope.tst tst/expand.scm tst/expand.tst
   tst/role_uniq.scm tst/role_uniq.tst
+  tst/chan-envelope.scm tst/chan-envelope.tst tst/chan-yahalom.scm
+  tst/chan-yahalom.tst tst/chan-perrig-song.scm
+  tst/chan-perrig-song.tst
 
 Source-Repository head
   Type:     git
