@@ -47,9 +47,9 @@ Category:		Cryptography
 Build-Type:		Simple
 Data-Files:
   index.html cpsalogo.svg readme.html cpsauser.html cpsa4.mk Make4.hs
-  cpsaprimer.pdf cpsagoals.pdf cpsaintroslides.pdf cpsaspec.pdf
-  cpsadesign.pdf ffgg.scm ns.scm blanchet.scm or.scm woolam.scm
-  yahalom.scm goals.scm rules.scm
+  init/Makefile cpsaprimer.pdf cpsagoals.pdf cpsaintroslides.pdf
+  cpsaspec.pdf cpsadesign.pdf ffgg.scm ns.scm blanchet.scm or.scm
+  woolam.scm yahalom.scm goals.scm rules.scm
 
 Data-Dir:	    	doc
 Extra-Source-Files:
@@ -217,3 +217,12 @@ Executable cpsa4json
   Other-Modules:
     Paths_cpsa CPSA.Lib.Pretty CPSA.Lib.SExpr
     CPSA.Lib.Printer CPSA.Lib.Entry
+
+Executable cpsa4init
+  Main-Is:		CPSA/Init/Main.hs
+  Build-Depends:	base, directory
+  GHC-Options:
+    -Wall -fno-warn-name-shadowing -fwarn-unused-imports
+  Hs-Source-Dirs:	src
+  Other-Modules:
+    Paths_cpsa

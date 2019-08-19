@@ -35,7 +35,11 @@ is complete relative to natural role semantics.</p>
 <p>The analyzer is designed to work well with other tools. S-expressions are
 used for both input and output. The analyzer reads all the problems in its
 input, writes out the solution to each problem, and then exits. This release
-contains seven tools. The <a href="#cpsagraph"><code>cpsagraph</code></a> program
+  contains eight tools.
+  The <a href="#cpsainit"><code>cpsainit</code></a> program copies a
+  Makefile and a Haskell script for use with <code>ghci</code> into
+  the current directory.  They orchestrate the use of the other tools.
+  The <a href="#cpsagraph"><code>cpsagraph</code></a> program
 provides a visualization of answers using Scalable Vector Graphics (<a
 href="http://www.w3.org/Graphics/SVG/">SVG</a>). The <a
 href="#cpsashapes"><code>cpsashapes</code></a> program removes intermediate results
@@ -81,25 +85,9 @@ $ cpsagraph -o prob_shapes.xhtml prob_shapes.txt
 $ firefox -remote "openFile(`pwd`/prob_shapes.xhtml)"</pre>
 </blockquote>
 
-<p id="make">The distribution comes with the
-file <a href="cpsa.mk"><code>cpsa.mk</code></a> for inclusion into your
-makefile. A sample makefile follows. If you cut-and-paste from a
-browser window, be sure to convert the leading spaces in the last line
-into a tab character.</p>
-
-<blockquote>
-  <pre>CPSAFLAGS = +RTS -M512m -RTS
-
-SRCS := $(wildcard *.scm) $(wildcard *.lsp)
-
-include cpsa4.mk
-
-all:    $(SRCS:%.scm=%_shapes.xhtml) $(SRCS:%.scm=%.xhtml) \
-        $(SRCS:%.lsp=%_shapes.xhtml) $(SRCS:%.lsp=%.xhtml)
-
-clean:
-        -rm *.txt *.xhtml</pre>
-</blockquote>
+<p id="make"> The <a href="#cpsainit"><code>cpsainit</code></a>
+  program creates the file <a href="cpsa4.mk"><code>cpsa4.mk</code></a>
+  for inclusion into your makefile. A sample makefile is also created.</p>
 
 <p>The CPSA program
   is <a href="http://www.gnu.org/software/emacs/">Emacs</a> friendly.
@@ -109,12 +97,14 @@ clean:
   the locus of the next error message or match (<code>next-error</code>)
   in your CPSA input file.</p>
 
-<p>For platforms without GNU <code>make</code>, the Haskell program <a
-href="Make.hs"><code>Make.hs</code></a> can be loaded into a Haskell interpreter
-and perform a similar function. Users are expected to copy the makefile or the
-Haskell program into the directory containing a set of analysis problems, and
-then modify the file so it specifies the command line flags appropriate for the
-problems in the directory.</p>
+<p>For platforms without GNU <code>make</code>, the Haskell
+ program <a href="make4.hs"><code>make4.hs</code></a> can be loaded
+ into a Haskell interpreter and perform a similar function. Users are
+ expected to copy the makefile or the Haskell program into the
+ directory containing a set of analysis problems
+ using <a href="#cpsainit"><code>cpsainit</code></a>, and then modify
+ a file so it specifies the command line flags appropriate for the
+ problems in the directory.</p>
 
 <h2>Syntax</h2>
 
@@ -564,6 +554,25 @@ from roles, but may be overridden in a skeleton with a
 <code>(priority (<var>n</var> <var>p</var>))</code>,
 where <var>n</var> is a node.</p>
 
+<h2 id="cpsainit">Initialization</h2>
+
+<p>The <code>cpsainit</code> copies the
+  files <code>Makefile</code>, <code>cpsa4.mk</code>,
+  and <code>Make4.hs</code> into the current directory.  It will not
+  overwrite existing files of the same name.  The makefile is for use
+  with systems that provide GNU <code>make</code>.  Windows users should
+  load <code>Make4.hs</code> into <code>ghci</code>.  Read the
+  comments in the script for usage instructions.</p>
+
+<h3>Usage</h3>
+
+<blockquote>
+  <pre>$ cpsainit -h
+Usage: cpsainit [OPTIONS]
+  -h       --help          show help message
+  -v       --version       show version number</pre>
+</blockquote>
+
 <h2 id="cpsagraph">Visualization</h2>
 
 <p>The <code>cpsagraph</code> program produces a graphical rendering of the output
@@ -605,7 +614,7 @@ information, and should be displayed next to its graphical rendition.</p>
 
 <p>In LaTeX mode, <code>cpsagraph</code> generates LaTeX source. XY-pic is used for
 drawings of skeletons. The margin specified in <a
-href="cpsa.mk"><code>cpsa.mk</code></a> produces good results. </p>
+href="cpsa4.mk"><code>cpsa4.mk</code></a> produces good results. </p>
 
 <h3>Usage</h3>
 

@@ -1,3 +1,10 @@
+2019-08-19  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Init/Main.hs (main): Added program cpsainit.  The
+	programs copies the files Makefile, cpsa4.mk, and Make4.hs from
+	the CPSA data directory to the current directory, thereby easing
+	the task of starting a CPSA project.
+
 2019-08-12  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* Added support for channels.
