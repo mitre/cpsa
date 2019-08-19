@@ -14,6 +14,7 @@ import System.Environment
 import System.Console.GetOpt
 import System.Exit
 import System.Directory (copyFile, doesFileExist)
+import Data.List (elemIndex)
 import Data.Version
 import Paths_cpsa
 
@@ -23,7 +24,7 @@ main =
     argv <- getArgs
     (flags, _) <- opts options argv
     interp flags
-    copy ["Makefile", "cpsa4.mk", "Make4.hs"]
+    copy ["init/Makefile", "cpsa4.mk", "Make4.hs"]
 
 -- Copy the file only if it does not already exist
 
@@ -31,16 +32,23 @@ copy :: [String] -> IO ()
 copy [] = return ()
 copy (f : fs) =
   do
-    exist <- doesFileExist f
+    let b = basename f
+    exist <- doesFileExist b
     case exist of
       True ->
-        hPutStrLn stderr ("File " ++ f ++ " exists, not overwriting")
+        hPutStrLn stderr ("File " ++ b ++ " exists, not overwriting")
       False ->
         do
           fp <- getDataFileName f
-          copyFile fp f
-          hPutStrLn stderr ("Created " ++ f)
+          copyFile fp b
+          hPutStrLn stderr ("Created " ++ b)
     copy fs
+
+basename :: String -> String
+basename f =
+  case elemIndex '/' f of
+    Nothing -> f
+    Just i -> basename (drop (i + 1) f)
 
 -- Command-line options
 
