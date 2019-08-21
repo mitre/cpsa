@@ -2626,6 +2626,7 @@ runiqAt name t (z, i) k (g, e) =
     (True, Just s)
       | elem (t', [(s, i)]) (korig k) -> [(k, (g, e))]
       | not $ isAtom t' -> []
+      | i >= height (strandInst k s) -> []
       | otherwise ->
         [(k', (g, e))]
         where
