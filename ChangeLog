@@ -2,6 +2,7 @@
 
 	* src/CPSA/Strand.hs (runiqAt): Ensured that rewriting with
 	uniq-at fails when the index is greater than the strand length.
+	(rluniq): Fixed existing check to using kunique instead of knon.
 
 2019-08-19  John D. Ramsdell  <ramsdell@mitre.org>
 

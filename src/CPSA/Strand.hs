@@ -2605,7 +2605,7 @@ rluniq :: String -> Term -> Rewrite
 rluniq name t k (g, e) =
   case matched e t of
     True
-      | elem t' (knon k) -> [(k, (g, e))]
+      | elem t' (kunique k) -> [(k, (g, e))]
       | not $ isAtom t' -> []
       | otherwise ->
         [(k', (g, e))]
