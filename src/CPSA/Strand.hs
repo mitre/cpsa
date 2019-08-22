@@ -2332,7 +2332,7 @@ rewrite k =
         if null vas then
           loop rs               -- Rule does not apply
         else
-          Just $ doRewrites 0 prules k r vas
+          Just $ doRewrites prules k r vas
 
 -- Returns the environments that show satifaction of the antecedent
 -- but fail to be extendable to show satifaction of one of the
@@ -2349,23 +2349,29 @@ ruleLimit :: Int
 ruleLimit = 500
 
 -- Repeatedly applies rules until no rule applies.
-doRewrites :: Int -> [Rule] -> Preskel -> Rule -> [(Gen, Env)] -> [Preskel]
-doRewrites lim _ _ _ _
+doRewrites :: [Rule] -> Preskel -> Rule -> [(Gen, Env)] -> [Preskel]
+doRewrites rules k r vas =
+  doRewritesLoop rules k (length vas) (doRewrite k r vas) []
+
+doRewritesLoop :: [Rule] -> Preskel -> Int ->
+                  [Preskel] -> [Preskel] -> [Preskel]
+doRewritesLoop _ _ lim _ _
   | lim >= ruleLimit =
     error ("Aborting after applying " ++ show ruleLimit ++
            " rules and more are applicable")
-doRewrites lim rules k r vas =
-  concatMap f (doRewrite k r vas)
+doRewritesLoop _ _ _ [] ks = ks
+doRewritesLoop rules k lim (k' : todo) ks =
+  loop rules
   where
-    f k = loop rules
-      where
-        loop [] = [k]           -- No rules apply
-        loop (r : rs) =
-          let vas = tryRule k r in
-            if null vas then
-              loop rs           -- Rule does not apply
-            else
-              doRewrites (lim + 1) rules k r vas
+    loop [] =                   -- No rules apply
+      doRewritesLoop rules k lim todo (k' : ks)
+    loop (r : rs) =
+      let vas = tryRule k' r in
+        if null vas then
+          loop rs               -- Rule does not apply
+        else
+          let new = doRewrite k' r vas in
+            doRewritesLoop rules k (lim + length vas) (todo ++ new) ks
 
 -- Apply rewrite rule at all assignments
 doRewrite :: Preskel -> Rule -> [(Gen, Env)] -> [Preskel]

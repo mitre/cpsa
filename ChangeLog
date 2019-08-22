@@ -1,3 +1,9 @@
+2019-08-22  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Strand.hs (doRewritesLoop): Fixed the code that counts
+	rewrite rules applied so it is accurate.  This allows the rewrite
+	rule limit to be correctly enforced.
+
 2019-08-21  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Strand.hs (runiqAt): Ensured that rewriting with
