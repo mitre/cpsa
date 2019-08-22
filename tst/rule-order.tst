@@ -20,29 +20,29 @@
   (comment "Not closed under rules"))
 
 (defskeleton rule-order
-  (vars (s t text))
-  (defstrand init 1 (s s) (t t))
-  (facts (lt s t) (le s t))
-  (rule ge)
-  (traces ((send (cat s t))))
-  (label 1)
-  (parent 0)
-  (unrealized)
-  (shape)
-  (maps ((0) ((s s) (t t))))
-  (origs))
-
-(defskeleton rule-order
   (vars (t text))
   (defstrand init 1 (s t) (t t))
   (facts (le t t))
   (rule ge)
   (traces ((send (cat t t))))
-  (label 2)
+  (label 1)
   (parent 0)
   (unrealized)
   (shape)
   (maps ((0) ((s t) (t t))))
+  (origs))
+
+(defskeleton rule-order
+  (vars (s t text))
+  (defstrand init 1 (s s) (t t))
+  (facts (lt s t) (le s t))
+  (rule ge)
+  (traces ((send (cat s t))))
+  (label 2)
+  (parent 0)
+  (unrealized)
+  (shape)
+  (maps ((0) ((s s) (t t))))
   (origs))
 
 (comment "Nothing left to do")

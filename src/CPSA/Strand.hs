@@ -2359,7 +2359,7 @@ doRewritesLoop _ _ lim _ _
   | lim >= ruleLimit =
     error ("Aborting after applying " ++ show ruleLimit ++
            " rules and more are applicable")
-doRewritesLoop _ _ _ [] ks = ks
+doRewritesLoop _ _ _ [] ks = reverse ks
 doRewritesLoop rules k lim (k' : todo) ks =
   loop rules
   where
