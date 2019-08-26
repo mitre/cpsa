@@ -8,6 +8,11 @@ CPSA NEWS -- history of user-visible changes.
    implementation of behavior that was prevously simulated with
    encryption in a bulky, awkard way.
 
+** Added the cpsainit program.
+   The cpsainit program copies files from the CPSA data directory into
+   a fresh CPSA project directory.  The files ease the task of
+   automating the use of the various CPSA tools.
+
 * Changes in version 4.1.1
 
 ** This is a bug fix release.  There are no user visible changes.
