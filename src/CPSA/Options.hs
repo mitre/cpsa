@@ -16,6 +16,7 @@ data Options = Options {
       optCheckNoncesFirst :: Bool, -- True when checking nonces first
       optTryOldStrandsFirst :: Bool, -- True when visiting old strands first
       optTryYoungNodesFirst :: Bool, -- True when visiting young nodes first
+      optGoalsSat :: Bool , -- True when goals satisfied stops tree expansion
       optLimit :: Int,          -- Step count limit
       optBound :: Int,          -- Strand cound bound
       optDepth :: Int,          -- Tree depth bound
@@ -32,6 +33,7 @@ defaultOptions = Options {
   optCheckNoncesFirst = False,
   optTryOldStrandsFirst = False,
   optTryYoungNodesFirst = False,
+  optGoalsSat = False,
   optLimit = 2000,
   optBound = 8,
   optDepth = 0,                 -- Infinite

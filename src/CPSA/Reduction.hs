@@ -211,6 +211,12 @@ step p h ks m oseen n seen todo tobig (Reduct lk _ _  _  : reducts)
     | nstrands (content lk) >= optBound p = -- Check strand count
         step p h ks m oseen n seen todo (lk : tobig) reducts
 step p h ks m oseen n seen todo tobig (Reduct lk size kids dups : reducts)
+    | optGoalsSat p && satCheck lk = -- Stop if goals satisfied mode?
+        do
+          let ns = unrealized (content lk)
+          let shape = if null ns then Shape else Fringe
+          wrt p h (commentPreskel lk [] ns shape SatisfiesAll "satisfies all")
+          step p h ks m oseen n seen todo tobig reducts
     | size <= 0 =               -- Interpret empty reducts
         do
           let ns = unrealized (content lk)
@@ -434,3 +440,11 @@ origs k =
       | (t, ns) <- korig k, n <- ns ]
     where
       ctx = addToContext emptyContext (kvars k)
+
+satCheck :: LPreskel -> Bool
+satCheck lk =
+  not (null tests) && all f tests
+  where
+    tests = sat $ content lk
+    f (_, []) = True
+    f _ = False

@@ -180,6 +180,7 @@ data Flag
     | CheckNoncesFirst          -- Check nonces first
     | TryOldStrandsFirst        -- Try old strands first
     | TryYoungNodesFirst        -- Try young nodes first
+    | GoalsSat                  -- Stop when goals are satisfied
     | Algebra String            -- Algebra
     | Algebras                  -- Show algebras
     | Help                      -- Help
@@ -207,6 +208,8 @@ options =
       "try old strands first",
       Option ['r'] ["reverse-nodes"] (NoArg TryYoungNodesFirst)
       "try younger nodes first",
+      Option ['g'] ["goals-sat"] (NoArg GoalsSat)
+      "Stop when goals are satisfied",
       Option ['a'] ["algebra"]  (ReqArg Algebra "STRING")
       ("algebra (default " ++ defaultAlgebra ++ ")"),
       Option ['s'] ["show-algebras"] (NoArg Algebras)  "show algebras",
@@ -264,6 +267,8 @@ interp algs opts flags =
           loop flags $ opts { optTryOldStrandsFirst = True }
       loop (TryYoungNodesFirst : flags) opts =
           loop flags $ opts { optTryYoungNodesFirst = True }
+      loop (GoalsSat : flags) opts =
+          loop flags $ opts { optGoalsSat = True }
       loop (Algebra name : flags) opts
           | elem name algs = loop flags $ opts { optAlg = name }
           | otherwise =

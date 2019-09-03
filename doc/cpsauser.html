@@ -460,18 +460,19 @@ includes files while it does macro expansion.</p>
 <h3 id="usage">Usage of CPSA</h3>
 
 <blockquote>
-  <pre>$ cpsa -h
-Usage: cpsa [OPTIONS] [FILE]
+  <pre>$ cpsa4 -h
+Usage: cpsa4 [OPTIONS] [FILE]
   -o FILE    --output=FILE      output FILE
   -l INT     --limit=INT        step count limit (default 2000)
   -b INT     --bound=INT        strand count bound (default 8)
-  -d INT     --depth=INT        tree depth bound (default 32)
+  -d INT     --depth=INT        tree depth bound (default unbounded)
   -m INT     --margin=INT       set output margin (default 72)
   -e         --expand           expand macros only; don't analyze
   -n         --noisochk         disable isomorphism checks
   -c         --check-nonces     check nonces first
   -t         --try-old-strands  try old strands first
   -r         --reverse-nodes    try younger nodes first
+  -g         --goals-sat        Stop when goals are satisfied
   -a STRING  --algebra=STRING   algebra (default basic)
   -s         --show-algebras    show algebras
   -h         --help             show help message
@@ -567,8 +568,8 @@ where <var>n</var> is a node.</p>
 <h3>Usage</h3>
 
 <blockquote>
-  <pre>$ cpsainit -h
-Usage: cpsainit [OPTIONS]
+  <pre>$ cpsa4init -h
+Usage: cpsa4init [OPTIONS]
   -h       --help          show help message
   -v       --version       show version number</pre>
 </blockquote>
@@ -619,8 +620,8 @@ href="cpsa4.mk"><code>cpsa4.mk</code></a> produces good results. </p>
 <h3>Usage</h3>
 
 <blockquote>
-  <pre>$ cpsagraph -h
-Usage: cpsagraph [OPTIONS] [FILE]
+  <pre>$ cpsa4graph -h
+Usage: cpsa4graph [OPTIONS] [FILE]
   -o FILE  --output=FILE   output FILE
   -x       --expanded      use expanded format (default)
   -z       --zoom          enable diagram scaling
@@ -643,8 +644,8 @@ differs.</p>
 <h3>Usage</h3>
 
 <blockquote>
-  <pre>$ cpsadiff -h
-Usage: cpsadiff [OPTIONS] OLD-FILE NEW-FILE
+  <pre>$ cpsa4diff -h
+Usage: cpsa4diff [OPTIONS] OLD-FILE NEW-FILE
   -o FILE  --output=FILE  output FILE
   -m INT   --margin=INT   set output margin (default 72)
   -h       --help         show help message
@@ -660,8 +661,8 @@ the output can be graphed.</p>
 <h3>Usage</h3>
 
 <blockquote>
-  <pre>$ cpsashapes -h
-Usage: cpsashapes [OPTIONS] [FILE]
+  <pre>$ cpsa4shapes -h
+Usage: cpsa4shapes [OPTIONS] [FILE]
   -o FILE  --output=FILE  output FILE
   -m INT   --margin=INT   set output margin (default 72)
   -h       --help         show help message
@@ -680,8 +681,8 @@ Usage: cpsashapes [OPTIONS] [FILE]
 <h3>Usage</h3>
 
 <blockquote>
-  <pre>$ cpsasas -h
-Usage: cpsasas [OPTIONS] [FILE]
+  <pre>$ cpsa4sas -h
+Usage: cpsa4sas [OPTIONS] [FILE]
   -o FILE    --output=FILE     output FILE
   -m INT     --margin=INT      set output margin (default 72)
   -a STRING  --algebra=STRING  algebra (default basic)
@@ -700,8 +701,8 @@ to ease processing in other languages.</p>
 <h3>Usage</h3>
 
 <blockquote>
-  <pre>$ cpsapp -h
-Usage: cpsapp [OPTIONS] [FILE]
+  <pre>$ cpsa4pp -h
+Usage: cpsa4pp [OPTIONS] [FILE]
   -o FILE  --output=FILE  output FILE
   -m INT   --margin=INT   set output margin (default 72)
   -i       --infix        output uses infix notation
@@ -718,8 +719,8 @@ CPSA S-Expressions.</p>
 <h3>Usage</h3>
 
 <blockquote>
-  <pre>$ cpsajson -h
-Usage: cpsajson [OPTIONS] [FILE]
+  <pre>$ cpsa4json -h
+Usage: cpsa4json [OPTIONS] [FILE]
   -o FILE  --output=FILE  output FILE
   -m INT   --margin=INT   set output margin (default 72)
   -i       --infix        output uses infix notation
