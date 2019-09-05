@@ -702,7 +702,9 @@ loadRoleSpecific pos prot vars unbound x =
   do
     as <- loadConjunction pos prot vars x
     let as' = L.sortBy (\(_, x) (_, y) -> aFormOrder x y) as
-    unbound <- foldM roleSpecific unbound as'
+    -- Remove vars that are in facts
+    let unbound' = foldl factSpecific unbound as'
+    unbound <- foldM roleSpecific unbound' as'
     case unbound of
       [] -> return as'
       (v : _) -> fail (shows (annotation x) (showst v " not used"))
@@ -913,3 +915,9 @@ roleSpecific unbound (pos, Equals t t')
   | isStrdVar t' = fail (shows pos "Type mismatch in equals")
   | allBound unbound t && allBound unbound t' = return unbound
   | otherwise = fail (shows pos "Unbound variable in equals")
+
+-- Remove unbound message variables that occur in a fact
+factSpecific :: [Term] -> (Pos, AForm) -> [Term]
+factSpecific unbound (_, AFact _ fs) =
+  unbound L.\\ foldl addVars [] (L.filter (not . isStrdVar) fs)
+factSpecific unbound _ = unbound

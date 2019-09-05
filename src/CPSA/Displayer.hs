@@ -171,7 +171,7 @@ displayPreskel k rest =
           foldr f (displayRest k ctx rest) (insts k))
     where
       ctx = varsContext vars
-      vars = kvars k
+      vars = kfvars k ++ kvars k
       f i rest = displayInst ctx i : rest
 
 -- Display the remainder of a preskeleton

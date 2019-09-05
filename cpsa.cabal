@@ -134,7 +134,8 @@ Extra-Source-Files:
   tst/role_uniq.scm tst/role_uniq.tst
   tst/chan-envelope.scm tst/chan-envelope.tst tst/chan-yahalom.scm
   tst/chan-yahalom.tst tst/chan-perrig-song.scm
-  tst/chan-perrig-song.tst
+  tst/chan-perrig-song.tst tst/chan-unilateral.scm
+  tst/chan-unilateral.tst tst/factvar.scm tst/factvar.tst
 
 Source-Repository head
   Type:     git

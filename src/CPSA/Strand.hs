@@ -11,7 +11,7 @@ module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     firstSkeleton, Pair, Preskel, gen, protocol, kgoals, insts, orderings,
     pov, knon, kpnon, kunique, kconf, kauth, kfacts, korig,
     kpriority, kcomment, nstrands,
-    kvars, strandids, kterms, kchans, uniqOrig, preskelWellFormed,
+    kvars, kfvars, strandids, kterms, kchans, uniqOrig, preskelWellFormed,
     confCm, authCm,
     verbosePreskelWellFormed, Strand, inst, sid, nodes,
     Vertex, strand, pos, preds, event, graphNode, strands, vertex,
@@ -374,6 +374,7 @@ data Preskel = Preskel
       kconf :: ![Term],           -- A list of channels
       kauth :: ![Term],           -- A list of channels
       kfacts :: ![Fact],          -- A list of facts
+      kfvars :: [Term],           -- Fact vars not in instances
       kpriority :: [(Node, Int)], -- Override node priority
       kcomment :: [SExpr ()],   -- Comments from the input
       korig :: ![(Term, [Node])], -- This is an association list with a
@@ -494,6 +495,7 @@ newPreskel gen shared insts orderings non pnon unique conf auth facts
                       kconf = L.nub conf,
                       kauth = L.nub auth,
                       kfacts = facts',
+                      kfvars = factVars insts facts',
                       kpriority = prio,
                       kcomment = [],
                       korig = orig,
@@ -556,7 +558,6 @@ preskelWellFormed k =
     all uniqueCheck (kunique k) &&
     all chanCheck (kconf k) &&
     all chanCheck (kauth k) &&
-    all factCheck (kfacts k) &&
     wellOrdered k && acyclicOrder k &&
     roleOrigCheck k
     where
@@ -564,7 +565,6 @@ preskelWellFormed k =
       nonCheck t = all (not . carriedBy t) terms
       uniqueCheck t = any (carriedBy t) terms
       chanCheck c = elem c (kvars k)
-      factCheck f = factVarsElem (kvars k) f
 
 -- Do notation friendly preskeleton well formed check.
 wellFormedPreskel :: Monad m => Preskel -> m Preskel
@@ -585,7 +585,6 @@ verbosePreskelWellFormed k =
       mapM_ uniqueCheck $ kunique k
       mapM_ confCheck $ kconf k
       mapM_ authCheck $ kauth k
-      mapM_ factCheck $ kfacts k
       failwith "ordered pairs not well formed" $ wellOrdered k
       failwith "cycle found in ordered pairs" $ acyclicOrder k
       failwith "an inherited unique doesn't originate in its strand"
@@ -606,9 +605,6 @@ verbosePreskelWellFormed k =
         failwith (showString "authenticated channel "
                   $ showst c " not in some strand")
                  $ elem c (kvars k)
-      factCheck f =
-          failwith ("a fact var in " ++  factPred f ++ " not in some strand")
-                       $ factVarsElem (kvars k) f
 
 failwith :: Monad m => String -> Bool -> m ()
 failwith msg test =
@@ -669,7 +665,7 @@ acyclicOrder k =
 -- that only occur in a cause.
 kvars :: Preskel -> [Term]
 kvars k =
-    S.elems $ foldl addIvars S.empty (insts k)
+    instVars (insts k)
 
 -- Ensure each role unique origination assumption mapped by an
 -- instance originates in the instance's strand.
@@ -727,6 +723,7 @@ data Gist = Gist
       gpnon :: [Term],   -- A list of penetrator non-originating terms
       gunique :: [Term], -- A list of uniquely-originating terms
       gfacts :: [Fact],  -- A list of facts
+      gfvars :: [Term],  -- Fact vars not in instances
       nvars :: !Int,     -- Number of variables
       ntraces :: !Int,   -- Number of traces
       briefs :: [(Int, Int)],   -- Multiset of trace briefs
@@ -734,7 +731,8 @@ data Gist = Gist
       nnon :: !Int,      -- Number of non-originating terms
       npnon :: !Int,     -- Number of penetrator non-originating terms
       nunique :: !Int,   -- Number of uniquely-originating terms
-      nfacts :: !Int }   -- Number of facts
+      nfacts :: !Int,    -- Number of facts
+      nfvars :: !Int }   -- Number of fact vars not in instances
     deriving Show
 
 gist :: Preskel -> Gist
@@ -746,6 +744,7 @@ gist k =
            gpnon = gpnon,
            gunique = gunique,
            gfacts = gfacts,
+           gfvars = gfvars,
            nvars = length (kvars k),
            ntraces = length gtraces,
            briefs = multiset (map fst gtraces),
@@ -753,7 +752,8 @@ gist k =
            nnon = length gnon,
            npnon = length gpnon,
            nunique = length gunique,
-           nfacts = length gfacts }
+           nfacts = length gfacts,
+           nfvars = length gfvars }
     where
       gtraces = map f (insts k)
       -- Old: f i = (height i, trace i)
@@ -765,6 +765,7 @@ gist k =
       gpnon = kpnon k
       gunique = kunique k
       gfacts = kfacts k
+      gfvars = kfvars k
 
 -- Summarize a trace so that two traces don't match unless they have
 -- the same number.  The summary used to be the height of the trace.
@@ -791,10 +792,11 @@ multiset brf =
 
 -- First, ensure the two preskeletons have:
 -- 1. The same number of variables
--- 2. The same number of strands
+-- 2. The same number of strands with the same brief
 -- 3. The same number of node orderings
 -- 4. The same number of terms in knon and kunique
 -- 5. The same number of facts
+-- 6. The same number of variables in facts but not in instances
 
 -- Next compute the plausible permutations and substitutions.
 
@@ -809,7 +811,7 @@ multiset brf =
 
 isomorphic :: Gist -> Gist -> Bool
 isomorphic g g' =
-    nvars g == nvars g' &&
+    nvars g == nvars g' &&      -- Doesn't work for Diffie-Hellman
     ntraces g == ntraces g' &&
     briefs g == briefs g' &&
     norderings g == norderings g' &&
@@ -817,6 +819,7 @@ isomorphic g g' =
     npnon g == npnon g' &&
     nunique g == nunique g' &&
     nfacts g == nfacts g' &&
+    nfvars g == nfvars g' &&
     any (tryPerm g g') (permutations g g')
 
 -- Extend a permutation while extending a substitution
@@ -854,6 +857,22 @@ jibeTraces (Out t : c) (Out t' : c') ge =
       jibeTraces c c' env
 jibeTraces _ _ _ = []
 
+-- Extend a fact permutation while extending a substitution
+fperms :: Gist -> Gist -> (Gen, Env) -> (Gen, Env) ->
+          [((Gen, Env), (Gen, Env), [Int])]
+fperms g g' env renv =
+  perms env renv (gfvars g) (nats $ nfvars g)
+  where
+    perms env renv [] [] = [(env, renv, [])]
+    perms env renv (t:ts) xs =
+          [ (env'', renv'', x:ys) |
+            x <- xs,
+            let t' = gfvars g' !! x,
+            env' <- match t t' env,
+            renv' <- match t' t renv,
+            (env'', renv'', ys) <- perms env' renv' ts (L.delete x xs) ]
+    perms _ _ _ _ = error "Strand.fperms: lists not same length"
+
 {-
 -- Here is the permutation algorithm used
 
@@ -883,8 +902,7 @@ tryPerm :: Gist -> Gist -> ((Gen, Env), (Gen, Env), [Sid]) -> Bool
 tryPerm g g' (env, renv, perm) =
     checkOrigs g g' env &&
     checkOrigs g' g renv &&
-    checkFacts g g' env perm &&
-    checkFacts g' g renv (invperm perm) &&
+    any (tryFacts g g' perm (invperm perm)) (fperms g g' env renv) &&
     containsMapped (permutePair perm) (gorderings g') (gorderings g)
 
 invperm :: [Int] -> [Int]
@@ -901,6 +919,12 @@ permutePair perm (n, n') = (permuteNode perm n, permuteNode perm n')
 
 permuteNode :: [Sid] -> Node -> Node
 permuteNode perm (strand, pos) = (perm !! strand, pos)
+
+tryFacts :: Gist -> Gist -> [Sid] -> [Sid] ->
+            ((Gen, Env), (Gen, Env), a) -> Bool
+tryFacts g g' perm invperm (env, renv, _) =
+  checkFacts g g' env perm &&
+  checkFacts g' g renv invperm
 
 checkFacts :: Gist -> Gist -> (Gen, Env) -> [Sid] -> Bool
 checkFacts g g' (_, e) perm =
@@ -1111,7 +1135,7 @@ soothePreskel k =
   (filter uniqueCheck $ kunique k)
   (filter varCheck $ kconf k)
   (filter varCheck $ kauth k)
-  (cleansFacts (kvars k) (kfacts k))
+  (kfacts k)
   (kpriority k)
   (operation k)
   (krules k)
@@ -1708,7 +1732,7 @@ deleteNodeRest :: Preskel -> Gen -> Node -> [Instance] -> [Pair] ->
                   [Sid] -> [Fact] -> Preskel
 deleteNodeRest k gen n insts' orderings prob facts =
     newPreskel gen (shared k) insts' orderings non' pnon' unique' conf'
-    auth' facts' prio' (Generalized (Deleted n)) [] (pprob k) prob (pov k)
+    auth' facts prio' (Generalized (Deleted n)) [] (pprob k) prob (pov k)
     where
       -- Drop nons that aren't mentioned anywhere
       non' = filter mentionedIn (knon k)
@@ -1722,8 +1746,6 @@ deleteNodeRest k gen n insts' orderings prob facts =
       chans = ichans insts'
       conf' = filter (flip elem chans) (kconf k)
       auth' = filter (flip elem chans) (kauth k)
-      -- Drop facts that have unused variables
-      facts' = cleansFacts terms facts
       -- Drop unused priorities
       prio' = filter within (kpriority k)
       within ((s, i), _) =
@@ -1913,7 +1935,8 @@ changeLocations k env gen t locs =
     [addIdentity k0, addIdentity k1]
     where
       k0 = newPreskel gen' (shared k) insts' (orderings k) non pnon unique0
-           (kconf k) (kauth k) facts' (kpriority k) (Generalized (Separated t))
+           (kconf k) (kauth k) (kfacts k) (kpriority k)
+           (Generalized (Separated t))
            [] (pprob k) (prob k) (pov k)
       k1 = newPreskel gen' (shared k) insts' (orderings k) non pnon unique1
            (kconf k) (kauth k) facts (kpriority k) (Generalized (Separated t))
@@ -1925,9 +1948,7 @@ changeLocations k env gen t locs =
       unique1 = map (instantiate env) (kunique k) ++ unique'
       -- Ensure all role unique assumptions are in.
       unique' = concatMap inheritRunique insts'
-      vars = instvars insts'
-      facts' = cleansFacts vars (kfacts k)
-      facts = cleansFacts vars (map (instFact env) (kfacts k))
+      facts = map (instFact env) (kfacts k)
 
 changeStrands :: [Location] -> Term -> Gen -> [Strand] -> (Gen, [Instance])
 changeStrands locs copy gen strands =
@@ -1994,9 +2015,6 @@ data Fact
   = Fact String [FTerm]
   deriving (Eq, Show)
 
-factPred :: Fact -> String
-factPred (Fact pred _) = pred
-
 substFTerm :: Subst -> FTerm -> FTerm
 substFTerm s (FTerm t) = FTerm $ substitute s t
 substFTerm _ t = t
@@ -2025,22 +2043,23 @@ instUpdateFTerm e _ (FTerm t) = FTerm $ instantiate e t
 instUpdateFact :: Env -> (Sid -> Sid) -> Fact -> Fact
 instUpdateFact e f (Fact name fs) = Fact name $ map (instUpdateFTerm e f) fs
 
--- Is all of the fact's variables in a list of variables?
-
-factVarsElem :: [Term] -> Fact -> Bool
-factVarsElem vs (Fact _ ts) =
-  all f ts
-  where
-    f (FSid _) = True
-    f (FTerm t) = all (\v -> elem v vs) (varsInTerms [t])
-
-cleansFacts :: [Term] -> [Fact] -> [Fact]
-cleansFacts vs facts =
-  L.filter (factVarsElem vs) facts
-
-instvars :: [Instance] -> [Term]
-instvars insts =
+instVars :: [Instance] -> [Term]
+instVars insts =
     S.elems $ foldl addIvars S.empty insts
+
+factVars :: [Instance] -> [Fact] -> [Term]
+factVars insts facts =
+  S.elems $ S.difference fvars ivars
+  where
+    ivars = foldl addIvars S.empty insts
+    fvars = foldl addFvars S.empty facts
+
+addFvars :: Set Term -> Fact -> Set Term
+addFvars vs (Fact _ ts) =
+  foldl f vs ts
+  where
+    f vs (FSid _) = vs
+    f vs (FTerm t) = foldVars (flip S.insert) vs t
 
 {-- For debugging
 factVars :: Fact -> [Term] -> [Term]
