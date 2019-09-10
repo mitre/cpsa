@@ -105,6 +105,9 @@ useThinningWhileSolving = True -- False
 useNoOrigPreservation :: Bool
 useNoOrigPreservation = False -- True
 
+usePruning :: Bool
+usePruning = False -- True
+
 -- Instances and Strand Identifiers
 
 -- An Instance is an instance of a role, in the sense that each
@@ -311,6 +314,12 @@ graph trace height insts pairs =
       enrich (s, i) ns
           | i > 0 = (s, i - 1) : ns
           | otherwise = ns
+
+-- Does start node precede end node?
+graphPrecedes :: GraphNode e i -> GraphNode e i -> Bool
+graphPrecedes start end =
+    let predecessors = preds end in
+    any (== start) predecessors || any (graphPrecedes start) predecessors
 
 -- Compute the transitive reduction
 graphReduce :: [GraphEdge e i] -> [GraphEdge e i]
@@ -1206,7 +1215,12 @@ enrich thin (k0, k, n, phi, hsubst) =
           maybeThin thin (k0, k', n, phi, hsubst)
 
 maybeThin :: Bool -> PRS -> [PRS]
-maybeThin True prs = thin prs
+maybeThin True prs
+  | usePruning =
+    do
+      prs <- prune prs
+      thin prs
+  | otherwise = thin prs
 maybeThin False prs = reduce prs
 
 origNode :: Preskel -> Term -> Maybe Node
@@ -1363,6 +1377,75 @@ swap ps =
 updatePairs :: Sid -> Sid -> (Sid, Sid) -> (Sid, Sid)
 updatePairs old new (s, s') =
     (updateStrand old new s, updateStrand old new s')
+
+-- Redundant Strand Elimination (also known as pruning)
+
+prune :: PRS -> [PRS]
+prune prs =
+    pruneStrands prs (reverse $ strandids $ skel prs) (strandids $ skel prs)
+
+pruneStrands :: PRS -> [Sid] -> [Sid] -> [PRS]
+pruneStrands prs [] _ =
+    reduce prs                  -- No redundant strands found
+pruneStrands prs (_:ss) [] =
+    pruneStrands prs ss (strandids $ skel prs)
+pruneStrands prs (s:ss) (s':ss')
+    | s == s' = pruneStrands prs (s:ss) ss'
+    | otherwise =
+        case pruneStrand prs s s' of
+          [] -> pruneStrands prs (s:ss) ss'  -- Try next pair
+          prss ->                            -- Success
+              do
+                prs <- prss
+                prune prs
+
+-- Strand s is redundant if there is an environment that maps
+-- the trace of s into a prefix of the trace of s', but changes
+-- no other traces in the preskeleton.
+pruneStrand :: PRS -> Sid -> Sid -> [PRS]
+pruneStrand prs s s' =
+    do
+      let k = skel prs
+      case elem s (prob k) && elem s' (prob k) of
+        True -> fail ""   -- Strands s and s' in image of POV skeleton
+        False -> return ()
+      (g, env) <- matchTraces
+                  (trace (strandInst k s))
+                  (trace (strandInst k s'))
+                  (gen k, emptyEnv)
+      let ts = concatMap (tterms . trace) $ deleteNth s $ insts k
+      let vs = L.foldl' (\vs t -> foldVars (flip S.insert) vs t) S.empty ts
+      let subst = substitution env
+      case disjointDom subst vs of
+        True -> return ()
+        False -> fail ""
+      case origCheck k env of
+        True -> return ()
+        False -> fail ""
+      case all (precedesCheck k s s') (edges k) of
+        True -> return ()
+        False -> fail ""
+      prs <- ksubst prs (g, subst)
+      compress True prs s s'
+
+-- Make sure a substitution does not take a unique out of the set of
+-- uniques, and the same for nons and pnons.
+origCheck :: Preskel -> Env -> Bool
+origCheck k env =
+    check (kunique k) && check (knon k) && check (kpnon k)
+    where
+      check orig =
+          all (pred orig) orig
+      pred set item =
+          elem (instantiate env item) set
+
+-- Ensure that if (s, p) precedes (s", p"), then (s', p) precedes (s", p")
+-- and if (s", p") precedes (s, p), then (s", p") precedes (s', p)
+precedesCheck :: Preskel -> Sid -> Sid -> Edge -> Bool
+precedesCheck k s s' (gn0, gn1)
+    | s == sid (strand gn0) = graphPrecedes (vertex k (s', pos gn0)) gn1
+    | s == sid (strand gn1) = graphPrecedes gn0 (vertex k (s', pos gn1))
+    | otherwise = True
 
 -- Transitive Reduction
 

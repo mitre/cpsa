@@ -95,6 +95,7 @@ module CPSA.Algebra (name,
 
     Subst,
     emptySubst,
+    disjointDom,
     substitute,
     unify,
     compose,
@@ -605,6 +606,12 @@ newtype Subst = Subst IdMap deriving (Eq, Ord, Show)
 
 emptySubst :: Subst
 emptySubst = Subst emptyIdMap
+
+-- Is the domain of the substitution disjoint from
+-- the given set of variables?
+disjointDom :: Subst -> Set Term -> Bool
+disjointDom (Subst s) vs =      -- Assumes vs contains only variables
+  S.null $ S.intersection (M.keysSet s) (S.map varId vs)
 
 -- Apply a substitution created by unification
 substitute :: Subst -> Term -> Term

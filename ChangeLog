@@ -1,3 +1,9 @@
+2019-09-10  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Strand.hs (prune):  Added pruning as a compile time
+	option controlled by Strand.usePruning.  When True, CPSA prunes
+	before it attempts to thin.
+
 2019-09-05  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Strand.hs (fperms):  Added support for variables that
