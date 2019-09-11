@@ -105,8 +105,13 @@ useThinningWhileSolving = True -- False
 useNoOrigPreservation :: Bool
 useNoOrigPreservation = False -- True
 
+-- Use Pruning instead of thinning
 usePruning :: Bool
 usePruning = False -- True
+
+-- When using pruning use strong version
+useStrongPruning :: Bool
+useStrongPruning = False -- True
 
 -- Instances and Strand Identifiers
 
@@ -1215,12 +1220,8 @@ enrich thin (k0, k, n, phi, hsubst) =
           maybeThin thin (k0, k', n, phi, hsubst)
 
 maybeThin :: Bool -> PRS -> [PRS]
-maybeThin True prs
-  | usePruning =
-    do
-      prs <- prune prs
-      thin prs
-  | otherwise = thin prs
+maybeThin _ prs | usePruning = prune prs
+maybeThin True prs = thin prs
 maybeThin False prs = reduce prs
 
 origNode :: Preskel -> Term -> Maybe Node
@@ -1422,11 +1423,14 @@ pruneStrand prs s s' =
       case origCheck k env of
         True -> return ()
         False -> fail ""
-      case all (precedesCheck k s s') (edges k) of
+      -- If performing strong pruning, drop inbound edges to strand s.
+      let k' = if useStrongPruning then dropInbnd k s else k
+      let prs' = if useStrongPruning then setSkel prs k else prs
+      case all (precedesCheck k' s s') (edges k') of
         True -> return ()
         False -> fail ""
-      prs <- ksubst prs (g, subst)
-      compress True prs s s'
+      prs' <- ksubst prs' (g, subst)
+      compress True prs' s s'
 
 -- Make sure a substitution does not take a unique out of the set of
 -- uniques, and the same for nons and pnons.
@@ -1446,6 +1450,18 @@ precedesCheck k s s' (gn0, gn1)
     | s == sid (strand gn0) = graphPrecedes (vertex k (s', pos gn0)) gn1
     | s == sid (strand gn1) = graphPrecedes gn0 (vertex k (s', pos gn1))
     | otherwise = True
+
+dropInbnd :: Preskel -> Sid -> Preskel
+dropInbnd k s =
+  newPreskel (gen k) (shared k) (insts k) orderings'
+  (knon k) (kpnon k) (kunique k) (kconf k) (kauth k) (kfacts k)
+  (kpriority k) (operation k) (krules k) (pprob k) (prob k) (pov k)
+  where
+    orderings' = L.filter f $ orderings k
+    f ((s', _), _) = s /= s'
+
+setSkel :: PRS -> Preskel -> PRS
+setSkel (k0, _, n, phi, hsubst) k = (k0, k, n, phi, hsubst)
 
 -- Transitive Reduction
 

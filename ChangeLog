@@ -1,3 +1,9 @@
+2019-09-11  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Strand.hs (dropInbnd):  Enabled strong pruning as a
+	compile time switch.  Also, when using either form of pruning,
+	thinning is disabled.
+
 2019-09-10  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Strand.hs (prune):  Added pruning as a compile time
