@@ -1407,8 +1407,8 @@ pruneStrand :: PRS -> Sid -> Sid -> [PRS]
 pruneStrand prs s s' =
     do
       let k = skel prs
-      case elem s (prob k) && elem s' (prob k) of
-        True -> fail ""   -- Strands s and s' in image of POV skeleton
+      case elem s (prob k) of
+        True -> fail ""   -- Strands s in image of POV skeleton
         False -> return ()
       (g, env) <- matchTraces
                   (trace (strandInst k s))
@@ -1457,7 +1457,7 @@ dropInbnd k s =
   (kpriority k) (operation k) (krules k) (pprob k) (prob k) (pov k)
   where
     orderings' = L.filter f $ orderings k
-    f ((s', _), _) = s /= s'
+    f (_, (s', _)) = s /= s'
 
 setSkel :: PRS -> Preskel -> PRS
 setSkel (k0, _, n, phi, hsubst) k = (k0, k, n, phi, hsubst)
