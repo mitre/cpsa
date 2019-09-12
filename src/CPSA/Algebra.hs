@@ -608,10 +608,17 @@ emptySubst :: Subst
 emptySubst = Subst emptyIdMap
 
 -- Is the domain of the substitution disjoint from
--- the given set of variables?
-disjointDom :: Subst -> Set Term -> Bool
-disjointDom (Subst s) vs =      -- Assumes vs contains only variables
-  S.null $ S.intersection (M.keysSet s) (S.map varId vs)
+-- the variables in a list of terms?
+disjointDom :: Subst -> [Term] -> Bool
+disjointDom (Subst s) ts =
+  all (allId $ flip S.notMember $ M.keysSet s) ts
+
+allId :: (Id -> Bool) -> Term -> Bool
+allId f (I x) = f x
+allId _ (C _) = True
+allId f (F _ u) = all (allId f) u
+allId f (D x) = f x
+allId _ (Z _) = True
 
 -- Apply a substitution created by unification
 substitute :: Subst -> Term -> Term

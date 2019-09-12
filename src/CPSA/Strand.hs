@@ -111,7 +111,7 @@ usePruning = False -- True
 
 -- When using pruning use strong version
 useStrongPruning :: Bool
-useStrongPruning = False -- True
+useStrongPruning = True -- False
 
 -- Instances and Strand Identifiers
 
@@ -1415,9 +1415,8 @@ pruneStrand prs s s' =
                   (trace (strandInst k s'))
                   (gen k, emptyEnv)
       let ts = concatMap (tterms . trace) $ deleteNth s $ insts k
-      let vs = L.foldl' (\vs t -> foldVars (flip S.insert) vs t) S.empty ts
       let subst = substitution env
-      case disjointDom subst vs of
+      case disjointDom subst ts of
         True -> return ()
         False -> fail ""
       case origCheck k env of
