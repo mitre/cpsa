@@ -1424,7 +1424,7 @@ pruneStrand prs s s' =
         False -> fail ""
       -- If performing strong pruning, drop inbound edges to strand s.
       let k' = if useStrongPruning then dropInbnd k s else k
-      let prs' = if useStrongPruning then setSkel prs k else prs
+      let prs' = if useStrongPruning then setSkel prs k' else prs
       case all (precedesCheck k' s s') (edges k') of
         True -> return ()
         False -> fail ""
@@ -1456,8 +1456,7 @@ dropInbnd k s =
   (knon k) (kpnon k) (kunique k) (kconf k) (kauth k) (kfacts k)
   (kpriority k) (operation k) (krules k) (pprob k) (prob k) (pov k)
   where
-    orderings' = L.filter f $ orderings k
-    f (_, (s', _)) = s /= s'
+    orderings' = forward s $ orderings k
 
 setSkel :: PRS -> Preskel -> PRS
 setSkel (k0, _, n, phi, hsubst) k = (k0, k, n, phi, hsubst)
