@@ -1,3 +1,9 @@
+2019-09-16  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Strand.hs (probIsomorphic): In thinning, replaced
+	isomorphic check with probIsomorphic check so that strands in the
+	point-of-view remain unmodified.
+
 2019-09-11  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Strand.hs (dropInbnd):  Enabled strong pruning as a

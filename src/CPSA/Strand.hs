@@ -836,6 +836,16 @@ isomorphic g g' =
     nfvars g == nfvars g' &&
     any (tryPerm g g') (permutations g g')
 
+-- For thinning.  Ensure point-of-view is preserved.
+probIsomorphic :: Preskel -> Preskel -> Bool
+probIsomorphic k k' =
+    any (tryPermProb g g' pr pr') (permutations g g')
+    where
+      g = gist k
+      g' = gist k'
+      pr = prob k
+      pr' = prob k'
+
 -- Extend a permutation while extending a substitution
 -- Extend by matching later strands first
 permutations :: Gist -> Gist -> [((Gen, Env), (Gen, Env), [Sid])]
@@ -918,6 +928,15 @@ tryPerm g g' (env, renv, perm) =
     checkOrigs g' g renv &&
     any (tryFacts g g' perm (invperm perm)) (fperms g g' env renv) &&
     containsMapped (permutePair perm) (gorderings g') (gorderings g)
+
+tryPermProb :: Gist -> Gist -> [Sid] -> [Sid] ->
+               ((Gen, Env), (Gen, Env), [Sid]) -> Bool
+tryPermProb g g' prob prob' (env, renv, perm) =
+    checkOrigs g g' env &&
+    checkOrigs g' g renv &&
+    any (tryFacts g g' perm (invperm perm)) (fperms g g' env renv) &&
+    containsMapped (permutePair perm) (gorderings g') (gorderings g) &&
+    all (\n -> perm !! (prob !! n) == prob' !! n) [0..((length prob)-1)]
 
 invperm :: [Int] -> [Int]
 invperm p = map snd (L.sortOn fst (zip p [0..]))
@@ -1309,7 +1328,7 @@ thinStrand prs s s' =
       True ->
         Just [ prs' | prs' <- purge prs s s',
                       prs'' <- purge prs s' s,
-                      isomorphic (gist (skel prs')) (gist (skel prs''))]
+                      probIsomorphic (skel prs') (skel prs'')]
 
 -- See if two strands match.
 thinStrandMatch :: Preskel -> Sid -> Sid -> Bool
@@ -1362,7 +1381,7 @@ thinManyStrands :: PRS -> [(Sid, Sid)] -> [PRS]
 thinManyStrands prs ps =
   [ prs' | prs' <- compressMany prs ps,
            prs'' <- compressMany prs (swap ps),
-           isomorphic (gist (skel prs')) (gist (skel prs''))]
+           probIsomorphic (skel prs') (skel prs'')]
 
 compressMany :: PRS -> [(Sid, Sid)] -> [PRS]
 compressMany prs [] = [prs]
