@@ -30,7 +30,7 @@ root = "z"
 
 type State = ([Prot], [Preskel])
 
-sas :: Monad m => String -> Gen -> State -> Maybe (SExpr Pos) ->
+sas :: MonadFail m => String -> Gen -> State -> Maybe (SExpr Pos) ->
        m (State, Maybe (SExpr ()))
 sas _ _ (ps, ks) Nothing =    -- Nothing signifies end-of-file
     displayFormula ps (reverse ks)
@@ -39,7 +39,7 @@ sas name gen (ps, []) (Just sexpr) = -- Looking for POV skeleton
 sas name gen (ps, ks) (Just sexpr) = -- Looking for shapes
     loadOtherPreskel name gen ps ks sexpr
 
-loadPOV :: Monad m => String -> Gen -> [Prot] -> SExpr Pos ->
+loadPOV :: MonadFail m => String -> Gen -> [Prot] -> SExpr Pos ->
            m (State, Maybe (SExpr ()))
 loadPOV name origin ps (L pos (S _ "defprotocol" : xs)) =
     do
@@ -54,7 +54,7 @@ loadPOV _ _ ps (L pos (S _ "defskeleton" : xs)) =
         _ -> return ((ps, []), Nothing) -- Not POV
 loadPOV _ _ ps _ = return ((ps, []), Nothing)
 
-loadOtherPreskel :: Monad m => String -> Gen -> [Prot] -> [Preskel] ->
+loadOtherPreskel :: MonadFail m => String -> Gen -> [Prot] -> [Preskel] ->
                     SExpr Pos -> m (State, Maybe (SExpr ()))
 loadOtherPreskel name origin ps ks (L pos (S _ "defprotocol" : xs)) =
     do                     -- Found next protocol.  Print this formula
@@ -91,7 +91,7 @@ data Role = Role
 
 -- Load a protocol.  On success, returns a Prot record.
 
-loadProt :: Monad m => String -> Gen -> Pos -> [SExpr Pos] -> m (Prot)
+loadProt :: MonadFail m => String -> Gen -> Pos -> [SExpr Pos] -> m (Prot)
 loadProt nom origin pos (S _ name : S _ alg : x : xs)
     | alg /= nom =
         fail (shows pos $ "Expecting terms in algebra " ++ nom)
@@ -108,7 +108,7 @@ loadProt _ _ pos _ =
 -- every variable that occurs in a preskeleton never occurs in one of
 -- its roles.
 
-loadRoles :: Monad m => Gen -> [SExpr Pos] -> m (Gen, [Role])
+loadRoles :: MonadFail m => Gen -> [SExpr Pos] -> m (Gen, [Role])
 loadRoles origin xs =
     mapAccumLM loadRole origin $ stripComments xs
 
@@ -129,7 +129,7 @@ mapAccumLM f z (x : xs) =
       (z'', ys) <- mapAccumLM f z' xs
       return (z'', y : ys)
 
-loadRole :: Monad m => Gen -> SExpr Pos -> m (Gen, Role)
+loadRole :: MonadFail m => Gen -> SExpr Pos -> m (Gen, Role)
 loadRole gen (L _ (S _ "defrole" :
                      S _ name :
                      L _ (S _ "vars" : vars) :
@@ -148,7 +148,7 @@ loadRole _ x =
 listenerName :: String
 listenerName = ""
 
-makeListenerRole :: Monad m => Pos -> Gen -> m (Gen, Role)
+makeListenerRole :: MonadFail m => Pos -> Gen -> m (Gen, Role)
 makeListenerRole pos gen =
     do
       (gen', t) <- makeVar pos gen "x"
@@ -157,7 +157,7 @@ makeListenerRole pos gen =
       let r = Role { rname = listenerName, vars = vars, ctx = ctx }
       return (gen', r)
 
-makeVar :: Monad m => Pos -> Gen -> String -> m (Gen, Term)
+makeVar :: MonadFail m => Pos -> Gen -> String -> m (Gen, Term)
 makeVar pos gen name =
     do
       (gen', ts) <- loadVars gen [L pos [S pos name, S pos "mesg"]]
@@ -175,7 +175,7 @@ type VM = M.Map Strand Term
 type GVM = (Gen, VM)
 
 -- Add a variable for a strand if the mapping does not already exist.
-addVar :: Monad m => Pos -> GVM -> Strand -> m GVM
+addVar :: MonadFail m => Pos -> GVM -> Strand -> m GVM
 addVar pos (gen, vm) z =
   case M.lookup z vm of
     Just _ -> return (gen, vm)
@@ -196,7 +196,7 @@ nlookup (z, i) vm = (slookup z vm, i)
 
 -- Find a protocol
 
-findProt :: Monad m => Pos -> [Prot] -> [SExpr Pos] -> m Prot
+findProt :: MonadFail m => Pos -> [Prot] -> [SExpr Pos] -> m Prot
 findProt pos ps (S _ name : _) =
     case L.find (\p -> name == pname p) ps of
       Nothing -> fail (shows pos $ "Protocol " ++ name ++ " unknown")
@@ -241,7 +241,7 @@ data Preskel = Preskel
       homomorphisms :: [SExpr Pos], -- Loaded later
       varmap :: VM }
 
-loadPreskel :: Monad m => Pos -> Prot -> Gen -> [SExpr Pos] -> m (Preskel)
+loadPreskel :: MonadFail m => Pos -> Prot -> Gen -> [SExpr Pos] -> m (Preskel)
 loadPreskel pos prot gen (S _ _ : L _ (S _ "vars" : vars) : xs) =
     do
       (gen, kvars) <- loadVars gen vars
@@ -277,7 +277,7 @@ loadPreskel pos prot gen (S _ _ : L _ (S _ "vars" : vars) : xs) =
                         varmap = varmap})
 loadPreskel pos _ _ _ = fail (shows pos "Malformed skeleton")
 
-loadInsts :: Monad m => Prot -> [Term] -> [Instance] ->
+loadInsts :: MonadFail m => Prot -> [Term] -> [Instance] ->
              [SExpr Pos] -> m [Instance]
 loadInsts prot kvars insts (L pos (S _ "defstrand" : x) : xs) =
     case x of
@@ -298,7 +298,7 @@ loadInsts prot kvars insts (L pos (S _ "deflistener" : x) : xs) =
 loadInsts _ _ insts _ =
     return (reverse insts)
 
-loadInst :: Monad m => Pos -> Prot -> [Term] -> String -> Int ->
+loadInst :: MonadFail m => Pos -> Prot -> [Term] -> String -> Int ->
             [SExpr Pos] -> m Instance
 loadInst pos prot kvars role height env =
     do
@@ -307,14 +307,14 @@ loadInst pos prot kvars role height env =
       return (Instance { pos = pos, role = r,
                          env = env, height = height })
 
-lookupRole :: Monad m => Pos -> Prot -> String -> m Role
+lookupRole :: MonadFail m => Pos -> Prot -> String -> m Role
 lookupRole pos prot role =
     case L.find (\r -> role == rname r) (roles prot) of
       Nothing ->
           fail (shows pos $ "Role " ++ role ++ " not found in " ++ pname prot)
       Just r -> return r
 
-loadMaplet :: Monad m => [Term] -> [Term] -> SExpr Pos -> m (Term, Term)
+loadMaplet :: MonadFail m => [Term] -> [Term] -> SExpr Pos -> m (Term, Term)
 loadMaplet kvars vars (L _ [domain, range]) =
     do
       t <- loadTerm vars domain
@@ -322,7 +322,7 @@ loadMaplet kvars vars (L _ [domain, range]) =
       return (t, t')
 loadMaplet _ _ x = fail (shows (annotation x) "Malformed maplet")
 
-loadListener :: Monad m => Pos -> Prot -> [Term] -> SExpr Pos -> m Instance
+loadListener :: MonadFail m => Pos -> Prot -> [Term] -> SExpr Pos -> m Instance
 loadListener pos prot kvars x =
     do
       r <- lookupRole pos prot listenerName
@@ -332,7 +332,7 @@ loadListener pos prot kvars x =
 
 -- Load the node orderings
 
-loadOrderings :: Monad m => Strands -> [SExpr Pos] -> m [Pair]
+loadOrderings :: MonadFail m => Strands -> [SExpr Pos] -> m [Pair]
 loadOrderings _ [] = return []
 loadOrderings strands (x : xs) =
     do
@@ -340,7 +340,7 @@ loadOrderings strands (x : xs) =
       nps <- loadOrderings strands xs
       return (adjoin np nps)
 
-loadPair :: Monad m => [Int] -> SExpr Pos -> m Pair
+loadPair :: MonadFail m => [Int] -> SExpr Pos -> m Pair
 loadPair heights (L pos [x0, x1]) =
     do
       n0 <- loadNode heights x0
@@ -352,7 +352,7 @@ loadPair heights (L pos [x0, x1]) =
       sameStrands (s0, _) (s1, _) = s0 == s1
 loadPair _ x = fail (shows (annotation x) "Malformed pair")
 
-loadNode :: Monad m => [Int] -> SExpr Pos -> m Node
+loadNode :: MonadFail m => [Int] -> SExpr Pos -> m Node
 loadNode heights (L pos [N _ s, N _ p])
     | s < 0 = fail (shows pos "Negative strand in node")
     | p < 0 = fail (shows pos "Negative position in node")
@@ -368,7 +368,7 @@ loadNode heights (L pos [N _ s, N _ p])
           | otherwise = height xs (s - 1)
 loadNode _ x = fail (shows (annotation x) "Malformed node")
 
-loadBaseTerms :: Monad m => [Term] -> [SExpr Pos] -> m [Term]
+loadBaseTerms :: MonadFail m => [Term] -> [SExpr Pos] -> m [Term]
 loadBaseTerms _ [] = return []
 loadBaseTerms vars (x : xs) =
     do
@@ -376,7 +376,7 @@ loadBaseTerms vars (x : xs) =
       ts <- loadBaseTerms vars xs
       return (adjoin t ts)
 
-loadBaseTerm :: Monad m => [Term] -> SExpr Pos -> m Term
+loadBaseTerm :: MonadFail m => [Term] -> SExpr Pos -> m Term
 loadBaseTerm vars x =
     do
       t <- loadTerm vars x
@@ -384,7 +384,7 @@ loadBaseTerm vars x =
         True -> return t
         False -> fail (shows (annotation x) "Expecting an atom")
 
-loadOrigs :: Monad m => [Term] -> Strands -> [SExpr Pos] -> m [(Term, Node)]
+loadOrigs :: MonadFail m => [Term] -> Strands -> [SExpr Pos] -> m [(Term, Node)]
 loadOrigs _ _ [] = return []
 loadOrigs vars heights (x : xs) =
     do
@@ -392,7 +392,7 @@ loadOrigs vars heights (x : xs) =
       os <- loadOrigs vars heights xs
       return (adjoin o os)
 
-loadOrig :: Monad m => [Term] -> Strands -> SExpr Pos -> m (Term, Node)
+loadOrig :: MonadFail m => [Term] -> Strands -> SExpr Pos -> m (Term, Node)
 loadOrig vars heights (L _ [x, y]) =
     do
       t <- loadTerm vars x
@@ -402,11 +402,11 @@ loadOrig _ _ x =
     fail (shows (annotation x) "Malformed origination")
 
 -- Make a variable for each strand
-makeVarmap :: Monad m => Pos -> Gen -> [Strand] -> m GVM
+makeVarmap :: MonadFail m => Pos -> Gen -> [Strand] -> m GVM
 makeVarmap pos g strands =
   foldM (addVar pos) (g, M.empty) strands
 
-loadFact :: Monad m => [Term] -> VM -> SExpr Pos -> m Fact
+loadFact :: MonadFail m => [Term] -> VM -> SExpr Pos -> m Fact
 loadFact vars varmap (L _ (S _ name : ft)) =
   do
     ft <- mapM (loadFactTerm vars varmap) ft
@@ -414,7 +414,7 @@ loadFact vars varmap (L _ (S _ name : ft)) =
 loadFact _ _ x =
   fail (shows (annotation x) "Malformed fact")
 
-loadFactTerm :: Monad m => [Term] -> VM -> SExpr Pos -> m Term
+loadFactTerm :: MonadFail m => [Term] -> VM -> SExpr Pos -> m Term
 loadFactTerm _ varmap (N pos z) =
   case M.lookup z varmap of
     Just t -> return t
@@ -430,11 +430,11 @@ loadFactTerm vars _ x =
 
 type Hom = ([(Term, Term)], [(Term, Term)])
 
-loadMaps :: Monad m => Preskel -> Preskel -> [SExpr Pos] -> m [Hom]
+loadMaps :: MonadFail m => Preskel -> Preskel -> [SExpr Pos] -> m [Hom]
 loadMaps pov k maps =
     mapM (loadMap pov k) maps
 
-loadMap :: Monad m => Preskel -> Preskel -> SExpr Pos -> m Hom
+loadMap :: MonadFail m => Preskel -> Preskel -> SExpr Pos -> m Hom
 loadMap pov k (L _ [L _ strandMap, L _ algebraMap]) =
     do
       perm <- mapM loadPerm strandMap -- Load the strand map
@@ -444,18 +444,19 @@ loadMap pov k (L _ [L _ strandMap, L _ algebraMap]) =
       return (nh, ah)
 loadMap _ _ x = fail (shows (annotation x) "Malformed map")
 
-loadPerm :: Monad m => SExpr Pos -> m Int
+loadPerm :: MonadFail m => SExpr Pos -> m Int
 loadPerm (N _ n) | n >= 0 = return n
 loadPerm x = fail (shows (annotation x) "Expecting a natural number")
 
 -- Applies a strand permutation to a strand.
-loadStrandEq :: Monad m => Preskel -> [Int] -> (Strand, Term) -> m (Term, Term)
+loadStrandEq :: MonadFail m => Preskel -> [Int] -> (Strand, Term) ->
+                m (Term, Term)
 loadStrandEq k perm (z, v) =
   do
     z <- index perm z
     return (v, slookup z (varmap k))
 
-index :: Monad m => [a] -> Int -> m a
+index :: MonadFail m => [a] -> Int -> m a
 index (x : _) 0 = return x
 index (_ : xs) i | i > 0 = index xs (i - 1)
 index _ _ = fail "Bad strand map"
@@ -520,7 +521,7 @@ factsKey = "facts"
 
 type Analysis = (Preskel, [(Hom, Preskel)])
 
-loadAnalysis :: Monad m => Preskel -> [Preskel] -> m (Analysis)
+loadAnalysis :: MonadFail m => Preskel -> [Preskel] -> m (Analysis)
 loadAnalysis pov ks =
   do
     shapes <- mapM f ks
@@ -608,7 +609,7 @@ mapSkel env pov k =
 
 -- Formula printing
 
-displayFormula :: Monad m => [Prot] -> [Preskel] ->
+displayFormula :: MonadFail m => [Prot] -> [Preskel] ->
                   m (State, Maybe (SExpr ()))
 displayFormula ps [] =
     return ((ps, []), Nothing)

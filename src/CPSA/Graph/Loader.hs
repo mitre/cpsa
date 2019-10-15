@@ -182,7 +182,7 @@ loadSExpr _ x = fail (shows (annotation x) "Malformed input")
 
 -- Protocols
 
-loadProt :: Monad m => SExpr Pos -> Pos -> [SExpr Pos] ->
+loadProt :: MonadFail m => SExpr Pos -> Pos -> [SExpr Pos] ->
             m (String, Protocol)
 loadProt x _ (S _ name : S _ _ : xs) =
     do
@@ -190,7 +190,7 @@ loadProt x _ (S _ name : S _ _ : xs) =
       return (name, Protocol { name = name, roles = roles, src = x })
 loadProt _ pos _ = fail (shows pos "Malformed protocol")
 
-loadRoles :: Monad m => [SExpr Pos] -> m [(String, Trace)]
+loadRoles :: MonadFail m => [SExpr Pos] -> m [(String, Trace)]
 loadRoles (L pos (S _ "defrole" : x) : xs) =
     do
       r <- loadRole pos x
@@ -198,7 +198,7 @@ loadRoles (L pos (S _ "defrole" : x) : xs) =
       return (r : rs)
 loadRoles _ = return []
 
-loadRole :: Monad m => Pos -> [SExpr Pos] -> m (String, Trace)
+loadRole :: MonadFail m => Pos -> [SExpr Pos] -> m (String, Trace)
 loadRole _ (S _ name :
             L _ (S _ "vars" : _) :
             L _ (S _ "trace" : trace) : _) = return (name, trace)
@@ -206,7 +206,7 @@ loadRole pos _ = fail (shows pos "Malformed role")
 
 -- Preskeletons
 
-loadPreskel :: Monad m => SExpr Pos -> Pos -> [(String, Protocol)] ->
+loadPreskel :: MonadFail m => SExpr Pos -> Pos -> [(String, Protocol)] ->
                Int -> [SExpr Pos] -> m Preskel
 loadPreskel s pos ps tag (S _ name : (L _ (S _ "vars" : _)) : xs) =
     case lookup name ps of
@@ -220,7 +220,7 @@ loadPreskel s pos ps tag (S _ name : (L _ (S _ "vars" : _)) : xs) =
             loadInsts s pos p tag [] cs xs
 loadPreskel _ pos _ _ _ = fail (shows pos "Malformed skeleton")
 
-loadInsts :: Monad m => SExpr Pos -> Pos -> Protocol -> Int ->
+loadInsts :: MonadFail m => SExpr Pos -> Pos -> Protocol -> Int ->
              [Inst] -> [SExpr Pos] -> [SExpr Pos] -> m Preskel
 loadInsts s top p tag insts cs (L pos (S _ "defstrand" : x) : xs) =
     case x of
@@ -345,7 +345,7 @@ reduce graph orderings =
 
 -- Instances
 
-loadInst :: Monad m => Pos -> Protocol -> [SExpr Pos] -> String ->
+loadInst :: MonadFail m => Pos -> Protocol -> [SExpr Pos] -> String ->
             Int -> [SExpr Pos] -> m Inst
 loadInst pos p c role ht env =
     case lookup role (roles p) of
@@ -371,7 +371,7 @@ itrace env (c : cs) (_: rs) =
 itrace env [] (r : rs) =
     subst env r : itrace env [] rs
 
-loadMaplet :: Monad m => [SExpr Pos] -> m [(String, SExpr Pos)]
+loadMaplet :: MonadFail m => [SExpr Pos] -> m [(String, SExpr Pos)]
 loadMaplet (L _ [S _ name, x] : xs) =
     do
       env <- loadMaplet xs
@@ -388,7 +388,7 @@ subst env (L pos (x : xs)) = L pos (x : map (subst env) xs)
 subst _ x = x
 
 -- Ensure alist has the proper form
-alist :: Monad m => [SExpr Pos] -> m ()
+alist :: MonadFail m => [SExpr Pos] -> m ()
 alist [] = return ()
 alist ((L _ (S _ _ : _)) : xs) = alist xs
 alist xs = fail (shows (annotation $ head xs) "Malformed association list")
@@ -418,7 +418,7 @@ qassoc key xs =
         f (Q _ s) = [s]
         f _ = []
 
-nassoc :: Monad m => String -> [SExpr Pos] -> m (Maybe Int)
+nassoc :: MonadFail m => String -> [SExpr Pos] -> m (Maybe Int)
 nassoc key xs =
     case assoc key xs of
       Nothing -> return Nothing
@@ -429,11 +429,11 @@ nassoc key xs =
       Just (x:_) -> fail (shows (annotation x) "Expecting one number")
       Just [] -> fail (shows (annotation (head xs)) "Expecting one number")
 
-num :: Monad m => SExpr Pos -> m Int
+num :: MonadFail m => SExpr Pos -> m Int
 num (N _ n) = return n
 num x = fail (shows (annotation x) "Expecting a number")
 
-nsassoc :: Monad m => String -> [SExpr Pos] -> m (Maybe [Int])
+nsassoc :: MonadFail m => String -> [SExpr Pos] -> m (Maybe [Int])
 nsassoc key xs =
     case assoc key xs of
       Nothing -> return Nothing
@@ -442,7 +442,7 @@ nsassoc key xs =
             ns <- mapM num val
             return (Just ns)
 
-loadOrderings :: Monad m => [Int] -> [SExpr Pos] -> m [Pair]
+loadOrderings :: MonadFail m => [Int] -> [SExpr Pos] -> m [Pair]
 loadOrderings heights x =
     foldM f [] x
     where
@@ -451,7 +451,7 @@ loadOrderings heights x =
             np <- loadPair heights x
             return (adjoin np ns)
 
-loadPair :: Monad m => [Int] -> SExpr Pos -> m Pair
+loadPair :: MonadFail m => [Int] -> SExpr Pos -> m Pair
 loadPair heights (L pos [x0, x1]) =
     do
       n0 <- loadNode heights x0
@@ -463,7 +463,7 @@ loadPair heights (L pos [x0, x1]) =
       sameStrands (s0, _) (s1, _) = s0 == s1
 loadPair _ x = fail (shows (annotation x) "Malformed pair")
 
-loadNode :: Monad m => [Int] -> SExpr Pos -> m Node
+loadNode :: MonadFail m => [Int] -> SExpr Pos -> m Node
 loadNode heights (L pos [N _ s, N _ p])
     | s < 0 = fail (shows pos "Negative strand in node")
     | p < 0 = fail (shows pos "Negative position in node")
@@ -479,7 +479,7 @@ loadNode heights (L pos [N _ s, N _ p])
           | otherwise = height xs (s - 1)
 loadNode _ x = fail (shows (annotation x) "Malformed node")
 
-loadNodes :: Monad m => [Int] -> Maybe [SExpr Pos] -> m (Maybe [Node])
+loadNodes :: MonadFail m => [Int] -> Maybe [SExpr Pos] -> m (Maybe [Node])
 loadNodes _ Nothing = return Nothing
 loadNodes heights (Just xs) =
     do

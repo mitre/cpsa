@@ -42,7 +42,7 @@ nats :: Int -> [Int]
 nats n = [0..(n - 1)]
 
 {-# INLINE assert #-}
-assert :: Monad m => (a -> Bool) -> a -> m a
+assert :: MonadFail m => (a -> Bool) -> a -> m a
 assert pred x
     | pred x = return x
     | otherwise = fail "assertion failed"

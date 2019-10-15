@@ -581,14 +581,14 @@ preskelWellFormed k =
       chanCheck c = elem c (kvars k)
 
 -- Do notation friendly preskeleton well formed check.
-wellFormedPreskel :: Monad m => Preskel -> m Preskel
+wellFormedPreskel :: MonadFail m => Preskel -> m Preskel
 wellFormedPreskel k
     | preskelWellFormed k = return k
     | otherwise = fail "preskeleton not well formed"
 
 -- A version of preskelWellFormed that explains why a preskeleton is
 -- not well formed.
-verbosePreskelWellFormed :: Monad m => Preskel -> m ()
+verbosePreskelWellFormed :: MonadFail m => Preskel -> m ()
 verbosePreskelWellFormed k =
     do
       failwith "a variable in non-orig is not in some trace"
@@ -620,7 +620,7 @@ verbosePreskelWellFormed k =
                   $ showst c " not in some strand")
                  $ elem c (kvars k)
 
-failwith :: Monad m => String -> Bool -> m ()
+failwith :: MonadFail m => String -> Bool -> m ()
 failwith msg test =
     case test of
       True -> return ()

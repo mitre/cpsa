@@ -143,20 +143,20 @@ Source-Repository head
 
 Executable cpsa4
   Main-Is:		CPSA/Main.hs
-  Build-Depends:	base >= 3 && < 5, containers, parallel
+  Build-Depends:	base >= 4.13 && < 5, containers, parallel
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports -threaded -rtsopts
   Hs-Source-Dirs:	src
   Other-Modules:
-    Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.Pretty CPSA.Lib.SExpr
-    CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Options CPSA.Algebra
-    CPSA.Protocol CPSA.Strand CPSA.Characteristic CPSA.Channel
-    CPSA.Loader CPSA.Displayer CPSA.Cohort CPSA.Lib.Expand
-    CPSA.Reduction
+    Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.ReturnFail CPSA.Lib.Pretty
+    CPSA.Lib.SExpr CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Options
+    CPSA.Algebra CPSA.Protocol CPSA.Strand CPSA.Characteristic
+    CPSA.Channel CPSA.Loader CPSA.Displayer CPSA.Cohort
+    CPSA.Lib.Expand CPSA.Reduction
 
 Executable cpsa4sas
   Main-Is:		CPSA/SAS/Main.hs
-  Build-Depends:	base >= 3 && < 5, containers
+  Build-Depends:	base >= 4.13 && < 5, containers
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
   Hs-Source-Dirs:	src
@@ -177,7 +177,7 @@ Executable cpsa4diff
 
 Executable cpsa4graph
   Main-Is:		CPSA/Graph/Main.hs
-  Build-Depends:	base, containers
+  Build-Depends:	base >= 4.13, containers
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
   Hs-Source-Dirs:	src
@@ -191,7 +191,7 @@ Executable cpsa4graph
 
 Executable cpsa4shapes
   Main-Is:		CPSA/Shapes/Main.hs
-  Build-Depends:	base, containers
+  Build-Depends:	base >= 4.13, containers
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
   Hs-Source-Dirs:	src

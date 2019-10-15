@@ -1,3 +1,8 @@
+2019-10-15  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/ReturnFail.hs: Updated code to support the removal
+	of fail from Monad as implemented in base-4.13.0.0.
+
 2019-09-16  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Strand.hs (probIsomorphic): In thinning, replaced

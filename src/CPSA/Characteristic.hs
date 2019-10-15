@@ -11,6 +11,7 @@ module CPSA.Characteristic (Conj, characteristic) where
 import Control.Monad
 import qualified Data.List as L
 import CPSA.Lib.Utilities
+import CPSA.Lib.ReturnFail
 import CPSA.Lib.SExpr
 import CPSA.Algebra
 import CPSA.Protocol
@@ -27,7 +28,7 @@ type Conj = [(Pos, AForm)]
 -- Entry point.  Takes a position, a protocol, a variable generator, a
 -- goal, and a skeleton comment and makes a skeleton or fails.  This
 -- function extracts the anecedent and univesally quantified variable.
-characteristic :: Monad m => Pos -> Prot -> [Goal] -> Gen ->
+characteristic :: MonadFail m => Pos -> Prot -> [Goal] -> Gen ->
                   Conj -> [SExpr ()] -> m Preskel
 characteristic pos prot goals g antec comment =
   equalsForm pos prot goals g antec comment
@@ -35,7 +36,7 @@ characteristic pos prot goals g antec comment =
 -- Checks for equals in an antecedent and fails if it finds one.  One
 -- could use unification to solve the equality, and then apply the
 -- result to the remaining parts of the formula.
-equalsForm :: Monad m => Pos -> Prot -> [Goal] -> Gen ->
+equalsForm :: MonadFail m => Pos -> Prot -> [Goal] -> Gen ->
               Conj -> [SExpr ()] -> m Preskel
 equalsForm pos _ _ _ as _ | any isEquals as =
   fail (shows pos "Equals not allowed in antecedent")
@@ -50,7 +51,7 @@ isEquals _ = False
 -- The instance formulas are used to generate the skeleton's
 -- instances, and the skeleton formulas generate the rest.  Make the
 -- instances, and then make the rest.
-splitForm :: Monad m => Pos -> Prot -> [Goal] -> Gen ->
+splitForm :: MonadFail m => Pos -> Prot -> [Goal] -> Gen ->
              Conj -> [SExpr ()] -> m Preskel
 splitForm pos prot goals g as comment =
   do
@@ -67,7 +68,7 @@ instForm _ = False
 
 -- Make the instances from the instance predicates
 
-mkInsts :: Monad m => Gen -> Conj -> m ([(Term, Sid)], Gen, [Instance])
+mkInsts :: MonadFail m => Gen -> Conj -> m ([(Term, Sid)], Gen, [Instance])
 mkInsts g as =
   do
     srl <- strdRoleLength as    -- Compute role-length of each strand
@@ -76,7 +77,7 @@ mkInsts g as =
     return (strdMap, g, insts) -- Construct node map for later use
 
 -- Computes a map from strands to roles and lengths
-strdRoleLength :: Monad m => Conj -> m [(Term, (Role, Int))]
+strdRoleLength :: MonadFail m => Conj -> m [(Term, (Role, Int))]
 strdRoleLength as =
   foldM f [] as
   where
@@ -92,7 +93,7 @@ strdRoleLength as =
     f srl _ = return srl
 
 -- Construct instances
-foldInsts :: Monad m => Gen -> Conj -> [(Term, (Role, Int))] ->
+foldInsts :: MonadFail m => Gen -> Conj -> [(Term, (Role, Int))] ->
              m (Gen, [Instance])
 foldInsts g _ [] = return (g, [])
 foldInsts g as ((z, (r, h)) : srs) =
@@ -103,14 +104,14 @@ foldInsts g as ((z, (r, h)) : srs) =
 
 -- Construct an instance by extracting maplets from the parameter
 -- predicates associated with the strand.
-mkInst :: Monad m => Gen -> Conj -> Term -> Role -> Int -> m (Gen, Instance)
+mkInst :: MonadFail m => Gen -> Conj -> Term -> Role -> Int -> m (Gen, Instance)
 mkInst g as z r h =
   do
     (g, env) <- foldM (mkMaplet r z) (g, emptyEnv) as
     return (mkInstance g r env h)
 
 -- Add match from a maplet
-mkMaplet :: Monad m => Role -> Term -> (Gen, Env) ->
+mkMaplet :: MonadFail m => Role -> Term -> (Gen, Env) ->
             (Pos, AForm) -> m (Gen, Env)
 mkMaplet role z env (pos, Param r v _ z' t)
   | z == z' =
@@ -133,7 +134,7 @@ nMapLookup (z, i) nmap =
 
 -- Create a skeleton given a list of instances
 
-mkSkel :: Monad m => Pos -> Prot -> [Goal] -> [(Term, Sid)] ->
+mkSkel :: MonadFail m => Pos -> Prot -> [Goal] -> [(Term, Sid)] ->
           Gen -> [Instance] -> Conj -> [SExpr ()] -> m Preskel
 mkSkel pos p goals nmap g insts as comment =
   do
@@ -153,8 +154,8 @@ mkSkel pos p goals nmap g insts as comment =
       False -> fail (shows pos "Terms in skeleton not well formed")
       True -> return ()
     case verbosePreskelWellFormed k of
-      Right () -> return k
-      Left msg -> fail $ shows pos
+      Return () -> return k
+      Fail msg -> fail $ shows pos
                   $ showString "Skeleton not well formed: " msg
 
 addInstOrigs :: ([Term], [Term], [Term], [Term], [Term]) ->
@@ -202,7 +203,7 @@ mkFact nmap (_, AFact name fs) ts =
         Nothing -> FTerm t
 mkFact _ _ ts = ts
 
-checkUniqAt :: Monad m => [(Term, Sid)] -> Preskel -> (Pos, AForm) -> m ()
+checkUniqAt :: MonadFail m => [(Term, Sid)] -> Preskel -> (Pos, AForm) -> m ()
 checkUniqAt nmap k (pos, UniqAt t n) =
   case lookup t $ korig k of
     Nothing -> fail (shows pos "Atom not unique at node")
