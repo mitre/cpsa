@@ -1,10 +1,10 @@
-Name:			cpsa
-Version:		4.2.0
-Maintainer:		ramsdell@mitre.org
-Cabal-Version:		>= 1.6
-License:		BSD3
-License-File:		license.txt
-Synopsis:		Symbolic cryptographic protocol analyzer
+Name:                   cpsa
+Version:                4.2.0
+Maintainer:             ramsdell@mitre.org
+Cabal-Version:          >= 1.6
+License:                BSD3
+License-File:           license.txt
+Synopsis:               Symbolic cryptographic protocol analyzer
 Description:
   The Cryptographic Protocol Shapes Analyzer (CPSA) attempts to
   enumerate all essentially different executions possible for a
@@ -43,15 +43,15 @@ Description:
   F. Doghmi, F. Javier Thayer, Paul D. Rowe, and Moses D. Liskov.
   John D. Ramsdell implemented the algorithm in Haskell.  CPSA was
   designed and implemented at The MITRE Corporation.
-Category:		Cryptography
-Build-Type:		Simple
+Category:               Cryptography
+Build-Type:             Simple
 Data-Files:
   index.html cpsalogo.svg readme.html cpsauser.html cpsa4.mk Make4.hs
   init/Makefile cpsaprimer.pdf cpsagoals.pdf cpsaintroslides.pdf
   cpsaspec.pdf cpsadesign.pdf ffgg.scm ns.scm blanchet.scm or.scm
   woolam.scm yahalom.scm goals.scm rules.scm
 
-Data-Dir:	    	doc
+Data-Dir:               doc
 Extra-Source-Files:
   Makefile ChangeLog README NEWS ghci cpsatst setup.bat doc/README
   doc/src/Makefile doc/src/macros.tex doc/src/cpsaprimer.tex
@@ -142,11 +142,11 @@ Source-Repository head
   Location: git://github.com/ramsdell/cpsa.git
 
 Executable cpsa4
-  Main-Is:		CPSA/Main.hs
-  Build-Depends:	base >= 4.13 && < 5, containers, parallel
+  Main-Is:              CPSA/Main.hs
+  Build-Depends:        base >= 4.13 && < 5, containers, parallel
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports -threaded -rtsopts
-  Hs-Source-Dirs:	src
+  Hs-Source-Dirs:       src
   Other-Modules:
     Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.ReturnFail CPSA.Lib.Pretty
     CPSA.Lib.SExpr CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Options
@@ -155,32 +155,32 @@ Executable cpsa4
     CPSA.Lib.Expand CPSA.Reduction
 
 Executable cpsa4sas
-  Main-Is:		CPSA/SAS/Main.hs
-  Build-Depends:	base >= 4.13 && < 5, containers
+  Main-Is:              CPSA/SAS/Main.hs
+  Build-Depends:        base >= 4.13 && < 5, containers
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
-  Hs-Source-Dirs:	src
+  Hs-Source-Dirs:       src
   Other-Modules:
     Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.Pretty CPSA.Lib.SExpr
     CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Options CPSA.Algebra
     CPSA.SAS.SAS
 
 Executable cpsa4diff
-  Main-Is:		CPSA/Diff/Main.hs
-  Build-Depends:	base
+  Main-Is:              CPSA/Diff/Main.hs
+  Build-Depends:        base
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
-  Hs-Source-Dirs:	src
+  Hs-Source-Dirs:       src
   Other-Modules:
     Paths_cpsa CPSA.Lib.Pretty CPSA.Lib.SExpr
     CPSA.Lib.Printer CPSA.Lib.Entry
 
 Executable cpsa4graph
-  Main-Is:		CPSA/Graph/Main.hs
-  Build-Depends:	base >= 4.13, containers
+  Main-Is:              CPSA/Graph/Main.hs
+  Build-Depends:        base >= 4.13, containers
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
-  Hs-Source-Dirs:	src
+  Hs-Source-Dirs:       src
   Other-Modules:
     Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.Pretty CPSA.Lib.SExpr
     CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Graph.XMLOutput
@@ -190,40 +190,40 @@ Executable cpsa4graph
     CPSA.Graph.LaTeXView
 
 Executable cpsa4shapes
-  Main-Is:		CPSA/Shapes/Main.hs
-  Build-Depends:	base >= 4.13, containers
+  Main-Is:              CPSA/Shapes/Main.hs
+  Build-Depends:        base >= 4.13, containers
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
-  Hs-Source-Dirs:	src
+  Hs-Source-Dirs:       src
   Other-Modules:
     Paths_cpsa CPSA.Lib.SExpr CPSA.Lib.Pretty CPSA.Lib.Printer
     CPSA.Lib.Entry CPSA.Shapes.Shapes
 
 Executable cpsa4pp
-  Main-Is:		CPSA/Pretty/Main.hs
-  Build-Depends:	base
+  Main-Is:              CPSA/Pretty/Main.hs
+  Build-Depends:        base
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
-  Hs-Source-Dirs:	src
+  Hs-Source-Dirs:       src
   Other-Modules:
     Paths_cpsa CPSA.Lib.Pretty CPSA.Lib.SExpr
     CPSA.Lib.Printer CPSA.Lib.Entry
 
 Executable cpsa4json
-  Main-Is:		CPSA/JSON/Main.hs
-  Build-Depends:	base
+  Main-Is:              CPSA/JSON/Main.hs
+  Build-Depends:        base
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
-  Hs-Source-Dirs:	src
+  Hs-Source-Dirs:       src
   Other-Modules:
     Paths_cpsa CPSA.Lib.Pretty CPSA.Lib.SExpr
     CPSA.Lib.Printer CPSA.Lib.Entry
 
 Executable cpsa4init
-  Main-Is:		CPSA/Init/Main.hs
-  Build-Depends:	base, directory
+  Main-Is:              CPSA/Init/Main.hs
+  Build-Depends:        base, directory
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
-  Hs-Source-Dirs:	src
+  Hs-Source-Dirs:       src
   Other-Modules:
     Paths_cpsa
