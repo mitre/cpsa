@@ -30,6 +30,12 @@ where @FILE@ is a quoted string containing a file path.
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
+{-# LANGUAGE CPP #-}
+
+#if !(MIN_VERSION_base(4,13,0))
+#define MonadFail Monad
+#endif
+
 module CPSA.Lib.Expand (expand, readSExprs) where
 
 import Control.Monad

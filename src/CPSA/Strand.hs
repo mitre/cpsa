@@ -6,6 +6,12 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
+{-# LANGUAGE CPP #-}
+
+#if !(MIN_VERSION_base(4,13,0))
+#define MonadFail Monad
+#endif
+
 module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     role, env, trace, height, listenerTerm, Sid, Node, mkPreskel,
     firstSkeleton, Pair, Preskel, gen, protocol, kgoals, insts, orderings,

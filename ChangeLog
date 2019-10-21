@@ -1,3 +1,9 @@
+2019-10-21  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Lib/ReturnFail.hs: Used the C preprocessor to allow
+	compilation using older versions of GHC.  In particular, defined
+	MonadFail to be Monad when the base library is less than 4.13.
+
 2019-10-15  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Lib/ReturnFail.hs: Updated code to support the removal
