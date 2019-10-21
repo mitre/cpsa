@@ -1,6 +1,6 @@
 (herald perrig-song)
 
-(comment "CPSA 4.2.0")
+(comment "CPSA 4.2.1")
 (comment "All input read from chan-perrig-song.scm")
 
 (defprotocol perrig-song basic

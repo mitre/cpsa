@@ -1,6 +1,6 @@
 (herald facts)
 
-(comment "CPSA 4.2.0")
+(comment "CPSA 4.2.1")
 (comment "All input read from facts.scm")
 
 (defprotocol unilateral basic

@@ -1,5 +1,20 @@
 CPSA NEWS -- history of user-visible changes.
 
+* Changes in version 4.2.1
+
+** Added support for new versions of GHC (>= 8.8) that omit the fail
+   method from the Monad type class.
+
+** Repaired a bug in thinning in which it occurred when it should not
+   have.  CPSA now ensures that the strands in the point-of-view remain
+   unmodified.
+
+** Added support for variables that occur in facts but do not occur in
+   strands.
+
+** Added goals-sat option (-g) so that CPSA stops pursuing a branch
+   when a set of goals are satisfied.
+
 * Changes in version 4.2.0
 
 ** Added support for messages on channels.
