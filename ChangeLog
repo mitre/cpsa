@@ -1,3 +1,8 @@
+2019-11-12  John D. Ramsdell  <ramsdell@gootoo.mitre.org>
+
+	* src/CPSA/Strand.hs (tryPermProb): Rewrote tryPermProb so
+	that it uses tryPerm.
+
 2019-10-21  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* cpsa.cabal (Version): Tagged as version 4.2.1
