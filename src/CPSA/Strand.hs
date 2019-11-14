@@ -1169,8 +1169,8 @@ soothePreskel k =
   (filter varCheck $ knon k)
   (filter varCheck $ kpnon k)
   (filter uniqueCheck $ kunique k)
-  (filter varCheck $ kconf k)
-  (filter varCheck $ kauth k)
+  (filter chanCheck $ kconf k)
+  (filter chanCheck $ kauth k)
   (kfacts k)
   (kpriority k)
   (operation k)
@@ -1182,6 +1182,7 @@ soothePreskel k =
     terms = kterms k
     varCheck t = varSubset [t] terms
     uniqueCheck t = any (carriedBy t) terms
+    chanCheck t = varSubset [t] $ kchans k
 
 -- This is the starting point of the Preskeleton Reduction System
 skeletonize :: Bool -> PRS -> [PRS]

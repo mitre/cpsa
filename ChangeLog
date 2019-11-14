@@ -1,3 +1,9 @@
+2019-11-14  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Strand.hs (soothePreskel):  Fixed the filters for
+	channels by testing with all channel variables rather than all
+	message variables.
+
 2019-11-12  John D. Ramsdell  <ramsdell@gootoo.mitre.org>
 
 	* src/CPSA/Strand.hs (tryPermProb): Rewrote tryPermProb so
