@@ -32,32 +32,34 @@ however it also showed that every omitted execution requires an
 unnatural interpretation of a protocol's roles.  Hence the algorithm
 is complete relative to natural role semantics.</p>
 
-<p>The analyzer is designed to work well with other tools. S-expressions are
-used for both input and output. The analyzer reads all the problems in its
-input, writes out the solution to each problem, and then exits. This release
-  contains eight tools.
-  The <a href="#cpsainit"><code>cpsainit</code></a> program copies a
-  Makefile and a Haskell script for use with <code>ghci</code> into
-  the current directory.  They orchestrate the use of the other tools.
-  The <a href="#cpsagraph"><code>cpsagraph</code></a> program
-provides a visualization of answers using Scalable Vector Graphics (<a
-href="http://www.w3.org/Graphics/SVG/">SVG</a>). The <a
-href="#cpsashapes"><code>cpsashapes</code></a> program removes intermediate results
-from analyzer runs making the shapes easy to identify.
-The <a
-href="#cpsadiff"><code>cpsadiff</code></a> program compares CPSA output
-  files S-expression by S-expression, and prints the first skeleton
-  that differs.
-The <a href="#cpsasas"><code>cpsasas</code></a> program logical
+<p>The analyzer is designed to work well with other
+  tools. S-expressions are used for both input and output. The
+  analyzer reads all the problems in its input, writes out the
+  solution to each problem, and then exits. This release contains nine
+  tools.  The <a href="#cpsainit"><code>cpsa4init</code></a> program
+  copies a Makefile and a Haskell script for use
+  with <code>ghci</code> into the current directory.  They orchestrate
+  the use of the other tools.
+  The <a href="#cpsagraph"><code>cpsa4graph</code></a> program provides
+  a visualization of answers using Scalable Vector Graphics
+  (<a href="http://www.w3.org/Graphics/SVG/">SVG</a>).
+  The <a href="#cpsashapes"><code>cpsa4shapes</code></a> program
+  removes intermediate results from analyzer runs making the shapes
+  easy to identify.  The <a href="#cpsadiff"><code>cpsa4diff</code></a>
+  program compares CPSA output files S-expression by S-expression, and
+  prints the first skeleton that differs.
+  The <a href="#cpsasas"><code>cpsa4sas</code></a> program logical
   formula that can be used to ensure security goals are achieved.
-The
-<a href="#cpsapp"><code>cpsapp</code></a> program pretty prints its
-input using a CPSA specific algorithm.  It also translates
-S-Expressions into JavaScript Object Notation
-(<a href="http://json.org">JSON</a>) to ease processing in other
-languages.  The
-<a href="#cpsajson"><code>cpsajson</code></a> program translates JSON
-encoded CPSA into CPSA S-Expressions.</p>
+  The <a href="#cpsagoalsat"><code>cpsa4goalsat</code></a> program
+  prints skeletons that do not satisfy the goal associated with the
+  point of view skeleton.  The
+  <a href="#cpsapp"><code>cpsa4pp</code></a> program pretty prints its
+  input using a CPSA specific algorithm.  It also translates
+  S-Expressions into JavaScript Object Notation
+  (<a href="http://json.org">JSON</a>) to ease processing in other
+  languages.  The
+  <a href="#cpsajson"><code>cpsa4json</code></a> program translates
+  JSON encoded CPSA into CPSA S-Expressions.</p>
 
 <p>The input syntax is essentially the same as the output syntax. A
   Lisp aware editor will pretty print input, and the output is pretty
@@ -72,20 +74,20 @@ into a file, in this example, <code>prob.scm</code>, analyze the problems, and i
 something interesting is produced, visualize the answers.</p>
 
 <blockquote>
-  <pre>$ cpsa +RTS -M512m -RTS -o prob.txt prob.scm
-$ cpsagraph -o prob.xhtml prob.txt
+  <pre>$ cpsa4 +RTS -M512m -RTS -o prob.txt prob.scm
+$ cpsa4graph -o prob.xhtml prob.txt
 $ firefox -remote "openFile(`pwd`/prob.xhtml)"</pre>
 </blockquote>
 
 <p>Often a summary of the analysis is more enlightening.</p>
 
 <blockquote>
-  <pre>$ cpsashapes -o prob_shapes.txt prob.txt
-$ cpsagraph -o prob_shapes.xhtml prob_shapes.txt
+  <pre>$ cpsa4shapes -o prob_shapes.txt prob.txt
+$ cpsa4graph -o prob_shapes.xhtml prob_shapes.txt
 $ firefox -remote "openFile(`pwd`/prob_shapes.xhtml)"</pre>
 </blockquote>
 
-<p id="make"> The <a href="#cpsainit"><code>cpsainit</code></a>
+<p id="make"> The <a href="#cpsainit"><code>cpsa4init</code></a>
   program creates the file <a href="cpsa4.mk"><code>cpsa4.mk</code></a>
   for inclusion into your makefile. A sample makefile is also created.</p>
 
@@ -102,7 +104,7 @@ $ firefox -remote "openFile(`pwd`/prob_shapes.xhtml)"</pre>
  into a Haskell interpreter and perform a similar function. Users are
  expected to copy the makefile or the Haskell program into the
  directory containing a set of analysis problems
- using <a href="#cpsainit"><code>cpsainit</code></a>, and then modify
+ using <a href="#cpsainit"><code>cpsa4init</code></a>, and then modify
  a file so it specifies the command line flags appropriate for the
  problems in the directory.</p>
 
@@ -426,20 +428,20 @@ PARAM       ::= STRING</pre>
 
 <h3>Macros and Includes</h3>
 
-<p>After reading the input, <code>cpsa</code> expands macros before analyzing
+<p>After reading the input, <code>cpsa4</code> expands macros before analyzing
 the results. A macro definition is a top-level form.</p>
 
 <blockquote>
   <pre>(defmacro (NAME ARG*) BODY)</pre>
 </blockquote>
 
-<p>The <code>cpsa</code> program expands all calls to macros in
+<p>The <code>cpsa4</code> program expands all calls to macros in
 non-macro defining S-expressions using the macros that have been
 defined previously. A macro definition can be used to expand a call if
 the first element of a list matches the name of the macro, and the
 length of the remaining elements in the list matches the length of the
 macro's argument list. When two macros definitions are applicable, the
-last definition takes precedence. The <code>cpsa</code> program omits
+last definition takes precedence. The <code>cpsa4</code> program omits
 macro definitions from its output.</p>
 
 <p>After expanding a list, elements of the list of the
@@ -454,7 +456,7 @@ include form,</p>
   <pre>(include FILE)</pre>
 </blockquote>
 
-<p>where <code>FILE</code> is a string. The <code>cpsa</code> program
+<p>where <code>FILE</code> is a string. The <code>cpsa4</code> program
 includes files while it does macro expansion.</p>
 
 <h3 id="usage">Usage of CPSA</h3>
@@ -498,7 +500,7 @@ option <code>+RTS -M512m -RTS</code> limits memory usage to 512m.</p>
 TITLE  ::= SYMBOL | STRING</pre>
 </blockquote>
 
-<p>The title is used by <code>cpsagraph</code> when generating XHTML.
+<p>The title is used by <code>cpsa4graph</code> when generating XHTML.
   In the following example, the herald form specifies a strand bound
   of 12 in a way that is equivalent to the command line
   option <code>--bound=12</code>.</p>
@@ -507,9 +509,9 @@ TITLE  ::= SYMBOL | STRING</pre>
   <pre>(herald "Needham-Schroeder Public-Key Protocol" (bound 12))</pre>
 </blockquote>
 
-<p>The herald form is only interpreted by the <code>cpsa</code> program,
+<p>The herald form is only interpreted by the <code>cpsa4</code> program,
   and is treated as a comment by all other programs.  In particular,
-  specifying a <code>margin</code> option effects <code>cpsa</code> only.</p>
+  specifying a <code>margin</code> option effects <code>cpsa4</code> only.</p>
 
 <p>For long running problems, SMP parallelism is available. For example, on a
 quad-core machine, we would probably use <code>+RTS -N4 -RTS</code>.</p>
@@ -530,7 +532,7 @@ takes too much time on the chance that avoiding the checks makes more progress.
 <p>In no isomorphism checking mode output, every realized skeleton is labeled a
 shape even when it is not. This allows the extraction of every realized
 skeletons from the output using the <a
-href="#cpsashapes"><code>cpsashapes</code></a> program.</p>
+href="#cpsashapes"><code>cpsa4shapes</code></a> program.</p>
 
 <p>An error message that begins with "No test for unrealized node" identifies a
 severe error that should be reported as a bug.</p>
@@ -557,7 +559,7 @@ where <var>n</var> is a node.</p>
 
 <h2 id="cpsainit">Initialization</h2>
 
-<p>The <code>cpsainit</code> copies the
+<p>The <code>cpsa4init</code> copies the
   files <code>Makefile</code>, <code>cpsa4.mk</code>,
   and <code>Make4.hs</code> into the current directory.  It will not
   overwrite existing files of the same name.  The makefile is for use
@@ -576,7 +578,7 @@ Usage: cpsa4init [OPTIONS]
 
 <h2 id="cpsagraph">Visualization</h2>
 
-<p>The <code>cpsagraph</code> program produces a graphical rendering of the output
+<p>The <code>cpsa4graph</code> program produces a graphical rendering of the output
 or input of an analyzer using SVG. It is viewable only with a
 standards-compliant web browser such as FireFox.</p>
 
@@ -602,18 +604,18 @@ skeletons, the label is red, unless it has been seen before, in which
 case it is orange. Otherwise the label is green for skeletons seen
 before. Seen skeleton labels are rendered in an italic font.</p>
 
-<p>By the default, <code>cpsagraph</code> generates a view of CPSA S-expressions as
+<p>By the default, <code>cpsa4graph</code> generates a view of CPSA S-expressions as
 a compound document that contains SVG within XHTML. This view integrates
 graphics with the input text.</p>
 
-<p>In compact mode, <code>cpsagraph</code> generates an SVG document. The tree is
+<p>In compact mode, <code>cpsa4graph</code> generates an SVG document. The tree is
 displayed immediately to the left of skeleton drawings. When there is more than
 one tree, the left-hand-side of the drawing contains a vertical listing of the
 trees. Compact mode output should never be used as a replacement for studying
 the text version of the output. The text version contains strictly more
 information, and should be displayed next to its graphical rendition.</p>
 
-<p>In LaTeX mode, <code>cpsagraph</code> generates LaTeX source. XY-pic is used for
+<p>In LaTeX mode, <code>cpsa4graph</code> generates LaTeX source. XY-pic is used for
 drawings of skeletons. The margin specified in <a
 href="cpsa4.mk"><code>cpsa4.mk</code></a> produces good results. </p>
 
@@ -629,7 +631,6 @@ Usage: cpsa4graph [OPTIONS] [FILE]
   -c       --compact       use compact format
   -l       --latex         use LaTeX format
   -m INT   --margin=INT    set output margin (default 72)
-  -i       --infix         output uses infix notation
   -p       --purge-traces  purge traces
   -h       --help          show help message
   -v       --version       show version number</pre>
@@ -637,7 +638,7 @@ Usage: cpsa4graph [OPTIONS] [FILE]
 
 <h2 id="cpsadiff">Output Comparisons</h2>
 
-<p>The <code>cpsadiff</code> program compares CPSA output files
+<p>The <code>cpsa4diff</code> program compares CPSA output files
 S-expression by S-expression, and prints the first skeleton that
 differs.</p>
 
@@ -654,7 +655,7 @@ Usage: cpsa4diff [OPTIONS] OLD-FILE NEW-FILE
 
 <h2 id="cpsashapes">Shape Extraction</h2>
 
-<p>The <code>cpsashapes</code> program extracts the original problems and the
+<p>The <code>cpsa4shapes</code> program extracts the original problems and the
 shapes from the output of a CPSA run. The shapes are linked to their problem so
 the output can be graphed.</p>
 
@@ -671,7 +672,7 @@ Usage: cpsa4shapes [OPTIONS] [FILE]
 
 <h2 id="cpsasas">Formula Extraction</h2>
 
-<p>The <code>cpsasas</code> program extracts a formula in the language
+<p>The <code>cpsa4sas</code> program extracts a formula in the language
   of order-sorted first-order logic for each problem and its shapes
   from a CPSA run. The formula is called a
   <a href="https://arxiv.org/abs/1204.0480">shape analysis
@@ -691,9 +692,29 @@ Usage: cpsa4sas [OPTIONS] [FILE]
   -v         --version         show version number</pre>
 </blockquote>
 
+<h2 id="cpsagoalsat">Goal Satisfaction Checking</h2>
+
+<p>The <code>cpsa4goalsat</code> program prints the labels of
+  skeletons that do not satisfy a <code>defgoal</code>.  For each
+  point of view skeleton specified by a goal, the program prints a
+  list.  The first element of the list is the label of the point of
+  view skeleton.  The remaining elements of the list are labels of the
+  skeletons that do not satisfy the goal.</p>
+
+<h3>Usage</h3>
+
+<blockquote>
+  <pre>$ cpsa4goalsat -h
+Usage: cpsa4goalsat [OPTIONS] [FILE]
+  -o FILE  --output=FILE  output FILE
+  -m INT   --margin=INT   set output margin (default 72)
+  -h       --help         show help message
+  -v       --version      show version number</pre>
+</blockquote>
+
 <h2 id="cpsapp">Pretty Printing</h2>
 
-<p>The <code>cpsapp</code> program program pretty prints its input
+<p>The <code>cpsa4pp</code> program program pretty prints its input
 using the CPSA specific algorithm.  It also translates S-Expressions
 into JavaScript Object Notation (<a href="http://json.org">JSON</a>)
 to ease processing in other languages.</p>
@@ -705,7 +726,6 @@ to ease processing in other languages.</p>
 Usage: cpsa4pp [OPTIONS] [FILE]
   -o FILE  --output=FILE  output FILE
   -m INT   --margin=INT   set output margin (default 72)
-  -i       --infix        output uses infix notation
   -j       --json         output uses JSON notation
   -h       --help         show help message
   -v       --version      show version number</pre>
@@ -713,7 +733,7 @@ Usage: cpsa4pp [OPTIONS] [FILE]
 
 <h2 id="cpsajson">JSON to S-Expression Translation</h2>
 
-<p>The <code>cpsajson</code> program translates JSON encoded CPSA into
+<p>The <code>cpsa4json</code> program translates JSON encoded CPSA into
 CPSA S-Expressions.</p>
 
 <h3>Usage</h3>
@@ -723,7 +743,6 @@ CPSA S-Expressions.</p>
 Usage: cpsa4json [OPTIONS] [FILE]
   -o FILE  --output=FILE  output FILE
   -m INT   --margin=INT   set output margin (default 72)
-  -i       --infix        output uses infix notation
   -h       --help         show help message
   -v       --version      show version number</pre>
 </blockquote>
