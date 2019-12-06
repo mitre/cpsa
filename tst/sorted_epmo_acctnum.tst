@@ -4,7 +4,7 @@
     "This version uses sorts to avoid confusion"
     "between a nonce and other data"))
 
-(comment "CPSA 4.2.1")
+(comment "CPSA 4.2.2")
 (comment "All input read from sorted_epmo_acctnum.scm")
 (comment "Strand count bounded at 12")
 

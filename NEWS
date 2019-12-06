@@ -1,5 +1,16 @@
 CPSA NEWS -- history of user-visible changes.
 
+* Changes in version 4.2.2
+
+** Added the cpsa4goalsat program.  The program prints the labels of
+   skeletons that do not satisfy a defgoal.  For each point of view
+   skeleton specified by a goal, the program prints a list.  The first
+   element of the list is the label of the point of view skeleton.
+   The remaining elements of the list are labels of the skeletons that
+   do not satisfy the goal.
+
+** Fixed a bug in thinning that caused channel assumptions to disappear.
+
 * Changes in version 4.2.1
 
 ** Added support for new versions of GHC (>= 8.8) that omit the fail

@@ -1,6 +1,6 @@
 (herald wonthull2 (bound 9))
 
-(comment "CPSA 4.2.1")
+(comment "CPSA 4.2.2")
 (comment "All input read from wonthull2.scm")
 (comment "Strand count bounded at 9")
 

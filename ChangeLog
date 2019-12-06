@@ -1,3 +1,7 @@
+2019-12-06  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 4.2.2
+
 2019-11-27  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/GoalSat/Main.hs (main):  Added cpsa4goalsat program.
