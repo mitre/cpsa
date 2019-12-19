@@ -1,0 +1,767 @@
+\documentclass[12pt]{article}
+
+% Much of this is taken from Deducing Security Goals From Shape
+% Analysis Sentences II
+
+\usepackage{url}
+\usepackage[matrix,arrow,curve]{xy}
+% \usepackage{hyperref}
+\usepackage{url}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{color}
+
+\input{macros}
+
+\newtheorem{thm}{Theorem}
+\newcommand{\sdom}{\fn{dom}}
+\newcommand{\sran}{\fn{ran}}
+\newcommand{\vars}{\fn{Vars}}
+\newcommand{\lvars}{\fn{lvars}}
+\newcommand{\flvars}{\fn{flvars}}
+\newcommand{\invk}[1]{{#1}^{-1}}
+\newcommand{\alga}{\ast\ast\ast}
+\newcommand{\typ}{\mathbin:}
+\newcommand{\defd}{\mathord\downarrow}
+\newcommand{\inst}{\star}
+\newcommand{\init}{\fn{init}}
+\newcommand{\resp}{\fn{resp}}
+\newcommand{\form}{\mathcal{K}}
+\newcommand{\sent}{\mathcal{S}}
+\newcommand{\lang}{\mathcal{L}}
+\newcommand{\tr}{\ensuremath{{(\pm\msgc)}^+}}
+\newcommand{\rl}{\fn{rl}}
+\newcommand{\skel}{\mathbb{A}}
+\newcommand{\skl}{\mathsf{k}}
+\newcommand{\nodes}{\ensuremath{\mathcal{N}}}
+\newcommand{\ztrands}{\ensuremath{\mathcal{Z}}}
+\newcommand{\evt}{\fn{evt}}
+%  This appears not to be used.
+%  (JDG)
+% \newcommand{\orig}{\mathcal{O}}
+\newcommand{\length}[1]{\ensuremath{|#1|}}
+\newcommand{\bun}{\ensuremath{\mathcal{B}}}
+\newcommand{\insta}{\mathsf{i}}
+\newcommand{\insts}{\mathcal{I}}
+\newcommand{\role}{\mathsf{r}}
+
+\newcommand{\morph}{\ensuremath{\mathbin{\cdot\joinrel\!\!\rightarrow}}}
+
+%  First:  Some alterations to the macros:
+
+%
+
+\renewcommand{\alg}[1]{\ensuremath{\mathsf{#1}}}
+\newcommand{\msg}{\alg{Alg}}
+\newcommand{\msgc}{\overline\msg}
+\newcommand{\atm}{\alg{BV}}
+
+\newcommand{\atom}{basic value}
+\newcommand{\atomic}{basic}
+\newcommand{\Indefart}{A}
+\newcommand{\indefart}{a}
+
+\newcommand{\trace}{\fn{tr}}
+\newcommand{\ssp}{\Sigma}
+
+\newcommand{\strands}{\sdom}
+\newcommand{\str}{\fn{str}}
+\newcommand{\fac}{\fn{fac}}
+
+\newcommand{\roleuo}{\fn{rl\_uniq}}
+\newcommand{\roleno}{\fn{rl\_non}}
+
+\newcommand{\run}{\fn{Bnd}}
+\newcommand{\tracec}{\fn{trc}}
+\newcommand{\tracei}{\fn{tri}}
+\newcommand{\nonatomic}{{message}}
+\newcommand{\mess}{\fn{msg}}
+
+\newcommand{\skelB}{\mathbb{B}}
+\newcommand{\skelC}{\mathbb{C}}
+\newcommand{\skeleton}{\fn{sk}}
+\newcommand{\skeletons}{\fn{skels}}
+\newcommand{\Uni}{\mathcal{D}}
+
+\newcommand{\sat}[3]{#1\models_{#2} #3}
+\newcommand{\unsat}[3]{#1\not\models_{#2} #3}
+\newcommand{\actuals}{\ensuremath{\fn{actl}}}
+\newcommand{\cf}{\ensuremath{\fn{cf}}}
+\newcommand{\hc}{\ensuremath{\fn{hc}}}
+\newcommand{\hcf}{\ensuremath{\fn{hcform}}}
+
+\newcounter{running}[section]
+\newenvironment{renumerate}{\begin{enumerate}%
+\setcounter{enumi}{\value{running}}}%
+{\setcounter{running}{\value{enumi}}\end{enumerate}}
+
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+
+\newcommand{\instsJ}{\mathcal{J}}
+
+\newcommand{\Adv}{\ensuremath{\mathsf{Adv}}}
+
+%\institute{The MITRE Corporation}
+
+\title{Strand Spaces with Channels and Rules}
+\author{Joshua D.\ Guttman\quad John D.\ Ramsdell\\
+  The MITRE Corporation\\ CPSA Version \version}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+This paper describes the formalism on which {\cpsa4} is built.
+Section~\ref{sec:strand spaces} describes an implementation-oriented
+specification of strand spaces.  It is based on the presentation for
+{\cpsa2} in~\cite{cpsaspec09}, but modified so as to reflect changes
+implemented in {\cpsa4}.  In particular, channels and facts have been
+added to bundles and skeletons, and rules have been added to
+protocols.
+
+In previous versions of {\cpsa}, a communication event is either the
+transmission or reception of a message.  In this version of {\cpsa}, a
+communication event may optionally occur on a channel.  If during a
+run of a protocol, the adversary never transmits a message on the
+channel, the channel is considered \emph{authenticated}.  Dually, if
+during a run of a protocol, the adversary never receives a message on
+the channel, the channel is considered to be \emph{confidential}.  A
+channel that is both authenticated and confidential is \emph{secure}.
+
+The messages without an associated channel---which are thus certainly
+not assumed to be authenticated or confidential---will be
+called \emph{plain messages}.
+
+Section~\ref{sec:rule language} presents the strand spaces rule
+language that is used for rewriting.  Protocols have been redefined
+so that they include both roles and rules.
+
+\paragraph{Notation.}
+
+A finite sequence~$f$ is a function from an initial segment of the
+natural numbers.  The length of~$f$ is~$\length{f}$, and $f=\seq{f(0),\ldots,
+  f(n-1)}$ for $n=\length{f}$.  When $f$ is a sequence, we will write
+$g\colon\length{f}\rightarrow S$ to mean that $\sdom(g)=\{i\colon0\le
+i<\length{f}\}$ and $\sran(g)=S$.  Thus, in effect we are regarding
+each natural number $i$ as being the set of natural numbers smaller
+than it, like the ordinals of ZF set theory.
+
+If~$S$ is a set, then~$S^\ast$ is the set of finite sequences
+over~$S$, and~$S^+$ is the non-empty finite sequences over~$S$.
+\iffalse
+The concatenation of sequences~$f_0$ and~$f_1$ is~$f_0\append f_1$.
+\fi
+The prefix of sequence~$f$ of length~$n$ is~$\prefix{f}{n}$.
+For partial function~$g$, $g(x)\defd$ asserts $g$ is defined at~$x$.
+
+\section{Implementation-Oriented Strand Spaces}\label{sec:strand spaces}
+
+This section describes the formalism on which {\cpsa} is based.  The
+parameters to this strand space theory are:
+\begin{enumerate}
+  \item a set of messages \msg.  The set of messages~{\msg} is the
+  carrier set (or domain) of a term algebra.
+  \item a set of {\atom}s $\atm\subset\msg$.  Keys and nonces are
+  examples of {\atom}s.
+  \item a \emph{carried by} relation
+    ${\sqsubseteq}\subseteq\msg\times\msg$.  Intuitively, a
+    message~$t_0$ is carried by~$t_1$, written $t_0\sqsubseteq t_1$,
+    if it is possible to extract~$t_0$ from~$t_1$ for someone who
+    knows the relevant decryption keys.
+  \item a set of application specific predicate symbols $P$.
+\end{enumerate}
+
+\paragraph{Example Message Algebra.}
+The signature of one possible order-sorted~\cite{GoguenMeseguer92}
+message algebra is in Figure~\ref{fig:signature}.  The algebra is the
+simplification of the {\cpsa} message algebra used by the examples in
+this paper.  In an order-sorted algebra, each variable~$x$ has a
+unique sort~$S$.  The \emph{declaration} of~$x$ is $x\typ S$.
+
+The algebra of interest is the order-sorted quotient term algebra
+generated by a set of declarations~$X$.  The message algebra~$\msg_X$
+is the carrier set for sort~\srt{M}.  The set of {\atom}s~$\atm_X$ is
+the union of the carrier sets for sorts \srt{A}, \srt{S}, and \srt{D}.
+We write $t\typ S$ to say that term~$t$ is in the carrier set of
+sort~$S$.
+
+\begin{figure}
+$$\begin{array}{ll@{{}\colon{}}ll}
+\mbox{Sorts:}&
+\multicolumn{3}{l}{\mbox{\srt{M}, \srt{A}, \srt{S}, \srt{D}}}\\
+\mbox{Subsorts:}&
+\multicolumn{3}{l}{\mbox{$\srt{A}<\srt{M}$, $\srt{S}<\srt{M}$,
+    $\srt{D}<\srt{M}$}}\\
+\mbox{Operations:}&(\cdot,\cdot)&\srt{M}\times\srt{M}\to\srt{M}
+&\mbox{Pairing}\\
+&\enc{\cdot}{(\cdot)}&\srt{M}\times\srt{A}\to\srt{M}
+&\mbox{Asymmetric encryption}\\
+&\enc{\cdot}{(\cdot)}&\srt{M}\times\srt{S}\to\srt{M}
+&\mbox{Symmetric encryption}\\
+&(\cdot)^{-1}&\srt{A}\to\srt{A}
+&\mbox{Asymmetric key inverse}\\
+&\tau_0,\tau_1,\ldots&\srt{M}
+&\mbox{Tag constants}\\
+\mbox{Equations:}&\multicolumn{3}{l}{(x^{-1})^{-1}=x\mbox{ for $x\typ\srt{A}$}}
+\end{array}$$
+\caption{Simple Crypto Algebra Signature}\label{fig:signature}
+\end{figure}
+
+A variable has no intrinsic sort associated with it.  Variables occur
+in the context of a set of declarations, and a declaration for the
+variable specifies its sort.  The set of variables that occur in
+term~$t$ is $\vars(t)$.  A variable declared to be of sort~\srt{M} is
+called a \emph{{\nonatomic} variable}.
+
+A message~$t_0$ is \emph{carried by}~$t_1$, written $t_0\sqsubseteq
+t_1$, if~$t_0$ can be derived from~$t_1$ given the right set of keys.
+That is:  $\sqsubseteq$ is the smallest reflexive, transitive relation
+such that
+%
+$$t_0\sqsubseteq (t_0, t_1),\quad
+t_1\sqsubseteq (t_0, t_1),\quad\mbox{ and }\quad
+t_0\sqsubseteq\enc{t_0}{t_1}.$$
+
+\paragraph{Channel Messages}
+
+Some messages are transmitted over channels.  A channel is a variable
+of sort \srt{C}.  For $c\typ\srt{C}$ and $t\typ\srt{M} $, $[c,t]$
+associates message $t$ with channel $c$, and is called a
+\emph{channeled message}.  A message $t$ transmitted without a channel
+is written $[t]$, and is called a \emph{plain message}.
+Fig.~\ref{fig:channel:signature} shows the additions to a message
+signature required to support channels.  The sort associated with a
+channeled or plain message is \srt{CM}.  The carrier set for that sort
+is $\msgc$.  Variables of sort \srt{CM} are forbidden by the
+implementation.
+
+The carried by relation is extended to channel messages as follows:
+\[t\sqsubseteq[c,t]\mbox{ and }t\sqsubseteq[t].\]
+
+\begin{figure}
+  \[
+    \begin{array}{ll@{{}\colon{}}ll}
+      \mbox{Extra Sorts:} & \multicolumn{3}{l}{\mbox{\srt{C}, \srt{CM}}}\\
+      \mbox{Operations:} & [\cdot]&\srt{M}\to\srt{CM}\quad
+      &\mbox{Plain messages}\\
+      &[\cdot,\cdot]&\srt{C}\times\srt{M}\to\srt{CM}\quad
+         &\mbox{Channeled messages}
+    \end{array}
+  \]
+  \caption{Channel Signature additions to a Message Signature}
+  \label{fig:channel:signature}
+\end{figure}
+
+\paragraph{Strand Spaces.}
+A run of a protocol is viewed as an exchange of channel messages by a
+finite set of local sessions of the protocol.  Each local session is
+called a \emph{strand}.  The behavior of a strand, its \emph{trace},
+is a finite non-empty sequence of \emph{events}.  An \emph{event} is
+either a \emph{channel message transmission} or a \emph{channel
+  message reception}.  An event transmitting $m\in\msgc$ is written
+as~$\outbnd m$; and an event receiving channel message~$m$ is written
+as~$\inbnd m$.  If $e=\pm m$ is an event, then $\mess(e)=m$.  The set
+of traces over $\msgc$ is $\tr$.  When the context is clear,
+the plain message $[t]$ may be abbreviated by~$t$.
+
+\begin{renumerate}
+  \item A message $t$ \emph{originates} in trace~$a$ at index~$i$ iff
+  $a(i)=+t_1$, $t\sqsubseteq t_1$, and for all $j<i$,
+  $t\not\sqsubseteq\mess(a(j))$.
+  \item A message $t$ is \emph{acquired} in trace~$a$ at index~$i$ iff
+  $a(i)=-t_1$, $t\sqsubseteq t_1$, and for all
+  $j<i$, $t$ does not occur in $\mess(a(j))$.
+  \item A variable $x$ \emph{appears} in trace~$a$ at index~$i$ iff
+    $x$ occurs in $\mess(a(i))$, and for all $j<i$, $x$ does not occur
+    in $\mess(a(j))$.
+  \item For algebra homomorphism~$\sigma$,
+%
+  \[\sigma\circ\seq{\pm m_0,\ldots,\pm m_{n-1}}=
+  \seq{\pm \sigma(m_0),\ldots,\pm \sigma(m_{n-1})},\]
+%
+  so that $\prefix{(\sigma\circ
+    c)}{h}=\sigma\circ(\prefix{c}{h})=\sigma\circ\prefix{c}{h}$.
+  \item For traces~$a_1$, $a_2$, $a_1\inst a_2=\sigma$ if
+    $\sigma(\prefix{a_2}{\length{a_1}})=a_1$, and the domain
+    of~$\sigma$ is the variables that occur in
+    $\prefix{a_2}{\length{a_1}}$.  When $a_1\inst a_2$ is defined,
+    $a_1$ is said to be an \emph{instance} of $a_2$.
+  \item A \emph{strand space} is a set $\Sigma$ of values, which we
+  will call \emph{the strands of $\Sigma$}, equipped with a
+  \emph{trace-of} operator
+  $\trace\colon\Sigma\rightarrow\tr$.
+\end{renumerate}
+%
+To avoid excess notation, we generally suppress $\trace$ and regard
+$\ssp$ as the strand space.  We write $\sdom(\ssp)$ for the underlying
+set of strands, and $\ssp(s)$ for $\trace(s)$ when $s\in\sdom(\ssp)$.
+
+The set of strands $\sdom(\ssp)$ that {\cpsa} uses are of a specific
+kind.  They are finite initial segments of the natural numbers, so
+that $\ssp$ is in fact a sequence of traces.
+
+%
+Message events occur at \emph{nodes} in a strand space.  For each
+strand~$s$, there is a node for every event in~$\ssp(s)$.
+\begin{renumerate}
+  \item The \emph{nodes} of strand space $\ssp$ are
+%
+  $$ \nodes(\ssp)=\{(s,i)\mid
+  s\in\strands(\ssp), i < \length{\ssp(s)}\}
+  $$
+  %
+  and the event at a node is $\evt_{\ssp}(s,i)=\ssp(s)(i)$.
+  \item The \emph{message at} a node $n$, written $\mess_{\ssp}(n)$,
+    is $\mess(\evt_{\ssp}(n))$.
+  \item The \emph{strand succession relation}~$\Rightarrow$ is defined
+  by
+%
+  $$(s,i)\Rightarrow(s,i+1)\mbox{ iff } s\in\strands(\ssp)\mbox{ and }
+  i<\length{\ssp(s)}-1.$$
+%
+  \item {\Indefart} {\atom}~$t$ is \emph{non-originating} \emph{in a
+    strand space}~$\ssp$, written $\fn{non}(\ssp,t)$, iff it
+    originates on no strand in~$\ssp$ and each variable in $t$ occurs
+    in $\ssp$.
+  \item {\Indefart} {\atom}~$t$ \emph{uniquely originates at node} $n$
+    \emph{in strand space}~$\ssp$, written $\fn{uniq}(\ssp,t,n)$,
+    iff $t$ originates at index $i$ in $s\in\sdom(\ssp)$, $n=(s,i)$,
+    and $t$ originates on no other strand in $\sdom(\ssp)$.
+  \item An atomic formula $p(t_1,\ldots,t_m)$ is a
+    \emph{fact of} $\ssp$ iff
+    \begin{enumerate}
+    \item $p\in P$ is a predicate symbol,
+    \item $t_i\in\msgc\cup\sdom(\ssp)$, and
+    \item each variable that occurs in $t_i$ occurs in $\ssp$.
+    \end{enumerate}
+\end{renumerate}
+
+\begin{definition}[Bundle]\label{def:bundle} Let $\bun=(\ssp,\to,\omega)$, where
+  $\to\subseteq\nodes(\ssp)\times\nodes(\ssp)$ and $\omega$ is a set
+  of atomic formulas.  Relation $\to$ is called the
+  \emph{communication relation}.  $\bun$ is a \emph{bundle} iff:
+  \begin{enumerate}
+    \item $n_0\to n_1$ implies $\evt_{\ssp}(n_0)=\outbnd t$
+    and~$\evt_{\ssp}(n_1)=\inbnd t$ for some message~$t$;
+    \item $\evt_{\ssp}(n_1)=\inbnd t$ implies there exists a unique
+      $n_0$ such that $n_0\to n_1$;
+    \item $\nodes(\ssp),\to\cup\Rightarrow$ forms a well-founded
+      directed graph; and
+    \item for all $f\in\omega$, $f$ is a fact of $\ssp$.
+  \end{enumerate}
+  Let $\prec_{\bun}=(\to\cup\Rightarrow)^+$, the transitive closure of
+  the edges.
+%
+\end{definition}
+
+%
+The transitive closure $\prec_{\bun}$ is an irreflexive relation on
+$\nodes(\ssp)$.  This transitive, irreflexive relation specifies the
+causal ordering of nodes in a bundle.  A transitive irreflexive binary
+relation is also called a strict (partial) order.
+
+Since {\cpsa} manipulates only finite strand spaces, and acyclicity is
+equivalent to well-foundedness for finite graphs, {\cpsa} just checks
+acyclicity.  Thus, in $\bun=(\ssp,\to,\omega)$, the nodes form the vertices
+of a directed acyclic graph, whose edges represent communications
+$\rightarrow$ and strand succession $\Rightarrow$ in~$\ssp$.
+%
+\begin{lemma}
+  Let $\bun=(\ssp,\to,\omega)$ be a bundle.  Then $\prec_{\bun}$ is a
+  well-founded strict partial order.
+
+  If $S\subseteq\nodes(\ssp)$ is non-empty, then $S$ has
+  $\prec_{\bun}$-minimal members.
+\end{lemma}
+
+\begin{renumerate}
+  \item The strand space of bundle~{\bun} is written~$\str(\bun)$, its
+    communication relation is~$\to_\bun$, and the facts are
+    $\fac(\bun)$, so $\bun=(\str(\bun),\to_\bun,\fac(\bun))$.
+\end{renumerate}
+%
+
+\paragraph{Runs of Bare Protocols.}
+%
+In a run of a bare protocol, each strand is an instance of a role of
+that protocol.  We view adversarial strands as constrained by roles,
+just like compliant, non-adversarial strands.  Recall that when $f$ is
+a sequence, $g\colon\length{f}\rightarrow S$ means that
+$\sdom(g)=\{i\colon0\le i<\length{f}\}$.
+%
+\begin{definition}[Role, Bare Protocol]\label{def:role bare protocol}
+  ~
+  \begin{enumerate}
+    \item A \emph{role} is of the form $\role_X(a)$, where
+    \begin{description}
+      \item[$X$] is the \emph{parameters} of the role, the
+        declarations used to generate its algebra.
+      \item[$a\in\tr_X$] is the trace of the role;
+    \end{description}
+%
+    satisfying the following property:
+%
+%  A proto-role $\role(c,\nu,\upsilon)$ is a \emph{role} iff
+%
+    \begin{enumerate}
+      \item every {\nonatomic} variable is acquired on $a$, i.e.~its
+      first occurrence is in a reception event of $a$;
+    \end{enumerate}
+    \item The \emph{listener role} is
+      $\fn{lsn}=r_{\{x:\srt{M}\}}(\seq{\inbnd x, \outbnd x})$.
+    \item A \emph{bare protocol} is a set of roles that includes the
+      listener role.
+  \end{enumerate}
+\end{definition}
+%
+Notice that in one role, variable~$k$ may be declared to be of
+sort~\srt{A}, and in another, of sort~\srt{S}.
+%
+\begin{definition}\label{def:instance}
+  A strand $s\in\ssp$ is an \emph{instance} of a role $\role_Y(a)$ in
+  strand space $\ssp$ over $\msgc_X$ iff the function
+  $\fn{inst}(\ssp,s,\role_Y(a))$ is defined, and
+  $\fn{inst}(\ssp,s,\role_Y(a)) = \sigma$ when
+  \begin{enumerate}
+    \item $\length{\ssp(s)}\leq\length{a}$;
+    \item $\sigma\in\msgc_Y\to\msgc_X$; and
+    \item $\sigma = \ssp(s)\inst a$.
+  \end{enumerate}
+\end{definition}
+%
+We use the variables $\rho,\rho',\rho_i$, etc., to range over roles.
+
+\begin{figure}
+  $$\begin{array}{r@{{}={}}ll}
+    \fn{create}&\seq{\outbnd x}&
+    \mbox{$x\typ\srt{A}$ or $x\typ\srt{S}$ or $x\typ\srt{D}$}\\
+    \fn{pair}&
+    \seq{\inbnd x,\inbnd y,\outbnd (x,y)}&
+    x,y\typ\srt{M}\\
+    \fn{sep}&
+    \seq{\inbnd (x,y),\outbnd x,\outbnd y}&
+    x,y\typ\srt{M}\\
+    \fn{aenc}&
+    \seq{\inbnd x,\inbnd k,\outbnd \enc{x}{k}}&
+    \mbox{$x\typ\srt{M}$ and $k\typ\srt{A}$}\\
+    \fn{adec}&
+    \seq{\inbnd \enc{x}{k},\inbnd\invk{k},\outbnd x}&
+    \mbox{$x\typ\srt{M}$ and $k\typ\srt{A}$}\\
+    \fn{senc}&
+    \seq{\inbnd x,\inbnd k,\outbnd \enc{x}{k}}&
+    \mbox{$x\typ\srt{M}$ and $k\typ\srt{S}$}\\
+    \fn{sdec}&
+    \seq{\inbnd \enc{x}{k},\inbnd k,\outbnd x}&
+    \mbox{$x\typ\srt{M}$ and $k\typ\srt{S}$}\\
+    \fn{unchan}&
+    \seq{\inbnd[c,t],\outbnd[t]}&
+    \mbox{$c\typ\srt{C}$ and $t\typ\srt{M}$}\\
+    \fn{chan}&
+    \seq{\inbnd[t],\outbnd[c,t]}&
+    \mbox{$c\typ\srt{C}$ and $t\typ\srt{M}$}
+  \end{array}$$
+  \caption{Adversary Roles}\label{fig:adversary}
+\end{figure}
+
+\paragraph{Adversary Model.}
+The roles of adversarial behavior are in Figure~\ref{fig:adversary}.
+There are three \fn{create} roles, one for each basic sort.  In fact,
+the defining characteristic of {\indefart} {\atom} is that it denotes
+the set of messages the adversary can create out of thin air,
+consistent with origination assumptions.
+
+The adversary roles form the bare protocol $\Adv$.  We are always
+interested in bare protocols that contain these roles.  Thus, given a set
+$\Pi$ of roles that represent the legitimate, compliant behaviors of
+principals in some (real-world) bare protocol, we will refer to the roles
+of $\Pi$ as the \emph{regular} behaviors, and to strands that
+instantiate them as \emph{regular strands}.  We will be interested in
+the bundles that are executions of the ``penetrated'' bare protocol
+$\Pi^+=\Pi\cup\Adv$.
+%
+\begin{renumerate}
+%
+  \item A bundle~$\bun=(\ssp,\to,\omega)$ is a \emph{run of bare
+    protocol} $\Pi$ iff, for every $s\in\strands(\ssp)$, there is a
+    role $\rho\in\Pi^+=\Pi\cup\Adv$ such that
+    $\fn{inst}(\ssp,s,\rho)\defd$.
+%
+  \item $\run(\Pi)$ is the set of bundles that are runs of bare
+    protocol~$\Pi$.
+
+  \item For $\bun\in\run(\Pi)$, $\varrho\in\sdom(\str(\bun))\to\Pi^+$ is a
+    \emph{role assignment} if for every $s\in\sdom(\str(\bun))$,
+    $\fn{inst}(\str(\bun),s,\varrho(s))\defd$.
+
+\end{renumerate}
+%
+\begin{lemma}
+  If $\bun\in\run(\Pi)$ and $x$ is a {\nonatomic} variable, then
+  $x\not\in\vars(\bun)$.
+\end{lemma}
+%
+Ensuring this is the purpose of requiring that in each role, every
+{\nonatomic} variable in the trace is acquired.
+
+\begin{definition}
+  For bundle~$\bun=(\ssp,\to,\omega)$, channel $c$ is
+  \emph{authenticated} in~{\bun}, written $\fn{auth}(\bun,c)$, iff $c$
+  occurs in $\ssp$, and no strand in $\ssp$ is a full length instance
+  of the \fn{chan} adversary role instantiated with~$c$.  Dually, channel $c$ is
+  \emph{confidential} in~{\bun}, written $\fn{conf}(\bun,c)$, iff $c$
+  occurs in $\ssp$, and no strand in $\ssp$ is a full length instance
+  of the \fn{unchan} adversary role instantiated with~$c$.
+\end{definition}
+
+\paragraph{Skeletons.}
+
+A \emph{skeleton} represents part of the regular behavior in a set of
+bundles.  It consists of a strand space, a partial ordering on the
+nodes, assumptions about uncompromised keys and about freshly
+generated {\atom}s, and a set of facts.
+
+\begin{definition}\label{def:skeleton}
+  $\skel=\skl_X(\Pi,\ssp,\prec,\nu,\upsilon,\zeta,\chi,\omega)$ is a
+  \emph{skeleton of} bare protocol $\Pi$ over declarations $X$ iff:
+%
+  \begin{enumerate}
+    \item A variable is declared in~$X$ iff it occurs in $\ssp$.
+    \item For all $s<\length{\ssp}$, there is some $\rho\in\Pi$ such
+      that $\fn{inst}(\ssp,s,\rho)\defd$;
+    \item $\prec$ is a strict (partial) order on $\nodes(\ssp)$;
+    \item for all $t\in\nu$, (i) $t\in\atm_X$; and (ii) for all
+    $n\in\nodes(\ssp)$, $t\not\sqsubseteq\mess(n)$;
+    \item for all $(t,n)\in\upsilon$, (i) $t\in\atm_X$; (ii) for some
+      $n=(s,i)$, $t$ originates in $\ssp(s)$ at~$i$; and (iii) $t$
+      originates at no other node in $\nodes(\ssp)$.
+    \item for all $c\in\zeta$, $c$ is channel that occurs in strand
+      space~$\Sigma$.
+    \item for all $c\in\chi$, $c$ is channel that occurs in strand
+      space~$\Sigma$.
+    \item for all $f\in\omega$, $f$ is a fact of $\ssp$.
+  \end{enumerate}
+%
+\end{definition}
+
+We regard skeletons as giving us \emph{partial information} about a
+set of bundles; these are the executions that it is compatible with.
+This notion of compatibility is determined by the the notion of a
+homomorphism, or information-preserving map between skeletons.
+
+\begin{definition}[Homomorphism]\label{def:homomorphism}
+  Let
+  $\skel_0=\skl_X(\Pi,\ssp_0,\prec_0,\nu_0,\upsilon_0,\zeta_0,\chi_0,\omega_0)$
+  and $\skel_1=$
+  $\skl_Y(\Pi,\ssp_1,\prec_1,\nu_1,\upsilon_1,\zeta_1,\chi_1,\omega_1)$
+  be skeletons of bare protocol $\Pi$.
+
+  $H=(\phi,\sigma)$ is a \emph{skeleton homomorphism}, written
+  $H\colon \skel_0\morph \skel_1$, if~$\phi$ and~$\sigma$ are maps
+  with the following properties:
+  \begin{enumerate}
+    \item $\phi\colon\strands(\ssp_0)\to\strands(\ssp_1)$ maps strands
+    of~$\skel_0$ into those of~$\skel_1$.  We require
+    $\length{\ssp_0(s)}\le\length{\ssp_1(\phi(s))}$, and we regard
+    $\phi$ also as mapping nodes by the rule
+    $\phi((s,i))=(\phi(s),i)$;
+    \item $\sigma\colon\msgc_X\to\msgc_Y$ is a message algebra homomorphism;
+    \item for all $n\in\nodes(\ssp_0)$,
+    $\sigma(\evt_{\ssp_0}(n))=\evt_{\ssp_1}(\phi(n))$;
+    \item $n_0\prec_0 n_1$ implies $\phi(n_0)\prec_1\phi(n_1)$;
+    \item $\sigma(\nu_0)\subseteq \nu_1$;
+    \item\label{item:orig:jdg} $(t,n)\in \upsilon_0$ implies
+      $(\sigma(t), \phi(n))\in \upsilon_1$; and
+    \item $\sigma(\zeta_0)\subseteq \zeta_1$;
+    \item $\sigma(\chi_0)\subseteq \chi_1$;
+   \item $p(t_1,\ldots,t_m)\in\omega_0$ implies
+      $p(\delta(t_1),\ldots,\delta(t_m))\in\omega_1$, where
+      \[\delta(t)=\left\{
+      \begin{array}{ll}
+        \sigma(t)&\mbox{if $t\in\msg$}\\
+        \phi(t)&\mbox{if $t\in\sdom{\ssp}$.}
+      \end{array}\right.
+      \]
+
+  \end{enumerate}
+%
+\end{definition}
+%
+Property~\ref{item:orig:jdg} says the node at which {\indefart}
+{\atom} is declared to be uniquely originating is preserved by
+homomorphisms.
+%
+\begin{definition}[Skeleton of Bundle]\label{def:homomorphism to bundle}
+  ~
+  \begin{enumerate}
+    \item Suppose that $\bun$ is a bundle of bare protocol
+      $\Pi^+=\Pi\cup\Adv$, and
+      $\skel=\skl_X(\Pi,\ssp,\prec,\nu,\upsilon,\zeta,\chi,\omega)$ is
+      a $\Pi$-skeleton.  $\skel$ is a skeleton of $\bun$, written
+      $\skel\in\skeletons(\bun)$, iff the strands of $\bun$ can be
+      permuted to form bundle $\overline{\bun}$ such that $\ssp$ is a
+      prefix of $\str(\overline{\bun})$, and:
+      \begin{enumerate}
+      \item the strands not in $\ssp$ are adversary strands;
+      \item ${\prec}={\prec_{\overline\bun}\cap(\nodes(\ssp)\times\nodes(\ssp))}$;
+      \item $\nu=\{t\mid\fn{non}(\overline\bun,t)$ and each variable in~$t$
+        occurs in $\ssp\}$;
+      \item $\upsilon=\{(t,n)\mid\fn{uniq}(\overline\bun,t,n)
+        \land n\in\nodes(\ssp)\}$; and
+      \item $\zeta=\{c\mid\fn{auth}(\overline\bun,c)$ and variable $c$
+        occurs in $\ssp\}$;
+      \item $\chi=\{c\mid\fn{conf}(\overline\bun,c)$ and variable $c$
+        occurs in $\ssp\}$;
+      \item $\omega=\{f\in\fac(\overline\bun)\mid
+        \mbox{$f$ is a fact of $\ssp$}\}$.
+    \end{enumerate}
+    \item $\sembrack{\skel}=\{\bun\colon\some{\skelB}\some{H}
+    \skelB\in\skeletons(\bun)\land H\colon \skel\morph\skelB\}$.
+
+  \end{enumerate}
+
+\end{definition}
+
+\section{Strand Spaces Rule Language}\label{sec:rule language}
+
+This section describes an order-sorted first-order language intimately
+tied to strand spaces with protocols.  Given a bare protocol $\Pi$,
+the strand spaces rule language is written $\lang(\Pi)$.  The
+signature of $\lang(\Pi)$ includes the sorts, sort orderings, and the
+function symbols of the protocol's message algebra signature, such as
+the one in Figure~\ref{fig:signature}.  It also includes the strand
+sort $\srt{Z}$, and no other additions.
+
+The predicates in the signature of $\lang(\Pi)$ will now be described.
+For each role $\role_X(a)\in\Pi$, there are height and parameter
+predicates.  There are $\length{a}$ unary height predicates
+$\Pi[\role_X(a),h]\typ\srt{Z}$ with $1\leq h \leq\length{a}$.
+Relative to skeleton~$\skel$, $\Pi[\rho,h](z)$ asserts that strand~$z$
+in~$\skel$ is an instance of~$\rho$ and has a height of at least~$h$.
+For each parameter $x\typ S\in X$, there is a binary parameter
+predicate $\Pi[\role_X(a),x]\typ\srt{Z}\times S$.  Relative to
+skeleton~$\skel$, $\Pi[\rho,x](z,t)$ asserts that strand~$z$
+in~$\skel$ is an instance of~$\rho$ in which~$x$ is instantiated
+as~$t$.  If $x$ appears in $a$ and index $i$, the height of strand $z$
+must be greater than~$i$.
+
+For each base sort~$B$, there are unary predicates $\cn{non}\colon B$
+and $\cn{uniq}\colon B$.  $\cn{non}(t)$ asserts~$t$ is non-originating
+in~$\skel$ and $\cn{uniq}(t)$ asserts~$t$ uniquely originates
+in~$\skel$.
+
+There exists two predicates about channels, $\cn{auth}\colon C$ and
+$\cn{conf}\colon C$.  $\cn{auth}(c)$ asserts~$c$ is authenticated
+in~$\skel$ and $\cn{conf}(c)$ asserts~$c$ is confidential in~$\skel$.
+
+Let $m$ be the length of the longest role in~$\Pi$.  There are $m^2$
+precedence predicates $\cn{prec}[i,j]:\srt{Z}\times\srt{Z}$ for $0\leq
+i,j< m$.  $\cn{prec}[i,j](x,y)$ asserts that node $(x,i)$ is before
+node $(y,j)$ in~$\skel$.  There are $3m$ origin predicates
+$\cn{uniq-at}[i]:B\times\srt{Z}$, with $0\leq i< m$ and $B$ as before.
+$\cn{uniq-at}[i](t,z)$ asserts that~$t$ uniquely originates in~$\skel$
+at node $(z,i)$.  For each fact predicate symbol $p$,
+$\cn{fact}[p](t_1,\ldots,t_m)$ asserts that $p(t_1,\ldots,t_m)$ is a
+fact of $\skel$.  Finally, equality is binary.
+
+To improve the readability of formulas to follow, we write
+$\cn{prec}(x,i,y,j)$ for $\cn{prec}[i,j](x,y)$, $\cn{uniq-at}(t,z,i)$
+for $\cn{uniq-at}[i](t,z)$, and $\cn{fact}(p,t_1,\ldots,t_m)$ for
+$\cn{fact}[p](t_1,\ldots,t_m)$.
+
+\paragraph{Semantics of Strand Space Rule Formulas.}
+
+When formula~$\Phi$ is satisfied in skeleton~$\skel$ with order-sorted
+variable assignment $\alpha$, we write $\skel,\alpha\models\Phi$.  For
+$x:S\in X$, $\alpha(x)$ is in the carrier set of $\msg_X$ for
+sort~$S$.  For $x:\srt{Z}$, $\alpha(x)\in\sdom(\ssp)$.  We
+write~$\bar\alpha$ when~$\alpha$ is extended to terms in the obvious
+way.  When sentence~$\Phi$ is satisfied in skeleton~$\skel$, we write
+$\skel\models\Phi$.  The semantics of atomic formulas is given in
+Figure~\ref{fig:semantics}.
+
+\begin{figure}
+  Let $\skel=\skl_X(\Pi,\ssp,\prec,\nu,\upsilon,\zeta,\chi,\omega)$.
+  \begin{itemize}
+  \item $\skel,\alpha\models\Pi[\role_X(a),h](z)$ iff
+    $\length{\ssp(s)}\geq h$ and
+    $\prefix{\ssp(s)}{h}\inst a\defd$, where $s=\alpha(z)$.
+  \item $\skel,\alpha\models P[\role_X(a),x](z,t)$ iff
+    $\length{\ssp(s)}\geq h$,
+    $\prefix{\ssp(s)}{h}\inst a=\sigma$, and
+    $\sigma(x)=\bar\alpha(t)$,
+    where $s=\alpha(z)$, $x$ appears in $a$ at index $i$, and $h=i+1$.
+  \item $\skel,\alpha\models\cn{prec}(x,i,y,j)$ iff
+    $(\alpha(x),i)\prec(\alpha(y),j)$.
+  \item $\skel,\alpha\models\cn{non}(t)$ iff $\bar\alpha(t)\in\nu$.
+  \item $\skel,\alpha\models\cn{uniq}(t)$ iff
+    ($\bar\alpha(t),n)\in\upsilon$ for some node $n$.
+  \item $\skel,\alpha\models\cn{uniq-at}(t,z,i)$ iff
+    $(\bar\alpha(t),(\alpha(z),i))\in\upsilon$.
+  \item $\skel,\alpha\models\cn{auth}(c)$ iff $\alpha(c)\in\zeta$.
+  \item $\skel,\alpha\models\cn{conf}(c)$ iff $\alpha(c)\in\chi$.
+  \item $\skel,\alpha\models\cn{fact}(p,t_1,\ldots,t_m)$ iff
+    $p(\bar\alpha(t_1),\ldots,\bar\alpha(t_m))\in\omega$.
+  \item $\skel,\alpha\models y=z$ iff $\bar\alpha(y)=\bar\alpha(z)$.
+  \end{itemize}
+  \caption{Strand Space Rule Formula Semantics}\label{fig:semantics}
+\end{figure}
+
+\paragraph{Rule Syntax.}
+
+Given a bare protocol $\Pi$, a rule is an order-sorted first-order
+sentence in $\lang(\Pi)$ with a restricted syntax.  A rule is an
+implication in which the antecedent is a conjunction of atomic
+formulas, and the conclusion is a disjunction of possibly
+existentially quantified conjunctions of atomic formulas.
+
+\begin{definition}[Rule]\label{def:rule}
+  A \emph{rule} is a sentence of the form
+  \[\all{\vec{x}}\Phi\supset\bigvee_i\some{\vec{y}_i}\Psi_i,\mbox{
+    where}\]
+  \begin{enumerate}
+  \item $\Phi$ and $\Psi_i$ are conjunctions of atomic formulas,
+  \item each variable that occurs free in $\vee_i\some{\vec{y}_i}\Psi_i$,
+    occurs in $\Phi$,
+  \item each strand variable in $\vec{y}_i$ occurs in a height formula
+    in $\Psi_i$, and
+  \item each non-strand variable in $\vec{y}_i$ occurs in a parameter
+    formula in $\Psi_i$.
+  \end{enumerate}
+\end{definition}
+
+\begin{definition}[Protocol]\label{def:protocol}
+  $\Upsilon=(\Pi,A)$ is a \emph{protocol} iff $\Pi$ is a bare protocol
+  and $A$ is a set of rules in $\lang(\Pi)$.
+\end{definition}
+
+\begin{definition}[Run of Protocol]\label{def:run of protocol}
+  Bundle $\bun$ is a \emph{run of protocol} $\Upsilon=(\Pi,A)$ iff
+  $\bun$ is a run of bare protocol $\Pi$ and for all
+  $\skel\in\skeletons(\bun)$ and rules $\Phi\in A$,
+  $\skel\models\Phi$.
+\end{definition}
+
+The strand spaces rule language is a descendent of the security goal
+language~\cite{Guttman14}.  They are very similar, but differ in several
+ways.
+
+\begin{enumerate}
+\item Pairing and encryption is purposely omitted from the security
+  goal language.
+\item The security goal language has variables that range over nodes
+  rather than strands as is the case for the strand spaces rule
+  language.
+\item Node variables that occur in the antecedent of a security goal
+  sentence occur in a height predicate in the antecedent.
+\item Non-node variables that occur in the antecedent of a sentence occur
+  in a parameter predicate in the antecedent.
+\item Facts are not part of the security goal language.
+\end{enumerate}
+
+\bibliography{cpsa}
+\bibliographystyle{plain}
+
+\end{document}
