@@ -508,12 +508,12 @@ Ensuring this is the purpose of requiring that in each role, every
 
 \begin{definition}
   For bundle~$\bun=(\ssp,\to,\omega)$, channel $c$ is
-  \emph{authenticated} in~{\bun}, written $\fn{auth}(\bun,c)$, iff $c$
-  occurs in $\ssp$, and no strand in $\ssp$ is a full length instance
-  of the \fn{chan} adversary role instantiated with~$c$.  Dually, channel $c$ is
-  \emph{confidential} in~{\bun}, written $\fn{conf}(\bun,c)$, iff $c$
-  occurs in $\ssp$, and no strand in $\ssp$ is a full length instance
-  of the \fn{unchan} adversary role instantiated with~$c$.
+  \emph{authenticated} in~{\bun}, written $\fn{auth}(\bun,c)$, iff no
+  strand in $\ssp$ is a full length instance of the \fn{chan}
+  adversary role instantiated with~$c$.  Dually, channel $c$ is
+  \emph{confidential} in~{\bun}, written $\fn{conf}(\bun,c)$, iff no
+  strand in $\ssp$ is a full length instance of the \fn{unchan}
+  adversary role instantiated with~$c$.
 \end{definition}
 
 \paragraph{Skeletons.}
