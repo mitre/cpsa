@@ -9,7 +9,7 @@ DIFF	= ../dist/build/cpsa4diff/cpsa4diff$(EXE)
 SHAPES	= ../dist/build/cpsa4shapes/cpsa4shapes$(EXE)
 SAS	= ../dist/build/cpsa4sas/cpsa4sas$(EXE)
 GRAPH	= ../dist/build/cpsa4graph/cpsa4graph$(EXE)
-CPSAFLAGS = +RTS -M512m -RTS
+CPSAFLAGS = +RTS -M512m -N -RTS
 
 # The expected answers are in files with the .tst extension.
 
