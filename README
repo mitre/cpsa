@@ -33,10 +33,11 @@ and facts are associated with skeletons.  A rule is a geometric
 formula that is used as a rewrite rule, and a fact is a named relation
 between values.
 
-This program has been built and tested using Haskell Platform.
-It is available from <http://haskell.org> or from an operating
-system specific source.  The name of the Linux package is usually
-haskell-platform.
+This program has been built and tested using Haskell Platform.  It is
+available from <http://haskell.org> or from an operating system
+specific source.  The name of the Linux package is usually
+haskell-platform.  If you have problems installing Haskell, try using
+Haskell Stack, and issue the commands "stack init; stack build".
 
 INSTALLING FROM A TARBALL
 
@@ -109,9 +110,9 @@ has usage instructions.
 PARALLELISM
 
 CPSA is built so it can make use of multiple processors.  To make use
-of more than one processor, start CPSA with a runtime flag that
-specifies the number of processors to be used, such as "+RTS -N4
--RTS".  The GHC documentation describes the -N option in detail.
+of more than one processor, start CPSA with the -N runtime flag, as in
+"+RTS -N -RTS".  The GHC documentation describes the -N option in
+detail.
 
 DOCUMENTATION
 
