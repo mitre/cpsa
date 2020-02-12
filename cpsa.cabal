@@ -70,8 +70,8 @@ Extra-Source-Files:
   src/ocaml/Makefile src/ocaml/README src/ocaml/cpsa.d.itarget
   src/ocaml/cpsa.itarget src/ocaml/cpsa.mllib src/ocaml/cpsa.mltop
   src/ocaml/cpsa.odocl src/ocaml/expand.ml src/ocaml/main.ml
-  src/ocaml/main.mli src/ocaml/pp.ml src/ocaml/reader.ml
-  src/ocaml/reader.mli src/ocaml/scanner.mll src/ocaml/sexpr.ml
+  src/ocaml/main.mli src/ocaml/pp.ml src/ocaml/token.ml
+  src/ocaml/token.mli src/ocaml/scanner.mll src/ocaml/sexpr.ml
   src/ocaml/sexpr.mli src/ocaml/sexpr_type.ml
   tst/README tst/Makefile tst/Make4.hs tst/checktst tst/cpsagraphall
   tst/cpsashapesall tst/graphtst tst/updatetst
