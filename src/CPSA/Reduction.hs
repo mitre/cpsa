@@ -7,7 +7,7 @@
 -- University of California.
 
 -- Provides the top-level search loop, which implements term reduction
--- on skeletos.
+-- on skeletons.
 
 module CPSA.Reduction (solve) where
 
@@ -183,40 +183,40 @@ mode p h ks m n seen todo =
 -- n is the current step count
 -- seen holds the gists of seen skeletons
 -- todo holds unreduced skeletons
--- tobig holds skeletons that have exceed the strand bound.
+-- toobig holds skeletons that have exceed the strand bound.
 breadth :: Options -> Handle -> [Preskel] -> Int -> Int -> Seen ->
            [LPreskel] -> [LPreskel] -> IO ()
-breadth p h ks _ n _ [] [] =       -- Empty todo list and tobig list
+breadth p h ks _ n _ [] [] =       -- Empty todo list and toobig list
     do
       wrt p h (comment "Nothing left to do")
       solve p h ks n            -- Solve next problem
-breadth p h _ _ _ _ [] tobig = -- Empty todo list and non-null tobig list
+breadth p h _ _ _ _ [] toobig = -- Empty todo list and non-null toobig list
     do
       wrt p h (comment "Strand bound exceeded--aborting run")
-      dump p h (reverse tobig)  "Strand bound exceeded"
-breadth p h ks m n seen todo tobig =
-    step p h ks m seen n void [] tobig (parMap (branch p seen) todo)
+      dump p h (reverse toobig)  "Strand bound exceeded"
+breadth p h ks m n seen todo toobig =
+    step p h ks m seen n void [] toobig (parMap (branch p seen) todo)
 
 -- Function step handles one skeleton in one level of the tree.
 step :: Options -> Handle -> [Preskel] -> Int -> Seen -> Int ->
         Seen -> [LPreskel] -> [LPreskel] -> [Reduct t g s e] -> IO ()
-step p h ks m oseen n seen todo tobig [] = -- Empty reducts
-    breadth p h ks m n (merge seen oseen) (reverse todo) tobig
-step p h _ m _ n _ todo tobig reducts
+step p h ks m oseen n seen todo toobig [] = -- Empty reducts
+    breadth p h ks m n (merge seen oseen) (reverse todo) toobig
+step p h _ m _ n _ todo toobig reducts
     | n > m =                   -- Check step count
         do
           wrt p h (comment "Step limit exceeded--aborting run")
-          dump p h (mktodo reducts todo tobig) "Step limit exceeded"
-step p h ks m oseen n seen todo tobig (Reduct lk _ _  _  : reducts)
+          dump p h (mktodo reducts todo toobig) "Step limit exceeded"
+step p h ks m oseen n seen todo toobig (Reduct lk _ _  _  : reducts)
     | nstrands (content lk) >= optBound p = -- Check strand count
-        step p h ks m oseen n seen todo (lk : tobig) reducts
-step p h ks m oseen n seen todo tobig (Reduct lk size kids dups : reducts)
+        step p h ks m oseen n seen todo (lk : toobig) reducts
+step p h ks m oseen n seen todo toobig (Reduct lk size kids dups : reducts)
     | optGoalsSat p && satCheck lk = -- Stop if goals satisfied mode?
         do
           let ns = unrealized (content lk)
           let shape = if null ns then Shape else Fringe
           wrt p h (commentPreskel lk [] ns shape SatisfiesAll "satisfies all")
-          step p h ks m oseen n seen todo tobig reducts
+          step p h ks m oseen n seen todo toobig reducts
     | size <= 0 =               -- Interpret empty reducts
         do
           let ns = unrealized (content lk)
@@ -225,12 +225,12 @@ step p h ks m oseen n seen todo tobig (Reduct lk size kids dups : reducts)
             True -> wrt p h (commentPreskel lk [] ns Shape Nada "")
             False ->
               wrt p h (commentPreskel lk [] ns Ordinary Dead "empty cohort")
-          step p h ks m oseen n seen todo tobig reducts
+          step p h ks m oseen n seen todo toobig reducts
     | optDepth p > 0 && depth lk >= optDepth p =
         do
           let ns = unrealized (content lk)
           wrt p h (commentPreskel lk [] ns Fringe Nada "")
-          step p h ks m oseen n seen todo tobig reducts
+          step p h ks m oseen n seen todo toobig reducts
     | otherwise =
         do
           let (n', seen', todo', dups') =
@@ -240,7 +240,7 @@ step p h ks m oseen n seen todo tobig (Reduct lk size kids dups : reducts)
           let msg = shows size $ showString " in cohort - " $
                          shows u " not yet seen"
           wrt p h (commentPreskel lk (reverse dups') ns Ordinary Nada msg)
-          step p h ks m oseen n' seen' todo' tobig reducts
+          step p h ks m oseen n' seen' todo' toobig reducts
 
 -- Expands one branch in the derivation tree.
 branch :: Options -> Seen -> LPreskel -> Reduct t g s e
@@ -267,8 +267,8 @@ duplicates seen (unseen, dups) kid =
 
 -- Make a todo list for dump
 mktodo :: [Reduct t g s e] -> [LPreskel] -> [LPreskel] -> [LPreskel]
-mktodo reducts todo tobig =
-    map (\(Reduct lk _ _ _) -> lk) reducts ++ reverse todo ++ reverse tobig
+mktodo reducts todo toobig =
+    map (\(Reduct lk _ _ _) -> lk) reducts ++ reverse todo ++ reverse toobig
 
 type Next = (Int, Seen, [LPreskel], [Int])
 
