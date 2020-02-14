@@ -1,3 +1,7 @@
+2020-02-14  Ian D. Kretz  <ikretz@mitre.org>
+
+	* src/CPSA/Latex/Main.hs: Added the cpsa2latex program.
+
 2019-12-19  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* doc/src/cpsafoundation.tex: Added document titled "Strand Spaces
@@ -9,7 +13,7 @@
 
 2019-11-27  John D. Ramsdell  <ramsdell@mitre.org>
 
-	* src/CPSA/GoalSat/Main.hs (main):  Added cpsa4goalsat program.
+	* src/CPSA/GoalSat/Main.hs (main):  Added the cpsa4goalsat program.
 
 2019-11-14  John D. Ramsdell  <ramsdell@mitre.org>
 
