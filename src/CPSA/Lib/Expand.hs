@@ -36,7 +36,9 @@ where @FILE@ is a quoted string containing a file path.
 #define MonadFail Monad
 #endif
 
-module CPSA.Lib.Expand (expand, readSExprs) where
+module CPSA.Lib.Expand (expand, readSExprs, expandSExpr,
+                        Macro, getMacroName, getMacroArgs,
+                        getMacroBody, bound) where
 
 import Control.Monad
 import System.IO (openFile, IOMode (ReadMode))
@@ -113,6 +115,15 @@ data Macro = Macro
     { name :: String,
       args :: [String],
       body :: SExpr Pos }
+
+getMacroName :: Macro -> String
+getMacroName (Macro {name=n, args=_, body=_}) = n
+
+getMacroArgs :: Macro -> [String]
+getMacroArgs (Macro {name=_, args=a, body=_}) = a
+
+getMacroBody :: Macro -> SExpr Pos
+getMacroBody (Macro {name=_, args=_, body=b}) = b
 
 defmacro :: MonadFail m => Pos -> [SExpr Pos] -> m Macro
 defmacro _ [L _ (name : args), body] =

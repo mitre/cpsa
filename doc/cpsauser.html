@@ -59,7 +59,9 @@ is complete relative to natural role semantics.</p>
   (<a href="http://json.org">JSON</a>) to ease processing in other
   languages.  The
   <a href="#cpsajson"><code>cpsa4json</code></a> program translates
-  JSON encoded CPSA into CPSA S-Expressions.</p>
+  JSON encoded CPSA into CPSA S-Expressions. Finally,
+  the <a href="#cpsa42latex"><code>cpsa42latex</code></a> program
+  translates CPSA macros into equivalent LaTeX macros.</p>
 
 <p>The input syntax is essentially the same as the output syntax. A
   Lisp aware editor will pretty print input, and the output is pretty
@@ -727,6 +729,25 @@ Usage: cpsa4pp [OPTIONS] [FILE]
   -o FILE  --output=FILE  output FILE
   -m INT   --margin=INT   set output margin (default 72)
   -j       --json         output uses JSON notation
+  -h       --help         show help message
+  -v       --version      show version number</pre>
+</blockquote>
+
+<h2 id="cpsa42latex">CPSA to LaTeX Macro Translation</h2>
+
+<p>The <code>cpsa42latex</code> program translates CPSA macros
+  specifying message formats into equivalent LaTeX macros. CPSA
+  algebra primitives are mapped to unspecified LaTeX macros with the
+  same name and arity (sometimes with an optional tag), allowing the
+  user to easily customize how they would like these primitives to be
+  typeset. </p>
+
+<h3>Usage</h3>
+
+<blockquote>
+  <pre>$ cpsa42latex -h
+Usage: cpsa42latex [OPTIONS] [FILE]
+  -o FILE  --output=FILE  output FILE
   -h       --help         show help message
   -v       --version      show version number</pre>
 </blockquote>
