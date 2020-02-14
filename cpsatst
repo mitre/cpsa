@@ -11,6 +11,34 @@
 # ./cpsashapesall
 # ./cpsagraphall
 
-cd tst
-make clean
-make "$@"
+CPSAFLAGS="+RTS -M512m -N -RTS"
+
+for i in tst/*.scm
+do
+    b=tst/`basename "$i" .scm`
+    echo cpsa4 ${CPSAFLAGS} -o "$b.txt" "$i"
+    cabal run cpsa4 -- ${CPSAFLAGS} -o "$b.txt" "$i" || echo cpsa4 failed.
+    echo cpsa4diff "$b.tst" "$b.txt"
+    cabal run cpsa4diff -- "$b.tst" "$b.txt"
+    echo cpsa4graph -o "$b.xhtml" "$b.txt"
+    cabal run cpsa4graph -- -o "$b.xhtml" "$b.txt"
+    echo cpsa4shapes -o "${b}_shapes.txt" "$b.txt"
+    cabal run cpsa4shapes -- -o "${b}_shapes.txt" "$b.txt"
+    echo cpsa4graph -o "${b}_shapes.xhtml" "${b}_shapes.txt"
+    cabal run cpsa4graph -- -o "${b}_shapes.xhtml" "${b}_shapes.txt"
+done
+
+for i in tst/*.lsp
+do
+    b=tst/`basename "$i" .lsp`
+    echo cpsa4 ${CPSAFLAGS} -o "$b.txt" "$i"
+    cabal run cpsa4 -- ${CPSAFLAGS} -o "$b.txt" "$i"
+    echo cpsa4diff "$b.tst" "$b.txt"
+    cabal run cpsa4diff -- "$b.tst" "$b.txt"
+    echo cpsa4graph -o "$b.xhtml" "$b.txt"
+    cabal run cpsa4graph -- -o "$b.xhtml" "$b.txt"
+    echo cpsa4shapes -o "${b}_shapes.txt" "$b.txt"
+    cabal run cpsa4shapes -- -o "${b}_shapes.txt" "$b.txt"
+    echo cpsa4graph -o "${b}_shapes.xhtml" "${b}_shapes.txt"
+    cabal run cpsa4graph -- -o "${b}_shapes.xhtml" "${b}_shapes.txt"
+done
