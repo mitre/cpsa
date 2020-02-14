@@ -240,7 +240,7 @@ Executable cpsa4init
     Paths_cpsa
 
 Executable cpsa42latex
-  Main-Is:              CPSA/Pretty/Main.hs
+  Main-Is:              CPSA/Latex/Main.hs
   Build-Depends:        base
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
