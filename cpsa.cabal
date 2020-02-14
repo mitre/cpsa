@@ -140,7 +140,7 @@ Extra-Source-Files:
 
 Source-Repository head
   Type:     git
-  Location: git://github.com/ramsdell/cpsa.git
+  Location: git://github.com/mitre/cpsaexp.git
 
 Executable cpsa4
   Main-Is:              CPSA/Main.hs
