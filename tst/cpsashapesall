@@ -2,7 +2,7 @@
 
 # Find the shapes associated with all test output.
 
-PROG=cpsashapes
+PROG=cpsa4shapes
 
 for i in *.txt
 do
