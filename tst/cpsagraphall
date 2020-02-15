@@ -2,7 +2,7 @@
 
 # Graph all test output.
 
-PROG=../dist/build/cpsagraph/cpsagraph
+PROG=cpsagraph
 
 for i in *.txt
 do

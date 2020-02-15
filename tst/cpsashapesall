@@ -2,7 +2,7 @@
 
 # Find the shapes associated with all test output.
 
-PROG=../dist/build/cpsashapes/cpsashapes
+PROG=cpsashapes
 
 for i in *.txt
 do

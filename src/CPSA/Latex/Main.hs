@@ -1,4 +1,4 @@
--- Convert macros into LaTeX macros
+b-- Convert macros into LaTeX macros
 
 -- Copyright (c) 2020 The MITRE Corporation
 --
