@@ -1,7 +1,7 @@
 (herald "Role Unique Origination")
 
-(comment "CPSA 4.2.2")
-(comment "All input read from role_uniq.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/role_uniq.scm")
 
 (defprotocol blanchet basic
   (defrole init

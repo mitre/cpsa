@@ -1,7 +1,7 @@
 (herald wonthull (bound 9))
 
-(comment "CPSA 4.2.2")
-(comment "All input read from wonthull.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/wonthull.scm")
 (comment "Strand count bounded at 9")
 
 (defprotocol wonthull basic

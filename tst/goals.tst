@@ -1,7 +1,7 @@
 (herald goals)
 
-(comment "CPSA 4.2.2")
-(comment "All input read from goals.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/goals.scm")
 
 (defprotocol ns basic
   (defrole init

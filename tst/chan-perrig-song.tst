@@ -1,7 +1,7 @@
 (herald perrig-song)
 
-(comment "CPSA 4.2.2")
-(comment "All input read from chan-perrig-song.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/chan-perrig-song.scm")
 
 (defprotocol perrig-song basic
   (defrole init

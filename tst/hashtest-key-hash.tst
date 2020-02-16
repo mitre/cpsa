@@ -1,7 +1,7 @@
 (herald "Hashtest")
 
-(comment "CPSA 4.2.2")
-(comment "All input read from hashtest-key-hash.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/hashtest-key-hash.scm")
 
 (defprotocol hashtest basic
   (defrole init

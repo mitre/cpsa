@@ -1,5 +1,5 @@
-(comment "CPSA 4.2.2")
-(comment "All input read from uo.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/uo.scm")
 
 (defprotocol uniq-orig basic
   (defrole init (vars (n text)) (trace (send n)) (uniq-orig n))

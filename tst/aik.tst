@@ -1,7 +1,7 @@
 (herald "Anonymous identity protocol from TCG")
 
-(comment "CPSA 4.2.2")
-(comment "All input read from aik.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/aik.scm")
 
 (defprotocol aikprot basic
   (defrole ca

@@ -1,5 +1,5 @@
-(comment "CPSA 4.2.2")
-(comment "All input read from kelly1.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/kelly1.scm")
 
 (defprotocol kelly1 basic
   (defrole client

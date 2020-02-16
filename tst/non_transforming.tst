@@ -1,5 +1,5 @@
-(comment "CPSA 4.2.2")
-(comment "All input read from non_transforming.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/non_transforming.scm")
 
 (defprotocol non_transforming basic
   (defrole sender

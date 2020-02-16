@@ -1,5 +1,5 @@
-(comment "CPSA 4.2.2")
-(comment "All input read from uncarried_keys.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/uncarried_keys.scm")
 
 (defprotocol uncarried-keys basic
   (defrole init

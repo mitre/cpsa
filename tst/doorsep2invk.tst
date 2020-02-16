@@ -1,7 +1,7 @@
 (herald doorsep2invk (comment "Door Simple Example Protocol"))
 
-(comment "CPSA 4.2.2")
-(comment "All input read from doorsep2invk.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/doorsep2invk.scm")
 
 (defprotocol doorsep basic
   (defrole init

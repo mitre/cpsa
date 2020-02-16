@@ -1,5 +1,5 @@
-(comment "CPSA 4.2.2")
-(comment "All input read from abc.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/abc.scm")
 
 (defprotocol abc basic
   (defrole init

@@ -1,8 +1,8 @@
 (herald "Print Test"
   (comment "See if read forms look like printed ones"))
 
-(comment "CPSA 4.2.2")
-(comment "All input read from print.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/print.scm")
 
 (defprotocol print-test basic
   (defrole role

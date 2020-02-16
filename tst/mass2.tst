@@ -1,5 +1,5 @@
-(comment "CPSA 4.2.2")
-(comment "All input read from mass2.lsp")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/mass2.lsp")
 
 (defprotocol mass2 basic
   (defrole init

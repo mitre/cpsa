@@ -1,5 +1,5 @@
-(comment "CPSA 4.2.2")
-(comment "All input read from fragile_pruning.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/fragile_pruning.scm")
 
 (defprotocol fragile_pruning basic
   (defrole init

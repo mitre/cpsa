@@ -1,7 +1,7 @@
 (herald facts)
 
-(comment "CPSA 4.2.2")
-(comment "All input read from facts.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/facts.scm")
 
 (defprotocol unilateral basic
   (defrole init

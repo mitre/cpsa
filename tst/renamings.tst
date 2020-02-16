@@ -2,8 +2,8 @@
   (comment "There is a flaw in this protocol by design")
   (comment "It also shows how variable renaming works"))
 
-(comment "CPSA 4.2.2")
-(comment "All input read from renamings.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/renamings.scm")
 
 (defprotocol blanchet basic
   (defrole init

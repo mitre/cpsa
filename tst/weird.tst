@@ -1,5 +1,5 @@
-(comment "CPSA 4.2.2")
-(comment "All input read from weird.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/weird.scm")
 
 (defprotocol weird basic
   (defrole originator (vars (k skey)) (trace (send k)) (uniq-orig k))

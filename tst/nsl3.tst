@@ -1,7 +1,7 @@
 (herald "Three Party Needham-Schroeder-Lowe Protocol")
 
-(comment "CPSA 4.2.2")
-(comment "All input read from nsl3.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/nsl3.scm")
 
 (defprotocol nsl3 basic
   (defrole init

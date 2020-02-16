@@ -1,7 +1,7 @@
 (herald "Woo-Lam Protocol")
 
-(comment "CPSA 4.2.2")
-(comment "All input read from woolam.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/woolam.scm")
 
 (defprotocol woolam basic
   (defrole init

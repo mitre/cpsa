@@ -1,5 +1,5 @@
-(comment "CPSA 4.2.2")
-(comment "All input read from neuman-stubblebine-reauth.lsp")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/neuman-stubblebine-reauth.lsp")
 
 (defprotocol neuman-stubblebine-reauth basic
   (defrole init

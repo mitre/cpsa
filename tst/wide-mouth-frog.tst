@@ -1,8 +1,8 @@
 (herald "Wide-Mouth Frog Protocol"
   (comment "This protocol has an infinite number of shapes"))
 
-(comment "CPSA 4.2.2")
-(comment "All input read from wide-mouth-frog.lsp")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/wide-mouth-frog.lsp")
 
 (defprotocol wide-mouth-frog basic
   (defrole init

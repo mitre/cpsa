@@ -1,5 +1,5 @@
-(comment "CPSA 4.2.2")
-(comment "All input read from completeness-test.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/completeness-test.scm")
 
 (defprotocol completeness-test basic
   (defrole init

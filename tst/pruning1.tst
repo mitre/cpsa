@@ -1,5 +1,5 @@
-(comment "CPSA 4.2.2")
-(comment "All input read from pruning1.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/pruning1.scm")
 
 (defprotocol prune basic
   (defrole init

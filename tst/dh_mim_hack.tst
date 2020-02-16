@@ -1,5 +1,5 @@
-(comment "CPSA 4.2.2")
-(comment "All input read from dh_mim_hack.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/dh_mim_hack.scm")
 
 (defprotocol dh_mim basic
   (defrole init

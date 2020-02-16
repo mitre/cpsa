@@ -1,7 +1,7 @@
 (herald "Needham-Schroeder Public-Key Protocol This-That Variant")
 
-(comment "CPSA 4.2.2")
-(comment "All input read from thisthat.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/thisthat.scm")
 
 (defprotocol thisthat basic
   (defrole init

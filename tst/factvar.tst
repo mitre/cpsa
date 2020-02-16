@@ -1,7 +1,7 @@
 (herald factvar)
 
-(comment "CPSA 4.2.2")
-(comment "All input read from factvar.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/factvar.scm")
 
 (defprotocol free-fact-var basic
   (defrole resp

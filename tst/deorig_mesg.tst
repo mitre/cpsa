@@ -1,7 +1,7 @@
 (herald deorig-mesg)
 
-(comment "CPSA 4.2.2")
-(comment "All input read from deorig_mesg.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/deorig_mesg.scm")
 
 (defprotocol deorig-mesg basic
   (defrole init

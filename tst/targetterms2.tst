@@ -1,5 +1,5 @@
-(comment "CPSA 4.2.2")
-(comment "All input read from targetterms2.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/targetterms2.scm")
 
 (defprotocol targetterms2 basic
   (defrole init

@@ -1,3 +1,13 @@
+2020-02-15  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 4.2.3
+
+2020-02-14  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* Makefile: Updated for Cabal 3.0.0.0
+
+	* cpsatst: Updated for Cabal 3.0.0.0
+
 2020-02-14  Ian D. Kretz  <ikretz@mitre.org>
 
 	* src/CPSA/Latex/Main.hs: Added the cpsa2latex program.

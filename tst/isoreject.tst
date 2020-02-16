@@ -1,5 +1,5 @@
-(comment "CPSA 4.2.2")
-(comment "All input read from isoreject.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/isoreject.scm")
 
 (defprotocol isoreject basic
   (defrole init

@@ -1,5 +1,5 @@
-(comment "CPSA 4.2.2")
-(comment "All input read from neuman-stubblebine.scm")
+(comment "CPSA 4.2.3")
+(comment "All input read from tst/neuman-stubblebine.scm")
 
 (defprotocol neuman-stubblebine basic
   (defrole init
