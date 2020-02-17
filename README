@@ -19,25 +19,30 @@ however it also showed that every omitted execution requires an
 unnatural interpretation of a protocol's roles.  Hence the algorithm
 is complete relative to natural role semantics.
 
-CPSA4 is based on a refactoring of CPSA2.  It is destinct from CPSA2
-and CPSA3 in that it uses a different security goal language, the
-strand-oriented language described in "Deducing Security Goals From
-Shape Analysis Sentences" <https://arxiv.org/abs/1204.0480>.  The size
-of the formulas expressed in the strand-oriented language is typically
-smaller than the ones produced using the previous language, an
-important property when the formulas are used to interact with theorem
-provers and proof assistants.
+CPSA4 is based on a refactoring of CPSA2.  It is destinct from CPSA3.
+It is used to experiment with new features.  It is where a different
+security goal language, the strand-oriented language described in
+"Deducing Security Goals From Shape Analysis Sentences"
+<https://arxiv.org/abs/1204.0480>, was first implemented.  The size of
+the formulas expressed in the strand-oriented language is typically
+smaller than the ones produced using the previous node-oriented
+language, an important property when the formulas are used to interact
+with theorem provers and proof assistants.
 
-CPSA4 also adds rules and facts.  Rules are associated with protocols,
+CPSA4 provides rules and facts.  Rules are associated with protocols,
 and facts are associated with skeletons.  A rule is a geometric
 formula that is used as a rewrite rule, and a fact is a named relation
 between values.
 
-This program has been built and tested using Haskell Platform.  It is
-available from <http://haskell.org> or from an operating system
-specific source.  The name of the Linux package is usually
-haskell-platform.  If you have problems installing Haskell, try using
-Haskell Stack, and issue the commands "stack init; stack build".
+CPSA4 provides channels.  Channels are designed to model confidential
+and authenticated communication channels.
+
+This program has been built and tested using the Haskell miminal
+installer and Haskell Platform.  THese are available from
+<http://haskell.org> or from an operating system specific source.  The
+name of the Linux package is usually haskell-platform.  If you have
+problems installing Haskell, try using Haskell Stack, and issue the
+commands "stack init; stack build, stack install".
 
 INSTALLING FROM A TARBALL
 
