@@ -40,19 +40,23 @@ is complete relative to natural role semantics.</p>
   copies a Makefile and a Haskell script for use
   with <code>ghci</code> into the current directory.  They orchestrate
   the use of the other tools.
-  The <a href="#cpsagraph"><code>cpsa4graph</code></a> program provides
-  a visualization of answers using Scalable Vector Graphics
+  The <a href="#cpsagraph"><code>cpsa4graph</code></a> program
+  provides a visualization of answers using Scalable Vector Graphics
   (<a href="http://www.w3.org/Graphics/SVG/">SVG</a>).
   The <a href="#cpsashapes"><code>cpsa4shapes</code></a> program
   removes intermediate results from analyzer runs making the shapes
-  easy to identify.  The <a href="#cpsadiff"><code>cpsa4diff</code></a>
-  program compares CPSA output files S-expression by S-expression, and
-  prints the first skeleton that differs.
+  easy to identify.
+  The <a href="#cpsadiff"><code>cpsa4diff</code></a> program compares
+  CPSA output files S-expression by S-expression, and prints the first
+  skeleton that differs.
   The <a href="#cpsasas"><code>cpsa4sas</code></a> program logical
   formula that can be used to ensure security goals are achieved.
   The <a href="#cpsagoalsat"><code>cpsa4goalsat</code></a> program
   prints skeletons that do not satisfy the goal associated with the
   point of view skeleton.  The
+  <a href="#cpsaprot"><code>cpsa4prot</code></a> program translates
+  protocols expressed in Alice and Bob notation into
+  CPSA's <code>defprotocol</code> syntax.
   <a href="#cpsapp"><code>cpsa4pp</code></a> program pretty prints its
   input using a CPSA specific algorithm.  It also translates
   S-Expressions into JavaScript Object Notation
@@ -710,6 +714,66 @@ Usage: cpsa4sas [OPTIONS] [FILE]
 Usage: cpsa4goalsat [OPTIONS] [FILE]
   -o FILE  --output=FILE  output FILE
   -m INT   --margin=INT   set output margin (default 72)
+  -h       --help         show help message
+  -v       --version      show version number</pre>
+</blockquote>
+
+<h2 id="cpsaprot">Alice and Bob notation to CPSA</h2>
+
+<p>The <code>cpsa4prot</code> program translates protocols expressed
+  in Alice and Bob notation into CPSA's <code>defprotocol</code>
+  syntax.  It translates <code>defprot</code> forms, and passes all
+  else through unchanged.  The syntax of a <code>defprot</code> form
+  is:</p>
+
+<blockquote>
+  <pre>PROT       ::= (defprot NAME ALGEBRA (vars DECLS) NOTATION* RULE* PROT-ALIST)
+NOTATION   ::= (msg ROLE ROLE CHMSG)
+            |  (msg ROLE ROLE CHMSG CHMSG)
+            |  (from ROLE CHMSG)
+            |  (to ROLE CHMSG)
+            |  (assume ROLE ASSUMPTION*)
+CHMSG      ::= (chmsg CHAN TERM) | TERM
+ASSUMPTION ::= (uniq-orig ...) | (non-orig ...) | ...
+RULE       ::= (defrule ...)</pre>
+</blockquote>
+  
+<p>The form (msg A B M) says role A sends M, and role B receives
+  M.<br/>  The form (msg A B M N) says role A sends M, and role B
+  receives N.<br/>  The form (from A M) says role A sends M.<br/>  The
+  form (to A M) says role A receives M.</p>
+
+<h3>Example</h3>
+
+<blockquote>
+  <pre>$ cat blanchet.prot
+(defprot blanchet basic
+  (vars (a b akey) (s skey) (d data))
+  (msg init resp (enc (enc s (invk a)) b))
+  (msg resp init (enc d s))
+  (assume init (uniq-orig s))
+  (assume resp (uniq_orig d))
+  (comment "Blanchet's protocol"))
+$ cpsa4prot blanchet.prot
+(defprotocol blanchet basic
+  (defrole init
+    (vars (a b akey) (s skey) (d data))
+    (trace (send (enc (enc s (invk a)) b)) (recv (enc d s)))
+    (uniq-orig s))
+  (defrole resp
+    (vars (a b akey) (s skey) (d data))
+    (trace (recv (enc (enc s (invk a)) b)) (send (enc d s)))
+    (uniq_orig d))
+  (comment "Blanchet's protocol"))
+$</pre>
+</blockquote>
+
+<h3>Usage</h3>
+
+<blockquote>
+  <pre>$ cpsa4prot -h
+Usage: cpsa4prot [OPTIONS] [FILE]
+  -o FILE  --output=FILE  output FILE
   -h       --help         show help message
   -v       --version      show version number</pre>
 </blockquote>

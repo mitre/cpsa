@@ -1,3 +1,9 @@
+2020-02-18  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Prot/Main.hs (main): Added cpsa4prot program that
+	translates protocols in Alice and Bob notation into defprotocol
+	syntax.
+
 2020-02-15  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* cpsa.cabal (Version): Tagged as version 4.2.3

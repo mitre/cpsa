@@ -166,6 +166,16 @@ Executable cpsa4sas
     CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Options CPSA.Algebra
     CPSA.SAS.SAS
 
+Executable cpsa4prot
+  Main-Is:              CPSA/Prot/Main.hs
+  Build-Depends:        base >= 3 && < 5, containers
+  GHC-Options:
+    -Wall -fno-warn-name-shadowing -fwarn-unused-imports
+  Hs-Source-Dirs:       src
+  Other-Modules:
+    Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.Pretty CPSA.Lib.SExpr
+    CPSA.Lib.Printer CPSA.Lib.Entry
+
 Executable cpsa4goalsat
   Main-Is:              CPSA/GoalSat/Main.hs
   Build-Depends:        base
