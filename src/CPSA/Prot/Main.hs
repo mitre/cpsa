@@ -16,6 +16,7 @@ NOTATION   ::= (msg ROLE ROLE CHMSG)
             |  (msg ROLE ROLE CHMSG CHMSG)
             |  (from ROLE CHMSG)
             |  (to ROLE CHMSG)
+            |  (clone ROLE ROLE)
             |  (assume ROLE ASSUMPTION*)
 CHMSG      ::= (chmsg CHAN TERM) | TERM
 ASSUMPTION ::= (uniq-orig ...) | (non-orig ...) | ...
@@ -25,6 +26,8 @@ The form (msg A B M) says role A sends M, and role B receives M.
 The form (msg A B M N) says role A sends M, and role B receives N.
 The form (from A M) says role A sends M.
 The form (to A M) says role A receives M.
+The form (clone A B) says make role B have the same messages as A up
+to this point in the specification.
 -}
 
 {-# LANGUAGE CPP #-}
@@ -181,6 +184,16 @@ msg env (L _ [S _ "to", S _ to, term]) =
   return (update to (L () (S () "recv" : chmsg term)) env)
 msg _ (L p (S _ "to" : _)) =
   fail (shows p "Malformed to")
+msg env (L _ [S _ "clone", S p1 from, S p2 to]) =
+  case lookup to env of
+    Just _ -> fail (shows p2 ("Role " ++ to ++ " already defined"))
+    Nothing ->
+      case lookup from env of
+        Nothing -> fail (shows p1 ("Role " ++ from ++ " not defined yet"))
+        Just trace -> return $ (to, trace) : env
+
+msg _ (L p (S _ "clone" : _)) =
+  fail (shows p "Malformed clone")
 msg env _ = return env
 
 chmsg :: SExpr a -> [SExpr ()]
@@ -211,5 +224,6 @@ scrub :: SExpr () -> Bool
 scrub (L () (S () "msg" : _)) = False
 scrub (L () (S () "from" : _)) = False
 scrub (L () (S () "to" : _)) = False
+scrub (L () (S () "clone" : _)) = False
 scrub (L () (S () "assume" : _)) = False
 scrub _ = True

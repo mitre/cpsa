@@ -732,16 +732,23 @@ NOTATION   ::= (msg ROLE ROLE CHMSG)
             |  (msg ROLE ROLE CHMSG CHMSG)
             |  (from ROLE CHMSG)
             |  (to ROLE CHMSG)
+            |  (clone ROLE ROLE)
             |  (assume ROLE ASSUMPTION*)
 CHMSG      ::= (chmsg CHAN TERM) | TERM
 ASSUMPTION ::= (uniq-orig ...) | (non-orig ...) | ...
 RULE       ::= (defrule ...)</pre>
 </blockquote>
   
-<p>The form (msg A B M) says role A sends M, and role B receives
-  M.<br/>  The form (msg A B M N) says role A sends M, and role B
-  receives N.<br/>  The form (from A M) says role A sends M.<br/>  The
-  form (to A M) says role A receives M.</p>
+<p>The form <code>(msg A B M)</code> says role <code>A</code>
+  sends <code>M</code>, and role <code>B</code> receives
+  <code>M</code>.<br/>  The form <code>(msg A B M N)</code> says
+  role <code>A</code> sends <code>M</code>, and role <code>B</code>
+  receives <code>N</code>.<br/>  The form <code>(from A M)</code> says
+  role <code>A</code> sends <code>M</code>.<br/>  The form <code>(to A
+  M)</code> says role <code>A</code> receives <code>M</code>.<br/>
+  The form <code>(clone A B)</code> says make role <code>B</code> have
+  the same messages as <code>A</code> up to this point in the
+  specification.</p>
 
 <h3>Example</h3>
 
