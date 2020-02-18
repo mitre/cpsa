@@ -1,5 +1,7 @@
 2020-02-18  John D. Ramsdell  <ramsdell@mitre.org>
 
+	* src/CPSA/Prot/Main.hs (msg): Added role cloning in cpsa4prot.
+
 	* doc/cpsa4.mk: Added preprocessing rule for *.prot files that
 	invoke cpsa4prot.
 
