@@ -1,11 +1,15 @@
 # Makefile rules for CPSA
 
 # Suggested CPSA flags include a memory use limit:
-# CPSAFLAGS = +RTS -M512m -RTS
+# CPSAFLAGS = +RTS -M512m -N -RTS
 
 # Analyze protocols for shapes
 %.txt:		%.scm
 	$(CPSATIME) cpsa4 $(CPSAFLAGS) -o $@ $<
+
+# Preprocess by transforming defprot forms into defprotocol
+%.scm:		%.prot
+	cpsa4prot $(CPSAPROTFLAGS) -o $@ $<
 
 # Analyze protocols for shapes, but don't fail when CPSA does
 %.txt:		%.lsp

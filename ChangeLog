@@ -1,5 +1,8 @@
 2020-02-18  John D. Ramsdell  <ramsdell@mitre.org>
 
+	* doc/cpsa4.mk: Added preprocessing rule for *.prot files that
+	invoke cpsa4prot.
+
 	* src/CPSA/Prot/Main.hs (main): Added cpsa4prot program that
 	translates protocols in Alice and Bob notation into defprotocol
 	syntax.
