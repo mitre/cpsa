@@ -13,19 +13,24 @@
 
 CPSAFLAGS="+RTS -M512m -N -RTS"
 
+# Analyze the results of a CPSA run.
+analyze () {
+    echo cpsa4diff "$1.tst" "$1.txt"
+    cabal run cpsa4diff -v0 -- "$1.tst" "$1.txt"
+    echo cpsa4graph -o "$1.xhtml" "$1.txt"
+    cabal run cpsa4graph -v0 -- -o "$1.xhtml" "$1.txt"
+    echo cpsa4shapes -o "${1}_shapes.txt" "$1.txt"
+    cabal run cpsa4shapes -v0 -- -o "${1}_shapes.txt" "$1.txt"
+    echo cpsa4graph -o "${1}_shapes.xhtml" "${1}_shapes.txt"
+    cabal run cpsa4graph -v0 -- -o "${1}_shapes.xhtml" "${1}_shapes.txt"
+}
+
 for i in tst/*.scm
 do
     b=tst/`basename "$i" .scm`
     echo cpsa4 ${CPSAFLAGS} -o "$b.txt" "$i"
     cabal run cpsa4 -v0 -- ${CPSAFLAGS} -o "$b.txt" "$i" || echo cpsa4 failed.
-    echo cpsa4diff "$b.tst" "$b.txt"
-    cabal run cpsa4diff -v0 -- "$b.tst" "$b.txt"
-    echo cpsa4graph -o "$b.xhtml" "$b.txt"
-    cabal run cpsa4graph -v0 -- -o "$b.xhtml" "$b.txt"
-    echo cpsa4shapes -o "${b}_shapes.txt" "$b.txt"
-    cabal run cpsa4shapes -v0 -- -o "${b}_shapes.txt" "$b.txt"
-    echo cpsa4graph -o "${b}_shapes.xhtml" "${b}_shapes.txt"
-    cabal run cpsa4graph -v0 -- -o "${b}_shapes.xhtml" "${b}_shapes.txt"
+    analyze "$b"
 done
 
 for i in tst/*.prot
@@ -35,14 +40,7 @@ do
     cabal run cpsa4prot -v0 -- "$i" | \
 	cabal run cpsa4 -v0 -- ${CPSAFLAGS} -o "$b.txt" || \
 	echo cpsa4 failed.
-    echo cpsa4diff "$b.tst" "$b.txt"
-    cabal run cpsa4diff -v0 -- "$b.tst" "$b.txt"
-    echo cpsa4graph -o "$b.xhtml" "$b.txt"
-    cabal run cpsa4graph -v0 -- -o "$b.xhtml" "$b.txt"
-    echo cpsa4shapes -o "${b}_shapes.txt" "$b.txt"
-    cabal run cpsa4shapes -v0 -- -o "${b}_shapes.txt" "$b.txt"
-    echo cpsa4graph -o "${b}_shapes.xhtml" "${b}_shapes.txt"
-    cabal run cpsa4graph -v0 -- -o "${b}_shapes.xhtml" "${b}_shapes.txt"
+    analyze "$b"
 done
 
 for i in tst/*.lsp
@@ -50,12 +48,5 @@ do
     b=tst/`basename "$i" .lsp`
     echo cpsa4 ${CPSAFLAGS} -o "$b.txt" "$i"
     cabal run cpsa4 -v0 -- ${CPSAFLAGS} -o "$b.txt" "$i"
-    echo cpsa4diff "$b.tst" "$b.txt"
-    cabal run cpsa4diff -v0 -- "$b.tst" "$b.txt"
-    echo cpsa4graph -o "$b.xhtml" "$b.txt"
-    cabal run cpsa4graph -v0 -- -o "$b.xhtml" "$b.txt"
-    echo cpsa4shapes -o "${b}_shapes.txt" "$b.txt"
-    cabal run cpsa4shapes -v0 -- -o "${b}_shapes.txt" "$b.txt"
-    echo cpsa4graph -o "${b}_shapes.xhtml" "${b}_shapes.txt"
-    cabal run cpsa4graph -v0 -- -o "${b}_shapes.xhtml" "${b}_shapes.txt"
+    analyze "$b"
 done
