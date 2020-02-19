@@ -137,6 +137,7 @@ Extra-Source-Files:
   tst/chan-perrig-song.tst tst/chan-unilateral.scm
   tst/chan-unilateral.tst tst/factvar.scm tst/factvar.tst
   tst/renamings.scm tst/renamings.tst
+  tst/blanchet_doorsep.prot tst/blanchet_doorsep.tst
 
 Source-Repository head
   Type:     git
