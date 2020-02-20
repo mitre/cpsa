@@ -759,7 +759,7 @@ RULE       ::= (defrule ...)</pre>
   (msg init resp (enc (enc s (invk a)) b))
   (msg resp init (enc d s))
   (assume init (uniq-orig s))
-  (assume resp (uniq_orig d))
+  (assume resp (uniq-orig d))
   (comment "Blanchet's protocol"))
 $ cpsa4prot blanchet.prot
 (defprotocol blanchet basic
@@ -770,7 +770,7 @@ $ cpsa4prot blanchet.prot
   (defrole resp
     (vars (a b akey) (s skey) (d data))
     (trace (recv (enc (enc s (invk a)) b)) (send (enc d s)))
-    (uniq_orig d))
+    (uniq-orig d))
   (comment "Blanchet's protocol"))
 $</pre>
 </blockquote>
