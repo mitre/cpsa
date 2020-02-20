@@ -734,7 +734,7 @@ NOTATION   ::= (msg ROLE ROLE CHMSG)
             |  (to ROLE CHMSG)
             |  (clone ROLE ROLE)
             |  (assume ROLE ASSUMPTION*)
-CHMSG      ::= (chmsg CHAN TERM) | TERM
+CHMSG      ::= (chmsg CHAN TERM) | (chmsg TERM) | TERM
 ASSUMPTION ::= (uniq-orig ...) | (non-orig ...) | ...
 RULE       ::= (defrule ...)</pre>
 </blockquote>

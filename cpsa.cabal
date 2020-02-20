@@ -175,7 +175,7 @@ Executable cpsa4prot
   Hs-Source-Dirs:       src
   Other-Modules:
     Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.Pretty CPSA.Lib.SExpr
-    CPSA.Lib.Printer CPSA.Lib.Entry
+    CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Lib.Expand
 
 Executable cpsa4goalsat
   Main-Is:              CPSA/GoalSat/Main.hs

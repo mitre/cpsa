@@ -18,7 +18,7 @@ NOTATION   ::= (msg ROLE ROLE CHMSG)
             |  (to ROLE CHMSG)
             |  (clone ROLE ROLE)
             |  (assume ROLE ASSUMPTION*)
-CHMSG      ::= (chmsg CHAN TERM) | TERM
+CHMSG      ::= (chmsg CHAN TERM) | (chmsg TERM) | TERM
 ASSUMPTION ::= (uniq-orig ...) | (non-orig ...) | ...
 RULE       ::= (defrule ...)
 
@@ -41,10 +41,11 @@ module Main (main) where
 import Numeric
 import System.IO
 import System.Console.GetOpt
-import Control.Monad (foldM)
+import Control.Monad (foldM, mapM, mapM_)
 import CPSA.Lib.SExpr
 import CPSA.Lib.Printer (pp)
 import CPSA.Lib.Entry
+import CPSA.Lib.Expand (readSExprs)
 
 -- Runtime parameters
 
@@ -57,31 +58,27 @@ main :: IO ()
 main =
     do
       (p, params) <- start options interp
+      sexprs <- readSExprs p
+      -- Could expand macros here
+      -- sexprs <- tryAbort (expand sexprs) -- Expand macros
+      sexprs <- tryAbort (mapM translate sexprs)
       h <- outputHandle $ file params
-      go (run (margin params) h) p
+      mapM_ (display (margin params) h) sexprs
       hClose h
 
-run :: Int -> Handle -> SExpr Pos -> IO ()
-run margin h x =
+tryAbort :: IO a -> IO a
+tryAbort x =
   do
-    x <- translate x
+    a <- tryIO x
+    case a of
+      Left err -> abort err
+      Right a -> return a
+
+display :: Int -> Handle -> SExpr a -> IO ()
+display margin h x =
+  do
     hPutStrLn h $ pp margin defaultIndent x
     hPutStrLn h ""
-
-go :: (SExpr Pos -> IO ()) -> PosHandle -> IO ()
-go f p =
-    loop
-    where
-      loop =
-          do
-            x <- gentlyReadSExpr p
-            case x of
-              Nothing ->
-                  return ()
-              Just sexpr ->
-                  do
-                    f sexpr
-                    loop
 
 -- Command line option flags
 data Flag
@@ -191,7 +188,6 @@ msg env (L _ [S _ "clone", S p1 from, S p2 to]) =
       case lookup from env of
         Nothing -> fail (shows p1 ("Role " ++ from ++ " not defined yet"))
         Just trace -> return $ (to, trace) : env
-
 msg _ (L p (S _ "clone" : _)) =
   fail (shows p "Malformed clone")
 msg env _ = return env
@@ -199,6 +195,7 @@ msg env _ = return env
 chmsg :: SExpr a -> [SExpr ()]
 chmsg (L _ [S _ "chmsg", S _ chan, term]) =
   [S () chan, strip term]
+chmsg (L _ [S _ "chmsg", term]) = [strip term]
 chmsg term = [strip term]
 
 update :: String -> SExpr () -> Env -> Env
