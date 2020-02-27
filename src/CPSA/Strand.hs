@@ -845,6 +845,15 @@ isomorphic g g' =
 -- For thinning.  Ensure point-of-view is preserved.
 probIsomorphic :: Preskel -> Preskel -> Bool
 probIsomorphic k k' =
+    nvars g == nvars g' &&      -- Doesn't work for Diffie-Hellman
+    ntraces g == ntraces g' &&
+    briefs g == briefs g' &&
+    norderings g == norderings g' &&
+    nnon g == nnon g' &&
+    npnon g == npnon g' &&
+    nunique g == nunique g' &&
+    nfacts g == nfacts g' &&
+    nfvars g == nfvars g' &&
     any (tryPermProb g g' pr pr') (permutations g g')
     where
       g = gist k
