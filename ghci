@@ -1,5 +1,0 @@
-:set -isrc:dist/build/autogen:dist/build/cpsa4/autogen
-:set -fbreak-on-error
-:set args tst/blanchet.scm
--- ghci src/CPSA/Main.hs
--- :trace main
