@@ -53,7 +53,7 @@ Data-Files:
 
 Data-Dir:               doc
 Extra-Source-Files:
-  Makefile ChangeLog README NEWS ghci cpsatst setup.bat doc/README
+  Makefile ChangeLog README NEWS mkghci cpsatst setup.bat doc/README
   doc/src/Makefile doc/src/macros.tex doc/src/cpsaprimer.tex
   doc/src/cpsagoals.tex doc/src/bcasyntax.tex
   doc/src/cpsaintroslides.tex doc/src/mitreslides.sty
