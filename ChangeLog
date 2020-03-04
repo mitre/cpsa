@@ -1,3 +1,8 @@
+2020-03-04  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Prot/Main.hs (maybeExpand): Added -e option that causes
+	cpsa4prot to expand macros before it generates protocols.
+
 2020-02-27  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Strand.hs (probIsomorphic): Added quick checks for

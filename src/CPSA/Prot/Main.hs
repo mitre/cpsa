@@ -45,13 +45,14 @@ import Control.Monad (foldM, mapM, mapM_)
 import CPSA.Lib.SExpr
 import CPSA.Lib.Printer (pp)
 import CPSA.Lib.Entry
-import CPSA.Lib.Expand (readSExprs)
+import CPSA.Lib.Expand (readSExprs, expand)
 
 -- Runtime parameters
 
 data Params = Params
     { file :: Maybe FilePath,   -- Nothing specifies standard output
-      margin :: Int }           -- Output line length
+      xpand :: Bool,            -- Expand macros first
+      margin :: Int}            -- Output line length
     deriving Show
 
 main :: IO ()
@@ -59,8 +60,7 @@ main =
     do
       (p, params) <- start options interp
       sexprs <- readSExprs p
-      -- Could expand macros here
-      -- sexprs <- tryAbort (expand sexprs) -- Expand macros
+      sexprs <- tryAbort (maybeExpand (xpand params) sexprs)
       sexprs <- tryAbort (mapM translate sexprs)
       h <- outputHandle $ file params
       mapM_ (display (margin params) h) sexprs
@@ -74,6 +74,10 @@ tryAbort x =
       Left err -> abort err
       Right a -> return a
 
+maybeExpand :: Bool -> [SExpr Pos] -> IO [SExpr Pos]
+maybeExpand False sexprs = return sexprs
+maybeExpand True sexprs = expand sexprs
+
 display :: Int -> Handle -> SExpr a -> IO ()
 display margin h x =
   do
@@ -84,6 +88,7 @@ display margin h x =
 data Flag
     = Help                      -- Help
     | Info                      -- Version information
+    | Expand                    -- Expand macros first
     | Margin String             -- Output line length
     | Output String             -- Output file name
       deriving Show
@@ -91,6 +96,7 @@ data Flag
 options :: [OptDescr Flag]
 options =
     [ Option ['o'] ["output"]   (ReqArg Output "FILE") "output FILE",
+      Option ['e'] ["expand"]   (NoArg Expand)         "expand macros first",
       Option ['m'] ["margin"]   (ReqArg Margin "INT")
       ("set output margin (default " ++ show defaultMargin ++ ")"),
       Option ['h'] ["help"]     (NoArg Help)           "show help message",
@@ -100,12 +106,15 @@ options =
 interp :: [Flag] -> IO Params
 interp flags =
     loop flags (Params { file = Nothing, -- By default, no output file
+                         xpand = False,  -- and don't expand macros
                          margin = defaultMargin })
     where
       loop [] params = return params
       loop (Output name : flags) params
           | file params == Nothing =
               loop flags $ params { file = Just name }
+      loop (Expand : flags) params =
+              loop flags $ params { xpand = True }
       loop (Margin value : flags) params =
           case readDec value of
             [(margin, "")] ->
