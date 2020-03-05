@@ -1,3 +1,7 @@
+2020-03-05  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Extra-Source-Files): Remove defunct CGI scripts.
+
 2020-03-04  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Prot/Main.hs (maybeExpand): Added -e option that causes

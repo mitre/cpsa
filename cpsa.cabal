@@ -57,25 +57,24 @@ Extra-Source-Files:
   doc/src/Makefile doc/src/macros.tex doc/src/cpsaprimer.tex
   doc/src/cpsagoals.tex doc/src/bcasyntax.tex
   doc/src/cpsaintroslides.tex doc/src/mitreslides.sty
-  doc/src/cpsaspec.tex doc/src/cpsafoundation.tex doc/src/cpsadesign.tex
-  doc/src/cpsadiagrams.mp doc/src/strands.mp doc/src/cmstrands.mp
-  doc/src/carriers.mp doc/src/termtree.mp doc/src/blanchet.mp
-  doc/src/mitrelogo.mp doc/src/cpsa.bib doc/SDAG.lhs doc/cpsalogo.mp
-  src/index.html src/cpsacgi src/cpsacgi.py src/cpsajson.py
-  src/split.py src/cpsa2svg src/cpsa.el src/httpd_allow_execmem.te
-  src/cpsaperm.scm src/cpsaops.scm src/preskel src/cpsa.pl
-  src/unsorted.pl src/pp.pl src/sexpr.pl src/perm.pl src/prover9.pl
-  src/zoom.js src/js2hs src/ghcmemlimit build.xml src/scala/Main.scala
+  doc/src/cpsaspec.tex doc/src/cpsafoundation.tex
+  doc/src/cpsadesign.tex doc/src/cpsadiagrams.mp doc/src/strands.mp
+  doc/src/cmstrands.mp doc/src/carriers.mp doc/src/termtree.mp
+  doc/src/blanchet.mp doc/src/mitrelogo.mp doc/src/cpsa.bib
+  doc/SDAG.lhs doc/cpsalogo.mp src/index.html src/cpsajson.py
+  src/split.py src/cpsa2svg src/cpsa.el src/cpsaperm.scm
+  src/cpsaops.scm src/preskel src/cpsa.pl src/unsorted.pl src/pp.pl
+  src/sexpr.pl src/perm.pl src/prover9.pl src/zoom.js src/js2hs
+  src/ghcmemlimit build.xml src/scala/Main.scala
   src/scala/Pretty.scala src/scala/Printer.scala src/scala/SExpr.scala
   src/ocaml/Makefile src/ocaml/README src/ocaml/cpsa.d.itarget
   src/ocaml/cpsa.itarget src/ocaml/cpsa.mllib src/ocaml/cpsa.mltop
   src/ocaml/cpsa.odocl src/ocaml/expand.ml src/ocaml/main.ml
   src/ocaml/main.mli src/ocaml/pp.ml src/ocaml/token.ml
   src/ocaml/token.mli src/ocaml/scanner.mll src/ocaml/sexpr.ml
-  src/ocaml/sexpr.mli src/ocaml/sexpr_type.ml
-  tst/README tst/Makefile tst/Make4.hs tst/checktst tst/cpsagraphall
-  tst/cpsashapesall tst/graphtst tst/updatetst
-  tst/aik.scm tst/aik.tst tst/blanchet.scm
+  src/ocaml/sexpr.mli src/ocaml/sexpr_type.ml tst/README tst/Makefile
+  tst/Make4.hs tst/checktst tst/cpsagraphall tst/cpsashapesall
+  tst/graphtst tst/updatetst tst/aik.scm tst/aik.tst tst/blanchet.scm
   tst/blanchet.tst tst/completeness-test.scm tst/completeness-test.tst
   tst/crushing.tst tst/crushing.tst tst/dass.lisp tst/dass-mod.lisp
   tst/dass_simple.scm tst/dass_simple.tst tst/denning-sacco.scm
@@ -109,34 +108,32 @@ Extra-Source-Files:
   tst/print.tst tst/pruning1.scm tst/pruning1.tst tst/sigenc.scm
   tst/sigenc.tst tst/sorted_epmo_acctnum.scm
   tst/sorted_epmo_acctnum.tst tst/targetterms1.scm
-  tst/targetterms1.tst tst/targetterms2.scm
-  tst/targetterms2.tst tst/targetterms6.scm tst/targetterms6.tst
-  tst/targetterms8.scm tst/targetterms8.tst tst/timestamping.scm
-  tst/timestamping.tst tst/tnsl5.lisp tst/uncarried_keys.scm
-  tst/uncarried_keys.tst tst/uo.scm tst/uo.tst
-  tst/wang-hash.scm tst/wang-hash.tst tst/wang-key-hash.scm
-  tst/wang-key-hash.tst tst/wang.lisp tst/weird.scm tst/weird.tst
-  tst/wide-mouth-frog.lsp tst/wide-mouth-frog-scyther.lsp
-  tst/wide-mouth-frog-scyther.tst tst/wide-mouth-frog.tst
-  tst/wonthull2.scm tst/wonthull2.tst tst/wonthull3.scm
-  tst/wonthull3.tst tst/wonthull.scm tst/wonthull.tst tst/woolam.scm
-  tst/woolam.tst tst/yahalom-6.3.6.scm tst/yahalom-6.3.6.tst
-  tst/yahalom.scm tst/yahalom.tst tst/unilateral.scm
-  tst/unilateral.tst tst/doorsep2invk.scm tst/doorsep2invk.tst
-  tst/doorsep.scm tst/doorsep.tst tst/facts.scm tst/facts.tst
-  tst/reflect.scm tst/reflect.tst tst/ab.tst tst/abc.tst
+  tst/targetterms1.tst tst/targetterms2.scm tst/targetterms2.tst
+  tst/targetterms6.scm tst/targetterms6.tst tst/targetterms8.scm
+  tst/targetterms8.tst tst/timestamping.scm tst/timestamping.tst
+  tst/tnsl5.lisp tst/uncarried_keys.scm tst/uncarried_keys.tst
+  tst/uo.scm tst/uo.tst tst/wang-hash.scm tst/wang-hash.tst
+  tst/wang-key-hash.scm tst/wang-key-hash.tst tst/wang.lisp
+  tst/weird.scm tst/weird.tst tst/wide-mouth-frog.lsp
+  tst/wide-mouth-frog-scyther.lsp tst/wide-mouth-frog-scyther.tst
+  tst/wide-mouth-frog.tst tst/wonthull2.scm tst/wonthull2.tst
+  tst/wonthull3.scm tst/wonthull3.tst tst/wonthull.scm
+  tst/wonthull.tst tst/woolam.scm tst/woolam.tst tst/yahalom-6.3.6.scm
+  tst/yahalom-6.3.6.tst tst/yahalom.scm tst/yahalom.tst
+  tst/unilateral.scm tst/unilateral.tst tst/doorsep2invk.scm
+  tst/doorsep2invk.tst tst/doorsep.scm tst/doorsep.tst tst/facts.scm
+  tst/facts.tst tst/reflect.scm tst/reflect.tst tst/ab.tst tst/abc.tst
   tst/bug_example.tst tst/dh-ca_hack.tst tst/dh_encrypt_hack.tst
   tst/dh_mim_hack.tst tst/dhnsl_hack.tst tst/epmo_acctnum.tst
-  tst/thisthat.tst tst/attest.scm tst/attest.tst
-  tst/prottrans.scm tst/prottrans.tst tst/neq_test.scm tst/neq_test.tst
+  tst/thisthat.tst tst/attest.scm tst/attest.tst tst/prottrans.scm
+  tst/prottrans.tst tst/neq_test.scm tst/neq_test.tst
   tst/fluffy_draft03_gske.scm tst/fluffy_draft03_gske.tst
   tst/envelope.scm tst/envelope.tst tst/expand.scm tst/expand.tst
-  tst/role_uniq.scm tst/role_uniq.tst
-  tst/chan-envelope.scm tst/chan-envelope.tst tst/chan-yahalom.scm
-  tst/chan-yahalom.tst tst/chan-perrig-song.scm
-  tst/chan-perrig-song.tst tst/chan-unilateral.scm
-  tst/chan-unilateral.tst tst/factvar.scm tst/factvar.tst
-  tst/renamings.scm tst/renamings.tst
+  tst/role_uniq.scm tst/role_uniq.tst tst/chan-envelope.scm
+  tst/chan-envelope.tst tst/chan-yahalom.scm tst/chan-yahalom.tst
+  tst/chan-perrig-song.scm tst/chan-perrig-song.tst
+  tst/chan-unilateral.scm tst/chan-unilateral.tst tst/factvar.scm
+  tst/factvar.tst tst/renamings.scm tst/renamings.tst
   tst/blanchet_doorsep.prot tst/blanchet_doorsep.tst
 
 Source-Repository head
