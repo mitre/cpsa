@@ -1,0 +1,116 @@
+(herald "Mauw et al.'s DB Toy Protocol")
+
+(defprot dbtoy basic
+  (vars (p v name) (np nv data) (fast chan))
+  (msg prover verifier (enc np (ltk p v)))
+  (msg verifier prover nv)
+  (msg prover verifier (chmsg fast (hash nv np p)))
+  ;(from verifier "accept")
+  (assume verifier (uniq-orig nv)))
+
+(defskeleton dbtoy ;0
+  (vars (p v name) (np data) (fast chan))
+  (defstrand verifier 3 (p p) (v v) (np np) (fast fast))
+  (non-orig (ltk p v))
+  (uniq-orig np)
+  (auth fast)
+  )
+
+(defskeleton dbtoy ;1
+  (vars (p v name) (np data) (fast chan))
+  (defstrand verifier 3 (p p) (v v) (np np) (fast fast))
+  ;(non-orig (ltk p v))
+  (uniq-orig np)
+  (auth fast)
+  )
+
+(defskeleton dbtoy ;2
+  (vars (p v name) (np data) (fast chan))
+  (defstrand verifier 3 (p p) (v v) (np np) (fast fast))
+  (non-orig (ltk p v))
+  ;(uniq-orig np)
+  (auth fast)
+  )
+
+(defskeleton dbtoy ;3
+  (vars (p v name) (np data) (fast chan))
+  (defstrand verifier 3 (p p) (v v) (np np) (fast fast))
+  (non-orig (ltk p v))
+  (uniq-orig np)
+  ;(auth fast)
+  )
+
+(defskeleton dbtoy ;4
+  (vars (p v name) (np data) (fast chan))
+  (defstrand verifier 3 (p p) (v v) (np np) (fast fast))
+  ;(non-orig (ltk p v))
+  ;(uniq-orig np)
+  (auth fast)
+  )
+
+(defskeleton dbtoy ;5
+  (vars (p v name) (np data) (fast chan))
+  (defstrand verifier 3 (p p) (v v) (np np) (fast fast))
+  ;(non-orig (ltk p v))
+  (uniq-orig np)
+  ;(auth fast)
+  )
+
+(defskeleton dbtoy ;6
+  (vars (p v name) (np data) (fast chan))
+  (defstrand verifier 3 (p p) (v v) (np np) (fast fast))
+  (non-orig (ltk p v))
+  ;(uniq-orig np)
+  ;(auth fast)
+  )
+
+(defskeleton dbtoy ;7
+  (vars (p v name) (np data) (fast chan))
+  (defstrand verifier 3 (p p) (v v) (np np) (fast fast))
+  ;(non-orig (ltk p v))
+  ;(uniq-orig np)
+  ;(auth fast)
+  )
+
+;; post-collusion tests
+(comment
+
+(defskeleton dbtoy ;2
+  (vars (p v name) (np np-0 data) (fast fast-0 chan))
+  (defstrand verifier 4 (p p) (v v) (np np) (fast fast))
+  (defstrand verifier 3 (p p) (v v) (np np-0) (fast fast-0))
+  (precedes ((0 3) (1 0)))
+  (non-orig (ltk p v))
+  (uniq-orig np np-0)
+  (auth fast)
+  )
+
+(defskeleton dbtoy ;3
+  (vars (p v name) (np np-0 data) (fast fast-0 chan))
+  (defstrand verifier 4 (p p) (v v) (np np) (fast fast))
+  (defstrand verifier 3 (p p) (v v) (np np-0) (fast fast-0))
+  (precedes ((0 3) (1 0)))
+  (non-orig (ltk p v))
+  (uniq-orig np)
+  (auth fast)
+  )
+
+(defskeleton dbtoy ;4
+  (vars (p v name) (np np-0 data) (fast fast-0 chan))
+  (defstrand verifier 3 (p p) (v v) (np np-0) (fast fast-0))
+  (defstrand verifier 4 (p p) (v v) (np np) (fast fast))
+  (precedes ((1 3) (0 0)))
+  (non-orig (ltk p v))
+  (uniq-orig np-0)
+  (auth fast)
+)
+
+(defskeleton dbtoy ;5
+  (vars (p v name) (np np-0 data) (fast fast-0 chan))
+  (defstrand verifier 4 (p p) (v v) (np np) (fast fast))
+  (defstrand verifier 3 (p p) (v v) (np np-0) (fast fast-0))
+  (precedes ((0 3) (1 0)))
+  (non-orig (ltk p v))
+  (auth fast)
+)
+)

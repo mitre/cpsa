@@ -1,0 +1,73 @@
+(herald "Hancke-Kuhn")
+
+(defprot hk basic
+  (vars (p v name) (nv np c data) (fast chan))
+  (msg verifier prover nv)
+  (msg prover verifier np)
+  (msg verifier prover c)
+  (msg prover verifier (chmsg fast (hash (ltk p v) nv np c)))
+  (assume verifier (uniq-orig nv c)))
+
+(defskeleton hk ;0
+  (vars (p v name) (np data) (fast chan))
+  (defstrand verifier 4 (np np) (p p) (v v) (fast fast))
+  (non-orig (ltk p v))
+  (uniq-orig np)
+  (auth fast)
+  )
+
+(defskeleton hk ;1
+  (vars (p v name) (np data) (fast chan))
+  (defstrand verifier 4 (np np) (p p) (v v) (fast fast))
+  ;(non-orig (ltk p v))
+  (uniq-orig np)
+  (auth fast)
+  )
+
+(defskeleton hk ;2
+  (vars (p v name) (np data) (fast chan))
+  (defstrand verifier 4 (np np) (p p) (v v) (fast fast))
+  (non-orig (ltk p v))
+  ;(uniq-orig np)
+  (auth fast)
+  )
+
+(defskeleton hk ;3
+  (vars (p v name) (np data) (fast chan))
+  (defstrand verifier 4 (np np) (p p) (v v) (fast fast))
+  (non-orig (ltk p v))
+  (uniq-orig np)
+  ;(auth fast)
+  )
+
+(defskeleton hk ;4
+  (vars (p v name) (np data) (fast chan))
+  (defstrand verifier 4 (np np) (p p) (v v) (fast fast))
+  ;(non-orig (ltk p v))
+  ;(uniq-orig np)
+  (auth fast)
+  )
+
+(defskeleton hk ;5
+  (vars (p v name) (np data) (fast chan))
+  (defstrand verifier 4 (np np) (p p) (v v) (fast fast))
+  ;(non-orig (ltk p v))
+  (uniq-orig np)
+  ;(auth fast)
+  )
+
+(defskeleton hk ;6
+  (vars (p v name) (np data) (fast chan))
+  (defstrand verifier 4 (np np) (p p) (v v) (fast fast))
+  (non-orig (ltk p v))
+  ;(uniq-orig np)
+  ;(auth fast)
+  )
+
+(defskeleton hk ;7
+  (vars (p v name) (np data) (fast chan))
+  (defstrand verifier 4 (np np) (p p) (v v) (fast fast))
+  ;(non-orig (ltk p v))
+  ;(uniq-orig np)
+  ;(auth fast)
+  )

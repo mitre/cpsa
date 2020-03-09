@@ -1,0 +1,154 @@
+(herald "TREAD Shared")
+
+(defprot tread-shared basic
+  (vars (p v name) (alpha beta m c data) (fast chan))
+  (msg prover verifier (cat (enc (enc alpha beta (privk p)) (ltk p v)) p))
+  (msg verifier prover  m)
+  (msg verifier prover c)
+  (msg prover verifier (chmsg fast (hash "f" c m alpha beta)))
+  ;(assume prover (uniq-orig alpha beta))
+  (assume verifier (uniq-orig m c)))
+
+(defskeleton tread-shared ; 0
+  (vars (p v name) (fast chan) (alpha beta data))
+  (defstrand verifier 4 (p p) (v v) (fast fast) (alpha alpha) (beta beta))
+  (non-orig (privk p))
+  (non-orig (ltk p v))
+  (uniq-orig alpha beta)
+  (auth fast)
+  )
+
+(defskeleton tread-shared ;1
+  (vars (p v name) (fast chan) (alpha beta data))
+  (defstrand verifier 4 (p p) (v v) (fast fast) (alpha alpha) (beta beta))
+  ;(non-orig (privk p))
+  (non-orig (ltk p v))
+  (uniq-orig alpha beta)
+  (auth fast)
+  )
+
+(defskeleton tread-shared ;2
+  (vars (p v name) (fast chan) (alpha beta data))
+  (defstrand verifier 4 (p p) (v v) (fast fast) (alpha alpha) (beta beta))
+  (non-orig (privk p))
+  ;(non-orig (ltk p v))
+  (uniq-orig alpha beta)
+  (auth fast)
+  )
+
+(defskeleton tread-shared ;3
+  (vars (p v name) (fast chan) (alpha beta data))
+  (defstrand verifier 4 (p p) (v v) (fast fast) (alpha alpha) (beta beta))
+  (non-orig (privk p))
+  (non-orig (ltk p v))
+  ;(uniq-orig alpha beta)
+  (auth fast)
+  )
+
+(defskeleton tread-shared ;4
+  (vars (p v name) (fast chan) (alpha beta data))
+  (defstrand verifier 4 (p p) (v v) (fast fast) (alpha alpha) (beta beta))
+  (non-orig (privk p))
+  (non-orig (ltk p v))
+  (uniq-orig alpha beta)
+  ;(auth fast)
+  )
+
+(defskeleton tread-shared ;5
+  (vars (p v name) (fast chan) (alpha beta data))
+  (defstrand verifier 4 (p p) (v v) (fast fast) (alpha alpha) (beta beta))
+  ;(non-orig (privk p))
+  ;(non-orig (ltk p v))
+  (uniq-orig alpha beta)
+  (auth fast)
+  )
+
+(defskeleton tread-shared ;6
+  (vars (p v name) (fast chan) (alpha beta data))
+  (defstrand verifier 4 (p p) (v v) (fast fast) (alpha alpha) (beta beta))
+  ;(non-orig (privk p))
+  (non-orig (ltk p v))
+  ;(uniq-orig alpha beta)
+  (auth fast)
+  )
+
+(defskeleton tread-shared ;7
+  (vars (p v name) (fast chan) (alpha beta data))
+  (defstrand verifier 4 (p p) (v v) (fast fast) (alpha alpha) (beta beta))
+  ;(non-orig (privk p))
+  (non-orig (ltk p v))
+  (uniq-orig alpha beta)
+  ;(auth fast)
+  )
+
+(defskeleton tread-shared ;8
+  (vars (p v name) (fast chan) (alpha beta data))
+  (defstrand verifier 4 (p p) (v v) (fast fast) (alpha alpha) (beta beta))
+  (non-orig (privk p))
+  ;(non-orig (ltk p v))
+  ;(uniq-orig alpha beta)
+  (auth fast)
+  )
+
+(defskeleton tread-shared ;9
+  (vars (p v name) (fast chan) (alpha beta data))
+  (defstrand verifier 4 (p p) (v v) (fast fast) (alpha alpha) (beta beta))
+  (non-orig (privk p))
+  ;(non-orig (ltk p v))
+  (uniq-orig alpha beta)
+  ;(auth fast)
+  )
+
+(defskeleton tread-shared ;10
+  (vars (p v name) (fast chan) (alpha beta data))
+  (defstrand verifier 4 (p p) (v v) (fast fast) (alpha alpha) (beta beta))
+  (non-orig (privk p))
+  (non-orig (ltk p v))
+  ;(uniq-orig alpha beta)
+  ;(auth fast)
+  )
+
+(defskeleton tread-shared ;11
+  (vars (p v name) (fast chan) (alpha beta data))
+  (defstrand verifier 4 (p p) (v v) (fast fast) (alpha alpha) (beta beta))
+  ;(non-orig (privk p))
+  ;(non-orig (ltk p v))
+  ;(uniq-orig alpha beta)
+  (auth fast)
+  )
+
+(defskeleton tread-shared ;12
+  (vars (p v name) (fast chan) (alpha beta data))
+  (defstrand verifier 4 (p p) (v v) (fast fast) (alpha alpha) (beta beta))
+  ;(non-orig (privk p))
+  ;(non-orig (ltk p v))
+  (uniq-orig alpha beta)
+  ;(auth fast)
+  )
+
+(defskeleton tread-shared ;13
+  (vars (p v name) (fast chan) (alpha beta data))
+  (defstrand verifier 4 (p p) (v v) (fast fast) (alpha alpha) (beta beta))
+  ;(non-orig (privk p))
+  (non-orig (ltk p v))
+  ;(uniq-orig alpha beta)
+  ;(auth fast)
+  )
+
+(defskeleton tread-shared ;14
+  (vars (p v name) (fast chan) (alpha beta data))
+  (defstrand verifier 4 (p p) (v v) (fast fast) (alpha alpha) (beta beta))
+  (non-orig (privk p))
+  ;(non-orig (ltk p v))
+  ;(uniq-orig alpha beta)
+  ;(auth fast)
+  )
+
+(defskeleton tread-shared ;15
+  (vars (p v name) (fast chan) (alpha beta data))
+  (defstrand verifier 4 (p p) (v v) (fast fast) (alpha alpha) (beta beta))
+  ;(non-orig (privk p))
+  ;(non-orig (ltk p v))
+  ;(uniq-orig alpha beta)
+  ;(auth fast)
+  )

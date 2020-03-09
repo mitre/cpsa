@@ -1,0 +1,76 @@
+(herald "Swiss Knife")
+
+(defprot swiss basic
+  (vars (na nb c data) (p v name) (fast chan))
+  (msg verifier prover na)
+  (msg prover verifier nb)
+  (msg verifier prover c)
+  (msg prover verifier (chmsg fast (hash "f" c (hash (ltk p v) "blaaah" nb)
+			     (hash "xor" (hash (ltk p v) "blaaah" nb) (ltk p v)))))
+  (msg prover verifier (cat (hash (ltk p v) c p na nb) c))
+  (msg verifier prover (hash (ltk p v) nb))
+  (assume verifier (uniq-orig na c)))
+
+(defskeleton swiss ;0
+  (vars (p v name) (nb data) (fast chan))
+  (defstrand verifier 6 (p p) (v v) (nb nb) (fast fast))
+  (non-orig (ltk p v))
+  (uniq-orig nb)
+  (auth fast)
+  )
+
+(defskeleton swiss ;1
+  (vars (p v name) (nb data) (fast chan))
+  (defstrand verifier 6 (p p) (v v) (nb nb) (fast fast))
+  ;(non-orig (ltk p v))
+  (uniq-orig nb)
+  (auth fast)
+  )
+
+(defskeleton swiss ;2
+  (vars (p v name) (nb data) (fast chan))
+  (defstrand verifier 6 (p p) (v v) (nb nb) (fast fast))
+  (non-orig (ltk p v))
+  ;(uniq-orig nb)
+  (auth fast)
+  )
+
+(defskeleton swiss ;3
+  (vars (p v name) (nb data) (fast chan))
+  (defstrand verifier 6 (p p) (v v) (nb nb) (fast fast))
+  (non-orig (ltk p v))
+  (uniq-orig nb)
+  ;(auth fast)
+  )
+
+(defskeleton swiss ;4
+  (vars (p v name) (nb data) (fast chan))
+  (defstrand verifier 6 (p p) (v v) (nb nb) (fast fast))
+  ;(non-orig (ltk p v))
+  ;(uniq-orig nb)
+  (auth fast)
+  )
+
+(defskeleton swiss ;5
+  (vars (p v name) (nb data) (fast chan))
+  (defstrand verifier 6 (p p) (v v) (nb nb) (fast fast))
+  ;(non-orig (ltk p v))
+  (uniq-orig nb)
+  ;(auth fast)
+  )
+
+(defskeleton swiss ;6
+  (vars (p v name) (nb data) (fast chan))
+  (defstrand verifier 6 (p p) (v v) (nb nb) (fast fast))
+  (non-orig (ltk p v))
+  ;(uniq-orig nb)
+  ;(auth fast)
+  )
+
+(defskeleton swiss ;7
+  (vars (p v name) (nb data) (fast chan))
+  (defstrand verifier 6 (p p) (v v) (nb nb) (fast fast))
+  ;(non-orig (ltk p v))
+  ;(uniq-orig nb)
+  ;(auth fast)
+  )

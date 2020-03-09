@@ -1,0 +1,123 @@
+(herald "Meadows")
+
+(comment This version has a more accurate result of decommitment that
+	 reflects the key properties of xor)
+
+(defprot meadows basic
+  (vars (p v name) (nv np data) (reply mesg) (fast chan))
+  (msg verifier prover v)
+  (msg verifier prover nv)
+  (msg prover verifier
+       (chmsg fast (hash "f" nv p np)) ;prover
+       (chmsg fast reply)) ;verifier
+  (msg prover verifier (cat p nv np (hash (ltk p v) p nv np)))
+  (assume verifier (uniq-orig nv))
+
+  (defrule check-decommit
+    (forall ((z strd) (nv np reply p mesg)) ;(p name))
+	    (implies
+	     (and (p "verifier" z 4)
+		  (p "verifier" "nv" z nv)
+		  (p "verifier" "p" z p)
+		  (p "verifier" "np" z np)
+		  (p "verifier" "reply" z reply))
+	     (exists ((np-0 np n data) (p-0 name))
+		     (and
+		      (= reply (hash "f" nv p-0 np-0))
+		      (fact xor p n p-0)
+		      (fact xor np n np-0))))))
+
+  (defrule check-decommit-uniq
+    (forall ((z strd) (nv np reply p mesg)) ;(p name))
+	    (implies
+	     (and (p "verifier" z 4)
+		  (p "verifier" "nv" z nv)
+		  (p "verifier" "p" z p)
+		  (p "verifier" "np" z np)
+		  (p "verifier" "reply" z reply)
+		  (uniq np))
+	     (= reply (hash "f" nv p np)))))
+
+  (defrule xor-effect
+    (forall ((a b c mesg))
+	    (implies
+	     (fact xor a b c)
+	     (and (fact xor a c b)
+		  (fact xor b a c)
+		  (fact xor b c a)
+		  (fact xor c a b)
+		  (fact xor c b a)))))
+
+  (defrule uniq-gen
+    (forall ((z z-0 strd) (np mesg))
+	    (implies
+	     (and (p "prover" z 3)
+		  (p "prover" z-0 3)
+		  (p "prover" "np" z np)
+		  (p "prover" "np" z-0 np)
+		  (uniq np))
+	     (= z z-0)))))
+
+(defskeleton meadows ;0
+  (vars (p v name) (np data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (np np) (fast fast))
+  (non-orig (ltk p v))
+  (uniq-orig np)
+  (auth fast)
+  )
+
+(defskeleton meadows ;1
+  (vars (p v name) (np data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (np np) (fast fast))
+  ;(non-orig (ltk p v))
+  (uniq-orig np)
+  (auth fast)
+  )
+
+(defskeleton meadows ;2
+  (vars (p v name) (np data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (np np) (fast fast))
+  (non-orig (ltk p v))
+  ;(uniq-orig np)
+  (auth fast)
+  )
+
+(defskeleton meadows ;3
+  (vars (p v name) (np data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (np np) (fast fast))
+  (non-orig (ltk p v))
+  (uniq-orig np)
+  ;(auth fast)
+  )
+
+(defskeleton meadows ;4
+  (vars (p v name) (np data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (np np) (fast fast))
+  ;(non-orig (ltk p v))
+  ;(uniq-orig np)
+  (auth fast)
+  )
+
+(defskeleton meadows ;5
+  (vars (p v name) (np data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (np np) (fast fast))
+  ;(non-orig (ltk p v))
+  (uniq-orig np)
+  ;(auth fast)
+  )
+
+(defskeleton meadows ;6
+  (vars (p v name) (np data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (np np) (fast fast))
+  (non-orig (ltk p v))
+  ;(uniq-orig np)
+  ;(auth fast)
+  )
+
+(defskeleton meadows ;7
+  (vars (p v name) (np data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (np np) (fast fast))
+  ;(non-orig (ltk p v))
+  ;(uniq-orig np)
+  ;(auth fast)
+  )

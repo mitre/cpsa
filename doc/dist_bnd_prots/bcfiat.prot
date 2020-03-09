@@ -1,0 +1,128 @@
+(herald "Brands Chaum Fiat-Shamir ID")
+
+(defprot bc basic
+  (vars (commit challenge ck r data) (p name) (t s sealedcommit mesg) (fast chan))
+  (msg prover verifier
+       (cat p (enc r (hash "sq" r)) (enc commit ck)) ;prover
+       (cat p t sealedcommit)) ;verifier
+  (msg verifier prover challenge)
+  (msg prover verifier (chmsg fast (hash "xor" commit challenge))) ;xor allows verifier to infer m
+  (msg prover verifier
+       (cat (hash "sq" r (hash "f" (privk p) (hash "xor" commit challenge))) ck) ;prover
+       (cat s ck)) ;verifier
+  (from verifier (cat commit r p)) ;send valued derived from decommit check
+  (assume verifier (uniq-orig challenge))
+
+  (defrule commit-check
+    ;; This implements the effects of a successful decommit combined with
+    ;; the Fiat-Shamir ID scheme (not sure how that works. It doesn't bind ck well.)
+    (forall ((z strd) (sealedcommit challenge commit ck r t s mesg) (p name))
+	    (implies
+	     (and (p "verifier" z 5)
+		  (p "verifier" "sealedcommit" z sealedcommit)
+		  (p "verifier" "challenge" z challenge)
+		  (p "verifier" "commit" z commit)
+		  (p "verifier" "ck" z ck)
+		  (p "verifier" "p" z p)
+		  (p "verifier" "r" z r)
+		  (p "verifier" "t" z t)
+		  (p "verifier" "s" z s))
+	     (and (= sealedcommit (enc commit ck))
+		  (= t (enc r (hash "sq" r)))
+		  (= s (hash "sq" r (hash "f" (privk p) (hash "xor" commit challenge)))))))))
+
+(defskeleton bc ;0
+  (vars (p name) (commit challenge ck r data) (fast chan))
+  (defstrand verifier 5 (p p) (commit commit) (r r) (ck ck) (fast fast))
+  (non-orig (privk p))
+  (uniq-orig r ck commit)
+  (auth fast)
+  )
+
+(defskeleton bc ;1
+  (vars (p name) (commit challenge ck r data) (fast chan))
+  (defstrand verifier 5 (p p) (commit commit) (r r) (ck ck) (fast fast))
+  ;(non-orig (privk p))
+  (uniq-orig r ck commit)
+  (auth fast)
+  )
+
+(defskeleton bc ;2
+  (vars (p name) (commit challenge ck r data) (fast chan))
+  (defstrand verifier 5 (p p) (commit commit) (r r) (ck ck) (fast fast))
+  (non-orig (privk p))
+  ;(uniq-orig r ck commit)
+  (auth fast)
+  )
+
+(defskeleton bc ;3
+  (vars (p name) (commit challenge ck r data) (fast chan))
+  (defstrand verifier 5 (p p) (commit commit) (r r) (ck ck) (fast fast))
+  (non-orig (privk p))
+  (uniq-orig r ck commit)
+  ;(auth fast)
+  )
+
+(defskeleton bc ;4
+  (vars (p name) (commit challenge ck r data) (fast chan))
+  (defstrand verifier 5 (p p) (commit commit) (r r) (ck ck) (fast fast))
+  ;(non-orig (privk p))
+  ;(uniq-orig r ck commit)
+  (auth fast)
+  )
+
+(defskeleton bc ;5
+  (vars (p name) (commit challenge ck r data) (fast chan))
+  (defstrand verifier 5 (p p) (commit commit) (r r) (ck ck) (fast fast))
+  ;(non-orig (privk p))
+  (uniq-orig r ck commit)
+  ;(auth fast)
+  )
+
+(defskeleton bc ;6
+  (vars (p name) (commit challenge ck r data) (fast chan))
+  (defstrand verifier 5 (p p) (commit commit) (r r) (ck ck) (fast fast))
+  (non-orig (privk p))
+  ;(uniq-orig r ck commit)
+  ;(auth fast)
+  )
+
+(defskeleton bc ;6
+  (vars (p name) (commit challenge ck r data) (fast chan))
+  (defstrand verifier 5 (p p) (commit commit) (r r) (ck ck) (fast fast))
+  ;(non-orig (privk p))
+  ;(uniq-orig r ck commit)
+  ;(auth fast)
+  )
+
+;;;;;;;;;;;
+;; (defprot bc-name basic
+;;   (vars (m challenge data) (p name) (k skey) (sealedcommit xor mesg) (fast chan))
+;;   (msg prover verifier (enc "commit" m k) sealedcommit)
+;;   (msg verifier prover challenge)
+;;   (msg prover verifier (chmsg fast (hash "xor" p m challenge)) (chmsg fast xor))
+;;   (msg prover verifier (cat m k (enc (hash "xor" p m challenge) (privk p)))
+;;        (cat m k (enc xor (privk p))))
+;;   (to bad-p-1 (cat m challenge))
+;;   (from bad-p-1 (enc (hash "xor" m challenge) (privk p)))
+;;   (assume prover (uniq-orig m k))
+;;   (assume verifier (auth fast))
+
+;;   (defrule commit-check
+;;     (forall ((z strd) (sealedcommit challenge m k xor p mesg))
+;; 	    (implies
+;; 	     (and (p "verifier" z 4)
+;; 		  (p "verifier" "sealedcommit" z sealedcommit)
+;; 		  (p "verifier" "challenge" z challenge)
+;; 		  (p "verifier" "p" z p)
+;; 		  (p "verifier" "m" z m)
+;; 		  (p "verifier" "k" z k)
+;; 		  (p "verifier" "xor" z xor))
+;; 	     (and (= sealedcommit (enc "commit" m k))
+;; 		  (= xor (hash "xor" p m challenge)))))))
+
+;; (defskeleton bc-name
+;;   (vars (p name) (m challenge data) (k skey))
+;;   (defstrand verifier 5 (p p) (m m) (k k)(challenge challenge))
+;;   (uniq-orig challenge m k)
+;;   (non-orig (privk p)))

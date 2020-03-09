@@ -1,0 +1,99 @@
+(herald "Brands Chaum Sig")
+
+(defprot bcsig basic
+  (vars (commit ck challenge data) (p name) (fast chan) (sealedcommit mesg))
+  (msg prover verifier
+       (cat p (enc commit ck)) ;prover
+       (cat p sealedcommit)) ;verifier
+  (msg verifier prover challenge)
+  (msg prover verifier
+       (chmsg fast (hash "xor" commit challenge))) ;prover
+       ;verifier can use same message because it can bind commit by xor with challenge
+  (msg prover verifier (enc ck challenge (privk p)))
+  (from verifier commit)
+  (assume verifier (uniq-orig challenge))
+
+  (defrule check-decommit
+    ;; If the verifier gets far enough, it can check the commit had the right value
+    (forall ((z strd) (sealedcommit ck commit mesg))
+	    (implies
+	     (and (p "verifier" z 5)
+		  (p "verifier" "sealedcommit" z sealedcommit)
+		  ;(p "verifier" "challenge_response" z cr)
+		  (p "verifier" "ck" z ck)
+		  (p "verifier" "commit" z commit))
+	     (and (= sealedcommit (enc commit ck))))))
+
+  (defrule uniq-gen-ck
+    (forall ((z z-0 strd) (ck mesg))
+	    (implies
+	     (and (p "prover" z 1)
+		  (p "prover" z-0 1)
+		  (p "prover" "ck" z ck)
+		  (p "prover" "ck" z-0 ck)
+		  (uniq ck))
+	     (= z z-0)))))
+
+(defskeleton bcsig ;0
+  (vars (p name) (commit ck data) (fast chan))
+  (defstrand verifier 5 (p p) (commit commit) (ck ck) (fast fast))
+  (non-orig (privk p))
+  (uniq-orig commit ck) ;We really want uniq-gen for ck, but can't use that with channels.
+  (auth fast)
+  )
+
+(defskeleton bcsig ;1
+  (vars (p name) (commit ck data) (fast chan))
+  (defstrand verifier 5 (p p) (commit commit) (ck ck) (fast fast))
+  ;(non-orig (privk p))
+  (uniq-orig commit ck)
+  (auth fast)
+  )
+
+(defskeleton bcsig ;2
+  (vars (p name) (commit ck data) (fast chan))
+  (defstrand verifier 5 (p p) (commit commit) (ck ck) (fast fast))
+  (non-orig (privk p))
+  ;(uniq-orig commit ck)
+  (auth fast)
+  )
+
+(defskeleton bcsig ;3
+  (vars (p name) (commit ck data) (fast chan))
+  (defstrand verifier 5 (p p) (commit commit) (ck ck) (fast fast))
+  (non-orig (privk p))
+  (uniq-orig commit ck)
+  ;(auth fast)
+  )
+
+(defskeleton bcsig ;4
+  (vars (p name) (commit ck data) (fast chan))
+  (defstrand verifier 5 (p p) (commit commit) (ck ck) (fast fast))
+  ;(non-orig (privk p))
+  ;(uniq-orig commit ck)
+  (auth fast)
+  )
+
+(defskeleton bcsig ;5
+  (vars (p name) (commit ck data) (fast chan))
+  (defstrand verifier 5 (p p) (commit commit) (ck ck) (fast fast))
+  ;(non-orig (privk p))
+  (uniq-orig commit ck)
+  ;(auth fast)
+  )
+
+(defskeleton bcsig ;6
+  (vars (p name) (commit ck data) (fast chan))
+  (defstrand verifier 5 (p p) (commit commit) (ck ck) (fast fast))
+  (non-orig (privk p))
+  ;(uniq-orig commit ck)
+  ;(auth fast)
+  )
+
+(defskeleton bcsig ;7
+  (vars (p name) (commit ck data) (fast chan))
+  (defstrand verifier 5 (p p) (commit commit) (ck ck) (fast fast))
+  ;(non-orig (privk p))
+  ;(uniq-orig commit ck)
+  ;(auth fast)
+  )

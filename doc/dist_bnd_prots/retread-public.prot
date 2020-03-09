@@ -1,0 +1,153 @@
+(herald "RETREAD Public")
+
+(defprot retread-public basic
+  (vars (m c alpha beta data) (p v name) (fast chan))
+  (msg prover verifier (enc (enc alpha beta p v (privk p)) (pubk v)))
+  (msg verifier prover m)
+  (msg verifier prover c)
+  (msg prover verifier (chmsg fast (hash "f" c m alpha beta)))
+  (assume verifier (uniq-orig m c)))
+
+(defskeleton retread-public ;0
+  (vars (p v name) (alpha beta data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (alpha alpha) (beta beta) (fast fast))
+  (non-orig (privk p))
+  (non-orig (privk v))
+  (uniq-orig alpha beta)
+  (auth fast)
+  )
+
+(defskeleton retread-public ;1
+  (vars (p v name) (alpha beta data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (alpha alpha) (beta beta) (fast fast))
+  ;(non-orig (privk p))
+  (non-orig (privk v))
+  (uniq-orig alpha beta)
+  (auth fast)
+  )
+
+(defskeleton retread-public ;2
+  (vars (p v name) (alpha beta data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (alpha alpha) (beta beta) (fast fast))
+  (non-orig (privk p))
+  ;(non-orig (privk v))
+  (uniq-orig alpha beta)
+  (auth fast)
+  )
+
+(defskeleton retread-public ;3
+  (vars (p v name) (alpha beta data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (alpha alpha) (beta beta) (fast fast))
+  (non-orig (privk p))
+  (non-orig (privk v))
+  ;(uniq-orig alpha beta)
+  (auth fast)
+  )
+
+(defskeleton retread-public ;4
+  (vars (p v name) (alpha beta data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (alpha alpha) (beta beta) (fast fast))
+  (non-orig (privk p))
+  (non-orig (privk v))
+  (uniq-orig alpha beta)
+  ;(auth fast)
+  )
+
+(defskeleton retread-public ;5
+  (vars (p v name) (alpha beta data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (alpha alpha) (beta beta) (fast fast))
+  ;(non-orig (privk p))
+  ;(non-orig (privk v))
+  (uniq-orig alpha beta)
+  (auth fast)
+  )
+
+(defskeleton retread-public ;6
+  (vars (p v name) (alpha beta data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (alpha alpha) (beta beta) (fast fast))
+  ;(non-orig (privk p))
+  (non-orig (privk v))
+  ;(uniq-orig alpha beta)
+  (auth fast)
+  )
+
+(defskeleton retread-public ;7
+  (vars (p v name) (alpha beta data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (alpha alpha) (beta beta) (fast fast))
+  ;(non-orig (privk p))
+  (non-orig (privk v))
+  (uniq-orig alpha beta)
+  ;(auth fast)
+  )
+
+(defskeleton retread-public ;8
+  (vars (p v name) (alpha beta data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (alpha alpha) (beta beta) (fast fast))
+  (non-orig (privk p))
+  ;(non-orig (privk v))
+  ;(uniq-orig alpha beta)
+  (auth fast)
+  )
+
+(defskeleton retread-public ;9
+  (vars (p v name) (alpha beta data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (alpha alpha) (beta beta) (fast fast))
+  (non-orig (privk p))
+  ;(non-orig (privk v))
+  (uniq-orig alpha beta)
+  ;(auth fast)
+  )
+
+(defskeleton retread-public ;10
+  (vars (p v name) (alpha beta data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (alpha alpha) (beta beta) (fast fast))
+  (non-orig (privk p))
+  (non-orig (privk v))
+  ;(uniq-orig alpha beta)
+  ;(auth fast)
+  )
+
+(defskeleton retread-public ;11
+  (vars (p v name) (alpha beta data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (alpha alpha) (beta beta) (fast fast))
+  ;(non-orig (privk p))
+  ;(non-orig (privk v))
+  ;(uniq-orig alpha beta)
+  (auth fast)
+  )
+
+(defskeleton retread-public ;12
+  (vars (p v name) (alpha beta data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (alpha alpha) (beta beta) (fast fast))
+  ;(non-orig (privk p))
+  ;(non-orig (privk v))
+  (uniq-orig alpha beta)
+  ;(auth fast)
+  )
+
+(defskeleton retread-public ;13
+  (vars (p v name) (alpha beta data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (alpha alpha) (beta beta) (fast fast))
+  ;(non-orig (privk p))
+  (non-orig (privk v))
+  ;(uniq-orig alpha beta)
+  ;(auth fast)
+  )
+
+(defskeleton retread-public ;14
+  (vars (p v name) (alpha beta data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (alpha alpha) (beta beta) (fast fast))
+  (non-orig (privk p))
+  ;(non-orig (privk v))
+  ;(uniq-orig alpha beta)
+  ;(auth fast)
+  )
+
+(defskeleton retread-public ;15
+  (vars (p v name) (alpha beta data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (alpha alpha) (beta beta) (fast fast))
+  ;(non-orig (privk p))
+  ;(non-orig (privk v))
+  ;(uniq-orig alpha beta)
+  ;(auth fast)
+  )

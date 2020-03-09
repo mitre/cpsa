@@ -1,0 +1,150 @@
+(herald "Paysafe")
+
+(defprot paysafe basic
+  (vars (un atc nc data) (amt text) (p v name) (fast chan))
+  (msg prover verifier "firstmsg")
+  (msg verifier prover (cat un amt))
+  (msg prover verifier (chmsg fast (cat atc nc))) ;atc nonce like Mauw et al.
+  (msg verifier prover "secondmsg")
+  (msg prover verifier (cat (cat (cat nc un (hash (enc atc (ltk p v))
+						  amt atc un))
+				 (enc nc un (hash (enc atc (ltk p v))
+						  amt atc un) (privk p)))
+			    (hash (enc atc (ltk p v)) amt atc un)))
+  (assume verifier (uniq-orig un)))
+
+(defskeleton paysafe ;0
+  (vars (p v name) (atc nc data) (fast chan))
+  (defstrand verifier 5 (p p) (v v) (atc atc) (nc nc) (fast fast))
+  (non-orig (privk p))
+  (non-orig (ltk p v))
+  (uniq-orig atc nc)
+  (auth fast))
+
+(defskeleton paysafe ;1
+  (vars (p v name) (atc nc data) (fast chan))
+  (defstrand verifier 5 (p p) (v v) (atc atc) (nc nc) (fast fast))
+  ;(non-orig (privk p))
+  (non-orig (ltk p v))
+  (uniq-orig atc nc)
+  (auth fast))
+
+(defskeleton paysafe ;2
+  (vars (p v name) (atc nc data) (fast chan))
+  (defstrand verifier 5 (p p) (v v) (atc atc) (nc nc) (fast fast))
+  (non-orig (privk p))
+  ;(non-orig (ltk p v))
+  (uniq-orig atc nc)
+  (auth fast))
+
+(defskeleton paysafe ;3
+  (vars (p v name) (atc nc data) (fast chan))
+  (defstrand verifier 5 (p p) (v v) (atc atc) (nc nc) (fast fast))
+  (non-orig (privk p))
+  (non-orig (ltk p v))
+  ;(uniq-orig atc nc)
+  (auth fast))
+
+(defskeleton paysafe ;4
+  (vars (p v name) (atc nc data) (fast chan))
+  (defstrand verifier 5 (p p) (v v) (atc atc) (nc nc) (fast fast))
+  (non-orig (privk p))
+  (non-orig (ltk p v))
+  (uniq-orig atc nc)
+  ;(auth fast)
+  )
+
+(defskeleton paysafe ;5
+  (vars (p v name) (atc nc data) (fast chan))
+  (defstrand verifier 5 (p p) (v v) (atc atc) (nc nc) (fast fast))
+  ;(non-orig (privk p))
+  ;(non-orig (ltk p v))
+  (uniq-orig atc nc)
+  (auth fast))
+
+(defskeleton paysafe ;6
+  (vars (p v name) (atc nc data) (fast chan))
+  (defstrand verifier 5 (p p) (v v) (atc atc) (nc nc) (fast fast))
+  ;(non-orig (privk p))
+  (non-orig (ltk p v))
+  ;(uniq-orig atc nc)
+  (auth fast))
+
+(defskeleton paysafe ;7
+  (vars (p v name) (atc nc data) (fast chan))
+  (defstrand verifier 5 (p p) (v v) (atc atc) (nc nc) (fast fast))
+  ;(non-orig (privk p))
+  (non-orig (ltk p v))
+  (uniq-orig atc nc)
+  ;(auth fast)
+  )
+
+(defskeleton paysafe ;8
+  (vars (p v name) (atc nc data) (fast chan))
+  (defstrand verifier 5 (p p) (v v) (atc atc) (nc nc) (fast fast))
+  (non-orig (privk p))
+  ;(non-orig (ltk p v))
+  ;(uniq-orig atc nc)
+  (auth fast))
+
+(defskeleton paysafe ;9
+  (vars (p v name) (atc nc data) (fast chan))
+  (defstrand verifier 5 (p p) (v v) (atc atc) (nc nc) (fast fast))
+  (non-orig (privk p))
+  ;(non-orig (ltk p v))
+  (uniq-orig atc nc)
+  ;(auth fast)
+  )
+
+(defskeleton paysafe ;10
+  (vars (p v name) (atc nc data) (fast chan))
+  (defstrand verifier 5 (p p) (v v) (atc atc) (nc nc) (fast fast))
+  (non-orig (privk p))
+  (non-orig (ltk p v))
+  ;(uniq-orig atc nc)
+  ;(auth fast)
+  )
+
+(defskeleton paysafe ;11
+  (vars (p v name) (atc nc data) (fast chan))
+  (defstrand verifier 5 (p p) (v v) (atc atc) (nc nc) (fast fast))
+  ;(non-orig (privk p))
+  ;(non-orig (ltk p v))
+  ;(uniq-orig atc nc)
+  (auth fast))
+
+(defskeleton paysafe ;12
+  (vars (p v name) (atc nc data) (fast chan))
+  (defstrand verifier 5 (p p) (v v) (atc atc) (nc nc) (fast fast))
+  ;(non-orig (privk p))
+  ;(non-orig (ltk p v))
+  (uniq-orig atc nc)
+  ;(auth fast)
+  )
+
+(defskeleton paysafe ;13
+  (vars (p v name) (atc nc data) (fast chan))
+  (defstrand verifier 5 (p p) (v v) (atc atc) (nc nc) (fast fast))
+  ;(non-orig (privk p))
+  (non-orig (ltk p v))
+  ;(uniq-orig atc nc)
+  ;(auth fast)
+  )
+
+(defskeleton paysafe ;14
+  (vars (p v name) (atc nc data) (fast chan))
+  (defstrand verifier 5 (p p) (v v) (atc atc) (nc nc) (fast fast))
+  (non-orig (privk p))
+  ;(non-orig (ltk p v))
+  ;(uniq-orig atc nc)
+  ;(auth fast)
+  )
+
+(defskeleton paysafe ;15
+  (vars (p v name) (atc nc data) (fast chan))
+  (defstrand verifier 5 (p p) (v v) (atc atc) (nc nc) (fast fast))
+  ;(non-orig (privk p))
+  ;(non-orig (ltk p v))
+  ;(uniq-orig atc nc)
+  ;(auth fast)
+  )

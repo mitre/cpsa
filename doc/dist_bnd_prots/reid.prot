@@ -1,0 +1,76 @@
+(herald "Reid et al.")
+
+(defprot reid basic
+  (vars (p v name) (ra rb c data) (fast chan))
+  (msg verifier prover (cat rb v))
+  (msg prover verifier (cat ra p))
+  (msg verifier prover c)
+  (msg prover verifier (chmsg fast
+			      (hash (enc (ltk p v)
+					 (hash "f" (ltk p v) p v ra rb)) c)))
+  ;(assume prover (uniq-orig ra))
+  (assume verifier (uniq-orig rb c)))
+
+(defskeleton reid ;0
+  (vars (p v name) (ra data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (ra ra) (fast fast))
+  (non-orig (ltk p v))
+  (uniq-orig ra)
+  (auth fast)
+  )
+
+(defskeleton reid ;1
+  (vars (p v name) (ra data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (ra ra) (fast fast))
+  ;(non-orig (ltk p v))
+  (uniq-orig ra)
+  (auth fast)
+  )
+
+(defskeleton reid ;2
+  (vars (p v name) (ra data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (ra ra) (fast fast))
+  (non-orig (ltk p v))
+  ;(uniq-orig ra)
+  (auth fast)
+  )
+
+(defskeleton reid ;3
+  (vars (p v name) (ra data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (ra ra) (fast fast))
+  (non-orig (ltk p v))
+  (uniq-orig ra)
+  ;(auth fast)
+  )
+
+(defskeleton reid ;4
+  (vars (p v name) (ra data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (ra ra) (fast fast))
+  ;(non-orig (ltk p v))
+  ;(uniq-orig ra)
+  (auth fast)
+  )
+
+(defskeleton reid ;5
+  (vars (p v name) (ra data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (ra ra) (fast fast))
+  ;(non-orig (ltk p v))
+  (uniq-orig ra)
+  ;(auth fast)
+  )
+
+(defskeleton reid ;6
+  (vars (p v name) (ra data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (ra ra) (fast fast))
+  (non-orig (ltk p v))
+  ;(uniq-orig ra)
+  ;(auth fast)
+  )
+
+(defskeleton reid ;7
+  (vars (p v name) (ra data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (ra ra) (fast fast))
+  ;(non-orig (ltk p v))
+  ;(uniq-orig ra)
+  ;(auth fast)
+  )

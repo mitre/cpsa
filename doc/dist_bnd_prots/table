@@ -1,0 +1,14 @@
+#! /bin/sh
+
+# Creates a table for each CPSA run.  Each line contains the real time
+# used to analyze the protocol and the root name of the source file.
+
+# $ ./table
+
+make clean
+make CPSATIME=time 2>&1 | egrep 'time|real' | sed '
+/^time/ {
+  s/\.scm//
+  N
+  s/\n//
+}' | awk '{ print $10 "\t" $9 }'

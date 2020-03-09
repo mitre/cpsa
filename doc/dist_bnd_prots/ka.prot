@@ -1,0 +1,73 @@
+(herald "Kim and Avoine")
+
+(defprot ka basic
+  (vars (na nb challenge data) (p v name) (fast chan))
+  (msg prover verifier nb)
+  (msg verifier prover na)
+  (msg verifier prover challenge)
+  (msg prover verifier (chmsg fast (hash (ltk p v) na nb challenge)))
+  (assume verifier (uniq-orig na challenge)))
+
+(defskeleton ka ;0
+  (vars (p v name) (nb data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (nb nb) (fast fast))
+  (non-orig (ltk p v))
+  (uniq-orig nb)
+  (auth fast)
+  )
+
+(defskeleton ka ;1
+  (vars (p v name) (nb data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (nb nb) (fast fast))
+  ;(non-orig (ltk p v))
+  (uniq-orig nb)
+  (auth fast)
+  )
+
+(defskeleton ka ;2
+  (vars (p v name) (nb data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (nb nb) (fast fast))
+  (non-orig (ltk p v))
+  ;(uniq-orig nb)
+  (auth fast)
+  )
+
+(defskeleton ka ;3
+  (vars (p v name) (nb data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (nb nb) (fast fast))
+  (non-orig (ltk p v))
+  (uniq-orig nb)
+  ;(auth fast)
+  )
+
+(defskeleton ka ;4
+  (vars (p v name) (nb data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (nb nb) (fast fast))
+  ;(non-orig (ltk p v))
+  ;(uniq-orig nb)
+  (auth fast)
+  )
+
+(defskeleton ka ;5
+  (vars (p v name) (nb data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (nb nb) (fast fast))
+  ;(non-orig (ltk p v))
+  (uniq-orig nb)
+  ;(auth fast)
+  )
+
+(defskeleton ka ;6
+  (vars (p v name) (nb data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (nb nb) (fast fast))
+  (non-orig (ltk p v))
+  ;(uniq-orig nb)
+  ;(auth fast)
+  )
+
+(defskeleton ka ;7
+  (vars (p v name) (nb data) (fast chan))
+  (defstrand verifier 4 (p p) (v v) (nb nb) (fast fast))
+  ;(non-orig (ltk p v))
+  ;(uniq-orig nb)
+  ;(auth fast)
+  )

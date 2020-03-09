@@ -1,0 +1,99 @@
+(herald "CRCS")
+
+(defprot crcs basic
+  (vars (commit nv data) (p name) (sealedcommit reply mesg) (fast chan))
+  (msg prover verifier
+       (enc (hash commit) (privk p)) ;prover
+       (enc sealedcommit (privk p))) ;verifier
+  (msg verifier prover nv)
+  (msg prover verifier
+       (chmsg fast (hash nv commit)) ;prover
+       (chmsg fast reply)) ;verifier
+  (msg prover verifier (enc p commit nv (privk p)))
+  (from verifier commit)
+  (assume verifier (uniq-orig nv))
+
+  (defrule check-decommit
+    (forall ((z strd) (sealedcommit reply commit nv mesg))
+	    (implies
+	     (and (p "verifier" z 5)
+		  (p "verifier" "sealedcommit" z sealedcommit)
+		  (p "verifier" "reply" z reply)
+		  (p "verifier" "commit" z commit)
+		  (p "verifier" "nv" z nv))
+	     (and (= sealedcommit (hash commit))
+		  (= reply (hash nv commit))))))
+
+  (defrule uniq-gen-result
+    (forall ((z z-0 strd) (commit mesg))
+	    (implies
+	     (and (p "prover" z 1)
+		  (p "prover" z-0 1)
+		  (p "prover" "commit" z commit)
+		  (p "prover" "commit" z-0 commit)
+		  (uniq commit))
+	     (= z z-0)))))
+
+(defskeleton crcs ;0
+  (vars (p name) (commit data) (fast chan))
+  (defstrand verifier 5 (p p) (commit commit) (fast fast))
+  (non-orig (privk p))
+  (uniq-orig commit)
+  (auth fast)
+  )
+
+(defskeleton crcs ;1
+  (vars (p name) (commit data) (fast chan))
+  (defstrand verifier 5 (p p) (commit commit) (fast fast))
+  ;(non-orig (privk p))
+  (uniq-orig commit)
+  (auth fast)
+  )
+
+(defskeleton crcs ;2
+  (vars (p name) (commit data) (fast chan))
+  (defstrand verifier 5 (p p) (commit commit) (fast fast))
+  (non-orig (privk p))
+  ;(uniq-orig commit)
+  (auth fast)
+  )
+
+(defskeleton crcs ;3
+  (vars (p name) (commit data) (fast chan))
+  (defstrand verifier 5 (p p) (commit commit) (fast fast))
+  (non-orig (privk p))
+  (uniq-orig commit)
+  ;(auth fast)
+  )
+
+(defskeleton crcs ;4
+  (vars (p name) (commit data) (fast chan))
+  (defstrand verifier 5 (p p) (commit commit) (fast fast))
+  ;(non-orig (privk p))
+  ;(uniq-orig commit)
+  (auth fast)
+  )
+
+(defskeleton crcs ;5
+  (vars (p name) (commit data) (fast chan))
+  (defstrand verifier 5 (p p) (commit commit) (fast fast))
+  ;(non-orig (privk p))
+  (uniq-orig commit)
+  ;(auth fast)
+  )
+
+(defskeleton crcs ;6
+  (vars (p name) (commit data) (fast chan))
+  (defstrand verifier 5 (p p) (commit commit) (fast fast))
+  (non-orig (privk p))
+  ;(uniq-orig commit)
+  ;(auth fast)
+  )
+
+(defskeleton crcs ;7
+  (vars (p name) (commit data) (fast chan))
+  (defstrand verifier 5 (p p) (commit commit) (fast fast))
+  ;(non-orig (privk p))
+  ;(uniq-orig commit)
+  ;(auth fast)
+  )

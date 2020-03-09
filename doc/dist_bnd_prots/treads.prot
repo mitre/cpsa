@@ -1,0 +1,133 @@
+(herald treads)
+
+;; A collection of variations on the TREAD distance bounding protocol
+
+(defprotocol tread basic
+  (defrole prover
+    (vars (gamma c m text) (prv verif name))
+    (trace
+     (send (enc gamma (enc gamma (privk prv)) (pubk verif)))
+     (recv m)
+     (recv c)
+     (send (hash c m gamma))))
+
+  (defrole verifier
+    (vars (gamma c m text) (prv verif name))
+    (trace
+     (recv (enc gamma (enc gamma (privk prv)) (pubk verif)))
+     (send m)
+     (send c)
+     (recv (hash c m gamma))
+     (send "success"))))
+
+(defskeleton tread
+  (vars (gamma c m text) (prv verif name))
+  (defstrand verifier 5 (c c) (m m) (prv prv) (verif verif) (gamma gamma))
+  (non-orig (privk prv) (privk verif))
+  (uniq-orig c m gamma))
+
+;; Add a confirming message
+(defprotocol tread-plus basic
+  (defrole prover
+    (vars (gamma c m text) (prv verif name))
+    (trace
+     (send (enc gamma (enc gamma (privk prv)) (pubk verif)))
+     (recv m)
+     (recv c)
+     (send (hash c m gamma))
+     (send (enc (hash c m gamma) (privk prv)))))
+
+  (defrole verifier
+    (vars (gamma c m text) (prv verif name))
+    (trace
+     (recv (enc gamma (enc gamma (privk prv)) (pubk verif)))
+     (send m)
+     (send c)
+     (recv (hash c m gamma))
+     (recv (enc (hash c m gamma) (privk prv)))
+     (send "success"))))
+
+(defskeleton tread-plus
+  (vars (gamma c m text) (prv verif name))
+  (defstrand verifier 6 (c c) (m m) (prv prv) (verif verif) (gamma gamma))
+  (non-orig (privk prv) (privk verif))
+  (uniq-orig c m gamma))
+
+(defprotocol retread basic
+  (defrole prover
+    (vars (gamma c m text) (prv verif name))
+    (trace
+     (send (enc gamma (enc gamma verif (privk prv)) (pubk verif)))
+     (recv m)
+     (recv c)
+     (send (hash c m gamma))))
+
+  (defrole verifier
+    (vars (gamma c m text) (prv verif name))
+    (trace
+     (recv (enc gamma (enc gamma verif (privk prv)) (pubk verif)))
+     (send m)
+     (send c)
+     (recv (hash c m gamma))
+     (send "success"))))
+
+(defskeleton retread
+  (vars (gamma c m text) (prv verif name))
+  (defstrand verifier 5 (c c) (m m) (prv prv) (verif verif) (gamma gamma))
+  (non-orig (privk prv) (privk verif))
+  (uniq-orig c m gamma))
+
+(defgoal retread
+  (forall ((gamma c m text) (prv verif name) (z strd))
+    (implies
+      (and (p "verifier" z 5) (p "verifier" "gamma" z gamma)
+        (p "verifier" "c" z c) (p "verifier" "m" z m)
+        (p "verifier" "prv" z prv) (p "verifier" "verif" z verif)
+        (non (privk prv)) (non (privk verif)) (uniq gamma)
+        (uniq c) (uniq m))
+      (exists ((z-0 strd))
+	      (and
+	       (p "prover" z-0 4)
+	       (prec z 2 z-0 2) (prec z-0 2 z 3)))))
+  (comment "Does (z, 2) and (z, 3) bound separation from z-0 in shape?"))
+
+(defskeleton retread
+  (vars (gamma c m text) (prv verif name))
+  (defstrand verifier 5 (c c) (m m) (prv prv) (verif verif) (gamma gamma))
+  (non-orig (privk prv) (privk verif))
+  (uniq-orig c m)
+  (comment "gamma not uniq-orig"))
+
+;; Add a confirming message
+(defprotocol retread-plus basic
+  (defrole prover
+    (vars (gamma c m text) (prv verif name))
+    (trace
+     (send (enc gamma (enc gamma verif (privk prv)) (pubk verif)))
+     (recv m)
+     (recv c)
+     (send (hash c m gamma))
+     (send (enc (hash c m gamma) (privk prv)))))
+
+  (defrole verifier
+    (vars (gamma c m text) (prv verif name))
+    (trace
+     (recv (enc gamma (enc gamma verif (privk prv)) (pubk verif)))
+     (send m)
+     (send c)
+     (recv (hash c m gamma))
+     (recv (enc (hash c m gamma) (privk prv)))
+     (send "success"))))
+
+(defskeleton retread-plus
+  (vars (gamma c m text) (prv verif name))
+  (defstrand verifier 6 (c c) (m m) (prv prv) (verif verif) (gamma gamma))
+  (non-orig (privk prv) (privk verif))
+  (uniq-orig c m gamma))
+
+(defskeleton retread-plus
+  (vars (gamma c m text) (prv verif name))
+  (defstrand verifier 6 (c c) (m m) (prv prv) (verif verif) (gamma gamma))
+  (non-orig (privk prv) (privk verif))
+  (uniq-orig c m)
+  (comment "gamma not uniq-orig"))

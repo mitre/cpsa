@@ -1,0 +1,91 @@
+(herald "Munilla")
+
+(defmacro (f a b)
+  (hash "f" a b))
+(defmacro (g a b)
+  (cat "g" (hash "g" a) b))
+(defmacro (h a)
+  (hash a))
+(defmacro (maked k a b)
+  (hash "maked" k a b))
+(defmacro (makev k a b)
+  (hash "makev" k a b))
+
+(defprot munilla basic
+  (vars (na nb c data) (p v name) (challenge mesg) (fast chan))
+  (msg prover verifier nb)
+  (msg verifier prover na)
+  (msg verifier prover
+       (g (maked (ltk p v) na nb) c) ;verifier
+       challenge); prover
+  (msg prover verifier
+       (chmsg fast (f challenge (makev (ltk p v) na nb))) ; prover
+       (chmsg fast (f (g (maked (ltk p v) na nb) c)
+		 (makev (ltk p v) na nb)))) ; verifier
+  (msg prover verifier
+       (h (cat (ltk p v) (makev (ltk p v) na nb)))) ; prover
+  (assume verifier (uniq-orig na c)))
+
+(defskeleton munilla ;0
+  (vars (p v name) (nb data) (fast chan))
+  (defstrand verifier 5 (p p) (v v) (nb nb) (fast fast))
+  (non-orig (ltk p v))
+  (uniq-orig nb)
+  (auth fast)
+  )
+
+(defskeleton munilla ;1
+  (vars (p v name) (nb data) (fast chan))
+  (defstrand verifier 5 (p p) (v v) (nb nb) (fast fast))
+  ;(non-orig (ltk p v))
+  (uniq-orig nb)
+  (auth fast)
+  )
+
+(defskeleton munilla ;2
+  (vars (p v name) (nb data) (fast chan))
+  (defstrand verifier 5 (p p) (v v) (nb nb) (fast fast))
+  (non-orig (ltk p v))
+  ;(uniq-orig nb)
+  (auth fast)
+  )
+
+(defskeleton munilla ;3
+  (vars (p v name) (nb data) (fast chan))
+  (defstrand verifier 5 (p p) (v v) (nb nb) (fast fast))
+  (non-orig (ltk p v))
+  (uniq-orig nb)
+  ;(auth fast)
+  )
+
+(defskeleton munilla ;4
+  (vars (p v name) (nb data) (fast chan))
+  (defstrand verifier 5 (p p) (v v) (nb nb) (fast fast))
+  ;(non-orig (ltk p v))
+  ;(uniq-orig nb)
+  (auth fast)
+  )
+
+(defskeleton munilla ;5
+  (vars (p v name) (nb data) (fast chan))
+  (defstrand verifier 5 (p p) (v v) (nb nb) (fast fast))
+  ;(non-orig (ltk p v))
+  (uniq-orig nb)
+  ;(auth fast)
+  )
+
+(defskeleton munilla ;6
+  (vars (p v name) (nb data) (fast chan))
+  (defstrand verifier 5 (p p) (v v) (nb nb) (fast fast))
+  (non-orig (ltk p v))
+  ;(uniq-orig nb)
+  ;(auth fast)
+  )
+
+(defskeleton munilla ;7
+  (vars (p v name) (nb data) (fast chan))
+  (defstrand verifier 5 (p p) (v v) (nb nb) (fast fast))
+  ;(non-orig (ltk p v))
+  ;(uniq-orig nb)
+  ;(auth fast)
+  )
