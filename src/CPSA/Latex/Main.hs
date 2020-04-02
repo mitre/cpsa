@@ -188,15 +188,21 @@ translateSExpr e (L p (S q "hash":ys)) =
 translateSExpr e (L _ [S _ "pubk", y1, y2]) =
   case translateSExprFold e [y1, y2] of
     ([s1, s2], e1) ->
-      ("\\pubk2{" ++ s1 ++ "}{" ++ s2 ++ "}", e1)
+      ("\\pubktwo{" ++ s1 ++ "}{" ++ s2 ++ "}", e1)
     _ ->
-      error "translateSExpr: bad fold for pubk2"
+      error "translateSExpr: bad fold for pubktwo"
 translateSExpr e (L _ [S _ "privk", y1, y2]) =
   case translateSExprFold e [y1, y2] of
     ([s1, s2], e1) ->
-      ("\\privk2{" ++ s1 ++ "}{" ++ s2 ++ "}", e1)
+      ("\\privktwo{" ++ s1 ++ "}{" ++ s2 ++ "}", e1)
     _ ->
-      error "translateSExpr: bad fold for privk2"
+      error "translateSExpr: bad fold for privktwo"
+translateSExpr e (L _ [S _ "invk", y1, y2]) =
+  case translateSExprFold e [y1, y2] of
+    ([s1, s2], e1) ->
+      ("\\invktwo{" ++ s1 ++ "}{" ++ s2 ++ "}", e1)
+    _ ->
+      error "translateSExpr: bad fold for invktwo"
 translateSExpr e (L _ ys) =
   (concat xs, e1)
   where

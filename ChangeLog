@@ -1,3 +1,8 @@
+2020-04-02  Ian D. Kretz  <ikretz@mitre.org>
+
+	* src/CPSA/Latex/Main.hs (main): Remove number from pubk, privk
+	newcommand, add invktwo
+
 2020-03-05  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* cpsa.cabal (Extra-Source-Files): Remove defunct CGI scripts.
