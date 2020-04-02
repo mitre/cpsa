@@ -197,12 +197,6 @@ translateSExpr e (L _ [S _ "privk", y1, y2]) =
       ("\\privktwo{" ++ s1 ++ "}{" ++ s2 ++ "}", e1)
     _ ->
       error "translateSExpr: bad fold for privktwo"
-translateSExpr e (L _ [S _ "invk", y1, y2]) =
-  case translateSExprFold e [y1, y2] of
-    ([s1, s2], e1) ->
-      ("\\invktwo{" ++ s1 ++ "}{" ++ s2 ++ "}", e1)
-    _ ->
-      error "translateSExpr: bad fold for invktwo"
 translateSExpr e (L _ ys) =
   (concat xs, e1)
   where
