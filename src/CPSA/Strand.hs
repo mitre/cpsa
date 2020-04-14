@@ -2279,29 +2279,32 @@ satisfy (Equals t t') = geq t t'
 
 -- Role length predicate
 -- r and h determine the predicate, which has arity one.
-glength :: Role -> Term -> Int -> Sem
-glength r z h k (g, e) =
-  case strdLookup e z of
-    Nothing ->
-      do
-        (s, inst) <- zip [0..] $ insts k
-        case () of
-          _ | h > height inst -> []
-            | rname (role inst) == rname r -> strdMatch z s (g, e)
-            | otherwise ->      -- See if z could have been an instance of r
-              case bldInstance r (take h $ trace inst) g of
-                [] -> []
-                _ -> strdMatch z s (g, e)
-    Just s | s < nstrands k ->
-      let inst = insts k !! s in
-      case () of
-        _ | h > height inst -> []
-          | rname (role inst) == rname r -> [(g, e)]
-          | otherwise ->
-            case bldInstance r (take h $ trace inst) g of
-              [] -> []
-              _ -> [(g, e)]
-    _ -> []
+glength :: Role -> Term -> Term -> Sem
+glength r z ht k (g, e) =
+  case indxLookup e ht of
+    Nothing -> []
+    Just h  ->
+      case strdLookup e z of
+        Nothing ->
+          do
+            (s, inst) <- zip [0..] $ insts k
+            case () of
+              _ | h > height inst -> []
+                | rname (role inst) == rname r -> strdMatch z s (g, e)
+                | otherwise ->      -- See if z could have been an instance of r
+                  case bldInstance r (take h $ trace inst) g of
+                    [] -> []
+                    _ -> strdMatch z s (g, e)
+        Just s | s < nstrands k ->
+          let inst = insts k !! s in
+          case () of
+            _ | h > height inst -> []
+              | rname (role inst) == rname r -> [(g, e)]
+              | otherwise ->
+                case bldInstance r (take h $ trace inst) g of
+                  [] -> []
+                  _ -> [(g, e)]
+        _ -> []
 
 -- Parameter predicate
 
@@ -2363,15 +2366,22 @@ strandPrec (s, i) (s', i')
   | otherwise = False
 
 nodeLookup :: Env -> NodeTerm -> Maybe Node
-nodeLookup e (z, i) =
+nodeLookup e (z, t) =
   do
     s <- strdLookup e z
+    i <- indxLookup e t 
     return (s, i)
+           
 
 nodeMatch :: NodeTerm -> Node -> (Gen, Env) -> [(Gen, Env)]
-nodeMatch (z, i) (s, j) e
-  | i == j = strdMatch z s e
-  | otherwise = []
+nodeMatch (z, t) (s, j) (g, e) =
+  do
+    (g,e) <- match t (indxOfInt j) (g, e)
+    case indxLookup e t of
+        Just i -> (case i == j of
+                     True -> strdMatch z s (g, e)
+                     False -> [])
+        Nothing -> []
 
 -- Non-origination
 ggnon :: Term -> Sem
@@ -2396,15 +2406,18 @@ gguniq t k e =
 
 -- Unique origination at a node
 guniqAt :: Term -> NodeTerm -> Sem
-guniqAt t (z, i) k e =
+guniqAt t (z, ht) k (g,e) =
   do
     (t', ls) <- korig k
-    case ls of
-      [(s, j)] | i == j ->
-        do
-          e <- match t t' e
-          strdMatch z s e
-      _ -> []
+    case indxLookup e ht of
+      Just i -> (case ls of
+                   [(s, j)] | i == j ->
+                                do
+                                  e <- match t t' (g,e)
+                                  strdMatch z s e
+                   _ -> [])
+      Nothing -> [] 
+
 
 -- Confidential channel
 ggconf :: Term -> Sem
@@ -2558,7 +2571,7 @@ doConj rule (f : fs) k e =
     doConj rule fs k e
 
 rwt :: String -> AForm -> Rewrite
-rwt _ (Length r z h) = rlength r z h
+rwt rule (Length r z ht) = rlength rule r z ht
 rwt rule (Param r v i z t) = rparam rule r v i z t
 rwt rule (Prec n n') = rprec rule n n'
 rwt rule (Non t) = rlnon rule t
@@ -2570,23 +2583,28 @@ rwt rule (Auth t) = rlauth rule t
 rwt rule (AFact name fs) = rafact rule name fs
 rwt rule (Equals t t') = req rule t t'
 
-rlength :: Role -> Term -> Int -> Rewrite
-rlength r z h k (g, e)
-  | length (rtrace r) < h = []
-  | otherwise =
-    case strdLookup e z of
-      Just s ->                 -- Try to displace
-        rDisplace e k' ns s
-        where
-          k' = addStrand g k r h
-          ns = nstrands k
-      Nothing ->                -- Try to augment
-        do                      -- and displace everywhere
-          let ns = nstrands k
-          (g, e) <- strdMatch z ns (g, e)
-          let k' = addStrand g k r h
-          let f s' = rDisplace e k' ns s'
-          (k', (gen k', e)) : concatMap f (nats ns)
+rlength :: String -> Role -> Term -> Term -> Rewrite
+rlength name r z ht k (g, e) =
+  case indxLookup e ht of
+    Nothing ->
+        error ("In rule " ++ name ++ ", role length did not get a height")
+    Just h ->
+      case length (rtrace r) < h of
+         True -> []
+         False -> 
+           (case strdLookup e z of
+            Just s ->                 -- Try to displace
+              rDisplace e k' ns s
+              where
+                k' = addStrand g k r h
+                ns = nstrands k
+            Nothing ->                -- Try to augment
+              do                      -- and displace everywhere
+                let ns = nstrands k
+                (g, e) <- strdMatch z ns (g, e)
+                let k' = addStrand g k r h
+                let f s' = rDisplace e k' ns s'
+                (k', (gen k', e)) : concatMap f (nats ns))
 
 -- Just add a strand cloned from a role.
 -- The length must be greater than one.
@@ -2694,9 +2712,9 @@ rUnify k (g, e) t t' =
     return (k, (gen k, substUpdate e (snd subst)))
 
 rprec :: String -> NodeTerm -> NodeTerm -> Rewrite
-rprec name (z, i) (z', i') k (g, e) =
-  case (strdLookup e z, strdLookup e z') of
-    (Just s, Just s')
+rprec name (z, t) (z', t') k (g, e) =
+  case (strdLookup e z, strdLookup e z', indxLookup e t, indxLookup e t') of
+    (Just s, Just s', Just i, Just i')
       | elem ((s, i), (s', i')) tc -> [(k, (g, e))]
       | badIndex k s i || badIndex k s' i' -> []
       | otherwise ->
@@ -2709,9 +2727,31 @@ rprec name (z, i) (z', i') k (g, e) =
                   (operation k) (krules k) (pprob k) (prob k) (pov k)
           return (k', (gen k, e))
     _ ->
-      error ("In rule " ++ name ++ ", precedence did not get a strand")
+      error ("In rule " ++ name ++ ", precedence did not get a strand or a height")
   where
     tc = map graphPair $ graphClose $ graphEdges $ strands k
+
+
+         --   rprec :: String -> NodeTerm -> NodeTerm -> Rewrite
+--   rprec name (z, i) (z', i') k (g, e) =
+--     case (strdLookup e z, strdLookup e z') of
+--       (Just s, Just s')
+--         | elem ((s, i), (s', i')) tc -> [(k, (g, e))]
+--         | badIndex k s i || badIndex k s' i' -> []
+--         | otherwise ->
+--           do                      -- Add one ordering
+--             orderings' <- normalizeOrderings True
+--                           (((s, i), (s', i')) : orderings k)
+--             let k' = newPreskel
+--                     g (shared k) (insts k) orderings' (knon k) (kpnon k)
+--                     (kunique k) (kconf k) (kauth k) (kfacts k) (kpriority k)
+--                     (operation k) (krules k) (pprob k) (prob k) (pov k)
+--             return (k', (gen k, e))
+--       _ ->
+--         error ("In rule " ++ name ++ ", precedence did not get a strand")
+--     where
+--       tc = map graphPair $ graphClose $ graphEdges $ strands k
+
 
 badIndex :: Preskel -> Sid -> Int -> Bool
 badIndex k s i =
@@ -2775,9 +2815,9 @@ rluniq name t k (g, e) =
     t' = instantiate e t
 
 runiqAt :: String -> Term -> NodeTerm -> Rewrite
-runiqAt name t (z, i) k (g, e) =
-  case (matched e t, strdLookup e z) of
-    (True, Just s)
+runiqAt name t (z, ht) k (g, e) =
+  case (matched e t, strdLookup e z, indxLookup e ht) of
+    (True, Just s, Just i)
       | elem (t', [(s, i)]) (korig k) -> [(k, (g, e))]
       | not $ isAtom t' -> []
       | i >= height (strandInst k s) -> []
@@ -2789,10 +2829,12 @@ runiqAt name t (z, i) k (g, e) =
                   (t' : kunique k) (kconf k) (kauth k) (kfacts k)
                   (kpriority k) (operation k) (krules k) (pprob k)
                   (prob k) (pov k)
-    (False, _) ->
+    (False, _, _) ->
       error ("In rule " ++ name ++ ", uniq-at did not get a term")
-    (_, Nothing) ->
+    (_, Nothing, _) ->
       error ("In rule " ++ name ++ ", uniq-at did not get a strand")
+    (_, _, Nothing) ->
+        error ("In rule " ++ name ++ ", uniq-at did not get an index")
   where
     t' = instantiate e t
 

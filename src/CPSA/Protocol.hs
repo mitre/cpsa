@@ -271,7 +271,7 @@ firstOccurs v r = firstOccursAt v (rtrace r)
 
 -- Syntax for the atomic formulas
 data AForm
-  = Length Role Term Int
+  = Length Role Term Term
   | Param Role Term Int Term Term -- role param first-height strand value
   | Prec NodeTerm NodeTerm
   | Non Term
@@ -284,7 +284,7 @@ data AForm
   | Equals Term Term
   deriving Show
 
-type NodeTerm = (Term, Int)
+type NodeTerm = (Term, Term)
 
 data Goal
   = Goal { uvars :: [Term],          -- Universally quantified variables
@@ -421,7 +421,7 @@ aFormOrder (Equals _ _) (Equals _ _) = EQ
 aFreeVars :: [Term] -> AForm -> [Term]
 aFreeVars vars (Length _ z _) = addVars vars z
 aFreeVars vars (Param _ _ _ z t) = addVars (addVars vars z) t
-aFreeVars vars (Prec (x, _) (y, _)) = addVars (addVars vars x) y
+aFreeVars vars (Prec (x, i) (y, j)) = addVars (addVars (addVars (addVars vars x) y) i) j
 aFreeVars vars (Non t) = addVars vars t
 aFreeVars vars (Pnon t) = addVars vars t
 aFreeVars vars (Uniq t) = addVars vars t

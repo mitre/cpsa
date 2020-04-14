@@ -80,13 +80,13 @@ displayConj ctx forms = L () (S () "and" : map (displayForm ctx) forms)
 
 displayForm :: Context -> AForm -> SExpr ()
 displayForm ctx (Length r s l) =
-  L () [S () "p", Q () (rname r), displayTerm ctx  s, N () l]
+  L () [S () "p", Q () (rname r), displayTerm ctx  s, displayTerm ctx l]
 displayForm ctx (Param r p _ s t) =
   L () [S () "p", Q () (rname r), displayParam r p,
         displayTerm ctx s, displayTerm ctx t]
 displayForm ctx (Prec (x, i) (y, j)) =
-  L () [S () "prec", displayTerm ctx x, N () i,
-        displayTerm ctx y, N () j]
+  L () [S () "prec", displayTerm ctx x, displayTerm ctx i,
+        displayTerm ctx y, displayTerm ctx j]
 displayForm ctx (Non t) =
   L () [S () "non", displayTerm ctx t]
 displayForm ctx (Pnon t) =
@@ -95,7 +95,7 @@ displayForm ctx (Uniq t) =
   L () [S () "uniq", displayTerm ctx t]
 displayForm ctx (UniqAt t (s, i)) =
   L () [S () "uniq-at", displayTerm ctx t,
-        displayTerm ctx s, N () i]
+        displayTerm ctx s, displayTerm ctx i]
 displayForm ctx (Conf t) =
   L () [S () "conf", displayTerm ctx t]
 displayForm ctx (Auth t) =

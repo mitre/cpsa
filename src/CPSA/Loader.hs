@@ -783,7 +783,13 @@ loadPrimary _ p kvars (L pos [S _ "p", Q _ name, x, N _ h]) =
     t <- loadStrdTerm kvars x
     case h <= 0 || h > length (rtrace r) of
       True -> fail (shows pos "Bad length")
-      False -> return (pos, Length r t h)
+      False -> return (pos, Length r t (indxOfInt h))
+loadPrimary _ p kvars (L pos [S _ "p", Q _ name, x, ht]) =
+  do
+    r <- lookupRole pos p name
+    t <- loadStrdTerm kvars x
+    h <- loadTerm kvars ht
+    return (pos, Length r t h)
 loadPrimary _ p kvars (L pos [S _ "p", Q _ name, Q var x, y, z]) =
   do
     r <- lookupRole pos p name
@@ -803,22 +809,22 @@ loadPrimary _ _ _ (L pos (S _ pred : _)) =
   fail (shows pos ("Bad formula for predicate " ++ pred))
 loadPrimary pos _ _ _ = fail (shows pos "Bad formula")
 
--- Load a term and make sure it does not have sort strd or chan
+-- Load a term and make sure it does not have sort strd, indx, locn, or chan
 
 loadAlgTerm :: MonadFail m => [Term] -> SExpr Pos -> m Term
 loadAlgTerm ts x =
   do
     t <- loadTerm ts x
-    case isStrdVar t || isChan t of
+    case isStrdVar t || isIndxVar t || isIndxConst t || isChan t || isLocn t of
       True -> fail (shows (annotation x) "Expecting an algebra term")
       False -> return t
--- Load a term and make sure it does not have sort strd
+-- Load a term and make sure it does not have sort strd, or indx
 
 loadAlgChanTerm :: MonadFail m => [Term] -> SExpr Pos -> m Term
 loadAlgChanTerm ts x =
   do
     t <- loadTerm ts x
-    case isStrdVar t of
+    case isStrdVar t || isIndxVar t || isIndxConst t of
       True -> fail (shows (annotation x)
                     "Expecting an algebra term or a channel")
       False -> return t
@@ -843,15 +849,33 @@ loadStrdTerm ts x =
       True -> return t
       False -> fail (shows (annotation x) "Expecting a strand variable")
 
+-- Load a term and make sure it has sort indx
+
+loadIndxTerm :: MonadFail m => [Term] -> SExpr Pos -> m Term
+loadIndxTerm ts x =
+  do
+    t <- loadTerm ts x
+    case isIndxVar t of
+      True -> return t
+      False ->
+        case isIndxConst t of
+          True -> return t
+          False -> fail (shows (annotation x) "Expecting an indx variable")
+
+-- Load a term and make sure it describes a node
+
 -- Load a term and make sure it describes a node
 
 loadNodeTerm :: MonadFail m => [Term] -> SExpr Pos -> SExpr Pos -> m NodeTerm
 loadNodeTerm ts x (N _ i) | i >= 0 =
   do
     t <- loadStrdTerm ts x
-    return (t, i)
-loadNodeTerm _ _ y =
-  fail (shows (annotation y) "Expecting an integer")
+    return (t, indxOfInt i)
+loadNodeTerm ts x v =
+  do
+    t <- loadStrdTerm ts x
+    t' <- loadIndxTerm ts v
+    return (t, t')
 
 -- Role specific check
 

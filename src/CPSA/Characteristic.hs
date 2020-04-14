@@ -87,15 +87,18 @@ strdRoleLength :: MonadFail m => Conj -> m [(Term, (Role, Int))]
 strdRoleLength as =
   foldM f [] as
   where
-    f srl (pos, Length r z h) =
-      case lookup z srl of
-        Nothing -> return ((z, (r, h)) : srl)
-        Just (r', h')
-          | rname r' /= rname r ->
-            fail (shows pos
-                  "Strand occurs in more than one role length atom")
-          | h <= h' -> return srl -- Use original binding
-          | otherwise -> return ((z, (r, h)) : srl)
+    f srl (pos, Length r z ht) =
+      case indxLookup emptyEnv ht of
+        Nothing -> fail (shows pos "Index is variable, not integer")
+        Just h -> 
+          (case lookup z srl of
+            Nothing -> return ((z, (r, h)) : srl)
+            Just (r', h')
+              | rname r' /= rname r ->
+                fail (shows pos
+                      "Strand occurs in more than one role length atom")
+              | h <= h' -> return srl -- Use original binding
+              | otherwise -> return ((z, (r, h)) : srl))
     f srl _ = return srl
 
 -- Construct instances
@@ -132,11 +135,12 @@ mkMaplet _ _ env _ = return env
 
 -- Use this lookup when lookup must succeed, that is when loader makes
 -- the check.
-nMapLookup :: (Term, Int) -> [(Term, Sid)] -> Node
-nMapLookup (z, i) nmap =
-  case lookup z nmap of
-    Just s -> (s, i)
-    Nothing -> error "Characteristic.nMapLookup: Bad lookup"
+nMapLookup :: NodeTerm -> [(Term, Sid)] -> Node
+nMapLookup (z, ht) nmap =
+  case (lookup z nmap, indxLookup emptyEnv ht) of
+    (Just s, Just i) -> (s, i)
+    (Nothing, _) -> error "Characteristic.nMapLookup: Bad lookup"
+    (_, Nothing) -> error "Characteristic.nMapLookup: Bad height term"
 
 -- Create a skeleton given a list of instances
 
