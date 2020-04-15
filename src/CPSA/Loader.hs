@@ -484,7 +484,8 @@ loadRest pos vars p gen gs insts orderings nr ar ur cn au fs pl comment =
       let (nr', ar', ur', cn', au') =
             foldl addInstOrigs (nr, ar, ur, cn, au) insts
       prios <- mapM (loadPriorities heights) pl
-      let k = mkPreskel gen p gs insts o nr' ar' ur' cn' au' fs prios comment
+      let k = mkPreskel gen p gs insts o nr' ar' ur' [] -- no gen state values
+              cn' au' fs prios comment
       case termsWellFormed $ nr' ++ ar' ++ ur' ++ kterms k of
         False -> fail (shows pos "Terms in skeleton not well formed")
         True -> return ()
@@ -758,6 +759,10 @@ loadPrimary _ _ kvars (L pos [S _ "uniq-at", x, y, z]) =
     t <- loadAlgTerm kvars x
     t' <- loadNodeTerm kvars y z
     return (pos, UniqAt t t')
+loadPrimary _ _ kvars (L pos [S _ "gen-st", x]) =
+  do
+    t <- loadAlgTerm kvars x
+    return (pos, GenStV t)
 loadPrimary _ _ kvars (L pos [S _ "conf", x]) =
   do
     t <- loadChanTerm kvars x
@@ -909,6 +914,9 @@ roleSpecific unbound (pos, Uniq t)
 roleSpecific unbound (pos, UniqAt t (z, _))
   | allBound unbound t && L.notElem z unbound = return unbound
   | otherwise = fail (shows pos "Unbound variable in uniq-at")
+roleSpecific unbound (pos, GenStV t)
+  | allBound unbound t = return unbound
+  | otherwise = fail (shows pos "Unbound variable in gen-st")
 roleSpecific unbound (pos, Conf t)
   | allBound unbound t = return unbound
   | otherwise = fail (shows pos "Unbound variable in conf")

@@ -152,13 +152,14 @@ mkSkel pos p goals nmap g insts as comment =
     let nr = foldr mkNon [] as
     let ar = foldr mkPnon [] as
     let ur = foldr mkUniq [] as
+    let gs = foldr mkGenSt [] as 
     let cf = foldr mkConf [] as
     let au = foldr mkAuth [] as
     let (nr', ar', ur', cf', au') =
           foldl addInstOrigs (nr, ar, ur, cf, au) insts
     let fs = foldr (mkFact nmap) [] as
     let prios = []
-    let k = mkPreskel g p goals insts o nr' ar' ur' cf' au' fs prios comment
+    let k = mkPreskel g p goals insts o nr' ar' ur' gs cf' au' fs prios comment
     mapM_ (checkUniqAt nmap k) as
     case termsWellFormed $ nr' ++ ar' ++ ur' ++ kterms k of
       False -> fail (shows pos "Terms in skeleton not well formed")
@@ -194,6 +195,10 @@ mkUniq :: (Pos, AForm) -> [Term] -> [Term]
 mkUniq (_, Uniq t) ts = t : ts
 mkUniq (_, UniqAt t _) ts = t : ts
 mkUniq _ ts = ts
+
+mkGenSt :: (Pos, AForm) -> [Term] -> [Term]
+mkGenSt (_, GenStV t) ts = t : ts
+mkGenSt _ ts = ts
 
 mkConf :: (Pos, AForm) -> [Term] -> [Term]
 mkConf (_, Conf t) ts = t : ts

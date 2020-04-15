@@ -96,6 +96,8 @@ displayForm ctx (Uniq t) =
 displayForm ctx (UniqAt t (s, i)) =
   L () [S () "uniq-at", displayTerm ctx t,
         displayTerm ctx s, displayTerm ctx i]
+displayForm ctx (GenStV t) =
+  L () [S () "gen-st", displayTerm ctx t]
 displayForm ctx (Conf t) =
   L () [S () "conf", displayTerm ctx t]
 displayForm ctx (Auth t) =
