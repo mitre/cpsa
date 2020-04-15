@@ -48,7 +48,6 @@
   (facts (le 0 0 0 1))
   )
 
-(comment
 (defskeleton rule-order
   (vars (s t text))
   (defstrand init 2 (s s) (t t))
@@ -81,12 +80,14 @@
   (vars (s t text))
   (defstrand init 2 (s s) (t t))
   (defstrand init 2 (s t) (t s))
+  (precedes ((1 0) (0 1)))
   )
 
 
 (defskeleton rule-order-prec 
   (vars (s t text))
   (defstrand init 2 (s s) (t t))
-  (defstrand init 2 (s t) (t s))
+  (defstrand init 2 (s s) (t t))
+  (precedes ((1 0) (0 1)))
   (neq (s t)))
-)
+
