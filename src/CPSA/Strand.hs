@@ -38,7 +38,7 @@ import CPSA.Algebra
 import CPSA.Channel
 import CPSA.Protocol
 
-{--
+--{--
 import System.IO.Unsafe
 import Control.Exception (try)
 import System.IO.Error (ioeGetErrorString)
@@ -345,7 +345,7 @@ graphReduce orderings =
           | elem n seen = loop dst ns seen
           | otherwise = loop dst (preds n ++ ns) (n : seen)
 
--- Compute the transitive closure
+-- Compute the transitive closure, but omit same strand pairs.  
 -- This routine returns pairs that are not well ordered.
 -- Deal with it!
 graphClose :: [GraphEdge e i] -> [GraphEdge e i]
@@ -363,6 +363,28 @@ graphClose orderings =
           | elem p orderings = inner orderings repeat pairs rest
           | otherwise = inner (p : orderings) True pairs rest
       sameStrands (n0, n1) = strand n0 == strand n1
+
+
+-- Compute the transitive closure including same strand
+-- pairs.  
+-- This routine returns pairs that are not well ordered.
+-- Deal with it!
+graphCloseAll :: [GraphEdge e i] -> [GraphEdge e i]
+graphCloseAll orderings =
+    graphAllCloseLoop orderings False orderings
+
+
+graphAllCloseLoop :: [GraphEdge e i] -> Bool -> [GraphEdge e i] -> [GraphEdge e i]
+graphAllCloseLoop orderings False [] = orderings
+graphAllCloseLoop orderings True [] = graphAllCloseLoop orderings False orderings -- restart loop
+graphAllCloseLoop orderings repeat ((n0, n1) : pairs) =
+    inner orderings repeat pairs [(n, n1) | n <- preds n0]
+    where
+      inner orderings repeat pairs [] =
+          graphAllCloseLoop orderings repeat pairs
+      inner orderings repeat pairs (p : rest)
+          | elem p orderings = inner orderings repeat pairs rest
+          | otherwise = inner (p : orderings) True pairs rest
 
 -- Shared part of preskeletons
 
@@ -2365,7 +2387,7 @@ gprec n n' k (g, e) =
         (g, e) <- nodeMatch n p (g, e)
         nodeMatch n' p' (g, e)
   where
-    tc = map graphPair $ graphClose $ graphEdges $ strands k
+    tc = map graphPair $ zz $ graphCloseAll $ graphEdges $ strands k
 
 inSkel :: Preskel -> (Int, Int) -> Bool
 inSkel k (s, i) =
