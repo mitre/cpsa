@@ -38,7 +38,7 @@ import CPSA.Algebra
 import CPSA.Channel
 import CPSA.Protocol
 
---{--
+{--
 import System.IO.Unsafe
 import Control.Exception (try)
 import System.IO.Error (ioeGetErrorString)
@@ -2387,7 +2387,7 @@ gprec n n' k (g, e) =
         (g, e) <- nodeMatch n p (g, e)
         nodeMatch n' p' (g, e)
   where
-    tc = map graphPair $ zz $ graphCloseAll $ graphEdges $ strands k
+    tc = map graphPair $ graphCloseAll $ graphEdges $ strands k
 
 inSkel :: Preskel -> (Int, Int) -> Bool
 inSkel k (s, i) =
