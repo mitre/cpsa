@@ -220,7 +220,7 @@ isVar (I _) = True           -- Sort: mesg
 isVar (F s [I _]) =
     -- Sorts: text, data, name, skey, akey, and chan
     s == Text || s == Data || s == Name
-    || s == Skey || s == Akey || s == Chan
+    || s == Skey || s == Akey || s == Chan || s == Locn 
 isVar _ = False
 
 -- Is term a channel variable

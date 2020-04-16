@@ -15,7 +15,7 @@
 module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     role, env, trace, height, listenerTerm, Sid, Node, mkPreskel,
     firstSkeleton, Pair, Preskel, gen, protocol, kgoals, insts, orderings,
-    pov, knon, kpnon, kunique, kconf, kauth, kfacts, korig,
+    pov, knon, kpnon, kunique, kgenSt, kconf, kauth, kfacts, korig,
     kpriority, kcomment, nstrands,
     kvars, kfvars, strandids, kterms, kchans, uniqOrig, preskelWellFormed,
     confCm, authCm,
@@ -732,13 +732,14 @@ roleOrigCheck k =
 confCm :: Preskel -> ChMsg -> Bool
 confCm k e =
   case cmChan e of
-    Just ch -> elem ch (kconf k)
+    Just ch -> elem ch (kconf k) || isLocn ch
     Nothing -> False
 
 authCm :: Preskel -> ChMsg -> Bool
 authCm k e =
   case cmChan e of
-    Just ch -> elem ch (kauth k)
+    Just ch -> elem ch (kauth k) ||
+               (isLocn ch && elem (cmTerm e) (kgenSt k))
     Nothing -> False
 
 -- Isomorphism Check

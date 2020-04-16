@@ -319,9 +319,9 @@ loadChan :: MonadFail m => [Term] -> SExpr Pos -> m Term
 loadChan vars x =
   do
     ch <- loadTerm vars x
-    case isChan ch of
+    case isChan ch || isLocn ch of
       True -> return ch
-      False -> fail (shows (annotation x) "Expecting a channel")
+      False -> fail (shows (annotation x) "Expecting a channel or location")
 
 loadBaseTerms :: MonadFail m => [Term] -> [SExpr Pos] -> m [Term]
 loadBaseTerms _ [] = return []
@@ -802,7 +802,7 @@ loadPrimary _ p kvars (L pos [S _ "p", Q _ name, Q var x, y, z]) =
     s <- loadStrdTerm kvars y
     t <- loadAlgChanTerm kvars z
     case isVar v of
-      False -> fail (shows pos "Bad parameter -- not a variable")
+      False -> fail (shows pos ("Bad parameter -- not a variable" ++ (show v)))
       True ->
         case firstOccurs v r of
           Just i -> return (pos, Param r v (i + 1) s t)

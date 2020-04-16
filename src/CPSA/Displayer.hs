@@ -172,7 +172,7 @@ displayPreskel k rest =
           L () (S () "vars" : displayVars ctx vars) :
           foldr f (displayRest k ctx rest) (insts k))
     where
-      ctx = varsContext vars
+      ctx = varsContext vars 
       vars = kfvars k ++ kvars k
       f i rest = displayInst ctx i : rest
 
@@ -183,14 +183,15 @@ displayRest k ctx rest =
      (displayOptional "non-orig" (displayTerms ctx (knon k))
       (displayOptional "pen-non-orig" (displayTerms ctx (kpnon k))
        (displayOptional "uniq-orig" (displayTerms ctx (kunique k))
-        (displayOptional "conf" (displayTerms ctx (kconf k))
-         (displayOptional "auth" (displayTerms ctx (kauth k))
-          (displayOptional "facts" (map (displayFact ctx) (kfacts k))
-           (displayOptional "priority" priorities
-            (kcomment k ++
-             (displayOptional "rule" (map (S ()) (krules k))
-              (displayOperation k ctx
-               (displayOptional "traces" traces rest)))))))))))
+        (displayOptional "genStV" (displayTerms ctx (kgenSt k))
+         (displayOptional "conf" (displayTerms ctx (kconf k))
+          (displayOptional "auth" (displayTerms ctx (kauth k))
+           (displayOptional "facts" (map (displayFact ctx) (kfacts k))
+            (displayOptional "priority" priorities
+             (kcomment k ++
+              (displayOptional "rule" (map (S ()) (krules k))
+               (displayOperation k ctx
+                (displayOptional "traces" traces rest))))))))))))
     where
       priorities = map displayPriority (kpriority k)
       traces = map (L () . displayTrace ctx . trace) (insts k)
