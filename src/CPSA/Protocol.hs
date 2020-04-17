@@ -300,6 +300,10 @@ mkRole name vars trace non pnon unique conf auth comment priority rev =
 firstOccurs :: Term -> Role -> Maybe Int
 firstOccurs v r = firstOccursAt v (rtrace r)
 
+
+
+
+
 -- Security Goals
 
 -- Syntax for the atomic formulas

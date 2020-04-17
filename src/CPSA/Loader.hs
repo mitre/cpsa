@@ -168,6 +168,8 @@ roleWellFormed role =
       mapM_ origVarCheck $ rvars role
       failwith "role trace is a prefix of a listener"
                    $ notListenerPrefix $ rtrace role
+      failwith "role trace has stor with no previous load"
+                   $ noBareStore $ rtrace role
     where
       terms = tterms (rtrace role)
       nonCheck (_, t) =
@@ -191,6 +193,25 @@ roleWellFormed role =
           failwith (showString "variable " $ showst v " not acquired")
                        $ not (isAcquiredVar v) ||
                          isJust (acquiredPos v (rtrace role))
+
+
+noBareStore :: Trace -> Bool 
+noBareStore c =
+    check c Nothing
+    where
+      check [] _ = True
+      check ((In (ChMsg ch _)) : c') _ 
+          | isLocn ch              = check c' (Just ch)
+          | otherwise              = check c' Nothing
+      check ((Out (ChMsg ch _)) : c') (Just ch') 
+          | ch == ch'              = check c' Nothing
+          | isLocn ch              = False 
+          | otherwise              = check c' Nothing
+      check ((Out (ChMsg ch _)) : c') Nothing 
+          | isLocn ch              = False
+          | otherwise              = check c' Nothing
+      check (e : c') _             = check c' Nothing
+
 
 failwith :: MonadFail m => String -> Bool -> m ()
 failwith msg test =
@@ -302,6 +323,11 @@ loadEvt vars (L _ [S _ "recv", ch, t]) =
       ch <- loadChan vars ch
       t <- loadTerm vars t
       return (In $ ChMsg ch t)
+loadEvt vars (L _ [S _ "load", ch, t]) =
+    do
+      ch <- loadLocn vars ch
+      t <- loadTerm vars t
+      return (In $ ChMsg ch t)
 loadEvt vars (L _ [S _ "send", t]) =
     do
       t <- loadTerm vars t
@@ -311,6 +337,12 @@ loadEvt vars (L _ [S _ "send", ch, t]) =
       ch <- loadChan vars ch
       t <- loadTerm vars t
       return (Out $ ChMsg ch t)
+loadEvt vars (L _ [S _ "stor", ch, t]) =
+    do
+      ch <- loadLocn vars ch
+      t <- loadTerm vars t
+      return (Out $ ChMsg ch t)
+             
 loadEvt _ (L pos [S _ dir, _]) =
     fail (shows pos $ "Unrecognized direction " ++ dir)
 loadEvt _ x = fail (shows (annotation x) "Malformed event")
@@ -322,6 +354,14 @@ loadChan vars x =
     case isChan ch || isLocn ch of
       True -> return ch
       False -> fail (shows (annotation x) "Expecting a channel or location")
+
+loadLocn :: MonadFail m => [Term] -> SExpr Pos -> m Term
+loadLocn vars x =
+  do
+    ch <- loadTerm vars x
+    case isLocn ch of
+      True -> return ch
+      False -> fail (shows (annotation x) "Expecting a location")
 
 loadBaseTerms :: MonadFail m => [Term] -> [SExpr Pos] -> m [Term]
 loadBaseTerms _ [] = return []

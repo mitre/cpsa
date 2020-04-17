@@ -157,11 +157,15 @@ displayTrace ctx trace =
       displayDt (In (Plain t)) =
         L () [S () "recv", displayTerm ctx t]
       displayDt (In (ChMsg ch t)) =
-        L () [S () "recv", displayTerm ctx ch, displayTerm ctx t]
+          case isLocn ch of
+            True ->  L () [S () "load", displayTerm ctx ch, displayTerm ctx t]
+            False -> L () [S () "recv", displayTerm ctx ch, displayTerm ctx t]
       displayDt (Out (Plain t)) =
         L () [S () "send", displayTerm ctx t]
       displayDt (Out (ChMsg ch t)) =
-        L () [S () "send", displayTerm ctx ch, displayTerm ctx t]
+          case isLocn ch of
+            True ->  L () [S () "stor", displayTerm ctx ch, displayTerm ctx t]
+            False -> L () [S () "send", displayTerm ctx ch, displayTerm ctx t]
 
 -- Display of preskeletons
 

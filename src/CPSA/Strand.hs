@@ -38,7 +38,7 @@ import CPSA.Algebra
 import CPSA.Channel
 import CPSA.Protocol
 
-{--
+--{--
 import System.IO.Unsafe
 import Control.Exception (try)
 import System.IO.Error (ioeGetErrorString)
@@ -2556,10 +2556,14 @@ doRewrites rules k r vas =
 
 doRewritesLoop :: [Rule] -> Preskel -> Int ->
                   [Preskel] -> [Preskel] -> [Preskel]
-doRewritesLoop _ _ lim _ _
+doRewritesLoop _ k0 lim [] _
   | lim >= ruleLimit =
-    error ("Aborting after applying " ++ show ruleLimit ++
-           " rules and more are applicable")
+    z k0 $ error ("Aborting after applying " ++ show ruleLimit ++
+                                                 " rules and more are applicable (1)")
+doRewritesLoop _ _ lim (k' : _) _
+  | lim >= ruleLimit =
+    z k' $ error ("Aborting after applying " ++ show ruleLimit ++
+                                                 " rules and more are applicable")
 doRewritesLoop _ _ _ [] ks = reverse ks
 doRewritesLoop rules k lim (k' : todo) ks =
   loop rules
