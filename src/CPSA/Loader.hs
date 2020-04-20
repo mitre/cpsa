@@ -107,7 +107,7 @@ loadRole gen pos (S _ name :
                   rest) =
     do
       (gen, vars) <- loadVars gen vars
-      c <- loadTrace vars (evt : c)
+      (gen, vars, pt_u, c) <- loadTrace gen vars (evt : c)  
       n <- loadPosBaseTerms vars (assoc "non-orig" rest)
       a <- loadPosBaseTerms vars (assoc "pen-non-orig" rest)
       u <- loadBaseTerms vars (assoc "uniq-orig" rest)
@@ -131,7 +131,7 @@ loadRole gen pos (S _ name :
       -- Drop rpnons that refer to unused variable declarations
       let as = L.filter (varsSeen vs . snd) a
       -- Drop runiques that refer to unused variable declarations
-      let us = L.filter (varsSeen vs) u
+      let us = L.filter (varsSeen vs) (u ++ pt_u)
       prios <- mapM (loadRolePriority (length c)) (assoc "priority" rest)
       let r = mkRole name vs c ns as us d h comment prios reverseSearch
       case roleWellFormed r of
@@ -210,7 +210,7 @@ noBareStore c =
       check ((Out (ChMsg ch _)) : c') Nothing 
           | isLocn ch              = False
           | otherwise              = check c' Nothing
-      check (e : c') _             = check c' Nothing
+      check (_ : c') _             = check c' Nothing
 
 
 failwith :: MonadFail m => String -> Bool -> m ()
@@ -310,42 +310,52 @@ badKey keys (L _ (S pos key : _) : xs)
     | otherwise = badKey keys xs
 badKey _ _ = return ()
 
-loadTrace :: MonadFail m => [Term] -> [SExpr Pos] -> m Trace
-loadTrace vars xs = mapM (loadEvt vars) xs
+loadTrace :: MonadFail m => Gen -> [Term] -> [SExpr Pos] -> m (Gen, [Term], [Term], Trace) 
+loadTrace gen vars xs =
+    loadTraceLoop gen [] [] [] xs
+    where
+      loadTraceLoop gen newVars uniqs events [] =
+          return (gen, vars ++ (reverse newVars),
+                  (reverse uniqs),
+                  reverse events)
+      loadTraceLoop gen newVars uniqs events ((L _ [S _ "recv", t]) : rest) =
+          do
+            t <- loadTerm vars t
+            loadTraceLoop gen newVars uniqs ((In $ Plain t) : events) rest
+      loadTraceLoop gen newVars uniqs events ((L _ [S _ "send", t]) : rest) =
+          do
+            t <- loadTerm vars t
+            loadTraceLoop gen newVars uniqs ((Out $ Plain t) : events) rest
+      loadTraceLoop gen newVars uniqs events ((L _ [S _ "recv", ch, t]) : rest) =
+          do
+            ch <- loadChan vars ch
+            t <- loadTerm vars t                 
+            loadTraceLoop gen newVars uniqs ((In $ ChMsg ch t) : events) rest
+      loadTraceLoop gen newVars uniqs events ((L _ [S _ "send", ch, t]) : rest) =
+          do
+            ch <- loadChan vars ch
+            t <- loadTerm vars t
+            loadTraceLoop gen newVars uniqs ((Out $ ChMsg ch t) : events) rest
+      loadTraceLoop gen newVars uniqs events ((L _ [S pos "load", ch, t]) : rest) =
+          do
+            ch <- loadLocn vars ch
+            t <- loadTerm vars t
+            (gen, pt, pt_t) <- loadLocnTerm gen (S pos "pt") (S pos "pval") t
+            loadTraceLoop gen (pt : newVars) uniqs
+                              ((In $ ChMsg ch pt_t) : events) rest
+      loadTraceLoop gen newVars uniqs events ((L _ [S pos "stor", ch, t]) : rest) =
+          do
+            ch <- loadLocn vars ch
+            t <- loadTerm vars t
+            (gen, pt, pt_t) <- loadLocnTerm gen (S pos "pt") (S pos "pval") t
+            loadTraceLoop gen (pt : newVars) (pt : uniqs)
+                              ((Out $ ChMsg ch pt_t) : events) rest
 
-loadEvt :: MonadFail m => [Term] -> SExpr Pos -> m Event
-loadEvt vars (L _ [S _ "recv", t]) =
-    do
-      t <- loadTerm vars t
-      return (In $ Plain t)
-loadEvt vars (L _ [S _ "recv", ch, t]) =
-    do
-      ch <- loadChan vars ch
-      t <- loadTerm vars t
-      return (In $ ChMsg ch t)
-loadEvt vars (L _ [S _ "load", ch, t]) =
-    do
-      ch <- loadLocn vars ch
-      t <- loadTerm vars t
-      return (In $ ChMsg ch t)
-loadEvt vars (L _ [S _ "send", t]) =
-    do
-      t <- loadTerm vars t
-      return (Out $ Plain t)
-loadEvt vars (L _ [S _ "send", ch, t]) =
-    do
-      ch <- loadChan vars ch
-      t <- loadTerm vars t
-      return (Out $ ChMsg ch t)
-loadEvt vars (L _ [S _ "stor", ch, t]) =
-    do
-      ch <- loadLocn vars ch
-      t <- loadTerm vars t
-      return (Out $ ChMsg ch t)
-             
-loadEvt _ (L pos [S _ dir, _]) =
-    fail (shows pos $ "Unrecognized direction " ++ dir)
-loadEvt _ x = fail (shows (annotation x) "Malformed event")
+      loadTraceLoop _ _ _ _ ((L pos [S _ dir, _, _]) : _) =
+          fail (shows pos $ "Unrecognized direction " ++ dir)
+      loadTraceLoop _ _ _ _ (x : _) =
+          fail (shows (annotation x) "Malformed event")
+
 
 loadChan :: MonadFail m => [Term] -> SExpr Pos -> m Term
 loadChan vars x =

@@ -1,6 +1,6 @@
 (herald "Envelope Protocol, location-based version"
-;;	(reverse-nodes)
-	(try-old-strands)
+   	(reverse-nodes)
+   	(try-old-strands)
 	(bound 30)
 	(limit 300)) 
 
@@ -35,7 +35,7 @@
 (defmacro (roles)
   (^
    ;; Power on sets the pcr to 0
-   (defrole tpm-power-on  
+   (defrole tpm-power-on 
      (vars (current-value mesg) (pcr locn) (tpm chan)) 
      (trace
       (recv tpm "power on")
@@ -231,13 +231,13 @@
   (defrule ordered-extends
     (forall ((y z strd) (pcr locn))
 	    (implies
-	     (and (p "tpm-extend-enc" y 3)
-		  (p "tpm-extend-enc" z 3)
+	     (and (p "tpm-extend-enc" y 4)
+		  (p "tpm-extend-enc" z 4)
 		  (p "tpm-extend-enc" "pcr" y pcr)
 		  (p "tpm-extend-enc" "pcr" z pcr))
 	     (or (= y z)
-		 (prec y 2 z 1)
-		 (prec z 2 y 1))))))
+		 (prec y 3 z 2)
+		 (prec z 3 y 2))))))
 
 
 (defskeleton envelope-plus
@@ -260,18 +260,6 @@
 (defprotocol envelope-plus-2 basic
   (roles)
   (genStV-rules)
-  
-
-  ;;   (defrule ordered-extends
-  ;;       (forall ((y z strd) (pcr locn))
-  ;;   	    (implies
-  ;;   	     (and (p "tpm-extend-enc" y 3)
-  ;;   		  (p "tpm-extend-enc" z 3)
-  ;;   		  (p "tpm-extend-enc" "pcr" y pcr)
-  ;;   		  (p "tpm-extend-enc" "pcr" z pcr))
-  ;;   	     (or (= y z)
-  ;;   		 (prec y 2 z 1)
-  ;;   		 (prec z 2 y 1)))))
 
   (defrule pcr-id-identifies-pcr 
     (forall ((y z strd) (pcr-id text) (pcr pcr-0 locn))
@@ -282,7 +270,7 @@
 		  (p "tpm-extend-enc" "pcr-id" z pcr-id)
 		  (p "tpm-extend-enc" "pcr" y pcr)
 		  (p "tpm-extend-enc" "pcr" z pcr-0))
-	     (= pcr pcr-0)))))
+	     (= pcr pcr-0))))) 
 
 (defskeleton envelope-plus-2
   (vars (v data))

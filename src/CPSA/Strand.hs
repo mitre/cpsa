@@ -38,7 +38,7 @@ import CPSA.Algebra
 import CPSA.Channel
 import CPSA.Protocol
 
---{--
+{--
 import System.IO.Unsafe
 import Control.Exception (try)
 import System.IO.Error (ioeGetErrorString)
@@ -739,7 +739,11 @@ authCm :: Preskel -> ChMsg -> Bool
 authCm k e =
   case cmChan e of
     Just ch -> elem ch (kauth k) ||
-               (isLocn ch && elem (cmTerm e) (kgenSt k))
+               (isLocn ch &&
+                (let t = (cmTerm e) in 
+                 elem t (kgenSt k) ||
+                 (isLocnMsg t &&
+                  elem (locnMsgPayload t) (kgenSt k))))
     Nothing -> False
 
 -- Isomorphism Check
@@ -2558,12 +2562,12 @@ doRewritesLoop :: [Rule] -> Preskel -> Int ->
                   [Preskel] -> [Preskel] -> [Preskel]
 doRewritesLoop _ k0 lim [] _
   | lim >= ruleLimit =
-    z k0 $ error ("Aborting after applying " ++ show ruleLimit ++
-                                                 " rules and more are applicable (1)")
+    error ("Aborting after applying " ++ show ruleLimit ++
+           " rules and more are applicable (1)")
 doRewritesLoop _ _ lim (k' : _) _
   | lim >= ruleLimit =
-    z k' $ error ("Aborting after applying " ++ show ruleLimit ++
-                                                 " rules and more are applicable")
+    error ("Aborting after applying " ++ show ruleLimit ++
+           " rules and more are applicable")
 doRewritesLoop _ _ _ [] ks = reverse ks
 doRewritesLoop rules k lim (k' : todo) ks =
   loop rules
