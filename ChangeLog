@@ -1,3 +1,8 @@
+2020-04-20  Joshua D. Guttman  <guttman@mitre.org>
+
+	* src/CPSA/Strand.hs (isAuth):  Added locations with point
+	structure and uniqueness assumptions.  
+
 2020-03-05  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* cpsa.cabal (Extra-Source-Files): Remove defunct CGI scripts.
