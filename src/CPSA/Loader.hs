@@ -15,6 +15,7 @@
 module CPSA.Loader (loadSExprs) where
 
 import Control.Monad
+
 import qualified Data.List as L
 import Data.Maybe (isJust)
 import CPSA.Lib.Utilities
@@ -73,13 +74,24 @@ loadProt nom origin pos (S _ name : S _ alg : x : xs)
         fail (shows pos $ "Expecting terms in algebra " ++ nom)
     | otherwise =
         do
-          (gen, rs, rest) <- loadRoles origin (x : xs)
+          (gen, rs, transRules, rest) <- loadRoles origin (x : xs)
           (gen, r) <- mkListenerRole pos gen
+          let (gen', scissors) = scissorsRule gen 
+          let (gen'', cake) = cakeRule gen' 
+          let (gen, neqs) = neqRules gen'' 
+          let initRls = scissors : cake : (neqs ++ transRules)
+
           -- Fake protocol is used only for loading rules
-          let fakeProt = mkProt name alg gen rs r [] []
-          (gen, rules, comment) <- loadRules fakeProt gen rest
+          let fakeProt = mkProt name alg gen rs r
+                         initRls
+                         []
+          (gen, newRls, comment) <- loadRules fakeProt gen rest
           -- Check for duplicate role names
-          validate (mkProt name alg gen rs r rules comment) rs
+          (validate
+           (mkProt name alg gen rs r
+                       (newRls ++ (rules fakeProt))
+                       comment)
+           rs)
     where
       validate prot [] = return prot
       validate prot (r : rs) =
@@ -91,28 +103,30 @@ loadProt nom origin pos (S _ name : S _ alg : x : xs)
                 fail (shows pos msg)
 loadProt _ _ pos _ = fail (shows pos "Malformed protocol")
 
-loadRoles :: MonadFail m => Gen -> [SExpr Pos] -> m (Gen, [Role], [SExpr Pos])
+loadRoles :: MonadFail m => Gen -> [SExpr Pos] -> m (Gen, [Role], [Rule], [SExpr Pos])
 loadRoles gen (L pos (S _ "defrole" : x) : xs) =
     do
-      (gen, r) <- loadRole gen pos x
-      (gen, rs, comment) <- loadRoles gen xs
-      return (gen, r : rs, comment)
+      (gen, r, rls) <- loadRole gen pos x
+      (gen, rs, rulesRest, comment) <- loadRoles gen xs
+      return (gen, r : rs, (rls ++ rulesRest), comment)
 loadRoles gen comment =
-    return (gen, [], comment)
+    return (gen, [], [], comment)
 
-loadRole :: MonadFail m => Gen -> Pos -> [SExpr Pos] -> m (Gen, Role)
+loadRole :: MonadFail m => Gen -> Pos -> [SExpr Pos] -> m (Gen, Role, [Rule])
 loadRole gen pos (S _ name :
                   L _ (S _ "vars" : vars) :
                   L _ (S _ "trace" : evt : c) :
                   rest) =
     do
       (gen, vars) <- loadVars gen vars
-      (gen, vars, pt_u, c) <- loadTrace gen vars (evt : c)  
+      (gen, vars, pt_u, c, indices) <-
+          loadTrace gen vars (evt : c)  
       n <- loadPosBaseTerms vars (assoc "non-orig" rest)
       a <- loadPosBaseTerms vars (assoc "pen-non-orig" rest)
       u <- loadBaseTerms vars (assoc "uniq-orig" rest)
       d <- loadBaseTerms vars (assoc "conf" rest)
       h <- loadBaseTerms vars (assoc "auth" rest)
+
       let keys = ["non-orig", "pen-non-orig", "uniq-orig", "conf", "auth"]
       comment <- alist keys rest
       let reverseSearch = hasKey "reverse-search" rest
@@ -134,8 +148,12 @@ loadRole gen pos (S _ name :
       let us = L.filter (varsSeen vs) (u ++ pt_u)
       prios <- mapM (loadRolePriority (length c)) (assoc "priority" rest)
       let r = mkRole name vs c ns as us d h comment prios reverseSearch
+
+      let (gen', transRls) = transRules gen r indices 
+      -- :: Gen -> Role -> [Int] -> (Gen, [Rule])
+      
       case roleWellFormed r of
-        Return () -> return (gen, r)
+        Return () -> return (gen', r, transRls)
         Fail msg -> fail (shows pos $ showString "Role not well formed: " msg)
 loadRole _ pos _ = fail (shows pos "Malformed role")
 
@@ -241,6 +259,100 @@ notListenerPrefix _ = True
 
 -- Protocol Rules
 
+-- foldM :: (Foldable t, Monad m) => (b -> a -> m b) -> b -> t a -> m b
+
+neqRules :: Gen -> (Gen, [Rule])
+neqRules g =
+    L.foldl
+    (\(g, rs) sortName ->
+         let (g', v) = newVar g "x" sortName in 
+         (g', ((Rule { rlname = "neqRule_" ++ sortName, 
+                      rlgoal = Goal {uvars =  [v],      
+                                     antec = [(AFact "neq" [v,v])], 
+                                     consq = [],
+                                     concl = []},
+                      rlcomment = [] }) : rs)))
+    (g,[])
+    ["mesg", "strd", "indx"]
+
+transRules :: Gen -> Role -> [Int] -> (Gen, [Rule])
+transRules g rl =
+    L.foldl
+     (\(g, rs) idx ->
+          let (g', z) = newVar g "z" "strd" in
+          let ti = (indxOfInt idx) in 
+          (g', (Rule { rlname = ("transRule_" ++ (rname rl) ++
+                                 "-at-" ++ (show idx)), 
+                       rlgoal = Goal {uvars =  [z],      
+                                      antec = [(Length rl z (indxOfInt (idx+1)))], 
+                                      consq = [([], -- no existentially
+                                                    -- bound vars
+                                                [(Trans (z,ti))])],
+                                      concl = [[(Trans (z,ti))]]},
+                      rlcomment = [] }) : rs))
+     (g, [])
+
+theVacuousRule :: Rule
+theVacuousRule =
+    (Rule { rlname = "vacuity", 
+            rlgoal = Goal {uvars =  [],      
+                           antec = [],
+                           consq = [([], [])], -- no bvs, no conjuncts 
+                           concl = [[]]},
+            rlcomment = [] })
+
+sortedVarsOfNames :: Gen -> String -> [String] -> (Gen, [Term])
+sortedVarsOfNames g sortName =
+    L.foldl
+    (\(g,vs) name ->
+         let (g', v) = newVar g name sortName in
+         (g', (v : vs)))
+    (g, []) 
+     
+scissorsRule :: Gen -> (Gen, Rule)
+scissorsRule g =
+    case sortedVarsOfNames g "strd" ["z0","z1","z2"] of
+      (g, [z0,z1,z2]) ->
+          case sortedVarsOfNames g "indx" ["i0","i1","i2"] of
+            (g, [i0,i1,i2]) -> 
+                (g, (Rule { rlname = "scissorsRule", 
+                        rlgoal =
+                            Goal
+                            {uvars = [z0,z1,z2,i0,i1,i2],      
+                             antec = [ (AFact "no-state-split" []), 
+                                       (Trans (z0,i0)), (Trans (z1,i1)), (Trans (z2,i2)),
+                                       (LeadsTo (z0,i0) (z1,i1)), (LeadsTo (z0,i0) (z2,i2)) ], 
+                             consq = [([],                -- no bvs
+                                       [(Equals z1 z2),   -- two eqns 
+                                        (Equals i1 i2)])], 
+                             concl = [[(Equals z1 z2),   -- two eqns 
+                                       (Equals i1 i2)]]},
+                        rlcomment = [] }))
+            (g, _) -> (g, theVacuousRule)
+      (g, _) -> (g, theVacuousRule)
+
+cakeRule :: Gen -> (Gen, Rule)
+cakeRule g =
+    case sortedVarsOfNames g "strd" ["z0","z1","z2"] of
+      (g, [z0,z1,z2]) ->
+          case sortedVarsOfNames g "indx" ["i0","i1","i2"] of
+            (g, [i0,i1,i2]) -> 
+                (g,
+                 (Rule { rlname = "cakeRule", 
+                         rlgoal =
+                             Goal
+                             {uvars = [z0,z1,z2,i0,i1,i2],      
+                              antec = [ (Trans (z0,i0)), (Trans (z1,i1)), 
+                                        (LeadsTo (z0,i0) (z1,i1)), (LeadsTo (z0,i0) (z2,i2)),
+                                        (Prec (z2,i2) (z1,i1)) ], 
+                              consq = [], -- implies False
+                              concl = []},
+                         rlcomment = [] }))
+            (g, _) -> (g, theVacuousRule)
+      (g, _) -> (g, theVacuousRule)
+      
+
+
 loadRules :: MonadFail m => Prot -> Gen -> [SExpr Pos] ->
              m (Gen, [Rule], [SExpr ()])
 loadRules prot g (L pos (S _ "defrule" : x) : xs) =
@@ -310,50 +422,60 @@ badKey keys (L _ (S pos key : _) : xs)
     | otherwise = badKey keys xs
 badKey _ _ = return ()
 
-loadTrace :: MonadFail m => Gen -> [Term] -> [SExpr Pos] -> m (Gen, [Term], [Term], Trace) 
+loadTrace :: MonadFail m => Gen -> [Term] -> [SExpr Pos] -> m (Gen, [Term], [Term], Trace, [Int]) 
 loadTrace gen vars xs =
-    loadTraceLoop gen [] [] [] xs
+    loadTraceLoop gen [] [] [] [] 0 xs
     where
-      loadTraceLoop gen newVars uniqs events [] =
+      loadTraceLoop gen newVars uniqs events trInds _ [] =
           return (gen, vars ++ (reverse newVars),
                   (reverse uniqs),
-                  reverse events)
-      loadTraceLoop gen newVars uniqs events ((L _ [S _ "recv", t]) : rest) =
+                  reverse events,
+                  reverse trInds)
+      loadTraceLoop gen newVars uniqs events trInds i ((L _ [S _ "recv", t]) : rest) =
           do
             t <- loadTerm vars t
-            loadTraceLoop gen newVars uniqs ((In $ Plain t) : events) rest
-      loadTraceLoop gen newVars uniqs events ((L _ [S _ "send", t]) : rest) =
+            loadTraceLoop gen newVars uniqs ((In $ Plain t) : events) trInds (i+1) rest
+      loadTraceLoop gen newVars uniqs events trInds i ((L _ [S _ "send", t]) : rest) =
           do
             t <- loadTerm vars t
-            loadTraceLoop gen newVars uniqs ((Out $ Plain t) : events) rest
-      loadTraceLoop gen newVars uniqs events ((L _ [S _ "recv", ch, t]) : rest) =
+            loadTraceLoop gen newVars uniqs ((Out $ Plain t) : events) trInds (i+1) rest
+      loadTraceLoop gen newVars uniqs events trInds i ((L _ [S _ "recv", ch, t]) : rest) =
           do
             ch <- loadChan vars ch
             t <- loadTerm vars t                 
-            loadTraceLoop gen newVars uniqs ((In $ ChMsg ch t) : events) rest
-      loadTraceLoop gen newVars uniqs events ((L _ [S _ "send", ch, t]) : rest) =
+            loadTraceLoop gen newVars uniqs ((In $ ChMsg ch t) : events) trInds (i+1) rest
+      loadTraceLoop gen newVars uniqs events trInds i ((L _ [S _ "send", ch, t]) : rest) =
           do
             ch <- loadChan vars ch
             t <- loadTerm vars t
-            loadTraceLoop gen newVars uniqs ((Out $ ChMsg ch t) : events) rest
-      loadTraceLoop gen newVars uniqs events ((L _ [S pos "load", ch, t]) : rest) =
+            loadTraceLoop gen newVars uniqs ((Out $ ChMsg ch t) : events) trInds (i+1) rest
+      loadTraceLoop gen newVars uniqs events trInds i ((L _ [S pos "load", ch, t]) : rest) =
           do
             ch <- loadLocn vars ch
             t <- loadTerm vars t
             (gen, pt, pt_t) <- loadLocnTerm gen (S pos "pt") (S pos "pval") t
-            loadTraceLoop gen (pt : newVars) uniqs
-                              ((In $ ChMsg ch pt_t) : events) rest
-      loadTraceLoop gen newVars uniqs events ((L _ [S pos "stor", ch, t]) : rest) =
+            (ch', trInds') <-
+                (case rest of
+                   (L _ [S _ "stor", ch', _]) : _ ->
+                       (do
+                         ch' <- loadLocn vars ch'
+                         return (ch', (i : trInds)))
+                   _ -> return (ch, trInds))
+            case ch == ch' of
+                   False -> fail (shows pos ("distinct locns in load/stor pair"))
+                   True -> loadTraceLoop gen (pt : newVars) uniqs
+                           ((In $ ChMsg ch pt_t) : events) trInds' (i+1) rest      
+      loadTraceLoop gen newVars uniqs events trInds i ((L _ [S pos "stor", ch, t]) : rest) =
           do
             ch <- loadLocn vars ch
             t <- loadTerm vars t
             (gen, pt, pt_t) <- loadLocnTerm gen (S pos "pt") (S pos "pval") t
             loadTraceLoop gen (pt : newVars) (pt : uniqs)
-                              ((Out $ ChMsg ch pt_t) : events) rest
+                              ((Out $ ChMsg ch pt_t) : events) (i : trInds) (i+1) rest
 
-      loadTraceLoop _ _ _ _ ((L pos [S _ dir, _, _]) : _) =
+      loadTraceLoop _ _ _ _ _ _ ((L pos [S _ dir, _, _]) : _) =
           fail (shows pos $ "Unrecognized direction " ++ dir)
-      loadTraceLoop _ _ _ _ (x : _) =
+      loadTraceLoop _ _ _ _ _ _ (x : _) =
           fail (shows (annotation x) "Malformed event")
 
 
@@ -825,6 +947,25 @@ loadPrimary _ _ kvars (L pos (S _ "fact" : S _ name : fs)) =
   do
     fs <- mapM (loadTerm kvars) fs
     return (pos, AFact name fs)
+loadPrimary _ _ kvars (L pos [S _ "comm-pr", w, x, y, z]) =
+  do
+    t <- loadNodeTerm kvars w x
+    t' <- loadNodeTerm kvars y z
+    return (pos, Commpair t t')
+loadPrimary _ _ kvars (L pos [S _ "state-node", w, x]) =
+  do
+    t <- loadNodeTerm kvars w x
+    return (pos, StateNode t)
+loadPrimary _ _ kvars (L pos [S _ "trans", w, x]) =
+  do
+    t <- loadNodeTerm kvars w x
+    return (pos, Trans t)
+loadPrimary _ _ kvars (L pos [S _ "leads-to", w, x, y, z]) =
+  do
+    t <- loadNodeTerm kvars w x
+    t' <- loadNodeTerm kvars y z
+    return (pos, LeadsTo t t')
+           
 loadPrimary _ _ kvars (L pos [S _ "prec", w, x, y, z]) =
   do
     t <- loadNodeTerm kvars w x
@@ -976,6 +1117,19 @@ roleSpecific unbound (pos, Auth t)
 roleSpecific unbound (pos, AFact _ fs)
   | all (allBound unbound) fs = return unbound
   | otherwise = fail (shows pos "Unbound variable in fact")
+roleSpecific unbound (pos, Commpair (z, _) (z', _))
+  | L.notElem z unbound && L.notElem z' unbound = return unbound
+  | otherwise = fail (shows pos "Unbound variable in comm-pr")
+roleSpecific unbound (pos, LeadsTo (z, _) (z', _))
+  | L.notElem z unbound && L.notElem z' unbound = return unbound
+  | otherwise = fail (shows pos "Unbound variable in leads-to")
+roleSpecific unbound (pos, StateNode (z, _))
+  | L.notElem z unbound = return unbound
+  | otherwise = fail (shows pos "Unbound variable in state-node")
+roleSpecific unbound (pos, Trans (z, _))
+  | L.notElem z unbound = return unbound
+  | otherwise = fail (shows pos "Unbound variable in trans")
+
 roleSpecific unbound (pos, Equals t t')
   | isStrdVar t && isStrdVar t' =
     case L.notElem t unbound && L.notElem t' unbound of

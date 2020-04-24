@@ -244,6 +244,7 @@ type Node = (Sid, Int)
 
 type Pair = (Node, Node)
 
+
 -- Graphs of preskeletons
 
 -- A strand is what is referred to by a strand ID.
@@ -672,6 +673,37 @@ pairWellOrdered (n0, n1) =
     case (event n0, event n1) of
       (Out _, In _) -> True
       _ -> False
+
+data Dir = Recv | Send 
+
+dirChMsgOfNode :: Node -> Preskel -> Maybe (Dir, ChMsg )
+dirChMsgOfNode (i, j) k =
+    do
+      s <- maybeNth (strands k) i
+      gn <- maybeNth (nodes s) j
+      return (case event gn of
+                In chMsg -> (Recv, chMsg)
+                Out chMsg -> (Send, chMsg))
+
+genNodes :: Preskel -> [Node]
+genNodes k =
+    let strs = strands k in 
+    let strCnt = L.length strs in 
+    [(i,j) | i <- [0..strCnt-1],
+                  j <- [0 .. (L.length (nodes (strs !! i)))-1] ]
+
+--   genSids :: Preskel -> [Sid]
+--   genSids k = [0 .. (L.length (strands k))-1]
+
+--   nodesOfSid :: Preskel -> Sid -> [Node]
+--   nodesOfSid k i =
+--       let strs = strands k in
+--       let strCnt = L.length strs in
+--       case i < strCnt of
+--         True -> [(i,j) | j <- [0 .. (L.length (nodes (strs !! i)))-1] ] 
+--         False -> [] 
+
+            
 
 -- The terms used in the strands in this preskeleton.
 -- Should this return a set, or a multiset?
@@ -2314,6 +2346,17 @@ satisfy (Conf t) = ggconf t
 satisfy (Auth t) = ggauth t
 satisfy (AFact name fs) = gafact name fs
 satisfy (Equals t t') = geq t t'
+satisfy (Commpair n n') = gcommpair n n'
+satisfy (StateNode n) = gstateNode n
+satisfy (Trans (t, t')) = gafact "trans" [t, t']
+satisfy (LeadsTo n n') =
+    \k ge ->
+        do
+          ge <- satisfy (Commpair n n') k ge
+          ge <- satisfy (Prec n n') k ge
+          ge <- satisfy (StateNode n) k ge
+          -- Commpair entails StateNode n' too 
+          return ge 
 
 -- Role length predicate
 -- r and h determine the predicate, which has arity one.
@@ -2515,6 +2558,97 @@ geq t t' _ (g, e)
     ti = instantiate e t
     ti' = instantiate e t'
 
+--   satisfy (StateNode n) = gstateNode n
+
+
+isStateChMsg :: ChMsg -> Bool
+isStateChMsg (Plain _) = False 
+isStateChMsg (ChMsg c _) = isLocn c
+
+nodeIsStateNode :: Preskel -> Node -> Bool
+nodeIsStateNode k p =
+    case dirChMsgOfNode p k of
+      Nothing -> False 
+      Just (_,chm) -> isStateChMsg chm
+         
+
+gstateNode :: NodeTerm -> Sem
+gstateNode n k (g, e) =
+    case nodeLookup e n of
+      Just p ->
+          case nodeIsStateNode k p of
+            True -> [(g,e)]
+            False -> []
+      Nothing ->
+          do
+            p <- filter (nodeIsStateNode k) $ genNodes k
+            (g,e) <- nodeMatch n p (g,e) 
+            return (g, e)
+                   
+nullSem :: Sem
+nullSem _ _ = [] 
+
+chMsgMatch :: ChMsg -> ChMsg -> Sem
+chMsgMatch chmsg chmsg' k e =
+    case chmsg of
+      Plain m ->
+          (case chmsg' of
+             Plain m' ->
+                 case m == m' of
+                   True -> [e]
+                   False -> nullSem k e 
+             ChMsg _ _ -> nullSem k e)
+      ChMsg c m ->
+          (case chmsg' of
+             Plain _ -> nullSem k e
+             ChMsg c' m' ->
+                 case c == c' && m == m' of
+                   True -> [e]
+                   False -> nullSem k e)
+
+
+dirMsgMatch :: Node -> Node -> Sem
+dirMsgMatch p p' k e =
+    case dirChMsgOfNode p k of
+      Nothing -> [] 
+      Just (Recv, _) -> [] 
+      Just (Send, chmsg) ->
+          case dirChMsgOfNode p' k of
+            Nothing -> [] 
+            Just (Send, _) -> []
+            Just (Recv, chmsg') ->
+                chMsgMatch chmsg chmsg' k e
+      
+
+gcommpair :: NodeTerm -> NodeTerm -> Sem
+gcommpair n n' k (g, e) =
+    case (nodeLookup e n, nodeLookup e n') of
+      (Just p, Just p') -> dirMsgMatch p p' k (g, e)
+      (Just p, Nothing) ->
+          do
+            p' <- genNodes k
+            (g, e) <- nodeMatch n' p' (g, e)
+            dirMsgMatch p p' k (g, e)
+      (Nothing, Just p') -> 
+          do
+            p <- genNodes k
+            (g, e) <- nodeMatch n p (g, e)
+            dirMsgMatch p p' k (g, e)
+      (Nothing, Nothing) ->
+          do
+            p <- genNodes k
+            (g, e) <- nodeMatch n p (g, e)
+            p' <- genNodes k
+            (g, e) <- nodeMatch n' p' (g, e)
+            dirMsgMatch p p' k (g, e)
+
+
+
+
+
+
+
+
 -- Rules
 
 -- Try simplifying k if possible
@@ -2560,11 +2694,11 @@ doRewrites rules k r vas =
 
 doRewritesLoop :: [Rule] -> Preskel -> Int ->
                   [Preskel] -> [Preskel] -> [Preskel]
-doRewritesLoop _ k0 lim [] _
+doRewritesLoop _ _ lim [] _
   | lim >= ruleLimit =
     error ("Aborting after applying " ++ show ruleLimit ++
            " rules and more are applicable (1)")
-doRewritesLoop _ _ lim (k' : _) _
+doRewritesLoop _ _ lim (_ : _) _
   | lim >= ruleLimit =
     error ("Aborting after applying " ++ show ruleLimit ++
            " rules and more are applicable")
@@ -2631,6 +2765,19 @@ rwt rule (Conf t) = rlconf rule t
 rwt rule (Auth t) = rlauth rule t
 rwt rule (AFact name fs) = rafact rule name fs
 rwt rule (Equals t t') = req rule t t'
+rwt rule (Commpair n n') = rcommpair rule n n'
+rwt rule (StateNode n) = rstateNode rule n
+rwt rule (Trans (t,t')) = rafact rule "trans" [t, t']
+rwt rule (LeadsTo n n') =
+    \k ge ->
+        do
+          (k,ge) <- rwt rule (Commpair n n') k ge
+          (k,ge) <- rwt rule (Prec n n') k ge
+          (k,ge) <- rwt rule (StateNode n) k ge
+          -- Commpair entails StateNode n' too 
+          return (k,ge) 
+
+
 
 rlength :: String -> Role -> Term -> Term -> Rewrite
 rlength name r z ht k (g, e) =
@@ -2990,3 +3137,41 @@ req name x y k (g, e)
     where
       u = instantiate e x
       v = instantiate e y
+
+rcommpair :: String -> NodeTerm -> NodeTerm -> Rewrite
+rcommpair name n n' k (g, e) =
+  case nodeLookup e n of
+    Nothing -> error ("In rule " ++ name ++ ", comm-pair did not get two node terms")
+    (Just p) ->
+        (case dirChMsgOfNode p k of
+           Nothing -> [] 
+           Just (Recv, _) -> [] 
+           Just (Send, chmsg) ->
+               (case nodeLookup e n' of
+                  Nothing -> error ("In rule " ++ name ++ ", comm-pair did not get two node terms")
+                  Just p' -> 
+                      (case dirChMsgOfNode p' k of
+                         Nothing -> [] 
+                         Just (Send, _) -> []
+                         Just (Recv, chmsg') ->
+                             (case (chmsg, chmsg') of
+                                (Plain _, ChMsg _ _) -> []
+                                (ChMsg _ _, Plain _) -> [] 
+                                (Plain m, Plain m')  -> req name m m' k (g, e)
+                                (ChMsg c m, ChMsg c' m') ->
+                                    do
+                                      (k, (g,e)) <- req name c c' k (g, e)
+                                      (k, (g,e)) <- req name m m' k (g, e)
+                                      return (k, (g,e))))))
+
+                                     
+rstateNode :: String -> NodeTerm -> Rewrite
+rstateNode name n k (g, e) =
+    case nodeLookup e n of
+      Just p ->
+          (case nodeIsStateNode k p of
+             True -> [(k, (g, e))]
+             False -> [])
+      _ -> error ("In rule " ++ name ++ ", state-node did not get a node term")
+            
+          

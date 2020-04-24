@@ -320,6 +320,10 @@ data AForm
   | Auth Term
   | AFact String [Term]
   | Equals Term Term
+  | Commpair NodeTerm NodeTerm
+  | StateNode NodeTerm
+  | Trans NodeTerm
+  | LeadsTo NodeTerm NodeTerm  
   deriving Show
 
 type NodeTerm = (Term, Term)
@@ -331,6 +335,37 @@ data Goal
            consq :: [([Term], [AForm])],
            concl :: [[AForm]] }      -- Conclusion
     deriving Show
+
+indexOfAForm :: AForm -> Int
+indexOfAForm (Length _ _ _) = 0
+indexOfAForm (Param _ _ _ _ _) = 1
+indexOfAForm (Prec _ _) = 2
+indexOfAForm (Non _) = 3
+indexOfAForm (Pnon _) = 4
+indexOfAForm (Uniq _) = 5
+indexOfAForm (UniqAt _ _) = 6
+indexOfAForm (GenStV _) = 7
+indexOfAForm (Conf _) = 8
+indexOfAForm (Auth _) = 9
+indexOfAForm (AFact _ _) = 10 
+indexOfAForm (Equals _ _) = 11
+indexOfAForm (Commpair _ _) = 12
+indexOfAForm (StateNode _) = 13
+indexOfAForm (Trans _) = 14
+indexOfAForm (LeadsTo _ _) = 15
+
+aFormOrder :: AForm -> AForm -> Ordering
+aFormOrder f f' =
+    let i = indexOfAForm f in
+    let i' = indexOfAForm f' in
+    case i == i' of
+      True -> EQ
+      False ->
+          (case i < i' of
+             True -> LT
+             False -> GT)
+
+{--  -- Unmaintainable version that we had before!
 
 -- Ordering used to sort by constructor order.
 aFormOrder :: AForm -> AForm -> Ordering
@@ -478,6 +513,7 @@ aFormOrder (Equals _ _) (Conf _ ) = GT
 aFormOrder (Equals _ _) (Auth _) = GT
 aFormOrder (Equals _ _) (AFact _ _) = GT
 aFormOrder (Equals _ _) (Equals _ _) = EQ
+--}
 
 aFreeVars :: [Term] -> AForm -> [Term]
 aFreeVars vars (Length _ z _) = addVars vars z
@@ -492,6 +528,13 @@ aFreeVars vars (Conf t) = addVars vars t
 aFreeVars vars (Auth t) = addVars vars t
 aFreeVars vars (AFact _ ft) = foldl addVars vars ft
 aFreeVars vars (Equals x y) = addVars (addVars vars x) y
+aFreeVars vars (Commpair (s,t) (s',t')) = addVars (addVars (addVars (addVars vars s) t) s') t' 
+aFreeVars vars (StateNode (s,t)) = addVars (addVars vars s) t
+aFreeVars vars (Trans (s,t)) = addVars (addVars vars s) t
+aFreeVars vars (LeadsTo (s,t) (s',t')) = addVars (addVars (addVars (addVars vars s) t) s') t' 
+
+
+
 
 data Rule
   = Rule { rlname :: String,    -- Name of rule

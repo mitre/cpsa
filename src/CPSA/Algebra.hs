@@ -75,6 +75,7 @@ module CPSA.Algebra (name,
     gmerge,
     clone,
     loadVars,
+    newVar, 
 
     Term,
     isVar,
@@ -135,10 +136,12 @@ module CPSA.Algebra (name,
     addToContext,
     displayVars,
     displayTerm,
+    displayTermNoPt,
+    notPt,
     displayEnv,
     displaySubst) where
 
-import Control.Monad (foldM)
+import Control.Monad -- (foldM)
 import qualified Data.List as L
 import qualified Data.Set as S
 import Data.Set (Set)
@@ -964,12 +967,12 @@ strdUpdate (Env e) f =
     h (Z z) = Z $ f z
     h t = t
 
-indxMatch ::  Term -> Int -> (Gen, Env) -> [(Gen, Env)]
-indxMatch t t' (g, e) =
-       maybe [] (\e -> [(g, e)]) $ indxMatchI t t' e
-
-indxMatchI ::  Term -> Int -> Env -> Maybe Env
-indxMatchI t p env = matchI t (Y p) env
+--   indxMatch ::  Term -> Int -> (Gen, Env) -> [(Gen, Env)]
+--   indxMatch t t' (g, e) =
+--          maybe [] (\e -> [(g, e)]) $ indxMatchI t t' e
+--   
+--   indxMatchI ::  Term -> Int -> Env -> Maybe Env
+--   indxMatchI t p env = matchI t (Y p) env
 
 indxLookup :: Env -> Term -> Maybe Int
 indxLookup env t =
@@ -1015,6 +1018,7 @@ loadVar (gen, vars) (S pos name, S pos' sort) =
             return (gen', p : vars)
 loadVar _ (x,_) = fail (shows (annotation x) "Bad variable syntax")
 
+
 mkVar :: MonadFail m => Pos -> String -> Id -> m Term
 mkVar pos sort x
   | sort == "mesg" = return $ I x
@@ -1029,6 +1033,30 @@ mkVar pos sort x
   | sort == "strd" = return $ D x
   | sort == "indx" = return $ X x
   | otherwise = fail (shows pos "Sort " ++ sort ++ " not recognized")
+
+
+
+newVar :: Gen -> String -> String -> (Gen, Term)
+newVar g varName varSort =
+    let (g', x) = freshId g varName in 
+    (g', mkVarUnfailingly varSort x)
+                        
+mkVarUnfailingly :: String -> Id -> Term
+mkVarUnfailingly sort x
+  | sort == "mesg" =  I x
+  | sort == "text" =  F Text [I x]
+  | sort == "data" =  F Data [I x]
+  | sort == "name" =  F Name [I x]
+  | sort == "pval" =  F Pval [I x]
+  | sort == "skey" =  F Skey [I x]
+  | sort == "akey" =  F Akey [I x]
+  | sort == "chan" =  F Chan [I x]
+  | sort == "locn" =  F Locn [I x]
+  | sort == "strd" =  D x
+  | sort == "indx" =  X x
+  | otherwise =  I x    -- Default:  Var of sort mesg
+
+
 
 loadLookup :: Pos -> [Term] -> String -> Either String Term
 loadLookup pos [] name = Left (shows pos $ "Identifier " ++ name ++ " unknown")
@@ -1257,6 +1285,10 @@ displayId (Context ctx) x =
           error $ "Algebra.displayId: Cannot find variable " ++ msg
       Just name -> S () name
 
+notPt :: Term -> Bool
+notPt (F Pval [I _]) = False
+notPt _ = True 
+
 displayTerm :: Context -> Term -> SExpr ()
 displayTerm ctx (I x) = displayId ctx x
 displayTerm ctx (F Text [I x]) = displayId ctx x
@@ -1290,6 +1322,47 @@ displayTerm _ (Z z) = N () z
 displayTerm ctx (X x) = displayId ctx x
 displayTerm _ (Y z) = N () z
 displayTerm _ t = error ("Algebra.displayTerm: Bad term " ++ show t)
+
+
+displayTermNoPt :: Context -> Term -> SExpr ()
+displayTermNoPt ctx (I x) = displayId ctx x
+displayTermNoPt ctx (F Text [I x]) = displayId ctx x
+displayTermNoPt ctx (F Data [I x]) = displayId ctx x
+displayTermNoPt ctx (F Name [I x]) = displayId ctx x
+displayTermNoPt _ (F Pval [I _]) = S () "" -- displayId ctx x
+displayTermNoPt ctx (F Skey [I x]) = displayId ctx x
+displayTermNoPt ctx (F Skey [F Ltk [I x, I y]]) =
+    L () [S () "ltk", displayId ctx x, displayId ctx y]
+displayTermNoPt ctx (F Akey [t]) =
+    case t of
+      I x -> displayId ctx x
+      F Invk [I x] -> L () [S () "invk", displayId ctx x]
+      F Pubk [I x] -> L () [S () "pubk", displayId ctx x]
+      F Pubk [C c, I x] -> L () [S () "pubk", Q () c, displayId ctx x]
+      F Invk [F Pubk [I x]] -> L () [S () "privk", displayId ctx x]
+      F Invk [F Pubk [C c, I x]] ->
+          L () [S () "privk", Q () c, displayId ctx x]
+      _ -> error ("Algebra.displayAkey: Bad term " ++ show t)
+displayTermNoPt ctx (F Chan [I x]) = displayId ctx x
+displayTermNoPt ctx (F Locn [I x]) = displayId ctx x
+displayTermNoPt _ (C t) = Q () t
+displayTermNoPt ctx (F Cat [t0, t1]) =
+    case t0 of
+      (F Pval [I _]) -> displayTermNoPt ctx t1
+      _ -> L () (S () "cat" : displayTermNoPt ctx t0 : displayList ctx t1) 
+displayTermNoPt ctx (F Enc [t0, t1]) =
+    L () (S () "enc" : displayEnc ctx t0 t1)
+displayTermNoPt ctx (F Hash [t]) =
+    L () (S () "hash" : displayList ctx t)
+displayTermNoPt ctx (D x) = displayId ctx x
+displayTermNoPt _ (Z z) = N () z
+displayTermNoPt ctx (X x) = displayId ctx x
+displayTermNoPt _ (Y z) = N () z
+displayTermNoPt _ t = error ("Algebra.displayTermNoPt: Bad term " ++ show t)
+                  
+
+
+
 
 displayList :: Context -> Term -> [SExpr ()]
 displayList ctx (F Cat [t0, t1]) = displayTerm ctx t0 : displayList ctx t1

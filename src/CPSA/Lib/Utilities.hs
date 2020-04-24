@@ -42,6 +42,13 @@ replaceNth _ n _
     | n < 0 = error "Utilities.replaceNth: negative index"
     | otherwise = error "Utilities.replaceNth: negative index"
 
+maybeNth :: [a] -> Int -> Maybe a
+maybeNth as i =
+    case i < L.length as of
+      True -> Just (as !! i)
+      False -> Nothing
+               
+
 -- Returns a list of the natural numbers less that the argument.
 {-# INLINE nats #-}
 nats :: Int -> [Int]

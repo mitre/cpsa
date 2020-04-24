@@ -1,0 +1,1551 @@
+(comment "CPSA 4.2.3")
+(comment "Extracted shapes")
+
+(herald "Envelope Protocol, location-based version" (try-old-strands)
+  (bound 30) (limit 300))
+
+(comment "CPSA 4.2.3")
+
+(comment "All input read from sync_locn_envelope.scm")
+
+(comment "Step count limited to 300")
+
+(comment "Strand count bounded at 30")
+
+(comment "Old strands tried first")
+
+(defprotocol envelope basic
+  (defrole tpm-power-on
+    (vars (current-value mesg) (pcr locn) (tpm chan))
+    (trace (recv tpm "power on") (load pcr current-value)
+      (stor pcr "0")))
+  (defrole tpm-extend-enc
+    (vars (value current-value mesg) (pcr-id nonce text) (pcr locn)
+      (tpm chan))
+    (trace (send tpm (cat "token" nonce))
+      (recv tpm (cat "extend" pcr-id value (hash pcr-id value nonce)))
+      (load pcr current-value) (stor pcr (hash current-value value))
+      (send "ext ok"))
+    (uniq-orig nonce))
+  (defrole tpm-quote
+    (vars (nonce current-value mesg) (pcr-id text) (aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat "quote" pcr-id nonce))
+      (load pcr current-value)
+      (send (enc "quote" pcr-id current-value nonce aik))))
+  (defrole tpm-create-key
+    (vars (k aik akey) (pcr-id text) (pcrval mesg) (tpm chan))
+    (trace (recv tpm (cat "create-req" pcr-id pcrval))
+      (send (enc "created" k pcr-id pcrval aik)))
+    (non-orig (invk k))
+    (uniq-orig k)
+    (auth tpm))
+  (defrole tpm-decrypt
+    (vars (m current-value mesg) (pcr-id text) (k aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat "decrypt" (enc m k)))
+      (recv (enc "created" k pcr-id current-value aik))
+      (load pcr current-value) (send m))
+    (non-orig aik))
+  (defrole alice
+    (vars (n v data) (pcr-id nonce text) (k aik akey) (tpm chan))
+    (trace (recv tpm (cat "token" nonce))
+      (send tpm (cat "extend" pcr-id n (hash pcr-id n nonce)))
+      (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
+      (recv (enc "created" k pcr-id (hash (hash "0" n) "obtain") aik))
+      (send (enc v k)))
+    (non-orig aik)
+    (uniq-orig n v)
+    (conf tpm)
+    (neq (k aik)))
+  (defrule genStV-if-hashed-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-extend-enc" z 3)
+          (p "tpm-extend-enc" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-not-catted-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-extend-enc" z 2)
+          (p "tpm-extend-enc" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (cat v1 v2)))
+        (false)))))
+
+(defskeleton envelope
+  (vars (pcr-id nonce text) (v n data) (k aik akey) (tpm chan))
+  (deflistener v)
+  (defstrand alice 5 (pcr-id pcr-id) (nonce nonce) (n n) (v v) (k k)
+    (aik aik) (tpm tpm))
+  (non-orig aik)
+  (uniq-orig v n)
+  (conf tpm)
+  (traces ((recv v) (send v))
+    ((recv tpm (cat "token" nonce))
+      (send tpm (cat "extend" pcr-id n (hash pcr-id n nonce)))
+      (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
+      (recv (enc "created" k pcr-id (hash (hash "0" n) "obtain") aik))
+      (send (enc v k))))
+  (label 0)
+  (unrealized (0 0) (1 3))
+  (preskeleton)
+  (origs (v (1 4)) (n (1 1)))
+  (comment "Not a skeleton"))
+
+(defskeleton envelope
+  (vars (pcr-id pcr-id-0 nonce nonce-0 text) (v n data) (k aik akey)
+    (tpm tpm-0 tpm-1 chan) (pcr locn))
+  (deflistener v)
+  (defstrand alice 5 (pcr-id pcr-id) (nonce nonce-0) (n n) (v v) (k k)
+    (aik aik) (tpm tpm-1))
+  (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
+    (pcr-id pcr-id) (k k) (aik aik) (tpm tpm-1))
+  (defstrand tpm-decrypt 4 (m v)
+    (current-value (hash (hash "0" n) "obtain")) (pcr-id pcr-id) (k k)
+    (aik aik) (tpm tpm) (pcr pcr))
+  (defstrand tpm-extend-enc 4 (value "obtain")
+    (current-value (hash "0" n)) (pcr-id pcr-id-0) (nonce nonce)
+    (tpm tpm-0) (pcr pcr))
+  (defstrand tpm-extend-enc 4 (value n) (current-value "0")
+    (pcr-id pcr-id) (nonce nonce-0) (tpm tpm-1) (pcr pcr))
+  (precedes ((1 1) (5 1)) ((1 2) (2 0)) ((1 4) (3 0)) ((2 1) (1 3))
+    ((3 3) (0 0)) ((4 3) (3 2)) ((5 0) (1 0)) ((5 3) (4 2)))
+  (non-orig aik (invk k))
+  (uniq-orig nonce nonce-0 v n k)
+  (genStV (hash "0" n) (hash (hash "0" n) "obtain"))
+  (conf tpm-1)
+  (auth tpm-1)
+  (operation channel-test (displaced 6 1 alice 2)
+    (ch-msg tpm-1 (cat "extend" pcr-id-1 n (hash pcr-id-1 n nonce-0)))
+    (5 1))
+  (traces ((recv v) (send v))
+    ((recv tpm-1 (cat "token" nonce-0))
+      (send tpm-1 (cat "extend" pcr-id n (hash pcr-id n nonce-0)))
+      (send tpm-1
+        (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
+      (recv (enc "created" k pcr-id (hash (hash "0" n) "obtain") aik))
+      (send (enc v k)))
+    ((recv tpm-1 (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
+      (send (enc "created" k pcr-id (hash (hash "0" n) "obtain") aik)))
+    ((recv tpm (cat "decrypt" (enc v k)))
+      (recv (enc "created" k pcr-id (hash (hash "0" n) "obtain") aik))
+      (load pcr (hash (hash "0" n) "obtain")) (send v))
+    ((send tpm-0 (cat "token" nonce))
+      (recv tpm-0
+        (cat "extend" pcr-id-0 "obtain" (hash pcr-id-0 "obtain" nonce)))
+      (load pcr (hash "0" n)) (stor pcr (hash (hash "0" n) "obtain")))
+    ((send tpm-1 (cat "token" nonce-0))
+      (recv tpm-1 (cat "extend" pcr-id n (hash pcr-id n nonce-0)))
+      (load pcr "0") (stor pcr (hash "0" n))))
+  (label 11)
+  (parent 0)
+  (unrealized)
+  (shape)
+  (maps
+    ((0 1)
+      ((v v) (n n) (pcr-id pcr-id) (nonce nonce-0) (k k) (aik aik)
+        (tpm tpm-1))))
+  (origs (n (1 1)) (nonce-0 (5 0)) (nonce (4 0)) (k (2 1)) (v (1 4))))
+
+(comment "Nothing left to do")
+
+(defprotocol envelope basic
+  (defrole tpm-power-on
+    (vars (current-value mesg) (pcr locn) (tpm chan))
+    (trace (recv tpm "power on") (load pcr current-value)
+      (stor pcr "0")))
+  (defrole tpm-extend-enc
+    (vars (value current-value mesg) (pcr-id nonce text) (pcr locn)
+      (tpm chan))
+    (trace (send tpm (cat "token" nonce))
+      (recv tpm (cat "extend" pcr-id value (hash pcr-id value nonce)))
+      (load pcr current-value) (stor pcr (hash current-value value))
+      (send "ext ok"))
+    (uniq-orig nonce))
+  (defrole tpm-quote
+    (vars (nonce current-value mesg) (pcr-id text) (aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat "quote" pcr-id nonce))
+      (load pcr current-value)
+      (send (enc "quote" pcr-id current-value nonce aik))))
+  (defrole tpm-create-key
+    (vars (k aik akey) (pcr-id text) (pcrval mesg) (tpm chan))
+    (trace (recv tpm (cat "create-req" pcr-id pcrval))
+      (send (enc "created" k pcr-id pcrval aik)))
+    (non-orig (invk k))
+    (uniq-orig k)
+    (auth tpm))
+  (defrole tpm-decrypt
+    (vars (m current-value mesg) (pcr-id text) (k aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat "decrypt" (enc m k)))
+      (recv (enc "created" k pcr-id current-value aik))
+      (load pcr current-value) (send m))
+    (non-orig aik))
+  (defrole alice
+    (vars (n v data) (pcr-id nonce text) (k aik akey) (tpm chan))
+    (trace (recv tpm (cat "token" nonce))
+      (send tpm (cat "extend" pcr-id n (hash pcr-id n nonce)))
+      (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
+      (recv (enc "created" k pcr-id (hash (hash "0" n) "obtain") aik))
+      (send (enc v k)))
+    (non-orig aik)
+    (uniq-orig n v)
+    (conf tpm)
+    (neq (k aik)))
+  (defrule genStV-if-hashed-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-extend-enc" z 3)
+          (p "tpm-extend-enc" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-not-catted-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-extend-enc" z 2)
+          (p "tpm-extend-enc" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (cat v1 v2)))
+        (false)))))
+
+(defskeleton envelope
+  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey) (tpm chan))
+  (deflistener
+    (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
+  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+    (aik aik) (tpm tpm))
+  (non-orig aik)
+  (uniq-orig n v)
+  (conf tpm)
+  (traces
+    ((recv
+       (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
+      (send
+        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k)
+          aik)))
+    ((recv tpm (cat "token" nonce))
+      (send tpm (cat "extend" pcr-id-0 n (hash pcr-id-0 n nonce)))
+      (send tpm
+        (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain")))
+      (recv (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik))
+      (send (enc v k))))
+  (label 34)
+  (unrealized (0 0) (1 3))
+  (preskeleton)
+  (origs (v (1 4)) (n (1 1)))
+  (comment "Not a skeleton"))
+
+(defskeleton envelope
+  (vars (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 text) (n v data)
+    (k aik akey) (tpm tpm-0 tpm-1 chan) (pcr locn))
+  (deflistener
+    (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
+  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce-0) (n n) (v v) (k k)
+    (aik aik) (tpm tpm-1))
+  (defstrand tpm-quote 3 (nonce (enc v k))
+    (current-value (hash (hash "0" n) "refuse")) (pcr-id pcr-id)
+    (aik aik) (tpm tpm) (pcr pcr))
+  (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
+    (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-1))
+  (defstrand tpm-extend-enc 4 (value "refuse")
+    (current-value (hash "0" n)) (pcr-id pcr-id-1) (nonce nonce)
+    (tpm tpm-0) (pcr pcr))
+  (defstrand tpm-extend-enc 4 (value n) (current-value "0")
+    (pcr-id pcr-id-0) (nonce nonce-0) (tpm tpm-1) (pcr pcr))
+  (precedes ((1 1) (5 1)) ((1 2) (3 0)) ((1 4) (2 0)) ((2 2) (0 0))
+    ((3 1) (1 3)) ((4 3) (2 1)) ((5 0) (1 0)) ((5 3) (4 2)))
+  (non-orig aik (invk k))
+  (uniq-orig nonce nonce-0 n v k)
+  (genStV (hash "0" n) (hash (hash "0" n) "refuse"))
+  (conf tpm-1)
+  (auth tpm-1)
+  (operation channel-test (displaced 6 1 alice 2)
+    (ch-msg tpm-1 (cat "extend" pcr-id-2 n (hash pcr-id-2 n nonce-0)))
+    (5 1))
+  (traces
+    ((recv
+       (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
+      (send
+        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k)
+          aik)))
+    ((recv tpm-1 (cat "token" nonce-0))
+      (send tpm-1 (cat "extend" pcr-id-0 n (hash pcr-id-0 n nonce-0)))
+      (send tpm-1
+        (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain")))
+      (recv (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik))
+      (send (enc v k)))
+    ((recv tpm (cat "quote" pcr-id (enc v k)))
+      (load pcr (hash (hash "0" n) "refuse"))
+      (send
+        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k)
+          aik)))
+    ((recv tpm-1
+       (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain")))
+      (send
+        (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik)))
+    ((send tpm-0 (cat "token" nonce))
+      (recv tpm-0
+        (cat "extend" pcr-id-1 "refuse" (hash pcr-id-1 "refuse" nonce)))
+      (load pcr (hash "0" n)) (stor pcr (hash (hash "0" n) "refuse")))
+    ((send tpm-1 (cat "token" nonce-0))
+      (recv tpm-1 (cat "extend" pcr-id-0 n (hash pcr-id-0 n nonce-0)))
+      (load pcr "0") (stor pcr (hash "0" n))))
+  (label 44)
+  (parent 34)
+  (unrealized)
+  (shape)
+  (maps
+    ((0 1)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce-0) (tpm tpm-1))))
+  (origs (n (1 1)) (nonce-0 (5 0)) (nonce (4 0)) (k (3 1)) (v (1 4))))
+
+(comment "Nothing left to do")
+
+(defprotocol envelope basic
+  (defrole tpm-power-on
+    (vars (current-value mesg) (pcr locn) (tpm chan))
+    (trace (recv tpm "power on") (load pcr current-value)
+      (stor pcr "0")))
+  (defrole tpm-extend-enc
+    (vars (value current-value mesg) (pcr-id nonce text) (pcr locn)
+      (tpm chan))
+    (trace (send tpm (cat "token" nonce))
+      (recv tpm (cat "extend" pcr-id value (hash pcr-id value nonce)))
+      (load pcr current-value) (stor pcr (hash current-value value))
+      (send "ext ok"))
+    (uniq-orig nonce))
+  (defrole tpm-quote
+    (vars (nonce current-value mesg) (pcr-id text) (aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat "quote" pcr-id nonce))
+      (load pcr current-value)
+      (send (enc "quote" pcr-id current-value nonce aik))))
+  (defrole tpm-create-key
+    (vars (k aik akey) (pcr-id text) (pcrval mesg) (tpm chan))
+    (trace (recv tpm (cat "create-req" pcr-id pcrval))
+      (send (enc "created" k pcr-id pcrval aik)))
+    (non-orig (invk k))
+    (uniq-orig k)
+    (auth tpm))
+  (defrole tpm-decrypt
+    (vars (m current-value mesg) (pcr-id text) (k aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat "decrypt" (enc m k)))
+      (recv (enc "created" k pcr-id current-value aik))
+      (load pcr current-value) (send m))
+    (non-orig aik))
+  (defrole alice
+    (vars (n v data) (pcr-id nonce text) (k aik akey) (tpm chan))
+    (trace (recv tpm (cat "token" nonce))
+      (send tpm (cat "extend" pcr-id n (hash pcr-id n nonce)))
+      (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
+      (recv (enc "created" k pcr-id (hash (hash "0" n) "obtain") aik))
+      (send (enc v k)))
+    (non-orig aik)
+    (uniq-orig n v)
+    (conf tpm)
+    (neq (k aik)))
+  (defrule genStV-if-hashed-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-extend-enc" z 3)
+          (p "tpm-extend-enc" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-not-catted-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-extend-enc" z 2)
+          (p "tpm-extend-enc" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (cat v1 v2)))
+        (false)))))
+
+(defskeleton envelope
+  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey) (tpm chan))
+  (deflistener
+    (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
+  (deflistener v)
+  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+    (aik aik) (tpm tpm))
+  (non-orig aik)
+  (uniq-orig n v)
+  (conf tpm)
+  (traces
+    ((recv
+       (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
+      (send
+        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k)
+          aik))) ((recv v) (send v))
+    ((recv tpm (cat "token" nonce))
+      (send tpm (cat "extend" pcr-id-0 n (hash pcr-id-0 n nonce)))
+      (send tpm
+        (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain")))
+      (recv (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik))
+      (send (enc v k))))
+  (label 67)
+  (unrealized (0 0) (1 0) (2 3))
+  (preskeleton)
+  (origs (v (2 4)) (n (2 1)))
+  (comment "Not a skeleton"))
+
+(defskeleton envelope
+  (vars (pcr-id pcr-id-0 pcr-id-1 nonce pcr-id-2 nonce-0 nonce-1 text)
+    (n v data) (k aik akey) (tpm tpm-0 tpm-1 tpm-2 tpm-3 chan)
+    (pcr locn))
+  (deflistener
+    (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
+  (deflistener v)
+  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce-1) (n n) (v v) (k k)
+    (aik aik) (tpm tpm-3))
+  (defstrand tpm-quote 3 (nonce (enc v k))
+    (current-value (hash (hash "0" n) "refuse")) (pcr-id pcr-id)
+    (aik aik) (tpm tpm) (pcr pcr))
+  (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
+    (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-3))
+  (defstrand tpm-decrypt 4 (m v)
+    (current-value (hash (hash "0" n) "obtain")) (pcr-id pcr-id-0) (k k)
+    (aik aik) (tpm tpm-0) (pcr pcr))
+  (defstrand tpm-extend-enc 4 (value "refuse")
+    (current-value (hash "0" n)) (pcr-id pcr-id-1) (nonce nonce)
+    (tpm tpm-1) (pcr pcr))
+  (defstrand tpm-extend-enc 4 (value "obtain")
+    (current-value (hash "0" n)) (pcr-id pcr-id-2) (nonce nonce-0)
+    (tpm tpm-2) (pcr pcr))
+  (defstrand tpm-extend-enc 4 (value n) (current-value "0")
+    (pcr-id pcr-id-0) (nonce nonce-1) (tpm tpm-3) (pcr pcr))
+  (precedes ((2 1) (8 1)) ((2 2) (4 0)) ((2 4) (3 0)) ((2 4) (5 0))
+    ((3 2) (0 0)) ((4 1) (2 3)) ((5 3) (1 0)) ((6 3) (3 1))
+    ((7 3) (5 2)) ((8 0) (2 0)) ((8 3) (6 2)) ((8 3) (7 2)))
+  (non-orig aik (invk k))
+  (uniq-orig nonce nonce-0 nonce-1 n v k)
+  (genStV (hash "0" n) (hash (hash "0" n) "obtain")
+    (hash (hash "0" n) "refuse"))
+  (conf tpm-3)
+  (auth tpm-3)
+  (operation channel-test (displaced 9 2 alice 2)
+    (ch-msg tpm-3 (cat "extend" pcr-id-3 n (hash pcr-id-3 n nonce-1)))
+    (8 1))
+  (traces
+    ((recv
+       (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
+      (send
+        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k)
+          aik))) ((recv v) (send v))
+    ((recv tpm-3 (cat "token" nonce-1))
+      (send tpm-3 (cat "extend" pcr-id-0 n (hash pcr-id-0 n nonce-1)))
+      (send tpm-3
+        (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain")))
+      (recv (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik))
+      (send (enc v k)))
+    ((recv tpm (cat "quote" pcr-id (enc v k)))
+      (load pcr (hash (hash "0" n) "refuse"))
+      (send
+        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k)
+          aik)))
+    ((recv tpm-3
+       (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain")))
+      (send
+        (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik)))
+    ((recv tpm-0 (cat "decrypt" (enc v k)))
+      (recv (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik))
+      (load pcr (hash (hash "0" n) "obtain")) (send v))
+    ((send tpm-1 (cat "token" nonce))
+      (recv tpm-1
+        (cat "extend" pcr-id-1 "refuse" (hash pcr-id-1 "refuse" nonce)))
+      (load pcr (hash "0" n)) (stor pcr (hash (hash "0" n) "refuse")))
+    ((send tpm-2 (cat "token" nonce-0))
+      (recv tpm-2
+        (cat "extend" pcr-id-2 "obtain"
+          (hash pcr-id-2 "obtain" nonce-0))) (load pcr (hash "0" n))
+      (stor pcr (hash (hash "0" n) "obtain")))
+    ((send tpm-3 (cat "token" nonce-1))
+      (recv tpm-3 (cat "extend" pcr-id-0 n (hash pcr-id-0 n nonce-1)))
+      (load pcr "0") (stor pcr (hash "0" n))))
+  (label 89)
+  (parent 67)
+  (unrealized)
+  (shape)
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce-1) (tpm tpm-3))))
+  (origs (n (2 1)) (nonce-1 (8 0)) (nonce-0 (7 0)) (k (4 1))
+    (nonce (6 0)) (v (2 4))))
+
+(comment "Nothing left to do")
+
+(defprotocol envelope-plus basic
+  (defrole tpm-power-on
+    (vars (current-value mesg) (pcr locn) (tpm chan))
+    (trace (recv tpm "power on") (load pcr current-value)
+      (stor pcr "0")))
+  (defrole tpm-extend-enc
+    (vars (value current-value mesg) (pcr-id nonce text) (pcr locn)
+      (tpm chan))
+    (trace (send tpm (cat "token" nonce))
+      (recv tpm (cat "extend" pcr-id value (hash pcr-id value nonce)))
+      (load pcr current-value) (stor pcr (hash current-value value))
+      (send "ext ok"))
+    (uniq-orig nonce))
+  (defrole tpm-quote
+    (vars (nonce current-value mesg) (pcr-id text) (aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat "quote" pcr-id nonce))
+      (load pcr current-value)
+      (send (enc "quote" pcr-id current-value nonce aik))))
+  (defrole tpm-create-key
+    (vars (k aik akey) (pcr-id text) (pcrval mesg) (tpm chan))
+    (trace (recv tpm (cat "create-req" pcr-id pcrval))
+      (send (enc "created" k pcr-id pcrval aik)))
+    (non-orig (invk k))
+    (uniq-orig k)
+    (auth tpm))
+  (defrole tpm-decrypt
+    (vars (m current-value mesg) (pcr-id text) (k aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat "decrypt" (enc m k)))
+      (recv (enc "created" k pcr-id current-value aik))
+      (load pcr current-value) (send m))
+    (non-orig aik))
+  (defrole alice
+    (vars (n v data) (pcr-id nonce text) (k aik akey) (tpm chan))
+    (trace (recv tpm (cat "token" nonce))
+      (send tpm (cat "extend" pcr-id n (hash pcr-id n nonce)))
+      (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
+      (recv (enc "created" k pcr-id (hash (hash "0" n) "obtain") aik))
+      (send (enc v k)))
+    (non-orig aik)
+    (uniq-orig n v)
+    (conf tpm)
+    (neq (k aik)))
+  (defrule genStV-if-hashed-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-extend-enc" z 3)
+          (p "tpm-extend-enc" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-not-catted-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-extend-enc" z 2)
+          (p "tpm-extend-enc" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule ordered-extends
+    (forall ((y z strd) (pcr locn))
+      (implies
+        (and (p "tpm-extend-enc" y 3) (p "tpm-extend-enc" z 3)
+          (p "tpm-extend-enc" "pcr" y pcr)
+          (p "tpm-extend-enc" "pcr" z pcr))
+        (or (= y z) (prec y 2 z 1) (prec z 2 y 1))))))
+
+(defskeleton envelope-plus
+  (vars (pcr-id nonce text) (v n data) (k aik akey) (tpm chan))
+  (deflistener v)
+  (defstrand alice 5 (pcr-id pcr-id) (nonce nonce) (n n) (v v) (k k)
+    (aik aik) (tpm tpm))
+  (non-orig aik)
+  (uniq-orig v n)
+  (conf tpm)
+  (traces ((recv v) (send v))
+    ((recv tpm (cat "token" nonce))
+      (send tpm (cat "extend" pcr-id n (hash pcr-id n nonce)))
+      (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
+      (recv (enc "created" k pcr-id (hash (hash "0" n) "obtain") aik))
+      (send (enc v k))))
+  (label 202)
+  (unrealized (0 0) (1 3))
+  (preskeleton)
+  (origs (v (1 4)) (n (1 1)))
+  (comment "Not a skeleton"))
+
+(comment "Nothing left to do")
+
+(defprotocol envelope-plus basic
+  (defrole tpm-power-on
+    (vars (current-value mesg) (pcr locn) (tpm chan))
+    (trace (recv tpm "power on") (load pcr current-value)
+      (stor pcr "0")))
+  (defrole tpm-extend-enc
+    (vars (value current-value mesg) (pcr-id nonce text) (pcr locn)
+      (tpm chan))
+    (trace (send tpm (cat "token" nonce))
+      (recv tpm (cat "extend" pcr-id value (hash pcr-id value nonce)))
+      (load pcr current-value) (stor pcr (hash current-value value))
+      (send "ext ok"))
+    (uniq-orig nonce))
+  (defrole tpm-quote
+    (vars (nonce current-value mesg) (pcr-id text) (aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat "quote" pcr-id nonce))
+      (load pcr current-value)
+      (send (enc "quote" pcr-id current-value nonce aik))))
+  (defrole tpm-create-key
+    (vars (k aik akey) (pcr-id text) (pcrval mesg) (tpm chan))
+    (trace (recv tpm (cat "create-req" pcr-id pcrval))
+      (send (enc "created" k pcr-id pcrval aik)))
+    (non-orig (invk k))
+    (uniq-orig k)
+    (auth tpm))
+  (defrole tpm-decrypt
+    (vars (m current-value mesg) (pcr-id text) (k aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat "decrypt" (enc m k)))
+      (recv (enc "created" k pcr-id current-value aik))
+      (load pcr current-value) (send m))
+    (non-orig aik))
+  (defrole alice
+    (vars (n v data) (pcr-id nonce text) (k aik akey) (tpm chan))
+    (trace (recv tpm (cat "token" nonce))
+      (send tpm (cat "extend" pcr-id n (hash pcr-id n nonce)))
+      (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
+      (recv (enc "created" k pcr-id (hash (hash "0" n) "obtain") aik))
+      (send (enc v k)))
+    (non-orig aik)
+    (uniq-orig n v)
+    (conf tpm)
+    (neq (k aik)))
+  (defrule genStV-if-hashed-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-extend-enc" z 3)
+          (p "tpm-extend-enc" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-not-catted-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-extend-enc" z 2)
+          (p "tpm-extend-enc" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule ordered-extends
+    (forall ((y z strd) (pcr locn))
+      (implies
+        (and (p "tpm-extend-enc" y 3) (p "tpm-extend-enc" z 3)
+          (p "tpm-extend-enc" "pcr" y pcr)
+          (p "tpm-extend-enc" "pcr" z pcr))
+        (or (= y z) (prec y 2 z 1) (prec z 2 y 1))))))
+
+(defskeleton envelope-plus
+  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey) (tpm chan))
+  (deflistener
+    (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
+  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+    (aik aik) (tpm tpm))
+  (non-orig aik)
+  (uniq-orig n v)
+  (conf tpm)
+  (traces
+    ((recv
+       (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
+      (send
+        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k)
+          aik)))
+    ((recv tpm (cat "token" nonce))
+      (send tpm (cat "extend" pcr-id-0 n (hash pcr-id-0 n nonce)))
+      (send tpm
+        (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain")))
+      (recv (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik))
+      (send (enc v k))))
+  (label 211)
+  (unrealized (0 0) (1 3))
+  (preskeleton)
+  (origs (v (1 4)) (n (1 1)))
+  (comment "Not a skeleton"))
+
+(comment "Nothing left to do")
+
+(defprotocol envelope-plus basic
+  (defrole tpm-power-on
+    (vars (current-value mesg) (pcr locn) (tpm chan))
+    (trace (recv tpm "power on") (load pcr current-value)
+      (stor pcr "0")))
+  (defrole tpm-extend-enc
+    (vars (value current-value mesg) (pcr-id nonce text) (pcr locn)
+      (tpm chan))
+    (trace (send tpm (cat "token" nonce))
+      (recv tpm (cat "extend" pcr-id value (hash pcr-id value nonce)))
+      (load pcr current-value) (stor pcr (hash current-value value))
+      (send "ext ok"))
+    (uniq-orig nonce))
+  (defrole tpm-quote
+    (vars (nonce current-value mesg) (pcr-id text) (aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat "quote" pcr-id nonce))
+      (load pcr current-value)
+      (send (enc "quote" pcr-id current-value nonce aik))))
+  (defrole tpm-create-key
+    (vars (k aik akey) (pcr-id text) (pcrval mesg) (tpm chan))
+    (trace (recv tpm (cat "create-req" pcr-id pcrval))
+      (send (enc "created" k pcr-id pcrval aik)))
+    (non-orig (invk k))
+    (uniq-orig k)
+    (auth tpm))
+  (defrole tpm-decrypt
+    (vars (m current-value mesg) (pcr-id text) (k aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat "decrypt" (enc m k)))
+      (recv (enc "created" k pcr-id current-value aik))
+      (load pcr current-value) (send m))
+    (non-orig aik))
+  (defrole alice
+    (vars (n v data) (pcr-id nonce text) (k aik akey) (tpm chan))
+    (trace (recv tpm (cat "token" nonce))
+      (send tpm (cat "extend" pcr-id n (hash pcr-id n nonce)))
+      (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
+      (recv (enc "created" k pcr-id (hash (hash "0" n) "obtain") aik))
+      (send (enc v k)))
+    (non-orig aik)
+    (uniq-orig n v)
+    (conf tpm)
+    (neq (k aik)))
+  (defrule genStV-if-hashed-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-extend-enc" z 3)
+          (p "tpm-extend-enc" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-not-catted-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-extend-enc" z 2)
+          (p "tpm-extend-enc" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule ordered-extends
+    (forall ((y z strd) (pcr locn))
+      (implies
+        (and (p "tpm-extend-enc" y 3) (p "tpm-extend-enc" z 3)
+          (p "tpm-extend-enc" "pcr" y pcr)
+          (p "tpm-extend-enc" "pcr" z pcr))
+        (or (= y z) (prec y 2 z 1) (prec z 2 y 1))))))
+
+(defskeleton envelope-plus
+  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey) (tpm chan))
+  (deflistener
+    (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
+  (deflistener v)
+  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+    (aik aik) (tpm tpm))
+  (non-orig aik)
+  (uniq-orig n v)
+  (conf tpm)
+  (traces
+    ((recv
+       (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
+      (send
+        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k)
+          aik))) ((recv v) (send v))
+    ((recv tpm (cat "token" nonce))
+      (send tpm (cat "extend" pcr-id-0 n (hash pcr-id-0 n nonce)))
+      (send tpm
+        (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain")))
+      (recv (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik))
+      (send (enc v k))))
+  (label 219)
+  (unrealized (0 0) (1 0) (2 3))
+  (preskeleton)
+  (origs (v (2 4)) (n (2 1)))
+  (comment "Not a skeleton"))
+
+(comment "Nothing left to do")
+
+(defprotocol envelope-plus-2 basic
+  (defrole tpm-power-on
+    (vars (current-value mesg) (pcr locn) (tpm chan))
+    (trace (recv tpm "power on") (load pcr current-value)
+      (stor pcr "0")))
+  (defrole tpm-extend-enc
+    (vars (value current-value mesg) (pcr-id nonce text) (pcr locn)
+      (tpm chan))
+    (trace (send tpm (cat "token" nonce))
+      (recv tpm (cat "extend" pcr-id value (hash pcr-id value nonce)))
+      (load pcr current-value) (stor pcr (hash current-value value))
+      (send "ext ok"))
+    (uniq-orig nonce))
+  (defrole tpm-quote
+    (vars (nonce current-value mesg) (pcr-id text) (aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat "quote" pcr-id nonce))
+      (load pcr current-value)
+      (send (enc "quote" pcr-id current-value nonce aik))))
+  (defrole tpm-create-key
+    (vars (k aik akey) (pcr-id text) (pcrval mesg) (tpm chan))
+    (trace (recv tpm (cat "create-req" pcr-id pcrval))
+      (send (enc "created" k pcr-id pcrval aik)))
+    (non-orig (invk k))
+    (uniq-orig k)
+    (auth tpm))
+  (defrole tpm-decrypt
+    (vars (m current-value mesg) (pcr-id text) (k aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat "decrypt" (enc m k)))
+      (recv (enc "created" k pcr-id current-value aik))
+      (load pcr current-value) (send m))
+    (non-orig aik))
+  (defrole alice
+    (vars (n v data) (pcr-id nonce text) (k aik akey) (tpm chan))
+    (trace (recv tpm (cat "token" nonce))
+      (send tpm (cat "extend" pcr-id n (hash pcr-id n nonce)))
+      (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
+      (recv (enc "created" k pcr-id (hash (hash "0" n) "obtain") aik))
+      (send (enc v k)))
+    (non-orig aik)
+    (uniq-orig n v)
+    (conf tpm)
+    (neq (k aik)))
+  (defrule genStV-if-hashed-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-extend-enc" z 3)
+          (p "tpm-extend-enc" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-not-catted-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-extend-enc" z 2)
+          (p "tpm-extend-enc" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule pcr-id-identifies-pcr
+    (forall ((y z strd) (pcr-id text) (pcr pcr-0 locn))
+      (implies
+        (and (p "tpm-extend-enc" y 3) (p "tpm-extend-enc" z 3)
+          (p "tpm-extend-enc" "pcr-id" y pcr-id)
+          (p "tpm-extend-enc" "pcr-id" z pcr-id)
+          (p "tpm-extend-enc" "pcr" y pcr)
+          (p "tpm-extend-enc" "pcr" z pcr-0))
+        (= pcr pcr-0)))))
+
+(defskeleton envelope-plus-2
+  (vars (pcr-id nonce text) (v n data) (k aik akey) (tpm chan))
+  (deflistener v)
+  (defstrand alice 5 (pcr-id pcr-id) (nonce nonce) (n n) (v v) (k k)
+    (aik aik) (tpm tpm))
+  (non-orig aik)
+  (uniq-orig v n)
+  (conf tpm)
+  (traces ((recv v) (send v))
+    ((recv tpm (cat "token" nonce))
+      (send tpm (cat "extend" pcr-id n (hash pcr-id n nonce)))
+      (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
+      (recv (enc "created" k pcr-id (hash (hash "0" n) "obtain") aik))
+      (send (enc v k))))
+  (label 233)
+  (unrealized (0 0) (1 3))
+  (preskeleton)
+  (origs (v (1 4)) (n (1 1)))
+  (comment "Not a skeleton"))
+
+(defskeleton envelope-plus-2
+  (vars (pcr-id pcr-id-0 nonce nonce-0 text) (v n data) (k aik akey)
+    (tpm tpm-0 tpm-1 chan) (pcr locn))
+  (deflistener v)
+  (defstrand alice 5 (pcr-id pcr-id) (nonce nonce-0) (n n) (v v) (k k)
+    (aik aik) (tpm tpm-1))
+  (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
+    (pcr-id pcr-id) (k k) (aik aik) (tpm tpm-1))
+  (defstrand tpm-decrypt 4 (m v)
+    (current-value (hash (hash "0" n) "obtain")) (pcr-id pcr-id) (k k)
+    (aik aik) (tpm tpm) (pcr pcr))
+  (defstrand tpm-extend-enc 4 (value "obtain")
+    (current-value (hash "0" n)) (pcr-id pcr-id-0) (nonce nonce)
+    (tpm tpm-0) (pcr pcr))
+  (defstrand tpm-extend-enc 4 (value n) (current-value "0")
+    (pcr-id pcr-id) (nonce nonce-0) (tpm tpm-1) (pcr pcr))
+  (precedes ((1 1) (5 1)) ((1 2) (2 0)) ((1 4) (3 0)) ((2 1) (1 3))
+    ((3 3) (0 0)) ((4 3) (3 2)) ((5 0) (1 0)) ((5 3) (4 2)))
+  (non-orig aik (invk k))
+  (uniq-orig nonce nonce-0 v n k)
+  (genStV (hash "0" n) (hash (hash "0" n) "obtain"))
+  (conf tpm-1)
+  (auth tpm-1)
+  (operation channel-test (displaced 6 1 alice 2)
+    (ch-msg tpm-1 (cat "extend" pcr-id-1 n (hash pcr-id-1 n nonce-0)))
+    (5 1))
+  (traces ((recv v) (send v))
+    ((recv tpm-1 (cat "token" nonce-0))
+      (send tpm-1 (cat "extend" pcr-id n (hash pcr-id n nonce-0)))
+      (send tpm-1
+        (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
+      (recv (enc "created" k pcr-id (hash (hash "0" n) "obtain") aik))
+      (send (enc v k)))
+    ((recv tpm-1 (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
+      (send (enc "created" k pcr-id (hash (hash "0" n) "obtain") aik)))
+    ((recv tpm (cat "decrypt" (enc v k)))
+      (recv (enc "created" k pcr-id (hash (hash "0" n) "obtain") aik))
+      (load pcr (hash (hash "0" n) "obtain")) (send v))
+    ((send tpm-0 (cat "token" nonce))
+      (recv tpm-0
+        (cat "extend" pcr-id-0 "obtain" (hash pcr-id-0 "obtain" nonce)))
+      (load pcr (hash "0" n)) (stor pcr (hash (hash "0" n) "obtain")))
+    ((send tpm-1 (cat "token" nonce-0))
+      (recv tpm-1 (cat "extend" pcr-id n (hash pcr-id n nonce-0)))
+      (load pcr "0") (stor pcr (hash "0" n))))
+  (label 244)
+  (parent 233)
+  (unrealized)
+  (shape)
+  (maps
+    ((0 1)
+      ((v v) (n n) (pcr-id pcr-id) (nonce nonce-0) (k k) (aik aik)
+        (tpm tpm-1))))
+  (origs (n (1 1)) (nonce-0 (5 0)) (nonce (4 0)) (k (2 1)) (v (1 4))))
+
+(comment "Nothing left to do")
+
+(defprotocol envelope-plus-2 basic
+  (defrole tpm-power-on
+    (vars (current-value mesg) (pcr locn) (tpm chan))
+    (trace (recv tpm "power on") (load pcr current-value)
+      (stor pcr "0")))
+  (defrole tpm-extend-enc
+    (vars (value current-value mesg) (pcr-id nonce text) (pcr locn)
+      (tpm chan))
+    (trace (send tpm (cat "token" nonce))
+      (recv tpm (cat "extend" pcr-id value (hash pcr-id value nonce)))
+      (load pcr current-value) (stor pcr (hash current-value value))
+      (send "ext ok"))
+    (uniq-orig nonce))
+  (defrole tpm-quote
+    (vars (nonce current-value mesg) (pcr-id text) (aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat "quote" pcr-id nonce))
+      (load pcr current-value)
+      (send (enc "quote" pcr-id current-value nonce aik))))
+  (defrole tpm-create-key
+    (vars (k aik akey) (pcr-id text) (pcrval mesg) (tpm chan))
+    (trace (recv tpm (cat "create-req" pcr-id pcrval))
+      (send (enc "created" k pcr-id pcrval aik)))
+    (non-orig (invk k))
+    (uniq-orig k)
+    (auth tpm))
+  (defrole tpm-decrypt
+    (vars (m current-value mesg) (pcr-id text) (k aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat "decrypt" (enc m k)))
+      (recv (enc "created" k pcr-id current-value aik))
+      (load pcr current-value) (send m))
+    (non-orig aik))
+  (defrole alice
+    (vars (n v data) (pcr-id nonce text) (k aik akey) (tpm chan))
+    (trace (recv tpm (cat "token" nonce))
+      (send tpm (cat "extend" pcr-id n (hash pcr-id n nonce)))
+      (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
+      (recv (enc "created" k pcr-id (hash (hash "0" n) "obtain") aik))
+      (send (enc v k)))
+    (non-orig aik)
+    (uniq-orig n v)
+    (conf tpm)
+    (neq (k aik)))
+  (defrule genStV-if-hashed-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-extend-enc" z 3)
+          (p "tpm-extend-enc" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-not-catted-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-extend-enc" z 2)
+          (p "tpm-extend-enc" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule pcr-id-identifies-pcr
+    (forall ((y z strd) (pcr-id text) (pcr pcr-0 locn))
+      (implies
+        (and (p "tpm-extend-enc" y 3) (p "tpm-extend-enc" z 3)
+          (p "tpm-extend-enc" "pcr-id" y pcr-id)
+          (p "tpm-extend-enc" "pcr-id" z pcr-id)
+          (p "tpm-extend-enc" "pcr" y pcr)
+          (p "tpm-extend-enc" "pcr" z pcr-0))
+        (= pcr pcr-0)))))
+
+(defskeleton envelope-plus-2
+  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey) (tpm chan))
+  (deflistener
+    (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
+  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+    (aik aik) (tpm tpm))
+  (non-orig aik)
+  (uniq-orig n v)
+  (conf tpm)
+  (traces
+    ((recv
+       (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
+      (send
+        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k)
+          aik)))
+    ((recv tpm (cat "token" nonce))
+      (send tpm (cat "extend" pcr-id-0 n (hash pcr-id-0 n nonce)))
+      (send tpm
+        (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain")))
+      (recv (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik))
+      (send (enc v k))))
+  (label 267)
+  (unrealized (0 0) (1 3))
+  (preskeleton)
+  (origs (v (1 4)) (n (1 1)))
+  (comment "Not a skeleton"))
+
+(defskeleton envelope-plus-2
+  (vars (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 text) (n v data)
+    (k aik akey) (tpm tpm-0 tpm-1 chan) (pcr locn))
+  (deflistener
+    (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
+  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce-0) (n n) (v v) (k k)
+    (aik aik) (tpm tpm-1))
+  (defstrand tpm-quote 3 (nonce (enc v k))
+    (current-value (hash (hash "0" n) "refuse")) (pcr-id pcr-id)
+    (aik aik) (tpm tpm) (pcr pcr))
+  (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
+    (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-1))
+  (defstrand tpm-extend-enc 4 (value "refuse")
+    (current-value (hash "0" n)) (pcr-id pcr-id-1) (nonce nonce)
+    (tpm tpm-0) (pcr pcr))
+  (defstrand tpm-extend-enc 4 (value n) (current-value "0")
+    (pcr-id pcr-id-0) (nonce nonce-0) (tpm tpm-1) (pcr pcr))
+  (precedes ((1 1) (5 1)) ((1 2) (3 0)) ((1 4) (2 0)) ((2 2) (0 0))
+    ((3 1) (1 3)) ((4 3) (2 1)) ((5 0) (1 0)) ((5 3) (4 2)))
+  (non-orig aik (invk k))
+  (uniq-orig nonce nonce-0 n v k)
+  (genStV (hash "0" n) (hash (hash "0" n) "refuse"))
+  (conf tpm-1)
+  (auth tpm-1)
+  (operation channel-test (displaced 6 1 alice 2)
+    (ch-msg tpm-1 (cat "extend" pcr-id-2 n (hash pcr-id-2 n nonce-0)))
+    (5 1))
+  (traces
+    ((recv
+       (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
+      (send
+        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k)
+          aik)))
+    ((recv tpm-1 (cat "token" nonce-0))
+      (send tpm-1 (cat "extend" pcr-id-0 n (hash pcr-id-0 n nonce-0)))
+      (send tpm-1
+        (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain")))
+      (recv (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik))
+      (send (enc v k)))
+    ((recv tpm (cat "quote" pcr-id (enc v k)))
+      (load pcr (hash (hash "0" n) "refuse"))
+      (send
+        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k)
+          aik)))
+    ((recv tpm-1
+       (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain")))
+      (send
+        (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik)))
+    ((send tpm-0 (cat "token" nonce))
+      (recv tpm-0
+        (cat "extend" pcr-id-1 "refuse" (hash pcr-id-1 "refuse" nonce)))
+      (load pcr (hash "0" n)) (stor pcr (hash (hash "0" n) "refuse")))
+    ((send tpm-1 (cat "token" nonce-0))
+      (recv tpm-1 (cat "extend" pcr-id-0 n (hash pcr-id-0 n nonce-0)))
+      (load pcr "0") (stor pcr (hash "0" n))))
+  (label 277)
+  (parent 267)
+  (unrealized)
+  (shape)
+  (maps
+    ((0 1)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce-0) (tpm tpm-1))))
+  (origs (n (1 1)) (nonce-0 (5 0)) (nonce (4 0)) (k (3 1)) (v (1 4))))
+
+(comment "Nothing left to do")
+
+(defprotocol envelope-plus-2 basic
+  (defrole tpm-power-on
+    (vars (current-value mesg) (pcr locn) (tpm chan))
+    (trace (recv tpm "power on") (load pcr current-value)
+      (stor pcr "0")))
+  (defrole tpm-extend-enc
+    (vars (value current-value mesg) (pcr-id nonce text) (pcr locn)
+      (tpm chan))
+    (trace (send tpm (cat "token" nonce))
+      (recv tpm (cat "extend" pcr-id value (hash pcr-id value nonce)))
+      (load pcr current-value) (stor pcr (hash current-value value))
+      (send "ext ok"))
+    (uniq-orig nonce))
+  (defrole tpm-quote
+    (vars (nonce current-value mesg) (pcr-id text) (aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat "quote" pcr-id nonce))
+      (load pcr current-value)
+      (send (enc "quote" pcr-id current-value nonce aik))))
+  (defrole tpm-create-key
+    (vars (k aik akey) (pcr-id text) (pcrval mesg) (tpm chan))
+    (trace (recv tpm (cat "create-req" pcr-id pcrval))
+      (send (enc "created" k pcr-id pcrval aik)))
+    (non-orig (invk k))
+    (uniq-orig k)
+    (auth tpm))
+  (defrole tpm-decrypt
+    (vars (m current-value mesg) (pcr-id text) (k aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat "decrypt" (enc m k)))
+      (recv (enc "created" k pcr-id current-value aik))
+      (load pcr current-value) (send m))
+    (non-orig aik))
+  (defrole alice
+    (vars (n v data) (pcr-id nonce text) (k aik akey) (tpm chan))
+    (trace (recv tpm (cat "token" nonce))
+      (send tpm (cat "extend" pcr-id n (hash pcr-id n nonce)))
+      (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
+      (recv (enc "created" k pcr-id (hash (hash "0" n) "obtain") aik))
+      (send (enc v k)))
+    (non-orig aik)
+    (uniq-orig n v)
+    (conf tpm)
+    (neq (k aik)))
+  (defrule genStV-if-hashed-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-extend-enc" z 3)
+          (p "tpm-extend-enc" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-not-catted-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-extend-enc" z 2)
+          (p "tpm-extend-enc" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (cat v1 v2)))
+        (false))))
+  (defrule pcr-id-identifies-pcr
+    (forall ((y z strd) (pcr-id text) (pcr pcr-0 locn))
+      (implies
+        (and (p "tpm-extend-enc" y 3) (p "tpm-extend-enc" z 3)
+          (p "tpm-extend-enc" "pcr-id" y pcr-id)
+          (p "tpm-extend-enc" "pcr-id" z pcr-id)
+          (p "tpm-extend-enc" "pcr" y pcr)
+          (p "tpm-extend-enc" "pcr" z pcr-0))
+        (= pcr pcr-0)))))
+
+(defskeleton envelope-plus-2
+  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey) (tpm chan))
+  (deflistener
+    (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
+  (deflistener v)
+  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+    (aik aik) (tpm tpm))
+  (non-orig aik)
+  (uniq-orig n v)
+  (conf tpm)
+  (traces
+    ((recv
+       (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
+      (send
+        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k)
+          aik))) ((recv v) (send v))
+    ((recv tpm (cat "token" nonce))
+      (send tpm (cat "extend" pcr-id-0 n (hash pcr-id-0 n nonce)))
+      (send tpm
+        (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain")))
+      (recv (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik))
+      (send (enc v k))))
+  (label 300)
+  (unrealized (0 0) (1 0) (2 3))
+  (preskeleton)
+  (origs (v (2 4)) (n (2 1)))
+  (comment "Not a skeleton"))
+
+(defskeleton envelope-plus-2
+  (vars (pcr-id pcr-id-0 pcr-id-1 nonce pcr-id-2 nonce-0 nonce-1 text)
+    (n v data) (k aik akey) (tpm tpm-0 tpm-1 tpm-2 tpm-3 chan)
+    (pcr locn))
+  (deflistener
+    (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
+  (deflistener v)
+  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce-1) (n n) (v v) (k k)
+    (aik aik) (tpm tpm-3))
+  (defstrand tpm-quote 3 (nonce (enc v k))
+    (current-value (hash (hash "0" n) "refuse")) (pcr-id pcr-id)
+    (aik aik) (tpm tpm) (pcr pcr))
+  (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
+    (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-3))
+  (defstrand tpm-decrypt 4 (m v)
+    (current-value (hash (hash "0" n) "obtain")) (pcr-id pcr-id-0) (k k)
+    (aik aik) (tpm tpm-0) (pcr pcr))
+  (defstrand tpm-extend-enc 4 (value "refuse")
+    (current-value (hash "0" n)) (pcr-id pcr-id-1) (nonce nonce)
+    (tpm tpm-1) (pcr pcr))
+  (defstrand tpm-extend-enc 4 (value "obtain")
+    (current-value (hash "0" n)) (pcr-id pcr-id-2) (nonce nonce-0)
+    (tpm tpm-2) (pcr pcr))
+  (defstrand tpm-extend-enc 4 (value n) (current-value "0")
+    (pcr-id pcr-id-0) (nonce nonce-1) (tpm tpm-3) (pcr pcr))
+  (precedes ((2 1) (8 1)) ((2 2) (4 0)) ((2 4) (3 0)) ((2 4) (5 0))
+    ((3 2) (0 0)) ((4 1) (2 3)) ((5 3) (1 0)) ((6 3) (3 1))
+    ((7 3) (5 2)) ((8 0) (2 0)) ((8 3) (6 2)) ((8 3) (7 2)))
+  (non-orig aik (invk k))
+  (uniq-orig nonce nonce-0 nonce-1 n v k)
+  (genStV (hash "0" n) (hash (hash "0" n) "obtain")
+    (hash (hash "0" n) "refuse"))
+  (conf tpm-3)
+  (auth tpm-3)
+  (operation channel-test (displaced 9 2 alice 2)
+    (ch-msg tpm-3 (cat "extend" pcr-id-3 n (hash pcr-id-3 n nonce-1)))
+    (8 1))
+  (traces
+    ((recv
+       (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
+      (send
+        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k)
+          aik))) ((recv v) (send v))
+    ((recv tpm-3 (cat "token" nonce-1))
+      (send tpm-3 (cat "extend" pcr-id-0 n (hash pcr-id-0 n nonce-1)))
+      (send tpm-3
+        (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain")))
+      (recv (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik))
+      (send (enc v k)))
+    ((recv tpm (cat "quote" pcr-id (enc v k)))
+      (load pcr (hash (hash "0" n) "refuse"))
+      (send
+        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k)
+          aik)))
+    ((recv tpm-3
+       (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain")))
+      (send
+        (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik)))
+    ((recv tpm-0 (cat "decrypt" (enc v k)))
+      (recv (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik))
+      (load pcr (hash (hash "0" n) "obtain")) (send v))
+    ((send tpm-1 (cat "token" nonce))
+      (recv tpm-1
+        (cat "extend" pcr-id-1 "refuse" (hash pcr-id-1 "refuse" nonce)))
+      (load pcr (hash "0" n)) (stor pcr (hash (hash "0" n) "refuse")))
+    ((send tpm-2 (cat "token" nonce-0))
+      (recv tpm-2
+        (cat "extend" pcr-id-2 "obtain"
+          (hash pcr-id-2 "obtain" nonce-0))) (load pcr (hash "0" n))
+      (stor pcr (hash (hash "0" n) "obtain")))
+    ((send tpm-3 (cat "token" nonce-1))
+      (recv tpm-3 (cat "extend" pcr-id-0 n (hash pcr-id-0 n nonce-1)))
+      (load pcr "0") (stor pcr (hash "0" n))))
+  (label 322)
+  (parent 300)
+  (unrealized)
+  (shape)
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce-1) (tpm tpm-3))))
+  (origs (n (2 1)) (nonce-1 (8 0)) (nonce-0 (7 0)) (k (4 1))
+    (nonce (6 0)) (v (2 4))))
+
+(comment "Nothing left to do")

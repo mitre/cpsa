@@ -106,6 +106,23 @@ displayForm ctx (AFact name fs) =
   L () (S () "fact" : S () name : map (displayTerm ctx) fs)
 displayForm ctx (Equals t1 t2) =
   L () [S () "=", displayTerm ctx t1, displayTerm ctx t2]
+displayForm ctx (Commpair (i,j) (i',j')) =
+    L () [S () "comm-pr",
+            displayTerm ctx i, displayTerm ctx j,
+            displayTerm ctx i', displayTerm ctx j']
+displayForm ctx (StateNode (i,j)) =
+    L () [S () "state-node",
+            displayTerm ctx i, displayTerm ctx j]
+displayForm ctx (Trans (i,j)) =
+    L () [S () "trans",
+            displayTerm ctx i, displayTerm ctx j]
+displayForm ctx (LeadsTo (i,j) (i',j')) =
+    L () [S () "leads-to",
+            displayTerm ctx i, displayTerm ctx j,
+            displayTerm ctx i', displayTerm ctx j']
+
+
+    
 
 displayParam :: Role -> Term -> SExpr ()
 displayParam r t =
@@ -115,21 +132,31 @@ displayParam r t =
 
 -- Display of roles
 
+sansPts :: [Term] -> [Term]
+sansPts = filter notPt
+
+sansNestedPts :: [(Maybe Int, Term)] -> [(Maybe Int, Term)]
+sansNestedPts = filter (\(_,t) -> notPt t)
+
+sansPtMaplets :: [(Term, Term)] -> [(Term, Term)]
+sansPtMaplets = filter (\(v,_) -> notPt v)
+
+
 displayRole :: Role -> SExpr ()
 displayRole r =
     L () (S () "defrole" :
           S () (rname r) :
-          L () (S () "vars" : displayVars ctx vars) :
-          L () (S () "trace" : displayTrace ctx (rtrace r)) :
-          displayOptional "non-orig" (displayLenTerms ctx (rnon r))
-          (displayOptional "pen-non-orig" (displayLenTerms ctx (rpnon r))
-           (displayOptional "uniq-orig" (displayTerms ctx (runique r))
+          L () (S () "vars" : displayVars ctx (sansPts vars)) :
+          L () (S () "trace" : displayTraceNoPt ctx (rtrace r)) :
+          displayOptional "non-orig" (displayLenTerms ctx (sansNestedPts (rnon r)))
+          (displayOptional "pen-non-orig" (displayLenTerms ctx (sansNestedPts (rpnon r)))
+           (displayOptional "uniq-orig" (displayTerms ctx (sansPts (runique r)))
             (displayOptional "conf" (displayTerms ctx (rconf r))
              (displayOptional "auth" (displayTerms ctx (rauth r))
               (rcomment r))))))
     where
-      ctx = varsContext vars
-      vars = rvars r
+      ctx = varsContext $ rvars r
+      vars = sansPts $ rvars r
 
 varsContext :: [Term] -> Context
 varsContext vars =
@@ -167,13 +194,32 @@ displayTrace ctx trace =
             True ->  L () [S () "stor", displayTerm ctx ch, displayTerm ctx t]
             False -> L () [S () "send", displayTerm ctx ch, displayTerm ctx t]
 
+displayTraceNoPt :: Context -> Trace -> [SExpr ()]
+displayTraceNoPt ctx trace =
+    map displayDt trace
+    where
+      displayDt (In (Plain t)) =
+        L () [S () "recv", displayTerm ctx t]
+      displayDt (In (ChMsg ch t)) =
+          case isLocn ch of
+            True ->  L () [S () "load", displayTerm ctx ch, displayTermNoPt ctx t]
+            False -> L () [S () "recv", displayTerm ctx ch, displayTerm ctx t]
+      displayDt (Out (Plain t)) =
+        L () [S () "send", displayTerm ctx t]
+      displayDt (Out (ChMsg ch t)) =
+          case isLocn ch of
+            True ->  L () [S () "stor", displayTerm ctx ch, displayTermNoPt ctx t]
+            False -> L () [S () "send", displayTerm ctx ch, displayTerm ctx t]
+
+
+
 -- Display of preskeletons
 
 displayPreskel :: Preskel -> [SExpr ()] -> SExpr ()
 displayPreskel k rest =
     L () (S () "defskeleton" :
           S () (pname (protocol k)) :
-          L () (S () "vars" : displayVars ctx vars) :
+          L () (S () "vars" : displayVars ctx (sansPts vars)) :
           foldr f (displayRest k ctx rest) (insts k))
     where
       ctx = varsContext vars 
@@ -184,9 +230,9 @@ displayPreskel k rest =
 displayRest :: Preskel -> Context -> [SExpr ()] -> [SExpr ()]
 displayRest k ctx rest =
     displayOptional "precedes" (displayOrdering (orderings k))
-     (displayOptional "non-orig" (displayTerms ctx (knon k))
-      (displayOptional "pen-non-orig" (displayTerms ctx (kpnon k))
-       (displayOptional "uniq-orig" (displayTerms ctx (kunique k))
+     (displayOptional "non-orig" (displayTerms ctx (sansPts (knon k)))
+      (displayOptional "pen-non-orig" (displayTerms ctx (sansPts (kpnon k)))
+       (displayOptional "uniq-orig" (displayTerms ctx (sansPts (kunique k)))
         (displayOptional "genStV" (displayTerms ctx (kgenSt k))
          (displayOptional "conf" (displayTerms ctx (kconf k))
           (displayOptional "auth" (displayTerms ctx (kauth k))
@@ -224,7 +270,7 @@ displayInst ctx s =
           where
             r = role s
             domain = rvars r
-            maplets = L.sort (reify domain (env s))
+            maplets = L.sort (sansPtMaplets (reify domain (env s))) 
             rctx = varsContext domain
 
 displayMaplet :: Context -> Context -> (Term, Term) -> SExpr ()

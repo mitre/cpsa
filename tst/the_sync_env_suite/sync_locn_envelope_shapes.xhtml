@@ -1,0 +1,3063 @@
+<?xml version="1.0"?>
+<!-- CPSA 4.2.3 -->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+ <title>Envelope Protocol, location-based version</title>
+ <meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+ <style>
+  svg.diagram { border-width: 1px; border-style: solid }
+ </style>
+</head>
+<body>
+
+<pre>(comment &quot;CPSA 4.2.3&quot;)
+(comment &quot;Extracted shapes&quot;)
+(herald &quot;Envelope Protocol, location-based version&quot; (try-old-strands)
+  (bound 30) (limit 300))
+(comment &quot;CPSA 4.2.3&quot;)
+(comment &quot;All input read from sync_locn_envelope.scm&quot;)
+(comment &quot;Step count limited to 300&quot;)
+(comment &quot;Strand count bounded at 30&quot;)
+(comment &quot;Old strands tried first&quot;)</pre>
+
+<p id="top">Trees: <a href="#t0">0</a> <a href="#t34">34</a> <a href="#t67">67</a> <a href="#t202">202</a> <a href="#t211">211</a> <a href="#t219">219</a> <a href="#t233">233</a> <a href="#t267">267</a> <a href="#t300">300</a>.</p>
+
+<p id="t0">Tree <a href="#top">0</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='129.840pt' height='79.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 129.840 79.920' font-size='12.000'>
+  <text
+   x='89.880' y='26.040' style='text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k11&quot;, &quot;_self&quot;)'>11</text>
+  <line
+   x1='39.960' y1='39.960' x2='89.880' y2='39.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='39.960' y='26.040' style='text-anchor: middle; fill: black;'
+   onclick='window.open(&quot;#k0&quot;, &quot;_self&quot;)'>0</text>
+  </svg></div>
+
+<pre>(defprotocol envelope basic
+  (defrole tpm-power-on
+    (vars (current-value mesg) (pcr locn) (tpm chan))
+    (trace (recv tpm &quot;power on&quot;) (load pcr current-value)
+      (stor pcr &quot;0&quot;)))
+  (defrole tpm-extend-enc
+    (vars (value current-value mesg) (pcr-id nonce text) (pcr locn)
+      (tpm chan))
+    (trace (send tpm (cat &quot;token&quot; nonce))
+      (recv tpm (cat &quot;extend&quot; pcr-id value (hash pcr-id value nonce)))
+      (load pcr current-value) (stor pcr (hash current-value value))
+      (send &quot;ext ok&quot;))
+    (uniq-orig nonce))
+  (defrole tpm-quote
+    (vars (nonce current-value mesg) (pcr-id text) (aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat &quot;quote&quot; pcr-id nonce))
+      (load pcr current-value)
+      (send (enc &quot;quote&quot; pcr-id current-value nonce aik))))
+  (defrole tpm-create-key
+    (vars (k aik akey) (pcr-id text) (pcrval mesg) (tpm chan))
+    (trace (recv tpm (cat &quot;create-req&quot; pcr-id pcrval))
+      (send (enc &quot;created&quot; k pcr-id pcrval aik)))
+    (non-orig (invk k))
+    (uniq-orig k)
+    (auth tpm))
+  (defrole tpm-decrypt
+    (vars (m current-value mesg) (pcr-id text) (k aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat &quot;decrypt&quot; (enc m k)))
+      (recv (enc &quot;created&quot; k pcr-id current-value aik))
+      (load pcr current-value) (send m))
+    (non-orig aik))
+  (defrole alice
+    (vars (n v data) (pcr-id nonce text) (k aik akey) (tpm chan))
+    (trace (recv tpm (cat &quot;token&quot; nonce))
+      (send tpm (cat &quot;extend&quot; pcr-id n (hash pcr-id n nonce)))
+      (send tpm (cat &quot;create-req&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (recv (enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (send (enc v k)))
+    (non-orig aik)
+    (uniq-orig n v)
+    (conf tpm)
+    (neq (k aik)))
+  (defrule genStV-if-hashed-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-power-on&quot; z 2)
+          (p &quot;tpm-power-on&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-extend-enc&quot; z 3)
+          (p &quot;tpm-extend-enc&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-decrypt&quot; z 3)
+          (p &quot;tpm-decrypt&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-quote&quot; z 2)
+          (p &quot;tpm-quote&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-not-catted-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-power-on&quot; z 2)
+          (p &quot;tpm-power-on&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-extend-enc&quot; z 2)
+          (p &quot;tpm-extend-enc&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-decrypt&quot; z 3)
+          (p &quot;tpm-decrypt&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-quote&quot; z 2)
+          (p &quot;tpm-quote&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false)))))</pre>
+
+<p id="k0">Item <a href="#t0">0</a>, Child: <a href="#k11">11</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='179.880pt' height='454.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 179.880 454.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='114.960' x2='39.960' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <g><title>(enc v k)</title>
+   <circle cx='139.920' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)</title>
+   <circle style='fill: red;' cx='139.920' cy='339.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm (cat &quot;create-req&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))</title>
+   <circle cx='139.920' cy='264.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm (cat &quot;extend&quot; pcr-id n (hash pcr-id n nonce)))</title>
+   <circle cx='139.920' cy='189.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm (cat &quot;token&quot; nonce))</title>
+   <circle style='fill: blue;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>v</title><circle cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>v</title>
+   <circle style='fill: red;' cx='39.960' cy='114.960' r='6.000'/></g>
+  <g>
+   <title>((pcr-id pcr-id) (nonce nonce) (n n) (v v) (k k) (aik aik) (tpm tpm))</title>
+   <text
+    x='139.920' y='77.460' style='text-anchor: middle;'>alice</text></g>
+  <text
+   x='89.940' y='39.960' style='text-anchor: middle;'>envelope 0</text>
+  </svg></div>
+
+<pre>(defskeleton envelope
+  (vars (pcr-id nonce text) (v n data) (k aik akey) (tpm chan))
+  (deflistener v)
+  (defstrand alice 5 (pcr-id pcr-id) (nonce nonce) (n n) (v v) (k k)
+    (aik aik) (tpm tpm))
+  (non-orig aik)
+  (uniq-orig v n)
+  (conf tpm)
+  (traces ((recv v) (send v))
+    ((recv tpm (cat &quot;token&quot; nonce))
+      (send tpm (cat &quot;extend&quot; pcr-id n (hash pcr-id n nonce)))
+      (send tpm (cat &quot;create-req&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (recv (enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (send (enc v k))))
+  (label 0)
+  (unrealized (0 0) (1 3))
+  (preskeleton)
+  (origs (v (1 4)) (n (1 1)))
+  (comment &quot;Not a skeleton&quot;))</pre>
+
+<p id="k11">Item <a href="#t0">11</a>, Parent: <a href="#k0">0</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='579.720pt' height='754.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 579.720 754.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='539.760' y1='114.960' x2='539.760' y2='339.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='439.800' y1='189.960' x2='439.800' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='339.840' y1='414.960' x2='339.840' y2='639.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='239.880' y1='264.960' x2='239.880' y2='339.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='639.960' x2='39.960' y2='714.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 539.760 339.960 Q 492.780 339.960 445.800 339.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(ch-msg pcr (hash &quot;0&quot; n))</title>
+   <circle style='fill: blue;' cx='539.760' cy='339.960' r='6.000'/></g>
+  <g><title>(ch-msg pcr &quot;0&quot;)</title>
+   <circle style='fill: blue;' cx='539.760' cy='264.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm-1 (cat &quot;extend&quot; pcr-id n (hash pcr-id n nonce-0)))</title>
+   <circle style='fill: blue;' cx='539.760' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 539.760 114.960 Q 342.840 77.460 145.920 114.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(ch-msg tpm-1 (cat &quot;token&quot; nonce-0))</title>
+   <circle cx='539.760' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 439.800 414.960 Q 391.484 487.464 343.167 559.967'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(ch-msg pcr (hash (hash &quot;0&quot; n) &quot;obtain&quot;))</title>
+   <circle style='fill: blue;' cx='439.800' cy='414.960' r='6.000'/></g>
+  <g><title>(ch-msg pcr (hash &quot;0&quot; n))</title>
+   <circle style='fill: blue;' cx='439.800' cy='339.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm-0 (cat &quot;extend&quot; pcr-id-0 &quot;obtain&quot; (hash pcr-id-0 &quot;obtain&quot; nonce)))</title>
+   <circle style='fill: blue;' cx='439.800' cy='264.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm-0 (cat &quot;token&quot; nonce))</title>
+   <circle cx='439.800' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 339.840 639.960 Q 192.900 602.460 45.960 639.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>v</title><circle cx='339.840' cy='639.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg pcr (hash (hash &quot;0&quot; n) &quot;obtain&quot;))</title>
+   <circle style='fill: blue;' cx='339.840' cy='564.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)</title>
+   <circle style='fill: blue;' cx='339.840' cy='489.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm (cat &quot;decrypt&quot; (enc v k)))</title>
+   <circle style='fill: blue;' cx='339.840' cy='414.960' r='6.000'/></g>
+  <path
+   d='M 239.880 339.960 Q 192.900 339.960 145.920 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)</title>
+   <circle cx='239.880' cy='339.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm-1 (cat &quot;create-req&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))</title>
+   <circle style='fill: blue;' cx='239.880' cy='264.960' r='6.000'/></g>
+  <path
+   d='M 139.920 414.960 Q 236.880 377.460 333.840 414.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc v k)</title>
+   <circle cx='139.920' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)</title>
+   <circle style='fill: blue;' cx='139.920' cy='339.960' r='6.000'/></g>
+  <path
+   d='M 139.920 264.960 Q 186.900 264.960 233.880 264.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(ch-msg tpm-1 (cat &quot;create-req&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))</title>
+   <circle cx='139.920' cy='264.960' r='6.000'/></g>
+  <path
+   d='M 139.920 189.960 Q 336.840 152.460 533.760 189.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(ch-msg tpm-1 (cat &quot;extend&quot; pcr-id n (hash pcr-id n nonce-0)))</title>
+   <circle cx='139.920' cy='189.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm-1 (cat &quot;token&quot; nonce-0))</title>
+   <circle style='fill: blue;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>v</title><circle cx='39.960' cy='714.960' r='6.000'/></g>
+  <g><title>v</title>
+   <circle style='fill: blue;' cx='39.960' cy='639.960' r='6.000'/></g>
+  <g>
+   <title>((value n) (current-value &quot;0&quot;) (pcr-id pcr-id) (nonce nonce-0) (tpm tpm-1) (pcr pcr))</title>
+   <text
+    x='539.760' y='77.460'
+    style='text-anchor: middle;'>tpm-extend-enc</text></g>
+  <g>
+   <title>((value &quot;obtain&quot;) (current-value (hash &quot;0&quot; n)) (pcr-id pcr-id-0) (nonce nonce) (tpm tpm-0) (pcr pcr))</title>
+   <text
+    x='439.800' y='77.460'
+    style='text-anchor: middle;'>tpm-extend-enc</text></g>
+  <g>
+   <title>((m v) (current-value (hash (hash &quot;0&quot; n) &quot;obtain&quot;)) (pcr-id pcr-id) (k k) (aik aik) (tpm tpm) (pcr pcr))</title>
+   <text
+    x='339.840' y='77.460'
+    style='text-anchor: middle;'>tpm-decrypt</text></g>
+  <g>
+   <title>((pcrval (hash (hash &quot;0&quot; n) &quot;obtain&quot;)) (pcr-id pcr-id) (k k) (aik aik) (tpm tpm-1))</title>
+   <text
+    x='239.880' y='77.460'
+    style='text-anchor: middle;'>tpm-create-key</text></g>
+  <g>
+   <title>((pcr-id pcr-id) (nonce nonce-0) (n n) (v v) (k k) (aik aik) (tpm tpm-1))</title>
+   <text
+    x='139.920' y='77.460' style='text-anchor: middle;'>alice</text></g>
+  <text
+   x='289.860' y='39.960'
+   style='text-anchor: middle;'>envelope 11 (realized)</text></svg>
+ </div>
+
+<pre>(defskeleton envelope
+  (vars (pcr-id pcr-id-0 nonce nonce-0 text) (v n data) (k aik akey)
+    (tpm tpm-0 tpm-1 chan) (pcr locn))
+  (deflistener v)
+  (defstrand alice 5 (pcr-id pcr-id) (nonce nonce-0) (n n) (v v) (k k)
+    (aik aik) (tpm tpm-1))
+  (defstrand tpm-create-key 2 (pcrval (hash (hash &quot;0&quot; n) &quot;obtain&quot;))
+    (pcr-id pcr-id) (k k) (aik aik) (tpm tpm-1))
+  (defstrand tpm-decrypt 4 (m v)
+    (current-value (hash (hash &quot;0&quot; n) &quot;obtain&quot;)) (pcr-id pcr-id) (k k)
+    (aik aik) (tpm tpm) (pcr pcr))
+  (defstrand tpm-extend-enc 4 (value &quot;obtain&quot;)
+    (current-value (hash &quot;0&quot; n)) (pcr-id pcr-id-0) (nonce nonce)
+    (tpm tpm-0) (pcr pcr))
+  (defstrand tpm-extend-enc 4 (value n) (current-value &quot;0&quot;)
+    (pcr-id pcr-id) (nonce nonce-0) (tpm tpm-1) (pcr pcr))
+  (precedes ((1 1) (5 1)) ((1 2) (2 0)) ((1 4) (3 0)) ((2 1) (1 3))
+    ((3 3) (0 0)) ((4 3) (3 2)) ((5 0) (1 0)) ((5 3) (4 2)))
+  (non-orig aik (invk k))
+  (uniq-orig nonce nonce-0 v n k)
+  (genStV (hash &quot;0&quot; n) (hash (hash &quot;0&quot; n) &quot;obtain&quot;))
+  (conf tpm-1)
+  (auth tpm-1)
+  (operation channel-test (displaced 6 1 alice 2)
+    (ch-msg tpm-1 (cat &quot;extend&quot; pcr-id-1 n (hash pcr-id-1 n nonce-0)))
+    (5 1))
+  (traces ((recv v) (send v))
+    ((recv tpm-1 (cat &quot;token&quot; nonce-0))
+      (send tpm-1 (cat &quot;extend&quot; pcr-id n (hash pcr-id n nonce-0)))
+      (send tpm-1
+        (cat &quot;create-req&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (recv (enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (send (enc v k)))
+    ((recv tpm-1 (cat &quot;create-req&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (send (enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)))
+    ((recv tpm (cat &quot;decrypt&quot; (enc v k)))
+      (recv (enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (load pcr (hash (hash &quot;0&quot; n) &quot;obtain&quot;)) (send v))
+    ((send tpm-0 (cat &quot;token&quot; nonce))
+      (recv tpm-0
+        (cat &quot;extend&quot; pcr-id-0 &quot;obtain&quot; (hash pcr-id-0 &quot;obtain&quot; nonce)))
+      (load pcr (hash &quot;0&quot; n)) (stor pcr (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+    ((send tpm-1 (cat &quot;token&quot; nonce-0))
+      (recv tpm-1 (cat &quot;extend&quot; pcr-id n (hash pcr-id n nonce-0)))
+      (load pcr &quot;0&quot;) (stor pcr (hash &quot;0&quot; n))))
+  (label 11)
+  (parent 0)
+  (unrealized)
+  (shape)
+  (maps
+    ((0 1)
+      ((v v) (n n) (pcr-id pcr-id) (nonce nonce-0) (k k) (aik aik)
+        (tpm tpm-1))))
+  (origs (n (1 1)) (nonce-0 (5 0)) (nonce (4 0)) (k (2 1)) (v (1 4))))</pre>
+
+<p id="t34">Tree <a href="#top">34</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='129.840pt' height='79.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 129.840 79.920' font-size='12.000'>
+  <text
+   x='89.880' y='26.040' style='text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k44&quot;, &quot;_self&quot;)'>44</text>
+  <line
+   x1='39.960' y1='39.960' x2='89.880' y2='39.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='39.960' y='26.040' style='text-anchor: middle; fill: black;'
+   onclick='window.open(&quot;#k34&quot;, &quot;_self&quot;)'>34</text>
+  </svg></div>
+
+<pre>(defprotocol envelope basic
+  (defrole tpm-power-on
+    (vars (current-value mesg) (pcr locn) (tpm chan))
+    (trace (recv tpm &quot;power on&quot;) (load pcr current-value)
+      (stor pcr &quot;0&quot;)))
+  (defrole tpm-extend-enc
+    (vars (value current-value mesg) (pcr-id nonce text) (pcr locn)
+      (tpm chan))
+    (trace (send tpm (cat &quot;token&quot; nonce))
+      (recv tpm (cat &quot;extend&quot; pcr-id value (hash pcr-id value nonce)))
+      (load pcr current-value) (stor pcr (hash current-value value))
+      (send &quot;ext ok&quot;))
+    (uniq-orig nonce))
+  (defrole tpm-quote
+    (vars (nonce current-value mesg) (pcr-id text) (aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat &quot;quote&quot; pcr-id nonce))
+      (load pcr current-value)
+      (send (enc &quot;quote&quot; pcr-id current-value nonce aik))))
+  (defrole tpm-create-key
+    (vars (k aik akey) (pcr-id text) (pcrval mesg) (tpm chan))
+    (trace (recv tpm (cat &quot;create-req&quot; pcr-id pcrval))
+      (send (enc &quot;created&quot; k pcr-id pcrval aik)))
+    (non-orig (invk k))
+    (uniq-orig k)
+    (auth tpm))
+  (defrole tpm-decrypt
+    (vars (m current-value mesg) (pcr-id text) (k aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat &quot;decrypt&quot; (enc m k)))
+      (recv (enc &quot;created&quot; k pcr-id current-value aik))
+      (load pcr current-value) (send m))
+    (non-orig aik))
+  (defrole alice
+    (vars (n v data) (pcr-id nonce text) (k aik akey) (tpm chan))
+    (trace (recv tpm (cat &quot;token&quot; nonce))
+      (send tpm (cat &quot;extend&quot; pcr-id n (hash pcr-id n nonce)))
+      (send tpm (cat &quot;create-req&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (recv (enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (send (enc v k)))
+    (non-orig aik)
+    (uniq-orig n v)
+    (conf tpm)
+    (neq (k aik)))
+  (defrule genStV-if-hashed-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-power-on&quot; z 2)
+          (p &quot;tpm-power-on&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-extend-enc&quot; z 3)
+          (p &quot;tpm-extend-enc&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-decrypt&quot; z 3)
+          (p &quot;tpm-decrypt&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-quote&quot; z 2)
+          (p &quot;tpm-quote&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-not-catted-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-power-on&quot; z 2)
+          (p &quot;tpm-power-on&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-extend-enc&quot; z 2)
+          (p &quot;tpm-extend-enc&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-decrypt&quot; z 3)
+          (p &quot;tpm-decrypt&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-quote&quot; z 2)
+          (p &quot;tpm-quote&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false)))))</pre>
+
+<p id="k34">Item <a href="#t34">34</a>, Child: <a href="#k44">44</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='179.880pt' height='454.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 179.880 454.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='114.960' x2='39.960' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <g><title>(enc v k)</title>
+   <circle cx='139.920' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)</title>
+   <circle style='fill: red;' cx='139.920' cy='339.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))</title>
+   <circle cx='139.920' cy='264.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce)))</title>
+   <circle cx='139.920' cy='189.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm (cat &quot;token&quot; nonce))</title>
+   <circle style='fill: blue;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik)</title>
+   <circle cx='39.960' cy='189.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik)</title>
+   <circle style='fill: red;' cx='39.960' cy='114.960' r='6.000'/></g>
+  <g>
+   <title>((pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k) (aik aik) (tpm tpm))</title>
+   <text
+    x='139.920' y='77.460' style='text-anchor: middle;'>alice</text></g>
+  <text
+   x='89.940' y='39.960' style='text-anchor: middle;'>envelope 34</text>
+  </svg></div>
+
+<pre>(defskeleton envelope
+  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey) (tpm chan))
+  (deflistener
+    (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik))
+  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+    (aik aik) (tpm tpm))
+  (non-orig aik)
+  (uniq-orig n v)
+  (conf tpm)
+  (traces
+    ((recv
+       (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik))
+      (send
+        (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k)
+          aik)))
+    ((recv tpm (cat &quot;token&quot; nonce))
+      (send tpm (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce)))
+      (send tpm
+        (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (recv (enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (send (enc v k))))
+  (label 34)
+  (unrealized (0 0) (1 3))
+  (preskeleton)
+  (origs (v (1 4)) (n (1 1)))
+  (comment &quot;Not a skeleton&quot;))</pre>
+
+<p id="k44">Item <a href="#t34">44</a>, Parent: <a href="#k34">34</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='579.720pt' height='679.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 579.720 679.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='539.760' y1='114.960' x2='539.760' y2='339.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='439.800' y1='189.960' x2='439.800' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='339.840' y1='264.960' x2='339.840' y2='339.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='239.880' y1='414.960' x2='239.880' y2='564.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='564.960' x2='39.960' y2='639.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 539.760 339.960 Q 492.780 339.960 445.800 339.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(ch-msg pcr (hash &quot;0&quot; n))</title>
+   <circle style='fill: blue;' cx='539.760' cy='339.960' r='6.000'/></g>
+  <g><title>(ch-msg pcr &quot;0&quot;)</title>
+   <circle style='fill: blue;' cx='539.760' cy='264.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm-1 (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce-0)))</title>
+   <circle style='fill: blue;' cx='539.760' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 539.760 114.960 Q 342.840 77.460 145.920 114.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(ch-msg tpm-1 (cat &quot;token&quot; nonce-0))</title>
+   <circle cx='539.760' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 439.800 414.960 Q 342.649 413.906 245.498 487.852'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(ch-msg pcr (hash (hash &quot;0&quot; n) &quot;refuse&quot;))</title>
+   <circle style='fill: blue;' cx='439.800' cy='414.960' r='6.000'/></g>
+  <g><title>(ch-msg pcr (hash &quot;0&quot; n))</title>
+   <circle style='fill: blue;' cx='439.800' cy='339.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm-0 (cat &quot;extend&quot; pcr-id-1 &quot;refuse&quot; (hash pcr-id-1 &quot;refuse&quot; nonce)))</title>
+   <circle style='fill: blue;' cx='439.800' cy='264.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm-0 (cat &quot;token&quot; nonce))</title>
+   <circle cx='439.800' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 339.840 339.960 Q 242.880 302.460 145.920 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)</title>
+   <circle cx='339.840' cy='339.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm-1 (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))</title>
+   <circle style='fill: blue;' cx='339.840' cy='264.960' r='6.000'/></g>
+  <path
+   d='M 239.880 564.960 Q 142.920 527.460 45.960 564.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik)</title>
+   <circle cx='239.880' cy='564.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg pcr (hash (hash &quot;0&quot; n) &quot;refuse&quot;))</title>
+   <circle style='fill: blue;' cx='239.880' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm (cat &quot;quote&quot; pcr-id (enc v k)))</title>
+   <circle style='fill: blue;' cx='239.880' cy='414.960' r='6.000'/></g>
+  <path
+   d='M 139.920 414.960 Q 186.900 414.960 233.880 414.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc v k)</title>
+   <circle cx='139.920' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)</title>
+   <circle style='fill: blue;' cx='139.920' cy='339.960' r='6.000'/></g>
+  <path
+   d='M 139.920 264.960 Q 236.880 227.460 333.840 264.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(ch-msg tpm-1 (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))</title>
+   <circle cx='139.920' cy='264.960' r='6.000'/></g>
+  <path
+   d='M 139.920 189.960 Q 336.840 152.460 533.760 189.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(ch-msg tpm-1 (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce-0)))</title>
+   <circle cx='139.920' cy='189.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm-1 (cat &quot;token&quot; nonce-0))</title>
+   <circle style='fill: blue;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik)</title>
+   <circle cx='39.960' cy='639.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik)</title>
+   <circle style='fill: blue;' cx='39.960' cy='564.960' r='6.000'/></g>
+  <g>
+   <title>((value n) (current-value &quot;0&quot;) (pcr-id pcr-id-0) (nonce nonce-0) (tpm tpm-1) (pcr pcr))</title>
+   <text
+    x='539.760' y='77.460'
+    style='text-anchor: middle;'>tpm-extend-enc</text></g>
+  <g>
+   <title>((value &quot;refuse&quot;) (current-value (hash &quot;0&quot; n)) (pcr-id pcr-id-1) (nonce nonce) (tpm tpm-0) (pcr pcr))</title>
+   <text
+    x='439.800' y='77.460'
+    style='text-anchor: middle;'>tpm-extend-enc</text></g>
+  <g>
+   <title>((pcrval (hash (hash &quot;0&quot; n) &quot;obtain&quot;)) (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-1))</title>
+   <text
+    x='339.840' y='77.460'
+    style='text-anchor: middle;'>tpm-create-key</text></g>
+  <g>
+   <title>((nonce (enc v k)) (current-value (hash (hash &quot;0&quot; n) &quot;refuse&quot;)) (pcr-id pcr-id) (aik aik) (tpm tpm) (pcr pcr))</title>
+   <text
+    x='239.880' y='77.460' style='text-anchor: middle;'>tpm-quote</text>
+   </g>
+  <g>
+   <title>((pcr-id pcr-id-0) (nonce nonce-0) (n n) (v v) (k k) (aik aik) (tpm tpm-1))</title>
+   <text
+    x='139.920' y='77.460' style='text-anchor: middle;'>alice</text></g>
+  <text
+   x='289.860' y='39.960'
+   style='text-anchor: middle;'>envelope 44 (realized)</text></svg>
+ </div>
+
+<pre>(defskeleton envelope
+  (vars (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 text) (n v data)
+    (k aik akey) (tpm tpm-0 tpm-1 chan) (pcr locn))
+  (deflistener
+    (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik))
+  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce-0) (n n) (v v) (k k)
+    (aik aik) (tpm tpm-1))
+  (defstrand tpm-quote 3 (nonce (enc v k))
+    (current-value (hash (hash &quot;0&quot; n) &quot;refuse&quot;)) (pcr-id pcr-id)
+    (aik aik) (tpm tpm) (pcr pcr))
+  (defstrand tpm-create-key 2 (pcrval (hash (hash &quot;0&quot; n) &quot;obtain&quot;))
+    (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-1))
+  (defstrand tpm-extend-enc 4 (value &quot;refuse&quot;)
+    (current-value (hash &quot;0&quot; n)) (pcr-id pcr-id-1) (nonce nonce)
+    (tpm tpm-0) (pcr pcr))
+  (defstrand tpm-extend-enc 4 (value n) (current-value &quot;0&quot;)
+    (pcr-id pcr-id-0) (nonce nonce-0) (tpm tpm-1) (pcr pcr))
+  (precedes ((1 1) (5 1)) ((1 2) (3 0)) ((1 4) (2 0)) ((2 2) (0 0))
+    ((3 1) (1 3)) ((4 3) (2 1)) ((5 0) (1 0)) ((5 3) (4 2)))
+  (non-orig aik (invk k))
+  (uniq-orig nonce nonce-0 n v k)
+  (genStV (hash &quot;0&quot; n) (hash (hash &quot;0&quot; n) &quot;refuse&quot;))
+  (conf tpm-1)
+  (auth tpm-1)
+  (operation channel-test (displaced 6 1 alice 2)
+    (ch-msg tpm-1 (cat &quot;extend&quot; pcr-id-2 n (hash pcr-id-2 n nonce-0)))
+    (5 1))
+  (traces
+    ((recv
+       (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik))
+      (send
+        (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k)
+          aik)))
+    ((recv tpm-1 (cat &quot;token&quot; nonce-0))
+      (send tpm-1 (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce-0)))
+      (send tpm-1
+        (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (recv (enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (send (enc v k)))
+    ((recv tpm (cat &quot;quote&quot; pcr-id (enc v k)))
+      (load pcr (hash (hash &quot;0&quot; n) &quot;refuse&quot;))
+      (send
+        (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k)
+          aik)))
+    ((recv tpm-1
+       (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (send
+        (enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)))
+    ((send tpm-0 (cat &quot;token&quot; nonce))
+      (recv tpm-0
+        (cat &quot;extend&quot; pcr-id-1 &quot;refuse&quot; (hash pcr-id-1 &quot;refuse&quot; nonce)))
+      (load pcr (hash &quot;0&quot; n)) (stor pcr (hash (hash &quot;0&quot; n) &quot;refuse&quot;)))
+    ((send tpm-1 (cat &quot;token&quot; nonce-0))
+      (recv tpm-1 (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce-0)))
+      (load pcr &quot;0&quot;) (stor pcr (hash &quot;0&quot; n))))
+  (label 44)
+  (parent 34)
+  (unrealized)
+  (shape)
+  (maps
+    ((0 1)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce-0) (tpm tpm-1))))
+  (origs (n (1 1)) (nonce-0 (5 0)) (nonce (4 0)) (k (3 1)) (v (1 4))))</pre>
+
+<p id="t67">Tree <a href="#top">67</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='129.840pt' height='79.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 129.840 79.920' font-size='12.000'>
+  <text
+   x='89.880' y='26.040' style='text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k89&quot;, &quot;_self&quot;)'>89</text>
+  <line
+   x1='39.960' y1='39.960' x2='89.880' y2='39.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='39.960' y='26.040' style='text-anchor: middle; fill: black;'
+   onclick='window.open(&quot;#k67&quot;, &quot;_self&quot;)'>67</text>
+  </svg></div>
+
+<pre>(defprotocol envelope basic
+  (defrole tpm-power-on
+    (vars (current-value mesg) (pcr locn) (tpm chan))
+    (trace (recv tpm &quot;power on&quot;) (load pcr current-value)
+      (stor pcr &quot;0&quot;)))
+  (defrole tpm-extend-enc
+    (vars (value current-value mesg) (pcr-id nonce text) (pcr locn)
+      (tpm chan))
+    (trace (send tpm (cat &quot;token&quot; nonce))
+      (recv tpm (cat &quot;extend&quot; pcr-id value (hash pcr-id value nonce)))
+      (load pcr current-value) (stor pcr (hash current-value value))
+      (send &quot;ext ok&quot;))
+    (uniq-orig nonce))
+  (defrole tpm-quote
+    (vars (nonce current-value mesg) (pcr-id text) (aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat &quot;quote&quot; pcr-id nonce))
+      (load pcr current-value)
+      (send (enc &quot;quote&quot; pcr-id current-value nonce aik))))
+  (defrole tpm-create-key
+    (vars (k aik akey) (pcr-id text) (pcrval mesg) (tpm chan))
+    (trace (recv tpm (cat &quot;create-req&quot; pcr-id pcrval))
+      (send (enc &quot;created&quot; k pcr-id pcrval aik)))
+    (non-orig (invk k))
+    (uniq-orig k)
+    (auth tpm))
+  (defrole tpm-decrypt
+    (vars (m current-value mesg) (pcr-id text) (k aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat &quot;decrypt&quot; (enc m k)))
+      (recv (enc &quot;created&quot; k pcr-id current-value aik))
+      (load pcr current-value) (send m))
+    (non-orig aik))
+  (defrole alice
+    (vars (n v data) (pcr-id nonce text) (k aik akey) (tpm chan))
+    (trace (recv tpm (cat &quot;token&quot; nonce))
+      (send tpm (cat &quot;extend&quot; pcr-id n (hash pcr-id n nonce)))
+      (send tpm (cat &quot;create-req&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (recv (enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (send (enc v k)))
+    (non-orig aik)
+    (uniq-orig n v)
+    (conf tpm)
+    (neq (k aik)))
+  (defrule genStV-if-hashed-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-power-on&quot; z 2)
+          (p &quot;tpm-power-on&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-extend-enc&quot; z 3)
+          (p &quot;tpm-extend-enc&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-decrypt&quot; z 3)
+          (p &quot;tpm-decrypt&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-quote&quot; z 2)
+          (p &quot;tpm-quote&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-not-catted-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-power-on&quot; z 2)
+          (p &quot;tpm-power-on&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-extend-enc&quot; z 2)
+          (p &quot;tpm-extend-enc&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-decrypt&quot; z 3)
+          (p &quot;tpm-decrypt&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-quote&quot; z 2)
+          (p &quot;tpm-quote&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false)))))</pre>
+
+<p id="k67">Item <a href="#t67">67</a>, Child: <a href="#k89">89</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='279.840pt' height='454.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 279.840 454.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='239.880' y1='114.960' x2='239.880' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='114.960' x2='39.960' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <g><title>(enc v k)</title>
+   <circle cx='239.880' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)</title>
+   <circle style='fill: red;' cx='239.880' cy='339.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))</title>
+   <circle cx='239.880' cy='264.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce)))</title>
+   <circle cx='239.880' cy='189.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm (cat &quot;token&quot; nonce))</title>
+   <circle style='fill: blue;' cx='239.880' cy='114.960' r='6.000'/></g>
+  <g><title>v</title><circle cx='139.920' cy='189.960' r='6.000'/></g>
+  <g><title>v</title>
+   <circle style='fill: red;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik)</title>
+   <circle cx='39.960' cy='189.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik)</title>
+   <circle style='fill: red;' cx='39.960' cy='114.960' r='6.000'/></g>
+  <g>
+   <title>((pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k) (aik aik) (tpm tpm))</title>
+   <text
+    x='239.880' y='77.460' style='text-anchor: middle;'>alice</text></g>
+  <text
+   x='139.920' y='39.960'
+   style='text-anchor: middle;'>envelope 67</text></svg></div>
+
+<pre>(defskeleton envelope
+  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey) (tpm chan))
+  (deflistener
+    (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik))
+  (deflistener v)
+  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+    (aik aik) (tpm tpm))
+  (non-orig aik)
+  (uniq-orig n v)
+  (conf tpm)
+  (traces
+    ((recv
+       (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik))
+      (send
+        (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k)
+          aik))) ((recv v) (send v))
+    ((recv tpm (cat &quot;token&quot; nonce))
+      (send tpm (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce)))
+      (send tpm
+        (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (recv (enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (send (enc v k))))
+  (label 67)
+  (unrealized (0 0) (1 0) (2 3))
+  (preskeleton)
+  (origs (v (2 4)) (n (2 1)))
+  (comment &quot;Not a skeleton&quot;))</pre>
+
+<p id="k89">Item <a href="#t67">89</a>, Parent: <a href="#k67">67</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='879.600pt' height='754.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 879.600 754.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='839.640' y1='114.960' x2='839.640' y2='339.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='739.680' y1='189.960' x2='739.680' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='639.720' y1='189.960' x2='639.720' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='539.760' y1='414.960' x2='539.760' y2='639.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='439.800' y1='264.960' x2='439.800' y2='339.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='339.840' y1='414.960' x2='339.840' y2='564.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='239.880' y1='114.960' x2='239.880' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='639.960' x2='139.920' y2='714.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='564.960' x2='39.960' y2='639.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 839.640 339.960 Q 742.680 302.460 645.720 339.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 839.640 339.960 Q 792.660 339.960 745.680 339.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(ch-msg pcr (hash &quot;0&quot; n))</title>
+   <circle style='fill: blue;' cx='839.640' cy='339.960' r='6.000'/></g>
+  <g><title>(ch-msg pcr &quot;0&quot;)</title>
+   <circle style='fill: blue;' cx='839.640' cy='264.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm-3 (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce-1)))</title>
+   <circle style='fill: blue;' cx='839.640' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 839.640 114.960 Q 542.760 77.460 245.880 114.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(ch-msg tpm-3 (cat &quot;token&quot; nonce-1))</title>
+   <circle cx='839.640' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 739.680 414.960 Q 642.120 450.660 544.559 561.359'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(ch-msg pcr (hash (hash &quot;0&quot; n) &quot;obtain&quot;))</title>
+   <circle style='fill: blue;' cx='739.680' cy='414.960' r='6.000'/></g>
+  <g><title>(ch-msg pcr (hash &quot;0&quot; n))</title>
+   <circle style='fill: blue;' cx='739.680' cy='339.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm-2 (cat &quot;extend&quot; pcr-id-2 &quot;obtain&quot; (hash pcr-id-2 &quot;obtain&quot; nonce-0)))</title>
+   <circle style='fill: blue;' cx='739.680' cy='264.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm-2 (cat &quot;token&quot; nonce-0))</title>
+   <circle cx='739.680' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 639.720 414.960 Q 492.690 414.232 345.661 488.504'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(ch-msg pcr (hash (hash &quot;0&quot; n) &quot;refuse&quot;))</title>
+   <circle style='fill: blue;' cx='639.720' cy='414.960' r='6.000'/></g>
+  <g><title>(ch-msg pcr (hash &quot;0&quot; n))</title>
+   <circle style='fill: blue;' cx='639.720' cy='339.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm-1 (cat &quot;extend&quot; pcr-id-1 &quot;refuse&quot; (hash pcr-id-1 &quot;refuse&quot; nonce)))</title>
+   <circle style='fill: blue;' cx='639.720' cy='264.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm-1 (cat &quot;token&quot; nonce))</title>
+   <circle cx='639.720' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 539.760 639.960 Q 342.840 602.460 145.920 639.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>v</title><circle cx='539.760' cy='639.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg pcr (hash (hash &quot;0&quot; n) &quot;obtain&quot;))</title>
+   <circle style='fill: blue;' cx='539.760' cy='564.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)</title>
+   <circle style='fill: blue;' cx='539.760' cy='489.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm-0 (cat &quot;decrypt&quot; (enc v k)))</title>
+   <circle style='fill: blue;' cx='539.760' cy='414.960' r='6.000'/></g>
+  <path
+   d='M 439.800 339.960 Q 342.840 302.460 245.880 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)</title>
+   <circle cx='439.800' cy='339.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm-3 (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))</title>
+   <circle style='fill: blue;' cx='439.800' cy='264.960' r='6.000'/></g>
+  <path
+   d='M 339.840 564.960 Q 192.900 527.460 45.960 564.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik)</title>
+   <circle cx='339.840' cy='564.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg pcr (hash (hash &quot;0&quot; n) &quot;refuse&quot;))</title>
+   <circle style='fill: blue;' cx='339.840' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm (cat &quot;quote&quot; pcr-id (enc v k)))</title>
+   <circle style='fill: blue;' cx='339.840' cy='414.960' r='6.000'/></g>
+  <path
+   d='M 239.880 414.960 Q 286.860 414.960 333.840 414.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 239.880 414.960 Q 386.820 377.460 533.760 414.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc v k)</title>
+   <circle cx='239.880' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)</title>
+   <circle style='fill: blue;' cx='239.880' cy='339.960' r='6.000'/></g>
+  <path
+   d='M 239.880 264.960 Q 336.840 227.460 433.800 264.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(ch-msg tpm-3 (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))</title>
+   <circle cx='239.880' cy='264.960' r='6.000'/></g>
+  <path
+   d='M 239.880 189.960 Q 536.760 152.460 833.640 189.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(ch-msg tpm-3 (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce-1)))</title>
+   <circle cx='239.880' cy='189.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm-3 (cat &quot;token&quot; nonce-1))</title>
+   <circle style='fill: blue;' cx='239.880' cy='114.960' r='6.000'/></g>
+  <g><title>v</title><circle cx='139.920' cy='714.960' r='6.000'/></g>
+  <g><title>v</title>
+   <circle style='fill: blue;' cx='139.920' cy='639.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik)</title>
+   <circle cx='39.960' cy='639.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik)</title>
+   <circle style='fill: blue;' cx='39.960' cy='564.960' r='6.000'/></g>
+  <g>
+   <title>((value n) (current-value &quot;0&quot;) (pcr-id pcr-id-0) (nonce nonce-1) (tpm tpm-3) (pcr pcr))</title>
+   <text
+    x='839.640' y='77.460'
+    style='text-anchor: middle;'>tpm-extend-enc</text></g>
+  <g>
+   <title>((value &quot;obtain&quot;) (current-value (hash &quot;0&quot; n)) (pcr-id pcr-id-2) (nonce nonce-0) (tpm tpm-2) (pcr pcr))</title>
+   <text
+    x='739.680' y='77.460'
+    style='text-anchor: middle;'>tpm-extend-enc</text></g>
+  <g>
+   <title>((value &quot;refuse&quot;) (current-value (hash &quot;0&quot; n)) (pcr-id pcr-id-1) (nonce nonce) (tpm tpm-1) (pcr pcr))</title>
+   <text
+    x='639.720' y='77.460'
+    style='text-anchor: middle;'>tpm-extend-enc</text></g>
+  <g>
+   <title>((m v) (current-value (hash (hash &quot;0&quot; n) &quot;obtain&quot;)) (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-0) (pcr pcr))</title>
+   <text
+    x='539.760' y='77.460'
+    style='text-anchor: middle;'>tpm-decrypt</text></g>
+  <g>
+   <title>((pcrval (hash (hash &quot;0&quot; n) &quot;obtain&quot;)) (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-3))</title>
+   <text
+    x='439.800' y='77.460'
+    style='text-anchor: middle;'>tpm-create-key</text></g>
+  <g>
+   <title>((nonce (enc v k)) (current-value (hash (hash &quot;0&quot; n) &quot;refuse&quot;)) (pcr-id pcr-id) (aik aik) (tpm tpm) (pcr pcr))</title>
+   <text
+    x='339.840' y='77.460' style='text-anchor: middle;'>tpm-quote</text>
+   </g>
+  <g>
+   <title>((pcr-id pcr-id-0) (nonce nonce-1) (n n) (v v) (k k) (aik aik) (tpm tpm-3))</title>
+   <text
+    x='239.880' y='77.460' style='text-anchor: middle;'>alice</text></g>
+  <text
+   x='439.800' y='39.960'
+   style='text-anchor: middle;'>envelope 89 (realized)</text></svg>
+ </div>
+
+<pre>(defskeleton envelope
+  (vars (pcr-id pcr-id-0 pcr-id-1 nonce pcr-id-2 nonce-0 nonce-1 text)
+    (n v data) (k aik akey) (tpm tpm-0 tpm-1 tpm-2 tpm-3 chan)
+    (pcr locn))
+  (deflistener
+    (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik))
+  (deflistener v)
+  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce-1) (n n) (v v) (k k)
+    (aik aik) (tpm tpm-3))
+  (defstrand tpm-quote 3 (nonce (enc v k))
+    (current-value (hash (hash &quot;0&quot; n) &quot;refuse&quot;)) (pcr-id pcr-id)
+    (aik aik) (tpm tpm) (pcr pcr))
+  (defstrand tpm-create-key 2 (pcrval (hash (hash &quot;0&quot; n) &quot;obtain&quot;))
+    (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-3))
+  (defstrand tpm-decrypt 4 (m v)
+    (current-value (hash (hash &quot;0&quot; n) &quot;obtain&quot;)) (pcr-id pcr-id-0) (k k)
+    (aik aik) (tpm tpm-0) (pcr pcr))
+  (defstrand tpm-extend-enc 4 (value &quot;refuse&quot;)
+    (current-value (hash &quot;0&quot; n)) (pcr-id pcr-id-1) (nonce nonce)
+    (tpm tpm-1) (pcr pcr))
+  (defstrand tpm-extend-enc 4 (value &quot;obtain&quot;)
+    (current-value (hash &quot;0&quot; n)) (pcr-id pcr-id-2) (nonce nonce-0)
+    (tpm tpm-2) (pcr pcr))
+  (defstrand tpm-extend-enc 4 (value n) (current-value &quot;0&quot;)
+    (pcr-id pcr-id-0) (nonce nonce-1) (tpm tpm-3) (pcr pcr))
+  (precedes ((2 1) (8 1)) ((2 2) (4 0)) ((2 4) (3 0)) ((2 4) (5 0))
+    ((3 2) (0 0)) ((4 1) (2 3)) ((5 3) (1 0)) ((6 3) (3 1))
+    ((7 3) (5 2)) ((8 0) (2 0)) ((8 3) (6 2)) ((8 3) (7 2)))
+  (non-orig aik (invk k))
+  (uniq-orig nonce nonce-0 nonce-1 n v k)
+  (genStV (hash &quot;0&quot; n) (hash (hash &quot;0&quot; n) &quot;obtain&quot;)
+    (hash (hash &quot;0&quot; n) &quot;refuse&quot;))
+  (conf tpm-3)
+  (auth tpm-3)
+  (operation channel-test (displaced 9 2 alice 2)
+    (ch-msg tpm-3 (cat &quot;extend&quot; pcr-id-3 n (hash pcr-id-3 n nonce-1)))
+    (8 1))
+  (traces
+    ((recv
+       (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik))
+      (send
+        (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k)
+          aik))) ((recv v) (send v))
+    ((recv tpm-3 (cat &quot;token&quot; nonce-1))
+      (send tpm-3 (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce-1)))
+      (send tpm-3
+        (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (recv (enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (send (enc v k)))
+    ((recv tpm (cat &quot;quote&quot; pcr-id (enc v k)))
+      (load pcr (hash (hash &quot;0&quot; n) &quot;refuse&quot;))
+      (send
+        (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k)
+          aik)))
+    ((recv tpm-3
+       (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (send
+        (enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)))
+    ((recv tpm-0 (cat &quot;decrypt&quot; (enc v k)))
+      (recv (enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (load pcr (hash (hash &quot;0&quot; n) &quot;obtain&quot;)) (send v))
+    ((send tpm-1 (cat &quot;token&quot; nonce))
+      (recv tpm-1
+        (cat &quot;extend&quot; pcr-id-1 &quot;refuse&quot; (hash pcr-id-1 &quot;refuse&quot; nonce)))
+      (load pcr (hash &quot;0&quot; n)) (stor pcr (hash (hash &quot;0&quot; n) &quot;refuse&quot;)))
+    ((send tpm-2 (cat &quot;token&quot; nonce-0))
+      (recv tpm-2
+        (cat &quot;extend&quot; pcr-id-2 &quot;obtain&quot;
+          (hash pcr-id-2 &quot;obtain&quot; nonce-0))) (load pcr (hash &quot;0&quot; n))
+      (stor pcr (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+    ((send tpm-3 (cat &quot;token&quot; nonce-1))
+      (recv tpm-3 (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce-1)))
+      (load pcr &quot;0&quot;) (stor pcr (hash &quot;0&quot; n))))
+  (label 89)
+  (parent 67)
+  (unrealized)
+  (shape)
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce-1) (tpm tpm-3))))
+  (origs (n (2 1)) (nonce-1 (8 0)) (nonce-0 (7 0)) (k (4 1))
+    (nonce (6 0)) (v (2 4))))</pre>
+
+<p id="t202">Tree <a href="#top">202</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='79.920pt' height='79.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 79.920 79.920' font-size='12.000'>
+  <text
+   x='39.960' y='26.040' style='text-anchor: middle; fill: black;'
+   onclick='window.open(&quot;#k202&quot;, &quot;_self&quot;)'>202</text>
+  </svg></div>
+
+<pre>(defprotocol envelope-plus basic
+  (defrole tpm-power-on
+    (vars (current-value mesg) (pcr locn) (tpm chan))
+    (trace (recv tpm &quot;power on&quot;) (load pcr current-value)
+      (stor pcr &quot;0&quot;)))
+  (defrole tpm-extend-enc
+    (vars (value current-value mesg) (pcr-id nonce text) (pcr locn)
+      (tpm chan))
+    (trace (send tpm (cat &quot;token&quot; nonce))
+      (recv tpm (cat &quot;extend&quot; pcr-id value (hash pcr-id value nonce)))
+      (load pcr current-value) (stor pcr (hash current-value value))
+      (send &quot;ext ok&quot;))
+    (uniq-orig nonce))
+  (defrole tpm-quote
+    (vars (nonce current-value mesg) (pcr-id text) (aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat &quot;quote&quot; pcr-id nonce))
+      (load pcr current-value)
+      (send (enc &quot;quote&quot; pcr-id current-value nonce aik))))
+  (defrole tpm-create-key
+    (vars (k aik akey) (pcr-id text) (pcrval mesg) (tpm chan))
+    (trace (recv tpm (cat &quot;create-req&quot; pcr-id pcrval))
+      (send (enc &quot;created&quot; k pcr-id pcrval aik)))
+    (non-orig (invk k))
+    (uniq-orig k)
+    (auth tpm))
+  (defrole tpm-decrypt
+    (vars (m current-value mesg) (pcr-id text) (k aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat &quot;decrypt&quot; (enc m k)))
+      (recv (enc &quot;created&quot; k pcr-id current-value aik))
+      (load pcr current-value) (send m))
+    (non-orig aik))
+  (defrole alice
+    (vars (n v data) (pcr-id nonce text) (k aik akey) (tpm chan))
+    (trace (recv tpm (cat &quot;token&quot; nonce))
+      (send tpm (cat &quot;extend&quot; pcr-id n (hash pcr-id n nonce)))
+      (send tpm (cat &quot;create-req&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (recv (enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (send (enc v k)))
+    (non-orig aik)
+    (uniq-orig n v)
+    (conf tpm)
+    (neq (k aik)))
+  (defrule genStV-if-hashed-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-power-on&quot; z 2)
+          (p &quot;tpm-power-on&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-extend-enc&quot; z 3)
+          (p &quot;tpm-extend-enc&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-decrypt&quot; z 3)
+          (p &quot;tpm-decrypt&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-quote&quot; z 2)
+          (p &quot;tpm-quote&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-not-catted-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-power-on&quot; z 2)
+          (p &quot;tpm-power-on&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-extend-enc&quot; z 2)
+          (p &quot;tpm-extend-enc&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-decrypt&quot; z 3)
+          (p &quot;tpm-decrypt&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-quote&quot; z 2)
+          (p &quot;tpm-quote&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule ordered-extends
+    (forall ((y z strd) (pcr locn))
+      (implies
+        (and (p &quot;tpm-extend-enc&quot; y 3) (p &quot;tpm-extend-enc&quot; z 3)
+          (p &quot;tpm-extend-enc&quot; &quot;pcr&quot; y pcr)
+          (p &quot;tpm-extend-enc&quot; &quot;pcr&quot; z pcr))
+        (or (= y z) (prec y 2 z 1) (prec z 2 y 1))))))</pre>
+
+<p id="k202">Item <a href="#t202">202</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='179.880pt' height='454.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 179.880 454.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='114.960' x2='39.960' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <g><title>(enc v k)</title>
+   <circle cx='139.920' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)</title>
+   <circle style='fill: red;' cx='139.920' cy='339.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm (cat &quot;create-req&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))</title>
+   <circle cx='139.920' cy='264.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm (cat &quot;extend&quot; pcr-id n (hash pcr-id n nonce)))</title>
+   <circle cx='139.920' cy='189.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm (cat &quot;token&quot; nonce))</title>
+   <circle style='fill: blue;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>v</title><circle cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>v</title>
+   <circle style='fill: red;' cx='39.960' cy='114.960' r='6.000'/></g>
+  <g>
+   <title>((pcr-id pcr-id) (nonce nonce) (n n) (v v) (k k) (aik aik) (tpm tpm))</title>
+   <text
+    x='139.920' y='77.460' style='text-anchor: middle;'>alice</text></g>
+  <text
+   x='89.940' y='39.960'
+   style='text-anchor: middle;'>envelope-plus 202</text></svg></div>
+
+<pre>(defskeleton envelope-plus
+  (vars (pcr-id nonce text) (v n data) (k aik akey) (tpm chan))
+  (deflistener v)
+  (defstrand alice 5 (pcr-id pcr-id) (nonce nonce) (n n) (v v) (k k)
+    (aik aik) (tpm tpm))
+  (non-orig aik)
+  (uniq-orig v n)
+  (conf tpm)
+  (traces ((recv v) (send v))
+    ((recv tpm (cat &quot;token&quot; nonce))
+      (send tpm (cat &quot;extend&quot; pcr-id n (hash pcr-id n nonce)))
+      (send tpm (cat &quot;create-req&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (recv (enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (send (enc v k))))
+  (label 202)
+  (unrealized (0 0) (1 3))
+  (preskeleton)
+  (origs (v (1 4)) (n (1 1)))
+  (comment &quot;Not a skeleton&quot;))</pre>
+
+<p id="t211">Tree <a href="#top">211</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='79.920pt' height='79.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 79.920 79.920' font-size='12.000'>
+  <text
+   x='39.960' y='26.040' style='text-anchor: middle; fill: black;'
+   onclick='window.open(&quot;#k211&quot;, &quot;_self&quot;)'>211</text>
+  </svg></div>
+
+<pre>(defprotocol envelope-plus basic
+  (defrole tpm-power-on
+    (vars (current-value mesg) (pcr locn) (tpm chan))
+    (trace (recv tpm &quot;power on&quot;) (load pcr current-value)
+      (stor pcr &quot;0&quot;)))
+  (defrole tpm-extend-enc
+    (vars (value current-value mesg) (pcr-id nonce text) (pcr locn)
+      (tpm chan))
+    (trace (send tpm (cat &quot;token&quot; nonce))
+      (recv tpm (cat &quot;extend&quot; pcr-id value (hash pcr-id value nonce)))
+      (load pcr current-value) (stor pcr (hash current-value value))
+      (send &quot;ext ok&quot;))
+    (uniq-orig nonce))
+  (defrole tpm-quote
+    (vars (nonce current-value mesg) (pcr-id text) (aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat &quot;quote&quot; pcr-id nonce))
+      (load pcr current-value)
+      (send (enc &quot;quote&quot; pcr-id current-value nonce aik))))
+  (defrole tpm-create-key
+    (vars (k aik akey) (pcr-id text) (pcrval mesg) (tpm chan))
+    (trace (recv tpm (cat &quot;create-req&quot; pcr-id pcrval))
+      (send (enc &quot;created&quot; k pcr-id pcrval aik)))
+    (non-orig (invk k))
+    (uniq-orig k)
+    (auth tpm))
+  (defrole tpm-decrypt
+    (vars (m current-value mesg) (pcr-id text) (k aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat &quot;decrypt&quot; (enc m k)))
+      (recv (enc &quot;created&quot; k pcr-id current-value aik))
+      (load pcr current-value) (send m))
+    (non-orig aik))
+  (defrole alice
+    (vars (n v data) (pcr-id nonce text) (k aik akey) (tpm chan))
+    (trace (recv tpm (cat &quot;token&quot; nonce))
+      (send tpm (cat &quot;extend&quot; pcr-id n (hash pcr-id n nonce)))
+      (send tpm (cat &quot;create-req&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (recv (enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (send (enc v k)))
+    (non-orig aik)
+    (uniq-orig n v)
+    (conf tpm)
+    (neq (k aik)))
+  (defrule genStV-if-hashed-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-power-on&quot; z 2)
+          (p &quot;tpm-power-on&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-extend-enc&quot; z 3)
+          (p &quot;tpm-extend-enc&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-decrypt&quot; z 3)
+          (p &quot;tpm-decrypt&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-quote&quot; z 2)
+          (p &quot;tpm-quote&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-not-catted-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-power-on&quot; z 2)
+          (p &quot;tpm-power-on&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-extend-enc&quot; z 2)
+          (p &quot;tpm-extend-enc&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-decrypt&quot; z 3)
+          (p &quot;tpm-decrypt&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-quote&quot; z 2)
+          (p &quot;tpm-quote&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule ordered-extends
+    (forall ((y z strd) (pcr locn))
+      (implies
+        (and (p &quot;tpm-extend-enc&quot; y 3) (p &quot;tpm-extend-enc&quot; z 3)
+          (p &quot;tpm-extend-enc&quot; &quot;pcr&quot; y pcr)
+          (p &quot;tpm-extend-enc&quot; &quot;pcr&quot; z pcr))
+        (or (= y z) (prec y 2 z 1) (prec z 2 y 1))))))</pre>
+
+<p id="k211">Item <a href="#t211">211</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='179.880pt' height='454.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 179.880 454.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='114.960' x2='39.960' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <g><title>(enc v k)</title>
+   <circle cx='139.920' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)</title>
+   <circle style='fill: red;' cx='139.920' cy='339.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))</title>
+   <circle cx='139.920' cy='264.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce)))</title>
+   <circle cx='139.920' cy='189.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm (cat &quot;token&quot; nonce))</title>
+   <circle style='fill: blue;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik)</title>
+   <circle cx='39.960' cy='189.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik)</title>
+   <circle style='fill: red;' cx='39.960' cy='114.960' r='6.000'/></g>
+  <g>
+   <title>((pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k) (aik aik) (tpm tpm))</title>
+   <text
+    x='139.920' y='77.460' style='text-anchor: middle;'>alice</text></g>
+  <text
+   x='89.940' y='39.960'
+   style='text-anchor: middle;'>envelope-plus 211</text></svg></div>
+
+<pre>(defskeleton envelope-plus
+  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey) (tpm chan))
+  (deflistener
+    (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik))
+  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+    (aik aik) (tpm tpm))
+  (non-orig aik)
+  (uniq-orig n v)
+  (conf tpm)
+  (traces
+    ((recv
+       (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik))
+      (send
+        (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k)
+          aik)))
+    ((recv tpm (cat &quot;token&quot; nonce))
+      (send tpm (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce)))
+      (send tpm
+        (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (recv (enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (send (enc v k))))
+  (label 211)
+  (unrealized (0 0) (1 3))
+  (preskeleton)
+  (origs (v (1 4)) (n (1 1)))
+  (comment &quot;Not a skeleton&quot;))</pre>
+
+<p id="t219">Tree <a href="#top">219</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='79.920pt' height='79.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 79.920 79.920' font-size='12.000'>
+  <text
+   x='39.960' y='26.040' style='text-anchor: middle; fill: black;'
+   onclick='window.open(&quot;#k219&quot;, &quot;_self&quot;)'>219</text>
+  </svg></div>
+
+<pre>(defprotocol envelope-plus basic
+  (defrole tpm-power-on
+    (vars (current-value mesg) (pcr locn) (tpm chan))
+    (trace (recv tpm &quot;power on&quot;) (load pcr current-value)
+      (stor pcr &quot;0&quot;)))
+  (defrole tpm-extend-enc
+    (vars (value current-value mesg) (pcr-id nonce text) (pcr locn)
+      (tpm chan))
+    (trace (send tpm (cat &quot;token&quot; nonce))
+      (recv tpm (cat &quot;extend&quot; pcr-id value (hash pcr-id value nonce)))
+      (load pcr current-value) (stor pcr (hash current-value value))
+      (send &quot;ext ok&quot;))
+    (uniq-orig nonce))
+  (defrole tpm-quote
+    (vars (nonce current-value mesg) (pcr-id text) (aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat &quot;quote&quot; pcr-id nonce))
+      (load pcr current-value)
+      (send (enc &quot;quote&quot; pcr-id current-value nonce aik))))
+  (defrole tpm-create-key
+    (vars (k aik akey) (pcr-id text) (pcrval mesg) (tpm chan))
+    (trace (recv tpm (cat &quot;create-req&quot; pcr-id pcrval))
+      (send (enc &quot;created&quot; k pcr-id pcrval aik)))
+    (non-orig (invk k))
+    (uniq-orig k)
+    (auth tpm))
+  (defrole tpm-decrypt
+    (vars (m current-value mesg) (pcr-id text) (k aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat &quot;decrypt&quot; (enc m k)))
+      (recv (enc &quot;created&quot; k pcr-id current-value aik))
+      (load pcr current-value) (send m))
+    (non-orig aik))
+  (defrole alice
+    (vars (n v data) (pcr-id nonce text) (k aik akey) (tpm chan))
+    (trace (recv tpm (cat &quot;token&quot; nonce))
+      (send tpm (cat &quot;extend&quot; pcr-id n (hash pcr-id n nonce)))
+      (send tpm (cat &quot;create-req&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (recv (enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (send (enc v k)))
+    (non-orig aik)
+    (uniq-orig n v)
+    (conf tpm)
+    (neq (k aik)))
+  (defrule genStV-if-hashed-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-power-on&quot; z 2)
+          (p &quot;tpm-power-on&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-extend-enc&quot; z 3)
+          (p &quot;tpm-extend-enc&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-decrypt&quot; z 3)
+          (p &quot;tpm-decrypt&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-quote&quot; z 2)
+          (p &quot;tpm-quote&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-not-catted-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-power-on&quot; z 2)
+          (p &quot;tpm-power-on&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-extend-enc&quot; z 2)
+          (p &quot;tpm-extend-enc&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-decrypt&quot; z 3)
+          (p &quot;tpm-decrypt&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-quote&quot; z 2)
+          (p &quot;tpm-quote&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule ordered-extends
+    (forall ((y z strd) (pcr locn))
+      (implies
+        (and (p &quot;tpm-extend-enc&quot; y 3) (p &quot;tpm-extend-enc&quot; z 3)
+          (p &quot;tpm-extend-enc&quot; &quot;pcr&quot; y pcr)
+          (p &quot;tpm-extend-enc&quot; &quot;pcr&quot; z pcr))
+        (or (= y z) (prec y 2 z 1) (prec z 2 y 1))))))</pre>
+
+<p id="k219">Item <a href="#t219">219</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='279.840pt' height='454.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 279.840 454.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='239.880' y1='114.960' x2='239.880' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='114.960' x2='39.960' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <g><title>(enc v k)</title>
+   <circle cx='239.880' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)</title>
+   <circle style='fill: red;' cx='239.880' cy='339.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))</title>
+   <circle cx='239.880' cy='264.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce)))</title>
+   <circle cx='239.880' cy='189.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm (cat &quot;token&quot; nonce))</title>
+   <circle style='fill: blue;' cx='239.880' cy='114.960' r='6.000'/></g>
+  <g><title>v</title><circle cx='139.920' cy='189.960' r='6.000'/></g>
+  <g><title>v</title>
+   <circle style='fill: red;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik)</title>
+   <circle cx='39.960' cy='189.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik)</title>
+   <circle style='fill: red;' cx='39.960' cy='114.960' r='6.000'/></g>
+  <g>
+   <title>((pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k) (aik aik) (tpm tpm))</title>
+   <text
+    x='239.880' y='77.460' style='text-anchor: middle;'>alice</text></g>
+  <text
+   x='139.920' y='39.960'
+   style='text-anchor: middle;'>envelope-plus 219</text></svg></div>
+
+<pre>(defskeleton envelope-plus
+  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey) (tpm chan))
+  (deflistener
+    (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik))
+  (deflistener v)
+  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+    (aik aik) (tpm tpm))
+  (non-orig aik)
+  (uniq-orig n v)
+  (conf tpm)
+  (traces
+    ((recv
+       (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik))
+      (send
+        (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k)
+          aik))) ((recv v) (send v))
+    ((recv tpm (cat &quot;token&quot; nonce))
+      (send tpm (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce)))
+      (send tpm
+        (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (recv (enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (send (enc v k))))
+  (label 219)
+  (unrealized (0 0) (1 0) (2 3))
+  (preskeleton)
+  (origs (v (2 4)) (n (2 1)))
+  (comment &quot;Not a skeleton&quot;))</pre>
+
+<p id="t233">Tree <a href="#top">233</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='129.840pt' height='79.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 129.840 79.920' font-size='12.000'>
+  <text
+   x='89.880' y='26.040' style='text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k244&quot;, &quot;_self&quot;)'>244</text>
+  <line
+   x1='39.960' y1='39.960' x2='89.880' y2='39.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='39.960' y='26.040' style='text-anchor: middle; fill: black;'
+   onclick='window.open(&quot;#k233&quot;, &quot;_self&quot;)'>233</text>
+  </svg></div>
+
+<pre>(defprotocol envelope-plus-2 basic
+  (defrole tpm-power-on
+    (vars (current-value mesg) (pcr locn) (tpm chan))
+    (trace (recv tpm &quot;power on&quot;) (load pcr current-value)
+      (stor pcr &quot;0&quot;)))
+  (defrole tpm-extend-enc
+    (vars (value current-value mesg) (pcr-id nonce text) (pcr locn)
+      (tpm chan))
+    (trace (send tpm (cat &quot;token&quot; nonce))
+      (recv tpm (cat &quot;extend&quot; pcr-id value (hash pcr-id value nonce)))
+      (load pcr current-value) (stor pcr (hash current-value value))
+      (send &quot;ext ok&quot;))
+    (uniq-orig nonce))
+  (defrole tpm-quote
+    (vars (nonce current-value mesg) (pcr-id text) (aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat &quot;quote&quot; pcr-id nonce))
+      (load pcr current-value)
+      (send (enc &quot;quote&quot; pcr-id current-value nonce aik))))
+  (defrole tpm-create-key
+    (vars (k aik akey) (pcr-id text) (pcrval mesg) (tpm chan))
+    (trace (recv tpm (cat &quot;create-req&quot; pcr-id pcrval))
+      (send (enc &quot;created&quot; k pcr-id pcrval aik)))
+    (non-orig (invk k))
+    (uniq-orig k)
+    (auth tpm))
+  (defrole tpm-decrypt
+    (vars (m current-value mesg) (pcr-id text) (k aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat &quot;decrypt&quot; (enc m k)))
+      (recv (enc &quot;created&quot; k pcr-id current-value aik))
+      (load pcr current-value) (send m))
+    (non-orig aik))
+  (defrole alice
+    (vars (n v data) (pcr-id nonce text) (k aik akey) (tpm chan))
+    (trace (recv tpm (cat &quot;token&quot; nonce))
+      (send tpm (cat &quot;extend&quot; pcr-id n (hash pcr-id n nonce)))
+      (send tpm (cat &quot;create-req&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (recv (enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (send (enc v k)))
+    (non-orig aik)
+    (uniq-orig n v)
+    (conf tpm)
+    (neq (k aik)))
+  (defrule genStV-if-hashed-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-power-on&quot; z 2)
+          (p &quot;tpm-power-on&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-extend-enc&quot; z 3)
+          (p &quot;tpm-extend-enc&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-decrypt&quot; z 3)
+          (p &quot;tpm-decrypt&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-quote&quot; z 2)
+          (p &quot;tpm-quote&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-not-catted-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-power-on&quot; z 2)
+          (p &quot;tpm-power-on&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-extend-enc&quot; z 2)
+          (p &quot;tpm-extend-enc&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-decrypt&quot; z 3)
+          (p &quot;tpm-decrypt&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-quote&quot; z 2)
+          (p &quot;tpm-quote&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule pcr-id-identifies-pcr
+    (forall ((y z strd) (pcr-id text) (pcr pcr-0 locn))
+      (implies
+        (and (p &quot;tpm-extend-enc&quot; y 3) (p &quot;tpm-extend-enc&quot; z 3)
+          (p &quot;tpm-extend-enc&quot; &quot;pcr-id&quot; y pcr-id)
+          (p &quot;tpm-extend-enc&quot; &quot;pcr-id&quot; z pcr-id)
+          (p &quot;tpm-extend-enc&quot; &quot;pcr&quot; y pcr)
+          (p &quot;tpm-extend-enc&quot; &quot;pcr&quot; z pcr-0))
+        (= pcr pcr-0)))))</pre>
+
+<p id="k233">Item <a href="#t233">233</a>, Child: <a href="#k244">244</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='179.880pt' height='454.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 179.880 454.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='114.960' x2='39.960' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <g><title>(enc v k)</title>
+   <circle cx='139.920' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)</title>
+   <circle style='fill: red;' cx='139.920' cy='339.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm (cat &quot;create-req&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))</title>
+   <circle cx='139.920' cy='264.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm (cat &quot;extend&quot; pcr-id n (hash pcr-id n nonce)))</title>
+   <circle cx='139.920' cy='189.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm (cat &quot;token&quot; nonce))</title>
+   <circle style='fill: blue;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>v</title><circle cx='39.960' cy='189.960' r='6.000'/></g>
+  <g><title>v</title>
+   <circle style='fill: red;' cx='39.960' cy='114.960' r='6.000'/></g>
+  <g>
+   <title>((pcr-id pcr-id) (nonce nonce) (n n) (v v) (k k) (aik aik) (tpm tpm))</title>
+   <text
+    x='139.920' y='77.460' style='text-anchor: middle;'>alice</text></g>
+  <text
+   x='89.940' y='39.960'
+   style='text-anchor: middle;'>envelope-plus-2 233</text></svg></div>
+
+<pre>(defskeleton envelope-plus-2
+  (vars (pcr-id nonce text) (v n data) (k aik akey) (tpm chan))
+  (deflistener v)
+  (defstrand alice 5 (pcr-id pcr-id) (nonce nonce) (n n) (v v) (k k)
+    (aik aik) (tpm tpm))
+  (non-orig aik)
+  (uniq-orig v n)
+  (conf tpm)
+  (traces ((recv v) (send v))
+    ((recv tpm (cat &quot;token&quot; nonce))
+      (send tpm (cat &quot;extend&quot; pcr-id n (hash pcr-id n nonce)))
+      (send tpm (cat &quot;create-req&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (recv (enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (send (enc v k))))
+  (label 233)
+  (unrealized (0 0) (1 3))
+  (preskeleton)
+  (origs (v (1 4)) (n (1 1)))
+  (comment &quot;Not a skeleton&quot;))</pre>
+
+<p id="k244">Item <a href="#t233">244</a>, Parent: <a href="#k233">233</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='579.720pt' height='754.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 579.720 754.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='539.760' y1='114.960' x2='539.760' y2='339.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='439.800' y1='189.960' x2='439.800' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='339.840' y1='414.960' x2='339.840' y2='639.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='239.880' y1='264.960' x2='239.880' y2='339.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='639.960' x2='39.960' y2='714.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 539.760 339.960 Q 492.780 339.960 445.800 339.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(ch-msg pcr (hash &quot;0&quot; n))</title>
+   <circle style='fill: blue;' cx='539.760' cy='339.960' r='6.000'/></g>
+  <g><title>(ch-msg pcr &quot;0&quot;)</title>
+   <circle style='fill: blue;' cx='539.760' cy='264.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm-1 (cat &quot;extend&quot; pcr-id n (hash pcr-id n nonce-0)))</title>
+   <circle style='fill: blue;' cx='539.760' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 539.760 114.960 Q 342.840 77.460 145.920 114.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(ch-msg tpm-1 (cat &quot;token&quot; nonce-0))</title>
+   <circle cx='539.760' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 439.800 414.960 Q 391.484 487.464 343.167 559.967'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(ch-msg pcr (hash (hash &quot;0&quot; n) &quot;obtain&quot;))</title>
+   <circle style='fill: blue;' cx='439.800' cy='414.960' r='6.000'/></g>
+  <g><title>(ch-msg pcr (hash &quot;0&quot; n))</title>
+   <circle style='fill: blue;' cx='439.800' cy='339.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm-0 (cat &quot;extend&quot; pcr-id-0 &quot;obtain&quot; (hash pcr-id-0 &quot;obtain&quot; nonce)))</title>
+   <circle style='fill: blue;' cx='439.800' cy='264.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm-0 (cat &quot;token&quot; nonce))</title>
+   <circle cx='439.800' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 339.840 639.960 Q 192.900 602.460 45.960 639.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>v</title><circle cx='339.840' cy='639.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg pcr (hash (hash &quot;0&quot; n) &quot;obtain&quot;))</title>
+   <circle style='fill: blue;' cx='339.840' cy='564.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)</title>
+   <circle style='fill: blue;' cx='339.840' cy='489.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm (cat &quot;decrypt&quot; (enc v k)))</title>
+   <circle style='fill: blue;' cx='339.840' cy='414.960' r='6.000'/></g>
+  <path
+   d='M 239.880 339.960 Q 192.900 339.960 145.920 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)</title>
+   <circle cx='239.880' cy='339.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm-1 (cat &quot;create-req&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))</title>
+   <circle style='fill: blue;' cx='239.880' cy='264.960' r='6.000'/></g>
+  <path
+   d='M 139.920 414.960 Q 236.880 377.460 333.840 414.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc v k)</title>
+   <circle cx='139.920' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)</title>
+   <circle style='fill: blue;' cx='139.920' cy='339.960' r='6.000'/></g>
+  <path
+   d='M 139.920 264.960 Q 186.900 264.960 233.880 264.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(ch-msg tpm-1 (cat &quot;create-req&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))</title>
+   <circle cx='139.920' cy='264.960' r='6.000'/></g>
+  <path
+   d='M 139.920 189.960 Q 336.840 152.460 533.760 189.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(ch-msg tpm-1 (cat &quot;extend&quot; pcr-id n (hash pcr-id n nonce-0)))</title>
+   <circle cx='139.920' cy='189.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm-1 (cat &quot;token&quot; nonce-0))</title>
+   <circle style='fill: blue;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g><title>v</title><circle cx='39.960' cy='714.960' r='6.000'/></g>
+  <g><title>v</title>
+   <circle style='fill: blue;' cx='39.960' cy='639.960' r='6.000'/></g>
+  <g>
+   <title>((value n) (current-value &quot;0&quot;) (pcr-id pcr-id) (nonce nonce-0) (tpm tpm-1) (pcr pcr))</title>
+   <text
+    x='539.760' y='77.460'
+    style='text-anchor: middle;'>tpm-extend-enc</text></g>
+  <g>
+   <title>((value &quot;obtain&quot;) (current-value (hash &quot;0&quot; n)) (pcr-id pcr-id-0) (nonce nonce) (tpm tpm-0) (pcr pcr))</title>
+   <text
+    x='439.800' y='77.460'
+    style='text-anchor: middle;'>tpm-extend-enc</text></g>
+  <g>
+   <title>((m v) (current-value (hash (hash &quot;0&quot; n) &quot;obtain&quot;)) (pcr-id pcr-id) (k k) (aik aik) (tpm tpm) (pcr pcr))</title>
+   <text
+    x='339.840' y='77.460'
+    style='text-anchor: middle;'>tpm-decrypt</text></g>
+  <g>
+   <title>((pcrval (hash (hash &quot;0&quot; n) &quot;obtain&quot;)) (pcr-id pcr-id) (k k) (aik aik) (tpm tpm-1))</title>
+   <text
+    x='239.880' y='77.460'
+    style='text-anchor: middle;'>tpm-create-key</text></g>
+  <g>
+   <title>((pcr-id pcr-id) (nonce nonce-0) (n n) (v v) (k k) (aik aik) (tpm tpm-1))</title>
+   <text
+    x='139.920' y='77.460' style='text-anchor: middle;'>alice</text></g>
+  <text
+   x='289.860' y='39.960'
+   style='text-anchor: middle;'>envelope-plus-2 244 (realized)</text>
+  </svg></div>
+
+<pre>(defskeleton envelope-plus-2
+  (vars (pcr-id pcr-id-0 nonce nonce-0 text) (v n data) (k aik akey)
+    (tpm tpm-0 tpm-1 chan) (pcr locn))
+  (deflistener v)
+  (defstrand alice 5 (pcr-id pcr-id) (nonce nonce-0) (n n) (v v) (k k)
+    (aik aik) (tpm tpm-1))
+  (defstrand tpm-create-key 2 (pcrval (hash (hash &quot;0&quot; n) &quot;obtain&quot;))
+    (pcr-id pcr-id) (k k) (aik aik) (tpm tpm-1))
+  (defstrand tpm-decrypt 4 (m v)
+    (current-value (hash (hash &quot;0&quot; n) &quot;obtain&quot;)) (pcr-id pcr-id) (k k)
+    (aik aik) (tpm tpm) (pcr pcr))
+  (defstrand tpm-extend-enc 4 (value &quot;obtain&quot;)
+    (current-value (hash &quot;0&quot; n)) (pcr-id pcr-id-0) (nonce nonce)
+    (tpm tpm-0) (pcr pcr))
+  (defstrand tpm-extend-enc 4 (value n) (current-value &quot;0&quot;)
+    (pcr-id pcr-id) (nonce nonce-0) (tpm tpm-1) (pcr pcr))
+  (precedes ((1 1) (5 1)) ((1 2) (2 0)) ((1 4) (3 0)) ((2 1) (1 3))
+    ((3 3) (0 0)) ((4 3) (3 2)) ((5 0) (1 0)) ((5 3) (4 2)))
+  (non-orig aik (invk k))
+  (uniq-orig nonce nonce-0 v n k)
+  (genStV (hash &quot;0&quot; n) (hash (hash &quot;0&quot; n) &quot;obtain&quot;))
+  (conf tpm-1)
+  (auth tpm-1)
+  (operation channel-test (displaced 6 1 alice 2)
+    (ch-msg tpm-1 (cat &quot;extend&quot; pcr-id-1 n (hash pcr-id-1 n nonce-0)))
+    (5 1))
+  (traces ((recv v) (send v))
+    ((recv tpm-1 (cat &quot;token&quot; nonce-0))
+      (send tpm-1 (cat &quot;extend&quot; pcr-id n (hash pcr-id n nonce-0)))
+      (send tpm-1
+        (cat &quot;create-req&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (recv (enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (send (enc v k)))
+    ((recv tpm-1 (cat &quot;create-req&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (send (enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)))
+    ((recv tpm (cat &quot;decrypt&quot; (enc v k)))
+      (recv (enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (load pcr (hash (hash &quot;0&quot; n) &quot;obtain&quot;)) (send v))
+    ((send tpm-0 (cat &quot;token&quot; nonce))
+      (recv tpm-0
+        (cat &quot;extend&quot; pcr-id-0 &quot;obtain&quot; (hash pcr-id-0 &quot;obtain&quot; nonce)))
+      (load pcr (hash &quot;0&quot; n)) (stor pcr (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+    ((send tpm-1 (cat &quot;token&quot; nonce-0))
+      (recv tpm-1 (cat &quot;extend&quot; pcr-id n (hash pcr-id n nonce-0)))
+      (load pcr &quot;0&quot;) (stor pcr (hash &quot;0&quot; n))))
+  (label 244)
+  (parent 233)
+  (unrealized)
+  (shape)
+  (maps
+    ((0 1)
+      ((v v) (n n) (pcr-id pcr-id) (nonce nonce-0) (k k) (aik aik)
+        (tpm tpm-1))))
+  (origs (n (1 1)) (nonce-0 (5 0)) (nonce (4 0)) (k (2 1)) (v (1 4))))</pre>
+
+<p id="t267">Tree <a href="#top">267</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='129.840pt' height='79.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 129.840 79.920' font-size='12.000'>
+  <text
+   x='89.880' y='26.040' style='text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k277&quot;, &quot;_self&quot;)'>277</text>
+  <line
+   x1='39.960' y1='39.960' x2='89.880' y2='39.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='39.960' y='26.040' style='text-anchor: middle; fill: black;'
+   onclick='window.open(&quot;#k267&quot;, &quot;_self&quot;)'>267</text>
+  </svg></div>
+
+<pre>(defprotocol envelope-plus-2 basic
+  (defrole tpm-power-on
+    (vars (current-value mesg) (pcr locn) (tpm chan))
+    (trace (recv tpm &quot;power on&quot;) (load pcr current-value)
+      (stor pcr &quot;0&quot;)))
+  (defrole tpm-extend-enc
+    (vars (value current-value mesg) (pcr-id nonce text) (pcr locn)
+      (tpm chan))
+    (trace (send tpm (cat &quot;token&quot; nonce))
+      (recv tpm (cat &quot;extend&quot; pcr-id value (hash pcr-id value nonce)))
+      (load pcr current-value) (stor pcr (hash current-value value))
+      (send &quot;ext ok&quot;))
+    (uniq-orig nonce))
+  (defrole tpm-quote
+    (vars (nonce current-value mesg) (pcr-id text) (aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat &quot;quote&quot; pcr-id nonce))
+      (load pcr current-value)
+      (send (enc &quot;quote&quot; pcr-id current-value nonce aik))))
+  (defrole tpm-create-key
+    (vars (k aik akey) (pcr-id text) (pcrval mesg) (tpm chan))
+    (trace (recv tpm (cat &quot;create-req&quot; pcr-id pcrval))
+      (send (enc &quot;created&quot; k pcr-id pcrval aik)))
+    (non-orig (invk k))
+    (uniq-orig k)
+    (auth tpm))
+  (defrole tpm-decrypt
+    (vars (m current-value mesg) (pcr-id text) (k aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat &quot;decrypt&quot; (enc m k)))
+      (recv (enc &quot;created&quot; k pcr-id current-value aik))
+      (load pcr current-value) (send m))
+    (non-orig aik))
+  (defrole alice
+    (vars (n v data) (pcr-id nonce text) (k aik akey) (tpm chan))
+    (trace (recv tpm (cat &quot;token&quot; nonce))
+      (send tpm (cat &quot;extend&quot; pcr-id n (hash pcr-id n nonce)))
+      (send tpm (cat &quot;create-req&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (recv (enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (send (enc v k)))
+    (non-orig aik)
+    (uniq-orig n v)
+    (conf tpm)
+    (neq (k aik)))
+  (defrule genStV-if-hashed-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-power-on&quot; z 2)
+          (p &quot;tpm-power-on&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-extend-enc&quot; z 3)
+          (p &quot;tpm-extend-enc&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-decrypt&quot; z 3)
+          (p &quot;tpm-decrypt&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-quote&quot; z 2)
+          (p &quot;tpm-quote&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-not-catted-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-power-on&quot; z 2)
+          (p &quot;tpm-power-on&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-extend-enc&quot; z 2)
+          (p &quot;tpm-extend-enc&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-decrypt&quot; z 3)
+          (p &quot;tpm-decrypt&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-quote&quot; z 2)
+          (p &quot;tpm-quote&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule pcr-id-identifies-pcr
+    (forall ((y z strd) (pcr-id text) (pcr pcr-0 locn))
+      (implies
+        (and (p &quot;tpm-extend-enc&quot; y 3) (p &quot;tpm-extend-enc&quot; z 3)
+          (p &quot;tpm-extend-enc&quot; &quot;pcr-id&quot; y pcr-id)
+          (p &quot;tpm-extend-enc&quot; &quot;pcr-id&quot; z pcr-id)
+          (p &quot;tpm-extend-enc&quot; &quot;pcr&quot; y pcr)
+          (p &quot;tpm-extend-enc&quot; &quot;pcr&quot; z pcr-0))
+        (= pcr pcr-0)))))</pre>
+
+<p id="k267">Item <a href="#t267">267</a>, Child: <a href="#k277">277</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='179.880pt' height='454.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 179.880 454.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='114.960' x2='39.960' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <g><title>(enc v k)</title>
+   <circle cx='139.920' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)</title>
+   <circle style='fill: red;' cx='139.920' cy='339.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))</title>
+   <circle cx='139.920' cy='264.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce)))</title>
+   <circle cx='139.920' cy='189.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm (cat &quot;token&quot; nonce))</title>
+   <circle style='fill: blue;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik)</title>
+   <circle cx='39.960' cy='189.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik)</title>
+   <circle style='fill: red;' cx='39.960' cy='114.960' r='6.000'/></g>
+  <g>
+   <title>((pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k) (aik aik) (tpm tpm))</title>
+   <text
+    x='139.920' y='77.460' style='text-anchor: middle;'>alice</text></g>
+  <text
+   x='89.940' y='39.960'
+   style='text-anchor: middle;'>envelope-plus-2 267</text></svg></div>
+
+<pre>(defskeleton envelope-plus-2
+  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey) (tpm chan))
+  (deflistener
+    (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik))
+  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+    (aik aik) (tpm tpm))
+  (non-orig aik)
+  (uniq-orig n v)
+  (conf tpm)
+  (traces
+    ((recv
+       (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik))
+      (send
+        (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k)
+          aik)))
+    ((recv tpm (cat &quot;token&quot; nonce))
+      (send tpm (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce)))
+      (send tpm
+        (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (recv (enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (send (enc v k))))
+  (label 267)
+  (unrealized (0 0) (1 3))
+  (preskeleton)
+  (origs (v (1 4)) (n (1 1)))
+  (comment &quot;Not a skeleton&quot;))</pre>
+
+<p id="k277">Item <a href="#t267">277</a>, Parent: <a href="#k267">267</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='579.720pt' height='679.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 579.720 679.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='539.760' y1='114.960' x2='539.760' y2='339.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='439.800' y1='189.960' x2='439.800' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='339.840' y1='264.960' x2='339.840' y2='339.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='239.880' y1='414.960' x2='239.880' y2='564.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='564.960' x2='39.960' y2='639.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 539.760 339.960 Q 492.780 339.960 445.800 339.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(ch-msg pcr (hash &quot;0&quot; n))</title>
+   <circle style='fill: blue;' cx='539.760' cy='339.960' r='6.000'/></g>
+  <g><title>(ch-msg pcr &quot;0&quot;)</title>
+   <circle style='fill: blue;' cx='539.760' cy='264.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm-1 (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce-0)))</title>
+   <circle style='fill: blue;' cx='539.760' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 539.760 114.960 Q 342.840 77.460 145.920 114.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(ch-msg tpm-1 (cat &quot;token&quot; nonce-0))</title>
+   <circle cx='539.760' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 439.800 414.960 Q 342.649 413.906 245.498 487.852'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(ch-msg pcr (hash (hash &quot;0&quot; n) &quot;refuse&quot;))</title>
+   <circle style='fill: blue;' cx='439.800' cy='414.960' r='6.000'/></g>
+  <g><title>(ch-msg pcr (hash &quot;0&quot; n))</title>
+   <circle style='fill: blue;' cx='439.800' cy='339.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm-0 (cat &quot;extend&quot; pcr-id-1 &quot;refuse&quot; (hash pcr-id-1 &quot;refuse&quot; nonce)))</title>
+   <circle style='fill: blue;' cx='439.800' cy='264.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm-0 (cat &quot;token&quot; nonce))</title>
+   <circle cx='439.800' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 339.840 339.960 Q 242.880 302.460 145.920 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)</title>
+   <circle cx='339.840' cy='339.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm-1 (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))</title>
+   <circle style='fill: blue;' cx='339.840' cy='264.960' r='6.000'/></g>
+  <path
+   d='M 239.880 564.960 Q 142.920 527.460 45.960 564.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik)</title>
+   <circle cx='239.880' cy='564.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg pcr (hash (hash &quot;0&quot; n) &quot;refuse&quot;))</title>
+   <circle style='fill: blue;' cx='239.880' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm (cat &quot;quote&quot; pcr-id (enc v k)))</title>
+   <circle style='fill: blue;' cx='239.880' cy='414.960' r='6.000'/></g>
+  <path
+   d='M 139.920 414.960 Q 186.900 414.960 233.880 414.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc v k)</title>
+   <circle cx='139.920' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)</title>
+   <circle style='fill: blue;' cx='139.920' cy='339.960' r='6.000'/></g>
+  <path
+   d='M 139.920 264.960 Q 236.880 227.460 333.840 264.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(ch-msg tpm-1 (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))</title>
+   <circle cx='139.920' cy='264.960' r='6.000'/></g>
+  <path
+   d='M 139.920 189.960 Q 336.840 152.460 533.760 189.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(ch-msg tpm-1 (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce-0)))</title>
+   <circle cx='139.920' cy='189.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm-1 (cat &quot;token&quot; nonce-0))</title>
+   <circle style='fill: blue;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik)</title>
+   <circle cx='39.960' cy='639.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik)</title>
+   <circle style='fill: blue;' cx='39.960' cy='564.960' r='6.000'/></g>
+  <g>
+   <title>((value n) (current-value &quot;0&quot;) (pcr-id pcr-id-0) (nonce nonce-0) (tpm tpm-1) (pcr pcr))</title>
+   <text
+    x='539.760' y='77.460'
+    style='text-anchor: middle;'>tpm-extend-enc</text></g>
+  <g>
+   <title>((value &quot;refuse&quot;) (current-value (hash &quot;0&quot; n)) (pcr-id pcr-id-1) (nonce nonce) (tpm tpm-0) (pcr pcr))</title>
+   <text
+    x='439.800' y='77.460'
+    style='text-anchor: middle;'>tpm-extend-enc</text></g>
+  <g>
+   <title>((pcrval (hash (hash &quot;0&quot; n) &quot;obtain&quot;)) (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-1))</title>
+   <text
+    x='339.840' y='77.460'
+    style='text-anchor: middle;'>tpm-create-key</text></g>
+  <g>
+   <title>((nonce (enc v k)) (current-value (hash (hash &quot;0&quot; n) &quot;refuse&quot;)) (pcr-id pcr-id) (aik aik) (tpm tpm) (pcr pcr))</title>
+   <text
+    x='239.880' y='77.460' style='text-anchor: middle;'>tpm-quote</text>
+   </g>
+  <g>
+   <title>((pcr-id pcr-id-0) (nonce nonce-0) (n n) (v v) (k k) (aik aik) (tpm tpm-1))</title>
+   <text
+    x='139.920' y='77.460' style='text-anchor: middle;'>alice</text></g>
+  <text
+   x='289.860' y='39.960'
+   style='text-anchor: middle;'>envelope-plus-2 277 (realized)</text>
+  </svg></div>
+
+<pre>(defskeleton envelope-plus-2
+  (vars (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 text) (n v data)
+    (k aik akey) (tpm tpm-0 tpm-1 chan) (pcr locn))
+  (deflistener
+    (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik))
+  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce-0) (n n) (v v) (k k)
+    (aik aik) (tpm tpm-1))
+  (defstrand tpm-quote 3 (nonce (enc v k))
+    (current-value (hash (hash &quot;0&quot; n) &quot;refuse&quot;)) (pcr-id pcr-id)
+    (aik aik) (tpm tpm) (pcr pcr))
+  (defstrand tpm-create-key 2 (pcrval (hash (hash &quot;0&quot; n) &quot;obtain&quot;))
+    (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-1))
+  (defstrand tpm-extend-enc 4 (value &quot;refuse&quot;)
+    (current-value (hash &quot;0&quot; n)) (pcr-id pcr-id-1) (nonce nonce)
+    (tpm tpm-0) (pcr pcr))
+  (defstrand tpm-extend-enc 4 (value n) (current-value &quot;0&quot;)
+    (pcr-id pcr-id-0) (nonce nonce-0) (tpm tpm-1) (pcr pcr))
+  (precedes ((1 1) (5 1)) ((1 2) (3 0)) ((1 4) (2 0)) ((2 2) (0 0))
+    ((3 1) (1 3)) ((4 3) (2 1)) ((5 0) (1 0)) ((5 3) (4 2)))
+  (non-orig aik (invk k))
+  (uniq-orig nonce nonce-0 n v k)
+  (genStV (hash &quot;0&quot; n) (hash (hash &quot;0&quot; n) &quot;refuse&quot;))
+  (conf tpm-1)
+  (auth tpm-1)
+  (operation channel-test (displaced 6 1 alice 2)
+    (ch-msg tpm-1 (cat &quot;extend&quot; pcr-id-2 n (hash pcr-id-2 n nonce-0)))
+    (5 1))
+  (traces
+    ((recv
+       (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik))
+      (send
+        (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k)
+          aik)))
+    ((recv tpm-1 (cat &quot;token&quot; nonce-0))
+      (send tpm-1 (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce-0)))
+      (send tpm-1
+        (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (recv (enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (send (enc v k)))
+    ((recv tpm (cat &quot;quote&quot; pcr-id (enc v k)))
+      (load pcr (hash (hash &quot;0&quot; n) &quot;refuse&quot;))
+      (send
+        (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k)
+          aik)))
+    ((recv tpm-1
+       (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (send
+        (enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)))
+    ((send tpm-0 (cat &quot;token&quot; nonce))
+      (recv tpm-0
+        (cat &quot;extend&quot; pcr-id-1 &quot;refuse&quot; (hash pcr-id-1 &quot;refuse&quot; nonce)))
+      (load pcr (hash &quot;0&quot; n)) (stor pcr (hash (hash &quot;0&quot; n) &quot;refuse&quot;)))
+    ((send tpm-1 (cat &quot;token&quot; nonce-0))
+      (recv tpm-1 (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce-0)))
+      (load pcr &quot;0&quot;) (stor pcr (hash &quot;0&quot; n))))
+  (label 277)
+  (parent 267)
+  (unrealized)
+  (shape)
+  (maps
+    ((0 1)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce-0) (tpm tpm-1))))
+  (origs (n (1 1)) (nonce-0 (5 0)) (nonce (4 0)) (k (3 1)) (v (1 4))))</pre>
+
+<p id="t300">Tree <a href="#top">300</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='129.840pt' height='79.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 129.840 79.920' font-size='12.000'>
+  <text
+   x='89.880' y='26.040' style='text-anchor: middle; fill: blue;'
+   onclick='window.open(&quot;#k322&quot;, &quot;_self&quot;)'>322</text>
+  <line
+   x1='39.960' y1='39.960' x2='89.880' y2='39.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <text
+   x='39.960' y='26.040' style='text-anchor: middle; fill: black;'
+   onclick='window.open(&quot;#k300&quot;, &quot;_self&quot;)'>300</text>
+  </svg></div>
+
+<pre>(defprotocol envelope-plus-2 basic
+  (defrole tpm-power-on
+    (vars (current-value mesg) (pcr locn) (tpm chan))
+    (trace (recv tpm &quot;power on&quot;) (load pcr current-value)
+      (stor pcr &quot;0&quot;)))
+  (defrole tpm-extend-enc
+    (vars (value current-value mesg) (pcr-id nonce text) (pcr locn)
+      (tpm chan))
+    (trace (send tpm (cat &quot;token&quot; nonce))
+      (recv tpm (cat &quot;extend&quot; pcr-id value (hash pcr-id value nonce)))
+      (load pcr current-value) (stor pcr (hash current-value value))
+      (send &quot;ext ok&quot;))
+    (uniq-orig nonce))
+  (defrole tpm-quote
+    (vars (nonce current-value mesg) (pcr-id text) (aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat &quot;quote&quot; pcr-id nonce))
+      (load pcr current-value)
+      (send (enc &quot;quote&quot; pcr-id current-value nonce aik))))
+  (defrole tpm-create-key
+    (vars (k aik akey) (pcr-id text) (pcrval mesg) (tpm chan))
+    (trace (recv tpm (cat &quot;create-req&quot; pcr-id pcrval))
+      (send (enc &quot;created&quot; k pcr-id pcrval aik)))
+    (non-orig (invk k))
+    (uniq-orig k)
+    (auth tpm))
+  (defrole tpm-decrypt
+    (vars (m current-value mesg) (pcr-id text) (k aik akey) (pcr locn)
+      (tpm chan))
+    (trace (recv tpm (cat &quot;decrypt&quot; (enc m k)))
+      (recv (enc &quot;created&quot; k pcr-id current-value aik))
+      (load pcr current-value) (send m))
+    (non-orig aik))
+  (defrole alice
+    (vars (n v data) (pcr-id nonce text) (k aik akey) (tpm chan))
+    (trace (recv tpm (cat &quot;token&quot; nonce))
+      (send tpm (cat &quot;extend&quot; pcr-id n (hash pcr-id n nonce)))
+      (send tpm (cat &quot;create-req&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (recv (enc &quot;created&quot; k pcr-id (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (send (enc v k)))
+    (non-orig aik)
+    (uniq-orig n v)
+    (conf tpm)
+    (neq (k aik)))
+  (defrule genStV-if-hashed-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-power-on&quot; z 2)
+          (p &quot;tpm-power-on&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-extend-enc&quot; z 3)
+          (p &quot;tpm-extend-enc&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-decrypt&quot; z 3)
+          (p &quot;tpm-decrypt&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-quote&quot; z 2)
+          (p &quot;tpm-quote&quot; &quot;current-value&quot; z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-not-catted-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-power-on&quot; z 2)
+          (p &quot;tpm-power-on&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-extend-enc&quot; z 2)
+          (p &quot;tpm-extend-enc&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-decrypt&quot; z 3)
+          (p &quot;tpm-decrypt&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule genStV-not-catted-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p &quot;tpm-quote&quot; z 2)
+          (p &quot;tpm-quote&quot; &quot;current-value&quot; z (cat v1 v2)))
+        (false))))
+  (defrule pcr-id-identifies-pcr
+    (forall ((y z strd) (pcr-id text) (pcr pcr-0 locn))
+      (implies
+        (and (p &quot;tpm-extend-enc&quot; y 3) (p &quot;tpm-extend-enc&quot; z 3)
+          (p &quot;tpm-extend-enc&quot; &quot;pcr-id&quot; y pcr-id)
+          (p &quot;tpm-extend-enc&quot; &quot;pcr-id&quot; z pcr-id)
+          (p &quot;tpm-extend-enc&quot; &quot;pcr&quot; y pcr)
+          (p &quot;tpm-extend-enc&quot; &quot;pcr&quot; z pcr-0))
+        (= pcr pcr-0)))))</pre>
+
+<p id="k300">Item <a href="#t300">300</a>, Child: <a href="#k322">322</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='279.840pt' height='454.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 279.840 454.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='239.880' y1='114.960' x2='239.880' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='114.960' x2='139.920' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='114.960' x2='39.960' y2='189.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <g><title>(enc v k)</title>
+   <circle cx='239.880' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)</title>
+   <circle style='fill: red;' cx='239.880' cy='339.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))</title>
+   <circle cx='239.880' cy='264.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce)))</title>
+   <circle cx='239.880' cy='189.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm (cat &quot;token&quot; nonce))</title>
+   <circle style='fill: blue;' cx='239.880' cy='114.960' r='6.000'/></g>
+  <g><title>v</title><circle cx='139.920' cy='189.960' r='6.000'/></g>
+  <g><title>v</title>
+   <circle style='fill: red;' cx='139.920' cy='114.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik)</title>
+   <circle cx='39.960' cy='189.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik)</title>
+   <circle style='fill: red;' cx='39.960' cy='114.960' r='6.000'/></g>
+  <g>
+   <title>((pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k) (aik aik) (tpm tpm))</title>
+   <text
+    x='239.880' y='77.460' style='text-anchor: middle;'>alice</text></g>
+  <text
+   x='139.920' y='39.960'
+   style='text-anchor: middle;'>envelope-plus-2 300</text></svg></div>
+
+<pre>(defskeleton envelope-plus-2
+  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey) (tpm chan))
+  (deflistener
+    (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik))
+  (deflistener v)
+  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+    (aik aik) (tpm tpm))
+  (non-orig aik)
+  (uniq-orig n v)
+  (conf tpm)
+  (traces
+    ((recv
+       (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik))
+      (send
+        (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k)
+          aik))) ((recv v) (send v))
+    ((recv tpm (cat &quot;token&quot; nonce))
+      (send tpm (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce)))
+      (send tpm
+        (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (recv (enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (send (enc v k))))
+  (label 300)
+  (unrealized (0 0) (1 0) (2 3))
+  (preskeleton)
+  (origs (v (2 4)) (n (2 1)))
+  (comment &quot;Not a skeleton&quot;))</pre>
+
+<p id="k322">Item <a href="#t300">322</a>, Parent: <a href="#k300">300</a>.</p>
+
+<div>
+ <svg
+  class='diagram' width='879.600pt' height='754.920pt'
+  xmlns='http://www.w3.org/2000/svg' version='1.1'
+  viewBox='0 0 879.600 754.920' font-size='12.000'>
+  <defs>
+   <marker
+    id='arrow' orient='auto' markerWidth='5' markerHeight='10' refX='5'
+    refY='5'>
+    <path
+     d='M 0 0 5 5 0 10'
+     style='stroke-width: 2; fill: none; stroke: black;'/></marker>
+   </defs>
+  <line
+   x1='839.640' y1='114.960' x2='839.640' y2='339.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='739.680' y1='189.960' x2='739.680' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='639.720' y1='189.960' x2='639.720' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='539.760' y1='414.960' x2='539.760' y2='639.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='439.800' y1='264.960' x2='439.800' y2='339.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='339.840' y1='414.960' x2='339.840' y2='564.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='239.880' y1='114.960' x2='239.880' y2='414.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='139.920' y1='639.960' x2='139.920' y2='714.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <line
+   x1='39.960' y1='564.960' x2='39.960' y2='639.960'
+   style='stroke-width: 0.960; stroke: gray;'/>
+  <path
+   d='M 839.640 339.960 Q 742.680 302.460 645.720 339.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 839.640 339.960 Q 792.660 339.960 745.680 339.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(ch-msg pcr (hash &quot;0&quot; n))</title>
+   <circle style='fill: blue;' cx='839.640' cy='339.960' r='6.000'/></g>
+  <g><title>(ch-msg pcr &quot;0&quot;)</title>
+   <circle style='fill: blue;' cx='839.640' cy='264.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm-3 (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce-1)))</title>
+   <circle style='fill: blue;' cx='839.640' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 839.640 114.960 Q 542.760 77.460 245.880 114.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(ch-msg tpm-3 (cat &quot;token&quot; nonce-1))</title>
+   <circle cx='839.640' cy='114.960' r='6.000'/></g>
+  <path
+   d='M 739.680 414.960 Q 642.120 450.660 544.559 561.359'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(ch-msg pcr (hash (hash &quot;0&quot; n) &quot;obtain&quot;))</title>
+   <circle style='fill: blue;' cx='739.680' cy='414.960' r='6.000'/></g>
+  <g><title>(ch-msg pcr (hash &quot;0&quot; n))</title>
+   <circle style='fill: blue;' cx='739.680' cy='339.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm-2 (cat &quot;extend&quot; pcr-id-2 &quot;obtain&quot; (hash pcr-id-2 &quot;obtain&quot; nonce-0)))</title>
+   <circle style='fill: blue;' cx='739.680' cy='264.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm-2 (cat &quot;token&quot; nonce-0))</title>
+   <circle cx='739.680' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 639.720 414.960 Q 492.690 414.232 345.661 488.504'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(ch-msg pcr (hash (hash &quot;0&quot; n) &quot;refuse&quot;))</title>
+   <circle style='fill: blue;' cx='639.720' cy='414.960' r='6.000'/></g>
+  <g><title>(ch-msg pcr (hash &quot;0&quot; n))</title>
+   <circle style='fill: blue;' cx='639.720' cy='339.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm-1 (cat &quot;extend&quot; pcr-id-1 &quot;refuse&quot; (hash pcr-id-1 &quot;refuse&quot; nonce)))</title>
+   <circle style='fill: blue;' cx='639.720' cy='264.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm-1 (cat &quot;token&quot; nonce))</title>
+   <circle cx='639.720' cy='189.960' r='6.000'/></g>
+  <path
+   d='M 539.760 639.960 Q 342.840 602.460 145.920 639.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>v</title><circle cx='539.760' cy='639.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg pcr (hash (hash &quot;0&quot; n) &quot;obtain&quot;))</title>
+   <circle style='fill: blue;' cx='539.760' cy='564.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)</title>
+   <circle style='fill: blue;' cx='539.760' cy='489.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm-0 (cat &quot;decrypt&quot; (enc v k)))</title>
+   <circle style='fill: blue;' cx='539.760' cy='414.960' r='6.000'/></g>
+  <path
+   d='M 439.800 339.960 Q 342.840 302.460 245.880 339.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)</title>
+   <circle cx='439.800' cy='339.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm-3 (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))</title>
+   <circle style='fill: blue;' cx='439.800' cy='264.960' r='6.000'/></g>
+  <path
+   d='M 339.840 564.960 Q 192.900 527.460 45.960 564.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik)</title>
+   <circle cx='339.840' cy='564.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg pcr (hash (hash &quot;0&quot; n) &quot;refuse&quot;))</title>
+   <circle style='fill: blue;' cx='339.840' cy='489.960' r='6.000'/></g>
+  <g>
+   <title>(ch-msg tpm (cat &quot;quote&quot; pcr-id (enc v k)))</title>
+   <circle style='fill: blue;' cx='339.840' cy='414.960' r='6.000'/></g>
+  <path
+   d='M 239.880 414.960 Q 286.860 414.960 333.840 414.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <path
+   d='M 239.880 414.960 Q 386.820 377.460 533.760 414.960'
+   style='stroke-dasharray: 6.000,2.400; stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g><title>(enc v k)</title>
+   <circle cx='239.880' cy='414.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)</title>
+   <circle style='fill: blue;' cx='239.880' cy='339.960' r='6.000'/></g>
+  <path
+   d='M 239.880 264.960 Q 336.840 227.460 433.800 264.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(ch-msg tpm-3 (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))</title>
+   <circle cx='239.880' cy='264.960' r='6.000'/></g>
+  <path
+   d='M 239.880 189.960 Q 536.760 152.460 833.640 189.960'
+   style='stroke-width: 0.960; stroke: black; marker-end: url(#arrow); fill: none;'/>
+  <g>
+   <title>(ch-msg tpm-3 (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce-1)))</title>
+   <circle cx='239.880' cy='189.960' r='6.000'/></g>
+  <g><title>(ch-msg tpm-3 (cat &quot;token&quot; nonce-1))</title>
+   <circle style='fill: blue;' cx='239.880' cy='114.960' r='6.000'/></g>
+  <g><title>v</title><circle cx='139.920' cy='714.960' r='6.000'/></g>
+  <g><title>v</title>
+   <circle style='fill: blue;' cx='139.920' cy='639.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik)</title>
+   <circle cx='39.960' cy='639.960' r='6.000'/></g>
+  <g>
+   <title>(enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik)</title>
+   <circle style='fill: blue;' cx='39.960' cy='564.960' r='6.000'/></g>
+  <g>
+   <title>((value n) (current-value &quot;0&quot;) (pcr-id pcr-id-0) (nonce nonce-1) (tpm tpm-3) (pcr pcr))</title>
+   <text
+    x='839.640' y='77.460'
+    style='text-anchor: middle;'>tpm-extend-enc</text></g>
+  <g>
+   <title>((value &quot;obtain&quot;) (current-value (hash &quot;0&quot; n)) (pcr-id pcr-id-2) (nonce nonce-0) (tpm tpm-2) (pcr pcr))</title>
+   <text
+    x='739.680' y='77.460'
+    style='text-anchor: middle;'>tpm-extend-enc</text></g>
+  <g>
+   <title>((value &quot;refuse&quot;) (current-value (hash &quot;0&quot; n)) (pcr-id pcr-id-1) (nonce nonce) (tpm tpm-1) (pcr pcr))</title>
+   <text
+    x='639.720' y='77.460'
+    style='text-anchor: middle;'>tpm-extend-enc</text></g>
+  <g>
+   <title>((m v) (current-value (hash (hash &quot;0&quot; n) &quot;obtain&quot;)) (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-0) (pcr pcr))</title>
+   <text
+    x='539.760' y='77.460'
+    style='text-anchor: middle;'>tpm-decrypt</text></g>
+  <g>
+   <title>((pcrval (hash (hash &quot;0&quot; n) &quot;obtain&quot;)) (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-3))</title>
+   <text
+    x='439.800' y='77.460'
+    style='text-anchor: middle;'>tpm-create-key</text></g>
+  <g>
+   <title>((nonce (enc v k)) (current-value (hash (hash &quot;0&quot; n) &quot;refuse&quot;)) (pcr-id pcr-id) (aik aik) (tpm tpm) (pcr pcr))</title>
+   <text
+    x='339.840' y='77.460' style='text-anchor: middle;'>tpm-quote</text>
+   </g>
+  <g>
+   <title>((pcr-id pcr-id-0) (nonce nonce-1) (n n) (v v) (k k) (aik aik) (tpm tpm-3))</title>
+   <text
+    x='239.880' y='77.460' style='text-anchor: middle;'>alice</text></g>
+  <text
+   x='439.800' y='39.960'
+   style='text-anchor: middle;'>envelope-plus-2 322 (realized)</text>
+  </svg></div>
+
+<pre>(defskeleton envelope-plus-2
+  (vars (pcr-id pcr-id-0 pcr-id-1 nonce pcr-id-2 nonce-0 nonce-1 text)
+    (n v data) (k aik akey) (tpm tpm-0 tpm-1 tpm-2 tpm-3 chan)
+    (pcr locn))
+  (deflistener
+    (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik))
+  (deflistener v)
+  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce-1) (n n) (v v) (k k)
+    (aik aik) (tpm tpm-3))
+  (defstrand tpm-quote 3 (nonce (enc v k))
+    (current-value (hash (hash &quot;0&quot; n) &quot;refuse&quot;)) (pcr-id pcr-id)
+    (aik aik) (tpm tpm) (pcr pcr))
+  (defstrand tpm-create-key 2 (pcrval (hash (hash &quot;0&quot; n) &quot;obtain&quot;))
+    (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-3))
+  (defstrand tpm-decrypt 4 (m v)
+    (current-value (hash (hash &quot;0&quot; n) &quot;obtain&quot;)) (pcr-id pcr-id-0) (k k)
+    (aik aik) (tpm tpm-0) (pcr pcr))
+  (defstrand tpm-extend-enc 4 (value &quot;refuse&quot;)
+    (current-value (hash &quot;0&quot; n)) (pcr-id pcr-id-1) (nonce nonce)
+    (tpm tpm-1) (pcr pcr))
+  (defstrand tpm-extend-enc 4 (value &quot;obtain&quot;)
+    (current-value (hash &quot;0&quot; n)) (pcr-id pcr-id-2) (nonce nonce-0)
+    (tpm tpm-2) (pcr pcr))
+  (defstrand tpm-extend-enc 4 (value n) (current-value &quot;0&quot;)
+    (pcr-id pcr-id-0) (nonce nonce-1) (tpm tpm-3) (pcr pcr))
+  (precedes ((2 1) (8 1)) ((2 2) (4 0)) ((2 4) (3 0)) ((2 4) (5 0))
+    ((3 2) (0 0)) ((4 1) (2 3)) ((5 3) (1 0)) ((6 3) (3 1))
+    ((7 3) (5 2)) ((8 0) (2 0)) ((8 3) (6 2)) ((8 3) (7 2)))
+  (non-orig aik (invk k))
+  (uniq-orig nonce nonce-0 nonce-1 n v k)
+  (genStV (hash &quot;0&quot; n) (hash (hash &quot;0&quot; n) &quot;obtain&quot;)
+    (hash (hash &quot;0&quot; n) &quot;refuse&quot;))
+  (conf tpm-3)
+  (auth tpm-3)
+  (operation channel-test (displaced 9 2 alice 2)
+    (ch-msg tpm-3 (cat &quot;extend&quot; pcr-id-3 n (hash pcr-id-3 n nonce-1)))
+    (8 1))
+  (traces
+    ((recv
+       (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k) aik))
+      (send
+        (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k)
+          aik))) ((recv v) (send v))
+    ((recv tpm-3 (cat &quot;token&quot; nonce-1))
+      (send tpm-3 (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce-1)))
+      (send tpm-3
+        (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (recv (enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (send (enc v k)))
+    ((recv tpm (cat &quot;quote&quot; pcr-id (enc v k)))
+      (load pcr (hash (hash &quot;0&quot; n) &quot;refuse&quot;))
+      (send
+        (enc &quot;quote&quot; pcr-id (hash (hash &quot;0&quot; n) &quot;refuse&quot;) (enc v k)
+          aik)))
+    ((recv tpm-3
+       (cat &quot;create-req&quot; pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+      (send
+        (enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik)))
+    ((recv tpm-0 (cat &quot;decrypt&quot; (enc v k)))
+      (recv (enc &quot;created&quot; k pcr-id-0 (hash (hash &quot;0&quot; n) &quot;obtain&quot;) aik))
+      (load pcr (hash (hash &quot;0&quot; n) &quot;obtain&quot;)) (send v))
+    ((send tpm-1 (cat &quot;token&quot; nonce))
+      (recv tpm-1
+        (cat &quot;extend&quot; pcr-id-1 &quot;refuse&quot; (hash pcr-id-1 &quot;refuse&quot; nonce)))
+      (load pcr (hash &quot;0&quot; n)) (stor pcr (hash (hash &quot;0&quot; n) &quot;refuse&quot;)))
+    ((send tpm-2 (cat &quot;token&quot; nonce-0))
+      (recv tpm-2
+        (cat &quot;extend&quot; pcr-id-2 &quot;obtain&quot;
+          (hash pcr-id-2 &quot;obtain&quot; nonce-0))) (load pcr (hash &quot;0&quot; n))
+      (stor pcr (hash (hash &quot;0&quot; n) &quot;obtain&quot;)))
+    ((send tpm-3 (cat &quot;token&quot; nonce-1))
+      (recv tpm-3 (cat &quot;extend&quot; pcr-id-0 n (hash pcr-id-0 n nonce-1)))
+      (load pcr &quot;0&quot;) (stor pcr (hash &quot;0&quot; n))))
+  (label 322)
+  (parent 300)
+  (unrealized)
+  (shape)
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce-1) (tpm tpm-3))))
+  (origs (n (2 1)) (nonce-1 (8 0)) (nonce-0 (7 0)) (k (4 1))
+    (nonce (6 0)) (v (2 4))))</pre>
+
+</body>
+</html>
