@@ -38,7 +38,7 @@ import CPSA.Algebra
 import CPSA.Channel
 import CPSA.Protocol
 
-{--
+--{--
 import System.IO.Unsafe
 import Control.Exception (try)
 import System.IO.Error (ioeGetErrorString)
@@ -805,6 +805,7 @@ data Gist = Gist
       gnon :: [Term],    -- A list of non-originating terms
       gpnon :: [Term],   -- A list of penetrator non-originating terms
       gunique :: [Term], -- A list of uniquely-originating terms
+      ggenSt :: [Term],  -- A list of terms for generated states 
       gfacts :: [Fact],  -- A list of facts
       gfvars :: [Term],  -- Fact vars not in instances
       nvars :: !Int,     -- Number of variables
@@ -814,6 +815,7 @@ data Gist = Gist
       nnon :: !Int,      -- Number of non-originating terms
       npnon :: !Int,     -- Number of penetrator non-originating terms
       nunique :: !Int,   -- Number of uniquely-originating terms
+      ngenSt :: !Int,  -- Number of generated states 
       nfacts :: !Int,    -- Number of facts
       nfvars :: !Int }   -- Number of fact vars not in instances
     deriving Show
@@ -826,6 +828,7 @@ gist k =
            gnon = gnon,
            gpnon = gpnon,
            gunique = gunique,
+           ggenSt = ggenSt, 
            gfacts = gfacts,
            gfvars = gfvars,
            nvars = length (kvars k),
@@ -835,6 +838,7 @@ gist k =
            nnon = length gnon,
            npnon = length gpnon,
            nunique = length gunique,
+           ngenSt  = length ggenSt, 
            nfacts = length gfacts,
            nfvars = length gfvars }
     where
@@ -847,6 +851,7 @@ gist k =
       gnon = knon k
       gpnon = kpnon k
       gunique = kunique k
+      ggenSt = kgenSt k
       gfacts = kfacts k
       gfvars = kfvars k
 
@@ -901,6 +906,7 @@ isomorphic g g' =
     nnon g == nnon g' &&
     npnon g == npnon g' &&
     nunique g == nunique g' &&
+    ngenSt g == ngenSt g' && 
     nfacts g == nfacts g' &&
     nfvars g == nfvars g' &&
     any (tryPerm g g') (permutations g g')
@@ -915,6 +921,7 @@ probIsomorphic k k' =
     nnon g == nnon g' &&
     npnon g == npnon g' &&
     nunique g == nunique g' &&
+    ngenSt g == ngenSt g' && 
     nfacts g == nfacts g' &&
     nfvars g == nfvars g' &&
     any (tryPermProb g g' pr pr') (permutations g g')
@@ -1004,6 +1011,8 @@ tryPerm :: Gist -> Gist -> ((Gen, Env), (Gen, Env), [Sid]) -> Bool
 tryPerm g g' (env, renv, perm) =
     checkOrigs g g' env &&
     checkOrigs g' g renv &&
+    checkGenSt g g' env &&
+    checkGenSt g' g renv && 
     any (tryFacts g g' perm (invperm perm)) (fperms g g' env renv) &&
     containsMapped (permutePair perm) (gorderings g') (gorderings g)
 
@@ -1057,6 +1066,14 @@ checkOrig env (t:ts) ts' =
       env' <- match t t' env
       checkOrig env' ts (L.delete t' ts')
 checkOrig _ _ _ = error "Strand.checkOrig: lists not same length"
+
+checkGenSt :: Gist -> Gist -> (Gen, Env) -> Bool
+checkGenSt g g' env =
+    let genStVs = (ggenSt g) in 
+    let genStVs' = (ggenSt g') in
+    let (_, e) = env in 
+    all (\gs -> (instantiate e gs) `elem` genStVs') genStVs
+
 
 -- Preskeleton Reduction System (PRS)
 

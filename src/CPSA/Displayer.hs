@@ -74,7 +74,7 @@ displayExistential ctx (evars, conj) =
     ctx' = addToContext ctx evars
 
 displayConj :: Context -> [AForm] -> SExpr ()
-displayConj _ [] = error "DisplayConj: empty conjunct"
+-- displayConj _ [] = error "DisplayConj: empty conjunction"
 displayConj ctx [form] = displayForm ctx form
 displayConj ctx forms = L () (S () "and" : map (displayForm ctx) forms)
 
