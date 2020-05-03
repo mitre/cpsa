@@ -61,7 +61,7 @@
       (send tpm (cat "token" nonce))
       (recv tpm (cat "extend" pcr-id value (hash pcr-id value nonce)))
       (load pcr current-value)		    ;; MSR lhs (deleted)
-      (stor pcr (hash current-value value)) ;; MSR rhs
+      (stor pcr (hash current-value value)) ;; MSR rhs 
       (send "ext ok"))
      (uniq-orig nonce))
 

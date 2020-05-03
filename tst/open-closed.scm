@@ -1,5 +1,5 @@
-(herald open-closed
-	(try-old-strands) 
+(herald open-closed 
+	;; (try-old-strands) 
 	;; 	(check-nonces)
 	;; 	(reverse-nodes) 
 	(bound 44))
@@ -126,7 +126,7 @@
   ;; (defstrand owner-power-dev 2 (k k))
   (defstrand dev-pass 4 (k k))
   ;; (uniq-orig k)
-  )
+  ) 
 
 (defskeleton open-closed 
   (vars (k skey) (d o name) (n text) (start-ch chan))
@@ -134,17 +134,35 @@
   (defstrand dev-pass 4 (k k))
   (uniq-orig k))
 
-(defskeleton open-closed
-  (vars (old old1 any mesg) (n n-0 text) (d o name) (k k-0 skey)
-    (start-ch chan) (ls lk ls-0 lk-0 locn))
-  (defstrand owner-power-dev 2 (d d) (o o) (k k) (start-ch start-ch))
-  (defstrand dev-pass 4 (n n) (d d) (o o) (k k) (lk lk) (ls ls))
-  (defstrand dev-up 6 (old old) (old1 old1) (d d) (o o) (k k)
-    (start-ch start-ch) (lk lk) (ls ls-0))
-  (defstrand user-pass 1 (k k))
-  (defstrand dev-open 4 (any any) (n n-0) (d d) (o o) (k k-0) (lk lk-0)
-    (ls ls))
-  (precedes ((0 0) (2 0)) ((2 2) (1 0)) ((2 5) (0 1)) ((3 0) (1 1))
-    ((4 3) (1 2)))
-  (uniq-orig n k))
+
+(comment
+ (defskeleton open-closed
+   (vars (any old old1 mesg) (n n-0 text) (d o name) (k k-0 skey)
+	 (start-ch chan) (ls lk lk-0 ls-0 locn))
+   (defstrand owner-power-dev 2 (d d) (o o) (k k) (start-ch start-ch))
+   (defstrand dev-pass 4 (n n) (d d) (o o) (k k) (lk lk ;-0
+						     ) (ls ls))
+   (defstrand user-pass 1 (k k))
+   (defstrand dev-open 4 (any any) (n n-0) (d d) (o o) (k k-0) (lk lk)
+     (ls ls))
+   (defstrand dev-up 6 (old old) (old1 old1) (d d) (o o) (k k)
+     (start-ch start-ch) (lk lk-0) (ls ls-0))
+   (precedes ((0 0) (4 0)) ((2 0) (1 1)) ((3 3) (1 2)) ((4 2) (1 0))
+	     ((4 5) (0 1)))
+   (uniq-orig n k))
+
+ (defskeleton open-closed
+   (vars (any old old1 mesg) (n n-0 text) (d o name) (k k-0 skey)
+	 (start-ch chan) (ls lk ls-0 locn))
+   (defstrand owner-power-dev 2 (d d) (o o) (k k) (start-ch start-ch))
+   (defstrand dev-pass 4 (n n) (d d) (o o) (k k) (lk lk) (ls ls))
+   (defstrand user-pass 1 (k k))
+   (defstrand dev-open 4 (any any) (n n-0) (d d) (o o) (k k-0) (lk lk)
+     (ls ls))
+   (defstrand dev-up 6 (old old) (old1 old1) (d d) (o o) (k k)
+     (start-ch start-ch) (lk lk) (ls ls	; -0
+				     )) 
+   (precedes ((0 0) (4 0)) ((2 0) (1 1)) ((3 3) (1 2)) ((4 2) (1 0))
+	     ((4 5) (0 1)))
+   (uniq-orig n k)))
 
