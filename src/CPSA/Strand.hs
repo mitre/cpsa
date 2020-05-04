@@ -38,7 +38,7 @@ import CPSA.Algebra
 import CPSA.Channel
 import CPSA.Protocol
 
---{--
+{--
 import System.IO.Unsafe
 import Control.Exception (try)
 import System.IO.Error (ioeGetErrorString)
@@ -2321,9 +2321,9 @@ chkFacts k =
 
 -- Security goals: satisfaction of atomic formulas
 
--- Returns the environments that show satifaction of the antecedent
--- but fail to be extendable to show satifaction of one of the
--- conclusions.
+-- Returns the environments that satisfy the antecedent
+-- but do not extend to satisfy  one of the conclusions.
+-- 
 goalSat :: Preskel -> Goal -> (Goal, [Env])
 goalSat k g =
   (g, [ e |
@@ -2711,14 +2711,14 @@ doRewrites rules k r vas =
 
 doRewritesLoop :: [Rule] -> Preskel -> Int ->
                   [Preskel] -> [Preskel] -> [Preskel]
-doRewritesLoop _ _ lim [] _
+doRewritesLoop _ _ lim [] ks
   | lim >= ruleLimit =
     error ("Aborting after applying " ++ show ruleLimit ++
-           " rules and more are applicable (1)")
-doRewritesLoop _ _ lim (_ : _) _
+           " rules and more are applicable (1)" ++ (show ks))
+doRewritesLoop _ _ lim todo ks
   | lim >= ruleLimit =
     error ("Aborting after applying " ++ show ruleLimit ++
-           " rules and more are applicable")
+           " rules and more are applicable"  ++ (show ks) ++ (show todo))
 doRewritesLoop _ _ _ [] ks = reverse ks
 doRewritesLoop rules k lim (k' : todo) ks =
   loop rules
@@ -3029,6 +3029,13 @@ rluniq name t k (g, e) =
   where
     t' = instantiate e t
 
+checkOrigination :: Term -> Trace -> Int -> Bool
+checkOrigination t c i =
+    case originationPos t c of
+      Nothing -> False
+      Just j -> i == j
+
+
 runiqAt :: String -> Term -> NodeTerm -> Rewrite
 runiqAt name t (z, ht) k (g, e) =
   case (matched e t, strdLookup e z, indxLookup e ht) of
@@ -3036,14 +3043,15 @@ runiqAt name t (z, ht) k (g, e) =
       | elem (t', [(s, i)]) (korig k) -> [(k, (g, e))]
       | not $ isAtom t' -> []
       | i >= height (strandInst k s) -> []
-      | otherwise ->
-        [(k', (g, e))]
-        where
-          k' = newPreskel
+      | checkOrigination t' (trace $ (insts k) !! s) i ->
+          let k' = newPreskel
                   g (shared k) (insts k) (orderings k) (knon k) (kpnon k)
                   (t' : kunique k) (kgenSt k) (kconf k) (kauth k) (kfacts k)
                   (kpriority k) (operation k) (krules k) (pprob k)
-                  (prob k) (pov k)
+                  (prob k) (pov k) in 
+          [(k', (g, e))]
+      | otherwise ->
+          error ("In rule " ++ name ++ ", uniq-at not at an origination")
     (False, _, _) ->
       error ("In rule " ++ name ++ ", uniq-at did not get a term")
     (_, Nothing, _) ->

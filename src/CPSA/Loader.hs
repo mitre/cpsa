@@ -119,7 +119,7 @@ loadRole gen pos (S _ name :
                   rest) =
     do
       (gen, vars) <- loadVars gen vars
-      (gen, vars, pt_u, c, indices) <-
+      (gen, vars, pt_u, c) <- -- indices computed below 
           loadTrace gen vars (evt : c)  
       n <- loadPosBaseTerms vars (assoc "non-orig" rest)
       a <- loadPosBaseTerms vars (assoc "pen-non-orig" rest)
@@ -149,7 +149,7 @@ loadRole gen pos (S _ name :
       prios <- mapM (loadRolePriority (length c)) (assoc "priority" rest)
       let r = mkRole name vs c ns as us d h comment prios reverseSearch
 
-      let (gen', transRls) = transRules gen r indices 
+      let (gen', transRls) = transRules gen r (transitionIndices c) 
       -- :: Gen -> Role -> [Int] -> (Gen, [Rule])
       
       case roleWellFormed r of
@@ -187,7 +187,7 @@ roleWellFormed role =
       failwith "role trace is a prefix of a listener"
                    $ notListenerPrefix $ rtrace role
       failwith "role trace has stor with no previous load"
-                   $ noBareStore $ rtrace role
+                   $ balancedStores $ rtrace role
     where
       terms = tterms (rtrace role)
       nonCheck (_, t) =
@@ -229,6 +229,42 @@ noBareStore c =
           | isLocn ch              = False
           | otherwise              = check c' Nothing
       check (_ : c') _             = check c' Nothing
+
+balancedStores :: Trace -> Bool
+balancedStores c =
+    check c []
+    where
+      check [] _ = True
+      check ((In (ChMsg ch _)) : c') loads
+          | isLocn ch              = check c' (ch : loads)
+          | otherwise              = check c' []
+      check ((Out (ChMsg ch _)) : c') loads
+          | ch `elem` loads         = check c' loads
+          | isLocn ch              = False
+          | otherwise              = check c' []
+      check (_ : c') _             = check c' []
+
+transitionIndices :: Trace -> [Int]
+transitionIndices c =
+    reverse $ loop [] 0 c
+    where 
+      loop so_far _ [] = so_far
+      loop so_far i ((Out (ChMsg ch _)) : c')
+           | isLocn ch              = loop (i : so_far) (i+1) c'
+           | otherwise              = loop so_far (i+1) c'
+      loop so_far i ((In (ChMsg ch _)) : c')
+           | isLocn ch &&
+             subseqSend ch c'       = loop (i : so_far) (i+1) c'
+           | otherwise              = loop so_far (i+1) c'
+      loop so_far i (_ : c')        = loop so_far (i+1) c'
+
+      subseqSend _ []              = False
+      subseqSend ch ((In (ChMsg _ _)) : c') = subseqSend ch c'
+      subseqSend ch ((Out (ChMsg ch' _)) : c')
+          | ch == ch'              = True
+          | isLocn ch'             = subseqSend ch c'
+          | otherwise              = False
+      subseqSend _ (_ : _)        = False
 
 
 failwith :: MonadFail m => String -> Bool -> m ()
@@ -344,7 +380,7 @@ cakeRule g =
                              {uvars = [z0,z1,z2,i0,i1,i2],      
                               antec = [ (Trans (z0,i0)), (Trans (z1,i1)), 
                                         (LeadsTo (z0,i0) (z1,i1)), (LeadsTo (z0,i0) (z2,i2)),
-                                        (Prec (z2,i2) (z1,i1)) ], 
+                                        (Prec (z1,i1) (z2,i2)) ], 
                               consq = [], -- implies False
                               concl = []},
                          rlcomment = [] }))
@@ -422,60 +458,62 @@ badKey keys (L _ (S pos key : _) : xs)
     | otherwise = badKey keys xs
 badKey _ _ = return ()
 
-loadTrace :: MonadFail m => Gen -> [Term] -> [SExpr Pos] -> m (Gen, [Term], [Term], Trace, [Int]) 
+loadTrace :: MonadFail m => Gen -> [Term] -> [SExpr Pos] -> m (Gen, [Term], [Term], Trace) 
 loadTrace gen vars xs =
-    loadTraceLoop gen [] [] [] [] 0 xs
+    loadTraceLoop gen [] [] [] xs
     where
-      loadTraceLoop gen newVars uniqs events trInds _ [] =
+      loadTraceLoop gen newVars uniqs events [] =
           return (gen, vars ++ (reverse newVars),
                   (reverse uniqs),
-                  reverse events,
-                  reverse trInds)
-      loadTraceLoop gen newVars uniqs events trInds i ((L _ [S _ "recv", t]) : rest) =
+                  reverse events)
+      loadTraceLoop gen newVars uniqs events ((L _ [S _ "recv", t]) : rest) =
           do
             t <- loadTerm vars t
-            loadTraceLoop gen newVars uniqs ((In $ Plain t) : events) trInds (i+1) rest
-      loadTraceLoop gen newVars uniqs events trInds i ((L _ [S _ "send", t]) : rest) =
+            loadTraceLoop gen newVars uniqs ((In $ Plain t) : events) rest
+      loadTraceLoop gen newVars uniqs events ((L _ [S _ "send", t]) : rest) =
           do
             t <- loadTerm vars t
-            loadTraceLoop gen newVars uniqs ((Out $ Plain t) : events) trInds (i+1) rest
-      loadTraceLoop gen newVars uniqs events trInds i ((L _ [S _ "recv", ch, t]) : rest) =
+            loadTraceLoop gen newVars uniqs ((Out $ Plain t) : events) rest
+      loadTraceLoop gen newVars uniqs events ((L _ [S _ "recv", ch, t]) : rest) =
           do
             ch <- loadChan vars ch
             t <- loadTerm vars t                 
-            loadTraceLoop gen newVars uniqs ((In $ ChMsg ch t) : events) trInds (i+1) rest
-      loadTraceLoop gen newVars uniqs events trInds i ((L _ [S _ "send", ch, t]) : rest) =
+            loadTraceLoop gen newVars uniqs ((In $ ChMsg ch t) : events) rest
+      loadTraceLoop gen newVars uniqs events ((L _ [S _ "send", ch, t]) : rest) =
           do
             ch <- loadChan vars ch
             t <- loadTerm vars t
-            loadTraceLoop gen newVars uniqs ((Out $ ChMsg ch t) : events) trInds (i+1) rest
-      loadTraceLoop gen newVars uniqs events trInds i ((L _ [S pos "load", ch, t]) : rest) =
+            loadTraceLoop gen newVars uniqs ((Out $ ChMsg ch t) : events) rest
+      loadTraceLoop gen newVars uniqs events ((L _ [S pos "load", ch, t]) : rest) =
           do
             ch <- loadLocn vars ch
             t <- loadTerm vars t
             (gen, pt, pt_t) <- loadLocnTerm gen (S pos "pt") (S pos "pval") t
-            (ch', trInds') <-
-                (case rest of
-                   (L _ [S _ "stor", ch', _]) : _ ->
-                       (do
-                         ch' <- loadLocn vars ch'
-                         return (ch', (i : trInds)))
-                   _ -> return (ch, trInds))
-            case ch == ch' of
-                   False -> fail (shows pos ("distinct locns in load/stor pair"))
-                   True -> loadTraceLoop gen (pt : newVars) uniqs
-                           ((In $ ChMsg ch pt_t) : events) trInds' (i+1) rest      
-      loadTraceLoop gen newVars uniqs events trInds i ((L _ [S pos "stor", ch, t]) : rest) =
+            loadTraceLoop gen (pt : newVars) uniqs
+                              ((In $ ChMsg ch pt_t) : events) rest 
+--   
+--               (ch', trInds') <-
+--                   (case rest of
+--                      (L _ [S _ "stor", ch', _]) : _ ->
+--                          (do
+--                            ch' <- loadLocn vars ch'
+--                            return (ch', (i : trInds)))
+--                      _ -> return (ch, trInds))
+--               case ch == ch' of
+--                      False -> fail (shows pos ("distinct locns in load/stor pair"))
+--                      True -> loadTraceLoop gen (pt : newVars) uniqs
+--                              ((In $ ChMsg ch pt_t) : events) trInds' (i+1) rest      
+      loadTraceLoop gen newVars uniqs events ((L _ [S pos "stor", ch, t]) : rest) =
           do
             ch <- loadLocn vars ch
             t <- loadTerm vars t
             (gen, pt, pt_t) <- loadLocnTerm gen (S pos "pt") (S pos "pval") t
             loadTraceLoop gen (pt : newVars) (pt : uniqs)
-                              ((Out $ ChMsg ch pt_t) : events) (i : trInds) (i+1) rest
+                              ((Out $ ChMsg ch pt_t) : events) rest
 
-      loadTraceLoop _ _ _ _ _ _ ((L pos [S _ dir, _, _]) : _) =
+      loadTraceLoop _ _ _ _ ((L pos [S _ dir, _, _]) : _) =
           fail (shows pos $ "Unrecognized direction " ++ dir)
-      loadTraceLoop _ _ _ _ _ _ (x : _) =
+      loadTraceLoop _ _ _ _ (x : _) =
           fail (shows (annotation x) "Malformed event")
 
 
