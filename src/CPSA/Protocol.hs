@@ -14,7 +14,7 @@ module CPSA.Protocol (Event (..), evtCm, evtTerm, evtChan, evtMap, evt,
     tchans, varSubset, varsInTerms, addVars, firstOccurs,
     AForm (..), NodeTerm, Goal (..),
     aFormOrder, aFreeVars, Rule (..),
-    Prot, mkProt, pname, alg, pgen, roles, rules, listenerRole,
+    Prot, mkProt, pname, alg, pgen, roles, hrules, grules, listenerRole,
     varsAllAtoms, pcomment) where
 
 import qualified Data.List as L
@@ -321,6 +321,7 @@ data AForm
   | AFact String [Term]
   | Equals Term Term
   | Commpair NodeTerm NodeTerm
+  | SameLocn NodeTerm NodeTerm
   | StateNode NodeTerm
   | Trans NodeTerm
   | LeadsTo NodeTerm NodeTerm  
@@ -328,13 +329,45 @@ data AForm
 
 type NodeTerm = (Term, Term)
 
-data Goal
-  = Goal { uvars :: [Term],          -- Universally quantified variables
+data Goal =
+    Goal { uvars :: [Term],          -- Universally quantified variables
            antec :: [AForm],         -- Antecedent
            -- Consequent with existentially quantified variables
            consq :: [([Term], [AForm])],
            concl :: [[AForm]] }      -- Conclusion
     deriving Show
+
+-- A HornRule has at most one disjunct, no existential             
+data HornRule =
+    HornRule { hruvars :: [Term],          -- Universally quantified variables
+               hrantec :: [AForm],         -- Antecedent
+               -- Consequent has no existentially quantified variables
+               hrconsq :: [AForm],         -- Conjunction of atomic
+                                           -- formulas
+               hrname :: !String,
+               hrcomment :: [SExpr ()] }
+    deriving Show
+
+-- A general rule has more than one disjunct in conclusion,
+-- or else existentially bound vars 
+
+data GenRule =
+    GenRule { gruvars :: [Term],          -- Universally quantified variables
+              grantec :: [AForm],         -- Antecedent
+              -- Consequent  with existentially quantified variables
+              -- Outer list is disjuncts, each w existential bindings
+              grconsq :: [([Term], [AForm])], 
+              grname :: !String,
+              grcomment :: [SExpr ()] }
+    deriving Show
+
+
+--   data Rule
+--     = Rule { rlname :: String,    -- Name of rule
+--              rlgoal :: Goal,      -- Sentence
+--              rlcomment :: [SExpr ()] }
+--       deriving Show
+
 
 indexOfAForm :: AForm -> Int
 indexOfAForm (Length _ _ _) = 0
@@ -350,9 +383,10 @@ indexOfAForm (Auth _) = 9
 indexOfAForm (AFact _ _) = 10 
 indexOfAForm (Equals _ _) = 11
 indexOfAForm (Commpair _ _) = 12
-indexOfAForm (StateNode _) = 13
-indexOfAForm (Trans _) = 14
-indexOfAForm (LeadsTo _ _) = 15
+indexOfAForm (SameLocn _ _) =13
+indexOfAForm (StateNode _) = 14
+indexOfAForm (Trans _) = 15
+indexOfAForm (LeadsTo _ _) = 16 
 
 aFormOrder :: AForm -> AForm -> Ordering
 aFormOrder f f' =
@@ -529,6 +563,7 @@ aFreeVars vars (Auth t) = addVars vars t
 aFreeVars vars (AFact _ ft) = foldl addVars vars ft
 aFreeVars vars (Equals x y) = addVars (addVars vars x) y
 aFreeVars vars (Commpair (s,t) (s',t')) = addVars (addVars (addVars (addVars vars s) t) s') t' 
+aFreeVars vars (SameLocn (s,t) (s',t')) = addVars (addVars (addVars (addVars vars s) t) s') t' 
 aFreeVars vars (StateNode (s,t)) = addVars (addVars vars s) t
 aFreeVars vars (Trans (s,t)) = addVars (addVars vars s) t
 aFreeVars vars (LeadsTo (s,t) (s',t')) = addVars (addVars (addVars (addVars vars s) t) s') t' 
@@ -542,6 +577,38 @@ data Rule
            rlcomment :: [SExpr ()] }
     deriving Show
 
+data HGRule = H HornRule 
+            | G GenRule 
+
+classifyRule :: Rule -> HGRule
+classifyRule r =
+    let gl = rlgoal r in 
+    case consq gl of
+      [] -> (H (HornRule { hruvars = uvars gl,
+                           hrantec = antec gl,
+                           hrconsq = [],
+                           hrname = rlname r,
+                           hrcomment = rlcomment r }))
+      [([],conjs)] -> (H (HornRule { hruvars = uvars gl,
+                                     hrantec = antec gl,
+                                     hrconsq = conjs,
+                                     hrname = rlname r,
+                                     hrcomment = rlcomment r }))
+      _ -> (G (GenRule { gruvars = uvars gl,
+                         grantec = antec gl,         
+                         grconsq = consq gl,
+                         grname = rlname r,
+                         grcomment =rlcomment r }))
+
+classifyRules :: [Rule] -> ([HornRule],[GenRule])
+classifyRules =
+    foldl
+    (\(hsoFar,gsoFar) rl ->
+         case classifyRule rl of
+           H hr -> ((hr : hsoFar), gsoFar)
+           G gr -> (hsoFar, (gr : gsoFar)))
+    ([],[])
+
 -- Protocols
 
 data Prot
@@ -550,7 +617,8 @@ data Prot
              pgen :: !Gen,      -- Initial variable generator
              roles :: ![Role], -- Non-listener roles of a protocol
              listenerRole :: Role,
-             rules :: ![Rule],  -- Protocol rules
+             hrules :: ![HornRule], -- Protocol rules: Horn rules 
+             grules :: ![GenRule],  -- Protocol rules:  general rules 
              varsAllAtoms :: !Bool,   -- Are all role variables atoms?
              pcomment :: [SExpr ()] }  -- Comments from the input
     deriving Show
@@ -559,8 +627,10 @@ data Prot
 mkProt :: String -> String -> Gen ->
           [Role] -> Role -> [Rule] -> [SExpr ()] -> Prot
 mkProt name alg gen roles lrole rules comment =
+    let (hrs,grs) = classifyRules rules in 
     Prot { pname = name, alg = alg, pgen = gen, roles = roles,
-           listenerRole = lrole, rules = rules, pcomment = comment,
+           listenerRole = lrole, hrules = hrs, grules = grs,
+           pcomment = comment,
            varsAllAtoms = all roleVarsAllAtoms roles }
     where
       roleVarsAllAtoms role = all isAtom (rvars role)
