@@ -110,6 +110,10 @@ displayForm ctx (Commpair (i,j) (i',j')) =
     L () [S () "comm-pr",
             displayTerm ctx i, displayTerm ctx j,
             displayTerm ctx i', displayTerm ctx j']
+displayForm ctx (SameLocn (i,j) (i',j')) =
+    L () [S () "same-locn",
+            displayTerm ctx i, displayTerm ctx j,
+            displayTerm ctx i', displayTerm ctx j']
 displayForm ctx (StateNode (i,j)) =
     L () [S () "state-node",
             displayTerm ctx i, displayTerm ctx j]

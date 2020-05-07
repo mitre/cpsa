@@ -113,6 +113,14 @@
  	   (p "dev-up" "k" z1 k)
  	   (p "dev-up" "k" z2 k))
        (= z1 z2))))
+
+   
+   (defrule same-locn
+     (forall ((z1 z2 strd) (i1 i2 indx))
+	     (implies
+	      (same-locn z1 i1 z2 i2) 
+	      (fact ha z1 i1 z2 i2)))
+     (comment this is a rule comment))
   )
 
 (defskeleton open-closed

@@ -988,8 +988,13 @@ loadPrimary _ _ kvars (L pos (S _ "fact" : S _ name : fs)) =
 loadPrimary _ _ kvars (L pos [S _ "comm-pr", w, x, y, z]) =
   do
     t <- loadNodeTerm kvars w x
-    t' <- loadNodeTerm kvars y z
+    t' <- loadNodeTerm kvars y z 
     return (pos, Commpair t t')
+loadPrimary _ _ kvars (L pos [S _ "same-locn", w, x, y, z]) =
+  do
+    t <- loadNodeTerm kvars w x
+    t' <- loadNodeTerm kvars y z
+    return (pos, SameLocn t t')
 loadPrimary _ _ kvars (L pos [S _ "state-node", w, x]) =
   do
     t <- loadNodeTerm kvars w x

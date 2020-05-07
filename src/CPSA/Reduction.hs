@@ -26,7 +26,7 @@ import CPSA.Displayer
 
 -- Set when debugging an exception so that buffered results get out.
 useFlush :: Bool
-useFlush = False                -- True
+useFlush = True                -- False
 
 -- Parameter driven S-expression printer
 wrt :: Options -> Handle -> SExpr a -> IO ()

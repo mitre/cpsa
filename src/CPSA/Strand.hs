@@ -432,7 +432,7 @@ data Preskel = Preskel
       tc :: [Pair],             -- Transitive closure of orderings
                                 -- Used only during generalization
       operation :: Operation,
-      krules :: [String],    -- Applied rule names
+      krules :: [String],    -- Names of rules applied 
       pprob :: [Sid],        -- strand map from preskel to first skeleton
       prob :: [Sid] }        -- A map from the strands in the original
     deriving Show               -- problem statement, the pov, into
@@ -2322,7 +2322,7 @@ chkFacts k =
 -- Security goals: satisfaction of atomic formulas
 
 -- Returns the environments that satisfy the antecedent
--- but do not extend to satisfy  one of the conclusions.
+-- but do not extend to satisfy any of the conclusions.
 -- 
 goalSat :: Preskel -> Goal -> (Goal, [Env])
 goalSat k g =
@@ -2364,6 +2364,7 @@ satisfy (Auth t) = ggauth t
 satisfy (AFact name fs) = gafact name fs
 satisfy (Equals t t') = geq t t'
 satisfy (Commpair n n') = gcommpair n n'
+satisfy (SameLocn n n') = gsamelocn n n' 
 satisfy (StateNode n) = gstateNode n
 satisfy (Trans (t, t')) = gafact "trans" [t, t']
 satisfy (LeadsTo n n') =
@@ -2659,21 +2660,84 @@ gcommpair n n' k (g, e) =
             (g, e) <- nodeMatch n' p' (g, e)
             dirMsgMatch p p' k (g, e)
 
+nodeSameLocn :: Node -> Node -> Preskel -> Bool
+nodeSameLocn p p' k =
+    case dirChMsgOfNode p k of
+      Nothing -> False 
+      Just (_, chmsg) ->
+          case dirChMsgOfNode p' k of
+            Nothing -> False 
+            Just(_, chmsg') ->
+                case (chmsg,chmsg') of
+                  (Plain _,_) -> False
+                  (_,Plain _) -> False
+                  (ChMsg c _, ChMsg c' _) 
+                      | c == c' && isLocn c -> True
+                      | otherwise -> False
 
-
-
-
-
-
-
+nodeLocn :: Node -> Preskel -> [Term]
+nodeLocn p k =
+    case dirChMsgOfNode p k of
+      Nothing -> []
+      Just (_, Plain _) -> []
+      Just (_, ChMsg c _)
+        | isLocn c -> [c]
+        | otherwise -> []
+                       
+glocnSem :: NodeTerm -> Preskel -> (Gen,Env) -> [(Term,(Gen,Env))]  
+glocnSem n k (g, e) =
+    case nodeLookup e n of
+      Just p ->
+          do
+            loc <- nodeLocn p k
+            return (loc, (g, e))
+      Nothing -> 
+          do
+            p <- genNodes k
+            loc <- nodeLocn p k
+            (g, e) <- nodeMatch n p (g, e)
+            return (loc, (g,e))
+                   
+gsamelocn :: NodeTerm -> NodeTerm -> Sem
+gsamelocn n n' k (g, e) =
+    foldl
+    (\so_far (l, (g, e)) ->
+         (foldl
+          (\so_far' (l',(g',e')) ->
+               case l' == l of
+                 True -> (g',e') : so_far'
+                 False -> so_far')
+          []
+          (glocnSem n' k (g, e)))
+         ++ so_far)
+    [] 
+    (glocnSem n k (g, e)) 
+ 
 -- Rules
+
+gistKnown :: Gist -> [(Preskel,Gist)] -> Bool
+gistKnown g  =
+    any (\(_,g') -> isomorphic g g') 
+
+setModuloIso :: [Preskel] -> [Preskel]
+setModuloIso ks =
+    ks'
+    where 
+      (ks',_) =
+          unzip (foldl
+                 (\soFar (k,g) ->
+                      case gistKnown g soFar of
+                        True -> soFar
+                        False -> (k,g) : soFar)
+                 [] 
+                 $ L.zip ks (map gist ks))
 
 -- Try simplifying k if possible
 simplify :: Preskel -> [Preskel]
 simplify k =
   case rewrite k of
     Nothing -> [k]
-    Just ks -> ks
+    Just ks -> setModuloIso ks
 
 -- Try all rules associated with the protocol of k.  Return nothing if
 -- no rule applies, otherwise return the replacements.
@@ -2690,9 +2754,10 @@ rewrite k =
         else
           Just $ doRewrites prules k r vas
 
--- Returns the environments that show satifaction of the antecedent
--- but fail to be extendable to show satifaction of one of the
--- conclusions.
+-- Returns the environments that satisfy the antecedent
+-- but do not extend to satisfy any of the conclusions.
+--
+
 tryRule :: Preskel -> Rule -> [(Gen, Env)]
 tryRule k r =
   [(g, e) | (g, e) <- conjoin (antec $ rlgoal r) k (gen k, emptyEnv),
@@ -2711,14 +2776,17 @@ doRewrites rules k r vas =
 
 doRewritesLoop :: [Rule] -> Preskel -> Int ->
                   [Preskel] -> [Preskel] -> [Preskel]
-doRewritesLoop _ _ lim [] ks
+doRewritesLoop _ _ lim [] _ =   -- ks
   | lim >= ruleLimit =
     error ("Aborting after applying " ++ show ruleLimit ++
-           " rules and more are applicable (1)" ++ (show ks))
-doRewritesLoop _ _ lim todo ks
+           " rules and more are applicable (1)" -- ++ (show ks)
+          )
+doRewritesLoop _ _ lim _ _ = -- todos ks 
   | lim >= ruleLimit =
     error ("Aborting after applying " ++ show ruleLimit ++
-           " rules and more are applicable"  ++ (show ks) ++ (show todo))
+           " rules and more are applicable "
+           -- ++ (concatMap (\k' -> show (kfacts k')) (todos ++ ks))
+          )
 doRewritesLoop _ _ _ [] ks = reverse ks
 doRewritesLoop rules k lim (k' : todo) ks =
   loop rules
@@ -2731,7 +2799,7 @@ doRewritesLoop rules k lim (k' : todo) ks =
           loop rs               -- Rule does not apply
         else
           let new = doRewrite k' r vas in
-            doRewritesLoop rules k (lim + length vas) (todo ++ new) ks
+            doRewritesLoop rules k (lim + length vas) (setModuloIso $ todo ++ new) (setModuloIso ks)
 
 -- Apply rewrite rule at all assignments
 doRewrite :: Preskel -> Rule -> [(Gen, Env)] -> [Preskel]
@@ -2783,6 +2851,7 @@ rwt rule (Auth t) = rlauth rule t
 rwt rule (AFact name fs) = rafact rule name fs
 rwt rule (Equals t t') = req rule t t'
 rwt rule (Commpair n n') = rcommpair rule n n'
+rwt rule (SameLocn n n') = rsamelocn rule n n' 
 rwt rule (StateNode n) = rstateNode rule n
 rwt rule (Trans (t,t')) = rafact rule "trans" [t, t']
 rwt rule (LeadsTo n n') =
@@ -3189,6 +3258,16 @@ rcommpair name n n' k (g, e) =
                                       (k, (g,e)) <- req name m m' k (g, e)
                                       return (k, (g,e))))))
 
+                                                            
+rsamelocn :: String -> NodeTerm -> NodeTerm -> Rewrite
+rsamelocn name n n' k (g, e) =
+    case (nodeLookup e n, nodeLookup e n') of
+      (Just p, Just p') ->
+          case (nodeLocn p k, nodeLocn p' k) of
+            ([c],[c']) -> req name c c' k (g, e)
+            (_,_) -> []
+      (_,_) -> error ("In rule " ++ name ++ ", same-locn did not get two node terms")
+      
                                      
 rstateNode :: String -> NodeTerm -> Rewrite
 rstateNode name n k (g, e) =

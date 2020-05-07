@@ -342,6 +342,7 @@
 	      (or (= x z)
 		  (prec z 2 x i1)))))
 
+
    ;; (defrule atomic-simpl
    ;;   (forall ((x z strd) (i1 i2 i3 indx))
    ;; 	     (implies
