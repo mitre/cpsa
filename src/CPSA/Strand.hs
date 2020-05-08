@@ -2739,6 +2739,27 @@ simplify k =
     Nothing -> [k]
     Just ks -> setModuloIso ks
 
+rewriteNullary :: Preskel -> Maybe Preskel
+rewriteNullary k =
+    loop nrs
+    where
+      nrs = nullaryrules $ protocol k
+      loop [] = Just k
+      loop (nr : rest) =
+          case conjoin (antec $ rlgoal nr) k (gen k, emptyEnv) of
+            [] -> loop rest     -- no satisfying instances 
+            _  -> Nothing       -- satisfying instances, hence false!  
+
+-- !!! 
+
+
+hornRewrite :: Preskel -> Maybe Preskel
+hornRewrite k =
+  loop phrules
+  where
+    prules = hrules
+         
+
 -- Try all rules associated with the protocol of k.  Return nothing if
 -- no rule applies, otherwise return the replacements.
 rewrite :: Preskel -> Maybe [Preskel]
@@ -2754,7 +2775,7 @@ rewrite k =
         else
           Just $ doRewrites prules k r vas
 
--- Returns the environments that satisfy the antecedent
+-- Returns all environments that satisfy the antecedent
 -- but do not extend to satisfy any of the conclusions.
 --
 
@@ -2962,7 +2983,9 @@ rparam :: String -> Role -> Term -> Int -> Term -> Term -> Rewrite
 rparam name r v h z t k (g, e) =
   case strdLookup e z of
     Just s
-      | height inst < h -> []
+      | height inst < h -> []   -- JDG:  This looks suspicious.  Why
+                                -- not extend the inst to a greater
+                                -- height?  
       | rname (role inst) == rname r ->
         rParam name k (g, e) t t'
       | otherwise ->
