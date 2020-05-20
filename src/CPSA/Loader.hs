@@ -75,11 +75,12 @@ loadProt nom origin pos (S _ name : S _ alg : x : xs)
     | otherwise =
         do
           (gen, rs, transRules, rest) <- loadRoles origin (x : xs)
-          (gen, r) <- mkListenerRole pos gen
-          let (gen', scissors) = scissorsRule gen 
-          let (gen'', cake) = cakeRule gen' 
-          let (gen, neqs) = neqRules gen'' 
-          let initRls = scissors : cake : (neqs ++ transRules)
+          (gen', r) <- mkListenerRole pos gen
+          let (gen'', scissors) = scissorsRule gen'
+          let (gen''', cake) = cakeRule gen''
+          let (gen'''', intrpt) = uninterruptibleRule gen'''
+          let (gen, neqs) = neqRules gen''''
+          let initRls = scissors : cake : intrpt : (neqs ++ transRules)
 
           -- Fake protocol is used only for loading rules
           let fakeProt = mkProt name alg gen rs r
@@ -213,22 +214,22 @@ roleWellFormed role =
                          isJust (acquiredPos v (rtrace role))
 
 
-noBareStore :: Trace -> Bool 
-noBareStore c =
-    check c Nothing
-    where
-      check [] _ = True
-      check ((In (ChMsg ch _)) : c') _ 
-          | isLocn ch              = check c' (Just ch)
-          | otherwise              = check c' Nothing
-      check ((Out (ChMsg ch _)) : c') (Just ch') 
-          | ch == ch'              = check c' Nothing
-          | isLocn ch              = False 
-          | otherwise              = check c' Nothing
-      check ((Out (ChMsg ch _)) : c') Nothing 
-          | isLocn ch              = False
-          | otherwise              = check c' Nothing
-      check (_ : c') _             = check c' Nothing
+--   noBareStore :: Trace -> Bool 
+--   noBareStore c =
+--       check c Nothing
+--       where
+--         check [] _ = True
+--         check ((In (ChMsg ch _)) : c') _ 
+--             | isLocn ch              = check c' (Just ch)
+--             | otherwise              = check c' Nothing
+--         check ((Out (ChMsg ch _)) : c') (Just ch') 
+--             | ch == ch'              = check c' Nothing
+--             | isLocn ch              = False 
+--             | otherwise              = check c' Nothing
+--         check ((Out (ChMsg ch _)) : c') Nothing 
+--             | isLocn ch              = False
+--             | otherwise              = check c' Nothing
+--         check (_ : c') _             = check c' Nothing
 
 balancedStores :: Trace -> Bool
 balancedStores c =
@@ -367,6 +368,26 @@ scissorsRule g =
             (g, _) -> (g, theVacuousRule)
       (g, _) -> (g, theVacuousRule)
 
+uninterruptibleRule :: Gen -> (Gen, Rule)
+uninterruptibleRule g =
+    case sortedVarsOfNames g "strd" ["z0","z1","z2"] of
+      (g, [z0,z1,z2]) ->
+          case sortedVarsOfNames g "indx" ["i0","i1","i2"] of
+            (g, [i0,i1,i2]) -> 
+                (g,
+                 (Rule { rlname = "no-interruption", 
+                         rlgoal =
+                             Goal
+                             {uvars = [z0,z1,z2,i0,i1,i2],      
+                              antec = [ (LeadsTo (z0,i0) (z2,i2)), (Trans (z1,i1)), 
+                                        (SameLocn (z0,i0) (z1,i1)), (Prec (z0,i0) (z1,i1)),
+                                        (Prec (z1,i1) (z2,i2)) ], 
+                              consq = [], -- implies False
+                              concl = []},
+                         rlcomment = [] }))
+            (g, _) -> (g, theVacuousRule)
+      (g, _) -> (g, theVacuousRule)
+      
 cakeRule :: Gen -> (Gen, Rule)
 cakeRule g =
     case sortedVarsOfNames g "strd" ["z0","z1","z2"] of
@@ -1172,6 +1193,12 @@ roleSpecific unbound (pos, StateNode (z, _))
 roleSpecific unbound (pos, Trans (z, _))
   | L.notElem z unbound = return unbound
   | otherwise = fail (shows pos "Unbound variable in trans")
+roleSpecific unbound (pos, SameLocn (z, i) (z', i'))
+  | L.notElem z unbound && L.notElem z' unbound &&
+    L.notElem i unbound && L.notElem i' unbound = return unbound
+  | otherwise = fail (shows pos "Unbound variable in same-locn")
+
+
 
 roleSpecific unbound (pos, Equals t t')
   | isStrdVar t && isStrdVar t' =

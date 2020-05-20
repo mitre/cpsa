@@ -25,7 +25,7 @@ module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     inheritRnon, inheritRpnon, inheritRunique, inheritRconf, inheritRauth,
     addListener, Cause (..), Direction (..), Method (..), Operation (..),
     operation, krules, pprob, prob, homomorphism, toSkeleton, generalize,
-    collapse, sat, FTerm (..), Fact (..), simplify, rewrite) where
+    collapse, sat, FTerm (..), Fact (..), simplify, rewrite, localSignal, rewriteUnaryOneOnce) where
 
 import Control.Monad
 import qualified Data.List as L
@@ -38,35 +38,35 @@ import CPSA.Algebra
 import CPSA.Channel
 import CPSA.Protocol
 
-{--
+--{--
 import System.IO.Unsafe
 import Control.Exception (try)
 import System.IO.Error (ioeGetErrorString)
 
-z :: Show a => a -> b -> b
-z x y = unsafePerformIO (print x >> return y)
+zP :: Show a => a -> b -> b
+zP x y = unsafePerformIO (print x >> return y)
 
 zz :: Show a => a -> a
-zz x = z x x
+zz x = zP x x
 
 zb :: Show a => a -> Bool -> Bool
-zb a False = z a False
+zb a False = zP a False
 zb _ b = b
 
 zn :: Show a => a -> Maybe b -> Maybe b
-zn x Nothing = z x Nothing
+zn x Nothing = zP x Nothing
 zn _ y = y
 
 zf :: Show a => a -> Bool -> Bool
-zf x False = z x False
+zf x False = zP x False
 zf _ y = y
 
 zt :: Show a => a -> Bool -> Bool
-zt x True = z x True
+zt x True = zP x True
 zt _ y = y
 
 zl :: Show a => [a] -> [a]
-zl a = z (length a) a
+zl a = zP (length a) a
 
 zi :: Instance -> String
 zi inst =
@@ -497,7 +497,10 @@ mkPreskel gen protocol gs insts orderings non pnon
 -- Strand functions
 
 strandInst :: Preskel -> Sid -> Instance
-strandInst k strand = insts k !! strand
+strandInst k strand =
+    let strands = insts k in
+    if strand < L.length strands then (strands !! strand)
+    else error ("strandInst:  index " ++ (show strand) ++ " is too big for " ++ (show (insts k)))
 
 nstrands :: Preskel -> Int
 nstrands k = length (strandids k)
@@ -603,6 +606,7 @@ preskelWellFormed k =
     varSubset (kpnon k) terms &&
     all nonCheck (knon k) &&
     all uniqueCheck (kunique k) &&
+    all genStCheck (kgenSt k) && 
     all chanCheck (kconf k) &&
     all chanCheck (kauth k) &&
     wellOrdered k && acyclicOrder k &&
@@ -611,6 +615,7 @@ preskelWellFormed k =
       terms = kterms k
       nonCheck t = all (not . carriedBy t) terms
       uniqueCheck t = any (carriedBy t) terms
+      genStCheck t = any (carriedBy t) terms
       chanCheck c = elem c (kvars k)
 
 -- Do notation friendly preskeleton well formed check.
@@ -630,6 +635,7 @@ verbosePreskelWellFormed k =
                    $ varSubset (kpnon k) terms
       mapM_ nonCheck $ knon k
       mapM_ uniqueCheck $ kunique k
+      mapM_ genStCheck $ kgenSt k
       mapM_ confCheck $ kconf k
       mapM_ authCheck $ kauth k
       failwith "ordered pairs not well formed" $ wellOrdered k
@@ -643,6 +649,9 @@ verbosePreskelWellFormed k =
                        $ all (not . carriedBy t) terms
       uniqueCheck t =
           failwith (showString "uniq-orig " $ showst t " not carried")
+                       $ any (carriedBy t) terms
+      genStCheck t =
+          failwith (showString "gen-st " $ showst t " not carried")
                        $ any (carriedBy t) terms
       confCheck c =
         failwith (showString "confidential channel "
@@ -1094,8 +1103,8 @@ skel (_, k, _, _, _) = k
 
 -- Returns the preskeletons that result from applying a substitution.
 -- If validate is True, preskeletons that fail to preserve the nodes
--- at which each maybe uniquely originating term originates are filter
--- out.
+-- at which each maybe uniquely originating term originates are
+-- filtered out.
 
 ksubst :: PRS -> (Gen, Subst) -> [PRS]
 ksubst (k0, k, n, phi, hsubst) (gen, subst) =
@@ -2345,7 +2354,7 @@ conjoin :: [AForm] -> Sem
 conjoin [] _ e = [e]
 conjoin (a: as) k e =
   do
-    e <- satisfy a k e
+    e <- checkSem (satisfy a) k e
     conjoin as k e
 
 -- Extends an environment (a variable assignment) according to the
@@ -2376,6 +2385,47 @@ satisfy (LeadsTo n n') =
           -- Commpair entails StateNode n' too 
           return ge 
 
+glengthExtendEnv :: Role -> Term -> Sid -> Int -> Instance -> (Gen,Env) -> [(Gen,Env)]  
+glengthExtendEnv r z s h inst (g, e)
+    | h > height inst = []
+    | rname (role inst) == rname r = strdMatch z s (g, e)
+    | otherwise =
+        case bldInstance r (take h $ trace inst) g of -- See if z could have been an instance of r
+          [] -> []
+          _ -> strdMatch z s (g, e)
+
+checkEnv :: Preskel -> Env -> Bool
+checkEnv k e = strandBoundEnv e <= nstrands k
+
+checkKFacts :: Preskel -> Bool
+checkKFacts k =
+    let bnd = nstrands k in
+    let fterms = concatMap (\(Fact _ fts) -> fts) (kfacts k) in
+    let strInds = L.map isStr fterms in
+    L.all (\i -> i < bnd) strInds
+    where
+      isStr (FSid i) = i 
+      isStr _ = 0
+
+checkBoth :: Preskel -> (Gen, Env) -> Bool 
+checkBoth k (_, e) =
+    checkEnv k e && checkKFacts k
+
+checkQuietly :: Preskel -> (Gen, Env) -> (Gen, Env)
+checkQuietly k (g, e)
+    | checkBoth k (g, e) = (g, e)
+    | otherwise = localSignal k (g, e)
+    
+checkSem :: Sem -> Sem
+checkSem f k (g, e) 
+    | checkBoth k (g, e) =
+        L.map (checkQuietly k) $ f k (g, e) 
+    | otherwise = [localSignal k (g, e)]
+
+localSignal :: Preskel -> (Gen, Env) -> (Gen, Env)
+localSignal _ (_, e) = error ("localSignal: Env "  ++ (show e))
+
+
 -- Role length predicate
 -- r and h determine the predicate, which has arity one.
 glength :: Role -> Term -> Term -> Sem
@@ -2387,22 +2437,10 @@ glength r z ht k (g, e) =
         Nothing ->
           do
             (s, inst) <- zip [0..] $ insts k
-            case () of
-              _ | h > height inst -> []
-                | rname (role inst) == rname r -> strdMatch z s (g, e)
-                | otherwise ->      -- See if z could have been an instance of r
-                  case bldInstance r (take h $ trace inst) g of
-                    [] -> []
-                    _ -> strdMatch z s (g, e)
+            glengthExtendEnv r z s h inst (g, e)
         Just s | s < nstrands k ->
           let inst = insts k !! s in
-          case () of
-            _ | h > height inst -> []
-              | rname (role inst) == rname r -> [(g, e)]
-              | otherwise ->
-                case bldInstance r (take h $ trace inst) g of
-                  [] -> []
-                  _ -> [(g, e)]
+          glengthExtendEnv r z s h inst (g, e)
         _ -> []
 
 -- Parameter predicate
@@ -2416,28 +2454,25 @@ gparam r t h z t' k (g, e) =
     Nothing ->
       do
         (s, inst) <- zip [0..] $ insts k
-        case () of
-          _ | h > height inst -> []
-            | rname (role inst) == rname r ->
-              do
-                ge <- strdMatch z s (g, e)
-                match t' (instantiate (env inst) t) ge
-            | otherwise ->      -- See if z could have been an instance of r
-                do
-                  (g, inst) <- bldInstance r (take h $ trace inst) g
-                  ge <- strdMatch z s (g, e)
-                  match t' (instantiate (env inst) t) ge
+        paramMatch r t h z s t' inst (g, e)
     Just s | s < nstrands k  ->
       let inst = insts k !! s in
-      case () of
-        _ | h > height inst -> []
-          | rname (role inst) == rname r ->
-            match t' (instantiate (env inst) t) (g, e)
-          | otherwise ->
-              do
-                (g, inst) <- bldInstance r (take h $ trace inst) g
-                match t' (instantiate (env inst) t) (g, e)
+      paramMatch r t h z s t' inst (g, e)
     _ -> []
+
+paramMatch :: Role -> Term -> Int -> Term -> Int -> Term -> Instance -> (Gen,Env) ->  [(Gen,Env)]
+paramMatch r pname h z s t' inst (g, e)
+    | h > height inst = []
+    | rname (role inst) == rname r = 
+        do
+          ge <- strdMatch z s (g, e)
+          match t' (instantiate (env inst) pname) ge
+    | otherwise =     
+        do
+          (g, inst) <- bldInstance r (take h $ trace inst) g
+          ge <- strdMatch z s (g, e)
+          match t' (instantiate (env inst) pname) ge
+    
 
 -- Node precedes
 -- This looks at the transitive closure of the ordering graph.
@@ -2660,24 +2695,24 @@ gcommpair n n' k (g, e) =
             (g, e) <- nodeMatch n' p' (g, e)
             dirMsgMatch p p' k (g, e)
 
-nodeSameLocn :: Node -> Node -> Preskel -> Bool
-nodeSameLocn p p' k =
-    case dirChMsgOfNode p k of
-      Nothing -> False 
-      Just (_, chmsg) ->
-          case dirChMsgOfNode p' k of
-            Nothing -> False 
-            Just(_, chmsg') ->
-                case (chmsg,chmsg') of
-                  (Plain _,_) -> False
-                  (_,Plain _) -> False
-                  (ChMsg c _, ChMsg c' _) 
-                      | c == c' && isLocn c -> True
-                      | otherwise -> False
+--   nodeSameLocn :: Node -> Node -> Preskel -> Bool
+--   nodeSameLocn p p' k =
+--       case dirChMsgOfNode p k of
+--         Nothing -> False 
+--         Just (_, chmsg) ->
+--             case dirChMsgOfNode p' k of
+--               Nothing -> False 
+--               Just(_, chmsg') ->
+--                   case (chmsg,chmsg') of
+--                     (Plain _,_) -> False
+--                     (_,Plain _) -> False
+--                     (ChMsg c _, ChMsg c' _) 
+--                         | c == c' && isLocn c -> True
+--                         | otherwise -> False
 
 nodeLocn :: Node -> Preskel -> [Term]
-nodeLocn p k =
-    case dirChMsgOfNode p k of
+nodeLocn (s,i) k =
+    case dirChMsgOfNode (s,i) k of
       Nothing -> []
       Just (_, Plain _) -> []
       Just (_, ChMsg c _)
@@ -2715,6 +2750,10 @@ gsamelocn n n' k (g, e) =
  
 -- Rules
 
+--   skelsIsomorphic :: Preskel -> Preskel -> Bool
+--   skelsIsomorphic k k' =
+--       (isomorphic (gist k) (gist k'))   -- previously k == k' || (isomorphic (gist k) (gist k'))
+
 gistKnown :: Gist -> [(Preskel,Gist)] -> Bool
 gistKnown g  =
     any (\(_,g') -> isomorphic g g') 
@@ -2735,9 +2774,18 @@ setModuloIso ks =
 -- Try simplifying k if possible
 simplify :: Preskel -> [Preskel]
 simplify k =
-  case rewrite k of
-    Nothing -> [k]
-    Just ks -> setModuloIso ks
+    case rewriteNullary k of
+      Nothing -> []
+      Just k ->
+          case rewriteUnary k of
+            Unsat -> []
+            Unch -> callRewrite k
+            Found k' -> callRewrite k'
+    where
+      callRewrite k = 
+          case rewrite k of
+            Nothing -> [k]
+            Just ks -> ks
 
 rewriteNullary :: Preskel -> Maybe Preskel
 rewriteNullary k =
@@ -2750,30 +2798,442 @@ rewriteNullary k =
             [] -> loop rest     -- no satisfying instances 
             _  -> Nothing       -- satisfying instances, hence false!  
 
--- !!! 
+data Ternary k = Unsat | Unch | Found k 
+
+rewriteUnary :: Preskel -> Ternary Preskel
+rewriteUnary k =
+    loop k urs False False
+    where
+      urs = unaryrules $ protocol k
+      loop _ [] False False = Unch  -- (zP "u" Unch)
+      loop k [] False True =
+          case preskelWellFormed k of
+            True -> Found k     --  (zP "_" )
+            False -> Unsat
+      loop k [] True b = loop k urs False b
+      loop k (ur : rest) b b' =
+          case tryRule k ur of
+            [] -> loop k rest b b'
+            vas -> case rewriteUnaryOne k ur vas of
+                     Nothing -> Unsat -- (zP "?" Unsat) 
+                     Just k' -> loop k' -- (zP "/" k')
+                                rest True True
+
+-- only interested in case ur is unary
+-- JDG:  Must really check wellFormedPreskel and do toSkeleton
+
+rewriteUnaryOne :: Preskel -> Rule -> [(Gen, Env)] -> Maybe Preskel 
+rewriteUnaryOne k ur vas =
+    case consq $ rlgoal ur of
+      -- First the case where it's really unary 
+      [([],conjuncts)] ->
+          foldM (rewriteUnaryOneOnce (rlname ur) conjuncts) k vas
+      _ ->
+          fail ("rewriteUnaryOne:  Hey, not really unary, rule " ++ (rlname ur))
+    -- Screwed up set of unary rules in the last case.  
+               
 
 
-hornRewrite :: Preskel -> Maybe Preskel
-hornRewrite k =
-  loop phrules
+--      loop k $ tryRule k r
+--       where
+--         loop k [] = Just k
+--         loop k (va : rest) =
+--             case rewriteUnaryOneOnce r k va of
+--               Nothing -> Nothing
+--               Just k' -> loop k' rest
+
+rewriteUnaryOneOnce :: String -> [AForm] -> Preskel -> (Gen, Env) -> Maybe Preskel
+rewriteUnaryOneOnce _ [] k _ = Just k
+rewriteUnaryOneOnce rn (a : as) k ge =
+    case checkURewrite (urwt rn a) k ge of
+      None -> Nothing
+      Failing msg -> fail msg
+      Some (k,ge) ->
+          case preskelWellFormed k of
+            False -> Nothing
+            True ->
+                case toSkeleton False (f k) of
+                  []   -> Nothing
+                  [k'] -> rewriteUnaryOneOnce rn as k' ge
+                  l    -> fail ("rewriteUnaryOneOnce:  too many results from toSkeleton ("
+                                ++ (show (L.length l)) ++ ")")
+    where
+      f k = k { krules = rn : krules k }
+
+data URewriteVal = None | Some (Preskel, (Gen, Env)) | Failing String 
+
+type URewrite = Preskel -> (Gen, Env) -> URewriteVal
+    
+checkURewrite :: URewrite -> URewrite
+checkURewrite f k (g, e) 
+    | checkBoth k (g, e) =
+        case f k (g, e) of
+          None -> None
+          Failing st -> Failing st
+          Some (k', (g', e')) 
+              | checkBoth k' (g', e') -> Some (k', (g', e'))
+              | otherwise -> Some (k', (localSignal k' (g', e')))
+    | otherwise = Some (k, (localSignal k (g, e)))
+
+uconjoin :: String -> [AForm] -> URewrite
+uconjoin _ [] k (g, e) = Some (k, (g, e))
+uconjoin rule (af : rest) k (g, e) =
+    case checkURewrite (urwt rule af) k (g, e) of
+      Some (k', (g', e')) -> uconjoin rule rest k' (g', e')
+      result -> result 
+                          
+urwt :: String -> AForm -> URewrite
+urwt rule (Length r z ht) = urlength rule r z ht
+urwt rule (Param r v i z t) = urparam rule r v i z t
+urwt rule (Prec n n') = urprec rule n n'
+urwt rule (Non t) = urnon rule t
+urwt rule (Pnon t) = urpnon rule t
+urwt rule (Uniq t) = uruniq rule t
+urwt rule (UniqAt t n) = uruniqAt rule t n
+urwt rule (GenStV t) = urgenst rule t
+urwt rule (Conf t) = urconf rule t
+urwt rule (Auth t) = urauth rule t
+urwt rule (AFact name fs) = urafact rule name fs
+urwt rule (Equals t t') = ureq rule t t'
+urwt rule (Commpair n n') = urcommpair rule n n'
+urwt rule (SameLocn n n') = ursamelocn rule n n' 
+urwt rule (StateNode n) = urstateNode rule n
+urwt rule (Trans (t,t')) = urafact rule "trans" [t, t']
+urwt rule (LeadsTo n n') =
+    uconjoin rule [(Commpair n n'), (Prec n n'), (StateNode n)] 
+    -- Commpair and StateNode n entails StateNode n' too 
+
+    
+urlength :: String -> Role -> Term -> Term -> URewrite
+urlength name r z ht k (g, e) =
+  case indxLookup e ht of
+    Nothing -> Failing ("In rule " ++ name ++ ", role length did not get a height") 
+    Just h ->
+      case length (rtrace r) < h of
+         True -> None 
+         False -> 
+           (case strdLookup e z of
+            Just s ->                 -- Try to displace
+              case rDisplace e k' ns s of
+                []              -> None 
+                [kge] -> Some kge
+                l     ->
+                    error ("urlength:  Hey, rDisplace multiple results (" ++
+                           (show (length l)) ++ ")")
+              where
+                k' = addStrand g k r h
+                ns = nstrands k
+            Nothing ->
+                Failing ("urlength:  Hey, strand variable unbound " ++ (show z)))
+
+urparam :: String -> Role -> Term -> Int -> Term -> Term -> URewrite
+urparam rule r v h z t k (g, e) = 
+  case strdLookup e z of
+    Just s -> 
+        do
+          case rDisplace e k' ns s of 
+            []               -> None
+            [(k, ge)]        -> 
+                (case rParam name k ge t t' of
+                   []        -> None 
+                   [kge]  -> Some kge
+                   l         -> error ("urparam:  Hey, rParam multiple results (" ++
+                                       (show (length l)) ++ ")"))
+            l                ->
+                error ("urparam:  Hey, rDisplace multiple results (" ++
+                       (show (length l)) ++ ")")
+        where
+          inst = strandInst k s
+          t' = instantiate (env inst) v
+          k' = addStrand g k r h
+          ns = nstrands k
+    Nothing ->
+        Failing ("In rule " ++ rule ++
+                 ", parameter predicate did not get a strand")
+
+
+urprec :: String -> NodeTerm -> NodeTerm -> URewrite
+urprec rule (z, t) (z', t') k (g, e) =
+    case (strdLookup e z, strdLookup e z', indxLookup e t, indxLookup e t') of
+      (Just s, Just s', Just i, Just i') 
+        | badIndex k s i || badIndex k s' i' -> None 
+        | elem ((s, i), (s', i')) tc -> Some (k, (g, e))
+        | otherwise ->
+            case normalizeOrderings True (((s, i), (s', i')) : orderings k) of
+              [] -> None
+              [orderings'] ->
+                  let k' = newPreskel
+                       g (shared k) (insts k) orderings' (knon k) (kpnon k)
+                       (kunique k) (kgenSt k) (kconf k) (kauth k) (kfacts k) (kpriority k)
+                       (operation k) (krules k) (pprob k) (prob k) (pov k) in 
+                  Some (k', (gen k, e))
+              l -> error ("urprec:  normalizeOrderings returned several orderings (" ++
+                          (show (length l)) ++ ")")
+                  
+      _ -> Failing ("In rule " ++ rule ++ ", precedence did not get a strand or a height")
+    where
+      tc = map graphPair $ graphClose $ graphEdges $ strands k
+    -- Observe here that we do not need graphCloseAll, since absent
+    -- orderings that lie on the same strand are irreparable.
+
+urnon :: String -> Term -> URewrite
+urnon rule t k (g, e) =
+    case matched e t of
+      True
+        | elem t' (knon k) -> Some (k, (g, e)) 
+        | not $ isAtom t' -> None
+        | otherwise -> 
+            Some (k', (g, e))
+          where
+            k' = newPreskel
+                     g (shared k) (insts k) (orderings k) (t' : knon k)
+                     (kpnon k) (kunique k) (kgenSt k) (kconf k) (kauth k) (kfacts k)
+                     (kpriority k) (operation k) (krules k) (pprob k)
+                     (prob k) (pov k)
+      False ->
+          Failing ("In rule " ++ rule ++ ", non did not get a term")
+    where
+      t' = instantiate e t
+    
+      
+urpnon :: String -> Term -> URewrite
+urpnon rule t k (g, e) =
+    case matched e t of
+      True
+        | elem t' (kpnon k) -> Some (k, (g, e)) 
+        | not $ isAtom t' -> None
+        | otherwise -> 
+            Some (k', (g, e))
+          where
+            k' = newPreskel
+                     g (shared k) (insts k) (orderings k) (knon k)
+                     (t' : kpnon k) (kunique k) (kgenSt k) (kconf k) (kauth k) (kfacts k)
+                     (kpriority k) (operation k) (krules k) (pprob k)
+                     (prob k) (pov k)
+      False ->
+          Failing ("In rule " ++ rule ++ ", pnon did not get a term")
+    where
+      t' = instantiate e t
+    
+uruniq :: String -> Term -> URewrite
+uruniq rule t k (g, e) =
+    case matched e t of
+      True
+        | elem t' (kunique k) -> Some (k, (g, e)) 
+        | not $ isAtom t' -> None
+        | otherwise -> 
+            Some (k', (g, e))
+          where
+            k' = newPreskel
+                     g (shared k) (insts k) (orderings k) (knon k)
+                     (kpnon k) (t' : kunique k) (kgenSt k) (kconf k) (kauth k) (kfacts k)
+                     (kpriority k) (operation k) (krules k) (pprob k)
+                     (prob k) (pov k)
+      False ->
+          Failing ("In rule " ++ rule ++ ", uniq did not get a term")
+    where
+      t' = instantiate e t
+    
+uruniqAt :: String -> Term -> NodeTerm -> URewrite
+uruniqAt rule t (z, ht) k (g, e) = 
+  case (matched e t, strdLookup e z, indxLookup e ht) of
+    (False, _, _) ->
+      Failing ("In rule " ++ rule ++ ", uniq-at did not get a term")
+    (_, Nothing, _) ->
+      Failing ("In rule " ++ rule ++ ", uniq-at did not get a strand")
+    (_, _, Nothing) ->
+        Failing ("In rule " ++ rule ++ ", uniq-at did not get an index")
+    (True, Just s, Just i)
+      | elem (t', [(s, i)]) (korig k) -> Some (k, (g, e))
+      | not $ isAtom t'               -> None
+      | i >= height (strandInst k s)  ->
+          None                  -- Definitely None, since any
+                                -- affirmative answer has to be
+                                -- preserved by homomorphisms 
+      | checkOrigination t'
+        (trace $ (insts k) !! s) i    ->
+          let k' = newPreskel
+                  g (shared k) (insts k) (orderings k) (knon k) (kpnon k)
+                  (t' : kunique k) (kgenSt k) (kconf k) (kauth k) (kfacts k)
+                  (kpriority k) (operation k) (krules k) (pprob k)
+                  (prob k) (pov k) in
+          Some (k', (g, e))
+      | otherwise ->
+          Failing ("In rule " ++ rule ++ ", uniq-at not at an origination") 
+      where
+        t' = instantiate e t
+
+urgenst :: String -> Term -> URewrite
+urgenst rule t k (g, e) =
+  case matched e t of
+    True
+      | elem t' (kgenSt k) -> Some (k, (g, e))
+      | otherwise -> Some (k', (g, e))
+        where
+          k' = newPreskel
+                  g (shared k) (insts k) (orderings k) (knon k) (kpnon k)
+                  (kunique k) (t' : kgenSt k) (kconf k) (kauth k) (kfacts k)
+                  (kpriority k) (operation k) (krules k) (pprob k)
+                  (prob k) (pov k)
+    False ->
+      Failing ("In rule " ++ rule ++ ", genSt did not get a term")
   where
-    prules = hrules
-         
+    t' = instantiate e t 
+        
+urconf :: String -> Term -> URewrite
+urconf rule t k (g, e) =
+  case matched e t of
+    True
+      | elem t' (kconf k) -> Some (k, (g, e))
+      | not $ isAtom t' -> None 
+      | otherwise -> Some (k', (g, e))
+        where
+          k' = newPreskel
+                  g (shared k) (insts k) (orderings k) (knon k)
+                  (kpnon k) (kunique k) (kgenSt k) (t': kconf k) (kauth k) (kfacts k)
+                  (kpriority k) (operation k) (krules k) (pprob k)
+                  (prob k) (pov k)
+    False ->
+      Failing ("In rule " ++ rule ++ ", conf did not get a term")
+  where
+    t' = instantiate e t
 
--- Try all rules associated with the protocol of k.  Return nothing if
--- no rule applies, otherwise return the replacements.
+urauth :: String -> Term -> URewrite
+urauth rule t k (g, e) =
+  case matched e t of
+    True
+      | elem t' (kauth k) -> Some (k, (g, e))
+      | not $ isAtom t' -> None 
+      | otherwise -> Some (k', (g, e))
+        where
+          k' = newPreskel
+                  g (shared k) (insts k) (orderings k) (knon k)
+                  (kpnon k) (kunique k) (kgenSt k) (kconf k) (t' : kauth k) (kfacts k)
+                  (kpriority k) (operation k) (krules k) (pprob k)
+                  (prob k) (pov k)
+    False ->
+      Failing ("In rule " ++ rule ++ ", auth did not get a term")
+  where
+    t' = instantiate e t
+
+urafact :: String -> String -> [Term] -> URewrite
+urafact rule predname fts k (g, e)
+  | elem fact (kfacts k) = Some (k, (g, e))
+  | otherwise = Some (k', (gen k', e))
+  where
+    fts' = map (rFactLookup rule e) fts
+    fact = Fact predname fts'
+    k' = newPreskel
+         g (shared k) (insts k) (orderings k) (knon k) (kpnon k)
+         (kunique k) (kgenSt k) (kconf k) (kauth k) (fact : kfacts k)
+         (kpriority k) (operation k) (krules k) (pprob k) (prob k) (pov k)
+
+ureq :: String -> Term -> Term -> URewrite
+ureq rule x y k (g, e) 
+    | isStrdVar x && isStrdVar y = 
+        case (strdLookup e x, strdLookup e y) of
+          (Just s, Just t)
+            | s == t -> Some (k, (g, e))
+            | s < (L.length (insts k)) && t < (L.length (insts k))  ->
+                (case rDisplace e (k {gen = g}) s t of
+                  []              -> None 
+                  [(k', (g',e'))] -> Some (k', (g',e'))
+                  l               ->
+                      error ("ureq:  Hey, rDisplace multiple results (" ++
+                             (show (length l)) ++ ")"))
+            | not (checkKFacts k) -> error ("ureq:  Bad kfacts")
+            | not (checkEnv k e) -> error ("ureq:  Bad env")
+            | otherwise ->
+                error ("ureq:  indices too large, (" ++ (show s) ++ ", " ++ (show t) ++ " in env " ++ (show (L.map (\i -> (rname (role i), env i)) (insts k))))
+          _ -> Failing ("In rule " ++ rule ++ ", = did not get a strand") 
+    | isStrdVar x || isStrdVar y  = None 
+    | otherwise = 
+        case (matched e x, matched e y) of
+          (True, True)
+            | u == v ->  Some (k, (g, e)) 
+            | otherwise ->
+                case rUnify k (g, e) u v of
+                  []          -> None
+                  [(k,(g,e))] -> Some (k,(g,e))
+                  l           -> error ("ureq:  Hey, rUnify multiple results (" ++
+                                         (show (length l)) ++ ")")
+          _ ->
+              error ("In rule " ++ rule ++ ", = did not get a term")
+    where
+      u = instantiate e x
+      v = instantiate e y
+
+urcommpair :: String -> NodeTerm -> NodeTerm -> URewrite
+urcommpair rule n n' k (g, e) =
+  case nodeLookup e n of
+    Nothing -> Failing ("In rule " ++ rule ++ ", comm-pair did not get two node terms")
+    (Just p) ->
+        (case dirChMsgOfNode p k of
+           Nothing -> None  
+           Just (Recv, _) -> None 
+           Just (Send, chmsg) ->
+               (case nodeLookup e n' of
+                  Nothing -> Failing ("In rule " ++ rule ++ ", comm-pair did not get two node terms")
+                  Just p' -> 
+                      (case dirChMsgOfNode p' k of
+                         Nothing -> None 
+                         Just (Send, _) -> None
+                         Just (Recv, chmsg') ->
+                             (case (chmsg, chmsg') of
+                                (Plain _, ChMsg _ _) -> None
+                                (ChMsg _ _, Plain _) -> None 
+                                (Plain m, Plain m')  -> ureq rule m m' k (g, e)
+                                (ChMsg c m, ChMsg c' m') ->
+                                    case ureq rule c c' k (g, e) of
+                                      None -> None
+                                      Failing st -> Failing st
+                                      Some (k',(g',e')) ->
+                                          ureq rule m m' k' (g',e')))))
+
+ursamelocn :: String -> NodeTerm -> NodeTerm -> URewrite
+ursamelocn rule n n' k (g, e) =
+    case (nodeLookup e n, nodeLookup e n') of
+      (Just (s,i), Just (s',i')) ->
+          case (nodeLocn (s,i) k, nodeLocn (s',i') k) of
+            ([c],[c']) -> ureq rule c c' k (g, e)
+            (_,_) -> None
+      (_,_) -> Failing ("In rule " ++ rule ++ ", same-locn did not get two node terms")
+      
+urstateNode :: String -> NodeTerm -> URewrite
+urstateNode rule n k (g, e) =
+    case nodeLookup e n of
+      Just (s,i) ->
+          (case nodeIsStateNode k (s,i) of
+             True -> Some (k, (g, e)) 
+             False -> None)
+      _ -> Failing ("In rule " ++ rule ++ ", state-node did not get a node term")
+            
+                                  
+
+-- Try all rules associated with the protocol of k.
+
+-- Return Nothing if no rule applies, otherwise return Just the list
+-- of (zero or more) replacements.
 rewrite :: Preskel -> Maybe [Preskel]
 rewrite k =
-  loop prules
-  where
-    prules = rules $ protocol k
-    loop [] = Nothing           -- No rules apply
-    loop (r : rs) =
-      let vas = tryRule k r in
-        if null vas then
-          loop rs               -- Rule does not apply
-        else
-          Just $ doRewrites prules k r vas
+    case rewriteNullary k of
+      Nothing -> Just []
+      Just k ->
+          case rewriteUnary k of
+            Unsat    -> Just []
+            Unch     -> loop k grules False 
+            Found k' -> loop k' grules True
+        where
+          grules = generalrules $ protocol k
+          loop _ [] False = Nothing           -- No rules left
+          loop k [] True = Just [k]           -- No rules left, but
+                                              -- already made progress 
+          loop k (r : rs) b =
+              let vas = tryRule k r in
+              if null vas then
+                  loop k rs b                 -- Rule r does not apply
+              else
+                  Just $ doRewrites grules k r vas
 
 -- Returns all environments that satisfy the antecedent
 -- but do not extend to satisfy any of the conclusions.
@@ -2797,12 +3257,12 @@ doRewrites rules k r vas =
 
 doRewritesLoop :: [Rule] -> Preskel -> Int ->
                   [Preskel] -> [Preskel] -> [Preskel]
-doRewritesLoop _ _ lim [] _ =   -- ks
+doRewritesLoop _ _ lim [] _ 
   | lim >= ruleLimit =
     error ("Aborting after applying " ++ show ruleLimit ++
            " rules and more are applicable (1)" -- ++ (show ks)
           )
-doRewritesLoop _ _ lim _ _ = -- todos ks 
+doRewritesLoop _ _ lim _ _  -- todos ks 
   | lim >= ruleLimit =
     error ("Aborting after applying " ++ show ruleLimit ++
            " rules and more are applicable "
@@ -2851,11 +3311,17 @@ fresh (g, e) t
 
 type Rewrite = Preskel -> (Gen, Env) -> [(Preskel, (Gen, Env))]
 
+checkRewrite :: Rewrite -> Rewrite
+checkRewrite f k (g, e) 
+    | checkBoth k (g, e) =
+        L.map (\(k',(g',e')) -> (k', checkQuietly k' (g',e'))) $ f k (g, e)
+    | otherwise = [(k, localSignal k (g, e))]
+
 doConj :: String -> [AForm] -> Rewrite
 doConj _ [] k e = [(k, e)]
 doConj rule (f : fs) k e =
   do
-    (k, e) <- rwt rule f k e
+    (k, e) <- checkRewrite (rwt rule f) k e
     doConj rule fs k e
 
 rwt :: String -> AForm -> Rewrite
@@ -2932,9 +3398,9 @@ rDisplace e k s s' =
     (s, s', subst) <- unifyStrands k s s'
     k <- rSubst k subst
     k <- rCompress k s s'
-    return (k, (gen k, strdUpdate
-                       (substUpdate e (snd subst))
-                       (updateStrand s s')))
+    let e' = strdUpdate (substUpdate e (snd subst)) (updateStrand s s')
+    let _ = checkSem (\_ ge -> [ge]) k ((gen k), e')
+    return (k, (gen k, e'))
 
 rSubst :: Preskel -> (Gen, Subst) -> [Preskel]
 rSubst k (gen, subst) =
@@ -2953,6 +3419,7 @@ rSubst k (gen, subst) =
         non' pnon' unique' genStV' conf' auth' facts' (kpriority k)
         operation' (krules k) (pprob k) (prob k) (pov k)
 
+-- Does rCompress assume that s \not= s'?  s is old, s' is new 
 rCompress :: Preskel -> Sid -> Sid -> [Preskel]
 rCompress k s s' =
     do
@@ -3135,7 +3602,7 @@ runiqAt name t (z, ht) k (g, e) =
       | elem (t', [(s, i)]) (korig k) -> [(k, (g, e))]
       | not $ isAtom t' -> []
       | i >= height (strandInst k s) -> []
-      | checkOrigination t' (trace $ (insts k) !! s) i ->
+      | checkOrigination t' (trace (strandInst k s)) i ->
           let k' = newPreskel
                   g (shared k) (insts k) (orderings k) (knon k) (kpnon k)
                   (t' : kunique k) (kgenSt k) (kconf k) (kauth k) (kfacts k)
@@ -3239,8 +3706,10 @@ req name x y k (g, e)
     case (strdLookup e x, strdLookup e y) of
       (Just s, Just t)
         | s == t -> [(k, (g, e))]
-        | otherwise ->
+        | s < (L.length (insts k)) && t < (L.length (insts k)) -> 
           rDisplace e (k {gen = g})  s t
+        | otherwise ->
+            error ("req:  indices too large, (" ++ (show s) ++ ", " ++ (show t) ++ " in env " ++ (show e))
       _ ->
         error ("In rule " ++ name ++ ", = did not get a strand")
   | otherwise =

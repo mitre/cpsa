@@ -119,6 +119,7 @@ module CPSA.Algebra (name,
     matched,
     match,
     substitution,
+    strandBoundEnv,
     reify,
     substUpdate,
     strdMatch,
@@ -914,6 +915,17 @@ substitution :: Env -> Subst
 substitution (Env r) =
     Subst $ M.filterWithKey nonTrivialBinding r
 
+
+-- Find bound above all the strand indices i in strand values Z i in
+-- values in the environment
+strandBoundEnv :: Env -> Int
+strandBoundEnv (Env map) =
+    M.foldl f 0 map
+     where
+       f bnd (Z i) = max bnd (i+1)
+       f bnd _ = bnd
+         
+
 -- Add type information to an environment, and return it as a list of
 -- associations.
 
@@ -966,6 +978,7 @@ strdUpdate (Env e) f =
   where
     h (Z z) = Z $ f z
     h t = t
+
 
 --   indxMatch ::  Term -> Int -> (Gen, Env) -> [(Gen, Env)]
 --   indxMatch t t' (g, e) =
@@ -1277,13 +1290,26 @@ displayVar _ _ =
 displaySortId :: String -> Context -> Id -> (SExpr (), SExpr ())
 displaySortId sort ctx x = (displayId ctx x, S () sort)
 
+-- JDG:  Restore this later !!! 
+--   displayId :: Context -> Id -> SExpr ()
+--   displayId (Context ctx) x =
+--       case lookup x ctx of
+--         Nothing ->
+--             let msg = idName x ++ " in a display context" ++ (show ctx) in
+--             error $ "Algebra.displayId: Cannot find variable " ++ msg
+--         Just name -> S () name
+
 displayId :: Context -> Id -> SExpr ()
 displayId (Context ctx) x =
     case lookup x ctx of
       Nothing ->
-          let msg = idName x ++ " in a display context" in
-          error $ "Algebra.displayId: Cannot find variable " ++ msg
+          let _ = idName x ++ " in a display context" ++ (show ctx) in
+          -- msg ... error $ "Algebra.displayId: Cannot find variable
+          -- " ++ msg
+         S () ("*" ++ idName x ++ "*")
       Just name -> S () name
+
+                   
 
 notPt :: Term -> Bool
 notPt (F Pval [I _]) = False

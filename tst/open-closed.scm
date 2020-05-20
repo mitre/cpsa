@@ -112,17 +112,24 @@
  	   (p "dev-up" z2 2)
  	   (p "dev-up" "k" z1 k)
  	   (p "dev-up" "k" z2 k))
-       (= z1 z2))))
+       (= z2 z1))))
 
    
-   (comment
-    (defrule same-locn
-      (forall ((z1 z2 strd) (i1 i2 indx))
-  	      (implies
-  	       (same-locn z1 i1 z2 i2) 
-  	       (fact ha z1 i1 z2 i2)))
-      (comment this is a rule comment)))
-  )
+   (defrule same-locn
+     (forall ((z1 z2 strd) (i1 i2 indx))
+  	     (implies
+  	      (same-locn z1 i1 z2 i2) 
+  	      (fact ha z1 i1 z2 i2)))
+     (comment this is a rule comment))
+
+   (defrule leadsto-la
+     (forall ((z1 z2 strd) (i1 i2 indx))
+  	     (implies
+  	      (leads-to z1 i1 z2 i2) 
+  	      (fact la z1 i1 z2 i2)))
+     (comment this is a rule comment))
+   )
+
 
 (defskeleton open-closed
   (vars (k skey) (d o name) (n text) (start-ch chan))
@@ -135,13 +142,16 @@
   ;; (defstrand owner-power-dev 2 (k k))
   (defstrand dev-pass 4 (k k))
   ;; (uniq-orig k)
-  ) 
+  )
+
 
 (defskeleton open-closed 
   (vars (k skey) (d o name) (n text) (start-ch chan))
   (defstrand owner-power-dev 2 (k k))
   (defstrand dev-pass 4 (k k))
   (uniq-orig k))
+
+
 
 
 (comment

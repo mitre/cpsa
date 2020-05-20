@@ -342,6 +342,26 @@
 	      (or (= x z)
 		  (prec z 2 x i1)))))
 
+;;      (defrule leadsto-la
+;;        (forall ((z1 z2 strd) (i1 i2 indx))
+;;     	     (implies
+;;     	      (leads-to z1 i1 z2 i2) 
+;;     	      (fact la z1 i1 z2 i2)))
+;;        (comment this is a rule comment))
+;;   
+;;      (defrule commpair-cp
+;;        (forall ((z1 z2 strd) (i1 i2 indx))
+;;     	     (implies
+;;     	      (comm-pr z1 i1 z2 i2) 
+;;     	      (fact cp z1 i1 z2 i2)))
+;;        (comment this is a rule comment))
+;;   
+;;      (defrule prec-pr
+;;        (forall ((z1 z2 strd) (i1 i2 indx))
+;;     	     (implies
+;;     	      (prec z1 i1 z2 i2) 
+;;     	      (fact pr z1 i1 z2 i2)))
+;;        (comment this is a rule comment))
 
    ;; (defrule atomic-simpl
    ;;   (forall ((x z strd) (i1 i2 i3 indx))

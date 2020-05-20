@@ -266,42 +266,42 @@
 ;;     (defstrand alice 5 (n n) (v v) (k k) (aik aik)))
 
 
-(defprotocol envelope-plus-2 basic
-  (roles)
-  (genStV-rules)
+(comment (defprotocol envelope-plus-2 basic
+	   (roles)
+	   (genStV-rules)
 
-  (defrule pcr-id-identifies-pcr 
-    (forall ((y z strd) (pcr-id text) (pcr pcr-0 locn))
-	    (implies
-	     (and (p "tpm-extend-enc" y 3)
-		  (p "tpm-extend-enc" z 3)
-		  (p "tpm-extend-enc" "pcr-id" y pcr-id) 
-		  (p "tpm-extend-enc" "pcr-id" z pcr-id)
-		  (p "tpm-extend-enc" "pcr" y pcr)
-		  (p "tpm-extend-enc" "pcr" z pcr-0))
-	     (= pcr pcr-0))))) 
+	   (defrule pcr-id-identifies-pcr 
+	     (forall ((y z strd) (pcr-id text) (pcr pcr-0 locn))
+		     (implies
+		      (and (p "tpm-extend-enc" y 3)
+			   (p "tpm-extend-enc" z 3)
+			   (p "tpm-extend-enc" "pcr-id" y pcr-id) 
+			   (p "tpm-extend-enc" "pcr-id" z pcr-id)
+			   (p "tpm-extend-enc" "pcr" y pcr)
+			   (p "tpm-extend-enc" "pcr" z pcr-0))
+		      (= pcr pcr-0))))) 
 
-(defskeleton envelope-plus-2
-  (vars (v data))
-  (deflistener v)
-  (defstrand alice 5 (v v)))
+	 (defskeleton envelope-plus-2
+	   (vars (v data))
+	   (deflistener v)
+	   (defstrand alice 5 (v v)))
 
-(defskeleton envelope-plus-2
-  (vars (n v data) (k aik akey) (pcr-id text))
-  (deflistener (refuse pcr-id n v k aik))
-  (defstrand alice 5 (n n) (v v) (k k) (aik aik)))
+	 (defskeleton envelope-plus-2
+	   (vars (n v data) (k aik akey) (pcr-id text))
+	   (deflistener (refuse pcr-id n v k aik))
+	   (defstrand alice 5 (n n) (v v) (k k) (aik aik)))
 
-(defskeleton envelope-plus-2
-  (vars (n v data) (k aik akey) (pcr-id text))
-  (deflistener (refuse pcr-id n v k aik))
-  (deflistener v)
-  (defstrand alice 5 (n n) (v v) (k k) (aik aik)))
+	 (defskeleton envelope-plus-2
+	   (vars (n v data) (k aik akey) (pcr-id text))
+	   (deflistener (refuse pcr-id n v k aik))
+	   (deflistener v)
+	   (defstrand alice 5 (n n) (v v) (k k) (aik aik)))
 
-(defskeleton envelope-plus-2
-  (vars (n v data) (k aik akey) (pcr-id text))
-  (deflistener (refuse pcr-id n v k aik))
-  (deflistener v) 
-  (defstrand alice 5 (n n) (v v) (k k) (aik aik))
-  (facts (no-state-split)))
+	 (defskeleton envelope-plus-2
+	   (vars (n v data) (k aik akey) (pcr-id text))
+	   (deflistener (refuse pcr-id n v k aik))
+	   (deflistener v) 
+	   (defstrand alice 5 (n n) (v v) (k k) (aik aik))
+	   (facts (no-state-split))))
 
 
