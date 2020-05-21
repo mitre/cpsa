@@ -38,7 +38,7 @@ import CPSA.Algebra
 import CPSA.Channel
 import CPSA.Protocol
 
---{--
+{--
 import System.IO.Unsafe
 import Control.Exception (try)
 import System.IO.Error (ioeGetErrorString)
@@ -2755,22 +2755,22 @@ gsamelocn n n' k (g, e) =
 --   skelsIsomorphic k k' =
 --       (isomorphic (gist k) (gist k'))   -- previously k == k' || (isomorphic (gist k) (gist k'))
 
-gistKnown :: Gist -> [(Preskel,Gist)] -> Bool
-gistKnown g  =
-    any (\(_,g') -> isomorphic g g') 
-
-setModuloIso :: [Preskel] -> [Preskel]
-setModuloIso ks =
-    ks'
-    where 
-      (ks',_) =
-          unzip (foldl
-                 (\soFar (k,g) ->
-                      case gistKnown g soFar of
-                        True -> soFar
-                        False -> (k,g) : soFar)
-                 [] 
-                 $ L.zip ks (map gist ks))
+--   gistKnown :: Gist -> [(Preskel,Gist)] -> Bool
+--   gistKnown g  =
+--       any (\(_,g') -> isomorphic g g') 
+--   
+--   setModuloIso :: [Preskel] -> [Preskel]
+--   setModuloIso ks =
+--       ks'
+--       where 
+--         (ks',_) =
+--             unzip (foldl
+--                    (\soFar (k,g) ->
+--                         case gistKnown g soFar of
+--                           True -> soFar
+--                           False -> (k,g) : soFar)
+--                    [] 
+--                    $ L.zip ks (map gist ks))
 
 -- Try simplifying k if possible
 simplify :: Preskel -> [Preskel]
@@ -3225,6 +3225,9 @@ rewrite k =
                   Unsat    -> Just []
                   Unch     -> Nothing
                   Found k' -> Just [k']
+
+      nullUnaryThrough =
+          concatMap (\k -> maybe [k] id (nullUnary k)) 
                                   
       -- iterate todos done action, which yields Maybe [Preskel]
       iterate [] [_] False = Nothing
@@ -3235,10 +3238,7 @@ rewrite k =
           case subiter k grules of
             Nothing  -> iterate rest (k : done) b
             Just new ->
-                iterate
-                (rest ++
-                 (concatMap (\k' -> maybe [k'] id (nullUnary k')) new))
-                done True 
+                iterate (rest ++ (nullUnaryThrough new)) done True 
 
       -- subiter 
       subiter _ [] = Nothing     -- No action, no rules left
@@ -3249,7 +3249,8 @@ rewrite k =
             vas ->
                 Just (concatMap (\k' -> maybe [k'] id 
                                        $ subiter k' rs)
-                                $ doRewrite k r vas)
+                                $ nullUnaryThrough
+                                      $ doRewrite k r vas)
 
 -- Returns all environments that satisfy the antecedent
 -- but do not extend to satisfy any of the conclusions.
@@ -3262,6 +3263,8 @@ tryRule k r =
   where
     conclusion e = all (disjunct e) $ concl $ rlgoal r
     disjunct e a = null $ conjoin a k e
+
+{-- 
 
 ruleLimit :: Int
 ruleLimit = 500
@@ -3297,6 +3300,8 @@ doRewritesLoop rules k lim (k' : todo) ks =
         else
           let new = doRewrite k' r vas in
             doRewritesLoop rules k (lim + length vas) (setModuloIso $ todo ++ new) (setModuloIso ks)
+
+--}
 
 -- Apply rewrite rule at all assignments
 doRewrite :: Preskel -> Rule -> [(Gen, Env)] -> [Preskel]
