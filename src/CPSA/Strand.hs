@@ -2423,7 +2423,8 @@ checkSem f k (g, e)
     | otherwise = [localSignal k (g, e)]
 
 localSignal :: Preskel -> (Gen, Env) -> (Gen, Env)
-localSignal _ (_, e) = error ("localSignal: Env "  ++ (show e))
+localSignal _ (g, e) = (g, e)
+    -- error ("localSignal: Env "  ++ (show e))
 
 
 -- Role length predicate
@@ -2774,18 +2775,9 @@ setModuloIso ks =
 -- Try simplifying k if possible
 simplify :: Preskel -> [Preskel]
 simplify k =
-    case rewriteNullary k of
-      Nothing -> []
-      Just k ->
-          case rewriteUnary k of
-            Unsat -> []
-            Unch -> callRewrite k
-            Found k' -> callRewrite k'
-    where
-      callRewrite k = 
-          case rewrite k of
-            Nothing -> [k]
-            Just ks -> ks
+  case rewrite k of
+    Nothing -> [k]
+    Just ks -> ks
 
 rewriteNullary :: Preskel -> Maybe Preskel
 rewriteNullary k =
@@ -2858,7 +2850,7 @@ rewriteUnaryOneOnce rn (a : as) k ge =
                   l    -> fail ("rewriteUnaryOneOnce:  too many results from toSkeleton ("
                                 ++ (show (L.length l)) ++ ")")
     where
-      f k = k { krules = rn : krules k }
+      f k = k { krules = L.nub $ rn : krules k }
 
 data URewriteVal = None | Some (Preskel, (Gen, Env)) | Failing String 
 
@@ -3125,7 +3117,7 @@ urafact rule predname fts k (g, e)
     fact = Fact predname fts'
     k' = newPreskel
          g (shared k) (insts k) (orderings k) (knon k) (kpnon k)
-         (kunique k) (kgenSt k) (kconf k) (kauth k) (fact : kfacts k)
+         (kunique k) (kgenSt k) (kconf k) (kauth k) (L.nub $ fact : kfacts k)
          (kpriority k) (operation k) (krules k) (pprob k) (prob k) (pov k)
 
 ureq :: String -> Term -> Term -> URewrite
@@ -3216,24 +3208,48 @@ urstateNode rule n k (g, e) =
 -- of (zero or more) replacements.
 rewrite :: Preskel -> Maybe [Preskel]
 rewrite k =
-    case rewriteNullary k of
-      Nothing -> Just []
-      Just k ->
-          case rewriteUnary k of
-            Unsat    -> Just []
-            Unch     -> loop k grules False 
-            Found k' -> loop k' grules True
-        where
-          grules = generalrules $ protocol k
-          loop _ [] False = Nothing           -- No rules left
-          loop k [] True = Just [k]           -- No rules left, but
-                                              -- already made progress 
-          loop k (r : rs) b =
-              let vas = tryRule k r in
-              if null vas then
-                  loop k rs b                 -- Rule r does not apply
-              else
-                  Just $ doRewrites grules k r vas
+    case nullUnary k of
+      Just [] -> Just []
+      Just [k'] -> iterate [k'] [] True
+      Just ks -> error ("rewrite:  nullUnary returned too many results ("
+                        ++ (show (L.length ks)) ++ ")")
+      Nothing -> iterate [k] [] False 
+    where
+      grules = generalrules $ protocol k
+
+      nullUnary k =
+          case rewriteNullary k of
+            Nothing -> Just []
+            Just k ->
+                case rewriteUnary k of
+                  Unsat    -> Just []
+                  Unch     -> Nothing
+                  Found k' -> Just [k']
+                                  
+      -- iterate todos done action, which yields Maybe [Preskel]
+      iterate [] [_] False = Nothing
+      iterate [] done False = error ("rewrite: non-singleton results with no change???  (" ++
+                                     (show (L.length done)) ++ ")")
+      iterate [] done True = Just done
+      iterate (k : rest) done b =
+          case subiter k grules of
+            Nothing  -> iterate rest (k : done) b
+            Just new ->
+                iterate
+                (rest ++
+                 (concatMap (\k' -> maybe [k'] id (nullUnary k')) new))
+                done True 
+
+      -- subiter 
+      subiter _ [] = Nothing     -- No action, no rules left
+      
+      subiter k (r : rs) =
+          case tryRule k r of
+            [] -> subiter k rs 
+            vas ->
+                Just (concatMap (\k' -> maybe [k'] id 
+                                       $ subiter k' rs)
+                                $ doRewrite k r vas)
 
 -- Returns all environments that satisfy the antecedent
 -- but do not extend to satisfy any of the conclusions.
@@ -3297,7 +3313,7 @@ doRewriteOne k r e =
     k <- wellFormedPreskel k
     k <- toSkeleton True k
     return $ f k                -- Add rule name
-  where f k = k { krules = rlname r : krules k }
+  where f k = k { krules = L.nub $ rlname r : krules k }
 
 fresh :: (Gen, Env) -> Term -> (Gen, Env)
 fresh (g, e) t
@@ -3686,7 +3702,7 @@ rafact rule name fts k (g, e)
     fact = Fact name fts'
     k' = newPreskel
          g (shared k) (insts k) (orderings k) (knon k) (kpnon k)
-         (kunique k) (kgenSt k) (kconf k) (kauth k) (fact : kfacts k)
+         (kunique k) (kgenSt k) (kconf k) (kauth k) (L.nub $ fact : kfacts k)
          (kpriority k) (operation k) (krules k) (pprob k) (prob k) (pov k)
 
 rFactLookup :: String -> Env -> Term -> FTerm

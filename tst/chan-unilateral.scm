@@ -12,7 +12,7 @@
   (defrole resp
      (vars (n text) (ch chan))
      (trace
-      (recv ch (cat ch n))
+      (recv ch n)			; bogus version was:  (cat ch n)
       (send n)))
   (comment "Unilateral protocol using channels with differing assumptions"))
 
