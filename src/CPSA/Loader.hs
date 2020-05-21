@@ -340,8 +340,8 @@ theVacuousRule =
 
 sortedVarsOfNames :: Gen -> String -> [String] -> (Gen, [Term])
 sortedVarsOfNames g sortName =
-    L.foldl
-    (\(g,vs) name ->
+    L.foldr
+    (\name (g,vs) ->
          let (g', v) = newVar g name sortName in
          (g', (v : vs)))
     (g, []) 
