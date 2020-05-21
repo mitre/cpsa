@@ -41,7 +41,7 @@ module Main (main) where
 import Numeric
 import System.IO
 import System.Console.GetOpt
-import Control.Monad (foldM, mapM, mapM_)
+import Control.Monad (foldM)
 import CPSA.Lib.SExpr
 import CPSA.Lib.Printer (pp)
 import CPSA.Lib.Entry
