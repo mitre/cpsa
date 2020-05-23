@@ -2943,6 +2943,20 @@ urparam rule r v h z t k (g, e) =
         Failing ("In rule " ++ rule ++
                  ", parameter predicate did not get a strand")
 
+prevIn :: Instance -> Int -> Maybe Int
+prevIn inst i =
+    case inbnd ((trace inst) !! i) of
+      Just _ -> Just i
+      Nothing -> if 0 < i then prevIn inst (i-1)
+                 else Nothing
+
+succOut :: Instance -> Int -> Maybe Int
+succOut inst i =
+    case outbnd ((trace inst) !! i) of
+      Just _ -> Just i
+      Nothing -> if (i+1) < height inst then succOut inst (i+1)
+                 else Nothing
+      
 
 urprec :: String -> NodeTerm -> NodeTerm -> URewrite
 urprec rule (z, t) (z', t') k (g, e) =
@@ -2951,17 +2965,19 @@ urprec rule (z, t) (z', t') k (g, e) =
         | badIndex k s i || badIndex k s' i' -> None 
         | elem ((s, i), (s', i')) tc -> Some (k, (g, e))
         | otherwise ->
-            case normalizeOrderings True (((s, i), (s', i')) : orderings k) of
-              [] -> None
-              [orderings'] ->
-                  let k' = newPreskel
-                       g (shared k) (insts k) orderings' (knon k) (kpnon k)
-                       (kunique k) (kgenSt k) (kconf k) (kauth k) (kfacts k) (kpriority k)
-                       (operation k) (krules k) (pprob k) (prob k) (pov k) in 
-                  Some (k', (gen k, e))
-              l -> error ("urprec:  normalizeOrderings returned several orderings (" ++
-                          (show (length l)) ++ ")")
-                  
+            case (succOut ((insts k) !! s) i,
+                  prevIn ((insts k) !! s') i') of 
+              (Just i, Just i') -> 
+                  case normalizeOrderings True (((s, i), (s', i')) : orderings k) of
+                    [] -> None
+                    [orderings'] ->
+                        let k' = newPreskel g (shared k) (insts k) orderings' (knon k) (kpnon k)
+                                 (kunique k) (kgenSt k) (kconf k) (kauth k) (kfacts k) (kpriority k)
+                                 (operation k) (krules k) (pprob k) (prob k) (pov k) in 
+                        Some (k', (gen k, e))
+                    l -> error ("urprec:  normalizeOrderings returned several orderings (" ++
+                                (show (length l)) ++ ")")
+              (_,_) -> None 
       _ -> Failing ("In rule " ++ rule ++ ", precedence did not get a strand or a height")
     where
       tc = map graphPair $ graphClose $ graphEdges $ strands k
@@ -3513,14 +3529,17 @@ rprec name (z, t) (z', t') k (g, e) =
       | elem ((s, i), (s', i')) tc -> [(k, (g, e))]
       | badIndex k s i || badIndex k s' i' -> []
       | otherwise ->
-        do                      -- Add one ordering
-          orderings' <- normalizeOrderings True
-                        (((s, i), (s', i')) : orderings k)
-          let k' = newPreskel
-                  g (shared k) (insts k) orderings' (knon k) (kpnon k)
-                  (kunique k) (kgenSt k) (kconf k) (kauth k) (kfacts k) (kpriority k)
-                  (operation k) (krules k) (pprob k) (prob k) (pov k)
-          return (k', (gen k, e))
+          case (succOut ((insts k) !! s) i,
+                prevIn ((insts k) !! s') i') of 
+            (Just i, Just i') -> 
+                do                      -- Add one ordering
+                  orderings' <- normalizeOrderings True
+                                (((s, i), (s', i')) : orderings k)
+                  let k' = newPreskel g (shared k) (insts k) orderings' (knon k) (kpnon k)
+                           (kunique k) (kgenSt k) (kconf k) (kauth k) (kfacts k) (kpriority k)
+                           (operation k) (krules k) (pprob k) (prob k) (pov k)
+                  return (k', (gen k, e))
+            (_,_) -> [] 
     _ ->
       error ("In rule " ++ name ++ ", precedence did not get a strand or a height")
   where

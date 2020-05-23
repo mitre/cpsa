@@ -73,9 +73,9 @@
   (defrole dev-pass
     (vars (k skey) (n text) (d o name) (lk ls locn))
     (trace
-     (recv (enc "may I pass" k))
      (load lk (dev-key-state d o k))
      (load ls (dev-state-opened d o))
+     (recv (enc "may I pass" k))
      (send (enc "you may pass" n k)))
     (uniq-orig n))
 
@@ -180,7 +180,23 @@
 		   (fact same-dev ls-0 lk))
 	      (= ls ls-0))))
 
-   ;; Single-threaded registers omitted 
+   ;; Single-threaded registers omitted
+
+   (defrule atomic-cause-dev-pass
+     (forall
+      ((z1 z2 strd) (i indx))
+      (implies (and (p "dev-pass" z1 2)
+		    (prec z2 i z1 1))
+	       (or (= z1 z2)
+		   (prec z2 i z1 0)))))
+
+   (defrule atomic-cause-dev-open
+     (forall
+      ((z1 z2 strd) (i indx))
+      (implies (and (p "dev-open" z1 3)
+		    (prec z2 i z1 2))
+	       (or (= z1 z2)
+		   (prec z2 i z1 1)))))
    
   )
 

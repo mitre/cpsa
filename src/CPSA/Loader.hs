@@ -68,6 +68,7 @@ loadSExpr _ _ _ x = fail (shows (annotation x) "Malformed input")
 
 -- load a protocol
 
+
 loadProt :: MonadFail m => String -> Gen -> Pos -> [SExpr Pos] -> m Prot
 loadProt nom origin pos (S _ name : S _ alg : x : xs)
     | alg /= nom =
@@ -76,15 +77,17 @@ loadProt nom origin pos (S _ name : S _ alg : x : xs)
         do
           (gen, rs, transRules, rest) <- loadRoles origin (x : xs)
           (gen', r) <- mkListenerRole pos gen
-          let (gen'', scissors) = scissorsRule gen'
-          let (gen''', cake) = cakeRule gen''
-          let (gen'''', intrpt) = uninterruptibleRule gen'''
-          let (gen, neqs) = neqRules gen''''
-          let initRls = scissors : cake : intrpt : (neqs ++ transRules)
+          let (gen,inits) = initRules gen' transRules
+--             let (gen'', scissors) = scissorsRule gen'
+--             let (gen''', cake) = cakeRule gen''
+--             let (gen'''', intrpt) = uninterruptibleRule gen'''
+--             let (genFive, shears) = shearsRule gen''''
+--             let (gen, neqs) = neqRules genFive
+--             let initRls = scissors : cake : intrpt : shears : (neqs ++ transRules)
 
-          -- Fake protocol is used only for loading rules
+          -- Fake protocol is used only for loading user defined rules
           let fakeProt = mkProt name alg gen rs r
-                         initRls
+                         inits
                          []
           (gen, newRls, comment) <- loadRules fakeProt gen rest
           -- Check for duplicate role names
@@ -356,7 +359,8 @@ scissorsRule g =
                         rlgoal =
                             Goal
                             {uvars = [z0,z1,z2,i0,i1,i2],      
-                             antec = [ (AFact "no-state-split" []), 
+                             antec = [ -- useful for debugging:
+                                       -- (AFact "no-state-split" []), 
                                        (Trans (z0,i0)), (Trans (z1,i1)), (Trans (z2,i2)),
                                        (LeadsTo (z0,i0) (z1,i1)), (LeadsTo (z0,i0) (z2,i2)) ], 
                              consq = [([],                -- no bvs
@@ -367,6 +371,66 @@ scissorsRule g =
                         rlcomment = [] }))
             (g, _) -> (g, theVacuousRule)
       (g, _) -> (g, theVacuousRule)
+
+shearsRule :: Gen -> (Gen, Rule)
+shearsRule g =
+    case sortedVarsOfNames g "strd" ["z0","z1","z2"] of
+      (g, [z0,z1,z2]) ->
+          case sortedVarsOfNames g "indx" ["i0","i1","i2"] of
+            (g, [i0,i1,i2]) -> 
+                (g, (Rule { rlname = "shearsRule", 
+                        rlgoal =
+                            Goal
+                            {uvars = [z0,z1,z2,i0,i1,i2],      
+                             antec = [ -- useful for debugging:
+                                       -- (AFact "no-state-split" []), 
+                                       (Trans (z0,i0)), (Trans (z1,i1)), (Trans (z2,i2)),
+                                       (LeadsTo (z0,i0) (z1,i1)), (SameLocn (z0,i0) (z2,i2)),
+                                       (Prec (z0,i0) (z2,i2)) ], 
+                             consq = [([],                -- no bvs
+                                       [(Equals z1 z2),   -- two eqns 
+                                        (Equals i1 i2)]),
+                                     ([],                -- no bvs
+                                      -- (z1,i1) precedes (z2,i2)
+                                       [(Prec (z1, i1) (z2, i2))])],    
+                             concl = [[(Equals z1 z2),   -- two eqns 
+                                        (Equals i1 i2)],
+                                      -- (z1,i1) precedes (z2,i2)
+                                       [(Prec (z1, i1) (z2, i2))]]},
+                        rlcomment = [] }))
+            (g, _) -> (g, theVacuousRule)
+      (g, _) -> (g, theVacuousRule)
+
+invShearsRule :: Gen -> (Gen, Rule)
+invShearsRule g =
+    case sortedVarsOfNames g "strd" ["z0","z1","z2"] of
+      (g, [z0,z1,z2]) ->
+          case sortedVarsOfNames g "indx" ["i0","i1","i2"] of
+            (g, [i0,i1,i2]) -> 
+                (g, (Rule { rlname = "invShearsRule", 
+                        rlgoal =
+                            Goal
+                            {uvars = [z0,z1,z2,i0,i1,i2],      
+                             antec = [ -- useful for debugging:
+                                       -- (AFact "no-state-split" []), 
+                                       (Trans (z0,i0)), (Trans (z1,i1)),
+                                       (SameLocn (z0,i0) (z1,i1)),
+                                       (LeadsTo (z1,i1) (z2,i2)), (Prec (z0,i0) (z2,i2)) ], 
+                             consq = [([],                -- no bvs
+                                       [(Equals z0 z1),   -- two eqns 
+                                        (Equals i0 i1)]),
+                                     ([],                -- no bvs
+                                      -- (z0, i0) precedes (z1,i1)
+                                       [(Prec (z0, i0) (z1, i1))])],    
+                             concl = [[(Equals z0 z1),   -- two eqns 
+                                        (Equals i0 i1)],
+                                      -- (z0, i0) precedes (z1,i1)
+                                       [(Prec (z0, i0) (z1, i1))]]},
+                        rlcomment = [] }))
+            (g, _) -> (g, theVacuousRule)
+      (g, _) -> (g, theVacuousRule)
+
+                                                                
 
 uninterruptibleRule :: Gen -> (Gen, Rule)
 uninterruptibleRule g =
@@ -408,7 +472,15 @@ cakeRule g =
             (g, _) -> (g, theVacuousRule)
       (g, _) -> (g, theVacuousRule)
       
-
+initRules :: Gen -> [Rule] -> (Gen, [Rule])
+initRules g rs =
+    let (g',neqs) = neqRules g in 
+    foldr (\f (g,rules) ->
+               let (g',r) = f g in
+               (g',r : rules))
+    (g',neqs ++ rs) 
+    [scissorsRule, cakeRule, uninterruptibleRule, shearsRule,
+     invShearsRule]
 
 loadRules :: MonadFail m => Prot -> Gen -> [SExpr Pos] ->
              m (Gen, [Rule], [SExpr ()])

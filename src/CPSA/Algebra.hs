@@ -1291,23 +1291,24 @@ displaySortId :: String -> Context -> Id -> (SExpr (), SExpr ())
 displaySortId sort ctx x = (displayId ctx x, S () sort)
 
 -- JDG:  Restore this later !!! 
---   displayId :: Context -> Id -> SExpr ()
---   displayId (Context ctx) x =
---       case lookup x ctx of
---         Nothing ->
---             let msg = idName x ++ " in a display context" ++ (show ctx) in
---             error $ "Algebra.displayId: Cannot find variable " ++ msg
---         Just name -> S () name
-
 displayId :: Context -> Id -> SExpr ()
 displayId (Context ctx) x =
     case lookup x ctx of
       Nothing ->
-          let _ = idName x ++ " in a display context" ++ (show ctx) in
-          -- msg ... error $ "Algebra.displayId: Cannot find variable
-          -- " ++ msg
-         S () ("*" ++ idName x ++ "*")
+          let msg = idName x ++ " in a display context" ++ (show ctx) in
+          error $ "Algebra.displayId: Cannot find variable " ++ msg
       Just name -> S () name
+
+-- JDG:  Use this if debugging  
+--   displayId :: Context -> Id -> SExpr ()
+--   displayId (Context ctx) x =
+--       case lookup x ctx of
+--         Nothing ->
+--             let _ = idName x ++ " in a display context" ++ (show ctx) in
+--             -- msg ... error $ "Algebra.displayId: Cannot find variable
+--             -- " ++ msg
+--            S () ("*" ++ idName x ++ "*")
+--         Just name -> S () name
 
                    
 

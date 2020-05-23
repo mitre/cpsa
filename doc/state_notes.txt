@@ -1,0 +1,210 @@
+From: "Joshua D. Guttman" <guttman@mitre.org>
+Subject: New version of state-devil branch of cpsa 4 
+To: Paul Rowe <prowe@mitre.org>, "John D. Ramsdell" <ramsdell@mitre.org>, "Moses D. Liskov" <mliskov@mitre.org>, "Ian D. Kretz" <ikretz@mitre.org>
+Cc: guttman@mitre.org (Joshua D. Guttman)
+Date: Wed, 20 May 2020 17:54:28 -0400 (1 day, 19 hours, 33 minutes ago)
+Reply-To: guttman@mitre.org (Joshua D. Guttman)
+
+I pushed a new version of the cpsa4 state-devil
+branch.  It corrects various messes in the rule
+engine (doubtless of my own creation).  It adds a
+new uninterruptible transition rule that strengths
+the cake rule.  Please check it with
+atomic-open-close.scm, open-close.scm, and
+syn_locn_envelop.scm
+
+Or whatever the right names are…
+
+And I think this is now ready for other
+exploration.
+
+[I also posted this part to the CPSA slack
+channel.]
+
+I should also add an explanation of the
+uninterruptible transition rule.
+
+Let's suppose that we have
+
+  n_0 ~~~~> n_2,
+
+where that means leadsto.  And we also have
+
+  n_0\prec n_1\prec n_2.
+
+If n_1 is a transition node on the same locn as
+n_0, n_2, then infer (false).
+
+This comes out of CPSA in the form:
+
+(defrule no-interruption
+    (forall ((z2 z1 z0 strd) (i2 i1 i0 indx))
+      (implies
+        (and (leads-to z2 i2 z0 i0) (trans z1 i1) 
+          (same-locn z2 i2 z1 i1)
+          (prec z2 i2 z1 i1) (prec z1 i1 z0 i0))
+        (false))))
+
+Though I notice that the indices worked out
+differently than I expected...
+
+I'll pretty that up in the morning.
+
+Note that this is stronger than the cake rule,
+which talks only about the case when n_2 is an
+observation and n_0 ~~~> n_1.
+
+        Joshua
+
+
+
+
+
+-- 
+	Joshua D. Guttman 
+	The MITRE Corporation 
+	guttman@mitre.org
+
+
+From: "Joshua D. Guttman" <guttman@mitre.org>
+Subject: Re: New version of state-devil branch of cpsa 4
+To: Paul Rowe <prowe@mitre.org>
+Cc: "John D. Ramsdell" <ramsdell@mitre.org>,  "Moses D. Liskov" <mliskov@mitre.org>,  "Ian D. Kretz" <ikretz@mitre.org>, guttman@mitre.org (Joshua D. Guttman)
+Date: Thu, 21 May 2020 06:50:09 -0400 (1 day, 6 hours, 39 minutes ago)
+Reply-To: guttman@mitre.org (Joshua D. Guttman)
+
+And a slightly stronger version of the scissors rule
+is:
+
+Suppose that n_0, n_1, and n_2 are transitions.
+If
+
+  n_0 ~~~> n_1 and n_0 \prec n_2,
+
+then n_1\preceq n_2.  
+
+
+
+I meant, transitions with the *same location*.
+
+I.e. Suppose that n_0, n_1, and n_2 are
+transitions on location l.  If
+
+   n_0 ~~~> n_1 and n_0 \prec n_2,
+
+then n_1\preceq n_2.
+
+The scissors rule is the case where in fact
+n_0 ~~~> n_2 also, and then the symmetry of n_1,
+n_2 makes n_1\prec n_2 impossible; so n_1=n_2.
+
+Any chance we could discuss all this on the cpsa
+slack channel eg at 10 am?
+
+        Joshua 
+
+
+Inverted shears:
+
+Suppose that n_0,n_1 l-transitions and:
+
+  n_1~~~>n_2 and n_0\prec n_2.
+
+Then either n_0=n_1 or n_0\prec n_1
+
+
+
+
+From: "Joshua D. Guttman" <guttman@mitre.org>
+Subject: Proposal for gen-st declarations and atomic role segments 
+To: "John D. Ramsdell" <ramsdell@mitre.org>,  "Moses D. Liskov" <mliskov@mitre.org>,  "Ian D. Kretz" <ikretz@mitre.org>, Paul Rowe <prowe@mitre.org>
+Cc: guttman@mitre.org (Joshua D. Guttman)
+Date: Fri, 22 May 2020 09:46:39 -0400 (3 hours, 43 minutes, 37 seconds ago)
+Reply-To: guttman@mitre.org (Joshua D. Guttman)
+
+Here are two things on the docket.
+
+1.  How can we easily decorate a defrole with a
+    declaration that says which incoming state
+    values can be assumed gen-st?
+
+2.  How can we express the idea that a device
+    updates a number of locations atomically, so
+    that a recipient that gets the new value of
+    one should not get an older (or incomparable)
+    version of the other?
+
+I propose that both of these should get syntax
+inside a defrole, so we could have for instance
+
+  (defrole rolename
+    (vars ...)
+    (trace ...)
+    (gen-st (v1 (cat "this" v2 (enc v1 k)))
+            ...)
+    (atomic-effect (3 5))
+    ...)
+
+What's the proposed significance of these
+declarations?  Each of them generates an axiom.
+The gen-st declaration leads to something like
+this, if we assume that height 2 is the shortest
+prefix of the trace that contains an occurrence of
+var v1:
+
+  (forall ((z strd) (v1 v2 sort1) (k sort2))
+    (implies (and (p "rolename" z 2)
+                  (p "rolename" "v1" z v1) 
+                  (p "rolename" "v2" z v2)
+                  (p "rolename" "k" z k))
+             (gen-st (cat "this" v2 (enc v1 k)))))
+
+The height 2 is determined by the first occurrence
+of v1 in the declaration.  We have to look inside
+the message term to see all the vars it contains
+-- and their sorts -- and each of them leads to a
+parameter predicate declaration.  The conclusion
+just says that the whole thing is gen-st.
+
+Does that seem pretty straightforward?
+
+Turning to atomic-effect, what it should say is
+that any node that's after the lower bound is
+actually after the upper bound.  Thus, it is the
+specifier's responsibility to make sure that node
+5 in this case is in fact a transmission node.  I
+think that there probably also needs to be a
+symmetric declaration
+
+  (atomic-cause (0 2))
+
+that says that any node earlier than node 2 on
+this strand is in fact earlier than node 0.  So
+(atomic-effect (3 5)) generates a formula:
+
+  (forall ((z1 z2 strd) (i indx))
+    (implies (and (p "rolename" z1 4)
+                  ;; note length vs index...
+                  (prec z1 3 z2 i))
+             (and (p "rolename" z1 6)
+                  (prec z1 5 z2 i))))
+
+The atomic-cause form would be symmetric, meaning
+that the specifier has to make sure that node 0 is
+a reception:
+
+  (forall ((z1 z2 strd) (i indx))
+    (implies (and (p "rolename" z1 3)
+                  ;; note length vs index...
+                  (prec z2 i z1 2))
+             (prec z2 i z1 0)))
+
+I think this gives a simple uniform way to do the
+key things Paul axiomatized in atomic-open-closed.
+
+What do you think?  Do we need more, less, or
+different?
+
+        Joshua 
+
+
