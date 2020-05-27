@@ -208,3 +208,125 @@ different?
         Joshua 
 
 
+From: "Joshua D. Guttman" <guttman@mitre.org>
+Subject: Re: Proposal for gen-st declarations and atomic role segments
+To: "John D. Ramsdell" <ramsdell@mitre.org>
+Cc: "Moses D. Liskov" <mliskov@mitre.org>,  "Ian D. Kretz" <ikretz@mitre.org>,  Paul Rowe <prowe@mitre.org>, guttman@mitre.org (Joshua D. Guttman), Dan Dougherty <dd@wpi.edu>
+Date: Wed, 27 May 2020 17:48:00 -0400 (1 minute, 28 seconds ago)
+Reply-To: guttman@mitre.org (Joshua D. Guttman)
+
+I'd like to combine the atomic-cause and
+atomic-effect annotations.  If you think of a role
+such as:
+
+  (defrole dev-up
+    (vars (k skey) (d o name) (old old1 mesg) (start-ch chan) (lk ls locn))
+    (trace
+     (recv start-ch (cat "power-up" d o k))
+     (load lk old) 
+     (load ls old1)
+     (stor ls (dev-state-closed d o))
+     (stor lk (dev-key-state d o k))
+     (send (enc "up" k)))
+    (auth start-ch))
+
+where we have two loads followed by two stores, we
+may as well just say that the four events form an
+critical section.
+
+That is, if a different event precedes any of the
+four, then it even precedes the first of them, and
+if it follows any of the four, then it even
+follows the last of them.  So in this case, the
+critical section includes (zero-based) nodes 1--4.
+
+Thus, we want to say both the atomic effect
+assertion, which in this case is:
+
+  (forall ((z1 z2 strd) (i indx))
+    (implies (and (p "dev-up" z1 4)
+                  (prec z1 3 z2 i))
+             (and (p "dev-up" z1 5)
+                  (prec z1 4 z2 i))))
+
+and the atomic-cause assertion, namely
+
+  (forall ((z1 z2 strd) (i indx))
+    (implies (and (p "dev-up" z1 3)
+                  (prec z2 i z1 2))
+             (prec z2 i z1 1)))
+
+where we use the fact that the nodes 1,2 are the
+receptions and 3,4 are the transmissions.  When
+there are 0 or 1 transmissions, for instance if
+this is an observation or if several locations are
+loaded but only one stored, then the atomic effect
+part is vacuous.  (The opposite situation doesn't
+arise.)
+
+So that suggests a syntax like:
+
+  (defrole dev-up
+    (vars (k skey) (d o name) (old old1 mesg) (start-ch chan) (lk ls locn))
+    (trace
+     (recv start-ch (cat "power-up" d o k))
+     (load lk old) 
+     (load ls old1)
+     (stor ls (dev-state-closed d o))
+     (stor lk (dev-key-state d o k))
+     (send (enc "up" k)))
+    (auth start-ch)
+    (critical-section (1 4)))
+
+to generate the two formulas shown.
+
+Does this sound right?
+
+        Joshua
+
+PS:  Right now, my branch of CPSA 4 generates 5
+(count them, yes, 5) state axioms.  I'm sure these
+can be organized into a smaller number of
+understandable rules.   There is though I suspect
+a premium on having dijunction-free versions
+separate.
+
+What do you think about this?
+
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+        
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+
+

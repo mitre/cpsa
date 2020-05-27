@@ -130,6 +130,7 @@ loadRole gen pos (S _ name :
       u <- loadBaseTerms vars (assoc "uniq-orig" rest)
       d <- loadBaseTerms vars (assoc "conf" rest)
       h <- loadBaseTerms vars (assoc "auth" rest)
+      cs <- loadCritSecs (assoc "auth" rest)
 
       let keys = ["non-orig", "pen-non-orig", "uniq-orig", "conf", "auth"]
       comment <- alist keys rest
@@ -247,6 +248,8 @@ balancedStores c =
           | isLocn ch              = False
           | otherwise              = check c' []
       check (_ : c') _             = check c' []
+
+                                     
 
 transitionIndices :: Trace -> [Int]
 transitionIndices c =
@@ -1141,6 +1144,19 @@ loadPrimary _ _ _ (L pos (S _ pred : _)) =
   fail (shows pos ("Bad formula for predicate " ++ pred))
 loadPrimary pos _ _ _ = fail (shows pos "Bad formula")
 
+loadCritSecs :: MonadFail m => [SExpr Pos] -> m [(Int, Int)]
+loadCritSecs [] = return [] 
+loadCritSecs (L pos [(N _ i), (N _ j)] : rest)
+    | j<i = fail (shows pos "loadCritSecs:  Bad int pair out of order")
+    | otherwise =
+        do
+          pairs <- loadCritSecs rest
+          return ((i,j) : pairs)
+loadCritSecs _ = fail "loadCritSecs:  Malformed int pairs"
+    
+
+
+
 -- Load a term and make sure it does not have sort strd, indx, locn, or chan
 
 loadAlgTerm :: MonadFail m => [Term] -> SExpr Pos -> m Term
@@ -1287,3 +1303,4 @@ factSpecific :: [Term] -> (Pos, AForm) -> [Term]
 factSpecific unbound (_, AFact _ fs) =
   unbound L.\\ foldl addVars [] (L.filter (not . isStrdVar) fs)
 factSpecific unbound _ = unbound
+

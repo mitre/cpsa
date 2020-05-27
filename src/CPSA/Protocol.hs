@@ -8,7 +8,7 @@
 
 module CPSA.Protocol (Event (..), evtCm, evtTerm, evtChan, evtMap, evt,
     inbnd, outbnd, Trace, tterms, originates,
-    originationPos, acquiredPos, gainedPos, usedPos,
+    originationPos, acquiredPos, gainedPos, usedPos, insPrecedeOuts, 
     Role, rname, rvars, rtrace, rnon, rpnon, runique, rconf, rauth, rcomment,
     rsearch, rnorig, rpnorig, ruorig, rpconf, rpauth, rpriority, mkRole,
     tchans, varSubset, varsInTerms, addVars, firstOccurs,
@@ -199,6 +199,29 @@ chanPos t c =
       loop pos (In t' : c)
           | Just t == cmChan t' = Just pos
           | otherwise = loop (pos + 1) c
+
+insPrecedeOuts :: Int -> Int -> Trace -> Bool
+insPrecedeOuts lower upper c =
+    loopIns (upper-lower) (drop lower c)
+    where
+      loopIns _ [] = False    -- Ran out too soon
+      loopIns u (In _ : c) 
+          | u==0 = True        -- Safely completed
+          | otherwise =
+              loopIns (u-1) c
+      loopIns u (Out _ : c) 
+          | u==0 = True          -- Safely completed
+          | otherwise = 
+              loopOuts (u-1) c
+
+      loopOuts _ [] = False   -- Ran out too soon
+      loopOuts _ (In _ : _) =
+          False -- Whoa:  Went back to Ins 
+      loopOuts u (Out _ : c) 
+          | u==0 = True        -- Safely completed
+          | otherwise =
+              loopOuts (u-1) c
+
 
 data Role = Role
     { rname :: !String,
