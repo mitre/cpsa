@@ -1,7 +1,7 @@
 Name:                   cpsa
 Version:                4.2.3
 Maintainer:             ramsdell@mitre.org
-Cabal-Version:          >= 1.6
+Cabal-Version:          >= 3.0
 License:                BSD3
 License-File:           license.txt
 Synopsis:               Symbolic cryptographic protocol analyzer
@@ -135,7 +135,7 @@ Extra-Source-Files:
   tst/chan-unilateral.scm tst/chan-unilateral.tst tst/factvar.scm
   tst/factvar.tst tst/renamings.scm tst/renamings.tst
   tst/blanchet_doorsep.prot tst/blanchet_doorsep.tst
-
+  
 Source-Repository head
   Type:     git
   Location: git://github.com/mitre/cpsaexp.git
