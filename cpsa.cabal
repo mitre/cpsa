@@ -1,7 +1,7 @@
 Name:                   cpsa
 Version:                4.2.3
 Maintainer:             ramsdell@mitre.org
-Cabal-Version:          >= 1.6
+Cabal-Version:          >= 1.10
 License:                BSD3
 License-File:           license.txt
 Synopsis:               Symbolic cryptographic protocol analyzer
@@ -135,13 +135,14 @@ Extra-Source-Files:
   tst/chan-unilateral.scm tst/chan-unilateral.tst tst/factvar.scm
   tst/factvar.tst tst/renamings.scm tst/renamings.tst
   tst/blanchet_doorsep.prot tst/blanchet_doorsep.tst
-
+  
 Source-Repository head
   Type:     git
   Location: git://github.com/mitre/cpsaexp.git
 
 Executable cpsa4
   Main-Is:              CPSA/Main.hs
+  Default-Language:     Haskell2010
   Build-Depends:        base >= 4 && < 5, containers, parallel
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports -threaded -rtsopts
@@ -155,6 +156,7 @@ Executable cpsa4
 
 Executable cpsa4sas
   Main-Is:              CPSA/SAS/Main.hs
+  Default-Language:     Haskell2010
   Build-Depends:        base >= 4 && < 5, containers
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
@@ -166,6 +168,7 @@ Executable cpsa4sas
 
 Executable cpsa4prot
   Main-Is:              CPSA/Prot/Main.hs
+  Default-Language:     Haskell2010
   Build-Depends:        base >= 3 && < 5, containers
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
@@ -176,6 +179,7 @@ Executable cpsa4prot
 
 Executable cpsa4goalsat
   Main-Is:              CPSA/GoalSat/Main.hs
+  Default-Language:     Haskell2010
   Build-Depends:        base
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
@@ -186,6 +190,7 @@ Executable cpsa4goalsat
 
 Executable cpsa4diff
   Main-Is:              CPSA/Diff/Main.hs
+  Default-Language:     Haskell2010
   Build-Depends:        base
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
@@ -196,6 +201,7 @@ Executable cpsa4diff
 
 Executable cpsa4graph
   Main-Is:              CPSA/Graph/Main.hs
+  Default-Language:     Haskell2010
   Build-Depends:        base >= 4, containers
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
@@ -210,6 +216,7 @@ Executable cpsa4graph
 
 Executable cpsa4shapes
   Main-Is:              CPSA/Shapes/Main.hs
+  Default-Language:     Haskell2010
   Build-Depends:        base >= 4, containers
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
@@ -220,6 +227,7 @@ Executable cpsa4shapes
 
 Executable cpsa4pp
   Main-Is:              CPSA/Pretty/Main.hs
+  Default-Language:     Haskell2010
   Build-Depends:        base
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
@@ -230,6 +238,7 @@ Executable cpsa4pp
 
 Executable cpsa4json
   Main-Is:              CPSA/JSON/Main.hs
+  Default-Language:     Haskell2010
   Build-Depends:        base
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
@@ -240,6 +249,7 @@ Executable cpsa4json
 
 Executable cpsa4init
   Main-Is:              CPSA/Init/Main.hs
+  Default-Language:     Haskell2010
   Build-Depends:        base, directory
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
@@ -249,6 +259,7 @@ Executable cpsa4init
 
 Executable cpsa42latex
   Main-Is:              CPSA/Latex/Main.hs
+  Default-Language:     Haskell2010
   Build-Depends:        base
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
