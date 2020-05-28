@@ -330,3 +330,28 @@ What do you think about this?
         (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
 
 
+From: "Joshua D. Guttman" <guttman@mitre.org>
+Subject: Re: Proposal for gen-st declarations and atomic role segments
+To: Paul D Rowe <prowe@mitre.org>
+Cc: John D Ramsdell <ramsdell@mitre.org>,  Moses D Liskov <mliskov@mitre.org>,  Ian D Kretz <ikretz@mitre.org>,  Dan Dougherty <dd@wpi.edu>, guttman@mitre.org (Joshua D. Guttman)
+Date: Thu, 28 May 2020 10:57:47 -0400 (35 minutes, 58 seconds ago)
+Reply-To: guttman@mitre.org (Joshua D. Guttman)
+
+
+Just to say what I know about them:
+
+1.  Shears implies scissors, which is why I chose
+    that name.  However, the conclusion is
+    disjunctive in form, which means it may be
+    desirable to keep the scissors anyway.
+
+2.  No-interruption implies Cake.  I don't think I
+    know any reason to keep Cake.
+
+3.  Inverse shears seems independent of the
+    others.
+
+So there are now three main principles, and
+possibly a fourth worth including, despite its
+being a consequence.
+
