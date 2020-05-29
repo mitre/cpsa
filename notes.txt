@@ -2,16 +2,14 @@ This contains repository notes, not to be distributed with CPSA.
 
 To make a source distribution, type:
 
-make
-(cd doc; make)
 make sdist
 
 VERSIONING
 
 Make sure the version number in cpsa.cabal matches the one in
-doc/macros.tex.
+doc/src/macros.tex.
 
 TESTING
 
-Expand the source distribution, build the program, run the test suite,
-and then build the documentation.
+Expand the source distribution, build the program, and then run the
+test suite.  There should be no differences reported.
