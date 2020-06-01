@@ -130,7 +130,8 @@ loadRole gen pos (S _ name :
       u <- loadBaseTerms vars (assoc "uniq-orig" rest)
       d <- loadBaseTerms vars (assoc "conf" rest)
       h <- loadBaseTerms vars (assoc "auth" rest)
-      cs <- loadCritSecs (assoc "auth" rest)
+      cs <- loadCritSecs (assoc "critical-sections" rest)
+      genstates <- loadTerms vars (assoc "gen-st" rest) 
 
       let keys = ["non-orig", "pen-non-orig", "uniq-orig", "conf", "auth"]
       comment <- alist keys rest
@@ -152,13 +153,20 @@ loadRole gen pos (S _ name :
       -- Drop runiques that refer to unused variable declarations
       let us = L.filter (varsSeen vs) (u ++ pt_u)
       prios <- mapM (loadRolePriority (length c)) (assoc "priority" rest)
+
+      let stateSegs = stateSegments c 
+      case all (flip checkCs stateSegs) cs of
+        False -> fail (shows pos "Critical sections in role not within state segments")
+        True -> return ()
+
       let r = mkRole name vs c ns as us d h comment prios reverseSearch
 
       let (gen', transRls) = transRules gen r (transitionIndices c) 
       -- :: Gen -> Role -> [Int] -> (Gen, [Rule])
+      let (gen'', csRls) = csRules gen' r cs
       
       case roleWellFormed r of
-        Return () -> return (gen', r, transRls)
+        Return () -> return (gen'', r, (csRls ++ transRls))
         Fail msg -> fail (shows pos $ showString "Role not well formed: " msg)
 loadRole _ pos _ = fail (shows pos "Malformed role")
 
@@ -273,6 +281,49 @@ transitionIndices c =
           | otherwise              = False
       subseqSend _ (_ : _)        = False
 
+stateSegments :: Trace -> [(Int,Int)]
+stateSegments c =
+    findSegments [] 0 c
+    where
+      findSegments soFar _ [] = soFar
+      findSegments soFar i ((Out _) : c) =
+          findSegments soFar (i+1) c
+      findSegments soFar i ((In (Plain _)) : c) =
+          findSegments soFar (i+1) c
+      findSegments soFar i ((In (ChMsg ch _)) : c) 
+          | isLocn ch           = findEnd soFar i (i+1) c False
+          -- the flag False means that no Outs have yet been observed
+          | otherwise            = findSegments soFar (i+1) c
+      
+
+      -- findEnd scans for the end of the segment starting at start.
+      -- i is always the index of the start of c in the full trace.
+      -- The boolean flag is False until Outs have been observed.  
+      
+      findEnd soFar start i [] _                         = (start,(i-1)) : soFar
+                                                           
+      findEnd soFar start i ((In (Plain _)) : c) _       =
+          findSegments ((start,(i-1)) : soFar) (i+1) c 
+      findEnd soFar start i ((Out (Plain _)) : c) _      =
+          findSegments ((start,(i-1)) : soFar) (i+1) c
+      findEnd soFar start i c@((In (ChMsg _ _)) : _) True =
+          findSegments ((start,(i-1)) : soFar)  i c
+      -- in th eprevious case we save the start of c for findSegments
+      -- to decide what to do.   
+          
+      findEnd soFar start i ((In (ChMsg ch _)) : c) False
+          | isLocn ch           = findEnd soFar start(i+1) c False
+          | otherwise           = findSegments ((start,(i-1)) : soFar) (i+1) c
+      findEnd soFar start i ((Out (ChMsg ch _)) : c) _ 
+          | isLocn ch           = findEnd soFar start (i+1) c True 
+          | otherwise           = findSegments ((start,(i-1)) : soFar) (i+1) c
+
+checkCs :: (Int,Int) -> [(Int,Int)] -> Bool 
+checkCs (i,j) =
+    any
+    (\(start,end) -> start <= i && j <= end)
+    
+
 
 failwith :: MonadFail m => String -> Bool -> m ()
 failwith msg test =
@@ -302,38 +353,183 @@ notListenerPrefix _ = True
 
 -- Protocol Rules
 
+type VarListSpec = [(String,[String])]
+type Conjunctor = [Term] -> [AForm] -- given universally bound vars,
+                                    -- yields a conjunction 
+type Disjunctor = [Term] -> Conjunctor -- given existentially bound
+                                       -- vars, yields a conjunctor 
+
+
+sortedVarsOfNames :: Gen -> String -> [String] -> (Gen, [Term])
+sortedVarsOfNames g sortName =
+    L.foldr
+    (\name (g,vs) ->
+         let (g', v) = newVar g name sortName in
+         (g', (v : vs)))
+    (g, [])
+
+
+sortedVarsOfStrings :: Gen -> VarListSpec -> (Gen,[Term])
+sortedVarsOfStrings g =
+    foldr (\(s,varnames) (g,soFar) ->
+               let (g', vars) = sortedVarsOfNames g s varnames in
+               (g', vars ++ soFar))
+              (g,[])
+
+varsInTerm :: Term -> [Term]
+varsInTerm t =
+    foldVars (\vars v -> v : vars) [] t
+
+loadTerms :: MonadFail m => [Term] -> [SExpr Pos] -> m [Term]
+loadTerms vars =
+    mapM (loadTerm vars) 
+
+ruleOfClauses :: Gen -> String ->
+                 VarListSpec -> Conjunctor ->
+                 [(VarListSpec,Disjunctor)] -> (Gen,Rule) 
+ruleOfClauses g rn sortedVarLists antecedent evarDisjs = 
+    let (g',uvars) = sortedVarsOfStrings g sortedVarLists in
+    let (g'', disjs) =
+            foldr
+            (\(evarlist,djor) (g,disjs) ->
+                 let (g',evars) = sortedVarsOfStrings g evarlist in 
+                 (g', (evars, (djor evars uvars)) : disjs))
+            (g',[])
+            evarDisjs in 
+    (g'',
+      (Rule { rlname = rn,
+              rlgoal =
+                  (Goal
+                   { uvars = uvars,
+                     antec = antecedent uvars,
+                     consq = disjs, 
+                     concl = map snd disjs}),
+              rlcomment = [] }))
+
+
+applyToSoleEntry :: (a -> b) ->  String -> [a] -> b
+applyToSoleEntry f _ [a] = f a
+applyToSoleEntry _ s _ = error s
+
+applyToThreeEntries :: (a -> a -> a -> b) ->  String -> [a] -> b
+applyToThreeEntries f _ [a1,a2,a3] = f a1 a2 a3
+applyToThreeEntries _ s _ = error s
+
+                         
+
 -- foldM :: (Foldable t, Monad m) => (b -> a -> m b) -> b -> t a -> m b
 
 neqRules :: Gen -> (Gen, [Rule])
 neqRules g =
     L.foldl
-    (\(g, rs) sortName ->
-         let (g', v) = newVar g "x" sortName in 
-         (g', ((Rule { rlname = "neqRule_" ++ sortName, 
-                      rlgoal = Goal {uvars =  [v],      
-                                     antec = [(AFact "neq" [v,v])], 
-                                     consq = [],
-                                     concl = []},
-                      rlcomment = [] }) : rs)))
-    (g,[])
-    ["mesg", "strd", "indx"]
+     (\(g,rs) sortName ->
+          let (g', r) =
+                  (ruleOfClauses g ("neqRl_" ++ sortName)
+                   [(sortName,["x"])]
+                   (applyToSoleEntry
+                    (\x -> [(AFact "neq" [x,x])])
+                    
+                    "neqrules:  Impossible var list.")
+                   [])       -- false conclusion
+          in 
+          (g', r : rs))
+     (g,[])
+     ["indx", "strd", "mesg"]
+
+--   neqRules g =
+--       L.foldl
+--       (\(g, rs) sortName ->
+--            let (g', v) = newVar g "x" sortName in 
+--            (g', ((Rule { rlname = "neqRule_" ++ sortName, 
+--                         rlgoal = Goal {uvars =  [v],      
+--                                        antec = [(AFact "neq" [v,v])], 
+--                                        consq = [],
+--                                        concl = []},
+--                         rlcomment = [] }) : rs)))
+--       (g,[])
+--       ["mesg", "strd", "indx"]
 
 transRules :: Gen -> Role -> [Int] -> (Gen, [Rule])
 transRules g rl =
     L.foldl
      (\(g, rs) idx ->
-          let (g', z) = newVar g "z" "strd" in
-          let ti = (indxOfInt idx) in 
-          (g', (Rule { rlname = ("transRule_" ++ (rname rl) ++
-                                 "-at-" ++ (show idx)), 
-                       rlgoal = Goal {uvars =  [z],      
-                                      antec = [(Length rl z (indxOfInt (idx+1)))], 
-                                      consq = [([], -- no existentially
-                                                    -- bound vars
-                                                [(Trans (z,ti))])],
-                                      concl = [[(Trans (z,ti))]]},
-                      rlcomment = [] }) : rs))
+          let (g', r) = f g idx in
+          (g', r : rs)) 
      (g, [])
+     where
+       f g idx =
+           ruleOfClauses g ("trRl_" ++ (rname rl) ++ "-at-" ++ (show idx))
+             [("strd",["z"])]
+             (applyToSoleEntry
+              (\z -> [(Length rl z (indxOfInt (idx+1)))])
+              "transRules:  Impossible var list.")           
+             [([],                   -- no existentially bound vars
+               (\_ -> applyToSoleEntry
+                        (\z -> [(Trans (z, (indxOfInt idx)))])
+                        "transRules:  Impossible var list."))]
+
+--   (\(g, rs) idx ->
+--             )
+-- [(Trans (z,ti))]
+
+--        let (g', z) = newVar g "z" "strd" in
+--             let ti = (indxOfInt idx) in 
+--             (g', (Rule { rlname = ("transRule_" ++ (rname rl) ++
+--                                    "-at-" ++ (show idx)), 
+--                          rlgoal = Goal {uvars =  [z],      
+--                                         antec = [(Length rl z (indxOfInt (idx+1)))], 
+--                                         consq = [([], -- no existentially
+--                                                       -- bound vars
+--                                                   [(Trans (z,ti))])],
+--                                         concl = [[(Trans (z,ti))]]},
+--                         rlcomment = [] }) : rs)
+
+csRules :: Gen -> Role -> [(Int,Int)] -> (Gen, [Rule])
+csRules g rl =
+    L.foldl
+     (\(g, rs) (start,end) ->
+          (let (g', cause_rule, effect_rule) = f g start end in
+           (g', cause_rule : effect_rule : rs)))
+     (g,[])
+     where
+       f g start end =
+           let (g',effect_rule) =
+                   ruleOfClauses g
+                     ("eff-" ++ (rname rl) ++ "-" ++ (show start) ++ "-" ++ (show end))
+                     [("strd",["z", "z1"]), ("indx", ["i"])]
+                     (applyToThreeEntries
+                      (\z z1 i -> [(Length rl z (indxOfInt (start+1))),
+                                   (Prec (z,(indxOfInt start)) (z1,i))])
+                      "csRules:  Impossible var list.")
+                     [([],
+                       (\_ -> applyToThreeEntries
+                              (\z z1 _ -> [Equals z z1])
+                              "csRules:  Impossible var list.")),
+                      ([],
+                       (\_ -> applyToThreeEntries
+                              (\z z1 i -> [(Length rl z (indxOfInt (end+1))),
+                                           (Prec (z,(indxOfInt end)) (z1,i))])
+                              "csRules:  Impossible var list."))] in
+           let (g'',cause_rule) =
+                   ruleOfClauses g'
+                     ("cau-" ++ (rname rl) ++ "-" ++ (show start) ++ "-" ++ (show end))
+                     [("strd",["z", "z1"]), ("indx", ["i"])]
+                     (applyToThreeEntries
+                      (\z z1 i -> [(Length rl z (indxOfInt (end+1))),
+                                   (Prec (z1,i) (z,(indxOfInt end)))])
+                      "csRules:  Impossible var list.")
+                     [([],
+                       (\_ -> applyToThreeEntries
+                              (\z z1 _ -> [Equals z z1])
+                              "csRules:  Impossible var list.")),
+                      ([],
+                       (\_ -> applyToThreeEntries
+                              (\z z1 i -> [(Prec (z1,i) (z,(indxOfInt start)))])
+                              "csRules:  Impossible var list."))] in
+           (g'', cause_rule, effect_rule)
+
+
+
 
 theVacuousRule :: Rule
 theVacuousRule =
@@ -343,14 +539,7 @@ theVacuousRule =
                            consq = [([], [])], -- no bvs, no conjuncts 
                            concl = [[]]},
             rlcomment = [] })
-
-sortedVarsOfNames :: Gen -> String -> [String] -> (Gen, [Term])
-sortedVarsOfNames g sortName =
-    L.foldr
-    (\name (g,vs) ->
-         let (g', v) = newVar g name sortName in
-         (g', (v : vs)))
-    (g, []) 
+   
      
 scissorsRule :: Gen -> (Gen, Rule)
 scissorsRule g =
@@ -474,6 +663,8 @@ cakeRule g =
                          rlcomment = [] }))
             (g, _) -> (g, theVacuousRule)
       (g, _) -> (g, theVacuousRule)
+
+
       
 initRules :: Gen -> [Rule] -> (Gen, [Rule])
 initRules g rs =
@@ -1152,7 +1343,7 @@ loadCritSecs (L pos [(N _ i), (N _ j)] : rest)
         do
           pairs <- loadCritSecs rest
           return ((i,j) : pairs)
-loadCritSecs _ = fail "loadCritSecs:  Malformed int pairs"
+loadCritSecs s = fail ("loadCritSecs:  Malformed int pairs: " ++ (show s))
     
 
 

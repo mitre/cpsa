@@ -31,7 +31,8 @@
      (stor ls (dev-state-closed d o))
      (stor lk (dev-key-state d o k))
      (send (enc "up" k)))
-    (auth start-ch))
+    (auth start-ch)
+    (critical-sections (1 4)))
 
   (defrole owner-power-dev
     (vars (k skey) (d o name) (start-ch chan))
@@ -59,7 +60,8 @@
      (load lk (dev-key-state d o k))
      (load ls (dev-state-any d o any)) 
      (stor ls (dev-state-opened d o))
-     (send n)))
+     (send n))
+    (critical-sections (1 3)))
 
   (defrole dev-close
     (vars (k skey) (n text) (any mesg) (d o name) (lk ls locn))
@@ -68,7 +70,8 @@
      (load lk (dev-key-state d o k))
      (load ls (dev-state-any d o any))
      (stor ls (dev-state-closed d o))
-     (send n)))
+     (send n))
+    (critical-sections (1 3)))
 
   (defrole dev-pass
     (vars (k skey) (n text) (d o name) (lk ls locn))
@@ -77,7 +80,8 @@
      (load ls (dev-state-opened d o))
      (recv (enc "may I pass" k))
      (send (enc "you may pass" n k)))
-    (uniq-orig n))
+    (uniq-orig n)
+    (critical-sections (0 1)))
 
   (defrole user-pass
     (vars (k skey) (n text) (d o name) (l locn))
@@ -182,21 +186,21 @@
 
    ;; Single-threaded registers omitted
 
-   (defrule atomic-cause-dev-pass
-     (forall
-      ((z1 z2 strd) (i indx))
-      (implies (and (p "dev-pass" z1 2)
-		    (prec z2 i z1 1))
-	       (or (= z1 z2)
-		   (prec z2 i z1 0)))))
-
-   (defrule atomic-cause-dev-open
-     (forall
-      ((z1 z2 strd) (i indx))
-      (implies (and (p "dev-open" z1 3)
-		    (prec z2 i z1 2))
-	       (or (= z1 z2)
-		   (prec z2 i z1 1)))))
+;      (defrule atomic-cause-dev-pass
+;        (forall
+;         ((z1 z2 strd) (i indx))
+;         (implies (and (p "dev-pass" z1 2)
+;   		    (prec z2 i z1 1))
+;   	       (or (= z1 z2)
+;   		   (prec z2 i z1 0)))))
+;   
+;      (defrule atomic-cause-dev-open
+;        (forall
+;         ((z1 z2 strd) (i indx))
+;         (implies (and (p "dev-open" z1 3)
+;   		    (prec z2 i z1 2))
+;   	       (or (= z1 z2)
+;   		   (prec z2 i z1 1)))))
    
   )
 
