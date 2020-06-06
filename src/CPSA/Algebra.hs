@@ -75,7 +75,8 @@ module CPSA.Algebra (name,
     gmerge,
     clone,
     loadVars,
-    newVar, 
+    newVar,
+    varName, 
 
     Term,
     isVar,
@@ -140,7 +141,8 @@ module CPSA.Algebra (name,
     displayTermNoPt,
     notPt,
     displayEnv,
-    displaySubst) where
+    displaySubst,
+    varListSpecOfVars) where
 
 import Control.Monad -- (foldM)
 import qualified Data.List as L
@@ -149,7 +151,7 @@ import Data.Set (Set)
 import qualified Data.Map as M
 import Data.Map (Map)
 import Data.Char (isDigit)
-import CPSA.Lib.Utilities (replaceNth)
+import CPSA.Lib.Utilities (replaceNth, adjoin)
 import CPSA.Lib.SExpr (SExpr(..), Pos, annotation)
 
 name :: String
@@ -1069,7 +1071,8 @@ mkVarUnfailingly sort x
   | sort == "indx" =  X x
   | otherwise =  I x    -- Default:  Var of sort mesg
 
-
+varName :: Term -> String
+varName t = idName (varId t)
 
 loadLookup :: Pos -> [Term] -> String -> Either String Term
 loadLookup pos [] name = Left (shows pos $ "Identifier " ++ name ++ " unknown")
@@ -1256,6 +1259,50 @@ loadHash _ vars (l : ls) =
      ts <- mapM (loadTerm vars) (l : ls)
      return $ F Hash [foldr1 (\a b -> F Cat [a, b]) ts]
 loadHash pos _ _ = fail (shows pos "Malformed hash")
+
+--   combineVarListSpecs :: [(String,[String])] -> [(String,[String])] -> [(String,[String])]
+--   combineVarListSpecs [] vls = vls
+--   combineVarListSpecs vls [] = vls
+--   combineVarListSpecs ((s, vnames) : vls) ((s', vnames') : vls')
+--       | s == s' = (s, (L.nub $ vnames ++ vnames'))
+--                   : (combineVarListSpecs vls vls')
+--       | otherwise =
+--           combineVarListSpecs vls $ (s', vnames') : (combineVarListSpecs [(s, vnames)] vls') 
+                    
+sortNameAndVarName :: Term -> (String,String)
+sortNameAndVarName (I (Id(_, name))) = ("mesg",name) 
+sortNameAndVarName (F Text [I (Id(_, name))]) = ("text",name)
+sortNameAndVarName (F Data [I (Id(_, name))]) = ("data",name)
+sortNameAndVarName (F Name [I (Id(_, name))]) = ("name",name)
+sortNameAndVarName (F Pval [I (Id(_, name))]) = ("pt",name)
+sortNameAndVarName (F Skey [I (Id(_, name))]) = ("skey",name)
+sortNameAndVarName (F Akey [I (Id(_, name))]) = ("akey",name)
+sortNameAndVarName (F Chan [I (Id(_, name))]) = ("chan",name)
+sortNameAndVarName (F Locn [I (Id(_, name))]) = ("locn",name)
+sortNameAndVarName (D (Id(_, name))) = ("strd",name)
+sortNameAndVarName (X (Id(_, name))) = ("indx",name)
+sortNameAndVarName t = error ("sortNameAndVarName:  Non-var " ++ (show t))
+
+
+
+addSortNameToVarListSpec :: (String,String) -> [(String,[String])] -> Maybe [(String,[String])]
+addSortNameToVarListSpec (_,_) [] = Nothing 
+addSortNameToVarListSpec (sn,vn) ((sn',vns) : rest)
+    | sn == sn' = Just $ (sn, adjoin vn vns) : rest
+    | otherwise =
+        do
+          added <- addSortNameToVarListSpec (sn,vn) rest
+          return $ ((sn',vns) : added)
+
+varListSpecOfVars :: [Term] -> [(String,[String])]
+varListSpecOfVars [] = []
+varListSpecOfVars (t : rest) =
+    let (sn,vn) = sortNameAndVarName t in
+    let specRest = varListSpecOfVars rest in 
+    case addSortNameToVarListSpec (sn,vn) specRest of
+      Nothing -> (sn,[vn]) : specRest
+      Just added -> added
+                                                             
 
 -- Term specific displaying functions
 

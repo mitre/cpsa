@@ -131,7 +131,8 @@ loadRole gen pos (S _ name :
       d <- loadBaseTerms vars (assoc "conf" rest)
       h <- loadBaseTerms vars (assoc "auth" rest)
       cs <- loadCritSecs (assoc "critical-sections" rest)
-      genstates <- loadTerms vars (assoc "gen-st" rest) 
+      genstates <- loadTerms vars (assoc "gen-st" rest)
+      facts <- loadFactList vars (assoc "facts" rest)
 
       let keys = ["non-orig", "pen-non-orig", "uniq-orig", "conf", "auth"]
       comment <- alist keys rest
@@ -159,14 +160,19 @@ loadRole gen pos (S _ name :
         False -> fail (shows pos "Critical sections in role not within state segments")
         True -> return ()
 
+      
+
       let r = mkRole name vs c ns as us d h comment prios reverseSearch
 
       let (gen', transRls) = transRules gen r (transitionIndices c) 
       -- :: Gen -> Role -> [Int] -> (Gen, [Rule])
       let (gen'', csRls) = csRules gen' r cs
+      let (gen''', gsRls) = genStateRls gen'' r genstates
+      let (genFour, factRls) = genFactRls gen''' r facts
       
       case roleWellFormed r of
-        Return () -> return (gen'', r, (csRls ++ transRls))
+        Return () -> return (genFour, r,
+                             (factRls ++ gsRls ++ csRls ++ transRls))
         Fail msg -> fail (shows pos $ showString "Role not well formed: " msg)
 loadRole _ pos _ = fail (shows pos "Malformed role")
 
@@ -382,7 +388,42 @@ varsInTerm t =
 
 loadTerms :: MonadFail m => [Term] -> [SExpr Pos] -> m [Term]
 loadTerms vars =
-    mapM (loadTerm vars) 
+    mapM (loadTerm vars)
+
+loadFactList :: MonadFail m => [Term] -> [SExpr Pos] -> m [(String, [Term])]
+loadFactList vars =
+    mapM (loadAFact vars)
+
+         
+loadAFact :: MonadFail m => [Term] -> SExpr Pos -> m (String, [Term])
+loadAFact vars (L _ (S _ name : fs)) =
+    do
+      fs <- mapM (loadTerm vars) fs 
+      return $ (name, fs)
+loadAFact _ x = fail (shows (annotation x) "Malformed fact")
+
+                
+
+
+             --   loadFact :: MonadFail m => [Int] -> [Term] -> SExpr Pos -> m Fact
+--   loadFact heights vars (L _ (S _ name : fs)) =
+--     do
+--       fs <- mapM (loadFterm heights vars) fs
+--       return $ Fact name fs
+--   loadFact _ _ x =
+--     fail (shows (annotation x) "Malformed fact")
+--   
+--   loadFterm :: MonadFail m => [Int] -> [Term] -> SExpr Pos -> m FTerm
+--   loadFterm heights _ (N pos s)
+--     | 0 <= s && s < length heights = return $ FSid s
+--     | otherwise = fail (shows pos ("Bad strand in fact: " ++ show s))
+--   loadFterm _ vars x =
+--     do
+--       t <- loadTerm vars x
+--       return $ FTerm t
+--   
+
+
 
 ruleOfClauses :: Gen -> String ->
                  VarListSpec -> Conjunctor ->
@@ -411,9 +452,14 @@ applyToSoleEntry :: (a -> b) ->  String -> [a] -> b
 applyToSoleEntry f _ [a] = f a
 applyToSoleEntry _ s _ = error s
 
-applyToThreeEntries :: (a -> a -> a -> b) ->  String -> [a] -> b
+applyToThreeEntries :: (a -> a -> a -> b) -> String -> [a] -> b
 applyToThreeEntries f _ [a1,a2,a3] = f a1 a2 a3
 applyToThreeEntries _ s _ = error s
+
+applyToStrandVarAndParams :: (a -> [a] -> b) -> [a] -> String -> b
+applyToStrandVarAndParams _ [] s = error s
+applyToStrandVarAndParams f (a : rest) _ = f a rest
+
 
                          
 
@@ -528,6 +574,121 @@ csRules g rl =
                               "csRules:  Impossible var list."))] in
            (g'', cause_rule, effect_rule)
 
+genStateRls :: Gen -> Role -> [Term] -> (Gen, [Rule])
+genStateRls g rl ts =
+    (g',rls)     
+    where
+      (g',rls,_) =
+          foldr (\t (g, rs, n) ->
+                       (let (g', new_rule) = f g t n in
+                        (g', new_rule : rs, n+1)))
+               (g, [], (0 :: Integer))
+               ts
+      
+      occ = flip firstOccurs rl
+            
+      heightLoop soFar [] = Just (1+soFar)
+      heightLoop soFar (v : rest) =
+          case occ v of
+            Nothing -> Nothing
+            Just i -> heightLoop (max i soFar) rest 
+          
+      vSpec t = ("strd", ["z"]) : varListSpecOfVars (varsInTerm t)
+
+      f g t n =
+          case heightLoop 0 (varsInTerm t) of
+            Nothing -> error ("genStateRls:  Unbound variable in gen-st of " ++
+                             (rname rl) ++ ": " ++ (show t))
+            Just ht ->
+                ruleOfClauses g
+                  ("gen-st-" ++ (rname rl) ++ "-" ++ (show n))
+                  (vSpec t)
+                  (\vars ->
+                       applyToStrandVarAndParams
+                       (\z pvars -> 
+                            (Length rl z (indxOfInt ht))
+                            : (map
+                               (\v ->
+                                    case paramOfName (varName v) rl of
+                                      Nothing -> error ("genStateRls:  Parameter " ++
+                                                        (varName v) ++ " not found.")
+                                      Just p ->
+                                          case firstOccurs p rl of
+                                            Nothing -> error ("genStateRls:  Parameter " ++
+                                                              (varName v) ++ " not found.")
+                                            Just i -> (Param rl p i z v))
+                              pvars))
+                       vars
+                       "genStateRls:  vars not strand+prams?")                
+                  [([], 
+                    (\_ vars ->
+                         applyToStrandVarAndParams
+                         (\_ pvars ->
+                              case envsRoleParams rl g pvars of
+                                [(_,e)] -> [GenStV (instantiate e t)]
+                                _ -> error "genStateRls:  Non-unary matching not implemented")
+                         vars
+                         "genStateRls:  vars not strand+params?"))]
+                                      
+
+genFactRls :: Gen -> Role -> [(String,[Term])] -> (Gen, [Rule])
+genFactRls g rl predarglists =
+    (g',rls)     
+    where
+      (g',rls,_) =
+          foldr (\(pred,args) (g, rs, n) ->
+                       (let (g', new_rule) = f g pred args n in
+                        (g', new_rule : rs, n+1)))
+               (g, [], (0 :: Integer))
+               predarglists
+      
+      occ = flip firstOccurs rl
+            
+      heightLoop soFar [] = Just (1+soFar)
+      heightLoop soFar (v : rest) =
+          case occ v of
+            Nothing -> Nothing
+            Just i -> heightLoop (max i soFar) rest 
+          
+      vSpec args = ("strd", ["z"]) : varListSpecOfVars (varsInArgs args)
+
+      varsInArgs = concatMap varsInTerm 
+
+      f g pred args n =
+          case heightLoop 0 (varsInArgs args) of
+            Nothing -> error ("genFactRls:  Unbound variable in fact of " ++
+                             (rname rl) ++ ": " ++ pred ++ (show args))
+            Just ht ->
+                ruleOfClauses g
+                  ("fact-" ++ (rname rl) ++ "-" ++ pred ++ (show n))
+                  (vSpec args)
+                  (\vars ->
+                       applyToStrandVarAndParams
+                       (\z pvars -> 
+                            (Length rl z (indxOfInt ht))
+                            : (map
+                               (\v ->
+                                    case paramOfName (varName v) rl of
+                                      Nothing -> error ("genFactRls:  Parameter " ++
+                                                        (varName v) ++ " not found.")
+                                      Just p ->
+                                          case firstOccurs p rl of
+                                            Nothing -> error ("genFactRls:  Parameter " ++
+                                                              (varName v) ++ " not found.")
+                                            Just i -> (Param rl p i z v))
+                              pvars))
+                       vars
+                       "genFactRls:  vars not strand+prams?")                
+                  [([], 
+                    (\_ vars ->
+                         applyToStrandVarAndParams
+                         (\_ pvars ->
+                              case envsRoleParams rl g pvars of
+                                [(_,e)] -> [AFact pred (map (instantiate e) args)]
+                                _ -> error "genFactRls:  Non-unary matching not implemented")
+                         vars
+                         "genFactRls:  vars not strand+params?"))]
+                                      
 
 
 

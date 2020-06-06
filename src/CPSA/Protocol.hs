@@ -11,7 +11,7 @@ module CPSA.Protocol (Event (..), evtCm, evtTerm, evtChan, evtMap, evt,
     originationPos, acquiredPos, gainedPos, usedPos, insPrecedeOuts, 
     Role, rname, rvars, rtrace, rnon, rpnon, runique, rconf, rauth, rcomment,
     rsearch, rnorig, rpnorig, ruorig, rpconf, rpauth, rpriority, mkRole,
-    tchans, varSubset, varsInTerms, addVars, firstOccurs,
+    tchans, varSubset, varsInTerms, addVars, firstOccurs, paramOfName, envsRoleParams, 
     AForm (..), NodeTerm, Goal (..),
     aFormOrder, aFreeVars, Rule (..),
     Prot, mkProt, pname, alg, pgen, roles, nullaryrules, unaryrules, generalrules, rules, listenerRole,
@@ -323,9 +323,26 @@ mkRole name vars trace non pnon unique conf auth comment priority rev =
 firstOccurs :: Term -> Role -> Maybe Int
 firstOccurs v r = firstOccursAt v (rtrace r)
 
+paramOfName :: String -> Role -> Maybe Term
+paramOfName name rl =
+    seek (rvars rl)
+    where
+      seek [] = Nothing
+      seek (v : rest)
+          | name == varName v = Just v
+          | otherwise = seek rest 
 
-
-
+envsRoleParams :: Role -> Gen -> [Term]-> [(Gen, Env)]
+envsRoleParams rl g =
+    foldl
+    (\ges v -> concatMap
+               (\ge -> case paramOfName (varName v) rl of
+                         Just p -> match p v ge
+                         Nothing -> [])
+               ges)
+    [(g,emptyEnv)]
+    
+                     
 
 -- Security Goals
 
