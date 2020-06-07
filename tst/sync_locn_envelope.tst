@@ -2,7 +2,7 @@
   (bound 30) (limit 6000))
 
 (comment "CPSA 4.2.3")
-(comment "All input read from sync_locn_envelope.scm")
+(comment "All input read from tst/sync_locn_envelope.scm")
 (comment "Step count limited to 6000")
 (comment "Strand count bounded at 30")
 (comment "Nonces checked first")
@@ -53,30 +53,36 @@
     (conf tpmconf)
     (neq (k aik)))
   (defrule cakeRule
-    (forall ((z2 z1 z0 strd) (i2 i1 i0 indx))
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z2 i2) (trans z1 i1) (leads-to z2 i2 z1 i1)
-          (leads-to z2 i2 z0 i0) (prec z1 i1 z0 i0))
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRule_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule neqRule_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRule_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
-    (forall ((z2 z1 z0 strd) (i2 i1 i0 indx))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (fact no-state-split) (trans z2 i2) (trans z1 i1)
-          (trans z0 i0) (leads-to z2 i2 z1 i1) (leads-to z2 i2 z0 i0))
-        (and (= z1 z0) (= i1 i0)))))
-  (defrule transRule_tpm-power-on-at-2
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule trRl_tpm-power-on-at-2
     (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
-  (defrule transRule_tpm-power-on-at-1
+  (defrule trRl_tpm-power-on-at-1
     (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
-  (defrule transRule_tpm-extend-enc-at-3
+  (defrule trRl_tpm-extend-enc-at-3
     (forall ((z strd)) (implies (p "tpm-extend-enc" z 4) (trans z 3))))
-  (defrule transRule_tpm-extend-enc-at-2
+  (defrule trRl_tpm-extend-enc-at-2
     (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
   (defrule genStV-if-hashed-tpm-quote
     (forall ((z strd) (v1 v2 mesg))
@@ -101,7 +107,20 @@
       (implies
         (and (p "tpm-power-on" z 2)
           (p "tpm-power-on" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2))))))
+        (gen-st (hash v1 v2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton envelope
   (vars (pcr-id nonce text) (v n data) (k aik akey) (tpm tpmconf chan))
@@ -283,7 +302,7 @@
   (genStV (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm)
-  (rule genStV-if-hashed-tpm-decrypt genStV-if-hashed-tpm-decrypt)
+  (rule genStV-if-hashed-tpm-decrypt)
   (operation encryption-test (displaced 5 2 tpm-create-key 2)
     (enc "created" k pcr-id-0 current-value aik-0) (4 1))
   (traces ((recv v) (send v))
@@ -325,9 +344,8 @@
   (conf tpmconf)
   (auth tpm-0)
   (facts (trans 4 2) (trans 4 3))
-  (rule genStV-if-hashed-tpm-extend-enc genStV-if-hashed-tpm-extend-enc
-    transRule_tpm-extend-enc-at-2 transRule_tpm-extend-enc-at-2
-    transRule_tpm-extend-enc-at-3 transRule_tpm-extend-enc-at-3)
+  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-2
+    trRl_tpm-extend-enc-at-3)
   (operation channel-test (displaced 3 5 tpm-extend-enc 4)
     (ch-msg pcr (cat pt (hash (hash "0" n) "obtain"))) (4 2))
   (traces ((recv v) (send v))
@@ -376,9 +394,8 @@
   (conf tpmconf)
   (auth tpm)
   (facts (trans 5 2) (trans 5 3))
-  (rule genStV-if-hashed-tpm-extend-enc genStV-if-hashed-tpm-extend-enc
-    transRule_tpm-extend-enc-at-2 transRule_tpm-extend-enc-at-2
-    transRule_tpm-extend-enc-at-3 transRule_tpm-extend-enc-at-3)
+  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-2
+    trRl_tpm-extend-enc-at-3)
   (operation channel-test (added-strand tpm-extend-enc 4)
     (ch-msg pcr (cat pt (hash (hash "0" n) "obtain"))) (4 2))
   (traces ((recv v) (send v))
@@ -428,8 +445,7 @@
   (conf tpmconf)
   (auth tpm-1)
   (facts (trans 5 2) (trans 5 3) (trans 4 2) (trans 4 3))
-  (rule transRule_tpm-extend-enc-at-2 transRule_tpm-extend-enc-at-2
-    transRule_tpm-extend-enc-at-3 transRule_tpm-extend-enc-at-3)
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-3)
   (operation channel-test (displaced 3 6 tpm-extend-enc 4)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (5 2))
   (traces ((recv v) (send v))
@@ -482,8 +498,7 @@
   (conf tpmconf)
   (auth tpm)
   (facts (trans 6 2) (trans 6 3) (trans 5 2) (trans 5 3))
-  (rule transRule_tpm-extend-enc-at-2 transRule_tpm-extend-enc-at-2
-    transRule_tpm-extend-enc-at-3 transRule_tpm-extend-enc-at-3)
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-3)
   (operation channel-test (added-strand tpm-extend-enc 4)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (5 2))
   (traces ((recv v) (send v))
@@ -620,30 +635,36 @@
     (conf tpmconf)
     (neq (k aik)))
   (defrule cakeRule
-    (forall ((z2 z1 z0 strd) (i2 i1 i0 indx))
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z2 i2) (trans z1 i1) (leads-to z2 i2 z1 i1)
-          (leads-to z2 i2 z0 i0) (prec z1 i1 z0 i0))
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRule_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule neqRule_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRule_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
-    (forall ((z2 z1 z0 strd) (i2 i1 i0 indx))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (fact no-state-split) (trans z2 i2) (trans z1 i1)
-          (trans z0 i0) (leads-to z2 i2 z1 i1) (leads-to z2 i2 z0 i0))
-        (and (= z1 z0) (= i1 i0)))))
-  (defrule transRule_tpm-power-on-at-2
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule trRl_tpm-power-on-at-2
     (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
-  (defrule transRule_tpm-power-on-at-1
+  (defrule trRl_tpm-power-on-at-1
     (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
-  (defrule transRule_tpm-extend-enc-at-3
+  (defrule trRl_tpm-extend-enc-at-3
     (forall ((z strd)) (implies (p "tpm-extend-enc" z 4) (trans z 3))))
-  (defrule transRule_tpm-extend-enc-at-2
+  (defrule trRl_tpm-extend-enc-at-2
     (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
   (defrule genStV-if-hashed-tpm-quote
     (forall ((z strd) (v1 v2 mesg))
@@ -668,7 +689,20 @@
       (implies
         (and (p "tpm-power-on" z 2)
           (p "tpm-power-on" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2))))))
+        (gen-st (hash v1 v2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton envelope
   (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey)
@@ -859,7 +893,7 @@
   (genStV (hash (hash "0" n) "refuse"))
   (conf tpmconf)
   (auth tpm)
-  (rule genStV-if-hashed-tpm-quote genStV-if-hashed-tpm-quote)
+  (rule genStV-if-hashed-tpm-quote)
   (operation encryption-test (added-strand tpm-quote 3)
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik)
     (0 0))
@@ -912,9 +946,8 @@
   (conf tpmconf)
   (auth tpm-0)
   (facts (trans 4 2) (trans 4 3))
-  (rule genStV-if-hashed-tpm-extend-enc genStV-if-hashed-tpm-extend-enc
-    transRule_tpm-extend-enc-at-2 transRule_tpm-extend-enc-at-2
-    transRule_tpm-extend-enc-at-3 transRule_tpm-extend-enc-at-3)
+  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-2
+    trRl_tpm-extend-enc-at-3)
   (operation channel-test (displaced 3 5 tpm-extend-enc 4)
     (ch-msg pcr (cat pt (hash (hash "0" n) "refuse"))) (4 1))
   (traces
@@ -973,9 +1006,8 @@
   (conf tpmconf)
   (auth tpm)
   (facts (trans 5 2) (trans 5 3))
-  (rule genStV-if-hashed-tpm-extend-enc genStV-if-hashed-tpm-extend-enc
-    transRule_tpm-extend-enc-at-2 transRule_tpm-extend-enc-at-2
-    transRule_tpm-extend-enc-at-3 transRule_tpm-extend-enc-at-3)
+  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-2
+    trRl_tpm-extend-enc-at-3)
   (operation channel-test (added-strand tpm-extend-enc 4)
     (ch-msg pcr (cat pt (hash (hash "0" n) "refuse"))) (4 1))
   (traces
@@ -1035,8 +1067,7 @@
   (conf tpmconf)
   (auth tpm-1)
   (facts (trans 5 2) (trans 5 3) (trans 4 2) (trans 4 3))
-  (rule transRule_tpm-extend-enc-at-2 transRule_tpm-extend-enc-at-2
-    transRule_tpm-extend-enc-at-3 transRule_tpm-extend-enc-at-3)
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-3)
   (operation channel-test (displaced 3 6 tpm-extend-enc 4)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (5 2))
   (traces
@@ -1100,8 +1131,7 @@
   (conf tpmconf)
   (auth tpm)
   (facts (trans 6 2) (trans 6 3) (trans 5 2) (trans 5 3))
-  (rule transRule_tpm-extend-enc-at-2 transRule_tpm-extend-enc-at-2
-    transRule_tpm-extend-enc-at-3 transRule_tpm-extend-enc-at-3)
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-3)
   (operation channel-test (added-strand tpm-extend-enc 4)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (5 2))
   (traces
@@ -1256,30 +1286,36 @@
     (conf tpmconf)
     (neq (k aik)))
   (defrule cakeRule
-    (forall ((z2 z1 z0 strd) (i2 i1 i0 indx))
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z2 i2) (trans z1 i1) (leads-to z2 i2 z1 i1)
-          (leads-to z2 i2 z0 i0) (prec z1 i1 z0 i0))
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRule_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule neqRule_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRule_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
-    (forall ((z2 z1 z0 strd) (i2 i1 i0 indx))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (fact no-state-split) (trans z2 i2) (trans z1 i1)
-          (trans z0 i0) (leads-to z2 i2 z1 i1) (leads-to z2 i2 z0 i0))
-        (and (= z1 z0) (= i1 i0)))))
-  (defrule transRule_tpm-power-on-at-2
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule trRl_tpm-power-on-at-2
     (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
-  (defrule transRule_tpm-power-on-at-1
+  (defrule trRl_tpm-power-on-at-1
     (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
-  (defrule transRule_tpm-extend-enc-at-3
+  (defrule trRl_tpm-extend-enc-at-3
     (forall ((z strd)) (implies (p "tpm-extend-enc" z 4) (trans z 3))))
-  (defrule transRule_tpm-extend-enc-at-2
+  (defrule trRl_tpm-extend-enc-at-2
     (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
   (defrule genStV-if-hashed-tpm-quote
     (forall ((z strd) (v1 v2 mesg))
@@ -1304,7 +1340,20 @@
       (implies
         (and (p "tpm-power-on" z 2)
           (p "tpm-power-on" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2))))))
+        (gen-st (hash v1 v2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton envelope
   (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey)
@@ -1546,7 +1595,7 @@
   (genStV (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm)
-  (rule genStV-if-hashed-tpm-decrypt genStV-if-hashed-tpm-decrypt)
+  (rule genStV-if-hashed-tpm-decrypt)
   (operation encryption-test (displaced 6 3 tpm-create-key 2)
     (enc "created" k pcr-id-1 current-value aik-0) (5 1))
   (traces
@@ -1597,9 +1646,8 @@
   (conf tpmconf)
   (auth tpm-0)
   (facts (trans 5 2) (trans 5 3))
-  (rule genStV-if-hashed-tpm-extend-enc genStV-if-hashed-tpm-extend-enc
-    transRule_tpm-extend-enc-at-2 transRule_tpm-extend-enc-at-2
-    transRule_tpm-extend-enc-at-3 transRule_tpm-extend-enc-at-3)
+  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-2
+    trRl_tpm-extend-enc-at-3)
   (operation channel-test (displaced 4 6 tpm-extend-enc 4)
     (ch-msg pcr (cat pt (hash (hash "0" n) "obtain"))) (5 2))
   (traces
@@ -1657,9 +1705,8 @@
   (conf tpmconf)
   (auth tpm)
   (facts (trans 6 2) (trans 6 3))
-  (rule genStV-if-hashed-tpm-extend-enc genStV-if-hashed-tpm-extend-enc
-    transRule_tpm-extend-enc-at-2 transRule_tpm-extend-enc-at-2
-    transRule_tpm-extend-enc-at-3 transRule_tpm-extend-enc-at-3)
+  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-2
+    trRl_tpm-extend-enc-at-3)
   (operation channel-test (added-strand tpm-extend-enc 4)
     (ch-msg pcr (cat pt (hash (hash "0" n) "obtain"))) (5 2))
   (traces
@@ -1719,8 +1766,7 @@
   (conf tpmconf)
   (auth tpm-1)
   (facts (trans 6 2) (trans 6 3) (trans 5 2) (trans 5 3))
-  (rule transRule_tpm-extend-enc-at-2 transRule_tpm-extend-enc-at-2
-    transRule_tpm-extend-enc-at-3 transRule_tpm-extend-enc-at-3)
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-3)
   (operation channel-test (displaced 4 7 tpm-extend-enc 4)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (6 2))
   (traces
@@ -1784,8 +1830,7 @@
   (conf tpmconf)
   (auth tpm)
   (facts (trans 7 2) (trans 7 3) (trans 6 2) (trans 6 3))
-  (rule transRule_tpm-extend-enc-at-2 transRule_tpm-extend-enc-at-2
-    transRule_tpm-extend-enc-at-3 transRule_tpm-extend-enc-at-3)
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-3)
   (operation channel-test (added-strand tpm-extend-enc 4)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (6 2))
   (traces
@@ -1915,7 +1960,7 @@
   (conf tpmconf)
   (auth tpmconf)
   (facts (trans 6 2) (trans 6 3) (trans 5 2) (trans 5 3))
-  (rule genStV-if-hashed-tpm-quote genStV-if-hashed-tpm-quote)
+  (rule genStV-if-hashed-tpm-quote)
   (operation encryption-test (added-strand tpm-quote 3)
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik)
     (0 0))
@@ -1992,8 +2037,7 @@
   (auth tpmconf)
   (facts (trans 8 2) (trans 8 3) (trans 6 2) (trans 6 3) (trans 5 2)
     (trans 5 3))
-  (rule transRule_tpm-extend-enc-at-2 transRule_tpm-extend-enc-at-2
-    transRule_tpm-extend-enc-at-3 transRule_tpm-extend-enc-at-3)
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-3)
   (operation channel-test (added-strand tpm-extend-enc 4)
     (ch-msg pcr-0 (cat pt-2 (hash (hash "0" n) "refuse"))) (7 1))
   (traces
@@ -2037,94 +2081,7 @@
   (label 36)
   (parent 35)
   (unrealized (8 2))
-  (comment "2 in cohort - 2 not yet seen"))
-
-(defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 pcr-id-2 nonce-1 text)
-    (n v data) (k aik akey) (tpmconf tpm tpm-0 tpm-1 tpm-2 chan)
-    (pcr locn))
-  (deflistener
-    (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce-0) (n n) (v v) (k k)
-    (aik aik) (tpm tpmconf) (tpmconf tpmconf))
-  (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
-    (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpmconf))
-  (defstrand tpm-decrypt 4 (m v)
-    (current-value (hash (hash "0" n) "obtain")) (pcr-id pcr-id-0) (k k)
-    (aik aik) (tpm tpm) (pcr pcr))
-  (defstrand tpm-extend-enc 4 (value "obtain")
-    (current-value (hash "0" n)) (pcr-id pcr-id-1) (nonce nonce)
-    (tpm tpm-0) (pcr pcr))
-  (defstrand tpm-extend-enc 4 (value n) (current-value "0")
-    (pcr-id pcr-id-0) (nonce nonce-0) (tpm tpmconf) (pcr pcr))
-  (defstrand tpm-quote 3 (nonce (enc v k))
-    (current-value (hash (hash "0" n) "refuse")) (pcr-id pcr-id)
-    (aik aik) (tpm tpm-1) (pcr pcr))
-  (defstrand tpm-extend-enc 4 (value "refuse")
-    (current-value (hash "0" n)) (pcr-id pcr-id-2) (nonce nonce-1)
-    (tpm tpm-2) (pcr pcr))
-  (precedes ((2 1) (6 1)) ((2 2) (3 0)) ((2 4) (4 0)) ((2 4) (7 0))
-    ((3 1) (2 3)) ((4 3) (1 0)) ((5 3) (4 2)) ((6 0) (2 0))
-    ((6 3) (5 2)) ((6 3) (8 2)) ((7 2) (0 0)) ((8 3) (7 1)))
-  (non-orig aik (invk k))
-  (uniq-orig nonce nonce-0 nonce-1 n v k)
-  (genStV (hash "0" n) (hash (hash "0" n) "obtain")
-    (hash (hash "0" n) "refuse"))
-  (conf tpmconf)
-  (auth tpmconf)
-  (facts (trans 8 2) (trans 8 3) (trans 6 2) (trans 6 3) (trans 5 2)
-    (trans 5 3))
-  (operation channel-test (displaced 9 6 tpm-extend-enc 4)
-    (ch-msg pcr-0 (cat pt-3 (hash "0" n))) (8 2))
-  (traces
-    ((recv
-       (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-      (send
-        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k)
-          aik))) ((recv v) (send v))
-    ((recv tpmconf (cat "token" nonce-0))
-      (send tpmconf (cat "extend" pcr-id-0 n (hash pcr-id-0 n nonce-0)))
-      (send tpmconf
-        (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain")))
-      (recv (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik))
-      (send (enc v k)))
-    ((recv tpmconf
-       (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain")))
-      (send
-        (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik)))
-    ((recv tpm (cat "decrypt" (enc v k)))
-      (recv (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik))
-      (load pcr (cat pt (hash (hash "0" n) "obtain"))) (send v))
-    ((send tpm-0 (cat "token" nonce))
-      (recv tpm-0
-        (cat "extend" pcr-id-1 "obtain" (hash pcr-id-1 "obtain" nonce)))
-      (load pcr (cat pt-0 (hash "0" n)))
-      (stor pcr (cat pt (hash (hash "0" n) "obtain"))))
-    ((send tpmconf (cat "token" nonce-0))
-      (recv tpmconf (cat "extend" pcr-id-0 n (hash pcr-id-0 n nonce-0)))
-      (load pcr (cat pt-1 "0")) (stor pcr (cat pt-0 (hash "0" n))))
-    ((recv tpm-1 (cat "quote" pcr-id (enc v k)))
-      (load pcr (cat pt-2 (hash (hash "0" n) "refuse")))
-      (send
-        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k)
-          aik)))
-    ((send tpm-2 (cat "token" nonce-1))
-      (recv tpm-2
-        (cat "extend" pcr-id-2 "refuse"
-          (hash pcr-id-2 "refuse" nonce-1)))
-      (load pcr (cat pt-0 (hash "0" n)))
-      (stor pcr (cat pt-2 (hash (hash "0" n) "refuse")))))
-  (label 37)
-  (parent 36)
-  (unrealized)
-  (shape)
-  (maps
-    ((0 1 2)
-      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
-        (nonce nonce-0) (tpm tpmconf) (tpmconf tpmconf))))
-  (origs (nonce-0 (6 0)) (pt-0 (6 3)) (nonce-1 (8 0)) (pt-2 (8 3))
-    (n (2 1)) (nonce (5 0)) (pt (5 3)) (k (3 1)) (v (2 4))))
+  (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
   (vars
@@ -2166,8 +2123,7 @@
   (auth tpmconf)
   (facts (trans 9 2) (trans 9 3) (trans 8 2) (trans 8 3) (trans 6 2)
     (trans 6 3) (trans 5 2) (trans 5 3))
-  (rule transRule_tpm-extend-enc-at-2 transRule_tpm-extend-enc-at-2
-    transRule_tpm-extend-enc-at-3 transRule_tpm-extend-enc-at-3)
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-3)
   (operation channel-test (added-strand tpm-extend-enc 4)
     (ch-msg pcr-0 (cat pt-3 (hash "0" n))) (8 2))
   (traces
@@ -2211,7 +2167,7 @@
     ((send tpm-3 (cat "token" nonce-2))
       (recv tpm-3 (cat "extend" pcr-id-3 n (hash pcr-id-3 n nonce-2)))
       (load pcr-0 (cat pt-4 "0")) (stor pcr-0 (cat pt-3 (hash "0" n)))))
-  (label 38)
+  (label 37)
   (parent 36)
   (unrealized (9 1))
   (dead)
@@ -2265,30 +2221,36 @@
     (conf tpmconf)
     (neq (k aik)))
   (defrule cakeRule
-    (forall ((z2 z1 z0 strd) (i2 i1 i0 indx))
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z2 i2) (trans z1 i1) (leads-to z2 i2 z1 i1)
-          (leads-to z2 i2 z0 i0) (prec z1 i1 z0 i0))
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRule_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule neqRule_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRule_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
-    (forall ((z2 z1 z0 strd) (i2 i1 i0 indx))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (fact no-state-split) (trans z2 i2) (trans z1 i1)
-          (trans z0 i0) (leads-to z2 i2 z1 i1) (leads-to z2 i2 z0 i0))
-        (and (= z1 z0) (= i1 i0)))))
-  (defrule transRule_tpm-power-on-at-2
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule trRl_tpm-power-on-at-2
     (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
-  (defrule transRule_tpm-power-on-at-1
+  (defrule trRl_tpm-power-on-at-1
     (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
-  (defrule transRule_tpm-extend-enc-at-3
+  (defrule trRl_tpm-extend-enc-at-3
     (forall ((z strd)) (implies (p "tpm-extend-enc" z 4) (trans z 3))))
-  (defrule transRule_tpm-extend-enc-at-2
+  (defrule trRl_tpm-extend-enc-at-2
     (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
   (defrule genStV-if-hashed-tpm-quote
     (forall ((z strd) (v1 v2 mesg))
@@ -2313,7 +2275,20 @@
       (implies
         (and (p "tpm-power-on" z 2)
           (p "tpm-power-on" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2))))))
+        (gen-st (hash v1 v2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton envelope
   (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey)
@@ -2339,7 +2314,7 @@
         (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain")))
       (recv (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik))
       (send (enc v k))))
-  (label 39)
+  (label 38)
   (unrealized (0 0) (1 0) (2 3))
   (preskeleton)
   (origs (v (2 4)) (n (2 1)))
@@ -2370,8 +2345,8 @@
         (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain")))
       (recv (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik))
       (send (enc v k))))
-  (label 40)
-  (parent 39)
+  (label 39)
+  (parent 38)
   (unrealized (0 0) (2 3))
   (origs (v (2 4)) (n (2 1)))
   (comment "1 in cohort - 1 not yet seen"))
@@ -2410,8 +2385,8 @@
        (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain")))
       (send
         (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik))))
-  (label 41)
-  (parent 40)
+  (label 40)
+  (parent 39)
   (unrealized (0 0) (1 0) (3 0))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -2449,8 +2424,8 @@
     ((recv tpm (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain")))
       (send
         (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik))))
-  (label 42)
-  (parent 41)
+  (label 41)
+  (parent 40)
   (unrealized (0 0) (1 0) (2 0))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -2490,8 +2465,8 @@
       (send
         (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik)))
     ((send tpm (cat "token" nonce))))
-  (label 43)
-  (parent 42)
+  (label 42)
+  (parent 41)
   (unrealized (0 0) (1 0))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -2535,8 +2510,8 @@
     ((recv tpm-0 (cat "decrypt" (enc v k)))
       (recv (enc "created" k pcr-id-1 current-value aik-0))
       (load pcr (cat pt current-value)) (send v)))
-  (label 44)
-  (parent 43)
+  (label 43)
+  (parent 42)
   (unrealized (0 0) (5 1))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -2562,7 +2537,7 @@
   (conf tpmconf)
   (auth tpm)
   (facts (no-state-split))
-  (rule genStV-if-hashed-tpm-decrypt genStV-if-hashed-tpm-decrypt)
+  (rule genStV-if-hashed-tpm-decrypt)
   (operation encryption-test (displaced 6 3 tpm-create-key 2)
     (enc "created" k pcr-id-1 current-value aik-0) (5 1))
   (traces
@@ -2584,8 +2559,8 @@
     ((recv tpm-0 (cat "decrypt" (enc v k)))
       (recv (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik))
       (load pcr (cat pt (hash (hash "0" n) "obtain"))) (send v)))
-  (label 45)
-  (parent 44)
+  (label 44)
+  (parent 43)
   (unrealized (0 0) (5 2))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -2613,9 +2588,8 @@
   (conf tpmconf)
   (auth tpm-0)
   (facts (trans 5 2) (trans 5 3) (no-state-split))
-  (rule genStV-if-hashed-tpm-extend-enc genStV-if-hashed-tpm-extend-enc
-    transRule_tpm-extend-enc-at-2 transRule_tpm-extend-enc-at-2
-    transRule_tpm-extend-enc-at-3 transRule_tpm-extend-enc-at-3)
+  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-2
+    trRl_tpm-extend-enc-at-3)
   (operation channel-test (displaced 4 6 tpm-extend-enc 4)
     (ch-msg pcr (cat pt (hash (hash "0" n) "obtain"))) (5 2))
   (traces
@@ -2642,8 +2616,8 @@
         (cat "extend" pcr-id-1 "obtain" (hash pcr-id-1 "obtain" nonce)))
       (load pcr (cat pt-0 (hash "0" n)))
       (stor pcr (cat pt (hash (hash "0" n) "obtain")))))
-  (label 46)
-  (parent 45)
+  (label 45)
+  (parent 44)
   (unrealized (0 0) (5 1) (5 2))
   (dead)
   (comment "empty cohort"))
@@ -2673,9 +2647,8 @@
   (conf tpmconf)
   (auth tpm)
   (facts (trans 6 2) (trans 6 3) (no-state-split))
-  (rule genStV-if-hashed-tpm-extend-enc genStV-if-hashed-tpm-extend-enc
-    transRule_tpm-extend-enc-at-2 transRule_tpm-extend-enc-at-2
-    transRule_tpm-extend-enc-at-3 transRule_tpm-extend-enc-at-3)
+  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-2
+    trRl_tpm-extend-enc-at-3)
   (operation channel-test (added-strand tpm-extend-enc 4)
     (ch-msg pcr (cat pt (hash (hash "0" n) "obtain"))) (5 2))
   (traces
@@ -2703,8 +2676,8 @@
           (hash pcr-id-1 "obtain" nonce-0)))
       (load pcr (cat pt-0 (hash "0" n)))
       (stor pcr (cat pt (hash (hash "0" n) "obtain")))))
-  (label 47)
-  (parent 45)
+  (label 46)
+  (parent 44)
   (unrealized (0 0) (6 2))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -2736,8 +2709,7 @@
   (auth tpm-1)
   (facts (trans 6 2) (trans 6 3) (trans 5 2) (trans 5 3)
     (no-state-split))
-  (rule transRule_tpm-extend-enc-at-2 transRule_tpm-extend-enc-at-2
-    transRule_tpm-extend-enc-at-3 transRule_tpm-extend-enc-at-3)
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-3)
   (operation channel-test (displaced 4 7 tpm-extend-enc 4)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (6 2))
   (traces
@@ -2767,8 +2739,8 @@
     ((send tpm-1 (cat "token" nonce-0))
       (recv tpm-1 (cat "extend" pcr-id-2 n (hash pcr-id-2 n nonce-0)))
       (load pcr (cat pt-1 "0")) (stor pcr (cat pt-0 (hash "0" n)))))
-  (label 48)
-  (parent 47)
+  (label 47)
+  (parent 46)
   (unrealized (0 0) (6 1))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -2802,8 +2774,7 @@
   (auth tpm)
   (facts (trans 7 2) (trans 7 3) (trans 6 2) (trans 6 3)
     (no-state-split))
-  (rule transRule_tpm-extend-enc-at-2 transRule_tpm-extend-enc-at-2
-    transRule_tpm-extend-enc-at-3 transRule_tpm-extend-enc-at-3)
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-3)
   (operation channel-test (added-strand tpm-extend-enc 4)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (6 2))
   (traces
@@ -2834,8 +2805,8 @@
     ((send tpm-2 (cat "token" nonce-1))
       (recv tpm-2 (cat "extend" pcr-id-2 n (hash pcr-id-2 n nonce-1)))
       (load pcr (cat pt-1 "0")) (stor pcr (cat pt-0 (hash "0" n)))))
-  (label 49)
-  (parent 47)
+  (label 48)
+  (parent 46)
   (unrealized (0 0) (7 1))
   (dead)
   (comment "empty cohort"))
@@ -2898,8 +2869,8 @@
     ((send tpmconf (cat "token" nonce-0))
       (recv tpmconf (cat "extend" pcr-id-0 n (hash pcr-id-0 n nonce-0)))
       (load pcr (cat pt-1 "0")) (stor pcr (cat pt-0 (hash "0" n)))))
-  (label 50)
-  (parent 48)
+  (label 49)
+  (parent 47)
   (unrealized (0 0))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -2935,7 +2906,7 @@
   (auth tpmconf)
   (facts (trans 6 2) (trans 6 3) (trans 5 2) (trans 5 3)
     (no-state-split))
-  (rule genStV-if-hashed-tpm-quote genStV-if-hashed-tpm-quote)
+  (rule genStV-if-hashed-tpm-quote)
   (operation encryption-test (added-strand tpm-quote 3)
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik)
     (0 0))
@@ -2971,8 +2942,8 @@
       (send
         (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k)
           aik))))
-  (label 51)
-  (parent 50)
+  (label 50)
+  (parent 49)
   (unrealized (7 1))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -3012,8 +2983,7 @@
   (auth tpmconf)
   (facts (trans 8 2) (trans 8 3) (trans 6 2) (trans 6 3) (trans 5 2)
     (trans 5 3) (no-state-split))
-  (rule transRule_tpm-extend-enc-at-2 transRule_tpm-extend-enc-at-2
-    transRule_tpm-extend-enc-at-3 transRule_tpm-extend-enc-at-3)
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-3)
   (operation channel-test (added-strand tpm-extend-enc 4)
     (ch-msg pcr-0 (cat pt-2 (hash (hash "0" n) "refuse"))) (7 1))
   (traces
@@ -3054,8 +3024,8 @@
           (hash pcr-id-2 "refuse" nonce-1)))
       (load pcr-0 (cat pt-3 (hash "0" n)))
       (stor pcr-0 (cat pt-2 (hash (hash "0" n) "refuse")))))
-  (label 52)
-  (parent 51)
+  (label 51)
+  (parent 50)
   (unrealized (8 2))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -3099,8 +3069,7 @@
   (auth tpmconf)
   (facts (trans 9 2) (trans 9 3) (trans 8 2) (trans 8 3) (trans 6 2)
     (trans 6 3) (trans 5 2) (trans 5 3) (no-state-split))
-  (rule transRule_tpm-extend-enc-at-2 transRule_tpm-extend-enc-at-2
-    transRule_tpm-extend-enc-at-3 transRule_tpm-extend-enc-at-3)
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-3)
   (operation channel-test (added-strand tpm-extend-enc 4)
     (ch-msg pcr-0 (cat pt-3 (hash "0" n))) (8 2))
   (traces
@@ -3144,8 +3113,8 @@
     ((send tpm-3 (cat "token" nonce-2))
       (recv tpm-3 (cat "extend" pcr-id-3 n (hash pcr-id-3 n nonce-2)))
       (load pcr-0 (cat pt-4 "0")) (stor pcr-0 (cat pt-3 (hash "0" n)))))
-  (label 53)
-  (parent 52)
+  (label 52)
+  (parent 51)
   (unrealized (9 1))
   (dead)
   (comment "empty cohort"))
