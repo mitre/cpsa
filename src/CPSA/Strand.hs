@@ -918,6 +918,11 @@ multiset brf =
 
 isomorphic :: Gist -> Gist -> Bool
 isomorphic g g' =
+    sameSkyline g g' &&
+    any (tryPerm g g') (permutations g g')
+
+sameSkyline :: Gist -> Gist -> Bool
+sameSkyline g g' =
     nvars g == nvars g' &&      -- Doesn't work for Diffie-Hellman
     ntraces g == ntraces g' &&
     briefs g == briefs g' &&
@@ -927,22 +932,12 @@ isomorphic g g' =
     nunique g == nunique g' &&
     ngenSt g == ngenSt g' && 
     nfacts g == nfacts g' &&
-    nfvars g == nfvars g' &&
-    any (tryPerm g g') (permutations g g')
+    nfvars g == nfvars g'
 
 -- For thinning.  Ensure point-of-view is preserved.
 probIsomorphic :: Preskel -> Preskel -> Bool
 probIsomorphic k k' =
-    nvars g == nvars g' &&      -- Doesn't work for Diffie-Hellman
-    ntraces g == ntraces g' &&
-    briefs g == briefs g' &&
-    norderings g == norderings g' &&
-    nnon g == nnon g' &&
-    npnon g == npnon g' &&
-    nunique g == nunique g' &&
-    ngenSt g == ngenSt g' && 
-    nfacts g == nfacts g' &&
-    nfvars g == nfvars g' &&
+    sameSkyline g g' &&
     any (tryPermProb g g' pr pr') (permutations g g')
     where
       g = gist k
