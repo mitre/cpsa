@@ -329,6 +329,52 @@ checkCs (i,j) =
     any
     (\(start,end) -> start <= i && j <= end)
     
+sepStateSegments :: Trace -> [(Int,Int,Int)]
+sepStateSegments c =
+    findSegments [] 0 c
+    where
+      findSegments soFar _ [] = soFar
+      findSegments soFar i ((Out _) : c) =
+          findSegments soFar (i+1) c
+      findSegments soFar i ((In (Plain _)) : c) =
+          findSegments soFar (i+1) c
+      findSegments soFar i ((In (ChMsg ch _)) : c) 
+          | isLocn ch           = findMid soFar i (i+1) c 
+          -- the flag False means that no Outs have yet been observed
+          | otherwise            = findSegments soFar (i+1) c
+      
+
+      -- findMid scans for the end of the load part of the segment
+      -- segment starting at start. 
+      -- start is always the index of the start of c in the full trace.
+      
+      findMid soFar start i []                           = (start,(i-1),(i-1)) : soFar
+                                                           
+      findMid soFar start i ((In (Plain _)) : c)         =
+          findSegments ((start,(i-1),(i-1)) : soFar) (i+1) c 
+      findMid soFar start i ((Out (Plain _)) : c)        =
+          findSegments ((start,(i-1),(i-1)) : soFar) (i+1) c
+      
+      findMid soFar start i ((In (ChMsg ch _)) : c) 
+          | isLocn ch           = findMid soFar start (i+1) c 
+          | otherwise           = findSegments ((start,(i-1),(i-1)) : soFar) (i+1) c
+                                  
+      findMid soFar start i ((Out (ChMsg ch _)) : c)  
+          | isLocn ch           = findEnd soFar start (i-1) (i+1) c  
+          | otherwise           = findSegments ((start,(i-1),(i-1)) : soFar) (i+1) c
+
+      findEnd soFar start mid i [] = ((start,mid,(i-1)) : soFar)
+      findEnd soFar start mid i ((Out (ChMsg ch _)) : c)
+          | isLocn ch           = findEnd soFar start mid (i+1) c
+          | otherwise           = findSegments ((start,mid,(i-1)) : soFar) (i+1) c 
+
+
+      findEnd soFar start mid i c@(_ : _) =
+          findSegments ((start,mid,(i-1)) : soFar) i c
+      -- in the previous case we save the start of c for findSegments
+      -- to decide what to do.   
+          
+
 
 
 failwith :: MonadFail m => String -> Bool -> m ()
@@ -530,49 +576,86 @@ transRules g rl =
 --                                         concl = [[(Trans (z,ti))]]},
 --                         rlcomment = [] }) : rs)
 
+causeAndEffectIndices :: Role -> Int -> Int -> ([Int],[Int])
+causeAndEffectIndices rl start end =
+    let c = drop start $ rtrace rl in
+    loopCause (start+1) [] c
+    where
+      loopCause _ causelist []          = (causelist,[])
+      loopCause i causelist ((In (ChMsg ch _)) : c)
+           | i < end && isLocn ch       = loopCause (i+1) (i : causelist) c
+           | otherwise                  = (causelist,[])
+      loopCause i causelist ((Out (ChMsg ch _)) : c)
+          | i < end && isLocn ch       = loopEffect (i+1) causelist [i] c
+          | otherwise                  = (causelist,[])
+      loopCause _ causelist _          = (causelist,[])
+
+      loopEffect _ causelist effectlist []              = (causelist,effectlist)
+      loopEffect _ causelist effectlist ((In _) : _)    = (causelist,effectlist)
+      loopEffect i causelist effectlist ((Out (ChMsg ch _)) : c) 
+          | i < (end-1) && isLocn ch   = loopEffect (i+1) causelist (i : effectlist) c
+          | otherwise                  = (causelist,effectlist)
+      loopEffect _ causelist effectlist ((Out _) : _)   = (causelist,effectlist)
+
+
 csRules :: Gen -> Role -> [(Int,Int)] -> (Gen, [Rule])
 csRules g rl =
     L.foldl
      (\(g, rs) (start,end) ->
-          (let (g', cause_rule, effect_rule) = f g start end in
-           (g', cause_rule : effect_rule : rs)))
+          (let (g', csRules) = f g start end in
+           (g', csRules ++ rs)))
      (g,[])
      where
        f g start end =
-           let (g',effect_rule) =
-                   ruleOfClauses g
-                     ("eff-" ++ (rname rl) ++ "-" ++ (show start) ++ "-" ++ (show end))
-                     [("strd",["z", "z1"]), ("indx", ["i"])]
-                     (applyToThreeEntries
-                      (\z z1 i -> [(Length rl z (indxOfInt (start+1))),
-                                   (Prec (z,(indxOfInt start)) (z1,i))])
+           let (causeIndices, effectIndices) = causeAndEffectIndices rl start end in
+           let (g',rs) = foldr (\ind (g,soFar) ->
+                                    let (g',r) = causeRule g rl start ind in
+                                    (g', (r : soFar)))
+                         (g,[])
+                         causeIndices in 
+           foldr (\ind (g,soFar) ->
+                      let (g',r) = effectRule g rl end ind in
+                      (g', (r : soFar)))
+             (g',rs)
+             effectIndices
+
+       causeRule g rl start ind =
+           ruleOfClauses g
+             ("cau-" ++ (rname rl) ++ "-" ++ (show ind))
+             [("strd",["z", "z1"]), ("indx", ["i"])]
+             (applyToThreeEntries
+              (\z z1 i -> [(Length rl z (indxOfInt (ind+1))),
+                           (Prec -- LeadsTo
+                            (z1,i) (z,(indxOfInt ind)))])
                       "csRules:  Impossible var list.")
-                     [([],
-                       (\_ -> applyToThreeEntries
-                              (\z z1 _ -> [Equals z z1])
-                              "csRules:  Impossible var list.")),
-                      ([],
-                       (\_ -> applyToThreeEntries
-                              (\z z1 i -> [(Length rl z (indxOfInt (end+1))),
-                                           (Prec (z,(indxOfInt end)) (z1,i))])
-                              "csRules:  Impossible var list."))] in
-           let (g'',cause_rule) =
-                   ruleOfClauses g'
-                     ("cau-" ++ (rname rl) ++ "-" ++ (show start) ++ "-" ++ (show end))
-                     [("strd",["z", "z1"]), ("indx", ["i"])]
-                     (applyToThreeEntries
+             [([],
+               (\_ -> applyToThreeEntries
+                      (\z z1 _ -> [Equals z z1])
+                      "csRules:  Impossible var list.")),
+              ([],
+               (\_ -> applyToThreeEntries
+                      (\z z1 i -> [(Prec (z1,i) (z,(indxOfInt start)))])
+                      "csRules:  Impossible var list."))]
+
+       effectRule g rl end ind =
+           ruleOfClauses g
+             ("eff-" ++ (rname rl) ++ "-" ++ (show ind))
+             [("strd",["z", "z1"]), ("indx", ["i"])]
+             (applyToThreeEntries
+              (\z z1 i -> [(Length rl z (indxOfInt (ind+1))),
+                           (Prec --LeadsTo
+                            (z, (indxOfInt ind)) (z1,i))])
+              "csRules:  Impossible var list.")
+             [([],
+               (\_ -> applyToThreeEntries
+                      (\z z1 _ -> [Equals z z1])
+                      "csRules:  Impossible var list.")),
+              ([],
+               (\_ -> applyToThreeEntries
                       (\z z1 i -> [(Length rl z (indxOfInt (end+1))),
-                                   (Prec (z1,i) (z,(indxOfInt end)))])
-                      "csRules:  Impossible var list.")
-                     [([],
-                       (\_ -> applyToThreeEntries
-                              (\z z1 _ -> [Equals z z1])
-                              "csRules:  Impossible var list.")),
-                      ([],
-                       (\_ -> applyToThreeEntries
-                              (\z z1 i -> [(Prec (z1,i) (z,(indxOfInt start)))])
-                              "csRules:  Impossible var list."))] in
-           (g'', cause_rule, effect_rule)
+                                   (Prec (z, (indxOfInt end)) (z1,i))])
+                "csRules:  Impossible var list."))]
+
 
 genStateRls :: Gen -> Role -> [Term] -> (Gen, [Rule])
 genStateRls g rl ts =
@@ -598,7 +681,7 @@ genStateRls g rl ts =
       f g t n =
           case heightLoop 0 (varsInTerm t) of
             Nothing -> error ("genStateRls:  Unbound variable in gen-st of " ++
-                             (rname rl) ++ ": " ++ (show t))
+                             (rname rl) ++ ": " ++ (show (varsInTerm t)))
             Just ht ->
                 ruleOfClauses g
                   ("gen-st-" ++ (rname rl) ++ "-" ++ (show n))

@@ -11,6 +11,7 @@ module CPSA.Cohort (Mode(..), reduce, unrealized) where
 import qualified Data.Set as S
 import Data.Set (Set)
 import qualified Data.List as L
+import Control.Parallel 
 import CPSA.Algebra
 import CPSA.Channel
 import CPSA.Protocol
@@ -153,15 +154,15 @@ avoid k =
       us = S.fromList u
 
 -- Suppose k --v,p-> k', where k |-phi,sigma-> k'.  Let t=msg(k, v)@p,
--- t'=sigma(t), T=sigma(esc(k, v, t)), and t"=msg(k', phi(v)).
+-- t'=sigma(t), T=sigma(esc(k, v, t)), and t''=msg(k', phi(v)).
 -- Position p is solved in k' from k at v if:
 --
--- 1. some member of anc(t", p) is in T', or
+-- 1. some member of anc(t'', p) is in T', or
 --
 -- 2. for some t in outpred(k', phi(v)), t' is not carried only within
 --    T in t, or
 --
--- 3. targetterms(t', T) \ sigma(targetterms(t, esc(k, v, t)) /= empty
+-- 3. targetterms(t', T) \ sigma(targetterms(t, esc(k, v, t))) /= empty
 --    and there are variables in k's protocol that are not atoms, or
 --
 -- 4. the decryption key for an element of T is derivable, or
@@ -216,6 +217,13 @@ data Mode = Mode
       reverseNodeOrder :: Bool }
     deriving Show
 
+parFoldr :: (a -> b -> b) -> b -> [a] -> b
+parFoldr _ b [] = b
+parFoldr f b (a : as) =
+    par b' (f a b')
+    where
+      b' = parFoldr f b as             
+
 -- Abort if there is an unrealized node without a test, otherwise
 -- return a list of skeletons that solve one test.  If the skeleton is
 -- realized, try to generalize it, but only when noIsoChk is false.
@@ -223,10 +231,12 @@ data Mode = Mode
 -- no progress.
 reduce :: Mode -> Preskel -> [Preskel]
 reduce mode k =
-    filterSame k $ concatMap simplify ks -- Apply rewrites
+    filterSame k simpKs         -- discard if no progress from k
     where
-      ks = maybe (whenRealized k) id (findTest mode k u a) -- Normal cohort
+      ks = factorIsomorphicPreskels $
+           maybe (whenRealized k) id (findTest mode k u a) -- Normal cohort
       (a, u) = avoid k
+      simpKs = parFoldr (\k soFar -> (simplify k) ++ soFar) [] ks -- Apply rewrites
       whenRealized k =
           if omitGeneralization || noGeneralization mode then
             []

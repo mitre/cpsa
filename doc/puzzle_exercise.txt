@@ -1,0 +1,24 @@
+
+Let's suppose that two parties A, B share a secret
+key k(A,B) that will be non-originating.  Each has
+the ability to randomly generate uniquely
+originating values when they want.
+
+A wants to send a text m to B, which should remain
+confidential, and B should learn that it's
+authentically coming from A.
+
+But A doesn't want to use k(A,B) directly for m.
+Instead, A wants to get a new, fresh session key s
+from B, and A will use that to encrypt m.  The
+long term key k(A,B) can be used to wrap s.
+Presumably, using k(A,B) with a bunch of the
+non-random texts such as m will eventually allow
+cryptanalysis.
+
+Constraint:  B should only after encrypt once, and
+decrypt once to get m.  A should only have to
+encrypt once (to protect m), and decrypt once (to
+get s).
+
+How should they do it?

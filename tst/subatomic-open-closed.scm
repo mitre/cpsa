@@ -1,8 +1,8 @@
-(herald subatomic-open-closed
+(herald subatomic-open-closed 
 	;; (try-old-strands) 
 	;; 	(check-nonces)
 	;; 	(reverse-nodes) 
-	(bound 44))
+	(bound 40))
 
 (defmacro (dev-key-state d o k)
   (cat "st-k" d o k))
@@ -28,8 +28,8 @@
      (recv start-ch (cat "power-up" d o k))
      (load lk old) 
      (load ls old1)
-     (stor ls (dev-state-closed d o))
      (stor lk (dev-key-state d o k))
+     (stor ls (dev-state-closed d o))
      (send (enc "up" k)))
     (auth start-ch)
     (critical-sections (1 4))
@@ -58,8 +58,8 @@
     (vars (k skey) (n text) (any mesg) (d o name) (lk ls locn))
     (trace
      (recv (enc "open" d o n k))
-     (load lk (dev-key-state d o k))
-     (load ls (dev-state-any d o any)) 
+     (load ls (dev-state-any d o any))
+     (load lk (dev-key-state d o k)) 
      (stor ls (dev-state-opened d o))
      (send n))
     (critical-sections (1 3))
@@ -105,35 +105,7 @@
  	   (p "dev-up" "k" z1 k)
  	   (p "dev-up" "k" z2 k))
        (= z1 z2))))
-
-;;      (defrule intro-same-dev-up
-;;        (forall ((z strd) (lk ls locn))
-;;   	     (implies
-;;   	      (and (p "dev-up" "lk" z lk)
-;;   		   (p "dev-up" "ls" z ls))
-;;   	      (fact same-dev ls lk))))
-;;   
-;;      (defrule intro-same-dev-open
-;;        (forall ((z strd) (lk ls locn))
-;;   	     (implies
-;;   	      (and (p "dev-open" "lk" z lk)
-;;   		   (p "dev-open" "ls" z ls))
-;;   	      (fact same-dev ls lk))))
-;;   
-;;      (defrule intro-same-dev-close
-;;        (forall ((z strd) (lk ls locn))
-;;   	     (implies
-;;   	      (and (p "dev-close" "lk" z lk)
-;;   		   (p "dev-close" "ls" z ls))
-;;   	      (fact same-dev ls lk))))
-;;   
-;;      (defrule intro-same-dev-pass
-;;        (forall ((z strd) (lk ls locn))
-;;   	     (implies
-;;   	      (and (p "dev-pass" "lk" z lk)
-;;   		   (p "dev-pass" "ls" z ls))
-;;   	      (fact same-dev ls lk))))
-;;   
+  
    (defrule same-dev-ls-lk
      (forall ((ls lk lk-0 locn))
   	     (implies
@@ -146,8 +118,7 @@
   	     (implies
   	      (and (fact same-dev ls lk)
   		   (fact same-dev ls-0 lk))
-     	      (= ls ls-0))))
-   )
+     	      (= ls ls-0)))))
 
 (defskeleton subatomic-open-closed
   (vars (k skey) (d o name) (n text) (start-ch chan))

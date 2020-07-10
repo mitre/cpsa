@@ -21,13 +21,14 @@ module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     confCm, authCm,
     verbosePreskelWellFormed, Strand, inst, sid, nodes,
     Vertex, strand, pos, preds, event, graphNode, strands, vertex,
-    Gist, gist, isomorphic, contract, augment,
+    Gist, gist, isomorphic, factorIsomorphicPreskels, contract, augment,
     inheritRnon, inheritRpnon, inheritRunique, inheritRconf, inheritRauth,
     addListener, Cause (..), Direction (..), Method (..), Operation (..),
     operation, krules, pprob, prob, homomorphism, toSkeleton, generalize,
     collapse, sat, FTerm (..), Fact (..), simplify, rewrite, localSignal, rewriteUnaryOneOnce) where
 
 import Control.Monad
+import Control.Parallel
 import qualified Data.List as L
 import qualified Data.Set as S
 import Data.Set (Set)
@@ -410,6 +411,8 @@ data Preskel = Preskel
       insts :: ![Instance],
       strands :: ![Strand],
       orderings :: ![Pair],
+      kgpOrds :: [Pair],
+      kgpOrdsAll :: [Pair],
       edges :: ![Edge],
       knon :: ![Term],            -- A list of atoms
       kpnon :: ![Term],           -- A list of atoms
@@ -431,6 +434,7 @@ data Preskel = Preskel
       strandids :: ![Sid],
       tc :: [Pair],             -- Transitive closure of orderings
                                 -- Used only during generalization
+      gist :: Gist,              -- Gist for iso checking 
       operation :: Operation,
       krules :: [String],    -- Names of rules applied 
       pprob :: [Sid],        -- strand map from preskel to first skeleton
@@ -530,18 +534,23 @@ newPreskel gen shared insts orderings non pnon unique genSt conf auth facts
         g = graph trace height insts orderings'
         strands = gstrands g
         edges = gedges g
+        gpOrds = map graphPair $ graphClose $ graphEdges $ strands
+        gpOrdsAll = map graphPair $ graphCloseAll $ graphEdges $ strands 
         orig = map (originationNodes strands) unique'
         tc = filter pairWellOrdered (graphClose $ graphEdges strands)
+        gg = mkGist k 
         k = Preskel { gen = gen,
                       shared = shared,
                       insts = insts,
                       strands = strands,
                       orderings = orderings',
+                      kgpOrds = gpOrds,
+                      kgpOrdsAll = gpOrdsAll, 
                       edges = edges,
                       knon = L.nub non,
                       kpnon = L.nub pnon,
                       kunique = unique',
-                      kgenSt = genSt, 
+                      kgenSt = L.nub genSt, 
                       kconf = L.nub conf,
                       kauth = L.nub auth,
                       kfacts = facts',
@@ -550,6 +559,7 @@ newPreskel gen shared insts orderings non pnon unique genSt conf auth facts
                       kcomment = [],
                       korig = orig,
                       tc = map graphPair tc,
+                      gist = gg,  
                       strandids = nats (length insts),
                       operation = oper,
                       krules = rules,
@@ -829,8 +839,8 @@ data Gist = Gist
       nfvars :: !Int }   -- Number of fact vars not in instances
     deriving Show
 
-gist :: Preskel -> Gist
-gist k =
+mkGist :: Preskel -> Gist
+mkGist k =
     Gist { ggen = gen k,
            gtraces = gtraces,
            gorderings = gorderings,
@@ -2489,7 +2499,8 @@ gprec n n' k (g, e) =
         (g, e) <- nodeMatch n p (g, e)
         nodeMatch n' p' (g, e)
   where
-    tc = map graphPair $ graphCloseAll $ graphEdges $ strands k
+    tc = kgpOrdsAll k 
+         -- map graphPair $ graphCloseAll $ graphEdges $ strands k
 
 inSkel :: Preskel -> (Int, Int) -> Bool
 inSkel k (s, i) =
@@ -2772,6 +2783,68 @@ gsamelocn n n' k (g, e) =
 --                    [] 
 --                    $ L.zip ks (map gist ks))
 
+{--  
+parFoldr :: (a -> b -> b) -> b -> [a] -> b
+parFoldr _ b [] = b
+parFoldr f b (a : as) =
+    par b' (f a b')
+    where
+      b' = parFoldr f b as
+--}
+             
+-- Suppose that eqRel is an equivalence relation, and one would like
+-- to obtain sets modulo eqRel.  I.e. given a list l, one would like a
+-- list l' such that everything in l bears the relation eqRel to
+-- something in l', and no two items in l' bear eqRel to each other.
+
+-- This procedure achieves that by a factoring the list by eqRel in
+-- parallel, ie reducing the left and right halves and then merging.
+
+
+
+mergeEqRel :: (a -> a -> Bool) -> [a] -> [a] -> [a]
+mergeEqRel eqRel as bs =
+    loop as []
+    where
+      loop [] keep = keep ++ bs 
+      loop (a:rest) keep =
+          case any (eqRel a) bs of
+            True -> loop rest keep
+            False -> loop rest (a:keep) 
+    
+parFactor :: (a -> a -> Bool) -> [a] -> [a]
+parFactor _ [] = []
+parFactor _ [a] = [a]
+parFactor eqRel [a,b] =
+    case eqRel a b of
+      True -> [b]
+      False -> [a,b]
+               
+parFactor eqRel as =
+    mergeEqRel eqRel leftM rightM
+    where
+      (left,right) = L.splitAt ((L.length as) `div` 2) as
+      leftM = par rightM (parFactor eqRel left)
+      rightM = (parFactor eqRel right)
+
+-- Given a list of preskeletons, return a maximal sublist containing
+-- no isomorphic members.
+
+-- Computed in parallel via the pars in parFactor.  
+
+factorIsomorphic :: [Preskel] -> [Preskel]
+factorIsomorphic =
+    parFactor
+    (\k1 k2 -> isomorphic (gist k1) (gist k2))
+
+mergeIsomorphic :: [Preskel] -> [Preskel] -> [Preskel]
+mergeIsomorphic =
+    mergeEqRel
+    (\k1 k2 -> isomorphic (gist k1) (gist k2))
+
+factorIsomorphicPreskels :: [Preskel] -> [Preskel]
+factorIsomorphicPreskels = factorIsomorphic
+
 -- Try simplifying k if possible
 simplify :: Preskel -> [Preskel]
 simplify k =
@@ -2980,7 +3053,8 @@ urprec rule (z, t) (z', t') k (g, e) =
               (_,_) -> None 
       _ -> Failing ("In rule " ++ rule ++ ", precedence did not get a strand or a height")
     where
-      tc = map graphPair $ graphClose $ graphEdges $ strands k
+      tc = kgpOrds k 
+          -- map graphPair $ graphClose $ graphEdges $ strands k
     -- Observe here that we do not need graphCloseAll, since absent
     -- orderings that lie on the same strand are irreparable.
 
@@ -3080,7 +3154,7 @@ urgenst rule t k (g, e) =
         where
           k' = newPreskel
                   g (shared k) (insts k) (orderings k) (knon k) (kpnon k)
-                  (kunique k) (t' : kgenSt k) (kconf k) (kauth k) (kfacts k)
+                  (kunique k) (adjoin t' $ kgenSt k) (kconf k) (kauth k) (kfacts k)
                   (kpriority k) (operation k) (krules k) (pprob k)
                   (prob k) (pov k)
     False ->
@@ -3218,18 +3292,22 @@ urstateNode rule n k (g, e) =
             
                                   
 
+rewriteDepthCount :: Int
+rewriteDepthCount = 7 
+
+
 -- Try all rules associated with the protocol of k.
 
 -- Return Nothing if no rule applies, otherwise return Just the list
 -- of (zero or more) replacements.
 rewrite :: Preskel -> Maybe [Preskel]
 rewrite k =
-    case nullUnary k of
-      Just [] -> Just []
-      Just [k'] -> iterate [k'] [] True
+    case nullUnary k of         --  (zP "<" k)
+      Just [] -> Just []        -- zP ">>" (Just [])
+      Just [k'] -> iterate rewriteDepthCount [k'] [] True
+      Nothing -> iterate rewriteDepthCount [k] [] False 
       Just ks -> error ("rewrite:  nullUnary returned too many results ("
                         ++ (show (L.length ks)) ++ ")")
-      Nothing -> iterate [k] [] False 
     where
       grules = generalrules $ protocol k
 
@@ -3246,15 +3324,24 @@ rewrite k =
           concatMap (\k -> maybe [k] id (nullUnary k)) 
                                   
       -- iterate todos done action, which yields Maybe [Preskel]
-      iterate [] [_] False = Nothing
-      iterate [] done False = error ("rewrite: non-singleton results with no change???  (" ++
-                                     (show (L.length done)) ++ ")")
-      iterate [] done True = Just done
-      iterate (k : rest) done b =
+      iterate _ [] [_] False = Nothing          -- zP ">>" Nothing
+      iterate _ [] done False = error ("rewrite: non-singleton results with no change???  (" ++
+                                        (show (L.length done)) ++ ")")
+      iterate _ [] done True = Just done        -- zP ">" (Just done)
+      iterate 0 todos done True = Just (todos ++ done)        -- zP ">!" (Just (todos ++ done))
+      iterate 0 _ done False = error ("rewrite: exhausted depth bound with no action???  (" ++
+                                        (show (L.length done)) ++ ")")
+      iterate dc (k : rest) done b =
           case subiter k grules of
-            Nothing  -> iterate rest (k : done) b
+            Nothing  -> iterate (dc-1) rest (k : done) b
             Just new ->
-                iterate (rest ++ (nullUnaryThrough new)) done True 
+                let new' = nullUnaryThrough new in
+                -- Could alternatively factor the new ones for
+                -- isomorphic copies, but that sounds anomalous
+                -- Skip it for now.  
+                -- factorIsomorphic 
+                -- (nullUnaryThrough new) in
+                iterate (dc-1) (mergeIsomorphic new' rest) done True 
 
       -- subiter 
       subiter _ [] = Nothing     -- No action, no rules left
@@ -3263,10 +3350,11 @@ rewrite k =
           case tryRule k r of
             [] -> subiter k rs 
             vas ->
+                           -- zP ("." ++ (rlname r))
                 Just (concatMap (\k' -> maybe [k'] id 
-                                       $ subiter k' rs)
-                                $ nullUnaryThrough
-                                      $ doRewrite k r vas)
+                                        $ subiter k' rs)
+                     $ nullUnaryThrough
+                           $ doRewrite k r vas)
 
 -- Returns all environments that satisfy the antecedent
 -- but do not extend to satisfy any of the conclusions.
@@ -3543,7 +3631,8 @@ rprec name (z, t) (z', t') k (g, e) =
     _ ->
       error ("In rule " ++ name ++ ", precedence did not get a strand or a height")
   where
-    tc = map graphPair $ graphClose $ graphEdges $ strands k
+    tc = kgpOrds k
+         -- map graphPair $ graphClose $ graphEdges $ strands k
 
 
          --   rprec :: String -> NodeTerm -> NodeTerm -> Rewrite
@@ -3670,7 +3759,7 @@ rlgenst name t k (g, e) =
         where
           k' = newPreskel
                   g (shared k) (insts k) (orderings k) (knon k) (kpnon k)
-                  (kunique k) (t' : kgenSt k) (kconf k) (kauth k) (kfacts k)
+                  (kunique k) (adjoin t' $ kgenSt k) (kconf k) (kauth k) (kfacts k)
                   (kpriority k) (operation k) (krules k) (pprob k)
                   (prob k) (pov k)
     False ->
