@@ -1,7 +1,7 @@
 (herald "Yahalom Protocol Without Forwarding" (bound 15))
 
 (comment "CPSA 4.2.3")
-(comment "All input read from tst/yahalom.scm")
+(comment "All input read from yahalom.scm")
 (comment "Strand count bounded at 15")
 
 (defprotocol yahalom basic
@@ -17,7 +17,44 @@
     (vars (c a b name) (n-a n-b text) (k skey))
     (trace (recv (cat b (enc a n-a n-b (ltk b c))))
       (send (enc b k n-a n-b (ltk a c))) (send (enc a k (ltk b c))))
-    (uniq-orig k)))
+    (uniq-orig k))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton yahalom
   (vars (n-b n-a text) (a b c name) (k skey))
@@ -665,7 +702,7 @@
       (send (enc b k-1 n-a n-b (ltk a c)))))
   (label 24)
   (parent 17)
-  (seen 30)
+  (seen 29)
   (unrealized (2 1))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -798,39 +835,6 @@
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton yahalom
-  (vars (n-b n-a text) (a b c name) (k k-0 skey))
-  (defstrand resp 4 (n-a n-a) (n-b n-b) (b b) (a a) (c c) (k k))
-  (defstrand serv 3 (n-a n-a) (n-b n-b) (c c) (a a) (b b) (k k))
-  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (c c) (k k))
-  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (c c) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (c c) (a a) (b b) (k k-0))
-  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (c c) (k k-0))
-  (precedes ((0 1) (1 0)) ((0 1) (4 0)) ((1 1) (3 1)) ((1 2) (0 2))
-    ((2 2) (0 3)) ((3 2) (2 1)) ((4 1) (5 1)) ((5 2) (2 1)))
-  (non-orig (ltk a c) (ltk b c))
-  (uniq-orig n-b k k-0)
-  (operation nonce-test (contracted (a-0 a) (b-0 b) (c-0 c) (n-a-0 n-a))
-    n-b (2 1) (enc n-b k) (enc n-b k-0) (enc a n-a n-b (ltk b c))
-    (enc b k n-a n-b (ltk a c)) (enc b k-0 n-a n-b (ltk a c)))
-  (traces
-    ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
-      (recv (enc a k (ltk b c))) (recv (enc n-b k)))
-    ((recv (cat b (enc a n-a n-b (ltk b c))))
-      (send (enc b k n-a n-b (ltk a c))) (send (enc a k (ltk b c))))
-    ((send (cat a n-a)) (recv (enc b k n-a n-b (ltk a c)))
-      (send (enc n-b k)))
-    ((send (cat a n-a)) (recv (enc b k n-a n-b (ltk a c)))
-      (send (enc n-b k)))
-    ((recv (cat b (enc a n-a n-b (ltk b c))))
-      (send (enc b k-0 n-a n-b (ltk a c))))
-    ((send (cat a n-a)) (recv (enc b k-0 n-a n-b (ltk a c)))
-      (send (enc n-b k-0))))
-  (label 29)
-  (parent 20)
-  (unrealized)
-  (comment "1 in cohort - 1 not yet seen"))
-
-(defskeleton yahalom
   (vars (n-b n-a n-a-0 text) (a b c a-0 b-0 c-0 name) (k k-0 k-1 skey))
   (defstrand resp 4 (n-a n-a) (n-b n-b) (b b) (a a) (c c) (k k))
   (defstrand serv 3 (n-a n-a) (n-b n-b) (c c) (a a) (b b) (k k))
@@ -862,10 +866,43 @@
       (send (enc n-b k-0)))
     ((recv (cat b (enc a n-a n-b (ltk b c))))
       (send (enc b k-1 n-a n-b (ltk a c)))))
-  (label 30)
+  (label 29)
   (parent 20)
   (unrealized (2 1))
   (comment "3 in cohort - 3 not yet seen"))
+
+(defskeleton yahalom
+  (vars (n-b n-a text) (a b c name) (k k-0 skey))
+  (defstrand resp 4 (n-a n-a) (n-b n-b) (b b) (a a) (c c) (k k))
+  (defstrand serv 3 (n-a n-a) (n-b n-b) (c c) (a a) (b b) (k k))
+  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (c c) (k k))
+  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (c c) (k k))
+  (defstrand serv 2 (n-a n-a) (n-b n-b) (c c) (a a) (b b) (k k-0))
+  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (c c) (k k-0))
+  (precedes ((0 1) (1 0)) ((0 1) (4 0)) ((1 1) (3 1)) ((1 2) (0 2))
+    ((2 2) (0 3)) ((3 2) (2 1)) ((4 1) (5 1)) ((5 2) (2 1)))
+  (non-orig (ltk a c) (ltk b c))
+  (uniq-orig n-b k k-0)
+  (operation nonce-test (contracted (a-0 a) (b-0 b) (c-0 c) (n-a-0 n-a))
+    n-b (2 1) (enc n-b k) (enc n-b k-0) (enc a n-a n-b (ltk b c))
+    (enc b k n-a n-b (ltk a c)) (enc b k-0 n-a n-b (ltk a c)))
+  (traces
+    ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
+      (recv (enc a k (ltk b c))) (recv (enc n-b k)))
+    ((recv (cat b (enc a n-a n-b (ltk b c))))
+      (send (enc b k n-a n-b (ltk a c))) (send (enc a k (ltk b c))))
+    ((send (cat a n-a)) (recv (enc b k n-a n-b (ltk a c)))
+      (send (enc n-b k)))
+    ((send (cat a n-a)) (recv (enc b k n-a n-b (ltk a c)))
+      (send (enc n-b k)))
+    ((recv (cat b (enc a n-a n-b (ltk b c))))
+      (send (enc b k-0 n-a n-b (ltk a c))))
+    ((send (cat a n-a)) (recv (enc b k-0 n-a n-b (ltk a c)))
+      (send (enc n-b k-0))))
+  (label 30)
+  (parent 20)
+  (unrealized)
+  (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
   (vars (n-b n-a n-a-0 text) (a b c a-0 b-0 c-0 name) (k k-0 skey))
@@ -1147,35 +1184,6 @@
   (comment "empty cohort"))
 
 (defskeleton yahalom
-  (vars (n-b n-a text) (a b c name) (k k-0 skey))
-  (defstrand resp 4 (n-a n-a) (n-b n-b) (b b) (a a) (c c) (k k))
-  (defstrand serv 3 (n-a n-a) (n-b n-b) (c c) (a a) (b b) (k k))
-  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (c c) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (c c) (a a) (b b) (k k-0))
-  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (c c) (k k-0))
-  (precedes ((0 1) (1 0)) ((0 1) (3 0)) ((1 1) (2 1)) ((1 2) (0 2))
-    ((2 2) (0 3)) ((3 1) (4 1)) ((4 2) (0 3)))
-  (non-orig (ltk a c) (ltk b c))
-  (uniq-orig n-b k k-0)
-  (operation generalization deleted (2 0))
-  (traces
-    ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
-      (recv (enc a k (ltk b c))) (recv (enc n-b k)))
-    ((recv (cat b (enc a n-a n-b (ltk b c))))
-      (send (enc b k n-a n-b (ltk a c))) (send (enc a k (ltk b c))))
-    ((send (cat a n-a)) (recv (enc b k n-a n-b (ltk a c)))
-      (send (enc n-b k)))
-    ((recv (cat b (enc a n-a n-b (ltk b c))))
-      (send (enc b k-0 n-a n-b (ltk a c))))
-    ((send (cat a n-a)) (recv (enc b k-0 n-a n-b (ltk a c)))
-      (send (enc n-b k-0))))
-  (label 39)
-  (parent 29)
-  (seen 28)
-  (unrealized)
-  (comment "1 in cohort - 0 not yet seen"))
-
-(defskeleton yahalom
   (vars (n-b n-a text) (a b c name) (k k-0 k-1 skey))
   (defstrand resp 4 (n-a n-a) (n-b n-b) (b b) (a a) (c c) (k k))
   (defstrand serv 3 (n-a n-a) (n-b n-b) (c c) (a a) (b b) (k k))
@@ -1208,8 +1216,8 @@
       (send (enc n-b k-0)))
     ((recv (cat b (enc a n-a n-b (ltk b c))))
       (send (enc b k-1 n-a n-b (ltk a c)))))
-  (label 40)
-  (parent 30)
+  (label 39)
+  (parent 29)
   (unrealized)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -1246,8 +1254,8 @@
       (send (enc n-b k-0)))
     ((recv (cat b (enc a n-a n-b (ltk b c))))
       (send (enc b k-1 n-a n-b (ltk a c)))) ((recv k) (send k)))
-  (label 41)
-  (parent 30)
+  (label 40)
+  (parent 29)
   (unrealized (7 0))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -1284,10 +1292,39 @@
       (send (enc n-b k-0)))
     ((recv (cat b (enc a n-a n-b (ltk b c))))
       (send (enc b k-1 n-a n-b (ltk a c)))) ((recv k-0) (send k-0)))
-  (label 42)
-  (parent 30)
+  (label 41)
+  (parent 29)
   (unrealized (2 1) (7 0))
   (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton yahalom
+  (vars (n-b n-a text) (a b c name) (k k-0 skey))
+  (defstrand resp 4 (n-a n-a) (n-b n-b) (b b) (a a) (c c) (k k))
+  (defstrand serv 3 (n-a n-a) (n-b n-b) (c c) (a a) (b b) (k k))
+  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (c c) (k k))
+  (defstrand serv 2 (n-a n-a) (n-b n-b) (c c) (a a) (b b) (k k-0))
+  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (c c) (k k-0))
+  (precedes ((0 1) (1 0)) ((0 1) (3 0)) ((1 1) (2 1)) ((1 2) (0 2))
+    ((2 2) (0 3)) ((3 1) (4 1)) ((4 2) (0 3)))
+  (non-orig (ltk a c) (ltk b c))
+  (uniq-orig n-b k k-0)
+  (operation generalization deleted (2 0))
+  (traces
+    ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
+      (recv (enc a k (ltk b c))) (recv (enc n-b k)))
+    ((recv (cat b (enc a n-a n-b (ltk b c))))
+      (send (enc b k n-a n-b (ltk a c))) (send (enc a k (ltk b c))))
+    ((send (cat a n-a)) (recv (enc b k n-a n-b (ltk a c)))
+      (send (enc n-b k)))
+    ((recv (cat b (enc a n-a n-b (ltk b c))))
+      (send (enc b k-0 n-a n-b (ltk a c))))
+    ((send (cat a n-a)) (recv (enc b k-0 n-a n-b (ltk a c)))
+      (send (enc n-b k-0))))
+  (label 42)
+  (parent 30)
+  (seen 28)
+  (unrealized)
+  (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton yahalom
   (vars (n-b n-a n-a-0 text) (a b c a-0 b-0 c-0 name) (k k-0 skey))
@@ -1492,7 +1529,7 @@
     ((recv (cat b (enc a n-a n-b (ltk b c))))
       (send (enc b k-1 n-a n-b (ltk a c)))))
   (label 48)
-  (parent 40)
+  (parent 39)
   (unrealized)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -1529,7 +1566,7 @@
     ((recv (cat b (enc a n-a n-b (ltk b c))))
       (send (enc b k-1 n-a n-b (ltk a c)))) ((recv k) (send k)))
   (label 49)
-  (parent 41)
+  (parent 40)
   (unrealized (7 0))
   (dead)
   (comment "empty cohort"))
@@ -1568,7 +1605,7 @@
       (send (enc b k-0 n-a n-b (ltk a c)))
       (send (enc a k-0 (ltk b c)))))
   (label 50)
-  (parent 42)
+  (parent 41)
   (unrealized (2 1) (6 0))
   (dead)
   (comment "empty cohort"))
@@ -1617,7 +1654,44 @@
     (vars (c a b name) (n-a n-b text) (k skey))
     (trace (recv (cat b (enc a n-a n-b (ltk b c))))
       (send (enc b k n-a n-b (ltk a c))) (send (enc a k (ltk b c))))
-    (uniq-orig k)))
+    (uniq-orig k))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton yahalom
   (vars (n-b n-a text) (a b c name) (k skey))
@@ -1740,5 +1814,114 @@
   (unrealized (0 3) (1 0))
   (dead)
   (comment "empty cohort"))
+
+(comment "Nothing left to do")
+
+(defprotocol yahalom basic
+  (defrole init
+    (vars (a b c name) (n-a n-b text) (k skey))
+    (trace (send (cat a n-a)) (recv (enc b k n-a n-b (ltk a c)))
+      (send (enc n-b k))))
+  (defrole resp
+    (vars (b a c name) (n-a n-b text) (k skey))
+    (trace (recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
+      (recv (enc a k (ltk b c))) (recv (enc n-b k))))
+  (defrole serv
+    (vars (c a b name) (n-a n-b text) (k skey))
+    (trace (recv (cat b (enc a n-a n-b (ltk b c))))
+      (send (enc b k n-a n-b (ltk a c))) (send (enc a k (ltk b c))))
+    (uniq-orig k))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+
+(defskeleton yahalom
+  (vars (n-a n-b text) (a b c name) (k skey))
+  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (c c) (k k))
+  (non-orig (ltk a c) (ltk b c))
+  (uniq-orig n-a)
+  (traces
+    ((send (cat a n-a)) (recv (enc b k n-a n-b (ltk a c)))
+      (send (enc n-b k))))
+  (label 58)
+  (unrealized (0 1))
+  (origs (n-a (0 0)))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton yahalom
+  (vars (n-a n-b text) (a b c name) (k skey))
+  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (c c) (k k))
+  (defstrand serv 2 (n-a n-a) (n-b n-b) (c c) (a a) (b b) (k k))
+  (precedes ((0 0) (1 0)) ((1 1) (0 1)))
+  (non-orig (ltk a c) (ltk b c))
+  (uniq-orig n-a k)
+  (operation encryption-test (added-strand serv 2)
+    (enc b k n-a n-b (ltk a c)) (0 1))
+  (traces
+    ((send (cat a n-a)) (recv (enc b k n-a n-b (ltk a c)))
+      (send (enc n-b k)))
+    ((recv (cat b (enc a n-a n-b (ltk b c))))
+      (send (enc b k n-a n-b (ltk a c)))))
+  (label 59)
+  (parent 58)
+  (unrealized (1 0))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton yahalom
+  (vars (n-a n-b text) (a b c name) (k skey))
+  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (c c) (k k))
+  (defstrand serv 2 (n-a n-a) (n-b n-b) (c c) (a a) (b b) (k k))
+  (defstrand resp 2 (n-a n-a) (n-b n-b) (b b) (a a) (c c))
+  (precedes ((0 0) (2 0)) ((1 1) (0 1)) ((2 1) (1 0)))
+  (non-orig (ltk a c) (ltk b c))
+  (uniq-orig n-a k)
+  (operation encryption-test (added-strand resp 2)
+    (enc a n-a n-b (ltk b c)) (1 0))
+  (traces
+    ((send (cat a n-a)) (recv (enc b k n-a n-b (ltk a c)))
+      (send (enc n-b k)))
+    ((recv (cat b (enc a n-a n-b (ltk b c))))
+      (send (enc b k n-a n-b (ltk a c))))
+    ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))))
+  (label 60)
+  (parent 59)
+  (unrealized)
+  (shape)
+  (maps ((0) ((a a) (b b) (c c) (n-a n-a) (n-b n-b) (k k))))
+  (origs (k (1 1)) (n-a (0 0))))
 
 (comment "Nothing left to do")

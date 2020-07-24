@@ -29,7 +29,7 @@ for i in tst/*.scm
 do
     b=tst/`basename "$i" .scm`
     echo cpsa4 ${CPSAFLAGS} -o "$b.txt" "$i"
-    cabal run cpsa4 -v0 -- ${CPSAFLAGS} -o "$b.txt" "$i" || echo cpsa4 failed.
+    time cabal run cpsa4 -v0 -- ${CPSAFLAGS} -o "$b.txt" "$i" || echo cpsa4 failed.
     analyze "$b"
 done
 
@@ -38,7 +38,7 @@ do
     b=tst/`basename "$i" .prot`
     echo cpsa4prot  "$i" '|' cpsa4 ${CPSAFLAGS} -o "$b.txt"
     cabal run cpsa4prot -v0 -- "$i" | \
-	cabal run cpsa4 -v0 -- ${CPSAFLAGS} -o "$b.txt" || \
+	time cabal run cpsa4 -v0 -- ${CPSAFLAGS} -o "$b.txt" || \
 	echo cpsa4 failed.
     analyze "$b"
 done
@@ -47,6 +47,6 @@ for i in tst/*.lsp
 do
     b=tst/`basename "$i" .lsp`
     echo cpsa4 ${CPSAFLAGS} -o "$b.txt" "$i"
-    cabal run cpsa4 -v0 -- ${CPSAFLAGS} -o "$b.txt" "$i"
+    time cabal run cpsa4 -v0 -- ${CPSAFLAGS} -o "$b.txt" "$i"
     analyze "$b"
 done

@@ -329,6 +329,7 @@ checkCs (i,j) =
     any
     (\(start,end) -> start <= i && j <= end)
     
+{-- 
 sepStateSegments :: Trace -> [(Int,Int,Int)]
 sepStateSegments c =
     findSegments [] 0 c
@@ -374,7 +375,7 @@ sepStateSegments c =
       -- in the previous case we save the start of c for findSegments
       -- to decide what to do.   
           
-
+--}
 
 
 failwith :: MonadFail m => String -> Bool -> m ()
@@ -576,27 +577,37 @@ transRules g rl =
 --                                         concl = [[(Trans (z,ti))]]},
 --                         rlcomment = [] }) : rs)
 
-causeAndEffectIndices :: Role -> Int -> Int -> ([Int],[Int])
-causeAndEffectIndices rl start end =
-    let c = drop start $ rtrace rl in
-    loopCause (start+1) [] c
+--   causeAndEffectIndices :: Role -> Int -> Int -> ([Int],[Int])
+--   causeAndEffectIndices rl start end =
+--       let c = drop start $ rtrace rl in
+--       loopCause (start+1) [] c
+--       where
+--         loopCause _ causelist []          = (causelist,[])
+--         loopCause i causelist ((In (ChMsg ch _)) : c)
+--              | i < end && isLocn ch       = loopCause (i+1) (i : causelist) c
+--              | otherwise                  = (causelist,[])
+--         loopCause i causelist ((Out (ChMsg ch _)) : c)
+--             | i <= end && isLocn ch       = loopEffect (z (i, end) i) causelist [i] c
+--             | otherwise                  = (causelist,[])
+--         loopCause _ causelist _          = (causelist,[])
+--   
+--         loopEffect _ causelist effectlist []              = (causelist,effectlist)
+--         loopEffect _ causelist effectlist ((In _) : _)    = (causelist,effectlist)
+--         loopEffect i causelist effectlist ((Out (ChMsg ch _)) : c) 
+--             | i < (end-1) && isLocn ch   = loopEffect (i+1) causelist (i : effectlist) c
+--             | otherwise                  = (causelist,effectlist)
+--         loopEffect _ causelist effectlist ((Out _) : _)   = (causelist,effectlist)
+
+lastRecvInCS :: Role -> Int -> Int -> Int
+lastRecvInCS rl start end =
+    loop start $ drop (start+1) $ rtrace rl
+    -- i is always the index before the index of the first entry still
+    -- in c.
     where
-      loopCause _ causelist []          = (causelist,[])
-      loopCause i causelist ((In (ChMsg ch _)) : c)
-           | i < end && isLocn ch       = loopCause (i+1) (i : causelist) c
-           | otherwise                  = (causelist,[])
-      loopCause i causelist ((Out (ChMsg ch _)) : c)
-          | i < end && isLocn ch       = loopEffect (i+1) causelist [i] c
-          | otherwise                  = (causelist,[])
-      loopCause _ causelist _          = (causelist,[])
-
-      loopEffect _ causelist effectlist []              = (causelist,effectlist)
-      loopEffect _ causelist effectlist ((In _) : _)    = (causelist,effectlist)
-      loopEffect i causelist effectlist ((Out (ChMsg ch _)) : c) 
-          | i < (end-1) && isLocn ch   = loopEffect (i+1) causelist (i : effectlist) c
-          | otherwise                  = (causelist,effectlist)
-      loopEffect _ causelist effectlist ((Out _) : _)   = (causelist,effectlist)
-
+      loop i ((In (ChMsg ch _)) : c)
+           | i < end && isLocn ch       = loop (i+1) c
+           | otherwise                  = i
+      loop i _                          = i
 
 csRules :: Gen -> Role -> [(Int,Int)] -> (Gen, [Rule])
 csRules g rl =
@@ -607,17 +618,17 @@ csRules g rl =
      (g,[])
      where
        f g start end =
-           let (causeIndices, effectIndices) = causeAndEffectIndices rl start end in
+           let lastRecv = lastRecvInCS rl start end in
            let (g',rs) = foldr (\ind (g,soFar) ->
                                     let (g',r) = causeRule g rl start ind in
                                     (g', (r : soFar)))
                          (g,[])
-                         causeIndices in 
+                         [start+1..lastRecv] in 
            foldr (\ind (g,soFar) ->
                       let (g',r) = effectRule g rl end ind in
                       (g', (r : soFar)))
              (g',rs)
-             effectIndices
+             [lastRecv+1..end-1]
 
        causeRule g rl start ind =
            ruleOfClauses g

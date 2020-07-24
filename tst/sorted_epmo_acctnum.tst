@@ -81,7 +81,44 @@
           (says c
             (exists ((acctnum2 text))
               (authtransfer c acctnum2 b price m nm)))))
-      (3 (and (reqtransfer m b price m nm) (doship m goods c))))))
+      (3 (and (reqtransfer m b price m nm) (doship m goods c)))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton sorted_epmo_acctnum
   (vars (goods price text) (nm nc nb data) (b m c hash name))
@@ -3356,74 +3393,6 @@
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum acctnum-0 goods-0 text)
-    (nc nb nb-0 nb-1 data) (b m c hash b-0 hash-0 hash-1 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
-    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
-    (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-1) (b b-0) (c c) (hash hash-1))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (0 0))
-    ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0)) ((4 1) (3 3))
-    ((5 1) (4 0)))
-  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
-    (privk hash-0) (privk hash-1))
-  (uniq-orig nc nb nb-0)
-  (operation nonce-test (contracted (acctnum-1 acctnum-0)) nb-0 (4 0)
-    (enc "hash" c nc nb-1 nb-0 price (pubk hash-1))
-    (enc nc nb-0 m price (pubk c))
-    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-1))
-            (privk b-0)) (enc nc nb-1 (pubk c))))))
-  (label 62)
-  (parent 51)
-  (unrealized (0 0) (0 2) (1 0))
-  (comment "3 in cohort - 3 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
   (vars (goods price acctnum acctnum-0 goods-0 acctnum-1 text)
     (nc nb nb-0 data) (b m c hash b-0 hash-0 hash-1 name))
   (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
@@ -3486,9 +3455,77 @@
         (cat
           (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
             (privk b-0)) (enc nc nb-0 (pubk c))))))
-  (label 63)
+  (label 62)
   (parent 51)
   (unrealized (0 0) (0 2) (1 0) (4 0))
+  (comment "3 in cohort - 3 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum acctnum-0 goods-0 text)
+    (nc nb nb-0 nb-1 data) (b m c hash b-0 hash-0 hash-1 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
+    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
+    (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-1) (b b-0) (c c) (hash hash-1))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (0 0))
+    ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0)) ((4 1) (3 3))
+    ((5 1) (4 0)))
+  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
+    (privk hash-0) (privk hash-1))
+  (uniq-orig nc nb nb-0)
+  (operation nonce-test (contracted (acctnum-1 acctnum-0)) nb-0 (4 0)
+    (enc "hash" c nc nb-1 nb-0 price (pubk hash-1))
+    (enc nc nb-0 m price (pubk c))
+    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-1))
+            (privk b-0)) (enc nc nb-1 (pubk c))))))
+  (label 63)
+  (parent 51)
+  (unrealized (0 0) (0 2) (1 0))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton sorted_epmo_acctnum
@@ -4240,6 +4277,217 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum acctnum-0 goods-0 text) (nc nb nb-0 data)
+    (b m c hash b-0 hash-0 hash-1 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
+    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
+    (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-1))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (0 0))
+    ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0)) ((4 1) (3 3))
+    ((5 1) (4 0)))
+  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
+    (privk hash-0) (privk hash-1))
+  (uniq-orig nc nb nb-0)
+  (operation nonce-test (contracted (acctnum-1 acctnum-0)) nb-0 (4 0)
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
+    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b-0)) (enc nc nb-0 (pubk c))))))
+  (label 75)
+  (parent 62)
+  (unrealized (0 0) (0 2) (1 0))
+  (comment "3 in cohort - 3 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum acctnum-0 goods-0 acctnum-1 text)
+    (nc nb nb-0 data) (b m c hash b-0 hash-0 hash-1 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
+    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
+    (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-1) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-1))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (4 0)) ((3 0) (0 0))
+    ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0)) ((4 1) (3 3))
+    ((5 1) (4 0)))
+  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
+    (privk hash-0) (privk hash-1))
+  (uniq-orig nc nb nb-0)
+  (operation nonce-test (displaced 6 2 bank 2) nb-0 (4 0)
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
+    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum-1 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b-0)) (enc nc nb-0 (pubk c))))))
+  (label 76)
+  (parent 62)
+  (unrealized (0 0) (0 2) (1 0) (4 0))
+  (comment "2 in cohort - 2 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum acctnum-0 goods-0 acctnum-1 text)
+    (nc nb nb-0 nb-1 data) (b m c hash b-0 hash-0 hash-1 hash-2 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
+    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
+    (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-1) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-1))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-1) (b b-0) (c c) (hash hash-2))
+  (precedes ((0 1) (3 1)) ((0 1) (6 0)) ((1 1) (0 2)) ((2 1) (1 0))
+    ((3 0) (0 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0))
+    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (4 0)))
+  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
+    (privk hash-0) (privk hash-1) (privk hash-2))
+  (uniq-orig nc nb nb-0)
+  (operation nonce-test (added-strand bank 2) nb-0 (4 0)
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
+    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum-1 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
+            (privk b-0)) (enc nc nb-1 (pubk c))))))
+  (label 77)
+  (parent 62)
+  (unrealized (0 0) (0 2) (1 0) (4 0) (6 0))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
   (vars (goods price acctnum goods-0 text) (nc nb nb-0 nb-1 data)
     (m c hash b hash-0 hash-1 name))
   (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
@@ -4303,8 +4551,8 @@
         (cat
           (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-1))
             (privk b)) (enc nc nb-1 (pubk c))))))
-  (label 75)
-  (parent 62)
+  (label 78)
+  (parent 63)
   (unrealized (0 0) (0 2))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -4381,8 +4629,8 @@
         (cat
           (enc (enc "hash" c nc nb-2 nb-0 price (pubk hash-2))
             (privk b-0)) (enc nc nb-2 (pubk c))))))
-  (label 76)
-  (parent 62)
+  (label 79)
+  (parent 63)
   (unrealized (0 0) (0 2) (1 0) (6 0))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -4455,221 +4703,10 @@
             (privk b-0)) (enc nc nb-1 (pubk c)))))
     ((recv (enc c nc goods-0 (pubk m)))
       (send (enc nc nm m price-0 (pubk c)))))
-  (label 77)
-  (parent 62)
-  (unrealized (0 0) (0 2) (1 0))
-  (comment "2 in cohort - 2 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum acctnum-0 goods-0 text) (nc nb nb-0 data)
-    (b m c hash b-0 hash-0 hash-1 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
-    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
-    (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-1))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (0 0))
-    ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0)) ((4 1) (3 3))
-    ((5 1) (4 0)))
-  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
-    (privk hash-0) (privk hash-1))
-  (uniq-orig nc nb nb-0)
-  (operation nonce-test (contracted (acctnum-1 acctnum-0)) nb-0 (4 0)
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
-    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b-0)) (enc nc nb-0 (pubk c))))))
-  (label 78)
-  (parent 63)
-  (unrealized (0 0) (0 2) (1 0))
-  (comment "3 in cohort - 3 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum acctnum-0 goods-0 acctnum-1 text)
-    (nc nb nb-0 data) (b m c hash b-0 hash-0 hash-1 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
-    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
-    (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-1) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-1))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (4 0)) ((3 0) (0 0))
-    ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0)) ((4 1) (3 3))
-    ((5 1) (4 0)))
-  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
-    (privk hash-0) (privk hash-1))
-  (uniq-orig nc nb nb-0)
-  (operation nonce-test (displaced 6 2 bank 2) nb-0 (4 0)
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
-    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum-1 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b-0)) (enc nc nb-0 (pubk c))))))
-  (label 79)
-  (parent 63)
-  (unrealized (0 0) (0 2) (1 0) (4 0))
-  (comment "2 in cohort - 2 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum acctnum-0 goods-0 acctnum-1 text)
-    (nc nb nb-0 nb-1 data) (b m c hash b-0 hash-0 hash-1 hash-2 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
-    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
-    (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-1) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-1))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-1) (b b-0) (c c) (hash hash-2))
-  (precedes ((0 1) (3 1)) ((0 1) (6 0)) ((1 1) (0 2)) ((2 1) (1 0))
-    ((3 0) (0 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0))
-    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (4 0)))
-  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
-    (privk hash-0) (privk hash-1) (privk hash-2))
-  (uniq-orig nc nb nb-0)
-  (operation nonce-test (added-strand bank 2) nb-0 (4 0)
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
-    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum-1 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
-            (privk b-0)) (enc nc nb-1 (pubk c))))))
   (label 80)
   (parent 63)
-  (unrealized (0 0) (0 2) (1 0) (4 0) (6 0))
-  (comment "1 in cohort - 1 not yet seen"))
+  (unrealized (0 0) (0 2) (1 0))
+  (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton sorted_epmo_acctnum
   (vars (goods price acctnum acctnum-0 goods-0 text)
@@ -5246,6 +5283,444 @@
   (comment "empty cohort"))
 
 (defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum goods-0 text) (nc nb nb-0 data)
+    (m c hash b hash-0 hash-1 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum) (goods goods-0) (price price)
+    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-1))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (0 0))
+    ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0)) ((4 1) (3 3))
+    ((5 1) (4 0)))
+  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
+    (privk hash-1))
+  (uniq-orig nc nb nb-0)
+  (operation nonce-test (contracted (b-0 b) (acctnum-0 acctnum)) nc
+    (1 0) (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
+    (enc c nc goods-0 (pubk m)) (enc c nc nb-0 acctnum price (pubk b)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum price (pubk b)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b)) (enc nc nb-0 (pubk c))))))
+  (label 89)
+  (parent 75)
+  (unrealized (0 0) (0 2))
+  (comment "2 in cohort - 2 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum acctnum-0 goods-0 text)
+    (nc nb nb-0 nb-1 data) (b m c hash b-0 hash-0 hash-1 hash-2 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
+    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
+    (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-1))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-1) (b b-0) (c c) (hash hash-2))
+  (precedes ((0 1) (3 1)) ((0 1) (6 0)) ((1 1) (0 2)) ((2 1) (1 0))
+    ((3 0) (0 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0))
+    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0)))
+  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
+    (privk hash-0) (privk hash-1) (privk hash-2))
+  (uniq-orig nc nb nb-0)
+  (operation nonce-test (added-strand bank 2) nc (1 0)
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
+    (enc c nc goods-0 (pubk m))
+    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
+            (privk b-0)) (enc nc nb-1 (pubk c))))))
+  (label 90)
+  (parent 75)
+  (unrealized (0 0) (0 2) (1 0) (6 0))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum acctnum-0 goods-0 price-0 text)
+    (nc nb nb-0 nm data) (b m c hash b-0 hash-0 hash-1 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
+    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
+    (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-1))
+  (defstrand merchant 2 (goods goods-0) (price price-0) (nc nc) (nm nm)
+    (c c) (m m))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (0 0))
+    ((3 0) (6 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0))
+    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0)))
+  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
+    (privk hash-0) (privk hash-1))
+  (uniq-orig nc nb nb-0 nm)
+  (operation nonce-test (added-strand merchant 2) nc (1 0)
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
+    (enc c nc goods-0 (pubk m))
+    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc goods-0 (pubk m)))
+      (send (enc nc nm m price-0 (pubk c)))))
+  (label 91)
+  (parent 75)
+  (unrealized (0 0) (0 2) (1 0))
+  (comment "2 in cohort - 2 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum acctnum-0 goods-0 text) (nc nb nb-0 data)
+    (b m c hash b-0 hash-0 hash-1 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
+    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
+    (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-1))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (4 0)) ((3 0) (0 0))
+    ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0)) ((4 1) (3 3))
+    ((5 1) (4 0)))
+  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
+    (privk hash-0) (privk hash-1))
+  (uniq-orig nc nb nb-0)
+  (operation nonce-test (contracted (acctnum-1 acctnum-0)) nb-0 (4 0)
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
+    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b-0)) (enc nc nb-0 (pubk c))))))
+  (label 92)
+  (parent 76)
+  (unrealized (0 0) (0 2) (1 0))
+  (comment "3 in cohort - 3 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum acctnum-0 goods-0 acctnum-1 text)
+    (nc nb nb-0 nb-1 data) (b m c hash b-0 hash-0 hash-1 hash-2 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
+    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
+    (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-1) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-1))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-1) (b b-0) (c c) (hash hash-2))
+  (precedes ((0 1) (3 1)) ((0 1) (6 0)) ((1 1) (0 2)) ((2 1) (4 0))
+    ((3 0) (0 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0))
+    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (4 0)))
+  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
+    (privk hash-0) (privk hash-1) (privk hash-2))
+  (uniq-orig nc nb nb-0)
+  (operation nonce-test (added-strand bank 2) nb-0 (4 0)
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
+    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum-1 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
+            (privk b-0)) (enc nc nb-1 (pubk c))))))
+  (label 93)
+  (parent 76)
+  (unrealized (0 0) (0 2) (1 0) (4 0) (6 0))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum acctnum-0 goods-0 acctnum-1 text)
+    (nc nb nb-0 nb-1 data) (b m c hash b-0 hash-0 hash-1 hash-2 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
+    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
+    (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-1) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-1))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-1) (b b-0) (c c) (hash hash-2))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (0 0))
+    ((3 2) (2 0)) ((3 2) (5 0)) ((3 2) (6 0)) ((3 4) (1 0))
+    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (4 0)))
+  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
+    (privk hash-0) (privk hash-1) (privk hash-2))
+  (uniq-orig nc nb nb-0)
+  (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
+    (enc nc nb-0 m price (pubk c)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum-1 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
+            (privk b-0)) (enc nc nb-1 (pubk c))))))
+  (label 94)
+  (parent 77)
+  (seen 62)
+  (unrealized (0 0) (0 2) (1 0) (4 0))
+  (comment "1 in cohort - 0 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
   (vars (price acctnum goods text) (nc nb nb-0 nb-1 data)
     (m c hash b hash-0 hash-1 name))
   (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
@@ -5305,8 +5780,8 @@
         (cat
           (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-1))
             (privk b)) (enc nc nb-1 (pubk c))))))
-  (label 89)
-  (parent 75)
+  (label 95)
+  (parent 78)
   (unrealized (0 2))
   (dead)
   (comment "empty cohort"))
@@ -5375,8 +5850,8 @@
             (privk b)) (enc nc nb-1 (pubk c)))))
     ((recv (enc c nc goods-0 (pubk m)))
       (send (enc nc nm m price-0 (pubk c)))))
-  (label 90)
-  (parent 75)
+  (label 96)
+  (parent 78)
   (unrealized (0 0) (0 2))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -5449,8 +5924,8 @@
         (cat
           (enc (enc "hash" c nc nb-2 nb-0 price (pubk hash-2))
             (privk b-0)) (enc nc nb-2 (pubk c))))))
-  (label 91)
-  (parent 76)
+  (label 97)
+  (parent 79)
   (unrealized (0 0) (0 2) (1 0))
   (comment "3 in cohort - 3 not yet seen"))
 
@@ -5522,9 +5997,9 @@
             (privk b)) (enc nc nb-1 (pubk c)))))
     ((recv (enc c nc goods-0 (pubk m)))
       (send (enc nc nm m price-0 (pubk c)))))
-  (label 92)
-  (parent 77)
-  (seen 90)
+  (label 98)
+  (parent 80)
+  (seen 96)
   (unrealized (0 0) (0 2))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -5607,448 +6082,10 @@
         (cat
           (enc (enc "hash" c nc nb-2 nb-0 price (pubk hash-2))
             (privk b-0)) (enc nc nb-2 (pubk c))))))
-  (label 93)
-  (parent 77)
-  (seen 109)
-  (unrealized (0 0) (0 2) (1 0) (7 0))
-  (comment "1 in cohort - 0 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum goods-0 text) (nc nb nb-0 data)
-    (m c hash b hash-0 hash-1 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum) (goods goods-0) (price price)
-    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-1))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (0 0))
-    ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0)) ((4 1) (3 3))
-    ((5 1) (4 0)))
-  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
-    (privk hash-1))
-  (uniq-orig nc nb nb-0)
-  (operation nonce-test (contracted (b-0 b) (acctnum-0 acctnum)) nc
-    (1 0) (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
-    (enc c nc goods-0 (pubk m)) (enc c nc nb-0 acctnum price (pubk b)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum price (pubk b)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b)) (enc nc nb-0 (pubk c))))))
-  (label 94)
-  (parent 78)
-  (unrealized (0 0) (0 2))
-  (comment "2 in cohort - 2 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum acctnum-0 goods-0 text)
-    (nc nb nb-0 nb-1 data) (b m c hash b-0 hash-0 hash-1 hash-2 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
-    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
-    (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-1))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-1) (b b-0) (c c) (hash hash-2))
-  (precedes ((0 1) (3 1)) ((0 1) (6 0)) ((1 1) (0 2)) ((2 1) (1 0))
-    ((3 0) (0 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0))
-    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0)))
-  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
-    (privk hash-0) (privk hash-1) (privk hash-2))
-  (uniq-orig nc nb nb-0)
-  (operation nonce-test (added-strand bank 2) nc (1 0)
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
-    (enc c nc goods-0 (pubk m))
-    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
-            (privk b-0)) (enc nc nb-1 (pubk c))))))
-  (label 95)
-  (parent 78)
-  (unrealized (0 0) (0 2) (1 0) (6 0))
-  (comment "1 in cohort - 1 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum acctnum-0 goods-0 price-0 text)
-    (nc nb nb-0 nm data) (b m c hash b-0 hash-0 hash-1 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
-    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
-    (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-1))
-  (defstrand merchant 2 (goods goods-0) (price price-0) (nc nc) (nm nm)
-    (c c) (m m))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (0 0))
-    ((3 0) (6 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0))
-    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0)))
-  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
-    (privk hash-0) (privk hash-1))
-  (uniq-orig nc nb nb-0 nm)
-  (operation nonce-test (added-strand merchant 2) nc (1 0)
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
-    (enc c nc goods-0 (pubk m))
-    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc goods-0 (pubk m)))
-      (send (enc nc nm m price-0 (pubk c)))))
-  (label 96)
-  (parent 78)
-  (unrealized (0 0) (0 2) (1 0))
-  (comment "2 in cohort - 2 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum acctnum-0 goods-0 text) (nc nb nb-0 data)
-    (b m c hash b-0 hash-0 hash-1 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
-    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
-    (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-1))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (4 0)) ((3 0) (0 0))
-    ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0)) ((4 1) (3 3))
-    ((5 1) (4 0)))
-  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
-    (privk hash-0) (privk hash-1))
-  (uniq-orig nc nb nb-0)
-  (operation nonce-test (contracted (acctnum-1 acctnum-0)) nb-0 (4 0)
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
-    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b-0)) (enc nc nb-0 (pubk c))))))
-  (label 97)
-  (parent 79)
-  (unrealized (0 0) (0 2) (1 0))
-  (comment "3 in cohort - 3 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum acctnum-0 goods-0 acctnum-1 text)
-    (nc nb nb-0 nb-1 data) (b m c hash b-0 hash-0 hash-1 hash-2 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
-    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
-    (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-1) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-1))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-1) (b b-0) (c c) (hash hash-2))
-  (precedes ((0 1) (3 1)) ((0 1) (6 0)) ((1 1) (0 2)) ((2 1) (4 0))
-    ((3 0) (0 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0))
-    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (4 0)))
-  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
-    (privk hash-0) (privk hash-1) (privk hash-2))
-  (uniq-orig nc nb nb-0)
-  (operation nonce-test (added-strand bank 2) nb-0 (4 0)
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
-    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum-1 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
-            (privk b-0)) (enc nc nb-1 (pubk c))))))
-  (label 98)
-  (parent 79)
-  (unrealized (0 0) (0 2) (1 0) (4 0) (6 0))
-  (comment "1 in cohort - 1 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum acctnum-0 goods-0 acctnum-1 text)
-    (nc nb nb-0 nb-1 data) (b m c hash b-0 hash-0 hash-1 hash-2 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
-    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
-    (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-1) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-1))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-1) (b b-0) (c c) (hash hash-2))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (0 0))
-    ((3 2) (2 0)) ((3 2) (5 0)) ((3 2) (6 0)) ((3 4) (1 0))
-    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (4 0)))
-  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
-    (privk hash-0) (privk hash-1) (privk hash-2))
-  (uniq-orig nc nb nb-0)
-  (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
-    (enc nc nb-0 m price (pubk c)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum-1 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
-            (privk b-0)) (enc nc nb-1 (pubk c))))))
   (label 99)
   (parent 80)
-  (seen 63)
-  (unrealized (0 0) (0 2) (1 0) (4 0))
+  (seen 118)
+  (unrealized (0 0) (0 2) (1 0) (7 0))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton sorted_epmo_acctnum
@@ -6487,6 +6524,665 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton sorted_epmo_acctnum
+  (vars (price acctnum goods text) (nc nb nb-0 data)
+    (m c hash b hash-0 hash-1 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum) (goods goods) (price price)
+    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-1))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (0 0))
+    ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0)) ((4 1) (3 3))
+    ((5 1) (4 0)))
+  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
+    (privk hash-1))
+  (uniq-orig nc nb nb-0)
+  (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
+    (enc c nc goods (pubk m)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum price (pubk b)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b)) (enc nc nb-0 (pubk c))))))
+  (label 106)
+  (parent 89)
+  (unrealized (0 2))
+  (dead)
+  (comment "empty cohort"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum goods-0 price-0 text) (nc nb nb-0 nm data)
+    (m c hash b hash-0 hash-1 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum) (goods goods-0) (price price)
+    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-1))
+  (defstrand merchant 2 (goods goods-0) (price price-0) (nc nc) (nm nm)
+    (c c) (m m))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (6 0))
+    ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0)) ((4 1) (3 3))
+    ((5 1) (4 0)) ((6 1) (0 0)))
+  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
+    (privk hash-1))
+  (uniq-orig nc nb nb-0 nm)
+  (operation nonce-test (added-strand merchant 2) nc (0 0)
+    (enc c nc goods-0 (pubk m)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum price (pubk b)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc goods-0 (pubk m)))
+      (send (enc nc nm m price-0 (pubk c)))))
+  (label 107)
+  (parent 89)
+  (unrealized (0 0) (0 2))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum acctnum-0 goods-0 text)
+    (nc nb nb-0 nb-1 data) (b m c hash b-0 hash-0 hash-1 hash-2 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
+    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
+    (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-1))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-1) (b b-0) (c c) (hash hash-2))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (0 0))
+    ((3 2) (2 0)) ((3 2) (5 0)) ((3 2) (6 0)) ((3 4) (1 0))
+    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0)))
+  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
+    (privk hash-0) (privk hash-1) (privk hash-2))
+  (uniq-orig nc nb nb-0)
+  (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
+    (enc nc nb-0 m price (pubk c)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
+            (privk b-0)) (enc nc nb-1 (pubk c))))))
+  (label 108)
+  (parent 90)
+  (unrealized (0 0) (0 2) (1 0))
+  (comment "3 in cohort - 3 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum goods-0 price-0 text) (nc nb nb-0 nm data)
+    (m c hash b hash-0 hash-1 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum) (goods goods-0) (price price)
+    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-1))
+  (defstrand merchant 2 (goods goods-0) (price price-0) (nc nc) (nm nm)
+    (c c) (m m))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (0 0))
+    ((3 0) (6 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0))
+    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0)))
+  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
+    (privk hash-1))
+  (uniq-orig nc nb nb-0 nm)
+  (operation nonce-test (contracted (b-0 b) (acctnum-0 acctnum)) nc
+    (1 0) (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
+    (enc nc nm m price-0 (pubk c)) (enc c nc goods-0 (pubk m))
+    (enc c nc nb-0 acctnum price (pubk b)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum price (pubk b)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc goods-0 (pubk m)))
+      (send (enc nc nm m price-0 (pubk c)))))
+  (label 109)
+  (parent 91)
+  (seen 107)
+  (unrealized (0 0) (0 2))
+  (comment "3 in cohort - 2 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum acctnum-0 goods-0 price-0 text)
+    (nc nb nb-0 nm nb-1 data)
+    (b m c hash b-0 hash-0 hash-1 hash-2 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
+    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
+    (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-1))
+  (defstrand merchant 2 (goods goods-0) (price price-0) (nc nc) (nm nm)
+    (c c) (m m))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-1) (b b-0) (c c) (hash hash-2))
+  (precedes ((0 1) (3 1)) ((0 1) (7 0)) ((1 1) (0 2)) ((2 1) (1 0))
+    ((3 0) (0 0)) ((3 0) (6 0)) ((3 2) (2 0)) ((3 2) (5 0))
+    ((3 4) (1 0)) ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0))
+    ((7 1) (1 0)))
+  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
+    (privk hash-0) (privk hash-1) (privk hash-2))
+  (uniq-orig nc nb nb-0 nm)
+  (operation nonce-test (added-strand bank 2) nc (1 0)
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
+    (enc nc nm m price-0 (pubk c)) (enc c nc goods-0 (pubk m))
+    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc goods-0 (pubk m)))
+      (send (enc nc nm m price-0 (pubk c))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
+            (privk b-0)) (enc nc nb-1 (pubk c))))))
+  (label 110)
+  (parent 91)
+  (seen 130)
+  (unrealized (0 0) (0 2) (1 0) (7 0))
+  (comment "1 in cohort - 0 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum goods-0 text) (nc nb nb-0 data)
+    (m c hash b hash-0 hash-1 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum) (goods goods-0) (price price)
+    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-1))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (4 0)) ((3 0) (0 0))
+    ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0)) ((4 1) (3 3))
+    ((5 1) (4 0)))
+  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
+    (privk hash-1))
+  (uniq-orig nc nb nb-0)
+  (operation nonce-test (contracted (b-0 b) (acctnum-0 acctnum)) nc
+    (1 0) (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
+    (enc c nc goods-0 (pubk m)) (enc c nc nb-0 acctnum price (pubk b)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum price (pubk b)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b)) (enc nc nb-0 (pubk c))))))
+  (label 111)
+  (parent 92)
+  (unrealized (0 0) (0 2))
+  (comment "2 in cohort - 2 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum acctnum-0 goods-0 text)
+    (nc nb nb-0 nb-1 data) (b m c hash b-0 hash-0 hash-1 hash-2 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
+    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
+    (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-1))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-1) (b b-0) (c c) (hash hash-2))
+  (precedes ((0 1) (3 1)) ((0 1) (6 0)) ((1 1) (0 2)) ((2 1) (4 0))
+    ((3 0) (0 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0))
+    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0)))
+  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
+    (privk hash-0) (privk hash-1) (privk hash-2))
+  (uniq-orig nc nb nb-0)
+  (operation nonce-test (added-strand bank 2) nc (1 0)
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
+    (enc c nc goods-0 (pubk m))
+    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
+            (privk b-0)) (enc nc nb-1 (pubk c))))))
+  (label 112)
+  (parent 92)
+  (unrealized (0 0) (0 2) (1 0) (6 0))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum acctnum-0 goods-0 price-0 text)
+    (nc nb nb-0 nm data) (b m c hash b-0 hash-0 hash-1 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
+    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
+    (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-1))
+  (defstrand merchant 2 (goods goods-0) (price price-0) (nc nc) (nm nm)
+    (c c) (m m))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (4 0)) ((3 0) (0 0))
+    ((3 0) (6 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0))
+    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0)))
+  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
+    (privk hash-0) (privk hash-1))
+  (uniq-orig nc nb nb-0 nm)
+  (operation nonce-test (added-strand merchant 2) nc (1 0)
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
+    (enc c nc goods-0 (pubk m))
+    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc goods-0 (pubk m)))
+      (send (enc nc nm m price-0 (pubk c)))))
+  (label 113)
+  (parent 92)
+  (unrealized (0 0) (0 2) (1 0))
+  (comment "2 in cohort - 2 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum acctnum-0 goods-0 acctnum-1 text)
+    (nc nb nb-0 nb-1 data) (b m c hash b-0 hash-0 hash-1 hash-2 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
+    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
+    (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-1) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-1))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-1) (b b-0) (c c) (hash hash-2))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (4 0)) ((3 0) (0 0))
+    ((3 2) (2 0)) ((3 2) (5 0)) ((3 2) (6 0)) ((3 4) (1 0))
+    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (4 0)))
+  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
+    (privk hash-0) (privk hash-1) (privk hash-2))
+  (uniq-orig nc nb nb-0)
+  (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
+    (enc nc nb-0 m price (pubk c)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum-1 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
+            (privk b-0)) (enc nc nb-1 (pubk c))))))
+  (label 114)
+  (parent 93)
+  (seen 76)
+  (unrealized (0 0) (0 2) (1 0) (4 0))
+  (comment "1 in cohort - 0 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
   (vars (price acctnum goods price-0 text) (nc nb nb-0 nb-1 nm data)
     (m c hash b hash-0 hash-1 name))
   (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
@@ -6550,8 +7246,8 @@
             (privk b)) (enc nc nb-1 (pubk c)))))
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price-0 (pubk c)))))
-  (label 106)
-  (parent 90)
+  (label 115)
+  (parent 96)
   (unrealized (0 2))
   (dead)
   (comment "empty cohort"))
@@ -6628,8 +7324,8 @@
         (cat
           (enc (enc "hash" c nc nb-2 nb-0 price (pubk hash-2))
             (privk b)) (enc nc nb-2 (pubk c))))))
-  (label 107)
-  (parent 91)
+  (label 116)
+  (parent 97)
   (unrealized (0 0) (0 2))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -6715,9 +7411,9 @@
         (cat
           (enc (enc "hash" c nc nb-3 nb-0 price (pubk hash-3))
             (privk b-0)) (enc nc nb-3 (pubk c))))))
-  (label 108)
-  (parent 91)
-  (seen 91)
+  (label 117)
+  (parent 97)
+  (seen 97)
   (unrealized (0 0) (0 2) (1 0) (7 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -6800,8 +7496,8 @@
             (privk b-0)) (enc nc nb-2 (pubk c)))))
     ((recv (enc c nc goods-0 (pubk m)))
       (send (enc nc nm m price-0 (pubk c)))))
-  (label 109)
-  (parent 91)
+  (label 118)
+  (parent 97)
   (unrealized (0 0) (0 2) (1 0))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -6869,8 +7565,8 @@
             (privk b)) (enc nc nb-1 (pubk c)))))
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price-0 (pubk c)))))
-  (label 110)
-  (parent 92)
+  (label 119)
+  (parent 98)
   (unrealized (0 2))
   (dead)
   (comment "empty cohort"))
@@ -6943,669 +7639,10 @@
       (send (enc nc nm m price-0 (pubk c))))
     ((recv (enc c nc goods-0 (pubk m)))
       (send (enc nc nm-0 m price-1 (pubk c)))))
-  (label 111)
-  (parent 92)
-  (unrealized (0 0) (0 2))
-  (comment "1 in cohort - 1 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (price acctnum goods text) (nc nb nb-0 data)
-    (m c hash b hash-0 hash-1 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum) (goods goods) (price price)
-    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-1))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (0 0))
-    ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0)) ((4 1) (3 3))
-    ((5 1) (4 0)))
-  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
-    (privk hash-1))
-  (uniq-orig nc nb nb-0)
-  (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
-    (enc c nc goods (pubk m)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum price (pubk b)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b)) (enc nc nb-0 (pubk c))))))
-  (label 112)
-  (parent 94)
-  (unrealized (0 2))
-  (dead)
-  (comment "empty cohort"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum goods-0 price-0 text) (nc nb nb-0 nm data)
-    (m c hash b hash-0 hash-1 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum) (goods goods-0) (price price)
-    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-1))
-  (defstrand merchant 2 (goods goods-0) (price price-0) (nc nc) (nm nm)
-    (c c) (m m))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (6 0))
-    ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0)) ((4 1) (3 3))
-    ((5 1) (4 0)) ((6 1) (0 0)))
-  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
-    (privk hash-1))
-  (uniq-orig nc nb nb-0 nm)
-  (operation nonce-test (added-strand merchant 2) nc (0 0)
-    (enc c nc goods-0 (pubk m)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum price (pubk b)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc goods-0 (pubk m)))
-      (send (enc nc nm m price-0 (pubk c)))))
-  (label 113)
-  (parent 94)
-  (unrealized (0 0) (0 2))
-  (comment "1 in cohort - 1 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum acctnum-0 goods-0 text)
-    (nc nb nb-0 nb-1 data) (b m c hash b-0 hash-0 hash-1 hash-2 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
-    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
-    (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-1))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-1) (b b-0) (c c) (hash hash-2))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (0 0))
-    ((3 2) (2 0)) ((3 2) (5 0)) ((3 2) (6 0)) ((3 4) (1 0))
-    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0)))
-  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
-    (privk hash-0) (privk hash-1) (privk hash-2))
-  (uniq-orig nc nb nb-0)
-  (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
-    (enc nc nb-0 m price (pubk c)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
-            (privk b-0)) (enc nc nb-1 (pubk c))))))
-  (label 114)
-  (parent 95)
-  (unrealized (0 0) (0 2) (1 0))
-  (comment "3 in cohort - 3 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum goods-0 price-0 text) (nc nb nb-0 nm data)
-    (m c hash b hash-0 hash-1 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum) (goods goods-0) (price price)
-    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-1))
-  (defstrand merchant 2 (goods goods-0) (price price-0) (nc nc) (nm nm)
-    (c c) (m m))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (0 0))
-    ((3 0) (6 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0))
-    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0)))
-  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
-    (privk hash-1))
-  (uniq-orig nc nb nb-0 nm)
-  (operation nonce-test (contracted (b-0 b) (acctnum-0 acctnum)) nc
-    (1 0) (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
-    (enc nc nm m price-0 (pubk c)) (enc c nc goods-0 (pubk m))
-    (enc c nc nb-0 acctnum price (pubk b)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum price (pubk b)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc goods-0 (pubk m)))
-      (send (enc nc nm m price-0 (pubk c)))))
-  (label 115)
-  (parent 96)
-  (seen 113)
-  (unrealized (0 0) (0 2))
-  (comment "3 in cohort - 2 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum acctnum-0 goods-0 price-0 text)
-    (nc nb nb-0 nm nb-1 data)
-    (b m c hash b-0 hash-0 hash-1 hash-2 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
-    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
-    (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-1))
-  (defstrand merchant 2 (goods goods-0) (price price-0) (nc nc) (nm nm)
-    (c c) (m m))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-1) (b b-0) (c c) (hash hash-2))
-  (precedes ((0 1) (3 1)) ((0 1) (7 0)) ((1 1) (0 2)) ((2 1) (1 0))
-    ((3 0) (0 0)) ((3 0) (6 0)) ((3 2) (2 0)) ((3 2) (5 0))
-    ((3 4) (1 0)) ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0))
-    ((7 1) (1 0)))
-  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
-    (privk hash-0) (privk hash-1) (privk hash-2))
-  (uniq-orig nc nb nb-0 nm)
-  (operation nonce-test (added-strand bank 2) nc (1 0)
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
-    (enc nc nm m price-0 (pubk c)) (enc c nc goods-0 (pubk m))
-    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc goods-0 (pubk m)))
-      (send (enc nc nm m price-0 (pubk c))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
-            (privk b-0)) (enc nc nb-1 (pubk c))))))
-  (label 116)
-  (parent 96)
-  (seen 135)
-  (unrealized (0 0) (0 2) (1 0) (7 0))
-  (comment "1 in cohort - 0 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum goods-0 text) (nc nb nb-0 data)
-    (m c hash b hash-0 hash-1 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum) (goods goods-0) (price price)
-    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-1))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (4 0)) ((3 0) (0 0))
-    ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0)) ((4 1) (3 3))
-    ((5 1) (4 0)))
-  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
-    (privk hash-1))
-  (uniq-orig nc nb nb-0)
-  (operation nonce-test (contracted (b-0 b) (acctnum-0 acctnum)) nc
-    (1 0) (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
-    (enc c nc goods-0 (pubk m)) (enc c nc nb-0 acctnum price (pubk b)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum price (pubk b)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b)) (enc nc nb-0 (pubk c))))))
-  (label 117)
-  (parent 97)
-  (unrealized (0 0) (0 2))
-  (comment "2 in cohort - 2 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum acctnum-0 goods-0 text)
-    (nc nb nb-0 nb-1 data) (b m c hash b-0 hash-0 hash-1 hash-2 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
-    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
-    (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-1))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-1) (b b-0) (c c) (hash hash-2))
-  (precedes ((0 1) (3 1)) ((0 1) (6 0)) ((1 1) (0 2)) ((2 1) (4 0))
-    ((3 0) (0 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0))
-    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0)))
-  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
-    (privk hash-0) (privk hash-1) (privk hash-2))
-  (uniq-orig nc nb nb-0)
-  (operation nonce-test (added-strand bank 2) nc (1 0)
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
-    (enc c nc goods-0 (pubk m))
-    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
-            (privk b-0)) (enc nc nb-1 (pubk c))))))
-  (label 118)
-  (parent 97)
-  (unrealized (0 0) (0 2) (1 0) (6 0))
-  (comment "1 in cohort - 1 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum acctnum-0 goods-0 price-0 text)
-    (nc nb nb-0 nm data) (b m c hash b-0 hash-0 hash-1 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
-    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
-    (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-1))
-  (defstrand merchant 2 (goods goods-0) (price price-0) (nc nc) (nm nm)
-    (c c) (m m))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (4 0)) ((3 0) (0 0))
-    ((3 0) (6 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0))
-    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0)))
-  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
-    (privk hash-0) (privk hash-1))
-  (uniq-orig nc nb nb-0 nm)
-  (operation nonce-test (added-strand merchant 2) nc (1 0)
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
-    (enc c nc goods-0 (pubk m))
-    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc goods-0 (pubk m)))
-      (send (enc nc nm m price-0 (pubk c)))))
-  (label 119)
-  (parent 97)
-  (unrealized (0 0) (0 2) (1 0))
-  (comment "2 in cohort - 2 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum acctnum-0 goods-0 acctnum-1 text)
-    (nc nb nb-0 nb-1 data) (b m c hash b-0 hash-0 hash-1 hash-2 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
-    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
-    (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-1) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-1))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-1) (b b-0) (c c) (hash hash-2))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (4 0)) ((3 0) (0 0))
-    ((3 2) (2 0)) ((3 2) (5 0)) ((3 2) (6 0)) ((3 4) (1 0))
-    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (4 0)))
-  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
-    (privk hash-0) (privk hash-1) (privk hash-2))
-  (uniq-orig nc nb nb-0)
-  (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
-    (enc nc nb-0 m price (pubk c)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum-1 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
-            (privk b-0)) (enc nc nb-1 (pubk c))))))
   (label 120)
   (parent 98)
-  (seen 79)
-  (unrealized (0 0) (0 2) (1 0) (4 0))
-  (comment "1 in cohort - 0 not yet seen"))
+  (unrealized (0 0) (0 2))
+  (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton sorted_epmo_acctnum
   (vars (price acctnum goods text) (nc nb nb-0 nb-1 data)
@@ -8051,6 +8088,834 @@
   (comment "empty cohort"))
 
 (defskeleton sorted_epmo_acctnum
+  (vars (price acctnum goods price-0 text) (nc nb nb-0 nm data)
+    (m c hash b hash-0 hash-1 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum) (goods goods) (price price)
+    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-1))
+  (defstrand merchant 2 (goods goods) (price price-0) (nc nc) (nm nm)
+    (c c) (m m))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (6 0))
+    ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0)) ((4 1) (3 3))
+    ((5 1) (4 0)) ((6 1) (0 0)))
+  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
+    (privk hash-1))
+  (uniq-orig nc nb nb-0 nm)
+  (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
+    (enc nc nm m price-0 (pubk c)) (enc c nc goods (pubk m)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum price (pubk b)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nm m price-0 (pubk c)))))
+  (label 127)
+  (parent 107)
+  (unrealized (0 2))
+  (dead)
+  (comment "empty cohort"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum goods-0 text) (nc nb nb-0 nb-1 data)
+    (m c hash b hash-0 hash-1 hash-2 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum) (goods goods-0) (price price)
+    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-1))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-1) (b b) (c c) (hash hash-2))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (0 0))
+    ((3 2) (2 0)) ((3 2) (5 0)) ((3 2) (6 0)) ((3 4) (1 0))
+    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0)))
+  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
+    (privk hash-1) (privk hash-2))
+  (uniq-orig nc nb nb-0)
+  (operation nonce-test (contracted (b-0 b) (acctnum-0 acctnum)) nc
+    (1 0) (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+    (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
+    (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
+    (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
+    (enc c nc nb-0 acctnum price (pubk b)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum price (pubk b)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
+            (privk b)) (enc nc nb-1 (pubk c))))))
+  (label 128)
+  (parent 108)
+  (unrealized (0 0) (0 2))
+  (comment "2 in cohort - 2 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum acctnum-0 goods-0 text)
+    (nc nb nb-0 nb-1 nb-2 data)
+    (b m c hash b-0 hash-0 hash-1 hash-2 hash-3 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
+    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
+    (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-1))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-1) (b b-0) (c c) (hash hash-2))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-2) (b b-0) (c c) (hash hash-3))
+  (precedes ((0 1) (3 1)) ((0 1) (7 0)) ((1 1) (0 2)) ((2 1) (1 0))
+    ((3 0) (0 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 2) (6 0))
+    ((3 4) (1 0)) ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0))
+    ((7 1) (1 0)))
+  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
+    (privk hash-0) (privk hash-1) (privk hash-2) (privk hash-3))
+  (uniq-orig nc nb nb-0)
+  (operation nonce-test (added-strand bank 2) nc (1 0)
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+    (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
+    (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
+    (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
+    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
+            (privk b-0)) (enc nc nb-1 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-2 nb-0 price (pubk hash-3))
+            (privk b-0)) (enc nc nb-2 (pubk c))))))
+  (label 129)
+  (parent 108)
+  (seen 108)
+  (unrealized (0 0) (0 2) (1 0) (7 0))
+  (comment "1 in cohort - 0 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum acctnum-0 goods-0 price-0 text)
+    (nc nb nb-0 nb-1 nm data)
+    (b m c hash b-0 hash-0 hash-1 hash-2 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
+    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
+    (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-1))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-1) (b b-0) (c c) (hash hash-2))
+  (defstrand merchant 2 (goods goods-0) (price price-0) (nc nc) (nm nm)
+    (c c) (m m))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (0 0))
+    ((3 0) (7 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 2) (6 0))
+    ((3 4) (1 0)) ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0))
+    ((7 1) (1 0)))
+  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
+    (privk hash-0) (privk hash-1) (privk hash-2))
+  (uniq-orig nc nb nb-0 nm)
+  (operation nonce-test (added-strand merchant 2) nc (1 0)
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+    (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
+    (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
+    (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
+    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
+            (privk b-0)) (enc nc nb-1 (pubk c)))))
+    ((recv (enc c nc goods-0 (pubk m)))
+      (send (enc nc nm m price-0 (pubk c)))))
+  (label 130)
+  (parent 108)
+  (unrealized (0 0) (0 2) (1 0))
+  (comment "2 in cohort - 2 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (price acctnum goods price-0 text) (nc nb nb-0 nm data)
+    (m c hash b hash-0 hash-1 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum) (goods goods) (price price)
+    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-1))
+  (defstrand merchant 2 (goods goods) (price price-0) (nc nc) (nm nm)
+    (c c) (m m))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (0 0))
+    ((3 0) (6 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0))
+    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0)))
+  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
+    (privk hash-1))
+  (uniq-orig nc nb nb-0 nm)
+  (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
+    (enc c nc goods (pubk m)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum price (pubk b)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nm m price-0 (pubk c)))))
+  (label 131)
+  (parent 109)
+  (unrealized (0 2))
+  (dead)
+  (comment "empty cohort"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum goods-0 price-0 price-1 text)
+    (nc nb nb-0 nm nm-0 data) (m c hash b hash-0 hash-1 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum) (goods goods-0) (price price)
+    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-1))
+  (defstrand merchant 2 (goods goods-0) (price price-0) (nc nc) (nm nm)
+    (c c) (m m))
+  (defstrand merchant 2 (goods goods-0) (price price-1) (nc nc)
+    (nm nm-0) (c c) (m m))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (6 0))
+    ((3 0) (7 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0))
+    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0)) ((7 1) (0 0)))
+  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
+    (privk hash-1))
+  (uniq-orig nc nb nb-0 nm nm-0)
+  (operation nonce-test (added-strand merchant 2) nc (0 0)
+    (enc c nc goods-0 (pubk m)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum price (pubk b)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc goods-0 (pubk m)))
+      (send (enc nc nm m price-0 (pubk c))))
+    ((recv (enc c nc goods-0 (pubk m)))
+      (send (enc nc nm-0 m price-1 (pubk c)))))
+  (label 132)
+  (parent 109)
+  (unrealized (0 0) (0 2))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (price acctnum goods text) (nc nb nb-0 data)
+    (m c hash b hash-0 hash-1 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum) (goods goods) (price price)
+    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-1))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (4 0)) ((3 0) (0 0))
+    ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0)) ((4 1) (3 3))
+    ((5 1) (4 0)))
+  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
+    (privk hash-1))
+  (uniq-orig nc nb nb-0)
+  (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
+    (enc c nc goods (pubk m)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum price (pubk b)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b)) (enc nc nb-0 (pubk c))))))
+  (label 133)
+  (parent 111)
+  (unrealized (0 2))
+  (dead)
+  (comment "empty cohort"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum goods-0 price-0 text) (nc nb nb-0 nm data)
+    (m c hash b hash-0 hash-1 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum) (goods goods-0) (price price)
+    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-1))
+  (defstrand merchant 2 (goods goods-0) (price price-0) (nc nc) (nm nm)
+    (c c) (m m))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (4 0)) ((3 0) (6 0))
+    ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0)) ((4 1) (3 3))
+    ((5 1) (4 0)) ((6 1) (0 0)))
+  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
+    (privk hash-1))
+  (uniq-orig nc nb nb-0 nm)
+  (operation nonce-test (added-strand merchant 2) nc (0 0)
+    (enc c nc goods-0 (pubk m)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum price (pubk b)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc goods-0 (pubk m)))
+      (send (enc nc nm m price-0 (pubk c)))))
+  (label 134)
+  (parent 111)
+  (unrealized (0 0) (0 2))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum acctnum-0 goods-0 text)
+    (nc nb nb-0 nb-1 data) (b m c hash b-0 hash-0 hash-1 hash-2 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
+    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
+    (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-1))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-1) (b b-0) (c c) (hash hash-2))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (4 0)) ((3 0) (0 0))
+    ((3 2) (2 0)) ((3 2) (5 0)) ((3 2) (6 0)) ((3 4) (1 0))
+    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0)))
+  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
+    (privk hash-0) (privk hash-1) (privk hash-2))
+  (uniq-orig nc nb nb-0)
+  (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
+    (enc nc nb-0 m price (pubk c)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
+            (privk b-0)) (enc nc nb-1 (pubk c))))))
+  (label 135)
+  (parent 112)
+  (unrealized (0 0) (0 2) (1 0))
+  (comment "3 in cohort - 3 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum goods-0 price-0 text) (nc nb nb-0 nm data)
+    (m c hash b hash-0 hash-1 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum) (goods goods-0) (price price)
+    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-1))
+  (defstrand merchant 2 (goods goods-0) (price price-0) (nc nc) (nm nm)
+    (c c) (m m))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (4 0)) ((3 0) (0 0))
+    ((3 0) (6 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0))
+    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0)))
+  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
+    (privk hash-1))
+  (uniq-orig nc nb nb-0 nm)
+  (operation nonce-test (contracted (b-0 b) (acctnum-0 acctnum)) nc
+    (1 0) (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
+    (enc nc nm m price-0 (pubk c)) (enc c nc goods-0 (pubk m))
+    (enc c nc nb-0 acctnum price (pubk b)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum price (pubk b)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc goods-0 (pubk m)))
+      (send (enc nc nm m price-0 (pubk c)))))
+  (label 136)
+  (parent 113)
+  (seen 134)
+  (unrealized (0 0) (0 2))
+  (comment "3 in cohort - 2 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum acctnum-0 goods-0 price-0 text)
+    (nc nb nb-0 nm nb-1 data)
+    (b m c hash b-0 hash-0 hash-1 hash-2 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
+    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
+    (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b-0) (c c) (hash hash-1))
+  (defstrand merchant 2 (goods goods-0) (price price-0) (nc nc) (nm nm)
+    (c c) (m m))
+  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
+    (nb nb-1) (b b-0) (c c) (hash hash-2))
+  (precedes ((0 1) (3 1)) ((0 1) (7 0)) ((1 1) (0 2)) ((2 1) (4 0))
+    ((3 0) (0 0)) ((3 0) (6 0)) ((3 2) (2 0)) ((3 2) (5 0))
+    ((3 4) (1 0)) ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0))
+    ((7 1) (1 0)))
+  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
+    (privk hash-0) (privk hash-1) (privk hash-2))
+  (uniq-orig nc nb nb-0 nm)
+  (operation nonce-test (added-strand bank 2) nc (1 0)
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
+    (enc nc nm m price-0 (pubk c)) (enc c nc goods-0 (pubk m))
+    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
+            (privk b-0)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc goods-0 (pubk m)))
+      (send (enc nc nm m price-0 (pubk c))))
+    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
+            (privk b-0)) (enc nc nb-1 (pubk c))))))
+  (label 137)
+  (parent 113)
+  (seen 157)
+  (unrealized (0 0) (0 2) (1 0) (7 0))
+  (comment "1 in cohort - 0 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
   (vars (price acctnum goods text) (nc nb nb-0 nb-1 nb-2 data)
     (m c hash b hash-0 hash-1 hash-2 name))
   (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
@@ -8117,8 +8982,8 @@
         (cat
           (enc (enc "hash" c nc nb-2 nb-0 price (pubk hash-2))
             (privk b)) (enc nc nb-2 (pubk c))))))
-  (label 127)
-  (parent 107)
+  (label 138)
+  (parent 116)
   (unrealized (0 2))
   (dead)
   (comment "empty cohort"))
@@ -8195,8 +9060,8 @@
             (privk b)) (enc nc nb-2 (pubk c)))))
     ((recv (enc c nc goods-0 (pubk m)))
       (send (enc nc nm m price-0 (pubk c)))))
-  (label 128)
-  (parent 107)
+  (label 139)
+  (parent 116)
   (unrealized (0 0) (0 2))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -8278,9 +9143,9 @@
             (privk b)) (enc nc nb-2 (pubk c)))))
     ((recv (enc c nc goods-0 (pubk m)))
       (send (enc nc nm m price-0 (pubk c)))))
-  (label 129)
-  (parent 109)
-  (seen 128)
+  (label 140)
+  (parent 118)
+  (seen 139)
   (unrealized (0 0) (0 2))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -8371,9 +9236,9 @@
         (cat
           (enc (enc "hash" c nc nb-3 nb-0 price (pubk hash-3))
             (privk b-0)) (enc nc nb-3 (pubk c))))))
-  (label 130)
-  (parent 109)
-  (seen 109)
+  (label 141)
+  (parent 118)
+  (seen 118)
   (unrealized (0 0) (0 2) (1 0) (8 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -8445,839 +9310,11 @@
       (send (enc nc nm m price-0 (pubk c))))
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm-0 m price-1 (pubk c)))))
-  (label 131)
-  (parent 111)
-  (unrealized (0 2))
-  (dead)
-  (comment "empty cohort"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (price acctnum goods price-0 text) (nc nb nb-0 nm data)
-    (m c hash b hash-0 hash-1 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum) (goods goods) (price price)
-    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-1))
-  (defstrand merchant 2 (goods goods) (price price-0) (nc nc) (nm nm)
-    (c c) (m m))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (6 0))
-    ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0)) ((4 1) (3 3))
-    ((5 1) (4 0)) ((6 1) (0 0)))
-  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
-    (privk hash-1))
-  (uniq-orig nc nb nb-0 nm)
-  (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
-    (enc nc nm m price-0 (pubk c)) (enc c nc goods (pubk m)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum price (pubk b)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nm m price-0 (pubk c)))))
-  (label 132)
-  (parent 113)
-  (unrealized (0 2))
-  (dead)
-  (comment "empty cohort"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum goods-0 text) (nc nb nb-0 nb-1 data)
-    (m c hash b hash-0 hash-1 hash-2 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum) (goods goods-0) (price price)
-    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-1))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-1) (b b) (c c) (hash hash-2))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (0 0))
-    ((3 2) (2 0)) ((3 2) (5 0)) ((3 2) (6 0)) ((3 4) (1 0))
-    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0)))
-  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
-    (privk hash-1) (privk hash-2))
-  (uniq-orig nc nb nb-0)
-  (operation nonce-test (contracted (b-0 b) (acctnum-0 acctnum)) nc
-    (1 0) (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-    (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
-    (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
-    (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
-    (enc c nc nb-0 acctnum price (pubk b)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum price (pubk b)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
-            (privk b)) (enc nc nb-1 (pubk c))))))
-  (label 133)
-  (parent 114)
-  (unrealized (0 0) (0 2))
-  (comment "2 in cohort - 2 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum acctnum-0 goods-0 text)
-    (nc nb nb-0 nb-1 nb-2 data)
-    (b m c hash b-0 hash-0 hash-1 hash-2 hash-3 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
-    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
-    (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-1))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-1) (b b-0) (c c) (hash hash-2))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-2) (b b-0) (c c) (hash hash-3))
-  (precedes ((0 1) (3 1)) ((0 1) (7 0)) ((1 1) (0 2)) ((2 1) (1 0))
-    ((3 0) (0 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 2) (6 0))
-    ((3 4) (1 0)) ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0))
-    ((7 1) (1 0)))
-  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
-    (privk hash-0) (privk hash-1) (privk hash-2) (privk hash-3))
-  (uniq-orig nc nb nb-0)
-  (operation nonce-test (added-strand bank 2) nc (1 0)
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-    (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
-    (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
-    (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
-    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
-            (privk b-0)) (enc nc nb-1 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-2 nb-0 price (pubk hash-3))
-            (privk b-0)) (enc nc nb-2 (pubk c))))))
-  (label 134)
-  (parent 114)
-  (seen 114)
-  (unrealized (0 0) (0 2) (1 0) (7 0))
-  (comment "1 in cohort - 0 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum acctnum-0 goods-0 price-0 text)
-    (nc nb nb-0 nb-1 nm data)
-    (b m c hash b-0 hash-0 hash-1 hash-2 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
-    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
-    (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-1))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-1) (b b-0) (c c) (hash hash-2))
-  (defstrand merchant 2 (goods goods-0) (price price-0) (nc nc) (nm nm)
-    (c c) (m m))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (0 0))
-    ((3 0) (7 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 2) (6 0))
-    ((3 4) (1 0)) ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0))
-    ((7 1) (1 0)))
-  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
-    (privk hash-0) (privk hash-1) (privk hash-2))
-  (uniq-orig nc nb nb-0 nm)
-  (operation nonce-test (added-strand merchant 2) nc (1 0)
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-    (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
-    (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
-    (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
-    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
-            (privk b-0)) (enc nc nb-1 (pubk c)))))
-    ((recv (enc c nc goods-0 (pubk m)))
-      (send (enc nc nm m price-0 (pubk c)))))
-  (label 135)
-  (parent 114)
-  (unrealized (0 0) (0 2) (1 0))
-  (comment "2 in cohort - 2 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (price acctnum goods price-0 text) (nc nb nb-0 nm data)
-    (m c hash b hash-0 hash-1 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum) (goods goods) (price price)
-    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-1))
-  (defstrand merchant 2 (goods goods) (price price-0) (nc nc) (nm nm)
-    (c c) (m m))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (0 0))
-    ((3 0) (6 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0))
-    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0)))
-  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
-    (privk hash-1))
-  (uniq-orig nc nb nb-0 nm)
-  (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
-    (enc c nc goods (pubk m)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum price (pubk b)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nm m price-0 (pubk c)))))
-  (label 136)
-  (parent 115)
-  (unrealized (0 2))
-  (dead)
-  (comment "empty cohort"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum goods-0 price-0 price-1 text)
-    (nc nb nb-0 nm nm-0 data) (m c hash b hash-0 hash-1 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum) (goods goods-0) (price price)
-    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-1))
-  (defstrand merchant 2 (goods goods-0) (price price-0) (nc nc) (nm nm)
-    (c c) (m m))
-  (defstrand merchant 2 (goods goods-0) (price price-1) (nc nc)
-    (nm nm-0) (c c) (m m))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (6 0))
-    ((3 0) (7 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0))
-    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0)) ((7 1) (0 0)))
-  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
-    (privk hash-1))
-  (uniq-orig nc nb nb-0 nm nm-0)
-  (operation nonce-test (added-strand merchant 2) nc (0 0)
-    (enc c nc goods-0 (pubk m)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum price (pubk b)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc goods-0 (pubk m)))
-      (send (enc nc nm m price-0 (pubk c))))
-    ((recv (enc c nc goods-0 (pubk m)))
-      (send (enc nc nm-0 m price-1 (pubk c)))))
-  (label 137)
-  (parent 115)
-  (unrealized (0 0) (0 2))
-  (comment "1 in cohort - 1 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (price acctnum goods text) (nc nb nb-0 data)
-    (m c hash b hash-0 hash-1 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum) (goods goods) (price price)
-    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-1))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (4 0)) ((3 0) (0 0))
-    ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0)) ((4 1) (3 3))
-    ((5 1) (4 0)))
-  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
-    (privk hash-1))
-  (uniq-orig nc nb nb-0)
-  (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
-    (enc c nc goods (pubk m)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum price (pubk b)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b)) (enc nc nb-0 (pubk c))))))
-  (label 138)
-  (parent 117)
-  (unrealized (0 2))
-  (dead)
-  (comment "empty cohort"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum goods-0 price-0 text) (nc nb nb-0 nm data)
-    (m c hash b hash-0 hash-1 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum) (goods goods-0) (price price)
-    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-1))
-  (defstrand merchant 2 (goods goods-0) (price price-0) (nc nc) (nm nm)
-    (c c) (m m))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (4 0)) ((3 0) (6 0))
-    ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0)) ((4 1) (3 3))
-    ((5 1) (4 0)) ((6 1) (0 0)))
-  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
-    (privk hash-1))
-  (uniq-orig nc nb nb-0 nm)
-  (operation nonce-test (added-strand merchant 2) nc (0 0)
-    (enc c nc goods-0 (pubk m)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum price (pubk b)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc goods-0 (pubk m)))
-      (send (enc nc nm m price-0 (pubk c)))))
-  (label 139)
-  (parent 117)
-  (unrealized (0 0) (0 2))
-  (comment "1 in cohort - 1 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum acctnum-0 goods-0 text)
-    (nc nb nb-0 nb-1 data) (b m c hash b-0 hash-0 hash-1 hash-2 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
-    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
-    (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-1))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-1) (b b-0) (c c) (hash hash-2))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (4 0)) ((3 0) (0 0))
-    ((3 2) (2 0)) ((3 2) (5 0)) ((3 2) (6 0)) ((3 4) (1 0))
-    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0)))
-  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
-    (privk hash-0) (privk hash-1) (privk hash-2))
-  (uniq-orig nc nb nb-0)
-  (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
-    (enc nc nb-0 m price (pubk c)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
-            (privk b-0)) (enc nc nb-1 (pubk c))))))
-  (label 140)
-  (parent 118)
-  (unrealized (0 0) (0 2) (1 0))
-  (comment "3 in cohort - 3 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum goods-0 price-0 text) (nc nb nb-0 nm data)
-    (m c hash b hash-0 hash-1 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum) (goods goods-0) (price price)
-    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-1))
-  (defstrand merchant 2 (goods goods-0) (price price-0) (nc nc) (nm nm)
-    (c c) (m m))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (4 0)) ((3 0) (0 0))
-    ((3 0) (6 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 4) (1 0))
-    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0)))
-  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
-    (privk hash-1))
-  (uniq-orig nc nb nb-0 nm)
-  (operation nonce-test (contracted (b-0 b) (acctnum-0 acctnum)) nc
-    (1 0) (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
-    (enc nc nm m price-0 (pubk c)) (enc c nc goods-0 (pubk m))
-    (enc c nc nb-0 acctnum price (pubk b)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum price (pubk b)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc goods-0 (pubk m)))
-      (send (enc nc nm m price-0 (pubk c)))))
-  (label 141)
-  (parent 119)
-  (seen 139)
-  (unrealized (0 0) (0 2))
-  (comment "3 in cohort - 2 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum acctnum-0 goods-0 price-0 text)
-    (nc nb nb-0 nm nb-1 data)
-    (b m c hash b-0 hash-0 hash-1 hash-2 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum-0) (goods goods-0)
-    (price price) (nc nc) (nm nb-0) (nb nb-0) (b b-0) (c c) (m m)
-    (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b-0) (c c) (hash hash-1))
-  (defstrand merchant 2 (goods goods-0) (price price-0) (nc nc) (nm nm)
-    (c c) (m m))
-  (defstrand bank 2 (acctnum acctnum-0) (price price) (nc nc) (nm nb-0)
-    (nb nb-1) (b b-0) (c c) (hash hash-2))
-  (precedes ((0 1) (3 1)) ((0 1) (7 0)) ((1 1) (0 2)) ((2 1) (4 0))
-    ((3 0) (0 0)) ((3 0) (6 0)) ((3 2) (2 0)) ((3 2) (5 0))
-    ((3 4) (1 0)) ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0))
-    ((7 1) (1 0)))
-  (non-orig (privk b) (privk m) (privk c) (privk hash) (privk b-0)
-    (privk hash-0) (privk hash-1) (privk hash-2))
-  (uniq-orig nc nb nb-0 nm)
-  (operation nonce-test (added-strand bank 2) nc (1 0)
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-    (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-    (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
-    (enc nc nm m price-0 (pubk c)) (enc c nc goods-0 (pubk m))
-    (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
-            (privk b-0)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc goods-0 (pubk m)))
-      (send (enc nc nm m price-0 (pubk c))))
-    ((recv (enc c nc nb-0 acctnum-0 price (pubk b-0)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
-            (privk b-0)) (enc nc nb-1 (pubk c))))))
   (label 142)
-  (parent 119)
-  (seen 160)
-  (unrealized (0 0) (0 2) (1 0) (7 0))
-  (comment "1 in cohort - 0 not yet seen"))
+  (parent 120)
+  (unrealized (0 2))
+  (dead)
+  (comment "empty cohort"))
 
 (defskeleton sorted_epmo_acctnum
   (vars (price acctnum goods price-0 text) (nc nb nb-0 nb-1 nm data)
@@ -9742,245 +9779,6 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton sorted_epmo_acctnum
-  (vars (price acctnum goods price-0 text)
-    (nc nb nb-0 nb-1 nb-2 nm data)
-    (m c hash b hash-0 hash-1 hash-2 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum) (goods goods) (price price)
-    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-1) (b b) (c c) (hash hash-1))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-2) (b b) (c c) (hash hash-2))
-  (defstrand merchant 2 (goods goods) (price price-0) (nc nc) (nm nm)
-    (c c) (m m))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (7 0))
-    ((3 2) (2 0)) ((3 2) (5 0)) ((3 2) (6 0)) ((3 4) (1 0))
-    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0)) ((7 1) (0 0)))
-  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
-    (privk hash-1) (privk hash-2))
-  (uniq-orig nc nb nb-0 nm)
-  (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
-    (enc nc nm m price-0 (pubk c)) (enc c nc goods (pubk m)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum price (pubk b)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-1))
-            (privk b)) (enc nc nb-1 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-2 nb-0 price (pubk hash-2))
-            (privk b)) (enc nc nb-2 (pubk c)))))
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nm m price-0 (pubk c)))))
-  (label 149)
-  (parent 128)
-  (unrealized (0 2))
-  (dead)
-  (comment "empty cohort"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (price acctnum goods price-0 text)
-    (nc nb nb-0 nb-1 nb-2 nm data)
-    (m c hash b hash-0 hash-1 hash-2 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum) (goods goods) (price price)
-    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-1) (b b) (c c) (hash hash-1))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-2) (b b) (c c) (hash hash-2))
-  (defstrand merchant 2 (goods goods) (price price-0) (nc nc) (nm nm)
-    (c c) (m m))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (0 0))
-    ((3 0) (7 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 2) (6 0))
-    ((3 4) (1 0)) ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0))
-    ((7 1) (1 0)))
-  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
-    (privk hash-1) (privk hash-2))
-  (uniq-orig nc nb nb-0 nm)
-  (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
-    (enc c nc goods (pubk m)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum price (pubk b)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-1))
-            (privk b)) (enc nc nb-1 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-2 nb-0 price (pubk hash-2))
-            (privk b)) (enc nc nb-2 (pubk c)))))
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nm m price-0 (pubk c)))))
-  (label 150)
-  (parent 129)
-  (unrealized (0 2))
-  (dead)
-  (comment "empty cohort"))
-
-(defskeleton sorted_epmo_acctnum
-  (vars (goods price acctnum goods-0 price-0 price-1 text)
-    (nc nb nb-0 nb-1 nb-2 nm nm-0 data)
-    (m c hash b hash-0 hash-1 hash-2 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum) (goods goods-0) (price price)
-    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-1) (b b) (c c) (hash hash-1))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-2) (b b) (c c) (hash hash-2))
-  (defstrand merchant 2 (goods goods-0) (price price-0) (nc nc) (nm nm)
-    (c c) (m m))
-  (defstrand merchant 2 (goods goods-0) (price price-1) (nc nc)
-    (nm nm-0) (c c) (m m))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (7 0))
-    ((3 0) (8 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 2) (6 0))
-    ((3 4) (1 0)) ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0))
-    ((7 1) (1 0)) ((8 1) (0 0)))
-  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
-    (privk hash-1) (privk hash-2))
-  (uniq-orig nc nb nb-0 nm nm-0)
-  (operation nonce-test (added-strand merchant 2) nc (0 0)
-    (enc c nc goods-0 (pubk m)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods-0 (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum price (pubk b)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-1))
-            (privk b)) (enc nc nb-1 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-2 nb-0 price (pubk hash-2))
-            (privk b)) (enc nc nb-2 (pubk c)))))
-    ((recv (enc c nc goods-0 (pubk m)))
-      (send (enc nc nm m price-0 (pubk c))))
-    ((recv (enc c nc goods-0 (pubk m)))
-      (send (enc nc nm-0 m price-1 (pubk c)))))
-  (label 151)
-  (parent 129)
-  (unrealized (0 0) (0 2))
-  (comment "1 in cohort - 1 not yet seen"))
-
-(defskeleton sorted_epmo_acctnum
   (vars (price acctnum goods text) (nc nb nb-0 nb-1 data)
     (m c hash b hash-0 hash-1 hash-2 name))
   (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
@@ -10047,8 +9845,8 @@
         (cat
           (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
             (privk b)) (enc nc nb-1 (pubk c))))))
-  (label 152)
-  (parent 133)
+  (label 149)
+  (parent 128)
   (unrealized (0 2))
   (dead)
   (comment "empty cohort"))
@@ -10124,8 +9922,8 @@
             (privk b)) (enc nc nb-1 (pubk c)))))
     ((recv (enc c nc goods-0 (pubk m)))
       (send (enc nc nm m price-0 (pubk c)))))
-  (label 153)
-  (parent 133)
+  (label 150)
+  (parent 128)
   (unrealized (0 0) (0 2))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -10206,9 +10004,9 @@
             (privk b)) (enc nc nb-1 (pubk c)))))
     ((recv (enc c nc goods-0 (pubk m)))
       (send (enc nc nm m price-0 (pubk c)))))
-  (label 154)
-  (parent 135)
-  (seen 153)
+  (label 151)
+  (parent 130)
+  (seen 150)
   (unrealized (0 0) (0 2))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -10299,9 +10097,9 @@
         (cat
           (enc (enc "hash" c nc nb-2 nb-0 price (pubk hash-3))
             (privk b-0)) (enc nc nb-2 (pubk c))))))
-  (label 155)
-  (parent 135)
-  (seen 135)
+  (label 152)
+  (parent 130)
+  (seen 130)
   (unrealized (0 0) (0 2) (1 0) (8 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -10373,8 +10171,8 @@
       (send (enc nc nm m price-0 (pubk c))))
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm-0 m price-1 (pubk c)))))
-  (label 156)
-  (parent 137)
+  (label 153)
+  (parent 132)
   (unrealized (0 2))
   (dead)
   (comment "empty cohort"))
@@ -10443,8 +10241,8 @@
             (privk b)) (enc nc nb-0 (pubk c)))))
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price-0 (pubk c)))))
-  (label 157)
-  (parent 139)
+  (label 154)
+  (parent 134)
   (unrealized (0 2))
   (dead)
   (comment "empty cohort"))
@@ -10521,8 +10319,8 @@
         (cat
           (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
             (privk b)) (enc nc nb-1 (pubk c))))))
-  (label 158)
-  (parent 140)
+  (label 155)
+  (parent 135)
   (unrealized (0 0) (0 2))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -10608,9 +10406,9 @@
         (cat
           (enc (enc "hash" c nc nb-2 nb-0 price (pubk hash-3))
             (privk b-0)) (enc nc nb-2 (pubk c))))))
-  (label 159)
-  (parent 140)
-  (seen 140)
+  (label 156)
+  (parent 135)
+  (seen 135)
   (unrealized (0 0) (0 2) (1 0) (7 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -10693,8 +10491,8 @@
             (privk b-0)) (enc nc nb-1 (pubk c)))))
     ((recv (enc c nc goods-0 (pubk m)))
       (send (enc nc nm m price-0 (pubk c)))))
-  (label 160)
-  (parent 140)
+  (label 157)
+  (parent 135)
   (unrealized (0 0) (0 2) (1 0))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -10762,8 +10560,8 @@
             (privk b)) (enc nc nb-0 (pubk c)))))
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price-0 (pubk c)))))
-  (label 161)
-  (parent 141)
+  (label 158)
+  (parent 136)
   (unrealized (0 2))
   (dead)
   (comment "empty cohort"))
@@ -10836,8 +10634,247 @@
       (send (enc nc nm m price-0 (pubk c))))
     ((recv (enc c nc goods-0 (pubk m)))
       (send (enc nc nm-0 m price-1 (pubk c)))))
+  (label 159)
+  (parent 136)
+  (unrealized (0 0) (0 2))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (price acctnum goods price-0 text)
+    (nc nb nb-0 nb-1 nb-2 nm data)
+    (m c hash b hash-0 hash-1 hash-2 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum) (goods goods) (price price)
+    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-1) (b b) (c c) (hash hash-1))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-2) (b b) (c c) (hash hash-2))
+  (defstrand merchant 2 (goods goods) (price price-0) (nc nc) (nm nm)
+    (c c) (m m))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (7 0))
+    ((3 2) (2 0)) ((3 2) (5 0)) ((3 2) (6 0)) ((3 4) (1 0))
+    ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0)) ((7 1) (0 0)))
+  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
+    (privk hash-1) (privk hash-2))
+  (uniq-orig nc nb nb-0 nm)
+  (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
+    (enc nc nm m price-0 (pubk c)) (enc c nc goods (pubk m)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum price (pubk b)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-1))
+            (privk b)) (enc nc nb-1 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-2 nb-0 price (pubk hash-2))
+            (privk b)) (enc nc nb-2 (pubk c)))))
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nm m price-0 (pubk c)))))
+  (label 160)
+  (parent 139)
+  (unrealized (0 2))
+  (dead)
+  (comment "empty cohort"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (price acctnum goods price-0 text)
+    (nc nb nb-0 nb-1 nb-2 nm data)
+    (m c hash b hash-0 hash-1 hash-2 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum) (goods goods) (price price)
+    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-1) (b b) (c c) (hash hash-1))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-2) (b b) (c c) (hash hash-2))
+  (defstrand merchant 2 (goods goods) (price price-0) (nc nc) (nm nm)
+    (c c) (m m))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (0 0))
+    ((3 0) (7 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 2) (6 0))
+    ((3 4) (1 0)) ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0))
+    ((7 1) (1 0)))
+  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
+    (privk hash-1) (privk hash-2))
+  (uniq-orig nc nb nb-0 nm)
+  (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
+    (enc c nc goods (pubk m)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum price (pubk b)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-1))
+            (privk b)) (enc nc nb-1 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-2 nb-0 price (pubk hash-2))
+            (privk b)) (enc nc nb-2 (pubk c)))))
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nm m price-0 (pubk c)))))
+  (label 161)
+  (parent 140)
+  (unrealized (0 2))
+  (dead)
+  (comment "empty cohort"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (goods price acctnum goods-0 price-0 price-1 text)
+    (nc nb nb-0 nb-1 nb-2 nm nm-0 data)
+    (m c hash b hash-0 hash-1 hash-2 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum) (goods goods-0) (price price)
+    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-1) (b b) (c c) (hash hash-1))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-2) (b b) (c c) (hash hash-2))
+  (defstrand merchant 2 (goods goods-0) (price price-0) (nc nc) (nm nm)
+    (c c) (m m))
+  (defstrand merchant 2 (goods goods-0) (price price-1) (nc nc)
+    (nm nm-0) (c c) (m m))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (7 0))
+    ((3 0) (8 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 2) (6 0))
+    ((3 4) (1 0)) ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0))
+    ((7 1) (1 0)) ((8 1) (0 0)))
+  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
+    (privk hash-1) (privk hash-2))
+  (uniq-orig nc nb nb-0 nm nm-0)
+  (operation nonce-test (added-strand merchant 2) nc (0 0)
+    (enc c nc goods-0 (pubk m)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods-0 (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum price (pubk b)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-1))
+            (privk b)) (enc nc nb-1 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-2 nb-0 price (pubk hash-2))
+            (privk b)) (enc nc nb-2 (pubk c)))))
+    ((recv (enc c nc goods-0 (pubk m)))
+      (send (enc nc nm m price-0 (pubk c))))
+    ((recv (enc c nc goods-0 (pubk m)))
+      (send (enc nc nm-0 m price-1 (pubk c)))))
   (label 162)
-  (parent 141)
+  (parent 140)
   (unrealized (0 0) (0 2))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -11243,89 +11280,6 @@
   (comment "empty cohort"))
 
 (defskeleton sorted_epmo_acctnum
-  (vars (price acctnum goods price-0 price-1 text)
-    (nc nb nb-0 nb-1 nb-2 nm nm-0 data)
-    (m c hash b hash-0 hash-1 hash-2 name))
-  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (m m) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb) (b b) (c c) (hash hash))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand customer 5 (acctnum acctnum) (goods goods) (price price)
-    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-0) (b b) (c c) (hash hash-0))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-1) (b b) (c c) (hash hash-1))
-  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
-    (nb nb-2) (b b) (c c) (hash hash-2))
-  (defstrand merchant 2 (goods goods) (price price-0) (nc nc) (nm nm)
-    (c c) (m m))
-  (defstrand merchant 2 (goods goods) (price price-1) (nc nc) (nm nm-0)
-    (c c) (m m))
-  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (7 0))
-    ((3 0) (8 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 2) (6 0))
-    ((3 4) (1 0)) ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0))
-    ((7 1) (1 0)) ((8 1) (0 0)))
-  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
-    (privk hash-1) (privk hash-2))
-  (uniq-orig nc nb nb-0 nm nm-0)
-  (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
-    (enc nc nm-0 m price-1 (pubk c)) (enc c nc goods (pubk m)))
-  (traces
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nb-0 m price (pubk c)))
-      (recv
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          nb))
-      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
-          (enc nc nb (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((send (enc c nc goods (pubk m)))
-      (recv (enc nc nb-0 m price (pubk c)))
-      (send (enc c nc nb-0 acctnum price (pubk b)))
-      (recv
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c))))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) nb-0)))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
-            (privk b)) (enc nc nb-0 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-1))
-            (privk b)) (enc nc nb-1 (pubk c)))))
-    ((recv (enc c nc nb-0 acctnum price (pubk b)))
-      (send
-        (cat
-          (enc (enc "hash" c nc nb-2 nb-0 price (pubk hash-2))
-            (privk b)) (enc nc nb-2 (pubk c)))))
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nm m price-0 (pubk c))))
-    ((recv (enc c nc goods (pubk m)))
-      (send (enc nc nm-0 m price-1 (pubk c)))))
-  (label 168)
-  (parent 151)
-  (unrealized (0 2))
-  (dead)
-  (comment "empty cohort"))
-
-(defskeleton sorted_epmo_acctnum
   (vars (price acctnum goods price-0 text) (nc nb nb-0 nb-1 nm data)
     (m c hash b hash-0 hash-1 hash-2 name))
   (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
@@ -11396,8 +11350,8 @@
             (privk b)) (enc nc nb-1 (pubk c)))))
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price-0 (pubk c)))))
-  (label 169)
-  (parent 153)
+  (label 168)
+  (parent 150)
   (unrealized (0 2))
   (dead)
   (comment "empty cohort"))
@@ -11474,8 +11428,8 @@
             (privk b)) (enc nc nb-1 (pubk c)))))
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price-0 (pubk c)))))
-  (label 170)
-  (parent 154)
+  (label 169)
+  (parent 151)
   (unrealized (0 2))
   (dead)
   (comment "empty cohort"))
@@ -11557,8 +11511,8 @@
       (send (enc nc nm m price-0 (pubk c))))
     ((recv (enc c nc goods-0 (pubk m)))
       (send (enc nc nm-0 m price-1 (pubk c)))))
-  (label 171)
-  (parent 154)
+  (label 170)
+  (parent 151)
   (unrealized (0 0) (0 2))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -11629,8 +11583,8 @@
         (cat
           (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-2))
             (privk b)) (enc nc nb-1 (pubk c))))))
-  (label 172)
-  (parent 158)
+  (label 171)
+  (parent 155)
   (unrealized (0 2))
   (dead)
   (comment "empty cohort"))
@@ -11706,8 +11660,8 @@
             (privk b)) (enc nc nb-1 (pubk c)))))
     ((recv (enc c nc goods-0 (pubk m)))
       (send (enc nc nm m price-0 (pubk c)))))
-  (label 173)
-  (parent 158)
+  (label 172)
+  (parent 155)
   (unrealized (0 0) (0 2))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -11788,9 +11742,9 @@
             (privk b)) (enc nc nb-1 (pubk c)))))
     ((recv (enc c nc goods-0 (pubk m)))
       (send (enc nc nm m price-0 (pubk c)))))
-  (label 174)
-  (parent 160)
-  (seen 173)
+  (label 173)
+  (parent 157)
+  (seen 172)
   (unrealized (0 0) (0 2))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -11881,9 +11835,9 @@
         (cat
           (enc (enc "hash" c nc nb-2 nb-0 price (pubk hash-3))
             (privk b-0)) (enc nc nb-2 (pubk c))))))
-  (label 175)
-  (parent 160)
-  (seen 160)
+  (label 174)
+  (parent 157)
+  (seen 157)
   (unrealized (0 0) (0 2) (1 0) (8 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -11951,6 +11905,89 @@
         (cat
           (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
             (privk b)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nm m price-0 (pubk c))))
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nm-0 m price-1 (pubk c)))))
+  (label 175)
+  (parent 159)
+  (unrealized (0 2))
+  (dead)
+  (comment "empty cohort"))
+
+(defskeleton sorted_epmo_acctnum
+  (vars (price acctnum goods price-0 price-1 text)
+    (nc nb nb-0 nb-1 nb-2 nm nm-0 data)
+    (m c hash b hash-0 hash-1 hash-2 name))
+  (defstrand merchant 4 (goods goods) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (m m) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb) (b b) (c c) (hash hash))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand customer 5 (acctnum acctnum) (goods goods) (price price)
+    (nc nc) (nm nb-0) (nb nb-0) (b b) (c c) (m m) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-0) (b b) (c c) (hash hash-0))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-1) (b b) (c c) (hash hash-1))
+  (defstrand bank 2 (acctnum acctnum) (price price) (nc nc) (nm nb-0)
+    (nb nb-2) (b b) (c c) (hash hash-2))
+  (defstrand merchant 2 (goods goods) (price price-0) (nc nc) (nm nm)
+    (c c) (m m))
+  (defstrand merchant 2 (goods goods) (price price-1) (nc nc) (nm nm-0)
+    (c c) (m m))
+  (precedes ((0 1) (3 1)) ((1 1) (0 2)) ((2 1) (1 0)) ((3 0) (7 0))
+    ((3 0) (8 0)) ((3 2) (2 0)) ((3 2) (5 0)) ((3 2) (6 0))
+    ((3 4) (1 0)) ((4 1) (3 3)) ((5 1) (4 0)) ((6 1) (1 0))
+    ((7 1) (1 0)) ((8 1) (0 0)))
+  (non-orig (privk m) (privk c) (privk hash) (privk b) (privk hash-0)
+    (privk hash-1) (privk hash-2))
+  (uniq-orig nc nb nb-0 nm nm-0)
+  (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
+    (enc nc nm-0 m price-1 (pubk c)) (enc c nc goods (pubk m)))
+  (traces
+    ((recv (enc c nc goods (pubk m)))
+      (send (enc nc nb-0 m price (pubk c)))
+      (recv
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          nb))
+      (send (enc (enc "hash" b m nb nb-0 (pubk hash)) (privk m))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat (enc (enc "hash" c nc nb nb-0 price (pubk hash)) (privk b))
+          (enc nc nb (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((send (enc c nc goods (pubk m)))
+      (recv (enc nc nb-0 m price (pubk c)))
+      (send (enc c nc nb-0 acctnum price (pubk b)))
+      (recv
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c))))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) nb-0)))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
+            (privk b)) (enc nc nb-0 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-1 nb-0 price (pubk hash-1))
+            (privk b)) (enc nc nb-1 (pubk c)))))
+    ((recv (enc c nc nb-0 acctnum price (pubk b)))
+      (send
+        (cat
+          (enc (enc "hash" c nc nb-2 nb-0 price (pubk hash-2))
+            (privk b)) (enc nc nb-2 (pubk c)))))
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price-0 (pubk c))))
     ((recv (enc c nc goods (pubk m)))
@@ -12278,7 +12315,7 @@
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm-0 m price-1 (pubk c)))))
   (label 180)
-  (parent 171)
+  (parent 170)
   (unrealized (0 2))
   (dead)
   (comment "empty cohort"))
@@ -12355,7 +12392,7 @@
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price-0 (pubk c)))))
   (label 181)
-  (parent 173)
+  (parent 172)
   (unrealized (0 2))
   (dead)
   (comment "empty cohort"))
@@ -12433,7 +12470,7 @@
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price-0 (pubk c)))))
   (label 182)
-  (parent 174)
+  (parent 173)
   (unrealized (0 2))
   (dead)
   (comment "empty cohort"))
@@ -12516,7 +12553,7 @@
     ((recv (enc c nc goods-0 (pubk m)))
       (send (enc nc nm-0 m price-1 (pubk c)))))
   (label 183)
-  (parent 174)
+  (parent 173)
   (unrealized (0 0) (0 2))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -12761,7 +12798,44 @@
           (says c
             (exists ((acctnum2 text))
               (authtransfer c acctnum2 b price m nm)))))
-      (3 (and (reqtransfer m b price m nm) (doship m goods c))))))
+      (3 (and (reqtransfer m b price m nm) (doship m goods c)))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton sorted_epmo_acctnum
   (vars (acctnum price text) (nm nb nc data) (b m c hash name))

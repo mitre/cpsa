@@ -277,7 +277,44 @@
           (enc "abrq" a b t y (hash k) (privk "sign" a))))
       (send
         (enc "abcf" (enc "abrq" a b t y (hash k) (privk "sign" a))
-          (privk "sign" t))))))
+          (privk "sign" t)))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton wang
   (vars (r text) (m data) (b t a name) (k skey))
@@ -778,7 +815,44 @@
           (enc "abrq" a b t y (hash k) (privk "sign" a))))
       (send
         (enc "abcf" (enc "abrq" a b t y (hash k) (privk "sign" a))
-          (privk "sign" t))))))
+          (privk "sign" t)))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton wang
   (vars (r text) (m data) (b t a name) (k skey))
@@ -1179,7 +1253,44 @@
           (enc "abrq" a b t y (hash k) (privk "sign" a))))
       (send
         (enc "abcf" (enc "abrq" a b t y (hash k) (privk "sign" a))
-          (privk "sign" t))))))
+          (privk "sign" t)))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton wang
   (vars (r text) (m data) (b t a name) (k skey))
@@ -1567,7 +1678,44 @@
           (enc "abrq" a b t y (hash k) (privk "sign" a))))
       (send
         (enc "abcf" (enc "abrq" a b t y (hash k) (privk "sign" a))
-          (privk "sign" t))))))
+          (privk "sign" t)))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton wang
   (vars (r text) (m data) (b t a name) (k skey))
@@ -1961,7 +2109,44 @@
           (enc "abrq" a b t y (hash k) (privk "sign" a))))
       (send
         (enc "abcf" (enc "abrq" a b t y (hash k) (privk "sign" a))
-          (privk "sign" t))))))
+          (privk "sign" t)))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton wang
   (vars (r text) (m data) (b t a name) (k skey))
@@ -2367,7 +2552,44 @@
           (enc "abrq" a b t y (hash k) (privk "sign" a))))
       (send
         (enc "abcf" (enc "abrq" a b t y (hash k) (privk "sign" a))
-          (privk "sign" t))))))
+          (privk "sign" t)))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton wang
   (vars (r text) (m data) (a t b name) (k skey))
@@ -2702,7 +2924,44 @@
           (enc "abrq" a b t y (hash k) (privk "sign" a))))
       (send
         (enc "abcf" (enc "abrq" a b t y (hash k) (privk "sign" a))
-          (privk "sign" t))))))
+          (privk "sign" t)))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton wang
   (vars (r text) (m data) (a t b name) (k skey))
@@ -3075,7 +3334,44 @@
           (enc "abrq" a b t y (hash k) (privk "sign" a))))
       (send
         (enc "abcf" (enc "abrq" a b t y (hash k) (privk "sign" a))
-          (privk "sign" t))))))
+          (privk "sign" t)))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton wang
   (vars (e1 e2 x mesg) (a t b name))
@@ -3164,73 +3460,6 @@
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton wang
-  (vars (r text) (m data) (a t b name) (k skey))
-  (defstrand resp3 4 (e1 (enc m k))
-    (e2
-      (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
-        (pubk "encr" t))) (x (hash k)) (a a) (b b) (t t))
-  (defstrand init3 2 (r r) (m m) (a a) (b b) (t t) (k k))
-  (precedes ((1 0) (0 0)) ((1 1) (0 3)))
-  (non-orig (privk "sign" a))
-  (operation encryption-test (displaced 1 2 init3 2)
-    (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)) (0 3))
-  (traces
-    ((recv
-       (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
-         (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
-           (pubk "encr" t))
-         (enc "eootag" (hash a b t (hash (enc m k)) (hash k))
-           (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
-             (pubk "encr" t)) (privk "sign" a))))
-      (send
-        (cat (cat a b t (hash (enc m k)) (hash k))
-          (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
-            (pubk "encr" t))
-          (enc "eootag" (hash a b t (hash (enc m k)) (hash k))
-            (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
-              (pubk "encr" t)) (privk "sign" a))
-          (enc "eortag" (hash a b t (hash (enc m k)) (hash k))
-            (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
-              (pubk "encr" t)) (privk "sign" b))))
-      (send
-        (cat (cat a b t (hash (enc m k)) (hash k))
-          (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
-            (pubk "encr" t))
-          (enc "eootag" (hash a b t (hash (enc m k)) (hash k))
-            (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
-              (pubk "encr" t)) (privk "sign" a))
-          (enc "eortag" (hash a b t (hash (enc m k)) (hash k))
-            (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
-              (pubk "encr" t)) (privk "sign" b))
-          (enc "rcrq" (cat a b t (hash (enc m k)) (hash k))
-            (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
-              (pubk "encr" t)) (privk "sign" b))))
-      (recv
-        (enc "abcf"
-          (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a))
-          (privk "sign" t))))
-    ((send
-       (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
-         (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
-           (pubk "encr" t))
-         (enc "eootag" (hash a b t (hash (enc m k)) (hash k))
-           (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
-             (pubk "encr" t)) (privk "sign" a))))
-      (send
-        (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)))))
-  (label 26)
-  (parent 25)
-  (unrealized)
-  (shape)
-  (maps
-    ((0)
-      ((a a) (t t) (b b) (e1 (enc m k))
-        (e2
-          (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
-            (pubk "encr" t))) (x (hash k)))))
-  (origs))
-
-(defskeleton wang
   (vars (r r-0 text) (m data) (a t b name) (k skey))
   (defstrand resp3 4 (e1 (enc m k))
     (e2
@@ -3290,6 +3519,73 @@
            (pubk "encr" t))
          (enc "eootag" (hash a b t (hash (enc m k)) (hash k))
            (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r-0
+             (pubk "encr" t)) (privk "sign" a))))
+      (send
+        (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)))))
+  (label 26)
+  (parent 25)
+  (unrealized)
+  (shape)
+  (maps
+    ((0)
+      ((a a) (t t) (b b) (e1 (enc m k))
+        (e2
+          (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
+            (pubk "encr" t))) (x (hash k)))))
+  (origs))
+
+(defskeleton wang
+  (vars (r text) (m data) (a t b name) (k skey))
+  (defstrand resp3 4 (e1 (enc m k))
+    (e2
+      (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
+        (pubk "encr" t))) (x (hash k)) (a a) (b b) (t t))
+  (defstrand init3 2 (r r) (m m) (a a) (b b) (t t) (k k))
+  (precedes ((1 0) (0 0)) ((1 1) (0 3)))
+  (non-orig (privk "sign" a))
+  (operation encryption-test (displaced 1 2 init3 2)
+    (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)) (0 3))
+  (traces
+    ((recv
+       (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
+         (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
+           (pubk "encr" t))
+         (enc "eootag" (hash a b t (hash (enc m k)) (hash k))
+           (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
+             (pubk "encr" t)) (privk "sign" a))))
+      (send
+        (cat (cat a b t (hash (enc m k)) (hash k))
+          (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
+            (pubk "encr" t))
+          (enc "eootag" (hash a b t (hash (enc m k)) (hash k))
+            (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
+              (pubk "encr" t)) (privk "sign" a))
+          (enc "eortag" (hash a b t (hash (enc m k)) (hash k))
+            (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
+              (pubk "encr" t)) (privk "sign" b))))
+      (send
+        (cat (cat a b t (hash (enc m k)) (hash k))
+          (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
+            (pubk "encr" t))
+          (enc "eootag" (hash a b t (hash (enc m k)) (hash k))
+            (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
+              (pubk "encr" t)) (privk "sign" a))
+          (enc "eortag" (hash a b t (hash (enc m k)) (hash k))
+            (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
+              (pubk "encr" t)) (privk "sign" b))
+          (enc "rcrq" (cat a b t (hash (enc m k)) (hash k))
+            (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
+              (pubk "encr" t)) (privk "sign" b))))
+      (recv
+        (enc "abcf"
+          (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a))
+          (privk "sign" t))))
+    ((send
+       (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
+         (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
+           (pubk "encr" t))
+         (enc "eootag" (hash a b t (hash (enc m k)) (hash k))
+           (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
              (pubk "encr" t)) (privk "sign" a))))
       (send
         (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)))))
@@ -3730,7 +4026,44 @@
           (enc "abrq" a b t y (hash k) (privk "sign" a))))
       (send
         (enc "abcf" (enc "abrq" a b t y (hash k) (privk "sign" a))
-          (privk "sign" t))))))
+          (privk "sign" t)))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton wang
   (vars (y x mesg) (a b t name))
@@ -4142,7 +4475,44 @@
           (enc "abrq" a b t y (hash k) (privk "sign" a))))
       (send
         (enc "abcf" (enc "abrq" a b t y (hash k) (privk "sign" a))
-          (privk "sign" t))))))
+          (privk "sign" t)))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton wang
   (vars (y x mesg) (a b t name))
@@ -4511,7 +4881,44 @@
           (enc "abrq" a b t y (hash k) (privk "sign" a))))
       (send
         (enc "abcf" (enc "abrq" a b t y (hash k) (privk "sign" a))
-          (privk "sign" t))))))
+          (privk "sign" t)))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton wang
   (vars (y mesg) (r text) (a b t name) (k skey))
@@ -4588,53 +4995,6 @@
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton wang
-  (vars (r text) (m data) (a b t name) (k skey))
-  (defstrand ttp-rc2 3 (y (hash (enc m k))) (r r) (a a) (b b) (t t)
-    (k k))
-  (defstrand init3 2 (r r) (m m) (a a) (b b) (t t) (k k))
-  (precedes ((1 0) (0 0)) ((1 1) (0 1)))
-  (non-orig (privk "encr" t) (privk "sign" a))
-  (operation encryption-test (displaced 1 2 init3 2)
-    (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)) (0 1))
-  (traces
-    ((recv
-       (cat (cat a b t (hash (enc m k)) (hash k))
-         (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
-           (pubk "encr" t))
-         (enc "eootag" (hash a b t (hash (enc m k)) (hash k))
-           (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
-             (pubk "encr" t)) (privk "sign" a))
-         (enc "eortag" (hash a b t (hash (enc m k)) (hash k))
-           (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
-             (pubk "encr" t)) (privk "sign" b))
-         (enc "rcrq" (cat a b t (hash (enc m k)) (hash k))
-           (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
-             (pubk "encr" t)) (privk "sign" b))))
-      (recv
-        (cat "sync-rc-req"
-          (enc "abrq" a b t (hash (enc m k)) (hash k)
-            (privk "sign" a))))
-      (send
-        (enc "abcf"
-          (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a))
-          (privk "sign" t))))
-    ((send
-       (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
-         (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
-           (pubk "encr" t))
-         (enc "eootag" (hash a b t (hash (enc m k)) (hash k))
-           (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
-             (pubk "encr" t)) (privk "sign" a))))
-      (send
-        (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)))))
-  (label 39)
-  (parent 38)
-  (unrealized)
-  (shape)
-  (maps ((0) ((a a) (b b) (t t) (r r) (k k) (y (hash (enc m k))))))
-  (origs))
-
-(defskeleton wang
   (vars (r r-0 text) (m data) (a b t name) (k skey))
   (defstrand ttp-rc2 3 (y (hash (enc m k))) (r r) (a a) (b b) (t t)
     (k k))
@@ -4679,6 +5039,53 @@
            (pubk "encr" t))
          (enc "eootag" (hash a b t (hash (enc m k)) (hash k))
            (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r-0
+             (pubk "encr" t)) (privk "sign" a))))
+      (send
+        (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)))))
+  (label 39)
+  (parent 38)
+  (unrealized)
+  (shape)
+  (maps ((0) ((a a) (b b) (t t) (r r) (k k) (y (hash (enc m k))))))
+  (origs))
+
+(defskeleton wang
+  (vars (r text) (m data) (a b t name) (k skey))
+  (defstrand ttp-rc2 3 (y (hash (enc m k))) (r r) (a a) (b b) (t t)
+    (k k))
+  (defstrand init3 2 (r r) (m m) (a a) (b b) (t t) (k k))
+  (precedes ((1 0) (0 0)) ((1 1) (0 1)))
+  (non-orig (privk "encr" t) (privk "sign" a))
+  (operation encryption-test (displaced 1 2 init3 2)
+    (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)) (0 1))
+  (traces
+    ((recv
+       (cat (cat a b t (hash (enc m k)) (hash k))
+         (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
+           (pubk "encr" t))
+         (enc "eootag" (hash a b t (hash (enc m k)) (hash k))
+           (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
+             (pubk "encr" t)) (privk "sign" a))
+         (enc "eortag" (hash a b t (hash (enc m k)) (hash k))
+           (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
+             (pubk "encr" t)) (privk "sign" b))
+         (enc "rcrq" (cat a b t (hash (enc m k)) (hash k))
+           (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
+             (pubk "encr" t)) (privk "sign" b))))
+      (recv
+        (cat "sync-rc-req"
+          (enc "abrq" a b t (hash (enc m k)) (hash k)
+            (privk "sign" a))))
+      (send
+        (enc "abcf"
+          (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a))
+          (privk "sign" t))))
+    ((send
+       (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
+         (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
+           (pubk "encr" t))
+         (enc "eootag" (hash a b t (hash (enc m k)) (hash k))
+           (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
              (pubk "encr" t)) (privk "sign" a))))
       (send
         (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)))))
@@ -5074,7 +5481,44 @@
           (enc "abrq" a b t y (hash k) (privk "sign" a))))
       (send
         (enc "abcf" (enc "abrq" a b t y (hash k) (privk "sign" a))
-          (privk "sign" t))))))
+          (privk "sign" t)))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton wang
   (vars (y mesg) (r text) (a b t name) (k skey))
@@ -5151,53 +5595,6 @@
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton wang
-  (vars (r text) (m data) (a b t name) (k skey))
-  (defstrand ttp-cf2 3 (y (hash (enc m k))) (r r) (a a) (b b) (t t)
-    (k k))
-  (defstrand init3 2 (r r) (m m) (a a) (b b) (t t) (k k))
-  (precedes ((1 0) (0 0)) ((1 1) (0 1)))
-  (non-orig (privk "encr" t) (privk "sign" a))
-  (operation encryption-test (displaced 1 2 init3 2)
-    (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)) (0 1))
-  (traces
-    ((recv
-       (cat (cat a b t (hash (enc m k)) (hash k))
-         (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
-           (pubk "encr" t))
-         (enc "eootag" (hash a b t (hash (enc m k)) (hash k))
-           (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
-             (pubk "encr" t)) (privk "sign" a))
-         (enc "eortag" (hash a b t (hash (enc m k)) (hash k))
-           (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
-             (pubk "encr" t)) (privk "sign" b))
-         (enc "cfrq" (cat a b t (hash (enc m k)) (hash k))
-           (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
-             (pubk "encr" t)) (privk "sign" b))))
-      (recv
-        (cat "sync-cf-req"
-          (enc "abrq" a b t (hash (enc m k)) (hash k)
-            (privk "sign" a))))
-      (send
-        (enc "abcf"
-          (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a))
-          (privk "sign" t))))
-    ((send
-       (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
-         (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
-           (pubk "encr" t))
-         (enc "eootag" (hash a b t (hash (enc m k)) (hash k))
-           (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
-             (pubk "encr" t)) (privk "sign" a))))
-      (send
-        (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)))))
-  (label 45)
-  (parent 44)
-  (unrealized)
-  (shape)
-  (maps ((0) ((a a) (b b) (t t) (r r) (k k) (y (hash (enc m k))))))
-  (origs))
-
-(defskeleton wang
   (vars (r r-0 text) (m data) (a b t name) (k skey))
   (defstrand ttp-cf2 3 (y (hash (enc m k))) (r r) (a a) (b b) (t t)
     (k k))
@@ -5242,6 +5639,53 @@
            (pubk "encr" t))
          (enc "eootag" (hash a b t (hash (enc m k)) (hash k))
            (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r-0
+             (pubk "encr" t)) (privk "sign" a))))
+      (send
+        (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)))))
+  (label 45)
+  (parent 44)
+  (unrealized)
+  (shape)
+  (maps ((0) ((a a) (b b) (t t) (r r) (k k) (y (hash (enc m k))))))
+  (origs))
+
+(defskeleton wang
+  (vars (r text) (m data) (a b t name) (k skey))
+  (defstrand ttp-cf2 3 (y (hash (enc m k))) (r r) (a a) (b b) (t t)
+    (k k))
+  (defstrand init3 2 (r r) (m m) (a a) (b b) (t t) (k k))
+  (precedes ((1 0) (0 0)) ((1 1) (0 1)))
+  (non-orig (privk "encr" t) (privk "sign" a))
+  (operation encryption-test (displaced 1 2 init3 2)
+    (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)) (0 1))
+  (traces
+    ((recv
+       (cat (cat a b t (hash (enc m k)) (hash k))
+         (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
+           (pubk "encr" t))
+         (enc "eootag" (hash a b t (hash (enc m k)) (hash k))
+           (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
+             (pubk "encr" t)) (privk "sign" a))
+         (enc "eortag" (hash a b t (hash (enc m k)) (hash k))
+           (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
+             (pubk "encr" t)) (privk "sign" b))
+         (enc "cfrq" (cat a b t (hash (enc m k)) (hash k))
+           (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
+             (pubk "encr" t)) (privk "sign" b))))
+      (recv
+        (cat "sync-cf-req"
+          (enc "abrq" a b t (hash (enc m k)) (hash k)
+            (privk "sign" a))))
+      (send
+        (enc "abcf"
+          (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a))
+          (privk "sign" t))))
+    ((send
+       (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
+         (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
+           (pubk "encr" t))
+         (enc "eootag" (hash a b t (hash (enc m k)) (hash k))
+           (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
              (pubk "encr" t)) (privk "sign" a))))
       (send
         (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)))))

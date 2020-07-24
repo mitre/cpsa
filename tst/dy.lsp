@@ -1,4 +1,7 @@
-(herald "Example 1.3 from 1983 Dolev-Yao Paper")
+(herald "Example 1.3 from 1983 Dolev-Yao Paper"
+	(bound 12)
+	;; (limit 6000)
+	)
 
 ; This protocol, from Example 1.3 in 1983 Dolev-Yao paper, is known to
 ; be vulnerable to the following attack.
@@ -21,15 +24,18 @@
      (recv (enc (enc m (pubk b)) a (pubk b)))
      (send (enc (enc m (pubk a)) b (pubk a))))))
 
-(defskeleton dy
-  (vars (a b name) (m text))
-  (defstrand init 2 (a a) (b b) (m m))
-  (uniq-orig m)
-  (non-orig (privk a) (privk b)))
+
 
 (defskeleton dy
   (vars (a b name) (m text))
   (defstrand init 1 (a a) (b b) (m m))
   (deflistener m)
+  (uniq-orig m)
+  (non-orig (privk a) (privk b)))
+
+
+(defskeleton dy
+  (vars (a b name) (m text))
+  (defstrand init 2 (a a) (b b) (m m))
   (uniq-orig m)
   (non-orig (privk a) (privk b)))

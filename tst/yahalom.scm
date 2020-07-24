@@ -32,3 +32,9 @@
   (deflistener k)
   (non-orig (ltk b c) (ltk a c))
   (uniq-orig n-b))
+
+(defskeleton yahalom
+  (vars (a b c name) (n-a text))
+  (defstrand init 3 (n-a n-a) (a a) (b b) (c c))
+  (non-orig (ltk b c) (ltk a c))
+  (uniq-orig n-a))

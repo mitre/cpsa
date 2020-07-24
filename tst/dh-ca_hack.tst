@@ -1,7 +1,7 @@
 (herald dhca (algebra basic) (bound 12))
 
 (comment "CPSA 4.2.3")
-(comment "All input read from tst/dh-ca_hack.scm")
+(comment "All input read from dh-ca_hack.scm")
 (comment "Strand count bounded at 12")
 
 (defprotocol dhca basic
@@ -29,7 +29,44 @@
     (trace (recv (cat gx (invk gy))) (send (enc "dh" gx gy dhkey))))
   (defrole CDHcalc2
     (vars (gx gy akey) (dhkey skey))
-    (trace (recv (cat gy (invk gx))) (send (enc "dh" gx gy dhkey)))))
+    (trace (recv (cat gy (invk gx))) (send (enc "dh" gx gy dhkey))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton dhca
   (vars (n text) (a b ca name) (dhkey skey) (gx h akey))
@@ -660,6 +697,35 @@
   (origs))
 
 (defskeleton dhca
+  (vars (n text) (a b ca b-0 name) (dhkey skey) (h akey))
+  (defstrand init 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gx h)
+    (h h))
+  (defstrand ca 1 (subject a) (ca ca) (gz h))
+  (defstrand ca 1 (subject b) (ca ca) (gz h))
+  (defstrand resp 3 (n n) (a b) (b b-0) (ca ca) (dhkey dhkey) (gy h)
+    (h h))
+  (defstrand ca 1 (subject b-0) (ca ca) (gz h))
+  (precedes ((1 0) (0 0)) ((2 0) (3 1)) ((3 2) (0 2)) ((4 0) (3 0)))
+  (non-orig dhkey (invk h) (privk ca))
+  (operation encryption-test (displaced 5 2 ca 1)
+    (enc gx a-0 (privk ca-0)) (3 1))
+  (traces
+    ((recv (enc h a (privk ca))) (send (cat h (enc h a (privk ca))))
+      (recv (cat h (enc h b (privk ca)) (enc n (enc "dh" h h dhkey))))
+      (send (enc "check" n (enc "dh" h h dhkey))))
+    ((send (enc h a (privk ca)))) ((send (enc h b (privk ca))))
+    ((recv (enc h b-0 (privk ca))) (recv (cat h (enc h b (privk ca))))
+      (send
+        (cat h (enc h b-0 (privk ca)) (enc n (enc "dh" h h dhkey)))))
+    ((send (enc h b-0 (privk ca)))))
+  (label 24)
+  (parent 12)
+  (unrealized)
+  (shape)
+  (maps ((0) ((gx h) (h h) (dhkey dhkey) (a a) (b b) (ca ca) (n n))))
+  (origs))
+
+(defskeleton dhca
   (vars (n text) (a b ca b-0 name) (dhkey skey) (gx h akey))
   (defstrand init 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gx gx)
     (h h))
@@ -682,40 +748,11 @@
       (send
         (cat h (enc h b-0 (privk ca)) (enc n (enc "dh" gx h dhkey)))))
     ((send (enc h b-0 (privk ca)))))
-  (label 24)
-  (parent 12)
-  (unrealized)
-  (shape)
-  (maps ((0) ((gx gx) (h h) (dhkey dhkey) (a a) (b b) (ca ca) (n n))))
-  (origs))
-
-(defskeleton dhca
-  (vars (n text) (a b ca b-0 name) (dhkey skey) (h akey))
-  (defstrand init 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gx h)
-    (h h))
-  (defstrand ca 1 (subject a) (ca ca) (gz h))
-  (defstrand ca 1 (subject b) (ca ca) (gz h))
-  (defstrand resp 3 (n n) (a b) (b b-0) (ca ca) (dhkey dhkey) (gy h)
-    (h h))
-  (defstrand ca 1 (subject b-0) (ca ca) (gz h))
-  (precedes ((1 0) (0 0)) ((2 0) (3 1)) ((3 2) (0 2)) ((4 0) (3 0)))
-  (non-orig dhkey (invk h) (privk ca))
-  (operation encryption-test (displaced 5 2 ca 1)
-    (enc gx a-0 (privk ca-0)) (3 1))
-  (traces
-    ((recv (enc h a (privk ca))) (send (cat h (enc h a (privk ca))))
-      (recv (cat h (enc h b (privk ca)) (enc n (enc "dh" h h dhkey))))
-      (send (enc "check" n (enc "dh" h h dhkey))))
-    ((send (enc h a (privk ca)))) ((send (enc h b (privk ca))))
-    ((recv (enc h b-0 (privk ca))) (recv (cat h (enc h b (privk ca))))
-      (send
-        (cat h (enc h b-0 (privk ca)) (enc n (enc "dh" h h dhkey)))))
-    ((send (enc h b-0 (privk ca)))))
   (label 25)
   (parent 12)
   (unrealized)
   (shape)
-  (maps ((0) ((gx h) (h h) (dhkey dhkey) (a a) (b b) (ca ca) (n n))))
+  (maps ((0) ((gx gx) (h h) (dhkey dhkey) (a a) (b b) (ca ca) (n n))))
   (origs))
 
 (defskeleton dhca
@@ -808,7 +845,44 @@
     (trace (recv (cat gx (invk gy))) (send (enc "dh" gx gy dhkey))))
   (defrole CDHcalc2
     (vars (gx gy akey) (dhkey skey))
-    (trace (recv (cat gy (invk gx))) (send (enc "dh" gx gy dhkey)))))
+    (trace (recv (cat gy (invk gx))) (send (enc "dh" gx gy dhkey))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton dhca
   (vars (n text) (a b ca name) (dhkey skey) (gy h akey))
@@ -1496,6 +1570,37 @@
   (origs (n (0 2))))
 
 (defskeleton dhca
+  (vars (n text) (a b ca a-0 name) (dhkey skey) (h akey))
+  (defstrand resp 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gy h)
+    (h h))
+  (defstrand ca 1 (subject b) (ca ca) (gz h))
+  (defstrand ca 1 (subject a) (ca ca) (gz h))
+  (defstrand init 4 (n n) (a a-0) (b a) (ca ca) (dhkey dhkey) (gx h)
+    (h h))
+  (defstrand ca 1 (subject a-0) (ca ca) (gz h))
+  (precedes ((0 2) (3 2)) ((1 0) (0 0)) ((2 0) (0 1)) ((3 3) (0 3))
+    ((4 0) (3 0)))
+  (non-orig dhkey (invk h) (privk ca))
+  (uniq-orig n)
+  (operation encryption-test (displaced 5 2 ca 1)
+    (enc gy b-0 (privk ca-0)) (3 2))
+  (traces
+    ((recv (enc h b (privk ca))) (recv (cat h (enc h a (privk ca))))
+      (send (cat h (enc h b (privk ca)) (enc n (enc "dh" h h dhkey))))
+      (recv (enc "check" n (enc "dh" h h dhkey))))
+    ((send (enc h b (privk ca)))) ((send (enc h a (privk ca))))
+    ((recv (enc h a-0 (privk ca))) (send (cat h (enc h a-0 (privk ca))))
+      (recv (cat h (enc h a (privk ca)) (enc n (enc "dh" h h dhkey))))
+      (send (enc "check" n (enc "dh" h h dhkey))))
+    ((send (enc h a-0 (privk ca)))))
+  (label 52)
+  (parent 40)
+  (unrealized)
+  (shape)
+  (maps ((0) ((n n) (gy h) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
+  (origs (n (0 2))))
+
+(defskeleton dhca
   (vars (n text) (a b ca a-0 name) (dhkey skey) (gy h akey))
   (defstrand resp 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gy gy)
     (h h))
@@ -1521,42 +1626,11 @@
         (cat gy (enc gy b (privk ca)) (enc n (enc "dh" h gy dhkey))))
       (send (enc "check" n (enc "dh" h gy dhkey))))
     ((send (enc h a-0 (privk ca)))))
-  (label 52)
-  (parent 40)
-  (unrealized)
-  (shape)
-  (maps ((0) ((n n) (gy gy) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
-  (origs (n (0 2))))
-
-(defskeleton dhca
-  (vars (n text) (a b ca a-0 name) (dhkey skey) (h akey))
-  (defstrand resp 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gy h)
-    (h h))
-  (defstrand ca 1 (subject b) (ca ca) (gz h))
-  (defstrand ca 1 (subject a) (ca ca) (gz h))
-  (defstrand init 4 (n n) (a a-0) (b a) (ca ca) (dhkey dhkey) (gx h)
-    (h h))
-  (defstrand ca 1 (subject a-0) (ca ca) (gz h))
-  (precedes ((0 2) (3 2)) ((1 0) (0 0)) ((2 0) (0 1)) ((3 3) (0 3))
-    ((4 0) (3 0)))
-  (non-orig dhkey (invk h) (privk ca))
-  (uniq-orig n)
-  (operation encryption-test (displaced 5 2 ca 1)
-    (enc gy b-0 (privk ca-0)) (3 2))
-  (traces
-    ((recv (enc h b (privk ca))) (recv (cat h (enc h a (privk ca))))
-      (send (cat h (enc h b (privk ca)) (enc n (enc "dh" h h dhkey))))
-      (recv (enc "check" n (enc "dh" h h dhkey))))
-    ((send (enc h b (privk ca)))) ((send (enc h a (privk ca))))
-    ((recv (enc h a-0 (privk ca))) (send (cat h (enc h a-0 (privk ca))))
-      (recv (cat h (enc h a (privk ca)) (enc n (enc "dh" h h dhkey))))
-      (send (enc "check" n (enc "dh" h h dhkey))))
-    ((send (enc h a-0 (privk ca)))))
   (label 53)
   (parent 40)
   (unrealized)
   (shape)
-  (maps ((0) ((n n) (gy h) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
+  (maps ((0) ((n n) (gy gy) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
   (origs (n (0 2))))
 
 (defskeleton dhca
@@ -1656,7 +1730,44 @@
     (trace (recv (cat gx (invk gy))) (send (enc "dh" gx gy dhkey))))
   (defrole CDHcalc2
     (vars (gx gy akey) (dhkey skey))
-    (trace (recv (cat gy (invk gx))) (send (enc "dh" gx gy dhkey)))))
+    (trace (recv (cat gy (invk gx))) (send (enc "dh" gx gy dhkey))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton dhca
   (vars (n text) (a b ca name) (dhkey skey) (gy h akey))
@@ -2005,7 +2116,44 @@
     (trace (recv (cat gx (invk gy))) (send (enc "dh" gx gy dhkey))))
   (defrole CDHcalc2
     (vars (gx gy akey) (dhkey skey))
-    (trace (recv (cat gy (invk gx))) (send (enc "dh" gx gy dhkey)))))
+    (trace (recv (cat gy (invk gx))) (send (enc "dh" gx gy dhkey))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton dhca
   (vars (n text) (a b ca name) (dhkey skey) (gx gy akey))
@@ -3062,44 +3210,6 @@
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton dhca
-  (vars (n text) (a b ca a-0 name) (dhkey skey) (gx gy akey))
-  (defstrand init 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gx gx)
-    (h gy))
-  (defstrand resp 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gy gy)
-    (h gx))
-  (defstrand ca 1 (subject b) (ca ca) (gz gy))
-  (defstrand ca 1 (subject a) (ca ca) (gz gx))
-  (defstrand init 4 (n n) (a a-0) (b b) (ca ca) (dhkey dhkey) (gx gx)
-    (h gy))
-  (defstrand ca 1 (subject a-0) (ca ca) (gz gx))
-  (precedes ((1 2) (0 2)) ((1 2) (4 2)) ((2 0) (1 0)) ((3 0) (1 1))
-    ((4 3) (1 3)) ((5 0) (4 0)))
-  (non-orig dhkey (invk gx) (invk gy) (privk ca))
-  (uniq-orig n)
-  (operation encryption-test (displaced 6 2 ca 1)
-    (enc gy b-0 (privk ca-0)) (4 2))
-  (traces
-    ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
-      (recv
-        (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gx gy dhkey))))
-      (send (enc "check" n (enc "dh" gx gy dhkey))))
-    ((recv (enc gy b (privk ca))) (recv (cat gx (enc gx a (privk ca))))
-      (send
-        (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gx gy dhkey))))
-      (recv (enc "check" n (enc "dh" gx gy dhkey))))
-    ((send (enc gy b (privk ca)))) ((send (enc gx a (privk ca))))
-    ((recv (enc gx a-0 (privk ca)))
-      (send (cat gx (enc gx a-0 (privk ca))))
-      (recv
-        (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gx gy dhkey))))
-      (send (enc "check" n (enc "dh" gx gy dhkey))))
-    ((send (enc gx a-0 (privk ca)))))
-  (label 100)
-  (parent 88)
-  (unrealized (0 0))
-  (comment "4 in cohort - 4 not yet seen"))
-
-(defskeleton dhca
   (vars (n text) (a b ca a-0 name) (dhkey skey) (gx akey))
   (defstrand init 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gx gx)
     (h gx))
@@ -3132,9 +3242,47 @@
         (cat gx (enc gx a (privk ca)) (enc n (enc "dh" gx gx dhkey))))
       (send (enc "check" n (enc "dh" gx gx dhkey))))
     ((send (enc gx a-0 (privk ca)))))
+  (label 100)
+  (parent 88)
+  (unrealized (0 0))
+  (comment "4 in cohort - 4 not yet seen"))
+
+(defskeleton dhca
+  (vars (n text) (a b ca a-0 name) (dhkey skey) (gx gy akey))
+  (defstrand init 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gx gx)
+    (h gy))
+  (defstrand resp 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gy gy)
+    (h gx))
+  (defstrand ca 1 (subject b) (ca ca) (gz gy))
+  (defstrand ca 1 (subject a) (ca ca) (gz gx))
+  (defstrand init 4 (n n) (a a-0) (b b) (ca ca) (dhkey dhkey) (gx gx)
+    (h gy))
+  (defstrand ca 1 (subject a-0) (ca ca) (gz gx))
+  (precedes ((1 2) (0 2)) ((1 2) (4 2)) ((2 0) (1 0)) ((3 0) (1 1))
+    ((4 3) (1 3)) ((5 0) (4 0)))
+  (non-orig dhkey (invk gx) (invk gy) (privk ca))
+  (uniq-orig n)
+  (operation encryption-test (displaced 6 2 ca 1)
+    (enc gy b-0 (privk ca-0)) (4 2))
+  (traces
+    ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
+      (recv
+        (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gx gy dhkey))))
+      (send (enc "check" n (enc "dh" gx gy dhkey))))
+    ((recv (enc gy b (privk ca))) (recv (cat gx (enc gx a (privk ca))))
+      (send
+        (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gx gy dhkey))))
+      (recv (enc "check" n (enc "dh" gx gy dhkey))))
+    ((send (enc gy b (privk ca)))) ((send (enc gx a (privk ca))))
+    ((recv (enc gx a-0 (privk ca)))
+      (send (cat gx (enc gx a-0 (privk ca))))
+      (recv
+        (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gx gy dhkey))))
+      (send (enc "check" n (enc "dh" gx gy dhkey))))
+    ((send (enc gx a-0 (privk ca)))))
   (label 101)
   (parent 88)
-  (seen 136)
+  (seen 137)
   (unrealized (0 0))
   (comment "4 in cohort - 3 not yet seen"))
 
@@ -3174,7 +3322,7 @@
     ((send (enc gx a-0 (privk ca-0)))))
   (label 102)
   (parent 88)
-  (seen 141)
+  (seen 138)
   (unrealized (0 0))
   (comment "4 in cohort - 3 not yet seen"))
 
@@ -3610,6 +3758,46 @@
   (origs (n (1 2))))
 
 (defskeleton dhca
+  (vars (n text) (a b ca name) (dhkey skey) (gy akey))
+  (defstrand init 4 (n n) (a a) (b a) (ca ca) (dhkey dhkey) (gx gy)
+    (h gy))
+  (defstrand resp 4 (n n) (a a) (b a) (ca ca) (dhkey dhkey) (gy gy)
+    (h gy))
+  (defstrand ca 1 (subject a) (ca ca) (gz gy))
+  (defstrand init 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gx gy)
+    (h gy))
+  (defstrand ca 1 (subject a) (ca ca) (gz gy))
+  (defstrand ca 1 (subject b) (ca ca) (gz gy))
+  (precedes ((1 2) (0 2)) ((1 2) (3 2)) ((2 0) (1 0)) ((3 3) (1 3))
+    ((4 0) (0 0)) ((4 0) (3 0)) ((5 0) (3 2)))
+  (non-orig dhkey (invk gy) (privk ca))
+  (uniq-orig n)
+  (operation encryption-test (displaced 6 4 ca 1)
+    (enc gy b-0 (privk ca-0)) (0 0))
+  (traces
+    ((recv (enc gy a (privk ca))) (send (cat gy (enc gy a (privk ca))))
+      (recv
+        (cat gy (enc gy a (privk ca)) (enc n (enc "dh" gy gy dhkey))))
+      (send (enc "check" n (enc "dh" gy gy dhkey))))
+    ((recv (enc gy a (privk ca))) (recv (cat gy (enc gy a (privk ca))))
+      (send
+        (cat gy (enc gy a (privk ca)) (enc n (enc "dh" gy gy dhkey))))
+      (recv (enc "check" n (enc "dh" gy gy dhkey))))
+    ((send (enc gy a (privk ca))))
+    ((recv (enc gy a (privk ca))) (send (cat gy (enc gy a (privk ca))))
+      (recv
+        (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gy gy dhkey))))
+      (send (enc "check" n (enc "dh" gy gy dhkey))))
+    ((send (enc gy a (privk ca)))) ((send (enc gy b (privk ca)))))
+  (label 114)
+  (parent 93)
+  (unrealized)
+  (shape)
+  (maps
+    ((0 1) ((a a) (b a) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
+  (origs (n (1 2))))
+
+(defskeleton dhca
   (vars (n text) (b ca a b-0 ca-0 name) (dhkey skey) (gy akey))
   (defstrand init 4 (n n) (a b) (b b) (ca ca) (dhkey dhkey) (gx gy)
     (h gy))
@@ -3643,52 +3831,12 @@
           (enc n (enc "dh" gy gy dhkey))))
       (send (enc "check" n (enc "dh" gy gy dhkey))))
     ((send (enc gy a (privk ca-0)))) ((send (enc gy b-0 (privk ca-0)))))
-  (label 114)
-  (parent 93)
-  (unrealized)
-  (shape)
-  (maps
-    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2))))
-
-(defskeleton dhca
-  (vars (n text) (a b ca name) (dhkey skey) (gy akey))
-  (defstrand init 4 (n n) (a a) (b a) (ca ca) (dhkey dhkey) (gx gy)
-    (h gy))
-  (defstrand resp 4 (n n) (a a) (b a) (ca ca) (dhkey dhkey) (gy gy)
-    (h gy))
-  (defstrand ca 1 (subject a) (ca ca) (gz gy))
-  (defstrand init 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gx gy)
-    (h gy))
-  (defstrand ca 1 (subject a) (ca ca) (gz gy))
-  (defstrand ca 1 (subject b) (ca ca) (gz gy))
-  (precedes ((1 2) (0 2)) ((1 2) (3 2)) ((2 0) (1 0)) ((3 3) (1 3))
-    ((4 0) (0 0)) ((4 0) (3 0)) ((5 0) (3 2)))
-  (non-orig dhkey (invk gy) (privk ca))
-  (uniq-orig n)
-  (operation encryption-test (displaced 6 4 ca 1)
-    (enc gy b-0 (privk ca-0)) (0 0))
-  (traces
-    ((recv (enc gy a (privk ca))) (send (cat gy (enc gy a (privk ca))))
-      (recv
-        (cat gy (enc gy a (privk ca)) (enc n (enc "dh" gy gy dhkey))))
-      (send (enc "check" n (enc "dh" gy gy dhkey))))
-    ((recv (enc gy a (privk ca))) (recv (cat gy (enc gy a (privk ca))))
-      (send
-        (cat gy (enc gy a (privk ca)) (enc n (enc "dh" gy gy dhkey))))
-      (recv (enc "check" n (enc "dh" gy gy dhkey))))
-    ((send (enc gy a (privk ca))))
-    ((recv (enc gy a (privk ca))) (send (cat gy (enc gy a (privk ca))))
-      (recv
-        (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gy gy dhkey))))
-      (send (enc "check" n (enc "dh" gy gy dhkey))))
-    ((send (enc gy a (privk ca)))) ((send (enc gy b (privk ca)))))
   (label 115)
   (parent 93)
   (unrealized)
   (shape)
   (maps
-    ((0 1) ((a a) (b a) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
+    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (origs (n (1 2))))
 
 (defskeleton dhca
@@ -3965,44 +4113,6 @@
   (origs (n (1 2))))
 
 (defskeleton dhca
-  (vars (n text) (b ca b-0 name) (dhkey skey) (gy akey))
-  (defstrand init 4 (n n) (a b) (b b) (ca ca) (dhkey dhkey) (gx gy)
-    (h gy))
-  (defstrand resp 4 (n n) (a b) (b b) (ca ca) (dhkey dhkey) (gy gy)
-    (h gy))
-  (defstrand ca 1 (subject b) (ca ca) (gz gy))
-  (defstrand ca 1 (subject b) (ca ca) (gz gy))
-  (defstrand init 4 (n n) (a b) (b b-0) (ca ca) (dhkey dhkey) (gx gy)
-    (h gy))
-  (defstrand ca 1 (subject b-0) (ca ca) (gz gy))
-  (precedes ((1 2) (0 2)) ((1 2) (4 2)) ((2 0) (0 0)) ((2 0) (1 0))
-    ((2 0) (4 0)) ((3 0) (1 1)) ((4 3) (1 3)) ((5 0) (4 2)))
-  (non-orig dhkey (invk gy) (privk ca))
-  (uniq-orig n)
-  (operation encryption-test (displaced 6 2 ca 1) (enc gy a (privk ca))
-    (0 0))
-  (traces
-    ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
-      (recv
-        (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gy gy dhkey))))
-      (send (enc "check" n (enc "dh" gy gy dhkey))))
-    ((recv (enc gy b (privk ca))) (recv (cat gy (enc gy b (privk ca))))
-      (send
-        (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gy gy dhkey))))
-      (recv (enc "check" n (enc "dh" gy gy dhkey))))
-    ((send (enc gy b (privk ca)))) ((send (enc gy b (privk ca))))
-    ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
-      (recv
-        (cat gy (enc gy b-0 (privk ca)) (enc n (enc "dh" gy gy dhkey))))
-      (send (enc "check" n (enc "dh" gy gy dhkey))))
-    ((send (enc gy b-0 (privk ca)))))
-  (label 123)
-  (parent 96)
-  (seen 106)
-  (unrealized)
-  (comment "1 in cohort - 0 not yet seen"))
-
-(defskeleton dhca
   (vars (n text) (a b ca b-0 name) (dhkey skey) (gy akey))
   (defstrand init 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gx gy)
     (h gy))
@@ -4034,13 +4144,51 @@
         (cat gy (enc gy b-0 (privk ca)) (enc n (enc "dh" gy gy dhkey))))
       (send (enc "check" n (enc "dh" gy gy dhkey))))
     ((send (enc gy b-0 (privk ca)))))
-  (label 124)
+  (label 123)
   (parent 96)
   (unrealized)
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (origs (n (1 2))))
+
+(defskeleton dhca
+  (vars (n text) (b ca b-0 name) (dhkey skey) (gy akey))
+  (defstrand init 4 (n n) (a b) (b b) (ca ca) (dhkey dhkey) (gx gy)
+    (h gy))
+  (defstrand resp 4 (n n) (a b) (b b) (ca ca) (dhkey dhkey) (gy gy)
+    (h gy))
+  (defstrand ca 1 (subject b) (ca ca) (gz gy))
+  (defstrand ca 1 (subject b) (ca ca) (gz gy))
+  (defstrand init 4 (n n) (a b) (b b-0) (ca ca) (dhkey dhkey) (gx gy)
+    (h gy))
+  (defstrand ca 1 (subject b-0) (ca ca) (gz gy))
+  (precedes ((1 2) (0 2)) ((1 2) (4 2)) ((2 0) (0 0)) ((2 0) (1 0))
+    ((2 0) (4 0)) ((3 0) (1 1)) ((4 3) (1 3)) ((5 0) (4 2)))
+  (non-orig dhkey (invk gy) (privk ca))
+  (uniq-orig n)
+  (operation encryption-test (displaced 6 2 ca 1) (enc gy a (privk ca))
+    (0 0))
+  (traces
+    ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
+      (recv
+        (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gy gy dhkey))))
+      (send (enc "check" n (enc "dh" gy gy dhkey))))
+    ((recv (enc gy b (privk ca))) (recv (cat gy (enc gy b (privk ca))))
+      (send
+        (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gy gy dhkey))))
+      (recv (enc "check" n (enc "dh" gy gy dhkey))))
+    ((send (enc gy b (privk ca)))) ((send (enc gy b (privk ca))))
+    ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
+      (recv
+        (cat gy (enc gy b-0 (privk ca)) (enc n (enc "dh" gy gy dhkey))))
+      (send (enc "check" n (enc "dh" gy gy dhkey))))
+    ((send (enc gy b-0 (privk ca)))))
+  (label 124)
+  (parent 96)
+  (seen 106)
+  (unrealized)
+  (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton dhca
   (vars (n text) (b ca b-0 name) (dhkey skey) (gy akey))
@@ -4314,43 +4462,6 @@
   (origs (n (1 2))))
 
 (defskeleton dhca
-  (vars (n text) (b ca b-0 name) (dhkey skey) (gy akey))
-  (defstrand init 4 (n n) (a b) (b b) (ca ca) (dhkey dhkey) (gx gy)
-    (h gy))
-  (defstrand resp 4 (n n) (a b) (b b) (ca ca) (dhkey dhkey) (gy gy)
-    (h gy))
-  (defstrand ca 1 (subject b) (ca ca) (gz gy))
-  (defstrand ca 1 (subject b) (ca ca) (gz gy))
-  (defstrand init 4 (n n) (a b) (b b-0) (ca ca) (dhkey dhkey) (gx gy)
-    (h gy))
-  (defstrand ca 1 (subject b-0) (ca ca) (gz gy))
-  (precedes ((1 2) (0 2)) ((1 2) (4 2)) ((2 0) (0 0)) ((2 0) (1 0))
-    ((3 0) (1 1)) ((3 0) (4 0)) ((4 3) (1 3)) ((5 0) (4 2)))
-  (non-orig dhkey (invk gy) (privk ca))
-  (uniq-orig n)
-  (operation encryption-test (displaced 6 2 ca 1) (enc gx a (privk ca))
-    (0 0))
-  (traces
-    ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
-      (recv
-        (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gy gy dhkey))))
-      (send (enc "check" n (enc "dh" gy gy dhkey))))
-    ((recv (enc gy b (privk ca))) (recv (cat gy (enc gy b (privk ca))))
-      (send
-        (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gy gy dhkey))))
-      (recv (enc "check" n (enc "dh" gy gy dhkey))))
-    ((send (enc gy b (privk ca)))) ((send (enc gy b (privk ca))))
-    ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
-      (recv
-        (cat gy (enc gy b-0 (privk ca)) (enc n (enc "dh" gy gy dhkey))))
-      (send (enc "check" n (enc "dh" gy gy dhkey))))
-    ((send (enc gy b-0 (privk ca)))))
-  (label 132)
-  (parent 99)
-  (unrealized)
-  (comment "1 in cohort - 1 not yet seen"))
-
-(defskeleton dhca
   (vars (n text) (a b ca b-0 name) (dhkey skey) (gx gy akey))
   (defstrand init 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gx gx)
     (h gy))
@@ -4382,13 +4493,50 @@
         (cat gy (enc gy b-0 (privk ca)) (enc n (enc "dh" gx gy dhkey))))
       (send (enc "check" n (enc "dh" gx gy dhkey))))
     ((send (enc gy b-0 (privk ca)))))
-  (label 133)
+  (label 132)
   (parent 99)
   (unrealized)
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
   (origs (n (1 2))))
+
+(defskeleton dhca
+  (vars (n text) (b ca b-0 name) (dhkey skey) (gy akey))
+  (defstrand init 4 (n n) (a b) (b b) (ca ca) (dhkey dhkey) (gx gy)
+    (h gy))
+  (defstrand resp 4 (n n) (a b) (b b) (ca ca) (dhkey dhkey) (gy gy)
+    (h gy))
+  (defstrand ca 1 (subject b) (ca ca) (gz gy))
+  (defstrand ca 1 (subject b) (ca ca) (gz gy))
+  (defstrand init 4 (n n) (a b) (b b-0) (ca ca) (dhkey dhkey) (gx gy)
+    (h gy))
+  (defstrand ca 1 (subject b-0) (ca ca) (gz gy))
+  (precedes ((1 2) (0 2)) ((1 2) (4 2)) ((2 0) (0 0)) ((2 0) (1 0))
+    ((3 0) (1 1)) ((3 0) (4 0)) ((4 3) (1 3)) ((5 0) (4 2)))
+  (non-orig dhkey (invk gy) (privk ca))
+  (uniq-orig n)
+  (operation encryption-test (displaced 6 2 ca 1) (enc gx a (privk ca))
+    (0 0))
+  (traces
+    ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
+      (recv
+        (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gy gy dhkey))))
+      (send (enc "check" n (enc "dh" gy gy dhkey))))
+    ((recv (enc gy b (privk ca))) (recv (cat gy (enc gy b (privk ca))))
+      (send
+        (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gy gy dhkey))))
+      (recv (enc "check" n (enc "dh" gy gy dhkey))))
+    ((send (enc gy b (privk ca)))) ((send (enc gy b (privk ca))))
+    ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
+      (recv
+        (cat gy (enc gy b-0 (privk ca)) (enc n (enc "dh" gy gy dhkey))))
+      (send (enc "check" n (enc "dh" gy gy dhkey))))
+    ((send (enc gy b-0 (privk ca)))))
+  (label 133)
+  (parent 99)
+  (unrealized)
+  (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhca
   (vars (n text) (b ca b-0 name) (dhkey skey) (gy akey))
@@ -4472,42 +4620,165 @@
   (origs (n (1 2))))
 
 (defskeleton dhca
-  (vars (n text) (b ca a name) (dhkey skey) (gy akey))
-  (defstrand init 4 (n n) (a b) (b b) (ca ca) (dhkey dhkey) (gx gy)
-    (h gy))
-  (defstrand resp 4 (n n) (a b) (b b) (ca ca) (dhkey dhkey) (gy gy)
-    (h gy))
-  (defstrand ca 1 (subject b) (ca ca) (gz gy))
-  (defstrand ca 1 (subject b) (ca ca) (gz gy))
-  (defstrand init 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gx gy)
-    (h gy))
-  (defstrand ca 1 (subject a) (ca ca) (gz gy))
+  (vars (n text) (a b ca a-0 name) (dhkey skey) (gx akey))
+  (defstrand init 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gx gx)
+    (h gx))
+  (defstrand resp 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gy gx)
+    (h gx))
+  (defstrand ca 1 (subject b) (ca ca) (gz gx))
+  (defstrand ca 1 (subject a) (ca ca) (gz gx))
+  (defstrand init 4 (n n) (a a-0) (b a) (ca ca) (dhkey dhkey) (gx gx)
+    (h gx))
+  (defstrand ca 1 (subject a-0) (ca ca) (gz gx))
+  (precedes ((1 2) (0 2)) ((1 2) (4 2)) ((2 0) (1 0)) ((3 0) (0 0))
+    ((3 0) (1 1)) ((4 3) (1 3)) ((5 0) (4 0)))
+  (non-orig dhkey (invk gx) (privk ca))
+  (uniq-orig n)
+  (operation encryption-test (displaced 6 3 ca 1) (enc gx a (privk ca))
+    (0 0))
+  (traces
+    ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
+      (recv
+        (cat gx (enc gx b (privk ca)) (enc n (enc "dh" gx gx dhkey))))
+      (send (enc "check" n (enc "dh" gx gx dhkey))))
+    ((recv (enc gx b (privk ca))) (recv (cat gx (enc gx a (privk ca))))
+      (send
+        (cat gx (enc gx b (privk ca)) (enc n (enc "dh" gx gx dhkey))))
+      (recv (enc "check" n (enc "dh" gx gx dhkey))))
+    ((send (enc gx b (privk ca)))) ((send (enc gx a (privk ca))))
+    ((recv (enc gx a-0 (privk ca)))
+      (send (cat gx (enc gx a-0 (privk ca))))
+      (recv
+        (cat gx (enc gx a (privk ca)) (enc n (enc "dh" gx gx dhkey))))
+      (send (enc "check" n (enc "dh" gx gx dhkey))))
+    ((send (enc gx a-0 (privk ca)))))
+  (label 136)
+  (parent 100)
+  (unrealized)
+  (shape)
+  (maps
+    ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gx) (n n) (dhkey dhkey))))
+  (origs (n (1 2))))
+
+(defskeleton dhca
+  (vars (n text) (b ca a name) (dhkey skey) (gx akey))
+  (defstrand init 4 (n n) (a b) (b b) (ca ca) (dhkey dhkey) (gx gx)
+    (h gx))
+  (defstrand resp 4 (n n) (a b) (b b) (ca ca) (dhkey dhkey) (gy gx)
+    (h gx))
+  (defstrand ca 1 (subject b) (ca ca) (gz gx))
+  (defstrand ca 1 (subject b) (ca ca) (gz gx))
+  (defstrand init 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gx gx)
+    (h gx))
+  (defstrand ca 1 (subject a) (ca ca) (gz gx))
   (precedes ((1 2) (0 2)) ((1 2) (4 2)) ((2 0) (0 0)) ((2 0) (1 0))
     ((3 0) (1 1)) ((4 3) (1 3)) ((5 0) (4 0)))
-  (non-orig dhkey (invk gy) (privk ca))
+  (non-orig dhkey (invk gx) (privk ca))
   (uniq-orig n)
   (operation encryption-test (displaced 6 2 ca 1)
     (enc gx a-0 (privk ca)) (0 0))
   (traces
-    ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
+    ((recv (enc gx b (privk ca))) (send (cat gx (enc gx b (privk ca))))
       (recv
-        (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gy gy dhkey))))
-      (send (enc "check" n (enc "dh" gy gy dhkey))))
-    ((recv (enc gy b (privk ca))) (recv (cat gy (enc gy b (privk ca))))
+        (cat gx (enc gx b (privk ca)) (enc n (enc "dh" gx gx dhkey))))
+      (send (enc "check" n (enc "dh" gx gx dhkey))))
+    ((recv (enc gx b (privk ca))) (recv (cat gx (enc gx b (privk ca))))
       (send
-        (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gy gy dhkey))))
-      (recv (enc "check" n (enc "dh" gy gy dhkey))))
-    ((send (enc gy b (privk ca)))) ((send (enc gy b (privk ca))))
-    ((recv (enc gy a (privk ca))) (send (cat gy (enc gy a (privk ca))))
+        (cat gx (enc gx b (privk ca)) (enc n (enc "dh" gx gx dhkey))))
+      (recv (enc "check" n (enc "dh" gx gx dhkey))))
+    ((send (enc gx b (privk ca)))) ((send (enc gx b (privk ca))))
+    ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
-        (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gy gy dhkey))))
-      (send (enc "check" n (enc "dh" gy gy dhkey))))
-    ((send (enc gy a (privk ca)))))
-  (label 136)
+        (cat gx (enc gx b (privk ca)) (enc n (enc "dh" gx gx dhkey))))
+      (send (enc "check" n (enc "dh" gx gx dhkey))))
+    ((send (enc gx a (privk ca)))))
+  (label 137)
   (parent 100)
   (seen 109)
   (unrealized)
   (comment "1 in cohort - 0 not yet seen"))
+
+(defskeleton dhca
+  (vars (n text) (b ca a name) (dhkey skey) (gx akey))
+  (defstrand init 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gx gx)
+    (h gx))
+  (defstrand resp 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gy gx)
+    (h gx))
+  (defstrand ca 1 (subject b) (ca ca) (gz gx))
+  (defstrand ca 1 (subject a) (ca ca) (gz gx))
+  (defstrand init 4 (n n) (a a) (b a) (ca ca) (dhkey dhkey) (gx gx)
+    (h gx))
+  (defstrand ca 1 (subject a) (ca ca) (gz gx))
+  (precedes ((1 2) (0 2)) ((1 2) (4 2)) ((2 0) (1 0)) ((3 0) (1 1))
+    ((4 3) (1 3)) ((5 0) (0 0)) ((5 0) (4 0)))
+  (non-orig dhkey (invk gx) (privk ca))
+  (uniq-orig n)
+  (operation encryption-test (displaced 6 5 ca 1)
+    (enc gx a-0 (privk ca)) (0 0))
+  (traces
+    ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
+      (recv
+        (cat gx (enc gx b (privk ca)) (enc n (enc "dh" gx gx dhkey))))
+      (send (enc "check" n (enc "dh" gx gx dhkey))))
+    ((recv (enc gx b (privk ca))) (recv (cat gx (enc gx a (privk ca))))
+      (send
+        (cat gx (enc gx b (privk ca)) (enc n (enc "dh" gx gx dhkey))))
+      (recv (enc "check" n (enc "dh" gx gx dhkey))))
+    ((send (enc gx b (privk ca)))) ((send (enc gx a (privk ca))))
+    ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
+      (recv
+        (cat gx (enc gx a (privk ca)) (enc n (enc "dh" gx gx dhkey))))
+      (send (enc "check" n (enc "dh" gx gx dhkey))))
+    ((send (enc gx a (privk ca)))))
+  (label 138)
+  (parent 100)
+  (unrealized)
+  (shape)
+  (maps
+    ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gx) (n n) (dhkey dhkey))))
+  (origs (n (1 2))))
+
+(defskeleton dhca
+  (vars (n text) (a b ca a-0 name) (dhkey skey) (gx akey))
+  (defstrand init 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gx gx)
+    (h gx))
+  (defstrand resp 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gy gx)
+    (h gx))
+  (defstrand ca 1 (subject b) (ca ca) (gz gx))
+  (defstrand ca 1 (subject a) (ca ca) (gz gx))
+  (defstrand init 4 (n n) (a a-0) (b a) (ca ca) (dhkey dhkey) (gx gx)
+    (h gx))
+  (defstrand ca 1 (subject a-0) (ca ca) (gz gx))
+  (defstrand ca 1 (subject a) (ca ca) (gz gx))
+  (precedes ((1 2) (0 2)) ((1 2) (4 2)) ((2 0) (1 0)) ((3 0) (1 1))
+    ((4 3) (1 3)) ((5 0) (4 0)) ((6 0) (0 0)))
+  (non-orig dhkey (invk gx) (privk ca))
+  (uniq-orig n)
+  (operation encryption-test (added-strand ca 1) (enc gx a (privk ca))
+    (0 0))
+  (traces
+    ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
+      (recv
+        (cat gx (enc gx b (privk ca)) (enc n (enc "dh" gx gx dhkey))))
+      (send (enc "check" n (enc "dh" gx gx dhkey))))
+    ((recv (enc gx b (privk ca))) (recv (cat gx (enc gx a (privk ca))))
+      (send
+        (cat gx (enc gx b (privk ca)) (enc n (enc "dh" gx gx dhkey))))
+      (recv (enc "check" n (enc "dh" gx gx dhkey))))
+    ((send (enc gx b (privk ca)))) ((send (enc gx a (privk ca))))
+    ((recv (enc gx a-0 (privk ca)))
+      (send (cat gx (enc gx a-0 (privk ca))))
+      (recv
+        (cat gx (enc gx a (privk ca)) (enc n (enc "dh" gx gx dhkey))))
+      (send (enc "check" n (enc "dh" gx gx dhkey))))
+    ((send (enc gx a-0 (privk ca)))) ((send (enc gx a (privk ca)))))
+  (label 139)
+  (parent 100)
+  (unrealized)
+  (shape)
+  (maps
+    ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gx) (n n) (dhkey dhkey))))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (n text) (a b ca a-0 name) (dhkey skey) (gx gy akey))
@@ -4542,8 +4813,8 @@
         (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gx gy dhkey))))
       (send (enc "check" n (enc "dh" gx gy dhkey))))
     ((send (enc gx a-0 (privk ca)))))
-  (label 137)
-  (parent 100)
+  (label 140)
+  (parent 101)
   (unrealized)
   (shape)
   (maps
@@ -4582,8 +4853,8 @@
         (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gx gy dhkey))))
       (send (enc "check" n (enc "dh" gx gy dhkey))))
     ((send (enc gx a (privk ca)))))
-  (label 138)
-  (parent 100)
+  (label 141)
+  (parent 101)
   (unrealized)
   (shape)
   (maps
@@ -4624,8 +4895,8 @@
         (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gx gy dhkey))))
       (send (enc "check" n (enc "dh" gx gy dhkey))))
     ((send (enc gx a-0 (privk ca)))) ((send (enc gx a (privk ca)))))
-  (label 139)
-  (parent 100)
+  (label 142)
+  (parent 101)
   (unrealized)
   (shape)
   (maps
@@ -4633,19 +4904,19 @@
   (origs (n (1 2))))
 
 (defskeleton dhca
-  (vars (n text) (a b ca a-0 name) (dhkey skey) (gx akey))
+  (vars (n text) (a b ca a-0 ca-0 name) (dhkey skey) (gx akey))
   (defstrand init 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gx gx)
     (h gx))
   (defstrand resp 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gy gx)
     (h gx))
   (defstrand ca 1 (subject b) (ca ca) (gz gx))
   (defstrand ca 1 (subject a) (ca ca) (gz gx))
-  (defstrand init 4 (n n) (a a-0) (b a) (ca ca) (dhkey dhkey) (gx gx)
-    (h gx))
-  (defstrand ca 1 (subject a-0) (ca ca) (gz gx))
+  (defstrand init 4 (n n) (a a-0) (b a-0) (ca ca-0) (dhkey dhkey)
+    (gx gx) (h gx))
+  (defstrand ca 1 (subject a-0) (ca ca-0) (gz gx))
   (precedes ((1 2) (0 2)) ((1 2) (4 2)) ((2 0) (1 0)) ((3 0) (0 0))
     ((3 0) (1 1)) ((4 3) (1 3)) ((5 0) (4 0)))
-  (non-orig dhkey (invk gx) (privk ca))
+  (non-orig dhkey (invk gx) (privk ca) (privk ca-0))
   (uniq-orig n)
   (operation encryption-test (displaced 6 3 ca 1) (enc gx a (privk ca))
     (0 0))
@@ -4659,96 +4930,15 @@
         (cat gx (enc gx b (privk ca)) (enc n (enc "dh" gx gx dhkey))))
       (recv (enc "check" n (enc "dh" gx gx dhkey))))
     ((send (enc gx b (privk ca)))) ((send (enc gx a (privk ca))))
-    ((recv (enc gx a-0 (privk ca)))
-      (send (cat gx (enc gx a-0 (privk ca))))
+    ((recv (enc gx a-0 (privk ca-0)))
+      (send (cat gx (enc gx a-0 (privk ca-0))))
       (recv
-        (cat gx (enc gx a (privk ca)) (enc n (enc "dh" gx gx dhkey))))
+        (cat gx (enc gx a-0 (privk ca-0))
+          (enc n (enc "dh" gx gx dhkey))))
       (send (enc "check" n (enc "dh" gx gx dhkey))))
-    ((send (enc gx a-0 (privk ca)))))
-  (label 140)
-  (parent 101)
-  (unrealized)
-  (shape)
-  (maps
-    ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gx) (n n) (dhkey dhkey))))
-  (origs (n (1 2))))
-
-(defskeleton dhca
-  (vars (n text) (b ca a name) (dhkey skey) (gx akey))
-  (defstrand init 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gx gx)
-    (h gx))
-  (defstrand resp 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gy gx)
-    (h gx))
-  (defstrand ca 1 (subject b) (ca ca) (gz gx))
-  (defstrand ca 1 (subject a) (ca ca) (gz gx))
-  (defstrand init 4 (n n) (a a) (b a) (ca ca) (dhkey dhkey) (gx gx)
-    (h gx))
-  (defstrand ca 1 (subject a) (ca ca) (gz gx))
-  (precedes ((1 2) (0 2)) ((1 2) (4 2)) ((2 0) (1 0)) ((3 0) (1 1))
-    ((4 3) (1 3)) ((5 0) (0 0)) ((5 0) (4 0)))
-  (non-orig dhkey (invk gx) (privk ca))
-  (uniq-orig n)
-  (operation encryption-test (displaced 6 5 ca 1)
-    (enc gx a-0 (privk ca)) (0 0))
-  (traces
-    ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
-      (recv
-        (cat gx (enc gx b (privk ca)) (enc n (enc "dh" gx gx dhkey))))
-      (send (enc "check" n (enc "dh" gx gx dhkey))))
-    ((recv (enc gx b (privk ca))) (recv (cat gx (enc gx a (privk ca))))
-      (send
-        (cat gx (enc gx b (privk ca)) (enc n (enc "dh" gx gx dhkey))))
-      (recv (enc "check" n (enc "dh" gx gx dhkey))))
-    ((send (enc gx b (privk ca)))) ((send (enc gx a (privk ca))))
-    ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
-      (recv
-        (cat gx (enc gx a (privk ca)) (enc n (enc "dh" gx gx dhkey))))
-      (send (enc "check" n (enc "dh" gx gx dhkey))))
-    ((send (enc gx a (privk ca)))))
-  (label 141)
-  (parent 101)
-  (unrealized)
-  (shape)
-  (maps
-    ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gx) (n n) (dhkey dhkey))))
-  (origs (n (1 2))))
-
-(defskeleton dhca
-  (vars (n text) (a b ca a-0 name) (dhkey skey) (gx akey))
-  (defstrand init 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gx gx)
-    (h gx))
-  (defstrand resp 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gy gx)
-    (h gx))
-  (defstrand ca 1 (subject b) (ca ca) (gz gx))
-  (defstrand ca 1 (subject a) (ca ca) (gz gx))
-  (defstrand init 4 (n n) (a a-0) (b a) (ca ca) (dhkey dhkey) (gx gx)
-    (h gx))
-  (defstrand ca 1 (subject a-0) (ca ca) (gz gx))
-  (defstrand ca 1 (subject a) (ca ca) (gz gx))
-  (precedes ((1 2) (0 2)) ((1 2) (4 2)) ((2 0) (1 0)) ((3 0) (1 1))
-    ((4 3) (1 3)) ((5 0) (4 0)) ((6 0) (0 0)))
-  (non-orig dhkey (invk gx) (privk ca))
-  (uniq-orig n)
-  (operation encryption-test (added-strand ca 1) (enc gx a (privk ca))
-    (0 0))
-  (traces
-    ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
-      (recv
-        (cat gx (enc gx b (privk ca)) (enc n (enc "dh" gx gx dhkey))))
-      (send (enc "check" n (enc "dh" gx gx dhkey))))
-    ((recv (enc gx b (privk ca))) (recv (cat gx (enc gx a (privk ca))))
-      (send
-        (cat gx (enc gx b (privk ca)) (enc n (enc "dh" gx gx dhkey))))
-      (recv (enc "check" n (enc "dh" gx gx dhkey))))
-    ((send (enc gx b (privk ca)))) ((send (enc gx a (privk ca))))
-    ((recv (enc gx a-0 (privk ca)))
-      (send (cat gx (enc gx a-0 (privk ca))))
-      (recv
-        (cat gx (enc gx a (privk ca)) (enc n (enc "dh" gx gx dhkey))))
-      (send (enc "check" n (enc "dh" gx gx dhkey))))
-    ((send (enc gx a-0 (privk ca)))) ((send (enc gx a (privk ca)))))
-  (label 142)
-  (parent 101)
+    ((send (enc gx a-0 (privk ca-0)))))
+  (label 143)
+  (parent 102)
   (unrealized)
   (shape)
   (maps
@@ -4788,53 +4978,11 @@
         (cat gx (enc gx a (privk ca-0)) (enc n (enc "dh" gx gx dhkey))))
       (send (enc "check" n (enc "dh" gx gx dhkey))))
     ((send (enc gx a (privk ca-0)))))
-  (label 143)
+  (label 144)
   (parent 102)
   (seen 112)
   (unrealized)
   (comment "1 in cohort - 0 not yet seen"))
-
-(defskeleton dhca
-  (vars (n text) (a b ca a-0 ca-0 name) (dhkey skey) (gx akey))
-  (defstrand init 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gx gx)
-    (h gx))
-  (defstrand resp 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gy gx)
-    (h gx))
-  (defstrand ca 1 (subject b) (ca ca) (gz gx))
-  (defstrand ca 1 (subject a) (ca ca) (gz gx))
-  (defstrand init 4 (n n) (a a-0) (b a-0) (ca ca-0) (dhkey dhkey)
-    (gx gx) (h gx))
-  (defstrand ca 1 (subject a-0) (ca ca-0) (gz gx))
-  (precedes ((1 2) (0 2)) ((1 2) (4 2)) ((2 0) (1 0)) ((3 0) (0 0))
-    ((3 0) (1 1)) ((4 3) (1 3)) ((5 0) (4 0)))
-  (non-orig dhkey (invk gx) (privk ca) (privk ca-0))
-  (uniq-orig n)
-  (operation encryption-test (displaced 6 3 ca 1) (enc gx a (privk ca))
-    (0 0))
-  (traces
-    ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
-      (recv
-        (cat gx (enc gx b (privk ca)) (enc n (enc "dh" gx gx dhkey))))
-      (send (enc "check" n (enc "dh" gx gx dhkey))))
-    ((recv (enc gx b (privk ca))) (recv (cat gx (enc gx a (privk ca))))
-      (send
-        (cat gx (enc gx b (privk ca)) (enc n (enc "dh" gx gx dhkey))))
-      (recv (enc "check" n (enc "dh" gx gx dhkey))))
-    ((send (enc gx b (privk ca)))) ((send (enc gx a (privk ca))))
-    ((recv (enc gx a-0 (privk ca-0)))
-      (send (cat gx (enc gx a-0 (privk ca-0))))
-      (recv
-        (cat gx (enc gx a-0 (privk ca-0))
-          (enc n (enc "dh" gx gx dhkey))))
-      (send (enc "check" n (enc "dh" gx gx dhkey))))
-    ((send (enc gx a-0 (privk ca-0)))))
-  (label 144)
-  (parent 102)
-  (unrealized)
-  (shape)
-  (maps
-    ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gx) (n n) (dhkey dhkey))))
-  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (n text) (a b ca a-0 ca-0 name) (dhkey skey) (gx akey))
@@ -4880,47 +5028,6 @@
   (origs (n (1 2))))
 
 (defskeleton dhca
-  (vars (n text) (b ca a b-0 ca-0 name) (dhkey skey) (gy akey))
-  (defstrand init 4 (n n) (a b) (b b) (ca ca) (dhkey dhkey) (gx gy)
-    (h gy))
-  (defstrand resp 4 (n n) (a b) (b b) (ca ca) (dhkey dhkey) (gy gy)
-    (h gy))
-  (defstrand ca 1 (subject b) (ca ca) (gz gy))
-  (defstrand ca 1 (subject b) (ca ca) (gz gy))
-  (defstrand init 4 (n n) (a a) (b b-0) (ca ca-0) (dhkey dhkey) (gx gy)
-    (h gy))
-  (defstrand ca 1 (subject a) (ca ca-0) (gz gy))
-  (defstrand ca 1 (subject b-0) (ca ca-0) (gz gy))
-  (precedes ((1 2) (0 2)) ((1 2) (4 2)) ((2 0) (0 0)) ((2 0) (1 0))
-    ((3 0) (1 1)) ((4 3) (1 3)) ((5 0) (4 0)) ((6 0) (4 2)))
-  (non-orig dhkey (invk gy) (privk ca) (privk ca-0))
-  (uniq-orig n)
-  (operation encryption-test (displaced 7 2 ca 1)
-    (enc gx a-0 (privk ca)) (0 0))
-  (traces
-    ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
-      (recv
-        (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gy gy dhkey))))
-      (send (enc "check" n (enc "dh" gy gy dhkey))))
-    ((recv (enc gy b (privk ca))) (recv (cat gy (enc gy b (privk ca))))
-      (send
-        (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gy gy dhkey))))
-      (recv (enc "check" n (enc "dh" gy gy dhkey))))
-    ((send (enc gy b (privk ca)))) ((send (enc gy b (privk ca))))
-    ((recv (enc gy a (privk ca-0)))
-      (send (cat gy (enc gy a (privk ca-0))))
-      (recv
-        (cat gy (enc gy b-0 (privk ca-0))
-          (enc n (enc "dh" gy gy dhkey))))
-      (send (enc "check" n (enc "dh" gy gy dhkey))))
-    ((send (enc gy a (privk ca-0)))) ((send (enc gy b-0 (privk ca-0)))))
-  (label 146)
-  (parent 103)
-  (seen 114)
-  (unrealized)
-  (comment "1 in cohort - 0 not yet seen"))
-
-(defskeleton dhca
   (vars (n text) (a b ca a-0 b-0 ca-0 name) (dhkey skey) (gx gy akey))
   (defstrand init 4 (n n) (a a) (b b) (ca ca) (dhkey dhkey) (gx gx)
     (h gy))
@@ -4956,13 +5063,54 @@
       (send (enc "check" n (enc "dh" gx gy dhkey))))
     ((send (enc gx a-0 (privk ca-0))))
     ((send (enc gy b-0 (privk ca-0)))))
-  (label 147)
+  (label 146)
   (parent 103)
   (unrealized)
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
   (origs (n (1 2))))
+
+(defskeleton dhca
+  (vars (n text) (b ca a b-0 ca-0 name) (dhkey skey) (gy akey))
+  (defstrand init 4 (n n) (a b) (b b) (ca ca) (dhkey dhkey) (gx gy)
+    (h gy))
+  (defstrand resp 4 (n n) (a b) (b b) (ca ca) (dhkey dhkey) (gy gy)
+    (h gy))
+  (defstrand ca 1 (subject b) (ca ca) (gz gy))
+  (defstrand ca 1 (subject b) (ca ca) (gz gy))
+  (defstrand init 4 (n n) (a a) (b b-0) (ca ca-0) (dhkey dhkey) (gx gy)
+    (h gy))
+  (defstrand ca 1 (subject a) (ca ca-0) (gz gy))
+  (defstrand ca 1 (subject b-0) (ca ca-0) (gz gy))
+  (precedes ((1 2) (0 2)) ((1 2) (4 2)) ((2 0) (0 0)) ((2 0) (1 0))
+    ((3 0) (1 1)) ((4 3) (1 3)) ((5 0) (4 0)) ((6 0) (4 2)))
+  (non-orig dhkey (invk gy) (privk ca) (privk ca-0))
+  (uniq-orig n)
+  (operation encryption-test (displaced 7 2 ca 1)
+    (enc gx a-0 (privk ca)) (0 0))
+  (traces
+    ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
+      (recv
+        (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gy gy dhkey))))
+      (send (enc "check" n (enc "dh" gy gy dhkey))))
+    ((recv (enc gy b (privk ca))) (recv (cat gy (enc gy b (privk ca))))
+      (send
+        (cat gy (enc gy b (privk ca)) (enc n (enc "dh" gy gy dhkey))))
+      (recv (enc "check" n (enc "dh" gy gy dhkey))))
+    ((send (enc gy b (privk ca)))) ((send (enc gy b (privk ca))))
+    ((recv (enc gy a (privk ca-0)))
+      (send (cat gy (enc gy a (privk ca-0))))
+      (recv
+        (cat gy (enc gy b-0 (privk ca-0))
+          (enc n (enc "dh" gy gy dhkey))))
+      (send (enc "check" n (enc "dh" gy gy dhkey))))
+    ((send (enc gy a (privk ca-0)))) ((send (enc gy b-0 (privk ca-0)))))
+  (label 147)
+  (parent 103)
+  (seen 115)
+  (unrealized)
+  (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton dhca
   (vars (n text) (b a b-0 ca name) (dhkey skey) (gx gy akey))
@@ -5268,7 +5416,7 @@
       (send (enc "check" n (enc "dh" gy gy dhkey))))
     ((send (enc gy b-0 (privk ca)))))
   (label 155)
-  (parent 132)
+  (parent 133)
   (unrealized)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -5348,7 +5496,7 @@
     ((send (enc gy a (privk ca)))) ((send (enc gy b-0 (privk ca)))))
   (label 157)
   (parent 149)
-  (seen 142)
+  (seen 139)
   (unrealized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -5457,7 +5605,7 @@
     ((send (enc gy b-0 (privk ca)))))
   (label 160)
   (parent 159)
-  (seen 114)
+  (seen 115)
   (unrealized)
   (comment "1 in cohort - 0 not yet seen"))
 
