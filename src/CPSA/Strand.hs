@@ -2456,15 +2456,15 @@ glength r z ht k (g, e) =
 -- of the role's trace that contains t.
 gparam :: Role -> Term -> Int -> Term -> Term -> Sem
 gparam r t h z t' k (g, e) =
-  case strdLookup e z of
-    Nothing ->
-      do
-        (s, inst) <- zip [0..] $ insts k
-        paramMatch r t h z s t' inst (g, e)
-    Just s | s < nstrands k  ->
-      let inst = insts k !! s in
-      paramMatch r t h z s t' inst (g, e)
-    _ -> []
+    case strdLookup e z of
+      Nothing ->
+          do
+            (s, inst) <- zip [0..] $ insts k
+            paramMatch r t h z s t' inst (g, e)
+      Just s | s < nstrands k  ->
+                 let inst = insts k !! s in
+                 paramMatch r t h z s t' inst (g, e)
+      _ -> []
 
 paramMatch :: Role -> Term -> Int -> Term -> Int -> Term -> Instance -> (Gen,Env) ->  [(Gen,Env)]
 paramMatch r pname h z s t' inst (g, e)

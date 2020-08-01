@@ -1,4 +1,4 @@
-(herald neuman-stubblebine-reauth (bound 12)) 
+(herald neuman-stubblebine-reauth (bound 8)) 
 
 (defprotocol neuman-stubblebine-reauth basic
   (defrole init (vars (a b ks name) (ra rb text) (k skey) (tb text))

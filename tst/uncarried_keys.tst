@@ -13,7 +13,44 @@
     (vars (a text) (A B name) (K akey))
     (trace (recv (enc "start" a A B (pubk B)))
       (send (enc a A B (pubk A))) (recv (enc a K (pubk B)))
-      (send (enc a A B K)))))
+      (send (enc a A B K))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton uncarried-keys
   (vars (a text) (A B name) (K akey))
@@ -49,14 +86,17 @@
 (defskeleton uncarried-keys
   (vars (a text) (A B name) (K akey))
   (defstrand init 4 (a a) (A A) (B B) (K K))
+  (defstrand resp 2 (a a) (A A) (B B))
   (defstrand resp 4 (a a) (A A) (B B) (K K))
-  (precedes ((0 0) (1 0)) ((0 2) (1 2)) ((1 1) (0 1)) ((1 3) (0 3)))
+  (precedes ((0 0) (1 0)) ((0 0) (2 0)) ((0 2) (2 2)) ((1 1) (0 1))
+    ((2 3) (0 3)))
   (non-orig (invk K) (privk B))
   (uniq-orig a K)
-  (operation encryption-test (displaced 1 2 resp 4) (enc a A B K) (0 3))
+  (operation encryption-test (added-strand resp 4) (enc a A B K) (0 3))
   (traces
     ((send (enc "start" a A B (pubk B))) (recv (enc a A B (pubk A)))
       (send (enc a K (pubk B))) (recv (enc a A B K)))
+    ((recv (enc "start" a A B (pubk B))) (send (enc a A B (pubk A))))
     ((recv (enc "start" a A B (pubk B))) (send (enc a A B (pubk A)))
       (recv (enc a K (pubk B))) (send (enc a A B K))))
   (label 2)
@@ -69,17 +109,14 @@
 (defskeleton uncarried-keys
   (vars (a text) (A B name) (K akey))
   (defstrand init 4 (a a) (A A) (B B) (K K))
-  (defstrand resp 2 (a a) (A A) (B B))
   (defstrand resp 4 (a a) (A A) (B B) (K K))
-  (precedes ((0 0) (1 0)) ((0 0) (2 0)) ((0 2) (2 2)) ((1 1) (0 1))
-    ((2 3) (0 3)))
+  (precedes ((0 0) (1 0)) ((0 2) (1 2)) ((1 1) (0 1)) ((1 3) (0 3)))
   (non-orig (invk K) (privk B))
   (uniq-orig a K)
-  (operation encryption-test (added-strand resp 4) (enc a A B K) (0 3))
+  (operation encryption-test (displaced 1 2 resp 4) (enc a A B K) (0 3))
   (traces
     ((send (enc "start" a A B (pubk B))) (recv (enc a A B (pubk A)))
       (send (enc a K (pubk B))) (recv (enc a A B K)))
-    ((recv (enc "start" a A B (pubk B))) (send (enc a A B (pubk A))))
     ((recv (enc "start" a A B (pubk B))) (send (enc a A B (pubk A)))
       (recv (enc a K (pubk B))) (send (enc a A B K))))
   (label 3)

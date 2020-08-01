@@ -710,7 +710,7 @@ genStateRls g rl ts =
                                           case firstOccurs p rl of
                                             Nothing -> error ("genStateRls:  Parameter " ++
                                                               (varName v) ++ " not found.")
-                                            Just i -> (Param rl p i z v))
+                                            Just i -> (Param rl p (i+1) z v))
                               pvars))
                        vars
                        "genStateRls:  vars not strand+prams?")                
@@ -769,7 +769,7 @@ genFactRls g rl predarglists =
                                           case firstOccurs p rl of
                                             Nothing -> error ("genFactRls:  Parameter " ++
                                                               (varName v) ++ " not found.")
-                                            Just i -> (Param rl p i z v))
+                                            Just i -> (Param rl p (i+1) z v))
                               pvars))
                        vars
                        "genFactRls:  vars not strand+prams?")                

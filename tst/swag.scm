@@ -228,89 +228,89 @@
        (critical-sections (4 5))
        )
 
-     ;; ;; workstation-roles 
+     ;; workstation-roles 
 
-     ;; (defrole specialize-to-host
-     ;;   (vars (w p ws name)
-     ;; 	     (n-w n-ts text) (h old mesg) (dcred hcred locn))
-     ;;   (trace
-     ;; 	(load dcred (db-daily w p h))
-     ;; 	(load hcred old)
-     ;; 	(stor hcred (db-daily-ws w p ws h))
-     ;; 	)
-     ;;   (gen-st (db-daily w p h))
-     ;;   (critical-sections (1 2))
-     ;;   )
+     (defrole specialize-to-host
+       (vars (w p ws name)
+     	     (n-w n-ts text) (h old mesg) (dcred hcred locn))
+       (trace
+     	(load dcred (db-daily w p h))
+     	(load hcred old)
+     	(stor hcred (db-daily-ws w p ws h))
+     	)
+       (gen-st (db-daily w p h))
+       (critical-sections (1 2))
+       )
      
-     ;; (defrole host-login 
-     ;;   (vars (w p ts ws name)	; watch, person turnstile, workstation
-     ;; 	     (s k k-local skey)
-     ;; 	     (nl-w n-ws text) (bio data) (h old mesg) (hcred hsess locn))
-     ;;   (trace
-     ;; 	(load hcred (db-daily-rec w p ws h))
+     (defrole host-login 
+       (vars (w p ts ws name)	; watch, person turnstile, workstation
+     	     (s k k-local skey)
+     	     (nl-w n-ws text) (bio data) (h old mesg) (hcred hsess locn))
+       (trace
+     	(load hcred (db-daily-rec w p ws h))
 
-     ;; 	(recv (login-req w p ws nl-w h))
-     ;; 	(send (login-challenge w p ws nl-w s n-ws h))
-     ;; 	(recv (login-conf n-ws s))
+     	(recv (login-req w p ws nl-w h))
+     	(send (login-challenge w p ws nl-w s n-ws h))
+     	(recv (login-conf n-ws s))
 
-     ;; 	(load hsess old)
-     ;; 	(stor hsess (host-beacon-data w p ws nl-w n-ws s))
-     ;; 	)
-     ;;   (gen-st (db-daily-rec w p ws h))
-     ;;   (critical-sections (4 5))
-     ;;   )
+     	(load hsess old)
+     	(stor hsess (host-beacon-data w p ws nl-w n-ws s))
+     	)
+       (gen-st (db-daily-rec w p ws h))
+       (critical-sections (4 5))
+       )
 
-     ;; (defrole w-login
-     ;;   (vars (w p ts ws name) (h old mesg)	; watch, person turnstile, workstation
-     ;; 	     (s k k-local skey) (fpt now nprovo n-w n-ts nl-w n-ws text)
-     ;; 	     (wkey wcred wsess locn)
-     ;; 	     )
-     ;;   (trace
-     ;; 	(recv (local (cat p now fpt)))	   ; fingerprint impression 
+     (defrole w-login
+       (vars (w p ts ws name) (h old mesg) ; watch, person turnstile, workstation
+       	     (s k k-local skey) (fpt now nprovo n-w n-ts nl-w n-ws text)
+       	     (wkey wcred wsess locn)
+       	     )
+       (trace
+       	(recv (local (cat p now fpt)))	; fingerprint impression 
+  
+       	(load wkey (watch-key w (enc k fpt)))
+       	(load wcred (watch-stored-cred w p ts h k))
+  
+       	(send (login-req w p ws nl-w (hash "seed" ws h)))
+       	(recv (login-challenge w p ws nl-w s n-ws (hash "seed" ws h)))
+       	(send (login-conf n-ws s))
+  
+       	(load wsess old)
+       	(stor wsess (w-beacon-data w p ws nl-w n-ws s))
+       	)
+       (local-restriction)
+       (gen-st
+       	(watch-key w (enc k fpt))
+       	(watch-stored-cred w p ts h k)
+       	)
+       (critical-sections (6 7))
+       )
 
-     ;; 	(load wkey (watch-key w (enc k fpt)))
-     ;; 	(load wcred (watch-stored-cred w p ts h k))
+     (defrole w-beacon
+       (vars (w p ts ws name)	; watch, person turnstile, workstation
+     	     (s k k-local skey)
+     	     (nl-w n-ws count text)
+     	     (wsess locn)
+     	     )
+       (trace
+     	(load wsess (w-beacon-data w p ws nl-w n-ws s))
+     	(send (enc "beacon" w p ws (hash nl-w n-ws) count s))
+     	)
+       (gen-st (w-beacon-data w p ws nl-w n-ws s))
+       )
 
-     ;; 	(send (login-req w p ws nl-w (hash "seed" ws h)))
-     ;; 	(recv (login-challenge w p ws nl-w s n-ws (hash "seed" ws h)))
-     ;; 	(send (login-conf n-ws s))
-
-     ;; 	(load wsess old)
-     ;; 	(stor wsess (w-beacon-data w p ws nl-w n-ws s))
-     ;; 	)
-     ;;   (local-restriction)
-     ;;   (gen-st
-     ;; 	(watch-key w (enc k fpt))
-     ;; 	(watch-stored-cred w p ts h k)
-     ;; 	)
-     ;;   (critical-sections (6 7))
-     ;;   )
-
-     ;; (defrole w-beacon
-     ;;   (vars (w p ts ws name)	; watch, person turnstile, workstation
-     ;; 	     (s k k-local skey)
-     ;; 	     (nl-w n-ws count text)
-     ;; 	     (wsess locn)
-     ;; 	     )
-     ;;   (trace
-     ;; 	(load wsess (w-beacon-data w p ws nl-w n-ws s))
-     ;; 	(send (enc "beacon" w p ws (hash nl-w n-ws) count s))
-     ;; 	)
-     ;;   (gen-st (w-beacon-data w p ws nl-w n-ws s))
-     ;;   )
-
-     ;; (defrole host-recv-beacon
-     ;;   (vars (w p ts ws name)	; watch, person turnstile, workstation
-     ;; 	     (s k k-local skey)
-     ;; 	     (nl-w n-ws count text)
-     ;; 	     (hsess locn)
-     ;; 	     )
-     ;;   (trace
-     ;; 	(load hsess (host-beacon-data w p ws nl-w n-ws s))
-     ;; 	(recv (enc "beacon" w p ws (hash nl-w n-ws) count s))
-     ;; 	)
-     ;;   (gen-st (host-beacon-data w p ws nl-w n-ws s))
-     ;;   )
+     (defrole host-recv-beacon
+       (vars (w p ts ws name)	; watch, person turnstile, workstation
+     	     (s k k-local skey)
+     	     (nl-w n-ws count text)
+     	     (hsess locn)
+     	     )
+       (trace
+     	(load hsess (host-beacon-data w p ws nl-w n-ws s))
+     	(recv (enc "beacon" w p ws (hash nl-w n-ws) count s))
+     	)
+       (gen-st (host-beacon-data w p ws nl-w n-ws s))
+       )
 
      (defrule fpt-deliver-once
        (forall
@@ -370,3 +370,4 @@
 ;;   (defstrand w-login 8)
 ;;   (facts (no-state-split))
 ;;   )
+
