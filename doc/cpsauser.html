@@ -142,14 +142,17 @@ ROLE       ::= (defrole ID VARS TRACE ROLE-ALIST)
 VARS       ::= (vars DECL*)
 DECL       ::= (ID+ SORT)
 TRACE      ::= (trace EVENT+)
-EVENT      ::= (send TERM) | (send ID TERM)
-            |  (recv TERM) | (recv ID TERM)
+EVENT      ::= (send TERM) | (send ID TERM) | (stor ID TERM)
+            |  (recv TERM) | (recv ID TERM) | (load ID TERM)
 ROLE-ALIST ::= (non-orig POS-TERM*) ROLE-ALIST
             |  (pen-non-orig POS-TERM*) ROLE-ALIST
             |  (uniq-orig TERM*) ROLE-ALIST
             |  (conf ID*) ROLE-ALIST
             |  (auth ID*) ROLE-ALIST
-            |  (priority POS-INT*) ROLE-ALIST | ...
+            |  (priority POS-INT*) ROLE-ALIST 
+	    |  (gen-st TERM+) ROLE-ALIST
+            |  (critical-sections POS-INT+) ROLE-ALIST
+	    |  (facts FACTS*) ROLE-ALIST | ... 
 POS-TERM   ::= TERM | (INT TERM)
 POS-INT    ::= (INT INT)
 RULE       ::= (defrule ID SENTENCE RULE-ALIST)
@@ -170,32 +173,49 @@ specific, but must include <code>mesg</code>
 and <code>chan</code>.</p>
 
 <p>Events specify message transmission (<code>send</code>) or
-  reception (<code>recv</code>).  A message can be sent on a
-  channel using the form <code>(send ID TERM)</code>
-  where <code>ID</code> is declared to be of sort <code>chan</code>,
-  and similarly for message receptions.</p>
+  reception (<code>recv</code>).  A message can be sent on a channel
+  using the form <code>(send ID TERM)</code> where <code>ID</code> is
+  declared to be of sort <code>chan</code>, and similarly for message
+  receptions.  A state value may be received or loaded from a location
+  using the form <code>(stor ID TERM)</code> where <code>ID</code> is
+  declared to be of sort <code>locn</code>.  Every store event
+  must be in a group consisting of a number of loads followed by a
+  number of stores.  Moreover, each <code>locn</code> in a store
+  event must have had a load event earlier in that group.</p>
 
 <p>The protocol association list has no predefined keys, while the
-role association list has five. The value associated with all of these
-keys must be atoms in the algebra. Each <code>non-orig</code> term
-must not be carried by any event in the role's trace, but each of its
-variables must occur in some term.  A role non-origination assumption
-of the form <code>(3 a)</code> asserts that atom <code>a</code> will
-not be mapped into an instance unless its height is greater than
-three.  For each <code>pen-non-orig</code> term, each of its variables
-must occur in some term, but unlike a non-origination assumption, the
-term may be carried.  Each <code>uniq-orig</code> term must originate
-in the role's trace.  Each <code>conf</code> term must be a channel
-variable, and it asserts the channel is confidential.
-Each <code>auth</code> term must be a channel variable, and it asserts
-the channel is authenticated.  Every variable of
-sort <code>mesg</code> must be acquired by the role's trace.</p>
+role association list has nine predefined keys. The value associated
+with <code>non-orig, pen-non-orig, uniq-orig, conf, auth</code> must
+be atoms in the algebra. Each <code>non-orig</code> term must not be
+carried by any event in the role's trace, but each of its variables
+must occur in some term.  A role non-origination assumption of the
+form <code>(3 a)</code> asserts that atom <code>a</code> will not be
+mapped into an instance unless its height is greater than three.  For
+each <code>pen-non-orig</code> term, each of its variables must occur
+in some term, but unlike a non-origination assumption, the term may be
+carried.  Each <code>uniq-orig</code> term must originate in the
+role's trace.  Each <code>conf</code> term must be a channel variable,
+and it asserts the channel is confidential.  Each <code>auth</code>
+term must be a channel variable, and it asserts the channel is
+authenticated.  Each <code>gen-st</code> must be a term loaded in the
+role.  It entails that the instances of these terms are not initial
+values, and they must be explained by a previous store event on some
+strand.  Each <code>critical-section</code> designates the start and
+end of a group of loads and stores that must occur atomically.  It is
+not needed when there is only one load and at most one store in the
+group of events.  And it is not needed if the events are not assumed
+to occur atomically.  Each <code>facts</code> declaration ensures
+that, whenever an instance of the role proceeds long enough to have
+chosen parameter values for each parameter that appears in the facts,
+the corresponding instance of the fact will be inferred.  Every
+variable of sort <code>mesg</code> must be acquired by the role's
+trace.</p>
 
 <p>The structure of sorts and terms in the Basic Cryptographic Algebra
 follows.</p>
 
 <blockquote>
-  <pre>SORT ::= text | data | name | skey | akey | mesg | chan
+  <pre>SORT ::= text | data | name | skey | akey | mesg | chan | locn 
 TERM ::= ID | AKEY | (ltk ID ID) | STRING
       |  (cat TERM+) | (enc TERM+ TERM) | (hash TERM+)
 AKEY ::= ID | (invk AKEY) | (pubk ID) | (privk ID)
@@ -315,7 +335,7 @@ of <code>mesg</code>.</p>
 <p>The axioms for Diffie-Hellman values are the usual ones for an
   Abelian group for terms of sort <code>expr</code>.  For terms of
   sort <code>base</code>, <code>(exp h (one)) = h</code> and
-<code>(exp (exp h x) y) = (exp h (mul x y)</code>.</p>
+<code>(exp (exp h x) y) = (exp h (mul x y))</code>.</p>
 
 -->
 
@@ -351,11 +371,14 @@ ANTECEDENT  ::= ATOMIC | (and ATOMIC+)
 ATOMIC      ::= (p ROLEID SVAR HGT) | (p ROLEID PARAM SVAR TERM)
              |  (prec SVAR POS SVAR POS) | (non TERM) | (pnon TERM)
              |  (uniq TERM) | (uniq-at TERM SVAR POS)
-             |  (conf ID) | (auth ID)
+             |  (conf ID) | (auth ID) 
+	     |  (gen-st TERM) | (comm-pr SVAR POS SVAR POS) 
+	     |  (same-locn SVAR POS SVAR POS) | (state-node SVAR POS) 
+	     |  (trans SVAR POS) | (leads-to SVAR POS SVAR POS) 
              |  (fact ID TERM*) | (= TERM TERM)
 ROLEID      ::= STRING
 HGT         ::= INT
-POS         ::= INT
+POS         ::= INT | ID 
 SVAR        ::= ID
 PARAM       ::= STRING</pre>
 </blockquote>
@@ -383,7 +406,20 @@ PARAM       ::= STRING</pre>
 
 <p>The empty string names the listener role of a protocol.  The
   role has the variable <code>x</code> of sort <code>mesg</code>
-  as its only role variable. There are two positions in the listener role.</p>
+  as its only role variable. There are two positions in the listener
+  role.</p>
+
+<p> <code>gen-st</code> asserts that its argument is a generated state
+  value, and cannot be an initial value.  <code>comm-pr</code> asserts
+  that the two nodes that follow are a transmission-reception pair
+  with the same message.  <code>same-locn</code> asserts that the two
+  nodes that follow are state nodes involving the same
+  location.  <code>same-locn</code> asserts that the node that follows
+  is a state node.  <code>trans</code> asserts that the node that
+  follows is a transition node rather than a pure
+  observation.  <code>leads-to</code> asserts that the two nodes that
+  follow are a transmission and a reception on the same location that
+  are immediately related, ie no other transition comes between them.  
 
 <h3>Rules</h3>
 
