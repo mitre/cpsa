@@ -1,5 +1,6 @@
 (herald "SWAG"
 	(bound 28)
+	(limit 800)
 	)
 
 (defmacro (la payload)
@@ -256,6 +257,7 @@
      	(load hsess old)
      	(stor hsess (host-beacon-data w p ws nl-w n-ws s))
      	)
+       (uniq-orig n-ws)
        (gen-st (db-daily-rec w p ws h))
        (critical-sections (4 5))
        )
@@ -278,6 +280,7 @@
        	(load wsess old)
        	(stor wsess (w-beacon-data w p ws nl-w n-ws s))
        	)
+       (uniq-orig nl-w)
        (local-restriction)
        (gen-st
        	(watch-key w (enc k fpt))
@@ -319,19 +322,43 @@
      		      (p "w-turnstile" "now" z2 now))
      		 (= z1 z2))))
      
-     ;; (defrule fpt-deliver-once-again
-     ;;   (forall
-     ;;    ((z1 z2 strd) (now text))
-     ;;    (implies (and (p "w-bio" "now" z1 now)
-     ;; 		   (p "w-login" "now" z2 now)) 
-     ;; 	      (= z1 z2))))
+     (defrule fpt-deliver-once-again
+       (forall
+        ((z1 z2 strd) (now text))
+        (implies (and (p "w-bio" "now" z1 now)
+     		   (p "w-login" "now" z2 now)) 
+     	      (= z1 z2))))
      
-     ;; (defrule fpt-deliver-once-yet-again
-     ;;   (forall
-     ;;    ((z1 z2 strd) (now text))
-     ;;    (implies (and (p "w-turnstile" "now" z1 now)
-     ;; 		   (p "w-login" "now" z2 now))
-     ;; 	      (= z1 z2))))
+     (defrule fpt-deliver-once-yet-again
+       (forall
+        ((z1 z2 strd) (now text))
+        (implies (and (p "w-turnstile" "now" z1 now)
+     		   (p "w-login" "now" z2 now))
+		 (= z1 z2))))
+
+     (defrule w-beacon-counter
+       (forall ((z0 z1 strd) (w p name) (c text))
+	       (implies (and (p "w-beacon" z0 2)
+			     (p "w-beacon" z1 2)
+			     (p "w-beacon" "w" z0 w)
+			     (p "w-beacon" "w" z1 w)
+			     (p "w-beacon" "p" z0 p)
+			     (p "w-beacon" "p" z1 p)
+			     (p "w-beacon" "count" z0 c)
+			     (p "w-beacon" "count" z1 c))
+			(= z0 z1))))
+     
+     (defrule host-recv-beacon-counter
+       (forall ((z0 z1 strd) (w p name) (c text))
+	       (implies (and (p "host-recv-beacon" z0 2)
+			     (p "host-recv-beacon" z1 2)
+			     (p "host-recv-beacon" "w" z0 w)
+			     (p "host-recv-beacon" "w" z1 w)
+			     (p "host-recv-beacon" "p" z0 p)
+			     (p "host-recv-beacon" "p" z1 p)
+			     (p "host-recv-beacon" "count" z0 c)
+			     (p "host-recv-beacon" "count" z1 c))
+			(= z0 z1))))
      
      )
 
@@ -359,15 +386,26 @@
   (facts (no-state-split))
   )
 
-;; (defskeleton swag
-;;   (vars )
-;;   (defstrand host-login 6)
-;;   (facts (no-state-split))
-;;   )
+(defskeleton swag
+  (vars )
+  (defstrand host-login 6)
+  (facts (no-state-split))
+  )
 
-;; (defskeleton swag
-;;   (vars )
-;;   (defstrand w-login 8)
-;;   (facts (no-state-split))
-;;   )
+(defskeleton swag
+  (vars )
+  (defstrand w-login 8)
+  (facts (no-state-split))
+  )
 
+(defskeleton swag
+  (vars )
+  (defstrand w-beacon 2)
+  (facts (no-state-split))
+  )
+
+(defskeleton swag
+  (vars )
+  (defstrand host-recv-beacon 2)
+  (facts (no-state-split))
+  )
