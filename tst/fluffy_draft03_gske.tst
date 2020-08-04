@@ -21,7 +21,44 @@
   (defrole client
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
-      (recv (cat "deliver" a (enc s g na gk (ltk s a)))))))
+      (recv (cat "deliver" a (enc s g na gk (ltk s a))))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton fluffy
   (vars (nb g text) (b s name) (gk skey))
@@ -99,7 +136,44 @@
   (defrole client
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
-      (recv (cat "deliver" a (enc s g na gk (ltk s a)))))))
+      (recv (cat "deliver" a (enc s g na gk (ltk s a))))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton fluffy
   (vars (nb na g text) (a b s name) (gk skey))
@@ -305,7 +379,44 @@
   (defrole client
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
-      (recv (cat "deliver" a (enc s g na gk (ltk s a)))))))
+      (recv (cat "deliver" a (enc s g na gk (ltk s a))))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton fluffy
   (vars (na g text) (a s name) (gk skey))
@@ -383,18 +494,55 @@
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
       (recv (cat "deliver" a (enc s g na gk (ltk s a))))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule sp-no-fetch
+    (forall ((b s name) (y z strd))
+      (implies
+        (and (p "sp" z 1) (p "sp" "s" z s) (p "sp" "b" z b)
+          (p "keyserv" y 3) (p "keyserv" "s" y s) (p "keyserv" "a" y b))
+        (false))))
   (defrule client-no-request
     (forall ((a s name) (y z strd))
       (implies
         (and (p "client" z 1) (p "client" "s" z s) (p "client" "a" z a)
           (p "keyserv" y 1) (p "keyserv" "s" y s) (p "keyserv" "b" y a))
         (false))))
-  (defrule sp-no-fetch
-    (forall ((b s name) (y z strd))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (p "sp" z 1) (p "sp" "s" z s) (p "sp" "b" z b)
-          (p "keyserv" y 3) (p "keyserv" "s" y s) (p "keyserv" "a" y b))
-        (false)))))
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton fluffy-rule
   (vars (nb g text) (b s name) (gk skey))
@@ -449,18 +597,55 @@
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
       (recv (cat "deliver" a (enc s g na gk (ltk s a))))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule sp-no-fetch
+    (forall ((b s name) (y z strd))
+      (implies
+        (and (p "sp" z 1) (p "sp" "s" z s) (p "sp" "b" z b)
+          (p "keyserv" y 3) (p "keyserv" "s" y s) (p "keyserv" "a" y b))
+        (false))))
   (defrule client-no-request
     (forall ((a s name) (y z strd))
       (implies
         (and (p "client" z 1) (p "client" "s" z s) (p "client" "a" z a)
           (p "keyserv" y 1) (p "keyserv" "s" y s) (p "keyserv" "b" y a))
         (false))))
-  (defrule sp-no-fetch
-    (forall ((b s name) (y z strd))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (p "sp" z 1) (p "sp" "s" z s) (p "sp" "b" z b)
-          (p "keyserv" y 3) (p "keyserv" "s" y s) (p "keyserv" "a" y b))
-        (false)))))
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton fluffy-rule
   (vars (nb na g text) (a b s name) (gk skey))
@@ -537,18 +722,55 @@
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
       (recv (cat "deliver" a (enc s g na gk (ltk s a))))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule sp-no-fetch
+    (forall ((b s name) (y z strd))
+      (implies
+        (and (p "sp" z 1) (p "sp" "s" z s) (p "sp" "b" z b)
+          (p "keyserv" y 3) (p "keyserv" "s" y s) (p "keyserv" "a" y b))
+        (false))))
   (defrule client-no-request
     (forall ((a s name) (y z strd))
       (implies
         (and (p "client" z 1) (p "client" "s" z s) (p "client" "a" z a)
           (p "keyserv" y 1) (p "keyserv" "s" y s) (p "keyserv" "b" y a))
         (false))))
-  (defrule sp-no-fetch
-    (forall ((b s name) (y z strd))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (p "sp" z 1) (p "sp" "s" z s) (p "sp" "b" z b)
-          (p "keyserv" y 3) (p "keyserv" "s" y s) (p "keyserv" "a" y b))
-        (false)))))
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton fluffy-rule
   (vars (na g text) (a s name) (gk skey))

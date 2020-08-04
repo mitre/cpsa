@@ -14,7 +14,44 @@
     (vars (b a name) (n2 n1 text))
     (trace (recv (enc (enc n1 a (privk "sig" a)) (pubk "enc" b)))
       (send (enc (enc n1 n2 (privk "sig" b)) (pubk "enc" a)))
-      (recv (enc (enc n2 (privk "sig" a)) (pubk "enc" b))))))
+      (recv (enc (enc n2 (privk "sig" a)) (pubk "enc" b)))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton mult-keys-sig-enc
   (vars (n1 n2 text) (a b name))
@@ -85,7 +122,44 @@
     (vars (b a name) (n2 n1 text))
     (trace (recv (enc (enc n1 a (privk "sig" a)) (pubk "enc" b)))
       (send (enc (enc n1 n2 (privk "sig" b)) (pubk "enc" a)))
-      (recv (enc (enc n2 (privk "sig" a)) (pubk "enc" b))))))
+      (recv (enc (enc n2 (privk "sig" a)) (pubk "enc" b)))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton mult-keys-sig-enc
   (vars (n2 n1 text) (a b name))
@@ -180,7 +254,44 @@
     (vars (b a name) (n2 n1 text))
     (trace (recv (enc (enc n1 a (privk "sig" a)) (pubk "enc" b)))
       (send (enc (enc n1 n2 (privk "sig" b)) (pubk "enc" a)))
-      (recv (enc (enc n2 (privk "sig" a)) (pubk "enc" b))))))
+      (recv (enc (enc n2 (privk "sig" a)) (pubk "enc" b)))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton mult-keys-sig-enc
   (vars (n2 n1 text) (a b name))
@@ -231,7 +342,44 @@
     (vars (b a name) (n2 n1 text))
     (trace (recv (enc (enc n1 a (privk "sig" a)) (pubk "enc" b)))
       (send (enc (enc n1 n2 (privk "sig" b)) (pubk "enc" a)))
-      (recv (enc (enc n2 (privk "sig" a)) (pubk "enc" b))))))
+      (recv (enc (enc n2 (privk "sig" a)) (pubk "enc" b)))))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton mult-keys-sig-enc
   (vars (n2 n1 text) (a b name))
