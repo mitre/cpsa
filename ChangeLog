@@ -1,7 +1,11 @@
+2020-08-10  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 4.3.0
+
 2020-04-20  Joshua D. Guttman  <guttman@mitre.org>
 
 	* src/CPSA/Strand.hs (isAuth):  Added locations with point
-	structure and uniqueness assumptions.  
+	structure and uniqueness assumptions.
 
 2020-04-02  Ian D. Kretz  <ikretz@mitre.org>
 

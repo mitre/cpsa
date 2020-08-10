@@ -1,6 +1,6 @@
 (herald neuman-stubblebine-reauth (bound 8))
 
-(comment "CPSA 4.2.3")
+(comment "CPSA 4.3.0")
 (comment "All input read from tst/neuman-stubblebine-reauth.lsp")
 
 (defprotocol neuman-stubblebine-reauth basic

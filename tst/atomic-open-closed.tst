@@ -1,6 +1,6 @@
 (herald atomic-open-closed (bound 44))
 
-(comment "CPSA 4.2.3")
+(comment "CPSA 4.3.0")
 (comment "All input read from tst/atomic-open-closed.scm")
 (comment "Strand count bounded at 44")
 

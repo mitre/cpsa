@@ -2,7 +2,7 @@
   (comment "First skeleton should have a shape,"
     "second should be dead."))
 
-(comment "CPSA 4.2.3")
+(comment "CPSA 4.3.0")
 (comment "All input read from tst/neq_test.scm")
 
 (defprotocol neq-test basic

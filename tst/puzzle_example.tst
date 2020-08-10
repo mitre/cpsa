@@ -1,6 +1,6 @@
 (herald puzzle_example)
 
-(comment "CPSA 4.2.3")
+(comment "CPSA 4.3.0")
 (comment "All input read from tst/puzzle_example.scm")
 
 (defprotocol puzzle basic
