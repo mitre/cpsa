@@ -11,7 +11,7 @@
 # ./cpsashapesall
 # ./cpsagraphall
 
-CPSAFLAGS="+RTS -M512m -N -RTS"
+CPSAFLAGS="+RTS -M512m -N4 -RTS"
 
 # Analyze the results of a CPSA run.
 analyze () {
@@ -23,6 +23,8 @@ analyze () {
     cabal run cpsa4shapes -v0 -- -o "${1}_shapes.txt" "$1.txt"
     echo cpsa4graph -o "${1}_shapes.xhtml" "${1}_shapes.txt"
     cabal run cpsa4graph -v0 -- -o "${1}_shapes.xhtml" "${1}_shapes.txt"
+    echo cpsa4sas -o "${1}_sas.txt" "${1}.txt"
+    cabal run cpsa4sas -v0 -- -o "${1}_sas.txt" "${1}.txt"
 }
 
 for i in tst/*.scm

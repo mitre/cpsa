@@ -631,24 +631,30 @@ form (pov, shapes) =
   L () [S () "defgoal", S () (pname $ protocol pov), -- Name of protocol
         quantify "forall" vars (imply (conjoin conj) (disjoin disj))]
 
+sansPts :: [Term] -> [Term]
+sansPts = filter notPt
+
+sansPtOrigs :: [(Term, (Term, Int))] -> [(Term, (Term, Int))]
+sansPtOrigs = filter (\(pt, _) -> notPt pt)
+
 -- Convert one skeleton into a declaration and a conjunction.  The
 -- declaration is used as the bound variables in a quantifier.  The
 -- context is extended so it can be used as input for another
 -- skeleton.
 skel :: Context -> Preskel -> (Context, [SExpr ()], [SExpr ()])
 skel ctx k =
-  let vars = kvars k ++ kstrands k in
+  let vars = (sansPts $ kvars k ++ kstrands k) in
   let kctx = addToContext ctx vars in
   let strds = displayVars kctx (kstrands k) in
   (kctx,
-   displayVars kctx (kvars k) ++ listMap strd strds,
+   displayVars kctx (sansPts (kvars k)) ++ listMap strd strds,
    map (lengthForm kctx k) (M.assocs (varmap k)) ++
    concatMap (paramForm kctx) (zip (strands k) $ insts k) ++
    map (precForm kctx) (orderings k) ++
    map (unary "non" kctx) (nons k) ++
    map (unary "pnon" kctx) (pnons k) ++
-   map (unary "uniq" kctx) (noOrigUniqs k) ++
-   map (uniqAtForm kctx) (origs k) ++
+   map (unary "uniq" kctx) (sansPts (noOrigUniqs k)) ++
+   map (uniqAtForm kctx) (sansPtOrigs (origs k)) ++
    map (unary "auth" kctx) (auths k) ++
    map (unary "conf" kctx) (confs k) ++
    map (factForm kctx) (facts k))

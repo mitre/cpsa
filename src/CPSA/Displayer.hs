@@ -223,8 +223,10 @@ displayPreskel :: Preskel -> [SExpr ()] -> SExpr ()
 displayPreskel k rest =
     L () (S () "defskeleton" :
           S () (pname (protocol k)) :
-          L () (S () "vars" : displayVars ctx (sansPts vars)) :
-          foldr f (displayRest k ctx rest) (insts k))
+          L () (S () "vars" : displayVars ctx vars ) :
+               -- (sansPts vars) lets
+               -- try printing points
+                foldr f (displayRest k ctx rest) (insts k))
     where
       ctx = varsContext vars 
       vars = kfvars k ++ kvars k
@@ -240,15 +242,26 @@ displayRest k ctx rest =
         (displayOptional "genStV" (displayTerms ctx (kgenSt k))
          (displayOptional "conf" (displayTerms ctx (kconf k))
           (displayOptional "auth" (displayTerms ctx (kauth k))
-           (displayOptional "facts" (map (displayFact ctx) (kfacts k))
-            (displayOptional "priority" priorities
-             (kcomment k ++
-              (displayOptional "rule" (map (S ()) (krules k))
-               (displayOperation k ctx
-                (displayOptional "traces" traces rest))))))))))))
+           (displayOptional "facts" (displayFacts ctx (kfacts k))
+            -- (map (displayFact ctx) (kfacts
+            -- k))            
+             (displayOptional "priority" priorities
+              (kcomment k ++
+               (displayOptional "rule" (map (S ()) (krules k))
+                (displayOperation k ctx
+                 (displayOptional "traces" traces rest))))))))))))
     where
       priorities = map displayPriority (kpriority k)
       traces = map (L () . displayTrace ctx . trace) (insts k)
+
+displayFacts :: Context -> [Fact] -> [SExpr ()]
+displayFacts ctx =
+    foldr
+    (\(Fact name fs) soFar ->
+         case name of
+           "trans" -> soFar
+           _ -> (L () (S () name : map (displayFterm ctx) fs)) : soFar)
+    []
 
 displayFact :: Context -> Fact -> SExpr ()
 displayFact ctx (Fact name fs) =

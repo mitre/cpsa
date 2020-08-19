@@ -1,4 +1,4 @@
-(comment "CPSA 4.2.3")
+(comment "CPSA 4.3.0")
 (comment "All input read")
 
 (defprotocol blanchet basic
@@ -10,6 +10,43 @@
     (vars (a b akey) (s skey) (d data))
     (trace (recv (enc (enc s (invk a)) b)) (send (enc d s)))
     (uniq_orig d))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (comment "Blanchet's protocol"))
 
 (defskeleton blanchet
@@ -83,12 +120,49 @@
   (defrole door
     (vars (p d akey) (k skey) (t text))
     (trace (recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t)))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
   (defrule trust
     (forall ((z strd) (p d akey) (k skey))
       (implies
         (and (p "person" z 1) (p "person" "p" z p) (p "person" "d" z d)
           (p "person" "k" z k) (fact trust p))
-        (and (non (invk d)) (uniq k))))))
+        (and (non (invk d)) (uniq k)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton doorsep
   (vars (t text) (k skey) (p d akey))
@@ -184,12 +258,49 @@
   (defrole door
     (vars (p d akey) (k skey) (t text))
     (trace (recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t)))
+  (defrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
   (defrule trust
     (forall ((z strd) (p d akey) (k skey))
       (implies
         (and (p "person" z 1) (p "person" "p" z p) (p "person" "d" z d)
           (p "person" "k" z k) (fact trust p))
-        (and (non (invk d)) (uniq k))))))
+        (and (non (invk d)) (uniq k)))))
+  (defrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton doorsep
   (vars (t text) (k skey) (p d akey))

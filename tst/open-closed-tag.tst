@@ -143,7 +143,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton open-closed
-  (vars (old mesg) (d o name) (k skey) (start-ch chan) (lk locn))
+  (vars (old mesg) (d o name) (pt pt-0 pval) (k skey) (start-ch chan)
+    (lk locn))
   (defstrand owner-power-dev 2 (d d) (o o) (k k) (start-ch start-ch))
   (deflistener k)
   (defstrand dev-up 3 (old old) (d d) (o o) (k k) (start-ch start-ch)
@@ -152,7 +153,6 @@
   (uniq-orig k)
   (conf start-ch)
   (auth start-ch)
-  (facts (trans 2 1) (trans 2 2))
   (rule trRl_dev-up-at-1 trRl_dev-up-at-2)
   (operation nonce-test (added-strand dev-up 3) k (1 0)
     (ch-msg start-ch (cat "power-up" d o k)))
@@ -278,7 +278,7 @@
         (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton open-closed
-  (vars (n text) (d o name) (k skey) (lk ls locn))
+  (vars (n text) (d o name) (pt pt-0 pval) (k skey) (lk ls locn))
   (defstrand dev-pass 4 (n n) (d d) (o o) (k k) (lk lk) (ls ls))
   (uniq-orig n)
   (traces
@@ -291,7 +291,7 @@
   (comment "Not closed under rules"))
 
 (defskeleton open-closed
-  (vars (n text) (d o name) (k skey) (lk ls locn))
+  (vars (n text) (d o name) (pt pt-0 pval) (k skey) (lk ls locn))
   (defstrand dev-pass 4 (n n) (d d) (o o) (k k) (lk lk) (ls ls))
   (uniq-orig n)
   (genStV (cat "st" d "opened"))
@@ -307,15 +307,14 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton open-closed
-  (vars (any mesg) (n n-0 text) (d o o-0 name) (k k-0 skey)
-    (lk ls lk-0 locn))
+  (vars (any mesg) (n n-0 text) (d o o-0 name) (pt pt-0 pt-1 pt-2 pval)
+    (k k-0 skey) (lk ls lk-0 locn))
   (defstrand dev-pass 4 (n n) (d d) (o o) (k k) (lk lk) (ls ls))
   (defstrand dev-open 4 (any any) (n n-0) (d d) (o o-0) (k k-0)
     (lk lk-0) (ls ls))
   (precedes ((1 3) (0 2)))
   (uniq-orig n)
   (genStV (cat "st" d "opened"))
-  (facts (trans 1 2) (trans 1 3))
   (rule trRl_dev-open-at-2 trRl_dev-open-at-3)
   (operation channel-test (added-strand dev-open 4)
     (ch-msg ls (cat pt-0 "st" d "opened")) (0 2))
@@ -446,8 +445,8 @@
         (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton open-closed
-  (vars (n text) (d o d-0 o-0 name) (k skey) (start-ch chan)
-    (lk ls locn))
+  (vars (n text) (d o d-0 o-0 name) (pt pt-0 pval) (k skey)
+    (start-ch chan) (lk ls locn))
   (defstrand owner-power-dev 2 (d d) (o o) (k k) (start-ch start-ch))
   (defstrand dev-pass 4 (n n) (d d-0) (o o-0) (k k) (lk lk) (ls ls))
   (uniq-orig n k)
@@ -463,8 +462,8 @@
   (comment "Not a skeleton"))
 
 (defskeleton open-closed
-  (vars (n text) (d o d-0 o-0 name) (k skey) (start-ch chan)
-    (lk ls locn))
+  (vars (n text) (d o d-0 o-0 name) (pt pt-0 pval) (k skey)
+    (start-ch chan) (lk ls locn))
   (defstrand owner-power-dev 2 (d d) (o o) (k k) (start-ch start-ch))
   (defstrand dev-pass 4 (n n) (d d-0) (o o-0) (k k) (lk lk) (ls ls))
   (precedes ((0 0) (1 0)))
@@ -481,8 +480,8 @@
   (comment "Not closed under rules"))
 
 (defskeleton open-closed
-  (vars (n text) (d o d-0 o-0 name) (k skey) (start-ch chan)
-    (lk ls locn))
+  (vars (n text) (d o d-0 o-0 name) (pt pt-0 pval) (k skey)
+    (start-ch chan) (lk ls locn))
   (defstrand owner-power-dev 2 (d d) (o o) (k k) (start-ch start-ch))
   (defstrand dev-pass 4 (n n) (d d-0) (o o-0) (k k) (lk lk) (ls ls))
   (precedes ((0 0) (1 0)))
@@ -501,8 +500,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton open-closed
-  (vars (old mesg) (n text) (d o d-0 o-0 name) (k skey) (start-ch chan)
-    (lk ls lk-0 locn))
+  (vars (old mesg) (n text) (d o d-0 o-0 name) (pt pt-0 pt-1 pt-2 pval)
+    (k skey) (start-ch chan) (lk ls lk-0 locn))
   (defstrand owner-power-dev 2 (d d) (o o) (k k) (start-ch start-ch))
   (defstrand dev-pass 4 (n n) (d d-0) (o o-0) (k k) (lk lk) (ls ls))
   (defstrand dev-up 3 (old old) (d d) (o o) (k k) (start-ch start-ch)
@@ -512,7 +511,6 @@
   (genStV (cat "st" d-0 "opened"))
   (conf start-ch)
   (auth start-ch)
-  (facts (trans 2 1) (trans 2 2))
   (rule trRl_dev-up-at-1 trRl_dev-up-at-2)
   (operation nonce-test (added-strand dev-up 3) k (1 0)
     (ch-msg start-ch (cat "power-up" d o k)))
@@ -528,8 +526,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton open-closed
-  (vars (old mesg) (n text) (d o name) (k skey) (start-ch chan)
-    (ls lk locn))
+  (vars (old mesg) (n text) (d o name) (pt pt-0 pt-1 pval) (k skey)
+    (start-ch chan) (ls lk locn))
   (defstrand owner-power-dev 2 (d d) (o o) (k k) (start-ch start-ch))
   (defstrand dev-pass 4 (n n) (d d) (o o) (k k) (lk lk) (ls ls))
   (defstrand dev-up 3 (old old) (d d) (o o) (k k) (start-ch start-ch)
@@ -539,7 +537,6 @@
   (genStV (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
-  (facts (trans 2 1) (trans 2 2))
   (operation nonce-test
     (contracted (d-0 d) (o-0 o) (lk-0 lk) (pt-2 pt-1)) k (1 0)
     (ch-msg start-ch (cat "power-up" d o k))
@@ -556,8 +553,8 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton open-closed
-  (vars (old mesg) (n text) (d o name) (k skey) (start-ch chan)
-    (ls lk locn))
+  (vars (old mesg) (n text) (d o name) (pt pt-0 pt-1 pval) (k skey)
+    (start-ch chan) (ls lk locn))
   (defstrand owner-power-dev 2 (d d) (o o) (k k) (start-ch start-ch))
   (defstrand dev-pass 4 (n n) (d d) (o o) (k k) (lk lk) (ls ls))
   (defstrand dev-up 3 (old old) (d d) (o o) (k k) (start-ch start-ch)
@@ -568,7 +565,6 @@
   (genStV (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
-  (facts (trans 2 1) (trans 2 2))
   (operation encryption-test (added-strand user-pass 1)
     (enc "may I pass" k) (1 1))
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
@@ -583,8 +579,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton open-closed
-  (vars (old mesg) (n text) (d o name) (k skey) (start-ch chan)
-    (ls lk locn))
+  (vars (old mesg) (n text) (d o name) (pt pt-0 pt-1 pval) (k skey)
+    (start-ch chan) (ls lk locn))
   (defstrand owner-power-dev 2 (d d) (o o) (k k) (start-ch start-ch))
   (defstrand dev-pass 4 (n n) (d d) (o o) (k k) (lk lk) (ls ls))
   (defstrand dev-up 3 (old old) (d d) (o o) (k k) (start-ch start-ch)
@@ -595,7 +591,6 @@
   (genStV (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
-  (facts (trans 2 1) (trans 2 2))
   (operation encryption-test (added-listener k) (enc "may I pass" k)
     (1 1))
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
@@ -611,8 +606,9 @@
   (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton open-closed
-  (vars (old any mesg) (n n-0 text) (d o o-0 name) (k k-0 skey)
-    (start-ch chan) (ls lk lk-0 locn))
+  (vars (old any mesg) (n n-0 text) (d o o-0 name)
+    (pt pt-0 pt-1 pt-2 pt-3 pval) (k k-0 skey) (start-ch chan)
+    (ls lk lk-0 locn))
   (defstrand owner-power-dev 2 (d d) (o o) (k k) (start-ch start-ch))
   (defstrand dev-pass 4 (n n) (d d) (o o) (k k) (lk lk) (ls ls))
   (defstrand dev-up 3 (old old) (d d) (o o) (k k) (start-ch start-ch)
@@ -625,7 +621,6 @@
   (genStV (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
-  (facts (trans 4 2) (trans 4 3) (trans 2 1) (trans 2 2))
   (rule trRl_dev-open-at-2 trRl_dev-open-at-3)
   (operation channel-test (added-strand dev-open 4)
     (ch-msg ls (cat pt "st" d "opened")) (1 2))
@@ -645,8 +640,8 @@
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton open-closed
-  (vars (old mesg) (n text) (d o name) (k skey) (start-ch chan)
-    (ls lk locn))
+  (vars (old mesg) (n text) (d o name) (pt pt-0 pt-1 pval) (k skey)
+    (start-ch chan) (ls lk locn))
   (defstrand owner-power-dev 2 (d d) (o o) (k k) (start-ch start-ch))
   (defstrand dev-pass 4 (n n) (d d) (o o) (k k) (lk lk) (ls ls))
   (defstrand dev-up 3 (old old) (d d) (o o) (k k) (start-ch start-ch)
@@ -657,7 +652,6 @@
   (genStV (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
-  (facts (trans 2 1) (trans 2 2))
   (operation nonce-test (displaced 4 2 dev-up 3) k (3 0)
     (ch-msg start-ch (cat "power-up" d o k)))
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
@@ -673,8 +667,9 @@
   (comment "empty cohort"))
 
 (defskeleton open-closed
-  (vars (any old old1 mesg) (n n-0 text) (o d o-0 name) (k k-0 skey)
-    (start-ch chan) (ls lk lk-0 ls-0 locn))
+  (vars (any old old1 mesg) (n n-0 text) (o d o-0 name)
+    (pt pt-0 pt-1 pt-2 pt-3 pt-4 pt-5 pval) (k k-0 skey) (start-ch chan)
+    (ls lk lk-0 ls-0 locn))
   (defstrand owner-power-dev 2 (d d) (o o-0) (k k) (start-ch start-ch))
   (defstrand dev-pass 4 (n n) (d d) (o o-0) (k k) (lk lk-0) (ls ls))
   (defstrand user-pass 1 (k k))
@@ -688,8 +683,6 @@
   (genStV (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
-  (facts (trans 4 3) (trans 4 4) (trans 3 2) (trans 3 3) (trans 4 1)
-    (trans 4 2))
   (rule trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (displaced 2 5 dev-up 6) (enc "up" k)
     (0 1))
@@ -714,8 +707,9 @@
   (origs (pt-3 (4 2)) (pt-5 (4 4)) (pt (3 3)) (n (1 3)) (k (0 0))))
 
 (defskeleton open-closed
-  (vars (old any mesg) (n n-0 text) (d o o-0 name) (k k-0 skey)
-    (start-ch chan) (ls lk lk-0 locn))
+  (vars (old any mesg) (n n-0 text) (d o o-0 name)
+    (pt pt-0 pt-1 pt-2 pt-3 pval) (k k-0 skey) (start-ch chan)
+    (ls lk lk-0 locn))
   (defstrand owner-power-dev 2 (d d) (o o) (k k) (start-ch start-ch))
   (defstrand dev-pass 4 (n n) (d d) (o o) (k k) (lk lk) (ls ls))
   (defstrand dev-up 3 (old old) (d d) (o o) (k k) (start-ch start-ch)
@@ -730,7 +724,6 @@
   (genStV (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
-  (facts (trans 4 2) (trans 4 3) (trans 2 1) (trans 2 2))
   (operation encryption-test (added-listener k) (enc "up" k) (0 1))
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
     ((load lk (cat pt-1 "st-k" d o k)) (recv (enc "may I pass" k))
@@ -748,8 +741,9 @@
   (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton open-closed
-  (vars (old any mesg) (n n-0 text) (d o o-0 name) (k k-0 skey)
-    (start-ch chan) (ls lk lk-0 locn))
+  (vars (old any mesg) (n n-0 text) (d o o-0 name)
+    (pt pt-0 pt-1 pt-2 pt-3 pval) (k k-0 skey) (start-ch chan)
+    (ls lk lk-0 locn))
   (defstrand owner-power-dev 2 (d d) (o o) (k k) (start-ch start-ch))
   (defstrand dev-pass 4 (n n) (d d) (o o) (k k) (lk lk) (ls ls))
   (defstrand dev-up 3 (old old) (d d) (o o) (k k) (start-ch start-ch)
@@ -764,7 +758,6 @@
   (genStV (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
-  (facts (trans 4 2) (trans 4 3) (trans 2 1) (trans 2 2))
   (operation nonce-test (displaced 6 2 dev-up 3) k (5 0)
     (ch-msg start-ch (cat "power-up" d o k)))
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
@@ -894,7 +887,8 @@
         (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
 
 (defskeleton open-closed
-  (vars (old old1 any mesg) (n n-0 text) (d o name) (k k-0 skey)
+  (vars (old old1 any mesg) (n n-0 text) (d o name)
+    (pt pt-0 pt-1 pt-2 pt-3 pt-4 pt-5 pt-6 pt-7 pval) (k k-0 skey)
     (start-ch chan) (ls lk ls-0 lk-0 locn))
   (defstrand owner-power-dev 2 (d d) (o o) (k k) (start-ch start-ch))
   (defstrand dev-pass 4 (n n) (d d) (o o) (k k) (lk lk) (ls ls))
@@ -925,7 +919,8 @@
   (comment "Not closed under rules"))
 
 (defskeleton open-closed
-  (vars (old old1 any mesg) (n n-0 text) (d o name) (k k-0 skey)
+  (vars (old old1 any mesg) (n n-0 text) (d o name)
+    (pt pt-0 pt-1 pt-2 pt-3 pt-4 pt-5 pt-6 pt-7 pval) (k k-0 skey)
     (start-ch chan) (ls lk ls-0 lk-0 locn))
   (defstrand owner-power-dev 2 (d d) (o o) (k k) (start-ch start-ch))
   (defstrand dev-pass 4 (n n) (d d) (o o) (k k) (lk lk) (ls ls))
@@ -940,8 +935,6 @@
   (genStV (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
-  (facts (trans 4 2) (trans 4 3) (trans 2 1) (trans 2 2) (trans 2 3)
-    (trans 2 4))
   (rule gen-state-pass trRl_dev-open-at-2 trRl_dev-open-at-3
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
@@ -962,7 +955,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton open-closed
-  (vars (old old1 any mesg) (n n-0 text) (d o name) (k k-0 skey)
+  (vars (old old1 any mesg) (n n-0 text) (d o name)
+    (pt pt-0 pt-1 pt-2 pt-3 pt-4 pt-5 pt-6 pval) (k k-0 skey)
     (start-ch chan) (ls lk ls-0 lk-0 locn))
   (defstrand owner-power-dev 2 (d d) (o o) (k k) (start-ch start-ch))
   (defstrand dev-pass 4 (n n) (d d) (o o) (k k) (lk lk) (ls ls))
@@ -977,8 +971,6 @@
   (genStV (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
-  (facts (trans 4 2) (trans 4 3) (trans 2 1) (trans 2 2) (trans 2 3)
-    (trans 2 4))
   (operation nonce-test (contracted (pt-7 pt-1)) k (1 0)
     (ch-msg start-ch (cat "power-up" d o k))
     (ch-msg lk (cat pt-1 "st-k" d o k)))
@@ -1001,8 +993,9 @@
   (comment "4 in cohort - 2 not yet seen"))
 
 (defskeleton open-closed
-  (vars (old old1 any mesg) (n n-0 text) (d o name) (k k-0 skey)
-    (start-ch chan) (ls lk ls-0 lk-0 locn))
+  (vars (old old1 any mesg) (n n-0 text) (d o name)
+    (pt pt-0 pt-1 pt-2 pt-3 pt-4 pt-5 pval) (k k-0 skey) (start-ch chan)
+    (ls lk ls-0 lk-0 locn))
   (defstrand owner-power-dev 2 (d d) (o o) (k k) (start-ch start-ch))
   (defstrand dev-pass 4 (n n) (d d) (o o) (k k) (lk lk) (ls ls))
   (defstrand dev-up 6 (old old) (old1 old1) (d d) (o o) (k k)
@@ -1016,8 +1009,6 @@
   (genStV (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
-  (facts (trans 4 2) (trans 4 3) (trans 2 1) (trans 2 2) (trans 2 3)
-    (trans 2 4))
   (operation channel-test (displaced 5 4 dev-open 4)
     (ch-msg ls (cat pt-6 "st" d "opened")) (1 2))
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
@@ -1045,6 +1036,7 @@
 
 (defskeleton open-closed
   (vars (old old1 any any-0 mesg) (n n-0 n-1 text) (d o o-0 name)
+    (pt pt-0 pt-1 pt-2 pt-3 pt-4 pt-5 pt-6 pt-7 pt-8 pval)
     (k k-0 k-1 skey) (start-ch chan) (ls lk ls-0 lk-0 lk-1 locn))
   (defstrand owner-power-dev 2 (d d) (o o) (k k) (start-ch start-ch))
   (defstrand dev-pass 4 (n n) (d d) (o o) (k k) (lk lk) (ls ls))
@@ -1061,8 +1053,6 @@
   (genStV (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
-  (facts (trans 5 2) (trans 5 3) (trans 4 2) (trans 4 3) (trans 2 1)
-    (trans 2 2) (trans 2 3) (trans 2 4))
   (rule invShearsRule trRl_dev-open-at-2 trRl_dev-open-at-3)
   (operation channel-test (added-strand dev-open 4)
     (ch-msg ls (cat pt "st" d "opened")) (1 2))

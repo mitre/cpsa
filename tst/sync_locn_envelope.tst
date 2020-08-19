@@ -250,7 +250,7 @@
 
 (defskeleton envelope
   (vars (current-value mesg) (pcr-id nonce pcr-id-0 text) (v n data)
-    (k aik aik-0 akey) (tpm tpmconf tpm-0 chan) (pcr locn))
+    (pt pval) (k aik aik-0 akey) (tpm tpmconf tpm-0 chan) (pcr locn))
   (deflistener v)
   (defstrand alice 5 (pcr-id pcr-id) (nonce nonce) (n n) (v v) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
@@ -284,7 +284,7 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id nonce text) (v n data) (k aik akey)
+  (vars (pcr-id nonce text) (v n data) (pt pval) (k aik akey)
     (tpm tpmconf tpm-0 chan) (pcr locn))
   (deflistener v)
   (defstrand alice 5 (pcr-id pcr-id) (nonce nonce) (n n) (v v) (k k)
@@ -323,8 +323,8 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce text) (v n data) (k aik akey)
-    (tpmconf tpm tpm-0 chan) (pcr locn))
+  (vars (pcr-id pcr-id-0 nonce text) (v n data) (pt pt-0 pval)
+    (k aik akey) (tpmconf tpm tpm-0 chan) (pcr locn))
   (deflistener v)
   (defstrand alice 5 (pcr-id pcr-id) (nonce nonce) (n n) (v v) (k k)
     (aik aik) (tpm tpm-0) (tpmconf tpmconf))
@@ -343,7 +343,6 @@
   (genStV (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm-0)
-  (facts (trans 4 2) (trans 4 3))
   (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-2
     trRl_tpm-extend-enc-at-3)
   (operation channel-test (displaced 3 5 tpm-extend-enc 4)
@@ -372,8 +371,8 @@
   (comment "empty cohort"))
 
 (defskeleton envelope
-  (vars (pcr-id nonce pcr-id-0 nonce-0 text) (v n data) (k aik akey)
-    (tpm tpmconf tpm-0 tpm-1 chan) (pcr locn))
+  (vars (pcr-id nonce pcr-id-0 nonce-0 text) (v n data) (pt pt-0 pval)
+    (k aik akey) (tpm tpmconf tpm-0 tpm-1 chan) (pcr locn))
   (deflistener v)
   (defstrand alice 5 (pcr-id pcr-id) (nonce nonce) (n n) (v v) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
@@ -393,7 +392,6 @@
   (genStV (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm)
-  (facts (trans 5 2) (trans 5 3))
   (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-2
     trRl_tpm-extend-enc-at-3)
   (operation channel-test (added-strand tpm-extend-enc 4)
@@ -423,7 +421,8 @@
 
 (defskeleton envelope
   (vars (pcr-id pcr-id-0 nonce pcr-id-1 nonce-0 text) (v n data)
-    (k aik akey) (tpmconf tpm tpm-0 tpm-1 chan) (pcr locn))
+    (pt pt-0 pt-1 pval) (k aik akey) (tpmconf tpm tpm-0 tpm-1 chan)
+    (pcr locn))
   (deflistener v)
   (defstrand alice 5 (pcr-id pcr-id) (nonce nonce-0) (n n) (v v) (k k)
     (aik aik) (tpm tpm-1) (tpmconf tpmconf))
@@ -444,7 +443,6 @@
   (genStV (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm-1)
-  (facts (trans 5 2) (trans 5 3) (trans 4 2) (trans 4 3))
   (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-3)
   (operation channel-test (displaced 3 6 tpm-extend-enc 4)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (5 2))
@@ -475,7 +473,8 @@
 
 (defskeleton envelope
   (vars (pcr-id nonce pcr-id-0 nonce-0 pcr-id-1 nonce-1 text) (v n data)
-    (k aik akey) (tpm tpmconf tpm-0 tpm-1 tpm-2 chan) (pcr locn))
+    (pt pt-0 pt-1 pval) (k aik akey)
+    (tpm tpmconf tpm-0 tpm-1 tpm-2 chan) (pcr locn))
   (deflistener v)
   (defstrand alice 5 (pcr-id pcr-id) (nonce nonce) (n n) (v v) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
@@ -497,7 +496,6 @@
   (genStV (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm)
-  (facts (trans 6 2) (trans 6 3) (trans 5 2) (trans 5 3))
   (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-3)
   (operation channel-test (added-strand tpm-extend-enc 4)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (5 2))
@@ -529,8 +527,9 @@
   (comment "empty cohort"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce nonce-0 text) (v n data) (k aik akey)
-    (tpmconf tpm tpm-0 chan) (pcr locn))
+  (vars (pcr-id pcr-id-0 nonce nonce-0 text) (v n data)
+    (pt pt-0 pt-1 pval) (k aik akey) (tpmconf tpm tpm-0 chan)
+    (pcr locn))
   (deflistener v)
   (defstrand alice 5 (pcr-id pcr-id) (nonce nonce-0) (n n) (v v) (k k)
     (aik aik) (tpm tpmconf) (tpmconf tpmconf))
@@ -551,7 +550,6 @@
   (genStV (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpmconf)
-  (facts (trans 5 2) (trans 5 3) (trans 4 2) (trans 4 3))
   (operation channel-test (displaced 6 1 alice 2)
     (ch-msg tpm-1 (cat "extend" pcr-id-1 n (hash pcr-id-1 n nonce-0)))
     (5 1))
@@ -874,7 +872,7 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey)
+  (vars (pcr-id pcr-id-0 nonce text) (n v data) (pt pval) (k aik akey)
     (tpm tpmconf tpm-0 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -924,8 +922,8 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 nonce text) (n v data) (k aik akey)
-    (tpmconf tpm tpm-0 chan) (pcr locn))
+  (vars (pcr-id pcr-id-0 pcr-id-1 nonce text) (n v data) (pt pt-0 pval)
+    (k aik akey) (tpmconf tpm tpm-0 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
@@ -945,7 +943,6 @@
   (genStV (hash "0" n) (hash (hash "0" n) "refuse"))
   (conf tpmconf)
   (auth tpm-0)
-  (facts (trans 4 2) (trans 4 3))
   (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-2
     trRl_tpm-extend-enc-at-3)
   (operation channel-test (displaced 3 5 tpm-extend-enc 4)
@@ -984,7 +981,8 @@
 
 (defskeleton envelope
   (vars (pcr-id pcr-id-0 nonce pcr-id-1 nonce-0 text) (n v data)
-    (k aik akey) (tpm tpmconf tpm-0 tpm-1 chan) (pcr locn))
+    (pt pt-0 pval) (k aik akey) (tpm tpmconf tpm-0 tpm-1 chan)
+    (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
@@ -1005,7 +1003,6 @@
   (genStV (hash "0" n) (hash (hash "0" n) "refuse"))
   (conf tpmconf)
   (auth tpm)
-  (facts (trans 5 2) (trans 5 3))
   (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-2
     trRl_tpm-extend-enc-at-3)
   (operation channel-test (added-strand tpm-extend-enc 4)
@@ -1044,7 +1041,8 @@
 
 (defskeleton envelope
   (vars (pcr-id pcr-id-0 pcr-id-1 nonce pcr-id-2 nonce-0 text)
-    (n v data) (k aik akey) (tpmconf tpm tpm-0 tpm-1 chan) (pcr locn))
+    (n v data) (pt pt-0 pt-1 pval) (k aik akey)
+    (tpmconf tpm tpm-0 tpm-1 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce-0) (n n) (v v) (k k)
@@ -1066,7 +1064,6 @@
   (genStV (hash "0" n) (hash (hash "0" n) "refuse"))
   (conf tpmconf)
   (auth tpm-1)
-  (facts (trans 5 2) (trans 5 3) (trans 4 2) (trans 4 3))
   (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-3)
   (operation channel-test (displaced 3 6 tpm-extend-enc 4)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (5 2))
@@ -1106,8 +1103,8 @@
 
 (defskeleton envelope
   (vars (pcr-id pcr-id-0 nonce pcr-id-1 nonce-0 pcr-id-2 nonce-1 text)
-    (n v data) (k aik akey) (tpm tpmconf tpm-0 tpm-1 tpm-2 chan)
-    (pcr locn))
+    (n v data) (pt pt-0 pt-1 pval) (k aik akey)
+    (tpm tpmconf tpm-0 tpm-1 tpm-2 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
@@ -1130,7 +1127,6 @@
   (genStV (hash "0" n) (hash (hash "0" n) "refuse"))
   (conf tpmconf)
   (auth tpm)
-  (facts (trans 6 2) (trans 6 3) (trans 5 2) (trans 5 3))
   (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-3)
   (operation channel-test (added-strand tpm-extend-enc 4)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (5 2))
@@ -1172,7 +1168,8 @@
 
 (defskeleton envelope
   (vars (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 text) (n v data)
-    (k aik akey) (tpmconf tpm tpm-0 chan) (pcr locn))
+    (pt pt-0 pt-1 pval) (k aik akey) (tpmconf tpm tpm-0 chan)
+    (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce-0) (n n) (v v) (k k)
@@ -1194,7 +1191,6 @@
   (genStV (hash "0" n) (hash (hash "0" n) "refuse"))
   (conf tpmconf)
   (auth tpmconf)
-  (facts (trans 5 2) (trans 5 3) (trans 4 2) (trans 4 3))
   (operation channel-test (displaced 6 1 alice 2)
     (ch-msg tpm-1 (cat "extend" pcr-id-2 n (hash pcr-id-2 n nonce-0)))
     (5 1))
@@ -1532,7 +1528,8 @@
 
 (defskeleton envelope
   (vars (current-value mesg) (pcr-id pcr-id-0 nonce pcr-id-1 text)
-    (n v data) (k aik aik-0 akey) (tpm tpmconf tpm-0 chan) (pcr locn))
+    (n v data) (pt pval) (k aik aik-0 akey) (tpm tpmconf tpm-0 chan)
+    (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
@@ -1575,7 +1572,7 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey)
+  (vars (pcr-id pcr-id-0 nonce text) (n v data) (pt pval) (k aik akey)
     (tpm tpmconf tpm-0 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -1623,8 +1620,8 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 nonce text) (n v data) (k aik akey)
-    (tpmconf tpm tpm-0 chan) (pcr locn))
+  (vars (pcr-id pcr-id-0 pcr-id-1 nonce text) (n v data) (pt pt-0 pval)
+    (k aik akey) (tpmconf tpm tpm-0 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
@@ -1645,7 +1642,6 @@
   (genStV (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm-0)
-  (facts (trans 5 2) (trans 5 3))
   (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-2
     trRl_tpm-extend-enc-at-3)
   (operation channel-test (displaced 4 6 tpm-extend-enc 4)
@@ -1682,7 +1678,8 @@
 
 (defskeleton envelope
   (vars (pcr-id pcr-id-0 nonce pcr-id-1 nonce-0 text) (n v data)
-    (k aik akey) (tpm tpmconf tpm-0 tpm-1 chan) (pcr locn))
+    (pt pt-0 pval) (k aik akey) (tpm tpmconf tpm-0 tpm-1 chan)
+    (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
@@ -1704,7 +1701,6 @@
   (genStV (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm)
-  (facts (trans 6 2) (trans 6 3))
   (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-2
     trRl_tpm-extend-enc-at-3)
   (operation channel-test (added-strand tpm-extend-enc 4)
@@ -1741,7 +1737,8 @@
 
 (defskeleton envelope
   (vars (pcr-id pcr-id-0 pcr-id-1 nonce pcr-id-2 nonce-0 text)
-    (n v data) (k aik akey) (tpmconf tpm tpm-0 tpm-1 chan) (pcr locn))
+    (n v data) (pt pt-0 pt-1 pval) (k aik akey)
+    (tpmconf tpm tpm-0 tpm-1 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
@@ -1765,7 +1762,6 @@
   (genStV (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm-1)
-  (facts (trans 6 2) (trans 6 3) (trans 5 2) (trans 5 3))
   (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-3)
   (operation channel-test (displaced 4 7 tpm-extend-enc 4)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (6 2))
@@ -1803,8 +1799,8 @@
 
 (defskeleton envelope
   (vars (pcr-id pcr-id-0 nonce pcr-id-1 nonce-0 pcr-id-2 nonce-1 text)
-    (n v data) (k aik akey) (tpm tpmconf tpm-0 tpm-1 tpm-2 chan)
-    (pcr locn))
+    (n v data) (pt pt-0 pt-1 pval) (k aik akey)
+    (tpm tpmconf tpm-0 tpm-1 tpm-2 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
@@ -1829,7 +1825,6 @@
   (genStV (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm)
-  (facts (trans 7 2) (trans 7 3) (trans 6 2) (trans 6 3))
   (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-3)
   (operation channel-test (added-strand tpm-extend-enc 4)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (6 2))
@@ -1869,7 +1864,8 @@
 
 (defskeleton envelope
   (vars (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 text) (n v data)
-    (k aik akey) (tpmconf tpm tpm-0 chan) (pcr locn))
+    (pt pt-0 pt-1 pval) (k aik akey) (tpmconf tpm tpm-0 chan)
+    (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
@@ -1893,7 +1889,6 @@
   (genStV (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpmconf)
-  (facts (trans 6 2) (trans 6 3) (trans 5 2) (trans 5 3))
   (operation channel-test (displaced 7 2 alice 2)
     (ch-msg tpm-1 (cat "extend" pcr-id-2 n (hash pcr-id-2 n nonce-0)))
     (6 1))
@@ -1931,7 +1926,8 @@
 
 (defskeleton envelope
   (vars (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 text) (n v data)
-    (k aik akey) (tpmconf tpm tpm-0 tpm-1 chan) (pcr pcr-0 locn))
+    (pt pt-0 pt-1 pt-2 pval) (k aik akey) (tpmconf tpm tpm-0 tpm-1 chan)
+    (pcr pcr-0 locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
@@ -1959,7 +1955,6 @@
     (hash (hash "0" n) "refuse"))
   (conf tpmconf)
   (auth tpmconf)
-  (facts (trans 6 2) (trans 6 3) (trans 5 2) (trans 5 3))
   (rule genStV-if-hashed-tpm-quote)
   (operation encryption-test (added-strand tpm-quote 3)
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik)
@@ -2003,8 +1998,8 @@
 
 (defskeleton envelope
   (vars (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 pcr-id-2 nonce-1 text)
-    (n v data) (k aik akey) (tpmconf tpm tpm-0 tpm-1 tpm-2 chan)
-    (pcr pcr-0 locn))
+    (n v data) (pt pt-0 pt-1 pt-2 pt-3 pval) (k aik akey)
+    (tpmconf tpm tpm-0 tpm-1 tpm-2 chan) (pcr pcr-0 locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
@@ -2035,8 +2030,6 @@
     (hash (hash "0" n) "refuse"))
   (conf tpmconf)
   (auth tpmconf)
-  (facts (trans 8 2) (trans 8 3) (trans 6 2) (trans 6 3) (trans 5 2)
-    (trans 5 3))
   (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-3)
   (operation channel-test (added-strand tpm-extend-enc 4)
     (ch-msg pcr-0 (cat pt-2 (hash (hash "0" n) "refuse"))) (7 1))
@@ -2086,8 +2079,9 @@
 (defskeleton envelope
   (vars
     (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 pcr-id-2 nonce-1 pcr-id-3
-      nonce-2 text) (n v data) (k aik akey)
-    (tpmconf tpm tpm-0 tpm-1 tpm-2 tpm-3 chan) (pcr pcr-0 locn))
+      nonce-2 text) (n v data) (pt pt-0 pt-1 pt-2 pt-3 pt-4 pval)
+    (k aik akey) (tpmconf tpm tpm-0 tpm-1 tpm-2 tpm-3 chan)
+    (pcr pcr-0 locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
@@ -2121,8 +2115,6 @@
     (hash (hash "0" n) "refuse"))
   (conf tpmconf)
   (auth tpmconf)
-  (facts (trans 9 2) (trans 9 3) (trans 8 2) (trans 8 3) (trans 6 2)
-    (trans 6 3) (trans 5 2) (trans 5 3))
   (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-3)
   (operation channel-test (added-strand tpm-extend-enc 4)
     (ch-msg pcr-0 (cat pt-3 (hash "0" n))) (8 2))
@@ -2472,7 +2464,8 @@
 
 (defskeleton envelope
   (vars (current-value mesg) (pcr-id pcr-id-0 nonce pcr-id-1 text)
-    (n v data) (k aik aik-0 akey) (tpm tpmconf tpm-0 chan) (pcr locn))
+    (n v data) (pt pval) (k aik aik-0 akey) (tpm tpmconf tpm-0 chan)
+    (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
@@ -2516,7 +2509,7 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey)
+  (vars (pcr-id pcr-id-0 nonce text) (n v data) (pt pval) (k aik akey)
     (tpm tpmconf tpm-0 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -2565,8 +2558,8 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 nonce text) (n v data) (k aik akey)
-    (tpmconf tpm tpm-0 chan) (pcr locn))
+  (vars (pcr-id pcr-id-0 pcr-id-1 nonce text) (n v data) (pt pt-0 pval)
+    (k aik akey) (tpmconf tpm tpm-0 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
@@ -2587,7 +2580,7 @@
   (genStV (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm-0)
-  (facts (trans 5 2) (trans 5 3) (no-state-split))
+  (facts (no-state-split))
   (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-2
     trRl_tpm-extend-enc-at-3)
   (operation channel-test (displaced 4 6 tpm-extend-enc 4)
@@ -2624,7 +2617,8 @@
 
 (defskeleton envelope
   (vars (pcr-id pcr-id-0 nonce pcr-id-1 nonce-0 text) (n v data)
-    (k aik akey) (tpm tpmconf tpm-0 tpm-1 chan) (pcr locn))
+    (pt pt-0 pval) (k aik akey) (tpm tpmconf tpm-0 tpm-1 chan)
+    (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
@@ -2646,7 +2640,7 @@
   (genStV (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm)
-  (facts (trans 6 2) (trans 6 3) (no-state-split))
+  (facts (no-state-split))
   (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-2
     trRl_tpm-extend-enc-at-3)
   (operation channel-test (added-strand tpm-extend-enc 4)
@@ -2683,7 +2677,8 @@
 
 (defskeleton envelope
   (vars (pcr-id pcr-id-0 pcr-id-1 nonce pcr-id-2 nonce-0 text)
-    (n v data) (k aik akey) (tpmconf tpm tpm-0 tpm-1 chan) (pcr locn))
+    (n v data) (pt pt-0 pt-1 pval) (k aik akey)
+    (tpmconf tpm tpm-0 tpm-1 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
@@ -2707,8 +2702,7 @@
   (genStV (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm-1)
-  (facts (trans 6 2) (trans 6 3) (trans 5 2) (trans 5 3)
-    (no-state-split))
+  (facts (no-state-split))
   (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-3)
   (operation channel-test (displaced 4 7 tpm-extend-enc 4)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (6 2))
@@ -2746,8 +2740,8 @@
 
 (defskeleton envelope
   (vars (pcr-id pcr-id-0 nonce pcr-id-1 nonce-0 pcr-id-2 nonce-1 text)
-    (n v data) (k aik akey) (tpm tpmconf tpm-0 tpm-1 tpm-2 chan)
-    (pcr locn))
+    (n v data) (pt pt-0 pt-1 pval) (k aik akey)
+    (tpm tpmconf tpm-0 tpm-1 tpm-2 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
@@ -2772,8 +2766,7 @@
   (genStV (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm)
-  (facts (trans 7 2) (trans 7 3) (trans 6 2) (trans 6 3)
-    (no-state-split))
+  (facts (no-state-split))
   (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-3)
   (operation channel-test (added-strand tpm-extend-enc 4)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (6 2))
@@ -2813,7 +2806,8 @@
 
 (defskeleton envelope
   (vars (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 text) (n v data)
-    (k aik akey) (tpmconf tpm tpm-0 chan) (pcr locn))
+    (pt pt-0 pt-1 pval) (k aik akey) (tpmconf tpm tpm-0 chan)
+    (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
@@ -2837,8 +2831,7 @@
   (genStV (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpmconf)
-  (facts (trans 6 2) (trans 6 3) (trans 5 2) (trans 5 3)
-    (no-state-split))
+  (facts (no-state-split))
   (operation channel-test (displaced 7 2 alice 2)
     (ch-msg tpm-1 (cat "extend" pcr-id-2 n (hash pcr-id-2 n nonce-0)))
     (6 1))
@@ -2876,7 +2869,8 @@
 
 (defskeleton envelope
   (vars (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 text) (n v data)
-    (k aik akey) (tpmconf tpm tpm-0 tpm-1 chan) (pcr pcr-0 locn))
+    (pt pt-0 pt-1 pt-2 pval) (k aik akey) (tpmconf tpm tpm-0 tpm-1 chan)
+    (pcr pcr-0 locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
@@ -2904,8 +2898,7 @@
     (hash (hash "0" n) "refuse"))
   (conf tpmconf)
   (auth tpmconf)
-  (facts (trans 6 2) (trans 6 3) (trans 5 2) (trans 5 3)
-    (no-state-split))
+  (facts (no-state-split))
   (rule genStV-if-hashed-tpm-quote)
   (operation encryption-test (added-strand tpm-quote 3)
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik)
@@ -2949,8 +2942,8 @@
 
 (defskeleton envelope
   (vars (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 pcr-id-2 nonce-1 text)
-    (n v data) (k aik akey) (tpmconf tpm tpm-0 tpm-1 tpm-2 chan)
-    (pcr pcr-0 locn))
+    (n v data) (pt pt-0 pt-1 pt-2 pt-3 pval) (k aik akey)
+    (tpmconf tpm tpm-0 tpm-1 tpm-2 chan) (pcr pcr-0 locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
@@ -2981,8 +2974,7 @@
     (hash (hash "0" n) "refuse"))
   (conf tpmconf)
   (auth tpmconf)
-  (facts (trans 8 2) (trans 8 3) (trans 6 2) (trans 6 3) (trans 5 2)
-    (trans 5 3) (no-state-split))
+  (facts (no-state-split))
   (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-3)
   (operation channel-test (added-strand tpm-extend-enc 4)
     (ch-msg pcr-0 (cat pt-2 (hash (hash "0" n) "refuse"))) (7 1))
@@ -3032,8 +3024,9 @@
 (defskeleton envelope
   (vars
     (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 pcr-id-2 nonce-1 pcr-id-3
-      nonce-2 text) (n v data) (k aik akey)
-    (tpmconf tpm tpm-0 tpm-1 tpm-2 tpm-3 chan) (pcr pcr-0 locn))
+      nonce-2 text) (n v data) (pt pt-0 pt-1 pt-2 pt-3 pt-4 pval)
+    (k aik akey) (tpmconf tpm tpm-0 tpm-1 tpm-2 tpm-3 chan)
+    (pcr pcr-0 locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
@@ -3067,8 +3060,7 @@
     (hash (hash "0" n) "refuse"))
   (conf tpmconf)
   (auth tpmconf)
-  (facts (trans 9 2) (trans 9 3) (trans 8 2) (trans 8 3) (trans 6 2)
-    (trans 6 3) (trans 5 2) (trans 5 3) (no-state-split))
+  (facts (no-state-split))
   (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-3)
   (operation channel-test (added-strand tpm-extend-enc 4)
     (ch-msg pcr-0 (cat pt-3 (hash "0" n))) (8 2))
