@@ -58,6 +58,9 @@ nodeColor :: Preskel -> Vertex -> Maybe String
 nodeColor k node =
   case dir node of
     OutDir -> Nothing           -- Transmission nodes are black
+    SyncDir
+      | elem node (maybe [] id (unrealized k)) -> Just "orange"
+      | otherwise -> Just "gray" -- Realized nodes are gray
     InDir
       | elem node (maybe [] id (unrealized k)) -> Just "red"
       | otherwise -> Just "blue" -- Realized nodes are blue

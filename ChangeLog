@@ -1,3 +1,8 @@
+2020-08-28  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Graph/Preskeleton.hs (nodeColor):  Added colors for
+	load and stor.
+
 2020-08-10  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* cpsa.cabal (Version): Tagged as version 4.3.0
