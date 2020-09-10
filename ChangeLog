@@ -1,3 +1,7 @@
+2020-09-10  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Roletran/Main.hs: Added cpsa4roletran
+
 2020-08-28  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Graph/Preskeleton.hs (nodeColor):  Added colors for
