@@ -233,7 +233,7 @@ loopPair pos (fresh, cs, stmts) recvd todo t v x y =
     let st = (
           fresh + 2,
           M.insert t v cs,      -- Add pair to the compile time store
-          stmtX : stmtY : stmts)
+          stmtY : stmtX : stmts)
     loop pos st True recvd ((x, fresh) : (y, fresh + 1) : todo)
 
 -- Reduce an encryption.  If the inverse key can be synthesized, it
