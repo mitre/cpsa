@@ -211,7 +211,7 @@ loop :: MonadFail m => Pos -> State -> Bool ->
         [(Term, Vari)] -> [(Term, Vari)] -> m State
 loop _ st _ [] [] = return st
 loop pos st True [] todo =      -- More todo
-  loop pos st True todo []
+  loop pos st False todo []
 loop pos _ False [] (_ : _) =   -- No progress can be made
   fail (shows pos "Received term cannot be fully destructured")
 loop pos st more ((t, v) : recvd) todo =
