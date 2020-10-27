@@ -50,7 +50,7 @@ data Stmt
   = Recv Decl Vari              -- Receive a message
   | Send Vari Decl              -- Send a message
   | Bind Decl Expr              -- Bind a variable to an expression
-  | Same Sort Vari Vari         -- Are to values the same?
+  | Same Sort Vari Vari         -- Are two values the same?
   | Return [Vari]               -- Return values from the procedure
   | Comment String              -- Insert a comment
 

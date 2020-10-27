@@ -1,0 +1,9 @@
+This directory contains the Coq sources for proofs about input/output
+pairs produced by the CPSA4 role compiler.
+
+To build the proofs and an HTML document, type:
+
+    $ pushd ..; make; popd
+    $ make
+
+and then view html/toc.html.

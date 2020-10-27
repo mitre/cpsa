@@ -53,6 +53,7 @@ data Term
   | Nam Var              -- Name variable
   | Sky Skey             -- Symmetric key
   | Aky Akey             -- Asymmetric key
+  | Iky Akey             -- Inverse asymmetric key
   | Msg Var              -- Message variable
   | Tag String           -- A message tag
   | Pr Term Term         -- A pair of terms,
@@ -70,11 +71,8 @@ data Skey
 -- Asymmetric keys
 data Akey
   = AVar Var                  -- Asymmetric key variable
-  | Inv Var                   -- Inverse of an asymmetric key variable
   | Pubk Var                  -- Public key of a name variable
   | Pubk2 String Var          -- Tagged public key of a name variable
-  | Privk Var                 -- Private key of a name variable
-  | Privk2 String Var         -- Tagged private key of a name variable
   deriving (Show, Eq, Ord)
 
 -- Return the sort of a term.
@@ -83,14 +81,8 @@ sort (Txt _) = Text
 sort (Dta _) = Data
 sort (Nam _) = Name
 sort (Sky _) = Skey
-sort (Aky k) =
-  case k of
-    AVar _ -> Akey
-    Inv _ -> Ikey
-    Pubk _ -> Akey
-    Pubk2 _ _ -> Akey
-    Privk _ -> Ikey
-    Privk2 _ _ -> Ikey
+sort (Aky _) = Akey
+sort (Iky _) = Ikey
 sort (Msg _) = Mesg
 sort (Tag _) = Mesg
 sort (Pr _ _) = Mesg
@@ -100,14 +92,8 @@ sort (Chn _) = Chan
 
 -- Inverse key
 inv :: Term -> Term
-inv (Aky k) =
-  case k of
-    AVar v -> Aky (Inv v)
-    Inv v -> Aky (AVar v)
-    Pubk v -> Aky (Privk v)
-    Pubk2 c v -> Aky (Privk2 c v)
-    Privk v -> Aky (Pubk v)
-    Privk2 c v -> Aky (Pubk2 c v)
+inv (Aky k) = Iky k
+inv (Iky k) = Aky k
 inv t = t
 
 -- Is term a CPSA basic value?
@@ -117,6 +103,7 @@ isBasic (Dta _) = True
 isBasic (Nam _) = True
 isBasic (Sky _) = True
 isBasic (Aky _) = True
+isBasic (Iky _) = True
 isBasic _ = False
 
 -- Is term a CPSA message variable?
@@ -146,14 +133,10 @@ termWellFormed env t@(Sky (SVar x)) =
 termWellFormed env (Sky (Ltk x y)) =
     -- Long term shared symmetric key
     doubleTermWellFormed env (Nam x) (Nam y)
-termWellFormed env (Aky t) =    -- Asymmetric key terms
-    case t of
-      AVar x -> extendVarEnv env x Akey
-      Inv x -> extendVarEnv env x Akey
-      Pubk x -> extendVarEnv env x Name
-      Pubk2 _ x -> extendVarEnv env x Name
-      Privk x -> extendVarEnv env x Name
-      Privk2 _ x -> extendVarEnv env x Name
+termWellFormed env (Aky k) =    -- Asymmetric key terms
+  akeyWellFormed env k
+termWellFormed env (Iky k) =    -- Inverse asymmetric key terms
+  akeyWellFormed env k
 termWellFormed env t@(Msg x) =
     extendVarEnv env x (sort t) -- Mesg variable
 termWellFormed env (Tag _) =
@@ -173,6 +156,11 @@ extendVarEnv env x s =
     case M.lookup x env of
       Nothing -> Just $ M.insert x s env
       Just s' -> if s == s' then Just env else Nothing
+
+akeyWellFormed :: VarEnv -> Akey -> Maybe VarEnv
+akeyWellFormed env (AVar x) = extendVarEnv env x Akey
+akeyWellFormed env (Pubk x) = extendVarEnv env x Name
+akeyWellFormed env (Pubk2 _ x) = extendVarEnv env x Name
 
 doubleTermWellFormed :: VarEnv -> Term -> Term -> Maybe VarEnv
 doubleTermWellFormed env x y =

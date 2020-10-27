@@ -1,3 +1,14 @@
+2020-10-27  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/RoleCoq/Main.hs: Added program cpsa4rolecoq that
+	translates the roles in the first protocol of CPSA input into Coq.
+
+	* src/CPSA/Coq/Main.hs: Added program cpsa4coq that translates the
+	output of cpsa4roletran into Coq.
+
+	* coq: Added Coq libraries that can be used to verify that an
+	output of cpsa4roletran is valid.
+
 2020-09-10  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Roletran/Main.hs: Added cpsa4roletran

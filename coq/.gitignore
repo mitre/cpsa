@@ -1,0 +1,9 @@
+*.glob
+*.vo
+*.vok
+*.vos
+*.aux
+coq.mk
+.coq.mk.d
+coq.mk.conf
+html

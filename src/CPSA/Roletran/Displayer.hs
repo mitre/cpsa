@@ -79,6 +79,7 @@ displayTerm (Dta v) = S () v
 displayTerm (Nam v) = S () v
 displayTerm (Sky k) = displaySkey k
 displayTerm (Aky k) = displayAkey k
+displayTerm (Iky k) = displayIkey k
 displayTerm (Msg v) = S () v
 displayTerm (Tag v) = Q () v
 displayTerm (Pr x y) =
@@ -96,15 +97,17 @@ displaySkey (Ltk x y) =
 
 displayAkey :: Akey -> SExpr ()
 displayAkey (AVar v) = S () v
-displayAkey (Inv v) =
-  L () [S () "invk", S () v]
 displayAkey (Pubk v) =
   L () [S () "pubk", S () v]
 displayAkey (Pubk2 c v) =
   L () [S () "pubk", Q () c, S () v]
-displayAkey (Privk v) =
+
+displayIkey :: Akey -> SExpr ()
+displayIkey (AVar v) =
+  L () [S () "invk", S () v]
+displayIkey (Pubk v) =
   L () [S () "privk", S () v]
-displayAkey (Privk2 c v) =
+displayIkey (Pubk2 c v) =
   L () [S () "privk", Q () c, S () v]
 
 displayList :: Term -> [SExpr ()]

@@ -238,11 +238,11 @@ loadPrivk :: MonadFail m => LoadFunction m
 loadPrivk _ env [S pos s] =
     do
       loadName env pos s
-      return $ Aky (Privk s)
+      return $ Iky (Pubk s)
 loadPrivk _ env [Q _ c, S pos s] =
     do
       loadName env pos s
-      return $ Aky (Privk2 c s)
+      return $ Iky (Pubk2 c s)
 loadPrivk pos _ _ = fail (shows pos "Malformed privk")
 
 loadInvk :: MonadFail m => LoadFunction m

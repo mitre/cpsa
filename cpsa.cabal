@@ -136,6 +136,18 @@ Extra-Source-Files:
   tst/chan-unilateral.scm tst/chan-unilateral.tst tst/factvar.scm
   tst/factvar.tst tst/renamings.scm tst/renamings.tst
   tst/blanchet_doorsep.prot tst/blanchet_doorsep.tst
+  coq/Alg.v coq/Chk_sorts.v coq/Comp.v coq/Derives.v coq/Exec.v
+  coq/Makefile coq/Monad.v coq/Proc.v coq/README coq/Sem.v
+  coq/SemTactics.v coq/Unilateral.v coq/Unilateral_proof.v
+  coq/Unilateral_role.v coq/_CoqProject coq/mkdist coq/mkdoc
+  coq/procdoc.mk coq/procdoc.tex coq/Examples/Makefile
+  coq/Examples/Nsl.v coq/Examples/Nsl_proof.v coq/Examples/Nsl_role.v
+  coq/Examples/Otway_rees.v coq/Examples/Otway_rees_proof.v
+  coq/Examples/Otway_rees_role.v coq/Examples/README
+  coq/Examples/Yahalom.v coq/Examples/Yahalom_proof.v
+  coq/Examples/Yahalom_role.v coq/Examples/_CoqProject
+  coq/Examples/nsl.scm coq/Examples/otway_rees.scm
+  coq/Examples/yahalom.scm
   
 Source-Repository head
   Type:     git
@@ -281,3 +293,27 @@ Executable cpsa4roletran
     CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Lib.Expand
     CPSA.Roletran.Algebra CPSA.Roletran.Protocol CPSA.Roletran.Loader
     CPSA.Roletran.Displayer CPSA.Roletran.Derivation CPSA.Roletran.Emitter
+
+Executable cpsa4coq
+  Main-Is:              CPSA/Coq/Main.hs
+  Default-Language:     Haskell2010
+  Build-Depends:        base >= 4 && < 5, containers
+  GHC-Options:
+    -Wall -fno-warn-name-shadowing -fwarn-unused-imports
+  Hs-Source-Dirs:       src
+  Other-Modules:
+    Paths_cpsa CPSA.Lib.Pretty CPSA.Lib.SExpr CPSA.Lib.Printer
+    CPSA.Lib.Entry CPSA.Lib.Expand CPSA.Proc.Proc
+
+Executable cpsa4rolecoq
+  Main-Is:              CPSA/RoleCoq/Main.hs
+  Default-Language:     Haskell2010
+  Build-Depends:        base >= 4 && < 5, containers
+  GHC-Options:
+    -Wall -fno-warn-name-shadowing -fwarn-unused-imports
+  Hs-Source-Dirs:       src
+  Other-Modules:
+    Paths_cpsa CPSA.Lib.ReturnFail CPSA.Lib.Pretty CPSA.Lib.SExpr
+    CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Lib.Expand
+    CPSA.Roletran.Algebra CPSA.Roletran.Protocol CPSA.Roletran.Loader
+    CPSA.Roletran.Displayer CPSA.Roletran.Emitter

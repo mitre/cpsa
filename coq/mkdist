@@ -1,0 +1,9 @@
+#! /bin/sh
+
+NAME=$(basename `pwd`)
+DATE=${1:-`date -u +%y-%m-%d`}
+find . -name .git -prune -o -print0 \
+	| cpio -pmd0 ../"${NAME}-${DATE}"
+cd ..
+tar czf "${NAME}-${DATE}".tar.gz "${NAME}-${DATE}"
+rm -rf "${NAME}-${DATE}"
