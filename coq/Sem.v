@@ -165,6 +165,7 @@ Inductive stmts_sem: env -> list evt -> list alg ->
     lookup x ev = Some a ->
     lookup y ev = Some b ->
     a = b ->                    (* Sameness check *)
+    has_enc a = false ->        (* For probabilistic encryption *)
     stmts_sem ev tr us outs ev' stmts ->
     stmts_sem ev tr us outs ev' (Same x y stmts).
 Hint Constructors stmts_sem : core.
