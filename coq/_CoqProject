@@ -3,7 +3,6 @@ Monad.v
 Proc.v
 Alg.v
 Sem.v
-Chk_sorts.v
 SemTactics.v
 Unilateral.v
 Unilateral_role.v

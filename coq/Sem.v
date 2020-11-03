@@ -12,7 +12,7 @@ Open Scope nat_scope.
 
 (** A runtime environment *)
 
-Definition env: Set := list (var * alg).
+Definition env: Set := list (pvar * alg).
 
 (** Executions are roles *)
 
@@ -194,7 +194,7 @@ Definition sem (p: proc) (ev: env) (e: role): Prop :=
 
 (** ** Matching *)
 
-Definition extend_term (ev: env) (v: var) (x: alg): option env :=
+Definition extend_term (ev: env) (v: pvar) (x: alg): option env :=
   match lookup v ev with
   | None => Some ((v, x) :: ev)
   | Some y =>

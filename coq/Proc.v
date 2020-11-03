@@ -2,9 +2,9 @@
 
 Require Export String List.
 
-(** A variable is a nat *)
+(** A procedure variable is a nat *)
 
-Notation var := nat (only parsing).
+Notation pvar := nat (only parsing).
 
 (** Sorts *)
 
@@ -37,7 +37,7 @@ Definition inv_sort (x: sort): sort :=
 
 (** Declarations *)
 
-Definition decl: Set := var * sort.
+Definition decl: Set := pvar * sort.
 
 Definition decl_dec:
   forall x y: decl, {x = y} + {x <> y}.
@@ -50,22 +50,22 @@ Hint Resolve decl_dec : core.
 (** Expressions *)
 Inductive expr: Set :=
 | Tagg: string -> expr          (* Construct a tag *)
-| Hash: var -> expr             (* Construct a hash *)
-| Pair: var -> var -> expr      (* Construct a pair *)
-| Encr: var -> var -> expr      (* Encrypt plain text *)
-| Frst: var -> expr             (* Project first component of pair *)
-| Scnd: var -> expr             (* Project second component of pair *)
-| Decr: var -> var -> expr      (* Decrypt cipher text *)
+| Hash: pvar -> expr            (* Construct a hash *)
+| Pair: pvar -> pvar -> expr    (* Construct a pair *)
+| Encr: pvar -> pvar -> expr    (* Encrypt plain text *)
+| Frst: pvar -> expr            (* Project first component of pair *)
+| Scnd: pvar -> expr            (* Project second component of pair *)
+| Decr: pvar -> pvar -> expr    (* Decrypt cipher text *)
 | Nonce: expr                   (* Generate a nonce *)
-| Recv:  var -> expr.           (* Receive a message *)
+| Recv:  pvar -> expr.          (* Receive a message *)
 
 (** Statements *)
 
 Inductive stmts: Set :=
-| Return: list var -> stmts           (* Return values *)
+| Return: list pvar -> stmts           (* Return values *)
 | Bind: decl -> expr -> stmts -> stmts (* Bind a variable *)
-| Send: var -> var -> stmts -> stmts  (* Send a message *)
-| Same: var -> var -> stmts -> stmts. (* Check for sameness *)
+| Send: pvar -> pvar -> stmts -> stmts (* Send a message *)
+| Same: pvar -> pvar -> stmts -> stmts. (* Check for sameness *)
 
 (** Procedures *)
 

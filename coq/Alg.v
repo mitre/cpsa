@@ -3,6 +3,8 @@
 Require Import Nat DecBool Monad Proc.
 (** printing <- #←# *)
 
+Notation var := nat (only parsing).
+
 (** Symmetric keys *)
 
 Inductive skey: Set :=

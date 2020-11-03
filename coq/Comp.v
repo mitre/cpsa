@@ -23,7 +23,7 @@ Open Scope program_scope.
 
 (** A compile time store *)
 
-Definition store: Set := list (alg * var).
+Definition store: Set := list (alg * pvar).
 
 (** Find [x] in association list [l]. *)
 
@@ -41,7 +41,7 @@ Fixpoint find {A} (x: alg) (l: list (alg * A)): option A :=
 
 Record state: Set :=
   mkSt {
-      fresh: var;
+      fresh: pvar;
       cstore: store;
       code: stmts -> stmts }.
 
@@ -85,7 +85,7 @@ Definition comp_uniq (st: state) (u: alg): state :=
 
     Synthesize [x] and place it in the returned variable. *)
 
-Fixpoint synth (st: state) (x: alg): option (state * var) :=
+Fixpoint synth (st: state) (x: alg): option (state * pvar) :=
   match find x (cstore st) with
   | Some v => Some (st, v)
   | None =>
@@ -128,8 +128,8 @@ Fixpoint synth (st: state) (x: alg): option (state * var) :=
     end
 end.
 
-Definition synth_fold (acc: state * list var) (x: alg):
-  option (state * list var) :=
+Definition synth_fold (acc: state * list pvar) (x: alg):
+  option (state * list pvar) :=
   let (st, vs) := acc in
   y <- synth st x;
   let (st, v) := y in
@@ -138,7 +138,7 @@ Definition synth_fold (acc: state * list var) (x: alg):
 (** Synthesize procedure outputs *)
 
 Definition synth_return (st: state) (xs: list alg):
-  option (state * list var) :=
+  option (state * list pvar) :=
   w <- fold_m synth_fold (st, []) xs;
   let (st, vs) := w in
   Some (st, rev vs).
@@ -171,13 +171,13 @@ Inductive pick {A}: list A -> A -> list A -> Prop :=
 (** The hairy predicates for generating code to destructure a
     reception.  *)
 
-Inductive comp_recv_loop: state -> list (alg * var) -> state -> Prop :=
+Inductive comp_recv_loop: state -> list (alg * pvar) -> state -> Prop :=
 | Comp_loop_nil: forall st, comp_recv_loop st [] st
 | Comp_loop_pair: forall r x v r' st st',
     pick r (x, v) r' ->
     comp_recv_match st x v r' st' ->
     comp_recv_loop st r st'
-with comp_recv_match: state -> alg -> var -> list (alg * var) ->
+with comp_recv_match: state -> alg -> pvar -> list (alg * pvar) ->
                       state -> Prop :=
 | Comp_pair: forall st y z v r' st' st'',
     st' = mkSt
@@ -227,7 +227,7 @@ Hint Resolve Comp_loop_nil : core.
 
 (** Add a recption and then destructure the result. *)
 
-Inductive comp_recv (st: state) (ch: var) (x: alg) (st': state): Prop :=
+Inductive comp_recv (st: state) (ch: pvar) (x: alg) (st': state): Prop :=
 | Comp_recv:
     comp_recv_loop (mkSt
                       (S (fresh st))
@@ -268,7 +268,7 @@ Hint Resolve Comp_return : core.
 
 (** ** Inputs *)
 
-Definition istate: Set := var * store * list decl.
+Definition istate: Set := pvar * store * list decl.
 
 Definition comp_input (ins: istate) (x: alg): istate :=
   let (z, decls) := ins in
