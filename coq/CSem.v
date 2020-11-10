@@ -13,10 +13,7 @@ Open Scope list_scope.
 
     The key theorem in this library is [csem_sem], which states that
     whenever there is a run in the concrete executions semantics,
-    there is a corresponding run in the abstract execution semantics.
-
-    The proofs in this library have not been cleaned up and thus are
-    very difficult to read.  You have been warned. *)
+    there is a corresponding run in the abstract execution semantics. *)
 
 Inductive calg: Set :=
 | CTx: var -> calg              (* Text *)
@@ -240,6 +237,14 @@ Proof.
   - intuition.
 Qed.
 
+Local Ltac lookup_and_sort_check :=
+  repeat match goal with
+         | [ H: lookup _ _ = Some _ |- _ ] =>
+           apply lookup_ev in H; simpl in H
+         | [ H: csort_check _ _ |- _ ] =>
+           rewrite sort_check_equiv in H
+         end.
+
 (** Main theorem about expressions *)
 
 Theorem expr_csem_expr_sem:
@@ -250,36 +255,9 @@ Theorem expr_csem_expr_sem:
              (to_env ev') (map to_evt tr') (map to_alg us').
 Proof.
   intros. destruct dcl as [v s].
-  inv H; simpl; auto.
-  - inv H11; eauto.
-  - apply lookup_ev in H7.
-    inv H12; eauto.
-  - apply lookup_ev in H2.
-    apply lookup_ev in H8.
-    inv H13; eauto.
-  - apply lookup_ev in H2.
-    apply lookup_ev in H8.
-    inv H13; eauto.
-  - apply lookup_ev in H2.
-    apply lookup_ev in H8.
-    inv H13; eauto.
-  - apply lookup_ev in H7.
-    rewrite sort_check_equiv in H12.
-    eauto.
-  - apply lookup_ev in H7.
-    rewrite sort_check_equiv in H12.
-    eauto.
-  - apply lookup_ev in H2.
-    apply lookup_ev in H8.
-    rewrite sort_check_equiv in H13.
-    rewrite <- inv_to_alg in H8.
-    simpl in *.
-    eauto.
-  - rewrite sort_check_equiv in H11.
-    eauto.
-  - apply lookup_ev in H7.
-    rewrite sort_check_equiv in H12.
-    eauto.
+  inv H; simpl; auto; lookup_and_sort_check; eauto.
+  rewrite <- inv_to_alg in H8.
+  eauto.
 Qed.
 
 (** The semantics of statements
@@ -362,20 +340,13 @@ Theorem stmts_csem_stmts_sem:
       stmts_sem (to_env ev) (map to_evt tr) (map to_alg us)
                 (map to_alg outs) (to_env ev') ss.
 Proof.
-  intros.
-  induction H; simpl; auto.
+  intros; induction H; auto; lookup_and_sort_check; eauto.
   - apply Stmts_return.
     apply map_m_lookup_cev; auto.
   - destruct dcl as [v s].
-    apply expr_csem_expr_sem in H.
-    eauto.
-  - apply lookup_ev in H.
-    apply lookup_ev in H0.
-    eauto.
-  - apply lookup_ev in H.
-    apply lookup_ev in H0.
-    subst.
-    eauto.
+    apply expr_csem_expr_sem in H; eauto.
+  - apply Stmts_send; auto.
+  - subst. eauto.
 Qed.
 
 (** Definitions and lemmas about inputs *)
@@ -435,22 +406,20 @@ Theorem csem_sem:
 Proof.
   intros.
   unfold csem in H.
-  destruct H as [cins H].
-  destruct H as [G H].
-  destruct H as [F H].
-  apply cins_ins_inputs in F.
-  destruct H as [ctr H].
-  destruct H as [cus H].
-  destruct H as [couts H].
-  destruct H as [H E].
-  destruct E as [E D].
-  destruct D as [D C].
-  apply stmts_csem_stmts_sem in H.
-  rewrite mk_cenv_env in H.
+  repeat match goal with
+         | [ H: _ /\ _ |- _ ] =>
+           destruct H
+         | [ H: exists _, _ |- _ ] =>
+           destruct H
+         | [ H: cins_inputs (ins _) _ |- _ ] =>
+             apply cins_ins_inputs in H
+         end.
+  apply stmts_csem_stmts_sem in H1.
+  rewrite mk_cenv_env in H1.
   unfold sem.
-  rewrite G.
-  rewrite E.
-  rewrite D.
-  rewrite C.
+  repeat match goal with
+         | [ H: _ e = map _ _ |- _ ] =>
+           rewrite H
+         end.
   split; auto.
 Qed.
