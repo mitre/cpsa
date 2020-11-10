@@ -66,14 +66,9 @@ emitProc h margin (Defproc _ proc) =
   do
     emitHeader h margin (name proc) (inputs proc)
     mapM_ (emitStmt h margin) (stmts proc)
-    hPutStr h (replicate (sum (map paren (stmts proc))) ')')
-    hPutStrLn h "."
+    hPutStrLn h "  ]."
 emitProc _ _ (Cmt pos _) =
   fail (shows pos "Expecting a defproc")
-
-paren :: Stmt -> Int
-paren (Comment _) = 0
-paren _ = 1
 
 emitHeader :: Handle -> Int -> String -> [Decl] -> IO ()
 emitHeader h margin name inputs =
@@ -81,7 +76,7 @@ emitHeader h margin name inputs =
     hPutStrLn h ("Definition " ++ name ++ ": proc :=")
     hPutStrLn h "  mkProc"
     emitInputs h margin (map emitInput inputs)
-    hPutStrLn h "  ("
+    hPutStrLn h "  ["
 
 emitInput :: Decl -> String
 emitInput (var, sort) =
@@ -109,11 +104,11 @@ emitStmt h _ (Bind (var, sort) expr) =
   do
     hPutStr h ("   Bind (" ++ ref var ++ ", " ++ toSort sort ++ ") ")
     emitExpr h expr
-    hPutStrLn h  " ("
+    hPutStrLn h  ";"
 emitStmt h _ (Send _ chan msg) =
-  hPutStrLn h ("   Send " ++ ref chan ++ " " ++ ref msg ++ " (")
+  hPutStrLn h ("   Send " ++ ref chan ++ " " ++ ref msg ++ ";")
 emitStmt h _ (Same _ x y) =
-  hPutStrLn h ("   Same " ++ ref x ++ " " ++ ref y ++ " (")
+  hPutStrLn h ("   Same " ++ ref x ++ " " ++ ref y ++ ";")
 emitStmt h margin (Return returns) =
   do
     hPutStr h "   Return "
@@ -147,4 +142,4 @@ emitReturns h _ xs =
   do
     hPutStr h "["
     mapM_ (hPutStr h) (intersperse "; " xs)
-    hPutStr h "]"
+    hPutStrLn h "]"

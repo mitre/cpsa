@@ -1,3 +1,8 @@
+2020-11-10  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* coq: Changed the representation of procedures to use statement
+	lists.
+
 2020-10-27  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/RoleCoq/Main.hs: Added program cpsa4rolecoq that

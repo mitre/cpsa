@@ -136,7 +136,7 @@ Extra-Source-Files:
   tst/chan-unilateral.scm tst/chan-unilateral.tst tst/factvar.scm
   tst/factvar.tst tst/renamings.scm tst/renamings.tst
   tst/blanchet_doorsep.prot tst/blanchet_doorsep.tst
-  coq/Alg.v coq/Chk_sorts.v coq/Comp.v coq/Derives.v coq/Exec.v
+  coq/Alg.v coq/CSem.v coq/Comp.v coq/CSem.v coq/Derives.v coq/Exec.v
   coq/Makefile coq/Monad.v coq/Proc.v coq/README coq/Sem.v
   coq/SemTactics.v coq/Unilateral.v coq/Unilateral_proof.v
   coq/Unilateral_role.v coq/_CoqProject coq/mkdist coq/mkdoc

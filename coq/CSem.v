@@ -220,7 +220,7 @@ Inductive expr_csem: cenv -> list cevt -> list calg -> list nat ->
     lookup c ev = Some (CCh d) ->
     csort_check s a ->
     expr_csem ev (CRv d a :: tr) us rs (Recv c) (v, s)
-             ((v, a) :: ev) tr us rs.
+              ((v, a) :: ev) tr us rs.
 Hint Constructors expr_csem : core.
 
 Lemma lookup_ev:
@@ -260,43 +260,67 @@ Proof.
   eauto.
 Qed.
 
-(** The semantics of statements
+(** The semantics of a statement
 
 <<
    Parmeters:
-   cenv:      Input environment
-   list cevt: Input trace
-   list calg: Input list of uniques
-   list nat:  Input list of random values
-   list calg: Input list of outputs
-   cenv:      Output environment
-   stmts:     Statements
+   env:      Input environment
+   list evt: Input trace
+   list alg: Input list of uniques
+   list nat: Input list of random values
+   stmts:    Statements
+   env:      Output environment
+   list evt: Output trace
+   list alg: Output list of uniques
+   list nat: Output list of random values
 >>
 *)
 
-Inductive stmts_csem: cenv -> list cevt -> list calg ->
-                      list nat -> list calg ->
-                      cenv -> stmts -> Prop :=
-| CStmts_return: forall ev rs outs vs,
-    map_m (flip lookup ev) vs = Some outs ->
-    stmts_csem ev [] [] rs outs ev (Return vs)
-| CStmts_bind: forall ev tr us rs outs exp dcl ev'' stmts ev' tr' us' rs',
+Inductive stmt_csem: cenv -> list cevt -> list calg ->
+                     list nat -> stmt -> cenv -> list cevt ->
+                     list calg -> list nat -> Prop :=
+| CStmt_bind: forall ev tr us rs exp dcl ev' tr' us' rs',
     expr_csem ev tr us rs exp dcl ev' tr' us' rs' ->
-    stmts_csem ev' tr' us' rs' outs ev'' stmts ->
-    stmts_csem ev tr us rs outs ev'' (Bind dcl exp stmts)
-| CStmts_send: forall ev tr us rs outs c d x a ev' stmts,
+    stmt_csem ev tr us rs (Bind dcl exp) ev' tr' us' rs'
+| CStmt_send: forall ev tr us rs c d x a,
     lookup c ev = Some (CCh d) ->
     lookup x ev = Some a ->
-    stmts_csem ev tr us rs outs ev' stmts ->
-    stmts_csem ev (CSd d a :: tr) us rs outs ev' (Send c x stmts)
-| CStmts_same: forall ev tr us rs outs ev' stmts x y a b,
+    stmt_csem ev (CSd d a :: tr) us rs (Send c x) ev tr us rs
+| CStmt_same: forall ev tr us rs x y a b,
     lookup x ev = Some a ->
     lookup y ev = Some b ->
     a = b ->                    (* Sameness check *)
     has_enc (to_alg a) = false -> (* For probabilistic encryption *)
-    stmts_csem ev tr us rs outs ev' stmts ->
-    stmts_csem ev tr us rs outs ev' (Same x y stmts).
-Hint Constructors stmts_csem : core.
+    stmt_csem ev tr us rs (Same x y) ev tr us rs.
+Hint Constructors stmt_csem : core.
+
+(** Main theorem about statements *)
+
+Theorem stmt_csem_stmt_sem:
+  forall ev tr us rs stmt ev' tr' us' rs',
+    stmt_csem ev tr us rs stmt ev' tr' us' rs' ->
+    stmt_sem (to_env ev) (map to_evt tr) (map to_alg us)
+             stmt
+             (to_env ev') (map to_evt tr') (map to_alg us').
+Proof.
+  intros; inv H; auto; lookup_and_sort_check; eauto.
+  - apply expr_csem_expr_sem in H0; auto.
+  - apply Stmt_send; auto.
+Qed.
+
+Inductive stmt_list_csem:
+  cenv -> list cevt -> list calg ->
+  list nat -> list calg -> list stmt -> cenv ->
+  list cevt -> list calg -> list nat -> Prop :=
+| CStmt_return: forall ev rs outs vs,
+    map_m (flip lookup ev) vs = Some outs ->
+    stmt_list_csem ev [] [] rs outs [Return vs] ev [] [] rs
+| CStmt_pair: forall ev tr us rs outs stmt ev' tr' us' rs'
+                     stmts ev'' tr'' us'' rs'',
+    stmt_csem ev tr us rs stmt ev' tr' us' rs' ->
+    stmt_list_csem ev' tr' us' rs' outs stmts ev'' tr'' us'' rs'' ->
+    stmt_list_csem ev tr us rs outs (stmt :: stmts) ev'' tr'' us'' rs''.
+Hint Constructors stmt_list_csem : core.
 
 Lemma lookup_none:
   forall x ev,
@@ -332,21 +356,20 @@ Proof.
       auto.
 Qed.
 
-(** Main theorem about statements *)
+(** Main theorem about statement lists *)
 
-Theorem stmts_csem_stmts_sem:
-  forall ev tr us rs outs ss ev',
-      stmts_csem ev tr us rs outs ev' ss ->
-      stmts_sem (to_env ev) (map to_evt tr) (map to_alg us)
-                (map to_alg outs) (to_env ev') ss.
+Theorem stmt_list_csem_stmt_list_sem:
+  forall ev tr us rs outs stmts ev' rs',
+      stmt_list_csem ev tr us rs outs stmts ev' [] [] rs' ->
+      stmt_list_sem (to_env ev) (map to_evt tr) (map to_alg us)
+                    (map to_alg outs) stmts (to_env ev') [] [].
 Proof.
-  intros; induction H; auto; lookup_and_sort_check; eauto.
-  - apply Stmts_return.
+  intros.
+  induction H; simpl; auto.
+  - apply Stmt_return.
     apply map_m_lookup_cev; auto.
-  - destruct dcl as [v s].
-    apply expr_csem_expr_sem in H; eauto.
-  - apply Stmts_send; auto.
-  - subst. eauto.
+  - apply stmt_csem_stmt_sem in H; auto.
+    eauto.
 Qed.
 
 (** Definitions and lemmas about inputs *)
@@ -391,9 +414,9 @@ Definition csem (p: proc) (rs: list nat) (cev: cenv) (e: role): Prop :=
   exists cins,
     inputs e = map to_alg cins /\
     cins_inputs (ins p) cins /\
-    exists ctr cus couts,
+    exists ctr cus couts rs',
       let ev_in := mk_cenv (ins p) cins in
-      stmts_csem ev_in ctr cus rs couts cev (body p) /\
+      stmt_list_csem ev_in ctr cus rs couts (body p) cev [] [] rs' /\
       trace e = map to_evt ctr /\
       uniqs e = map to_alg cus /\
       outputs e = map to_alg couts.
@@ -414,7 +437,7 @@ Proof.
          | [ H: cins_inputs (ins _) _ |- _ ] =>
              apply cins_ins_inputs in H
          end.
-  apply stmts_csem_stmts_sem in H1.
+  apply stmt_list_csem_stmt_list_sem in H1.
   rewrite mk_cenv_env in H1.
   unfold sem.
   repeat match goal with

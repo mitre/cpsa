@@ -61,15 +61,15 @@ Inductive expr: Set :=
 
 (** Statements *)
 
-Inductive stmts: Set :=
-| Return: list pvar -> stmts           (* Return values *)
-| Bind: decl -> expr -> stmts -> stmts (* Bind a variable *)
-| Send: pvar -> pvar -> stmts -> stmts (* Send a message *)
-| Same: pvar -> pvar -> stmts -> stmts. (* Check for sameness *)
+Inductive stmt: Set :=
+| Return: list pvar -> stmt     (* Return values *)
+| Bind: decl -> expr -> stmt    (* Bind a variable *)
+| Send: pvar -> pvar -> stmt    (* Send a message *)
+| Same: pvar -> pvar -> stmt.   (* Check for sameness *)
 
 (** Procedures *)
 
 Record proc: Set :=
   mkProc {
       ins: list decl;
-      body: stmts }.
+      body: list stmt }.

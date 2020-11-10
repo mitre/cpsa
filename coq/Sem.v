@@ -134,41 +134,52 @@ Inductive expr_sem: env -> list evt -> list alg -> expr ->
              ((v, a) :: ev) tr us.
 Hint Constructors expr_sem : core.
 
-(** The semantics of statements
+(** The semantics of a statement
 
 <<
    Parmeters:
    env:      Input environment
    list evt: Input trace
    list alg: Input list of uniques
-   list alg: Input list of outputs
-   env:      Output environment
    stmts:    Statements
+   env:      Output environment
+   list evt: Output trace
+   list alg: Output list of uniques
 >>
 *)
 
-Inductive stmts_sem: env -> list evt -> list alg ->
-                     list alg -> env -> stmts -> Prop :=
-| Stmts_return: forall ev outs vs,
-    map_m (flip lookup ev) vs = Some outs ->
-    stmts_sem ev [] [] outs ev (Return vs)
-| Stmts_bind: forall ev tr us outs exp dcl ev'' stmts ev' tr' us',
+Inductive stmt_sem: env -> list evt -> list alg ->
+                    stmt -> env -> list evt ->
+                    list alg -> Prop :=
+| Stmt_bind: forall ev tr us exp dcl ev' tr' us',
     expr_sem ev tr us exp dcl ev' tr' us' ->
-    stmts_sem ev' tr' us' outs ev'' stmts ->
-    stmts_sem ev tr us outs ev'' (Bind dcl exp stmts)
-| Stmts_send: forall ev tr us outs c d x a ev' stmts,
+    stmt_sem ev tr us (Bind dcl exp) ev' tr' us'
+| Stmt_send: forall ev tr us c d x a,
     lookup c ev = Some (Ch d) ->
     lookup x ev = Some a ->
-    stmts_sem ev tr us outs ev' stmts ->
-    stmts_sem ev (Sd d a :: tr) us outs ev' (Send c x stmts)
-| Stmts_same: forall ev tr us outs ev' stmts x y a b,
+    stmt_sem ev (Sd d a :: tr) us (Send c x) ev tr us
+| Stmt_same: forall ev tr us x y a b,
     lookup x ev = Some a ->
     lookup y ev = Some b ->
     a = b ->                    (* Sameness check *)
     has_enc a = false ->        (* For probabilistic encryption *)
-    stmts_sem ev tr us outs ev' stmts ->
-    stmts_sem ev tr us outs ev' (Same x y stmts).
-Hint Constructors stmts_sem : core.
+    stmt_sem ev tr us (Same x y) ev tr us.
+Hint Constructors stmt_sem : core.
+
+(** Statement list semantics *)
+
+Inductive stmt_list_sem:
+  env -> list evt -> list alg ->
+  list alg -> list stmt -> env ->
+  list evt -> list alg -> Prop :=
+| Stmt_return: forall ev outs vs,
+    map_m (flip lookup ev) vs = Some outs ->
+    stmt_list_sem ev [] [] outs [Return vs] ev [] []
+| Stmt_pair: forall ev tr us outs stmt ev' tr' us' stmts ev'' tr'' us'',
+    stmt_sem ev tr us stmt ev' tr' us' ->
+    stmt_list_sem ev' tr' us' outs stmts ev'' tr'' us'' ->
+    stmt_list_sem ev tr us outs (stmt :: stmts) ev'' tr'' us''.
+Hint Constructors stmt_list_sem : core.
 
 Fixpoint mk_env (ds: list decl) (xs: list alg): env :=
   match (ds, xs) with
@@ -185,12 +196,12 @@ Inductive ins_inputs: list decl -> list alg -> Prop :=
     ins_inputs ((v, s) :: ds) (x :: xs).
 Hint Constructors ins_inputs : core.
 
-(** Is [e] an execution accepted by procedure [p]? *)
+(** The semantics of a procedure using statement lists *)
 
 Definition sem (p: proc) (ev: env) (e: role): Prop :=
   let ev_in := mk_env (ins p) (inputs e) in
   ins_inputs (ins p) (inputs e) /\
-  stmts_sem ev_in (trace e) (uniqs e) (outputs e) ev (body p).
+  stmt_list_sem ev_in (trace e) (uniqs e) (outputs e) (body p) ev [] [].
 
 (** ** Matching *)
 

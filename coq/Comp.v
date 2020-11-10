@@ -12,14 +12,13 @@
     of the code is specified by mutually inductive predicates.  This
     means code generation must be guided by a proof script. *)
 
-Require Import List Program Monad Proc Alg Sem
+Require Import List Monad Proc Alg Sem
         Unilateral_role Unilateral_proof.
 Import List.ListNotations.
 Open Scope list_scope.
 Open Scope nat_scope.
 Open Scope program_scope.
 (** printing <- #←# *)
-(** printing ∘ %\ensuremath{\circ}% *)
 
 (** A compile time store *)
 
@@ -43,7 +42,7 @@ Record state: Set :=
   mkSt {
       fresh: pvar;
       cstore: store;
-      code: stmts -> stmts }.
+      code: list stmt }.
 
 (** ** Uniques
 
@@ -79,7 +78,7 @@ Definition uniq_list (tr: list evt) (uniqs: list alg): list (list alg) :=
 Definition comp_uniq (st: state) (u: alg): state :=
   mkSt (S (fresh st))
        ((u, fresh st) :: cstore st)
-       (code st ∘ (Bind (fresh st, sort_of u) Nonce)).
+       ((Bind (fresh st, sort_of u) Nonce) :: code st).
 
 (** ** Trace and Outputs
 
@@ -93,8 +92,8 @@ Fixpoint synth (st: state) (x: alg): option (state * pvar) :=
     | Tg s =>
       Some (mkSt (S (fresh st))
                  ((x, fresh st) :: cstore st)
-                 (code st ∘ (Bind (fresh st, Mesg)
-                                  (Tagg s))),
+                 ((Bind (fresh st, Mesg)
+                        (Tagg s)) :: code st),
             fresh st)
     | Pr y z =>
       l <- synth st y;
@@ -103,8 +102,8 @@ Fixpoint synth (st: state) (x: alg): option (state * pvar) :=
       let (st, u) := r in
       Some (mkSt (S (fresh st))
                  ((x, fresh st) :: cstore st)
-                 (code st ∘ (Bind (fresh st, Mesg)
-                                  (Pair v u))),
+                 ((Bind (fresh st, Mesg)
+                        (Pair v u)) :: code st),
             fresh st)
     | En y z =>
       l <- synth st y;
@@ -113,16 +112,16 @@ Fixpoint synth (st: state) (x: alg): option (state * pvar) :=
       let (st, u) := r in
       Some (mkSt (S (fresh st))
                  ((x, fresh st) :: cstore st)
-                 (code st ∘ (Bind (fresh st, Mesg)
-                                  (Encr v u))),
+                 ((Bind (fresh st, Mesg)
+                        (Encr v u)) :: code st),
             fresh st)
     | Hs y =>
       l <- synth st y;
       let (st, v) := l in
       Some (mkSt (S (fresh st))
                  ((x, fresh st) :: cstore st)
-                 (code st ∘ (Bind (fresh st, Mesg)
-                                  (Hash v))),
+                 ((Bind (fresh st, Mesg)
+                        (Hash v)) :: code st),
             fresh st)
     | _ => None
     end
@@ -155,7 +154,7 @@ Definition comp_send (st: state) (ch: var) (x: alg)
   Some (mkSt
          (fresh st)
          (cstore st)
-         (code st ∘ Send u v)).
+         (Send u v :: code st)).
 
 (** *** Compile a Reception
 
@@ -183,11 +182,9 @@ with comp_recv_match: state -> alg -> pvar -> list (alg * pvar) ->
     st' = mkSt
             (S (S (fresh st)))
             ((Pr y z, v) :: cstore st)
-            (code st ∘
-                  (Bind (fresh st, sort_of y)
-                        (Frst v)) ∘
-                  (Bind (S (fresh st), sort_of z)
-                        (Scnd v))) ->
+            ((Bind (S (fresh st), sort_of z) (Scnd v))
+               :: (Bind (fresh st, sort_of y) (Frst v))
+               :: code st) ->
     comp_recv_loop st' (r' ++ [(y, fresh st); (z, S (fresh st))]) st'' ->
     comp_recv_match st (Pr y z) v r' st''
 | Comp_decr: forall st y z v u r' st' st'' st''',
@@ -195,8 +192,8 @@ with comp_recv_match: state -> alg -> pvar -> list (alg * pvar) ->
     st'' = mkSt
             (S (fresh st'))
             ((En y z, v) :: cstore st')
-            (code st ∘ (Bind (fresh st', sort_of y)
-                             (Decr v u))) ->
+            ((Bind (fresh st', sort_of y)
+                   (Decr v u)) :: code st) ->
     comp_recv_loop st'' (r' ++ [(y, fresh st)]) st''' ->
     comp_recv_match st (En y z) v r' st'''
 | Comp_hash: forall st y v u r' st' st'' st''',
@@ -204,7 +201,7 @@ with comp_recv_match: state -> alg -> pvar -> list (alg * pvar) ->
     st'' = mkSt
             (fresh st')
             (cstore st')
-            (code st ∘ Same v u) ->
+            (Same v u :: code st) ->
     comp_recv_loop st'' r' st''' ->
     comp_recv_match st (Hs y) v r' st'''
 | Comp_simple: forall st x v r' st' st'',
@@ -219,7 +216,7 @@ with comp_recv_match: state -> alg -> pvar -> list (alg * pvar) ->
             mkSt
               (fresh st'')
               (cstore st'')
-              (code st ∘ Same v u)
+              (Same v u :: code st)
           end ->
     comp_recv_loop st' r' st'' ->
     comp_recv_match st x v r' st''.
@@ -232,8 +229,8 @@ Inductive comp_recv (st: state) (ch: pvar) (x: alg) (st': state): Prop :=
     comp_recv_loop (mkSt
                       (S (fresh st))
                       (cstore st)
-                      (code st ∘ (Bind (fresh st, sort_of x)
-                                       (Recv ch))))
+                      ((Bind (fresh st, sort_of x)
+                             (Recv ch)) :: code st))
                    [(x, fresh st)] st' ->
     comp_recv st ch x st'.
 Hint Constructors comp_recv : core.
@@ -252,10 +249,10 @@ Hint Constructors comp_recv : core.
 *)
 
 Inductive comp_tr: state -> list evt -> list (list alg) ->
-                   list alg -> store -> stmts -> Prop :=
+                   list alg -> store -> list stmt -> Prop :=
 | Comp_return: forall st outs st' vs,
     synth_return st outs = Some (st', vs) ->
-    comp_tr st [] [] outs (cstore st') (code st' (Return vs))
+    comp_tr st [] [] outs (cstore st') (rev ((Return vs) :: code st'))
 | Comp_sd: forall st ch x ys st' tr us outs ost ostmts,
     comp_send st ch x ys = Some st' ->
     comp_tr st' tr us outs ost ostmts ->
@@ -293,7 +290,7 @@ Inductive comp (rl: role) (cs: store) (p: proc): Prop :=
     valid_role rl = true ->
     comp_inputs (inputs rl) = (fresh, cs', ins') ->
     uniq_list (trace rl) (uniqs rl) = uniques ->
-    comp_tr (mkSt fresh cs' id) (trace rl) uniques (outputs rl) cs ss ->
+    comp_tr (mkSt fresh cs' []) (trace rl) uniques (outputs rl) cs ss ->
     p = mkProc (rev ins') ss ->
     comp rl cs p.
 
@@ -303,7 +300,7 @@ Inductive view_proc (cs: store) (p: proc): Prop :=
 | View_proc: view_proc cs p.
 
 Lemma comp_init:
-    exists (cs: store) (is: list decl) (ss: stmts),
+    exists (cs: store) (is: list decl) (ss: list stmt),
       comp init_role cs (mkProc is ss) /\
       view_proc cs (mkProc is ss).
 Proof.
@@ -322,12 +319,11 @@ Proof.
          ++ eapply Comp_return; simpl; eauto.
             unfold synth_return; simpl; eauto.
   - simpl.
-    unfold compose; unfold id; simpl.
     apply View_proc.
 Qed.
 
 Lemma comp_resp:
-    exists (cs: store) (is: list decl) (ss: stmts),
+    exists (cs: store) (is: list decl) (ss: list stmt),
       comp resp_role cs (mkProc is ss) /\
       view_proc cs (mkProc is ss).
 Proof.
@@ -347,7 +343,6 @@ Proof.
          eapply Comp_return; simpl; eauto.
          unfold synth_return; simpl; eauto.
   - simpl.
-    unfold compose; unfold id; simpl.
     apply View_proc.
 Qed.
 
