@@ -3,7 +3,7 @@ Monad.v
 Proc.v
 Alg.v
 Sem.v
-SemTactics.v
+Sem_tactics.v
 Unilateral.v
 Unilateral_role.v
 Unilateral_proof.v

@@ -1,6 +1,6 @@
 (** * Derivability *)
 
-Require Import List ListSet Bool Lia Alg SemTactics.
+Require Import List ListSet Bool Lia Alg Sem_tactics.
 
 (** [derives pub t] when [t] can be derived using the terms in [pub]. *)
 

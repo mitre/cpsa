@@ -1,7 +1,7 @@
 (** * Unilateral Protocol Generated Code Verification *)
 
 Require Import List Program Monad Proc Alg.
-Require Import Sem SemTactics Unilateral Unilateral_role.
+Require Import Sem Sem_tactics Unilateral Unilateral_role.
 Import List.ListNotations.
 Open Scope list_scope.
 Open Scope nat_scope.

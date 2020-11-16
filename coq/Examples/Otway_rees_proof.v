@@ -1,6 +1,6 @@
 (** * Otway Rees Protocol Generated Code Verification *)
 
-Require Import Sem SemTactics Otway_rees Otway_rees_role.
+Require Import Sem Sem_tactics Otway_rees Otway_rees_role.
 
 Theorem correct_otway_rees_init_io_liveness:
   correct_io_liveness init_role init.

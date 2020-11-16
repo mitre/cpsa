@@ -3,6 +3,7 @@
 *.vok
 *.vos
 *.aux
+.lia.cache
 coq.mk
 .coq.mk.d
 coq.mk.conf

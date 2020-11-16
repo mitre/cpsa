@@ -1,6 +1,6 @@
 (** * Nsl Protocol Generated Code Verification *)
 
-Require Import Sem SemTactics Nsl Nsl_role.
+Require Import Sem Sem_tactics Nsl Nsl_role.
 
 Theorem correct_nsl_init_io_liveness:
   correct_io_liveness init_role init.

@@ -1,6 +1,6 @@
 (** * Yahalom Protocol Generated Code Verification *)
 
-Require Import Sem SemTactics Yahalom Yahalom_role.
+Require Import Sem Sem_tactics Yahalom Yahalom_role.
 
 Theorem correct_yahalom_init_io_liveness:
   correct_io_liveness init_role init.

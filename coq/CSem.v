@@ -1,6 +1,6 @@
-(** * Concrete Semantics *)
+(** * Concrete Execution Semantics *)
 
-Require Import ListSet Nat Bool Program Monad Proc Alg Sem SemTactics.
+Require Import ListSet Nat Bool Program Monad Proc Alg Sem Sem_tactics.
 Import List.ListNotations.
 Open Scope list_scope.
 
@@ -264,15 +264,15 @@ Qed.
 
 <<
    Parmeters:
-   env:      Input environment
-   list evt: Input trace
-   list alg: Input list of uniques
-   list nat: Input list of random values
-   stmts:    Statements
-   env:      Output environment
-   list evt: Output trace
-   list alg: Output list of uniques
-   list nat: Output list of random values
+   cenv:      Input environment
+   list cevt: Input trace
+   list calg: Input list of uniques
+   list nat:  Input list of random values
+   stmts:     Statements
+   cenv:      Output environment
+   list cevt: Output trace
+   list calg: Output list of uniques
+   list nat:  Output list of random values
 >>
 *)
 

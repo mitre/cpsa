@@ -13,7 +13,7 @@ Notation "x <- M ; N" := (match M with None => None | Some x => N end)
 Lemma do_some:
   forall A B (f: option A) (g: A -> option B) b,
     x <- f; g x = Some b ->
-    exists a, f = Some a.
+    exists a, f = Some a /\ g a = Some b.
 Proof.
   intros.
   destruct f as [x|].
@@ -39,16 +39,13 @@ Proof.
   intros.
   intro.
   simpl in H.
-  pose proof H as G.
-  apply do_some in G.
-  destruct G as [y G].
-  rewrite G in H; simpl in H.
-  clear G.
-  pose proof H as G.
+  apply do_some in H.
+  destruct H as [y H].
+  destruct H as [H G].
   apply do_some in G.
   destruct G as [ys G].
-  rewrite G in H; simpl in H.
-  inversion H.
+  destruct G as [G F].
+  inversion F.
 Qed.
 
 Lemma map_m_pair:
@@ -58,15 +55,13 @@ Lemma map_m_pair:
 Proof.
   intros.
   simpl in H.
-  pose proof H as G.
+  apply do_some in H.
+  destruct H as [z H].
+  destruct H as [H G].
   apply do_some in G.
-  destruct G as [z G].
-  rewrite G in H.
-  pose proof H as F.
-  apply do_some in F.
-  destruct F as [zs F].
-  rewrite F in H.
-  inversion H; subst; auto.
+  destruct G as [zs G].
+  destruct G as [G F].
+  inversion F; subst; auto.
 Qed.
 
 (** Monadic fold *)
