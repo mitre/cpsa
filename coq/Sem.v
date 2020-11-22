@@ -84,54 +84,42 @@ Hint Constructors sort_check : core.
    list evt: Input trace
    list alg: Input list of uniques
    expr:     Expression code fragment
-   decl:     Declaration to be bound by the value of the expression
-   env:      Output environment
+   alg:      Value of the expression
    list evt: Output trace
    list alg: Output list of uniques
 >>
 *)
 
 Inductive expr_sem: env -> list evt -> list alg -> expr ->
-                    decl -> env -> list evt -> list alg -> Prop :=
-| Expr_tagg: forall ev tr us x s v,
-    sort_check s (Tg x) ->
-    expr_sem ev tr us (Tagg x) (v, s) ((v, Tg x) :: ev) tr us
-| Expr_hash: forall ev tr us x a v s,
+                    alg -> list evt -> list alg -> Prop :=
+| Expr_tagg: forall ev tr us x,
+    expr_sem ev tr us (Tagg x) (Tg x) tr us
+| Expr_hash: forall ev tr us x a,
     lookup x ev = Some a ->
-    sort_check s (Hs a) ->
-    expr_sem ev tr us (Hash x) (v, s) ((v, Hs a) :: ev) tr us
-| Expr_pair: forall ev tr us x y a b v s,
+    expr_sem ev tr us (Hash x) (Hs a) tr us
+| Expr_pair: forall ev tr us x y a b,
     lookup x ev = Some a ->
     lookup y ev = Some b ->
-    sort_check s (Pr a b) ->
-    expr_sem ev tr us (Pair x y) (v, s) ((v, Pr a b) :: ev) tr us
-| Expr_encr: forall ev tr us x y a b v s,
+    expr_sem ev tr us (Pair x y) (Pr a b) tr us
+| Expr_encr: forall ev tr us x y a b,
     lookup x ev = Some a ->
     lookup y ev = Some b ->
-    sort_check s (En a b) ->
-    expr_sem ev tr us (Encr x y) (v, s) ((v, En a b) :: ev) tr us
-| Expr_frst: forall ev tr us x a b v s,
+    expr_sem ev tr us (Encr x y) (En a b) tr us
+| Expr_frst: forall ev tr us x a b,
     lookup x ev = Some (Pr a b) ->
-    sort_check s a ->
-    expr_sem ev tr us (Frst x) (v, s) ((v, a) :: ev) tr us
-| Expr_scnd: forall ev tr us x a b v s,
+    expr_sem ev tr us (Frst x) a tr us
+| Expr_scnd: forall ev tr us x a b,
     lookup x ev = Some (Pr a b) ->
-    sort_check s b ->
-    expr_sem ev tr us (Scnd x) (v, s) ((v, b) :: ev) tr us
-| Expr_decr: forall ev tr us x y a b v s,
+    expr_sem ev tr us (Scnd x) b tr us
+| Expr_decr: forall ev tr us x y a b,
     lookup x ev = Some (En a b) ->
     lookup y ev = Some (inv b) ->
-    sort_check s a ->
-    expr_sem ev tr us (Decr x y) (v, s) ((v, a) :: ev) tr us
-| Expr_nonce: forall ev tr us a v s,
-    sort_check s a ->
-    expr_sem ev tr (a :: us) Nonce (v, s)
-             ((v, a) :: ev) tr us
-| Expr_recv: forall ev tr us a c d v s,
+    expr_sem ev tr us (Decr x y) a tr us
+| Expr_nonce: forall ev tr us a,
+    expr_sem ev tr (a :: us) Nonce a tr us
+| Expr_recv: forall ev tr us a c d,
     lookup c ev = Some (Ch d) ->
-    sort_check s a ->
-    expr_sem ev (Rv d a :: tr) us (Recv c) (v, s)
-             ((v, a) :: ev) tr us.
+    expr_sem ev (Rv d a :: tr) us (Recv c) a tr us.
 Hint Constructors expr_sem : core.
 
 (** The semantics of a statement
@@ -151,9 +139,10 @@ Hint Constructors expr_sem : core.
 Inductive stmt_sem: env -> list evt -> list alg ->
                     stmt -> env -> list evt ->
                     list alg -> Prop :=
-| Stmt_bind: forall ev tr us exp dcl ev' tr' us',
-    expr_sem ev tr us exp dcl ev' tr' us' ->
-    stmt_sem ev tr us (Bind dcl exp) ev' tr' us'
+| Stmt_bind: forall ev tr us exp val dcl tr' us',
+    expr_sem ev tr us exp val tr' us' ->
+    sort_check (snd dcl) val ->
+    stmt_sem ev tr us (Bind dcl exp) ((fst dcl, val) :: ev) tr' us'
 | Stmt_send: forall ev tr us c d x a,
     lookup c ev = Some (Ch d) ->
     lookup x ev = Some a ->

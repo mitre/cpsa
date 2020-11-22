@@ -164,8 +164,7 @@ Qed.
    list calg: Input list of uniques
    list nat:  Input list of random values
    expr:      Expression code fragment
-   decl:      Declaration to be bound by the value of the expression
-   cenv:      Output environment
+   calg:      Value of the expression
    list cevt: Output trace
    list calg: Output list of uniques
    list nat:  Output list of random values
@@ -174,53 +173,40 @@ Qed.
 *)
 
 Inductive expr_csem: cenv -> list cevt -> list calg -> list nat ->
-                     expr -> decl -> cenv -> list cevt ->
+                     expr -> calg -> list cevt ->
                      list calg -> list nat -> Prop :=
-| CExpr_tagg: forall ev tr us rs x s v,
-    csort_check s (CTg x) ->
-    expr_csem ev tr us rs (Tagg x) (v, s) ((v, CTg x) :: ev) tr us rs
-| CExpr_hash: forall ev tr us rs x a v s,
+| CExpr_tagg: forall ev tr us rs x,
+    expr_csem ev tr us rs (Tagg x) (CTg x) tr us rs
+| CExpr_hash: forall ev tr us rs x a,
     lookup x ev = Some a ->
-    csort_check s (CHs a) ->
-    expr_csem ev tr us rs (Hash x) (v, s) ((v, CHs a) :: ev) tr us rs
-| CExpr_pair: forall ev tr us rs x y a b v s,
+    expr_csem ev tr us rs (Hash x) (CHs a) tr us rs
+| CExpr_pair: forall ev tr us rs x y a b,
     lookup x ev = Some a ->
     lookup y ev = Some b ->
-    csort_check s (CPr a b) ->
-    expr_csem ev tr us rs (Pair x y) (v, s) ((v, CPr a b) :: ev) tr us rs
-| CExpr_encr_prob: forall ev tr us rs x y r a b v s,
+    expr_csem ev tr us rs (Pair x y) (CPr a b) tr us rs
+| CExpr_encr_prob: forall ev tr us rs x y r a b,
     lookup x ev = Some a ->
     lookup y ev = Some b ->
-    csort_check s (CEn r a b) ->
-    expr_csem ev tr us (r :: rs) (Encr x y) (v, s)
-              ((v, CEn r a b) :: ev) tr us rs
-| CExpr_encr_zero: forall ev tr us x y a b v s,
+    expr_csem ev tr us (r :: rs) (Encr x y) (CEn r a b) tr us rs
+| CExpr_encr_zero: forall ev tr us x y a b,
     lookup x ev = Some a ->
     lookup y ev = Some b ->
-    csort_check s (CEn 0 a b) ->
-    expr_csem ev tr us [] (Encr x y) (v, s) ((v, CEn 0 a b) :: ev) tr us []
-| CExpr_frst: forall ev tr us rs x a b v s,
+    expr_csem ev tr us [] (Encr x y) (CEn 0 a b) tr us []
+| CExpr_frst: forall ev tr us rs x a b,
     lookup x ev = Some (CPr a b) ->
-    csort_check s a ->
-    expr_csem ev tr us rs (Frst x) (v, s) ((v, a) :: ev) tr us rs
-| CExpr_scnd: forall ev tr us rs x a b v s,
+    expr_csem ev tr us rs (Frst x) a tr us rs
+| CExpr_scnd: forall ev tr us rs x a b,
     lookup x ev = Some (CPr a b) ->
-    csort_check s b ->
-    expr_csem ev tr us rs (Scnd x) (v, s) ((v, b) :: ev) tr us rs
-| CExpr_decr: forall ev tr us rs x y r a b v s,
+    expr_csem ev tr us rs (Scnd x) b tr us rs
+| CExpr_decr: forall ev tr us rs x y r a b,
     lookup x ev = Some (CEn r a b) ->
     lookup y ev = Some (cinv b) ->
-    csort_check s a ->
-    expr_csem ev tr us rs (Decr x y) (v, s) ((v, a) :: ev) tr us rs
-| CExpr_nonce: forall ev tr us rs a v s,
-    csort_check s a ->
-    expr_csem ev tr (a :: us) rs Nonce (v, s)
-             ((v, a) :: ev) tr us rs
-| CExpr_recv: forall ev tr us rs a c d v s,
+    expr_csem ev tr us rs (Decr x y) a tr us rs
+| CExpr_nonce: forall ev tr us rs a,
+    expr_csem ev tr (a :: us) rs Nonce a tr us rs
+| CExpr_recv: forall ev tr us rs a c d,
     lookup c ev = Some (CCh d) ->
-    csort_check s a ->
-    expr_csem ev (CRv d a :: tr) us rs (Recv c) (v, s)
-              ((v, a) :: ev) tr us rs.
+    expr_csem ev (CRv d a :: tr) us rs (Recv c) a tr us rs.
 Hint Constructors expr_csem : core.
 
 Lemma lookup_ev:
@@ -248,15 +234,14 @@ Local Ltac lookup_and_sort_check :=
 (** Main theorem about expressions *)
 
 Theorem expr_csem_expr_sem:
-  forall ev tr us rs exp dcl ev' tr' us' rs',
-    expr_csem ev tr us rs exp dcl ev' tr' us' rs' ->
-    expr_sem (to_env ev) (map to_evt tr) (map to_alg us)
-             exp dcl
-             (to_env ev') (map to_evt tr') (map to_alg us').
+  forall ev tr us rs exp val tr' us' rs',
+    expr_csem ev tr us rs exp val tr' us' rs' ->
+    expr_sem (to_env ev) (map to_evt tr) (map to_alg us) exp
+             (to_alg val) (map to_evt tr') (map to_alg us').
 Proof.
-  intros. destruct dcl as [v s].
+  intros.
   inv H; simpl; auto; lookup_and_sort_check; eauto.
-  rewrite <- inv_to_alg in H8.
+  rewrite <- inv_to_alg in H1.
   eauto.
 Qed.
 
@@ -279,9 +264,10 @@ Qed.
 Inductive stmt_csem: cenv -> list cevt -> list calg ->
                      list nat -> stmt -> cenv -> list cevt ->
                      list calg -> list nat -> Prop :=
-| CStmt_bind: forall ev tr us rs exp dcl ev' tr' us' rs',
-    expr_csem ev tr us rs exp dcl ev' tr' us' rs' ->
-    stmt_csem ev tr us rs (Bind dcl exp) ev' tr' us' rs'
+| CStmt_bind: forall ev tr us rs exp val dcl tr' us' rs',
+    expr_csem ev tr us rs exp val tr' us' rs' ->
+    csort_check (snd dcl) val ->
+    stmt_csem ev tr us rs (Bind dcl exp) ((fst dcl, val) :: ev) tr' us' rs'
 | CStmt_send: forall ev tr us rs c d x a,
     lookup c ev = Some (CCh d) ->
     lookup x ev = Some a ->
@@ -304,7 +290,8 @@ Theorem stmt_csem_stmt_sem:
              (to_env ev') (map to_evt tr') (map to_alg us').
 Proof.
   intros; inv H; auto; lookup_and_sort_check; eauto.
-  - apply expr_csem_expr_sem in H0; auto.
+  - apply expr_csem_expr_sem in H0.
+    apply Stmt_bind; auto.
   - apply Stmt_send; auto.
 Qed.
 

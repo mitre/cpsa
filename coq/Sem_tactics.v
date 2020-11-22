@@ -47,7 +47,7 @@ Ltac sem_inv :=
       apply inv_swap in H; simpl in H; subst
     | [ H: lookup _ _ = _ |- _ ] => inv H
     | [ H: sort_check _ _ |- _ ] => inv H
-    | [ H: expr_sem _ _ _ _ _ _ _ _ |- _ ] => inv H
+    | [ H: expr_sem _ _ _ _ _ _ _ |- _ ] => inv H
     | [ H: stmt_sem _ _ _ _ _ _ _ |- _ ] => inv H
     | [ H: stmt_list_sem _ _ _ _ _ _ _ _ |- _ ] => inv H
     end.
