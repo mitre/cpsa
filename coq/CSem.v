@@ -29,6 +29,8 @@ Inductive calg: Set :=
 | CEn: nat -> calg -> calg -> calg (* Probabilistic encryption *)
 | CHs: calg -> calg.            (* Hash *)
 
+(* An uninformative comment added to make coqdoc happy *)
+
 Definition calg_dec:
   forall x y: calg, {x = y} + {x <> y}.
 Proof.
@@ -44,6 +46,8 @@ Hint Resolve calg_dec : core.
 Inductive cevt: Set :=
 | CSd: var -> calg -> cevt      (* Send *)
 | CRv: var -> calg -> cevt.     (* Recv *)
+
+(* An uninformative comment added to make coqdoc happy *)
 
 Definition cevt_dec:
   forall x y: cevt, {x = y} + {x <> y}.
@@ -155,8 +159,6 @@ Qed.
 
 (** The semantics of an expression
 
-   This predicate captures the semantics of a let binding
-
 <<
    Parmeters:
    cenv:      Input environment
@@ -264,10 +266,10 @@ Qed.
 Inductive stmt_csem: cenv -> list cevt -> list calg ->
                      list nat -> stmt -> cenv -> list cevt ->
                      list calg -> list nat -> Prop :=
-| CStmt_bind: forall ev tr us rs exp val dcl tr' us' rs',
+| CStmt_bind: forall ev tr us rs exp val v s tr' us' rs',
     expr_csem ev tr us rs exp val tr' us' rs' ->
-    csort_check (snd dcl) val ->
-    stmt_csem ev tr us rs (Bind dcl exp) ((fst dcl, val) :: ev) tr' us' rs'
+    csort_check s val ->
+    stmt_csem ev tr us rs (Bind (v, s) exp) ((v, val) :: ev) tr' us' rs'
 | CStmt_send: forall ev tr us rs c d x a,
     lookup c ev = Some (CCh d) ->
     lookup x ev = Some a ->
