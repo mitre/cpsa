@@ -297,10 +297,29 @@ Proof.
   - apply Stmt_send; auto.
 Qed.
 
-Inductive stmt_list_csem:
-  cenv -> list cevt -> list calg ->
-  list nat -> list calg -> list stmt -> cenv ->
-  list cevt -> list calg -> list nat -> Prop :=
+(** The semantics of a statement list
+
+    Parameters as for [stmt_csem] but with one extra argument,
+    for outputs.
+
+<<
+   Parameters:
+   cenv:      Input environment
+   list cevt: Input trace
+   list calg: Input list of uniques
+   list nat:  Input list of random values
+   list calg: Output list
+   stmts:     Statements
+   cenv:      Output environment
+   list cevt: Output trace
+   list calg: Output list of uniques
+   list nat:  Output list of random values
+>>
+ *)
+
+Inductive stmt_list_csem: cenv -> list cevt -> list calg ->
+                          list nat -> list calg -> list stmt -> cenv ->
+                          list cevt -> list calg -> list nat -> Prop :=
 | CStmt_return: forall ev rs outs vs,
     map_m (flip lookup ev) vs = Some outs ->
     stmt_list_csem ev [] [] rs outs [Return vs] ev [] [] rs
