@@ -14,7 +14,11 @@ Open Scope nat_scope.
 
 Definition env: Set := list (pvar * alg).
 
-(** Executions are roles *)
+(** Executions are roles with one exception.  The order in which
+    uniques occur in an execution is significant, but it is not for a
+    role.  In an execution, the order of the uniques determines the
+    order in which they are used to generate nonces.  Within a role,
+    uniques are just a set of basic values. *)
 
 Record role: Set :=
   mkRole {
@@ -76,10 +80,8 @@ Hint Constructors sort_check : core.
 
 (** The semantics of an expression
 
-   This predicate captures the semantics of a let binding
-
 <<
-   Parmeters:
+   Parameters:
    env:      Input environment
    list evt: Input trace
    list alg: Input list of uniques
@@ -125,11 +127,11 @@ Hint Constructors expr_sem : core.
 (** The semantics of a statement
 
 <<
-   Parmeters:
+   Parameters:
    env:      Input environment
    list evt: Input trace
    list alg: Input list of uniques
-   stmts:    Statements
+   stmt:     Statement
    env:      Output environment
    list evt: Output trace
    list alg: Output list of uniques
@@ -139,10 +141,10 @@ Hint Constructors expr_sem : core.
 Inductive stmt_sem: env -> list evt -> list alg ->
                     stmt -> env -> list evt ->
                     list alg -> Prop :=
-| Stmt_bind: forall ev tr us exp val dcl tr' us',
+| Stmt_bind: forall ev tr us exp val v s tr' us',
     expr_sem ev tr us exp val tr' us' ->
-    sort_check (snd dcl) val ->
-    stmt_sem ev tr us (Bind dcl exp) ((fst dcl, val) :: ev) tr' us'
+    sort_check s val ->
+    stmt_sem ev tr us (Bind (v, s) exp) ((v, val) :: ev) tr' us'
 | Stmt_send: forall ev tr us c d x a,
     lookup c ev = Some (Ch d) ->
     lookup x ev = Some a ->
@@ -155,12 +157,27 @@ Inductive stmt_sem: env -> list evt -> list alg ->
     stmt_sem ev tr us (Same x y) ev tr us.
 Hint Constructors stmt_sem : core.
 
-(** Statement list semantics *)
+(** The semantics of a statement list
 
-Inductive stmt_list_sem:
-  env -> list evt -> list alg ->
-  list alg -> list stmt -> env ->
-  list evt -> list alg -> Prop :=
+    Parameters as for [stmt_sem] but with one extra argument,
+    for outputs.
+
+<<
+   Parameters:
+   env:        Input environment
+   list evt:   Input trace
+   list alg:   Input list of uniques
+   list alg:   Output list
+   list stmt:  Statement list
+   env:        Output environment
+   list evt:   Output trace
+   list alg:   Output list of uniques
+>>
+*)
+
+Inductive stmt_list_sem: env -> list evt -> list alg ->
+                         list alg -> list stmt -> env ->
+                         list evt -> list alg -> Prop :=
 | Stmt_return: forall ev outs vs,
     map_m (flip lookup ev) vs = Some outs ->
     stmt_list_sem ev [] [] outs [Return vs] ev [] []

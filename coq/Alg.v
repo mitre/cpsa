@@ -11,6 +11,8 @@ Inductive skey: Set :=
 | Sv: var -> skey               (* Variable as key *)
 | Lt: var -> var -> skey.       (* Long term key of two names *)
 
+(* An uninformative comment added to make coqdoc happy *)
+
 Definition skey_dec:
   forall x y: skey, {x = y} + {x <> y}.
 Proof.
@@ -25,6 +27,8 @@ Inductive akey: Set :=
 | Av: var -> akey               (* Variable as key *)
 | Pb: var -> akey               (* Public key of name *)
 | Pb2: string -> var -> akey.   (* Tagged public key of name *)
+
+(* An uninformative comment added to make coqdoc happy *)
 
 Definition akey_dec:
   forall x y: akey, {x = y} + {x <> y}.
@@ -52,6 +56,8 @@ Inductive alg: Set :=
 | En: alg -> alg -> alg         (* Encryption *)
 | Hs: alg -> alg.               (* Hash *)
 
+(* An uninformative comment added to make coqdoc happy *)
+
 Definition alg_dec:
   forall x y: alg, {x = y} + {x <> y}.
 Proof.
@@ -67,6 +73,8 @@ Hint Resolve alg_dec : core.
 Inductive evt: Set :=
 | Sd: var -> alg -> evt         (* Send *)
 | Rv: var -> alg -> evt.        (* Recv *)
+
+(* An uninformative comment added to make coqdoc happy *)
 
 Definition evt_dec:
   forall x y: evt, {x = y} + {x <> y}.
