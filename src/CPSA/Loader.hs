@@ -1156,7 +1156,7 @@ loadInsts top p kvars gen insts xs =
       _ <- alist [] xs          -- Check syntax of xs
       (gen, gs) <- loadGoals top p gen goals
       loadRest top kvars p gen gs (reverse insts)
-        order nr ar ur cn au fs pl kcomment
+        order nr ar ur cn au fs pl genSts kcomment
     where
       order = assoc "precedes" xs
       nr = assoc "non-orig" xs
@@ -1167,6 +1167,7 @@ loadInsts top p kvars gen insts xs =
       fs = assoc "facts" xs
       pl = assoc "priority" xs
       goals = assoc "goals" xs
+      genSts = assoc "gen-st" xs 
       kcomment =
         loadComment "goals" goals ++
         loadComment "comment" (assoc "comment" xs)
@@ -1219,8 +1220,8 @@ loadListener p kvars gen x =
 loadRest :: MonadFail m => Pos -> [Term] -> Prot -> Gen -> [Goal] ->
             [Instance] -> [SExpr Pos] -> [SExpr Pos] -> [SExpr Pos] ->
             [SExpr Pos] -> [SExpr Pos] -> [SExpr Pos] ->
-            [SExpr Pos] -> [SExpr Pos] -> [SExpr ()] -> m Preskel
-loadRest pos vars p gen gs insts orderings nr ar ur cn au fs pl comment =
+            [SExpr Pos] -> [SExpr Pos] -> [SExpr Pos] -> [SExpr ()] -> m Preskel
+loadRest pos vars p gen gs insts orderings nr ar ur cn au fs pl genSts comment =
     do
       case null insts of
         True -> fail (shows pos "No strands")
@@ -1233,10 +1234,11 @@ loadRest pos vars p gen gs insts orderings nr ar ur cn au fs pl comment =
       cn <- loadBaseTerms vars cn
       au <- loadBaseTerms vars au
       fs <- mapM (loadFact heights vars) fs
+      genSts <- mapM (loadTerm vars) genSts
       let (nr', ar', ur', cn', au') =
             foldl addInstOrigs (nr, ar, ur, cn, au) insts
       prios <- mapM (loadPriorities heights) pl
-      let k = mkPreskel gen p gs insts o nr' ar' ur' [] -- no gen state values
+      let k = mkPreskel gen p gs insts o nr' ar' ur' genSts -- was [], no gen state values
               cn' au' fs prios comment
       case termsWellFormed $ nr' ++ ar' ++ ur' ++ kterms k of
         False -> fail (shows pos "Terms in skeleton not well formed")
