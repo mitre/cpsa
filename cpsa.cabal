@@ -138,7 +138,7 @@ Extra-Source-Files:
   tst/blanchet_doorsep.prot tst/blanchet_doorsep.tst
   coq/Alg.v coq/CSem.v coq/Comp.v coq/CSem.v coq/Derives.v coq/Exec.v
   coq/Makefile coq/Monad.v coq/Proc.v coq/README coq/Sem.v
-  coq/SemTactics.v coq/Unilateral.v coq/Unilateral_proof.v
+  coq/Sem_Tactics.v coq/Unilateral.v coq/Unilateral_proof.v
   coq/Unilateral_role.v coq/_CoqProject coq/mkdist coq/mkdoc
   coq/procdoc.mk coq/procdoc.tex coq/Examples/Makefile
   coq/Examples/Nsl.v coq/Examples/Nsl_proof.v coq/Examples/Nsl_role.v
