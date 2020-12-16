@@ -239,7 +239,7 @@ displayRest k ctx rest =
      (displayOptional "non-orig" (displayTerms ctx (sansPts (knon k)))
       (displayOptional "pen-non-orig" (displayTerms ctx (sansPts (kpnon k)))
        (displayOptional "uniq-orig" (displayTerms ctx (sansPts (kunique k)))
-        (displayOptional "genStV" (displayTerms ctx (kgenSt k))
+        (displayOptional "gen-st" (displayTerms ctx (kgenSt k))
          (displayOptional "conf" (displayTerms ctx (kconf k))
           (displayOptional "auth" (displayTerms ctx (kauth k))
            (displayOptional "facts" (displayFacts ctx (kfacts k))
