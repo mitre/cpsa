@@ -1,0 +1,14 @@
+#! /bin/sh
+
+capitalize ()
+{
+    echo $* | awk '{ print toupper( substr( $0, 1, 1 ) ) substr( $0, 2 ); }'
+}
+
+for i in *.scm
+do
+    a=$(basename $(capitalize $i) .scm)
+    echo ${a}
+    cpsa4rolecoq -o "${a}_role.v" "$i"
+    cpsa4roletran "$i" | cpsa4coq -o "${a}.v"
+done

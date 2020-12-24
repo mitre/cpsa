@@ -2,6 +2,7 @@
 Monad.v
 Proc.v
 Alg.v
+Role.v
 Sem.v
 Sem_tactics.v
 Unilateral.v
