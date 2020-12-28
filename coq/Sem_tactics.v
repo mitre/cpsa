@@ -14,6 +14,14 @@ Ltac destruct_disjunct :=
   | [ H: _ \/ _  |- _ ] => destruct H as [H|H]
   end.
 
+Ltac destruct_ex_and :=
+  match goal with
+  | [ H: _ /\ _ |- _ ] =>
+    destruct H
+  | [ H: exists _, _ |- _ ] =>
+    destruct H
+  end.
+
 (** A tactic for running an execution *)
 
 Ltac sem_auto :=
