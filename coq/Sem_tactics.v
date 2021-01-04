@@ -41,7 +41,7 @@ Ltac sem_liveness :=
 Ltac sem_inputs :=
   repeat
     match goal with
-    | [ H: sort_check _ _ |- _ ] => inv H
+    | [ H: type_check _ _ |- _ ] => inv H
     | [ H: ins_inputs _ _ |- _ ] => inv H
     end.
 
@@ -54,7 +54,7 @@ Ltac sem_inv :=
     | [ H: ?l = inv ?r |- _ ] =>
       apply inv_swap in H; simpl in H; subst
     | [ H: lookup _ _ = _ |- _ ] => inv H
-    | [ H: sort_check _ _ |- _ ] => inv H
+    | [ H: type_check _ _ |- _ ] => inv H
     | [ H: expr_sem _ _ _ _ _ _ _ |- _ ] => inv H
     | [ H: stmt_sem _ _ _ _ _ _ _ |- _ ] => inv H
     | [ H: stmt_list_sem _ _ _ _ _ _ _ _ |- _ ] => inv H

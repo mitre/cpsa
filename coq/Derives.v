@@ -19,8 +19,8 @@ Inductive derives (pub: list alg): alg -> Prop :=
     derives pub (En x y) -> derives pub (inv y) -> derives pub x.
 Hint Constructors derives : core.
 
-(* There is no way to implement derives directly in code.  There is an
-   easy way to do it with analyze-then-synthesize.  Here is the
+(* There is no good way to implement derives directly in code.  There
+   is an easy way to do it with analyze-then-synthesize.  Here is the
    algorithm used in CPSA and in the role compiler:
 
 synth(T, t): bool :=

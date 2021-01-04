@@ -28,13 +28,13 @@ Definition valid_role (p: role): bool :=
   match fold_m well_formed_event nil (trace p) with
   | None => false
   | Some decls =>
-    forallb (well_sorted decls) (uniqs p) &&
+    forallb (well_typed decls) (uniqs p) &&
     forallb (flip orig (trace p)) (uniqs p) &&
     forallb is_basic (uniqs p) &&
     has_no_dups (uniqs p) &&
-    forallb (well_sorted_with_chan decls) (inputs p) &&
+    forallb (well_typed_with_chan decls) (inputs p) &&
     forallb (fun x => is_chan x || is_basic x) (inputs p) &&
-    forallb (well_sorted decls) (outputs p) &&
+    forallb (well_typed decls) (outputs p) &&
     forallb (flip not_in (uniqs p)) (inputs p) &&
     forallb (flip not_in (outputs p)) (inputs p)
   end.

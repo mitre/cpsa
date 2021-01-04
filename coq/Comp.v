@@ -78,7 +78,7 @@ Definition uniq_list (tr: list evt) (uniqs: list alg): list (list alg) :=
 Definition comp_uniq (st: state) (u: alg): state :=
   mkSt (S (fresh st))
        ((u, fresh st) :: cstore st)
-       ((Bind (fresh st, sort_of u) Nonce) :: code st).
+       ((Bind (fresh st, type_of u) Nonce) :: code st).
 
 (** ** Trace and Outputs
 
@@ -182,8 +182,8 @@ with comp_recv_match: state -> alg -> pvar -> list (alg * pvar) ->
     st' = mkSt
             (S (S (fresh st)))
             ((Pr y z, v) :: cstore st)
-            ((Bind (S (fresh st), sort_of z) (Scnd v))
-               :: (Bind (fresh st, sort_of y) (Frst v))
+            ((Bind (S (fresh st), type_of z) (Scnd v))
+               :: (Bind (fresh st, type_of y) (Frst v))
                :: code st) ->
     comp_recv_loop st' (r' ++ [(y, fresh st); (z, S (fresh st))]) st'' ->
     comp_recv_match st (Pr y z) v r' st''
@@ -192,7 +192,7 @@ with comp_recv_match: state -> alg -> pvar -> list (alg * pvar) ->
     st'' = mkSt
             (S (fresh st'))
             ((En y z, v) :: cstore st')
-            ((Bind (fresh st', sort_of y)
+            ((Bind (fresh st', type_of y)
                    (Decr v u)) :: code st) ->
     comp_recv_loop st'' (r' ++ [(y, fresh st)]) st''' ->
     comp_recv_match st (En y z) v r' st'''
@@ -229,7 +229,7 @@ Inductive comp_recv (st: state) (ch: pvar) (x: alg) (st': state): Prop :=
     comp_recv_loop (mkSt
                       (S (fresh st))
                       (cstore st)
-                      ((Bind (fresh st, sort_of x)
+                      ((Bind (fresh st, type_of x)
                              (Recv ch)) :: code st))
                    [(x, fresh st)] st' ->
     comp_recv st ch x st'.
@@ -270,7 +270,7 @@ Definition istate: Set := pvar * store * list decl.
 Definition comp_input (ins: istate) (x: alg): istate :=
   let (z, decls) := ins in
   let (v, cs) := z in
-  (S v, (x, v) :: cs, (v, sort_of x) :: decls).
+  (S v, (x, v) :: cs, (v, type_of x) :: decls).
 
 Definition comp_inputs (ins: list alg): istate :=
   fold_left comp_input ins (0, [], []).

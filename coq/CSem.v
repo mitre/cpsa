@@ -121,30 +121,30 @@ Proof.
   destruct x; simpl; auto.
 Qed.
 
-(** Check the sort of an element in the concrete algebra. *)
+(** Check the type of an element in the concrete algebra. *)
 
-Inductive csort_check: sort -> calg -> Prop :=
+Inductive ctype_check: type -> calg -> Prop :=
 | CText_check: forall v,
-    csort_check Text (CTx v)
+    ctype_check Text (CTx v)
 | CData_check: forall v,
-    csort_check Data (CDt v)
+    ctype_check Data (CDt v)
 | CName_check: forall v,
-    csort_check Name (CNm v)
+    ctype_check Name (CNm v)
 | CSkey_check: forall k,
-    csort_check Skey (CSk k)
+    ctype_check Skey (CSk k)
 | CAkey_check: forall k,
-    csort_check Akey (CAk k)
+    ctype_check Akey (CAk k)
 | CIkey_check: forall k,
-    csort_check Ikey (CIk k)
+    ctype_check Ikey (CIk k)
 | CChan_check: forall v,
-    csort_check Chan (CCh v)
+    ctype_check Chan (CCh v)
 | CMesg_check: forall a,
-    csort_check Mesg a.
-Hint Constructors csort_check : core.
+    ctype_check Mesg a.
+Hint Constructors ctype_check : core.
 
-Lemma sort_check_equiv:
-  forall (s: sort) (c: calg),
-    csort_check s c <-> sort_check s (to_alg c).
+Lemma type_check_equiv:
+  forall (s: type) (c: calg),
+    ctype_check s c <-> type_check s (to_alg c).
 Proof.
   split; intros; destruct c; simpl in *; inv H; auto.
 Qed.
@@ -225,12 +225,12 @@ Proof.
   - intuition.
 Qed.
 
-Local Ltac lookup_and_sort_check :=
+Local Ltac lookup_and_type_check :=
   repeat match goal with
          | [ H: lookup _ _ = Some _ |- _ ] =>
            apply lookup_ev in H; simpl in H
-         | [ H: csort_check _ _ |- _ ] =>
-           rewrite sort_check_equiv in H
+         | [ H: ctype_check _ _ |- _ ] =>
+           rewrite type_check_equiv in H
          end.
 
 (** Main theorem about expressions *)
@@ -242,7 +242,7 @@ Theorem expr_csem_expr_sem:
              (to_alg val) (map to_evt tr') (map to_alg us').
 Proof.
   intros.
-  inv H; simpl; auto; lookup_and_sort_check; eauto.
+  inv H; simpl; auto; lookup_and_type_check; eauto.
   rewrite <- inv_to_alg in H1.
   eauto.
 Qed.
@@ -268,7 +268,7 @@ Inductive stmt_csem: cenv -> list cevt -> list calg ->
                      list calg -> list nat -> Prop :=
 | CStmt_bind: forall ev tr us rs exp val v s tr' us' rs',
     expr_csem ev tr us rs exp val tr' us' rs' ->
-    csort_check s val ->
+    ctype_check s val ->
     stmt_csem ev tr us rs (Bind (v, s) exp) ((v, val) :: ev) tr' us' rs'
 | CStmt_send: forall ev tr us rs c d x a,
     lookup c ev = Some (CCh d) ->
@@ -291,7 +291,7 @@ Theorem stmt_csem_stmt_sem:
              stmt
              (to_env ev') (map to_evt tr') (map to_alg us').
 Proof.
-  intros; inv H; auto; lookup_and_sort_check; eauto.
+  intros; inv H; auto; lookup_and_type_check; eauto.
   - apply expr_csem_expr_sem in H0.
     apply Stmt_bind; auto.
   - apply Stmt_send; auto.
@@ -403,7 +403,7 @@ Qed.
 Inductive cins_inputs: list decl -> list calg -> Prop :=
 | CIns_inputs_nil: cins_inputs nil nil
 | CIns_inputs_pair: forall v s ds x xs,
-    csort_check s x ->
+    ctype_check s x ->
     cins_inputs ds xs ->
     cins_inputs ((v, s) :: ds) (x :: xs).
 Hint Constructors cins_inputs : core.
@@ -413,7 +413,7 @@ Lemma cins_ins_inputs:
     cins_inputs ds cxs -> ins_inputs ds (map to_alg cxs).
 Proof.
   intros; induction H; simpl; auto.
-  apply sort_check_equiv in H; auto.
+  apply type_check_equiv in H; auto.
 Qed.
 
 (** Definition of the concrete semantics *)

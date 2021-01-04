@@ -6,9 +6,9 @@ Require Export String List.
 
 Notation pvar := nat (only parsing).
 
-(** Sorts *)
+(** Types *)
 
-Inductive sort: Set :=
+Inductive type: Set :=
 | Text
 | Data
 | Name
@@ -18,17 +18,17 @@ Inductive sort: Set :=
 | Mesg
 | Chan.
 
-Definition sort_dec:
-  forall x y: sort, {x = y} + {x <> y}.
+Definition type_dec:
+  forall x y: type, {x = y} + {x <> y}.
 Proof.
   intros.
   decide equality.
 Defined.
-Hint Resolve sort_dec : core.
+Hint Resolve type_dec : core.
 
-(** The inverse sort *)
+(** The inverse type *)
 
-Definition inv_sort (x: sort): sort :=
+Definition inv_type (x: type): type :=
   match x with
   | Akey => Ikey
   | Ikey => Akey
@@ -37,7 +37,7 @@ Definition inv_sort (x: sort): sort :=
 
 (** Declarations *)
 
-Definition decl: Set := pvar * sort.
+Definition decl: Set := pvar * type.
 
 Definition decl_dec:
   forall x y: decl, {x = y} + {x <> y}.

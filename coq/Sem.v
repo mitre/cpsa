@@ -15,26 +15,26 @@ Open Scope nat_scope.
 
 Definition env: Set := list (pvar * alg).
 
-(** Check the sort of an element of the message algebra. *)
+(** Check the type of an element of the message algebra. *)
 
-Inductive sort_check: sort -> alg -> Prop :=
+Inductive type_check: type -> alg -> Prop :=
 | Text_check: forall v,
-    sort_check Text (Tx v)
+    type_check Text (Tx v)
 | Data_check: forall v,
-    sort_check Data (Dt v)
+    type_check Data (Dt v)
 | Name_check: forall v,
-    sort_check Name (Nm v)
+    type_check Name (Nm v)
 | Skey_check: forall k,
-    sort_check Skey (Sk k)
+    type_check Skey (Sk k)
 | Akey_check: forall k,
-    sort_check Akey (Ak k)
+    type_check Akey (Ak k)
 | Ikey_check: forall k,
-    sort_check Ikey (Ik k)
+    type_check Ikey (Ik k)
 | Chan_check: forall v,
-    sort_check Chan (Ch v)
+    type_check Chan (Ch v)
 | Mesg_check: forall a,
-    sort_check Mesg a.
-Hint Constructors sort_check : core.
+    type_check Mesg a.
+Hint Constructors type_check : core.
 
 (** The semantics of an expression
 
@@ -101,7 +101,7 @@ Inductive stmt_sem: env -> list evt -> list alg ->
                     list alg -> Prop :=
 | Stmt_bind: forall ev tr us exp val v s tr' us',
     expr_sem ev tr us exp val tr' us' ->
-    sort_check s val ->
+    type_check s val ->
     stmt_sem ev tr us (Bind (v, s) exp) ((v, val) :: ev) tr' us'
 | Stmt_send: forall ev tr us c d x a,
     lookup c ev = Some (Ch d) ->
@@ -161,7 +161,7 @@ Fixpoint mk_env (ds: list decl) (xs: list alg): env :=
 Inductive ins_inputs: list decl -> list alg -> Prop :=
 | Ins_inputs_nil: ins_inputs nil nil
 | Ins_inputs_pair: forall v s ds x xs,
-    sort_check s x ->
+    type_check s x ->
     ins_inputs ds xs ->
     ins_inputs ((v, s) :: ds) (x :: xs).
 Hint Constructors ins_inputs : core.
