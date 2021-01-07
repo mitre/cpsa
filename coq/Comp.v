@@ -30,7 +30,7 @@ Fixpoint find {A} (x: alg) (l: list (alg * A)): option A :=
   match l with
   | nil => None
   | (y, v) :: l =>
-    if alg_dec x y then
+    if alg_eqb x y then
       Some v
     else
       find x l

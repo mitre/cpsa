@@ -113,14 +113,6 @@ Definition to_maplet (m: var * calg): var * alg :=
 Definition to_env (ev: cenv): env :=
   map to_maplet ev.
 
-Lemma has_enc_inv:
-  forall x,
-    has_enc (inv x) = has_enc x.
-Proof.
-  intros.
-  destruct x; simpl; auto.
-Qed.
-
 (** Check the type of an element in the concrete algebra. *)
 
 Inductive ctype_check: type -> calg -> Prop :=
@@ -278,7 +270,6 @@ Inductive stmt_csem: cenv -> list cevt -> list calg ->
     lookup x ev = Some a ->
     lookup y ev = Some b ->
     a = b ->                    (* Sameness check *)
-    has_enc (to_alg a) = false -> (* For probabilistic encryption *)
     stmt_csem ev tr us rs (Same x y) ev tr us rs.
 Hint Constructors stmt_csem : core.
 

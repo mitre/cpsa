@@ -26,6 +26,31 @@ Proof.
 Defined.
 Hint Resolve type_dec : core.
 
+Definition type_eqb x y: bool :=
+  if type_dec x y then
+    true
+  else
+    false.
+
+Lemma type_eq_correct:
+  forall x y,
+    type_eqb x y = true <-> x = y.
+Proof.
+  intros.
+  unfold type_eqb.
+  destruct (type_dec x y); subst; intuition.
+  inversion H.
+Qed.
+
+Lemma type_eq_complete:
+  forall x y,
+    type_eqb x y = false <-> x <> y.
+Proof.
+  intros.
+  unfold type_eqb.
+  destruct (type_dec x y); subst; intuition.
+Qed.
+
 (** The inverse type *)
 
 Definition inv_type (x: type): type :=
