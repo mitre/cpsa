@@ -113,6 +113,18 @@ Inductive stmt_sem: env -> list evt -> list alg ->
     stmt_sem ev tr us (Same x y) ev tr us.
 Hint Constructors stmt_sem : core.
 
+Lemma stmt_sem_env_extends:
+  forall ev tr us exp ev' tr' us',
+    stmt_sem ev tr us exp ev' tr' us' ->
+    exists ev'', ev' = ev'' ++ ev.
+Proof.
+  intros.
+  inversion H; subst.
+  - exists [(v, val)]; auto.
+  - exists []; auto.
+  - exists []; auto.
+Qed.
+
 (** The semantics of a statement list
 
     Parameters as for [stmt_sem] but with one extra argument,
@@ -142,6 +154,22 @@ Inductive stmt_list_sem: env -> list evt -> list alg ->
     stmt_list_sem ev' tr' us' outs stmts ev'' tr'' us'' ->
     stmt_list_sem ev tr us outs (stmt :: stmts) ev'' tr'' us''.
 Hint Constructors stmt_list_sem : core.
+
+Lemma stmt_list_sem_env_extends:
+  forall ev tr us outs stmts ev' tr' us',
+    stmt_list_sem ev tr us outs stmts ev' tr' us' ->
+    exists ev'', ev' = ev'' ++ ev.
+Proof.
+  intros.
+  induction H.
+  exists []; auto.
+  apply stmt_sem_env_extends in H.
+  destruct H.
+  destruct IHstmt_list_sem.
+  subst.
+  exists (x0 ++ x).
+  apply app_assoc.
+Qed.
 
 (** Executions are roles with one exception.  The order in which
     uniques occur in an execution is significant, but it is not for a

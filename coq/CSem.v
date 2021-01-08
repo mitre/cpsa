@@ -1,6 +1,7 @@
 (** * Concrete Execution Semantics *)
 
-Require Import ListSet Nat Bool Program Monad Proc Alg Sem Sem_tactics.
+Require Import FunInd ListSet Arith Program Lia.
+Require Import Monad Proc Alg Sem Sem_tactics.
 Import List.ListNotations.
 Open Scope list_scope.
 
@@ -273,6 +274,18 @@ Inductive stmt_csem: cenv -> list cevt -> list calg ->
     stmt_csem ev tr us rs (Same x y) ev tr us rs.
 Hint Constructors stmt_csem : core.
 
+Lemma stmt_csem_env_extends:
+  forall ev tr us rs exp ev' tr' us' rs',
+    stmt_csem ev tr us rs exp ev' tr' us' rs'->
+    exists ev'', ev' = ev'' ++ ev.
+Proof.
+  intros.
+  inv H.
+  - exists [(v, val)]; auto.
+  - exists []; auto.
+  - exists []; auto.
+Qed.
+
 (** Main theorem about statements *)
 
 Theorem stmt_csem_stmt_sem:
@@ -320,6 +333,22 @@ Inductive stmt_list_csem: cenv -> list cevt -> list calg ->
     stmt_list_csem ev' tr' us' rs' outs stmts ev'' tr'' us'' rs'' ->
     stmt_list_csem ev tr us rs outs (stmt :: stmts) ev'' tr'' us'' rs''.
 Hint Constructors stmt_list_csem : core.
+
+Lemma stmt_list_csem_env_extends:
+  forall ev tr us rs outs stmts ev' tr' us' rs',
+    stmt_list_csem ev tr us rs outs stmts ev' tr' us' rs' ->
+    exists ev'', ev' = ev'' ++ ev.
+Proof.
+  intros.
+  induction H.
+  exists []; auto.
+  apply stmt_csem_env_extends in H.
+  destruct H.
+  destruct IHstmt_list_csem.
+  subst.
+  exists (x0 ++ x).
+  apply app_assoc.
+Qed.
 
 Lemma lookup_none:
   forall x ev,
@@ -444,4 +473,139 @@ Proof.
            rewrite H
          end.
   split; auto.
+Qed.
+
+(** * Alternate Concrete Execution Semantics
+
+    In this semantics, the inputs are computed from the given output
+    environment instead of being assumed to exist, and outputs are
+    computed from the environment and the statement list. *)
+
+Definition mk_ins (ev: cenv) (ds: list decl): list calg :=
+  map snd (skipn (length ev - length ds) ev).
+
+Fixpoint mk_outs (ev: cenv) (stmts: list stmt): option (list calg) :=
+  match stmts with
+  | [] => None
+  | [Return vs] => map_m (flip lookup ev) vs
+  | stmt :: stmts => mk_outs ev stmts
+  end.
+
+Definition csem' (p: proc) (rs: list nat) (cev: cenv) (e: role): Prop :=
+  let cins := mk_ins cev (ins p) in
+  inputs e = map to_alg cins /\
+  cins_inputs (ins p) cins /\
+  exists ctr cus rs',
+    trace e = map to_evt ctr /\
+    uniqs e = map to_alg cus /\
+    let ev_in := mk_cenv (ins p) cins in
+    exists couts,
+      mk_outs cev (body p) = Some couts /\
+      stmt_list_csem ev_in ctr cus rs couts (body p) cev [] [] rs' /\
+      outputs e = map to_alg couts.
+
+Theorem csem'_csem:
+  forall p rs cev ex,
+    csem' p rs cev ex ->
+    csem p rs cev ex.
+Proof.
+  intros.
+  unfold csem' in H.
+  repeat destruct_ex_and.
+  unfold csem.
+  eexists; intuition; eauto.
+    eexists; eexists; eexists;
+      intuition; eauto.
+Qed.
+
+Functional Scheme mk_cenv_ind :=
+  Induction for mk_cenv Sort Prop.
+
+Lemma ins_inputs_length:
+  forall inputs ds,
+    cins_inputs ds inputs ->
+    length (mk_cenv ds inputs) = length ds.
+Proof.
+  intros.
+  functional induction (mk_cenv ds inputs); auto.
+  - inv H.
+  - inv H; simpl.
+    apply IHc in H6.
+    rewrite H6; auto.
+Qed.
+
+Lemma mk_ins_inputs:
+  forall inputs ds ev,
+    cins_inputs ds inputs ->
+    mk_ins (ev ++ mk_cenv ds inputs) ds = inputs.
+Proof.
+  intros.
+  unfold mk_ins.
+  rewrite skipn_app.
+  rewrite app_length.
+  rewrite ins_inputs_length; auto.
+  assert (G: length ev +
+             length ds -
+             length ds = length ev).
+  lia.
+  rewrite G.
+  rewrite skipn_all.
+  rewrite app_nil_l.
+  rewrite minus_diag; simpl.
+  clear G.
+  induction H; simpl; auto.
+  rewrite IHcins_inputs; auto.
+Qed.
+
+Functional Scheme mk_outs_ind :=
+  Induction for mk_outs Sort Prop.
+
+Lemma stmt_list_csem_outputs:
+  forall ev tr us rs outs stmts ev' rs',
+    stmt_list_csem ev tr us rs outs stmts ev' [] [] rs' ->
+    mk_outs ev' stmts = Some outs.
+Proof.
+  intros.
+  revert H.
+  revert ev.
+  revert tr.
+  revert us.
+  revert rs.
+  revert rs'.
+  functional induction (mk_outs ev' stmts); intros.
+  - inv H.
+  - inv H; auto.
+    inv H7.
+  - inv H.
+    inv H7.
+  - inv H.
+    apply IHo in H12; auto.
+  - inv H.
+    apply IHo in H12; auto.
+  - inv H.
+    apply IHo in H12; auto.
+Qed.
+
+Theorem csem_csem':
+  forall p rs cev ex,
+    csem p rs cev ex ->
+    csem' p rs cev ex.
+Proof.
+  intros.
+  unfold csem in H.
+  repeat destruct_ex_and.
+  pose proof H1 as G.
+  apply stmt_list_csem_outputs in G.
+  unfold csem'.
+  rewrite G.
+  pose proof H1 as F.
+  apply stmt_list_csem_env_extends in F.
+  destruct F as [ev'' F]; subst.
+  rewrite mk_ins_inputs; auto.
+  repeat split; auto.
+  exists x0.
+  exists x1.
+  exists x3.
+  intuition.
+  eexists; eauto.
 Qed.
