@@ -62,13 +62,13 @@ The translator ignores all fields in a role definition except its
 name, `vars`, `trace`, `uniq-orig`, `inputs`, and `outputs`.
 
 The translator performs various checks to ensure that each role read
-is well formed.  It ensures the each term in the inputs is a basic
-value.  It ensures that any basic value assumed to be uniquely
-originating originates in the role's trace, and that no uniquely
-originating value is in the inputs.  It ensures that no input variable
-is specified as an output.  It also ensures that every variable in
-terms that occur in the inputs, outputs, or are assumed to be uniquely
-originating also occur in the role's trace.
+is well formed.  It ensures the each term in the inputs is receivable
+given previous inputs.  It ensures that any basic value assumed to be
+uniquely originating originates in the role's trace, and that no
+uniquely originating value is in the inputs.  It ensures that no input
+variable is specified as an output.  It also ensures that every
+variable in terms that occur in the inputs, outputs, or are assumed to
+be uniquely originating also occur in the role's trace.
 
 Finally, a role must be executable.  A role is *executable* iff
 

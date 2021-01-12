@@ -11,3 +11,6 @@ Yahalom_proof.v
 Bad_unilateral.v
 Bad_unilateral_role.v
 Bad_unilateral_proof.v
+Cert.v
+Cert_role.v
+Cert_proof.v

@@ -1,3 +1,9 @@
+2021-01-12  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* CPSA/Roletran/Derivation.hs (deriveInputs): Allowed inputs to
+	contain any term as long as they can be reduced using previous
+	inputs.
+
 2020-11-10  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* coq: Changed the representation of procedures to use statement

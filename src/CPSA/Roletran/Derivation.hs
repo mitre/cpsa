@@ -35,12 +35,14 @@ type CompStore = Map Term Vari
 derive :: MonadFail m => Role -> m Proc
 derive r =
   do
-    -- Construct the parameters.
-    let (fresh, cs, ins) = deriveInputs (rinputs r)
+    -- Construct the parameter bindings.
+    let (fresh, bindings, ins) = bindInputs (rinputs r)
+    -- Construct the the statements from the inputs
+    preamble <- deriveInputs r fresh (reverse bindings)
     -- Construct a list of the return types.
     let outs = map sort (routputs r)
     -- Construct the statements that form the body of the procedure.
-    stmts <- deriveStmts fresh cs r
+    stmts <- deriveStmts r preamble
     return $ mkProc
       (rname r)
       (rpos r)
@@ -48,14 +50,14 @@ derive r =
       outs
       (reverse stmts)
 
--- Allocate variable indices to inputs and populate the compile time
--- store.
-deriveInputs :: [Term] -> (Vari, CompStore, [Decl])
-deriveInputs ts =
-  foldl f (0, M.empty, []) ts
+-- Allocate variable indices to inputs and create procedure
+-- declarations.
+bindInputs :: [Term] -> (Vari, [(Vari, Term)], [Decl])
+bindInputs ts =
+  foldl f (0, [], []) ts
   where
-    f (fresh, cs, ins) t =
-      (fresh + 1, M.insert t fresh cs, (fresh, sort t) : ins)
+    f (fresh, binding, ins) t =
+      (fresh + 1, (fresh, t) : binding, (fresh, sort t) : ins)
 
 -- The state association with compilation
 type State = (Vari, CompStore, [Stmt])
@@ -74,12 +76,26 @@ compStore (_, cs, _) = cs
 statements :: State -> [Stmt]
 statements (_, _, stmts) = stmts
 
+-- Compile the inputs.
+deriveInputs :: MonadFail m => Role -> Vari -> [(Vari, Term)] -> m State
+deriveInputs r fresh ts =
+  foldM (deriveInput (rpos r)) (fresh, M.empty, []) ts
+
+-- Construct statements for an input.
+deriveInput :: MonadFail m => Pos -> State -> (Vari, Term) -> m State
+deriveInput pos st (v, t) =
+  case receivable t of
+    Nothing ->                  -- t is receivable.
+      reduce pos st t v
+    Just t ->                   -- t is the offending term
+      fail (shows pos ("Input not receivable " ++ show (displayTerm t)))
+
 -- Compile the trace and the outputs.
-deriveStmts :: MonadFail m => Vari -> CompStore -> Role -> m [Stmt]
-deriveStmts fresh cs r =
+deriveStmts :: MonadFail m => Role -> State -> m [Stmt]
+deriveStmts r st =
   do
     st <- foldM (deriveEvent (runiques r))
-                (fresh, cs, [])
+                st
                 (zip (rtrace r) [0..])
     deriveOutputs st r
 

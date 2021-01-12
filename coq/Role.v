@@ -33,7 +33,6 @@ Definition valid_role (r: role): bool :=
     forallb is_basic (uniqs r) &&
     has_no_dups (uniqs r) &&
     forallb (well_typed_with_chan decls) (inputs r) &&
-    forallb (fun x => is_chan x || is_basic x) (inputs r) &&
     forallb (well_typed decls) (outputs r) &&
     forallb (flip not_in (uniqs r)) (inputs r) &&
     forallb (flip not_in (outputs r)) (inputs r)
@@ -64,7 +63,6 @@ Definition valid_exec (r: role): bool :=
     forallb is_basic (uniqs r) &&
     has_no_dups (uniqs r) &&
     forallb (well_typed_with_chan decls) (inputs r) &&
-    forallb (fun x => is_chan x || is_basic x) (inputs r) &&
     forallb (well_typed decls) (outputs r) &&
     forallb (flip not_in (uniqs r)) (inputs r) &&
     forallb (flip not_in (outputs r)) (inputs r)
