@@ -170,13 +170,13 @@ Inductive pick {A}: list A -> A -> list A -> Prop :=
 (** The hairy predicates for generating code to destructure a
     reception.  *)
 
-Inductive comp_recv_loop: state -> list (alg * pvar) -> state -> Prop :=
+Inductive comp_recv_loop: state -> store -> state -> Prop :=
 | Comp_loop_nil: forall st, comp_recv_loop st [] st
 | Comp_loop_pair: forall r x v r' st st',
     pick r (x, v) r' ->
     comp_recv_match st x v r' st' ->
     comp_recv_loop st r st'
-with comp_recv_match: state -> alg -> pvar -> list (alg * pvar) ->
+with comp_recv_match: state -> alg -> pvar -> store ->
                       state -> Prop :=
 | Comp_pair: forall st y z v r' st' st'',
     st' = mkSt
@@ -286,15 +286,23 @@ Definition comp_inputs (ins: list alg): istate :=
 *)
 
 Inductive comp (rl: role) (cs: store) (p: proc): Prop :=
-| Comp: forall fresh cs' ins' uniques ss,
+| Comp: forall ist st uniques ss,
     valid_role rl = true ->
-    comp_inputs (inputs rl) = (fresh, cs', ins') ->
+    comp_inputs (inputs rl) = ist ->
+    comp_recv_loop (mkSt (fst (fst ist)) [] []) (snd (fst ist)) st  ->
     uniq_list (trace rl) (uniqs rl) = uniques ->
-    comp_tr (mkSt fresh cs' []) (trace rl) uniques (outputs rl) cs ss ->
-    p = mkProc (rev ins') ss ->
+    comp_tr st (trace rl) uniques (outputs rl) cs ss ->
+    p = mkProc (rev (snd ist)) ss ->
     comp rl cs p.
 
 (** This predicate is used to view existential variables. *)
+
+Ltac run_comp :=
+  repeat match goal with
+         | [ H: pick _ _ _ |- _ ] =>
+           apply Pick_this
+         | _ => econstructor; simpl; eauto
+         end.
 
 Inductive view_proc (cs: store) (p: proc): Prop :=
 | View_proc: view_proc cs p.
@@ -305,19 +313,7 @@ Lemma comp_init:
       view_proc cs (mkProc is ss).
 Proof.
   eexists; eexists; eexists; split.
-  - eapply Comp; simpl; eauto.
-    + unfold comp_inputs; simpl; eauto.
-    + unfold uniq_list; simpl; eauto.
-      simpl; eauto.
-      eapply Comp_sd; simpl; eauto.
-      -- unfold comp_send; simpl; eauto.
-      -- eapply Comp_rv; simpl; eauto.
-         ++ eapply Comp_recv; simpl; eauto.
-            eapply Comp_loop_pair; simpl; eauto.
-            eapply Pick_this; eauto.
-            eapply Comp_simple; simpl; eauto.
-         ++ eapply Comp_return; simpl; eauto.
-            unfold synth_return; simpl; eauto.
+  - eapply Comp; eauto; run_comp.
   - simpl.
     apply View_proc.
 Qed.
@@ -328,20 +324,7 @@ Lemma comp_resp:
       view_proc cs (mkProc is ss).
 Proof.
   eexists; eexists; eexists; split.
-  - eapply Comp; simpl; eauto; simpl.
-    + unfold comp_inputs; simpl; eauto.
-    + eapply Comp_rv; simpl; eauto.
-      -- eapply Comp_recv; simpl; eauto.
-         eapply Comp_loop_pair; simpl; eauto.
-         eapply Pick_this; eauto.
-         eapply Comp_decr; simpl; eauto; simpl.
-         eapply Comp_loop_pair; simpl; eauto.
-         eapply Pick_this; eauto.
-         eapply Comp_simple; simpl; eauto; simpl.
-      -- eapply Comp_sd; simpl; eauto.
-         unfold comp_send; simpl; eauto.
-         eapply Comp_return; simpl; eauto.
-         unfold synth_return; simpl; eauto.
+  - eapply Comp; eauto; run_comp.
   - simpl.
     apply View_proc.
 Qed.

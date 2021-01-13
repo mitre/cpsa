@@ -37,7 +37,9 @@ derive r =
   do
     -- Construct the parameter bindings.
     let (fresh, bindings, ins) = bindInputs (rinputs r)
-    -- Construct the the statements from the inputs
+    -- Ensure inputs are receivable
+    mapM_ (checkInput (rpos r)) (reverse bindings)
+    -- Construct the statements from the inputs
     preamble <- deriveInputs r fresh (reverse bindings)
     -- Construct a list of the return types.
     let outs = map sort (routputs r)
@@ -52,12 +54,12 @@ derive r =
 
 -- Allocate variable indices to inputs and create procedure
 -- declarations.
-bindInputs :: [Term] -> (Vari, [(Vari, Term)], [Decl])
+bindInputs :: [Term] -> (Vari, [(Term, Vari)], [Decl])
 bindInputs ts =
   foldl f (0, [], []) ts
   where
     f (fresh, binding, ins) t =
-      (fresh + 1, (fresh, t) : binding, (fresh, sort t) : ins)
+      (fresh + 1, (t, fresh) : binding, (fresh, sort t) : ins)
 
 -- The state association with compilation
 type State = (Vari, CompStore, [Stmt])
@@ -76,19 +78,19 @@ compStore (_, cs, _) = cs
 statements :: State -> [Stmt]
 statements (_, _, stmts) = stmts
 
--- Compile the inputs.
-deriveInputs :: MonadFail m => Role -> Vari -> [(Vari, Term)] -> m State
-deriveInputs r fresh ts =
-  foldM (deriveInput (rpos r)) (fresh, M.empty, []) ts
-
 -- Construct statements for an input.
-deriveInput :: MonadFail m => Pos -> State -> (Vari, Term) -> m State
-deriveInput pos st (v, t) =
+checkInput :: MonadFail m => Pos -> (Term, Vari) -> m ()
+checkInput pos (t, _) =
   case receivable t of
     Nothing ->                  -- t is receivable.
-      reduce pos st t v
+      return ()
     Just t ->                   -- t is the offending term
       fail (shows pos ("Input not receivable " ++ show (displayTerm t)))
+
+-- Compile the inputs.
+deriveInputs :: MonadFail m => Role -> Vari -> [(Term, Vari)] -> m State
+deriveInputs r fresh ts =
+  loop (rpos r) (fresh, M.empty, []) False ts []
 
 -- Compile the trace and the outputs.
 deriveStmts :: MonadFail m => Role -> State -> m [Stmt]
