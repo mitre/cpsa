@@ -33,6 +33,7 @@ Inductive type_check: type -> alg -> Prop :=
     type_check Chan (Ch v)
 | Mesg_check: forall a,
     type_check Mesg a.
+#[global]
 Hint Constructors type_check : core.
 
 (** The semantics of an expression
@@ -79,6 +80,7 @@ Inductive expr_sem: env -> list evt -> list alg -> expr ->
 | Expr_recv: forall ev tr us a c d,
     lookup c ev = Some (Ch d) ->
     expr_sem ev (Rv d a :: tr) us (Recv c) a tr us.
+#[global]
 Hint Constructors expr_sem : core.
 
 (** The semantics of a statement
@@ -111,6 +113,7 @@ Inductive stmt_sem: env -> list evt -> list alg ->
     lookup y ev = Some b ->
     a = b ->                    (* Sameness check *)
     stmt_sem ev tr us (Same x y) ev tr us.
+#[global]
 Hint Constructors stmt_sem : core.
 
 Lemma stmt_sem_env_extends:
@@ -153,6 +156,7 @@ Inductive stmt_list_sem: env -> list evt -> list alg ->
     stmt_sem ev tr us stmt ev' tr' us' ->
     stmt_list_sem ev' tr' us' outs stmts ev'' tr'' us'' ->
     stmt_list_sem ev tr us outs (stmt :: stmts) ev'' tr'' us''.
+#[global]
 Hint Constructors stmt_list_sem : core.
 
 Lemma stmt_list_sem_env_extends:
@@ -190,6 +194,7 @@ Inductive ins_inputs: list decl -> list alg -> Prop :=
     type_check s x ->
     ins_inputs ds xs ->
     ins_inputs ((v, s) :: ds) (x :: xs).
+#[global]
 Hint Constructors ins_inputs : core.
 
 (** The semantics of a procedure using statement lists *)

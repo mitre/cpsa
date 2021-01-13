@@ -73,7 +73,7 @@ Fixpoint get_outs (ev: env) (stmts: list stmt): option (list alg) :=
   match stmts with
   | [] => None
   | [Return vs] => map_m (flip lookup ev) vs
-  | stmt :: stmts => get_outs ev stmts
+  | _ :: stmts => get_outs ev stmts
   end.
 
 Functional Scheme get_outs_ind :=

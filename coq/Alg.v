@@ -19,6 +19,7 @@ Proof.
   intros.
   decide equality; decide equality.
 Defined.
+#[global]
 Hint Resolve skey_dec : core.
 
 (** Asymmetric keys *)
@@ -38,6 +39,7 @@ Proof.
     try apply string_dec;
     decide equality.
 Defined.
+#[global]
 Hint Resolve akey_dec : core.
 
 (** Message algebra *)
@@ -66,6 +68,7 @@ Proof.
     try apply string_dec;
     decide equality.
 Defined.
+#[global]
 Hint Resolve alg_dec : core.
 
 Definition alg_eqb x y: bool :=
@@ -107,6 +110,7 @@ Proof.
   intros.
   decide equality; decide equality.
 Defined.
+#[global]
 Hint Resolve evt_dec : core.
 
 (** ** Kinds of Messages *)
@@ -397,6 +401,7 @@ Inductive carried_by: alg -> alg -> Prop :=
     forall x y z,
       carried_by z x ->
       carried_by z (En x y).
+#[global]
 Hint Constructors carried_by : core.
 
 Lemma carried_by_trans:

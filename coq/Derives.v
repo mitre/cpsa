@@ -17,6 +17,7 @@ Inductive derives (pub: list alg): alg -> Prop :=
 | Der_scnd: forall x y, derives pub (Pr x y) -> derives pub y
 | Der_decr: forall x y,
     derives pub (En x y) -> derives pub (inv y) -> derives pub x.
+#[global]
 Hint Constructors derives : core.
 
 (* There is no good way to implement derives directly in code.  There
@@ -49,6 +50,7 @@ Inductive synth (pub: alg -> Prop): alg -> Prop :=
     synth pub x -> synth pub y -> synth pub (En x y)
 | Synth_hash: forall x,
     synth pub x -> synth pub (Hs x).
+#[global]
 Hint Constructors synth : core.
 
 (* analyze pub t when t can be analyzed using the terms in pub. *)
@@ -111,6 +113,7 @@ Inductive analyze_strat (pub: list alg): nat -> alg -> Prop :=
     analyze_strat pub n (En x y) ->
     synth (analyze_strat pub n) (inv y) ->
     analyze_strat pub (S n) x.
+#[global]
 Hint Constructors analyze_strat : core.
 
 Lemma analyze_strat_zero:

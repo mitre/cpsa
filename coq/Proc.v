@@ -24,6 +24,7 @@ Proof.
   intros.
   decide equality.
 Defined.
+#[global]
 Hint Resolve type_dec : core.
 
 Definition type_eqb x y: bool :=
@@ -70,6 +71,7 @@ Proof.
   intros.
   decide equality; decide equality.
 Defined.
+#[global]
 Hint Resolve decl_dec : core.
 
 (** Expressions *)

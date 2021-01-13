@@ -40,6 +40,7 @@ Proof.
     try apply string_dec;
     decide equality.
 Defined.
+#[global]
 Hint Resolve calg_dec : core.
 
 (** Concrete event *)
@@ -56,6 +57,7 @@ Proof.
   intros.
   decide equality; decide equality.
 Defined.
+#[global]
 Hint Resolve cevt_dec : core.
 
 (** Inverse of a concrete message *)
@@ -133,6 +135,7 @@ Inductive ctype_check: type -> calg -> Prop :=
     ctype_check Chan (CCh v)
 | CMesg_check: forall a,
     ctype_check Mesg a.
+#[global]
 Hint Constructors ctype_check : core.
 
 Lemma type_check_equiv:
@@ -202,6 +205,7 @@ Inductive expr_csem: cenv -> list cevt -> list calg -> list nat ->
 | CExpr_recv: forall ev tr us rs a c d,
     lookup c ev = Some (CCh d) ->
     expr_csem ev (CRv d a :: tr) us rs (Recv c) a tr us rs.
+#[global]
 Hint Constructors expr_csem : core.
 
 Lemma lookup_ev:
@@ -272,6 +276,7 @@ Inductive stmt_csem: cenv -> list cevt -> list calg ->
     lookup y ev = Some b ->
     a = b ->                    (* Sameness check *)
     stmt_csem ev tr us rs (Same x y) ev tr us rs.
+#[global]
 Hint Constructors stmt_csem : core.
 
 Lemma stmt_csem_env_extends:
@@ -332,6 +337,7 @@ Inductive stmt_list_csem: cenv -> list cevt -> list calg ->
     stmt_csem ev tr us rs stmt ev' tr' us' rs' ->
     stmt_list_csem ev' tr' us' rs' outs stmts ev'' tr'' us'' rs'' ->
     stmt_list_csem ev tr us rs outs (stmt :: stmts) ev'' tr'' us'' rs''.
+#[global]
 Hint Constructors stmt_list_csem : core.
 
 Lemma stmt_list_csem_env_extends:
@@ -426,6 +432,7 @@ Inductive cins_inputs: list decl -> list calg -> Prop :=
     ctype_check s x ->
     cins_inputs ds xs ->
     cins_inputs ((v, s) :: ds) (x :: xs).
+#[global]
 Hint Constructors cins_inputs : core.
 
 Lemma cins_ins_inputs:
@@ -488,7 +495,7 @@ Fixpoint mk_outs (ev: cenv) (stmts: list stmt): option (list calg) :=
   match stmts with
   | [] => None
   | [Return vs] => map_m (flip lookup ev) vs
-  | stmt :: stmts => mk_outs ev stmts
+  | _ :: stmts => mk_outs ev stmts
   end.
 
 Definition csem' (p: proc) (rs: list nat) (cev: cenv) (e: role): Prop :=

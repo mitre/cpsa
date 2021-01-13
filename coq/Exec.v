@@ -13,6 +13,7 @@ Inductive executable_outputs (pub: list alg): list alg -> Prop :=
     derives pub x ->
     executable_outputs pub xs ->
     executable_outputs pub (x :: xs).
+#[global]
 Hint Constructors executable_outputs : core.
 
 (** Definition of reducible *)
@@ -54,6 +55,7 @@ Inductive executable_trace
     derives pub (Ch ch) ->
     executable_trace outs (x :: pub) tr ys ->
     executable_trace outs pub (Rv ch x :: tr) ys.
+#[global]
 Hint Constructors executable_trace : core.
 
 (** A role is executable if it is a valid execution and its trace is

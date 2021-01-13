@@ -220,6 +220,7 @@ with comp_recv_match: state -> alg -> pvar -> store ->
           end ->
     comp_recv_loop st' r' st'' ->
     comp_recv_match st x v r' st''.
+#[global]
 Hint Resolve Comp_loop_nil : core.
 
 (** Add a recption and then destructure the result. *)
@@ -233,6 +234,7 @@ Inductive comp_recv (st: state) (ch: pvar) (x: alg) (st': state): Prop :=
                              (Recv ch)) :: code st))
                    [(x, fresh st)] st' ->
     comp_recv st ch x st'.
+#[global]
 Hint Constructors comp_recv : core.
 
 (** *** Compile a Trace
@@ -261,6 +263,7 @@ Inductive comp_tr: state -> list evt -> list (list alg) ->
     comp_recv st ch x st' ->
     comp_tr st' tr us outs ost ostmts ->
     comp_tr st (Rv ch x :: tr) us outs ost ostmts.
+#[global]
 Hint Resolve Comp_return : core.
 
 (** ** Inputs *)
