@@ -90,7 +90,7 @@ checkInput pos (t, _) =
 -- Compile the inputs.
 deriveInputs :: MonadFail m => Role -> Vari -> [(Term, Vari)] -> m State
 deriveInputs r fresh ts =
-  loop (rpos r) (fresh, M.empty, []) False ts []
+  reduce (rpos r) (fresh, M.empty, []) ts
 
 -- Compile the trace and the outputs.
 deriveStmts :: MonadFail m => Role -> State -> m [Stmt]
@@ -127,7 +127,7 @@ deriveEvent _ st ((In pos ch t), _) =
         let recv = Recv (fresh, sort t) chan
         let st' = (fresh + 1, cs, recv : stmts)
         -- Associate fresh with the received message.
-        reduce pos st' t fresh
+        reduce pos st' [(t, fresh)]
     Just t ->                   -- t is the offending term
       fail (shows pos ("Message not receivable " ++ show (displayTerm t)))
 
@@ -215,9 +215,9 @@ synthTag (fresh, cs, stmts) t s  =
 -- Reduce a received term.  This is by far the trickiest code.  The
 -- reason is there is a loop that repeats as long as progress is being
 -- made.
-reduce :: MonadFail m => Pos -> State -> Term -> Vari -> m State
-reduce pos st t v =
-  loop pos st False [(t, v)] []
+reduce :: MonadFail m => Pos -> State -> [(Term, Vari)] -> m State
+reduce pos st cs =
+  loop pos st False cs []
 
 -- The loop parameters are
 -- pos:   the position of the received term in the source file
