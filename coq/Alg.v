@@ -155,6 +155,57 @@ Definition is_simple (x: alg): bool :=
   | _ => true
   end.
 
+(** Is [x] an elementary message, one that is not a pair, encryption, a
+    hash, or a tag? *)
+
+Definition is_elem (x: alg): Prop :=
+  match x with
+  | Pr _ _ => False
+  | En _ _ => False
+  | Hs _ => False
+  | Tg _ => False
+  | _ => True
+  end.
+
+(** Is [x] not an elementary message? *)
+
+Definition is_not_elem (x: alg): Prop :=
+  match x with
+  | Pr _ _ => True
+  | En _ _ => True
+  | Hs _ => True
+  | Tg _ => True
+  | _ => False
+  end.
+
+Lemma is_elem_dec:
+  forall x: alg, {is_elem x} + {is_not_elem x}.
+Proof.
+  intros.
+  unfold is_elem.
+  unfold is_not_elem.
+  destruct x; auto.
+Qed.
+
+Lemma alg_elem_ind:
+  forall P: alg -> Prop,
+    (forall x:alg, is_elem x -> P x) ->
+    (forall s: string, P (Tg s)) ->
+    (forall y: alg,
+        P y ->
+        forall z: alg,
+          P z -> P (Pr y z)) ->
+    (forall y: alg,
+        P y ->
+        forall z: alg, P (En y z)) ->
+    (forall y: alg,
+        P y -> P (Hs y)) ->
+    forall x: alg, P x.
+Proof.
+  intros.
+  induction x; simpl; auto; apply H; simpl; auto.
+Qed.
+
 (** ** Inverse of a Message *)
 
 Definition inv (x: alg): alg :=
@@ -235,7 +286,7 @@ Definition well_formed_skey decls (k: skey): option (list decl) :=
   match k with
   | Sv v => extend decls v Skey
   | Lt v v' =>
-    ds <- extend decls v Name;
+    ds <- extend decls v Name;;
     extend ds v' Name
   end.
 
@@ -265,10 +316,10 @@ Fixpoint well_formed decls (x: alg): option (list decl) :=
   | Mg v => extend decls v Mesg
   | Tg z => Some decls
   | Pr y z =>
-    ds <- well_formed decls y;
+    ds <- well_formed decls y;;
     well_formed ds z
   | En y z =>
-    ds <- well_formed decls y;
+    ds <- well_formed decls y;;
     well_formed ds z
   | Hs y => well_formed decls y
   end.
@@ -276,10 +327,10 @@ Fixpoint well_formed decls (x: alg): option (list decl) :=
 Definition well_formed_event decls (x: evt): option (list decl) :=
   match x with
   | Sd ch y =>
-    ds <- extend decls ch Chan;
+    ds <- extend decls ch Chan;;
     well_formed ds y
   | Rv ch y =>
-    ds <- extend decls ch Chan;
+    ds <- extend decls ch Chan;;
     well_formed ds y
   end.
 
@@ -349,7 +400,7 @@ Fixpoint size (x: alg): nat :=
   | Pr y z => S (size y + size z)
   | En y z => S (size y + size z)
   | Hs y => S (size y)
-  | _ => 0
+  | _ => 1
   end.
 
 Lemma inv_size:
@@ -360,8 +411,6 @@ Proof.
 Qed.
 
 (** ** Origination *)
-
-(** Carried by *)
 
 (** Carried by *)
 

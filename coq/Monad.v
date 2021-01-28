@@ -7,12 +7,12 @@ Open Scope list_scope.
 
 (** Haskell do-like notation for option types *)
 
-Notation "x <- M ; N" := (match M with None => None | Some x => N end)
+Notation "x <- M ;; N" := (match M with None => None | Some x => N end)
   (at level 30, right associativity).
 
 Lemma do_some:
   forall A B (f: option A) (g: A -> option B) b,
-    x <- f; g x = Some b ->
+    x <- f;; g x = Some b ->
     exists a, f = Some a /\ g a = Some b.
 Proof.
   intros.
@@ -27,8 +27,8 @@ Fixpoint map_m {A B} (f: A -> option B) (l: list A): option (list B) :=
   match l with
   | [] => Some []
   | x :: xs =>
-    y <- f x;
-    ys <- map_m f xs;
+    y <- f x;;
+    ys <- map_m f xs;;
     Some (y :: ys)
   end.
 
@@ -71,6 +71,6 @@ Fixpoint fold_m {A B} (f: A -> B -> option A)
   match l with
   | [] => Some a
   | x :: xs =>
-    b <- f a x;
+    b <- f a x;;
     fold_m f b xs
   end.

@@ -151,7 +151,7 @@ Extra-Source-Files:
   coq/Examples/Otway_rees_role.v coq/Examples/Nsl.v
   coq/Examples/Bad_unilateral.v coq/Examples/yahalom.scm
   coq/Examples/Yahalom_role.v coq/CSem.v coq/Proc.v coq/Derives.v
-  coq/unilateral.scm coq/Unilateral.v coq/Role.v
+  coq/unilateral.scm coq/Unilateral.v coq/Role.v coq/Preamble.v
       
 Source-Repository head
   Type:     git

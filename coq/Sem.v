@@ -117,8 +117,8 @@ Inductive stmt_sem: env -> list evt -> list alg ->
 Hint Constructors stmt_sem : core.
 
 Lemma stmt_sem_env_extends:
-  forall ev tr us exp ev' tr' us',
-    stmt_sem ev tr us exp ev' tr' us' ->
+  forall ev tr us cmd ev' tr' us',
+    stmt_sem ev tr us cmd ev' tr' us' ->
     exists ev'', ev' = ev'' ++ ev.
 Proof.
   intros.

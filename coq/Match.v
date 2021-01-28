@@ -27,7 +27,7 @@ Definition match_skey (sb: sbst) (x y: skey): option sbst :=
   match x, y with
   | Sv v, w => extend_term sb v (Sk w)
   | Lt v w, Lt x y =>
-    sb <- extend_term sb v (Nm x);
+    sb <- extend_term sb v (Nm x);;
     extend_term sb w (Nm y)
   | _, _ => None
   end.
@@ -64,10 +64,10 @@ Fixpoint match_term (sb: sbst) (x y: alg): option sbst :=
     else
       None
   | Pr v w, Pr x y =>
-    sb <- match_term sb v x;
+    sb <- match_term sb v x;;
     match_term sb w y
   | En v w, En x y =>
-    sb <- match_term sb v x;
+    sb <- match_term sb v x;;
     match_term sb w y
   | Hs v, Hs w => match_term sb v w
   | _, _ => None
@@ -80,10 +80,10 @@ Fixpoint match_term (sb: sbst) (x y: alg): option sbst :=
 Definition match_evt (sb: sbst) (x y: evt): option sbst :=
   match x, y with
   | Sd c x, Sd d y =>
-    sb <- match_term sb (Ch c) (Ch d);
+    sb <- match_term sb (Ch c) (Ch d);;
     match_term sb x y
   | Rv c x, Rv d y =>
-    sb <- match_term sb (Ch c) (Ch d);
+    sb <- match_term sb (Ch c) (Ch d);;
     match_term sb x y
   | _, _ => None
   end.
@@ -92,7 +92,7 @@ Fixpoint match_trace (sb: sbst) (xs ys: list evt): option sbst :=
   match xs, ys with
   | [], [] => Some sb
   | x :: xs, y :: ys =>
-    sb <- match_evt sb x y;
+    sb <- match_evt sb x y;;
     match_trace sb xs ys
   | _, _ => None
   end.
@@ -101,7 +101,7 @@ Fixpoint match_list (sb: sbst) (xs ys: list alg): option sbst :=
   match xs, ys with
   | [], [] => Some sb
   | x :: xs, y :: ys =>
-    sb <- match_term sb x y;
+    sb <- match_term sb x y;;
     match_list sb xs ys
   | _, _ => None
 end.
@@ -123,7 +123,7 @@ Definition match_uniqs (sb: sbst) (xs ys: list alg): option sbst :=
     [None]. *)
 
 Definition homomorphism (x y: role): option sbst :=
-  sb <- match_trace [] (trace x) (trace y);
-  sb <- match_uniqs sb (uniqs x) (uniqs y);
-  sb <- match_list sb (inputs x) (inputs y);
+  sb <- match_trace [] (trace x) (trace y);;
+  sb <- match_uniqs sb (uniqs x) (uniqs y);;
+  sb <- match_list sb (inputs x) (inputs y);;
   match_list sb (outputs x) (outputs y).

@@ -57,21 +57,14 @@ Definition uniq_here (x: alg) (u: alg) (z: list alg * list alg):
   else
     (u :: fst z, snd z).
 
-(** The first element in [x] is the uniques that have not been found
-    to originate yet, and the second element is the answer so far. *)
-
-Definition uniq_pos  (e: evt) (x: list alg * list (list alg)):
-  list alg * list (list alg) :=
-  match e with
-  | Sd _ y =>
-    let (us, ans) := x in
-    let (us', here) := fold_right (uniq_here y) ([], []) us in
-    (us', here :: ans)
-  | Rv _ y => x
+Fixpoint uniq_list (tr: list evt) (us: list alg): list (list alg) :=
+  match tr with
+  | [] => []
+  | Sd _ x :: tr =>
+    let (us, here) := fold_right (uniq_here x) ([], []) us in
+    here :: uniq_list tr us
+  | Rv _ _ :: tr => uniq_list tr us
   end.
-
-Definition uniq_list (tr: list evt) (uniqs: list alg): list (list alg) :=
-  snd (fold_right uniq_pos (uniqs, []) tr).
 
 (** Compile one unique. *)
 
@@ -96,9 +89,9 @@ Fixpoint synth (st: state) (x: alg): option (state * pvar) :=
                         (Tagg s)) :: code st),
             fresh st)
     | Pr y z =>
-      l <- synth st y;
+      l <- synth st y;;
       let (st, v) := l in
-      r <- synth st z;
+      r <- synth st z;;
       let (st, u) := r in
       Some (mkSt (S (fresh st))
                  ((x, fresh st) :: cstore st)
@@ -106,9 +99,9 @@ Fixpoint synth (st: state) (x: alg): option (state * pvar) :=
                         (Pair v u)) :: code st),
             fresh st)
     | En y z =>
-      l <- synth st y;
+      l <- synth st y;;
       let (st, v) := l in
-      r <- synth st z;
+      r <- synth st z;;
       let (st, u) := r in
       Some (mkSt (S (fresh st))
                  ((x, fresh st) :: cstore st)
@@ -116,7 +109,7 @@ Fixpoint synth (st: state) (x: alg): option (state * pvar) :=
                         (Encr v u)) :: code st),
             fresh st)
     | Hs y =>
-      l <- synth st y;
+      l <- synth st y;;
       let (st, v) := l in
       Some (mkSt (S (fresh st))
                  ((x, fresh st) :: cstore st)
@@ -130,7 +123,7 @@ end.
 Definition synth_fold (acc: state * list pvar) (x: alg):
   option (state * list pvar) :=
   let (st, vs) := acc in
-  y <- synth st x;
+  y <- synth st x;;
   let (st, v) := y in
   Some (st, v :: vs).
 
@@ -138,7 +131,7 @@ Definition synth_fold (acc: state * list pvar) (x: alg):
 
 Definition synth_return (st: state) (xs: list alg):
   option (state * list pvar) :=
-  w <- fold_m synth_fold (st, []) xs;
+  w <- fold_m synth_fold (st, []) xs;;
   let (st, vs) := w in
   Some (st, rev vs).
 
@@ -147,9 +140,9 @@ Definition synth_return (st: state) (xs: list alg):
 Definition comp_send (st: state) (ch: var) (x: alg)
            (us: list alg): option state :=
   let st := fold_left comp_uniq us st in
-  y <- synth st x;
+  y <- synth st x;;
   let (st, v) := y in
-  z <- synth st (Ch ch);
+  z <- synth st (Ch ch);;
   let (st, u) := z in
   Some (mkSt
          (fresh st)
