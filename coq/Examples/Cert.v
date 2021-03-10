@@ -9,9 +9,9 @@ Open Scope string.
 
 Definition init: proc :=
   mkProc
-  [(0, Chan); (1, Akey); (2, Mesg)]
+  [(0, Chan); (1, Akey); (2, Ienc)]
   [
-   Bind (3, Text) (Decr 2 1);
+   Bind (3, Text) (Decr_ 2 1);
    (* Send (cert.scm:4:12) *)
    Send 0 2;
    Return []  ].

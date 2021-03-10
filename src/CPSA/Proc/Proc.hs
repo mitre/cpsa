@@ -7,7 +7,7 @@
 -- University of California.
 
 module CPSA.Proc.Proc (
-  parse, Var, Sort, Decl, Stmt(..), Expr(..),
+  parse, Var, Kind, Decl, Stmt(..), Expr(..),
   Proc, mkProc, name, inputs, outputs, stmts, Item(..)) where
 
 import CPSA.Lib.SExpr
@@ -17,19 +17,19 @@ import CPSA.Lib.SExpr
 -- Variable
 type Var = String
 
-type Sort = String
+type Kind = String
 
--- A declaration, is a variable and a sort
-type Decl = (Var, Sort)
+-- A declaration, is a variable and a kind
+type Decl = (Var, Kind)
 
 -- A procedure
 data Proc
   = Proc { name :: String,
            inputs :: [Decl],
-           outputs :: [Sort],
+           outputs :: [Kind],
            stmts :: [Stmt] }
 
-mkProc :: String  -> [Decl] -> [Sort] -> [Stmt] -> Proc
+mkProc :: String  -> [Decl] -> [Kind] -> [Stmt] -> Proc
 mkProc name inputs outputs stmts =
   Proc { name = name,
          inputs = inputs,
@@ -47,7 +47,7 @@ data Stmt
 -- Expressions
 data Expr
   = Call Var [Var]
-  | Tagg String
+  | Tag String
 
 data Item
   = Cmt Pos String
@@ -70,22 +70,22 @@ parseItem x =
   fail (shows (annotation x) "Unrecogized S-Expression")
 
 parseDecl :: SExpr Pos -> IO Decl
-parseDecl (L _ [S _ name, S _ sort]) =
-  return (name, sort)
+parseDecl (L _ [S _ name, S _ kind]) =
+  return (name, kind)
 parseDecl x =
   fail (shows (annotation x) "Expecting a declaration")
 
 parseString :: SExpr Pos -> IO String
-parseString (S _ sort) =
-  return sort
+parseString (S _ kind) =
+  return kind
 parseString x =
   fail (shows (annotation x) "Expecting a string")
 
 parseStmt :: SExpr Pos -> IO Stmt
-parseStmt (L _ [S _ "let", L _ [S _ var, S _ sort], expr]) =
+parseStmt (L _ [S _ "let", L _ [S _ var, S _ kind], expr]) =
   do
     expr <- parseExpr expr
-    return $ Bind (var, sort) expr
+    return $ Bind (var, kind) expr
 parseStmt (L _ [S _ send, S _ chan, S _ msg])
   | prefix "send_" send =
     return $ Send send chan msg
@@ -108,7 +108,7 @@ prefix (x : xs) (y : ys) = x == y && prefix xs ys
 
 parseExpr :: SExpr Pos -> IO Expr
 parseExpr (Q _ tag) =
-  return $ Tagg tag
+  return $ Tag tag
 parseExpr (L _ (x : xs)) =
   do
     string <- parseString x

@@ -1,3 +1,8 @@
+2021-03-10  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* CPSA/Roletran/Emitter.hs (Kind):  Added refined program
+	variables for procedures.
+
 2021-01-12  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* CPSA/Roletran/Derivation.hs (deriveInputs): Allowed inputs to

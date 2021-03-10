@@ -118,6 +118,11 @@ Definition to_env (ev: cenv): env :=
 
 (** Check the type of an element in the concrete algebra. *)
 
+Definition is_cskey (x: calg): Prop :=
+  is_skey (to_alg x).
+#[global]
+Hint Unfold is_cskey : core.
+
 Inductive ctype_check: type -> calg -> Prop :=
 | CText_check: forall v,
     ctype_check Text (CTx v)
@@ -133,16 +138,30 @@ Inductive ctype_check: type -> calg -> Prop :=
     ctype_check Ikey (CIk k)
 | CChan_check: forall v,
     ctype_check Chan (CCh v)
-| CMesg_check: forall a,
-    ctype_check Mesg a.
+| CMesg_check: forall v,
+    ctype_check Mesg (CMg v)
+| CTag_check: forall s,
+    ctype_check Quot (CTg s)
+| CPair_check: forall x y,
+    ctype_check Pair (CPr x y)
+| CAenc_check: forall r x y,
+    ctype_check Aenc (CEn r x (CAk y))
+| CIenc_check: forall r x y,
+    ctype_check Ienc (CEn r x (CIk y))
+| CSenc_check: forall r x y,
+    is_cskey y ->
+    ctype_check Senc (CEn r x y)
+| CHash_check: forall x,
+    ctype_check Hash (CHs x).
 #[global]
-Hint Constructors ctype_check : core.
+ Hint Constructors ctype_check : core.
 
 Lemma type_check_equiv:
   forall (s: type) (c: calg),
     ctype_check s c <-> type_check s (to_alg c).
 Proof.
-  split; intros; destruct c; simpl in *; inv H; auto.
+  split; intros; destruct c; simpl in *; inv H; simpl; auto;
+    destruct c2; inv H3; auto.
 Qed.
 
 Lemma inv_to_alg:
@@ -173,38 +192,38 @@ Qed.
 Inductive expr_csem: cenv -> list cevt -> list calg -> list nat ->
                      expr -> calg -> list cevt ->
                      list calg -> list nat -> Prop :=
-| CExpr_tagg: forall ev tr us rs x,
-    expr_csem ev tr us rs (Tagg x) (CTg x) tr us rs
+| CExpr_tag: forall ev tr us rs x,
+    expr_csem ev tr us rs (Tag_ x) (CTg x) tr us rs
 | CExpr_hash: forall ev tr us rs x a,
     lookup x ev = Some a ->
-    expr_csem ev tr us rs (Hash x) (CHs a) tr us rs
+    expr_csem ev tr us rs (Hash_ x) (CHs a) tr us rs
 | CExpr_pair: forall ev tr us rs x y a b,
     lookup x ev = Some a ->
     lookup y ev = Some b ->
-    expr_csem ev tr us rs (Pair x y) (CPr a b) tr us rs
+    expr_csem ev tr us rs (Pair_ x y) (CPr a b) tr us rs
 | CExpr_encr_prob: forall ev tr us rs x y r a b,
     lookup x ev = Some a ->
     lookup y ev = Some b ->
-    expr_csem ev tr us (r :: rs) (Encr x y) (CEn r a b) tr us rs
+    expr_csem ev tr us (r :: rs) (Encr_ x y) (CEn r a b) tr us rs
 | CExpr_encr_zero: forall ev tr us x y a b,
     lookup x ev = Some a ->
     lookup y ev = Some b ->
-    expr_csem ev tr us [] (Encr x y) (CEn 0 a b) tr us []
+    expr_csem ev tr us [] (Encr_ x y) (CEn 0 a b) tr us []
 | CExpr_frst: forall ev tr us rs x a b,
     lookup x ev = Some (CPr a b) ->
-    expr_csem ev tr us rs (Frst x) a tr us rs
+    expr_csem ev tr us rs (Frst_ x) a tr us rs
 | CExpr_scnd: forall ev tr us rs x a b,
     lookup x ev = Some (CPr a b) ->
-    expr_csem ev tr us rs (Scnd x) b tr us rs
+    expr_csem ev tr us rs (Scnd_ x) b tr us rs
 | CExpr_decr: forall ev tr us rs x y r a b,
     lookup x ev = Some (CEn r a b) ->
     lookup y ev = Some (cinv b) ->
-    expr_csem ev tr us rs (Decr x y) a tr us rs
+    expr_csem ev tr us rs (Decr_ x y) a tr us rs
 | CExpr_nonce: forall ev tr us rs a,
-    expr_csem ev tr (a :: us) rs Nonce a tr us rs
+    expr_csem ev tr (a :: us) rs Nonce_ a tr us rs
 | CExpr_recv: forall ev tr us rs a c d,
     lookup c ev = Some (CCh d) ->
-    expr_csem ev (CRv d a :: tr) us rs (Recv c) a tr us rs.
+    expr_csem ev (CRv d a :: tr) us rs (Recv_ c) a tr us rs.
 #[global]
 Hint Constructors expr_csem : core.
 

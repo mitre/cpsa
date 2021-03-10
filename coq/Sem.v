@@ -16,6 +16,15 @@ Definition env: Set := list (pvar * alg).
 
 (** Check the type of an element of the message algebra. *)
 
+Definition is_skey (x: alg): Prop :=
+  match x with
+  | Ak _ => False
+  | Ik _ => False
+  | _ => True
+  end.
+#[global]
+Hint Unfold is_skey : core.
+
 Inductive type_check: type -> alg -> Prop :=
 | Text_check: forall v,
     type_check Text (Tx v)
@@ -31,10 +40,34 @@ Inductive type_check: type -> alg -> Prop :=
     type_check Ikey (Ik k)
 | Chan_check: forall v,
     type_check Chan (Ch v)
-| Mesg_check: forall a,
-    type_check Mesg a.
+| Mesg_check: forall v,
+    type_check Mesg (Mg v)
+| Tag_check: forall s,
+    type_check Quot (Tg s)
+| Pair_check: forall x y,
+    type_check Pair (Pr x y)
+| Aenc_check: forall x y,
+    type_check Aenc (En x (Ak y))
+| Ienc_check: forall x y,
+    type_check Ienc (En x (Ik y))
+| Senc_check: forall x y,
+    is_skey y ->
+    type_check Senc (En x y)
+| Hash_check: forall x,
+    type_check Hash (Hs x).
 #[global]
-Hint Constructors type_check : core.
+ Hint Constructors type_check : core.
+
+Lemma type_check_type_of:
+  forall s x,
+    type_check s x <-> s = type_of x.
+Proof.
+  split; intros; subst.
+  - destruct x; inversion H; subst; simpl; auto.
+    destruct x2; inversion H2; simpl; auto.
+  - destruct x; simpl; auto.
+    destruct x2; simpl; auto.
+Qed.
 
 (** The semantics of an expression
 
@@ -52,34 +85,34 @@ Hint Constructors type_check : core.
 
 Inductive expr_sem: env -> list evt -> list alg -> expr ->
                     alg -> list evt -> list alg -> Prop :=
-| Expr_tagg: forall ev tr us x,
-    expr_sem ev tr us (Tagg x) (Tg x) tr us
+| Expr_tag: forall ev tr us x,
+    expr_sem ev tr us (Tag_ x) (Tg x) tr us
 | Expr_hash: forall ev tr us x a,
     lookup x ev = Some a ->
-    expr_sem ev tr us (Hash x) (Hs a) tr us
+    expr_sem ev tr us (Hash_ x) (Hs a) tr us
 | Expr_pair: forall ev tr us x y a b,
     lookup x ev = Some a ->
     lookup y ev = Some b ->
-    expr_sem ev tr us (Pair x y) (Pr a b) tr us
+    expr_sem ev tr us (Pair_ x y) (Pr a b) tr us
 | Expr_encr: forall ev tr us x y a b,
     lookup x ev = Some a ->
     lookup y ev = Some b ->
-    expr_sem ev tr us (Encr x y) (En a b) tr us
+    expr_sem ev tr us (Encr_ x y) (En a b) tr us
 | Expr_frst: forall ev tr us x a b,
     lookup x ev = Some (Pr a b) ->
-    expr_sem ev tr us (Frst x) a tr us
+    expr_sem ev tr us (Frst_ x) a tr us
 | Expr_scnd: forall ev tr us x a b,
     lookup x ev = Some (Pr a b) ->
-    expr_sem ev tr us (Scnd x) b tr us
+    expr_sem ev tr us (Scnd_ x) b tr us
 | Expr_decr: forall ev tr us x y a b,
     lookup x ev = Some (En a b) ->
     lookup y ev = Some (inv b) ->
-    expr_sem ev tr us (Decr x y) a tr us
+    expr_sem ev tr us (Decr_ x y) a tr us
 | Expr_nonce: forall ev tr us a,
-    expr_sem ev tr (a :: us) Nonce a tr us
+    expr_sem ev tr (a :: us) Nonce_ a tr us
 | Expr_recv: forall ev tr us a c d,
     lookup c ev = Some (Ch d) ->
-    expr_sem ev (Rv d a :: tr) us (Recv c) a tr us.
+    expr_sem ev (Rv d a :: tr) us (Recv_ c) a tr us.
 #[global]
 Hint Constructors expr_sem : core.
 

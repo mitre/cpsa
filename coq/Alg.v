@@ -235,14 +235,20 @@ Qed.
 
 Definition type_of (x: alg): type :=
   match x with
-  | Tx v => Text
-  | Dt v => Data
-  | Nm v => Name
-  | Sk k => Skey
-  | Ak k => Akey
-  | Ik k => Ikey
+  | Tx _ => Text
+  | Dt _ => Data
+  | Nm _ => Name
+  | Sk _ => Skey
+  | Ak _ => Akey
+  | Ik _ => Ikey
+  | Mg _ => Mesg
+  | Tg _ => Quot
+  | Pr _ _ => Pair
+  | En _ (Ak _) => Aenc
+  | En _ (Ik _) => Ienc
+  | En _ _ => Senc
+  | Hs _ => Hash
   | Ch v => Chan
-  | _ => Mesg
   end.
 
 (** ** Is a Term Well Formed?

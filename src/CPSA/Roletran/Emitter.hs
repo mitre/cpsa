@@ -7,25 +7,59 @@
 -- University of California.
 
 module CPSA.Roletran.Emitter (
-  Proc, mkProc, name, pos,
+  Kind(..), kind, Proc, mkProc, name, pos,
   Vari, Decl, Stmt(..), Expr(..),
   emit, displayPos) where
 
 import CPSA.Lib.SExpr
 import CPSA.Lib.Pretty
-import CPSA.Roletran.Algebra (Sort(..))
-import CPSA.Roletran.Displayer (displaySort)
+import CPSA.Roletran.Algebra (Term(..))
 
--- When true, add the sort of a let bound variable
-showBindSort :: Bool
-showBindSort = True
+data Kind
+  = KText                       -- Plaintext
+  | KData                       -- Data
+  | KName                       -- Name
+  | KSkey                       -- Symmetric key
+  | KAkey                       -- Public asymmetric key
+  | KIkey                       -- Private asymmetric key
+  | KMesg                       -- Message -- top kind for terms
+  | KQuot                       -- Tag
+  | KPair                       -- Pair
+  | KSenc                       -- Symmetric encryption
+  | KAenc                       -- Asymmetric encryption
+  | KIenc                       -- Sign
+  | KHash                       -- Hash
+  | KChan                       -- Channels -- not allowed
+  deriving (Show, Eq)           -- in terms in events
+
+-- Return the kind of a term.
+kind :: Term -> Kind
+kind (Txt _) = KText
+kind (Dta _) = KData
+kind (Nam _) = KName
+kind (Sky _) = KSkey
+kind (Aky _) = KAkey
+kind (Iky _) = KIkey
+kind (Msg _) = KMesg
+kind (Tag _) = KQuot
+kind (Pr _ _) = KPair
+kind (En _ (Aky _)) = KAenc
+kind (En _ (Iky _)) = KIenc
+kind (En _ _) = KSenc
+kind (Hsh _) = KHash
+kind (Chn _) = KChan
+
+
+-- When true, add the kind of a let bound variable
+showBindKind :: Bool
+showBindKind = True
 
 -- Variable index
 type Vari = Int
 
--- A declaration, comprising an index for a variable and the sort of
+-- A declaration, comprising an index for a variable and the kind of
 -- that variable
-type Decl = (Vari, Sort)
+type Decl = (Vari, Kind)
 
 -- A procedure
 data Proc
@@ -33,10 +67,10 @@ data Proc
            pos :: Pos,
            inputs :: [Decl],
            firstVar :: Vari,
-           outputs :: [Sort],
+           outputs :: [Kind],
            stmts :: [Stmt] }
 
-mkProc :: String -> Pos -> [Decl] -> [Sort] -> [Stmt] -> Proc
+mkProc :: String -> Pos -> [Decl] -> [Kind] -> [Stmt] -> Proc
 mkProc name pos inputs outputs stmts =
   Proc { name = name,
          pos = pos,
@@ -50,20 +84,20 @@ data Stmt
   = Recv Decl Vari              -- Receive a message
   | Send Vari Decl              -- Send a message
   | Bind Decl Expr              -- Bind a variable to an expression
-  | Same Sort Vari Vari         -- Are two values the same?
+  | Same Kind Vari Vari         -- Are two values the same?
   | Return [Vari]               -- Return values from the procedure
   | Comment String              -- Insert a comment
 
 -- Expressions
 data Expr
   = Pair Decl Decl              -- Construct a pair
-  | Frst Sort Vari              -- project first component of pair
-  | Scnd Sort Vari              -- project second component of pair
+  | Frst Kind Vari              -- project first component of pair
+  | Scnd Kind Vari              -- project second component of pair
   | Encr Decl Decl              -- Encrypt plain text
-  | Decr Sort Vari Decl         -- Decrypt cipher text
+  | Decr Kind Vari Decl         -- Decrypt cipher text
   | Tagg String                 -- Construct a tag
   | Hash Decl                   -- Construct a hash
-  | Nonce Sort                  -- Generate a nonce
+  | Nonce Kind                  -- Generate a nonce
 
 -- Emit code as a pretty printed S-expression
 
@@ -93,14 +127,14 @@ displayInputs first (d : ds) =
 
 displayInput :: Vari -> Decl -> Pretty
 displayInput first (x, s) =
-  str ("(" ++ var first x ++ " " ++ displaySort s ++ ")")
+  str ("(" ++ var first x ++ " " ++ displayKind s ++ ")")
 
-displayOutputs :: [Sort] -> [Pretty]
+displayOutputs :: [Kind] -> [Pretty]
 displayOutputs [] = [str ")"]
 displayOutputs (s : ss) =
-  str (displaySort s) : foldr f [str ")"] ss
+  str (displayKind s) : foldr f [str ")"] ss
   where
-    f s ps = brk 1 : str (displaySort s) : ps
+    f s ps = brk 1 : str (displayKind s) : ps
 
 displayStmts :: Vari -> [Stmt] -> [Pretty]
 displayStmts _ [] = [str ")"]
@@ -154,38 +188,55 @@ var first v
   | v < first = 'p' : show v
   | otherwise = 'v' : show v
 
--- Maybe show sort for a let bound variable.
+-- Maybe show kind for a let bound variable.
 bvar :: Vari -> Decl -> String
 bvar first (v, s)
-  | showBindSort =
-    "(" ++ var first v ++ " " ++ displaySort s ++ ")"
+  | showBindKind =
+    "(" ++ var first v ++ " " ++ displayKind s ++ ")"
   | otherwise = var first v
 
--- Mark a symbol with some sort abbeviations.
-mark :: String -> [Sort] -> String
-mark sym sorts =
-  sym ++ "_" ++ map abbrev sorts
+-- Mark a symbol with some kind abbeviations.
+mark :: String -> [Kind] -> String
+mark sym kinds =
+  sym ++ "_" ++ map abbrev kinds
 
-abbrev :: Sort -> Char
-abbrev Text = 't'
-abbrev Data = 'd'
-abbrev Name = 'n'
-abbrev Skey = 's'
-abbrev Akey = 'a'
-abbrev Ikey = 'i'
-abbrev Mesg = 'm'
-abbrev Chan = 'c'
+displayKind :: Kind -> String
+displayKind KText = "text"
+displayKind KData = "data"
+displayKind KName = "name"
+displayKind KSkey = "skey"
+displayKind KAkey = "akey"
+displayKind KIkey = "ikey"
+displayKind KMesg = "mesg"
+displayKind KQuot = "quot"
+displayKind KPair = "pair"
+displayKind KSenc = "senc"
+displayKind KAenc = "aenc"
+displayKind KIenc = "ienc"
+displayKind KHash = "hash"
+displayKind KChan = "chan"
 
--- The inverse sort of a sort
-inv :: Sort -> Sort
-inv Text = Text
-inv Data = Data
-inv Name = Name
-inv Skey = Skey
-inv Akey = Ikey
-inv Ikey = Akey
-inv Mesg = Mesg
-inv Chan = Chan
+abbrev :: Kind -> Char
+abbrev KText = 't'
+abbrev KData = 'd'
+abbrev KName = 'n'
+abbrev KSkey = 's'
+abbrev KAkey = 'a'
+abbrev KIkey = 'i'
+abbrev KMesg = 'm'
+abbrev KQuot = 'q'
+abbrev KPair = 'p'
+abbrev KSenc = 'e'
+abbrev KAenc = 'y'
+abbrev KIenc = 'z'
+abbrev KHash = 'h'
+abbrev KChan = 'c'
+
+-- The inverse kind of a kind
+inv :: Kind -> Kind
+inv KAkey = KIkey
+inv KIkey = KAkey
+inv k = k
 
 -- Trim last two characters when showing a Pos.
 displayPos :: Pos -> String

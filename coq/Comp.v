@@ -71,7 +71,7 @@ Fixpoint uniq_list (tr: list evt) (us: list alg): list (list alg) :=
 Definition comp_uniq (st: state) (u: alg): state :=
   mkSt (S (fresh st))
        ((u, fresh st) :: cstore st)
-       ((Bind (fresh st, type_of u) Nonce) :: code st).
+       ((Bind (fresh st, type_of u) Nonce_) :: code st).
 
 (** ** Trace and Outputs
 
@@ -85,8 +85,8 @@ Fixpoint synth (st: state) (x: alg): option (state * pvar) :=
     | Tg s =>
       Some (mkSt (S (fresh st))
                  ((x, fresh st) :: cstore st)
-                 ((Bind (fresh st, Mesg)
-                        (Tagg s)) :: code st),
+                 ((Bind (fresh st, type_of x)
+                        (Tag_ s)) :: code st),
             fresh st)
     | Pr y z =>
       l <- synth st y;;
@@ -95,8 +95,8 @@ Fixpoint synth (st: state) (x: alg): option (state * pvar) :=
       let (st, u) := r in
       Some (mkSt (S (fresh st))
                  ((x, fresh st) :: cstore st)
-                 ((Bind (fresh st, Mesg)
-                        (Pair v u)) :: code st),
+                 ((Bind (fresh st, type_of x)
+                        (Pair_ v u)) :: code st),
             fresh st)
     | En y z =>
       l <- synth st y;;
@@ -105,16 +105,16 @@ Fixpoint synth (st: state) (x: alg): option (state * pvar) :=
       let (st, u) := r in
       Some (mkSt (S (fresh st))
                  ((x, fresh st) :: cstore st)
-                 ((Bind (fresh st, Mesg)
-                        (Encr v u)) :: code st),
+                 ((Bind (fresh st, type_of x)
+                        (Encr_ v u)) :: code st),
             fresh st)
     | Hs y =>
       l <- synth st y;;
       let (st, v) := l in
       Some (mkSt (S (fresh st))
                  ((x, fresh st) :: cstore st)
-                 ((Bind (fresh st, Mesg)
-                        (Hash v)) :: code st),
+                 ((Bind (fresh st, type_of x)
+                        (Hash_ v)) :: code st),
             fresh st)
     | _ => None
     end
@@ -175,8 +175,8 @@ with comp_recv_match: state -> alg -> pvar -> store ->
     st' = mkSt
             (S (S (fresh st)))
             ((Pr y z, v) :: cstore st)
-            ((Bind (S (fresh st), type_of z) (Scnd v))
-               :: (Bind (fresh st, type_of y) (Frst v))
+            ((Bind (S (fresh st), type_of z) (Scnd_ v))
+               :: (Bind (fresh st, type_of y) (Frst_ v))
                :: code st) ->
     comp_recv_loop st' (r' ++ [(y, fresh st); (z, S (fresh st))]) st'' ->
     comp_recv_match st (Pr y z) v r' st''
@@ -186,7 +186,7 @@ with comp_recv_match: state -> alg -> pvar -> store ->
             (S (fresh st'))
             ((En y z, v) :: cstore st')
             ((Bind (fresh st', type_of y)
-                   (Decr v u)) :: code st) ->
+                   (Decr_ v u)) :: code st) ->
     comp_recv_loop st'' (r' ++ [(y, fresh st)]) st''' ->
     comp_recv_match st (En y z) v r' st'''
 | Comp_hash: forall st y v u r' st' st'' st''',
@@ -224,7 +224,7 @@ Inductive comp_recv (st: state) (ch: pvar) (x: alg) (st': state): Prop :=
                       (S (fresh st))
                       (cstore st)
                       ((Bind (fresh st, type_of x)
-                             (Recv ch)) :: code st))
+                             (Recv_ ch)) :: code st))
                    [(x, fresh st)] st' ->
     comp_recv st ch x st'.
 #[global]

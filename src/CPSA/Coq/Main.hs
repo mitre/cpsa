@@ -79,16 +79,16 @@ emitHeader h margin name inputs =
     hPutStrLn h "  ["
 
 emitInput :: Decl -> String
-emitInput (var, sort) =
-  "(" ++ ref var ++ ", " ++ toSort sort ++ ")"
+emitInput (var, kind) =
+  "(" ++ ref var ++ ", " ++ toKind kind ++ ")"
 
 ref :: String -> String
 ref [] = []
 ref (_ : xs) = xs
 
-toSort :: String -> String
-toSort [] = []
-toSort (h : t) = toUpper h : t
+toKind :: String -> String
+toKind [] = []
+toKind (h : t) = toUpper h : t
 
 emitInputs :: Handle -> Int -> [String] -> IO ()
 emitInputs h _ [] =
@@ -100,9 +100,9 @@ emitInputs h _ xs =
     hPutStrLn h "]"
 
 emitStmt :: Handle -> Int -> Stmt -> IO ()
-emitStmt h _ (Bind (var, sort) expr) =
+emitStmt h _ (Bind (var, kind) expr) =
   do
-    hPutStr h ("   Bind (" ++ ref var ++ ", " ++ toSort sort ++ ") ")
+    hPutStr h ("   Bind (" ++ ref var ++ ", " ++ toKind kind ++ ") ")
     emitExpr h expr
     hPutStrLn h  ";"
 emitStmt h _ (Send _ chan msg) =
@@ -120,15 +120,15 @@ emitExpr :: Handle -> Expr -> IO ()
 emitExpr h (Call op args) =
   do
     hPutStr h "("
-    hPutStr h $ trim $ toSort op
+    hPutStr h $ trim $ toKind op
     mapM_ (emitArg h) args
     hPutStr h ")"
-emitExpr h (Tagg x) =
-  hPutStr h ("(Tagg \"" ++ x ++ "\")")
+emitExpr h (Tag x) =
+  hPutStr h ("(Tag_ \"" ++ x ++ "\")")
 
 trim :: String -> String
 trim [] = []
-trim ('_' : _) = []
+trim ('_' : _) = "_"
 trim (x : xs) = x : trim xs
 
 emitArg :: Handle -> String -> IO ()

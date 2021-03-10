@@ -1,6 +1,6 @@
 (** Protocol: cert (cert.scm:1:1) *)
 
-Require Import String List Alg Sem.
+Require Import String List Alg Role.
 Import List.ListNotations.
 Open Scope list_scope.
 Open Scope string.

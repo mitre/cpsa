@@ -20,7 +20,7 @@ Hint Constructors executable_outputs : core.
 
 Inductive reducible (pub: list alg) (x: alg): Prop :=
 | Reducible:
-    (forall y, cb y x = true -> derives pub y) ->
+    (forall y, cb y x = true -> In y pub) ->
     (forall y z, cb (En y z) x = true -> reducible pub (inv z)) ->
     (forall y, cb (Hs y) x = true -> reducible pub y) ->
     reducible pub x.

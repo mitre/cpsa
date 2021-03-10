@@ -16,6 +16,12 @@ Inductive type: Set :=
 | Akey
 | Ikey
 | Mesg
+| Quot
+| Pair
+| Senc
+| Aenc
+| Ienc
+| Hash
 | Chan.
 
 Definition type_dec:
@@ -76,15 +82,15 @@ Hint Resolve decl_dec : core.
 
 (** Expressions *)
 Inductive expr: Set :=
-| Tagg: string -> expr          (* Construct a tag *)
-| Hash: pvar -> expr            (* Construct a hash *)
-| Pair: pvar -> pvar -> expr    (* Construct a pair *)
-| Encr: pvar -> pvar -> expr    (* Encrypt plain text *)
-| Frst: pvar -> expr            (* Project first component of pair *)
-| Scnd: pvar -> expr            (* Project second component of pair *)
-| Decr: pvar -> pvar -> expr    (* Decrypt cipher text *)
-| Nonce: expr                   (* Generate a nonce *)
-| Recv:  pvar -> expr.          (* Receive a message *)
+| Tag_: string -> expr          (* Construct a tag *)
+| Hash_: pvar -> expr           (* Construct a hash *)
+| Pair_: pvar -> pvar -> expr   (* Construct a pair *)
+| Encr_: pvar -> pvar -> expr   (* Encrypt plain text *)
+| Frst_: pvar -> expr           (* Project first component of pair *)
+| Scnd_: pvar -> expr           (* Project second component of pair *)
+| Decr_: pvar -> pvar -> expr   (* Decrypt cipher text *)
+| Nonce_: expr                  (* Generate a nonce *)
+| Recv_:  pvar -> expr.         (* Receive a message *)
 
 (** Statements *)
 

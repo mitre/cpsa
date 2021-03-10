@@ -78,11 +78,11 @@ Definition bad_init: proc :=
   [(0, Chan); (1, Akey)]
   [
    (* Send (rtst/unilateral.scm:9:7) *)
-   Bind (2, Text) (Nonce);
-   Bind (3, Mesg) (Encr 2 1);
+   Bind (2, Text) (Nonce_);
+   Bind (3, Aenc) (Encr_ 2 1);
    Send 0 3;
    (* Recv (rtst/unilateral.scm:10:7) *)
-   Bind (4, Text) (Recv 0);
+   Bind (4, Text) (Recv_ 0);
    Return [2]
   ].
 

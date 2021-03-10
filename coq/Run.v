@@ -37,31 +37,31 @@ Record run_state: Set :=
 Definition run_expr (rst: run_state) (ex: expr):
   option (run_state * alg) :=
   match ex with
-  | Tagg s => Some (rst, Tg s)
-  | Hash v =>
+  | Tag_ s => Some (rst, Tg s)
+  | Hash_ v =>
     x <- lookup v (renv rst);;
     Some (rst, Hs x)
-  | Pair u v =>
+  | Pair_ u v =>
     x <- lookup u (renv rst);;
     y <- lookup v (renv rst);;
     Some (rst, Pr x y)
-  | Encr u v =>
+  | Encr_ u v =>
     x <- lookup u (renv rst);;
     y <- lookup v (renv rst);;
     Some (rst, En x y)
-  | Frst v =>
+  | Frst_ v =>
     x <- lookup v (renv rst);;
     match x with
     | Pr y z => Some (rst, y)
     | _ => None
     end
-  | Scnd v =>
+  | Scnd_ v =>
     x <- lookup v (renv rst);;
     match x with
     | Pr y z => Some (rst, z)
     | _ => None
     end
-  | Decr u v =>
+  | Decr_ u v =>
     x <- lookup u (renv rst);;
     match x with
     | En y z =>
@@ -72,7 +72,7 @@ Definition run_expr (rst: run_state) (ex: expr):
         None
     | _ => None
     end
-  | Recv v =>
+  | Recv_ v =>
     c <- lookup v (renv rst);;
     match rtr rst with
     | Rv d x :: tr =>
@@ -97,7 +97,7 @@ Definition run_expr (rst: run_state) (ex: expr):
 (** Check that the type of [x] is compatible with [t]. *)
 
 Definition type_check (x: alg) (t: type): bool :=
-  type_eqb t Mesg || type_eqb (type_of x) t.
+  type_eqb (type_of x) t.
 
 (** The semantics of statements *)
 

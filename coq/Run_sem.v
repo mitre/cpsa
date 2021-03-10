@@ -96,12 +96,8 @@ Lemma type_check_reflect:
 Proof.
   intros.
   unfold type_check.
-  rewrite orb_true_iff.
   rewrite type_eq_correct.
-  rewrite type_eq_correct.
-  split; intros; subst; auto.
-  - destruct H; subst; destruct x; auto.
-  - inv H; simpl; intuition.
+  rewrite Sem.type_check_type_of; intuition.
 Qed.
 
 Lemma stmt_sem_implies_run_stmt:
