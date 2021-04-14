@@ -107,15 +107,20 @@ deriveEvent :: MonadFail m => [(Term, Int)] ->
 -- Compile a send event.  Variable i holds the position of the event
 -- in the trace.  It used to determine when to bind uniques to nonces.
 deriveEvent uniques st ((Out pos ch t), i) =
-  do
-    -- Create uniques and synthesize the channel
-    (st, chan) <- build pos (deriveUniques uniques i (sendCmt pos st)) ch
-    -- Synthesize the message
-    (st, v) <- build pos st t
-    return (
-      freshVar st,
-      compStore st,
-      Send chan (v, kind t) : statements st)
+  case receivable t of
+    Nothing ->                  -- t is receivable.
+      do
+        -- Create uniques and synthesize the channel
+        (st, chan) <- build pos (deriveUniques uniques i (sendCmt pos st)) ch
+        -- Synthesize the message
+        (st, v) <- build pos st t
+        return (
+          freshVar st,
+          compStore st,
+          Send chan (v, kind t) : statements st)
+    Just t ->                   -- t is the offending term
+      fail (shows pos ("Message not receivable " ++ show (displayTerm t)))
+
 -- Compile a recv event.
 deriveEvent _ st ((In pos ch t), _) =
   case receivable t of
@@ -311,6 +316,10 @@ deriveOutputs st r =
 deriveOutput :: MonadFail m => Pos -> (State, [Vari]) ->
                 Term -> m (State, [Vari])
 deriveOutput pos (st, vs) t =
-  do
-    (st, v) <- build pos st t
-    return (st, v : vs)
+  case receivable t of
+    Nothing ->                  -- t is receivable.
+      do
+        (st, v) <- build pos st t
+        return (st, v : vs)
+    Just t ->                   -- t is the offending term
+      fail (shows pos ("Message not receivable " ++ show (displayTerm t)))

@@ -113,6 +113,14 @@ Defined.
 #[global]
 Hint Resolve evt_dec : core.
 
+(** The message communicated by an event *)
+
+Definition evt_msg (e: evt): alg :=
+  match e with
+  | Sd _ t => t
+  | Rv _ t => t
+  end.
+
 (** ** Kinds of Messages *)
 
 (** Is [x] a basic value? *)

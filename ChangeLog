@@ -1,3 +1,9 @@
+2021-04-14  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* CPSA/Roletran/Derivation.hs (deriveEvent): Added missing checks
+	that determine if sent messages and returned messages are
+	receivable.
+
 2021-03-10  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* CPSA/Roletran/Emitter.hs (Kind):  Added refined program
