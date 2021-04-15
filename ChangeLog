@@ -1,5 +1,7 @@
 2021-04-14  John D. Ramsdell  <ramsdell@mitre.org>
 
+	* Makefile: Vastly simplified.
+
 	* CPSA/Roletran/Derivation.hs (deriveEvent): Added missing checks
 	that determine if sent messages and returned messages are
 	receivable.
