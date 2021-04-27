@@ -9,34 +9,30 @@ Description:
   The Cryptographic Protocol Shapes Analyzer (CPSA) attempts to
   enumerate all essentially different executions possible for a
   cryptographic protocol.  We call them the shapes of the protocol.
-  Naturally occurring protocols have only finitely many, indeed very
-  few shapes.  Authentication and secrecy properties are easy to
-  determine from them, as are attacks and anomalies.
+  Many naturally occurring protocols have only finitely many, indeed
+  very few shapes.  Authentication and secrecy properties are easy to
+  determine from them, as are attacks and anomalies, and an auxiliary
+  tool reads off strongest authentication and secrecy goals from the
+  shapes.
   .
   For each input problem, the CPSA program is given some initial
-  behavior, and it discovers what shapes are compatible with
-  it. Normally, the initial behavior is from the point of view of one
-  participant. The analysis reveals what the other participants must
-  have done, given the participant's view. The search is based on a
-  high-level algorithm that was claimed to be complete, i.e. every
-  shape can in fact be found in a finite number of steps. Further
-  theoretical work showed classes of executions that are not found by
-  the algorithm, however it also showed that every omitted execution
-  requires an unnatural interpretation of a protocol's roles.  Hence
-  the algorithm is complete relative to natural role semantics.
+  behavior, and it discovers what shapes are compatible with it.
+  Normally, the initial behavior is from the point of view of one
+  participant.  The analysis reveals what the other participants must
+  have done, given the participant's view.  The search is complete,
+  i.e. we proved every shape can in fact be found in a finite number
+  of steps, relative to a procedural semantics of protocol roles.
   .
-  The package contains a set of programs used to perform and display
-  the analysis.  A standards complient browser, such as Firefox,
-  Safari, or Chrome, is required to display the results.  Program
-  documentation is in the doc directory in the source distribution,
-  and installed in the package's data directory.  You can locate the
-  package's data directory by typing "cpsa --help" to a command
-  prompt.  New users should study the documentation and the sample
-  inputs in the data directory.  The source distribution includes a
-  test suite with an expanded set of input files and is easily
-  installed on operating systems that decend from Unix.  Serious
-  Windows users should install MSYS so as to allow the use of make and
-  script execution.
+  The package contains a set of programs used to perform the analysis
+  and display it in a browser.  Program documentation is in the doc
+  directory in the source distribution, and installed in the package's
+  data directory.  You can locate the package's data directory by
+  typing "cpsa --help" to a command prompt.  New users should study
+  the documentation and the sample inputs in the data directory.  The
+  source distribution includes a test suite with an expanded set of
+  input files and is easily installed on operating systems that decend
+  from Unix.  Serious Windows users should install MSYS so as to allow
+  the use of make and script execution.
   .
   The theory and algorithm used by CPSA was developed with the help of
   Joshua D. Guttman, John D. Ramsdell, Jon C. Herzog, Shaddin
@@ -153,7 +149,7 @@ Extra-Source-Files:
   coq/Examples/Yahalom_role.v coq/CSem.v coq/Proc.v coq/Derives.v
   coq/unilateral.scm coq/Unilateral.v coq/Role.v coq/Preamble.v
   coq/Intro.v coq/Nonce.v coq/Run.v coq/Run_sem.v coq/Subst.v
-      
+
 Source-Repository head
   Type:     git
   Location: git://github.com/mitre/cpsaexp.git
