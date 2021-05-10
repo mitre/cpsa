@@ -133,22 +133,32 @@ Extra-Source-Files:
   tst/factvar.tst tst/renamings.scm tst/renamings.tst
   tst/blanchet_doorsep.prot tst/blanchet_doorsep.tst
   coq/Sem_tactics.v coq/Comp.v coq/Alt_sem.v coq/Match.v coq/Alg.v
-  coq/Exec.v coq/Unilateral_proof.v coq/Makefile coq/procdoc.tex
-  coq/_CoqProject coq/Monad.v coq/procdoc.mk coq/README coq/Sem.v
-  coq/mkdist coq/Unilateral_role.v coq/mkdoc
+  coq/Exec.v coq/Intro.v coq/Nonce.v coq/Preamble.v
+  coq/Unilateral_proof.v coq/Makefile coq/Run.v coq/procdoc.tex
+  coq/Run_sem.v coq/_CoqProject coq/Monad.v coq/procdoc.mk coq/README
+  coq/Sem.v coq/mkdist coq/Unilateral_role.v coq/mkdoc
   coq/Examples/Otway_rees_proof.v coq/Examples/Otway_rees.v
-  coq/Examples/nsl.scm coq/Examples/Cert_role.v coq/Examples/Yahalom.v
-  coq/Examples/update coq/Examples/Cert.v coq/Examples/Makefile
-  coq/Examples/Bad_unilateral_proof.v coq/Examples/Nsl_proof.v
-  coq/Examples/_CoqProject coq/Examples/Nsl_role.v coq/Examples/README
-  coq/Examples/Cert_proof.v coq/Examples/bad_unilateral.scm
-  coq/Examples/Yahalom_proof.v coq/Examples/cert.scm
-  coq/Examples/otway_rees.scm coq/Examples/Bad_unilateral_role.v
-  coq/Examples/Otway_rees_role.v coq/Examples/Nsl.v
-  coq/Examples/Bad_unilateral.v coq/Examples/yahalom.scm
-  coq/Examples/Yahalom_role.v coq/CSem.v coq/Proc.v coq/Derives.v
-  coq/unilateral.scm coq/Unilateral.v coq/Role.v coq/Preamble.v
-  coq/Intro.v coq/Nonce.v coq/Run.v coq/Run_sem.v coq/Subst.v
+  coq/Examples/Ltk_proof.v coq/Examples/nsl.scm
+  coq/Examples/privk2.scm coq/Examples/Yahalom.v coq/Examples/update
+  coq/Examples/Privk2_role.v coq/Examples/invk.scm
+  coq/Examples/Privk2.v coq/Examples/Pubk2_role.v
+  coq/Examples/Makefile coq/Examples/ltk.scm
+  coq/Examples/Pubk2_proof.v coq/Examples/Invk_role.v
+  coq/Examples/Privk.v coq/Examples/Bad_unilateral_proof.v
+  coq/Examples/Invk_proof.v coq/Examples/Nsl_proof.v
+  coq/Examples/_CoqProject coq/Examples/Ltk.v coq/Examples/Nsl_role.v
+  coq/Examples/README coq/Examples/Ltk_role.v coq/Examples/pubk.scm
+  coq/Examples/Privk_proof.v coq/Examples/bad_unilateral.scm
+  coq/Examples/Pubk.v coq/Examples/Yahalom_proof.v
+  coq/Examples/Pubk2.v coq/Examples/otway_rees.scm
+  coq/Examples/Bad_unilateral_role.v coq/Examples/privk.scm
+  coq/Examples/Privk_role.v coq/Examples/Otway_rees_role.v
+  coq/Examples/Nsl.v coq/Examples/Invk.v coq/Examples/Pubk_role.v
+  coq/Examples/Bad_unilateral.v coq/Examples/Privk2_proof.v
+  coq/Examples/pubk2.scm coq/Examples/Pubk_proof.v
+  coq/Examples/yahalom.scm coq/Examples/Yahalom_role.v coq/Proc.v
+  coq/Derives.v coq/unilateral.scm coq/Unilateral.v coq/Role.v
+  coq/Subst.v
 
 Source-Repository head
   Type:     git

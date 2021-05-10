@@ -33,7 +33,7 @@ Definition valid_role (r: role): bool :=
     forallb is_basic (uniqs r) &&
     has_no_dups (uniqs r) &&
     forallb (well_typed_with_chan decls) (inputs r) &&
-    forallb receivable (inputs r) &&
+    forallb (fun t => is_basic t || is_chan t) (inputs r) &&
     forallb receivable (map evt_msg (trace r)) &&
     forallb receivable (outputs r) &&
     forallb (well_typed decls) (outputs r) &&

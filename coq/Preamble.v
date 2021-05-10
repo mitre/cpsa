@@ -1,5 +1,7 @@
 (** * Some General Purpose Tactics *)
 
+Require Import Bool Plus.
+
 Ltac inv H := inversion H; clear H; subst.
 
 Ltac find_if :=
@@ -38,4 +40,15 @@ Proof.
   - right.
     exists a; auto.
   - left; auto.
+Qed.
+
+Ltac alt_option_dec x y H :=
+  destruct (option_dec x) as [H|H];
+  [ idtac | destruct H as [y H] ].
+
+Lemma alt_bool_dec (b: bool):
+  {b = true} + {b = false}.
+Proof.
+  destruct (bool_dec b true) as [H|H]; auto.
+  rewrite not_true_iff_false in H; auto.
 Qed.

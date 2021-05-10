@@ -103,6 +103,14 @@ Proof.
     apply IHo in H10; auto.
   - inv H.
     apply IHo in H10; auto.
+  - inv H.
+    apply IHo in H10; auto.
+  - inv H.
+    apply IHo in H10; auto.
+  - inv H.
+    apply IHo in H10; auto.
+  - inv H.
+    apply IHo in H10; auto.
 Qed.
 
 Lemma sem_implies_outputs:

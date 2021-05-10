@@ -33,12 +33,12 @@ Fixpoint nonce (stmts: list stmt) (tr: list evt) (us: list alg):
     | nil => Some nil
     | _ => None
     end
-  | Bind (_, t) Nonce_ :: stmts, Sd _ x :: _ =>
+  | Bind (_, t) Frsh_ :: stmts, Sd _ x :: _ =>
     p <- find_nonce x t nil us;;
     let (u, us) := p in
     us <- nonce stmts tr us;;
     Some (u :: us)
-  | Bind (_, _) Nonce_ :: stmts, Rv _ _ :: _ =>
+  | Bind (_, _) Frsh_ :: stmts, Rv _ _ :: _ =>
     None
   | Send _ _ :: stmts, Sd _ x :: tr =>
     if existsb (fun u => cb u x) us then

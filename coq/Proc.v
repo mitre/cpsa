@@ -82,14 +82,14 @@ Hint Resolve decl_dec : core.
 
 (** Expressions *)
 Inductive expr: Set :=
-| Tag_: string -> expr          (* Construct a tag *)
+| Quot_: string -> expr         (* Construct a tag *)
 | Hash_: pvar -> expr           (* Construct a hash *)
 | Pair_: pvar -> pvar -> expr   (* Construct a pair *)
 | Encr_: pvar -> pvar -> expr   (* Encrypt plain text *)
 | Frst_: pvar -> expr           (* Project first component of pair *)
 | Scnd_: pvar -> expr           (* Project second component of pair *)
 | Decr_: pvar -> pvar -> expr   (* Decrypt cipher text *)
-| Nonce_: expr                  (* Generate a nonce *)
+| Frsh_: expr                   (* Generate a nonce *)
 | Recv_:  pvar -> expr.         (* Receive a message *)
 
 (** Statements *)
@@ -98,7 +98,11 @@ Inductive stmt: Set :=
 | Return: list pvar -> stmt     (* Return values *)
 | Bind: decl -> expr -> stmt    (* Bind a variable *)
 | Send: pvar -> pvar -> stmt    (* Send a message *)
-| Same: pvar -> pvar -> stmt.   (* Check for sameness *)
+| Same: pvar -> pvar -> stmt    (* Check for sameness *)
+| Ltkp: pvar -> pvar -> pvar -> stmt (* Check Inv predicate *)
+| Invp: pvar -> pvar -> stmt    (* Check Name predicate *)
+| Namp: pvar -> pvar -> stmt    (* Check Name2 predicate *)
+| Nm2p: pvar -> pvar -> pvar -> stmt. (* Check LTK predicate *)
 
 (** Procedures *)
 

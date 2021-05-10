@@ -1,5 +1,7 @@
 (** * Role Compiler
 
+    THE COMPILER IS OUT-OF-DATE.  Please ignore this for now.
+
     The role compiler translates a role specified as a [Proc.Sem.role]
     into a procedure specified as a [Proc.Proc.proc] and also returns
     the final compile time [store] produced during the compilation.
@@ -71,7 +73,7 @@ Fixpoint uniq_list (tr: list evt) (us: list alg): list (list alg) :=
 Definition comp_uniq (st: state) (u: alg): state :=
   mkSt (S (fresh st))
        ((u, fresh st) :: cstore st)
-       ((Bind (fresh st, type_of u) Nonce_) :: code st).
+       ((Bind (fresh st, type_of u) Frsh_) :: code st).
 
 (** ** Trace and Outputs
 
@@ -86,7 +88,7 @@ Fixpoint synth (st: state) (x: alg): option (state * pvar) :=
       Some (mkSt (S (fresh st))
                  ((x, fresh st) :: cstore st)
                  ((Bind (fresh st, type_of x)
-                        (Tag_ s)) :: code st),
+                        (Quot_ s)) :: code st),
             fresh st)
     | Pr y z =>
       l <- synth st y;;

@@ -42,6 +42,12 @@ Defined.
 #[global]
 Hint Resolve akey_dec : core.
 
+Definition akey_eqb x y: bool :=
+  if akey_dec x y then
+    true
+  else
+    false.
+
 (** Message algebra *)
 
 Inductive alg: Set :=

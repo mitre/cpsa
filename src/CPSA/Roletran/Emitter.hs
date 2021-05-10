@@ -49,7 +49,6 @@ kind (En _ _) = KSenc
 kind (Hsh _) = KHash
 kind (Chn _) = KChan
 
-
 -- When true, add the kind of a let bound variable
 showBindKind :: Bool
 showBindKind = True
@@ -85,6 +84,10 @@ data Stmt
   | Send Vari Decl              -- Send a message
   | Bind Decl Expr              -- Bind a variable to an expression
   | Same Kind Vari Vari         -- Are two values the same?
+  | Ltkp Vari Vari Vari         -- Values related by the ltk function?
+  | Invp Kind Vari Vari         -- Values related by the invk function?
+  | Namp Kind Vari Vari         -- Values related by the pubk function?
+  | Nm2p Kind Vari Vari Vari    -- Values related by the pubk2 function?
   | Return [Vari]               -- Return values from the procedure
   | Comment String              -- Insert a comment
 
@@ -95,9 +98,9 @@ data Expr
   | Scnd Kind Vari              -- project second component of pair
   | Encr Decl Decl              -- Encrypt plain text
   | Decr Kind Vari Decl         -- Decrypt cipher text
-  | Tagg String                 -- Construct a tag
+  | Quot String                 -- Construct a tag
   | Hash Decl                   -- Construct a hash
-  | Nonce Kind                  -- Generate a nonce
+  | Frsh Kind                   -- Generate a fresh nonce
 
 -- Emit code as a pretty printed S-expression
 
@@ -154,6 +157,18 @@ displayStmt first (Bind d e) =
 displayStmt first (Same s x y) =
   mark "(same" [s] ++ " " ++ var first x ++
   " " ++ var first y ++ ")"
+displayStmt first (Ltkp x y z) =
+  "(ltk " ++ var first x ++ " " ++ var first y ++
+  " " ++ var first z ++ ")"
+displayStmt first (Invp s x y) =
+  mark "(invp" [s] ++ " " ++ var first x ++
+  " " ++ var first y ++ ")"
+displayStmt first (Namp s x y) =
+  mark "(namp" [s] ++ " " ++ var first x ++
+  " " ++ var first y ++ ")"
+displayStmt first (Nm2p s x y z) =
+  mark "(nm2p" [s] ++ " " ++ var first x ++
+  " " ++ var first y ++ " " ++ var first z ++ ")"
 displayStmt first (Return vs) =
   "(return" ++ foldr f ")" vs
   where
@@ -175,11 +190,11 @@ displayExpr first (Encr (x, s) (y, t)) =
 displayExpr first (Decr s x (y, t)) =
   mark "(decr" [s, inv t] ++ " " ++
   var first x ++ " " ++ var first y ++ ")"
-displayExpr _ (Tagg s) = "\"" ++ s ++ "\""
+displayExpr _ (Quot s) = "\"" ++ s ++ "\""
 displayExpr first (Hash (x, s)) =
   mark "(hash" [s] ++ " " ++ var first x ++ ")"
-displayExpr _ (Nonce s) =
-  mark "(nonce" [s] ++ ")"
+displayExpr _ (Frsh s) =
+  mark "(frsh" [s] ++ ")"
 
 -- Display parameters with variables that start with 'p'.
 -- Display let bound variables starting with 'v'.

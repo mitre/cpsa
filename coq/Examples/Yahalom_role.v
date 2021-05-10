@@ -14,7 +14,7 @@ Definition init_role: role :=
                 (Sk (Lt 0 8))) (Mg 5));
    Sd 6 (Pr (Mg 5) (En (Tx 4) (Sk (Sv 2))))]
   [Tx 3]
-  [Ch 6; Ch 7; Nm 0; Nm 1; Sk (Lt 0 8)]
+  [Ch 6; Ch 7; Nm 0; Nm 1; Nm 8; Sk (Lt 0 8)]
   [Sk (Sv 2)].
 
 (** Role: resp (yahalom.scm:23:3) *)

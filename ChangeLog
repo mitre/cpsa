@@ -1,3 +1,8 @@
+2021-05-07  John D. Ramsdell  <ramsdell0mitre.org>
+
+	* Roletran correctly handles long term keys, key inverses, and
+	named asymmetric keys.
+
 2021-04-27  Joshua D. Guttman  <guttman@mitre.org>
 
 	* clarified package description (deorigination)

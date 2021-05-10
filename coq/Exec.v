@@ -1,80 +1,71 @@
 (** * Executable Roles
 
-    Every executable role can be compiled and only executable roles
-    can be compiled. *)
+    Every executable role will be compiled. *)
 
-Require Import Proc Alg Sem Derives Comp.
+Require Import Proc Alg Role Derives Comp.
 
-(** Outputs are executable iff each one can be derived. *)
+(** A member [y] of [ys] is reducible iff every encryption carried by
+    y can be decrypted and every hash can be synthesized.  *)
 
-Inductive executable_outputs (pub: list alg): list alg -> Prop :=
-| Exec_outs_nil: executable_outputs pub nil
-| Exec_outs_pair: forall (x: alg) (xs: list alg),
-    derives pub x ->
-    executable_outputs pub xs ->
-    executable_outputs pub (x :: xs).
-#[global]
-Hint Constructors executable_outputs : core.
+Definition reducible (xs ys: list alg): Prop :=
+  forall y,
+    In y ys ->
+    (forall x k,
+        carried_by (En x k) y ->
+        derives (ys ++ xs) (inv k)) /\
+    (forall x,
+        carried_by (Hs x) y ->
+        derives (ys ++ xs) x).
 
-(** Definition of reducible *)
+(** ** Executable Role
 
-Inductive reducible (pub: list alg) (x: alg): Prop :=
-| Reducible:
-    (forall y, cb y x = true -> In y pub) ->
-    (forall y z, cb (En y z) x = true -> reducible pub (inv z)) ->
-    (forall y, cb (Hs y) x = true -> reducible pub y) ->
-    reducible pub x.
+    A role is executable iff
 
-(** Executable trace
+    - the role is valid,
 
-<<
-   Parmeters:
-   list alg:         Outputs
-   list alg:         Public messages
-   list evt:         Trace
-   list (list alg):  Unique list at an event
->>
-*)
+    - the input is reducible, and
 
-Inductive executable_trace
-          (outs: list alg): list alg -> list evt ->
-                            list (list alg) -> Prop :=
-| Exec_tr_nil: forall (pub: list alg),
-    executable_outputs pub outs ->
-    executable_trace outs pub nil nil
-| Exec_tr_sd: forall (us pub: list alg) (ch: var) (x: alg)
-                     (tr: list evt) (ys: list (list alg)),
-    derives (us ++ pub) (Ch ch) ->
-    derives (us ++ pub) x ->
-    executable_trace outs (us ++ pub) tr ys ->
-    executable_trace outs pub (Sd ch x :: tr) (us :: ys)
-| Exec_tr_rv: forall (pub: list alg) (ch: var) (x: alg)
-                     (tr: list evt) (ys: list (list alg)),
-    receivable x = true ->
-    reducible (x :: pub) x ->
-    derives pub (Ch ch) ->
-    executable_trace outs (x :: pub) tr ys ->
-    executable_trace outs pub (Rv ch x :: tr) ys.
-#[global]
-Hint Constructors executable_trace : core.
+    - the trace is executable.
 
-(** A role is executable if it is a valid execution and its trace is
-    executable. *)
+    A trace is executable iff
 
-Definition executable (rl: role): Prop :=
+    - the outputs can be derived from previous messaging,
+
+    - sent terms can be derived from previous messaging, and
+
+    - received terms are reducible given previous messaging. *)
+
+Fixpoint exec_tr (xs: list alg) (tr: list evt)
+         (us: list (list alg)) (outs: list alg): Prop :=
+  match tr, us with
+  | nil, nil =>
+    forall x,
+      In x outs ->
+      derives xs x
+  | Sd v x :: tr, u :: us =>
+    derives (u ++ xs) (Ch v) /\
+    derives (u ++ xs) x /\
+    exec_tr (u ++ xs) tr us outs
+  | Rv v x :: tr, us =>
+    derives xs (Ch v) /\
+    reducible xs (x :: nil) /\
+    exec_tr (x :: xs) tr us outs
+  | _, _ => False
+  end.
+
+Definition exec_rl (rl: role): Prop :=
   valid_role rl = true /\
-  executable_trace (outputs rl) (inputs rl) (trace rl)
-                   (uniq_list (trace rl) (uniqs rl)).
+  reducible nil (inputs rl) /\
+  exec_tr (rev (inputs rl))
+          (trace rl)
+          (uniq_list (trace rl) (uniqs rl))
+          (outputs rl).
 
-(** Conjectures about the how executable and comp are related. *)
+(** When the compiler is presented with an executable role, it will
+    produce code. *)
 
 Conjecture exec_implies_comp:
   forall (rl: role),
-    executable rl ->
+    exec_rl rl ->
     exists (cs: store) (p: proc),
       comp rl cs p.
-
-Conjecture comp_implies_exec:
-  forall (rl: role) (cs: store) (p: proc),
-    comp rl cs p ->
-    executable rl.

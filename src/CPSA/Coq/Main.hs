@@ -109,6 +109,16 @@ emitStmt h _ (Send _ chan msg) =
   hPutStrLn h ("   Send " ++ ref chan ++ " " ++ ref msg ++ ";")
 emitStmt h _ (Same _ x y) =
   hPutStrLn h ("   Same " ++ ref x ++ " " ++ ref y ++ ";")
+emitStmt h _ (Ltkp _ x y z) =
+  hPutStrLn h ("   Ltkp " ++ ref x ++ " " ++ ref y ++
+               " " ++ ref z ++ ";")
+emitStmt h _ (Invp _ x y) =
+  hPutStrLn h ("   Invp " ++ ref x ++ " " ++ ref y ++ ";")
+emitStmt h _ (Namp _ x y) =
+  hPutStrLn h ("   Namp " ++ ref x ++ " " ++ ref y ++ ";")
+emitStmt h _ (Nm2p _ x y z) =
+  hPutStrLn h ("   Nm2p " ++ ref x ++ " " ++
+                          ref y ++ " " ++ ref z ++ ";")
 emitStmt h margin (Return returns) =
   do
     hPutStr h "   Return "
@@ -124,7 +134,7 @@ emitExpr h (Call op args) =
     mapM_ (emitArg h) args
     hPutStr h ")"
 emitExpr h (Tag x) =
-  hPutStr h ("(Tag_ \"" ++ x ++ "\")")
+  hPutStr h ("(Quot_ \"" ++ x ++ "\")")
 
 trim :: String -> String
 trim [] = []
@@ -137,7 +147,7 @@ emitArg h x =
 
 emitReturns :: Handle -> Int -> [String] -> IO ()
 emitReturns h _ [] =
-  hPutStr h "[]"
+  hPutStrLn h "[]"
 emitReturns h _ xs =
   do
     hPutStr h "["

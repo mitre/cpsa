@@ -13,7 +13,7 @@ Definition init_role: role :=
    Rv 4 (En (Pr (Tx 3) (Pr (Nm 0) (Pr (Nm 1) (Sk (Sv 2)))))
             (Sk (Lt 0 5)))]
   [Tx 3]
-  [Ch 4; Nm 0; Nm 1; Sk (Lt 0 5)]
+  [Ch 4; Nm 0; Nm 1; Nm 5; Sk (Lt 0 5)]
   [Sk (Sv 2)].
 
 (** Role: resp (otway_rees.scm:20:3) *)

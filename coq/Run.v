@@ -37,7 +37,7 @@ Record run_state: Set :=
 Definition run_expr (rst: run_state) (ex: expr):
   option (run_state * alg) :=
   match ex with
-  | Tag_ s => Some (rst, Tg s)
+  | Quot_ s => Some (rst, Tg s)
   | Hash_ v =>
     x <- lookup v (renv rst);;
     Some (rst, Hs x)
@@ -86,7 +86,7 @@ Definition run_expr (rst: run_state) (ex: expr):
       end
     | _ => None
     end
-  | Nonce =>
+  | Frsh =>
     match runiqs rst with
     | u :: us =>
       Some (mkRSt (renv rst) (rtr rst) us, u)
@@ -138,6 +138,58 @@ Definition run_stmt (rst: run_state) (cmd: stmt): option run_state :=
       Some rst
     else
       None
+  | Ltkp u v w =>
+    x <- lookup u (renv rst);;
+    y <- lookup v (renv rst);;
+    z <- lookup w (renv rst);;
+    match y, z with
+    | Nm b, Nm c =>
+      if alg_eqb x (Sk (Lt b c)) then
+        Some rst
+      else
+        None
+    | _, _ => None
+    end
+  | Invp u v =>
+    x <- lookup u (renv rst);;
+    y <- lookup v (renv rst);;
+    if alg_eqb x (inv y) then
+      Some rst
+    else
+      None
+  | Namp u v =>
+    x <- lookup u (renv rst);;
+    y <- lookup v (renv rst);;
+    match x, y with
+    | Ak k, Nm b =>
+      if akey_eqb k (Pb b) then
+        Some rst
+      else
+        None
+    | Ik k, Nm b =>
+      if akey_eqb k (Pb b) then
+        Some rst
+      else
+        None
+    | _, _ => None
+    end
+  | Nm2p u v w =>
+    x <- lookup u (renv rst);;
+    y <- lookup v (renv rst);;
+    z <- lookup w (renv rst);;
+    match x, y, z with
+    | Ak k, Tg s, Nm c =>
+      if akey_eqb k (Pb2 s c) then
+        Some rst
+      else
+        None
+    | Ik k, Tg s, Nm c =>
+      if akey_eqb k (Pb2 s c) then
+        Some rst
+      else
+        None
+    | _, _, _ => None
+    end
   | Return _ => None
 end.
 

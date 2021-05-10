@@ -82,6 +82,7 @@ mkRole :: MonadFail m => String -> Pos -> VarEnv -> Trace ->
           [Term] -> [Term] -> [Term] -> m Role
 mkRole name pos vars trace uniques inputs outputs =
   do
+    mapM_ (checkInput pos) inputs
     mapM_ (checkUniq pos inputs) uniques
     uniquesPos <- mapM (addPos pos trace) (L.nub uniques)
     mapM_ (checkOutput pos inputs) outputs
@@ -94,6 +95,11 @@ mkRole name pos vars trace uniques inputs outputs =
         rinputs = L.nub inputs,
         routputs = outputs
       }
+
+checkInput :: MonadFail m => Pos -> Term -> m ()
+checkInput _ input | isBasic input || isChanVar input = return ()
+checkInput pos input =
+    fail (shows pos $ "Input is not a basic value or a channel " ++ show input)
 
 checkUniq :: MonadFail m => Pos -> [Term] -> Term -> m ()
 checkUniq pos inputs unique

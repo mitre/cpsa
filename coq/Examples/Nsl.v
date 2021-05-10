@@ -12,7 +12,7 @@ Definition init: proc :=
   [(0, Chan); (1, Ikey); (2, Akey); (3, Akey)]
   [
    (* Send (nsl.scm:7:6) *)
-   Bind (4, Text) (Nonce_);
+   Bind (4, Text) (Frsh_);
    Bind (5, Pair) (Pair_ 4 2);
    Bind (6, Aenc) (Encr_ 5 3);
    Send 0 6;
@@ -44,7 +44,7 @@ Definition resp: proc :=
    Bind (7, Akey) (Scnd_ 5);
    Same 7 3;
    (* Send (nsl.scm:17:6) *)
-   Bind (8, Text) (Nonce_);
+   Bind (8, Text) (Frsh_);
    Bind (9, Pair) (Pair_ 8 2);
    Bind (10, Pair) (Pair_ 6 9);
    Bind (11, Aenc) (Encr_ 10 3);

@@ -37,14 +37,12 @@ derive r =
   do
     -- Construct the parameter bindings.
     let (fresh, bindings, ins) = bindInputs (rinputs r)
-    -- Ensure inputs are receivable
-    mapM_ (checkInput (rpos r)) (reverse bindings)
-    -- Construct the statements from the inputs
-    preamble <- deriveInputs r fresh (reverse bindings)
+    -- Construct the initial state.
+    let st = (fresh, M.fromList bindings, [])
     -- Construct a list of the return types.
     let outs = map kind (routputs r)
     -- Construct the statements that form the body of the procedure.
-    stmts <- deriveStmts r preamble
+    stmts <- deriveStmts r st
     return $ mkProc
       (rname r)
       (rpos r)
@@ -77,20 +75,6 @@ compStore (_, cs, _) = cs
 -- The third component is the current list of statements.
 statements :: State -> [Stmt]
 statements (_, _, stmts) = stmts
-
--- Construct statements for an input.
-checkInput :: MonadFail m => Pos -> (Term, Vari) -> m ()
-checkInput pos (t, _) =
-  case receivable t of
-    Nothing ->                  -- t is receivable.
-      return ()
-    Just t ->                   -- t is the offending term
-      fail (shows pos ("Input not receivable " ++ show (displayTerm t)))
-
--- Compile the inputs.
-deriveInputs :: MonadFail m => Role -> Vari -> [(Term, Vari)] -> m State
-deriveInputs r fresh ts =
-  reduce (rpos r) (fresh, M.empty, []) ts
 
 -- Compile the trace and the outputs.
 deriveStmts :: MonadFail m => Role -> State -> m [Stmt]
@@ -154,7 +138,7 @@ deriveUniques uniques i st =
     f st@(fresh, cs, stmts) (t, j)
       | i == j = (fresh + 1,
                   M.insert t fresh cs, -- Bind fresh to a nonce.
-                  Bind (fresh, kind t) (Nonce (kind t)) : stmts)
+                  Bind (fresh, kind t) (Frsh (kind t)) : stmts)
       | otherwise = st
 
 -- Synthesize a term and fail when it can't be built.
@@ -214,7 +198,7 @@ synthTag (fresh, cs, stmts) t s  =
   return (
     (fresh + 1,
      M.insert t fresh cs,       -- Bind fresh to the tag.
-     Bind (fresh, kind t) (Tagg s) : stmts),
+     Bind (fresh, kind t) (Quot s) : stmts),
     fresh)
 
 -- Reduce a received term.  This is by far the trickiest code.  The
@@ -242,6 +226,9 @@ loop pos st more ((t, v) : recvd) todo =
     Pr x y -> loopPair pos st recvd todo t v x y
     En x y -> loopEncr pos st more recvd todo t v x y
     Hsh _ -> loopHash pos st more recvd todo t v
+    Sky (Ltk x y) -> loopLtk pos st more recvd todo t v x y
+    Aky k -> loopAsym pos st more recvd todo t v k
+    Iky k -> loopAsym pos st more recvd todo t v k
     _ -> loopOther pos st more recvd todo t v
 
 -- Reduce a pair.  Adds two instructions and allocates two variables.
@@ -291,7 +278,107 @@ loopHash pos st more recvd todo t v =
         let st = (fresh, cs, stmt : stmts)
         loop pos st True recvd todo
 
--- Reduce terms other than pairs, encryptions, and hashes.
+-- Reduce a long term key.
+loopLtk :: MonadFail m => Pos -> State -> Bool ->
+           [(Term, Vari)] -> [(Term, Vari)] ->
+           Term -> Vari -> Var -> Var -> m State
+loopLtk pos st@(fresh, cs, stmts) more recvd todo t v x y =
+  case synth st t of
+    Nothing ->
+      case M.lookup (Nam x) (compStore st) of
+        Nothing ->              -- Create variable reference to x
+          let st = (
+                fresh + 1,
+                cs,
+                stmts) in
+            loop pos st True recvd ((Nam x, fresh) : (t, v) : todo)
+        Just u ->
+          case M.lookup (Nam y) (compStore st) of
+            Nothing ->              -- Create variable reference to y
+              let st = (
+                    fresh + 1,
+                    cs,
+                    stmts) in
+                loop pos st True recvd ((Nam y, fresh) : (t, v) : todo)
+            Just w ->
+              let st = (
+                    fresh,
+                    M.insert t v cs,
+                    Ltkp v u w : stmts) in
+                loop pos st True recvd todo
+    Just ((fresh, cs, stmts), h) ->
+      do                        -- Otherwise, check sameness
+        let stmt = Same (kind t) v h
+        let st = (fresh, cs, stmt : stmts)
+        loop pos st more recvd todo
+
+-- Reduce an asymmtric key.
+loopAsym :: MonadFail m => Pos -> State -> Bool ->
+            [(Term, Vari)] -> [(Term, Vari)] ->
+            Term -> Vari -> Akey -> m State
+loopAsym pos st@(fresh, cs, stmts) more recvd todo t v (AVar _) =
+  case synth st t of
+    Nothing ->
+      case synth st (inv t) of
+        Nothing ->            -- Add new term
+          loop pos (fresh, M.insert t v cs, stmts) True recvd todo
+        Just ((fresh, cs, stmts), h) ->
+          do
+            let stmt = Invp (kind t) v h
+            let st = (fresh, M.insert t v cs, stmt : stmts)
+            loop pos st True recvd todo
+    Just ((fresh, cs, stmts), h) ->
+      do                        -- Otherwise, check sameness
+        let stmt = Same (kind t) v h
+        let st = (fresh, cs, stmt : stmts)
+        loop pos st more recvd todo
+loopAsym pos st@(fresh, cs, stmts) more recvd todo t v (Pubk x) =
+  case synth st t of
+    Nothing ->
+      case M.lookup (Nam x) (compStore st) of
+        Nothing ->              -- Create variable reference to x
+          let st = (
+                fresh + 1,
+                cs,
+                stmts) in
+            loop pos st True recvd ((Nam x, fresh) : (t, v) : todo)
+        Just u ->
+          do
+            let stmt = Namp (kind t) v u
+            let st = (fresh, M.insert t v cs, stmt : stmts)
+            loop pos st True recvd todo
+    Just ((fresh, cs, stmts), h) ->
+      do                        -- Otherwise, check sameness
+        let stmt = Same (kind t) v h
+        let st = (fresh, cs, stmt : stmts)
+        loop pos st more recvd todo
+loopAsym pos st@(fresh, cs, stmts) more recvd todo t v (Pubk2 q x) =
+  case synth st t of
+    Nothing ->
+      case M.lookup (Nam x) (compStore st) of
+        Nothing ->              -- Create variable reference to x
+          let st = (
+                fresh + 1,
+                cs,
+                stmts) in
+            loop pos st True recvd ((Nam x, fresh) : (t, v) : todo)
+        Just u ->
+          case synth st (Tag q) of
+            Just ((fresh, cs, stmts), h) ->
+              do
+                let stmt = Nm2p (kind t) v h u
+                let st = (fresh, M.insert t v cs, stmt : stmts)
+                loop pos st True recvd todo
+            Nothing ->
+              fail (shows pos ("Tag not synthesized " ++ show (displayTerm t)))
+    Just ((fresh, cs, stmts), h) ->
+      do                        -- Otherwise, check sameness
+        let stmt = Same (kind t) v h
+        let st = (fresh, cs, stmt : stmts)
+        loop pos st more recvd todo
+
+-- Reduce terms other than pairs, encryptions, hashes, long term keys,
+-- and asymmetric keys.
 loopOther :: MonadFail m => Pos -> State -> Bool ->
             [(Term, Vari)] -> [(Term, Vari)] ->
             Term -> Vari -> m State

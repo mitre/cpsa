@@ -8,23 +8,6 @@
 Require Import FunInd String List Nat Bool Arith.
 Require Import Preamble Monad Alg Match.
 
-Lemma option_dec {A} (a: option A):
-  {a = None} + {exists b, a = Some b}.
-Proof.
-  destruct a.
-  - right.
-    exists a; auto.
-  - left; auto.
-Qed.
-
-Lemma eqb_refl_true:
-  forall v,
-    (v =? v) = true.
-Proof.
-  intros.
-  rewrite Nat.eqb_eq; auto.
-Qed.
-
 Definition subst_skey (sb: sbst) (x: skey): skey :=
   match x with
   | Sv v =>
@@ -113,13 +96,11 @@ Lemma extend_term_lookup:
 Proof.
   unfold extend_term.
   intros.
-  destruct (option_dec (lookup v sb)) as [G|G].
-  - rewrite G in H.
-    inv H; simpl; auto.
-    rewrite eqb_refl_true; simpl; auto.
-  - destruct G as [b].
-    rewrite H0 in H.
-    destruct (alg_dec x b) as [G|G]; inv H; simpl; auto.
+  alt_option_dec (lookup v sb) b G;
+    rewrite G in H.
+  - inv H; simpl; auto.
+    rewrite Nat.eqb_refl; simpl; auto.
+  - destruct (alg_dec x b); inv H; simpl; auto.
 Qed.
 
 Lemma lookup_extend_term_lookup:
@@ -133,14 +114,12 @@ Proof.
   destruct (Nat.eq_dec y v) as [G|G]; subst.
   - rewrite H in H0.
     destruct (alg_dec z x) as [G|G]; subst; inv H0; auto.
-  - destruct (option_dec (lookup y sb)) as [F|F].
-    + rewrite F in H0.
-      inv H0; simpl.
+  - alt_option_dec (lookup y sb) b F;
+      rewrite F in H0.
+    + inv H0; simpl.
       rewrite <- Nat.eqb_neq in G.
       rewrite G; auto.
-    + destruct F as [b].
-      rewrite H1 in H0.
-      destruct (alg_dec z b); subst.
+    + destruct (alg_dec z b); subst.
       inv H0; auto.
       inv H0.
 Qed.

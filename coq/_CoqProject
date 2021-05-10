@@ -15,7 +15,6 @@ Sem_tactics.v
 Unilateral.v
 Unilateral_role.v
 Unilateral_proof.v
-CSem.v
 Alt_sem.v
 Comp.v
 Derives.v

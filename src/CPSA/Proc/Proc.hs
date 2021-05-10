@@ -41,6 +41,10 @@ data Stmt
   = Send String Var Var         -- Send a message
   | Bind Decl Expr              -- Bind a variable to an expression
   | Same String Var Var         -- Are two values the same?
+  | Ltkp String Var Var Var     -- Vars related by the ltk function?
+  | Invp String Var Var         -- Vars related by the invk function?
+  | Namp String Var Var         -- Vars related by the pubk function?
+  | Nm2p String Var Var Var     -- Vars related by the pubk2 function?
   | Return [Var]                -- Return values from the procedure
   | Comment String              -- Insert a comment
 
@@ -86,12 +90,23 @@ parseStmt (L _ [S _ "let", L _ [S _ var, S _ kind], expr]) =
   do
     expr <- parseExpr expr
     return $ Bind (var, kind) expr
-parseStmt (L _ [S _ send, S _ chan, S _ msg])
-  | prefix "send_" send =
-    return $ Send send chan msg
-parseStmt (L _ [S _ same, S _ x, S _ y])
-  | prefix "same_" same =
-    return $ Same same x y
+parseStmt (L _ [S _ op, S _ chan, S _ msg])
+  | prefix "send_" op =
+    return $ Send op chan msg
+parseStmt (L _ [S _ op, S _ x, S _ y])
+  | prefix "same_" op =
+    return $ Same op x y
+parseStmt (L _ [S _ "ltk", S _ x, S _ y, S _ z]) =
+    return $ Ltkp "ltk" x y z
+parseStmt (L _ [S _ op, S _ x, S _ y])
+  | prefix "invp_" op =
+    return $ Invp op x y
+parseStmt (L _ [S _ op, S _ x, S _ y])
+  | prefix "namp_" op =
+    return $ Namp op x y
+parseStmt (L _ [S _ op, S _ x, S _ y, S _ z])
+  | prefix "nm2p_" op =
+    return $ Nm2p op x y z
 parseStmt (L _ (S _ "return" : xs)) =
   do
     returns <- mapM parseString xs

@@ -12,7 +12,7 @@ Definition init: proc :=
   [(0, Chan); (1, Akey)]
   [
    (* Send (unilateral.scm:9:7) *)
-   Bind (2, Text) (Nonce_);
+   Bind (2, Text) (Frsh_);
    Bind (3, Aenc) (Encr_ 2 1);
    Send 0 3;
    (* Recv (unilateral.scm:10:7) *)

@@ -86,7 +86,7 @@ Qed.
 Inductive expr_sem: env -> list evt -> list alg -> expr ->
                     alg -> list evt -> list alg -> Prop :=
 | Expr_tag: forall ev tr us x,
-    expr_sem ev tr us (Tag_ x) (Tg x) tr us
+    expr_sem ev tr us (Quot_ x) (Tg x) tr us
 | Expr_hash: forall ev tr us x a,
     lookup x ev = Some a ->
     expr_sem ev tr us (Hash_ x) (Hs a) tr us
@@ -108,8 +108,8 @@ Inductive expr_sem: env -> list evt -> list alg -> expr ->
     lookup x ev = Some (En a b) ->
     lookup y ev = Some (inv b) ->
     expr_sem ev tr us (Decr_ x y) a tr us
-| Expr_nonce: forall ev tr us a,
-    expr_sem ev tr (a :: us) Nonce_ a tr us
+| Expr_frsh: forall ev tr us a,
+    expr_sem ev tr (a :: us) Frsh_ a tr us
 | Expr_recv: forall ev tr us a c d,
     lookup c ev = Some (Ch d) ->
     expr_sem ev (Rv d a :: tr) us (Recv_ c) a tr us.
@@ -145,7 +145,40 @@ Inductive stmt_sem: env -> list evt -> list alg ->
     lookup x ev = Some a ->
     lookup y ev = Some b ->
     a = b ->                    (* Sameness check *)
-    stmt_sem ev tr us (Same x y) ev tr us.
+    stmt_sem ev tr us (Same x y) ev tr us
+| Stmt_ltkp: forall ev tr us x y z a b c,
+    lookup x ev = Some a ->
+    lookup y ev = Some (Nm b) ->
+    lookup z ev = Some (Nm c) ->
+    a = Sk (Lt b c) ->          (* Ltk check *)
+    stmt_sem ev tr us (Ltkp x y z) ev tr us
+| Stmt_invp: forall ev tr us x y a b,
+    lookup x ev = Some a ->
+    lookup y ev = Some b ->
+    a = inv b ->                (* Inverse check *)
+    stmt_sem ev tr us (Invp x y) ev tr us
+| Stmt_pub_namp: forall ev tr us x y a b,
+    lookup x ev = Some (Ak a) ->
+    lookup y ev = Some (Nm b) ->
+    a = Pb b ->                (* Name check *)
+    stmt_sem ev tr us (Namp x y) ev tr us
+| Stmt_priv_namp: forall ev tr us x y a b,
+    lookup x ev = Some (Ik a) ->
+    lookup y ev = Some (Nm b) ->
+    a = Pb b ->                (* Name check *)
+    stmt_sem ev tr us (Namp x y) ev tr us
+| Stmt_pub_nm2p: forall ev tr us x y z a s b,
+    lookup x ev = Some (Ak a) ->
+    lookup y ev = Some (Tg s) ->
+    lookup z ev = Some (Nm b) ->
+    a = Pb2 s b ->              (* Tagged name check *)
+    stmt_sem ev tr us (Nm2p x y z) ev tr us
+| Stmt_priv_nm2p: forall ev tr us x y z a s b,
+    lookup x ev = Some (Ik a) ->
+    lookup y ev = Some (Tg s) ->
+    lookup z ev = Some (Nm b) ->
+    a = Pb2 s b ->              (* Tagged name check *)
+    stmt_sem ev tr us (Nm2p x y z) ev tr us.
 #[global]
 Hint Constructors stmt_sem : core.
 
@@ -157,6 +190,12 @@ Proof.
   intros.
   inversion H; subst.
   - exists [(v, val)]; auto.
+  - exists []; auto.
+  - exists []; auto.
+  - exists []; auto.
+  - exists []; auto.
+  - exists []; auto.
+  - exists []; auto.
   - exists []; auto.
   - exists []; auto.
 Qed.

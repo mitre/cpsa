@@ -8,12 +8,12 @@ indeed very few shapes.  Authentication and secrecy properties are
 easy to determine from them, as are attacks and anomalies.
 
 For each input problem, the CPSA program is given some initial
-behavior, and it discovers what shapes are compatible with it.
-Normally, the initial behavior is from the point of view of one
-participant.  The analysis reveals what the other participants must
-have done, given the participant's view.  The search is based on a
+behavior, and it discovers what shapes are compatible with
+it. Normally, the initial behavior is from the point of view of one
+participant. The analysis reveals what the other participants must
+have done, given the participant's view. The search is based on a
 high-level algorithm that was claimed to be complete, i.e. every shape
-can in fact be found in a finite number of steps.  Further theoretical
+can in fact be found in a finite number of steps. Further theoretical
 work showed classes of executions that are not found by the algorithm,
 however it also showed that every omitted execution requires an
 unnatural interpretation of a protocol's roles.  Hence the algorithm
@@ -62,9 +62,9 @@ The translator ignores all fields in a role definition except its
 name, `vars`, `trace`, `uniq-orig`, `inputs`, and `outputs`.
 
 The translator performs various checks to ensure that each role read
-is well formed.  It ensures the each term in the inputs is receivable
-given previous inputs.  It ensures that any basic value assumed to be
-uniquely originating originates in the role's trace, and that no
+is well formed.  It ensures the each term in the inputs is either a
+basic value or a channel.  It ensures that any basic value assumed to
+be uniquely originating originates in the role's trace, and that no
 uniquely originating value is in the inputs.  It ensures that no input
 variable is specified as an output.  It also ensures that every
 variable in terms that occur in the inputs, outputs, or are assumed to
@@ -170,7 +170,7 @@ role.
 
 (defproc init ((p0 chan) (p1 akey)) (text)
   (comment "Send (rtst/unilateral.scm:9:7)")
-  (let (v2 text) (nonce_t))
+  (let (v2 text) (frsh_t))
   (let (v3 aenc) (encr_ta v2 p1))
   (send_y p0 v3)
   (comment "Recv (rtst/unilateral.scm:10:7)")
