@@ -61,6 +61,10 @@ and Sem agree.
 
 Library Sem_tactics defines tactics used to automate many proof.
 
+Library CSem defines a concrete execution semantics in which
+probabilistic encryption is simulated by adding an argument to
+encryption that provides randomness.
+
 Library Comp defines the Roletran compiler (Not up-to-date).
 
 *)

@@ -85,7 +85,7 @@ Qed.
 
 Inductive expr_sem: env -> list evt -> list alg -> expr ->
                     alg -> list evt -> list alg -> Prop :=
-| Expr_tag: forall ev tr us x,
+| Expr_quot: forall ev tr us x,
     expr_sem ev tr us (Quot_ x) (Tg x) tr us
 | Expr_hash: forall ev tr us x a,
     lookup x ev = Some a ->
