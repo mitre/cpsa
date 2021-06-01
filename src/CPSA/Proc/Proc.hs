@@ -7,7 +7,7 @@
 -- University of California.
 
 module CPSA.Proc.Proc (
-  parse, Var, Sort, Decl, Stmt(..), Expr(..),
+  parse, Var, Kind, Decl, Stmt(..), Expr(..),
   Proc, mkProc, name, inputs, outputs, stmts, Item(..)) where
 
 import CPSA.Lib.SExpr
@@ -17,19 +17,19 @@ import CPSA.Lib.SExpr
 -- Variable
 type Var = String
 
-type Sort = String
+type Kind = String
 
--- A declaration, is a variable and a sort
-type Decl = (Var, Sort)
+-- A declaration, is a variable and a kind
+type Decl = (Var, Kind)
 
 -- A procedure
 data Proc
   = Proc { name :: String,
            inputs :: [Decl],
-           outputs :: [Sort],
+           outputs :: [Kind],
            stmts :: [Stmt] }
 
-mkProc :: String  -> [Decl] -> [Sort] -> [Stmt] -> Proc
+mkProc :: String  -> [Decl] -> [Kind] -> [Stmt] -> Proc
 mkProc name inputs outputs stmts =
   Proc { name = name,
          inputs = inputs,
@@ -41,13 +41,17 @@ data Stmt
   = Send String Var Var         -- Send a message
   | Bind Decl Expr              -- Bind a variable to an expression
   | Same String Var Var         -- Are two values the same?
+  | Ltkp String Var Var Var     -- Vars related by the ltk function?
+  | Invp String Var Var         -- Vars related by the invk function?
+  | Namp String Var Var         -- Vars related by the pubk function?
+  | Nm2p String Var Var Var     -- Vars related by the pubk2 function?
   | Return [Var]                -- Return values from the procedure
   | Comment String              -- Insert a comment
 
 -- Expressions
 data Expr
   = Call Var [Var]
-  | Tagg String
+  | Tag String
 
 data Item
   = Cmt Pos String
@@ -70,28 +74,39 @@ parseItem x =
   fail (shows (annotation x) "Unrecogized S-Expression")
 
 parseDecl :: SExpr Pos -> IO Decl
-parseDecl (L _ [S _ name, S _ sort]) =
-  return (name, sort)
+parseDecl (L _ [S _ name, S _ kind]) =
+  return (name, kind)
 parseDecl x =
   fail (shows (annotation x) "Expecting a declaration")
 
 parseString :: SExpr Pos -> IO String
-parseString (S _ sort) =
-  return sort
+parseString (S _ kind) =
+  return kind
 parseString x =
   fail (shows (annotation x) "Expecting a string")
 
 parseStmt :: SExpr Pos -> IO Stmt
-parseStmt (L _ [S _ "let", L _ [S _ var, S _ sort], expr]) =
+parseStmt (L _ [S _ "let", L _ [S _ var, S _ kind], expr]) =
   do
     expr <- parseExpr expr
-    return $ Bind (var, sort) expr
-parseStmt (L _ [S _ send, S _ chan, S _ msg])
-  | prefix "send_" send =
-    return $ Send send chan msg
-parseStmt (L _ [S _ same, S _ x, S _ y])
-  | prefix "same_" same =
-    return $ Same same x y
+    return $ Bind (var, kind) expr
+parseStmt (L _ [S _ op, S _ chan, S _ msg])
+  | prefix "send_" op =
+    return $ Send op chan msg
+parseStmt (L _ [S _ op, S _ x, S _ y])
+  | prefix "same_" op =
+    return $ Same op x y
+parseStmt (L _ [S _ "ltk", S _ x, S _ y, S _ z]) =
+    return $ Ltkp "ltk" x y z
+parseStmt (L _ [S _ op, S _ x, S _ y])
+  | prefix "invp_" op =
+    return $ Invp op x y
+parseStmt (L _ [S _ op, S _ x, S _ y])
+  | prefix "namp_" op =
+    return $ Namp op x y
+parseStmt (L _ [S _ op, S _ x, S _ y, S _ z])
+  | prefix "nm2p_" op =
+    return $ Nm2p op x y z
 parseStmt (L _ (S _ "return" : xs)) =
   do
     returns <- mapM parseString xs
@@ -108,7 +123,7 @@ prefix (x : xs) (y : ys) = x == y && prefix xs ys
 
 parseExpr :: SExpr Pos -> IO Expr
 parseExpr (Q _ tag) =
-  return $ Tagg tag
+  return $ Tag tag
 parseExpr (L _ (x : xs)) =
   do
     string <- parseString x

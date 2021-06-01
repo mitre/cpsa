@@ -1,26 +1,7 @@
+(** * Tactics for the Abstract Execution Semantics *)
+
 Require Import Alg Sem.
-
-(** Some general purpose tactics *)
-
-Ltac inv H := inversion H; clear H; subst.
-
-Ltac find_if :=
-  match goal with
-  | [ |- context[ if ?X then _ else _ ] ] => destruct X
-  end.
-
-Ltac destruct_disjunct :=
-  match goal with
-  | [ H: _ \/ _  |- _ ] => destruct H as [H|H]
-  end.
-
-Ltac destruct_ex_and :=
-  match goal with
-  | [ H: _ /\ _ |- _ ] =>
-    destruct H
-  | [ H: exists _, _ |- _ ] =>
-    destruct H
-  end.
+Require Export Preamble.
 
 (** A tactic for running an execution *)
 
@@ -41,7 +22,7 @@ Ltac sem_liveness :=
 Ltac sem_inputs :=
   repeat
     match goal with
-    | [ H: sort_check _ _ |- _ ] => inv H
+    | [ H: type_check _ _ |- _ ] => inv H
     | [ H: ins_inputs _ _ |- _ ] => inv H
     end.
 
@@ -54,10 +35,10 @@ Ltac sem_inv :=
     | [ H: ?l = inv ?r |- _ ] =>
       apply inv_swap in H; simpl in H; subst
     | [ H: lookup _ _ = _ |- _ ] => inv H
-    | [ H: sort_check _ _ |- _ ] => inv H
+    | [ H: type_check _ _ |- _ ] => inv H
     | [ H: expr_sem _ _ _ _ _ _ _ |- _ ] => inv H
     | [ H: stmt_sem _ _ _ _ _ _ _ |- _ ] => inv H
-    | [ H: stmt_list_sem _ _ _ _ _ _ _ _ |- _ ] => inv H
+    | [ H: stmt_list_sem _ _ _ _ _ _ |- _ ] => inv H
     end.
 
 Ltac sem_rewrite :=

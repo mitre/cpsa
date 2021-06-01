@@ -1,3 +1,31 @@
+2021-05-07  John D. Ramsdell  <ramsdell0mitre.org>
+
+	* Roletran correctly handles long term keys, key inverses, and
+	named asymmetric keys.
+
+2021-04-27  Joshua D. Guttman  <guttman@mitre.org>
+
+	* clarified package description (deorigination)
+
+2021-04-14  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* Makefile: Vastly simplified.
+
+	* CPSA/Roletran/Derivation.hs (deriveEvent): Added missing checks
+	that determine if sent messages and returned messages are
+	receivable.
+
+2021-03-10  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* CPSA/Roletran/Emitter.hs (Kind):  Added refined program
+	variables for procedures.
+
+2021-01-12  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* CPSA/Roletran/Derivation.hs (deriveInputs): Allowed inputs to
+	contain any term as long as they can be reduced using previous
+	inputs.
+
 2020-11-10  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* coq: Changed the representation of procedures to use statement

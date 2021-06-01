@@ -4,37 +4,70 @@
     role compiler. *)
 
 Require Import ListSet Bool Program Monad Proc Alg.
-Require Export Role.
+Require Export Role Match.
 Import List.ListNotations.
 Open Scope list_scope.
 Open Scope nat_scope.
 (** printing <- #←# *)
-(** printing ∘ %\ensuremath{\circ}% *)
 
 (** A runtime environment *)
 
 Definition env: Set := list (pvar * alg).
 
-(** Check the sort of an element of the message algebra. *)
+(** Check the type of an element of the message algebra. *)
 
-Inductive sort_check: sort -> alg -> Prop :=
+Definition is_skey (x: alg): Prop :=
+  match x with
+  | Ak _ => False
+  | Ik _ => False
+  | _ => True
+  end.
+#[global]
+Hint Unfold is_skey : core.
+
+Inductive type_check: type -> alg -> Prop :=
 | Text_check: forall v,
-    sort_check Text (Tx v)
+    type_check Text (Tx v)
 | Data_check: forall v,
-    sort_check Data (Dt v)
+    type_check Data (Dt v)
 | Name_check: forall v,
-    sort_check Name (Nm v)
+    type_check Name (Nm v)
 | Skey_check: forall k,
-    sort_check Skey (Sk k)
+    type_check Skey (Sk k)
 | Akey_check: forall k,
-    sort_check Akey (Ak k)
+    type_check Akey (Ak k)
 | Ikey_check: forall k,
-    sort_check Ikey (Ik k)
+    type_check Ikey (Ik k)
 | Chan_check: forall v,
-    sort_check Chan (Ch v)
-| Mesg_check: forall a,
-    sort_check Mesg a.
-Hint Constructors sort_check : core.
+    type_check Chan (Ch v)
+| Mesg_check: forall v,
+    type_check Mesg (Mg v)
+| Tag_check: forall s,
+    type_check Quot (Tg s)
+| Pair_check: forall x y,
+    type_check Pair (Pr x y)
+| Aenc_check: forall x y,
+    type_check Aenc (En x (Ak y))
+| Ienc_check: forall x y,
+    type_check Ienc (En x (Ik y))
+| Senc_check: forall x y,
+    is_skey y ->
+    type_check Senc (En x y)
+| Hash_check: forall x,
+    type_check Hash (Hs x).
+#[global]
+ Hint Constructors type_check : core.
+
+Lemma type_check_type_of:
+  forall s x,
+    type_check s x <-> s = type_of x.
+Proof.
+  split; intros; subst.
+  - destruct x; inversion H; subst; simpl; auto.
+    destruct x2; inversion H2; simpl; auto.
+  - destruct x; simpl; auto.
+    destruct x2; simpl; auto.
+Qed.
 
 (** The semantics of an expression
 
@@ -52,34 +85,36 @@ Hint Constructors sort_check : core.
 
 Inductive expr_sem: env -> list evt -> list alg -> expr ->
                     alg -> list evt -> list alg -> Prop :=
-| Expr_tagg: forall ev tr us x,
-    expr_sem ev tr us (Tagg x) (Tg x) tr us
+| Expr_quot: forall ev tr us x,
+    expr_sem ev tr us (Quot_ x) (Tg x) tr us
 | Expr_hash: forall ev tr us x a,
     lookup x ev = Some a ->
-    expr_sem ev tr us (Hash x) (Hs a) tr us
+    expr_sem ev tr us (Hash_ x) (Hs a) tr us
 | Expr_pair: forall ev tr us x y a b,
     lookup x ev = Some a ->
     lookup y ev = Some b ->
-    expr_sem ev tr us (Pair x y) (Pr a b) tr us
+    expr_sem ev tr us (Pair_ x y) (Pr a b) tr us
 | Expr_encr: forall ev tr us x y a b,
     lookup x ev = Some a ->
     lookup y ev = Some b ->
-    expr_sem ev tr us (Encr x y) (En a b) tr us
+    expr_sem ev tr us (Encr_ x y) (En a b) tr us
 | Expr_frst: forall ev tr us x a b,
     lookup x ev = Some (Pr a b) ->
-    expr_sem ev tr us (Frst x) a tr us
+    expr_sem ev tr us (Frst_ x) a tr us
 | Expr_scnd: forall ev tr us x a b,
     lookup x ev = Some (Pr a b) ->
-    expr_sem ev tr us (Scnd x) b tr us
+    expr_sem ev tr us (Scnd_ x) b tr us
 | Expr_decr: forall ev tr us x y a b,
     lookup x ev = Some (En a b) ->
     lookup y ev = Some (inv b) ->
-    expr_sem ev tr us (Decr x y) a tr us
-| Expr_nonce: forall ev tr us a,
-    expr_sem ev tr (a :: us) Nonce a tr us
+    has_enc (inv b) = false ->
+    expr_sem ev tr us (Decr_ x y) a tr us
+| Expr_frsh: forall ev tr us a,
+    expr_sem ev tr (a :: us) Frsh_ a tr us
 | Expr_recv: forall ev tr us a c d,
     lookup c ev = Some (Ch d) ->
-    expr_sem ev (Rv d a :: tr) us (Recv c) a tr us.
+    expr_sem ev (Rv d a :: tr) us (Recv_ c) a tr us.
+#[global]
 Hint Constructors expr_sem : core.
 
 (** The semantics of a statement
@@ -101,7 +136,7 @@ Inductive stmt_sem: env -> list evt -> list alg ->
                     list alg -> Prop :=
 | Stmt_bind: forall ev tr us exp val v s tr' us',
     expr_sem ev tr us exp val tr' us' ->
-    sort_check s val ->
+    type_check s val ->
     stmt_sem ev tr us (Bind (v, s) exp) ((v, val) :: ev) tr' us'
 | Stmt_send: forall ev tr us c d x a,
     lookup c ev = Some (Ch d) ->
@@ -110,15 +145,68 @@ Inductive stmt_sem: env -> list evt -> list alg ->
 | Stmt_same: forall ev tr us x y a b,
     lookup x ev = Some a ->
     lookup y ev = Some b ->
-    a = b ->                    (* Sameness check *)
     has_enc a = false ->        (* For probabilistic encryption *)
-    stmt_sem ev tr us (Same x y) ev tr us.
+    a = b ->                    (* Sameness check *)
+    stmt_sem ev tr us (Same x y) ev tr us
+| Stmt_ltkp: forall ev tr us x y z a b c,
+    lookup x ev = Some a ->
+    lookup y ev = Some (Nm b) ->
+    lookup z ev = Some (Nm c) ->
+    a = Sk (Lt b c) ->          (* Ltk check *)
+    stmt_sem ev tr us (Ltkp x y z) ev tr us
+| Stmt_invp: forall ev tr us x y a b,
+    lookup x ev = Some a ->
+    lookup y ev = Some b ->
+    has_enc a = false ->        (* For probabilistic encryption *)
+    a = inv b ->                (* Inverse check *)
+    stmt_sem ev tr us (Invp x y) ev tr us
+| Stmt_pub_namp: forall ev tr us x y a b,
+    lookup x ev = Some (Ak a) ->
+    lookup y ev = Some (Nm b) ->
+    a = Pb b ->                (* Name check *)
+    stmt_sem ev tr us (Namp x y) ev tr us
+| Stmt_priv_namp: forall ev tr us x y a b,
+    lookup x ev = Some (Ik a) ->
+    lookup y ev = Some (Nm b) ->
+    a = Pb b ->                (* Name check *)
+    stmt_sem ev tr us (Namp x y) ev tr us
+| Stmt_pub_nm2p: forall ev tr us x y z a s b,
+    lookup x ev = Some (Ak a) ->
+    lookup y ev = Some (Tg s) ->
+    lookup z ev = Some (Nm b) ->
+    a = Pb2 s b ->              (* Tagged name check *)
+    stmt_sem ev tr us (Nm2p x y z) ev tr us
+| Stmt_priv_nm2p: forall ev tr us x y z a s b,
+    lookup x ev = Some (Ik a) ->
+    lookup y ev = Some (Tg s) ->
+    lookup z ev = Some (Nm b) ->
+    a = Pb2 s b ->              (* Tagged name check *)
+    stmt_sem ev tr us (Nm2p x y z) ev tr us.
+#[global]
 Hint Constructors stmt_sem : core.
+
+Lemma stmt_sem_env_extends:
+  forall ev tr us cmd ev' tr' us',
+    stmt_sem ev tr us cmd ev' tr' us' ->
+    exists ev'', ev' = ev'' ++ ev.
+Proof.
+  intros.
+  inversion H; subst.
+  - exists [(v, val)]; auto.
+  - exists []; auto.
+  - exists []; auto.
+  - exists []; auto.
+  - exists []; auto.
+  - exists []; auto.
+  - exists []; auto.
+  - exists []; auto.
+  - exists []; auto.
+Qed.
 
 (** The semantics of a statement list
 
     Parameters as for [stmt_sem] but with one extra argument,
-    for outputs.
+    for outputs, and no output trace and list of uniques.
 
 <<
    Parameters:
@@ -128,22 +216,37 @@ Hint Constructors stmt_sem : core.
    list alg:   Output list
    list stmt:  Statement list
    env:        Output environment
-   list evt:   Output trace
-   list alg:   Output list of uniques
 >>
 *)
 
-Inductive stmt_list_sem: env -> list evt -> list alg ->
-                         list alg -> list stmt -> env ->
-                         list evt -> list alg -> Prop :=
+Inductive stmt_list_sem:
+  env -> list evt -> list alg ->
+  list alg -> list stmt -> env -> Prop :=
 | Stmt_return: forall ev outs vs,
     map_m (flip lookup ev) vs = Some outs ->
-    stmt_list_sem ev [] [] outs [Return vs] ev [] []
-| Stmt_pair: forall ev tr us outs stmt ev' tr' us' stmts ev'' tr'' us'',
+    stmt_list_sem ev [] [] outs [Return vs] ev
+| Stmt_pair: forall ev tr us outs stmt ev' tr' us' stmts ev'',
     stmt_sem ev tr us stmt ev' tr' us' ->
-    stmt_list_sem ev' tr' us' outs stmts ev'' tr'' us'' ->
-    stmt_list_sem ev tr us outs (stmt :: stmts) ev'' tr'' us''.
+    stmt_list_sem ev' tr' us' outs stmts ev'' ->
+    stmt_list_sem ev tr us outs (stmt :: stmts) ev''.
+#[global]
 Hint Constructors stmt_list_sem : core.
+
+Lemma stmt_list_sem_env_extends:
+  forall ev tr us outs stmts ev',
+    stmt_list_sem ev tr us outs stmts ev' ->
+    exists ev'', ev' = ev'' ++ ev.
+Proof.
+  intros.
+  induction H.
+  exists []; auto.
+  apply stmt_sem_env_extends in H.
+  destruct H.
+  destruct IHstmt_list_sem.
+  subst.
+  exists (x0 ++ x).
+  apply app_assoc.
+Qed.
 
 (** Executions are roles with one exception.  The order in which
     uniques occur in an execution is significant, but it is not for a
@@ -161,9 +264,10 @@ Fixpoint mk_env (ds: list decl) (xs: list alg): env :=
 Inductive ins_inputs: list decl -> list alg -> Prop :=
 | Ins_inputs_nil: ins_inputs nil nil
 | Ins_inputs_pair: forall v s ds x xs,
-    sort_check s x ->
+    type_check s x ->
     ins_inputs ds xs ->
     ins_inputs ((v, s) :: ds) (x :: xs).
+#[global]
 Hint Constructors ins_inputs : core.
 
 (** The semantics of a procedure using statement lists *)
@@ -171,122 +275,7 @@ Hint Constructors ins_inputs : core.
 Definition sem (p: proc) (ev: env) (e: role): Prop :=
   let ev_in := mk_env (ins p) (inputs e) in
   ins_inputs (ins p) (inputs e) /\
-  stmt_list_sem ev_in (trace e) (uniqs e) (outputs e) (body p) ev [] [].
-
-(** ** Matching *)
-
-Definition extend_term (ev: env) (v: pvar) (x: alg): option env :=
-  match lookup v ev with
-  | None => Some ((v, x) :: ev)
-  | Some y =>
-    if alg_dec x y then
-      Some ev
-    else                        (* Term clash! *)
-      None
-  end.
-
-Definition match_skey (ev: env) (x y: skey): option env :=
-  match (x, y) with
-  | (Sv v, w) => extend_term ev v (Sk w)
-  | (Lt v w, Lt x y) =>
-    ev <- extend_term ev v (Nm x);
-    extend_term ev w (Nm y)
-  | _ => None
-  end.
-
-Definition match_akey (ev: env) (x y: akey): option env :=
-  match (x, y) with
-  | (Av v, w) => extend_term ev v (Ak w)
-  | (Pb v, Pb w) => extend_term ev v (Nm w)
-  | (Pb2 s v, Pb2 t w) =>
-    if string_dec s t then
-      extend_term ev v (Nm w)
-    else
-      None
-  | _ => None
-  end.
-
-Fixpoint match_term (ev: env) (x y: alg): option env :=
-  match (x, y) with
-  | (Tx v, Tx w) => extend_term ev v (Tx w)
-  | (Dt v, Dt w) => extend_term ev v (Dt w)
-  | (Nm v, Nm w) => extend_term ev v (Nm w)
-  | (Sk v, Sk w) => match_skey ev v w
-  | (Ak v, Ak w) => match_akey ev v w
-  | (Ak (Av v), Ik w) => extend_term ev v (Ik w)
-  | (Ik v, Ik w) => match_akey ev v w
-  | (Ik (Av v), Ak w) => extend_term ev v (Ik w)
-  | (Ch v, Ch w) => extend_term ev v (Ch w)
-  | (Mg v, w) => extend_term ev v w
-  | (Tg s, Tg t) =>
-    if string_dec s t then
-      Some ev
-    else
-      None
-  | (Pr v w, Pr x y) =>
-    ev <- match_term ev v x;
-    match_term ev w y
-  | (En v w, En x y) =>
-    ev <- match_term ev v x;
-    match_term ev w y
-  | (Hs v, Hs w) => match_term ev v w
-  | _ => None
-  end.
-
-Definition match_evt (ev: env) (x y: evt): option env :=
-  match (x, y) with
-  | (Sd c x, Sd d y) =>
-    ev <- match_term ev (Ch c) (Ch d);
-    match_term ev x y
-  | (Rv c x, Rv d y) =>
-    ev <- match_term ev (Ch c) (Ch d);
-    match_term ev x y
-  | _ => None
-  end.
-
-Fixpoint match_trace (ev: env) (xs ys: list evt): option env :=
-  match (xs, ys) with
-  | ([], []) => Some ev
-  | (x :: xs, y :: ys) =>
-    ev <- match_evt ev x y;
-    match_trace ev xs ys
-  | _ => None
-  end.
-
-Fixpoint match_list (ev: env) (xs ys: list alg): option env :=
-  match (xs, ys) with
-  | ([], []) => Some ev
-  | (x :: xs, y :: ys) =>
-    ev <- match_term ev x y;
-    match_list ev xs ys
-  | _ => None
-end.
-
-(** ** Role Homomorphism
-
-    See if [x] matches one item in [ys]. *)
-
-Fixpoint match_one (ys: list alg) (ev: env) (x: alg): option env :=
-  match ys with
-  | [] => None
-  | y :: ys =>
-    match match_term ev x y with
-    | Some ev => Some ev
-    | None => match_one ys ev x
-    end
-  end.
-
-Definition match_uniqs (ev: env) (xs ys: list alg): option env :=
-  fold_m (match_one ys) ev xs.
-
-(** There exists a homomorphism from [x] to [y] iff the result is not
-    [None]. *)
-
-Definition homomorphism (x y: role): option env :=
-  ev <- match_trace [] (trace x) (trace y);
-  ev <- match_uniqs ev (uniqs x) (uniqs y);
-  ev <- match_list ev (inputs x) (inputs y);
-  match_list ev (outputs x) (outputs y).
+  stmt_list_sem ev_in (trace e) (uniqs e) (outputs e) (body p) ev.
 
 (** ** Correct Input and Output *)
 

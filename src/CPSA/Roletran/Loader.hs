@@ -85,7 +85,7 @@ loadRole pos (S _ name :
         Just env ->
           do
             u <- mapM (loadBasic env) (assoc "uniq-orig" rest)
-            i <- mapM (loadChanBasic env) (assoc "inputs" rest)
+            i <- mapM (loadChanTerm env) (assoc "inputs" rest)
             o <- mapM (loadTerm env) (assoc "outputs" rest)
             mkRole name pos env c u i o
 loadRole pos _ = fail (shows pos "Malformed role")
@@ -183,11 +183,11 @@ loadLookup env pos v =
     Just Mesg -> return (Msg v)
     Just Chan -> fail (shows pos "Not expecting a channel")
 
-loadChanBasic :: MonadFail m => VarEnv -> SExpr Pos -> m Term
-loadChanBasic env x =
+loadChanTerm :: MonadFail m => VarEnv -> SExpr Pos -> m Term
+loadChanTerm env x =
   case loadChan env x of
     Return t -> return t
-    Fail _ -> loadBasic env x
+    Fail _ -> loadTerm env x
 
 loadName :: MonadFail m => VarEnv -> Pos -> Var -> m ()
 loadName env pos v =

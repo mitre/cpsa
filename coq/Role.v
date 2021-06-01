@@ -1,4 +1,4 @@
-Require Import List ListSet Bool Program Monad Alg.
+Require Import List ListSet Bool Program Monad Proc Alg.
 
 (** * Protocol Roles *)
 
@@ -22,19 +22,21 @@ Fixpoint has_no_dups (l: list alg): bool :=
   | x :: xs => not_in x xs && has_no_dups xs
   end.
 
-(** Is [p] a valid role? *)
+(** Is [r] a valid role? *)
 
-Definition valid_role (p: role): bool :=
-  match fold_m well_formed_event nil (trace p) with
+Definition valid_role (r: role): bool :=
+  match fold_m well_formed_event nil (trace r) with
   | None => false
   | Some decls =>
-    forallb (well_sorted decls) (uniqs p) &&
-    forallb (flip orig (trace p)) (uniqs p) &&
-    forallb is_basic (uniqs p) &&
-    has_no_dups (uniqs p) &&
-    forallb (well_sorted_with_chan decls) (inputs p) &&
-    forallb (fun x => is_chan x || is_basic x) (inputs p) &&
-    forallb (well_sorted decls) (outputs p) &&
-    forallb (flip not_in (uniqs p)) (inputs p) &&
-    forallb (flip not_in (outputs p)) (inputs p)
+    forallb (well_typed decls) (uniqs r) &&
+    forallb (flip orig (trace r)) (uniqs r) &&
+    forallb is_basic (uniqs r) &&
+    has_no_dups (uniqs r) &&
+    forallb (well_typed_with_chan decls) (inputs r) &&
+    forallb (fun t => is_basic t || is_chan t) (inputs r) &&
+    forallb receivable (map evt_msg (trace r)) &&
+    forallb receivable (outputs r) &&
+    forallb (well_typed decls) (outputs r) &&
+    forallb (flip not_in (uniqs r)) (inputs r) &&
+    forallb (flip not_in (outputs r)) (inputs r)
   end.
