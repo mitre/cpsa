@@ -1419,7 +1419,8 @@ loadExistential :: MonadFail m => Pos -> Prot -> Gen -> [Term] ->
 loadExistential _ prot g vars (L pos [S _ "exists", L _ vs, x]) =
   do
     (g, evars) <- loadVars g vs
-    as <- loadCheckedConj RoleSpec pos prot (evars ++ vars) evars x
+    as <- loadCheckedConj -- RoleSpec
+          UnusedVars pos prot (evars ++ vars) evars x
     return (g, (evars, as))
 loadExistential pos prot g vars x =
   do
@@ -1496,6 +1497,13 @@ loadPrimary _ _ kvars (L pos [S _ "=", x, y]) =
     case isStrdVar t == isStrdVar t' of
       True -> return (pos, Equals t t')
       False -> fail (shows pos "Sort mismatch in equality")
+loadPrimary _ _ kvars (L pos [S _ "component", x, y]) =
+  do
+    t <- loadTerm kvars x
+    t' <- loadTerm kvars y
+    case isStrdVar t || isStrdVar t' of
+      True -> fail (shows pos "Strand variable in component formula")
+      False -> return (pos, Component t t')
 loadPrimary _ _ kvars (L pos [S _ "non", x]) =
   do
     t <- loadAlgTerm kvars x
@@ -1745,6 +1753,18 @@ roleSpecific unbound (pos, Equals t t')
   | isStrdVar t' = fail (shows pos "Type mismatch in equals")
   | allBound unbound t && allBound unbound t' = return unbound
   | otherwise = fail (shows pos "Unbound variable in equals")
+
+roleSpecific unbound (pos, Component t t')
+  | isStrdVar t && isStrdVar t' =
+    case L.notElem t unbound && L.notElem t' unbound of
+      True -> return unbound
+      False -> fail (shows pos "Unbound variable in component")
+  | isStrdVar t = fail (shows pos "Type mismatch in component")
+  | isStrdVar t' = fail (shows pos "Type mismatch in component")
+  | allBound unbound t && allBound unbound t' = return unbound
+  | otherwise = fail (shows pos "Unbound variable in component")
+
+
 
 -- Remove unbound message variables that occur in a fact
 factSpecific :: [Term] -> (Pos, AForm) -> [Term]

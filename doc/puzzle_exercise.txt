@@ -16,8 +16,8 @@ Presumably, using k(A,B) with a bunch of the
 non-random texts such as m will eventually allow
 cryptanalysis.
 
-Constraint:  B should only after encrypt once, and
-decrypt once to get m.  A should only have to
+Constraint:  B should only have to encrypt once,
+and decrypt once to get m.  A should only have to
 encrypt once (to protect m), and decrypt once (to
 get s).
 

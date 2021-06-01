@@ -39,7 +39,7 @@ import CPSA.Algebra
 import CPSA.Channel
 import CPSA.Protocol
 
-{--
+--{--
 import System.IO.Unsafe
 import Control.Exception (try)
 import System.IO.Error (ioeGetErrorString)
@@ -1854,7 +1854,8 @@ validateEnv k k' mapping env =
     all (flip elem (kpnon k')) (map (instantiate env) (kpnon k)) &&
     all (flip elem (kunique k')) (map (instantiate env) (kunique k)) &&
     all (flip elem (kfacts k'))
-    (map (instUpdateFact env (mapping !!)) (kfacts k)) &&
+            (map (instUpdateFact env (mapping !!)) (kfacts k)) &&
+    all (flip elem (kgenSt k')) (map (instantiate env) (kgenSt k)) && 
     validateEnvOrig k k' mapping env &&
     all (flip elem (tc k')) (permuteOrderings mapping (orderings k))
 
@@ -2377,6 +2378,7 @@ satisfy (Conf t) = ggconf t
 satisfy (Auth t) = ggauth t
 satisfy (AFact name fs) = gafact name fs
 satisfy (Equals t t') = geq t t'
+satisfy (Component t t') = gcomponent t t' 
 satisfy (Commpair n n') = gcommpair n n'
 satisfy (SameLocn n n') = gsamelocn n n' 
 satisfy (StateNode n) = gstateNode n
@@ -2617,6 +2619,14 @@ geq t t' _ (g, e)
   where
     ti = instantiate e t
     ti' = instantiate e t'
+
+gcomponent :: Term -> Term -> Sem
+gcomponent t t' k (g, e) =
+    let result = foldl (\ges cmpt -> (geq t cmpt k (g, e)) ++ ges)
+                 [] 
+                 (components t') in
+    --    zP ("> " ++ (show (length result))) result
+    result
 
 --   satisfy (StateNode n) = gstateNode n
 
@@ -2955,6 +2965,9 @@ urwt rule (Conf t) = urconf rule t
 urwt rule (Auth t) = urauth rule t
 urwt rule (AFact name fs) = urafact rule name fs
 urwt rule (Equals t t') = ureq rule t t'
+urwt rule (Component t t') =
+    \_ _ -> error ("In rule " ++ rule ++ ", component in conclusion with" ++
+                                  (show t) ++ ",  " ++ (show t'))
 urwt rule (Commpair n n') = urcommpair rule n n'
 urwt rule (SameLocn n n') = ursamelocn rule n n' 
 urwt rule (StateNode n) = urstateNode rule n
@@ -3288,7 +3301,7 @@ urstateNode rule n k (g, e) =
                                   
 
 rewriteDepthCount :: Int
-rewriteDepthCount = 14
+rewriteDepthCount = 1640  -- was 14 and 24, 36
 
 
 -- Try all rules associated with the protocol of k.
@@ -3323,7 +3336,7 @@ rewrite k =
       iterate _ [] done False = error ("rewrite: non-singleton results with no change???  (" ++
                                         (show (L.length done)) ++ ")")
       iterate _ [] done True = Just done        -- zP ">" (Just done)
-      iterate 0 todos done True = Just (todos ++ done)        -- zP ">!" (Just (todos ++ done))
+      iterate 0 todos done True = zP ">!" (Just (todos ++ done))        -- Just (todos ++ done)
       iterate 0 _ done False = error ("rewrite: exhausted depth bound with no action???  (" ++
                                         (show (L.length done)) ++ ")")
       iterate dc (k : rest) done b =
@@ -3336,7 +3349,8 @@ rewrite k =
                 -- Skip it for now.  
                 -- factorIsomorphic 
                 -- (nullUnaryThrough new) in
-                iterate (dc-1) (mergeIsomorphic new' rest) done True 
+                iterate dc -- (dc-1)
+                            (mergeIsomorphic new' rest) done True 
 
       -- subiter 
       subiter _ [] = Nothing     -- No action, no rules left
@@ -3457,6 +3471,9 @@ rwt rule (Conf t) = rlconf rule t
 rwt rule (Auth t) = rlauth rule t
 rwt rule (AFact name fs) = rafact rule name fs
 rwt rule (Equals t t') = req rule t t'
+rwt rule (Component t t') = 
+    \_ _ -> error ("In rule " ++ rule ++ ", component in conclusion with" ++
+                                  (show t) ++ ",  " ++ (show t'))
 rwt rule (Commpair n n') = rcommpair rule n n'
 rwt rule (SameLocn n n') = rsamelocn rule n n' 
 rwt rule (StateNode n) = rstateNode rule n

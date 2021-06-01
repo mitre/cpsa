@@ -106,6 +106,8 @@ displayForm ctx (AFact name fs) =
   L () (S () "fact" : S () name : map (displayTerm ctx) fs)
 displayForm ctx (Equals t1 t2) =
   L () [S () "=", displayTerm ctx t1, displayTerm ctx t2]
+displayForm ctx (Component t1 t2) =
+  L () [S () "component", displayTerm ctx t1, displayTerm ctx t2]
 displayForm ctx (Commpair (i,j) (i',j')) =
     L () [S () "comm-pr",
             displayTerm ctx i, displayTerm ctx j,

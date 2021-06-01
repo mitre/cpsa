@@ -95,6 +95,7 @@ module CPSA.Algebra (name,
     decryptionKey,
     decompose,
     buildable,
+    components,
     encryptions,
     escapeSet,
     loadTerm,
@@ -508,6 +509,14 @@ inv (D _) = error "Algebra.inv: Cannot invert a variable of sort strd"
 inv (Z _) = error "Algebra.inv: Cannot invert a strd constant"
 inv (X _) = error "Algebra.inv: Cannot invert a variable of sort indx"
 inv (Y _) = error "Algebra.inv: Cannot invert an indx constant"
+
+components :: Term -> [Term]
+components (F Cat [t, t']) =
+    setUnion (components t) (components t')
+    where
+      setUnion [] ts' = ts'
+      setUnion (t : ts) ts' = setUnion ts $ adjoin t ts'
+components t = [t] 
 
 -- Extracts every encryption that is carried by a term along with its
 -- encryption key.  Note that a hash is treated as a kind of

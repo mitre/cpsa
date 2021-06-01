@@ -365,6 +365,7 @@ data AForm
   | LeadsTo NodeTerm NodeTerm  
   | AFact String [Term]
   | Equals Term Term
+  | Component Term Term
   deriving Show
 
 type NodeTerm = (Term, Term)
@@ -427,6 +428,7 @@ indexOfAForm (Trans _) = 13
 indexOfAForm (LeadsTo _ _) = 14
 indexOfAForm (AFact _ _) = 15
 indexOfAForm (Equals _ _) = 16
+indexOfAForm (Component _ _) = 17 
 
 aFormOrder :: AForm -> AForm -> Ordering
 aFormOrder f f' = compare (indexOfAForm f) (indexOfAForm f')
@@ -602,6 +604,7 @@ aFreeVars vars (Conf t) = addVars vars t
 aFreeVars vars (Auth t) = addVars vars t
 aFreeVars vars (AFact _ ft) = foldl addVars vars ft
 aFreeVars vars (Equals x y) = addVars (addVars vars x) y
+aFreeVars vars (Component x y) = addVars (addVars vars x) y
 aFreeVars vars (Commpair (s,t) (s',t')) = addVars (addVars (addVars (addVars vars s) t) s') t' 
 aFreeVars vars (SameLocn (s,t) (s',t')) = addVars (addVars (addVars (addVars vars s) t) s') t' 
 aFreeVars vars (StateNode (s,t)) = addVars (addVars vars s) t

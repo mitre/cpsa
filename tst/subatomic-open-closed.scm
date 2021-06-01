@@ -2,7 +2,7 @@
 	;; (try-old-strands) 
 	;; 	(check-nonces)
 	;; 	(reverse-nodes) 
-	(bound 40))
+	(bound 40)) 
 
 (defmacro (dev-key-state d o k)
   (cat "st-k" d o k))
