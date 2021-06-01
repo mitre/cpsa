@@ -15,7 +15,7 @@
     - a list of the uniques that occur at the transmissions in the
       current trace. *)
 
-Require Import Nat Preamble Monad Proc Alg.
+Require Import Nat Bool Preamble Monad Proc Alg.
 Import List.ListNotations.
 Open Scope list_scope.
 (** printing <- #←# *)
@@ -66,7 +66,7 @@ Definition run_expr (rst: run_state) (ex: expr):
     match x with
     | En y z =>
       k <- lookup v (renv rst);;
-      if alg_eqb k (inv z) then
+      if negb (has_enc k) && alg_eqb k (inv z) then
         Some (rst, y)
       else
         None
@@ -134,7 +134,7 @@ Definition run_stmt (rst: run_state) (cmd: stmt): option run_state :=
   | Same u v =>
     x <- lookup u (renv rst);;
     y <- lookup v (renv rst);;
-    if alg_eqb x y then
+    if negb (has_enc x) && alg_eqb x y then
       Some rst
     else
       None
@@ -153,7 +153,7 @@ Definition run_stmt (rst: run_state) (cmd: stmt): option run_state :=
   | Invp u v =>
     x <- lookup u (renv rst);;
     y <- lookup v (renv rst);;
-    if alg_eqb x (inv y) then
+    if negb (has_enc x) && alg_eqb x (inv y) then
       Some rst
     else
       None

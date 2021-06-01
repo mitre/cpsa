@@ -83,7 +83,7 @@ Functional Scheme get_outs_ind :=
 
 Lemma stmt_list_sem_implies_outputs:
   forall ev tr us outs stmts ev',
-    stmt_list_sem ev tr us outs stmts ev' [] [] ->
+    stmt_list_sem ev tr us outs stmts ev' ->
     get_outs ev' stmts = Some outs.
 Proof.
   intros.
@@ -98,19 +98,19 @@ Proof.
   - inv H.
     inv H6.
   - inv H.
-    apply IHo in H10; auto.
+    apply IHo in H8; auto.
   - inv H.
-    apply IHo in H10; auto.
+    apply IHo in H8; auto.
   - inv H.
-    apply IHo in H10; auto.
+    apply IHo in H8; auto.
   - inv H.
-    apply IHo in H10; auto.
+    apply IHo in H8; auto.
   - inv H.
-    apply IHo in H10; auto.
+    apply IHo in H8; auto.
   - inv H.
-    apply IHo in H10; auto.
+    apply IHo in H8; auto.
   - inv H.
-    apply IHo in H10; auto.
+    apply IHo in H8; auto.
 Qed.
 
 Lemma sem_implies_outputs:
@@ -133,7 +133,7 @@ Definition sem' (p: proc) (ev: env) (tr: list evt) (us: list alg): Prop :=
   ins_inputs (ins p) inputs /\
   exists outs,
     get_outs ev (body p) = Some outs /\
-    stmt_list_sem ev_in tr us outs (body p) ev [] [].
+    stmt_list_sem ev_in tr us outs (body p) ev.
 
 Lemma sem_implies_sem':
   forall (p: proc) (ev: env) (ex: role),

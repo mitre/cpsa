@@ -107,6 +107,7 @@ Inductive expr_sem: env -> list evt -> list alg -> expr ->
 | Expr_decr: forall ev tr us x y a b,
     lookup x ev = Some (En a b) ->
     lookup y ev = Some (inv b) ->
+    has_enc (inv b) = false ->
     expr_sem ev tr us (Decr_ x y) a tr us
 | Expr_frsh: forall ev tr us a,
     expr_sem ev tr (a :: us) Frsh_ a tr us
@@ -144,6 +145,7 @@ Inductive stmt_sem: env -> list evt -> list alg ->
 | Stmt_same: forall ev tr us x y a b,
     lookup x ev = Some a ->
     lookup y ev = Some b ->
+    has_enc a = false ->        (* For probabilistic encryption *)
     a = b ->                    (* Sameness check *)
     stmt_sem ev tr us (Same x y) ev tr us
 | Stmt_ltkp: forall ev tr us x y z a b c,
@@ -155,6 +157,7 @@ Inductive stmt_sem: env -> list evt -> list alg ->
 | Stmt_invp: forall ev tr us x y a b,
     lookup x ev = Some a ->
     lookup y ev = Some b ->
+    has_enc a = false ->        (* For probabilistic encryption *)
     a = inv b ->                (* Inverse check *)
     stmt_sem ev tr us (Invp x y) ev tr us
 | Stmt_pub_namp: forall ev tr us x y a b,
@@ -203,7 +206,7 @@ Qed.
 (** The semantics of a statement list
 
     Parameters as for [stmt_sem] but with one extra argument,
-    for outputs.
+    for outputs, and no output trace and list of uniques.
 
 <<
    Parameters:
@@ -213,27 +216,25 @@ Qed.
    list alg:   Output list
    list stmt:  Statement list
    env:        Output environment
-   list evt:   Output trace
-   list alg:   Output list of uniques
 >>
 *)
 
-Inductive stmt_list_sem: env -> list evt -> list alg ->
-                         list alg -> list stmt -> env ->
-                         list evt -> list alg -> Prop :=
+Inductive stmt_list_sem:
+  env -> list evt -> list alg ->
+  list alg -> list stmt -> env -> Prop :=
 | Stmt_return: forall ev outs vs,
     map_m (flip lookup ev) vs = Some outs ->
-    stmt_list_sem ev [] [] outs [Return vs] ev [] []
-| Stmt_pair: forall ev tr us outs stmt ev' tr' us' stmts ev'' tr'' us'',
+    stmt_list_sem ev [] [] outs [Return vs] ev
+| Stmt_pair: forall ev tr us outs stmt ev' tr' us' stmts ev'',
     stmt_sem ev tr us stmt ev' tr' us' ->
-    stmt_list_sem ev' tr' us' outs stmts ev'' tr'' us'' ->
-    stmt_list_sem ev tr us outs (stmt :: stmts) ev'' tr'' us''.
+    stmt_list_sem ev' tr' us' outs stmts ev'' ->
+    stmt_list_sem ev tr us outs (stmt :: stmts) ev''.
 #[global]
 Hint Constructors stmt_list_sem : core.
 
 Lemma stmt_list_sem_env_extends:
-  forall ev tr us outs stmts ev' tr' us',
-    stmt_list_sem ev tr us outs stmts ev' tr' us' ->
+  forall ev tr us outs stmts ev',
+    stmt_list_sem ev tr us outs stmts ev' ->
     exists ev'', ev' = ev'' ++ ev.
 Proof.
   intros.
@@ -274,7 +275,7 @@ Hint Constructors ins_inputs : core.
 Definition sem (p: proc) (ev: env) (e: role): Prop :=
   let ev_in := mk_env (ins p) (inputs e) in
   ins_inputs (ins p) (inputs e) /\
-  stmt_list_sem ev_in (trace e) (uniqs e) (outputs e) (body p) ev [] [].
+  stmt_list_sem ev_in (trace e) (uniqs e) (outputs e) (body p) ev.
 
 (** ** Correct Input and Output *)
 

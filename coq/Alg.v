@@ -556,6 +556,13 @@ Fixpoint has_enc (x: alg): bool :=
   | _ => false
   end.
 
+Lemma inv_has_enc:
+  forall x,
+    has_enc (inv x) = has_enc x.
+Proof.
+  destruct x; simpl; auto.
+Qed.
+
 (** Is [x] receivable? *)
 
 Fixpoint receivable (x: alg): bool :=

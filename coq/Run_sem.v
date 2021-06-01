@@ -16,7 +16,8 @@ Proof.
     repeat match goal with
            | [ H: lookup _ _ = Some _ |- _ ] => rewrite H
            end; auto.
-  - destruct (bool_dec (alg_eqb (inv b) (inv b)) true) as [G|G].
+  - rewrite H2; simpl.
+    destruct (bool_dec (alg_eqb (inv b) (inv b)) true) as [G|G].
     + rewrite G; auto.
     + contradiction G.
       rewrite alg_eq_correct; auto.
@@ -67,13 +68,17 @@ Proof.
       destruct (option_dec (lookup n0 (renv rst))) as [F|F].
       * rewrite F in H1; inv H1; destruct b; inv H0.
       * destruct F as [c F]; rewrite F in H1.
+        destruct (alt_bool_dec (negb (has_enc c))) as [D|D];
+          rewrite D in H1; simpl in H1.
         destruct (bool_dec (alg_eqb c (inv b2)) true) as [E|E].
         -- rewrite E in H1; inv H1.
            apply alg_eq_correct in E; subst.
            split; auto.
            eapply Expr_decr; eauto.
+           apply negb_true_iff in D; auto.
         -- rewrite not_true_iff_false in E.
            rewrite E in H1; inv H1.
+        -- inv H1.
   - destruct (runiqs rst); inv H; auto.
   - destruct (option_dec (lookup n (renv rst))) as [G|G].
     + rewrite G in H; inv H.
@@ -124,6 +129,8 @@ Proof.
   - simpl.
     rewrite H0.
     rewrite H1.
+    rewrite H2.
+    simpl.
     destruct (bool_dec (alg_eqb b b) true) as [G|G].
     + rewrite G; auto.
     + contradiction G.
@@ -140,6 +147,8 @@ Proof.
   - simpl.
     rewrite H0.
     rewrite H1.
+    rewrite H2.
+    simpl.
     destruct (bool_dec (alg_eqb (inv b) (inv b)) true) as [G|G].
     + rewrite G; auto.
     + contradiction G.
@@ -230,6 +239,9 @@ Proof.
       * rewrite G in H; inv H.
       * destruct G.
         rewrite H1 in H.
+        destruct (alt_bool_dec (has_enc x)) as [F|F];
+          rewrite F in H; simpl in H.
+        inv H.
         destruct (bool_dec (alg_eqb x x0) true) as [G|G].
         -- rewrite G in H; inv H.
            apply alg_eq_correct in G; subst.
@@ -259,7 +271,10 @@ Proof.
     + alt_option_dec (lookup n0 (renv rst)) y F;
         rewrite F in H.
       * inv H.
-      * destruct (alt_bool_dec (alg_eqb x (inv y))) as [E|E];
+      * destruct (alt_bool_dec (has_enc x)) as [D|D];
+          rewrite D in H; simpl in H.
+        inv H.
+        destruct (alt_bool_dec (alg_eqb x (inv y))) as [E|E];
           rewrite E in H.
         -- inv H.
            apply alg_eq_correct in E.
@@ -312,7 +327,7 @@ Qed.
 
 Lemma stmt_list_sem_implies_run_stmts:
   forall ev_in tr us outs stmts ev,
-    stmt_list_sem ev_in tr us outs stmts ev nil nil ->
+    stmt_list_sem ev_in tr us outs stmts ev ->
     run_stmts (mkRSt ev_in tr us) stmts = Some (ev, outs).
 Proof.
   intros.
@@ -332,7 +347,7 @@ Functional Scheme run_stmts_ind :=
 Lemma run_stmts_implies_stmt_list_sem:
   forall rst stmts ev outs,
     run_stmts rst stmts = Some (ev, outs) ->
-    stmt_list_sem (renv rst) (rtr rst) (runiqs rst) outs stmts ev nil nil.
+    stmt_list_sem (renv rst) (rtr rst) (runiqs rst) outs stmts ev.
 Proof.
   intros.
   functional induction (run_stmts rst stmts); inv H.

@@ -38,7 +38,7 @@ Ltac sem_inv :=
     | [ H: type_check _ _ |- _ ] => inv H
     | [ H: expr_sem _ _ _ _ _ _ _ |- _ ] => inv H
     | [ H: stmt_sem _ _ _ _ _ _ _ |- _ ] => inv H
-    | [ H: stmt_list_sem _ _ _ _ _ _ _ _ |- _ ] => inv H
+    | [ H: stmt_list_sem _ _ _ _ _ _ |- _ ] => inv H
     end.
 
 Ltac sem_rewrite :=
