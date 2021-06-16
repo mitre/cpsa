@@ -1,14 +1,14 @@
--- Basic Crypto Algebra implementation
+-- Diffie-Hellman Algebra implementation
 
--- The module implements a many-sorted algebra, but is used as an
--- order-sorted algebra.  It exports a name, and the origin used to
--- generate variables.
+-- This module implements a version of Diffie-Hellman in which
+-- exponents form a free Abelian group.  It uses the basis elements as
+-- atoms principle.
 
 -- To support security goals, the message algebra has been augmented
--- with support for variables of sort strd and integers.  The
+-- with support for variables of sort node and pairs of integers.  The
 -- constructor D is used as N is taken for numbers in S-Expressions.
 
--- Copyright (c) 2009 The MITRE Corporation
+-- Copyright (c) 2021 The MITRE Corporation
 --
 -- This program is free software: you can redistribute it and/or
 -- modify it under the terms of the BSD License as published by the
@@ -16,11 +16,17 @@
 
 --------------------------------------------------------------------
 
--- The Basic Crypto Order-Sorted Signature is
+-- The module implements a many-sorted algebra, but is used as an
+-- order-sorted algebra.  It exports a name, and the origin used to
+-- generate variables.
 
--- Sorts: mesg, text, data, name, skey, akey, chan, locn, and string
+-- The Diffie-Hellman Order-Sorted Signature is
+
+-- Sorts: mesg, text, data, name, skey, akey, tag,
+--        string, base, expr, and expn
 --
--- Subsorts: text, data, name, skey, akey, chan < mesg
+-- Subsorts: text, data, name, skey, akey,
+--           base, expr < mesg and expn < expr
 --
 -- Operations:
 --   cat : mesg X mesg -> mesg               Pairing
@@ -28,20 +34,36 @@
 --   hash : mesg -> mesg                     Hashing
 --   string : mesg                           Tag constants
 --   ltk : name X name -> skey               Long term shared key
+--   bltk : name X name -> skey              Bidirectional long-term key
 --   pubk : name -> akey                     Public key of principal
 --   pubk : string X name -> akey            Tagged public key of principal
 --   invk : akey -> akey                     Inverse of asymmetric key
+--   gen : base                              DH generator
+--   exp : base X expr -> base               Exponentiation
+--   mul : expr X expr -> expr               Group operation
+--   rec : expr -> expr                      Group inverse
+--   one : expr                              Group identity
 --
--- Atoms: messages of sort text, data, name, skey, akey, locn, and chan.
+-- Atoms: messages of sort text, data, name, skey, akey, and expn, and
+--        messages of the form (exp (gen) x) where x is of sort expn.
+
+-- A free Abelian group has a set of basis elements, and the sort expn
+-- is the sort for basis elements.  Limiting the atoms associated with
+-- an exponent to basis elements is the basis elements as atoms
+-- principle.  This principle enables CPSA to correctly handle
+-- origination assumptions.
 
 -- Variables of sort string are forbidden.
 
 -- The implementation exploits the isomorphism between order-sorted
 -- algebras and many-sorted algebras by adding inclusion operations to
--- produce an equivalent Basic Crypto Many-Sorted Signature.  There is
--- an inclusion operation for each subsort of mesg.
+-- produce an equivalent Diffie-Hellman Many-Sorted Signature.  There
+-- is an inclusion operation for each subsort of mesg.  Diffie-Hellman
+-- exponents are handled specially using a canonical representation as
+-- monomials.
 
--- Sorts: mesg, text, data, name, skey, akey, chan, and string
+-- Sorts: mesg, text, data, name, skey, akey,
+--        string, base, expr, and expn
 --
 -- Operations:
 --   cat : mesg X mesg -> mesg               Pairing
@@ -49,6 +71,7 @@
 --   hash : mesg -> mesg                     Hashing
 --   string : mesg                           Tag constants
 --   ltk : name X name -> skey               Long term shared key
+--   bltk : name X name -> skey              Bidirectional long-term key
 --   pubk : name -> akey                     Public key of principal
 --   pubk : string X name -> akey            Tagged public key of principal
 --   invk : akey -> akey                     Inverse of asymmetric key
@@ -57,10 +80,21 @@
 --   name : name -> mesg                     Sort name inclusion
 --   skey : skey -> mesg                     Sort skey inclusion
 --   akey : akey -> mesg                     Sort akey inclusion
---   chan : chan -> mesg                     Sort chan inclusion
---   locn : locn -> mesg                     Sort locn inclusion
+--   base : base -> mesg                     Sort base inclusion
+--
+--  A message of sort expr, a monomial, is represented by a map from
+--  identifiers to descriptions.  A description is a pair consisting
+--  of a flag saying if the variable is of sort expn or expr, and a
+--  non-zero integer.  For t of sort expr, the monomial associated
+--  with t is
+--
+--      x1 ^ c1 * x2 ^ c2 * ... * xn ^ cn
+--
+-- for all xi in the domain of t and t(xi) = (_, ci).
 
--- In both algebras, invk(invk(t)) = t for all t of sort akey
+-- In both algebras, invk(invk(t)) = t for all t of sort akey,
+-- (exp h (one)) = h, (exp (exp h x) y) = (exp h (mul x y)), and
+-- the Abelian group axioms hold.
 
 {-# LANGUAGE CPP #-}
 
@@ -68,7 +102,7 @@
 #define MonadFail Monad
 #endif
 
-module CPSA.Algebra (name,
+module CPSA.Algebra (name, alias,
 
     Gen,
     origin,
@@ -155,8 +189,14 @@ import Data.Char (isDigit)
 import CPSA.Lib.Utilities (replaceNth, adjoin)
 import CPSA.Lib.SExpr (SExpr(..), Pos, annotation)
 
+-- The default name for the algebra handled by this module
+-- One gets Diffie Hellman features too.
 name :: String
 name = "basic"
+
+-- The name used when Diffie Hellman features are explictly requested
+alias :: String
+alias = "diffie-hellman"
 
 -- An identifier is a variable without any information about its sort
 

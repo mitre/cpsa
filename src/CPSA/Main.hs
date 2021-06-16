@@ -95,14 +95,14 @@ openInput _ =
 
 -- Algebra names -- omit Diffie-Hellman for releases until it works
 algs :: [String]
-algs = [name]
+algs = [name, alias]
 
 -- Select the algebra and go.
 select :: [String] -> Maybe (SExpr Pos) -> Options -> [SExpr Pos] -> IO ()
 select files herald opts sexprs =
     case optAlg opts of
-      nom | nom == name ->
-              go name origin files herald opts sexprs
+      nom | nom == name || nom == alias ->
+              go nom origin files herald opts sexprs
           | otherwise ->
               abort ("Bad algebra: " ++ nom)
 
