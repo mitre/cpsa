@@ -101,11 +101,10 @@ algs = [name]
 select :: [String] -> Maybe (SExpr Pos) -> Options -> [SExpr Pos] -> IO ()
 select files herald opts sexprs =
     case optAlg opts of
-      name | name == name ->
-               go name origin
-                  files herald opts sexprs
-           | otherwise ->
-               abort ("Bad algebra: " ++ name)
+      nom | nom == name ->
+              go name origin files herald opts sexprs
+          | otherwise ->
+              abort ("Bad algebra: " ++ nom)
 
 -- Load protocols and preskeletons and print run time information
 go :: String -> Gen -> [String] -> Maybe (SExpr Pos) ->
