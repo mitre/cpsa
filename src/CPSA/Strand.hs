@@ -39,7 +39,7 @@ import CPSA.Algebra
 import CPSA.Channel
 import CPSA.Protocol
 
---{--
+{--
 import System.IO.Unsafe
 import Control.Exception (try)
 import System.IO.Error (ioeGetErrorString)
@@ -3336,7 +3336,7 @@ rewrite k =
       iterate _ [] done False = error ("rewrite: non-singleton results with no change???  (" ++
                                         (show (L.length done)) ++ ")")
       iterate _ [] done True = Just done        -- zP ">" (Just done)
-      iterate 0 todos done True = zP ">!" (Just (todos ++ done))        -- Just (todos ++ done)
+      iterate 0 todos done True = Just (todos ++ done)  -- zP ">!" (Just (todos ++ done))      
       iterate 0 _ done False = error ("rewrite: exhausted depth bound with no action???  (" ++
                                         (show (L.length done)) ++ ")")
       iterate dc (k : rest) done b =
