@@ -1,3 +1,10 @@
+2021-06-16  Joshua D. Guttman  <guttman@mitre.org>
+
+	* src/CPSA/Roletran/Protocol.hs:  Distinguished generated rules
+	and user-written rules in the protocol datatype.  Caused Loader to
+	separate the two kinds of rules, and Displayer to display the
+	generated rules as defgenrule.  
+
 2021-05-07  John D. Ramsdell  <ramsdell0mitre.org>
 
 	* Roletran correctly handles long term keys, key inverses, and

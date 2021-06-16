@@ -31,16 +31,24 @@ displayProt :: Prot -> SExpr ()
 displayProt p =
     L () (S () "defprotocol" : S () (pname p) : S () (alg p) : rs)
     where
-      rs = foldl f (map displayRule (rules p) ++ pcomment p)
+      rs = foldl f ((map displayUserRule (userrules p)) ++
+                    (map displayGenRule (generatedrules p)) ++
+                    pcomment p)
                    (reverse (roles p))
       f rs r = displayRole r : rs
 
-displayRule :: Rule -> SExpr ()
-displayRule r =
-  L () (S () "defrule" :
+displayRule :: String -> Rule -> SExpr ()
+displayRule s r =
+  L () (S () s :
         S () (rlname r) :
         displayGoal (rlgoal r) :
         rlcomment r)
+
+displayUserRule :: Rule -> SExpr ()
+displayUserRule = displayRule "defrule"
+
+displayGenRule :: Rule -> SExpr ()
+displayGenRule = displayRule "defgenrule"
 
 displayGoal :: Goal -> SExpr ()
 displayGoal g =

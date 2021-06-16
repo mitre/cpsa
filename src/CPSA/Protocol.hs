@@ -14,8 +14,9 @@ module CPSA.Protocol (Event (..), evtCm, evtTerm, evtChan, evtMap, evt,
     tchans, varSubset, varsInTerms, addVars, firstOccurs, paramOfName, envsRoleParams, 
     AForm (..), NodeTerm, Goal (..),
     aFormOrder, aFreeVars, Rule (..), 
-    Prot, mkProt, pname, alg, pgen, roles, nullaryrules, unaryrules, generalrules, rules, listenerRole,
-    varsAllAtoms, pcomment) where
+    Prot, mkProt, pname, alg, pgen, roles,
+    nullaryrules, unaryrules, generalrules, rules, userrules, generatedrules,
+    listenerRole, varsAllAtoms, pcomment) where
 
 import qualified Data.List as L
 import qualified Data.Maybe as M
@@ -662,19 +663,24 @@ data Prot
              unaryrules :: ![Rule],   -- Protocol rules: no branching
                                       -- or existential
              generalrules :: ![Rule], -- Protocol rules: may branch
-                                      -- and introduce ex. bound vars 
+                                      -- and introduce ex. bound vars
+             userrules :: ![Rule],    -- those rules explicitly
+                                      -- written by the user
+             generatedrules :: ![Rule],  -- those rules created by
+                                       -- the loader 
              varsAllAtoms :: !Bool,   -- Are all role variables atoms?
              pcomment :: [SExpr ()] }  -- Comments from the input
     deriving Show
 
 -- Callers should ensure every role has a distinct name.
 mkProt :: String -> String -> Gen ->
-          [Role] -> Role -> [Rule] -> [SExpr ()] -> Prot
-mkProt name alg gen roles lrole rules comment =
+          [Role] -> Role -> [Rule] -> [Rule] -> [Rule] -> [SExpr ()] -> Prot
+mkProt name alg gen roles lrole rules written generated comment =
     let (nrs,urs,grs) = classifyRules rules in 
     Prot { pname = name, alg = alg, pgen = gen, roles = roles,
            listenerRole = lrole,
-           nullaryrules = nrs, unaryrules = urs,  generalrules = grs, 
+           nullaryrules = nrs, unaryrules = urs,  generalrules = grs,
+           userrules = written, generatedrules = generated, 
            pcomment = comment,
            varsAllAtoms = all roleVarsAllAtoms roles }
     where

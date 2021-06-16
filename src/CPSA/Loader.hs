@@ -88,12 +88,16 @@ loadProt nom origin pos (S _ name : S _ alg : x : xs)
           -- Fake protocol is used only for loading user defined rules
           let fakeProt = mkProt name alg gen rs r
                          inits
+                         []     -- user-written rules 
+                         inits  -- loader-generated rules 
                          []
           (gen, newRls, comment) <- loadRules fakeProt gen rest
           -- Check for duplicate role names
           (validate
            (mkProt name alg gen rs r
                        (newRls ++ (rules fakeProt))
+                       newRls   -- user-written rules
+                       (rules fakeProt) -- loader-generated rules 
                        comment)
            rs)
     where
