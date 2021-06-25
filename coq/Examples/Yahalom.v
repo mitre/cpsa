@@ -9,30 +9,30 @@ Open Scope string.
 
 Definition init: proc :=
   mkProc
-  [(0, Chan); (1, Chan); (2, Name); (3, Name); (4, Name); (5, Skey)]
+  [(0, Chan); (1, Chan); (2, Name); (3, Name); (4, Skey)]
   [
    (* Send (yahalom.scm:13:6) *)
-   Bind (6, Text) (Frsh_);
-   Bind (7, Pair) (Pair_ 2 6);
-   Send 0 7;
+   Bind (5, Text) (Frsh_);
+   Bind (6, Pair) (Pair_ 2 5);
+   Send 0 6;
    (* Recv (yahalom.scm:14:6) *)
-   Bind (8, Pair) (Recv_ 1);
-   Bind (9, Senc) (Frst_ 8);
-   Bind (10, Mesg) (Scnd_ 8);
-   Bind (11, Pair) (Decr_ 9 5);
-   Bind (12, Name) (Frst_ 11);
-   Bind (13, Pair) (Scnd_ 11);
-   Same 12 3;
-   Bind (14, Skey) (Frst_ 13);
-   Bind (15, Pair) (Scnd_ 13);
-   Bind (16, Text) (Frst_ 15);
-   Bind (17, Text) (Scnd_ 15);
-   Same 16 6;
+   Bind (7, Pair) (Recv_ 1);
+   Bind (8, Senc) (Frst_ 7);
+   Bind (9, Mesg) (Scnd_ 7);
+   Bind (10, Pair) (Decr_ 8 4);
+   Bind (11, Name) (Frst_ 10);
+   Bind (12, Pair) (Scnd_ 10);
+   Same 11 3;
+   Bind (13, Skey) (Frst_ 12);
+   Bind (14, Pair) (Scnd_ 12);
+   Bind (15, Text) (Frst_ 14);
+   Bind (16, Text) (Scnd_ 14);
+   Same 15 5;
    (* Send (yahalom.scm:15:6) *)
-   Bind (18, Senc) (Encr_ 17 14);
-   Bind (19, Pair) (Pair_ 10 18);
-   Send 0 19;
-   Return [14]
+   Bind (17, Senc) (Encr_ 16 13);
+   Bind (18, Pair) (Pair_ 9 17);
+   Send 0 18;
+   Return [13]
   ].
 
 (** Role: resp (yahalom.scm:23:3) *)

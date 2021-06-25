@@ -9,26 +9,26 @@ Open Scope string.
 
 Definition init: proc :=
   mkProc
-  [(0, Chan); (1, Name); (2, Name); (3, Name); (4, Skey)]
+  [(0, Chan); (1, Name); (2, Name); (3, Skey)]
   [
    (* Send (otway_rees.scm:12:6) *)
-   Bind (5, Text) (Frsh_);
-   Bind (6, Pair) (Pair_ 2 5);
-   Bind (7, Pair) (Pair_ 1 6);
-   Send 0 7;
+   Bind (4, Text) (Frsh_);
+   Bind (5, Pair) (Pair_ 2 4);
+   Bind (6, Pair) (Pair_ 1 5);
+   Send 0 6;
    (* Recv (otway_rees.scm:13:6) *)
-   Bind (8, Senc) (Recv_ 0);
-   Bind (9, Pair) (Decr_ 8 4);
-   Bind (10, Text) (Frst_ 9);
-   Bind (11, Pair) (Scnd_ 9);
-   Same 10 5;
-   Bind (12, Name) (Frst_ 11);
-   Bind (13, Pair) (Scnd_ 11);
-   Same 12 1;
-   Bind (14, Name) (Frst_ 13);
-   Bind (15, Skey) (Scnd_ 13);
-   Same 14 2;
-   Return [15]
+   Bind (7, Senc) (Recv_ 0);
+   Bind (8, Pair) (Decr_ 7 3);
+   Bind (9, Text) (Frst_ 8);
+   Bind (10, Pair) (Scnd_ 8);
+   Same 9 4;
+   Bind (11, Name) (Frst_ 10);
+   Bind (12, Pair) (Scnd_ 10);
+   Same 11 1;
+   Bind (13, Name) (Frst_ 12);
+   Bind (14, Skey) (Scnd_ 12);
+   Same 13 2;
+   Return [14]
   ].
 
 (** Role: resp (otway_rees.scm:20:3) *)

@@ -262,7 +262,7 @@ Definition type_of (x: alg): type :=
   | En _ (Ik _) => Ienc
   | En _ _ => Senc
   | Hs _ => Hash
-  | Ch v => Chan
+  | Ch _ => Chan
   end.
 
 (** ** Is a Term Well Formed?
