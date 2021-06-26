@@ -222,6 +222,9 @@ displayKind KName = "name"
 displayKind KSkey = "skey"
 displayKind KAkey = "akey"
 displayKind KIkey = "ikey"
+displayKind KChan = "chan"
+displayKind _ = "mesg"
+{- For fine typing
 displayKind KMesg = "mesg"
 displayKind KQuot = "quot"
 displayKind KPair = "pair"
@@ -229,7 +232,7 @@ displayKind KSenc = "senc"
 displayKind KAenc = "aenc"
 displayKind KIenc = "ienc"
 displayKind KHash = "hash"
-displayKind KChan = "chan"
+-}
 
 abbrev :: Kind -> Char
 abbrev KText = 't'

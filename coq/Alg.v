@@ -255,14 +255,8 @@ Definition type_of (x: alg): type :=
   | Sk _ => Skey
   | Ak _ => Akey
   | Ik _ => Ikey
-  | Mg _ => Mesg
-  | Tg _ => Quot
-  | Pr _ _ => Pair
-  | En _ (Ak _) => Aenc
-  | En _ (Ik _) => Ienc
-  | En _ _ => Senc
-  | Hs _ => Hash
   | Ch _ => Chan
+  | _ => Mesg
   end.
 
 (** ** Is a Term Well Formed?

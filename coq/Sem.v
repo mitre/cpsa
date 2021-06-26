@@ -40,33 +40,18 @@ Inductive type_check: type -> alg -> Prop :=
     type_check Ikey (Ik k)
 | Chan_check: forall v,
     type_check Chan (Ch v)
-| Mesg_check: forall v,
-    type_check Mesg (Mg v)
-| Tag_check: forall s,
-    type_check Quot (Tg s)
-| Pair_check: forall x y,
-    type_check Pair (Pr x y)
-| Aenc_check: forall x y,
-    type_check Aenc (En x (Ak y))
-| Ienc_check: forall x y,
-    type_check Ienc (En x (Ik y))
-| Senc_check: forall x y,
-    is_skey y ->
-    type_check Senc (En x y)
-| Hash_check: forall x,
-    type_check Hash (Hs x).
+| Mesg_check: forall x,
+    type_check Mesg x.
 #[global]
  Hint Constructors type_check : core.
 
 Lemma type_check_type_of:
   forall s x,
-    type_check s x <-> s = type_of x.
+    type_check s x <-> s = type_of x \/ s = Mesg.
 Proof.
   split; intros; subst.
   - destruct x; inversion H; subst; simpl; auto.
-    destruct x2; inversion H2; simpl; auto.
-  - destruct x; simpl; auto.
-    destruct x2; simpl; auto.
+  - destruct H; subst; destruct x; simpl; auto.
 Qed.
 
 (** The semantics of an expression

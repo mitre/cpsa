@@ -97,7 +97,7 @@ Definition run_expr (rst: run_state) (ex: expr):
 (** Check that the type of [x] is compatible with [t]. *)
 
 Definition type_check (x: alg) (t: type): bool :=
-  type_eqb (type_of x) t.
+  type_eqb t Mesg || type_eqb (type_of x) t.
 
 (** The semantics of statements *)
 

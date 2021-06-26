@@ -79,7 +79,7 @@ Definition bad_init: proc :=
   [
    (* Send (rtst/unilateral.scm:9:7) *)
    Bind (2, Text) (Frsh_);
-   Bind (3, Aenc) (Encr_ 2 1);
+   Bind (3, Mesg) (Encr_ 2 1);
    Send 0 3;
    (* Recv (rtst/unilateral.scm:10:7) *)
    Bind (4, Text) (Recv_ 0);

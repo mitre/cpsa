@@ -218,21 +218,8 @@ Inductive ctype_check: type -> calg -> Prop :=
     ctype_check Ikey (CIk k)
 | CChan_check: forall v,
     ctype_check Chan (CCh v)
-| CMesg_check: forall v,
-    ctype_check Mesg (CMg v)
-| CTag_check: forall s,
-    ctype_check Quot (CTg s)
-| CPair_check: forall x y,
-    ctype_check Pair (CPr x y)
-| CAenc_check: forall r x y,
-    ctype_check Aenc (CEn r x (CAk y))
-| CIenc_check: forall r x y,
-    ctype_check Ienc (CEn r x (CIk y))
-| CSenc_check: forall r x y,
-    is_cskey y ->
-    ctype_check Senc (CEn r x y)
-| CHash_check: forall x,
-    ctype_check Hash (CHs x).
+| CMesg_check: forall x,
+    ctype_check Mesg x.
 #[global]
  Hint Constructors ctype_check : core.
 

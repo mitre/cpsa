@@ -101,7 +101,8 @@ Lemma type_check_reflect:
 Proof.
   intros.
   unfold type_check.
-  rewrite type_eq_correct.
+  rewrite orb_true_iff.
+  repeat rewrite type_eq_correct.
   rewrite Sem.type_check_type_of; intuition.
 Qed.
 
