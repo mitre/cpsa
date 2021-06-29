@@ -15,14 +15,8 @@ Inductive type: Set :=
 | Skey
 | Akey
 | Ikey
-| Mesg
-| Quot
-| Pair
-| Senc
-| Aenc
-| Ienc
-| Hash
-| Chan.
+| Chan
+| Mesg.
 
 Definition type_dec:
   forall x y: type, {x = y} + {x <> y}.
@@ -99,10 +93,10 @@ Inductive stmt: Set :=
 | Bind: decl -> expr -> stmt    (* Bind a variable *)
 | Send: pvar -> pvar -> stmt    (* Send a message *)
 | Same: pvar -> pvar -> stmt    (* Check for sameness *)
-| Ltkp: pvar -> pvar -> pvar -> stmt (* Check Inv predicate *)
-| Invp: pvar -> pvar -> stmt    (* Check Name predicate *)
-| Namp: pvar -> pvar -> stmt    (* Check Name2 predicate *)
-| Nm2p: pvar -> pvar -> pvar -> stmt. (* Check LTK predicate *)
+| Ltkp: pvar -> pvar -> pvar -> stmt (* Check LTK predicate *)
+| Invp: pvar -> pvar -> stmt    (* Check Inv predicate *)
+| Namp: pvar -> pvar -> stmt    (* Check Name predicate *)
+| Nm2p: pvar -> pvar -> pvar -> stmt. (* Check Name2 predicate *)
 
 (** Procedures *)
 
