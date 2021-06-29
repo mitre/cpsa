@@ -6,7 +6,7 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-module CPSA.Cohort (Mode(..), reduce, unrealized) where
+module CPSA.Cohort (Mode(..), ReduceRes(..), reduce, unrealized) where
 
 import qualified Data.Set as S
 import Data.Set (Set)
@@ -222,26 +222,69 @@ parFoldr _ b [] = b
 parFoldr f b (a : as) =
     par b' (f a b')
     where
-      b' = parFoldr f b as             
+      b' = parFoldr f b as
 
--- Abort if there is an unrealized node without a test, otherwise
--- return a list of skeletons that solve one test.  If the skeleton is
--- realized, try to generalize it, but only when noIsoChk is false.
--- After all of that, apply rewrite rule and filter output that makes
--- no progress.
-reduce :: Mode -> Preskel -> [Preskel]
+
+-- Desired functionality, given a skeleton k.  
+
+-- If some node in k is unrealized, then find a test for it; compute
+-- the cohort; close each cohort member under the rules using
+-- simplify.  Return the list of results simpKs factored by
+-- isomorphism, labeled as Crt simpKs.
+--
+-- If this is Crt [], then k is dead.
+
+-- If no node in k is unrealized, then close under the rules,
+-- obtaining 0 or more results factored by isomorphism.
+
+-- If just one k' is present in these results, and k' is isomorphic to
+-- k, then k is realized.  Check whether k can be generalized,
+-- returning Crt ks, where ks are the results (factored by
+-- isomorphism) of simplifying the generalized versions.  When k
+-- cannot be generalized, Return Stable, since it is a successful
+-- terminal value for the branch.
+
+-- If multiple nonisomorphic results ks are obtained from simplifying
+-- k, return Crt ks.
+
+-- Previous comment, which was less explicit:  
+
+--   -- Abort if there is an unrealized node without a test, otherwise
+--   -- return a list of skeletons that solve one test.  If the skeleton is
+--   -- realized, try to generalize it, but only when noIsoChk is false.
+--   -- After all of that, apply rewrite rule and filter output that makes
+--   -- no progress.
+
+data ReduceRes = Stable | Crt [Preskel] -- | Gnl [Preskel] not needed?  
+
+simplifyNonIsomorphic :: Preskel -> [Preskel]
+simplifyNonIsomorphic = factorIsomorphicPreskels . simplify
+                        
+reduceNoTest :: Mode -> Preskel -> ReduceRes
+reduceNoTest mode k =
+    case simplifyNonIsomorphic k of
+      [] -> Crt []
+      [k']
+          | isomorphic (gist k) (gist k') ->
+              let kmaxima = if omitGeneralization || noGeneralization mode then [k]
+                            else maximize k in 
+              (case filterSame k kmaxima of
+                 [] -> Stable
+                 ks -> Crt ks)
+          | True -> Crt [k']
+      ks -> Crt (filterSame k ks)
+
+reduce :: Mode -> Preskel -> ReduceRes 
 reduce mode k =
-    filterSame k simpKs         -- discard if no progress from k
+    case findTest mode k u a of 
+      Nothing -> reduceNoTest mode k
+      Just ks ->                -- normal cohort for selected unrealized node
+        Crt (parFoldr
+             (\k soFar -> (simplify k) ++ soFar)
+             []
+             $ factorIsomorphicPreskels ks)
     where
-      ks = factorIsomorphicPreskels $
-           maybe (whenRealized k) id (findTest mode k u a) -- Normal cohort
-      (a, u) = avoid k
-      simpKs = parFoldr (\k soFar -> (simplify k) ++ soFar) [] ks -- Apply rewrites
-      whenRealized k =
-          if omitGeneralization || noGeneralization mode then
-            []
-          else
-            maximize k
+      (a, u) = avoid k 
 
 -- Filter out skeletons in ks that are isomorphic to k.
 filterSame :: Preskel -> [Preskel] -> [Preskel]
@@ -294,7 +337,8 @@ findTest mode k u a =
             Just t ->
               case () of
                 _ | S.member t (cmsInNodes ns) ->
-                      -- If channel message sent, node is realized
+                      -- If previous node sent channel message, node
+                      -- is realized
                       loop nodes
                   | authCm k t ->
                       -- If channel message is authenticated

@@ -3301,7 +3301,7 @@ urstateNode rule n k (g, e) =
                                   
 
 rewriteDepthCount :: Int
-rewriteDepthCount = 1640  -- was 14 and 24, 36
+rewriteDepthCount = 2000  -- was 14 and 24, 36
 
 
 -- Try all rules associated with the protocol of k.

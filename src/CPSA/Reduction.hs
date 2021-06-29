@@ -86,8 +86,7 @@ merge (Seen xs) (Seen ys) = Seen (xs ++ ys)
 -- Contains the result of applying the cohort reduction rule.  The
 -- last position is used to hold the reverse of the labels of the
 -- seen children
-data Reduct t g s e  =
-    Reduct !(LPreskel) !Int ![Preskel] ![Int]
+data Reduct t g s e  = ReductStable !(LPreskel) | Reduct !(LPreskel) !Int ![Preskel] ![Int]
 
 parMap :: (a -> b) -> [a] -> [b]
 parMap _ [] = []
@@ -210,6 +209,10 @@ step p h _ m _ n _ todo toobig reducts
 step p h ks m oseen n seen todo toobig (Reduct lk _ _  _  : reducts)
     | nstrands (content lk) >= optBound p = -- Check strand count
         step p h ks m oseen n seen todo (lk : toobig) reducts
+step p h ks m oseen n seen todo toobig (ReductStable lk : reducts) = 
+     do
+       wrt p h (commentPreskel lk [] [] Shape Nada "")
+       step p h ks m oseen n seen todo toobig reducts
 step p h ks m oseen n seen todo toobig (Reduct lk size kids dups : reducts)
     | optGoalsSat p && satCheck lk = -- Stop if goals satisfied mode?
         do
@@ -220,11 +223,11 @@ step p h ks m oseen n seen todo toobig (Reduct lk size kids dups : reducts)
     | size <= 0 =               -- Interpret empty reducts
         do
           let ns = unrealized (content lk)
-          let shape = null ns
-          case shape of
-            True -> wrt p h (commentPreskel lk [] ns Shape Nada "")
-            False ->
-              wrt p h (commentPreskel lk [] ns Ordinary Dead "empty cohort")
+              -- let shape = null ns
+              --             case shape of
+              --               True -> wrt p h (commentPreskel lk [] ns Shape Nada "")
+              --               False  ->                 
+          wrt p h (commentPreskel lk [] ns Ordinary Dead "empty cohort")
           step p h ks m oseen n seen todo toobig reducts
     | optDepth p > 0 && depth lk >= optDepth p =
         do
@@ -245,12 +248,14 @@ step p h ks m oseen n seen todo toobig (Reduct lk size kids dups : reducts)
 -- Expands one branch in the derivation tree.
 branch :: Options -> Seen -> LPreskel -> Reduct t g s e
 branch p seen lk =
-    Reduct lk (length kids)
-               (seqList $ reverse unseen) (seqList dups)
-    where
-      kids = reduce (mkMode p) (content lk)
-      (unseen, dups) =
-          foldl (duplicates seen) ([], []) kids
+    case reduce (mkMode p) (content lk) of
+      Stable -> ReductStable lk
+      Crt kids -> 
+          Reduct lk (length kids) (seqList $ reverse unseen) (seqList dups)
+        where
+            (unseen, dups) =
+                foldl (duplicates seen) ([], []) kids
+
 
 mkMode :: Options -> Mode
 mkMode p =
@@ -303,9 +308,14 @@ fast p h _ _ _ todo@(lk : _)
 fast p h ks m n (lk : todo) =
     do
       let ns = unrealized (content lk)
-      let ks' = reduce (mkMode p) (content lk)
-      let msg = show (length ks') ++ " in cohort"
-      let shape = if null ns then Shape else Ordinary
+      let red = reduce (mkMode p) (content lk)
+      let (len,ks') = (case red of 
+                   Stable -> (0,[]) 
+                   Crt kids -> (length kids, kids))
+      let msg = show len ++ " in cohort"
+      let shape = (case red of 
+                     Stable -> Shape
+                     Crt _ -> Ordinary) 
       wrt p h (commentPreskel lk [] ns shape Nada msg)
       let (n', todo') = foldl (children lk) (n, []) ks'
       fast p h ks m n' (todo ++ reverse todo')
