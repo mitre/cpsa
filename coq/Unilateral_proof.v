@@ -1,3 +1,11 @@
+(* Unilateral Proofs
+
+Copyright (c) 2021 The MITRE Corporation
+
+This program is free software: you can redistribute it and/or
+modify it under the terms of the BSD License as published by the
+University of California. *)
+
 (** * Unilateral Protocol Generated Code Verification *)
 
 Require Import List Program Monad Proc Alg.

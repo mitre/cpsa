@@ -1,3 +1,11 @@
+(* Message Algebra
+
+Copyright (c) 2021 The MITRE Corporation
+
+This program is free software: you can redistribute it and/or
+modify it under the terms of the BSD License as published by the
+University of California. *)
+
 (** * The Message Algebra *)
 
 Require Import FunInd Nat Bool DecBool Monad Proc.

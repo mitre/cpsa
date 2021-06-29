@@ -1,3 +1,11 @@
+(* Derivability
+
+Copyright (c) 2021 The MITRE Corporation
+
+This program is free software: you can redistribute it and/or
+modify it under the terms of the BSD License as published by the
+University of California. *)
+
 (** * Derivability *)
 
 Require Import List ListSet Bool Lia Alg Sem_tactics.
