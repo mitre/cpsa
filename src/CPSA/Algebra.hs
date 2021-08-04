@@ -76,7 +76,7 @@ module CPSA.Algebra (name,
     clone,
     loadVars,
     newVar,
-    varName, 
+    varName,
 
     Term,
     isVar,
@@ -86,7 +86,7 @@ module CPSA.Algebra (name,
     isChan,
     isLocn,
     isIndxVar,
-    isIndxConst, 
+    isIndxConst,
     termsWellFormed,
     occursIn,
     foldVars,
@@ -191,21 +191,19 @@ cloneId gen x = freshId gen (idName x)
 
 -- Operations other than the tag constant constructor
 data Symbol
-    = Text                      -- Text
-    | Data                      -- Another text-like item
-    | Name                      -- Principal
-    | Pval                      -- Point at which a store occurs 
-    | Skey                      -- Symmetric key
-    | Ltk                       -- Long term shared symmetric key
-    | Akey                      -- Asymmetric key
-    | Invk                      -- Inverse of asymmetric key
-    | Pubk                      -- Public asymmetric key of a principal
-    | Chan                      -- Channel
-    | Locn                      -- Location 
-    | Cat                       -- Term concatenation (Pairing really)
-    | Enc                       -- Encryption
-    | Hash                      -- Hashing
-      deriving (Show, Eq, Ord, Enum, Bounded)
+    = Atom String              -- Atoms
+    | Akey String              -- Asymmetric keys
+    | Name                     -- Principal
+    | Pval                     -- Point at which a store occurs
+    | Ltk                      -- Long term shared symmetric key
+    | Invk                     -- Inverse of asymmetric key
+    | Pubk                     -- Public asymmetric key of a principal
+    | Chan                     -- Channel
+    | Locn                     -- Location
+    | Tupl String              -- Term tupling
+    | Enc String               -- Encryption
+    | Hash String              -- Hashing
+      deriving (Show, Eq, Ord)
 
 -- A Basic Crypto Algebra Term
 
@@ -232,8 +230,8 @@ isVar :: Term -> Bool
 isVar (I _) = True           -- Sort: mesg
 isVar (F s [I _]) =
     -- Sorts: text, data, name, skey, akey, and chan
-    s == Text || s == Data || s == Name || s == Pval 
-    || s == Skey || s == Akey || s == Chan || s == Locn 
+    s == Text || s == Data || s == Name || s == Pval
+    || s == Skey || s == Akey || s == Chan || s == Locn
 isVar _ = False
 
 -- Is term a channel variable
@@ -251,7 +249,6 @@ isStrdVar :: Term -> Bool
 isStrdVar (D _) = True
 isStrdVar _ = False
 
-
 -- Note that isVar of (X _) is false.
 isIndxVar :: Term -> Bool
 isIndxVar (X _) = True
@@ -261,17 +258,13 @@ isIndxConst :: Term -> Bool
 isIndxConst (Y _) = True
 isIndxConst _ = False
 
-
-
 -- Extract the identifier from a variable
 varId :: Term -> Id
 varId (I x) = x
-varId (F Text [I x]) = x
-varId (F Data [I x]) = x
+varId (F (Atom _) [I x]) = x
+varId (F (Akey _) [I x]) = x
 varId (F Name [I x]) = x
 varId (F Pval [I x]) = x
-varId (F Skey [I x]) = x
-varId (F Akey [I x]) = x
 varId (F Chan [I x]) = x
 varId (F Locn [I x]) = x
 varId (D x) = x
@@ -327,23 +320,21 @@ emptyVarEnv = VarEnv M.empty
 termWellFormed :: VarEnv -> Term -> Maybe VarEnv
 termWellFormed xts t@(I x) =
     extendVarEnv xts x t        -- Mesg variable
-termWellFormed xts t@(F Text [I x]) =
-    extendVarEnv xts x t        -- Text variable
-termWellFormed xts t@(F Data [I x]) =
-    extendVarEnv xts x t        -- Data variable
+termWellFormed xts t@(F (Atom _) [I x]) =
+    extendVarEnv xts x t        -- Atom variable
+termWellFormed xts t@(F (Akey _) [I x]) =
+    extendVarEnv xts x t        -- Akey variable
 termWellFormed xts t@(F Name [I x]) =
     extendVarEnv xts x t        -- Name variable
 termWellFormed xts t@(F Pval [I x]) =
     extendVarEnv xts x t        -- pval variable
-termWellFormed xts t@(F Skey [I x]) =
-    extendVarEnv xts x t        -- Symmetric key variable
-termWellFormed xts (F Skey [F Ltk [I x, I y]]) =
+termWellFormed xts (F (Atom _) [F Ltk [I x, I y]]) =
     -- Long term shared symmetric key
-    doubleTermWellFormed xts (F Name [I x]) (F Name [I y])
-termWellFormed xts (F Akey [t]) = -- Asymmetric key terms
+    foldM termWellFormed xts [F Name [I x], F Name [I y]]
+termWellFormed xts (F op@(Akey _) [t]) = -- Asymmetric key terms
     case t of
-      I x -> extendVarEnv xts x (F Akey [I x])
-      F Invk [I x] -> extendVarEnv xts x (F Akey [I x])
+      I x -> extendVarEnv xts x (F op [I x])
+      F Invk [I x] -> extendVarEnv xts x (F op [I x])
       F Pubk [I x] -> extendVarEnv xts x (F Name [I x])
       F Pubk [C _, I x] -> extendVarEnv xts x (F Name [I x])
       F Invk [F Pubk [I x]] -> extendVarEnv xts x (F Name [I x])
@@ -351,10 +342,10 @@ termWellFormed xts (F Akey [t]) = -- Asymmetric key terms
       _ -> Nothing
 termWellFormed xts (C _) =
     Just xts                    -- Tags
-termWellFormed xts (F Cat [t0, t1]) =
-    doubleTermWellFormed xts t0 t1  -- Concatenation
-termWellFormed xts (F Enc [t0, t1]) =
-    doubleTermWellFormed xts t0 t1  -- Encryption
+termWellFormed xts (F Tupl ts) =
+    foldM termWellFormed xts ts -- tupling
+termWellFormed xts (F Enc ts@[t0, t1]) =
+    foldM ermWellFormed xts ts  -- Encryption
 termWellFormed xts (F Hash [t])     =
     termWellFormed xts t            -- Hashing
 termWellFormed _ _ = Nothing
@@ -365,12 +356,6 @@ extendVarEnv (VarEnv env) x t =
     case M.lookup x env of
       Nothing -> Just $ VarEnv $ M.insert x t env
       Just t' -> if t == t' then Just (VarEnv env) else Nothing
-
-doubleTermWellFormed :: VarEnv -> Term -> Term -> Maybe VarEnv
-doubleTermWellFormed xts t0 t1 =
-    do
-      xts <- termWellFormed xts t0
-      termWellFormed xts t1
 
 {-
 -- Is there an identifier incompatible with gen?
@@ -388,11 +373,11 @@ isAtom (I _) = False
 isAtom (C _) = False
 isAtom (F s _) =
     s == Text || s == Data || s == Name || s == Pval
-    || s == Skey || s == Akey || s == Chan || s == Locn 
+    || s == Skey || s == Akey || s == Chan || s == Locn
 isAtom (D _) = False
 isAtom (Z _) = False
 isAtom (X _) = False
-isAtom (Y _) = False               
+isAtom (Y _) = False
 
 -- Does a variable occur in a term?
 occursIn :: Term -> Term -> Bool
@@ -409,27 +394,26 @@ occursIn t _ = error $ "Algebra.occursIn: Bad variable " ++ show t
 -- Fold f through a term applying it to each variable in the term.
 foldVars :: (a -> Term -> a) -> a -> Term -> a
 foldVars f acc t@(I _) = f acc t          -- Mesg variable
-foldVars f acc t@(F Text [I _]) = f acc t -- Text variable
-foldVars f acc t@(F Data [I _]) = f acc t -- Data variable
+foldVars f acc t@(F (Atom _) [I _]) = f acc t -- Atom variable
+foldVars f acc t@(F (Akey _) [I _]) = f acc t -- Akey variable
 foldVars f acc t@(F Name [I _]) = f acc t -- Name variable
 foldVars f acc t@(F Pval [I _]) = f acc t -- Pval variable
-foldVars f acc t@(F Skey [I _]) = f acc t -- Symmetric keys
-foldVars f acc (F Skey [F Ltk [I x, I y]]) =
+foldVars f acc (F (Akey _) [F Ltk [I x, I y]]) =
     f (f acc (F Name [I x])) (F Name [I y])
-foldVars f acc t@(F Akey [I _]) = f acc t -- Asymmetric keys
-foldVars f acc (F Akey [F Invk [I x]]) = f acc (F Akey [I x])
-foldVars f acc (F Akey [F Pubk [I x]]) = f acc (F Name [I x])
-foldVars f acc (F Akey [F Pubk [C _, I x]]) = f acc (F Name [I x])
-foldVars f acc (F Akey [F Invk [F Pubk [I x]]]) = f acc (F Name [I x])
-foldVars f acc (F Akey [F Invk [F Pubk [C _, I x]]]) = f acc (F Name [I x])
+foldVars f acc t@(F (Akey _) [I _]) = f acc t -- Asymmetric keys
+foldVars f acc (F op@(Akey _) [F Invk [I x]]) = f acc (F op [I x])
+foldVars f acc (F (Akey _) [F Pubk [I x]]) = f acc (F Name [I x])
+foldVars f acc (F (Akey _) [F Pubk [C _, I x]]) = f acc (F Name [I x])
+foldVars f acc (F (Akey _) [F Invk [F Pubk [I x]]]) = f acc (F Name [I x])
+foldVars f acc (F (Akey _) [F Invk [F Pubk [C _, I x]]]) = f acc (F Name [I x])
 foldVars f acc t@(F Chan [I _]) = f acc t -- Channels
 foldVars f acc t@(F Locn [I _]) = f acc t -- Locn
 foldVars _ acc (C _) = acc                -- Tags
-foldVars f acc (F Cat [t0, t1]) =         -- Concatenation
+foldVars f acc (F (Tupl _) ts) =              -- Concatenation
+    foldl (foldVars f) acc ts
+foldVars f acc (F (Enc _) [t0, t1]) =         -- Encryption
     foldVars f (foldVars f acc t0) t1
-foldVars f acc (F Enc [t0, t1]) =         -- Encryption
-    foldVars f (foldVars f acc t0) t1
-foldVars f acc (F Hash [t]) =             -- Hashing
+foldVars f acc (F (Hash _) [t]) =             -- Hashing
     foldVars f acc t
 foldVars f acc t@(D _) = f acc t          -- Strd variable
 foldVars _ acc (Z _) = acc                -- Strd constant
@@ -439,8 +423,8 @@ foldVars _ _ t = error $ "Algebra.foldVars: Bad term " ++ show t
 
 -- Fold f through a term applying it to each term that is carried by the term.
 foldCarriedTerms :: (a -> Term -> a) -> a -> Term -> a
-foldCarriedTerms f acc t@(F Cat [t0, t1]) = -- Concatenation
-    foldCarriedTerms f (foldCarriedTerms f (f acc t) t0) t1
+foldCarriedTerms f acc t@(F (Tupl _) ts) = -- Concatenation
+    foldl (foldCarriedTerms f) acc ts
 foldCarriedTerms f acc t@(F Enc [t0, _]) = -- Encryption
     foldCarriedTerms f (f acc t) t0
 foldCarriedTerms f acc t = f acc t     -- atoms and tags
@@ -450,8 +434,8 @@ carriedBy :: Term -> Term -> Bool
 carriedBy t t' =
     t == t' ||
       case t' of
-        F Cat [t0, t1] -> carriedBy t t0 || carriedBy t t1
-        F Enc [t0, _] -> carriedBy t t0
+        F (Tupl _) ts -> any (carriedBy t) ts
+        F (Enc _) [t0, _] -> carriedBy t t0
         _ -> False
 
 -- The key used to decrypt an encrypted term, otherwise Nothing.
@@ -465,11 +449,11 @@ buildable knowns unguessable term =
     where
       ba (I _) = True           -- A mesg sorted variable is always buildable
       ba (C _) = True           -- and so is a tag
-      ba (F Cat [t0, t1]) =
-          ba t0 && ba t1
-      ba t@(F Enc [t0, t1]) =
+      ba (F (Tupl _) ts) =
+          all ba ts
+      ba t@(F (Enc _) [t0, t1]) =
           S.member t knowns || ba t0 && ba t1
-      ba t@(F Hash [t1]) =
+      ba t@(F (Hash _) [t1]) =
           S.member t knowns || ba t1
       ba t = isAtom t && S.notMember t unguessable
 
@@ -484,24 +468,24 @@ decompose knowns unguessable =
       loop unguessable knowns old []
           | old == knowns = (knowns, unguessable) -- Done
           | otherwise = loop unguessable knowns knowns (S.elems knowns)
-      loop unguessable knowns old (t@(F Cat _) : todo) =
+      loop unguessable knowns old (t@(F (Tupl _) _) : todo) =
           loop unguessable (decat t (S.delete t knowns)) old todo
-      loop unguessable knowns old ((F Enc [t0, t1]) : todo)
+      loop unguessable knowns old ((F (Enc _) [t0, t1]) : todo)
           | buildable knowns unguessable (inv t1) = -- Add plaintext
               loop unguessable (decat t0 knowns) old todo
           | otherwise = loop unguessable knowns old todo
-      loop unguessable knowns old ((F Hash [_]) : todo) =
+      loop unguessable knowns old ((F (Hash _) [_]) : todo) =
           loop unguessable knowns old todo -- Hash can't be decomposed
       loop unguessable knowns old (t : todo) =
           loop (S.delete t unguessable) (S.delete t knowns) old todo
       -- Decat
-      decat (F Cat [t0, t1]) s = decat t1 (decat t0 s)
+      decat (F (Tupl _) ts) s = foldl decat s ts
       decat t s = S.insert t s
 
 -- Inverts an asymmetric key
 inv :: Term -> Term
-inv (F Akey [F Invk [t]]) = F Akey [t]
-inv (F Akey [t]) = F Akey [F Invk [t]]
+inv (F op@(Akey _) [F Invk [t]]) = F op [t]
+inv (F op@(Akey _) [t]) = F op [F Invk [t]]
 inv t@(F _ _) = t
 inv (I _) = error "Algebra.inv: Cannot invert a variable of sort mesg"
 inv (C _) = error "Algebra.inv: Cannot invert a tag constant"
@@ -511,30 +495,24 @@ inv (X _) = error "Algebra.inv: Cannot invert a variable of sort indx"
 inv (Y _) = error "Algebra.inv: Cannot invert an indx constant"
 
 components :: Term -> [Term]
-components (F Cat [t, t']) =
-    setUnion (components t) (components t')
-    where
-      setUnion [] ts' = ts'
-      setUnion (t : ts) ts' = setUnion ts $ adjoin t ts'
-components t = [t] 
+components (F (Tupl _) ts) =
+    nub (flatten $ map components ts)
+components t = [t]
 
 -- Extracts every encryption that is carried by a term along with its
 -- encryption key.  Note that a hash is treated as a kind of
 -- encryption in which the term that is hashed is the encryption key.
 encryptions :: Term -> [(Term, [Term])]
 encryptions t =
-    reverse $ loop t []
+    f t []
     where
-      loop (F Cat [t, t']) acc =
-          loop t' (loop t acc)
-      loop t@(F Enc [t', t'']) acc =
-          loop t' (adjoin (t, [t'']) acc)
-      loop t@(F Hash [t']) acc =
-          adjoin (t, [t']) acc
-      loop _ acc = acc
-      adjoin x xs
-          | x `elem` xs = xs
-          | otherwise = x : xs
+      f (F (Tupl _) ts) acc =
+        foldr f acc ts
+      f t@(F (Enc _) [t', t'']) acc =
+        f t' (adjoin (t, [t'']) acc)
+      f t@(F Hash [t']) acc =
+        adjoin (t, [t']) acc
+      f _ acc = acc
 
 escapeSet :: Set Term -> Set Term -> Term -> Maybe (Set Term)
 escapeSet ts a ct =
@@ -543,7 +521,7 @@ escapeSet ts a ct =
     else
         Just $ S.filter f ts
         where
-          f (F Enc [t, key]) =
+          f (F (Enc _) [t, key]) =
               carriedBy ct t &&
               not (buildable ts a (inv key))
           f _ = False
@@ -589,9 +567,11 @@ carriedPlaces target source =
     where
       f paths path source
           | target == source = Place (reverse path) : paths
-      f paths path (F Cat [t, t']) =
-          f (f paths  (0 : path) t) (1 : path) t'
-      f paths path (F Enc [t, _]) =
+      f paths path (F (Tupl _) ts) =
+          foldr g paths (zip [0..] ts)
+          where
+            g (i, t) paths = f paths (i : path) t
+      f paths path (F (Enc _) [t, _]) =
           f paths (0 : path) t
       f paths _ _ = paths
 
@@ -667,7 +647,7 @@ idSubst _ t@(Z _) = t
 idSubst subst (X x) =
     M.findWithDefault (X x) x subst
 idSubst _ t@(Y _) = t
-                    
+
 -- Is every variable in a term a key in the map?
 idMapped :: IdMap -> Term -> Bool
 idMapped subst (I x) = M.member x subst
@@ -849,7 +829,7 @@ substChase subst t =
       t@(D _) -> t
       t@(Z _) -> t
       t@(X _) -> t
-      t@(Y _) -> t                 
+      t@(Y _) -> t
 
 -- Matching and instantiation
 
@@ -926,7 +906,6 @@ substitution :: Env -> Subst
 substitution (Env r) =
     Subst $ M.filterWithKey nonTrivialBinding r
 
-
 -- Find bound above all the strand indices i in strand values Z i in
 -- values in the environment
 strandBoundEnv :: Env -> Int
@@ -935,7 +914,6 @@ strandBoundEnv (Env map) =
      where
        f bnd (Z i) = max bnd (i+1)
        f bnd _ = bnd
-         
 
 -- Add type information to an environment, and return it as a list of
 -- associations.
@@ -948,18 +926,14 @@ reify domain (Env env) =
           error $ "Algebra.reify: variable missing from domain " ++ idName x
       loop (I x : _) (y, t)
           | x == y = (I x, t)
-      loop (F Text [I x] : _) (y, t)
-          | x == y = (F Text [I x], F Text [t])
-      loop (F Data [I x] : _) (y, t)
-          | x == y = (F Data [I x], F Data [t])
+      loop (F op@(Atom _) [I x] : _) (y, t)
+          | x == y = (F op [I x], F op [t])
+      loop (F op@(Akey _) [I x] : _) (y, t)
+          | x == y = (F op [I x], F op [t])
       loop (F Name [I x] : _) (y, t)
           | x == y = (F Name [I x], F Name [t])
       loop (F Pval [I x] : _) (y, t)
           | x == y = (F Pval [I x], F Pval [t])
-      loop (F Skey [I x] : _) (y, t)
-          | x == y = (F Skey [I x], F Skey [t])
-      loop (F Akey [I x] : _) (y, t)
-          | x == y = (F Akey [I x], F Akey [t])
       loop (F Chan [I x] : _) (y, t)
           | x == y = (F Chan [I x], F Chan [t])
       loop (F Locn [I x] : _) (y, t)
@@ -990,11 +964,10 @@ strdUpdate (Env e) f =
     h (Z z) = Z $ f z
     h t = t
 
-
 --   indxMatch ::  Term -> Int -> (Gen, Env) -> [(Gen, Env)]
 --   indxMatch t t' (g, e) =
 --          maybe [] (\e -> [(g, e)]) $ indxMatchI t t' e
---   
+--
 --   indxMatchI ::  Term -> Int -> Env -> Maybe Env
 --   indxMatchI t p env = matchI t (Y p) env
 
@@ -1042,7 +1015,6 @@ loadVar (gen, vars) (S pos name, S pos' sort) =
             return (gen', p : vars)
 loadVar _ (x,_) = fail (shows (annotation x) "Bad variable syntax")
 
-
 mkVar :: MonadFail m => Pos -> String -> Id -> m Term
 mkVar pos sort x
   | sort == "mesg" = return $ I x
@@ -1058,13 +1030,11 @@ mkVar pos sort x
   | sort == "indx" = return $ X x
   | otherwise = fail (shows pos "Sort " ++ sort ++ " not recognized")
 
-
-
 newVar :: Gen -> String -> String -> (Gen, Term)
 newVar g varName varSort =
-    let (g', x) = freshId g varName in 
+    let (g', x) = freshId g varName in
     (g', mkVarUnfailingly varSort x)
-                        
+
 mkVarUnfailingly :: String -> Id -> Term
 mkVarUnfailingly sort x
   | sort == "mesg" =  I x
@@ -1130,32 +1100,29 @@ loadDispatch =
 
 locnMesg :: Term -> Term -> Term
 locnMesg pt t =
-    F Cat [pt, t]
+    F (Tupl "cat") [pt, t]
 
 isLocnMsg :: Term -> Bool
-isLocnMsg (F Cat[pt, _]) =
+isLocnMsg (F (Tupl "cat") [pt, _]) =
     case pt of
       F Pval [I _] -> True
       _ ->  False
 isLocnMsg _ = False
 
 locnMsgPayload :: Term -> Term
-locnMsgPayload m@(F Cat[pt, t]) =
+locnMsgPayload m@(F (Tupl "cat") [pt, t]) =
     case pt of
       F Pval [I _] -> t
       _            -> m
 locnMsgPayload x = x
 
 locnMsgPoint :: MonadFail m => Term -> m Term
-locnMsgPoint (F Cat[pt, _]) =
+locnMsgPoint (F (Tupl "cat") [pt, _]) =
     case pt of
       F Pval [I _] -> return pt
       _ -> fail ("locnMsgPoint:  Bad point " ++ show pt)
 locnMsgPoint x =
-    fail ("locnMsgPoint:  Bad state message " ++ show x)         
-               
-
-                          
+    fail ("locnMsgPoint:  Bad state message " ++ show x)
 
 loadLocnTerm :: MonadFail m => Gen -> SExpr Pos -> SExpr Pos -> Term -> m (Gen, Term, Term)
 loadLocnTerm gen (S pos ptStr) (S pos' pvalStr) t =
@@ -1166,10 +1133,6 @@ loadLocnTerm gen (S pos ptStr) (S pos' pvalStr) t =
         pt : _ -> return (gen', pt, locnMesg pt t)
 loadLocnTerm _ _ _ _ =
     fail "loadLocnTerm:  Call only with SExprs that are really Strings"
-         
-      
-
-
 
 -- Atom constructors: pubk privk invk ltk
 
@@ -1276,26 +1239,22 @@ loadHash pos _ _ = fail (shows pos "Malformed hash")
 --       | s == s' = (s, (L.nub $ vnames ++ vnames'))
 --                   : (combineVarListSpecs vls vls')
 --       | otherwise =
---           combineVarListSpecs vls $ (s', vnames') : (combineVarListSpecs [(s, vnames)] vls') 
-                    
+--           combineVarListSpecs vls $ (s', vnames') : (combineVarListSpecs [(s, vnames)] vls')
+
 sortNameAndVarName :: Term -> (String,String)
-sortNameAndVarName (I (Id(_, name))) = ("mesg",name) 
-sortNameAndVarName (F Text [I (Id(_, name))]) = ("text",name)
-sortNameAndVarName (F Data [I (Id(_, name))]) = ("data",name)
+sortNameAndVarName (I (Id(_, name))) = ("mesg",name)
+sortNameAndVarName (F (Atom sort) [I (Id(_, name))]) = (sort,name)
+sortNameAndVarName (F (Akey sort) [I (Id(_, name))]) = (sort,name)
 sortNameAndVarName (F Name [I (Id(_, name))]) = ("name",name)
 sortNameAndVarName (F Pval [I (Id(_, name))]) = ("pt",name)
-sortNameAndVarName (F Skey [I (Id(_, name))]) = ("skey",name)
-sortNameAndVarName (F Akey [I (Id(_, name))]) = ("akey",name)
 sortNameAndVarName (F Chan [I (Id(_, name))]) = ("chan",name)
 sortNameAndVarName (F Locn [I (Id(_, name))]) = ("locn",name)
 sortNameAndVarName (D (Id(_, name))) = ("strd",name)
 sortNameAndVarName (X (Id(_, name))) = ("indx",name)
 sortNameAndVarName t = error ("sortNameAndVarName:  Non-var " ++ (show t))
 
-
-
 addSortNameToVarListSpec :: (String,String) -> [(String,[String])] -> Maybe [(String,[String])]
-addSortNameToVarListSpec (_,_) [] = Nothing 
+addSortNameToVarListSpec (_,_) [] = Nothing
 addSortNameToVarListSpec (sn,vn) ((sn',vns) : rest)
     | sn == sn' = Just $ (sn, adjoin vn vns) : rest
     | otherwise =
@@ -1307,11 +1266,10 @@ varListSpecOfVars :: [Term] -> [(String,[String])]
 varListSpecOfVars [] = []
 varListSpecOfVars (t : rest) =
     let (sn,vn) = sortNameAndVarName t in
-    let specRest = varListSpecOfVars rest in 
+    let specRest = varListSpecOfVars rest in
     case addSortNameToVarListSpec (sn,vn) specRest of
       Nothing -> (sn,[vn]) : specRest
       Just added -> added
-                                                             
 
 -- Term specific displaying functions
 
@@ -1330,12 +1288,10 @@ displayVars ctx vars =
 
 displayVar :: Context -> Term -> (SExpr (), SExpr ())
 displayVar ctx (I x) = displaySortId "mesg" ctx x
-displayVar ctx (F Text [I x]) = displaySortId "text" ctx x
-displayVar ctx (F Data [I x]) = displaySortId "data" ctx x
+displayVar ctx (F (Atom sort) [I x]) = displaySortId sort ctx x
+displayVar ctx (F (Akey sort) [I x]) = displaySortId sort ctx x
 displayVar ctx (F Name [I x]) = displaySortId "name" ctx x
 displayVar ctx (F Pval [I x]) = displaySortId "pval" ctx x
-displayVar ctx (F Skey [I x]) = displaySortId "skey" ctx x
-displayVar ctx (F Akey [I x]) = displaySortId "akey" ctx x
 displayVar ctx (F Chan [I x]) = displaySortId "chan" ctx x
 displayVar ctx (F Locn [I x]) = displaySortId "locn" ctx x
 displayVar ctx (D x) = displaySortId "strd" ctx x
@@ -1346,7 +1302,7 @@ displayVar _ _ =
 displaySortId :: String -> Context -> Id -> (SExpr (), SExpr ())
 displaySortId sort ctx x = (displayId ctx x, S () sort)
 
--- JDG:  Restore this later !!! 
+-- JDG:  Restore this later !!!
 displayId :: Context -> Id -> SExpr ()
 displayId (Context ctx) x =
     case lookup x ctx of
@@ -1355,7 +1311,7 @@ displayId (Context ctx) x =
           error $ "Algebra.displayId: Cannot find variable " ++ msg
       Just name -> S () name
 
--- JDG:  Use this if debugging  
+-- JDG:  Use this if debugging
 --   displayId :: Context -> Id -> SExpr ()
 --   displayId (Context ctx) x =
 --       case lookup x ctx of
@@ -1366,46 +1322,42 @@ displayId (Context ctx) x =
 --            S () ("*" ++ idName x ++ "*")
 --         Just name -> S () name
 
-                   
-
 notPt :: Term -> Bool
 notPt (F Pval [I _]) = False
-notPt _ = True 
+notPt _ = True
 
 displayTerm :: Context -> Term -> SExpr ()
 displayTerm ctx (I x) = displayId ctx x
-displayTerm ctx (F Text [I x]) = displayId ctx x
-displayTerm ctx (F Data [I x]) = displayId ctx x
-displayTerm ctx (F Name [I x]) = displayId ctx x
-displayTerm ctx (F Pval [I x]) = displayId ctx x
-displayTerm ctx (F Skey [I x]) = displayId ctx x
-displayTerm ctx (F Skey [F Ltk [I x, I y]]) =
+displayTerm ctx (F (Atom _) [I x]) = displayId ctx x
+displayTerm ctx (F (Atom "skey") [F Ltk [I x, I y]]) =
     L () [S () "ltk", displayId ctx x, displayId ctx y]
-displayTerm ctx (F Akey [t]) =
+displayTerm ctx (F (Akey _) [I x]) = displayId ctx x
+displayTerm ctx (F (Akey _) [F invk [I x]]) =
+    L () [S () "invk", displayId ctx x]
+displayTerm ctx (F (Akey "akey") [t]) =
     case t of
-      I x -> displayId ctx x
-      F Invk [I x] -> L () [S () "invk", displayId ctx x]
       F Pubk [I x] -> L () [S () "pubk", displayId ctx x]
       F Pubk [C c, I x] -> L () [S () "pubk", Q () c, displayId ctx x]
       F Invk [F Pubk [I x]] -> L () [S () "privk", displayId ctx x]
       F Invk [F Pubk [C c, I x]] ->
           L () [S () "privk", Q () c, displayId ctx x]
       _ -> error ("Algebra.displayAkey: Bad term " ++ show t)
+displayTerm ctx (F Name [I x]) = displayId ctx x
+displayTerm ctx (F Pval [I x]) = displayId ctx x
 displayTerm ctx (F Chan [I x]) = displayId ctx x
 displayTerm ctx (F Locn [I x]) = displayId ctx x
 displayTerm _ (C t) = Q () t
-displayTerm ctx (F Cat [t0, t1]) =
-    L () (S () "cat" : displayTerm ctx t0 : displayList ctx t1)
-displayTerm ctx (F Enc [t0, t1]) =
-    L () (S () "enc" : displayEnc ctx t0 t1)
-displayTerm ctx (F Hash [t]) =
-    L () (S () "hash" : displayList ctx t)
+displayTerm ctx (F (Tupl op) ts) =
+    L () (S () op : map (displayTerm ctx) ts)
+displayTerm ctx (F (Enc op) [t0, t1]) =
+    L () (S () op : displayEnc ctx t0 t1)
+displayTerm ctx (F (Hash op) [t]) =
+    L () (S () op : displayList ctx t)
 displayTerm ctx (D x) = displayId ctx x
 displayTerm _ (Z z) = N () z
 displayTerm ctx (X x) = displayId ctx x
 displayTerm _ (Y z) = N () z
 displayTerm _ t = error ("Algebra.displayTerm: Bad term " ++ show t)
-
 
 displayTermNoPt :: Context -> Term -> SExpr ()
 displayTermNoPt ctx (I x) = displayId ctx x
@@ -1432,7 +1384,7 @@ displayTermNoPt _ (C t) = Q () t
 displayTermNoPt ctx (F Cat [t0, t1]) =
     case t0 of
       (F Pval [I _]) -> displayTermNoPt ctx t1
-      _ -> L () (S () "cat" : displayTermNoPt ctx t0 : displayList ctx t1) 
+      _ -> L () (S () "cat" : displayTermNoPt ctx t0 : displayList ctx t1)
 displayTermNoPt ctx (F Enc [t0, t1]) =
     L () (S () "enc" : displayEnc ctx t0 t1)
 displayTermNoPt ctx (F Hash [t]) =
@@ -1442,17 +1394,15 @@ displayTermNoPt _ (Z z) = N () z
 displayTermNoPt ctx (X x) = displayId ctx x
 displayTermNoPt _ (Y z) = N () z
 displayTermNoPt _ t = error ("Algebra.displayTermNoPt: Bad term " ++ show t)
-                  
-
-
-
 
 displayList :: Context -> Term -> [SExpr ()]
-displayList ctx (F Cat [t0, t1]) = displayTerm ctx t0 : displayList ctx t1
+displayList ctx (F (Tupl "cat") [t0, t1]) =
+  displayTerm ctx t0 : displayList ctx t1
 displayList ctx t = [displayTerm ctx t]
 
 displayEnc :: Context -> Term -> Term -> [SExpr ()]
-displayEnc ctx (F Cat [t0, t1]) t = displayTerm ctx t0 : displayEnc ctx t1 t
+displayEnc ctx (F (Tupl "cat") [t0, t1]) t =
+  displayTerm ctx t0 : displayEnc ctx t1 t
 displayEnc ctx t0 t1 = [displayTerm ctx t0, displayTerm ctx t1]
 
 displayEnv :: Context -> Context -> Env -> [SExpr ()]
