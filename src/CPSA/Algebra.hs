@@ -322,24 +322,24 @@ termWellFormed xts t@(I x) =
     extendVarEnv xts x t        -- Mesg variable
 termWellFormed xts t@(F (Atom _) [I x]) =
     extendVarEnv xts x t        -- Atom variable
-termWellFormed xts t@(F (Akey _) [I x]) =
-    extendVarEnv xts x t        -- Akey variable
-termWellFormed xts t@(F Name [I x]) =
-    extendVarEnv xts x t        -- Name variable
-termWellFormed xts t@(F Pval [I x]) =
-    extendVarEnv xts x t        -- pval variable
-termWellFormed xts (F (Atom _) [F Ltk [I x, I y]]) =
+termWellFormed xts (F (Atom "skey") [F Ltk [I x, I y]]) =
     -- Long term shared symmetric key
     foldM termWellFormed xts [F Name [I x], F Name [I y]]
-termWellFormed xts (F op@(Akey _) [t]) = -- Asymmetric key terms
+termWellFormed xts t@(F (Akey _) [I x]) =
+    extendVarEnv xts x t        -- Akey variable
+termWellFormed xts (F op@(Akey _) [F Invk [I x]]) =
+    extendVarEnv xts x (F op [I x])      -- inverse Akey variable
+termWellFormed xts (F (Akey "akey") [t]) = -- Asymmetric key terms
     case t of
-      I x -> extendVarEnv xts x (F op [I x])
-      F Invk [I x] -> extendVarEnv xts x (F op [I x])
       F Pubk [I x] -> extendVarEnv xts x (F Name [I x])
       F Pubk [C _, I x] -> extendVarEnv xts x (F Name [I x])
       F Invk [F Pubk [I x]] -> extendVarEnv xts x (F Name [I x])
       F Invk [F Pubk [C _, I x]] -> extendVarEnv xts x (F Name [I x])
       _ -> Nothing
+termWellFormed xts t@(F Name [I x]) =
+    extendVarEnv xts x t        -- Name variable
+termWellFormed xts t@(F Pval [I x]) =
+    extendVarEnv xts x t        -- pval variable
 termWellFormed xts (C _) =
     Just xts                    -- Tags
 termWellFormed xts (F Tupl ts) =
@@ -395,17 +395,17 @@ occursIn t _ = error $ "Algebra.occursIn: Bad variable " ++ show t
 foldVars :: (a -> Term -> a) -> a -> Term -> a
 foldVars f acc t@(I _) = f acc t          -- Mesg variable
 foldVars f acc t@(F (Atom _) [I _]) = f acc t -- Atom variable
-foldVars f acc t@(F (Akey _) [I _]) = f acc t -- Akey variable
-foldVars f acc t@(F Name [I _]) = f acc t -- Name variable
-foldVars f acc t@(F Pval [I _]) = f acc t -- Pval variable
-foldVars f acc (F (Akey _) [F Ltk [I x, I y]]) =
+foldVars f acc (F (Atom _) [F Ltk [I x, I y]]) =
     f (f acc (F Name [I x])) (F Name [I y])
+foldVars f acc t@(F (Akey _) [I _]) = f acc t -- Akey variable
 foldVars f acc t@(F (Akey _) [I _]) = f acc t -- Asymmetric keys
 foldVars f acc (F op@(Akey _) [F Invk [I x]]) = f acc (F op [I x])
 foldVars f acc (F (Akey _) [F Pubk [I x]]) = f acc (F Name [I x])
 foldVars f acc (F (Akey _) [F Pubk [C _, I x]]) = f acc (F Name [I x])
 foldVars f acc (F (Akey _) [F Invk [F Pubk [I x]]]) = f acc (F Name [I x])
 foldVars f acc (F (Akey _) [F Invk [F Pubk [C _, I x]]]) = f acc (F Name [I x])
+foldVars f acc t@(F Name [I _]) = f acc t -- Name variable
+foldVars f acc t@(F Pval [I _]) = f acc t -- Pval variable
 foldVars f acc t@(F Chan [I _]) = f acc t -- Channels
 foldVars f acc t@(F Locn [I _]) = f acc t -- Locn
 foldVars _ acc (C _) = acc                -- Tags
