@@ -2,9 +2,9 @@
 
 ;; Note that (ltk a b) \not= (ltk b a).  If we have a shared key with
 ;; this symmetry, then we need a lttle more structure in the middle
-;; msg.  
+;; msg.
 
-(defprotocol puzzle basic 
+(defprotocol puzzle basic
   (defrole init
     (vars (a b name) (na payload text) (s skey))
     (trace

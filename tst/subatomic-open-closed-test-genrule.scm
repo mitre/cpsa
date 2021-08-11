@@ -1,8 +1,8 @@
 (herald subatomic-open-closed-test-genrule
-	;; (try-old-strands) 
+	;; (try-old-strands)
 	;; 	(check-nonces)
-	;; 	(reverse-nodes) 
-	(bound 40)) 
+	;; 	(reverse-nodes)
+	(bound 40))
 
 (defmacro (dev-key-state d o k)
   (cat "st-k" d o k))
@@ -19,7 +19,7 @@
   (cat "st" d (closed o)))
 
 (defmacro (dev-state-any d o any)
-  (cat "st" d any)) 
+  (cat "st" d any))
 
 (defprotocol subatomic-open-closed basic
   (defrole dev-up
@@ -210,17 +210,14 @@
   (uniq-orig k)
   (facts (no-state-split)))
 
-(defskeleton subatomic-open-closed 
+(defskeleton subatomic-open-closed
   (vars (k skey) (d o name) (n text) (start-ch chan))
   (defstrand dev-pass 4 (k k))
   (facts (no-state-split)))
 
-(defskeleton subatomic-open-closed 
+(defskeleton subatomic-open-closed
   (vars (k skey) (d o name) (n text) (start-ch chan))
   (defstrand owner-power-dev 2 (k k))
   (defstrand dev-pass 4 (k k))
   (uniq-orig k)
   (facts (no-state-split)))
-
-
-

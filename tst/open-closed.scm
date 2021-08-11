@@ -1,7 +1,7 @@
-(herald open-closed 
-	;; (try-old-strands) 
+(herald open-closed
+	;; (try-old-strands)
 	;; 	(check-nonces)
-	;; 	(reverse-nodes) 
+	;; 	(reverse-nodes)
 	(bound 44))
 
 (defmacro (dev-key-state d o k)
@@ -19,14 +19,14 @@
   (cat "st" d (closed o)))
 
 (defmacro (dev-state-any d o any)
-  (cat "st" d any)) 
+  (cat "st" d any))
 
 (defprotocol open-closed basic
   (defrole dev-up
     (vars (k skey) (d o name) (old old1 mesg) (start-ch chan) (lk ls locn))
     (trace
      (recv start-ch (cat "power-up" d o k))
-     (load lk old) 
+     (load lk old)
      (stor lk (dev-key-state d o k))
      (load ls old1)
      (stor ls (dev-state-closed d o))
@@ -51,13 +51,13 @@
     (trace
      (send (enc "close" d o n k))
      (recv n)))
-  
+
   (defrole dev-open
     (vars (k skey) (n text) (any mesg) (d o name) (lk ls locn))
     (trace
      (load lk (dev-key-state d o k))
      (recv (enc "open" d o n k))
-     (load ls (dev-state-any d o any)) 
+     (load ls (dev-state-any d o any))
      (stor ls (dev-state-opened d o))
      (send n)))
 
@@ -85,7 +85,7 @@
      (send (enc "may I pass" k))
      (recv (enc "you may pass" k))))
 
-  (defrule gen-state-close 
+  (defrule gen-state-close
     (forall ((z strd) (d o name) (k skey))
 	    (implies
 	     (and (p "dev-close" z 1)
@@ -94,12 +94,12 @@
 		  (p "dev-close" "k" z k)
 		  (p "dev-close" "any" z (opened o)))
 	     (gen-st (dev-state-opened d o)))))
-	     
-  (defrule gen-state-pass 
+
+  (defrule gen-state-pass
     (forall ((z strd) (d o name) (k skey))
 	    (implies
 	     (and (p "dev-pass" z 1)
-		  (p "dev-pass" "d" z d) 
+		  (p "dev-pass" "d" z d)
 		  (p "dev-pass" "o" z o)
 		  (p "dev-pass" "k" z k))
 	     (gen-st (dev-state-opened d o)))))
@@ -114,22 +114,20 @@
  	   (p "dev-up" "k" z2 k))
        (= z2 z1))))
 
-   
    (defrule same-locn
      (forall ((z1 z2 strd) (i1 i2 indx))
   	     (implies
-  	      (same-locn z1 i1 z2 i2) 
+  	      (same-locn z1 i1 z2 i2)
   	      (fact ha z1 i1 z2 i2)))
      (comment this is a rule comment))
 
    (defrule leadsto-la
      (forall ((z1 z2 strd) (i1 i2 indx))
   	     (implies
-  	      (leads-to z1 i1 z2 i2) 
+  	      (leads-to z1 i1 z2 i2)
   	      (fact la z1 i1 z2 i2)))
      (comment this is a rule comment))
    )
-
 
 (defskeleton open-closed
   (vars (k skey) (d o name) (n text) (start-ch chan))
@@ -137,22 +135,18 @@
   (deflistener k)
   (uniq-orig k))
 
-(defskeleton open-closed 
+(defskeleton open-closed
   (vars (k skey) (d o name) (n text) (start-ch chan))
   ;; (defstrand owner-power-dev 2 (k k))
   (defstrand dev-pass 4 (k k))
   ;; (uniq-orig k)
   )
 
-
-(defskeleton open-closed 
+(defskeleton open-closed
   (vars (k skey) (d o name) (n text) (start-ch chan))
   (defstrand owner-power-dev 2 (k k))
   (defstrand dev-pass 4 (k k))
   (uniq-orig k))
-
-
-
 
 (comment
  (defskeleton open-closed
@@ -180,8 +174,7 @@
      (ls ls))
    (defstrand dev-up 6 (old old) (old1 old1) (d d) (o o) (k k)
      (start-ch start-ch) (lk lk) (ls ls	; -0
-				     )) 
+				     ))
    (precedes ((0 0) (4 0)) ((2 0) (1 1)) ((3 3) (1 2)) ((4 2) (1 0))
 	     ((4 5) (0 1)))
    (uniq-orig n k)))
-
