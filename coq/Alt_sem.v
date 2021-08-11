@@ -1,3 +1,11 @@
+(* Alternate Abstract Execution Semantics
+
+Copyright (c) 2021 The MITRE Corporation
+
+This program is free software: you can redistribute it and/or
+modify it under the terms of the BSD License as published by the
+University of California. *)
+
 (** * An Alternate Abstract Execution Semantics
 
     This section provides a semantics for produres using traces and
