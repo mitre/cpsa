@@ -38,121 +38,6 @@
   (defrole user-pass
     (vars (k skey))
     (trace (send (enc "may I pass" k)) (recv (enc "you may pass" k))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defrule trRl_dev-up-at-4
-    (forall ((z strd)) (implies (p "dev-up" z 5) (trans z 4))))
-  (defrule trRl_dev-up-at-3
-    (forall ((z strd)) (implies (p "dev-up" z 4) (trans z 3))))
-  (defrule trRl_dev-up-at-2
-    (forall ((z strd)) (implies (p "dev-up" z 3) (trans z 2))))
-  (defrule trRl_dev-up-at-1
-    (forall ((z strd)) (implies (p "dev-up" z 2) (trans z 1))))
-  (defrule trRl_dev-open-at-3
-    (forall ((z strd)) (implies (p "dev-open" z 4) (trans z 3))))
-  (defrule trRl_dev-open-at-2
-    (forall ((z strd)) (implies (p "dev-open" z 3) (trans z 2))))
-  (defrule trRl_dev-close-at-3
-    (forall ((z strd)) (implies (p "dev-close" z 4) (trans z 3))))
-  (defrule trRl_dev-close-at-2
-    (forall ((z strd)) (implies (p "dev-close" z 3) (trans z 2))))
-  (defrule dev-pass-completes
-    (forall ((x strd)) (implies (p "dev-pass" x 2) (p "dev-pass" x 3))))
-  (defrule dev-close-completes
-    (forall ((x strd))
-      (implies (p "dev-close" x 2) (p "dev-close" x 4))))
-  (defrule dev-open-completes
-    (forall ((x strd)) (implies (p "dev-open" x 2) (p "dev-open" x 4))))
-  (defrule dev-up-completes
-    (forall ((x strd)) (implies (p "dev-up" x 2) (p "dev-up" x 5))))
-  (defrule atomic-up-pass
-    (forall ((x y strd) (lk locn))
-      (implies
-        (and (p "dev-up" x 5) (p "dev-pass" y 3) (p "dev-up" "lk" x lk)
-          (p "dev-pass" "lk" y lk) (prec x 2 y 1))
-        (prec x 4 y 1))))
-  (defrule same-dev-lk-ls
-    (forall ((lk ls ls-0 locn))
-      (implies
-        (and (fact same-dev ls lk) (fact same-dev ls-0 lk))
-        (= ls ls-0))))
-  (defrule same-dev-ls-lk
-    (forall ((ls lk lk-0 locn))
-      (implies
-        (and (fact same-dev ls lk) (fact same-dev ls lk-0))
-        (= lk lk-0))))
-  (defrule intro-same-dev-pass
-    (forall ((z strd) (lk ls locn))
-      (implies
-        (and (p "dev-pass" "lk" z lk) (p "dev-pass" "ls" z ls))
-        (fact same-dev ls lk))))
-  (defrule intro-same-dev-close
-    (forall ((z strd) (lk ls locn))
-      (implies
-        (and (p "dev-close" "lk" z lk) (p "dev-close" "ls" z ls))
-        (fact same-dev ls lk))))
-  (defrule intro-same-dev-open
-    (forall ((z strd) (lk ls locn))
-      (implies
-        (and (p "dev-open" "lk" z lk) (p "dev-open" "ls" z ls))
-        (fact same-dev ls lk))))
-  (defrule intro-same-dev-up
-    (forall ((z strd) (lk ls locn))
-      (implies
-        (and (p "dev-up" "lk" z lk) (p "dev-up" "ls" z ls))
-        (fact same-dev ls lk))))
-  (defrule power-deliver-once
-    (forall ((z1 z2 strd) (k skey))
-      (implies
-        (and (p "dev-up" z1 2) (p "dev-up" z2 2) (p "dev-up" "k" z1 k)
-          (p "dev-up" "k" z2 k))
-        (= z1 z2))))
-  (defrule gen-state-pass
-    (forall ((z strd) (d o k mesg))
-      (implies
-        (and (p "dev-pass" "d" z d) (p "dev-pass" "o" z o)
-          (p "dev-pass" "k" z k))
-        (gen-st (cat "st-k" d o k)))))
-  (defrule gen-state-close
-    (forall ((z strd) (d o k mesg))
-      (implies
-        (and (p "dev-close" "d" z d) (p "dev-close" "o" z o)
-          (p "dev-close" "k" z k))
-        (gen-st (cat "st-k" d o k)))))
-  (defrule gen-state-open
-    (forall ((z strd) (d o k mesg))
-      (implies
-        (and (p "dev-open" "d" z d) (p "dev-open" "o" z o)
-          (p "dev-open" "k" z k))
-        (gen-st (cat "st-k" d o k)))))
-  (defrule gen-state-pass
-    (forall ((z strd) (d o name) (k skey))
-      (implies
-        (and (p "dev-pass" z 1) (p "dev-pass" "d" z d)
-          (p "dev-pass" "o" z o) (p "dev-pass" "k" z k))
-        (gen-st (cat "st" d o o)))))
   (defrule gen-state-close
     (forall ((z strd) (d o name) (k skey))
       (implies
@@ -160,64 +45,89 @@
           (p "dev-close" "o" z o) (p "dev-close" "k" z k)
           (p "dev-close" "any" z (cat o o)))
         (gen-st (cat "st" d o o)))))
-  (defrule shearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+  (defrule gen-state-pass
+    (forall ((z strd) (d o name) (k skey))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+        (and (p "dev-pass" z 1) (p "dev-pass" "d" z d)
+          (p "dev-pass" "o" z o) (p "dev-pass" "k" z k))
+        (gen-st (cat "st" d o o)))))
+  (defrule gen-state-open
+    (forall ((z strd) (d o k mesg))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
-  (defrule dev-pass-atomic2
-    (forall ((x z strd) (i1 indx))
+        (and (p "dev-open" "d" z d) (p "dev-open" "o" z o)
+          (p "dev-open" "k" z k))
+        (gen-st (cat "st-k" d o k)))))
+  (defrule gen-state-close
+    (forall ((z strd) (d o k mesg))
       (implies
-        (and (p "dev-pass" z 3) (prec z 1 x i1))
-        (or (= x z) (prec z 2 x i1)))))
-  (defrule dev-pass-atomic1
-    (forall ((x z strd) (i1 indx))
+        (and (p "dev-close" "d" z d) (p "dev-close" "o" z o)
+          (p "dev-close" "k" z k))
+        (gen-st (cat "st-k" d o k)))))
+  (defrule gen-state-pass
+    (forall ((z strd) (d o k mesg))
       (implies
-        (and (p "dev-pass" z 3) (prec x i1 z 2))
-        (or (= x z) (prec x i1 z 1)))))
-  (defrule dev-close-atomic2
-    (forall ((x z strd) (i1 indx))
+        (and (p "dev-pass" "d" z d) (p "dev-pass" "o" z o)
+          (p "dev-pass" "k" z k))
+        (gen-st (cat "st-k" d o k)))))
+  (defrule power-deliver-once
+    (forall ((z1 z2 strd) (k skey))
       (implies
-        (and (p "dev-close" z 4) (prec z 1 x i1))
-        (or (= x z) (prec z 3 x i1)))))
-  (defrule dev-close-atomic1
-    (forall ((x z strd) (i1 indx))
+        (and (p "dev-up" z1 2) (p "dev-up" z2 2) (p "dev-up" "k" z1 k)
+          (p "dev-up" "k" z2 k))
+        (= z1 z2))))
+  (defrule intro-same-dev-up
+    (forall ((z strd) (lk ls locn))
       (implies
-        (and (p "dev-close" z 4) (prec x i1 z 3))
-        (or (= x z) (prec x i1 z 1)))))
-  (defrule dev-open-atomic2
-    (forall ((x z strd) (i1 indx))
+        (and (p "dev-up" "lk" z lk) (p "dev-up" "ls" z ls))
+        (fact same-dev ls lk))))
+  (defrule intro-same-dev-open
+    (forall ((z strd) (lk ls locn))
       (implies
-        (and (p "dev-open" z 4) (prec z 1 x i1))
-        (or (= x z) (prec z 3 x i1)))))
-  (defrule dev-open-atomic1
-    (forall ((x z strd) (i1 indx))
+        (and (p "dev-open" "lk" z lk) (p "dev-open" "ls" z ls))
+        (fact same-dev ls lk))))
+  (defrule intro-same-dev-close
+    (forall ((z strd) (lk ls locn))
       (implies
-        (and (p "dev-open" z 4) (prec x i1 z 3))
-        (or (= x z) (prec x i1 z 1)))))
-  (defrule dev-up-atomic2
-    (forall ((x z strd) (i1 indx))
+        (and (p "dev-close" "lk" z lk) (p "dev-close" "ls" z ls))
+        (fact same-dev ls lk))))
+  (defrule intro-same-dev-pass
+    (forall ((z strd) (lk ls locn))
       (implies
-        (and (p "dev-up" z 5) (prec z 1 x i1))
-        (or (= x z) (prec z 4 x i1)))))
-  (defrule dev-up-atomic1
-    (forall ((x z strd) (i1 indx))
+        (and (p "dev-pass" "lk" z lk) (p "dev-pass" "ls" z ls))
+        (fact same-dev ls lk))))
+  (defrule same-dev-ls-lk
+    (forall ((ls lk lk-0 locn))
       (implies
-        (and (p "dev-up" z 5) (prec x i1 z 4))
-        (or (= x z) (prec x i1 z 1)))))
-  (defrule single-thread-close-close
+        (and (fact same-dev ls lk) (fact same-dev ls lk-0))
+        (= lk lk-0))))
+  (defrule same-dev-lk-ls
+    (forall ((lk ls ls-0 locn))
+      (implies
+        (and (fact same-dev ls lk) (fact same-dev ls-0 lk))
+        (= ls ls-0))))
+  (defrule single-thread-up-up
+    (forall ((x y strd) (lk locn))
+      (implies
+        (and (p "dev-up" x 5) (p "dev-up" y 5) (p "dev-up" "lk" x lk)
+          (p "dev-up" "lk" y lk))
+        (or (= x y) (prec x 4 y 1) (prec y 4 x 1)))))
+  (defrule single-thread-up-open
     (forall ((x y strd) (ls locn))
       (implies
-        (and (p "dev-close" x 4) (p "dev-close" y 4)
-          (p "dev-close" "ls" x ls) (p "dev-close" "ls" y ls))
+        (and (p "dev-up" x 5) (p "dev-open" y 4) (p "dev-up" "ls" x ls)
+          (p "dev-open" "ls" y ls))
+        (or (prec x 4 y 1) (prec y 3 x 1)))))
+  (defrule single-thread-up-close
+    (forall ((x y strd) (ls locn))
+      (implies
+        (and (p "dev-up" x 5) (p "dev-close" y 4) (p "dev-up" "ls" x ls)
+          (p "dev-close" "ls" y ls))
+        (or (prec x 4 y 1) (prec y 3 x 1)))))
+  (defrule single-thread-open-open
+    (forall ((x y strd) (ls locn))
+      (implies
+        (and (p "dev-open" x 4) (p "dev-open" y 4)
+          (p "dev-open" "ls" x ls) (p "dev-open" "ls" y ls))
         (or (= x y) (prec x 3 y 1) (prec y 3 x 1)))))
   (defrule single-thread-ls-open-close
     (forall ((x y strd) (ls locn))
@@ -225,30 +135,119 @@
         (and (p "dev-open" x 4) (p "dev-close" y 4)
           (p "dev-open" "ls" x ls) (p "dev-close" "ls" y ls))
         (or (prec x 3 y 1) (prec y 3 x 1)))))
-  (defrule single-thread-open-open
+  (defrule single-thread-close-close
     (forall ((x y strd) (ls locn))
       (implies
-        (and (p "dev-open" x 4) (p "dev-open" y 4)
-          (p "dev-open" "ls" x ls) (p "dev-open" "ls" y ls))
+        (and (p "dev-close" x 4) (p "dev-close" y 4)
+          (p "dev-close" "ls" x ls) (p "dev-close" "ls" y ls))
         (or (= x y) (prec x 3 y 1) (prec y 3 x 1)))))
-  (defrule single-thread-up-close
-    (forall ((x y strd) (ls locn))
-      (implies
-        (and (p "dev-up" x 5) (p "dev-close" y 4) (p "dev-up" "ls" x ls)
-          (p "dev-close" "ls" y ls))
-        (or (prec x 4 y 1) (prec y 3 x 1)))))
-  (defrule single-thread-up-open
-    (forall ((x y strd) (ls locn))
-      (implies
-        (and (p "dev-up" x 5) (p "dev-open" y 4) (p "dev-up" "ls" x ls)
-          (p "dev-open" "ls" y ls))
-        (or (prec x 4 y 1) (prec y 3 x 1)))))
-  (defrule single-thread-up-up
+  (defrule atomic-up-pass
     (forall ((x y strd) (lk locn))
       (implies
-        (and (p "dev-up" x 5) (p "dev-up" y 5) (p "dev-up" "lk" x lk)
-          (p "dev-up" "lk" y lk))
-        (or (= x y) (prec x 4 y 1) (prec y 4 x 1))))))
+        (and (p "dev-up" x 5) (p "dev-pass" y 3) (p "dev-up" "lk" x lk)
+          (p "dev-pass" "lk" y lk) (prec x 2 y 1))
+        (prec x 4 y 1))))
+  (defrule dev-up-completes
+    (forall ((x strd)) (implies (p "dev-up" x 2) (p "dev-up" x 5))))
+  (defrule dev-open-completes
+    (forall ((x strd)) (implies (p "dev-open" x 2) (p "dev-open" x 4))))
+  (defrule dev-close-completes
+    (forall ((x strd))
+      (implies (p "dev-close" x 2) (p "dev-close" x 4))))
+  (defrule dev-pass-completes
+    (forall ((x strd)) (implies (p "dev-pass" x 2) (p "dev-pass" x 3))))
+  (defrule dev-up-atomic1
+    (forall ((x z strd) (i1 indx))
+      (implies
+        (and (p "dev-up" z 5) (prec x i1 z 4))
+        (or (= x z) (prec x i1 z 1)))))
+  (defrule dev-up-atomic2
+    (forall ((x z strd) (i1 indx))
+      (implies
+        (and (p "dev-up" z 5) (prec z 1 x i1))
+        (or (= x z) (prec z 4 x i1)))))
+  (defrule dev-open-atomic1
+    (forall ((x z strd) (i1 indx))
+      (implies
+        (and (p "dev-open" z 4) (prec x i1 z 3))
+        (or (= x z) (prec x i1 z 1)))))
+  (defrule dev-open-atomic2
+    (forall ((x z strd) (i1 indx))
+      (implies
+        (and (p "dev-open" z 4) (prec z 1 x i1))
+        (or (= x z) (prec z 3 x i1)))))
+  (defrule dev-close-atomic1
+    (forall ((x z strd) (i1 indx))
+      (implies
+        (and (p "dev-close" z 4) (prec x i1 z 3))
+        (or (= x z) (prec x i1 z 1)))))
+  (defrule dev-close-atomic2
+    (forall ((x z strd) (i1 indx))
+      (implies
+        (and (p "dev-close" z 4) (prec z 1 x i1))
+        (or (= x z) (prec z 3 x i1)))))
+  (defrule dev-pass-atomic1
+    (forall ((x z strd) (i1 indx))
+      (implies
+        (and (p "dev-pass" z 3) (prec x i1 z 2))
+        (or (= x z) (prec x i1 z 1)))))
+  (defrule dev-pass-atomic2
+    (forall ((x z strd) (i1 indx))
+      (implies
+        (and (p "dev-pass" z 3) (prec z 1 x i1))
+        (or (= x z) (prec z 2 x i1)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule trRl_dev-close-at-2
+    (forall ((z strd)) (implies (p "dev-close" z 3) (trans z 2))))
+  (defgenrule trRl_dev-close-at-3
+    (forall ((z strd)) (implies (p "dev-close" z 4) (trans z 3))))
+  (defgenrule trRl_dev-open-at-2
+    (forall ((z strd)) (implies (p "dev-open" z 3) (trans z 2))))
+  (defgenrule trRl_dev-open-at-3
+    (forall ((z strd)) (implies (p "dev-open" z 4) (trans z 3))))
+  (defgenrule trRl_dev-up-at-1
+    (forall ((z strd)) (implies (p "dev-up" z 2) (trans z 1))))
+  (defgenrule trRl_dev-up-at-2
+    (forall ((z strd)) (implies (p "dev-up" z 3) (trans z 2))))
+  (defgenrule trRl_dev-up-at-3
+    (forall ((z strd)) (implies (p "dev-up" z 4) (trans z 3))))
+  (defgenrule trRl_dev-up-at-4
+    (forall ((z strd)) (implies (p "dev-up" z 5) (trans z 4))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton atomic-open-closed
   (vars (d o name) (k skey) (start-ch chan))
@@ -304,9 +303,9 @@
       (stor ls (cat pt-2 "st" d o))))
   (label 2)
   (parent 1)
+  (seen 2)
   (unrealized (0 1) (1 0))
-  (dead)
-  (comment "empty cohort"))
+  (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
 
@@ -344,121 +343,6 @@
   (defrole user-pass
     (vars (k skey))
     (trace (send (enc "may I pass" k)) (recv (enc "you may pass" k))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defrule trRl_dev-up-at-4
-    (forall ((z strd)) (implies (p "dev-up" z 5) (trans z 4))))
-  (defrule trRl_dev-up-at-3
-    (forall ((z strd)) (implies (p "dev-up" z 4) (trans z 3))))
-  (defrule trRl_dev-up-at-2
-    (forall ((z strd)) (implies (p "dev-up" z 3) (trans z 2))))
-  (defrule trRl_dev-up-at-1
-    (forall ((z strd)) (implies (p "dev-up" z 2) (trans z 1))))
-  (defrule trRl_dev-open-at-3
-    (forall ((z strd)) (implies (p "dev-open" z 4) (trans z 3))))
-  (defrule trRl_dev-open-at-2
-    (forall ((z strd)) (implies (p "dev-open" z 3) (trans z 2))))
-  (defrule trRl_dev-close-at-3
-    (forall ((z strd)) (implies (p "dev-close" z 4) (trans z 3))))
-  (defrule trRl_dev-close-at-2
-    (forall ((z strd)) (implies (p "dev-close" z 3) (trans z 2))))
-  (defrule dev-pass-completes
-    (forall ((x strd)) (implies (p "dev-pass" x 2) (p "dev-pass" x 3))))
-  (defrule dev-close-completes
-    (forall ((x strd))
-      (implies (p "dev-close" x 2) (p "dev-close" x 4))))
-  (defrule dev-open-completes
-    (forall ((x strd)) (implies (p "dev-open" x 2) (p "dev-open" x 4))))
-  (defrule dev-up-completes
-    (forall ((x strd)) (implies (p "dev-up" x 2) (p "dev-up" x 5))))
-  (defrule atomic-up-pass
-    (forall ((x y strd) (lk locn))
-      (implies
-        (and (p "dev-up" x 5) (p "dev-pass" y 3) (p "dev-up" "lk" x lk)
-          (p "dev-pass" "lk" y lk) (prec x 2 y 1))
-        (prec x 4 y 1))))
-  (defrule same-dev-lk-ls
-    (forall ((lk ls ls-0 locn))
-      (implies
-        (and (fact same-dev ls lk) (fact same-dev ls-0 lk))
-        (= ls ls-0))))
-  (defrule same-dev-ls-lk
-    (forall ((ls lk lk-0 locn))
-      (implies
-        (and (fact same-dev ls lk) (fact same-dev ls lk-0))
-        (= lk lk-0))))
-  (defrule intro-same-dev-pass
-    (forall ((z strd) (lk ls locn))
-      (implies
-        (and (p "dev-pass" "lk" z lk) (p "dev-pass" "ls" z ls))
-        (fact same-dev ls lk))))
-  (defrule intro-same-dev-close
-    (forall ((z strd) (lk ls locn))
-      (implies
-        (and (p "dev-close" "lk" z lk) (p "dev-close" "ls" z ls))
-        (fact same-dev ls lk))))
-  (defrule intro-same-dev-open
-    (forall ((z strd) (lk ls locn))
-      (implies
-        (and (p "dev-open" "lk" z lk) (p "dev-open" "ls" z ls))
-        (fact same-dev ls lk))))
-  (defrule intro-same-dev-up
-    (forall ((z strd) (lk ls locn))
-      (implies
-        (and (p "dev-up" "lk" z lk) (p "dev-up" "ls" z ls))
-        (fact same-dev ls lk))))
-  (defrule power-deliver-once
-    (forall ((z1 z2 strd) (k skey))
-      (implies
-        (and (p "dev-up" z1 2) (p "dev-up" z2 2) (p "dev-up" "k" z1 k)
-          (p "dev-up" "k" z2 k))
-        (= z1 z2))))
-  (defrule gen-state-pass
-    (forall ((z strd) (d o k mesg))
-      (implies
-        (and (p "dev-pass" "d" z d) (p "dev-pass" "o" z o)
-          (p "dev-pass" "k" z k))
-        (gen-st (cat "st-k" d o k)))))
-  (defrule gen-state-close
-    (forall ((z strd) (d o k mesg))
-      (implies
-        (and (p "dev-close" "d" z d) (p "dev-close" "o" z o)
-          (p "dev-close" "k" z k))
-        (gen-st (cat "st-k" d o k)))))
-  (defrule gen-state-open
-    (forall ((z strd) (d o k mesg))
-      (implies
-        (and (p "dev-open" "d" z d) (p "dev-open" "o" z o)
-          (p "dev-open" "k" z k))
-        (gen-st (cat "st-k" d o k)))))
-  (defrule gen-state-pass
-    (forall ((z strd) (d o name) (k skey))
-      (implies
-        (and (p "dev-pass" z 1) (p "dev-pass" "d" z d)
-          (p "dev-pass" "o" z o) (p "dev-pass" "k" z k))
-        (gen-st (cat "st" d o o)))))
   (defrule gen-state-close
     (forall ((z strd) (d o name) (k skey))
       (implies
@@ -466,64 +350,89 @@
           (p "dev-close" "o" z o) (p "dev-close" "k" z k)
           (p "dev-close" "any" z (cat o o)))
         (gen-st (cat "st" d o o)))))
-  (defrule shearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+  (defrule gen-state-pass
+    (forall ((z strd) (d o name) (k skey))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+        (and (p "dev-pass" z 1) (p "dev-pass" "d" z d)
+          (p "dev-pass" "o" z o) (p "dev-pass" "k" z k))
+        (gen-st (cat "st" d o o)))))
+  (defrule gen-state-open
+    (forall ((z strd) (d o k mesg))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
-  (defrule dev-pass-atomic2
-    (forall ((x z strd) (i1 indx))
+        (and (p "dev-open" "d" z d) (p "dev-open" "o" z o)
+          (p "dev-open" "k" z k))
+        (gen-st (cat "st-k" d o k)))))
+  (defrule gen-state-close
+    (forall ((z strd) (d o k mesg))
       (implies
-        (and (p "dev-pass" z 3) (prec z 1 x i1))
-        (or (= x z) (prec z 2 x i1)))))
-  (defrule dev-pass-atomic1
-    (forall ((x z strd) (i1 indx))
+        (and (p "dev-close" "d" z d) (p "dev-close" "o" z o)
+          (p "dev-close" "k" z k))
+        (gen-st (cat "st-k" d o k)))))
+  (defrule gen-state-pass
+    (forall ((z strd) (d o k mesg))
       (implies
-        (and (p "dev-pass" z 3) (prec x i1 z 2))
-        (or (= x z) (prec x i1 z 1)))))
-  (defrule dev-close-atomic2
-    (forall ((x z strd) (i1 indx))
+        (and (p "dev-pass" "d" z d) (p "dev-pass" "o" z o)
+          (p "dev-pass" "k" z k))
+        (gen-st (cat "st-k" d o k)))))
+  (defrule power-deliver-once
+    (forall ((z1 z2 strd) (k skey))
       (implies
-        (and (p "dev-close" z 4) (prec z 1 x i1))
-        (or (= x z) (prec z 3 x i1)))))
-  (defrule dev-close-atomic1
-    (forall ((x z strd) (i1 indx))
+        (and (p "dev-up" z1 2) (p "dev-up" z2 2) (p "dev-up" "k" z1 k)
+          (p "dev-up" "k" z2 k))
+        (= z1 z2))))
+  (defrule intro-same-dev-up
+    (forall ((z strd) (lk ls locn))
       (implies
-        (and (p "dev-close" z 4) (prec x i1 z 3))
-        (or (= x z) (prec x i1 z 1)))))
-  (defrule dev-open-atomic2
-    (forall ((x z strd) (i1 indx))
+        (and (p "dev-up" "lk" z lk) (p "dev-up" "ls" z ls))
+        (fact same-dev ls lk))))
+  (defrule intro-same-dev-open
+    (forall ((z strd) (lk ls locn))
       (implies
-        (and (p "dev-open" z 4) (prec z 1 x i1))
-        (or (= x z) (prec z 3 x i1)))))
-  (defrule dev-open-atomic1
-    (forall ((x z strd) (i1 indx))
+        (and (p "dev-open" "lk" z lk) (p "dev-open" "ls" z ls))
+        (fact same-dev ls lk))))
+  (defrule intro-same-dev-close
+    (forall ((z strd) (lk ls locn))
       (implies
-        (and (p "dev-open" z 4) (prec x i1 z 3))
-        (or (= x z) (prec x i1 z 1)))))
-  (defrule dev-up-atomic2
-    (forall ((x z strd) (i1 indx))
+        (and (p "dev-close" "lk" z lk) (p "dev-close" "ls" z ls))
+        (fact same-dev ls lk))))
+  (defrule intro-same-dev-pass
+    (forall ((z strd) (lk ls locn))
       (implies
-        (and (p "dev-up" z 5) (prec z 1 x i1))
-        (or (= x z) (prec z 4 x i1)))))
-  (defrule dev-up-atomic1
-    (forall ((x z strd) (i1 indx))
+        (and (p "dev-pass" "lk" z lk) (p "dev-pass" "ls" z ls))
+        (fact same-dev ls lk))))
+  (defrule same-dev-ls-lk
+    (forall ((ls lk lk-0 locn))
       (implies
-        (and (p "dev-up" z 5) (prec x i1 z 4))
-        (or (= x z) (prec x i1 z 1)))))
-  (defrule single-thread-close-close
+        (and (fact same-dev ls lk) (fact same-dev ls lk-0))
+        (= lk lk-0))))
+  (defrule same-dev-lk-ls
+    (forall ((lk ls ls-0 locn))
+      (implies
+        (and (fact same-dev ls lk) (fact same-dev ls-0 lk))
+        (= ls ls-0))))
+  (defrule single-thread-up-up
+    (forall ((x y strd) (lk locn))
+      (implies
+        (and (p "dev-up" x 5) (p "dev-up" y 5) (p "dev-up" "lk" x lk)
+          (p "dev-up" "lk" y lk))
+        (or (= x y) (prec x 4 y 1) (prec y 4 x 1)))))
+  (defrule single-thread-up-open
     (forall ((x y strd) (ls locn))
       (implies
-        (and (p "dev-close" x 4) (p "dev-close" y 4)
-          (p "dev-close" "ls" x ls) (p "dev-close" "ls" y ls))
+        (and (p "dev-up" x 5) (p "dev-open" y 4) (p "dev-up" "ls" x ls)
+          (p "dev-open" "ls" y ls))
+        (or (prec x 4 y 1) (prec y 3 x 1)))))
+  (defrule single-thread-up-close
+    (forall ((x y strd) (ls locn))
+      (implies
+        (and (p "dev-up" x 5) (p "dev-close" y 4) (p "dev-up" "ls" x ls)
+          (p "dev-close" "ls" y ls))
+        (or (prec x 4 y 1) (prec y 3 x 1)))))
+  (defrule single-thread-open-open
+    (forall ((x y strd) (ls locn))
+      (implies
+        (and (p "dev-open" x 4) (p "dev-open" y 4)
+          (p "dev-open" "ls" x ls) (p "dev-open" "ls" y ls))
         (or (= x y) (prec x 3 y 1) (prec y 3 x 1)))))
   (defrule single-thread-ls-open-close
     (forall ((x y strd) (ls locn))
@@ -531,30 +440,119 @@
         (and (p "dev-open" x 4) (p "dev-close" y 4)
           (p "dev-open" "ls" x ls) (p "dev-close" "ls" y ls))
         (or (prec x 3 y 1) (prec y 3 x 1)))))
-  (defrule single-thread-open-open
+  (defrule single-thread-close-close
     (forall ((x y strd) (ls locn))
       (implies
-        (and (p "dev-open" x 4) (p "dev-open" y 4)
-          (p "dev-open" "ls" x ls) (p "dev-open" "ls" y ls))
+        (and (p "dev-close" x 4) (p "dev-close" y 4)
+          (p "dev-close" "ls" x ls) (p "dev-close" "ls" y ls))
         (or (= x y) (prec x 3 y 1) (prec y 3 x 1)))))
-  (defrule single-thread-up-close
-    (forall ((x y strd) (ls locn))
-      (implies
-        (and (p "dev-up" x 5) (p "dev-close" y 4) (p "dev-up" "ls" x ls)
-          (p "dev-close" "ls" y ls))
-        (or (prec x 4 y 1) (prec y 3 x 1)))))
-  (defrule single-thread-up-open
-    (forall ((x y strd) (ls locn))
-      (implies
-        (and (p "dev-up" x 5) (p "dev-open" y 4) (p "dev-up" "ls" x ls)
-          (p "dev-open" "ls" y ls))
-        (or (prec x 4 y 1) (prec y 3 x 1)))))
-  (defrule single-thread-up-up
+  (defrule atomic-up-pass
     (forall ((x y strd) (lk locn))
       (implies
-        (and (p "dev-up" x 5) (p "dev-up" y 5) (p "dev-up" "lk" x lk)
-          (p "dev-up" "lk" y lk))
-        (or (= x y) (prec x 4 y 1) (prec y 4 x 1))))))
+        (and (p "dev-up" x 5) (p "dev-pass" y 3) (p "dev-up" "lk" x lk)
+          (p "dev-pass" "lk" y lk) (prec x 2 y 1))
+        (prec x 4 y 1))))
+  (defrule dev-up-completes
+    (forall ((x strd)) (implies (p "dev-up" x 2) (p "dev-up" x 5))))
+  (defrule dev-open-completes
+    (forall ((x strd)) (implies (p "dev-open" x 2) (p "dev-open" x 4))))
+  (defrule dev-close-completes
+    (forall ((x strd))
+      (implies (p "dev-close" x 2) (p "dev-close" x 4))))
+  (defrule dev-pass-completes
+    (forall ((x strd)) (implies (p "dev-pass" x 2) (p "dev-pass" x 3))))
+  (defrule dev-up-atomic1
+    (forall ((x z strd) (i1 indx))
+      (implies
+        (and (p "dev-up" z 5) (prec x i1 z 4))
+        (or (= x z) (prec x i1 z 1)))))
+  (defrule dev-up-atomic2
+    (forall ((x z strd) (i1 indx))
+      (implies
+        (and (p "dev-up" z 5) (prec z 1 x i1))
+        (or (= x z) (prec z 4 x i1)))))
+  (defrule dev-open-atomic1
+    (forall ((x z strd) (i1 indx))
+      (implies
+        (and (p "dev-open" z 4) (prec x i1 z 3))
+        (or (= x z) (prec x i1 z 1)))))
+  (defrule dev-open-atomic2
+    (forall ((x z strd) (i1 indx))
+      (implies
+        (and (p "dev-open" z 4) (prec z 1 x i1))
+        (or (= x z) (prec z 3 x i1)))))
+  (defrule dev-close-atomic1
+    (forall ((x z strd) (i1 indx))
+      (implies
+        (and (p "dev-close" z 4) (prec x i1 z 3))
+        (or (= x z) (prec x i1 z 1)))))
+  (defrule dev-close-atomic2
+    (forall ((x z strd) (i1 indx))
+      (implies
+        (and (p "dev-close" z 4) (prec z 1 x i1))
+        (or (= x z) (prec z 3 x i1)))))
+  (defrule dev-pass-atomic1
+    (forall ((x z strd) (i1 indx))
+      (implies
+        (and (p "dev-pass" z 3) (prec x i1 z 2))
+        (or (= x z) (prec x i1 z 1)))))
+  (defrule dev-pass-atomic2
+    (forall ((x z strd) (i1 indx))
+      (implies
+        (and (p "dev-pass" z 3) (prec z 1 x i1))
+        (or (= x z) (prec z 2 x i1)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule trRl_dev-close-at-2
+    (forall ((z strd)) (implies (p "dev-close" z 3) (trans z 2))))
+  (defgenrule trRl_dev-close-at-3
+    (forall ((z strd)) (implies (p "dev-close" z 4) (trans z 3))))
+  (defgenrule trRl_dev-open-at-2
+    (forall ((z strd)) (implies (p "dev-open" z 3) (trans z 2))))
+  (defgenrule trRl_dev-open-at-3
+    (forall ((z strd)) (implies (p "dev-open" z 4) (trans z 3))))
+  (defgenrule trRl_dev-up-at-1
+    (forall ((z strd)) (implies (p "dev-up" z 2) (trans z 1))))
+  (defgenrule trRl_dev-up-at-2
+    (forall ((z strd)) (implies (p "dev-up" z 3) (trans z 2))))
+  (defgenrule trRl_dev-up-at-3
+    (forall ((z strd)) (implies (p "dev-up" z 4) (trans z 3))))
+  (defgenrule trRl_dev-up-at-4
+    (forall ((z strd)) (implies (p "dev-up" z 5) (trans z 4))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton atomic-open-closed
   (vars (n text) (d o name) (pt pt-0 pval) (k skey) (lk ls locn))
@@ -746,121 +744,6 @@
   (defrole user-pass
     (vars (k skey))
     (trace (send (enc "may I pass" k)) (recv (enc "you may pass" k))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defrule trRl_dev-up-at-4
-    (forall ((z strd)) (implies (p "dev-up" z 5) (trans z 4))))
-  (defrule trRl_dev-up-at-3
-    (forall ((z strd)) (implies (p "dev-up" z 4) (trans z 3))))
-  (defrule trRl_dev-up-at-2
-    (forall ((z strd)) (implies (p "dev-up" z 3) (trans z 2))))
-  (defrule trRl_dev-up-at-1
-    (forall ((z strd)) (implies (p "dev-up" z 2) (trans z 1))))
-  (defrule trRl_dev-open-at-3
-    (forall ((z strd)) (implies (p "dev-open" z 4) (trans z 3))))
-  (defrule trRl_dev-open-at-2
-    (forall ((z strd)) (implies (p "dev-open" z 3) (trans z 2))))
-  (defrule trRl_dev-close-at-3
-    (forall ((z strd)) (implies (p "dev-close" z 4) (trans z 3))))
-  (defrule trRl_dev-close-at-2
-    (forall ((z strd)) (implies (p "dev-close" z 3) (trans z 2))))
-  (defrule dev-pass-completes
-    (forall ((x strd)) (implies (p "dev-pass" x 2) (p "dev-pass" x 3))))
-  (defrule dev-close-completes
-    (forall ((x strd))
-      (implies (p "dev-close" x 2) (p "dev-close" x 4))))
-  (defrule dev-open-completes
-    (forall ((x strd)) (implies (p "dev-open" x 2) (p "dev-open" x 4))))
-  (defrule dev-up-completes
-    (forall ((x strd)) (implies (p "dev-up" x 2) (p "dev-up" x 5))))
-  (defrule atomic-up-pass
-    (forall ((x y strd) (lk locn))
-      (implies
-        (and (p "dev-up" x 5) (p "dev-pass" y 3) (p "dev-up" "lk" x lk)
-          (p "dev-pass" "lk" y lk) (prec x 2 y 1))
-        (prec x 4 y 1))))
-  (defrule same-dev-lk-ls
-    (forall ((lk ls ls-0 locn))
-      (implies
-        (and (fact same-dev ls lk) (fact same-dev ls-0 lk))
-        (= ls ls-0))))
-  (defrule same-dev-ls-lk
-    (forall ((ls lk lk-0 locn))
-      (implies
-        (and (fact same-dev ls lk) (fact same-dev ls lk-0))
-        (= lk lk-0))))
-  (defrule intro-same-dev-pass
-    (forall ((z strd) (lk ls locn))
-      (implies
-        (and (p "dev-pass" "lk" z lk) (p "dev-pass" "ls" z ls))
-        (fact same-dev ls lk))))
-  (defrule intro-same-dev-close
-    (forall ((z strd) (lk ls locn))
-      (implies
-        (and (p "dev-close" "lk" z lk) (p "dev-close" "ls" z ls))
-        (fact same-dev ls lk))))
-  (defrule intro-same-dev-open
-    (forall ((z strd) (lk ls locn))
-      (implies
-        (and (p "dev-open" "lk" z lk) (p "dev-open" "ls" z ls))
-        (fact same-dev ls lk))))
-  (defrule intro-same-dev-up
-    (forall ((z strd) (lk ls locn))
-      (implies
-        (and (p "dev-up" "lk" z lk) (p "dev-up" "ls" z ls))
-        (fact same-dev ls lk))))
-  (defrule power-deliver-once
-    (forall ((z1 z2 strd) (k skey))
-      (implies
-        (and (p "dev-up" z1 2) (p "dev-up" z2 2) (p "dev-up" "k" z1 k)
-          (p "dev-up" "k" z2 k))
-        (= z1 z2))))
-  (defrule gen-state-pass
-    (forall ((z strd) (d o k mesg))
-      (implies
-        (and (p "dev-pass" "d" z d) (p "dev-pass" "o" z o)
-          (p "dev-pass" "k" z k))
-        (gen-st (cat "st-k" d o k)))))
-  (defrule gen-state-close
-    (forall ((z strd) (d o k mesg))
-      (implies
-        (and (p "dev-close" "d" z d) (p "dev-close" "o" z o)
-          (p "dev-close" "k" z k))
-        (gen-st (cat "st-k" d o k)))))
-  (defrule gen-state-open
-    (forall ((z strd) (d o k mesg))
-      (implies
-        (and (p "dev-open" "d" z d) (p "dev-open" "o" z o)
-          (p "dev-open" "k" z k))
-        (gen-st (cat "st-k" d o k)))))
-  (defrule gen-state-pass
-    (forall ((z strd) (d o name) (k skey))
-      (implies
-        (and (p "dev-pass" z 1) (p "dev-pass" "d" z d)
-          (p "dev-pass" "o" z o) (p "dev-pass" "k" z k))
-        (gen-st (cat "st" d o o)))))
   (defrule gen-state-close
     (forall ((z strd) (d o name) (k skey))
       (implies
@@ -868,64 +751,89 @@
           (p "dev-close" "o" z o) (p "dev-close" "k" z k)
           (p "dev-close" "any" z (cat o o)))
         (gen-st (cat "st" d o o)))))
-  (defrule shearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+  (defrule gen-state-pass
+    (forall ((z strd) (d o name) (k skey))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+        (and (p "dev-pass" z 1) (p "dev-pass" "d" z d)
+          (p "dev-pass" "o" z o) (p "dev-pass" "k" z k))
+        (gen-st (cat "st" d o o)))))
+  (defrule gen-state-open
+    (forall ((z strd) (d o k mesg))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
-  (defrule dev-pass-atomic2
-    (forall ((x z strd) (i1 indx))
+        (and (p "dev-open" "d" z d) (p "dev-open" "o" z o)
+          (p "dev-open" "k" z k))
+        (gen-st (cat "st-k" d o k)))))
+  (defrule gen-state-close
+    (forall ((z strd) (d o k mesg))
       (implies
-        (and (p "dev-pass" z 3) (prec z 1 x i1))
-        (or (= x z) (prec z 2 x i1)))))
-  (defrule dev-pass-atomic1
-    (forall ((x z strd) (i1 indx))
+        (and (p "dev-close" "d" z d) (p "dev-close" "o" z o)
+          (p "dev-close" "k" z k))
+        (gen-st (cat "st-k" d o k)))))
+  (defrule gen-state-pass
+    (forall ((z strd) (d o k mesg))
       (implies
-        (and (p "dev-pass" z 3) (prec x i1 z 2))
-        (or (= x z) (prec x i1 z 1)))))
-  (defrule dev-close-atomic2
-    (forall ((x z strd) (i1 indx))
+        (and (p "dev-pass" "d" z d) (p "dev-pass" "o" z o)
+          (p "dev-pass" "k" z k))
+        (gen-st (cat "st-k" d o k)))))
+  (defrule power-deliver-once
+    (forall ((z1 z2 strd) (k skey))
       (implies
-        (and (p "dev-close" z 4) (prec z 1 x i1))
-        (or (= x z) (prec z 3 x i1)))))
-  (defrule dev-close-atomic1
-    (forall ((x z strd) (i1 indx))
+        (and (p "dev-up" z1 2) (p "dev-up" z2 2) (p "dev-up" "k" z1 k)
+          (p "dev-up" "k" z2 k))
+        (= z1 z2))))
+  (defrule intro-same-dev-up
+    (forall ((z strd) (lk ls locn))
       (implies
-        (and (p "dev-close" z 4) (prec x i1 z 3))
-        (or (= x z) (prec x i1 z 1)))))
-  (defrule dev-open-atomic2
-    (forall ((x z strd) (i1 indx))
+        (and (p "dev-up" "lk" z lk) (p "dev-up" "ls" z ls))
+        (fact same-dev ls lk))))
+  (defrule intro-same-dev-open
+    (forall ((z strd) (lk ls locn))
       (implies
-        (and (p "dev-open" z 4) (prec z 1 x i1))
-        (or (= x z) (prec z 3 x i1)))))
-  (defrule dev-open-atomic1
-    (forall ((x z strd) (i1 indx))
+        (and (p "dev-open" "lk" z lk) (p "dev-open" "ls" z ls))
+        (fact same-dev ls lk))))
+  (defrule intro-same-dev-close
+    (forall ((z strd) (lk ls locn))
       (implies
-        (and (p "dev-open" z 4) (prec x i1 z 3))
-        (or (= x z) (prec x i1 z 1)))))
-  (defrule dev-up-atomic2
-    (forall ((x z strd) (i1 indx))
+        (and (p "dev-close" "lk" z lk) (p "dev-close" "ls" z ls))
+        (fact same-dev ls lk))))
+  (defrule intro-same-dev-pass
+    (forall ((z strd) (lk ls locn))
       (implies
-        (and (p "dev-up" z 5) (prec z 1 x i1))
-        (or (= x z) (prec z 4 x i1)))))
-  (defrule dev-up-atomic1
-    (forall ((x z strd) (i1 indx))
+        (and (p "dev-pass" "lk" z lk) (p "dev-pass" "ls" z ls))
+        (fact same-dev ls lk))))
+  (defrule same-dev-ls-lk
+    (forall ((ls lk lk-0 locn))
       (implies
-        (and (p "dev-up" z 5) (prec x i1 z 4))
-        (or (= x z) (prec x i1 z 1)))))
-  (defrule single-thread-close-close
+        (and (fact same-dev ls lk) (fact same-dev ls lk-0))
+        (= lk lk-0))))
+  (defrule same-dev-lk-ls
+    (forall ((lk ls ls-0 locn))
+      (implies
+        (and (fact same-dev ls lk) (fact same-dev ls-0 lk))
+        (= ls ls-0))))
+  (defrule single-thread-up-up
+    (forall ((x y strd) (lk locn))
+      (implies
+        (and (p "dev-up" x 5) (p "dev-up" y 5) (p "dev-up" "lk" x lk)
+          (p "dev-up" "lk" y lk))
+        (or (= x y) (prec x 4 y 1) (prec y 4 x 1)))))
+  (defrule single-thread-up-open
     (forall ((x y strd) (ls locn))
       (implies
-        (and (p "dev-close" x 4) (p "dev-close" y 4)
-          (p "dev-close" "ls" x ls) (p "dev-close" "ls" y ls))
+        (and (p "dev-up" x 5) (p "dev-open" y 4) (p "dev-up" "ls" x ls)
+          (p "dev-open" "ls" y ls))
+        (or (prec x 4 y 1) (prec y 3 x 1)))))
+  (defrule single-thread-up-close
+    (forall ((x y strd) (ls locn))
+      (implies
+        (and (p "dev-up" x 5) (p "dev-close" y 4) (p "dev-up" "ls" x ls)
+          (p "dev-close" "ls" y ls))
+        (or (prec x 4 y 1) (prec y 3 x 1)))))
+  (defrule single-thread-open-open
+    (forall ((x y strd) (ls locn))
+      (implies
+        (and (p "dev-open" x 4) (p "dev-open" y 4)
+          (p "dev-open" "ls" x ls) (p "dev-open" "ls" y ls))
         (or (= x y) (prec x 3 y 1) (prec y 3 x 1)))))
   (defrule single-thread-ls-open-close
     (forall ((x y strd) (ls locn))
@@ -933,30 +841,119 @@
         (and (p "dev-open" x 4) (p "dev-close" y 4)
           (p "dev-open" "ls" x ls) (p "dev-close" "ls" y ls))
         (or (prec x 3 y 1) (prec y 3 x 1)))))
-  (defrule single-thread-open-open
+  (defrule single-thread-close-close
     (forall ((x y strd) (ls locn))
       (implies
-        (and (p "dev-open" x 4) (p "dev-open" y 4)
-          (p "dev-open" "ls" x ls) (p "dev-open" "ls" y ls))
+        (and (p "dev-close" x 4) (p "dev-close" y 4)
+          (p "dev-close" "ls" x ls) (p "dev-close" "ls" y ls))
         (or (= x y) (prec x 3 y 1) (prec y 3 x 1)))))
-  (defrule single-thread-up-close
-    (forall ((x y strd) (ls locn))
-      (implies
-        (and (p "dev-up" x 5) (p "dev-close" y 4) (p "dev-up" "ls" x ls)
-          (p "dev-close" "ls" y ls))
-        (or (prec x 4 y 1) (prec y 3 x 1)))))
-  (defrule single-thread-up-open
-    (forall ((x y strd) (ls locn))
-      (implies
-        (and (p "dev-up" x 5) (p "dev-open" y 4) (p "dev-up" "ls" x ls)
-          (p "dev-open" "ls" y ls))
-        (or (prec x 4 y 1) (prec y 3 x 1)))))
-  (defrule single-thread-up-up
+  (defrule atomic-up-pass
     (forall ((x y strd) (lk locn))
       (implies
-        (and (p "dev-up" x 5) (p "dev-up" y 5) (p "dev-up" "lk" x lk)
-          (p "dev-up" "lk" y lk))
-        (or (= x y) (prec x 4 y 1) (prec y 4 x 1))))))
+        (and (p "dev-up" x 5) (p "dev-pass" y 3) (p "dev-up" "lk" x lk)
+          (p "dev-pass" "lk" y lk) (prec x 2 y 1))
+        (prec x 4 y 1))))
+  (defrule dev-up-completes
+    (forall ((x strd)) (implies (p "dev-up" x 2) (p "dev-up" x 5))))
+  (defrule dev-open-completes
+    (forall ((x strd)) (implies (p "dev-open" x 2) (p "dev-open" x 4))))
+  (defrule dev-close-completes
+    (forall ((x strd))
+      (implies (p "dev-close" x 2) (p "dev-close" x 4))))
+  (defrule dev-pass-completes
+    (forall ((x strd)) (implies (p "dev-pass" x 2) (p "dev-pass" x 3))))
+  (defrule dev-up-atomic1
+    (forall ((x z strd) (i1 indx))
+      (implies
+        (and (p "dev-up" z 5) (prec x i1 z 4))
+        (or (= x z) (prec x i1 z 1)))))
+  (defrule dev-up-atomic2
+    (forall ((x z strd) (i1 indx))
+      (implies
+        (and (p "dev-up" z 5) (prec z 1 x i1))
+        (or (= x z) (prec z 4 x i1)))))
+  (defrule dev-open-atomic1
+    (forall ((x z strd) (i1 indx))
+      (implies
+        (and (p "dev-open" z 4) (prec x i1 z 3))
+        (or (= x z) (prec x i1 z 1)))))
+  (defrule dev-open-atomic2
+    (forall ((x z strd) (i1 indx))
+      (implies
+        (and (p "dev-open" z 4) (prec z 1 x i1))
+        (or (= x z) (prec z 3 x i1)))))
+  (defrule dev-close-atomic1
+    (forall ((x z strd) (i1 indx))
+      (implies
+        (and (p "dev-close" z 4) (prec x i1 z 3))
+        (or (= x z) (prec x i1 z 1)))))
+  (defrule dev-close-atomic2
+    (forall ((x z strd) (i1 indx))
+      (implies
+        (and (p "dev-close" z 4) (prec z 1 x i1))
+        (or (= x z) (prec z 3 x i1)))))
+  (defrule dev-pass-atomic1
+    (forall ((x z strd) (i1 indx))
+      (implies
+        (and (p "dev-pass" z 3) (prec x i1 z 2))
+        (or (= x z) (prec x i1 z 1)))))
+  (defrule dev-pass-atomic2
+    (forall ((x z strd) (i1 indx))
+      (implies
+        (and (p "dev-pass" z 3) (prec z 1 x i1))
+        (or (= x z) (prec z 2 x i1)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule trRl_dev-close-at-2
+    (forall ((z strd)) (implies (p "dev-close" z 3) (trans z 2))))
+  (defgenrule trRl_dev-close-at-3
+    (forall ((z strd)) (implies (p "dev-close" z 4) (trans z 3))))
+  (defgenrule trRl_dev-open-at-2
+    (forall ((z strd)) (implies (p "dev-open" z 3) (trans z 2))))
+  (defgenrule trRl_dev-open-at-3
+    (forall ((z strd)) (implies (p "dev-open" z 4) (trans z 3))))
+  (defgenrule trRl_dev-up-at-1
+    (forall ((z strd)) (implies (p "dev-up" z 2) (trans z 1))))
+  (defgenrule trRl_dev-up-at-2
+    (forall ((z strd)) (implies (p "dev-up" z 3) (trans z 2))))
+  (defgenrule trRl_dev-up-at-3
+    (forall ((z strd)) (implies (p "dev-up" z 4) (trans z 3))))
+  (defgenrule trRl_dev-up-at-4
+    (forall ((z strd)) (implies (p "dev-up" z 5) (trans z 4))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton atomic-open-closed
   (vars (n text) (d o d-0 o-0 name) (pt pt-0 pval) (k skey)
@@ -1122,9 +1119,9 @@
       (load ls-0 (cat pt-3 old1)) (stor ls-0 (cat pt-4 "st" d-0 o-0))))
   (label 15)
   (parent 13)
+  (seen 15)
   (unrealized (0 1) (1 1) (1 2) (2 0))
-  (dead)
-  (comment "empty cohort"))
+  (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton atomic-open-closed
   (vars (old old1 mesg) (n text) (d o name)
@@ -1411,9 +1408,9 @@
     ((recv k) (send k)))
   (label 23)
   (parent 20)
+  (seen 23)
   (unrealized (0 1) (5 0))
-  (dead)
-  (comment "empty cohort"))
+  (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton atomic-open-closed
   (vars (old old1 any mesg) (n n-0 text) (d o name)
@@ -1450,8 +1447,8 @@
     ((send (enc "open" d o n-0 k))) ((recv k) (send k)))
   (label 24)
   (parent 22)
+  (seen 24)
   (unrealized (6 0))
-  (dead)
-  (comment "empty cohort"))
+  (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

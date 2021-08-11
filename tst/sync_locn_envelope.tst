@@ -52,49 +52,11 @@
     (uniq-orig n v)
     (conf tpmconf)
     (neq (k aik)))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defrule trRl_tpm-power-on-at-2
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
-  (defrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
-  (defrule trRl_tpm-extend-enc-at-3
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 4) (trans z 3))))
-  (defrule trRl_tpm-extend-enc-at-2
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
-  (defrule genStV-if-hashed-tpm-quote
+  (defrule genStV-if-hashed-tpm-power-on
     (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (p "tpm-quote" z 2)
-          (p "tpm-quote" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-decrypt
-    (forall ((z strd) (v1 v2 mesg))
-      (implies
-        (and (p "tpm-decrypt" z 3)
-          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
   (defrule genStV-if-hashed-tpm-extend-enc
     (forall ((z strd) (v1 v2 mesg))
@@ -102,25 +64,62 @@
         (and (p "tpm-extend-enc" z 3)
           (p "tpm-extend-enc" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-power-on
+  (defrule genStV-if-hashed-tpm-decrypt
     (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (p "tpm-power-on" z 2)
-          (p "tpm-power-on" "current-value" z (hash v1 v2)))
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
-  (defrule shearsRule
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule trRl_tpm-extend-enc-at-2
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-extend-enc-at-3
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 4) (trans z 3))))
+  (defgenrule trRl_tpm-power-on-at-1
+    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
+  (defgenrule trRl_tpm-power-on-at-2
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton envelope
   (vars (pcr-id nonce text) (v n data) (k aik akey) (tpm tpmconf chan))
@@ -632,49 +631,11 @@
     (uniq-orig n v)
     (conf tpmconf)
     (neq (k aik)))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defrule trRl_tpm-power-on-at-2
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
-  (defrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
-  (defrule trRl_tpm-extend-enc-at-3
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 4) (trans z 3))))
-  (defrule trRl_tpm-extend-enc-at-2
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
-  (defrule genStV-if-hashed-tpm-quote
+  (defrule genStV-if-hashed-tpm-power-on
     (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (p "tpm-quote" z 2)
-          (p "tpm-quote" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-decrypt
-    (forall ((z strd) (v1 v2 mesg))
-      (implies
-        (and (p "tpm-decrypt" z 3)
-          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
   (defrule genStV-if-hashed-tpm-extend-enc
     (forall ((z strd) (v1 v2 mesg))
@@ -682,25 +643,62 @@
         (and (p "tpm-extend-enc" z 3)
           (p "tpm-extend-enc" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-power-on
+  (defrule genStV-if-hashed-tpm-decrypt
     (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (p "tpm-power-on" z 2)
-          (p "tpm-power-on" "current-value" z (hash v1 v2)))
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
-  (defrule shearsRule
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule trRl_tpm-extend-enc-at-2
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-extend-enc-at-3
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 4) (trans z 3))))
+  (defgenrule trRl_tpm-power-on-at-1
+    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
+  (defgenrule trRl_tpm-power-on-at-2
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton envelope
   (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey)
@@ -1281,49 +1279,11 @@
     (uniq-orig n v)
     (conf tpmconf)
     (neq (k aik)))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defrule trRl_tpm-power-on-at-2
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
-  (defrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
-  (defrule trRl_tpm-extend-enc-at-3
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 4) (trans z 3))))
-  (defrule trRl_tpm-extend-enc-at-2
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
-  (defrule genStV-if-hashed-tpm-quote
+  (defrule genStV-if-hashed-tpm-power-on
     (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (p "tpm-quote" z 2)
-          (p "tpm-quote" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-decrypt
-    (forall ((z strd) (v1 v2 mesg))
-      (implies
-        (and (p "tpm-decrypt" z 3)
-          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
   (defrule genStV-if-hashed-tpm-extend-enc
     (forall ((z strd) (v1 v2 mesg))
@@ -1331,25 +1291,62 @@
         (and (p "tpm-extend-enc" z 3)
           (p "tpm-extend-enc" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-power-on
+  (defrule genStV-if-hashed-tpm-decrypt
     (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (p "tpm-power-on" z 2)
-          (p "tpm-power-on" "current-value" z (hash v1 v2)))
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
-  (defrule shearsRule
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule trRl_tpm-extend-enc-at-2
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-extend-enc-at-3
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 4) (trans z 3))))
+  (defgenrule trRl_tpm-power-on-at-1
+    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
+  (defgenrule trRl_tpm-power-on-at-2
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton envelope
   (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey)
@@ -2212,49 +2209,11 @@
     (uniq-orig n v)
     (conf tpmconf)
     (neq (k aik)))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defrule trRl_tpm-power-on-at-2
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
-  (defrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
-  (defrule trRl_tpm-extend-enc-at-3
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 4) (trans z 3))))
-  (defrule trRl_tpm-extend-enc-at-2
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
-  (defrule genStV-if-hashed-tpm-quote
+  (defrule genStV-if-hashed-tpm-power-on
     (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (p "tpm-quote" z 2)
-          (p "tpm-quote" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-decrypt
-    (forall ((z strd) (v1 v2 mesg))
-      (implies
-        (and (p "tpm-decrypt" z 3)
-          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
   (defrule genStV-if-hashed-tpm-extend-enc
     (forall ((z strd) (v1 v2 mesg))
@@ -2262,25 +2221,62 @@
         (and (p "tpm-extend-enc" z 3)
           (p "tpm-extend-enc" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-power-on
+  (defrule genStV-if-hashed-tpm-decrypt
     (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (p "tpm-power-on" z 2)
-          (p "tpm-power-on" "current-value" z (hash v1 v2)))
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
-  (defrule shearsRule
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule trRl_tpm-extend-enc-at-2
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-extend-enc-at-3
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 4) (trans z 3))))
+  (defgenrule trRl_tpm-power-on-at-1
+    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
+  (defgenrule trRl_tpm-power-on-at-2
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton envelope
   (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey)

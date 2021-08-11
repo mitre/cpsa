@@ -24,6 +24,61 @@ import CPSA.Strand
 import CPSA.Cohort
 import CPSA.Displayer
 
+{--  
+import System.IO.Unsafe
+import Control.Exception (try)
+import System.IO.Error (ioeGetErrorString)
+
+zP :: Show a => a -> b -> b
+zP x y = unsafePerformIO (print x >> return y)
+
+zz :: Show a => a -> a
+zz x = zP x x
+
+zb :: Show a => a -> Bool -> Bool
+zb a False = zP a False
+zb _ b = b
+
+zn :: Show a => a -> Maybe b -> Maybe b
+zn x Nothing = zP x Nothing
+zn _ y = y
+
+zf :: Show a => a -> Bool -> Bool
+zf x False = zP x False
+zf _ y = y
+
+zt :: Show a => a -> Bool -> Bool
+zt x True = zP x True
+zt _ y = y
+
+zl :: Show a => [a] -> [a]
+zl a = zP (length a) a
+
+zi :: Instance -> String
+zi inst =
+    show (map f e)
+    where
+      domain = rvars (role inst)
+      e = reify domain (env inst)
+      range = map snd e
+      f (x, t) = (displayTerm (context domain) x,
+                  displayTerm (context range) t)
+      context ts = addToContext emptyContext ts
+
+zv :: Preskel -> String
+zv k =
+  unsafePerformIO $ do
+    y <- try $ verbosePreskelWellFormed k
+    case y of
+      Right _ ->
+        return "preskel well formed"
+      Left err ->
+        return $ ioeGetErrorString err
+
+-- Also see showst
+--}
+
+
 -- Set when debugging an exception so that buffered results get out.
 useFlush :: Bool
 useFlush = True                -- False
@@ -34,6 +89,7 @@ wrt p h sexpr =
     do
       writeLnSExpr h (optMargin p) sexpr
       if useFlush then hFlush h else return ()
+
 
 -- A labeled and linked preskeleton
 data LPreskel
@@ -209,10 +265,16 @@ step p h _ m _ n _ todo toobig reducts
 step p h ks m oseen n seen todo toobig (Reduct lk _ _  _  : reducts)
     | nstrands (content lk) >= optBound p = -- Check strand count
         step p h ks m oseen n seen todo (lk : toobig) reducts
-step p h ks m oseen n seen todo toobig (ReductStable lk : reducts) = 
-     do
-       wrt p h (commentPreskel lk [] [] Shape Nada "")
-       step p h ks m oseen n seen todo toobig reducts
+step p h ks m oseen n seen todo toobig (ReductStable lk : reducts) =
+    case recall (wasSeen (gist (content lk))) seen of
+      Just (_, _) ->
+      --           zP ("seen", label lk) $
+          step p h ks m oseen n seen todo toobig reducts
+      Nothing -> 
+          do
+            wrt p h (commentPreskel lk [] [] Shape Nada "")
+      -- zP ("unseen", label lk) $
+            step p h ks m oseen n seen todo toobig reducts
 step p h ks m oseen n seen todo toobig (Reduct lk size kids dups : reducts)
     | optGoalsSat p && satCheck lk = -- Stop if goals satisfied mode?
         do
@@ -273,7 +335,11 @@ duplicates seen (unseen, dups) kid =
 -- Make a todo list for dump
 mktodo :: [Reduct t g s e] -> [LPreskel] -> [LPreskel] -> [LPreskel]
 mktodo reducts todo toobig =
-    map (\(Reduct lk _ _ _) -> lk) reducts ++ reverse todo ++ reverse toobig
+    foldl f [] reducts ++ reverse todo ++ reverse toobig
+    where
+      f sofar (Reduct lk _ _ _) = lk : sofar
+      f sofar (ReductStable _) = sofar 
+        
 
 type Next = (Int, Seen, [LPreskel], [Int])
 

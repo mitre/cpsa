@@ -262,15 +262,14 @@ simplifyNonIsomorphic = factorIsomorphicPreskels . simplify
                         
 reduceNoTest :: Mode -> Preskel -> ReduceRes
 reduceNoTest mode k =
-    case simplifyNonIsomorphic k of
-      [] -> Crt []
+    case simplifyNonIsomorphic k of      
       [k']
           | isomorphic (gist k) (gist k') ->
-              let kmaxima = if omitGeneralization || noGeneralization mode then [k]
-                            else maximize k in 
-              (case filterSame k kmaxima of
-                 [] -> Stable
-                 ks -> Crt ks)
+              if omitGeneralization || noGeneralization mode then Stable
+              else
+                  (case filterSame k (maximize k) of
+                     [] -> Stable
+                     ks -> Crt ks)
           | True -> Crt [k']
       ks -> Crt (filterSame k ks)
 
