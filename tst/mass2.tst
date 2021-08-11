@@ -10,43 +10,42 @@
     (vars (a b name) (n1 n2 text))
     (trace (recv (cat a n2)) (send (cat n1 (enc n2 (ltk a b))))
       (recv (enc n1 (ltk a b)))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton mass2
   (vars (n1 n2 text) (a b name))
@@ -565,6 +564,45 @@
   (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
   (origs (n1 (0 1))))
 
+(defskeleton mass2
+  (vars (n1 n2 n2-0 n2-1 n2-2 n2-3 n2-4 n2-5 n1-0 text) (a b name))
+  (defstrand resp 3 (n1 n1) (n2 n2) (a a) (b b))
+  (defstrand init 3 (n1 n1) (n2 n2-0) (a a) (b b))
+  (defstrand init 3 (n1 n2-0) (n2 n2-1) (a a) (b b))
+  (defstrand init 3 (n1 n2-1) (n2 n2-2) (a a) (b b))
+  (defstrand init 3 (n1 n2-2) (n2 n2-3) (a a) (b b))
+  (defstrand init 3 (n1 n2-3) (n2 n2-4) (a a) (b b))
+  (defstrand init 3 (n1 n2-4) (n2 n2-5) (a a) (b b))
+  (defstrand resp 2 (n1 n1-0) (n2 n2-5) (a a) (b b))
+  (precedes ((0 1) (1 1)) ((1 2) (0 2)) ((2 2) (1 1)) ((3 2) (2 1))
+    ((4 2) (3 1)) ((5 2) (4 1)) ((6 2) (5 1)) ((7 1) (6 1)))
+  (non-orig (ltk a b))
+  (uniq-orig n1)
+  (operation encryption-test (added-strand resp 2) (enc n2-5 (ltk a b))
+    (6 1))
+  (traces
+    ((recv (cat a n2)) (send (cat n1 (enc n2 (ltk a b))))
+      (recv (enc n1 (ltk a b))))
+    ((send (cat a n2-0)) (recv (cat n1 (enc n2-0 (ltk a b))))
+      (send (enc n1 (ltk a b))))
+    ((send (cat a n2-1)) (recv (cat n2-0 (enc n2-1 (ltk a b))))
+      (send (enc n2-0 (ltk a b))))
+    ((send (cat a n2-2)) (recv (cat n2-1 (enc n2-2 (ltk a b))))
+      (send (enc n2-1 (ltk a b))))
+    ((send (cat a n2-3)) (recv (cat n2-2 (enc n2-3 (ltk a b))))
+      (send (enc n2-2 (ltk a b))))
+    ((send (cat a n2-4)) (recv (cat n2-3 (enc n2-4 (ltk a b))))
+      (send (enc n2-3 (ltk a b))))
+    ((send (cat a n2-5)) (recv (cat n2-4 (enc n2-5 (ltk a b))))
+      (send (enc n2-4 (ltk a b))))
+    ((recv (cat a n2-5)) (send (cat n1-0 (enc n2-5 (ltk a b))))))
+  (label 20)
+  (parent 15)
+  (unrealized)
+  (shape)
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
+  (origs (n1 (0 1))))
+
 (comment "Strand bound exceeded--aborting run")
 
 (defskeleton mass2
@@ -603,43 +641,5 @@
   (label 18)
   (parent 15)
   (unrealized (7 1))
-  (aborted)
-  (comment "aborted"))
-
-(defskeleton mass2
-  (vars (n1 n2 n2-0 n2-1 n2-2 n2-3 n2-4 n2-5 n1-0 text) (a b name))
-  (defstrand resp 3 (n1 n1) (n2 n2) (a a) (b b))
-  (defstrand init 3 (n1 n1) (n2 n2-0) (a a) (b b))
-  (defstrand init 3 (n1 n2-0) (n2 n2-1) (a a) (b b))
-  (defstrand init 3 (n1 n2-1) (n2 n2-2) (a a) (b b))
-  (defstrand init 3 (n1 n2-2) (n2 n2-3) (a a) (b b))
-  (defstrand init 3 (n1 n2-3) (n2 n2-4) (a a) (b b))
-  (defstrand init 3 (n1 n2-4) (n2 n2-5) (a a) (b b))
-  (defstrand resp 2 (n1 n1-0) (n2 n2-5) (a a) (b b))
-  (precedes ((0 1) (1 1)) ((1 2) (0 2)) ((2 2) (1 1)) ((3 2) (2 1))
-    ((4 2) (3 1)) ((5 2) (4 1)) ((6 2) (5 1)) ((7 1) (6 1)))
-  (non-orig (ltk a b))
-  (uniq-orig n1)
-  (operation encryption-test (added-strand resp 2) (enc n2-5 (ltk a b))
-    (6 1))
-  (traces
-    ((recv (cat a n2)) (send (cat n1 (enc n2 (ltk a b))))
-      (recv (enc n1 (ltk a b))))
-    ((send (cat a n2-0)) (recv (cat n1 (enc n2-0 (ltk a b))))
-      (send (enc n1 (ltk a b))))
-    ((send (cat a n2-1)) (recv (cat n2-0 (enc n2-1 (ltk a b))))
-      (send (enc n2-0 (ltk a b))))
-    ((send (cat a n2-2)) (recv (cat n2-1 (enc n2-2 (ltk a b))))
-      (send (enc n2-1 (ltk a b))))
-    ((send (cat a n2-3)) (recv (cat n2-2 (enc n2-3 (ltk a b))))
-      (send (enc n2-2 (ltk a b))))
-    ((send (cat a n2-4)) (recv (cat n2-3 (enc n2-4 (ltk a b))))
-      (send (enc n2-3 (ltk a b))))
-    ((send (cat a n2-5)) (recv (cat n2-4 (enc n2-5 (ltk a b))))
-      (send (enc n2-4 (ltk a b))))
-    ((recv (cat a n2-5)) (send (cat n1-0 (enc n2-5 (ltk a b))))))
-  (label 20)
-  (parent 15)
-  (unrealized)
   (aborted)
   (comment "aborted"))

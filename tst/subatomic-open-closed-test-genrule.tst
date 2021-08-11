@@ -1,7 +1,8 @@
 (herald subatomic-open-closed-test-genrule (bound 40))
 
 (comment "CPSA 4.3.0")
-(comment "All input read from subatomic-open-closed-test-genrule.scm")
+(comment
+  "All input read from tst/subatomic-open-closed-test-genrule.scm")
 (comment "Strand count bounded at 40")
 
 (defprotocol subatomic-open-closed basic
@@ -361,9 +362,9 @@
       (stor ls (cat pt-2 "st" d o))))
   (label 2)
   (parent 1)
+  (seen 2)
   (unrealized (0 1) (1 0))
-  (dead)
-  (comment "empty cohort"))
+  (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
 
@@ -1486,9 +1487,9 @@
     ((recv k) (send k)))
   (label 20)
   (parent 17)
+  (seen 20)
   (unrealized (0 1) (4 0))
-  (dead)
-  (comment "empty cohort"))
+  (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton subatomic-open-closed
   (vars (any old old1 mesg) (n n-0 text) (d o name)
@@ -1600,9 +1601,9 @@
     ((send (enc "open" d o n-0 k))) ((recv k) (send k)))
   (label 23)
   (parent 19)
+  (seen 23)
   (unrealized (0 1) (5 0))
-  (dead)
-  (comment "empty cohort"))
+  (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton subatomic-open-closed
   (vars (old old1 any mesg) (n n-0 text) (d o name)
@@ -1639,8 +1640,8 @@
     ((recv k) (send k)))
   (label 24)
   (parent 22)
+  (seen 24)
   (unrealized (6 0))
-  (dead)
-  (comment "empty cohort"))
+  (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
