@@ -1,7 +1,7 @@
 (herald open-closed
-	;; (try-old-strands) 
+	;; (try-old-strands)
 	;; 	(check-nonces)
-	;; 	(reverse-nodes) 
+	;; 	(reverse-nodes)
 	(bound 44))
 
 (defmacro (dev-key-state d o k)
@@ -19,14 +19,14 @@
   (cat "st" d (closed o)))
 
 (defmacro (dev-state-any d o any)
-  (cat "st" d any)) 
+  (cat "st" d any))
 
 (defprotocol open-closed basic
   (defrole dev-up
     (vars (k skey) (d o name) (old old1 mesg) (start-ch chan) (lk ls locn))
     (trace
      (recv start-ch (cat "power-up" d o k))
-     (load lk old) 
+     (load lk old)
      (stor lk (dev-key-state d o k))
      (load ls old1)
      (stor ls (dev-state-closed d o))
@@ -51,13 +51,13 @@
     (trace
      (send (enc "close" d o n k))
      (recv n)))
-  
+
   (defrole dev-open
     (vars (k skey) (n text) (any mesg) (d o name) (lk ls locn))
     (trace
      (load lk (dev-key-state d o k))
      (recv (enc "open" d o n k))
-     (load ls (dev-state-any d o any)) 
+     (load ls (dev-state-any d o any))
      (stor ls (dev-state-opened d o))
      (send n)))
 
@@ -85,7 +85,7 @@
      (send (enc "may I pass" k))
      (recv (enc "you may pass" k))))
 
-  (defrule gen-state-close 
+  (defrule gen-state-close
     (forall ((z strd) (d o name) (k skey))
 	    (implies
 	     (and (p "dev-close" z 1)
@@ -94,12 +94,12 @@
 		  (p "dev-close" "k" z k)
 		  (p "dev-close" "any" z (opened o)))
 	     (gen-st (dev-state-opened d o)))))
-	     
-  (defrule gen-state-pass 
+
+  (defrule gen-state-pass
     (forall ((z strd) (d o name) (k skey))
 	    (implies
 	     (and (p "dev-pass" z 1)
-		  (p "dev-pass" "d" z d) 
+		  (p "dev-pass" "d" z d)
 		  (p "dev-pass" "o" z o)
 		  (p "dev-pass" "k" z k))
 	     (gen-st (dev-state-opened d o)))))
@@ -121,14 +121,14 @@
   (deflistener k)
   (uniq-orig k))
 
-(defskeleton open-closed 
+(defskeleton open-closed
   (vars (k skey) (d o name) (n text) (start-ch chan))
   ;; (defstrand owner-power-dev 2 (k k))
   (defstrand dev-pass 4 (k k))
   ;; (uniq-orig k)
   )
 
-(defskeleton open-closed 
+(defskeleton open-closed
   (vars (k skey) (d o name) (n text) (start-ch chan))
   (defstrand owner-power-dev 2 (k k))
   (defstrand dev-pass 4 (k k))
@@ -147,4 +147,3 @@
   (precedes ((0 0) (2 0)) ((2 2) (1 0)) ((2 5) (0 1)) ((3 0) (1 1))
     ((4 3) (1 2)))
   (uniq-orig n k))
-

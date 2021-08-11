@@ -1,4 +1,4 @@
-(herald isoreject-corrected) 
+(herald isoreject-corrected)
 
 (defprotocol isofix basic
   (defrole init (vars (a b name) (na nb nc text))

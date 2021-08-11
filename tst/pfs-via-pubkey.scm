@@ -6,9 +6,9 @@
     (trace
      (send (enc a b new-akey n (privk "sgn" a)))
      (recv (enc (enc a n s (privk "sgn" b)) new-akey))
-     (send (privk "sgn" a))))		; compromise signing key subsequently 
+     (send (privk "sgn" a))))		; compromise signing key subsequently
 
-  (defrole resp 
+  (defrole resp
     (vars (new-akey akey) (a b name) (n data) (s text))
     (trace
      (recv (enc a b new-akey n (privk "sgn" a)))
@@ -33,4 +33,3 @@
   (precedes ((1 0) (0 0)))
   (non-orig (invk new-akey))
   (uniq-orig (privk "sgn" a) s))
-

@@ -24,15 +24,12 @@
      (recv (enc (enc m (pubk b)) a (pubk b)))
      (send (enc (enc m (pubk a)) b (pubk a))))))
 
-
-
 (defskeleton dy
   (vars (a b name) (m text))
   (defstrand init 1 (a a) (b b) (m m))
   (deflistener m)
   (uniq-orig m)
   (non-orig (privk a) (privk b)))
-
 
 (defskeleton dy
   (vars (a b name) (m text))

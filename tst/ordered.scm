@@ -37,4 +37,3 @@
   (shape)
   (maps ((0 0) ((a b) (b b) (k k) (k-0 k))))
   (origs))
-

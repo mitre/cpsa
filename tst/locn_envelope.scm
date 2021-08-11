@@ -1,6 +1,6 @@
 (herald "Envelope Protocol, location-based version"
 	(bound 30)
-	(limit 1200)) 
+	(limit 1200))
 
 ;;; This file analyzes the Envelope Protocol using three rules sets.
 ;;; For each rule set, it checks three scenarios.  In every scenario,
@@ -33,11 +33,11 @@
 (defmacro (roles)
   (^
    ;; Power on sets the pcr to 0
-   (defrole tpm-power-on  
-     (vars (current-value mesg) (pcr locn) (tpm chan)) 
+   (defrole tpm-power-on
+     (vars (current-value mesg) (pcr locn) (tpm chan))
      (trace
       (recv tpm "power on")
-      (load pcr current-value) 
+      (load pcr current-value)
       (stor pcr "0")))
 
    ;; The extend command takes the value to extend and the current PCR
@@ -101,7 +101,7 @@
    ;; this newly created key.
    (defrole alice
      (vars (n v data) (pcr-id text) (k aik akey) (tpm chan))
-     (trace 
+     (trace
       (send tpm (cat "extend" pcr-id n))
       (send tpm (cat "create-req"pcr-id (hash (hash "0" n) "obtain")))
       ;; (enc "create key" (hash (hash "0" n) "obtain") esk)
@@ -123,7 +123,7 @@
 	(p "tpm-power-on" "current-value" z (hash v1 v2)))
        (gen-st (hash v1 v2)))))
 
-;;      (defrule genStV-if-hashed-tpm-extend 
+;;      (defrule genStV-if-hashed-tpm-extend
 ;;        (forall
 ;;         ((z strd) (v1 v2 mesg))
 ;;         (implies
@@ -132,7 +132,7 @@
 ;;   	(p "tpm-extend" "current-value" z (hash v1 v2)))
 ;;          (gen-st (hash v1 v2)))))
 
-   (defrule genStV-if-hashed-tpm-extend-enc 
+   (defrule genStV-if-hashed-tpm-extend-enc
      (forall
       ((z strd) (v1 v2 mesg))
       (implies
@@ -159,11 +159,10 @@
 	(p "tpm-quote" "current-value" z (hash v1 v2)))
        (gen-st (hash v1 v2)))))))
 
-
 (defprotocol envelope basic
   (roles)
   (genStV-rules)
-  ) 
+  )
 
 (defskeleton envelope
   (vars (v data))
@@ -196,7 +195,6 @@
 		 (prec y 2 z 1)
 		 (prec z 2 y 1))))))
 
-
 (defskeleton envelope-plus
   (vars (v data))
   (deflistener v)
@@ -213,11 +211,9 @@
   (deflistener v)
   (defstrand alice 4 (n n) (v v) (k k) (aik aik)))
 
-
 (defprotocol envelope-plus-2 basic
   (roles)
   (genStV-rules)
-  
 
   ;;   (defrule ordered-extends
 ;;       (forall ((y z strd) (pcr locn))
@@ -230,12 +226,12 @@
 ;;   		 (prec y 2 z 1)
 ;;   		 (prec z 2 y 1)))))
 
-  (defrule pcr-id-identifies-pcr 
+  (defrule pcr-id-identifies-pcr
     (forall ((y z strd) (pcr-id text) (pcr pcr-0 locn))
 	    (implies
 	     (and (p "tpm-extend-enc" y 3)
 		  (p "tpm-extend-enc" z 3)
-		  (p "tpm-extend-enc" "pcr-id" y pcr-id) 
+		  (p "tpm-extend-enc" "pcr-id" y pcr-id)
 		  (p "tpm-extend-enc" "pcr-id" z pcr-id)
 		  (p "tpm-extend-enc" "pcr" y pcr)
 		  (p "tpm-extend-enc" "pcr" z pcr-0))
@@ -256,4 +252,3 @@
   (deflistener (refuse pcr-id n v k aik))
   (deflistener v)
   (defstrand alice 4 (n n) (v v) (k k) (aik aik)))
-

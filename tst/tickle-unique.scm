@@ -1,6 +1,6 @@
 (herald tickle-unique)
 
-(defprotocol tickle basic 
+(defprotocol tickle basic
   (defrole init
     (vars (a b name) (na nb text))
     (trace
@@ -24,7 +24,6 @@
 	   (p "resp" z 2)
 	   (p "resp" "nb0" z nb0))
       (uniq nb0)))))
-
 
 (defskeleton tickle
   (vars (a b name) (na nb0 nb text))

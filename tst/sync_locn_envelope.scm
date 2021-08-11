@@ -3,7 +3,7 @@
 	;; (try-old-strands)
 	(check-nonces)
 	(bound 30)
-	(limit 6000)) 
+	(limit 6000))
 
 ;;; This file analyzes the Envelope Protocol using three rules sets.
 ;;; For each rule set, it checks three scenarios.  In every scenario,
@@ -36,11 +36,11 @@
 (defmacro (roles)
   (^
    ;; Power on sets the pcr to 0
-   (defrole tpm-power-on 
-     (vars (current-value mesg) (pcr locn) (tpm chan)) 
+   (defrole tpm-power-on
+     (vars (current-value mesg) (pcr locn) (tpm chan))
      (trace
       (recv tpm "power on")
-      (load pcr current-value) 
+      (load pcr current-value)
       (stor pcr "0")))
 
    ;; The extend command takes the value to extend and the current PCR
@@ -61,7 +61,7 @@
       (send tpm (cat "token" nonce))
       (recv tpm (cat "extend" pcr-id value (hash pcr-id value nonce)))
       (load pcr current-value)		    ;; MSR lhs (deleted)
-      (stor pcr (hash current-value value)) ;; MSR rhs 
+      (stor pcr (hash current-value value)) ;; MSR rhs
       (send "ext ok"))
      (uniq-orig nonce))
 
@@ -84,9 +84,9 @@
       (send (enc "created" k pcr-id pcrval aik))) ;; no tpm state is set
      (uniq-orig k)
      (non-orig (invk k))
-     (auth tpm)			; Weird shapes without auth 
+     (auth tpm)			; Weird shapes without auth
      )
-   
+
    ;; This role receives an encryption and a previously
    ;; made key structure that restricts the decryption key
    ;; to be used with a certain pcr value.  It retrieves the
@@ -121,8 +121,8 @@
 
 (defmacro (genStV-rules)
   (^
-   
-;;      (defrule genStV-if-hashed-tpm-extend 
+
+;;      (defrule genStV-if-hashed-tpm-extend
 ;;        (forall
 ;;         ((z strd) (v1 v2 mesg))
 ;;         (implies
@@ -140,7 +140,7 @@
 	(p "tpm-power-on" "current-value" z (hash v1 v2)))
        (gen-st (hash v1 v2)))))
 
-   (defrule genStV-if-hashed-tpm-extend-enc 
+   (defrule genStV-if-hashed-tpm-extend-enc
      (forall
       ((z strd) (v1 v2 mesg))
       (implies
@@ -171,12 +171,12 @@
 ;;        (forall
 ;;         ((z strd) (v1 v2 mesg))
 ;;         (implies
-;;          (and 
+;;          (and
 ;;   	(p "tpm-power-on" z 2)
 ;;   	(p "tpm-power-on" "current-value" z (cat v1 v2)))
 ;;          (false))))
-;;   
-;;      (defrule genStV-not-catted-tpm-extend-enc 
+;;
+;;      (defrule genStV-not-catted-tpm-extend-enc
 ;;        (forall
 ;;         ((z strd) (v1 v2 mesg))
 ;;         (implies
@@ -184,7 +184,7 @@
 ;;   	(p "tpm-extend-enc" z 2)
 ;;   	(p "tpm-extend-enc" "current-value" z (cat v1 v2)))
 ;;          (false))))
-;;   
+;;
 ;;      (defrule genStV-not-catted-tpm-decrypt
 ;;        (forall
 ;;         ((z strd) (v1 v2 mesg))
@@ -193,7 +193,7 @@
 ;;   	(p "tpm-decrypt" z 3)
 ;;   	(p "tpm-decrypt" "current-value" z (cat v1 v2)))
 ;;          (false))))
-;;   
+;;
 ;;      (defrule genStV-not-catted-tpm-quote
 ;;        (forall
 ;;         ((z strd) (v1 v2 mesg))
@@ -207,8 +207,7 @@
 (defprotocol envelope basic
   (roles)
   (genStV-rules)
-  ) 
-
+  )
 
 (defskeleton envelope
   (vars (v data))
@@ -223,20 +222,20 @@
 (defskeleton envelope
   (vars (n v data) (k aik akey) (pcr-id text))
   (deflistener (refuse pcr-id n v k aik))
-  (deflistener v) 
+  (deflistener v)
   (defstrand alice 5 (n n) (v v) (k k) (aik aik)))
 
 (defskeleton envelope
   (vars (n v data) (k aik akey) (pcr-id text))
   (deflistener (refuse pcr-id n v k aik))
-  (deflistener v) 
+  (deflistener v)
   (defstrand alice 5 (n n) (v v) (k k) (aik aik))
   (facts (no-state-split)))
 
 ;;   (defprotocol envelope-plus basic
 ;;     (roles)
 ;;     (genStV-rules)
-;;   
+;;
 ;;     (defrule ordered-extends
 ;;       (forall ((y z strd) (pcr locn))
 ;;   	    (implies
@@ -247,39 +246,38 @@
 ;;   	     (or (= y z)
 ;;   		 (prec y 3 z 2)
 ;;   		 (prec z 3 y 2))))))
-;;   
-;;   
+;;
+;;
 ;;   (defskeleton envelope-plus
 ;;     (vars (v data))
 ;;     (deflistener v)
 ;;     (defstrand alice 5 (v v)))
-;;   
+;;
 ;;   (defskeleton envelope-plus
 ;;     (vars (n v data) (k aik akey) (pcr-id text))
 ;;     (deflistener (refuse pcr-id n v k aik))
 ;;     (defstrand alice 5 (n n) (v v) (k k) (aik aik)))
-;;   
+;;
 ;;   (defskeleton envelope-plus
 ;;     (vars (n v data) (k aik akey) (pcr-id text))
 ;;     (deflistener (refuse pcr-id n v k aik))
 ;;     (deflistener v)
 ;;     (defstrand alice 5 (n n) (v v) (k k) (aik aik)))
-
 
 (comment (defprotocol envelope-plus-2 basic
 	   (roles)
 	   (genStV-rules)
 
-	   (defrule pcr-id-identifies-pcr 
+	   (defrule pcr-id-identifies-pcr
 	     (forall ((y z strd) (pcr-id text) (pcr pcr-0 locn))
 		     (implies
 		      (and (p "tpm-extend-enc" y 3)
 			   (p "tpm-extend-enc" z 3)
-			   (p "tpm-extend-enc" "pcr-id" y pcr-id) 
+			   (p "tpm-extend-enc" "pcr-id" y pcr-id)
 			   (p "tpm-extend-enc" "pcr-id" z pcr-id)
 			   (p "tpm-extend-enc" "pcr" y pcr)
 			   (p "tpm-extend-enc" "pcr" z pcr-0))
-		      (= pcr pcr-0))))) 
+		      (= pcr pcr-0)))))
 
 	 (defskeleton envelope-plus-2
 	   (vars (v data))
@@ -300,8 +298,6 @@
 	 (defskeleton envelope-plus-2
 	   (vars (n v data) (k aik akey) (pcr-id text))
 	   (deflistener (refuse pcr-id n v k aik))
-	   (deflistener v) 
+	   (deflistener v)
 	   (defstrand alice 5 (n n) (v v) (k k) (aik aik))
 	   (facts (no-state-split))))
-
-
