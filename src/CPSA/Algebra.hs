@@ -191,18 +191,18 @@ cloneId gen x = freshId gen (idName x)
 
 -- Operations other than the tag constant constructor
 data Symbol
-    = Data String              -- Atoms
-    | Akey String              -- Asymmetric keys
-    | Name                     -- Principal
-    | Pval                     -- Point at which a store occurs
-    | Ltk                      -- Long term shared symmetric key
-    | Invk String              -- Inverse of asymmetric key
-    | Pubk                     -- Public asymmetric key of a principal
-    | Chan                     -- Channel
-    | Locn                     -- Location
-    | Tupl String              -- Term tupling
-    | Enc String               -- Encryption
-    | Hash String              -- Hashing
+    = Data String               -- Atoms
+    | Akey String               -- Asymmetric keys
+    | Name                      -- Principal
+    | Pval                      -- Point at which a store occurs
+    | Ltk                       -- Long term shared symmetric key
+    | Invk String               -- Inverse of asymmetric key
+    | Pubk                      -- Public asymmetric key of a principal
+    | Chan                      -- Channel
+    | Locn                      -- Location
+    | Tupl String               -- Term tupling
+    | Enc String                -- Encryption
+    | Hash String               -- Hashing
       deriving (Show, Eq, Ord)
 
 -- A Basic Crypto Algebra Term
@@ -334,14 +334,15 @@ termWellFormed xts (F (Data "skey") [F Ltk [I x, I y]]) =
 termWellFormed xts (F (Akey op) [t]) = -- Asymmetric key terms
     case t of
       I x -> extendVarEnv xts x (F (Akey op) [I x])
-      F (Invk op) [I x] -> extendVarEnv xts x (F (Akey op) [I x])
+      F (Invk op') [I x]
+        | op' == op -> extendVarEnv xts x (F (Akey op) [I x])
       F Pubk [I x]
         | op == "akey" -> extendVarEnv xts x (F Name [I x])
       F Pubk [C _, I x]
         | op == "akey" -> extendVarEnv xts x (F Name [I x])
-      F (Invk op) [F Pubk [I x]]
+      F (Invk "akey") [F Pubk [I x]]
         | op == "akey" -> extendVarEnv xts x (F Name [I x])
-      F (Invk op) [F Pubk [C _, I x]]
+      F (Invk "akey") [F Pubk [C _, I x]]
         | op == "akey" -> extendVarEnv xts x (F Name [I x])
       _ -> Nothing
 termWellFormed xts t@(F Name [I x]) =
@@ -366,7 +367,6 @@ extendVarEnv (VarEnv env) x t =
       Just t' -> if t == t' then Just (VarEnv env) else Nothing
 
 -- Is the sort of the term a base sort?
-
 isAtom :: Term -> Bool
 isAtom (F s _) = varSym s
 isAtom _ = False
@@ -1237,15 +1237,15 @@ loadHash pos _ _ = fail (shows pos "Malformed hash")
 --           combineVarListSpecs vls $ (s', vnames') : (combineVarListSpecs [(s, vnames)] vls')
 
 sortNameAndVarName :: Term -> (String,String)
-sortNameAndVarName (I (Id(_, name))) = ("mesg",name)
-sortNameAndVarName (F (Data sort) [I (Id(_, name))]) = (sort,name)
-sortNameAndVarName (F (Akey sort) [I (Id(_, name))]) = (sort,name)
-sortNameAndVarName (F Name [I (Id(_, name))]) = ("name",name)
-sortNameAndVarName (F Pval [I (Id(_, name))]) = ("pt",name)
-sortNameAndVarName (F Chan [I (Id(_, name))]) = ("chan",name)
-sortNameAndVarName (F Locn [I (Id(_, name))]) = ("locn",name)
-sortNameAndVarName (D (Id(_, name))) = ("strd",name)
-sortNameAndVarName (X (Id(_, name))) = ("indx",name)
+sortNameAndVarName (I (Id(_, name))) = ("mesg", name)
+sortNameAndVarName (F (Data sort) [I (Id(_, name))]) = (sort, name)
+sortNameAndVarName (F (Akey sort) [I (Id(_, name))]) = (sort, name)
+sortNameAndVarName (F Name [I (Id(_, name))]) = ("name", name)
+sortNameAndVarName (F Pval [I (Id(_, name))]) = ("pt", name)
+sortNameAndVarName (F Chan [I (Id(_, name))]) = ("chan", name)
+sortNameAndVarName (F Locn [I (Id(_, name))]) = ("locn", name)
+sortNameAndVarName (D (Id(_, name))) = ("strd", name)
+sortNameAndVarName (X (Id(_, name))) = ("indx", name)
 sortNameAndVarName t = error ("sortNameAndVarName:  Non-var " ++ (show t))
 
 addSortNameToVarListSpec :: (String,String) -> [(String,[String])] -> Maybe [(String,[String])]
