@@ -473,7 +473,7 @@ decompose knowns unguessable =
           loop (S.delete t unguessable) (S.delete t knowns) old todo
       -- Decat
       decat :: Term -> Set Term -> Set Term
-      decat (F (Tupl _) ts) s = foldr decat s ts
+      decat (F (Tupl _) ts) s = foldl (\a b -> decat b a) s ts
       decat t s = S.insert t s
 
 -- Inverts an asymmetric key
@@ -498,10 +498,10 @@ components t = [t]
 -- encryption in which the term that is hashed is the encryption key.
 encryptions :: Term -> [(Term, [Term])]
 encryptions t =
-    f t []
+    reverse $ f t []
     where
       f (F (Tupl _) ts) acc =
-        foldr f acc ts
+        foldl (\a b -> f b a) acc ts
       f t@(F (Enc _) [t', t'']) acc =
         f t' (adjoin (t, [t'']) acc)
       f t@(F (Hash _) [t']) acc =
@@ -562,9 +562,9 @@ carriedPlaces target source =
       f paths path source
           | target == source = Place (reverse path) : paths
       f paths path (F (Tupl _) ts) =
-          foldr g paths (zip [0..] ts)
+          foldl g paths (zip [0..] ts)
           where
-            g (i, t) paths = f paths (i : path) t
+            g paths (i, t) = f paths (i : path) t
       f paths path (F (Enc _) [t, _]) =
           f paths (0 : path) t
       f paths _ _ = paths
