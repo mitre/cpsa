@@ -751,14 +751,14 @@ unifyTerms t (I x) s = unifyTerms (I x) t s
 unifyTerms (C c) (C c') s
     | c == c' = Just s
     | otherwise = Nothing
-unifyTerms (F (Invk op) [I x]) (F Pubk [I y]) s =
-    unifyTerms (I x) (F (Invk op) [F Pubk [I y]]) s
-unifyTerms (F (Invk op) [I x]) (F Pubk [C c, I y]) s =
-    unifyTerms (I x) (F (Invk op) [F Pubk [C c, I y]]) s
-unifyTerms (F Pubk [I x]) (F (Invk op) [I y]) s =
-    unifyTerms (I y) (F (Invk op) [F Pubk [I x]]) s
-unifyTerms (F Pubk [C c, I x]) (F (Invk op) [I y]) s =
-    unifyTerms (I y) (F (Invk op) [F Pubk [C c, I x]]) s
+unifyTerms (F (Invk "akey") [I x]) (F Pubk [I y]) s =
+    unifyTerms (I x) (F (Invk "akey") [F Pubk [I y]]) s
+unifyTerms (F (Invk "akey") [I x]) (F Pubk [C c, I y]) s =
+    unifyTerms (I x) (F (Invk "akey") [F Pubk [C c, I y]]) s
+unifyTerms (F Pubk [I x]) (F (Invk "akey") [I y]) s =
+    unifyTerms (I y) (F (Invk "akey") [F Pubk [I x]]) s
+unifyTerms (F Pubk [C c, I x]) (F (Invk "akey") [I y]) s =
+    unifyTerms (I y) (F (Invk "akey") [F Pubk [C c, I x]]) s
 unifyTerms (F sym u) (F sym' u') s
     | sym == sym' = unifyTermLists u u' s
     | otherwise = Nothing
