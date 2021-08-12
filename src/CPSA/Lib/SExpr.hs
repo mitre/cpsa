@@ -54,6 +54,25 @@ instance Eq (SExpr a) where
     L _ xs == L _ xs' = xs == xs'
     _ == _ = False
 
+-- | Ordering ignores position annotations.
+instance Ord (SExpr a) where
+    compare (S _ s) (S _ s') = compare s s'
+    compare (S _ _) (Q _ _) = LT
+    compare (S _ _) (N _ _) = LT
+    compare (S _ _) (L _ _) = LT
+    compare (Q _ _) (S _ _) = GT
+    compare (Q _ s) (Q _ s') = compare s s'
+    compare (Q _ _) (N _ _) = LT
+    compare (Q _ _) (L _ _) = LT
+    compare (N _ _) (S _ _) = GT
+    compare (N _ _) (Q _ _) = GT
+    compare (N _ n) (N _ n') = compare n n'
+    compare (N _ _) (L _ _) = LT
+    compare (L _ _) (S _ _) = GT
+    compare (L _ _) (Q _ _) = GT
+    compare (L _ _) (N _ _) = GT
+    compare (L _ xs) (L _ xs') = compare xs xs'
+
 -- | This printer produces no line breaks.
 instance Show (SExpr a) where
     showsPrec _ (S _ s) = showString s
