@@ -50,8 +50,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton neq-test
-  (vars (n1 n2 text) (k skey))
-  (defstrand init 2 (n1 n1) (n2 n2) (k k))
+  (vars (k skey) (n1 n2 text))
+  (defstrand init 2 (k k) (n1 n1) (n2 n2))
   (non-orig k)
   (uniq-orig n1 n2)
   (traces ((send (cat n1 (enc n1 n2 k))) (recv n2)))
@@ -61,8 +61,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neq-test
-  (vars (n1 text) (k skey))
-  (defstrand init 2 (n1 n1) (n2 n1) (k k))
+  (vars (k skey) (n1 text))
+  (defstrand init 2 (k k) (n1 n1) (n2 n1))
   (non-orig k)
   (uniq-orig n1)
   (operation nonce-test (displaced 1 0 init 1) n2 (0 1) (enc n1 n2 k))
@@ -121,8 +121,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton neq-test
-  (vars (n1 n2 text) (k skey))
-  (defstrand init 2 (n1 n1) (n2 n2) (k k))
+  (vars (k skey) (n1 n2 text))
+  (defstrand init 2 (k k) (n1 n1) (n2 n2))
   (non-orig k)
   (uniq-orig n1 n2)
   (facts (neq n1 n2))

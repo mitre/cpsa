@@ -529,8 +529,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton wang
-  (vars (r text) (m data) (b t a name) (k skey))
-  (defstrand init1 1 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (b t a name))
+  (defstrand init1 1 (m m) (k k) (r r) (a a) (b b) (t t))
   (deflistener m)
   (non-orig (privk "encr" t))
   (uniq-orig m k)
@@ -560,8 +560,8 @@
   (comment "Not a skeleton"))
 
 (defskeleton wang
-  (vars (r text) (m data) (b t a name) (k skey))
-  (defstrand init1 1 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (b t a name))
+  (defstrand init1 1 (m m) (k k) (r r) (a a) (b b) (t t))
   (deflistener m)
   (precedes ((0 0) (1 0)))
   (non-orig (privk "encr" t))
@@ -591,8 +591,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wang
-  (vars (r text) (m data) (b t a name) (k skey))
-  (defstrand init1 1 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (b t a name))
+  (defstrand init1 1 (m m) (k k) (r r) (a a) (b b) (t t))
   (deflistener m)
   (deflistener k)
   (precedes ((0 0) (2 0)) ((2 1) (1 0)))
@@ -623,10 +623,10 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wang
-  (vars (r text) (m data) (b t a name) (k skey))
+  (vars (m data) (k skey) (r text) (b t a name))
   (deflistener m)
   (deflistener k)
-  (defstrand init1 3 (r r) (m m) (a a) (b b) (t t) (k k))
+  (defstrand init1 3 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 1) (0 0)) ((2 2) (1 0)))
   (non-orig (privk "encr" t))
   (uniq-orig m k)
@@ -669,12 +669,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wang
-  (vars (r text) (m data) (b t a name) (k skey))
-  (defstrand init1 1 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (b t a name))
+  (defstrand init1 1 (m m) (k k) (r r) (a a) (b b) (t t))
   (deflistener m)
   (deflistener k)
-  (defstrand ttp-rc1 3 (y (enc "h" (cat "h" (enc m k)))) (r r) (a a)
-    (b b) (t t) (k k))
+  (defstrand ttp-rc1 3 (y (enc "h" (cat "h" (enc m k)))) (k k) (r r)
+    (a a) (b b) (t t))
   (precedes ((0 0) (3 0)) ((2 1) (1 0)) ((3 2) (2 0)))
   (non-orig (privk "encr" t))
   (uniq-orig m k)
@@ -774,9 +774,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wang
-  (vars (r text) (m data) (b t a name) (k skey))
+  (vars (m data) (k skey) (r text) (b t a name))
   (deflistener m)
-  (defstrand init1 3 (r r) (m m) (a a) (b b) (t t) (k k))
+  (defstrand init1 3 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 2) (0 0)))
   (non-orig (privk "encr" t))
   (uniq-orig m k)
@@ -817,11 +817,11 @@
   (origs (m (1 0)) (k (1 0))))
 
 (defskeleton wang
-  (vars (r text) (m data) (b t a name) (k skey))
-  (defstrand init1 1 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (b t a name))
+  (defstrand init1 1 (m m) (k k) (r r) (a a) (b b) (t t))
   (deflistener m)
-  (defstrand ttp-rc1 3 (y (enc "h" (cat "h" (enc m k)))) (r r) (a a)
-    (b b) (t t) (k k))
+  (defstrand ttp-rc1 3 (y (enc "h" (cat "h" (enc m k)))) (k k) (r r)
+    (a a) (b b) (t t))
   (precedes ((0 0) (2 0)) ((2 2) (1 0)))
   (non-orig (privk "encr" t))
   (uniq-orig m k)
@@ -1445,8 +1445,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton wang
-  (vars (r text) (m data) (b t a name) (k skey))
-  (defstrand init1 1 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (b t a name))
+  (defstrand init1 1 (m m) (k k) (r r) (a a) (b b) (t t))
   (deflistener k)
   (non-orig (privk "encr" t))
   (uniq-orig m k)
@@ -1476,8 +1476,8 @@
   (comment "Not a skeleton"))
 
 (defskeleton wang
-  (vars (r text) (m data) (b t a name) (k skey))
-  (defstrand init1 1 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (b t a name))
+  (defstrand init1 1 (m m) (k k) (r r) (a a) (b b) (t t))
   (deflistener k)
   (precedes ((0 0) (1 0)))
   (non-orig (privk "encr" t))
@@ -1507,9 +1507,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wang
-  (vars (r text) (m data) (b t a name) (k skey))
+  (vars (m data) (k skey) (r text) (b t a name))
   (deflistener k)
-  (defstrand init1 3 (r r) (m m) (a a) (b b) (t t) (k k))
+  (defstrand init1 3 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 2) (0 0)))
   (non-orig (privk "encr" t))
   (uniq-orig m k)
@@ -1554,11 +1554,11 @@
   (origs (m (1 0)) (k (1 0))))
 
 (defskeleton wang
-  (vars (r text) (m data) (b t a name) (k skey))
-  (defstrand init1 1 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (b t a name))
+  (defstrand init1 1 (m m) (k k) (r r) (a a) (b b) (t t))
   (deflistener k)
-  (defstrand ttp-rc1 3 (y (enc "h" (cat "h" (enc m k)))) (r r) (a a)
-    (b b) (t t) (k k))
+  (defstrand ttp-rc1 3 (y (enc "h" (cat "h" (enc m k)))) (k k) (r r)
+    (a a) (b b) (t t))
   (precedes ((0 0) (2 0)) ((2 2) (1 0)))
   (non-orig (privk "encr" t))
   (uniq-orig m k)
@@ -2186,8 +2186,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton wang
-  (vars (r text) (m data) (b t a name) (k skey))
-  (defstrand init1 3 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (b t a name))
+  (defstrand init1 3 (m m) (k k) (r r) (a a) (b b) (t t))
   (non-orig (privk "sign" b))
   (comment "First of three experiments to prove Lemma 4.2, clause 1.")
   (traces
@@ -2224,9 +2224,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wang
-  (vars (r text) (m data) (b t a name) (k skey))
-  (defstrand init1 3 (r r) (m m) (a a) (b b) (t t) (k k))
-  (defstrand resp1 2 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (b t a name))
+  (defstrand init1 3 (m m) (k k) (r r) (a a) (b b) (t t))
+  (defstrand resp1 2 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 1) (0 1)))
   (non-orig (privk "sign" b))
   (operation encryption-test (added-strand resp1 2)
@@ -2302,8 +2302,8 @@
   (origs))
 
 (defskeleton wang
-  (vars (r text) (m data) (b t a name) (k skey))
-  (defstrand init1 3 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (b t a name))
+  (defstrand init1 3 (m m) (k k) (r r) (a a) (b b) (t t))
   (defstrand resp3 2 (e1 (enc m k))
     (e2
       (enc "keytag"
@@ -2928,8 +2928,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton wang
-  (vars (r text) (m data) (b t a name) (k skey))
-  (defstrand init3 3 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (b t a name))
+  (defstrand init3 3 (m m) (k k) (r r) (a a) (b b) (t t))
   (non-orig (privk "sign" b))
   (comment "Second of three experiments to prove Lemma 4.2, clause 1.")
   (traces
@@ -2969,9 +2969,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wang
-  (vars (r text) (m data) (b t a name) (k skey))
-  (defstrand init3 3 (r r) (m m) (a a) (b b) (t t) (k k))
-  (defstrand resp1 2 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (b t a name))
+  (defstrand init3 3 (m m) (k k) (r r) (a a) (b b) (t t))
+  (defstrand resp1 2 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 1) (0 2)))
   (non-orig (privk "sign" b))
   (operation encryption-test (added-strand resp1 2)
@@ -3050,8 +3050,8 @@
   (origs))
 
 (defskeleton wang
-  (vars (r text) (m data) (b t a name) (k skey))
-  (defstrand init3 3 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (b t a name))
+  (defstrand init3 3 (m m) (k k) (r r) (a a) (b b) (t t))
   (defstrand resp3 2 (e1 (enc m k))
     (e2
       (enc "keytag"
@@ -3679,8 +3679,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton wang
-  (vars (r text) (m data) (b t a name) (k skey))
-  (defstrand init5 4 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (b t a name))
+  (defstrand init5 4 (m m) (k k) (r r) (a a) (b b) (t t))
   (non-orig (privk "sign" b))
   (comment "Third of three experiments to prove Lemma 4.2, clause 1.")
   (traces
@@ -3730,9 +3730,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wang
-  (vars (r text) (m data) (b t a name) (k skey))
-  (defstrand init5 4 (r r) (m m) (a a) (b b) (t t) (k k))
-  (defstrand resp1 2 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (b t a name))
+  (defstrand init5 4 (m m) (k k) (r r) (a a) (b b) (t t))
+  (defstrand resp1 2 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 1) (0 1)))
   (non-orig (privk "sign" b))
   (operation encryption-test (added-strand resp1 2)
@@ -3821,8 +3821,8 @@
   (origs))
 
 (defskeleton wang
-  (vars (r text) (m data) (b t a name) (k skey))
-  (defstrand init5 4 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (b t a name))
+  (defstrand init5 4 (m m) (k k) (r r) (a a) (b b) (t t))
   (defstrand resp3 2 (e1 (enc m k))
     (e2
       (enc "keytag"
@@ -4460,8 +4460,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton wang
-  (vars (r text) (m data) (a t b name) (k skey))
-  (defstrand resp1 3 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (a t b name))
+  (defstrand resp1 3 (m m) (k k) (r r) (a a) (b b) (t t))
   (non-orig (privk "sign" a))
   (comment "First of two experiments to prove Lemma 4.2, clause 2.")
   (traces
@@ -4498,9 +4498,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wang
-  (vars (r text) (m data) (a t b name) (k skey))
-  (defstrand resp1 3 (r r) (m m) (a a) (b b) (t t) (k k))
-  (defstrand init5 1 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (a t b name))
+  (defstrand resp1 3 (m m) (k k) (r r) (a a) (b b) (t t))
+  (defstrand init5 1 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)))
   (non-orig (privk "sign" a))
   (operation encryption-test (added-strand init5 1)
@@ -5092,8 +5092,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton wang
-  (vars (r text) (m data) (a t b name) (k skey))
-  (defstrand resp2 4 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (a t b name))
+  (defstrand resp2 4 (m m) (k k) (r r) (a a) (b b) (t t))
   (non-orig (privk "sign" a))
   (comment "Second of two experiments to prove Lemma 4.2, clause 2.")
   (traces
@@ -5180,9 +5180,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wang
-  (vars (r text) (m data) (a t b name) (k skey))
-  (defstrand resp2 4 (r r) (m m) (a a) (b b) (t t) (k k))
-  (defstrand init5 1 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (a t b name))
+  (defstrand resp2 4 (m m) (k k) (r r) (a a) (b b) (t t))
+  (defstrand init5 1 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)))
   (non-orig (privk "sign" a))
   (operation encryption-test (added-strand init5 1)
@@ -5862,7 +5862,7 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wang
-  (vars (r text) (m data) (a t b name) (k skey))
+  (vars (m data) (k skey) (r text) (a t b name))
   (defstrand resp3 4 (e1 (enc m k))
     (e2
       (enc "keytag"
@@ -5870,7 +5870,7 @@
           (cat "h" a b t (enc "h" (cat "h" (enc m k)))
             (enc "h" (cat "h" k)))) k r (pubk "encr" t)))
     (x (enc "h" (cat "h" k))) (a a) (b b) (t t))
-  (defstrand init5 1 (r r) (m m) (a a) (b b) (t t) (k k))
+  (defstrand init5 1 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)))
   (non-orig (privk "sign" a))
   (operation encryption-test (added-strand init5 1)
@@ -5988,7 +5988,7 @@
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton wang
-  (vars (r r-0 text) (m data) (a t b name) (k skey))
+  (vars (m data) (k skey) (r r-0 text) (a t b name))
   (defstrand resp3 4 (e1 (enc m k))
     (e2
       (enc "keytag"
@@ -5996,8 +5996,8 @@
           (cat "h" a b t (enc "h" (cat "h" (enc m k)))
             (enc "h" (cat "h" k)))) k r (pubk "encr" t)))
     (x (enc "h" (cat "h" k))) (a a) (b b) (t t))
-  (defstrand init5 1 (r r) (m m) (a a) (b b) (t t) (k k))
-  (defstrand init3 2 (r r-0) (m m) (a a) (b b) (t t) (k k))
+  (defstrand init5 1 (m m) (k k) (r r) (a a) (b b) (t t))
+  (defstrand init3 2 (m m) (k k) (r r-0) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)) ((2 1) (0 3)))
   (non-orig (privk "sign" a))
   (operation encryption-test (added-strand init3 2)
@@ -6138,7 +6138,7 @@
   (origs))
 
 (defskeleton wang
-  (vars (r text) (m data) (a t b name) (k skey))
+  (vars (m data) (k skey) (r text) (a t b name))
   (defstrand resp3 4 (e1 (enc m k))
     (e2
       (enc "keytag"
@@ -6146,7 +6146,7 @@
           (cat "h" a b t (enc "h" (cat "h" (enc m k)))
             (enc "h" (cat "h" k)))) k r (pubk "encr" t)))
     (x (enc "h" (cat "h" k))) (a a) (b b) (t t))
-  (defstrand init3 2 (r r) (m m) (a a) (b b) (t t) (k k))
+  (defstrand init3 2 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)) ((1 1) (0 3)))
   (non-orig (privk "sign" a))
   (operation encryption-test (displaced 1 2 init3 2)
@@ -6270,7 +6270,7 @@
   (origs))
 
 (defskeleton wang
-  (vars (r text) (m data) (a t b name) (k skey))
+  (vars (m data) (k skey) (r text) (a t b name))
   (defstrand resp3 4 (e1 (enc m k))
     (e2
       (enc "keytag"
@@ -6278,7 +6278,7 @@
           (cat "h" a b t (enc "h" (cat "h" (enc m k)))
             (enc "h" (cat "h" k)))) k r (pubk "encr" t)))
     (x (enc "h" (cat "h" k))) (a a) (b b) (t t))
-  (defstrand init5 3 (r r) (m m) (a a) (b b) (t t) (k k))
+  (defstrand init5 3 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)) ((1 2) (0 3)))
   (non-orig (privk "sign" a))
   (operation encryption-test (displaced 1 2 init5 3)
@@ -6412,7 +6412,7 @@
   (origs))
 
 (defskeleton wang
-  (vars (r r-0 text) (m data) (a t b name) (k skey))
+  (vars (m data) (k skey) (r r-0 text) (a t b name))
   (defstrand resp3 4 (e1 (enc m k))
     (e2
       (enc "keytag"
@@ -6420,8 +6420,8 @@
           (cat "h" a b t (enc "h" (cat "h" (enc m k)))
             (enc "h" (cat "h" k)))) k r (pubk "encr" t)))
     (x (enc "h" (cat "h" k))) (a a) (b b) (t t))
-  (defstrand init5 1 (r r) (m m) (a a) (b b) (t t) (k k))
-  (defstrand init5 3 (r r-0) (m m) (a a) (b b) (t t) (k k))
+  (defstrand init5 1 (m m) (k k) (r r) (a a) (b b) (t t))
+  (defstrand init5 3 (m m) (k k) (r r-0) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)) ((2 2) (0 3)))
   (non-orig (privk "sign" a))
   (operation encryption-test (added-strand init5 3)
@@ -7147,12 +7147,12 @@
   (origs))
 
 (defskeleton wang
-  (vars (y mesg) (r text) (a b t name) (k skey))
+  (vars (y mesg) (k skey) (r text) (a b t name))
   (deflistener
     (enc "abcf"
       (enc "abrq" a b t y (enc "h" (cat "h" k)) (privk "sign" a))
       (privk "sign" t)))
-  (defstrand ttp-rc2 3 (y y) (r r) (a a) (b b) (t t) (k k))
+  (defstrand ttp-rc2 3 (y y) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 2) (0 0)))
   (non-orig (privk "sign" t))
   (operation encryption-test (added-strand ttp-rc2 3)
@@ -7199,12 +7199,12 @@
   (origs))
 
 (defskeleton wang
-  (vars (y mesg) (r text) (a b t name) (k skey))
+  (vars (y mesg) (k skey) (r text) (a b t name))
   (deflistener
     (enc "abcf"
       (enc "abrq" a b t y (enc "h" (cat "h" k)) (privk "sign" a))
       (privk "sign" t)))
-  (defstrand ttp-cf2 3 (y y) (r r) (a a) (b b) (t t) (k k))
+  (defstrand ttp-cf2 3 (y y) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 2) (0 0)))
   (non-orig (privk "sign" t))
   (operation encryption-test (added-strand ttp-cf2 3)
@@ -7793,10 +7793,10 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wang
-  (vars (r text) (m data) (a b t name) (k skey))
+  (vars (m data) (k skey) (r text) (a b t name))
   (defstrand ttp-ab1 3 (y (enc "h" (cat "h" (enc m k))))
     (x (enc "h" (cat "h" k))) (a a) (b b) (t t))
-  (defstrand init3 2 (r r) (m m) (a a) (b b) (t t) (k k))
+  (defstrand init3 2 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 1) (0 0)))
   (non-orig (privk "encr" t) (privk "sign" a))
   (operation encryption-test (added-strand init3 2)
@@ -7845,10 +7845,10 @@
   (origs))
 
 (defskeleton wang
-  (vars (r text) (m data) (a b t name) (k skey))
+  (vars (m data) (k skey) (r text) (a b t name))
   (defstrand ttp-ab1 3 (y (enc "h" (cat "h" (enc m k))))
     (x (enc "h" (cat "h" k))) (a a) (b b) (t t))
-  (defstrand init5 3 (r r) (m m) (a a) (b b) (t t) (k k))
+  (defstrand init5 3 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 2) (0 0)))
   (non-orig (privk "encr" t) (privk "sign" a))
   (operation encryption-test (added-strand init5 3)
@@ -8433,8 +8433,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton wang
-  (vars (y mesg) (r text) (a b t name) (k skey))
-  (defstrand ttp-rc2 3 (y y) (r r) (a a) (b b) (t t) (k k))
+  (vars (y mesg) (k skey) (r text) (a b t name))
+  (defstrand ttp-rc2 3 (y y) (k k) (r r) (a a) (b b) (t t))
   (non-orig (privk "encr" t) (privk "sign" a))
   (comment "Experiment 2 to prove Lemma 4.3, clause 2.")
   (traces
@@ -8467,10 +8467,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wang
-  (vars (r text) (m data) (a b t name) (k skey))
-  (defstrand ttp-rc2 3 (y (enc "h" (cat "h" (enc m k)))) (r r) (a a)
-    (b b) (t t) (k k))
-  (defstrand init5 1 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (a b t name))
+  (defstrand ttp-rc2 3 (y (enc "h" (cat "h" (enc m k)))) (k k) (r r)
+    (a a) (b b) (t t))
+  (defstrand init5 1 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)))
   (non-orig (privk "encr" t) (privk "sign" a))
   (operation encryption-test (added-strand init5 1)
@@ -8548,11 +8548,11 @@
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton wang
-  (vars (r r-0 text) (m data) (a b t name) (k skey))
-  (defstrand ttp-rc2 3 (y (enc "h" (cat "h" (enc m k)))) (r r) (a a)
-    (b b) (t t) (k k))
-  (defstrand init5 1 (r r) (m m) (a a) (b b) (t t) (k k))
-  (defstrand init3 2 (r r-0) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r r-0 text) (a b t name))
+  (defstrand ttp-rc2 3 (y (enc "h" (cat "h" (enc m k)))) (k k) (r r)
+    (a a) (b b) (t t))
+  (defstrand init5 1 (m m) (k k) (r r) (a a) (b b) (t t))
+  (defstrand init3 2 (m m) (k k) (r r-0) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)) ((2 1) (0 1)))
   (non-orig (privk "encr" t) (privk "sign" a))
   (operation encryption-test (added-strand init3 2)
@@ -8648,10 +8648,10 @@
   (origs))
 
 (defskeleton wang
-  (vars (r text) (m data) (a b t name) (k skey))
-  (defstrand ttp-rc2 3 (y (enc "h" (cat "h" (enc m k)))) (r r) (a a)
-    (b b) (t t) (k k))
-  (defstrand init3 2 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (a b t name))
+  (defstrand ttp-rc2 3 (y (enc "h" (cat "h" (enc m k)))) (k k) (r r)
+    (a a) (b b) (t t))
+  (defstrand init3 2 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)) ((1 1) (0 1)))
   (non-orig (privk "encr" t) (privk "sign" a))
   (operation encryption-test (displaced 1 2 init3 2)
@@ -8730,10 +8730,10 @@
   (origs))
 
 (defskeleton wang
-  (vars (r text) (m data) (a b t name) (k skey))
-  (defstrand ttp-rc2 3 (y (enc "h" (cat "h" (enc m k)))) (r r) (a a)
-    (b b) (t t) (k k))
-  (defstrand init5 3 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (a b t name))
+  (defstrand ttp-rc2 3 (y (enc "h" (cat "h" (enc m k)))) (k k) (r r)
+    (a a) (b b) (t t))
+  (defstrand init5 3 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)) ((1 2) (0 1)))
   (non-orig (privk "encr" t) (privk "sign" a))
   (operation encryption-test (displaced 1 2 init5 3)
@@ -8822,11 +8822,11 @@
   (origs))
 
 (defskeleton wang
-  (vars (r r-0 text) (m data) (a b t name) (k skey))
-  (defstrand ttp-rc2 3 (y (enc "h" (cat "h" (enc m k)))) (r r) (a a)
-    (b b) (t t) (k k))
-  (defstrand init5 1 (r r) (m m) (a a) (b b) (t t) (k k))
-  (defstrand init5 3 (r r-0) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r r-0 text) (a b t name))
+  (defstrand ttp-rc2 3 (y (enc "h" (cat "h" (enc m k)))) (k k) (r r)
+    (a a) (b b) (t t))
+  (defstrand init5 1 (m m) (k k) (r r) (a a) (b b) (t t))
+  (defstrand init5 3 (m m) (k k) (r r-0) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)) ((2 2) (0 1)))
   (non-orig (privk "encr" t) (privk "sign" a))
   (operation encryption-test (added-strand init5 3)
@@ -9458,8 +9458,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton wang
-  (vars (y mesg) (r text) (a b t name) (k skey))
-  (defstrand ttp-cf2 3 (y y) (r r) (a a) (b b) (t t) (k k))
+  (vars (y mesg) (k skey) (r text) (a b t name))
+  (defstrand ttp-cf2 3 (y y) (k k) (r r) (a a) (b b) (t t))
   (non-orig (privk "encr" t) (privk "sign" a))
   (comment "Experiment 3 to prove Lemma 4.3, clause 2.")
   (traces
@@ -9492,10 +9492,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wang
-  (vars (r text) (m data) (a b t name) (k skey))
-  (defstrand ttp-cf2 3 (y (enc "h" (cat "h" (enc m k)))) (r r) (a a)
-    (b b) (t t) (k k))
-  (defstrand init5 1 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (a b t name))
+  (defstrand ttp-cf2 3 (y (enc "h" (cat "h" (enc m k)))) (k k) (r r)
+    (a a) (b b) (t t))
+  (defstrand init5 1 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)))
   (non-orig (privk "encr" t) (privk "sign" a))
   (operation encryption-test (added-strand init5 1)
@@ -9573,11 +9573,11 @@
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton wang
-  (vars (r r-0 text) (m data) (a b t name) (k skey))
-  (defstrand ttp-cf2 3 (y (enc "h" (cat "h" (enc m k)))) (r r) (a a)
-    (b b) (t t) (k k))
-  (defstrand init5 1 (r r) (m m) (a a) (b b) (t t) (k k))
-  (defstrand init3 2 (r r-0) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r r-0 text) (a b t name))
+  (defstrand ttp-cf2 3 (y (enc "h" (cat "h" (enc m k)))) (k k) (r r)
+    (a a) (b b) (t t))
+  (defstrand init5 1 (m m) (k k) (r r) (a a) (b b) (t t))
+  (defstrand init3 2 (m m) (k k) (r r-0) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)) ((2 1) (0 1)))
   (non-orig (privk "encr" t) (privk "sign" a))
   (operation encryption-test (added-strand init3 2)
@@ -9673,10 +9673,10 @@
   (origs))
 
 (defskeleton wang
-  (vars (r text) (m data) (a b t name) (k skey))
-  (defstrand ttp-cf2 3 (y (enc "h" (cat "h" (enc m k)))) (r r) (a a)
-    (b b) (t t) (k k))
-  (defstrand init3 2 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (a b t name))
+  (defstrand ttp-cf2 3 (y (enc "h" (cat "h" (enc m k)))) (k k) (r r)
+    (a a) (b b) (t t))
+  (defstrand init3 2 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)) ((1 1) (0 1)))
   (non-orig (privk "encr" t) (privk "sign" a))
   (operation encryption-test (displaced 1 2 init3 2)
@@ -9755,10 +9755,10 @@
   (origs))
 
 (defskeleton wang
-  (vars (r text) (m data) (a b t name) (k skey))
-  (defstrand ttp-cf2 3 (y (enc "h" (cat "h" (enc m k)))) (r r) (a a)
-    (b b) (t t) (k k))
-  (defstrand init5 3 (r r) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r text) (a b t name))
+  (defstrand ttp-cf2 3 (y (enc "h" (cat "h" (enc m k)))) (k k) (r r)
+    (a a) (b b) (t t))
+  (defstrand init5 3 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)) ((1 2) (0 1)))
   (non-orig (privk "encr" t) (privk "sign" a))
   (operation encryption-test (displaced 1 2 init5 3)
@@ -9847,11 +9847,11 @@
   (origs))
 
 (defskeleton wang
-  (vars (r r-0 text) (m data) (a b t name) (k skey))
-  (defstrand ttp-cf2 3 (y (enc "h" (cat "h" (enc m k)))) (r r) (a a)
-    (b b) (t t) (k k))
-  (defstrand init5 1 (r r) (m m) (a a) (b b) (t t) (k k))
-  (defstrand init5 3 (r r-0) (m m) (a a) (b b) (t t) (k k))
+  (vars (m data) (k skey) (r r-0 text) (a b t name))
+  (defstrand ttp-cf2 3 (y (enc "h" (cat "h" (enc m k)))) (k k) (r r)
+    (a a) (b b) (t t))
+  (defstrand init5 1 (m m) (k k) (r r) (a a) (b b) (t t))
+  (defstrand init5 3 (m m) (k k) (r r-0) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)) ((2 2) (0 1)))
   (non-orig (privk "encr" t) (privk "sign" a))
   (operation encryption-test (added-strand init5 3)

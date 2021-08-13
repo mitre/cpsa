@@ -55,8 +55,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton neuman-stubblebine
-  (vars (ra rb tb text) (a b ks name) (k skey))
-  (defstrand init 3 (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks) (k k))
+  (vars (k skey) (ra rb tb text) (a b ks name))
+  (defstrand init 3 (k k) (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks))
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig ra rb)
   (traces
@@ -69,13 +69,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine
-  (vars (ra rb tb rb-0 text) (a b ks name) (k skey))
-  (defstrand init 3 (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks) (k k))
-  (defstrand keyserver 2 (ra ra) (rb rb-0) (tb tb) (a a) (b b) (ks ks)
-    (k k))
+  (vars (k skey) (ra rb tb rb-0 text) (a b ks name))
+  (defstrand init 3 (k k) (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks))
+  (defstrand keyserver 2 (k k) (ra ra) (rb rb-0) (tb tb) (a a) (b b)
+    (ks ks))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (ltk a ks) (ltk b ks))
-  (uniq-orig ra rb k)
+  (uniq-orig k ra rb)
   (operation encryption-test (added-strand keyserver 2)
     (enc b ra k tb (ltk a ks)) (0 1))
   (traces
@@ -91,14 +91,14 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine
-  (vars (ra rb tb rb-0 rb-1 text) (a b ks name) (k skey))
-  (defstrand init 3 (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks) (k k))
-  (defstrand keyserver 2 (ra ra) (rb rb-0) (tb tb) (a a) (b b) (ks ks)
-    (k k))
+  (vars (k skey) (ra rb tb rb-0 rb-1 text) (a b ks name))
+  (defstrand init 3 (k k) (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks))
+  (defstrand keyserver 2 (k k) (ra ra) (rb rb-0) (tb tb) (a a) (b b)
+    (ks ks))
   (defstrand resp 2 (ra ra) (rb rb-1) (tb tb) (a a) (b b) (ks ks))
   (precedes ((0 0) (2 0)) ((1 1) (0 1)) ((2 1) (1 0)))
   (non-orig (ltk a ks) (ltk b ks))
-  (uniq-orig ra rb k)
+  (uniq-orig k ra rb)
   (operation encryption-test (added-strand resp 2)
     (enc a ra tb (ltk b ks)) (1 0))
   (traces
@@ -172,8 +172,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton neuman-stubblebine
-  (vars (ra rb tb text) (a b ks name) (k skey))
-  (defstrand resp 3 (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks) (k k))
+  (vars (k skey) (ra rb tb text) (a b ks name))
+  (defstrand resp 3 (k k) (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks))
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig ra rb)
   (traces
@@ -185,13 +185,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine
-  (vars (ra rb tb ra-0 rb-0 text) (a b ks name) (k skey))
-  (defstrand resp 3 (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks) (k k))
-  (defstrand keyserver 2 (ra ra-0) (rb rb-0) (tb tb) (a a) (b b) (ks ks)
-    (k k))
+  (vars (k skey) (ra rb tb ra-0 rb-0 text) (a b ks name))
+  (defstrand resp 3 (k k) (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks))
+  (defstrand keyserver 2 (k k) (ra ra-0) (rb rb-0) (tb tb) (a a) (b b)
+    (ks ks))
   (precedes ((1 1) (0 2)))
   (non-orig (ltk a ks) (ltk b ks))
-  (uniq-orig ra rb k)
+  (uniq-orig k ra rb)
   (operation encryption-test (added-strand keyserver 2)
     (enc a k tb (ltk b ks)) (0 2))
   (traces
@@ -207,13 +207,13 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton neuman-stubblebine
-  (vars (ra rb tb rb-0 text) (a b ks name) (k skey))
-  (defstrand resp 3 (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks) (k k))
-  (defstrand keyserver 2 (ra ra) (rb rb-0) (tb tb) (a a) (b b) (ks ks)
-    (k k))
+  (vars (k skey) (ra rb tb rb-0 text) (a b ks name))
+  (defstrand resp 3 (k k) (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks))
+  (defstrand keyserver 2 (k k) (ra ra) (rb rb-0) (tb tb) (a a) (b b)
+    (ks ks))
   (precedes ((0 1) (1 0)) ((1 1) (0 2)))
   (non-orig (ltk a ks) (ltk b ks))
-  (uniq-orig ra rb k)
+  (uniq-orig k ra rb)
   (operation encryption-test (displaced 2 0 resp 2)
     (enc a ra-0 tb (ltk b ks)) (1 0))
   (traces
@@ -228,14 +228,14 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton neuman-stubblebine
-  (vars (ra rb tb ra-0 rb-0 rb-1 text) (a b ks name) (k skey))
-  (defstrand resp 3 (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks) (k k))
-  (defstrand keyserver 2 (ra ra-0) (rb rb-0) (tb tb) (a a) (b b) (ks ks)
-    (k k))
+  (vars (k skey) (ra rb tb ra-0 rb-0 rb-1 text) (a b ks name))
+  (defstrand resp 3 (k k) (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks))
+  (defstrand keyserver 2 (k k) (ra ra-0) (rb rb-0) (tb tb) (a a) (b b)
+    (ks ks))
   (defstrand resp 2 (ra ra-0) (rb rb-1) (tb tb) (a a) (b b) (ks ks))
   (precedes ((1 1) (0 2)) ((2 1) (1 0)))
   (non-orig (ltk a ks) (ltk b ks))
-  (uniq-orig ra rb k)
+  (uniq-orig k ra rb)
   (operation encryption-test (added-strand resp 2)
     (enc a ra-0 tb (ltk b ks)) (1 0))
   (traces
@@ -253,16 +253,16 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton neuman-stubblebine
-  (vars (ra rb tb rb-0 ra-0 tb-0 text) (a b ks a-0 b-0 ks-0 name)
-    (k skey))
-  (defstrand resp 3 (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks) (k k))
-  (defstrand keyserver 2 (ra ra) (rb rb-0) (tb tb) (a a) (b b) (ks ks)
-    (k k))
-  (defstrand init 3 (ra ra-0) (rb rb) (tb tb-0) (a a-0) (b b-0)
-    (ks ks-0) (k k))
+  (vars (k skey) (ra rb tb rb-0 ra-0 tb-0 text)
+    (a b ks a-0 b-0 ks-0 name))
+  (defstrand resp 3 (k k) (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks))
+  (defstrand keyserver 2 (k k) (ra ra) (rb rb-0) (tb tb) (a a) (b b)
+    (ks ks))
+  (defstrand init 3 (k k) (ra ra-0) (rb rb) (tb tb-0) (a a-0) (b b-0)
+    (ks ks-0))
   (precedes ((0 1) (1 0)) ((1 1) (2 1)) ((2 2) (0 2)))
   (non-orig (ltk a ks) (ltk b ks))
-  (uniq-orig ra rb k)
+  (uniq-orig k ra rb)
   (operation encryption-test (added-strand init 3) (enc rb k) (0 2))
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
@@ -281,14 +281,14 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine
-  (vars (ra rb tb rb-0 text) (a b ks name) (k skey))
-  (defstrand resp 3 (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks) (k k))
-  (defstrand keyserver 2 (ra ra) (rb rb-0) (tb tb) (a a) (b b) (ks ks)
-    (k k))
+  (vars (k skey) (ra rb tb rb-0 text) (a b ks name))
+  (defstrand resp 3 (k k) (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks))
+  (defstrand keyserver 2 (k k) (ra ra) (rb rb-0) (tb tb) (a a) (b b)
+    (ks ks))
   (deflistener k)
   (precedes ((0 1) (1 0)) ((1 1) (2 0)) ((2 1) (0 2)))
   (non-orig (ltk a ks) (ltk b ks))
-  (uniq-orig ra rb k)
+  (uniq-orig k ra rb)
   (operation encryption-test (added-listener k) (enc rb k) (0 2))
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
@@ -304,17 +304,17 @@
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine
-  (vars (ra rb tb ra-0 rb-0 rb-1 ra-1 tb-0 text)
-    (a b ks a-0 b-0 ks-0 name) (k skey))
-  (defstrand resp 3 (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks) (k k))
-  (defstrand keyserver 2 (ra ra-0) (rb rb-0) (tb tb) (a a) (b b) (ks ks)
-    (k k))
+  (vars (k skey) (ra rb tb ra-0 rb-0 rb-1 ra-1 tb-0 text)
+    (a b ks a-0 b-0 ks-0 name))
+  (defstrand resp 3 (k k) (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks))
+  (defstrand keyserver 2 (k k) (ra ra-0) (rb rb-0) (tb tb) (a a) (b b)
+    (ks ks))
   (defstrand resp 2 (ra ra-0) (rb rb-1) (tb tb) (a a) (b b) (ks ks))
-  (defstrand init 3 (ra ra-1) (rb rb) (tb tb-0) (a a-0) (b b-0)
-    (ks ks-0) (k k))
+  (defstrand init 3 (k k) (ra ra-1) (rb rb) (tb tb-0) (a a-0) (b b-0)
+    (ks ks-0))
   (precedes ((0 1) (3 1)) ((1 1) (3 1)) ((2 1) (1 0)) ((3 2) (0 2)))
   (non-orig (ltk a ks) (ltk b ks))
-  (uniq-orig ra rb k)
+  (uniq-orig k ra rb)
   (operation encryption-test (added-strand init 3) (enc rb k) (0 2))
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
@@ -335,15 +335,15 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine
-  (vars (ra rb tb ra-0 rb-0 rb-1 text) (a b ks name) (k skey))
-  (defstrand resp 3 (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks) (k k))
-  (defstrand keyserver 2 (ra ra-0) (rb rb-0) (tb tb) (a a) (b b) (ks ks)
-    (k k))
+  (vars (k skey) (ra rb tb ra-0 rb-0 rb-1 text) (a b ks name))
+  (defstrand resp 3 (k k) (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks))
+  (defstrand keyserver 2 (k k) (ra ra-0) (rb rb-0) (tb tb) (a a) (b b)
+    (ks ks))
   (defstrand resp 2 (ra ra-0) (rb rb-1) (tb tb) (a a) (b b) (ks ks))
   (deflistener k)
   (precedes ((1 1) (3 0)) ((2 1) (1 0)) ((3 1) (0 2)))
   (non-orig (ltk a ks) (ltk b ks))
-  (uniq-orig ra rb k)
+  (uniq-orig k ra rb)
   (operation encryption-test (added-listener k) (enc rb k) (0 2))
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
@@ -361,14 +361,14 @@
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine
-  (vars (ra rb tb rb-0 ra-0 text) (a b ks name) (k skey))
-  (defstrand resp 3 (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks) (k k))
-  (defstrand keyserver 2 (ra ra) (rb rb-0) (tb tb) (a a) (b b) (ks ks)
-    (k k))
-  (defstrand init 3 (ra ra-0) (rb rb) (tb tb) (a a) (b b) (ks ks) (k k))
+  (vars (k skey) (ra rb tb rb-0 ra-0 text) (a b ks name))
+  (defstrand resp 3 (k k) (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks))
+  (defstrand keyserver 2 (k k) (ra ra) (rb rb-0) (tb tb) (a a) (b b)
+    (ks ks))
+  (defstrand init 3 (k k) (ra ra-0) (rb rb) (tb tb) (a a) (b b) (ks ks))
   (precedes ((0 1) (1 0)) ((1 1) (2 1)) ((2 2) (0 2)))
   (non-orig (ltk a ks) (ltk b ks))
-  (uniq-orig ra rb k)
+  (uniq-orig k ra rb)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (2 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
   (traces
@@ -387,15 +387,15 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine
-  (vars (ra rb tb ra-0 rb-0 rb-1 ra-1 text) (a b ks name) (k skey))
-  (defstrand resp 3 (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks) (k k))
-  (defstrand keyserver 2 (ra ra-0) (rb rb-0) (tb tb) (a a) (b b) (ks ks)
-    (k k))
+  (vars (k skey) (ra rb tb ra-0 rb-0 rb-1 ra-1 text) (a b ks name))
+  (defstrand resp 3 (k k) (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks))
+  (defstrand keyserver 2 (k k) (ra ra-0) (rb rb-0) (tb tb) (a a) (b b)
+    (ks ks))
   (defstrand resp 2 (ra ra-0) (rb rb-1) (tb tb) (a a) (b b) (ks ks))
-  (defstrand init 3 (ra ra-1) (rb rb) (tb tb) (a a) (b b) (ks ks) (k k))
+  (defstrand init 3 (k k) (ra ra-1) (rb rb) (tb tb) (a a) (b b) (ks ks))
   (precedes ((0 1) (3 1)) ((1 1) (3 1)) ((2 1) (1 0)) ((3 2) (0 2)))
   (non-orig (ltk a ks) (ltk b ks))
-  (uniq-orig ra rb k)
+  (uniq-orig k ra rb)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (3 1) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
   (traces
@@ -416,14 +416,14 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine
-  (vars (ra rb tb rb-0 text) (a b ks name) (k skey))
-  (defstrand resp 3 (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks) (k k))
-  (defstrand keyserver 2 (ra ra) (rb rb-0) (tb tb) (a a) (b b) (ks ks)
-    (k k))
-  (defstrand init 3 (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks) (k k))
+  (vars (k skey) (ra rb tb rb-0 text) (a b ks name))
+  (defstrand resp 3 (k k) (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks))
+  (defstrand keyserver 2 (k k) (ra ra) (rb rb-0) (tb tb) (a a) (b b)
+    (ks ks))
+  (defstrand init 3 (k k) (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks))
   (precedes ((0 1) (1 0)) ((1 1) (2 1)) ((2 0) (0 0)) ((2 2) (0 2)))
   (non-orig (ltk a ks) (ltk b ks))
-  (uniq-orig ra rb k)
+  (uniq-orig k ra rb)
   (operation encryption-test (displaced 3 1 keyserver 2)
     (enc b ra-0 k tb (ltk a ks)) (2 1))
   (traces
@@ -443,15 +443,15 @@
   (origs (k (1 1)) (ra (2 0)) (rb (0 1))))
 
 (defskeleton neuman-stubblebine
-  (vars (ra rb tb ra-0 rb-0 rb-1 text) (a b ks name) (k skey))
-  (defstrand resp 3 (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks) (k k))
-  (defstrand keyserver 2 (ra ra-0) (rb rb-0) (tb tb) (a a) (b b) (ks ks)
-    (k k))
+  (vars (k skey) (ra rb tb ra-0 rb-0 rb-1 text) (a b ks name))
+  (defstrand resp 3 (k k) (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks))
+  (defstrand keyserver 2 (k k) (ra ra-0) (rb rb-0) (tb tb) (a a) (b b)
+    (ks ks))
   (defstrand resp 2 (ra ra-0) (rb rb-1) (tb tb) (a a) (b b) (ks ks))
-  (defstrand init 3 (ra ra-0) (rb rb) (tb tb) (a a) (b b) (ks ks) (k k))
+  (defstrand init 3 (k k) (ra ra-0) (rb rb) (tb tb) (a a) (b b) (ks ks))
   (precedes ((0 1) (3 1)) ((1 1) (3 1)) ((2 1) (1 0)) ((3 2) (0 2)))
   (non-orig (ltk a ks) (ltk b ks))
-  (uniq-orig ra rb k)
+  (uniq-orig k ra rb)
   (operation encryption-test (displaced 4 1 keyserver 2)
     (enc b ra-1 k tb (ltk a ks)) (3 1))
   (traces
@@ -529,11 +529,11 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton neuman-stubblebine
-  (vars (ra rb tb text) (a b ks name) (k skey))
-  (defstrand keyserver 2 (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks)
-    (k k))
+  (vars (k skey) (ra rb tb text) (a b ks name))
+  (defstrand keyserver 2 (k k) (ra ra) (rb rb) (tb tb) (a a) (b b)
+    (ks ks))
   (non-orig (ltk a ks) (ltk b ks))
-  (uniq-orig ra rb k)
+  (uniq-orig k ra rb)
   (traces
     ((recv (cat b rb (enc a ra tb (ltk b ks))))
       (send
@@ -544,13 +544,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine
-  (vars (ra rb tb rb-0 text) (a b ks name) (k skey))
-  (defstrand keyserver 2 (ra ra) (rb rb) (tb tb) (a a) (b b) (ks ks)
-    (k k))
+  (vars (k skey) (ra rb tb rb-0 text) (a b ks name))
+  (defstrand keyserver 2 (k k) (ra ra) (rb rb) (tb tb) (a a) (b b)
+    (ks ks))
   (defstrand resp 2 (ra ra) (rb rb-0) (tb tb) (a a) (b b) (ks ks))
   (precedes ((1 1) (0 0)))
   (non-orig (ltk a ks) (ltk b ks))
-  (uniq-orig ra rb k)
+  (uniq-orig k ra rb)
   (operation encryption-test (added-strand resp 2)
     (enc a ra tb (ltk b ks)) (0 0))
   (traces

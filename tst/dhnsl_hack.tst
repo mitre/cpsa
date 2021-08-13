@@ -61,8 +61,8 @@
     "Needham-Schroeder-Lowe DH challenge/responses in place of nonces"))
 
 (defskeleton dhnsl
-  (vars (a b name) (dhkey skey) (gx gy gz akey))
-  (defstrand init 3 (a a) (b b) (dhkey dhkey) (h2 gy) (h3 gz) (gx gx))
+  (vars (dhkey skey) (gx gy gz akey) (a b name))
+  (defstrand init 3 (dhkey dhkey) (h2 gy) (h3 gz) (gx gx) (a a) (b b))
   (non-orig dhkey (invk gx) (privk a) (privk b))
   (uniq-orig gx)
   (comment "Initiator point-of-view")
@@ -76,10 +76,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhnsl
-  (vars (a b b-0 a-0 name) (dhkey skey) (gx gy gz gz-0 akey))
-  (defstrand init 3 (a a) (b b) (dhkey dhkey) (h2 gy) (h3 gz) (gx gx))
-  (defstrand resp 2 (b b-0) (a a-0) (dhkey dhkey) (h1 gx) (gy gy)
-    (gz gz-0))
+  (vars (dhkey skey) (gx gy gz gz-0 akey) (a b b-0 a-0 name))
+  (defstrand init 3 (dhkey dhkey) (h2 gy) (h3 gz) (gx gx) (a a) (b b))
+  (defstrand resp 2 (dhkey dhkey) (h1 gx) (gy gy) (gz gz-0) (b b-0)
+    (a a-0))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig dhkey (invk gx) (invk gy) (invk gz-0) (privk a) (privk b))
   (uniq-orig gx gy gz-0)
@@ -97,9 +97,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhnsl
-  (vars (a b name) (dhkey skey) (gx gy gz gz-0 akey))
-  (defstrand init 3 (a a) (b b) (dhkey dhkey) (h2 gy) (h3 gz) (gx gx))
-  (defstrand resp 2 (b b) (a a) (dhkey dhkey) (h1 gx) (gy gy) (gz gz-0))
+  (vars (dhkey skey) (gx gy gz gz-0 akey) (a b name))
+  (defstrand init 3 (dhkey dhkey) (h2 gy) (h3 gz) (gx gx) (a a) (b b))
+  (defstrand resp 2 (dhkey dhkey) (h1 gx) (gy gy) (gz gz-0) (b b) (a a))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig dhkey (invk gx) (invk gy) (invk gz-0) (privk a) (privk b))
   (uniq-orig gx gy gz-0)
@@ -117,13 +117,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhnsl
-  (vars (a b b-0 a-0 name) (dhkey dhkey-0 skey)
-    (gx gy gz gz-0 gy-0 gz-1 akey))
-  (defstrand init 3 (a a) (b b) (dhkey dhkey) (h2 gy) (h3 gz) (gx gx))
-  (defstrand resp 2 (b b-0) (a a-0) (dhkey dhkey) (h1 gx) (gy gy)
-    (gz gz-0))
-  (defstrand resp 2 (b b) (a a) (dhkey dhkey-0) (h1 gx) (gy gy-0)
-    (gz gz-1))
+  (vars (dhkey dhkey-0 skey) (gx gy gz gz-0 gy-0 gz-1 akey)
+    (a b b-0 a-0 name))
+  (defstrand init 3 (dhkey dhkey) (h2 gy) (h3 gz) (gx gx) (a a) (b b))
+  (defstrand resp 2 (dhkey dhkey) (h1 gx) (gy gy) (gz gz-0) (b b-0)
+    (a a-0))
+  (defstrand resp 2 (dhkey dhkey-0) (h1 gx) (gy gy-0) (gz gz-1) (b b)
+    (a a))
   (precedes ((0 0) (2 0)) ((1 1) (0 1)) ((2 1) (1 0)))
   (non-orig dhkey dhkey-0 (invk gx) (invk gy) (invk gz-0) (invk gy-0)
     (invk gz-1) (privk a) (privk b))
@@ -144,9 +144,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhnsl
-  (vars (a b name) (dhkey skey) (gx gy gz akey))
-  (defstrand init 3 (a a) (b b) (dhkey dhkey) (h2 gy) (h3 gz) (gx gx))
-  (defstrand resp 2 (b b) (a a) (dhkey dhkey) (h1 gx) (gy gy) (gz gz))
+  (vars (dhkey skey) (gx gy gz akey) (a b name))
+  (defstrand init 3 (dhkey dhkey) (h2 gy) (h3 gz) (gx gx) (a a) (b b))
+  (defstrand resp 2 (dhkey dhkey) (h1 gx) (gy gy) (gz gz) (b b) (a a))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig dhkey (invk gx) (invk gy) (invk gz) (privk a) (privk b))
   (uniq-orig gx gy gz)
@@ -167,11 +167,11 @@
   (origs (gy (1 1)) (gz (1 1)) (gx (0 0))))
 
 (defskeleton dhnsl
-  (vars (a b name) (dhkey dhkey-0 skey) (gx gy gz gz-0 gy-0 gz-1 akey))
-  (defstrand init 3 (a a) (b b) (dhkey dhkey) (h2 gy) (h3 gz) (gx gx))
-  (defstrand resp 2 (b b) (a a) (dhkey dhkey) (h1 gx) (gy gy) (gz gz-0))
-  (defstrand resp 2 (b b) (a a) (dhkey dhkey-0) (h1 gx) (gy gy-0)
-    (gz gz-1))
+  (vars (dhkey dhkey-0 skey) (gx gy gz gz-0 gy-0 gz-1 akey) (a b name))
+  (defstrand init 3 (dhkey dhkey) (h2 gy) (h3 gz) (gx gx) (a a) (b b))
+  (defstrand resp 2 (dhkey dhkey) (h1 gx) (gy gy) (gz gz-0) (b b) (a a))
+  (defstrand resp 2 (dhkey dhkey-0) (h1 gx) (gy gy-0) (gz gz-1) (b b)
+    (a a))
   (precedes ((0 0) (2 0)) ((1 1) (0 1)) ((2 1) (1 0)))
   (non-orig dhkey dhkey-0 (invk gx) (invk gy) (invk gz-0) (invk gy-0)
     (invk gz-1) (privk a) (privk b))
@@ -193,11 +193,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhnsl
-  (vars (a b name) (dhkey dhkey-0 skey) (gx gy gz gy-0 gz-0 akey))
-  (defstrand init 3 (a a) (b b) (dhkey dhkey) (h2 gy) (h3 gz) (gx gx))
-  (defstrand resp 2 (b b) (a a) (dhkey dhkey) (h1 gx) (gy gy) (gz gz))
-  (defstrand resp 2 (b b) (a a) (dhkey dhkey-0) (h1 gx) (gy gy-0)
-    (gz gz-0))
+  (vars (dhkey dhkey-0 skey) (gx gy gz gy-0 gz-0 akey) (a b name))
+  (defstrand init 3 (dhkey dhkey) (h2 gy) (h3 gz) (gx gx) (a a) (b b))
+  (defstrand resp 2 (dhkey dhkey) (h1 gx) (gy gy) (gz gz) (b b) (a a))
+  (defstrand resp 2 (dhkey dhkey-0) (h1 gx) (gy gy-0) (gz gz-0) (b b)
+    (a a))
   (precedes ((0 0) (2 0)) ((1 1) (0 1)) ((2 1) (1 0)))
   (non-orig dhkey dhkey-0 (invk gx) (invk gy) (invk gz) (invk gy-0)
     (invk gz-0) (privk a) (privk b))
@@ -278,8 +278,8 @@
     "Needham-Schroeder-Lowe DH challenge/responses in place of nonces"))
 
 (defskeleton dhnsl
-  (vars (a b name) (dhkey skey) (gx gy gz akey))
-  (defstrand resp 3 (b b) (a a) (dhkey dhkey) (h1 gx) (gy gy) (gz gz))
+  (vars (dhkey skey) (gx gy gz akey) (a b name))
+  (defstrand resp 3 (dhkey dhkey) (h1 gx) (gy gy) (gz gz) (b b) (a a))
   (non-orig dhkey (invk gy) (invk gz) (privk a))
   (uniq-orig gy gz)
   (comment "Responder point-of-view")
@@ -293,10 +293,10 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhnsl
-  (vars (a b a-0 b-0 name) (dhkey skey) (gx gy gz h2 akey))
-  (defstrand resp 3 (b b) (a a) (dhkey dhkey) (h1 gx) (gy gy) (gz gz))
-  (defstrand init 3 (a a-0) (b b-0) (dhkey dhkey) (h2 h2) (h3 gz)
-    (gx gx))
+  (vars (dhkey skey) (gx gy gz h2 akey) (a b a-0 b-0 name))
+  (defstrand resp 3 (dhkey dhkey) (h1 gx) (gy gy) (gz gz) (b b) (a a))
+  (defstrand init 3 (dhkey dhkey) (h2 h2) (h3 gz) (gx gx) (a a-0)
+    (b b-0))
   (precedes ((0 1) (1 1)) ((1 0) (0 0)) ((1 2) (0 2)))
   (non-orig dhkey (invk gx) (invk gy) (invk gz) (privk a))
   (uniq-orig gx gy gz)
@@ -315,8 +315,8 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhnsl
-  (vars (a b name) (dhkey skey) (gx gy akey))
-  (defstrand resp 3 (b b) (a a) (dhkey dhkey) (h1 gx) (gy gy) (gz gy))
+  (vars (dhkey skey) (gx gy akey) (a b name))
+  (defstrand resp 3 (dhkey dhkey) (h1 gx) (gy gy) (gz gy) (b b) (a a))
   (non-orig dhkey (invk gy) (privk a))
   (uniq-orig gy)
   (operation encryption-test (displaced 1 0 resp 2)
@@ -332,10 +332,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhnsl
-  (vars (a b a-0 b-0 name) (dhkey skey) (gx gy gz akey))
-  (defstrand resp 3 (b b) (a a) (dhkey dhkey) (h1 gx) (gy gy) (gz gz))
-  (defstrand init 3 (a a-0) (b b-0) (dhkey dhkey) (h2 gy) (h3 gz)
-    (gx gx))
+  (vars (dhkey skey) (gx gy gz akey) (a b a-0 b-0 name))
+  (defstrand resp 3 (dhkey dhkey) (h1 gx) (gy gy) (gz gz) (b b) (a a))
+  (defstrand init 3 (dhkey dhkey) (h2 gy) (h3 gz) (gx gx) (a a-0)
+    (b b-0))
   (precedes ((0 1) (1 1)) ((1 0) (0 0)) ((1 2) (0 2)))
   (non-orig dhkey (invk gx) (invk gy) (invk gz) (privk a))
   (uniq-orig gx gy gz)
@@ -354,12 +354,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhnsl
-  (vars (a b a-0 b-0 b-1 a-1 name) (dhkey skey) (gx gy gz h2 gz-0 akey))
-  (defstrand resp 3 (b b) (a a) (dhkey dhkey) (h1 gx) (gy gy) (gz gz))
-  (defstrand init 3 (a a-0) (b b-0) (dhkey dhkey) (h2 h2) (h3 gz)
-    (gx gx))
-  (defstrand resp 2 (b b-1) (a a-1) (dhkey dhkey) (h1 gx) (gy h2)
-    (gz gz-0))
+  (vars (dhkey skey) (gx gy gz h2 gz-0 akey) (a b a-0 b-0 b-1 a-1 name))
+  (defstrand resp 3 (dhkey dhkey) (h1 gx) (gy gy) (gz gz) (b b) (a a))
+  (defstrand init 3 (dhkey dhkey) (h2 h2) (h3 gz) (gx gx) (a a-0)
+    (b b-0))
+  (defstrand resp 2 (dhkey dhkey) (h1 gx) (gy h2) (gz gz-0) (b b-1)
+    (a a-1))
   (precedes ((0 1) (1 1)) ((1 0) (0 0)) ((1 0) (2 0)) ((1 2) (0 2))
     ((2 1) (1 1)))
   (non-orig dhkey (invk gx) (invk gy) (invk gz) (invk h2) (invk gz-0)
@@ -383,10 +383,10 @@
   (comment "empty cohort"))
 
 (defskeleton dhnsl
-  (vars (a b a-0 b-0 name) (dhkey skey) (gx gy h2 akey))
-  (defstrand resp 3 (b b) (a a) (dhkey dhkey) (h1 gx) (gy gy) (gz gy))
-  (defstrand init 3 (a a-0) (b b-0) (dhkey dhkey) (h2 h2) (h3 gy)
-    (gx gx))
+  (vars (dhkey skey) (gx gy h2 akey) (a b a-0 b-0 name))
+  (defstrand resp 3 (dhkey dhkey) (h1 gx) (gy gy) (gz gy) (b b) (a a))
+  (defstrand init 3 (dhkey dhkey) (h2 h2) (h3 gy) (gx gx) (a a-0)
+    (b b-0))
   (precedes ((0 1) (1 1)) ((1 0) (0 0)) ((1 2) (0 2)))
   (non-orig dhkey (invk gx) (invk gy) (privk a))
   (uniq-orig gx gy)
@@ -406,9 +406,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhnsl
-  (vars (a b name) (dhkey skey) (gx gy gz akey))
-  (defstrand resp 3 (b b) (a a) (dhkey dhkey) (h1 gx) (gy gy) (gz gz))
-  (defstrand init 3 (a a) (b b) (dhkey dhkey) (h2 gy) (h3 gz) (gx gx))
+  (vars (dhkey skey) (gx gy gz akey) (a b name))
+  (defstrand resp 3 (dhkey dhkey) (h1 gx) (gy gy) (gz gz) (b b) (a a))
+  (defstrand init 3 (dhkey dhkey) (h2 gy) (h3 gz) (gx gx) (a a) (b b))
   (precedes ((0 1) (1 1)) ((1 0) (0 0)) ((1 2) (0 2)))
   (non-orig dhkey (invk gx) (invk gy) (invk gz) (privk a))
   (uniq-orig gx gy gz)
@@ -430,10 +430,10 @@
   (origs (gy (0 1)) (gz (0 1)) (gx (1 0))))
 
 (defskeleton dhnsl
-  (vars (a b a-0 b-0 name) (dhkey skey) (gx gy akey))
-  (defstrand resp 3 (b b) (a a) (dhkey dhkey) (h1 gx) (gy gy) (gz gy))
-  (defstrand init 3 (a a-0) (b b-0) (dhkey dhkey) (h2 gy) (h3 gy)
-    (gx gx))
+  (vars (dhkey skey) (gx gy akey) (a b a-0 b-0 name))
+  (defstrand resp 3 (dhkey dhkey) (h1 gx) (gy gy) (gz gy) (b b) (a a))
+  (defstrand init 3 (dhkey dhkey) (h2 gy) (h3 gy) (gx gx) (a a-0)
+    (b b-0))
   (precedes ((0 1) (1 1)) ((1 0) (0 0)) ((1 2) (0 2)))
   (non-orig dhkey (invk gx) (invk gy) (privk a))
   (uniq-orig gx gy)
@@ -452,12 +452,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhnsl
-  (vars (a b a-0 b-0 b-1 a-1 name) (dhkey skey) (gx gy h2 gz akey))
-  (defstrand resp 3 (b b) (a a) (dhkey dhkey) (h1 gx) (gy gy) (gz gy))
-  (defstrand init 3 (a a-0) (b b-0) (dhkey dhkey) (h2 h2) (h3 gy)
-    (gx gx))
-  (defstrand resp 2 (b b-1) (a a-1) (dhkey dhkey) (h1 gx) (gy h2)
-    (gz gz))
+  (vars (dhkey skey) (gx gy h2 gz akey) (a b a-0 b-0 b-1 a-1 name))
+  (defstrand resp 3 (dhkey dhkey) (h1 gx) (gy gy) (gz gy) (b b) (a a))
+  (defstrand init 3 (dhkey dhkey) (h2 h2) (h3 gy) (gx gx) (a a-0)
+    (b b-0))
+  (defstrand resp 2 (dhkey dhkey) (h1 gx) (gy h2) (gz gz) (b b-1)
+    (a a-1))
   (precedes ((0 1) (1 1)) ((1 0) (0 0)) ((1 0) (2 0)) ((1 2) (0 2))
     ((2 1) (1 1)))
   (non-orig dhkey (invk gx) (invk gy) (invk h2) (invk gz) (privk a))
@@ -480,9 +480,9 @@
   (comment "empty cohort"))
 
 (defskeleton dhnsl
-  (vars (a b name) (dhkey skey) (gx gy akey))
-  (defstrand resp 3 (b b) (a a) (dhkey dhkey) (h1 gx) (gy gy) (gz gy))
-  (defstrand init 3 (a a) (b b) (dhkey dhkey) (h2 gy) (h3 gy) (gx gx))
+  (vars (dhkey skey) (gx gy akey) (a b name))
+  (defstrand resp 3 (dhkey dhkey) (h1 gx) (gy gy) (gz gy) (b b) (a a))
+  (defstrand init 3 (dhkey dhkey) (h2 gy) (h3 gy) (gx gx) (a a) (b b))
   (precedes ((0 1) (1 1)) ((1 0) (0 0)) ((1 2) (0 2)))
   (non-orig dhkey (invk gx) (invk gy) (privk a))
   (uniq-orig gx gy)

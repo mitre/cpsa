@@ -57,9 +57,9 @@
   (comment "Diffie-hellman key exchange followed by an encryption"))
 
 (defskeleton dh_mim
-  (vars (n text) (dhkey skey) (gx gy gy-0 gx-0 akey))
-  (defstrand init 3 (n n) (dhkey dhkey) (gx gx) (gy gy-0))
-  (defstrand resp 3 (n n) (dhkey dhkey) (gx gx-0) (gy gy))
+  (vars (dhkey skey) (n text) (gx gy gy-0 gx-0 akey))
+  (defstrand init 3 (dhkey dhkey) (n n) (gx gx) (gy gy-0))
+  (defstrand resp 3 (dhkey dhkey) (n n) (gx gx-0) (gy gy))
   (precedes ((0 2) (1 2)))
   (non-orig dhkey (invk gx) (invk gy))
   (uniq-orig n gx gy)
@@ -73,9 +73,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dh_mim
-  (vars (n text) (dhkey skey) (gx gy akey))
-  (defstrand init 3 (n n) (dhkey dhkey) (gx gx) (gy gy))
-  (defstrand resp 3 (n n) (dhkey dhkey) (gx gx) (gy gy))
+  (vars (dhkey skey) (n text) (gx gy akey))
+  (defstrand init 3 (dhkey dhkey) (n n) (gx gx) (gy gy))
+  (defstrand resp 3 (dhkey dhkey) (n n) (gx gx) (gy gy))
   (precedes ((0 0) (1 0)) ((0 2) (1 2)) ((1 1) (0 1)))
   (non-orig dhkey (invk gx) (invk gy))
   (uniq-orig n gx gy)
@@ -92,9 +92,9 @@
   (origs (n (0 2)) (gx (0 0)) (gy (1 1))))
 
 (defskeleton dh_mim
-  (vars (n text) (dhkey skey) (gx gy gy-0 gx-0 akey))
-  (defstrand init 3 (n n) (dhkey dhkey) (gx gx) (gy gy-0))
-  (defstrand resp 3 (n n) (dhkey dhkey) (gx gx-0) (gy gy))
+  (vars (dhkey skey) (n text) (gx gy gy-0 gx-0 akey))
+  (defstrand init 3 (dhkey dhkey) (n n) (gx gx) (gy gy-0))
+  (defstrand resp 3 (dhkey dhkey) (n n) (gx gx-0) (gy gy))
   (deflistener (enc "dh" gx-0 gy dhkey))
   (precedes ((0 2) (1 2)) ((1 1) (2 0)) ((2 1) (1 2)))
   (non-orig dhkey (invk gx) (invk gy))
@@ -111,9 +111,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_mim
-  (vars (n text) (dhkey skey) (gx gy gy-0 gx-0 akey))
-  (defstrand init 3 (n n) (dhkey dhkey) (gx gx) (gy gy-0))
-  (defstrand resp 3 (n n) (dhkey dhkey) (gx gx-0) (gy gy))
+  (vars (dhkey skey) (n text) (gx gy gy-0 gx-0 akey))
+  (defstrand init 3 (dhkey dhkey) (n n) (gx gx) (gy gy-0))
+  (defstrand resp 3 (dhkey dhkey) (n n) (gx gx-0) (gy gy))
   (deflistener (enc "dh" gx-0 gy dhkey))
   (defstrand CDHcalc2 2 (dhkey dhkey) (gx gx-0) (gy gy))
   (precedes ((0 2) (1 2)) ((1 1) (3 0)) ((2 1) (1 2)) ((3 1) (2 0)))
@@ -132,9 +132,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_mim
-  (vars (n text) (dhkey skey) (gx gy gy-0 gx-0 akey))
-  (defstrand init 3 (n n) (dhkey dhkey) (gx gx) (gy gy-0))
-  (defstrand resp 3 (n n) (dhkey dhkey) (gx gx-0) (gy gy))
+  (vars (dhkey skey) (n text) (gx gy gy-0 gx-0 akey))
+  (defstrand init 3 (dhkey dhkey) (n n) (gx gx) (gy gy-0))
+  (defstrand resp 3 (dhkey dhkey) (n n) (gx gx-0) (gy gy))
   (deflistener (enc "dh" gx-0 gy dhkey))
   (defstrand CDHcalc2 2 (dhkey dhkey) (gx gx-0) (gy gy))
   (deflistener (enc "dh" gx gy-0 dhkey))
@@ -156,9 +156,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_mim
-  (vars (n text) (dhkey skey) (gx gy gy-0 gx-0 akey))
-  (defstrand init 3 (n n) (dhkey dhkey) (gx gx) (gy gy-0))
-  (defstrand resp 3 (n n) (dhkey dhkey) (gx gx-0) (gy gy))
+  (vars (dhkey skey) (n text) (gx gy gy-0 gx-0 akey))
+  (defstrand init 3 (dhkey dhkey) (n n) (gx gx) (gy gy-0))
+  (defstrand resp 3 (dhkey dhkey) (n n) (gx gx-0) (gy gy))
   (deflistener (enc "dh" gx-0 gy dhkey))
   (defstrand CDHcalc2 2 (dhkey dhkey) (gx gx-0) (gy gy))
   (deflistener (enc "dh" gx gy-0 dhkey))
@@ -182,9 +182,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_mim
-  (vars (n text) (dhkey skey) (gx gy gy-0 gx-0 akey))
-  (defstrand init 3 (n n) (dhkey dhkey) (gx gx) (gy gy-0))
-  (defstrand resp 3 (n n) (dhkey dhkey) (gx gx-0) (gy gy))
+  (vars (dhkey skey) (n text) (gx gy gy-0 gx-0 akey))
+  (defstrand init 3 (dhkey dhkey) (n n) (gx gx) (gy gy-0))
+  (defstrand resp 3 (dhkey dhkey) (n n) (gx gx-0) (gy gy))
   (defstrand CDHcalc2 2 (dhkey dhkey) (gx gx-0) (gy gy))
   (deflistener (enc "dh" gx gy-0 dhkey))
   (defstrand CDHcalc1 2 (dhkey dhkey) (gx gx) (gy gy-0))
@@ -205,9 +205,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_mim
-  (vars (n text) (dhkey skey) (gx gy gy-0 gx-0 akey))
-  (defstrand init 3 (n n) (dhkey dhkey) (gx gx) (gy gy-0))
-  (defstrand resp 3 (n n) (dhkey dhkey) (gx gx-0) (gy gy))
+  (vars (dhkey skey) (n text) (gx gy gy-0 gx-0 akey))
+  (defstrand init 3 (dhkey dhkey) (n n) (gx gx) (gy gy-0))
+  (defstrand resp 3 (dhkey dhkey) (n n) (gx gx-0) (gy gy))
   (defstrand CDHcalc2 2 (dhkey dhkey) (gx gx-0) (gy gy))
   (defstrand CDHcalc1 2 (dhkey dhkey) (gx gx) (gy gy-0))
   (precedes ((0 0) (3 0)) ((0 2) (1 2)) ((1 1) (2 0)) ((2 1) (1 2))

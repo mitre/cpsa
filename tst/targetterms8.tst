@@ -48,8 +48,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton targetterms8
-  (vars (n1 n2 text) (a name) (k akey))
-  (defstrand init 2 (n1 n1) (n2 n2) (a a) (k k))
+  (vars (n1 n2 text) (k akey) (a name))
+  (defstrand init 2 (n1 n1) (n2 n2) (k k) (a a))
   (non-orig (invk k))
   (uniq-orig n1)
   (traces ((send (enc n1 (enc a n2 k) k)) (recv (enc a n1 k))))
@@ -59,8 +59,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton targetterms8
-  (vars (n2 text) (a name) (k akey))
-  (defstrand init 2 (n1 n2) (n2 n2) (a a) (k k))
+  (vars (n2 text) (k akey) (a name))
+  (defstrand init 2 (n1 n2) (n2 n2) (k k) (a a))
   (non-orig (invk k))
   (uniq-orig n2)
   (operation nonce-test (displaced 1 0 init 1) n1 (0 1)
@@ -73,8 +73,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton targetterms8
-  (vars (n2 text) (a name) (k akey))
-  (defstrand init 2 (n1 n2) (n2 n2) (a a) (k k))
+  (vars (n2 text) (k akey) (a name))
+  (defstrand init 2 (n1 n2) (n2 n2) (k k) (a a))
   (defstrand resp 2 (m (cat a n2)) (n1 n2) (k k))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk k))
@@ -139,8 +139,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton targetterms8
-  (vars (n1 text) (a name) (k akey))
-  (defstrand init 2 (n1 n1) (n2 n1) (a a) (k k))
+  (vars (n1 text) (k akey) (a name))
+  (defstrand init 2 (n1 n1) (n2 n1) (k k) (a a))
   (non-orig (invk k))
   (uniq-orig n1)
   (traces ((send (enc n1 (enc a n1 k) k)) (recv (enc a n1 k))))
@@ -150,8 +150,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton targetterms8
-  (vars (n1 text) (a name) (k akey))
-  (defstrand init 2 (n1 n1) (n2 n1) (a a) (k k))
+  (vars (n1 text) (k akey) (a name))
+  (defstrand init 2 (n1 n1) (n2 n1) (k k) (a a))
   (defstrand resp 2 (m (cat a n1)) (n1 n1) (k k))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk k))

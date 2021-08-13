@@ -43,9 +43,9 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton weird
-  (vars (a name) (k skey))
+  (vars (k skey) (a name))
   (defstrand originator 1 (k k))
-  (defstrand guesser 1 (a a) (k k))
+  (defstrand guesser 1 (k k) (a a))
   (uniq-orig k)
   (traces ((send k)) ((send (enc a k))))
   (label 0)
@@ -98,9 +98,9 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton weird
-  (vars (a name) (k skey))
+  (vars (k skey) (a name))
   (defstrand originator 1 (k k))
-  (defstrand encryptor 1 (a a) (k k))
+  (defstrand encryptor 1 (k k) (a a))
   (uniq-orig k)
   (traces ((send k)) ((recv (enc a k))))
   (label 1)
@@ -109,10 +109,10 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton weird
-  (vars (a name) (k skey))
+  (vars (k skey) (a name))
   (defstrand originator 1 (k k))
-  (defstrand encryptor 1 (a a) (k k))
-  (defstrand guesser 1 (a a) (k k))
+  (defstrand encryptor 1 (k k) (a a))
+  (defstrand guesser 1 (k k) (a a))
   (precedes ((2 0) (1 0)))
   (uniq-orig k)
   (operation encryption-test (added-strand guesser 1) (enc a k) (1 0))
@@ -125,9 +125,9 @@
   (origs (k (0 0))))
 
 (defskeleton weird
-  (vars (a name) (k skey))
+  (vars (k skey) (a name))
   (defstrand originator 1 (k k))
-  (defstrand encryptor 1 (a a) (k k))
+  (defstrand encryptor 1 (k k) (a a))
   (deflistener k)
   (precedes ((0 0) (2 0)) ((2 1) (1 0)))
   (uniq-orig k)
@@ -139,9 +139,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton weird
-  (vars (a name) (k skey))
+  (vars (k skey) (a name))
   (defstrand originator 1 (k k))
-  (defstrand encryptor 1 (a a) (k k))
+  (defstrand encryptor 1 (k k) (a a))
   (precedes ((0 0) (1 0)))
   (uniq-orig k)
   (operation generalization deleted (2 0))

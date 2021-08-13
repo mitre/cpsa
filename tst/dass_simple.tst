@@ -57,8 +57,8 @@
   (comment "That is why a is not authenticated to b."))
 
 (defskeleton dass-simple
-  (vars (ta tb text) (a b name) (k skey) (kp akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
+  (vars (k skey) (ta tb text) (kp akey) (a b name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
   (non-orig (invk kp) (privk a) (privk b))
   (uniq-orig k kp)
   (traces
@@ -71,9 +71,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dass-simple
-  (vars (ta tb ta-0 text) (a b a-0 b-0 name) (k skey) (kp kp-0 akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
-  (defstrand resp 2 (ta ta-0) (tb tb) (a a-0) (b b-0) (k k) (kp kp-0))
+  (vars (k skey) (ta tb ta-0 text) (kp kp-0 akey) (a b a-0 b-0 name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
+  (defstrand resp 2 (k k) (ta ta-0) (tb tb) (kp kp-0) (a a-0) (b b-0))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk kp) (privk a) (privk b))
   (uniq-orig k kp)
@@ -93,8 +93,8 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dass-simple
-  (vars (ta tb text) (a b name) (k skey) (kp akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
+  (vars (k skey) (ta tb text) (kp akey) (a b name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
   (deflistener k)
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk kp) (privk a) (privk b))
@@ -112,9 +112,9 @@
   (comment "empty cohort"))
 
 (defskeleton dass-simple
-  (vars (ta tb text) (a b a-0 b-0 name) (k skey) (kp kp-0 akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
-  (defstrand resp 2 (ta ta) (tb tb) (a a-0) (b b-0) (k k) (kp kp-0))
+  (vars (k skey) (ta tb text) (kp kp-0 akey) (a b a-0 b-0 name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
+  (defstrand resp 2 (k k) (ta ta) (tb tb) (kp kp-0) (a a-0) (b b-0))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk kp) (privk a) (privk b))
   (uniq-orig k kp)
@@ -134,9 +134,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dass-simple
-  (vars (ta tb ta-0 text) (a b a-0 b-0 name) (k skey) (kp kp-0 akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
-  (defstrand resp 2 (ta ta-0) (tb tb) (a a-0) (b b-0) (k k) (kp kp-0))
+  (vars (k skey) (ta tb ta-0 text) (kp kp-0 akey) (a b a-0 b-0 name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
+  (defstrand resp 2 (k k) (ta ta-0) (tb tb) (kp kp-0) (a a-0) (b b-0))
   (deflistener k)
   (precedes ((0 0) (2 0)) ((1 1) (0 1)) ((2 1) (1 0)))
   (non-orig (invk kp) (privk a) (privk b))
@@ -158,9 +158,9 @@
   (comment "empty cohort"))
 
 (defskeleton dass-simple
-  (vars (ta tb text) (a b a-0 name) (k skey) (kp kp-0 akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
-  (defstrand resp 2 (ta ta) (tb tb) (a a-0) (b b) (k k) (kp kp-0))
+  (vars (k skey) (ta tb text) (kp kp-0 akey) (a b a-0 name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
+  (defstrand resp 2 (k k) (ta ta) (tb tb) (kp kp-0) (a a-0) (b b))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk kp) (privk a) (privk b))
   (uniq-orig k kp)
@@ -236,8 +236,8 @@
   (comment "That is why a is properly authenticated to b."))
 
 (defskeleton dass+
-  (vars (ta tb text) (a b name) (k skey) (kp akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
+  (vars (k skey) (ta tb text) (kp akey) (a b name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
   (non-orig (invk kp) (privk a) (privk b))
   (uniq-orig k kp)
   (traces
@@ -250,9 +250,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dass+
-  (vars (ta tb ta-0 text) (a b a-0 b-0 name) (k skey) (kp kp-0 akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
-  (defstrand resp 2 (ta ta-0) (tb tb) (a a-0) (b b-0) (k k) (kp kp-0))
+  (vars (k skey) (ta tb ta-0 text) (kp kp-0 akey) (a b a-0 b-0 name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
+  (defstrand resp 2 (k k) (ta ta-0) (tb tb) (kp kp-0) (a a-0) (b b-0))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk kp) (privk a) (privk b) (privk a-0))
   (uniq-orig k kp)
@@ -272,8 +272,8 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dass+
-  (vars (ta tb text) (a b name) (k skey) (kp akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
+  (vars (k skey) (ta tb text) (kp akey) (a b name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
   (deflistener k)
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk kp) (privk a) (privk b))
@@ -291,9 +291,9 @@
   (comment "empty cohort"))
 
 (defskeleton dass+
-  (vars (ta tb text) (a b a-0 b-0 name) (k skey) (kp kp-0 akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
-  (defstrand resp 2 (ta ta) (tb tb) (a a-0) (b b-0) (k k) (kp kp-0))
+  (vars (k skey) (ta tb text) (kp kp-0 akey) (a b a-0 b-0 name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
+  (defstrand resp 2 (k k) (ta ta) (tb tb) (kp kp-0) (a a-0) (b b-0))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk kp) (privk a) (privk b) (privk a-0))
   (uniq-orig k kp)
@@ -313,9 +313,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dass+
-  (vars (ta tb ta-0 text) (a b a-0 b-0 name) (k skey) (kp kp-0 akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
-  (defstrand resp 2 (ta ta-0) (tb tb) (a a-0) (b b-0) (k k) (kp kp-0))
+  (vars (k skey) (ta tb ta-0 text) (kp kp-0 akey) (a b a-0 b-0 name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
+  (defstrand resp 2 (k k) (ta ta-0) (tb tb) (kp kp-0) (a a-0) (b b-0))
   (deflistener k)
   (precedes ((0 0) (2 0)) ((1 1) (0 1)) ((2 1) (1 0)))
   (non-orig (invk kp) (privk a) (privk b) (privk a-0))
@@ -337,9 +337,9 @@
   (comment "empty cohort"))
 
 (defskeleton dass+
-  (vars (ta tb text) (a b b-0 name) (k skey) (kp akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
-  (defstrand resp 2 (ta ta) (tb tb) (a a) (b b-0) (k k) (kp kp))
+  (vars (k skey) (ta tb text) (kp akey) (a b b-0 name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
+  (defstrand resp 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b-0))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk kp) (privk a) (privk b))
   (uniq-orig k kp)
@@ -358,11 +358,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dass+
-  (vars (ta tb ta-0 text) (a b a-0 b-0 b-1 name) (k k-0 skey)
-    (kp kp-0 akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
-  (defstrand resp 2 (ta ta) (tb tb) (a a-0) (b b-0) (k k) (kp kp-0))
-  (defstrand init 1 (ta ta-0) (a a-0) (b b-1) (k k-0) (kp kp-0))
+  (vars (k k-0 skey) (ta tb ta-0 text) (kp kp-0 akey)
+    (a b a-0 b-0 b-1 name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
+  (defstrand resp 2 (k k) (ta ta) (tb tb) (kp kp-0) (a a-0) (b b-0))
+  (defstrand init 1 (k k-0) (ta ta-0) (kp kp-0) (a a-0) (b b-1))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)) ((2 0) (1 0)))
   (non-orig (invk kp) (privk a) (privk b) (privk a-0))
   (uniq-orig k kp)
@@ -385,9 +385,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dass+
-  (vars (ta tb text) (a b name) (k skey) (kp akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
-  (defstrand resp 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
+  (vars (k skey) (ta tb text) (kp akey) (a b name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
+  (defstrand resp 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk kp) (privk a) (privk b))
   (uniq-orig k kp)
@@ -408,11 +408,11 @@
   (origs (k (0 0)) (kp (0 0))))
 
 (defskeleton dass+
-  (vars (ta tb ta-0 text) (a b a-0 b-0 name) (k k-0 skey)
-    (kp kp-0 akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
-  (defstrand resp 2 (ta ta) (tb tb) (a a-0) (b b) (k k) (kp kp-0))
-  (defstrand init 1 (ta ta-0) (a a-0) (b b-0) (k k-0) (kp kp-0))
+  (vars (k k-0 skey) (ta tb ta-0 text) (kp kp-0 akey)
+    (a b a-0 b-0 name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
+  (defstrand resp 2 (k k) (ta ta) (tb tb) (kp kp-0) (a a-0) (b b))
+  (defstrand init 1 (k k-0) (ta ta-0) (kp kp-0) (a a-0) (b b-0))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)) ((2 0) (1 0)))
   (non-orig (invk kp) (privk a) (privk b) (privk a-0))
   (uniq-orig k kp)

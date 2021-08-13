@@ -56,9 +56,9 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton pkinit
-  (vars (n2 n1 text) (tc tk tgt data) (c as t name) (k ak skey))
-  (defstrand client 2 (n2 n2) (n1 n1) (tc tc) (tk tk) (tgt tgt) (c c)
-    (t t) (as as) (k k) (ak ak))
+  (vars (tc tk tgt data) (k ak skey) (n2 n1 text) (c as t name))
+  (defstrand client 2 (tc tc) (tk tk) (tgt tgt) (k k) (ak ak) (n2 n2)
+    (n1 n1) (c c) (t t) (as as))
   (non-orig (privk c) (privk as))
   (uniq-orig n2 n1)
   (traces
@@ -72,15 +72,15 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton pkinit
-  (vars (n2 n1 n1-0 text) (tc tk tgt tc-0 tk-0 tgt-0 data)
-    (c as t c-0 t-0 name) (k ak ak-0 skey))
-  (defstrand client 2 (n2 n2) (n1 n1) (tc tc) (tk tk) (tgt tgt) (c c)
-    (t t) (as as) (k k) (ak ak))
-  (defstrand auth 2 (n2 n2) (n1 n1-0) (tc tc-0) (tk tk-0) (tgt tgt-0)
-    (c c-0) (t t-0) (as as) (k k) (ak ak-0))
+  (vars (tc tk tgt tc-0 tk-0 tgt-0 data) (k ak ak-0 skey)
+    (n2 n1 n1-0 text) (c as t c-0 t-0 name))
+  (defstrand client 2 (tc tc) (tk tk) (tgt tgt) (k k) (ak ak) (n2 n2)
+    (n1 n1) (c c) (t t) (as as))
+  (defstrand auth 2 (tc tc-0) (tk tk-0) (tgt tgt-0) (k k) (ak ak-0)
+    (n2 n2) (n1 n1-0) (c c-0) (t t-0) (as as))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (privk c) (privk as))
-  (uniq-orig n2 n1 k ak-0)
+  (uniq-orig k ak-0 n2 n1)
   (operation encryption-test (added-strand auth 2) (enc k n2 (privk as))
     (0 1))
   (traces

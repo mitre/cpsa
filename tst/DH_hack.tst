@@ -62,8 +62,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (x y akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (x y akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (non-orig (invk x) (invk y) (privk gcs))
   (traces
     ((recv
@@ -74,9 +74,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (x y akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (x y akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (precedes ((1 1) (0 0)))
   (non-orig (invk x) (invk y) (privk gcs))
   (operation encryption-test (added-strand commute 2)
@@ -92,10 +92,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (x y akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand init1 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (x y akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand init1 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (precedes ((1 1) (0 0)) ((2 0) (1 0)))
   (non-orig (invk x) (invk y) (privk gcs))
   (uniq-orig d cek x)
@@ -175,8 +175,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (x y akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (x y akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (non-orig (invk x) (privk gcs))
   (traces
     ((recv
@@ -187,9 +187,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (x y akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (x y akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (precedes ((1 1) (0 0)))
   (non-orig (invk x) (privk gcs))
   (operation encryption-test (added-strand commute 2)
@@ -205,10 +205,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (x y akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand init1 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (x y akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand init1 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (precedes ((1 1) (0 0)) ((2 0) (1 0)))
   (non-orig (invk x) (privk gcs))
   (uniq-orig d cek x)
@@ -288,8 +288,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (y x akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (y x akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (non-orig (invk y) (privk gcs))
   (traces
     ((recv
@@ -300,9 +300,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (y x akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (y x akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (precedes ((1 1) (0 0)))
   (non-orig (invk y) (privk gcs))
   (operation encryption-test (added-strand commute 2)
@@ -318,10 +318,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (y x akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand init1 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (y x akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand init1 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (precedes ((1 1) (0 0)) ((2 0) (1 0)))
   (non-orig (invk y) (privk gcs))
   (uniq-orig d cek x)
@@ -401,8 +401,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (x y akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (x y akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener cek)
   (non-orig (invk x) (invk y) (privk gcs))
   (traces
@@ -414,10 +414,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (x y akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (x y akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener cek)
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (precedes ((2 1) (0 0)))
   (non-orig (invk x) (invk y) (privk gcs))
   (operation encryption-test (added-strand commute 2)
@@ -434,11 +434,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (x y akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (x y akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener cek)
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand init1 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand init1 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (precedes ((2 1) (0 0)) ((3 0) (1 0)) ((3 0) (2 0)))
   (non-orig (invk x) (invk y) (privk gcs))
   (uniq-orig d cek x)
@@ -458,11 +458,11 @@
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (x y akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (x y akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener cek)
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand init1 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand init1 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (precedes ((2 1) (0 0)) ((2 1) (1 0)) ((3 0) (2 0)))
   (non-orig (invk x) (invk y) (privk gcs))
   (uniq-orig d cek x)
@@ -482,12 +482,12 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton DH_hack
-  (vars (d d-0 data) (gcs gcs-0 name) (cek skey) (x y akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d d-0 data) (cek skey) (x y akey) (gcs gcs-0 name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener cek)
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand init1 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand commute 2 (d d-0) (gcs gcs-0) (cek cek) (x x) (y y))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand init1 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand commute 2 (d d-0) (cek cek) (x x) (y y) (gcs gcs-0))
   (precedes ((2 1) (0 0)) ((3 0) (2 0)) ((3 0) (4 0)) ((4 1) (1 0)))
   (non-orig (invk x) (invk y) (privk gcs) (privk gcs-0))
   (uniq-orig d cek x)
@@ -511,11 +511,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (x y akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (x y akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener cek)
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand init1 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand init1 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener (hash (invk x) y))
   (precedes ((2 1) (0 0)) ((3 0) (1 0)) ((3 0) (2 0)) ((4 1) (1 0)))
   (non-orig (invk x) (invk y) (privk gcs))
@@ -537,11 +537,11 @@
   (comment "empty cohort"))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (x y akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (x y akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener cek)
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand init1 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand init1 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener (hash x (invk y)))
   (precedes ((2 1) (0 0)) ((2 1) (1 0)) ((3 0) (2 0)) ((4 1) (1 0)))
   (non-orig (invk x) (invk y) (privk gcs))
@@ -563,11 +563,11 @@
   (comment "empty cohort"))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (x y akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (x y akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener cek)
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand init1 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand init1 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener (hash (invk x) y))
   (precedes ((2 1) (0 0)) ((2 1) (1 0)) ((3 0) (2 0)) ((4 1) (1 0)))
   (non-orig (invk x) (invk y) (privk gcs))
@@ -589,12 +589,12 @@
   (comment "empty cohort"))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (x y akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (x y akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener cek)
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand init1 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand init1 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (precedes ((2 1) (0 0)) ((3 0) (2 0)) ((3 0) (4 0)) ((4 1) (1 0)))
   (non-orig (invk x) (invk y) (privk gcs))
   (uniq-orig d cek x)
@@ -617,12 +617,12 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (x y akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (x y akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener cek)
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand init1 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand init1 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener (hash x (invk y)))
   (precedes ((2 1) (0 0)) ((3 0) (2 0)) ((3 0) (4 0)) ((4 1) (1 0))
     ((5 1) (1 0)))
@@ -648,12 +648,12 @@
   (comment "empty cohort"))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (x y akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (x y akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener cek)
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand init1 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand init1 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener (hash (invk x) y))
   (precedes ((2 1) (0 0)) ((3 0) (2 0)) ((3 0) (4 0)) ((4 1) (1 0))
     ((5 1) (1 0)))
@@ -738,8 +738,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (x y akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (x y akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener cek)
   (non-orig (invk x) (privk gcs))
   (traces
@@ -751,10 +751,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (x y akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (x y akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener cek)
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (precedes ((2 1) (0 0)))
   (non-orig (invk x) (privk gcs))
   (operation encryption-test (added-strand commute 2)
@@ -771,11 +771,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (x y akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (x y akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener cek)
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand init1 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand init1 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (precedes ((2 1) (0 0)) ((3 0) (1 0)) ((3 0) (2 0)))
   (non-orig (invk x) (privk gcs))
   (uniq-orig d cek x)
@@ -795,11 +795,11 @@
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (x y akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (x y akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener cek)
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand init1 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand init1 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (precedes ((2 1) (0 0)) ((2 1) (1 0)) ((3 0) (2 0)))
   (non-orig (invk x) (privk gcs))
   (uniq-orig d cek x)
@@ -821,12 +821,12 @@
   (origs (cek (3 0)) (d (3 0)) (x (3 0))))
 
 (defskeleton DH_hack
-  (vars (d d-0 data) (gcs gcs-0 name) (cek skey) (x y akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d d-0 data) (cek skey) (x y akey) (gcs gcs-0 name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener cek)
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand init1 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand commute 2 (d d-0) (gcs gcs-0) (cek cek) (x x) (y y))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand init1 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand commute 2 (d d-0) (cek cek) (x x) (y y) (gcs gcs-0))
   (precedes ((2 1) (0 0)) ((3 0) (2 0)) ((3 0) (4 0)) ((4 1) (1 0)))
   (non-orig (invk x) (privk gcs) (privk gcs-0))
   (uniq-orig d cek x)
@@ -850,11 +850,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (x y akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (x y akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener cek)
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand init1 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand init1 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener (hash (invk x) y))
   (precedes ((2 1) (0 0)) ((3 0) (1 0)) ((3 0) (2 0)) ((4 1) (1 0)))
   (non-orig (invk x) (privk gcs))
@@ -876,12 +876,12 @@
   (comment "empty cohort"))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (x y akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (x y akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener cek)
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand init1 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand init1 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (precedes ((2 1) (0 0)) ((3 0) (2 0)) ((3 0) (4 0)) ((4 1) (1 0)))
   (non-orig (invk x) (privk gcs))
   (uniq-orig d cek x)
@@ -965,8 +965,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (y x akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (y x akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener cek)
   (non-orig (invk y) (privk gcs))
   (traces
@@ -978,10 +978,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (y x akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (y x akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener cek)
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (precedes ((2 1) (0 0)))
   (non-orig (invk y) (privk gcs))
   (operation encryption-test (added-strand commute 2)
@@ -998,11 +998,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
-  (vars (d data) (gcs name) (cek skey) (y x akey))
-  (defstrand resp 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (vars (d data) (cek skey) (y x akey) (gcs name))
+  (defstrand resp 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (deflistener cek)
-  (defstrand commute 2 (d d) (gcs gcs) (cek cek) (x x) (y y))
-  (defstrand init1 1 (d d) (gcs gcs) (cek cek) (x x) (y y))
+  (defstrand commute 2 (d d) (cek cek) (x x) (y y) (gcs gcs))
+  (defstrand init1 1 (d d) (cek cek) (x x) (y y) (gcs gcs))
   (precedes ((2 1) (0 0)) ((3 0) (1 0)) ((3 0) (2 0)))
   (non-orig (invk y) (privk gcs))
   (uniq-orig d cek x)

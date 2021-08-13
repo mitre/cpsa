@@ -54,8 +54,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton abc
-  (vars (x text) (k skey))
-  (defstrand init 2 (x x) (k k))
+  (vars (k skey) (x text))
+  (defstrand init 2 (k k) (x x))
   (non-orig k)
   (uniq-orig x)
   (traces ((send (enc x k)) (recv (enc x x k))))
@@ -65,9 +65,9 @@
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton abc
-  (vars (x text) (k skey))
-  (defstrand init 2 (x x) (k k))
-  (defstrand A 2 (x x) (k k))
+  (vars (k skey) (x text))
+  (defstrand init 2 (k k) (x x))
+  (defstrand A 2 (k k) (x x))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig k)
   (uniq-orig x)
@@ -81,9 +81,9 @@
   (comment "empty cohort"))
 
 (defskeleton abc
-  (vars (x text) (k skey))
-  (defstrand init 2 (x x) (k k))
-  (defstrand B 2 (x x) (k k))
+  (vars (k skey) (x text))
+  (defstrand init 2 (k k) (x x))
+  (defstrand B 2 (k k) (x x))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig k)
   (uniq-orig x)
@@ -97,9 +97,9 @@
   (comment "empty cohort"))
 
 (defskeleton abc
-  (vars (x text) (k skey))
-  (defstrand init 2 (x x) (k k))
-  (defstrand C 2 (x x) (k k))
+  (vars (k skey) (x text))
+  (defstrand init 2 (k k) (x x))
+  (defstrand C 2 (k k) (x x))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig k)
   (uniq-orig x)

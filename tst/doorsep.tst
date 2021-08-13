@@ -58,8 +58,8 @@
   (comment "Doorsep protocol using unnamed asymmetric keys"))
 
 (defskeleton doorsep
-  (vars (t text) (k skey) (p d akey))
-  (defstrand door 3 (t t) (k k) (d d) (p p))
+  (vars (k skey) (t text) (p d akey))
+  (defstrand door 3 (k k) (t t) (d d) (p p))
   (non-orig (invk p))
   (uniq-orig t)
   (comment "Analyze from the doors's perspective")
@@ -70,12 +70,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton doorsep
-  (vars (t text) (k skey) (p d d-0 akey))
-  (defstrand door 3 (t t) (k k) (d d) (p p))
+  (vars (k skey) (t text) (p d d-0 akey))
+  (defstrand door 3 (k k) (t t) (d d) (p p))
   (defstrand person 1 (k k) (d d-0) (p p))
   (precedes ((1 0) (0 0)))
   (non-orig (invk p) (invk d-0))
-  (uniq-orig t k)
+  (uniq-orig k t)
   (rule trust)
   (operation encryption-test (added-strand person 1) (enc k (invk p))
     (0 0))
@@ -87,12 +87,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton doorsep
-  (vars (t text) (k skey) (p d akey))
-  (defstrand door 3 (t t) (k k) (d d) (p p))
+  (vars (k skey) (t text) (p d akey))
+  (defstrand door 3 (k k) (t t) (d d) (p p))
   (defstrand person 1 (k k) (d d) (p p))
   (precedes ((1 0) (0 0)))
   (non-orig (invk p) (invk d))
-  (uniq-orig t k)
+  (uniq-orig k t)
   (operation encryption-test (contracted (d-0 d)) (enc k (invk p)) (0 0)
     (enc (enc k (invk p)) d))
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
@@ -103,12 +103,12 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton doorsep
-  (vars (t text) (k skey) (d p akey))
-  (defstrand door 3 (t t) (k k) (d d) (p p))
-  (defstrand person 3 (t t) (k k) (d d) (p p))
+  (vars (k skey) (t text) (d p akey))
+  (defstrand door 3 (k k) (t t) (d d) (p p))
+  (defstrand person 3 (k k) (t t) (d d) (p p))
   (precedes ((0 1) (1 1)) ((1 0) (0 0)) ((1 2) (0 2)))
   (non-orig (invk d) (invk p))
-  (uniq-orig t k)
+  (uniq-orig k t)
   (operation nonce-test (displaced 1 2 person 3) t (0 2) (enc t k))
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
     ((send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t)))
@@ -120,13 +120,13 @@
   (origs (k (1 0)) (t (0 1))))
 
 (defskeleton doorsep
-  (vars (t text) (k skey) (p d akey))
-  (defstrand door 3 (t t) (k k) (d d) (p p))
+  (vars (k skey) (t text) (p d akey))
+  (defstrand door 3 (k k) (t t) (d d) (p p))
   (defstrand person 1 (k k) (d d) (p p))
   (deflistener k)
   (precedes ((1 0) (0 0)) ((1 0) (2 0)) ((2 1) (0 2)))
   (non-orig (invk p) (invk d))
-  (uniq-orig t k)
+  (uniq-orig k t)
   (operation nonce-test (added-listener k) t (0 2) (enc t k))
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
     ((send (enc (enc k (invk p)) d))) ((recv k) (send k)))

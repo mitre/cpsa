@@ -48,8 +48,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton completeness-test
-  (vars (n text) (b a name) (s s-0 skey))
-  (defstrand init 3 (n n) (a a) (b b) (s s-0))
+  (vars (s s-0 skey) (n text) (b a name))
+  (defstrand init 3 (s s-0) (n n) (a a) (b b))
   (defstrand probe 1 (s s))
   (non-orig s (privk b))
   (uniq-orig n)
@@ -62,8 +62,8 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton completeness-test
-  (vars (n text) (b a name) (s skey))
-  (defstrand init 3 (n n) (a a) (b b) (s s))
+  (vars (s skey) (n text) (b a name))
+  (defstrand init 3 (s s) (n n) (a a) (b b))
   (defstrand probe 1 (s s))
   (precedes ((0 2) (1 0)))
   (non-orig s (privk b))
@@ -80,10 +80,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton completeness-test
-  (vars (n n-0 text) (b a a-0 b-0 name) (s s-0 skey))
-  (defstrand init 3 (n n) (a a) (b b) (s s-0))
+  (vars (s s-0 skey) (n n-0 text) (b a a-0 b-0 name))
+  (defstrand init 3 (s s-0) (n n) (a a) (b b))
   (defstrand probe 1 (s s))
-  (defstrand init 3 (n n-0) (a a-0) (b b-0) (s s))
+  (defstrand init 3 (s s) (n n-0) (a a-0) (b b-0))
   (precedes ((2 2) (1 0)))
   (non-orig s (privk b))
   (uniq-orig n)
@@ -99,8 +99,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton completeness-test
-  (vars (n text) (b a name) (s skey))
-  (defstrand init 3 (n n) (a a) (b b) (s s))
+  (vars (s skey) (n text) (b a name))
+  (defstrand init 3 (s s) (n n) (a a) (b b))
   (defstrand probe 1 (s s))
   (defstrand resp 2 (n n) (a a) (b b))
   (precedes ((0 0) (2 0)) ((0 2) (1 0)) ((2 1) (0 1)))
@@ -120,10 +120,10 @@
   (origs (n (0 0))))
 
 (defskeleton completeness-test
-  (vars (n n-0 text) (b a a-0 b-0 name) (s s-0 skey))
-  (defstrand init 3 (n n) (a a) (b b) (s s-0))
+  (vars (s s-0 skey) (n n-0 text) (b a a-0 b-0 name))
+  (defstrand init 3 (s s-0) (n n) (a a) (b b))
   (defstrand probe 1 (s s))
-  (defstrand init 3 (n n-0) (a a-0) (b b-0) (s s))
+  (defstrand init 3 (s s) (n n-0) (a a-0) (b b-0))
   (defstrand resp 2 (n n) (a a) (b b))
   (precedes ((0 0) (3 0)) ((2 2) (1 0)) ((3 1) (0 1)))
   (non-orig s (privk b))
@@ -192,9 +192,9 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton completeness-test
-  (vars (n text) (b a name) (s s-0 skey))
+  (vars (s s-0 skey) (n text) (b a name))
   (defstrand probe 1 (s s))
-  (defstrand init 3 (n n) (a a) (b b) (s s-0))
+  (defstrand init 3 (s s-0) (n n) (a a) (b b))
   (non-orig s (privk b))
   (uniq-orig n)
   (traces ((recv (enc "ok" s)))
@@ -206,9 +206,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton completeness-test
-  (vars (n text) (b a name) (s s-0 skey))
+  (vars (s s-0 skey) (n text) (b a name))
   (defstrand probe 1 (s s))
-  (defstrand init 3 (n n) (a a) (b b) (s s-0))
+  (defstrand init 3 (s s-0) (n n) (a a) (b b))
   (defstrand resp 2 (n n) (a a) (b b))
   (precedes ((1 0) (2 0)) ((2 1) (1 1)))
   (non-orig s (privk b))
@@ -225,9 +225,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton completeness-test
-  (vars (n text) (b a name) (s skey))
+  (vars (s skey) (n text) (b a name))
   (defstrand probe 1 (s s))
-  (defstrand init 3 (n n) (a a) (b b) (s s))
+  (defstrand init 3 (s s) (n n) (a a) (b b))
   (defstrand resp 2 (n n) (a a) (b b))
   (precedes ((1 0) (2 0)) ((1 2) (0 0)) ((2 1) (1 1)))
   (non-orig s (privk b))
@@ -246,11 +246,11 @@
   (origs (n (1 0))))
 
 (defskeleton completeness-test
-  (vars (n n-0 text) (b a a-0 b-0 name) (s s-0 skey))
+  (vars (s s-0 skey) (n n-0 text) (b a a-0 b-0 name))
   (defstrand probe 1 (s s))
-  (defstrand init 3 (n n) (a a) (b b) (s s-0))
+  (defstrand init 3 (s s-0) (n n) (a a) (b b))
   (defstrand resp 2 (n n) (a a) (b b))
-  (defstrand init 3 (n n-0) (a a-0) (b b-0) (s s))
+  (defstrand init 3 (s s) (n n-0) (a a-0) (b b-0))
   (precedes ((1 0) (2 0)) ((2 1) (1 1)) ((3 2) (0 0)))
   (non-orig s (privk b))
   (uniq-orig n)
@@ -317,7 +317,7 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton completeness-test
-  (vars (n text) (b a name) (s skey))
+  (vars (s skey) (n text) (b a name))
   (defstrand init 2 (n n) (a a) (b b))
   (defstrand probe 1 (s s))
   (non-orig s (privk b))
@@ -330,9 +330,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton completeness-test
-  (vars (n text) (a b name) (s skey))
+  (vars (s skey) (n text) (a b name))
   (defstrand probe 1 (s s))
-  (defstrand init 3 (n n) (a a) (b b) (s s))
+  (defstrand init 3 (s s) (n n) (a a) (b b))
   (precedes ((1 2) (0 0)))
   (non-orig s (privk b))
   (uniq-orig n)
@@ -347,10 +347,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton completeness-test
-  (vars (n n-0 text) (b a a-0 b-0 name) (s skey))
+  (vars (s skey) (n n-0 text) (b a a-0 b-0 name))
   (defstrand init 2 (n n) (a a) (b b))
   (defstrand probe 1 (s s))
-  (defstrand init 3 (n n-0) (a a-0) (b b-0) (s s))
+  (defstrand init 3 (s s) (n n-0) (a a-0) (b b-0))
   (precedes ((2 2) (1 0)))
   (non-orig s (privk b))
   (uniq-orig n)
@@ -365,9 +365,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton completeness-test
-  (vars (n text) (a b name) (s skey))
+  (vars (s skey) (n text) (a b name))
   (defstrand probe 1 (s s))
-  (defstrand init 3 (n n) (a a) (b b) (s s))
+  (defstrand init 3 (s s) (n n) (a a) (b b))
   (defstrand resp 2 (n n) (a a) (b b))
   (precedes ((1 0) (2 0)) ((1 2) (0 0)) ((2 1) (1 1)))
   (non-orig s (privk b))
@@ -386,10 +386,10 @@
   (origs (n (1 0))))
 
 (defskeleton completeness-test
-  (vars (n n-0 text) (b a a-0 b-0 name) (s skey))
+  (vars (s skey) (n n-0 text) (b a a-0 b-0 name))
   (defstrand init 2 (n n) (a a) (b b))
   (defstrand probe 1 (s s))
-  (defstrand init 3 (n n-0) (a a-0) (b b-0) (s s))
+  (defstrand init 3 (s s) (n n-0) (a a-0) (b b-0))
   (defstrand resp 2 (n n) (a a) (b b))
   (precedes ((0 0) (3 0)) ((2 2) (1 0)) ((3 1) (0 1)))
   (non-orig s (privk b))
@@ -457,7 +457,7 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton completeness-test
-  (vars (n text) (b a name) (s skey))
+  (vars (s skey) (n text) (b a name))
   (defstrand probe 1 (s s))
   (defstrand init 2 (n n) (a a) (b b))
   (non-orig s (privk b))
@@ -470,7 +470,7 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton completeness-test
-  (vars (n text) (b a name) (s skey))
+  (vars (s skey) (n text) (b a name))
   (defstrand probe 1 (s s))
   (defstrand init 2 (n n) (a a) (b b))
   (defstrand resp 2 (n n) (a a) (b b))
@@ -488,10 +488,10 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton completeness-test
-  (vars (n text) (a b name) (s skey))
+  (vars (s skey) (n text) (a b name))
   (defstrand probe 1 (s s))
   (defstrand resp 2 (n n) (a a) (b b))
-  (defstrand init 3 (n n) (a a) (b b) (s s))
+  (defstrand init 3 (s s) (n n) (a a) (b b))
   (precedes ((1 1) (2 1)) ((2 0) (1 0)) ((2 2) (0 0)))
   (non-orig s (privk b))
   (uniq-orig n)
@@ -508,11 +508,11 @@
   (origs (n (2 0))))
 
 (defskeleton completeness-test
-  (vars (n n-0 text) (b a a-0 b-0 name) (s skey))
+  (vars (s skey) (n n-0 text) (b a a-0 b-0 name))
   (defstrand probe 1 (s s))
   (defstrand init 2 (n n) (a a) (b b))
   (defstrand resp 2 (n n) (a a) (b b))
-  (defstrand init 3 (n n-0) (a a-0) (b b-0) (s s))
+  (defstrand init 3 (s s) (n n-0) (a a-0) (b b-0))
   (precedes ((1 0) (2 0)) ((2 1) (1 1)) ((3 2) (0 0)))
   (non-orig s (privk b))
   (uniq-orig n)
