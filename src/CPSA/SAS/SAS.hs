@@ -19,6 +19,7 @@ import qualified Data.List as L
 import qualified Data.Map as M
 import CPSA.Lib.Utilities
 import CPSA.Lib.SExpr
+import CPSA.Signature (Sig)
 import CPSA.Algebra
 
 {--
@@ -34,47 +35,47 @@ zz x = z x x
 root :: String
 root = "z"
 
-type State = ([Prot], [Preskel])
+type State = (Sig, [Prot], [Preskel])
 
 sas :: MonadFail m => String -> Gen -> State -> Maybe (SExpr Pos) ->
        m (State, Maybe (SExpr ()))
-sas _ _ (ps, ks) Nothing =    -- Nothing signifies end-of-file
-    displayFormula ps (reverse ks)
-sas name gen (ps, []) (Just sexpr) = -- Looking for POV skeleton
-    loadPOV name gen ps sexpr
-sas name gen (ps, ks) (Just sexpr) = -- Looking for shapes
-    loadOtherPreskel name gen ps ks sexpr
+sas _ _ (sig, ps, ks) Nothing =    -- Nothing signifies end-of-file
+    displayFormula sig ps (reverse ks)
+sas name gen (sig, ps, []) (Just sexpr) = -- Looking for POV skeleton
+    loadPOV sig name gen ps sexpr
+sas name gen (sig, ps, ks) (Just sexpr) = -- Looking for shapes
+    loadOtherPreskel sig name gen ps ks sexpr
 
-loadPOV :: MonadFail m => String -> Gen -> [Prot] -> SExpr Pos ->
+loadPOV :: MonadFail m => Sig -> String -> Gen -> [Prot] -> SExpr Pos ->
            m (State, Maybe (SExpr ()))
-loadPOV name origin ps (L pos (S _ "defprotocol" : xs)) =
+loadPOV sig name origin ps (L pos (S _ "defprotocol" : xs)) =
     do
-      p <- loadProt name origin pos xs
-      return ((p : ps, []), Nothing)
-loadPOV _ _ ps (L pos (S _ "defskeleton" : xs)) =
+      p <- loadProt sig name origin pos xs
+      return ((sig, p : ps, []), Nothing)
+loadPOV sig _ _ ps (L pos (S _ "defskeleton" : xs)) =
     do
       p <- findProt pos ps xs
-      k <- loadPreskel pos p (pgen p) xs
+      k <- loadPreskel sig pos p (pgen p) xs
       case isFringe k of
-        False -> return ((ps, [k]), Nothing) -- Found POV
-        _ -> return ((ps, []), Nothing) -- Not POV
-loadPOV _ _ ps _ = return ((ps, []), Nothing)
+        False -> return ((sig, ps, [k]), Nothing) -- Found POV
+        _ -> return ((sig, ps, []), Nothing) -- Not POV
+loadPOV sig _ _ ps _ = return ((sig, ps, []), Nothing)
 
-loadOtherPreskel :: MonadFail m => String -> Gen -> [Prot] -> [Preskel] ->
-                    SExpr Pos -> m (State, Maybe (SExpr ()))
-loadOtherPreskel name origin ps ks (L pos (S _ "defprotocol" : xs)) =
+loadOtherPreskel :: MonadFail m => Sig -> String -> Gen -> [Prot] ->
+                    [Preskel] -> SExpr Pos -> m (State, Maybe (SExpr ()))
+loadOtherPreskel sig name origin ps ks (L pos (S _ "defprotocol" : xs)) =
     do                     -- Found next protocol.  Print this formula
-      p <- loadProt name origin pos xs
-      displayFormula (p : ps) (reverse ks)
-loadOtherPreskel _ _ ps ks (L pos (S _ "defskeleton" : xs)) =
+      p <- loadProt sig name origin pos xs
+      displayFormula sig (p : ps) (reverse ks)
+loadOtherPreskel sig _ _ ps ks (L pos (S _ "defskeleton" : xs)) =
     do
       p <- findProt pos ps xs
       let g = kgen (last ks)      -- Make sure vars in skeleton are
-      k <- loadPreskel pos p g xs -- distinct from the ones in the POV
+      k <- loadPreskel sig pos p g xs -- distinct from the ones in the POV
       case isFringe k of
-        True -> return ((ps, k : ks), Nothing) -- Found shape
-        False -> return ((ps, ks), Nothing) -- Found intermediate skeleton
-loadOtherPreskel _ _ ps ks _ = return ((ps, ks), Nothing)
+        True -> return ((sig, ps, k : ks), Nothing) -- Found shape
+        False -> return ((sig, ps, ks), Nothing) -- Found intermediate skeleton
+loadOtherPreskel sig _ _ ps ks _ = return ((sig, ps, ks), Nothing)
 
 -- Load a protocol
 
@@ -97,16 +98,17 @@ data Role = Role
 
 -- Load a protocol.  On success, returns a Prot record.
 
-loadProt :: MonadFail m => String -> Gen -> Pos -> [SExpr Pos] -> m (Prot)
-loadProt nom origin pos (S _ name : S _ alg : x : xs)
+loadProt :: MonadFail m => Sig -> String -> Gen -> Pos ->
+            [SExpr Pos] -> m (Prot)
+loadProt sig nom origin pos (S _ name : S _ alg : x : xs)
     | alg /= nom =
         fail (shows pos $ "Expecting terms in algebra " ++ nom)
     | otherwise =
         do
-          (gen, rs) <- loadRoles origin (x : xs)
-          (gen', r) <- makeListenerRole pos gen
+          (gen, rs) <- loadRoles sig origin (x : xs)
+          (gen', r) <- makeListenerRole sig pos gen
           return (Prot { pname = name, pgen = gen', roles = r : rs })
-loadProt _ _ pos _ =
+loadProt _ _ _ pos _ =
     fail (shows pos "Malformed protocol")
 
 -- A generator is threaded thoughout the protocol loading process so
@@ -114,9 +116,9 @@ loadProt _ _ pos _ =
 -- every variable that occurs in a preskeleton never occurs in one of
 -- its roles.
 
-loadRoles :: MonadFail m => Gen -> [SExpr Pos] -> m (Gen, [Role])
-loadRoles origin xs =
-    mapAccumLM loadRole origin $ stripComments xs
+loadRoles :: MonadFail m => Sig -> Gen -> [SExpr Pos] -> m (Gen, [Role])
+loadRoles sig origin xs =
+    mapAccumLM (loadRole sig) origin $ stripComments xs
 
 stripComments :: [SExpr Pos] -> [SExpr Pos]
 stripComments xs =
@@ -135,18 +137,18 @@ mapAccumLM f z (x : xs) =
       (z'', ys) <- mapAccumLM f z' xs
       return (z'', y : ys)
 
-loadRole :: MonadFail m => Gen -> SExpr Pos -> m (Gen, Role)
-loadRole gen (L _ (S _ "defrole" :
-                     S _ name :
-                     L _ (S _ "vars" : vars) :
-                     L _ (S _ "trace" : _ : _) :
-                     _)) =
+loadRole :: MonadFail m => Sig -> Gen -> SExpr Pos -> m (Gen, Role)
+loadRole sig gen (L _ (S _ "defrole" :
+                       S _ name :
+                       L _ (S _ "vars" : vars) :
+                       L _ (S _ "trace" : _ : _) :
+                       _)) =
     do
-      (gen, vars) <- loadVars gen vars
+      (gen, vars) <- loadVars sig gen vars
       let ctx = addToContext emptyContext vars
       let r = Role { rname = name, vars = vars, ctx = ctx }
       return (gen, r)
-loadRole _ x =
+loadRole _ _ x =
     fail (shows (annotation x) "Malformed role")
 
 -- A protocol's listener role
@@ -154,19 +156,19 @@ loadRole _ x =
 listenerName :: String
 listenerName = ""
 
-makeListenerRole :: MonadFail m => Pos -> Gen -> m (Gen, Role)
-makeListenerRole pos gen =
+makeListenerRole :: MonadFail m => Sig -> Pos -> Gen -> m (Gen, Role)
+makeListenerRole sig pos gen =
     do
-      (gen', t) <- makeVar pos gen "x"
+      (gen', t) <- makeVar sig pos gen "x"
       let vars = [t]
       let ctx = addToContext emptyContext vars
       let r = Role { rname = listenerName, vars = vars, ctx = ctx }
       return (gen', r)
 
-makeVar :: MonadFail m => Pos -> Gen -> String -> m (Gen, Term)
-makeVar pos gen name =
+makeVar :: MonadFail m => Sig -> Pos -> Gen -> String -> m (Gen, Term)
+makeVar sig pos gen name =
     do
-      (gen', ts) <- loadVars gen [L pos [S pos name, S pos "mesg"]]
+      (gen', ts) <- loadVars sig gen [L pos [S pos name, S pos "mesg"]]
       case ts of
         [t] -> return (gen', t)
         _ -> fail (shows pos "Bad variable generation")
@@ -181,13 +183,13 @@ type VM = M.Map Strand Term
 type GVM = (Gen, VM)
 
 -- Add a variable for a strand if the mapping does not already exist.
-addVar :: MonadFail m => Pos -> GVM -> Strand -> m GVM
-addVar pos (gen, vm) z =
+addVar :: MonadFail m => Sig -> Pos -> GVM -> Strand -> m GVM
+addVar sig pos (gen, vm) z =
   case M.lookup z vm of
     Just _ -> return (gen, vm)
     Nothing ->
       do
-        (gen, t) <- makeVar pos gen root -- Make the variable
+        (gen, t) <- makeVar sig pos gen root -- Make the variable
         return (gen, M.insert z t vm)
 
 -- Strand lookup assumes a strand will always be found.
@@ -247,21 +249,22 @@ data Preskel = Preskel
       homomorphisms :: [SExpr Pos], -- Loaded later
       varmap :: VM }
 
-loadPreskel :: MonadFail m => Pos -> Prot -> Gen -> [SExpr Pos] -> m (Preskel)
-loadPreskel pos prot gen (S _ _ : L _ (S _ "vars" : vars) : xs) =
+loadPreskel :: MonadFail m => Sig -> Pos -> Prot -> Gen ->
+               [SExpr Pos] -> m (Preskel)
+loadPreskel sig pos prot gen (S _ _ : L _ (S _ "vars" : vars) : xs) =
     do
-      (gen, kvars) <- loadVars gen vars
-      insts <- loadInsts prot kvars [] xs
+      (gen, kvars) <- loadVars sig gen vars
+      insts <- loadInsts sig prot kvars [] xs
       let heights = map height insts
       orderings <- loadOrderings heights (assoc precedesKey xs)
-      nons <- loadBaseTerms kvars (assoc nonOrigKey xs)
-      pnons <- loadBaseTerms kvars (assoc pnonOrigKey xs)
-      uniqs <- loadBaseTerms kvars (assoc uniqOrigKey xs)
-      origs <- loadOrigs kvars heights (assoc origsKey xs)
-      auths <- loadBaseTerms kvars (assoc authKey xs)
-      confs <- loadBaseTerms kvars (assoc confKey xs)
-      (gen, varmap) <- makeVarmap pos gen [0..(length insts)-1]
-      facts <- mapM (loadFact kvars varmap) (assoc factsKey xs)
+      nons <- loadBaseTerms sig kvars (assoc nonOrigKey xs)
+      pnons <- loadBaseTerms sig kvars (assoc pnonOrigKey xs)
+      uniqs <- loadBaseTerms sig kvars (assoc uniqOrigKey xs)
+      origs <- loadOrigs sig kvars heights (assoc origsKey xs)
+      auths <- loadBaseTerms sig kvars (assoc authKey xs)
+      confs <- loadBaseTerms sig kvars (assoc confKey xs)
+      (gen, varmap) <- makeVarmap sig pos gen [0..(length insts)-1]
+      facts <- mapM (loadFact sig kvars varmap) (assoc factsKey xs)
       let f (n0, n1) = (nlookup n0 varmap, nlookup n1 varmap)
       let g (t, n) = (t, nlookup n varmap)
       return (Preskel { protocol = prot,
@@ -281,35 +284,35 @@ loadPreskel pos prot gen (S _ _ : L _ (S _ "vars" : vars) : xs) =
                         isFringe = hasKey shapeKey xs || hasKey fringeKey xs,
                         homomorphisms = assoc mapsKey xs,
                         varmap = varmap})
-loadPreskel pos _ _ _ = fail (shows pos "Malformed skeleton")
+loadPreskel _ pos _ _ _ = fail (shows pos "Malformed skeleton")
 
-loadInsts :: MonadFail m => Prot -> [Term] -> [Instance] ->
+loadInsts :: MonadFail m => Sig -> Prot -> [Term] -> [Instance] ->
              [SExpr Pos] -> m [Instance]
-loadInsts prot kvars insts (L pos (S _ "defstrand" : x) : xs) =
+loadInsts sig prot kvars insts (L pos (S _ "defstrand" : x) : xs) =
     case x of
       S _ role : N _ height : env ->
           do
-            i <- loadInst pos prot kvars role height env
-            loadInsts prot kvars (i : insts) xs
+            i <- loadInst sig pos prot kvars role height env
+            loadInsts sig prot kvars (i : insts) xs
       _ ->
           fail (shows pos "Malformed defstrand")
-loadInsts prot kvars insts (L pos (S _ "deflistener" : x) : xs) =
+loadInsts sig prot kvars insts (L pos (S _ "deflistener" : x) : xs) =
     case x of
       [term] ->
           do
-            i <- loadListener pos prot kvars term
-            loadInsts prot kvars (i : insts) xs
+            i <- loadListener sig pos prot kvars term
+            loadInsts sig prot kvars (i : insts) xs
       _ ->
           fail (shows pos "Malformed deflistener")
-loadInsts _ _ insts _ =
+loadInsts _ _ _ insts _ =
     return (reverse insts)
 
-loadInst :: MonadFail m => Pos -> Prot -> [Term] -> String -> Int ->
-            [SExpr Pos] -> m Instance
-loadInst pos prot kvars role height env =
+loadInst :: MonadFail m => Sig -> Pos -> Prot -> [Term] ->
+            String -> Int -> [SExpr Pos] -> m Instance
+loadInst sig pos prot kvars role height env =
     do
       r <- lookupRole pos prot role
-      env <- mapM (loadMaplet kvars (vars r)) env
+      env <- mapM (loadMaplet sig kvars (vars r)) env
       return (Instance { pos = pos, role = r,
                          env = env, height = height })
 
@@ -320,19 +323,21 @@ lookupRole pos prot role =
           fail (shows pos $ "Role " ++ role ++ " not found in " ++ pname prot)
       Just r -> return r
 
-loadMaplet :: MonadFail m => [Term] -> [Term] -> SExpr Pos -> m (Term, Term)
-loadMaplet kvars vars (L _ [domain, range]) =
+loadMaplet :: MonadFail m => Sig -> [Term] -> [Term] ->
+              SExpr Pos -> m (Term, Term)
+loadMaplet sig kvars vars (L _ [domain, range]) =
     do
-      t <- loadTerm vars domain
-      t' <- loadTerm kvars range
+      t <- loadTerm sig vars domain
+      t' <- loadTerm sig kvars range
       return (t, t')
-loadMaplet _ _ x = fail (shows (annotation x) "Malformed maplet")
+loadMaplet _ _ _ x = fail (shows (annotation x) "Malformed maplet")
 
-loadListener :: MonadFail m => Pos -> Prot -> [Term] -> SExpr Pos -> m Instance
-loadListener pos prot kvars x =
+loadListener :: MonadFail m => Sig -> Pos -> Prot -> [Term] ->
+                SExpr Pos -> m Instance
+loadListener sig pos prot kvars x =
     do
       r <- lookupRole pos prot listenerName
-      t <- loadTerm kvars x
+      t <- loadTerm sig kvars x
       return (Instance { pos = pos, role = r,
                          env = [(head $ vars r, t)], height = 2 })
 
@@ -374,59 +379,61 @@ loadNode heights (L pos [N _ s, N _ p])
           | otherwise = height xs (s - 1)
 loadNode _ x = fail (shows (annotation x) "Malformed node")
 
-loadBaseTerms :: MonadFail m => [Term] -> [SExpr Pos] -> m [Term]
-loadBaseTerms _ [] = return []
-loadBaseTerms vars (x : xs) =
+loadBaseTerms :: MonadFail m => Sig -> [Term] -> [SExpr Pos] -> m [Term]
+loadBaseTerms _ _ [] = return []
+loadBaseTerms sig vars (x : xs) =
     do
-      t <- loadBaseTerm vars x
-      ts <- loadBaseTerms vars xs
+      t <- loadBaseTerm sig vars x
+      ts <- loadBaseTerms sig vars xs
       return (adjoin t ts)
 
-loadBaseTerm :: MonadFail m => [Term] -> SExpr Pos -> m Term
-loadBaseTerm vars x =
+loadBaseTerm :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
+loadBaseTerm sig vars x =
     do
-      t <- loadTerm vars x
+      t <- loadTerm sig vars x
       case isAtom t of
         True -> return t
         False -> fail (shows (annotation x) "Expecting an atom")
 
-loadOrigs :: MonadFail m => [Term] -> Strands -> [SExpr Pos] -> m [(Term, Node)]
-loadOrigs _ _ [] = return []
-loadOrigs vars heights (x : xs) =
+loadOrigs :: MonadFail m => Sig -> [Term] -> Strands ->
+             [SExpr Pos] -> m [(Term, Node)]
+loadOrigs _ _ _ [] = return []
+loadOrigs sig vars heights (x : xs) =
     do
-      o <- loadOrig vars heights x
-      os <- loadOrigs vars heights xs
+      o <- loadOrig sig vars heights x
+      os <- loadOrigs sig vars heights xs
       return (adjoin o os)
 
-loadOrig :: MonadFail m => [Term] -> Strands -> SExpr Pos -> m (Term, Node)
-loadOrig vars heights (L _ [x, y]) =
+loadOrig :: MonadFail m => Sig -> [Term] -> Strands ->
+            SExpr Pos -> m (Term, Node)
+loadOrig sig vars heights (L _ [x, y]) =
     do
-      t <- loadTerm vars x
+      t <- loadTerm sig vars x
       n <- loadNode heights y
       return (t, n)
-loadOrig _ _ x =
+loadOrig _ _ _ x =
     fail (shows (annotation x) "Malformed origination")
 
 -- Make a variable for each strand
-makeVarmap :: MonadFail m => Pos -> Gen -> [Strand] -> m GVM
-makeVarmap pos g strands =
-  foldM (addVar pos) (g, M.empty) strands
+makeVarmap :: MonadFail m => Sig -> Pos -> Gen -> [Strand] -> m GVM
+makeVarmap sig pos g strands =
+  foldM (addVar sig pos) (g, M.empty) strands
 
-loadFact :: MonadFail m => [Term] -> VM -> SExpr Pos -> m Fact
-loadFact vars varmap (L _ (S _ name : ft)) =
+loadFact :: MonadFail m => Sig -> [Term] -> VM -> SExpr Pos -> m Fact
+loadFact sig vars varmap (L _ (S _ name : ft)) =
   do
-    ft <- mapM (loadFactTerm vars varmap) ft
+    ft <- mapM (loadFactTerm sig vars varmap) ft
     return (name, ft)
-loadFact _ _ x =
+loadFact _ _ _ x =
   fail (shows (annotation x) "Malformed fact")
 
-loadFactTerm :: MonadFail m => [Term] -> VM -> SExpr Pos -> m Term
-loadFactTerm _ varmap (N pos z) =
+loadFactTerm :: MonadFail m => Sig -> [Term] -> VM -> SExpr Pos -> m Term
+loadFactTerm _ _  varmap (N pos z) =
   case M.lookup z varmap of
     Just t -> return t
     Nothing -> fail $ shows pos ("Bad strand in fact: " ++ show z)
-loadFactTerm vars _ x =
-  loadTerm vars x
+loadFactTerm sig vars _ x =
+  loadTerm sig vars x
 
 -- Homomorphisms
 
@@ -436,19 +443,19 @@ loadFactTerm vars _ x =
 
 type Hom = ([(Term, Term)], [(Term, Term)])
 
-loadMaps :: MonadFail m => Preskel -> Preskel -> [SExpr Pos] -> m [Hom]
-loadMaps pov k maps =
-    mapM (loadMap pov k) maps
+loadMaps :: MonadFail m => Sig -> Preskel -> Preskel -> [SExpr Pos] -> m [Hom]
+loadMaps sig pov k maps =
+    mapM (loadMap sig pov k) maps
 
-loadMap :: MonadFail m => Preskel -> Preskel -> SExpr Pos -> m Hom
-loadMap pov k (L _ [L _ strandMap, L _ algebraMap]) =
+loadMap :: MonadFail m => Sig -> Preskel -> Preskel -> SExpr Pos -> m Hom
+loadMap sig pov k (L _ [L _ strandMap, L _ algebraMap]) =
     do
       perm <- mapM loadPerm strandMap -- Load the strand map
       nh <- mapM (loadStrandEq k perm) (M.assocs $ varmap pov)
       -- Load the algebra part of the homomorphism
-      ah <- mapM (loadMaplet (kvars k) (kvars pov)) algebraMap
+      ah <- mapM (loadMaplet sig (kvars k) (kvars pov)) algebraMap
       return (nh, ah)
-loadMap _ _ x = fail (shows (annotation x) "Malformed map")
+loadMap _ _ _ x = fail (shows (annotation x) "Malformed map")
 
 loadPerm :: MonadFail m => SExpr Pos -> m Int
 loadPerm (N _ n) | n >= 0 = return n
@@ -527,8 +534,8 @@ factsKey = "facts"
 
 type Analysis = (Preskel, [(Hom, Preskel)])
 
-loadAnalysis :: MonadFail m => Preskel -> [Preskel] -> m (Analysis)
-loadAnalysis pov ks =
+loadAnalysis :: MonadFail m => Sig -> Preskel -> [Preskel] -> m (Analysis)
+loadAnalysis sig pov ks =
   do
     shapes <- mapM f ks
     return (pov, concat shapes)
@@ -538,7 +545,7 @@ loadAnalysis pov ks =
         True -> fail "No homomorphism for shape"
         False ->
             do
-              hs <- loadMaps pov k (homomorphisms k)
+              hs <- loadMaps sig pov k (homomorphisms k)
               return [(h, k) | h <- hs]
 
 -- Eliminate trivial homomorphisms by substituting for the equality
@@ -615,14 +622,14 @@ mapSkel env pov k =
 
 -- Formula printing
 
-displayFormula :: MonadFail m => [Prot] -> [Preskel] ->
+displayFormula :: MonadFail m => Sig -> [Prot] -> [Preskel] ->
                   m (State, Maybe (SExpr ()))
-displayFormula ps [] =
-    return ((ps, []), Nothing)
-displayFormula ps (k : ks) =
+displayFormula sig ps [] =
+    return ((sig, ps, []), Nothing)
+displayFormula sig ps (k : ks) =
     do
-      analysis <- loadAnalysis k ks
-      return ((ps, []), Just $ form $ reduce analysis)
+      analysis <- loadAnalysis sig k ks
+      return ((sig, ps, []), Just $ form $ reduce analysis)
 
 form :: Analysis -> SExpr ()
 form (pov, shapes) =

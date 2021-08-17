@@ -12,7 +12,8 @@
 #define MonadFail Monad
 #endif
 
-module CPSA.Signature (Sig (..), Operator (..), defaultSig, loadSig) where
+module CPSA.Signature (Sig (..), Operator (..),
+                       defaultSig, loadSig, findOper) where
 
 import Control.Monad (foldM)
 import CPSA.Lib.SExpr (SExpr(..), Pos, annotation)
@@ -38,30 +39,38 @@ data Operator
   | Tupl String Int             -- A "cat" like operator
   deriving Show
 
+findOper :: String -> [Operator] -> Maybe Operator
+findOper _ [] = Nothing
+findOper sym (op@(Enc name) : _) | sym == name = Just op
+findOper sym (op@(Senc name) : _) | sym == name = Just op
+findOper sym (op@(Aenc name) : _) | sym == name = Just op
+findOper sym (op@(Sign name) : _) | sym == name = Just op
+findOper sym (op@(Hash name) : _) | sym == name = Just op
+findOper sym (op@(Tupl name _) : _) | sym == name = Just op
+findOper sym (op@(Enc name) : _) | sym == name = Just op
+findOper sym (op@(Enc name) : _) | sym == name = Just op
+findOper sym (_ : opers) = findOper sym opers
+
 -- The default signature does not mention "cat" because it is handled
--- specially.
+-- specially.  The same is true for "mesg".
 defaultSig :: Sig
 defaultSig = Sig {
-  atoms = ["text", "data", "name", "skey", "akey", "mesg"],
-  akeys = ["akeys"],
+  atoms = ["text", "data", "skey", "akey"],
+  akeys = ["akey"],
   opers = [Enc("enc"), Hash("hash")]
   }
 
 isValidSig :: Sig -> Bool
 isValidSig sig = isValidAtoms sig && isValidOpers (opers sig)
 
--- Ensure no atom is "chan" or "locn", every akey is in atoms,
--- "name" is an atom, and "mesg" is in atoms but not in akeys.
+-- Ensure no atom is bad, and every akey is in atoms.
 isValidAtoms :: Sig -> Bool
 isValidAtoms sig =
   all (\s -> notElem s badAtoms) (atoms sig) &&
-  all (\s -> elem s (atoms sig)) (akeys sig) &&
-  elem "name" (atoms sig) &&
-  elem "mesg" (atoms sig) &&
-  notElem "mesg" (akeys sig)
+  all (\s -> elem s (atoms sig)) (akeys sig)
 
 badAtoms :: [String]
-badAtoms = ["chan", "locn"]
+badAtoms = ["mesg", "name", "chan", "locn", "indx", "pval", "strd"]
 
 -- Ensure no operators is a bad operator and that there are no duplicates.
 isValidOpers :: [Operator] -> Bool

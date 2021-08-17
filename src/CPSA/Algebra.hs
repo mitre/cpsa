@@ -154,6 +154,8 @@ import Data.Map (Map)
 import Data.Char (isDigit)
 import CPSA.Lib.Utilities (replaceNth, adjoin)
 import CPSA.Lib.SExpr (SExpr(..), Pos, annotation)
+import CPSA.Signature (Sig)
+import qualified CPSA.Signature as Sig
 
 name :: String
 name = "basic"
@@ -983,11 +985,11 @@ indxOfInt i = Y i
 
 -- Term specific loading functions
 
-loadVars :: MonadFail m => Gen -> [SExpr Pos] -> m (Gen, [Term])
-loadVars gen sexprs =
+loadVars :: MonadFail m => Sig -> Gen -> [SExpr Pos] -> m (Gen, [Term])
+loadVars sig gen sexprs =
     do
       pairs <- mapM loadVarPair sexprs
-      (g, vars) <- foldM loadVar (gen, []) (concat pairs)
+      (g, vars) <- foldM (loadVar sig) (gen, []) (concat pairs)
       return (g, reverse vars)
 
 loadVarPair :: MonadFail m => SExpr Pos -> m [(SExpr Pos, SExpr Pos)]
@@ -996,52 +998,48 @@ loadVarPair (L _ (x:y:xs)) =
     return [(v,t) | v <- reverse vs]
 loadVarPair x = fail (shows (annotation x) "Bad variable declaration")
 
-loadVar :: MonadFail m => (Gen, [Term]) -> (SExpr Pos, SExpr Pos) ->
+loadVar :: MonadFail m => Sig -> (Gen, [Term]) -> (SExpr Pos, SExpr Pos) ->
            m (Gen, [Term])
-loadVar (gen, vars) (S pos name, S pos' sort) =
+loadVar sig (gen, vars) (S pos name, S pos' sort) =
     case loadLookup pos vars name of
       Right _ ->
           fail (shows pos "Duplicate variable declaration for " ++ name)
       Left _ ->
           do
             let (gen', x) = freshId gen name
-            p <- mkVar pos' sort x
+            p <- mkVar sig pos' sort x
             return (gen', p : vars)
-loadVar _ (x,_) = fail (shows (annotation x) "Bad variable syntax")
+loadVar _ _ (x,_) = fail (shows (annotation x) "Bad variable syntax")
 
-mkVar :: MonadFail m => Pos -> String -> Id -> m Term
-mkVar pos sort x
-  | sort == "mesg" = return $ I x
-  | sort == "text" = return $ F (Data "text") [I x]
-  | sort == "data" = return $ F (Data "data") [I x]
+mkVar :: MonadFail m => Sig -> Pos -> String -> Id -> m Term
+mkVar sig pos sort x
   | sort == "name" = return $ F Name [I x]
   | sort == "pval" = return $ F Pval [I x]
-  | sort == "skey" = return $ F (Data "skey") [I x]
-  | sort == "akey" = return $ F (Akey "akey") [I x]
   | sort == "chan" = return $ F Chan [I x]
   | sort == "locn" = return $ F Locn [I x]
+  | sort == "mesg" = return $ I x
   | sort == "strd" = return $ D x
   | sort == "indx" = return $ X x
+  | elem sort (Sig.akeys sig) = return $ F (Akey sort) [I x]
+  | elem sort (Sig.atoms sig) = return $ F (Data sort) [I x]
   | otherwise = fail (shows pos "Sort " ++ sort ++ " not recognized")
 
-newVar :: Gen -> String -> String -> (Gen, Term)
-newVar g varName varSort =
+newVar :: Sig -> Gen -> String -> String -> (Gen, Term)
+newVar sig g varName varSort =
     let (g', x) = freshId g varName in
-    (g', mkVarUnfailingly varSort x)
+    (g', mkVarUnfailingly sig varSort x)
 
-mkVarUnfailingly :: String -> Id -> Term
-mkVarUnfailingly sort x
-  | sort == "mesg" =  I x
-  | sort == "text" =  F (Data "text") [I x]
-  | sort == "data" =  F (Data "data") [I x]
-  | sort == "name" =  F Name [I x]
-  | sort == "pval" =  F Pval [I x]
-  | sort == "skey" =  F (Data "skey") [I x]
-  | sort == "akey" =  F (Akey "akey") [I x]
-  | sort == "chan" =  F Chan [I x]
-  | sort == "locn" =  F Locn [I x]
-  | sort == "strd" =  D x
-  | sort == "indx" =  X x
+mkVarUnfailingly :: Sig -> String -> Id -> Term
+mkVarUnfailingly sig sort x
+  | sort == "name" = F Name [I x]
+  | sort == "pval" = F Pval [I x]
+  | sort == "chan" = F Chan [I x]
+  | sort == "locn" = F Locn [I x]
+  | sort == "mesg" = I x
+  | sort == "strd" = D x
+  | sort == "indx" = X x
+  | elem sort (Sig.akeys sig) = F (Akey sort) [I x]
+  | elem sort (Sig.atoms sig) = F (Data sort) [I x]
   | otherwise =  I x    -- Default:  Var of sort mesg
 
 varName :: Term -> String
@@ -1069,18 +1067,21 @@ loadLookupAkey pos vars name =
       f _ = fail (shows pos $ "Expecting " ++ name ++ " to be an akey")
 
 -- Load term and check that it is well-formed.
-loadTerm :: MonadFail m => [Term] -> SExpr Pos -> m Term
-loadTerm vars (S pos s) =
+loadTerm :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
+loadTerm _ vars (S pos s) =
     either fail return (loadLookup pos vars s)
-loadTerm _ (Q _ t) =
+loadTerm _ _ (Q _ t) =
     return (C t)
-loadTerm vars (L pos (S _ s : l)) =
+loadTerm sig vars (L pos (S _ s : l)) =
     case lookup s loadDispatch of
-      Nothing -> fail (shows pos "Keyword " ++ s ++ " unknown")
-      Just f -> f pos vars l
-loadTerm _ x = fail (shows (annotation x) "Malformed term")
+      Nothing ->
+        case Sig.findOper s (Sig.opers sig) of
+          Nothing -> fail (shows pos "Keyword " ++ s ++ " unknown")
+          Just op -> loadOper sig pos vars op l
+      Just f -> f sig pos vars l
+loadTerm _ _ x = fail (shows (annotation x) "Malformed term")
 
-type LoadFunction m = Pos -> [Term] -> [SExpr Pos] -> m Term
+type LoadFunction m = Sig -> Pos -> [Term] -> [SExpr Pos] -> m Term
 
 loadDispatch :: MonadFail m => [(String, LoadFunction m)]
 loadDispatch =
@@ -1089,8 +1090,6 @@ loadDispatch =
     ,("invk", loadInvk)
     ,("ltk", loadLtk)
     ,("cat", loadCat)
-    ,("enc", loadEnc)
-    ,("hash", loadHash)
     ]
 
 locnMesg :: Term -> Term -> Term
@@ -1119,100 +1118,138 @@ locnMsgPoint (F (Tupl "cat") [pt, _]) =
 locnMsgPoint x =
     fail ("locnMsgPoint:  Bad state message " ++ show x)
 
-loadLocnTerm :: MonadFail m => Gen -> SExpr Pos -> SExpr Pos -> Term -> m (Gen, Term, Term)
-loadLocnTerm gen (S pos ptStr) (S pos' pvalStr) t =
+loadLocnTerm :: MonadFail m => Sig -> Gen -> SExpr Pos ->
+                SExpr Pos -> Term -> m (Gen, Term, Term)
+loadLocnTerm sig gen (S pos ptStr) (S pos' pvalStr) t =
     do
-      (gen', vars) <- loadVar (gen, []) (S pos ptStr, S pos' pvalStr)
+      (gen', vars) <- loadVar sig (gen, []) (S pos ptStr, S pos' pvalStr)
       case vars of
         []     -> fail (shows pos "No variable generated by loadVar in loadLocnTerm")
         pt : _ -> return (gen', pt, locnMesg pt t)
-loadLocnTerm _ _ _ _ =
+loadLocnTerm _ _ _ _ _ =
     fail "loadLocnTerm:  Call only with SExprs that are really Strings"
 
 -- Atom constructors: pubk privk invk ltk
 
 loadPubk :: MonadFail m => LoadFunction m
-loadPubk _ vars [S pos s] =
+loadPubk _ _ vars [S pos s] =
     do
       t <- loadLookupName pos vars s
       return $ F (Akey "akey") [F Pubk [I $ varId t]]
-loadPubk _ vars [Q _ c, S pos s] =
+loadPubk _ _ vars [Q _ c, S pos s] =
     do
       t <- loadLookupName pos vars s
       return $ F (Akey "akey") [F Pubk [C c, I $ varId t]]
-loadPubk pos _ _ = fail (shows pos "Malformed pubk")
+loadPubk _ pos _ _ = fail (shows pos "Malformed pubk")
 
 loadPrivk :: MonadFail m => LoadFunction m
-loadPrivk _ vars [S pos s] =
+loadPrivk _ _ vars [S pos s] =
     do
       t <- loadLookupName pos vars s
       return $ F (Akey "akey") [F (Invk "akey") [F Pubk [I $ varId t]]]
-loadPrivk _ vars [Q _ c, S pos s] =
+loadPrivk _ _ vars [Q _ c, S pos s] =
     do
       t <- loadLookupName pos vars s
       return $ F (Akey "akey") [F (Invk "akey") [F Pubk [C c, I $ varId t]]]
-loadPrivk pos _ _ = fail (shows pos "Malformed privk")
+loadPrivk _ pos _ _ = fail (shows pos "Malformed privk")
 
 loadInvk :: MonadFail m => LoadFunction m
-loadInvk _ vars [S pos s] =
+loadInvk _ _ vars [S pos s] =
     do
       (op, t) <- loadLookupAkey pos vars s
       return $ F (Akey op) [F (Invk op) [I $ varId t]]
-loadInvk _ vars [L _ [S _ pubk, S pos s]]
+loadInvk _ _ vars [L _ [S _ pubk, S pos s]]
   | pubk == "pubk" =
     do
       t <- loadLookupName pos vars s
       return $ F (Akey "akey") [F (Invk "akey") [F Pubk [I $ varId t]]]
-loadInvk _ vars [L _ [S _ pubk, Q _ c, S pos s]]
+loadInvk _ _ vars [L _ [S _ pubk, Q _ c, S pos s]]
   | pubk == "pubk" =
     do
       t <- loadLookupName pos vars s
       return $ F (Akey "akey") [F (Invk "akey") [F Pubk [C c, I $ varId t]]]
-loadInvk _ vars [L _ [S _ privk, S pos s]]
+loadInvk _ _ vars [L _ [S _ privk, S pos s]]
   | privk == "privk" =
     do
       t <- loadLookupName pos vars s
       return $ F (Akey "akey") [F Pubk [I $ varId t]]
-loadInvk _ vars [L _ [S _ privk, Q _ c, S pos s]]
+loadInvk _ _ vars [L _ [S _ privk, Q _ c, S pos s]]
   | privk == "privk" =
     do
       t <- loadLookupName pos vars s
       return $ F (Akey "akey") [F Pubk [C c, I $ varId t]]
-loadInvk _ vars [L _ [S _ invk, t]]
+loadInvk sig _ vars [L _ [S _ invk, t]]
   | invk == "invk" =
     do
-      a <- loadTerm vars t
+      a <- loadTerm sig vars t
       case a of
         F (Akey _) _ -> return a
         _ -> fail (shows (annotation t) "Expecting an akey")
-loadInvk pos _ _ = fail (shows pos "Malformed invk")
+loadInvk _ pos _ _ = fail (shows pos "Malformed invk")
 
 loadLtk :: MonadFail m => LoadFunction m
-loadLtk _ vars [S pos s, S pos' s'] =
+loadLtk _ _ vars [S pos s, S pos' s'] =
     do
       t <- loadLookupName pos vars s
       t' <- loadLookupName pos' vars s'
       return $ F (Data "skey") [F Ltk [I $ varId t, I $ varId t']]
-loadLtk pos _ _ = fail (shows pos "Malformed ltk")
-
--- Term constructors: cat enc
+loadLtk _ pos _ _ = fail (shows pos "Malformed ltk")
 
 loadCat :: MonadFail m => LoadFunction m
-loadCat _ vars (l : ls) =
+loadCat sig _ vars (l : ls) =
     do
-      ts <- mapM (loadTerm vars) (l : ls)
+      ts <- mapM (loadTerm sig vars) (l : ls)
       return $ foldr1 (\a b -> F (Tupl "cat") [a, b]) ts
-loadCat pos _ _ = fail (shows pos "Malformed cat")
+loadCat _ pos _ _ = fail (shows pos "Malformed cat")
 
-loadEnc :: MonadFail m => LoadFunction m
-loadEnc pos vars (l : l' : ls) =
+loadOper :: MonadFail m => Sig -> Pos -> [Term] ->
+            Sig.Operator -> [SExpr Pos] -> m Term
+loadOper sig pos vars (Sig.Enc op) (l : l' : ls) =
     do
       let (butLast, last) = splitLast l (l' : ls)
-      t <- loadCat pos vars butLast
-      t' <- loadTerm vars last
-      return $ F (Enc "enc") [t, t']
-loadEnc pos _ _ = fail (shows pos "Malformed enc")
+      t <- loadCat sig pos vars butLast
+      t' <- loadTerm sig vars last
+      return $ F (Enc op) [t, t']
+loadOper _ pos _ (Sig.Enc _) _ = fail (shows pos "Malformed enc")
+loadOper sig pos vars (Sig.Senc op) (l : l' : ls) =
+    do
+      let (butLast, last) = splitLast l (l' : ls)
+      t <- loadCat sig pos vars butLast
+      t' <- loadTerm sig vars last
+      case t' of
+        F (Akey _) _ -> fail (shows pos "Expecting a symmetric key")
+        _ -> return $ F (Enc op) [t, t']
+loadOper _ pos _ (Sig.Senc _) _ = fail (shows pos "Malformed senc")
+loadOper sig pos vars (Sig.Aenc op) (l : l' : ls) =
+    do
+      let (butLast, last) = splitLast l (l' : ls)
+      t <- loadCat sig pos vars butLast
+      t' <- loadTerm sig vars last
+      case isAkeyNotInvk t' of
+        True -> return $ F (Enc op) [t, t']
+        False -> fail (shows pos "Expecting an asymmetric key")
+loadOper _ pos _ (Sig.Aenc _) _ = fail (shows pos "Malformed aenc")
+loadOper sig pos vars (Sig.Sign op) (l : l' : ls) =
+    do
+      let (butLast, last) = splitLast l (l' : ls)
+      t <- loadCat sig pos vars butLast
+      t' <- loadTerm sig vars last
+      case t' of
+        F (Akey _) [F (Invk _) _] -> return $ F (Enc op) [t, t']
+        _ -> fail (shows pos "Expecting an asymmetric inverse key")
+loadOper _ pos _ (Sig.Sign _) _ = fail (shows pos "Malformed sign")
+loadOper sig _ vars (Sig.Hash op) (l : ls) =
+    do
+      ts <- mapM (loadTerm sig vars) (l : ls)
+      return $ F (Hash op) [foldr1 (\a b -> F (Tupl "cat") [a, b]) ts]
+loadOper _ pos _ (Sig.Hash _) _ = fail (shows pos "Malformed hash")
+loadOper sig _ vars (Sig.Tupl op len) (l : ls) | length (l : ls) == len =
+    do
+      ts <- mapM (loadTerm sig vars) (l : ls)
+      return $ F (Tupl op) ts
+loadOper _ pos _ (Sig.Tupl _ _) _ = fail (shows pos "Bad tuple length")
 
+-- Could have used init and last, but whatever...
 splitLast :: a -> [a] -> ([a], a)
 splitLast x xs =
     loop [] x xs
@@ -1220,12 +1257,10 @@ splitLast x xs =
       loop z x [] = (reverse z, x)
       loop z x (y : ys) = loop (x : z) y ys
 
-loadHash :: MonadFail m => LoadFunction m
-loadHash _ vars (l : ls) =
-   do
-     ts <- mapM (loadTerm vars) (l : ls)
-     return $ F (Hash "hash") [foldr1 (\a b -> F (Tupl "cat") [a, b]) ts]
-loadHash pos _ _ = fail (shows pos "Malformed hash")
+isAkeyNotInvk :: Term -> Bool
+isAkeyNotInvk (F (Akey _) [F (Invk _) _]) = False
+isAkeyNotInvk (F (Akey _) _) = True
+isAkeyNotInvk _ = False
 
 --   combineVarListSpecs :: [(String,[String])] -> [(String,[String])] -> [(String,[String])]
 --   combineVarListSpecs [] vls = vls
