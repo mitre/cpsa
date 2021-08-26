@@ -89,6 +89,44 @@ Defined.
 #[global]
 Hint Resolve calg_dec : core.
 
+Definition calg_eqb x y: bool :=
+  if calg_dec x y then
+    true
+  else
+    false.
+
+Lemma calg_eq_correct:
+  forall x y,
+    calg_eqb x y = true <-> x = y.
+Proof.
+  intros.
+  unfold calg_eqb.
+  destruct (calg_dec x y); subst; intuition.
+Qed.
+
+Lemma calg_eq_complete:
+  forall x y,
+    calg_eqb x y = false <-> x <> y.
+Proof.
+  intros.
+  unfold calg_eqb.
+  destruct (calg_dec x y); subst; intuition.
+Qed.
+
+(** ** Type of an Algebra Term *)
+
+Definition ctype_of (x: calg): type :=
+  match x with
+  | CTx _ => Text
+  | CDt _ => Data
+  | CNm _ => Name
+  | CSk _ => Skey
+  | CAk _ => Akey
+  | CIk _ => Ikey
+  | CCh _ => Chan
+  | _ => Mesg
+  end.
+
 (** Concrete event *)
 
 Inductive cevt: Set :=
@@ -443,8 +481,9 @@ Qed.
 
 (** The semantics of a statement list
 
-    Parameters as for [stmt_csem] but with one extra argument,
-    for outputs, and no output trace and list of uniques.
+    Parameters as for [stmt_csem] but with one extra argument, for
+    outputs, and no output trace, list of uniques, and list of random
+    values.
 
 <<
    Parameters:
@@ -455,27 +494,26 @@ Qed.
    list calg: Output list
    stmts:     Statements
    cenv:      Output environment
-   list cevt: Output trace
 >>
  *)
 
 Inductive stmt_list_csem:
   cenv -> list cevt -> list calg -> list nat ->
-  list calg -> list stmt -> cenv -> list nat -> Prop :=
+  list calg -> list stmt -> cenv -> Prop :=
 | CStmt_return: forall ev rs outs vs,
     map_m (flip lookup ev) vs = Some outs ->
-    stmt_list_csem ev [] [] rs outs [Return vs] ev rs
+    stmt_list_csem ev [] [] rs outs [Return vs] ev
 | CStmt_pair: forall ev tr us rs stmt ev' tr' us' rs'
-                     outs stmts ev'' rs'',
+                     outs stmts ev'',
     stmt_csem ev tr us rs stmt ev' tr' us' rs' ->
-    stmt_list_csem ev' tr' us' rs' outs stmts ev'' rs'' ->
-    stmt_list_csem ev tr us rs outs (stmt :: stmts) ev'' rs''.
+    stmt_list_csem ev' tr' us' rs' outs stmts ev'' ->
+    stmt_list_csem ev tr us rs outs (stmt :: stmts) ev''.
 #[global]
 Hint Constructors stmt_list_csem : core.
 
 Lemma stmt_list_csem_env_extends:
-  forall ev tr us rs outs stmts ev' rs',
-    stmt_list_csem ev tr us rs outs stmts ev' rs' ->
+  forall ev tr us rs outs stmts ev',
+    stmt_list_csem ev tr us rs outs stmts ev' ->
     exists ev'', ev' = ev'' ++ ev.
 Proof.
   intros.
@@ -526,8 +564,8 @@ Qed.
 (** Main theorem about statement lists *)
 
 Theorem stmt_list_csem_stmt_list_sem:
-  forall ev tr us rs outs stmts ev' rs',
-      stmt_list_csem ev tr us rs outs stmts ev' rs' ->
+  forall ev tr us rs outs stmts ev',
+      stmt_list_csem ev tr us rs outs stmts ev' ->
       stmt_list_sem (to_env ev) (map to_evt tr) (map to_alg us)
                     (map to_alg outs) stmts (to_env ev').
 Proof.
@@ -582,9 +620,9 @@ Definition csem (p: proc) (rs: list nat) (cev: cenv) (e: role): Prop :=
   exists cins,
     inputs e = map to_alg cins /\
     cins_inputs (ins p) cins /\
-    exists ctr cus couts rs',
+    exists ctr cus couts,
       let ev_in := mk_cenv (ins p) cins in
-      stmt_list_csem ev_in ctr cus rs couts (body p) cev rs' /\
+      stmt_list_csem ev_in ctr cus rs couts (body p) cev /\
       trace e = map to_evt ctr /\
       uniqs e = map to_alg cus /\
       outputs e = map to_alg couts.
@@ -1607,36 +1645,35 @@ Qed.
    list calg: Output list
    list stmt: Statements
    cenv:      Output environment
-   list nat:  Output list of random values
    list cevt: Output added concrete events
    list calg: Output added concrete uniques
 >>
 *)
 Inductive stmt_list_sim:
   cenv -> list evt -> list alg -> list nat -> list calg -> list stmt ->
-  cenv -> list nat -> list cevt -> list calg -> Prop :=
+  cenv -> list cevt -> list calg -> Prop :=
 | Sim_return: forall ev rs outs vs,
     map_m (flip lookup ev) vs = Some outs ->
-    stmt_list_sim ev [] [] rs outs [Return vs] ev rs [] []
+    stmt_list_sim ev [] [] rs outs [Return vs] ev [] []
 | Sim_stmts: forall ev tr us rs outs s stmts ev' tr' us' rs' dtr dus
-                    ev'' ctr cus rs'',
+                    ev'' ctr cus,
     stmt_sim ev tr us rs s ev' tr' us' rs' dtr dus ->
-    stmt_list_sim ev' tr' us' rs' outs stmts ev'' rs'' ctr cus ->
+    stmt_list_sim ev' tr' us' rs' outs stmts ev'' ctr cus ->
     stmt_list_sim ev tr us rs outs (s :: stmts)
-                  ev'' rs'' (dtr ++ ctr) (dus ++ cus).
+                  ev'' (dtr ++ ctr) (dus ++ cus).
 #[global]
 Hint Constructors stmt_list_sim : core.
 
 Lemma stmt_list_sim_to_alg:
-  forall stmts cev tr us rs couts cev' rs' ctr cus,
-    stmt_list_sim cev tr us rs couts stmts cev' rs' ctr cus ->
+  forall stmts cev tr us rs couts cev' ctr cus,
+    stmt_list_sim cev tr us rs couts stmts cev' ctr cus ->
     map to_evt ctr = tr /\ map to_alg cus = us.
 Proof.
   induction stmts; intros; inv H; simpl; auto.
   apply stmt_sim_to_alg in H7; auto.
   destruct H7; subst.
-  apply IHstmts in H12.
-  destruct H12; subst.
+  apply IHstmts in H11.
+  destruct H11; subst.
   repeat rewrite map_app; auto.
 Qed.
 
@@ -1646,8 +1683,8 @@ Lemma stmt_list_sem_stmt_list_sim:
   forall stmts ev tr us rs outs ev' cev,
     stmt_list_sem ev tr us outs stmts ev' ->
     to_env cev = ev ->
-    exists couts cev' rs' ctr cus,
-      stmt_list_sim cev tr us rs couts stmts cev' rs' ctr cus /\
+    exists couts cev' ctr cus,
+      stmt_list_sim cev tr us rs couts stmts cev' ctr cus /\
       map to_alg couts = outs.
 Proof.
   induction stmts; intros; simpl; auto; inv H.
@@ -1656,7 +1693,6 @@ Proof.
     destruct H; subst.
     exists couts.
     exists cev.
-    exists rs.
     exists [].
     exists [].
     auto.
@@ -1675,12 +1711,10 @@ Proof.
       with (rs := rs') (cev := cev') in H9; auto.
     destruct H9 as [couts G].
     destruct G as [cev'' G].
-    destruct G as [rs'' G].
     destruct G as [ctr G].
     destruct G as [cus G].
     exists couts.
     exists cev''.
-    exists rs''.
     exists (dtr ++ ctr).
     exists (dus ++ cus).
     destruct G; subst.
@@ -1696,15 +1730,15 @@ Qed.
 
 Lemma stmt_list_sem_sim_csem:
   forall stmts ev tr us outs ev' cev rs
-         couts cev' ctr cus rs',
+         couts cev' ctr cus,
     stmt_list_sem ev tr us outs stmts ev' ->
     stmt_list_sim cev tr us rs couts stmts
-                  cev' rs' ctr cus ->
+                  cev' ctr cus ->
     to_env cev = ev ->
     map to_evt ctr = tr ->
     map to_alg cus = us ->
     stmt_list_csem cev ctr cus rs
-                   couts stmts cev' rs'.
+                   couts stmts cev'.
 Proof.
   induction stmts; intros; inv H; inv H0; simpl; auto.
   - inv H9.
@@ -1731,8 +1765,8 @@ Theorem stmt_list_sem_stmt_list_csem:
   forall ev tr us outs stmts ev' cev rs,
     stmt_list_sem ev tr us outs stmts ev' ->
     to_env cev = ev ->
-    exists ctr cus couts cev' rs',
-      stmt_list_csem cev ctr cus rs couts stmts cev' rs' /\
+    exists ctr cus couts cev',
+      stmt_list_csem cev ctr cus rs couts stmts cev' /\
       map to_evt ctr = tr /\
       map to_alg cus = us /\
       map to_alg couts = outs.
@@ -1743,7 +1777,6 @@ Proof.
     with (rs := rs) (cev := cev) in H; auto.
   destruct H as [couts'].
   destruct H as [cev'].
-  destruct H as [rs'].
   destruct H as [ctr'].
   destruct H as [cus'].
   destruct H.
@@ -1751,7 +1784,6 @@ Proof.
   exists cus'.
   exists couts'.
   exists cev'.
-  exists rs'.
   pose proof H as F.
   apply stmt_list_sim_to_alg in F; auto.
   destruct F.
@@ -1785,7 +1817,6 @@ Proof.
     destruct G as [cus G].
     destruct G as [couts G].
     destruct G as [cev' G].
-    destruct G as [rs' G].
     destruct G as [G F].
     rewrite mk_env_cenv in G.
     exists cev'.
@@ -1797,7 +1828,6 @@ Proof.
     exists ctr.
     exists cus.
     exists couts.
-    exists rs'.
     split; auto.
     intuition.
   - rewrite to_env_cenv; auto.
@@ -1823,13 +1853,13 @@ Definition csem' (p: proc) (rs: list nat) (cev: cenv) (e: role): Prop :=
   let cins := mk_ins cev (ins p) in
   inputs e = map to_alg cins /\
   cins_inputs (ins p) cins /\
-  exists ctr cus rs',
+  exists ctr cus,
     trace e = map to_evt ctr /\
     uniqs e = map to_alg cus /\
     let ev_in := mk_cenv (ins p) cins in
     exists couts,
       mk_outs cev (body p) = Some couts /\
-      stmt_list_csem ev_in ctr cus rs couts (body p) cev rs' /\
+      stmt_list_csem ev_in ctr cus rs couts (body p) cev /\
       outputs e = map to_alg couts.
 
 Theorem csem'_csem:
@@ -1889,8 +1919,8 @@ Functional Scheme mk_outs_ind :=
   Induction for mk_outs Sort Prop.
 
 Lemma stmt_list_csem_outputs:
-  forall ev tr us rs outs stmts ev' rs',
-    stmt_list_csem ev tr us rs outs stmts ev' rs' ->
+  forall ev tr us rs outs stmts ev',
+    stmt_list_csem ev tr us rs outs stmts ev' ->
     mk_outs ev' stmts = Some outs.
 Proof.
   intros.
@@ -1899,7 +1929,6 @@ Proof.
   revert tr.
   revert us.
   revert rs.
-  revert rs'.
   functional induction (mk_outs ev' stmts); intros.
   - inv H.
   - inv H; auto.
@@ -1907,19 +1936,19 @@ Proof.
   - inv H.
     inv H7.
   - inv H.
-    apply IHo in H10; auto.
+    apply IHo in H9; auto.
   - inv H.
-    apply IHo in H10; auto.
+    apply IHo in H9; auto.
   - inv H.
-    apply IHo in H10; auto.
+    apply IHo in H9; auto.
   - inv H.
-    apply IHo in H10; auto.
+    apply IHo in H9; auto.
   - inv H.
-    apply IHo in H10; auto.
+    apply IHo in H9; auto.
   - inv H.
-    apply IHo in H10; auto.
+    apply IHo in H9; auto.
   - inv H.
-    apply IHo in H10; auto.
+    apply IHo in H9; auto.
 Qed.
 
 Theorem csem_csem':
@@ -1941,7 +1970,6 @@ Proof.
   repeat split; auto.
   exists x0.
   exists x1.
-  exists x3.
   intuition.
   eexists; eauto.
 Qed.

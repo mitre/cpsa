@@ -8,7 +8,7 @@ University of California. *)
 
 (** * Some General Purpose Tactics *)
 
-Require Import Bool Plus.
+Require Import Bool Plus List.
 
 Ltac inv H := inversion H; clear H; subst.
 
@@ -59,4 +59,18 @@ Lemma alt_bool_dec (b: bool):
 Proof.
   destruct (bool_dec b true) as [H|H]; auto.
   rewrite not_true_iff_false in H; auto.
+Qed.
+
+Lemma map_inj_eq:
+  forall {A B} (f: A -> B) (x y: list A),
+    (forall x y, f x = f y -> x = y) ->
+    map f x = map f y ->
+    x = y.
+Proof.
+  intros A B f x y H.
+  revert y.
+  induction x; intros; simpl in *; auto;
+    destruct y; simpl in *; auto; inv H0.
+  - apply IHx in H3; subst.
+    apply H in H2; subst; auto.
 Qed.

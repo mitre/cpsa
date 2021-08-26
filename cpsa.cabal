@@ -158,7 +158,7 @@ Extra-Source-Files:
   coq/Examples/pubk2.scm coq/Examples/Pubk_proof.v
   coq/Examples/yahalom.scm coq/Examples/Yahalom_role.v coq/Proc.v
   coq/Derives.v coq/unilateral.scm coq/Unilateral.v coq/Role.v
-  coq/Subst.v coq/CSem.v
+  coq/Subst.v coq/CSem.v coq/CRun.v coq/CRun_csem.v
 
 Source-Repository head
   Type:     git
