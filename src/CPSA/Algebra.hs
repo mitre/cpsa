@@ -332,7 +332,7 @@ termWellFormed xts t@(F (Data _) [I x]) =
     extendVarEnv xts x t        -- Data variable
 termWellFormed xts (F (Data "skey") [F Ltk [I x, I y]]) =
                                 -- Long term shared symmetric key
-      foldM termWellFormed xts [F Name [I x], F Name [I y]]
+    foldM termWellFormed xts [F Name [I x], F Name [I y]]
 termWellFormed xts (F (Akey op) [t]) = -- Asymmetric key terms
     case t of
       I x -> extendVarEnv xts x (F (Akey op) [I x])
