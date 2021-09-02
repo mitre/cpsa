@@ -64,9 +64,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton prune
-  (vars (n text) (a b name) (k akey))
+  (vars (n text) (k akey) (a b name))
   (defstrand init 3 (n n) (a a) (b b))
-  (defstrand trans 3 (n n) (a a) (k k))
+  (defstrand trans 3 (n n) (k k) (a a))
   (precedes ((0 0) (1 0)) ((1 2) (0 1)))
   (non-orig (privk a))
   (uniq-orig n)
@@ -83,7 +83,7 @@
 (defskeleton prune
   (vars (n text) (a b name))
   (defstrand init 3 (n n) (a a) (b b))
-  (defstrand trans 3 (n n) (a a) (k (pubk b)))
+  (defstrand trans 3 (n n) (k (pubk b)) (a a))
   (precedes ((0 0) (1 0)) ((1 2) (0 1)))
   (non-orig (privk a))
   (uniq-orig n)
@@ -100,10 +100,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton prune
-  (vars (n text) (a b name) (k akey))
+  (vars (n text) (k akey) (a b name))
   (defstrand init 3 (n n) (a a) (b b))
-  (defstrand trans 3 (n n) (a a) (k (pubk b)))
-  (defstrand trans 3 (n n) (a a) (k k))
+  (defstrand trans 3 (n n) (k (pubk b)) (a a))
+  (defstrand trans 3 (n n) (k k) (a a))
   (precedes ((0 0) (1 0)) ((0 0) (2 0)) ((1 2) (0 1)) ((2 2) (0 2)))
   (non-orig (privk a))
   (uniq-orig n)
@@ -123,8 +123,8 @@
 (defskeleton prune
   (vars (n text) (a b name))
   (defstrand init 3 (n n) (a a) (b b))
-  (defstrand trans 3 (n n) (a a) (k (pubk b)))
-  (defstrand trans 3 (n n) (a a) (k (privk b)))
+  (defstrand trans 3 (n n) (k (pubk b)) (a a))
+  (defstrand trans 3 (n n) (k (privk b)) (a a))
   (precedes ((0 0) (1 0)) ((0 0) (2 0)) ((1 2) (0 1)) ((2 2) (0 2)))
   (non-orig (privk a))
   (uniq-orig n)
@@ -199,8 +199,8 @@
 (defskeleton prune
   (vars (n text) (a b name))
   (defstrand init 3 (n n) (a a) (b b))
-  (defstrand trans 3 (n n) (a a) (k (pubk b)))
-  (defstrand trans 3 (n n) (a a) (k (privk b)))
+  (defstrand trans 3 (n n) (k (pubk b)) (a a))
+  (defstrand trans 3 (n n) (k (privk b)) (a a))
   (precedes ((0 0) (1 0)) ((0 0) (2 0)) ((1 2) (0 1)) ((2 2) (0 2)))
   (non-orig (privk a))
   (uniq-orig n)

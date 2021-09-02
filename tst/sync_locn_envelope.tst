@@ -122,9 +122,9 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton envelope
-  (vars (pcr-id nonce text) (v n data) (k aik akey) (tpm tpmconf chan))
+  (vars (v n data) (pcr-id nonce text) (k aik akey) (tpm tpmconf chan))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (non-orig aik)
   (uniq-orig v n)
@@ -142,9 +142,9 @@
   (comment "Not a skeleton"))
 
 (defskeleton envelope
-  (vars (pcr-id nonce text) (v n data) (k aik akey) (tpm tpmconf chan))
+  (vars (v n data) (pcr-id nonce text) (k aik akey) (tpm tpmconf chan))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (precedes ((1 4) (0 0)))
   (non-orig aik)
@@ -163,10 +163,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id nonce text) (v n data) (k aik akey)
+  (vars (v n data) (pcr-id nonce text) (k aik akey)
     (tpm tpmconf tpm-0 chan))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm-0))
@@ -191,9 +191,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id nonce text) (v n data) (k aik akey) (tpm tpmconf chan))
+  (vars (v n data) (pcr-id nonce text) (k aik akey) (tpm tpmconf chan))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm))
@@ -219,16 +219,16 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id nonce text) (v n data) (k aik akey) (tpm tpmconf chan))
+  (vars (v n data) (pcr-id nonce text) (k aik akey) (tpm tpmconf chan))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm))
   (defstrand tpm-extend-enc 1 (nonce nonce) (tpm tpm))
   (precedes ((1 2) (2 0)) ((1 4) (0 0)) ((2 1) (1 3)) ((3 0) (1 0)))
   (non-orig aik (invk k))
-  (uniq-orig nonce v n k)
+  (uniq-orig v n nonce k)
   (conf tpmconf)
   (auth tpm)
   (operation channel-test (added-strand tpm-extend-enc 1)
@@ -248,10 +248,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (current-value mesg) (pcr-id nonce pcr-id-0 text) (v n data)
-    (pt pval) (k aik aik-0 akey) (tpm tpmconf tpm-0 chan) (pcr locn))
+  (vars (current-value mesg) (v n data) (pcr-id nonce pcr-id-0 text)
+    (k aik aik-0 akey) (pt pval) (tpm tpmconf tpm-0 chan) (pcr locn))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm))
@@ -261,7 +261,7 @@
   (precedes ((1 2) (2 0)) ((1 4) (4 0)) ((2 1) (1 3)) ((3 0) (1 0))
     ((4 3) (0 0)))
   (non-orig aik aik-0 (invk k))
-  (uniq-orig nonce v n k)
+  (uniq-orig v n nonce k)
   (conf tpmconf)
   (auth tpm)
   (operation nonce-test (added-strand tpm-decrypt 4) v (0 0) (enc v k))
@@ -283,10 +283,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id nonce text) (v n data) (pt pval) (k aik akey)
+  (vars (v n data) (pcr-id nonce text) (k aik akey) (pt pval)
     (tpm tpmconf tpm-0 chan) (pcr locn))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm))
@@ -297,7 +297,7 @@
   (precedes ((1 2) (2 0)) ((1 4) (4 0)) ((2 1) (1 3)) ((3 0) (1 0))
     ((4 3) (0 0)))
   (non-orig aik (invk k))
-  (uniq-orig nonce v n k)
+  (uniq-orig v n nonce k)
   (gen-st (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm)
@@ -322,10 +322,10 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce text) (v n data) (pt pt-0 pval)
-    (k aik akey) (tpmconf tpm tpm-0 chan) (pcr locn))
+  (vars (v n data) (pcr-id pcr-id-0 nonce text) (k aik akey)
+    (pt pt-0 pval) (tpmconf tpm tpm-0 chan) (pcr locn))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id) (nonce nonce) (k k)
     (aik aik) (tpm tpm-0) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm-0))
@@ -338,7 +338,7 @@
   (precedes ((1 2) (2 0)) ((1 4) (3 0)) ((2 1) (1 3)) ((3 3) (0 0))
     ((4 0) (1 0)) ((4 3) (3 2)))
   (non-orig aik (invk k))
-  (uniq-orig nonce v n k)
+  (uniq-orig v n nonce k)
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm-0)
@@ -370,10 +370,10 @@
   (comment "empty cohort"))
 
 (defskeleton envelope
-  (vars (pcr-id nonce pcr-id-0 nonce-0 text) (v n data) (pt pt-0 pval)
-    (k aik akey) (tpm tpmconf tpm-0 tpm-1 chan) (pcr locn))
+  (vars (v n data) (pcr-id nonce pcr-id-0 nonce-0 text) (k aik akey)
+    (pt pt-0 pval) (tpm tpmconf tpm-0 tpm-1 chan) (pcr locn))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm))
@@ -387,7 +387,7 @@
   (precedes ((1 2) (2 0)) ((1 4) (4 0)) ((2 1) (1 3)) ((3 0) (1 0))
     ((4 3) (0 0)) ((5 3) (4 2)))
   (non-orig aik (invk k))
-  (uniq-orig nonce nonce-0 v n k)
+  (uniq-orig v n nonce nonce-0 k)
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm)
@@ -419,11 +419,11 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce pcr-id-1 nonce-0 text) (v n data)
-    (pt pt-0 pt-1 pval) (k aik akey) (tpmconf tpm tpm-0 tpm-1 chan)
+  (vars (v n data) (pcr-id pcr-id-0 nonce pcr-id-1 nonce-0 text)
+    (k aik akey) (pt pt-0 pt-1 pval) (tpmconf tpm tpm-0 tpm-1 chan)
     (pcr locn))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id) (nonce nonce-0) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id) (nonce nonce-0) (k k)
     (aik aik) (tpm tpm-1) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm-1))
@@ -438,7 +438,7 @@
   (precedes ((1 1) (5 1)) ((1 2) (2 0)) ((1 4) (3 0)) ((2 1) (1 3))
     ((3 3) (0 0)) ((4 3) (3 2)) ((5 0) (1 0)) ((5 3) (4 2)))
   (non-orig aik (invk k))
-  (uniq-orig nonce nonce-0 v n k)
+  (uniq-orig v n nonce nonce-0 k)
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm-1)
@@ -471,11 +471,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id nonce pcr-id-0 nonce-0 pcr-id-1 nonce-1 text) (v n data)
-    (pt pt-0 pt-1 pval) (k aik akey)
+  (vars (v n data) (pcr-id nonce pcr-id-0 nonce-0 pcr-id-1 nonce-1 text)
+    (k aik akey) (pt pt-0 pt-1 pval)
     (tpm tpmconf tpm-0 tpm-1 tpm-2 chan) (pcr locn))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm))
@@ -491,7 +491,7 @@
   (precedes ((1 1) (6 1)) ((1 2) (2 0)) ((1 4) (4 0)) ((2 1) (1 3))
     ((3 0) (1 0)) ((4 3) (0 0)) ((5 3) (4 2)) ((6 3) (5 2)))
   (non-orig aik (invk k))
-  (uniq-orig nonce nonce-0 nonce-1 v n k)
+  (uniq-orig v n nonce nonce-0 nonce-1 k)
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm)
@@ -526,11 +526,10 @@
   (comment "empty cohort"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce nonce-0 text) (v n data)
-    (pt pt-0 pt-1 pval) (k aik akey) (tpmconf tpm tpm-0 chan)
-    (pcr locn))
+  (vars (v n data) (pcr-id pcr-id-0 nonce nonce-0 text) (k aik akey)
+    (pt pt-0 pt-1 pval) (tpmconf tpm tpm-0 chan) (pcr locn))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id) (nonce nonce-0) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id) (nonce nonce-0) (k k)
     (aik aik) (tpm tpmconf) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpmconf))
@@ -545,7 +544,7 @@
   (precedes ((1 1) (5 1)) ((1 2) (2 0)) ((1 4) (3 0)) ((2 1) (1 3))
     ((3 3) (0 0)) ((4 3) (3 2)) ((5 0) (1 0)) ((5 3) (4 2)))
   (non-orig aik (invk k))
-  (uniq-orig nonce nonce-0 v n k)
+  (uniq-orig v n nonce nonce-0 k)
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpmconf)
@@ -701,11 +700,11 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 nonce text) (k aik akey)
     (tpm tpmconf chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (non-orig aik)
   (uniq-orig n v)
@@ -729,11 +728,11 @@
   (comment "Not a skeleton"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 nonce text) (k aik akey)
     (tpm tpmconf chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (precedes ((1 4) (0 0)))
   (non-orig aik)
@@ -758,11 +757,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 nonce text) (k aik akey)
     (tpm tpmconf tpm-0 chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-0))
@@ -795,11 +794,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 nonce text) (k aik akey)
     (tpm tpmconf chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -832,18 +831,18 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 nonce text) (k aik akey)
     (tpm tpmconf chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
   (defstrand tpm-extend-enc 1 (nonce nonce) (tpm tpm))
   (precedes ((1 2) (2 0)) ((1 4) (0 0)) ((2 1) (1 3)) ((3 0) (1 0)))
   (non-orig aik (invk k))
-  (uniq-orig nonce n v k)
+  (uniq-orig n v nonce k)
   (conf tpmconf)
   (auth tpm)
   (operation channel-test (added-strand tpm-extend-enc 1)
@@ -870,11 +869,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce text) (n v data) (pt pval) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 nonce text) (k aik akey) (pt pval)
     (tpm tpmconf tpm-0 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -885,7 +884,7 @@
   (precedes ((1 2) (2 0)) ((1 4) (4 0)) ((2 1) (1 3)) ((3 0) (1 0))
     ((4 2) (0 0)))
   (non-orig aik (invk k))
-  (uniq-orig nonce n v k)
+  (uniq-orig n v nonce k)
   (gen-st (hash (hash "0" n) "refuse"))
   (conf tpmconf)
   (auth tpm)
@@ -920,11 +919,11 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 nonce text) (n v data) (pt pt-0 pval)
-    (k aik akey) (tpmconf tpm tpm-0 chan) (pcr locn))
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 nonce text) (k aik akey)
+    (pt pt-0 pval) (tpmconf tpm tpm-0 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm-0) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-0))
@@ -937,7 +936,7 @@
   (precedes ((1 2) (2 0)) ((1 4) (3 0)) ((2 1) (1 3)) ((3 2) (0 0))
     ((4 0) (1 0)) ((4 3) (3 1)))
   (non-orig aik (invk k))
-  (uniq-orig nonce n v k)
+  (uniq-orig n v nonce k)
   (gen-st (hash "0" n) (hash (hash "0" n) "refuse"))
   (conf tpmconf)
   (auth tpm-0)
@@ -978,12 +977,12 @@
   (comment "empty cohort"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce pcr-id-1 nonce-0 text) (n v data)
-    (pt pt-0 pval) (k aik akey) (tpm tpmconf tpm-0 tpm-1 chan)
+  (vars (n v data) (pcr-id pcr-id-0 nonce pcr-id-1 nonce-0 text)
+    (k aik akey) (pt pt-0 pval) (tpm tpmconf tpm-0 tpm-1 chan)
     (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -997,7 +996,7 @@
   (precedes ((1 2) (2 0)) ((1 4) (4 0)) ((2 1) (1 3)) ((3 0) (1 0))
     ((4 2) (0 0)) ((5 3) (4 1)))
   (non-orig aik (invk k))
-  (uniq-orig nonce nonce-0 n v k)
+  (uniq-orig n v nonce nonce-0 k)
   (gen-st (hash "0" n) (hash (hash "0" n) "refuse"))
   (conf tpmconf)
   (auth tpm)
@@ -1038,12 +1037,12 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 nonce pcr-id-2 nonce-0 text)
-    (n v data) (pt pt-0 pt-1 pval) (k aik akey)
-    (tpmconf tpm tpm-0 tpm-1 chan) (pcr locn))
+  (vars (n v data)
+    (pcr-id pcr-id-0 pcr-id-1 nonce pcr-id-2 nonce-0 text) (k aik akey)
+    (pt pt-0 pt-1 pval) (tpmconf tpm tpm-0 tpm-1 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce-0) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce-0) (k k)
     (aik aik) (tpm tpm-1) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-1))
@@ -1058,7 +1057,7 @@
   (precedes ((1 1) (5 1)) ((1 2) (2 0)) ((1 4) (3 0)) ((2 1) (1 3))
     ((3 2) (0 0)) ((4 3) (3 1)) ((5 0) (1 0)) ((5 3) (4 2)))
   (non-orig aik (invk k))
-  (uniq-orig nonce nonce-0 n v k)
+  (uniq-orig n v nonce nonce-0 k)
   (gen-st (hash "0" n) (hash (hash "0" n) "refuse"))
   (conf tpmconf)
   (auth tpm-1)
@@ -1100,12 +1099,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce pcr-id-1 nonce-0 pcr-id-2 nonce-1 text)
-    (n v data) (pt pt-0 pt-1 pval) (k aik akey)
+  (vars (n v data)
+    (pcr-id pcr-id-0 nonce pcr-id-1 nonce-0 pcr-id-2 nonce-1 text)
+    (k aik akey) (pt pt-0 pt-1 pval)
     (tpm tpmconf tpm-0 tpm-1 tpm-2 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -1121,7 +1121,7 @@
   (precedes ((1 1) (6 1)) ((1 2) (2 0)) ((1 4) (4 0)) ((2 1) (1 3))
     ((3 0) (1 0)) ((4 2) (0 0)) ((5 3) (4 1)) ((6 3) (5 2)))
   (non-orig aik (invk k))
-  (uniq-orig nonce nonce-0 nonce-1 n v k)
+  (uniq-orig n v nonce nonce-0 nonce-1 k)
   (gen-st (hash "0" n) (hash (hash "0" n) "refuse"))
   (conf tpmconf)
   (auth tpm)
@@ -1165,12 +1165,12 @@
   (comment "empty cohort"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 text) (n v data)
-    (pt pt-0 pt-1 pval) (k aik akey) (tpmconf tpm tpm-0 chan)
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 text)
+    (k aik akey) (pt pt-0 pt-1 pval) (tpmconf tpm tpm-0 chan)
     (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce-0) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce-0) (k k)
     (aik aik) (tpm tpmconf) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpmconf))
@@ -1185,7 +1185,7 @@
   (precedes ((1 1) (5 1)) ((1 2) (2 0)) ((1 4) (3 0)) ((2 1) (1 3))
     ((3 2) (0 0)) ((4 3) (3 1)) ((5 0) (1 0)) ((5 3) (4 2)))
   (non-orig aik (invk k))
-  (uniq-orig nonce nonce-0 n v k)
+  (uniq-orig n v nonce nonce-0 k)
   (gen-st (hash "0" n) (hash (hash "0" n) "refuse"))
   (conf tpmconf)
   (auth tpmconf)
@@ -1349,12 +1349,12 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 nonce text) (k aik akey)
     (tpm tpmconf chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (non-orig aik)
   (uniq-orig n v)
@@ -1378,12 +1378,12 @@
   (comment "Not a skeleton"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 nonce text) (k aik akey)
     (tpm tpmconf chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (precedes ((2 4) (0 0)) ((2 4) (1 0)))
   (non-orig aik)
@@ -1408,12 +1408,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 nonce text) (k aik akey)
     (tpm tpmconf tpm-0 chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-0))
@@ -1446,12 +1446,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 nonce text) (k aik akey)
     (tpm tpmconf chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -1484,12 +1484,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 nonce text) (k aik akey)
     (tpm tpmconf chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -1497,7 +1497,7 @@
   (precedes ((2 2) (3 0)) ((2 4) (0 0)) ((2 4) (1 0)) ((3 1) (2 3))
     ((4 0) (2 0)))
   (non-orig aik (invk k))
-  (uniq-orig nonce n v k)
+  (uniq-orig n v nonce k)
   (conf tpmconf)
   (auth tpm)
   (operation channel-test (added-strand tpm-extend-enc 1)
@@ -1524,13 +1524,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (current-value mesg) (pcr-id pcr-id-0 nonce pcr-id-1 text)
-    (n v data) (pt pval) (k aik aik-0 akey) (tpm tpmconf tpm-0 chan)
-    (pcr locn))
+  (vars (current-value mesg) (n v data)
+    (pcr-id pcr-id-0 nonce pcr-id-1 text) (k aik aik-0 akey) (pt pval)
+    (tpm tpmconf tpm-0 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -1540,7 +1540,7 @@
   (precedes ((2 2) (3 0)) ((2 4) (0 0)) ((2 4) (5 0)) ((3 1) (2 3))
     ((4 0) (2 0)) ((5 3) (1 0)))
   (non-orig aik aik-0 (invk k))
-  (uniq-orig nonce n v k)
+  (uniq-orig n v nonce k)
   (conf tpmconf)
   (auth tpm)
   (operation nonce-test (added-strand tpm-decrypt 4) v (1 0) (enc v k))
@@ -1569,12 +1569,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce text) (n v data) (pt pval) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 nonce text) (k aik akey) (pt pval)
     (tpm tpmconf tpm-0 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -1585,7 +1585,7 @@
   (precedes ((2 2) (3 0)) ((2 4) (0 0)) ((2 4) (5 0)) ((3 1) (2 3))
     ((4 0) (2 0)) ((5 3) (1 0)))
   (non-orig aik (invk k))
-  (uniq-orig nonce n v k)
+  (uniq-orig n v nonce k)
   (gen-st (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm)
@@ -1617,12 +1617,12 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 nonce text) (n v data) (pt pt-0 pval)
-    (k aik akey) (tpmconf tpm tpm-0 chan) (pcr locn))
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 nonce text) (k aik akey)
+    (pt pt-0 pval) (tpmconf tpm tpm-0 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm-0) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-0))
@@ -1635,7 +1635,7 @@
   (precedes ((2 2) (3 0)) ((2 4) (0 0)) ((2 4) (4 0)) ((3 1) (2 3))
     ((4 3) (1 0)) ((5 0) (2 0)) ((5 3) (4 2)))
   (non-orig aik (invk k))
-  (uniq-orig nonce n v k)
+  (uniq-orig n v nonce k)
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm-0)
@@ -1674,13 +1674,13 @@
   (comment "empty cohort"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce pcr-id-1 nonce-0 text) (n v data)
-    (pt pt-0 pval) (k aik akey) (tpm tpmconf tpm-0 tpm-1 chan)
+  (vars (n v data) (pcr-id pcr-id-0 nonce pcr-id-1 nonce-0 text)
+    (k aik akey) (pt pt-0 pval) (tpm tpmconf tpm-0 tpm-1 chan)
     (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -1694,7 +1694,7 @@
   (precedes ((2 2) (3 0)) ((2 4) (0 0)) ((2 4) (5 0)) ((3 1) (2 3))
     ((4 0) (2 0)) ((5 3) (1 0)) ((6 3) (5 2)))
   (non-orig aik (invk k))
-  (uniq-orig nonce nonce-0 n v k)
+  (uniq-orig n v nonce nonce-0 k)
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm)
@@ -1733,13 +1733,13 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 nonce pcr-id-2 nonce-0 text)
-    (n v data) (pt pt-0 pt-1 pval) (k aik akey)
-    (tpmconf tpm tpm-0 tpm-1 chan) (pcr locn))
+  (vars (n v data)
+    (pcr-id pcr-id-0 pcr-id-1 nonce pcr-id-2 nonce-0 text) (k aik akey)
+    (pt pt-0 pt-1 pval) (tpmconf tpm tpm-0 tpm-1 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce-0) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce-0) (k k)
     (aik aik) (tpm tpm-1) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-1))
@@ -1755,7 +1755,7 @@
     ((3 1) (2 3)) ((4 3) (1 0)) ((5 3) (4 2)) ((6 0) (2 0))
     ((6 3) (5 2)))
   (non-orig aik (invk k))
-  (uniq-orig nonce nonce-0 n v k)
+  (uniq-orig n v nonce nonce-0 k)
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm-1)
@@ -1795,13 +1795,14 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce pcr-id-1 nonce-0 pcr-id-2 nonce-1 text)
-    (n v data) (pt pt-0 pt-1 pval) (k aik akey)
+  (vars (n v data)
+    (pcr-id pcr-id-0 nonce pcr-id-1 nonce-0 pcr-id-2 nonce-1 text)
+    (k aik akey) (pt pt-0 pt-1 pval)
     (tpm tpmconf tpm-0 tpm-1 tpm-2 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -1818,7 +1819,7 @@
     ((3 1) (2 3)) ((4 0) (2 0)) ((5 3) (1 0)) ((6 3) (5 2))
     ((7 3) (6 2)))
   (non-orig aik (invk k))
-  (uniq-orig nonce nonce-0 nonce-1 n v k)
+  (uniq-orig n v nonce nonce-0 nonce-1 k)
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm)
@@ -1860,13 +1861,13 @@
   (comment "empty cohort"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 text) (n v data)
-    (pt pt-0 pt-1 pval) (k aik akey) (tpmconf tpm tpm-0 chan)
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 text)
+    (k aik akey) (pt pt-0 pt-1 pval) (tpmconf tpm tpm-0 chan)
     (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce-0) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce-0) (k k)
     (aik aik) (tpm tpmconf) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpmconf))
@@ -1882,7 +1883,7 @@
     ((3 1) (2 3)) ((4 3) (1 0)) ((5 3) (4 2)) ((6 0) (2 0))
     ((6 3) (5 2)))
   (non-orig aik (invk k))
-  (uniq-orig nonce nonce-0 n v k)
+  (uniq-orig n v nonce nonce-0 k)
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpmconf)
@@ -1922,13 +1923,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 text) (n v data)
-    (pt pt-0 pt-1 pt-2 pval) (k aik akey) (tpmconf tpm tpm-0 tpm-1 chan)
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 text)
+    (k aik akey) (pt pt-0 pt-1 pt-2 pval) (tpmconf tpm tpm-0 tpm-1 chan)
     (pcr pcr-0 locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce-0) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce-0) (k k)
     (aik aik) (tpm tpmconf) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpmconf))
@@ -1947,7 +1948,7 @@
     ((3 1) (2 3)) ((4 3) (1 0)) ((5 3) (4 2)) ((6 0) (2 0))
     ((6 3) (5 2)) ((7 2) (0 0)))
   (non-orig aik (invk k))
-  (uniq-orig nonce nonce-0 n v k)
+  (uniq-orig n v nonce nonce-0 k)
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain")
     (hash (hash "0" n) "refuse"))
   (conf tpmconf)
@@ -1994,13 +1995,14 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 pcr-id-2 nonce-1 text)
-    (n v data) (pt pt-0 pt-1 pt-2 pt-3 pval) (k aik akey)
+  (vars (n v data)
+    (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 pcr-id-2 nonce-1 text)
+    (k aik akey) (pt pt-0 pt-1 pt-2 pt-3 pval)
     (tpmconf tpm tpm-0 tpm-1 tpm-2 chan) (pcr pcr-0 locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce-0) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce-0) (k k)
     (aik aik) (tpm tpmconf) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpmconf))
@@ -2022,7 +2024,7 @@
     ((3 1) (2 3)) ((4 3) (1 0)) ((5 3) (4 2)) ((6 0) (2 0))
     ((6 3) (5 2)) ((7 2) (0 0)) ((8 3) (7 1)))
   (non-orig aik (invk k))
-  (uniq-orig nonce nonce-0 nonce-1 n v k)
+  (uniq-orig n v nonce nonce-0 nonce-1 k)
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain")
     (hash (hash "0" n) "refuse"))
   (conf tpmconf)
@@ -2074,15 +2076,14 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars
+  (vars (n v data)
     (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 pcr-id-2 nonce-1 pcr-id-3
-      nonce-2 text) (n v data) (pt pt-0 pt-1 pt-2 pt-3 pt-4 pval)
-    (k aik akey) (tpmconf tpm tpm-0 tpm-1 tpm-2 tpm-3 chan)
-    (pcr pcr-0 locn))
+      nonce-2 text) (k aik akey) (pt pt-0 pt-1 pt-2 pt-3 pt-4 pval)
+    (tpmconf tpm tpm-0 tpm-1 tpm-2 tpm-3 chan) (pcr pcr-0 locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce-0) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce-0) (k k)
     (aik aik) (tpm tpmconf) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpmconf))
@@ -2107,7 +2108,7 @@
     ((6 0) (2 0)) ((6 3) (5 2)) ((7 2) (0 0)) ((8 3) (7 1))
     ((9 3) (8 2)))
   (non-orig aik (invk k))
-  (uniq-orig nonce nonce-0 nonce-1 nonce-2 n v k)
+  (uniq-orig n v nonce nonce-0 nonce-1 nonce-2 k)
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain")
     (hash (hash "0" n) "refuse"))
   (conf tpmconf)
@@ -2279,12 +2280,12 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 nonce text) (k aik akey)
     (tpm tpmconf chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (non-orig aik)
   (uniq-orig n v)
@@ -2309,12 +2310,12 @@
   (comment "Not a skeleton"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 nonce text) (k aik akey)
     (tpm tpmconf chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (precedes ((2 4) (0 0)) ((2 4) (1 0)))
   (non-orig aik)
@@ -2340,12 +2341,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 nonce text) (k aik akey)
     (tpm tpmconf tpm-0 chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-0))
@@ -2379,12 +2380,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 nonce text) (k aik akey)
     (tpm tpmconf chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -2418,12 +2419,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce text) (n v data) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 nonce text) (k aik akey)
     (tpm tpmconf chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -2431,7 +2432,7 @@
   (precedes ((2 2) (3 0)) ((2 4) (0 0)) ((2 4) (1 0)) ((3 1) (2 3))
     ((4 0) (2 0)))
   (non-orig aik (invk k))
-  (uniq-orig nonce n v k)
+  (uniq-orig n v nonce k)
   (conf tpmconf)
   (auth tpm)
   (facts (no-state-split))
@@ -2459,13 +2460,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (current-value mesg) (pcr-id pcr-id-0 nonce pcr-id-1 text)
-    (n v data) (pt pval) (k aik aik-0 akey) (tpm tpmconf tpm-0 chan)
-    (pcr locn))
+  (vars (current-value mesg) (n v data)
+    (pcr-id pcr-id-0 nonce pcr-id-1 text) (k aik aik-0 akey) (pt pval)
+    (tpm tpmconf tpm-0 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -2475,7 +2476,7 @@
   (precedes ((2 2) (3 0)) ((2 4) (0 0)) ((2 4) (5 0)) ((3 1) (2 3))
     ((4 0) (2 0)) ((5 3) (1 0)))
   (non-orig aik aik-0 (invk k))
-  (uniq-orig nonce n v k)
+  (uniq-orig n v nonce k)
   (conf tpmconf)
   (auth tpm)
   (facts (no-state-split))
@@ -2505,12 +2506,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce text) (n v data) (pt pval) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 nonce text) (k aik akey) (pt pval)
     (tpm tpmconf tpm-0 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -2521,7 +2522,7 @@
   (precedes ((2 2) (3 0)) ((2 4) (0 0)) ((2 4) (5 0)) ((3 1) (2 3))
     ((4 0) (2 0)) ((5 3) (1 0)))
   (non-orig aik (invk k))
-  (uniq-orig nonce n v k)
+  (uniq-orig n v nonce k)
   (gen-st (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm)
@@ -2554,12 +2555,12 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 nonce text) (n v data) (pt pt-0 pval)
-    (k aik akey) (tpmconf tpm tpm-0 chan) (pcr locn))
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 nonce text) (k aik akey)
+    (pt pt-0 pval) (tpmconf tpm tpm-0 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm-0) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-0))
@@ -2572,7 +2573,7 @@
   (precedes ((2 2) (3 0)) ((2 4) (0 0)) ((2 4) (4 0)) ((3 1) (2 3))
     ((4 3) (1 0)) ((5 0) (2 0)) ((5 3) (4 2)))
   (non-orig aik (invk k))
-  (uniq-orig nonce n v k)
+  (uniq-orig n v nonce k)
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm-0)
@@ -2612,13 +2613,13 @@
   (comment "empty cohort"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce pcr-id-1 nonce-0 text) (n v data)
-    (pt pt-0 pval) (k aik akey) (tpm tpmconf tpm-0 tpm-1 chan)
+  (vars (n v data) (pcr-id pcr-id-0 nonce pcr-id-1 nonce-0 text)
+    (k aik akey) (pt pt-0 pval) (tpm tpmconf tpm-0 tpm-1 chan)
     (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -2632,7 +2633,7 @@
   (precedes ((2 2) (3 0)) ((2 4) (0 0)) ((2 4) (5 0)) ((3 1) (2 3))
     ((4 0) (2 0)) ((5 3) (1 0)) ((6 3) (5 2)))
   (non-orig aik (invk k))
-  (uniq-orig nonce nonce-0 n v k)
+  (uniq-orig n v nonce nonce-0 k)
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm)
@@ -2672,13 +2673,13 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 nonce pcr-id-2 nonce-0 text)
-    (n v data) (pt pt-0 pt-1 pval) (k aik akey)
-    (tpmconf tpm tpm-0 tpm-1 chan) (pcr locn))
+  (vars (n v data)
+    (pcr-id pcr-id-0 pcr-id-1 nonce pcr-id-2 nonce-0 text) (k aik akey)
+    (pt pt-0 pt-1 pval) (tpmconf tpm tpm-0 tpm-1 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce-0) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce-0) (k k)
     (aik aik) (tpm tpm-1) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-1))
@@ -2694,7 +2695,7 @@
     ((3 1) (2 3)) ((4 3) (1 0)) ((5 3) (4 2)) ((6 0) (2 0))
     ((6 3) (5 2)))
   (non-orig aik (invk k))
-  (uniq-orig nonce nonce-0 n v k)
+  (uniq-orig n v nonce nonce-0 k)
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm-1)
@@ -2735,13 +2736,14 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 nonce pcr-id-1 nonce-0 pcr-id-2 nonce-1 text)
-    (n v data) (pt pt-0 pt-1 pval) (k aik akey)
+  (vars (n v data)
+    (pcr-id pcr-id-0 nonce pcr-id-1 nonce-0 pcr-id-2 nonce-1 text)
+    (k aik akey) (pt pt-0 pt-1 pval)
     (tpm tpmconf tpm-0 tpm-1 tpm-2 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce) (k k)
     (aik aik) (tpm tpm) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -2758,7 +2760,7 @@
     ((3 1) (2 3)) ((4 0) (2 0)) ((5 3) (1 0)) ((6 3) (5 2))
     ((7 3) (6 2)))
   (non-orig aik (invk k))
-  (uniq-orig nonce nonce-0 nonce-1 n v k)
+  (uniq-orig n v nonce nonce-0 nonce-1 k)
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpm)
@@ -2801,13 +2803,13 @@
   (comment "empty cohort"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 text) (n v data)
-    (pt pt-0 pt-1 pval) (k aik akey) (tpmconf tpm tpm-0 chan)
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 text)
+    (k aik akey) (pt pt-0 pt-1 pval) (tpmconf tpm tpm-0 chan)
     (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce-0) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce-0) (k k)
     (aik aik) (tpm tpmconf) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpmconf))
@@ -2823,7 +2825,7 @@
     ((3 1) (2 3)) ((4 3) (1 0)) ((5 3) (4 2)) ((6 0) (2 0))
     ((6 3) (5 2)))
   (non-orig aik (invk k))
-  (uniq-orig nonce nonce-0 n v k)
+  (uniq-orig n v nonce nonce-0 k)
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpmconf)
   (auth tpmconf)
@@ -2864,13 +2866,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 text) (n v data)
-    (pt pt-0 pt-1 pt-2 pval) (k aik akey) (tpmconf tpm tpm-0 tpm-1 chan)
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 text)
+    (k aik akey) (pt pt-0 pt-1 pt-2 pval) (tpmconf tpm tpm-0 tpm-1 chan)
     (pcr pcr-0 locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce-0) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce-0) (k k)
     (aik aik) (tpm tpmconf) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpmconf))
@@ -2889,7 +2891,7 @@
     ((3 1) (2 3)) ((4 3) (1 0)) ((5 3) (4 2)) ((6 0) (2 0))
     ((6 3) (5 2)) ((7 2) (0 0)))
   (non-orig aik (invk k))
-  (uniq-orig nonce nonce-0 n v k)
+  (uniq-orig n v nonce nonce-0 k)
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain")
     (hash (hash "0" n) "refuse"))
   (conf tpmconf)
@@ -2937,13 +2939,14 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 pcr-id-2 nonce-1 text)
-    (n v data) (pt pt-0 pt-1 pt-2 pt-3 pval) (k aik akey)
+  (vars (n v data)
+    (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 pcr-id-2 nonce-1 text)
+    (k aik akey) (pt pt-0 pt-1 pt-2 pt-3 pval)
     (tpmconf tpm tpm-0 tpm-1 tpm-2 chan) (pcr pcr-0 locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce-0) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce-0) (k k)
     (aik aik) (tpm tpmconf) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpmconf))
@@ -2965,7 +2968,7 @@
     ((3 1) (2 3)) ((4 3) (1 0)) ((5 3) (4 2)) ((6 0) (2 0))
     ((6 3) (5 2)) ((7 2) (0 0)) ((8 3) (7 1)))
   (non-orig aik (invk k))
-  (uniq-orig nonce nonce-0 nonce-1 n v k)
+  (uniq-orig n v nonce nonce-0 nonce-1 k)
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain")
     (hash (hash "0" n) "refuse"))
   (conf tpmconf)
@@ -3018,15 +3021,14 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars
+  (vars (n v data)
     (pcr-id pcr-id-0 pcr-id-1 nonce nonce-0 pcr-id-2 nonce-1 pcr-id-3
-      nonce-2 text) (n v data) (pt pt-0 pt-1 pt-2 pt-3 pt-4 pval)
-    (k aik akey) (tpmconf tpm tpm-0 tpm-1 tpm-2 tpm-3 chan)
-    (pcr pcr-0 locn))
+      nonce-2 text) (k aik akey) (pt pt-0 pt-1 pt-2 pt-3 pt-4 pval)
+    (tpmconf tpm tpm-0 tpm-1 tpm-2 tpm-3 chan) (pcr pcr-0 locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 5 (pcr-id pcr-id-0) (nonce nonce-0) (n n) (v v) (k k)
+  (defstrand alice 5 (n n) (v v) (pcr-id pcr-id-0) (nonce nonce-0) (k k)
     (aik aik) (tpm tpmconf) (tpmconf tpmconf))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpmconf))
@@ -3051,7 +3053,7 @@
     ((6 0) (2 0)) ((6 3) (5 2)) ((7 2) (0 0)) ((8 3) (7 1))
     ((9 3) (8 2)))
   (non-orig aik (invk k))
-  (uniq-orig nonce nonce-0 nonce-1 nonce-2 n v k)
+  (uniq-orig n v nonce nonce-0 nonce-1 nonce-2 k)
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain")
     (hash (hash "0" n) "refuse"))
   (conf tpmconf)

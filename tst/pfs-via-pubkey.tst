@@ -51,8 +51,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton pfs-easy
-  (vars (s text) (n data) (a b name) (new-akey akey))
-  (defstrand init 3 (s s) (n n) (a a) (b b) (new-akey new-akey))
+  (vars (n data) (s text) (new-akey akey) (a b name))
+  (defstrand init 3 (n n) (s s) (new-akey new-akey) (a a) (b b))
   (non-orig (invk new-akey) (privk "sgn" b))
   (uniq-orig n new-akey (privk "sgn" a))
   (traces
@@ -65,9 +65,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton pfs-easy
-  (vars (s text) (n data) (a b name) (new-akey new-akey-0 akey))
-  (defstrand init 3 (s s) (n n) (a a) (b b) (new-akey new-akey))
-  (defstrand resp 2 (s s) (n n) (a a) (b b) (new-akey new-akey-0))
+  (vars (n data) (s text) (new-akey new-akey-0 akey) (a b name))
+  (defstrand init 3 (n n) (s s) (new-akey new-akey) (a a) (b b))
+  (defstrand resp 2 (n n) (s s) (new-akey new-akey-0) (a a) (b b))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk new-akey) (privk "sgn" b))
   (uniq-orig n new-akey (privk "sgn" a))
@@ -85,9 +85,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton pfs-easy
-  (vars (s text) (n data) (a b name) (new-akey akey))
-  (defstrand init 3 (s s) (n n) (a a) (b b) (new-akey new-akey))
-  (defstrand resp 2 (s s) (n n) (a a) (b b) (new-akey new-akey))
+  (vars (n data) (s text) (new-akey akey) (a b name))
+  (defstrand init 3 (n n) (s s) (new-akey new-akey) (a a) (b b))
+  (defstrand resp 2 (n n) (s s) (new-akey new-akey) (a a) (b b))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk new-akey) (privk "sgn" b))
   (uniq-orig n new-akey (privk "sgn" a))
@@ -156,8 +156,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton pfs-easy
-  (vars (s text) (n data) (a b name) (new-akey akey))
-  (defstrand resp 2 (s s) (n n) (a a) (b b) (new-akey new-akey))
+  (vars (n data) (s text) (new-akey akey) (a b name))
+  (defstrand resp 2 (n n) (s s) (new-akey new-akey) (a a) (b b))
   (non-orig (privk "sgn" a))
   (traces
     ((recv (enc a b new-akey n (privk "sgn" a)))
@@ -168,9 +168,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton pfs-easy
-  (vars (s text) (n data) (a b name) (new-akey akey))
-  (defstrand resp 2 (s s) (n n) (a a) (b b) (new-akey new-akey))
-  (defstrand init 1 (n n) (a a) (b b) (new-akey new-akey))
+  (vars (n data) (s text) (new-akey akey) (a b name))
+  (defstrand resp 2 (n n) (s s) (new-akey new-akey) (a a) (b b))
+  (defstrand init 1 (n n) (new-akey new-akey) (a a) (b b))
   (precedes ((1 0) (0 0)))
   (non-orig (privk "sgn" a))
   (operation encryption-test (added-strand init 1)
@@ -236,9 +236,9 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton pfs-easy
-  (vars (s s-0 text) (n data) (a b name) (new-akey akey))
-  (defstrand resp 2 (s s) (n n) (a a) (b b) (new-akey new-akey))
-  (defstrand init 3 (s s-0) (n n) (a a) (b b) (new-akey new-akey))
+  (vars (n data) (s s-0 text) (new-akey akey) (a b name))
+  (defstrand resp 2 (n n) (s s) (new-akey new-akey) (a a) (b b))
+  (defstrand init 3 (n n) (s s-0) (new-akey new-akey) (a a) (b b))
   (deflistener s)
   (precedes ((1 0) (0 0)))
   (non-orig (invk new-akey))
@@ -256,9 +256,9 @@
   (comment "Not a skeleton"))
 
 (defskeleton pfs-easy
-  (vars (s s-0 text) (n data) (a b name) (new-akey akey))
-  (defstrand resp 2 (s s) (n n) (a a) (b b) (new-akey new-akey))
-  (defstrand init 3 (s s-0) (n n) (a a) (b b) (new-akey new-akey))
+  (vars (n data) (s s-0 text) (new-akey akey) (a b name))
+  (defstrand resp 2 (n n) (s s) (new-akey new-akey) (a a) (b b))
+  (defstrand init 3 (n n) (s s-0) (new-akey new-akey) (a a) (b b))
   (deflistener s)
   (precedes ((0 1) (2 0)) ((1 0) (0 0)))
   (non-orig (invk new-akey))

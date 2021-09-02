@@ -176,7 +176,7 @@ Executable cpsa4
     CPSA.Lib.SExpr CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Options
     CPSA.Algebra CPSA.Protocol CPSA.Strand CPSA.Characteristic
     CPSA.Channel CPSA.Loader CPSA.Displayer CPSA.Cohort
-    CPSA.Lib.Expand CPSA.Reduction
+    CPSA.Lib.Expand CPSA.Reduction CPSA.Signature
 
 Executable cpsa4sas
   Main-Is:              CPSA/SAS/Main.hs
@@ -188,7 +188,7 @@ Executable cpsa4sas
   Other-Modules:
     Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.Pretty CPSA.Lib.SExpr
     CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Options CPSA.Algebra
-    CPSA.SAS.SAS
+    CPSA.Signature CPSA.SAS.SAS
 
 Executable cpsa4prot
   Main-Is:              CPSA/Prot/Main.hs

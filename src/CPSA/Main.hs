@@ -17,8 +17,7 @@ import CPSA.Lib.SExpr
 import CPSA.Lib.Entry
 import CPSA.Options
 import CPSA.Algebra
--- import CPSA.Strand
-
+import CPSA.Signature (Sig, defaultSig, loadSig)
 import CPSA.Loader
 import CPSA.Lib.Expand
 import CPSA.Reduction
@@ -111,7 +110,9 @@ go :: String -> Gen -> [String] -> Maybe (SExpr Pos) ->
       Options -> [SExpr Pos] -> IO ()
 go name origin files herald opts sexprs =
     do
-      preskels <- tryIO (loadSExprs name origin sexprs)
+      sig <- getSig herald
+      -- print sig
+      preskels <- tryIO (loadSExprs sig name origin sexprs)
       case preskels of          -- Load protocols and preskeletons
         Left err -> abort err
         Right preskels ->
@@ -374,3 +375,18 @@ checkHeraldFlag Algebras =
     abort "show algebras help option not allowed in herald"
 checkHeraldFlag _ =
     return ()
+
+-- Get a signature from a herald form
+
+getSig :: Maybe (SExpr Pos) -> IO Sig
+getSig Nothing = return defaultSig
+getSig (Just x) =
+  do
+    xs <- getAlist x
+    let decls = assoc "lang" xs
+    loadSig (annotation x) decls
+
+-- Lookup value in alist, appending values with the same key
+assoc :: String -> [SExpr a] -> [SExpr a]
+assoc key alist =
+    concat [ rest | L _ (S _ head : rest) <- alist, key == head ]

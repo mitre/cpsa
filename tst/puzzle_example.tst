@@ -50,8 +50,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton puzzle
-  (vars (na payload text) (a b name) (s skey))
-  (defstrand init 3 (na na) (payload payload) (a a) (b b) (s s))
+  (vars (s skey) (na payload text) (a b name))
+  (defstrand init 3 (s s) (na na) (payload payload) (a a) (b b))
   (non-orig (ltk a b))
   (uniq-orig na payload)
   (traces
@@ -62,9 +62,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton puzzle
-  (vars (na payload text) (a b name) (s skey))
-  (defstrand init 3 (na na) (payload payload) (a a) (b b) (s s))
-  (defstrand resp 2 (na na) (a a) (b b) (s s))
+  (vars (s skey) (na payload text) (a b name))
+  (defstrand init 3 (s s) (na na) (payload payload) (a a) (b b))
+  (defstrand resp 2 (s s) (na na) (a a) (b b))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (ltk a b))
   (uniq-orig na payload)
@@ -128,8 +128,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton puzzle
-  (vars (na payload text) (a b name) (s skey))
-  (defstrand init 3 (na na) (payload payload) (a a) (b b) (s s))
+  (vars (s skey) (na payload text) (a b name))
+  (defstrand init 3 (s s) (na na) (payload payload) (a a) (b b))
   (deflistener payload)
   (non-orig (ltk a b))
   (uniq-orig na payload)
@@ -142,8 +142,8 @@
   (comment "Not a skeleton"))
 
 (defskeleton puzzle
-  (vars (na payload text) (a b name) (s skey))
-  (defstrand init 3 (na na) (payload payload) (a a) (b b) (s s))
+  (vars (s skey) (na payload text) (a b name))
+  (defstrand init 3 (s s) (na na) (payload payload) (a a) (b b))
   (deflistener payload)
   (precedes ((0 2) (1 0)))
   (non-orig (ltk a b))
@@ -157,10 +157,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton puzzle
-  (vars (na payload text) (a b name) (s skey))
-  (defstrand init 3 (na na) (payload payload) (a a) (b b) (s s))
+  (vars (s skey) (na payload text) (a b name))
+  (defstrand init 3 (s s) (na na) (payload payload) (a a) (b b))
   (deflistener payload)
-  (defstrand resp 2 (na na) (a a) (b b) (s s))
+  (defstrand resp 2 (s s) (na na) (a a) (b b))
   (precedes ((0 0) (2 0)) ((0 2) (1 0)) ((2 1) (0 1)))
   (non-orig (ltk a b))
   (uniq-orig na payload)
@@ -225,13 +225,13 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton puzzle
-  (vars (na payload text) (a b name) (s skey))
-  (defstrand init 3 (na na) (payload payload) (a a) (b b) (s s))
-  (defstrand resp 2 (na na) (a a) (b b) (s s))
+  (vars (s skey) (na payload text) (a b name))
+  (defstrand init 3 (s s) (na na) (payload payload) (a a) (b b))
+  (defstrand resp 2 (s s) (na na) (a a) (b b))
   (deflistener s)
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (ltk a b))
-  (uniq-orig na payload s)
+  (uniq-orig s na payload)
   (traces ((send na) (recv (enc na s (ltk a b))) (send (enc payload s)))
     ((recv na) (send (enc na s (ltk a b)))) ((recv s) (send s)))
   (label 5)
@@ -241,13 +241,13 @@
   (comment "Not a skeleton"))
 
 (defskeleton puzzle
-  (vars (na payload text) (a b name) (s skey))
-  (defstrand init 3 (na na) (payload payload) (a a) (b b) (s s))
-  (defstrand resp 2 (na na) (a a) (b b) (s s))
+  (vars (s skey) (na payload text) (a b name))
+  (defstrand init 3 (s s) (na na) (payload payload) (a a) (b b))
+  (defstrand resp 2 (s s) (na na) (a a) (b b))
   (deflistener s)
   (precedes ((0 0) (1 0)) ((1 1) (0 1)) ((1 1) (2 0)))
   (non-orig (ltk a b))
-  (uniq-orig na payload s)
+  (uniq-orig s na payload)
   (traces ((send na) (recv (enc na s (ltk a b))) (send (enc payload s)))
     ((recv na) (send (enc na s (ltk a b)))) ((recv s) (send s)))
   (label 6)
@@ -306,13 +306,13 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton puzzle
-  (vars (na payload text) (a b name) (s skey))
-  (defstrand init 3 (na na) (payload payload) (a a) (b b) (s s))
-  (defstrand resp 2 (na na) (a a) (b b) (s s))
+  (vars (s skey) (na payload text) (a b name))
+  (defstrand init 3 (s s) (na na) (payload payload) (a a) (b b))
+  (defstrand resp 2 (s s) (na na) (a a) (b b))
   (deflistener payload)
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (ltk a b))
-  (uniq-orig na payload s)
+  (uniq-orig s na payload)
   (traces ((send na) (recv (enc na s (ltk a b))) (send (enc payload s)))
     ((recv na) (send (enc na s (ltk a b))))
     ((recv payload) (send payload)))
@@ -323,13 +323,13 @@
   (comment "Not a skeleton"))
 
 (defskeleton puzzle
-  (vars (na payload text) (a b name) (s skey))
-  (defstrand init 3 (na na) (payload payload) (a a) (b b) (s s))
-  (defstrand resp 2 (na na) (a a) (b b) (s s))
+  (vars (s skey) (na payload text) (a b name))
+  (defstrand init 3 (s s) (na na) (payload payload) (a a) (b b))
+  (defstrand resp 2 (s s) (na na) (a a) (b b))
   (deflistener payload)
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)))
   (non-orig (ltk a b))
-  (uniq-orig na payload s)
+  (uniq-orig s na payload)
   (traces ((send na) (recv (enc na s (ltk a b))) (send (enc payload s)))
     ((recv na) (send (enc na s (ltk a b))))
     ((recv payload) (send payload)))
@@ -340,15 +340,15 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton puzzle
-  (vars (na payload text) (a b name) (s skey))
-  (defstrand init 3 (na na) (payload payload) (a a) (b b) (s s))
-  (defstrand resp 2 (na na) (a a) (b b) (s s))
+  (vars (s skey) (na payload text) (a b name))
+  (defstrand init 3 (s s) (na na) (payload payload) (a a) (b b))
+  (defstrand resp 2 (s s) (na na) (a a) (b b))
   (deflistener payload)
   (deflistener s)
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((1 1) (3 0))
     ((3 1) (2 0)))
   (non-orig (ltk a b))
-  (uniq-orig na payload s)
+  (uniq-orig s na payload)
   (operation nonce-test (added-listener s) payload (2 0)
     (enc payload s))
   (traces ((send na) (recv (enc na s (ltk a b))) (send (enc payload s)))
@@ -409,8 +409,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton puzzle
-  (vars (payload na text) (a b name) (s skey))
-  (defstrand resp 3 (na na) (payload payload) (a a) (b b) (s s))
+  (vars (s skey) (payload na text) (a b name))
+  (defstrand resp 3 (s s) (na na) (payload payload) (a a) (b b))
   (non-orig (ltk a b))
   (uniq-orig s)
   (traces
@@ -421,9 +421,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton puzzle
-  (vars (payload na na-0 text) (a b a-0 b-0 name) (s skey))
-  (defstrand resp 3 (na na) (payload payload) (a a) (b b) (s s))
-  (defstrand init 3 (na na-0) (payload payload) (a a-0) (b b-0) (s s))
+  (vars (s skey) (payload na na-0 text) (a b a-0 b-0 name))
+  (defstrand resp 3 (s s) (na na) (payload payload) (a a) (b b))
+  (defstrand init 3 (s s) (na na-0) (payload payload) (a a-0) (b b-0))
   (precedes ((0 1) (1 1)) ((1 2) (0 2)))
   (non-orig (ltk a b))
   (uniq-orig s)
@@ -438,8 +438,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton puzzle
-  (vars (payload na text) (a b name) (s skey))
-  (defstrand resp 3 (na na) (payload payload) (a a) (b b) (s s))
+  (vars (s skey) (payload na text) (a b name))
+  (defstrand resp 3 (s s) (na na) (payload payload) (a a) (b b))
   (deflistener s)
   (precedes ((0 1) (1 0)) ((1 1) (0 2)))
   (non-orig (ltk a b))
@@ -454,9 +454,9 @@
   (comment "empty cohort"))
 
 (defskeleton puzzle
-  (vars (payload na text) (a b name) (s skey))
-  (defstrand resp 3 (na na) (payload payload) (a a) (b b) (s s))
-  (defstrand init 3 (na na) (payload payload) (a a) (b b) (s s))
+  (vars (s skey) (payload na text) (a b name))
+  (defstrand resp 3 (s s) (na na) (payload payload) (a a) (b b))
+  (defstrand init 3 (s s) (na na) (payload payload) (a a) (b b))
   (precedes ((0 1) (1 1)) ((1 2) (0 2)))
   (non-orig (ltk a b))
   (uniq-orig s)
@@ -520,8 +520,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton puzzle
-  (vars (payload na text) (a b name) (s skey))
-  (defstrand resp 3 (na na) (payload payload) (a a) (b b) (s s))
+  (vars (s skey) (payload na text) (a b name))
+  (defstrand resp 3 (s s) (na na) (payload payload) (a a) (b b))
   (deflistener s)
   (non-orig (ltk a b))
   (uniq-orig s)
@@ -534,8 +534,8 @@
   (comment "Not a skeleton"))
 
 (defskeleton puzzle
-  (vars (payload na text) (a b name) (s skey))
-  (defstrand resp 3 (na na) (payload payload) (a a) (b b) (s s))
+  (vars (s skey) (payload na text) (a b name))
+  (defstrand resp 3 (s s) (na na) (payload payload) (a a) (b b))
   (deflistener s)
   (precedes ((0 1) (1 0)))
   (non-orig (ltk a b))
@@ -598,13 +598,13 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton puzzle
-  (vars (payload na text) (a b name) (s skey))
-  (defstrand resp 3 (na na) (payload payload) (a a) (b b) (s s))
-  (defstrand init 3 (na na) (payload payload) (a a) (b b) (s s))
+  (vars (s skey) (payload na text) (a b name))
+  (defstrand resp 3 (s s) (na na) (payload payload) (a a) (b b))
+  (defstrand init 3 (s s) (na na) (payload payload) (a a) (b b))
   (deflistener payload)
   (precedes ((0 1) (1 1)) ((1 2) (0 2)))
   (non-orig (ltk a b))
-  (uniq-orig payload s)
+  (uniq-orig s payload)
   (traces ((recv na) (send (enc na s (ltk a b))) (recv (enc payload s)))
     ((send na) (recv (enc na s (ltk a b))) (send (enc payload s)))
     ((recv payload) (send payload)))
@@ -615,13 +615,13 @@
   (comment "Not a skeleton"))
 
 (defskeleton puzzle
-  (vars (payload na text) (a b name) (s skey))
-  (defstrand resp 3 (na na) (payload payload) (a a) (b b) (s s))
-  (defstrand init 3 (na na) (payload payload) (a a) (b b) (s s))
+  (vars (s skey) (payload na text) (a b name))
+  (defstrand resp 3 (s s) (na na) (payload payload) (a a) (b b))
+  (defstrand init 3 (s s) (na na) (payload payload) (a a) (b b))
   (deflistener payload)
   (precedes ((0 1) (1 1)) ((1 2) (0 2)) ((1 2) (2 0)))
   (non-orig (ltk a b))
-  (uniq-orig payload s)
+  (uniq-orig s payload)
   (traces ((recv na) (send (enc na s (ltk a b))) (recv (enc payload s)))
     ((send na) (recv (enc na s (ltk a b))) (send (enc payload s)))
     ((recv payload) (send payload)))
@@ -632,15 +632,15 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton puzzle
-  (vars (payload na text) (a b name) (s skey))
-  (defstrand resp 3 (na na) (payload payload) (a a) (b b) (s s))
-  (defstrand init 3 (na na) (payload payload) (a a) (b b) (s s))
+  (vars (s skey) (payload na text) (a b name))
+  (defstrand resp 3 (s s) (na na) (payload payload) (a a) (b b))
+  (defstrand init 3 (s s) (na na) (payload payload) (a a) (b b))
   (deflistener payload)
   (deflistener s)
   (precedes ((0 1) (1 1)) ((0 1) (3 0)) ((1 2) (0 2)) ((1 2) (2 0))
     ((3 1) (2 0)))
   (non-orig (ltk a b))
-  (uniq-orig payload s)
+  (uniq-orig s payload)
   (operation nonce-test (added-listener s) payload (2 0)
     (enc payload s))
   (traces ((recv na) (send (enc na s (ltk a b))) (recv (enc payload s)))

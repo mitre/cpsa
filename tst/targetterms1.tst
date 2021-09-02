@@ -46,8 +46,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton targetterms
-  (vars (n1 n2 text) (a skey) (k akey))
-  (defstrand init 2 (n1 n1) (n2 n2) (a a) (k k))
+  (vars (a skey) (n1 n2 text) (k akey))
+  (defstrand init 2 (a a) (n1 n1) (n2 n2) (k k))
   (non-orig (invk k))
   (uniq-orig n1)
   (traces ((send (enc n1 (enc a n2 k) k)) (recv (enc a n1 k))))
@@ -57,8 +57,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton targetterms
-  (vars (n2 text) (a skey) (k akey))
-  (defstrand init 2 (n1 n2) (n2 n2) (a a) (k k))
+  (vars (a skey) (n2 text) (k akey))
+  (defstrand init 2 (a a) (n1 n2) (n2 n2) (k k))
   (non-orig (invk k))
   (uniq-orig n2)
   (operation nonce-test (displaced 1 0 init 1) n1 (0 1)
@@ -71,8 +71,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton targetterms
-  (vars (n2 text) (a skey) (k akey))
-  (defstrand init 2 (n1 n2) (n2 n2) (a a) (k k))
+  (vars (a skey) (n2 text) (k akey))
+  (defstrand init 2 (a a) (n1 n2) (n2 n2) (k k))
   (defstrand resp 2 (m (enc a n2 k)) (n1 n2) (k k))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk k))

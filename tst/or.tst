@@ -59,8 +59,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton or
-  (vars (x y mesg) (nb m text) (s a b name) (k skey))
-  (defstrand resp 4 (x x) (y y) (nb nb) (m m) (a a) (b b) (s s) (k k))
+  (vars (x y mesg) (k skey) (nb m text) (s a b name))
+  (defstrand resp 4 (x x) (y y) (k k) (nb nb) (m m) (a a) (b b) (s s))
   (non-orig (ltk a s) (ltk b s))
   (uniq-orig nb)
   (traces
@@ -72,12 +72,12 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton or
-  (vars (x y mesg) (nb m na m-0 text) (s a b a-0 name) (k skey))
-  (defstrand resp 4 (x x) (y y) (nb nb) (m m) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (na na) (nb nb) (m m-0) (a a-0) (b b) (s s) (k k))
+  (vars (x y mesg) (k skey) (nb m na m-0 text) (s a b a-0 name))
+  (defstrand resp 4 (x x) (y y) (k k) (nb nb) (m m) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (na na) (nb nb) (m m-0) (a a-0) (b b) (s s))
   (precedes ((0 1) (1 0)) ((1 1) (0 2)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig nb k)
+  (uniq-orig k nb)
   (operation encryption-test (added-strand serv 2) (enc nb k (ltk b s))
     (0 2))
   (traces
@@ -93,12 +93,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton or
-  (vars (x y mesg) (nb m nb-0 m-0 text) (s a b b-0 name) (k skey))
-  (defstrand resp 4 (x x) (y y) (nb nb) (m m) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (na nb) (nb nb-0) (m m-0) (a b) (b b-0) (s s) (k k))
+  (vars (x y mesg) (k skey) (nb m nb-0 m-0 text) (s a b b-0 name))
+  (defstrand resp 4 (x x) (y y) (k k) (nb nb) (m m) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (na nb) (nb nb-0) (m m-0) (a b) (b b-0) (s s))
   (precedes ((0 1) (1 0)) ((1 1) (0 2)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig nb k)
+  (uniq-orig k nb)
   (operation encryption-test (added-strand serv 2) (enc nb k (ltk b s))
     (0 2))
   (traces
@@ -114,12 +114,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton or
-  (vars (x y mesg) (nb m na text) (s a b name) (k skey))
-  (defstrand resp 4 (x x) (y y) (nb nb) (m m) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (na na) (nb nb) (m m) (a a) (b b) (s s) (k k))
+  (vars (x y mesg) (k skey) (nb m na text) (s a b name))
+  (defstrand resp 4 (x x) (y y) (k k) (nb nb) (m m) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (na na) (nb nb) (m m) (a a) (b b) (s s))
   (precedes ((0 1) (1 0)) ((1 1) (0 2)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig nb k)
+  (uniq-orig k nb)
   (operation encryption-test (displaced 2 0 resp 2)
     (enc nb m-0 a-0 b (ltk b s)) (1 0))
   (traces
@@ -134,12 +134,12 @@
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton or
-  (vars (x y mesg) (nb m nb-0 text) (s a name) (k skey))
-  (defstrand resp 4 (x x) (y y) (nb nb) (m m) (a a) (b a) (s s) (k k))
-  (defstrand serv 2 (na nb) (nb nb-0) (m m) (a a) (b a) (s s) (k k))
+  (vars (x y mesg) (k skey) (nb m nb-0 text) (s a name))
+  (defstrand resp 4 (x x) (y y) (k k) (nb nb) (m m) (a a) (b a) (s s))
+  (defstrand serv 2 (k k) (na nb) (nb nb-0) (m m) (a a) (b a) (s s))
   (precedes ((0 1) (1 0)) ((1 1) (0 2)))
   (non-orig (ltk a s))
-  (uniq-orig nb k)
+  (uniq-orig k nb)
   (operation encryption-test (displaced 2 0 resp 2)
     (enc nb m-0 b b (ltk b s)) (1 0))
   (traces
@@ -155,13 +155,13 @@
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton or
-  (vars (x y mesg) (nb m na text) (s a b name) (k skey))
-  (defstrand resp 4 (x x) (y y) (nb nb) (m m) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (na na) (nb nb) (m m) (a a) (b b) (s s) (k k))
+  (vars (x y mesg) (k skey) (nb m na text) (s a b name))
+  (defstrand resp 4 (x x) (y y) (k k) (nb nb) (m m) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (na na) (nb nb) (m m) (a a) (b b) (s s))
   (defstrand init 1 (na na) (m m) (a a) (b b) (s s))
   (precedes ((0 1) (1 0)) ((1 1) (0 2)) ((2 0) (1 0)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig nb k)
+  (uniq-orig k nb)
   (operation encryption-test (added-strand init 1)
     (enc na m a b (ltk a s)) (1 0))
   (traces
@@ -179,12 +179,12 @@
   (origs (k (1 1)) (nb (0 1))))
 
 (defskeleton or
-  (vars (x y mesg) (nb m text) (s a name) (k skey))
-  (defstrand resp 4 (x x) (y y) (nb nb) (m m) (a a) (b a) (s s) (k k))
-  (defstrand serv 2 (na nb) (nb nb) (m m) (a a) (b a) (s s) (k k))
+  (vars (x y mesg) (k skey) (nb m text) (s a name))
+  (defstrand resp 4 (x x) (y y) (k k) (nb nb) (m m) (a a) (b a) (s s))
+  (defstrand serv 2 (k k) (na nb) (nb nb) (m m) (a a) (b a) (s s))
   (precedes ((0 1) (1 0)) ((1 1) (0 2)))
   (non-orig (ltk a s))
-  (uniq-orig nb k)
+  (uniq-orig k nb)
   (operation encryption-test (displaced 2 0 resp 2)
     (enc na m a a (ltk a s)) (1 0))
   (traces
@@ -201,13 +201,13 @@
   (origs (k (1 1)) (nb (0 1))))
 
 (defskeleton or
-  (vars (x y x-0 mesg) (nb m na text) (s a name) (k skey))
-  (defstrand resp 4 (x x) (y y) (nb nb) (m m) (a a) (b a) (s s) (k k))
-  (defstrand serv 2 (na na) (nb nb) (m m) (a a) (b a) (s s) (k k))
+  (vars (x y x-0 mesg) (k skey) (nb m na text) (s a name))
+  (defstrand resp 4 (x x) (y y) (k k) (nb nb) (m m) (a a) (b a) (s s))
+  (defstrand serv 2 (k k) (na na) (nb nb) (m m) (a a) (b a) (s s))
   (defstrand resp 2 (x x-0) (nb na) (m m) (a a) (b a) (s s))
   (precedes ((0 1) (1 0)) ((1 1) (0 2)) ((2 1) (1 0)))
   (non-orig (ltk a s))
-  (uniq-orig nb k)
+  (uniq-orig k nb)
   (operation encryption-test (added-strand resp 2)
     (enc na m a a (ltk a s)) (1 0))
   (traces
@@ -226,13 +226,13 @@
   (origs (k (1 1)) (nb (0 1))))
 
 (defskeleton or
-  (vars (x y mesg) (nb m nb-0 text) (s a name) (k skey))
-  (defstrand resp 4 (x x) (y y) (nb nb) (m m) (a a) (b a) (s s) (k k))
-  (defstrand serv 2 (na nb) (nb nb-0) (m m) (a a) (b a) (s s) (k k))
+  (vars (x y mesg) (k skey) (nb m nb-0 text) (s a name))
+  (defstrand resp 4 (x x) (y y) (k k) (nb nb) (m m) (a a) (b a) (s s))
+  (defstrand serv 2 (k k) (na nb) (nb nb-0) (m m) (a a) (b a) (s s))
   (defstrand init 1 (na nb-0) (m m) (a a) (b a) (s s))
   (precedes ((0 1) (1 0)) ((1 1) (0 2)) ((2 0) (1 0)))
   (non-orig (ltk a s))
-  (uniq-orig nb k)
+  (uniq-orig k nb)
   (operation encryption-test (added-strand init 1)
     (enc nb-0 m a a (ltk a s)) (1 0))
   (traces
@@ -250,13 +250,13 @@
   (origs (k (1 1)) (nb (0 1))))
 
 (defskeleton or
-  (vars (x y x-0 mesg) (nb m nb-0 text) (s a name) (k skey))
-  (defstrand resp 4 (x x) (y y) (nb nb) (m m) (a a) (b a) (s s) (k k))
-  (defstrand serv 2 (na nb) (nb nb-0) (m m) (a a) (b a) (s s) (k k))
+  (vars (x y x-0 mesg) (k skey) (nb m nb-0 text) (s a name))
+  (defstrand resp 4 (x x) (y y) (k k) (nb nb) (m m) (a a) (b a) (s s))
+  (defstrand serv 2 (k k) (na nb) (nb nb-0) (m m) (a a) (b a) (s s))
   (defstrand resp 2 (x x-0) (nb nb-0) (m m) (a a) (b a) (s s))
   (precedes ((0 1) (1 0)) ((1 1) (0 2)) ((2 1) (1 0)))
   (non-orig (ltk a s))
-  (uniq-orig nb k)
+  (uniq-orig k nb)
   (operation encryption-test (added-strand resp 2)
     (enc nb-0 m a a (ltk a s)) (1 0))
   (traces

@@ -61,8 +61,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton denning-sacco
-  (vars (ta text) (a b ks name) (k skey))
-  (defstrand resp 1 (ta ta) (a a) (b b) (ks ks) (k k))
+  (vars (k skey) (ta text) (a b ks name))
+  (defstrand resp 1 (k k) (ta ta) (a a) (b b) (ks ks))
   (non-orig (privk a) (privk b) (privk ks))
   (uniq-orig k)
   (traces
@@ -75,9 +75,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton denning-sacco
-  (vars (ta text) (a b ks ks-0 name) (k skey))
-  (defstrand resp 1 (ta ta) (a a) (b b) (ks ks) (k k))
-  (defstrand init 3 (ta ta) (a a) (b b) (ks ks-0) (k k))
+  (vars (k skey) (ta text) (a b ks ks-0 name))
+  (defstrand resp 1 (k k) (ta ta) (a a) (b b) (ks ks))
+  (defstrand init 3 (k k) (ta ta) (a a) (b b) (ks ks-0))
   (precedes ((1 2) (0 0)))
   (non-orig (privk a) (privk b) (privk ks))
   (uniq-orig k)
@@ -100,9 +100,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton denning-sacco
-  (vars (ta text) (a b ks name) (k skey))
-  (defstrand resp 1 (ta ta) (a a) (b b) (ks ks) (k k))
-  (defstrand init 3 (ta ta) (a a) (b b) (ks ks) (k k))
+  (vars (k skey) (ta text) (a b ks name))
+  (defstrand resp 1 (k k) (ta ta) (a a) (b b) (ks ks))
+  (defstrand init 3 (k k) (ta ta) (a a) (b b) (ks ks))
   (precedes ((1 2) (0 0)))
   (non-orig (privk a) (privk b) (privk ks))
   (uniq-orig k)
@@ -126,9 +126,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton denning-sacco
-  (vars (ta text) (a b ks a-0 name) (k skey))
-  (defstrand resp 1 (ta ta) (a a) (b b) (ks ks) (k k))
-  (defstrand init 3 (ta ta) (a a) (b b) (ks ks) (k k))
+  (vars (k skey) (ta text) (a b ks a-0 name))
+  (defstrand resp 1 (k k) (ta ta) (a a) (b b) (ks ks))
+  (defstrand init 3 (k k) (ta ta) (a a) (b b) (ks ks))
   (defstrand keyserver 2 (a a-0) (b b) (ks ks))
   (precedes ((1 2) (0 0)) ((2 1) (1 1)))
   (non-orig (privk a) (privk b) (privk ks))
@@ -155,9 +155,9 @@
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton denning-sacco
-  (vars (ta text) (a b ks b-0 name) (k skey))
-  (defstrand resp 1 (ta ta) (a a) (b b) (ks ks) (k k))
-  (defstrand init 3 (ta ta) (a a) (b b) (ks ks) (k k))
+  (vars (k skey) (ta text) (a b ks b-0 name))
+  (defstrand resp 1 (k k) (ta ta) (a a) (b b) (ks ks))
+  (defstrand init 3 (k k) (ta ta) (a a) (b b) (ks ks))
   (defstrand keyserver 2 (a b) (b b-0) (ks ks))
   (precedes ((1 2) (0 0)) ((2 1) (1 1)))
   (non-orig (privk a) (privk b) (privk ks))
@@ -184,9 +184,9 @@
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton denning-sacco
-  (vars (ta text) (a b ks a-0 a-1 name) (k skey))
-  (defstrand resp 1 (ta ta) (a a) (b b) (ks ks) (k k))
-  (defstrand init 3 (ta ta) (a a) (b b) (ks ks) (k k))
+  (vars (k skey) (ta text) (a b ks a-0 a-1 name))
+  (defstrand resp 1 (k k) (ta ta) (a a) (b b) (ks ks))
+  (defstrand init 3 (k k) (ta ta) (a a) (b b) (ks ks))
   (defstrand keyserver 2 (a a-0) (b b) (ks ks))
   (defstrand keyserver 2 (a a-1) (b a) (ks ks))
   (precedes ((1 2) (0 0)) ((2 1) (1 1)) ((3 1) (1 1)))
@@ -220,9 +220,9 @@
   (origs (k (1 2))))
 
 (defskeleton denning-sacco
-  (vars (ta text) (b ks a name) (k skey))
-  (defstrand resp 1 (ta ta) (a b) (b b) (ks ks) (k k))
-  (defstrand init 3 (ta ta) (a b) (b b) (ks ks) (k k))
+  (vars (k skey) (ta text) (b ks a name))
+  (defstrand resp 1 (k k) (ta ta) (a b) (b b) (ks ks))
+  (defstrand init 3 (k k) (ta ta) (a b) (b b) (ks ks))
   (defstrand keyserver 2 (a a) (b b) (ks ks))
   (precedes ((1 2) (0 0)) ((2 1) (1 1)))
   (non-orig (privk b) (privk ks))
@@ -250,9 +250,9 @@
   (origs (k (1 2))))
 
 (defskeleton denning-sacco
-  (vars (ta text) (b ks a name) (k skey))
-  (defstrand resp 1 (ta ta) (a a) (b b) (ks ks) (k k))
-  (defstrand init 3 (ta ta) (a a) (b b) (ks ks) (k k))
+  (vars (k skey) (ta text) (b ks a name))
+  (defstrand resp 1 (k k) (ta ta) (a a) (b b) (ks ks))
+  (defstrand init 3 (k k) (ta ta) (a a) (b b) (ks ks))
   (defstrand keyserver 2 (a a) (b b) (ks ks))
   (precedes ((1 2) (0 0)) ((2 1) (1 1)))
   (non-orig (privk b) (privk ks) (privk a))
@@ -280,9 +280,9 @@
   (origs (k (1 2))))
 
 (defskeleton denning-sacco
-  (vars (ta text) (a b ks a-0 b-0 name) (k skey))
-  (defstrand resp 1 (ta ta) (a a) (b b) (ks ks) (k k))
-  (defstrand init 3 (ta ta) (a a) (b b) (ks ks) (k k))
+  (vars (k skey) (ta text) (a b ks a-0 b-0 name))
+  (defstrand resp 1 (k k) (ta ta) (a a) (b b) (ks ks))
+  (defstrand init 3 (k k) (ta ta) (a a) (b b) (ks ks))
   (defstrand keyserver 2 (a a-0) (b b) (ks ks))
   (defstrand keyserver 2 (a a) (b b-0) (ks ks))
   (precedes ((1 2) (0 0)) ((2 1) (1 1)) ((3 1) (1 1)))
@@ -316,9 +316,9 @@
   (origs (k (1 2))))
 
 (defskeleton denning-sacco
-  (vars (ta text) (a b ks b-0 a-0 name) (k skey))
-  (defstrand resp 1 (ta ta) (a a) (b b) (ks ks) (k k))
-  (defstrand init 3 (ta ta) (a a) (b b) (ks ks) (k k))
+  (vars (k skey) (ta text) (a b ks b-0 a-0 name))
+  (defstrand resp 1 (k k) (ta ta) (a a) (b b) (ks ks))
+  (defstrand init 3 (k k) (ta ta) (a a) (b b) (ks ks))
   (defstrand keyserver 2 (a b) (b b-0) (ks ks))
   (defstrand keyserver 2 (a a-0) (b a) (ks ks))
   (precedes ((1 2) (0 0)) ((2 1) (1 1)) ((3 1) (1 1)))
@@ -352,9 +352,9 @@
   (origs (k (1 2))))
 
 (defskeleton denning-sacco
-  (vars (ta text) (b ks b-0 name) (k skey))
-  (defstrand resp 1 (ta ta) (a b-0) (b b) (ks ks) (k k))
-  (defstrand init 3 (ta ta) (a b-0) (b b) (ks ks) (k k))
+  (vars (k skey) (ta text) (b ks b-0 name))
+  (defstrand resp 1 (k k) (ta ta) (a b-0) (b b) (ks ks))
+  (defstrand init 3 (k k) (ta ta) (a b-0) (b b) (ks ks))
   (defstrand keyserver 2 (a b) (b b-0) (ks ks))
   (precedes ((1 2) (0 0)) ((2 1) (1 1)))
   (non-orig (privk b) (privk ks) (privk b-0))
@@ -384,9 +384,9 @@
   (origs (k (1 2))))
 
 (defskeleton denning-sacco
-  (vars (ta text) (b ks b-0 name) (k skey))
-  (defstrand resp 1 (ta ta) (a b) (b b) (ks ks) (k k))
-  (defstrand init 3 (ta ta) (a b) (b b) (ks ks) (k k))
+  (vars (k skey) (ta text) (b ks b-0 name))
+  (defstrand resp 1 (k k) (ta ta) (a b) (b b) (ks ks))
+  (defstrand init 3 (k k) (ta ta) (a b) (b b) (ks ks))
   (defstrand keyserver 2 (a b) (b b-0) (ks ks))
   (precedes ((1 2) (0 0)) ((2 1) (1 1)))
   (non-orig (privk b) (privk ks))
@@ -415,9 +415,9 @@
   (origs (k (1 2))))
 
 (defskeleton denning-sacco
-  (vars (ta text) (a b ks b-0 b-1 name) (k skey))
-  (defstrand resp 1 (ta ta) (a a) (b b) (ks ks) (k k))
-  (defstrand init 3 (ta ta) (a a) (b b) (ks ks) (k k))
+  (vars (k skey) (ta text) (a b ks b-0 b-1 name))
+  (defstrand resp 1 (k k) (ta ta) (a a) (b b) (ks ks))
+  (defstrand init 3 (k k) (ta ta) (a a) (b b) (ks ks))
   (defstrand keyserver 2 (a b) (b b-0) (ks ks))
   (defstrand keyserver 2 (a a) (b b-1) (ks ks))
   (precedes ((1 2) (0 0)) ((2 1) (1 1)) ((3 1) (1 1)))

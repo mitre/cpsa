@@ -50,8 +50,8 @@
   (comment "Blanchet's protocol using named asymmetric keys"))
 
 (defskeleton blanchet
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (non-orig (privk b))
   (uniq-orig s)
   (comment "Analyze from the initiator's perspective")
@@ -62,9 +62,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton blanchet
-  (vars (d data) (a b a-0 b-0 name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
-  (defstrand resp 2 (d d) (a a-0) (b b-0) (s s))
+  (vars (d data) (s skey) (a b a-0 b-0 name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
+  (defstrand resp 2 (d d) (s s) (a a-0) (b b-0))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (privk b))
   (uniq-orig s)
@@ -77,8 +77,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (deflistener s)
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (privk b))
@@ -93,9 +93,9 @@
   (comment "empty cohort"))
 
 (defskeleton blanchet
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (privk b))
   (uniq-orig s)
@@ -158,8 +158,8 @@
   (comment "Blanchet's protocol using named asymmetric keys"))
 
 (defskeleton blanchet
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (deflistener d)
   (non-orig (privk b))
   (uniq-orig d s)
@@ -172,10 +172,10 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton blanchet
-  (vars (d data) (a b a-0 b-0 name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b a-0 b-0 name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (deflistener d)
-  (defstrand resp 2 (d d) (a a-0) (b b-0) (s s))
+  (defstrand resp 2 (d d) (s s) (a a-0) (b b-0))
   (precedes ((0 0) (2 0)) ((2 1) (0 1)) ((2 1) (1 0)))
   (non-orig (privk b))
   (uniq-orig d s)
@@ -189,8 +189,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (deflistener d)
   (deflistener s)
   (precedes ((0 0) (2 0)) ((2 1) (0 1)))
@@ -206,10 +206,10 @@
   (comment "empty cohort"))
 
 (defskeleton blanchet
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (deflistener d)
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (precedes ((0 0) (2 0)) ((2 1) (0 1)) ((2 1) (1 0)))
   (non-orig (privk b))
   (uniq-orig d s)
@@ -224,10 +224,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (deflistener d)
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (deflistener s)
   (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((2 1) (0 1)) ((2 1) (1 0))
     ((3 1) (1 0)))
@@ -292,8 +292,8 @@
   (comment "Blanchet's protocol using named asymmetric keys"))
 
 (defskeleton blanchet
-  (vars (d data) (a b name) (s skey))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (non-orig (privk a) (privk b))
   (uniq-orig s)
   (comment "Analyze from the responder's perspective")
@@ -304,9 +304,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet
-  (vars (d data) (a b b-0 name) (s skey))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
-  (defstrand init 1 (a a) (b b-0) (s s))
+  (vars (d data) (s skey) (a b b-0 name))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
+  (defstrand init 1 (s s) (a a) (b b-0))
   (precedes ((1 0) (0 0)))
   (non-orig (privk a) (privk b))
   (uniq-orig s)
@@ -369,8 +369,8 @@
   (comment "Blanchet's protocol using named asymmetric keys"))
 
 (defskeleton blanchet
-  (vars (d data) (a b name) (s skey))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (deflistener d)
   (non-orig (privk a) (privk b))
   (uniq-orig d s)
@@ -384,8 +384,8 @@
   (comment "Not a skeleton"))
 
 (defskeleton blanchet
-  (vars (d data) (a b name) (s skey))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (deflistener d)
   (precedes ((0 1) (1 0)))
   (non-orig (privk a) (privk b))
@@ -399,10 +399,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet
-  (vars (d data) (a b b-0 name) (s skey))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b b-0 name))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (deflistener d)
-  (defstrand init 1 (a a) (b b-0) (s s))
+  (defstrand init 1 (s s) (a a) (b b-0))
   (precedes ((0 1) (1 0)) ((2 0) (0 0)))
   (non-orig (privk a) (privk b))
   (uniq-orig d s)
@@ -880,8 +880,8 @@
   (comment "Fixed Blanchet's protocol using named asymmetric keys"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (non-orig (privk b))
   (uniq-orig s)
   (comment "Analyze from the initiator's perspective")
@@ -892,9 +892,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b a-0 b-0 name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
-  (defstrand resp 2 (d d) (a a-0) (b b-0) (s s))
+  (vars (d data) (s skey) (a b a-0 b-0 name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
+  (defstrand resp 2 (d d) (s s) (a a-0) (b b-0))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (privk b))
   (uniq-orig s)
@@ -907,8 +907,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (deflistener s)
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (privk b))
@@ -923,9 +923,9 @@
   (comment "empty cohort"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (privk b))
   (uniq-orig s)
@@ -988,8 +988,8 @@
   (comment "Fixed Blanchet's protocol using named asymmetric keys"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (deflistener d)
   (non-orig (privk b))
   (uniq-orig d s)
@@ -1002,10 +1002,10 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b a-0 b-0 name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b a-0 b-0 name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (deflistener d)
-  (defstrand resp 2 (d d) (a a-0) (b b-0) (s s))
+  (defstrand resp 2 (d d) (s s) (a a-0) (b b-0))
   (precedes ((0 0) (2 0)) ((2 1) (0 1)) ((2 1) (1 0)))
   (non-orig (privk b))
   (uniq-orig d s)
@@ -1019,8 +1019,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (deflistener d)
   (deflistener s)
   (precedes ((0 0) (2 0)) ((2 1) (0 1)))
@@ -1036,10 +1036,10 @@
   (comment "empty cohort"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (deflistener d)
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (precedes ((0 0) (2 0)) ((2 1) (0 1)) ((2 1) (1 0)))
   (non-orig (privk b))
   (uniq-orig d s)
@@ -1054,10 +1054,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (deflistener d)
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (deflistener s)
   (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((2 1) (0 1)) ((2 1) (1 0))
     ((3 1) (1 0)))
@@ -1122,8 +1122,8 @@
   (comment "Fixed Blanchet's protocol using named asymmetric keys"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (non-orig (privk a) (privk b))
   (uniq-orig s)
   (comment "Analyze from the responder's perspective")
@@ -1134,9 +1134,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
-  (defstrand init 1 (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
+  (defstrand init 1 (s s) (a a) (b b))
   (precedes ((1 0) (0 0)))
   (non-orig (privk a) (privk b))
   (uniq-orig s)
@@ -1199,8 +1199,8 @@
   (comment "Fixed Blanchet's protocol using named asymmetric keys"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (deflistener d)
   (non-orig (privk a) (privk b))
   (uniq-orig d s)
@@ -1214,8 +1214,8 @@
   (comment "Not a skeleton"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (deflistener d)
   (precedes ((0 1) (1 0)))
   (non-orig (privk a) (privk b))
@@ -1229,10 +1229,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (deflistener d)
-  (defstrand init 1 (a a) (b b) (s s))
+  (defstrand init 1 (s s) (a a) (b b))
   (precedes ((0 1) (1 0)) ((2 0) (0 0)))
   (non-orig (privk a) (privk b))
   (uniq-orig d s)
@@ -1246,10 +1246,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (deflistener d)
-  (defstrand init 1 (a a) (b b) (s s))
+  (defstrand init 1 (s s) (a a) (b b))
   (deflistener s)
   (precedes ((0 1) (1 0)) ((2 0) (0 0)) ((2 0) (3 0)) ((3 1) (1 0)))
   (non-orig (privk a) (privk b))

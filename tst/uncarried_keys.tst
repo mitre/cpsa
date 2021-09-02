@@ -52,8 +52,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton uncarried-keys
-  (vars (a text) (A B name) (K akey))
-  (defstrand init 4 (a a) (A A) (B B) (K K))
+  (vars (a text) (K akey) (A B name))
+  (defstrand init 4 (a a) (K K) (A A) (B B))
   (non-orig (invk K) (privk B))
   (uniq-orig a K)
   (traces
@@ -65,8 +65,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton uncarried-keys
-  (vars (a text) (A B name) (K akey))
-  (defstrand init 4 (a a) (A A) (B B) (K K))
+  (vars (a text) (K akey) (A B name))
+  (defstrand init 4 (a a) (K K) (A A) (B B))
   (defstrand resp 2 (a a) (A A) (B B))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk K) (privk B))
@@ -83,10 +83,10 @@
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton uncarried-keys
-  (vars (a text) (A B name) (K akey))
-  (defstrand init 4 (a a) (A A) (B B) (K K))
+  (vars (a text) (K akey) (A B name))
+  (defstrand init 4 (a a) (K K) (A A) (B B))
   (defstrand resp 2 (a a) (A A) (B B))
-  (defstrand resp 4 (a a) (A A) (B B) (K K))
+  (defstrand resp 4 (a a) (K K) (A A) (B B))
   (precedes ((0 0) (1 0)) ((0 0) (2 0)) ((0 2) (2 2)) ((1 1) (0 1))
     ((2 3) (0 3)))
   (non-orig (invk K) (privk B))
@@ -106,9 +106,9 @@
   (origs (K (0 2)) (a (0 0))))
 
 (defskeleton uncarried-keys
-  (vars (a text) (A B name) (K akey))
-  (defstrand init 4 (a a) (A A) (B B) (K K))
-  (defstrand resp 4 (a a) (A A) (B B) (K K))
+  (vars (a text) (K akey) (A B name))
+  (defstrand init 4 (a a) (K K) (A A) (B B))
+  (defstrand resp 4 (a a) (K K) (A A) (B B))
   (precedes ((0 0) (1 0)) ((0 2) (1 2)) ((1 1) (0 1)) ((1 3) (0 3)))
   (non-orig (invk K) (privk B))
   (uniq-orig a K)
@@ -127,7 +127,7 @@
 
 (defskeleton uncarried-keys
   (vars (a text) (A B name))
-  (defstrand init 4 (a a) (A A) (B B) (K (pubk A)))
+  (defstrand init 4 (a a) (K (pubk A)) (A A) (B B))
   (defstrand resp 2 (a a) (A A) (B B))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (privk A) (privk B))
@@ -146,8 +146,8 @@
   (origs ((pubk A) (0 2)) (a (0 0))))
 
 (defskeleton uncarried-keys
-  (vars (a text) (A B name) (K akey))
-  (defstrand init 4 (a a) (A A) (B B) (K K))
+  (vars (a text) (K akey) (A B name))
+  (defstrand init 4 (a a) (K K) (A A) (B B))
   (defstrand resp 2 (a a) (A A) (B B))
   (deflistener K)
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((2 1) (0 3)))

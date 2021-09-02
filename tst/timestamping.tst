@@ -78,8 +78,8 @@
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton timestamping-service
-  (vars (t_1 l mesg) (h h_1 text) (n data) (trent alice alice_1 name))
-  (defstrand client 2 (t_1 t_1) (l l) (h h) (h_1 h_1) (n n)
+  (vars (t_1 l mesg) (n data) (h h_1 text) (trent alice alice_1 name))
+  (defstrand client 2 (t_1 t_1) (l l) (n n) (h h) (h_1 h_1)
     (alice alice) (alice_1 alice_1) (trent trent))
   (non-orig (privk trent))
   (traces
@@ -91,10 +91,10 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton timestamping-service
-  (vars (t_1 l_1 mesg) (h h_1 text) (n data) (trent alice alice_1 name))
-  (defstrand client 2 (t_1 t_1) (l (hash alice_1 h_1 t_1 l_1)) (h h)
-    (h_1 h_1) (n n) (alice alice) (alice_1 alice_1) (trent trent))
-  (defstrand server 2 (t_1 t_1) (l_1 l_1) (h h) (h_1 h_1) (n n)
+  (vars (t_1 l_1 mesg) (n data) (h h_1 text) (trent alice alice_1 name))
+  (defstrand client 2 (t_1 t_1) (l (hash alice_1 h_1 t_1 l_1)) (n n)
+    (h h) (h_1 h_1) (alice alice) (alice_1 alice_1) (trent trent))
+  (defstrand server 2 (t_1 t_1) (l_1 l_1) (n n) (h h) (h_1 h_1)
     (alice alice) (alice_1 alice_1) (trent trent))
   (precedes ((1 1) (0 1)))
   (non-orig (privk trent))
@@ -127,10 +127,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton timestamping-service
-  (vars (h h_1 t_1 l_1 text) (n data) (trent alice alice_1 name))
-  (defstrand client 2 (t_1 t_1) (l (hash alice_1 h_1 t_1 l_1)) (h h)
-    (h_1 h_1) (n n) (alice alice) (alice_1 alice_1) (trent trent))
-  (defstrand origin 2 (h h) (h_1 h_1) (t_1 t_1) (l_1 l_1) (n n)
+  (vars (n data) (h h_1 t_1 l_1 text) (trent alice alice_1 name))
+  (defstrand client 2 (t_1 t_1) (l (hash alice_1 h_1 t_1 l_1)) (n n)
+    (h h) (h_1 h_1) (alice alice) (alice_1 alice_1) (trent trent))
+  (defstrand origin 2 (n n) (h h) (h_1 h_1) (t_1 t_1) (l_1 l_1)
     (alice alice) (alice_1 alice_1) (trent trent))
   (precedes ((1 1) (0 1)))
   (non-orig (privk trent))
@@ -155,7 +155,7 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton timestamping-service
-  (vars (h h_1 h_1-0 t_1 l_1 text) (n n-0 data)
+  (vars (n n-0 data) (h h_1 h_1-0 t_1 l_1 text)
     (trent alice alice_1 alice_1-0 name))
   (defstrand client 2
     (t_1
@@ -165,15 +165,15 @@
       (hash alice_1 h_1
         (enc n-0 alice_1 h_1 alice_1-0 h_1-0 t_1
           (hash alice_1-0 h_1-0 t_1 l_1) (privk trent))
-        (hash alice_1-0 h_1-0 t_1 l_1))) (h h) (h_1 h_1) (n n)
+        (hash alice_1-0 h_1-0 t_1 l_1))) (n n) (h h) (h_1 h_1)
     (alice alice) (alice_1 alice_1) (trent trent))
   (defstrand server 2
     (t_1
       (enc n-0 alice_1 h_1 alice_1-0 h_1-0 t_1
         (hash alice_1-0 h_1-0 t_1 l_1) (privk trent)))
-    (l_1 (hash alice_1-0 h_1-0 t_1 l_1)) (h h) (h_1 h_1) (n n)
+    (l_1 (hash alice_1-0 h_1-0 t_1 l_1)) (n n) (h h) (h_1 h_1)
     (alice alice) (alice_1 alice_1) (trent trent))
-  (defstrand origin 2 (h h_1) (h_1 h_1-0) (t_1 t_1) (l_1 l_1) (n n-0)
+  (defstrand origin 2 (n n-0) (h h_1) (h_1 h_1-0) (t_1 t_1) (l_1 l_1)
     (alice alice_1) (alice_1 alice_1-0) (trent trent))
   (precedes ((1 1) (0 1)) ((2 1) (1 0)))
   (non-orig (privk trent))
@@ -239,10 +239,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton timestamping-service
-  (vars (h h_1 t_1 l_1 text) (n data) (trent alice alice_1 name))
-  (defstrand client 2 (t_1 t_1) (l (hash alice_1 h_1 t_1 l_1)) (h h)
-    (h_1 h_1) (n n) (alice alice) (alice_1 alice_1) (trent trent))
-  (defstrand origin 2 (h h) (h_1 h_1) (t_1 t_1) (l_1 l_1) (n n)
+  (vars (n data) (h h_1 t_1 l_1 text) (trent alice alice_1 name))
+  (defstrand client 2 (t_1 t_1) (l (hash alice_1 h_1 t_1 l_1)) (n n)
+    (h h) (h_1 h_1) (alice alice) (alice_1 alice_1) (trent trent))
+  (defstrand origin 2 (n n) (h h) (h_1 h_1) (t_1 t_1) (l_1 l_1)
     (alice alice) (alice_1 alice_1) (trent trent))
   (defstrand big-bang 1 (n n) (trent trent))
   (precedes ((1 1) (0 1)) ((2 0) (1 0)))
@@ -269,7 +269,7 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton timestamping-service
-  (vars (h h_1 h_1-0 t_1 l_1 text) (n n-0 data)
+  (vars (n n-0 data) (h h_1 h_1-0 t_1 l_1 text)
     (trent alice alice_1 alice_1-0 name))
   (defstrand client 2
     (t_1
@@ -279,15 +279,15 @@
       (hash alice_1 h_1
         (enc n-0 alice_1 h_1 alice_1-0 h_1-0 t_1
           (hash alice_1-0 h_1-0 t_1 l_1) (privk trent))
-        (hash alice_1-0 h_1-0 t_1 l_1))) (h h) (h_1 h_1) (n n)
+        (hash alice_1-0 h_1-0 t_1 l_1))) (n n) (h h) (h_1 h_1)
     (alice alice) (alice_1 alice_1) (trent trent))
   (defstrand server 2
     (t_1
       (enc n-0 alice_1 h_1 alice_1-0 h_1-0 t_1
         (hash alice_1-0 h_1-0 t_1 l_1) (privk trent)))
-    (l_1 (hash alice_1-0 h_1-0 t_1 l_1)) (h h) (h_1 h_1) (n n)
+    (l_1 (hash alice_1-0 h_1-0 t_1 l_1)) (n n) (h h) (h_1 h_1)
     (alice alice) (alice_1 alice_1) (trent trent))
-  (defstrand origin 2 (h h_1) (h_1 h_1-0) (t_1 t_1) (l_1 l_1) (n n-0)
+  (defstrand origin 2 (n n-0) (h h_1) (h_1 h_1-0) (t_1 t_1) (l_1 l_1)
     (alice alice_1) (alice_1 alice_1-0) (trent trent))
   (defstrand big-bang 1 (n n-0) (trent trent))
   (precedes ((1 1) (0 1)) ((2 1) (1 0)) ((3 0) (2 0)))
@@ -365,18 +365,18 @@
   (origs (n-0 (3 0)) (n (1 1))))
 
 (defskeleton timestamping-service
-  (vars (h h_1 t_1 l_1 h-0 text) (n n-0 data)
+  (vars (n n-0 data) (h h_1 t_1 l_1 h-0 text)
     (trent alice alice_1 alice-0 name))
-  (defstrand client 2 (t_1 t_1) (l (hash alice_1 h_1 t_1 l_1)) (h h)
-    (h_1 h_1) (n n) (alice alice) (alice_1 alice_1) (trent trent))
-  (defstrand origin 2 (h h) (h_1 h_1) (t_1 t_1) (l_1 l_1) (n n)
+  (defstrand client 2 (t_1 t_1) (l (hash alice_1 h_1 t_1 l_1)) (n n)
+    (h h) (h_1 h_1) (alice alice) (alice_1 alice_1) (trent trent))
+  (defstrand origin 2 (n n) (h h) (h_1 h_1) (t_1 t_1) (l_1 l_1)
     (alice alice) (alice_1 alice_1) (trent trent))
   (defstrand big-bang 1 (n n) (trent trent))
   (defstrand server 2
     (t_1
       (enc n alice h alice_1 h_1 t_1 (hash alice_1 h_1 t_1 l_1)
-        (privk trent))) (l_1 (hash alice_1 h_1 t_1 l_1)) (h h-0) (h_1 h)
-    (n n-0) (alice alice-0) (alice_1 alice) (trent trent))
+        (privk trent))) (l_1 (hash alice_1 h_1 t_1 l_1)) (n n-0) (h h-0)
+    (h_1 h) (alice alice-0) (alice_1 alice) (trent trent))
   (precedes ((1 1) (0 1)) ((2 0) (1 0)) ((2 0) (3 0)) ((3 1) (0 1)))
   (non-orig (privk trent))
   (uniq-orig n n-0)
@@ -438,18 +438,18 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton timestamping-service
-  (vars (h h_1 t_1 l_1 h-0 text) (n n-0 data)
+  (vars (n n-0 data) (h h_1 t_1 l_1 h-0 text)
     (trent alice alice_1 alice-0 name))
-  (defstrand client 2 (t_1 t_1) (l (hash alice_1 h_1 t_1 l_1)) (h h)
-    (h_1 h_1) (n n) (alice alice) (alice_1 alice_1) (trent trent))
-  (defstrand origin 2 (h h) (h_1 h_1) (t_1 t_1) (l_1 l_1) (n n)
+  (defstrand client 2 (t_1 t_1) (l (hash alice_1 h_1 t_1 l_1)) (n n)
+    (h h) (h_1 h_1) (alice alice) (alice_1 alice_1) (trent trent))
+  (defstrand origin 2 (n n) (h h) (h_1 h_1) (t_1 t_1) (l_1 l_1)
     (alice alice) (alice_1 alice_1) (trent trent))
   (defstrand big-bang 1 (n n) (trent trent))
   (defstrand server 2
     (t_1
       (enc n alice h alice_1 h_1 t_1 (hash alice_1 h_1 t_1 l_1)
-        (privk trent))) (l_1 (hash alice_1 h_1 t_1 l_1)) (h h-0) (h_1 h)
-    (n n-0) (alice alice-0) (alice_1 alice) (trent trent))
+        (privk trent))) (l_1 (hash alice_1 h_1 t_1 l_1)) (n n-0) (h h-0)
+    (h_1 h) (alice alice-0) (alice_1 alice) (trent trent))
   (precedes ((1 1) (3 0)) ((2 0) (1 0)) ((3 1) (0 1)))
   (non-orig (privk trent))
   (uniq-orig n n-0)
@@ -512,19 +512,19 @@
   (origs (n-0 (3 1)) (n (2 0))))
 
 (defskeleton timestamping-service
-  (vars (h h_1 t_1 l_1 h-0 text) (n n-0 data)
+  (vars (n n-0 data) (h h_1 t_1 l_1 h-0 text)
     (trent alice alice_1 alice-0 name))
-  (defstrand client 2 (t_1 t_1) (l (hash alice_1 h_1 t_1 l_1)) (h h)
-    (h_1 h_1) (n n) (alice alice) (alice_1 alice_1) (trent trent))
-  (defstrand origin 2 (h h) (h_1 h_1) (t_1 t_1) (l_1 l_1) (n n)
+  (defstrand client 2 (t_1 t_1) (l (hash alice_1 h_1 t_1 l_1)) (n n)
+    (h h) (h_1 h_1) (alice alice) (alice_1 alice_1) (trent trent))
+  (defstrand origin 2 (n n) (h h) (h_1 h_1) (t_1 t_1) (l_1 l_1)
     (alice alice) (alice_1 alice_1) (trent trent))
   (defstrand big-bang 1 (n n) (trent trent))
   (defstrand server 2
     (t_1
       (enc n alice h alice_1 h_1 t_1 (hash alice_1 h_1 t_1 l_1)
-        (privk trent))) (l_1 (hash alice_1 h_1 t_1 l_1)) (h h-0) (h_1 h)
-    (n n-0) (alice alice-0) (alice_1 alice) (trent trent))
-  (defstrand origin 2 (h h) (h_1 h_1) (t_1 t_1) (l_1 l_1) (n n)
+        (privk trent))) (l_1 (hash alice_1 h_1 t_1 l_1)) (n n-0) (h h-0)
+    (h_1 h) (alice alice-0) (alice_1 alice) (trent trent))
+  (defstrand origin 2 (n n) (h h) (h_1 h_1) (t_1 t_1) (l_1 l_1)
     (alice alice) (alice_1 alice_1) (trent trent))
   (precedes ((1 1) (0 1)) ((2 0) (1 0)) ((2 0) (4 0)) ((3 1) (0 1))
     ((4 1) (3 0)))
