@@ -1,3 +1,11 @@
+(* Procedure Execution as a Function
+
+Copyright (c) 2021 The MITRE Corporation
+
+This program is free software: you can redistribute it and/or
+modify it under the terms of the BSD License as published by the
+University of California. *)
+
 (** * Procedure Execution
 
     This library contains a straightforward definition of the
@@ -97,7 +105,7 @@ Definition run_expr (rst: run_state) (ex: expr):
 (** Check that the type of [x] is compatible with [t]. *)
 
 Definition type_check (x: alg) (t: type): bool :=
-  type_eqb (type_of x) t.
+  type_eqb t Mesg || type_eqb (type_of x) t.
 
 (** The semantics of statements *)
 

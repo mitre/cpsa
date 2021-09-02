@@ -15,49 +15,48 @@
   (defrole trans2
     (vars (n text) (A name) (k akey))
     (trace (recv (enc n A k)) (send (enc n A A A k))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton nonaug-prune
-  (vars (n text) (A B name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand orig 3 (n n) (A A) (B B) (k k))
+  (vars (n text) (k akey) (A B name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand orig 3 (n n) (k k) (A A) (B B))
   (precedes ((2 0) (0 0)) ((2 0) (1 0)))
   (non-orig (invk k))
   (uniq-orig n)
@@ -70,9 +69,9 @@
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (B name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand orig 3 (n n) (A B) (B B) (k k))
+  (vars (n text) (k akey) (B name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand orig 3 (n n) (k k) (A B) (B B))
   (precedes ((1 0) (0 0)))
   (non-orig (invk k))
   (uniq-orig n)
@@ -86,10 +85,10 @@
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (B name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand orig 3 (n n) (A B) (B B) (k k))
+  (vars (n text) (k akey) (B name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand orig 3 (n n) (k k) (A B) (B B))
   (precedes ((0 1) (2 2)) ((2 0) (0 0)) ((2 0) (1 0)))
   (non-orig (invk k))
   (uniq-orig n)
@@ -105,11 +104,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (B C name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand orig 3 (n n) (A B) (B B) (k k))
-  (defstrand trans1 3 (n n) (A B) (C C) (k k))
+  (vars (n text) (k akey) (B C name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand orig 3 (n n) (k k) (A B) (B B))
+  (defstrand trans1 3 (n n) (k k) (A B) (C C))
   (precedes ((2 0) (0 0)) ((2 0) (1 0)) ((2 0) (3 0)) ((3 2) (2 2)))
   (non-orig (invk k))
   (uniq-orig n)
@@ -125,10 +124,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (A B name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand orig 3 (n n) (A A) (B B) (k k))
+  (vars (n text) (k akey) (A B name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand orig 3 (n n) (k k) (A A) (B B))
   (precedes ((1 1) (2 2)) ((2 0) (0 0)) ((2 0) (1 0)))
   (non-orig (invk k))
   (uniq-orig n)
@@ -144,11 +143,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (A B name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand orig 3 (n n) (A A) (B B) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
+  (vars (n text) (k akey) (A B name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand orig 3 (n n) (k k) (A A) (B B))
+  (defstrand trans2 2 (n n) (k k) (A A))
   (precedes ((2 0) (0 0)) ((2 0) (1 0)) ((2 0) (3 0)) ((3 1) (2 2)))
   (non-orig (invk k))
   (uniq-orig n)
@@ -164,10 +163,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (B C name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand orig 3 (n n) (A B) (B B) (k k))
-  (defstrand trans1 3 (n n) (A B) (C C) (k k))
+  (vars (n text) (k akey) (B C name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand orig 3 (n n) (k k) (A B) (B B))
+  (defstrand trans1 3 (n n) (k k) (A B) (C C))
   (precedes ((1 0) (0 0)) ((1 0) (2 0)) ((2 2) (1 2)))
   (non-orig (invk k))
   (uniq-orig n)
@@ -183,9 +182,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (B name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand orig 3 (n n) (A B) (B B) (k k))
+  (vars (n text) (k akey) (B name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand orig 3 (n n) (k k) (A B) (B B))
   (precedes ((0 1) (1 2)) ((1 0) (0 0)))
   (non-orig (invk k))
   (uniq-orig n)
@@ -199,10 +198,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (B name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand orig 3 (n n) (A B) (B B) (k k))
+  (vars (n text) (k akey) (B name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand orig 3 (n n) (k k) (A B) (B B))
   (precedes ((0 1) (2 2)) ((2 0) (0 0)) ((2 1) (1 0)))
   (non-orig (invk k))
   (uniq-orig n)
@@ -217,11 +216,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (B C name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand orig 3 (n n) (A B) (B B) (k k))
-  (defstrand trans1 3 (n n) (A B) (C C) (k k))
+  (vars (n text) (k akey) (B C name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand orig 3 (n n) (k k) (A B) (B B))
+  (defstrand trans1 3 (n n) (k k) (A B) (C C))
   (precedes ((2 0) (0 0)) ((2 0) (1 0)) ((2 0) (3 0)) ((2 1) (3 1))
     ((3 2) (2 2)))
   (non-orig (invk k))
@@ -237,10 +236,10 @@
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (A B name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand orig 3 (n n) (A A) (B B) (k k))
+  (vars (n text) (k akey) (A B name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand orig 3 (n n) (k k) (A A) (B B))
   (precedes ((1 1) (2 2)) ((2 0) (0 0)) ((2 1) (1 0)))
   (non-orig (invk k))
   (uniq-orig n)
@@ -255,11 +254,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (A B name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand orig 3 (n n) (A A) (B B) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
+  (vars (n text) (k akey) (A B name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand orig 3 (n n) (k k) (A A) (B B))
+  (defstrand trans2 2 (n n) (k k) (A A))
   (precedes ((2 0) (0 0)) ((2 0) (1 0)) ((2 1) (3 0)) ((3 1) (2 2)))
   (non-orig (invk k))
   (uniq-orig n)
@@ -274,10 +273,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (B C name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand orig 3 (n n) (A B) (B B) (k k))
-  (defstrand trans1 3 (n n) (A B) (C C) (k k))
+  (vars (n text) (k akey) (B C name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand orig 3 (n n) (k k) (A B) (B B))
+  (defstrand trans1 3 (n n) (k k) (A B) (C C))
   (precedes ((1 0) (0 0)) ((1 0) (2 0)) ((1 1) (2 1)) ((2 2) (1 2)))
   (non-orig (invk k))
   (uniq-orig n)
@@ -293,9 +292,9 @@
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (B name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand orig 3 (n n) (A B) (B B) (k k))
+  (vars (n text) (k akey) (B name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand orig 3 (n n) (k k) (A B) (B B))
   (precedes ((0 1) (1 2)) ((1 1) (0 0)))
   (non-orig (invk k))
   (uniq-orig n)
@@ -310,10 +309,10 @@
   (origs (n (1 0))))
 
 (defskeleton nonaug-prune
-  (vars (n text) (B name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand orig 3 (n n) (A B) (B B) (k k))
+  (vars (n text) (k akey) (B name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand orig 3 (n n) (k k) (A B) (B B))
   (precedes ((0 1) (2 2)) ((2 1) (0 0)) ((2 1) (1 0)))
   (non-orig (invk k))
   (uniq-orig n)
@@ -329,12 +328,12 @@
   (origs (n (2 0))))
 
 (defskeleton nonaug-prune
-  (vars (n text) (B C C-0 name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand orig 3 (n n) (A B) (B B) (k k))
-  (defstrand trans1 3 (n n) (A B) (C C) (k k))
-  (defstrand trans1 3 (n n) (A B) (C C-0) (k k))
+  (vars (n text) (k akey) (B C C-0 name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand orig 3 (n n) (k k) (A B) (B B))
+  (defstrand trans1 3 (n n) (k k) (A B) (C C))
+  (defstrand trans1 3 (n n) (k k) (A B) (C C-0))
   (precedes ((2 0) (0 0)) ((2 0) (1 0)) ((2 0) (3 0)) ((2 0) (4 0))
     ((2 1) (3 1)) ((3 2) (2 2)) ((4 2) (2 2)))
   (non-orig (invk k))
@@ -353,11 +352,11 @@
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (B C name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand orig 3 (n n) (A B) (B B) (k k))
-  (defstrand trans1 3 (n n) (A B) (C C) (k k))
+  (vars (n text) (k akey) (B C name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand orig 3 (n n) (k k) (A B) (B B))
+  (defstrand trans1 3 (n n) (k k) (A B) (C C))
   (precedes ((1 1) (2 2)) ((2 0) (0 0)) ((2 0) (1 0)) ((2 0) (3 0))
     ((2 1) (3 1)) ((3 2) (2 2)))
   (non-orig (invk k))
@@ -374,12 +373,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (B C name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand orig 3 (n n) (A B) (B B) (k k))
-  (defstrand trans1 3 (n n) (A B) (C C) (k k))
-  (defstrand trans2 2 (n n) (A B) (k k))
+  (vars (n text) (k akey) (B C name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand orig 3 (n n) (k k) (A B) (B B))
+  (defstrand trans1 3 (n n) (k k) (A B) (C C))
+  (defstrand trans2 2 (n n) (k k) (A B))
   (precedes ((2 0) (0 0)) ((2 0) (1 0)) ((2 0) (3 0)) ((2 0) (4 0))
     ((2 1) (3 1)) ((3 2) (2 2)) ((4 1) (2 2)))
   (non-orig (invk k))
@@ -397,10 +396,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (A B name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand orig 3 (n n) (A A) (B B) (k k))
+  (vars (n text) (k akey) (A B name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand orig 3 (n n) (k k) (A A) (B B))
   (precedes ((1 1) (2 2)) ((2 1) (0 0)) ((2 1) (1 0)))
   (non-orig (invk k))
   (uniq-orig n)
@@ -416,11 +415,11 @@
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (A B name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand orig 3 (n n) (A A) (B B) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
+  (vars (n text) (k akey) (A B name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand orig 3 (n n) (k k) (A A) (B B))
+  (defstrand trans2 2 (n n) (k k) (A A))
   (precedes ((2 0) (0 0)) ((2 1) (1 0)) ((2 1) (3 0)) ((3 1) (2 2)))
   (non-orig (invk k))
   (uniq-orig n)
@@ -435,11 +434,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (B C C-0 name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand orig 3 (n n) (A B) (B B) (k k))
-  (defstrand trans1 3 (n n) (A B) (C C) (k k))
-  (defstrand trans1 3 (n n) (A B) (C C-0) (k k))
+  (vars (n text) (k akey) (B C C-0 name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand orig 3 (n n) (k k) (A B) (B B))
+  (defstrand trans1 3 (n n) (k k) (A B) (C C))
+  (defstrand trans1 3 (n n) (k k) (A B) (C C-0))
   (precedes ((1 0) (0 0)) ((1 0) (2 0)) ((1 0) (3 0)) ((1 1) (2 1))
     ((2 2) (1 2)) ((3 2) (1 2)))
   (non-orig (invk k))
@@ -457,10 +456,10 @@
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (B C name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand orig 3 (n n) (A B) (B B) (k k))
-  (defstrand trans1 3 (n n) (A B) (C C) (k k))
+  (vars (n text) (k akey) (B C name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand orig 3 (n n) (k k) (A B) (B B))
+  (defstrand trans1 3 (n n) (k k) (A B) (C C))
   (precedes ((0 1) (1 2)) ((1 0) (0 0)) ((1 0) (2 0)) ((1 1) (2 1))
     ((2 2) (1 2)))
   (non-orig (invk k))
@@ -477,11 +476,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (B C name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand orig 3 (n n) (A B) (B B) (k k))
-  (defstrand trans1 3 (n n) (A B) (C C) (k k))
+  (vars (n text) (k akey) (B C name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand orig 3 (n n) (k k) (A B) (B B))
+  (defstrand trans1 3 (n n) (k k) (A B) (C C))
   (precedes ((1 1) (2 2)) ((2 0) (0 0)) ((2 0) (3 0)) ((2 1) (1 0))
     ((2 1) (3 1)) ((3 2) (2 2)))
   (non-orig (invk k))
@@ -497,12 +496,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (B C name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand orig 3 (n n) (A B) (B B) (k k))
-  (defstrand trans1 3 (n n) (A B) (C C) (k k))
-  (defstrand trans2 2 (n n) (A B) (k k))
+  (vars (n text) (k akey) (B C name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand orig 3 (n n) (k k) (A B) (B B))
+  (defstrand trans1 3 (n n) (k k) (A B) (C C))
+  (defstrand trans2 2 (n n) (k k) (A B))
   (precedes ((2 0) (0 0)) ((2 0) (1 0)) ((2 0) (3 0)) ((2 1) (3 1))
     ((2 1) (4 0)) ((3 2) (2 2)) ((4 1) (2 2)))
   (non-orig (invk k))
@@ -519,10 +518,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (A B name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand orig 3 (n n) (A A) (B B) (k k))
+  (vars (n text) (k akey) (A B name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand orig 3 (n n) (k k) (A A) (B B))
   (precedes ((1 1) (0 0)) ((1 1) (2 2)) ((2 1) (1 0)))
   (non-orig (invk k))
   (uniq-orig n)
@@ -538,11 +537,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (A B name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand orig 3 (n n) (A A) (B B) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
+  (vars (n text) (k akey) (A B name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand orig 3 (n n) (k k) (A A) (B B))
+  (defstrand trans2 2 (n n) (k k) (A A))
   (precedes ((1 1) (2 2)) ((2 0) (3 0)) ((2 1) (0 0)) ((2 1) (1 0))
     ((3 1) (0 0)))
   (non-orig (invk k))
@@ -559,11 +558,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (A B name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand orig 3 (n n) (A A) (B B) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
+  (vars (n text) (k akey) (A B name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand orig 3 (n n) (k k) (A A) (B B))
+  (defstrand trans2 2 (n n) (k k) (A A))
   (precedes ((2 1) (0 0)) ((2 1) (1 0)) ((2 1) (3 0)) ((3 1) (2 2)))
   (non-orig (invk k))
   (uniq-orig n)
@@ -579,10 +578,10 @@
   (comment "4 in cohort - 3 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (B C name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand orig 3 (n n) (A B) (B B) (k k))
-  (defstrand trans1 3 (n n) (A B) (C C) (k k))
+  (vars (n text) (k akey) (B C name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand orig 3 (n n) (k k) (A B) (B B))
+  (defstrand trans1 3 (n n) (k k) (A B) (C C))
   (precedes ((0 1) (1 2)) ((1 0) (2 0)) ((1 1) (0 0)) ((1 1) (2 1))
     ((2 2) (1 2)))
   (non-orig (invk k))
@@ -599,11 +598,11 @@
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (B C name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand orig 3 (n n) (A B) (B B) (k k))
-  (defstrand trans1 3 (n n) (A B) (C C) (k k))
+  (vars (n text) (k akey) (B C name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand orig 3 (n n) (k k) (A B) (B B))
+  (defstrand trans1 3 (n n) (k k) (A B) (C C))
   (precedes ((1 1) (2 2)) ((2 0) (3 0)) ((2 1) (0 0)) ((2 1) (1 0))
     ((2 1) (3 1)) ((3 2) (2 2)))
   (non-orig (invk k))
@@ -620,12 +619,12 @@
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (B C name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand orig 3 (n n) (A B) (B B) (k k))
-  (defstrand trans1 3 (n n) (A B) (C C) (k k))
-  (defstrand trans2 2 (n n) (A B) (k k))
+  (vars (n text) (k akey) (B C name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand orig 3 (n n) (k k) (A B) (B B))
+  (defstrand trans1 3 (n n) (k k) (A B) (C C))
+  (defstrand trans2 2 (n n) (k k) (A B))
   (precedes ((2 0) (0 0)) ((2 0) (3 0)) ((2 1) (1 0)) ((2 1) (3 1))
     ((2 1) (4 0)) ((3 2) (2 2)) ((4 1) (2 2)))
   (non-orig (invk k))
@@ -642,10 +641,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (A name) (k akey))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand orig 3 (n n) (A A) (B A) (k k))
+  (vars (n text) (k akey) (A name))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand orig 3 (n n) (k k) (A A) (B A))
   (precedes ((1 1) (0 0)) ((1 1) (2 2)) ((2 1) (1 0)))
   (non-orig (invk k))
   (uniq-orig n)
@@ -662,11 +661,11 @@
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (A B name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand orig 3 (n n) (A A) (B B) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
+  (vars (n text) (k akey) (A B name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand orig 3 (n n) (k k) (A A) (B B))
+  (defstrand trans2 2 (n n) (k k) (A A))
   (precedes ((1 1) (2 2)) ((2 1) (1 0)) ((2 1) (3 0)) ((3 1) (0 0)))
   (non-orig (invk k))
   (uniq-orig n)
@@ -681,11 +680,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (A name) (k akey))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand orig 3 (n n) (A A) (B A) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
+  (vars (n text) (k akey) (A name))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand orig 3 (n n) (k k) (A A) (B A))
+  (defstrand trans2 2 (n n) (k k) (A A))
   (precedes ((2 1) (0 0)) ((2 1) (1 0)) ((2 1) (3 0)) ((3 1) (2 2)))
   (non-orig (invk k))
   (uniq-orig n)
@@ -703,11 +702,11 @@
   (origs (n (2 0))))
 
 (defskeleton nonaug-prune
-  (vars (n text) (A B name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand orig 3 (n n) (A A) (B B) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
+  (vars (n text) (k akey) (A B name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand orig 3 (n n) (k k) (A A) (B B))
+  (defstrand trans2 2 (n n) (k k) (A A))
   (precedes ((2 1) (1 0)) ((2 1) (3 0)) ((3 1) (0 0)) ((3 1) (2 2)))
   (non-orig (invk k))
   (uniq-orig n)
@@ -723,12 +722,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (A B name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand orig 3 (n n) (A A) (B B) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
+  (vars (n text) (k akey) (A B name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand orig 3 (n n) (k k) (A A) (B B))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand trans2 2 (n n) (k k) (A A))
   (precedes ((2 0) (4 0)) ((2 1) (0 0)) ((2 1) (1 0)) ((2 1) (3 0))
     ((3 1) (2 2)) ((4 1) (0 0)))
   (non-orig (invk k))
@@ -746,12 +745,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (B C name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand orig 3 (n n) (A B) (B B) (k k))
-  (defstrand trans1 3 (n n) (A B) (C C) (k k))
-  (defstrand trans2 2 (n n) (A B) (k k))
+  (vars (n text) (k akey) (B C name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand orig 3 (n n) (k k) (A B) (B B))
+  (defstrand trans1 3 (n n) (k k) (A B) (C C))
+  (defstrand trans2 2 (n n) (k k) (A B))
   (precedes ((2 0) (3 0)) ((2 1) (0 0)) ((2 1) (1 0)) ((2 1) (3 1))
     ((2 1) (4 0)) ((3 2) (2 2)) ((4 1) (2 2)))
   (non-orig (invk k))
@@ -769,11 +768,11 @@
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (A name) (k akey))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand orig 3 (n n) (A A) (B A) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
+  (vars (n text) (k akey) (A name))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand orig 3 (n n) (k k) (A A) (B A))
+  (defstrand trans2 2 (n n) (k k) (A A))
   (precedes ((1 1) (2 2)) ((2 1) (1 0)) ((2 1) (3 0)) ((3 1) (0 0)))
   (non-orig (invk k))
   (uniq-orig n)
@@ -790,11 +789,11 @@
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (A name) (k akey))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand orig 3 (n n) (A A) (B A) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
+  (vars (n text) (k akey) (A name))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand orig 3 (n n) (k k) (A A) (B A))
+  (defstrand trans2 2 (n n) (k k) (A A))
   (precedes ((2 1) (1 0)) ((2 1) (3 0)) ((3 1) (0 0)) ((3 1) (2 2)))
   (non-orig (invk k))
   (uniq-orig n)
@@ -811,12 +810,12 @@
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (A B name) (k akey))
-  (defstrand trans2 2 (n n) (A B) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand orig 3 (n n) (A A) (B B) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
+  (vars (n text) (k akey) (A B name))
+  (defstrand trans2 2 (n n) (k k) (A B))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand orig 3 (n n) (k k) (A A) (B B))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand trans2 2 (n n) (k k) (A A))
   (precedes ((2 1) (1 0)) ((2 1) (3 0)) ((2 1) (4 0)) ((3 1) (2 2))
     ((4 1) (0 0)))
   (non-orig (invk k))
@@ -833,12 +832,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
-  (vars (n text) (A name) (k akey))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand orig 3 (n n) (A A) (B A) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
-  (defstrand trans2 2 (n n) (A A) (k k))
+  (vars (n text) (k akey) (A name))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand orig 3 (n n) (k k) (A A) (B A))
+  (defstrand trans2 2 (n n) (k k) (A A))
+  (defstrand trans2 2 (n n) (k k) (A A))
   (precedes ((2 1) (1 0)) ((2 1) (3 0)) ((2 1) (4 0)) ((3 1) (2 2))
     ((4 1) (0 0)))
   (non-orig (invk k))

@@ -11,48 +11,47 @@
   (defrole resp
     (vars (a b name) (s skey) (d data))
     (trace (recv (enc (enc s (privk a)) (pubk b))) (send (enc d s))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (comment "Blanchet's protocol using named asymmetric keys"))
 
 (defskeleton blanchet
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (non-orig (privk b))
   (uniq-orig s)
   (comment "Analyze from the initiator's perspective")
@@ -63,9 +62,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton blanchet
-  (vars (d data) (a b a-0 b-0 name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
-  (defstrand resp 2 (d d) (a a-0) (b b-0) (s s))
+  (vars (d data) (s skey) (a b a-0 b-0 name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
+  (defstrand resp 2 (d d) (s s) (a a-0) (b b-0))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (privk b))
   (uniq-orig s)
@@ -78,8 +77,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (deflistener s)
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (privk b))
@@ -94,9 +93,9 @@
   (comment "empty cohort"))
 
 (defskeleton blanchet
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (privk b))
   (uniq-orig s)
@@ -120,48 +119,47 @@
   (defrole resp
     (vars (a b name) (s skey) (d data))
     (trace (recv (enc (enc s (privk a)) (pubk b))) (send (enc d s))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (comment "Blanchet's protocol using named asymmetric keys"))
 
 (defskeleton blanchet
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (deflistener d)
   (non-orig (privk b))
   (uniq-orig d s)
@@ -174,10 +172,10 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton blanchet
-  (vars (d data) (a b a-0 b-0 name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b a-0 b-0 name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (deflistener d)
-  (defstrand resp 2 (d d) (a a-0) (b b-0) (s s))
+  (defstrand resp 2 (d d) (s s) (a a-0) (b b-0))
   (precedes ((0 0) (2 0)) ((2 1) (0 1)) ((2 1) (1 0)))
   (non-orig (privk b))
   (uniq-orig d s)
@@ -191,8 +189,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (deflistener d)
   (deflistener s)
   (precedes ((0 0) (2 0)) ((2 1) (0 1)))
@@ -208,10 +206,10 @@
   (comment "empty cohort"))
 
 (defskeleton blanchet
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (deflistener d)
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (precedes ((0 0) (2 0)) ((2 1) (0 1)) ((2 1) (1 0)))
   (non-orig (privk b))
   (uniq-orig d s)
@@ -226,10 +224,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (deflistener d)
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (deflistener s)
   (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((2 1) (0 1)) ((2 1) (1 0))
     ((3 1) (1 0)))
@@ -255,48 +253,47 @@
   (defrole resp
     (vars (a b name) (s skey) (d data))
     (trace (recv (enc (enc s (privk a)) (pubk b))) (send (enc d s))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (comment "Blanchet's protocol using named asymmetric keys"))
 
 (defskeleton blanchet
-  (vars (d data) (a b name) (s skey))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (non-orig (privk a) (privk b))
   (uniq-orig s)
   (comment "Analyze from the responder's perspective")
@@ -307,9 +304,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet
-  (vars (d data) (a b b-0 name) (s skey))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
-  (defstrand init 1 (a a) (b b-0) (s s))
+  (vars (d data) (s skey) (a b b-0 name))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
+  (defstrand init 1 (s s) (a a) (b b-0))
   (precedes ((1 0) (0 0)))
   (non-orig (privk a) (privk b))
   (uniq-orig s)
@@ -333,48 +330,47 @@
   (defrole resp
     (vars (a b name) (s skey) (d data))
     (trace (recv (enc (enc s (privk a)) (pubk b))) (send (enc d s))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (comment "Blanchet's protocol using named asymmetric keys"))
 
 (defskeleton blanchet
-  (vars (d data) (a b name) (s skey))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (deflistener d)
   (non-orig (privk a) (privk b))
   (uniq-orig d s)
@@ -388,8 +384,8 @@
   (comment "Not a skeleton"))
 
 (defskeleton blanchet
-  (vars (d data) (a b name) (s skey))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (deflistener d)
   (precedes ((0 1) (1 0)))
   (non-orig (privk a) (privk b))
@@ -403,10 +399,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet
-  (vars (d data) (a b b-0 name) (s skey))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b b-0 name))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (deflistener d)
-  (defstrand init 1 (a a) (b b-0) (s s))
+  (defstrand init 1 (s s) (a a) (b b-0))
   (precedes ((0 1) (1 0)) ((2 0) (0 0)))
   (non-orig (privk a) (privk b))
   (uniq-orig d s)
@@ -430,43 +426,42 @@
   (defrole resp
     (vars (a b akey) (s skey) (d data))
     (trace (recv (enc (enc s (invk a)) b)) (send (enc d s))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (comment "Blanchet's protocol using unnamed asymmetric keys"))
 
 (defskeleton blanchet-akey
@@ -539,43 +534,42 @@
   (defrole resp
     (vars (a b akey) (s skey) (d data))
     (trace (recv (enc (enc s (invk a)) b)) (send (enc d s))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (comment "Blanchet's protocol using unnamed asymmetric keys"))
 
 (defskeleton blanchet-akey
@@ -674,43 +668,42 @@
   (defrole resp
     (vars (a b akey) (s skey) (d data))
     (trace (recv (enc (enc s (invk a)) b)) (send (enc d s))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (comment "Blanchet's protocol using unnamed asymmetric keys"))
 
 (defskeleton blanchet-akey
@@ -752,43 +745,42 @@
   (defrole resp
     (vars (a b akey) (s skey) (d data))
     (trace (recv (enc (enc s (invk a)) b)) (send (enc d s))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (comment "Blanchet's protocol using unnamed asymmetric keys"))
 
 (defskeleton blanchet-akey
@@ -849,48 +841,47 @@
   (defrole resp
     (vars (a b name) (s skey) (d data))
     (trace (recv (enc (enc s b (privk a)) (pubk b))) (send (enc d s))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (comment "Fixed Blanchet's protocol using named asymmetric keys"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (non-orig (privk b))
   (uniq-orig s)
   (comment "Analyze from the initiator's perspective")
@@ -901,9 +892,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b a-0 b-0 name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
-  (defstrand resp 2 (d d) (a a-0) (b b-0) (s s))
+  (vars (d data) (s skey) (a b a-0 b-0 name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
+  (defstrand resp 2 (d d) (s s) (a a-0) (b b-0))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (privk b))
   (uniq-orig s)
@@ -916,8 +907,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (deflistener s)
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (privk b))
@@ -932,9 +923,9 @@
   (comment "empty cohort"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (privk b))
   (uniq-orig s)
@@ -958,48 +949,47 @@
   (defrole resp
     (vars (a b name) (s skey) (d data))
     (trace (recv (enc (enc s b (privk a)) (pubk b))) (send (enc d s))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (comment "Fixed Blanchet's protocol using named asymmetric keys"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (deflistener d)
   (non-orig (privk b))
   (uniq-orig d s)
@@ -1012,10 +1002,10 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b a-0 b-0 name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b a-0 b-0 name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (deflistener d)
-  (defstrand resp 2 (d d) (a a-0) (b b-0) (s s))
+  (defstrand resp 2 (d d) (s s) (a a-0) (b b-0))
   (precedes ((0 0) (2 0)) ((2 1) (0 1)) ((2 1) (1 0)))
   (non-orig (privk b))
   (uniq-orig d s)
@@ -1029,8 +1019,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (deflistener d)
   (deflistener s)
   (precedes ((0 0) (2 0)) ((2 1) (0 1)))
@@ -1046,10 +1036,10 @@
   (comment "empty cohort"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (deflistener d)
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (precedes ((0 0) (2 0)) ((2 1) (0 1)) ((2 1) (1 0)))
   (non-orig (privk b))
   (uniq-orig d s)
@@ -1064,10 +1054,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand init 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand init 2 (d d) (s s) (a a) (b b))
   (deflistener d)
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (deflistener s)
   (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((2 1) (0 1)) ((2 1) (1 0))
     ((3 1) (1 0)))
@@ -1093,48 +1083,47 @@
   (defrole resp
     (vars (a b name) (s skey) (d data))
     (trace (recv (enc (enc s b (privk a)) (pubk b))) (send (enc d s))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (comment "Fixed Blanchet's protocol using named asymmetric keys"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (non-orig (privk a) (privk b))
   (uniq-orig s)
   (comment "Analyze from the responder's perspective")
@@ -1145,9 +1134,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
-  (defstrand init 1 (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
+  (defstrand init 1 (s s) (a a) (b b))
   (precedes ((1 0) (0 0)))
   (non-orig (privk a) (privk b))
   (uniq-orig s)
@@ -1171,48 +1160,47 @@
   (defrole resp
     (vars (a b name) (s skey) (d data))
     (trace (recv (enc (enc s b (privk a)) (pubk b))) (send (enc d s))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (comment "Fixed Blanchet's protocol using named asymmetric keys"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (deflistener d)
   (non-orig (privk a) (privk b))
   (uniq-orig d s)
@@ -1226,8 +1214,8 @@
   (comment "Not a skeleton"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (deflistener d)
   (precedes ((0 1) (1 0)))
   (non-orig (privk a) (privk b))
@@ -1241,10 +1229,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (deflistener d)
-  (defstrand init 1 (a a) (b b) (s s))
+  (defstrand init 1 (s s) (a a) (b b))
   (precedes ((0 1) (1 0)) ((2 0) (0 0)))
   (non-orig (privk a) (privk b))
   (uniq-orig d s)
@@ -1258,10 +1246,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet-fixed
-  (vars (d data) (a b name) (s skey))
-  (defstrand resp 2 (d d) (a a) (b b) (s s))
+  (vars (d data) (s skey) (a b name))
+  (defstrand resp 2 (d d) (s s) (a a) (b b))
   (deflistener d)
-  (defstrand init 1 (a a) (b b) (s s))
+  (defstrand init 1 (s s) (a a) (b b))
   (deflistener s)
   (precedes ((0 1) (1 0)) ((2 0) (0 0)) ((2 0) (3 0)) ((3 1) (1 0)))
   (non-orig (privk a) (privk b))

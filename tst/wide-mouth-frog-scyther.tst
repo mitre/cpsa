@@ -15,47 +15,46 @@
     (vars (a b t name) (k skey) (ta tb text))
     (trace (recv (cat a (enc a ta b k (ltk a t))))
       (send (enc t tb a k (ltk b t)))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton wide-mouth-frog
-  (vars (ta text) (a t b name) (k skey))
-  (defstrand init 1 (ta ta) (a a) (b b) (t t) (k k))
+  (vars (k skey) (ta text) (a t b name))
+  (defstrand init 1 (k k) (ta ta) (a a) (b b) (t t))
   (non-orig (ltk a t))
   (uniq-orig k)
   (traces ((send (cat a (enc a ta b k (ltk a t))))))
@@ -78,47 +77,46 @@
     (vars (a b t name) (k skey) (ta tb text))
     (trace (recv (cat a (enc a ta b k (ltk a t))))
       (send (enc t tb a k (ltk b t)))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton wide-mouth-frog
-  (vars (tb text) (b t a name) (k skey))
-  (defstrand resp 1 (tb tb) (a a) (b b) (t t) (k k))
+  (vars (k skey) (tb text) (b t a name))
+  (defstrand resp 1 (k k) (tb tb) (a a) (b b) (t t))
   (non-orig (ltk b t))
   (uniq-orig k)
   (traces ((recv (enc t tb a k (ltk b t)))))
@@ -128,9 +126,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wide-mouth-frog
-  (vars (tb text) (b a name) (k skey))
-  (defstrand resp 1 (tb tb) (a a) (b b) (t b) (k k))
-  (defstrand init 1 (ta tb) (a b) (b a) (t b) (k k))
+  (vars (k skey) (tb text) (b a name))
+  (defstrand resp 1 (k k) (tb tb) (a a) (b b) (t b))
+  (defstrand init 1 (k k) (ta tb) (a b) (b a) (t b))
   (precedes ((1 0) (0 0)))
   (non-orig (ltk b b))
   (uniq-orig k)
@@ -146,9 +144,9 @@
   (origs (k (1 0))))
 
 (defskeleton wide-mouth-frog
-  (vars (tb ta text) (b t a name) (k skey))
-  (defstrand resp 1 (tb tb) (a a) (b b) (t t) (k k))
-  (defstrand ks 2 (ta ta) (tb tb) (a a) (b b) (t t) (k k))
+  (vars (k skey) (tb ta text) (b t a name))
+  (defstrand resp 1 (k k) (tb tb) (a a) (b b) (t t))
+  (defstrand ks 2 (k k) (ta ta) (tb tb) (a a) (b b) (t t))
   (precedes ((1 1) (0 0)))
   (non-orig (ltk b t))
   (uniq-orig k)
@@ -177,47 +175,46 @@
     (vars (a b t name) (k skey) (ta tb text))
     (trace (recv (cat a (enc a ta b k (ltk a t))))
       (send (enc t tb a k (ltk b t)))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton wide-mouth-frog
-  (vars (ta tb text) (a b t name) (k skey))
-  (defstrand ks 2 (ta ta) (tb tb) (a a) (b b) (t t) (k k))
+  (vars (k skey) (ta tb text) (a b t name))
+  (defstrand ks 2 (k k) (ta ta) (tb tb) (a a) (b b) (t t))
   (non-orig (ltk a t) (ltk b t))
   (uniq-orig k)
   (traces
@@ -229,9 +226,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wide-mouth-frog
-  (vars (ta tb text) (a b t name) (k skey))
-  (defstrand ks 2 (ta ta) (tb tb) (a a) (b b) (t t) (k k))
-  (defstrand init 1 (ta ta) (a a) (b b) (t t) (k k))
+  (vars (k skey) (ta tb text) (a b t name))
+  (defstrand ks 2 (k k) (ta ta) (tb tb) (a a) (b b) (t t))
+  (defstrand init 1 (k k) (ta ta) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)))
   (non-orig (ltk a t) (ltk b t))
   (uniq-orig k)
@@ -249,9 +246,9 @@
   (origs (k (1 0))))
 
 (defskeleton wide-mouth-frog
-  (vars (ta tb ta-0 text) (b t name) (k skey))
-  (defstrand ks 2 (ta ta) (tb tb) (a t) (b b) (t t) (k k))
-  (defstrand ks 2 (ta ta-0) (tb ta) (a b) (b t) (t t) (k k))
+  (vars (k skey) (ta tb ta-0 text) (b t name))
+  (defstrand ks 2 (k k) (ta ta) (tb tb) (a t) (b b) (t t))
+  (defstrand ks 2 (k k) (ta ta-0) (tb ta) (a b) (b t) (t t))
   (precedes ((1 1) (0 0)))
   (non-orig (ltk b t) (ltk t t))
   (uniq-orig k)
@@ -268,10 +265,10 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wide-mouth-frog
-  (vars (ta tb ta-0 text) (b t name) (k skey))
-  (defstrand ks 2 (ta ta) (tb tb) (a t) (b b) (t t) (k k))
-  (defstrand ks 2 (ta ta-0) (tb ta) (a b) (b t) (t t) (k k))
-  (defstrand init 1 (ta ta-0) (a b) (b t) (t t) (k k))
+  (vars (k skey) (ta tb ta-0 text) (b t name))
+  (defstrand ks 2 (k k) (ta ta) (tb tb) (a t) (b b) (t t))
+  (defstrand ks 2 (k k) (ta ta-0) (tb ta) (a b) (b t) (t t))
+  (defstrand init 1 (k k) (ta ta-0) (a b) (b t) (t t))
   (precedes ((1 1) (0 0)) ((2 0) (1 0)))
   (non-orig (ltk b t) (ltk t t))
   (uniq-orig k)
@@ -291,10 +288,10 @@
   (origs (k (2 0))))
 
 (defskeleton wide-mouth-frog
-  (vars (ta tb ta-0 ta-1 text) (t name) (k skey))
-  (defstrand ks 2 (ta ta) (tb tb) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-0) (tb ta) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-1) (tb ta-0) (a t) (b t) (t t) (k k))
+  (vars (k skey) (ta tb ta-0 ta-1 text) (t name))
+  (defstrand ks 2 (k k) (ta ta) (tb tb) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-0) (tb ta) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-1) (tb ta-0) (a t) (b t) (t t))
   (precedes ((1 1) (0 0)) ((2 1) (1 0)))
   (non-orig (ltk t t))
   (uniq-orig k)
@@ -313,11 +310,11 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wide-mouth-frog
-  (vars (ta tb ta-0 ta-1 text) (t name) (k skey))
-  (defstrand ks 2 (ta ta) (tb tb) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-0) (tb ta) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-1) (tb ta-0) (a t) (b t) (t t) (k k))
-  (defstrand init 1 (ta ta-1) (a t) (b t) (t t) (k k))
+  (vars (k skey) (ta tb ta-0 ta-1 text) (t name))
+  (defstrand ks 2 (k k) (ta ta) (tb tb) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-0) (tb ta) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-1) (tb ta-0) (a t) (b t) (t t))
+  (defstrand init 1 (k k) (ta ta-1) (a t) (b t) (t t))
   (precedes ((1 1) (0 0)) ((2 1) (1 0)) ((3 0) (2 0)))
   (non-orig (ltk t t))
   (uniq-orig k)
@@ -339,11 +336,11 @@
   (origs (k (3 0))))
 
 (defskeleton wide-mouth-frog
-  (vars (ta tb ta-0 ta-1 ta-2 text) (t name) (k skey))
-  (defstrand ks 2 (ta ta) (tb tb) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-0) (tb ta) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-1) (tb ta-0) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-2) (tb ta-1) (a t) (b t) (t t) (k k))
+  (vars (k skey) (ta tb ta-0 ta-1 ta-2 text) (t name))
+  (defstrand ks 2 (k k) (ta ta) (tb tb) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-0) (tb ta) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-1) (tb ta-0) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-2) (tb ta-1) (a t) (b t) (t t))
   (precedes ((1 1) (0 0)) ((2 1) (1 0)) ((3 1) (2 0)))
   (non-orig (ltk t t))
   (uniq-orig k)
@@ -364,12 +361,12 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wide-mouth-frog
-  (vars (ta tb ta-0 ta-1 ta-2 text) (t name) (k skey))
-  (defstrand ks 2 (ta ta) (tb tb) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-0) (tb ta) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-1) (tb ta-0) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-2) (tb ta-1) (a t) (b t) (t t) (k k))
-  (defstrand init 1 (ta ta-2) (a t) (b t) (t t) (k k))
+  (vars (k skey) (ta tb ta-0 ta-1 ta-2 text) (t name))
+  (defstrand ks 2 (k k) (ta ta) (tb tb) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-0) (tb ta) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-1) (tb ta-0) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-2) (tb ta-1) (a t) (b t) (t t))
+  (defstrand init 1 (k k) (ta ta-2) (a t) (b t) (t t))
   (precedes ((1 1) (0 0)) ((2 1) (1 0)) ((3 1) (2 0)) ((4 0) (3 0)))
   (non-orig (ltk t t))
   (uniq-orig k)
@@ -393,12 +390,12 @@
   (origs (k (4 0))))
 
 (defskeleton wide-mouth-frog
-  (vars (ta tb ta-0 ta-1 ta-2 ta-3 text) (t name) (k skey))
-  (defstrand ks 2 (ta ta) (tb tb) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-0) (tb ta) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-1) (tb ta-0) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-2) (tb ta-1) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-3) (tb ta-2) (a t) (b t) (t t) (k k))
+  (vars (k skey) (ta tb ta-0 ta-1 ta-2 ta-3 text) (t name))
+  (defstrand ks 2 (k k) (ta ta) (tb tb) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-0) (tb ta) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-1) (tb ta-0) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-2) (tb ta-1) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-3) (tb ta-2) (a t) (b t) (t t))
   (precedes ((1 1) (0 0)) ((2 1) (1 0)) ((3 1) (2 0)) ((4 1) (3 0)))
   (non-orig (ltk t t))
   (uniq-orig k)
@@ -421,13 +418,13 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wide-mouth-frog
-  (vars (ta tb ta-0 ta-1 ta-2 ta-3 text) (t name) (k skey))
-  (defstrand ks 2 (ta ta) (tb tb) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-0) (tb ta) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-1) (tb ta-0) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-2) (tb ta-1) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-3) (tb ta-2) (a t) (b t) (t t) (k k))
-  (defstrand init 1 (ta ta-3) (a t) (b t) (t t) (k k))
+  (vars (k skey) (ta tb ta-0 ta-1 ta-2 ta-3 text) (t name))
+  (defstrand ks 2 (k k) (ta ta) (tb tb) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-0) (tb ta) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-1) (tb ta-0) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-2) (tb ta-1) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-3) (tb ta-2) (a t) (b t) (t t))
+  (defstrand init 1 (k k) (ta ta-3) (a t) (b t) (t t))
   (precedes ((1 1) (0 0)) ((2 1) (1 0)) ((3 1) (2 0)) ((4 1) (3 0))
     ((5 0) (4 0)))
   (non-orig (ltk t t))
@@ -454,13 +451,13 @@
   (origs (k (5 0))))
 
 (defskeleton wide-mouth-frog
-  (vars (ta tb ta-0 ta-1 ta-2 ta-3 ta-4 text) (t name) (k skey))
-  (defstrand ks 2 (ta ta) (tb tb) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-0) (tb ta) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-1) (tb ta-0) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-2) (tb ta-1) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-3) (tb ta-2) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-4) (tb ta-3) (a t) (b t) (t t) (k k))
+  (vars (k skey) (ta tb ta-0 ta-1 ta-2 ta-3 ta-4 text) (t name))
+  (defstrand ks 2 (k k) (ta ta) (tb tb) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-0) (tb ta) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-1) (tb ta-0) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-2) (tb ta-1) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-3) (tb ta-2) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-4) (tb ta-3) (a t) (b t) (t t))
   (precedes ((1 1) (0 0)) ((2 1) (1 0)) ((3 1) (2 0)) ((4 1) (3 0))
     ((5 1) (4 0)))
   (non-orig (ltk t t))
@@ -486,14 +483,14 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wide-mouth-frog
-  (vars (ta tb ta-0 ta-1 ta-2 ta-3 ta-4 text) (t name) (k skey))
-  (defstrand ks 2 (ta ta) (tb tb) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-0) (tb ta) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-1) (tb ta-0) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-2) (tb ta-1) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-3) (tb ta-2) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-4) (tb ta-3) (a t) (b t) (t t) (k k))
-  (defstrand init 1 (ta ta-4) (a t) (b t) (t t) (k k))
+  (vars (k skey) (ta tb ta-0 ta-1 ta-2 ta-3 ta-4 text) (t name))
+  (defstrand ks 2 (k k) (ta ta) (tb tb) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-0) (tb ta) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-1) (tb ta-0) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-2) (tb ta-1) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-3) (tb ta-2) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-4) (tb ta-3) (a t) (b t) (t t))
+  (defstrand init 1 (k k) (ta ta-4) (a t) (b t) (t t))
   (precedes ((1 1) (0 0)) ((2 1) (1 0)) ((3 1) (2 0)) ((4 1) (3 0))
     ((5 1) (4 0)) ((6 0) (5 0)))
   (non-orig (ltk t t))
@@ -522,14 +519,14 @@
   (origs (k (6 0))))
 
 (defskeleton wide-mouth-frog
-  (vars (ta tb ta-0 ta-1 ta-2 ta-3 ta-4 ta-5 text) (t name) (k skey))
-  (defstrand ks 2 (ta ta) (tb tb) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-0) (tb ta) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-1) (tb ta-0) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-2) (tb ta-1) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-3) (tb ta-2) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-4) (tb ta-3) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-5) (tb ta-4) (a t) (b t) (t t) (k k))
+  (vars (k skey) (ta tb ta-0 ta-1 ta-2 ta-3 ta-4 ta-5 text) (t name))
+  (defstrand ks 2 (k k) (ta ta) (tb tb) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-0) (tb ta) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-1) (tb ta-0) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-2) (tb ta-1) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-3) (tb ta-2) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-4) (tb ta-3) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-5) (tb ta-4) (a t) (b t) (t t))
   (precedes ((1 1) (0 0)) ((2 1) (1 0)) ((3 1) (2 0)) ((4 1) (3 0))
     ((5 1) (4 0)) ((6 1) (5 0)))
   (non-orig (ltk t t))
@@ -556,18 +553,16 @@
   (unrealized (6 0))
   (comment "2 in cohort - 2 not yet seen"))
 
-(comment "Strand bound exceeded--aborting run")
-
 (defskeleton wide-mouth-frog
-  (vars (ta tb ta-0 ta-1 ta-2 ta-3 ta-4 ta-5 text) (t name) (k skey))
-  (defstrand ks 2 (ta ta) (tb tb) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-0) (tb ta) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-1) (tb ta-0) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-2) (tb ta-1) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-3) (tb ta-2) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-4) (tb ta-3) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-5) (tb ta-4) (a t) (b t) (t t) (k k))
-  (defstrand init 1 (ta ta-5) (a t) (b t) (t t) (k k))
+  (vars (k skey) (ta tb ta-0 ta-1 ta-2 ta-3 ta-4 ta-5 text) (t name))
+  (defstrand ks 2 (k k) (ta ta) (tb tb) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-0) (tb ta) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-1) (tb ta-0) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-2) (tb ta-1) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-3) (tb ta-2) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-4) (tb ta-3) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-5) (tb ta-4) (a t) (b t) (t t))
+  (defstrand init 1 (k k) (ta ta-5) (a t) (b t) (t t))
   (precedes ((1 1) (0 0)) ((2 1) (1 0)) ((3 1) (2 0)) ((4 1) (3 0))
     ((5 1) (4 0)) ((6 1) (5 0)) ((7 0) (6 0)))
   (non-orig (ltk t t))
@@ -593,20 +588,23 @@
   (label 17)
   (parent 16)
   (unrealized)
-  (aborted)
-  (comment "aborted"))
+  (shape)
+  (maps ((0) ((a t) (b t) (t t) (k k) (ta ta) (tb tb))))
+  (origs (k (7 0))))
+
+(comment "Strand bound exceeded--aborting run")
 
 (defskeleton wide-mouth-frog
-  (vars (ta tb ta-0 ta-1 ta-2 ta-3 ta-4 ta-5 ta-6 text) (t name)
-    (k skey))
-  (defstrand ks 2 (ta ta) (tb tb) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-0) (tb ta) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-1) (tb ta-0) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-2) (tb ta-1) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-3) (tb ta-2) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-4) (tb ta-3) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-5) (tb ta-4) (a t) (b t) (t t) (k k))
-  (defstrand ks 2 (ta ta-6) (tb ta-5) (a t) (b t) (t t) (k k))
+  (vars (k skey) (ta tb ta-0 ta-1 ta-2 ta-3 ta-4 ta-5 ta-6 text)
+    (t name))
+  (defstrand ks 2 (k k) (ta ta) (tb tb) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-0) (tb ta) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-1) (tb ta-0) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-2) (tb ta-1) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-3) (tb ta-2) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-4) (tb ta-3) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-5) (tb ta-4) (a t) (b t) (t t))
+  (defstrand ks 2 (k k) (ta ta-6) (tb ta-5) (a t) (b t) (t t))
   (precedes ((1 1) (0 0)) ((2 1) (1 0)) ((3 1) (2 0)) ((4 1) (3 0))
     ((5 1) (4 0)) ((6 1) (5 0)) ((7 1) (6 0)))
   (non-orig (ltk t t))

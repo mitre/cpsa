@@ -1,3 +1,11 @@
+(* Message Algebra
+
+Copyright (c) 2021 The MITRE Corporation
+
+This program is free software: you can redistribute it and/or
+modify it under the terms of the BSD License as published by the
+University of California. *)
+
 (** * The Message Algebra *)
 
 Require Import FunInd Nat Bool DecBool Monad Proc.
@@ -255,14 +263,8 @@ Definition type_of (x: alg): type :=
   | Sk _ => Skey
   | Ak _ => Akey
   | Ik _ => Ikey
-  | Mg _ => Mesg
-  | Tg _ => Quot
-  | Pr _ _ => Pair
-  | En _ (Ak _) => Aenc
-  | En _ (Ik _) => Ienc
-  | En _ _ => Senc
-  | Hs _ => Hash
-  | Ch v => Chan
+  | Ch _ => Chan
+  | _ => Mesg
   end.
 
 (** ** Is a Term Well Formed?

@@ -13,7 +13,7 @@ Definition init: proc :=
   [
    (* Send (bad_unilateral.scm:10:6) *)
    Bind (2, Text) (Frsh_);
-   Bind (3, Aenc) (Encr_ 2 1);
+   Bind (3, Mesg) (Encr_ 2 1);
    Send 0 3;
    (* Recv (bad_unilateral.scm:11:6) *)
    Bind (4, Text) (Recv_ 0);
@@ -28,7 +28,7 @@ Definition resp: proc :=
   [(0, Chan); (1, Akey)]
   [
    (* Recv (bad_unilateral.scm:18:6) *)
-   Bind (2, Ienc) (Recv_ 0);
+   Bind (2, Mesg) (Recv_ 0);
    Bind (3, Text) (Decr_ 2 1);
    (* Send (bad_unilateral.scm:19:6) *)
    Send 0 3;

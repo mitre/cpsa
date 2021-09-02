@@ -1,3 +1,11 @@
+(* Unilateral Proofs
+
+Copyright (c) 2021 The MITRE Corporation
+
+This program is free software: you can redistribute it and/or
+modify it under the terms of the BSD License as published by the
+University of California. *)
+
 (** * Unilateral Protocol Generated Code Verification *)
 
 Require Import List Program Monad Proc Alg.
@@ -79,7 +87,7 @@ Definition bad_init: proc :=
   [
    (* Send (rtst/unilateral.scm:9:7) *)
    Bind (2, Text) (Frsh_);
-   Bind (3, Aenc) (Encr_ 2 1);
+   Bind (3, Mesg) (Encr_ 2 1);
    Send 0 3;
    (* Recv (rtst/unilateral.scm:10:7) *)
    Bind (4, Text) (Recv_ 0);

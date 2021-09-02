@@ -1,8 +1,8 @@
-(herald subatomic-open-closed 
-	;; (try-old-strands) 
+(herald subatomic-open-closed
+	;; (try-old-strands)
 	;; 	(check-nonces)
-	;; 	(reverse-nodes) 
-	(bound 40)) 
+	;; 	(reverse-nodes)
+	(bound 40))
 
 (defmacro (dev-key-state d o k)
   (cat "st-k" d o k))
@@ -19,14 +19,14 @@
   (cat "st" d (closed o)))
 
 (defmacro (dev-state-any d o any)
-  (cat "st" d any)) 
+  (cat "st" d any))
 
 (defprotocol subatomic-open-closed basic
   (defrole dev-up
     (vars (k skey) (d o name) (old old1 mesg) (start-ch chan) (lk ls locn))
     (trace
      (recv start-ch (cat "power-up" d o k))
-     (load lk old) 
+     (load lk old)
      (load ls old1)
      (stor lk (dev-key-state d o k))
      (stor ls (dev-state-closed d o))
@@ -53,13 +53,13 @@
     (trace
      (send (enc "close" d o n k))
      (recv n)))
-  
+
   (defrole dev-open
     (vars (k skey) (n text) (any mesg) (d o name) (lk ls locn))
     (trace
      (recv (enc "open" d o n k))
      (load ls (dev-state-any d o any))
-     (load lk (dev-key-state d o k)) 
+     (load lk (dev-key-state d o k))
      (stor ls (dev-state-opened d o))
      (send n))
     (critical-sections (1 3))
@@ -105,14 +105,14 @@
  	   (p "dev-up" "k" z1 k)
  	   (p "dev-up" "k" z2 k))
        (= z1 z2))))
-  
+
    (defrule same-dev-ls-lk
      (forall ((ls lk lk-0 locn))
   	     (implies
   	      (and (fact same-dev ls lk)
   		   (fact same-dev ls lk-0))
   	      (= lk lk-0))))
-  
+
    (defrule same-dev-lk-ls
      (forall ((lk ls ls-0 locn))
   	     (implies
@@ -127,17 +127,14 @@
   (uniq-orig k)
   (facts (no-state-split)))
 
-(defskeleton subatomic-open-closed 
+(defskeleton subatomic-open-closed
   (vars (k skey) (d o name) (n text) (start-ch chan))
   (defstrand dev-pass 4 (k k))
   (facts (no-state-split)))
 
-(defskeleton subatomic-open-closed 
+(defskeleton subatomic-open-closed
   (vars (k skey) (d o name) (n text) (start-ch chan))
   (defstrand owner-power-dev 2 (k k))
   (defstrand dev-pass 4 (k k))
   (uniq-orig k)
   (facts (no-state-split)))
-
-
-

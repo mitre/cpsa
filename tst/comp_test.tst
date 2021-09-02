@@ -25,47 +25,46 @@
     (trace (recv (cat i a (enc (enc k b c i (invk a)) b) x))
       (send (enc "data" d k)))
     (uniq-orig d))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton main-ex-src
-  (vars (i ssn text) (k skey) (a b c akey))
-  (defstrand qn 2 (i i) (ssn ssn) (k k) (a a) (b b) (c c))
+  (vars (k skey) (i ssn text) (a b c akey))
+  (defstrand qn 2 (k k) (i i) (ssn ssn) (a a) (b b) (c c))
   (non-orig (invk a) (invk b) (invk c))
   (uniq-orig k)
   (comment
@@ -89,9 +88,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton main-ex-src
-  (vars (x mesg) (i ssn i-0 text) (k skey) (a b c c-0 akey))
-  (defstrand qn 2 (i i) (ssn ssn) (k k) (a a) (b b) (c c))
-  (defstrand an 2 (x x) (i i-0) (k k) (a a) (b b) (c c-0))
+  (vars (x mesg) (k skey) (i ssn i-0 text) (a b c c-0 akey))
+  (defstrand qn 2 (k k) (i i) (ssn ssn) (a a) (b b) (c c))
+  (defstrand an 2 (x x) (k k) (i i-0) (a a) (b b) (c c-0))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk a) (invk b) (invk c))
   (uniq-orig k)
@@ -108,8 +107,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton main-ex-src
-  (vars (i ssn text) (k skey) (a b c akey))
-  (defstrand qn 2 (i i) (ssn ssn) (k k) (a a) (b b) (c c))
+  (vars (k skey) (i ssn text) (a b c akey))
+  (defstrand qn 2 (k k) (i i) (ssn ssn) (a a) (b b) (c c))
   (deflistener k)
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk a) (invk b) (invk c))
@@ -126,9 +125,9 @@
   (comment "empty cohort"))
 
 (defskeleton main-ex-src
-  (vars (x mesg) (i ssn text) (k skey) (a b c akey))
-  (defstrand qn 2 (i i) (ssn ssn) (k k) (a a) (b b) (c c))
-  (defstrand an 2 (x x) (i i) (k k) (a a) (b b) (c c))
+  (vars (x mesg) (k skey) (i ssn text) (a b c akey))
+  (defstrand qn 2 (k k) (i i) (ssn ssn) (a a) (b b) (c c))
+  (defstrand an 2 (x x) (k k) (i i) (a a) (b b) (c c))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk a) (invk b) (invk c))
   (uniq-orig k)
@@ -170,47 +169,46 @@
     (trace (recv (cat i a (enc (enc k b c i (invk a)) b) x))
       (send (enc "data" d k)))
     (uniq-orig d))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton main-ex-src
-  (vars (i ssn d text) (k skey) (a b c akey))
-  (defstrand qy 2 (i i) (ssn ssn) (d d) (k k) (a a) (b b) (c c))
+  (vars (k skey) (i ssn d text) (a b c akey))
+  (defstrand qy 2 (k k) (i i) (ssn ssn) (d d) (a a) (b b) (c c))
   (non-orig (invk a) (invk b) (invk c))
   (uniq-orig k)
   (traces
@@ -222,12 +220,12 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton main-ex-src
-  (vars (x mesg) (i ssn d i-0 text) (k skey) (a b c a-0 b-0 c-0 akey))
-  (defstrand qy 2 (i i) (ssn ssn) (d d) (k k) (a a) (b b) (c c))
-  (defstrand ay 2 (x x) (i i-0) (d d) (k k) (a a-0) (b b-0) (c c-0))
+  (vars (x mesg) (k skey) (i ssn d i-0 text) (a b c a-0 b-0 c-0 akey))
+  (defstrand qy 2 (k k) (i i) (ssn ssn) (d d) (a a) (b b) (c c))
+  (defstrand ay 2 (x x) (k k) (i i-0) (d d) (a a-0) (b b-0) (c c-0))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk a) (invk b) (invk c))
-  (uniq-orig d k)
+  (uniq-orig k d)
   (operation encryption-test (added-strand ay 2) (enc "data" d k) (0 1))
   (traces
     ((send (cat i a (enc (enc k b c i (invk a)) b) (enc a b i ssn c)))
@@ -240,8 +238,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton main-ex-src
-  (vars (i ssn d text) (k skey) (a b c akey))
-  (defstrand qy 2 (i i) (ssn ssn) (d d) (k k) (a a) (b b) (c c))
+  (vars (k skey) (i ssn d text) (a b c akey))
+  (defstrand qy 2 (k k) (i i) (ssn ssn) (d d) (a a) (b b) (c c))
   (deflistener k)
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk a) (invk b) (invk c))
@@ -257,12 +255,12 @@
   (comment "empty cohort"))
 
 (defskeleton main-ex-src
-  (vars (x mesg) (i ssn d text) (k skey) (a b c akey))
-  (defstrand qy 2 (i i) (ssn ssn) (d d) (k k) (a a) (b b) (c c))
-  (defstrand ay 2 (x x) (i i) (d d) (k k) (a a) (b b) (c c))
+  (vars (x mesg) (k skey) (i ssn d text) (a b c akey))
+  (defstrand qy 2 (k k) (i i) (ssn ssn) (d d) (a a) (b b) (c c))
+  (defstrand ay 2 (x x) (k k) (i i) (d d) (a a) (b b) (c c))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk a) (invk b) (invk c))
-  (uniq-orig d k)
+  (uniq-orig k d)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (c-0 c) (i-0 i)) k
     (1 0) (enc (enc k b c i (invk a)) b))
   (traces
@@ -308,47 +306,46 @@
   (defrole sy
     (vars (a b c akey) (i ssn y n text))
     (trace (recv (enc y n i a (enc a b i ssn c) c)) (send y)))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton main-ex-tgt
-  (vars (i ssn text) (k skey) (a b c akey))
-  (defstrand qn 2 (i i) (ssn ssn) (k k) (a a) (b b) (c c))
+  (vars (k skey) (i ssn text) (a b c akey))
+  (defstrand qn 2 (k k) (i i) (ssn ssn) (a a) (b b) (c c))
   (non-orig (invk a) (invk b) (invk c))
   (uniq-orig k)
   (traces
@@ -360,12 +357,12 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton main-ex-tgt
-  (vars (x mesg) (i ssn i-0 y n text) (k skey) (a b c c-0 akey))
-  (defstrand qn 2 (i i) (ssn ssn) (k k) (a a) (b b) (c c))
-  (defstrand an 4 (x x) (i i-0) (y y) (n n) (k k) (a a) (b b) (c c-0))
+  (vars (x mesg) (k skey) (i ssn i-0 y n text) (a b c c-0 akey))
+  (defstrand qn 2 (k k) (i i) (ssn ssn) (a a) (b b) (c c))
+  (defstrand an 4 (x x) (k k) (i i-0) (y y) (n n) (a a) (b b) (c c-0))
   (precedes ((0 0) (1 0)) ((1 3) (0 1)))
   (non-orig (invk a) (invk b) (invk c))
-  (uniq-orig y n k)
+  (uniq-orig k y n)
   (operation encryption-test (added-strand an 4) (enc "sorry" a b k)
     (0 1))
   (traces
@@ -379,8 +376,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton main-ex-tgt
-  (vars (i ssn text) (k skey) (a b c akey))
-  (defstrand qn 2 (i i) (ssn ssn) (k k) (a a) (b b) (c c))
+  (vars (k skey) (i ssn text) (a b c akey))
+  (defstrand qn 2 (k k) (i i) (ssn ssn) (a a) (b b) (c c))
   (deflistener k)
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk a) (invk b) (invk c))
@@ -397,12 +394,12 @@
   (comment "empty cohort"))
 
 (defskeleton main-ex-tgt
-  (vars (x mesg) (i ssn y n text) (k skey) (a b c akey))
-  (defstrand qn 2 (i i) (ssn ssn) (k k) (a a) (b b) (c c))
-  (defstrand an 4 (x x) (i i) (y y) (n n) (k k) (a a) (b b) (c c))
+  (vars (x mesg) (k skey) (i ssn y n text) (a b c akey))
+  (defstrand qn 2 (k k) (i i) (ssn ssn) (a a) (b b) (c c))
+  (defstrand an 4 (x x) (k k) (i i) (y y) (n n) (a a) (b b) (c c))
   (precedes ((0 0) (1 0)) ((1 3) (0 1)))
   (non-orig (invk a) (invk b) (invk c))
-  (uniq-orig y n k)
+  (uniq-orig k y n)
   (operation encryption-test (displaced 2 0 qy 1)
     (enc k b c-0 i-0 (invk a)) (1 0))
   (traces
@@ -416,14 +413,14 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton main-ex-tgt
-  (vars (i ssn y n ssn-0 text) (k skey) (a b c b-0 akey))
-  (defstrand qn 2 (i i) (ssn ssn) (k k) (a a) (b b) (c c))
-  (defstrand an 4 (x (enc a b-0 i ssn-0 c)) (i i) (y y) (n n) (k k)
+  (vars (k skey) (i ssn y n ssn-0 text) (a b c b-0 akey))
+  (defstrand qn 2 (k k) (i i) (ssn ssn) (a a) (b b) (c c))
+  (defstrand an 4 (x (enc a b-0 i ssn-0 c)) (k k) (i i) (y y) (n n)
     (a a) (b b) (c c))
   (defstrand sn 2 (i i) (ssn ssn-0) (y y) (n n) (a a) (b b-0) (c c))
   (precedes ((0 0) (1 0)) ((1 1) (2 0)) ((1 3) (0 1)) ((2 1) (1 2)))
   (non-orig (invk a) (invk b) (invk c))
-  (uniq-orig y n k)
+  (uniq-orig k y n)
   (operation nonce-test (added-strand sn 2) n (1 2)
     (enc y n i a (enc a b-0 i ssn-0 c) c))
   (traces
@@ -472,47 +469,46 @@
   (defrole sy
     (vars (a b c akey) (i ssn y n text))
     (trace (recv (enc y n i a (enc a b i ssn c) c)) (send y)))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton main-ex-tgt
-  (vars (i ssn d text) (k skey) (a b c akey))
-  (defstrand qy 2 (i i) (ssn ssn) (d d) (k k) (a a) (b b) (c c))
+  (vars (k skey) (i ssn d text) (a b c akey))
+  (defstrand qy 2 (k k) (i i) (ssn ssn) (d d) (a a) (b b) (c c))
   (non-orig (invk a) (invk b) (invk c))
   (uniq-orig k)
   (traces
@@ -524,14 +520,14 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton main-ex-tgt
-  (vars (x mesg) (i ssn d i-0 y n text) (k skey)
+  (vars (x mesg) (k skey) (i ssn d i-0 y n text)
     (a b c a-0 b-0 c-0 akey))
-  (defstrand qy 2 (i i) (ssn ssn) (d d) (k k) (a a) (b b) (c c))
-  (defstrand ay 4 (x x) (i i-0) (y y) (n n) (d d) (k k) (a a-0) (b b-0)
+  (defstrand qy 2 (k k) (i i) (ssn ssn) (d d) (a a) (b b) (c c))
+  (defstrand ay 4 (x x) (k k) (i i-0) (y y) (n n) (d d) (a a-0) (b b-0)
     (c c-0))
   (precedes ((0 0) (1 0)) ((1 3) (0 1)))
   (non-orig (invk a) (invk b) (invk c))
-  (uniq-orig d y n k)
+  (uniq-orig k d y n)
   (operation encryption-test (added-strand ay 4) (enc "data" d k) (0 1))
   (traces
     ((send (cat i a (enc (enc k b c i (invk a)) b) (enc a b i ssn c)))
@@ -544,8 +540,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton main-ex-tgt
-  (vars (i ssn d text) (k skey) (a b c akey))
-  (defstrand qy 2 (i i) (ssn ssn) (d d) (k k) (a a) (b b) (c c))
+  (vars (k skey) (i ssn d text) (a b c akey))
+  (defstrand qy 2 (k k) (i i) (ssn ssn) (d d) (a a) (b b) (c c))
   (deflistener k)
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk a) (invk b) (invk c))
@@ -561,12 +557,12 @@
   (comment "empty cohort"))
 
 (defskeleton main-ex-tgt
-  (vars (x mesg) (i ssn d y n text) (k skey) (a b c akey))
-  (defstrand qy 2 (i i) (ssn ssn) (d d) (k k) (a a) (b b) (c c))
-  (defstrand ay 4 (x x) (i i) (y y) (n n) (d d) (k k) (a a) (b b) (c c))
+  (vars (x mesg) (k skey) (i ssn d y n text) (a b c akey))
+  (defstrand qy 2 (k k) (i i) (ssn ssn) (d d) (a a) (b b) (c c))
+  (defstrand ay 4 (x x) (k k) (i i) (y y) (n n) (d d) (a a) (b b) (c c))
   (precedes ((0 0) (1 0)) ((1 3) (0 1)))
   (non-orig (invk a) (invk b) (invk c))
-  (uniq-orig d y n k)
+  (uniq-orig k d y n)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (c-0 c) (i-0 i)) k
     (1 0) (enc (enc k b c i (invk a)) b))
   (traces
@@ -580,12 +576,12 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton main-ex-tgt
-  (vars (x mesg) (i ssn d n text) (k skey) (a b c akey))
-  (defstrand qy 2 (i i) (ssn ssn) (d d) (k k) (a a) (b b) (c c))
-  (defstrand ay 4 (x x) (i i) (y n) (n n) (d d) (k k) (a a) (b b) (c c))
+  (vars (x mesg) (k skey) (i ssn d n text) (a b c akey))
+  (defstrand qy 2 (k k) (i i) (ssn ssn) (d d) (a a) (b b) (c c))
+  (defstrand ay 4 (x x) (k k) (i i) (y n) (n n) (d d) (a a) (b b) (c c))
   (precedes ((0 0) (1 0)) ((1 3) (0 1)))
   (non-orig (invk a) (invk b) (invk c))
-  (uniq-orig d n k)
+  (uniq-orig k d n)
   (operation nonce-test (displaced 2 1 ay 2) y (1 2) (enc y n i a x c))
   (traces
     ((send (cat i a (enc (enc k b c i (invk a)) b) (enc a b i ssn c)))
@@ -598,14 +594,14 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton main-ex-tgt
-  (vars (i ssn d y n ssn-0 text) (k skey) (a b c b-0 akey))
-  (defstrand qy 2 (i i) (ssn ssn) (d d) (k k) (a a) (b b) (c c))
-  (defstrand ay 4 (x (enc a b-0 i ssn-0 c)) (i i) (y y) (n n) (d d)
-    (k k) (a a) (b b) (c c))
+  (vars (k skey) (i ssn d y n ssn-0 text) (a b c b-0 akey))
+  (defstrand qy 2 (k k) (i i) (ssn ssn) (d d) (a a) (b b) (c c))
+  (defstrand ay 4 (x (enc a b-0 i ssn-0 c)) (k k) (i i) (y y) (n n)
+    (d d) (a a) (b b) (c c))
   (defstrand sy 2 (i i) (ssn ssn-0) (y y) (n n) (a a) (b b-0) (c c))
   (precedes ((0 0) (1 0)) ((1 1) (2 0)) ((1 3) (0 1)) ((2 1) (1 2)))
   (non-orig (invk a) (invk b) (invk c))
-  (uniq-orig d y n k)
+  (uniq-orig k d y n)
   (operation nonce-test (added-strand sy 2) y (1 2)
     (enc y n i a (enc a b-0 i ssn-0 c) c))
   (traces
@@ -624,14 +620,14 @@
   (origs (d (1 3)) (y (1 1)) (n (1 1)) (k (0 0))))
 
 (defskeleton main-ex-tgt
-  (vars (i ssn d n ssn-0 text) (k skey) (a b c b-0 akey))
-  (defstrand qy 2 (i i) (ssn ssn) (d d) (k k) (a a) (b b) (c c))
-  (defstrand ay 4 (x (enc a b-0 i ssn-0 c)) (i i) (y n) (n n) (d d)
-    (k k) (a a) (b b) (c c))
+  (vars (k skey) (i ssn d n ssn-0 text) (a b c b-0 akey))
+  (defstrand qy 2 (k k) (i i) (ssn ssn) (d d) (a a) (b b) (c c))
+  (defstrand ay 4 (x (enc a b-0 i ssn-0 c)) (k k) (i i) (y n) (n n)
+    (d d) (a a) (b b) (c c))
   (defstrand sy 2 (i i) (ssn ssn-0) (y n) (n n) (a a) (b b-0) (c c))
   (precedes ((0 0) (1 0)) ((1 1) (2 0)) ((1 3) (0 1)) ((2 1) (1 2)))
   (non-orig (invk a) (invk b) (invk c))
-  (uniq-orig d n k)
+  (uniq-orig k d n)
   (operation nonce-test (added-strand sy 2) n (1 2)
     (enc n n i a (enc a b-0 i ssn-0 c) c))
   (traces
@@ -679,43 +675,6 @@
   (defrole sy
     (vars (a b c akey) (i ssn y n text))
     (trace (recv (enc y n i a (enc a b i ssn c) c)) (send y)))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (defrule src
     (forall ((z strd) (i ssn text) (k skey) (a b c akey))
       (implies
@@ -726,11 +685,47 @@
         (exists ((z-0 strd) (x mesg))
           (and (p "an" z-0 4) (p "an" "x" z-0 x) (p "an" "i" z-0 i)
             (p "an" "k" z-0 k) (p "an" "a" z-0 a) (p "an" "b" z-0 b)
-            (p "an" "c" z-0 c) (prec z 0 z-0 0) (prec z-0 3 z 1)))))))
+            (p "an" "c" z-0 c) (prec z 0 z-0 0) (prec z-0 3 z 1))))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton main-ex-tgt-rule
-  (vars (i ssn text) (k skey) (a b c akey))
-  (defstrand qn 2 (i i) (ssn ssn) (k k) (a a) (b b) (c c))
+  (vars (k skey) (i ssn text) (a b c akey))
+  (defstrand qn 2 (k k) (i i) (ssn ssn) (a a) (b b) (c c))
   (non-orig (invk a) (invk b) (invk c))
   (uniq-orig k)
   (traces
@@ -742,12 +737,12 @@
   (comment "Not closed under rules"))
 
 (defskeleton main-ex-tgt-rule
-  (vars (x mesg) (ssn i y n text) (k skey) (a b c akey))
-  (defstrand qn 2 (i i) (ssn ssn) (k k) (a a) (b b) (c c))
-  (defstrand an 4 (x x) (i i) (y y) (n n) (k k) (a a) (b b) (c c))
+  (vars (x mesg) (k skey) (ssn i y n text) (a b c akey))
+  (defstrand qn 2 (k k) (i i) (ssn ssn) (a a) (b b) (c c))
+  (defstrand an 4 (x x) (k k) (i i) (y y) (n n) (a a) (b b) (c c))
   (precedes ((0 0) (1 0)) ((1 3) (0 1)))
   (non-orig (invk a) (invk b) (invk c))
-  (uniq-orig y n k)
+  (uniq-orig k y n)
   (rule src)
   (traces
     ((send (cat i a (enc (enc k b c i (invk a)) b) (enc a b i ssn c)))
@@ -760,14 +755,14 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton main-ex-tgt-rule
-  (vars (ssn i y n ssn-0 text) (k skey) (a b c b-0 akey))
-  (defstrand qn 2 (i i) (ssn ssn) (k k) (a a) (b b) (c c))
-  (defstrand an 4 (x (enc a b-0 i ssn-0 c)) (i i) (y y) (n n) (k k)
+  (vars (k skey) (ssn i y n ssn-0 text) (a b c b-0 akey))
+  (defstrand qn 2 (k k) (i i) (ssn ssn) (a a) (b b) (c c))
+  (defstrand an 4 (x (enc a b-0 i ssn-0 c)) (k k) (i i) (y y) (n n)
     (a a) (b b) (c c))
   (defstrand sn 2 (i i) (ssn ssn-0) (y y) (n n) (a a) (b b-0) (c c))
   (precedes ((0 0) (1 0)) ((1 1) (2 0)) ((1 3) (0 1)) ((2 1) (1 2)))
   (non-orig (invk a) (invk b) (invk c))
-  (uniq-orig y n k)
+  (uniq-orig k y n)
   (operation nonce-test (added-strand sn 2) n (1 2)
     (enc y n i a (enc a b-0 i ssn-0 c) c))
   (traces

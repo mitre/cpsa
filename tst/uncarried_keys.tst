@@ -14,47 +14,46 @@
     (trace (recv (enc "start" a A B (pubk B)))
       (send (enc a A B (pubk A))) (recv (enc a K (pubk B)))
       (send (enc a A B K))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton uncarried-keys
-  (vars (a text) (A B name) (K akey))
-  (defstrand init 4 (a a) (A A) (B B) (K K))
+  (vars (a text) (K akey) (A B name))
+  (defstrand init 4 (a a) (K K) (A A) (B B))
   (non-orig (invk K) (privk B))
   (uniq-orig a K)
   (traces
@@ -66,8 +65,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton uncarried-keys
-  (vars (a text) (A B name) (K akey))
-  (defstrand init 4 (a a) (A A) (B B) (K K))
+  (vars (a text) (K akey) (A B name))
+  (defstrand init 4 (a a) (K K) (A A) (B B))
   (defstrand resp 2 (a a) (A A) (B B))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk K) (privk B))
@@ -84,10 +83,10 @@
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton uncarried-keys
-  (vars (a text) (A B name) (K akey))
-  (defstrand init 4 (a a) (A A) (B B) (K K))
+  (vars (a text) (K akey) (A B name))
+  (defstrand init 4 (a a) (K K) (A A) (B B))
   (defstrand resp 2 (a a) (A A) (B B))
-  (defstrand resp 4 (a a) (A A) (B B) (K K))
+  (defstrand resp 4 (a a) (K K) (A A) (B B))
   (precedes ((0 0) (1 0)) ((0 0) (2 0)) ((0 2) (2 2)) ((1 1) (0 1))
     ((2 3) (0 3)))
   (non-orig (invk K) (privk B))
@@ -107,9 +106,9 @@
   (origs (K (0 2)) (a (0 0))))
 
 (defskeleton uncarried-keys
-  (vars (a text) (A B name) (K akey))
-  (defstrand init 4 (a a) (A A) (B B) (K K))
-  (defstrand resp 4 (a a) (A A) (B B) (K K))
+  (vars (a text) (K akey) (A B name))
+  (defstrand init 4 (a a) (K K) (A A) (B B))
+  (defstrand resp 4 (a a) (K K) (A A) (B B))
   (precedes ((0 0) (1 0)) ((0 2) (1 2)) ((1 1) (0 1)) ((1 3) (0 3)))
   (non-orig (invk K) (privk B))
   (uniq-orig a K)
@@ -128,7 +127,7 @@
 
 (defskeleton uncarried-keys
   (vars (a text) (A B name))
-  (defstrand init 4 (a a) (A A) (B B) (K (pubk A)))
+  (defstrand init 4 (a a) (K (pubk A)) (A A) (B B))
   (defstrand resp 2 (a a) (A A) (B B))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (privk A) (privk B))
@@ -147,8 +146,8 @@
   (origs ((pubk A) (0 2)) (a (0 0))))
 
 (defskeleton uncarried-keys
-  (vars (a text) (A B name) (K akey))
-  (defstrand init 4 (a a) (A A) (B B) (K K))
+  (vars (a text) (K akey) (A B name))
+  (defstrand init 4 (a a) (K K) (A A) (B B))
   (defstrand resp 2 (a a) (A A) (B B))
   (deflistener K)
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((2 1) (0 3)))

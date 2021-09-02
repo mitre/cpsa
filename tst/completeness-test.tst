@@ -10,47 +10,46 @@
     (vars (a b name) (n text))
     (trace (recv (enc a n (pubk b))) (send (enc n (pubk a)))))
   (defrole probe (vars (s skey)) (trace (recv (enc "ok" s))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton completeness-test
-  (vars (n text) (b a name) (s s-0 skey))
-  (defstrand init 3 (n n) (a a) (b b) (s s-0))
+  (vars (s s-0 skey) (n text) (b a name))
+  (defstrand init 3 (s s-0) (n n) (a a) (b b))
   (defstrand probe 1 (s s))
   (non-orig s (privk b))
   (uniq-orig n)
@@ -63,8 +62,8 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton completeness-test
-  (vars (n text) (b a name) (s skey))
-  (defstrand init 3 (n n) (a a) (b b) (s s))
+  (vars (s skey) (n text) (b a name))
+  (defstrand init 3 (s s) (n n) (a a) (b b))
   (defstrand probe 1 (s s))
   (precedes ((0 2) (1 0)))
   (non-orig s (privk b))
@@ -81,10 +80,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton completeness-test
-  (vars (n n-0 text) (b a a-0 b-0 name) (s s-0 skey))
-  (defstrand init 3 (n n) (a a) (b b) (s s-0))
+  (vars (s s-0 skey) (n n-0 text) (b a a-0 b-0 name))
+  (defstrand init 3 (s s-0) (n n) (a a) (b b))
   (defstrand probe 1 (s s))
-  (defstrand init 3 (n n-0) (a a-0) (b b-0) (s s))
+  (defstrand init 3 (s s) (n n-0) (a a-0) (b b-0))
   (precedes ((2 2) (1 0)))
   (non-orig s (privk b))
   (uniq-orig n)
@@ -100,8 +99,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton completeness-test
-  (vars (n text) (b a name) (s skey))
-  (defstrand init 3 (n n) (a a) (b b) (s s))
+  (vars (s skey) (n text) (b a name))
+  (defstrand init 3 (s s) (n n) (a a) (b b))
   (defstrand probe 1 (s s))
   (defstrand resp 2 (n n) (a a) (b b))
   (precedes ((0 0) (2 0)) ((0 2) (1 0)) ((2 1) (0 1)))
@@ -121,10 +120,10 @@
   (origs (n (0 0))))
 
 (defskeleton completeness-test
-  (vars (n n-0 text) (b a a-0 b-0 name) (s s-0 skey))
-  (defstrand init 3 (n n) (a a) (b b) (s s-0))
+  (vars (s s-0 skey) (n n-0 text) (b a a-0 b-0 name))
+  (defstrand init 3 (s s-0) (n n) (a a) (b b))
   (defstrand probe 1 (s s))
-  (defstrand init 3 (n n-0) (a a-0) (b b-0) (s s))
+  (defstrand init 3 (s s) (n n-0) (a a-0) (b b-0))
   (defstrand resp 2 (n n) (a a) (b b))
   (precedes ((0 0) (3 0)) ((2 2) (1 0)) ((3 1) (0 1)))
   (non-orig s (privk b))
@@ -155,48 +154,47 @@
     (vars (a b name) (n text))
     (trace (recv (enc a n (pubk b))) (send (enc n (pubk a)))))
   (defrole probe (vars (s skey)) (trace (recv (enc "ok" s))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton completeness-test
-  (vars (n text) (b a name) (s s-0 skey))
+  (vars (s s-0 skey) (n text) (b a name))
   (defstrand probe 1 (s s))
-  (defstrand init 3 (n n) (a a) (b b) (s s-0))
+  (defstrand init 3 (s s-0) (n n) (a a) (b b))
   (non-orig s (privk b))
   (uniq-orig n)
   (traces ((recv (enc "ok" s)))
@@ -208,9 +206,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton completeness-test
-  (vars (n text) (b a name) (s s-0 skey))
+  (vars (s s-0 skey) (n text) (b a name))
   (defstrand probe 1 (s s))
-  (defstrand init 3 (n n) (a a) (b b) (s s-0))
+  (defstrand init 3 (s s-0) (n n) (a a) (b b))
   (defstrand resp 2 (n n) (a a) (b b))
   (precedes ((1 0) (2 0)) ((2 1) (1 1)))
   (non-orig s (privk b))
@@ -227,9 +225,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton completeness-test
-  (vars (n text) (b a name) (s skey))
+  (vars (s skey) (n text) (b a name))
   (defstrand probe 1 (s s))
-  (defstrand init 3 (n n) (a a) (b b) (s s))
+  (defstrand init 3 (s s) (n n) (a a) (b b))
   (defstrand resp 2 (n n) (a a) (b b))
   (precedes ((1 0) (2 0)) ((1 2) (0 0)) ((2 1) (1 1)))
   (non-orig s (privk b))
@@ -248,11 +246,11 @@
   (origs (n (1 0))))
 
 (defskeleton completeness-test
-  (vars (n n-0 text) (b a a-0 b-0 name) (s s-0 skey))
+  (vars (s s-0 skey) (n n-0 text) (b a a-0 b-0 name))
   (defstrand probe 1 (s s))
-  (defstrand init 3 (n n) (a a) (b b) (s s-0))
+  (defstrand init 3 (s s-0) (n n) (a a) (b b))
   (defstrand resp 2 (n n) (a a) (b b))
-  (defstrand init 3 (n n-0) (a a-0) (b b-0) (s s))
+  (defstrand init 3 (s s) (n n-0) (a a-0) (b b-0))
   (precedes ((1 0) (2 0)) ((2 1) (1 1)) ((3 2) (0 0)))
   (non-orig s (privk b))
   (uniq-orig n)
@@ -281,46 +279,45 @@
     (vars (a b name) (n text))
     (trace (recv (enc a n (pubk b))) (send (enc n (pubk a)))))
   (defrole probe (vars (s skey)) (trace (recv (enc "ok" s))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton completeness-test
-  (vars (n text) (b a name) (s skey))
+  (vars (s skey) (n text) (b a name))
   (defstrand init 2 (n n) (a a) (b b))
   (defstrand probe 1 (s s))
   (non-orig s (privk b))
@@ -333,9 +330,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton completeness-test
-  (vars (n text) (a b name) (s skey))
+  (vars (s skey) (n text) (a b name))
   (defstrand probe 1 (s s))
-  (defstrand init 3 (n n) (a a) (b b) (s s))
+  (defstrand init 3 (s s) (n n) (a a) (b b))
   (precedes ((1 2) (0 0)))
   (non-orig s (privk b))
   (uniq-orig n)
@@ -350,10 +347,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton completeness-test
-  (vars (n n-0 text) (b a a-0 b-0 name) (s skey))
+  (vars (s skey) (n n-0 text) (b a a-0 b-0 name))
   (defstrand init 2 (n n) (a a) (b b))
   (defstrand probe 1 (s s))
-  (defstrand init 3 (n n-0) (a a-0) (b b-0) (s s))
+  (defstrand init 3 (s s) (n n-0) (a a-0) (b b-0))
   (precedes ((2 2) (1 0)))
   (non-orig s (privk b))
   (uniq-orig n)
@@ -368,9 +365,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton completeness-test
-  (vars (n text) (a b name) (s skey))
+  (vars (s skey) (n text) (a b name))
   (defstrand probe 1 (s s))
-  (defstrand init 3 (n n) (a a) (b b) (s s))
+  (defstrand init 3 (s s) (n n) (a a) (b b))
   (defstrand resp 2 (n n) (a a) (b b))
   (precedes ((1 0) (2 0)) ((1 2) (0 0)) ((2 1) (1 1)))
   (non-orig s (privk b))
@@ -389,10 +386,10 @@
   (origs (n (1 0))))
 
 (defskeleton completeness-test
-  (vars (n n-0 text) (b a a-0 b-0 name) (s skey))
+  (vars (s skey) (n n-0 text) (b a a-0 b-0 name))
   (defstrand init 2 (n n) (a a) (b b))
   (defstrand probe 1 (s s))
-  (defstrand init 3 (n n-0) (a a-0) (b b-0) (s s))
+  (defstrand init 3 (s s) (n n-0) (a a-0) (b b-0))
   (defstrand resp 2 (n n) (a a) (b b))
   (precedes ((0 0) (3 0)) ((2 2) (1 0)) ((3 1) (0 1)))
   (non-orig s (privk b))
@@ -422,46 +419,45 @@
     (vars (a b name) (n text))
     (trace (recv (enc a n (pubk b))) (send (enc n (pubk a)))))
   (defrole probe (vars (s skey)) (trace (recv (enc "ok" s))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton completeness-test
-  (vars (n text) (b a name) (s skey))
+  (vars (s skey) (n text) (b a name))
   (defstrand probe 1 (s s))
   (defstrand init 2 (n n) (a a) (b b))
   (non-orig s (privk b))
@@ -474,7 +470,7 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton completeness-test
-  (vars (n text) (b a name) (s skey))
+  (vars (s skey) (n text) (b a name))
   (defstrand probe 1 (s s))
   (defstrand init 2 (n n) (a a) (b b))
   (defstrand resp 2 (n n) (a a) (b b))
@@ -492,10 +488,10 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton completeness-test
-  (vars (n text) (a b name) (s skey))
+  (vars (s skey) (n text) (a b name))
   (defstrand probe 1 (s s))
   (defstrand resp 2 (n n) (a a) (b b))
-  (defstrand init 3 (n n) (a a) (b b) (s s))
+  (defstrand init 3 (s s) (n n) (a a) (b b))
   (precedes ((1 1) (2 1)) ((2 0) (1 0)) ((2 2) (0 0)))
   (non-orig s (privk b))
   (uniq-orig n)
@@ -512,11 +508,11 @@
   (origs (n (2 0))))
 
 (defskeleton completeness-test
-  (vars (n n-0 text) (b a a-0 b-0 name) (s skey))
+  (vars (s skey) (n n-0 text) (b a a-0 b-0 name))
   (defstrand probe 1 (s s))
   (defstrand init 2 (n n) (a a) (b b))
   (defstrand resp 2 (n n) (a a) (b b))
-  (defstrand init 3 (n n-0) (a a-0) (b b-0) (s s))
+  (defstrand init 3 (s s) (n n-0) (a a-0) (b b-0))
   (precedes ((1 0) (2 0)) ((2 1) (1 1)) ((3 2) (0 0)))
   (non-orig s (privk b))
   (uniq-orig n)

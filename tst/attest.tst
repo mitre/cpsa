@@ -12,7 +12,7 @@
     (vars (d p a akey) (k skey) (n t text))
     (trace (send (enc (enc d n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t))
-    (uniq-orig n k)
+    (uniq-orig k n)
     (comment "Person requesting door entry"))
   (defrole door
     (vars (d p akey) (k skey) (t text))
@@ -22,43 +22,6 @@
     (vars (d p akey) (k skey))
     (trace (recv (enc (enc k (invk p)) d)) (send k))
     (comment "Fake door"))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (defrule yes
     (forall ((z strd) (a akey))
       (implies
@@ -66,13 +29,49 @@
         (exists ((d akey))
           (and (p "appraise" "d" z d) (non (invk d))))))
     (comment "Appraisal succeeded"))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (comment "Door attestations protocol"))
 
 (defskeleton attest-door
-  (vars (n t text) (k skey) (p a d akey))
-  (defstrand person 5 (n n) (t t) (k k) (d d) (p p) (a a))
+  (vars (k skey) (n t text) (p a d akey))
+  (defstrand person 5 (k k) (n n) (t t) (d d) (p p) (a a))
   (non-orig (invk p) (invk a))
-  (uniq-orig n k)
+  (uniq-orig k n)
   (comment "Analyze from the person's perspective")
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
@@ -83,12 +82,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door
-  (vars (n t text) (k skey) (p a d akey))
-  (defstrand person 5 (n n) (t t) (k k) (d d) (p p) (a a))
+  (vars (k skey) (n t text) (p a d akey))
+  (defstrand person 5 (k k) (n n) (t t) (d d) (p p) (a a))
   (defstrand appraise 2 (n n) (d d) (p p) (a a))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk p) (invk a) (invk d))
-  (uniq-orig n k)
+  (uniq-orig k n)
   (rule yes)
   (operation nonce-test (added-strand appraise 2) n (0 1)
     (enc (enc d n (invk p)) a))
@@ -102,13 +101,13 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton attest-door
-  (vars (n t text) (k skey) (p a d d-0 p-0 akey))
-  (defstrand person 5 (n n) (t t) (k k) (d d) (p p) (a a))
+  (vars (k skey) (n t text) (p a d d-0 p-0 akey))
+  (defstrand person 5 (k k) (n n) (t t) (d d) (p p) (a a))
   (defstrand appraise 2 (n n) (d d) (p p) (a a))
-  (defstrand door 2 (t t) (k k) (d d-0) (p p-0))
+  (defstrand door 2 (k k) (t t) (d d-0) (p p-0))
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((2 1) (0 3)))
   (non-orig (invk p) (invk a) (invk d))
-  (uniq-orig n t k)
+  (uniq-orig k n t)
   (operation encryption-test (added-strand door 2) (enc t k) (0 3))
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
@@ -121,13 +120,13 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton attest-door
-  (vars (n t text) (k skey) (p a d akey))
-  (defstrand person 5 (n n) (t t) (k k) (d d) (p p) (a a))
+  (vars (k skey) (n t text) (p a d akey))
+  (defstrand person 5 (k k) (n n) (t t) (d d) (p p) (a a))
   (defstrand appraise 2 (n n) (d d) (p p) (a a))
   (deflistener k)
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((2 1) (0 3)))
   (non-orig (invk p) (invk a) (invk d))
-  (uniq-orig n k)
+  (uniq-orig k n)
   (operation encryption-test (added-listener k) (enc t k) (0 3))
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
@@ -140,13 +139,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door
-  (vars (n t text) (k skey) (p a d akey))
-  (defstrand person 5 (n n) (t t) (k k) (d d) (p p) (a a))
+  (vars (k skey) (n t text) (p a d akey))
+  (defstrand person 5 (k k) (n n) (t t) (d d) (p p) (a a))
   (defstrand appraise 2 (n n) (d d) (p p) (a a))
-  (defstrand door 2 (t t) (k k) (d d) (p p))
+  (defstrand door 2 (k k) (t t) (d d) (p p))
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((2 1) (0 3)))
   (non-orig (invk p) (invk a) (invk d))
-  (uniq-orig n t k)
+  (uniq-orig k n t)
   (operation nonce-test (contracted (d-0 d) (p-0 p)) k (2 0)
     (enc (enc k (invk p)) d))
   (traces
@@ -162,15 +161,15 @@
   (origs (t (2 1)) (k (0 2)) (n (0 0))))
 
 (defskeleton attest-door
-  (vars (n t text) (k skey) (p a d d-0 p-0 akey))
-  (defstrand person 5 (n n) (t t) (k k) (d d) (p p) (a a))
+  (vars (k skey) (n t text) (p a d d-0 p-0 akey))
+  (defstrand person 5 (k k) (n n) (t t) (d d) (p p) (a a))
   (defstrand appraise 2 (n n) (d d) (p p) (a a))
-  (defstrand door 2 (t t) (k k) (d d-0) (p p-0))
+  (defstrand door 2 (k k) (t t) (d d-0) (p p-0))
   (defstrand squealer 2 (k k) (d d) (p p))
   (precedes ((0 0) (1 0)) ((0 2) (3 0)) ((1 1) (0 1)) ((2 1) (0 3))
     ((3 1) (2 0)))
   (non-orig (invk p) (invk a) (invk d))
-  (uniq-orig n t k)
+  (uniq-orig k n t)
   (operation nonce-test (added-strand squealer 2) k (2 0)
     (enc (enc k (invk p)) d))
   (traces
@@ -185,15 +184,15 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door
-  (vars (n t text) (k skey) (p a d akey))
-  (defstrand person 5 (n n) (t t) (k k) (d d) (p p) (a a))
+  (vars (k skey) (n t text) (p a d akey))
+  (defstrand person 5 (k k) (n n) (t t) (d d) (p p) (a a))
   (defstrand appraise 2 (n n) (d d) (p p) (a a))
   (deflistener k)
   (defstrand squealer 2 (k k) (d d) (p p))
   (precedes ((0 0) (1 0)) ((0 2) (3 0)) ((1 1) (0 1)) ((2 1) (0 3))
     ((3 1) (2 0)))
   (non-orig (invk p) (invk a) (invk d))
-  (uniq-orig n k)
+  (uniq-orig k n)
   (operation nonce-test (added-strand squealer 2) k (2 0)
     (enc (enc k (invk p)) d))
   (traces
@@ -207,13 +206,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door
-  (vars (n t text) (k skey) (p a d akey))
-  (defstrand person 5 (n n) (t t) (k k) (d d) (p p) (a a))
+  (vars (k skey) (n t text) (p a d akey))
+  (defstrand person 5 (k k) (n n) (t t) (d d) (p p) (a a))
   (defstrand appraise 2 (n n) (d d) (p p) (a a))
   (defstrand squealer 2 (k k) (d d) (p p))
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((2 1) (0 3)))
   (non-orig (invk p) (invk a) (invk d))
-  (uniq-orig n t k)
+  (uniq-orig k n t)
   (operation generalization deleted (2 0))
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
@@ -228,13 +227,13 @@
   (origs (k (0 2)) (n (0 0))))
 
 (defskeleton attest-door
-  (vars (n t text) (k skey) (p a d akey))
-  (defstrand person 5 (n n) (t t) (k k) (d d) (p p) (a a))
+  (vars (k skey) (n t text) (p a d akey))
+  (defstrand person 5 (k k) (n n) (t t) (d d) (p p) (a a))
   (defstrand appraise 2 (n n) (d d) (p p) (a a))
   (defstrand squealer 2 (k k) (d d) (p p))
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((2 1) (0 3)))
   (non-orig (invk p) (invk a) (invk d))
-  (uniq-orig n k)
+  (uniq-orig k n)
   (operation generalization deleted (2 0))
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
@@ -259,7 +258,7 @@
     (vars (d p a akey) (k skey) (n t text))
     (trace (send (enc (enc d n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t))
-    (uniq-orig n k)
+    (uniq-orig k n)
     (comment "Person requesting door entry"))
   (defrole door
     (vars (d p akey) (k skey) (t text))
@@ -269,43 +268,6 @@
     (vars (d p akey) (k skey))
     (trace (recv (enc (enc k (invk p)) d)) (send k))
     (comment "Fake door"))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (defrule yes
     (forall ((z strd) (a akey))
       (implies
@@ -313,11 +275,47 @@
         (exists ((d akey))
           (and (p "appraise" "d" z d) (non (invk d))))))
     (comment "Appraisal succeeded"))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (comment "Door attestations protocol"))
 
 (defskeleton attest-door
-  (vars (t text) (k skey) (p d akey))
-  (defstrand door 3 (t t) (k k) (d d) (p p))
+  (vars (k skey) (t text) (p d akey))
+  (defstrand door 3 (k k) (t t) (d d) (p p))
   (non-orig (invk p) (invk d))
   (uniq-orig t)
   (comment "Analyze from the door's perspective")
@@ -328,12 +326,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door
-  (vars (t n text) (k skey) (p d d-0 a akey))
-  (defstrand door 3 (t t) (k k) (d d) (p p))
-  (defstrand person 3 (n n) (k k) (d d-0) (p p) (a a))
+  (vars (k skey) (t n text) (p d d-0 a akey))
+  (defstrand door 3 (k k) (t t) (d d) (p p))
+  (defstrand person 3 (k k) (n n) (d d-0) (p p) (a a))
   (precedes ((1 2) (0 0)))
   (non-orig (invk p) (invk d))
-  (uniq-orig t n k)
+  (uniq-orig k t n)
   (operation encryption-test (added-strand person 3) (enc k (invk p))
     (0 0))
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
@@ -357,7 +355,7 @@
     (vars (d p a akey) (k skey) (n t text))
     (trace (send (enc (enc d n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t))
-    (uniq-orig n k)
+    (uniq-orig k n)
     (comment "Person requesting door entry"))
   (defrole door
     (vars (d p akey) (k skey) (t text))
@@ -367,50 +365,6 @@
     (vars (d p akey) (k skey))
     (trace (recv (enc (enc k (invk p)) d)) (send k))
     (comment "Fake door"))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule trust
-    (forall ((z w strd) (d akey))
-      (implies
-        (and (p "appraise" z 2) (p "appraise" "d" z d)
-          (p "squealer" w 2) (p "squealer" "d" w d))
-        (false)))
-    (comment "Passing attestation means not a squealer"))
-  (defrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (defrule yes
     (forall ((z strd) (a akey))
       (implies
@@ -418,13 +372,56 @@
         (exists ((d akey))
           (and (p "appraise" "d" z d) (non (invk d))))))
     (comment "Appraisal succeeded"))
+  (defrule trust
+    (forall ((z w strd) (d akey))
+      (implies
+        (and (p "appraise" z 2) (p "appraise" "d" z d)
+          (p "squealer" w 2) (p "squealer" "d" w d))
+        (false)))
+    (comment "Passing attestation means not a squealer"))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (comment "Door attestations protocol with attestation"))
 
 (defskeleton attest-door-trust
-  (vars (n t text) (k skey) (p a d akey))
-  (defstrand person 5 (n n) (t t) (k k) (d d) (p p) (a a))
+  (vars (k skey) (n t text) (p a d akey))
+  (defstrand person 5 (k k) (n n) (t t) (d d) (p p) (a a))
   (non-orig (invk p) (invk a))
-  (uniq-orig n k)
+  (uniq-orig k n)
   (comment "Analyze from the person's perspective")
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
@@ -435,12 +432,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door-trust
-  (vars (n t text) (k skey) (p a d akey))
-  (defstrand person 5 (n n) (t t) (k k) (d d) (p p) (a a))
+  (vars (k skey) (n t text) (p a d akey))
+  (defstrand person 5 (k k) (n n) (t t) (d d) (p p) (a a))
   (defstrand appraise 2 (n n) (d d) (p p) (a a))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk p) (invk a) (invk d))
-  (uniq-orig n k)
+  (uniq-orig k n)
   (rule yes)
   (operation nonce-test (added-strand appraise 2) n (0 1)
     (enc (enc d n (invk p)) a))
@@ -454,13 +451,13 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton attest-door-trust
-  (vars (n t text) (k skey) (p a d d-0 p-0 akey))
-  (defstrand person 5 (n n) (t t) (k k) (d d) (p p) (a a))
+  (vars (k skey) (n t text) (p a d d-0 p-0 akey))
+  (defstrand person 5 (k k) (n n) (t t) (d d) (p p) (a a))
   (defstrand appraise 2 (n n) (d d) (p p) (a a))
-  (defstrand door 2 (t t) (k k) (d d-0) (p p-0))
+  (defstrand door 2 (k k) (t t) (d d-0) (p p-0))
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((2 1) (0 3)))
   (non-orig (invk p) (invk a) (invk d))
-  (uniq-orig n t k)
+  (uniq-orig k n t)
   (operation encryption-test (added-strand door 2) (enc t k) (0 3))
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
@@ -473,13 +470,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door-trust
-  (vars (n t text) (k skey) (p a d akey))
-  (defstrand person 5 (n n) (t t) (k k) (d d) (p p) (a a))
+  (vars (k skey) (n t text) (p a d akey))
+  (defstrand person 5 (k k) (n n) (t t) (d d) (p p) (a a))
   (defstrand appraise 2 (n n) (d d) (p p) (a a))
   (deflistener k)
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((2 1) (0 3)))
   (non-orig (invk p) (invk a) (invk d))
-  (uniq-orig n k)
+  (uniq-orig k n)
   (operation encryption-test (added-listener k) (enc t k) (0 3))
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
@@ -493,13 +490,13 @@
   (comment "empty cohort"))
 
 (defskeleton attest-door-trust
-  (vars (n t text) (k skey) (p a d akey))
-  (defstrand person 5 (n n) (t t) (k k) (d d) (p p) (a a))
+  (vars (k skey) (n t text) (p a d akey))
+  (defstrand person 5 (k k) (n n) (t t) (d d) (p p) (a a))
   (defstrand appraise 2 (n n) (d d) (p p) (a a))
-  (defstrand door 2 (t t) (k k) (d d) (p p))
+  (defstrand door 2 (k k) (t t) (d d) (p p))
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((2 1) (0 3)))
   (non-orig (invk p) (invk a) (invk d))
-  (uniq-orig n t k)
+  (uniq-orig k n t)
   (operation nonce-test (contracted (d-0 d) (p-0 p)) k (2 0)
     (enc (enc k (invk p)) d))
   (traces
@@ -525,7 +522,7 @@
     (vars (d p a akey) (k skey) (n t text))
     (trace (send (enc (enc d n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t))
-    (uniq-orig n k)
+    (uniq-orig k n)
     (comment "Person requesting door entry"))
   (defrole door
     (vars (d p akey) (k skey) (t text))
@@ -535,50 +532,6 @@
     (vars (d p akey) (k skey))
     (trace (recv (enc (enc k (invk p)) d)) (send k))
     (comment "Fake door"))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule trust
-    (forall ((z w strd) (d akey))
-      (implies
-        (and (p "appraise" z 2) (p "appraise" "d" z d)
-          (p "squealer" w 2) (p "squealer" "d" w d))
-        (false)))
-    (comment "Passing attestation means not a squealer"))
-  (defrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (defrule yes
     (forall ((z strd) (a akey))
       (implies
@@ -586,11 +539,54 @@
         (exists ((d akey))
           (and (p "appraise" "d" z d) (non (invk d))))))
     (comment "Appraisal succeeded"))
+  (defrule trust
+    (forall ((z w strd) (d akey))
+      (implies
+        (and (p "appraise" z 2) (p "appraise" "d" z d)
+          (p "squealer" w 2) (p "squealer" "d" w d))
+        (false)))
+    (comment "Passing attestation means not a squealer"))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (comment "Door attestations protocol with attestation"))
 
 (defskeleton attest-door-trust
-  (vars (t text) (k skey) (p d akey))
-  (defstrand door 3 (t t) (k k) (d d) (p p))
+  (vars (k skey) (t text) (p d akey))
+  (defstrand door 3 (k k) (t t) (d d) (p p))
   (non-orig (invk p) (invk d))
   (uniq-orig t)
   (comment "Analyze from the door's perspective")
@@ -601,12 +597,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door-trust
-  (vars (t n text) (k skey) (p d d-0 a akey))
-  (defstrand door 3 (t t) (k k) (d d) (p p))
-  (defstrand person 3 (n n) (k k) (d d-0) (p p) (a a))
+  (vars (k skey) (t n text) (p d d-0 a akey))
+  (defstrand door 3 (k k) (t t) (d d) (p p))
+  (defstrand person 3 (k k) (n n) (d d-0) (p p) (a a))
   (precedes ((1 2) (0 0)))
   (non-orig (invk p) (invk d))
-  (uniq-orig t n k)
+  (uniq-orig k t n)
   (operation encryption-test (added-strand person 3) (enc k (invk p))
     (0 0))
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
@@ -630,7 +626,7 @@
     (vars (d p a akey) (k skey) (n t text))
     (trace (send (enc (enc d n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t))
-    (uniq-orig n k)
+    (uniq-orig k n)
     (comment "Person requesting door entry"))
   (defrole door
     (vars (d p akey) (k skey) (t text))
@@ -640,56 +636,6 @@
     (vars (d p akey) (k skey))
     (trace (recv (enc (enc k (invk p)) d)) (send k))
     (comment "Fake door"))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule trust
-    (forall ((z w strd) (d akey))
-      (implies
-        (and (p "appraise" z 2) (p "appraise" "d" z d)
-          (p "squealer" w 2) (p "squealer" "d" w d))
-        (false)))
-    (comment "Passing attestation means not a squealer"))
-  (defrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defrule uncompromised-people-choose-uncompromised-appraisers
-    (forall ((z strd) (a p akey))
-      (implies
-        (and (p "person" z 3) (p "person" "p" z p) (p "person" "a" z a)
-          (non (invk p)))
-        (non (invk a)))))
-  (defrule shearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (defrule yes
     (forall ((z strd) (a akey))
       (implies
@@ -697,14 +643,63 @@
         (exists ((d akey))
           (and (p "appraise" "d" z d) (non (invk d))))))
     (comment "Appraisal succeeded"))
+  (defrule trust
+    (forall ((z w strd) (d akey))
+      (implies
+        (and (p "appraise" z 2) (p "appraise" "d" z d)
+          (p "squealer" w 2) (p "squealer" "d" w d))
+        (false)))
+    (comment "Passing attestation means not a squealer"))
+  (defrule uncompromised-people-choose-uncompromised-appraisers
+    (forall ((z strd) (a p akey))
+      (implies
+        (and (p "person" z 3) (p "person" "p" z p) (p "person" "a" z a)
+          (non (invk p)))
+        (non (invk a)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (comment
     "Door attestations protocol with attestation and reliable persons"))
 
 (defskeleton attest-door-trust-attest
-  (vars (n t text) (k skey) (p a d akey))
-  (defstrand person 5 (n n) (t t) (k k) (d d) (p p) (a a))
+  (vars (k skey) (n t text) (p a d akey))
+  (defstrand person 5 (k k) (n n) (t t) (d d) (p p) (a a))
   (non-orig (invk p) (invk a))
-  (uniq-orig n k)
+  (uniq-orig k n)
   (comment "Analyze from the person's perspective")
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
@@ -715,12 +710,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door-trust-attest
-  (vars (n t text) (k skey) (p a d akey))
-  (defstrand person 5 (n n) (t t) (k k) (d d) (p p) (a a))
+  (vars (k skey) (n t text) (p a d akey))
+  (defstrand person 5 (k k) (n n) (t t) (d d) (p p) (a a))
   (defstrand appraise 2 (n n) (d d) (p p) (a a))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk p) (invk a) (invk d))
-  (uniq-orig n k)
+  (uniq-orig k n)
   (rule yes)
   (operation nonce-test (added-strand appraise 2) n (0 1)
     (enc (enc d n (invk p)) a))
@@ -734,13 +729,13 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton attest-door-trust-attest
-  (vars (n t text) (k skey) (p a d d-0 p-0 akey))
-  (defstrand person 5 (n n) (t t) (k k) (d d) (p p) (a a))
+  (vars (k skey) (n t text) (p a d d-0 p-0 akey))
+  (defstrand person 5 (k k) (n n) (t t) (d d) (p p) (a a))
   (defstrand appraise 2 (n n) (d d) (p p) (a a))
-  (defstrand door 2 (t t) (k k) (d d-0) (p p-0))
+  (defstrand door 2 (k k) (t t) (d d-0) (p p-0))
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((2 1) (0 3)))
   (non-orig (invk p) (invk a) (invk d))
-  (uniq-orig n t k)
+  (uniq-orig k n t)
   (operation encryption-test (added-strand door 2) (enc t k) (0 3))
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
@@ -753,13 +748,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door-trust-attest
-  (vars (n t text) (k skey) (p a d akey))
-  (defstrand person 5 (n n) (t t) (k k) (d d) (p p) (a a))
+  (vars (k skey) (n t text) (p a d akey))
+  (defstrand person 5 (k k) (n n) (t t) (d d) (p p) (a a))
   (defstrand appraise 2 (n n) (d d) (p p) (a a))
   (deflistener k)
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((2 1) (0 3)))
   (non-orig (invk p) (invk a) (invk d))
-  (uniq-orig n k)
+  (uniq-orig k n)
   (operation encryption-test (added-listener k) (enc t k) (0 3))
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
@@ -773,13 +768,13 @@
   (comment "empty cohort"))
 
 (defskeleton attest-door-trust-attest
-  (vars (n t text) (k skey) (p a d akey))
-  (defstrand person 5 (n n) (t t) (k k) (d d) (p p) (a a))
+  (vars (k skey) (n t text) (p a d akey))
+  (defstrand person 5 (k k) (n n) (t t) (d d) (p p) (a a))
   (defstrand appraise 2 (n n) (d d) (p p) (a a))
-  (defstrand door 2 (t t) (k k) (d d) (p p))
+  (defstrand door 2 (k k) (t t) (d d) (p p))
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((2 1) (0 3)))
   (non-orig (invk p) (invk a) (invk d))
-  (uniq-orig n t k)
+  (uniq-orig k n t)
   (operation nonce-test (contracted (d-0 d) (p-0 p)) k (2 0)
     (enc (enc k (invk p)) d))
   (traces
@@ -805,7 +800,7 @@
     (vars (d p a akey) (k skey) (n t text))
     (trace (send (enc (enc d n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t))
-    (uniq-orig n k)
+    (uniq-orig k n)
     (comment "Person requesting door entry"))
   (defrole door
     (vars (d p akey) (k skey) (t text))
@@ -815,56 +810,6 @@
     (vars (d p akey) (k skey))
     (trace (recv (enc (enc k (invk p)) d)) (send k))
     (comment "Fake door"))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule trust
-    (forall ((z w strd) (d akey))
-      (implies
-        (and (p "appraise" z 2) (p "appraise" "d" z d)
-          (p "squealer" w 2) (p "squealer" "d" w d))
-        (false)))
-    (comment "Passing attestation means not a squealer"))
-  (defrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defrule uncompromised-people-choose-uncompromised-appraisers
-    (forall ((z strd) (a p akey))
-      (implies
-        (and (p "person" z 3) (p "person" "p" z p) (p "person" "a" z a)
-          (non (invk p)))
-        (non (invk a)))))
-  (defrule shearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (defrule yes
     (forall ((z strd) (a akey))
       (implies
@@ -872,12 +817,61 @@
         (exists ((d akey))
           (and (p "appraise" "d" z d) (non (invk d))))))
     (comment "Appraisal succeeded"))
+  (defrule trust
+    (forall ((z w strd) (d akey))
+      (implies
+        (and (p "appraise" z 2) (p "appraise" "d" z d)
+          (p "squealer" w 2) (p "squealer" "d" w d))
+        (false)))
+    (comment "Passing attestation means not a squealer"))
+  (defrule uncompromised-people-choose-uncompromised-appraisers
+    (forall ((z strd) (a p akey))
+      (implies
+        (and (p "person" z 3) (p "person" "p" z p) (p "person" "a" z a)
+          (non (invk p)))
+        (non (invk a)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (comment
     "Door attestations protocol with attestation and reliable persons"))
 
 (defskeleton attest-door-trust-attest
-  (vars (t text) (k skey) (p d akey))
-  (defstrand door 3 (t t) (k k) (d d) (p p))
+  (vars (k skey) (t text) (p d akey))
+  (defstrand door 3 (k k) (t t) (d d) (p p))
   (non-orig (invk p) (invk d))
   (uniq-orig t)
   (comment "Analyze from the door's perspective")
@@ -888,12 +882,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door-trust-attest
-  (vars (t n text) (k skey) (p d d-0 a akey))
-  (defstrand door 3 (t t) (k k) (d d) (p p))
-  (defstrand person 3 (n n) (k k) (d d-0) (p p) (a a))
+  (vars (k skey) (t n text) (p d d-0 a akey))
+  (defstrand door 3 (k k) (t t) (d d) (p p))
+  (defstrand person 3 (k k) (n n) (d d-0) (p p) (a a))
   (precedes ((1 2) (0 0)))
   (non-orig (invk p) (invk d) (invk a))
-  (uniq-orig t n k)
+  (uniq-orig k t n)
   (rule uncompromised-people-choose-uncompromised-appraisers)
   (operation encryption-test (added-strand person 3) (enc k (invk p))
     (0 0))
@@ -906,13 +900,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door-trust-attest
-  (vars (t n text) (k skey) (p d d-0 a akey))
-  (defstrand door 3 (t t) (k k) (d d) (p p))
-  (defstrand person 3 (n n) (k k) (d d-0) (p p) (a a))
+  (vars (k skey) (t n text) (p d d-0 a akey))
+  (defstrand door 3 (k k) (t t) (d d) (p p))
+  (defstrand person 3 (k k) (n n) (d d-0) (p p) (a a))
   (defstrand appraise 2 (n n) (d d-0) (p p) (a a))
   (precedes ((1 0) (2 0)) ((1 2) (0 0)) ((2 1) (1 1)))
   (non-orig (invk p) (invk d) (invk d-0) (invk a))
-  (uniq-orig t n k)
+  (uniq-orig k t n)
   (rule yes)
   (operation nonce-test (added-strand appraise 2) n (1 1)
     (enc (enc d-0 n (invk p)) a))
@@ -926,13 +920,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door-trust-attest
-  (vars (t n text) (k skey) (p d a akey))
-  (defstrand door 3 (t t) (k k) (d d) (p p))
-  (defstrand person 3 (n n) (k k) (d d) (p p) (a a))
+  (vars (k skey) (t n text) (p d a akey))
+  (defstrand door 3 (k k) (t t) (d d) (p p))
+  (defstrand person 3 (k k) (n n) (d d) (p p) (a a))
   (defstrand appraise 2 (n n) (d d) (p p) (a a))
   (precedes ((1 0) (2 0)) ((1 2) (0 0)) ((2 1) (1 1)))
   (non-orig (invk p) (invk d) (invk a))
-  (uniq-orig t n k)
+  (uniq-orig k t n)
   (operation encryption-test (contracted (d-0 d)) (enc k (invk p)) (0 0)
     (enc (enc k (invk p)) d))
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
@@ -945,14 +939,14 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton attest-door-trust-attest
-  (vars (t n text) (k skey) (d p a akey))
-  (defstrand door 3 (t t) (k k) (d d) (p p))
+  (vars (k skey) (t n text) (d p a akey))
+  (defstrand door 3 (k k) (t t) (d d) (p p))
   (defstrand appraise 2 (n n) (d d) (p p) (a a))
-  (defstrand person 5 (n n) (t t) (k k) (d d) (p p) (a a))
+  (defstrand person 5 (k k) (n n) (t t) (d d) (p p) (a a))
   (precedes ((0 1) (2 3)) ((1 1) (2 1)) ((2 0) (1 0)) ((2 2) (0 0))
     ((2 4) (0 2)))
   (non-orig (invk d) (invk p) (invk a))
-  (uniq-orig t n k)
+  (uniq-orig k t n)
   (operation nonce-test (displaced 1 3 person 5) t (0 2) (enc t k))
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
     ((recv (enc (enc d n (invk p)) a)) (send (enc n a p)))
@@ -966,15 +960,15 @@
   (origs (n (2 0)) (k (2 2)) (t (0 1))))
 
 (defskeleton attest-door-trust-attest
-  (vars (t n text) (k skey) (p d a akey))
-  (defstrand door 3 (t t) (k k) (d d) (p p))
-  (defstrand person 3 (n n) (k k) (d d) (p p) (a a))
+  (vars (k skey) (t n text) (p d a akey))
+  (defstrand door 3 (k k) (t t) (d d) (p p))
+  (defstrand person 3 (k k) (n n) (d d) (p p) (a a))
   (defstrand appraise 2 (n n) (d d) (p p) (a a))
   (deflistener k)
   (precedes ((1 0) (2 0)) ((1 2) (0 0)) ((1 2) (3 0)) ((2 1) (1 1))
     ((3 1) (0 2)))
   (non-orig (invk p) (invk d) (invk a))
-  (uniq-orig t n k)
+  (uniq-orig k t n)
   (operation nonce-test (added-listener k) t (0 2) (enc t k))
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))

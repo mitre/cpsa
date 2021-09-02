@@ -20,47 +20,46 @@
     (uniq-orig k)
     (conf ch2 ch3)
     (auth ch2))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton yahalom
-  (vars (n-b n-a text) (a b name) (k skey) (ch1 ch2 chan))
-  (defstrand resp 4 (n-a n-a) (n-b n-b) (b b) (a a) (k k) (ch1 ch1)
+  (vars (k skey) (n-b n-a text) (a b name) (ch1 ch2 chan))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
     (ch2 ch2))
   (uniq-orig n-b)
   (conf ch1)
@@ -73,13 +72,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
-  (vars (n-b n-a text) (a b name) (k k-0 skey) (ch1 ch2 ch3 chan))
-  (defstrand resp 4 (n-a n-a) (n-b n-b) (b b) (a a) (k k) (ch1 ch1)
+  (vars (k k-0 skey) (n-b n-a text) (a b name) (ch1 ch2 ch3 chan))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
     (ch2 ch2))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (k k-0) (ch1 ch1)
+  (defstrand serv 2 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
     (ch3 ch3))
   (precedes ((0 1) (1 0)) ((1 1) (0 3)))
-  (uniq-orig n-b k-0)
+  (uniq-orig k-0 n-b)
   (conf ch1 ch3)
   (operation nonce-test (added-strand serv 2) n-b (0 3)
     (ch-msg ch1 (cat a b n-a n-b)))
@@ -93,14 +92,14 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
-  (vars (n-b n-a text) (a b name) (k k-0 skey) (ch1 ch2 ch3 chan))
-  (defstrand resp 4 (n-a n-a) (n-b n-b) (b b) (a a) (k k) (ch1 ch1)
+  (vars (k k-0 skey) (n-b n-a text) (a b name) (ch1 ch2 ch3 chan))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
     (ch2 ch2))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (k k-0) (ch1 ch1)
+  (defstrand serv 2 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
     (ch3 ch3))
-  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (k k-0) (ch ch3))
+  (defstrand init 3 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (ch ch3))
   (precedes ((0 1) (1 0)) ((1 1) (2 1)) ((2 2) (0 3)))
-  (uniq-orig n-b k-0)
+  (uniq-orig k-0 n-b)
   (conf ch1 ch3)
   (operation nonce-test (added-strand init 3) n-b (0 3)
     (ch-msg ch1 (cat a b n-a n-b)) (ch-msg ch3 (cat a b k-0 n-a n-b)))
@@ -116,14 +115,14 @@
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton yahalom
-  (vars (n-b n-a text) (a b name) (k skey) (ch1 ch2 ch3 chan))
-  (defstrand resp 4 (n-a n-a) (n-b n-b) (b b) (a a) (k k) (ch1 ch1)
+  (vars (k skey) (n-b n-a text) (a b name) (ch1 ch2 ch3 chan))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
     (ch2 ch2))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (k k) (ch1 ch1)
+  (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
     (ch3 ch3))
-  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (k k) (ch ch3))
+  (defstrand init 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch ch3))
   (precedes ((0 1) (1 0)) ((1 1) (0 2)) ((1 1) (2 1)) ((2 2) (0 3)))
-  (uniq-orig n-b k)
+  (uniq-orig k n-b)
   (conf ch1 ch3)
   (operation nonce-test (contracted (k-0 k)) n-b (0 3) (enc n-b k)
     (ch-msg ch1 (cat a b n-a n-b)) (ch-msg ch3 (cat a b k n-a n-b)))
@@ -139,18 +138,18 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
-  (vars (n-b n-a text) (a b name) (k k-0 k-1 skey)
+  (vars (k k-0 k-1 skey) (n-b n-a text) (a b name)
     (ch1 ch2 ch3 ch3-0 chan))
-  (defstrand resp 4 (n-a n-a) (n-b n-b) (b b) (a a) (k k) (ch1 ch1)
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
     (ch2 ch2))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (k k-0) (ch1 ch1)
+  (defstrand serv 2 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
     (ch3 ch3))
-  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (k k-0) (ch ch3))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (k k-1) (ch1 ch1)
+  (defstrand init 3 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (ch ch3))
+  (defstrand serv 2 (k k-1) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
     (ch3 ch3-0))
   (precedes ((0 1) (1 0)) ((0 1) (3 0)) ((1 1) (2 1)) ((2 2) (0 3))
     ((3 1) (0 3)))
-  (uniq-orig n-b k-0 k-1)
+  (uniq-orig k-0 k-1 n-b)
   (conf ch1 ch3 ch3-0)
   (operation nonce-test (added-strand serv 2) n-b (0 3) (enc n-b k-0)
     (ch-msg ch1 (cat a b n-a n-b)) (ch-msg ch3 (cat a b k-0 n-a n-b)))
@@ -167,16 +166,16 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton yahalom
-  (vars (n-b n-a text) (a b name) (k k-0 skey) (ch1 ch2 ch3 chan))
-  (defstrand resp 4 (n-a n-a) (n-b n-b) (b b) (a a) (k k) (ch1 ch1)
+  (vars (k k-0 skey) (n-b n-a text) (a b name) (ch1 ch2 ch3 chan))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
     (ch2 ch2))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (k k-0) (ch1 ch1)
+  (defstrand serv 2 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
     (ch3 ch3))
-  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (k k-0) (ch ch3))
+  (defstrand init 3 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (ch ch3))
   (deflistener k-0)
   (precedes ((0 1) (1 0)) ((1 1) (2 1)) ((1 1) (3 0)) ((2 2) (0 3))
     ((3 1) (0 3)))
-  (uniq-orig n-b k-0)
+  (uniq-orig k-0 n-b)
   (conf ch1 ch3)
   (operation nonce-test (added-listener k-0) n-b (0 3) (enc n-b k-0)
     (ch-msg ch1 (cat a b n-a n-b)) (ch-msg ch3 (cat a b k-0 n-a n-b)))
@@ -192,14 +191,14 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
-  (vars (n-b n-a text) (a b name) (k skey) (ch2 ch3 ch1 ch2-0 chan))
-  (defstrand resp 4 (n-a n-a) (n-b n-b) (b b) (a a) (k k) (ch1 ch1)
+  (vars (k skey) (n-b n-a text) (a b name) (ch2 ch3 ch1 ch2-0 chan))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
     (ch2 ch2))
-  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (k k) (ch ch3))
-  (defstrand serv 3 (n-a n-a) (n-b n-b) (a a) (b b) (k k) (ch1 ch1)
+  (defstrand init 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch ch3))
+  (defstrand serv 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
     (ch2 ch2-0) (ch3 ch3))
   (precedes ((0 1) (2 0)) ((1 2) (0 3)) ((2 1) (1 1)) ((2 2) (0 2)))
-  (uniq-orig n-b k)
+  (uniq-orig k n-b)
   (conf ch3 ch1 ch2-0)
   (auth ch2-0)
   (operation nonce-test (displaced 1 3 serv 3) k (0 2)
@@ -217,17 +216,17 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
-  (vars (n-b n-a text) (a b name) (k k-0 skey) (ch1 ch2 ch3 ch3-0 chan))
-  (defstrand resp 4 (n-a n-a) (n-b n-b) (b b) (a a) (k k) (ch1 ch1)
+  (vars (k k-0 skey) (n-b n-a text) (a b name) (ch1 ch2 ch3 ch3-0 chan))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
     (ch2 ch2))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (k k) (ch1 ch1)
+  (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
     (ch3 ch3))
-  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (k k) (ch ch3))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (k k-0) (ch1 ch1)
+  (defstrand init 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch ch3))
+  (defstrand serv 2 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
     (ch3 ch3-0))
   (precedes ((0 1) (1 0)) ((0 1) (3 0)) ((1 1) (0 2)) ((1 1) (2 1))
     ((2 2) (0 3)) ((3 1) (0 3)))
-  (uniq-orig n-b k k-0)
+  (uniq-orig k k-0 n-b)
   (conf ch1 ch3 ch3-0)
   (operation nonce-test (contracted (k-1 k)) n-b (0 3) (enc n-b k)
     (ch-msg ch1 (cat a b n-a n-b)) (ch-msg ch3 (cat a b k n-a n-b))
@@ -245,19 +244,19 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
-  (vars (n-b n-a text) (a b name) (k k-0 k-1 skey)
+  (vars (k k-0 k-1 skey) (n-b n-a text) (a b name)
     (ch1 ch2 ch3 ch3-0 chan))
-  (defstrand resp 4 (n-a n-a) (n-b n-b) (b b) (a a) (k k) (ch1 ch1)
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
     (ch2 ch2))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (k k-0) (ch1 ch1)
+  (defstrand serv 2 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
     (ch3 ch3))
-  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (k k-0) (ch ch3))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (k k-1) (ch1 ch1)
+  (defstrand init 3 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (ch ch3))
+  (defstrand serv 2 (k k-1) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
     (ch3 ch3-0))
   (deflistener k-0)
   (precedes ((0 1) (1 0)) ((0 1) (3 0)) ((1 1) (2 1)) ((1 1) (4 0))
     ((2 2) (0 3)) ((3 1) (0 3)) ((4 1) (0 3)))
-  (uniq-orig n-b k-0 k-1)
+  (uniq-orig k-0 k-1 n-b)
   (conf ch1 ch3 ch3-0)
   (operation nonce-test (added-listener k-0) n-b (0 3) (enc n-b k-0)
     (ch-msg ch1 (cat a b n-a n-b)) (ch-msg ch3 (cat a b k-0 n-a n-b))
@@ -276,16 +275,16 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
-  (vars (n-b n-a text) (a b name) (k k-0 skey) (ch2 ch3 ch1 ch2-0 chan))
-  (defstrand resp 4 (n-a n-a) (n-b n-b) (b b) (a a) (k k) (ch1 ch1)
+  (vars (k k-0 skey) (n-b n-a text) (a b name) (ch2 ch3 ch1 ch2-0 chan))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
     (ch2 ch2))
-  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (k k-0) (ch ch3))
+  (defstrand init 3 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (ch ch3))
   (deflistener k-0)
-  (defstrand serv 3 (n-a n-a) (n-b n-b) (a a) (b b) (k k-0) (ch1 ch1)
+  (defstrand serv 3 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
     (ch2 ch2-0) (ch3 ch3))
   (precedes ((0 1) (3 0)) ((1 2) (0 3)) ((2 1) (0 3)) ((3 1) (1 1))
     ((3 2) (2 0)))
-  (uniq-orig n-b k-0)
+  (uniq-orig k-0 n-b)
   (conf ch3 ch1 ch2-0)
   (auth ch2-0)
   (operation nonce-test (displaced 1 4 serv 3) k-0 (3 0)
@@ -304,14 +303,14 @@
   (comment "empty cohort"))
 
 (defskeleton yahalom
-  (vars (n-b n-a text) (a b name) (k skey) (ch3 ch1 ch2 chan))
-  (defstrand resp 4 (n-a n-a) (n-b n-b) (b b) (a a) (k k) (ch1 ch1)
+  (vars (k skey) (n-b n-a text) (a b name) (ch3 ch1 ch2 chan))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
     (ch2 ch2))
-  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (k k) (ch ch3))
-  (defstrand serv 3 (n-a n-a) (n-b n-b) (a a) (b b) (k k) (ch1 ch1)
+  (defstrand init 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch ch3))
+  (defstrand serv 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
     (ch2 ch2) (ch3 ch3))
   (precedes ((0 1) (2 0)) ((1 2) (0 3)) ((2 1) (1 1)) ((2 2) (0 2)))
-  (uniq-orig n-b k)
+  (uniq-orig k n-b)
   (conf ch3 ch1 ch2)
   (auth ch2)
   (operation nonce-test (contracted (ch2-0 ch2)) k (0 2)
@@ -332,18 +331,18 @@
   (origs (k (2 1)) (n-b (0 1))))
 
 (defskeleton yahalom
-  (vars (n-b n-a text) (a b name) (k k-0 skey)
+  (vars (k k-0 skey) (n-b n-a text) (a b name)
     (ch2 ch3 ch3-0 ch1 ch2-0 chan))
-  (defstrand resp 4 (n-a n-a) (n-b n-b) (b b) (a a) (k k) (ch1 ch1)
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
     (ch2 ch2))
-  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (k k) (ch ch3))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (k k-0) (ch1 ch1)
+  (defstrand init 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch ch3))
+  (defstrand serv 2 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
     (ch3 ch3-0))
-  (defstrand serv 3 (n-a n-a) (n-b n-b) (a a) (b b) (k k) (ch1 ch1)
+  (defstrand serv 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
     (ch2 ch2-0) (ch3 ch3))
   (precedes ((0 1) (2 0)) ((0 1) (3 0)) ((1 2) (0 3)) ((2 1) (0 3))
     ((3 1) (1 1)) ((3 2) (0 2)))
-  (uniq-orig n-b k k-0)
+  (uniq-orig k k-0 n-b)
   (conf ch3 ch3-0 ch1 ch2-0)
   (auth ch2-0)
   (operation nonce-test (displaced 1 4 serv 3) k (0 2)
@@ -362,19 +361,19 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
-  (vars (n-b n-a text) (a b name) (k k-0 k-1 skey)
+  (vars (k k-0 k-1 skey) (n-b n-a text) (a b name)
     (ch2 ch3 ch3-0 ch1 ch2-0 chan))
-  (defstrand resp 4 (n-a n-a) (n-b n-b) (b b) (a a) (k k) (ch1 ch1)
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
     (ch2 ch2))
-  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (k k-0) (ch ch3))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (k k-1) (ch1 ch1)
+  (defstrand init 3 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (ch ch3))
+  (defstrand serv 2 (k k-1) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
     (ch3 ch3-0))
   (deflistener k-0)
-  (defstrand serv 3 (n-a n-a) (n-b n-b) (a a) (b b) (k k-0) (ch1 ch1)
+  (defstrand serv 3 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
     (ch2 ch2-0) (ch3 ch3))
   (precedes ((0 1) (2 0)) ((0 1) (4 0)) ((1 2) (0 3)) ((2 1) (0 3))
     ((3 1) (0 3)) ((4 1) (1 1)) ((4 2) (3 0)))
-  (uniq-orig n-b k-0 k-1)
+  (uniq-orig k-0 k-1 n-b)
   (conf ch3 ch3-0 ch1 ch2-0)
   (auth ch2-0)
   (operation nonce-test (displaced 1 5 serv 3) k-0 (4 0)
@@ -395,17 +394,17 @@
   (comment "empty cohort"))
 
 (defskeleton yahalom
-  (vars (n-b n-a text) (a b name) (k k-0 skey) (ch3 ch3-0 ch1 ch2 chan))
-  (defstrand resp 4 (n-a n-a) (n-b n-b) (b b) (a a) (k k) (ch1 ch1)
+  (vars (k k-0 skey) (n-b n-a text) (a b name) (ch3 ch3-0 ch1 ch2 chan))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
     (ch2 ch2))
-  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (k k) (ch ch3))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (k k-0) (ch1 ch1)
+  (defstrand init 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch ch3))
+  (defstrand serv 2 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
     (ch3 ch3-0))
-  (defstrand serv 3 (n-a n-a) (n-b n-b) (a a) (b b) (k k) (ch1 ch1)
+  (defstrand serv 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
     (ch2 ch2) (ch3 ch3))
   (precedes ((0 1) (2 0)) ((0 1) (3 0)) ((1 2) (0 3)) ((2 1) (0 3))
     ((3 1) (1 1)) ((3 2) (0 2)))
-  (uniq-orig n-b k k-0)
+  (uniq-orig k k-0 n-b)
   (conf ch3 ch3-0 ch1 ch2)
   (auth ch2)
   (operation nonce-test (contracted (ch2-0 ch2)) k (0 2)
@@ -442,47 +441,46 @@
     (uniq-orig k)
     (conf ch2 ch3)
     (auth ch2))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton yahalom
-  (vars (n-b n-a text) (a b name) (k skey) (ch1 ch2 chan))
-  (defstrand resp 4 (n-a n-a) (n-b n-b) (b b) (a a) (k k) (ch1 ch1)
+  (vars (k skey) (n-b n-a text) (a b name) (ch1 ch2 chan))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
     (ch2 ch2))
   (deflistener k)
   (uniq-orig n-b)
@@ -497,15 +495,15 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
-  (vars (n-b n-a n-a-0 n-b-0 text) (a b name) (k skey)
+  (vars (k skey) (n-b n-a n-a-0 n-b-0 text) (a b name)
     (ch1 ch2 ch1-0 ch3 chan))
-  (defstrand resp 4 (n-a n-a) (n-b n-b) (b b) (a a) (k k) (ch1 ch1)
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
     (ch2 ch2))
   (deflistener k)
-  (defstrand serv 3 (n-a n-a-0) (n-b n-b-0) (a a) (b b) (k k)
+  (defstrand serv 3 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b)
     (ch1 ch1-0) (ch2 ch2) (ch3 ch3))
   (precedes ((2 1) (1 0)) ((2 2) (0 2)))
-  (uniq-orig n-b k)
+  (uniq-orig k n-b)
   (conf ch1 ch2 ch3)
   (auth ch2)
   (operation channel-test (added-strand serv 3) (ch-msg ch2 (cat a b k))
@@ -521,15 +519,15 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
-  (vars (n-b n-a n-a-0 n-b-0 text) (a b name) (k skey)
+  (vars (k skey) (n-b n-a n-a-0 n-b-0 text) (a b name)
     (ch1 ch2 ch1-0 ch3 chan))
-  (defstrand resp 4 (n-a n-a) (n-b n-b) (b b) (a a) (k k) (ch1 ch1)
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
     (ch2 ch2))
   (deflistener k)
-  (defstrand serv 3 (n-a n-a-0) (n-b n-b-0) (a a) (b b) (k k)
+  (defstrand serv 3 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b)
     (ch1 ch1-0) (ch2 ch2) (ch3 ch3))
   (precedes ((2 2) (0 2)) ((2 2) (1 0)))
-  (uniq-orig n-b k)
+  (uniq-orig k n-b)
   (conf ch1 ch2 ch3)
   (auth ch2)
   (operation nonce-test (displaced 3 2 serv 3) k (1 0)
@@ -563,47 +561,46 @@
     (uniq-orig k)
     (conf ch2 ch3)
     (auth ch2))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton yahalom
-  (vars (n-a n-b text) (a b name) (k skey) (ch chan))
-  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (k k) (ch ch))
+  (vars (k skey) (n-a n-b text) (a b name) (ch chan))
+  (defstrand init 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch ch))
   (conf ch)
   (auth ch)
   (traces
@@ -615,9 +612,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
-  (vars (n-a n-b text) (a b name) (k skey) (ch ch1 chan))
-  (defstrand init 3 (n-a n-a) (n-b n-b) (a a) (b b) (k k) (ch ch))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (k k) (ch1 ch1)
+  (vars (k skey) (n-a n-b text) (a b name) (ch ch1 chan))
+  (defstrand init 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch ch))
+  (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
     (ch3 ch))
   (precedes ((1 1) (0 1)))
   (uniq-orig k)

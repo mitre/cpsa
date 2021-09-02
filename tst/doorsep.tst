@@ -12,30 +12,6 @@
     (vars (d p akey) (k skey) (t text))
     (trace (recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
     (uniq-orig t))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
   (defrule trust
     (forall ((z strd) (p d akey))
       (implies
@@ -43,24 +19,47 @@
           (non (invk p)))
         (non (invk d))))
     (comment "The trust rule"))
-  (defrule shearsRule
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (comment "Doorsep protocol using unnamed asymmetric keys"))
 
 (defskeleton doorsep
-  (vars (t text) (k skey) (p d akey))
-  (defstrand door 3 (t t) (k k) (d d) (p p))
+  (vars (k skey) (t text) (p d akey))
+  (defstrand door 3 (k k) (t t) (d d) (p p))
   (non-orig (invk p))
   (uniq-orig t)
   (comment "Analyze from the doors's perspective")
@@ -71,12 +70,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton doorsep
-  (vars (t text) (k skey) (p d d-0 akey))
-  (defstrand door 3 (t t) (k k) (d d) (p p))
+  (vars (k skey) (t text) (p d d-0 akey))
+  (defstrand door 3 (k k) (t t) (d d) (p p))
   (defstrand person 1 (k k) (d d-0) (p p))
   (precedes ((1 0) (0 0)))
   (non-orig (invk p) (invk d-0))
-  (uniq-orig t k)
+  (uniq-orig k t)
   (rule trust)
   (operation encryption-test (added-strand person 1) (enc k (invk p))
     (0 0))
@@ -88,12 +87,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton doorsep
-  (vars (t text) (k skey) (p d akey))
-  (defstrand door 3 (t t) (k k) (d d) (p p))
+  (vars (k skey) (t text) (p d akey))
+  (defstrand door 3 (k k) (t t) (d d) (p p))
   (defstrand person 1 (k k) (d d) (p p))
   (precedes ((1 0) (0 0)))
   (non-orig (invk p) (invk d))
-  (uniq-orig t k)
+  (uniq-orig k t)
   (operation encryption-test (contracted (d-0 d)) (enc k (invk p)) (0 0)
     (enc (enc k (invk p)) d))
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
@@ -104,12 +103,12 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton doorsep
-  (vars (t text) (k skey) (d p akey))
-  (defstrand door 3 (t t) (k k) (d d) (p p))
-  (defstrand person 3 (t t) (k k) (d d) (p p))
+  (vars (k skey) (t text) (d p akey))
+  (defstrand door 3 (k k) (t t) (d d) (p p))
+  (defstrand person 3 (k k) (t t) (d d) (p p))
   (precedes ((0 1) (1 1)) ((1 0) (0 0)) ((1 2) (0 2)))
   (non-orig (invk d) (invk p))
-  (uniq-orig t k)
+  (uniq-orig k t)
   (operation nonce-test (displaced 1 2 person 3) t (0 2) (enc t k))
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
     ((send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t)))
@@ -121,13 +120,13 @@
   (origs (k (1 0)) (t (0 1))))
 
 (defskeleton doorsep
-  (vars (t text) (k skey) (p d akey))
-  (defstrand door 3 (t t) (k k) (d d) (p p))
+  (vars (k skey) (t text) (p d akey))
+  (defstrand door 3 (k k) (t t) (d d) (p p))
   (defstrand person 1 (k k) (d d) (p p))
   (deflistener k)
   (precedes ((1 0) (0 0)) ((1 0) (2 0)) ((2 1) (0 2)))
   (non-orig (invk p) (invk d))
-  (uniq-orig t k)
+  (uniq-orig k t)
   (operation nonce-test (added-listener k) t (0 2) (enc t k))
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
     ((send (enc (enc k (invk p)) d))) ((recv k) (send k)))

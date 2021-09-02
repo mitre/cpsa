@@ -1,4 +1,16 @@
-2021-05-07  John D. Ramsdell  <ramsdell0mitre.org>
+2021-06-26  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Roletran/Emitter.hs (displayKind): Reverted to coarse
+	program variable types for procedures.
+
+2021-06-16  Joshua D. Guttman  <guttman@mitre.org>
+
+	* src/CPSA/Roletran/Protocol.hs:  Distinguished generated rules
+	and user-written rules in the protocol datatype.  Caused Loader to
+	separate the two kinds of rules, and Displayer to display the
+	generated rules as defgenrule.
+
+2021-05-07  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* Roletran correctly handles long term keys, key inverses, and
 	named asymmetric keys.
@@ -18,7 +30,7 @@
 2021-03-10  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* CPSA/Roletran/Emitter.hs (Kind):  Added refined program
-	variables for procedures.
+	variable types for procedures.
 
 2021-01-12  John D. Ramsdell  <ramsdell@mitre.org>
 

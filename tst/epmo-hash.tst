@@ -63,48 +63,47 @@
               (transfer b price m nm)))
           (says c (transfer b price m nm))))
       (3 (and (transfer b price m nm) (ship m goods c)))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton epmo
-  (vars (goods price text) (nb nc nm data) (b c m name))
-  (defstrand customer 5 (goods goods) (price price) (nb nb) (nc nc)
-    (nm nm) (b b) (c c) (m m))
+  (vars (nb nc nm data) (goods price text) (b c m name))
+  (defstrand customer 5 (nb nb) (nc nc) (nm nm) (goods goods)
+    (price price) (b b) (c c) (m m))
   (non-orig (privk b) (privk c) (privk m))
   (uniq-orig nc)
   (traces
@@ -121,10 +120,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo
-  (vars (goods price text) (nb nc nm nm-0 data) (b c m name))
-  (defstrand customer 5 (goods goods) (price price) (nb nb) (nc nc)
-    (nm nm) (b b) (c c) (m m))
-  (defstrand merchant 2 (goods goods) (price price) (nc nc) (nm nm-0)
+  (vars (nb nc nm nm-0 data) (goods price text) (b c m name))
+  (defstrand customer 5 (nb nb) (nc nc) (nm nm) (goods goods)
+    (price price) (b b) (c c) (m m))
+  (defstrand merchant 2 (nc nc) (nm nm-0) (goods goods) (price price)
     (c c) (m m))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (privk b) (privk c) (privk m))
@@ -147,10 +146,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo
-  (vars (goods price text) (nb nc nm data) (b c m name))
-  (defstrand customer 5 (goods goods) (price price) (nb nb) (nc nc)
-    (nm nm) (b b) (c c) (m m))
-  (defstrand merchant 2 (goods goods) (price price) (nc nc) (nm nm)
+  (vars (nb nc nm data) (goods price text) (b c m name))
+  (defstrand customer 5 (nb nb) (nc nc) (nm nm) (goods goods)
+    (price price) (b b) (c c) (m m))
+  (defstrand merchant 2 (nc nc) (nm nm) (goods goods) (price price)
     (c c) (m m))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (privk b) (privk c) (privk m))
@@ -173,12 +172,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo
-  (vars (goods price text) (nb nc nm data) (b c m name))
-  (defstrand customer 5 (goods goods) (price price) (nb nb) (nc nc)
-    (nm nm) (b b) (c c) (m m))
-  (defstrand merchant 2 (goods goods) (price price) (nc nc) (nm nm)
+  (vars (nb nc nm data) (goods price text) (b c m name))
+  (defstrand customer 5 (nb nb) (nc nc) (nm nm) (goods goods)
+    (price price) (b b) (c c) (m m))
+  (defstrand merchant 2 (nc nc) (nm nm) (goods goods) (price price)
     (c c) (m m))
-  (defstrand bank 2 (price price) (nc nc) (nm nm) (nb nb) (b b) (c c))
+  (defstrand bank 2 (nc nc) (nm nm) (nb nb) (price price) (b b) (c c))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)) ((1 1) (2 0)) ((2 1) (0 3)))
   (non-orig (privk b) (privk c) (privk m))
   (uniq-orig nb nc nm)
@@ -204,12 +203,12 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo
-  (vars (goods price text) (nb nc nm data) (b c m name))
-  (defstrand customer 5 (goods goods) (price price) (nb nb) (nc nc)
-    (nm nm) (b b) (c c) (m m))
-  (defstrand merchant 2 (goods goods) (price price) (nc nc) (nm nm)
+  (vars (nb nc nm data) (goods price text) (b c m name))
+  (defstrand customer 5 (nb nb) (nc nc) (nm nm) (goods goods)
+    (price price) (b b) (c c) (m m))
+  (defstrand merchant 2 (nc nc) (nm nm) (goods goods) (price price)
     (c c) (m m))
-  (defstrand bank 2 (price price) (nc nc) (nm nm) (nb nb) (b b) (c c))
+  (defstrand bank 2 (nc nc) (nm nm) (nb nb) (price price) (b b) (c c))
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((2 1) (0 3)))
   (non-orig (privk b) (privk c) (privk m))
   (uniq-orig nb nc nm)
@@ -240,13 +239,13 @@
   (origs (nc (0 0)) (nb (2 1)) (nm (1 1))))
 
 (defskeleton epmo
-  (vars (goods price text) (nb nc nm nm-0 data) (b c m name))
-  (defstrand customer 5 (goods goods) (price price) (nb nb) (nc nc)
-    (nm nm) (b b) (c c) (m m))
-  (defstrand merchant 2 (goods goods) (price price) (nc nc) (nm nm)
+  (vars (nb nc nm nm-0 data) (goods price text) (b c m name))
+  (defstrand customer 5 (nb nb) (nc nc) (nm nm) (goods goods)
+    (price price) (b b) (c c) (m m))
+  (defstrand merchant 2 (nc nc) (nm nm) (goods goods) (price price)
     (c c) (m m))
-  (defstrand bank 2 (price price) (nc nc) (nm nm) (nb nb) (b b) (c c))
-  (defstrand merchant 2 (goods goods) (price price) (nc nc) (nm nm-0)
+  (defstrand bank 2 (nc nc) (nm nm) (nb nb) (price price) (b b) (c c))
+  (defstrand merchant 2 (nc nc) (nm nm-0) (goods goods) (price price)
     (c c) (m m))
   (precedes ((0 0) (1 0)) ((0 0) (3 0)) ((1 1) (0 1)) ((1 1) (2 0))
     ((2 1) (0 3)) ((3 1) (2 0)))
@@ -276,13 +275,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo
-  (vars (goods price text) (nb nc nm nm-0 data) (b c m name))
-  (defstrand customer 5 (goods goods) (price price) (nb nb) (nc nc)
-    (nm nm) (b b) (c c) (m m))
-  (defstrand merchant 2 (goods goods) (price price) (nc nc) (nm nm)
+  (vars (nb nc nm nm-0 data) (goods price text) (b c m name))
+  (defstrand customer 5 (nb nb) (nc nc) (nm nm) (goods goods)
+    (price price) (b b) (c c) (m m))
+  (defstrand merchant 2 (nc nc) (nm nm) (goods goods) (price price)
     (c c) (m m))
-  (defstrand bank 2 (price price) (nc nc) (nm nm) (nb nb) (b b) (c c))
-  (defstrand merchant 2 (goods goods) (price price) (nc nc) (nm nm-0)
+  (defstrand bank 2 (nc nc) (nm nm) (nb nb) (price price) (b b) (c c))
+  (defstrand merchant 2 (nc nc) (nm nm-0) (goods goods) (price price)
     (c c) (m m))
   (precedes ((0 0) (1 0)) ((0 0) (3 0)) ((0 2) (2 0)) ((1 1) (0 1))
     ((2 1) (0 3)) ((3 1) (2 0)))
@@ -375,47 +374,46 @@
               (transfer b price m nm)))
           (says c (transfer b price m nm))))
       (3 (and (transfer b price m nm) (ship m goods c)))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton epmo
-  (vars (price text) (nc nm nb data) (b c m name))
-  (defstrand bank 3 (price price) (nc nc) (nm nm) (nb nb) (b b) (c c)
+  (vars (nc nm nb data) (price text) (b c m name))
+  (defstrand bank 3 (nc nc) (nm nm) (nb nb) (price price) (b b) (c c)
     (m m))
   (non-orig (privk b) (privk c) (privk m))
   (uniq-orig nb)
@@ -430,12 +428,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo
-  (vars (price goods price-0 text) (nc nm nb nc-0 data)
+  (vars (nc nm nb nc-0 data) (price goods price-0 text)
     (b c m c-0 name))
-  (defstrand bank 3 (price price) (nc nc) (nm nm) (nb nb) (b b) (c c)
+  (defstrand bank 3 (nc nc) (nm nm) (nb nb) (price price) (b b) (c c)
     (m m))
-  (defstrand merchant 4 (goods goods) (price price-0) (nb nb) (nc nc-0)
-    (nm nm) (b b) (c c-0) (m m))
+  (defstrand merchant 4 (nb nb) (nc nc-0) (nm nm) (goods goods)
+    (price price-0) (b b) (c c-0) (m m))
   (precedes ((0 1) (1 2)) ((1 1) (0 0)) ((1 3) (0 2)))
   (non-orig (privk b) (privk c) (privk m))
   (uniq-orig nm nb)
@@ -456,11 +454,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo
-  (vars (price goods text) (nc nm nb data) (b c m name))
-  (defstrand bank 3 (price price) (nc nc) (nm nm) (nb nb) (b b) (c c)
+  (vars (nc nm nb data) (price goods text) (b c m name))
+  (defstrand bank 3 (nc nc) (nm nm) (nb nb) (price price) (b b) (c c)
     (m m))
-  (defstrand merchant 4 (goods goods) (price price) (nb nb) (nc nc)
-    (nm nm) (b b) (c c) (m m))
+  (defstrand merchant 4 (nb nb) (nc nc) (nm nm) (goods goods)
+    (price price) (b b) (c c) (m m))
   (precedes ((0 1) (1 2)) ((1 1) (0 0)) ((1 3) (0 2)))
   (non-orig (privk b) (privk c) (privk m))
   (uniq-orig nm nb)
@@ -481,14 +479,14 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo
-  (vars (price goods goods-0 price-0 text) (nc nm nb nm-0 data)
+  (vars (nc nm nb nm-0 data) (price goods goods-0 price-0 text)
     (b c m b-0 m-0 name))
-  (defstrand bank 3 (price price) (nc nc) (nm nm) (nb nb) (b b) (c c)
+  (defstrand bank 3 (nc nc) (nm nm) (nb nb) (price price) (b b) (c c)
     (m m))
-  (defstrand merchant 4 (goods goods) (price price) (nb nb) (nc nc)
-    (nm nm) (b b) (c c) (m m))
-  (defstrand customer 5 (goods goods-0) (price price-0) (nb nb) (nc nc)
-    (nm nm-0) (b b-0) (c c) (m m-0))
+  (defstrand merchant 4 (nb nb) (nc nc) (nm nm) (goods goods)
+    (price price) (b b) (c c) (m m))
+  (defstrand customer 5 (nb nb) (nc nc) (nm nm-0) (goods goods-0)
+    (price price-0) (b b-0) (c c) (m m-0))
   (precedes ((0 1) (2 3)) ((1 1) (0 0)) ((1 3) (0 2)) ((2 0) (1 0))
     ((2 4) (1 2)))
   (non-orig (privk b) (privk c) (privk m))
@@ -517,13 +515,13 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo
-  (vars (price goods goods-0 text) (nc nm nb data) (b c m b-0 m-0 name))
-  (defstrand bank 3 (price price) (nc nc) (nm nm) (nb nb) (b b) (c c)
+  (vars (nc nm nb data) (price goods goods-0 text) (b c m b-0 m-0 name))
+  (defstrand bank 3 (nc nc) (nm nm) (nb nb) (price price) (b b) (c c)
     (m m))
-  (defstrand merchant 4 (goods goods) (price price) (nb nb) (nc nc)
-    (nm nm) (b b) (c c) (m m))
-  (defstrand customer 5 (goods goods-0) (price price) (nb nb) (nc nc)
-    (nm nm) (b b-0) (c c) (m m-0))
+  (defstrand merchant 4 (nb nb) (nc nc) (nm nm) (goods goods)
+    (price price) (b b) (c c) (m m))
+  (defstrand customer 5 (nb nb) (nc nc) (nm nm) (goods goods-0)
+    (price price) (b b-0) (c c) (m m-0))
   (precedes ((0 1) (2 3)) ((1 1) (0 0)) ((1 1) (2 1)) ((1 3) (0 2))
     ((2 0) (1 0)) ((2 4) (1 2)))
   (non-orig (privk b) (privk c) (privk m))
@@ -552,14 +550,14 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo
-  (vars (price goods goods-0 price-0 text) (nc nm nb nm-0 data)
+  (vars (nc nm nb nm-0 data) (price goods goods-0 price-0 text)
     (b c m b-0 m-0 name))
-  (defstrand bank 3 (price price) (nc nc) (nm nm) (nb nb) (b b) (c c)
+  (defstrand bank 3 (nc nc) (nm nm) (nb nb) (price price) (b b) (c c)
     (m m))
-  (defstrand merchant 4 (goods goods) (price price) (nb nb) (nc nc)
-    (nm nm) (b b) (c c) (m m))
-  (defstrand customer 5 (goods goods-0) (price price-0) (nb nb) (nc nc)
-    (nm nm-0) (b b-0) (c c) (m m-0))
+  (defstrand merchant 4 (nb nb) (nc nc) (nm nm) (goods goods)
+    (price price) (b b) (c c) (m m))
+  (defstrand customer 5 (nb nb) (nc nc) (nm nm-0) (goods goods-0)
+    (price price-0) (b b-0) (c c) (m m-0))
   (deflistener (cat c nc nb nm-0 price-0))
   (precedes ((0 1) (3 0)) ((1 1) (0 0)) ((1 3) (0 2)) ((2 0) (1 0))
     ((2 4) (1 2)) ((3 1) (2 3)))
@@ -592,13 +590,13 @@
   (comment "empty cohort"))
 
 (defskeleton epmo
-  (vars (price goods text) (nc nm nb data) (b c m b-0 name))
-  (defstrand bank 3 (price price) (nc nc) (nm nm) (nb nb) (b b) (c c)
+  (vars (nc nm nb data) (price goods text) (b c m b-0 name))
+  (defstrand bank 3 (nc nc) (nm nm) (nb nb) (price price) (b b) (c c)
     (m m))
-  (defstrand merchant 4 (goods goods) (price price) (nb nb) (nc nc)
-    (nm nm) (b b) (c c) (m m))
-  (defstrand customer 5 (goods goods) (price price) (nb nb) (nc nc)
-    (nm nm) (b b-0) (c c) (m m))
+  (defstrand merchant 4 (nb nb) (nc nc) (nm nm) (goods goods)
+    (price price) (b b) (c c) (m m))
+  (defstrand customer 5 (nb nb) (nc nc) (nm nm) (goods goods)
+    (price price) (b b-0) (c c) (m m))
   (precedes ((0 1) (2 3)) ((1 1) (0 0)) ((1 1) (2 1)) ((1 3) (0 2))
     ((2 0) (1 0)) ((2 4) (1 2)))
   (non-orig (privk b) (privk c) (privk m))
@@ -627,13 +625,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo
-  (vars (price goods text) (nc nm nb data) (b c m b-0 name))
-  (defstrand bank 3 (price price) (nc nc) (nm nm) (nb nb) (b b) (c c)
+  (vars (nc nm nb data) (price goods text) (b c m b-0 name))
+  (defstrand bank 3 (nc nc) (nm nm) (nb nb) (price price) (b b) (c c)
     (m m))
-  (defstrand merchant 4 (goods goods) (price price) (nb nb) (nc nc)
-    (nm nm) (b b) (c c) (m m))
-  (defstrand customer 5 (goods goods) (price price) (nb nb) (nc nc)
-    (nm nm) (b b-0) (c c) (m m))
+  (defstrand merchant 4 (nb nb) (nc nc) (nm nm) (goods goods)
+    (price price) (b b) (c c) (m m))
+  (defstrand customer 5 (nb nb) (nc nc) (nm nm) (goods goods)
+    (price price) (b b-0) (c c) (m m))
   (precedes ((0 1) (2 3)) ((1 1) (2 1)) ((1 3) (0 2)) ((2 0) (1 0))
     ((2 2) (0 0)) ((2 4) (1 2)))
   (non-orig (privk b) (privk c) (privk m))
@@ -724,48 +722,47 @@
               (transfer b price m nm)))
           (says c (transfer b price m nm))))
       (3 (and (transfer b price m nm) (ship m goods c)))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton epmo
-  (vars (goods price text) (nb nc nm data) (b c m name))
-  (defstrand merchant 4 (goods goods) (price price) (nb nb) (nc nc)
-    (nm nm) (b b) (c c) (m m))
+  (vars (nb nc nm data) (goods price text) (b c m name))
+  (defstrand merchant 4 (nb nb) (nc nc) (nm nm) (goods goods)
+    (price price) (b b) (c c) (m m))
   (non-orig (privk b) (privk c) (privk m))
   (uniq-orig nm)
   (traces
@@ -779,10 +776,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo
-  (vars (goods price text) (nb nc nm data) (b c m name))
-  (defstrand merchant 4 (goods goods) (price price) (nb nb) (nc nc)
-    (nm nm) (b b) (c c) (m m))
-  (defstrand bank 2 (price price) (nc nc) (nm nm) (nb nb) (b b) (c c))
+  (vars (nb nc nm data) (goods price text) (b c m name))
+  (defstrand merchant 4 (nb nb) (nc nc) (nm nm) (goods goods)
+    (price price) (b b) (c c) (m m))
+  (defstrand bank 2 (nc nc) (nm nm) (nb nb) (price price) (b b) (c c))
   (precedes ((0 1) (1 0)) ((1 1) (0 2)))
   (non-orig (privk b) (privk c) (privk m))
   (uniq-orig nb nm)
@@ -803,11 +800,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo
-  (vars (goods price text) (nb nc nm data) (b c m b-0 name))
-  (defstrand merchant 4 (goods goods) (price price) (nb nb) (nc nc)
-    (nm nm) (b b) (c c) (m m))
-  (defstrand bank 2 (price price) (nc nc) (nm nm) (nb nb) (b b) (c c))
-  (defstrand customer 3 (goods goods) (price price) (nc nc) (nm nm)
+  (vars (nb nc nm data) (goods price text) (b c m b-0 name))
+  (defstrand merchant 4 (nb nb) (nc nc) (nm nm) (goods goods)
+    (price price) (b b) (c c) (m m))
+  (defstrand bank 2 (nc nc) (nm nm) (nb nb) (price price) (b b) (c c))
+  (defstrand customer 3 (nc nc) (nm nm) (goods goods) (price price)
     (b b-0) (c c) (m m))
   (precedes ((0 1) (2 1)) ((1 1) (0 2)) ((2 0) (0 0)) ((2 2) (1 0)))
   (non-orig (privk b) (privk c) (privk m))
@@ -832,12 +829,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo
-  (vars (goods price text) (nb nc nm data) (b c b-0 m name))
-  (defstrand merchant 4 (goods goods) (price price) (nb nb) (nc nc)
-    (nm nm) (b b) (c c) (m m))
-  (defstrand bank 2 (price price) (nc nc) (nm nm) (nb nb) (b b) (c c))
-  (defstrand customer 5 (goods goods) (price price) (nb nb) (nc nc)
-    (nm nm) (b b-0) (c c) (m m))
+  (vars (nb nc nm data) (goods price text) (b c b-0 m name))
+  (defstrand merchant 4 (nb nb) (nc nc) (nm nm) (goods goods)
+    (price price) (b b) (c c) (m m))
+  (defstrand bank 2 (nc nc) (nm nm) (nb nb) (price price) (b b) (c c))
+  (defstrand customer 5 (nb nb) (nc nc) (nm nm) (goods goods)
+    (price price) (b b-0) (c c) (m m))
   (precedes ((0 1) (2 1)) ((1 1) (2 3)) ((2 0) (0 0)) ((2 2) (1 0))
     ((2 4) (0 2)))
   (non-orig (privk b) (privk c) (privk m))

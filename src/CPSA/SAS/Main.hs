@@ -10,6 +10,7 @@ module Main (main) where
 
 import System.IO
 import CPSA.Lib.SExpr
+import CPSA.Signature (defaultSig, loadSig)
 import CPSA.Algebra
 import CPSA.Lib.Entry
 import CPSA.Options
@@ -31,7 +32,7 @@ main =
       case () of
         _ | alg == name ->
               go (step h alg origin margin)
-                 p ([], [])
+                 p (defaultSig, [], [])
           | otherwise ->
                abort ("Bad algebra: " ++ alg)
       hClose h
@@ -55,11 +56,17 @@ go f p a =
 
 step :: Handle -> String -> Gen -> Int -> State ->
         Maybe (SExpr Pos) -> IO State
-step output _ _ margin state@([], []) (Just sexpr@(L _ (S _ cmt : _)))
-     | cmt == "herald" || cmt == "comment" =
-         do
-           writeLnSExpr output margin sexpr
-           return state
+step output _ _ margin (_, [], [])
+     (Just sexpr@(L pos (S _ "herald" : _ : xs))) =
+    do
+      writeLnSExpr output margin sexpr
+      sig <- loadSig pos (assoc "lang" xs)
+      return (sig, [], [])
+step output _ _ margin state@(_, [], [])
+     (Just sexpr@(L _ (S _ "comment" : _))) =
+    do
+      writeLnSExpr output margin sexpr
+      return state
 step output name origin margin state sexpr =
     do
       x <- tryIO (sas name origin state sexpr)
@@ -80,3 +87,8 @@ after output margin state (Just sexpr@(L _ (S _ "defprotocol" : _))) =
       return state
 after _ _ state _ =
     return state
+
+-- Lookup value in alist, appending values with the same key
+assoc :: String -> [SExpr a] -> [SExpr a]
+assoc key alist =
+    concat [ rest | L _ (S _ head : rest) <- alist, key == head ]

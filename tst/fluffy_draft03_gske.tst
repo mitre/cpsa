@@ -22,47 +22,46 @@
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
       (recv (cat "deliver" a (enc s g na gk (ltk s a))))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton fluffy
-  (vars (nb g text) (b s name) (gk skey))
-  (defstrand sp 2 (nb nb) (g g) (b b) (s s) (gk gk))
+  (vars (gk skey) (nb g text) (b s name))
+  (defstrand sp 2 (gk gk) (nb nb) (g g) (b b) (s s))
   (non-orig (ltk s b))
   (uniq-orig nb)
   (comment "Service Principal's point-of-view")
@@ -75,10 +74,10 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fluffy
-  (vars (nb g nb-0 text) (b s b-0 name) (gk skey))
-  (defstrand sp 2 (nb nb) (g g) (b b) (s s) (gk gk))
-  (defstrand keyserv 4 (nb nb-0) (na nb) (g g) (a b) (b b-0) (s s)
-    (gk gk))
+  (vars (gk skey) (nb g nb-0 text) (b s b-0 name))
+  (defstrand sp 2 (gk gk) (nb nb) (g g) (b b) (s s))
+  (defstrand keyserv 4 (gk gk) (nb nb-0) (na nb) (g g) (a b) (b b-0)
+    (s s))
   (precedes ((0 0) (1 2)) ((1 3) (0 1)))
   (non-orig (ltk s b))
   (uniq-orig nb)
@@ -99,9 +98,9 @@
   (origs (nb (0 0))))
 
 (defskeleton fluffy
-  (vars (nb g text) (b s name) (gk skey))
-  (defstrand sp 2 (nb nb) (g g) (b b) (s s) (gk gk))
-  (defstrand keyserv 2 (nb nb) (g g) (b b) (s s) (gk gk))
+  (vars (gk skey) (nb g text) (b s name))
+  (defstrand sp 2 (gk gk) (nb nb) (g g) (b b) (s s))
+  (defstrand keyserv 2 (gk gk) (nb nb) (g g) (b b) (s s))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (ltk s b))
   (uniq-orig nb)
@@ -137,47 +136,46 @@
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
       (recv (cat "deliver" a (enc s g na gk (ltk s a))))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton fluffy
-  (vars (nb na g text) (a b s name) (gk skey))
-  (defstrand keyserv 4 (nb nb) (na na) (g g) (a a) (b b) (s s) (gk gk))
+  (vars (gk skey) (nb na g text) (a b s name))
+  (defstrand keyserv 4 (gk gk) (nb nb) (na na) (g g) (a a) (b b) (s s))
   (non-orig (ltk s a) (ltk s b))
   (comment "SKDC's point-of-view")
   (traces
@@ -191,8 +189,8 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fluffy
-  (vars (nb na g g-0 text) (a b s name) (gk skey))
-  (defstrand keyserv 4 (nb nb) (na na) (g g) (a a) (b b) (s s) (gk gk))
+  (vars (gk skey) (nb na g g-0 text) (a b s name))
+  (defstrand keyserv 4 (gk gk) (nb nb) (na na) (g g) (a a) (b b) (s s))
   (defstrand sp 1 (nb nb) (g g-0) (b b) (s s))
   (precedes ((1 0) (0 0)))
   (non-orig (ltk s a) (ltk s b))
@@ -210,8 +208,8 @@
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton fluffy
-  (vars (nb na g g-0 text) (a b s name) (gk skey))
-  (defstrand keyserv 4 (nb nb) (na na) (g g) (a a) (b b) (s s) (gk gk))
+  (vars (gk skey) (nb na g g-0 text) (a b s name))
+  (defstrand keyserv 4 (gk gk) (nb nb) (na na) (g g) (a a) (b b) (s s))
   (defstrand client 1 (na nb) (g g-0) (a b) (s s))
   (precedes ((1 0) (0 0)))
   (non-orig (ltk s a) (ltk s b))
@@ -229,8 +227,8 @@
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton fluffy
-  (vars (nb g g-0 text) (b s name) (gk skey))
-  (defstrand keyserv 4 (nb nb) (na nb) (g g) (a b) (b b) (s s) (gk gk))
+  (vars (gk skey) (nb g g-0 text) (b s name))
+  (defstrand keyserv 4 (gk gk) (nb nb) (na nb) (g g) (a b) (b b) (s s))
   (defstrand sp 1 (nb nb) (g g-0) (b b) (s s))
   (precedes ((1 0) (0 0)))
   (non-orig (ltk s b))
@@ -250,8 +248,8 @@
   (origs))
 
 (defskeleton fluffy
-  (vars (nb na g g-0 g-1 text) (a b s name) (gk skey))
-  (defstrand keyserv 4 (nb nb) (na na) (g g) (a a) (b b) (s s) (gk gk))
+  (vars (gk skey) (nb na g g-0 g-1 text) (a b s name))
+  (defstrand keyserv 4 (gk gk) (nb nb) (na na) (g g) (a a) (b b) (s s))
   (defstrand sp 1 (nb nb) (g g-0) (b b) (s s))
   (defstrand sp 1 (nb na) (g g-1) (b a) (s s))
   (precedes ((1 0) (0 0)) ((2 0) (0 2)))
@@ -273,8 +271,8 @@
   (origs))
 
 (defskeleton fluffy
-  (vars (nb na g g-0 g-1 text) (a b s name) (gk skey))
-  (defstrand keyserv 4 (nb nb) (na na) (g g) (a a) (b b) (s s) (gk gk))
+  (vars (gk skey) (nb na g g-0 g-1 text) (a b s name))
+  (defstrand keyserv 4 (gk gk) (nb nb) (na na) (g g) (a a) (b b) (s s))
   (defstrand sp 1 (nb nb) (g g-0) (b b) (s s))
   (defstrand client 1 (na na) (g g-1) (a a) (s s))
   (precedes ((1 0) (0 0)) ((2 0) (0 2)))
@@ -296,8 +294,8 @@
   (origs))
 
 (defskeleton fluffy
-  (vars (nb na g g-0 g-1 text) (a b s name) (gk skey))
-  (defstrand keyserv 4 (nb nb) (na na) (g g) (a a) (b b) (s s) (gk gk))
+  (vars (gk skey) (nb na g g-0 g-1 text) (a b s name))
+  (defstrand keyserv 4 (gk gk) (nb nb) (na na) (g g) (a a) (b b) (s s))
   (defstrand client 1 (na nb) (g g-0) (a b) (s s))
   (defstrand sp 1 (nb na) (g g-1) (b a) (s s))
   (precedes ((1 0) (0 0)) ((2 0) (0 2)))
@@ -319,8 +317,8 @@
   (origs))
 
 (defskeleton fluffy
-  (vars (nb g g-0 text) (b s name) (gk skey))
-  (defstrand keyserv 4 (nb nb) (na nb) (g g) (a b) (b b) (s s) (gk gk))
+  (vars (gk skey) (nb g g-0 text) (b s name))
+  (defstrand keyserv 4 (gk gk) (nb nb) (na nb) (g g) (a b) (b b) (s s))
   (defstrand client 1 (na nb) (g g-0) (a b) (s s))
   (precedes ((1 0) (0 0)))
   (non-orig (ltk s b))
@@ -340,8 +338,8 @@
   (origs))
 
 (defskeleton fluffy
-  (vars (nb na g g-0 g-1 text) (a b s name) (gk skey))
-  (defstrand keyserv 4 (nb nb) (na na) (g g) (a a) (b b) (s s) (gk gk))
+  (vars (gk skey) (nb na g g-0 g-1 text) (a b s name))
+  (defstrand keyserv 4 (gk gk) (nb nb) (na na) (g g) (a a) (b b) (s s))
   (defstrand client 1 (na nb) (g g-0) (a b) (s s))
   (defstrand client 1 (na na) (g g-1) (a a) (s s))
   (precedes ((1 0) (0 0)) ((2 0) (0 2)))
@@ -380,47 +378,46 @@
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
       (recv (cat "deliver" a (enc s g na gk (ltk s a))))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton fluffy
-  (vars (na g text) (a s name) (gk skey))
-  (defstrand client 2 (na na) (g g) (a a) (s s) (gk gk))
+  (vars (gk skey) (na g text) (a s name))
+  (defstrand client 2 (gk gk) (na na) (g g) (a a) (s s))
   (non-orig (ltk s a))
   (uniq-orig na)
   (comment "Clients's point-of-view")
@@ -433,9 +430,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fluffy
-  (vars (na g nb text) (a s b name) (gk skey))
-  (defstrand client 2 (na na) (g g) (a a) (s s) (gk gk))
-  (defstrand keyserv 4 (nb nb) (na na) (g g) (a a) (b b) (s s) (gk gk))
+  (vars (gk skey) (na g nb text) (a s b name))
+  (defstrand client 2 (gk gk) (na na) (g g) (a a) (s s))
+  (defstrand keyserv 4 (gk gk) (nb nb) (na na) (g g) (a a) (b b) (s s))
   (precedes ((0 0) (1 2)) ((1 3) (0 1)))
   (non-orig (ltk s a))
   (uniq-orig na)
@@ -456,9 +453,9 @@
   (origs (na (0 0))))
 
 (defskeleton fluffy
-  (vars (na g text) (a s name) (gk skey))
-  (defstrand client 2 (na na) (g g) (a a) (s s) (gk gk))
-  (defstrand keyserv 2 (nb na) (g g) (b a) (s s) (gk gk))
+  (vars (gk skey) (na g text) (a s name))
+  (defstrand client 2 (gk gk) (na na) (g g) (a a) (s s))
+  (defstrand keyserv 2 (gk gk) (nb na) (g g) (b a) (s s))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (ltk s a))
   (uniq-orig na)
@@ -494,59 +491,58 @@
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
       (recv (cat "deliver" a (enc s g na gk (ltk s a))))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule sp-no-fetch
-    (forall ((b s name) (y z strd))
-      (implies
-        (and (p "sp" z 1) (p "sp" "s" z s) (p "sp" "b" z b)
-          (p "keyserv" y 3) (p "keyserv" "s" y s) (p "keyserv" "a" y b))
-        (false))))
   (defrule client-no-request
     (forall ((a s name) (y z strd))
       (implies
         (and (p "client" z 1) (p "client" "s" z s) (p "client" "a" z a)
           (p "keyserv" y 1) (p "keyserv" "s" y s) (p "keyserv" "b" y a))
         (false))))
-  (defrule scissorsRule
+  (defrule sp-no-fetch
+    (forall ((b s name) (y z strd))
+      (implies
+        (and (p "sp" z 1) (p "sp" "s" z s) (p "sp" "b" z b)
+          (p "keyserv" y 3) (p "keyserv" "s" y s) (p "keyserv" "a" y b))
+        (false))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton fluffy-rule
-  (vars (nb g text) (b s name) (gk skey))
-  (defstrand sp 2 (nb nb) (g g) (b b) (s s) (gk gk))
+  (vars (gk skey) (nb g text) (b s name))
+  (defstrand sp 2 (gk gk) (nb nb) (g g) (b b) (s s))
   (non-orig (ltk s b))
   (uniq-orig nb)
   (comment "Service Principal's point-of-view")
@@ -559,9 +555,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fluffy-rule
-  (vars (nb g text) (b s name) (gk skey))
-  (defstrand sp 2 (nb nb) (g g) (b b) (s s) (gk gk))
-  (defstrand keyserv 2 (nb nb) (g g) (b b) (s s) (gk gk))
+  (vars (gk skey) (nb g text) (b s name))
+  (defstrand sp 2 (gk gk) (nb nb) (g g) (b b) (s s))
+  (defstrand keyserv 2 (gk gk) (nb nb) (g g) (b b) (s s))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (ltk s b))
   (uniq-orig nb)
@@ -597,59 +593,58 @@
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
       (recv (cat "deliver" a (enc s g na gk (ltk s a))))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule sp-no-fetch
-    (forall ((b s name) (y z strd))
-      (implies
-        (and (p "sp" z 1) (p "sp" "s" z s) (p "sp" "b" z b)
-          (p "keyserv" y 3) (p "keyserv" "s" y s) (p "keyserv" "a" y b))
-        (false))))
   (defrule client-no-request
     (forall ((a s name) (y z strd))
       (implies
         (and (p "client" z 1) (p "client" "s" z s) (p "client" "a" z a)
           (p "keyserv" y 1) (p "keyserv" "s" y s) (p "keyserv" "b" y a))
         (false))))
-  (defrule scissorsRule
+  (defrule sp-no-fetch
+    (forall ((b s name) (y z strd))
+      (implies
+        (and (p "sp" z 1) (p "sp" "s" z s) (p "sp" "b" z b)
+          (p "keyserv" y 3) (p "keyserv" "s" y s) (p "keyserv" "a" y b))
+        (false))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton fluffy-rule
-  (vars (nb na g text) (a b s name) (gk skey))
-  (defstrand keyserv 4 (nb nb) (na na) (g g) (a a) (b b) (s s) (gk gk))
+  (vars (gk skey) (nb na g text) (a b s name))
+  (defstrand keyserv 4 (gk gk) (nb nb) (na na) (g g) (a a) (b b) (s s))
   (non-orig (ltk s a) (ltk s b))
   (comment "SKDC's point-of-view")
   (traces
@@ -663,8 +658,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fluffy-rule
-  (vars (nb na g g-0 text) (a b s name) (gk skey))
-  (defstrand keyserv 4 (nb nb) (na na) (g g) (a a) (b b) (s s) (gk gk))
+  (vars (gk skey) (nb na g g-0 text) (a b s name))
+  (defstrand keyserv 4 (gk gk) (nb nb) (na na) (g g) (a a) (b b) (s s))
   (defstrand sp 1 (nb nb) (g g-0) (b b) (s s))
   (precedes ((1 0) (0 0)))
   (non-orig (ltk s a) (ltk s b))
@@ -682,8 +677,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fluffy-rule
-  (vars (nb na g g-0 g-1 text) (a b s name) (gk skey))
-  (defstrand keyserv 4 (nb nb) (na na) (g g) (a a) (b b) (s s) (gk gk))
+  (vars (gk skey) (nb na g g-0 g-1 text) (a b s name))
+  (defstrand keyserv 4 (gk gk) (nb nb) (na na) (g g) (a a) (b b) (s s))
   (defstrand sp 1 (nb nb) (g g-0) (b b) (s s))
   (defstrand client 1 (na na) (g g-1) (a a) (s s))
   (precedes ((1 0) (0 0)) ((2 0) (0 2)))
@@ -722,59 +717,58 @@
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
       (recv (cat "deliver" a (enc s g na gk (ltk s a))))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule sp-no-fetch
-    (forall ((b s name) (y z strd))
-      (implies
-        (and (p "sp" z 1) (p "sp" "s" z s) (p "sp" "b" z b)
-          (p "keyserv" y 3) (p "keyserv" "s" y s) (p "keyserv" "a" y b))
-        (false))))
   (defrule client-no-request
     (forall ((a s name) (y z strd))
       (implies
         (and (p "client" z 1) (p "client" "s" z s) (p "client" "a" z a)
           (p "keyserv" y 1) (p "keyserv" "s" y s) (p "keyserv" "b" y a))
         (false))))
-  (defrule scissorsRule
+  (defrule sp-no-fetch
+    (forall ((b s name) (y z strd))
+      (implies
+        (and (p "sp" z 1) (p "sp" "s" z s) (p "sp" "b" z b)
+          (p "keyserv" y 3) (p "keyserv" "s" y s) (p "keyserv" "a" y b))
+        (false))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton fluffy-rule
-  (vars (na g text) (a s name) (gk skey))
-  (defstrand client 2 (na na) (g g) (a a) (s s) (gk gk))
+  (vars (gk skey) (na g text) (a s name))
+  (defstrand client 2 (gk gk) (na na) (g g) (a a) (s s))
   (non-orig (ltk s a))
   (uniq-orig na)
   (comment "Clients's point-of-view")
@@ -787,9 +781,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fluffy-rule
-  (vars (na g nb text) (a s b name) (gk skey))
-  (defstrand client 2 (na na) (g g) (a a) (s s) (gk gk))
-  (defstrand keyserv 4 (nb nb) (na na) (g g) (a a) (b b) (s s) (gk gk))
+  (vars (gk skey) (na g nb text) (a s b name))
+  (defstrand client 2 (gk gk) (na na) (g g) (a a) (s s))
+  (defstrand keyserv 4 (gk gk) (nb nb) (na na) (g g) (a a) (b b) (s s))
   (precedes ((0 0) (1 2)) ((1 3) (0 1)))
   (non-orig (ltk s a))
   (uniq-orig na)

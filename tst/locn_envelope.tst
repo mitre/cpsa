@@ -47,49 +47,11 @@
     (uniq-orig n v)
     (conf tpm)
     (neq (k aik)))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defrule trRl_tpm-power-on-at-2
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
-  (defrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
-  (defrule trRl_tpm-extend-enc-at-2
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
-  (defrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
-  (defrule genStV-if-hashed-tpm-quote
+  (defrule genStV-if-hashed-tpm-power-on
     (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (p "tpm-quote" z 2)
-          (p "tpm-quote" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-decrypt
-    (forall ((z strd) (v1 v2 mesg))
-      (implies
-        (and (p "tpm-decrypt" z 3)
-          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
   (defrule genStV-if-hashed-tpm-extend-enc
     (forall ((z strd) (v1 v2 mesg))
@@ -97,30 +59,67 @@
         (and (p "tpm-extend-enc" z 2)
           (p "tpm-extend-enc" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-power-on
+  (defrule genStV-if-hashed-tpm-decrypt
     (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (p "tpm-power-on" z 2)
-          (p "tpm-power-on" "current-value" z (hash v1 v2)))
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
-  (defrule shearsRule
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule trRl_tpm-extend-enc-at-1
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
+  (defgenrule trRl_tpm-extend-enc-at-2
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-power-on-at-1
+    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
+  (defgenrule trRl_tpm-power-on-at-2
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton envelope
-  (vars (pcr-id text) (v n data) (k aik akey) (tpm chan))
+  (vars (v n data) (pcr-id text) (k aik akey) (tpm chan))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (non-orig aik)
   (uniq-orig v n)
@@ -137,9 +136,9 @@
   (comment "Not a skeleton"))
 
 (defskeleton envelope
-  (vars (pcr-id text) (v n data) (k aik akey) (tpm chan))
+  (vars (v n data) (pcr-id text) (k aik akey) (tpm chan))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (precedes ((1 3) (0 0)))
   (non-orig aik)
@@ -157,9 +156,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id text) (v n data) (k aik akey) (tpm tpm-0 chan))
+  (vars (v n data) (pcr-id text) (k aik akey) (tpm tpm-0 chan))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm-0))
@@ -183,9 +182,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id text) (v n data) (k aik akey) (tpm chan))
+  (vars (v n data) (pcr-id text) (k aik akey) (tpm chan))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm))
@@ -210,10 +209,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (current-value mesg) (pcr-id pcr-id-0 text) (v n data) (pt pval)
-    (k aik aik-0 akey) (tpm tpm-0 chan) (pcr locn))
+  (vars (current-value mesg) (v n data) (pcr-id pcr-id-0 text)
+    (k aik aik-0 akey) (pt pval) (tpm tpm-0 chan) (pcr locn))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm))
@@ -241,10 +240,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id text) (v n data) (pt pval) (k aik akey) (tpm tpm-0 chan)
+  (vars (v n data) (pcr-id text) (k aik akey) (pt pval) (tpm tpm-0 chan)
     (pcr locn))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm))
@@ -276,10 +275,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 text) (v n data) (pt pt-0 pval) (k aik akey)
+  (vars (v n data) (pcr-id pcr-id-0 text) (k aik akey) (pt pt-0 pval)
     (tpm tpm-0 tpm-1 chan) (pcr locn))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm))
@@ -319,10 +318,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 text) (v n data) (pt pt-0 pt-1 pval)
-    (k aik akey) (tpm tpm-0 tpm-1 tpm-2 chan) (pcr locn))
+  (vars (v n data) (pcr-id pcr-id-0 pcr-id-1 text) (k aik akey)
+    (pt pt-0 pt-1 pval) (tpm tpm-0 tpm-1 tpm-2 chan) (pcr locn))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm))
@@ -365,10 +364,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 text) (v n data) (pt pt-0 pt-1 pval)
-    (k aik akey) (tpm tpm-0 tpm-1 chan) (pcr locn))
+  (vars (v n data) (pcr-id pcr-id-0 text) (k aik akey)
+    (pt pt-0 pt-1 pval) (tpm tpm-0 tpm-1 chan) (pcr locn))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm))
@@ -454,49 +453,11 @@
     (uniq-orig n v)
     (conf tpm)
     (neq (k aik)))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defrule trRl_tpm-power-on-at-2
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
-  (defrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
-  (defrule trRl_tpm-extend-enc-at-2
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
-  (defrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
-  (defrule genStV-if-hashed-tpm-quote
+  (defrule genStV-if-hashed-tpm-power-on
     (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (p "tpm-quote" z 2)
-          (p "tpm-quote" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-decrypt
-    (forall ((z strd) (v1 v2 mesg))
-      (implies
-        (and (p "tpm-decrypt" z 3)
-          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
   (defrule genStV-if-hashed-tpm-extend-enc
     (forall ((z strd) (v1 v2 mesg))
@@ -504,31 +465,68 @@
         (and (p "tpm-extend-enc" z 2)
           (p "tpm-extend-enc" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-power-on
+  (defrule genStV-if-hashed-tpm-decrypt
     (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (p "tpm-power-on" z 2)
-          (p "tpm-power-on" "current-value" z (hash v1 v2)))
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
-  (defrule shearsRule
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule trRl_tpm-extend-enc-at-1
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
+  (defgenrule trRl_tpm-extend-enc-at-2
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-power-on-at-1
+    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
+  (defgenrule trRl_tpm-power-on-at-2
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 text) (n v data) (k aik akey) (tpm chan))
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (non-orig aik)
   (uniq-orig n v)
@@ -551,10 +549,10 @@
   (comment "Not a skeleton"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 text) (n v data) (k aik akey) (tpm chan))
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (precedes ((1 3) (0 0)))
   (non-orig aik)
@@ -578,10 +576,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 text) (n v data) (k aik akey) (tpm tpm-0 chan))
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm tpm-0 chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-0))
@@ -613,10 +611,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 text) (n v data) (k aik akey) (tpm chan))
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -648,11 +646,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 text) (n v data) (pt pval) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (pt pval)
     (tpm tpm-0 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -694,11 +692,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 text) (n v data) (pt pt-0 pval)
-    (k aik akey) (tpm tpm-0 tpm-1 chan) (pcr locn))
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 text) (k aik akey)
+    (pt pt-0 pval) (tpm tpm-0 tpm-1 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -747,12 +745,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 text) (n v data)
-    (pt pt-0 pt-1 pval) (k aik akey) (tpm tpm-0 tpm-1 tpm-2 chan)
-    (pcr locn))
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 text) (k aik akey)
+    (pt pt-0 pt-1 pval) (tpm tpm-0 tpm-1 tpm-2 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -804,11 +801,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 text) (n v data) (pt pt-0 pt-1 pval)
-    (k aik akey) (tpm tpm-0 tpm-1 chan) (pcr locn))
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 text) (k aik akey)
+    (pt pt-0 pt-1 pval) (tpm tpm-0 tpm-1 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -906,49 +903,11 @@
     (uniq-orig n v)
     (conf tpm)
     (neq (k aik)))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defrule trRl_tpm-power-on-at-2
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
-  (defrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
-  (defrule trRl_tpm-extend-enc-at-2
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
-  (defrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
-  (defrule genStV-if-hashed-tpm-quote
+  (defrule genStV-if-hashed-tpm-power-on
     (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (p "tpm-quote" z 2)
-          (p "tpm-quote" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-decrypt
-    (forall ((z strd) (v1 v2 mesg))
-      (implies
-        (and (p "tpm-decrypt" z 3)
-          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
   (defrule genStV-if-hashed-tpm-extend-enc
     (forall ((z strd) (v1 v2 mesg))
@@ -956,32 +915,69 @@
         (and (p "tpm-extend-enc" z 2)
           (p "tpm-extend-enc" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-power-on
+  (defrule genStV-if-hashed-tpm-decrypt
     (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (p "tpm-power-on" z 2)
-          (p "tpm-power-on" "current-value" z (hash v1 v2)))
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
-  (defrule shearsRule
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule trRl_tpm-extend-enc-at-1
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
+  (defgenrule trRl_tpm-extend-enc-at-2
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-power-on-at-1
+    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
+  (defgenrule trRl_tpm-power-on-at-2
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 text) (n v data) (k aik akey) (tpm chan))
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (non-orig aik)
   (uniq-orig n v)
@@ -1004,11 +1000,11 @@
   (comment "Not a skeleton"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 text) (n v data) (k aik akey) (tpm chan))
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (precedes ((2 3) (0 0)) ((2 3) (1 0)))
   (non-orig aik)
@@ -1032,11 +1028,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 text) (n v data) (k aik akey) (tpm tpm-0 chan))
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm tpm-0 chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-0))
@@ -1068,11 +1064,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 text) (n v data) (k aik akey) (tpm chan))
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -1104,12 +1100,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (current-value mesg) (pcr-id pcr-id-0 pcr-id-1 text) (n v data)
-    (pt pval) (k aik aik-0 akey) (tpm tpm-0 chan) (pcr locn))
+  (vars (current-value mesg) (n v data) (pcr-id pcr-id-0 pcr-id-1 text)
+    (k aik aik-0 akey) (pt pval) (tpm tpm-0 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -1145,12 +1141,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 text) (n v data) (pt pval) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (pt pval)
     (tpm tpm-0 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -1190,12 +1186,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 text) (n v data) (pt pt-0 pval)
-    (k aik akey) (tpm tpm-0 tpm-1 chan) (pcr locn))
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 text) (k aik akey)
+    (pt pt-0 pval) (tpm tpm-0 tpm-1 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -1242,13 +1238,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 text) (n v data)
-    (pt pt-0 pt-1 pval) (k aik akey) (tpm tpm-0 tpm-1 tpm-2 chan)
-    (pcr locn))
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 text) (k aik akey)
+    (pt pt-0 pt-1 pval) (tpm tpm-0 tpm-1 tpm-2 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -1298,12 +1293,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 text) (n v data) (pt pt-0 pt-1 pval)
-    (k aik akey) (tpm tpm-0 tpm-1 chan) (pcr locn))
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 text) (k aik akey)
+    (pt pt-0 pt-1 pval) (tpm tpm-0 tpm-1 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -1352,13 +1347,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 text) (n v data)
-    (pt pt-0 pt-1 pt-2 pval) (k aik akey) (tpm tpm-0 tpm-1 tpm-2 chan)
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 text) (k aik akey)
+    (pt pt-0 pt-1 pt-2 pval) (tpm tpm-0 tpm-1 tpm-2 chan)
     (pcr pcr-0 locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -1419,13 +1414,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 text) (n v data)
-    (pt pt-0 pt-1 pt-2 pt-3 pval) (k aik akey)
-    (tpm tpm-0 tpm-1 tpm-2 tpm-3 chan) (pcr pcr-0 locn))
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 text) (k aik akey)
+    (pt pt-0 pt-1 pt-2 pt-3 pval) (tpm tpm-0 tpm-1 tpm-2 tpm-3 chan)
+    (pcr pcr-0 locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -1491,13 +1486,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 pcr-id-3 text) (n v data)
-    (pt pt-0 pt-1 pt-2 pt-3 pt-4 pval) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 pcr-id-3 text)
+    (k aik akey) (pt pt-0 pt-1 pt-2 pt-3 pt-4 pval)
     (tpm tpm-0 tpm-1 tpm-2 tpm-3 tpm-4 chan) (pcr pcr-0 locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -1567,13 +1562,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
-  (vars (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 text) (n v data)
-    (pt pt-0 pt-1 pt-2 pt-3 pt-4 pval) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 text) (k aik akey)
+    (pt pt-0 pt-1 pt-2 pt-3 pt-4 pval)
     (tpm tpm-0 tpm-1 tpm-2 tpm-3 chan) (pcr pcr-0 locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -1690,49 +1685,11 @@
     (uniq-orig n v)
     (conf tpm)
     (neq (k aik)))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defrule trRl_tpm-power-on-at-2
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
-  (defrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
-  (defrule trRl_tpm-extend-enc-at-2
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
-  (defrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
-  (defrule genStV-if-hashed-tpm-quote
+  (defrule genStV-if-hashed-tpm-power-on
     (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (p "tpm-quote" z 2)
-          (p "tpm-quote" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-decrypt
-    (forall ((z strd) (v1 v2 mesg))
-      (implies
-        (and (p "tpm-decrypt" z 3)
-          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
   (defrule genStV-if-hashed-tpm-extend-enc
     (forall ((z strd) (v1 v2 mesg))
@@ -1740,37 +1697,74 @@
         (and (p "tpm-extend-enc" z 2)
           (p "tpm-extend-enc" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-power-on
+  (defrule genStV-if-hashed-tpm-decrypt
     (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (p "tpm-power-on" z 2)
-          (p "tpm-power-on" "current-value" z (hash v1 v2)))
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
-  (defrule shearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
   (defrule ordered-extends
     (forall ((y z strd) (pcr locn))
       (implies
         (and (p "tpm-extend-enc" y 3) (p "tpm-extend-enc" z 3)
           (p "tpm-extend-enc" "pcr" y pcr)
           (p "tpm-extend-enc" "pcr" z pcr))
-        (or (= y z) (prec y 2 z 1) (prec z 2 y 1))))))
+        (or (= y z) (prec y 2 z 1) (prec z 2 y 1)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule trRl_tpm-extend-enc-at-1
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
+  (defgenrule trRl_tpm-extend-enc-at-2
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-power-on-at-1
+    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
+  (defgenrule trRl_tpm-power-on-at-2
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton envelope-plus
-  (vars (pcr-id text) (v n data) (k aik akey) (tpm chan))
+  (vars (v n data) (pcr-id text) (k aik akey) (tpm chan))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (non-orig aik)
   (uniq-orig v n)
@@ -1787,9 +1781,9 @@
   (comment "Not a skeleton"))
 
 (defskeleton envelope-plus
-  (vars (pcr-id text) (v n data) (k aik akey) (tpm chan))
+  (vars (v n data) (pcr-id text) (k aik akey) (tpm chan))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (precedes ((1 3) (0 0)))
   (non-orig aik)
@@ -1807,9 +1801,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus
-  (vars (pcr-id text) (v n data) (k aik akey) (tpm tpm-0 chan))
+  (vars (v n data) (pcr-id text) (k aik akey) (tpm tpm-0 chan))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm-0))
@@ -1833,9 +1827,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus
-  (vars (pcr-id text) (v n data) (k aik akey) (tpm chan))
+  (vars (v n data) (pcr-id text) (k aik akey) (tpm chan))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm))
@@ -1860,10 +1854,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus
-  (vars (current-value mesg) (pcr-id pcr-id-0 text) (v n data) (pt pval)
-    (k aik aik-0 akey) (tpm tpm-0 chan) (pcr locn))
+  (vars (current-value mesg) (v n data) (pcr-id pcr-id-0 text)
+    (k aik aik-0 akey) (pt pval) (tpm tpm-0 chan) (pcr locn))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm))
@@ -1891,10 +1885,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus
-  (vars (pcr-id text) (v n data) (pt pval) (k aik akey) (tpm tpm-0 chan)
+  (vars (v n data) (pcr-id text) (k aik akey) (pt pval) (tpm tpm-0 chan)
     (pcr locn))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm))
@@ -1926,10 +1920,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus
-  (vars (pcr-id pcr-id-0 text) (v n data) (pt pt-0 pval) (k aik akey)
+  (vars (v n data) (pcr-id pcr-id-0 text) (k aik akey) (pt pt-0 pval)
     (tpm tpm-0 tpm-1 chan) (pcr locn))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm))
@@ -1969,10 +1963,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus
-  (vars (pcr-id pcr-id-0 pcr-id-1 text) (v n data) (pt pt-0 pt-1 pval)
-    (k aik akey) (tpm tpm-0 tpm-1 tpm-2 chan) (pcr locn))
+  (vars (v n data) (pcr-id pcr-id-0 pcr-id-1 text) (k aik akey)
+    (pt pt-0 pt-1 pval) (tpm tpm-0 tpm-1 tpm-2 chan) (pcr locn))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm))
@@ -2015,10 +2009,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus
-  (vars (pcr-id pcr-id-0 text) (v n data) (pt pt-0 pt-1 pval)
-    (k aik akey) (tpm tpm-0 tpm-1 chan) (pcr locn))
+  (vars (v n data) (pcr-id pcr-id-0 text) (k aik akey)
+    (pt pt-0 pt-1 pval) (tpm tpm-0 tpm-1 chan) (pcr locn))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm))
@@ -2104,49 +2098,11 @@
     (uniq-orig n v)
     (conf tpm)
     (neq (k aik)))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defrule trRl_tpm-power-on-at-2
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
-  (defrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
-  (defrule trRl_tpm-extend-enc-at-2
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
-  (defrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
-  (defrule genStV-if-hashed-tpm-quote
+  (defrule genStV-if-hashed-tpm-power-on
     (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (p "tpm-quote" z 2)
-          (p "tpm-quote" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-decrypt
-    (forall ((z strd) (v1 v2 mesg))
-      (implies
-        (and (p "tpm-decrypt" z 3)
-          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
   (defrule genStV-if-hashed-tpm-extend-enc
     (forall ((z strd) (v1 v2 mesg))
@@ -2154,38 +2110,75 @@
         (and (p "tpm-extend-enc" z 2)
           (p "tpm-extend-enc" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-power-on
+  (defrule genStV-if-hashed-tpm-decrypt
     (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (p "tpm-power-on" z 2)
-          (p "tpm-power-on" "current-value" z (hash v1 v2)))
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
-  (defrule shearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
   (defrule ordered-extends
     (forall ((y z strd) (pcr locn))
       (implies
         (and (p "tpm-extend-enc" y 3) (p "tpm-extend-enc" z 3)
           (p "tpm-extend-enc" "pcr" y pcr)
           (p "tpm-extend-enc" "pcr" z pcr))
-        (or (= y z) (prec y 2 z 1) (prec z 2 y 1))))))
+        (or (= y z) (prec y 2 z 1) (prec z 2 y 1)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule trRl_tpm-extend-enc-at-1
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
+  (defgenrule trRl_tpm-extend-enc-at-2
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-power-on-at-1
+    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
+  (defgenrule trRl_tpm-power-on-at-2
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton envelope-plus
-  (vars (pcr-id pcr-id-0 text) (n v data) (k aik akey) (tpm chan))
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (non-orig aik)
   (uniq-orig n v)
@@ -2208,10 +2201,10 @@
   (comment "Not a skeleton"))
 
 (defskeleton envelope-plus
-  (vars (pcr-id pcr-id-0 text) (n v data) (k aik akey) (tpm chan))
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (precedes ((1 3) (0 0)))
   (non-orig aik)
@@ -2235,10 +2228,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus
-  (vars (pcr-id pcr-id-0 text) (n v data) (k aik akey) (tpm tpm-0 chan))
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm tpm-0 chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-0))
@@ -2270,10 +2263,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus
-  (vars (pcr-id pcr-id-0 text) (n v data) (k aik akey) (tpm chan))
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -2305,11 +2298,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus
-  (vars (pcr-id pcr-id-0 text) (n v data) (pt pval) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (pt pval)
     (tpm tpm-0 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -2351,11 +2344,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus
-  (vars (pcr-id pcr-id-0 pcr-id-1 text) (n v data) (pt pt-0 pval)
-    (k aik akey) (tpm tpm-0 tpm-1 chan) (pcr locn))
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 text) (k aik akey)
+    (pt pt-0 pval) (tpm tpm-0 tpm-1 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -2404,12 +2397,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus
-  (vars (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 text) (n v data)
-    (pt pt-0 pt-1 pval) (k aik akey) (tpm tpm-0 tpm-1 tpm-2 chan)
-    (pcr locn))
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 text) (k aik akey)
+    (pt pt-0 pt-1 pval) (tpm tpm-0 tpm-1 tpm-2 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -2461,11 +2453,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus
-  (vars (pcr-id pcr-id-0 pcr-id-1 text) (n v data) (pt pt-0 pt-1 pval)
-    (k aik akey) (tpm tpm-0 tpm-1 chan) (pcr locn))
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 text) (k aik akey)
+    (pt pt-0 pt-1 pval) (tpm tpm-0 tpm-1 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -2563,49 +2555,11 @@
     (uniq-orig n v)
     (conf tpm)
     (neq (k aik)))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defrule trRl_tpm-power-on-at-2
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
-  (defrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
-  (defrule trRl_tpm-extend-enc-at-2
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
-  (defrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
-  (defrule genStV-if-hashed-tpm-quote
+  (defrule genStV-if-hashed-tpm-power-on
     (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (p "tpm-quote" z 2)
-          (p "tpm-quote" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-decrypt
-    (forall ((z strd) (v1 v2 mesg))
-      (implies
-        (and (p "tpm-decrypt" z 3)
-          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
   (defrule genStV-if-hashed-tpm-extend-enc
     (forall ((z strd) (v1 v2 mesg))
@@ -2613,39 +2567,76 @@
         (and (p "tpm-extend-enc" z 2)
           (p "tpm-extend-enc" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-power-on
+  (defrule genStV-if-hashed-tpm-decrypt
     (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (p "tpm-power-on" z 2)
-          (p "tpm-power-on" "current-value" z (hash v1 v2)))
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
-  (defrule shearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
   (defrule ordered-extends
     (forall ((y z strd) (pcr locn))
       (implies
         (and (p "tpm-extend-enc" y 3) (p "tpm-extend-enc" z 3)
           (p "tpm-extend-enc" "pcr" y pcr)
           (p "tpm-extend-enc" "pcr" z pcr))
-        (or (= y z) (prec y 2 z 1) (prec z 2 y 1))))))
+        (or (= y z) (prec y 2 z 1) (prec z 2 y 1)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule trRl_tpm-extend-enc-at-1
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
+  (defgenrule trRl_tpm-extend-enc-at-2
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-power-on-at-1
+    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
+  (defgenrule trRl_tpm-power-on-at-2
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
+          (prec z0 i0 z2 i2))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton envelope-plus
-  (vars (pcr-id pcr-id-0 text) (n v data) (k aik akey) (tpm chan))
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (non-orig aik)
   (uniq-orig n v)
@@ -2668,11 +2659,11 @@
   (comment "Not a skeleton"))
 
 (defskeleton envelope-plus
-  (vars (pcr-id pcr-id-0 text) (n v data) (k aik akey) (tpm chan))
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (precedes ((2 3) (0 0)) ((2 3) (1 0)))
   (non-orig aik)
@@ -2696,11 +2687,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus
-  (vars (pcr-id pcr-id-0 text) (n v data) (k aik akey) (tpm tpm-0 chan))
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm tpm-0 chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-0))
@@ -2732,11 +2723,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus
-  (vars (pcr-id pcr-id-0 text) (n v data) (k aik akey) (tpm chan))
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -2768,12 +2759,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus
-  (vars (current-value mesg) (pcr-id pcr-id-0 pcr-id-1 text) (n v data)
-    (pt pval) (k aik aik-0 akey) (tpm tpm-0 chan) (pcr locn))
+  (vars (current-value mesg) (n v data) (pcr-id pcr-id-0 pcr-id-1 text)
+    (k aik aik-0 akey) (pt pval) (tpm tpm-0 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -2809,12 +2800,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus
-  (vars (pcr-id pcr-id-0 text) (n v data) (pt pval) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (pt pval)
     (tpm tpm-0 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -2854,12 +2845,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus
-  (vars (pcr-id pcr-id-0 pcr-id-1 text) (n v data) (pt pt-0 pval)
-    (k aik akey) (tpm tpm-0 tpm-1 chan) (pcr locn))
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 text) (k aik akey)
+    (pt pt-0 pval) (tpm tpm-0 tpm-1 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -2906,13 +2897,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus
-  (vars (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 text) (n v data)
-    (pt pt-0 pt-1 pval) (k aik akey) (tpm tpm-0 tpm-1 tpm-2 chan)
-    (pcr locn))
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 text) (k aik akey)
+    (pt pt-0 pt-1 pval) (tpm tpm-0 tpm-1 tpm-2 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -2962,12 +2952,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus
-  (vars (pcr-id pcr-id-0 pcr-id-1 text) (n v data) (pt pt-0 pt-1 pval)
-    (k aik akey) (tpm tpm-0 tpm-1 chan) (pcr locn))
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 text) (k aik akey)
+    (pt pt-0 pt-1 pval) (tpm tpm-0 tpm-1 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -3016,13 +3006,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus
-  (vars (pcr-id pcr-id-0 pcr-id-1 text) (n v data)
-    (pt pt-0 pt-1 pt-2 pval) (k aik akey) (tpm tpm-0 tpm-1 tpm-2 chan)
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 text) (k aik akey)
+    (pt pt-0 pt-1 pt-2 pval) (tpm tpm-0 tpm-1 tpm-2 chan)
     (pcr pcr-0 locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -3083,13 +3073,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus
-  (vars (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 text) (n v data)
-    (pt pt-0 pt-1 pt-2 pt-3 pval) (k aik akey)
-    (tpm tpm-0 tpm-1 tpm-2 tpm-3 chan) (pcr pcr-0 locn))
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 text) (k aik akey)
+    (pt pt-0 pt-1 pt-2 pt-3 pval) (tpm tpm-0 tpm-1 tpm-2 tpm-3 chan)
+    (pcr pcr-0 locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -3155,13 +3145,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus
-  (vars (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 pcr-id-3 text) (n v data)
-    (pt pt-0 pt-1 pt-2 pt-3 pt-4 pval) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 pcr-id-3 text)
+    (k aik akey) (pt pt-0 pt-1 pt-2 pt-3 pt-4 pval)
     (tpm tpm-0 tpm-1 tpm-2 tpm-3 tpm-4 chan) (pcr pcr-0 locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -3231,13 +3221,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus
-  (vars (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 text) (n v data)
-    (pt pt-0 pt-1 pt-2 pt-3 pt-4 pval) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 text) (k aik akey)
+    (pt pt-0 pt-1 pt-2 pt-3 pt-4 pval)
     (tpm tpm-0 tpm-1 tpm-2 tpm-3 chan) (pcr pcr-0 locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -3354,38 +3344,30 @@
     (uniq-orig n v)
     (conf tpm)
     (neq (k aik)))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+  (defrule genStV-if-hashed-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+        (and (p "tpm-extend-enc" z 2)
+          (p "tpm-extend-enc" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defrule trRl_tpm-power-on-at-2
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
-  (defrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
-  (defrule trRl_tpm-extend-enc-at-2
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
-  (defrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
   (defrule pcr-id-identifies-pcr
     (forall ((y z strd) (pcr-id text) (pcr pcr-0 locn))
       (implies
@@ -3395,48 +3377,55 @@
           (p "tpm-extend-enc" "pcr" y pcr)
           (p "tpm-extend-enc" "pcr" z pcr-0))
         (= pcr pcr-0))))
-  (defrule genStV-if-hashed-tpm-quote
-    (forall ((z strd) (v1 v2 mesg))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (p "tpm-quote" z 2)
-          (p "tpm-quote" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-decrypt
-    (forall ((z strd) (v1 v2 mesg))
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (p "tpm-decrypt" z 3)
-          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-extend-enc
-    (forall ((z strd) (v1 v2 mesg))
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule trRl_tpm-extend-enc-at-1
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
+  (defgenrule trRl_tpm-extend-enc-at-2
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-power-on-at-1
+    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
+  (defgenrule trRl_tpm-power-on-at-2
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (p "tpm-extend-enc" z 2)
-          (p "tpm-extend-enc" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-power-on
-    (forall ((z strd) (v1 v2 mesg))
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (p "tpm-power-on" z 2)
-          (p "tpm-power-on" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2)))))
-  (defrule shearsRule
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id text) (v n data) (k aik akey) (tpm chan))
+  (vars (v n data) (pcr-id text) (k aik akey) (tpm chan))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (non-orig aik)
   (uniq-orig v n)
@@ -3453,9 +3442,9 @@
   (comment "Not a skeleton"))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id text) (v n data) (k aik akey) (tpm chan))
+  (vars (v n data) (pcr-id text) (k aik akey) (tpm chan))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (precedes ((1 3) (0 0)))
   (non-orig aik)
@@ -3473,9 +3462,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id text) (v n data) (k aik akey) (tpm tpm-0 chan))
+  (vars (v n data) (pcr-id text) (k aik akey) (tpm tpm-0 chan))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm-0))
@@ -3499,9 +3488,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id text) (v n data) (k aik akey) (tpm chan))
+  (vars (v n data) (pcr-id text) (k aik akey) (tpm chan))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm))
@@ -3526,10 +3515,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus-2
-  (vars (current-value mesg) (pcr-id pcr-id-0 text) (v n data) (pt pval)
-    (k aik aik-0 akey) (tpm tpm-0 chan) (pcr locn))
+  (vars (current-value mesg) (v n data) (pcr-id pcr-id-0 text)
+    (k aik aik-0 akey) (pt pval) (tpm tpm-0 chan) (pcr locn))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm))
@@ -3557,10 +3546,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id text) (v n data) (pt pval) (k aik akey) (tpm tpm-0 chan)
+  (vars (v n data) (pcr-id text) (k aik akey) (pt pval) (tpm tpm-0 chan)
     (pcr locn))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm))
@@ -3592,10 +3581,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id pcr-id-0 text) (v n data) (pt pt-0 pval) (k aik akey)
+  (vars (v n data) (pcr-id pcr-id-0 text) (k aik akey) (pt pt-0 pval)
     (tpm tpm-0 tpm-1 chan) (pcr locn))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm))
@@ -3635,10 +3624,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id pcr-id-0 pcr-id-1 text) (v n data) (pt pt-0 pt-1 pval)
-    (k aik akey) (tpm tpm-0 tpm-1 tpm-2 chan) (pcr locn))
+  (vars (v n data) (pcr-id pcr-id-0 pcr-id-1 text) (k aik akey)
+    (pt pt-0 pt-1 pval) (tpm tpm-0 tpm-1 tpm-2 chan) (pcr locn))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm))
@@ -3681,10 +3670,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id pcr-id-0 text) (v n data) (pt pt-0 pt-1 pval)
-    (k aik akey) (tpm tpm-0 tpm-1 chan) (pcr locn))
+  (vars (v n data) (pcr-id pcr-id-0 text) (k aik akey)
+    (pt pt-0 pt-1 pval) (tpm tpm-0 tpm-1 chan) (pcr locn))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id) (k k) (aik aik) (tpm tpm))
@@ -3770,38 +3759,30 @@
     (uniq-orig n v)
     (conf tpm)
     (neq (k aik)))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+  (defrule genStV-if-hashed-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+        (and (p "tpm-extend-enc" z 2)
+          (p "tpm-extend-enc" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defrule trRl_tpm-power-on-at-2
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
-  (defrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
-  (defrule trRl_tpm-extend-enc-at-2
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
-  (defrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
   (defrule pcr-id-identifies-pcr
     (forall ((y z strd) (pcr-id text) (pcr pcr-0 locn))
       (implies
@@ -3811,49 +3792,56 @@
           (p "tpm-extend-enc" "pcr" y pcr)
           (p "tpm-extend-enc" "pcr" z pcr-0))
         (= pcr pcr-0))))
-  (defrule genStV-if-hashed-tpm-quote
-    (forall ((z strd) (v1 v2 mesg))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (p "tpm-quote" z 2)
-          (p "tpm-quote" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-decrypt
-    (forall ((z strd) (v1 v2 mesg))
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (p "tpm-decrypt" z 3)
-          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-extend-enc
-    (forall ((z strd) (v1 v2 mesg))
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule trRl_tpm-extend-enc-at-1
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
+  (defgenrule trRl_tpm-extend-enc-at-2
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-power-on-at-1
+    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
+  (defgenrule trRl_tpm-power-on-at-2
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (p "tpm-extend-enc" z 2)
-          (p "tpm-extend-enc" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-power-on
-    (forall ((z strd) (v1 v2 mesg))
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (p "tpm-power-on" z 2)
-          (p "tpm-power-on" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2)))))
-  (defrule shearsRule
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id pcr-id-0 text) (n v data) (k aik akey) (tpm chan))
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (non-orig aik)
   (uniq-orig n v)
@@ -3876,10 +3864,10 @@
   (comment "Not a skeleton"))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id pcr-id-0 text) (n v data) (k aik akey) (tpm chan))
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (precedes ((1 3) (0 0)))
   (non-orig aik)
@@ -3903,10 +3891,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id pcr-id-0 text) (n v data) (k aik akey) (tpm tpm-0 chan))
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm tpm-0 chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-0))
@@ -3938,10 +3926,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id pcr-id-0 text) (n v data) (k aik akey) (tpm chan))
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -3973,11 +3961,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id pcr-id-0 text) (n v data) (pt pval) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (pt pval)
     (tpm tpm-0 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -4019,11 +4007,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id pcr-id-0 pcr-id-1 text) (n v data) (pt pt-0 pval)
-    (k aik akey) (tpm tpm-0 tpm-1 chan) (pcr locn))
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 text) (k aik akey)
+    (pt pt-0 pval) (tpm tpm-0 tpm-1 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -4072,12 +4060,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 text) (n v data)
-    (pt pt-0 pt-1 pval) (k aik akey) (tpm tpm-0 tpm-1 tpm-2 chan)
-    (pcr locn))
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 text) (k aik akey)
+    (pt pt-0 pt-1 pval) (tpm tpm-0 tpm-1 tpm-2 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -4129,11 +4116,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id pcr-id-0 pcr-id-1 text) (n v data) (pt pt-0 pt-1 pval)
-    (k aik akey) (tpm tpm-0 tpm-1 chan) (pcr locn))
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 text) (k aik akey)
+    (pt pt-0 pt-1 pval) (tpm tpm-0 tpm-1 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -4231,38 +4218,30 @@
     (uniq-orig n v)
     (conf tpm)
     (neq (k aik)))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+  (defrule genStV-if-hashed-tpm-power-on
+    (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+        (and (p "tpm-power-on" z 2)
+          (p "tpm-power-on" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-extend-enc
+    (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+        (and (p "tpm-extend-enc" z 2)
+          (p "tpm-extend-enc" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-decrypt
+    (forall ((z strd) (v1 v2 mesg))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defrule trRl_tpm-power-on-at-2
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
-  (defrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
-  (defrule trRl_tpm-extend-enc-at-2
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
-  (defrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
+        (and (p "tpm-decrypt" z 3)
+          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
+  (defrule genStV-if-hashed-tpm-quote
+    (forall ((z strd) (v1 v2 mesg))
+      (implies
+        (and (p "tpm-quote" z 2)
+          (p "tpm-quote" "current-value" z (hash v1 v2)))
+        (gen-st (hash v1 v2)))))
   (defrule pcr-id-identifies-pcr
     (forall ((y z strd) (pcr-id text) (pcr pcr-0 locn))
       (implies
@@ -4272,50 +4251,57 @@
           (p "tpm-extend-enc" "pcr" y pcr)
           (p "tpm-extend-enc" "pcr" z pcr-0))
         (= pcr pcr-0))))
-  (defrule genStV-if-hashed-tpm-quote
-    (forall ((z strd) (v1 v2 mesg))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (p "tpm-quote" z 2)
-          (p "tpm-quote" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-decrypt
-    (forall ((z strd) (v1 v2 mesg))
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (p "tpm-decrypt" z 3)
-          (p "tpm-decrypt" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-extend-enc
-    (forall ((z strd) (v1 v2 mesg))
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule trRl_tpm-extend-enc-at-1
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
+  (defgenrule trRl_tpm-extend-enc-at-2
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-power-on-at-1
+    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
+  (defgenrule trRl_tpm-power-on-at-2
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (p "tpm-extend-enc" z 2)
-          (p "tpm-extend-enc" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2)))))
-  (defrule genStV-if-hashed-tpm-power-on
-    (forall ((z strd) (v1 v2 mesg))
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (p "tpm-power-on" z 2)
-          (p "tpm-power-on" "current-value" z (hash v1 v2)))
-        (gen-st (hash v1 v2)))))
-  (defrule shearsRule
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id pcr-id-0 text) (n v data) (k aik akey) (tpm chan))
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (non-orig aik)
   (uniq-orig n v)
@@ -4338,11 +4324,11 @@
   (comment "Not a skeleton"))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id pcr-id-0 text) (n v data) (k aik akey) (tpm chan))
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (precedes ((2 3) (0 0)) ((2 3) (1 0)))
   (non-orig aik)
@@ -4366,11 +4352,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id pcr-id-0 text) (n v data) (k aik akey) (tpm tpm-0 chan))
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm tpm-0 chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm-0))
@@ -4402,11 +4388,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id pcr-id-0 text) (n v data) (k aik akey) (tpm chan))
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm chan))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -4438,12 +4424,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus-2
-  (vars (current-value mesg) (pcr-id pcr-id-0 pcr-id-1 text) (n v data)
-    (pt pval) (k aik aik-0 akey) (tpm tpm-0 chan) (pcr locn))
+  (vars (current-value mesg) (n v data) (pcr-id pcr-id-0 pcr-id-1 text)
+    (k aik aik-0 akey) (pt pval) (tpm tpm-0 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -4479,12 +4465,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id pcr-id-0 text) (n v data) (pt pval) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (pt pval)
     (tpm tpm-0 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -4524,12 +4510,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id pcr-id-0 pcr-id-1 text) (n v data) (pt pt-0 pval)
-    (k aik akey) (tpm tpm-0 tpm-1 chan) (pcr locn))
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 text) (k aik akey)
+    (pt pt-0 pval) (tpm tpm-0 tpm-1 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -4576,13 +4562,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 text) (n v data)
-    (pt pt-0 pt-1 pval) (k aik akey) (tpm tpm-0 tpm-1 tpm-2 chan)
-    (pcr locn))
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 text) (k aik akey)
+    (pt pt-0 pt-1 pval) (tpm tpm-0 tpm-1 tpm-2 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -4632,12 +4617,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id pcr-id-0 pcr-id-1 text) (n v data) (pt pt-0 pt-1 pval)
-    (k aik akey) (tpm tpm-0 tpm-1 chan) (pcr locn))
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 text) (k aik akey)
+    (pt pt-0 pt-1 pval) (tpm tpm-0 tpm-1 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -4686,13 +4671,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id pcr-id-0 pcr-id-1 text) (n v data)
-    (pt pt-0 pt-1 pt-2 pval) (k aik akey) (tpm tpm-0 tpm-1 tpm-2 chan)
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 text) (k aik akey)
+    (pt pt-0 pt-1 pt-2 pval) (tpm tpm-0 tpm-1 tpm-2 chan)
     (pcr pcr-0 locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -4753,13 +4738,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 text) (n v data)
-    (pt pt-0 pt-1 pt-2 pt-3 pval) (k aik akey)
-    (tpm tpm-0 tpm-1 tpm-2 tpm-3 chan) (pcr pcr-0 locn))
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 text) (k aik akey)
+    (pt pt-0 pt-1 pt-2 pt-3 pval) (tpm tpm-0 tpm-1 tpm-2 tpm-3 chan)
+    (pcr pcr-0 locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -4825,13 +4810,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 pcr-id-3 text) (n v data)
-    (pt pt-0 pt-1 pt-2 pt-3 pt-4 pval) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 pcr-id-3 text)
+    (k aik akey) (pt pt-0 pt-1 pt-2 pt-3 pt-4 pval)
     (tpm tpm-0 tpm-1 tpm-2 tpm-3 tpm-4 chan) (pcr pcr-0 locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))
@@ -4901,13 +4886,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope-plus-2
-  (vars (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 text) (n v data)
-    (pt pt-0 pt-1 pt-2 pt-3 pt-4 pval) (k aik akey)
+  (vars (n v data) (pcr-id pcr-id-0 pcr-id-1 pcr-id-2 text) (k aik akey)
+    (pt pt-0 pt-1 pt-2 pt-3 pt-4 pval)
     (tpm tpm-0 tpm-1 tpm-2 tpm-3 chan) (pcr locn))
   (deflistener
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
   (deflistener v)
-  (defstrand alice 4 (pcr-id pcr-id-0) (n n) (v v) (k k) (aik aik)
+  (defstrand alice 4 (n n) (v v) (pcr-id pcr-id-0) (k k) (aik aik)
     (tpm tpm))
   (defstrand tpm-create-key 2 (pcrval (hash (hash "0" n) "obtain"))
     (pcr-id pcr-id-0) (k k) (aik aik) (tpm tpm))

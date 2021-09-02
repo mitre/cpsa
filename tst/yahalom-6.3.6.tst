@@ -24,50 +24,49 @@
     (trace (recv (cat b (enc a n-a n-b (ltk b s))))
       (send (cat (enc b k n-a n-b (ltk a s)) (enc a k (ltk b s)))))
     (uniq-orig k))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (comment "Yahalom protocol, Section 6.3.6, Page 49")
   (url "http://www.eecs.umich.edu/acal/swerve/docs/49-1.pdf"))
 
 (defskeleton yahalom
-  (vars (blob mesg) (n-a n-b text) (a b s name) (k skey))
-  (defstrand init 3 (blob blob) (n-a n-a) (n-b n-b) (a a) (b b) (s s)
-    (k k))
+  (vars (blob mesg) (k skey) (n-a n-b text) (a b s name))
+  (defstrand init 3 (blob blob) (k k) (n-a n-a) (n-b n-b) (a a) (b b)
+    (s s))
   (non-orig (ltk a s) (ltk b s))
   (uniq-orig n-a n-b)
   (traces
@@ -79,13 +78,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
-  (vars (blob mesg) (n-a n-b text) (a b s name) (k skey))
-  (defstrand init 3 (blob blob) (n-a n-a) (n-b n-b) (a a) (b b) (s s)
-    (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
+  (vars (blob mesg) (k skey) (n-a n-b text) (a b s name))
+  (defstrand init 3 (blob blob) (k k) (n-a n-a) (n-b n-b) (a a) (b b)
+    (s s))
+  (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k)
+  (uniq-orig k n-a n-b)
   (operation encryption-test (added-strand serv 2)
     (enc b k n-a n-b (ltk a s)) (0 1))
   (traces
@@ -99,14 +98,14 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
-  (vars (blob mesg) (n-a n-b text) (a b s name) (k skey))
-  (defstrand init 3 (blob blob) (n-a n-a) (n-b n-b) (a a) (b b) (s s)
-    (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
+  (vars (blob mesg) (k skey) (n-a n-b text) (a b s name))
+  (defstrand init 3 (blob blob) (k k) (n-a n-a) (n-b n-b) (a a) (b b)
+    (s s))
+  (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
   (defstrand resp 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s))
   (precedes ((0 0) (2 0)) ((1 1) (0 1)) ((2 1) (1 0)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k)
+  (uniq-orig k n-a n-b)
   (operation encryption-test (added-strand resp 2)
     (enc a n-a n-b (ltk b s)) (1 0))
   (traces
@@ -139,49 +138,48 @@
     (trace (recv (cat b (enc a n-a n-b (ltk b s))))
       (send (cat (enc b k n-a n-b (ltk a s)) (enc a k (ltk b s)))))
     (uniq-orig k))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (comment "Yahalom protocol, Section 6.3.6, Page 49")
   (url "http://www.eecs.umich.edu/acal/swerve/docs/49-1.pdf"))
 
 (defskeleton yahalom
-  (vars (n-a n-b text) (a b s name) (k skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
+  (vars (k skey) (n-a n-b text) (a b s name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
   (deflistener k)
   (non-orig (ltk a s) (ltk b s))
   (uniq-orig n-a n-b)
@@ -194,13 +192,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
-  (vars (n-a n-b n-a-0 n-b-0 text) (a b s name) (k skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
+  (vars (k skey) (n-a n-b n-a-0 n-b-0 text) (a b s name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
   (deflistener k)
-  (defstrand serv 2 (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s) (k k))
+  (defstrand serv 2 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s))
   (precedes ((2 1) (0 2)) ((2 1) (1 0)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k)
+  (uniq-orig k n-a n-b)
   (operation encryption-test (added-strand serv 2) (enc a k (ltk b s))
     (0 2))
   (traces
@@ -214,13 +212,13 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton yahalom
-  (vars (n-a n-b text) (a b s name) (k skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
+  (vars (k skey) (n-a n-b text) (a b s name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
   (deflistener k)
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
+  (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
   (precedes ((0 1) (2 0)) ((2 1) (0 2)) ((2 1) (1 0)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k)
+  (uniq-orig k n-a n-b)
   (operation encryption-test (displaced 3 0 resp 2)
     (enc a n-a-0 n-b-0 (ltk b s)) (2 0))
   (traces
@@ -235,14 +233,14 @@
   (comment "empty cohort"))
 
 (defskeleton yahalom
-  (vars (n-a n-b n-a-0 n-b-0 text) (a b s name) (k skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
+  (vars (k skey) (n-a n-b n-a-0 n-b-0 text) (a b s name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
   (deflistener k)
-  (defstrand serv 2 (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s) (k k))
+  (defstrand serv 2 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s))
   (defstrand resp 2 (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s))
   (precedes ((2 1) (0 2)) ((2 1) (1 0)) ((3 1) (2 0)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k)
+  (uniq-orig k n-a n-b)
   (operation encryption-test (added-strand resp 2)
     (enc a n-a-0 n-b-0 (ltk b s)) (2 0))
   (traces
@@ -274,49 +272,48 @@
     (trace (recv (cat b (enc a n-a n-b (ltk b s))))
       (send (cat (enc b k n-a n-b (ltk a s)) (enc a k (ltk b s)))))
     (uniq-orig k))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (comment "Yahalom protocol, Section 6.3.6, Page 49")
   (url "http://www.eecs.umich.edu/acal/swerve/docs/49-1.pdf"))
 
 (defskeleton yahalom
-  (vars (n-a n-b text) (a b s name) (k skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
+  (vars (k skey) (n-a n-b text) (a b s name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
   (non-orig (ltk a s) (ltk b s))
   (uniq-orig n-a n-b)
   (traces
@@ -328,12 +325,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
-  (vars (n-a n-b n-a-0 n-b-0 text) (a b s name) (k skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s) (k k))
+  (vars (k skey) (n-a n-b n-a-0 n-b-0 text) (a b s name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s))
   (precedes ((1 1) (0 2)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k)
+  (uniq-orig k n-a n-b)
   (operation encryption-test (added-strand serv 2) (enc a k (ltk b s))
     (0 2))
   (traces
@@ -347,12 +344,12 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton yahalom
-  (vars (n-a n-b text) (a b s name) (k skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
+  (vars (k skey) (n-a n-b text) (a b s name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
   (precedes ((0 1) (1 0)) ((1 1) (0 2)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k)
+  (uniq-orig k n-a n-b)
   (operation encryption-test (displaced 2 0 resp 2)
     (enc a n-a-0 n-b-0 (ltk b s)) (1 0))
   (traces
@@ -366,13 +363,13 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton yahalom
-  (vars (n-a n-b n-a-0 n-b-0 text) (a b s name) (k skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s) (k k))
+  (vars (k skey) (n-a n-b n-a-0 n-b-0 text) (a b s name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s))
   (defstrand resp 2 (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s))
   (precedes ((1 1) (0 2)) ((2 1) (1 0)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k)
+  (uniq-orig k n-a n-b)
   (operation encryption-test (added-strand resp 2)
     (enc a n-a-0 n-b-0 (ltk b s)) (1 0))
   (traces
@@ -387,15 +384,15 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton yahalom
-  (vars (blob mesg) (n-a n-b n-a-0 text) (a b s a-0 b-0 s-0 name)
-    (k skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand init 3 (blob blob) (n-a n-a-0) (n-b n-b) (a a-0) (b b-0)
-    (s s-0) (k k))
+  (vars (blob mesg) (k skey) (n-a n-b n-a-0 text)
+    (a b s a-0 b-0 s-0 name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand init 3 (blob blob) (k k) (n-a n-a-0) (n-b n-b) (a a-0)
+    (b b-0) (s s-0))
   (precedes ((0 1) (1 0)) ((1 1) (2 1)) ((2 2) (0 2)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k)
+  (uniq-orig k n-a n-b)
   (operation encryption-test (added-strand init 3) (enc n-b k) (0 2))
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b s))))
@@ -411,13 +408,13 @@
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton yahalom
-  (vars (n-a n-b text) (a b s name) (k skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
+  (vars (k skey) (n-a n-b text) (a b s name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
   (deflistener k)
   (precedes ((0 1) (1 0)) ((1 1) (2 0)) ((2 1) (0 2)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k)
+  (uniq-orig k n-a n-b)
   (operation encryption-test (added-listener k) (enc n-b k) (0 2))
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b s))))
@@ -432,16 +429,16 @@
   (comment "empty cohort"))
 
 (defskeleton yahalom
-  (vars (blob mesg) (n-a n-b n-a-0 n-b-0 n-a-1 text)
-    (a b s a-0 b-0 s-0 name) (k skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s) (k k))
+  (vars (blob mesg) (k skey) (n-a n-b n-a-0 n-b-0 n-a-1 text)
+    (a b s a-0 b-0 s-0 name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s))
   (defstrand resp 2 (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s))
-  (defstrand init 3 (blob blob) (n-a n-a-1) (n-b n-b) (a a-0) (b b-0)
-    (s s-0) (k k))
+  (defstrand init 3 (blob blob) (k k) (n-a n-a-1) (n-b n-b) (a a-0)
+    (b b-0) (s s-0))
   (precedes ((0 1) (3 1)) ((1 1) (3 1)) ((2 1) (1 0)) ((3 2) (0 2)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k)
+  (uniq-orig k n-a n-b)
   (operation encryption-test (added-strand init 3) (enc n-b k) (0 2))
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b s))))
@@ -458,14 +455,14 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
-  (vars (n-a n-b n-a-0 n-b-0 text) (a b s name) (k skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s) (k k))
+  (vars (k skey) (n-a n-b n-a-0 n-b-0 text) (a b s name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s))
   (defstrand resp 2 (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s))
   (deflistener k)
   (precedes ((1 1) (3 0)) ((2 1) (1 0)) ((3 1) (0 2)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k)
+  (uniq-orig k n-a n-b)
   (operation encryption-test (added-listener k) (enc n-b k) (0 2))
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b s))))
@@ -481,14 +478,14 @@
   (comment "empty cohort"))
 
 (defskeleton yahalom
-  (vars (blob mesg) (n-a n-b text) (a b s name) (k skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand init 3 (blob blob) (n-a n-a) (n-b n-b) (a a) (b b) (s s)
-    (k k))
+  (vars (blob mesg) (k skey) (n-a n-b text) (a b s name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand init 3 (blob blob) (k k) (n-a n-a) (n-b n-b) (a a) (b b)
+    (s s))
   (precedes ((0 1) (1 0)) ((1 1) (2 1)) ((2 0) (0 0)) ((2 2) (0 2)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k)
+  (uniq-orig k n-a n-b)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (s-0 s) (n-a-0 n-a))
     n-b (2 1) (enc a n-a n-b (ltk b s)) (enc b k n-a n-b (ltk a s)))
   (traces
@@ -506,18 +503,18 @@
   (origs (k (1 1)) (n-a (2 0)) (n-b (0 1))))
 
 (defskeleton yahalom
-  (vars (blob blob-0 mesg) (n-a n-b n-a-0 text) (a b s a-0 b-0 s-0 name)
-    (k skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand init 3 (blob blob) (n-a n-a-0) (n-b n-b) (a a-0) (b b-0)
-    (s s-0) (k k))
-  (defstrand init 3 (blob blob-0) (n-a n-a) (n-b n-b) (a a) (b b) (s s)
-    (k k))
+  (vars (blob blob-0 mesg) (k skey) (n-a n-b n-a-0 text)
+    (a b s a-0 b-0 s-0 name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand init 3 (blob blob) (k k) (n-a n-a-0) (n-b n-b) (a a-0)
+    (b b-0) (s s-0))
+  (defstrand init 3 (blob blob-0) (k k) (n-a n-a) (n-b n-b) (a a) (b b)
+    (s s))
   (precedes ((0 1) (1 0)) ((1 1) (3 1)) ((2 2) (0 2)) ((3 0) (0 0))
     ((3 2) (2 1)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k)
+  (uniq-orig k n-a n-b)
   (operation nonce-test (added-strand init 3) n-b (2 1)
     (enc a n-a n-b (ltk b s)) (enc b k n-a n-b (ltk a s)))
   (traces
@@ -536,17 +533,17 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton yahalom
-  (vars (blob mesg) (n-a n-b n-a-0 text) (a b s a-0 b-0 s-0 name)
-    (k k-0 skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand init 3 (blob blob) (n-a n-a-0) (n-b n-b) (a a-0) (b b-0)
-    (s s-0) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k-0))
+  (vars (blob mesg) (k k-0 skey) (n-a n-b n-a-0 text)
+    (a b s a-0 b-0 s-0 name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand init 3 (blob blob) (k k) (n-a n-a-0) (n-b n-b) (a a-0)
+    (b b-0) (s s-0))
+  (defstrand serv 2 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
   (precedes ((0 1) (1 0)) ((0 1) (3 0)) ((1 1) (2 1)) ((2 2) (0 2))
     ((3 1) (2 1)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k k-0)
+  (uniq-orig k k-0 n-a n-b)
   (operation nonce-test (added-strand serv 2) n-b (2 1)
     (enc a n-a n-b (ltk b s)) (enc b k n-a n-b (ltk a s)))
   (traces
@@ -566,18 +563,18 @@
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton yahalom
-  (vars (blob mesg) (n-a n-b n-a-0 n-b-0 n-a-1 text)
-    (a b s a-0 b-0 s-0 name) (k k-0 skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s) (k k))
+  (vars (blob mesg) (k k-0 skey) (n-a n-b n-a-0 n-b-0 n-a-1 text)
+    (a b s a-0 b-0 s-0 name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s))
   (defstrand resp 2 (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s))
-  (defstrand init 3 (blob blob) (n-a n-a-1) (n-b n-b) (a a-0) (b b-0)
-    (s s-0) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k-0))
+  (defstrand init 3 (blob blob) (k k) (n-a n-a-1) (n-b n-b) (a a-0)
+    (b b-0) (s s-0))
+  (defstrand serv 2 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
   (precedes ((0 1) (4 0)) ((1 1) (3 1)) ((2 1) (1 0)) ((3 2) (0 2))
     ((4 1) (3 1)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k k-0)
+  (uniq-orig k k-0 n-a n-b)
   (operation nonce-test (added-strand serv 2) n-b (3 1)
     (enc a n-a n-b (ltk b s)))
   (traces
@@ -597,19 +594,19 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
-  (vars (blob blob-0 mesg) (n-a n-b n-a-0 text) (a b s a-0 b-0 s-0 name)
-    (k k-0 skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand init 3 (blob blob) (n-a n-a-0) (n-b n-b) (a a-0) (b b-0)
-    (s s-0) (k k))
-  (defstrand init 3 (blob blob-0) (n-a n-a) (n-b n-b) (a a) (b b) (s s)
-    (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k-0))
+  (vars (blob blob-0 mesg) (k k-0 skey) (n-a n-b n-a-0 text)
+    (a b s a-0 b-0 s-0 name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand init 3 (blob blob) (k k) (n-a n-a-0) (n-b n-b) (a a-0)
+    (b b-0) (s s-0))
+  (defstrand init 3 (blob blob-0) (k k) (n-a n-a) (n-b n-b) (a a) (b b)
+    (s s))
+  (defstrand serv 2 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
   (precedes ((0 1) (1 0)) ((0 1) (4 0)) ((1 1) (3 1)) ((2 2) (0 2))
     ((3 0) (0 0)) ((3 2) (2 1)) ((4 1) (2 1)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k k-0)
+  (uniq-orig k k-0 n-a n-b)
   (operation nonce-test (added-strand serv 2) n-b (2 1) (enc n-b k)
     (enc a n-a n-b (ltk b s)) (enc b k n-a n-b (ltk a s)))
   (traces
@@ -630,19 +627,19 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
-  (vars (blob blob-0 mesg) (n-a n-b n-a-0 text) (a b s a-0 b-0 s-0 name)
-    (k skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand init 3 (blob blob) (n-a n-a-0) (n-b n-b) (a a-0) (b b-0)
-    (s s-0) (k k))
-  (defstrand init 3 (blob blob-0) (n-a n-a) (n-b n-b) (a a) (b b) (s s)
-    (k k))
+  (vars (blob blob-0 mesg) (k skey) (n-a n-b n-a-0 text)
+    (a b s a-0 b-0 s-0 name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand init 3 (blob blob) (k k) (n-a n-a-0) (n-b n-b) (a a-0)
+    (b b-0) (s s-0))
+  (defstrand init 3 (blob blob-0) (k k) (n-a n-a) (n-b n-b) (a a) (b b)
+    (s s))
   (deflistener k)
   (precedes ((0 1) (1 0)) ((1 1) (3 1)) ((1 1) (4 0)) ((2 2) (0 2))
     ((3 0) (0 0)) ((3 2) (2 1)) ((4 1) (2 1)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k)
+  (uniq-orig k n-a n-b)
   (operation nonce-test (added-listener k) n-b (2 1) (enc n-b k)
     (enc a n-a n-b (ltk b s)) (enc b k n-a n-b (ltk a s)))
   (traces
@@ -662,16 +659,16 @@
   (comment "empty cohort"))
 
 (defskeleton yahalom
-  (vars (blob mesg) (n-a n-b text) (a b s name) (k k-0 skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand init 3 (blob blob) (n-a n-a) (n-b n-b) (a a) (b b) (s s)
-    (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k-0))
+  (vars (blob mesg) (k k-0 skey) (n-a n-b text) (a b s name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand init 3 (blob blob) (k k) (n-a n-a) (n-b n-b) (a a) (b b)
+    (s s))
+  (defstrand serv 2 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
   (precedes ((0 1) (1 0)) ((0 1) (3 0)) ((1 1) (2 1)) ((2 0) (0 0))
     ((2 2) (0 2)) ((3 1) (2 1)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k k-0)
+  (uniq-orig k k-0 n-a n-b)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (s-0 s) (n-a-0 n-a))
     n-b (2 1) (enc a n-a n-b (ltk b s)) (enc b k n-a n-b (ltk a s))
     (enc b k-0 n-a n-b (ltk a s)))
@@ -691,19 +688,19 @@
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton yahalom
-  (vars (blob blob-0 mesg) (n-a n-b n-a-0 text) (a b s a-0 b-0 s-0 name)
-    (k k-0 skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand init 3 (blob blob) (n-a n-a-0) (n-b n-b) (a a-0) (b b-0)
-    (s s-0) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k-0))
-  (defstrand init 3 (blob blob-0) (n-a n-a) (n-b n-b) (a a) (b b) (s s)
-    (k k-0))
+  (vars (blob blob-0 mesg) (k k-0 skey) (n-a n-b n-a-0 text)
+    (a b s a-0 b-0 s-0 name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand init 3 (blob blob) (k k) (n-a n-a-0) (n-b n-b) (a a-0)
+    (b b-0) (s s-0))
+  (defstrand serv 2 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand init 3 (blob blob-0) (k k-0) (n-a n-a) (n-b n-b) (a a)
+    (b b) (s s))
   (precedes ((0 1) (1 0)) ((0 1) (3 0)) ((1 1) (2 1)) ((2 2) (0 2))
     ((3 1) (4 1)) ((4 0) (0 0)) ((4 2) (2 1)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k k-0)
+  (uniq-orig k k-0 n-a n-b)
   (operation nonce-test (added-strand init 3) n-b (2 1)
     (enc a n-a n-b (ltk b s)) (enc b k n-a n-b (ltk a s))
     (enc b k-0 n-a n-b (ltk a s)))
@@ -726,20 +723,20 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton yahalom
-  (vars (blob blob-0 mesg) (n-a n-b n-a-0 n-b-0 n-a-1 text)
-    (a b s a-0 b-0 s-0 name) (k k-0 skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s) (k k))
+  (vars (blob blob-0 mesg) (k k-0 skey) (n-a n-b n-a-0 n-b-0 n-a-1 text)
+    (a b s a-0 b-0 s-0 name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s))
   (defstrand resp 2 (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s))
-  (defstrand init 3 (blob blob) (n-a n-a-1) (n-b n-b) (a a-0) (b b-0)
-    (s s-0) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k-0))
-  (defstrand init 3 (blob blob-0) (n-a n-a) (n-b n-b) (a a) (b b) (s s)
-    (k k-0))
+  (defstrand init 3 (blob blob) (k k) (n-a n-a-1) (n-b n-b) (a a-0)
+    (b b-0) (s s-0))
+  (defstrand serv 2 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand init 3 (blob blob-0) (k k-0) (n-a n-a) (n-b n-b) (a a)
+    (b b) (s s))
   (precedes ((0 1) (4 0)) ((1 1) (3 1)) ((2 1) (1 0)) ((3 2) (0 2))
     ((4 1) (5 1)) ((5 0) (0 0)) ((5 2) (3 1)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k k-0)
+  (uniq-orig k k-0 n-a n-b)
   (operation nonce-test (added-strand init 3) n-b (3 1)
     (enc a n-a n-b (ltk b s)) (enc b k-0 n-a n-b (ltk a s)))
   (traces
@@ -762,21 +759,21 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton yahalom
-  (vars (blob blob-0 mesg) (n-a n-b n-a-0 text) (a b s a-0 b-0 s-0 name)
-    (k k-0 skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand init 3 (blob blob) (n-a n-a-0) (n-b n-b) (a a-0) (b b-0)
-    (s s-0) (k k))
-  (defstrand init 3 (blob blob-0) (n-a n-a) (n-b n-b) (a a) (b b) (s s)
-    (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k-0))
+  (vars (blob blob-0 mesg) (k k-0 skey) (n-a n-b n-a-0 text)
+    (a b s a-0 b-0 s-0 name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand init 3 (blob blob) (k k) (n-a n-a-0) (n-b n-b) (a a-0)
+    (b b-0) (s s-0))
+  (defstrand init 3 (blob blob-0) (k k) (n-a n-a) (n-b n-b) (a a) (b b)
+    (s s))
+  (defstrand serv 2 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
   (deflistener k)
   (precedes ((0 1) (1 0)) ((0 1) (4 0)) ((1 1) (3 1)) ((1 1) (5 0))
     ((2 2) (0 2)) ((3 0) (0 0)) ((3 2) (2 1)) ((4 1) (2 1))
     ((5 1) (2 1)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k k-0)
+  (uniq-orig k k-0 n-a n-b)
   (operation nonce-test (added-listener k) n-b (2 1) (enc n-b k)
     (enc a n-a n-b (ltk b s)) (enc b k n-a n-b (ltk a s))
     (enc b k-0 n-a n-b (ltk a s)))
@@ -800,21 +797,21 @@
   (comment "empty cohort"))
 
 (defskeleton yahalom
-  (vars (blob blob-0 mesg) (n-a n-b n-a-0 text) (a b s a-0 b-0 s-0 name)
-    (k k-0 k-1 skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand init 3 (blob blob) (n-a n-a-0) (n-b n-b) (a a-0) (b b-0)
-    (s s-0) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k-0))
-  (defstrand init 3 (blob blob-0) (n-a n-a) (n-b n-b) (a a) (b b) (s s)
-    (k k-0))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k-1))
+  (vars (blob blob-0 mesg) (k k-0 k-1 skey) (n-a n-b n-a-0 text)
+    (a b s a-0 b-0 s-0 name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand init 3 (blob blob) (k k) (n-a n-a-0) (n-b n-b) (a a-0)
+    (b b-0) (s s-0))
+  (defstrand serv 2 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand init 3 (blob blob-0) (k k-0) (n-a n-a) (n-b n-b) (a a)
+    (b b) (s s))
+  (defstrand serv 2 (k k-1) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
   (precedes ((0 1) (1 0)) ((0 1) (3 0)) ((0 1) (5 0)) ((1 1) (2 1))
     ((2 2) (0 2)) ((3 1) (4 1)) ((4 0) (0 0)) ((4 2) (2 1))
     ((5 1) (2 1)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k k-0 k-1)
+  (uniq-orig k k-0 k-1 n-a n-b)
   (operation nonce-test (added-strand serv 2) n-b (2 1) (enc n-b k-0)
     (enc a n-a n-b (ltk b s)) (enc b k n-a n-b (ltk a s))
     (enc b k-0 n-a n-b (ltk a s)))
@@ -839,21 +836,21 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
-  (vars (blob blob-0 mesg) (n-a n-b n-a-0 text) (a b s a-0 b-0 s-0 name)
-    (k k-0 skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand init 3 (blob blob) (n-a n-a-0) (n-b n-b) (a a-0) (b b-0)
-    (s s-0) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k-0))
-  (defstrand init 3 (blob blob-0) (n-a n-a) (n-b n-b) (a a) (b b) (s s)
-    (k k-0))
+  (vars (blob blob-0 mesg) (k k-0 skey) (n-a n-b n-a-0 text)
+    (a b s a-0 b-0 s-0 name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand init 3 (blob blob) (k k) (n-a n-a-0) (n-b n-b) (a a-0)
+    (b b-0) (s s-0))
+  (defstrand serv 2 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand init 3 (blob blob-0) (k k-0) (n-a n-a) (n-b n-b) (a a)
+    (b b) (s s))
   (deflistener k-0)
   (precedes ((0 1) (1 0)) ((0 1) (3 0)) ((1 1) (2 1)) ((2 2) (0 2))
     ((3 1) (4 1)) ((3 1) (5 0)) ((4 0) (0 0)) ((4 2) (2 1))
     ((5 1) (2 1)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k k-0)
+  (uniq-orig k k-0 n-a n-b)
   (operation nonce-test (added-listener k-0) n-b (2 1) (enc n-b k-0)
     (enc a n-a n-b (ltk b s)) (enc b k n-a n-b (ltk a s))
     (enc b k-0 n-a n-b (ltk a s)))
@@ -877,22 +874,22 @@
   (comment "empty cohort"))
 
 (defskeleton yahalom
-  (vars (blob blob-0 mesg) (n-a n-b n-a-0 n-b-0 n-a-1 text)
-    (a b s a-0 b-0 s-0 name) (k k-0 k-1 skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s) (k k))
+  (vars (blob blob-0 mesg) (k k-0 k-1 skey)
+    (n-a n-b n-a-0 n-b-0 n-a-1 text) (a b s a-0 b-0 s-0 name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s))
   (defstrand resp 2 (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s))
-  (defstrand init 3 (blob blob) (n-a n-a-1) (n-b n-b) (a a-0) (b b-0)
-    (s s-0) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k-0))
-  (defstrand init 3 (blob blob-0) (n-a n-a) (n-b n-b) (a a) (b b) (s s)
-    (k k-0))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k-1))
+  (defstrand init 3 (blob blob) (k k) (n-a n-a-1) (n-b n-b) (a a-0)
+    (b b-0) (s s-0))
+  (defstrand serv 2 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand init 3 (blob blob-0) (k k-0) (n-a n-a) (n-b n-b) (a a)
+    (b b) (s s))
+  (defstrand serv 2 (k k-1) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
   (precedes ((0 1) (4 0)) ((0 1) (6 0)) ((1 1) (3 1)) ((2 1) (1 0))
     ((3 2) (0 2)) ((4 1) (5 1)) ((5 0) (0 0)) ((5 2) (3 1))
     ((6 1) (3 1)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k k-0 k-1)
+  (uniq-orig k k-0 k-1 n-a n-b)
   (operation nonce-test (added-strand serv 2) n-b (3 1) (enc n-b k-0)
     (enc a n-a n-b (ltk b s)) (enc b k-0 n-a n-b (ltk a s)))
   (traces
@@ -917,22 +914,22 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
-  (vars (blob blob-0 mesg) (n-a n-b n-a-0 n-b-0 n-a-1 text)
-    (a b s a-0 b-0 s-0 name) (k k-0 skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s) (k k))
+  (vars (blob blob-0 mesg) (k k-0 skey) (n-a n-b n-a-0 n-b-0 n-a-1 text)
+    (a b s a-0 b-0 s-0 name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s))
   (defstrand resp 2 (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s))
-  (defstrand init 3 (blob blob) (n-a n-a-1) (n-b n-b) (a a-0) (b b-0)
-    (s s-0) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k-0))
-  (defstrand init 3 (blob blob-0) (n-a n-a) (n-b n-b) (a a) (b b) (s s)
-    (k k-0))
+  (defstrand init 3 (blob blob) (k k) (n-a n-a-1) (n-b n-b) (a a-0)
+    (b b-0) (s s-0))
+  (defstrand serv 2 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand init 3 (blob blob-0) (k k-0) (n-a n-a) (n-b n-b) (a a)
+    (b b) (s s))
   (deflistener k-0)
   (precedes ((0 1) (4 0)) ((1 1) (3 1)) ((2 1) (1 0)) ((3 2) (0 2))
     ((4 1) (5 1)) ((4 1) (6 0)) ((5 0) (0 0)) ((5 2) (3 1))
     ((6 1) (3 1)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k k-0)
+  (uniq-orig k k-0 n-a n-b)
   (operation nonce-test (added-listener k-0) n-b (3 1) (enc n-b k-0)
     (enc a n-a n-b (ltk b s)) (enc b k-0 n-a n-b (ltk a s)))
   (traces
@@ -956,22 +953,22 @@
   (comment "empty cohort"))
 
 (defskeleton yahalom
-  (vars (blob blob-0 mesg) (n-a n-b n-a-0 text) (a b s a-0 b-0 s-0 name)
-    (k k-0 k-1 skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand init 3 (blob blob) (n-a n-a-0) (n-b n-b) (a a-0) (b b-0)
-    (s s-0) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k-0))
-  (defstrand init 3 (blob blob-0) (n-a n-a) (n-b n-b) (a a) (b b) (s s)
-    (k k-0))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k-1))
+  (vars (blob blob-0 mesg) (k k-0 k-1 skey) (n-a n-b n-a-0 text)
+    (a b s a-0 b-0 s-0 name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand init 3 (blob blob) (k k) (n-a n-a-0) (n-b n-b) (a a-0)
+    (b b-0) (s s-0))
+  (defstrand serv 2 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand init 3 (blob blob-0) (k k-0) (n-a n-a) (n-b n-b) (a a)
+    (b b) (s s))
+  (defstrand serv 2 (k k-1) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
   (deflistener k-0)
   (precedes ((0 1) (1 0)) ((0 1) (3 0)) ((0 1) (5 0)) ((1 1) (2 1))
     ((2 2) (0 2)) ((3 1) (4 1)) ((3 1) (6 0)) ((4 0) (0 0))
     ((4 2) (2 1)) ((5 1) (2 1)) ((6 1) (2 1)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k k-0 k-1)
+  (uniq-orig k k-0 k-1 n-a n-b)
   (operation nonce-test (added-listener k-0) n-b (2 1) (enc n-b k-0)
     (enc a n-a n-b (ltk b s)) (enc b k n-a n-b (ltk a s))
     (enc b k-0 n-a n-b (ltk a s)) (enc b k-1 n-a n-b (ltk a s)))
@@ -998,23 +995,23 @@
   (comment "empty cohort"))
 
 (defskeleton yahalom
-  (vars (blob blob-0 mesg) (n-a n-b n-a-0 n-b-0 n-a-1 text)
-    (a b s a-0 b-0 s-0 name) (k k-0 k-1 skey))
-  (defstrand resp 3 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
-  (defstrand serv 2 (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s) (k k))
+  (vars (blob blob-0 mesg) (k k-0 k-1 skey)
+    (n-a n-b n-a-0 n-b-0 n-a-1 text) (a b s a-0 b-0 s-0 name))
+  (defstrand resp 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand serv 2 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s))
   (defstrand resp 2 (n-a n-a-0) (n-b n-b-0) (a a) (b b) (s s))
-  (defstrand init 3 (blob blob) (n-a n-a-1) (n-b n-b) (a a-0) (b b-0)
-    (s s-0) (k k))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k-0))
-  (defstrand init 3 (blob blob-0) (n-a n-a) (n-b n-b) (a a) (b b) (s s)
-    (k k-0))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k-1))
+  (defstrand init 3 (blob blob) (k k) (n-a n-a-1) (n-b n-b) (a a-0)
+    (b b-0) (s s-0))
+  (defstrand serv 2 (k k-0) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
+  (defstrand init 3 (blob blob-0) (k k-0) (n-a n-a) (n-b n-b) (a a)
+    (b b) (s s))
+  (defstrand serv 2 (k k-1) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
   (deflistener k-0)
   (precedes ((0 1) (4 0)) ((0 1) (6 0)) ((1 1) (3 1)) ((2 1) (1 0))
     ((3 2) (0 2)) ((4 1) (5 1)) ((4 1) (7 0)) ((5 0) (0 0))
     ((5 2) (3 1)) ((6 1) (3 1)) ((7 1) (3 1)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k k-0 k-1)
+  (uniq-orig k k-0 k-1 n-a n-b)
   (operation nonce-test (added-listener k-0) n-b (3 1) (enc n-b k-0)
     (enc a n-a n-b (ltk b s)) (enc b k-0 n-a n-b (ltk a s))
     (enc b k-1 n-a n-b (ltk a s)))
@@ -1058,51 +1055,50 @@
     (trace (recv (cat b (enc a n-a n-b (ltk b s))))
       (send (cat (enc b k n-a n-b (ltk a s)) (enc a k (ltk b s)))))
     (uniq-orig k))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (comment "Yahalom protocol, Section 6.3.6, Page 49")
   (url "http://www.eecs.umich.edu/acal/swerve/docs/49-1.pdf"))
 
 (defskeleton yahalom
-  (vars (n-a n-b text) (a b s name) (k skey))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
+  (vars (k skey) (n-a n-b text) (a b s name))
+  (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k)
+  (uniq-orig k n-a n-b)
   (traces
     ((recv (cat b (enc a n-a n-b (ltk b s))))
       (send (cat (enc b k n-a n-b (ltk a s)) (enc a k (ltk b s))))))
@@ -1112,12 +1108,12 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
-  (vars (n-a n-b text) (a b s name) (k skey))
-  (defstrand serv 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s) (k k))
+  (vars (k skey) (n-a n-b text) (a b s name))
+  (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (s s))
   (defstrand resp 2 (n-a n-a) (n-b n-b) (a a) (b b) (s s))
   (precedes ((1 1) (0 0)))
   (non-orig (ltk a s) (ltk b s))
-  (uniq-orig n-a n-b k)
+  (uniq-orig k n-a n-b)
   (operation encryption-test (added-strand resp 2)
     (enc a n-a n-b (ltk b s)) (0 0))
   (traces

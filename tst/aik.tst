@@ -21,47 +21,46 @@
     (trace (recv (cat i k x (enc "ekc" mf ek (privk mf))))
       (send (enc (enc "aic" i k x (privk pc)) ek)))
     (non-orig (privk mf)))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton aikprot
-  (vars (mf pc i x name) (srk skey) (ek k akey))
-  (defstrand tpm 4 (i i) (x x) (mf mf) (pc pc) (srk srk) (ek ek) (k k))
+  (vars (srk skey) (ek k akey) (mf pc i x name))
+  (defstrand tpm 4 (srk srk) (ek ek) (k k) (i i) (x x) (mf mf) (pc pc))
   (non-orig srk (invk ek) (privk pc))
   (uniq-orig k (invk k))
   (traces
@@ -75,9 +74,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton aikprot
-  (vars (mf pc i x mf-0 name) (srk skey) (ek k ek-0 akey))
-  (defstrand tpm 4 (i i) (x x) (mf mf) (pc pc) (srk srk) (ek ek) (k k))
-  (defstrand pca 2 (i i) (x x) (mf mf-0) (pc pc) (ek ek-0) (k k))
+  (vars (srk skey) (ek k ek-0 akey) (mf pc i x mf-0 name))
+  (defstrand tpm 4 (srk srk) (ek ek) (k k) (i i) (x x) (mf mf) (pc pc))
+  (defstrand pca 2 (ek ek-0) (k k) (i i) (x x) (mf mf-0) (pc pc))
   (precedes ((0 1) (1 0)) ((1 1) (0 2)))
   (non-orig srk (invk ek) (privk pc) (privk mf-0))
   (uniq-orig k (invk k))
@@ -96,10 +95,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton aikprot
-  (vars (mf pc i x mf-0 name) (srk skey) (ek k ek-0 akey))
-  (defstrand tpm 4 (i i) (x x) (mf mf) (pc pc) (srk srk) (ek ek) (k k))
-  (defstrand pca 2 (i i) (x x) (mf mf-0) (pc pc) (ek ek-0) (k k))
-  (defstrand ca 1 (mf mf-0) (ek ek-0))
+  (vars (srk skey) (ek k ek-0 akey) (mf pc i x mf-0 name))
+  (defstrand tpm 4 (srk srk) (ek ek) (k k) (i i) (x x) (mf mf) (pc pc))
+  (defstrand pca 2 (ek ek-0) (k k) (i i) (x x) (mf mf-0) (pc pc))
+  (defstrand ca 1 (ek ek-0) (mf mf-0))
   (precedes ((0 1) (1 0)) ((1 1) (0 2)) ((2 0) (1 0)))
   (non-orig srk (invk ek) (invk ek-0) (privk pc) (privk mf-0))
   (uniq-orig k (invk k))
@@ -119,10 +118,10 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton aikprot
-  (vars (mf pc i x mf-0 name) (srk skey) (k ek akey))
-  (defstrand tpm 4 (i i) (x x) (mf mf) (pc pc) (srk srk) (ek ek) (k k))
-  (defstrand pca 2 (i i) (x x) (mf mf-0) (pc pc) (ek ek) (k k))
-  (defstrand ca 1 (mf mf-0) (ek ek))
+  (vars (srk skey) (k ek akey) (mf pc i x mf-0 name))
+  (defstrand tpm 4 (srk srk) (ek ek) (k k) (i i) (x x) (mf mf) (pc pc))
+  (defstrand pca 2 (ek ek) (k k) (i i) (x x) (mf mf-0) (pc pc))
+  (defstrand ca 1 (ek ek) (mf mf-0))
   (precedes ((0 1) (1 0)) ((1 1) (0 2)) ((2 0) (1 0)))
   (non-orig srk (invk ek) (privk pc) (privk mf-0))
   (uniq-orig k (invk k))
@@ -145,11 +144,11 @@
   (origs ((invk k) (0 3)) (k (0 1))))
 
 (defskeleton aikprot
-  (vars (mf pc i x mf-0 mf-1 name) (srk skey) (ek k ek-0 ek-1 akey))
-  (defstrand tpm 4 (i i) (x x) (mf mf) (pc pc) (srk srk) (ek ek) (k k))
-  (defstrand pca 2 (i i) (x x) (mf mf-0) (pc pc) (ek ek-0) (k k))
-  (defstrand ca 1 (mf mf-0) (ek ek-0))
-  (defstrand pca 2 (i i) (x x) (mf mf-1) (pc pc) (ek ek-1) (k k))
+  (vars (srk skey) (ek k ek-0 ek-1 akey) (mf pc i x mf-0 mf-1 name))
+  (defstrand tpm 4 (srk srk) (ek ek) (k k) (i i) (x x) (mf mf) (pc pc))
+  (defstrand pca 2 (ek ek-0) (k k) (i i) (x x) (mf mf-0) (pc pc))
+  (defstrand ca 1 (ek ek-0) (mf mf-0))
+  (defstrand pca 2 (ek ek-1) (k k) (i i) (x x) (mf mf-1) (pc pc))
   (precedes ((0 1) (1 0)) ((0 1) (3 0)) ((1 1) (0 2)) ((2 0) (1 0))
     ((3 1) (0 2)))
   (non-orig srk (invk ek) (invk ek-0) (privk pc) (privk mf-0)
@@ -194,46 +193,45 @@
     (trace (recv (cat i k x (enc "ekc" mf ek (privk mf))))
       (send (enc (enc "aic" i k x (privk pc)) ek)))
     (non-orig (privk mf)))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
 
 (defskeleton aikprot
-  (vars (i x pc name) (k akey))
+  (vars (k akey) (i x pc name))
   (deflistener (enc "aic" i k x (privk pc)))
   (non-orig (privk pc))
   (traces
@@ -245,9 +243,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton aikprot
-  (vars (i x pc mf name) (k ek akey))
+  (vars (k ek akey) (i x pc mf name))
   (deflistener (enc "aic" i k x (privk pc)))
-  (defstrand pca 2 (i i) (x x) (mf mf) (pc pc) (ek ek) (k k))
+  (defstrand pca 2 (ek ek) (k k) (i i) (x x) (mf mf) (pc pc))
   (precedes ((1 1) (0 0)))
   (non-orig (privk pc) (privk mf))
   (operation encryption-test (added-strand pca 2)
@@ -263,10 +261,10 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton aikprot
-  (vars (i x pc mf name) (k ek akey))
+  (vars (k ek akey) (i x pc mf name))
   (deflistener (enc "aic" i k x (privk pc)))
-  (defstrand pca 2 (i i) (x x) (mf mf) (pc pc) (ek ek) (k k))
-  (defstrand ca 1 (mf mf) (ek ek))
+  (defstrand pca 2 (ek ek) (k k) (i i) (x x) (mf mf) (pc pc))
+  (defstrand ca 1 (ek ek) (mf mf))
   (precedes ((1 1) (0 0)) ((2 0) (1 0)))
   (non-orig (invk ek) (privk pc) (privk mf))
   (operation encryption-test (added-strand ca 1)
@@ -283,12 +281,12 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton aikprot
-  (vars (i x pc mf mf-0 name) (srk skey) (k ek akey))
+  (vars (srk skey) (k ek akey) (i x pc mf mf-0 name))
   (deflistener (enc "aic" i k x (privk pc)))
-  (defstrand pca 2 (i i) (x x) (mf mf) (pc pc) (ek ek) (k k))
-  (defstrand ca 1 (mf mf) (ek ek))
-  (defstrand tpm 4 (i i) (x x) (mf mf-0) (pc pc) (srk srk) (ek ek)
-    (k k))
+  (defstrand pca 2 (ek ek) (k k) (i i) (x x) (mf mf) (pc pc))
+  (defstrand ca 1 (ek ek) (mf mf))
+  (defstrand tpm 4 (srk srk) (ek ek) (k k) (i i) (x x) (mf mf-0)
+    (pc pc))
   (precedes ((1 1) (0 0)) ((2 0) (1 0)) ((3 1) (1 0)) ((3 3) (0 0)))
   (non-orig srk (invk ek) (privk pc) (privk mf))
   (uniq-orig k (invk k))
@@ -311,11 +309,11 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton aikprot
-  (vars (i x pc mf mf-0 name) (k ek ek-0 akey))
+  (vars (k ek ek-0 akey) (i x pc mf mf-0 name))
   (deflistener (enc "aic" i k x (privk pc)))
-  (defstrand pca 2 (i i) (x x) (mf mf) (pc pc) (ek ek) (k k))
-  (defstrand ca 1 (mf mf) (ek ek))
-  (defstrand pca 2 (i i) (x x) (mf mf-0) (pc pc) (ek ek-0) (k k))
+  (defstrand pca 2 (ek ek) (k k) (i i) (x x) (mf mf) (pc pc))
+  (defstrand ca 1 (ek ek) (mf mf))
+  (defstrand pca 2 (ek ek-0) (k k) (i i) (x x) (mf mf-0) (pc pc))
   (precedes ((1 1) (0 0)) ((2 0) (1 0)) ((3 1) (0 0)))
   (non-orig (invk ek) (privk pc) (privk mf) (privk mf-0))
   (operation encryption-test (added-strand pca 2)
@@ -336,12 +334,12 @@
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton aikprot
-  (vars (i x pc mf mf-0 name) (srk skey) (k ek akey))
+  (vars (srk skey) (k ek akey) (i x pc mf mf-0 name))
   (deflistener (enc "aic" i k x (privk pc)))
-  (defstrand pca 2 (i i) (x x) (mf mf) (pc pc) (ek ek) (k k))
-  (defstrand ca 1 (mf mf) (ek ek))
-  (defstrand tpm 4 (i i) (x x) (mf mf-0) (pc pc) (srk srk) (ek ek)
-    (k k))
+  (defstrand pca 2 (ek ek) (k k) (i i) (x x) (mf mf) (pc pc))
+  (defstrand ca 1 (ek ek) (mf mf))
+  (defstrand tpm 4 (srk srk) (ek ek) (k k) (i i) (x x) (mf mf-0)
+    (pc pc))
   (precedes ((1 1) (3 2)) ((2 0) (1 0)) ((3 1) (1 0)) ((3 3) (0 0)))
   (non-orig srk (invk ek) (privk pc) (privk mf))
   (uniq-orig k (invk k))
@@ -365,13 +363,13 @@
   (origs (k (3 1)) ((invk k) (3 3))))
 
 (defskeleton aikprot
-  (vars (i x pc mf mf-0 mf-1 name) (srk skey) (k ek ek-0 akey))
+  (vars (srk skey) (k ek ek-0 akey) (i x pc mf mf-0 mf-1 name))
   (deflistener (enc "aic" i k x (privk pc)))
-  (defstrand pca 2 (i i) (x x) (mf mf) (pc pc) (ek ek) (k k))
-  (defstrand ca 1 (mf mf) (ek ek))
-  (defstrand tpm 4 (i i) (x x) (mf mf-0) (pc pc) (srk srk) (ek ek)
-    (k k))
-  (defstrand pca 2 (i i) (x x) (mf mf-1) (pc pc) (ek ek-0) (k k))
+  (defstrand pca 2 (ek ek) (k k) (i i) (x x) (mf mf) (pc pc))
+  (defstrand ca 1 (ek ek) (mf mf))
+  (defstrand tpm 4 (srk srk) (ek ek) (k k) (i i) (x x) (mf mf-0)
+    (pc pc))
+  (defstrand pca 2 (ek ek-0) (k k) (i i) (x x) (mf mf-1) (pc pc))
   (precedes ((1 1) (0 0)) ((2 0) (1 0)) ((3 1) (1 0)) ((3 1) (4 0))
     ((3 3) (0 0)) ((4 1) (3 2)))
   (non-orig srk (invk ek) (privk pc) (privk mf) (privk mf-1))
@@ -396,13 +394,13 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton aikprot
-  (vars (i x pc mf mf-0 name) (srk skey) (k ek akey))
+  (vars (srk skey) (k ek akey) (i x pc mf mf-0 name))
   (deflistener (enc "aic" i k x (privk pc)))
-  (defstrand pca 2 (i i) (x x) (mf mf) (pc pc) (ek ek) (k k))
-  (defstrand ca 1 (mf mf) (ek ek))
-  (defstrand tpm 4 (i i) (x x) (mf mf-0) (pc pc) (srk srk) (ek ek)
-    (k k))
-  (defstrand pca 2 (i i) (x x) (mf mf) (pc pc) (ek ek) (k k))
+  (defstrand pca 2 (ek ek) (k k) (i i) (x x) (mf mf) (pc pc))
+  (defstrand ca 1 (ek ek) (mf mf))
+  (defstrand tpm 4 (srk srk) (ek ek) (k k) (i i) (x x) (mf mf-0)
+    (pc pc))
+  (defstrand pca 2 (ek ek) (k k) (i i) (x x) (mf mf) (pc pc))
   (precedes ((1 1) (0 0)) ((2 0) (1 0)) ((2 0) (4 0)) ((3 1) (1 0))
     ((3 1) (4 0)) ((3 3) (0 0)) ((4 1) (3 2)))
   (non-orig srk (invk ek) (privk pc) (privk mf))
@@ -428,14 +426,14 @@
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton aikprot
-  (vars (i x pc mf mf-0 mf-1 name) (srk skey) (k ek ek-0 akey))
+  (vars (srk skey) (k ek ek-0 akey) (i x pc mf mf-0 mf-1 name))
   (deflistener (enc "aic" i k x (privk pc)))
-  (defstrand pca 2 (i i) (x x) (mf mf) (pc pc) (ek ek) (k k))
-  (defstrand ca 1 (mf mf) (ek ek))
-  (defstrand tpm 4 (i i) (x x) (mf mf-0) (pc pc) (srk srk) (ek ek)
-    (k k))
-  (defstrand pca 2 (i i) (x x) (mf mf-1) (pc pc) (ek ek-0) (k k))
-  (defstrand ca 1 (mf mf-1) (ek ek-0))
+  (defstrand pca 2 (ek ek) (k k) (i i) (x x) (mf mf) (pc pc))
+  (defstrand ca 1 (ek ek) (mf mf))
+  (defstrand tpm 4 (srk srk) (ek ek) (k k) (i i) (x x) (mf mf-0)
+    (pc pc))
+  (defstrand pca 2 (ek ek-0) (k k) (i i) (x x) (mf mf-1) (pc pc))
+  (defstrand ca 1 (ek ek-0) (mf mf-1))
   (precedes ((1 1) (0 0)) ((2 0) (1 0)) ((3 1) (1 0)) ((3 1) (4 0))
     ((3 3) (0 0)) ((4 1) (3 2)) ((5 0) (4 0)))
   (non-orig srk (invk ek) (invk ek-0) (privk pc) (privk mf)
@@ -462,14 +460,14 @@
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton aikprot
-  (vars (i x pc mf mf-0 mf-1 name) (srk skey) (k ek akey))
+  (vars (srk skey) (k ek akey) (i x pc mf mf-0 mf-1 name))
   (deflistener (enc "aic" i k x (privk pc)))
-  (defstrand pca 2 (i i) (x x) (mf mf) (pc pc) (ek ek) (k k))
-  (defstrand ca 1 (mf mf) (ek ek))
-  (defstrand tpm 4 (i i) (x x) (mf mf-0) (pc pc) (srk srk) (ek ek)
-    (k k))
-  (defstrand pca 2 (i i) (x x) (mf mf-1) (pc pc) (ek ek) (k k))
-  (defstrand ca 1 (mf mf-1) (ek ek))
+  (defstrand pca 2 (ek ek) (k k) (i i) (x x) (mf mf) (pc pc))
+  (defstrand ca 1 (ek ek) (mf mf))
+  (defstrand tpm 4 (srk srk) (ek ek) (k k) (i i) (x x) (mf mf-0)
+    (pc pc))
+  (defstrand pca 2 (ek ek) (k k) (i i) (x x) (mf mf-1) (pc pc))
+  (defstrand ca 1 (ek ek) (mf mf-1))
   (precedes ((1 1) (0 0)) ((2 0) (1 0)) ((3 1) (1 0)) ((3 1) (4 0))
     ((3 3) (0 0)) ((4 1) (3 2)) ((5 0) (4 0)))
   (non-orig srk (invk ek) (privk pc) (privk mf) (privk mf-1))
@@ -496,14 +494,14 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton aikprot
-  (vars (i x pc mf mf-0 mf-1 name) (srk skey) (k ek ek-0 akey))
+  (vars (srk skey) (k ek ek-0 akey) (i x pc mf mf-0 mf-1 name))
   (deflistener (enc "aic" i k x (privk pc)))
-  (defstrand pca 2 (i i) (x x) (mf mf) (pc pc) (ek ek) (k k))
-  (defstrand ca 1 (mf mf) (ek ek))
-  (defstrand tpm 4 (i i) (x x) (mf mf-0) (pc pc) (srk srk) (ek ek)
-    (k k))
-  (defstrand pca 2 (i i) (x x) (mf mf-1) (pc pc) (ek ek-0) (k k))
-  (defstrand ca 1 (mf mf-1) (ek ek-0))
+  (defstrand pca 2 (ek ek) (k k) (i i) (x x) (mf mf) (pc pc))
+  (defstrand ca 1 (ek ek) (mf mf))
+  (defstrand tpm 4 (srk srk) (ek ek) (k k) (i i) (x x) (mf mf-0)
+    (pc pc))
+  (defstrand pca 2 (ek ek-0) (k k) (i i) (x x) (mf mf-1) (pc pc))
+  (defstrand ca 1 (ek ek-0) (mf mf-1))
   (precedes ((1 1) (3 2)) ((2 0) (1 0)) ((3 1) (1 0)) ((3 1) (4 0))
     ((3 3) (0 0)) ((4 1) (3 2)) ((5 0) (4 0)))
   (non-orig srk (invk ek) (invk ek-0) (privk pc) (privk mf)
@@ -531,16 +529,16 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton aikprot
-  (vars (i x pc mf mf-0 mf-1 mf-2 name) (srk skey)
-    (k ek ek-0 ek-1 akey))
+  (vars (srk skey) (k ek ek-0 ek-1 akey)
+    (i x pc mf mf-0 mf-1 mf-2 name))
   (deflistener (enc "aic" i k x (privk pc)))
-  (defstrand pca 2 (i i) (x x) (mf mf) (pc pc) (ek ek) (k k))
-  (defstrand ca 1 (mf mf) (ek ek))
-  (defstrand tpm 4 (i i) (x x) (mf mf-0) (pc pc) (srk srk) (ek ek)
-    (k k))
-  (defstrand pca 2 (i i) (x x) (mf mf-1) (pc pc) (ek ek-0) (k k))
-  (defstrand ca 1 (mf mf-1) (ek ek-0))
-  (defstrand pca 2 (i i) (x x) (mf mf-2) (pc pc) (ek ek-1) (k k))
+  (defstrand pca 2 (ek ek) (k k) (i i) (x x) (mf mf) (pc pc))
+  (defstrand ca 1 (ek ek) (mf mf))
+  (defstrand tpm 4 (srk srk) (ek ek) (k k) (i i) (x x) (mf mf-0)
+    (pc pc))
+  (defstrand pca 2 (ek ek-0) (k k) (i i) (x x) (mf mf-1) (pc pc))
+  (defstrand ca 1 (ek ek-0) (mf mf-1))
+  (defstrand pca 2 (ek ek-1) (k k) (i i) (x x) (mf mf-2) (pc pc))
   (precedes ((1 1) (0 0)) ((2 0) (1 0)) ((3 1) (1 0)) ((3 1) (4 0))
     ((3 1) (6 0)) ((3 3) (0 0)) ((4 1) (3 2)) ((5 0) (4 0))
     ((6 1) (3 2)))
@@ -572,13 +570,13 @@
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton aikprot
-  (vars (i x pc mf mf-0 mf-1 name) (srk skey) (k ek akey))
+  (vars (srk skey) (k ek akey) (i x pc mf mf-0 mf-1 name))
   (deflistener (enc "aic" i k x (privk pc)))
-  (defstrand ca 1 (mf mf) (ek ek))
-  (defstrand tpm 4 (i i) (x x) (mf mf-0) (pc pc) (srk srk) (ek ek)
-    (k k))
-  (defstrand pca 2 (i i) (x x) (mf mf-1) (pc pc) (ek ek) (k k))
-  (defstrand ca 1 (mf mf-1) (ek ek))
+  (defstrand ca 1 (ek ek) (mf mf))
+  (defstrand tpm 4 (srk srk) (ek ek) (k k) (i i) (x x) (mf mf-0)
+    (pc pc))
+  (defstrand pca 2 (ek ek) (k k) (i i) (x x) (mf mf-1) (pc pc))
+  (defstrand ca 1 (ek ek) (mf mf-1))
   (precedes ((1 0) (0 0)) ((2 1) (3 0)) ((2 3) (0 0)) ((3 1) (2 2))
     ((4 0) (3 0)))
   (non-orig srk (invk ek) (privk pc) (privk mf) (privk mf-1))
@@ -602,13 +600,13 @@
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton aikprot
-  (vars (i x pc mf mf-0 mf-1 name) (srk skey) (k ek ek-0 akey))
+  (vars (srk skey) (k ek ek-0 akey) (i x pc mf mf-0 mf-1 name))
   (deflistener (enc "aic" i k x (privk pc)))
-  (defstrand pca 2 (i i) (x x) (mf mf) (pc pc) (ek ek) (k k))
-  (defstrand ca 1 (mf mf) (ek ek))
-  (defstrand tpm 4 (i i) (x x) (mf mf-0) (pc pc) (srk srk) (ek ek)
-    (k k))
-  (defstrand ca 1 (mf mf-1) (ek ek-0))
+  (defstrand pca 2 (ek ek) (k k) (i i) (x x) (mf mf) (pc pc))
+  (defstrand ca 1 (ek ek) (mf mf))
+  (defstrand tpm 4 (srk srk) (ek ek) (k k) (i i) (x x) (mf mf-0)
+    (pc pc))
+  (defstrand ca 1 (ek ek-0) (mf mf-1))
   (precedes ((1 1) (3 2)) ((2 0) (1 0)) ((3 1) (1 0)) ((3 3) (0 0))
     ((4 0) (3 2)))
   (non-orig srk (invk ek) (invk ek-0) (privk pc) (privk mf)

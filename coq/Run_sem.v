@@ -1,3 +1,11 @@
+(* Correctness of Run semantics
+
+Copyright (c) 2021 The MITRE Corporation
+
+This program is free software: you can redistribute it and/or
+modify it under the terms of the BSD License as published by the
+University of California. *)
+
 (** This library contains proofs that the semantics specified in
     [Roletran.Run] and [Roletran.Sem] agree. *)
 
@@ -101,7 +109,8 @@ Lemma type_check_reflect:
 Proof.
   intros.
   unfold type_check.
-  rewrite type_eq_correct.
+  rewrite orb_true_iff.
+  repeat rewrite type_eq_correct.
   rewrite Sem.type_check_type_of; intuition.
 Qed.
 

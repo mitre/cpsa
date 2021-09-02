@@ -16,50 +16,49 @@
       (recv
         (cat (enc "init" ta k) (enc a kp (privk a))
           (enc (enc k (pubk b)) (invk kp)))) (send (enc "resp" tb k))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (comment "In this version of the protocol ")
   (comment "b might interact with a compromised initiator.")
   (comment "That is why a is not authenticated to b."))
 
 (defskeleton dass-simple
-  (vars (ta tb text) (a b name) (k skey) (kp akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
+  (vars (k skey) (ta tb text) (kp akey) (a b name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
   (non-orig (invk kp) (privk a) (privk b))
   (uniq-orig k kp)
   (traces
@@ -72,9 +71,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dass-simple
-  (vars (ta tb ta-0 text) (a b a-0 b-0 name) (k skey) (kp kp-0 akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
-  (defstrand resp 2 (ta ta-0) (tb tb) (a a-0) (b b-0) (k k) (kp kp-0))
+  (vars (k skey) (ta tb ta-0 text) (kp kp-0 akey) (a b a-0 b-0 name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
+  (defstrand resp 2 (k k) (ta ta-0) (tb tb) (kp kp-0) (a a-0) (b b-0))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk kp) (privk a) (privk b))
   (uniq-orig k kp)
@@ -94,8 +93,8 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dass-simple
-  (vars (ta tb text) (a b name) (k skey) (kp akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
+  (vars (k skey) (ta tb text) (kp akey) (a b name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
   (deflistener k)
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk kp) (privk a) (privk b))
@@ -113,9 +112,9 @@
   (comment "empty cohort"))
 
 (defskeleton dass-simple
-  (vars (ta tb text) (a b a-0 b-0 name) (k skey) (kp kp-0 akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
-  (defstrand resp 2 (ta ta) (tb tb) (a a-0) (b b-0) (k k) (kp kp-0))
+  (vars (k skey) (ta tb text) (kp kp-0 akey) (a b a-0 b-0 name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
+  (defstrand resp 2 (k k) (ta ta) (tb tb) (kp kp-0) (a a-0) (b b-0))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk kp) (privk a) (privk b))
   (uniq-orig k kp)
@@ -135,9 +134,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dass-simple
-  (vars (ta tb ta-0 text) (a b a-0 b-0 name) (k skey) (kp kp-0 akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
-  (defstrand resp 2 (ta ta-0) (tb tb) (a a-0) (b b-0) (k k) (kp kp-0))
+  (vars (k skey) (ta tb ta-0 text) (kp kp-0 akey) (a b a-0 b-0 name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
+  (defstrand resp 2 (k k) (ta ta-0) (tb tb) (kp kp-0) (a a-0) (b b-0))
   (deflistener k)
   (precedes ((0 0) (2 0)) ((1 1) (0 1)) ((2 1) (1 0)))
   (non-orig (invk kp) (privk a) (privk b))
@@ -159,9 +158,9 @@
   (comment "empty cohort"))
 
 (defskeleton dass-simple
-  (vars (ta tb text) (a b a-0 name) (k skey) (kp kp-0 akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
-  (defstrand resp 2 (ta ta) (tb tb) (a a-0) (b b) (k k) (kp kp-0))
+  (vars (k skey) (ta tb text) (kp kp-0 akey) (a b a-0 name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
+  (defstrand resp 2 (k k) (ta ta) (tb tb) (kp kp-0) (a a-0) (b b))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk kp) (privk a) (privk b))
   (uniq-orig k kp)
@@ -196,50 +195,49 @@
         (cat (enc "init" ta k) (enc a kp (privk a))
           (enc (enc k (pubk b)) (invk kp)))) (send (enc "resp" tb k)))
     (non-orig (privk a)))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (comment "In this version of the protocol ")
   (comment "b never interacts with a compromised initiator.")
   (comment "That is why a is properly authenticated to b."))
 
 (defskeleton dass+
-  (vars (ta tb text) (a b name) (k skey) (kp akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
+  (vars (k skey) (ta tb text) (kp akey) (a b name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
   (non-orig (invk kp) (privk a) (privk b))
   (uniq-orig k kp)
   (traces
@@ -252,9 +250,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dass+
-  (vars (ta tb ta-0 text) (a b a-0 b-0 name) (k skey) (kp kp-0 akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
-  (defstrand resp 2 (ta ta-0) (tb tb) (a a-0) (b b-0) (k k) (kp kp-0))
+  (vars (k skey) (ta tb ta-0 text) (kp kp-0 akey) (a b a-0 b-0 name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
+  (defstrand resp 2 (k k) (ta ta-0) (tb tb) (kp kp-0) (a a-0) (b b-0))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk kp) (privk a) (privk b) (privk a-0))
   (uniq-orig k kp)
@@ -274,8 +272,8 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dass+
-  (vars (ta tb text) (a b name) (k skey) (kp akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
+  (vars (k skey) (ta tb text) (kp akey) (a b name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
   (deflistener k)
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk kp) (privk a) (privk b))
@@ -293,9 +291,9 @@
   (comment "empty cohort"))
 
 (defskeleton dass+
-  (vars (ta tb text) (a b a-0 b-0 name) (k skey) (kp kp-0 akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
-  (defstrand resp 2 (ta ta) (tb tb) (a a-0) (b b-0) (k k) (kp kp-0))
+  (vars (k skey) (ta tb text) (kp kp-0 akey) (a b a-0 b-0 name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
+  (defstrand resp 2 (k k) (ta ta) (tb tb) (kp kp-0) (a a-0) (b b-0))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk kp) (privk a) (privk b) (privk a-0))
   (uniq-orig k kp)
@@ -315,9 +313,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dass+
-  (vars (ta tb ta-0 text) (a b a-0 b-0 name) (k skey) (kp kp-0 akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
-  (defstrand resp 2 (ta ta-0) (tb tb) (a a-0) (b b-0) (k k) (kp kp-0))
+  (vars (k skey) (ta tb ta-0 text) (kp kp-0 akey) (a b a-0 b-0 name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
+  (defstrand resp 2 (k k) (ta ta-0) (tb tb) (kp kp-0) (a a-0) (b b-0))
   (deflistener k)
   (precedes ((0 0) (2 0)) ((1 1) (0 1)) ((2 1) (1 0)))
   (non-orig (invk kp) (privk a) (privk b) (privk a-0))
@@ -339,9 +337,9 @@
   (comment "empty cohort"))
 
 (defskeleton dass+
-  (vars (ta tb text) (a b b-0 name) (k skey) (kp akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
-  (defstrand resp 2 (ta ta) (tb tb) (a a) (b b-0) (k k) (kp kp))
+  (vars (k skey) (ta tb text) (kp akey) (a b b-0 name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
+  (defstrand resp 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b-0))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk kp) (privk a) (privk b))
   (uniq-orig k kp)
@@ -360,11 +358,11 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dass+
-  (vars (ta tb ta-0 text) (a b a-0 b-0 b-1 name) (k k-0 skey)
-    (kp kp-0 akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
-  (defstrand resp 2 (ta ta) (tb tb) (a a-0) (b b-0) (k k) (kp kp-0))
-  (defstrand init 1 (ta ta-0) (a a-0) (b b-1) (k k-0) (kp kp-0))
+  (vars (k k-0 skey) (ta tb ta-0 text) (kp kp-0 akey)
+    (a b a-0 b-0 b-1 name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
+  (defstrand resp 2 (k k) (ta ta) (tb tb) (kp kp-0) (a a-0) (b b-0))
+  (defstrand init 1 (k k-0) (ta ta-0) (kp kp-0) (a a-0) (b b-1))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)) ((2 0) (1 0)))
   (non-orig (invk kp) (privk a) (privk b) (privk a-0))
   (uniq-orig k kp)
@@ -387,9 +385,9 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dass+
-  (vars (ta tb text) (a b name) (k skey) (kp akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
-  (defstrand resp 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
+  (vars (k skey) (ta tb text) (kp akey) (a b name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
+  (defstrand resp 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk kp) (privk a) (privk b))
   (uniq-orig k kp)
@@ -410,11 +408,11 @@
   (origs (k (0 0)) (kp (0 0))))
 
 (defskeleton dass+
-  (vars (ta tb ta-0 text) (a b a-0 b-0 name) (k k-0 skey)
-    (kp kp-0 akey))
-  (defstrand init 2 (ta ta) (tb tb) (a a) (b b) (k k) (kp kp))
-  (defstrand resp 2 (ta ta) (tb tb) (a a-0) (b b) (k k) (kp kp-0))
-  (defstrand init 1 (ta ta-0) (a a-0) (b b-0) (k k-0) (kp kp-0))
+  (vars (k k-0 skey) (ta tb ta-0 text) (kp kp-0 akey)
+    (a b a-0 b-0 name))
+  (defstrand init 2 (k k) (ta ta) (tb tb) (kp kp) (a a) (b b))
+  (defstrand resp 2 (k k) (ta ta) (tb tb) (kp kp-0) (a a-0) (b b))
+  (defstrand init 1 (k k-0) (ta ta-0) (kp kp-0) (a a-0) (b b-0))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)) ((2 0) (1 0)))
   (non-orig (invk kp) (privk a) (privk b) (privk a-0))
   (uniq-orig k kp)

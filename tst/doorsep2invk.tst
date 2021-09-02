@@ -14,53 +14,52 @@
     (trace (recv (enc (enc skey (invk peer)) self))
       (send (enc data skey)) (recv data))
     (uniq-orig data))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (comment "Doorsep's protocol using unnamed asymmetric keys"))
 
 (defskeleton doorsep
-  (vars (text+0 text) (skey+0 skey) (akey+1 akey+0 akey+3 akey))
+  (vars (skey+0 skey) (text+0 text) (akey+1 akey+0 akey+3 akey))
   (defstrand init 1 (skey skey+0) (self (invk akey+3)) (peer akey+0))
-  (defstrand resp 3 (data text+0) (skey skey+0) (self akey+1)
+  (defstrand resp 3 (skey skey+0) (data text+0) (self akey+1)
     (peer (invk akey+3)))
   (precedes ((0 0) (1 0)))
   (non-orig akey+3 (invk akey+0))
-  (uniq-orig text+0 skey+0)
+  (uniq-orig skey+0 text+0)
   (goals
     (forall
       ((text+0 text) (skey+0 skey) (akey+1 akey+0 akey+3 akey)
@@ -82,13 +81,13 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton doorsep
-  (vars (text+0 text) (skey+0 skey) (akey+0 akey+3 akey))
+  (vars (skey+0 skey) (text+0 text) (akey+0 akey+3 akey))
   (defstrand init 1 (skey skey+0) (self (invk akey+3)) (peer akey+0))
-  (defstrand resp 3 (data text+0) (skey skey+0) (self akey+0)
+  (defstrand resp 3 (skey skey+0) (data text+0) (self akey+0)
     (peer (invk akey+3)))
   (precedes ((0 0) (1 0)))
   (non-orig akey+3 (invk akey+0))
-  (uniq-orig text+0 skey+0)
+  (uniq-orig skey+0 text+0)
   (operation encryption-test (contracted (akey+1 akey+0))
     (enc skey+0 akey+3) (1 0) (enc (enc skey+0 akey+3) akey+0))
   (traces ((send (enc (enc skey+0 akey+3) akey+0)))
@@ -101,12 +100,12 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton doorsep
-  (vars (text+0 text) (skey+0 skey) (self peer akey))
-  (defstrand resp 3 (data text+0) (skey skey+0) (self peer) (peer self))
-  (defstrand init 3 (data text+0) (skey skey+0) (self self) (peer peer))
+  (vars (skey+0 skey) (text+0 text) (self peer akey))
+  (defstrand resp 3 (skey skey+0) (data text+0) (self peer) (peer self))
+  (defstrand init 3 (skey skey+0) (data text+0) (self self) (peer peer))
   (precedes ((0 1) (1 1)) ((1 0) (0 0)) ((1 2) (0 2)))
   (non-orig (invk self) (invk peer))
-  (uniq-orig text+0 skey+0)
+  (uniq-orig skey+0 text+0)
   (operation nonce-test (displaced 0 2 init 3) text+0 (1 2)
     (enc text+0 skey+0))
   (traces
@@ -126,14 +125,14 @@
   (origs (skey+0 (1 0)) (text+0 (0 1))))
 
 (defskeleton doorsep
-  (vars (text+0 text) (skey+0 skey) (akey+0 akey+3 akey))
+  (vars (skey+0 skey) (text+0 text) (akey+0 akey+3 akey))
   (defstrand init 1 (skey skey+0) (self (invk akey+3)) (peer akey+0))
-  (defstrand resp 3 (data text+0) (skey skey+0) (self akey+0)
+  (defstrand resp 3 (skey skey+0) (data text+0) (self akey+0)
     (peer (invk akey+3)))
   (deflistener skey+0)
   (precedes ((0 0) (1 0)) ((0 0) (2 0)) ((2 1) (1 2)))
   (non-orig akey+3 (invk akey+0))
-  (uniq-orig text+0 skey+0)
+  (uniq-orig skey+0 text+0)
   (operation nonce-test (added-listener skey+0) text+0 (1 2)
     (enc text+0 skey+0))
   (traces ((send (enc (enc skey+0 akey+3) akey+0)))

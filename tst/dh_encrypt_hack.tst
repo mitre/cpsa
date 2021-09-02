@@ -21,49 +21,48 @@
   (defrole CDHcalc2
     (vars (gx gy akey) (dhkey skey))
     (trace (recv (cat gy (invk gx))) (send (enc "dh" gx gy dhkey))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (comment
     "Diffie-hellman key exchange followed by an encrypted-nonce challenge/response"))
 
 (defskeleton dhencrypt
-  (vars (n text) (dhkey skey) (gx h akey))
-  (defstrand init 3 (n n) (dhkey dhkey) (gx gx) (h h))
+  (vars (dhkey skey) (n text) (gx h akey))
+  (defstrand init 3 (dhkey dhkey) (n n) (gx gx) (h h))
   (non-orig dhkey (invk gx))
   (comment "Initiator full point of view")
   (traces
@@ -75,9 +74,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhencrypt
-  (vars (n text) (dhkey skey) (gx h akey))
-  (defstrand init 3 (n n) (dhkey dhkey) (gx gx) (h h))
-  (defstrand resp 2 (n n) (dhkey dhkey) (h gx) (gy h))
+  (vars (dhkey skey) (n text) (gx h akey))
+  (defstrand init 3 (dhkey dhkey) (n n) (gx gx) (h h))
+  (defstrand resp 2 (dhkey dhkey) (n n) (h gx) (gy h))
   (precedes ((1 1) (0 1)))
   (non-orig dhkey (invk gx) (invk h))
   (uniq-orig n h)
@@ -95,8 +94,8 @@
   (origs (h (1 1)) (n (1 1))))
 
 (defskeleton dhencrypt
-  (vars (n text) (dhkey skey) (gx h akey))
-  (defstrand init 3 (n n) (dhkey dhkey) (gx gx) (h h))
+  (vars (dhkey skey) (n text) (gx h akey))
+  (defstrand init 3 (dhkey dhkey) (n n) (gx gx) (h h))
   (deflistener (enc "dh" gx h dhkey))
   (precedes ((1 1) (0 1)))
   (non-orig dhkey (invk gx))
@@ -112,8 +111,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhencrypt
-  (vars (n text) (dhkey skey) (gx h akey))
-  (defstrand init 3 (n n) (dhkey dhkey) (gx gx) (h h))
+  (vars (dhkey skey) (n text) (gx h akey))
+  (defstrand init 3 (dhkey dhkey) (n n) (gx gx) (h h))
   (deflistener (enc "dh" gx h dhkey))
   (defstrand CDHcalc1 2 (dhkey dhkey) (gx gx) (gy h))
   (precedes ((1 1) (0 1)) ((2 1) (1 0)))
@@ -131,8 +130,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhencrypt
-  (vars (n text) (dhkey skey) (gx h akey))
-  (defstrand init 3 (n n) (dhkey dhkey) (gx gx) (h h))
+  (vars (dhkey skey) (n text) (gx h akey))
+  (defstrand init 3 (dhkey dhkey) (n n) (gx gx) (h h))
   (defstrand CDHcalc1 2 (dhkey dhkey) (gx gx) (gy h))
   (precedes ((1 1) (0 1)))
   (non-orig dhkey (invk gx))
@@ -168,49 +167,48 @@
   (defrole CDHcalc2
     (vars (gx gy akey) (dhkey skey))
     (trace (recv (cat gy (invk gx))) (send (enc "dh" gx gy dhkey))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (comment
     "Diffie-hellman key exchange followed by an encrypted-nonce challenge/response"))
 
 (defskeleton dhencrypt
-  (vars (n text) (dhkey skey) (gy h akey))
-  (defstrand resp 3 (n n) (dhkey dhkey) (h h) (gy gy))
+  (vars (dhkey skey) (n text) (gy h akey))
+  (defstrand resp 3 (dhkey dhkey) (n n) (h h) (gy gy))
   (non-orig dhkey (invk gy))
   (uniq-orig n gy)
   (comment "Responder full point of view")
@@ -223,9 +221,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhencrypt
-  (vars (n text) (dhkey skey) (gy h akey))
-  (defstrand resp 3 (n n) (dhkey dhkey) (h h) (gy gy))
-  (defstrand init 3 (n n) (dhkey dhkey) (gx h) (h gy))
+  (vars (dhkey skey) (n text) (gy h akey))
+  (defstrand resp 3 (dhkey dhkey) (n n) (h h) (gy gy))
+  (defstrand init 3 (dhkey dhkey) (n n) (gx h) (h gy))
   (precedes ((0 1) (1 1)) ((1 2) (0 2)))
   (non-orig dhkey (invk gy) (invk h))
   (uniq-orig n gy)
@@ -244,8 +242,8 @@
   (origs (n (0 1)) (gy (0 1))))
 
 (defskeleton dhencrypt
-  (vars (n text) (dhkey skey) (gy h akey))
-  (defstrand resp 3 (n n) (dhkey dhkey) (h h) (gy gy))
+  (vars (dhkey skey) (n text) (gy h akey))
+  (defstrand resp 3 (dhkey dhkey) (n n) (h h) (gy gy))
   (deflistener (enc "dh" h gy dhkey))
   (precedes ((0 1) (1 0)) ((1 1) (0 2)))
   (non-orig dhkey (invk gy))
@@ -262,8 +260,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhencrypt
-  (vars (n text) (dhkey skey) (gy h akey))
-  (defstrand resp 3 (n n) (dhkey dhkey) (h h) (gy gy))
+  (vars (dhkey skey) (n text) (gy h akey))
+  (defstrand resp 3 (dhkey dhkey) (n n) (h h) (gy gy))
   (deflistener (enc "dh" h gy dhkey))
   (defstrand CDHcalc2 2 (dhkey dhkey) (gx h) (gy gy))
   (precedes ((0 1) (2 0)) ((1 1) (0 2)) ((2 1) (1 0)))
@@ -282,8 +280,8 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhencrypt
-  (vars (n text) (dhkey skey) (gy h akey))
-  (defstrand resp 3 (n n) (dhkey dhkey) (h h) (gy gy))
+  (vars (dhkey skey) (n text) (gy h akey))
+  (defstrand resp 3 (dhkey dhkey) (n n) (h h) (gy gy))
   (defstrand CDHcalc2 2 (dhkey dhkey) (gx h) (gy gy))
   (precedes ((0 1) (1 0)) ((1 1) (0 2)))
   (non-orig dhkey (invk gy))
@@ -320,50 +318,49 @@
   (defrole CDHcalc2
     (vars (gx gy akey) (dhkey skey))
     (trace (recv (cat gy (invk gx))) (send (enc "dh" gx gy dhkey))))
-  (defrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2))
-        (false))))
-  (defrule no-interruption
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defrule scissorsRule
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defrule shearsRule
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (comment
     "Diffie-hellman key exchange followed by an encrypted-nonce challenge/response"))
 
 (defskeleton dhencrypt
-  (vars (n text) (dhkey dhkey-0 skey) (gx gy akey))
-  (defstrand init 2 (n n) (dhkey dhkey) (gx gx) (h gy))
-  (defstrand resp 3 (n n) (dhkey dhkey-0) (h gx) (gy gy))
+  (vars (dhkey dhkey-0 skey) (n text) (gx gy akey))
+  (defstrand init 2 (dhkey dhkey) (n n) (gx gx) (h gy))
+  (defstrand resp 3 (dhkey dhkey-0) (n n) (h gx) (gy gy))
   (non-orig dhkey dhkey-0 (invk gx) (invk gy))
   (uniq-orig n gy)
   (comment
@@ -378,9 +375,9 @@
   (comment "Not a skeleton"))
 
 (defskeleton dhencrypt
-  (vars (n text) (dhkey dhkey-0 skey) (gx gy akey))
-  (defstrand init 2 (n n) (dhkey dhkey) (gx gx) (h gy))
-  (defstrand resp 3 (n n) (dhkey dhkey-0) (h gx) (gy gy))
+  (vars (dhkey dhkey-0 skey) (n text) (gx gy akey))
+  (defstrand init 2 (dhkey dhkey) (n n) (gx gx) (h gy))
+  (defstrand resp 3 (dhkey dhkey-0) (n n) (h gx) (gy gy))
   (precedes ((1 1) (0 1)))
   (non-orig dhkey dhkey-0 (invk gx) (invk gy))
   (uniq-orig n gy)
@@ -394,9 +391,9 @@
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhencrypt
-  (vars (n text) (dhkey skey) (gx gy akey))
-  (defstrand resp 3 (n n) (dhkey dhkey) (h gx) (gy gy))
-  (defstrand init 3 (n n) (dhkey dhkey) (gx gx) (h gy))
+  (vars (dhkey skey) (n text) (gx gy akey))
+  (defstrand resp 3 (dhkey dhkey) (n n) (h gx) (gy gy))
+  (defstrand init 3 (dhkey dhkey) (n n) (gx gx) (h gy))
   (precedes ((0 1) (1 1)) ((1 2) (0 2)))
   (non-orig dhkey (invk gx) (invk gy))
   (uniq-orig n gy)
@@ -415,10 +412,10 @@
   (origs (n (0 1)) (gy (0 1))))
 
 (defskeleton dhencrypt
-  (vars (n text) (dhkey dhkey-0 skey) (gx gy akey))
-  (defstrand init 2 (n n) (dhkey dhkey) (gx gx) (h gy))
-  (defstrand resp 3 (n n) (dhkey dhkey-0) (h gx) (gy gy))
-  (defstrand init 3 (n n) (dhkey dhkey-0) (gx gx) (h gy))
+  (vars (dhkey dhkey-0 skey) (n text) (gx gy akey))
+  (defstrand init 2 (dhkey dhkey) (n n) (gx gx) (h gy))
+  (defstrand resp 3 (dhkey dhkey-0) (n n) (h gx) (gy gy))
+  (defstrand init 3 (dhkey dhkey-0) (n n) (gx gx) (h gy))
   (precedes ((1 1) (0 1)) ((1 1) (2 1)) ((2 2) (1 2)))
   (non-orig dhkey dhkey-0 (invk gx) (invk gy))
   (uniq-orig n gy)
@@ -435,9 +432,9 @@
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhencrypt
-  (vars (n text) (dhkey dhkey-0 skey) (gx gy akey))
-  (defstrand init 2 (n n) (dhkey dhkey) (gx gx) (h gy))
-  (defstrand resp 3 (n n) (dhkey dhkey-0) (h gx) (gy gy))
+  (vars (dhkey dhkey-0 skey) (n text) (gx gy akey))
+  (defstrand init 2 (dhkey dhkey) (n n) (gx gx) (h gy))
+  (defstrand resp 3 (dhkey dhkey-0) (n n) (h gx) (gy gy))
   (deflistener (enc "dh" gx gy dhkey-0))
   (precedes ((1 1) (0 1)) ((1 1) (2 0)) ((2 1) (1 2)))
   (non-orig dhkey dhkey-0 (invk gx) (invk gy))
@@ -455,10 +452,10 @@
   (comment "empty cohort"))
 
 (defskeleton dhencrypt
-  (vars (n text) (dhkey skey) (gx gy akey))
-  (defstrand init 2 (n n) (dhkey dhkey) (gx gx) (h gy))
-  (defstrand resp 3 (n n) (dhkey dhkey) (h gx) (gy gy))
-  (defstrand init 3 (n n) (dhkey dhkey) (gx gx) (h gy))
+  (vars (dhkey skey) (n text) (gx gy akey))
+  (defstrand init 2 (dhkey dhkey) (n n) (gx gx) (h gy))
+  (defstrand resp 3 (dhkey dhkey) (n n) (h gx) (gy gy))
+  (defstrand init 3 (dhkey dhkey) (n n) (gx gx) (h gy))
   (precedes ((1 1) (0 1)) ((1 1) (2 1)) ((2 2) (1 2)))
   (non-orig dhkey (invk gx) (invk gy))
   (uniq-orig n gy)
@@ -477,10 +474,10 @@
   (origs (gy (1 1)) (n (1 1))))
 
 (defskeleton dhencrypt
-  (vars (n text) (dhkey dhkey-0 skey) (gx gy akey))
-  (defstrand init 2 (n n) (dhkey dhkey) (gx gx) (h gy))
-  (defstrand resp 3 (n n) (dhkey dhkey-0) (h gx) (gy gy))
-  (defstrand init 3 (n n) (dhkey dhkey-0) (gx gx) (h gy))
+  (vars (dhkey dhkey-0 skey) (n text) (gx gy akey))
+  (defstrand init 2 (dhkey dhkey) (n n) (gx gx) (h gy))
+  (defstrand resp 3 (dhkey dhkey-0) (n n) (h gx) (gy gy))
+  (defstrand init 3 (dhkey dhkey-0) (n n) (gx gx) (h gy))
   (deflistener (enc "dh" gx gy dhkey))
   (precedes ((1 1) (2 1)) ((1 1) (3 0)) ((2 2) (1 2)) ((3 1) (0 1)))
   (non-orig dhkey dhkey-0 (invk gx) (invk gy))
