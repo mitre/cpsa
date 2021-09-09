@@ -121,12 +121,13 @@ The \texttt{cpsa} program uses S-expressions for both input and
 output.  S-expression is an abbreviation for a Symbolic Expression of
 Lisp fame, and is described in Appendix~\ref{sec:syntax reference}.
 
-The input may optionally start with a \texttt{herald} form.  The form
-contains a title for the run and an association list.  The association
-list allows options normally specified on the command line to be
-specified within an input file.  In the following example, the herald
-form specifies a strand bound of 12 in a way that is equivalent to the
-command line option \texttt{--bound=12}.
+The input may optionally start with a \index{herald
+  form}\texttt{herald} form.  The form contains a title for the run
+and an association list.  The association list allows options normally
+specified on the command line to be specified within an input file.
+In the following example, the herald form specifies a strand bound of
+12 in a way that is equivalent to the command line option
+\texttt{--bound=12}.
 
 \begin{quote}
 \begin{verbatim}
@@ -1187,6 +1188,106 @@ with the top-level include form,\index{includes}
 \end{quote}
 where \texttt{\scshape file} is a string.
 
+\section{Algebra Signature Extensions}\label{sec:signature}
+
+The signature of the message algebra used by {\cpsa} is extensible.
+There are two forms of extensibility provided by {\cpsa}.  Users can
+add operations for encryption, \index{tuple}tupling, and hashing; and
+add sorts for atomic data.
+
+A common extension is to add tupling operations to message algebras.
+Previously, complex protocols often made use of tagged concatenation
+to encode a tagged sequence of messages.  In {\cpsa}, concatenation is
+implemented as sequences of pairing operations.  Thus, the expression
+for a certificate body of the form
+\begin{quote}
+\begin{verbatim}
+(cat "cert-body" dn serial-no pub-key)
+\end{verbatim}
+\end{quote}
+is syntax for
+\begin{quote}
+\begin{verbatim}
+(cat "cert-body" (cat dn (cat serial-no pub-key)))
+\end{verbatim}
+\end{quote}
+
+Algebra extensions are declared using a \texttt{lang} field in the
+herald form of a source file.  For the certificate body example,
+\begin{quote}
+\begin{verbatim}
+(herald prot (lang (cert-body (tupl 3))))
+\end{verbatim}
+\end{quote}
+adds one tupling operation so that the example above can be written as
+\begin{quote}
+\begin{verbatim}
+(cert-body dn serial-no pub-key)
+\end{verbatim}
+\end{quote}
+{\cpsa} represents this form internally as sequence of messages with a
+distinguished mark.  This representation is more efficient as compared
+with the tagged concatenation representation.
+
+\begin{table}
+\newcommand{\sym}[1]{\textup{\texttt{#1}}}
+\begin{center}\scshape
+\begin{tabular}{rcl}
+  lang&$\leftarrow$&(\sym{lang} decl$\ast$)
+  \\ decl&$\leftarrow$&(symbol+ kind)
+  \\ kind&$\leftarrow$&
+  $\sym{atom}\mid\sym{akey}\mid\sym{hash}\mid\mbox{(\sym{tupl}
+    integer)}$
+  \\ &$\mid$&$\sym{enc}\mid\sym{senc}\mid\sym{aenc}\mid\sym{sign}$
+\end{tabular}
+\end{center}
+\caption{Lang Field Syntax}\label{tab:lang field syntax}
+\end{table}
+
+The syntax of the \index{lang field}\texttt{lang} field is given in
+Table~\ref{tab:lang field syntax}.  There are eight kinds of ways that
+{\cpsa} algebras can be extended.
+
+\begin{itemize}
+
+\item An atomic sort is added to the algebra when a symbol is declared
+  to be of kind \texttt{atom}.  If \texttt{dollar} is declared to be
+  an atomic sort, than \verb|(price dollar)| in a \texttt{var} form
+  declares \texttt{price} to be of sort \texttt{dollar}.
+
+\item An atomic sort is also added to the algebra when a symbol is declared
+  to be of kind \texttt{akey}.  However, in addition to adding the
+  sort, {\cpsa} adds the equation $(x^{-1})^{-1}=x$ for variables of
+  the new sort.
+
+\item A unary operation is added to the algebra when a symbol is
+  declared to be of kind \texttt{hash}.  As with the default hash
+  operation, the adversary cannot extract the contents of the hash.
+
+\item An $n$-ary operation is added to the algebra when a symbol is
+  declared to be of kind (\texttt{tupl} $n$).  As with concatenation,
+ the adversary can construct and extract contents of tuples.
+ Constraint: $n>0$.
+
+\item A binary operation is added to the algebra when a symbol is
+  declared to be of kind \texttt{enc}.  As with the default encryption
+  operation, the adversary cannot extract contents of the encryption
+  without access to the inverse of the key.
+
+\item A symbol of kind \texttt{senc} is just like one of kind
+  \texttt{enc} except that the key supplied when it is applied must be
+  symmetric.
+
+\item A symbol of kind \texttt{aenc} is just like one of kind
+  \texttt{enc} except that the key supplied when it is applied must be
+  asymmetric.
+  
+\item A symbol of kind \texttt{sign} is just like one of kind
+  \texttt{enc} except that the key supplied when it is applied must be
+  the inverse applied to an asymmetric key.
+
+\end{itemize}
+
 \section{Advice}\label{sec:advice}
 
 This section contains advice derived from using {\cpsa}.  When
@@ -1258,27 +1359,6 @@ order-sorted first-order logic for each problem and its shapes from a
 sentence~\cite{Ramsdell12}. The formula is satisfied in all realized
 skeletons when {\cpsa} finds all the shapes for the problem.  The
 details of formula extraction are presented in Appendix~B of The
-{\cpsa} Specification~\cite{cpsaspec09}.
-
-\section{Annotations}\label{sec:annotations}
-
-The \texttt{cpsaannotations} program uses protocol annotations to
-annotate shapes and generate protocol soundness obligations for use
-with the rely-guarantee method of trust
-management~\cite{GuttmanEtAl04,RamsdellEtAl09}.  The language of
-formulas is order-sorted first-order logic extended with a modal says
-operator.  Formula terms may include function symbols that are not
-part of a protocol's message signature.  The syntax of a formula is
-specified in the {\cpsa} Overview~\cite{cpsaoverview09}.
-
-\section{Parameter Analysis}\label{sec:parameters}
-
-The parameters of a role are the atoms that are not acquired by the
-role's trace, but must be available before a complete execution of the
-trace is possible. The \texttt{cpsaparameters} program computes sets
-of sets of parameters consistent with the role. If the expected
-parameter set is not a member, a specification error is indicated.
-The details of parameter analysis are presented in Appendix~A of The
 {\cpsa} Specification~\cite{cpsaspec09}.
 
 \section*{Acknowledgement}

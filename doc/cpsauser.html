@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv="content-type"
   content="application/xhtml+xml; charset=UTF-8" />
-  <title>CPSA 4.2 User Guide</title>
+  <title>CPSA 4.3 User Guide</title>
   <meta name="generator" content="Amaya 9.54, see http://www.w3.org/Amaya/" />
   <style type="text/css">
     h1 { text-align: center }
@@ -12,7 +12,7 @@
 </head>
 
 <body>
-<h1>CPSA 4.2 User Guide</h1>
+<h1>CPSA 4.3 User Guide</h1>
 
 <p>The Cryptographic Protocol Shapes Analyzer (CPSA) attempts to enumerate all
 essentially different executions possible for a cryptographic protocol. We call
@@ -149,10 +149,10 @@ ROLE-ALIST ::= (non-orig POS-TERM*) ROLE-ALIST
             |  (uniq-orig TERM*) ROLE-ALIST
             |  (conf ID*) ROLE-ALIST
             |  (auth ID*) ROLE-ALIST
-            |  (priority POS-INT*) ROLE-ALIST 
+            |  (priority POS-INT*) ROLE-ALIST
 	    |  (gen-st TERM+) ROLE-ALIST
             |  (critical-sections POS-INT+) ROLE-ALIST
-	    |  (facts FACTS*) ROLE-ALIST | ... 
+	    |  (facts FACTS*) ROLE-ALIST | ...
 POS-TERM   ::= TERM | (INT TERM)
 POS-INT    ::= (INT INT)
 RULE       ::= (defrule ID SENTENCE RULE-ALIST)
@@ -215,7 +215,7 @@ trace.</p>
 follows.</p>
 
 <blockquote>
-  <pre>SORT ::= text | data | name | skey | akey | mesg | chan | locn 
+  <pre>SORT ::= text | data | name | skey | akey | mesg | chan | locn
 TERM ::= ID | AKEY | (ltk ID ID) | STRING
       |  (cat TERM+) | (enc TERM+ TERM) | (hash TERM+)
 AKEY ::= ID | (invk AKEY) | (pubk ID) | (privk ID)
@@ -227,10 +227,102 @@ AKEY ::= ID | (invk AKEY) | (pubk ID) | (privk ID)
 The form (<code>enc</code> a b c d e) is expands to (<code>enc</code>
   (<code>cat</code> a b c d) e).</p>
 
-<p>A term in the Basic Crypto Algebra is an atom if it is variable of a sort
+<p>A term in the Basic Crypto Algebra is an atom if it is a variable of a sort
 other than <code>mesg</code>, or it if formed from one of the following operations:
 <code>pubk</code>, <code>privk</code>, <code>invk</code>,
 and <code>ltk</code>.</p>
+
+<h4>Algebra Signature Extensions</h4>
+
+<p>The signature of the message algebra used by CPSA is extensible.
+  There are two forms of extensibility provided by CPSA.  Users can add
+  operations for encryption, tupling, and hashing; and add sorts for
+  atomic data.</p>
+
+<p>A common extension is to add tupling operations to message algebras.
+  Previously, complex protocols often made use of tagged concatenation
+  to encode a tagged sequence of messages.  In CPSA, concatenation is
+  implemented as sequences of pairing operations.  Thus, the expression
+  for a certificate body of the form</p>
+
+<blockquote>
+  <pre>(cat "cert-body" dn serial-no pub-key)</pre>
+</blockquote>
+
+<p>is syntax for</p>
+
+<blockquote>
+  <pre>(cat "cert-body" (cat dn (cat serial-no pub-key)))</pre>
+</blockquote>
+
+<p>Algebra extensions are declared using a <code>lang</code> field in the
+  herald form of a source file.  For the certificate body example,</p>
+
+<blockquote>
+  <pre>(herald prot (lang (cert-body (tupl 3))))</pre>
+</blockquote>
+
+<p>adds one tupling operation so that the example above can be written as</p>
+
+<blockquote>
+  <pre>(cert-body dn serial-no pub-key)</pre>
+</blockquote>
+
+<p>CPSA represents this form internally as sequence of messages with a
+  distinguished mark.  This representation is more efficient as compared
+  with the tagged concatenation representation.</p>
+
+<blockquote>
+  <pre>LANG  ::= (lang LDECL*)
+LDECL ::= (ID + KIND)
+KIND  ::= atom | akey | hash | (tupl INT)
+       |  enc | senc | aenc | sign</pre>
+</blockquote>
+
+The syntax of the <code>lang</code> field is given above.
+There are eight kinds of ways that CPSA algebras can be extended.
+
+<ul>
+
+  <li>An atomic sort is added to the algebra when a symbol is declared
+    to be of kind <code>atom</code>.  If <code>dollar</code> is
+    declared to be an atomic sort, than <code>(price dollar)</code> in
+    a <code>var</code> form declares <code>price</code> to be of
+    sort <code>dollar</code>.</li>
+
+  <li>An atomic sort is also added to the algebra when a symbol is
+    declared to be of kind <code>akey</code>.  However, in addition to
+    adding the sort, CPSA adds the equation <code>(invk (invk x)) =
+    x</code> for variables of the new sort.</li>
+
+  <li>A unary operation is added to the algebra when a symbol is
+    declared to be of kind <code>hash</code>.  As with the default
+    hash operation, the adversary cannot extract the contents of the
+    hash.</li>
+
+  <li>An N-ary operation is added to the algebra when a symbol is
+    declared to be of kind (<code>tupl</code> N).  As with
+    concatenation, the adversary can construct and extract contents of
+    tuples.</li>
+
+  <li>A binary operation is added to the algebra when a symbol is
+    declared to be of kind <code>enc</code>.  As with the default
+    encryption operation, the adversary cannot extract contents of the
+    encryption without access to the inverse of the key.</li>
+
+  <li>A symbol of kind <code>senc</code> is just like one of kind
+    <code>enc</code> except that the key supplied when it is applied
+    must be symmetric.</li>
+
+  <li>A symbol of kind <code>aenc</code> is just like one of kind
+    <code>enc</code> except that the key supplied when it is applied
+    must be asymmetric.</li>
+
+  <li>A symbol of kind <code>sign</code> is just like one of kind
+    <code>enc</code> except that the key supplied when it is applied
+    must be the inverse applied to an asymmetric key.</li>
+
+</ul>
 
 <h3>Skeletons</h3>
 
@@ -371,14 +463,14 @@ ANTECEDENT  ::= ATOMIC | (and ATOMIC+)
 ATOMIC      ::= (p ROLEID SVAR HGT) | (p ROLEID PARAM SVAR TERM)
              |  (prec SVAR POS SVAR POS) | (non TERM) | (pnon TERM)
              |  (uniq TERM) | (uniq-at TERM SVAR POS)
-             |  (conf ID) | (auth ID) 
-	     |  (gen-st TERM) | (comm-pr SVAR POS SVAR POS) 
-	     |  (same-locn SVAR POS SVAR POS) | (state-node SVAR POS) 
-	     |  (trans SVAR POS) | (leads-to SVAR POS SVAR POS) 
+             |  (conf ID) | (auth ID)
+	     |  (gen-st TERM) | (comm-pr SVAR POS SVAR POS)
+	     |  (same-locn SVAR POS SVAR POS) | (state-node SVAR POS)
+	     |  (trans SVAR POS) | (leads-to SVAR POS SVAR POS)
              |  (fact ID TERM*) | (= TERM TERM)
 ROLEID      ::= STRING
 HGT         ::= INT
-POS         ::= INT | ID 
+POS         ::= INT | ID
 SVAR        ::= ID
 PARAM       ::= STRING</pre>
 </blockquote>
@@ -419,7 +511,7 @@ PARAM       ::= STRING</pre>
   follows is a transition node rather than a pure
   observation.  <code>leads-to</code> asserts that the two nodes that
   follow are a transmission and a reception on the same location that
-  are immediately related, ie no other transition comes between them.  
+  are immediately related, ie no other transition comes between them.</p>
 
 <h3>Rules</h3>
 
@@ -496,7 +588,7 @@ latter happens immediately after; CPSA formalizes this internally by
 creating a special value (a "point") that originates uniquely at
 each <code>stor</code> and must match in an immediately
 subsequent <code>load</code> event.  There may be several immediately
-subsequentload</code> event, since several events may observe the
+subsequent <code>load</code> events, since several events may observe the
 value without causing a transition.  A transition consists of a pair
 of adjacent events, one which <code>load</code>s the current value,
 followed by another the <code>stor</code>es the subsequent value.
@@ -517,7 +609,7 @@ language.  CPSA uses the formula <code>(gen-st term)</code> to assert
 that <code>term</code> is definitely non-initial, and requires a
 (regular) <code>(stor l term)</code> event to explain it being
 available in location <code>l</code>.  Rules with this kind of
-conclusion allow CPSA to infer these formulas when needed.</p>  
+conclusion allow CPSA to infer these formulas when needed.</p>
 
 <p>Within a role definition, a declaration <code>(gen-st term-1
 ... term-i)</code> causes CPSA to generate rules that establish that
@@ -831,7 +923,7 @@ CHMSG      ::= (chmsg CHAN TERM) | (chmsg TERM) | TERM
 ASSUMPTION ::= (uniq-orig ...) | (non-orig ...) | ...
 RULE       ::= (defrule ...)</pre>
 </blockquote>
-  
+
 <p>The form <code>(msg A B M)</code> says role <code>A</code>
   sends <code>M</code>, and role <code>B</code> receives
   <code>M</code>.<br/>  The form <code>(msg A B M N)</code> says
