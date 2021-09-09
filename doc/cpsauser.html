@@ -274,7 +274,7 @@ and <code>ltk</code>.</p>
 
 <blockquote>
   <pre>LANG  ::= (lang LDECL*)
-LDECL ::= (ID + KIND)
+LDECL ::= (ID+ KIND)
 KIND  ::= atom | akey | hash | (tupl INT)
        |  enc | senc | aenc | sign</pre>
 </blockquote>
@@ -303,7 +303,7 @@ There are eight kinds of ways that CPSA algebras can be extended.
   <li>An N-ary operation is added to the algebra when a symbol is
     declared to be of kind (<code>tupl</code> N).  As with
     concatenation, the adversary can construct and extract contents of
-    tuples.</li>
+    tuples.  N must be positive.</li>
 
   <li>A binary operation is added to the algebra when a symbol is
     declared to be of kind <code>enc</code>.  As with the default
