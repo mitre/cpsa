@@ -1,4 +1,4 @@
-\documentclass[12pt]{report}
+ \documentclass[12pt]{report}
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{amsthm}
@@ -6,7 +6,7 @@
 \usepackage[matrix,arrow,curve]{xy}
 \usepackage{makeidx}
 % Include this for a hyperlinked version of the document
-% \usepackage{hyperref}
+\usepackage{hyperref}
 \theoremstyle{definition}
 \newtheorem{defn}{Definition}[chapter]
 \newtheorem{thm}{Theorem}[chapter]
@@ -291,7 +291,8 @@ $$\fn{inv}(t) =\left\{
 \cn{invk}(t)&\mbox{if $t\colon\dom{akey}$;}\\
 \mbox{undefined}&\mbox{if $t$ is a variable of sort $\dom{mesg}$;}\\
 t&\mbox{otherwise.}
-\end{array}\right.$$
+\end{array}\right. %}
+$$
 
 An important property possessed by the algebra is that for all
 $T\in\alga$, if there are any encryptions in $T$ then all members of
@@ -351,7 +352,8 @@ p\in\carpos(t,t_1)\}}\\
 i\in\{0,1\}, p\in\carpos(t,t_i)\}} \\
 & \mbox{if $t'=(t_0,t_1)$ else}\\
 \emptyset&\mbox{otherwise.}
-\end{array}\right.$$
+\end{array}\right.  %}
+$$
 
 Term~$t$ \index{carries}\emph{carries}~$t'$ if $\carpos(t',t)$ is not
 empty, and $t'\sqsubseteq t$ when~$t'$ is carried by~$t$.  Note that
@@ -393,6 +395,49 @@ The set of carried positions is extended to channel messages in the
 obvious way.  The plain message $[t]$ will often be written as $t$
 when the context disambiguates the reference.
 
+\section{Locations and state messages}\index{locations}\index{points}
+\label{sec:locns:and:state}
+
+The {\cpsa} 4 treatment of state makes two additions to the message
+algebra.  First, we introduce a new sort of channel, called
+\emph{locations} and written \dom{locn}.  These are handled exactly
+like \dom{chan}s in building channel messages:
+%
+\[\begin{array}{r@{{}:{}}ll}
+    [\cdot]&\dom{mesg}\rightarrow\dom{chmsg}&\mbox{Plain message}\\ \relax
+    [\cdot,\cdot]&(\dom{chan}\cup\dom{locn})\times\dom{mesg}\rightarrow\dom{chmsg}
+                                            &\mbox{Channel message}
+\end{array}\]
+%
+We also add a new sort to the underlying message sorts, the sort of
+\emph{points} \dom{pval}, which are a base sort.
+\begin{center}
+  Sorts: \dom{pval}, \dom{name}, \dom{text}, \dom{data}, \dom{skey},
+  \dom{akey} $<$ \dom{mesg}\\[1ex]
+  Base sorts: \dom{pval}, \dom{name}, \dom{text}, \dom{data},
+  \dom{skey}, \dom{akey}
+\end{center}
+%
+We leave the operators and equations unchanged.  {\cpsa} protocol
+specifications never mention point values explicitly, but the {\cpsa}
+loader incorporates them whenever it reads roles that load state
+values from locations or store them into locations.
+
+The state value is a pair $(pt,t)$ consisting of a point
+$pt : \dom{pval}$ and the user-specified message term $t$; the point
+occurring when a state value is stored into a location is always
+assumed to be uniquely originating.  This ensures that loads that
+receive the same value (including the point component) are in fact
+observing the same state transition event.  This allows {\cpsa} to
+reconstruct the state histories of different state registers.
+
+Thus, when $m$ is a message, it may be a plain message $[t]$ or a
+channel message $[c,t]$, where either $c : \dom{chan}$ or
+$c : \dom{locn}$.  In case $c : \dom{locn}$, {\cpsa} always arranges
+that $t$ is a pair of the form $t=(pt,t_0)$ where $pt : \dom{pval}$
+and $t_0$ is a point-free term.
+
+
 \chapter{Strand Spaces and Bundles}\label{chp:strand spaces and bundles}
 
 When using strand space theory, one normally hypothesizes the
@@ -411,16 +456,28 @@ set of local sessions of the protocol.  Each local session is called a
 \index{strand}\emph{strand}.  The behavior of a strand, its
 \index{trace}\emph{trace}, is a sequence of messaging events.  An
 \index{event}\emph{event} is either a message transmission or a
-reception.  Outbound channel message $m\in\algbara_X$ is written
-as~$\outbnd m$, and inbound channel message~$m$ is written as~$\inbnd
-m$.  The set of traces over $\algbara_X$ is $\tr_X=(\pm\algbara_X)^+$.  A
-message \index{originates}\emph{originates} in a trace if it is
-carried by some event and the first event in which it is carried is
-outbound.  A message is \index{gained}\emph{gained} by a trace if it
-is carried by some event and the first event in which it is carried is
-inbound.  A message is \index{acquired}\emph{acquired} by a trace if
-it first occurs in a reception event and is also carried by that
-event.
+reception.
+
+An outbound message $m\in\algbara_X$ is written as~$\outbnd m$, and a
+message~$m$ is written as~$\inbnd m$.
+
+\paragraph{State events:  Stores and loads.}  When $m=[c,(pt,t_0)]$
+for $c : \dom{locn}$ and $pt : \dom{pval}$, $\outbnd m$ is a store
+event, in which the value $t_0$ is written into the location $c$, and
+$\inbnd m$ is a load event, in which the value $t_0$ is read out of
+the location $c$.  In the latter case, $pt$ may be the point
+associated with an earlier store event $e$ that wrote $t_0$ into $c$.
+In this case, our theory will ensure that $e$ is the most recent store
+event involving $c$.
+
+\paragraph{Traces and strand spaces.}  The set of traces over
+$\algbara_X$ is $\tr_X=(\pm\algbara_X)^+$.  A message
+\index{originates}\emph{originates} in a trace if it is carried by
+some event and the first event in which it is carried is outbound.  A
+message is \index{gained}\emph{gained} by a trace if it is carried by
+some event and the first event in which it is carried is inbound.  A
+message is \index{acquired}\emph{acquired} by a trace if it first
+occurs in a reception event and is also carried by that event.
 
 Abstractly, a strand space is a multiset of traces, but since we wish
 to name each element, a \index{strand space}\emph{strand
@@ -456,9 +513,10 @@ a bundle.  An transitive irreflexive binary relation is also called a
 \index{strict partial order}\index{partial order!strict}strict partial
 order.
 
-An atom \index{uniquely originates}\emph{uniquely originates} in a
-bundle if it originates in the trace of exactly one strand.  An atom
-is \index{non-originating}\emph{non-originating} in a bundle if it
+\paragraph{Authentic and confidential channels.}  An atom
+\index{uniquely originates}\emph{uniquely originates} in a bundle if
+it originates in the trace of exactly one strand.  An atom is
+\index{non-originating}\emph{non-originating} in a bundle if it
 originates on no strand, but each of its variables occurs in some
 strand's trace.  A channel is \index{authenticated
   channel}\emph{authenticated} if only regular strands in a bundle use
@@ -466,25 +524,53 @@ it to transmit messages.  A channel is \index{confidential
   channel}\emph{confidential} if only regular strands in a bundle use
 it to receive messages.
 
-In a run of a protocol, the behavior of each strand is constrained by
-a role in a protocol.  Adversarial strands are constrained by roles as
-are non-adversarial strands.  What follows is the definition of a role
-before channels and channel messages were introduced into {\cpsa},
-followed by a discussion of the additions caused by channels.
+\paragraph{Channel properties of locations.}  Every location is
+regarded as a confidential channel.  Thus, we are modeling long term
+state registers that are associated with devices under the control of
+regular (i.e.~compliant) participants.  The adversary never observes a
+location directly; the adversary observes only messages from regular
+participants that may reflect the contents of locations.  The
+adversary may store certain values directly, namely the possible
+initial values for a location.  Thus, we rely on the adversary to
+initialize locations values.  Other values that can be produced only
+by a state transition cannot be inserted by the adversary; only a
+regular participant's store event can cause them.  The protocol
+specification determines the sufficient conditions for these
+non-initial values, or, as we will call them, \emph{generated state}
+values.  Naturally, messages the adversary delivers to regular
+participants may affect what generated state values they subsequently
+store.
 
-A protorole over $\algbara_Y$ is
-$\role_Y(C,N,U)$, where $C\in\tr_Y$, $N\subseteq\base_Y$, and
-$U\subseteq\base_Y$.  The trace of the role is~$C$, its
-non-origination assumptions are~$N$, and its unique origination
-assumptions are~$U$.  A protorole is a \index{role}\emph{role} if (1)
-$t\in N$ implies $t$ is not carried in $C$, and all variables in $N$
-occur in $C$, (2) $t\in U$ implies $t$ originates in $C$, (3) if
-variable~$x$ occurs in $C$ then $x$ is an atom or it is acquired in
-$C$, and (4) the trace of a role may not match the pattern
-$\seq{\inbnd m, \outbnd m,\ldots}$.  This is to ensure
-that listeners, which are introduced on Page~\pageref{def:listeners},
-cannot be confused with protocol constrained strands.
-A \index{protocol}\emph{protocol} is a set of roles.  Let
+\paragraph{Roles.}  In a run of a protocol, the behavior of each
+strand is constrained by a role in a protocol.  Adversarial strands
+are constrained by roles as are non-adversarial strands.  What follows
+is the definition of a role before channels and channel messages were
+introduced into {\cpsa}, followed by a discussion of the additions
+caused by channels.
+
+%A %proto  JDG:  Protorole?  What's that?
+%
+Given an $\algbara_Y$, and $C\in\tr_Y$, $N\subseteq\base_Y$, and
+$U\subseteq\base_Y$, if:
+%
+\begin{enumerate}
+  \item $t\in N$ implies $t$ is not carried in $C$, and all variables
+  in $N$ occur in $C$;
+  \item $t\in U$ implies $t$ originates in $C$; 
+  \item if variable~$x$ occurs in $C$ then $x$ is an atom or it is
+  acquired in $C$; and
+  \item the trace of a role may not match the pattern\label{item:no:lsn}
+  $\seq{\inbnd m, \outbnd m,\ldots}$, 
+\end{enumerate}
+%
+then $\role_Y(C,N,U)$ is a \emph{role}\index{role} over $\algbara_Y$.
+The trace of $\role_Y(C,N,U)$ is~$C$, its non-origination assumptions
+are~$N$, and its unique origination assumptions are~$U$.  Item
+(\ref{item:no:lsn}) is meant to ensure that listeners, which are
+introduced on Page~\pageref{def:listeners}, cannot be confused with
+protocol constrained strands.
+
+A \index{protocol}\emph{protocol} $P$ is a set of roles.  Let
 \index{Vars@\svars}$\svars(P)$ be the set of variables that occur in
 the traces of the roles in protocol~$P$.
 
@@ -505,10 +591,13 @@ Origination assumptions in bundles specified by roles are called
 \index{inherited origination assumptions}\emph{inherited origination
   assumptions}.
 
-The introduction of channels adds two new fields to a role, a set of
-channels assumed to be authenticated, and a set of channels assumed to
-be confidential.  For a bundle to be a run of a protocol, the
-inherited channel assumptions must be honored by the bundle.
+\paragraph{Roles and channels.}  The introduction of channels adds two
+new fields to a role, a set of channels assumed to be authenticated,
+and a set of channels assumed to be confidential.  For a bundle to be
+a run of a protocol, the inherited channel assumptions must be honored
+by the bundle.  State adds no other fields to the role data structure,
+although when $c :  \dom{locn}$, $c$ will always be among the
+confidential channels.
 
 \chapter{Adversary Model}\label{chp:adversary model}
 
@@ -831,7 +920,7 @@ $$\begin{array}{r@{}ll}
 \seq{\inbnd\enc{\enc{s}{a^{-1}}}{b},\outbnd\enc{d}{s}},
 \seq{\inbnd d,\outbnd d}},
 &\mbox{Traces}\\
-&\{(0,1)\prec(1,0),
+&\{(0,1)\prec(1,0)\},
 &\mbox{Node orderings}\\
 &\{a^{-1},b^{-1}\},
 &\mbox{Non-origination}\\
@@ -1073,7 +1162,7 @@ $$\begin{array}{r@{}c@{}l}
 \begin{array}{ll}
 j+1&\mbox{if $j\geq s$}\\
 j&\mbox{otherwise,}
-\end{array}\right.
+\end{array}\right. %}
 \end{array}$$
 relation $\prec'$ is the transitive closure of $\phi_{s,s'}(\prec)$, and
 $$\begin{array}{r@{}c@{}l}
@@ -1086,7 +1175,7 @@ $$\begin{array}{r@{}c@{}l}
 \begin{array}{ll}
 j-1&\mbox{if $j>s$}\\
 j&\mbox{otherwise.}
-\end{array}\right.
+\end{array}\right. %}
 \end{array}$$
 \end{defn}
 
@@ -1542,7 +1631,7 @@ $S=\fn{fold}(t,T,t',\sigma)$
 $\fn{fold}(t,T,t',\sigma)={}$\\
 $\quad\{\sigma'\circ\sigma\mid\sigma'\in
 \fn{fold}_0(\sigma(T),\sigma(t'),\{\idsigma\},
-\fn{carpos}(\sigma(t),\sigma(t')))$\\
+\fn{carpos}(\sigma(t),\sigma(t')))\}$\\
 \\
 $\fn{fold}_0(T,t',S,\{\})=S$\\
 $\fn{fold}_0(T,t',S,\seq{p}\append P)={}$\\
@@ -2462,3 +2551,8 @@ skeleton produced during a cohort step.
 \printindex
 
 \end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

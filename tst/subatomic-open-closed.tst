@@ -99,7 +99,7 @@
         (and (p "dev-pass" z 2) (p "dev-pass" "ls" z ls)
           (p "dev-pass" "lk" z lk)) (fact same-dev ls lk))))
   (defgenrule trRl_dev-close-at-2
-    (forall ((z strd)) (implies (p "dev-close" z 3) (trans z 2))))
+    (forall ((z strd)) (implies (p "dev-close" z 4) (trans z 2))))
   (defgenrule trRl_dev-close-at-3
     (forall ((z strd)) (implies (p "dev-close" z 4) (trans z 3))))
   (defgenrule gen-st-dev-close-0
@@ -114,7 +114,7 @@
         (and (p "dev-close" z 3) (p "dev-close" "ls" z ls)
           (p "dev-close" "lk" z lk)) (fact same-dev ls lk))))
   (defgenrule trRl_dev-open-at-1
-    (forall ((z strd)) (implies (p "dev-open" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "dev-open" z 4) (trans z 1))))
   (defgenrule trRl_dev-open-at-3
     (forall ((z strd)) (implies (p "dev-open" z 4) (trans z 3))))
   (defgenrule gen-st-dev-open-0
@@ -134,9 +134,9 @@
         (and (p "dev-open" z 3) (p "dev-open" "ls" z ls)
           (p "dev-open" "lk" z lk)) (fact same-dev ls lk))))
   (defgenrule trRl_dev-up-at-1
-    (forall ((z strd)) (implies (p "dev-up" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "dev-up" z 4) (trans z 1))))
   (defgenrule trRl_dev-up-at-2
-    (forall ((z strd)) (implies (p "dev-up" z 3) (trans z 2))))
+    (forall ((z strd)) (implies (p "dev-up" z 5) (trans z 2))))
   (defgenrule trRl_dev-up-at-3
     (forall ((z strd)) (implies (p "dev-up" z 4) (trans z 3))))
   (defgenrule trRl_dev-up-at-4
@@ -230,7 +230,7 @@
   (conf start-ch)
   (auth start-ch)
   (facts (same-dev ls lk) (no-state-split))
-  (rule trRl_dev-up-at-4 eff-dev-up-3 trRl_dev-up-at-1 trRl_dev-up-at-2
+  (rule trRl_dev-up-at-2 trRl_dev-up-at-4 eff-dev-up-3 trRl_dev-up-at-1
     trRl_dev-up-at-3 fact-dev-up-same-dev0)
   (operation nonce-test (added-strand dev-up 4) k (1 0)
     (ch-msg start-ch (cat "power-up" d o k)))
@@ -342,7 +342,7 @@
         (and (p "dev-pass" z 2) (p "dev-pass" "ls" z ls)
           (p "dev-pass" "lk" z lk)) (fact same-dev ls lk))))
   (defgenrule trRl_dev-close-at-2
-    (forall ((z strd)) (implies (p "dev-close" z 3) (trans z 2))))
+    (forall ((z strd)) (implies (p "dev-close" z 4) (trans z 2))))
   (defgenrule trRl_dev-close-at-3
     (forall ((z strd)) (implies (p "dev-close" z 4) (trans z 3))))
   (defgenrule gen-st-dev-close-0
@@ -357,7 +357,7 @@
         (and (p "dev-close" z 3) (p "dev-close" "ls" z ls)
           (p "dev-close" "lk" z lk)) (fact same-dev ls lk))))
   (defgenrule trRl_dev-open-at-1
-    (forall ((z strd)) (implies (p "dev-open" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "dev-open" z 4) (trans z 1))))
   (defgenrule trRl_dev-open-at-3
     (forall ((z strd)) (implies (p "dev-open" z 4) (trans z 3))))
   (defgenrule gen-st-dev-open-0
@@ -377,9 +377,9 @@
         (and (p "dev-open" z 3) (p "dev-open" "ls" z ls)
           (p "dev-open" "lk" z lk)) (fact same-dev ls lk))))
   (defgenrule trRl_dev-up-at-1
-    (forall ((z strd)) (implies (p "dev-up" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "dev-up" z 4) (trans z 1))))
   (defgenrule trRl_dev-up-at-2
-    (forall ((z strd)) (implies (p "dev-up" z 3) (trans z 2))))
+    (forall ((z strd)) (implies (p "dev-up" z 5) (trans z 2))))
   (defgenrule trRl_dev-up-at-3
     (forall ((z strd)) (implies (p "dev-up" z 4) (trans z 3))))
   (defgenrule trRl_dev-up-at-4
@@ -470,8 +470,8 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (auth start-ch)
   (facts (same-dev ls lk) (no-state-split))
-  (rule cau-dev-pass-1 eff-dev-up-3 trRl_dev-up-at-4 same-dev-lk-ls
-    trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3
+  (rule cau-dev-pass-1 eff-dev-up-3 trRl_dev-up-at-2 trRl_dev-up-at-4
+    same-dev-lk-ls trRl_dev-up-at-1 trRl_dev-up-at-3
     fact-dev-up-same-dev0)
   (operation channel-test (added-strand dev-up 4)
     (ch-msg lk (cat pt-2 "st-k" d o k)) (0 0))
@@ -682,7 +682,7 @@
         (and (p "dev-pass" z 2) (p "dev-pass" "ls" z ls)
           (p "dev-pass" "lk" z lk)) (fact same-dev ls lk))))
   (defgenrule trRl_dev-close-at-2
-    (forall ((z strd)) (implies (p "dev-close" z 3) (trans z 2))))
+    (forall ((z strd)) (implies (p "dev-close" z 4) (trans z 2))))
   (defgenrule trRl_dev-close-at-3
     (forall ((z strd)) (implies (p "dev-close" z 4) (trans z 3))))
   (defgenrule gen-st-dev-close-0
@@ -697,7 +697,7 @@
         (and (p "dev-close" z 3) (p "dev-close" "ls" z ls)
           (p "dev-close" "lk" z lk)) (fact same-dev ls lk))))
   (defgenrule trRl_dev-open-at-1
-    (forall ((z strd)) (implies (p "dev-open" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "dev-open" z 4) (trans z 1))))
   (defgenrule trRl_dev-open-at-3
     (forall ((z strd)) (implies (p "dev-open" z 4) (trans z 3))))
   (defgenrule gen-st-dev-open-0
@@ -717,9 +717,9 @@
         (and (p "dev-open" z 3) (p "dev-open" "ls" z ls)
           (p "dev-open" "lk" z lk)) (fact same-dev ls lk))))
   (defgenrule trRl_dev-up-at-1
-    (forall ((z strd)) (implies (p "dev-up" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "dev-up" z 4) (trans z 1))))
   (defgenrule trRl_dev-up-at-2
-    (forall ((z strd)) (implies (p "dev-up" z 3) (trans z 2))))
+    (forall ((z strd)) (implies (p "dev-up" z 5) (trans z 2))))
   (defgenrule trRl_dev-up-at-3
     (forall ((z strd)) (implies (p "dev-up" z 4) (trans z 3))))
   (defgenrule trRl_dev-up-at-4
@@ -842,8 +842,8 @@
   (conf start-ch)
   (auth start-ch-0)
   (facts (same-dev ls lk) (no-state-split))
-  (rule cau-dev-pass-1 eff-dev-up-3 trRl_dev-up-at-4 same-dev-lk-ls
-    trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3
+  (rule cau-dev-pass-1 eff-dev-up-3 trRl_dev-up-at-2 trRl_dev-up-at-4
+    same-dev-lk-ls trRl_dev-up-at-1 trRl_dev-up-at-3
     fact-dev-up-same-dev0)
   (operation channel-test (added-strand dev-up 4)
     (ch-msg lk (cat pt-2 "st-k" d-0 o-0 k)) (1 0))
