@@ -1,3 +1,13 @@
+2021-09-14  Joshua D. Guttman  <guttman@mitre.org>
+
+	* src/CPSA/Loader.hs:  Modified the transition rules.  A load
+	event will now be asserted to be a transition event in a strand
+	only if that strand is long enough to contain a matching stor.
+	Previously it counted as a transition as long as the role
+	contained a matching stor.  This should avoid unwanted
+	consequences when roles may match up to a height that contains the
+	load but not the subsequent stor.  
+
 2021-06-26  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Roletran/Emitter.hs (displayKind): Reverted to coarse
