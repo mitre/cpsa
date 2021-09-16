@@ -265,27 +265,36 @@ balancedStores c =
           | otherwise              = check c' []
       check (_ : c') _             = check c' []
 
-transitionIndices :: Trace -> [Int]
+-- Given a trace, return a list of pairs of indices.  The first member
+-- of each pair is the index of a state event.  If the state event is
+-- a stor, then the second member is equal to the first.  If the state
+-- event is a load, then there is a matching stor in the state
+-- segment, and the second member is its index.  
+
+transitionIndices :: Trace -> [(Int, Int)]
 transitionIndices c =
     reverse $ loop [] 0 c
     where
       loop so_far _ [] = so_far
       loop so_far i ((Out (ChMsg ch _)) : c')
-           | isLocn ch              = loop (i : so_far) (i+1) c'
+           | isLocn ch              = loop ((i,i) : so_far) (i+1) c'
            | otherwise              = loop so_far (i+1) c'
       loop so_far i ((In (ChMsg ch _)) : c')
-           | isLocn ch &&
-             subseqSend ch c'       = loop (i : so_far) (i+1) c'
+           | isLocn ch              =
+               case subseqSend (i+1) ch c' of
+                 Just j             -> loop ((i,j) : so_far) (i+1) c'
+                 Nothing            -> loop so_far (i+1) c'
            | otherwise              = loop so_far (i+1) c'
       loop so_far i (_ : c')        = loop so_far (i+1) c'
 
-      subseqSend _ []              = False
-      subseqSend ch ((In (ChMsg _ _)) : c') = subseqSend ch c'
-      subseqSend ch ((Out (ChMsg ch' _)) : c')
-          | ch == ch'              = True
-          | isLocn ch'             = subseqSend ch c'
-          | otherwise              = False
-      subseqSend _ (_ : _)        = False
+      subseqSend _ _ []             = Nothing 
+      subseqSend j ch ((In (ChMsg _ _)) : c')
+                                    = subseqSend (j+1) ch c'
+      subseqSend j ch ((Out (ChMsg ch' _)) : c')
+          | ch == ch'               = Just j 
+          | isLocn ch'              = subseqSend (j+1) ch c'
+          | otherwise               = Nothing
+      subseqSend _ _ (_ : _)        = Nothing 
 
 stateSegments :: Trace -> [(Int,Int)]
 stateSegments c =
@@ -527,23 +536,23 @@ neqRules sig g =
 --       (g,[])
 --       ["mesg", "strd", "indx"]
 
-transRules :: Sig -> Gen -> Role -> [Int] -> (Gen, [Rule])
+transRules :: Sig -> Gen -> Role -> [(Int,Int)] -> (Gen, [Rule])
 transRules sig g rl =
     L.foldl
-     (\(g, rs) idx ->
-          let (g', r) = f g idx in
+     (\(g, rs) pair ->
+          let (g', r) = f g pair in
           (g', r : rs))
      (g, [])
      where
-       f g idx =
-           ruleOfClauses sig g ("trRl_" ++ (rname rl) ++ "-at-" ++ (show idx))
+       f g (i,j) =
+           ruleOfClauses sig g ("trRl_" ++ (rname rl) ++ "-at-" ++ (show i))
              [("strd",["z"])]
              (applyToSoleEntry
-              (\z -> [(Length rl z (indxOfInt (idx+1)))])
+              (\z -> [(Length rl z (indxOfInt (j+1)))])
               "transRules:  Impossible var list.")
              [([],                   -- no existentially bound vars
                (\_ -> applyToSoleEntry
-                        (\z -> [(Trans (z, (indxOfInt idx)))])
+                        (\z -> [(Trans (z, (indxOfInt i)))])
                         "transRules:  Impossible var list."))]
 
 --   (\(g, rs) idx ->
@@ -652,6 +661,9 @@ csRules sig g rl =
                                    (Prec (z, (indxOfInt end)) (z1,i))])
                 "csRules:  Impossible var list."))]
 
+data FoundAt = FoundAt Int
+             | Missing Term 
+
 genStateRls :: Sig -> Gen -> Role -> [Term] -> (Gen, [Rule])
 genStateRls sig g rl ts =
     (g',rls)
@@ -665,19 +677,21 @@ genStateRls sig g rl ts =
 
       occ = flip firstOccurs rl
 
-      heightLoop soFar [] = Just (1+soFar)
+      heightLoop soFar [] = FoundAt (1+soFar)
       heightLoop soFar (v : rest) =
           case occ v of
-            Nothing -> Nothing
+            Nothing -> Missing v
             Just i -> heightLoop (max i soFar) rest
 
       vSpec t = ("strd", ["z"]) : varListSpecOfVars (varsInTerm t)
 
       f g t n =
           case heightLoop 0 (varsInTerm t) of
-            Nothing -> error ("genStateRls:  Unbound variable in gen-st of " ++
-                             (rname rl) ++ ": " ++ (show (varsInTerm t)))
-            Just ht ->
+            Missing v -> error
+                         ("genStateRls:  In gen-st of "
+                          ++ (rname rl) ++ ": no occurrence of "
+                                 ++ (show (displayTerm (addToContext emptyContext [t]) v)))
+            FoundAt ht ->
                 ruleOfClauses sig g
                   ("gen-st-" ++ (rname rl) ++ "-" ++ (show n))
                   (vSpec t)
