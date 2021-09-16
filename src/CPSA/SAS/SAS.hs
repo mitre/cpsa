@@ -327,8 +327,8 @@ loadMaplet :: MonadFail m => Sig -> [Term] -> [Term] ->
               SExpr Pos -> m (Term, Term)
 loadMaplet sig kvars vars (L _ [domain, range]) =
     do
-      t <- loadTerm sig vars domain
-      t' <- loadTerm sig kvars range
+      t <- loadTerm sig vars False domain
+      t' <- loadTerm sig kvars False range
       return (t, t')
 loadMaplet _ _ _ x = fail (shows (annotation x) "Malformed maplet")
 
@@ -337,7 +337,7 @@ loadListener :: MonadFail m => Sig -> Pos -> Prot -> [Term] ->
 loadListener sig pos prot kvars x =
     do
       r <- lookupRole pos prot listenerName
-      t <- loadTerm sig kvars x
+      t <- loadTerm sig kvars True x
       return (Instance { pos = pos, role = r,
                          env = [(head $ vars r, t)], height = 2 })
 
@@ -390,7 +390,7 @@ loadBaseTerms sig vars (x : xs) =
 loadBaseTerm :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
 loadBaseTerm sig vars x =
     do
-      t <- loadTerm sig vars x
+      t <- loadTerm sig vars True x
       case isAtom t of
         True -> return t
         False -> fail (shows (annotation x) "Expecting an atom")
@@ -408,7 +408,7 @@ loadOrig :: MonadFail m => Sig -> [Term] -> Strands ->
             SExpr Pos -> m (Term, Node)
 loadOrig sig vars heights (L _ [x, y]) =
     do
-      t <- loadTerm sig vars x
+      t <- loadTerm sig vars True x
       n <- loadNode heights y
       return (t, n)
 loadOrig _ _ _ x =
@@ -433,7 +433,7 @@ loadFactTerm _ _  varmap (N pos z) =
     Just t -> return t
     Nothing -> fail $ shows pos ("Bad strand in fact: " ++ show z)
 loadFactTerm sig vars _ x =
-  loadTerm sig vars x
+  loadTerm sig vars True x
 
 -- Homomorphisms
 

@@ -68,6 +68,9 @@ assert pred x
     | pred x = return x
     | otherwise = fail "assertion failed"
 
+assertError :: [Char] -> a
+assertError s = error ("[ASSERT FAILED] " ++ s)
+
 seqList :: [a] -> [a]
 seqList xs =
     loop xs

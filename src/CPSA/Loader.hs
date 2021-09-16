@@ -438,7 +438,7 @@ varsInTerm t =
 
 loadTerms :: MonadFail m => Sig -> [Term] -> [SExpr Pos] -> m [Term]
 loadTerms sig vars =
-    mapM (loadTerm sig vars)
+    mapM (loadTerm sig vars False)
 
 loadFactList :: MonadFail m => Sig -> [Term] ->
                 [SExpr Pos] -> m [(String, [Term])]
@@ -448,7 +448,7 @@ loadFactList sig vars =
 loadAFact :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m (String, [Term])
 loadAFact sig vars (L _ (S _ name : fs)) =
     do
-      fs <- mapM (loadTerm sig vars) fs
+      fs <- mapM (loadTerm sig vars False) fs
       return $ (name, fs)
 loadAFact _ _ x = fail (shows (annotation x) "Malformed fact")
 
@@ -1001,26 +1001,26 @@ loadTrace sig gen vars xs =
                   reverse events)
       loadTraceLoop gen newVars uniqs events ((L _ [S _ "recv", t]) : rest) =
           do
-            t <- loadTerm sig vars t
+            t <- loadTerm sig vars True t
             loadTraceLoop gen newVars uniqs ((In $ Plain t) : events) rest
       loadTraceLoop gen newVars uniqs events ((L _ [S _ "send", t]) : rest) =
           do
-            t <- loadTerm sig vars t
+            t <- loadTerm sig vars True t
             loadTraceLoop gen newVars uniqs ((Out $ Plain t) : events) rest
       loadTraceLoop gen newVars uniqs events ((L _ [S _ "recv", ch, t]) : rest) =
           do
             ch <- loadChan sig vars ch
-            t <- loadTerm sig vars t
+            t <- loadTerm sig vars True t
             loadTraceLoop gen newVars uniqs ((In $ ChMsg ch t) : events) rest
       loadTraceLoop gen newVars uniqs events ((L _ [S _ "send", ch, t]) : rest) =
           do
             ch <- loadChan sig vars ch
-            t <- loadTerm sig vars t
+            t <- loadTerm sig vars True t
             loadTraceLoop gen newVars uniqs ((Out $ ChMsg ch t) : events) rest
       loadTraceLoop gen newVars uniqs events ((L _ [S pos "load", ch, t]) : rest) =
           do
             ch <- loadLocn sig vars ch
-            t <- loadTerm sig vars t
+            t <- loadTerm sig vars True t
             (gen, pt, pt_t) <- loadLocnTerm sig gen (S pos "pt") (S pos "pval") t
             loadTraceLoop gen (pt : newVars) uniqs
                               ((In $ ChMsg ch pt_t) : events) rest
@@ -1039,7 +1039,7 @@ loadTrace sig gen vars xs =
       loadTraceLoop gen newVars uniqs events ((L _ [S pos "stor", ch, t]) : rest) =
           do
             ch <- loadLocn sig vars ch
-            t <- loadTerm sig vars t
+            t <- loadTerm sig vars True t
             (gen, pt, pt_t) <- loadLocnTerm sig gen (S pos "pt") (S pos "pval") t
             loadTraceLoop gen (pt : newVars) (pt : uniqs)
                               ((Out $ ChMsg ch pt_t) : events) rest
@@ -1052,7 +1052,7 @@ loadTrace sig gen vars xs =
 loadChan :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
 loadChan sig vars x =
   do
-    ch <- loadTerm sig vars x
+    ch <- loadTerm sig vars True x
     case isChan ch || isLocn ch of
       True -> return ch
       False -> fail (shows (annotation x) "Expecting a channel or location")
@@ -1060,7 +1060,7 @@ loadChan sig vars x =
 loadLocn :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
 loadLocn sig vars x =
   do
-    ch <- loadTerm sig vars x
+    ch <- loadTerm sig vars True x
     case isLocn ch of
       True -> return ch
       False -> fail (shows (annotation x) "Expecting a location")
@@ -1076,7 +1076,7 @@ loadBaseTerms sig vars (x : xs) =
 loadBaseTerm :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
 loadBaseTerm sig vars x =
     do
-      t <- loadTerm sig vars x
+      t <- loadTerm sig vars True x
       case isAtom t of
         True -> return t
         False -> fail (shows (annotation x) "Expecting an atom")
@@ -1102,7 +1102,7 @@ loadPosBaseTerm sig vars x'@(L _ [N _ opos, x])
           return (Just opos, t)
 loadPosBaseTerm sig vars x =
     do
-      t <- loadTerm sig vars x
+      t <- loadTerm sig vars True x
       case isAtom t of
         True -> return (Nothing, t)
         False -> fail (shows (annotation x) "Expecting an atom")
@@ -1196,8 +1196,8 @@ loadMaplet :: MonadFail m => Sig -> [Term] -> [Term] ->
               (Gen, Env) -> SExpr Pos -> m (Gen, Env)
 loadMaplet sig kvars vars env (L pos [domain, range]) =
     do
-      t <- loadTerm sig vars domain
-      t' <- loadTerm sig kvars range
+      t <- loadTerm sig vars False domain
+      t' <- loadTerm sig kvars False range
       case match t t' env of
         env' : _ -> return env'
         [] -> fail (shows pos "Domain does not match range")
@@ -1207,7 +1207,7 @@ loadListener :: MonadFail m => Sig -> Prot -> [Term] -> Gen -> SExpr Pos ->
                 m (Gen, Instance)
 loadListener sig p kvars gen x =
     do
-     t <- loadTerm sig kvars x
+     t <- loadTerm sig kvars True x
      return $ mkListener p gen t
 
 loadRest :: MonadFail m => Sig -> Pos -> [Term] -> Prot -> Gen -> [Goal] ->
@@ -1228,7 +1228,7 @@ loadRest sig pos vars p gen gs insts orderings
       cn <- loadBaseTerms sig vars cn
       au <- loadBaseTerms sig vars au
       fs <- mapM (loadFact sig heights vars) fs
-      genSts <- mapM (loadTerm sig vars) genSts
+      genSts <- mapM (loadTerm sig vars True) genSts
       let (nr', ar', ur', cn', au') =
             foldl addInstOrigs (nr, ar, ur, cn, au) insts
       prios <- mapM (loadPriorities heights) pl
@@ -1294,7 +1294,7 @@ loadFterm _ heights _ (N pos s)
   | otherwise = fail (shows pos ("Bad strand in fact: " ++ show s))
 loadFterm sig _ vars x =
   do
-    t <- loadTerm sig vars x
+    t <- loadTerm sig vars True x
     return $ FTerm t
 
 loadPriorities :: MonadFail m => [Int] -> SExpr Pos -> m (Node, Int)
@@ -1487,15 +1487,15 @@ loadPrimary :: MonadFail m => Sig -> Pos -> Prot -> [Term] ->
                SExpr Pos -> m (Pos, AForm)
 loadPrimary sig _ _ kvars (L pos [S _ "=", x, y]) =
   do
-    t <- loadTerm sig kvars x
-    t' <- loadTerm sig kvars y
+    t <- loadTerm sig kvars True x
+    t' <- loadTerm sig kvars True y
     case isStrdVar t == isStrdVar t' of
       True -> return (pos, Equals t t')
       False -> fail (shows pos "Sort mismatch in equality")
 loadPrimary sig _ _ kvars (L pos [S _ "component", x, y]) =
   do
-    t <- loadTerm sig kvars x
-    t' <- loadTerm sig kvars y
+    t <- loadTerm sig kvars True x
+    t' <- loadTerm sig kvars True y
     case isStrdVar t || isStrdVar t' of
       True -> fail (shows pos "Strand variable in component formula")
       False -> return (pos, Component t t')
@@ -1530,7 +1530,7 @@ loadPrimary sig _ _ kvars (L pos [S _ "auth", x]) =
     return (pos, Auth t)
 loadPrimary sig _ _ kvars (L pos (S _ "fact" : S _ name : fs)) =
   do
-    fs <- mapM (loadTerm sig kvars) fs
+    fs <- mapM (loadTerm sig kvars True) fs
     return (pos, AFact name fs)
 loadPrimary sig _ _ kvars (L pos [S _ "comm-pr", w, x, y, z]) =
   do
@@ -1574,7 +1574,7 @@ loadPrimary sig _ p kvars (L pos [S _ "p", Q _ name, x, ht]) =
   do
     r <- lookupRole pos p name
     t <- loadStrdTerm sig kvars x
-    h <- loadTerm sig kvars ht
+    h <- loadTerm sig kvars True ht
     return (pos, Length r t h)
 loadPrimary sig _ p kvars (L pos [S _ "p", Q _ name, Q var x, y, z]) =
   do
@@ -1610,7 +1610,7 @@ loadCritSecs s = fail ("loadCritSecs:  Malformed int pairs: " ++ (show s))
 loadAlgTerm :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
 loadAlgTerm sig ts x =
   do
-    t <- loadTerm sig ts x
+    t <- loadTerm sig ts True x
     case isStrdVar t || isIndxVar t || isIndxConst t || isChan t || isLocn t of
       True -> fail (shows (annotation x) "Expecting an algebra term")
       False -> return t
@@ -1619,7 +1619,7 @@ loadAlgTerm sig ts x =
 loadAlgChanTerm :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
 loadAlgChanTerm sig ts x =
   do
-    t <- loadTerm sig ts x
+    t <- loadTerm sig ts True x
     case isStrdVar t || isIndxVar t || isIndxConst t of
       True -> fail (shows (annotation x)
                     "Expecting an algebra term or a channel")
@@ -1630,7 +1630,7 @@ loadAlgChanTerm sig ts x =
 loadChanTerm :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
 loadChanTerm sig ts x =
   do
-    t <- loadTerm sig ts x
+    t <- loadTerm sig ts True x
     case isChan t of
       True -> return t
       False -> fail (shows (annotation x) "Expecting a channel variable")
@@ -1640,7 +1640,7 @@ loadChanTerm sig ts x =
 loadStrdTerm :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
 loadStrdTerm sig ts x =
   do
-    t <- loadTerm sig ts x
+    t <- loadTerm sig ts True x
     case isStrdVar t of
       True -> return t
       False -> fail (shows (annotation x) "Expecting a strand variable")
@@ -1650,7 +1650,7 @@ loadStrdTerm sig ts x =
 loadIndxTerm :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
 loadIndxTerm sig ts x =
   do
-    t <- loadTerm sig ts x
+    t <- loadTerm sig ts True x
     case isIndxVar t of
       True -> return t
       False ->

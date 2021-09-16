@@ -169,7 +169,7 @@ Executable cpsa4
   Default-Language:     Haskell2010
   Build-Depends:        base >= 4 && < 5, containers, parallel
   GHC-Options:
-    -Wall -fno-warn-name-shadowing -fwarn-unused-imports -threaded -rtsopts
+    -Wall -fno-warn-name-shadowing -fwarn-unused-imports -fmax-pmcheck-iterations=10000000 -threaded -rtsopts
   Hs-Source-Dirs:       src
   Other-Modules:
     Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.ReturnFail CPSA.Lib.Pretty
@@ -183,7 +183,7 @@ Executable cpsa4sas
   Default-Language:     Haskell2010
   Build-Depends:        base >= 4 && < 5, containers
   GHC-Options:
-    -Wall -fno-warn-name-shadowing -fwarn-unused-imports
+    -Wall -fno-warn-name-shadowing -fwarn-unused-imports -fmax-pmcheck-iterations=10000000
   Hs-Source-Dirs:       src
   Other-Modules:
     Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.Pretty CPSA.Lib.SExpr
