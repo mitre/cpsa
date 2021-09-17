@@ -13,3 +13,17 @@ TESTING
 
 Expand the source distribution, build the program, and then run the
 test suite.  There should be no differences reported.
+
+--------------------------------------------
+
+PROFILING
+
+Install profiling parallel package with
+
+$ cabal install -p --lib parallel --reinstall
+
+Configure with
+
+$ cabal configure --enable-profiling
+
+Edit the cpsa4 GHC-Options to include "-fprof-auto -with-rtsopts=-p".
