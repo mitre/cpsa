@@ -161,7 +161,7 @@ module CPSA.Algebra (name, alias,
     unify,
     compose,
     absenceSubst,
-    
+
     Env,
     emptyEnv,
     instantiate,
@@ -356,7 +356,6 @@ data Term
     | Y Int                     -- Indx constant
       deriving Show
 
-
 subNums :: Term -> Set Term
 subNums t | isNum t = S.singleton t
 subNums t@(F Exp _) = S.singleton (F Base [t])
@@ -395,8 +394,10 @@ equalTerm t l@(F Exp [t0, G t1]) | M.null t1 = error ("EQ: " ++ show l)
 equalTerm l@(F Exp [F Exp [t, G t0], G t1]) t' = error ("EQ: " ++ show l)
 equalTerm t l@(F Exp [F Exp [t', G t0], G t1])  = error ("EQ: " ++ show l)
 #else
-equalTerm (F (Invk op) [F (Invk op') [t]]) t' | op == op' = equalTerm t t'
-equalTerm t (F (Invk op) [F (Invk op') [t']]) | op == op' = equalTerm t t'
+-- equalTerm (F (Invk op) [F (Invk op') [t]]) t' | op == op' = equalTerm t t'
+-- equalTerm t (F (Invk op) [F (Invk op') [t']]) | op == op' = equalTerm t t'
+equalTerm (F (Invk _) [F (Invk _) [t]]) t' = equalTerm t t'
+equalTerm t (F (Invk _) [F (Invk _) [t']]) = equalTerm t t'
 equalTerm (F Exp [t0, G t1]) t' | M.null t1 = equalTerm t0 t'
 equalTerm t (F Exp [t0, G t1]) | M.null t1 = equalTerm t t0
 equalTerm (F Exp [F Exp [t, G t0], G t1]) t' =
@@ -809,7 +810,6 @@ constituent t _ =
 decryptionKey :: Term -> Maybe Term
 decryptionKey (F (Enc _) [_, t]) = Just (inv t)
 decryptionKey _ = Nothing
-
 
 buildable :: Set Term -> Set Term -> Term -> Bool
 buildable knowns unguessable term =
@@ -1399,7 +1399,6 @@ occurs _ (Z _) = False
 occurs x (X y) = x == y
 occurs _ (Y _) = False
 
-
 type GenSubst = (Gen, Subst)
 
 unifyChase :: Term -> Term -> GenSubst -> [GenSubst]
@@ -1767,6 +1766,11 @@ match (D x) t (g, Env (v, r)) =
     Nothing -> [(g, Env (v, M.insert x t r))]
     Just t' -> if t == t' then [(g, Env (v, r))] else []
 match (Z p) (Z p') r = if p == p' then [r] else []
+match (X x) t (g, Env (v, r)) =
+  case M.lookup x r of
+    Nothing -> [(g, Env (v, M.insert x t r))]
+    Just t' -> if t == t' then [(g, Env (v, r))] else []
+match (Y p) (Y p') r = if p == p' then [r] else []
 match _ _ _ = []
 
 -- On input t, outputs (b, e) such that if t is of sort base then
@@ -2604,7 +2608,7 @@ loadCat sig _ vars strict (l : ls) =
       return $ foldr1 (\a b -> F (Tupl "cat") [a, b]) ts
 loadCat _ pos _ _ _ = fail (shows pos "Malformed cat")
 
-loadOper :: MonadFail m => Sig -> Pos -> [Term] -> Bool -> 
+loadOper :: MonadFail m => Sig -> Pos -> [Term] -> Bool ->
             Sig.Operator -> [SExpr Pos] -> m Term
 loadOper sig pos vars strict (Sig.Enc op) (l : l' : ls) =
     do
