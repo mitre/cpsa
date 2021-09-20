@@ -167,7 +167,7 @@ Source-Repository head
 Executable cpsa4
   Main-Is:              CPSA/Main.hs
   Default-Language:     Haskell2010
-  Build-Depends:        base >= 4 && < 5, containers, parallel
+  Build-Depends:        base >= 4.13 && < 5, containers, parallel
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports -fmax-pmcheck-iterations=10000000 -threaded -rtsopts
   Hs-Source-Dirs:       src
@@ -181,7 +181,7 @@ Executable cpsa4
 Executable cpsa4sas
   Main-Is:              CPSA/SAS/Main.hs
   Default-Language:     Haskell2010
-  Build-Depends:        base >= 4 && < 5, containers
+  Build-Depends:        base >= 4.13 && < 5, containers
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports -fmax-pmcheck-iterations=10000000
   Hs-Source-Dirs:       src
@@ -226,7 +226,7 @@ Executable cpsa4diff
 Executable cpsa4graph
   Main-Is:              CPSA/Graph/Main.hs
   Default-Language:     Haskell2010
-  Build-Depends:        base >= 4, containers
+  Build-Depends:        base >= 4.13, containers
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
   Hs-Source-Dirs:       src
@@ -241,7 +241,7 @@ Executable cpsa4graph
 Executable cpsa4shapes
   Main-Is:              CPSA/Shapes/Main.hs
   Default-Language:     Haskell2010
-  Build-Depends:        base >= 4, containers
+  Build-Depends:        base >= 4.13, containers
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
   Hs-Source-Dirs:       src
@@ -295,7 +295,7 @@ Executable cpsa42latex
 Executable cpsa4roletran
   Main-Is:              CPSA/Roletran/Main.hs
   Default-Language:     Haskell2010
-  Build-Depends:        base >= 4 && < 5, containers
+  Build-Depends:        base >= 4.13 && < 5, containers
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
   Hs-Source-Dirs:       src
@@ -308,7 +308,7 @@ Executable cpsa4roletran
 Executable cpsa4coq
   Main-Is:              CPSA/Coq/Main.hs
   Default-Language:     Haskell2010
-  Build-Depends:        base >= 4 && < 5, containers
+  Build-Depends:        base >= 4.13 && < 5, containers
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
   Hs-Source-Dirs:       src
@@ -319,7 +319,7 @@ Executable cpsa4coq
 Executable cpsa4rolecoq
   Main-Is:              CPSA/RoleCoq/Main.hs
   Default-Language:     Haskell2010
-  Build-Depends:        base >= 4 && < 5, containers
+  Build-Depends:        base >= 4.13 && < 5, containers
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
   Hs-Source-Dirs:       src

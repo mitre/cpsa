@@ -6,8 +6,6 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-{-# LANGUAGE CPP #-}
-
 module CPSA.Lib.ReturnFail where
 
 -- Like Either String but with fail method defined
@@ -28,7 +26,5 @@ instance Monad ReturnFail where
     Fail l >>= _   = Fail l
     Return r >>= k = k r
 
-#if (MIN_VERSION_base(4,13,0))
 instance MonadFail ReturnFail where
-#endif
     fail s         = Fail s

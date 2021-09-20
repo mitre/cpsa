@@ -6,12 +6,6 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-{-# LANGUAGE CPP #-}
-
-#if !(MIN_VERSION_base(4,13,0))
-#define MonadFail Monad
-#endif
-
 module CPSA.Roletran.Protocol (
   Event (..), Trace, traceWellFormed,
   Role, mkRole, rname, rpos, rvars, rtrace, runiques, rinputs, routputs,

@@ -96,10 +96,6 @@
 
 {-# LANGUAGE CPP #-}
 
-#if !(MIN_VERSION_base(4,13,0))
-#define MonadFail Monad
-#endif
-
 module CPSA.Algebra (name, alias,
 
     Gen,

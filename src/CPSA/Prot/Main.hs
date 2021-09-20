@@ -30,12 +30,6 @@ The form (clone A B) says make role B have the same messages as A up
 to this point in the specification.
 -}
 
-{-# LANGUAGE CPP #-}
-
-#if !(MIN_VERSION_base(4,13,0))
-#define MonadFail Monad
-#endif
-
 module Main (main) where
 
 import Numeric
