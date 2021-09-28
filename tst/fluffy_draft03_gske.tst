@@ -16,8 +16,7 @@
     (trace (recv (cat "req" s g (enc b nb (ltk s b))))
       (send (cat "resp" b (enc s g nb gk (ltk s b))))
       (recv (cat "fetch" s g (enc a na (ltk s a))))
-      (send (cat "deliver" a (enc s g na gk (ltk s a)))))
-    (uniq-gen gk))
+      (send (cat "deliver" a (enc s g na gk (ltk s a))))))
   (defrole client
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
@@ -130,8 +129,7 @@
     (trace (recv (cat "req" s g (enc b nb (ltk s b))))
       (send (cat "resp" b (enc s g nb gk (ltk s b))))
       (recv (cat "fetch" s g (enc a na (ltk s a))))
-      (send (cat "deliver" a (enc s g na gk (ltk s a)))))
-    (uniq-gen gk))
+      (send (cat "deliver" a (enc s g na gk (ltk s a))))))
   (defrole client
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
@@ -372,8 +370,7 @@
     (trace (recv (cat "req" s g (enc b nb (ltk s b))))
       (send (cat "resp" b (enc s g nb gk (ltk s b))))
       (recv (cat "fetch" s g (enc a na (ltk s a))))
-      (send (cat "deliver" a (enc s g na gk (ltk s a)))))
-    (uniq-gen gk))
+      (send (cat "deliver" a (enc s g na gk (ltk s a))))))
   (defrole client
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
@@ -485,8 +482,7 @@
     (trace (recv (cat "req" s g (enc b nb (ltk s b))))
       (send (cat "resp" b (enc s g nb gk (ltk s b))))
       (recv (cat "fetch" s g (enc a na (ltk s a))))
-      (send (cat "deliver" a (enc s g na gk (ltk s a)))))
-    (uniq-gen gk))
+      (send (cat "deliver" a (enc s g na gk (ltk s a))))))
   (defrole client
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
@@ -587,8 +583,7 @@
     (trace (recv (cat "req" s g (enc b nb (ltk s b))))
       (send (cat "resp" b (enc s g nb gk (ltk s b))))
       (recv (cat "fetch" s g (enc a na (ltk s a))))
-      (send (cat "deliver" a (enc s g na gk (ltk s a)))))
-    (uniq-gen gk))
+      (send (cat "deliver" a (enc s g na gk (ltk s a))))))
   (defrole client
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
@@ -711,8 +706,7 @@
     (trace (recv (cat "req" s g (enc b nb (ltk s b))))
       (send (cat "resp" b (enc s g nb gk (ltk s b))))
       (recv (cat "fetch" s g (enc a na (ltk s a))))
-      (send (cat "deliver" a (enc s g na gk (ltk s a)))))
-    (uniq-gen gk))
+      (send (cat "deliver" a (enc s g na gk (ltk s a))))))
   (defrole client
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))

@@ -77,19 +77,19 @@
         (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
           (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
   (defgenrule trRl_dev-close-at-2
-    (forall ((z strd)) (implies (p "dev-close" z 3) (trans z 2))))
+    (forall ((z strd)) (implies (p "dev-close" z 4) (trans z 2))))
   (defgenrule trRl_dev-close-at-3
     (forall ((z strd)) (implies (p "dev-close" z 4) (trans z 3))))
   (defgenrule trRl_dev-open-at-2
-    (forall ((z strd)) (implies (p "dev-open" z 3) (trans z 2))))
+    (forall ((z strd)) (implies (p "dev-open" z 4) (trans z 2))))
   (defgenrule trRl_dev-open-at-3
     (forall ((z strd)) (implies (p "dev-open" z 4) (trans z 3))))
   (defgenrule trRl_dev-up-at-1
-    (forall ((z strd)) (implies (p "dev-up" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "dev-up" z 3) (trans z 1))))
   (defgenrule trRl_dev-up-at-2
     (forall ((z strd)) (implies (p "dev-up" z 3) (trans z 2))))
   (defgenrule trRl_dev-up-at-3
-    (forall ((z strd)) (implies (p "dev-up" z 4) (trans z 3))))
+    (forall ((z strd)) (implies (p "dev-up" z 5) (trans z 3))))
   (defgenrule trRl_dev-up-at-4
     (forall ((z strd)) (implies (p "dev-up" z 5) (trans z 4))))
   (defgenrule scissorsRule
@@ -240,19 +240,19 @@
         (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
           (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
   (defgenrule trRl_dev-close-at-2
-    (forall ((z strd)) (implies (p "dev-close" z 3) (trans z 2))))
+    (forall ((z strd)) (implies (p "dev-close" z 4) (trans z 2))))
   (defgenrule trRl_dev-close-at-3
     (forall ((z strd)) (implies (p "dev-close" z 4) (trans z 3))))
   (defgenrule trRl_dev-open-at-2
-    (forall ((z strd)) (implies (p "dev-open" z 3) (trans z 2))))
+    (forall ((z strd)) (implies (p "dev-open" z 4) (trans z 2))))
   (defgenrule trRl_dev-open-at-3
     (forall ((z strd)) (implies (p "dev-open" z 4) (trans z 3))))
   (defgenrule trRl_dev-up-at-1
-    (forall ((z strd)) (implies (p "dev-up" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "dev-up" z 3) (trans z 1))))
   (defgenrule trRl_dev-up-at-2
     (forall ((z strd)) (implies (p "dev-up" z 3) (trans z 2))))
   (defgenrule trRl_dev-up-at-3
-    (forall ((z strd)) (implies (p "dev-up" z 4) (trans z 3))))
+    (forall ((z strd)) (implies (p "dev-up" z 5) (trans z 3))))
   (defgenrule trRl_dev-up-at-4
     (forall ((z strd)) (implies (p "dev-up" z 5) (trans z 4))))
   (defgenrule scissorsRule
@@ -406,19 +406,19 @@
         (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
           (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
   (defgenrule trRl_dev-close-at-2
-    (forall ((z strd)) (implies (p "dev-close" z 3) (trans z 2))))
+    (forall ((z strd)) (implies (p "dev-close" z 4) (trans z 2))))
   (defgenrule trRl_dev-close-at-3
     (forall ((z strd)) (implies (p "dev-close" z 4) (trans z 3))))
   (defgenrule trRl_dev-open-at-2
-    (forall ((z strd)) (implies (p "dev-open" z 3) (trans z 2))))
+    (forall ((z strd)) (implies (p "dev-open" z 4) (trans z 2))))
   (defgenrule trRl_dev-open-at-3
     (forall ((z strd)) (implies (p "dev-open" z 4) (trans z 3))))
   (defgenrule trRl_dev-up-at-1
-    (forall ((z strd)) (implies (p "dev-up" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "dev-up" z 3) (trans z 1))))
   (defgenrule trRl_dev-up-at-2
     (forall ((z strd)) (implies (p "dev-up" z 3) (trans z 2))))
   (defgenrule trRl_dev-up-at-3
-    (forall ((z strd)) (implies (p "dev-up" z 4) (trans z 3))))
+    (forall ((z strd)) (implies (p "dev-up" z 5) (trans z 3))))
   (defgenrule trRl_dev-up-at-4
     (forall ((z strd)) (implies (p "dev-up" z 5) (trans z 4))))
   (defgenrule scissorsRule
@@ -844,19 +844,19 @@
         (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
           (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
   (defgenrule trRl_dev-close-at-2
-    (forall ((z strd)) (implies (p "dev-close" z 3) (trans z 2))))
+    (forall ((z strd)) (implies (p "dev-close" z 4) (trans z 2))))
   (defgenrule trRl_dev-close-at-3
     (forall ((z strd)) (implies (p "dev-close" z 4) (trans z 3))))
   (defgenrule trRl_dev-open-at-2
-    (forall ((z strd)) (implies (p "dev-open" z 3) (trans z 2))))
+    (forall ((z strd)) (implies (p "dev-open" z 4) (trans z 2))))
   (defgenrule trRl_dev-open-at-3
     (forall ((z strd)) (implies (p "dev-open" z 4) (trans z 3))))
   (defgenrule trRl_dev-up-at-1
-    (forall ((z strd)) (implies (p "dev-up" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "dev-up" z 3) (trans z 1))))
   (defgenrule trRl_dev-up-at-2
     (forall ((z strd)) (implies (p "dev-up" z 3) (trans z 2))))
   (defgenrule trRl_dev-up-at-3
-    (forall ((z strd)) (implies (p "dev-up" z 4) (trans z 3))))
+    (forall ((z strd)) (implies (p "dev-up" z 5) (trans z 3))))
   (defgenrule trRl_dev-up-at-4
     (forall ((z strd)) (implies (p "dev-up" z 5) (trans z 4))))
   (defgenrule scissorsRule

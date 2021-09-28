@@ -11,7 +11,7 @@ module CPSA.Cohort (Mode(..), ReduceRes(..), reduce, unrealized) where
 import qualified Data.Set as S
 import Data.Set (Set)
 import qualified Data.List as L
-import Control.Parallel 
+import Control.Parallel
 import CPSA.Algebra
 import CPSA.Channel
 import CPSA.Protocol
@@ -224,8 +224,7 @@ parFoldr f b (a : as) =
     where
       b' = parFoldr f b as
 
-
--- Desired functionality, given a skeleton k.  
+-- Desired functionality, given a skeleton k.
 
 -- If some node in k is unrealized, then find a test for it; compute
 -- the cohort; close each cohort member under the rules using
@@ -247,7 +246,7 @@ parFoldr f b (a : as) =
 -- If multiple nonisomorphic results ks are obtained from simplifying
 -- k, return Crt ks.
 
--- Previous comment, which was less explicit:  
+-- Previous comment, which was less explicit:
 
 --   -- Abort if there is an unrealized node without a test, otherwise
 --   -- return a list of skeletons that solve one test.  If the skeleton is
@@ -255,14 +254,14 @@ parFoldr f b (a : as) =
 --   -- After all of that, apply rewrite rule and filter output that makes
 --   -- no progress.
 
-data ReduceRes = Stable | Crt [Preskel] -- | Gnl [Preskel] not needed?  
+data ReduceRes = Stable | Crt [Preskel] -- | Gnl [Preskel] not needed?
 
 simplifyNonIsomorphic :: Preskel -> [Preskel]
 simplifyNonIsomorphic = factorIsomorphicPreskels . simplify
-                        
+
 reduceNoTest :: Mode -> Preskel -> ReduceRes
 reduceNoTest mode k =
-    case simplifyNonIsomorphic k of      
+    case simplifyNonIsomorphic k of
       [k']
           | isomorphic (gist k) (gist k') ->
               if omitGeneralization || noGeneralization mode then Stable
@@ -273,9 +272,9 @@ reduceNoTest mode k =
           | True -> Crt [k']
       ks -> Crt (filterSame k ks)
 
-reduce :: Mode -> Preskel -> ReduceRes 
+reduce :: Mode -> Preskel -> ReduceRes
 reduce mode k =
-    case findTest mode k u a of 
+    case findTest mode k u a of
       Nothing -> reduceNoTest mode k
       Just ks ->                -- normal cohort for selected unrealized node
         Crt (parFoldr
@@ -283,7 +282,7 @@ reduce mode k =
              []
              $ factorIsomorphicPreskels ks)
     where
-      (a, u) = avoid k 
+      (a, u) = avoid k
 
 -- Filter out skeletons in ks that are isomorphic to k.
 filterSame :: Preskel -> [Preskel] -> [Preskel]

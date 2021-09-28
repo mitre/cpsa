@@ -43,13 +43,12 @@ maybeNth as i =
       False -> Nothing
 
 listMax :: Ord a => [a] -> Maybe a
-listMax [] = Nothing 
+listMax [] = Nothing
 listMax [a] = Just a
 listMax (a : rest) =
     do
       maxRest <- listMax rest
-      Just $ max a maxRest  
-               
+      Just $ max a maxRest
 
 -- Returns a list of the natural numbers less that the argument.
 {-# INLINE nats #-}

@@ -89,11 +89,11 @@
         (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
           (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
   (defgenrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1))))
   (defgenrule trRl_tpm-extend-enc-at-2
     (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
   (defgenrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
   (defgenrule trRl_tpm-power-on-at-2
     (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
   (defgenrule scissorsRule
@@ -495,11 +495,11 @@
         (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
           (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
   (defgenrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1))))
   (defgenrule trRl_tpm-extend-enc-at-2
     (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
   (defgenrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
   (defgenrule trRl_tpm-power-on-at-2
     (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
   (defgenrule scissorsRule
@@ -945,11 +945,11 @@
         (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
           (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
   (defgenrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1))))
   (defgenrule trRl_tpm-extend-enc-at-2
     (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
   (defgenrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
   (defgenrule trRl_tpm-power-on-at-2
     (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
   (defgenrule scissorsRule
@@ -1734,11 +1734,11 @@
         (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
           (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
   (defgenrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1))))
   (defgenrule trRl_tpm-extend-enc-at-2
     (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
   (defgenrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
   (defgenrule trRl_tpm-power-on-at-2
     (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
   (defgenrule scissorsRule
@@ -2147,11 +2147,11 @@
         (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
           (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
   (defgenrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1))))
   (defgenrule trRl_tpm-extend-enc-at-2
     (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
   (defgenrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
   (defgenrule trRl_tpm-power-on-at-2
     (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
   (defgenrule scissorsRule
@@ -2604,11 +2604,11 @@
         (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
           (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
   (defgenrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1))))
   (defgenrule trRl_tpm-extend-enc-at-2
     (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
   (defgenrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
   (defgenrule trRl_tpm-power-on-at-2
     (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
   (defgenrule scissorsRule
@@ -3395,11 +3395,11 @@
         (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
           (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
   (defgenrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1))))
   (defgenrule trRl_tpm-extend-enc-at-2
     (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
   (defgenrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
   (defgenrule trRl_tpm-power-on-at-2
     (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
   (defgenrule scissorsRule
@@ -3810,11 +3810,11 @@
         (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
           (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
   (defgenrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1))))
   (defgenrule trRl_tpm-extend-enc-at-2
     (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
   (defgenrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
   (defgenrule trRl_tpm-power-on-at-2
     (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
   (defgenrule scissorsRule
@@ -4269,11 +4269,11 @@
         (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
           (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
   (defgenrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1))))
   (defgenrule trRl_tpm-extend-enc-at-2
     (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
   (defgenrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 2) (trans z 1))))
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
   (defgenrule trRl_tpm-power-on-at-2
     (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
   (defgenrule scissorsRule

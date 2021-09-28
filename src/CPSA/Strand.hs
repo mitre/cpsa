@@ -9,14 +9,15 @@
 module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     role, env, trace, height, listenerTerm, Sid, Node, mkPreskel,
     firstSkeleton, Pair, Preskel, gen, protocol, kgoals, insts, orderings,
-    pov, knon, kpnon, kunique, kgenSt, kconf, kauth, kfacts, korig,
-    kpriority, kcomment, nstrands,
+    pov, knon, kpnon, kunique, kuniqgen, kabsent, kprecur, kgenSt,
+    kconf, kauth, kfacts, korig, kugen, kpriority, kcomment, nstrands,
     kvars, kfvars, strandids, kterms, kchans, uniqOrig, preskelWellFormed,
     confCm, authCm,
     verbosePreskelWellFormed, Strand, inst, sid, nodes,
     Vertex, strand, pos, preds, event, graphNode, strands, vertex,
     Gist, gist, isomorphic, factorIsomorphicPreskels, contract, augment,
-    inheritRnon, inheritRpnon, inheritRunique, inheritRconf, inheritRauth,
+    inheritRnon, inheritRpnon, inheritRunique, inheritRuniqgen,
+    inheritRconf, inheritRauth,
     addListener, Cause (..), Direction (..), Method (..), Operation (..),
     operation, krules, pprob, prob, homomorphism, toSkeleton, generalize,
     collapse, sat, FTerm (..), Fact (..), simplify, rewrite, localSignal, rewriteUnaryOneOnce) where
@@ -239,7 +240,6 @@ type Node = (Sid, Int)
 
 type Pair = (Node, Node)
 
-
 -- Graphs of preskeletons
 
 -- A strand is what is referred to by a strand ID.
@@ -341,7 +341,7 @@ graphReduce orderings =
           | elem n seen = loop dst ns seen
           | otherwise = loop dst (preds n ++ ns) (n : seen)
 
--- Compute the transitive closure, but omit same strand pairs.  
+-- Compute the transitive closure, but omit same strand pairs.
 -- This routine returns pairs that are not well ordered.
 -- Deal with it!
 graphClose :: [GraphEdge e i] -> [GraphEdge e i]
@@ -360,15 +360,13 @@ graphClose orderings =
           | otherwise = inner (p : orderings) True pairs rest
       sameStrands (n0, n1) = strand n0 == strand n1
 
-
 -- Compute the transitive closure including same strand
--- pairs.  
+-- pairs.
 -- This routine returns pairs that are not well ordered.
 -- Deal with it!
 graphCloseAll :: [GraphEdge e i] -> [GraphEdge e i]
 graphCloseAll orderings =
     graphAllCloseLoop orderings False orderings
-
 
 graphAllCloseLoop :: [GraphEdge e i] -> Bool -> [GraphEdge e i] -> [GraphEdge e i]
 graphAllCloseLoop orderings False [] = orderings
@@ -411,7 +409,10 @@ data Preskel = Preskel
       knon :: ![Term],            -- A list of atoms
       kpnon :: ![Term],           -- A list of atoms
       kunique :: ![Term],         -- A list of atoms
-      kgenSt :: ![Term],          -- A list of terms, known to be non-initial 
+      kuniqgen :: ![Term],        -- A list of atoms
+      kabsent :: ![Term],         -- A list of random exponents
+      kprecur :: ![Node],         -- A list of nodes
+      kgenSt :: ![Term],          -- A list of terms, known to be non-initial
       kconf :: ![Term],           -- A list of channels
       kauth :: ![Term],           -- A list of channels
       kfacts :: ![Fact],          -- A list of facts
@@ -423,14 +424,15 @@ data Preskel = Preskel
                                 -- The value associated with a term
                                 -- is a list of the nodes at which it
                                 -- originates--the term's provenance.
+      kugen :: ![(Term, [Node])], -- Like korig but for kuniqgen.
       pov :: Maybe Preskel,     -- Point of view, the
                                 -- original problem statement.
       strandids :: ![Sid],
       tc :: [Pair],             -- Transitive closure of orderings
                                 -- Used only during generalization
-      gist :: Gist,              -- Gist for iso checking 
+      gist :: Gist,              -- Gist for iso checking
       operation :: Operation,
-      krules :: [String],    -- Names of rules applied 
+      krules :: [String],    -- Names of rules applied
       pprob :: [Sid],        -- strand map from preskel to first skeleton
       prob :: [Sid] }        -- A map from the strands in the original
     deriving Show               -- problem statement, the pov, into
@@ -480,14 +482,15 @@ data Operation
 -- must be consumed by firstSkeleton.
 mkPreskel :: Gen -> Prot -> [Goal] -> [Instance] -> [Pair] ->
              [Term] -> [Term] -> [Term] -> [Term] ->
-             [Term] ->          -- new arg:  generated state values 
+             [Term] -> [Node] -> [Term] -> [Term] ->
              [Term] -> [Fact] -> [(Node, Int)] -> [SExpr ()] -> Preskel
 mkPreskel gen protocol gs insts orderings non pnon
-          unique genStVs conf auth facts prio comment =
+          unique uniqgen absent precur genStVs
+          conf auth facts prio comment =
     k { kcomment = comment }
     where
       k = newPreskel gen shared insts orderings non pnon
-          unique genStVs           -- kgenSt members 
+          unique uniqgen absent precur genStVs
           conf auth facts prio New [] prob prob Nothing
       shared = Shared { prot = protocol, goals = gs }
       prob = strandids k        -- Fixed point on k is okay.
@@ -518,33 +521,40 @@ firstSkeleton k =
 -- within this module.
 newPreskel :: Gen -> Shared ->
              [Instance] -> [Pair] -> [Term] -> [Term] -> [Term] ->
-             [Term] -> [Term] -> [Term] -> [Fact] -> [(Node, Int)] -> Operation ->
+             [Term] -> [Term] -> [Node] -> [Term] -> [Term] -> [Term] ->
+             [Fact] -> [(Node, Int)] -> Operation ->
              [String] -> [Sid] -> [Sid] -> Maybe Preskel -> Preskel
-newPreskel gen shared insts orderings non pnon unique genSt conf auth facts
+newPreskel gen shared insts orderings non pnon unique
+           uniqgen absent precur genSt conf auth facts
            prio oper rules pprob prob pov =
     let orderings' = L.nub orderings
         unique' = L.nub unique
+        uniqgen' = L.nub uniqgen
         facts' = L.nub facts
         g = graph trace height insts orderings'
         strands = gstrands g
         edges = gedges g
         gpOrds = map graphPair $ graphClose $ graphEdges $ strands
-        gpOrdsAll = map graphPair $ graphCloseAll $ graphEdges $ strands 
+        gpOrdsAll = map graphPair $ graphCloseAll $ graphEdges $ strands
         orig = map (originationNodes strands) unique'
+        ugen = map (generationNodes strands) uniqgen'
         tc = filter pairWellOrdered (graphClose $ graphEdges strands)
-        gg = mkGist k 
+        gg = mkGist k
         k = Preskel { gen = gen,
                       shared = shared,
                       insts = insts,
                       strands = strands,
                       orderings = orderings',
                       kgpOrds = gpOrds,
-                      kgpOrdsAll = gpOrdsAll, 
+                      kgpOrdsAll = gpOrdsAll,
                       edges = edges,
                       knon = L.nub non,
                       kpnon = L.nub pnon,
                       kunique = unique',
-                      kgenSt = L.nub genSt, 
+                      kuniqgen = uniqgen',
+                      kabsent = L.nub absent,
+                      kprecur = L.nub precur,
+                      kgenSt = L.nub genSt,
                       kconf = L.nub conf,
                       kauth = L.nub auth,
                       kfacts = facts',
@@ -552,8 +562,9 @@ newPreskel gen shared insts orderings non pnon unique genSt conf auth facts
                       kpriority = prio,
                       kcomment = [],
                       korig = orig,
+                      kugen = ugen,
                       tc = map graphPair tc,
-                      gist = gg,  
+                      gist = gg,
                       strandids = nats (length insts),
                       operation = oper,
                       krules = rules,
@@ -589,6 +600,12 @@ originationNodes strands u =
           strand <- reverse strands,
           p <- M.maybeToList $ originationPos u (trace (inst strand)) ])
 
+generationNodes :: [Strand] -> Term -> (Term, [Node])
+generationNodes strands u =
+    (u, [ (sid strand, p) |
+          strand <- reverse strands,
+          p <- M.maybeToList $ generationPos u (trace (inst strand)) ])
+
 uniqOrig :: Preskel -> [Term]
 uniqOrig k =
     do
@@ -610,7 +627,7 @@ preskelWellFormed k =
     varSubset (kpnon k) terms &&
     all nonCheck (knon k) &&
     all uniqueCheck (kunique k) &&
-    all genStCheck (kgenSt k) && 
+    all genStCheck (kgenSt k) &&
     all chanCheck (kconf k) &&
     all chanCheck (kauth k) &&
     wellOrdered k && acyclicOrder k &&
@@ -687,7 +704,7 @@ pairWellOrdered (n0, n1) =
       (Out _, In _) -> True
       _ -> False
 
-data Dir = Recv | Send 
+data Dir = Recv | Send
 
 dirChMsgOfNode :: Node -> Preskel -> Maybe (Dir, ChMsg )
 dirChMsgOfNode (i, j) k =
@@ -700,8 +717,8 @@ dirChMsgOfNode (i, j) k =
 
 genNodes :: Preskel -> [Node]
 genNodes k =
-    let strs = strands k in 
-    let strCnt = L.length strs in 
+    let strs = strands k in
+    let strCnt = L.length strs in
     [(i,j) | i <- [0..strCnt-1],
                   j <- [0 .. (L.length (nodes (strs !! i)))-1] ]
 
@@ -713,10 +730,8 @@ genNodes k =
 --       let strs = strands k in
 --       let strCnt = L.length strs in
 --       case i < strCnt of
---         True -> [(i,j) | j <- [0 .. (L.length (nodes (strs !! i)))-1] ] 
---         False -> [] 
-
-            
+--         True -> [(i,j) | j <- [0 .. (L.length (nodes (strs !! i)))-1] ]
+--         False -> []
 
 -- The terms used in the strands in this preskeleton.
 -- Should this return a set, or a multiset?
@@ -785,7 +800,7 @@ authCm k e =
   case cmChan e of
     Just ch -> elem ch (kauth k) ||
                (isLocn ch &&
-                (let t = (cmTerm e) in 
+                (let t = (cmTerm e) in
                  elem t (kgenSt k) ||
                  (isLocnMsg t &&
                   elem (locnMsgPayload t) (kgenSt k))))
@@ -818,7 +833,7 @@ data Gist = Gist
       gnon :: [Term],    -- A list of non-originating terms
       gpnon :: [Term],   -- A list of penetrator non-originating terms
       gunique :: [Term], -- A list of uniquely-originating terms
-      ggenSt :: [Term],  -- A list of terms for generated states 
+      ggenSt :: [Term],  -- A list of terms for generated states
       gfacts :: [Fact],  -- A list of facts
       gfvars :: [Term],  -- Fact vars not in instances
       nvars :: !Int,     -- Number of variables
@@ -828,7 +843,7 @@ data Gist = Gist
       nnon :: !Int,      -- Number of non-originating terms
       npnon :: !Int,     -- Number of penetrator non-originating terms
       nunique :: !Int,   -- Number of uniquely-originating terms
-      ngenSt :: !Int,  -- Number of generated states 
+      ngenSt :: !Int,  -- Number of generated states
       nfacts :: !Int,    -- Number of facts
       nfvars :: !Int }   -- Number of fact vars not in instances
     deriving Show
@@ -841,7 +856,7 @@ mkGist k =
            gnon = gnon,
            gpnon = gpnon,
            gunique = gunique,
-           ggenSt = ggenSt, 
+           ggenSt = ggenSt,
            gfacts = gfacts,
            gfvars = gfvars,
            nvars = length (kvars k),
@@ -851,7 +866,7 @@ mkGist k =
            nnon = length gnon,
            npnon = length gpnon,
            nunique = length gunique,
-           ngenSt  = length ggenSt, 
+           ngenSt  = length ggenSt,
            nfacts = length gfacts,
            nfvars = length gfvars }
     where
@@ -924,7 +939,7 @@ sameSkyline g g' =
     nnon g == nnon g' &&
     npnon g == npnon g' &&
     nunique g == nunique g' &&
-    ngenSt g == ngenSt g' && 
+    ngenSt g == ngenSt g' &&
     nfacts g == nfacts g' &&
     nfvars g == nfvars g'
 
@@ -1020,7 +1035,7 @@ tryPerm g g' (env, renv, perm) =
     checkOrigs g g' env &&
     checkOrigs g' g renv &&
     checkGenSt g g' env &&
-    checkGenSt g' g renv && 
+    checkGenSt g' g renv &&
     any (tryFacts g g' perm (invperm perm)) (fperms g g' env renv) &&
     containsMapped (permutePair perm) (gorderings g') (gorderings g)
 
@@ -1077,11 +1092,10 @@ checkOrig _ _ _ = error "Strand.checkOrig: lists not same length"
 
 checkGenSt :: Gist -> Gist -> (Gen, Env) -> Bool
 checkGenSt g g' env =
-    let genStVs = (ggenSt g) in 
+    let genStVs = (ggenSt g) in
     let genStVs' = (ggenSt g') in
-    let (_, e) = env in 
+    let (_, e) = env in
     all (\gs -> (instantiate e gs) `elem` genStVs') genStVs
-
 
 -- Preskeleton Reduction System (PRS)
 
@@ -1112,13 +1126,16 @@ ksubst (k0, k, n, phi, hsubst) (gen, subst) =
       let non' = map (substitute subst) (knon k)
       let pnon' = map (substitute subst) (kpnon k)
       let unique' = map (substitute subst) (kunique k)
+      let uniqgen' = map (substitute subst) (kuniqgen k)
+      let absent' = map (substitute subst) (kabsent k)
       let genStV' = map (substitute subst) (kgenSt k)
       let conf' = map (substitute subst) (kconf k)
       let auth' = map (substitute subst) (kauth k)
       let facts' = map (substFact subst) (kfacts k)
       let operation' = substOper subst (operation k)
       let k' = newPreskel gen' (shared k) insts'
-               (orderings k) non' pnon' unique' genStV' conf' auth' facts'
+               (orderings k) non' pnon' unique' uniqgen'
+               absent' (kprecur k) genStV' conf' auth' facts'
                (kpriority k) operation' (krules k) (pprob k) (prob k) (pov k)
       k' <- wellFormedPreskel k'
       return (k0, k', n, phi, compose subst hsubst)
@@ -1168,6 +1185,9 @@ compress validate (k0, k, n, phi, hsubst) s s' =
               (knon k)
               (kpnon k)
               (kunique k)
+              (kuniqgen k)
+              (kabsent k)
+              (map (updateNode s s') (kprecur k))
               (kgenSt k)
               (kconf k)
               (kauth k)
@@ -1193,6 +1213,10 @@ updateStrand :: Int -> Int -> Sid -> Sid
 updateStrand old new i =
     let j = if old == i then new else i in
     if j > old then j - 1 else j
+
+updateNode :: Int -> Int -> Node -> Node
+updateNode old new (s, i) =
+    (updateStrand old new s, i)
 
 -- Eliminates implied intrastrand orderings and fails if it finds a
 -- reverse intrastrand ordering when flag is true.
@@ -1233,6 +1257,9 @@ purge (k0, k, n, phi, hsubst) s s' =
               (knon k)
               (kpnon k)
               (kunique k)
+              (kuniqgen k)
+              (kabsent k)
+              (map (updateNode s s') (kprecur k))
               (kgenSt k)
               (kconf k)
               (kauth k)
@@ -1269,6 +1296,9 @@ soothePreskel k =
   (filter varCheck $ knon k)
   (filter varCheck $ kpnon k)
   (filter uniqueCheck $ kunique k)
+  (filter varCheck $ kuniqgen k)
+  (kabsent k)
+  (kprecur k)
   (kgenSt k)
   (filter chanCheck $ kconf k)
   (filter chanCheck $ kauth k)
@@ -1331,6 +1361,9 @@ enrich thin (k0, k, n, phi, hsubst) =
                   (knon k)
                   (kpnon k)
                   (kunique k)
+                  (kuniqgen k)
+                  (kabsent k)
+                  (kprecur k)
                   (kgenSt k)
                   (kconf k)
                   (kauth k)
@@ -1578,7 +1611,8 @@ precedesCheck k s s' (gn0, gn1)
 dropInbnd :: Preskel -> Sid -> Preskel
 dropInbnd k s =
   newPreskel (gen k) (shared k) (insts k) orderings'
-  (knon k) (kpnon k) (kunique k) (kgenSt k) (kconf k) (kauth k) (kfacts k)
+  (knon k) (kpnon k) (kunique k) (kuniqgen k) (kabsent k) (kprecur k)
+  (kgenSt k) (kconf k) (kauth k) (kfacts k)
   (kpriority k) (operation k) (krules k) (pprob k) (prob k) (pov k)
   where
     orderings' = forward s $ orderings k
@@ -1608,6 +1642,9 @@ reduce (k0, k, n, phi, hsubst) =
                   (knon k)
                   (kpnon k)
                   (kunique k)
+                  (kuniqgen k)
+                  (kabsent k)
+                  (kprecur k)
                   (kgenSt k)
                   (kconf k)
                   (kauth k)
@@ -1708,10 +1745,12 @@ aug (k0, k, n, phi, hsubst) inst =
       let non' = inheritRnon inst ++ (knon k)
       let pnon' = inheritRpnon inst ++ (kpnon k)
       let unique' = inheritRunique inst ++ (kunique k)
+      let uniqgen' = inheritRuniqgen inst ++ (kuniqgen k)
       let conf' = inheritRconf inst ++ (kconf k)
       let auth' = inheritRauth inst ++ (kauth k)
       let k' = newPreskel (gen k) (shared k) insts'
-           orderings' non' pnon' unique' (kgenSt k) conf' auth' (kfacts k) (kpriority k)
+           orderings' non' pnon' unique' uniqgen' (kabsent k) (kprecur k)
+           (kgenSt k) conf' auth' (kfacts k) (kpriority k)
            (operation k) (krules k) (pprob k) (prob k) (pov k)
       k' <- wellFormedPreskel k'
       return (k0, k', n, phi, hsubst)
@@ -1730,6 +1769,11 @@ inheritRpnon i =
 inheritRunique :: Instance -> [Term]
 inheritRunique i =
     inherit i (ruorig (role i))
+
+-- Inherit uniquely generating atoms if the traces is long enough
+inheritRuniqgen :: Instance -> [Term]
+inheritRuniqgen i =
+    inherit i (rugen (role i))
 
 -- Inherit confidential channels if the traces is long enough
 inheritRconf :: Instance -> [Term]
@@ -1809,7 +1853,8 @@ addListener k n cause t =
       homomorphismFilter prs
     where
       k' = newPreskel gen' (shared k) insts' orderings' (knon k)
-           (kpnon k) (kunique k) (kgenSt k) (kconf k) (kauth k) (kfacts k) (kpriority k)
+           (kpnon k) (kunique k) (kuniqgen k) (kabsent k) (kprecur k)
+           (kgenSt k) (kconf k) (kauth k) (kfacts k) (kpriority k)
            (AddedListener t cause) [] (pprob k) (prob k) (pov k)
       (gen', inst) = mkListener (protocol k) (gen k) t
       insts' = insts k ++ [inst]
@@ -1849,7 +1894,7 @@ validateEnv k k' mapping env =
     all (flip elem (kunique k')) (map (instantiate env) (kunique k)) &&
     all (flip elem (kfacts k'))
             (map (instUpdateFact env (mapping !!)) (kfacts k)) &&
-    all (flip elem (kgenSt k')) (map (instantiate env) (kgenSt k)) && 
+    all (flip elem (kgenSt k')) (map (instantiate env) (kgenSt k)) &&
     validateEnvOrig k k' mapping env &&
     all (flip elem (tc k')) (permuteOrderings mapping (orderings k))
 
@@ -1955,7 +2000,8 @@ shortenOrderings (s, i) ps =
 deleteNodeRest :: Preskel -> Gen -> Node -> [Instance] -> [Pair] ->
                   [Sid] -> [Fact] -> Preskel
 deleteNodeRest k gen n insts' orderings prob facts =
-    newPreskel gen (shared k) insts' orderings non' pnon' unique' (kgenSt k) conf'
+    newPreskel gen (shared k) insts' orderings non' pnon' unique'
+    uniqgen' absent' precur' (kgenSt k) conf'
     auth' facts prio' (Generalized (Deleted n)) [] (pprob k) prob (pov k)
     where
       -- Drop nons that aren't mentioned anywhere
@@ -1966,6 +2012,9 @@ deleteNodeRest k gen n insts' orderings prob facts =
       -- Drop uniques that aren't carried anywhere
       unique' = filter carriedIn (kunique k)
       carriedIn t = any (carriedBy t) terms
+      uniqgen' = filter mentionedIn (kunique k)
+      absent' = filter mentionedIn (kabsent k)
+      precur' = L.delete n (kprecur k)
       -- Drop channel assumptions for non-existent channels
       chans = ichans insts'
       conf' = filter (flip elem chans) (kconf k)
@@ -2009,7 +2058,8 @@ weaken k p orderings =
     addIdentity k'
     where
       k' = newPreskel (gen k) (shared k) (insts k) orderings (knon k)
-           (kpnon k) (kunique k) (kgenSt k) (kconf k) (kauth k) (kfacts k) (kpriority k)
+           (kpnon k) (kunique k) (kuniqgen k) (kabsent k) (kprecur k)
+           (kgenSt k) (kconf k) (kauth k) (kfacts k) (kpriority k)
            (Generalized (Weakened p)) [] (pprob k) (prob k) (pov k)
 
 -- Origination assumption forgetting
@@ -2019,7 +2069,8 @@ weaken k p orderings =
 
 forgetAssumption :: Preskel -> [Candidate]
 forgetAssumption k =
-    forgetNonTerm k ++ forgetPnonTerm k ++ forgetUniqueTerm k
+    forgetNonTerm k ++ forgetPnonTerm k ++
+    forgetUniqueTerm k ++ forgetUniqgenTerm k
 
 -- Non-originating terms
 
@@ -2068,6 +2119,22 @@ skelUniques k =
     filter (flip notElem ru) (kunique k)
     where
       ru = [u | i <- insts k, u <- inheritRunique i]
+
+-- Uniquely-generating terms
+
+forgetUniqgenTerm :: Preskel -> [Candidate]
+forgetUniqgenTerm k =
+    map (addIdentity . delUgen) (skelUniqgens k)
+    where
+      delUgen t =
+          k { kuniqgen = L.delete t (kuniqgen k),
+              operation = Generalized (Forgot t), krules = [] }
+
+skelUniqgens :: Preskel -> [Term]
+skelUniqgens k =
+    filter (flip notElem ru) (kuniqgen k)
+    where
+      ru = [u | i <- insts k, u <- inheritRuniqgen i]
 
 -- Variable separation
 
@@ -2158,11 +2225,13 @@ changeLocations :: Preskel -> Env -> Gen -> Term -> [Location] -> [Candidate]
 changeLocations k env gen t locs =
     [addIdentity k0, addIdentity k1]
     where
-      k0 = newPreskel gen' (shared k) insts' (orderings k) non pnon unique0
+      k0 = newPreskel gen' (shared k) insts' (orderings k) non pnon
+           unique0 uniqgen0 (kabsent k) (kprecur k)
            (kgenSt k) (kconf k) (kauth k) (kfacts k) (kpriority k)
            (Generalized (Separated t))
            [] (pprob k) (prob k) (pov k)
-      k1 = newPreskel gen' (shared k) insts' (orderings k) non pnon unique1 (kgenSt k)
+      k1 = newPreskel gen' (shared k) insts' (orderings k) non pnon
+           unique1 uniqgen1 (kabsent k) (kprecur k) (kgenSt k)
            (kconf k) (kauth k) facts (kpriority k) (Generalized (Separated t))
            [] (pprob k) (prob k) (pov k)
       (gen', insts') = changeStrands locs t gen (strands k)
@@ -2172,6 +2241,10 @@ changeLocations k env gen t locs =
       unique1 = map (instantiate env) (kunique k) ++ unique'
       -- Ensure all role unique assumptions are in.
       unique' = concatMap inheritRunique insts'
+      uniqgen0 = kuniqgen k ++ uniqgen'
+      uniqgen1 = map (instantiate env) (kuniqgen k) ++ uniqgen'
+      -- Ensure all role uniq gen assumptions are in.
+      uniqgen' = concatMap inheritRuniqgen insts'
       facts = map (instFact env) (kfacts k)
 
 changeStrands :: [Location] -> Term -> Gen -> [Strand] -> (Gen, [Instance])
@@ -2332,7 +2405,7 @@ chkFacts k =
 
 -- Returns the environments that satisfy the antecedent
 -- but do not extend to satisfy any of the conclusions.
--- 
+--
 goalSat :: Preskel -> Goal -> (Goal, [Env])
 goalSat k g =
   (g, [ e |
@@ -2367,14 +2440,16 @@ satisfy (Non t) = ggnon t
 satisfy (Pnon t) = ggpnon t
 satisfy (Uniq t) = gguniq t
 satisfy (UniqAt t n) = guniqAt t n
+satisfy (Ugen t) = gggen t
+satisfy (UgenAt t n) = gugenAt t n
 satisfy (GenStV t) = ggenstv t
 satisfy (Conf t) = ggconf t
 satisfy (Auth t) = ggauth t
 satisfy (AFact name fs) = gafact name fs
 satisfy (Equals t t') = geq t t'
-satisfy (Component t t') = gcomponent t t' 
+satisfy (Component t t') = gcomponent t t'
 satisfy (Commpair n n') = gcommpair n n'
-satisfy (SameLocn n n') = gsamelocn n n' 
+satisfy (SameLocn n n') = gsamelocn n n'
 satisfy (StateNode n) = gstateNode n
 satisfy (Trans (t, t')) = gafact "trans" [t, t']
 satisfy (LeadsTo n n') =
@@ -2383,10 +2458,10 @@ satisfy (LeadsTo n n') =
           ge <- satisfy (Commpair n n') k ge
           ge <- satisfy (Prec n n') k ge
           ge <- satisfy (StateNode n) k ge
-          -- Commpair entails StateNode n' too 
-          return ge 
+          -- Commpair entails StateNode n' too
+          return ge
 
-glengthExtendEnv :: Role -> Term -> Sid -> Int -> Instance -> (Gen,Env) -> [(Gen,Env)]  
+glengthExtendEnv :: Role -> Term -> Sid -> Int -> Instance -> (Gen,Env) -> [(Gen,Env)]
 glengthExtendEnv r z s h inst (g, e)
     | h > height inst = []
     | rname (role inst) == rname r = strdMatch z s (g, e)
@@ -2405,10 +2480,10 @@ checkKFacts k =
     let strInds = L.map isStr fterms in
     L.all (\i -> i < bnd) strInds
     where
-      isStr (FSid i) = i 
+      isStr (FSid i) = i
       isStr _ = 0
 
-checkBoth :: Preskel -> (Gen, Env) -> Bool 
+checkBoth :: Preskel -> (Gen, Env) -> Bool
 checkBoth k (_, e) =
     checkEnv k e && checkKFacts k
 
@@ -2416,17 +2491,16 @@ checkQuietly :: Preskel -> (Gen, Env) -> (Gen, Env)
 checkQuietly k (g, e)
     | checkBoth k (g, e) = (g, e)
     | otherwise = localSignal k (g, e)
-    
+
 checkSem :: Sem -> Sem
-checkSem f k (g, e) 
+checkSem f k (g, e)
     | checkBoth k (g, e) =
-        L.map (checkQuietly k) $ f k (g, e) 
+        L.map (checkQuietly k) $ f k (g, e)
     | otherwise = [localSignal k (g, e)]
 
 localSignal :: Preskel -> (Gen, Env) -> (Gen, Env)
 localSignal _ (g, e) = (g, e)
     -- error ("localSignal: Env "  ++ (show e))
-
 
 -- Role length predicate
 -- r and h determine the predicate, which has arity one.
@@ -2465,16 +2539,15 @@ gparam r t h z t' k (g, e) =
 paramMatch :: Role -> Term -> Int -> Term -> Int -> Term -> Instance -> (Gen,Env) ->  [(Gen,Env)]
 paramMatch r pname h z s t' inst (g, e)
     | h > height inst = []
-    | rname (role inst) == rname r = 
+    | rname (role inst) == rname r =
         do
           ge <- strdMatch z s (g, e)
           match t' (instantiate (env inst) pname) ge
-    | otherwise =     
+    | otherwise =
         do
           (g, inst) <- bldInstance r (take h $ trace inst) g
           ge <- strdMatch z s (g, e)
           match t' (instantiate (env inst) pname) ge
-    
 
 -- Node precedes
 -- This looks at the transitive closure of the ordering graph.
@@ -2490,7 +2563,7 @@ gprec n n' k (g, e) =
         (g, e) <- nodeMatch n p (g, e)
         nodeMatch n' p' (g, e)
   where
-    tc = kgpOrdsAll k 
+    tc = kgpOrdsAll k
          -- map graphPair $ graphCloseAll $ graphEdges $ strands k
 
 inSkel :: Preskel -> (Int, Int) -> Bool
@@ -2506,9 +2579,8 @@ nodeLookup :: Env -> NodeTerm -> Maybe Node
 nodeLookup e (z, t) =
   do
     s <- strdLookup e z
-    i <- indxLookup e t 
+    i <- indxLookup e t
     return (s, i)
-           
 
 nodeMatch :: NodeTerm -> Node -> (Gen, Env) -> [(Gen, Env)]
 nodeMatch (z, t) (s, j) (g, e) =
@@ -2553,14 +2625,34 @@ guniqAt t (z, ht) k (g,e) =
                                   e <- match t t' (g,e)
                                   strdMatch z s e
                    _ -> [])
-      Nothing -> [] 
+      Nothing -> []
+
+-- Unique generation
+gggen :: Term -> Sem
+gggen t k e =
+  do
+    t' <- kuniqgen k
+    match t t' e
+
+-- Unique origination at a node
+gugenAt :: Term -> NodeTerm -> Sem
+gugenAt t (z, ht) k (g,e) =
+  do
+    (t', ls) <- kugen k
+    case indxLookup e ht of
+      Just i -> (case ls of
+                   [(s, j)] | i == j ->
+                                do
+                                  e <- match t t' (g,e)
+                                  strdMatch z s e
+                   _ -> [])
+      Nothing -> []
 
 ggenstv :: Term -> Sem
 ggenstv t k e =
   do
     t' <- kgenSt k
     match t t' e
-    
 
 -- Confidential channel
 ggconf :: Term -> Sem
@@ -2617,24 +2709,22 @@ geq t t' _ (g, e)
 gcomponent :: Term -> Term -> Sem
 gcomponent t t' k (g, e) =
     let result = foldl (\ges cmpt -> (geq t cmpt k (g, e)) ++ ges)
-                 [] 
+                 []
                  (components t') in
     --    zP ("> " ++ (show (length result))) result
     result
 
 --   satisfy (StateNode n) = gstateNode n
 
-
 isStateChMsg :: ChMsg -> Bool
-isStateChMsg (Plain _) = False 
+isStateChMsg (Plain _) = False
 isStateChMsg (ChMsg c _) = isLocn c
 
 nodeIsStateNode :: Preskel -> Node -> Bool
 nodeIsStateNode k p =
     case dirChMsgOfNode p k of
-      Nothing -> False 
+      Nothing -> False
       Just (_,chm) -> isStateChMsg chm
-         
 
 gstateNode :: NodeTerm -> Sem
 gstateNode n k (g, e) =
@@ -2646,11 +2736,11 @@ gstateNode n k (g, e) =
       Nothing ->
           do
             p <- filter (nodeIsStateNode k) $ genNodes k
-            (g,e) <- nodeMatch n p (g,e) 
+            (g,e) <- nodeMatch n p (g,e)
             return (g, e)
-                   
+
 nullSem :: Sem
-nullSem _ _ = [] 
+nullSem _ _ = []
 
 chMsgMatch :: ChMsg -> ChMsg -> Sem
 chMsgMatch chmsg chmsg' k e =
@@ -2660,7 +2750,7 @@ chMsgMatch chmsg chmsg' k e =
              Plain m' ->
                  case m == m' of
                    True -> [e]
-                   False -> nullSem k e 
+                   False -> nullSem k e
              ChMsg _ _ -> nullSem k e)
       ChMsg c m ->
           (case chmsg' of
@@ -2670,19 +2760,17 @@ chMsgMatch chmsg chmsg' k e =
                    True -> [e]
                    False -> nullSem k e)
 
-
 dirMsgMatch :: Node -> Node -> Sem
 dirMsgMatch p p' k e =
     case dirChMsgOfNode p k of
-      Nothing -> [] 
-      Just (Recv, _) -> [] 
+      Nothing -> []
+      Just (Recv, _) -> []
       Just (Send, chmsg) ->
           case dirChMsgOfNode p' k of
-            Nothing -> [] 
+            Nothing -> []
             Just (Send, _) -> []
             Just (Recv, chmsg') ->
                 chMsgMatch chmsg chmsg' k e
-      
 
 gcommpair :: NodeTerm -> NodeTerm -> Sem
 gcommpair n n' k (g, e) =
@@ -2693,7 +2781,7 @@ gcommpair n n' k (g, e) =
             p' <- genNodes k
             (g, e) <- nodeMatch n' p' (g, e)
             dirMsgMatch p p' k (g, e)
-      (Nothing, Just p') -> 
+      (Nothing, Just p') ->
           do
             p <- genNodes k
             (g, e) <- nodeMatch n p (g, e)
@@ -2709,15 +2797,15 @@ gcommpair n n' k (g, e) =
 --   nodeSameLocn :: Node -> Node -> Preskel -> Bool
 --   nodeSameLocn p p' k =
 --       case dirChMsgOfNode p k of
---         Nothing -> False 
+--         Nothing -> False
 --         Just (_, chmsg) ->
 --             case dirChMsgOfNode p' k of
---               Nothing -> False 
+--               Nothing -> False
 --               Just(_, chmsg') ->
 --                   case (chmsg,chmsg') of
 --                     (Plain _,_) -> False
 --                     (_,Plain _) -> False
---                     (ChMsg c _, ChMsg c' _) 
+--                     (ChMsg c _, ChMsg c' _)
 --                         | c == c' && isLocn c -> True
 --                         | otherwise -> False
 
@@ -2729,21 +2817,21 @@ nodeLocn (s,i) k =
       Just (_, ChMsg c _)
         | isLocn c -> [c]
         | otherwise -> []
-                       
-glocnSem :: NodeTerm -> Preskel -> (Gen,Env) -> [(Term,(Gen,Env))]  
+
+glocnSem :: NodeTerm -> Preskel -> (Gen,Env) -> [(Term,(Gen,Env))]
 glocnSem n k (g, e) =
     case nodeLookup e n of
       Just p ->
           do
             loc <- nodeLocn p k
             return (loc, (g, e))
-      Nothing -> 
+      Nothing ->
           do
             p <- genNodes k
             loc <- nodeLocn p k
             (g, e) <- nodeMatch n p (g, e)
             return (loc, (g,e))
-                   
+
 gsamelocn :: NodeTerm -> NodeTerm -> Sem
 gsamelocn n n' k (g, e) =
     foldl
@@ -2756,9 +2844,9 @@ gsamelocn n n' k (g, e) =
           []
           (glocnSem n' k (g, e)))
          ++ so_far)
-    [] 
-    (glocnSem n k (g, e)) 
- 
+    []
+    (glocnSem n k (g, e))
+
 -- Rules
 
 --   skelsIsomorphic :: Preskel -> Preskel -> Bool
@@ -2767,22 +2855,22 @@ gsamelocn n n' k (g, e) =
 
 --   gistKnown :: Gist -> [(Preskel,Gist)] -> Bool
 --   gistKnown g  =
---       any (\(_,g') -> isomorphic g g') 
---   
+--       any (\(_,g') -> isomorphic g g')
+--
 --   setModuloIso :: [Preskel] -> [Preskel]
 --   setModuloIso ks =
 --       ks'
---       where 
+--       where
 --         (ks',_) =
 --             unzip (foldl
 --                    (\soFar (k,g) ->
 --                         case gistKnown g soFar of
 --                           True -> soFar
 --                           False -> (k,g) : soFar)
---                    [] 
+--                    []
 --                    $ L.zip ks (map gist ks))
 
-{--  
+{--
 parFoldr :: (a -> b -> b) -> b -> [a] -> b
 parFoldr _ b [] = b
 parFoldr f b (a : as) =
@@ -2790,7 +2878,7 @@ parFoldr f b (a : as) =
     where
       b' = parFoldr f b as
 --}
-             
+
 -- Suppose that eqRel is an equivalence relation, and one would like
 -- to obtain sets modulo eqRel.  I.e. given a list l, one would like a
 -- list l' such that everything in l bears the relation eqRel to
@@ -2799,18 +2887,16 @@ parFoldr f b (a : as) =
 -- This procedure achieves that by a factoring the list by eqRel in
 -- parallel, ie reducing the left and right halves and then merging.
 
-
-
 mergeEqRel :: (a -> a -> Bool) -> [a] -> [a] -> [a]
 mergeEqRel eqRel as bs =
     loop as []
     where
-      loop [] keep = keep ++ bs 
+      loop [] keep = keep ++ bs
       loop (a:rest) keep =
           case any (eqRel a) bs of
             True -> loop rest keep
-            False -> loop rest (a:keep) 
-    
+            False -> loop rest (a:keep)
+
 parFactor :: (a -> a -> Bool) -> [a] -> [a]
 parFactor _ [] = []
 parFactor _ [a] = [a]
@@ -2818,7 +2904,7 @@ parFactor eqRel [a,b] =
     case eqRel a b of
       True -> [b]
       False -> [a,b]
-               
+
 parFactor eqRel as =
     mergeEqRel eqRel leftM rightM
     where
@@ -2829,7 +2915,7 @@ parFactor eqRel as =
 -- Given a list of preskeletons, return a maximal sublist containing
 -- no isomorphic members.
 
--- Computed in parallel via the pars in parFactor.  
+-- Computed in parallel via the pars in parFactor.
 
 factorIsomorphic :: [Preskel] -> [Preskel]
 factorIsomorphic =
@@ -2859,10 +2945,10 @@ rewriteNullary k =
       loop [] = Just k
       loop (nr : rest) =
           case conjoin (antec $ rlgoal nr) k (gen k, emptyEnv) of
-            [] -> loop rest     -- no satisfying instances 
-            _  -> Nothing       -- satisfying instances, hence false!  
+            [] -> loop rest     -- no satisfying instances
+            _  -> Nothing       -- satisfying instances, hence false!
 
-data Ternary k = Unsat | Unch | Found k 
+data Ternary k = Unsat | Unch | Found k
 
 rewriteUnary :: Preskel -> Ternary Preskel
 rewriteUnary k =
@@ -2879,24 +2965,22 @@ rewriteUnary k =
           case tryRule k ur of
             [] -> loop k rest b b'
             vas -> case rewriteUnaryOne k ur vas of
-                     Nothing -> Unsat -- (zP "?" Unsat) 
+                     Nothing -> Unsat -- (zP "?" Unsat)
                      Just k' -> loop k' -- (zP "/" k')
                                 rest True True
 
 -- only interested in case ur is unary
 -- JDG:  Must really check wellFormedPreskel and do toSkeleton
 
-rewriteUnaryOne :: Preskel -> Rule -> [(Gen, Env)] -> Maybe Preskel 
+rewriteUnaryOne :: Preskel -> Rule -> [(Gen, Env)] -> Maybe Preskel
 rewriteUnaryOne k ur vas =
     case consq $ rlgoal ur of
-      -- First the case where it's really unary 
+      -- First the case where it's really unary
       [([],conjuncts)] ->
           foldM (rewriteUnaryOneOnce (rlname ur) conjuncts) k vas
       _ ->
           fail ("rewriteUnaryOne:  Hey, not really unary, rule " ++ (rlname ur))
-    -- Screwed up set of unary rules in the last case.  
-               
-
+    -- Screwed up set of unary rules in the last case.
 
 --      loop k $ tryRule k r
 --       where
@@ -2924,17 +3008,17 @@ rewriteUnaryOneOnce rn (a : as) k ge =
     where
       f k = k { krules = L.nub $ rn : krules k }
 
-data URewriteVal = None | Some (Preskel, (Gen, Env)) | Failing String 
+data URewriteVal = None | Some (Preskel, (Gen, Env)) | Failing String
 
 type URewrite = Preskel -> (Gen, Env) -> URewriteVal
-    
+
 checkURewrite :: URewrite -> URewrite
-checkURewrite f k (g, e) 
+checkURewrite f k (g, e)
     | checkBoth k (g, e) =
         case f k (g, e) of
           None -> None
           Failing st -> Failing st
-          Some (k', (g', e')) 
+          Some (k', (g', e'))
               | checkBoth k' (g', e') -> Some (k', (g', e'))
               | otherwise -> Some (k', (localSignal k' (g', e')))
     | otherwise = Some (k, (localSignal k (g, e)))
@@ -2944,8 +3028,8 @@ uconjoin _ [] k (g, e) = Some (k, (g, e))
 uconjoin rule (af : rest) k (g, e) =
     case checkURewrite (urwt rule af) k (g, e) of
       Some (k', (g', e')) -> uconjoin rule rest k' (g', e')
-      result -> result 
-                          
+      result -> result
+
 urwt :: String -> AForm -> URewrite
 urwt rule (Length r z ht) = urlength rule r z ht
 urwt rule (Param r v i z t) = urparam rule r v i z t
@@ -2954,6 +3038,8 @@ urwt rule (Non t) = urnon rule t
 urwt rule (Pnon t) = urpnon rule t
 urwt rule (Uniq t) = uruniq rule t
 urwt rule (UniqAt t n) = uruniqAt rule t n
+urwt rule (Ugen t) = urugen rule t
+urwt rule (UgenAt t n) = urugenAt rule t n
 urwt rule (GenStV t) = urgenst rule t
 urwt rule (Conf t) = urconf rule t
 urwt rule (Auth t) = urauth rule t
@@ -2963,26 +3049,25 @@ urwt rule (Component t t') =
     \_ _ -> error ("In rule " ++ rule ++ ", component in conclusion with" ++
                                   (show t) ++ ",  " ++ (show t'))
 urwt rule (Commpair n n') = urcommpair rule n n'
-urwt rule (SameLocn n n') = ursamelocn rule n n' 
+urwt rule (SameLocn n n') = ursamelocn rule n n'
 urwt rule (StateNode n) = urstateNode rule n
 urwt rule (Trans (t,t')) = urafact rule "trans" [t, t']
 urwt rule (LeadsTo n n') =
-    uconjoin rule [(Commpair n n'), (Prec n n'), (StateNode n)] 
-    -- Commpair and StateNode n entails StateNode n' too 
+    uconjoin rule [(Commpair n n'), (Prec n n'), (StateNode n)]
+    -- Commpair and StateNode n entails StateNode n' too
 
-    
 urlength :: String -> Role -> Term -> Term -> URewrite
 urlength name r z ht k (g, e) =
   case indxLookup e ht of
-    Nothing -> Failing ("In rule " ++ name ++ ", role length did not get a height") 
+    Nothing -> Failing ("In rule " ++ name ++ ", role length did not get a height")
     Just h ->
       case length (rtrace r) < h of
-         True -> None 
-         False -> 
+         True -> None
+         False ->
            (case strdLookup e z of
             Just s ->                 -- Try to displace
               case rDisplace e k' ns s of
-                []              -> None 
+                []              -> None
                 [kge] -> Some kge
                 l     ->
                     error ("urlength:  Hey, rDisplace multiple results (" ++
@@ -2994,15 +3079,15 @@ urlength name r z ht k (g, e) =
                 Failing ("urlength:  Hey, strand variable unbound " ++ (show z)))
 
 urparam :: String -> Role -> Term -> Int -> Term -> Term -> URewrite
-urparam rule r v h z t k (g, e) = 
+urparam rule r v h z t k (g, e) =
   case strdLookup e z of
-    Just s -> 
+    Just s ->
         do
-          case rDisplace e k' ns s of 
+          case rDisplace e k' ns s of
             []               -> None
-            [(k, ge)]        -> 
+            [(k, ge)]        ->
                 (case rParam name k ge t t' of
-                   []        -> None 
+                   []        -> None
                    [kge]  -> Some kge
                    l         -> error ("urparam:  Hey, rParam multiple results (" ++
                                        (show (length l)) ++ ")"))
@@ -3031,31 +3116,33 @@ succOut inst i =
       Just _ -> Just i
       Nothing -> if (i+1) < height inst then succOut inst (i+1)
                  else Nothing
-      
 
 urprec :: String -> NodeTerm -> NodeTerm -> URewrite
 urprec rule (z, t) (z', t') k (g, e) =
     case (strdLookup e z, strdLookup e z', indxLookup e t, indxLookup e t') of
-      (Just s, Just s', Just i, Just i') 
-        | badIndex k s i || badIndex k s' i' -> None 
+      (Just s, Just s', Just i, Just i')
+        | badIndex k s i || badIndex k s' i' -> None
         | elem ((s, i), (s', i')) tc -> Some (k, (g, e))
         | otherwise ->
             case (succOut ((insts k) !! s) i,
-                  prevIn ((insts k) !! s') i') of 
-              (Just i, Just i') -> 
+                  prevIn ((insts k) !! s') i') of
+              (Just i, Just i') ->
                   case normalizeOrderings True (((s, i), (s', i')) : orderings k) of
                     [] -> None
                     [orderings'] ->
-                        let k' = newPreskel g (shared k) (insts k) orderings' (knon k) (kpnon k)
-                                 (kunique k) (kgenSt k) (kconf k) (kauth k) (kfacts k) (kpriority k)
-                                 (operation k) (krules k) (pprob k) (prob k) (pov k) in 
+                        let k' = newPreskel g (shared k) (insts k)
+                                 orderings' (knon k) (kpnon k)
+                                 (kunique k) (kuniqgen k) (kabsent k)
+                                 (kprecur k) (kgenSt k) (kconf k) (kauth k)
+                                 (kfacts k) (kpriority k) (operation k)
+                                 (krules k) (pprob k) (prob k) (pov k) in
                         Some (k', (gen k, e))
                     l -> error ("urprec:  normalizeOrderings returned several orderings (" ++
                                 (show (length l)) ++ ")")
-              (_,_) -> None 
+              (_,_) -> None
       _ -> Failing ("In rule " ++ rule ++ ", precedence did not get a strand or a height")
     where
-      tc = kgpOrds k 
+      tc = kgpOrds k
           -- map graphPair $ graphClose $ graphEdges $ strands k
     -- Observe here that we do not need graphCloseAll, since absent
     -- orderings that lie on the same strand are irreparable.
@@ -3064,62 +3151,64 @@ urnon :: String -> Term -> URewrite
 urnon rule t k (g, e) =
     case matched e t of
       True
-        | elem t' (knon k) -> Some (k, (g, e)) 
+        | elem t' (knon k) -> Some (k, (g, e))
         | not $ isAtom t' -> None
-        | otherwise -> 
+        | otherwise ->
             Some (k', (g, e))
           where
             k' = newPreskel
                      g (shared k) (insts k) (orderings k) (t' : knon k)
-                     (kpnon k) (kunique k) (kgenSt k) (kconf k) (kauth k) (kfacts k)
+                     (kpnon k) (kunique k) (kuniqgen k) (kabsent k)
+                     (kprecur k) (kgenSt k) (kconf k) (kauth k) (kfacts k)
                      (kpriority k) (operation k) (krules k) (pprob k)
                      (prob k) (pov k)
       False ->
           Failing ("In rule " ++ rule ++ ", non did not get a term")
     where
       t' = instantiate e t
-    
-      
+
 urpnon :: String -> Term -> URewrite
 urpnon rule t k (g, e) =
     case matched e t of
       True
-        | elem t' (kpnon k) -> Some (k, (g, e)) 
+        | elem t' (kpnon k) -> Some (k, (g, e))
         | not $ isAtom t' -> None
-        | otherwise -> 
+        | otherwise ->
             Some (k', (g, e))
           where
             k' = newPreskel
                      g (shared k) (insts k) (orderings k) (knon k)
-                     (t' : kpnon k) (kunique k) (kgenSt k) (kconf k) (kauth k) (kfacts k)
+                     (t' : kpnon k) (kunique k) (kuniqgen k) (kabsent k)
+                     (kprecur k) (kgenSt k) (kconf k) (kauth k) (kfacts k)
                      (kpriority k) (operation k) (krules k) (pprob k)
                      (prob k) (pov k)
       False ->
           Failing ("In rule " ++ rule ++ ", pnon did not get a term")
     where
       t' = instantiate e t
-    
+
 uruniq :: String -> Term -> URewrite
 uruniq rule t k (g, e) =
     case matched e t of
       True
-        | elem t' (kunique k) -> Some (k, (g, e)) 
+        | elem t' (kunique k) -> Some (k, (g, e))
         | not $ isAtom t' -> None
-        | otherwise -> 
+        | otherwise ->
             Some (k', (g, e))
           where
             k' = newPreskel
                      g (shared k) (insts k) (orderings k) (knon k)
-                     (kpnon k) (t' : kunique k) (kgenSt k) (kconf k) (kauth k) (kfacts k)
+                     (kpnon k) (t' : kunique k) (kuniqgen k) (kabsent k)
+                     (kprecur k) (kgenSt k) (kconf k) (kauth k) (kfacts k)
                      (kpriority k) (operation k) (krules k) (pprob k)
                      (prob k) (pov k)
       False ->
           Failing ("In rule " ++ rule ++ ", uniq did not get a term")
     where
       t' = instantiate e t
-    
+
 uruniqAt :: String -> Term -> NodeTerm -> URewrite
-uruniqAt rule t (z, ht) k (g, e) = 
+uruniqAt rule t (z, ht) k (g, e) =
   case (matched e t, strdLookup e z, indxLookup e ht) of
     (False, _, _) ->
       Failing ("In rule " ++ rule ++ ", uniq-at did not get a term")
@@ -3133,17 +3222,68 @@ uruniqAt rule t (z, ht) k (g, e) =
       | i >= height (strandInst k s)  ->
           None                  -- Definitely None, since any
                                 -- affirmative answer has to be
-                                -- preserved by homomorphisms 
+                                -- preserved by homomorphisms
       | checkOrigination t'
         (trace $ (insts k) !! s) i    ->
           let k' = newPreskel
                   g (shared k) (insts k) (orderings k) (knon k) (kpnon k)
-                  (t' : kunique k) (kgenSt k) (kconf k) (kauth k) (kfacts k)
+                  (t' : kunique k) (kuniqgen k) (kabsent k) (kprecur k)
+                  (kgenSt k) (kconf k) (kauth k) (kfacts k)
                   (kpriority k) (operation k) (krules k) (pprob k)
                   (prob k) (pov k) in
           Some (k', (g, e))
       | otherwise ->
-          Failing ("In rule " ++ rule ++ ", uniq-at not at an origination") 
+          Failing ("In rule " ++ rule ++ ", uniq-at not at an origination")
+      where
+        t' = instantiate e t
+
+urugen :: String -> Term -> URewrite
+urugen rule t k (g, e) =
+    case matched e t of
+      True
+        | elem t' (kuniqgen k) -> Some (k, (g, e))
+        | not $ isAtom t' -> None
+        | otherwise ->
+            Some (k', (g, e))
+          where
+            k' = newPreskel
+                     g (shared k) (insts k) (orderings k) (knon k)
+                     (kpnon k) (kunique k) (t' : kuniqgen k) (kabsent k)
+                     (kprecur k) (kgenSt k) (kconf k) (kauth k) (kfacts k)
+                     (kpriority k) (operation k) (krules k) (pprob k)
+                     (prob k) (pov k)
+      False ->
+          Failing ("In rule " ++ rule ++ ", ugen did not get a term")
+    where
+      t' = instantiate e t
+
+urugenAt :: String -> Term -> NodeTerm -> URewrite
+urugenAt rule t (z, ht) k (g, e) =
+  case (matched e t, strdLookup e z, indxLookup e ht) of
+    (False, _, _) ->
+      Failing ("In rule " ++ rule ++ ", ugen-at did not get a term")
+    (_, Nothing, _) ->
+      Failing ("In rule " ++ rule ++ ", ugen-at did not get a strand")
+    (_, _, Nothing) ->
+        Failing ("In rule " ++ rule ++ ", ugen-at did not get an index")
+    (True, Just s, Just i)
+      | elem (t', [(s, i)]) (korig k) -> Some (k, (g, e))
+      | not $ isAtom t'               -> None
+      | i >= height (strandInst k s)  ->
+          None                  -- Definitely None, since any
+                                -- affirmative answer has to be
+                                -- preserved by homomorphisms
+      | checkGeneration t'
+        (trace $ (insts k) !! s) i    ->
+          let k' = newPreskel
+                  g (shared k) (insts k) (orderings k) (knon k) (kpnon k)
+                  (kunique k) (t' : kuniqgen k) (kabsent k) (kprecur k)
+                  (kgenSt k) (kconf k) (kauth k) (kfacts k)
+                  (kpriority k) (operation k) (krules k) (pprob k)
+                  (prob k) (pov k) in
+          Some (k', (g, e))
+      | otherwise ->
+          Failing ("In rule " ++ rule ++ ", ugen-at not at a generation")
       where
         t' = instantiate e t
 
@@ -3156,25 +3296,27 @@ urgenst rule t k (g, e) =
         where
           k' = newPreskel
                   g (shared k) (insts k) (orderings k) (knon k) (kpnon k)
-                  (kunique k) (adjoin t' $ kgenSt k) (kconf k) (kauth k) (kfacts k)
+                  (kunique k) (kuniqgen k) (kabsent k) (kprecur k)
+                  (adjoin t' $ kgenSt k) (kconf k) (kauth k) (kfacts k)
                   (kpriority k) (operation k) (krules k) (pprob k)
                   (prob k) (pov k)
     False ->
       Failing ("In rule " ++ rule ++ ", genSt did not get a term")
   where
-    t' = instantiate e t 
-        
+    t' = instantiate e t
+
 urconf :: String -> Term -> URewrite
 urconf rule t k (g, e) =
   case matched e t of
     True
       | elem t' (kconf k) -> Some (k, (g, e))
-      | not $ isAtom t' -> None 
+      | not $ isAtom t' -> None
       | otherwise -> Some (k', (g, e))
         where
           k' = newPreskel
                   g (shared k) (insts k) (orderings k) (knon k)
-                  (kpnon k) (kunique k) (kgenSt k) (t': kconf k) (kauth k) (kfacts k)
+                  (kpnon k) (kunique k) (kuniqgen k) (kabsent k) (kprecur k)
+                  (kgenSt k) (t': kconf k) (kauth k) (kfacts k)
                   (kpriority k) (operation k) (krules k) (pprob k)
                   (prob k) (pov k)
     False ->
@@ -3187,12 +3329,13 @@ urauth rule t k (g, e) =
   case matched e t of
     True
       | elem t' (kauth k) -> Some (k, (g, e))
-      | not $ isAtom t' -> None 
+      | not $ isAtom t' -> None
       | otherwise -> Some (k', (g, e))
         where
           k' = newPreskel
                   g (shared k) (insts k) (orderings k) (knon k)
-                  (kpnon k) (kunique k) (kgenSt k) (kconf k) (t' : kauth k) (kfacts k)
+                  (kpnon k) (kunique k) (kuniqgen k) (kabsent k)
+                  (kprecur k)(kgenSt k) (kconf k) (t' : kauth k) (kfacts k)
                   (kpriority k) (operation k) (krules k) (pprob k)
                   (prob k) (pov k)
     False ->
@@ -3209,18 +3352,19 @@ urafact rule predname fts k (g, e)
     fact = Fact predname fts'
     k' = newPreskel
          g (shared k) (insts k) (orderings k) (knon k) (kpnon k)
-         (kunique k) (kgenSt k) (kconf k) (kauth k) (L.nub $ fact : kfacts k)
+         (kunique k) (kuniqgen k) (kabsent k) (kprecur k) (kgenSt k)
+         (kconf k) (kauth k) (L.nub $ fact : kfacts k)
          (kpriority k) (operation k) (krules k) (pprob k) (prob k) (pov k)
 
 ureq :: String -> Term -> Term -> URewrite
-ureq rule x y k (g, e) 
-    | isStrdVar x && isStrdVar y = 
+ureq rule x y k (g, e)
+    | isStrdVar x && isStrdVar y =
         case (strdLookup e x, strdLookup e y) of
           (Just s, Just t)
             | s == t -> Some (k, (g, e))
             | s < (L.length (insts k)) && t < (L.length (insts k))  ->
                 (case rDisplace e (k {gen = g}) s t of
-                  []              -> None 
+                  []              -> None
                   [(k', (g',e'))] -> Some (k', (g',e'))
                   l               ->
                       error ("ureq:  Hey, rDisplace multiple results (" ++
@@ -3229,12 +3373,12 @@ ureq rule x y k (g, e)
             | not (checkEnv k e) -> error ("ureq:  Bad env")
             | otherwise ->
                 error ("ureq:  indices too large, (" ++ (show s) ++ ", " ++ (show t) ++ " in env " ++ (show (L.map (\i -> (rname (role i), env i)) (insts k))))
-          _ -> Failing ("In rule " ++ rule ++ ", = did not get a strand") 
-    | isStrdVar x || isStrdVar y  = None 
-    | otherwise = 
+          _ -> Failing ("In rule " ++ rule ++ ", = did not get a strand")
+    | isStrdVar x || isStrdVar y  = None
+    | otherwise =
         case (matched e x, matched e y) of
           (True, True)
-            | u == v ->  Some (k, (g, e)) 
+            | u == v ->  Some (k, (g, e))
             | otherwise ->
                 case rUnify k (g, e) u v of
                   []          -> None
@@ -3253,19 +3397,19 @@ urcommpair rule n n' k (g, e) =
     Nothing -> Failing ("In rule " ++ rule ++ ", comm-pair did not get two node terms")
     (Just p) ->
         (case dirChMsgOfNode p k of
-           Nothing -> None  
-           Just (Recv, _) -> None 
+           Nothing -> None
+           Just (Recv, _) -> None
            Just (Send, chmsg) ->
                (case nodeLookup e n' of
                   Nothing -> Failing ("In rule " ++ rule ++ ", comm-pair did not get two node terms")
-                  Just p' -> 
+                  Just p' ->
                       (case dirChMsgOfNode p' k of
-                         Nothing -> None 
+                         Nothing -> None
                          Just (Send, _) -> None
                          Just (Recv, chmsg') ->
                              (case (chmsg, chmsg') of
                                 (Plain _, ChMsg _ _) -> None
-                                (ChMsg _ _, Plain _) -> None 
+                                (ChMsg _ _, Plain _) -> None
                                 (Plain m, Plain m')  -> ureq rule m m' k (g, e)
                                 (ChMsg c m, ChMsg c' m') ->
                                     case ureq rule c c' k (g, e) of
@@ -3282,21 +3426,18 @@ ursamelocn rule n n' k (g, e) =
             ([c],[c']) -> ureq rule c c' k (g, e)
             (_,_) -> None
       (_,_) -> Failing ("In rule " ++ rule ++ ", same-locn did not get two node terms")
-      
+
 urstateNode :: String -> NodeTerm -> URewrite
 urstateNode rule n k (g, e) =
     case nodeLookup e n of
       Just (s,i) ->
           (case nodeIsStateNode k (s,i) of
-             True -> Some (k, (g, e)) 
+             True -> Some (k, (g, e))
              False -> None)
       _ -> Failing ("In rule " ++ rule ++ ", state-node did not get a node term")
-            
-                                  
 
 rewriteDepthCount :: Int
 rewriteDepthCount = 2000  -- was 14 and 24, 36
-
 
 -- Try all rules associated with the protocol of k.
 
@@ -3307,7 +3448,7 @@ rewrite k =
     case nullUnary k of         --  (zP "<" k)
       Just [] -> Just []        -- zP ">>" (Just [])
       Just [k'] -> iterate rewriteDepthCount [k'] [] True
-      Nothing -> iterate rewriteDepthCount [k] [] False 
+      Nothing -> iterate rewriteDepthCount [k] [] False
       Just ks -> error ("rewrite:  nullUnary returned too many results ("
                         ++ (show (L.length ks)) ++ ")")
     where
@@ -3323,14 +3464,14 @@ rewrite k =
                   Found k' -> Just [k']
 
       nullUnaryThrough =
-          concatMap (\k -> maybe [k] id (nullUnary k)) 
-                                  
+          concatMap (\k -> maybe [k] id (nullUnary k))
+
       -- iterate todos done action, which yields Maybe [Preskel]
       iterate _ [] [_] False = Nothing          -- zP ">>" Nothing
       iterate _ [] done False = error ("rewrite: non-singleton results with no change???  (" ++
                                         (show (L.length done)) ++ ")")
       iterate _ [] done True = Just done        -- zP ">" (Just done)
-      iterate 0 todos done True = Just (todos ++ done)  -- zP ">!" (Just (todos ++ done))      
+      iterate 0 todos done True = Just (todos ++ done)  -- zP ">!" (Just (todos ++ done))
       iterate 0 _ done False = error ("rewrite: exhausted depth bound with no action???  (" ++
                                         (show (L.length done)) ++ ")")
       iterate dc (k : rest) done b =
@@ -3340,21 +3481,21 @@ rewrite k =
                 let new' = nullUnaryThrough new in
                 -- Could alternatively factor the new ones for
                 -- isomorphic copies, but that sounds anomalous
-                -- Skip it for now.  
-                -- factorIsomorphic 
+                -- Skip it for now.
+                -- factorIsomorphic
                 -- (nullUnaryThrough new) in
                 iterate dc -- (dc-1)
-                            (mergeIsomorphic new' rest) done True 
+                            (mergeIsomorphic new' rest) done True
 
-      -- subiter 
+      -- subiter
       subiter _ [] = Nothing     -- No action, no rules left
-      
+
       subiter k (r : rs) =
           case tryRule k r of
-            [] -> subiter k rs 
+            [] -> subiter k rs
             vas ->
                            -- zP ("." ++ (rlname r))
-                Just (concatMap (\k' -> maybe [k'] id 
+                Just (concatMap (\k' -> maybe [k'] id
                                         $ subiter k' rs)
                      $ nullUnaryThrough
                            $ doRewrite k r vas)
@@ -3371,7 +3512,7 @@ tryRule k r =
     conclusion e = all (disjunct e) $ concl $ rlgoal r
     disjunct e a = null $ conjoin a k e
 
-{-- 
+{--
 
 ruleLimit :: Int
 ruleLimit = 500
@@ -3383,12 +3524,12 @@ doRewrites rules k r vas =
 
 doRewritesLoop :: [Rule] -> Preskel -> Int ->
                   [Preskel] -> [Preskel] -> [Preskel]
-doRewritesLoop _ _ lim [] _ 
+doRewritesLoop _ _ lim [] _
   | lim >= ruleLimit =
     error ("Aborting after applying " ++ show ruleLimit ++
            " rules and more are applicable (1)" -- ++ (show ks)
           )
-doRewritesLoop _ _ lim _ _  -- todos ks 
+doRewritesLoop _ _ lim _ _  -- todos ks
   | lim >= ruleLimit =
     error ("Aborting after applying " ++ show ruleLimit ++
            " rules and more are applicable "
@@ -3440,7 +3581,7 @@ fresh (g, e) t
 type Rewrite = Preskel -> (Gen, Env) -> [(Preskel, (Gen, Env))]
 
 checkRewrite :: Rewrite -> Rewrite
-checkRewrite f k (g, e) 
+checkRewrite f k (g, e)
     | checkBoth k (g, e) =
         L.map (\(k',(g',e')) -> (k', checkQuietly k' (g',e'))) $ f k (g, e)
     | otherwise = [(k, localSignal k (g, e))]
@@ -3460,16 +3601,18 @@ rwt rule (Non t) = rlnon rule t
 rwt rule (Pnon t) = rlpnon rule t
 rwt rule (Uniq t) = rluniq rule t
 rwt rule (UniqAt t n) = runiqAt rule t n
+rwt rule (Ugen t) = rlugen rule t
+rwt rule (UgenAt t n) = rugenAt rule t n
 rwt rule (GenStV t) = rlgenst rule t
 rwt rule (Conf t) = rlconf rule t
 rwt rule (Auth t) = rlauth rule t
 rwt rule (AFact name fs) = rafact rule name fs
 rwt rule (Equals t t') = req rule t t'
-rwt rule (Component t t') = 
+rwt rule (Component t t') =
     \_ _ -> error ("In rule " ++ rule ++ ", component in conclusion with" ++
                                   (show t) ++ ",  " ++ (show t'))
 rwt rule (Commpair n n') = rcommpair rule n n'
-rwt rule (SameLocn n n') = rsamelocn rule n n' 
+rwt rule (SameLocn n n') = rsamelocn rule n n'
 rwt rule (StateNode n) = rstateNode rule n
 rwt rule (Trans (t,t')) = rafact rule "trans" [t, t']
 rwt rule (LeadsTo n n') =
@@ -3478,10 +3621,8 @@ rwt rule (LeadsTo n n') =
           (k,ge) <- rwt rule (Commpair n n') k ge
           (k,ge) <- rwt rule (Prec n n') k ge
           (k,ge) <- rwt rule (StateNode n) k ge
-          -- Commpair entails StateNode n' too 
-          return (k,ge) 
-
-
+          -- Commpair entails StateNode n' too
+          return (k,ge)
 
 rlength :: String -> Role -> Term -> Term -> Rewrite
 rlength name r z ht k (g, e) =
@@ -3491,7 +3632,7 @@ rlength name r z ht k (g, e) =
     Just h ->
       case length (rtrace r) < h of
          True -> []
-         False -> 
+         False ->
            (case strdLookup e z of
             Just s ->                 -- Try to displace
               rDisplace e k' ns s
@@ -3511,7 +3652,8 @@ rlength name r z ht k (g, e) =
 addStrand :: Gen -> Preskel -> Role -> Int -> Preskel
 addStrand g k r h =
   newPreskel g' (shared k) insts'
-  (orderings k) non' pnon' unique' (kgenSt k) conf' auth' (kfacts k)
+  (orderings k) non' pnon' unique' uniqgen' (kabsent k) (kprecur k)
+  (kgenSt k) conf' auth' (kfacts k)
   (kpriority k) (operation k) (krules k) (pprob k) (prob k) (pov k)
   where
     (g', inst) = mkInstance g r emptyEnv h -- Create instance
@@ -3519,6 +3661,7 @@ addStrand g k r h =
     non' = inheritRnon inst ++ (knon k)
     pnon' = inheritRpnon inst ++ (kpnon k)
     unique' = inheritRunique inst ++ (kunique k)
+    uniqgen' = inheritRuniqgen inst ++ (kuniqgen k)
     conf' = inheritRconf inst ++ (kconf k)
     auth' = inheritRauth inst ++ (kauth k)
 
@@ -3540,6 +3683,8 @@ rSubst k (gen, subst) =
       let non' = map (substitute subst) (knon k)
       let pnon' = map (substitute subst) (kpnon k)
       let unique' = map (substitute subst) (kunique k)
+      let uniqgen' = map (substitute subst) (kuniqgen k)
+      let absent' = map (substitute subst) (kabsent k)
       let genStV' = map (substitute subst) (kgenSt k)
       let conf' = map (substitute subst) (kconf k)
       let auth' = map (substitute subst) (kauth k)
@@ -3547,10 +3692,11 @@ rSubst k (gen, subst) =
       let operation' = substOper subst (operation k)
       return $
         newPreskel gen' (shared k) insts' (orderings k)
-        non' pnon' unique' genStV' conf' auth' facts' (kpriority k)
+        non' pnon' unique' uniqgen' absent' (kprecur k)
+        genStV' conf' auth' facts' (kpriority k)
         operation' (krules k) (pprob k) (prob k) (pov k)
 
--- Does rCompress assume that s \not= s'?  s is old, s' is new 
+-- Does rCompress assume that s \not= s'?  s is old, s' is new
 rCompress :: Preskel -> Sid -> Sid -> [Preskel]
 rCompress k s s' =
     do
@@ -3566,6 +3712,9 @@ rCompress k s s' =
         (knon k)
         (kpnon k)
         (kunique k)
+        (kuniqgen k)
+        (kabsent k)
+        (map (updateNode s s') (kprecur k))
         (kgenSt k)
         (kconf k)
         (kauth k)
@@ -3583,7 +3732,7 @@ rparam name r v h z t k (g, e) =
     Just s
       | height inst < h -> []   -- JDG:  This looks suspicious.  Why
                                 -- not extend the inst to a greater
-                                -- height?  
+                                -- height?
       | rname (role inst) == rname r ->
         rParam name k (g, e) t t'
       | otherwise ->
@@ -3624,22 +3773,23 @@ rprec name (z, t) (z', t') k (g, e) =
       | badIndex k s i || badIndex k s' i' -> []
       | otherwise ->
           case (succOut ((insts k) !! s) i,
-                prevIn ((insts k) !! s') i') of 
-            (Just i, Just i') -> 
+                prevIn ((insts k) !! s') i') of
+            (Just i, Just i') ->
                 do                      -- Add one ordering
                   orderings' <- normalizeOrderings True
                                 (((s, i), (s', i')) : orderings k)
-                  let k' = newPreskel g (shared k) (insts k) orderings' (knon k) (kpnon k)
-                           (kunique k) (kgenSt k) (kconf k) (kauth k) (kfacts k) (kpriority k)
+                  let k' = newPreskel g (shared k) (insts k) orderings'
+                           (knon k) (kpnon k) (kunique k) (kuniqgen k)
+                           (kabsent k) (kprecur k) (kgenSt k)
+                           (kconf k) (kauth k) (kfacts k) (kpriority k)
                            (operation k) (krules k) (pprob k) (prob k) (pov k)
                   return (k', (gen k, e))
-            (_,_) -> [] 
+            (_,_) -> []
     _ ->
       error ("In rule " ++ name ++ ", precedence did not get a strand or a height")
   where
     tc = kgpOrds k
          -- map graphPair $ graphClose $ graphEdges $ strands k
-
 
          --   rprec :: String -> NodeTerm -> NodeTerm -> Rewrite
 --   rprec name (z, i) (z', i') k (g, e) =
@@ -3661,7 +3811,6 @@ rprec name (z, t) (z', t') k (g, e) =
 --     where
 --       tc = map graphPair $ graphClose $ graphEdges $ strands k
 
-
 badIndex :: Preskel -> Sid -> Int -> Bool
 badIndex k s i =
   i >= height (strandInst k s)
@@ -3677,7 +3826,8 @@ rlnon name t k (g, e) =
         where
           k' = newPreskel
                   g (shared k) (insts k) (orderings k) (t' : knon k)
-                  (kpnon k) (kunique k) (kgenSt k) (kconf k) (kauth k) (kfacts k)
+                  (kpnon k) (kunique k) (kuniqgen k) (kabsent k) (kprecur k)
+                  (kgenSt k) (kconf k) (kauth k) (kfacts k)
                   (kpriority k) (operation k) (krules k) (pprob k)
                   (prob k) (pov k)
     False ->
@@ -3696,7 +3846,8 @@ rlpnon name t k (g, e) =
         where
           k' = newPreskel
                   g (shared k) (insts k) (orderings k) (knon k)
-                  (t' : kpnon k) (kunique k) (kgenSt k) (kconf k) (kauth k) (kfacts k)
+                  (t' : kpnon k) (kunique k) (kuniqgen k) (kabsent k)
+                  (kprecur k) (kgenSt k) (kconf k) (kauth k) (kfacts k)
                   (kpriority k) (operation k) (krules k) (pprob k)
                   (prob k) (pov k)
     False ->
@@ -3715,7 +3866,8 @@ rluniq name t k (g, e) =
         where
           k' = newPreskel
                   g (shared k) (insts k) (orderings k) (knon k) (kpnon k)
-                  (t' : kunique k) (kgenSt k) (kconf k) (kauth k) (kfacts k)
+                  (t' : kunique k) (kuniqgen k) (kabsent k) (kprecur k)
+                  (kgenSt k) (kconf k) (kauth k) (kfacts k)
                   (kpriority k) (operation k) (krules k) (pprob k)
                   (prob k) (pov k)
     False ->
@@ -3729,7 +3881,6 @@ checkOrigination t c i =
       Nothing -> False
       Just j -> i == j
 
-
 runiqAt :: String -> Term -> NodeTerm -> Rewrite
 runiqAt name t (z, ht) k (g, e) =
   case (matched e t, strdLookup e z, indxLookup e ht) of
@@ -3740,9 +3891,10 @@ runiqAt name t (z, ht) k (g, e) =
       | checkOrigination t' (trace (strandInst k s)) i ->
           let k' = newPreskel
                   g (shared k) (insts k) (orderings k) (knon k) (kpnon k)
-                  (t' : kunique k) (kgenSt k) (kconf k) (kauth k) (kfacts k)
+                  (t' : kunique k) (kuniqgen k) (kabsent k) (kprecur k)
+                  (kgenSt k) (kconf k) (kauth k) (kfacts k)
                   (kpriority k) (operation k) (krules k) (pprob k)
-                  (prob k) (pov k) in 
+                  (prob k) (pov k) in
           [(k', (g, e))]
       | otherwise ->
           error ("In rule " ++ name ++ ", uniq-at not at an origination")
@@ -3752,6 +3904,58 @@ runiqAt name t (z, ht) k (g, e) =
       error ("In rule " ++ name ++ ", uniq-at did not get a strand")
     (_, _, Nothing) ->
         error ("In rule " ++ name ++ ", uniq-at did not get an index")
+  where
+    t' = instantiate e t
+
+rlugen :: String -> Term -> Rewrite
+rlugen name t k (g, e) =
+  case matched e t of
+    True
+      | elem t' (kuniqgen k) -> [(k, (g, e))]
+      | not $ isAtom t' -> []
+      | otherwise ->
+        [(k', (g, e))]
+        where
+          k' = newPreskel
+                  g (shared k) (insts k) (orderings k) (knon k) (kpnon k)
+                  (kunique k) (t' : kuniqgen k) (kabsent k) (kprecur k)
+                  (kgenSt k) (kconf k) (kauth k) (kfacts k)
+                  (kpriority k) (operation k) (krules k) (pprob k)
+                  (prob k) (pov k)
+    False ->
+      error ("In rule " ++ name ++ ", ugen did not get a term")
+  where
+    t' = instantiate e t
+
+checkGeneration :: Term -> Trace -> Int -> Bool
+checkGeneration t c i =
+    case generationPos t c of
+      Nothing -> False
+      Just j -> i == j
+
+rugenAt :: String -> Term -> NodeTerm -> Rewrite
+rugenAt name t (z, ht) k (g, e) =
+  case (matched e t, strdLookup e z, indxLookup e ht) of
+    (True, Just s, Just i)
+      | elem (t', [(s, i)]) (kugen k) -> [(k, (g, e))]
+      | not $ isAtom t' -> []
+      | i >= height (strandInst k s) -> []
+      | checkGeneration t' (trace (strandInst k s)) i ->
+          let k' = newPreskel
+                  g (shared k) (insts k) (orderings k) (knon k) (kpnon k)
+                  (kunique k) (t' : kuniqgen k) (kabsent k) (kprecur k)
+                  (kgenSt k) (kconf k) (kauth k) (kfacts k)
+                  (kpriority k) (operation k) (krules k) (pprob k)
+                  (prob k) (pov k) in
+          [(k', (g, e))]
+      | otherwise ->
+          error ("In rule " ++ name ++ ", ugen-at not at an origination")
+    (False, _, _) ->
+      error ("In rule " ++ name ++ ", ugen-at did not get a term")
+    (_, Nothing, _) ->
+      error ("In rule " ++ name ++ ", ugen-at did not get a strand")
+    (_, _, Nothing) ->
+        error ("In rule " ++ name ++ ", ugen-at did not get an index")
   where
     t' = instantiate e t
 
@@ -3765,14 +3969,14 @@ rlgenst name t k (g, e) =
         where
           k' = newPreskel
                   g (shared k) (insts k) (orderings k) (knon k) (kpnon k)
-                  (kunique k) (adjoin t' $ kgenSt k) (kconf k) (kauth k) (kfacts k)
+                  (kunique k) (kuniqgen k) (kabsent k) (kprecur k)
+                  (adjoin t' $ kgenSt k) (kconf k) (kauth k) (kfacts k)
                   (kpriority k) (operation k) (krules k) (pprob k)
                   (prob k) (pov k)
     False ->
       error ("In rule " ++ name ++ ", genSt did not get a term")
   where
-    t' = instantiate e t 
-    
+    t' = instantiate e t
 
 rlconf :: String -> Term -> Rewrite
 rlconf name t k (g, e) =
@@ -3785,7 +3989,8 @@ rlconf name t k (g, e) =
         where
           k' = newPreskel
                   g (shared k) (insts k) (orderings k) (knon k)
-                  (kpnon k) (kunique k) (kgenSt k) (t': kconf k) (kauth k) (kfacts k)
+                  (kpnon k) (kunique k) (kuniqgen k) (kabsent k) (kprecur k)
+                  (kgenSt k) (t': kconf k) (kauth k) (kfacts k)
                   (kpriority k) (operation k) (krules k) (pprob k)
                   (prob k) (pov k)
     False ->
@@ -3804,7 +4009,8 @@ rlauth name t k (g, e) =
         where
           k' = newPreskel
                   g (shared k) (insts k) (orderings k) (knon k)
-                  (kpnon k) (kunique k) (kgenSt k) (kconf k) (t' : kauth k) (kfacts k)
+                  (kpnon k) (kunique k) (kuniqgen k) (kabsent k) (kprecur k)
+                  (kgenSt k) (kconf k) (t' : kauth k) (kfacts k)
                   (kpriority k) (operation k) (krules k) (pprob k)
                   (prob k) (pov k)
     False ->
@@ -3821,7 +4027,8 @@ rafact rule name fts k (g, e)
     fact = Fact name fts'
     k' = newPreskel
          g (shared k) (insts k) (orderings k) (knon k) (kpnon k)
-         (kunique k) (kgenSt k) (kconf k) (kauth k) (L.nub $ fact : kfacts k)
+         (kunique k) (kuniqgen k) (kabsent k) (kprecur k)
+         (kgenSt k) (kconf k) (kauth k) (L.nub $ fact : kfacts k)
          (kpriority k) (operation k) (krules k) (pprob k) (prob k) (pov k)
 
 rFactLookup :: String -> Env -> Term -> FTerm
@@ -3841,7 +4048,7 @@ req name x y k (g, e)
     case (strdLookup e x, strdLookup e y) of
       (Just s, Just t)
         | s == t -> [(k, (g, e))]
-        | s < (L.length (insts k)) && t < (L.length (insts k)) -> 
+        | s < (L.length (insts k)) && t < (L.length (insts k)) ->
           rDisplace e (k {gen = g})  s t
         | otherwise ->
             error ("req:  indices too large, (" ++ (show s) ++ ", " ++ (show t) ++ " in env " ++ (show e))
@@ -3865,19 +4072,19 @@ rcommpair name n n' k (g, e) =
     Nothing -> error ("In rule " ++ name ++ ", comm-pair did not get two node terms")
     (Just p) ->
         (case dirChMsgOfNode p k of
-           Nothing -> [] 
-           Just (Recv, _) -> [] 
+           Nothing -> []
+           Just (Recv, _) -> []
            Just (Send, chmsg) ->
                (case nodeLookup e n' of
                   Nothing -> error ("In rule " ++ name ++ ", comm-pair did not get two node terms")
-                  Just p' -> 
+                  Just p' ->
                       (case dirChMsgOfNode p' k of
-                         Nothing -> [] 
+                         Nothing -> []
                          Just (Send, _) -> []
                          Just (Recv, chmsg') ->
                              (case (chmsg, chmsg') of
                                 (Plain _, ChMsg _ _) -> []
-                                (ChMsg _ _, Plain _) -> [] 
+                                (ChMsg _ _, Plain _) -> []
                                 (Plain m, Plain m')  -> req name m m' k (g, e)
                                 (ChMsg c m, ChMsg c' m') ->
                                     do
@@ -3885,7 +4092,6 @@ rcommpair name n n' k (g, e) =
                                       (k, (g,e)) <- req name m m' k (g, e)
                                       return (k, (g,e))))))
 
-                                                            
 rsamelocn :: String -> NodeTerm -> NodeTerm -> Rewrite
 rsamelocn name n n' k (g, e) =
     case (nodeLookup e n, nodeLookup e n') of
@@ -3894,8 +4100,7 @@ rsamelocn name n n' k (g, e) =
             ([c],[c']) -> req name c c' k (g, e)
             (_,_) -> []
       (_,_) -> error ("In rule " ++ name ++ ", same-locn did not get two node terms")
-      
-                                     
+
 rstateNode :: String -> NodeTerm -> Rewrite
 rstateNode name n k (g, e) =
     case nodeLookup e n of
@@ -3904,5 +4109,3 @@ rstateNode name n k (g, e) =
              True -> [(k, (g, e))]
              False -> [])
       _ -> error ("In rule " ++ name ++ ", state-node did not get a node term")
-            
-          

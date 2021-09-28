@@ -84,7 +84,7 @@ strdRoleLength as =
     f srl (pos, Length r z ht) =
       case indxLookup emptyEnv ht of
         Nothing -> fail (shows pos "Index is variable, not integer")
-        Just h -> 
+        Just h ->
           (case lookup z srl of
             Nothing -> return ((z, (r, h)) : srl)
             Just (r', h')
@@ -146,16 +146,19 @@ mkSkel pos p goals nmap g insts as comment =
     let nr = foldr mkNon [] as
     let ar = foldr mkPnon [] as
     let ur = foldr mkUniq [] as
-    let gs = foldr mkGenSt [] as 
+    let ug = foldr mkUgen [] as
+    let gs = foldr mkGenSt [] as
     let cf = foldr mkConf [] as
     let au = foldr mkAuth [] as
-    let (nr', ar', ur', cf', au') =
-          foldl addInstOrigs (nr, ar, ur, cf, au) insts
+    let (nr', ar', ur', ug', cf', au') =
+          foldl addInstOrigs (nr, ar, ur, ug, cf, au) insts
     let fs = foldr (mkFact nmap) [] as
     let prios = []
-    let k = mkPreskel g p goals insts o nr' ar' ur' gs cf' au' fs prios comment
+    let k = mkPreskel g p goals insts o nr' ar' ur' ug' [] []
+            gs cf' au' fs prios comment
     mapM_ (checkUniqAt nmap k) as
-    case termsWellFormed $ nr' ++ ar' ++ ur' ++ kterms k of
+    mapM_ (checkUgenAt nmap k) as
+    case termsWellFormed $ nr' ++ ar' ++ ur' ++ ug' ++ kterms k of
       False -> fail (shows pos "Terms in skeleton not well formed")
       True -> return ()
     case verbosePreskelWellFormed k of
@@ -163,12 +166,13 @@ mkSkel pos p goals nmap g insts as comment =
       Fail msg -> fail $ shows pos
                   $ showString "Skeleton not well formed: " msg
 
-addInstOrigs :: ([Term], [Term], [Term], [Term], [Term]) ->
-                Instance -> ([Term], [Term], [Term], [Term], [Term])
-addInstOrigs (nr, ar, ur, cf, au) i =
+addInstOrigs :: ([Term], [Term], [Term], [Term], [Term], [Term]) ->
+                Instance -> ([Term], [Term], [Term], [Term], [Term], [Term])
+addInstOrigs (nr, ar, ur, ug, cf, au) i =
     (foldl (flip adjoin) nr $ inheritRnon i,
      foldl (flip adjoin) ar $ inheritRpnon i,
      foldl (flip adjoin) ur $ inheritRunique i,
+     foldl (flip adjoin) ug $ inheritRuniqgen i,
      foldl (flip adjoin) au $ inheritRconf i,
      foldl (flip adjoin) cf $ inheritRauth i)
 
@@ -189,6 +193,11 @@ mkUniq :: (Pos, AForm) -> [Term] -> [Term]
 mkUniq (_, Uniq t) ts = t : ts
 mkUniq (_, UniqAt t _) ts = t : ts
 mkUniq _ ts = ts
+
+mkUgen :: (Pos, AForm) -> [Term] -> [Term]
+mkUgen (_, Ugen t) ts = t : ts
+mkUgen (_, UgenAt t _) ts = t : ts
+mkUgen _ ts = ts
 
 mkGenSt :: (Pos, AForm) -> [Term] -> [Term]
 mkGenSt (_, GenStV t) ts = t : ts
@@ -220,3 +229,12 @@ checkUniqAt nmap k (pos, UniqAt t n) =
       | elem (nMapLookup n nmap) ns -> return ()
       | otherwise -> fail (shows pos "Atom not unique at node")
 checkUniqAt _ _ _ = return ()
+
+checkUgenAt :: MonadFail m => [(Term, Sid)] -> Preskel -> (Pos, AForm) -> m ()
+checkUgenAt nmap k (pos, UgenAt t n) =
+  case lookup t $ kugen k of
+    Nothing -> fail (shows pos "Atom not uniq gen at node")
+    Just ns
+      | elem (nMapLookup n nmap) ns -> return ()
+      | otherwise -> fail (shows pos "Atom not uniq gen at node")
+checkUgenAt _ _ _ = return ()

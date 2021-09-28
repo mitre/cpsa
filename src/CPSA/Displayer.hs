@@ -104,6 +104,11 @@ displayForm ctx (Uniq t) =
 displayForm ctx (UniqAt t (s, i)) =
   L () [S () "uniq-at", displayTerm ctx t,
         displayTerm ctx s, displayTerm ctx i]
+displayForm ctx (Ugen t) =
+  L () [S () "ugen", displayTerm ctx t]
+displayForm ctx (UgenAt t (s, i)) =
+  L () [S () "ugen-at", displayTerm ctx t,
+        displayTerm ctx s, displayTerm ctx i]
 displayForm ctx (GenStV t) =
   L () [S () "gen-st", displayTerm ctx t]
 displayForm ctx (Conf t) =
@@ -135,9 +140,6 @@ displayForm ctx (LeadsTo (i,j) (i',j')) =
             displayTerm ctx i, displayTerm ctx j,
             displayTerm ctx i', displayTerm ctx j']
 
-
-    
-
 displayParam :: Role -> Term -> SExpr ()
 displayParam r t =
   case displayTerm (varsContext (rvars r)) t of
@@ -154,7 +156,6 @@ sansNestedPts = filter (\(_,t) -> notPt t)
 
 sansPtMaplets :: [(Term, Term)] -> [(Term, Term)]
 sansPtMaplets = filter (\(v,_) -> notPt v)
-
 
 displayRole :: Role -> SExpr ()
 displayRole r =
@@ -225,8 +226,6 @@ displayTraceNoPt ctx trace =
             True ->  L () [S () "stor", displayTerm ctx ch, displayTermNoPt ctx t]
             False -> L () [S () "send", displayTerm ctx ch, displayTerm ctx t]
 
-
-
 -- Display of preskeletons
 
 displayPreskel :: Preskel -> [SExpr ()] -> SExpr ()
@@ -238,7 +237,7 @@ displayPreskel k rest =
                -- try printing points
                 foldr f (displayRest k ctx rest) (insts k))
     where
-      ctx = varsContext vars 
+      ctx = varsContext vars
       vars = kfvars k ++ kvars k
       f i rest = displayInst ctx i : rest
 
@@ -254,7 +253,7 @@ displayRest k ctx rest =
           (displayOptional "auth" (displayTerms ctx (kauth k))
            (displayOptional "facts" (displayFacts ctx (kfacts k))
             -- (map (displayFact ctx) (kfacts
-            -- k))            
+            -- k))
              (displayOptional "priority" priorities
               (kcomment k ++
                (displayOptional "rule" (map (S ()) (krules k))
@@ -297,7 +296,7 @@ displayInst ctx s =
           where
             r = role s
             domain = rvars r
-            maplets = L.sort (sansPtMaplets (reify domain (env s))) 
+            maplets = L.sort (sansPtMaplets (reify domain (env s)))
             rctx = varsContext domain
 
 displayMaplet :: Context -> Context -> (Term, Term) -> SExpr ()

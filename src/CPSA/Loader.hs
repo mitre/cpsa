@@ -127,17 +127,19 @@ loadRole sig gen pos (S _ name :
       n <- loadPosBaseTerms sig vars (assoc "non-orig" rest)
       a <- loadPosBaseTerms sig vars (assoc "pen-non-orig" rest)
       u <- loadBaseTerms sig vars (assoc "uniq-orig" rest)
+      g <- loadBaseTerms sig vars (assoc "uniq-gen" rest)
       d <- loadBaseTerms sig vars (assoc "conf" rest)
       h <- loadBaseTerms sig vars (assoc "auth" rest)
       cs <- loadCritSecs (assoc "critical-sections" rest)
       genstates <- loadTerms sig vars (assoc "gen-st" rest)
       facts <- loadFactList sig vars (assoc "facts" rest)
 
-      let keys = ["non-orig", "pen-non-orig", "uniq-orig", "conf", "auth"]
+      let keys = ["non-orig", "pen-non-orig", "uniq-orig",
+                  "uniq-gen", "conf", "auth"]
       comment <- alist keys rest
       let reverseSearch = hasKey "reverse-search" rest
       let ts = tterms c
-      case termsWellFormed (map snd n ++ map snd a ++ u ++ ts) of
+      case termsWellFormed (map snd n ++ map snd a ++ u ++ g ++ ts) of
         False -> fail (shows pos "Terms in role not well formed")
         True -> return ()
       case L.all isChan (d ++ h) of
@@ -152,6 +154,7 @@ loadRole sig gen pos (S _ name :
       let as = L.filter (varsSeen vs . snd) a
       -- Drop runiques that refer to unused variable declarations
       let us = L.filter (varsSeen vs) (u ++ pt_u)
+      let gs = L.filter (varsSeen vs) g
       prios <- mapM (loadRolePriority (length c)) (assoc "priority" rest)
 
       let stateSegs = stateSegments c
@@ -159,7 +162,7 @@ loadRole sig gen pos (S _ name :
         False -> fail (shows pos "Critical sections in role not within state segments")
         True -> return ()
 
-      let r = mkRole name vs c ns as us d h comment prios reverseSearch
+      let r = mkRole name vs c ns as us gs d h comment prios reverseSearch
 
       let (gen', transRls) = transRules sig gen r (transitionIndices c)
       -- :: Gen -> Role -> [Int] -> (Gen, [Rule])
@@ -199,6 +202,7 @@ roleWellFormed role =
       mapM_ lenCheck $ rnon role
       mapM_ lenCheck $ rpnon role
       mapM_ uniqueCheck $ runique role
+      mapM_ uniqgenCheck $ runiqgen role
       mapM_ origVarCheck $ rvars role
       failwith "role trace is a prefix of a listener"
                    $ notListenerPrefix $ rtrace role
@@ -223,6 +227,9 @@ roleWellFormed role =
       uniqueCheck t =
           failwith (showString "uniq-orig " $ showst  t " doesn't originate")
                        $ originates t (rtrace role)
+      uniqgenCheck t =
+          failwith (showString "uniq-gen " $ showst  t " doesn't generate")
+                       $ generates t (rtrace role)
       origVarCheck v =
           failwith (showString "variable " $ showst v " not acquired")
                        $ not (isAcquiredVar v) ||
@@ -263,7 +270,7 @@ balancedStores c =
 -- of each pair is the index of a state event.  If the state event is
 -- a stor, then the second member is equal to the first.  If the state
 -- event is a load, then there is a matching stor in the state
--- segment, and the second member is its index.  
+-- segment, and the second member is its index.
 
 transitionIndices :: Trace -> [(Int, Int)]
 transitionIndices c =
@@ -281,14 +288,14 @@ transitionIndices c =
            | otherwise              = loop so_far (i+1) c'
       loop so_far i (_ : c')        = loop so_far (i+1) c'
 
-      subseqSend _ _ []             = Nothing 
+      subseqSend _ _ []             = Nothing
       subseqSend j ch ((In (ChMsg _ _)) : c')
                                     = subseqSend (j+1) ch c'
       subseqSend j ch ((Out (ChMsg ch' _)) : c')
-          | ch == ch'               = Just j 
+          | ch == ch'               = Just j
           | isLocn ch'              = subseqSend (j+1) ch c'
           | otherwise               = Nothing
-      subseqSend _ _ (_ : _)        = Nothing 
+      subseqSend _ _ (_ : _)        = Nothing
 
 stateSegments :: Trace -> [(Int,Int)]
 stateSegments c =
@@ -395,7 +402,7 @@ mkListenerRole sig pos g =
     (g, xs) <- loadVars sig g [L pos [S pos "x", S pos "mesg"]]
     case xs of
       [x] -> return (g, mkRole "" [x] [In $ Plain x, Out $ Plain x]
-                        [] [] [] [] [] [] [] False)
+                        [] [] [] [] [] [] [] [] False)
       _ -> fail (shows pos "mkListenerRole: expecting one variable")
 
 -- Ensure a trace is not a prefix of a listener
@@ -656,7 +663,7 @@ csRules sig g rl =
                 "csRules:  Impossible var list."))]
 
 data FoundAt = FoundAt Int
-             | Missing Term 
+             | Missing Term
 
 genStateRls :: Sig -> Gen -> Role -> [Term] -> (Gen, [Rule])
 genStateRls sig g rl ts =
@@ -1101,6 +1108,22 @@ loadPosBaseTerm sig vars x =
         True -> return (Nothing, t)
         False -> fail (shows (annotation x) "Expecting an atom")
 
+loadExprTerms :: MonadFail m => Sig -> [Term] -> [SExpr Pos] -> m [Term]
+loadExprTerms _ _ [] = return []
+loadExprTerms sig vars (x : xs) =
+    do
+      t <- loadExprTerm sig vars x
+      ts <- loadExprTerms sig vars xs
+      return (adjoin t ts)
+
+loadExprTerm :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
+loadExprTerm sig vars x =
+    do
+      t <- loadTerm sig vars True x
+      case isExpr t of
+        True -> return t
+        False -> fail (shows (annotation x) "Expecting an exponent")
+
 -- Find protocol and then load a preskeleton.
 
 findPreskel :: MonadFail m => Sig -> Pos -> [Prot] ->
@@ -1142,12 +1165,15 @@ loadInsts sig top p kvars gen insts xs =
       _ <- alist [] xs          -- Check syntax of xs
       (gen, gs) <- loadGoals sig top p gen goals
       loadRest sig top kvars p gen gs (reverse insts)
-        order nr ar ur cn au fs pl genSts kcomment
+        order nr ar ur ug ab pr cn au fs pl genSts kcomment
     where
       order = assoc "precedes" xs
       nr = assoc "non-orig" xs
       ar = assoc "pen-non-orig" xs
       ur = assoc "uniq-orig" xs
+      ug = assoc "uniq-gen" xs
+      ab = assoc "absent" xs
+      pr = assoc "precur" xs
       cn = assoc "conf" xs
       au = assoc "auth" xs
       fs = assoc "facts" xs
@@ -1207,9 +1233,10 @@ loadListener sig p kvars gen x =
 loadRest :: MonadFail m => Sig -> Pos -> [Term] -> Prot -> Gen -> [Goal] ->
             [Instance] -> [SExpr Pos] -> [SExpr Pos] -> [SExpr Pos] ->
             [SExpr Pos] -> [SExpr Pos] -> [SExpr Pos] ->
+            [SExpr Pos] -> [SExpr Pos] -> [SExpr Pos] ->
             [SExpr Pos] -> [SExpr Pos] -> [SExpr Pos] -> [SExpr ()] -> m Preskel
 loadRest sig pos vars p gen gs insts orderings
-         nr ar ur cn au fs pl genSts comment =
+         nr ar ur ug ab pr cn au fs pl genSts comment =
     do
       case null insts of
         True -> fail (shows pos "No strands")
@@ -1219,16 +1246,19 @@ loadRest sig pos vars p gen gs insts orderings
       nr <- loadBaseTerms sig vars nr
       ar <- loadBaseTerms sig vars ar
       ur <- loadBaseTerms sig vars ur
+      ug <- loadBaseTerms sig vars ug
+      ab <- loadExprTerms sig vars ab
+      pr <- mapM (loadNode heights) pr
       cn <- loadBaseTerms sig vars cn
       au <- loadBaseTerms sig vars au
       fs <- mapM (loadFact sig heights vars) fs
       genSts <- mapM (loadTerm sig vars True) genSts
-      let (nr', ar', ur', cn', au') =
-            foldl addInstOrigs (nr, ar, ur, cn, au) insts
+      let (nr', ar', ur', ug', cn', au') =
+            foldl addInstOrigs (nr, ar, ur, ug, cn, au) insts
       prios <- mapM (loadPriorities heights) pl
-      let k = mkPreskel gen p gs insts o nr' ar' ur' genSts -- was [], no gen state values
-              cn' au' fs prios comment
-      case termsWellFormed $ nr' ++ ar' ++ ur' ++ kterms k of
+      let k = mkPreskel gen p gs insts o nr' ar' ur'
+              ug' ab pr genSts cn' au' fs prios comment
+      case termsWellFormed $ nr' ++ ar' ++ ur' ++ ug' ++ ab ++ kterms k of
         False -> fail (shows pos "Terms in skeleton not well formed")
         True -> return ()
       case L.all isChan (cn' ++ au') of
@@ -1299,12 +1329,14 @@ loadPriorities heights (L _ [x, N _ p]) =
 loadPriorities _ x =
     fail (shows (annotation x) "Malformed priority")
 
-addInstOrigs :: ([Term], [Term], [Term], [Term], [Term]) -> Instance ->
-                ([Term], [Term], [Term], [Term], [Term])
-addInstOrigs (nr, ar, ur, cn, au) i =
+addInstOrigs :: ([Term], [Term], [Term], [Term], [Term], [Term])
+                -> Instance ->
+                ([Term], [Term], [Term], [Term], [Term], [Term])
+addInstOrigs (nr, ar, ur, ug, cn, au) i =
     (foldl (flip adjoin) nr $ inheritRnon i,
      foldl (flip adjoin) ar $ inheritRpnon i,
      foldl (flip adjoin) ur $ inheritRunique i,
+     foldl (flip adjoin) ug $ inheritRuniqgen i,
      foldl (flip adjoin) cn $ inheritRconf i,
      foldl (flip adjoin) au $ inheritRauth i)
 
@@ -1510,6 +1542,15 @@ loadPrimary sig _ _ kvars (L pos [S _ "uniq-at", x, y, z]) =
     t <- loadAlgTerm sig kvars x
     t' <- loadNodeTerm sig kvars y z
     return (pos, UniqAt t t')
+loadPrimary sig _ _ kvars (L pos [S _ "ugen", x]) =
+  do
+    t <- loadAlgTerm sig kvars x
+    return (pos, Ugen t)
+loadPrimary sig _ _ kvars (L pos [S _ "ugen-at", x, y, z]) =
+  do
+    t <- loadAlgTerm sig kvars x
+    t' <- loadNodeTerm sig kvars y z
+    return (pos, UgenAt t t')
 loadPrimary sig _ _ kvars (L pos [S _ "gen-st", x]) =
   do
     t <- loadAlgTerm sig kvars x
@@ -1700,6 +1741,12 @@ roleSpecific unbound (pos, Uniq t)
 roleSpecific unbound (pos, UniqAt t (z, _))
   | allBound unbound t && L.notElem z unbound = return unbound
   | otherwise = fail (shows pos "Unbound variable in uniq-at")
+roleSpecific unbound (pos, Ugen t)
+  | allBound unbound t = return unbound
+  | otherwise = fail (shows pos "Unbound variable in ugen")
+roleSpecific unbound (pos, UgenAt t (z, _))
+  | allBound unbound t && L.notElem z unbound = return unbound
+  | otherwise = fail (shows pos "Unbound variable in ugen-at")
 roleSpecific unbound (pos, GenStV t)
   | allBound unbound t = return unbound
   | otherwise = fail (shows pos "Unbound variable in gen-st")

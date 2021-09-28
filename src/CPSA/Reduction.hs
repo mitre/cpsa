@@ -24,7 +24,7 @@ import CPSA.Strand
 import CPSA.Cohort
 import CPSA.Displayer
 
-{--  
+{--
 import System.IO.Unsafe
 import Control.Exception (try)
 import System.IO.Error (ioeGetErrorString)
@@ -78,7 +78,6 @@ zv k =
 -- Also see showst
 --}
 
-
 -- Set when debugging an exception so that buffered results get out.
 useFlush :: Bool
 useFlush = True                -- False
@@ -89,7 +88,6 @@ wrt p h sexpr =
     do
       writeLnSExpr h (optMargin p) sexpr
       if useFlush then hFlush h else return ()
-
 
 -- A labeled and linked preskeleton
 data LPreskel
@@ -270,7 +268,7 @@ step p h ks m oseen n seen todo toobig (ReductStable lk : reducts) =
       Just (_, _) ->
       --           zP ("seen", label lk) $
           step p h ks m oseen n seen todo toobig reducts
-      Nothing -> 
+      Nothing ->
           do
             wrt p h (commentPreskel lk [] [] Shape Nada "")
       -- zP ("unseen", label lk) $
@@ -288,7 +286,7 @@ step p h ks m oseen n seen todo toobig (Reduct lk size kids dups : reducts)
               -- let shape = null ns
               --             case shape of
               --               True -> wrt p h (commentPreskel lk [] ns Shape Nada "")
-              --               False  ->                 
+              --               False  ->
           wrt p h (commentPreskel lk [] ns Ordinary Dead "empty cohort")
           step p h ks m oseen n seen todo toobig reducts
     | optDepth p > 0 && depth lk >= optDepth p =
@@ -312,12 +310,11 @@ branch :: Options -> Seen -> LPreskel -> Reduct t g s e
 branch p seen lk =
     case reduce (mkMode p) (content lk) of
       Stable -> ReductStable lk
-      Crt kids -> 
+      Crt kids ->
           Reduct lk (length kids) (seqList $ reverse unseen) (seqList dups)
         where
             (unseen, dups) =
                 foldl (duplicates seen) ([], []) kids
-
 
 mkMode :: Options -> Mode
 mkMode p =
@@ -338,8 +335,7 @@ mktodo reducts todo toobig =
     foldl f [] reducts ++ reverse todo ++ reverse toobig
     where
       f sofar (Reduct lk _ _ _) = lk : sofar
-      f sofar (ReductStable _) = sofar 
-        
+      f sofar (ReductStable _) = sofar
 
 type Next = (Int, Seen, [LPreskel], [Int])
 
@@ -375,13 +371,13 @@ fast p h ks m n (lk : todo) =
     do
       let ns = unrealized (content lk)
       let red = reduce (mkMode p) (content lk)
-      let (len,ks') = (case red of 
-                   Stable -> (0,[]) 
+      let (len,ks') = (case red of
+                   Stable -> (0,[])
                    Crt kids -> (length kids, kids))
       let msg = show len ++ " in cohort"
-      let shape = (case red of 
+      let shape = (case red of
                      Stable -> Shape
-                     Crt _ -> Ordinary) 
+                     Crt _ -> Ordinary)
       wrt p h (commentPreskel lk [] ns shape Nada msg)
       let (n', todo') = foldl (children lk) (n, []) ks'
       fast p h ks m n' (todo ++ reverse todo')

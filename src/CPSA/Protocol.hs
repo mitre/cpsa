@@ -7,13 +7,15 @@
 -- University of California.
 
 module CPSA.Protocol (Event (..), evtCm, evtTerm, evtChan, evtMap, evt,
-    inbnd, outbnd, Trace, tterms, originates,
-    originationPos, acquiredPos, gainedPos, usedPos, insPrecedeOuts, 
-    Role, rname, rvars, rtrace, rnon, rpnon, runique, rconf, rauth, rcomment,
-    rsearch, rnorig, rpnorig, ruorig, rpconf, rpauth, rpriority, mkRole,
-    tchans, varSubset, varsInTerms, addVars, firstOccurs, paramOfName, envsRoleParams, 
+    inbnd, outbnd, Trace, tterms, originates, originationPos,
+    generates, generationPos,
+    acquiredPos, gainedPos, usedPos, insPrecedeOuts,
+    Role, rname, rvars, rtrace, rnon, rpnon, runique, runiqgen,
+    rconf, rauth, rcomment, rsearch, rnorig, rpnorig, ruorig, rugen,
+    rpconf, rpauth, rpriority, mkRole, tchans, varSubset, varsInTerms,
+    addVars, firstOccurs, paramOfName, envsRoleParams,
     AForm (..), NodeTerm, Goal (..),
-    aFormOrder, aFreeVars, Rule (..), 
+    aFormOrder, aFreeVars, Rule (..),
     Prot, mkProt, pname, alg, pgen, roles,
     nullaryrules, unaryrules, generalrules, rules, userrules, generatedrules,
     listenerRole, varsAllAtoms, pcomment) where
@@ -149,6 +151,25 @@ originationPos t c =
           | t `carriedBy` cmTerm t' = Nothing -- Term does not originate
           | otherwise = loop (pos + 1) c
 
+-- Does the term occur in an event, and is the first one outgoing?
+generates :: Term -> Trace -> Bool
+generates _ [] = False         -- Term does not occur
+generates t (Out t' : c) = t `occursIn` cmTerm t' || generates t c
+generates t (In t' : c) = not (t `occursIn` cmTerm t') && generates t c
+
+-- At what position does a term generate in a trace?
+generationPos :: Term -> Trace -> Maybe Int
+generationPos t c =
+    loop 0 c
+    where
+      loop _ [] = Nothing       -- Term does not occur
+      loop pos (Out t' : c)
+          | t `occursIn` cmTerm t' = Just pos -- Found it
+          | otherwise = loop (pos + 1) c
+      loop pos (In t' : c)
+          | t `occursIn` cmTerm t' = Nothing -- Term does not generate
+          | otherwise = loop (pos + 1) c
+
 -- At what position is a term acquired in a trace?
 acquiredPos :: Term -> Trace -> Maybe Int
 acquiredPos t c =
@@ -206,23 +227,22 @@ insPrecedeOuts lower upper c =
     loopIns (upper-lower) (drop lower c)
     where
       loopIns _ [] = False    -- Ran out too soon
-      loopIns u (In _ : c) 
+      loopIns u (In _ : c)
           | u==0 = True        -- Safely completed
           | otherwise =
               loopIns (u-1) c
-      loopIns u (Out _ : c) 
+      loopIns u (Out _ : c)
           | u==0 = True          -- Safely completed
-          | otherwise = 
+          | otherwise =
               loopOuts (u-1) c
 
       loopOuts _ [] = False   -- Ran out too soon
       loopOuts _ (In _ : _) =
-          False -- Whoa:  Went back to Ins 
-      loopOuts u (Out _ : c) 
+          False -- Whoa:  Went back to Ins
+      loopOuts u (Out _ : c)
           | u==0 = True        -- Safely completed
           | otherwise =
               loopOuts (u-1) c
-
 
 data Role = Role
     { rname :: !String,
@@ -233,6 +253,7 @@ data Role = Role
       rnon :: ![(Maybe Int, Term)], -- that says when to inherit the atom
       rpnon :: ![(Maybe Int, Term)], -- that says when to inherit the atom
       runique :: ![Term],       -- Set of uniquely originating atoms
+      runiqgen :: ![Term],      -- Set of uniquely generated atoms
       rconf :: ![Term],         -- Confidential channels
       rauth :: ![Term],         -- Authenticated channels
       rcomment :: [SExpr ()],   -- Comments from the input
@@ -240,6 +261,7 @@ data Role = Role
       rnorig :: [(Term, Int)],  -- Nons plus origination position
       rpnorig :: [(Term, Int)], -- Penetrator nons plus origination position
       ruorig :: [(Term, Int)],  -- Uniques plus origination position
+      rugen :: [(Term, Int)],   -- Uniq gens plus generation position
       rpconf :: [(Term, Int)],  -- Confidentials plus origination position
       rpauth :: [(Term, Int)],  -- Authenticated plus origination position
       rpriority :: [Int] }      -- List of all priorities
@@ -268,20 +290,23 @@ firstOccursAt t c =
 -- Create a role
 mkRole :: String -> [Term] -> Trace ->
           [(Maybe Int, Term)] -> [(Maybe Int, Term)] -> [Term] -> [Term] ->
-          [Term] -> [SExpr ()] -> [(Int, Int)] -> Bool -> Role
-mkRole name vars trace non pnon unique conf auth comment priority rev =
+          [Term] -> [Term] -> [SExpr ()] -> [(Int, Int)] -> Bool -> Role
+mkRole name vars trace non pnon unique uniqgen
+    conf auth comment priority rev =
     Role { rname = name,
            rvars = L.nub vars,  -- Every variable here must
            rtrace = trace,      -- occur in the trace.
            rnon = non,
            rpnon = pnon,
            runique = L.nub unique,
+           runiqgen = L.nub uniqgen,
            rconf = L.nub conf,
            rauth = L.nub auth,
            rcomment = comment,
            rnorig = map addNonOrig $ nonNub non,
            rpnorig = map addNonOrig $ nonNub pnon,
            ruorig = map addUniqueOrig $ L.nub unique,
+           rugen = map addUniqueGen $ L.nub uniqgen,
            rpconf = map addChanPos $ L.nub conf,
            rpauth = map addChanPos $ L.nub auth,
            rpriority = addDefaultPrio priority,
@@ -292,6 +317,10 @@ mkRole name vars trace non pnon unique conf auth comment priority rev =
           case originationPos t trace of
             Just p -> (t, p)
             Nothing -> error "Protocol.mkRole: Atom does not uniquely originate"
+      addUniqueGen t =
+          case generationPos t trace of
+            Just p -> (t, p)
+            Nothing -> error "Protocol.mkRole: Atom does not uniquely generate"
       addNonOrig (len, t) =
           case usedPos t trace of
             Nothing -> error "Protocol.mkRole: Atom variables not in trace"
@@ -331,7 +360,7 @@ paramOfName name rl =
       seek [] = Nothing
       seek (v : rest)
           | name == varName v = Just v
-          | otherwise = seek rest 
+          | otherwise = seek rest
 
 envsRoleParams :: Role -> Gen -> [Term]-> [(Gen, Env)]
 envsRoleParams rl g =
@@ -342,8 +371,6 @@ envsRoleParams rl g =
                          Nothing -> [])
                ges)
     [(g,emptyEnv)]
-    
-                     
 
 -- Security Goals
 
@@ -356,6 +383,8 @@ data AForm
   | Pnon Term
   | Uniq Term
   | UniqAt Term NodeTerm
+  | Ugen Term
+  | UgenAt Term NodeTerm
   | GenStV Term
   | Conf Term
   | Auth Term
@@ -363,7 +392,7 @@ data AForm
   | SameLocn NodeTerm NodeTerm
   | StateNode NodeTerm
   | Trans NodeTerm
-  | LeadsTo NodeTerm NodeTerm  
+  | LeadsTo NodeTerm NodeTerm
   | AFact String [Term]
   | Equals Term Term
   | Component Term Term
@@ -379,7 +408,7 @@ data Goal =
            concl :: [[AForm]] }      -- Conclusion
     deriving Show
 
---   -- A HornRule has at most one disjunct, no existential             
+--   -- A HornRule has at most one disjunct, no existential
 --   data HornRule =
 --       HornRule { hruvars :: [Term],          -- Universally quantified variables
 --                  hrantec :: [AForm],         -- Antecedent
@@ -389,27 +418,26 @@ data Goal =
 --                  hrname :: !String,
 --                  hrcomment :: [SExpr ()] }
 --       deriving Show
---   
+--
 --   -- A general rule has more than one disjunct in conclusion,
---   -- or else existentially bound vars 
---   
+--   -- or else existentially bound vars
+--
 --   data GenRule =
 --       GenRule { gruvars :: [Term],          -- Universally quantified variables
 --                 grantec :: [AForm],         -- Antecedent
 --                 -- Consequent  with existentially quantified variables
 --                 -- Outer list is disjuncts, each w existential bindings
---                 grconsq :: [([Term], [AForm])], 
+--                 grconsq :: [([Term], [AForm])],
 --                 grname :: !String,
 --                 grcomment :: [SExpr ()] }
 --       deriving Show
---   
---   
+--
+--
 --   --   data Rule
 --   --     = Rule { rlname :: String,    -- Name of rule
 --   --              rlgoal :: Goal,      -- Sentence
 --   --              rlcomment :: [SExpr ()] }
 --   --       deriving Show
-
 
 indexOfAForm :: AForm -> Int
 indexOfAForm (Length _ _ _) = 0
@@ -429,11 +457,13 @@ indexOfAForm (Trans _) = 13
 indexOfAForm (LeadsTo _ _) = 14
 indexOfAForm (AFact _ _) = 15
 indexOfAForm (Equals _ _) = 16
-indexOfAForm (Component _ _) = 17 
+indexOfAForm (Component _ _) = 17
+indexOfAForm (Ugen _) = 18
+indexOfAForm (UgenAt _ _) = 19
 
 aFormOrder :: AForm -> AForm -> Ordering
 aFormOrder f f' = compare (indexOfAForm f) (indexOfAForm f')
---   
+--
 --       let i' =   in
 --       case i == i' of
 --         True -> EQ
@@ -600,20 +630,19 @@ aFreeVars vars (Non t) = addVars vars t
 aFreeVars vars (Pnon t) = addVars vars t
 aFreeVars vars (Uniq t) = addVars vars t
 aFreeVars vars (UniqAt t (z, _)) = addVars (addVars vars t) z
+aFreeVars vars (Ugen t) = addVars vars t
+aFreeVars vars (UgenAt t (z, _)) = addVars (addVars vars t) z
 aFreeVars vars (GenStV t) = addVars vars t
 aFreeVars vars (Conf t) = addVars vars t
 aFreeVars vars (Auth t) = addVars vars t
 aFreeVars vars (AFact _ ft) = foldl addVars vars ft
 aFreeVars vars (Equals x y) = addVars (addVars vars x) y
 aFreeVars vars (Component x y) = addVars (addVars vars x) y
-aFreeVars vars (Commpair (s,t) (s',t')) = addVars (addVars (addVars (addVars vars s) t) s') t' 
-aFreeVars vars (SameLocn (s,t) (s',t')) = addVars (addVars (addVars (addVars vars s) t) s') t' 
+aFreeVars vars (Commpair (s,t) (s',t')) = addVars (addVars (addVars (addVars vars s) t) s') t'
+aFreeVars vars (SameLocn (s,t) (s',t')) = addVars (addVars (addVars (addVars vars s) t) s') t'
 aFreeVars vars (StateNode (s,t)) = addVars (addVars vars s) t
 aFreeVars vars (Trans (s,t)) = addVars (addVars vars s) t
-aFreeVars vars (LeadsTo (s,t) (s',t')) = addVars (addVars (addVars (addVars vars s) t) s') t' 
-
-
-
+aFreeVars vars (LeadsTo (s,t) (s',t')) = addVars (addVars (addVars (addVars vars s) t) s') t'
 
 data Rule
   = Rule { rlname :: String,    -- Name of rule
@@ -621,24 +650,24 @@ data Rule
            rlcomment :: [SExpr ()] }
     deriving Show
 
---   data HGRule = H HornRule 
+--   data HGRule = H HornRule
 --               | G GenRule
 
 data RuleKind = NullaryRule | UnaryRule | GeneralRule
 
 classifyRule :: Rule -> RuleKind
 classifyRule r =
-    let gl = rlgoal r in 
+    let gl = rlgoal r in
     case consq gl of
       []           -> NullaryRule    -- null disjunction = false
-      [([],_)]     -> UnaryRule      -- single disjunct, no existentials 
+      [([],_)]     -> UnaryRule      -- single disjunct, no existentials
       _            -> GeneralRule    -- multiple branches or any existentials
 
 -- partition the rules given into three lists,
 -- containing resp.
--- (i) those with empty (false) conclusion; 
+-- (i) those with empty (false) conclusion;
 -- (ii) those with unary, existential-free conclusion;
--- (iii) those with multiple disjuncts or existential quantifiers 
+-- (iii) those with multiple disjuncts or existential quantifiers
 
 classifyRules :: [Rule] -> ([Rule],[Rule],[Rule])
 classifyRules =
@@ -650,7 +679,6 @@ classifyRules =
            GeneralRule -> (nullSoFar, unarySoFar, rl : genSoFar))
     ([],[],[])
 
-
 -- Protocols
 
 data Prot
@@ -659,7 +687,7 @@ data Prot
              pgen :: !Gen,      -- Initial variable generator
              roles :: ![Role], -- Non-listener roles of a protocol
              listenerRole :: Role,
-             nullaryrules :: ![Rule], -- Protocol rules: False conclusion 
+             nullaryrules :: ![Rule], -- Protocol rules: False conclusion
              unaryrules :: ![Rule],   -- Protocol rules: no branching
                                       -- or existential
              generalrules :: ![Rule], -- Protocol rules: may branch
@@ -667,7 +695,7 @@ data Prot
              userrules :: ![Rule],    -- those rules explicitly
                                       -- written by the user
              generatedrules :: ![Rule],  -- those rules created by
-                                       -- the loader 
+                                       -- the loader
              varsAllAtoms :: !Bool,   -- Are all role variables atoms?
              pcomment :: [SExpr ()] }  -- Comments from the input
     deriving Show
@@ -676,11 +704,11 @@ data Prot
 mkProt :: String -> String -> Gen ->
           [Role] -> Role -> [Rule] -> [Rule] -> [Rule] -> [SExpr ()] -> Prot
 mkProt name alg gen roles lrole rules written generated comment =
-    let (nrs,urs,grs) = classifyRules rules in 
+    let (nrs,urs,grs) = classifyRules rules in
     Prot { pname = name, alg = alg, pgen = gen, roles = roles,
            listenerRole = lrole,
            nullaryrules = nrs, unaryrules = urs,  generalrules = grs,
-           userrules = written, generatedrules = generated, 
+           userrules = written, generatedrules = generated,
            pcomment = comment,
            varsAllAtoms = all roleVarsAllAtoms roles }
     where
