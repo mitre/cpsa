@@ -589,9 +589,11 @@ varId (I x) = x
 varId (F (Data _) [I x]) = x
 varId (F (Akey _) [I x]) = x
 varId (F Name [I x]) = x
+varId (F Base [I x]) = x
 varId (F Pval [I x]) = x
 varId (F Chan [I x]) = x
 varId (F Locn [I x]) = x
+varId (G g) = getGroupVar g
 varId (D x) = x
 varId (X x) = x
 varId _ = error "Algebra.varId: term not a variable with its sort"
@@ -2739,7 +2741,6 @@ displayVar _ _ =
 displaySortId :: String -> Context -> Id -> (SExpr (), SExpr ())
 displaySortId sort ctx x = (displayId ctx x, S () sort)
 
--- JDG:  Restore this later !!!
 displayId :: Context -> Id -> SExpr ()
 displayId (Context ctx) x =
     case lookup x ctx of

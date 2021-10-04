@@ -11,14 +11,14 @@ module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     firstSkeleton, Pair, Preskel, gen, protocol, kgoals, insts, orderings,
     pov, knon, kpnon, kunique, kuniqgen, kabsent, kprecur, kgenSt,
     kconf, kauth, kfacts, korig, kugen, kpriority, kcomment, nstrands,
-    kvars, kfvars, strandids, kterms, kchans, uniqOrig, preskelWellFormed,
-    confCm, authCm,
+    kvars, kfvars, strandids, kterms, kchans, uniqOrig, uniqGen,
+    preskelWellFormed, confCm, authCm,
     verbosePreskelWellFormed, Strand, inst, sid, nodes,
     Vertex, strand, pos, preds, event, graphNode, strands, vertex,
     Gist, gist, isomorphic, factorIsomorphicPreskels, contract, augment,
     inheritRnon, inheritRpnon, inheritRunique, inheritRuniqgen,
-    inheritRconf, inheritRauth,
-    addListener, Cause (..), Direction (..), Method (..), Operation (..),
+    inheritRconf, inheritRauth, addListener, addBaseListener, addAbsence,
+    Cause (..), Direction (..), Method (..), Operation (..),
     operation, krules, pprob, prob, homomorphism, toSkeleton, generalize,
     collapse, sat, FTerm (..), Fact (..), simplify, rewrite, localSignal, rewriteUnaryOneOnce) where
 
@@ -410,7 +410,7 @@ data Preskel = Preskel
       kpnon :: ![Term],           -- A list of atoms
       kunique :: ![Term],         -- A list of atoms
       kuniqgen :: ![Term],        -- A list of atoms
-      kabsent :: ![Term],         -- A list of random exponents
+      kabsent :: ![(Term, Term)], -- A list of pairs of terms
       kprecur :: ![Node],         -- A list of nodes
       kgenSt :: ![Term],          -- A list of terms, known to be non-initial
       kconf :: ![Term],           -- A list of channels
@@ -473,6 +473,8 @@ data Operation
     | Displaced Int Int String Int Cause
     | AddedStrand String Int Cause
     | AddedListener Term Cause
+    | AddedAbsence Term Term Cause
+    | AlgebraSolved Subst Cause
     | Generalized Method
     | Collapsed Int Int
       deriving Show
@@ -482,7 +484,7 @@ data Operation
 -- must be consumed by firstSkeleton.
 mkPreskel :: Gen -> Prot -> [Goal] -> [Instance] -> [Pair] ->
              [Term] -> [Term] -> [Term] -> [Term] ->
-             [Term] -> [Node] -> [Term] -> [Term] ->
+             [(Term, Term)] -> [Node] -> [Term] -> [Term] ->
              [Term] -> [Fact] -> [(Node, Int)] -> [SExpr ()] -> Preskel
 mkPreskel gen protocol gs insts orderings non pnon
           unique uniqgen absent precur genStVs
@@ -521,8 +523,8 @@ firstSkeleton k =
 -- within this module.
 newPreskel :: Gen -> Shared ->
              [Instance] -> [Pair] -> [Term] -> [Term] -> [Term] ->
-             [Term] -> [Term] -> [Node] -> [Term] -> [Term] -> [Term] ->
-             [Fact] -> [(Node, Int)] -> Operation ->
+             [Term] -> [(Term, Term)] -> [Node] -> [Term] -> [Term] ->
+             [Term] -> [Fact] -> [(Node, Int)] -> Operation ->
              [String] -> [Sid] -> [Sid] -> Maybe Preskel -> Preskel
 newPreskel gen shared insts orderings non pnon unique
            uniqgen absent precur genSt conf auth facts
@@ -610,6 +612,12 @@ uniqOrig :: Preskel -> [Term]
 uniqOrig k =
     do
       (t, [_]) <- reverse (korig k)
+      return t
+
+uniqGen :: Preskel -> [Term]
+uniqGen k =
+    do
+      (t, [_]) <- reverse (kugen k)
       return t
 
 -- A preskeleton is well formed if the ordering relation is acyclic,
@@ -833,6 +841,8 @@ data Gist = Gist
       gnon :: [Term],    -- A list of non-originating terms
       gpnon :: [Term],   -- A list of penetrator non-originating terms
       gunique :: [Term], -- A list of uniquely-originating terms
+      guniqgen :: [Term], -- A list of uniquely-generated terms
+      gabsent :: [(Term, Term)], -- A list of absent terms
       ggenSt :: [Term],  -- A list of terms for generated states
       gfacts :: [Fact],  -- A list of facts
       gfvars :: [Term],  -- Fact vars not in instances
@@ -843,7 +853,9 @@ data Gist = Gist
       nnon :: !Int,      -- Number of non-originating terms
       npnon :: !Int,     -- Number of penetrator non-originating terms
       nunique :: !Int,   -- Number of uniquely-originating terms
-      ngenSt :: !Int,  -- Number of generated states
+      nuniqgen :: !Int,  -- Number of uniquely-generating terms
+      nabsent :: !Int,   -- Number of absent terms
+      ngenSt :: !Int,    -- Number of generated states
       nfacts :: !Int,    -- Number of facts
       nfvars :: !Int }   -- Number of fact vars not in instances
     deriving Show
@@ -856,6 +868,8 @@ mkGist k =
            gnon = gnon,
            gpnon = gpnon,
            gunique = gunique,
+           guniqgen = guniqgen,
+           gabsent = gabsent,
            ggenSt = ggenSt,
            gfacts = gfacts,
            gfvars = gfvars,
@@ -866,6 +880,8 @@ mkGist k =
            nnon = length gnon,
            npnon = length gpnon,
            nunique = length gunique,
+           nuniqgen = length guniqgen,
+           nabsent = length gabsent,
            ngenSt  = length ggenSt,
            nfacts = length gfacts,
            nfvars = length gfvars }
@@ -879,6 +895,8 @@ mkGist k =
       gnon = knon k
       gpnon = kpnon k
       gunique = kunique k
+      guniqgen = kuniqgen k
+      gabsent = kabsent k
       ggenSt = kgenSt k
       gfacts = kfacts k
       gfvars = kfvars k
@@ -932,13 +950,15 @@ isomorphic g g' =
 
 sameSkyline :: Gist -> Gist -> Bool
 sameSkyline g g' =
-    nvars g == nvars g' &&      -- Doesn't work for Diffie-Hellman
+    -- nvars g == nvars g' &&      -- Doesn't work for Diffie-Hellman
     ntraces g == ntraces g' &&
     briefs g == briefs g' &&
     norderings g == norderings g' &&
     nnon g == nnon g' &&
     npnon g == npnon g' &&
     nunique g == nunique g' &&
+    nuniqgen g == nuniqgen g' &&
+    nabsent g == nabsent g' &&
     ngenSt g == ngenSt g' &&
     nfacts g == nfacts g' &&
     nfvars g == nfvars g'
@@ -1075,10 +1095,12 @@ checkFacts g g' (_, e) perm =
 checkOrigs :: Gist -> Gist -> (Gen, Env) -> Bool
 checkOrigs g g' env =
     not (null
-         [ env''' |
+         [ env''''' |
            env' <- checkOrig env (gnon g) (gnon g'),
            env'' <- checkOrig env' (gpnon g) (gpnon g'),
-           env''' <- checkOrig env'' (gunique g) (gunique g')])
+           env''' <- checkOrig env'' (gunique g) (gunique g'),
+           env'''' <- checkOrig env''' (guniqgen g) (guniqgen g'),
+           env''''' <- checkAbs env'''' (gabsent g) (gabsent g')])
 
 -- Try all permutations as done above
 checkOrig :: (Gen, Env) -> [Term] -> [Term] -> [(Gen, Env)]
@@ -1089,6 +1111,17 @@ checkOrig env (t:ts) ts' =
       env' <- match t t' env
       checkOrig env' ts (L.delete t' ts')
 checkOrig _ _ _ = error "Strand.checkOrig: lists not same length"
+
+-- Try all permutations as done above
+checkAbs :: (Gen, Env) -> [(Term, Term)] -> [(Term, Term)] -> [(Gen, Env)]
+checkAbs env [] [] = [env]
+checkAbs env ((t1,t2):ts) ts' =
+    do
+      (t1', t2') <- ts'
+      env <- match t1 t1' env
+      env <- match t2 t2' env
+      checkAbs env ts (L.delete (t1', t2') ts')
+checkAbs _ _ _ = error "Strand.checkAbs: lists not same length"
 
 checkGenSt :: Gist -> Gist -> (Gen, Env) -> Bool
 checkGenSt g g' env =
@@ -1127,7 +1160,7 @@ ksubst (k0, k, n, phi, hsubst) (gen, subst) =
       let pnon' = map (substitute subst) (kpnon k)
       let unique' = map (substitute subst) (kunique k)
       let uniqgen' = map (substitute subst) (kuniqgen k)
-      let absent' = map (substitute subst) (kabsent k)
+      let absent' = map (pairApp $ substitute subst) (kabsent k)
       let genStV' = map (substitute subst) (kgenSt k)
       let conf' = map (substitute subst) (kconf k)
       let auth' = map (substitute subst) (kauth k)
@@ -1139,6 +1172,9 @@ ksubst (k0, k, n, phi, hsubst) (gen, subst) =
                (kpriority k) operation' (krules k) (pprob k) (prob k) (pov k)
       k' <- wellFormedPreskel k'
       return (k0, k', n, phi, compose subst hsubst)
+
+pairApp :: (a -> b) -> (a, a) -> (b, b)
+pairApp f (x, y) = (f x, f y)
 
 -- Monad version of mapAccumR
 foldMapM :: Monad m => (a -> b -> m (a, c)) -> a -> [b] -> m (a, [c])
@@ -1162,6 +1198,10 @@ substOper subst (AddedStrand role height cause) =
     AddedStrand role height (substCause subst cause)
 substOper subst (AddedListener t cause) =
     AddedListener (substitute subst t) (substCause subst cause)
+substOper subst (AddedAbsence t1 t2 cause) =
+    AddedAbsence (substitute subst t1) (substitute subst t2) (substCause subst cause)
+substOper subst (AlgebraSolved s cause) =
+    AlgebraSolved (compose subst s) (substCause subst cause)
 substOper _ m@(Generalized _) = m
 substOper _ m@(Collapsed _ _) = m
 
@@ -1323,7 +1363,8 @@ skeletonize thin prs
 
 hasMultipleOrig :: PRS -> Bool
 hasMultipleOrig prs =
-    any (\(_, l) -> length l > 1) (korig (skel prs))
+  any (\(_, l) -> length l > 1) (korig (skel prs)) ||
+  any (\(_, l) -> length l > 1) (kugen (skel prs))
 
 -- Hulling or Ensuring Unique Origination
 hull :: Bool -> PRS -> [PRS]
@@ -1347,8 +1388,9 @@ hull thin prs =
 
 enrich :: Bool -> PRS -> [PRS]
 enrich thin (k0, k, n, phi, hsubst) =
-    let o = foldl (addOrderings k) (orderings k) (kunique k) in
-    if length o == length (orderings k) then
+    let o = foldl (addUniqOrigOrderings k) (orderings k) (kunique k) in
+    let o' = foldl (addUniqGenOrderings k) o (kuniqgen k) in
+    if length o' == length (orderings k) then
         maybeThin thin (k0, k, n, phi, hsubst) -- Nothing to add
     else
         do
@@ -1357,7 +1399,7 @@ enrich thin (k0, k, n, phi, hsubst) =
                   (gen k)
                   (shared k)
                   (insts k)
-                  o
+                  o'
                   (knon k)
                   (kpnon k)
                   (kunique k)
@@ -1390,8 +1432,8 @@ origNode k t =
       Just [n] -> Just n
       Just _ -> error "Strand.origNode: not a hulled skeleton"
 
-addOrderings :: Preskel -> [Pair] -> Term -> [Pair]
-addOrderings k orderings t =
+addUniqOrigOrderings :: Preskel -> [Pair] -> Term -> [Pair]
+addUniqOrigOrderings k orderings t =
     case origNode k t of
       Nothing -> orderings
       Just n@(s, _) ->
@@ -1399,6 +1441,26 @@ addOrderings k orderings t =
           where
             f orderings s =
                 case gainedPos t (trace (strandInst k s)) of
+                  Nothing -> orderings
+                  Just pos -> adjoin (n, (s, pos)) orderings
+
+genNode :: Preskel -> Term -> Maybe Node
+genNode k t =
+    case lookup t (kugen k) of
+      Nothing -> error "Strand.genNode: term not in kuniqgen"
+      Just [] -> Nothing
+      Just [n] -> Just n
+      Just _ -> error "Strand.genNode: not a hulled skeleton"
+
+addUniqGenOrderings :: Preskel -> [Pair] -> Term -> [Pair]
+addUniqGenOrderings k orderings t =
+    case genNode k t of
+      Nothing -> orderings
+      Just n@(s, _) ->
+          foldl f orderings (L.delete s (strandids k))
+          where
+            f orderings s =
+                case genGainedPos t (trace (strandInst k s)) of
                   Nothing -> orderings
                   Just pos -> adjoin (n, (s, pos)) orderings
 
@@ -1674,10 +1736,15 @@ homomorphismFilter prs@(k0, k, _, phi, subst)
 -- Ensure origination nodes a preserved as required to be a homomorphism
 validateMappingSubst :: Preskel -> [Sid] -> Subst -> Preskel -> Bool
 validateMappingSubst k phi subst k' =
-    useNoOrigPreservation || all check (korig k)
+    useNoOrigPreservation ||
+    all checkOrig (korig k) &&  all checkGen (kugen k)
     where
-      check (u, ns) =
+      checkOrig (u, ns) =
           case lookup (substitute subst u) (korig k') of
+            Nothing -> False
+            Just ns' -> all (flip elem ns') (map (permuteNode phi) ns)
+      checkGen (u, ns) =
+          case lookup (substitute subst u) (kugen k') of
             Nothing -> False
             Just ns' -> all (flip elem ns') (map (permuteNode phi) ns)
 
@@ -1861,6 +1928,42 @@ addListener k n cause t =
       pair = ((length (insts k), 1), n)
       orderings' = pair : orderings k
 
+-- Base Listener Augmentation.  Like listener augmentation but adds a
+-- precur assertion.
+
+addBaseListener :: Preskel -> Node -> Cause -> Term -> [Ans]
+addBaseListener k n cause t =
+    do
+      k' <- wellFormedPreskel k'
+      prs <- skeletonize useThinningWhileSolving
+             (k, k', n, strandids k, emptySubst)
+      homomorphismFilter prs
+    where
+      k' = newPreskel gen' (shared k) insts' orderings' (knon k)
+           (kpnon k) (kunique k) (kuniqgen k) (kabsent k) precur'
+           (kgenSt k) (kconf k) (kauth k) (kfacts k) (kpriority k)
+           (AddedListener t cause) [] (pprob k) (prob k) (pov k)
+      (gen', inst) = mkListener (protocol k) (gen k) t
+      insts' = insts k ++ [inst]
+      pair = ((length (insts k), 1), n)
+      orderings' = pair : orderings k
+      precur' = (length (insts k), 0) : kprecur k
+
+-- addAbsence
+addAbsence :: Preskel -> Node -> Cause -> Term -> Term -> [Ans]
+addAbsence k n cause x t =
+    do
+      k' <- wellFormedPreskel k'
+      prs <- skeletonize useThinningWhileSolving
+             (k, k', n, strandids k, emptySubst)
+      homomorphismFilter prs
+    where                       -- New cause should be added!
+      k' = newPreskel (gen k) (shared k) (insts k) (orderings k)
+           (knon k) (kpnon k) (kunique k) (kuniqgen k) absent' (kprecur k)
+           (kgenSt k) (kconf k) (kauth k) (kfacts k) (kpriority k)
+           (AddedAbsence x t cause) (krules k) (pprob k) (prob k) (pov k)
+      absent' = (x, t) : kabsent k
+
 -- Homomorphisms
 
 -- Find a substitution that demonstrates the existence of a
@@ -1892,19 +1995,30 @@ validateEnv k k' mapping env =
     all (flip elem (knon k')) (map (instantiate env) (knon k)) &&
     all (flip elem (kpnon k')) (map (instantiate env) (kpnon k)) &&
     all (flip elem (kunique k')) (map (instantiate env) (kunique k)) &&
+    all (flip elem (kuniqgen k')) (map (instantiate env) (kuniqgen k)) &&
+    all (flip elem (kabsent k')) (map (instantiatePair env) (kabsent k)) &&
+    all (flip elem (kprecur k')) (map (permuteNode mapping) (kprecur k)) &&
     all (flip elem (kfacts k'))
-            (map (instUpdateFact env (mapping !!)) (kfacts k)) &&
+        (map (instUpdateFact env (mapping !!)) (kfacts k)) &&
     all (flip elem (kgenSt k')) (map (instantiate env) (kgenSt k)) &&
     validateEnvOrig k k' mapping env &&
     all (flip elem (tc k')) (permuteOrderings mapping (orderings k))
+    where
+      instantiatePair env (t1, t2) =
+        (instantiate env t1, instantiate env t2)
 
 validateEnvOrig :: Preskel -> Preskel -> [Sid] -> Env -> Bool
 validateEnvOrig k k' mapping env =
-    useNoOrigPreservation || all check (korig k)
+    useNoOrigPreservation ||
+    all checkOrig (korig k) &&  all checkGen (kugen k)
     where
-      check (u, ns) =
+      checkOrig (u, ns) =
           case lookup (instantiate env u) (korig k') of
             Nothing -> error "Strand.validateEnv: term not in kunique"
+            Just ns' -> all (flip elem ns') (map (permuteNode mapping) ns)
+      checkGen (u, ns) =
+          case lookup (instantiate env u) (kugen k') of
+            Nothing -> error "Strand.validateEnv: term not in kuniqgen"
             Just ns' -> all (flip elem ns') (map (permuteNode mapping) ns)
 
 -- Given a realized skeleton k, generate candidates for minimization.
@@ -2012,8 +2126,8 @@ deleteNodeRest k gen n insts' orderings prob facts =
       -- Drop uniques that aren't carried anywhere
       unique' = filter carriedIn (kunique k)
       carriedIn t = any (carriedBy t) terms
-      uniqgen' = filter mentionedIn (kunique k)
-      absent' = filter mentionedIn (kabsent k)
+      uniqgen' = filter mentionedIn (kuniqgen k)
+      absent' = filter (\(x, y) -> mentionedIn x && mentionedIn y) (kabsent k)
       precur' = L.delete n (kprecur k)
       -- Drop channel assumptions for non-existent channels
       chans = ichans insts'
@@ -3684,7 +3798,7 @@ rSubst k (gen, subst) =
       let pnon' = map (substitute subst) (kpnon k)
       let unique' = map (substitute subst) (kunique k)
       let uniqgen' = map (substitute subst) (kuniqgen k)
-      let absent' = map (substitute subst) (kabsent k)
+      let absent' = map (pairApp $ substitute subst) (kabsent k)
       let genStV' = map (substitute subst) (kgenSt k)
       let conf' = map (substitute subst) (kconf k)
       let auth' = map (substitute subst) (kauth k)

@@ -1108,14 +1108,15 @@ loadPosBaseTerm sig vars x =
         True -> return (Nothing, t)
         False -> fail (shows (annotation x) "Expecting an atom")
 
-loadExprTerms :: MonadFail m => Sig -> [Term] -> [SExpr Pos] -> m [Term]
-loadExprTerms _ _ [] = return []
-loadExprTerms sig vars (x : xs) =
+loadAbsent :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m (Term, Term)
+loadAbsent sig vars (L _ [x, y]) =
     do
-      t <- loadExprTerm sig vars x
-      ts <- loadExprTerms sig vars xs
-      return (adjoin t ts)
-
+      x <- loadExprTerm sig vars x
+      y <- loadTerm sig vars False y
+      return (x, y)
+loadAbsent _ _ x =
+    fail (shows (annotation x) "Expecting a pair of terms")
+      
 loadExprTerm :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
 loadExprTerm sig vars x =
     do
@@ -1247,7 +1248,7 @@ loadRest sig pos vars p gen gs insts orderings
       ar <- loadBaseTerms sig vars ar
       ur <- loadBaseTerms sig vars ur
       ug <- loadBaseTerms sig vars ug
-      ab <- loadExprTerms sig vars ab
+      ab <- mapM (loadAbsent sig vars) ab
       pr <- mapM (loadNode heights) pr
       cn <- loadBaseTerms sig vars cn
       au <- loadBaseTerms sig vars au
@@ -1258,7 +1259,8 @@ loadRest sig pos vars p gen gs insts orderings
       prios <- mapM (loadPriorities heights) pl
       let k = mkPreskel gen p gs insts o nr' ar' ur'
               ug' ab pr genSts cn' au' fs prios comment
-      case termsWellFormed $ nr' ++ ar' ++ ur' ++ ug' ++ ab ++ kterms k of
+          ab' = L.concatMap (\(x, y) -> [x, y]) ab
+      case termsWellFormed $ nr' ++ ar' ++ ur' ++ ug' ++ ab' ++ kterms k of
         False -> fail (shows pos "Terms in skeleton not well formed")
         True -> return ()
       case L.all isChan (cn' ++ au') of

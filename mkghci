@@ -4,6 +4,6 @@ autogen=`find . -name autogen -type d | grep '/cpsa4/'`
 echo ':set' "-isrc:$autogen"
 echo ':set -fbreak-on-error'
 echo ':set' args ${1:-bug.scm}
-echo '-- ghci src/CPSA/Main.hs'
+echo '-- ghci -fghci-hist-size=200 src/CPSA/Main.hs'
 echo '-- :trace main'
 

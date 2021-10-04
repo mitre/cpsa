@@ -10,7 +10,7 @@ module CPSA.Channel (ChMsg (..), cmTerm, cmTerms, cmMap, cmChan,
                      cmMatch, cmUnify, cmtSubstitute,
                      cmFoldCarriedTerms,
                      CMT (..),
-                     cmtMap, cmtTerms, cmtUnify,
+                     cmtMap, cmtTerms, cmtUnify, cmtTerm,
                      cmtAncestors, cmSubstitute,
                      cmtCarriedPlaces,
                     ) where
@@ -104,6 +104,10 @@ cmtUnify :: CMT -> CMT -> (Gen, Subst) -> [(Gen, Subst)]
 cmtUnify (CM t) (CM t') gs = cmUnify t t' gs
 cmtUnify (TM t) (TM t') gs = unify t t' gs
 cmtUnify _ _ _ = []
+
+cmtTerm :: CMT -> Term
+cmtTerm (CM cm) = cmTerm cm
+cmtTerm (TM t) = t
 
 -- Carried places
 

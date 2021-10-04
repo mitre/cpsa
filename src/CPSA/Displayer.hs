@@ -163,12 +163,16 @@ displayRole r =
           S () (rname r) :
           L () (S () "vars" : displayVars ctx (sansPts vars)) :
           L () (S () "trace" : displayTraceNoPt ctx (rtrace r)) :
-          displayOptional "non-orig" (displayLenTerms ctx (sansNestedPts (rnon r)))
-          (displayOptional "pen-non-orig" (displayLenTerms ctx (sansNestedPts (rpnon r)))
-           (displayOptional "uniq-orig" (displayTerms ctx (sansPts (runique r)))
-            (displayOptional "conf" (displayTerms ctx (rconf r))
-             (displayOptional "auth" (displayTerms ctx (rauth r))
-              (rcomment r))))))
+          displayOptional "non-orig" (displayLenTerms ctx
+                                      (sansNestedPts (rnon r)))
+          (displayOptional "pen-non-orig" (displayLenTerms ctx
+                                           (sansNestedPts (rpnon r)))
+           (displayOptional "uniq-orig" (displayTerms ctx
+                                         (sansPts (runique r)))
+             (displayOptional "uniq-gen" (displayTerms ctx (runiqgen r))
+              (displayOptional "conf" (displayTerms ctx (rconf r))
+               (displayOptional "auth" (displayTerms ctx (rauth r))
+                (rcomment r)))))))
     where
       ctx = varsContext $ rvars r
       vars = sansPts $ rvars r
@@ -186,6 +190,13 @@ displayLenTerms ctx ts = map (displayLenTerm ctx) (L.sort ts)
 displayLenTerm :: Context -> (Maybe Int, Term) -> SExpr ()
 displayLenTerm ctx (Nothing, t) = displayTerm ctx t
 displayLenTerm ctx (Just len, t) = L () [N () len, displayTerm ctx t]
+
+displayTermPair :: Context -> (Term, Term) -> SExpr ()
+displayTermPair ctx (x, y) =
+  L () [displayTerm ctx x, displayTerm ctx y]
+
+displayTermPairs :: Context -> [(Term, Term)] -> [SExpr ()]
+displayTermPairs ctx ts = map (displayTermPair ctx) (L.sort ts)
 
 displayOptional :: String -> [SExpr ()] -> [SExpr ()] -> [SExpr ()]
 displayOptional _ [] rest = rest
@@ -248,17 +259,20 @@ displayRest k ctx rest =
      (displayOptional "non-orig" (displayTerms ctx (sansPts (knon k)))
       (displayOptional "pen-non-orig" (displayTerms ctx (sansPts (kpnon k)))
        (displayOptional "uniq-orig" (displayTerms ctx (sansPts (kunique k)))
-        (displayOptional "gen-st" (displayTerms ctx (kgenSt k))
-         (displayOptional "conf" (displayTerms ctx (kconf k))
-          (displayOptional "auth" (displayTerms ctx (kauth k))
-           (displayOptional "facts" (displayFacts ctx (kfacts k))
-            -- (map (displayFact ctx) (kfacts
-            -- k))
-             (displayOptional "priority" priorities
-              (kcomment k ++
-               (displayOptional "rule" (map (S ()) (krules k))
-                (displayOperation k ctx
-                 (displayOptional "traces" traces rest))))))))))))
+        (displayOptional "uniq-gen" (displayTerms ctx (kuniqgen k))
+         (displayOptional "absent" (displayTermPairs ctx (kabsent k))
+          (displayOptional "precur" (displayNodes (kprecur k))
+           (displayOptional "gen-st" (displayTerms ctx (kgenSt k))
+            (displayOptional "conf" (displayTerms ctx (kconf k))
+             (displayOptional "auth" (displayTerms ctx (kauth k))
+              (displayOptional "facts" (displayFacts ctx (kfacts k))
+              -- (map (displayFact ctx) (kfacts
+              -- k))
+               (displayOptional "priority" priorities
+                (kcomment k ++
+                 (displayOptional "rule" (map (S ()) (krules k))
+                  (displayOperation k ctx
+                   (displayOptional "traces" traces rest)))))))))))))))
     where
       priorities = map displayPriority (kpriority k)
       traces = map (L () . displayTrace ctx . trace) (insts k)
@@ -314,6 +328,9 @@ displayPair (n0, n1) =
 displayNode :: Node -> SExpr ()
 displayNode (s, p) = L () [N () s, N () p]
 
+displayNodes :: [Node] -> [SExpr ()]
+displayNodes ns = map displayNode (L.sort ns)
+
 -- Display the reason the preskeleton was created
 displayOperation :: Preskel -> Context -> [SExpr ()] -> [SExpr ()]
 displayOperation k ctx rest =
@@ -332,6 +349,12 @@ displayOperation k ctx rest =
       AddedListener t cause ->
           displayCause
           (L () [S () "added-listener", displayOpCmt ctx $ CM $ Plain t]) cause
+      AddedAbsence t1 t2 cause ->
+          displayCause (L () [S () "added-absence", displayOpCmt ctx $ TM t1,
+                                displayOpCmt ctx $ TM t2]) cause
+      AlgebraSolved subst cause ->
+          let substitution = displaySubst ctx subst in
+          displayCause (L () (S () "algebra-contracted" : substitution)) cause
       Generalized method ->
           let desc = displayMethod ctx method in
           L () (S () "operation" : S () "generalization" : desc) : rest

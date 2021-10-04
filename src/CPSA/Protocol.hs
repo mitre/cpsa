@@ -9,7 +9,7 @@
 module CPSA.Protocol (Event (..), evtCm, evtTerm, evtChan, evtMap, evt,
     inbnd, outbnd, Trace, tterms, originates, originationPos,
     generates, generationPos,
-    acquiredPos, gainedPos, usedPos, insPrecedeOuts,
+    acquiredPos, gainedPos, genGainedPos, usedPos, insPrecedeOuts,
     Role, rname, rvars, rtrace, rnon, rpnon, runique, runiqgen,
     rconf, rauth, rcomment, rsearch, rnorig, rpnorig, ruorig, rugen,
     rpconf, rpauth, rpriority, mkRole, tchans, varSubset, varsInTerms,
@@ -195,6 +195,19 @@ gainedPos t c =
           | otherwise = loop (pos + 1) c
       loop pos (In t' : c)
           | t `carriedBy` cmTerm t' = Just pos -- Found it
+          | otherwise = loop (pos + 1) c
+
+-- At what position is a term gained in a trace?
+genGainedPos :: Term -> Trace -> Maybe Int
+genGainedPos t c =
+    loop 0 c
+    where
+      loop _ [] = Nothing       -- Term does not occur
+      loop pos (Out t' : c)
+          | t `occursIn` cmTerm t' = Nothing -- Term is not gained
+          | otherwise = loop (pos + 1) c
+      loop pos (In t' : c)
+          | t `occursIn` cmTerm t' = Just pos -- Found it
           | otherwise = loop (pos + 1) c
 
 -- At what position do all of the variables in a term occur in a trace?

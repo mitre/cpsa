@@ -143,15 +143,15 @@ confsInNodes k ns =
 
 -- Returns that atoms that cannot be guess when determining if a
 -- term is derivable from some other terms, and the atoms that
--- uniquely originate in this skeleton.
+-- uniquely originate or generate in this skeleton.
 avoid :: Preskel -> (Set Term, [Term])
 avoid k =
-    (S.unions [ns, as, us], L.nub ((kpnon k) ++ u))
+    (S.fromList (knon k ++ p ++ u ++ g),
+      L.nub (p ++ u ++ g))
     where
-      ns = S.fromList (knon k)
-      as = S.fromList (kpnon k)
+      p = kpnon k
       u = uniqOrig k
-      us = S.fromList u
+      g = uniqGen k
 
 -- Suppose k --v,p-> k', where k |-phi,sigma-> k'.  Let t=msg(k, v)@p,
 -- t'=sigma(t), T=sigma(esc(k, v, t)), and t''=msg(k', phi(v)).
@@ -169,6 +169,10 @@ avoid k =
 --
 -- 5. t' is an encryption and the encryption key for t' is derivable.
 --
+-- 6. t' is derivable in k' at phi(v).
+--
+-- 7. k' has a distinct absent constraint
+--
 -- Haskell variables:
 -- ct     = t
 -- pos    = p
@@ -178,8 +182,8 @@ avoid k =
 -- n      = v
 -- subst  = sigma
 solved :: CMT -> Place -> [Term] -> Set CMT ->
-          Preskel -> Node -> Subst -> Bool
-solved ct pos eks escape k n subst =
+          Preskel -> Node -> Subst -> [(Term, Term)] -> Bool
+solved ct pos eks escape k n subst absent =
     -- Condition 1
     isAncestorInSet escape' t pos ||
     -- Condition 2
@@ -190,7 +194,11 @@ solved ct pos eks escape k n subst =
     any (maybe False (derivable a ts) . decryptionKey) (S.toList encs) ||
     -- Condition 5
     -- Bug fix: apply subst to eks
-    any (derivable a ts) (map (substitute subst) eks)
+    any (derivable a ts) (map (substitute subst) eks) ||
+    -- Condition 6
+    derivable a ts (cmtTerm ct') ||
+    -- Condition 7: hack!
+    length (kabsent k) > length absent
     where
       v = vertex k n            -- Look up vertex in k
       t = evtCm (event v)       -- Term at v
@@ -199,16 +207,16 @@ solved ct pos eks escape k n subst =
       mappedTargetTerms = S.map (cmtSubstitute subst) (targetTerms ct escape)
       targetTermsDiff = S.difference (targetTerms ct' escape') mappedTargetTerms
       vs = addSendingBefore S.empty v
-      ts = termsInNodes k vs     -- Outbound predecessors !!! JDR
+      ts = termsInNodes k vs     -- Outbound predecessors
       (a, _) = avoid k
       encs = S.fold f S.empty escape'
       f (CM _) ts = ts
       f (TM t) ts = S.insert t ts
 
 maybeSolved :: CMT -> Place -> [Term] -> Set CMT ->
-               Preskel -> Node -> Subst -> Bool
-maybeSolved ct pos eks escape k n subst =
-    not useSolvedFilter || solved ct pos eks escape k n subst
+               Preskel -> Node -> Subst -> [(Term, Term)] -> Bool
+maybeSolved ct pos eks escape k n subst absent =
+    not useSolvedFilter || solved ct pos eks escape k n subst absent
 
 data Mode = Mode
     { noGeneralization :: Bool,
@@ -371,7 +379,7 @@ testNode mode k u cms ts a n cm =
             places [] = loop cts  -- Find position at which
             places (p : ps)       -- ct has escaped
               | isAncestorInSet escape cm p = places ps
-              | otherwise = solveNode k (TM ct) p eks n cm escape
+              | otherwise = solveNode k a (TM ct) p eks n cm escape
             escape = S.union    -- The escape set has type CMT
                      (S.map TM esc)
                      (S.map CM (S.filter (carriedBy ct . cmTerm) cms))
@@ -380,12 +388,15 @@ potentialCriticalMessages :: Mode -> [Term] -> Set Term ->
                              Set Term -> Term -> [(Term, [Term])]
 potentialCriticalMessages mode u ts a t =
   if nonceFirstOrder mode then
-    map f (filter (flip carriedBy t) u) ++
-    filter g (map h (encryptions t))
+    nonces ++ encs
   else
-    filter g (map h (encryptions t)) ++
-    map f (filter (flip carriedBy t) u)
+    encs ++ nonces
   where
+    nonces = map f (filter (flip carriedBy t) u) ++
+             (foldCarriedTerms fnum [] t)
+    encs = filter g (map h (encryptions t))
+    fnum nums t | isNum t && (not $ buildable ts a t) = nums ++ [(t, [])]
+                | otherwise = nums
     f ct = (ct, [])             -- A nonce tests has no eks
     g (_, []) = False           -- An encryption test must have
     g _ = True                  -- at least one non-derivable key
@@ -405,15 +416,16 @@ isAncestorInSet set source position =
 -- Solve critical message at position pos at node n.
 -- ct = t @ pos
 -- t  = msg(k, n)
-solveNode :: Preskel -> CMT -> Place -> [Term] -> Node ->
+solveNode :: Preskel -> Set Term -> CMT -> Place -> [Term] -> Node ->
              ChMsg -> Set CMT -> [Preskel]
 -- solveNode _ _ _ _ _ _ _ = []
-solveNode k ct pos eks n t escape =
-    mgs $ cons ++ augs ++ lsns
+solveNode k a ct pos eks n t escape =
+    mgs $ cons ++ augs ++ lsns ++ dhs
     where
       cons = contractions k ct pos eks n t escape cause
       augs = augmentations k ct pos eks n escape cause
       lsns = addListeners k ct pos eks n t escape cause
+      dhs = theDHSubcohort k a ct pos eks n escape cause
       cause = Cause (dir eks) n ct escape
 
 -- Authenticated channel message is the critical value
@@ -471,11 +483,11 @@ perms alist range (s:domain) =
 contractions :: Preskel -> CMT -> Place -> [Term] -> Node -> ChMsg ->
                 Set CMT -> Cause -> [(Preskel, [Sid])]
 contractions k ct pos eks n t escape cause =
-    [ (k, phi) |
-          let anc = cmtAncestors t pos,
-          subst <- solve escape anc (gen k, emptySubst),
-          (k, n, phi, subst') <- contract k n cause subst,
-          maybeSolved ct pos eks escape k n subst' ]
+    [ (k', phi) |
+           let anc = cmtAncestors t pos,
+           subst <- solve escape anc (gen k, emptySubst),
+           (k', n, phi, subst') <- contract k n cause subst,
+           maybeSolved ct pos eks escape k' n subst' (kabsent k) ]
 
 solve :: Set CMT -> [CMT] -> (Gen, Subst) -> [(Gen, Subst)]
 solve escape ancestors subst =
@@ -524,7 +536,7 @@ roleAugs k ct pos eks n escape cause targets role =
                transformingNode ct escape targets role subst,
            (k', n', phi, subst'') <-
                augment k n cause role subst' inst,
-           maybeSolved ct pos eks escape k' n' subst'' ]
+           maybeSolved ct pos eks escape k' n' subst'' (kabsent k)]
     where
       subst = cloneRoleVars (gen k) role
 
@@ -575,8 +587,6 @@ targetTerms ct escape =
           TM ct ->
             foldl (flip S.insert) ts
                   (map TM $ concatMap (ancestors t) (carriedPlaces ct t))
-
---- JDR !!!
 
 -- Find bindings for terms in the test.
 carriedBindings :: [CMT] -> ChMsg -> (Gen, Subst) -> [(Gen, Subst)]
@@ -643,7 +653,7 @@ addListeners k ct pos eks n t escape cause =
     [ (k', phi) |
            t' <- filter (f t) (S.toList (escapeKeys eks escape)),
            (k', n', phi, subst) <- addListener k n cause t',
-           maybeSolved ct pos eks escape k' n' subst ]
+           maybeSolved ct pos eks escape k' n' subst (kabsent k) ]
     where
       f (ChMsg _ _) _ = True
       f (Plain t) t' = t /= t'
@@ -655,6 +665,44 @@ escapeKeys eks escape =
       f (TM e) s = maybe s (flip S.insert s) (decryptionKey e)
       f (CM _) s = s
       es = S.fromList eks
+
+
+-- DH Subcohort
+
+theDHSubcohort :: Preskel -> Set Term ->
+                  CMT -> Place -> [Term] -> Node ->
+                  Set CMT -> Cause -> [(Preskel, [Sid])]
+theDHSubcohort k a ct pos eks n escape cause
+  | isBase (cmtTerm ct) = baseDHSubcohort k ct pos eks n escape cause
+  | isExpr (cmtTerm ct) = exprDHSubcohort k a ct pos eks n escape cause
+  | otherwise = []
+
+baseDHSubcohort :: Preskel -> CMT -> Place -> [Term] -> Node ->
+                  Set CMT -> Cause -> [(Preskel, [Sid])]
+baseDHSubcohort k ct pos eks n escape cause
+  | elem n (kprecur k) = []
+  | otherwise =
+    [ (k', phi) |
+      (k', n', phi, subst) <- addBaseListener k n cause (cmtTerm ct),
+      maybeSolved ct pos eks escape k' n' subst (kabsent k)]
+
+exprDHSubcohort :: Preskel -> Set Term ->
+                  CMT -> Place -> [Term] -> Node ->
+                  Set CMT -> Cause -> [(Preskel, [Sid])]
+exprDHSubcohort k a ct pos eks n escape cause =
+--  | isNodePrecur k n = []
+--  | otherwise =
+  do
+    x <- S.toList a
+    case expnInExpr x (cmtTerm ct) of
+      False -> []
+      True ->
+        [ (k', phi) |
+           (k', n', phi, subst) <- addAbsence k n cause x (cmtTerm ct),
+             maybeSolved ct pos eks escape k' n' subst (kabsent k) ] ++
+        [ (k', phi) |
+          (k', n', phi, subst) <- addListener k n cause x,
+          maybeSolved ct pos eks escape k' n' subst (kabsent k) ]
 
 -- Maximize a realized skeleton if possible.  Do not consider
 -- generalizations that fail to satisfy the rules of the skeleton's
