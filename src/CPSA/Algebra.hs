@@ -670,6 +670,8 @@ termWellFormed xts (F Base [t]) =
           extendVarEnv xts x (F Base [t])
       baseVarEnv xts (F Genr []) =
           Just xts
+      -- Check for non-canonical form
+      baseVarEnv _ (F Exp [F Exp _, _]) = Nothing
       baseVarEnv xts (F Exp [t0, G t1]) =
           do
             xts <- baseVarEnv xts t0
@@ -764,7 +766,7 @@ foldVars f acc (G t) =
     where
       expnAddVars acc x (be, _) =
           f acc (groupVar be x)
-foldVars _ acc (F Tag [C _]) = acc                -- Tags
+foldVars _ acc (F Tag [C _]) = acc            -- Tags
 foldVars f acc (F (Tupl _) ts) =              -- Concatenation
     foldl (foldVars f) acc ts
 foldVars f acc (F (Enc _) [t0, t1]) =         -- Encryption
@@ -1168,13 +1170,21 @@ clone gen t =
 
 basePrecursor :: Gen -> Term -> (Gen, Term)
 basePrecursor g (F Base [t]) =
-  (g', F (Tupl "cat") [F Base [F Exp [t, G $ invert x']], G x'])
+  (g', F (Tupl "cat")
+    [F Base [simplifyBase $ F Exp [t, G $ invert x']],
+     G x'])
   where
     (g', x) = freshId g "w"
     G x' = groupVar False x
-
 basePrecursor _ t =
-  error ("Algebra.basePrecursor: Bad term " ++ show (F Base [t]))
+  error ("Algebra.basePrecursor: Bad term " ++ show t)
+
+simplifyBase :: Term -> Term
+simplifyBase (F Exp [t, G g])
+  | M.null g = simplifyBase t
+simplifyBase (F Exp [F Exp [t, G g0], G g1]) =
+  simplifyBase (F Exp [t, G (mul g0 g1)])
+simplifyBase t = t
 
 -- Functions used in both unification and matching
 
@@ -1843,9 +1853,9 @@ match (F Base [I x]) (F Base [I y]) (g, Env (v, r)) =
 -- Both t0 and t0' should not be F Exp, though, as this would indicate a non-canonical form.
 matchExp ::  Term -> Group -> Term -> Group -> GenEnv -> [GenEnv]
 matchExp (F Exp [t0, G e]) t1 _ _ _ =
-    error ("Algebra.matchExp: Input not in canonical form" ++ show (F Exp [F Exp [t0, G e], G t1]))
+    error ("Algebra.matchExp: Input not in canonical form " ++ show (F Exp [F Exp [t0, G e], G t1]))
 matchExp _ _ (F Exp [t0, G e]) t1 _ =
-    error ("Algebra.matchExp: Input not in canonical form" ++ show (F Exp [F Exp [t0, G e], G t1]))
+    error ("Algebra.matchExp: Input not in canonical form " ++ show (F Exp [F Exp [t0, G e], G t1]))
 -- Force both inputs into canonical form
 --matchExp (F Exp [t0, G e]) t1 t0' t1' ge =
 --    matchExp t0 (mul e t1) t0' t1' ge

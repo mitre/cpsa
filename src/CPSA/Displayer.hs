@@ -352,9 +352,6 @@ displayOperation k ctx rest =
       AddedAbsence t1 t2 cause ->
           displayCause (L () [S () "added-absence", displayOpCmt ctx $ TM t1,
                                 displayOpCmt ctx $ TM t2]) cause
-      AlgebraSolved subst cause ->
-          let substitution = displaySubst ctx subst in
-          displayCause (L () (S () "algebra-contracted" : substitution)) cause
       Generalized method ->
           let desc = displayMethod ctx method in
           L () (S () "operation" : S () "generalization" : desc) : rest

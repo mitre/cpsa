@@ -154,8 +154,8 @@ originationPos t c =
 -- Does the term occur in an event, and is the first one outgoing?
 generates :: Term -> Trace -> Bool
 generates _ [] = False         -- Term does not occur
-generates t (Out t' : c) = t `occursIn` cmTerm t' || generates t c
-generates t (In t' : c) = not (t `occursIn` cmTerm t') && generates t c
+generates t (Out t' : c) = t `constituent` cmTerm t' || generates t c
+generates t (In t' : c) = not (t `constituent` cmTerm t') && generates t c
 
 -- At what position does a term generate in a trace?
 generationPos :: Term -> Trace -> Maybe Int
@@ -164,10 +164,10 @@ generationPos t c =
     where
       loop _ [] = Nothing       -- Term does not occur
       loop pos (Out t' : c)
-          | t `occursIn` cmTerm t' = Just pos -- Found it
+          | t `constituent` cmTerm t' = Just pos -- Found it
           | otherwise = loop (pos + 1) c
       loop pos (In t' : c)
-          | t `occursIn` cmTerm t' = Nothing -- Term does not generate
+          | t `constituent` cmTerm t' = Nothing -- Term does not generate
           | otherwise = loop (pos + 1) c
 
 -- At what position is a term acquired in a trace?
@@ -204,10 +204,10 @@ genGainedPos t c =
     where
       loop _ [] = Nothing       -- Term does not occur
       loop pos (Out t' : c)
-          | t `occursIn` cmTerm t' = Nothing -- Term is not gained
+          | t `constituent` cmTerm t' = Nothing -- Term is not gained
           | otherwise = loop (pos + 1) c
       loop pos (In t' : c)
-          | t `occursIn` cmTerm t' = Just pos -- Found it
+          | t `constituent` cmTerm t' = Just pos -- Found it
           | otherwise = loop (pos + 1) c
 
 -- At what position do all of the variables in a term occur in a trace?

@@ -115,6 +115,10 @@ usePruning = False -- True
 useStrongPruning :: Bool
 useStrongPruning = True -- False
 
+-- Check terms in preskeletons, should be off by default
+useWellFormedTerms :: Bool
+useWellFormedTerms = False -- True
+
 -- Instances and Strand Identifiers
 
 -- An Instance is an instance of a role, in the sense that each
@@ -474,7 +478,6 @@ data Operation
     | AddedStrand String Int Cause
     | AddedListener Term Cause
     | AddedAbsence Term Term Cause
-    | AlgebraSolved Subst Cause
     | Generalized Method
     | Collapsed Int Int
       deriving Show
@@ -635,6 +638,7 @@ preskelWellFormed k =
     varSubset (kpnon k) terms &&
     all nonCheck (knon k) &&
     all uniqueCheck (kunique k) &&
+    all uniqgenCheck (kuniqgen k) &&
     all genStCheck (kgenSt k) &&
     all chanCheck (kconf k) &&
     all chanCheck (kauth k) &&
@@ -644,14 +648,19 @@ preskelWellFormed k =
       terms = kterms k
       nonCheck t = all (not . carriedBy t) terms
       uniqueCheck t = any (carriedBy t) terms
+      uniqgenCheck t = any (constituent t) terms
       genStCheck t = any (carriedBy t) terms
       chanCheck c = elem c (kvars k)
 
 -- Do notation friendly preskeleton well formed check.
 wellFormedPreskel :: MonadFail m => Preskel -> m Preskel
 wellFormedPreskel k
-    | preskelWellFormed k = return k
+    | preskelWellFormed k && traceWellFormed k = return k
     | otherwise = fail "preskeleton not well formed"
+
+traceWellFormed :: Preskel -> Bool
+traceWellFormed k =
+  not useWellFormedTerms || termsWellFormed (kterms k)
 
 -- A version of preskelWellFormed that explains why a preskeleton is
 -- not well formed.
@@ -664,6 +673,7 @@ verbosePreskelWellFormed k =
                    $ varSubset (kpnon k) terms
       mapM_ nonCheck $ knon k
       mapM_ uniqueCheck $ kunique k
+      mapM_ uniqgenCheck $ kuniqgen k
       mapM_ genStCheck $ kgenSt k
       mapM_ confCheck $ kconf k
       mapM_ authCheck $ kauth k
@@ -679,6 +689,9 @@ verbosePreskelWellFormed k =
       uniqueCheck t =
           failwith (showString "uniq-orig " $ showst t " not carried")
                        $ any (carriedBy t) terms
+      uniqgenCheck t =
+          failwith (showString "uniq-gen " $ showst t " does not occur")
+                       $ any (constituent t) terms
       genStCheck t =
           failwith (showString "gen-st " $ showst t " not carried")
                        $ any (carriedBy t) terms
@@ -1200,8 +1213,6 @@ substOper subst (AddedListener t cause) =
     AddedListener (substitute subst t) (substCause subst cause)
 substOper subst (AddedAbsence t1 t2 cause) =
     AddedAbsence (substitute subst t1) (substitute subst t2) (substCause subst cause)
-substOper subst (AlgebraSolved s cause) =
-    AlgebraSolved (compose subst s) (substCause subst cause)
 substOper _ m@(Generalized _) = m
 substOper _ m@(Collapsed _ _) = m
 
@@ -1358,8 +1369,133 @@ soothePreskel k =
 -- This is the starting point of the Preskeleton Reduction System
 skeletonize :: Bool -> PRS -> [PRS]
 skeletonize thin prs
-    | hasMultipleOrig prs = []  -- Usual case
-    | otherwise = enrich thin prs
+  | hasMultipleOrig prs = []
+  | otherwise =
+    do
+      prs' <- enforceAbsence prs
+      enrich thin prs'
+  
+enforceAbsence :: PRS -> [PRS]
+enforceAbsence prs@(_, k, _, _, _) =
+  [prs' | s <- absenceSubst (gen k) (kabsent k), prs' <- ksubst prs s]
+
+{-
+skeletonize :: Bool -> PRS -> [PRS]
+skeletonize thin prs = skeletonizeLoop thin 5 prs
+
+enforceAbsence :: PRS -> [PRS]
+enforceAbsence prs@(_, k, _, _, _) =
+  [prs' | s <- absenceSubst (gen k) (kabsent k), prs' <- ksubst prs s]
+
+skeletonizeLoop :: Bool -> Int -> PRS -> [PRS]
+skeletonizeLoop _ 0 prs = [prs]
+skeletonizeLoop thin iter prs =
+  concatMap maybeRectify coreResult
+  where
+      coreResult = concatMap coreAlg (enforceAbsence prs)
+      coreAlg
+        | useDeOrigination = hull thin
+        | otherwise = normalAlg
+      normalAlg prs | hasMultipleOrig prs = []
+                    | otherwise = enrich thin prs
+      maybeRectify prs
+                | rectifiableConstraintCheck (skel prs) = [prs]
+                | otherwise = concatMap
+                              (skeletonizeLoop thin (iter - 1)) (rectify prs)
+
+
+-- rectifiableConstraintCheck: outputs True if all rectifiable
+-- constraints are true of the input skeleton.
+rectifiableConstraintCheck :: Preskel -> Bool
+rectifiableConstraintCheck k
+  | not (null (rectUnifications k)) = False
+  | not (indicatorConstraintsCheck k) = False
+  | otherwise = True
+
+-- indicatorConstraintsCheck: outputs True iff all indicator constraints are
+-- currently met.
+indicatorConstraintsCheck :: Preskel -> Bool
+indicatorConstraintsCheck k =
+  indZeroCheck && indZeroInCheck
+  where
+    indZeroCheck = all (\(t,v) -> t == v || calcIndicator t v == Just 0)
+                   (pairs indZeroTerms avoidExpVars)
+    indZeroTerms = map head (map dterms $ tagDecls "ind-zero" (decls k))
+    avoidExpVars = filter isNum (S.toList $ avoid k)
+    indZeroInCheck = all (\(t,v) -> indicator t v == Just 0) indZeroInPairs
+    indZeroInPairs = map (\ts -> (ts !! 0, ts !! 1)) (map dterms $ tagDecls "ind-zero-in" (decls k))
+    pairs x y = [(a,b)|a <- x, b <- y]
+
+-- rectify: rectify rectifiable constraints.
+rectify :: Algebra t p g s e c => PRS t p g s e c -> [PRS t p g s e c]
+rectify prs =
+   concatMap rectifyIndicatorConstraints $
+   doUnifs prs
+   where
+     doUnifs prs
+       | null $ unifs prs = [prs]
+       | otherwise = concatMap (ksubst prs) (rectUnifs (unifs prs) (gen (skel prs), emptySubst))
+     unifs prs = rectUnifications (skel prs)
+     rectUnifs [] sigma = [sigma]
+     rectUnifs ((t1,t2):rest) sigma =
+       do
+         s <- unify t1 t2 sigma
+         rectUnifs rest s
+
+-- sklyynch: cancel a numeric variable from points earlier than its
+-- generation point.
+rectifyIndicatorConstraints :: Algebra t p g s e c => PRS t p g s e c -> [PRS t p g s e c]
+rectifyIndicatorConstraints prs
+  | indicatorConstraintsCheck (skel prs) = [prs]
+  | otherwise = [prs' | ge <- gefix,
+                        prs' <- recurse1 (ind0Problems (skel prs)) prs ge]
+  where
+    -- Rectify ind-zero constraints until none are left, then rectify
+    -- ind-zero-in constraints.
+    recurse1 [] prs ge = recurse2 (ind0_inProblems (skel prs)) prs ge
+    recurse1 (t:ts) prs ge =
+      [prs' | (g,e) <- zeroIndicator t ge (filter (/= t) $ resExps (skel prs)),
+              sprs <- ksubst prs (g, substitution e),
+              prs' <- recurse1 (map (substitute (substitution e)) ts) sprs (g,e)]
+
+    -- Rectify ind-zero-in constraints until none are left
+    recurse2 [] prs _ = [prs]
+    recurse2 (tv:tvs) prs ge =
+      [prs' | (g,e) <- zeroIndicatorIn (tv !! 1) (tv !! 0) ge,
+              sprs <- ksubst prs (g,substitution e),
+              prs' <- recurse2 (map (\tv -> map (substitute (substitution e)) tv) tvs) sprs (g,e)]
+
+    -- Include restricted variables
+    gefix = matchMany (resExps (skel prs)) (resExps (skel prs)) (gen (skel prs), emptyEnv)
+    resExps k = (filter isNum $ S.toList (avoid k))
+
+    ind0Problems k = filter (\t -> ind0ProblemCheck t (resExps k))
+                  (map head $ map dterms $ tagDecls "ind-zero" (decls k))
+    ind0_inProblems k = filter (\ts -> indicator (ts !! 1) (ts !! 0) /= Just 0)
+                  (map dterms $ tagDecls "ind-zero-in" (decls k))
+    ind0ProblemCheck t av = any (\v -> indicator t v /= Just 0) (filter (/= t) av)
+
+-- rectUnifications: list required, non-trivial unification for
+-- rectifying k
+rectUnifications :: Algebra t p g s e c => Preskel t g s e -> [(t,t)]
+rectUnifications k = fnofUnifications k
+
+-- fnofUnifications: list unifications required by fnof constraint
+fnofUnifications :: Algebra t p g s e c => Preskel t g s e -> [(t,t)]
+fnofUnifications k =
+   reducePairs [(head $ dterms ti1, head $ dterms ti2) |
+          ti1 <- fnofDecls, ti2 <- fnofDecls, daux ti1 == daux ti2,
+          (head $ dterms ti1) /= (head $ dterms ti2),
+          ((dterms ti1) !! 1) == ((dterms ti2) !! 1)]
+   where
+     -- Relies every fn-of declaration including at least 2 entries in dterms.
+     fnofDecls = filter (\d -> (length $ dterms d) >= 2) $ tagDecls "fn-of" (decls k)
+     -- removes duplicates and flips
+     reducePairs [] = []
+     reducePairs ((a,b):rest) = ((a,b):(reducePairs (filter (\ (c,d) ->
+                              ((c,d) /= (a,b)) && ((c,d) /= (b,a))) rest)))
+
+-}
 
 hasMultipleOrig :: PRS -> Bool
 hasMultipleOrig prs =
@@ -1652,10 +1788,11 @@ pruneStrand prs s s' =
       compress True prs' s s'
 
 -- Make sure a substitution does not take a unique out of the set of
--- uniques, and the same for nons and pnons.
+-- uniques, and the same for uniq gens, nons, and pnons.
 origCheck :: Preskel -> Env -> Bool
 origCheck k env =
-    check (kunique k) && check (knon k) && check (kpnon k)
+    check (kunique k) && check (kuniqgen k) &&
+    check (knon k) && check (kpnon k)
     where
       check orig =
           all (pred orig) orig
@@ -1939,11 +2076,12 @@ addBaseListener k n cause t =
              (k, k', n, strandids k, emptySubst)
       homomorphismFilter prs
     where
-      k' = newPreskel gen' (shared k) insts' orderings' (knon k)
+      k' = newPreskel gen'' (shared k) insts' orderings' (knon k)
            (kpnon k) (kunique k) (kuniqgen k) (kabsent k) precur'
            (kgenSt k) (kconf k) (kauth k) (kfacts k) (kpriority k)
            (AddedListener t cause) [] (pprob k) (prob k) (pov k)
-      (gen', inst) = mkListener (protocol k) (gen k) t
+      (gen', t') = basePrecursor (gen k) t
+      (gen'', inst) = mkListener (protocol k) gen' t'
       insts' = insts k ++ [inst]
       pair = ((length (insts k), 1), n)
       orderings' = pair : orderings k
@@ -1953,9 +2091,9 @@ addBaseListener k n cause t =
 addAbsence :: Preskel -> Node -> Cause -> Term -> Term -> [Ans]
 addAbsence k n cause x t =
     do
-      k' <- wellFormedPreskel k'
+      k'' <- wellFormedPreskel k'
       prs <- skeletonize useThinningWhileSolving
-             (k, k', n, strandids k, emptySubst)
+             (k, k'', n, strandids k, emptySubst)
       homomorphismFilter prs
     where                       -- New cause should be added!
       k' = newPreskel (gen k) (shared k) (insts k) (orderings k)
