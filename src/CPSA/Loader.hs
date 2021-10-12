@@ -1116,7 +1116,7 @@ loadAbsent sig vars (L _ [x, y]) =
       return (x, y)
 loadAbsent _ _ x =
     fail (shows (annotation x) "Expecting a pair of terms")
-      
+
 loadExprTerm :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
 loadExprTerm sig vars x =
     do

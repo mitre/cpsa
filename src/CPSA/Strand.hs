@@ -20,7 +20,8 @@ module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     inheritRconf, inheritRauth, addListener, addBaseListener, addAbsence,
     Cause (..), Direction (..), Method (..), Operation (..),
     operation, krules, pprob, prob, homomorphism, toSkeleton, generalize,
-    collapse, sat, FTerm (..), Fact (..), simplify, rewrite, localSignal, rewriteUnaryOneOnce) where
+    collapse, sat, FTerm (..), Fact (..), simplify, rewrite,
+    localSignal, rewriteUnaryOneOnce) where
 
 import Control.Monad
 import Control.Parallel
@@ -1374,10 +1375,21 @@ skeletonize thin prs
     do
       prs' <- enforceAbsence prs
       enrich thin prs'
-  
+
+-- Compute the substitutions that satisfy the absence assumptions and
+-- apply them to the skeleton.
 enforceAbsence :: PRS -> [PRS]
+enforceAbsence prs@(_, k, _, _, _)
+  | null (kabsent k) = [prs]
 enforceAbsence prs@(_, k, _, _, _) =
-  [prs' | s <- absenceSubst (gen k) (kabsent k), prs' <- ksubst prs s]
+  do
+    s <- foldl f [(gen k, emptySubst)] (kabsent k)
+    ksubst prs s
+  where
+    f ss ts =
+      do
+        s <- ss
+        absentSubst s ts
 
 {-
 skeletonize :: Bool -> PRS -> [PRS]
@@ -1402,7 +1414,6 @@ skeletonizeLoop thin iter prs =
                 | rectifiableConstraintCheck (skel prs) = [prs]
                 | otherwise = concatMap
                               (skeletonizeLoop thin (iter - 1)) (rectify prs)
-
 
 -- rectifiableConstraintCheck: outputs True if all rectifiable
 -- constraints are true of the input skeleton.
@@ -2079,7 +2090,7 @@ addBaseListener k n cause t =
       k' = newPreskel gen'' (shared k) insts' orderings' (knon k)
            (kpnon k) (kunique k) (kuniqgen k) (kabsent k) precur'
            (kgenSt k) (kconf k) (kauth k) (kfacts k) (kpriority k)
-           (AddedListener t cause) [] (pprob k) (prob k) (pov k)
+           (AddedListener t' cause) [] (pprob k) (prob k) (pov k)
       (gen', t') = basePrecursor (gen k) t
       (gen'', inst) = mkListener (protocol k) gen' t'
       insts' = insts k ++ [inst]

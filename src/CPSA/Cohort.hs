@@ -487,9 +487,15 @@ contractions :: Preskel -> CMT -> Place -> [Term] -> Node -> ChMsg ->
 contractions k ct pos eks n t escape cause =
     [ (k', phi) |
            let anc = cmtAncestors t pos,
-           subst <- solve escape anc (gen k, emptySubst),
+           subst <- solve escape anc (gen k, emptySubst) ++
+                    constSolve (gen k, emptySubst) ct (kterms k),
            (k', n, phi, subst') <- contract k n cause subst,
            maybeSolved ct pos eks escape k' n subst' (kabsent k) ]
+
+constSolve :: (Gen, Subst) -> CMT -> [Term] -> [(Gen, Subst)]
+constSolve subst ct kts =
+    [ s | c <- consts (cmtTerm ct) kts,
+          s <- unify (cmtTerm ct) c subst]
 
 solve :: Set CMT -> [CMT] -> (Gen, Subst) -> [(Gen, Subst)]
 solve escape ancestors subst =
@@ -691,8 +697,6 @@ exprDHSubcohort :: Preskel -> Set Term ->
                   CMT -> Place -> [Term] -> Node ->
                   Set CMT -> Cause -> [(Preskel, [Sid])]
 exprDHSubcohort k a ct pos eks n escape cause =
---  | isNodePrecur k n = []
---  | otherwise =
   do
     x <- S.toList a
     case expnInExpr x (cmtTerm ct) of

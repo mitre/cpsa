@@ -156,6 +156,7 @@ module CPSA.Algebra (name, alias,
     substitute,
     unify,
     compose,
+    absentSubst,
     absenceSubst,
 
     Env,
@@ -317,6 +318,20 @@ isMapletNonzero (_, (_, c)) = c /= 0
 group :: [Maplet] -> Group
 group maplets =
   M.fromList $ filter isMapletNonzero maplets
+
+-- For Absence
+
+-- Seperate a group term based on one variable.
+-- When the variable is not in the group, return Nothing
+-- Otherwise return a group with just the variable negated,
+-- and a group that contains the rest of the group.
+separateVar :: Id -> Group -> Maybe (Group, Group)
+separateVar var t =
+  case M.lookup var t of
+    Nothing -> Nothing
+    Just (basis, coef) ->
+      Just (M.singleton var (basis, negate coef),
+            M.delete var t)
 
 -- Operations other than the tag constant constructor
 data Symbol
@@ -1569,6 +1584,17 @@ destroyer :: Term -> Maybe Subst
 destroyer t@(G m) | isVar t =
   Just $ Subst (M.fromList [(head $ M.keys m, G M.empty)])
 destroyer _ = Nothing
+
+-- Extend a substitution so that it satisfies an abstence assertion
+absentSubst :: (Gen, Subst) -> (Term, Term) -> [(Gen, Subst)]
+absentSubst gs (G v, G t) | isGroupVar v =
+  case separateVar (getGroupVar v) t of
+    Nothing -> [gs]
+    Just (v', t') -> unifyGroup v' t' gs
+absentSubst _ ts =
+  error ("Algebra.absentSubst: Bad absent pair " ++ show ts)
+
+--------------------------------------------------------
 
 -- Stub absence substitution generator.  The current implementation
 -- never identifies basis variables.
