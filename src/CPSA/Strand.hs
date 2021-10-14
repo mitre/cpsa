@@ -1239,7 +1239,7 @@ compress validate (k0, k, n, phi, hsubst) s s' =
               (kunique k)
               (kuniqgen k)
               (kabsent k)
-              (map (updateNode s s') (kprecur k))
+              (map (permuteNode perm) (kprecur k))
               (kgenSt k)
               (kconf k)
               (kauth k)
@@ -1311,7 +1311,7 @@ purge (k0, k, n, phi, hsubst) s s' =
               (kunique k)
               (kuniqgen k)
               (kabsent k)
-              (map (updateNode s s') (kprecur k))
+              (map (permuteNode perm) (kprecur k))
               (kgenSt k)
               (kconf k)
               (kauth k)
@@ -2236,8 +2236,10 @@ deleteNode k n
     | p == 0 =
         do
           let mapping = deleteNth s (strandids k)
-          let k' = deleteNodeRest k (gen k) (s, p) (deleteNth s (insts k))
-                   (deleteOrderings s (tc k)) (updatePerm s s (prob k))
+          let k' = deleteNodeRest k (gen k) (s, p)
+                   (deleteNth s (insts k))
+                   (deleteOrderings s (tc k))
+                   (updatePerm s s (prob k))
                    (map
                      (updateFact (updateStrand s s))
                      (deleteFacts s $ kfacts k))
@@ -2247,8 +2249,10 @@ deleteNode k n
           let mapping = strandids k
           let i = inst (strand n)
           (gen', i') <- bldInstance (role i) (take p (trace i)) (gen k)
-          let k' = deleteNodeRest k gen' (s, p) (replaceNth i' s (insts k))
-                   (shortenOrderings (s, p) (tc k)) (prob k) (kfacts k)
+          let k' = deleteNodeRest k gen' (s, p)
+                   (replaceNth i' s (insts k))
+                   (shortenOrderings (s, p) (tc k))
+                   (prob k) (kfacts k)
           return (k', mapping)
     where
       p = pos n
@@ -2297,7 +2301,7 @@ deleteNodeRest k gen n insts' orderings prob facts =
       carriedIn t = any (carriedBy t) terms
       uniqgen' = filter mentionedIn (kuniqgen k)
       absent' = filter (\(x, y) -> mentionedIn x && mentionedIn y) (kabsent k)
-      precur' = L.delete n (kprecur k)
+      precur' = map (updateNode (fst n) (fst n)) $ L.delete n (kprecur k)
       -- Drop channel assumptions for non-existent channels
       chans = ichans insts'
       conf' = filter (flip elem chans) (kconf k)
@@ -4000,7 +4004,7 @@ rCompress k s s' =
         (kunique k)
         (kuniqgen k)
         (kabsent k)
-        (map (updateNode s s') (kprecur k))
+        (map (permuteNode perm) (kprecur k))
         (kgenSt k)
         (kconf k)
         (kauth k)
