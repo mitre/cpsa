@@ -18,7 +18,7 @@ import CPSA.SAS.SAS
 
 -- Algebra names
 algs :: [String]
-algs = [name]
+algs = [name, alias]
 
 main :: IO ()
 main =

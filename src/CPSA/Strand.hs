@@ -1368,6 +1368,24 @@ soothePreskel k =
     chanCheck t = varSubset [t] $ kchans k
 
 -- This is the starting point of the Preskeleton Reduction System
+
+skeletonize :: Bool -> PRS -> [PRS]
+skeletonize thin prs =
+  do
+    prs' <- enforceAbsence prs
+    enrich thin prs'
+
+{-
+skeletonize :: Bool -> PRS -> [PRS]
+skeletonize thin prs =
+  do
+    prs' <- enforceAbsence prs
+    case hasMultipleOrig prs' of
+      True -> []
+      False -> zP "enrich" $ enrich thin prs'
+-}
+
+{- Old
 skeletonize :: Bool -> PRS -> [PRS]
 skeletonize thin prs
   | hasMultipleOrig prs = []
@@ -1375,6 +1393,7 @@ skeletonize thin prs
     do
       prs' <- enforceAbsence prs
       enrich thin prs'
+-}
 
 -- Compute the substitutions that satisfy the absence assumptions and
 -- apply them to the skeleton.
@@ -1534,6 +1553,7 @@ hull thin prs =
 -- Adds orderings so that a skeleton respects origination.
 
 enrich :: Bool -> PRS -> [PRS]
+enrich _ prs | hasMultipleOrig prs = []
 enrich thin (k0, k, n, phi, hsubst) =
     let o = foldl (addUniqOrigOrderings k) (orderings k) (kunique k) in
     let o' = foldl (addUniqGenOrderings k) o (kuniqgen k) in
@@ -2449,6 +2469,7 @@ extractPlaces k =
       s <- strands k,
       (v, t) <- instAssocs (inst s),
       var <- foldVars (flip adjoin) [] t,
+      not (isExpr var), -- Filter out due to bugs in the algebra module
       p <- places var t ]
 
 instAssocs :: Instance -> [(Term, Term)]
@@ -2459,6 +2480,8 @@ instAssocs i =
 -- variable for subsets of the locations associated with the variable.
 separateVariable :: Preskel -> [(Term, Location)] -> Term -> [Candidate]
 separateVariable _ _ t | isChan t = [] -- Ignore channels
+-- Ignore group elements because of bugs in the algebra module
+separateVariable _ _ t | isExpr t = []
 separateVariable k ps t =
     sepVar (locsFor ps t)
     where

@@ -201,6 +201,15 @@ import CPSA.Lib.SExpr (SExpr(..), Pos, annotation)
 import CPSA.Signature (Sig)
 import qualified CPSA.Signature as Sig
 
+{--
+import System.IO.Unsafe
+z :: Show a => a -> b -> b
+z x y = unsafePerformIO (print x >> return y)
+
+zz :: Show a => a -> a
+zz x = z x x
+--}
+
 -- The default name for the algebra handled by this module
 -- One gets Diffie Hellman features too.
 name :: String
@@ -605,6 +614,7 @@ varId (F (Data _) [I x]) = x
 varId (F (Akey _) [I x]) = x
 varId (F Name [I x]) = x
 varId (F Base [I x]) = x
+varId (F Tag [I x]) = x
 varId (F Pval [I x]) = x
 varId (F Chan [I x]) = x
 varId (F Locn [I x]) = x
@@ -677,7 +687,7 @@ termWellFormed xts t@(F Name [I x]) =
 termWellFormed xts t@(F Pval [I x]) =
     extendVarEnv xts x t        -- pval variable
 termWellFormed xts t@(F Tag [I x]) =
-    extendVarEnv xts x t        -- tag variable
+    extendVarEnv xts x t        -- Tag variable
 termWellFormed xts (F Base [t]) =
     baseVarEnv xts t
     where
@@ -763,7 +773,7 @@ foldVars f acc (F (Akey _) [F (Invk _) [F Pubk [C _, I x]]]) =
   f acc (F Name [I x])
 foldVars f acc t@(F Name [I _]) = f acc t -- Name variable
 foldVars f acc t@(F Pval [I _]) = f acc t -- Pval variable
-foldVars f acc t@(F Tag [I _]) = f acc t -- tag variable
+foldVars f acc t@(F Tag [I _]) = f acc t  -- Tag variable
 foldVars f acc t@(F Chan [I _]) = f acc t -- Channels
 foldVars f acc t@(F Locn [I _]) = f acc t -- Locn
 foldVars f acc (F Base [t]) =
@@ -1040,7 +1050,7 @@ places var source =
           | var == source = Place (reverse path) : paths
       f paths path (F _ u) =
           g paths path 0 u
-      f paths path (G t) =
+      f paths path (G t) =      -- This case is broken
           groupPlaces (varId var) paths path 0 (linearize t)
       f paths _ _ = paths
       g paths _ _ [] = paths
@@ -1053,13 +1063,20 @@ linearize t =
       (x, (_, n)) <- M.assocs t
       replicate (if n >= 0 then n else negate n) x
 
+-- This function is broken
+--
 groupPlaces ::  Id -> [Place] -> [Int] -> Int -> [Id] -> [Place]
+groupPlaces x _ _ _ _ =
+  error ("Algebra.groupPlaces failed for " ++ show x)
+
+{-
 groupPlaces _ paths _ _ [] = paths
 groupPlaces x paths path i (y:ys) =
     let paths' = if x == y then
                      Place (reverse (i : path)) : paths
                  else paths in
     groupPlaces x paths' path (i + 1) ys
+-}
 
 -- Returns the places a term is carried by another term.
 carriedPlaces :: Term -> Term -> [Place]
@@ -1585,7 +1602,7 @@ destroyer t@(G m) | isVar t =
   Just $ Subst (M.fromList [(head $ M.keys m, G M.empty)])
 destroyer _ = Nothing
 
--- Extend a substitution so that it satisfies an abstence assertion
+-- Extend a substitution so that it satisfies an absence assertion
 absentSubst :: (Gen, Subst) -> (Term, Term) -> [(Gen, Subst)]
 absentSubst gs (G v, G t) | isGroupVar v =
   case separateVar (getGroupVar v) t of
@@ -2956,6 +2973,7 @@ inferSort t@(F Ltk _) = F (Data "skey") [t]
 inferSort t@(F Bltk _) = F (Data "skey") [t]
 inferSort t@(F Genr _) = F Base [t]
 inferSort t@(F Exp _) = F Base [t]
+inferSort t@(C _) = F Tag [t]
 inferSort t = t
 
 emptyContext :: Context
