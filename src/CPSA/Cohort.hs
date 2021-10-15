@@ -186,8 +186,9 @@ solved :: CMT -> Place -> [Term] -> Set CMT ->
 solved ct pos eks escape k n subst absent =
     -- Condition 1
     isAncestorInSet escape' t pos ||
-    -- Condiition 1a, needed for DH according to Moses
-    derivable a (S.map cmtTerm escape') (cmtTerm ct') ||
+    -- Condition 1a, needed for DH according to Moses
+    -- No it breaks CPSA!
+    -- derivable a (S.map cmtTerm escape') (cmtTerm ct') ||
     -- Condition 2
     any (not . carriedOnlyWithin ct' escape') (S.toList $ cmsInNodes vs) ||
     -- Condition 3
