@@ -349,7 +349,6 @@ data Symbol
     | Name                      -- Principal
     | Pval                      -- Point at which a store occurs
     | Base                      -- Base of an exponentiated atom
-    | Tag                       -- Tag atom
     | Ltk                       -- Long term shared symmetric key
     | Bltk                      -- Bidirectional ltk
     | Invk String               -- Inverse of asymmetric key
@@ -578,7 +577,6 @@ varSym (Akey _) = True
 varSym Name = True
 varSym Pval = True
 varSym Base = True
-varSym Tag = True
 varSym Chan = True
 varSym Locn = True
 varSym _ = False
@@ -614,7 +612,6 @@ varId (F (Data _) [I x]) = x
 varId (F (Akey _) [I x]) = x
 varId (F Name [I x]) = x
 varId (F Base [I x]) = x
-varId (F Tag [I x]) = x
 varId (F Pval [I x]) = x
 varId (F Chan [I x]) = x
 varId (F Locn [I x]) = x
@@ -686,8 +683,6 @@ termWellFormed xts t@(F Name [I x]) =
     extendVarEnv xts x t        -- Name variable
 termWellFormed xts t@(F Pval [I x]) =
     extendVarEnv xts x t        -- pval variable
-termWellFormed xts t@(F Tag [I x]) =
-    extendVarEnv xts x t        -- Tag variable
 termWellFormed xts (F Base [t]) =
     baseVarEnv xts t
     where
@@ -707,10 +702,10 @@ termWellFormed xts (G t) =
     where
       expnVarEnv xts (x, (be, _)) =
           extendVarEnv xts x (groupVar be x)
-termWellFormed xts (F Tag [C _]) =
+termWellFormed xts (C _) =
     Just xts                    -- Tags
 termWellFormed xts (F (Tupl _) ts) =
-    foldM termWellFormed xts ts -- tupling
+    foldM termWellFormed xts ts -- Tupling
 termWellFormed xts (F (Enc _) ts@[_, _]) =
     foldM termWellFormed xts ts  -- Encryption
 termWellFormed xts (F (Hash _) [t])     =
@@ -773,7 +768,6 @@ foldVars f acc (F (Akey _) [F (Invk _) [F Pubk [C _, I x]]]) =
   f acc (F Name [I x])
 foldVars f acc t@(F Name [I _]) = f acc t -- Name variable
 foldVars f acc t@(F Pval [I _]) = f acc t -- Pval variable
-foldVars f acc t@(F Tag [I _]) = f acc t  -- Tag variable
 foldVars f acc t@(F Chan [I _]) = f acc t -- Channels
 foldVars f acc t@(F Locn [I _]) = f acc t -- Locn
 foldVars f acc (F Base [t]) =
@@ -791,7 +785,7 @@ foldVars f acc (G t) =
     where
       expnAddVars acc x (be, _) =
           f acc (groupVar be x)
-foldVars _ acc (F Tag [C _]) = acc            -- Tags
+foldVars _ acc (C _) = acc                    -- Tags
 foldVars f acc (F (Tupl _) ts) =              -- Concatenation
     foldl (foldVars f) acc ts
 foldVars f acc (F (Enc _) [t0, t1]) =         -- Encryption
@@ -841,7 +835,7 @@ buildable knowns unguessable term =
     ba term
     where
       ba (I _) = True           -- A mesg sorted variable is always buildable
---      ba (C _) = True           -- Tags are now atoms.
+      ba (C _) = True           -- So is a tag
       ba (F (Tupl _) ts) =
           all ba ts
       ba t@(F (Enc _) [t0, t1]) =
@@ -1022,13 +1016,6 @@ expnInExpr _ _ = False
 consts :: Term -> [Term] -> [Term]
 consts (F Base _) _ = [F Base [F Genr []]]
 consts (G _) _ = [G M.empty]
-consts (F Tag _) ts =
-    loop [] ts
-    where
-      loop acc [] = acc
-      loop acc ((C str): ts) = loop ((C str): acc) ts
-      loop acc ((F _ subts): ts) = loop acc (subts ++ ts)
-      loop acc (_ : ts) = loop acc ts
 consts _ _ = []
 
 -- Places
@@ -2312,8 +2299,6 @@ reify domain (Env (_, env)) =
           | x == y = (F Locn [I x], F Locn [t])
       loop (F Base [I x] : _) (y, t)
           | x == y = (F Base [I x], F Base [t])
-      loop (F Tag [I x] : _) (y, t)
-          | x == y = (F Tag [I x], F Tag [t])
       loop (G x : _) (y, G t)
           | isGroupVar x && varId (G x) == y = (G x, G t)
       loop (D x : _) (y, t)
@@ -2396,7 +2381,6 @@ mkVar sig pos sort x
   | sort == "chan" = return $ F Chan [I x]
   | sort == "locn" = return $ F Locn [I x]
   | sort == "base" = return $ F Base [I x]
-  | sort == "tag" = return $ F Tag [I x]
   | sort == "expt" = return $ groupVar False x
   | sort == "rndx" = return $ groupVar True x
   | sort == "mesg" = return $ I x
@@ -2453,7 +2437,7 @@ loadTerm :: MonadFail m => Sig -> [Term] -> Bool -> SExpr Pos -> m Term
 loadTerm _ vars _ (S pos s) =
     either fail return (loadLookup pos vars s)
 loadTerm _ _ _ (Q _ t) =
-    return (F Tag [C t])
+    return (C t)
 loadTerm sig vars strict (L pos (S _ s : l)) =
     case lookup s loadDispatch of
       Nothing ->
@@ -2782,7 +2766,6 @@ displayVar ctx (F Pval [I x]) = displaySortId "pval" ctx x
 displayVar ctx (F Chan [I x]) = displaySortId "chan" ctx x
 displayVar ctx (F Locn [I x]) = displaySortId "locn" ctx x
 displayVar ctx (F Base [I x]) = displaySortId "base" ctx x
-displayVar ctx (F Tag [I x]) = displaySortId "tag" ctx x
 displayVar ctx t@(G x)
     | isBasisVar x = displaySortId "rndx" ctx (varId t)
     | isGroupVar x = displaySortId "expt" ctx (varId t)
@@ -2839,7 +2822,6 @@ displayTerm ctx (F Name [I x]) = displayId ctx x
 displayTerm ctx (F Pval [I x]) = displayId ctx x
 displayTerm ctx (F Chan [I x]) = displayId ctx x
 displayTerm ctx (F Locn [I x]) = displayId ctx x
-displayTerm ctx (F Tag [I x]) = displayId ctx x
 displayTerm ctx (F Base [t]) =
     displayBase t
     where
@@ -2861,7 +2843,6 @@ displayTerm ctx (G t) =
       displayFactor (x, (_, n))
           | n >= 0 = displayId ctx x
           | otherwise = L () [S () "rec", displayId ctx x]
-displayTerm _ (F Tag [(C t)]) = Q () t
 displayTerm _ (C t) = Q () t
 displayTerm ctx (F (Tupl "cat") [t0, t1]) =
     L () (S () "cat" : displayTerm ctx t0 : displayList ctx t1)
@@ -2899,7 +2880,6 @@ displayTermNoPt ctx (F Name [I x]) = displayId ctx x
 displayTermNoPt _ (F Pval [I _]) = S () "" -- displayId ctx x
 displayTermNoPt ctx (F Chan [I x]) = displayId ctx x
 displayTermNoPt ctx (F Locn [I x]) = displayId ctx x
-displayTermNoPt ctx (F Tag [I x]) = displayId ctx x
 displayTermNoPt ctx (F Base [t]) =
     displayBase t
     where
@@ -2921,7 +2901,6 @@ displayTermNoPt ctx (G t) =
       displayFactor (x, (_, n))
           | n >= 0 = displayId ctx x
           | otherwise = L () [S () "rec", displayId ctx x]
-displayTermNoPt _ (F Tag [(C t)]) = Q () t
 displayTermNoPt _ (C t) = Q () t
 displayTermNoPt ctx (F (Tupl "cat") [t0, t1]) =
     case t0 of
@@ -2973,7 +2952,6 @@ inferSort t@(F Ltk _) = F (Data "skey") [t]
 inferSort t@(F Bltk _) = F (Data "skey") [t]
 inferSort t@(F Genr _) = F Base [t]
 inferSort t@(F Exp _) = F Base [t]
-inferSort t@(C _) = F Tag [t]
 inferSort t = t
 
 emptyContext :: Context

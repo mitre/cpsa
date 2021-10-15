@@ -1373,27 +1373,9 @@ skeletonize :: Bool -> PRS -> [PRS]
 skeletonize thin prs =
   do
     prs' <- enforceAbsence prs
-    enrich thin prs'
-
-{-
-skeletonize :: Bool -> PRS -> [PRS]
-skeletonize thin prs =
-  do
-    prs' <- enforceAbsence prs
     case hasMultipleOrig prs' of
       True -> []
-      False -> zP "enrich" $ enrich thin prs'
--}
-
-{- Old
-skeletonize :: Bool -> PRS -> [PRS]
-skeletonize thin prs
-  | hasMultipleOrig prs = []
-  | otherwise =
-    do
-      prs' <- enforceAbsence prs
-      enrich thin prs'
--}
+      False -> enrich thin prs'
 
 -- Compute the substitutions that satisfy the absence assumptions and
 -- apply them to the skeleton.
