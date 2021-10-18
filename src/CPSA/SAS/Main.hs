@@ -10,7 +10,7 @@ module Main (main) where
 
 import System.IO
 import CPSA.Lib.SExpr
-import CPSA.Signature (defaultSig, loadSig)
+import CPSA.Signature (Sig, defaultSig, loadSig)
 import CPSA.Algebra
 import CPSA.Lib.Entry
 import CPSA.Options
@@ -27,12 +27,36 @@ main =
       let interp = algInterp name algs
       (p, (output, alg, margin)) <- start options interp
       h <- outputHandle output
+      -- Handle the herald
+      x <- readSExpr p
+      case x of
+        Nothing -> abort "Empty input"
+        Just x@(L pos (S _ "herald" : _ : xs)) ->
+          do
+            writeSExpr h margin x
+            hPutStrLn h ""
+            sig <- loadSig pos (assoc "lang" xs)
+            let nom = getAlgName xs alg
+            select p margin h sig nom Nothing
+        x ->
+          select p margin h defaultSig alg x
+
+select :: PosHandle -> Int -> Handle -> Sig ->
+          String -> Maybe (SExpr Pos) -> IO ()
+select p margin h sig alg x =
+    do
       writeComment h margin cpsaVersion
       writeComment h margin "Coherent logic"
+      let stepper = step h alg origin margin
+      let state = (sig, [], [])
       case () of
-        _ | alg == name ->
-              go (step h alg origin margin)
-                 p (defaultSig, [], [])
+        _ | alg == name || alg == alias ->
+            case x of
+              Nothing -> go stepper p state
+              _ ->
+                do
+                  next <- stepper state x
+                  go stepper p next
           | otherwise ->
                abort ("Bad algebra: " ++ alg)
       hClose h
@@ -56,12 +80,6 @@ go f p a =
 
 step :: Handle -> String -> Gen -> Int -> State ->
         Maybe (SExpr Pos) -> IO State
-step output _ _ margin (_, [], [])
-     (Just sexpr@(L pos (S _ "herald" : _ : xs))) =
-    do
-      writeLnSExpr output margin sexpr
-      sig <- loadSig pos (assoc "lang" xs)
-      return (sig, [], [])
 step output _ _ margin state@(_, [], [])
      (Just sexpr@(L _ (S _ "comment" : _))) =
     do
@@ -87,6 +105,13 @@ after output margin state (Just sexpr@(L _ (S _ "defprotocol" : _))) =
       return state
 after _ _ state _ =
     return state
+
+getAlgName :: [SExpr a] -> String -> String
+getAlgName xs name =
+    case assoc "algebra" xs of
+      [] -> name
+      [S _ nom] -> nom
+      _ -> error "Bad algbra field an herald"
 
 -- Lookup value in alist, appending values with the same key
 assoc :: String -> [SExpr a] -> [SExpr a]
