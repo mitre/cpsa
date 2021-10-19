@@ -187,8 +187,7 @@ solved ct pos eks escape k n subst absent =
     -- Condition 1
     isAncestorInSet escape' t pos ||
     -- Condition 1a, needed for DH according to Moses
-    -- No it breaks CPSA!
-    -- derivable a (S.map cmtTerm escape') (cmtTerm ct') ||
+    derivable a (excludeConf k escape') (cmtTerm ct') ||
     -- Condition 2
     any (not . carriedOnlyWithin ct' escape') (S.toList $ cmsInNodes vs) ||
     -- Condition 3
@@ -227,6 +226,13 @@ data Mode = Mode
       visitOldStrandsFirst :: Bool,
       reverseNodeOrder :: Bool }
     deriving Show
+
+excludeConf :: Preskel -> Set CMT -> Set Term
+excludeConf k cm =
+  S.map cmtTerm (S.filter f cm)
+  where
+    f (CM cm) = not $ confCm k cm
+    f (TM _) = True
 
 parFoldr :: (a -> b -> b) -> b -> [a] -> b
 parFoldr _ b [] = b
