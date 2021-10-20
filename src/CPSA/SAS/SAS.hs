@@ -331,7 +331,7 @@ loadListener :: MonadFail m => Sig -> Pos -> Prot -> [Term] ->
 loadListener sig pos prot kvars x =
     do
       r <- lookupRole pos prot listenerName
-      t <- loadTerm sig kvars True x
+      t <- loadTerm sig kvars False x
       return (Instance { pos = pos, role = r,
                          env = [(head $ vars r, t)], height = 2 })
 
