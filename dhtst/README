@@ -1,3 +1,37 @@
 Run these examples in the parent directory with
 
 $ ./cpsatst dhtst
+
+STATUS
+
+The protocols in the *.prot and *.lsp files all work correctly.  They
+are present just to stop the cpsatst script from complaining.
+
+Protocol attest.scm:
+
+This example shows a failure in CPSA4 to generalize by forgetting a
+unique origination assumption. Skeleton 7 should generalize to become
+skeleton 8 by forgetting that t is uniquely originating.
+
+Protocol staticdh.scm:
+
+This example shows that in this case, the tree computed by CPSA3 is a
+subtree of what is computed by CPSA4.  Unlike other examples, there
+are many cases in which CPSA4 cohorts have more members than their
+equivalents in CPSA3.
+
+Protocol dhnsl_use.scm:
+
+This example shows a case in which one cohort in CPSA4 has an extra
+member, and that leads to an extra a dead tree.  The parent skeleton
+is labeled 3, and the extra cohort member is skeleton 10.
+
+Protocol station_newhope.scm:
+
+This example shows the case in which the tree computed by CPSA4 is a
+much, much smaller than the one computed by CPSA3.  Tree 6 is one of
+several trees that differ.  Tree 6 in CPSA3 contains examples in which
+there is a failure to generalize, such as skeleton 23 which should
+generalize to became skeleton 7.  I think this is to be expected
+because I don't think that variable separation is working for
+exponents.  I am not sure why there are so many other shapes.
