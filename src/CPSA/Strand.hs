@@ -644,7 +644,8 @@ preskelWellFormed k =
     all chanCheck (kconf k) &&
     all chanCheck (kauth k) &&
     wellOrdered k && acyclicOrder k &&
-    roleOrigCheck k
+    roleOrigCheck k &&
+    roleGenCheck k
     where
       terms = kterms k
       nonCheck t = all (not . carriedBy t) terms
@@ -682,6 +683,8 @@ verbosePreskelWellFormed k =
       failwith "cycle found in ordered pairs" $ acyclicOrder k
       failwith "an inherited unique doesn't originate in its strand"
                    $ roleOrigCheck k
+      failwith "an inherited unique gen doesn't generate in its strand"
+                   $ roleGenCheck k
     where
       terms = kterms k
       nonCheck t =
@@ -806,6 +809,21 @@ roleOrigCheck k =
       uniqRoleOrig strand (ru, pos)
           | pos < height (inst strand) =
               case lookup (instantiate (env $ inst strand) ru) (korig k) of
+                Nothing -> True     -- role term not mapped
+                Just ns -> any (\(s, i)-> sid strand == s && i == pos) ns
+          | otherwise = True
+
+-- Ensure each role unique generation assumption mapped by an
+-- instance generates in the instance's strand.
+roleGenCheck :: Preskel -> Bool
+roleGenCheck k =
+    all strandRoleGen (strands k) -- Check each strand
+    where
+      strandRoleGen strand =   -- Check each role ugen used in strand
+          all (uniqRoleGen strand) $ rugen $ role $ inst strand
+      uniqRoleGen strand (ru, pos)
+          | pos < height (inst strand) =
+              case lookup (instantiate (env $ inst strand) ru) (kugen k) of
                 Nothing -> True     -- role term not mapped
                 Just ns -> any (\(s, i)-> sid strand == s && i == pos) ns
           | otherwise = True
