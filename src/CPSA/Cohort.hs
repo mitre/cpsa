@@ -44,6 +44,9 @@ zs s =
     where
       ts = S.toList s
 
+zl :: Show a => [a] -> [a]
+zl a = z (length a) a
+
 zi :: Instance -> String
 zi inst =
     show (map f e)

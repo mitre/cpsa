@@ -1535,7 +1535,7 @@ hasMultipleOrig prs =
 -- Hulling or Ensuring Unique Origination
 hull :: Bool -> PRS -> [PRS]
 hull thin prs =
-    loop (korig $ skel prs)
+    loop (korig (skel prs) ++ kugen (skel prs))
     where
       -- No uniques originate on more than one strand
       loop [] = enrich thin prs
