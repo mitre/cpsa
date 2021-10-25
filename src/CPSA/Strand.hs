@@ -1202,8 +1202,8 @@ ksubst (k0, k, n, phi, hsubst) (gen, subst) =
                (orderings k) non' pnon' unique' uniqgen'
                absent' (kprecur k) genStV' conf' auth' facts'
                (kpriority k) operation' (krules k) (pprob k) (prob k) (pov k)
-      k' <- wellFormedPreskel k'
-      return (k0, k', n, phi, compose subst hsubst)
+      k'' <- wellFormedPreskel k'
+      return (k0, k'', n, phi, compose subst hsubst)
 
 pairApp :: (a -> b) -> (a, a) -> (b, b)
 pairApp f (x, y) = (f x, f y)
@@ -1583,8 +1583,8 @@ enrich thin (k0, k, n, phi, hsubst) =
                   (pprob k)
                   (prob k)
                   (pov k)
-          k' <- wellFormedPreskel k'
-          maybeThin thin (k0, k', n, phi, hsubst)
+          k'' <- wellFormedPreskel k'
+          maybeThin thin (k0, k'', n, phi, hsubst)
 
 maybeThin :: Bool -> PRS -> [PRS]
 maybeThin _ prs | usePruning = prune prs
@@ -1987,35 +1987,35 @@ aug (k0, k, n, phi, hsubst) inst =
            orderings' non' pnon' unique' uniqgen' (kabsent k) (kprecur k)
            (kgenSt k) conf' auth' (kfacts k) (kpriority k)
            (operation k) (krules k) (pprob k) (prob k) (pov k)
-      k' <- wellFormedPreskel k'
-      return (k0, k', n, phi, hsubst)
+      k'' <- wellFormedPreskel k'
+      return (k0, k'', n, phi, hsubst)
 
--- Inherit non-originating atoms if the traces is long enough
+-- Inherit non-originating atoms if the trace is long enough
 inheritRnon :: Instance -> [Term]
 inheritRnon i =
     inherit i (rnorig (role i))
 
--- Inherit penenetrator non-originating atoms if the traces is long enough
+-- Inherit penenetrator non-originating atoms if the trace is long enough
 inheritRpnon :: Instance -> [Term]
 inheritRpnon i =
     inherit i (rpnorig (role i))
 
--- Inherit uniquely originating atoms if the traces is long enough
+-- Inherit uniquely originating atoms if the trace is long enough
 inheritRunique :: Instance -> [Term]
 inheritRunique i =
     inherit i (ruorig (role i))
 
--- Inherit uniquely generating atoms if the traces is long enough
+-- Inherit uniquely generating atoms if the trace is long enough
 inheritRuniqgen :: Instance -> [Term]
 inheritRuniqgen i =
     inherit i (rugen (role i))
 
--- Inherit confidential channels if the traces is long enough
+-- Inherit confidential channels if the trace is long enough
 inheritRconf :: Instance -> [Term]
 inheritRconf i =
     inherit i (rpconf (role i))
 
--- Inherit authenticated channels if the traces is long enough
+-- Inherit authenticated channels if the trace is long enough
 inheritRauth :: Instance -> [Term]
 inheritRauth i =
     inherit i (rpauth (role i))
@@ -2082,9 +2082,9 @@ addedToDisplaced _ _ _ = error "Strand.addedToDisplaced: Bad operation"
 addListener :: Preskel -> Node -> Cause -> Term -> [Ans]
 addListener k n cause t =
     do
-      k' <- wellFormedPreskel k'
+      k'' <- wellFormedPreskel k'
       prs <- skeletonize useThinningWhileSolving
-             (k, k', n, strandids k, emptySubst)
+             (k, k'', n, strandids k, emptySubst)
       homomorphismFilter prs
     where
       k' = newPreskel gen' (shared k) insts' orderings' (knon k)
@@ -2102,9 +2102,9 @@ addListener k n cause t =
 addBaseListener :: Preskel -> Node -> Cause -> Term -> [Ans]
 addBaseListener k n cause t =
     do
-      k' <- wellFormedPreskel k'
+      k'' <- wellFormedPreskel k'
       prs <- skeletonize useThinningWhileSolving
-             (k, k', n, strandids k, emptySubst)
+             (k, k'', n, strandids k, emptySubst)
       homomorphismFilter prs
     where
       k' = newPreskel gen'' (shared k) insts' orderings' (knon k)
