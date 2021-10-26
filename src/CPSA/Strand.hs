@@ -820,13 +820,14 @@ roleGenCheck k =
     all strandRoleGen (strands k) -- Check each strand
     where
       strandRoleGen strand =   -- Check each role ugen used in strand
-          all (uniqRoleGen strand) $ rugen $ role $ inst strand
+          all (uniqRoleGen strand) (filter nonNum (rugen $ role $ inst strand))
       uniqRoleGen strand (ru, pos)
           | pos < height (inst strand) =
               case lookup (instantiate (env $ inst strand) ru) (kugen k) of
                 Nothing -> True     -- role term not mapped
                 Just ns -> any (\(s, i)-> sid strand == s && i == pos) ns
           | otherwise = True
+      nonNum (u, _) = not (isNum u)
 
 -- Channel functions
 confCm :: Preskel -> ChMsg -> Bool
