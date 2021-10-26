@@ -48,7 +48,6 @@ INSTALLING FROM A TARBALL
 
 Build and install with:
 
-$ cabal configure
 $ cabal build
 $ cabal install
 : To find the directory containing documentation and samples, type:
