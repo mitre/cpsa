@@ -133,6 +133,7 @@ module CPSA.Algebra (name, alias,
     loadLocnTerm,
     indxOfInt,
     isNum,
+    subNums,
     consts,
     isBase,
     isExpr,
@@ -675,6 +676,11 @@ isNum :: Term -> Bool
 isNum (F Base _) = True
 isNum (G _) = True
 isNum _ = False
+
+subNums :: Term -> Set Term
+subNums t@(G _) = S.singleton t
+subNums (F _ ts) = S.unions (map subNums ts)
+subNums _ = S.empty
 
 -- Does a variable occur in a term?
 occursIn :: Term -> Term -> Bool

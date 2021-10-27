@@ -22,6 +22,7 @@ module CPSA.Protocol (Event (..), evtCm, evtTerm, evtChan, evtMap, evt,
 
 import qualified Data.List as L
 import qualified Data.Maybe as M
+import qualified Data.Set as S
 import CPSA.Lib.Utilities
 import CPSA.Lib.SExpr
 import CPSA.Algebra
@@ -315,22 +316,24 @@ mkRole name vars trace non pnon unique uniqgen absent
            rnon = non,
            rpnon = pnon,
            runique = L.nub unique,
-           runiqgen = L.nub uniqgen,
-           rabsent = L.nub absent,
+           runiqgen = uniqgen',
+           rabsent = absent',
            rconf = L.nub conf,
            rauth = L.nub auth,
            rcomment = comment,
            rnorig = map addNonOrig $ nonNub non,
            rpnorig = map addNonOrig $ nonNub pnon,
            ruorig = map addUniqueOrig $ L.nub unique,
-           rugen = map addUniqueGen $ L.nub uniqgen,
-           rabs = map addAbsentPos $ L.nub absent,
+           rugen = map addUniqueGen uniqgen',
+           rabs = map addAbsentPos absent',
            rpconf = map addChanPos $ L.nub conf,
            rpauth = map addChanPos $ L.nub auth,
            rpriority = addDefaultPrio priority,
            rsearch = rev
          }
     where
+      uniqgen' = L.nub uniqgen
+      absent' = L.nub (traceAbsent trace uniqgen' ++ absent)
       addUniqueOrig t =
           case originationPos t trace of
             Just p -> (t, p)
@@ -373,6 +376,23 @@ mkRole name vars trace non pnon unique uniqgen absent
               case lookup n priority of
                 Nothing -> defaultPriority
                 Just p -> p
+
+traceAbsent :: Trace -> [Term] -> [(Term, Term)]
+traceAbsent trace ugens =
+  concatMap indz_ininsts $ filter isNum ugens
+  where
+    indz_ininsts v =
+      case generationPos v trace of
+        Nothing -> error "Protocol.mkRole: Atom does not generate"
+        Just p -> indz_ininsts_var v p
+    -- ind-zero instances for a specific variable v that generates at height p
+    indz_ininsts_var v p =
+      map (\t -> (v, t)) (numsUpTo p)
+    -- returns a list of numeric subterms of all messages prior to height p.
+    numsUpTo p =
+      S.toList $ foldl f S.empty $ take p trace
+      where
+        f ts evt = S.union ts $ subNums $ evtTerm evt
 
 firstOccurs :: Term -> Role -> Maybe Int
 firstOccurs v r = firstOccursAt v (rtrace r)
