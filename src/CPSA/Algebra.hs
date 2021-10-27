@@ -133,9 +133,7 @@ module CPSA.Algebra (name, alias,
     loadLocnTerm,
     indxOfInt,
     isNum,
-    subNums,
     consts,
-    calcIndicator,
     isBase,
     isExpr,
     isVarExpr,
@@ -158,7 +156,6 @@ module CPSA.Algebra (name, alias,
     unify,
     compose,
     absentSubst,
-    absenceSubst,
 
     Env,
     emptyEnv,
@@ -376,32 +373,6 @@ data Term
     | Y Int                     -- Indx constant
       deriving Show
 
-subNums :: Term -> Set Term
-subNums t | isNum t = S.singleton t
-subNums t@(F Exp _) = S.singleton (F Base [t])
-subNums (F _ ts) = (S.unions (map subNums ts))
-subNums _ = S.empty
-
-calcIndicator :: Term -> Term -> Maybe Int
-calcIndicator t v
-  | (not (isNum t) || not (isExpn v)) = Nothing
-  | (not (isVar v)) = Nothing
-  | otherwise = Just (ind t v)
-  where
-    ind t@(F Base _) v = case expCollapse t of
-      F Base [F Genr _] -> 0
-      F Base [I _] -> 0
-      F Base [F Exp [_, G m]] -> ind (G m) v
-      _ -> error ("Algebra.hs: expCollapse returned non-base element")
-    ind (G m) v = case M.lookup (extrVar v) m of
-        Nothing -> 0
-        Just (_, i) -> i
-    ind _ _ = 0
-    isExpn (G _) = True
-    isExpn _ = False
-    extrVar (G t) = head $ M.keys t
-    extrVar _ = error ("Algebra.hs: extrExpn called on a non-exponent")
-
 equalTerm :: Term -> Term -> Bool
 equalTerm (I x) (I y) = x == y
 equalTerm (C c) (C c') = c == c'
@@ -435,34 +406,6 @@ equalTerm (Z p) (Z p') = p == p'
 equalTerm (X x) (X y) = x == y
 equalTerm (Y x) (Y y) = x == y
 equalTerm _ _ = False
-
-{-
-forceVar :: Term -> Term
-forceVar x | not $ termsWellFormed [x] =
-  error ("Algebra.hs:forceVar: terms not well formed" ++ show x)
-forceVar (I x) = (I x)
-forceVar (C x) = (C x) -- no variable!
-forceVar (F Text y) = (F Text y)
-forceVar (F Data y) = (F Data y)
-forceVar (F Name y) = (F Name y)
-forceVar (F Tag [(I x)]) = (F Tag [(I x)])
-forceVar (F Skey [(I x)]) = (F Skey [(I x)])
-forceVar (F Skey [(F Ltk ns@(_:_))]) = forceVar (head ns)
-forceVar (F Skey [(F Bltk ns@(_:_))]) = forceVar (head ns)
-forceVar (F Base [(I x)]) = (F Base [(I x)])
-forceVar (F Base [(F Exp ns@(_:(_:_)))]) = forceVar (ns !! 1) -- go to the exponent part
-forceVar (F Base [F Genr []]) = (F Base [F Genr []]) -- no variable
-forceVar (F Akey [(I x)]) = (F Akey [(I x)])
-forceVar (F Akey [F Invk ns@(_:_)]) = forceVar (head ns)
-forceVar (F Akey [F Pubk ns@(_:_)]) = forceVar (head ns)
-forceVar (F _ ns@(_:_)) = forceVar (head ns) -- for Cat, Enc.
-forceVar (G m) | not $ null (M.keys m) =
-  let (x, (be, _)) = head $ M.assocs m in
-  G $ M.fromList [(x, (be, 1))]
-forceVar (D x) = (D x)
-forceVar (P x) = (P x) -- no variable!
-forceVar _ = error ("Algebra.hs:forceVar: something unexpected happened.")
--}
 
 equalTermLists :: [Term] -> [Term] -> Bool
 equalTermLists [] [] = True
@@ -1083,8 +1026,6 @@ carriedPlaces target source =
             g paths (i, t) = f paths (i : path) t
       f paths path (F (Enc _) [t, _]) =
           f paths (0 : path) t
---      f paths path (F Base [F Exp [_, t]]) =
---        f paths (1 : 0 : path) t
       f paths _ _ = paths
 
 -- Returns the places a term is carried by another term.
@@ -1100,8 +1041,6 @@ carriedRelPlaces target source avoid =
             g paths (i, t) = f paths (i : path) t
       f paths path (F (Enc _) [t, _]) =
           f paths (0 : path) t
---      f paths path (F Base [F Exp [_, t]]) =
---        f paths (1 : 0 : path) t
       f paths _ _ = paths
 
 -- Replace a variable within a term at a given place.
@@ -1603,128 +1542,6 @@ absentSubst gs (G v, G t) | isGroupVar v =
 absentSubst _ ts =
   error ("Algebra.absentSubst: Bad absent pair " ++ show ts)
 
---------------------------------------------------------
-
--- Stub absence substitution generator.  The current implementation
--- never identifies basis variables.
-
-absenceSubst :: Gen -> [(Term, Term)] -> [(Gen, Subst)]
-absenceSubst g as =
-  latticeCrawl g $ simplifyAbs [] as
-  where
-    simplifyAbs as [] = as
-    simplifyAbs acc (a : as) =
-      case a of
-        (G v, t) | isBasisVar v -> simplifyAbs ((getGroupVar v, t) : acc) as
-        _ -> error ("Algebra.absenceSubst: bad absence assertion " ++ show a)
-
-partitionSet :: [a] -> [[[a]]]
-partitionSet  []    = [[]]
-partitionSet (x:xs) = [ys | yss <- partitionSet xs, ys <- bloat x yss]
-
-bloat :: a -> [[a]] -> [[[a]]]
-bloat x  []      = [[[x]]]
-bloat x (xs:xss) = ((x:xs):xss) : map (xs:) (bloat x xss)
-
-{--
-partitionMoreGeneral :: (Eq a, Foldable t, Foldable t1, Foldable t2, Foldable t3) =>
-                        t (t2 a) -> t1 (t3 a) -> Bool
-partitionMoreGeneral p1 p2 =
-    all (\c1 -> any (\c2 -> all (\e -> elem e c2) c1) p2) p1
---}
-
-nontrivClasses :: [[a]] -> [[a]]
-nontrivClasses xss = [xs | xs <- xss, length xs > 1]
-
-fullCrawl :: Bool
-fullCrawl = True -- False
-
--- This function should produce a comprehensive answer, involving expn unification
--- if necessary, and returning an empty list *only* if no solution is possible.
---
--- Full version not yet implemented.
-latticeCrawl :: Gen -> [(Id, Term)] -> [(Gen, Subst)]
-latticeCrawl g as =
-      case nullifyAll g as of
-        (gs : gss) -> (gs : gss)
-        [] -> if fullCrawl then bruteForceResults else []
-      where
-      gatherAllExpns as = doGatherAll [] as
-      doGatherAll acc [] = L.nub acc
-      doGatherAll acc ((v,t):as) =
-          doGatherAll (acc ++ [v] ++ (gatherInTerm t)) as
-      gatherInTerm (G m) =
-          map fst (filter (\(_,(b,_))->b) $ M.assocs m)
-      gatherInTerm (F Base [F Genr []]) = []
-      gatherInTerm (F Base [I _]) = []
-      gatherInTerm (F Base [F Exp [_, G m]]) = gatherInTerm (G m)
-      gatherInTerm _ = error ("Algebra.latticeCrawl: unexpected pattern")
-      allExpns = map (\id -> G (M.singleton id (True,1))) $ gatherAllExpns as
-      allExpnIds = map foo allExpns
-      foo (G grp) = getGroupVar grp
-      foo _ = assertError ("Algebra.latticeCrawl: critical failure!")
-      allPartitions = map nontrivClasses (partitionSet allExpnIds)
-      bruteForceResults = [gs | part <- allPartitions, gs <- nullifyAllPartition g as part]
-
-nullifyAll :: Gen -> [(Id, Term)] -> [(Gen, Subst)]
-nullifyAll g [] = [(g, emptySubst)]
-nullifyAll g as@((v,_):_) =
-  [(g1, s1) | (g2, s2) <- nullifyAll g (filter neqv as),
-              (g1, s1) <- nullifyOne g2 (filter eqv as) s2]
-  where
-    eqv (v',_) = (v == v')
-    neqv vm = not (eqv vm)
-
-nullifyAllPartition :: Gen -> [(Id, Term)] -> [[Id]] -> [(Gen, Subst)]
-nullifyAllPartition g [] _ = [(g, emptySubst)]
-nullifyAllPartition g as part =
-    [(g, compose s partUnifier) | (g', partUnifier) <- partUnifiers,
-                                  (g,s) <- nullifyAll g' (apply partUnifier as)]
-  where
-    partUnifiers = partUnifierLoop part [(g, emptySubst)]
-    partUnifierLoop [] acc = acc
-    partUnifierLoop ([]:rest) acc = partUnifierLoop rest acc
-    partUnifierLoop ([_]:rest) acc = partUnifierLoop rest acc
-    partUnifierLoop ((a:(b:more)):rest) acc = partUnifierLoop ((b:more):rest)
-           [gs' | gs <- acc, gs' <- unify (groupVar True a) (groupVar True b) gs]
-    apply s as =
-        map (substituteIdTerm s) as
-
--- Guaranteed that as has all first elements the same
-nullifyOne :: Gen -> [(Id,Term)] -> Subst -> [(Gen, Subst)]
-nullifyOne g as s =
-  map (\(g,e) -> (g, compose (substitution e) s)) ges
-  where
-    isolateExprs (v, (G m)) =
-        (v, G $ M.filterWithKey (\k (b,_) -> ((not b) || k == v)) m)
-    isolateExprs (v, (F Base [F Exp [base, G m]])) =
-        (v, F Base [F Exp [base, snd $ isolateExprs (v,(G m))]])
-    isolateExprs (v, t@(F Base _)) = (v, t)
-    isolateExprs _ = assertError "Algebra.nullifyOne: unexpected pattern"
-    expnNullified v (G m) = G $ M.delete v m
-    expnNullified v (F Base [F Exp [base, G m]]) =
-        F Base [F Exp [base, expnNullified v (G m)]]
-    expnNullified _ t@(F Base _) = t
-    expnNullified _ _ = assertError "Algebra.nullifyOne: unexpected pattern"
-    lefts = map snd isas
-    rights = map (\(v, t) -> expnNullified v t) isas
-    sas = map (substituteIdTerm s) as
-    isas = map isolateExprs sas
-    ges = matchLists lefts rights (g, emptyEnv)
-
-substituteIdTerm :: Subst -> (Id, Term) -> (Id, Term)
-substituteIdTerm s (v,t) =
-    (substituteForceBasisVar s v, substitute s t)
-
-substituteForceBasisVar :: Subst -> Id -> Id
-substituteForceBasisVar (Subst s) v =
-    case M.lookup v s of
-      Nothing -> v
-      Just t -> case t of
-                   (G v') | isBasisVar v' -> getGroupVar v'
-                   _ -> assertError ("Algebra.hs: Unable to force" ++
-                                " substitution to produce basis variable")
-
 -- Matching and instantiation
 
 newtype Env = Env (Set Id, IdMap) deriving (Eq, Ord)
@@ -1772,17 +1589,6 @@ substUpdate (Env (x, r)) s =
 --   g is a generator for the destination/flex algebra
 --   variables in the domain of r are source variables
 --   terms in the range of r are destination/flex terms.
-
-{-
-xmatch ::  Term -> Term -> GenEnv -> [GenEnv]
-xmatch x y e@(g, _)
-  | badGen g x =
-      error ("match: " ++ show g ++ ": " ++ show x)
-  | badGen g y =
-      error ("match: " ++ show g ++ ": " ++ show y)
-  | otherwise =
-      match x y e
---}
 
 type GenEnv = (Gen, Env)
 
@@ -2232,36 +2038,6 @@ identSolve z ci i t0 t1 v g r d =
         r' = eliminate x y' r   -- And in r
         y' = groupVar True y
         d' = d {same = (x, y):same d}
-
-{-
-nonTrivialEnv :: GenEnv -> GenEnv
-nonTrivialEnv (g, Env (v, r)) =
-    nonGroupEnv (M.assocs r) M.empty []
-    where
-      nonGroupEnv [] env grp =
-          groupEnv g v env grp grp
-      nonGroupEnv ((x, I y):r) env grp
-          | x == y = nonGroupEnv r env grp
-      nonGroupEnv ((x, G y):r) env grp
-          | isGroupVar y && varId (G y) == x =
-              nonGroupEnv r env grp
-          | otherwise = nonGroupEnv r env ((x, y):grp)
-      nonGroupEnv ((x, y):r) env grp = nonGroupEnv r (M.insert x y env) grp
-
-groupEnv :: Gen -> Set Id -> IdMap -> [(Id, Group)] -> [(Id, Group)] -> GenEnv
-groupEnv g v env grp [] =
-    (g, Env (v, foldl (\env (x, y) -> M.insert x (G y) env) env grp))
-groupEnv g v env grp ((x, t):map)
-    | M.lookup x t /= Just 1 = groupEnv g v env grp map
-    | otherwise =
-        let (t0, t1) = partition M.empty (mul t (M.singleton x (-1))) v in
-        case matchGroup (group t0) (group t1) S.empty g of
-          Nothing -> groupEnv g v env grp map
-          Just (v', g', subst, _) ->
-              let grp' = L.delete (x, t) grp
-                  grp'' = L.map (\(x, t) -> (x, groupSubst subst t)) grp' in
-              groupEnv g' (S.union v' v) env grp'' grp''
--}
 
 -- Cast an environment into a substitution by filtering out trivial
 -- bindings.
