@@ -170,9 +170,10 @@ displayRole r =
            (displayOptional "uniq-orig" (displayTerms ctx
                                          (sansPts (runique r)))
              (displayOptional "uniq-gen" (displayTerms ctx (runiqgen r))
-              (displayOptional "conf" (displayTerms ctx (rconf r))
-               (displayOptional "auth" (displayTerms ctx (rauth r))
-                (rcomment r)))))))
+              (displayOptional "absent" (displayTermPairs ctx (rabsent r))
+               (displayOptional "conf" (displayTerms ctx (rconf r))
+                (displayOptional "auth" (displayTerms ctx (rauth r))
+                 (rcomment r))))))))
     where
       ctx = varsContext $ rvars r
       vars = sansPts $ rvars r

@@ -128,6 +128,7 @@ loadRole sig gen pos (S _ name :
       a <- loadPosBaseTerms sig vars (assoc "pen-non-orig" rest)
       u <- loadBaseTerms sig vars (assoc "uniq-orig" rest)
       g <- loadBaseTerms sig vars (assoc "uniq-gen" rest)
+      b <- mapM (loadAbsent sig vars) (assoc "absent" rest)
       d <- loadBaseTerms sig vars (assoc "conf" rest)
       h <- loadBaseTerms sig vars (assoc "auth" rest)
       cs <- loadCritSecs (assoc "critical-sections" rest)
@@ -135,11 +136,12 @@ loadRole sig gen pos (S _ name :
       facts <- loadFactList sig vars (assoc "facts" rest)
 
       let keys = ["non-orig", "pen-non-orig", "uniq-orig",
-                  "uniq-gen", "conf", "auth"]
+                  "uniq-gen", "absent", "conf", "auth"]
       comment <- alist keys rest
       let reverseSearch = hasKey "reverse-search" rest
       let ts = tterms c
-      case termsWellFormed (map snd n ++ map snd a ++ u ++ g ++ ts) of
+      let bs = concatMap (\(x, y) -> [x, y]) b
+      case termsWellFormed (map snd n ++ map snd a ++ u ++ g ++ bs ++ ts) of
         False -> fail (shows pos "Terms in role not well formed")
         True -> return ()
       case L.all isChan (d ++ h) of
@@ -162,7 +164,7 @@ loadRole sig gen pos (S _ name :
         False -> fail (shows pos "Critical sections in role not within state segments")
         True -> return ()
 
-      let r = mkRole name vs c ns as us gs d h comment prios reverseSearch
+      let r = mkRole name vs c ns as us gs b d h comment prios reverseSearch
 
       let (gen', transRls) = transRules sig gen r (transitionIndices c)
       -- :: Gen -> Role -> [Int] -> (Gen, [Rule])
@@ -402,7 +404,7 @@ mkListenerRole sig pos g =
     (g, xs) <- loadVars sig g [L pos [S pos "x", S pos "mesg"]]
     case xs of
       [x] -> return (g, mkRole "" [x] [In $ Plain x, Out $ Plain x]
-                        [] [] [] [] [] [] [] [] False)
+                        [] [] [] [] [] [] [] [] [] False)
       _ -> fail (shows pos "mkListenerRole: expecting one variable")
 
 -- Ensure a trace is not a prefix of a listener
@@ -1111,8 +1113,8 @@ loadPosBaseTerm sig vars x =
 loadAbsent :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m (Term, Term)
 loadAbsent sig vars (L _ [x, y]) =
     do
-      x <- loadExprTerm sig vars x
-      y <- loadTerm sig vars False y
+      x <- loadVarExprTerm sig vars x
+      y <- loadExprTerm sig vars y
       return (x, y)
 loadAbsent _ _ x =
     fail (shows (annotation x) "Expecting a pair of terms")
@@ -1124,6 +1126,14 @@ loadExprTerm sig vars x =
       case isExpr t of
         True -> return t
         False -> fail (shows (annotation x) "Expecting an exponent")
+
+loadVarExprTerm :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
+loadVarExprTerm sig vars x =
+    do
+      t <- loadTerm sig vars True x
+      case isVarExpr t of
+        True -> return t
+        False -> fail (shows (annotation x) "Expecting an exponent variable")
 
 -- Find protocol and then load a preskeleton.
 
@@ -1254,13 +1264,13 @@ loadRest sig pos vars p gen gs insts orderings
       au <- loadBaseTerms sig vars au
       fs <- mapM (loadFact sig heights vars) fs
       genSts <- mapM (loadTerm sig vars True) genSts
-      let (nr', ar', ur', ug', cn', au') =
-            foldl addInstOrigs (nr, ar, ur, ug, cn, au) insts
+      let (nr', ar', ur', ug', ab', cn', au') =
+            foldl addInstOrigs (nr, ar, ur, ug, ab, cn, au) insts
       prios <- mapM (loadPriorities heights) pl
       let k = mkPreskel gen p gs insts o nr' ar' ur'
-              ug' ab pr genSts cn' au' fs prios comment
-          ab' = L.concatMap (\(x, y) -> [x, y]) ab
-      case termsWellFormed $ nr' ++ ar' ++ ur' ++ ug' ++ ab' ++ kterms k of
+              ug' ab' pr genSts cn' au' fs prios comment
+          ab'' = L.concatMap (\(x, y) -> [x, y]) ab'
+      case termsWellFormed $ nr' ++ ar' ++ ur' ++ ug' ++ ab'' ++ kterms k of
         False -> fail (shows pos "Terms in skeleton not well formed")
         True -> return ()
       case L.all isChan (cn' ++ au') of
@@ -1331,14 +1341,15 @@ loadPriorities heights (L _ [x, N _ p]) =
 loadPriorities _ x =
     fail (shows (annotation x) "Malformed priority")
 
-addInstOrigs :: ([Term], [Term], [Term], [Term], [Term], [Term])
+addInstOrigs :: ([Term], [Term], [Term], [Term], [(Term, Term)], [Term], [Term])
                 -> Instance ->
-                ([Term], [Term], [Term], [Term], [Term], [Term])
-addInstOrigs (nr, ar, ur, ug, cn, au) i =
+                ([Term], [Term], [Term], [Term], [(Term, Term)], [Term], [Term])
+addInstOrigs (nr, ar, ur, ug, ab, cn, au) i =
     (foldl (flip adjoin) nr $ inheritRnon i,
      foldl (flip adjoin) ar $ inheritRpnon i,
      foldl (flip adjoin) ur $ inheritRunique i,
      foldl (flip adjoin) ug $ inheritRuniqgen i,
+     foldl (flip adjoin) ab $ inheritRabsent i,
      foldl (flip adjoin) cn $ inheritRconf i,
      foldl (flip adjoin) au $ inheritRauth i)
 

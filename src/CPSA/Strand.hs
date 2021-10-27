@@ -16,7 +16,7 @@ module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     verbosePreskelWellFormed, Strand, inst, sid, nodes,
     Vertex, strand, pos, preds, event, graphNode, strands, vertex,
     Gist, gist, isomorphic, factorIsomorphicPreskels, contract, augment,
-    inheritRnon, inheritRpnon, inheritRunique, inheritRuniqgen,
+    inheritRnon, inheritRpnon, inheritRunique, inheritRuniqgen, inheritRabsent,
     inheritRconf, inheritRauth, addListener, addBaseListener, addAbsence,
     Cause (..), Direction (..), Method (..), Operation (..),
     operation, krules, pprob, prob, homomorphism, toSkeleton, generalize,
@@ -640,6 +640,7 @@ preskelWellFormed k =
     all nonCheck (knon k) &&
     all uniqueCheck (kunique k) &&
     all uniqgenCheck (kuniqgen k) &&
+    all absentCheck (kabsent k) &&
     all genStCheck (kgenSt k) &&
     all chanCheck (kconf k) &&
     all chanCheck (kauth k) &&
@@ -651,6 +652,7 @@ preskelWellFormed k =
       nonCheck t = all (not . carriedBy t) terms
       uniqueCheck t = any (carriedBy t) terms
       uniqgenCheck t = any (constituent t) terms
+      absentCheck (x, y) = varSubset [x, y] (kvars k)
       genStCheck t = any (carriedBy t) terms
       chanCheck c = elem c (kvars k)
 
@@ -676,6 +678,7 @@ verbosePreskelWellFormed k =
       mapM_ nonCheck $ knon k
       mapM_ uniqueCheck $ kunique k
       mapM_ uniqgenCheck $ kuniqgen k
+      mapM_ absentCheck $ kabsent k
       mapM_ genStCheck $ kgenSt k
       mapM_ confCheck $ kconf k
       mapM_ authCheck $ kauth k
@@ -696,6 +699,12 @@ verbosePreskelWellFormed k =
       uniqgenCheck t =
           failwith (showString "uniq-gen " $ showst t " does not occur")
                        $ any (constituent t) terms
+      absentCheck (x, y) =
+          do
+            failwith (showString "absent " $ showst x " does not occur")
+                       $ elem x $ kvars k
+            failwith (showString "absent " $ showst y " does not occur")
+                       $ varSubset [y] (kvars k)
       genStCheck t =
           failwith (showString "gen-st " $ showst t " not carried")
                        $ any (carriedBy t) terms
@@ -1368,7 +1377,7 @@ soothePreskel k =
   (filter varCheck $ kpnon k)
   (filter uniqueCheck $ kunique k)
   (filter varCheck $ kuniqgen k)
-  (kabsent k)
+  (filter absentCheck $ kabsent k)
   (kprecur k)
   (kgenSt k)
   (filter chanCheck $ kconf k)
@@ -1385,6 +1394,7 @@ soothePreskel k =
     varCheck t = varSubset [t] terms
     uniqueCheck t = any (carriedBy t) terms
     chanCheck t = varSubset [t] $ kchans k
+    absentCheck (x, y) = varSubset [x, y] $ kvars k
 
 -- This is the starting point of the Preskeleton Reduction System
 
@@ -1978,14 +1988,15 @@ aug (k0, k, n, phi, hsubst) inst =
       let insts' = (insts k) ++ [inst]
       let pair = ((length (insts k), height inst - 1), n)
       let orderings' = pair : orderings k
-      let non' = inheritRnon inst ++ (knon k)
-      let pnon' = inheritRpnon inst ++ (kpnon k)
-      let unique' = inheritRunique inst ++ (kunique k)
-      let uniqgen' = inheritRuniqgen inst ++ (kuniqgen k)
-      let conf' = inheritRconf inst ++ (kconf k)
-      let auth' = inheritRauth inst ++ (kauth k)
+      let non' = inheritRnon inst ++ knon k
+      let pnon' = inheritRpnon inst ++ kpnon k
+      let unique' = inheritRunique inst ++ kunique k
+      let uniqgen' = inheritRuniqgen inst ++ kuniqgen k
+      let absent' = inheritRabsent inst ++ kabsent k
+      let conf' = inheritRconf inst ++ kconf k
+      let auth' = inheritRauth inst ++ kauth k
       let k' = newPreskel (gen k) (shared k) insts'
-           orderings' non' pnon' unique' uniqgen' (kabsent k) (kprecur k)
+           orderings' non' pnon' unique' uniqgen' absent' (kprecur k)
            (kgenSt k) conf' auth' (kfacts k) (kpriority k)
            (operation k) (krules k) (pprob k) (prob k) (pov k)
       k'' <- wellFormedPreskel k'
@@ -2026,6 +2037,14 @@ inherit i rorigs =
     map (instantiate (env i) . fst) $ filter f rorigs
     where
       f (_, pos) = pos < height i
+
+inheritRabsent :: Instance -> [(Term, Term)]
+inheritRabsent i =
+    map g abs
+    where
+      g (x, y, _) = (instantiate (env i) x, instantiate (env i) y)
+      abs = filter f (rabs (role i))
+      f (_, _, pos) = pos < height i
 
 -- Add all displacements
 augDisplace :: PRS -> [PRS]
@@ -3943,18 +3962,19 @@ rlength name r z ht k (g, e) =
 addStrand :: Gen -> Preskel -> Role -> Int -> Preskel
 addStrand g k r h =
   newPreskel g' (shared k) insts'
-  (orderings k) non' pnon' unique' uniqgen' (kabsent k) (kprecur k)
+  (orderings k) non' pnon' unique' uniqgen' absent' (kprecur k)
   (kgenSt k) conf' auth' (kfacts k)
   (kpriority k) (operation k) (krules k) (pprob k) (prob k) (pov k)
   where
     (g', inst) = mkInstance g r emptyEnv h -- Create instance
     insts' = (insts k) ++ [inst]
-    non' = inheritRnon inst ++ (knon k)
-    pnon' = inheritRpnon inst ++ (kpnon k)
-    unique' = inheritRunique inst ++ (kunique k)
-    uniqgen' = inheritRuniqgen inst ++ (kuniqgen k)
-    conf' = inheritRconf inst ++ (kconf k)
-    auth' = inheritRauth inst ++ (kauth k)
+    non' = inheritRnon inst ++ knon k
+    pnon' = inheritRpnon inst ++ kpnon k
+    unique' = inheritRunique inst ++ kunique k
+    uniqgen' = inheritRuniqgen inst ++ kuniqgen k
+    absent' = inheritRabsent inst ++ kabsent k
+    conf' = inheritRconf inst ++ kconf k
+    auth' = inheritRauth inst ++ kauth k
 
 rDisplace :: Env -> Preskel -> Sid -> Sid -> [(Preskel, (Gen, Env))]
 rDisplace e k s s' | s == s' = [(k, (gen k, e))]

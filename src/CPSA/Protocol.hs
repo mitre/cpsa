@@ -10,8 +10,8 @@ module CPSA.Protocol (Event (..), evtCm, evtTerm, evtChan, evtMap, evt,
     inbnd, outbnd, Trace, tterms, originates, originationPos,
     generates, generationPos,
     acquiredPos, gainedPos, genGainedPos, usedPos, insPrecedeOuts,
-    Role, rname, rvars, rtrace, rnon, rpnon, runique, runiqgen,
-    rconf, rauth, rcomment, rsearch, rnorig, rpnorig, ruorig, rugen,
+    Role, rname, rvars, rtrace, rnon, rpnon, runique, runiqgen, rabsent,
+    rconf, rauth, rcomment, rsearch, rnorig, rpnorig, ruorig, rugen, rabs,
     rpconf, rpauth, rpriority, mkRole, tchans, varSubset, varsInTerms,
     addVars, firstOccurs, paramOfName, envsRoleParams,
     AForm (..), NodeTerm, Goal (..),
@@ -267,6 +267,7 @@ data Role = Role
       rpnon :: ![(Maybe Int, Term)], -- that says when to inherit the atom
       runique :: ![Term],       -- Set of uniquely originating atoms
       runiqgen :: ![Term],      -- Set of uniquely generated atoms
+      rabsent :: ![(Term, Term)], -- Role absence
       rconf :: ![Term],         -- Confidential channels
       rauth :: ![Term],         -- Authenticated channels
       rcomment :: [SExpr ()],   -- Comments from the input
@@ -275,6 +276,7 @@ data Role = Role
       rpnorig :: [(Term, Int)], -- Penetrator nons plus origination position
       ruorig :: [(Term, Int)],  -- Uniques plus origination position
       rugen :: [(Term, Int)],   -- Uniq gens plus generation position
+      rabs :: [(Term, Term, Int)], -- Absent plus position
       rpconf :: [(Term, Int)],  -- Confidentials plus origination position
       rpauth :: [(Term, Int)],  -- Authenticated plus origination position
       rpriority :: [Int] }      -- List of all priorities
@@ -303,8 +305,9 @@ firstOccursAt t c =
 -- Create a role
 mkRole :: String -> [Term] -> Trace ->
           [(Maybe Int, Term)] -> [(Maybe Int, Term)] -> [Term] -> [Term] ->
-          [Term] -> [Term] -> [SExpr ()] -> [(Int, Int)] -> Bool -> Role
-mkRole name vars trace non pnon unique uniqgen
+          [(Term, Term)] -> [Term] -> [Term] ->
+          [SExpr ()] -> [(Int, Int)] -> Bool -> Role
+mkRole name vars trace non pnon unique uniqgen absent
     conf auth comment priority rev =
     Role { rname = name,
            rvars = L.nub vars,  -- Every variable here must
@@ -313,6 +316,7 @@ mkRole name vars trace non pnon unique uniqgen
            rpnon = pnon,
            runique = L.nub unique,
            runiqgen = L.nub uniqgen,
+           rabsent = L.nub absent,
            rconf = L.nub conf,
            rauth = L.nub auth,
            rcomment = comment,
@@ -320,6 +324,7 @@ mkRole name vars trace non pnon unique uniqgen
            rpnorig = map addNonOrig $ nonNub pnon,
            ruorig = map addUniqueOrig $ L.nub unique,
            rugen = map addUniqueGen $ L.nub uniqgen,
+           rabs = map addAbsentPos $ L.nub absent,
            rpconf = map addChanPos $ L.nub conf,
            rpauth = map addChanPos $ L.nub auth,
            rpriority = addDefaultPrio priority,
@@ -344,6 +349,12 @@ mkRole name vars trace non pnon unique uniqgen
                            | otherwise -> error msg
           where
             msg = "Protocol.mkRole: Position for atom too early in trace"
+      addAbsentPos (x, y) =
+          case (usedPos x trace, usedPos y trace) of
+            (Just xp, Just yp) -> (x, y, max xp yp)
+            _ -> error msg
+          where
+            msg = "Protocol.mkRole: Absence variable not in trace"
       addChanPos t =
         case chanPos t trace of
           Just p -> (t, p)

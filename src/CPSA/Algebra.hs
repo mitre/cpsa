@@ -138,6 +138,7 @@ module CPSA.Algebra (name, alias,
     calcIndicator,
     isBase,
     isExpr,
+    isVarExpr,
     expnInExpr,
 
     Place (..),
@@ -999,6 +1000,10 @@ isBase _ = False
 isExpr :: Term -> Bool
 isExpr (G _) = True
 isExpr _ = False
+
+isVarExpr :: Term -> Bool
+isVarExpr (G g) = isGroupVar g
+isVarExpr _ = False
 
 {-
 isExpn :: Term -> Bool
