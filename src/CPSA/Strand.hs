@@ -1912,7 +1912,8 @@ homomorphismFilter prs@(k0, k, _, phi, subst)
     | validateMappingSubst k0 phi subst k = [ans prs]
     | otherwise = []
 
--- Ensure origination nodes a preserved as required to be a homomorphism
+-- Ensure origination and generation nodes are preserved as required
+-- to be a homomorphism
 validateMappingSubst :: Preskel -> [Sid] -> Subst -> Preskel -> Bool
 validateMappingSubst k phi subst k' =
     useNoOrigPreservation ||
