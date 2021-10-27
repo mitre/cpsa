@@ -1,8 +1,13 @@
 dist
 dist-newstyle
 tst/*.txt
+tst/*.text
 tst/*.xhtml
+dhtst/*.txt
+dhtst/*.text
+dhtst/*.xhtml
 *.bak
+TAGS
 doc/src/*.mp?
 doc/src/*.aux
 doc/src/*.toc
