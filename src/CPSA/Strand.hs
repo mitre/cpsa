@@ -585,6 +585,38 @@ newPreskel gen shared insts orderings non pnon unique
           else k
 -}
 
+
+-- Suppose that a Preskel k has been created by rebinding some fields
+-- in an earlier skeleton.  The fields that newPreskel would compute
+-- so that they have an invariant relation to the given fields may no
+-- longer satisfy that relation.
+
+-- In this case, we call renewPreskel which will call newPreskel on
+-- the freely varying fields to recompute the dependent fields.
+
+renewPreskel :: Preskel -> Preskel
+renewPreskel k =
+    let k' = newPreskel
+             (gen k)
+             (shared k)
+             (insts k)
+             (orderings k)
+             (knon k)
+             (kpnon k)
+             (kunique k)
+             (kgenSt k)
+             (kconf k)
+             (kauth k)
+             (kfacts k)
+             (kpriority k)
+             (operation k)
+             (krules k)
+             (pprob k)
+             (prob k)
+             (pov k) in
+    k' { kcomment = kcomment k}
+
+
 checkVars :: Preskel -> Preskel
 checkVars k =
     foldl f k rolevars
@@ -2387,8 +2419,9 @@ forgetNonTerm k =
     map (addIdentity . delNon) (skelNons k)
     where
       delNon t =
-          k { knon = L.delete t (knon k),
-              operation = Generalized (Forgot t), krules = [] }
+          renewPreskel
+          $ k { knon = L.delete t (knon k),
+                operation = Generalized (Forgot t), krules = [] }
 
 skelNons :: Preskel -> [Term]
 skelNons k =
@@ -2403,8 +2436,9 @@ forgetPnonTerm k =
     map (addIdentity . delPnon) (skelPnons k)
     where
       delPnon t =
-          k { kpnon = L.delete t (kpnon k),
-              operation = Generalized (Forgot t), krules = [] }
+          renewPreskel
+          $ k { kpnon = L.delete t (kpnon k),
+                operation = Generalized (Forgot t), krules = [] }
 
 skelPnons :: Preskel -> [Term]
 skelPnons k =
@@ -2419,8 +2453,9 @@ forgetUniqueTerm k =
     map (addIdentity . delUniq) (skelUniques k)
     where
       delUniq t =
-          k { kunique = L.delete t (kunique k),
-              operation = Generalized (Forgot t), krules = [] }
+          renewPreskel
+          $ k { kunique = L.delete t (kunique k),
+                operation = Generalized (Forgot t), krules = [] }
 
 skelUniques :: Preskel -> [Term]
 skelUniques k =

@@ -1,3 +1,13 @@
+2021-10-27  Joshua D. Guttman  <guttman@mitre.org>
+
+	* src/CPSA/Strand.hs:  Fixed subtle bug causing generalization to
+	fail when uniqs, nons, and pnons can be omitted.  Problem was that
+	the code for these operations modifies the preskeleton data
+	structure directly, just deleting the basic value.  But the
+	preskeleton datastructure as computed fields, especially the gist,
+	that need to be recomputed.  RenewPreskel calls newPreskel to
+	recompute these fields correctly.  
+
 2021-09-14  Joshua D. Guttman  <guttman@mitre.org>
 
 	* src/CPSA/Loader.hs:  Modified the transition rules.  A load
