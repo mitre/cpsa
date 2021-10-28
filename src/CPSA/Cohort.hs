@@ -498,13 +498,13 @@ contractions k ct pos eks n t escape cause =
     [ (k', phi) |
            let anc = cmtAncestors t pos,
            subst <- solve escape anc (gen k, emptySubst) ++
-                    constSolve (gen k, emptySubst) ct (kterms k),
+                    constSolve (gen k, emptySubst) ct,
            (k', n, phi, subst') <- contract k n cause subst,
            maybeSolved ct pos eks escape k' n subst' (kabsent k) ]
 
-constSolve :: (Gen, Subst) -> CMT -> [Term] -> [(Gen, Subst)]
-constSolve subst ct kts =
-    [ s | c <- consts (cmtTerm ct) kts,
+constSolve :: (Gen, Subst) -> CMT -> [(Gen, Subst)]
+constSolve subst ct =
+    [ s | c <- consts (cmtTerm ct),
           s <- unify (cmtTerm ct) c subst]
 
 solve :: Set CMT -> [CMT] -> (Gen, Subst) -> [(Gen, Subst)]

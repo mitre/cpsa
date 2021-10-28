@@ -967,10 +967,10 @@ expnInExpr (G n) (G r) =
   M.member (getGroupVar n) r
 expnInExpr _ _ = False
 
-consts :: Term -> [Term] -> [Term]
-consts (F Base _) _ = [F Base [F Genr []]]
-consts (G _) _ = [G M.empty]
-consts _ _ = []
+consts :: Term -> [Term]
+consts (F Base _) = [F Base [F Genr []]]
+consts (G _) = [G M.empty]
+consts _ = []
 
 -- Places
 
