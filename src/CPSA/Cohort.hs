@@ -714,8 +714,8 @@ exprDHSubcohort k a ct pos eks n escape cause =
       False -> []
       True ->
         [ (k', phi) |
-           (k', n', phi, subst) <- addAbsence k n cause x (cmtTerm ct),
-             maybeSolved ct pos eks escape k' n' subst (kabsent k) ] ++
+          (k', n', phi, subst) <- addAbsence k n cause x (cmtTerm ct),
+          maybeSolved ct pos eks escape k' n' subst (kabsent k) ] ++
         [ (k', phi) |
           (k', n', phi, subst) <- addListener k n cause x,
           maybeSolved ct pos eks escape k' n' subst (kabsent k) ]
