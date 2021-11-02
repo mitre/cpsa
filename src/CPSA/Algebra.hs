@@ -2209,6 +2209,14 @@ loadLookup pos (t : u) name =
     let name' = idName (varId t) in
     if name' == name then Right t else loadLookup pos u name
 
+loadLookupStrict :: Pos -> [Term] -> String -> Either String Term
+loadLookupStrict pos vars name =
+  case loadLookup pos vars name of
+    Left msg -> Left msg
+    Right t | not (isExpr t) || isRndx t -> Right t
+    _ -> Left (shows pos $ "Identifier " ++ name ++
+               " is an expt--must be a rndx")
+
 loadLookupName :: MonadFail m => Pos -> [Term] -> String -> m Term
 loadLookupName pos vars name =
     either fail f (loadLookup pos vars name)
@@ -2225,8 +2233,13 @@ loadLookupAkey pos vars name =
       f _ = fail (shows pos $ "Expecting " ++ name ++ " to be an akey")
 
 -- Load term and check that it is well-formed.
+-- Load in strict mode when the third argument is true.
+-- In this case, make sure that when an exponent is a carried term,
+-- the exponent is a rndx variable reference.
 loadTerm :: MonadFail m => Sig -> [Term] -> Bool -> SExpr Pos -> m Term
-loadTerm _ vars _ (S pos s) =
+loadTerm _ vars True (S pos s) =
+    either fail return (loadLookupStrict pos vars s)
+loadTerm _ vars False (S pos s) =
     either fail return (loadLookup pos vars s)
 loadTerm _ _ _ (Q _ t) =
     return (C t)
