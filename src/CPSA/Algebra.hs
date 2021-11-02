@@ -96,6 +96,8 @@
 
 {-# LANGUAGE CPP #-}
 
+#define CHECK_CANONICAL
+
 module CPSA.Algebra (name, alias,
 
     Gen,
@@ -372,19 +374,22 @@ data Term
     | Z Int                     -- Strd constant
     | X !Id                     -- Indx variable
     | Y Int                     -- Indx constant
+#if !defined CHECK_CANONICAL
+      deriving (Show, Eq, Ord)
+#else
       deriving Show
 
 equalTerm :: Term -> Term -> Bool
 equalTerm (I x) (I y) = x == y
 equalTerm (C c) (C c') = c == c'
 equalTerm (G t) (G t') = t == t'
-#if defined CANONICAL
-equalTerm l@(F (Invk _) [F (Invk _) [t]]) t' = error ("EQ: " ++ show l)
-equalTerm t l@(F (Invk _) [F (Invk _) [t']]) = error ("EQ: " ++ show l)
-equalTerm l@(F Exp [t0, G t1]) t' | M.null t1 = error ("EQ: " ++ show l)
-equalTerm t l@(F Exp [t0, G t1]) | M.null t1 = error ("EQ: " ++ show l)
-equalTerm l@(F Exp [F Exp [t, G t0], G t1]) t' = error ("EQ: " ++ show l)
-equalTerm t l@(F Exp [F Exp [t', G t0], G t1])  = error ("EQ: " ++ show l)
+#if defined CHECK_CANONICAL
+equalTerm l@(F (Invk _) [F (Invk _) [_]]) _ = error ("EQ: " ++ show l)
+equalTerm _ l@(F (Invk _) [F (Invk _) [_]]) = error ("EQ: " ++ show l)
+equalTerm l@(F Exp [_, G t1]) _ | M.null t1 = error ("EQ: " ++ show l)
+equalTerm _ l@(F Exp [_, G t1]) | M.null t1 = error ("EQ: " ++ show l)
+equalTerm l@(F Exp [F Exp [_, G _], G _]) _ = error ("EQ: " ++ show l)
+equalTerm _ l@(F Exp [F Exp [_, G _], G _])  = error ("EQ: " ++ show l)
 #else
 -- equalTerm (F (Invk op) [F (Invk op') [t]]) t' | op == op' = equalTerm t t'
 -- equalTerm t (F (Invk op) [F (Invk op') [t']]) | op == op' = equalTerm t t'
@@ -423,13 +428,13 @@ compareTerm :: Term -> Term -> Ordering
 compareTerm (I x) (I y) = compare x y
 compareTerm (C c) (C c') = compare c c'
 compareTerm (G t) (G t') = compare t t'
-#if defined CANONICAL
-compareTerm l@(F (Invk _) [F (Invk _) [t]]) t' = error ("COM: " ++ show l)
-compareTerm t l@(F (Invk _) [F (Invk _) [t']]) = error ("COM: " ++ show l)
-compareTerm l@(F Exp [t0, G t1]) t' | M.null t1 = error ("COM: " ++ show l)
-compareTerm t l@(F Exp [t0, G t1]) | M.null t1 = error ("COM: " ++ show l)
-compareTerm l@(F Exp [F Exp [t, G t0], G t1]) t' = error ("COM: " ++ show l)
-compareTerm t l@(F Exp [F Exp [t', G t0], G t1]) = error ("COM: " ++ show l)
+#if defined CHECK_CANONICAL
+compareTerm l@(F (Invk _) [F (Invk _) [_]]) _ = error ("COM: " ++ show l)
+compareTerm _ l@(F (Invk _) [F (Invk _) [_]]) = error ("COM: " ++ show l)
+compareTerm l@(F Exp [_, G t1]) _ | M.null t1 = error ("COM: " ++ show l)
+compareTerm _ l@(F Exp [_, G t1]) | M.null t1 = error ("COM: " ++ show l)
+compareTerm l@(F Exp [F Exp [_, G _], G _]) _ = error ("COM: " ++ show l)
+compareTerm _ l@(F Exp [F Exp [_, G _], G _]) = error ("COM: " ++ show l)
 #else
 compareTerm (F (Invk _) [F (Invk _) [t]]) t' = compareTerm t t'
 compareTerm t (F (Invk _) [F (Invk _) [t']]) = compareTerm t t'
@@ -502,6 +507,7 @@ compareTermLists _ [] = GT
 
 instance Ord Term where
     compare = compareTerm
+#endif
 
 -- Basic terms are introduced by defining a function used to decide if
 -- a term is well-formed.  The context of an occurrence of an identifier

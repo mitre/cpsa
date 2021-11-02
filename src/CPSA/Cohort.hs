@@ -202,7 +202,7 @@ solved ct pos eks escape k n subst absent =
     any (derivable a ts) (map (substitute subst) eks) ||
     -- Condition 6
     derivable a ts (cmtTerm ct') ||
-    -- Condition 7: hack!
+    -- Condition 7: hack?
     length (kabsent k) > length absent
     where
       v = vertex k n            -- Look up vertex in k
@@ -212,7 +212,7 @@ solved ct pos eks escape k n subst absent =
       mappedTargetTerms = S.map (cmtSubstitute subst) (targetTerms ct escape)
       targetTermsDiff = S.difference (targetTerms ct' escape') mappedTargetTerms
       vs = addSendingBefore S.empty v
-      ts = termsInNodes k vs     -- Outbound predecessors
+      ts = termsInNodes k vs     -- Outbound non-conf predecessors
       (a, _) = avoid k
       encs = S.fold f S.empty escape'
       f (CM _) ts = ts
