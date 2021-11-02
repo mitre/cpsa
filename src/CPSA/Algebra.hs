@@ -23,10 +23,10 @@
 -- The Diffie-Hellman Order-Sorted Signature is
 
 -- Sorts: mesg, text, data, name, skey, akey, tag,
---        string, base, expr, and expn
+--        string, base, expt, and rndx
 --
 -- Subsorts: text, data, name, skey, akey,
---           base, expr < mesg and expn < expr
+--           base, expt < mesg and rndx < expt
 --
 -- Operations:
 --   cat : mesg X mesg -> mesg               Pairing
@@ -39,15 +39,15 @@
 --   pubk : string X name -> akey            Tagged public key of principal
 --   invk : akey -> akey                     Inverse of asymmetric key
 --   gen : base                              DH generator
---   exp : base X expr -> base               Exponentiation
---   mul : expr X expr -> expr               Group operation
---   rec : expr -> expr                      Group inverse
---   one : expr                              Group identity
+--   exp : base X expt -> base               Exponentiation
+--   mul : expt X expt -> expt               Group operation
+--   rec : expt -> expt                      Group inverse
+--   one : expt                              Group identity
 --
--- Atoms: messages of sort text, data, name, skey, akey, and expn, and
---        messages of the form (exp (gen) x) where x is of sort expn.
+-- Atoms: messages of sort text, data, name, skey, akey, and rndx, and
+--        messages of the form (exp (gen) x) where x is of sort rndx.
 
--- A free Abelian group has a set of basis elements, and the sort expn
+-- A free Abelian group has a set of basis elements, and the sort rndx
 -- is the sort for basis elements.  Limiting the atoms associated with
 -- an exponent to basis elements is the basis elements as atoms
 -- principle.  This principle enables CPSA to correctly handle
@@ -61,7 +61,7 @@
 -- monomials.
 
 -- Sorts: mesg, text, data, name, skey, akey,
---        string, base, expr, and expn
+--        string, base, expt, and rndx
 --
 -- Operations:
 --   cat : mesg X mesg -> mesg               Pairing
@@ -80,10 +80,10 @@
 --   akey : akey -> mesg                     Sort akey inclusion
 --   base : base -> mesg                     Sort base inclusion
 --
---  A message of sort expr, a monomial, is represented by a map from
+--  A message of sort expt, a monomial, is represented by a map from
 --  identifiers to descriptions.  A description is a pair consisting
---  of a flag saying if the variable is of sort expn or expr, and a
---  non-zero integer.  For t of sort expr, the monomial associated
+--  of a flag saying if the variable is of sort rndx or expt, and a
+--  non-zero integer.  For t of sort expt, the monomial associated
 --  with t is
 --
 --      x1 ^ c1 * x2 ^ c2 * ... * xn ^ cn
@@ -140,7 +140,8 @@ module CPSA.Algebra (name, alias,
     isBase,
     isExpr,
     isVarExpr,
-    expnInExpr,
+    isRndx,
+    exprVars,
 
     Place (..),
     places,
@@ -328,6 +329,13 @@ isMapletNonzero (_, (_, c)) = c /= 0
 group :: [Maplet] -> Group
 group maplets =
   M.fromList $ filter isMapletNonzero maplets
+
+exprVars :: Term -> [Term]
+exprVars (G g) =
+  M.foldlWithKey f [] g
+  where
+    f vars id (sort, _) = G (M.singleton id (sort, 1)) : vars
+exprVars t = error ("Algebra.exprVars: Expecting exponent but got " ++ show t)
 
 -- For Absence
 
@@ -649,9 +657,9 @@ termWellFormed xts (F Base [t]) =
             termWellFormed xts (G t1)
       baseVarEnv _ _ = Nothing
 termWellFormed xts (G t) =
-    foldM expnVarEnv xts (M.assocs t)
+    foldM rndxVarEnv xts (M.assocs t)
     where
-      expnVarEnv xts (x, (be, _)) =
+      rndxVarEnv xts (x, (be, _)) =
           extendVarEnv xts x (groupVar be x)
 termWellFormed xts (C _) =
     Just xts                    -- Tags
@@ -737,9 +745,9 @@ foldVars f acc (F Base [t]) =
           foldVars f (baseAddVars acc t0) (G t1)
       baseAddVars _ _ = assertError "Algebra.foldVars: Bad term"
 foldVars f acc (G t) =
-    M.foldlWithKey expnAddVars acc t
+    M.foldlWithKey rndxAddVars acc t
     where
-      expnAddVars acc x (be, _) =
+      rndxAddVars acc x (be, _) =
           f acc (groupVar be x)
 foldVars _ acc (C _) = acc                    -- Tags
 foldVars f acc (F (Tupl _) ts) =              -- Concatenation
@@ -812,12 +820,12 @@ buildable knowns unguessable term =
       be exp =
         all (flip notElem ids) $ M.keys exp
       -- Exponent variables with origination assumptions
-      ids = getExpnOrigAssumptions unguessable
+      ids = getRndxOrigAssumptions unguessable
       -- Known exponent without non-known variables
-      -- kns = map (stripExpn ids) (getExpns knowns)
+      -- kns = map (stripRndx ids) (getRndxs knowns)
 
-getExpnOrigAssumptions :: Set Term -> [Id]
-getExpnOrigAssumptions terms =
+getRndxOrigAssumptions :: Set Term -> [Id]
+getRndxOrigAssumptions terms =
     concatMap f $ S.elems terms
     where
       f (G t) = M.keys t        -- This is an approximation
@@ -928,11 +936,11 @@ indicator avoid t@(F Base _) =
     F Base [F Exp [_, G m]] -> M.intersection m indicatorBasis
     _ -> error ("Algebra.hs: expCollapse returned non-base element")
   where
-    numAvoid = S.map extrExpn $ S.filter isExpn avoid
-    isExpn (G g) = isBasisVar g
-    isExpn _ = False
-    extrExpn (G t) = t
-    extrExpn _ = error ("Algebra.hs: extrExpn called on a non-exponent")
+    numAvoid = S.map extrRndx $ S.filter isRndx avoid
+    isRndx (G g) = isBasisVar g
+    isRndx _ = False
+    extrRndx (G t) = t
+    extrRndx _ = error ("Algebra.hs: extrRndx called on a non-exponent")
     indicatorBasis = S.fold mul M.empty numAvoid
 indicator _ t = error ("Algebra.hs: indicator called on a non-base " ++ show t)
 
@@ -960,18 +968,9 @@ isVarExpr :: Term -> Bool
 isVarExpr (G g) = isGroupVar g
 isVarExpr _ = False
 
-{-
-isExpn :: Term -> Bool
-isExpn (G t) = isBasisVar t
-isExpn _ = False
--}
-
-expnInExpr :: Term -> Term -> Bool
-expnInExpr (G n) (G r) =
-  isBasisVar n &&
-  not (isBasisVar r) &&
-  M.member (getGroupVar n) r
-expnInExpr _ _ = False
+isRndx :: Term -> Bool
+isRndx (G t) = isBasisVar t
+isRndx _ = False
 
 consts :: Term -> [Term]
 consts (F Base _) = [F Base [F Genr []]]
@@ -1244,7 +1243,7 @@ showMap m =
 
 -- The rewrite rules used are:
 --
--- (vars (h base) (x y expn))
+-- (vars (h base) (x y rndx))
 --
 -- 1.  ((exp h x) y) ==> (exp h (mul x y))
 -- 2.  (exp h (one)) ==> h
@@ -1754,7 +1753,7 @@ matchGroup ::  Group -> Group -> Set Id -> Gen ->
 matchGroup t0 t1 v g r =
   let (t0', t1') = merge t0 t1 r       -- Apply subst to LHS
       (v', g', r') = genVars v g t0' r -- Gen vars for non-fresh vars
-      d = mkInitMatchDecis v' t1' in -- Ensure expns on RHS stay distinct
+      d = mkInitMatchDecis v' t1' in -- Ensure rndxs on RHS stay distinct
   case partition (groupSubst r' t0') t1' v' of
     ([], []) -> return (v', g', r')
     ([], t) -> constSolve t v' g' r' d -- No variables of sort expr here
@@ -1773,7 +1772,7 @@ merge t t' r =
             Just (G t) ->
                 loop t0 (t1, mul (expg t (negate c)) t1')
             Just t ->
-                error $ "Algebra.merge: expecting an expn but got " ++ show t
+                error $ "Algebra.merge: expecting an rndx but got " ++ show t
 
 -- Generate vars for each non-fleshly generated vars
 genVars :: Set Id -> Gen -> Group -> IdMap -> (Set Id, Gen, IdMap)
@@ -1800,7 +1799,7 @@ genVars v g t r =
         (g', x') = cloneId g x
 --}
 
--- A set of decisions records expn variables that have been identified
+-- A set of decisions records rndx variables that have been identified
 -- and those that are distinct.
 data Decision t = Decision
   { same :: [(t, t)],
@@ -1822,7 +1821,7 @@ mkInitMatchDecis vs t =
     v = [x | (x, (be, _)) <- M.assocs t, be, not $ S.member x vs]
 
 -- Move fresh variables on the RHS of the equation to the LHS
--- Move variables of sort expn on the LHS to the RHS
+-- Move variables of sort rndx on the LHS to the RHS
 partition ::  Group -> Group -> Set Id -> ([Maplet], [Maplet])
 partition t0 t1 v =
   (M.assocs lhs, M.assocs rhs)
@@ -1840,7 +1839,7 @@ constSolve :: [Maplet] -> Set Id -> Gen -> IdMap ->
               Decision Id -> [(Set Id, Gen, IdMap)]
 constSolve t v g r d
   | any (\(_, (be, _)) -> not be) t = [] -- Fail expr var is on RHS
-  | otherwise = constSolve1 t v g r d    -- All vars are expn
+  | otherwise = constSolve1 t v g r d    -- All vars are rndx
 
 constSolve1 :: [Maplet] -> Set Id -> Gen ->
                IdMap -> Decision Id -> [(Set Id, Gen, IdMap)]
@@ -1951,7 +1950,7 @@ identify x y t =
 --       and goto step 3,
 --
 --     * otherwise fail because there is no solution.  In this case
---       expn vars must be identified.
+--       rndx vars must be identified.
 --
 -- 5.  Otherwise, eliminate x[i] as above in favor of freshly created
 -- variable x[n], where n is the length of c.
@@ -2625,9 +2624,9 @@ displayTerm ctx (F Base [t]) =
           L () [S () "exp", displayBase t0, displayTerm ctx (G t1)]
       displayBase t = error ("Algebra.displayBase: Bad term " ++ show t)
 displayTerm ctx (G t) =
-    displayExpn t
+    displayExpr t
     where
-      displayExpn t
+      displayExpr t
           | M.null t = L () [S () "one"]
           | otherwise =
               case factors t of
@@ -2683,9 +2682,9 @@ displayTermNoPt ctx (F Base [t]) =
           L () [S () "exp", displayBase t0, displayTerm ctx (G t1)]
       displayBase t = error ("Algebra.displayBase: Bad term " ++ show t)
 displayTermNoPt ctx (G t) =
-    displayExpn t
+    displayExpr t
     where
-      displayExpn t
+      displayExpr t
           | M.null t = L () [S () "one"]
           | otherwise =
               case factors t of

@@ -706,10 +706,11 @@ baseDHSubcohort k ct pos eks n escape cause
 exprDHSubcohort :: Preskel -> Set Term ->
                   CMT -> Place -> [Term] -> Node ->
                   Set CMT -> Cause -> [(Preskel, [Sid])]
+exprDHSubcohort _ _ ct _ _ _ _ _ | isRndx (cmtTerm ct) = []
 exprDHSubcohort k a ct pos eks n escape cause =
   do
-    x <- S.toList a
-    case expnInExpr x (cmtTerm ct) of
+    x <- exprVars (cmtTerm ct)
+    case S.member x a of
       False -> []
       True ->
         [ (k', phi) |
