@@ -106,8 +106,9 @@ module CPSA.Algebra (name, alias,
     clone,
     loadVars,
     basePrecursor,
+    baseAbsent,
     newVar,
-    newVarDefault, 
+    newVarDefault,
     varName,
 
     Term,
@@ -1165,6 +1166,17 @@ simplifyBase (F Exp [F Exp [t, G g0], G g1]) =
   simplifyBase (F Exp [t, G (mul g0 g1)])
 simplifyBase t = t
 
+baseAbsent :: Term -> Maybe [(Term, Term)]
+baseAbsent (F Base [F Exp [F Genr [], t@(G g)]])
+  | M.size g > 1 =
+    loop [] (M.assocs g)
+    where
+      loop acc [] = Just acc
+      loop _ ((_, (Expt, _)) : _) = Nothing
+      loop acc ((id, (Rndx, _)) : maplets) =
+        loop ((groupVar Rndx id, t) : acc) maplets
+baseAbsent _ = Nothing
+
 -- Functions used in both unification and matching
 
 type IdMap = Map Id Term
@@ -2196,7 +2208,6 @@ newVar sig g varName varSort =
 
 newVarDefault :: Gen -> String -> String -> (Gen, Term)
 newVarDefault = newVar Sig.defaultSig
-    
 
 mkVarUnfailingly :: Sig -> String -> Id -> Term
 mkVarUnfailingly sig sort x

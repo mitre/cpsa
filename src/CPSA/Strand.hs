@@ -585,7 +585,6 @@ newPreskel gen shared insts orderings non pnon unique
           else k
 -}
 
-
 -- Suppose that a Preskel k has been created by rebinding some fields
 -- in an earlier skeleton.  The fields that newPreskel would compute
 -- so that they have an invariant relation to the given fields may no
@@ -618,7 +617,6 @@ renewPreskel k =
              (prob k)
              (pov k) in
     k' { kcomment = kcomment k}
-
 
 checkVars :: Preskel -> Preskel
 checkVars k =
@@ -2036,10 +2034,19 @@ addListener k n cause t =
       orderings' = pair : orderings k
 
 -- Base Listener Augmentation.  Like listener augmentation but adds a
--- precur assertion.
+-- base precursor and a precur assertion.
 
 addBaseListener :: Preskel -> Node -> Cause -> Term -> [Ans]
 addBaseListener k n cause t =
+    case baseAbsent t of
+      Nothing -> formerAddBaseListener k n cause t
+      Just absences ->
+        do
+          (x, t) <- absences
+          addAbsence k n cause x t
+
+formerAddBaseListener :: Preskel -> Node -> Cause -> Term -> [Ans]
+formerAddBaseListener k n cause t =
     do
       k'' <- wellFormedPreskel k'
       prs <- skeletonize useThinningWhileSolving
@@ -2426,7 +2433,7 @@ instAssocs i =
 -- variable for subsets of the locations associated with the variable.
 separateVariable :: Preskel -> [(Term, Location)] -> Term -> [Candidate]
 separateVariable _ _ t | isChan t = [] -- Ignore channels
-separateVariable _ _ t | isLocn t = [] -- Ignore locations 
+separateVariable _ _ t | isLocn t = [] -- Ignore locations
 -- Ignore group elements because of bugs in the algebra module
 separateVariable _ _ t | isExpr t = []
 separateVariable k ps t =
@@ -2694,14 +2701,13 @@ satisfy (LeadsTo n n') =
           -- Commpair entails StateNode n' too
           return ge
 
-
 nodePairsOfSkel :: Preskel -> Maybe [((Sid,Int),(Sid,Int))]
 nodePairsOfSkel k =
     let (g1,z1) = newVarDefault (gen k) "z1" "strd" in
     let (g2,z2) = newVarDefault g1 "z2" "strd" in
-    let (g3,i1) = newVarDefault g2 "i1" "indx" in 
-    let (g4,i2) = newVarDefault g3 "i2" "indx" in       
-    
+    let (g3,i1) = newVarDefault g2 "i1" "indx" in
+    let (g4,i2) = newVarDefault g3 "i2" "indx" in
+
     (mapM
      (\(_,e) ->
           tupleOfMaybeList
@@ -2709,11 +2715,11 @@ nodePairsOfSkel k =
            [strdLookup e z1, indxLookup e i1,
             strdLookup e z2, indxLookup e i2]))
      (satisfy (LeadsTo (z1,i1) (z2,i2)) k (g4,emptyEnv)))
-   
+
     where
       maybeList [] = Just []
-      maybeList (Nothing : _) = Nothing 
-      maybeList ((Just v) : l) = 
+      maybeList (Nothing : _) = Nothing
+      maybeList ((Just v) : l) =
           case maybeList l of
             Nothing -> Nothing
             Just l' -> Just (v : l')
