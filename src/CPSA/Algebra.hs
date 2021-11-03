@@ -107,6 +107,7 @@ module CPSA.Algebra (name, alias,
     loadVars,
     basePrecursor,
     newVar,
+    newVarDefault, 
     varName,
 
     Term,
@@ -2190,6 +2191,10 @@ newVar :: Sig -> Gen -> String -> String -> (Gen, Term)
 newVar sig g varName varSort =
     let (g', x) = freshId g varName in
     (g', mkVarUnfailingly sig varSort x)
+
+newVarDefault :: Gen -> String -> String -> (Gen, Term)
+newVarDefault = newVar Sig.defaultSig
+    
 
 mkVarUnfailingly :: Sig -> String -> Id -> Term
 mkVarUnfailingly sig sort x

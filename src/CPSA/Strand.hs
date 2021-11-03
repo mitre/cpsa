@@ -21,7 +21,7 @@ module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     Cause (..), Direction (..), Method (..), Operation (..),
     operation, krules, pprob, prob, homomorphism, toSkeleton, generalize,
     collapse, sat, FTerm (..), Fact (..), simplify, rewrite,
-    localSignal, rewriteUnaryOneOnce) where
+    localSignal, rewriteUnaryOneOnce, nodePairsOfSkel) where
 
 import Control.Monad
 import Control.Parallel
@@ -2426,6 +2426,7 @@ instAssocs i =
 -- variable for subsets of the locations associated with the variable.
 separateVariable :: Preskel -> [(Term, Location)] -> Term -> [Candidate]
 separateVariable _ _ t | isChan t = [] -- Ignore channels
+separateVariable _ _ t | isLocn t = [] -- Ignore locations 
 -- Ignore group elements because of bugs in the algebra module
 separateVariable _ _ t | isExpr t = []
 separateVariable k ps t =
@@ -2692,6 +2693,44 @@ satisfy (LeadsTo n n') =
           ge <- satisfy (StateNode n) k ge
           -- Commpair entails StateNode n' too
           return ge
+
+--   nodePairsOfLeadsTo :: Preskel -> [(Node,Node)]
+--   nodePairsOfLeadsTo k =
+--       let (g,n) = newVar 
+--   
+--       do
+--         (g,n) <- 
+--       map pairOfOneLeadsTo (leadsTos k) 
+--       where
+--         
+--         leadsTos k' = !!!!!
+
+nodePairsOfSkel :: Preskel -> Maybe [((Sid,Int),(Sid,Int))]
+nodePairsOfSkel k =
+    let (g1,z1) = newVarDefault (gen k) "z1" "strd" in
+    let (g2,z2) = newVarDefault g1 "z2" "strd" in
+    let (g3,i1) = newVarDefault g2 "i1" "indx" in 
+    let (g4,i2) = newVarDefault g3 "i2" "indx" in       
+    
+    (mapM
+     (\(_,e) ->
+          tupleOfMaybeList
+          (maybeList
+           [strdLookup e z1, indxLookup e i1,
+            strdLookup e z2, indxLookup e i2]))
+     (satisfy (LeadsTo (z1,i1) (z2,i2)) k (g4,emptyEnv)))
+   
+    where
+      maybeList [] = Just []
+      maybeList (Nothing : _) = Nothing 
+      maybeList ((Just v) : l) = 
+          case maybeList l of
+            Nothing -> Nothing
+            Just l' -> Just (v : l')
+
+      tupleOfMaybeList (Just [v1, v2, v3, v4]) = Just ((v1, v2), (v3, v4))
+      tupleOfMaybeList (Just _) = Nothing
+      tupleOfMaybeList Nothing = Nothing
 
 glengthExtendEnv :: Role -> Term -> Sid -> Int -> Instance -> (Gen,Env) -> [(Gen,Env)]
 glengthExtendEnv r z s h inst (g, e)
