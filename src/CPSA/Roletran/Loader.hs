@@ -119,8 +119,10 @@ loadVars sexprs =
 
 loadVarPair :: MonadFail m => SExpr Pos -> m [(SExpr Pos, SExpr Pos)]
 loadVarPair (L _ (x:y:xs)) =
-  let (t:vs) = reverse (x:y:xs) in
-  return [(v,t) | v <- reverse vs]
+  case reverse (x:y:xs) of
+    t : vs ->
+      return [(v,t) | v <- reverse vs]
+    [] -> error "Loader.loadVarPair: [] cannot happen"
 loadVarPair x = fail (shows (annotation x) "Bad variable declaration")
 
 loadVar :: MonadFail m => VarEnv -> (SExpr Pos, SExpr Pos) -> m VarEnv
