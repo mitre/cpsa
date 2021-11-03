@@ -1154,7 +1154,7 @@ basePrecursor g (F Base [t]) =
      G x'])
   where
     (g', x) = freshId g "w"
-    G x' = groupVar Expt x
+    x' = groupVarG Expt x
 basePrecursor _ t =
   error ("Algebra.basePrecursor: Bad term " ++ show t)
 
@@ -2154,8 +2154,10 @@ loadVars sig gen sexprs =
 
 loadVarPair :: MonadFail m => SExpr Pos -> m [(SExpr Pos, SExpr Pos)]
 loadVarPair (L _ (x:y:xs)) =
-    let (t:vs) = reverse (x:y:xs) in
-    return [(v,t) | v <- reverse vs]
+    case reverse (x:y:xs) of
+      t : vs ->
+        return [(v,t) | v <- reverse vs]
+      [] -> error "Algebra.loadVarPair [] cannot happen"
 loadVarPair x = fail (shows (annotation x) "Malformed vars declaration")
 
 loadVar :: MonadFail m => Sig -> (Gen, [Term]) -> (SExpr Pos, SExpr Pos) ->
@@ -2563,13 +2565,15 @@ newtype Context = Context [(Id, String)] deriving Show
 displayVars :: Context -> [Term] -> [SExpr ()]
 displayVars _ [] = []
 displayVars ctx vars =
-    let (v,t):pairs = map (displayVar ctx) vars in
-    loop t [v] pairs
-    where
-      loop t vs [] = [L () (reverse (t:vs))]
-      loop t vs ((v',t'):xs)
-          | t == t' = loop t (v':vs) xs
-          | otherwise = L () (reverse (t:vs)):loop t' [v'] xs
+    case map (displayVar ctx) vars of
+      (v, t) : pairs ->
+        loop t [v] pairs
+        where
+          loop t vs [] = [L () (reverse (t:vs))]
+          loop t vs ((v',t'):xs)
+            | t == t' = loop t (v':vs) xs
+            | otherwise = L () (reverse (t:vs)):loop t' [v'] xs
+      [] -> error "Algebra.displayVars: [] vars cannot happen"
 
 displayVar :: Context -> Term -> (SExpr (), SExpr ())
 displayVar ctx (I x) = displaySortId "mesg" ctx x
