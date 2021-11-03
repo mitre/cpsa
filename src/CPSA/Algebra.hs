@@ -253,12 +253,16 @@ cloneId :: Gen -> Id -> (Gen, Id)
 cloneId gen x = freshId gen (idName x)
 
 -- A term in an Abelian group is a map from identifiers to pairs of
--- bools and non-zero integers.  The boolean is true if the variable
--- is a basis element.
+-- sorts and non-zero integers.
+
+data Sort
+  = Rndx                        -- Sort of a basis element
+  | Expt
+  deriving (Show, Eq, Ord)
 
 type Coef = Int
 
-type Desc = (Bool, Coef)
+type Desc = (Sort, Coef)
 
 type Group = Map Id Desc
 
@@ -268,25 +272,25 @@ isGroupVar t =
 
 isBasisVar :: Group -> Bool
 isBasisVar t =
-  M.size t == 1 && head (M.elems t) == (True, 1)
+  M.size t == 1 && head (M.elems t) == (Rndx, 1)
 
 isExprVar :: Group -> Bool
 isExprVar t =
-  M.size t == 1 && head (M.elems t) == (False, 1)
+  M.size t == 1 && head (M.elems t) == (Expt, 1)
 
--- Assumes isGroupVar t == True or isBasisVar t == True!
+-- Assumes isGroupVar t, isBasisVar t, or isExprVar is True!
 getGroupVar :: Group -> Id
 getGroupVar x = head $ M.keys x
 
--- Create group var as a basis element if be is true
-groupVarG :: Bool -> Id -> Group
+-- Create group var as a basis element if be is Rndx
+groupVarG :: Sort -> Id -> Group
 groupVarG be x = M.singleton x (be, 1)
 
-groupVar :: Bool -> Id -> Term
+groupVar :: Sort -> Id -> Term
 groupVar be x = G $ groupVarG be x
 
 groupVarGroup :: Id -> Group
-groupVarGroup x = groupVarG False x
+groupVarGroup x = groupVarG Expt x
 
 dMapCoef :: (Coef -> Coef) -> Desc -> Desc
 dMapCoef f (be, c) = (be, f c)
@@ -334,7 +338,7 @@ exprVars :: Term -> [Term]
 exprVars (G g) =
   M.foldlWithKey f [] g
   where
-    f vars id (sort, _) = G (M.singleton id (sort, 1)) : vars
+    f vars id (sort, _) = groupVar sort id : vars
 exprVars t = error ("Algebra.exprVars: Expecting exponent but got " ++ show t)
 
 -- For Absence
@@ -1064,7 +1068,7 @@ replace var (Place ints) source =
           F s (replaceNth (loop path (u !! i)) i u)
       loop _ _ = assertError "Algebra.replace: Bad path to term"
 
-factors :: Group -> [(Id, (Bool, Int))]
+factors :: Group -> [(Id, (Sort, Int))]
 factors t =
     do
       (x, (be, n)) <- M.assocs t
@@ -1149,7 +1153,7 @@ basePrecursor g (F Base [t]) =
      G x'])
   where
     (g', x) = freshId g "w"
-    G x' = groupVar False x
+    G x' = groupVar Expt x
 basePrecursor _ t =
   error ("Algebra.basePrecursor: Bad term " ++ show t)
 
@@ -1223,7 +1227,7 @@ groupSubst subst t =
       f x (be, c) t =
           mul (expg (groupLookup subst be x) c) t
 
-groupLookup :: IdMap -> Bool -> Id -> Group
+groupLookup :: IdMap -> Sort -> Id -> Group
 groupLookup subst be x =
     case M.findWithDefault (groupVar be x) x subst of
       G t -> t
@@ -1300,7 +1304,7 @@ compose (Subst s0) (Subst s1) =
 
 nonTrivialBinding :: Id -> Term -> Bool
 nonTrivialBinding x (I y) = x /= y
-nonTrivialBinding x t@(G _) = not (t == groupVar True x || t == groupVar False x)
+nonTrivialBinding x t@(G _) = not (t == groupVar Rndx x || t == groupVar Expt x)
 nonTrivialBinding _ _ = True
 
 -- During unification, variables determined to be equal are collected
@@ -1362,7 +1366,7 @@ chaseGroup s t =
        f x (be, c) t =
            mul (expg (chaseGroupLookup s be x) c) t
 
-chaseGroupLookup :: IdMap -> Bool -> Id -> Group
+chaseGroupLookup :: IdMap -> Sort -> Id -> Group
 chaseGroupLookup s be x =
     case M.lookup x s of
       Nothing -> groupVarG be x
@@ -1818,7 +1822,7 @@ mkInitMatchDecis :: Set Id -> Group -> Decision Id
 mkInitMatchDecis vs t =
   mkDecis { dist = [(x, y) | x <- v, y <- v, x /= y] }
   where
-    v = [x | (x, (be, _)) <- M.assocs t, be, not $ S.member x vs]
+    v = [x | (x, (be, _)) <- M.assocs t, be == Rndx, not $ S.member x vs]
 
 -- Move fresh variables on the RHS of the equation to the LHS
 -- Move variables of sort rndx on the LHS to the RHS
@@ -1829,7 +1833,7 @@ partition t0 t1 v =
     (v1, c1) = M.partitionWithKey g t1 -- Fresh variables go in v1
     g x y = S.member x v && f y        -- only when they are exprs
     (v0, c0) = M.partition f t0        -- Basis elements go in c0
-    f (be, _) = not be
+    f (be, _) = be /= Rndx
     lhs = mul v0 (invert v1)
     rhs = mul c1 (invert c0)
 
@@ -1838,7 +1842,7 @@ partition t0 t1 v =
 constSolve :: [Maplet] -> Set Id -> Gen -> IdMap ->
               Decision Id -> [(Set Id, Gen, IdMap)]
 constSolve t v g r d
-  | any (\(_, (be, _)) -> not be) t = [] -- Fail expr var is on RHS
+  | any (\(_, (be, _)) -> be /= Rndx) t = [] -- Fail expr var is on RHS
   | otherwise = constSolve1 t v g r d    -- All vars are rndx
 
 constSolve1 :: [Maplet] -> Set Id -> Gen ->
@@ -1857,7 +1861,7 @@ constSolve1 t v g r d =
         t' = identify x y t     -- Equate x y in t
         v' = S.delete x v       -- Eliminate x in v
         r' = eliminate x y' r   -- And in r
-        y' = groupVar True y
+        y' = groupVar Rndx y
         d' = d {same = (x, y):same d} -- And note decision
 
 -- Find a pair of variables for which no decision has been made.
@@ -1867,8 +1871,8 @@ nextDecis d t =
     not $ decided d x y]
   where
     vars = foldr f [] t
-    f (x, (True, _)) v = x:v
-    f (_, (False, _)) v = v
+    f (x, (Rndx, _)) v = x:v
+    f (_, (Expt, _)) v = v
     decided d x y =             -- Is x and y decided?
       u == v ||
       any f (dist d)
@@ -2002,10 +2006,10 @@ agSolve x ci i t0 t1 v g r d
       solve t0' t1 (S.insert x' $ S.delete x v) g' r' d
       where
         (g', x') = cloneId g x
-        t = G $ group ((x', (False, 1)) :
+        t = G $ group ((x', (Expt, 1)) :
                        mInverse (divide ci (omit i t0)))
         r' = eliminate x t r
-        t0' = (x', (False, ci)) : modulo ci (omit i t0)
+        t0' = (x', (Expt, ci)) : modulo ci (omit i t0)
 
 eliminate :: Id -> Term -> IdMap -> IdMap
 eliminate x t r =
@@ -2047,7 +2051,7 @@ identSolve z ci i t0 t1 v g r d =
         t1' = identify x y t1   -- Equate x y in t1
         v' = S.delete x v       -- Eliminate x in v
         r' = eliminate x y' r   -- And in r
-        y' = groupVar True y
+        y' = groupVar Rndx y
         d' = d {same = (x, y):same d}
 
 -- Cast an environment into a substitution by filtering out trivial
@@ -2173,8 +2177,8 @@ mkVar sig pos sort x
   | sort == "chan" = return $ F Chan [I x]
   | sort == "locn" = return $ F Locn [I x]
   | sort == "base" = return $ F Base [I x]
-  | sort == "expt" = return $ groupVar False x
-  | sort == "rndx" = return $ groupVar True x
+  | sort == "expt" = return $ groupVar Expt x
+  | sort == "rndx" = return $ groupVar Rndx x
   | sort == "mesg" = return $ I x
   | sort == "strd" = return $ D x
   | sort == "indx" = return $ X x

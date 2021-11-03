@@ -16,7 +16,8 @@
     (trace (recv (cat "req" s g (enc b nb (ltk s b))))
       (send (cat "resp" b (enc s g nb gk (ltk s b))))
       (recv (cat "fetch" s g (enc a na (ltk s a))))
-      (send (cat "deliver" a (enc s g na gk (ltk s a))))))
+      (send (cat "deliver" a (enc s g na gk (ltk s a)))))
+    (uniq-gen gk))
   (defrole client
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
@@ -80,6 +81,7 @@
   (precedes ((0 0) (1 2)) ((1 3) (0 1)))
   (non-orig (ltk s b))
   (uniq-orig nb)
+  (uniq-gen gk)
   (operation encryption-test (added-strand keyserv 4)
     (enc s g nb gk (ltk s b)) (0 1))
   (traces
@@ -103,6 +105,7 @@
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (ltk s b))
   (uniq-orig nb)
+  (uniq-gen gk)
   (operation encryption-test (added-strand keyserv 2)
     (enc s g nb gk (ltk s b)) (0 1))
   (traces
@@ -129,7 +132,8 @@
     (trace (recv (cat "req" s g (enc b nb (ltk s b))))
       (send (cat "resp" b (enc s g nb gk (ltk s b))))
       (recv (cat "fetch" s g (enc a na (ltk s a))))
-      (send (cat "deliver" a (enc s g na gk (ltk s a))))))
+      (send (cat "deliver" a (enc s g na gk (ltk s a)))))
+    (uniq-gen gk))
   (defrole client
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
@@ -175,6 +179,7 @@
   (vars (gk skey) (nb na g text) (a b s name))
   (defstrand keyserv 4 (gk gk) (nb nb) (na na) (g g) (a a) (b b) (s s))
   (non-orig (ltk s a) (ltk s b))
+  (uniq-gen gk)
   (comment "SKDC's point-of-view")
   (traces
     ((recv (cat "req" s g (enc b nb (ltk s b))))
@@ -192,6 +197,7 @@
   (defstrand sp 1 (nb nb) (g g-0) (b b) (s s))
   (precedes ((1 0) (0 0)))
   (non-orig (ltk s a) (ltk s b))
+  (uniq-gen gk)
   (operation encryption-test (added-strand sp 1) (enc b nb (ltk s b))
     (0 0))
   (traces
@@ -211,6 +217,7 @@
   (defstrand client 1 (na nb) (g g-0) (a b) (s s))
   (precedes ((1 0) (0 0)))
   (non-orig (ltk s a) (ltk s b))
+  (uniq-gen gk)
   (operation encryption-test (added-strand client 1)
     (enc b nb (ltk s b)) (0 0))
   (traces
@@ -230,6 +237,7 @@
   (defstrand sp 1 (nb nb) (g g-0) (b b) (s s))
   (precedes ((1 0) (0 0)))
   (non-orig (ltk s b))
+  (uniq-gen gk)
   (operation encryption-test (displaced 2 1 sp 1) (enc a na (ltk s a))
     (0 2))
   (traces
@@ -252,6 +260,7 @@
   (defstrand sp 1 (nb na) (g g-1) (b a) (s s))
   (precedes ((1 0) (0 0)) ((2 0) (0 2)))
   (non-orig (ltk s a) (ltk s b))
+  (uniq-gen gk)
   (operation encryption-test (added-strand sp 1) (enc a na (ltk s a))
     (0 2))
   (traces
@@ -275,6 +284,7 @@
   (defstrand client 1 (na na) (g g-1) (a a) (s s))
   (precedes ((1 0) (0 0)) ((2 0) (0 2)))
   (non-orig (ltk s a) (ltk s b))
+  (uniq-gen gk)
   (operation encryption-test (added-strand client 1)
     (enc a na (ltk s a)) (0 2))
   (traces
@@ -298,6 +308,7 @@
   (defstrand sp 1 (nb na) (g g-1) (b a) (s s))
   (precedes ((1 0) (0 0)) ((2 0) (0 2)))
   (non-orig (ltk s a) (ltk s b))
+  (uniq-gen gk)
   (operation encryption-test (added-strand sp 1) (enc a na (ltk s a))
     (0 2))
   (traces
@@ -320,6 +331,7 @@
   (defstrand client 1 (na nb) (g g-0) (a b) (s s))
   (precedes ((1 0) (0 0)))
   (non-orig (ltk s b))
+  (uniq-gen gk)
   (operation encryption-test (displaced 2 1 client 1)
     (enc a na (ltk s a)) (0 2))
   (traces
@@ -342,6 +354,7 @@
   (defstrand client 1 (na na) (g g-1) (a a) (s s))
   (precedes ((1 0) (0 0)) ((2 0) (0 2)))
   (non-orig (ltk s a) (ltk s b))
+  (uniq-gen gk)
   (operation encryption-test (added-strand client 1)
     (enc a na (ltk s a)) (0 2))
   (traces
@@ -370,7 +383,8 @@
     (trace (recv (cat "req" s g (enc b nb (ltk s b))))
       (send (cat "resp" b (enc s g nb gk (ltk s b))))
       (recv (cat "fetch" s g (enc a na (ltk s a))))
-      (send (cat "deliver" a (enc s g na gk (ltk s a))))))
+      (send (cat "deliver" a (enc s g na gk (ltk s a)))))
+    (uniq-gen gk))
   (defrole client
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
@@ -433,6 +447,7 @@
   (precedes ((0 0) (1 2)) ((1 3) (0 1)))
   (non-orig (ltk s a))
   (uniq-orig na)
+  (uniq-gen gk)
   (operation encryption-test (added-strand keyserv 4)
     (enc s g na gk (ltk s a)) (0 1))
   (traces
@@ -456,6 +471,7 @@
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (ltk s a))
   (uniq-orig na)
+  (uniq-gen gk)
   (operation encryption-test (added-strand keyserv 2)
     (enc s g na gk (ltk s a)) (0 1))
   (traces
@@ -482,7 +498,8 @@
     (trace (recv (cat "req" s g (enc b nb (ltk s b))))
       (send (cat "resp" b (enc s g nb gk (ltk s b))))
       (recv (cat "fetch" s g (enc a na (ltk s a))))
-      (send (cat "deliver" a (enc s g na gk (ltk s a))))))
+      (send (cat "deliver" a (enc s g na gk (ltk s a)))))
+    (uniq-gen gk))
   (defrole client
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
@@ -557,6 +574,7 @@
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (ltk s b))
   (uniq-orig nb)
+  (uniq-gen gk)
   (operation encryption-test (added-strand keyserv 2)
     (enc s g nb gk (ltk s b)) (0 1))
   (traces
@@ -583,7 +601,8 @@
     (trace (recv (cat "req" s g (enc b nb (ltk s b))))
       (send (cat "resp" b (enc s g nb gk (ltk s b))))
       (recv (cat "fetch" s g (enc a na (ltk s a))))
-      (send (cat "deliver" a (enc s g na gk (ltk s a))))))
+      (send (cat "deliver" a (enc s g na gk (ltk s a)))))
+    (uniq-gen gk))
   (defrole client
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
@@ -641,6 +660,7 @@
   (vars (gk skey) (nb na g text) (a b s name))
   (defstrand keyserv 4 (gk gk) (nb nb) (na na) (g g) (a a) (b b) (s s))
   (non-orig (ltk s a) (ltk s b))
+  (uniq-gen gk)
   (comment "SKDC's point-of-view")
   (traces
     ((recv (cat "req" s g (enc b nb (ltk s b))))
@@ -658,6 +678,7 @@
   (defstrand sp 1 (nb nb) (g g-0) (b b) (s s))
   (precedes ((1 0) (0 0)))
   (non-orig (ltk s a) (ltk s b))
+  (uniq-gen gk)
   (operation encryption-test (added-strand sp 1) (enc b nb (ltk s b))
     (0 0))
   (traces
@@ -678,6 +699,7 @@
   (defstrand client 1 (na na) (g g-1) (a a) (s s))
   (precedes ((1 0) (0 0)) ((2 0) (0 2)))
   (non-orig (ltk s a) (ltk s b))
+  (uniq-gen gk)
   (operation encryption-test (added-strand client 1)
     (enc a na (ltk s a)) (0 2))
   (traces
@@ -706,7 +728,8 @@
     (trace (recv (cat "req" s g (enc b nb (ltk s b))))
       (send (cat "resp" b (enc s g nb gk (ltk s b))))
       (recv (cat "fetch" s g (enc a na (ltk s a))))
-      (send (cat "deliver" a (enc s g na gk (ltk s a))))))
+      (send (cat "deliver" a (enc s g na gk (ltk s a)))))
+    (uniq-gen gk))
   (defrole client
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
@@ -781,6 +804,7 @@
   (precedes ((0 0) (1 2)) ((1 3) (0 1)))
   (non-orig (ltk s a))
   (uniq-orig na)
+  (uniq-gen gk)
   (operation encryption-test (added-strand keyserv 4)
     (enc s g na gk (ltk s a)) (0 1))
   (traces

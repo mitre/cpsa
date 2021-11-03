@@ -126,7 +126,7 @@
   (non-orig (privk a))
   (uniq-orig x1 x2 y3)
   (operation nonce-test (contracted (x3 y3) (x4 y3)) y3 (0 1)
-    (enc y3 x2 (pubk a)) (enc "okay" y3 y3 (pubk a)))
+    (enc "okay" y3 y3 (pubk a)) (enc y3 x2 (pubk a)))
   (traces
     ((send (cat (enc x1 x2 (pubk a)) (enc y3 x2 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -146,8 +146,8 @@
   (non-orig (privk a))
   (uniq-orig x1 y3)
   (operation nonce-test (contracted (x2 y3) (x4 y3)) y3 (0 1)
-    (enc x1 y3 (pubk a)) (enc y3 y3 (pubk a))
-    (enc "okay" y3 y3 (pubk a)))
+    (enc "okay" y3 y3 (pubk a)) (enc x1 y3 (pubk a))
+    (enc y3 y3 (pubk a)))
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 y3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -167,8 +167,8 @@
   (non-orig (privk a))
   (uniq-orig x1 x2)
   (operation nonce-test (added-strand resp 2) x2 (0 1)
-    (enc x1 x2 (pubk a)) (enc x2 x2 (pubk a))
-    (enc "okay" y3 x2 (pubk a)))
+    (enc "okay" y3 x2 (pubk a)) (enc x1 x2 (pubk a))
+    (enc x2 x2 (pubk a)))
   (traces
     ((send (cat (enc x1 x2 (pubk a)) (enc x2 x2 (pubk a))))
       (recv (enc "okay" x2 x4 (pubk a))))
@@ -188,8 +188,8 @@
   (non-orig (privk a))
   (uniq-orig x1 x2)
   (operation nonce-test (contracted (x4 x2)) x2 (0 1)
-    (enc x1 x2 (pubk a)) (enc x2 x2 (pubk a))
-    (enc "okay" x2 x2 (pubk a)) (enc "okay" y3 x2 (pubk a)))
+    (enc "okay" x2 x2 (pubk a)) (enc "okay" y3 x2 (pubk a))
+    (enc x1 x2 (pubk a)) (enc x2 x2 (pubk a)))
   (traces
     ((send (cat (enc x1 x2 (pubk a)) (enc x2 x2 (pubk a))))
       (recv (enc "okay" x2 x2 (pubk a))))
