@@ -27,6 +27,7 @@ import CPSA.Lib.Utilities
 import CPSA.Lib.SExpr
 import CPSA.Algebra
 import CPSA.Channel
+import CPSA.Signature (Sig)
 
 {--
 import System.IO.Unsafe
@@ -729,6 +730,7 @@ data Prot
     = Prot { pname :: !String,  -- Name of the protocol
              alg :: !String,    -- Name of the algebra
              pgen :: !Gen,      -- Initial variable generator
+             psig :: !Sig,      -- The signature
              roles :: ![Role], -- Non-listener roles of a protocol
              listenerRole :: Role,
              nullaryrules :: ![Rule], -- Protocol rules: False conclusion
@@ -745,11 +747,11 @@ data Prot
     deriving Show
 
 -- Callers should ensure every role has a distinct name.
-mkProt :: String -> String -> Gen ->
+mkProt :: String -> String -> Gen -> Sig ->
           [Role] -> Role -> [Rule] -> [Rule] -> [Rule] -> [SExpr ()] -> Prot
-mkProt name alg gen roles lrole rules written generated comment =
+mkProt name alg gen sig roles lrole rules written generated comment =
     let (nrs,urs,grs) = classifyRules rules in
-    Prot { pname = name, alg = alg, pgen = gen, roles = roles,
+    Prot { pname = name, alg = alg, pgen = gen, psig = sig, roles = roles,
            listenerRole = lrole,
            nullaryrules = nrs, unaryrules = urs,  generalrules = grs,
            userrules = written, generatedrules = generated,
