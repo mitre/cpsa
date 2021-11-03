@@ -2694,16 +2694,6 @@ satisfy (LeadsTo n n') =
           -- Commpair entails StateNode n' too
           return ge
 
---   nodePairsOfLeadsTo :: Preskel -> [(Node,Node)]
---   nodePairsOfLeadsTo k =
---       let (g,n) = newVar 
---   
---       do
---         (g,n) <- 
---       map pairOfOneLeadsTo (leadsTos k) 
---       where
---         
---         leadsTos k' = !!!!!
 
 nodePairsOfSkel :: Preskel -> Maybe [((Sid,Int),(Sid,Int))]
 nodePairsOfSkel k =
