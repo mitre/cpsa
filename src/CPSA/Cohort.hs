@@ -690,17 +690,17 @@ theDHSubcohort :: Preskel -> Set Term ->
                   CMT -> Place -> [Term] -> Node ->
                   Set CMT -> Cause -> [(Preskel, [Sid])]
 theDHSubcohort k a ct pos eks n escape cause
-  | isBase (cmtTerm ct) = baseDHSubcohort k ct pos eks n escape cause
+  | isBase (cmtTerm ct) = baseDHSubcohort k a ct pos eks n escape cause
   | isExpr (cmtTerm ct) = exprDHSubcohort k a ct pos eks n escape cause
   | otherwise = []
 
-baseDHSubcohort :: Preskel -> CMT -> Place -> [Term] -> Node ->
-                  Set CMT -> Cause -> [(Preskel, [Sid])]
-baseDHSubcohort k ct pos eks n escape cause
+baseDHSubcohort :: Preskel -> Set Term -> CMT -> Place -> [Term] ->
+                   Node -> Set CMT -> Cause -> [(Preskel, [Sid])]
+baseDHSubcohort k a ct pos eks n escape cause
   | elem n (kprecur k) = []
   | otherwise =
     [ (k', phi) |
-      (k', n', phi, subst) <- addBaseListener k n cause (cmtTerm ct),
+      (k', n', phi, subst) <- addBaseListener k a n cause (cmtTerm ct),
       maybeSolved ct pos eks escape k' n' subst (kabsent k)]
 
 exprDHSubcohort :: Preskel -> Set Term ->
