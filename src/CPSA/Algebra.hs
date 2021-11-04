@@ -1070,7 +1070,7 @@ replace var (Place ints) source =
           F s (replaceNth (loop path (u !! i)) i u)
       loop _ _ = assertError "Algebra.replace: Bad path to term"
 
-factors :: Group -> [(Id, (Sort, Int))]
+factors :: Group -> [Maplet]
 factors t =
     do
       (x, (be, n)) <- M.assocs t

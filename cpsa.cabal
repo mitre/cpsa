@@ -183,7 +183,7 @@ Executable cpsa4sas
   Default-Language:     Haskell2010
   Build-Depends:        base >= 4.13 && < 5, containers
   GHC-Options:
-    -Wall -fno-warn-name-shadowing -fwarn-unused-imports -fmax-pmcheck-models=70
+    -Wall -fno-warn-name-shadowing -fwarn-unused-imports
   Hs-Source-Dirs:       src
   Other-Modules:
     Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.Pretty CPSA.Lib.SExpr

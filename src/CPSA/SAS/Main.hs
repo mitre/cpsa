@@ -89,14 +89,14 @@ step output name origin margin state sexpr =
     do
       x <- tryIO (sas name origin state sexpr)
       case x of
+        Left err ->
+            abort (show err)
         Right (acc, Nothing) ->
             after output margin acc sexpr
         Right (acc, Just x) ->
             do
               writeLnSExpr output margin x
               after output margin acc sexpr
-        Left err ->
-            abort (show err)
 
 after :: Handle -> Int -> State -> Maybe (SExpr Pos) -> IO State
 after output margin state (Just sexpr@(L _ (S _ "defprotocol" : _))) =
