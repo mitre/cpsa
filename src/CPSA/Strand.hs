@@ -2036,13 +2036,13 @@ addListener k n cause t =
 -- Base Listener Augmentation.  Like listener augmentation but adds a
 -- base precursor and a precur assertion.
 
-addBaseListener :: Preskel -> Set Term -> Node -> Cause -> Term -> [Ans]
-addBaseListener k a n cause t =
-    case baseAbsent t of
-      Just absences | all (\(x, _) -> S.member x a) absences ->
+addBaseListener :: Preskel -> Node -> Cause -> Term -> [Ans]
+addBaseListener k n cause t =
+    case baseRndx t of
+      Just ts ->
         do
-          (x, t) <- absences
-          addAbsence k n cause x t
+          x <- ts
+          addListener k n cause x
       _ -> formerAddBaseListener k n cause t
 
 formerAddBaseListener :: Preskel -> Node -> Cause -> Term -> [Ans]

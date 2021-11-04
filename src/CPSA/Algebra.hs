@@ -106,7 +106,7 @@ module CPSA.Algebra (name, alias,
     clone,
     loadVars,
     basePrecursor,
-    baseAbsent,
+    baseRndx,
     newVar,
     newVarDefault,
     varName,
@@ -1166,16 +1166,22 @@ simplifyBase (F Exp [F Exp [t, G g0], G g1]) =
   simplifyBase (F Exp [t, G (mul g0 g1)])
 simplifyBase t = t
 
-baseAbsent :: Term -> Maybe [(Term, Term)]
-baseAbsent (F Base [F Exp [F Genr [], t@(G g)]])
+baseRndx :: Term -> Maybe [Term]
+baseRndx (F Base [F Exp [F Genr [], G g]])
   | M.size g > 1 =
     loop [] (M.assocs g)
     where
       loop acc [] = Just acc
       loop _ ((_, (Expt, _)) : _) = Nothing
       loop acc ((id, (Rndx, _)) : maplets) =
-        loop ((groupVar Rndx id, t) : acc) maplets
-baseAbsent _ = Nothing
+        loop (baseBuild g id : acc) maplets
+baseRndx _ = Nothing
+
+baseBuild :: Group -> Id -> Term
+baseBuild g var =
+  F (Tupl "cat")
+  [F Base [F Exp [F Genr [], G $ M.delete var g]],
+    groupVar Rndx var]
 
 -- Functions used in both unification and matching
 
