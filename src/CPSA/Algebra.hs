@@ -2482,14 +2482,14 @@ loadOper sig pos vars strict (Sig.Enc op) (l : l' : ls) =
     do
       let (butLast, last) = splitLast l (l' : ls)
       t <- loadCat sig pos vars strict butLast
-      t' <- loadTerm sig vars strict last
+      t' <- loadTerm sig vars False last
       return $ F (Enc op) [t, t']
 loadOper _ pos _ _ (Sig.Enc _) _ = fail (shows pos "Malformed enc")
 loadOper sig pos vars strict (Sig.Senc op) (l : l' : ls) =
     do
       let (butLast, last) = splitLast l (l' : ls)
       t <- loadCat sig pos vars strict butLast
-      t' <- loadTerm sig vars strict last
+      t' <- loadTerm sig vars False last
       case t' of
         F (Akey _) _ -> fail (shows pos "Expecting a symmetric key")
         _ -> return $ F (Enc op) [t, t']
@@ -2498,7 +2498,7 @@ loadOper sig pos vars strict (Sig.Aenc op) (l : l' : ls) =
     do
       let (butLast, last) = splitLast l (l' : ls)
       t <- loadCat sig pos vars strict butLast
-      t' <- loadTerm sig vars strict last
+      t' <- loadTerm sig vars False last
       case isAkeyNotInvk t' of
         True -> return $ F (Enc op) [t, t']
         False -> fail (shows pos "Expecting an asymmetric key")
@@ -2507,14 +2507,14 @@ loadOper sig pos vars strict (Sig.Sign op) (l : l' : ls) =
     do
       let (butLast, last) = splitLast l (l' : ls)
       t <- loadCat sig pos vars strict butLast
-      t' <- loadTerm sig vars strict last
+      t' <- loadTerm sig vars False last
       case t' of
         F (Akey _) [F (Invk _) _] -> return $ F (Enc op) [t, t']
         _ -> fail (shows pos "Expecting an asymmetric inverse key")
 loadOper _ pos _ _ (Sig.Sign _) _ = fail (shows pos "Malformed sign")
-loadOper sig _ vars strict (Sig.Hash op) (l : ls) =
+loadOper sig _ vars _ (Sig.Hash op) (l : ls) =
     do
-      ts <- mapM (loadTerm sig vars strict) (l : ls)
+      ts <- mapM (loadTerm sig vars False) (l : ls)
       return $ F (Hash op) [foldr1 (\a b -> F (Tupl "cat") [a, b]) ts]
 loadOper _ pos _ _ (Sig.Hash _) _ = fail (shows pos "Malformed hash")
 loadOper sig _ vars strict (Sig.Tupl op len) (l : ls) | length (l : ls) == len =

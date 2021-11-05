@@ -1122,7 +1122,7 @@ loadAbsent _ _ x =
 loadExprTerm :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
 loadExprTerm sig vars x =
     do
-      t <- loadTerm sig vars True x
+      t <- loadTerm sig vars False x
       case isExpr t of
         True -> return t
         False -> fail (shows (annotation x) "Expecting an exponent")
