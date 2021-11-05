@@ -1225,7 +1225,7 @@ adds one tupling operation so that the example above can be written as
 (cert-body dn serial-no pub-key)
 \end{verbatim}
 \end{quote}
-{\cpsa} represents this form internally as sequence of messages with a
+{\cpsa} represents this form internally as a sequence of messages with a
 distinguished mark.  This representation is more efficient as compared
 with the tagged concatenation representation.
 
@@ -1252,7 +1252,7 @@ Table~\ref{tab:lang field syntax}.  There are eight kinds of ways that
 
 \item An atomic sort is added to the algebra when a symbol is declared
   to be of kind \texttt{atom}.  If \texttt{dollar} is declared to be
-  an atomic sort, than \verb|(price dollar)| in a \texttt{var} form
+  an atomic sort, then \verb|(price dollar)| in a \texttt{var} form
   declares \texttt{price} to be of sort \texttt{dollar}.
 
 \item An atomic sort is also added to the algebra when a symbol is declared
@@ -1276,11 +1276,11 @@ Table~\ref{tab:lang field syntax}.  There are eight kinds of ways that
 
 \item A symbol of kind \texttt{senc} is just like one of kind
   \texttt{enc} except that the key supplied when it is applied must be
-  symmetric.
+  symmetric, that is, the sort of the key must not be asymmetric.
 
 \item A symbol of kind \texttt{aenc} is just like one of kind
   \texttt{enc} except that the key supplied when it is applied must be
-  asymmetric.
+  asymmetric, but not the inverse applied to an asymmetric key.
   
 \item A symbol of kind \texttt{sign} is just like one of kind
   \texttt{enc} except that the key supplied when it is applied must be
