@@ -66,7 +66,15 @@
 	    (implies
 	     (and (p "resp" "a" z a)
 		  (p "resp" "b" z a))
-	     (false)))))
+	     (false))))
+  (defrule owner-of
+    (forall ((z1 z2 strd) (p1 p2 name) (x rndx))
+	    (implies
+	     (and (p "ca" "x" z1 x)
+		  (p "ca" "x" z2 x)
+		  (p "ca" "p" z1 p1)
+		  (p "ca" "p" z2 p2))
+	     (= p1 p2)))))
 
 (defskeleton staticdh1
   (vars)
