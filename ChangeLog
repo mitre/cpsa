@@ -1,3 +1,8 @@
+2021-11-02  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Graph/ExpandedView.hs (tdrawer): Added POV link in
+	tree.
+
 2021-10-27  Joshua D. Guttman  <guttman@mitre.org>
 
 	* src/CPSA/Strand.hs:  Fixed subtle bug causing generalization to
@@ -6,7 +11,7 @@
 	structure directly, just deleting the basic value.  But the
 	preskeleton datastructure as computed fields, especially the gist,
 	that need to be recomputed.  RenewPreskel calls newPreskel to
-	recompute these fields correctly.  
+	recompute these fields correctly.
 
 2021-09-14  Joshua D. Guttman  <guttman@mitre.org>
 
@@ -16,7 +21,12 @@
 	Previously it counted as a transition as long as the role
 	contained a matching stor.  This should avoid unwanted
 	consequences when roles may match up to a height that contains the
-	load but not the subsequent stor.  
+	load but not the subsequent store.
+
+2021-09-10  John D. Ramsdell  <ramsdell0@mitre.org>
+
+	* src/CPSA/lib/Expand.hs (macroExpand): Made it an error to apply
+	a macro to the wrong number of arguments.
 
 2021-06-26  John D. Ramsdell  <ramsdell@mitre.org>
 
