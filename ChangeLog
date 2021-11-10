@@ -23,7 +23,7 @@
 	consequences when roles may match up to a height that contains the
 	load but not the subsequent store.
 
-2021-09-10  John D. Ramsdell  <ramsdell0@mitre.org>
+2021-09-10  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/lib/Expand.hs (macroExpand): Made it an error to apply
 	a macro to the wrong number of arguments.

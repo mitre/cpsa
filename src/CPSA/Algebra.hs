@@ -1002,33 +1002,14 @@ places var source =
           | var == source = Place (reverse path) : paths
       f paths path (F _ u) =
           g paths path 0 u
-      f paths path (G t) =      -- This case is broken
-          groupPlaces (varId var) paths path 0 (linearize t)
+      f paths path (G t)
+          | M.member (varId var) t =
+            Place (reverse path) : paths
+          | otherwise = paths
       f paths _ _ = paths
       g paths _ _ [] = paths
       g paths path i (t : u) =
           g (f paths (i: path) t) path (i + 1) u
-
-linearize :: Group -> [Id]
-linearize t =
-    do
-      (x, (_, n)) <- M.assocs t
-      replicate (if n >= 0 then n else negate n) x
-
--- This function is broken
---
-groupPlaces ::  Id -> [Place] -> [Int] -> Int -> [Id] -> [Place]
-groupPlaces x _ _ _ _ =
-  error ("Algebra.groupPlaces failed for " ++ show x)
-
-{-
-groupPlaces _ paths _ _ [] = paths
-groupPlaces x paths path i (y:ys) =
-    let paths' = if x == y then
-                     Place (reverse (i : path)) : paths
-                 else paths in
-    groupPlaces x paths' path (i + 1) ys
--}
 
 -- Returns the places a term is carried by another term.
 carriedPlaces :: Term -> Term -> [Place]
