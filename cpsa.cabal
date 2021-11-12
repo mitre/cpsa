@@ -50,7 +50,7 @@ Data-Files:
 
 Data-Dir:               doc
 Extra-Source-Files:
-  Makefile ChangeLog README NEWS mkghci cpsatst setup.bat doc/README
+  Makefile ChangeLog README NEWS mkghci cpsatst fixperms setup.bat doc/README
   doc/src/Makefile doc/src/macros.tex doc/src/cpsaprimer.tex
   doc/src/cpsagoals.tex doc/src/bcasyntax.tex
   doc/src/cpsaintroslides.tex doc/src/mitreslides.sty
@@ -59,7 +59,7 @@ Extra-Source-Files:
   doc/src/cmstrands.mp doc/src/carriers.mp doc/src/termtree.mp
   doc/src/blanchet.mp doc/src/mitrelogo.mp doc/src/cpsa.bib
   doc/SDAG.lhs doc/cpsalogo.mp src/index.html src/cpsajson.py
-  src/split.py src/cpsa2svg src/cpsa.el src/cpsaperm.scm
+  src/split.py src/cpsa2svg src/cpsa.el src/cpsaperm.scm src/lastlabel.py
   src/cpsaops.scm src/preskel src/cpsa.pl src/unsorted.pl src/pp.pl
   src/sexpr.pl src/perm.pl src/prover9.pl src/zoom.js src/js2hs
   src/ghcmemlimit build.xml src/scala/Main.scala
@@ -70,8 +70,8 @@ Extra-Source-Files:
   src/ocaml/main.mli src/ocaml/pp.ml src/ocaml/token.ml
   src/ocaml/token.mli src/ocaml/scanner.mll src/ocaml/sexpr.ml
   src/ocaml/sexpr.mli src/ocaml/sexpr_type.ml tst/README tst/Makefile
-  tst/Make4.hs tst/checktst tst/cpsagraphall tst/cpsashapesall
-  tst/graphtst tst/updatetst tst/aik.scm tst/aik.tst tst/blanchet.scm
+  tst/Make4.hs tst/checktst tst/cpsagraphtst tst/updatetst
+  tst/aik.scm tst/aik.tst tst/blanchet.scm
   tst/blanchet.tst tst/completeness-test.scm tst/completeness-test.tst
   tst/crushing.tst tst/crushing.tst tst/dass.lisp tst/dass-mod.lisp
   tst/dass_simple.scm tst/dass_simple.tst tst/denning-sacco.scm
