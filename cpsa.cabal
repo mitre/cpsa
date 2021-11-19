@@ -43,8 +43,8 @@ Category:               Cryptography
 Build-Type:             Simple
 Data-Files:
   index.html cpsalogo.svg readme.html cpsauser.html cpsa4.mk Make4.hs
-  init/Makefile cpsaprimer.pdf cpsagoals.pdf cpsaintroslides.pdf
-  cpsaspec.pdf cpsafoundation.pdf cpsadesign.pdf cpsa4roletran.md
+  init/Makefile cpsaprimer.pdf cpsagoals.pdf cpsaintroslides.pdf cpsaspec.pdf
+  cpsafoundation.pdf cpsadesign.pdf cpsa4roletran.md roletran.pdf
   ffgg.scm ns.scm blanchet.scm or.scm woolam.scm yahalom.scm goals.scm
   rules.scm
 
