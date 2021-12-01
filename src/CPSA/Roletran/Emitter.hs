@@ -15,6 +15,9 @@ import CPSA.Lib.SExpr
 import CPSA.Lib.Pretty
 import CPSA.Roletran.Algebra (Term(..))
 
+useFineTyping :: Bool
+useFineTyping = False
+
 data Kind
   = KText                       -- Plaintext
   | KData                       -- Data
@@ -223,16 +226,13 @@ displayKind KSkey = "skey"
 displayKind KAkey = "akey"
 displayKind KIkey = "ikey"
 displayKind KChan = "chan"
+displayKind KQuot | useFineTyping = "quot"
+displayKind KPair | useFineTyping = "pair"
+displayKind KSenc | useFineTyping = "senc"
+displayKind KAenc | useFineTyping = "aenc"
+displayKind KIenc | useFineTyping = "ienc"
+displayKind KHash | useFineTyping = "hash"
 displayKind _ = "mesg"
-{- For fine typing
-displayKind KMesg = "mesg"
-displayKind KQuot = "quot"
-displayKind KPair = "pair"
-displayKind KSenc = "senc"
-displayKind KAenc = "aenc"
-displayKind KIenc = "ienc"
-displayKind KHash = "hash"
--}
 
 abbrev :: Kind -> Char
 abbrev KText = 't'
@@ -241,14 +241,14 @@ abbrev KName = 'n'
 abbrev KSkey = 's'
 abbrev KAkey = 'a'
 abbrev KIkey = 'i'
-abbrev KMesg = 'm'
-abbrev KQuot = 'q'
-abbrev KPair = 'p'
-abbrev KSenc = 'e'
-abbrev KAenc = 'y'
-abbrev KIenc = 'z'
-abbrev KHash = 'h'
 abbrev KChan = 'c'
+abbrev KQuot | useFineTyping = 'q'
+abbrev KPair | useFineTyping = 'p'
+abbrev KSenc | useFineTyping = 'e'
+abbrev KAenc | useFineTyping = 'y'
+abbrev KIenc | useFineTyping = 'z'
+abbrev KHash | useFineTyping = 'h'
+abbrev _ = 'm'
 
 -- The inverse kind of a kind
 inv :: Kind -> Kind
