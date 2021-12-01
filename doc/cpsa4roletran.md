@@ -172,7 +172,7 @@ role.
   (comment "Send (rtst/unilateral.scm:9:7)")
   (let (v2 text) (frsh_t))
   (let (v3 aenc) (encr_ta v2 p1))
-  (send_y p0 v3)
+  (send_m p0 v3)
   (comment "Recv (rtst/unilateral.scm:10:7)")
   (let (v4 text) (recv_t p0))
   (same_t v4 v2)
