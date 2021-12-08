@@ -1454,10 +1454,24 @@ enforceAbsence prs@(_, k, _, _, _) =
         s <- ss
         absentSubst s ts
 
+-- Determine if a given PRS has a multiple origination of a
+-- non-numeric fresh value.  Also when a value is both uniq
+-- orig and uniq gen, check to see if they start on different strands.
 hasMultipleOrig :: PRS -> Bool
 hasMultipleOrig prs =
   any (\(_, l) -> length l > 1) (korig (skel prs)) ||
-  any (\(_, l) -> length l > 1) (kugen (skel prs))
+  any (\(_, l) -> length l > 1) (kugen (skel prs)) ||
+  origUgenDiffStrand (korig (skel prs)) (kugen (skel prs))
+
+-- When a value is both uniq orig and uniq gen, check to see if they
+-- start on different strands.
+origUgenDiffStrand :: [(Term, [Node])] -> [(Term, [Node])] -> Bool
+origUgenDiffStrand _ [] = False
+origUgenDiffStrand orig ((t, ns) : ugen) =
+  case lookup t orig of
+    Nothing -> origUgenDiffStrand orig ugen
+    Just ns' -> any f ns || origUgenDiffStrand orig ugen
+      where f (s, _) = any (\(s', _) -> s /= s') ns'
 
 -- Hulling or Ensuring Unique Origination
 hull :: Bool -> PRS -> [PRS]

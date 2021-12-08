@@ -1,3 +1,9 @@
+2021-12-08  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Strand.hs (origUgenDiffStrand): Flush skeletons that
+	have a value that is both uniq orig and uniq gen, and start on
+	different strands.
+
 2021-11-02  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Graph/ExpandedView.hs (tdrawer): Added POV link in
