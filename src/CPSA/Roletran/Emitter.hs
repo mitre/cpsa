@@ -94,7 +94,12 @@ data Stmt
   | Return [Vari]               -- Return values from the procedure
   | Comment String              -- Insert a comment
 
--- Expressions
+-- For Invp, Namp, and Nm2p, the kind is associated with the first
+-- variable.  A name is associated with the second two variables in
+-- Ltkp, the second variable in Namp, and the third variable in Nm2p.
+-- A tag is associated with the second variable in Nm2p.
+
+-- Expressions -- The kind is associated with the returned value
 data Expr
   = Pair Decl Decl              -- Construct a pair
   | Frst Kind Vari              -- project first component of pair
@@ -161,7 +166,7 @@ displayStmt first (Same s x y) =
   mark "(same" [s] ++ " " ++ var first x ++
   " " ++ var first y ++ ")"
 displayStmt first (Ltkp x y z) =
-  "(ltk " ++ var first x ++ " " ++ var first y ++
+  "(ltkp " ++ var first x ++ " " ++ var first y ++
   " " ++ var first z ++ ")"
 displayStmt first (Invp s x y) =
   mark "(invp" [s] ++ " " ++ var first x ++

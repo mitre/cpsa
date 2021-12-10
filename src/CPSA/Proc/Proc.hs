@@ -96,8 +96,8 @@ parseStmt (L _ [S _ op, S _ chan, S _ msg])
 parseStmt (L _ [S _ op, S _ x, S _ y])
   | prefix "same_" op =
     return $ Same op x y
-parseStmt (L _ [S _ "ltk", S _ x, S _ y, S _ z]) =
-    return $ Ltkp "ltk" x y z
+parseStmt (L _ [S _ "ltkp", S _ x, S _ y, S _ z]) =
+    return $ Ltkp "ltkp" x y z
 parseStmt (L _ [S _ op, S _ x, S _ y])
   | prefix "invp_" op =
     return $ Invp op x y
