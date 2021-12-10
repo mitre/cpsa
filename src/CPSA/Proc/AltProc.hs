@@ -53,7 +53,7 @@ mkProc name inputs outputs stmts =
 -- A statement
 data Stmt
   = Bind Decl Expr              -- Bind a variable to an expression
-  | Send Type Var Var           -- Send a message
+  | Send Var Decl               -- Send a message
   | Same Type Var Var           -- Are two values the same?
   | Ltkp Var Var Var            -- Vars related by the ltk function?
   | Invp Type Var Var           -- Vars related by the invk function?
@@ -62,15 +62,20 @@ data Stmt
   | Return [Var]                -- Return values from the procedure
   | Comment String              -- Insert a comment
 
--- Expressions
+-- For Invp, Namp, and Nm2p, the type is associated with the first
+-- variable.  A name is associated with the second two variables in
+-- Ltkp, the second variable in Namp, and the third variable in Nm2p.
+-- A tag is associated with the second variable in Nm2p.
+
+-- Expressions -- The type is associated with the returned value
 data Expr
-  = PairE Type Type Var Var     -- Construct a pair
+  = PairE Decl Decl             -- Construct a pair
   | Frst Type Var               -- project first component of pair
   | Scnd Type Var               -- project second component of pair
-  | Encr Type Type Var Var      -- Encrypt plain text
-  | Decr Type Type Var Var      -- Decrypt cipher text
+  | Encr Decl Decl              -- Encrypt plain text
+  | Decr Type Var Decl          -- Decrypt cipher text
   | Tag String                  -- Construct a tag
-  | HashE Type Var              -- Construct a hash
+  | HashE Decl                  -- Construct a hash
   | Frsh Type                   -- Generate a fresh nonce
   | Recv Type Var               -- Receive a message
 
@@ -185,7 +190,7 @@ parseLet pos _ _ = fail (shows pos "Malformed let")
 
 parseSend :: Pos -> [Type] -> [SExpr Pos] -> IO Stmt
 parseSend _ [kind] [S _ chan, S _ msg] =
-  return $ Send kind chan msg
+  return $ Send chan (msg, kind)
 parseSend pos _ _ = fail (shows pos "Malformed send")
 
 parseSame :: Pos -> [Type] -> [SExpr Pos] -> IO Stmt
@@ -251,7 +256,7 @@ parseExpr x =
 
 parsePair :: Pos -> [Type] -> [SExpr Pos] -> IO Expr
 parsePair _ [left, right] [S _ x, S _ y] =
-  return $ PairE left right x y
+  return $ PairE (x, left) (y, right)
 parsePair pos _ _ = fail (shows pos "Malformed pair")
 
 parseFrst :: Pos -> [Type] -> [SExpr Pos] -> IO Expr
@@ -266,17 +271,17 @@ parseScnd pos _ _ = fail (shows pos "Malformed scnd")
 
 parseEncr :: Pos -> [Type] -> [SExpr Pos] -> IO Expr
 parseEncr _ [left, right] [S _ x, S _ y] =
-  return $ Encr left right x y
+  return $ Encr (x, left) (y, right)
 parseEncr pos _ _ = fail (shows pos "Malformed encr")
 
 parseDecr :: Pos -> [Type] -> [SExpr Pos] -> IO Expr
 parseDecr _ [left, right] [S _ x, S _ y] =
-  return $ Decr left right x y
+  return $ Decr left x (y, right)
 parseDecr pos _ _ = fail (shows pos "Malformed decr")
 
 parseHash :: Pos -> [Type] -> [SExpr Pos] -> IO Expr
 parseHash _ [kind] [S _ x] =
-  return $ HashE kind x
+  return $ HashE (x, kind)
 parseHash pos _ _ = fail (shows pos "Malformed hash")
 
 parseFrsh :: Pos -> [Type] -> [SExpr Pos] -> IO Expr
