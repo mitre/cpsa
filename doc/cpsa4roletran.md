@@ -8,16 +8,12 @@ indeed very few shapes.  Authentication and secrecy properties are
 easy to determine from them, as are attacks and anomalies.
 
 For each input problem, the CPSA program is given some initial
-behavior, and it discovers what shapes are compatible with
-it. Normally, the initial behavior is from the point of view of one
-participant. The analysis reveals what the other participants must
-have done, given the participant's view. The search is based on a
-high-level algorithm that was claimed to be complete, i.e. every shape
-can in fact be found in a finite number of steps. Further theoretical
-work showed classes of executions that are not found by the algorithm,
-however it also showed that every omitted execution requires an
-unnatural interpretation of a protocol's roles.  Hence the algorithm
-is complete relative to natural role semantics.
+behavior, and it discovers what shapes are compatible with it.
+Normally, the initial behavior is from the point of view of one
+participant.  The analysis reveals what the other participants must
+have done, given the participant's view.  The search is complete,
+i.e. we proved every shape can in fact be found in a finite number of
+steps, relative to a procedural semantics of protocol roles.
 
 When we say a role has natural role semantics, we mean that there
 exists a program that implements the intent of the specified role.
