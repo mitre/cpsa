@@ -103,6 +103,7 @@ data ButtonKind
     | AliveDup                  -- duplicate node is alive
     | DeadTree                  -- tree node is dead
     | DeadDup                   -- duplication node is dead
+    | Realized                  -- realized but not a shape
 
 -- A button that displays a preskeleton
 kbutton :: Config -> Float -> Float -> ButtonKind -> Int -> Element
@@ -117,11 +118,13 @@ kbutton conf x y kind label =
       color AliveDup = "green"
       color DeadTree = "red"
       color DeadDup = "orange"
+      color Realized = "blue"
       italic AliveTree props = props
-      italic Shape props = props
+      italic Shape props = ("font-weight", "bold"):props
       italic AliveDup props = ("font-style", "italic"):props
       italic DeadTree props = props
       italic DeadDup props = ("font-style", "italic"):props
+      italic Realized props = props
 
 onclick :: Config -> Int -> String
 onclick conf label =
