@@ -574,7 +574,7 @@
       (load pcr (cat pt-1 "0")) (stor pcr (cat pt-0 (hash "0" n)))))
   (label 11)
   (parent 9)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0 1)
@@ -1223,7 +1223,7 @@
       (load pcr (cat pt-1 "0")) (stor pcr (cat pt-0 (hash "0" n)))))
   (label 22)
   (parent 20)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0 1)

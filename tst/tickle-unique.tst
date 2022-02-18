@@ -84,7 +84,7 @@
       (send nb)))
   (label 1)
   (parent 0)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((a a) (b b) (nb0 nb0) (nb nb) (na nb0))))
   (origs (nb0 (1 0)) (nb (0 1))))

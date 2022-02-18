@@ -324,7 +324,7 @@
       (send ch2 (cat a b k))))
   (label 10)
   (parent 6)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0) ((a a) (b b) (n-b n-b) (ch1 ch1) (ch2 ch2) (n-a n-a) (k k))))
@@ -420,7 +420,7 @@
   (label 13)
   (parent 11)
   (seen 10)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
@@ -628,7 +628,7 @@
     ((recv ch1 (cat a b n-a n-b)) (send ch (cat a b k n-a n-b))))
   (label 18)
   (parent 17)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((ch ch) (a a) (b b) (n-a n-a) (n-b n-b) (k k))))
   (origs (k (1 1))))

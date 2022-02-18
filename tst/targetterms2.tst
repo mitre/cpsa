@@ -202,7 +202,7 @@
       (send (enc n (enc n (pubk a)) (pubk a)))))
   (label 7)
   (parent 5)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((a a) (n n))))
   (origs (n (0 0))))
@@ -255,7 +255,7 @@
   (label 9)
   (parent 8)
   (seen 7)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton targetterms2
@@ -281,7 +281,7 @@
   (label 10)
   (parent 8)
   (seen 7)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

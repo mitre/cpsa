@@ -15,7 +15,7 @@ module CPSA.Protocol (Event (..), evtCm, evtTerm, evtChan, evtMap, evt,
     rpconf, rpauth, rpriority, mkRole, tchans, varSubset, varsInTerms,
     addVars, firstOccurs, paramOfName, envsRoleParams,
     AForm (..), NodeTerm, Goal (..),
-    aFormOrder, aFreeVars, Rule (..),
+    aFormOrder, aFreeVars, instantiateAForm, Rule (..),
     Prot, mkProt, pname, alg, pgen, roles,
     nullaryrules, unaryrules, generalrules, rules, userrules, generatedrules,
     listenerRole, varsAllAtoms, pcomment) where
@@ -674,9 +674,9 @@ aFreeVars vars (Prec (x, i) (y, j)) = addVars (addVars (addVars (addVars vars x)
 aFreeVars vars (Non t) = addVars vars t
 aFreeVars vars (Pnon t) = addVars vars t
 aFreeVars vars (Uniq t) = addVars vars t
-aFreeVars vars (UniqAt t (z, _)) = addVars (addVars vars t) z
+aFreeVars vars (UniqAt t (z, i)) = addVars (addVars (addVars vars t) z) i
 aFreeVars vars (Ugen t) = addVars vars t
-aFreeVars vars (UgenAt t (z, _)) = addVars (addVars vars t) z
+aFreeVars vars (UgenAt t (z, i)) = addVars (addVars (addVars vars t) z) i
 aFreeVars vars (GenStV t) = addVars vars t
 aFreeVars vars (Conf t) = addVars vars t
 aFreeVars vars (Auth t) = addVars vars t
@@ -688,6 +688,72 @@ aFreeVars vars (SameLocn (s,t) (s',t')) = addVars (addVars (addVars (addVars var
 aFreeVars vars (StateNode (s,t)) = addVars (addVars vars s) t
 aFreeVars vars (Trans (s,t)) = addVars (addVars vars s) t
 aFreeVars vars (LeadsTo (s,t) (s',t')) = addVars (addVars (addVars (addVars vars s) t) s') t'
+
+instantiateAForm :: Env -> AForm -> AForm
+instantiateAForm e (Length rl z v) =
+    (Length rl (instantiate e z) (instantiate e v))
+instantiateAForm e (Param rl p i z t) =
+    (Param rl p i (instantiate e z) (instantiate e t))
+instantiateAForm e (Prec (x, i) (y, j)) =
+    (Prec
+     ((instantiate e x), (instantiate e i))
+     ((instantiate e y), (instantiate e j)))
+instantiateAForm e (Non t) =
+    (Non (instantiate e t))
+instantiateAForm e (Pnon t) =
+    (Pnon (instantiate e t)) 
+instantiateAForm e (Uniq t) =
+    (Uniq (instantiate e t)) 
+instantiateAForm e (UniqAt t (z, i)) =
+    (UniqAt
+     (instantiate e t)
+     ((instantiate e z), (instantiate e i)))
+instantiateAForm e (Ugen t) =
+    (Ugen (instantiate e t)) 
+instantiateAForm e (UgenAt t (z, i)) =
+    (UgenAt
+     (instantiate e t)
+     ((instantiate e z), (instantiate e i)))
+instantiateAForm e (GenStV t) =
+    (GenStV (instantiate e t))
+instantiateAForm e (Conf t) =
+    (Conf (instantiate e t))
+instantiateAForm e (Auth t) =
+    (Auth (instantiate e t))
+instantiateAForm e (AFact pred ft) =
+    (AFact pred (map (instantiate e) ft))
+instantiateAForm e (Equals x y) =
+    (Equals
+     (instantiate e x)
+     (instantiate e y))
+instantiateAForm e (Component x y) =
+    (Component
+     (instantiate e x)
+     (instantiate e y))
+instantiateAForm e (Commpair (s,t) (s',t')) =
+    (Commpair
+     ((instantiate e s), (instantiate e t))
+     ((instantiate e s'), (instantiate e t')))
+instantiateAForm e (SameLocn (s,t) (s',t')) =
+    (SameLocn 
+     ((instantiate e s), (instantiate e t))
+     ((instantiate e s'), (instantiate e t')))
+instantiateAForm e (StateNode (s,t)) =
+    (StateNode
+     ((instantiate e s), (instantiate e t)))
+instantiateAForm e (Trans (s,t)) =
+    (Trans
+     ((instantiate e s), (instantiate e t)))
+instantiateAForm e (LeadsTo (s,t) (s',t')) =
+    (LeadsTo
+     ((instantiate e s), (instantiate e t))
+     ((instantiate e s'), (instantiate e t')))
+
+
+
+
+
+
 
 data Rule
   = Rule { rlname :: String,    -- Name of rule

@@ -138,7 +138,7 @@
     ((send (enc "ekc" mf-0 ek (privk mf-0)))))
   (label 3)
   (parent 2)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((mf mf) (pc pc) (i i) (x x) (ek ek) (k k) (srk srk))))
   (origs ((invk k) (0 3)) (k (0 1))))
@@ -357,7 +357,7 @@
       (send (cat (enc "aic" i k x (privk pc)) (enc k (invk k) srk)))))
   (label 10)
   (parent 8)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((i i) (x x) (pc pc) (k k))))
   (origs (k (3 1)) ((invk k) (3 3))))
@@ -422,7 +422,7 @@
   (label 12)
   (parent 11)
   (seen 10)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton aikprot
@@ -490,7 +490,7 @@
     ((send (enc "ekc" mf-1 ek (privk mf-1)))))
   (label 14)
   (parent 13)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton aikprot
@@ -525,7 +525,7 @@
     ((send (enc "ekc" mf-1 ek-0 (privk mf-1)))))
   (label 15)
   (parent 13)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton aikprot
@@ -596,7 +596,7 @@
   (label 17)
   (parent 14)
   (seen 10)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton aikprot
@@ -627,7 +627,7 @@
   (label 18)
   (parent 15)
   (seen 10)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

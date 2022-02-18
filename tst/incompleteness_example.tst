@@ -117,7 +117,7 @@
   (comment "A shape compatible with the first problem in this run")
   (traces ((send (enc n k)) (recv n)) ((recv (enc n k)) (send n)))
   (label 1)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0 1) ((k k) (n n))))
   (origs (n (0 0))))

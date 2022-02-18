@@ -154,7 +154,7 @@
       (send (cat n2 m (enc m n1 n2 (pubk b))))))
   (label 4)
   (parent 3)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0 1) ((b b) (m m) (a a) (n1 n1) (n2 n2) (x x) (y y))))
   (origs (n1 (2 1)) (n2-0 (2 1)) (n2 (3 1)) (n2-1 (3 1)) (m (0 2))))

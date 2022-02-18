@@ -397,7 +397,7 @@
       (send (enc n n1 n1 n1 n (invk k)))))
   (label 14)
   (parent 9)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((k k) (n n) (n1 n1) (n2 n1) (n3 n1))))
   (origs (n (0 0)) (n1 (1 1))))

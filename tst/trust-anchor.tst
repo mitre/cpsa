@@ -107,7 +107,7 @@
     ((recv (enc f (pubk f) (privk ca)))
       (send (enc f (pubk f) (privk ca)))))
   (label 1)
-  (unrealized)
+  (realized)
   (origs)
   (comment "Not closed under rules"))
 

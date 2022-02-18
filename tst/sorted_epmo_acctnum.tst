@@ -424,7 +424,7 @@
           nb))))
   (label 8)
   (parent 5)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)
@@ -651,7 +651,7 @@
   (label 13)
   (parent 9)
   (seen 8)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton sorted_epmo_acctnum
@@ -932,7 +932,7 @@
   (label 19)
   (parent 14)
   (seen 8)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton sorted_epmo_acctnum
@@ -1276,7 +1276,7 @@
   (label 26)
   (parent 20)
   (seen 13)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton sorted_epmo_acctnum
@@ -1324,7 +1324,7 @@
   (label 27)
   (parent 21)
   (seen 8)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton sorted_epmo_acctnum
@@ -1649,7 +1649,7 @@
   (label 33)
   (parent 28)
   (seen 13)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton sorted_epmo_acctnum
@@ -13244,7 +13244,7 @@
           nb))))
   (label 196)
   (parent 194)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)
@@ -13436,7 +13436,7 @@
   (label 200)
   (parent 198)
   (seen 196)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton sorted_epmo_acctnum
@@ -13540,7 +13540,7 @@
   (label 202)
   (parent 199)
   (seen 196)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton sorted_epmo_acctnum
@@ -13752,7 +13752,7 @@
   (label 206)
   (parent 203)
   (seen 196)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton sorted_epmo_acctnum
@@ -13865,7 +13865,7 @@
   (label 208)
   (parent 205)
   (seen 202)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton sorted_epmo_acctnum
@@ -14097,7 +14097,7 @@
   (label 212)
   (parent 209)
   (seen 206)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton sorted_epmo_acctnum

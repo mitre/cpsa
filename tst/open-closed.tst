@@ -296,7 +296,7 @@
     ((load lk (cat pt "st-k" d o k)) (recv (enc "may I pass" k))
       (load ls (cat pt-0 "st" d o o)) (send (enc "you may pass" n k))))
   (label 3)
-  (unrealized)
+  (realized)
   (origs (n (0 3)))
   (comment "Not closed under rules"))
 
@@ -339,7 +339,7 @@
       (stor ls (cat pt-0 "st" d o o))))
   (label 5)
   (parent 4)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0) ((k k) (n n) (d d) (o o) (lk lk) (ls ls) (pt pt) (pt-0 pt-0))))
@@ -735,7 +735,7 @@
       (stor ls-0 (cat pt-5 "st" d o)) (send (enc "up" k))))
   (label 15)
   (parent 13)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0 1)

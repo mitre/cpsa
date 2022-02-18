@@ -115,7 +115,7 @@
       (recv (enc text+0 skey+0)) (send text+0)))
   (label 2)
   (parent 1)
-  (unrealized)
+  (realized)
   (shape)
   (satisfies yes)
   (maps

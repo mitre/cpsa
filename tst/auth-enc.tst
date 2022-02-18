@@ -90,7 +90,7 @@
     ((send ch (enc n k)) (send ch (cat n k))))
   (label 2)
   (parent 1)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((ch ch) (n n) (k k))))
   (origs (n (1 0)) (k (1 1))))

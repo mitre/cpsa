@@ -132,7 +132,7 @@
   (traces ((send (enc x1 k)) (send (enc x2 k)) (recv (enc x1 x2 k)))
     ((recv (enc x1 k)) (recv (enc x2 k)) (send (enc x1 x2 k))))
   (label 2)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0 1) ((k k) (x1 x1) (x2 x2))))
   (origs (x2 (0 1)) (x1 (0 0))))

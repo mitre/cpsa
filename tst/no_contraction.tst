@@ -87,7 +87,7 @@
     ((send (enc (enc n (privk a)) (pubk b)))))
   (label 2)
   (parent 1)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0 1) ((a a) (n n) (a-0 a) (b b))))
   (origs (n (1 0))))

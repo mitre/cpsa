@@ -118,7 +118,7 @@
     ((recv (enc y3 x2 (pubk a))) (send (enc "okay" y3 y3 (pubk a)))))
   (label 3)
   (parent 1)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 y3) (x4 y3))))
   (origs (y3 (0 0))))
@@ -182,7 +182,7 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a)))))
   (label 6)
   (parent 2)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -225,7 +225,7 @@
     ((recv (enc x1 x2 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
   (label 8)
   (parent 4)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -247,7 +247,7 @@
   (label 9)
   (parent 4)
   (seen 3)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -294,7 +294,7 @@
   (label 11)
   (parent 5)
   (seen 6)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -316,7 +316,7 @@
   (label 12)
   (parent 5)
   (seen 16)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -358,7 +358,7 @@
       (send (enc "okay" y3-0 y3 (pubk a)))))
   (label 14)
   (parent 6)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -380,7 +380,7 @@
   (label 15)
   (parent 7)
   (seen 6)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -398,7 +398,7 @@
   (label 16)
   (parent 8)
   (seen 3)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -424,7 +424,7 @@
   (label 17)
   (parent 10)
   (seen 12)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -450,7 +450,7 @@
   (label 18)
   (parent 13)
   (seen 15)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -468,7 +468,7 @@
       (send (enc "okay" y3-0 y3 (pubk a)))))
   (label 19)
   (parent 14)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((a a) (x1 y3) (x2 x2) (x3 y3-0) (x4 y3))))
   (origs (y3-0 (0 0))))
@@ -640,7 +640,7 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
   (label 25)
   (parent 21)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (origs (x3 (0 0))))
@@ -703,7 +703,7 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a)))))
   (label 28)
   (parent 22)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (origs (x3 (0 0))))
@@ -915,7 +915,7 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a)))))
   (label 37)
   (parent 26)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -940,7 +940,7 @@
   (label 38)
   (parent 26)
   (seen 37)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -961,7 +961,7 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a)))))
   (label 39)
   (parent 26)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -1008,7 +1008,7 @@
   (label 41)
   (parent 27)
   (seen 25)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -1053,7 +1053,7 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a)))))
   (label 43)
   (parent 27)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a))))
   (origs (y3 (0 0))))
@@ -1077,7 +1077,7 @@
   (label 44)
   (parent 29)
   (seen 28)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -1099,7 +1099,7 @@
   (label 45)
   (parent 29)
   (seen 25)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -1341,7 +1341,7 @@
   (label 55)
   (parent 32)
   (seen 28)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -1635,7 +1635,7 @@
       (send (enc "okay" y3-0 y3 (pubk a)))))
   (label 67)
   (parent 37)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -1653,7 +1653,7 @@
   (label 68)
   (parent 39)
   (seen 25)
-  (unrealized)
+  (realized)
   (origs (x1 (0 0)))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -1682,7 +1682,7 @@
   (label 69)
   (parent 40)
   (seen 75)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -1710,7 +1710,7 @@
   (label 70)
   (parent 40)
   (seen 71)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -1736,7 +1736,7 @@
   (label 71)
   (parent 40)
   (seen 37)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -1763,7 +1763,7 @@
       (send (enc "okay" y3-0 y3-0 (pubk a)))))
   (label 72)
   (parent 40)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -1788,7 +1788,7 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
   (label 73)
   (parent 42)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -1814,7 +1814,7 @@
   (label 74)
   (parent 42)
   (seen 43)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -1840,7 +1840,7 @@
   (label 75)
   (parent 42)
   (seen 132)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -1864,7 +1864,7 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
   (label 76)
   (parent 46)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -1888,7 +1888,7 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
   (label 77)
   (parent 46)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -1938,7 +1938,7 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
   (label 79)
   (parent 47)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -1962,7 +1962,7 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
   (label 80)
   (parent 47)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -2158,7 +2158,7 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
   (label 88)
   (parent 50)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -2282,7 +2282,7 @@
   (label 93)
   (parent 52)
   (seen 43)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -2383,7 +2383,7 @@
   (label 97)
   (parent 53)
   (seen 43)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -2462,7 +2462,7 @@
   (label 100)
   (parent 54)
   (seen 132)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -2487,7 +2487,7 @@
   (label 101)
   (parent 56)
   (seen 44)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -2512,7 +2512,7 @@
   (label 102)
   (parent 56)
   (seen 45)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -2880,7 +2880,7 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
   (label 116)
   (parent 61)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -2959,7 +2959,7 @@
   (label 119)
   (parent 62)
   (seen 37)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3059,7 +3059,7 @@
   (label 123)
   (parent 63)
   (seen 37)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3138,7 +3138,7 @@
   (label 126)
   (parent 64)
   (seen 37)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3159,7 +3159,7 @@
   (label 127)
   (parent 65)
   (seen 68)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3209,7 +3209,7 @@
   (label 129)
   (parent 66)
   (seen 127)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3259,7 +3259,7 @@
       (send (enc "okay" y3-0 y3 (pubk a)))))
   (label 131)
   (parent 67)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -3279,7 +3279,7 @@
   (label 132)
   (parent 72)
   (seen 43)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3299,7 +3299,7 @@
   (label 133)
   (parent 73)
   (seen 25)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3319,7 +3319,7 @@
   (label 134)
   (parent 76)
   (seen 25)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3339,7 +3339,7 @@
   (label 135)
   (parent 77)
   (seen 28)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3366,7 +3366,7 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
   (label 136)
   (parent 78)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -3393,7 +3393,7 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
   (label 137)
   (parent 78)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -3413,7 +3413,7 @@
   (label 138)
   (parent 79)
   (seen 25)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3433,7 +3433,7 @@
   (label 139)
   (parent 80)
   (seen 28)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3483,7 +3483,7 @@
   (label 141)
   (parent 81)
   (seen 93)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3562,7 +3562,7 @@
   (label 144)
   (parent 82)
   (seen 43)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3619,7 +3619,7 @@
   (label 146)
   (parent 83)
   (seen 97)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3676,7 +3676,7 @@
   (label 148)
   (parent 84)
   (seen 100)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3785,7 +3785,7 @@
   (label 152)
   (parent 85)
   (seen 132)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3834,7 +3834,7 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
   (label 154)
   (parent 86)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -3918,7 +3918,7 @@
   (label 157)
   (parent 87)
   (seen 152)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3938,7 +3938,7 @@
   (label 158)
   (parent 88)
   (seen 28)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3963,7 +3963,7 @@
   (label 159)
   (parent 89)
   (seen 158)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3988,7 +3988,7 @@
   (label 160)
   (parent 89)
   (seen 133)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4066,7 +4066,7 @@
   (label 163)
   (parent 90)
   (seen 135)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4091,7 +4091,7 @@
   (label 164)
   (parent 90)
   (seen 134)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4148,7 +4148,7 @@
   (label 166)
   (parent 91)
   (seen 159)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4175,7 +4175,7 @@
   (label 167)
   (parent 91)
   (seen 160)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4314,7 +4314,7 @@
   (label 172)
   (parent 94)
   (seen 93)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4392,7 +4392,7 @@
   (label 175)
   (parent 95)
   (seen 245)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4419,7 +4419,7 @@
   (label 176)
   (parent 96)
   (seen 144)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4504,7 +4504,7 @@
   (label 179)
   (parent 98)
   (seen 100)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4531,7 +4531,7 @@
   (label 180)
   (parent 99)
   (seen 219)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4558,7 +4558,7 @@
   (label 181)
   (parent 103)
   (seen 77)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4585,7 +4585,7 @@
   (label 182)
   (parent 103)
   (seen 76)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4642,7 +4642,7 @@
   (label 184)
   (parent 104)
   (seen 80)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4669,7 +4669,7 @@
   (label 185)
   (parent 104)
   (seen 79)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4809,7 +4809,7 @@
   (label 190)
   (parent 106)
   (seen 119)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4902,7 +4902,7 @@
   (label 193)
   (parent 107)
   (seen 123)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4999,7 +4999,7 @@
   (label 196)
   (parent 108)
   (seen 126)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5056,7 +5056,7 @@
   (label 198)
   (parent 109)
   (seen 100)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5138,7 +5138,7 @@
   (label 201)
   (parent 110)
   (seen 245)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5222,7 +5222,7 @@
   (label 204)
   (parent 111)
   (seen 152)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5247,7 +5247,7 @@
   (label 205)
   (parent 112)
   (seen 119)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5358,7 +5358,7 @@
   (label 209)
   (parent 113)
   (seen 123)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5445,7 +5445,7 @@
   (label 212)
   (parent 114)
   (seen 126)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5469,7 +5469,7 @@
   (label 213)
   (parent 115)
   (seen 215)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5518,7 +5518,7 @@
   (label 215)
   (parent 116)
   (seen 68)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5541,7 +5541,7 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
   (label 216)
   (parent 117)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -5601,7 +5601,7 @@
   (label 218)
   (parent 118)
   (seen 213)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5626,7 +5626,7 @@
   (label 219)
   (parent 120)
   (seen 119)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5677,7 +5677,7 @@
   (label 221)
   (parent 121)
   (seen 119)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5704,7 +5704,7 @@
   (label 222)
   (parent 122)
   (seen 219)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5760,7 +5760,7 @@
   (label 224)
   (parent 124)
   (seen 126)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5816,7 +5816,7 @@
   (label 226)
   (parent 125)
   (seen 244)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5841,7 +5841,7 @@
   (label 227)
   (parent 128)
   (seen 305)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5868,7 +5868,7 @@
   (label 228)
   (parent 130)
   (seen 227)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5888,7 +5888,7 @@
       (send (enc "okay" y3-0 y3 (pubk a)))))
   (label 229)
   (parent 131)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3-0) (a-0 a-0))))
   (origs (y3-0 (0 0))))
@@ -5913,7 +5913,7 @@
   (label 230)
   (parent 136)
   (seen 138)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5936,7 +5936,7 @@
   (label 231)
   (parent 137)
   (seen 139)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5961,7 +5961,7 @@
   (label 232)
   (parent 140)
   (seen 93)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6018,7 +6018,7 @@
   (label 234)
   (parent 142)
   (seen 172)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6045,7 +6045,7 @@
   (label 235)
   (parent 143)
   (seen 100)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6075,7 +6075,7 @@
   (label 236)
   (parent 145)
   (seen 176)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6105,7 +6105,7 @@
   (label 237)
   (parent 147)
   (seen 180)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6164,7 +6164,7 @@
   (label 239)
   (parent 149)
   (seen 175)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6224,7 +6224,7 @@
   (label 241)
   (parent 150)
   (seen 179)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6282,7 +6282,7 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
   (label 243)
   (parent 151)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -6307,7 +6307,7 @@
   (label 244)
   (parent 153)
   (seen 245)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6327,7 +6327,7 @@
   (label 245)
   (parent 154)
   (seen 132)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6354,7 +6354,7 @@
   (label 246)
   (parent 155)
   (seen 244)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6384,7 +6384,7 @@
   (label 247)
   (parent 156)
   (seen 243)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6410,7 +6410,7 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
   (label 248)
   (parent 161)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -6436,7 +6436,7 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
   (label 249)
   (parent 161)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -6491,7 +6491,7 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
   (label 251)
   (parent 162)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -6517,7 +6517,7 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
   (label 252)
   (parent 162)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -6547,7 +6547,7 @@
   (label 253)
   (parent 165)
   (seen 249)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6577,7 +6577,7 @@
   (label 254)
   (parent 165)
   (seen 248)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6639,7 +6639,7 @@
   (label 256)
   (parent 168)
   (seen 251)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6669,7 +6669,7 @@
   (label 257)
   (parent 168)
   (seen 252)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6731,7 +6731,7 @@
   (label 259)
   (parent 169)
   (seen 198)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6820,7 +6820,7 @@
   (label 262)
   (parent 170)
   (seen 201)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6912,7 +6912,7 @@
   (label 265)
   (parent 171)
   (seen 204)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6940,7 +6940,7 @@
   (label 266)
   (parent 173)
   (seen 232)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6968,7 +6968,7 @@
   (label 267)
   (parent 174)
   (seen 175)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6999,7 +6999,7 @@
   (label 268)
   (parent 177)
   (seen 267)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7030,7 +7030,7 @@
   (label 269)
   (parent 178)
   (seen 307)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7061,7 +7061,7 @@
   (label 270)
   (parent 183)
   (seen 136)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7092,7 +7092,7 @@
   (label 271)
   (parent 183)
   (seen 137)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7119,7 +7119,7 @@
   (label 272)
   (parent 186)
   (seen 205)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7241,7 +7241,7 @@
   (label 276)
   (parent 187)
   (seen 209)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7335,7 +7335,7 @@
   (label 279)
   (parent 188)
   (seen 212)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7364,7 +7364,7 @@
   (label 280)
   (parent 189)
   (seen 219)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7427,7 +7427,7 @@
   (label 282)
   (parent 191)
   (seen 221)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7460,7 +7460,7 @@
   (label 283)
   (parent 192)
   (seen 222)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7530,7 +7530,7 @@
   (label 285)
   (parent 194)
   (seen 224)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7600,7 +7600,7 @@
   (label 287)
   (parent 195)
   (seen 226)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7630,7 +7630,7 @@
   (label 288)
   (parent 197)
   (seen 296)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7689,7 +7689,7 @@
   (label 290)
   (parent 199)
   (seen 175)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7749,7 +7749,7 @@
   (label 292)
   (parent 200)
   (seen 179)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7808,7 +7808,7 @@
   (label 294)
   (parent 202)
   (seen 244)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7838,7 +7838,7 @@
   (label 295)
   (parent 203)
   (seen 294)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7865,7 +7865,7 @@
   (label 296)
   (parent 206)
   (seen 219)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7922,7 +7922,7 @@
   (label 298)
   (parent 207)
   (seen 221)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7952,7 +7952,7 @@
   (label 299)
   (parent 208)
   (seen 222)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8014,7 +8014,7 @@
   (label 301)
   (parent 210)
   (seen 224)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8076,7 +8076,7 @@
   (label 303)
   (parent 211)
   (seen 226)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8102,7 +8102,7 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
   (label 304)
   (parent 214)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -8122,7 +8122,7 @@
   (label 305)
   (parent 216)
   (seen 68)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8152,7 +8152,7 @@
   (label 306)
   (parent 217)
   (seen 304)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8180,7 +8180,7 @@
   (label 307)
   (parent 220)
   (seen 221)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8211,7 +8211,7 @@
   (label 308)
   (parent 223)
   (seen 307)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8242,7 +8242,7 @@
   (label 309)
   (parent 225)
   (seen 267)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8273,7 +8273,7 @@
   (label 310)
   (parent 233)
   (seen 266)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8306,7 +8306,7 @@
   (label 311)
   (parent 238)
   (seen 269)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8337,7 +8337,7 @@
   (label 312)
   (parent 240)
   (seen 267)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8370,7 +8370,7 @@
   (label 313)
   (parent 242)
   (seen 268)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8393,7 +8393,7 @@
   (label 314)
   (parent 243)
   (seen 245)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8416,7 +8416,7 @@
   (label 315)
   (parent 248)
   (seen 134)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8439,7 +8439,7 @@
   (label 316)
   (parent 249)
   (seen 135)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8469,7 +8469,7 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
   (label 317)
   (parent 250)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -8499,7 +8499,7 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
   (label 318)
   (parent 250)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -8522,7 +8522,7 @@
   (label 319)
   (parent 251)
   (seen 139)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8545,7 +8545,7 @@
   (label 320)
   (parent 252)
   (seen 138)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8578,7 +8578,7 @@
   (label 321)
   (parent 255)
   (seen 317)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8611,7 +8611,7 @@
   (label 322)
   (parent 255)
   (seen 318)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8643,7 +8643,7 @@
   (label 323)
   (parent 258)
   (seen 288)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8708,7 +8708,7 @@
   (label 325)
   (parent 260)
   (seen 290)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8807,7 +8807,7 @@
   (label 328)
   (parent 261)
   (seen 292)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8837,7 +8837,7 @@
   (label 329)
   (parent 263)
   (seen 294)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8869,7 +8869,7 @@
   (label 330)
   (parent 264)
   (seen 295)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8899,7 +8899,7 @@
   (label 331)
   (parent 273)
   (seen 296)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8961,7 +8961,7 @@
   (label 333)
   (parent 274)
   (seen 298)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8993,7 +8993,7 @@
   (label 334)
   (parent 275)
   (seen 299)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9095,7 +9095,7 @@
   (label 337)
   (parent 277)
   (seen 301)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9127,7 +9127,7 @@
   (label 338)
   (parent 278)
   (seen 303)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9161,7 +9161,7 @@
   (label 339)
   (parent 281)
   (seen 307)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9198,7 +9198,7 @@
   (label 340)
   (parent 284)
   (seen 308)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9235,7 +9235,7 @@
   (label 341)
   (parent 286)
   (seen 309)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9268,7 +9268,7 @@
   (label 342)
   (parent 289)
   (seen 345)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9299,7 +9299,7 @@
   (label 343)
   (parent 291)
   (seen 267)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9332,7 +9332,7 @@
   (label 344)
   (parent 293)
   (seen 343)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9363,7 +9363,7 @@
   (label 345)
   (parent 297)
   (seen 307)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9396,7 +9396,7 @@
   (label 346)
   (parent 300)
   (seen 308)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9429,7 +9429,7 @@
   (label 347)
   (parent 302)
   (seen 309)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9452,7 +9452,7 @@
   (label 348)
   (parent 304)
   (seen 305)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9477,7 +9477,7 @@
   (label 349)
   (parent 317)
   (seen 230)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9502,7 +9502,7 @@
   (label 350)
   (parent 318)
   (seen 231)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9538,7 +9538,7 @@
   (label 351)
   (parent 324)
   (seen 342)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9571,7 +9571,7 @@
   (label 352)
   (parent 326)
   (seen 343)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9607,7 +9607,7 @@
   (label 353)
   (parent 327)
   (seen 344)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9640,7 +9640,7 @@
   (label 354)
   (parent 332)
   (seen 345)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9676,7 +9676,7 @@
   (label 355)
   (parent 335)
   (seen 346)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9712,7 +9712,7 @@
   (label 356)
   (parent 336)
   (seen 347)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

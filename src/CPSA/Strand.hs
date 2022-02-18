@@ -435,7 +435,7 @@ data Preskel = Preskel
       strandids :: ![Sid],
       tc :: [Pair],             -- Transitive closure of orderings
                                 -- Used only during generalization
-      gist :: Gist,              -- Gist for iso checking
+      kgist :: Gist,            -- Gist for iso checking
       operation :: Operation,
       krules :: [String],    -- Names of rules applied
       pprob :: [Sid],        -- strand map from preskel to first skeleton
@@ -570,7 +570,7 @@ newPreskel gen shared insts orderings non pnon unique
                       korig = orig,
                       kugen = ugen,
                       tc = map graphPair tc,
-                      gist = gg,
+                      kgist = gg,
                       strandids = nats (length insts),
                       operation = oper,
                       krules = rules,
@@ -1204,6 +1204,10 @@ checkGenSt g g' env =
     let genStVs' = (ggenSt g') in
     let (_, e) = env in
     all (\gs -> (instantiate e gs) `elem` genStVs') genStVs
+
+gist :: Preskel -> Gist
+-- gist = mkGist 
+gist = kgist 
 
 -- Preskeleton Reduction System (PRS)
 

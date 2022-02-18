@@ -52,7 +52,7 @@
   (comment "Check the order in which variables are printed")
   (traces ((recv (cat a b f g x y))))
   (label 0)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((a a) (b b) (f f) (g g) (x x) (y y))))
   (origs))

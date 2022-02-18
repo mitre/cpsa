@@ -265,7 +265,7 @@
       (send (cat tkt (enc rb k)))))
   (label 8)
   (parent 4)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k))))
   (origs (k (1 1)) (ra (2 0)) (rb (0 1))))
@@ -298,7 +298,7 @@
       (send (cat tkt (enc rb k)))))
   (label 9)
   (parent 6)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k))))
   (origs (k (1 1)) (rb (0 1))))
@@ -416,7 +416,7 @@
     ((recv (cat a ra)) (send (cat b rb-1 (enc a ra tb (ltk b ks))))))
   (label 12)
   (parent 11)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0) ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k) (tkt tkt))))
@@ -686,7 +686,7 @@
       (send (cat tkt (enc rb k)))))
   (label 21)
   (parent 17)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k))))
   (origs (k (1 1)) (ra (2 0)) (rb (0 1))))
@@ -719,7 +719,7 @@
       (send (cat tkt (enc rb k)))))
   (label 22)
   (parent 19)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k))))
   (origs (k (1 1)) (rb (0 1))))
@@ -837,7 +837,7 @@
     ((recv (cat a ra)) (send (cat b rb-1 (enc a ra tb (ltk b ks))))))
   (label 25)
   (parent 24)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0) ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k) (tkt tkt))))
@@ -1146,7 +1146,7 @@
       (send (cat tkt (enc rb-prime k)))))
   (label 34)
   (parent 30)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)
@@ -1180,7 +1180,7 @@
       (send (cat rb-prime-0 (enc rb-prime k)))))
   (label 35)
   (parent 31)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)
@@ -1291,7 +1291,7 @@
       (send (enc rb-prime k))))
   (label 38)
   (parent 33)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)
@@ -1443,7 +1443,7 @@
       (send (cat tkt-0 (enc ra-prime-0 k)))))
   (label 42)
   (parent 37)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)
@@ -1484,7 +1484,7 @@
       (send (cat rb-prime-0 (enc ra-prime-0 k)))))
   (label 43)
   (parent 39)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)
@@ -1616,7 +1616,7 @@
       (send (enc ra-prime-0 k))))
   (label 46)
   (parent 41)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)
@@ -1796,7 +1796,7 @@
       (send (cat tkt-1 (enc ra-prime-1 k)))))
   (label 50)
   (parent 45)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)
@@ -1844,7 +1844,7 @@
       (send (cat rb-prime-0 (enc ra-prime-1 k)))))
   (label 51)
   (parent 47)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)
@@ -1995,7 +1995,7 @@
       (send (enc ra-prime-1 k))))
   (label 54)
   (parent 49)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)
@@ -2199,7 +2199,7 @@
       (send (cat tkt-2 (enc ra-prime-2 k)))))
   (label 58)
   (parent 53)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)
@@ -2253,7 +2253,7 @@
       (send (cat rb-prime-0 (enc ra-prime-2 k)))))
   (label 59)
   (parent 55)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)
@@ -2309,7 +2309,7 @@
       (send (enc ra-prime-2 k))))
   (label 62)
   (parent 57)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)

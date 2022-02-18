@@ -348,7 +348,7 @@
     ((send (enc (enc n-0 (privk trent)) (pubk trent)))))
   (label 5)
   (parent 3)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)
@@ -503,7 +503,7 @@
             (pubk trent))))))
   (label 7)
   (parent 6)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)
@@ -588,7 +588,7 @@
   (label 8)
   (parent 6)
   (seen 7)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

@@ -260,7 +260,7 @@
       (send (enc ki a t (invk kp)))))
   (label 9)
   (parent 5)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (origs (ki (2 0))))
@@ -312,7 +312,7 @@
       (send (enc ki a t (invk kp)))))
   (label 11)
   (parent 7)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (origs (ki (3 0)) (ki-0 (2 0))))
@@ -368,7 +368,7 @@
   (label 13)
   (parent 10)
   (seen 9)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton pca
@@ -425,7 +425,7 @@
   (label 15)
   (parent 12)
   (seen 11)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton pca
@@ -453,7 +453,7 @@
       (send (enc (enc ki a t (invk kp)) ke))))
   (label 16)
   (parent 12)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton pca
@@ -512,7 +512,7 @@
   (label 18)
   (parent 14)
   (seen 11)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton pca
@@ -540,7 +540,7 @@
     ((send (cat (enc ki-0 a-0 (invk ki-0)) (enc t ke-0 (invk km-0))))))
   (label 19)
   (parent 14)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton pca
@@ -596,7 +596,7 @@
   (label 21)
   (parent 16)
   (seen 9)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton pca
@@ -626,7 +626,7 @@
     ((send (cat (enc ki-1 a-1 (invk ki-1)) (enc t ke (invk km-1))))))
   (label 22)
   (parent 17)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton pca
@@ -656,7 +656,7 @@
     ((send (cat (enc ki-1 a-1 (invk ki-1)) (enc t ke-0 (invk km-1))))))
   (label 23)
   (parent 17)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton pca
@@ -717,7 +717,7 @@
   (label 25)
   (parent 19)
   (seen 9)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton pca
@@ -744,7 +744,7 @@
   (label 26)
   (parent 22)
   (seen 11)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton pca
@@ -771,7 +771,7 @@
   (label 27)
   (parent 23)
   (seen 11)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

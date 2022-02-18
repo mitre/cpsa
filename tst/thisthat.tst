@@ -398,7 +398,7 @@
       (send (enc "this" n3-0 (pubk b)))))
   (label 15)
   (parent 12)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n1 n1) (n2 n3-0) (n3 n3))))
   (origs (n3-0 (2 1)) (n3 (1 1)) (n1 (0 0))))

@@ -450,7 +450,7 @@
     ((load lk (cat pt "st-k" d o k)) (load ls (cat pt-0 "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k))))
   (label 3)
-  (unrealized)
+  (realized)
   (origs (n (0 3)))
   (comment "Not closed under rules"))
 
@@ -591,7 +591,7 @@
       (load ls (cat pt-4 "st" d any)) (stor ls (cat pt "st" d o o))))
   (label 8)
   (parent 7)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0) ((k k) (n n) (d d) (o o) (lk lk) (ls ls) (pt pt-2) (pt-0 pt))))
@@ -935,7 +935,7 @@
     ((send start-ch-0 (cat "power-up" d o k-0))))
   (label 16)
   (parent 9)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0) ((k k) (n n) (d d) (o o) (lk lk) (ls ls) (pt pt-2) (pt-0 pt))))
@@ -981,7 +981,7 @@
     ((send start-ch-0 (cat "power-up" d o k-0))))
   (label 17)
   (parent 15)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0) ((k k) (n n) (d d) (o o) (lk lk) (ls ls) (pt pt-2) (pt-0 pt))))
@@ -1027,7 +1027,7 @@
     ((send start-ch-0 (cat "power-up" d o k-0))))
   (label 18)
   (parent 15)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0) ((k k) (n n) (d d) (o o) (lk lk) (ls ls) (pt pt-2) (pt-0 pt))))
@@ -1073,7 +1073,7 @@
     ((send start-ch-0 (cat "power-up" d o k-0))))
   (label 19)
   (parent 15)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0) ((k k) (n n) (d d) (o o) (lk lk) (ls ls) (pt pt-2) (pt-0 pt))))
@@ -2205,7 +2205,7 @@
       (stor ls (cat pt-4 "st" d o)) (send (enc "up" k))))
   (label 45)
   (parent 40)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0 1)
@@ -2325,7 +2325,7 @@
       (stor ls (cat pt-8 "st" d o)) (send (enc "up" k))))
   (label 48)
   (parent 43)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0 1)

@@ -235,7 +235,7 @@
       (send (enc n-b k))))
   (label 8)
   (parent 4)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((a a) (b b) (c c) (n-b n-b) (n-a n-a) (k k))))
   (origs (k (1 1)) (n-b (0 1))))
@@ -450,7 +450,7 @@
   (label 16)
   (parent 10)
   (seen 8)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton yahalom
@@ -543,7 +543,7 @@
       (send (enc b k-0 n-a n-b (ltk a c)))))
   (label 19)
   (parent 14)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
@@ -667,7 +667,7 @@
   (label 23)
   (parent 17)
   (seen 16)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton yahalom
@@ -830,7 +830,7 @@
   (label 28)
   (parent 19)
   (seen 8)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton yahalom
@@ -900,7 +900,7 @@
       (send (enc n-b k-0))))
   (label 30)
   (parent 20)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
@@ -1037,7 +1037,7 @@
       (send (enc b k-1 n-a n-b (ltk a c)))))
   (label 34)
   (parent 24)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
@@ -1217,7 +1217,7 @@
       (send (enc b k-1 n-a n-b (ltk a c)))))
   (label 39)
   (parent 29)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
@@ -1322,7 +1322,7 @@
   (label 42)
   (parent 30)
   (seen 28)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton yahalom
@@ -1422,7 +1422,7 @@
   (label 45)
   (parent 34)
   (seen 16)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton yahalom
@@ -1529,7 +1529,7 @@
       (send (enc b k-1 n-a n-b (ltk a c)))))
   (label 48)
   (parent 39)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
@@ -1635,7 +1635,7 @@
   (label 51)
   (parent 48)
   (seen 28)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
@@ -1916,7 +1916,7 @@
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))))
   (label 60)
   (parent 59)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((a a) (b b) (c c) (n-a n-a) (n-b n-b) (k k))))
   (origs (k (1 1)) (n-a (0 0))))

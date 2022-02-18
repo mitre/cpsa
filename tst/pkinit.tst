@@ -94,7 +94,7 @@
           (enc ak-0 n1-0 tk-0 t-0 k)))))
   (label 1)
   (parent 0)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)

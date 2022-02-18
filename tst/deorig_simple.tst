@@ -118,7 +118,7 @@
   (uniq-orig z)
   (traces ((send (enc z k)) (recv z)) ((recv (enc z k)) (send z)))
   (label 1)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0 1) ((k k) (z z))))
   (origs (z (0 0))))

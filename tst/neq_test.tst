@@ -69,7 +69,7 @@
   (traces ((send (cat n1 (enc n1 n1 k))) (recv n1)))
   (label 1)
   (parent 0)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((n1 n1) (n2 n1) (k k))))
   (origs (n1 (0 0))))

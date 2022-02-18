@@ -133,7 +133,7 @@
     ((recv (enc y3 x2 (pubk a))) (send (enc "okay" y3 y3 (pubk a)))))
   (label 4)
   (parent 2)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 y3) (x4 y3))))
   (origs (y3 (0 0)) (x2 (0 0)) (x1 (0 0))))
@@ -155,7 +155,7 @@
   (label 5)
   (parent 3)
   (seen 4)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull
@@ -198,7 +198,7 @@
   (label 7)
   (parent 6)
   (seen 5)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
@@ -263,7 +263,7 @@
       (recv (enc "okay" x3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a)))))
   (label 8)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0 1) ((a a) (x1 x1) (x3 x3))))
   (origs (x3 (0 0)) (x1 (0 0))))

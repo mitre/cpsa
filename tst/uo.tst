@@ -62,7 +62,7 @@
   (traces ((send n)) ((send (enc m n)) (recv n)))
   (label 1)
   (parent 0)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0 1) ((n n) (m m))))
   (origs (n (0 0))))

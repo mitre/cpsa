@@ -178,7 +178,7 @@
       (send (cat S C-1 (enc response Ns (privk S))))))
   (label 3)
   (parent 2)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)

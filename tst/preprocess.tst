@@ -129,7 +129,7 @@
       (recv (enc n2 n3p (pubk b)))))
   (label 3)
   (parent 2)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0 1 1) ((a a) (b b) (n1 n1) (n2 n2) (n3 n3p) (n2p n2) (n3p n3p))))

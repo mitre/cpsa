@@ -238,7 +238,7 @@
           (enc nc nb (pubk c))))))
   (label 4)
   (parent 3)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)
@@ -320,7 +320,7 @@
   (label 6)
   (parent 5)
   (seen 4)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
@@ -694,7 +694,7 @@
           nb))))
   (label 14)
   (parent 13)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((b b) (c c) (m m) (nc nc) (nm nm) (nb nb) (price price))))
   (origs (nc (2 0)) (nb (0 1)) (nm (1 1))))
@@ -906,7 +906,7 @@
           nb))))
   (label 18)
   (parent 17)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)

@@ -102,7 +102,7 @@
     ((recv (enc n k)) (send (hash n))))
   (label 3)
   (parent 1)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((n n) (k k))))
   (origs (n (0 0))))

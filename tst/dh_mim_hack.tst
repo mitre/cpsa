@@ -85,7 +85,7 @@
     ((recv gx) (send gy) (recv (enc n (enc "dh" gx gy dhkey)))))
   (label 1)
   (parent 0)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0 1) ((n n) (gx gx) (gy gy) (dhkey dhkey) (gy-0 gy) (gx-0 gx))))
@@ -178,7 +178,7 @@
     ((recv (cat gx (invk gy-0))) (send (enc "dh" gx gy-0 dhkey))))
   (label 5)
   (parent 4)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_mim
@@ -201,7 +201,7 @@
     ((recv (cat gx (invk gy-0))) (send (enc "dh" gx gy-0 dhkey))))
   (label 6)
   (parent 5)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_mim
@@ -222,7 +222,7 @@
     ((recv (cat gx (invk gy-0))) (send (enc "dh" gx gy-0 dhkey))))
   (label 7)
   (parent 6)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0 1)

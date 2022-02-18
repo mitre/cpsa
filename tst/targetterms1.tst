@@ -83,7 +83,7 @@
     ((recv (enc n2 (enc a n2 k) k)) (send (enc a n2 k))))
   (label 2)
   (parent 1)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((n1 n2) (k k) (a a) (n2 n2))))
   (origs (n2 (0 0))))

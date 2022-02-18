@@ -196,7 +196,7 @@
           (enc nb1 nc0 c a (pubk b)) (pubk a)))))
   (label 3)
   (parent 2)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)
@@ -302,7 +302,7 @@
   (label 5)
   (parent 4)
   (seen 3)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
@@ -508,7 +508,7 @@
           (pubk b)))))
   (label 9)
   (parent 8)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)
@@ -622,7 +622,7 @@
   (label 11)
   (parent 10)
   (seen 9)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
@@ -1062,7 +1062,7 @@
           (pubk b))) (send (enc nc0 (enc nc1 (pubk c)) (pubk c)))))
   (label 20)
   (parent 17)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)
@@ -1288,7 +1288,7 @@
   (label 24)
   (parent 21)
   (seen 20)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton nsl3
@@ -1464,7 +1464,7 @@
           (pubk b))) (send (enc nc0 (enc nc1 (pubk c)) (pubk c)))))
   (label 27)
   (parent 25)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nsl3
@@ -1522,7 +1522,7 @@
   (label 28)
   (parent 26)
   (seen 29)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton nsl3
@@ -1569,7 +1569,7 @@
   (label 29)
   (parent 27)
   (seen 20)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

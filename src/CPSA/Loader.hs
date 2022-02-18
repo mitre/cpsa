@@ -725,6 +725,52 @@ genStateRls sig g rl ts =
                          vars
                          "genStateRls:  vars not strand+params?"))]
 
+
+genClaimRule :: Sig -> Gen -> Role -> [AForm] -> Int -> (Gen, Rule)
+genClaimRule sig g rl aforms ht =
+    case badvars of
+      [] ->
+          ruleOfClauses
+          sig g ("claim-" ++ (rname rl) ++ "-" ++ (show ht))
+           (vSpec params)
+           (\vars ->
+                applyToStrandVarAndParams
+                (\z pvars ->
+                     (Length rl z (indxOfInt ht))
+                     : (map
+                        (\v ->
+                             case paramOfName (varName v) rl of
+                               Nothing -> error ("genClaimRule:  Parameter " ++
+                                                 (varName v) ++ " not found.")
+                               Just p ->
+                                   case firstOccurs p rl of
+                                     Nothing -> error ("genClaimRule:  Parameter " ++
+                                                       (varName v) ++ " not found.")
+                                     Just i -> (Param rl p (i+1) z v))
+                        pvars))
+                vars
+                "genClaimRule:  vars not strand+prams?")
+           [([],
+             (\_ vars ->
+                  applyToStrandVarAndParams
+                  (\_ pvars ->
+                       case envsRoleParams rl g pvars of
+                         [(_,e)] -> map (instantiateAForm e) aforms
+                         _ -> error "genClaimRule:  Non-unary matching not implemented")
+                  vars
+                  "genClaimRule:  vars not strand+params?"))]
+      b : rest -> error ("genClaimRule:  bad vars " ++ (show (b : rest)) ++ "occur too late")
+    where
+      tr = map evtTerm (rtrace rl)
+      fvs = foldl aFreeVars [] aforms
+      params = L.intersect (concatMap varsInTerm (take ht tr)) fvs
+      badvars = L.intersect (concatMap varsInTerm (drop ht tr)) fvs
+      evars = fvs L.\\ params
+      vSpec args =
+          (("strd", ["z"])
+           : varListSpecOfVars (concatMap varsInTerm args))
+
+
 genFactRls :: Sig -> Gen -> Role -> [(String,[Term])] -> (Gen, [Rule])
 genFactRls sig g rl predarglists =
     (g',rls)
@@ -1501,7 +1547,7 @@ loadUsedVars sig pos prot vars unbound x =
       [] -> return as
       (v : _) -> fail (shows (annotation x) (showst v " not used"))
 
--- Load a conjunction of atomic formulas
+-- Load a conjunction of atomic formulas 
 
 loadConjunction :: MonadFail m => Sig -> Pos -> Prot -> [Term] ->
                    SExpr Pos -> m Conj

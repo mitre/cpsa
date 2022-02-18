@@ -237,7 +237,7 @@
           (enc nc nb (pubk c))))))
   (label 4)
   (parent 3)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)
@@ -321,7 +321,7 @@
   (label 6)
   (parent 5)
   (seen 4)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
@@ -602,7 +602,7 @@
       (send (cat (enc (enc c nc nb nm price hash) (privk b-0)) nb))))
   (label 12)
   (parent 11)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)
@@ -815,7 +815,7 @@
       (send (cat (enc (enc c nc nb nm price hash) (privk b-0)) nb))))
   (label 16)
   (parent 15)
-  (unrealized)
+  (realized)
   (shape)
   (maps
     ((0)

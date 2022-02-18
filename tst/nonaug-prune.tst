@@ -303,7 +303,7 @@
     ((send (enc n B B k)) (send (enc n B k)) (recv (enc n B B B k))))
   (label 13)
   (parent 7)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0 0 1) ((n n) (A B) (B B) (k k))))
   (origs (n (1 0))))
@@ -322,7 +322,7 @@
     ((send (enc n B B k)) (send (enc n B k)) (recv (enc n B B B k))))
   (label 14)
   (parent 8)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0 1 2) ((n n) (A B) (B B) (k k))))
   (origs (n (2 0))))
@@ -593,7 +593,7 @@
   (label 27)
   (parent 21)
   (seen 13)
-  (unrealized)
+  (realized)
   (origs (n (1 0)))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -615,7 +615,7 @@
   (label 28)
   (parent 22)
   (seen 14)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -656,7 +656,7 @@
   (label 30)
   (parent 24)
   (seen 14)
-  (unrealized)
+  (realized)
   (origs (n (2 0)))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -696,7 +696,7 @@
     ((recv (enc n A k)) (send (enc n A A A k))))
   (label 32)
   (parent 26)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0 1 2) ((n n) (A A) (B A) (k k))))
   (origs (n (2 0))))
@@ -764,7 +764,7 @@
   (label 35)
   (parent 29)
   (seen 32)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -785,7 +785,7 @@
   (label 36)
   (parent 31)
   (seen 14)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -806,7 +806,7 @@
   (label 37)
   (parent 33)
   (seen 32)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -852,7 +852,7 @@
   (label 39)
   (parent 38)
   (seen 32)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

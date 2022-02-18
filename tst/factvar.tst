@@ -55,7 +55,7 @@
   (non-orig (invk k))
   (traces ((recv (enc n k))))
   (label 0)
-  (unrealized)
+  (realized)
   (origs)
   (comment "Not closed under rules"))
 
@@ -68,7 +68,7 @@
   (traces ((recv (enc n k))))
   (label 1)
   (parent 0)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((k k) (n n))))
   (origs))

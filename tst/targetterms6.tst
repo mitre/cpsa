@@ -175,7 +175,7 @@
       (send (enc n (enc n (enc n (pubk a)) (pubk a)) (pubk a)))))
   (label 5)
   (parent 4)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((a a) (n n))))
   (origs (n (0 0))))
@@ -232,7 +232,7 @@
   (label 7)
   (parent 6)
   (seen 5)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton targetterms6
@@ -260,7 +260,7 @@
   (label 8)
   (parent 6)
   (seen 5)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
@@ -332,7 +332,7 @@
     ((recv (enc n (pubk a))) (recv (enc n (enc n (pubk a)) (pubk a)))
       (send (enc n (enc n (enc n (pubk a)) (pubk a)) (pubk a)))))
   (label 9)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0 1 2) ((n n) (a a))))
   (origs (n (0 0))))

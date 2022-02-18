@@ -485,7 +485,7 @@
     ((recv (enc n new new new k)) (send (enc n new new new n k))))
   (label 20)
   (parent 10)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (origs (n (0 0)) (new (1 1))))
@@ -969,7 +969,7 @@
   (label 40)
   (parent 19)
   (seen 20)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1020,7 +1020,7 @@
   (label 42)
   (parent 21)
   (seen 20)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1151,7 +1151,7 @@
     ((recv (enc n new new new-0 k)) (send (enc n new new new-0 n k))))
   (label 47)
   (parent 25)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (origs (n (0 0)) (new-0 (2 1)) (new (1 1))))
@@ -1312,7 +1312,7 @@
   (label 53)
   (parent 29)
   (seen 47)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1554,7 +1554,7 @@
     ((recv (enc n new new-0 new k)) (send (enc n new new-0 new n k))))
   (label 62)
   (parent 34)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new))))
   (origs (n (0 0)) (new-0 (2 1)) (new (1 1))))
@@ -1638,7 +1638,7 @@
       (send (enc n new new-0 new-0 n k))))
   (label 65)
   (parent 36)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-0))))
   (origs (n (0 0)) (new-0 (2 1)) (new (1 1))))
@@ -1862,7 +1862,7 @@
   (label 73)
   (parent 41)
   (seen 42)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1945,7 +1945,7 @@
   (label 76)
   (parent 44)
   (seen 20)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1999,7 +1999,7 @@
   (label 78)
   (parent 46)
   (seen 47)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2055,7 +2055,7 @@
   (label 80)
   (parent 48)
   (seen 47)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2138,7 +2138,7 @@
   (label 83)
   (parent 50)
   (seen 20)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2192,7 +2192,7 @@
   (label 85)
   (parent 52)
   (seen 53)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2248,7 +2248,7 @@
   (label 87)
   (parent 54)
   (seen 53)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2567,7 +2567,7 @@
   (label 98)
   (parent 61)
   (seen 62)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2623,7 +2623,7 @@
   (label 100)
   (parent 63)
   (seen 62)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2651,7 +2651,7 @@
   (label 101)
   (parent 64)
   (seen 65)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2709,7 +2709,7 @@
   (label 103)
   (parent 66)
   (seen 65)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2947,7 +2947,7 @@
       (send (enc n new new-0 new-1 n k))))
   (label 111)
   (parent 72)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-1))))
   (origs (n (0 0)) (new-1 (3 1)) (new-0 (2 1)) (new (1 1))))
@@ -3006,7 +3006,7 @@
   (label 113)
   (parent 74)
   (seen 40)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3062,7 +3062,7 @@
   (label 115)
   (parent 77)
   (seen 42)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3092,7 +3092,7 @@
   (label 116)
   (parent 79)
   (seen 80)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3119,7 +3119,7 @@
   (label 117)
   (parent 81)
   (seen 40)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3175,7 +3175,7 @@
   (label 119)
   (parent 84)
   (seen 42)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3205,7 +3205,7 @@
   (label 120)
   (parent 86)
   (seen 87)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3474,7 +3474,7 @@
   (label 129)
   (parent 93)
   (seen 53)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3593,7 +3593,7 @@
   (label 133)
   (parent 96)
   (seen 47)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3652,7 +3652,7 @@
   (label 135)
   (parent 99)
   (seen 100)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3683,7 +3683,7 @@
   (label 136)
   (parent 102)
   (seen 103)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3773,7 +3773,7 @@
   (label 139)
   (parent 105)
   (seen 62)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3895,7 +3895,7 @@
   (label 143)
   (parent 108)
   (seen 65)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3956,7 +3956,7 @@
   (label 145)
   (parent 110)
   (seen 111)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4020,7 +4020,7 @@
   (label 147)
   (parent 112)
   (seen 111)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4050,7 +4050,7 @@
   (label 148)
   (parent 114)
   (seen 73)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4080,7 +4080,7 @@
   (label 149)
   (parent 118)
   (seen 73)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4203,7 +4203,7 @@
   (label 153)
   (parent 124)
   (seen 76)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4262,7 +4262,7 @@
   (label 155)
   (parent 127)
   (seen 85)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4324,7 +4324,7 @@
   (label 157)
   (parent 130)
   (seen 87)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4354,7 +4354,7 @@
   (label 158)
   (parent 131)
   (seen 78)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4416,7 +4416,7 @@
   (label 160)
   (parent 134)
   (seen 80)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4446,7 +4446,7 @@
   (label 161)
   (parent 137)
   (seen 98)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4508,7 +4508,7 @@
   (label 163)
   (parent 140)
   (seen 100)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4539,7 +4539,7 @@
   (label 164)
   (parent 141)
   (seen 101)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4603,7 +4603,7 @@
   (label 166)
   (parent 144)
   (seen 103)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4636,7 +4636,7 @@
   (label 167)
   (parent 146)
   (seen 147)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4666,7 +4666,7 @@
   (label 168)
   (parent 150)
   (seen 113)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4728,7 +4728,7 @@
   (label 170)
   (parent 154)
   (seen 115)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4760,7 +4760,7 @@
   (label 171)
   (parent 156)
   (seen 120)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4792,7 +4792,7 @@
   (label 172)
   (parent 159)
   (seen 116)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4824,7 +4824,7 @@
   (label 173)
   (parent 162)
   (seen 135)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4857,7 +4857,7 @@
   (label 174)
   (parent 165)
   (seen 136)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4889,7 +4889,7 @@
   (label 175)
   (parent 169)
   (seen 148)
-  (unrealized)
+  (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

@@ -114,7 +114,7 @@
     ((send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t)))
   (label 3)
   (parent 2)
-  (unrealized)
+  (realized)
   (shape)
   (maps ((0) ((p p) (d d) (k k) (t t))))
   (origs (k (1 0)) (t (0 1))))
