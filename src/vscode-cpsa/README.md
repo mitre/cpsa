@@ -23,6 +23,27 @@ VSCode needs to be able to call the `cpsa4`, `cpsa4graph`, and
 The extension currently depends on features from VSCode 1.54 (February
 2021) or newer.
 
+## Installation
+
+To obtain the built extension, you can build it from source or obtain a
+`.vsix` archive. A standard location to download this build artifact is
+being worked on. See the "Building the extension" section of DEVELOPING.md
+to build it from source.
+
+To install the `.vsix` archive, there are two methods.
+
+On the commandline, if the VSCode `code` executable is on your PATH:
+
+    code --install-extension vscode-cpsa-VERSION.vsix
+
+The other method is to use VSCode to "Open Folder" on the directory
+containing the archive. Then, it should be possible to right-click the
+file in VSCode's Explorer panel, and an "Install Extension" option should
+be available.
+
+If you already had the extension installed and you are replacing it,
+VSCode might need to be restarted.
+
 ## Known Issues
 
 This extension assumes that CPSA is installed. If it isn't, there will be
