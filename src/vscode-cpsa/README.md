@@ -26,8 +26,8 @@ The extension currently depends on features from VSCode 1.54 (February
 ## Installation
 
 To obtain the built extension, you can build it from source or obtain a
-`.vsix` archive. A standard location to download this build artifact is
-being worked on. See the "Building the extension" section of DEVELOPING.md
+`.vsix` archive. The latest version can be downloaded from Artifactory
+here: [0.1.0]. See the "Building the extension" section of DEVELOPING.md
 to build it from source.
 
 To install the `.vsix` archive, there are two methods.
@@ -76,7 +76,7 @@ From a user's perspective:
 - Until version 1.0.0, no compatibility guarantees are made. Versions
   before 1.0.0 are considered experimental.
 
-### 0.1.0 - 2022-03-08
+### [0.1.0] - 2022-03-08
 
 #### Added
 
@@ -95,3 +95,5 @@ Initial testing release.
   `cpsa4graph`, respectively.
 - The errors from CPSA are detected with a Problem Matcher, to integrate
   with VSCode's built in error-highlighting features.
+
+[0.1.0]: https://artifacts.mitre.org/artifactory/generic-vscode-cpsa-local/vscode-cpsa-0.1.0.vsix

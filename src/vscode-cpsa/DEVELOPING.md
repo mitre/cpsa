@@ -38,6 +38,16 @@ This will create a `vscode-cpsa-VERSION.vsix` file (where VERSION is the
 current version) which can be shared and installed to VSCode on users'
 machines.
 
+## Deploying to Artifactory
+
+This project has a Repository on MITRE's Artifactory instance called
+[`generic-vscode-cpsa-local`](https://artifacts.mitre.org/ui/repos/tree/General/generic-vscode-cpsa-local).
+Developers with write access can upload new versions of the `.vsix`
+archive, and anyone with a link to the repository can read all versions
+without authentication.
+Uploading files can be done through the web interface manually, as well as
+with basic HTTP requests (with `curl` for example).
+
 ## Code Overview
 
 `package.json`: This is both a standard NPM package description file, as

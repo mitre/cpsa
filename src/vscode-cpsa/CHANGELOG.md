@@ -7,7 +7,7 @@ and this project follows the [Semantic Versioning](https://semver.org/spec/v2.0.
 
 ## Unreleased
 
-## 0.1.0 - 2022-03-08
+## [0.1.0] - 2022-03-08
 
 ### Added
 
@@ -26,3 +26,5 @@ Initial testing release.
   `cpsa4graph`, respectively.
 - The errors from CPSA are detected with a Problem Matcher, to integrate
   with VSCode's built in error-highlighting features.
+
+[0.1.0]: https://artifacts.mitre.org/artifactory/generic-vscode-cpsa-local/vscode-cpsa-0.1.0.vsix
