@@ -61,7 +61,12 @@ $\mbox{id}\mid(\sym{invk}\mbox{ id})
 \\ rule&$\leftarrow$&
 (\sym{defrule} id sentence rule-alist)
 \\ rule-alist&$\leftarrow$&$\ldots$
-\\ prot-alist&$\leftarrow$&$\ldots$
+\\ prot-alist&$\leftarrow$
+&$(\sym{lang}\mbox{ ldecl}\ast)\mbox{ prot-alist}\mid{}$\ldots
+\\ ldecl&$\leftarrow$&$(\sym{symbol}{\mathord +}\mbox{ kind})$
+\\ kind&$\leftarrow$&$\sym{atom}\mid\sym{akey}\mid\sym{hash}\mid
+(\sym{tupl}\mbox{ integer})$
+\\ &&$\sym{enc}\mid\sym{senc}\mid\sym{aenc}\mid\sym{sign}$
 \end{tabular}
 \end{center}
 \caption{{\cpsa} Syntax}\label{tab:syntax}
@@ -129,7 +134,8 @@ a \textsc{string}.  The characters that make up a symbol are the
 letters, the digits, and the special characters in
 ``\verb|-*/<=>!?:$%_&~^+|''.  A symbol may not begin with a digit or a
 sign followed by a digit.  The characters that make up a string are
-the printing characters omitting double quote and backslash.  Double
-quotes delimit a string.  A comment\index{comments} begins with a
-semicolon, or is an S-expression list at top-level that starts with
-the \texttt{comment} symbol.
+the printing characters omitting double quote and backslash, except
+when double quote and backslash are escaped using the backslash
+character.  Double quotes delimit a string.  A comment\index{comments}
+begins with a semicolon, or is an S-expression list at top-level that
+starts with the \texttt{comment} symbol.

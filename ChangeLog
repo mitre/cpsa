@@ -1,5 +1,8 @@
 2022-03-17  John D. Ramsdell  <ramsdell@mitre.org>
 
+	* src/CPSA/Lib/SExpr.hs: Allow double quote and backslash in
+	strings so that S-expressions can contain Windows file names.
+
 	* src/CPSA/Loader.hs (loadLang): Optionally load a lang field in a
 	protocol.
 

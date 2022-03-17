@@ -1,6 +1,6 @@
 (herald attest-door)
 
-(comment "CPSA 4.3.0")
+(comment "CPSA 4.3.1")
 (comment "All input read from tst/attest.scm")
 
 (defprotocol attest-door basic

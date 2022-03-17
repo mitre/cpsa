@@ -15,13 +15,15 @@ or a string. The characters that make up a symbol are the letters, the
 digits, and these special characters.
 
 @
-    +-*\/\<=>!?:$%_&~^
+    +-*/<=>!?:$%_&~^
 @
 
 A symbol may not begin with a digit or a sign followed by a digit. The
 characters that make up a string are the printing characters omitting
-double quote and backslash. Double quotes delimit a string. A comment
-begins with a semicolon and continues to the end of the current line.
+double quote and backslash, except when double quote and backslash are
+escaped using the backslash character. Double quotes delimit a
+string. A comment begins with a semicolon and continues to the end of
+the current line.
 
 -}
 
@@ -31,7 +33,7 @@ begins with a semicolon and continues to the end of the current line.
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-module CPSA.Lib.SExpr (SExpr(..), showQuoted, annotation,
+module CPSA.Lib.SExpr (SExpr(..), showQuoted, stringSExpr, annotation,
                        -- * S-expression Reader
                        Pos, PosHandle, posHandle, load) where
 
@@ -76,7 +78,7 @@ instance Ord (SExpr a) where
 -- | This printer produces no line breaks.
 instance Show (SExpr a) where
     showsPrec _ (S _ s) = showString s
-    showsPrec _ (Q _ s) = showChar '"' . showString s . showChar '"'
+    showsPrec _ (Q _ s) = showQuoted s
     showsPrec _ (N _ n) = shows n
     showsPrec _ (L _ []) = showString "()"
     showsPrec _ (L _ (x:xs)) =
@@ -87,7 +89,21 @@ instance Show (SExpr a) where
 
 -- | Add quotes to a string so it reads as an S-expression string.
 showQuoted :: String -> ShowS
-showQuoted s = showChar '"' . showString s . showChar '"'
+showQuoted s = showChar '"' . showEscaped s . showChar '"'
+
+showEscaped :: String -> ShowS
+showEscaped ('\\' : s) = showString "\\\\" . showEscaped s
+showEscaped ('"' : s) = showString "\\\"" . showEscaped s
+showEscaped (ch : s) = showChar ch . showEscaped s
+showEscaped [] = id
+
+-- | Convert a raw string into a quoted S-expression.
+stringSExpr :: String -> SExpr ()
+stringSExpr s =
+  if all isPrint s then
+    Q () s
+  else
+    error "SExpr.stringSExpr: Bad string"
 
 -- | Extract an S-expression's annotation.
 annotation :: SExpr a -> a
@@ -259,10 +275,27 @@ string p l c pos s =
             abort p (shows pos "End of input in string")
         Just '"' ->
             return (l, c + 1, Atom (Q pos (seqrev s)))
-        Just ch | isStr ch ->
+        Just '\\' ->
+            escaped p l (c + 1) pos s
+        Just ch | isPrint ch ->
             string p l (c + 1) pos (ch : s)
         Just _ ->
-            abort p (shows pos "Bad char for string")
+            abort p (shows pos "Bad char in string")
+
+-- Scan an escaped character in a quoted string of characters
+escaped :: PosHandle -> Int -> Int -> Pos -> String -> IO (Int, Int, Token)
+escaped p l c pos s =
+    do
+      ch <- get p
+      case ch of
+        Nothing ->
+            abort p (shows pos "End of input in escaped char in string")
+        Just '"' ->
+            string p l (c + 1) pos ('"' : s)
+        Just '\\' ->
+            string p l (c + 1) pos ('\\' : s)
+        Just _ ->
+            abort p (shows pos "Bad escaped char in string")
 
 -- Scan a sequence of digits
 number :: PosHandle -> Int -> Int -> Pos -> String -> IO (Int, Int, Token)
@@ -340,13 +373,6 @@ isSym '&' = True
 isSym '~' = True
 isSym '^' = True
 isSym c = isAlphaNum c
-
--- A string is made from printable characters.
--- Omits " and \ so that the code works with many readers.
-isStr :: Char -> Bool
-isStr '"' = False
-isStr '\\' = False
-isStr c = isPrint c
 
 -- Close input handle and then report failure
 abort :: PosHandle -> String -> IO a

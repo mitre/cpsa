@@ -1,4 +1,4 @@
-(comment "CPSA 4.3.0")
+(comment "CPSA 4.3.1")
 (comment "All input read from tst/missing_contraction.scm")
 
 (defprotocol missing-contraction basic

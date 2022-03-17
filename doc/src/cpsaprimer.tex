@@ -1212,11 +1212,14 @@ is syntax for
 \end{verbatim}
 \end{quote}
 
-Algebra extensions are declared using a \texttt{lang} field in the
-herald form of a source file.  For the certificate body example,
+Algebra extensions are declared using the \texttt{lang} key in the
+protocol's association list, at the end of a protocol.  For the
+certificate body example,
 \begin{quote}
 \begin{verbatim}
-(herald prot (lang (cert-body (tupl 3))))
+(defprotocol cert basic
+  ...
+  (lang (cert-body (tupl 3))))
 \end{verbatim}
 \end{quote}
 adds one tupling operation so that the example above can be written as
@@ -1233,8 +1236,8 @@ with the tagged concatenation representation.
 \newcommand{\sym}[1]{\textup{\texttt{#1}}}
 \begin{center}\scshape
 \begin{tabular}{rcl}
-  lang&$\leftarrow$&(\sym{lang} decl$\ast$)
-  \\ decl&$\leftarrow$&(symbol+ kind)
+  lang&$\leftarrow$&(\sym{lang} ldecl$\ast$)
+  \\ ldecl&$\leftarrow$&(symbol+ kind)
   \\ kind&$\leftarrow$&
   $\sym{atom}\mid\sym{akey}\mid\sym{hash}\mid\mbox{(\sym{tupl}
     integer)}$
@@ -1244,9 +1247,9 @@ with the tagged concatenation representation.
 \caption{Lang Field Syntax}\label{tab:lang field syntax}
 \end{table}
 
-The syntax of the \index{lang field}\texttt{lang} field is given in
-Table~\ref{tab:lang field syntax}.  There are eight kinds of ways that
-{\cpsa} algebras can be extended.
+The syntax of a \index{lang field}\texttt{lang} declaration is given
+in Table~\ref{tab:lang field syntax}.  There are eight kinds of ways
+that {\cpsa} algebras can be extended.
 
 \begin{itemize}
 

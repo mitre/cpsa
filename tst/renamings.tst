@@ -2,7 +2,7 @@
   (comment "There is a flaw in this protocol by design")
   (comment "It also shows how variable renaming works"))
 
-(comment "CPSA 4.3.0")
+(comment "CPSA 4.3.1")
 (comment "All input read from tst/renamings.scm")
 
 (defprotocol blanchet basic

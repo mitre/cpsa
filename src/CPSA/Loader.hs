@@ -731,7 +731,7 @@ genStateRls sig g rl ts =
                          vars
                          "genStateRls:  vars not strand+params?"))]
 
-
+{-
 genClaimRule :: Sig -> Gen -> Role -> [AForm] -> Int -> (Gen, Rule)
 genClaimRule sig g rl aforms ht =
     case badvars of
@@ -775,7 +775,7 @@ genClaimRule sig g rl aforms ht =
       vSpec args =
           (("strd", ["z"])
            : varListSpecOfVars (concatMap varsInTerm args))
-
+-}
 
 genFactRls :: Sig -> Gen -> Role -> [(String,[Term])] -> (Gen, [Rule])
 genFactRls sig g rl predarglists =
@@ -1553,7 +1553,7 @@ loadUsedVars sig pos prot vars unbound x =
       [] -> return as
       (v : _) -> fail (shows (annotation x) (showst v " not used"))
 
--- Load a conjunction of atomic formulas 
+-- Load a conjunction of atomic formulas
 
 loadConjunction :: MonadFail m => Sig -> Pos -> Prot -> [Term] ->
                    SExpr Pos -> m Conj

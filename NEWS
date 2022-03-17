@@ -2,6 +2,13 @@ CPSA NEWS -- history of user-visible changes.
 
 * Changes in version 4.3.1
 
+** Algebra signature extensions may be specified in a protocol.
+
+** double quote and backslash characters are allowed in strings so
+   that S-expressions can contain Windows file names.
+
+* Changes in version 4.3.0
+
 ** Added support for Diffie-Hellman algebra extensions.
 
 ** Added support for algebra signature extensions.

@@ -158,7 +158,9 @@ POS-INT    ::= (INT INT)
 RULE       ::= (defrule ID SENTENCE RULE-ALIST)
 RULE-ALIST ::= ...
 PROT-ALIST ::= (lang LDECL*) PROT-ALIST | ...
-...</pre>
+LDECL      ::= (ID+ KIND)
+KIND       ::= atom | akey | hash | (tupl INT)
+            |  enc | senc | aenc | sign</pre>
 </blockquote>
 
 <p>The syntax for <code>SORT</code>, <code>TERM</code>,
@@ -256,15 +258,14 @@ and <code>ltk</code>.</p>
   <pre>(cat "cert-body" (cat dn (cat serial-no pub-key)))</pre>
 </blockquote>
 
-<p>Algebra extensions are declared using a <code>lang</code> field in the
-  herald form of a source file.  For the certificate body example,</p>
-
-<p>Algebra extensions are declared using a <code>lang</code> field in
-  the herald form of a source file or a lang field in a protocol.  For
-  the certificate body example,</p>
+<p>Algebra extensions are declared using the <code>lang</code> key in
+  the protocol's association list, at the end of a protocol.  For the
+  certificate body example,</p>
 
 <blockquote>
-  <pre>(herald prot (lang (cert-body (tupl 3))))</pre>
+  <pre>(defprotocol cert basic
+  ...
+  (lang (cert-body (tupl 3))))</pre>
 </blockquote>
 
 <p>adds one tupling operation so that the example above can be written as</p>
@@ -284,7 +285,7 @@ KIND  ::= atom | akey | hash | (tupl INT)
        |  enc | senc | aenc | sign</pre>
 </blockquote>
 
-The syntax of the <code>lang</code> field is given above.
+The syntax of a <code>lang</code> declaration is given above.
 There are eight kinds of ways that CPSA algebras can be extended.
 
 <ul>
@@ -1038,12 +1039,13 @@ can read them, and characters within symbols and strings never need
 quoting. Every list is proper. An atom is either a symbol, an integer,
 or a string. The characters that make up a symbol are the letters, the
 digits, and the special characters in
-"<code>+-*/&lt;=&gt;!?:$%_&amp;~^</code>". A symbol may not begin with a
-digit or a sign followed by a digit. The characters that make up a
+"<code>+-*/&lt;=&gt;!?:$%_&amp;~^</code>". A symbol may not begin with
+a digit or a sign followed by a digit. The characters that make up a
 string are the printing characters omitting double quote and
-backslash. Double quotes delimit a string. A comment begins with a
-semicolon, or is an S-expression list at top-level that starts with
-the <code>comment</code> symbol. </p>
+backslash, except when double quote and backslash are escaped using
+the backslash character. Double quotes delimit a string. A comment
+begins with a semicolon, or is an S-expression list at top-level that
+starts with the <code>comment</code> symbol. </p>
 
 <hr />
 
