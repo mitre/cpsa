@@ -38,6 +38,7 @@ async function executeFile(uri: vscode.Uri) {
     let out_txt = parsed.name + '.txt';
     let out_xhtml = parsed.name + '.xhtml';
     let out_shapes = parsed.name + '_shapes.txt';
+    let out_shapes_xhtml = parsed.name + '_shapes.xhtml';
 
     let txt_task = new vscode.Task(
         {'type': 'cpsa4build'},
@@ -74,6 +75,18 @@ async function executeFile(uri: vscode.Uri) {
         '$cpsa4'
     );
     await vscode.tasks.executeTask(shapes_task);
+
+    let shapes_xhtml_task = new vscode.Task(
+        {'type': 'cpsa4build'},
+        vscode.TaskScope.Workspace,
+        // User-visible name of this Task
+        'cpsa4graph on generated _shapes.txt',
+        'cpsa4build',
+        new vscode.ProcessExecution('cpsa4graph', ['-o', out_shapes_xhtml, out_shapes]),
+        // Refers to the `cpsa4` Problem Matcher defined in `package.json`
+        '$cpsa4'
+    );
+    await vscode.tasks.executeTask(shapes_xhtml_task);
 }
 
 // This method is called when the extension is deactivated.

@@ -7,6 +7,11 @@ and this project follows the [Semantic Versioning](https://semver.org/spec/v2.0.
 
 ## Unreleased
 
+### Added
+
+- The build button now also generates a `_shapes.xhtml` output file, using
+  `cpsa4graph`, from the `_shapes.txt` generated file.
+
 ### Fixed
 
 - The extension now calls `cpsa4` and other tools with relative paths. This is
