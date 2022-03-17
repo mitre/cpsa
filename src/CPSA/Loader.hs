@@ -15,7 +15,7 @@ import Data.Maybe (isJust)
 import CPSA.Lib.Utilities
 import CPSA.Lib.ReturnFail
 import CPSA.Lib.SExpr
-import CPSA.Signature (Sig)
+import CPSA.Signature (Sig, loadSig)
 import CPSA.Algebra
 import CPSA.Channel
 import CPSA.Protocol
@@ -68,6 +68,7 @@ loadProt sig nom origin pos (S _ name : S _ alg : x : xs)
         fail (shows pos $ "Expecting terms in algebra " ++ nom)
     | otherwise =
         do
+          sig <- loadLang pos sig xs
           (gen, rs, transRules, rest) <- loadRoles sig origin (x : xs)
           (gen', r) <- mkListenerRole sig pos gen
           let (gen,inits) = initRules sig gen' transRules
@@ -103,6 +104,11 @@ loadProt sig nom origin pos (S _ name : S _ alg : x : xs)
                           " in protocol " ++ name in
                 fail (shows pos msg)
 loadProt _ _ _ pos _ = fail (shows pos "Malformed protocol")
+
+-- Optionally load a lang field in a protocol.
+loadLang :: MonadFail m => Pos -> Sig -> [SExpr Pos] -> m Sig
+loadLang pos _ xs | hasKey "lang" xs = loadSig pos (assoc "lang" xs)
+loadLang _ sig _ | otherwise = return sig
 
 loadRoles :: MonadFail m => Sig -> Gen -> [SExpr Pos] ->
              m (Gen, [Role], [Rule], [SExpr Pos])

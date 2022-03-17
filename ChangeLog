@@ -1,3 +1,8 @@
+2022-03-17  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/Loader.hs (loadLang): Optionally load a lang field in a
+	protocol.
+
 2022-02-08  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Graph/SVG.hs (kbutton): Made realized skeletions print

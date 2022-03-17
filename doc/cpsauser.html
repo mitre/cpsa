@@ -157,7 +157,8 @@ POS-TERM   ::= TERM | (INT TERM)
 POS-INT    ::= (INT INT)
 RULE       ::= (defrule ID SENTENCE RULE-ALIST)
 RULE-ALIST ::= ...
-PROT-ALIST ::= ...</pre>
+PROT-ALIST ::= (lang LDECL*) PROT-ALIST | ...
+...</pre>
 </blockquote>
 
 <p>The syntax for <code>SORT</code>, <code>TERM</code>,
@@ -257,6 +258,10 @@ and <code>ltk</code>.</p>
 
 <p>Algebra extensions are declared using a <code>lang</code> field in the
   herald form of a source file.  For the certificate body example,</p>
+
+<p>Algebra extensions are declared using a <code>lang</code> field in
+  the herald form of a source file or a lang field in a protocol.  For
+  the certificate body example,</p>
 
 <blockquote>
   <pre>(herald prot (lang (cert-body (tupl 3))))</pre>
