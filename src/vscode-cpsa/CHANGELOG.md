@@ -7,6 +7,8 @@ and this project follows the [Semantic Versioning](https://semver.org/spec/v2.0.
 
 ## Unreleased
 
+## [0.2.0] - 2022-03-17
+
 ### Added
 
 - The build button now also generates a `_shapes.xhtml` output file, using
@@ -38,4 +40,5 @@ Initial testing release.
 - The errors from CPSA are detected with a Problem Matcher, to integrate
   with VSCode's built in error-highlighting features.
 
+[0.2.0]: https://artifacts.mitre.org/artifactory/generic-vscode-cpsa-local/vscode-cpsa-0.2.0.vsix
 [0.1.0]: https://artifacts.mitre.org/artifactory/generic-vscode-cpsa-local/vscode-cpsa-0.1.0.vsix
