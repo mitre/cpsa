@@ -33,11 +33,11 @@ async function executeFile(uri: vscode.Uri) {
     // Split the file path to remove the file extension of the source
     // file.
     let parsed = path.parse(file_path);
+    let source = parsed.base;
     // Generate the output file names by adding conventional suffixes.
-    // By using `path.join()`, this should be completely portable.
-    let out_txt = path.join(parsed.dir, parsed.name + '.txt');
-    let out_xhtml = path.join(parsed.dir, parsed.name + '.xhtml');
-    let out_shapes = path.join(parsed.dir, parsed.name + '_shapes.txt');
+    let out_txt = parsed.name + '.txt';
+    let out_xhtml = parsed.name + '.xhtml';
+    let out_shapes = parsed.name + '_shapes.txt';
 
     let txt_task = new vscode.Task(
         {'type': 'cpsa4build'},
@@ -45,7 +45,7 @@ async function executeFile(uri: vscode.Uri) {
         // User-visible name of this Task
         'cpsa4 on current file',
         'cpsa4build',
-        new vscode.ProcessExecution('cpsa4', ['-o', out_txt, file_path]),
+        new vscode.ProcessExecution('cpsa4', ['-o', out_txt, source]),
         // Refers to the `cpsa4` Problem Matcher defined in `package.json`
         '$cpsa4'
     );

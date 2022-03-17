@@ -7,6 +7,12 @@ and this project follows the [Semantic Versioning](https://semver.org/spec/v2.0.
 
 ## Unreleased
 
+### Fixed
+
+- The extension now calls `cpsa4` and other tools with relative paths. This is
+  a workaround for the fact that CPSA cannot currently handle backslashes in
+  strings due to Windows absolute file paths.
+
 ## [0.1.0] - 2022-03-08
 
 ### Added
