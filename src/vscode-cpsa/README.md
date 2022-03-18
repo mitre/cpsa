@@ -27,7 +27,7 @@ The extension currently depends on features from VSCode 1.54 (February
 
 To obtain the built extension, you can build it from source or obtain a
 `.vsix` archive. The latest version can be downloaded from Artifactory
-here: [0.2.0]. See the "Building the extension" section of DEVELOPING.md
+here: [0.2.1]. See the "Building the extension" section of DEVELOPING.md
 to build it from source.
 
 To install the `.vsix` archive, there are two methods.
@@ -76,6 +76,15 @@ From a user's perspective:
 - Until version 1.0.0, no compatibility guarantees are made. Versions
   before 1.0.0 are considered experimental.
 
+### [0.2.1] - 2022-03-18
+
+#### Fixed
+
+- The extension did not properly wait for Tasks to finish before starting
+  later ones which depended on them completing. This led to corrupted or
+  incomplete results. Now all tasks are executed serially in a predictable
+  order.
+
 ### [0.2.0] - 2022-03-17
 
 #### Added
@@ -109,5 +118,6 @@ Initial testing release.
 - The errors from CPSA are detected with a Problem Matcher, to integrate
   with VSCode's built in error-highlighting features.
 
+[0.2.1]: https://artifacts.mitre.org/artifactory/generic-vscode-cpsa-local/vscode-cpsa-0.2.1.vsix
 [0.2.0]: https://artifacts.mitre.org/artifactory/generic-vscode-cpsa-local/vscode-cpsa-0.2.0.vsix
 [0.1.0]: https://artifacts.mitre.org/artifactory/generic-vscode-cpsa-local/vscode-cpsa-0.1.0.vsix
