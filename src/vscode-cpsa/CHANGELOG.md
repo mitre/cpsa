@@ -7,6 +7,13 @@ and this project follows the [Semantic Versioning](https://semver.org/spec/v2.0.
 
 ## Unreleased
 
+### Fixed
+
+- The extension did not properly wait for Tasks to finish before starting
+  later ones which depended on them completing. This led to corrupted or
+  incomplete results. Now all tasks are executed serially in a predictable
+  order.
+
 ## [0.2.0] - 2022-03-17
 
 ### Added

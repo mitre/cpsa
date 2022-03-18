@@ -50,7 +50,7 @@ async function executeFile(uri: vscode.Uri) {
         // Refers to the `cpsa4` Problem Matcher defined in `package.json`
         '$cpsa4'
     );
-    await vscode.tasks.executeTask(txt_task);
+    await wait_for_task(txt_task);
 
     let xhtml_task = new vscode.Task(
         {'type': 'cpsa4build'},
@@ -62,7 +62,7 @@ async function executeFile(uri: vscode.Uri) {
         // Refers to the `cpsa4` Problem Matcher defined in `package.json`
         '$cpsa4'
     );
-    await vscode.tasks.executeTask(xhtml_task);
+    await wait_for_task(xhtml_task);
 
     let shapes_task = new vscode.Task(
         {'type': 'cpsa4build'},
@@ -74,7 +74,7 @@ async function executeFile(uri: vscode.Uri) {
         // Refers to the `cpsa4` Problem Matcher defined in `package.json`
         '$cpsa4'
     );
-    await vscode.tasks.executeTask(shapes_task);
+    await wait_for_task(shapes_task);
 
     let shapes_xhtml_task = new vscode.Task(
         {'type': 'cpsa4build'},
@@ -86,7 +86,20 @@ async function executeFile(uri: vscode.Uri) {
         // Refers to the `cpsa4` Problem Matcher defined in `package.json`
         '$cpsa4'
     );
-    await vscode.tasks.executeTask(shapes_xhtml_task);
+    await wait_for_task(shapes_xhtml_task);
+}
+
+async function wait_for_task(task: vscode.Task) {
+    const execution = await vscode.tasks.executeTask(task);
+
+    return new Promise<void>(resolve => {
+        let disposable = vscode.tasks.onDidEndTask(e => {
+            if (e.execution === execution) {
+                disposable.dispose();
+                resolve();
+            }
+        });
+    });
 }
 
 // This method is called when the extension is deactivated.
