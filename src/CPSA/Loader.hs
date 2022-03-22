@@ -71,13 +71,7 @@ loadProt sig nom origin pos (S _ name : S _ alg : x : xs)
           sig <- loadLang pos sig xs
           (gen, rs, transRules, rest) <- loadRoles sig origin (x : xs)
           (gen', r) <- mkListenerRole sig pos gen
-          let (gen,inits) = initRules sig gen' transRules
---             let (gen'', scissors) = scissorsRule gen'
---             let (gen''', cake) = cakeRule gen''
---             let (gen'''', intrpt) = uninterruptibleRule gen'''
---             let (genFive, shears) = shearsRule gen''''
---             let (gen, neqs) = neqRules genFive
---             let initRls = scissors : cake : intrpt : shears : (neqs ++ transRules)
+          let (gen, inits) = initRules sig (any hasLocn rs) gen' transRules
 
           -- Fake protocol is used only for loading user defined rules
           let fakeProt = mkProt name alg gen sig rs r
@@ -965,8 +959,14 @@ cakeRule sig g =
             (g, _) -> (g, theVacuousRule)
       (g, _) -> (g, theVacuousRule)
 
-initRules :: Sig -> Gen -> [Rule] -> (Gen, [Rule])
-initRules sig g rs =
+-- Are there any locations used in the role?
+hasLocn :: Role -> Bool
+hasLocn rl =
+  any isLocn (tchans (rtrace rl))
+
+initRules :: Sig -> Bool -> Gen -> [Rule] -> (Gen, [Rule])
+initRules _  False g _ = (g, [])
+initRules sig True g rs =
     let (g',neqs) = neqRules sig g in
     foldr (\f (g,rules) ->
                let (g',r) = f g in

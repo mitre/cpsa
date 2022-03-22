@@ -24,42 +24,6 @@
     (trace (recv (cat b (enc a n-a n-b (ltk b s))))
       (send (cat (enc b k n-a n-b (ltk a s)) (enc a k (ltk b s)))))
     (uniq-orig k))
-  (defgenrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defgenrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defgenrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
-  (defgenrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defgenrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
-  (defgenrule shearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (comment "Yahalom protocol, Section 6.3.6, Page 49")
   (url "http://www.eecs.umich.edu/acal/swerve/docs/49-1.pdf"))
 
@@ -138,42 +102,6 @@
     (trace (recv (cat b (enc a n-a n-b (ltk b s))))
       (send (cat (enc b k n-a n-b (ltk a s)) (enc a k (ltk b s)))))
     (uniq-orig k))
-  (defgenrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defgenrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defgenrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
-  (defgenrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defgenrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
-  (defgenrule shearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (comment "Yahalom protocol, Section 6.3.6, Page 49")
   (url "http://www.eecs.umich.edu/acal/swerve/docs/49-1.pdf"))
 
@@ -272,42 +200,6 @@
     (trace (recv (cat b (enc a n-a n-b (ltk b s))))
       (send (cat (enc b k n-a n-b (ltk a s)) (enc a k (ltk b s)))))
     (uniq-orig k))
-  (defgenrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defgenrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defgenrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
-  (defgenrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defgenrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
-  (defgenrule shearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (comment "Yahalom protocol, Section 6.3.6, Page 49")
   (url "http://www.eecs.umich.edu/acal/swerve/docs/49-1.pdf"))
 
@@ -1055,42 +947,6 @@
     (trace (recv (cat b (enc a n-a n-b (ltk b s))))
       (send (cat (enc b k n-a n-b (ltk a s)) (enc a k (ltk b s)))))
     (uniq-orig k))
-  (defgenrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defgenrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defgenrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
-  (defgenrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defgenrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
-  (defgenrule shearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (comment "Yahalom protocol, Section 6.3.6, Page 49")
   (url "http://www.eecs.umich.edu/acal/swerve/docs/49-1.pdf"))
 

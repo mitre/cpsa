@@ -34,43 +34,7 @@
         (enc na1 nc1 c b (enc na0 nb0 b c (pubk a))
           (enc nb1 nc0 c a (pubk b)) (pubk a)))
       (recv (enc nc0 (enc nc1 (pubk c)) (pubk c))))
-    (uniq-orig nc0 nc1))
-  (defgenrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defgenrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defgenrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
-  (defgenrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defgenrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
-  (defgenrule shearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
+    (uniq-orig nc0 nc1)))
 
 (defskeleton nsl3
   (vars (na0 na1 nb0 nb1 nc0 nc1 text) (a b c name))
@@ -338,43 +302,7 @@
         (enc na1 nc1 c b (enc na0 nb0 b c (pubk a))
           (enc nb1 nc0 c a (pubk b)) (pubk a)))
       (recv (enc nc0 (enc nc1 (pubk c)) (pubk c))))
-    (uniq-orig nc0 nc1))
-  (defgenrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defgenrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defgenrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
-  (defgenrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defgenrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
-  (defgenrule shearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
+    (uniq-orig nc0 nc1)))
 
 (defskeleton nsl3
   (vars (na0 na1 nb0 nb1 nc0 nc1 text) (a b c name))
@@ -658,43 +586,7 @@
         (enc na1 nc1 c b (enc na0 nb0 b c (pubk a))
           (enc nb1 nc0 c a (pubk b)) (pubk a)))
       (recv (enc nc0 (enc nc1 (pubk c)) (pubk c))))
-    (uniq-orig nc0 nc1))
-  (defgenrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defgenrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defgenrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
-  (defgenrule scissorsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
-        (and (= z1 z2) (= i1 i2)))))
-  (defgenrule invShearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
-  (defgenrule shearsRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
+    (uniq-orig nc0 nc1)))
 
 (defskeleton nsl3
   (vars (na0 na1 nb0 nb1 nc0 nc1 text) (a b c name))

@@ -701,15 +701,15 @@ instantiateAForm e (Prec (x, i) (y, j)) =
 instantiateAForm e (Non t) =
     (Non (instantiate e t))
 instantiateAForm e (Pnon t) =
-    (Pnon (instantiate e t)) 
+    (Pnon (instantiate e t))
 instantiateAForm e (Uniq t) =
-    (Uniq (instantiate e t)) 
+    (Uniq (instantiate e t))
 instantiateAForm e (UniqAt t (z, i)) =
     (UniqAt
      (instantiate e t)
      ((instantiate e z), (instantiate e i)))
 instantiateAForm e (Ugen t) =
-    (Ugen (instantiate e t)) 
+    (Ugen (instantiate e t))
 instantiateAForm e (UgenAt t (z, i)) =
     (UgenAt
      (instantiate e t)
@@ -735,7 +735,7 @@ instantiateAForm e (Commpair (s,t) (s',t')) =
      ((instantiate e s), (instantiate e t))
      ((instantiate e s'), (instantiate e t')))
 instantiateAForm e (SameLocn (s,t) (s',t')) =
-    (SameLocn 
+    (SameLocn
      ((instantiate e s), (instantiate e t))
      ((instantiate e s'), (instantiate e t')))
 instantiateAForm e (StateNode (s,t)) =
@@ -748,12 +748,6 @@ instantiateAForm e (LeadsTo (s,t) (s',t')) =
     (LeadsTo
      ((instantiate e s), (instantiate e t))
      ((instantiate e s'), (instantiate e t')))
-
-
-
-
-
-
 
 data Rule
   = Rule { rlname :: String,    -- Name of rule

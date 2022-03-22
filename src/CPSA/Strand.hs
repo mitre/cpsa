@@ -1206,8 +1206,8 @@ checkGenSt g g' env =
     all (\gs -> (instantiate e gs) `elem` genStVs') genStVs
 
 gist :: Preskel -> Gist
--- gist = mkGist 
-gist = kgist 
+-- gist = mkGist
+gist = kgist
 
 -- Preskeleton Reduction System (PRS)
 

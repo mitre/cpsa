@@ -264,7 +264,7 @@ step p h ks m oseen n seen todo toobig (Reduct lk _ _  _  : reducts)
     | nstrands (content lk) >= optBound p = -- Check strand count
         step p h ks m oseen n seen todo (lk : toobig) reducts
 step p h ks m oseen n seen todo toobig (ReductStable lk : reducts) =
-    case recall (wasSeen (gist (content lk))) seen of 
+    case recall (wasSeen (gist (content lk))) seen of
       Just (_, _) ->
       --           zP ("seen", label lk) $
           step p h ks m oseen n seen todo toobig reducts
@@ -406,7 +406,7 @@ commentPreskel :: LPreskel -> [Int] -> [Node] -> Kind ->
 commentPreskel lk seen unrealized kind anno msg =
     let realizedToken = case (null unrealized) of
                           True -> "realized"
-                          False -> "unrealized" in 
+                          False -> "unrealized" in
     displayPreskel k $
     addKeyValues "label" [N () (label lk)] $
     maybeAddVKeyValues "parent" (\p -> [N () (label p)]) (parent lk) $
