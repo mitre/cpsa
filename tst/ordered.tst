@@ -11,7 +11,13 @@
     (forall ((y z strd))
       (implies
         (and (p "dec" y 2) (p "dec" z 2))
-        (or (prec y 1 z 0) (prec z 1 y 0) (= y z))))))
+        (or (prec y 1 z 0) (prec z 1 y 0) (= y z)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton ordered
   (vars (a b text) (k k-0 akey))
@@ -54,19 +60,6 @@
   (maps ((0 1) ((a a) (b b) (k k) (k-0 k-0))))
   (origs))
 
-(defskeleton ordered
-  (vars (b text) (k akey))
-  (defstrand dec 2 (t b) (k k))
-  (facts (neq b b))
-  (rule order)
-  (traces ((recv (enc b k)) (send b)))
-  (label 3)
-  (parent 0)
-  (realized)
-  (shape)
-  (maps ((0 0) ((a b) (b b) (k k) (k-0 k))))
-  (origs))
-
 (comment "Nothing left to do")
 
 (defprotocol ordered basic
@@ -77,17 +70,22 @@
     (forall ((y z strd))
       (implies
         (and (p "dec" y 2) (p "dec" z 2))
-        (or (prec y 1 z 0) (prec z 1 y 0) (= y z))))))
+        (or (prec y 1 z 0) (prec z 1 y 0) (= y z)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton ordered
   (vars (b text) (k akey))
   (defstrand dec 2 (t b) (k k))
   (facts (neq b b))
   (traces ((recv (enc b k)) (send b)))
-  (label 4)
+  (label 3)
   (realized)
-  (shape)
-  (maps ((0) ((b b) (k k))))
-  (origs))
+  (origs)
+  (comment "Not closed under rules"))
 
 (comment "Nothing left to do")
