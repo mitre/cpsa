@@ -25,16 +25,27 @@
                 "configuration": "./cpsa.language-configuration.json"
             }
         ],
+        "configuration": {
+            "title": "CPSA",
+            "properties": {
+                "CPSA.build.compilerVersion": {
+                    "description": "Which version of the CPSA compiler to call as a subprocess when building.",
+                    "type": "string",
+                    "default": "cpsa3",
+                    "enum": ["cpsa3", "cpsa4"]
+                }
+            }
+        },
         "commands": [
             {
-                "command": "vscode-cpsa.execCPSA4CurrentFile",
-                "title": "Run CPSA4 on the current file"
+                "command": "vscode-cpsa.execCPSACurrentFile",
+                "title": "Run CPSA on the current file"
             }
         ],
         "menus": {
             "editor/title/run": [
                 {
-                    "command": "vscode-cpsa.execCPSA4CurrentFile",
+                    "command": "vscode-cpsa.execCPSACurrentFile",
                     "when": "resourceLangId == cpsa"
                 }
             ]
@@ -48,7 +59,7 @@
         ],
         "problemMatchers": [
             {
-                "name": "cpsa4",
+                "name": "cpsa",
                 "owner": "cpsa",
                 "fileLocation": ["autoDetect", "${workspaceFolder}"],
                 "pattern": {

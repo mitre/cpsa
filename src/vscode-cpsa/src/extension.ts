@@ -10,17 +10,29 @@ export function activate(context: vscode.ExtensionContext) {
     // The commandId parameter must match the command field in
     // package.json.
     let disposable = vscode.commands.registerCommand(
-        'vscode-cpsa.execCPSA4CurrentFile',
+        'vscode-cpsa.execCPSACurrentFile',
         uri => executeFile(uri)
     );
     context.subscriptions.push(disposable);
 }
 
+const cpsa3_paths = {
+    'cpsa': 'cpsa',
+    'cpsashapes': 'cpsashapes',
+    'cpsagraph': 'cpsagraph'
+};
+
+const cpsa4_paths = {
+    'cpsa': 'cpsa4',
+    'cpsashapes': 'cpsa4shapes',
+    'cpsagraph': 'cpsa4graph'
+};
+
 // Run CPSA on a specific source file to generate the `.txt`, `.xhtml` and
-// `_shapes.txt` output files, just like the conventional CPSA4 Makefile
+// `_shapes.txt` output files, just like the conventional CPSA Makefile
 // would create.
 // This function is set up to be triggered by the
-// `vscode-cpsa.execCPSA4CurrentFile` command.
+// `vscode-cpsa.execCPSACurrentFile` command.
 //
 // This works by creating ephemeral `Task`s, and immediately running them
 // with `vscode.tasks.executeTask()`. Normally an extension informs VSCode
@@ -40,51 +52,69 @@ async function executeFile(uri: vscode.Uri) {
     let out_shapes = parsed.name + '_shapes.txt';
     let out_shapes_xhtml = parsed.name + '_shapes.xhtml';
 
+    let config = vscode.workspace.getConfiguration('CPSA.build');
+    let compilerVersion = config.get('compilerVersion');
+
+    let cpsa_paths = undefined;
+    switch (compilerVersion) {
+        case 'cpsa3':
+            cpsa_paths = cpsa3_paths;
+            break;
+        case 'cpsa4':
+            cpsa_paths = cpsa4_paths;
+            break;
+        default:
+            // Default to CPSA 3 paths.
+            // TODO print a warning
+            cpsa_paths = cpsa3_paths;
+            break;
+    }
+
     let txt_task = new vscode.Task(
-        {'type': 'cpsa4build'},
+        {'type': 'cpsabuild'},
         vscode.TaskScope.Workspace,
         // User-visible name of this Task
-        'cpsa4 on current file',
-        'cpsa4build',
-        new vscode.ProcessExecution('cpsa4', ['-o', out_txt, source]),
-        // Refers to the `cpsa4` Problem Matcher defined in `package.json`
-        '$cpsa4'
+        `${cpsa_paths.cpsa} on current file`,
+        'cpsabuild',
+        new vscode.ProcessExecution(cpsa_paths.cpsa, ['-o', out_txt, source]),
+        // Refers to the `cpsa` Problem Matcher defined in `package.json`
+        '$cpsa'
     );
     await wait_for_task(txt_task);
 
     let xhtml_task = new vscode.Task(
-        {'type': 'cpsa4build'},
+        {'type': 'cpsabuild'},
         vscode.TaskScope.Workspace,
         // User-visible name of this Task
-        'cpsa4graph on generated .txt',
-        'cpsa4build',
-        new vscode.ProcessExecution('cpsa4graph', ['-o', out_xhtml, out_txt]),
-        // Refers to the `cpsa4` Problem Matcher defined in `package.json`
-        '$cpsa4'
+        `${cpsa_paths.cpsagraph} on generated .txt`,
+        'cpsabuild',
+        new vscode.ProcessExecution(cpsa_paths.cpsagraph, ['-o', out_xhtml, out_txt]),
+        // Refers to the `cpsa` Problem Matcher defined in `package.json`
+        '$cpsa'
     );
     await wait_for_task(xhtml_task);
 
     let shapes_task = new vscode.Task(
-        {'type': 'cpsa4build'},
+        {'type': 'cpsabuild'},
         vscode.TaskScope.Workspace,
         // User-visible name of this Task
-        'cpsa4shapes on generated .txt',
-        'cpsa4build',
-        new vscode.ProcessExecution('cpsa4shapes', ['-o', out_shapes, out_txt]),
-        // Refers to the `cpsa4` Problem Matcher defined in `package.json`
-        '$cpsa4'
+        `${cpsa_paths.cpsashapes} on generated .txt`,
+        'cpsabuild',
+        new vscode.ProcessExecution(cpsa_paths.cpsashapes, ['-o', out_shapes, out_txt]),
+        // Refers to the `cpsa` Problem Matcher defined in `package.json`
+        '$cpsa'
     );
     await wait_for_task(shapes_task);
 
     let shapes_xhtml_task = new vscode.Task(
-        {'type': 'cpsa4build'},
+        {'type': 'cpsabuild'},
         vscode.TaskScope.Workspace,
         // User-visible name of this Task
-        'cpsa4graph on generated _shapes.txt',
-        'cpsa4build',
-        new vscode.ProcessExecution('cpsa4graph', ['-o', out_shapes_xhtml, out_shapes]),
-        // Refers to the `cpsa4` Problem Matcher defined in `package.json`
-        '$cpsa4'
+        `${cpsa_paths.cpsagraph} on generated _shapes.txt`,
+        'cpsabuild',
+        new vscode.ProcessExecution(cpsa_paths.cpsagraph, ['-o', out_shapes_xhtml, out_shapes]),
+        // Refers to the `cpsa` Problem Matcher defined in `package.json`
+        '$cpsa'
     );
     await wait_for_task(shapes_xhtml_task);
 }

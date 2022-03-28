@@ -7,6 +7,17 @@ and this project follows the [Semantic Versioning](https://semver.org/spec/v2.0.
 
 ## Unreleased
 
+Breaking change: The extension now defaults to using CPSA version 3 rather
+than 4. Users who use CPSA4 will need to
+[change the setting](https://code.visualstudio.com/docs/getstarted/settings#_settings-editor)
+under Settings -> Extensions -> CPSA. The setting is called "Build: Compiler
+Version".
+
+### Added
+
+- The extension can now make use of both CPSA 3 and 4, switching between them
+  with a configuration setting. The default is set to CPSA 3.
+
 ## [0.2.1] - 2022-03-18
 
 ### Fixed

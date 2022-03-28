@@ -10,15 +10,21 @@ This extension adds support for CPSA to VS Code.
   detected as CPSA source code (`.scm`, `.lsp`). The button will build the
   output `.txt`, `.xhtml`, and `_shapes.txt` files for the
   currently-edited CPSA file. The file names are compatible with existing
-  Makefile conventions used with CPSA4.
+  Makefile conventions used with CPSA.
 - When the CPSA source has errors, the messages are parsed so that the
   user can see where in the code an error was found.
 
 ## Requirements
 
-The extension requires that CPSA4 be installed.
-VSCode needs to be able to call the `cpsa4`, `cpsa4graph`, and
-`cpsa4shapes` binaries.
+The extension requires that CPSA be installed. Both CPSA 3 and CPSA 4 are
+supported.  VSCode needs to be able to call the `cpsa`, `cpsagraph`, and
+`cpsashapes` binaries. For CPSA 4, these are named `cpsa4`, `cpsa4graph`,
+and `cpsa4shapes`, respectively.
+The extension needs to be configured for which CPSA version you have
+installed. Version 3 is the default. First
+[go to the Settings menu](https://code.visualstudio.com/docs/getstarted/settings#_settings-editor)
+and then select Extensions -> CPSA to find the "Build: Compiler Version"
+setting.
 
 The extension currently depends on features from VSCode 1.54 (February
 2021) or newer.
