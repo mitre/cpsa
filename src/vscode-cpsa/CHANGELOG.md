@@ -7,6 +7,8 @@ and this project follows the [Semantic Versioning](https://semver.org/spec/v2.0.
 
 ## Unreleased
 
+## [0.3.0] - 2022-03-28
+
 Breaking change: The extension now defaults to using CPSA version 3 rather
 than 4. Users who use CPSA4 will need to
 [change the setting](https://code.visualstudio.com/docs/getstarted/settings#_settings-editor)
@@ -60,6 +62,7 @@ Initial testing release.
 - The errors from CPSA are detected with a Problem Matcher, to integrate
   with VSCode's built in error-highlighting features.
 
+[0.3.0]: https://artifacts.mitre.org/artifactory/generic-vscode-cpsa-local/vscode-cpsa-0.3.0.vsix
 [0.2.1]: https://artifacts.mitre.org/artifactory/generic-vscode-cpsa-local/vscode-cpsa-0.2.1.vsix
 [0.2.0]: https://artifacts.mitre.org/artifactory/generic-vscode-cpsa-local/vscode-cpsa-0.2.0.vsix
 [0.1.0]: https://artifacts.mitre.org/artifactory/generic-vscode-cpsa-local/vscode-cpsa-0.1.0.vsix
