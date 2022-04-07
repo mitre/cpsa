@@ -1,8 +1,13 @@
+2022-04-07  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/CPSA/{Graph,SAS,Shapes}/Main.hs: Removed extra quotes in
+	error messages.
+
 2022-03-25  Joshua D. Guttman  <guttman@mitre.org>
 
 	* src/CPSA/Loader.hs (loadRole etc):  Distinguish state-specific
 	generated rules from other generated rules so that only the state
-	rules will be omitted if state is not in use.  
+	rules will be omitted if state is not in use.
 
 2022-03-22  John D. Ramsdell  <ramsdell@mitre.org>
 
