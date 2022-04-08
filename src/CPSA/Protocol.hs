@@ -16,7 +16,7 @@ module CPSA.Protocol (Event (..), evtCm, evtTerm, evtChan, evtMap, evt,
     addVars, firstOccurs, paramOfName, envsRoleParams,
     AForm (..), NodeTerm, Goal (..),
     aFormOrder, aFreeVars, instantiateAForm, Rule (..),
-    Prot, mkProt, pname, alg, pgen, roles,
+    Prot, mkProt, pname, alg, pgen, psig, roles,
     nullaryrules, unaryrules, generalrules, rules, userrules, generatedrules,
     listenerRole, varsAllAtoms, pcomment) where
 

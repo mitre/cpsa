@@ -47,13 +47,13 @@ loadSExpr sig nom origin (ps, ks) (L pos (S _ "defprotocol" : xs)) =
     do
       p <- loadProt sig nom origin pos xs
       return (p : ps, ks)
-loadSExpr sig _ _ (ps, ks) (L pos (S _ "defskeleton" : xs)) =
+loadSExpr _ _ _ (ps, ks) (L pos (S _ "defskeleton" : xs)) =
     do
-      k <- findPreskel sig pos ps xs
+      k <- findPreskel pos ps xs
       return (ps, k : ks)
-loadSExpr sig _ _ (ps, ks) (L pos (S _ "defgoal" : xs)) =
+loadSExpr _ _ _ (ps, ks) (L pos (S _ "defgoal" : xs)) =
     do
-      k <- findGoal sig pos ps xs
+      k <- findGoal pos ps xs
       return (ps, k : ks)
 loadSExpr _ _ _ (ps, ks) (L _ (S _ "comment" : _)) = return (ps, ks)
 loadSExpr _ _ _ (ps, ks) (L _ (S _ "herald" : _)) = return (ps, ks)
@@ -1196,13 +1196,13 @@ loadVarExprTerm sig vars x =
 
 -- Find protocol and then load a preskeleton.
 
-findPreskel :: MonadFail m => Sig -> Pos -> [Prot] ->
+findPreskel :: MonadFail m => Pos -> [Prot] ->
                [SExpr Pos] -> m Preskel
-findPreskel sig pos ps (S _ name : xs) =
+findPreskel pos ps (S _ name : xs) =
     case L.find (\p -> name == pname p) ps of
       Nothing -> fail (shows pos $ "Protocol " ++ name ++ " unknown")
-      Just p -> loadPreskel sig pos p xs
-findPreskel _ pos _ _ = fail (shows pos "Malformed skeleton")
+      Just p -> loadPreskel (psig p) pos p xs
+findPreskel pos _ _ = fail (shows pos "Malformed skeleton")
 
 loadPreskel :: MonadFail m => Sig -> Pos -> Prot -> [SExpr Pos] -> m Preskel
 loadPreskel sig pos p (L _ (S _ "vars" : vars) : xs) =
@@ -1415,12 +1415,13 @@ addInstOrigs (nr, ar, ur, ug, ab, cn, au) i =
 -- Security goals
 
 -- Load a defgoal form
-findGoal :: MonadFail m => Sig -> Pos -> [Prot] -> [SExpr Pos] -> m Preskel
-findGoal sig pos ps (S _ name : x : xs) =
+findGoal :: MonadFail m => Pos -> [Prot] -> [SExpr Pos] -> m Preskel
+findGoal pos ps (S _ name : x : xs) =
     case L.find (\p -> name == pname p) ps of
       Nothing -> fail (shows pos $ "Protocol " ++ name ++ " unknown")
       Just p ->
         do
+          let sig = psig p
           (g, goal, antec) <- loadSentence sig RoleSpec pos p (pgen p) x
           let (gs, xs') = findAlist xs
           (g, goals) <- loadGoals sig pos p g gs
@@ -1430,7 +1431,7 @@ findGoal sig pos ps (S _ name : x : xs) =
                 loadComment "comment" (assoc "comment" xs')
           -- Make and return the characteristic skeleton of a security goal
           characteristic pos p (goal : goals) g antec kcomment
-findGoal _ pos _ _ = fail (shows pos "Malformed goal")
+findGoal pos _ _ = fail (shows pos "Malformed goal")
 
 -- Separate argument into goals and any remaining elements of an
 -- association list.
