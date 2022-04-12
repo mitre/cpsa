@@ -7,6 +7,13 @@ and this project follows the [Semantic Versioning](https://semver.org/spec/v2.0.
 
 ## Unreleased
 
+### Added
+
+- The extension now runs `cpsa`/`cpsa4` with the appropriate RTS flags to
+  enable multithreading and limit GHC's runtime heap size to prevent
+  whole-system hangs. The heap size limit is configurable in the Settings
+  menu, and defaults to 512 MB.
+
 ### Fixed
 
 - Error squiggles are fixed. This was unexpectedly broken in version 0.2.1 due
