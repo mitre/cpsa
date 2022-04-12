@@ -61,7 +61,7 @@
             {
                 "name": "cpsa",
                 "owner": "cpsa",
-                "fileLocation": ["autoDetect", "${workspaceFolder}"],
+                "fileLocation": "autoDetect",
                 "pattern": {
                     "regexp": "^(.*):(\\d+):(\\d+):\\s+(.*)$",
                     "file": 1,
