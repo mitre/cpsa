@@ -21,7 +21,7 @@
             {
                 "id": "cpsa",
                 "aliases": ["CPSA"],
-                "extensions": [".scm", ".lsp", ".cpsa"],
+                "extensions": [".scm", ".lisp", ".lsp", ".cpsa"],
                 "configuration": "./cpsa.language-configuration.json"
             },
             {

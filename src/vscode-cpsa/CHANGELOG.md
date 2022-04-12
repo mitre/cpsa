@@ -14,6 +14,8 @@ and this project follows the [Semantic Versioning](https://semver.org/spec/v2.0.
   whole-system hangs. The heap size limit is configurable in the Settings
   menu, and defaults to 512 MB.
 
+- The extension now recognizes the `.lisp` file extension as CPSA source code.
+
 ### Fixed
 
 - Error squiggles are fixed. This was unexpectedly broken in version 0.2.1 due
