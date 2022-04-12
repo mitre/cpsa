@@ -7,6 +7,22 @@ and this project follows the [Semantic Versioning](https://semver.org/spec/v2.0.
 
 ## Unreleased
 
+### Fixed
+
+- Error squiggles are fixed. This was unexpectedly broken in version 0.2.1 due
+  to that fix serializing all build steps, allowing VSCode to use an
+  undocumented heuristic that causes error squiggles to be cleared when a
+  Problem Matcher gets re-used. Users may have seen an error squiggle briefly
+  appear, but then disappear right when a subsequent build step ran.
+
+  This release fixes error squiggles by simply making copies of the Problem
+  Matcher for each different build step. All error squiggles caused by
+  different build steps should persist until re-running the whole set, as
+  expected.
+
+  All build steps are still attempted, regardless of whether an earlier one
+  fails.
+
 ## [0.3.0] - 2022-03-28
 
 Breaking change: The extension now defaults to using CPSA version 3 rather

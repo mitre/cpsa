@@ -55,10 +55,6 @@ VSCode might need to be restarted.
 This extension assumes that CPSA is installed. If it isn't, there will be
 OS-specific error messages when it tries to run CPSA.
 
-The error highlighting only briefly displays correctly after the initial
-run of `cpsa` or `cpsa4`, but is then cleared after running later build
-steps.
-
 ## Developing on this extension
 
 Please see the DEVELOPING file.

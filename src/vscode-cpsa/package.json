@@ -23,6 +23,15 @@
                 "aliases": ["CPSA"],
                 "extensions": [".scm", ".lsp", ".cpsa"],
                 "configuration": "./cpsa.language-configuration.json"
+            },
+            {
+                "id": "cpsabuild_xhtml"
+            },
+            {
+                "id": "cpsabuild_shapes"
+            },
+            {
+                "id": "cpsabuild_shapes_xhtml"
             }
         ],
         "configuration": {
@@ -59,8 +68,44 @@
         ],
         "problemMatchers": [
             {
-                "name": "cpsa",
+                "name": "cpsabuild_txt",
                 "owner": "cpsa",
+                "fileLocation": "autoDetect",
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "message": 4
+                }
+            },
+            {
+                "name": "cpsabuild_shapes",
+                "owner": "cpsabuild_shapes",
+                "fileLocation": "autoDetect",
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "message": 4
+                }
+            },
+            {
+                "name": "cpsabuild_xhtml",
+                "owner": "cpsabuild_xhtml",
+                "fileLocation": "autoDetect",
+                "pattern": {
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "message": 4
+                }
+            },
+            {
+                "name": "cpsabuild_shapes_xhtml",
+                "owner": "cpsabuild_shapes_xhtml",
                 "fileLocation": "autoDetect",
                 "pattern": {
                     "regexp": "^(.*):(\\d+):(\\d+):\\s+(.*)$",

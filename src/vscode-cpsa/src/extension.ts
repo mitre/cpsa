@@ -71,50 +71,50 @@ async function executeFile(uri: vscode.Uri) {
     }
 
     let txt_task = new vscode.Task(
-        {'type': 'cpsabuild'},
+        {'type': 'cpsabuild_txt'},
         vscode.TaskScope.Workspace,
         // User-visible name of this Task
         `${cpsa_paths.cpsa} on current file`,
-        'cpsabuild',
+        'cpsabuild_txt',
         new vscode.ProcessExecution(cpsa_paths.cpsa, ['-o', out_txt, source]),
-        // Refers to the `cpsa` Problem Matcher defined in `package.json`
-        '$cpsa'
+        // Refers to a Problem Matcher defined in `package.json`
+        '$cpsabuild_txt'
     );
     await wait_for_task(txt_task);
 
     let xhtml_task = new vscode.Task(
-        {'type': 'cpsabuild'},
+        {'type': 'cpsabuild_xhtml'},
         vscode.TaskScope.Workspace,
         // User-visible name of this Task
         `${cpsa_paths.cpsagraph} on generated .txt`,
-        'cpsabuild',
+        'cpsabuild_xhtml',
         new vscode.ProcessExecution(cpsa_paths.cpsagraph, ['-o', out_xhtml, out_txt]),
-        // Refers to the `cpsa` Problem Matcher defined in `package.json`
-        '$cpsa'
+        // Refers to a Problem Matcher defined in `package.json`
+        '$cpsabuild_xhtml'
     );
     await wait_for_task(xhtml_task);
 
     let shapes_task = new vscode.Task(
-        {'type': 'cpsabuild'},
+        {'type': 'cpsabuild_shapes'},
         vscode.TaskScope.Workspace,
         // User-visible name of this Task
         `${cpsa_paths.cpsashapes} on generated .txt`,
-        'cpsabuild',
+        'cpsabuild_shapes',
         new vscode.ProcessExecution(cpsa_paths.cpsashapes, ['-o', out_shapes, out_txt]),
-        // Refers to the `cpsa` Problem Matcher defined in `package.json`
-        '$cpsa'
+        // Refers to a Problem Matcher defined in `package.json`
+        '$cpsabuild_shapes'
     );
     await wait_for_task(shapes_task);
 
     let shapes_xhtml_task = new vscode.Task(
-        {'type': 'cpsabuild'},
+        {'type': 'cpsabuild_shapes_xhtml'},
         vscode.TaskScope.Workspace,
         // User-visible name of this Task
         `${cpsa_paths.cpsagraph} on generated _shapes.txt`,
-        'cpsabuild',
+        'cpsabuild_shapes_xhtml',
         new vscode.ProcessExecution(cpsa_paths.cpsagraph, ['-o', out_shapes_xhtml, out_shapes]),
-        // Refers to the `cpsa` Problem Matcher defined in `package.json`
-        '$cpsa'
+        // Refers to a Problem Matcher defined in `package.json`
+        '$cpsabuild_shapes_xhtml'
     );
     await wait_for_task(shapes_xhtml_task);
 }
