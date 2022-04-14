@@ -70,13 +70,34 @@ async function executeFile(uri: vscode.Uri) {
             break;
     }
 
+    let ghcMemLimitMegabytes = config.get('ghcMemLimitMegabytes');
+
+    if (ghcMemLimitMegabytes === undefined) {
+        ghcMemLimitMegabytes = 512;
+    }
+
+    // https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/runtime_control.html#setting-rts-options-on-the-command-line
+    let rtsOpts = [
+        '+RTS',
+
+        // enable multithreading with auto-detected thread count
+        // https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/using-concurrent.html#rts-flag--N
+        '-N',
+
+        // limit GHC runtime heap size
+        // https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/runtime_control.html#rts-flag--M%20%E2%9F%A8size%E2%9F%A9
+        `-M ${ghcMemLimitMegabytes}m`,
+
+        '-RTS'
+    ];
+
     let txt_task = new vscode.Task(
         {'type': 'cpsabuild_txt'},
         vscode.TaskScope.Workspace,
         // User-visible name of this Task
         `${cpsa_paths.cpsa} on current file`,
         'cpsabuild_txt',
-        new vscode.ProcessExecution(cpsa_paths.cpsa, ['-o', out_txt, source]),
+        new vscode.ProcessExecution(cpsa_paths.cpsa, [...rtsOpts, '-o', out_txt, source]),
         // Refers to a Problem Matcher defined in `package.json`
         '$cpsabuild_txt'
     );

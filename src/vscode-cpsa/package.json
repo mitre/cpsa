@@ -42,6 +42,11 @@
                     "type": "string",
                     "default": "cpsa3",
                     "enum": ["cpsa3", "cpsa4"]
+                },
+                "CPSA.build.ghcMemLimitMegabytes": {
+                    "description": "How much RAM, at maximum, that will be allocated to GHC's runtime heap while building. If GHC exceeds this amount it will crash (preferable to hanging your entire system).",
+                    "type": "number",
+                    "default": 512
                 }
             }
         },
