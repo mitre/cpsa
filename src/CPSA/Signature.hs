@@ -175,6 +175,8 @@ loadType (S pos sym) =
     _ -> fail (shows pos "Bad type in language")
 loadType (L _ [S _ "tupl", N _ n]) =
   return $  TTupl n
+loadType (L _ [S _ "tuple", N _ n]) =
+  return $  TTupl n
 loadType x =
   fail (shows (annotation x) "Bad type in language")
 
