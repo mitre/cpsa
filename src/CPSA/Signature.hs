@@ -54,40 +54,54 @@ defaultSig = Sig {
   opers = [Enc("enc"), Hash("hash")]
   }
 
-isValidSig :: Sig -> Bool
-isValidSig sig = isValidAtoms sig && isValidOpers (opers sig)
-
--- Ensure no atom is bad, and every akey is in atoms.
-isValidAtoms :: Sig -> Bool
-isValidAtoms sig =
-  all (\s -> notElem s badAtoms) (atoms sig) &&
+-- Ensure every akey is in atoms.
+isValidAkeys :: Sig -> Bool
+isValidAkeys sig =
   all (\s -> elem s (atoms sig)) (akeys sig)
 
 badAtoms :: [String]
 badAtoms = ["mesg", "name", "chan", "locn", "indx", "pval", "strd"]
 
--- Ensure no operators is a bad operator and that there are no duplicates.
-isValidOpers :: [Operator] -> Bool
-isValidOpers opers =
-  loop [] opers
-  where
-    loop acc [] =
-      length acc == length (nub acc) -- Ensure no duplicates
-    loop acc (Enc s : opers) =
-      notElem s badOpers && loop (s : acc) opers
-    loop acc (Senc s : opers) =
-      notElem s badOpers && loop (s : acc) opers
-    loop acc (Aenc s : opers) =
-      notElem s badOpers && loop (s : acc) opers
-    loop acc (Sign s : opers) =
-      notElem s badOpers && loop (s : acc) opers
-    loop acc (Hash s : opers) =
-      notElem s badOpers && loop (s : acc) opers
-    loop acc (Tupl s n : opers) =
-      notElem s badOpers && n > 0 && loop (s : acc) opers
+badAtom :: MonadFail m => Pos -> String -> m ()
+badAtom pos sym
+  | elem sym badAtoms =
+      fail (shows pos ("Bad atom " ++ sym ++ " in language"))
+badAtom _ _ = return ()
+
+operSym :: Operator -> String
+operSym (Enc sym) = sym
+operSym (Senc sym) = sym
+operSym (Aenc sym) = sym
+operSym (Sign sym) = sym
+operSym (Hash sym) = sym
+operSym (Tupl sym _) = sym
 
 badOpers :: [String]
 badOpers = ["pubk", "privk", "invk", "ltk", "cat"]
+
+badOper :: MonadFail m => Pos -> Operator -> m ()
+badOper pos (Enc sym)
+  | elem sym badOpers =
+      fail (shows pos ("Bad enc operator " ++ sym ++ " in language"))
+badOper pos (Senc sym)
+  | elem sym badOpers =
+      fail (shows pos ("Bad senc operator " ++ sym ++ " in language"))
+badOper pos (Aenc sym)
+  | elem sym badOpers =
+      fail (shows pos ("Bad aenc operator " ++ sym ++ " in language"))
+badOper pos (Sign sym)
+  | elem sym badOpers =
+      fail (shows pos ("Bad sign operator " ++ sym ++ " in language"))
+badOper pos (Hash sym)
+  | elem sym badOpers =
+      fail (shows pos ("Bad hash operator " ++ sym ++ " in language"))
+badOper pos (Tupl sym _)
+  | elem sym badOpers =
+      fail (shows pos ("Bad tupl operator " ++ sym ++ " in language"))
+badOper pos (Tupl _ n)
+  | 1 > n =
+      fail (shows pos ("Bad tupl length " ++ show n ++ " in language"))
+badOper _ _ = return ()
 
 -- Load a signature
 
@@ -107,14 +121,21 @@ loadSig pos decls =
           atoms = nub (aks ++ ats),
           akeys = nub aks,
           opers = ops }
-    case isValidSig sig of
+    mapM_ (badAtom pos) (atoms sig)
+    mapM_ (badOper pos) (opers sig)
+    case isValidAkeys sig of
+      True -> return ()
+      False ->
+        fail (shows pos "Invalid language because an akey is not in atoms")
+    let syms = map operSym (opers sig)
+    case length syms == length (nub syms) of
       True -> return sig
-      False -> fail (shows pos "Invalid signature")
+      False -> fail (shows pos "Duplicate operator symbol in language")
 
 loadDecl :: MonadFail m => ([String], [String], [Operator]) ->
             SExpr Pos -> m ([String], [String], [Operator])
 loadDecl (ats, aks, ops) (L pos xs)
-  | length xs < 2 = fail (shows pos "Malformed lang field")
+  | length xs < 2 = fail (shows pos "Malformed declaration in language")
   | otherwise =
     do
       typ <- loadType (last xs)
@@ -129,7 +150,7 @@ loadDecl (ats, aks, ops) (L pos xs)
         THash -> return (ats, aks, map Hash syms ++ ops)
         TTupl n -> return (ats, aks, map (\s -> Tupl s n) syms ++ ops)
 loadDecl _ x =
-  fail (shows (annotation x) "Malformed lang field")
+  fail (shows (annotation x) "Malformed declaration in language")
 
 data Type
   = TAtom
@@ -151,13 +172,13 @@ loadType (S pos sym) =
     "aenc" -> return TAenc
     "sign" -> return TSign
     "hash" -> return THash
-    _ -> fail (shows pos "Bad type in signature")
+    _ -> fail (shows pos "Bad type in language")
 loadType (L _ [S _ "tupl", N _ n]) =
   return $  TTupl n
 loadType x =
-  fail (shows (annotation x) "Bad type in signature")
+  fail (shows (annotation x) "Bad type in language")
 
 loadSym :: MonadFail m => SExpr Pos -> m String
 loadSym (S _ sym) = return sym
 loadSym x =
-  fail (shows (annotation x) "Bad symbol in signature")
+  fail (shows (annotation x) "Bad symbol in language")
