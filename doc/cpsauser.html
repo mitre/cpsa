@@ -159,7 +159,7 @@ RULE       ::= (defrule ID SENTENCE RULE-ALIST)
 RULE-ALIST ::= ...
 PROT-ALIST ::= (lang LDECL*) PROT-ALIST | ...
 LDECL      ::= (ID+ KIND)
-KIND       ::= atom | akey | hash | (tupl INT)
+KIND       ::= atom | akey | hash | (tuple INT)
             |  enc | senc | aenc | sign</pre>
 </blockquote>
 
@@ -276,7 +276,7 @@ EXPT ::= ID | (one) | (mul EXPT EXPT) | (inv EXPT)</pre>
 <blockquote>
   <pre>(defprotocol cert basic
   ...
-  (lang (cert-body (tupl 3))))</pre>
+  (lang (cert-body (tuple 3))))</pre>
 </blockquote>
 
 <p>adds one tupling operation so that the example above can be written as</p>
@@ -292,7 +292,7 @@ EXPT ::= ID | (one) | (mul EXPT EXPT) | (inv EXPT)</pre>
 <blockquote>
   <pre>LANG  ::= (lang LDECL*)
 LDECL ::= (ID+ KIND)
-KIND  ::= atom | akey | hash | (tupl INT)
+KIND  ::= atom | akey | hash | (tuple INT)
        |  enc | senc | aenc | sign</pre>
 </blockquote>
 
@@ -318,7 +318,7 @@ There are eight kinds of ways that CPSA algebras can be extended.
     hash.</li>
 
   <li>An N-ary operation is added to the algebra when a symbol is
-    declared to be of kind (<code>tupl</code> N).  As with
+    declared to be of kind (<code>tuple</code> N).  As with
     concatenation, the adversary can construct and extract contents of
     tuples.  N must be positive.</li>
 

@@ -97,10 +97,10 @@ badOper pos (Hash sym)
       fail (shows pos ("Bad hash operator " ++ sym ++ " in language"))
 badOper pos (Tupl sym _)
   | elem sym badOpers =
-      fail (shows pos ("Bad tupl operator " ++ sym ++ " in language"))
+      fail (shows pos ("Bad tuple operator " ++ sym ++ " in language"))
 badOper pos (Tupl _ n)
   | 1 > n =
-      fail (shows pos ("Bad tupl length " ++ show n ++ " in language"))
+      fail (shows pos ("Bad tuple length " ++ show n ++ " in language"))
 badOper _ _ = return ()
 
 -- Load a signature
@@ -109,7 +109,7 @@ badOper _ _ = return ()
 --
 -- DECL ::= (SYMBOL+ TYPE)
 --
--- TYPE ::= atom | akey | hash | (tupl N)
+-- TYPE ::= atom | akey | hash | (tuple N)
 --       | enc | senc | aenc | sign.
 
 loadSig :: MonadFail m => Pos -> [SExpr Pos] -> m Sig
@@ -173,9 +173,9 @@ loadType (S pos sym) =
     "sign" -> return TSign
     "hash" -> return THash
     _ -> fail (shows pos "Bad type in language")
-loadType (L _ [S _ "tupl", N _ n]) =
-  return $  TTupl n
 loadType (L _ [S _ "tuple", N _ n]) =
+  return $  TTupl n
+loadType (L _ [S _ "tupl", N _ n]) = -- Legacy support
   return $  TTupl n
 loadType x =
   fail (shows (annotation x) "Bad type in language")
