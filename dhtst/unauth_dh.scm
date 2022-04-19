@@ -1,6 +1,8 @@
-(herald basic-dh (algebra diffie-hellman))
+;; Unauthenticated Diffie-Hellman
 
-(defprotocol basic-dh diffie-hellman
+(herald unauth-dh (algebra diffie-hellman))
+
+(defprotocol unauth-dh diffie-hellman
   (defrole init
     (vars (a rndx) (b base) (n text))
     (trace
@@ -19,11 +21,10 @@
      (send n))
     (uniq-gen a)))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars)
   (defstrand init 4))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars)
   (defstrand recv 4))
-  

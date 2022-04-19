@@ -1,9 +1,9 @@
-(herald basic-dh (algebra diffie-hellman))
+(herald unauth-dh (algebra diffie-hellman))
 
 (comment "CPSA 4.3.1")
-(comment "All input read from basic_dh.scm")
+(comment "All input read from unauth_dh.scm")
 
-(defprotocol basic-dh diffie-hellman
+(defprotocol unauth-dh diffie-hellman
   (defrole init
     (vars (a rndx) (b base) (n text))
     (trace (send (exp (gen) a)) (recv b) (send (enc n (exp b a)))
@@ -22,7 +22,7 @@
   (defgenrule neqRl_mesg
     (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a rndx))
   (defstrand init 4 (n n) (b b) (a a))
   (uniq-orig n)
@@ -34,7 +34,7 @@
   (origs (n (0 2)))
   (comment "2 in cohort - 2 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 rndx))
   (defstrand init 4 (n n) (b b) (a a))
   (defstrand recv 4 (n n) (b (exp b (mul a (rec a-0)))) (a a-0))
@@ -51,7 +51,7 @@
   (unrealized (1 0))
   (comment "5 in cohort - 5 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a rndx))
   (defstrand init 4 (n n) (b b) (a a))
   (deflistener (exp b a))
@@ -68,7 +68,7 @@
   (unrealized (1 0))
   (comment "5 in cohort - 5 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) a)) (a a-0))
   (defstrand recv 4 (n n) (b (exp (gen) a-0)) (a a))
@@ -86,7 +86,7 @@
   (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0))) (a a))
   (defstrand recv 4 (n n) (b (gen)) (a a-0))
@@ -105,7 +105,7 @@
   (unrealized (0 1))
   (comment "2 in cohort - 2 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0 a-1))) (a a))
   (defstrand recv 4 (n n) (b (exp (gen) a-1)) (a a-0))
@@ -126,7 +126,7 @@
   (unrealized (0 1))
   (comment "3 in cohort - 3 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0 a-1))) (a a))
   (defstrand recv 4 (n n) (b (exp (gen) a-1)) (a a-0))
@@ -147,7 +147,7 @@
   (unrealized (0 1))
   (comment "3 in cohort - 3 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 rndx) (w expt))
   (defstrand init 4 (n n) (b b) (a a))
   (defstrand recv 4 (n n) (b (exp b (mul a (rec a-0)))) (a a-0))
@@ -170,7 +170,7 @@
   (unrealized (2 0))
   (comment "4 in cohort - 4 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx))
   (defstrand init 4 (n n) (b (gen)) (a a))
   (deflistener (exp (gen) a))
@@ -186,7 +186,7 @@
   (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx))
   (defstrand init 4 (n n) (b (exp (gen) (rec a))) (a a))
   (deflistener (gen))
@@ -203,7 +203,7 @@
   (unrealized (0 1))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0))) (a a))
   (deflistener (exp (gen) a-0))
@@ -222,7 +222,7 @@
   (unrealized (0 1))
   (comment "2 in cohort - 2 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0))) (a a))
   (deflistener (exp (gen) a-0))
@@ -241,7 +241,7 @@
   (unrealized (0 1))
   (comment "2 in cohort - 2 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a rndx) (w expt))
   (defstrand init 4 (n n) (b b) (a a))
   (deflistener (exp b a))
@@ -262,7 +262,7 @@
   (unrealized (2 0))
   (comment "4 in cohort - 4 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) a)) (a a-0))
   (uniq-orig n)
@@ -278,7 +278,7 @@
   (maps ((0) ((a a-0) (b (exp (gen) a)) (n n))))
   (origs (n (0 2))))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0))) (a a))
   (defstrand recv 4 (n n) (b (gen)) (a a-0))
@@ -302,7 +302,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0))) (a a))
   (defstrand recv 4 (n n) (b (gen)) (a a-0))
@@ -325,7 +325,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0 a-1))) (a a))
   (defstrand recv 4 (n n) (b (exp (gen) a-1)) (a a-0))
@@ -352,7 +352,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0 a-1))) (a a))
   (defstrand recv 4 (n n) (b (exp (gen) a-1)) (a a-0))
@@ -379,7 +379,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0 a-1))) (a a))
   (defstrand recv 4 (n n) (b (exp (gen) a-1)) (a a-0))
@@ -406,7 +406,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0 a-1))) (a a))
   (defstrand recv 4 (n n) (b (exp (gen) a-1)) (a a-0))
@@ -433,7 +433,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0 a-1))) (a a))
   (defstrand recv 4 (n n) (b (exp (gen) a-1)) (a a-0))
@@ -460,7 +460,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0 a-1))) (a a))
   (defstrand recv 4 (n n) (b (exp (gen) a-1)) (a a-0))
@@ -487,7 +487,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx) (w expt) (a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul a w))) (a a-0))
   (defstrand recv 4 (n n) (b (exp (gen) (mul w a-0))) (a a))
@@ -509,7 +509,7 @@
   (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx) (w expt))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0 w))) (a a))
   (defstrand recv 4 (n n) (b (exp (gen) w)) (a a-0))
@@ -532,7 +532,7 @@
   (unrealized (0 1))
   (comment "2 in cohort - 2 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx) (w expt) (a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0 w a-1))) (a a))
   (defstrand recv 4 (n n) (b (exp (gen) (mul w a-1))) (a a-0))
@@ -556,7 +556,7 @@
   (unrealized (0 1))
   (comment "2 in cohort - 2 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 rndx) (w expt) (a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0 w a-1))) (a a))
   (defstrand recv 4 (n n) (b (exp (gen) (mul w a-1))) (a a-0))
@@ -580,7 +580,7 @@
   (unrealized (0 1))
   (comment "2 in cohort - 2 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx))
   (defstrand init 4 (n n) (b (gen)) (a a))
   (uniq-orig n)
@@ -596,7 +596,7 @@
   (maps ((0) ((a a) (b (gen)) (n n))))
   (origs (n (0 2))))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx) (w expt))
   (defstrand init 4 (n n) (b (exp (gen) (rec a))) (a a))
   (deflistener (gen))
@@ -618,7 +618,7 @@
   (unrealized (2 0))
   (comment "4 in cohort - 4 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0))) (a a))
   (deflistener (exp (gen) a-0))
@@ -643,7 +643,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0))) (a a))
   (deflistener (exp (gen) a-0))
@@ -667,7 +667,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0))) (a a))
   (deflistener (exp (gen) a-0))
@@ -692,7 +692,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0))) (a a))
   (deflistener (exp (gen) a-0))
@@ -716,7 +716,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (w expt) (a rndx))
   (defstrand init 4 (n n) (b (exp (gen) w)) (a a))
   (deflistener (exp (gen) (mul w a)))
@@ -736,7 +736,7 @@
   (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx) (w expt))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) w))) (a a))
   (deflistener (exp (gen) w))
@@ -757,7 +757,7 @@
   (unrealized (0 1))
   (comment "5 in cohort - 5 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx) (w expt) (a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) w a-0))) (a a))
   (deflistener (exp (gen) (mul w a-0)))
@@ -780,7 +780,7 @@
   (unrealized (0 1))
   (comment "6 in cohort - 6 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a rndx) (w expt) (a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) w a-0))) (a a))
   (deflistener (exp (gen) (mul w a-0)))
@@ -803,7 +803,7 @@
   (unrealized (0 1))
   (comment "6 in cohort - 6 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx) (w expt) (a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul a w))) (a a-0))
   (deflistener (cat (exp (gen) a-0) w))
@@ -821,7 +821,7 @@
   (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) a-0)) (a a))
   (defstrand recv 4 (n n) (b (exp (gen) a)) (a a-0))
@@ -844,7 +844,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx) (w w-0 expt))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0 w))) (a a))
   (defstrand recv 4 (n n) (b (exp (gen) w)) (a a-0))
@@ -871,7 +871,7 @@
   (unrealized (3 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) a-1)) (a a))
   (defstrand recv 4 (n n) (b (exp (gen) a)) (a a-1))
@@ -897,7 +897,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx) (w expt) (a-1 rndx) (w-0 expt))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0 w a-1))) (a a))
   (defstrand recv 4 (n n) (b (exp (gen) (mul w a-1))) (a a-0))
@@ -927,7 +927,7 @@
   (unrealized (4 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) a-1)) (a a))
   (defstrand recv 4 (n n) (b (exp (gen) a)) (a a-1))
@@ -953,7 +953,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 rndx) (w expt) (a-1 rndx) (w-0 expt))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0 w a-1))) (a a))
   (defstrand recv 4 (n n) (b (exp (gen) (mul w a-1))) (a a-0))
@@ -983,7 +983,7 @@
   (unrealized (4 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx))
   (defstrand init 4 (n n) (b (exp (gen) (rec a))) (a a))
   (deflistener (gen))
@@ -1003,7 +1003,7 @@
   (unrealized (0 1) (2 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx))
   (defstrand init 4 (n n) (b (exp (gen) (rec a))) (a a))
   (deflistener (gen))
@@ -1022,7 +1022,7 @@
   (unrealized (0 1) (2 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (rec a))) (a a))
   (deflistener (gen))
@@ -1046,7 +1046,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (rec a))) (a a))
   (deflistener (gen))
@@ -1070,7 +1070,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (w expt) (a rndx))
   (defstrand init 4 (n n) (b (exp (gen) w)) (a a))
   (deflistener (cat (exp (gen) a) w))
@@ -1088,7 +1088,7 @@
   (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx))
   (defstrand init 4 (n n) (b (exp (gen) a)) (a a))
   (deflistener (exp (gen) (mul a a)))
@@ -1108,7 +1108,7 @@
   (unrealized (1 0) (2 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx))
   (defstrand init 4 (n n) (b (gen)) (a a))
   (deflistener (exp (gen) a))
@@ -1128,7 +1128,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) a-0)) (a a))
   (deflistener (exp (gen) (mul a a-0)))
@@ -1152,7 +1152,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) a-0)) (a a))
   (deflistener (exp (gen) (mul a a-0)))
@@ -1176,7 +1176,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx) (w w-0 expt))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) w))) (a a))
   (deflistener (exp (gen) w))
@@ -1202,7 +1202,7 @@
   (unrealized (3 0))
   (comment "5 in cohort - 5 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) a-0)) (a a))
   (deflistener (exp (gen) (mul a a-0)))
@@ -1226,7 +1226,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) a-0)) (a a-0))
   (deflistener (exp (gen) (mul a-0 a-0)))
@@ -1251,7 +1251,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand init 4 (n n) (b (gen)) (a a))
   (deflistener (exp (gen) a))
@@ -1276,7 +1276,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) a-1)) (a a))
   (deflistener (exp (gen) (mul a a-1)))
@@ -1302,7 +1302,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) a-1)) (a a))
   (deflistener (exp (gen) (mul a a-1)))
@@ -1328,7 +1328,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx) (w expt) (a-0 rndx) (w-0 expt))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) w a-0))) (a a))
   (deflistener (exp (gen) (mul w a-0)))
@@ -1356,7 +1356,7 @@
   (unrealized (4 0))
   (comment "6 in cohort - 6 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) a-1)) (a a))
   (deflistener (exp (gen) (mul a a-1)))
@@ -1382,7 +1382,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) a-0)) (a a-0))
   (deflistener (exp (gen) (mul a-0 a-0)))
@@ -1407,7 +1407,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 rndx))
   (defstrand init 4 (n n) (b (gen)) (a a))
   (deflistener (exp (gen) a))
@@ -1432,7 +1432,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) a-0)) (a a))
   (deflistener (exp (gen) (mul a a-0)))
@@ -1456,7 +1456,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b b-0 base) (a a-0 a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) a-1)) (a a))
   (deflistener (exp (gen) (mul a a-1)))
@@ -1483,7 +1483,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a rndx) (w expt) (a-0 rndx) (w-0 expt))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) w a-0))) (a a))
   (deflistener (exp (gen) (mul w a-0)))
@@ -1511,7 +1511,7 @@
   (unrealized (4 0))
   (comment "6 in cohort - 6 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx) (w expt) (a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul a w))) (a a-0))
   (deflistener (cat (exp (gen) a-0) w))
@@ -1531,7 +1531,7 @@
   (maps ((0) ((a a-0) (b (exp (gen) (mul a w))) (n n))))
   (origs (n (0 2))))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx) (w expt) (a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul w a-0))) (a a))
   (defstrand recv 4 (n n) (b (exp (gen) (mul a w))) (a a-0))
@@ -1555,7 +1555,7 @@
   (unrealized (2 0))
   (comment "2 in cohort - 2 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx) (w expt) (a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul w a-1))) (a a))
   (defstrand recv 4 (n n) (b (exp (gen) (mul a w))) (a a-1))
@@ -1582,7 +1582,7 @@
   (unrealized (2 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 rndx) (w expt) (a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul w a-1))) (a a))
   (defstrand recv 4 (n n) (b (exp (gen) (mul a w))) (a a-1))
@@ -1609,7 +1609,7 @@
   (unrealized (2 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx))
   (defstrand init 4 (n n) (b (exp (gen) (rec a))) (a a))
   (deflistener (gen))
@@ -1633,7 +1633,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx))
   (defstrand init 4 (n n) (b (exp (gen) (rec a))) (a a))
   (deflistener (gen))
@@ -1656,7 +1656,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (w expt) (a rndx))
   (defstrand init 4 (n n) (b (exp (gen) w)) (a a))
   (uniq-orig n)
@@ -1672,7 +1672,7 @@
   (maps ((0) ((a a) (b (exp (gen) w)) (n n))))
   (origs (n (0 2))))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx))
   (defstrand init 4 (n n) (b (exp (gen) a)) (a a))
   (deflistener (exp (gen) (mul a a)))
@@ -1695,7 +1695,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (w expt) (a rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul w a))) (a a))
   (deflistener (exp (gen) (mul w a a)))
@@ -1718,7 +1718,7 @@
   (unrealized (1 0) (2 0))
   (comment "2 in cohort - 2 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx) (w expt))
   (defstrand init 4 (n n) (b (exp (gen) w)) (a a))
   (deflistener (exp (gen) (mul a w)))
@@ -1742,7 +1742,7 @@
   (unrealized (2 0))
   (comment "2 in cohort - 2 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx) (w expt) (a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul w a-0))) (a a))
   (deflistener (exp (gen) (mul a w a-0)))
@@ -1767,7 +1767,7 @@
   (unrealized (1 0) (2 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul a (rec a-0)))) (a a-0))
   (deflistener (exp (gen) a))
@@ -1790,7 +1790,7 @@
   (unrealized (0 1) (3 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a rndx) (w expt) (a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul w a-0))) (a a))
   (deflistener (exp (gen) (mul a w a-0)))
@@ -1815,7 +1815,7 @@
   (unrealized (1 0) (2 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx) (w expt) (a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul w a-0))) (a a))
   (deflistener (exp (gen) (mul a w a-0)))
@@ -1840,7 +1840,7 @@
   (unrealized (1 0) (2 0))
   (comment "2 in cohort - 2 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx) (w expt) (a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul w a-0))) (a a-0))
   (deflistener (exp (gen) (mul w a-0 a-0)))
@@ -1867,7 +1867,7 @@
   (unrealized (1 0) (2 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx) (w expt))
   (defstrand init 4 (n n) (b (exp (gen) w)) (a a))
   (deflistener (exp (gen) (mul a w)))
@@ -1895,7 +1895,7 @@
   (unrealized (2 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx) (w expt) (a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul w a-1))) (a a))
   (deflistener (exp (gen) (mul a w a-1)))
@@ -1924,7 +1924,7 @@
   (unrealized (1 0) (2 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul a-0 (rec a-1)))) (a a-1))
   (deflistener (exp (gen) a-0))
@@ -1951,7 +1951,7 @@
   (unrealized (0 1) (2 0) (4 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 rndx) (w expt) (a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul w a-1))) (a a))
   (deflistener (exp (gen) (mul a w a-1)))
@@ -1980,7 +1980,7 @@
   (unrealized (1 0) (2 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 rndx) (w expt) (a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul w a-1))) (a a))
   (deflistener (exp (gen) (mul a w a-1)))
@@ -2009,7 +2009,7 @@
   (unrealized (1 0) (2 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a rndx) (w expt) (a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul w a-0))) (a a-0))
   (deflistener (exp (gen) (mul w a-0 a-0)))
@@ -2036,7 +2036,7 @@
   (unrealized (1 0) (2 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 rndx) (w expt))
   (defstrand init 4 (n n) (b (exp (gen) w)) (a a))
   (deflistener (exp (gen) (mul a w)))
@@ -2064,7 +2064,7 @@
   (unrealized (2 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul a-0 (rec a-1)))) (a a-1))
   (deflistener (exp (gen) a-0))
@@ -2091,7 +2091,7 @@
   (unrealized (0 1) (2 0) (4 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a rndx) (w expt) (a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul w a-0))) (a a))
   (deflistener (exp (gen) (mul a w a-0)))
@@ -2117,7 +2117,7 @@
   (unrealized (1 0) (2 0))
   (comment "2 in cohort - 2 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b b-0 base) (a a-0 rndx) (w expt) (a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul w a-1))) (a a))
   (deflistener (exp (gen) (mul a w a-1)))
@@ -2146,7 +2146,7 @@
   (unrealized (1 0) (2 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul a (rec a-0)))) (a a-0))
   (defstrand recv 4 (n n) (b (gen)) (a a))
@@ -2171,7 +2171,7 @@
   (unrealized (0 1) (3 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx) (w expt) (a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul w a-0))) (a a))
   (defstrand recv 4 (n n) (b (exp (gen) (mul a w))) (a a-0))
@@ -2198,7 +2198,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul a (rec a-0) a-1))) (a a-0))
   (defstrand recv 4 (n n) (b (exp (gen) a-1)) (a a))
@@ -2228,7 +2228,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul a (rec a-0) a-1))) (a a-0))
   (defstrand recv 4 (n n) (b (exp (gen) a-1)) (a a))
@@ -2259,7 +2259,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx))
   (defstrand init 4 (n n) (b (exp (gen) (rec a))) (a a))
   (deflistener (gen))
@@ -2283,7 +2283,7 @@
   (unrealized (0 1) (3 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (w expt) (a rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul w a))) (a a))
   (deflistener (exp (gen) (mul w a a)))
@@ -2309,7 +2309,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx))
   (defstrand init 4 (n n) (b (exp (gen) (rec a))) (a a))
   (deflistener (gen))
@@ -2331,7 +2331,7 @@
   (unrealized (0 1) (3 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx) (w expt))
   (defstrand init 4 (n n) (b (exp (gen) w)) (a a))
   (deflistener (exp (gen) (mul a w)))
@@ -2356,7 +2356,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (rec a))) (a a))
   (deflistener (gen))
@@ -2384,7 +2384,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul a (rec a-0)))) (a a-0))
   (deflistener (exp (gen) a))
@@ -2410,7 +2410,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (rec a))) (a a))
   (deflistener (gen))
@@ -2438,7 +2438,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul a (rec a-0)))) (a a-0))
   (deflistener (exp (gen) a))
@@ -2465,7 +2465,7 @@
   (unrealized (0 1) (4 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx) (w expt) (a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul w a-0))) (a a))
   (deflistener (exp (gen) (mul a w a-0)))
@@ -2493,7 +2493,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul a (rec a-0)))) (a a-0))
   (deflistener (exp (gen) a))
@@ -2522,7 +2522,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0))) (a a))
   (deflistener (exp (gen) a-0))
@@ -2550,7 +2550,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0))) (a a))
   (deflistener (exp (gen) a-0))
@@ -2582,7 +2582,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul a-0 (rec a-1)))) (a a-1))
   (deflistener (exp (gen) a-0))
@@ -2611,7 +2611,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0))) (a a))
   (deflistener (exp (gen) a-0))
@@ -2643,7 +2643,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0))) (a a))
   (deflistener (exp (gen) a-0))
@@ -2676,7 +2676,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul a (rec a-0)))) (a a-0))
   (deflistener (exp (gen) a))
@@ -2705,7 +2705,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0))) (a a))
   (deflistener (exp (gen) a-0))
@@ -2734,7 +2734,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul a-0 (rec a-1)))) (a a-1))
   (deflistener (exp (gen) a-0))
@@ -2763,7 +2763,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul a (rec a-0)))) (a a-0))
   (deflistener (exp (gen) a))
@@ -2790,7 +2790,7 @@
   (unrealized (0 1) (4 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a rndx) (w expt) (a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul w a-0))) (a a))
   (deflistener (exp (gen) (mul a w a-0)))
@@ -2819,7 +2819,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b b-0 base) (a a-0 a-1 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul (rec a) a-0))) (a a))
   (deflistener (exp (gen) a-0))
@@ -2852,7 +2852,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul a (rec a-0)))) (a a-0))
   (defstrand recv 4 (n n) (b (gen)) (a a))
@@ -2878,7 +2878,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx))
   (defstrand init 4 (n n) (b (exp (gen) (rec a))) (a a))
   (deflistener (gen))
@@ -2904,7 +2904,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx))
   (defstrand init 4 (n n) (b (exp (gen) (rec a))) (a a))
   (deflistener (gen))
@@ -2929,7 +2929,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul a (rec a-0)))) (a a-0))
   (deflistener (exp (gen) a))
@@ -2957,7 +2957,7 @@
   (dead)
   (comment "empty cohort"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 rndx))
   (defstrand init 4 (n n) (b (exp (gen) (mul a (rec a-0)))) (a a-0))
   (deflistener (exp (gen) a))
@@ -2987,7 +2987,7 @@
 
 (comment "Nothing left to do")
 
-(defprotocol basic-dh diffie-hellman
+(defprotocol unauth-dh diffie-hellman
   (defrole init
     (vars (a rndx) (b base) (n text))
     (trace (send (exp (gen) a)) (recv b) (send (enc n (exp b a)))
@@ -3006,7 +3006,7 @@
   (defgenrule neqRl_mesg
     (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a rndx))
   (defstrand recv 4 (n n) (b b) (a a))
   (uniq-gen a)
@@ -3017,7 +3017,7 @@
   (origs)
   (comment "2 in cohort - 2 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 rndx))
   (defstrand recv 4 (n n) (b b) (a a))
   (defstrand init 3 (n n) (b (exp b (mul a (rec a-0)))) (a a-0))
@@ -3035,7 +3035,7 @@
   (unrealized (1 1))
   (comment "2 in cohort - 2 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a rndx))
   (defstrand recv 4 (n n) (b b) (a a))
   (deflistener (exp b a))
@@ -3051,7 +3051,7 @@
   (unrealized (1 0))
   (comment "2 in cohort - 2 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand recv 4 (n n) (b (exp (gen) a)) (a a-0))
   (defstrand init 3 (n n) (b (exp (gen) a-0)) (a a))
@@ -3069,7 +3069,7 @@
   (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a a-0 rndx) (w expt))
   (defstrand recv 4 (n n) (b b) (a a))
   (defstrand init 3 (n n) (b (exp b (mul a (rec a-0)))) (a a-0))
@@ -3092,7 +3092,7 @@
   (unrealized (2 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx))
   (defstrand recv 4 (n n) (b (gen)) (a a))
   (deflistener (exp (gen) a))
@@ -3107,7 +3107,7 @@
   (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (b base) (a rndx) (w expt))
   (defstrand recv 4 (n n) (b b) (a a))
   (deflistener (exp b a))
@@ -3127,7 +3127,7 @@
   (unrealized (2 0))
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand recv 4 (n n) (b (exp (gen) a)) (a a-0))
   (uniq-orig n)
@@ -3142,7 +3142,7 @@
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx) (w expt) (a-0 rndx))
   (defstrand recv 4 (n n) (b (exp (gen) (mul a w))) (a a-0))
   (defstrand init 3 (n n) (b (exp (gen) (mul w a-0))) (a a))
@@ -3163,7 +3163,7 @@
   (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx))
   (defstrand recv 4 (n n) (b (gen)) (a a))
   (uniq-gen a)
@@ -3178,7 +3178,7 @@
   (maps ((0) ((a a) (b (gen)) (n n))))
   (origs))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (w expt) (a rndx))
   (defstrand recv 4 (n n) (b (exp (gen) w)) (a a))
   (deflistener (exp (gen) (mul w a)))
@@ -3197,7 +3197,7 @@
   (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a a-0 rndx))
   (defstrand recv 4 (n n) (b (exp (gen) a)) (a a-0))
   (uniq-gen a a-0)
@@ -3212,7 +3212,7 @@
   (maps ((0) ((a a-0) (b (exp (gen) a)) (n n))))
   (origs))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx) (w expt) (a-0 rndx))
   (defstrand recv 4 (n n) (b (exp (gen) (mul a w))) (a a-0))
   (deflistener (cat (exp (gen) a-0) w))
@@ -3230,7 +3230,7 @@
   (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (w expt) (a rndx))
   (defstrand recv 4 (n n) (b (exp (gen) w)) (a a))
   (deflistener (cat (exp (gen) a) w))
@@ -3247,7 +3247,7 @@
   (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx) (w expt) (a-0 rndx))
   (defstrand recv 4 (n n) (b (exp (gen) (mul a w))) (a a-0))
   (deflistener (cat (exp (gen) a-0) w))
@@ -3265,7 +3265,7 @@
   (realized)
   (comment "1 in cohort - 1 not yet seen"))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (w expt) (a rndx))
   (defstrand recv 4 (n n) (b (exp (gen) w)) (a a))
   (uniq-gen a)
@@ -3280,7 +3280,7 @@
   (maps ((0) ((a a) (b (exp (gen) w)) (n n))))
   (origs))
 
-(defskeleton basic-dh
+(defskeleton unauth-dh
   (vars (n text) (a rndx) (w expt) (a-0 rndx))
   (defstrand recv 4 (n n) (b (exp (gen) (mul a w))) (a a-0))
   (deflistener (cat (exp (gen) a-0) w))
