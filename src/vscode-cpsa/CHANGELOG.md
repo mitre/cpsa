@@ -7,12 +7,23 @@ and this project follows the [Semantic Versioning](https://semver.org/spec/v2.0.
 
 ## Unreleased
 
+## [0.4.0] - 2022-04-25
+
 ### Added
+
+- A default keybinding was added that triggers the same build functionality as
+  the existing button. The default keybinding is `Ctrl+Shift+B` on Windows and
+  Linux, and `Cmd+Shift+B` on Mac. This can be changed in the [Keyboard
+  Shortcuts menu of VSCode](https://code.visualstudio.com/docs/getstarted/keybindings#_keyboard-shortcuts-editor).
+  You can search by extension name ("CPSA") or search by existing key bindings
+  with the Record Keys functionality.
 
 - The extension now runs `cpsa`/`cpsa4` with the appropriate RTS flags to
   enable multithreading and limit GHC's runtime heap size to prevent
   whole-system hangs. The heap size limit is configurable in the Settings
   menu, and defaults to 512 MB.
+
+- The extension now recognizes the `.lisp` file extension as CPSA source code.
 
 ### Fixed
 
@@ -29,6 +40,9 @@ and this project follows the [Semantic Versioning](https://semver.org/spec/v2.0.
 
   All build steps are still attempted, regardless of whether an earlier one
   fails.
+
+- The internal function `executeFile` was made more flexible so that it's now
+  possible to call it directly from a key binding.
 
 ## [0.3.0] - 2022-03-28
 
@@ -85,6 +99,7 @@ Initial testing release.
 - The errors from CPSA are detected with a Problem Matcher, to integrate
   with VSCode's built in error-highlighting features.
 
+[0.4.0]: https://artifacts.mitre.org/artifactory/generic-vscode-cpsa-local/vscode-cpsa-0.4.0.vsix
 [0.3.0]: https://artifacts.mitre.org/artifactory/generic-vscode-cpsa-local/vscode-cpsa-0.3.0.vsix
 [0.2.1]: https://artifacts.mitre.org/artifactory/generic-vscode-cpsa-local/vscode-cpsa-0.2.1.vsix
 [0.2.0]: https://artifacts.mitre.org/artifactory/generic-vscode-cpsa-local/vscode-cpsa-0.2.0.vsix

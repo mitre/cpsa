@@ -40,8 +40,19 @@ const cpsa4_paths = {
 // ideal for the CPSA use case where each source file is usually
 // self-contained and there is not really a central build system or source
 // heirarchy like most languages.
-async function executeFile(uri: vscode.Uri) {
-    let file_path = uri.fsPath;
+async function executeFile(uri?: vscode.Uri) {
+    let file_path = '';
+    if (uri !== undefined) {
+        file_path = uri.fsPath;
+    }
+    else {
+        const editor = vscode.window.activeTextEditor;
+        if (editor === undefined) {
+            return;
+        }
+        file_path = editor.document.fileName;
+    }
+
     // Split the file path to remove the file extension of the source
     // file.
     let parsed = path.parse(file_path);
