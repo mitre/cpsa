@@ -11,6 +11,8 @@ This extension adds support for CPSA to VS Code.
   output `.txt`, `.xhtml`, and `_shapes.txt` files for the
   currently-edited CPSA file. The file names are compatible with existing
   Makefile conventions used with CPSA.
+- A default keybinding of `Ctrl+Shift+B` (Windows, Linux) or `Cmd+Shift+B`
+  (Mac) that triggers the same build functionality as the button.
 - When the CPSA source has errors, the messages are parsed so that the
   user can see where in the code an error was found.
 

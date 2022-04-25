@@ -56,6 +56,14 @@
                 "title": "Run CPSA on the current file"
             }
         ],
+        "keybindings": [
+            {
+                "command": "vscode-cpsa.execCPSACurrentFile",
+                "key": "Ctrl+Shift+b",
+                "mac": "Cmd+Shift+b",
+                "when": "resourceLangId == cpsa"
+            }
+        ],
         "menus": {
             "editor/title/run": [
                 {

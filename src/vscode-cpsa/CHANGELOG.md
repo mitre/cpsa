@@ -9,6 +9,13 @@ and this project follows the [Semantic Versioning](https://semver.org/spec/v2.0.
 
 ### Added
 
+- A default keybinding was added that triggers the same build functionality as
+  the existing button. The default keybinding is `Ctrl+Shift+B` on Windows and
+  Linux, and `Cmd+Shift+B` on Mac. This can be changed in the [Keyboard
+  Shortcuts menu of VSCode](https://code.visualstudio.com/docs/getstarted/keybindings#_keyboard-shortcuts-editor).
+  You can search by extension name ("CPSA") or search by existing key bindings
+  with the Record Keys functionality.
+
 - The extension now runs `cpsa`/`cpsa4` with the appropriate RTS flags to
   enable multithreading and limit GHC's runtime heap size to prevent
   whole-system hangs. The heap size limit is configurable in the Settings
@@ -31,6 +38,9 @@ and this project follows the [Semantic Versioning](https://semver.org/spec/v2.0.
 
   All build steps are still attempted, regardless of whether an earlier one
   fails.
+
+- The internal function `executeFile` was made more flexible so that it's now
+  possible to call it directly from a key binding.
 
 ## [0.3.0] - 2022-03-28
 
