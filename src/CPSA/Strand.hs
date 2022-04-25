@@ -2206,7 +2206,7 @@ deleteNode k n
                    (updatePerm s s (prob k))
                    (map
                      (updateFact (updateStrand s s))
-                     (deleteFacts s $ kfacts k))
+                     (deleteStrandFacts s $ kfacts k))
           return (k', mapping)
     | otherwise =
         do
@@ -2216,7 +2216,8 @@ deleteNode k n
           let k' = deleteNodeRest k gen' (s, p)
                    (replaceNth i' s (insts k))
                    (shortenOrderings (s, p) (tc k))
-                   (prob k) (kfacts k)
+                   (prob k)
+                   (deleteNodeFacts s p (kfacts k))
           return (k', mapping)
     where
       p = pos n
@@ -2275,14 +2276,26 @@ deleteNodeRest k gen n insts' orderings prob facts =
       within ((s, i), _) =
         s < fst n || s == fst n && i < snd n
 
-deleteFacts :: Sid -> [Fact] -> [Fact]
-deleteFacts s facts =
+deleteStrandFacts :: Sid -> [Fact] -> [Fact]
+deleteStrandFacts s facts =
   filter f facts
   where
     f (Fact _ ft) =
       all g ft
     g (FSid s') = s /= s'
     g (FTerm _) = True
+
+-- Correct this!  When we know how to filter based on strand and
+-- index.  !!!!
+deleteNodeFacts :: Sid -> Int -> [Fact] -> [Fact]
+deleteNodeFacts s _ facts =                  
+  filter f facts
+  where
+    f (Fact _ ft) =
+      all g ft
+    g (FSid s') = s /= s'
+    g (FTerm _) = True
+
 
 -- Node ordering weakening
 

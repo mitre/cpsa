@@ -2534,6 +2534,13 @@ sortNameAndVarName (F Name [I (Id(_, name))]) = ("name", name)
 sortNameAndVarName (F Pval [I (Id(_, name))]) = ("pt", name)
 sortNameAndVarName (F Chan [I (Id(_, name))]) = ("chan", name)
 sortNameAndVarName (F Locn [I (Id(_, name))]) = ("locn", name)
+sortNameAndVarName (G m)
+    | isBasisVar m = ("rndx", (case getGroupVar m of
+                                 Id (_,name) -> name))
+    | isExprVar m = ("expt", (case getGroupVar m of
+                                 Id (_,name) -> name))
+    | otherwise = error ("sortNameAndVarName:  Non-var group member " ++ (show (G m)))
+               
 sortNameAndVarName (D (Id(_, name))) = ("strd", name)
 sortNameAndVarName (X (Id(_, name))) = ("indx", name)
 sortNameAndVarName t = error ("sortNameAndVarName:  Non-var " ++ (show t))
