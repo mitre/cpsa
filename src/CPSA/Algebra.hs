@@ -2202,6 +2202,9 @@ mkVarUnfailingly sig sort x
   | sort == "pval" = F Pval [I x]
   | sort == "chan" = F Chan [I x]
   | sort == "locn" = F Locn [I x]
+  | sort == "base" = F Base [I x]
+  | sort == "expt" = groupVar Expt x
+  | sort == "rndx" = groupVar Rndx x
   | sort == "mesg" = I x
   | sort == "strd" = D x
   | sort == "indx" = X x

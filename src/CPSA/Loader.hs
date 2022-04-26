@@ -721,8 +721,9 @@ genStateRls sig g rl ts =
                          applyToStrandVarAndParams
                          (\_ pvars ->
                               case envsRoleParams rl g pvars of
-                                [(_,e)] -> [GenStV (instantiate e t)]
-                                _ -> error "genStateRls:  Non-unary matching not implemented")
+                                (_,e) : _ -> [GenStV (instantiate e t)]
+                                _ -> error ("genStateRls:  Non-unary matching not implemented"
+                                            ++  (show pvars) ++ (show t)))
                          vars
                          "genStateRls:  vars not strand+params?"))]
 
