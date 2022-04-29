@@ -1390,7 +1390,7 @@ loadFterm _ heights _ (N pos s)
   | otherwise = fail (shows pos ("Bad strand in fact: " ++ show s))
 loadFterm sig _ vars x =
   do
-    t <- loadTerm sig vars True x
+    t <- loadTerm sig vars False x
     return $ FTerm t
 
 loadPriorities :: MonadFail m => [Int] -> SExpr Pos -> m (Node, Int)
@@ -1587,15 +1587,15 @@ loadPrimary :: MonadFail m => Sig -> Pos -> Prot -> [Term] ->
                SExpr Pos -> m (Pos, AForm)
 loadPrimary sig _ _ kvars (L pos [S _ "=", x, y]) =
   do
-    t <- loadTerm sig kvars True x
-    t' <- loadTerm sig kvars True y
+    t <- loadTerm sig kvars False x
+    t' <- loadTerm sig kvars False y
     case isStrdVar t == isStrdVar t' of
       True -> return (pos, Equals t t')
       False -> fail (shows pos "Sort mismatch in equality")
 loadPrimary sig _ _ kvars (L pos [S _ "component", x, y]) =
   do
-    t <- loadTerm sig kvars True x
-    t' <- loadTerm sig kvars True y
+    t <- loadTerm sig kvars False x
+    t' <- loadTerm sig kvars False y
     case isStrdVar t || isStrdVar t' of
       True -> fail (shows pos "Strand variable in component formula")
       False -> return (pos, Component t t')
@@ -1639,7 +1639,7 @@ loadPrimary sig _ _ kvars (L pos [S _ "auth", x]) =
     return (pos, Auth t)
 loadPrimary sig _ _ kvars (L pos (S _ "fact" : S _ name : fs)) =
   do
-    fs <- mapM (loadTerm sig kvars True) fs
+    fs <- mapM (loadTerm sig kvars False) fs
     return (pos, AFact name fs)
 loadPrimary sig _ _ kvars (L pos [S _ "comm-pr", w, x, y, z]) =
   do
@@ -1683,7 +1683,7 @@ loadPrimary sig _ p kvars (L pos [S _ "p", Q _ name, x, ht]) =
   do
     r <- lookupRole pos p name
     t <- loadStrdTerm sig kvars x
-    h <- loadTerm sig kvars True ht
+    h <- loadTerm sig kvars False ht
     return (pos, Length r t h)
 loadPrimary sig _ p kvars (L pos [S _ "p", Q _ name, Q var x, y, z]) =
   do

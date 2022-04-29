@@ -282,7 +282,7 @@ displayFacts ctx =
     foldr
     (\(Fact name fs) soFar ->
          case name of
-           "trans" -> soFar
+           -- "trans" -> soFar
            _ -> (L () (S () name : map (displayFterm ctx) fs)) : soFar)
     []
 

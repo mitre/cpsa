@@ -2537,15 +2537,18 @@ sortNameAndVarName (F Name [I (Id(_, name))]) = ("name", name)
 sortNameAndVarName (F Pval [I (Id(_, name))]) = ("pt", name)
 sortNameAndVarName (F Chan [I (Id(_, name))]) = ("chan", name)
 sortNameAndVarName (F Locn [I (Id(_, name))]) = ("locn", name)
+sortNameAndVarName (F Base [I (Id (_,name))]) = ("base", name)
+sortNameAndVarName (D (Id(_, name))) = ("strd", name)
+sortNameAndVarName (X (Id(_, name))) = ("indx", name)
+
 sortNameAndVarName (G m)
     | isBasisVar m = ("rndx", (case getGroupVar m of
                                  Id (_,name) -> name))
     | isExprVar m = ("expt", (case getGroupVar m of
                                  Id (_,name) -> name))
     | otherwise = error ("sortNameAndVarName:  Non-var group member " ++ (show (G m)))
+
                
-sortNameAndVarName (D (Id(_, name))) = ("strd", name)
-sortNameAndVarName (X (Id(_, name))) = ("indx", name)
 sortNameAndVarName t = error ("sortNameAndVarName:  Non-var " ++ (show t))
 
 addSortNameToVarListSpec :: (String,String) -> [(String,[String])] -> Maybe [(String,[String])]
@@ -2656,6 +2659,8 @@ displayTerm ctx (F Base [t]) =
           L () [S () "gen"]
       displayBase (F Exp [t0, G t1]) =
           L () [S () "exp", displayBase t0, displayTerm ctx (G t1)]
+      displayBase (G m) =
+          L () [S () "exp", displayTerm ctx (G m)]
       displayBase t = error ("Algebra.displayBase: Bad term " ++ show t)
 displayTerm ctx (G t) =
     displayExpr t
