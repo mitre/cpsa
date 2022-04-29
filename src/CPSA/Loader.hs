@@ -978,10 +978,9 @@ initRules sig b g stateRules nonStateRules =
           foldr (\f (g,rules) ->
                      let (g',r) = f g in
                      (g',r : rules))
-                    (g,stateRules) 
+                    (g,stateRules)
                     [scissorsRule sig, cakeRule sig, uninterruptibleRule sig,
                                   shearsRule sig, invShearsRule sig]
-          
 
 loadRules :: MonadFail m => Sig -> Prot -> Gen -> [SExpr Pos] ->
              m (Gen, [Rule], [SExpr ()])
@@ -1115,7 +1114,7 @@ loadTrace sig gen vars xs =
 loadChan :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
 loadChan sig vars x =
   do
-    ch <- loadTerm sig vars True x
+    ch <- loadTerm sig vars False x
     case isChan ch || isLocn ch of
       True -> return ch
       False -> fail (shows (annotation x) "Expecting a channel or location")
@@ -1123,7 +1122,7 @@ loadChan sig vars x =
 loadLocn :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
 loadLocn sig vars x =
   do
-    ch <- loadTerm sig vars True x
+    ch <- loadTerm sig vars False x
     case isLocn ch of
       True -> return ch
       False -> fail (shows (annotation x) "Expecting a location")
@@ -1323,7 +1322,7 @@ loadRest sig pos vars p gen gs insts orderings
       cn <- loadBaseTerms sig vars cn
       au <- loadBaseTerms sig vars au
       fs <- mapM (loadFact sig heights vars) fs
-      genSts <- mapM (loadTerm sig vars True) genSts
+      genSts <- loadTerms sig vars genSts
       let (nr', ar', ur', ug', ab', cn', au') =
             foldl addInstOrigs (nr, ar, ur, ug, ab, cn, au) insts
       prios <- mapM (loadPriorities heights) pl
@@ -1639,7 +1638,7 @@ loadPrimary sig _ _ kvars (L pos [S _ "auth", x]) =
     return (pos, Auth t)
 loadPrimary sig _ _ kvars (L pos (S _ "fact" : S _ name : fs)) =
   do
-    fs <- mapM (loadTerm sig kvars False) fs
+    fs <- loadTerms sig kvars fs
     return (pos, AFact name fs)
 loadPrimary sig _ _ kvars (L pos [S _ "comm-pr", w, x, y, z]) =
   do
@@ -1739,7 +1738,7 @@ loadAlgChanTerm sig ts x =
 loadChanTerm :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
 loadChanTerm sig ts x =
   do
-    t <- loadTerm sig ts True x
+    t <- loadTerm sig ts False x
     case isChan t of
       True -> return t
       False -> fail (shows (annotation x) "Expecting a channel variable")
@@ -1749,7 +1748,7 @@ loadChanTerm sig ts x =
 loadStrdTerm :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
 loadStrdTerm sig ts x =
   do
-    t <- loadTerm sig ts True x
+    t <- loadTerm sig ts False x
     case isStrdVar t of
       True -> return t
       False -> fail (shows (annotation x) "Expecting a strand variable")
@@ -1759,7 +1758,7 @@ loadStrdTerm sig ts x =
 loadIndxTerm :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
 loadIndxTerm sig ts x =
   do
-    t <- loadTerm sig ts True x
+    t <- loadTerm sig ts False x
     case isIndxVar t of
       True -> return t
       False ->
