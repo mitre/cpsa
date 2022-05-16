@@ -38,6 +38,25 @@ This will create a `vscode-cpsa-VERSION.vsix` file (where VERSION is the
 current version) which can be shared and installed to VSCode on users'
 machines.
 
+## Composing a Release
+
+[ ] Make sure changes are documented in CHANGELOG.md under Unreleased (in a separate commit)
+[ ] Increment the version number appropriately in `package.json`
+[ ] Regenerate `package-lock.json` to update this package's version number
+    `npm install` will do this, but it will also rewrite `package.json` to change
+    formatting. Keep the changes to `package-lock.json` but reset
+    `package.json`.
+[ ] Add a new heading to CHANGELOG.md with the version number
+[ ] Add a new link to CHANGELOG.md to the new version on Artifactory
+[ ] Add a new heading to README.md with the version number
+[ ] Add a new link to README.md to the new version on Artifactory
+[ ] Update the Installation section of README.md with the latest version
+[ ] Make a commit with only these changes, titled "Release vscode-cpsa $VERSION"
+[ ] Make sure working directory is clean, and build new package archive
+    npm ci && vsce package
+[ ] Upload the new archive to Artifactory (see section below)
+[ ] Announce the new release
+
 ## Deploying to Artifactory
 
 This project has a Repository on MITRE's Artifactory instance called
@@ -47,6 +66,14 @@ archive, and anyone with a link to the repository can read all versions
 without authentication.
 Uploading files can be done through the web interface manually, as well as
 with basic HTTP requests (with `curl` for example).
+
+Steps for manual deploy via web browser:
+    - Go to https://artifacts.mitre.org/ui/repos/tree/General/generic-vscode-cpsa-local
+    - Click the Deploy button in the top right
+    - Click Select File and select the new `.vsix` archive
+    - Click Deploy
+    - Artifactory should tell you whether it was successful, but you can also
+      check by visiting the index here: https://artifacts.mitre.org/artifactory/generic-vscode-cpsa-local/ and looking for the new file you uploaded.
 
 ## Code Overview
 
