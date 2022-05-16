@@ -4,10 +4,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0),
 and this project follows the [Semantic Versioning](https://semver.org/spec/v2.0.0.html) spec.
+This means that version numbers look like `MAJOR.MINOR.PATCH`.
+
+From a user's perspective:
+
+- If the MAJOR part has been incremented, then breaking changes have been
+  made. This could include commands working differently in an incompatible
+  way, or features being removed. Be careful updating to a new MAJOR
+  release.
+- If the MINOR part has been incremented, then features have been added
+  without breaking compatibility. It should be safe to update to a new
+  MINOR release.
+- If the PATCH part has been incremented, then only bugfixes or
+  user-invisible changes have been made. It should be safe to update to a
+  new PATCH release.
+- Until version 1.0.0, no compatibility guarantees are made. Versions
+  before 1.0.0 are considered experimental.
 
 ## Unreleased
 
-## [0.4.0] - 2022-04-25
+## 0.4.0 - 2022-04-25
 
 ### Added
 
@@ -44,7 +60,7 @@ and this project follows the [Semantic Versioning](https://semver.org/spec/v2.0.
 - The internal function `executeFile` was made more flexible so that it's now
   possible to call it directly from a key binding.
 
-## [0.3.0] - 2022-03-28
+## 0.3.0 - 2022-03-28
 
 Breaking change: The extension now defaults to using CPSA version 3 rather
 than 4. Users who use CPSA4 will need to
@@ -57,7 +73,7 @@ Version".
 - The extension can now make use of both CPSA 3 and 4, switching between them
   with a configuration setting. The default is set to CPSA 3.
 
-## [0.2.1] - 2022-03-18
+## 0.2.1 - 2022-03-18
 
 ### Fixed
 
@@ -66,7 +82,7 @@ Version".
   incomplete results. Now all tasks are executed serially in a predictable
   order.
 
-## [0.2.0] - 2022-03-17
+## 0.2.0 - 2022-03-17
 
 ### Added
 
@@ -79,7 +95,7 @@ Version".
   a workaround for the fact that CPSA cannot currently handle backslashes in
   strings due to Windows absolute file paths.
 
-## [0.1.0] - 2022-03-08
+## 0.1.0 - 2022-03-08
 
 ### Added
 
@@ -98,9 +114,3 @@ Initial testing release.
   `cpsa4graph`, respectively.
 - The errors from CPSA are detected with a Problem Matcher, to integrate
   with VSCode's built in error-highlighting features.
-
-[0.4.0]: https://artifacts.mitre.org/artifactory/generic-vscode-cpsa-local/vscode-cpsa-0.4.0.vsix
-[0.3.0]: https://artifacts.mitre.org/artifactory/generic-vscode-cpsa-local/vscode-cpsa-0.3.0.vsix
-[0.2.1]: https://artifacts.mitre.org/artifactory/generic-vscode-cpsa-local/vscode-cpsa-0.2.1.vsix
-[0.2.0]: https://artifacts.mitre.org/artifactory/generic-vscode-cpsa-local/vscode-cpsa-0.2.0.vsix
-[0.1.0]: https://artifacts.mitre.org/artifactory/generic-vscode-cpsa-local/vscode-cpsa-0.1.0.vsix
