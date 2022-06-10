@@ -121,6 +121,7 @@ module CPSA.Algebra (name, alias,
     isLocn,
     isIndxVar,
     isIndxConst,
+    intOfIndex,
     termsWellFormed,
     occursIn,
     foldVars,
@@ -569,6 +570,10 @@ isIndxVar _ = False
 isIndxConst :: Term -> Bool
 isIndxConst (Y _) = True
 isIndxConst _ = False
+
+intOfIndex :: Term -> Maybe Int
+intOfIndex (Y q) = Just q
+intOfIndex _ = Nothing 
 
 -- Extract the identifier from a variable
 varId :: Term -> Id

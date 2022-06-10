@@ -2288,13 +2288,18 @@ deleteStrandFacts s facts =
 -- Correct this!  When we know how to filter based on strand and
 -- index.  !!!!
 deleteNodeFacts :: Sid -> Int -> [Fact] -> [Fact]
-deleteNodeFacts s _ facts =                  
+deleteNodeFacts s p facts =                  
   filter f facts
   where
-    f (Fact _ ft) =
-      all g ft
-    g (FSid s') = s /= s'
-    g (FTerm _) = True
+    f (Fact _ fts) = checkRest fts
+    checkRest [] = True
+    checkRest ((FSid s') : (FTerm t) : rest)
+        | s == s' =
+            case intOfIndex t of
+              Just q -> q<p && checkRest rest
+              Nothing -> checkRest rest
+        | otherwise = checkRest rest
+    checkRest (_ : rest) = checkRest rest
 
 
 -- Node ordering weakening
