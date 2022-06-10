@@ -2405,7 +2405,7 @@ loadExp sig _ vars _ [x, x'] =
       t <- loadBase sig vars x
       t' <- loadExpr sig vars False x'
       return $ F Base [idSubst emptyIdMap $ F Exp [t, G t']]
-loadExp _ pos _ _ _ = fail (shows pos "Malformed exp")
+loadExp _ pos _ _ _ = fail (shows pos "Malformed exponentiation")
 
 loadBase :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
 loadBase sig vars x =
@@ -2421,7 +2421,7 @@ loadExpr sig vars False x =
       t <- loadTerm sig vars False x
       case t of
         G t -> return t
-        _ -> fail (shows (annotation x) "Malformed expr")
+        _ -> fail (shows (annotation x) "Malformed exponent")
 loadExpr sig vars True x = loadExpr sig vars False x
 --loadExpr _ True x =
 --    do
@@ -2505,7 +2505,7 @@ loadOper sig _ vars strict (Sig.Tupl op len) (l : ls) | length (l : ls) == len =
     do
       ts <- mapM (loadTerm sig vars strict) (l : ls)
       return $ F (Tupl op) ts
-loadOper _ pos _ _ (Sig.Tupl _ _) _ = fail (shows pos "Bad tuple length")
+loadOper _ pos _ _ (Sig.Tupl s n) _ = fail (shows pos "Bad tuple length " ++ s ++ " should be " ++ (show n))
 
 -- Could have used init and last, but whatever...
 splitLast :: a -> [a] -> ([a], a)
