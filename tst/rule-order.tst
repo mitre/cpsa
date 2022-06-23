@@ -7,7 +7,13 @@
   (defrole init (vars (s t text)) (trace (send (cat s t))))
   (defrule ge
     (forall ((x y text))
-      (implies (fact le x y) (or (= x y) (fact lt x y))))))
+      (implies (fact le x y) (or (= x y) (fact lt x y)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton rule-order
   (vars (s t text))

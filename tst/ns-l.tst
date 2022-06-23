@@ -13,6 +13,12 @@
     (vars (b a name) (n2 n1 text))
     (trace (recv (enc n1 a (pubk b))) (send (enc b n1 n2 (pubk a)))
       (recv (enc n2 (pubk b)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Needham-Schroeder"))
 
 (defskeleton ns
@@ -119,6 +125,12 @@
     (vars (b a name) (n2 n1 text))
     (trace (recv (enc n1 a (pubk b))) (send (enc b n1 n2 (pubk a)))
       (recv (enc n2 (pubk b)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Needham-Schroeder"))
 
 (defskeleton ns

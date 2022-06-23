@@ -1,4 +1,4 @@
-(herald bug_example (bound 10))
+(herald bug_example (bound 20))
 
 (defprotocol bug_example basic
   (defrole init (vars (x y akey))

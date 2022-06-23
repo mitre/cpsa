@@ -12,7 +12,13 @@
   (defrole resp
     (vars (a b name) (m mesg))
     (trace (recv (enc (enc m (pubk b)) a (pubk b)))
-      (send (enc (enc m (pubk a)) b (pubk a))))))
+      (send (enc (enc m (pubk a)) b (pubk a)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton dy
   (vars (m text) (a b name))

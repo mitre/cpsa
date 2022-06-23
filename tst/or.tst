@@ -20,7 +20,13 @@
       (recv
         (cat m a b (enc na m a b (ltk a s)) (enc nb m a b (ltk b s))))
       (send (cat m (enc na k (ltk a s)) (enc nb k (ltk b s)))))
-    (uniq-orig k)))
+    (uniq-orig k))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton or
   (vars (x y mesg) (k skey) (nb m text) (s a b name))

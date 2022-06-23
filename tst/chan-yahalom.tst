@@ -19,7 +19,13 @@
       (send ch2 (cat a b k)))
     (uniq-orig k)
     (conf ch2 ch3)
-    (auth ch2)))
+    (auth ch2))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton yahalom
   (vars (k skey) (n-b n-a text) (a b name) (ch1 ch2 chan))
@@ -404,7 +410,13 @@
       (send ch2 (cat a b k)))
     (uniq-orig k)
     (conf ch2 ch3)
-    (auth ch2)))
+    (auth ch2))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton yahalom
   (vars (k skey) (n-b n-a text) (a b name) (ch1 ch2 chan))
@@ -488,7 +500,13 @@
       (send ch2 (cat a b k)))
     (uniq-orig k)
     (conf ch2 ch3)
-    (auth ch2)))
+    (auth ch2))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton yahalom
   (vars (k skey) (n-a n-b text) (a b name) (ch chan))

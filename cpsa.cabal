@@ -175,7 +175,8 @@ Executable cpsa4
     Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.ReturnFail CPSA.Lib.Pretty
     CPSA.Lib.SExpr CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Options
     CPSA.Algebra CPSA.Protocol CPSA.Strand CPSA.Characteristic
-    CPSA.Channel CPSA.Loader CPSA.Displayer CPSA.Cohort
+    CPSA.Channel CPSA.LoadFormulas CPSA.GenRules CPSA.Loader
+    CPSA.Displayer CPSA.Cohort
     CPSA.Lib.Expand CPSA.Reduction CPSA.Signature
 
 Executable cpsa4sas

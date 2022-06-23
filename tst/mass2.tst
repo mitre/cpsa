@@ -9,7 +9,13 @@
   (defrole resp
     (vars (a b name) (n1 n2 text))
     (trace (recv (cat a n2)) (send (cat n1 (enc n2 (ltk a b))))
-      (recv (enc n1 (ltk a b))))))
+      (recv (enc n1 (ltk a b)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton mass2
   (vars (n1 n2 text) (a b name))

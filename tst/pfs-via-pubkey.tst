@@ -12,7 +12,13 @@
   (defrole resp
     (vars (new-akey akey) (a b name) (n data) (s text))
     (trace (recv (enc a b new-akey n (privk "sgn" a)))
-      (send (enc (enc a n s (privk "sgn" b)) new-akey)))))
+      (send (enc (enc a n s (privk "sgn" b)) new-akey))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton pfs-easy
   (vars (n data) (s text) (new-akey akey) (a b name))
@@ -81,7 +87,13 @@
   (defrole resp
     (vars (new-akey akey) (a b name) (n data) (s text))
     (trace (recv (enc a b new-akey n (privk "sgn" a)))
-      (send (enc (enc a n s (privk "sgn" b)) new-akey)))))
+      (send (enc (enc a n s (privk "sgn" b)) new-akey))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton pfs-easy
   (vars (n data) (s text) (new-akey akey) (a b name))
@@ -125,7 +137,13 @@
   (defrole resp
     (vars (new-akey akey) (a b name) (n data) (s text))
     (trace (recv (enc a b new-akey n (privk "sgn" a)))
-      (send (enc (enc a n s (privk "sgn" b)) new-akey)))))
+      (send (enc (enc a n s (privk "sgn" b)) new-akey))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton pfs-easy
   (vars (n data) (s s-0 text) (new-akey akey) (a b name))

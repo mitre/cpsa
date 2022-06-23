@@ -18,7 +18,13 @@
   (defrole serv
     (vars (a s b name) (n text))
     (trace (recv (enc a (enc n (ltk a s)) (ltk b s)))
-      (send (enc a n (ltk b s))))))
+      (send (enc a n (ltk b s)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton woolam
   (vars (n text) (a s b name))
@@ -115,7 +121,13 @@
   (defrole serv
     (vars (a s b name) (n text))
     (trace (recv (enc a (enc n (ltk a s)) (ltk b s)))
-      (send (enc n (ltk b s))))))
+      (send (enc n (ltk b s)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton woolam-msg
   (vars (m mesg) (n text) (a s b name))
@@ -305,7 +317,13 @@
   (defrole serv
     (vars (a s b name) (n text))
     (trace (recv (cat a b (enc (enc n (ltk a s)) (ltk b s))))
-      (send (enc a n (ltk b s))))))
+      (send (enc a n (ltk b s)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton woolam-msg1
   (vars (m mesg) (n text) (a s b name))

@@ -1379,8 +1379,9 @@ purge (k0, k, n, phi, hsubst) s s' =
               (map (permuteNode perm) (kprecur k))
               (kgenSt k)
               (kconf k)
-              (kauth k)
-              (map (updateFact $ updateStrand s s') (kfacts k))
+              (kauth k) 
+              (map (updateFact $ updateStrand s s')
+                       (deleteStrandFacts s (kfacts k)))
               (updatePriority perm (kpriority k))
               (operation k)
               (krules k)
@@ -1402,7 +1403,7 @@ forward s orderings =
           | s1 == s = []        -- Dump edges to strand s
           | otherwise = [p]     -- Pass thru other edges
 
--- Remove bad origination assumptions and facts
+-- Remove bad origination assumptions, gen-states, and facts
 soothePreskel :: Preskel -> Preskel
 soothePreskel k =
   newPreskel
@@ -1412,11 +1413,11 @@ soothePreskel k =
   (orderings k)
   (filter varCheck $ knon k)
   (filter varCheck $ kpnon k)
-  (filter uniqueCheck $ kunique k)
+  (filter carriedCheck $ kunique k)
   (filter varCheck $ kuniqgen k)
   (filter absentCheck $ kabsent k)
   (kprecur k)
-  (kgenSt k)
+  (filter carriedCheck $ kgenSt k)
   (filter chanCheck $ kconf k)
   (filter chanCheck $ kauth k)
   (kfacts k)
@@ -1429,7 +1430,7 @@ soothePreskel k =
   where
     terms = kterms k
     varCheck t = varSubset [t] terms
-    uniqueCheck t = any (carriedBy t) terms
+    carriedCheck t = any (carriedBy t) terms
     chanCheck t = varSubset [t] $ kchans k
     absentCheck (x, y) = varSubset [x, y] $ kvars k
 

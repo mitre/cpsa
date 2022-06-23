@@ -9,7 +9,13 @@
     (uniq-orig x1 x2))
   (defrole resp
     (vars (k akey) (y1 y2 y3 text))
-    (trace (recv (enc y1 k)) (recv (enc y2 k)) (send (enc y1 y3 k)))))
+    (trace (recv (enc y1 k)) (recv (enc y2 k)) (send (enc y1 y3 k))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton deorig-contract
   (vars (x1 x2 text) (k akey))
@@ -48,7 +54,13 @@
     (uniq-orig x1 x2))
   (defrole resp
     (vars (k akey) (y1 y2 y3 text))
-    (trace (recv (enc y1 k)) (recv (enc y2 k)) (send (enc y1 y3 k)))))
+    (trace (recv (enc y1 k)) (recv (enc y2 k)) (send (enc y1 y3 k))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton deorig-contract
   (vars (x1 x2 text) (k akey))

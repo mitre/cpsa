@@ -11,6 +11,12 @@
   (defrole resp
     (vars (a b akey) (s skey) (d data))
     (trace (recv (enc (enc s (invk a)) b)) (send (enc d s))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Blanchet's protocol using unnamed asymmetric keys"))
 
 (defskeleton blanchet
@@ -84,6 +90,12 @@
   (defrole resp
     (vars (a b akey) (s skey) (d data))
     (trace (recv (enc (enc s (invk a)) b)) (send (enc d s))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Blanchet's protocol using unnamed asymmetric keys"))
 
 (defskeleton blanchet
@@ -126,6 +138,12 @@
     (trace (recv (enc (enc s (invk a)) b)) (send (enc d s))))
   (defrule role-uniq
     (forall ((z strd) (s skey)) (implies (p "init" "s" z s) (uniq s))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Blanchet's protocol using unnamed asymmetric keys"))
 
 (defskeleton blanchet
@@ -212,6 +230,12 @@
     (trace (recv (enc (enc s (invk a)) b)) (send (enc d s))))
   (defrule role-uniq
     (forall ((z strd) (s skey)) (implies (p "init" "s" z s) (uniq s))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Blanchet's protocol using unnamed asymmetric keys"))
 
 (defskeleton blanchet

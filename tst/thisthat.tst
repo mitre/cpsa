@@ -18,7 +18,13 @@
     (vars (b a name) (n3 n1 text))
     (trace (recv (enc n1 a (pubk b))) (send (enc n1 n3 (pubk a)))
       (send (enc "that" n3 (pubk b))))
-    (uniq-orig n3)))
+    (uniq-orig n3))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton thisthat
   (vars (n1 n2 n3 text) (a b name))

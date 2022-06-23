@@ -9,7 +9,13 @@
     (trace (send (enc b (invk a))) (recv (enc a (invk b)))))
   (defrole resp
     (vars (a b akey))
-    (trace (recv (enc b (invk a))) (send (enc a (invk b))))))
+    (trace (recv (enc b (invk a))) (send (enc a (invk b)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton reflect
   (vars (a b akey))
@@ -152,7 +158,13 @@
     (trace (send (enc b (invk a))) (recv (enc a (invk b)))))
   (defrole resp
     (vars (a b akey))
-    (trace (recv (enc b (invk a))) (send (enc a (invk b))))))
+    (trace (recv (enc b (invk a))) (send (enc a (invk b)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton reflect
   (vars (a b akey))
@@ -343,7 +355,13 @@
     (trace (send (enc b (invk a))) (recv (enc a (invk b)))))
   (defrole resp
     (vars (a b akey))
-    (trace (recv (enc b (invk a))) (send (enc a (invk b))))))
+    (trace (recv (enc b (invk a))) (send (enc a (invk b)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton reflect
   (vars (a b akey))

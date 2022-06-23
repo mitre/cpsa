@@ -14,7 +14,13 @@
   (defrole resp
     (vars (a name) (y1 y2 y3 text))
     (trace (recv (enc y1 y2 (pubk a)))
-      (send (enc "okay" y3 y1 (pubk a))))))
+      (send (enc "okay" y3 y1 (pubk a)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton wonthull
   (vars (x1 x2 x3 x4 text) (a name))
@@ -177,7 +183,13 @@
   (defrole resp
     (vars (a name) (y1 y2 y3 text))
     (trace (recv (enc y1 y2 (pubk a)))
-      (send (enc "okay" y3 y1 (pubk a))))))
+      (send (enc "okay" y3 y1 (pubk a)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton wonthull
   (vars (x1 x3 text) (a name))

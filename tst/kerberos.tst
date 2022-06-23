@@ -16,7 +16,13 @@
     (vars (a b ks name) (t l text) (k skey))
     (trace (recv (cat a b))
       (send (cat (enc t l k b (ltk a ks)) (enc t l k a (ltk b ks)))))
-    (uniq-orig k)))
+    (uniq-orig k))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton kerberos
   (vars (k skey) (t t-prime l text) (a b ks name))
@@ -674,7 +680,13 @@
     (vars (a b ks name) (t l text) (k skey))
     (trace (recv (cat a b))
       (send (cat (enc t l k b (ltk a ks)) (enc t l k a (ltk b ks)))))
-    (uniq-orig k)))
+    (uniq-orig k))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton kerberos
   (vars (k skey) (t t-prime l text) (a b ks name))
@@ -892,7 +904,13 @@
     (vars (a b ks name) (t l text) (k skey))
     (trace (recv (cat a b))
       (send (cat (enc t l k b (ltk a ks)) (enc t l k a (ltk b ks)))))
-    (uniq-orig k)))
+    (uniq-orig k))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton kerberos
   (vars (k skey) (t l text) (a b ks name))

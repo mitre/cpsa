@@ -24,7 +24,13 @@
     (vars (a b c akey) (i d text) (k skey) (x mesg))
     (trace (recv (cat i a (enc (enc k b c i (invk a)) b) x))
       (send (enc "data" d k)))
-    (uniq-orig d)))
+    (uniq-orig d))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton main-ex-src
   (vars (k skey) (i ssn text) (a b c akey))
@@ -132,7 +138,13 @@
     (vars (a b c akey) (i d text) (k skey) (x mesg))
     (trace (recv (cat i a (enc (enc k b c i (invk a)) b) x))
       (send (enc "data" d k)))
-    (uniq-orig d)))
+    (uniq-orig d))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton main-ex-src
   (vars (k skey) (i ssn d text) (a b c akey))
@@ -233,7 +245,13 @@
     (trace (recv (enc y n i a (enc a b i ssn c) c)) (send n)))
   (defrole sy
     (vars (a b c akey) (i ssn y n text))
-    (trace (recv (enc y n i a (enc a b i ssn c) c)) (send y))))
+    (trace (recv (enc y n i a (enc a b i ssn c) c)) (send y)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton main-ex-tgt
   (vars (k skey) (i ssn text) (a b c akey))
@@ -360,7 +378,13 @@
     (trace (recv (enc y n i a (enc a b i ssn c) c)) (send n)))
   (defrole sy
     (vars (a b c akey) (i ssn y n text))
-    (trace (recv (enc y n i a (enc a b i ssn c) c)) (send y))))
+    (trace (recv (enc y n i a (enc a b i ssn c) c)) (send y)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton main-ex-tgt
   (vars (k skey) (i ssn d text) (a b c akey))
@@ -541,7 +565,13 @@
         (exists ((z-0 strd) (x mesg))
           (and (p "an" z-0 4) (p "an" "x" z-0 x) (p "an" "i" z-0 i)
             (p "an" "k" z-0 k) (p "an" "a" z-0 a) (p "an" "b" z-0 b)
-            (p "an" "c" z-0 c) (prec z 0 z-0 0) (prec z-0 3 z 1)))))))
+            (p "an" "c" z-0 c) (prec z 0 z-0 0) (prec z-0 3 z 1))))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton main-ex-tgt-rule
   (vars (k skey) (i ssn text) (a b c akey))

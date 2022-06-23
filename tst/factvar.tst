@@ -11,7 +11,13 @@
     (forall ((z strd))
       (implies (p "resp" z 1) (exists ((m text)) (fact thing m))))
     (comment "This rule adds a text variable")
-    (comment "that does not appear in a strand")))
+    (comment "that does not appear in a strand"))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton free-fact-var
   (vars (n text) (k akey))
@@ -47,7 +53,13 @@
     (forall ((z strd))
       (implies (p "resp" z 1) (exists ((m text)) (fact thing m))))
     (comment "This rule adds a text variable")
-    (comment "that does not appear in a strand")))
+    (comment "that does not appear in a strand"))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton free-fact-var
   (vars (n text) (k akey))

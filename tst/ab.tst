@@ -12,7 +12,13 @@
     (trace (recv (enc "A" x k)) (send (enc x x k))))
   (defrole B
     (vars (x text) (k skey))
-    (trace (recv (enc "B" x k)) (send (enc x x k)))))
+    (trace (recv (enc "B" x k)) (send (enc x x k))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton ab
   (vars (k skey) (x text))

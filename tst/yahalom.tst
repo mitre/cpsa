@@ -17,7 +17,13 @@
     (vars (c a b name) (n-a n-b text) (k skey))
     (trace (recv (cat b (enc a n-a n-b (ltk b c))))
       (send (enc b k n-a n-b (ltk a c))) (send (enc a k (ltk b c))))
-    (uniq-orig k)))
+    (uniq-orig k))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton yahalom
   (vars (k skey) (n-b n-a text) (a b c name))
@@ -1617,7 +1623,13 @@
     (vars (c a b name) (n-a n-b text) (k skey))
     (trace (recv (cat b (enc a n-a n-b (ltk b c))))
       (send (enc b k n-a n-b (ltk a c))) (send (enc a k (ltk b c))))
-    (uniq-orig k)))
+    (uniq-orig k))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton yahalom
   (vars (k skey) (n-b n-a text) (a b c name))
@@ -1756,7 +1768,13 @@
     (vars (c a b name) (n-a n-b text) (k skey))
     (trace (recv (cat b (enc a n-a n-b (ltk b c))))
       (send (enc b k n-a n-b (ltk a c))) (send (enc a k (ltk b c))))
-    (uniq-orig k)))
+    (uniq-orig k))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton yahalom
   (vars (k skey) (n-a n-b text) (a b c name))

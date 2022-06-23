@@ -9,7 +9,13 @@
     (uniq-orig n1))
   (defrole resp
     (vars (n1 text) (m mesg) (k akey))
-    (trace (recv (enc n1 (enc m k) k)) (send (enc m k)))))
+    (trace (recv (enc n1 (enc m k) k)) (send (enc m k))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton targetterms8
   (vars (n1 n2 text) (k akey) (a name))
@@ -64,7 +70,13 @@
     (uniq-orig n1))
   (defrole resp
     (vars (n1 text) (m mesg) (k akey))
-    (trace (recv (enc n1 (enc m k) k)) (send (enc m k)))))
+    (trace (recv (enc n1 (enc m k) k)) (send (enc m k))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton targetterms8
   (vars (n1 text) (k akey) (a name))

@@ -11,7 +11,13 @@
     (trace (send (cat n1 (enc n1 n2 k))) (recv n2))
     (non-orig k)
     (uniq-orig n1 n2))
-  (defrule neq (forall ((a mesg)) (implies (fact neq a a) (false)))))
+  (defrule neq (forall ((a mesg)) (implies (fact neq a a) (false))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton neq-test
   (vars (k skey) (n1 n2 text))
@@ -46,7 +52,13 @@
     (trace (send (cat n1 (enc n1 n2 k))) (recv n2))
     (non-orig k)
     (uniq-orig n1 n2))
-  (defrule neq (forall ((a mesg)) (implies (fact neq a a) (false)))))
+  (defrule neq (forall ((a mesg)) (implies (fact neq a a) (false))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton neq-test
   (vars (k skey) (n1 n2 text))

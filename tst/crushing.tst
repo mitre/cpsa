@@ -17,7 +17,13 @@
   (defrole twister
     (vars (k akey) (n n1 n2 n3 text))
     (trace (recv (enc n n1 n2 n3 (invk k)))
-      (send (enc n n2 n3 n1 n (invk k))))))
+      (send (enc n n2 n3 n1 n (invk k)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton crushing
   (vars (n n1 n2 n3 text) (k akey))

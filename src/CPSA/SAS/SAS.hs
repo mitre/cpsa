@@ -425,7 +425,7 @@ loadFactTerm :: MonadFail m => Sig -> [Term] -> VM -> SExpr Pos -> m Term
 loadFactTerm _ _  varmap (N pos z) =
   case M.lookup z varmap of
     Just t -> return t
-    Nothing -> fail $ shows pos ("Bad strand in fact: " ++ show z)
+    Nothing -> fail $ shows pos ("cpsa4sas:  Bad strand in fact: " ++ show z)
 loadFactTerm sig vars _ x =
   loadTerm sig vars True x
 

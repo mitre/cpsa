@@ -14,6 +14,12 @@
     (trace (recv (enc n1 a (pubk b))) (send (enc n1 n2 n3 (pubk a)))
       (recv (enc n2 n3 (pubk b))))
     (uniq-orig n2 n3))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment
     "modified Needham-Schroeder with role origination assumptions"))
 

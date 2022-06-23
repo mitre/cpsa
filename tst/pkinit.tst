@@ -17,7 +17,13 @@
       (send
         (cat (enc (enc k n2 (privk as)) (pubk c)) c tgt
           (enc ak n1 tk t k))))
-    (uniq-orig k ak)))
+    (uniq-orig k ak))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton pkinit
   (vars (tc tk tgt data) (k ak skey) (n2 n1 text) (c as t name))

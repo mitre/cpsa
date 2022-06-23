@@ -12,6 +12,12 @@
     (vars (b a name) (n2 n1 text))
     (trace (recv (enc n1 a (pubk b))) (send (enc n1 n2 (pubk a)))
       (recv (enc n2 (pubk b)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Needham-Schroeder with no role origination assumptions"))
 
 (defskeleton ns
@@ -77,6 +83,12 @@
     (vars (b a name) (n2 n1 text))
     (trace (recv (enc n1 a (pubk b))) (send (enc n1 n2 (pubk a)))
       (recv (enc n2 (pubk b)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Needham-Schroeder with no role origination assumptions"))
 
 (defskeleton ns
@@ -250,6 +262,12 @@
     (vars (b a name) (n2 n1 text))
     (trace (recv (enc n1 a (pubk b))) (send (enc n1 n2 (pubk a)))
       (recv (enc n2 (pubk b)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Needham-Schroeder with no role origination assumptions"))
 
 (defskeleton ns
@@ -333,6 +351,12 @@
     (vars (b a name) (n2 n1 text))
     (trace (recv (enc n1 a (pubk b))) (send (enc n1 n2 (pubk a)))
       (recv (enc n2 (pubk b)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Needham-Schroeder with no role origination assumptions"))
 
 (defskeleton ns
@@ -385,6 +409,12 @@
       (recv (enc n2 (pubk b))))
     (non-orig (privk a))
     (uniq-orig n2))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment
     "Needham-Schroeder with role assumptions that are too strong"))
 
@@ -454,6 +484,12 @@
       (recv (enc n2 (pubk b))))
     (non-orig (privk a))
     (uniq-orig n2))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment
     "Needham-Schroeder with role assumptions that are too strong"))
 
@@ -565,6 +601,12 @@
     (trace (recv (enc n1 n1 a (pubk b))) (send (enc n1 n2 (pubk a)))
       (recv (enc n2 (pubk b))))
     (note doubled nonce in the first message))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (note that this protocol is derived from Needham-Schroeder))
 
 (defskeleton ns2
@@ -629,6 +671,12 @@
     (vars (b a name) (n2 n1 text))
     (trace (recv (enc n1 a (pubk b))) (send (enc n1 n2 (pubk a)))
       (recv (enc n2 (pubk b)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Needham-Schroeder with no role origination assumptions"))
 
 (defskeleton ns
@@ -659,6 +707,12 @@
     (vars (b a name) (n2 text) (n1 mesg))
     (trace (recv (enc a n1 (pubk b))) (send (enc n1 n2 b (pubk a)))
       (recv (enc n2 (pubk b)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Needham-Schroeder-Lowe with untyped nonces"))
 
 (defskeleton nsl-typeless

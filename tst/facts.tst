@@ -10,7 +10,13 @@
     (uniq-orig n))
   (defrole resp
     (vars (n text) (k akey))
-    (trace (recv (enc n k)) (send n))))
+    (trace (recv (enc n k)) (send n)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton unilateral
   (vars (n text) (k akey))
@@ -50,7 +56,13 @@
     (uniq-orig n))
   (defrole resp
     (vars (n text) (k akey))
-    (trace (recv (enc n k)) (send n))))
+    (trace (recv (enc n k)) (send n)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton unilateral
   (vars (n text) (k akey))
@@ -89,7 +101,13 @@
     (uniq-orig n))
   (defrole resp
     (vars (n text) (k akey))
-    (trace (recv (enc n k)) (send n))))
+    (trace (recv (enc n k)) (send n)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton unilateral
   (vars (n text) (k akey))
@@ -139,7 +157,13 @@
     (uniq-orig n))
   (defrole resp
     (vars (n text) (k akey))
-    (trace (recv (enc n k)) (send n))))
+    (trace (recv (enc n k)) (send n)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton unilateral
   (vars (n text) (k akey))
@@ -192,6 +216,12 @@
     (trace (send (cat nb t1))
       (recv (cat na nb b t3 (enc na nb b t2 (privk b)))))
     (uniq-orig nb))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Two pass authentication"))
 
 (defskeleton iso-unilateral
@@ -241,6 +271,12 @@
     (trace (send (cat nb t1))
       (recv (cat na nb b t3 (enc na nb b t2 (privk b)))))
     (uniq-orig nb))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Two pass authentication"))
 
 (defskeleton iso-unilateral
@@ -295,6 +331,12 @@
     (trace (send (cat nb t1))
       (recv (cat na nb b t3 (enc na nb b t2 (privk b)))))
     (uniq-orig nb))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Two pass authentication"))
 
 (defskeleton iso-unilateral

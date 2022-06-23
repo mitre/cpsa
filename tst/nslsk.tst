@@ -11,7 +11,13 @@
   (defrole resp
     (vars (b a name) (n text) (k skey) (t text))
     (trace (recv (enc n a (pubk b))) (send (enc n k b (pubk a)))
-      (recv (enc t k)))))
+      (recv (enc t k))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton nslsk
   (vars (k skey) (n t text) (a b name))
@@ -92,7 +98,13 @@
   (defrole resp
     (vars (b a name) (n text) (k skey) (t text))
     (trace (recv (enc n a (pubk b))) (send (enc n k b (pubk a)))
-      (recv (enc t k)))))
+      (recv (enc t k))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton nslsk
   (vars (k skey) (n t text) (b a name))
@@ -137,7 +149,13 @@
   (defrole resp
     (vars (b a name) (n text) (k skey))
     (trace (recv (enc n a (pubk b))) (send (enc n k b (pubk a)))
-      (recv (enc "t" k)))))
+      (recv (enc "t" k))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton nslsk-tag-term
   (vars (k skey) (n text) (a b name))
@@ -218,7 +236,13 @@
   (defrole resp
     (vars (b a name) (n text) (k skey))
     (trace (recv (enc n a (pubk b))) (send (enc n k b (pubk a)))
-      (recv (enc "t" k)))))
+      (recv (enc "t" k))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton nslsk-tag-term
   (vars (k skey) (n text) (b a name))

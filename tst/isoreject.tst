@@ -10,7 +10,13 @@
     (vars (a b name) (na nb nc text))
     (trace (recv (cat a na)) (send (enc nb na a (privk b)))
       (recv (enc nc nb b (privk a))))
-    (uniq-orig nb)))
+    (uniq-orig nb))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton isoreject
   (vars (na nb nc text) (a b name))
@@ -96,7 +102,13 @@
     (vars (a b name) (na nb nc text))
     (trace (recv (cat a na)) (send (enc nb na a (privk b)))
       (recv (enc nc nb b (privk a))))
-    (uniq-orig nb)))
+    (uniq-orig nb))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton isoreject
   (vars (na nb nc text) (b a name))

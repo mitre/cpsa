@@ -21,6 +21,12 @@
     (non-orig dhkey (invk gy) (invk gz))
     (uniq-orig gy gz)
     (comment "Y and Z should be assumed to be freshly chosen per role"))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment
     "Needham-Schroeder-Lowe DH challenge/responses in place of nonces"))
 
@@ -202,6 +208,12 @@
     (non-orig dhkey (invk gy) (invk gz))
     (uniq-orig gy gz)
     (comment "Y and Z should be assumed to be freshly chosen per role"))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment
     "Needham-Schroeder-Lowe DH challenge/responses in place of nonces"))
 

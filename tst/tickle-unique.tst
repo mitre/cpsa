@@ -17,7 +17,13 @@
     (forall ((z strd) (nb0 text))
       (implies
         (and (fact guard-me) (p "resp" z 2) (p "resp" "nb0" z nb0))
-        (uniq nb0)))))
+        (uniq nb0))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton tickle
   (vars (nb0 nb na text) (a b name))
@@ -69,7 +75,13 @@
     (forall ((z strd) (nb0 text))
       (implies
         (and (fact guard-me) (p "resp" z 2) (p "resp" "nb0" z nb0))
-        (uniq nb0)))))
+        (uniq nb0))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton tickle
   (vars (nb0 nb na text) (a b name))

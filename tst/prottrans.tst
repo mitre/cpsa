@@ -10,6 +10,12 @@
   (defrole resp
     (vars (b a akey) (nb na text))
     (trace (recv (enc na a b)) (send (enc na nb a)) (recv (enc nb b))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Needham-Schroeder without rules"))
 
 (defskeleton ns
@@ -66,6 +72,12 @@
   (defrole resp
     (vars (b a akey) (nb na text))
     (trace (recv (enc na a b)) (send (enc na nb a)) (recv (enc nb b))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Needham-Schroeder without rules"))
 
 (defskeleton ns
@@ -105,7 +117,13 @@
     (trace (send (enc n k)) (recv n)))
   (defrole resp
     (vars (n text) (k akey))
-    (trace (recv (enc n k)) (send n))))
+    (trace (recv (enc n k)) (send n)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton unilateral
   (vars (n text) (k akey))
@@ -168,6 +186,12 @@
     (comment (p "resp" 2) "->" (p "init" 3) "and")
     (comment (p "resp" "n") "->" (p "init" "nb"))
     (comment (p "resp" "k") "->" (p "init" "a")))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Needham-Schroeder with rule"))
 
 (defskeleton ns-with-rule

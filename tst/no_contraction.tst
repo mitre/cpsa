@@ -7,7 +7,13 @@
     (trace (send (enc (enc n (privk a)) (pubk b)))))
   (defrole resp
     (vars (a name) (n text))
-    (trace (recv (enc n (privk a))))))
+    (trace (recv (enc n (privk a)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton no-contraction
   (vars (n text) (a a-0 b name))

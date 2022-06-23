@@ -1,4 +1,4 @@
-CPSAFLAGS = +RTS -M512m -N8 -RTS
+CPSAFLAGS = +RTS -M512m -N12 -RTS
 CPSATIME = time 
 
 SRCS := $(wildcard *.scm) $(wildcard *.prot) $(wildcard *.lsp)

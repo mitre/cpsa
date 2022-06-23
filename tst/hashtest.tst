@@ -11,7 +11,13 @@
     (uniq-orig n))
   (defrole resp
     (vars (k akey) (n data))
-    (trace (recv (enc n k)) (send (hash n)))))
+    (trace (recv (enc n k)) (send (hash n))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton hashtest
   (vars (n data) (k akey))

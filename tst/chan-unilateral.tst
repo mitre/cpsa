@@ -9,6 +9,12 @@
     (trace (send ch n) (recv n))
     (uniq-orig n))
   (defrole resp (vars (n text) (ch chan)) (trace (recv ch n) (send n)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment
     "Unilateral protocol using channels with differing assumptions"))
 
@@ -31,6 +37,12 @@
     (trace (send ch n) (recv n))
     (uniq-orig n))
   (defrole resp (vars (n text) (ch chan)) (trace (recv ch n) (send n)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment
     "Unilateral protocol using channels with differing assumptions"))
 
@@ -54,6 +66,12 @@
     (trace (send ch n) (recv n))
     (uniq-orig n))
   (defrole resp (vars (n text) (ch chan)) (trace (recv ch n) (send n)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment
     "Unilateral protocol using channels with differing assumptions"))
 
@@ -92,6 +110,12 @@
     (trace (send ch n) (recv n))
     (uniq-orig n))
   (defrole resp (vars (n text) (ch chan)) (trace (recv ch n) (send n)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment
     "Unilateral protocol using channels with differing assumptions"))
 
@@ -132,6 +156,12 @@
     (trace (send ch n) (recv n))
     (uniq-orig n))
   (defrole resp (vars (n text) (ch chan)) (trace (recv ch n) (send n)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment
     "Unilateral protocol using channels with differing assumptions"))
 
@@ -169,6 +199,12 @@
     (trace (send ch n) (recv n))
     (uniq-orig n))
   (defrole resp (vars (n text) (ch chan)) (trace (recv ch n) (send n)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment
     "Unilateral protocol using channels with differing assumptions"))
 
@@ -208,6 +244,12 @@
     (trace (send ch n) (recv n))
     (uniq-orig n))
   (defrole resp (vars (n text) (ch chan)) (trace (recv ch n) (send n)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment
     "Unilateral protocol using channels with differing assumptions"))
 
@@ -247,6 +289,12 @@
     (trace (send ch n) (recv n))
     (uniq-orig n))
   (defrole resp (vars (n text) (ch chan)) (trace (recv ch n) (send n)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment
     "Unilateral protocol using channels with differing assumptions"))
 

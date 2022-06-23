@@ -20,7 +20,13 @@
     (vars (i x mf pc name) (ek k akey))
     (trace (recv (cat i k x (enc "ekc" mf ek (privk mf))))
       (send (enc (enc "aic" i k x (privk pc)) ek)))
-    (non-orig (privk mf))))
+    (non-orig (privk mf)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton aikprot
   (vars (srk skey) (ek k akey) (mf pc i x name))
@@ -156,7 +162,13 @@
     (vars (i x mf pc name) (ek k akey))
     (trace (recv (cat i k x (enc "ekc" mf ek (privk mf))))
       (send (enc (enc "aic" i k x (privk pc)) ek)))
-    (non-orig (privk mf))))
+    (non-orig (privk mf)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton aikprot
   (vars (k akey) (i x pc name))

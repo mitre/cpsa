@@ -14,7 +14,13 @@
       (send (enc n n C k))))
   (defrole trans2
     (vars (n text) (A name) (k akey))
-    (trace (recv (enc n A k)) (send (enc n A A A k)))))
+    (trace (recv (enc n A k)) (send (enc n A A A k))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton nonaug-prune
   (vars (n text) (k akey) (A B name))

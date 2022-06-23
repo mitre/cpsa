@@ -33,6 +33,12 @@
           (p "certify" "ca" zca ca) (p "certify" "pk" zca pk)
           (non (privk "cert" ca)))
         (non (invk pk)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (lang (cert sign) (cert-body (tupl 3))))
 
 (defskeleton cert-uni

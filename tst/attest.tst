@@ -29,6 +29,12 @@
         (exists ((d akey))
           (and (p "appraise" "d" z d) (non (invk d))))))
     (comment "Appraisal succeeded"))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Door attestations protocol"))
 
 (defskeleton attest-door
@@ -238,6 +244,12 @@
         (exists ((d akey))
           (and (p "appraise" "d" z d) (non (invk d))))))
     (comment "Appraisal succeeded"))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Door attestations protocol"))
 
 (defskeleton attest-door
@@ -306,6 +318,12 @@
           (p "squealer" w 2) (p "squealer" "d" w d))
         (false)))
     (comment "Passing attestation means not a squealer"))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Door attestations protocol with attestation"))
 
 (defskeleton attest-door-trust
@@ -437,6 +455,12 @@
           (p "squealer" w 2) (p "squealer" "d" w d))
         (false)))
     (comment "Passing attestation means not a squealer"))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Door attestations protocol with attestation"))
 
 (defskeleton attest-door-trust
@@ -511,6 +535,12 @@
         (and (p "person" z 3) (p "person" "p" z p) (p "person" "a" z a)
           (non (invk p)))
         (non (invk a)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment
     "Door attestations protocol with attestation and reliable persons"))
 
@@ -649,6 +679,12 @@
         (and (p "person" z 3) (p "person" "p" z p) (p "person" "a" z a)
           (non (invk p)))
         (non (invk a)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment
     "Door attestations protocol with attestation and reliable persons"))
 

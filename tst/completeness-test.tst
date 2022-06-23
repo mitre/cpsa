@@ -9,7 +9,13 @@
   (defrole resp
     (vars (a b name) (n text))
     (trace (recv (enc a n (pubk b))) (send (enc n (pubk a)))))
-  (defrole probe (vars (s skey)) (trace (recv (enc "ok" s)))))
+  (defrole probe (vars (s skey)) (trace (recv (enc "ok" s))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton completeness-test
   (vars (s s-0 skey) (n text) (b a name))
@@ -117,7 +123,13 @@
   (defrole resp
     (vars (a b name) (n text))
     (trace (recv (enc a n (pubk b))) (send (enc n (pubk a)))))
-  (defrole probe (vars (s skey)) (trace (recv (enc "ok" s)))))
+  (defrole probe (vars (s skey)) (trace (recv (enc "ok" s))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton completeness-test
   (vars (s s-0 skey) (n text) (b a name))
@@ -206,7 +218,13 @@
   (defrole resp
     (vars (a b name) (n text))
     (trace (recv (enc a n (pubk b))) (send (enc n (pubk a)))))
-  (defrole probe (vars (s skey)) (trace (recv (enc "ok" s)))))
+  (defrole probe (vars (s skey)) (trace (recv (enc "ok" s))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton completeness-test
   (vars (s skey) (n text) (b a name))
@@ -310,7 +328,13 @@
   (defrole resp
     (vars (a b name) (n text))
     (trace (recv (enc a n (pubk b))) (send (enc n (pubk a)))))
-  (defrole probe (vars (s skey)) (trace (recv (enc "ok" s)))))
+  (defrole probe (vars (s skey)) (trace (recv (enc "ok" s))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton completeness-test
   (vars (s skey) (n text) (b a name))

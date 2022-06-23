@@ -29,7 +29,13 @@
     (trace (recv (cat gx (invk gy))) (send (enc "dh" gx gy dhkey))))
   (defrole CDHcalc2
     (vars (gx gy akey) (dhkey skey))
-    (trace (recv (cat gy (invk gx))) (send (enc "dh" gx gy dhkey)))))
+    (trace (recv (cat gy (invk gx))) (send (enc "dh" gx gy dhkey))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx h akey) (a b ca name))
@@ -808,7 +814,13 @@
     (trace (recv (cat gx (invk gy))) (send (enc "dh" gx gy dhkey))))
   (defrole CDHcalc2
     (vars (gx gy akey) (dhkey skey))
-    (trace (recv (cat gy (invk gx))) (send (enc "dh" gx gy dhkey)))))
+    (trace (recv (cat gy (invk gx))) (send (enc "dh" gx gy dhkey))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy h akey) (a b ca name))
@@ -1656,7 +1668,13 @@
     (trace (recv (cat gx (invk gy))) (send (enc "dh" gx gy dhkey))))
   (defrole CDHcalc2
     (vars (gx gy akey) (dhkey skey))
-    (trace (recv (cat gy (invk gx))) (send (enc "dh" gx gy dhkey)))))
+    (trace (recv (cat gy (invk gx))) (send (enc "dh" gx gy dhkey))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy h akey) (a b ca name))
@@ -2005,7 +2023,13 @@
     (trace (recv (cat gx (invk gy))) (send (enc "dh" gx gy dhkey))))
   (defrole CDHcalc2
     (vars (gx gy akey) (dhkey skey))
-    (trace (recv (cat gy (invk gx))) (send (enc "dh" gx gy dhkey)))))
+    (trace (recv (cat gy (invk gx))) (send (enc "dh" gx gy dhkey))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx gy akey) (a b ca name))

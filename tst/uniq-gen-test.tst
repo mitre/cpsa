@@ -11,7 +11,13 @@
   (defrole doubler (vars (a name) (k skey)) (trace (send (enc a a k))))
   (defrole resp
     (vars (a name) (k skey))
-    (trace (recv (enc a k)) (send (enc a a k)))))
+    (trace (recv (enc a k)) (send (enc a a k))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton uniqgentest
   (vars (k skey) (a name))
@@ -62,7 +68,13 @@
   (defrole doubler (vars (a name) (k skey)) (trace (send (enc a a k))))
   (defrole resp
     (vars (a name) (k skey))
-    (trace (recv (enc a k)) (send (enc a a k)))))
+    (trace (recv (enc a k)) (send (enc a a k))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton uniqgentest
   (vars (k skey) (a name))

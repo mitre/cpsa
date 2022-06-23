@@ -16,7 +16,13 @@
     (trace (recv (cat b rb (enc a ra tb (ltk b ks))))
       (send
         (cat (enc b ra k tb (ltk a ks)) (enc a k tb (ltk b ks)) rb)))
-    (uniq-orig k)))
+    (uniq-orig k))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton neuman-stubblebine
   (vars (k skey) (ra rb tb text) (a b ks name))
@@ -97,7 +103,13 @@
     (trace (recv (cat b rb (enc a ra tb (ltk b ks))))
       (send
         (cat (enc b ra k tb (ltk a ks)) (enc a k tb (ltk b ks)) rb)))
-    (uniq-orig k)))
+    (uniq-orig k))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton neuman-stubblebine
   (vars (k skey) (ra rb tb text) (a b ks name))
@@ -418,7 +430,13 @@
     (trace (recv (cat b rb (enc a ra tb (ltk b ks))))
       (send
         (cat (enc b ra k tb (ltk a ks)) (enc a k tb (ltk b ks)) rb)))
-    (uniq-orig k)))
+    (uniq-orig k))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton neuman-stubblebine
   (vars (k skey) (ra rb tb text) (a b ks name))

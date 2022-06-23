@@ -15,7 +15,13 @@
     (trace (recv a) (send (cat b n1 n2))
       (recv (cat a (enc n1 x y (pubk b))))
       (send (cat n1 x (enc x y n1 (pubk b)))))
-    (uniq-orig n1 n2)))
+    (uniq-orig n1 n2))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton ffgg
   (vars (m n1 n2 x y text) (b a name))

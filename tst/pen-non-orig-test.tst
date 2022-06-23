@@ -10,7 +10,13 @@
   (defrole server
     (vars (userid name) (pwd text))
     (trace (recv (cat userid pwd)))
-    (pen-non-orig pwd)))
+    (pen-non-orig pwd))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton pennonorigtest
   (vars (pwd text) (userid name))
@@ -46,7 +52,13 @@
   (defrole server
     (vars (userid name) (pwd text))
     (trace (recv (cat userid pwd)))
-    (pen-non-orig pwd)))
+    (pen-non-orig pwd))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton pennonorigtest
   (vars (pwd text) (userid name))

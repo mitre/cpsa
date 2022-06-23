@@ -1,8 +1,8 @@
-(herald bug_example (bound 10))
+(herald bug_example (bound 20))
 
 (comment "CPSA 4.3.1")
 (comment "All input read from tst/bug_example.scm")
-(comment "Strand count bounded at 10")
+(comment "Strand count bounded at 20")
 
 (defprotocol bug_example basic
   (defrole init
@@ -16,7 +16,13 @@
   (defrole flip
     (vars (k k1 k2 akey))
     (trace (recv (enc k (hash k1 k2)))
-      (send (enc k (hash (invk k1) (invk k2)))))))
+      (send (enc k (hash (invk k1) (invk k2))))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton bug_example
   (vars (x y akey))
@@ -181,7 +187,13 @@
   (defrole flip2
     (vars (k k1 k2 akey))
     (trace (recv (enc k (hash k1 (invk k2))))
-      (send (enc k (hash (invk k1) k2))))))
+      (send (enc k (hash (invk k1) k2)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton bug_example
   (vars (x y akey))

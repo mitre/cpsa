@@ -490,7 +490,13 @@
       (send
         (enc "abcf"
           (enc "abrq" a b t y (enc "h" (cat "h" k)) (privk "sign" a))
-          (privk "sign" t))))))
+          (privk "sign" t)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton wang
   (vars (m data) (k skey) (r text) (b t a name))
@@ -1370,7 +1376,13 @@
       (send
         (enc "abcf"
           (enc "abrq" a b t y (enc "h" (cat "h" k)) (privk "sign" a))
-          (privk "sign" t))))))
+          (privk "sign" t)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton wang
   (vars (m data) (k skey) (r text) (b t a name))
@@ -2075,7 +2087,13 @@
       (send
         (enc "abcf"
           (enc "abrq" a b t y (enc "h" (cat "h" k)) (privk "sign" a))
-          (privk "sign" t))))))
+          (privk "sign" t)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton wang
   (vars (m data) (k skey) (r text) (b t a name))
@@ -2781,7 +2799,13 @@
       (send
         (enc "abcf"
           (enc "abrq" a b t y (enc "h" (cat "h" k)) (privk "sign" a))
-          (privk "sign" t))))))
+          (privk "sign" t)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton wang
   (vars (m data) (k skey) (r text) (b t a name))
@@ -3496,7 +3520,13 @@
       (send
         (enc "abcf"
           (enc "abrq" a b t y (enc "h" (cat "h" k)) (privk "sign" a))
-          (privk "sign" t))))))
+          (privk "sign" t)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton wang
   (vars (m data) (k skey) (r text) (b t a name))
@@ -4241,7 +4271,13 @@
       (send
         (enc "abcf"
           (enc "abrq" a b t y (enc "h" (cat "h" k)) (privk "sign" a))
-          (privk "sign" t))))))
+          (privk "sign" t)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton wang
   (vars (m data) (k skey) (r text) (a t b name))
@@ -4837,7 +4873,13 @@
       (send
         (enc "abcf"
           (enc "abrq" a b t y (enc "h" (cat "h" k)) (privk "sign" a))
-          (privk "sign" t))))))
+          (privk "sign" t)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton wang
   (vars (m data) (k skey) (r text) (a t b name))
@@ -5533,7 +5575,13 @@
       (send
         (enc "abcf"
           (enc "abrq" a b t y (enc "h" (cat "h" k)) (privk "sign" a))
-          (privk "sign" t))))))
+          (privk "sign" t)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton wang
   (vars (e1 e2 x mesg) (a t b name))
@@ -6771,7 +6819,13 @@
       (send
         (enc "abcf"
           (enc "abrq" a b t y (enc "h" (cat "h" k)) (privk "sign" a))
-          (privk "sign" t))))))
+          (privk "sign" t)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton wang
   (vars (y x mesg) (a b t name))
@@ -7414,7 +7468,13 @@
       (send
         (enc "abcf"
           (enc "abrq" a b t y (enc "h" (cat "h" k)) (privk "sign" a))
-          (privk "sign" t))))))
+          (privk "sign" t)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton wang
   (vars (y x mesg) (a b t name))
@@ -8034,7 +8094,13 @@
       (send
         (enc "abcf"
           (enc "abrq" a b t y (enc "h" (cat "h" k)) (privk "sign" a))
-          (privk "sign" t))))))
+          (privk "sign" t)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton wang
   (vars (y mesg) (k skey) (r text) (a b t name))
@@ -9023,7 +9089,13 @@
       (send
         (enc "abcf"
           (enc "abrq" a b t y (enc "h" (cat "h" k)) (privk "sign" a))
-          (privk "sign" t))))))
+          (privk "sign" t)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton wang
   (vars (y mesg) (k skey) (r text) (a b t name))

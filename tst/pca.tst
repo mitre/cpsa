@@ -21,7 +21,13 @@
   (defrole appr
     (vars (ki kp akey) (t a text))
     (trace (recv (enc ki a t (invk kp))))
-    (non-orig (invk ki) (invk kp))))
+    (non-orig (invk ki) (invk kp)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton pca
   (vars (t a text) (ki kp akey))

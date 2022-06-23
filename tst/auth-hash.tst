@@ -13,7 +13,13 @@
     (vars (n text) (ch chan))
     (trace (recv ch (hash n)) (recv ch n))
     (inputs ch)
-    (outputs n)))
+    (outputs n))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton auth-hash
   (vars (n text) (ch chan))

@@ -21,7 +21,13 @@
   (defrole client
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
-      (recv (cat "deliver" a (enc s g na gk (ltk s a)))))))
+      (recv (cat "deliver" a (enc s g na gk (ltk s a))))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton fluffy
   (vars (gk skey) (nb g text) (b s name))
@@ -101,7 +107,13 @@
   (defrole client
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
-      (recv (cat "deliver" a (enc s g na gk (ltk s a)))))))
+      (recv (cat "deliver" a (enc s g na gk (ltk s a))))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton fluffy
   (vars (gk skey) (nb na g text) (a b s name))
@@ -316,7 +328,13 @@
   (defrole client
     (vars (a s name) (na g text) (gk skey))
     (trace (send (cat "fetch" s g (enc a na (ltk s a))))
-      (recv (cat "deliver" a (enc s g na gk (ltk s a)))))))
+      (recv (cat "deliver" a (enc s g na gk (ltk s a))))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton fluffy
   (vars (gk skey) (na g text) (a s name))
@@ -407,7 +425,13 @@
       (implies
         (and (p "sp" z 1) (p "sp" "s" z s) (p "sp" "b" z b)
           (p "keyserv" y 3) (p "keyserv" "s" y s) (p "keyserv" "a" y b))
-        (false)))))
+        (false))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton fluffy-rule
   (vars (gk skey) (nb g text) (b s name))
@@ -474,7 +498,13 @@
       (implies
         (and (p "sp" z 1) (p "sp" "s" z s) (p "sp" "b" z b)
           (p "keyserv" y 3) (p "keyserv" "s" y s) (p "keyserv" "a" y b))
-        (false)))))
+        (false))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton fluffy-rule
   (vars (gk skey) (nb na g text) (a b s name))
@@ -565,7 +595,13 @@
       (implies
         (and (p "sp" z 1) (p "sp" "s" z s) (p "sp" "b" z b)
           (p "keyserv" y 3) (p "keyserv" "s" y s) (p "keyserv" "a" y b))
-        (false)))))
+        (false))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton fluffy-rule
   (vars (gk skey) (na g text) (a s name))

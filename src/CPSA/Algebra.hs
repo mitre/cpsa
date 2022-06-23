@@ -754,7 +754,9 @@ foldVars f acc (F Base [t]) =
           acc
       baseAddVars acc (F Exp [t0, G t1]) =
           foldVars f (baseAddVars acc t0) (G t1)
-      baseAddVars _ _ = assertError "Algebra.foldVars: Bad term"
+      baseAddVars _ t1 = assertError
+                         ("Algebra.foldVars: Bad term (F Base ["
+                          ++ (show t1) ++ "]) in " ++ (show t))
 foldVars f acc (G t) =
     M.foldlWithKey rndxAddVars acc t
     where

@@ -14,7 +14,13 @@
     (vars (b a name) (n2 n1 text))
     (trace (recv (enc (enc n1 a (privk "sig" a)) (pubk "enc" b)))
       (send (enc (enc n1 n2 (privk "sig" b)) (pubk "enc" a)))
-      (recv (enc (enc n2 (privk "sig" a)) (pubk "enc" b))))))
+      (recv (enc (enc n2 (privk "sig" a)) (pubk "enc" b)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton mult-keys-sig-enc
   (vars (n1 n2 text) (a b name))
@@ -85,7 +91,13 @@
     (vars (b a name) (n2 n1 text))
     (trace (recv (enc (enc n1 a (privk "sig" a)) (pubk "enc" b)))
       (send (enc (enc n1 n2 (privk "sig" b)) (pubk "enc" a)))
-      (recv (enc (enc n2 (privk "sig" a)) (pubk "enc" b))))))
+      (recv (enc (enc n2 (privk "sig" a)) (pubk "enc" b)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton mult-keys-sig-enc
   (vars (n2 n1 text) (a b name))
@@ -180,7 +192,13 @@
     (vars (b a name) (n2 n1 text))
     (trace (recv (enc (enc n1 a (privk "sig" a)) (pubk "enc" b)))
       (send (enc (enc n1 n2 (privk "sig" b)) (pubk "enc" a)))
-      (recv (enc (enc n2 (privk "sig" a)) (pubk "enc" b))))))
+      (recv (enc (enc n2 (privk "sig" a)) (pubk "enc" b)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton mult-keys-sig-enc
   (vars (n2 n1 text) (a b name))
@@ -231,7 +249,13 @@
     (vars (b a name) (n2 n1 text))
     (trace (recv (enc (enc n1 a (privk "sig" a)) (pubk "enc" b)))
       (send (enc (enc n1 n2 (privk "sig" b)) (pubk "enc" a)))
-      (recv (enc (enc n2 (privk "sig" a)) (pubk "enc" b))))))
+      (recv (enc (enc n2 (privk "sig" a)) (pubk "enc" b)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton mult-keys-sig-enc
   (vars (n2 n1 text) (a b name))

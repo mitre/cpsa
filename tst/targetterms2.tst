@@ -10,7 +10,13 @@
     (uniq-orig n))
   (defrole trans
     (vars (a name) (n text) (m mesg))
-    (trace (recv (enc n (pubk a))) (recv m) (send (enc n m (pubk a))))))
+    (trace (recv (enc n (pubk a))) (recv m) (send (enc n m (pubk a)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton targetterms2
   (vars (n text) (a name))

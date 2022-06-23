@@ -16,6 +16,12 @@
       (recv
         (cat (enc "init" ta k) (enc a kp (privk a))
           (enc (enc k (pubk b)) (invk kp)))) (send (enc "resp" tb k))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "In this version of the protocol ")
   (comment "b might interact with a compromised initiator.")
   (comment "That is why a is not authenticated to b."))
@@ -159,6 +165,12 @@
         (cat (enc "init" ta k) (enc a kp (privk a))
           (enc (enc k (pubk b)) (invk kp)))) (send (enc "resp" tb k)))
     (non-orig (privk a)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "In this version of the protocol ")
   (comment "b never interacts with a compromised initiator.")
   (comment "That is why a is properly authenticated to b."))

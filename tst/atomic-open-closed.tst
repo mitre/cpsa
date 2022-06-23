@@ -196,12 +196,6 @@
       (implies
         (and (p "dev-pass" z 3) (prec z 1 x i1))
         (or (= x z) (prec z 2 x i1)))))
-  (defgenrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
@@ -213,6 +207,12 @@
       (implies
         (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
           (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (defgenrule trRl_dev-close-at-2
     (forall ((z strd)) (implies (p "dev-close" z 4) (trans z 2))))
   (defgenrule trRl_dev-close-at-3
@@ -290,7 +290,8 @@
   (uniq-orig k)
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk))
+  (facts (trans 2 3) (trans 2 4) (same-dev ls lk) (trans 2 1)
+    (trans 2 2))
   (rule dev-up-atomic2 trRl_dev-up-at-3 trRl_dev-up-at-4
     intro-same-dev-up dev-up-completes trRl_dev-up-at-1
     trRl_dev-up-at-2)
@@ -501,12 +502,6 @@
       (implies
         (and (p "dev-pass" z 3) (prec z 1 x i1))
         (or (= x z) (prec z 2 x i1)))))
-  (defgenrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
@@ -518,6 +513,12 @@
       (implies
         (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
           (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (defgenrule trRl_dev-close-at-2
     (forall ((z strd)) (implies (p "dev-close" z 4) (trans z 2))))
   (defgenrule trRl_dev-close-at-3
@@ -592,7 +593,8 @@
   (uniq-orig n)
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (auth start-ch)
-  (facts (same-dev ls lk))
+  (facts (trans 1 3) (trans 1 4) (same-dev ls lk) (trans 1 1)
+    (trans 1 2))
   (rule same-dev-lk-ls trRl_dev-up-at-3 trRl_dev-up-at-4
     intro-same-dev-up atomic-up-pass dev-up-completes trRl_dev-up-at-1
     trRl_dev-up-at-2)
@@ -621,7 +623,8 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk))
+  (facts (trans 1 3) (trans 1 4) (same-dev ls lk) (trans 1 1)
+    (trans 1 2))
   (operation channel-test (added-strand owner-power-dev 1)
     (ch-msg start-ch (cat "power-up" d o k)) (1 0))
   (traces
@@ -652,7 +655,8 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k) (cat "st-k" d o k-0))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk))
+  (facts (same-dev ls lk) (trans 3 2) (trans 3 3) (trans 1 3)
+    (trans 1 4) (trans 1 1) (trans 1 2))
   (rule single-thread-up-open dev-open-atomic1 dev-pass-atomic1
     invShearsRule same-dev-ls-lk gen-state-open intro-same-dev-open
     trRl_dev-open-at-2 trRl_dev-open-at-3)
@@ -687,7 +691,8 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk))
+  (facts (same-dev ls lk) (trans 3 2) (trans 3 3) (trans 1 3)
+    (trans 1 4) (trans 1 1) (trans 1 2))
   (operation channel-test (displaced 4 1 dev-up 3)
     (ch-msg lk (cat pt-5 "st-k" d o k-0)) (3 1))
   (traces
@@ -901,12 +906,6 @@
       (implies
         (and (p "dev-pass" z 3) (prec z 1 x i1))
         (or (= x z) (prec z 2 x i1)))))
-  (defgenrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (defgenrule no-interruption
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
@@ -918,6 +917,12 @@
       (implies
         (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
           (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (defgenrule trRl_dev-close-at-2
     (forall ((z strd)) (implies (p "dev-close" z 4) (trans z 2))))
   (defgenrule trRl_dev-close-at-3
@@ -1069,7 +1074,8 @@
   (gen-st (cat "st" d-0 o-0 o-0) (cat "st-k" d-0 o-0 k))
   (conf start-ch)
   (auth start-ch-0)
-  (facts (same-dev ls lk))
+  (facts (trans 3 3) (trans 3 4) (same-dev ls lk) (trans 3 1)
+    (trans 3 2))
   (rule same-dev-lk-ls trRl_dev-up-at-3 trRl_dev-up-at-4
     intro-same-dev-up atomic-up-pass dev-up-completes trRl_dev-up-at-1
     trRl_dev-up-at-2)
@@ -1102,7 +1108,8 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls-0 lk-0) (same-dev ls lk))
+  (facts (trans 3 3) (trans 3 4) (same-dev ls-0 lk-0) (trans 3 1)
+    (trans 3 2) (same-dev ls lk))
   (rule dev-up-atomic2 dev-pass-atomic1 trRl_dev-up-at-3
     trRl_dev-up-at-4 intro-same-dev-up dev-up-completes trRl_dev-up-at-1
     trRl_dev-up-at-2)
@@ -1135,7 +1142,8 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk))
+  (facts (trans 3 3) (trans 3 4) (same-dev ls lk) (trans 3 1)
+    (trans 3 2))
   (operation channel-test (displaced 4 0 owner-power-dev 1)
     (ch-msg start-ch-0 (cat "power-up" d-0 o-0 k)) (3 0))
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
@@ -1167,7 +1175,8 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k) (cat "st-k" d o k-0))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk))
+  (facts (same-dev ls lk) (trans 4 2) (trans 4 3) (trans 3 3)
+    (trans 3 4) (trans 3 1) (trans 3 2))
   (rule single-thread-up-open dev-open-atomic1 dev-pass-atomic1
     invShearsRule same-dev-ls-lk gen-state-open intro-same-dev-open
     trRl_dev-open-at-2 trRl_dev-open-at-3)
@@ -1203,7 +1212,8 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk))
+  (facts (same-dev ls lk) (trans 4 2) (trans 4 3) (trans 3 3)
+    (trans 3 4) (trans 3 1) (trans 3 2))
   (operation channel-test (displaced 5 3 dev-up 3)
     (ch-msg lk (cat pt-5 "st-k" d o k-0)) (4 1))
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
@@ -1237,7 +1247,8 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk))
+  (facts (same-dev ls lk) (trans 4 2) (trans 4 3) (trans 3 3)
+    (trans 3 4) (trans 3 1) (trans 3 2))
   (operation encryption-test (added-strand owner-open 1)
     (enc "open" d o n-0 k) (4 0))
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
@@ -1273,7 +1284,8 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk))
+  (facts (same-dev ls lk) (trans 4 2) (trans 4 3) (trans 3 3)
+    (trans 3 4) (trans 3 1) (trans 3 2))
   (operation encryption-test (added-listener k) (enc "open" d o n-0 k)
     (4 0))
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
@@ -1309,7 +1321,8 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk))
+  (facts (same-dev ls lk) (trans 3 2) (trans 3 3) (trans 5 3)
+    (trans 5 4) (trans 5 1) (trans 5 2))
   (operation encryption-test (displaced 3 6 dev-up 6) (enc "up" k)
     (0 1))
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
@@ -1350,7 +1363,8 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk))
+  (facts (same-dev ls lk) (trans 4 2) (trans 4 3) (trans 3 3)
+    (trans 3 4) (trans 3 1) (trans 3 2))
   (operation encryption-test (added-listener k) (enc "up" k) (0 1))
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
     ((recv (enc "may I pass" k)) (load lk (cat pt-1 "st-k" d o k))
@@ -1385,7 +1399,8 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk))
+  (facts (same-dev ls lk) (trans 4 2) (trans 4 3) (trans 3 3)
+    (trans 3 4) (trans 3 1) (trans 3 2))
   (rule dev-up-atomic2)
   (operation nonce-test (displaced 6 3 dev-up 3) k (5 0)
     (ch-msg start-ch (cat "power-up" d o k)))
@@ -1423,7 +1438,8 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk))
+  (facts (same-dev ls lk) (trans 4 2) (trans 4 3) (trans 3 3)
+    (trans 3 4) (trans 3 1) (trans 3 2))
   (rule dev-up-atomic2)
   (operation nonce-test (displaced 7 3 dev-up 3) k (6 0)
     (ch-msg start-ch (cat "power-up" d o k)))

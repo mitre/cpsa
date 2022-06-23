@@ -4,7 +4,13 @@
 (defprotocol weird basic
   (defrole originator (vars (k skey)) (trace (send k)) (uniq-orig k))
   (defrole guesser (vars (k skey) (a name)) (trace (send (enc a k))))
-  (defrole encryptor (vars (k skey) (a name)) (trace (recv (enc a k)))))
+  (defrole encryptor (vars (k skey) (a name)) (trace (recv (enc a k))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton weird
   (vars (k skey) (a name))
@@ -23,7 +29,13 @@
 (defprotocol weird basic
   (defrole originator (vars (k skey)) (trace (send k)) (uniq-orig k))
   (defrole guesser (vars (k skey) (a name)) (trace (send (enc a k))))
-  (defrole encryptor (vars (k skey) (a name)) (trace (recv (enc a k)))))
+  (defrole encryptor (vars (k skey) (a name)) (trace (recv (enc a k))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton weird
   (vars (k skey) (a name))

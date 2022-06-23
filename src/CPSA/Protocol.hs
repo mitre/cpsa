@@ -407,14 +407,17 @@ paramOfName name rl =
           | name == varName v = Just v
           | otherwise = seek rest
 
-envsRoleParams :: Role -> Gen -> [Term]-> [(Gen, Env)]
-envsRoleParams rl g =
+envsRoleParams :: Role -> Gen -> [Term] -> [Term] -> [(Gen, Env)]
+envsRoleParams rl g boundvars =
     foldl
-    (\ges v -> concatMap
-               (\ge -> case paramOfName (varName v) rl of
-                         Just p -> match p v ge
-                         Nothing -> [])
-               ges)
+    (\ges v -> if v `elem` boundvars
+               then ges
+               else 
+                   (concatMap
+                   (\ge -> case paramOfName (varName v) rl of
+                             Just p -> match p v ge
+                             Nothing -> [])
+                    ges))
     [(g,emptyEnv)]
 
 -- Security Goals

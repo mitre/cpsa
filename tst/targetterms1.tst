@@ -7,7 +7,13 @@
     (trace (send (enc n1 (enc a n2 k) k)) (recv (enc a n1 k))))
   (defrole resp
     (vars (n1 text) (m mesg) (k akey))
-    (trace (recv (enc n1 m k)) (send m))))
+    (trace (recv (enc n1 m k)) (send m)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton targetterms
   (vars (a skey) (n1 n2 text) (k akey))

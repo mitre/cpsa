@@ -6,7 +6,13 @@
 
 (defprotocol trust-anchor basic
   (defrule trust-anchor-inverse-is-non
-    (forall ((k akey)) (implies (fact trust-anchor k) (non (invk k))))))
+    (forall ((k akey)) (implies (fact trust-anchor k) (non (invk k)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton trust-anchor
   (vars (f ca name))
@@ -25,7 +31,13 @@
 
 (defprotocol trust-anchor basic
   (defrule trust-anchor-inverse-is-non
-    (forall ((k akey)) (implies (fact trust-anchor k) (non (invk k))))))
+    (forall ((k akey)) (implies (fact trust-anchor k) (non (invk k)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton trust-anchor
   (vars (f ca name))

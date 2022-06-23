@@ -15,7 +15,13 @@
     (uniq-orig new))
   (defrole final
     (vars (k akey) (n n1 n2 n3 text))
-    (trace (recv (enc n n1 n2 n3 k)) (send (enc n n1 n2 n3 n k)))))
+    (trace (recv (enc n n1 n2 n3 k)) (send (enc n n1 n2 n3 n k))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton fragile_pruning
   (vars (n n1 n2 n3 text) (k akey))

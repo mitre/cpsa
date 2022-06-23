@@ -34,7 +34,13 @@
         (enc na1 nc1 c b (enc na0 nb0 b c (pubk a))
           (enc nb1 nc0 c a (pubk b)) (pubk a)))
       (recv (enc nc0 (enc nc1 (pubk c)) (pubk c))))
-    (uniq-orig nc0 nc1)))
+    (uniq-orig nc0 nc1))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton nsl3
   (vars (na0 na1 nb0 nb1 nc0 nc1 text) (a b c name))
@@ -302,7 +308,13 @@
         (enc na1 nc1 c b (enc na0 nb0 b c (pubk a))
           (enc nb1 nc0 c a (pubk b)) (pubk a)))
       (recv (enc nc0 (enc nc1 (pubk c)) (pubk c))))
-    (uniq-orig nc0 nc1)))
+    (uniq-orig nc0 nc1))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton nsl3
   (vars (na0 na1 nb0 nb1 nc0 nc1 text) (a b c name))
@@ -586,7 +598,13 @@
         (enc na1 nc1 c b (enc na0 nb0 b c (pubk a))
           (enc nb1 nc0 c a (pubk b)) (pubk a)))
       (recv (enc nc0 (enc nc1 (pubk c)) (pubk c))))
-    (uniq-orig nc0 nc1)))
+    (uniq-orig nc0 nc1))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton nsl3
   (vars (na0 na1 nb0 nb1 nc0 nc1 text) (a b c name))

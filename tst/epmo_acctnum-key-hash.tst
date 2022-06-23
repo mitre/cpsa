@@ -74,7 +74,13 @@
           (says c
             (exists ((acctnum2 text))
               (authtransfer c acctnum2 b price m nm)))))
-      (3 (and (reqtransfer m b price m nm) (doship m goods c))))))
+      (3 (and (reqtransfer m b price m nm) (doship m goods c)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton epmo_acctnum
   (vars (nm nc nb goods price text) (b m c name))
@@ -443,7 +449,13 @@
           (says c
             (exists ((acctnum2 text))
               (authtransfer c acctnum2 b price m nm)))))
-      (3 (and (reqtransfer m b price m nm) (doship m goods c))))))
+      (3 (and (reqtransfer m b price m nm) (doship m goods c)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton epmo_acctnum
   (vars (nm nb nc acctnum price text) (b m c name))

@@ -39,7 +39,13 @@
   (defrole big-bang
     (vars (n data) (trent name))
     (trace (send (enc (enc n (privk trent)) (pubk trent))))
-    (uniq-orig n)))
+    (uniq-orig n))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton timestamping-service
   (vars (t_1 l mesg) (n data) (h h_1 text) (trent alice alice_1 name))

@@ -13,7 +13,13 @@
     (vars (n text) (k skey) (ch chan))
     (trace (recv ch (enc n k)) (recv ch (cat n k)))
     (inputs ch)
-    (outputs n)))
+    (outputs n))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton auth-enc
   (vars (k skey) (n text) (ch chan))

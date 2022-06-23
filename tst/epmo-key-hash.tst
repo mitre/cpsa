@@ -65,7 +65,13 @@
                 (forall ((pm name)) (says m (transfer b price pm nm))))
               (transfer b price m nm)))
           (says c (transfer b price m nm))))
-      (3 (and (transfer b price m nm) (ship m goods c))))))
+      (3 (and (transfer b price m nm) (ship m goods c)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton epmo
   (vars (nb nc nm data) (goods price text) (b c m name))
@@ -350,7 +356,13 @@
                 (forall ((pm name)) (says m (transfer b price pm nm))))
               (transfer b price m nm)))
           (says c (transfer b price m nm))))
-      (3 (and (transfer b price m nm) (ship m goods c))))))
+      (3 (and (transfer b price m nm) (ship m goods c)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton epmo
   (vars (nc nm nb data) (price text) (b c m name))
@@ -690,7 +702,13 @@
                 (forall ((pm name)) (says m (transfer b price pm nm))))
               (transfer b price m nm)))
           (says c (transfer b price m nm))))
-      (3 (and (transfer b price m nm) (ship m goods c))))))
+      (3 (and (transfer b price m nm) (ship m goods c)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton epmo
   (vars (nb nc nm data) (goods price text) (b c m name))

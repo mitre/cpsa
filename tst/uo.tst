@@ -3,7 +3,13 @@
 
 (defprotocol uniq-orig basic
   (defrole init (vars (n text)) (trace (send n)) (uniq-orig n))
-  (defrole resp (vars (m n text)) (trace (send (enc m n)) (recv n))))
+  (defrole resp (vars (m n text)) (trace (send (enc m n)) (recv n)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton uniq-orig
   (vars (n m text))

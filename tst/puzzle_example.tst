@@ -11,7 +11,13 @@
   (defrole resp
     (vars (a b name) (na payload text) (s skey))
     (trace (recv na) (send (enc na s (ltk a b)))
-      (recv (enc payload s)))))
+      (recv (enc payload s))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton puzzle
   (vars (s skey) (na payload text) (a b name))
@@ -53,7 +59,13 @@
   (defrole resp
     (vars (a b name) (na payload text) (s skey))
     (trace (recv na) (send (enc na s (ltk a b)))
-      (recv (enc payload s)))))
+      (recv (enc payload s))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton puzzle
   (vars (s skey) (na payload text) (a b name))
@@ -114,7 +126,13 @@
   (defrole resp
     (vars (a b name) (na payload text) (s skey))
     (trace (recv na) (send (enc na s (ltk a b)))
-      (recv (enc payload s)))))
+      (recv (enc payload s))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton puzzle
   (vars (s skey) (na payload text) (a b name))
@@ -159,7 +177,13 @@
   (defrole resp
     (vars (a b name) (na payload text) (s skey))
     (trace (recv na) (send (enc na s (ltk a b)))
-      (recv (enc payload s)))))
+      (recv (enc payload s))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton puzzle
   (vars (s skey) (na payload text) (a b name))
@@ -226,7 +250,13 @@
   (defrole resp
     (vars (a b name) (na payload text) (s skey))
     (trace (recv na) (send (enc na s (ltk a b)))
-      (recv (enc payload s)))))
+      (recv (enc payload s))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton puzzle
   (vars (s skey) (payload na text) (a b name))
@@ -301,7 +331,13 @@
   (defrole resp
     (vars (a b name) (na payload text) (s skey))
     (trace (recv na) (send (enc na s (ltk a b)))
-      (recv (enc payload s)))))
+      (recv (enc payload s))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton puzzle
   (vars (s skey) (payload na text) (a b name))
@@ -343,7 +379,13 @@
   (defrole resp
     (vars (a b name) (na payload text) (s skey))
     (trace (recv na) (send (enc na s (ltk a b)))
-      (recv (enc payload s)))))
+      (recv (enc payload s))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton puzzle
   (vars (s skey) (payload na text) (a b name))

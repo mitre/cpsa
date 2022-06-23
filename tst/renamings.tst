@@ -12,6 +12,12 @@
   (defrole resp
     (vars (d a name) (b skey) (s data))
     (trace (recv (enc (enc b (privk d)) (pubk a))) (send (enc s b))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Blanchet's protocol using named asymmetric keys"))
 
 (defskeleton blanchet
@@ -53,6 +59,12 @@
   (defrole resp
     (vars (d a name) (b skey) (s data))
     (trace (recv (enc (enc b (privk d)) (pubk a))) (send (enc s b))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Blanchet's protocol using named asymmetric keys"))
 
 (defskeleton blanchet

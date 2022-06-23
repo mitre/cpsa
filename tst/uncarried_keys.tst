@@ -13,7 +13,13 @@
     (vars (a text) (A B name) (K akey))
     (trace (recv (enc "start" a A B (pubk B)))
       (send (enc a A B (pubk A))) (recv (enc a K (pubk B)))
-      (send (enc a A B K)))))
+      (send (enc a A B K))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton uncarried-keys
   (vars (a text) (K akey) (A B name))

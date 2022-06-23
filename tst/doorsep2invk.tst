@@ -14,6 +14,12 @@
     (trace (recv (enc (enc skey (invk peer)) self))
       (send (enc data skey)) (recv data))
     (uniq-orig data))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Doorsep's protocol using unnamed asymmetric keys"))
 
 (defskeleton doorsep

@@ -19,7 +19,13 @@
     (forall ((z1 z2 strd) (i1 i2 indx))
       (implies (prec z1 i1 z2 i2) (fact lt z1 i1 z2 i2))))
   (defrule neq-false
-    (forall ((s mesg)) (implies (fact neq s s) (false)))))
+    (forall ((s mesg)) (implies (fact neq s s) (false))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton rule-order
   (vars (s t text))
@@ -69,7 +75,13 @@
     (forall ((z1 z2 strd) (i1 i2 indx))
       (implies (prec z1 i1 z2 i2) (fact lt z1 i1 z2 i2))))
   (defrule neq-false
-    (forall ((s mesg)) (implies (fact neq s s) (false)))))
+    (forall ((s mesg)) (implies (fact neq s s) (false))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton rule-order
   (vars (s t text))
@@ -136,7 +148,13 @@
     (trace (send (cat s t)) (recv (cat t s))))
   (defrule prec-tell-me
     (forall ((z1 z2 strd) (i1 i2 indx))
-      (implies (prec z1 i1 z2 i2) (fact tell-me z1 i1 z2 i2)))))
+      (implies (prec z1 i1 z2 i2) (fact tell-me z1 i1 z2 i2))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton rule-order-prec
   (vars (s t text))
@@ -168,7 +186,13 @@
     (trace (send (cat s t)) (recv (cat t s))))
   (defrule prec-tell-me
     (forall ((z1 z2 strd) (i1 i2 indx))
-      (implies (prec z1 i1 z2 i2) (fact tell-me z1 i1 z2 i2)))))
+      (implies (prec z1 i1 z2 i2) (fact tell-me z1 i1 z2 i2))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton rule-order-prec
   (vars (s t text))
@@ -219,7 +243,13 @@
     (trace (send (cat s t)) (recv (cat t s))))
   (defrule prec-tell-me
     (forall ((z1 z2 strd) (i1 i2 indx))
-      (implies (prec z1 i1 z2 i2) (fact tell-me z1 i1 z2 i2)))))
+      (implies (prec z1 i1 z2 i2) (fact tell-me z1 i1 z2 i2))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton rule-order-prec
   (vars (s t text))

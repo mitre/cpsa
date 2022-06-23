@@ -11,6 +11,12 @@
   (defrole trans
     (vars (a name) (n text) (k akey))
     (trace (recv (enc n (pubk a))) (recv k) (send (enc n k (pubk a)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Shows a failure with generalization"
     "Run this with a step count of 4"))
 
@@ -121,6 +127,12 @@
   (defrole trans
     (vars (a name) (n text) (k akey))
     (trace (recv (enc n (pubk a))) (recv k) (send (enc n k (pubk a)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Shows a failure with generalization"
     "Run this with a step count of 4"))
 

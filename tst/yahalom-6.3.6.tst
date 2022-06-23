@@ -24,6 +24,12 @@
     (trace (recv (cat b (enc a n-a n-b (ltk b s))))
       (send (cat (enc b k n-a n-b (ltk a s)) (enc a k (ltk b s)))))
     (uniq-orig k))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Yahalom protocol, Section 6.3.6, Page 49")
   (url "http://www.eecs.umich.edu/acal/swerve/docs/49-1.pdf"))
 
@@ -102,6 +108,12 @@
     (trace (recv (cat b (enc a n-a n-b (ltk b s))))
       (send (cat (enc b k n-a n-b (ltk a s)) (enc a k (ltk b s)))))
     (uniq-orig k))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Yahalom protocol, Section 6.3.6, Page 49")
   (url "http://www.eecs.umich.edu/acal/swerve/docs/49-1.pdf"))
 
@@ -200,6 +212,12 @@
     (trace (recv (cat b (enc a n-a n-b (ltk b s))))
       (send (cat (enc b k n-a n-b (ltk a s)) (enc a k (ltk b s)))))
     (uniq-orig k))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Yahalom protocol, Section 6.3.6, Page 49")
   (url "http://www.eecs.umich.edu/acal/swerve/docs/49-1.pdf"))
 
@@ -947,6 +965,12 @@
     (trace (recv (cat b (enc a n-a n-b (ltk b s))))
       (send (cat (enc b k n-a n-b (ltk a s)) (enc a k (ltk b s)))))
     (uniq-orig k))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Yahalom protocol, Section 6.3.6, Page 49")
   (url "http://www.eecs.umich.edu/acal/swerve/docs/49-1.pdf"))
 

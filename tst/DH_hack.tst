@@ -23,7 +23,13 @@
       (recv (enc x (enc cek (hash (invk x) y)) (enc d cek) (privk gcs)))
       (send
         (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
-    (non-orig (privk gcs))))
+    (non-orig (privk gcs)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton DH_hack
   (vars (d data) (cek skey) (x y akey) (gcs name))
@@ -100,7 +106,13 @@
       (recv (enc x (enc cek (hash (invk x) y)) (enc d cek) (privk gcs)))
       (send
         (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
-    (non-orig (privk gcs))))
+    (non-orig (privk gcs)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton DH_hack
   (vars (d data) (cek skey) (x y akey) (gcs name))
@@ -177,7 +189,13 @@
       (recv (enc x (enc cek (hash (invk x) y)) (enc d cek) (privk gcs)))
       (send
         (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
-    (non-orig (privk gcs))))
+    (non-orig (privk gcs)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton DH_hack
   (vars (d data) (cek skey) (y x akey) (gcs name))
@@ -254,7 +272,13 @@
       (recv (enc x (enc cek (hash (invk x) y)) (enc d cek) (privk gcs)))
       (send
         (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
-    (non-orig (privk gcs))))
+    (non-orig (privk gcs)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton DH_hack
   (vars (d data) (cek skey) (x y akey) (gcs name))
@@ -555,7 +579,13 @@
       (recv (enc x (enc cek (hash (invk x) y)) (enc d cek) (privk gcs)))
       (send
         (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
-    (non-orig (privk gcs))))
+    (non-orig (privk gcs)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton DH_hack
   (vars (d data) (cek skey) (x y akey) (gcs name))
@@ -746,7 +776,13 @@
       (recv (enc x (enc cek (hash (invk x) y)) (enc d cek) (privk gcs)))
       (send
         (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
-    (non-orig (privk gcs))))
+    (non-orig (privk gcs)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton DH_hack
   (vars (d data) (cek skey) (y x akey) (gcs name))

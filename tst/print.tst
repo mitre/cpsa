@@ -8,7 +8,13 @@
   (defrole role
     (vars (a b akey) (f g skey) (x y data))
     (trace (recv (cat a b f g x y)))
-    (comment "Check the order in which variables are printed")))
+    (comment "Check the order in which variables are printed"))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton print-test
   (vars (x y data) (f g skey) (a b akey))

@@ -11,7 +11,13 @@
     (uniq-orig n))
   (defrole resp
     (vars (k akey) (n1 n2 text))
-    (trace (recv (enc n1 k)) (send n2))))
+    (trace (recv (enc n1 k)) (send n2)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton incompleteness-example
   (vars (n text) (k akey))
@@ -34,7 +40,13 @@
     (uniq-orig n))
   (defrole resp
     (vars (k akey) (n1 n2 text))
-    (trace (recv (enc n1 k)) (send n2))))
+    (trace (recv (enc n1 k)) (send n2)))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton incompleteness-example
   (vars (n text) (k akey))

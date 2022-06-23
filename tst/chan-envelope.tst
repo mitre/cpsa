@@ -50,7 +50,13 @@
       (recv (enc "created" k (hash (hash "0" n) "obtain") aik))
       (send (enc v k)))
     (non-orig esk aik)
-    (uniq-orig n v)))
+    (uniq-orig n v))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton envelope
   (vars (v n data) (esk skey) (k aik akey))
@@ -467,7 +473,13 @@
       (recv (enc "created" k (hash (hash "0" n) "obtain") aik))
       (send (enc v k)))
     (non-orig esk aik)
-    (uniq-orig n v)))
+    (uniq-orig n v))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton envelope
   (vars (n v data) (esk skey) (k aik akey))
@@ -877,7 +889,13 @@
       (recv (enc "created" k (hash (hash "0" n) "obtain") aik))
       (send (enc v k)))
     (non-orig esk aik)
-    (uniq-orig n v)))
+    (uniq-orig n v))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton envelope
   (vars (n v data) (esk skey) (k aik akey))
@@ -1862,7 +1880,13 @@
       (implies
         (and (p "tpm-extend" y 3) (p "tpm-extend" z 3)
           (p "tpm-extend" "c" y c) (p "tpm-extend" "c" z c))
-        (or (= y z) (prec y 2 z 3) (prec z 2 y 3))))))
+        (or (= y z) (prec y 2 z 3) (prec z 2 y 3)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton envelope
   (vars (v n data) (esk skey) (k aik akey))
@@ -2247,7 +2271,13 @@
       (implies
         (and (p "tpm-extend" y 3) (p "tpm-extend" z 3)
           (p "tpm-extend" "c" y c) (p "tpm-extend" "c" z c))
-        (or (= y z) (prec y 2 z 3) (prec z 2 y 3))))))
+        (or (= y z) (prec y 2 z 3) (prec z 2 y 3)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton envelope
   (vars (n v data) (esk skey) (k aik akey))
@@ -2623,7 +2653,13 @@
       (implies
         (and (p "tpm-extend" y 3) (p "tpm-extend" z 3)
           (p "tpm-extend" "c" y c) (p "tpm-extend" "c" z c))
-        (or (= y z) (prec y 2 z 3) (prec z 2 y 3))))))
+        (or (= y z) (prec y 2 z 3) (prec z 2 y 3)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton envelope
   (vars (n v data) (esk skey) (k aik akey))
@@ -3400,7 +3436,13 @@
           (p "tpm-extend-enc" "esk" y esk)
           (p "tpm-extend-enc" "esk" z esk) (p "tpm-extend-enc" "c" y c)
           (p "tpm-extend-enc" "c" z c-0))
-        (= c c-0)))))
+        (= c c-0))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton envelope
   (vars (v n data) (esk skey) (k aik akey))
@@ -3793,7 +3835,13 @@
           (p "tpm-extend-enc" "esk" y esk)
           (p "tpm-extend-enc" "esk" z esk) (p "tpm-extend-enc" "c" y c)
           (p "tpm-extend-enc" "c" z c-0))
-        (= c c-0)))))
+        (= c c-0))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton envelope
   (vars (n v data) (esk skey) (k aik akey))
@@ -4177,7 +4225,13 @@
           (p "tpm-extend-enc" "esk" y esk)
           (p "tpm-extend-enc" "esk" z esk) (p "tpm-extend-enc" "c" y c)
           (p "tpm-extend-enc" "c" z c-0))
-        (= c c-0)))))
+        (= c c-0))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton envelope
   (vars (n v data) (esk skey) (k aik akey))

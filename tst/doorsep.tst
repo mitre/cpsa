@@ -19,6 +19,12 @@
           (non (invk p)))
         (non (invk d))))
     (comment "The trust rule"))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
   (comment "Doorsep protocol using unnamed asymmetric keys"))
 
 (defskeleton doorsep

@@ -27,7 +27,13 @@
           (pubk S))) (recv (cat C S request))
       (send (cat S C (enc response Ns (privk S)))))
     (non-orig (privk S) (privk AIK))
-    (uniq-orig Ns)))
+    (uniq-orig Ns))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton kelly1
   (vars (Ns request Check policy response text) (A C S name))

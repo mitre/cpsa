@@ -13,7 +13,13 @@
   (defrole breaker
     (vars (a b text) (B name))
     (trace (recv (enc a b (pubk B))) (send (enc a (pubk B)))
-      (send (enc b (pubk B))))))
+      (send (enc b (pubk B)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton non_transforming
   (vars (a b c d text) (B B0 B1 name))
