@@ -11,6 +11,7 @@ module CPSA.Loader (loadSExprs) where
 import Control.Monad
 
 import qualified Data.List as L
+import qualified Data.Foldable as F
 import Data.Maybe (isJust)
 import CPSA.Lib.Utilities
 import CPSA.Lib.ReturnFail
@@ -71,23 +72,28 @@ loadProt sig nom origin pos (S _ name : S _ alg : x : xs)
     | otherwise =
         do
           sig <- loadLang pos sig xs
-          (gen, rs, stateRules, nonStateRules, rest) <- loadRoles sig origin (x : xs)
+          (gen, rolesAndPreRules, rest) <- loadRoles sig origin (x : xs)
           (gen', r) <- mkListenerRole sig pos gen
-          let (gen, rls) = initRules sig (any hasLocn rs) gen' stateRules nonStateRules
+          let rs = map fst rolesAndPreRules
+                   
+          -- let (gen, rls) = initRules sig (any hasLocn rs) gen' stateRules nonStateRules
 
           -- Fake protocol is used only for loading user defined rules
           let fakeProt = mkProt name alg gen sig rs r
-                         rls
+                         []     -- was rls
                          []     -- user-written rules
-                         rls  -- loader-generated rules
+                         []   -- loader-generated rules was rls 
                          []
+
+          (gen, rls) <- initRules sig (any hasLocn rs) gen' rolesAndPreRules 
+                           
           (gen, newRls, comment) <- loadRules sig fakeProt gen rest
           -- Check for duplicate role names
           (validate
            (mkProt name alg gen sig rs r
-                       (newRls ++ (rules fakeProt))
+                       (newRls ++ rls)
                        newRls   -- user-written rules
-                       (rules fakeProt) -- loader-generated rules
+                       rls -- loader-generated rules
                        comment)
            rs)
     where
@@ -107,35 +113,37 @@ loadLang pos _ xs | hasKey "lang" xs = loadSig pos (assoc "lang" xs)
 loadLang _ sig _ | otherwise = return sig
 
 loadRoles :: MonadFail m => Sig -> Gen -> [SExpr Pos] ->
-             m (Gen, [Role], [Rule], [Rule], [SExpr Pos])
+             m (Gen, [(Role,PreRules)], [SExpr Pos])
 loadRoles sig gen (L pos (S _ "defrole" : x) : xs) =
     do
-      (gen, r, stateRls, nonStateRls) <- loadRole sig gen pos x
-      (gen, rs, stateRulesRest, nonStateRulesRest, comment) <- loadRoles sig gen xs
-      return (gen, r : rs, (stateRls ++ stateRulesRest),  (nonStateRls ++ nonStateRulesRest), comment)
+      (gen, r, pr) <- loadRole sig gen pos x
+      (gen, rolesAndPreRules, comment) <- loadRoles sig gen xs
+      return (gen, (r,pr) : rolesAndPreRules, comment)
 loadRoles _ gen comment =
-    return (gen, [], [], [], comment)
+    return (gen, [], comment)
 
 loadRole :: MonadFail m => Sig -> Gen -> Pos ->
-            [SExpr Pos] -> m (Gen, Role, [Rule], [Rule])
+            [SExpr Pos] -> m (Gen, Role, PreRules)
 loadRole sig gen pos (S _ name :
                       L _ (S _ "vars" : vars) :
                       L _ (S _ "trace" : evt : c) :
                       rest) =
     do
       (gen, vars) <- loadVars sig gen vars
-      (gen, vars, pt_u, c) <- -- indices computed below
+      (gen, vars, pt_u, c) <-
+          -- critical section indices computed below
           loadTrace sig gen vars (evt : c)
       n <- loadPosBaseTerms sig vars (assoc "non-orig" rest)
       a <- loadPosBaseTerms sig vars (assoc "pen-non-orig" rest)
       u <- loadBaseTerms sig vars (assoc "uniq-orig" rest)
       g <- loadBaseTerms sig vars (assoc "uniq-gen" rest)
-      b <- mapM (loadAbsent sig vars) (assoc "absent" rest)
+      b <- mapM (loadAbsent sig vars) (assoc "absent" rest) 
       d <- loadBaseTerms sig vars (assoc "conf" rest)
       h <- loadBaseTerms sig vars (assoc "auth" rest)
       cs <- loadCritSecs (assoc "critical-sections" rest)
-      genstates <- loadTerms sig vars (assoc "gen-st" rest)
-      facts <- loadFactList sig vars (assoc "facts" rest)
+      let genstates = (assoc "gen-st" rest)
+      let facts = (assoc "facts" rest)
+      let assumes = (assoc "assume" rest)
 
       let keys = ["non-orig", "pen-non-orig", "uniq-orig",
                   "uniq-gen", "absent", "conf", "auth"]
@@ -168,16 +176,22 @@ loadRole sig gen pos (S _ name :
 
       let r = mkRole name vs c ns as us gs b d h comment prios reverseSearch
 
-      let (gen', transRls) = transRules sig gen r (transitionIndices c)
-      -- :: Gen -> Role -> [Int] -> (Gen, [Rule])
-      let (gen'', csRls) = csRules sig gen' r cs
-      let (gen''', gsRls) = genStateRls sig gen'' r genstates
-      let (genFour, factRls) = genFactRls sig gen''' r facts
+      let pr = PreRules { preruCs = stateSegs,
+                          preruTrans = transitionIndices c,
+                          preruFacts = facts,
+                          preruGensts = genstates }
+
+--         let (gen', transRls) = transRules sig gen r (transitionIndices c)
+--         -- :: Gen -> Role -> [Int] -> (Gen, [Rule])
+--         let (gen'', csRls) = csRules sig gen' r cs
+--         let (gen''', gsRls) = genStateRls sig gen'' r genstates
+--         let (genFour, factRls) = genFactRls sig gen''' r facts
 
       case roleWellFormed r of
-        Return () -> return (genFour, r,
-                             (gsRls ++ csRls ++ transRls),
-                             factRls)
+        Return () -> return (gen, r, pr
+                           --  (gsRls ++ csRls ++ transRls),
+                           --  factRls
+                            )
         Fail msg -> fail (shows pos $ showString "Role not well formed: " msg)
 loadRole _ _ pos _ = fail (shows pos "Malformed role")
 
@@ -190,6 +204,13 @@ loadRolePriority _ x = fail (shows (annotation x) "Malformed priority")
 varsSeen :: [Term] -> Term -> Bool
 varsSeen vs t =
     all (flip elem vs) (addVars [] t)
+
+data PreRules =
+    PreRules { preruCs :: [(Int,Int)],
+               preruTrans :: [(Int,Int)],
+               preruFacts :: [SExpr Pos],
+               preruGensts :: [SExpr Pos]
+      }
 
 -- A role is well formed if all non-base variables are receive bound,
 -- each atom declared to be uniquely-originating originates in
@@ -387,21 +408,59 @@ hasLocn :: Role -> Bool
 hasLocn rl =
   any isLocn (tchans (rtrace rl))
 
-initRules :: Sig -> Bool -> Gen -> [Rule] -> [Rule] -> (Gen, [Rule])
+initRules :: MonadFail m => Sig -> Bool -> Gen -> [(Role,PreRules)] -> m (Gen, [Rule])
 -- initRules _  False g _ = (g, [])
-initRules sig b g stateRules nonStateRules =
+initRules sig b g prs =
     let (g',neqs) = neqRules sig g in
-    let (g'',stRls) = makeStateRules b g' in
-    (g'', (neqs ++ nonStateRules ++ stRls))
+    let (g'', trans) = transRules g' in 
+    do 
+      (g''',stRls) <- makeStateRules b g''
+      (g'''', nonStRls) <- factRules g'''
+      return (g'''', (neqs ++ trans ++ nonStRls ++ stRls))
     where
-      makeStateRules False g = (g,[])
+      genStateRules :: MonadFail m => Gen -> m (Gen, [Rule])
+      genStateRules gen =
+          F.foldrM 
+          (\(r,pr) (gen,rules) ->
+               do
+                 ts <- loadTerms sig (rvars r) (preruGensts pr)
+                 let (gen', newRules) = (genStateRls sig gen r ts) 
+                 return (gen', newRules ++ rules))
+          (gen,[])
+          prs
+
+      factRules :: MonadFail m => Gen -> m (Gen, [Rule])
+      factRules gen =
+          F.foldrM
+          (\(r,pr) (gen,rules) ->
+               do
+                 facts <- loadFactList sig (rvars r) (preruFacts pr) 
+                 let (gen', newRules) = genFactRls sig gen r facts 
+                 return (gen', newRules ++ rules))
+          (gen,[])
+          prs
+
+      transRules :: Gen -> (Gen, [Rule])
+      transRules gen =
+          foldr
+          (\(r,pr) (g,rules) ->
+               let (gen', newRules) = 
+                       (transRls sig g r (preruTrans pr)) in
+               (gen', newRules ++ rules))
+          (gen,[])
+          prs
+              
+      makeStateRules :: MonadFail m => Bool -> Gen -> m (Gen, [Rule])   
+      makeStateRules False g = return (g,[])
       makeStateRules True g =
-          foldr (\f (g,rules) ->
-                     let (g',r) = f g in
-                     (g',r : rules))
-                    (g,stateRules)
+          do
+            (g',gsrules) <- genStateRules g 
+            return (foldr (\f (g,rules) ->
+                               let (g',r) = f g in
+                               (g',r : rules))
+                    (g',gsrules)
                     [scissorsRule sig, cakeRule sig, uninterruptibleRule sig,
-                                  shearsRule sig, invShearsRule sig]
+                                  shearsRule sig, invShearsRule sig])
 
 loadRules :: MonadFail m => Sig -> Prot -> Gen -> [SExpr Pos] ->
              m (Gen, [Rule], [SExpr ()])

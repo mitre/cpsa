@@ -23,7 +23,8 @@ z :: Show a => a -> b -> b
 z x y = unsafePerformIO (print x >> return y)
 --}
 
-type Conj = [(Pos, AForm)]
+-- Relocating this to Protocol.hs:  
+-- type Conj = [(Pos, AForm)]
 
 -- Entry point.  Takes a position, a protocol, a variable generator, a
 -- goal, and a skeleton comment and makes a skeleton or fails.  This

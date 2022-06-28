@@ -14,8 +14,8 @@ module CPSA.Protocol (Event (..), evtCm, evtTerm, evtChan, evtMap, evt,
     rconf, rauth, rcomment, rsearch, rnorig, rpnorig, ruorig, rugen, rabs,
     rpconf, rpauth, rpriority, mkRole, tchans, varSubset, varsInTerms,
     addVars, firstOccurs, paramOfName, envsRoleParams,
-    AForm (..), NodeTerm, Goal (..),
-    aFormOrder, aFreeVars, instantiateAForm, Rule (..),
+    AForm (..), NodeTerm, Goal (..), Conj, 
+    aFormOrder, aFreeVars, instantiateAForm, instantiateConj, Rule (..),
     Prot, mkProt, pname, alg, pgen, psig, roles,
     nullaryrules, unaryrules, generalrules, rules, userrules, generatedrules,
     listenerRole, varsAllAtoms, pcomment) where
@@ -407,17 +407,16 @@ paramOfName name rl =
           | name == varName v = Just v
           | otherwise = seek rest
 
-envsRoleParams :: Role -> Gen -> [Term] -> [Term] -> [(Gen, Env)]
-envsRoleParams rl g boundvars =
+envsRoleParams :: Role -> Gen -> [Term] -> [(Gen, Env)]
+envsRoleParams rl g =    
     foldl
-    (\ges v -> if v `elem` boundvars
-               then ges
-               else 
-                   (concatMap
-                   (\ge -> case paramOfName (varName v) rl of
-                             Just p -> match p v ge
-                             Nothing -> [])
-                    ges))
+    (\ges v -> concatMap
+               (\ge -> case paramOfName (varName v) rl of
+                         Just p -> match p v ge
+                         Nothing -> -- vars not locally bound may
+                                    -- occur elsewhere in formula 
+                                   [ge])
+               ges)
     [(g,emptyEnv)]
 
 -- Security Goals
@@ -455,6 +454,9 @@ data Goal =
            consq :: [([Term], [AForm])],
            concl :: [[AForm]] }      -- Conclusion
     deriving Show
+
+type Conj = [(Pos, AForm)]
+
 
 --   -- A HornRule has at most one disjunct, no existential
 --   data HornRule =
@@ -751,6 +753,10 @@ instantiateAForm e (LeadsTo (s,t) (s',t')) =
     (LeadsTo
      ((instantiate e s), (instantiate e t))
      ((instantiate e s'), (instantiate e t')))
+
+instantiateConj :: Env -> Conj -> Conj
+instantiateConj e =
+    map (\(p,a) -> (p, instantiateAForm e a)) 
 
 data Rule
   = Rule { rlname :: String,    -- Name of rule

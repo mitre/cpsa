@@ -145,6 +145,7 @@ module CPSA.Algebra (name, alias,
     isVarExpr,
     isRndx,
     exprVars,
+    VarListSpec, 
 
     Place (..),
     places,
@@ -2558,16 +2559,18 @@ sortNameAndVarName (G m)
                
 sortNameAndVarName t = error ("sortNameAndVarName:  Non-var " ++ (show t))
 
-addSortNameToVarListSpec :: (String,String) -> [(String,[String])] -> Maybe [(String,[String])]
+type VarListSpec = [(String,[String])]
+
+addSortNameToVarListSpec :: (String,String) -> VarListSpec -> Maybe VarListSpec
 addSortNameToVarListSpec (_,_) [] = Nothing
 addSortNameToVarListSpec (sn,vn) ((sn',vns) : rest)
     | sn == sn' = Just $ (sn, adjoin vn vns) : rest
     | otherwise =
         do
           added <- addSortNameToVarListSpec (sn,vn) rest
-          return $ ((sn',vns) : added)
+          return $ ((sn',vns) : added)  
 
-varListSpecOfVars :: [Term] -> [(String,[String])]
+varListSpecOfVars :: [Term] -> VarListSpec
 varListSpecOfVars [] = []
 varListSpecOfVars (t : rest) =
     let (sn,vn) = sortNameAndVarName t in

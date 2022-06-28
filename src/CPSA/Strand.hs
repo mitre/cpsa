@@ -2803,8 +2803,9 @@ checkSem f k (g, e)
     | otherwise = [localSignal k (g, e)]
 
 localSignal :: Preskel -> (Gen, Env) -> (Gen, Env)
-localSignal _ (g, e) = (g, e)
-    -- error ("localSignal: Env "  ++ (show e))
+localSignal _ (g, e) =
+--    zP "yiao " (error ("localSignal: Env "  ++ (show e)))
+  (g, e)
 
 -- Role length predicate
 -- r and h determine the predicate, which has arity one.
@@ -3250,7 +3251,8 @@ rewriteNullary k =
       loop (nr : rest) =
           case conjoin (antec $ rlgoal nr) k (gen k, emptyEnv) of
             [] -> loop rest     -- no satisfying instances
-            _  -> Nothing       -- satisfying instances, hence false!
+            _  ->             --  zP ("nullary " ++ (rlname nr))
+                  Nothing       -- satisfying instances, hence false!
 
 data Ternary k = Unsat | Unch | Found k
 
@@ -3268,10 +3270,11 @@ rewriteUnary k =
       loop k (ur : rest) b b' =
           case tryRule k ur of
             [] -> loop k rest b b'
-            vas -> case rewriteUnaryOne k ur vas of
-                     Nothing -> Unsat -- (zP "?" Unsat)
-                     Just k' -> loop k' -- (zP "/" k')
-                                rest True True
+            vas -> -- zP ("unary " ++ (rlname ur))
+                   (case rewriteUnaryOne k ur vas of
+                      Nothing -> Unsat -- (zP "?" Unsat)
+                      Just k' -> loop k' -- (zP "/" k')
+                                 rest True True)
 
 -- only interested in case ur is unary
 -- JDG:  Must really check wellFormedPreskel and do toSkeleton
@@ -3798,11 +3801,11 @@ rewrite k =
           case tryRule k r of
             [] -> subiter k rs
             vas ->
-                           -- zP ("." ++ (rlname r))
-                Just (concatMap (\k' -> maybe [k'] id
+                -- zP ("." ++ (rlname r))
+                (Just (concatMap (\k' -> maybe [k'] id
                                         $ subiter k' rs)
                      $ nullUnaryThrough
-                           $ doRewrite k r vas)
+                           $ doRewrite k r vas))
 
 -- Returns all environments that satisfy the antecedent
 -- but do not extend to satisfy any of the conclusions.

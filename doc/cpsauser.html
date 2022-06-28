@@ -459,12 +459,18 @@ of <code>mesg</code>.</p>
   authentication and secrecy goals of a protocol.</p>
 
 <p>The <code>defgoal</code> form is used to pose an analysis problem
-  with a sentence instead of a skeleton.  CPSA extracts a point of view
-  skeleton from the antecedent of the formula and then analyzes it.
+  with a sentence instead of a skeleton.  CPSA extracts a point of
+  view skeleton from the antecedent of the formula and then analyzes
+  it.  When a <code>defgoal</code> form has a sequence of sentences,
+  they must all contain the same antecedent.  CPSA will evaluate all
+  of the conclusions during the analysis of this shared antecedent.
   When it prints a shape, it checks to see if the shape satisfies the
-  conclusion of the security goal.  See
+  conclusions of the security goal sentences.  When invoked with
+  the <code>goals-sat</code> option, CPSA will successfully terminate
+  any branch of its analysis as soon as the conclusions of the goals
+  are satisfied.  See
   <a href="cpsagoals.pdf">CPSA Security Goals and Rules</a> for
-  details.</p>
+  details.</p>  
 
 <p>To be precise, a security goal is an order-sorted first-order logic
   sentence in a restricted form.  The set of sort symbols available
