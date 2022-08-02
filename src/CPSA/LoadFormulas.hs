@@ -12,7 +12,7 @@ module CPSA.LoadFormulas
      sortedVarsOfNames, 
      varsInTerm,
      loadTerms,
-     loadFactList, 
+     loadFactList, loadDisjuncts, loadConclusions, loadConclusion, 
      VarListSpec, Mode(..), 
      lookupRole) where
 
@@ -61,6 +61,38 @@ sortedVarsOfStrings sig g =
 varsInTerm :: Term -> [Term]
 varsInTerm t =
     foldVars (\vars v -> v : vars) [] t
+
+
+varOfName :: MonadFail m => [AForm] -> String -> m Term
+varOfName aforms s =
+    case (foldr (\aform vars -> filter (((==) s) . varName)
+                                $ aFreeVars vars aform)
+          []                          -- no vars to begin with
+          aforms) of
+      [v] -> return v
+      [] -> fail ("varOfName:  Variable of name "
+                  ++ s ++ "not found in formulas "
+                         ++ (show aforms))
+      _ -> fail ("varOfName:  Multiple variables of name "
+                 ++ s ++ "found in formulas "
+                        ++ (show aforms))
+
+-- Given a conjunction (list of AForms) and a variable specification,
+-- we would like to retrieve, for each of the variable names in the
+-- variable specification, a unique variable occurring in the
+-- conjunction with that name.  We return them in the same order as in
+-- the variable specification.
+
+-- This procedure fails if there is no variable of a given name, or if
+-- there are more than one.  
+    
+varsOfVarSpecList :: MonadFail m => [AForm] -> VarListSpec -> m [Term]
+varsOfVarSpecList aforms [] = return []
+varsOfVarSpecList aforms ((_, names) : rest) =
+    do
+      varsRest <- varsOfVarSpecList aforms rest
+      newVars <- (mapM (varOfName aforms) names)
+      return (newVars ++ varsRest) 
 
 loadTerms :: MonadFail m => Sig -> [Term] -> [SExpr Pos] -> m [Term]
 loadTerms sig vars =
@@ -123,6 +155,18 @@ loadImplication sig md _ prot g vars (L pos [S _ "implies", a, c]) =
                  concl = map snd consq }
     return (g, goal, antec)
 loadImplication _ _ pos _ _ _ _ = fail (shows pos "Bad goal implication")
+
+-- To load a number of conclusions from an SExpr
+
+loadConclusions :: MonadFail m => Sig -> Prot -> Gen -> [Term] ->
+                  [SExpr Pos] -> m (Gen, [[([Term], Conj)]])
+loadConclusions _ _ g _ [] = return (g,[])
+loadConclusions sig prot g vars (x : rest) =
+    do
+      (g,newConcl) <- loadConclusion sig (annotation x) prot g vars x
+      (g',concls) <- loadConclusions sig prot g vars rest
+      return (g', newConcl : concls)
+
 
 -- The conclusion must be a disjunction.  Each disjunct may introduce
 -- existentially quantified variables.

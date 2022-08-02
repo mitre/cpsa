@@ -1,4 +1,4 @@
-; Unified Model.  This version used in the paper, tooldev/dh/conf_dh/dh_ebn.tex
+; Unified Model.  This version used in the paper, tooldev/dh/conf_dh/dh_ebn.tex 
 
 ; This file models the "Unified Model" method of determining a fresh
 ; key from long-term and ephemeral Diffie-Hellman exponents.  We use

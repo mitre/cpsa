@@ -85,7 +85,7 @@ loadProt sig nom origin pos (S _ name : S _ alg : x : xs)
                          []   -- loader-generated rules was rls 
                          []
 
-          (gen, rls) <- initRules sig (any hasLocn rs) gen' rolesAndPreRules 
+          (gen, rls) <- initRules sig gen' fakeProt rolesAndPreRules 
                            
           (gen, newRls, comment) <- loadRules sig fakeProt gen rest
           -- Check for duplicate role names
@@ -130,7 +130,7 @@ loadRole sig gen pos (S _ name :
                       rest) =
     do
       (gen, vars) <- loadVars sig gen vars
-      (gen, vars, pt_u, c) <-
+      (gen, vars, pt_u, pr_t, c) <-
           -- critical section indices computed below
           loadTrace sig gen vars (evt : c)
       n <- loadPosBaseTerms sig vars (assoc "non-orig" rest)
@@ -147,6 +147,7 @@ loadRole sig gen pos (S _ name :
 
       let keys = ["non-orig", "pen-non-orig", "uniq-orig",
                   "uniq-gen", "absent", "conf", "auth"]
+
       comment <- alist keys rest
       let reverseSearch = hasKey "reverse-search" rest
       let ts = tterms c
@@ -176,10 +177,11 @@ loadRole sig gen pos (S _ name :
 
       let r = mkRole name vs c ns as us gs b d h comment prios reverseSearch
 
-      let pr = PreRules { preruCs = stateSegs,
-                          preruTrans = transitionIndices c,
-                          preruFacts = facts,
-                          preruGensts = genstates }
+      let pr = pr_t { preruleCs = stateSegs,
+                      preruleTrans = transitionIndices c,
+                      preruleFacts = facts,
+                      preruleGensts = genstates,
+                      preruleAssumes = assumes }
 
 --         let (gen', transRls) = transRules sig gen r (transitionIndices c)
 --         -- :: Gen -> Role -> [Int] -> (Gen, [Rule])
@@ -205,13 +207,35 @@ varsSeen :: [Term] -> Term -> Bool
 varsSeen vs t =
     all (flip elem vs) (addVars [] t)
 
-data PreRules =
-    PreRules { preruCs :: [(Int,Int)],
-               preruTrans :: [(Int,Int)],
-               preruFacts :: [SExpr Pos],
-               preruGensts :: [SExpr Pos]
-      }
+data PreRules = PreRules { preruleCs      :: [(Int,Int)],
+                           preruleTrans   :: [(Int,Int)],
+                           preruleFacts   :: [SExpr Pos],
+                           preruleGensts  :: [SExpr Pos],
+                           preruleAssumes :: [SExpr Pos],   
+                           preruleRelies  :: [(Int, SExpr Pos)],
+                           preruleGuars   :: [(Int, SExpr Pos)],
+                           preruleCheqs   :: [(Int, Pos, Term, Term)]  
+                         }
 
+emptyPreRules :: PreRules
+emptyPreRules = PreRules { preruleCs = [],
+                           preruleTrans = [],
+                           preruleFacts = [],
+                           preruleGensts = [],
+                           preruleAssumes = [], 
+                           preruleRelies  = [],
+                           preruleGuars  = [],
+                           preruleCheqs = []}
+
+preRulesAddRely :: PreRules -> (Int, SExpr Pos) -> PreRules
+preRulesAddRely pr new = pr { preruleRelies = new : preruleRelies pr }
+
+preRulesAddGuar :: PreRules -> (Int, SExpr Pos) -> PreRules
+preRulesAddGuar pr new = pr { preruleGuars = new : preruleGuars pr }
+
+preRulesAddCheq :: PreRules -> (Int, Pos, Term, Term) -> PreRules
+preRulesAddCheq pr new = pr { preruleCheqs = new : preruleCheqs pr }
+                                              
 -- A role is well formed if all non-base variables are receive bound,
 -- each atom declared to be uniquely-originating originates in
 -- the trace, and every variable that occurs in each atom
@@ -408,59 +432,133 @@ hasLocn :: Role -> Bool
 hasLocn rl =
   any isLocn (tchans (rtrace rl))
 
-initRules :: MonadFail m => Sig -> Bool -> Gen -> [(Role,PreRules)] -> m (Gen, [Rule])
--- initRules _  False g _ = (g, [])
-initRules sig b g prs =
-    let (g',neqs) = neqRules sig g in
-    let (g'', trans) = transRules g' in 
-    do 
-      (g''',stRls) <- makeStateRules b g''
-      (g'''', nonStRls) <- factRules g'''
-      return (g'''', (neqs ++ trans ++ nonStRls ++ stRls))
-    where
-      genStateRules :: MonadFail m => Gen -> m (Gen, [Rule])
-      genStateRules gen =
+initPreRuleCS :: MonadFail m => Sig -> Gen -> Prot -> Role -> PreRules -> m (Gen, [Rule])
+initPreRuleCS sig gen _ rl pr =
+    return (csRules sig gen rl (preruleCs pr)) 
+
+initPreRulesTrans :: MonadFail m => Sig -> Gen -> Prot -> Role -> PreRules -> m (Gen, [Rule])
+initPreRulesTrans sig gen _ rl pr =
+    return (transRls sig gen rl (preruleTrans pr))
+
+initPreRulesFacts :: MonadFail m => Sig -> Gen -> Prot -> Role -> PreRules -> m (Gen, [Rule])
+initPreRulesFacts sig gen _ rl pr =
+    do
+      facts <- loadFactList sig (rvars rl) (preruleFacts pr) 
+      return (genFactRls sig gen rl facts)
+
+initPreRulesGensts :: MonadFail m => Sig -> Gen -> Prot -> Role -> PreRules -> m (Gen, [Rule])
+initPreRulesGensts sig gen _ rl pr =
+    do
+      ts <- loadTerms sig (rvars rl) (preruleGensts pr)
+      return (genStateRls sig gen rl ts)
+
+initPreRulesAssumes :: MonadFail m => Sig -> Gen -> Prot -> Role -> PreRules -> m (Gen, [Rule])
+initPreRulesAssumes sig gen prot rl pr =
+    do
+      (g,rules,_) <-
           F.foldrM 
-          (\(r,pr) (gen,rules) ->
-               do
-                 ts <- loadTerms sig (rvars r) (preruGensts pr)
-                 let (gen', newRules) = (genStateRls sig gen r ts) 
-                 return (gen', newRules ++ rules))
-          (gen,[])
-          prs
+               (\sexpr (g,rules,n) ->
+                    do
+                      (g',varConjs) <- loadConclusion sig (annotation sexpr) prot g (rvars rl) sexpr                                       
+                      let (g'',newRule) = genOneAssumeRl sig g' rl n varConjs
+                      return (g'', newRule : rules, (n+1)))
+               (gen,[],0)
+               (preruleAssumes pr)
+      return (g,rules) 
 
-      factRules :: MonadFail m => Gen -> m (Gen, [Rule])
-      factRules gen =
-          F.foldrM
-          (\(r,pr) (gen,rules) ->
-               do
-                 facts <- loadFactList sig (rvars r) (preruFacts pr) 
-                 let (gen', newRules) = genFactRls sig gen r facts 
-                 return (gen', newRules ++ rules))
-          (gen,[])
-          prs
+initPreRulesRelies :: MonadFail m => Sig -> Gen -> Prot -> Role -> PreRules -> m (Gen, [Rule])
+initPreRulesRelies sig gen prot rl pr =
+    initRelyGuars sig gen prot rl (preruleRelies pr)
 
-      transRules :: Gen -> (Gen, [Rule])
-      transRules gen =
-          foldr
-          (\(r,pr) (g,rules) ->
-               let (gen', newRules) = 
-                       (transRls sig g r (preruTrans pr)) in
-               (gen', newRules ++ rules))
-          (gen,[])
-          prs
-              
-      makeStateRules :: MonadFail m => Bool -> Gen -> m (Gen, [Rule])   
-      makeStateRules False g = return (g,[])
-      makeStateRules True g =
-          do
-            (g',gsrules) <- genStateRules g 
-            return (foldr (\f (g,rules) ->
-                               let (g',r) = f g in
-                               (g',r : rules))
-                    (g',gsrules)
-                    [scissorsRule sig, cakeRule sig, uninterruptibleRule sig,
-                                  shearsRule sig, invShearsRule sig])
+initPreRulesGuars :: MonadFail m => Sig -> Gen -> Prot -> Role -> PreRules -> m (Gen, [Rule])
+initPreRulesGuars sig gen prot rl pr =
+    initRelyGuars sig gen prot rl (preruleGuars pr)
+   
+initRelyGuars ::  MonadFail m => Sig -> Gen -> Prot -> Role -> [(Int, SExpr Pos)] -> m (Gen, [Rule])
+initRelyGuars sig gen prot rl = 
+    F.foldrM 
+    (\(ht,sexpr) (g,rules) ->
+         do
+           (g',varConjs) <- loadConclusion sig (annotation sexpr) prot g (rvars rl) sexpr
+           () <- varsUsedBy rl (freeVarsInConjLists varConjs) ht (annotation sexpr)
+           let (g'',newRule) = genOneAssumeRl sig g' rl ht varConjs
+           return (g'', newRule : rules))
+    (gen,[]) 
+
+
+
+initPreRulesCheqs :: MonadFail m => Sig -> Gen -> Prot -> Role -> PreRules -> m (Gen, [Rule])
+initPreRulesCheqs sig gen _ rl pr =
+    F.foldrM 
+    (\(ht, pos, v, t) (g,rules) ->
+         do
+           () <- varsUsedBy rl (varsInTerms [t])  ht pos
+           let (g',newRule) = genOneAssumeRl sig g rl ht
+                              [([],[(pos, Equals v t)])] -- stipulate v=t 
+           return (g', newRule : rules))
+    (gen,[])
+    (preruleCheqs pr)
+          
+varsUsedBy :: MonadFail m => Role -> [Term] -> Int -> Pos -> m ()
+varsUsedBy rl vars bound pos =
+    case varsUsedHeight rl vars of
+      Missing v -> fail ((show pos) ++ " var " ++ (show (varName v))
+                         ++ " not bound by height " ++ (show bound))
+      FoundAt ht -> if ht <= bound then return ()
+                    else fail ((show pos) ++ " variables not bound until height "
+                                              ++ (show ht))
+
+iterPreRules :: MonadFail m => (Sig -> Gen -> Prot -> Role -> PreRules -> m (Gen, [Rule])) ->
+                Sig -> Gen -> Prot -> [(Role,PreRules)] -> m (Gen, [Rule])
+iterPreRules f sig gen prot rlPreRules =
+    F.foldrM
+         (\(rl,prs) (g,rules) ->
+              do
+                (g',newRules) <- f sig g prot rl prs
+                return (g', newRules ++ rules))
+         (gen,[])
+         rlPreRules
+     
+
+
+initRules :: MonadFail m => Sig -> Gen -> Prot -> [(Role,PreRules)] -> m (Gen, [Rule])
+initRules sig g prot prs =  
+    -- Must generate neqRules, factRules, assumeRules, relyRules,
+    -- guarRules, cheqRules, and, 
+    -- if b is true, the state rules:
+    -- transRules, genStateRules, csRules, and the omnipresent state
+    -- rules for 
+    -- scissors, cake, (inv) shears, and interruptions
+
+    
+    -- let (g',neqs) = neqRules sig g in
+    -- let (g'', trans) = transRules g' in
+    let anyState = any (\(rl,_) -> hasLocn rl) prs in 
+    do
+      let (g',neqs) = neqRules sig g
+      let (g,fixedStateRls) =
+              if anyState
+              then foldr (\f (g,rules) -> let (g',r) = f g in
+                                          (g',r : rules))
+                       (g',[])
+                       [scissorsRule sig, cakeRule sig, uninterruptibleRule sig,
+                                     shearsRule sig, invShearsRule sig]
+              else (g',[])
+      (g,fcRls) <- iterPreRules initPreRulesFacts sig g prot prs
+      (g,asRls) <- iterPreRules initPreRulesAssumes sig g prot prs
+      (g,rlRls) <- iterPreRules initPreRulesRelies sig g prot prs
+      (g,grRls) <- iterPreRules initPreRulesGuars sig g prot prs
+      (g,cqRls) <- iterPreRules initPreRulesCheqs sig g prot prs
+
+      -- Now here are the ones for states 
+
+      (g,trRls) <- iterPreRules initPreRulesTrans sig g prot prs
+      (g,csRls) <- iterPreRules initPreRuleCS sig g prot prs
+      (g,gsRls) <- iterPreRules initPreRulesGensts sig g prot prs
+
+      return (g, neqs ++ fixedStateRls ++ fcRls ++ asRls ++
+               rlRls ++ grRls ++ cqRls ++ trRls ++ csRls ++ gsRls)
+
 
 loadRules :: MonadFail m => Sig -> Prot -> Gen -> [SExpr Pos] ->
              m (Gen, [Rule], [SExpr ()])
@@ -533,53 +631,89 @@ badKey keys (L _ (S pos key : _) : xs)
 badKey _ _ = return ()
 
 loadTrace :: MonadFail m => Sig -> Gen -> [Term] ->
-             [SExpr Pos] -> m (Gen, [Term], [Term], Trace)
+             [SExpr Pos] -> m (Gen, [Term], [Term], PreRules, Trace)
 loadTrace sig gen vars xs =
-    loadTraceLoop gen [] [] [] xs
+    loadTraceLoop gen [] [] emptyPreRules [] xs
     where
-      loadTraceLoop gen newVars uniqs events [] =
-          return (gen, vars ++ (reverse newVars),
-                  (reverse uniqs),
-                  reverse events)
-      loadTraceLoop gen newVars uniqs events ((L _ [S _ "recv", t]) : rest) =
+      loadTraceLoop :: MonadFail m => Gen -> [Term] -> [Term] -> PreRules 
+                    -> Trace -> [SExpr Pos]
+                    -> m (Gen, [Term], [Term], PreRules, Trace)
+      loadTraceLoop gen newVars uniqs pr events [] =
+          return (gen, (vars ++ (reverse newVars)), (reverse uniqs), pr, 
+                  (reverse events))
+      loadTraceLoop gen newVars uniqs pr events ((L _ [S _ "recv", t]) : rest) =
           do
             t <- loadTerm sig vars True t
-            loadTraceLoop gen newVars uniqs ((In $ Plain t) : events) rest
-      loadTraceLoop gen newVars uniqs events ((L _ [S _ "send", t]) : rest) =
+            loadTraceLoop gen newVars uniqs pr ((In $ Plain t) : events) rest
+      loadTraceLoop gen newVars uniqs pr events ((L _ [S _ "send", t]) : rest) =
           do
             t <- loadTerm sig vars True t
-            loadTraceLoop gen newVars uniqs ((Out $ Plain t) : events) rest
-      loadTraceLoop gen newVars uniqs events ((L _ [S _ "recv", ch, t]) : rest) =
-          do
-            ch <- loadChan sig vars ch
-            t <- loadTerm sig vars True t
-            loadTraceLoop gen newVars uniqs ((In $ ChMsg ch t) : events) rest
-      loadTraceLoop gen newVars uniqs events ((L _ [S _ "send", ch, t]) : rest) =
+            loadTraceLoop gen newVars uniqs pr ((Out $ Plain t) : events) rest
+      loadTraceLoop gen newVars uniqs pr events ((L _ [S _ "recv", ch, t]) : rest) =
           do
             ch <- loadChan sig vars ch
             t <- loadTerm sig vars True t
-            loadTraceLoop gen newVars uniqs ((Out $ ChMsg ch t) : events) rest
-      loadTraceLoop gen newVars uniqs events ((L _ [S pos "load", ch, t]) : rest) =
+            loadTraceLoop gen newVars uniqs pr ((In $ ChMsg ch t) : events) rest
+      loadTraceLoop gen newVars uniqs pr events ((L _ [S _ "send", ch, t]) : rest) =
+          do
+            ch <- loadChan sig vars ch
+            t <- loadTerm sig vars True t
+            loadTraceLoop gen newVars uniqs pr ((Out $ ChMsg ch t) : events) rest
+      loadTraceLoop gen newVars uniqs pr events ((L _ [S pos "load", ch, t]) : rest) =
           do
             ch <- loadLocn sig vars ch
             t <- loadTerm sig vars True t
             (gen, pt, pt_t) <- loadLocnTerm sig gen (S pos "pt") (S pos "pval") t
-            loadTraceLoop gen (pt : newVars) uniqs
+            loadTraceLoop gen (pt : newVars) uniqs pr
                               ((In $ ChMsg ch pt_t) : events) rest
 
-      loadTraceLoop gen newVars uniqs events ((L _ [S pos "stor", ch, t]) : rest) =
+      loadTraceLoop gen newVars uniqs pr events ((L _ [S pos "stor", ch, t]) : rest) =
           do
             ch <- loadLocn sig vars ch
             t <- loadTerm sig vars True t
             (gen, pt, pt_t) <- loadLocnTerm sig gen (S pos "pt") (S pos "pval") t
-            loadTraceLoop gen (pt : newVars) (pt : uniqs)
+            loadTraceLoop gen (pt : newVars) (pt : uniqs) pr
                               ((Out $ ChMsg ch pt_t) : events) rest
+
+      loadTraceLoop gen newVars uniqs pr events ((L _ [S pos "rely", form]) : rest) =
+          case events of
+            [] -> fail (shows pos $ "Rely precedes first event:  " ++ (show form))
+            (In _) : _ ->
+                loadTraceLoop gen newVars uniqs
+                              (preRulesAddRely pr ((L.length events), form))
+                              events rest
+            _ -> fail (shows pos $ "Rely must follow recv or load:  " ++ (show form))
+
+      loadTraceLoop gen newVars uniqs pr events ((L _ [S pos "guar", form]) : rest) =
+          case rest of
+            [] -> fail (shows pos $ "Guarantee follows last event:  " ++ (show form))
+            (L _ (S _ "stor" : _) : _) ->
+                loadTraceLoop gen newVars uniqs
+                                  (preRulesAddGuar pr (1+(L.length events), form))
+                                  events rest
+            (L _ (S _ "send" : _) : _) ->
+                loadTraceLoop gen newVars uniqs
+                                  (preRulesAddGuar pr (1+(L.length events), form))
+                                  events rest
+            _ -> fail (shows pos $ "Guarantee must precede send or stor:  " ++ (show form))
+
+      loadTraceLoop gen newVars uniqs pr events ((L _ [S pos "cheq", src, tgt]) : rest) =
+          case rest of
+            [] -> fail (shows pos $ "cheq must precede some event:  " ++ (show src) ++ ", " ++ (show tgt))
+            _ ->
+                do
+                  src <- loadTerm sig vars False src
+                  tgt <- loadTerm sig vars False tgt
+                  loadTraceLoop gen newVars uniqs
+                                (preRulesAddCheq pr
+                                 (1+(L.length events), pos, src, tgt))
+                                events rest          
                                                                
-      loadTraceLoop _ _ _ _ ((L pos [S _ dir, _, _]) : _) =
+      loadTraceLoop _ _ _ _ _ ((L pos [S _ dir, _, _]) : _) =
           fail (shows pos $ "Unrecognized direction " ++ dir)
                
-      loadTraceLoop _ _ _ _ (x : _) =
-          fail (shows (annotation x) "Malformed event")
+      loadTraceLoop _ _ _ _ _ (x : _) =
+          fail (shows (annotation x) "Malformed event") 
 
 loadChan :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
 loadChan sig vars x =

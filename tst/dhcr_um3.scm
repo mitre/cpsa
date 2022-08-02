@@ -94,7 +94,7 @@
   (vars (ltxa ltxb x y rndx) (a b name))
   (defstrand init 4 (ltxa ltxa) (ltxb ltxb) (a a) (b b) (x x) (y y))
   (defstrand ltx-gen 1 (l ltxb))
-  (deflistener (mul x y))
+  (deflistener (exp (gen) (mul x y)))
   (non-orig ltxb)
   (neq (a b)))
 

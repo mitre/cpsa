@@ -50,6 +50,19 @@ listMax (a : rest) =
       maxRest <- listMax rest
       Just $ max a maxRest
 
+-- given a function of two args and two lists, return the list of
+-- results of applying the function to the successive members.
+--
+-- If one list is longer, discard its excess members.
+
+mapTwo :: (a -> b -> c) -> [a] -> [b] -> [c]
+mapTwo f as bs =
+    map (\(a,b) -> f a b) (zip as bs)
+
+foldrTwo :: (a -> b -> c -> c) -> c -> [a] -> [b] -> c
+foldrTwo f seed as bs =
+    foldr (\(a,b) c -> f a b c) seed (zip as bs)
+
 -- Returns a list of the natural numbers less that the argument.
 {-# INLINE nats #-}
 nats :: Int -> [Int]
