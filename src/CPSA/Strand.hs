@@ -2131,7 +2131,7 @@ validateEnv k k' mapping env =
     all (flip elem (kunique k')) (map (instantiate env) (kunique k)) &&
     all (flip elem (kuniqgen k')) (map (instantiate env) (kuniqgen k)) &&
     all (flip elem (kabsent k')) (map (instantiatePair env) (kabsent k)) &&
-    all (flip elem (kprecur k')) (map (permuteNode mapping) (kprecur k)) &&
+    --    all (flip elem (kprecur k')) (map (permuteNode mapping) (kprecur k)) &&
     all (flip elem (kfacts k'))
         (map (instUpdateFact env (mapping !!)) (kfacts k)) &&
     all (flip elem (kgenSt k')) (map (instantiate env) (kgenSt k)) &&

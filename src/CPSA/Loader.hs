@@ -25,7 +25,7 @@ import CPSA.Characteristic
 import CPSA.LoadFormulas
 import CPSA.GenRules
 
-{--
+--{--
 import System.IO.Unsafe
 z :: Show a => a -> b -> b
 z x y = unsafePerformIO (print x >> return y)
@@ -75,6 +75,9 @@ loadProt sig nom origin pos (S _ name : S _ alg : x : xs)
           (gen, rolesAndPreRules, rest) <- loadRoles sig origin (x : xs)
           (gen', r) <- mkListenerRole sig pos gen
           let rs = map fst rolesAndPreRules
+
+          let _ = zz (showRoleGenStates rolesAndPreRules)
+                                 
                    
           -- let (gen, rls) = initRules sig (any hasLocn rs) gen' stateRules nonStateRules
 
@@ -544,6 +547,7 @@ initRules sig g prot prs =
                        [scissorsRule sig, cakeRule sig, uninterruptibleRule sig,
                                      shearsRule sig, invShearsRule sig]
               else (g',[])
+
       (g,fcRls) <- iterPreRules initPreRulesFacts sig g prot prs
       (g,asRls) <- iterPreRules initPreRulesAssumes sig g prot prs
       (g,rlRls) <- iterPreRules initPreRulesRelies sig g prot prs
@@ -558,6 +562,12 @@ initRules sig g prot prs =
 
       return (g, neqs ++ fixedStateRls ++ fcRls ++ asRls ++
                rlRls ++ grRls ++ cqRls ++ trRls ++ csRls ++ gsRls)
+
+showRoleGenStates :: [(Role,PreRules)] -> [(String,String)]
+showRoleGenStates [] = []
+showRoleGenStates ((role, pr) : rest) =
+    (rname role, concatMap show $ map snd $ preruleGuars pr)
+    : showRoleGenStates rest 
 
 
 loadRules :: MonadFail m => Sig -> Prot -> Gen -> [SExpr Pos] ->
@@ -706,7 +716,7 @@ loadTrace sig gen vars xs =
                   tgt <- loadTerm sig vars False tgt
                   loadTraceLoop gen newVars uniqs
                                 (preRulesAddCheq pr
-                                 (1+(L.length events), pos, src, tgt))
+                                 (L.length events, pos, src, tgt))
                                 events rest          
                                                                
       loadTraceLoop _ _ _ _ _ ((L pos [S _ dir, _, _]) : _) =

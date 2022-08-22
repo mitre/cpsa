@@ -62,6 +62,10 @@ varsInTerm :: Term -> [Term]
 varsInTerm t =
     foldVars (\vars v -> v : vars) [] t
 
+{--
+
+-- These two next procedures were unused.  
+
 
 varOfName :: MonadFail m => [AForm] -> String -> m Term
 varOfName aforms s =
@@ -92,7 +96,9 @@ varsOfVarSpecList aforms ((_, names) : rest) =
     do
       varsRest <- varsOfVarSpecList aforms rest
       newVars <- (mapM (varOfName aforms) names)
-      return (newVars ++ varsRest) 
+      return (newVars ++ varsRest)
+
+--}
 
 loadTerms :: MonadFail m => Sig -> [Term] -> [SExpr Pos] -> m [Term]
 loadTerms sig vars =

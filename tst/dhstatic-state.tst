@@ -40,61 +40,29 @@
     (facts (neq a b))
     (gen-st (cat "privkey" b rb serial-b ca))
     (comment "Responder is B"))
-  (defgenrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defgenrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
     (forall ((x strd)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_mesg
     (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defgenrule gen-st-resp-0
-    (forall ((z strd) (serial-b data) (rb rndx) (ca b name))
-      (implies
-        (and (p "resp" z 1) (p "resp" "serial-b" z serial-b)
-          (p "resp" "rb" z rb) (p "resp" "ca" z ca) (p "resp" "b" z b))
-        (gen-st (cat "privkey" b rb serial-b ca)))))
-  (defgenrule gen-st-init-0
-    (forall ((z strd) (serial-a data) (ra rndx) (ca a name))
-      (implies
-        (and (p "init" z 1) (p "init" "serial-a" z serial-a)
-          (p "init" "ra" z ra) (p "init" "ca" z ca) (p "init" "a" z a))
-        (gen-st (cat "privkey" a ra serial-a ca)))))
-  (defgenrule trRl_get-cert-at-2
-    (forall ((z strd)) (implies (p "get-cert" z 4) (trans z 2))))
-  (defgenrule trRl_get-cert-at-3
-    (forall ((z strd)) (implies (p "get-cert" z 4) (trans z 3))))
   (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defgenrule fact-resp-neq0
-    (forall ((z strd) (a b name))
-      (implies
-        (and (p "resp" z 2) (p "resp" "a" z a) (p "resp" "b" z b))
-        (fact neq a b))))
-  (defgenrule fact-init-neq0
-    (forall ((z strd) (a b name))
-      (implies
-        (and (p "init" z 2) (p "init" "a" z a) (p "init" "b" z b))
-        (fact neq a b))))
-  (defgenrule invShearsRule
+  (defgenrule cakeRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
   (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
@@ -102,6 +70,38 @@
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule fact-init-neq0
+    (forall ((z strd) (b a name))
+      (implies
+        (and (p "init" z 2) (p "init" "b" z b) (p "init" "a" z a))
+        (fact neq a b))))
+  (defgenrule fact-resp-neq0
+    (forall ((z strd) (b a name))
+      (implies
+        (and (p "resp" z 2) (p "resp" "b" z b) (p "resp" "a" z a))
+        (fact neq a b))))
+  (defgenrule trRl_get-cert-at-3
+    (forall ((z strd)) (implies (p "get-cert" z 4) (trans z 3))))
+  (defgenrule trRl_get-cert-at-2
+    (forall ((z strd)) (implies (p "get-cert" z 4) (trans z 2))))
+  (defgenrule gen-st-init-0
+    (forall ((z strd) (serial-a data) (ra rndx) (ca a name))
+      (implies
+        (and (p "init" z 1) (p "init" "serial-a" z serial-a)
+          (p "init" "ra" z ra) (p "init" "ca" z ca) (p "init" "a" z a))
+        (gen-st (cat "privkey" a ra serial-a ca)))))
+  (defgenrule gen-st-resp-0
+    (forall ((z strd) (serial-b data) (rb rndx) (ca b name))
+      (implies
+        (and (p "resp" z 1) (p "resp" "serial-b" z serial-b)
+          (p "resp" "rb" z rb) (p "resp" "ca" z ca) (p "resp" "b" z b))
+        (gen-st (cat "privkey" b rb serial-b ca)))))
   (lang (cert-req (tupl 3)) (cert (tupl 4)) (sig sign)))
 
 (defskeleton dhstatic-state
@@ -128,8 +128,8 @@
   (non-orig (privk "sig" ca) (privk "sig" b))
   (uniq-orig n)
   (gen-st (cat "privkey" a ra serial-a ca))
-  (facts (neq b a) (neq a b))
-  (rule gen-st-init-0 fact-resp-neq0 fact-init-neq0)
+  (facts (neq a b) (neq b a))
+  (rule fact-init-neq0 fact-resp-neq0 gen-st-resp-0)
   (traces
     ((load static-key (cat pt "privkey" a ra serial-a ca))
       (recv (sig (cert b galpha ca serial-b) (privk "sig" ca)))
@@ -152,8 +152,8 @@
   (uniq-orig n)
   (uniq-gen ra)
   (gen-st (cat "privkey" a ra serial-a ca))
-  (facts (trans 1 2) (trans 1 3) (neq b a) (neq a b))
-  (rule trRl_get-cert-at-2 trRl_get-cert-at-3)
+  (facts (trans 1 3) (trans 1 2) (neq a b) (neq b a))
+  (rule trRl_get-cert-at-3 trRl_get-cert-at-2)
   (operation channel-test (added-strand get-cert 4)
     (ch-msg static-key (cat pt "privkey" a ra serial-a ca)) (0 0))
   (traces
@@ -183,7 +183,7 @@
   (uniq-orig serial-a n)
   (uniq-gen ra)
   (gen-st (cat "privkey" a ra serial-a ca))
-  (facts (trans 1 2) (trans 1 3) (neq b a) (neq a b))
+  (facts (trans 1 3) (trans 1 2) (neq a b) (neq b a))
   (operation encryption-test (added-strand cert 2)
     (sig (cert a (exp (gen) ra) ca serial-a) (privk "sig" ca)) (1 1))
   (traces
@@ -217,7 +217,7 @@
   (uniq-orig serial-a serial-b n)
   (uniq-gen ra)
   (gen-st (cat "privkey" a ra serial-a ca))
-  (facts (trans 1 2) (trans 1 3) (neq b a) (neq a b))
+  (facts (trans 1 3) (trans 1 2) (neq a b) (neq b a))
   (operation encryption-test (added-strand cert 2)
     (sig (cert b galpha ca serial-b) (privk "sig" ca)) (0 1))
   (traces
@@ -256,7 +256,7 @@
   (uniq-orig serial-a serial-b n)
   (uniq-gen ra ra-0)
   (gen-st (cat "privkey" a ra serial-a ca))
-  (facts (trans 1 2) (trans 1 3) (neq b a) (neq a b))
+  (facts (trans 1 3) (trans 1 2) (neq a b) (neq b a))
   (operation encryption-test (added-strand get-cert 1)
     (sig (cert-req b (exp (gen) ra-0) ca) (privk "sig" b)) (3 0))
   (traces
@@ -305,8 +305,8 @@
   (uniq-gen ra ra-0)
   (gen-st (cat "privkey" b rb serial-b ca-0)
     (cat "privkey" a ra serial-a ca))
-  (facts (trans 1 2) (trans 1 3) (neq b a) (neq a b))
-  (rule gen-st-init-0)
+  (facts (trans 1 3) (trans 1 2) (neq a b) (neq b a))
+  (rule gen-st-resp-0)
   (operation nonce-test (added-strand resp 4) n (0 3)
     (enc n a b serial-a serial-b (exp (gen) (mul ra ra-0))))
   (traces
@@ -356,7 +356,7 @@
   (uniq-orig serial-a serial-b n)
   (uniq-gen ra ra-0)
   (gen-st (cat "privkey" a ra serial-a ca))
-  (facts (trans 1 2) (trans 1 3) (neq b a) (neq a b))
+  (facts (trans 1 3) (trans 1 2) (neq a b) (neq b a))
   (operation nonce-test (added-listener (exp (gen) (mul ra ra-0))) n
     (0 3) (enc n a b serial-a serial-b (exp (gen) (mul ra ra-0))))
   (traces
@@ -407,9 +407,9 @@
   (uniq-gen ra ra-0)
   (gen-st (cat "privkey" b ra-0 serial-b ca)
     (cat "privkey" a ra serial-a ca))
-  (facts (trans 5 2) (trans 5 3) (trans 1 2) (trans 1 3) (neq b a)
-    (neq a b))
-  (rule trRl_get-cert-at-2 trRl_get-cert-at-3)
+  (facts (trans 5 3) (trans 5 2) (trans 1 3) (trans 1 2) (neq a b)
+    (neq b a))
+  (rule trRl_get-cert-at-3 trRl_get-cert-at-2)
   (operation channel-test (displaced 4 6 get-cert 4)
     (ch-msg static-key-0 (cat pt-1 "privkey" b ra-1 serial-b ca)) (5 0))
   (traces
@@ -475,9 +475,9 @@
   (uniq-gen ra ra-0 ra-1)
   (gen-st (cat "privkey" b ra-1 serial-b ca-0)
     (cat "privkey" a ra serial-a ca))
-  (facts (trans 6 2) (trans 6 3) (trans 1 2) (trans 1 3) (neq b a)
-    (neq a b))
-  (rule trRl_get-cert-at-2 trRl_get-cert-at-3)
+  (facts (trans 6 3) (trans 6 2) (trans 1 3) (trans 1 2) (neq a b)
+    (neq b a))
+  (rule trRl_get-cert-at-3 trRl_get-cert-at-2)
   (operation channel-test (added-strand get-cert 4)
     (ch-msg static-key-0 (cat pt-1 "privkey" b ra-1 serial-b ca-0))
     (5 0))
@@ -535,7 +535,7 @@
   (uniq-orig serial-a serial-b n)
   (uniq-gen ra ra-0)
   (gen-st (cat "privkey" a ra serial-a ca))
-  (facts (trans 1 2) (trans 1 3) (neq b a) (neq a b))
+  (facts (trans 1 3) (trans 1 2) (neq a b) (neq b a))
   (operation nonce-test (added-listener (cat (exp (gen) ra) ra-0))
     (exp (gen) (mul ra ra-0)) (5 0))
   (traces
@@ -583,7 +583,7 @@
   (uniq-orig serial-a serial-b n)
   (uniq-gen ra ra-0)
   (gen-st (cat "privkey" a ra serial-a ca))
-  (facts (trans 1 2) (trans 1 3) (neq b a) (neq a b))
+  (facts (trans 1 3) (trans 1 2) (neq a b) (neq b a))
   (operation nonce-test (added-listener (cat (exp (gen) ra-0) ra))
     (exp (gen) (mul ra ra-0)) (5 0))
   (traces
@@ -638,8 +638,8 @@
   (uniq-gen ra ra-0 ra-1)
   (gen-st (cat "privkey" b ra-1 serial-b ca-0)
     (cat "privkey" a ra serial-a ca))
-  (facts (trans 6 2) (trans 6 3) (trans 1 2) (trans 1 3) (neq b a)
-    (neq a b))
+  (facts (trans 6 3) (trans 6 2) (trans 1 3) (trans 1 2) (neq a b)
+    (neq b a))
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul ra ra-0)) ra-1))
     (exp (gen) (mul ra ra-0 (rec ra-1))) (5 1))
@@ -706,8 +706,8 @@
   (uniq-gen ra ra-0 ra-1)
   (gen-st (cat "privkey" b ra-1 serial-b ca-0)
     (cat "privkey" a ra serial-a ca))
-  (facts (trans 6 2) (trans 6 3) (trans 1 2) (trans 1 3) (neq b a)
-    (neq a b))
+  (facts (trans 6 3) (trans 6 2) (trans 1 3) (trans 1 2) (neq a b)
+    (neq b a))
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul ra (rec ra-1))) ra-0))
     (exp (gen) (mul ra ra-0 (rec ra-1))) (5 1))
@@ -774,8 +774,8 @@
   (uniq-gen ra ra-0 ra-1)
   (gen-st (cat "privkey" b ra-1 serial-b ca-0)
     (cat "privkey" a ra serial-a ca))
-  (facts (trans 6 2) (trans 6 3) (trans 1 2) (trans 1 3) (neq b a)
-    (neq a b))
+  (facts (trans 6 3) (trans 6 2) (trans 1 3) (trans 1 2) (neq a b)
+    (neq b a))
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul ra-0 (rec ra-1))) ra))
     (exp (gen) (mul ra ra-0 (rec ra-1))) (5 1))
@@ -837,9 +837,9 @@
   (uniq-orig serial-a serial-b n)
   (uniq-gen ra ra-0)
   (gen-st (cat "privkey" a ra serial-a ca))
-  (facts (trans 6 2) (trans 6 3) (trans 1 2) (trans 1 3) (neq self a)
-    (neq a self))
-  (rule trRl_get-cert-at-2 trRl_get-cert-at-3)
+  (facts (trans 6 3) (trans 6 2) (trans 1 3) (trans 1 2) (neq a self)
+    (neq self a))
+  (rule trRl_get-cert-at-3 trRl_get-cert-at-2)
   (operation nonce-test (displaced 4 7 get-cert 4) ra-0 (6 0))
   (traces
     ((load static-key (cat pt "privkey" a ra serial-a ca))
@@ -891,7 +891,7 @@
   (uniq-orig serial-a serial-b n)
   (uniq-gen ra ra-0)
   (gen-st (cat "privkey" a ra-0 serial-a ca))
-  (facts (trans 1 2) (trans 1 3) (neq b a) (neq a b))
+  (facts (trans 1 3) (trans 1 2) (neq a b) (neq b a))
   (operation nonce-test (displaced 7 1 get-cert 4) ra-0 (6 0))
   (traces
     ((load static-key (cat pt "privkey" a ra-0 serial-a ca))
@@ -946,8 +946,8 @@
   (uniq-gen ra ra-0 ra-1)
   (gen-st (cat "privkey" b ra-1 serial-b ca-0)
     (cat "privkey" a ra serial-a ca))
-  (facts (trans 6 2) (trans 6 3) (trans 1 2) (trans 1 3) (neq b a)
-    (neq a b))
+  (facts (trans 6 3) (trans 6 2) (trans 1 3) (trans 1 2) (neq a b)
+    (neq b a))
   (operation nonce-test (displaced 8 6 get-cert 4) ra-1 (7 0))
   (traces
     ((load static-key (cat pt "privkey" a ra serial-a ca))
@@ -1014,9 +1014,9 @@
   (uniq-gen ra ra-0 ra-1)
   (gen-st (cat "privkey" a ra serial-a ca-0)
     (cat "privkey" self ra-0 serial-b ca))
-  (facts (trans 7 2) (trans 7 3) (trans 5 2) (trans 5 3) (trans 1 2)
-    (trans 1 3) (neq self a) (neq a self))
-  (rule trRl_get-cert-at-2 trRl_get-cert-at-3)
+  (facts (trans 7 3) (trans 7 2) (trans 5 3) (trans 5 2) (trans 1 3)
+    (trans 1 2) (neq a self) (neq self a))
+  (rule trRl_get-cert-at-3 trRl_get-cert-at-2)
   (operation nonce-test (displaced 4 8 get-cert 4) ra-1 (7 0))
   (traces
     ((load static-key (cat pt "privkey" a ra serial-a ca-0))
@@ -1091,8 +1091,8 @@
   (uniq-gen ra ra-0 ra-1)
   (gen-st (cat "privkey" b ra-0 serial-b ca-0)
     (cat "privkey" a ra-1 serial-a ca))
-  (facts (trans 6 2) (trans 6 3) (trans 1 2) (trans 1 3) (neq b a)
-    (neq a b))
+  (facts (trans 6 3) (trans 6 2) (trans 1 3) (trans 1 2) (neq a b)
+    (neq b a))
   (operation nonce-test (displaced 8 1 get-cert 4) ra-1 (7 0))
   (traces
     ((load static-key (cat pt "privkey" a ra-1 serial-a ca))
@@ -1153,8 +1153,8 @@
   (uniq-orig serial-a serial-b n)
   (uniq-gen ra ra-0)
   (gen-st (cat "privkey" a ra serial-a ca))
-  (facts (trans 6 2) (trans 6 3) (trans 1 2) (trans 1 3) (neq self a)
-    (neq a self))
+  (facts (trans 6 3) (trans 6 2) (trans 1 3) (trans 1 2) (neq a self)
+    (neq self a))
   (operation encryption-test (displaced 7 3 cert 2)
     (sig (cert self (exp (gen) ra-0) ca serial) (privk "sig" ca)) (6 1))
   (traces
@@ -1212,8 +1212,8 @@
   (uniq-orig serial-a serial-b serial n)
   (uniq-gen ra ra-0)
   (gen-st (cat "privkey" a ra serial-a ca))
-  (facts (trans 6 2) (trans 6 3) (trans 1 2) (trans 1 3) (neq self a)
-    (neq a self))
+  (facts (trans 6 3) (trans 6 2) (trans 1 3) (trans 1 2) (neq a self)
+    (neq self a))
   (operation encryption-test (added-strand cert 2)
     (sig (cert self (exp (gen) ra-0) ca serial) (privk "sig" ca)) (6 1))
   (traces
@@ -1278,8 +1278,8 @@
   (uniq-gen ra ra-0 ra-1)
   (gen-st (cat "privkey" a ra serial-a ca-0)
     (cat "privkey" self ra-0 serial-b ca))
-  (facts (trans 7 2) (trans 7 3) (trans 5 2) (trans 5 3) (trans 1 2)
-    (trans 1 3) (neq self a) (neq a self))
+  (facts (trans 7 3) (trans 7 2) (trans 5 3) (trans 5 2) (trans 1 3)
+    (trans 1 2) (neq a self) (neq self a))
   (operation encryption-test (displaced 8 3 cert 2)
     (sig (cert self (exp (gen) ra-1) ca-0 serial) (privk "sig" ca-0))
     (7 1))
@@ -1360,8 +1360,8 @@
   (uniq-gen ra ra-0 ra-1)
   (gen-st (cat "privkey" a ra serial-a ca-0)
     (cat "privkey" self ra-0 serial-b ca))
-  (facts (trans 7 2) (trans 7 3) (trans 5 2) (trans 5 3) (trans 1 2)
-    (trans 1 3) (neq self a) (neq a self))
+  (facts (trans 7 3) (trans 7 2) (trans 5 3) (trans 5 2) (trans 1 3)
+    (trans 1 2) (neq a self) (neq self a))
   (operation encryption-test (added-strand cert 2)
     (sig (cert self (exp (gen) ra-1) ca-0 serial) (privk "sig" ca-0))
     (7 1))
@@ -1453,61 +1453,29 @@
     (facts (neq a b))
     (gen-st (cat "privkey" b rb serial-b ca))
     (comment "Responder is B"))
-  (defgenrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defgenrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
     (forall ((x strd)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_mesg
     (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defgenrule gen-st-resp-0
-    (forall ((z strd) (serial-b data) (rb rndx) (ca b name))
-      (implies
-        (and (p "resp" z 1) (p "resp" "serial-b" z serial-b)
-          (p "resp" "rb" z rb) (p "resp" "ca" z ca) (p "resp" "b" z b))
-        (gen-st (cat "privkey" b rb serial-b ca)))))
-  (defgenrule gen-st-init-0
-    (forall ((z strd) (serial-a data) (ra rndx) (ca a name))
-      (implies
-        (and (p "init" z 1) (p "init" "serial-a" z serial-a)
-          (p "init" "ra" z ra) (p "init" "ca" z ca) (p "init" "a" z a))
-        (gen-st (cat "privkey" a ra serial-a ca)))))
-  (defgenrule trRl_get-cert-at-2
-    (forall ((z strd)) (implies (p "get-cert" z 4) (trans z 2))))
-  (defgenrule trRl_get-cert-at-3
-    (forall ((z strd)) (implies (p "get-cert" z 4) (trans z 3))))
   (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defgenrule fact-resp-neq0
-    (forall ((z strd) (a b name))
-      (implies
-        (and (p "resp" z 2) (p "resp" "a" z a) (p "resp" "b" z b))
-        (fact neq a b))))
-  (defgenrule fact-init-neq0
-    (forall ((z strd) (a b name))
-      (implies
-        (and (p "init" z 2) (p "init" "a" z a) (p "init" "b" z b))
-        (fact neq a b))))
-  (defgenrule invShearsRule
+  (defgenrule cakeRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
   (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
@@ -1515,6 +1483,38 @@
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule fact-init-neq0
+    (forall ((z strd) (b a name))
+      (implies
+        (and (p "init" z 2) (p "init" "b" z b) (p "init" "a" z a))
+        (fact neq a b))))
+  (defgenrule fact-resp-neq0
+    (forall ((z strd) (b a name))
+      (implies
+        (and (p "resp" z 2) (p "resp" "b" z b) (p "resp" "a" z a))
+        (fact neq a b))))
+  (defgenrule trRl_get-cert-at-3
+    (forall ((z strd)) (implies (p "get-cert" z 4) (trans z 3))))
+  (defgenrule trRl_get-cert-at-2
+    (forall ((z strd)) (implies (p "get-cert" z 4) (trans z 2))))
+  (defgenrule gen-st-init-0
+    (forall ((z strd) (serial-a data) (ra rndx) (ca a name))
+      (implies
+        (and (p "init" z 1) (p "init" "serial-a" z serial-a)
+          (p "init" "ra" z ra) (p "init" "ca" z ca) (p "init" "a" z a))
+        (gen-st (cat "privkey" a ra serial-a ca)))))
+  (defgenrule gen-st-resp-0
+    (forall ((z strd) (serial-b data) (rb rndx) (ca b name))
+      (implies
+        (and (p "resp" z 1) (p "resp" "serial-b" z serial-b)
+          (p "resp" "rb" z rb) (p "resp" "ca" z ca) (p "resp" "b" z b))
+        (gen-st (cat "privkey" b rb serial-b ca)))))
   (lang (cert-req (tupl 3)) (cert (tupl 4)) (sig sign)))
 
 (defskeleton dhstatic-state
@@ -1539,8 +1539,8 @@
     (b b) (ca ca) (galpha galpha) (static-key static-key) (rb rb))
   (non-orig (privk "sig" ca) (privk "sig" a))
   (gen-st (cat "privkey" b rb serial-b ca))
-  (facts (neq a b) (neq b a))
-  (rule gen-st-init-0 fact-resp-neq0 fact-init-neq0)
+  (facts (neq b a) (neq a b))
+  (rule fact-init-neq0 fact-resp-neq0 gen-st-resp-0)
   (traces
     ((load static-key (cat pt "privkey" b rb serial-b ca))
       (recv (sig (cert a galpha ca serial-a) (privk "sig" ca)))
@@ -1562,8 +1562,8 @@
   (non-orig (privk "sig" ca) (privk "sig" a))
   (uniq-gen ra)
   (gen-st (cat "privkey" b ra serial-b ca))
-  (facts (trans 1 2) (trans 1 3) (neq a b) (neq b a))
-  (rule trRl_get-cert-at-2 trRl_get-cert-at-3)
+  (facts (trans 1 3) (trans 1 2) (neq b a) (neq a b))
+  (rule trRl_get-cert-at-3 trRl_get-cert-at-2)
   (operation channel-test (added-strand get-cert 4)
     (ch-msg static-key (cat pt "privkey" b ra serial-b ca)) (0 0))
   (traces
@@ -1593,7 +1593,7 @@
   (uniq-orig serial-b)
   (uniq-gen ra)
   (gen-st (cat "privkey" b ra serial-b ca))
-  (facts (trans 1 2) (trans 1 3) (neq a b) (neq b a))
+  (facts (trans 1 3) (trans 1 2) (neq b a) (neq a b))
   (operation encryption-test (added-strand cert 2)
     (sig (cert b (exp (gen) ra) ca serial-b) (privk "sig" ca)) (1 1))
   (traces
@@ -1627,7 +1627,7 @@
   (uniq-orig serial-b serial-a)
   (uniq-gen ra)
   (gen-st (cat "privkey" b ra serial-b ca))
-  (facts (trans 1 2) (trans 1 3) (neq a b) (neq b a))
+  (facts (trans 1 3) (trans 1 2) (neq b a) (neq a b))
   (operation encryption-test (added-strand cert 2)
     (sig (cert a galpha ca serial-a) (privk "sig" ca)) (0 1))
   (traces
@@ -1666,7 +1666,7 @@
   (uniq-orig serial-b serial-a)
   (uniq-gen ra ra-0)
   (gen-st (cat "privkey" b ra serial-b ca))
-  (facts (trans 1 2) (trans 1 3) (neq a b) (neq b a))
+  (facts (trans 1 3) (trans 1 2) (neq b a) (neq a b))
   (operation encryption-test (added-strand get-cert 1)
     (sig (cert-req a (exp (gen) ra-0) ca) (privk "sig" a)) (3 0))
   (traces
@@ -1714,8 +1714,8 @@
   (uniq-gen ra ra-0)
   (gen-st (cat "privkey" a ra-1 serial-a ca-0)
     (cat "privkey" b ra serial-b ca))
-  (facts (trans 1 2) (trans 1 3) (neq a b) (neq b a))
-  (rule gen-st-init-0)
+  (facts (trans 1 3) (trans 1 2) (neq b a) (neq a b))
+  (rule gen-st-resp-0)
   (operation encryption-test (added-strand init 3)
     (enc n a b serial-a serial-b (exp (gen) (mul ra ra-0))) (0 2))
   (traces
@@ -1764,7 +1764,7 @@
   (uniq-orig serial-b serial-a)
   (uniq-gen ra ra-0)
   (gen-st (cat "privkey" b ra serial-b ca))
-  (facts (trans 1 2) (trans 1 3) (neq a b) (neq b a))
+  (facts (trans 1 3) (trans 1 2) (neq b a) (neq a b))
   (operation encryption-test (added-listener (exp (gen) (mul ra ra-0)))
     (enc n a b serial-a serial-b (exp (gen) (mul ra ra-0))) (0 2))
   (traces
@@ -1815,9 +1815,9 @@
   (uniq-gen ra ra-0)
   (gen-st (cat "privkey" a ra-0 serial-a ca)
     (cat "privkey" b ra serial-b ca))
-  (facts (trans 5 2) (trans 5 3) (trans 1 2) (trans 1 3) (neq a b)
-    (neq b a))
-  (rule trRl_get-cert-at-2 trRl_get-cert-at-3)
+  (facts (trans 5 3) (trans 5 2) (trans 1 3) (trans 1 2) (neq b a)
+    (neq a b))
+  (rule trRl_get-cert-at-3 trRl_get-cert-at-2)
   (operation channel-test (displaced 4 6 get-cert 4)
     (ch-msg static-key-0 (cat pt-1 "privkey" a ra-1 serial-a ca)) (5 0))
   (traces
@@ -1882,9 +1882,9 @@
   (uniq-gen ra ra-0 ra-1)
   (gen-st (cat "privkey" a ra-1 serial-a ca-0)
     (cat "privkey" b ra serial-b ca))
-  (facts (trans 6 2) (trans 6 3) (trans 1 2) (trans 1 3) (neq a b)
-    (neq b a))
-  (rule trRl_get-cert-at-2 trRl_get-cert-at-3)
+  (facts (trans 6 3) (trans 6 2) (trans 1 3) (trans 1 2) (neq b a)
+    (neq a b))
+  (rule trRl_get-cert-at-3 trRl_get-cert-at-2)
   (operation channel-test (added-strand get-cert 4)
     (ch-msg static-key-0 (cat pt-1 "privkey" a ra-1 serial-a ca-0))
     (5 0))
@@ -1941,7 +1941,7 @@
   (uniq-orig serial-b serial-a)
   (uniq-gen ra ra-0)
   (gen-st (cat "privkey" b ra serial-b ca))
-  (facts (trans 1 2) (trans 1 3) (neq a b) (neq b a))
+  (facts (trans 1 3) (trans 1 2) (neq b a) (neq a b))
   (operation nonce-test (added-listener (cat (exp (gen) ra) ra-0))
     (exp (gen) (mul ra ra-0)) (5 0))
   (traces
@@ -1989,7 +1989,7 @@
   (uniq-orig serial-b serial-a)
   (uniq-gen ra ra-0)
   (gen-st (cat "privkey" b ra serial-b ca))
-  (facts (trans 1 2) (trans 1 3) (neq a b) (neq b a))
+  (facts (trans 1 3) (trans 1 2) (neq b a) (neq a b))
   (operation nonce-test (added-listener (cat (exp (gen) ra-0) ra))
     (exp (gen) (mul ra ra-0)) (5 0))
   (traces
@@ -2044,8 +2044,8 @@
   (uniq-gen ra ra-0 ra-1)
   (gen-st (cat "privkey" a ra-1 serial-a ca-0)
     (cat "privkey" b ra serial-b ca))
-  (facts (trans 6 2) (trans 6 3) (trans 1 2) (trans 1 3) (neq a b)
-    (neq b a))
+  (facts (trans 6 3) (trans 6 2) (trans 1 3) (trans 1 2) (neq b a)
+    (neq a b))
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul ra ra-0)) ra-1))
     (exp (gen) (mul ra ra-0 (rec ra-1))) (5 1))
@@ -2111,8 +2111,8 @@
   (uniq-gen ra ra-0 ra-1)
   (gen-st (cat "privkey" a ra-1 serial-a ca-0)
     (cat "privkey" b ra serial-b ca))
-  (facts (trans 6 2) (trans 6 3) (trans 1 2) (trans 1 3) (neq a b)
-    (neq b a))
+  (facts (trans 6 3) (trans 6 2) (trans 1 3) (trans 1 2) (neq b a)
+    (neq a b))
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul ra (rec ra-1))) ra-0))
     (exp (gen) (mul ra ra-0 (rec ra-1))) (5 1))
@@ -2178,8 +2178,8 @@
   (uniq-gen ra ra-0 ra-1)
   (gen-st (cat "privkey" a ra-1 serial-a ca-0)
     (cat "privkey" b ra serial-b ca))
-  (facts (trans 6 2) (trans 6 3) (trans 1 2) (trans 1 3) (neq a b)
-    (neq b a))
+  (facts (trans 6 3) (trans 6 2) (trans 1 3) (trans 1 2) (neq b a)
+    (neq a b))
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul ra-0 (rec ra-1))) ra))
     (exp (gen) (mul ra ra-0 (rec ra-1))) (5 1))
@@ -2240,9 +2240,9 @@
   (uniq-orig serial-b serial-a)
   (uniq-gen ra ra-0)
   (gen-st (cat "privkey" b ra serial-b ca))
-  (facts (trans 6 2) (trans 6 3) (trans 1 2) (trans 1 3) (neq self b)
-    (neq b self))
-  (rule trRl_get-cert-at-2 trRl_get-cert-at-3)
+  (facts (trans 6 3) (trans 6 2) (trans 1 3) (trans 1 2) (neq b self)
+    (neq self b))
+  (rule trRl_get-cert-at-3 trRl_get-cert-at-2)
   (operation nonce-test (displaced 4 7 get-cert 4) ra-0 (6 0))
   (traces
     ((load static-key (cat pt "privkey" b ra serial-b ca))
@@ -2294,7 +2294,7 @@
   (uniq-orig serial-b serial-a)
   (uniq-gen ra ra-0)
   (gen-st (cat "privkey" b ra-0 serial-b ca))
-  (facts (trans 1 2) (trans 1 3) (neq a b) (neq b a))
+  (facts (trans 1 3) (trans 1 2) (neq b a) (neq a b))
   (operation nonce-test (displaced 7 1 get-cert 4) ra-0 (6 0))
   (traces
     ((load static-key (cat pt "privkey" b ra-0 serial-b ca))
@@ -2348,8 +2348,8 @@
   (uniq-gen ra ra-0 ra-1)
   (gen-st (cat "privkey" a ra-1 serial-a ca-0)
     (cat "privkey" b ra serial-b ca))
-  (facts (trans 6 2) (trans 6 3) (trans 1 2) (trans 1 3) (neq a b)
-    (neq b a))
+  (facts (trans 6 3) (trans 6 2) (trans 1 3) (trans 1 2) (neq b a)
+    (neq a b))
   (operation nonce-test (displaced 8 6 get-cert 4) ra-1 (7 0))
   (traces
     ((load static-key (cat pt "privkey" b ra serial-b ca))
@@ -2415,9 +2415,9 @@
   (uniq-gen ra ra-0 ra-1)
   (gen-st (cat "privkey" b ra serial-b ca-0)
     (cat "privkey" self ra-0 serial-a ca))
-  (facts (trans 7 2) (trans 7 3) (trans 5 2) (trans 5 3) (trans 1 2)
-    (trans 1 3) (neq self b) (neq b self))
-  (rule trRl_get-cert-at-2 trRl_get-cert-at-3)
+  (facts (trans 7 3) (trans 7 2) (trans 5 3) (trans 5 2) (trans 1 3)
+    (trans 1 2) (neq b self) (neq self b))
+  (rule trRl_get-cert-at-3 trRl_get-cert-at-2)
   (operation nonce-test (displaced 4 8 get-cert 4) ra-1 (7 0))
   (traces
     ((load static-key (cat pt "privkey" b ra serial-b ca-0))
@@ -2490,8 +2490,8 @@
   (uniq-gen ra ra-0 ra-1)
   (gen-st (cat "privkey" a ra-0 serial-a ca-0)
     (cat "privkey" b ra-1 serial-b ca))
-  (facts (trans 6 2) (trans 6 3) (trans 1 2) (trans 1 3) (neq a b)
-    (neq b a))
+  (facts (trans 6 3) (trans 6 2) (trans 1 3) (trans 1 2) (neq b a)
+    (neq a b))
   (operation nonce-test (displaced 8 1 get-cert 4) ra-1 (7 0))
   (traces
     ((load static-key (cat pt "privkey" b ra-1 serial-b ca))
@@ -2551,8 +2551,8 @@
   (uniq-orig serial-b serial-a)
   (uniq-gen ra ra-0)
   (gen-st (cat "privkey" b ra serial-b ca))
-  (facts (trans 6 2) (trans 6 3) (trans 1 2) (trans 1 3) (neq self b)
-    (neq b self))
+  (facts (trans 6 3) (trans 6 2) (trans 1 3) (trans 1 2) (neq b self)
+    (neq self b))
   (operation encryption-test (displaced 7 3 cert 2)
     (sig (cert self (exp (gen) ra-0) ca serial) (privk "sig" ca)) (6 1))
   (traces
@@ -2610,8 +2610,8 @@
   (uniq-orig serial-b serial-a serial)
   (uniq-gen ra ra-0)
   (gen-st (cat "privkey" b ra serial-b ca))
-  (facts (trans 6 2) (trans 6 3) (trans 1 2) (trans 1 3) (neq self b)
-    (neq b self))
+  (facts (trans 6 3) (trans 6 2) (trans 1 3) (trans 1 2) (neq b self)
+    (neq self b))
   (operation encryption-test (added-strand cert 2)
     (sig (cert self (exp (gen) ra-0) ca serial) (privk "sig" ca)) (6 1))
   (traces
@@ -2676,8 +2676,8 @@
   (uniq-gen ra ra-0 ra-1)
   (gen-st (cat "privkey" b ra serial-b ca-0)
     (cat "privkey" self ra-0 serial-a ca))
-  (facts (trans 7 2) (trans 7 3) (trans 5 2) (trans 5 3) (trans 1 2)
-    (trans 1 3) (neq self b) (neq b self))
+  (facts (trans 7 3) (trans 7 2) (trans 5 3) (trans 5 2) (trans 1 3)
+    (trans 1 2) (neq b self) (neq self b))
   (operation encryption-test (displaced 8 3 cert 2)
     (sig (cert self (exp (gen) ra-1) ca-0 serial) (privk "sig" ca-0))
     (7 1))
@@ -2757,8 +2757,8 @@
   (uniq-gen ra ra-0 ra-1)
   (gen-st (cat "privkey" b ra serial-b ca-0)
     (cat "privkey" self ra-0 serial-a ca))
-  (facts (trans 7 2) (trans 7 3) (trans 5 2) (trans 5 3) (trans 1 2)
-    (trans 1 3) (neq self b) (neq b self))
+  (facts (trans 7 3) (trans 7 2) (trans 5 3) (trans 5 2) (trans 1 3)
+    (trans 1 2) (neq b self) (neq self b))
   (operation encryption-test (added-strand cert 2)
     (sig (cert self (exp (gen) ra-1) ca-0 serial) (privk "sig" ca-0))
     (7 1))

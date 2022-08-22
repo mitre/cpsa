@@ -1,3 +1,4 @@
+
 -- Generates rules when loading protocols from S-Expressions.  
 
 -- Copyright (c) 2009 The MITRE Corporation
@@ -250,12 +251,15 @@ csRules sig g rl =
 data FoundAt = FoundAt Int
              | Missing Term
 
+-- Return the smallest height in the trace of rl at which all of the
+-- vars are found to have occurred, if found, or a missing var if no
+-- such height.
 varsUsedHeight :: Role -> [Term] -> FoundAt
 varsUsedHeight rl vars =
     loop 0 vars
     where
-      occ = flip firstOccurs rl
-      loop i [] = FoundAt (1+i)
+      occ = flip firstOccurs rl -- return *index* 
+      loop i [] = FoundAt (1+i) -- convert to height 
       loop i (v : rest) =
           case occ v of
             Nothing -> Missing v
@@ -291,6 +295,26 @@ freeVarsInConjLists ((vars,conj) : rest) =
      L.\\ vars)
     ++ (freeVarsInConjLists rest)
 
+-- Take the subset of fvars that have a name shared with some member
+-- of pvars
+freeVarsSubsetByName :: [Term] -> [Term] -> [Term]
+freeVarsSubsetByName fvars pvars =
+    loop fvars []
+    where
+      pvarNames = map varName pvars
+      loop [] soFar = reverse soFar
+      loop (fv : rest) soFar
+          | (varName fv) `elem` pvarNames =
+              loop rest (fv : soFar)
+          | otherwise =
+              loop rest soFar
+          
+--   freeVarsNamedIn [] pvars = []
+--   freeVarsNamedIn (fv : rest) pvars =
+--       if (varName fv) `elem` (map varName pvars)
+--       then fv : freeVarsNamedIn rest pvars
+--       else freeVarsNamedIn rest pvars
+
 conclHeight :: Role -> [([Term], Conj)] -> FoundAt
 conclHeight _ [] = FoundAt 1
 conclHeight rl (disj : rest) =
@@ -314,14 +338,17 @@ renameApart prefix vars =
           let candidate = prefix ++ "-" ++ (show i) in
           if not (candidate `elem` vns) then candidate
           else
-              loop (i+1) 
+              loop (i+1)
+
+                   
 
 ruleOfDisjAtHeight :: Sig -> Gen -> Role -> String -> [([Term],Existor)] -> Int -> (Gen, Rule)
 ruleOfDisjAtHeight sig g rl rulename disj ht =
     let fvs = freeVarsInDisjunction disj in 
     ruleOfClauses
     sig g rulename 
-            (("strd", [renameApart "z" (concatMap fst disj)]) : varListSpecOfVars fvs)
+            (("strd", [renameApart "z" (concatMap fst disj)])
+             : varListSpecOfVars (freeVarsSubsetByName fvs (rvars rl)))
             (\vars ->
                  applyToStrandVarAndParams
                  (\z pvars ->
@@ -335,7 +362,9 @@ ruleOfDisjAtHeight sig g rl rulename disj ht =
                                       Nothing -> errorWithMsg v " not found."
                                       Just i ->
                                           if i < ht then (Param rl p (i+1) z v)
-                                          else errorWithMsg v " introduced too high.")
+                                          else errorWithMsg v
+                                                   (" introduced for " ++ (varName p) ++ " too high in role " ++ (rname rl) ++": " ++ (show i) ++
+                                                    " not below " ++ (show ht) ++ "in " ++ rulename ++ "."))
                          pvars))
                  vars
                  "ruleOfDisjAtHeight:  vars not strand+prams?")
@@ -412,7 +441,7 @@ genStateRls sig g rl ts =
                     (\pvars ->
                          case envsRoleParams rl g pvars of
                            (_,e) : _ -> [GenStV (instantiate e t)] 
-                           _ -> error ("genStateRls:  Parameter matching failed "
+                           [] -> error ("genStateRls:  Parameter matching failed "
                                        ++  (show pvars) ++ (show t))))]
                  ht)
 

@@ -395,6 +395,8 @@ traceAbsent trace ugens =
       where
         f ts evt = S.union ts $ subNums $ evtTerm evt
 
+-- Return just the index of the first occurrence of v in the trace, or
+-- nothing.  
 firstOccurs :: Term -> Role -> Maybe Int
 firstOccurs v r = firstOccursAt v (rtrace r)
 
@@ -412,7 +414,11 @@ envsRoleParams rl g =
     foldl
     (\ges v -> concatMap
                (\ge -> case paramOfName (varName v) rl of
-                         Just p -> match p v ge
+                         Just p ->
+                             case match p v ge of
+                               [] -> -- debug with z ("!" ++ (varName v))
+                                    [ge]
+                               xs -> xs 
                          Nothing -> -- vars not locally bound may
                                     -- occur elsewhere in formula 
                                    [ge])

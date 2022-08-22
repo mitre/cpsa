@@ -77,7 +77,7 @@
      )
     (uniq-gen y)
     (uniq-orig nb)
-    (facts (neq gx (gen)))
+    ;;    (facts (neq gx (gen)))
     (gen-st (pv b l))
     (fn-of ("principal-of" (ltxa a) (ltxb b))
 	   ("ltx-of" (a ltxa) (b ltxb))))
@@ -106,9 +106,14 @@
 	   ("ltx-of" (self l))))
 
   (defrule fact-resp-neq0
-    (forall ((z strd) (gx base))
-      (implies (and (p "resp" z 3) (p "resp" "gx" z gx))
-        (fact neq gx (gen)))))
+    (forall ((z strd) ;(gx base)
+	     )
+	    (implies (and (p "resp" z 3) (p "resp" "gx" z (gen))) (false))))
+
+  (defrule fact-init-neq0
+    (forall ((z strd) ;(gx base)
+	     )
+	    (implies (and (p "init" z 4) (p "init" "gy" z (gen))) (false))))
 
   (defrule undisclosed-not-disclosed
     (forall

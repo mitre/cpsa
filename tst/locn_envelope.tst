@@ -71,50 +71,50 @@
         (and (p "tpm-quote" z 2)
           (p "tpm-quote" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
-  (defgenrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defgenrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
     (forall ((x strd)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_mesg
     (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defgenrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1))))
-  (defgenrule trRl_tpm-extend-enc-at-2
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
-  (defgenrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
-  (defgenrule trRl_tpm-power-on-at-2
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
   (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defgenrule invShearsRule
+  (defgenrule cakeRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
   (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule trRl_tpm-power-on-at-2
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-power-on-at-1
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
+  (defgenrule trRl_tpm-extend-enc-at-2
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-extend-enc-at-1
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1)))))
 
 (defskeleton envelope
   (vars (v n data) (pcr-id text) (k aik akey) (tpm chan))
@@ -295,9 +295,9 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 4 1) (trans 4 2))
-  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-1
-    trRl_tpm-extend-enc-at-2)
+  (facts (trans 4 2) (trans 4 1))
+  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-2
+    trRl_tpm-extend-enc-at-1)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt (hash (hash "0" n) "obtain"))) (3 2))
   (traces ((recv v) (send v))
@@ -341,8 +341,8 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 5 1) (trans 5 2) (trans 4 1) (trans 4 2))
-  (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
+  (facts (trans 5 2) (trans 5 1) (trans 4 2) (trans 4 1))
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-1)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (4 1))
   (traces ((recv v) (send v))
@@ -388,7 +388,7 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 5 1) (trans 5 2) (trans 4 1) (trans 4 2))
+  (facts (trans 5 2) (trans 5 1) (trans 4 2) (trans 4 1))
   (operation nonce-test (contracted (pcr-id-1 pcr-id) (tpm-2 tpm)) n
     (5 0) (ch-msg tpm (cat "extend" pcr-id n)))
   (traces ((recv v) (send v))
@@ -480,50 +480,50 @@
         (and (p "tpm-quote" z 2)
           (p "tpm-quote" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
-  (defgenrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defgenrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
     (forall ((x strd)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_mesg
     (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defgenrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1))))
-  (defgenrule trRl_tpm-extend-enc-at-2
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
-  (defgenrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
-  (defgenrule trRl_tpm-power-on-at-2
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
   (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defgenrule invShearsRule
+  (defgenrule cakeRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
   (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule trRl_tpm-power-on-at-2
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-power-on-at-1
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
+  (defgenrule trRl_tpm-extend-enc-at-2
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-extend-enc-at-1
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1)))))
 
 (defskeleton envelope
   (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm chan))
@@ -716,9 +716,9 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "refuse"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 4 1) (trans 4 2))
-  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-1
-    trRl_tpm-extend-enc-at-2)
+  (facts (trans 4 2) (trans 4 1))
+  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-2
+    trRl_tpm-extend-enc-at-1)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt (hash (hash "0" n) "refuse"))) (3 1))
   (traces
@@ -772,8 +772,8 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "refuse"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 5 1) (trans 5 2) (trans 4 1) (trans 4 2))
-  (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
+  (facts (trans 5 2) (trans 5 1) (trans 4 2) (trans 4 1))
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-1)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (4 1))
   (traces
@@ -829,7 +829,7 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "refuse"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 5 1) (trans 5 2) (trans 4 1) (trans 4 2))
+  (facts (trans 5 2) (trans 5 1) (trans 4 2) (trans 4 1))
   (operation nonce-test (contracted (pcr-id-2 pcr-id-0) (tpm-2 tpm)) n
     (5 0) (ch-msg tpm (cat "extend" pcr-id-0 n)))
   (traces
@@ -933,50 +933,50 @@
         (and (p "tpm-quote" z 2)
           (p "tpm-quote" "current-value" z (hash v1 v2)))
         (gen-st (hash v1 v2)))))
-  (defgenrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defgenrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
     (forall ((x strd)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_mesg
     (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defgenrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1))))
-  (defgenrule trRl_tpm-extend-enc-at-2
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
-  (defgenrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
-  (defgenrule trRl_tpm-power-on-at-2
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
   (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defgenrule invShearsRule
+  (defgenrule cakeRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
   (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule trRl_tpm-power-on-at-2
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-power-on-at-1
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
+  (defgenrule trRl_tpm-extend-enc-at-2
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-extend-enc-at-1
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1)))))
 
 (defskeleton envelope
   (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm chan))
@@ -1214,9 +1214,9 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 5 1) (trans 5 2))
-  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-1
-    trRl_tpm-extend-enc-at-2)
+  (facts (trans 5 2) (trans 5 1))
+  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-2
+    trRl_tpm-extend-enc-at-1)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt (hash (hash "0" n) "obtain"))) (4 2))
   (traces
@@ -1269,8 +1269,8 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 6 1) (trans 6 2) (trans 5 1) (trans 5 2))
-  (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
+  (facts (trans 6 2) (trans 6 1) (trans 5 2) (trans 5 1))
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-1)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (5 1))
   (traces
@@ -1325,7 +1325,7 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 6 1) (trans 6 2) (trans 5 1) (trans 5 2))
+  (facts (trans 6 2) (trans 6 1) (trans 5 2) (trans 5 1))
   (operation nonce-test (contracted (pcr-id-2 pcr-id-0) (tpm-2 tpm)) n
     (6 0) (ch-msg tpm (cat "extend" pcr-id-0 n)))
   (traces
@@ -1386,7 +1386,7 @@
     (hash (hash "0" n) "refuse"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 6 1) (trans 6 2) (trans 5 1) (trans 5 2))
+  (facts (trans 6 2) (trans 6 1) (trans 5 2) (trans 5 1))
   (rule genStV-if-hashed-tpm-quote)
   (operation encryption-test (added-strand tpm-quote 3)
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik)
@@ -1457,9 +1457,9 @@
     (hash (hash "0" n) "refuse"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 8 1) (trans 8 2) (trans 6 1) (trans 6 2) (trans 5 1)
-    (trans 5 2))
-  (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
+  (facts (trans 8 2) (trans 8 1) (trans 6 2) (trans 6 1) (trans 5 2)
+    (trans 5 1))
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-1)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr-0 (cat pt-2 (hash (hash "0" n) "refuse"))) (7 1))
   (traces
@@ -1533,9 +1533,9 @@
     (hash (hash "0" n) "refuse"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 9 1) (trans 9 2) (trans 8 1) (trans 8 2) (trans 6 1)
-    (trans 6 2) (trans 5 1) (trans 5 2))
-  (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
+  (facts (trans 9 2) (trans 9 1) (trans 8 2) (trans 8 1) (trans 6 2)
+    (trans 6 1) (trans 5 2) (trans 5 1))
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-1)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr-0 (cat pt-3 (hash "0" n))) (8 1))
   (traces
@@ -1611,8 +1611,8 @@
     (hash (hash "0" n) "refuse"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 9 1) (trans 9 2) (trans 8 1) (trans 8 2) (trans 6 1)
-    (trans 6 2) (trans 5 1) (trans 5 2))
+  (facts (trans 9 2) (trans 9 1) (trans 8 2) (trans 8 1) (trans 6 2)
+    (trans 6 1) (trans 5 2) (trans 5 1))
   (operation nonce-test (contracted (pcr-id-3 pcr-id-0) (tpm-4 tpm)) n
     (9 0) (ch-msg tpm (cat "extend" pcr-id-0 n)))
   (traces
@@ -1732,50 +1732,50 @@
           (p "tpm-extend-enc" "pcr" y pcr)
           (p "tpm-extend-enc" "pcr" z pcr))
         (or (= y z) (prec y 2 z 1) (prec z 2 y 1)))))
-  (defgenrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defgenrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
     (forall ((x strd)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_mesg
     (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defgenrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1))))
-  (defgenrule trRl_tpm-extend-enc-at-2
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
-  (defgenrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
-  (defgenrule trRl_tpm-power-on-at-2
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
   (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defgenrule invShearsRule
+  (defgenrule cakeRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
   (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule trRl_tpm-power-on-at-2
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-power-on-at-1
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
+  (defgenrule trRl_tpm-extend-enc-at-2
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-extend-enc-at-1
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1)))))
 
 (defskeleton envelope-plus
   (vars (v n data) (pcr-id text) (k aik akey) (tpm chan))
@@ -1956,9 +1956,9 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 4 1) (trans 4 2))
-  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-1
-    trRl_tpm-extend-enc-at-2)
+  (facts (trans 4 2) (trans 4 1))
+  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-2
+    trRl_tpm-extend-enc-at-1)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt (hash (hash "0" n) "obtain"))) (3 2))
   (traces ((recv v) (send v))
@@ -2002,8 +2002,8 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 5 1) (trans 5 2) (trans 4 1) (trans 4 2))
-  (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
+  (facts (trans 5 2) (trans 5 1) (trans 4 2) (trans 4 1))
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-1)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (4 1))
   (traces ((recv v) (send v))
@@ -2049,7 +2049,7 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 5 1) (trans 5 2) (trans 4 1) (trans 4 2))
+  (facts (trans 5 2) (trans 5 1) (trans 4 2) (trans 4 1))
   (operation nonce-test (contracted (pcr-id-1 pcr-id) (tpm-2 tpm)) n
     (5 0) (ch-msg tpm (cat "extend" pcr-id n)))
   (traces ((recv v) (send v))
@@ -2148,50 +2148,50 @@
           (p "tpm-extend-enc" "pcr" y pcr)
           (p "tpm-extend-enc" "pcr" z pcr))
         (or (= y z) (prec y 2 z 1) (prec z 2 y 1)))))
-  (defgenrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defgenrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
     (forall ((x strd)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_mesg
     (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defgenrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1))))
-  (defgenrule trRl_tpm-extend-enc-at-2
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
-  (defgenrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
-  (defgenrule trRl_tpm-power-on-at-2
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
   (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defgenrule invShearsRule
+  (defgenrule cakeRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
   (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule trRl_tpm-power-on-at-2
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-power-on-at-1
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
+  (defgenrule trRl_tpm-extend-enc-at-2
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-extend-enc-at-1
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1)))))
 
 (defskeleton envelope-plus
   (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm chan))
@@ -2384,9 +2384,9 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "refuse"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 4 1) (trans 4 2))
-  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-1
-    trRl_tpm-extend-enc-at-2)
+  (facts (trans 4 2) (trans 4 1))
+  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-2
+    trRl_tpm-extend-enc-at-1)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt (hash (hash "0" n) "refuse"))) (3 1))
   (traces
@@ -2440,8 +2440,8 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "refuse"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 5 1) (trans 5 2) (trans 4 1) (trans 4 2))
-  (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
+  (facts (trans 5 2) (trans 5 1) (trans 4 2) (trans 4 1))
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-1)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (4 1))
   (traces
@@ -2497,7 +2497,7 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "refuse"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 5 1) (trans 5 2) (trans 4 1) (trans 4 2))
+  (facts (trans 5 2) (trans 5 1) (trans 4 2) (trans 4 1))
   (operation nonce-test (contracted (pcr-id-2 pcr-id-0) (tpm-2 tpm)) n
     (5 0) (ch-msg tpm (cat "extend" pcr-id-0 n)))
   (traces
@@ -2608,50 +2608,50 @@
           (p "tpm-extend-enc" "pcr" y pcr)
           (p "tpm-extend-enc" "pcr" z pcr))
         (or (= y z) (prec y 2 z 1) (prec z 2 y 1)))))
-  (defgenrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defgenrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
     (forall ((x strd)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_mesg
     (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defgenrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1))))
-  (defgenrule trRl_tpm-extend-enc-at-2
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
-  (defgenrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
-  (defgenrule trRl_tpm-power-on-at-2
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
   (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defgenrule invShearsRule
+  (defgenrule cakeRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
   (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule trRl_tpm-power-on-at-2
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-power-on-at-1
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
+  (defgenrule trRl_tpm-extend-enc-at-2
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-extend-enc-at-1
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1)))))
 
 (defskeleton envelope-plus
   (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm chan))
@@ -2889,9 +2889,9 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 5 1) (trans 5 2))
-  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-1
-    trRl_tpm-extend-enc-at-2)
+  (facts (trans 5 2) (trans 5 1))
+  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-2
+    trRl_tpm-extend-enc-at-1)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt (hash (hash "0" n) "obtain"))) (4 2))
   (traces
@@ -2944,8 +2944,8 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 6 1) (trans 6 2) (trans 5 1) (trans 5 2))
-  (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
+  (facts (trans 6 2) (trans 6 1) (trans 5 2) (trans 5 1))
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-1)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (5 1))
   (traces
@@ -3000,7 +3000,7 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 6 1) (trans 6 2) (trans 5 1) (trans 5 2))
+  (facts (trans 6 2) (trans 6 1) (trans 5 2) (trans 5 1))
   (operation nonce-test (contracted (pcr-id-2 pcr-id-0) (tpm-2 tpm)) n
     (6 0) (ch-msg tpm (cat "extend" pcr-id-0 n)))
   (traces
@@ -3061,7 +3061,7 @@
     (hash (hash "0" n) "refuse"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 6 1) (trans 6 2) (trans 5 1) (trans 5 2))
+  (facts (trans 6 2) (trans 6 1) (trans 5 2) (trans 5 1))
   (rule genStV-if-hashed-tpm-quote)
   (operation encryption-test (added-strand tpm-quote 3)
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik)
@@ -3132,9 +3132,9 @@
     (hash (hash "0" n) "refuse"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 8 1) (trans 8 2) (trans 6 1) (trans 6 2) (trans 5 1)
-    (trans 5 2))
-  (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
+  (facts (trans 8 2) (trans 8 1) (trans 6 2) (trans 6 1) (trans 5 2)
+    (trans 5 1))
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-1)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr-0 (cat pt-2 (hash (hash "0" n) "refuse"))) (7 1))
   (traces
@@ -3208,9 +3208,9 @@
     (hash (hash "0" n) "refuse"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 9 1) (trans 9 2) (trans 8 1) (trans 8 2) (trans 6 1)
-    (trans 6 2) (trans 5 1) (trans 5 2))
-  (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
+  (facts (trans 9 2) (trans 9 1) (trans 8 2) (trans 8 1) (trans 6 2)
+    (trans 6 1) (trans 5 2) (trans 5 1))
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-1)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr-0 (cat pt-3 (hash "0" n))) (8 1))
   (traces
@@ -3286,8 +3286,8 @@
     (hash (hash "0" n) "refuse"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 9 1) (trans 9 2) (trans 8 1) (trans 8 2) (trans 6 1)
-    (trans 6 2) (trans 5 1) (trans 5 2))
+  (facts (trans 9 2) (trans 9 1) (trans 8 2) (trans 8 1) (trans 6 2)
+    (trans 6 1) (trans 5 2) (trans 5 1))
   (operation nonce-test (contracted (pcr-id-3 pcr-id-0) (tpm-4 tpm)) n
     (9 0) (ch-msg tpm (cat "extend" pcr-id-0 n)))
   (traces
@@ -3409,50 +3409,50 @@
           (p "tpm-extend-enc" "pcr" y pcr)
           (p "tpm-extend-enc" "pcr" z pcr-0))
         (= pcr pcr-0))))
-  (defgenrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defgenrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
     (forall ((x strd)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_mesg
     (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defgenrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1))))
-  (defgenrule trRl_tpm-extend-enc-at-2
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
-  (defgenrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
-  (defgenrule trRl_tpm-power-on-at-2
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
   (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defgenrule invShearsRule
+  (defgenrule cakeRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
   (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule trRl_tpm-power-on-at-2
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-power-on-at-1
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
+  (defgenrule trRl_tpm-extend-enc-at-2
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-extend-enc-at-1
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1)))))
 
 (defskeleton envelope-plus-2
   (vars (v n data) (pcr-id text) (k aik akey) (tpm chan))
@@ -3633,9 +3633,9 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 4 1) (trans 4 2))
-  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-1
-    trRl_tpm-extend-enc-at-2)
+  (facts (trans 4 2) (trans 4 1))
+  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-2
+    trRl_tpm-extend-enc-at-1)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt (hash (hash "0" n) "obtain"))) (3 2))
   (traces ((recv v) (send v))
@@ -3679,8 +3679,8 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 5 1) (trans 5 2) (trans 4 1) (trans 4 2))
-  (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
+  (facts (trans 5 2) (trans 5 1) (trans 4 2) (trans 4 1))
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-1)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (4 1))
   (traces ((recv v) (send v))
@@ -3726,7 +3726,7 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 5 1) (trans 5 2) (trans 4 1) (trans 4 2))
+  (facts (trans 5 2) (trans 5 1) (trans 4 2) (trans 4 1))
   (operation nonce-test (contracted (pcr-id-1 pcr-id) (tpm-2 tpm)) n
     (5 0) (ch-msg tpm (cat "extend" pcr-id n)))
   (traces ((recv v) (send v))
@@ -3827,50 +3827,50 @@
           (p "tpm-extend-enc" "pcr" y pcr)
           (p "tpm-extend-enc" "pcr" z pcr-0))
         (= pcr pcr-0))))
-  (defgenrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defgenrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
     (forall ((x strd)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_mesg
     (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defgenrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1))))
-  (defgenrule trRl_tpm-extend-enc-at-2
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
-  (defgenrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
-  (defgenrule trRl_tpm-power-on-at-2
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
   (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defgenrule invShearsRule
+  (defgenrule cakeRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
   (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule trRl_tpm-power-on-at-2
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-power-on-at-1
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
+  (defgenrule trRl_tpm-extend-enc-at-2
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-extend-enc-at-1
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1)))))
 
 (defskeleton envelope-plus-2
   (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm chan))
@@ -4063,9 +4063,9 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "refuse"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 4 1) (trans 4 2))
-  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-1
-    trRl_tpm-extend-enc-at-2)
+  (facts (trans 4 2) (trans 4 1))
+  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-2
+    trRl_tpm-extend-enc-at-1)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt (hash (hash "0" n) "refuse"))) (3 1))
   (traces
@@ -4119,8 +4119,8 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "refuse"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 5 1) (trans 5 2) (trans 4 1) (trans 4 2))
-  (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
+  (facts (trans 5 2) (trans 5 1) (trans 4 2) (trans 4 1))
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-1)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (4 1))
   (traces
@@ -4176,7 +4176,7 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "refuse"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 5 1) (trans 5 2) (trans 4 1) (trans 4 2))
+  (facts (trans 5 2) (trans 5 1) (trans 4 2) (trans 4 1))
   (operation nonce-test (contracted (pcr-id-2 pcr-id-0) (tpm-2 tpm)) n
     (5 0) (ch-msg tpm (cat "extend" pcr-id-0 n)))
   (traces
@@ -4289,50 +4289,50 @@
           (p "tpm-extend-enc" "pcr" y pcr)
           (p "tpm-extend-enc" "pcr" z pcr-0))
         (= pcr pcr-0))))
-  (defgenrule no-interruption
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
-          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
-        (false))))
-  (defgenrule cakeRule
-    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
-      (implies
-        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
-          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
     (forall ((x strd)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_mesg
     (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defgenrule trRl_tpm-extend-enc-at-1
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1))))
-  (defgenrule trRl_tpm-extend-enc-at-2
-    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
-  (defgenrule trRl_tpm-power-on-at-1
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
-  (defgenrule trRl_tpm-power-on-at-2
-    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
   (defgenrule scissorsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
         (and (= z1 z2) (= i1 i2)))))
-  (defgenrule invShearsRule
+  (defgenrule cakeRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
-          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
-        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
   (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
-        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2))))))
+        (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
+  (defgenrule invShearsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
+          (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
+        (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule trRl_tpm-power-on-at-2
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-power-on-at-1
+    (forall ((z strd)) (implies (p "tpm-power-on" z 3) (trans z 1))))
+  (defgenrule trRl_tpm-extend-enc-at-2
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 2))))
+  (defgenrule trRl_tpm-extend-enc-at-1
+    (forall ((z strd)) (implies (p "tpm-extend-enc" z 3) (trans z 1)))))
 
 (defskeleton envelope-plus-2
   (vars (n v data) (pcr-id pcr-id-0 text) (k aik akey) (tpm chan))
@@ -4570,9 +4570,9 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 5 1) (trans 5 2))
-  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-1
-    trRl_tpm-extend-enc-at-2)
+  (facts (trans 5 2) (trans 5 1))
+  (rule genStV-if-hashed-tpm-extend-enc trRl_tpm-extend-enc-at-2
+    trRl_tpm-extend-enc-at-1)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt (hash (hash "0" n) "obtain"))) (4 2))
   (traces
@@ -4625,8 +4625,8 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 6 1) (trans 6 2) (trans 5 1) (trans 5 2))
-  (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
+  (facts (trans 6 2) (trans 6 1) (trans 5 2) (trans 5 1))
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-1)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (5 1))
   (traces
@@ -4681,7 +4681,7 @@
   (gen-st (hash "0" n) (hash (hash "0" n) "obtain"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 6 1) (trans 6 2) (trans 5 1) (trans 5 2))
+  (facts (trans 6 2) (trans 6 1) (trans 5 2) (trans 5 1))
   (operation nonce-test (contracted (pcr-id-2 pcr-id-0) (tpm-2 tpm)) n
     (6 0) (ch-msg tpm (cat "extend" pcr-id-0 n)))
   (traces
@@ -4742,7 +4742,7 @@
     (hash (hash "0" n) "refuse"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 6 1) (trans 6 2) (trans 5 1) (trans 5 2))
+  (facts (trans 6 2) (trans 6 1) (trans 5 2) (trans 5 1))
   (rule genStV-if-hashed-tpm-quote)
   (operation encryption-test (added-strand tpm-quote 3)
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik)
@@ -4813,9 +4813,9 @@
     (hash (hash "0" n) "refuse"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 8 1) (trans 8 2) (trans 6 1) (trans 6 2) (trans 5 1)
-    (trans 5 2))
-  (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
+  (facts (trans 8 2) (trans 8 1) (trans 6 2) (trans 6 1) (trans 5 2)
+    (trans 5 1))
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-1)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr-0 (cat pt-2 (hash (hash "0" n) "refuse"))) (7 1))
   (traces
@@ -4889,9 +4889,9 @@
     (hash (hash "0" n) "refuse"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 9 1) (trans 9 2) (trans 8 1) (trans 8 2) (trans 6 1)
-    (trans 6 2) (trans 5 1) (trans 5 2))
-  (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
+  (facts (trans 9 2) (trans 9 1) (trans 8 2) (trans 8 1) (trans 6 2)
+    (trans 6 1) (trans 5 2) (trans 5 1))
+  (rule trRl_tpm-extend-enc-at-2 trRl_tpm-extend-enc-at-1)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr-0 (cat pt-3 (hash "0" n))) (8 1))
   (traces
@@ -4967,8 +4967,8 @@
     (hash (hash "0" n) "refuse"))
   (conf tpm)
   (auth tpm)
-  (facts (trans 9 1) (trans 9 2) (trans 8 1) (trans 8 2) (trans 6 1)
-    (trans 6 2) (trans 5 1) (trans 5 2))
+  (facts (trans 9 2) (trans 9 1) (trans 8 2) (trans 8 1) (trans 6 2)
+    (trans 6 1) (trans 5 2) (trans 5 1))
   (rule pcr-id-identifies-pcr)
   (operation nonce-test
     (contracted (pcr-0 pcr) (pcr-id-3 pcr-id-0) (tpm-4 tpm)) n (9 0)
