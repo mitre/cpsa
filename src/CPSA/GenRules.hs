@@ -16,6 +16,39 @@ import CPSA.Algebra
 import CPSA.Channel
 import CPSA.Protocol
 import CPSA.LoadFormulas
+
+{--
+import System.IO.Unsafe
+
+z :: Show a => a -> b -> b
+z x y = unsafePerformIO (print x >> return y)
+
+zz :: Show a => a -> a
+zz x = z x x
+
+zb :: Show a => a -> Bool -> Bool
+zb a False = z a False
+zb _ b = b
+
+zn :: Show a => a -> Maybe b -> Maybe b
+zn x Nothing = z x Nothing
+zn _ y = y
+
+zf :: Show a => a -> Bool -> Bool
+zf x False = z x False
+zf _ y = y
+
+zt :: Show a => a -> Bool -> Bool
+zt x True = z x True
+zt _ y = y
+
+zl :: Show a => [a] -> [a]
+zl a = z (length a) a
+
+--}
+
+
+    
 -- Protocol Rules
 
 type Conjunction = [AForm]

@@ -1682,7 +1682,9 @@ matchBase (F Exp [t0, G t1]) (F Genr []) ge
 matchBase (I x) (F Exp [t0', G t1']) ge
   = matchExp (I x) (M.empty) t0' t1' ge
 matchBase (I x) (I y) ge
-  = matchExp (I x) (M.empty) (I y) (M.empty) ge
+  = match (I x) (I y) ge
+    -- matchExp (I x) (M.empty) (I y) (M.empty) ge
+
 matchBase (I x) (F Genr []) ge
   = matchExp (I x) (M.empty) (F Genr []) (M.empty) ge
 matchBase t0 t1 ge

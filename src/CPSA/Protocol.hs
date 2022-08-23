@@ -406,7 +406,7 @@ paramOfName name rl =
     where
       seek [] = Nothing
       seek (v : rest)
-          | name == varName v = Just v
+          | name == varName v = Just v -- $ z v v
           | otherwise = seek rest
 
 envsRoleParams :: Role -> Gen -> [Term] -> [(Gen, Env)]
@@ -415,10 +415,14 @@ envsRoleParams rl g =
     (\ges v -> concatMap
                (\ge -> case paramOfName (varName v) rl of
                          Just p ->
-                             case match p v ge of
-                               [] -> -- debug with z ("!" ++ (varName v))
+                             case match p v ge -- (z ("ingoing env: "
+                                               -- ++ (show ge)) ge)
+                             of
+                               [] ->  -- debug with z ("?" ++ (varName v))
                                     [ge]
-                               xs -> xs 
+                               xs -> --  z ("! " ++ (show v) ++ " for " ++ (show p)
+                                     -- ++ " in " ++ (show xs))
+                                     xs 
                          Nothing -> -- vars not locally bound may
                                     -- occur elsewhere in formula 
                                    [ge])

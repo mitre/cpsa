@@ -25,7 +25,7 @@ import CPSA.Characteristic
 import CPSA.LoadFormulas
 import CPSA.GenRules
 
---{--
+{--
 import System.IO.Unsafe
 z :: Show a => a -> b -> b
 z x y = unsafePerformIO (print x >> return y)
@@ -76,7 +76,7 @@ loadProt sig nom origin pos (S _ name : S _ alg : x : xs)
           (gen', r) <- mkListenerRole sig pos gen
           let rs = map fst rolesAndPreRules
 
-          let _ = zz (showRoleGenStates rolesAndPreRules)
+          -- let _ = zz (showRoleGenStates rolesAndPreRules)
                                  
                    
           -- let (gen, rls) = initRules sig (any hasLocn rs) gen' stateRules nonStateRules
