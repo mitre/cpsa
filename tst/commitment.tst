@@ -1,7 +1,7 @@
 (herald commitment)
 
 (comment "CPSA 4.3.1")
-(comment "All input read from commitment.scm")
+(comment "All input read from tst/commitment.scm")
 
 (defprotocol commit basic
   (defrole bidder
