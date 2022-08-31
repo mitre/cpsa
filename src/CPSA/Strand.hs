@@ -3785,12 +3785,12 @@ rewrite k =
           case subiter k grules of
             Nothing  -> iterate (dc-1) rest (k : done) b
             Just new ->
-                let new' = nullUnaryThrough new in
+                let new' = factorIsomorphic (nullUnaryThrough new) in
+                -- nullUnaryThrough new in 
                 -- Could alternatively factor the new ones for
                 -- isomorphic copies, but that sounds anomalous
-                -- Skip it for now.
-                -- factorIsomorphic
-                -- (nullUnaryThrough new) in
+                -- *Don't* Skip it for now.
+
                 iterate dc -- (dc-1)
                             (mergeIsomorphic new' rest) done True
 
