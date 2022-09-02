@@ -2,9 +2,9 @@
 
 (defprotocol yahalom basic
   (defrole init
-    (vars (a b c name) (n-a n-b text) (k skey) (ch chan))
+    (vars (a b c name) (n-a n-b text) (k skey) (ch3 chan))
     (trace (send (cat a n-a))
-	   (recv ch (cat a b k n-a n-b))
+	   (recv ch3 (cat a b k n-a n-b))
 	   (send (enc n-b k))))
   (defrole resp
     (vars (b a c name) (n-a n-b text) (k skey) (ch1 ch2 chan))
@@ -17,11 +17,11 @@
     (trace (recv ch1 (cat a b n-a n-b))
 	   (send ch3 (cat a b k n-a n-b))
 	   (send ch2 (cat a b k)))
-    ;;    (conf ch3 ch2)
     (uniq-orig k)))
 
 ;;; How much do we know assuming that the resp had a run with an
-;;; authenticated channel ch2?
+;;; authenticated channel ch2?  We also assume the responder's nonce
+;;; is freshly chosen.
 
 (defskeleton yahalom
   (vars (a b c name) (n-b text) (ch1 ch2 chan))
@@ -29,8 +29,8 @@
   (auth ch2)   
   (uniq-orig n-b))
 
-;;; This is the answer to the previous question, together with the
-;;; additional assumptions that ch2 and ch3, used by the key server to
+;;; This is the answer to the previous question, to which we have
+;;; added the assumptions that ch2 and ch3, used by the key server to
 ;;; distribute the key, are confidential channels.  In this case, we
 ;;; find *almost* all we would expect.
 
@@ -41,13 +41,16 @@
     (ch2 ch2))
   (defstrand serv 3 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b)
     (ch1 ch1-0) (ch2 ch2) (ch3 ch3))
+  (precedes ((1 2) (0 2)))
   (uniq-orig k n-b)
   (auth ch2)
   (conf ch2 ch3))
 
-;;; This is teh answer to the previous question, together with the
+;;; This is the answer to the previous question, together with the
 ;;; assumption that the server's request channel is an authenticated
-;;; channel.  This yields all of the desired result, including ch1-0 = ch1.  
+;;; channel.  This yields all of the desired result, including the
+;;; fact that the channels used by the server and the responder agree:
+;;; ch1-0 = ch1.
 
 (defskeleton yahalom
   (vars (k skey) (n-b n-a n-a-0 n-b-0 text) (a b name)
@@ -61,7 +64,8 @@
   (conf ch2 ch3))
 
 ;;; In particular, we can now check that the session key cannot be
-;;; compromised, subject to the assumptions we have imposed.
+;;; compromised, subject to the assumptions we have imposed, using
+;;; (deflistener k).  
 
 (defskeleton yahalom
   (vars (k skey) (n-b n-a n-a-0 n-b-0 text) (a b name)
@@ -78,27 +82,25 @@
 ;;; Let's turn now to the initiator's point of view:  
 
 (defskeleton yahalom
-  (vars (a b c name) (n-a text) (k skey) (ch chan))
-  (defstrand init 3 (ch ch) (n-a n-a))
+  (vars (a b c name) (n-a text) (k skey) (ch3 chan))
+  (defstrand init 3 (ch3 ch3) (n-a n-a))
   (uniq-orig n-a)
-  (auth ch)
-  ;; This annotation is unnecessary
-  ;; (conf ch)
-  )
+  (auth ch3))
 
-;;; The initiator infers the presence of the server.  We can now also
-;;; assume that the server's channels have the same trust properties
-;;; as before:
+;;; The initiator infers the presence of the server.  We can now add
+;;; the assumptions that the server's channels -- ch1 and ch, here --
+;;; have the same trust properties as before, ie ch1 is auth and ch is
+;;; conf, in addition to the auth previously assumed:
 
 (defskeleton yahalom
-  (vars (k skey) (n-a n-b text) (a b name) (ch ch1 chan))
-  (defstrand init 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch ch))
+  (vars (k skey) (n-a n-b text) (a b name) (ch3 ch3-0 ch1 chan))
+  (defstrand init 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch3 ch3))
   (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
-    (ch3 ch))
+    (ch3 ch3-0))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (uniq-orig k n-a)
-  (auth ch ch1)
-  (conf ch))
+  (auth ch3 ch1)
+  (conf ch3-0))
   
 ;;; This now authenticates the presence of the responder for the first
 ;;; two nodes, and its agreement on all of the values present there.
