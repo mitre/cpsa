@@ -999,10 +999,10 @@
       (stor ls (cat pt-6 "st" d "opened"))))
   (label 20)
   (parent 19)
-  (seen 21 22)
+  (seen 21)
   (unrealized (1 2))
   (origs (pt-6 (4 3)) (pt-3 (2 4)) (pt-1 (2 2)) (n (1 3)) (k (0 0)))
-  (comment "4 in cohort - 2 not yet seen"))
+  (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton open-closed
   (vars (old old1 any mesg) (k k-0 skey) (n n-0 text) (d o name)

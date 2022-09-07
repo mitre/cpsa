@@ -334,10 +334,9 @@
     ((recv k) (send k)))
   (label 1)
   (parent 0)
-  (seen 2)
   (unrealized (0 1) (1 0))
   (origs (k (0 0)))
-  (comment "2 in cohort - 1 not yet seen"))
+  (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
   (vars (old old1 mesg) (k skey) (d o name) (pt pt-0 pt-1 pt-2 pval)
@@ -699,7 +698,7 @@
   (seen 5)
   (unrealized (0 0) (0 1))
   (origs (n (0 3)))
-  (comment "6 in cohort - 1 not yet seen"))
+  (comment "4 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
   (vars (old old1 mesg) (k skey) (n text) (d o name)
@@ -756,7 +755,7 @@
   (parent 5)
   (seen 7)
   (unrealized (0 1))
-  (comment "104 in cohort - 1 not yet seen"))
+  (comment "5 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
   (vars (old old1 any mesg) (k k-0 skey) (n n-0 text) (d o name)
@@ -775,9 +774,9 @@
   (auth start-ch)
   (facts (same-dev ls lk) (trans 3 3) (trans 3 1) (trans 1 4)
     (trans 1 2) (trans 1 3) (trans 1 1) (no-state-split))
-  (rule eff-dev-up-3 cau-dev-open-2 invShearsRule cau-dev-pass-1
-    same-dev-ls-lk fact-dev-open-same-dev0 trRl_dev-open-at-3
-    trRl_dev-open-at-1 gen-st-dev-open-1)
+  (rule cau-dev-open-2 invShearsRule cau-dev-pass-1 same-dev-ls-lk
+    fact-dev-open-same-dev0 trRl_dev-open-at-3 trRl_dev-open-at-1
+    gen-st-dev-open-1)
   (operation channel-test (added-strand dev-open 4)
     (ch-msg ls (cat pt "st" d o o)) (0 1))
   (traces
@@ -794,7 +793,7 @@
   (parent 6)
   (seen 8)
   (unrealized (3 2))
-  (comment "57 in cohort - 1 not yet seen"))
+  (comment "3 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
   (vars (old old1 any mesg) (k skey) (n n-0 text) (d o name)
@@ -829,7 +828,7 @@
   (shape)
   (maps
     ((0) ((k k) (n n) (d d) (o o) (lk lk) (ls ls) (pt pt-2) (pt-0 pt))))
-  (origs (pt-2 (1 3)) (pt-3 (1 4)) (pt (3 3)) (n (0 3))))
+  (origs (pt-2 (1 3)) (pt (3 3)) (pt-3 (1 4)) (n (0 3))))
 
 (comment "Nothing left to do")
 
@@ -1192,7 +1191,7 @@
   (seen 12)
   (unrealized (0 1) (1 0) (1 1) (1 2))
   (origs (n (1 3)) (k (0 0)))
-  (comment "6 in cohort - 1 not yet seen"))
+  (comment "4 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
   (vars (old old1 mesg) (k skey) (n text) (d o d-0 o-0 name)
@@ -1253,7 +1252,7 @@
   (parent 12)
   (seen 14)
   (unrealized (0 1) (1 1) (1 2))
-  (comment "104 in cohort - 1 not yet seen"))
+  (comment "5 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
   (vars (old old1 any mesg) (k k-0 skey) (n n-0 text) (d o name)
@@ -1272,9 +1271,9 @@
   (auth start-ch)
   (facts (same-dev ls lk) (trans 3 3) (trans 3 1) (trans 2 4)
     (trans 2 2) (trans 2 3) (trans 2 1) (no-state-split))
-  (rule eff-dev-up-3 cau-dev-open-2 invShearsRule cau-dev-pass-1
-    same-dev-ls-lk fact-dev-open-same-dev0 trRl_dev-open-at-3
-    trRl_dev-open-at-1 gen-st-dev-open-1)
+  (rule cau-dev-open-2 invShearsRule cau-dev-pass-1 same-dev-ls-lk
+    fact-dev-open-same-dev0 trRl_dev-open-at-3 trRl_dev-open-at-1
+    gen-st-dev-open-1)
   (operation channel-test (added-strand dev-open 4)
     (ch-msg ls (cat pt "st" d o o)) (1 1))
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
@@ -1290,7 +1289,7 @@
   (parent 13)
   (seen 15)
   (unrealized (0 1) (1 2) (3 2))
-  (comment "57 in cohort - 1 not yet seen"))
+  (comment "3 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
   (vars (old old1 any mesg) (k skey) (n n-0 text) (d o name)
@@ -1389,7 +1388,7 @@
   (parent 15)
   (seen 20)
   (unrealized (0 1) (4 0))
-  (comment "8 in cohort - 1 not yet seen"))
+  (comment "4 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
   (vars (old old1 any mesg) (k skey) (n n-0 text) (d o name)
@@ -1461,7 +1460,7 @@
   (parent 16)
   (seen 23)
   (unrealized (0 1) (5 0))
-  (comment "4 in cohort - 1 not yet seen"))
+  (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
   (vars (old old1 any mesg) (k skey) (n n-0 text) (d o name)
@@ -1573,7 +1572,7 @@
   (parent 18)
   (seen 24)
   (unrealized (6 0))
-  (comment "8 in cohort - 1 not yet seen"))
+  (comment "4 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
   (vars (old old1 any mesg) (k skey) (n n-0 text) (d o name)

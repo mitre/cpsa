@@ -286,10 +286,9 @@
     ((recv k) (send k)))
   (label 1)
   (parent 0)
-  (seen 2)
   (unrealized (0 1) (1 0))
   (origs (k (0 0)))
-  (comment "2 in cohort - 1 not yet seen"))
+  (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton atomic-open-closed
   (vars (old old1 mesg) (k skey) (d o name) (pt pt-0 pt-1 pt-2 pval)
@@ -660,9 +659,8 @@
     ((send start-ch (cat "power-up" d o k))))
   (label 6)
   (parent 5)
-  (seen 7)
   (unrealized (0 2))
-  (comment "48 in cohort - 1 not yet seen"))
+  (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton atomic-open-closed
   (vars (old old1 any mesg) (k k-0 skey) (n n-0 text) (d o name)
@@ -681,9 +679,9 @@
   (auth start-ch)
   (facts (same-dev ls lk) (trans 3 3) (trans 3 2) (trans 1 4)
     (trans 1 3) (trans 1 2) (trans 1 1))
-  (rule single-thread-up-open dev-open-atomic1 invShearsRule
-    cau-dev-pass-2 same-dev-ls-lk gen-state-open intro-same-dev-open
-    trRl_dev-open-at-3 trRl_dev-open-at-2)
+  (rule dev-open-atomic1 invShearsRule cau-dev-pass-2 same-dev-ls-lk
+    gen-state-open intro-same-dev-open trRl_dev-open-at-3
+    trRl_dev-open-at-2)
   (operation channel-test (added-strand dev-open 4)
     (ch-msg ls (cat pt "st" d o o)) (0 2))
   (traces
@@ -699,7 +697,7 @@
   (parent 6)
   (seen 8)
   (unrealized (3 1))
-  (comment "11 in cohort - 1 not yet seen"))
+  (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton atomic-open-closed
   (vars (old old1 any mesg) (k skey) (n n-0 text) (d o name)
@@ -1094,7 +1092,7 @@
   (parent 11)
   (seen 15)
   (unrealized (0 1) (1 1) (1 2) (2 0))
-  (comment "20 in cohort - 1 not yet seen"))
+  (comment "6 in cohort - 1 not yet seen"))
 
 (defskeleton atomic-open-closed
   (vars (old old1 mesg) (k skey) (n text) (d o d-0 o-0 name)
@@ -1146,7 +1144,7 @@
   (auth start-ch)
   (facts (trans 3 4) (trans 3 3) (same-dev ls-0 lk-0) (trans 3 2)
     (trans 3 1) (same-dev ls lk))
-  (rule dev-up-atomic2 cau-dev-pass-2 trRl_dev-up-at-4 trRl_dev-up-at-3
+  (rule dev-up-atomic2 trRl_dev-up-at-4 trRl_dev-up-at-3
     intro-same-dev-up dev-up-completes trRl_dev-up-at-2
     trRl_dev-up-at-1)
   (operation nonce-test (added-strand dev-up 3) k (2 0)
@@ -1191,9 +1189,8 @@
       (stor ls (cat pt-3 "st" d o))))
   (label 16)
   (parent 14)
-  (seen 17)
   (unrealized (0 1) (1 2))
-  (comment "48 in cohort - 1 not yet seen"))
+  (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton atomic-open-closed
   (vars (old old1 any mesg) (k k-0 skey) (n n-0 text) (d o name)
@@ -1213,9 +1210,9 @@
   (auth start-ch)
   (facts (same-dev ls lk) (trans 4 3) (trans 4 2) (trans 3 4)
     (trans 3 3) (trans 3 2) (trans 3 1))
-  (rule single-thread-up-open dev-open-atomic1 invShearsRule
-    cau-dev-pass-2 same-dev-ls-lk gen-state-open intro-same-dev-open
-    trRl_dev-open-at-3 trRl_dev-open-at-2)
+  (rule dev-open-atomic1 invShearsRule cau-dev-pass-2 same-dev-ls-lk
+    gen-state-open intro-same-dev-open trRl_dev-open-at-3
+    trRl_dev-open-at-2)
   (operation channel-test (added-strand dev-open 4)
     (ch-msg ls (cat pt "st" d o o)) (1 2))
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
@@ -1231,7 +1228,7 @@
   (parent 16)
   (seen 18)
   (unrealized (0 1) (4 1))
-  (comment "11 in cohort - 1 not yet seen"))
+  (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton atomic-open-closed
   (vars (old old1 any mesg) (k skey) (n n-0 text) (d o name)
@@ -1338,7 +1335,7 @@
   (parent 18)
   (seen 23)
   (unrealized (0 1) (5 0))
-  (comment "8 in cohort - 1 not yet seen"))
+  (comment "4 in cohort - 1 not yet seen"))
 
 (defskeleton atomic-open-closed
   (vars (any old old1 mesg) (k skey) (n n-0 text) (d o name)
@@ -1416,7 +1413,7 @@
   (parent 19)
   (seen 24)
   (unrealized (6 0))
-  (comment "8 in cohort - 1 not yet seen"))
+  (comment "4 in cohort - 1 not yet seen"))
 
 (defskeleton atomic-open-closed
   (vars (old old1 any mesg) (k skey) (n n-0 text) (d o name)

@@ -2,7 +2,7 @@
   (algebra diffie-hellman))
 
 (comment "CPSA 4.3.1")
-(comment "All input read from tst/dhcr_um_exercise_bug.lsp")
+(comment "All input read from tst/dhcr_um_exercise_resolved_bug.scm")
 (comment "Step count limited to 12000")
 (comment "Strand count bounded at 20")
 
