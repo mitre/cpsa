@@ -38,7 +38,7 @@
 
 (herald "DHCR: unified model (UM) original"
 	(bound 20)
-	(limit 12000)
+	(limit 325)
 	(algebra diffie-hellman))
 
 (defmacro (kcfa l gb x gy)

@@ -471,20 +471,20 @@ initPreRulesAssumes sig gen prot rl pr =
 
 initPreRulesRelies :: MonadFail m => Sig -> Gen -> Prot -> Role -> PreRules -> m (Gen, [Rule])
 initPreRulesRelies sig gen prot rl pr =
-    initRelyGuars sig gen prot rl (preruleRelies pr)
+    initRelyGuars sig gen prot rl "rely" (preruleRelies pr)
 
 initPreRulesGuars :: MonadFail m => Sig -> Gen -> Prot -> Role -> PreRules -> m (Gen, [Rule])
 initPreRulesGuars sig gen prot rl pr =
-    initRelyGuars sig gen prot rl (preruleGuars pr)
+    initRelyGuars sig gen prot rl "guar" (preruleGuars pr)
    
-initRelyGuars ::  MonadFail m => Sig -> Gen -> Prot -> Role -> [(Int, SExpr Pos)] -> m (Gen, [Rule])
-initRelyGuars sig gen prot rl = 
+initRelyGuars ::  MonadFail m => Sig -> Gen -> Prot -> Role -> String -> [(Int, SExpr Pos)] -> m (Gen, [Rule])
+initRelyGuars sig gen prot rl kind = 
     F.foldrM 
     (\(ht,sexpr) (g,rules) ->
          do
            (g',varConjs) <- loadConclusion sig (annotation sexpr) prot g (rvars rl) sexpr
            () <- varsUsedBy rl (freeVarsInConjLists varConjs) ht (annotation sexpr)
-           let (g'',newRule) = genOneAssumeRl sig g' rl ht varConjs
+           let (g'',newRule) = genOneRelyGuarRl sig g' rl ht kind varConjs 
            return (g'', newRule : rules))
     (gen,[]) 
 
@@ -496,7 +496,7 @@ initPreRulesCheqs sig gen _ rl pr =
     (\(ht, pos, v, t) (g,rules) ->
          do
            () <- varsUsedBy rl (varsInTerms [t])  ht pos
-           let (g',newRule) = genOneAssumeRl sig g rl ht
+           let (g',newRule) = genOneRelyGuarRl sig g rl ht "cheq"
                               [([],[(pos, Equals v t)])] -- stipulate v=t 
            return (g', newRule : rules))
     (gen,[])
@@ -716,7 +716,7 @@ loadTrace sig gen vars xs =
                   tgt <- loadTerm sig vars False tgt
                   loadTraceLoop gen newVars uniqs
                                 (preRulesAddCheq pr
-                                 (L.length events, pos, src, tgt))
+                                 (1+(L.length events), pos, src, tgt))
                                 events rest          
                                                                
       loadTraceLoop _ _ _ _ _ ((L pos [S _ dir, _, _]) : _) =

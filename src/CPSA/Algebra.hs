@@ -1049,6 +1049,7 @@ carriedRelPlaces target source avoid =
           f paths (0 : path) t
       f paths _ _ = paths
 
+                    
 -- Replace a variable within a term at a given place.
 replace :: Term -> Place -> Term -> Term
 replace var (Place ints) source =

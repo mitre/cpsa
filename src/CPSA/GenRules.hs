@@ -446,6 +446,27 @@ genAssumeRls sig g rl disjunctLists =
                disjunctLists  
 
 
+genOneRelyGuarRl :: Sig -> Gen -> Role -> Int -> String -> [([Term], Conj)] -> (Gen, Rule)
+genOneRelyGuarRl sig g rl ht kind disjuncts =
+    case conclHeight rl disjuncts of
+      Missing v -> error ("genOneRelyGuarRl:  Variable not in role " ++ (rname rl) 
+                         ++ ": " ++ (show (varName v)))
+      FoundAt fndHt | fndHt <= ht -> 
+          ruleOfDisjAtHeight
+          sig g rl (kind ++ "-" ++ (rname rl) ++ "-" ++ (show ht))
+                  (map (\(evars,conj) ->
+                            (evars,
+                             (\pvars ->
+                              case envsRoleParams rl g pvars of
+                                (_,e) : _ -> (map snd $ instantiateConj e conj)
+                                _ -> error ("genOneAssumeRl:  Parameter matching failed "
+                                            ++  (show pvars) ++ (rname rl)))))
+                   disjuncts)
+                  ht
+        | otherwise -> error ("genOneRelyGuarRl:  Variable found above ht " ++ (show ht) ++
+                              " in " ++ (rname rl))
+
+
 genStateRls :: Sig -> Gen -> Role -> [Term] -> (Gen, [Rule])
 genStateRls sig g rl ts =
     (g',rls)

@@ -579,11 +579,24 @@ newPreskel gen shared insts orderings non pnon unique
                       pov = pov } in
         if useCheckVars then
             checkVars k
-        else k
+        else checkPOV k
 {-
           if chkFacts k then k
           else k
 -}
+
+checkPOV :: Preskel -> Preskel
+checkPOV k =
+    case pov k of
+      Nothing -> k
+      Just k0 ->
+          if L.length (insts k0) == L.length (prob k)
+          then k
+          else (zP ("skel's POV has " ++ (show (L.length (insts k0)))
+                   ++ " insts, but its prob has length "
+                   ++ (show (L.length (prob k))))
+                k)
+                                  
 
 -- Suppose that a Preskel k has been created by rebinding some fields
 -- in an earlier skeleton.  The fields that newPreskel would compute
@@ -2101,8 +2114,7 @@ addAbsence k n cause x t =
 -- Homomorphisms
 
 -- Find a substitution that demonstrates the existence of a
--- homomorphism between the two skeletons using the given
--- strand mapping function.
+-- homomorphism from k to k' using the given strand mapping function.
 
 homomorphism :: Preskel -> Preskel -> [Sid] -> [Env]
 homomorphism k k' mapping =
@@ -2114,9 +2126,15 @@ homomorphism k k' mapping =
 
 findReplacement :: Preskel -> Preskel -> [Sid] -> [(Gen, Env)]
 findReplacement k k' mapping =
-    foldM (matchStrand k k' mapping) (gg, emptyEnv) (strandids k)
-    where
-      gg = gmerge (gen k) (gen k')
+    if (L.length mapping) == (L.length (insts k))
+    then
+        (let gg = gmerge (gen k) (gen k') in
+         foldM (matchStrand k k' mapping) (gg, emptyEnv) (strandids k)) 
+    else
+        [] 
+--               error ("Yarg! JDR " ++ (show (L.length mapping)) ++ " vs " ++
+--                                       (show (L.length (insts k))))
+            
 
 matchStrand :: Preskel -> Preskel -> [Sid] -> (Gen, Env) -> Sid -> [(Gen, Env)]
 matchStrand k k' mapping env s =
@@ -2193,7 +2211,8 @@ deleteNodes k =
     do
       strand <- strands k
       node <- nodes strand
-      deleteNode k node
+      cand <- deleteNode k node
+      candWithNeededFacts cand
 
 deleteNode :: Preskel -> Vertex -> [(Preskel, [Sid])]
 deleteNode k n
@@ -2223,6 +2242,11 @@ deleteNode k n
     where
       p = pos n
       s = sid (strand n)
+
+candWithNeededFacts :: Candidate -> [Candidate]
+candWithNeededFacts (k,sids) =
+    map (\k' -> (k',sids)) $ simplify k 
+    
 
 -- Update orderings when a strand is eliminated (p == 0)
 deleteOrderings :: Sid -> [Pair] -> [Pair]
@@ -2302,6 +2326,27 @@ deleteNodeFacts s p facts =
         | otherwise = checkRest rest
     checkRest (_ : rest) = checkRest rest
 
+permOfSidList :: [Sid] -> Sid -> Sid
+permOfSidList = (!!) 
+
+withCoreFacts :: Preskel -> Preskel
+withCoreFacts k =
+    case pov k of
+      Nothing -> k              -- Can't change pov 
+      Just k0 ->
+          if (L.length (prob k)) == (L.length (insts k0)) then 
+              (case (homomorphism k0
+                                  k
+                                  (prob k)) of
+                 [] -> k
+               -- error (show (prob k) ++ "  " ++ (show (L.length (insts k))) ++ "  " ++ (show (L.length (insts k0))))
+                 (env : _) -> 
+                     k { kfacts =
+                             map (instUpdateFact env (permOfSidList (prob k)))
+                                     (kfacts k0) })
+              else error ("Yarg!" ++ show (prob k) ++ "  " ++ (show (L.length (insts k))) ++ "  " ++ (show (L.length (insts k0))))
+
+      
 
 -- Node ordering weakening
 
@@ -3238,7 +3283,7 @@ factorIsomorphicPreskels = factorIsomorphic
 -- Try simplifying k if possible
 simplify :: Preskel -> [Preskel]
 simplify k =
-  case rewrite k of
+  case rewrite $ withCoreFacts k of  --
     Nothing -> [k]
     Just ks -> ks
 
@@ -3771,7 +3816,7 @@ rewrite k =
                   Found k' -> Just [k']
 
       nullUnaryThrough =
-          concatMap (\k -> maybe [k] id (nullUnary k))
+          concatMap (\k -> maybe [k] id (nullUnary k)) 
 
       -- iterate todos done action, which yields Maybe [Preskel]
       iterate _ [] [_] False = Nothing          -- zP ">>" Nothing

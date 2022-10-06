@@ -65,7 +65,7 @@
     (uniq-orig na)
     (facts (neq (exp (gen) upsilon) (gen)))
     (gen-st (pv a la))
-    (fn-of ("principal-of" (ltxa a) (ltxb b))
+    (fn-off ("principal-of" (ltxa a) (ltxb b))
            ("ltx-of" (a ltxa) (b ltxb))))
 
   (defrole resp
@@ -85,7 +85,7 @@
     (uniq-orig nb)
     (facts (neq (exp (gen) zeta) (gen)))
     (gen-st (pv b lb))
-    (fn-of ("principal-of" (ltxa a) (ltxb b))
+    (fn-off ("principal-of" (ltxa a) (ltxb b))
 	   ("ltx-of" (a ltxa) (b ltxb))))
 
   (defrole ltx-gen
@@ -97,7 +97,7 @@
      (send (sig (body self (exp (gen) l) (pubk "sig" self))
 		(privk "sig" self))))
     (uniq-orig l)    
-    (fn-of ("principal-of" (l self))
+    (fn-off ("principal-of" (l self))
 	   ("ltx-of" (self l))))
 
   (defrole ltx-disclose
@@ -108,7 +108,7 @@
      (stor priv-stor "nil")
      (send l))
     (gen-st (pv self l)) 
-    (fn-of ("principal-of" (l self))
+    (fn-off ("principal-of" (l self))
 	   ("ltx-of" (self l))))
 
 ;     (defrule fact-resp-neq0

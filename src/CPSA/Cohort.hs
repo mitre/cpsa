@@ -319,6 +319,7 @@ prioritizeVertices k vs =
        prios (_, p) (_, p') = compare p' p
        keep (_, p) = p >= minPriority
 
+                     
 priority :: Preskel -> Node -> Int
 priority k (s, i) =
   case lookup (s, i) (kpriority k) of
@@ -463,8 +464,9 @@ mgs cohort =
         loop cohort acc
       | otherwise = loop cohort (kphi : acc)
     f (k, phi) (k', phi') =
-      any (not. null . homomorphism k' k)
-          (composeFactors (strandids k) (strandids k') phi phi')
+        let ans = any (not. null . homomorphism k' k)
+                  (composeFactors (strandids k) (strandids k') phi phi') in
+        ans 
 
 -- Given two permutations p and p', with ranges r and r', this
 -- function returns the list of permutations p'' such that
@@ -748,7 +750,7 @@ specialization k k' mapping
           k'' <- toSkeleton useThinningDuringGeneralization k'
           case realized k'' && not (isomorphic (gist k) (gist k'')) &&
                refines k'' (pov k'') (prob k'') &&
-               refines k (Just k') mapping of
+               refines k (Just k'') mapping of
             True -> [k'']
             False -> []
         where
@@ -756,4 +758,10 @@ specialization k k' mapping
           refines _ Nothing _ =
               error "Cohort.specialization: cannot find point of view"
           refines k (Just k') mapping =
-              not $ null $ homomorphism k' k mapping
+              not $ null $ homomorphism k' k mapping 
+--             checkedHom src dst mapping =
+--                 if (L.length mapping) == (L.length (insts src)) then
+--                     homomorphism src dst mapping
+--                 else
+--                     error ("Yarg! spec " ++ (show (L.length mapping)) ++ " vs " ++
+--                                              (show (L.length (insts src))))
