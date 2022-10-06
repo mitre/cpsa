@@ -563,12 +563,13 @@ initRules sig g prot prs =
       return (g, neqs ++ fixedStateRls ++ fcRls ++ asRls ++
                rlRls ++ grRls ++ cqRls ++ trRls ++ csRls ++ gsRls)
 
-showRoleGenStates :: [(Role,PreRules)] -> [(String,String)]
+{--
+  showRoleGenStates :: [(Role,PreRules)] -> [(String,String)]
 showRoleGenStates [] = []
 showRoleGenStates ((role, pr) : rest) =
     (rname role, concatMap show $ map snd $ preruleGuars pr)
     : showRoleGenStates rest 
-
+--}
 
 loadRules :: MonadFail m => Sig -> Prot -> Gen -> [SExpr Pos] ->
              m (Gen, [Rule], [SExpr ()])

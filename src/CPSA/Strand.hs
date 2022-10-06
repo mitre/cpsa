@@ -579,13 +579,14 @@ newPreskel gen shared insts orderings non pnon unique
                       pov = pov } in
         if useCheckVars then
             checkVars k
-        else checkPOV k
+        else k
 {-
           if chkFacts k then k
           else k
 -}
 
-checkPOV :: Preskel -> Preskel
+{--
+  checkPOV :: Preskel -> Preskel
 checkPOV k =
     case pov k of
       Nothing -> k
@@ -596,7 +597,7 @@ checkPOV k =
                    ++ " insts, but its prob has length "
                    ++ (show (L.length (prob k))))
                 k)
-                                  
+--}                                
 
 -- Suppose that a Preskel k has been created by rebinding some fields
 -- in an earlier skeleton.  The fields that newPreskel would compute
