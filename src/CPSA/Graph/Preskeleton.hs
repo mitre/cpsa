@@ -43,6 +43,7 @@ sameMsg :: Vertex -> Vertex -> Bool
 sameMsg src dest =
   case (dir src, dir dest) of
     (OutDir, InDir) -> msg src == msg dest
+    (StorDir, LoadDir) -> msg src == msg dest
     _ -> False
 
 -- Add a strand node
@@ -58,7 +59,10 @@ nodeColor :: Preskel -> Vertex -> Maybe String
 nodeColor k node =
   case dir node of
     OutDir -> Nothing           -- Transmission nodes are black
-    SyncDir
+    LoadDir
+      | elem node (maybe [] id (unrealized k)) -> Just "orange"
+      | otherwise -> Just "gray" -- Realized nodes are gray
+    StorDir
       | elem node (maybe [] id (unrealized k)) -> Just "orange"
       | otherwise -> Just "gray" -- Realized nodes are gray
     InDir

@@ -56,7 +56,8 @@ data Inst = Inst
 
 data Dir = InDir
          | OutDir
-         | SyncDir
+         | StorDir
+         | LoadDir
 
 -- A vertex v contains the information associated with the node
 -- (strand v, pos v).
@@ -301,8 +302,8 @@ loadInsts s pos p tag revInsts _ xs =
               evtMsg x = x      -- Handle bad syntax
               evtDir (L _ [S _ "send", _]) = OutDir
               evtDir (L _ [S _ "send", _, _]) = OutDir
-              evtDir (L _ [S _ "load", _, _]) = SyncDir
-              evtDir (L _ [S _ "stor", _, _]) = SyncDir
+              evtDir (L _ [S _ "load", _, _]) = LoadDir
+              evtDir (L _ [S _ "stor", _, _]) = StorDir
               evtDir _ = InDir  -- Handle bad syntax
               getNode (s, p) = nodes !! s !! p
               getPrev (s, p)
