@@ -751,14 +751,16 @@ specialization k k' mapping
           case realized k'' && not (isomorphic (gist k) (gist k'')) &&
                refines k'' (pov k'') (prob k'') &&
                refines k (Just k'') mapping of
-            True -> [k'']
+            True -> simplify k'' 
             False -> []
         where
           realized = null . unrealized
           refines _ Nothing _ =
               error "Cohort.specialization: cannot find point of view"
           refines k (Just k') mapping =
-              not $ null $ homomorphism k' k mapping 
+              not $ null $ homomorphism k' k mapping
+
+                  
 --             checkedHom src dst mapping =
 --                 if (L.length mapping) == (L.length (insts src)) then
 --                     homomorphism src dst mapping

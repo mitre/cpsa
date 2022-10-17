@@ -696,12 +696,15 @@ preskelWellFormed k =
     roleGenCheck k
     where
       terms = kterms k
+      vs = kvars k
+      f False _ = False
+      f True t = t `elem` vs 
       nonCheck t = all (not . carriedBy t) terms
       uniqueCheck t = any (carriedBy t) terms
       uniqgenCheck t = any (constituent t) terms
-      absentCheck (x, y) = varSubset [x, y] (kvars k)
-      genStCheck t = any (carriedBy t) terms
-      chanCheck c = elem c (kvars k)
+      absentCheck (x, y) = varSubset [x, y] vs
+      genStCheck t = foldVars f True t 
+      chanCheck c = elem c vs
 
 -- Do notation friendly preskeleton well formed check.
 wellFormedPreskel :: MonadFail m => Preskel -> m Preskel
@@ -2213,7 +2216,11 @@ deleteNodes k =
       strand <- strands k
       node <- nodes strand
       cand <- deleteNode k node
-      candWithNeededFacts cand
+      return $ candWithCoreFacts cand
+
+candWithCoreFacts :: Candidate -> Candidate
+candWithCoreFacts (k,sids) =
+    (withCoreFacts k, sids) 
 
 deleteNode :: Preskel -> Vertex -> [(Preskel, [Sid])]
 deleteNode k n
@@ -2335,17 +2342,18 @@ withCoreFacts k =
     case pov k of
       Nothing -> k              -- Can't change pov 
       Just k0 ->
-          if (L.length (prob k)) == (L.length (insts k0)) then 
-              (case (homomorphism k0
-                                  k
-                                  (prob k)) of
-                 [] -> k
-               -- error (show (prob k) ++ "  " ++ (show (L.length (insts k))) ++ "  " ++ (show (L.length (insts k0))))
-                 (env : _) -> 
-                     k { kfacts =
-                             map (instUpdateFact env (permOfSidList (prob k)))
-                                     (kfacts k0) })
-              else error ("Yarg!" ++ show (prob k) ++ "  " ++ (show (L.length (insts k))) ++ "  " ++ (show (L.length (insts k0))))
+          case L.length (prob k) == L.length (insts k0) of
+            False -> error ("Strands.withCoreFacts:  Mapping from POV to skeleton wrong length, "
+                            ++ show (prob k) ++ " should map "
+                                   ++ (show (L.length (insts k0))) ++ " strands into "
+                                          ++ (show (L.length (insts k))))
+            True -> 
+                case (homomorphism k0 k (prob k)) of
+                  [] -> k
+                  (env : _) -> 
+                      k { kfacts =
+                              map (instUpdateFact env (permOfSidList (prob k)))
+                                      (kfacts k0) } 
 
       
 

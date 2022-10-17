@@ -270,10 +270,9 @@ displayRest k ctx rest =
                (displayOptional "leads-to" (displayOrdering [])
                 (displayOptional "priority" priorities
                  (kcomment k ++
-                  -- (displayOptional "rule" (map (S ()) (krules k)) 
+                  (displayOptional "rule" (L.sort (map (S ()) (krules k))) 
                    (displayOperation k ctx
-                    (displayOptional "traces" traces rest))) --)
-                ))))))))))))
+                    (displayOptional "traces" traces rest))))))))))))))))
     where
       priorities = map displayPriority (kpriority k)
       traces = map (L () . displayTrace ctx . trace) (insts k)
