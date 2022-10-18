@@ -8,6 +8,7 @@
 
 module CPSA.Graph.Preskeleton (skel) where
 
+import CPSA.Lib.SExpr
 import CPSA.Graph.XMLOutput
 import CPSA.Graph.Config
 import CPSA.Graph.SVG
@@ -42,8 +43,15 @@ addEdge conf rank src x1 y1 elements n =
 sameMsg :: Vertex -> Vertex -> Bool
 sameMsg src dest =
   case (dir src, dir dest) of
-    (OutDir, InDir) -> msg src == msg dest
+    (OutDir, InDir) -> msgEquiv (msg src) (msg dest)
+    (StorDir, LoadDir) -> msg src == msg dest
     _ -> False
+
+-- Ignore channels for message equality test
+msgEquiv :: SExpr Pos -> SExpr Pos -> Bool
+msgEquiv src dest | src == dest = True
+msgEquiv (L _ [_, _, src]) (L _ [_, _, dest]) = src == dest
+msgEquiv _ _ = False
 
 -- Add a strand node
 addNode :: Config -> Preskel -> Rank -> [Element] -> Vertex -> [Element]
@@ -58,7 +66,10 @@ nodeColor :: Preskel -> Vertex -> Maybe String
 nodeColor k node =
   case dir node of
     OutDir -> Nothing           -- Transmission nodes are black
-    SyncDir
+    LoadDir
+      | elem node (maybe [] id (unrealized k)) -> Just "orange"
+      | otherwise -> Just "gray" -- Realized nodes are gray
+    StorDir
       | elem node (maybe [] id (unrealized k)) -> Just "orange"
       | otherwise -> Just "gray" -- Realized nodes are gray
     InDir

@@ -2251,11 +2251,13 @@ deleteNode k n
       p = pos n
       s = sid (strand n)
 
+
 {-- 
 candWithNeededFacts :: Candidate -> [Candidate]
 candWithNeededFacts (k,sids) =
     map (\k' -> (k',sids)) $ simplify k 
 --}
+
 
 -- Update orderings when a strand is eliminated (p == 0)
 deleteOrderings :: Sid -> [Pair] -> [Pair]
