@@ -268,7 +268,7 @@ displayRest k ctx rest =
              (displayOptional "auth" (displayTerms ctx (kauth k))
               (displayOptional "facts" (displayFacts ctx (kfacts k))
                (displayOptional "leads-to" (displayOrdering [])
-                (displayOptional "priority" priorities
+                (displayOptional "priority" priorities 
                  (kcomment k ++
                   (displayOptional "rule" (L.sort (map (S ()) (krules k))) 
                    (displayOperation k ctx
