@@ -1,7 +1,7 @@
 ;;; Here's a protocol where there are two ways for the init strand to
-;;; be satisfied.  The responder can use teh key to extract that
+;;; be satisfied.  The responder can use the key to extract that
 ;;; nonce.  Or else the adversary can get the key from the init's last
-;;; send, and use that in *the next* session to extract teh nonce
+;;; send, and use that in *the next* session to extract the nonce
 ;;; without the responder's help.
 
 ;;; This is a simplest example in which CPSA needs to introduce a
