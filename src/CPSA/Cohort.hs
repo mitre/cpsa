@@ -23,6 +23,9 @@ import System.IO.Unsafe
 z :: Show a => a -> b -> b
 z x y = unsafePerformIO (print x >> return y)
 
+zShow :: Show a => a -> a
+zShow x = z (show x) x
+
 zz :: Show a => a -> a
 zz x = z x x
 
@@ -258,7 +261,7 @@ parFoldr f b (a : as) =
 
 -- If just one k' is present in these results, and k' is isomorphic to
 -- k, then k is realized.  Check whether k can be generalized,
--- returning Crt ks, where ks are the results (factored by
+-- returning Gnl ks, where ks are the results (factored by
 -- isomorphism) of simplifying the generalized versions.  When k
 -- cannot be generalized, Return Stable, since it is a successful
 -- terminal value for the branch.
@@ -274,7 +277,7 @@ parFoldr f b (a : as) =
 --   -- After all of that, apply rewrite rule and filter output that makes
 --   -- no progress.
 
-data ReduceRes = Stable | Crt [Preskel] -- | Gnl [Preskel] not needed?
+data ReduceRes = Stable | Crt [Preskel] | Gnl [Preskel] -- now needed
 
 simplifyNonIsomorphic :: Preskel -> [Preskel]
 simplifyNonIsomorphic = factorIsomorphicPreskels . simplify
@@ -288,7 +291,7 @@ reduceNoTest mode k =
               else
                   (case filterSame k (maximize k) of
                      [] -> Stable
-                     ks -> Crt ks)
+                     ks -> Gnl ks)
           | True -> Crt [k']
       ks -> Crt (filterSame k ks)
 
@@ -726,6 +729,10 @@ exprDHSubcohort k a ct pos eks n escape cause =
 -- generalizations that fail to satisfy the rules of the skeleton's
 -- protocol.
 
+{--
+
+The previous version:  
+
 maximize :: Preskel -> [Preskel]
 maximize k =
     take 1 (filter f gens)      -- Return at most the first answer
@@ -738,20 +745,35 @@ maximize k =
           Nothing -> True
           _ -> False
 
+--}
+
+maximize :: Preskel -> [Preskel]
+maximize k =
+    iter $ generalize k
+    where
+      iter [] = [] 
+      iter ((k',mapping) : rest) =
+          case specialization k k' mapping of
+            [] -> iter rest
+            -- Since specialization now simplifies, the ks are
+            -- automatically closed under the rules.
+            ks -> ks 
+
 -- Test to see if realized skeleton k is a specialization of
 -- preskeleton k' using the given strand mapping.  Returns the
 -- skeleton associated with k' if it refines k.
 
 specialization :: Preskel -> Preskel -> [Sid] -> [Preskel]
-specialization k k' mapping
-    | not (preskelWellFormed k') = []
-    | otherwise =
+specialization k k' mapping 
+    | not (preskelWellFormed k') = []  -- z (showSome k') 
+    | otherwise =        
         do
           k'' <- toSkeleton useThinningDuringGeneralization k'
-          case realized k'' && not (isomorphic (gist k) (gist k'')) &&
-               refines k'' (pov k'') (prob k'') &&
-               refines k (Just k'') mapping of
-            True -> simplify k'' 
+          -- (showSome k'') inside *realized* to debug
+          case (realized k'') &&  (not (isomorphic (gist k) (gist k''))) &&
+               (refines k'' (pov k'') (prob k'')) &&
+               (refines k (Just k'') mapping) of
+            True -> simplify k'' -- maybeOK $
             False -> []
         where
           realized = null . unrealized
@@ -760,10 +782,27 @@ specialization k k' mapping
           refines k (Just k') mapping =
               not $ null $ homomorphism k' k mapping
 
+{--          showSome k'' =
+              if (14 == L.length (insts k)) && (1+L.length (insts k'') == L.length (insts k))
+              then 
+                  (z
+                   ("length: " ++ (show (L.length (insts k''))) ++
+                    ", unrealized: " ++ (show (unrealized k'')) ++
+                    ", prev nodes: " ++ (show (addSendingBefore S.empty (vertex k'' (0,0)))) ++ 
+                    ", after: " ++ (show
+                                    (cmsInNodes
+                                     (addSendingBefore S.empty (vertex k'' (0,0))))) ++ 
+                    ", prob: " ++ (show (prob k'')) ++
+                    ", POV OK: " ++ (show (refines k'' (pov k'') (prob k''))) ++
+                    ", refines: " ++ (show (refines k (Just k'') mapping)) ++
+                    ", survives: " ++
+                    (show ((realized k'') &&  (not (isomorphic (gist k) (gist k''))) &&
+                           (refines k'' (pov k'') (prob k'')) &&
+                           (refines k (Just k'') mapping))))
+                   k'')
+              else k''
+
+          maybeOK x = if (12 < L.length (insts k)) then z "OK" x else x 
+--}
+          
                   
---             checkedHom src dst mapping =
---                 if (L.length mapping) == (L.length (insts src)) then
---                     homomorphism src dst mapping
---                 else
---                     error ("Yarg! spec " ++ (show (L.length mapping)) ++ " vs " ++
---                                              (show (L.length (insts src))))

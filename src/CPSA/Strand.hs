@@ -46,6 +46,10 @@ zP x y = unsafePerformIO (print x >> return y)
 zz :: Show a => a -> a
 zz x = zP x x
 
+       
+zShow :: Show a => a -> a
+zShow x = zP (show x) x
+
 zb :: Show a => a -> Bool -> Bool
 zb a False = zP a False
 zb _ b = b
@@ -693,7 +697,12 @@ preskelWellFormed k =
     all chanCheck (kauth k) &&
     wellOrdered k && acyclicOrder k &&
     roleOrigCheck k &&
-    roleGenCheck k
+    roleGenCheck k && 
+    (povCheck k || --   (zP (show (povCheck k) ++ " pov length " ++
+                   --     (show (case pov k of
+                   --             Nothing -> 0
+                   --             Just k0 -> L.length (insts k0))))
+                    (povCheck k)) -- )
     where
       terms = kterms k
       vs = kvars k
@@ -705,6 +714,9 @@ preskelWellFormed k =
       absentCheck (x, y) = varSubset [x, y] vs
       genStCheck t = foldVars f True t 
       chanCheck c = elem c vs
+      povCheck k = case pov k of
+                     Nothing -> True
+                     Just k0 -> not (null (homomorphism k0 k (prob k)))
 
 -- Do notation friendly preskeleton well formed check.
 wellFormedPreskel :: MonadFail m => Preskel -> m Preskel
@@ -1570,7 +1582,8 @@ addUniqOrigOrderings k orderings t =
           foldl f orderings (L.delete s (strandids k))
           where
             f orderings s =
-                case gainedPos t (trace (strandInst k s)) of
+                -- JDG:  Was gainedPos:  usedPos seems more correct
+                case usedPos t (trace (strandInst k s)) of
                   Nothing -> orderings
                   Just pos -> adjoin (n, (s, pos)) orderings
 
@@ -1590,7 +1603,8 @@ addUniqGenOrderings k orderings t =
           foldl f orderings (L.delete s (strandids k))
           where
             f orderings s =
-                case genGainedPos t (trace (strandInst k s)) of
+                -- JDG:  Was genGainedPos:  genGainedPos seems more correct
+                case usedPos t (trace (strandInst k s)) of
                   Nothing -> orderings
                   Just pos -> adjoin (n, (s, pos)) orderings
 
@@ -2122,11 +2136,23 @@ addAbsence k n cause x t =
 
 homomorphism :: Preskel -> Preskel -> [Sid] -> [Env]
 homomorphism k k' mapping =
-    do
-      (_, env) <- findReplacement k k' mapping
-      case validateEnv k k' mapping env of
-        True -> [env]
-        False -> []
+    case findReplacement k k' mapping of
+      [] -> [] -- maybeShow
+      _ -> (do
+             (_, env) <- findReplacement k k' mapping -- maybeShow $ 
+             case validateEnv k k' mapping env of
+               True -> [env]
+               False -> [])
+    where
+--         maybeShow x = if (12 < L.length (insts k') &&
+--                           1 < L.length (trace ((insts k') !! 0)))
+--                       then (zP ((show (trace ((insts k') !! 0))) ++
+--                                 " should match pattern " ++ 
+--                                 (show (trace ((insts k) !! 0))) ++
+--                                " mapping " ++ (show mapping))
+--                             x)
+--                       else x 
+
 
 findReplacement :: Preskel -> Preskel -> [Sid] -> [(Gen, Env)]
 findReplacement k k' mapping =
@@ -2135,9 +2161,9 @@ findReplacement k k' mapping =
         (let gg = gmerge (gen k) (gen k') in
          foldM (matchStrand k k' mapping) (gg, emptyEnv) (strandids k)) 
     else
-        [] 
---               error ("Yarg! JDR " ++ (show (L.length mapping)) ++ " vs " ++
---                                       (show (L.length (insts k))))
+        -- [] 
+        error ("Yarg! JDR " ++ (show (L.length mapping)) ++ " vs " ++
+               (show (L.length (insts k))))
             
 
 matchStrand :: Preskel -> Preskel -> [Sid] -> (Gen, Env) -> Sid -> [(Gen, Env)]
@@ -2191,10 +2217,48 @@ separateVariablesLimit :: Int
 separateVariablesLimit = 1024
 
 generalize :: Preskel -> [Candidate]
-generalize k = deleteNodes k ++
+generalize k = deleteTerminal k ++ 
+               deleteNodes k ++
                weakenOrderings k ++
                forgetAssumption k ++
                take separateVariablesLimit (separateVariables k)
+
+-- terminal strand deletion 
+
+strandTerminal :: Preskel -> Sid -> Bool
+strandTerminal k s =
+    not(any (\((s1,_),_) -> s == s1) (orderings k))
+
+strandNonPov :: Preskel -> Sid -> Bool
+strandNonPov k s =
+    not (elem s (prob k))       -- the members of the mapping *are*
+                                -- its range
+
+deleteTerminal :: Preskel -> [Candidate]
+deleteTerminal k =
+    report v
+    where
+      v = [(withCoreFacts
+            (deleteNodeRest k (gen k) (s, 0)
+             (deleteNth s (insts k))
+             (deleteOrderings s (tc k))
+             (updatePerm s s (prob k))
+             (map (updateFact (updateStrand s s))
+                      (deleteStrandFacts s $ kfacts k))),
+            deleteNth s (strandids k),
+            s)
+          | s <- [0 .. (L.length (insts k))-1],
+                 strandNonPov k s,
+                 strandTerminal k s]
+      report [] = []
+      report ((k', mapping, _) : rest) = (k',mapping) : report rest
+{--
+  (zP
+           ("dT: strand " ++ (show s) ++ " insts: " ++ (show (L.length (insts k'))) ++
+            " prob: " ++ (show (prob k')))
+           (k',mapping)) : report rest
+           --}
+             
 
 -- Node deletion
 
@@ -2251,6 +2315,8 @@ deleteNode k n
       p = pos n
       s = sid (strand n)
 
+          
+
 
 {-- 
 candWithNeededFacts :: Candidate -> [Candidate]
@@ -2289,7 +2355,7 @@ deleteNodeRest :: Preskel -> Gen -> Node -> [Instance] -> [Pair] ->
                   [Sid] -> [Fact] -> Preskel
 deleteNodeRest k gen n insts' orderings prob facts =
     newPreskel gen (shared k) insts' orderings non' pnon' unique'
-    uniqgen' absent' precur' (kgenSt k) conf'
+    uniqgen' absent' precur' genSt' conf'
     auth' facts prio' (Generalized (Deleted n)) [] (pprob k) prob (pov k)
     where
       -- Drop nons that aren't mentioned anywhere
@@ -2297,6 +2363,10 @@ deleteNodeRest k gen n insts' orderings prob facts =
       pnon' = filter mentionedIn (kpnon k)
       mentionedIn t = varSubset [t] terms
       terms = iterms insts'
+      vs = instVars insts'
+      f False _ = False
+      f True t = t `elem` vs 
+
       -- Drop uniques that aren't carried anywhere
       unique' = filter carriedIn (kunique k)
       carriedIn t = any (carriedBy t) terms
@@ -2307,6 +2377,7 @@ deleteNodeRest k gen n insts' orderings prob facts =
       chans = ichans insts'
       conf' = filter (flip elem chans) (kconf k)
       auth' = filter (flip elem chans) (kauth k)
+      genSt' = filter (\t -> foldVars f True t) (kgenSt k)
       -- Drop unused priorities
       prio' = filter within (kpriority k)
       within ((s, i), _) =
@@ -2343,7 +2414,7 @@ permOfSidList = (!!)
 withCoreFacts :: Preskel -> Preskel
 withCoreFacts k =
     case pov k of
-      Nothing -> k              -- Can't change pov 
+      Nothing -> k              -- Can't recover pov 
       Just k0 ->
           case L.length (prob k) == L.length (insts k0) of
             False -> error ("Strands.withCoreFacts:  Mapping from POV to skeleton wrong length, "
@@ -2353,7 +2424,14 @@ withCoreFacts k =
             True -> 
                 case (homomorphism k0 k (prob k)) of
                   [] -> k
-                  (env : _) -> 
+                  (env : _) ->  -- If there are multiple envs, this
+                                -- could mean that some don't extend
+                                -- under *simplify* to a result k1
+                                -- such that k0 -> k1 -> k.  The
+                                -- latter may have made a different
+                                -- choice of env in its facts.
+                                -- (Delete this if it turns out
+                                -- wrong.) 
                       k { kfacts =
                               map (instUpdateFact env (permOfSidList (prob k)))
                                       (kfacts k0) } 
@@ -3918,7 +3996,8 @@ doRewritesLoop rules k lim (k' : todo) ks =
 -- Apply rewrite rule at all assignments
 doRewrite :: Preskel -> Rule -> [(Gen, Env)] -> [Preskel]
 doRewrite k r vas =
-  concatMap (doRewriteOne k r) vas
+   --   concatMap (toSkeleton False) $
+    concatMap (doRewriteOne k r) vas
 
 -- Apply rewrite rule at one assignment
 doRewriteOne :: Preskel -> Rule -> (Gen, Env) -> [Preskel]

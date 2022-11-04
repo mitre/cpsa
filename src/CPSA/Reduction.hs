@@ -82,6 +82,15 @@ zv k =
 useFlush :: Bool
 useFlush = True                -- False
 
+-- Possibly generalization is no longer needed, to find all of the
+-- shapes?  To find out if this is true, and reap the benefits if it
+-- is, we add the dieOnGeneralization flag.  It causes a
+-- generalization step to terminate the search branch.  
+
+dieOnGeneralization :: Bool
+dieOnGeneralization = False -- True
+
+
 -- Parameter driven S-expression printer
 wrt :: Options -> Handle -> SExpr a -> IO ()
 wrt p h sexpr =
@@ -138,9 +147,18 @@ merge :: Seen -> Seen -> Seen
 merge (Seen xs) (Seen ys) = Seen (xs ++ ys)
 
 -- Contains the result of applying the cohort reduction rule.  The
--- last position is used to hold the reverse of the labels of the
--- seen children
-data Reduct t g s e  = ReductStable !(LPreskel) | Reduct !(LPreskel) !Int ![Preskel] ![Int]
+-- ReductStable case reports a shape
+
+-- The last position in the Reduct case is used to hold the reverse of
+-- the labels of the seen children.
+
+-- The Genlz case contains the result of a generalization step,
+-- structured like a Reduct case.  
+
+data Reduct t g s e
+    = ReductStable !(LPreskel)
+    | Reduct !(LPreskel) !Int ![Preskel] ![Int]
+    | Genlz !(LPreskel) !Int ![Preskel] ![Int]
 
 parMap :: (a -> b) -> [a] -> [b]
 parMap _ [] = []
@@ -169,7 +187,7 @@ solve p h (k : ks) n =
         [] ->                  -- Input cannot be made into a skeleton
             do
               let lk = LPreskel k n 0 Nothing
-              wrt p h (commentPreskel lk [] (unrealized k) Ordinary Nada
+              wrt p h (commentPreskel lk [] (unrealized k) Ordinary Dead -- Mark this case dead 
                        "Input cannot be made into a skeleton--nothing to do")
               solve p h ks (n + 1)
         [k'] ->
@@ -273,6 +291,16 @@ step p h ks m oseen n seen todo toobig (ReductStable lk : reducts) =
             wrt p h (commentPreskel lk [] [] Shape Nada "")
       -- zP ("unseen", label lk) $
             step p h ks m oseen n seen todo toobig reducts
+                 
+step p h ks m oseen n seen todo toobig (Genlz lk size kids dups : reducts)
+    | dieOnGeneralization =
+        do
+          let ns = unrealized (content lk)
+          wrt p h (commentPreskel lk [] ns Ordinary Dead "died of generalization")
+          step p h ks m oseen n seen todo toobig reducts 
+    | otherwise = 
+      step p h ks m oseen n seen todo toobig (Reduct lk size kids dups : reducts)
+
 step p h ks m oseen n seen todo toobig (Reduct lk size kids dups : reducts)
     | optGoalsSat p && satCheck lk = -- Stop if goals satisfied mode?
         do
@@ -313,8 +341,13 @@ branch p seen lk =
       Crt kids ->
           Reduct lk (length kids) (seqList $ reverse unseen) (seqList dups)
         where
-            (unseen, dups) =
-                foldl (duplicates seen) ([], []) kids
+          (unseen, dups) =
+              foldl (duplicates seen) ([], []) kids
+      Gnl kids ->
+          Genlz lk (length kids) (seqList $ reverse unseen) (seqList dups)
+        where
+          (unseen, dups) =
+              foldl (duplicates seen) ([], []) kids
 
 mkMode :: Options -> Mode
 mkMode p =
@@ -335,6 +368,7 @@ mktodo reducts todo toobig =
     foldl f [] reducts ++ reverse todo ++ reverse toobig
     where
       f sofar (Reduct lk _ _ _) = lk : sofar
+      f sofar (Genlz lk _ _ _) = lk : sofar
       f sofar (ReductStable _) = sofar
 
 type Next = (Int, Seen, [LPreskel], [Int])
@@ -373,11 +407,13 @@ fast p h ks m n (lk : todo) =
       let red = reduce (mkMode p) (content lk)
       let (len,ks') = (case red of
                    Stable -> (0,[])
-                   Crt kids -> (length kids, kids))
+                   Crt kids -> (length kids, kids)
+                   Gnl kids -> (length kids, kids))
       let msg = show len ++ " in cohort"
       let shape = (case red of
                      Stable -> Shape
-                     Crt _ -> Ordinary)
+                     Crt _ -> Ordinary
+                     Gnl _ -> Ordinary)
       wrt p h (commentPreskel lk [] ns shape Nada msg)
       let (n', todo') = foldl (children lk) (n, []) ks'
       fast p h ks m n' (todo ++ reverse todo')
