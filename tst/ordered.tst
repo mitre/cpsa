@@ -40,10 +40,10 @@
   (traces ((recv (enc a k)) (send a)) ((recv (enc b k-0)) (send b)))
   (label 1)
   (parent 0)
+  (seen 2)
   (realized)
-  (shape)
-  (maps ((0 1) ((a a) (b b) (k k) (k-0 k-0))))
-  (origs))
+  (origs)
+  (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton ordered
   (vars (a b text) (k k-0 akey))
@@ -55,10 +55,10 @@
   (traces ((recv (enc a k)) (send a)) ((recv (enc b k-0)) (send b)))
   (label 2)
   (parent 0)
+  (seen 1)
   (realized)
-  (shape)
-  (maps ((0 1) ((a a) (b b) (k k) (k-0 k-0))))
-  (origs))
+  (origs)
+  (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
 

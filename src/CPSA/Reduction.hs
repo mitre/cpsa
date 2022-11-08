@@ -85,7 +85,12 @@ useFlush = True                -- False
 -- Possibly generalization is no longer needed, to find all of the
 -- shapes?  To find out if this is true, and reap the benefits if it
 -- is, we add the dieOnGeneralization flag.  It causes a
--- generalization step to terminate the search branch.  
+-- generalization step to terminate the search branch.
+
+-- Conclusion:  generalization is definitely needed, since it can
+-- remove listeners as unnecessary.  You wouldn't want every branch
+-- with listeners to silently disappear when CPSA notes that they can
+-- be generalized away.  ( :- )
 
 dieOnGeneralization :: Bool
 dieOnGeneralization = False -- True

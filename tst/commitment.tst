@@ -25,10 +25,10 @@
     (forall ((x strd)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_mesg
     (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defgenrule assume-auctioneer-3
+  (defgenrule cheq-auctioneer-4
     (forall ((z strd) (quote text) (n data) (b a name) (sealed mesg))
       (implies
-        (and (p "auctioneer" z 3) (p "auctioneer" "quote" z quote)
+        (and (p "auctioneer" z 4) (p "auctioneer" "quote" z quote)
           (p "auctioneer" "n" z n) (p "auctioneer" "b" z b)
           (p "auctioneer" "a" z a) (p "auctioneer" "sealed" z sealed))
         (= sealed (hash a b n quote))))))
@@ -52,7 +52,7 @@
   (defstrand auctioneer 4 (sealed (hash a b n quote)) (n n)
     (quote quote) (outcome outcome) (a a) (b b))
   (non-orig (privk "sig" a))
-  (rule assume-auctioneer-3)
+  (rule cheq-auctioneer-4)
   (traces
     ((recv (enc "bid" (hash a b n quote) (privk "sig" a)))
       (send (enc "receipt" (hash a b n quote) (privk "sig" b)))
@@ -113,10 +113,10 @@
     (forall ((x strd)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_mesg
     (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defgenrule assume-auctioneer-3
+  (defgenrule cheq-auctioneer-4
     (forall ((z strd) (quote text) (n data) (b a name) (sealed mesg))
       (implies
-        (and (p "auctioneer" z 3) (p "auctioneer" "quote" z quote)
+        (and (p "auctioneer" z 4) (p "auctioneer" "quote" z quote)
           (p "auctioneer" "n" z n) (p "auctioneer" "b" z b)
           (p "auctioneer" "a" z a) (p "auctioneer" "sealed" z sealed))
         (= sealed (hash a b n quote))))))
@@ -195,10 +195,10 @@
     (forall ((x strd)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_mesg
     (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defgenrule assume-auctioneer-3
+  (defgenrule cheq-auctioneer-4
     (forall ((z strd) (quote text) (n data) (b a name) (sealed mesg))
       (implies
-        (and (p "auctioneer" z 3) (p "auctioneer" "quote" z quote)
+        (and (p "auctioneer" z 4) (p "auctioneer" "quote" z quote)
           (p "auctioneer" "n" z n) (p "auctioneer" "b" z b)
           (p "auctioneer" "a" z a) (p "auctioneer" "sealed" z sealed))
         (= sealed (hash a b n quote))))))

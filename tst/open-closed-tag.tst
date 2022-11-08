@@ -65,6 +65,23 @@
     (forall ((x strd)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_mesg
     (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
   (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
@@ -136,7 +153,7 @@
   (conf start-ch)
   (auth start-ch)
   (facts (trans 2 2) (trans 2 1))
-  (rule trRl_dev-up-at-2 trRl_dev-up-at-1)
+  (rule trRl_dev-up-at-1 trRl_dev-up-at-2)
   (operation nonce-test (added-strand dev-up 3) k (1 0)
     (ch-msg start-ch (cat "power-up" d o k)))
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
@@ -212,6 +229,23 @@
     (forall ((x strd)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_mesg
     (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
   (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
@@ -281,7 +315,7 @@
   (uniq-orig n)
   (gen-st (cat "st" d "opened"))
   (facts (trans 1 3) (trans 1 2))
-  (rule trRl_dev-open-at-3 trRl_dev-open-at-2)
+  (rule trRl_dev-open-at-2 trRl_dev-open-at-3)
   (operation channel-test (added-strand dev-open 4)
     (ch-msg ls (cat pt-0 "st" d "opened")) (0 2))
   (traces
@@ -362,6 +396,23 @@
     (forall ((x strd)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_mesg
     (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
   (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
@@ -460,7 +511,7 @@
   (conf start-ch)
   (auth start-ch)
   (facts (trans 2 2) (trans 2 1))
-  (rule trRl_dev-up-at-2 trRl_dev-up-at-1)
+  (rule trRl_dev-up-at-1 trRl_dev-up-at-2)
   (operation nonce-test (added-strand dev-up 3) k (1 0)
     (ch-msg start-ch (cat "power-up" d o k)))
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
@@ -488,6 +539,7 @@
   (conf start-ch)
   (auth start-ch)
   (facts (trans 2 2) (trans 2 1))
+  (rule trRl_dev-up-at-1 trRl_dev-up-at-2)
   (operation nonce-test
     (contracted (d-0 d) (o-0 o) (lk-0 lk) (pt-2 pt-1)) k (1 0)
     (ch-msg start-ch (cat "power-up" d o k))
@@ -517,6 +569,7 @@
   (conf start-ch)
   (auth start-ch)
   (facts (trans 2 2) (trans 2 1))
+  (rule trRl_dev-up-at-1 trRl_dev-up-at-2)
   (operation encryption-test (added-strand user-pass 1)
     (enc "may I pass" k) (1 1))
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
@@ -544,6 +597,7 @@
   (conf start-ch)
   (auth start-ch)
   (facts (trans 2 2) (trans 2 1))
+  (rule trRl_dev-up-at-1 trRl_dev-up-at-2)
   (operation encryption-test (added-listener k) (enc "may I pass" k)
     (1 1))
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
@@ -573,8 +627,9 @@
   (gen-st (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
-  (facts (trans 4 3) (trans 4 2) (trans 2 2) (trans 2 1))
-  (rule trRl_dev-open-at-3 trRl_dev-open-at-2)
+  (facts (trans 2 2) (trans 2 1) (trans 4 3) (trans 4 2))
+  (rule trRl_dev-open-at-2 trRl_dev-open-at-3 trRl_dev-up-at-1
+    trRl_dev-up-at-2)
   (operation channel-test (added-strand dev-open 4)
     (ch-msg ls (cat pt "st" d "opened")) (1 2))
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
@@ -606,6 +661,7 @@
   (conf start-ch)
   (auth start-ch)
   (facts (trans 2 2) (trans 2 1))
+  (rule trRl_dev-up-at-1 trRl_dev-up-at-2)
   (operation nonce-test (displaced 4 2 dev-up 3) k (3 0)
     (ch-msg start-ch (cat "power-up" d o k)))
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
@@ -637,9 +693,10 @@
   (gen-st (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
-  (facts (trans 4 4) (trans 4 3) (trans 3 3) (trans 3 2) (trans 4 2)
-    (trans 4 1))
-  (rule trRl_dev-up-at-4 trRl_dev-up-at-3)
+  (facts (trans 4 4) (trans 4 3) (trans 4 2) (trans 4 1) (trans 3 3)
+    (trans 3 2))
+  (rule trRl_dev-open-at-2 trRl_dev-open-at-3 trRl_dev-up-at-1
+    trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (displaced 2 5 dev-up 6) (enc "up" k)
     (0 1))
   (traces ((send start-ch (cat "power-up" d o-0 k)) (recv (enc "up" k)))
@@ -679,7 +736,9 @@
   (gen-st (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
-  (facts (trans 4 3) (trans 4 2) (trans 2 2) (trans 2 1))
+  (facts (trans 2 2) (trans 2 1) (trans 4 3) (trans 4 2))
+  (rule trRl_dev-open-at-2 trRl_dev-open-at-3 trRl_dev-up-at-1
+    trRl_dev-up-at-2)
   (operation encryption-test (added-listener k) (enc "up" k) (0 1))
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
     ((load lk (cat pt-1 "st-k" d o k)) (recv (enc "may I pass" k))
@@ -713,7 +772,9 @@
   (gen-st (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
-  (facts (trans 4 3) (trans 4 2) (trans 2 2) (trans 2 1))
+  (facts (trans 2 2) (trans 2 1) (trans 4 3) (trans 4 2))
+  (rule trRl_dev-open-at-2 trRl_dev-open-at-3 trRl_dev-up-at-1
+    trRl_dev-up-at-2)
   (operation nonce-test (displaced 6 2 dev-up 3) k (5 0)
     (ch-msg start-ch (cat "power-up" d o k)))
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
@@ -794,6 +855,23 @@
     (forall ((x strd)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_mesg
     (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule scissorsRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
+          (leads-to z0 i0 z1 i1) (leads-to z0 i0 z2 i2))
+        (and (= z1 z2) (= i1 i2)))))
+  (defgenrule cakeRule
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (trans z0 i0) (trans z1 i1) (leads-to z0 i0 z1 i1)
+          (leads-to z0 i0 z2 i2) (prec z1 i1 z2 i2)) (false))))
+  (defgenrule no-interruption
+    (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
+      (implies
+        (and (leads-to z0 i0 z2 i2) (trans z1 i1)
+          (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
+        (false))))
   (defgenrule shearsRule
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
@@ -875,9 +953,8 @@
   (auth start-ch)
   (facts (trans 2 4) (trans 2 3) (trans 2 2) (trans 2 1) (trans 4 3)
     (trans 4 2))
-  (rule gen-state-pass trRl_dev-up-at-4 trRl_dev-up-at-3
-    trRl_dev-up-at-2 trRl_dev-up-at-1 trRl_dev-open-at-3
-    trRl_dev-open-at-2)
+  (rule gen-state-pass trRl_dev-open-at-2 trRl_dev-open-at-3
+    trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
     ((load lk (cat pt "st-k" d o k)) (recv (enc "may I pass" k))
       (load ls (cat pt-0 "st" d "opened"))
@@ -915,6 +992,8 @@
   (auth start-ch)
   (facts (trans 2 4) (trans 2 3) (trans 2 2) (trans 2 1) (trans 4 3)
     (trans 4 2))
+  (rule trRl_dev-open-at-2 trRl_dev-open-at-3 trRl_dev-up-at-1
+    trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation nonce-test (contracted (pt-7 pt-1)) k (1 0)
     (ch-msg start-ch (cat "power-up" d o k))
     (ch-msg lk (cat pt-1 "st-k" d o k)))
@@ -955,6 +1034,8 @@
   (auth start-ch)
   (facts (trans 2 4) (trans 2 3) (trans 2 2) (trans 2 1) (trans 4 3)
     (trans 4 2))
+  (rule trRl_dev-open-at-2 trRl_dev-open-at-3 trRl_dev-up-at-1
+    trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation channel-test (displaced 5 4 dev-open 4)
     (ch-msg ls (cat pt-6 "st" d "opened")) (1 2))
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
@@ -1000,9 +1081,10 @@
   (gen-st (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
-  (facts (trans 5 3) (trans 5 2) (trans 2 4) (trans 2 3) (trans 2 2)
-    (trans 2 1) (trans 4 3) (trans 4 2))
-  (rule invShearsRule trRl_dev-open-at-3 trRl_dev-open-at-2)
+  (facts (trans 2 4) (trans 2 3) (trans 2 2) (trans 2 1) (trans 5 3)
+    (trans 4 3) (trans 5 2) (trans 4 2))
+  (rule invShearsRule trRl_dev-open-at-2 trRl_dev-open-at-3
+    trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation channel-test (added-strand dev-open 4)
     (ch-msg ls (cat pt "st" d "opened")) (1 2))
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
@@ -1022,15 +1104,8 @@
       (stor ls (cat pt "st" d "opened"))))
   (label 22)
   (parent 20)
+  (seen 21)
   (realized)
-  (shape)
-  (maps
-    ((0 1 2 3 4)
-      ((old old) (old1 old1) (any any) (n n) (n-0 n-0) (d d) (o o) (k k)
-        (k-0 k-0) (start-ch start-ch) (ls ls) (lk lk) (ls-0 ls-0)
-        (lk-0 lk-0) (pt pt-1) (pt-0 pt) (pt-1 pt-0) (pt-2 pt-1)
-        (pt-3 pt-2) (pt-4 pt-3) (pt-5 pt-4) (pt-6 pt-5) (pt-7 pt-6))))
-  (origs (pt (5 3)) (pt-6 (4 3)) (pt-3 (2 4)) (pt-1 (2 2)) (n (1 3))
-    (k (0 0))))
+  (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

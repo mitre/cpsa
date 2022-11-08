@@ -11,9 +11,9 @@
 (defprotocol wonthull2 basic
   (defrole init (vars (a name) (x1 x2 x3 x4 text))
     (trace
-      (send (cat (enc x1 x3 (pubk a)) (enc x3 x2 (pubk a))))
-	(recv (enc "okay" x3 x4 (pubk a)))
-    )
+     (send (cat (enc x1 x3 (pubk a)) (enc x3 x2 (pubk a))))
+     (recv (enc "okay" x3 x4 (pubk a)))
+     )
     (uniq-orig x3)
     (non-orig (privk a))
   )

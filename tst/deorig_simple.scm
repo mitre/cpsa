@@ -28,3 +28,4 @@
   (defstrand init 2 (k k) (x z))
   (defstrand resp 2 (k k) (x z) (y z))
   (precedes ((0 0) (1 0)) ((1 1) (0 1))))
+

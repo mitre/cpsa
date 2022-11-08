@@ -56,7 +56,7 @@
   (non-orig (privk a) (privk b))
   (uniq-orig n1)
   (facts (rel2 x n2) (rel1 n1 n2) (rel2 n1 n2))
-  (rule rebind-x fact-init-rel11 fact-init-rel20)
+  (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc n1 n2 b (pubk a)))
       (send (enc n2 (pubk b)))))
@@ -74,6 +74,7 @@
   (non-orig (privk a) (privk b))
   (uniq-orig n1)
   (facts (rel2 x n2) (rel1 n1 n2) (rel2 n1 n2))
+  (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (added-strand resp 2) n1 (0 1)
     (enc n1 a (pubk b)))
   (traces
@@ -93,6 +94,7 @@
   (non-orig (privk a) (privk b))
   (uniq-orig n1)
   (facts (rel2 x n2) (rel1 n1 n2) (rel2 n1 n2))
+  (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (contracted (n2-0 n2)) n1 (0 1)
     (enc n1 a (pubk b)) (enc n1 n2 b (pubk a)))
   (traces
@@ -162,7 +164,7 @@
   (non-orig (privk a) (privk b))
   (uniq-orig n1)
   (facts (rel2 x n2) (rel1 n1 n2) (rel2 n1 n2) (rel n1 n1))
-  (rule rebind-x fact-init-rel11 fact-init-rel20)
+  (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc n1 n2 b (pubk a)))
       (send (enc n2 (pubk b)))))
@@ -180,6 +182,7 @@
   (non-orig (privk a) (privk b))
   (uniq-orig n1)
   (facts (rel2 x n2) (rel1 n1 n2) (rel2 n1 n2) (rel n1 n1))
+  (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (added-strand resp 2) n1 (0 1)
     (enc n1 a (pubk b)))
   (traces
@@ -199,6 +202,7 @@
   (non-orig (privk a) (privk b))
   (uniq-orig n1)
   (facts (rel2 x n2) (rel1 n1 n2) (rel2 n1 n2) (rel n1 n1))
+  (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (contracted (n2-0 n2)) n1 (0 1)
     (enc n1 a (pubk b)) (enc n1 n2 b (pubk a)))
   (traces
@@ -267,7 +271,7 @@
   (non-orig (privk b))
   (uniq-orig n1)
   (facts (rel2 x n2) (rel1 n1 n2) (rel2 n1 n2))
-  (rule rebind-x fact-init-rel11 fact-init-rel20)
+  (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc n1 n2 b (pubk a)))
       (send (enc n2 (pubk b)))))
@@ -285,6 +289,7 @@
   (non-orig (privk b))
   (uniq-orig n1)
   (facts (rel2 x n2) (rel1 n1 n2) (rel2 n1 n2))
+  (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (added-strand resp 2) n1 (0 1)
     (enc n1 a (pubk b)))
   (traces
@@ -373,7 +378,7 @@
   (non-orig (privk a) (privk b))
   (uniq-orig n1)
   (facts (rel2 x n2) (rel1 n1 n2) (rel2 n1 n2))
-  (rule rebind-x fact-init-rel11 fact-init-rel20)
+  (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc n1 n2 b (pubk a)))
       (send (enc n2 (pubk b)))) ((recv n1) (send n1)))
@@ -392,6 +397,7 @@
   (non-orig (privk a) (privk b))
   (uniq-orig n1)
   (facts (rel2 x n2) (rel1 n1 n2) (rel2 n1 n2))
+  (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (added-strand resp 2) n1 (1 0)
     (enc n1 a (pubk b)))
   (traces
@@ -412,6 +418,7 @@
   (non-orig (privk a) (privk b))
   (uniq-orig n2)
   (facts (rel2 x n2) (rel1 n2 n2) (rel2 n2 n2))
+  (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (displaced 3 0 init 3) n2-0 (1 0)
     (enc n2-0 a (pubk b)) (enc n2-0 n2-0 b (pubk a)))
   (traces
@@ -434,6 +441,7 @@
   (non-orig (privk a) (privk b))
   (uniq-orig n2)
   (facts (rel2 x n2) (rel1 n2 n2) (rel2 n2 n2))
+  (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (added-strand resp 2) n2 (1 0) (enc n2 (pubk b))
     (enc n2 a (pubk b)) (enc n2 n2 b (pubk a)))
   (traces
@@ -507,7 +515,7 @@
   (uniq-orig n1 n1-0)
   (facts (rel2 x-0 n2-0) (rel2 x n2) (rel1 n1-0 n2-0) (rel1 n1 n2)
     (rel2 n1-0 n2-0) (rel2 n1 n2))
-  (rule rebind-x fact-init-rel11 fact-init-rel20)
+  (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc n1 n2 b (pubk a)))
       (send (enc n2 (pubk b))))
@@ -515,16 +523,18 @@
       (send (enc n2-0 (pubk b)))))
   (label 18)
   (parent 17)
+  (seen 20)
   (unrealized (0 1) (1 1))
   (origs (n1 (0 0)) (n1-0 (1 0)))
-  (comment "1 in cohort - 1 not yet seen"))
+  (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton ns
-  (vars (x x-0 name) (n1 n2 text) (a b name))
+  (vars (x name) (n1 n2 text) (a b name))
   (defstrand init 3 (n1 n1) (n2 n2) (a a) (b b))
   (non-orig (privk a) (privk b))
   (uniq-orig n1)
-  (facts (rel2 x-0 n2) (rel2 x n2) (rel1 n1 n2) (rel2 n1 n2))
+  (facts (rel2 x n2) (rel1 n1 n2) (rel2 n1 n2))
+  (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation collapsed 1 0)
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc n1 n2 b (pubk a)))
@@ -542,8 +552,9 @@
   (precedes ((1 0) (2 0)) ((2 1) (1 1)))
   (non-orig (privk a) (privk b))
   (uniq-orig n1 n1-0)
-  (facts (rel2 x-0 n2-0) (rel2 x n2) (rel1 n1-0 n2-0) (rel1 n1 n2)
+  (facts (rel2 x-0 n2) (rel2 x n2-0) (rel1 n1-0 n2-0) (rel1 n1 n2)
     (rel2 n1-0 n2-0) (rel2 n1 n2))
+  (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (added-strand resp 2) n1-0 (1 1)
     (enc n1-0 a (pubk b)))
   (traces
@@ -554,17 +565,19 @@
     ((recv (enc n1-0 a (pubk b))) (send (enc n1-0 n2-1 b (pubk a)))))
   (label 20)
   (parent 18)
+  (seen 22)
   (unrealized (0 1) (1 1))
-  (comment "1 in cohort - 1 not yet seen"))
+  (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton ns
-  (vars (x x-0 name) (n1 n2 n2-0 text) (a b name))
+  (vars (x name) (n1 n2 n2-0 text) (a b name))
   (defstrand init 3 (n1 n1) (n2 n2) (a a) (b b))
   (defstrand resp 2 (n2 n2-0) (n1 n1) (b b) (a a))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (privk a) (privk b))
   (uniq-orig n1)
-  (facts (rel2 x-0 n2) (rel2 x n2) (rel1 n1 n2) (rel2 n1 n2))
+  (facts (rel2 x n2) (rel1 n1 n2) (rel2 n1 n2))
+  (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (added-strand resp 2) n1 (0 1)
     (enc n1 a (pubk b)))
   (traces
@@ -585,8 +598,9 @@
   (precedes ((1 0) (2 0)) ((2 1) (1 1)))
   (non-orig (privk a) (privk b))
   (uniq-orig n1 n1-0)
-  (facts (rel2 x-0 n2-0) (rel2 x n2) (rel1 n1-0 n2-0) (rel1 n1 n2)
+  (facts (rel2 x-0 n2) (rel2 x n2-0) (rel1 n1-0 n2-0) (rel1 n1 n2)
     (rel2 n1-0 n2-0) (rel2 n1 n2))
+  (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (contracted (n2-1 n2-0)) n1-0 (1 1)
     (enc n1-0 a (pubk b)) (enc n1-0 n2-0 b (pubk a)))
   (traces
@@ -597,17 +611,19 @@
     ((recv (enc n1-0 a (pubk b))) (send (enc n1-0 n2-0 b (pubk a)))))
   (label 22)
   (parent 20)
+  (seen 24)
   (unrealized (0 1))
-  (comment "1 in cohort - 1 not yet seen"))
+  (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton ns
-  (vars (x x-0 name) (n1 n2 text) (a b name))
+  (vars (x name) (n1 n2 text) (a b name))
   (defstrand init 3 (n1 n1) (n2 n2) (a a) (b b))
   (defstrand resp 2 (n2 n2) (n1 n1) (b b) (a a))
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (privk a) (privk b))
   (uniq-orig n1)
-  (facts (rel2 x-0 n2) (rel2 x n2) (rel1 n1 n2) (rel2 n1 n2))
+  (facts (rel2 x n2) (rel1 n1 n2) (rel2 n1 n2))
+  (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (contracted (n2-0 n2)) n1 (0 1)
     (enc n1 a (pubk b)) (enc n1 n2 b (pubk a)))
   (traces
@@ -630,8 +646,9 @@
   (precedes ((0 0) (3 0)) ((1 0) (2 0)) ((2 1) (1 1)) ((3 1) (0 1)))
   (non-orig (privk a) (privk b))
   (uniq-orig n1 n1-0)
-  (facts (rel2 x-0 n2-0) (rel2 x n2) (rel1 n1-0 n2-0) (rel1 n1 n2)
+  (facts (rel2 x-0 n2) (rel2 x n2-0) (rel1 n1-0 n2-0) (rel1 n1 n2)
     (rel2 n1-0 n2-0) (rel2 n1 n2))
+  (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (added-strand resp 2) n1 (0 1)
     (enc n1 a (pubk b)))
   (traces
@@ -657,6 +674,7 @@
   (uniq-orig n1 n1-0)
   (facts (rel2 x-0 n2) (rel2 x n2-0) (rel1 n1-0 n2) (rel1 n1 n2-0)
     (rel2 n1-0 n2) (rel2 n1 n2-0))
+  (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (contracted (n2-1 n2-0)) n1 (0 1)
     (enc n1 a (pubk b)) (enc n1 n2-0 b (pubk a)))
   (traces
@@ -746,7 +764,7 @@
   (non-orig (privk a) (privk b))
   (uniq-orig n1)
   (facts (rel2 x n2) (rel1 n1 n2) (rel2 n1 n2))
-  (rule rebind-x fact-init-rel11 fact-init-rel20)
+  (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc n1 n2 b (pubk a)))
       (send (enc n2 (pubk b)))))
@@ -764,6 +782,7 @@
   (non-orig (privk a) (privk b))
   (uniq-orig n1)
   (facts (rel2 x n2) (rel1 n1 n2) (rel2 n1 n2))
+  (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (added-strand resp 2) n1 (0 1)
     (enc n1 a (pubk b)))
   (traces
@@ -783,6 +802,7 @@
   (non-orig (privk a) (privk b))
   (uniq-orig n1)
   (facts (rel2 x n2) (rel1 n1 n2) (rel2 n1 n2))
+  (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (contracted (n2-0 n2)) n1 (0 1)
     (enc n1 a (pubk b)) (enc n1 n2 b (pubk a)))
   (traces
@@ -853,7 +873,7 @@
   (non-orig (privk a))
   (uniq-orig n2)
   (facts (rel2 x n2) (rel1 n1 n2) (rel2 n1 n2))
-  (rule rebind-x fact-init-rel11 fact-init-rel20)
+  (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (added-strand init 3) n2 (0 2)
     (enc n1 n2 b (pubk a)))
   (traces

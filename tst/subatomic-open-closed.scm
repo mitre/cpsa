@@ -131,10 +131,10 @@
   (vars (k skey) (d o name) (n text) (start-ch chan))
   (defstrand dev-pass 4 (k k))
   (facts (no-state-split)))
-
+	
 (defskeleton subatomic-open-closed
-  (vars (k skey) (d o name) (n text) (start-ch chan))
-  (defstrand owner-power-dev 2 (k k))
-  (defstrand dev-pass 4 (k k))
-  (uniq-orig k)
-  (facts (no-state-split)))
+	   (vars (k skey) (d o name) (n text) (start-ch chan))
+	   (defstrand owner-power-dev 2 (k k))
+	   (defstrand dev-pass 4 (k k))
+	   (uniq-orig k)
+	   (facts (no-state-split)))

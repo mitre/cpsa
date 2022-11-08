@@ -46,9 +46,9 @@
   (traces ((send (cat s t))))
   (label 2)
   (parent 0)
+  (seen 1)
   (realized)
-  (shape)
-  (maps ((0) ((s s) (t t))))
-  (origs))
+  (origs)
+  (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

@@ -706,8 +706,9 @@ preskelWellFormed k =
     where
       terms = kterms k
       vs = kvars k
-      f False _ = False
-      f True t = t `elem` vs 
+      f b t = b && t `elem` vs 
+--      f False _ = False
+--      f True t = t `elem` vs 
       nonCheck t = all (not . carriedBy t) terms
       uniqueCheck t = any (carriedBy t) terms
       uniqgenCheck t = any (constituent t) terms
@@ -1278,7 +1279,7 @@ ksubst (k0, k, n, phi, hsubst) (gen, subst) =
                (orderings k) non' pnon' unique' uniqgen'
                absent' (kprecur k) genStV' conf' auth' facts'
                (kpriority k) operation' (krules k) (pprob k) (prob k) (pov k)
-      k'' <- wellFormedPreskel k'
+      k'' <- wellFormedPreskel $ soothePreskel k'
       return (k0, k'', n, phi, compose subst hsubst)
 
 pairApp :: (a -> b) -> (a, a) -> (b, b)
@@ -1446,7 +1447,7 @@ soothePreskel k =
   (filter varCheck $ kuniqgen k)
   (filter absentCheck $ kabsent k)
   (kprecur k)
-  (filter carriedCheck $ kgenSt k)
+  (filter genStCheck $ kgenSt k)
   (filter chanCheck $ kconf k)
   (filter chanCheck $ kauth k)
   (kfacts k)
@@ -1457,11 +1458,15 @@ soothePreskel k =
   (prob k)
   (pov k)
   where
+    vs = kvars k
     terms = kterms k
+    f b t = b && t `elem` vs 
     varCheck t = varSubset [t] terms
     carriedCheck t = any (carriedBy t) terms
+    genStCheck t = foldVars f True t  
     chanCheck t = varSubset [t] $ kchans k
     absentCheck (x, y) = varSubset [x, y] $ kvars k
+
 
 -- This is the starting point of the Preskeleton Reduction System
 
@@ -1582,8 +1587,9 @@ addUniqOrigOrderings k orderings t =
           foldl f orderings (L.delete s (strandids k))
           where
             f orderings s =
-                -- JDG:  Was gainedPos:  usedPos seems more correct
-                case usedPos t (trace (strandInst k s)) of
+                -- JDG:  Was gainedPos:  usedPos seemed more correct
+                -- before further checking... 
+                case gainedPos t (trace (strandInst k s)) of
                   Nothing -> orderings
                   Just pos -> adjoin (n, (s, pos)) orderings
 
@@ -1603,7 +1609,7 @@ addUniqGenOrderings k orderings t =
           foldl f orderings (L.delete s (strandids k))
           where
             f orderings s =
-                -- JDG:  Was genGainedPos:  genGainedPos seems more correct
+                -- JDG:  Was genGainedPos:  usedPos seems more correct
                 case usedPos t (trace (strandInst k s)) of
                   Nothing -> orderings
                   Just pos -> adjoin (n, (s, pos)) orderings
@@ -2219,8 +2225,8 @@ separateVariablesLimit = 1024
 generalize :: Preskel -> [Candidate]
 generalize k = deleteTerminal k ++ 
                deleteNodes k ++
-               weakenOrderings k ++
                forgetAssumption k ++
+               weakenOrderings k ++
                take separateVariablesLimit (separateVariables k)
 
 -- terminal strand deletion 
@@ -2474,8 +2480,8 @@ weaken k p orderings =
 
 forgetAssumption :: Preskel -> [Candidate]
 forgetAssumption k =
-    forgetNonTerm k ++ forgetPnonTerm k ++
-    forgetUniqueTerm k ++ forgetUniqgenTerm k
+    forgetUniqueTerm k ++ forgetNonTerm k ++ forgetPnonTerm k ++
+    forgetUniqgenTerm k
 
 -- Non-originating terms
 
@@ -2515,12 +2521,13 @@ skelPnons k =
 
 forgetUniqueTerm :: Preskel -> [Candidate]
 forgetUniqueTerm k =
-    map (addIdentity . delUniq) (skelUniques k)
+    map (addIdentity . delUniq) (skelUniques k)            
     where
       delUniq t =
           renewPreskel
           $ k { kunique = L.delete t (kunique k),
-                operation = Generalized (Forgot t), krules = [] }
+                operation = Generalized (Forgot t),
+                krules = [] }
 
 skelUniques :: Preskel -> [Term]
 skelUniques k =
