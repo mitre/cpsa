@@ -427,7 +427,7 @@ loadFactTerm _ _  varmap (N pos z) =
     Just t -> return t
     Nothing -> fail $ shows pos ("cpsa4sas:  Bad strand in fact: " ++ show z)
 loadFactTerm sig vars _ x =
-  loadTerm sig vars True x
+  loadTerm sig vars False x
 
 -- Homomorphisms
 
