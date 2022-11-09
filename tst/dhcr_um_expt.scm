@@ -129,6 +129,7 @@
 	(body (tuple 3))
 	(pv (tuple 2)))) 
 
+
 ; Initiator point of view: both LTX exponents secret
 (defskeleton dhcr-um
   (vars (a b name) (la l-peer rndx) (beta expt))
@@ -170,7 +171,7 @@
 	 ;;	 (undisclosed la)
 	 ))
 
-(comment 
+
 (defskeleton dhcr-um
   (vars (a b name) (la lb rndx) (alpha beta expt))
   (defstrand resp 5 (a a) (b b) (lb lb) (alpha alpha))
@@ -178,7 +179,7 @@
   (non-orig (privk "sig" a) (privk "sig" b))
   (facts (neq a b)
 	 (undisclosed la)
-	 (undisclosed lb))))
+	 (undisclosed lb)))
 
 ; Responder point of view: both exponents secret
 (defskeleton dhcr-um
@@ -221,7 +222,7 @@
 	 ;;	 (undisclosed lb)
 	 ))
 
-(comment 
+(comment
 ;;; Initiator point of view: partner's exponent secret
 (defskeleton dhcr-um
   (vars (ltxa ltxb rndx) (a b name))
@@ -258,12 +259,12 @@
    (neq (a b)))
 
 ;;; Forward secrecy, neither long-term exponent secure
- (defskeleton dhcr-um
-   (vars (ltxa ltxb x rndx) (y expt) (a b name))
-   (defstrand init 4 (ltxa ltxa) (ltxb ltxb) (x x) (y y) (a a) (b b))
-   (deflistener (exp (gen) (mul x y)))
-   (defstrand ltx-gen 3 (l ltxa))
-   (defstrand ltx-gen 3 (l ltxb))
-   (precedes ((0 3) (3 1)) ((0 3) (2 1)))
-   (neq (a b)))
- )
+(defskeleton dhcr-um
+  (vars (ltxa ltxb x rndx) (y expt) (a b name))
+  (defstrand init 4 (ltxa ltxa) (ltxb ltxb) (x x) (y y) (a a) (b b))
+  (deflistener (exp (gen) (mul x y)))
+  (defstrand ltx-gen 3 (l ltxa))
+  (defstrand ltx-gen 3 (l ltxb))
+  (precedes ((0 3) (3 1)) ((0 3) (2 1)))
+  (neq (a b)))
+) 

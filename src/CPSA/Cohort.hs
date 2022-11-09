@@ -23,7 +23,8 @@ import System.IO.Unsafe
 z :: Show a => a -> b -> b
 z x y = unsafePerformIO (print x >> return y)
 
-zShow :: Show a => a -> a
+
+  zShow :: Show a => a -> a
 zShow x = z (show x) x
 
 zz :: Show a => a -> a
@@ -765,11 +766,11 @@ maximize k =
 
 specialization :: Preskel -> Preskel -> [Sid] -> [Preskel]
 specialization k k' mapping 
-    | not (preskelWellFormed k') = []  -- z (showSome k') 
+    | not (preskelWellFormed k') = []     --  (showSome k' [] )
     | otherwise =        
         do
           k'' <- toSkeleton useThinningDuringGeneralization k'
-          -- (showSome k'') inside *realized* to debug
+          -- (showSome k'' k'') inside *realized* to debug
           case (realized k'') &&  (not (isomorphic (gist k) (gist k''))) &&
                (refines k'' (pov k'') (prob k'')) &&
                (refines k (Just k'') mapping) of
@@ -782,16 +783,17 @@ specialization k k' mapping
           refines k (Just k') mapping =
               not $ null $ homomorphism k' k mapping
 
-{--          showSome k'' =
-              if (14 == L.length (insts k)) && (1+L.length (insts k'') == L.length (insts k))
+{--  Debugging apparatus:  
+          showSome k'' v =
+              if (5 == L.length (insts k)) && (1+L.length (insts k'') == L.length (insts k))
               then 
                   (z
                    ("length: " ++ (show (L.length (insts k''))) ++
                     ", unrealized: " ++ (show (unrealized k'')) ++
                     ", prev nodes: " ++ (show (addSendingBefore S.empty (vertex k'' (0,0)))) ++ 
-                    ", after: " ++ (show
-                                    (cmsInNodes
-                                     (addSendingBefore S.empty (vertex k'' (0,0))))) ++ 
+--                       ", after: " ++ (show
+--                                       (cmsInNodes
+--                                        (addSendingBefore S.empty (vertex k'' (0,0))))) ++ 
                     ", prob: " ++ (show (prob k'')) ++
                     ", POV OK: " ++ (show (refines k'' (pov k'') (prob k''))) ++
                     ", refines: " ++ (show (refines k (Just k'') mapping)) ++
@@ -799,10 +801,10 @@ specialization k k' mapping
                     (show ((realized k'') &&  (not (isomorphic (gist k) (gist k''))) &&
                            (refines k'' (pov k'') (prob k'')) &&
                            (refines k (Just k'') mapping))))
-                   k'')
-              else k''
+                   v)
+              else v
 
-          maybeOK x = if (12 < L.length (insts k)) then z "OK" x else x 
+--          maybeOK x = if (12 < L.length (insts k)) then z "OK" x else x 
 --}
           
                   

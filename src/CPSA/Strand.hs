@@ -36,6 +36,7 @@ import CPSA.Channel
 import CPSA.Protocol
 
 {--
+
 import System.IO.Unsafe
 import Control.Exception (try)
 import System.IO.Error (ioeGetErrorString)
@@ -123,6 +124,10 @@ useStrongPruning = True -- False
 -- Check terms in preskeletons, should be off by default
 useWellFormedTerms :: Bool
 useWellFormedTerms = False -- True
+
+-- Don't do variable separation if False
+useVariableSeparation :: Bool
+useVariableSeparation = True -- False 
 
 -- Instances and Strand Identifiers
 
@@ -849,6 +854,7 @@ ichans :: [Instance] -> [Term]
 ichans insts =
   L.nub $ M.catMaybes [evtChan evt | i <- insts, evt <- trace i]
 
+
 -- The node orderings form an acyclic order if there are no cycles.
 -- Use depth first search to detect cycles.  A graph with no node with
 -- an indegree of zero is cyclic and must not be checked with depth
@@ -1242,7 +1248,7 @@ gist = kgist
 -- Preskeleton Reduction System (PRS)
 
 -- The PRS reduces a preskeleton to a list of skeletons.  Along the way,
--- it applies the associtated homomorphism to a node and computes a
+-- it applies the associated homomorphism to a node and computes a
 -- substitution.  Thus if skel (k, n, empty) = [(k', n', sigma)], then
 -- phi,sigma is a homomorphism from k to k', n' = phi(n).
 
@@ -2142,34 +2148,48 @@ addAbsence k n cause x t =
 
 homomorphism :: Preskel -> Preskel -> [Sid] -> [Env]
 homomorphism k k' mapping =
-    case findReplacement k k' mapping of
-      [] -> [] -- maybeShow
-      _ -> (do
-             (_, env) <- findReplacement k k' mapping -- maybeShow $ 
-             case validateEnv k k' mapping env of
-               True -> [env]
-               False -> [])
-    where
---         maybeShow x = if (12 < L.length (insts k') &&
---                           1 < L.length (trace ((insts k') !! 0)))
---                       then (zP ((show (trace ((insts k') !! 0))) ++
---                                 " should match pattern " ++ 
---                                 (show (trace ((insts k) !! 0))) ++
---                                " mapping " ++ (show mapping))
---                             x)
---                       else x 
+    do
+      (_, env) <- findReplacement k k' mapping 
+      case validateEnv k k' mapping env of
+        True -> [env]
+        False -> []
+
+
+{--     filter (validateEnv k k mapping) 
+               $ map snd
+                     $ findReplacement k k' mapping
+                     --}
+                 
+{--  where
+         maybeShow x = if (5 == L.length (insts k') &&
+                           4 == L.length (insts k))
+                       then (zP "validateEnv failed"
+                             x)
+                       else x
+                       --}
+
+                            {--
+                                ((show (trace ((insts k') !! 0))) ++
+                                 " should match pattern " ++ 
+                                 (show (trace ((insts k) !! 0))) ++
+                                " mapping " ++ (show mapping))
+                            --}
 
 
 findReplacement :: Preskel -> Preskel -> [Sid] -> [(Gen, Env)]
 findReplacement k k' mapping =
     if (L.length mapping) == (L.length (insts k))
-    then
-        (let gg = gmerge (gen k) (gen k') in
-         foldM (matchStrand k k' mapping) (gg, emptyEnv) (strandids k)) 
-    else
-        -- [] 
-        error ("Yarg! JDR " ++ (show (L.length mapping)) ++ " vs " ++
-               (show (L.length (insts k))))
+    then let v = (let gg = gmerge (gen k) (gen k') in
+                  foldM (matchStrand k k' mapping) (gg, emptyEnv) (strandids k))  in
+         v
+--            if (5 == L.length (insts k') &&
+--                4 == L.length (insts k))
+--            then 
+--                zP (show (L.length v)) v
+--            else v
+    else [] 
+        -- error ("Yarg! JDR " ++ (show (L.length mapping)) ++ " vs " ++
+        --       (show (L.length (insts k))))
             
 
 matchStrand :: Preskel -> Preskel -> [Sid] -> (Gen, Env) -> Sid -> [(Gen, Env)]
@@ -2185,15 +2205,28 @@ validateEnv k k' mapping env =
     all (flip elem (kunique k')) (map (instantiate env) (kunique k)) &&
     all (flip elem (kuniqgen k')) (map (instantiate env) (kuniqgen k)) &&
     all (flip elem (kabsent k')) (map (instantiatePair env) (kabsent k)) &&
-    --    all (flip elem (kprecur k')) (map (permuteNode mapping) (kprecur k)) &&
+     --    all (flip elem (kprecur k')) (map (permuteNode mapping) (kprecur k)) &&
     all (flip elem (kfacts k'))
-        (map (instUpdateFact env (mapping !!)) (kfacts k)) &&
+            (map (instUpdateFact env (mapping !!)) (kfacts k)) &&
     all (flip elem (kgenSt k')) (map (instantiate env) (kgenSt k)) &&
     validateEnvOrig k k' mapping env &&
     all (flip elem (tc k')) (permuteOrderings mapping (orderings k))
     where
       instantiatePair env (t1, t2) =
         (instantiate env t1, instantiate env t2)
+
+{-- Degugging apparatus: 
+      allShowingFailingIndex _ [] = True
+      allShowingFailingIndex i (True : rest) = allShowingFailingIndex (i+1) rest
+      allShowingFailingIndex i (False : _) =
+          if (5 == L.length (insts k') &&
+              4 == L.length (insts k))
+          then
+              zP (show i ++ " failed this time")
+              False
+          else
+              False
+              --}
 
 validateEnvOrig :: Preskel -> Preskel -> [Sid] -> Env -> Bool
 validateEnvOrig k k' mapping env =
@@ -2227,7 +2260,9 @@ generalize k = deleteTerminal k ++
                deleteNodes k ++
                forgetAssumption k ++
                weakenOrderings k ++
-               take separateVariablesLimit (separateVariables k)
+               (if useVariableSeparation
+                then take separateVariablesLimit (separateVariables k)
+                else [])
 
 -- terminal strand deletion 
 
@@ -2258,8 +2293,10 @@ deleteTerminal k =
                  strandTerminal k s]
       report [] = []
       report ((k', mapping, _) : rest) = (k',mapping) : report rest
-{--
-  (zP
+
+
+ {-- debugging apparatus:
+   (zP
            ("dT: strand " ++ (show s) ++ " insts: " ++ (show (L.length (insts k'))) ++
             " prob: " ++ (show (prob k')))
            (k',mapping)) : report rest
@@ -2368,16 +2405,21 @@ deleteNodeRest k gen n insts' orderings prob facts =
       non' = filter mentionedIn (knon k)
       pnon' = filter mentionedIn (kpnon k)
       mentionedIn t = varSubset [t] terms
+
       terms = iterms insts'
       vs = instVars insts'
       f False _ = False
-      f True t = t `elem` vs 
+      f True t = t `elem` vs
+
+      lostgen (s,i) t = case generationPos t (trace ((insts k) !! s)) of
+                          Nothing -> False
+                          Just pos -> i <= pos 
 
       -- Drop uniques that aren't carried anywhere
       unique' = filter carriedIn (kunique k)
       carriedIn t = any (carriedBy t) terms
-      uniqgen' = filter mentionedIn (kuniqgen k)
-      absent' = filter (\(x, y) -> mentionedIn x && mentionedIn y) (kabsent k)
+      uniqgen' = filter (not . (lostgen n)) (kuniqgen k)
+      absent' = filter (\(x, y) -> not (lostgen n x) && mentionedIn x && mentionedIn y) (kabsent k)
       precur' = map (updateNode (fst n) (fst n)) $ L.delete n (kprecur k)
       -- Drop channel assumptions for non-existent channels
       chans = ichans insts'
@@ -3943,7 +3985,6 @@ rewrite k =
           case tryRule k r of
             [] -> subiter k rs
             vas ->
-                -- zP ("." ++ (rlname r))
                 (Just (concatMap (\k' -> maybe [k'] id
                                         $ subiter k' rs)
                      $ nullUnaryThrough
