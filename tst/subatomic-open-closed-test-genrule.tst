@@ -349,8 +349,7 @@
   (uniq-orig k)
   (conf start-ch)
   (auth start-ch)
-  (facts (trans 2 4) (trans 2 2) (same-dev ls lk) (trans 2 3)
-    (trans 2 1) (no-state-split))
+  (facts (same-dev ls lk) (no-state-split))
   (rule eff-dev-up-3 fact-dev-up-same-dev0 trRl_dev-up-at-1
     trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation nonce-test (added-strand dev-up 4) k (1 0)
@@ -710,8 +709,7 @@
   (uniq-orig n)
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (auth start-ch)
-  (facts (trans 1 4) (trans 1 2) (same-dev ls lk) (trans 1 3)
-    (trans 1 1) (no-state-split))
+  (facts (same-dev ls lk) (no-state-split))
   (rule cau-dev-pass-1 eff-dev-up-3 fact-dev-pass-same-dev0
     fact-dev-up-same-dev0 same-dev-lk-ls trRl_dev-up-at-1
     trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
@@ -740,8 +738,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 1 4) (trans 1 3) (trans 1 2)
-    (trans 1 1) (no-state-split))
+  (facts (same-dev ls lk) (no-state-split))
   (rule fact-dev-pass-same-dev0 trRl_dev-up-at-1 trRl_dev-up-at-2
     trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation channel-test (added-strand owner-power-dev 1)
@@ -774,8 +771,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k) (cat "st-k" d o k-0))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 1 4) (trans 1 3) (trans 1 2)
-    (trans 1 1) (trans 3 3) (trans 3 1) (no-state-split))
+  (facts (same-dev ls lk) (no-state-split))
   (rule cau-dev-open-2 cau-dev-pass-1 fact-dev-open-same-dev0
     fact-dev-pass-same-dev0 gen-st-dev-open-1 invShearsRule
     same-dev-ls-lk trRl_dev-open-at-1 trRl_dev-open-at-3
@@ -812,8 +808,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 1 4) (trans 1 3) (trans 1 2)
-    (trans 1 1) (trans 3 3) (trans 3 1) (no-state-split))
+  (facts (same-dev ls lk) (no-state-split))
   (rule fact-dev-pass-same-dev0 trRl_dev-open-at-1 trRl_dev-open-at-3
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation channel-test (displaced 4 1 dev-up 4)
@@ -831,8 +826,7 @@
   (parent 7)
   (realized)
   (shape)
-  (maps
-    ((0) ((k k) (n n) (d d) (o o) (lk lk) (ls ls) (pt pt-2) (pt-0 pt))))
+  (maps ((0) ((k k) (n n) (d d) (o o) (lk lk) (ls ls))))
   (origs (pt-2 (1 3)) (pt (3 3)) (pt-3 (1 4)) (n (0 3))))
 
 (comment "Nothing left to do")
@@ -1211,8 +1205,7 @@
   (gen-st (cat "st" d-0 o-0 o-0) (cat "st-k" d-0 o-0 k))
   (conf start-ch)
   (auth start-ch-0)
-  (facts (trans 2 4) (trans 2 2) (same-dev ls lk) (trans 2 3)
-    (trans 2 1) (no-state-split))
+  (facts (same-dev ls lk) (no-state-split))
   (rule cau-dev-pass-1 eff-dev-up-3 fact-dev-pass-same-dev0
     fact-dev-up-same-dev0 same-dev-lk-ls trRl_dev-up-at-1
     trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
@@ -1243,8 +1236,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 2 4) (trans 2 3) (trans 2 2)
-    (trans 2 1) (no-state-split))
+  (facts (same-dev ls lk) (no-state-split))
   (rule fact-dev-pass-same-dev0 trRl_dev-up-at-1 trRl_dev-up-at-2
     trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation channel-test (displaced 3 0 owner-power-dev 1)
@@ -1276,8 +1268,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k) (cat "st-k" d o k-0))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 2 4) (trans 2 3) (trans 2 2)
-    (trans 2 1) (trans 3 3) (trans 3 1) (no-state-split))
+  (facts (same-dev ls lk) (no-state-split))
   (rule cau-dev-open-2 cau-dev-pass-1 fact-dev-open-same-dev0
     fact-dev-pass-same-dev0 gen-st-dev-open-1 invShearsRule
     same-dev-ls-lk trRl_dev-open-at-1 trRl_dev-open-at-3
@@ -1313,8 +1304,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 2 4) (trans 2 3) (trans 2 2)
-    (trans 2 1) (trans 3 3) (trans 3 1) (no-state-split))
+  (facts (same-dev ls lk) (no-state-split))
   (rule fact-dev-pass-same-dev0 trRl_dev-open-at-1 trRl_dev-open-at-3
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation channel-test (displaced 4 2 dev-up 4)
@@ -1347,8 +1337,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 2 4) (trans 2 3) (trans 2 2)
-    (trans 2 1) (trans 3 3) (trans 3 1) (no-state-split))
+  (facts (same-dev ls lk) (no-state-split))
   (rule fact-dev-pass-same-dev0 trRl_dev-open-at-1 trRl_dev-open-at-3
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (added-strand owner-open 1)
@@ -1383,8 +1372,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 2 4) (trans 2 3) (trans 2 2)
-    (trans 2 1) (trans 3 3) (trans 3 1) (no-state-split))
+  (facts (same-dev ls lk) (no-state-split))
   (rule fact-dev-pass-same-dev0 trRl_dev-open-at-1 trRl_dev-open-at-3
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (added-listener k) (enc "open" d o n-0 k)
@@ -1421,8 +1409,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 2 4) (trans 2 3) (trans 2 2)
-    (trans 2 1) (trans 3 3) (trans 3 1) (no-state-split))
+  (facts (same-dev ls lk) (no-state-split))
   (rule fact-dev-pass-same-dev0 trRl_dev-open-at-1 trRl_dev-open-at-3
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (added-strand user-pass 1)
@@ -1459,8 +1446,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 2 4) (trans 2 3) (trans 2 2)
-    (trans 2 1) (trans 3 3) (trans 3 1) (no-state-split))
+  (facts (same-dev ls lk) (no-state-split))
   (rule fact-dev-pass-same-dev0 trRl_dev-open-at-1 trRl_dev-open-at-3
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (added-listener k) (enc "may I pass" k)
@@ -1495,8 +1481,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 2 4) (trans 2 3) (trans 2 2)
-    (trans 2 1) (trans 3 3) (trans 3 1) (no-state-split))
+  (facts (same-dev ls lk) (no-state-split))
   (rule eff-dev-up-3 fact-dev-pass-same-dev0 trRl_dev-open-at-1
     trRl_dev-open-at-3 trRl_dev-up-at-1 trRl_dev-up-at-2
     trRl_dev-up-at-3 trRl_dev-up-at-4)
@@ -1534,8 +1519,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 5 4) (trans 5 3) (trans 5 2)
-    (trans 5 1) (trans 2 3) (trans 2 1) (no-state-split))
+  (facts (same-dev ls lk) (no-state-split))
   (rule fact-dev-pass-same-dev0 trRl_dev-open-at-1 trRl_dev-open-at-3
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (displaced 2 6 dev-up 6) (enc "up" k)
@@ -1556,7 +1540,7 @@
   (maps
     ((0 1)
       ((k k) (d d) (o o) (start-ch start-ch) (n n) (d-0 d) (o-0 o)
-        (lk lk) (ls ls) (pt pt-3) (pt-0 pt))))
+        (lk lk) (ls ls))))
   (origs (pt-3 (5 3)) (pt-4 (5 4)) (pt (2 3)) (n (1 3)) (k (0 0))))
 
 (defskeleton subatomic-open-closed
@@ -1577,8 +1561,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 2 4) (trans 2 3) (trans 2 2)
-    (trans 2 1) (trans 3 3) (trans 3 1) (no-state-split))
+  (facts (same-dev ls lk) (no-state-split))
   (rule fact-dev-pass-same-dev0 trRl_dev-open-at-1 trRl_dev-open-at-3
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (added-listener k) (enc "up" k) (0 1))
@@ -1615,8 +1598,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 2 4) (trans 2 3) (trans 2 2)
-    (trans 2 1) (trans 3 3) (trans 3 1) (no-state-split))
+  (facts (same-dev ls lk) (no-state-split))
   (rule eff-dev-up-3 fact-dev-pass-same-dev0 trRl_dev-open-at-1
     trRl_dev-open-at-3 trRl_dev-up-at-1 trRl_dev-up-at-2
     trRl_dev-up-at-3 trRl_dev-up-at-4)
@@ -1655,8 +1637,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 2 4) (trans 2 3) (trans 2 2)
-    (trans 2 1) (trans 3 3) (trans 3 1) (no-state-split))
+  (facts (same-dev ls lk) (no-state-split))
   (rule eff-dev-up-3 fact-dev-pass-same-dev0 trRl_dev-open-at-1
     trRl_dev-open-at-3 trRl_dev-up-at-1 trRl_dev-up-at-2
     trRl_dev-up-at-3 trRl_dev-up-at-4)

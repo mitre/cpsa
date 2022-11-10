@@ -317,6 +317,8 @@ lookupRole pos prot role =
           fail (shows pos $ "Role " ++ role ++ " not found in " ++ pname prot)
       Just r -> return r
 
+
+
 loadMaplet :: MonadFail m => Sig -> [Term] -> [Term] ->
               SExpr Pos -> m (Term, Term)
 loadMaplet sig kvars vars (L _ [domain, range]) =
@@ -601,7 +603,7 @@ mapSkel env pov k =
       nons = map (instantiate env) (nons k),
       pnons = map (instantiate env) (pnons k),
       uniqs = map (instantiate env) (uniqs k),
-      origs = mapOrig (instantiate env) (origs k),
+      origs = mapOrig (instantiate env) (sansPtOrigs (origs k)),
       auths = map (instantiate env) (auths k),
       confs = map (instantiate env) (confs k),
       facts = mapFact (instantiate env) (facts k),
@@ -637,6 +639,7 @@ sansPts = filter notPt
 
 sansPtOrigs :: [(Term, (Term, Int))] -> [(Term, (Term, Int))]
 sansPtOrigs = filter (\(pt, _) -> notPt pt)
+
 
 -- Convert one skeleton into a declaration and a conjunction.  The
 -- declaration is used as the bound variables in a quantifier.  The

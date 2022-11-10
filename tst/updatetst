@@ -4,6 +4,7 @@ for f in *.scm
 do
   if test -f "$f"
   then
+    echo "$f"
     b=`basename $f .scm`
     mv "$b.txt" "$b.tst"
   fi

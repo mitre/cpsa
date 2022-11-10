@@ -546,8 +546,9 @@ maps k =
           case pov k of
             Nothing -> []
             Just k' ->
-                map (displayEnv (ctx k') (ctx k)) (homomorphism k' k (prob k))
+                map (displayEnvSansPts vars (ctx k') (ctx k)) (homomorphism k' k (prob k))
       ctx k = addToContext emptyContext (kvars k)
+      vars = kvars k
 
 -- Prints the nodes of origination for each uniquely originating atom
 origs :: Preskel -> [SExpr ()]

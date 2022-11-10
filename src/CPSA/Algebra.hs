@@ -191,7 +191,7 @@ module CPSA.Algebra (name, alias,
     displayTerm,
     displayTermNoPt,
     notPt,
-    displayEnv,
+    displayEnv, displayEnvSansPts, 
     displaySubst,
     varListSpecOfVars) where
 
@@ -2777,6 +2777,14 @@ displayEnv ctx ctx' (Env (_, r)) =
     map (\(x, t) -> L () [displayTerm ctx x, displayTerm ctx'' t]) r'
     where
       r' = map (\(x, t) -> (I x, inferSort t)) $ M.assocs r
+      ctx'' = addToContext ctx' (map snd r')
+
+displayEnvSansPts :: [Term] -> Context -> Context -> Env -> [SExpr ()]
+displayEnvSansPts vars ctx ctx' (Env (_, r)) =
+    map (\(x, t) -> L () [displayTerm ctx x, displayTerm ctx'' t]) r'
+    where
+      nonPt x = not (F Pval [x] `elem` vars) 
+      r' = map (\(x, t) -> (I x, inferSort t)) $ M.assocs $ M.filter nonPt r
       ctx'' = addToContext ctx' (map snd r')
 
 -- displaySubst c s displays a substitution s in context c, where some

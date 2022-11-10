@@ -301,8 +301,7 @@
   (uniq-orig k)
   (conf start-ch)
   (auth start-ch)
-  (facts (trans 2 4) (trans 2 3) (same-dev ls lk) (trans 2 2)
-    (trans 2 1))
+  (facts (same-dev ls lk))
   (rule dev-up-atomic2 dev-up-completes intro-same-dev-up
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation nonce-test (added-strand dev-up 3) k (1 0)
@@ -615,8 +614,7 @@
   (uniq-orig n)
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (auth start-ch)
-  (facts (trans 1 4) (trans 1 3) (same-dev ls lk) (trans 1 2)
-    (trans 1 1))
+  (facts (same-dev ls lk))
   (rule atomic-up-pass dev-up-completes intro-same-dev-pass
     intro-same-dev-up same-dev-lk-ls trRl_dev-up-at-1 trRl_dev-up-at-2
     trRl_dev-up-at-3 trRl_dev-up-at-4)
@@ -645,8 +643,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 1 4) (trans 1 3) (trans 1 2)
-    (trans 1 1))
+  (facts (same-dev ls lk))
   (rule intro-same-dev-pass trRl_dev-up-at-1 trRl_dev-up-at-2
     trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation channel-test (added-strand owner-power-dev 1)
@@ -678,8 +675,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k) (cat "st-k" d o k-0))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 1 4) (trans 1 3) (trans 1 2)
-    (trans 1 1) (trans 3 3) (trans 3 2))
+  (facts (same-dev ls lk))
   (rule cau-dev-pass-2 dev-open-atomic1 gen-state-open
     intro-same-dev-open intro-same-dev-pass invShearsRule same-dev-ls-lk
     trRl_dev-open-at-2 trRl_dev-open-at-3 trRl_dev-up-at-1
@@ -715,8 +711,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 1 4) (trans 1 3) (trans 1 2)
-    (trans 1 1) (trans 3 3) (trans 3 2))
+  (facts (same-dev ls lk))
   (rule intro-same-dev-pass trRl_dev-open-at-2 trRl_dev-open-at-3
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation channel-test (displaced 4 1 dev-up 3)
@@ -734,8 +729,7 @@
   (parent 7)
   (realized)
   (shape)
-  (maps
-    ((0) ((k k) (n n) (d d) (o o) (lk lk) (ls ls) (pt pt-1) (pt-0 pt))))
+  (maps ((0) ((k k) (n n) (d d) (o o) (lk lk) (ls ls))))
   (origs (pt-1 (1 2)) (pt (3 3)) (pt-3 (1 4)) (n (0 3))))
 
 (comment "Nothing left to do")
@@ -1114,8 +1108,7 @@
   (gen-st (cat "st" d-0 o-0 o-0) (cat "st-k" d-0 o-0 k))
   (conf start-ch)
   (auth start-ch-0)
-  (facts (trans 3 4) (trans 3 3) (same-dev ls lk) (trans 3 2)
-    (trans 3 1))
+  (facts (same-dev ls lk))
   (rule atomic-up-pass dev-up-completes intro-same-dev-pass
     intro-same-dev-up same-dev-lk-ls trRl_dev-up-at-1 trRl_dev-up-at-2
     trRl_dev-up-at-3 trRl_dev-up-at-4)
@@ -1148,8 +1141,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (trans 3 4) (trans 3 3) (same-dev ls-0 lk-0) (same-dev ls lk)
-    (trans 3 2) (trans 3 1))
+  (facts (same-dev ls-0 lk-0) (same-dev ls lk))
   (rule dev-up-atomic2 dev-up-completes intro-same-dev-pass
     intro-same-dev-up trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3
     trRl_dev-up-at-4)
@@ -1182,8 +1174,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 3 4) (trans 3 3) (trans 3 2)
-    (trans 3 1))
+  (facts (same-dev ls lk))
   (rule intro-same-dev-pass trRl_dev-up-at-1 trRl_dev-up-at-2
     trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation channel-test (displaced 4 0 owner-power-dev 1)
@@ -1216,8 +1207,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k) (cat "st-k" d o k-0))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 3 4) (trans 3 3) (trans 3 2)
-    (trans 3 1) (trans 4 3) (trans 4 2))
+  (facts (same-dev ls lk))
   (rule cau-dev-pass-2 dev-open-atomic1 gen-state-open
     intro-same-dev-open intro-same-dev-pass invShearsRule same-dev-ls-lk
     trRl_dev-open-at-2 trRl_dev-open-at-3 trRl_dev-up-at-1
@@ -1254,8 +1244,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 3 4) (trans 3 3) (trans 3 2)
-    (trans 3 1) (trans 4 3) (trans 4 2))
+  (facts (same-dev ls lk))
   (rule intro-same-dev-pass trRl_dev-open-at-2 trRl_dev-open-at-3
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation channel-test (displaced 5 3 dev-up 3)
@@ -1291,8 +1280,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 3 4) (trans 3 3) (trans 3 2)
-    (trans 3 1) (trans 4 3) (trans 4 2))
+  (facts (same-dev ls lk))
   (rule intro-same-dev-pass trRl_dev-open-at-2 trRl_dev-open-at-3
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (added-strand owner-open 1)
@@ -1330,8 +1318,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 3 4) (trans 3 3) (trans 3 2)
-    (trans 3 1) (trans 4 3) (trans 4 2))
+  (facts (same-dev ls lk))
   (rule intro-same-dev-pass trRl_dev-open-at-2 trRl_dev-open-at-3
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (added-listener k) (enc "open" d o n-0 k)
@@ -1369,8 +1356,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 5 4) (trans 5 3) (trans 5 2)
-    (trans 5 1) (trans 3 3) (trans 3 2))
+  (facts (same-dev ls lk))
   (rule intro-same-dev-pass trRl_dev-open-at-2 trRl_dev-open-at-3
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (displaced 3 6 dev-up 6) (enc "up" k)
@@ -1392,7 +1378,7 @@
   (maps
     ((0 1)
       ((k k) (d d) (o o) (start-ch start-ch) (n n) (d-0 d) (o-0 o)
-        (lk lk) (ls ls) (pt pt-2) (pt-0 pt))))
+        (lk lk) (ls ls))))
   (origs (pt-2 (5 2)) (pt-4 (5 4)) (pt (3 3)) (n (1 3)) (k (0 0))))
 
 (defskeleton atomic-open-closed
@@ -1413,8 +1399,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 3 4) (trans 3 3) (trans 3 2)
-    (trans 3 1) (trans 4 3) (trans 4 2))
+  (facts (same-dev ls lk))
   (rule intro-same-dev-pass trRl_dev-open-at-2 trRl_dev-open-at-3
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (added-listener k) (enc "up" k) (0 1))
@@ -1451,8 +1436,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 3 4) (trans 3 3) (trans 3 2)
-    (trans 3 1) (trans 4 3) (trans 4 2))
+  (facts (same-dev ls lk))
   (rule dev-up-atomic2 intro-same-dev-pass trRl_dev-open-at-2
     trRl_dev-open-at-3 trRl_dev-up-at-1 trRl_dev-up-at-2
     trRl_dev-up-at-3 trRl_dev-up-at-4)
@@ -1492,8 +1476,7 @@
   (gen-st (cat "st" d o o) (cat "st-k" d o k))
   (conf start-ch)
   (auth start-ch)
-  (facts (same-dev ls lk) (trans 3 4) (trans 3 3) (trans 3 2)
-    (trans 3 1) (trans 4 3) (trans 4 2))
+  (facts (same-dev ls lk))
   (rule dev-up-atomic2 intro-same-dev-pass trRl_dev-open-at-2
     trRl_dev-open-at-3 trRl_dev-up-at-1 trRl_dev-up-at-2
     trRl_dev-up-at-3 trRl_dev-up-at-4)
