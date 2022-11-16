@@ -850,7 +850,7 @@ loadInsts sig top p kvars gen insts xs =
       _ <- alist [] xs          -- Check syntax of xs
       (gen, gs) <- loadGoals sig top p gen goals
       loadRest sig top kvars p gen gs (reverse insts)
-        order nr ar ur ug ab pr cn au fs pl genSts kcomment
+        order nr ar ur ug ab pr cn au fs pl leads genSts kcomment
     where
       order = assoc "precedes" xs
       nr = assoc "non-orig" xs
@@ -863,6 +863,7 @@ loadInsts sig top p kvars gen insts xs =
       au = assoc "auth" xs
       fs = assoc "facts" xs
       pl = assoc "priority" xs
+      leads = assoc "leads-to" xs
       goals = assoc "goals" xs
       genSts = assoc "gen-st" xs
       kcomment =
@@ -910,9 +911,9 @@ loadRest :: MonadFail m => Sig -> Pos -> [Term] -> Prot -> Gen -> [Goal] ->
             [Instance] -> [SExpr Pos] -> [SExpr Pos] -> [SExpr Pos] ->
             [SExpr Pos] -> [SExpr Pos] -> [SExpr Pos] ->
             [SExpr Pos] -> [SExpr Pos] -> [SExpr Pos] ->
-            [SExpr Pos] -> [SExpr Pos] -> [SExpr Pos] -> [SExpr ()] -> m Preskel
+            [SExpr Pos] -> [SExpr Pos] -> [SExpr Pos] -> [SExpr Pos] -> [SExpr ()] -> m Preskel
 loadRest sig pos vars p gen gs insts orderings
-         nr ar ur ug ab pr cn au fs pl genSts comment =
+         nr ar ur ug ab pr cn au fs pl leads genSts comment =
     do
       case null insts of
         True -> fail (shows pos "No strands")
@@ -928,6 +929,7 @@ loadRest sig pos vars p gen gs insts orderings
       cn <- loadBaseTerms sig vars cn
       au <- loadBaseTerms sig vars au
       fs <- mapM (loadFact sig heights vars) fs
+      lds <- loadOrderings heights leads
       genSts <- loadTerms sig vars genSts
       let (nr', ar', ur', ug', ab', cn', au') =
             foldl addInstOrigs (nr, ar, ur, ug, ab, cn, au) insts
@@ -942,7 +944,8 @@ loadRest sig pos vars p gen gs insts orderings
         False -> fail (shows pos "Bad channel in role")
         True -> return ()
       case verbosePreskelWellFormed k of
-        Return () -> return k
+        Return () -> return
+                     $ applyLeadsTo k lds 
         Fail msg -> fail $ shows pos
                     $ showString "Skeleton not well formed: " msg
 

@@ -68,64 +68,7 @@ type Existor = Conjunctor
                                         -- in to yield a conjunctor
 
 
-{-- 
-existorOfVarnamesAndConj :: Gen -> [String] -> [String] -> [Conj] -> Existor
-existorOfVarnamesAndConj gen eVarNames uVarNames conj evars uvars = 
-
-    instantiateConj uenv $ instantiateConj eenv conj 
-
-    where
-      
-      varOfName _ _ [] = Nothing
-      varOfName n avoid (c : conjuncts)
-          | n `elem` avoid = Nothing
-          | otherwise =
-              let vars = aFreeVars [] c in
-              case filter (\v -> varName v == n) vars of
-                [] -> varOfName n avoid conjuncts
-                (v : _) -> Just v 
-
-      envNamesVars g names vars avoid =
-          foldrTwo
-          (\n v ges ->
-               case varOfName n avoid conj of
-                 Nothing -> ges
-                 Just vn -> concatMap (match p v) ges)
-          [(g,emptyEnv)]
-          names
-          vars 
-    
-      (g1,eenv) =
-          case envNamesVars gen eVarNames evars [] of
-            [] -> (gen,emptyEnv)
-            (g1,eenv) : _ ->  (g1,eenv)
-
-      (_,uenv) =
-          case envNamesVars g1 uVarNames uvars eVarNames of
-            [] -> (gen,emptyEnv)
-            (_,uenv) : _ -> (_,uenv)
---} 
-
-
-    
-
-    
-{-- 
-loadFactList :: MonadFail m => Sig -> [Term] ->
-                [SExpr Pos] -> m [(String, [Term])]
-loadFactList sig vars =
-    mapM (loadAFact sig vars)
-
-loadAFact :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m (String, [Term])
-loadAFact sig vars (L _ (S _ name : fs)) =
-    do
-      fs <- mapM (loadTerm sig vars False) fs
-      return $ (name, fs)
-loadAFact _ _ x = fail (shows (annotation x) "Malformed fact")
---}
-                  
-
-
+ 
 
 ruleOfClauses :: Sig -> Gen -> String ->
                  VarListSpec -> Conjunctor ->

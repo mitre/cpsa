@@ -21,7 +21,7 @@ module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     Cause (..), Direction (..), Method (..), Operation (..),
     operation, krules, pprob, prob, homomorphism, toSkeleton, generalize,
     collapse, sat, FTerm (..), Fact (..), simplify, rewrite,
-    localSignal, rewriteUnaryOneOnce, nodePairsOfSkel) where
+    localSignal, rewriteUnaryOneOnce, nodePairsOfSkel, applyLeadsTo) where
 
 import Control.Monad
 import Control.Parallel
@@ -2922,20 +2922,22 @@ satisfy (LeadsTo n n') =
           -- Commpair entails StateNode n' too
           return ge
 
-nodePairsOfSkel :: Preskel -> Maybe [((Sid,Int),(Sid,Int))]
+nodePairsOfSkel :: Preskel -> [Pair] -- Maybe ((Sid,Int),(Sid,Int))
 nodePairsOfSkel k =
     let (g1,z1) = newVarDefault (gen k) "z1" "strd" in
     let (g2,z2) = newVarDefault g1 "z2" "strd" in
     let (g3,i1) = newVarDefault g2 "i1" "indx" in
     let (g4,i2) = newVarDefault g3 "i2" "indx" in
 
-    (mapM
-     (\(_,e) ->
-          tupleOfMaybeList
-          (maybeList
-           [strdLookup e z1, indxLookup e i1,
-            strdLookup e z2, indxLookup e i2]))
-     (satisfy (LeadsTo (z1,i1) (z2,i2)) k (g4,emptyEnv)))
+    (case mapM
+              (\(_,e) ->
+               tupleOfMaybeList
+               (maybeList
+                [strdLookup e z1, indxLookup e i1,
+                 strdLookup e z2, indxLookup e i2]))
+              (satisfy (LeadsTo (z1,i1) (z2,i2)) k (g4,emptyEnv)) of 
+       Nothing -> []
+       Just l -> l)
 
     where
       maybeList [] = Just []
@@ -3460,8 +3462,7 @@ rewriteUnary k =
                       Just k' -> loop k' -- (zP "/" k')
                                  rest True True)
 
--- only interested in case ur is unary
--- JDG:  Must really check wellFormedPreskel and do toSkeleton
+-- only interested in case ur is unary:  
 
 rewriteUnaryOne :: Preskel -> Rule -> [(Gen, Env)] -> Maybe Preskel
 rewriteUnaryOne k ur vas =
@@ -3863,24 +3864,28 @@ ureq rule x y k (g, e)
             | not (checkKFacts k) -> error ("ureq:  Bad kfacts")
             | not (checkEnv k e) -> error ("ureq:  Bad env")
             | otherwise ->
-                error ("ureq:  indices too large, (" ++ (show s) ++ ", " ++ (show t) ++ " in env " ++ (show (L.map (\i -> (rname (role i), env i)) (insts k))))
+                error ("ureq:  indices too large, (" ++ (show s) ++ ", " ++ (show t) ++
+                       " in env " ++ (show (L.map (\i -> (rname (role i), env i))
+                                                 (insts k))))
           _ -> Failing ("In rule " ++ rule ++ ", = did not get a strand")
     | isStrdVar x || isStrdVar y  = None
+    | u == v = Some (k, (g, e))
     | otherwise =
-        case (matched e x, matched e y) of
-          (True, True)
-            | u == v ->  Some (k, (g, e))
-            | otherwise ->
-                case rUnify k (g, e) u v of
-                  []          -> None
-                  [(k,(g,e))] -> Some (k,(g,e))
-                  l           -> error ("ureq:  Hey, rUnify multiple results (" ++
-                                         (show (length l)) ++ ")")
-          _ ->
-              error ("In rule " ++ rule ++ ", = did not get a term")
+        case rUnify k (g, e) u v of
+          []          -> None
+          [(k,(g,e))] -> Some (k,(g,e))
+          l           -> error ("ureq:  Hey, rUnify multiple results (" ++
+                                (show (length l)) ++ ")")
+--             _ ->
+--                 error ("In rule " ++ rule ++ ", = did not get a term, " ++
+--                        (show x) ++ ", " ++ (show y) ++ ", " ++ (show e))
     where
-      u = instantiate e x
-      v = instantiate e y
+      u = if matched e x
+          then instantiate e x
+          else x
+      v = if matched e x
+          then instantiate e y
+          else y
 
 urcommpair :: String -> NodeTerm -> NodeTerm -> URewrite
 urcommpair rule n n' k (g, e) =
@@ -4602,3 +4607,18 @@ rstateNode name n k (g, e) =
              False -> [])
       _ -> error ("In rule " ++ name ++ ", state-node did not get a node term")
 
+applyLeadsTo :: Preskel -> [Pair] -> Preskel
+applyLeadsTo k pairs =    
+    case rewriteUnaryOneOnce rn atomicFormulae k ge of
+      Nothing -> k
+      Just k' -> k' 
+    where
+      rn = "(reading leads-to field)"
+      ge = (gen k, emptyEnv)
+      atomicFormulae =
+          map commpairOfPair pairs
+      commpairOfPair ((s1,i1), (s2,i2)) =
+          Commpair (strdOfInt s1, indxOfInt i1)
+                   (strdOfInt s2, indxOfInt i2)
+                   
+             

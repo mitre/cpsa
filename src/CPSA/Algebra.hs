@@ -136,7 +136,7 @@ module CPSA.Algebra (name, alias,
     escapeSet,
     loadTerm,
     loadLocnTerm,
-    indxOfInt,
+    indxOfInt, strdOfInt, 
     isNum,
     subNums,
     consts,
@@ -2152,6 +2152,9 @@ indxUpdate (Env (g, e)) f =
 
 indxOfInt :: Int -> Term
 indxOfInt i = Y i
+
+strdOfInt :: Int -> Term
+strdOfInt i = Z i
 
 -- Term specific loading functions
 
