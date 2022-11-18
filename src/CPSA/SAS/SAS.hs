@@ -16,7 +16,7 @@ import CPSA.Lib.SExpr
 import CPSA.Signature (Sig)
 import CPSA.Algebra
 
-{--
+--{--
 import System.IO.Unsafe
 z :: Show a => a -> b -> b
 z x y = unsafePerformIO (print x >> return y)
@@ -235,7 +235,15 @@ data Preskel = Preskel
       nons :: [Term],
       pnons :: [Term],
       uniqs :: [Term],
+      uniqgens :: [Term],       -- adding nov 2022                 
+      absents :: [(Term, Term)], -- adding nov 2022
       origs :: [(Term, (Term, Int))],
+      -- adding nov 2022; it's like origs but for uniqgen:  
+      genNodes :: [(Term, Node)],
+      genSts :: [Term],         -- adding nov 2022
+      -- adding nov 2022; like orderings but for the state transition
+      -- relation: 
+      leadsTos :: [Pair],       -- ((Term, Int), (Term, Int))
       auths :: [Term],
       confs :: [Term],
       facts :: [Fact],
@@ -255,6 +263,11 @@ loadPreskel sig pos prot gen (S _ _ : L _ (S _ "vars" : vars) : xs) =
       pnons <- loadBaseTerms sig kvars (assoc pnonOrigKey xs)
       uniqs <- loadBaseTerms sig kvars (assoc uniqOrigKey xs)
       origs <- loadOrigs sig kvars heights (assoc origsKey xs)
+      uniqgens <- loadBaseTerms sig kvars (assoc uGenKey xs)
+      absents <-  mapM (loadAbsentPair sig kvars) (assoc absKey xs) 
+      genNodes <- loadOrigs sig kvars heights (assoc gensKey xs)
+      leadsTos <- loadOrderings heights (zz (assoc leadsToKey xs))
+      genSts <- mapM (loadTerm sig kvars False) (assoc genStKey xs)
       auths <- loadBaseTerms sig kvars (assoc authKey xs)
       confs <- loadBaseTerms sig kvars (assoc confKey xs)
       (gen, varmap) <- makeVarmap sig pos gen [0..(length insts)-1]
@@ -271,7 +284,12 @@ loadPreskel sig pos prot gen (S _ _ : L _ (S _ "vars" : vars) : xs) =
                         nons = nons,
                         pnons = pnons,
                         uniqs = uniqs,
+                        uniqgens = uniqgens,
+                        absents = absents, 
                         origs = map g origs,
+                        genNodes = genNodes,
+                        genSts = genSts,
+                        leadsTos = leadsTos, 
                         auths = auths,
                         confs = confs,
                         facts = facts,
@@ -390,6 +408,19 @@ loadBaseTerm sig vars x =
       case isAtom t of
         True -> return t
         False -> fail (shows (annotation x) "Expecting an atom")
+
+loadAbsentPair :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m (Term, Term)
+loadAbsentPair sig vars (L _ [x, y]) =
+    do
+      v <- loadTerm sig vars True x
+      case isAtom v of
+        True ->
+            do
+              t <- loadTerm sig vars False y
+              return (v,t)
+        False -> fail (shows (annotation x) "Expecting an atom")
+loadAbsentPair _ _ x =
+    fail (shows (annotation x) "Expecting a pair, atom and term")                     
 
 loadOrigs :: MonadFail m => Sig -> [Term] -> Strands ->
              [SExpr Pos] -> m [(Term, Node)]
@@ -512,6 +543,14 @@ pnonOrigKey = "pen-non-orig"
 uniqOrigKey :: String
 uniqOrigKey = "uniq-orig"
 
+-- The key used in preskeletons for uniquely generated atoms
+uGenKey :: String
+uGenKey = "uniq-gen"
+
+-- The key used to extract absent declarations
+absKey :: String
+absKey = "absent" 
+
 -- The key used in preskeletons for authenticated channels
 authKey :: String
 authKey = "auth"
@@ -523,6 +562,20 @@ confKey = "conf"
 -- The key used to extract the nodes of origination
 origsKey :: String
 origsKey = "origs"
+
+-- The key used to extract the nodes of generation 
+gensKey :: String
+gensKey = "gens"
+
+-- The key used to extract the leads-to node pairs 
+leadsToKey :: String
+leadsToKey = "leads-to"
+
+-- The key used to extract the gen-state node pairs 
+genStKey :: String
+genStKey = "gen-st"
+
+          
 
 -- The key used to extract facts
 factsKey :: String
