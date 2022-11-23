@@ -129,6 +129,7 @@ module CPSA.Algebra (name, alias,
     carriedBy,
     constituent,
     decryptionKey,
+    invertKey, 
     decompose,
     buildable,
     components,
@@ -689,6 +690,15 @@ extendVarEnv (VarEnv env) x t =
     case M.lookup x env of
       Nothing -> Just $ VarEnv $ M.insert x t env
       Just t' -> if t == t' then Just (VarEnv env) else Nothing
+
+-- Return just the inverse of an asymmetric key, or nothing if a term
+-- isn't an asymmetric key.  Assumes arg is well-formed. 
+
+invertKey :: Term -> Maybe Term
+invertKey (F (Akey op) [F (Invk _) [t]]) = Just (F (Akey op) [t])
+invertKey (F (Akey op) [t]) = Just (F (Akey op) [F (Invk op) [t]])
+invertKey _ = Nothing 
+                              
 
 -- Is the sort of the term a base sort?
 isAtom :: Term -> Bool

@@ -3424,10 +3424,30 @@ factorIsomorphicPreskels = factorIsomorphic
 -- Try simplifying k if possible
 simplify :: Preskel -> [Preskel]
 simplify k =
-  case rewrite $ withCoreFacts k of  --
-    Nothing -> [k]
-    Just ks -> ks
+    if checkNullary k
+    then
+        case rewrite $ withCoreFacts k of  
+          Nothing -> [k]
+          Just ks -> ks
+    else
+        []
+        
+{--
+  case rewriteNullary k of
+    Nothing -> []               -- Big win:  false consequence 
+    Just k -> 
+        case rewrite $ withCoreFacts k of  
+          Nothing -> [k]
+          Just ks -> ks
+--} 
+checkNullary :: Preskel -> Bool
+checkNullary k =
+    L.and $ map inapplicable nrs 
+    where 
+      nrs = nullaryrules $ protocol k
+      inapplicable nr = null $ conjoin (antec $ rlgoal nr) k (gen k, emptyEnv)
 
+{--
 rewriteNullary :: Preskel -> Maybe Preskel
 rewriteNullary k =
     loop nrs
@@ -3436,9 +3456,9 @@ rewriteNullary k =
       loop [] = Just k
       loop (nr : rest) =
           case conjoin (antec $ rlgoal nr) k (gen k, emptyEnv) of
-            [] -> loop rest     -- no satisfying instances
-            _  ->             --  zP ("nullary " ++ (rlname nr))
-                  Nothing       -- satisfying instances, hence false!
+            [] -> loop rest     -- antecedent: no satisfying instances  
+            _  -> Nothing       -- satisfying instances, hence false!
+--}
 
 data Ternary k = Unsat | Unch | Found k
 
@@ -3471,16 +3491,11 @@ rewriteUnaryOne k ur vas =
       [([],conjuncts)] ->
           foldM (rewriteUnaryOneOnce (rlname ur) conjuncts) k vas
       _ ->
-          fail ("rewriteUnaryOne:  Hey, not really unary, rule " ++ (rlname ur))
-    -- Screwed up set of unary rules in the last case.
+          fail ("rewriteUnaryOne:  Hey, not really unary, rule " ++ (rlname ur)) 
+    -- Screwed up set of unary rules in the last case.  Should never
+    -- occur.  
 
---      loop k $ tryRule k r
---       where
---         loop k [] = Just k
---         loop k (va : rest) =
---             case rewriteUnaryOneOnce r k va of
---               Nothing -> Nothing
---               Just k' -> loop k' rest
+
 
 rewriteUnaryOneOnce :: String -> [AForm] -> Preskel -> (Gen, Env) -> Maybe Preskel
 rewriteUnaryOneOnce _ [] k _ = Just k
@@ -3951,13 +3966,14 @@ rewrite k =
       grules = generalrules $ protocol k
 
       nullUnary k =
-          case rewriteNullary k of
-            Nothing -> Just []
-            Just k ->
-                case rewriteUnary k of
+          if checkNullary k
+          then
+              case rewriteUnary k of
                   Unsat    -> Just []
                   Unch     -> Nothing
                   Found k' -> Just [k']
+          else
+              Just [] 
 
       nullUnaryThrough =
           concatMap (\k -> maybe [k] id (nullUnary k)) 

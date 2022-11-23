@@ -164,12 +164,20 @@ generationPos :: Term -> Trace -> Maybe Int
 generationPos t c =
     loop 0 c
     where
+      maybeInv = invertKey t 
+
+      testMaybe Nothing _ = False
+      testMaybe (Just tInv) ct = tInv `constituent` ct
+      test t ct = t `constituent` ct                  
+
       loop _ [] = Nothing       -- Term does not occur
       loop pos (Out t' : c)
-          | t `constituent` cmTerm t' = Just pos -- Found it
+          | test t (cmTerm t') ||
+            testMaybe maybeInv (cmTerm t') = Just pos -- Found it
           | otherwise = loop (pos + 1) c
       loop pos (In t' : c)
-          | t `constituent` cmTerm t' = Nothing -- Term does not generate
+          | test t (cmTerm t') ||
+            testMaybe maybeInv (cmTerm t') = Nothing -- Term does not generate
           | otherwise = loop (pos + 1) c
 
 -- At what position is a term acquired in a trace?
