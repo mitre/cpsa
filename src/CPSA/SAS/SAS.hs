@@ -13,10 +13,10 @@ import qualified Data.List as L
 import qualified Data.Map as M
 import CPSA.Lib.Utilities
 import CPSA.Lib.SExpr
-import CPSA.Signature (Sig)
+import CPSA.Signature (Sig, loadSig)
 import CPSA.Algebra
 
---{--
+{--
 import System.IO.Unsafe
 z :: Show a => a -> b -> b
 z x y = unsafePerformIO (print x >> return y)
@@ -51,8 +51,8 @@ loadPOV sig _ _ ps (L pos (S _ "defskeleton" : xs)) =
       p <- findProt pos ps xs
       k <- loadPreskel sig pos p (pgen p) xs
       case isFringe k of
-        False -> return ((sig, ps, [k]), Nothing) -- Found POV
-        _ -> return ((sig, ps, []), Nothing) -- Not POV
+        False -> return ((psig p, ps, [k]), Nothing) -- Found POV
+        _ -> return ((psig p, ps, []), Nothing) -- Not POV
 loadPOV sig _ _ ps _ = return ((sig, ps, []), Nothing)
 
 loadOtherPreskel :: MonadFail m => Sig -> String -> Gen -> [Prot] ->
@@ -60,15 +60,15 @@ loadOtherPreskel :: MonadFail m => Sig -> String -> Gen -> [Prot] ->
 loadOtherPreskel sig name origin ps ks (L pos (S _ "defprotocol" : xs)) =
     do                     -- Found next protocol.  Print this formula
       p <- loadProt sig name origin pos xs
-      displayFormula sig (p : ps) (reverse ks)
-loadOtherPreskel sig _ _ ps ks (L pos (S _ "defskeleton" : xs)) =
+      displayFormula (psig p) (p : ps) (reverse ks)
+loadOtherPreskel _ _ _ ps ks (L pos (S _ "defskeleton" : xs)) =
     do
       p <- findProt pos ps xs
       let g = kgen (last ks)      -- Make sure vars in skeleton are
-      k <- loadPreskel sig pos p g xs -- distinct from the ones in the POV
+      k <- loadPreskel (psig p) pos p g xs -- distinct from the ones in the POV
       case isFringe k of
-        True -> return ((sig, ps, k : ks), Nothing) -- Found shape
-        False -> return ((sig, ps, ks), Nothing) -- Found intermediate skeleton
+        True -> return ((psig p, ps, k : ks), Nothing) -- Found shape
+        False -> return ((psig p, ps, ks), Nothing) -- Found intermediate skeleton
 loadOtherPreskel sig _ _ ps ks _ = return ((sig, ps, ks), Nothing)
 
 -- Load a protocol
@@ -79,7 +79,8 @@ loadOtherPreskel sig _ _ ps ks _ = return ((sig, ps, ks), Nothing)
 data Prot = Prot
     { pname :: String,          -- Protocol name
       pgen :: Gen,                -- Generator for preskeletons
-      roles :: [Role] }
+      roles :: [Role], 
+      psig :: Sig }             -- the protocol's signature 
     deriving Show
 
 -- The Role record contains information extraced from roles for use
@@ -99,11 +100,18 @@ loadProt sig nom origin pos (S _ name : S _ alg : x : xs)
         fail (shows pos $ "Expecting terms in algebra " ++ nom)
     | otherwise =
         do
+          sig <- loadLang pos sig xs
           (gen, rs) <- loadRoles sig origin (x : xs)
           (gen', r) <- makeListenerRole sig pos gen
-          return (Prot { pname = name, pgen = gen', roles = r : rs })
+          return (Prot { pname = name, pgen = gen', roles = r : rs, psig = sig })
 loadProt _ _ _ pos _ =
     fail (shows pos "Malformed protocol")
+
+-- Optionally load a lang field in a protocol.
+loadLang :: MonadFail m => Pos -> Sig -> [SExpr Pos] -> m Sig
+loadLang pos _ xs | hasKey "lang" xs = loadSig pos (assoc "lang" xs)
+loadLang _ sig _ | otherwise = return sig
+
 
 -- A generator is threaded thoughout the protocol loading process so
 -- as to ensure no variable occurs in two roles.  It also ensures that
@@ -236,14 +244,14 @@ data Preskel = Preskel
       pnons :: [Term],
       uniqs :: [Term],
       uniqgens :: [Term],       -- adding nov 2022                 
-      absents :: [(Term, Term)], -- adding nov 2022
+      -- absents :: [(Term, Term)], -- adding nov 2022
       origs :: [(Term, (Term, Int))],
       -- adding nov 2022; it's like origs but for uniqgen:  
-      genNodes :: [(Term, Node)],
+      genNodes :: [(Term, (Term, Int))],
       genSts :: [Term],         -- adding nov 2022
       -- adding nov 2022; like orderings but for the state transition
       -- relation: 
-      leadsTos :: [Pair],       -- ((Term, Int), (Term, Int))
+      leadsTos :: [((Term, Int), (Term, Int))],       -- Pair
       auths :: [Term],
       confs :: [Term],
       facts :: [Fact],
@@ -264,9 +272,9 @@ loadPreskel sig pos prot gen (S _ _ : L _ (S _ "vars" : vars) : xs) =
       uniqs <- loadBaseTerms sig kvars (assoc uniqOrigKey xs)
       origs <- loadOrigs sig kvars heights (assoc origsKey xs)
       uniqgens <- loadBaseTerms sig kvars (assoc uGenKey xs)
-      absents <-  mapM (loadAbsentPair sig kvars) (assoc absKey xs) 
+      -- absents <-  mapM (loadAbsentPair sig kvars) (assoc absKey xs) 
       genNodes <- loadOrigs sig kvars heights (assoc gensKey xs)
-      leadsTos <- loadOrderings heights (zz (assoc leadsToKey xs))
+      leadsTos <- loadOrderings heights (assoc leadsToKey xs)
       genSts <- mapM (loadTerm sig kvars False) (assoc genStKey xs)
       auths <- loadBaseTerms sig kvars (assoc authKey xs)
       confs <- loadBaseTerms sig kvars (assoc confKey xs)
@@ -285,11 +293,11 @@ loadPreskel sig pos prot gen (S _ _ : L _ (S _ "vars" : vars) : xs) =
                         pnons = pnons,
                         uniqs = uniqs,
                         uniqgens = uniqgens,
-                        absents = absents, 
+                        -- absents = absents, 
                         origs = map g origs,
-                        genNodes = genNodes,
+                        genNodes = map g genNodes,
                         genSts = genSts,
-                        leadsTos = leadsTos, 
+                        leadsTos = map f leadsTos, 
                         auths = auths,
                         confs = confs,
                         facts = facts,
@@ -409,8 +417,9 @@ loadBaseTerm sig vars x =
         True -> return t
         False -> fail (shows (annotation x) "Expecting an atom")
 
-loadAbsentPair :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m (Term, Term)
-loadAbsentPair sig vars (L _ [x, y]) =
+{--
+  loadAbsentPair :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m (Term, Term)
+  loadAbsentPair sig vars (L _ [x, y]) =
     do
       v <- loadTerm sig vars True x
       case isAtom v of
@@ -419,9 +428,9 @@ loadAbsentPair sig vars (L _ [x, y]) =
               t <- loadTerm sig vars False y
               return (v,t)
         False -> fail (shows (annotation x) "Expecting an atom")
-loadAbsentPair _ _ x =
+  loadAbsentPair _ _ x =
     fail (shows (annotation x) "Expecting a pair, atom and term")                     
-
+--}
 loadOrigs :: MonadFail m => Sig -> [Term] -> Strands ->
              [SExpr Pos] -> m [(Term, Node)]
 loadOrigs _ _ _ [] = return []
@@ -547,9 +556,9 @@ uniqOrigKey = "uniq-orig"
 uGenKey :: String
 uGenKey = "uniq-gen"
 
--- The key used to extract absent declarations
-absKey :: String
-absKey = "absent" 
+--   -- The key used to extract absent declarations
+--   absKey :: String
+--   absKey = "absent" 
 
 -- The key used in preskeletons for authenticated channels
 authKey :: String
@@ -646,6 +655,8 @@ mapInst e inst =
   where
     f (p, x) = (p, instantiate e x)
 
+-- JDG:  I extended this:
+
 mapSkel :: Env -> Preskel -> Preskel -> Preskel
 mapSkel env pov k =
   k { kvars = vs L.\\ kvars pov, -- Delete redundant POV variables
@@ -656,7 +667,11 @@ mapSkel env pov k =
       nons = map (instantiate env) (nons k),
       pnons = map (instantiate env) (pnons k),
       uniqs = map (instantiate env) (uniqs k),
+      uniqgens = map (instantiate env) (uniqgens k), 
       origs = mapOrig (instantiate env) (sansPtOrigs (origs k)),
+      genNodes = mapOrig (instantiate env) (genNodes k),
+      genSts = map (instantiate env) (genSts k),
+      leadsTos = mapPair (instantiate env) (leadsTos k),
       auths = map (instantiate env) (auths k),
       confs = map (instantiate env) (confs k),
       facts = mapFact (instantiate env) (facts k),
@@ -698,6 +713,8 @@ sansPtOrigs = filter (\(pt, _) -> notPt pt)
 -- declaration is used as the bound variables in a quantifier.  The
 -- context is extended so it can be used as input for another
 -- skeleton.
+
+-- JDG:  Must extend.  
 skel :: Context -> Preskel -> (Context, [SExpr ()], [SExpr ()])
 skel ctx k =
   let vars = (sansPts $ kvars k ++ kstrands k) in
@@ -711,7 +728,11 @@ skel ctx k =
    map (unary "non" kctx) (nons k) ++
    map (unary "pnon" kctx) (pnons k) ++
    map (unary "uniq" kctx) (sansPts (noOrigUniqs k)) ++
+   map (unary "ugen" kctx) (noGenUniqs k) ++
    map (uniqAtForm kctx) (sansPtOrigs (origs k)) ++
+   map (ternary "ugen-at" kctx) (genNodes k) ++
+   map (unary "gen-st" kctx) (genSts k) ++ 
+   map (leadsToForm kctx) (leadsTos k) ++
    map (unary "auth" kctx) (auths k) ++
    map (unary "conf" kctx) (confs k) ++
    map (factForm kctx) (facts k))
@@ -758,6 +779,9 @@ paramForm c (z, inst) =
 precForm :: Context -> ((Term, Int), (Term, Int)) -> SExpr ()
 precForm = quaternary "prec"
 
+leadsToForm :: Context -> ((Term, Int), (Term, Int)) -> SExpr ()
+leadsToForm = quaternary "leads-to"
+
 uniqAtForm :: Context -> (Term, (Term, Int)) -> SExpr ()
 uniqAtForm = ternary "uniq-at"
 
@@ -769,6 +793,13 @@ factForm c (name, ft) =
 noOrigUniqs :: Preskel -> [Term]
 noOrigUniqs k =
   [ t | t <- uniqs k, all (f t) (origs k) ]
+  where
+    f t (t', _) = t /= t'
+
+-- Returns the uniqgens that do not get generated in k.
+noGenUniqs :: Preskel -> [Term]
+noGenUniqs k =
+  [ t | t <- uniqgens k, all (f t) (genNodes k) ]
   where
     f t (t', _) = t /= t'
 

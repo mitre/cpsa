@@ -2279,6 +2279,10 @@ loadTerm _ vars False (S pos s) =
     either fail return (loadLookup pos vars s)
 loadTerm _ _ _ (Q _ t) =
     return (C t)
+
+-- special case to read index values: 
+loadTerm _ _ _ (L _ [S _ "idx", N _ i]) = return $ Y i
+
 loadTerm sig vars strict (L pos (S _ s : l)) =
     case lookup s loadDispatch of
       Nothing ->
@@ -2712,7 +2716,7 @@ displayTerm ctx (F (Hash op) [t]) =
 displayTerm ctx (D x) = displayId ctx x
 displayTerm _ (Z z) = N () z
 displayTerm ctx (X x) = displayId ctx x
-displayTerm _ (Y z) = N () z
+displayTerm _ (Y z) = L () [S () "idx", N () z]
 displayTerm _ t = error ("Algebra.displayTerm: Bad term " ++ show t)
 
 displayTermNoPt :: Context -> Term -> SExpr ()
