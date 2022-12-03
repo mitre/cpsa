@@ -2411,10 +2411,13 @@
   (defrule ordered-extends
     (forall ((y z strd) (pcrkey skey))
       (implies
-        (and (p "tpm-extend" y 3) (p "tpm-extend" z 3)
+        (and (p "tpm-extend" y (idx 3)) (p "tpm-extend" z (idx 3))
           (p "tpm-extend" "pcrkey" y pcrkey)
           (p "tpm-extend" "pcrkey" z pcrkey))
-        (or (= y z) (prec y 2 z 3) (prec z 2 y 3)))))
+        (or
+          (= y z)
+          (prec y (idx 2) z (idx 3))
+          (prec z (idx 2) y (idx 3))))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
@@ -2905,10 +2908,13 @@
   (defrule ordered-extends
     (forall ((y z strd) (pcrkey skey))
       (implies
-        (and (p "tpm-extend" y 3) (p "tpm-extend" z 3)
+        (and (p "tpm-extend" y (idx 3)) (p "tpm-extend" z (idx 3))
           (p "tpm-extend" "pcrkey" y pcrkey)
           (p "tpm-extend" "pcrkey" z pcrkey))
-        (or (= y z) (prec y 2 z 3) (prec z 2 y 3)))))
+        (or
+          (= y z)
+          (prec y (idx 2) z (idx 3))
+          (prec z (idx 2) y (idx 3))))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
@@ -3407,10 +3413,13 @@
   (defrule ordered-extends
     (forall ((y z strd) (pcrkey skey))
       (implies
-        (and (p "tpm-extend" y 3) (p "tpm-extend" z 3)
+        (and (p "tpm-extend" y (idx 3)) (p "tpm-extend" z (idx 3))
           (p "tpm-extend" "pcrkey" y pcrkey)
           (p "tpm-extend" "pcrkey" z pcrkey))
-        (or (= y z) (prec y 2 z 3) (prec z 2 y 3)))))
+        (or
+          (= y z)
+          (prec y (idx 2) z (idx 3))
+          (prec z (idx 2) y (idx 3))))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
@@ -4487,14 +4496,18 @@
   (defrule ordered-extends
     (forall ((y z strd) (pcrkey skey))
       (implies
-        (and (p "tpm-extend" y 3) (p "tpm-extend" z 3)
+        (and (p "tpm-extend" y (idx 3)) (p "tpm-extend" z (idx 3))
           (p "tpm-extend" "pcrkey" y pcrkey)
           (p "tpm-extend" "pcrkey" z pcrkey))
-        (or (= y z) (prec y 2 z 3) (prec z 2 y 3)))))
+        (or
+          (= y z)
+          (prec y (idx 2) z (idx 3))
+          (prec z (idx 2) y (idx 3))))))
   (defrule esk-same-as-pcrkey
     (forall ((y z strd) (esk pcrkey pcrkey-0 skey))
       (implies
-        (and (p "tpm-extend-enc" y 3) (p "tpm-extend-enc" z 3)
+        (and (p "tpm-extend-enc" y (idx 3))
+          (p "tpm-extend-enc" z (idx 3))
           (p "tpm-extend-enc" "esk" y esk)
           (p "tpm-extend-enc" "esk" z esk)
           (p "tpm-extend-enc" "pcrkey" y pcrkey)
@@ -4990,14 +5003,18 @@
   (defrule ordered-extends
     (forall ((y z strd) (pcrkey skey))
       (implies
-        (and (p "tpm-extend" y 3) (p "tpm-extend" z 3)
+        (and (p "tpm-extend" y (idx 3)) (p "tpm-extend" z (idx 3))
           (p "tpm-extend" "pcrkey" y pcrkey)
           (p "tpm-extend" "pcrkey" z pcrkey))
-        (or (= y z) (prec y 2 z 3) (prec z 2 y 3)))))
+        (or
+          (= y z)
+          (prec y (idx 2) z (idx 3))
+          (prec z (idx 2) y (idx 3))))))
   (defrule esk-same-as-pcrkey
     (forall ((y z strd) (esk pcrkey pcrkey-0 skey))
       (implies
-        (and (p "tpm-extend-enc" y 3) (p "tpm-extend-enc" z 3)
+        (and (p "tpm-extend-enc" y (idx 3))
+          (p "tpm-extend-enc" z (idx 3))
           (p "tpm-extend-enc" "esk" y esk)
           (p "tpm-extend-enc" "esk" z esk)
           (p "tpm-extend-enc" "pcrkey" y pcrkey)
@@ -5501,14 +5518,18 @@
   (defrule ordered-extends
     (forall ((y z strd) (pcrkey skey))
       (implies
-        (and (p "tpm-extend" y 3) (p "tpm-extend" z 3)
+        (and (p "tpm-extend" y (idx 3)) (p "tpm-extend" z (idx 3))
           (p "tpm-extend" "pcrkey" y pcrkey)
           (p "tpm-extend" "pcrkey" z pcrkey))
-        (or (= y z) (prec y 2 z 3) (prec z 2 y 3)))))
+        (or
+          (= y z)
+          (prec y (idx 2) z (idx 3))
+          (prec z (idx 2) y (idx 3))))))
   (defrule esk-same-as-pcrkey
     (forall ((y z strd) (esk pcrkey pcrkey-0 skey))
       (implies
-        (and (p "tpm-extend-enc" y 3) (p "tpm-extend-enc" z 3)
+        (and (p "tpm-extend-enc" y (idx 3))
+          (p "tpm-extend-enc" z (idx 3))
           (p "tpm-extend-enc" "esk" y esk)
           (p "tpm-extend-enc" "esk" z esk)
           (p "tpm-extend-enc" "pcrkey" y pcrkey)

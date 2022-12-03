@@ -10,8 +10,11 @@
   (defrule order
     (forall ((y z strd))
       (implies
-        (and (p "dec" y 2) (p "dec" z 2))
-        (or (prec y 1 z 0) (prec z 1 y 0) (= y z)))))
+        (and (p "dec" y (idx 2)) (p "dec" z (idx 2)))
+        (or
+          (prec y (idx 1) z (idx 0))
+          (prec z (idx 1) y (idx 0))
+          (= y z)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
@@ -69,8 +72,11 @@
   (defrule order
     (forall ((y z strd))
       (implies
-        (and (p "dec" y 2) (p "dec" z 2))
-        (or (prec y 1 z 0) (prec z 1 y 0) (= y z)))))
+        (and (p "dec" y (idx 2)) (p "dec" z (idx 2)))
+        (or
+          (prec y (idx 1) z (idx 0))
+          (prec z (idx 1) y (idx 0))
+          (= y z)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd

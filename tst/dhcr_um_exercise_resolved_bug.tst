@@ -53,18 +53,22 @@
   (defrule fact-resp-silly
     (forall ((z strd) (gx base))
       (implies
-        (and (p "resp" z 3) (p "resp" "gx" z gx))
+        (and (p "resp" z (idx 3)) (p "resp" "gx" z gx))
         (fact silly gx))))
   (defrule fact-resp-neq0
     (forall ((z strd))
-      (implies (and (p "resp" z 3) (p "resp" "gx" z (gen))) (false))))
+      (implies
+        (and (p "resp" z (idx 3)) (p "resp" "gx" z (gen)))
+        (false))))
   (defrule fact-init-neq0
     (forall ((z strd))
-      (implies (and (p "init" z 4) (p "init" "gy" z (gen))) (false))))
+      (implies
+        (and (p "init" z (idx 4)) (p "init" "gy" z (gen)))
+        (false))))
   (defrule undisclosed-not-disclosed
     (forall ((z strd) (l rndx))
       (implies
-        (and (fact undisclosed l) (p "ltx-disclose" z 2)
+        (and (fact undisclosed l) (p "ltx-disclose" z (idx 2))
           (p "ltx-disclose" "l" z l))
         (false))))
   (defgenrule neqRl_indx
@@ -105,30 +109,34 @@
         (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (defgenrule fact-resp-neq0
     (forall ((z strd) (gx base))
-      (implies (and (p "resp" z 3) (p "resp" "gx" z gx))
+      (implies (and (p "resp" z (idx 3)) (p "resp" "gx" z gx))
         (fact neq gx (gen)))))
   (defgenrule trRl_ltx-gen-at-1
-    (forall ((z strd)) (implies (p "ltx-gen" z 2) (trans z 1))))
+    (forall ((z strd))
+      (implies (p "ltx-gen" z (idx 2)) (trans z (idx 1)))))
   (defgenrule trRl_ltx-gen-at-0
-    (forall ((z strd)) (implies (p "ltx-gen" z 2) (trans z 0))))
+    (forall ((z strd))
+      (implies (p "ltx-gen" z (idx 2)) (trans z (idx 0)))))
   (defgenrule trRl_ltx-disclose-at-1
-    (forall ((z strd)) (implies (p "ltx-disclose" z 2) (trans z 1))))
+    (forall ((z strd))
+      (implies (p "ltx-disclose" z (idx 2)) (trans z (idx 1)))))
   (defgenrule trRl_ltx-disclose-at-0
-    (forall ((z strd)) (implies (p "ltx-disclose" z 2) (trans z 0))))
+    (forall ((z strd))
+      (implies (p "ltx-disclose" z (idx 2)) (trans z (idx 0)))))
   (defgenrule gen-st-init-0
     (forall ((z strd) (l rndx) (a name))
       (implies
-        (and (p "init" z 1) (p "init" "l" z l) (p "init" "a" z a))
+        (and (p "init" z (idx 1)) (p "init" "l" z l) (p "init" "a" z a))
         (gen-st (pv a l)))))
   (defgenrule gen-st-resp-0
     (forall ((z strd) (l rndx) (b name))
       (implies
-        (and (p "resp" z 1) (p "resp" "l" z l) (p "resp" "b" z b))
+        (and (p "resp" z (idx 1)) (p "resp" "l" z l) (p "resp" "b" z b))
         (gen-st (pv b l)))))
   (defgenrule gen-st-ltx-disclose-0
     (forall ((z strd) (l rndx) (self name))
       (implies
-        (and (p "ltx-disclose" z 1) (p "ltx-disclose" "l" z l)
+        (and (p "ltx-disclose" z (idx 1)) (p "ltx-disclose" "l" z l)
           (p "ltx-disclose" "self" z self)) (gen-st (pv self l)))))
   (lang (sig sign) (body (tuple 3)) (pv (tuple 2))))
 
@@ -197,6 +205,7 @@
   (absent (x l))
   (gen-st (pv a l))
   (facts (neq a b) (undisclosed l) (undisclosed l-peer))
+  (leads-to ((1 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor (cat pt (pv a l))) (0 0))
@@ -233,6 +242,7 @@
   (absent (x l))
   (gen-st (pv a l))
   (facts (neq a b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation encryption-test (added-strand ltx-gen 3)
     (sig (body b (exp (gen) l-0) (pubk "sig" b)) (privk "sig" b)) (0 1))
@@ -277,6 +287,7 @@
   (facts (silly (exp gy (mul x (rec y))))
     (neq (exp gy (mul x (rec y))) (gen)) (neq a b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly gen-st-ltx-disclose-0
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation encryption-test (added-strand resp 4)
@@ -325,6 +336,7 @@
   (absent (x l))
   (gen-st (pv a l))
   (facts (neq a b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation encryption-test
     (added-listener (hash (exp (gen) (mul l l-0)) (exp gy x)))
@@ -372,6 +384,7 @@
   (facts (silly (exp gy (mul x (rec y))))
     (neq (exp gy (mul x (rec y))) (gen)) (neq a b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (0 0)) ((2 1) (3 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 4 2 ltx-gen 2)
@@ -426,6 +439,7 @@
   (facts (silly (exp gy (mul x (rec y))))
     (neq (exp gy (mul x (rec y))) (gen)) (neq a b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (0 0)) ((4 1) (3 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
@@ -478,6 +492,7 @@
   (absent (x l))
   (gen-st (pv a l))
   (facts (neq a b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation encryption-test
     (added-listener (cat (exp (gen) (mul l l-0)) (exp gy x)))
@@ -527,6 +542,7 @@
   (facts (silly (exp gy (mul x (rec y))))
     (neq (exp gy (mul x (rec y))) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 4 ltx-gen 3) (exp (gen) l-0) (3 1))
@@ -585,6 +601,7 @@
   (facts (silly (exp gy (mul x (rec y))))
     (neq (exp gy (mul x (rec y))) (gen)) (neq a b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (0 0)) ((2 1) (3 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -643,6 +660,7 @@
   (facts (silly (exp gy (mul x (rec y))))
     (neq (exp gy (mul x (rec y))) (gen)) (neq a b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (0 0)) ((4 1) (3 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -704,6 +722,7 @@
   (facts (silly (exp gy (mul x (rec y))))
     (neq (exp gy (mul x (rec y))) (gen)) (neq a b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (0 0)) ((4 1) (3 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -766,6 +785,7 @@
   (facts (silly (exp gy (mul x (rec y))))
     (neq (exp gy (mul x (rec y))) (gen)) (neq a b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (0 0)) ((4 1) (3 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -823,6 +843,7 @@
   (absent (x l))
   (gen-st (pv a l))
   (facts (neq a b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
     (exp (gen) (mul l l-0)) (4 0))
@@ -872,6 +893,7 @@
   (absent (x l))
   (gen-st (pv a l))
   (facts (neq a b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l))
     (exp (gen) (mul l l-0)) (4 0))
@@ -925,6 +947,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly gen-st-ltx-disclose-0
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (2 2))
@@ -988,6 +1011,7 @@
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly gen-st-ltx-disclose-0
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (2 2))
@@ -1045,6 +1069,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) x)) (neq (exp (gen) x) (gen)) (neq self b)
     (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 4 0 init 3) (exp (gen) x-0) (2 2))
@@ -1106,6 +1131,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 4 3 ltx-gen 3) (exp (gen) l-1) (2 2))
@@ -1161,6 +1187,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 4 1 ltx-gen 3) (exp (gen) l-1) (2 2))
@@ -1219,6 +1246,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) l-1)) (neq (exp (gen) l-1) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-1) (2 2))
@@ -1281,6 +1309,7 @@
   (facts (silly (exp gy (mul x (rec y))))
     (neq (exp gy (mul x (rec y))) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -1345,6 +1374,7 @@
   (facts (silly (exp gy (mul x (rec y))))
     (neq (exp gy (mul x (rec y))) (gen)) (neq a b) (undisclosed l-1)
     (undisclosed l))
+  (leads-to ((1 1) (0 0)) ((2 1) (3 0)))
   (rule fact-resp-neq0 fact-resp-silly gen-st-ltx-disclose-0
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (4 0))
@@ -1402,6 +1432,7 @@
   (facts (silly (exp gy (mul (rec y) x)))
     (neq (exp gy (mul (rec y) x)) (gen)) (neq a b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (0 0)) ((2 1) (3 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 0 init 3) (exp (gen) x-0) (4 0))
@@ -1457,6 +1488,7 @@
   (facts (silly (exp gy (mul x (rec y))))
     (neq (exp gy (mul x (rec y))) (gen)) (neq a b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (0 0)) ((2 1) (3 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-1 l-0) (w l-0)) (gen) (4 0))
@@ -1511,6 +1543,7 @@
   (facts (silly (exp gy (mul x (rec y))))
     (neq (exp gy (mul x (rec y))) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 5 ltx-gen 3) (exp (gen) l-1) (4 0))
@@ -1573,6 +1606,7 @@
   (facts (silly gx) (silly (exp gy (mul x (rec y)))) (neq gx (gen))
     (neq (exp gy (mul x (rec y))) (gen)) (neq a b) (undisclosed l-1)
     (undisclosed l))
+  (leads-to ((1 1) (0 0)) ((2 1) (3 0)))
   (rule fact-resp-neq0 fact-resp-silly gen-st-ltx-disclose-0
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (4 0))
@@ -1633,6 +1667,7 @@
   (facts (silly (exp gy (mul x (rec y))))
     (neq (exp gy (mul x (rec y))) (gen)) (neq a b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (0 0)) ((2 1) (3 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 2 ltx-gen 3) (exp (gen) l-1) (4 0))
@@ -1690,6 +1725,7 @@
   (facts (silly (exp gy (mul x (rec y))))
     (neq (exp gy (mul x (rec y))) (gen)) (neq a b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (0 0)) ((2 1) (3 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-1) (4 0))
@@ -1753,6 +1789,7 @@
   (facts (silly (exp gy (mul x (rec y))))
     (neq (exp gy (mul x (rec y))) (gen)) (neq a b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (0 0)) ((4 1) (3 0)) ((4 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (5 0)
@@ -1814,6 +1851,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (4 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 5 1 ltx-gen 2)
@@ -1880,6 +1918,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (4 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 5 3 ltx-gen 2)
@@ -1947,6 +1986,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((5 1) (4 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
@@ -2013,6 +2053,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (4 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 5 1 ltx-gen 2)
@@ -2075,6 +2116,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (4 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 5 3 ltx-gen 2)
@@ -2138,6 +2180,7 @@
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((5 1) (4 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
@@ -2200,6 +2243,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -2261,6 +2305,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -2322,6 +2367,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y l-0)) x))
@@ -2382,6 +2428,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -2444,6 +2491,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -2506,6 +2554,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y l-0)) x))
@@ -2569,6 +2618,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) l-1)) (neq (exp (gen) l-1) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -2636,6 +2686,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) l-1)) (neq (exp (gen) l-1) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -2704,6 +2755,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) l-1)) (neq (exp (gen) l-1) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y l-1)) x))
@@ -2774,6 +2826,7 @@
   (facts (silly (exp (gen) (mul w x-0)))
     (neq (exp (gen) (mul w x-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly gen-st-ltx-disclose-0
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (4 0))
@@ -2835,6 +2888,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) (mul w x))) (neq (exp (gen) (mul w x)) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 0 init 3) (exp (gen) x-0) (4 0))
@@ -2894,6 +2948,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) w)) (neq (exp (gen) w) (gen)) (neq self b)
     (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (gy (exp (gen) (mul (rec x) y w))))
@@ -2954,6 +3009,7 @@
   (facts (silly (exp (gen) (mul w l-0)))
     (neq (exp (gen) (mul w l-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 1 ltx-gen 3) (exp (gen) l-1) (4 0))
@@ -3018,6 +3074,7 @@
   (facts (silly gx) (silly (exp (gen) (mul w y-0))) (neq gx (gen))
     (neq (exp (gen) (mul w y-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly gen-st-ltx-disclose-0
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (4 0))
@@ -3084,6 +3141,7 @@
   (facts (silly (exp (gen) (mul w l-0)))
     (neq (exp (gen) (mul w l-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 3 ltx-gen 3) (exp (gen) l-1) (4 0))
@@ -3147,6 +3205,7 @@
   (facts (silly (exp (gen) (mul w l-1)))
     (neq (exp (gen) (mul w l-1)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-1) (4 0))
@@ -3213,6 +3272,7 @@
   (facts (silly (exp gy (mul x (rec y))))
     (neq (exp gy (mul x (rec y))) (gen)) (neq a b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (0 0)) ((1 1) (5 0)) ((2 1) (3 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 1 ltx-gen 2)
@@ -3274,6 +3334,7 @@
   (facts (silly (exp gy (mul x (rec y))))
     (neq (exp gy (mul x (rec y))) (gen)) (neq a b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (0 0)) ((2 1) (3 0)) ((2 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 2 ltx-gen 2)
@@ -3337,6 +3398,7 @@
   (facts (silly (exp gy (mul x (rec y))))
     (neq (exp gy (mul x (rec y))) (gen)) (neq a b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (0 0)) ((2 1) (3 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
@@ -3401,6 +3463,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly gen-st-ltx-disclose-0
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (2 2))
@@ -3468,6 +3531,7 @@
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly gen-st-ltx-disclose-0
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (2 2))
@@ -3529,6 +3593,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) x)) (neq (exp (gen) x) (gen)) (neq self b)
     (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 0 init 3) (exp (gen) x-0) (2 2))
@@ -3589,6 +3654,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 4 ltx-gen 3) (exp (gen) l-1) (2 2))
@@ -3648,6 +3714,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 1 ltx-gen 3) (exp (gen) l-1) (2 2))
@@ -3709,6 +3776,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) l-1)) (neq (exp (gen) l-1) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-1) (2 2))
@@ -3774,6 +3842,7 @@
   (facts (silly (exp gy (mul x (rec y))))
     (neq (exp gy (mul x (rec y))) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -3840,6 +3909,7 @@
   (facts (silly gx) (silly (exp gy (mul x (rec y)))) (neq gx (gen))
     (neq (exp gy (mul x (rec y))) (gen)) (neq a b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (0 0)) ((1 1) (5 0)) ((2 1) (3 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 1 ltx-gen 2)
@@ -3904,6 +3974,7 @@
   (facts (silly gx) (silly (exp gy (mul x (rec y)))) (neq gx (gen))
     (neq (exp gy (mul x (rec y))) (gen)) (neq a b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (0 0)) ((2 1) (3 0)) ((2 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 2 ltx-gen 2)
@@ -3971,6 +4042,7 @@
   (facts (silly gx) (silly (exp gy (mul x (rec y)))) (neq gx (gen))
     (neq (exp gy (mul x (rec y))) (gen)) (neq a b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (0 0)) ((2 1) (3 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
@@ -4040,6 +4112,7 @@
   (facts (silly (exp gy (mul x (rec y))))
     (neq (exp gy (mul x (rec y))) (gen)) (neq a b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (0 0)) ((4 1) (3 0)) ((4 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
@@ -4107,6 +4180,7 @@
   (facts (silly (exp gy (mul x (rec y))))
     (neq (exp gy (mul x (rec y))) (gen)) (neq a b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (0 0)) ((4 1) (3 0)) ((4 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l))
@@ -4172,6 +4246,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (4 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -4244,6 +4319,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (4 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -4316,6 +4392,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (4 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y y-0)) x))
@@ -4387,6 +4464,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (4 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -4458,6 +4536,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (4 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -4529,6 +4608,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (4 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y y-0)) x))
@@ -4601,6 +4681,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((5 1) (4 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -4676,6 +4757,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((5 1) (4 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -4751,6 +4833,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((5 1) (4 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y y-0)) x))
@@ -4822,6 +4905,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (4 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -4890,6 +4974,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (4 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -4958,6 +5043,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (4 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y x-0)) x))
@@ -5025,6 +5111,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (4 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -5092,6 +5179,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (4 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -5159,6 +5247,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (4 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y x-0)) x))
@@ -5227,6 +5316,7 @@
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((5 1) (4 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -5298,6 +5388,7 @@
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((5 1) (4 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -5369,6 +5460,7 @@
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((5 1) (4 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y x-0)) x))
@@ -5439,6 +5531,7 @@
   (gen-st (pv b l) (pv self l-0) (pv self-0 l-1))
   (facts (silly (exp (gen) l-1)) (neq (exp (gen) l-1) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((4 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly gen-st-ltx-disclose-0
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
@@ -5511,6 +5604,7 @@
   (facts (silly (exp (gen) (mul w x-0)))
     (neq (exp (gen) (mul w x-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 1 ltx-gen 2)
@@ -5579,6 +5673,7 @@
   (facts (silly (exp (gen) (mul w x-0)))
     (neq (exp (gen) (mul w x-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 3 ltx-gen 2)
@@ -5649,6 +5744,7 @@
   (facts (silly (exp (gen) (mul w x-0)))
     (neq (exp (gen) (mul w x-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
@@ -5711,6 +5807,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) (mul w x))) (neq (exp (gen) (mul w x)) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
@@ -5775,6 +5872,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) x)) (neq (exp (gen) x) (gen)) (neq self b)
     (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 2 resp 4) (exp (gen) y-0) (0 3))
@@ -5836,6 +5934,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) w)) (neq (exp (gen) w) (gen)) (neq self b)
     (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -5897,6 +5996,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) x)) (neq (exp (gen) x) (gen)) (neq self b)
     (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 2 resp 4) (exp (gen) y-0) (0 3))
@@ -5960,6 +6060,7 @@
   (facts (silly (exp (gen) (mul w l-0)))
     (neq (exp (gen) (mul w l-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -6029,6 +6130,7 @@
   (facts (silly gx) (silly (exp (gen) (mul w y-0))) (neq gx (gen))
     (neq (exp (gen) (mul w y-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 1 ltx-gen 2)
@@ -6100,6 +6202,7 @@
   (facts (silly gx) (silly (exp (gen) (mul w y-0))) (neq gx (gen))
     (neq (exp (gen) (mul w y-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 3 ltx-gen 2)
@@ -6173,6 +6276,7 @@
   (facts (silly gx) (silly (exp (gen) (mul w y-0))) (neq gx (gen))
     (neq (exp (gen) (mul w y-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
@@ -6240,6 +6344,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) x)) (neq (exp (gen) x) (gen)) (neq self b)
     (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 2 resp 4) (exp (gen) y-0) (0 3))
@@ -6304,6 +6409,7 @@
   (facts (silly (exp (gen) (mul w l-0)))
     (neq (exp (gen) (mul w l-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -6369,6 +6475,7 @@
   (gen-st (pv b l-1) (pv self l))
   (facts (silly (exp (gen) x)) (neq (exp (gen) x) (gen)) (neq self b)
     (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-0) (0 3))
@@ -6441,6 +6548,7 @@
   (facts (silly (exp (gen) (mul w l-1)))
     (neq (exp (gen) (mul w l-1)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -6514,6 +6622,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 1 ltx-gen 2)
@@ -6584,6 +6693,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 4 ltx-gen 2)
@@ -6656,6 +6766,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
@@ -6727,6 +6838,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 1 ltx-gen 2)
@@ -6793,6 +6905,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 4 ltx-gen 2)
@@ -6861,6 +6974,7 @@
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
@@ -6927,6 +7041,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -6992,6 +7107,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -7057,6 +7173,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y l-0)) x))
@@ -7121,6 +7238,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -7186,6 +7304,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -7251,6 +7370,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y l-0)) x))
@@ -7318,6 +7438,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) l-1)) (neq (exp (gen) l-1) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -7390,6 +7511,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) l-1)) (neq (exp (gen) l-1) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -7463,6 +7585,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) l-1)) (neq (exp (gen) l-1) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y l-1)) x))
@@ -7537,6 +7660,7 @@
   (facts (silly (exp (gen) (mul w x-0)))
     (neq (exp (gen) (mul w x-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly gen-st-ltx-disclose-0
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (5 0))
@@ -7601,6 +7725,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) (mul w x))) (neq (exp (gen) (mul w x)) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 0 init 3) (exp (gen) x-0) (5 0))
@@ -7664,6 +7789,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) w)) (neq (exp (gen) w) (gen)) (neq self b)
     (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (gy (exp (gen) (mul (rec x) y w))))
@@ -7727,6 +7853,7 @@
   (facts (silly (exp (gen) (mul w l-0)))
     (neq (exp (gen) (mul w l-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 1 ltx-gen 3) (exp (gen) l-1) (5 0))
@@ -7794,6 +7921,7 @@
   (facts (silly gx) (silly (exp (gen) (mul w y-0))) (neq gx (gen))
     (neq (exp (gen) (mul w y-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly gen-st-ltx-disclose-0
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (5 0))
@@ -7864,6 +7992,7 @@
   (facts (silly (exp (gen) (mul w l-0)))
     (neq (exp (gen) (mul w l-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 4 ltx-gen 3) (exp (gen) l-1) (5 0))
@@ -7931,6 +8060,7 @@
   (facts (silly (exp (gen) (mul w l-1)))
     (neq (exp (gen) (mul w l-1)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-1) (5 0))
@@ -8002,6 +8132,7 @@
   (gen-st (pv b l) (pv self l-0) (pv self-0 l-1))
   (facts (silly (exp (gen) l-1)) (neq (exp (gen) l-1) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((4 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (rec x)) y))
@@ -8077,6 +8208,7 @@
   (gen-st (pv b l) (pv self l-0) (pv self-0 l-1))
   (facts (silly (exp (gen) l-1)) (neq (exp (gen) l-1) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((4 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) y) x))
@@ -8148,6 +8280,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) x)) (neq (exp (gen) x) (gen)) (neq self b)
     (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-0) (0 3))
@@ -8217,6 +8350,7 @@
   (facts (silly (exp (gen) (mul w x-0)))
     (neq (exp (gen) (mul w x-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -8287,6 +8421,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) x)) (neq (exp (gen) x) (gen)) (neq self b)
     (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-0) (0 3))
@@ -8356,6 +8491,7 @@
   (facts (silly (exp (gen) (mul w x-0)))
     (neq (exp (gen) (mul w x-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -8427,6 +8563,7 @@
   (gen-st (pv b l-1) (pv self l) (pv a l-0))
   (facts (silly (exp (gen) x)) (neq (exp (gen) x) (gen)) (neq self b)
     (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-0) (0 3))
@@ -8501,6 +8638,7 @@
   (facts (silly (exp (gen) (mul w x-0)))
     (neq (exp (gen) (mul w x-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -8570,6 +8708,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) (mul x w))) (neq (exp (gen) (mul x w)) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-0) (5 0))
@@ -8631,6 +8770,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) (mul x w))) (neq (exp (gen) (mul x w)) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-0) (5 0))
@@ -8696,6 +8836,7 @@
   (facts (silly gx) (silly (exp (gen) x)) (neq gx (gen))
     (neq (exp (gen) x) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-1) (0 3))
@@ -8768,6 +8909,7 @@
   (facts (silly gx) (silly (exp (gen) (mul w y-0))) (neq gx (gen))
     (neq (exp (gen) (mul w y-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -8842,6 +8984,7 @@
   (facts (silly gx) (silly (exp (gen) x)) (neq gx (gen))
     (neq (exp (gen) x) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-1) (0 3))
@@ -8914,6 +9057,7 @@
   (facts (silly gx) (silly (exp (gen) (mul w y-0))) (neq gx (gen))
     (neq (exp (gen) (mul w y-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -8989,6 +9133,7 @@
   (facts (silly gx) (silly (exp (gen) x)) (neq gx (gen))
     (neq (exp (gen) x) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-1) (0 3))
@@ -9066,6 +9211,7 @@
   (facts (silly gx) (silly (exp (gen) (mul w y-0))) (neq gx (gen))
     (neq (exp (gen) (mul w y-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -9139,6 +9285,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) (mul x w))) (neq (exp (gen) (mul x w)) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-0) (5 0))
@@ -9205,6 +9352,7 @@
   (gen-st (pv b l-1) (pv self l))
   (facts (silly (exp (gen) (mul x w))) (neq (exp (gen) (mul x w)) (gen))
     (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-0) (6 0))
@@ -9277,6 +9425,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -9352,6 +9501,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -9427,6 +9577,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y y-0)) x))
@@ -9501,6 +9652,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -9576,6 +9728,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -9651,6 +9804,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y y-0)) x))
@@ -9727,6 +9881,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -9806,6 +9961,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -9885,6 +10041,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y y-0)) x))
@@ -9960,6 +10117,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -10031,6 +10189,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -10102,6 +10261,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y x-0)) x))
@@ -10172,6 +10332,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -10243,6 +10404,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -10314,6 +10476,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y x-0)) x))
@@ -10386,6 +10549,7 @@
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -10461,6 +10625,7 @@
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -10536,6 +10701,7 @@
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y x-0)) x))
@@ -10610,6 +10776,7 @@
   (gen-st (pv b l) (pv self l-0) (pv self-0 l-1))
   (facts (silly (exp (gen) l-1)) (neq (exp (gen) l-1) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((5 1) (7 0)))
   (rule fact-resp-neq0 fact-resp-silly gen-st-ltx-disclose-0
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
@@ -10685,6 +10852,7 @@
   (facts (silly (exp (gen) (mul w x-0)))
     (neq (exp (gen) (mul w x-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 7 1 ltx-gen 2)
@@ -10755,6 +10923,7 @@
   (facts (silly (exp (gen) (mul w x-0)))
     (neq (exp (gen) (mul w x-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 7 4 ltx-gen 2)
@@ -10828,6 +10997,7 @@
   (facts (silly (exp (gen) (mul w x-0)))
     (neq (exp (gen) (mul w x-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
@@ -10895,6 +11065,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) x)) (neq (exp (gen) x) (gen)) (neq self b)
     (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-0) (0 3))
@@ -10959,6 +11130,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) w)) (neq (exp (gen) w) (gen)) (neq self b)
     (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -11023,6 +11195,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) x)) (neq (exp (gen) x) (gen)) (neq self b)
     (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-0) (0 3))
@@ -11089,6 +11262,7 @@
   (facts (silly (exp (gen) (mul w l-0)))
     (neq (exp (gen) (mul w l-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -11160,6 +11334,7 @@
   (facts (silly gx) (silly (exp (gen) (mul w y-0))) (neq gx (gen))
     (neq (exp (gen) (mul w y-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 7 1 ltx-gen 2)
@@ -11233,6 +11408,7 @@
   (facts (silly gx) (silly (exp (gen) (mul w y-0))) (neq gx (gen))
     (neq (exp (gen) (mul w y-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 7 4 ltx-gen 2)
@@ -11309,6 +11485,7 @@
   (facts (silly gx) (silly (exp (gen) (mul w y-0))) (neq gx (gen))
     (neq (exp (gen) (mul w y-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
@@ -11380,6 +11557,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) x)) (neq (exp (gen) x) (gen)) (neq self b)
     (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-0) (0 3))
@@ -11446,6 +11624,7 @@
   (facts (silly (exp (gen) (mul w l-0)))
     (neq (exp (gen) (mul w l-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -11515,6 +11694,7 @@
   (gen-st (pv b l-1) (pv self l))
   (facts (silly (exp (gen) x)) (neq (exp (gen) x) (gen)) (neq self b)
     (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-0) (0 3))
@@ -11589,6 +11769,7 @@
   (facts (silly (exp (gen) (mul w l-1)))
     (neq (exp (gen) (mul w l-1)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -11663,6 +11844,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) (mul x w))) (neq (exp (gen) (mul x w)) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-0) (6 0))
@@ -11731,6 +11913,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) (mul x w))) (neq (exp (gen) (mul x w)) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-0) (6 0))
@@ -11802,6 +11985,7 @@
   (gen-st (pv b l-1) (pv self l) (pv a l-0))
   (facts (silly (exp (gen) (mul x w))) (neq (exp (gen) (mul x w)) (gen))
     (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 resp 4) (exp (gen) y-0) (7 0))
@@ -11870,6 +12054,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 1 ltx-gen 2) l-1 (4 0))
@@ -11932,6 +12117,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 3 ltx-gen 2) l-1 (4 0))
@@ -11996,6 +12182,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) l-1)) (neq (exp (gen) l-1) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (4 0))
@@ -12061,6 +12248,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) (mul x w))) (neq (exp (gen) (mul x w)) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul x w) (4 0))
@@ -12126,6 +12314,7 @@
   (facts (silly (exp (gen) (mul l-0 l-0)))
     (neq (exp (gen) (mul l-0 l-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 1 ltx-gen 2) l-1 (4 0))
@@ -12191,6 +12380,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -12257,6 +12447,7 @@
   (facts (silly (exp (gen) (mul l l-0)))
     (neq (exp (gen) (mul l l-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 3 ltx-gen 2) l-1 (4 0))
@@ -12324,6 +12515,7 @@
   (facts (silly (exp (gen) (mul l-0 l-1)))
     (neq (exp (gen) (mul l-0 l-1)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (4 0))
@@ -12395,6 +12587,7 @@
   (facts (silly gx) (silly (exp (gen) (mul x w))) (neq gx (gen))
     (neq (exp (gen) (mul x w)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-1) (6 0))
@@ -12467,6 +12660,7 @@
   (facts (silly gx) (silly (exp (gen) (mul x w))) (neq gx (gen))
     (neq (exp (gen) (mul x w)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-1) (6 0))
@@ -12542,6 +12736,7 @@
   (facts (silly gx) (silly (exp (gen) (mul x w))) (neq gx (gen))
     (neq (exp (gen) (mul x w)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 resp 4) (exp (gen) y-1) (7 0))
@@ -12615,6 +12810,7 @@
   (facts (silly (exp (gen) (mul l l-0)))
     (neq (exp (gen) (mul l l-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 1 ltx-gen 2) l-1 (4 0))
@@ -12680,6 +12876,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -12746,6 +12943,7 @@
   (facts (silly (exp (gen) (mul l-0 l-0)))
     (neq (exp (gen) (mul l-0 l-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 3 ltx-gen 2) l-1 (4 0))
@@ -12814,6 +13012,7 @@
   (facts (silly (exp (gen) (mul l-0 l-1)))
     (neq (exp (gen) (mul l-0 l-1)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (4 0))
@@ -12885,6 +13084,7 @@
   (facts (silly (exp (gen) (mul l-0 l-1)))
     (neq (exp (gen) (mul l-0 l-1)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 1 ltx-gen 2) l-2 (4 0))
@@ -12959,6 +13159,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) l-1)) (neq (exp (gen) l-1) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -13033,6 +13234,7 @@
   (facts (silly (exp (gen) (mul l-0 l-1)))
     (neq (exp (gen) (mul l-0 l-1)) (gen)) (neq self b) (undisclosed l-1)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 3 ltx-gen 2) l-2 (4 0))
@@ -13107,6 +13309,7 @@
   (facts (silly (exp (gen) (mul l-1 l-1)))
     (neq (exp (gen) (mul l-1 l-1)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 5 ltx-gen 2) l-2 (4 0))
@@ -13185,6 +13388,7 @@
   (facts (silly (exp (gen) (mul l-1 l-2)))
     (neq (exp (gen) (mul l-1 l-2)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-2 (4 0))
@@ -13264,6 +13468,7 @@
   (gen-st (pv b l) (pv self l-0) (pv self-0 l-1))
   (facts (silly (exp (gen) l-1)) (neq (exp (gen) l-1) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((5 1) (7 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (rec x)) y))
@@ -13343,6 +13548,7 @@
   (gen-st (pv b l) (pv self l-0) (pv self-0 l-1))
   (facts (silly (exp (gen) l-1)) (neq (exp (gen) l-1) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((5 1) (7 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) y) x))
@@ -13417,6 +13623,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) x)) (neq (exp (gen) x) (gen)) (neq self b)
     (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-0) (0 3))
@@ -13488,6 +13695,7 @@
   (facts (silly (exp (gen) (mul w x-0)))
     (neq (exp (gen) (mul w x-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -13560,6 +13768,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) x)) (neq (exp (gen) x) (gen)) (neq self b)
     (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-0) (0 3))
@@ -13631,6 +13840,7 @@
   (facts (silly (exp (gen) (mul w x-0)))
     (neq (exp (gen) (mul w x-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -13705,6 +13915,7 @@
   (gen-st (pv b l-1) (pv self l) (pv a l-0))
   (facts (silly (exp (gen) x)) (neq (exp (gen) x) (gen)) (neq self b)
     (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 resp 4) (exp (gen) y-0) (0 3))
@@ -13781,6 +13992,7 @@
   (facts (silly (exp (gen) (mul w x-0)))
     (neq (exp (gen) (mul w x-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -13854,6 +14066,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) (mul x w))) (neq (exp (gen) (mul x w)) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-0) (6 0))
@@ -13918,6 +14131,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) (mul x w))) (neq (exp (gen) (mul x w)) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-0) (6 0))
@@ -13985,6 +14199,7 @@
   (facts (silly gx) (silly (exp (gen) x)) (neq gx (gen))
     (neq (exp (gen) x) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-1) (0 3))
@@ -14059,6 +14274,7 @@
   (facts (silly gx) (silly (exp (gen) (mul w y-0))) (neq gx (gen))
     (neq (exp (gen) (mul w y-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -14135,6 +14351,7 @@
   (facts (silly gx) (silly (exp (gen) x)) (neq gx (gen))
     (neq (exp (gen) x) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-1) (0 3))
@@ -14209,6 +14426,7 @@
   (facts (silly gx) (silly (exp (gen) (mul w y-0))) (neq gx (gen))
     (neq (exp (gen) (mul w y-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -14287,6 +14505,7 @@
   (facts (silly gx) (silly (exp (gen) x)) (neq gx (gen))
     (neq (exp (gen) x) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 resp 4) (exp (gen) y-1) (0 3))
@@ -14366,6 +14585,7 @@
   (facts (silly gx) (silly (exp (gen) (mul w y-0))) (neq gx (gen))
     (neq (exp (gen) (mul w y-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -14442,6 +14662,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) (mul x w))) (neq (exp (gen) (mul x w)) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-0) (6 0))
@@ -14510,6 +14731,7 @@
   (gen-st (pv b l-1) (pv self l))
   (facts (silly (exp (gen) (mul x w))) (neq (exp (gen) (mul x w)) (gen))
     (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 resp 4) (exp (gen) y-0) (7 0))
@@ -14583,6 +14805,7 @@
   (facts (silly (exp (gen) (mul x-0 l-0)))
     (neq (exp (gen) (mul x-0 l-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 1 ltx-gen 2) l-1 (4 0))
@@ -14655,6 +14878,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -14727,6 +14951,7 @@
   (facts (silly (exp (gen) (mul x-0 l-0)))
     (neq (exp (gen) (mul x-0 l-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 3 ltx-gen 2) l-1 (4 0))
@@ -14802,6 +15027,7 @@
   (facts (silly (exp (gen) (mul x-0 l-1)))
     (neq (exp (gen) (mul x-0 l-1)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (4 0))
@@ -14877,6 +15103,7 @@
   (facts (silly (exp (gen) (mul x-0 l-0)))
     (neq (exp (gen) (mul x-0 l-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 1 ltx-gen 2) l-1 (4 0))
@@ -14949,6 +15176,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -15021,6 +15249,7 @@
   (facts (silly (exp (gen) (mul x-0 l-0)))
     (neq (exp (gen) (mul x-0 l-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 3 ltx-gen 2) l-1 (4 0))
@@ -15096,6 +15325,7 @@
   (facts (silly (exp (gen) (mul x-0 l-1)))
     (neq (exp (gen) (mul x-0 l-1)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (4 0))
@@ -15173,6 +15403,7 @@
   (facts (silly (exp (gen) (mul x-0 l-1)))
     (neq (exp (gen) (mul x-0 l-1)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 1 ltx-gen 2) l-2 (4 0))
@@ -15249,6 +15480,7 @@
   (gen-st (pv b l-1) (pv self l) (pv a l-0))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -15325,6 +15557,7 @@
   (facts (silly (exp (gen) (mul x-0 l-1)))
     (neq (exp (gen) (mul x-0 l-1)) (gen)) (neq self b) (undisclosed l-1)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 3 ltx-gen 2) l-2 (4 0))
@@ -15402,6 +15635,7 @@
   (facts (silly (exp (gen) (mul x-0 l-1)))
     (neq (exp (gen) (mul x-0 l-1)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 6 ltx-gen 2) l-2 (4 0))
@@ -15483,6 +15717,7 @@
   (facts (silly (exp (gen) (mul x-0 l-2)))
     (neq (exp (gen) (mul x-0 l-2)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-2 (4 0))
@@ -15558,6 +15793,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul (rec x) l-0) (5 0))
@@ -15623,6 +15859,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul (rec x) l-0) (5 0))
@@ -15689,6 +15926,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) l-1)) (neq (exp (gen) l-1) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul (rec x) l-1) (5 0))
@@ -15758,6 +15996,7 @@
   (facts (silly (exp (gen) (mul l-0 l-0)))
     (neq (exp (gen) (mul l-0 l-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul (rec x) l-0 l-0) (5 0))
@@ -15829,6 +16068,7 @@
   (facts (silly gx) (silly (exp (gen) (mul y-0 l-0))) (neq gx (gen))
     (neq (exp (gen) (mul y-0 l-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 1 ltx-gen 2) l-1 (4 0))
@@ -15905,6 +16145,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -15980,6 +16221,7 @@
   (facts (silly gx) (silly (exp (gen) (mul y-0 l-0))) (neq gx (gen))
     (neq (exp (gen) (mul y-0 l-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 3 ltx-gen 2) l-1 (4 0))
@@ -16058,6 +16300,7 @@
   (facts (silly gx) (silly (exp (gen) (mul y-0 l-1))) (neq gx (gen))
     (neq (exp (gen) (mul y-0 l-1)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (4 0))
@@ -16136,6 +16379,7 @@
   (facts (silly gx) (silly (exp (gen) (mul y-0 l-0))) (neq gx (gen))
     (neq (exp (gen) (mul y-0 l-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 1 ltx-gen 2) l-1 (4 0))
@@ -16212,6 +16456,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -16287,6 +16532,7 @@
   (facts (silly gx) (silly (exp (gen) (mul y-0 l-0))) (neq gx (gen))
     (neq (exp (gen) (mul y-0 l-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 3 ltx-gen 2) l-1 (4 0))
@@ -16365,6 +16611,7 @@
   (facts (silly gx) (silly (exp (gen) (mul y-0 l-1))) (neq gx (gen))
     (neq (exp (gen) (mul y-0 l-1)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (4 0))
@@ -16445,6 +16692,7 @@
   (facts (silly gx) (silly (exp (gen) (mul y-0 l-1))) (neq gx (gen))
     (neq (exp (gen) (mul y-0 l-1)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 1 ltx-gen 2) l-2 (4 0))
@@ -16525,6 +16773,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -16604,6 +16853,7 @@
   (facts (silly gx) (silly (exp (gen) (mul y-0 l-1))) (neq gx (gen))
     (neq (exp (gen) (mul y-0 l-1)) (gen)) (neq self b) (undisclosed l-1)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 3 ltx-gen 2) l-2 (4 0))
@@ -16684,6 +16934,7 @@
   (facts (silly gx) (silly (exp (gen) (mul y-0 l-1))) (neq gx (gen))
     (neq (exp (gen) (mul y-0 l-1)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 6 ltx-gen 2) l-2 (4 0))
@@ -16768,6 +17019,7 @@
   (facts (silly gx) (silly (exp (gen) (mul y-0 l-2))) (neq gx (gen))
     (neq (exp (gen) (mul y-0 l-2)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-2 (4 0))
@@ -16847,6 +17099,7 @@
   (facts (silly (exp (gen) (mul l-0 l-0)))
     (neq (exp (gen) (mul l-0 l-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul (rec x) l-0 l-0) (5 0))
@@ -16918,6 +17171,7 @@
   (facts (silly (exp (gen) (mul l-1 l-1)))
     (neq (exp (gen) (mul l-1 l-1)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul (rec x) l-1 l-1) (6 0))
@@ -16993,6 +17247,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) (mul x w))) (neq (exp (gen) (mul x w)) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 resp 4) (exp (gen) y-0) (7 0))
@@ -17063,6 +17318,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) (mul x w))) (neq (exp (gen) (mul x w)) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 resp 4) (exp (gen) y-0) (7 0))
@@ -17136,6 +17392,7 @@
   (gen-st (pv b l-1) (pv self l) (pv a l-0))
   (facts (silly (exp (gen) (mul x w))) (neq (exp (gen) (mul x w)) (gen))
     (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 2 resp 4) (exp (gen) y-0) (8 0))
@@ -17207,6 +17464,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 1 ltx-gen 2) l-1 (5 0))
@@ -17272,6 +17530,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 4 ltx-gen 2) l-1 (5 0))
@@ -17339,6 +17598,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) l-1)) (neq (exp (gen) l-1) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (5 0))
@@ -17406,6 +17666,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) (mul x w))) (neq (exp (gen) (mul x w)) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul x w) (5 0))
@@ -17474,6 +17735,7 @@
   (facts (silly (exp (gen) (mul l-0 l-0)))
     (neq (exp (gen) (mul l-0 l-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 1 ltx-gen 2) l-1 (5 0))
@@ -17542,6 +17804,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -17611,6 +17874,7 @@
   (facts (silly (exp (gen) (mul l l-0)))
     (neq (exp (gen) (mul l l-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 4 ltx-gen 2) l-1 (5 0))
@@ -17681,6 +17945,7 @@
   (facts (silly (exp (gen) (mul l-0 l-1)))
     (neq (exp (gen) (mul l-0 l-1)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (5 0))
@@ -17754,6 +18019,7 @@
   (facts (silly gx) (silly (exp (gen) (mul x w))) (neq gx (gen))
     (neq (exp (gen) (mul x w)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 resp 4) (exp (gen) y-1) (7 0))
@@ -17828,6 +18094,7 @@
   (facts (silly gx) (silly (exp (gen) (mul x w))) (neq gx (gen))
     (neq (exp (gen) (mul x w)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 resp 4) (exp (gen) y-1) (7 0))
@@ -17905,6 +18172,7 @@
   (facts (silly gx) (silly (exp (gen) (mul x w))) (neq gx (gen))
     (neq (exp (gen) (mul x w)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 2 resp 4) (exp (gen) y-1) (8 0))
@@ -17980,6 +18248,7 @@
   (facts (silly (exp (gen) (mul l l-0)))
     (neq (exp (gen) (mul l l-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 1 ltx-gen 2) l-1 (5 0))
@@ -18047,6 +18316,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -18116,6 +18386,7 @@
   (facts (silly (exp (gen) (mul l-0 l-0)))
     (neq (exp (gen) (mul l-0 l-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 4 ltx-gen 2) l-1 (5 0))
@@ -18187,6 +18458,7 @@
   (facts (silly (exp (gen) (mul l-0 l-1)))
     (neq (exp (gen) (mul l-0 l-1)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (5 0))
@@ -18261,6 +18533,7 @@
   (facts (silly (exp (gen) (mul l-0 l-1)))
     (neq (exp (gen) (mul l-0 l-1)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 1 ltx-gen 2) l-2 (5 0))
@@ -18337,6 +18610,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) l-1)) (neq (exp (gen) l-1) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -18413,6 +18687,7 @@
   (facts (silly (exp (gen) (mul l-0 l-1)))
     (neq (exp (gen) (mul l-0 l-1)) (gen)) (neq self b) (undisclosed l-1)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 4 ltx-gen 2) l-2 (5 0))
@@ -18490,6 +18765,7 @@
   (facts (silly (exp (gen) (mul l-1 l-1)))
     (neq (exp (gen) (mul l-1 l-1)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 6 ltx-gen 2) l-2 (5 0))
@@ -18570,6 +18846,7 @@
   (facts (silly (exp (gen) (mul l-1 l-2)))
     (neq (exp (gen) (mul l-1 l-2)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-2 (5 0))
@@ -18649,6 +18926,7 @@
   (facts (silly (exp (gen) (mul x-0 l-0)))
     (neq (exp (gen) (mul x-0 l-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 1 ltx-gen 2) l-1 (5 0))
@@ -18723,6 +19001,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -18797,6 +19076,7 @@
   (facts (silly (exp (gen) (mul x-0 l-0)))
     (neq (exp (gen) (mul x-0 l-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 4 ltx-gen 2) l-1 (5 0))
@@ -18875,6 +19155,7 @@
   (facts (silly (exp (gen) (mul x-0 l-1)))
     (neq (exp (gen) (mul x-0 l-1)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (5 0))
@@ -18952,6 +19233,7 @@
   (facts (silly (exp (gen) (mul x-0 l-0)))
     (neq (exp (gen) (mul x-0 l-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 1 ltx-gen 2) l-1 (5 0))
@@ -19026,6 +19308,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -19100,6 +19383,7 @@
   (facts (silly (exp (gen) (mul x-0 l-0)))
     (neq (exp (gen) (mul x-0 l-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 4 ltx-gen 2) l-1 (5 0))
@@ -19178,6 +19462,7 @@
   (facts (silly (exp (gen) (mul x-0 l-1)))
     (neq (exp (gen) (mul x-0 l-1)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (5 0))
@@ -19257,6 +19542,7 @@
   (facts (silly (exp (gen) (mul x-0 l-1)))
     (neq (exp (gen) (mul x-0 l-1)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 1 ltx-gen 2) l-2 (5 0))
@@ -19335,6 +19621,7 @@
   (gen-st (pv b l-1) (pv self l) (pv a l-0))
   (facts (silly (exp (gen) x-0)) (neq (exp (gen) x-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -19413,6 +19700,7 @@
   (facts (silly (exp (gen) (mul x-0 l-1)))
     (neq (exp (gen) (mul x-0 l-1)) (gen)) (neq self b) (undisclosed l-1)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 4 ltx-gen 2) l-2 (5 0))
@@ -19493,6 +19781,7 @@
   (facts (silly (exp (gen) (mul x-0 l-1)))
     (neq (exp (gen) (mul x-0 l-1)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 7 ltx-gen 2) l-2 (5 0))
@@ -19576,6 +19865,7 @@
   (facts (silly (exp (gen) (mul x-0 l-2)))
     (neq (exp (gen) (mul x-0 l-2)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-2 (5 0))
@@ -19653,6 +19943,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul (rec x) l-0) (6 0))
@@ -19720,6 +20011,7 @@
   (gen-st (pv b l) (pv self l-0))
   (facts (silly (exp (gen) l-0)) (neq (exp (gen) l-0) (gen))
     (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul (rec x) l-0) (6 0))
@@ -19789,6 +20081,7 @@
   (gen-st (pv b l-0) (pv self l))
   (facts (silly (exp (gen) l-1)) (neq (exp (gen) l-1) (gen))
     (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul (rec x) l-1) (6 0))
@@ -19860,6 +20153,7 @@
   (facts (silly (exp (gen) (mul l-0 l-0)))
     (neq (exp (gen) (mul l-0 l-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul (rec x) l-0 l-0) (6 0))
@@ -19933,6 +20227,7 @@
   (facts (silly gx) (silly (exp (gen) (mul y-0 l-0))) (neq gx (gen))
     (neq (exp (gen) (mul y-0 l-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 1 ltx-gen 2) l-1 (5 0))
@@ -20011,6 +20306,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -20088,6 +20384,7 @@
   (facts (silly gx) (silly (exp (gen) (mul y-0 l-0))) (neq gx (gen))
     (neq (exp (gen) (mul y-0 l-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 4 ltx-gen 2) l-1 (5 0))
@@ -20169,6 +20466,7 @@
   (facts (silly gx) (silly (exp (gen) (mul y-0 l-1))) (neq gx (gen))
     (neq (exp (gen) (mul y-0 l-1)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (5 0))
@@ -20249,6 +20547,7 @@
   (facts (silly gx) (silly (exp (gen) (mul y-0 l-0))) (neq gx (gen))
     (neq (exp (gen) (mul y-0 l-0)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 1 ltx-gen 2) l-1 (5 0))
@@ -20327,6 +20626,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -20404,6 +20704,7 @@
   (facts (silly gx) (silly (exp (gen) (mul y-0 l-0))) (neq gx (gen))
     (neq (exp (gen) (mul y-0 l-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 4 ltx-gen 2) l-1 (5 0))
@@ -20485,6 +20786,7 @@
   (facts (silly gx) (silly (exp (gen) (mul y-0 l-1))) (neq gx (gen))
     (neq (exp (gen) (mul y-0 l-1)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (5 0))
@@ -20567,6 +20869,7 @@
   (facts (silly gx) (silly (exp (gen) (mul y-0 l-1))) (neq gx (gen))
     (neq (exp (gen) (mul y-0 l-1)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 1 ltx-gen 2) l-2 (5 0))
@@ -20649,6 +20952,7 @@
   (facts (silly gx) (silly (exp (gen) y-0)) (neq gx (gen))
     (neq (exp (gen) y-0) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test
@@ -20730,6 +21034,7 @@
   (facts (silly gx) (silly (exp (gen) (mul y-0 l-1))) (neq gx (gen))
     (neq (exp (gen) (mul y-0 l-1)) (gen)) (neq self b) (undisclosed l-1)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 4 ltx-gen 2) l-2 (5 0))
@@ -20813,6 +21118,7 @@
   (facts (silly gx) (silly (exp (gen) (mul y-0 l-1))) (neq gx (gen))
     (neq (exp (gen) (mul y-0 l-1)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 7 ltx-gen 2) l-2 (5 0))
@@ -20899,6 +21205,7 @@
   (facts (silly gx) (silly (exp (gen) (mul y-0 l-2))) (neq gx (gen))
     (neq (exp (gen) (mul y-0 l-2)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-2 (5 0))
@@ -20980,6 +21287,7 @@
   (facts (silly (exp (gen) (mul l-0 l-0)))
     (neq (exp (gen) (mul l-0 l-0)) (gen)) (neq self b) (undisclosed l-0)
     (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul (rec x) l-0 l-0) (6 0))
@@ -21054,6 +21362,7 @@
   (facts (silly (exp (gen) (mul l-1 l-1)))
     (neq (exp (gen) (mul l-1 l-1)) (gen)) (neq self b) (undisclosed l)
     (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule fact-resp-neq0 fact-resp-silly trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul (rec x) l-1 l-1) (7 0))

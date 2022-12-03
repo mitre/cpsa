@@ -25,7 +25,8 @@
   (defrule yes
     (forall ((z strd) (a akey))
       (implies
-        (and (p "appraise" z 2) (p "appraise" "a" z a) (non (invk a)))
+        (and (p "appraise" z (idx 2)) (p "appraise" "a" z a)
+          (non (invk a)))
         (exists ((d akey))
           (and (p "appraise" "d" z d) (non (invk d))))))
     (comment "Appraisal succeeded"))
@@ -240,7 +241,8 @@
   (defrule yes
     (forall ((z strd) (a akey))
       (implies
-        (and (p "appraise" z 2) (p "appraise" "a" z a) (non (invk a)))
+        (and (p "appraise" z (idx 2)) (p "appraise" "a" z a)
+          (non (invk a)))
         (exists ((d akey))
           (and (p "appraise" "d" z d) (non (invk d))))))
     (comment "Appraisal succeeded"))
@@ -307,15 +309,16 @@
   (defrule yes
     (forall ((z strd) (a akey))
       (implies
-        (and (p "appraise" z 2) (p "appraise" "a" z a) (non (invk a)))
+        (and (p "appraise" z (idx 2)) (p "appraise" "a" z a)
+          (non (invk a)))
         (exists ((d akey))
           (and (p "appraise" "d" z d) (non (invk d))))))
     (comment "Appraisal succeeded"))
   (defrule trust
     (forall ((z w strd) (d akey))
       (implies
-        (and (p "appraise" z 2) (p "appraise" "d" z d)
-          (p "squealer" w 2) (p "squealer" "d" w d))
+        (and (p "appraise" z (idx 2)) (p "appraise" "d" z d)
+          (p "squealer" w (idx 2)) (p "squealer" "d" w d))
         (false)))
     (comment "Passing attestation means not a squealer"))
   (defgenrule neqRl_indx
@@ -444,15 +447,16 @@
   (defrule yes
     (forall ((z strd) (a akey))
       (implies
-        (and (p "appraise" z 2) (p "appraise" "a" z a) (non (invk a)))
+        (and (p "appraise" z (idx 2)) (p "appraise" "a" z a)
+          (non (invk a)))
         (exists ((d akey))
           (and (p "appraise" "d" z d) (non (invk d))))))
     (comment "Appraisal succeeded"))
   (defrule trust
     (forall ((z w strd) (d akey))
       (implies
-        (and (p "appraise" z 2) (p "appraise" "d" z d)
-          (p "squealer" w 2) (p "squealer" "d" w d))
+        (and (p "appraise" z (idx 2)) (p "appraise" "d" z d)
+          (p "squealer" w (idx 2)) (p "squealer" "d" w d))
         (false)))
     (comment "Passing attestation means not a squealer"))
   (defgenrule neqRl_indx
@@ -518,22 +522,23 @@
   (defrule yes
     (forall ((z strd) (a akey))
       (implies
-        (and (p "appraise" z 2) (p "appraise" "a" z a) (non (invk a)))
+        (and (p "appraise" z (idx 2)) (p "appraise" "a" z a)
+          (non (invk a)))
         (exists ((d akey))
           (and (p "appraise" "d" z d) (non (invk d))))))
     (comment "Appraisal succeeded"))
   (defrule trust
     (forall ((z w strd) (d akey))
       (implies
-        (and (p "appraise" z 2) (p "appraise" "d" z d)
-          (p "squealer" w 2) (p "squealer" "d" w d))
+        (and (p "appraise" z (idx 2)) (p "appraise" "d" z d)
+          (p "squealer" w (idx 2)) (p "squealer" "d" w d))
         (false)))
     (comment "Passing attestation means not a squealer"))
   (defrule uncompromised-people-choose-uncompromised-appraisers
     (forall ((z strd) (a p akey))
       (implies
-        (and (p "person" z 3) (p "person" "p" z p) (p "person" "a" z a)
-          (non (invk p)))
+        (and (p "person" z (idx 3)) (p "person" "p" z p)
+          (p "person" "a" z a) (non (invk p)))
         (non (invk a)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -662,22 +667,23 @@
   (defrule yes
     (forall ((z strd) (a akey))
       (implies
-        (and (p "appraise" z 2) (p "appraise" "a" z a) (non (invk a)))
+        (and (p "appraise" z (idx 2)) (p "appraise" "a" z a)
+          (non (invk a)))
         (exists ((d akey))
           (and (p "appraise" "d" z d) (non (invk d))))))
     (comment "Appraisal succeeded"))
   (defrule trust
     (forall ((z w strd) (d akey))
       (implies
-        (and (p "appraise" z 2) (p "appraise" "d" z d)
-          (p "squealer" w 2) (p "squealer" "d" w d))
+        (and (p "appraise" z (idx 2)) (p "appraise" "d" z d)
+          (p "squealer" w (idx 2)) (p "squealer" "d" w d))
         (false)))
     (comment "Passing attestation means not a squealer"))
   (defrule uncompromised-people-choose-uncompromised-appraisers
     (forall ((z strd) (a p akey))
       (implies
-        (and (p "person" z 3) (p "person" "p" z p) (p "person" "a" z a)
-          (non (invk p)))
+        (and (p "person" z (idx 3)) (p "person" "p" z p)
+          (p "person" "a" z a) (non (invk p)))
         (non (invk a)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))

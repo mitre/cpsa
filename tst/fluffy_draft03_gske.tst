@@ -417,14 +417,16 @@
   (defrule client-no-request
     (forall ((a s name) (y z strd))
       (implies
-        (and (p "client" z 1) (p "client" "s" z s) (p "client" "a" z a)
-          (p "keyserv" y 1) (p "keyserv" "s" y s) (p "keyserv" "b" y a))
+        (and (p "client" z (idx 1)) (p "client" "s" z s)
+          (p "client" "a" z a) (p "keyserv" y (idx 1))
+          (p "keyserv" "s" y s) (p "keyserv" "b" y a))
         (false))))
   (defrule sp-no-fetch
     (forall ((b s name) (y z strd))
       (implies
-        (and (p "sp" z 1) (p "sp" "s" z s) (p "sp" "b" z b)
-          (p "keyserv" y 3) (p "keyserv" "s" y s) (p "keyserv" "a" y b))
+        (and (p "sp" z (idx 1)) (p "sp" "s" z s) (p "sp" "b" z b)
+          (p "keyserv" y (idx 3)) (p "keyserv" "s" y s)
+          (p "keyserv" "a" y b))
         (false))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -490,14 +492,16 @@
   (defrule client-no-request
     (forall ((a s name) (y z strd))
       (implies
-        (and (p "client" z 1) (p "client" "s" z s) (p "client" "a" z a)
-          (p "keyserv" y 1) (p "keyserv" "s" y s) (p "keyserv" "b" y a))
+        (and (p "client" z (idx 1)) (p "client" "s" z s)
+          (p "client" "a" z a) (p "keyserv" y (idx 1))
+          (p "keyserv" "s" y s) (p "keyserv" "b" y a))
         (false))))
   (defrule sp-no-fetch
     (forall ((b s name) (y z strd))
       (implies
-        (and (p "sp" z 1) (p "sp" "s" z s) (p "sp" "b" z b)
-          (p "keyserv" y 3) (p "keyserv" "s" y s) (p "keyserv" "a" y b))
+        (and (p "sp" z (idx 1)) (p "sp" "s" z s) (p "sp" "b" z b)
+          (p "keyserv" y (idx 3)) (p "keyserv" "s" y s)
+          (p "keyserv" "a" y b))
         (false))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -587,14 +591,16 @@
   (defrule client-no-request
     (forall ((a s name) (y z strd))
       (implies
-        (and (p "client" z 1) (p "client" "s" z s) (p "client" "a" z a)
-          (p "keyserv" y 1) (p "keyserv" "s" y s) (p "keyserv" "b" y a))
+        (and (p "client" z (idx 1)) (p "client" "s" z s)
+          (p "client" "a" z a) (p "keyserv" y (idx 1))
+          (p "keyserv" "s" y s) (p "keyserv" "b" y a))
         (false))))
   (defrule sp-no-fetch
     (forall ((b s name) (y z strd))
       (implies
-        (and (p "sp" z 1) (p "sp" "s" z s) (p "sp" "b" z b)
-          (p "keyserv" y 3) (p "keyserv" "s" y s) (p "keyserv" "a" y b))
+        (and (p "sp" z (idx 1)) (p "sp" "s" z s) (p "sp" "b" z b)
+          (p "keyserv" y (idx 3)) (p "keyserv" "s" y s)
+          (p "keyserv" "a" y b))
         (false))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))

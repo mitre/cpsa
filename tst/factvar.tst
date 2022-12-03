@@ -9,7 +9,7 @@
     (trace (recv (enc n k)) (send n)))
   (defrule add
     (forall ((z strd))
-      (implies (p "resp" z 1) (exists ((m text)) (fact thing m))))
+      (implies (p "resp" z (idx 1)) (exists ((m text)) (fact thing m))))
     (comment "This rule adds a text variable")
     (comment "that does not appear in a strand"))
   (defgenrule neqRl_indx
@@ -51,7 +51,7 @@
     (trace (recv (enc n k)) (send n)))
   (defrule add
     (forall ((z strd))
-      (implies (p "resp" z 1) (exists ((m text)) (fact thing m))))
+      (implies (p "resp" z (idx 1)) (exists ((m text)) (fact thing m))))
     (comment "This rule adds a text variable")
     (comment "that does not appear in a strand"))
   (defgenrule neqRl_indx

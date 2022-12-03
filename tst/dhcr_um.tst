@@ -51,14 +51,18 @@
     (fn-of ("principal-of" (l self)) ("ltx-of" (self l))))
   (defrule fact-resp-neq0
     (forall ((z strd))
-      (implies (and (p "resp" z 3) (p "resp" "gx" z (gen))) (false))))
+      (implies
+        (and (p "resp" z (idx 3)) (p "resp" "gx" z (gen)))
+        (false))))
   (defrule fact-init-neq0
     (forall ((z strd))
-      (implies (and (p "init" z 4) (p "init" "gy" z (gen))) (false))))
+      (implies
+        (and (p "init" z (idx 4)) (p "init" "gy" z (gen)))
+        (false))))
   (defrule undisclosed-not-disclosed
     (forall ((z strd) (l rndx))
       (implies
-        (and (fact undisclosed l) (p "ltx-disclose" z 2)
+        (and (fact undisclosed l) (p "ltx-disclose" z (idx 2))
           (p "ltx-disclose" "l" z l))
         (false))))
   (defgenrule neqRl_indx
@@ -98,27 +102,31 @@
           (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
         (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
   (defgenrule trRl_ltx-gen-at-1
-    (forall ((z strd)) (implies (p "ltx-gen" z 2) (trans z 1))))
+    (forall ((z strd))
+      (implies (p "ltx-gen" z (idx 2)) (trans z (idx 1)))))
   (defgenrule trRl_ltx-gen-at-0
-    (forall ((z strd)) (implies (p "ltx-gen" z 2) (trans z 0))))
+    (forall ((z strd))
+      (implies (p "ltx-gen" z (idx 2)) (trans z (idx 0)))))
   (defgenrule trRl_ltx-disclose-at-1
-    (forall ((z strd)) (implies (p "ltx-disclose" z 2) (trans z 1))))
+    (forall ((z strd))
+      (implies (p "ltx-disclose" z (idx 2)) (trans z (idx 1)))))
   (defgenrule trRl_ltx-disclose-at-0
-    (forall ((z strd)) (implies (p "ltx-disclose" z 2) (trans z 0))))
+    (forall ((z strd))
+      (implies (p "ltx-disclose" z (idx 2)) (trans z (idx 0)))))
   (defgenrule gen-st-init-0
     (forall ((z strd) (l rndx) (a name))
       (implies
-        (and (p "init" z 1) (p "init" "l" z l) (p "init" "a" z a))
+        (and (p "init" z (idx 1)) (p "init" "l" z l) (p "init" "a" z a))
         (gen-st (pv a l)))))
   (defgenrule gen-st-resp-0
     (forall ((z strd) (l rndx) (b name))
       (implies
-        (and (p "resp" z 1) (p "resp" "l" z l) (p "resp" "b" z b))
+        (and (p "resp" z (idx 1)) (p "resp" "l" z l) (p "resp" "b" z b))
         (gen-st (pv b l)))))
   (defgenrule gen-st-ltx-disclose-0
     (forall ((z strd) (l rndx) (self name))
       (implies
-        (and (p "ltx-disclose" z 1) (p "ltx-disclose" "l" z l)
+        (and (p "ltx-disclose" z (idx 1)) (p "ltx-disclose" "l" z l)
           (p "ltx-disclose" "self" z self)) (gen-st (pv self l)))))
   (lang (sig sign) (body (tuple 3)) (pv (tuple 2))))
 
@@ -187,6 +195,7 @@
   (absent (x l))
   (gen-st (pv a l))
   (facts (neq a b) (undisclosed l) (undisclosed l-peer))
+  (leads-to ((1 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor (cat pt (pv a l))) (0 0))
@@ -223,6 +232,7 @@
   (absent (x l))
   (gen-st (pv a l))
   (facts (neq a b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation encryption-test (added-strand ltx-gen 3)
     (sig (body b (exp (gen) l-0) (pubk "sig" b)) (privk "sig" b)) (0 1))
@@ -265,6 +275,7 @@
   (absent (x l) (y l-1))
   (gen-st (pv a l) (pv b l-1))
   (facts (neq a b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (0 0)))
   (rule gen-st-ltx-disclose-0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation encryption-test (added-strand resp 4)
     (enc na nb a b (hash (exp (gen) (mul l l-0)) (exp gy x))) (0 3))
@@ -312,6 +323,7 @@
   (absent (x l))
   (gen-st (pv a l))
   (facts (neq a b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation encryption-test
     (added-listener (hash (exp (gen) (mul l l-0)) (exp gy x)))
@@ -357,6 +369,7 @@
   (absent (x l) (y l-0))
   (gen-st (pv a l) (pv b l-0))
   (facts (neq a b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (0 0)) ((2 1) (3 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 4 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b l-1))) (3 0))
@@ -408,6 +421,7 @@
   (absent (x l) (y l-1))
   (gen-st (pv a l) (pv b l-1))
   (facts (neq a b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (0 0)) ((4 1) (3 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b l-1))) (3 0))
@@ -459,6 +473,7 @@
   (absent (x l))
   (gen-st (pv a l))
   (facts (neq a b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation encryption-test
     (added-listener (cat (exp (gen) (mul l l-0)) (exp gy x)))
@@ -506,6 +521,7 @@
   (absent (x l-0) (y l))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 4 ltx-gen 3) (exp (gen) l-0) (3 1))
   (traces
@@ -561,6 +577,7 @@
   (precur (4 0))
   (gen-st (pv a l) (pv b l-0))
   (facts (neq a b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (0 0)) ((2 1) (3 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec w))) w)) (exp (gen) l)
@@ -616,6 +633,7 @@
   (absent (x l) (y l-1))
   (gen-st (pv a l) (pv b l-1))
   (facts (neq a b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (0 0)) ((4 1) (3 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l l-0)) l-1))
@@ -674,6 +692,7 @@
   (absent (x l) (y l-1))
   (gen-st (pv a l) (pv b l-1))
   (facts (neq a b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (0 0)) ((4 1) (3 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec l-1))) l-0))
@@ -733,6 +752,7 @@
   (absent (x l) (y l-1))
   (gen-st (pv a l) (pv b l-1))
   (facts (neq a b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (0 0)) ((4 1) (3 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l-0 (rec l-1))) l))
@@ -789,6 +809,7 @@
   (absent (x l))
   (gen-st (pv a l))
   (facts (neq a b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
     (exp (gen) (mul l l-0)) (4 0))
@@ -838,6 +859,7 @@
   (absent (x l))
   (gen-st (pv a l))
   (facts (neq a b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l))
     (exp (gen) (mul l l-0)) (4 0))
@@ -889,6 +911,7 @@
   (absent (x l-0) (y l) (y-0 l-1))
   (gen-st (pv b l) (pv self l-0) (pv b-0 l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule gen-st-ltx-disclose-0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (2 2))
   (traces
@@ -950,6 +973,7 @@
   (absent (x l-0) (y l) (x-0 l-1))
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule gen-st-ltx-disclose-0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (2 2))
   (traces
@@ -1005,6 +1029,7 @@
   (absent (y l) (x l-0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 4 0 init 3) (exp (gen) x-0) (2 2))
   (traces
@@ -1064,6 +1089,7 @@
   (absent (x l-0) (y l))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 4 3 ltx-gen 3) (exp (gen) l-1) (2 2))
   (traces
@@ -1117,6 +1143,7 @@
   (absent (x l) (y l-0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 4 1 ltx-gen 3) (exp (gen) l-1) (2 2))
   (traces
@@ -1173,6 +1200,7 @@
   (absent (x l-0) (y l))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-1) (2 2))
   (traces
@@ -1232,6 +1260,7 @@
   (precur (4 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp gy (mul x (rec y) (rec w))) w))
@@ -1293,6 +1322,7 @@
   (precur (4 0))
   (gen-st (pv a l-1) (pv b l) (pv a-0 l-0))
   (facts (neq a b) (undisclosed l-1) (undisclosed l))
+  (leads-to ((1 1) (0 0)) ((2 1) (3 0)))
   (rule gen-st-ltx-disclose-0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (4 0))
   (traces
@@ -1347,6 +1377,7 @@
   (precur (4 0))
   (gen-st (pv a l-0) (pv b l))
   (facts (neq a b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (0 0)) ((2 1) (3 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 0 init 3) (exp (gen) x-0) (4 0))
   (traces
@@ -1399,6 +1430,7 @@
   (precur (4 0))
   (gen-st (pv a l-0) (pv b l))
   (facts (neq a b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (0 0)) ((2 1) (3 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-1 l-0) (w l-0)) (gen) (4 0))
   (traces
@@ -1450,6 +1482,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 5 ltx-gen 3) (exp (gen) l-1) (4 0))
   (traces
@@ -1509,6 +1542,7 @@
   (precur (4 0))
   (gen-st (pv a l-1) (pv b l) (pv b-0 l-0))
   (facts (neq a b) (undisclosed l-1) (undisclosed l))
+  (leads-to ((1 1) (0 0)) ((2 1) (3 0)))
   (rule gen-st-ltx-disclose-0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (4 0))
   (traces
@@ -1566,6 +1600,7 @@
   (precur (4 0))
   (gen-st (pv a l) (pv b l-0))
   (facts (neq a b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (0 0)) ((2 1) (3 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 2 ltx-gen 3) (exp (gen) l-1) (4 0))
   (traces
@@ -1620,6 +1655,7 @@
   (precur (4 0))
   (gen-st (pv a l-0) (pv b l))
   (facts (neq a b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (0 0)) ((2 1) (3 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-1) (4 0))
   (traces
@@ -1680,6 +1716,7 @@
   (absent (x l) (y l-1))
   (gen-st (pv a l) (pv b l-1))
   (facts (neq a b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (0 0)) ((4 1) (3 0)) ((4 1) (6 0)))
   (rule trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (5 0)
@@ -1739,6 +1776,7 @@
   (absent (x l) (y l-0) (y-0 l-0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (4 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 5 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (4 0))
@@ -1802,6 +1840,7 @@
   (absent (x l-0) (y l) (y-0 l-0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (4 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 5 3 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (4 0))
@@ -1866,6 +1905,7 @@
   (absent (x l-0) (y l) (y-0 l-1))
   (gen-st (pv b l) (pv self l-0) (pv b-0 l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((5 1) (4 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (4 0))
@@ -1930,6 +1970,7 @@
   (absent (x l) (y l-0) (x-0 l-0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (4 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 5 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a l-1))) (4 0))
@@ -1990,6 +2031,7 @@
   (absent (x l-0) (y l) (x-0 l-0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (4 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 5 3 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a l-1))) (4 0))
@@ -2051,6 +2093,7 @@
   (absent (x l-0) (y l) (x-0 l-1))
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((5 1) (4 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a l-1))) (4 0))
@@ -2111,6 +2154,7 @@
   (absent (x l-0) (y l))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y)) l-0))
@@ -2170,6 +2214,7 @@
   (absent (x l-0) (y l))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) l-0)) y))
@@ -2229,6 +2274,7 @@
   (absent (x l-0) (y l))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y l-0)) x))
     (exp (gen) (mul (rec x) y l-0)) (0 3))
@@ -2287,6 +2333,7 @@
   (absent (x l) (y l-0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y)) l-0))
@@ -2347,6 +2394,7 @@
   (absent (x l) (y l-0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) l-0)) y))
@@ -2407,6 +2455,7 @@
   (absent (x l) (y l-0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y l-0)) x))
     (exp (gen) (mul (rec x) y l-0)) (0 3))
@@ -2468,6 +2517,7 @@
   (absent (x l-0) (y l))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y)) l-1))
@@ -2533,6 +2583,7 @@
   (absent (x l-0) (y l))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) l-1)) y))
@@ -2599,6 +2650,7 @@
   (absent (x l-0) (y l))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y l-1)) x))
     (exp (gen) (mul (rec x) y l-1)) (0 3))
@@ -2666,6 +2718,7 @@
   (precur (4 0))
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule gen-st-ltx-disclose-0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (4 0))
   (traces
@@ -2725,6 +2778,7 @@
   (precur (4 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 0 init 3) (exp (gen) x-0) (4 0))
   (traces
@@ -2782,6 +2836,7 @@
   (precur (4 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (gy (exp (gen) (mul (rec x) y w))))
     (gen) (4 0))
@@ -2839,6 +2894,7 @@
   (precur (4 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 1 ltx-gen 3) (exp (gen) l-1) (4 0))
   (traces
@@ -2900,6 +2956,7 @@
   (precur (4 0))
   (gen-st (pv b l) (pv self l-0) (pv b-0 l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule gen-st-ltx-disclose-0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (4 0))
   (traces
@@ -2963,6 +3020,7 @@
   (precur (4 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 3 ltx-gen 3) (exp (gen) l-1) (4 0))
   (traces
@@ -3023,6 +3081,7 @@
   (precur (4 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-1) (4 0))
   (traces
@@ -3086,6 +3145,7 @@
   (precur (4 0))
   (gen-st (pv a l-0) (pv b l))
   (facts (neq a b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (0 0)) ((1 1) (5 0)) ((2 1) (3 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a-0 l-1))) (5 0))
@@ -3144,6 +3204,7 @@
   (precur (4 0))
   (gen-st (pv a l) (pv b l-0))
   (facts (neq a b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (0 0)) ((2 1) (3 0)) ((2 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a-0 l-1))) (5 0))
@@ -3204,6 +3265,7 @@
   (precur (4 0))
   (gen-st (pv a l-0) (pv b l) (pv a-0 l-1))
   (facts (neq a b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (0 0)) ((2 1) (3 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a-0 l-1))) (5 0))
@@ -3265,6 +3327,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0) (pv b-0 l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule gen-st-ltx-disclose-0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (2 2))
   (traces
@@ -3330,6 +3393,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule gen-st-ltx-disclose-0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (2 2))
   (traces
@@ -3389,6 +3453,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 0 init 3) (exp (gen) x-0) (2 2))
   (traces
@@ -3447,6 +3512,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 4 ltx-gen 3) (exp (gen) l-1) (2 2))
   (traces
@@ -3504,6 +3570,7 @@
   (precur (3 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 1 ltx-gen 3) (exp (gen) l-1) (2 2))
   (traces
@@ -3563,6 +3630,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-1) (2 2))
   (traces
@@ -3625,6 +3693,7 @@
   (precur (3 0) (5 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp gy (mul x (rec y) (rec w))) w))
@@ -3688,6 +3757,7 @@
   (precur (4 0))
   (gen-st (pv a l-0) (pv b l))
   (facts (neq a b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (0 0)) ((1 1) (5 0)) ((2 1) (3 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (5 0))
@@ -3749,6 +3819,7 @@
   (precur (4 0))
   (gen-st (pv a l) (pv b l-0))
   (facts (neq a b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (0 0)) ((2 1) (3 0)) ((2 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (5 0))
@@ -3813,6 +3884,7 @@
   (precur (4 0))
   (gen-st (pv a l-0) (pv b l) (pv b-0 l-1))
   (facts (neq a b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (0 0)) ((2 1) (3 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (5 0))
@@ -3879,6 +3951,7 @@
   (absent (x l) (y l-1))
   (gen-st (pv a l) (pv b l-1))
   (facts (neq a b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (0 0)) ((4 1) (3 0)) ((4 1) (6 0)))
   (rule trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
@@ -3944,6 +4017,7 @@
   (absent (x l) (y l-1))
   (gen-st (pv a l) (pv b l-1))
   (facts (neq a b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (0 0)) ((4 1) (3 0)) ((4 1) (6 0)))
   (rule trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l))
@@ -4007,6 +4081,7 @@
   (absent (x l) (y l-0) (y-0 l-0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (4 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y)) y-0))
@@ -4076,6 +4151,7 @@
   (absent (x l) (y l-0) (y-0 l-0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (4 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y-0)) y))
@@ -4145,6 +4221,7 @@
   (absent (x l) (y l-0) (y-0 l-0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (4 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y y-0)) x))
     (exp (gen) (mul (rec x) y y-0)) (0 3))
@@ -4213,6 +4290,7 @@
   (absent (x l-0) (y l) (y-0 l-0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (4 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y)) y-0))
@@ -4281,6 +4359,7 @@
   (absent (x l-0) (y l) (y-0 l-0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (4 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y-0)) y))
@@ -4349,6 +4428,7 @@
   (absent (x l-0) (y l) (y-0 l-0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (4 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y y-0)) x))
     (exp (gen) (mul (rec x) y y-0)) (0 3))
@@ -4418,6 +4498,7 @@
   (absent (x l-0) (y l) (y-0 l-1))
   (gen-st (pv b l) (pv self l-0) (pv b-0 l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((5 1) (4 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y)) y-0))
@@ -4490,6 +4571,7 @@
   (absent (x l-0) (y l) (y-0 l-1))
   (gen-st (pv b l) (pv self l-0) (pv b-0 l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((5 1) (4 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y-0)) y))
@@ -4562,6 +4644,7 @@
   (absent (x l-0) (y l) (y-0 l-1))
   (gen-st (pv b l) (pv self l-0) (pv b-0 l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((5 1) (4 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y y-0)) x))
     (exp (gen) (mul (rec x) y y-0)) (0 3))
@@ -4631,6 +4714,7 @@
   (absent (x l) (y l-0) (x-0 l-0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (4 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y)) x-0))
@@ -4697,6 +4781,7 @@
   (absent (x l) (y l-0) (x-0 l-0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (4 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) x-0)) y))
@@ -4763,6 +4848,7 @@
   (absent (x l) (y l-0) (x-0 l-0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (4 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y x-0)) x))
     (exp (gen) (mul (rec x) y x-0)) (0 3))
@@ -4828,6 +4914,7 @@
   (absent (x l-0) (y l) (x-0 l-0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (4 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y)) x-0))
@@ -4893,6 +4980,7 @@
   (absent (x l-0) (y l) (x-0 l-0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (4 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) x-0)) y))
@@ -4958,6 +5046,7 @@
   (absent (x l-0) (y l) (x-0 l-0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (4 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y x-0)) x))
     (exp (gen) (mul (rec x) y x-0)) (0 3))
@@ -5024,6 +5113,7 @@
   (absent (x l-0) (y l) (x-0 l-1))
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((5 1) (4 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y)) x-0))
@@ -5093,6 +5183,7 @@
   (absent (x l-0) (y l) (x-0 l-1))
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((5 1) (4 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) x-0)) y))
@@ -5162,6 +5253,7 @@
   (absent (x l-0) (y l) (x-0 l-1))
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((5 1) (4 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y x-0)) x))
     (exp (gen) (mul (rec x) y x-0)) (0 3))
@@ -5230,6 +5322,7 @@
   (absent (x l-0) (y l))
   (gen-st (pv b l) (pv self l-0) (pv self-0 l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((4 1) (6 0)))
   (rule gen-st-ltx-disclose-0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (5 0)
@@ -5299,6 +5392,7 @@
   (precur (4 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a l-1))) (5 0))
@@ -5364,6 +5458,7 @@
   (precur (4 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 3 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a l-1))) (5 0))
@@ -5431,6 +5526,7 @@
   (precur (4 0))
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a l-1))) (5 0))
@@ -5491,6 +5587,7 @@
   (absent (y l) (x l-0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
   (traces
@@ -5553,6 +5650,7 @@
   (precur (4 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 2 resp 4) (exp (gen) y-0) (0 3))
   (traces
@@ -5612,6 +5710,7 @@
   (precur (4 0) (5 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y w (rec w-0))) w-0))
@@ -5671,6 +5770,7 @@
   (precur (4 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 2 resp 4) (exp (gen) y-0) (0 3))
   (traces
@@ -5731,6 +5831,7 @@
   (precur (4 0) (5 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener
@@ -5797,6 +5898,7 @@
   (precur (4 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (5 0))
@@ -5865,6 +5967,7 @@
   (precur (4 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 3 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (5 0))
@@ -5935,6 +6038,7 @@
   (precur (4 0))
   (gen-st (pv b l) (pv self l-0) (pv b-0 l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (5 0))
@@ -6000,6 +6104,7 @@
   (precur (4 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 2 resp 4) (exp (gen) y-0) (0 3))
   (traces
@@ -6061,6 +6166,7 @@
   (precur (4 0) (5 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener
@@ -6124,6 +6230,7 @@
   (precur (4 0))
   (gen-st (pv b l-1) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-0) (0 3))
   (traces
@@ -6193,6 +6300,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener
@@ -6263,6 +6371,7 @@
   (precur (3 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (5 0))
@@ -6330,6 +6439,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 4 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (5 0))
@@ -6399,6 +6509,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0) (pv b-0 l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (5 0))
@@ -6468,6 +6579,7 @@
   (precur (3 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a l-1))) (5 0))
@@ -6532,6 +6644,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 4 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a l-1))) (5 0))
@@ -6598,6 +6711,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a l-1))) (5 0))
@@ -6662,6 +6776,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y)) l-0))
@@ -6725,6 +6840,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) l-0)) y))
@@ -6788,6 +6904,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y l-0)) x))
     (exp (gen) (mul (rec x) y l-0)) (0 3))
@@ -6850,6 +6967,7 @@
   (precur (3 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y)) l-0))
@@ -6913,6 +7031,7 @@
   (precur (3 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) l-0)) y))
@@ -6976,6 +7095,7 @@
   (precur (3 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y l-0)) x))
     (exp (gen) (mul (rec x) y l-0)) (0 3))
@@ -7041,6 +7161,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y)) l-1))
@@ -7111,6 +7232,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) l-1)) y))
@@ -7182,6 +7304,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y l-1)) x))
     (exp (gen) (mul (rec x) y l-1)) (0 3))
@@ -7253,6 +7376,7 @@
   (precur (3 0) (5 0))
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule gen-st-ltx-disclose-0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (5 0))
   (traces
@@ -7315,6 +7439,7 @@
   (precur (3 0) (5 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 0 init 3) (exp (gen) x-0) (5 0))
   (traces
@@ -7376,6 +7501,7 @@
   (precur (3 0) (5 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (gy (exp (gen) (mul (rec x) y w))))
     (gen) (5 0))
@@ -7436,6 +7562,7 @@
   (precur (3 0) (5 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 1 ltx-gen 3) (exp (gen) l-1) (5 0))
   (traces
@@ -7500,6 +7627,7 @@
   (precur (3 0) (5 0))
   (gen-st (pv b l) (pv self l-0) (pv b-0 l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule gen-st-ltx-disclose-0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (5 0))
   (traces
@@ -7567,6 +7695,7 @@
   (precur (3 0) (5 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 4 ltx-gen 3) (exp (gen) l-1) (5 0))
   (traces
@@ -7631,6 +7760,7 @@
   (precur (3 0) (5 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-1) (5 0))
   (traces
@@ -7700,6 +7830,7 @@
   (absent (x l-0) (y l))
   (gen-st (pv b l) (pv self l-0) (pv self-0 l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((4 1) (6 0)))
   (rule trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (rec x)) y))
@@ -7774,6 +7905,7 @@
   (absent (x l-0) (y l))
   (gen-st (pv b l) (pv self l-0) (pv self-0 l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((4 1) (6 0)))
   (rule trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) y) x))
@@ -7844,6 +7976,7 @@
   (precur (4 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-0) (0 3))
   (traces
@@ -7910,6 +8043,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener
@@ -7978,6 +8112,7 @@
   (precur (4 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-0) (0 3))
   (traces
@@ -8044,6 +8179,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener
@@ -8113,6 +8249,7 @@
   (precur (4 0))
   (gen-st (pv b l-1) (pv self l) (pv a l-0))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-0) (0 3))
   (traces
@@ -8184,6 +8321,7 @@
   (precur (4 0) (7 0))
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener
@@ -8251,6 +8389,7 @@
   (precur (4 0) (5 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-0) (5 0))
   (traces
@@ -8310,6 +8449,7 @@
   (precur (4 0) (5 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-0) (5 0))
   (traces
@@ -8372,6 +8512,7 @@
   (precur (4 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-1) (0 3))
   (traces
@@ -8441,6 +8582,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener
@@ -8512,6 +8654,7 @@
   (precur (4 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-1) (0 3))
   (traces
@@ -8581,6 +8724,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener
@@ -8653,6 +8797,7 @@
   (precur (4 0))
   (gen-st (pv b l-1) (pv self l) (pv b-0 l-0))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-1) (0 3))
   (traces
@@ -8727,6 +8872,7 @@
   (precur (4 0) (7 0))
   (gen-st (pv b l) (pv self l-0) (pv b-0 l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener
@@ -8798,6 +8944,7 @@
   (precur (4 0) (5 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-0) (5 0))
   (traces
@@ -8862,6 +9009,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l-1) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-0) (6 0))
   (traces
@@ -8931,6 +9079,7 @@
   (precur (3 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y)) y-0))
@@ -9003,6 +9152,7 @@
   (precur (3 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y-0)) y))
@@ -9075,6 +9225,7 @@
   (precur (3 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y y-0)) x))
     (exp (gen) (mul (rec x) y y-0)) (0 3))
@@ -9146,6 +9297,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y)) y-0))
@@ -9218,6 +9370,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y-0)) y))
@@ -9290,6 +9443,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y y-0)) x))
     (exp (gen) (mul (rec x) y y-0)) (0 3))
@@ -9363,6 +9517,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0) (pv b-0 l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y)) y-0))
@@ -9439,6 +9594,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0) (pv b-0 l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y-0)) y))
@@ -9515,6 +9671,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0) (pv b-0 l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y y-0)) x))
     (exp (gen) (mul (rec x) y y-0)) (0 3))
@@ -9588,6 +9745,7 @@
   (precur (3 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y)) x-0))
@@ -9657,6 +9815,7 @@
   (precur (3 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) x-0)) y))
@@ -9726,6 +9885,7 @@
   (precur (3 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y x-0)) x))
     (exp (gen) (mul (rec x) y x-0)) (0 3))
@@ -9794,6 +9954,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y)) x-0))
@@ -9863,6 +10024,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) x-0)) y))
@@ -9932,6 +10094,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y x-0)) x))
     (exp (gen) (mul (rec x) y x-0)) (0 3))
@@ -10002,6 +10165,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y)) x-0))
@@ -10075,6 +10239,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) x-0)) y))
@@ -10148,6 +10313,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (mul y x-0)) x))
     (exp (gen) (mul (rec x) y x-0)) (0 3))
@@ -10220,6 +10386,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0) (pv self-0 l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((5 1) (7 0)))
   (rule gen-st-ltx-disclose-0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (6 0)
@@ -10292,6 +10459,7 @@
   (precur (3 0) (5 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 7 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a l-1))) (6 0))
@@ -10359,6 +10527,7 @@
   (precur (3 0) (5 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 7 4 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a l-1))) (6 0))
@@ -10429,6 +10598,7 @@
   (precur (3 0) (5 0))
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a l-1))) (6 0))
@@ -10494,6 +10664,7 @@
   (precur (3 0) (5 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-0) (0 3))
   (traces
@@ -10556,6 +10727,7 @@
   (precur (3 0) (5 0) (6 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y w (rec w-0))) w-0))
@@ -10618,6 +10790,7 @@
   (precur (3 0) (5 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-0) (0 3))
   (traces
@@ -10681,6 +10854,7 @@
   (precur (3 0) (5 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener
@@ -10749,6 +10923,7 @@
   (precur (3 0) (5 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 7 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (6 0))
@@ -10819,6 +10994,7 @@
   (precur (3 0) (5 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 7 4 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (6 0))
@@ -10892,6 +11068,7 @@
   (precur (3 0) (5 0))
   (gen-st (pv b l) (pv self l-0) (pv b-0 l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (6 0))
@@ -10961,6 +11138,7 @@
   (precur (3 0) (5 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-0) (0 3))
   (traces
@@ -11024,6 +11202,7 @@
   (precur (3 0) (5 0) (6 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener
@@ -11091,6 +11270,7 @@
   (precur (3 0) (5 0))
   (gen-st (pv b l-1) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-0) (0 3))
   (traces
@@ -11162,6 +11342,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener
@@ -11234,6 +11415,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-0) (6 0))
   (traces
@@ -11300,6 +11482,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-0) (6 0))
   (traces
@@ -11369,6 +11552,7 @@
   (precur (4 0) (7 0))
   (gen-st (pv b l-1) (pv self l) (pv a l-0))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 resp 4) (exp (gen) y-0) (7 0))
   (traces
@@ -11435,6 +11619,7 @@
   (precur (4 0) (5 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 1 ltx-gen 2) l-1 (4 0))
   (traces
@@ -11495,6 +11680,7 @@
   (precur (4 0) (5 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 3 ltx-gen 2) l-1 (4 0))
   (traces
@@ -11557,6 +11743,7 @@
   (precur (4 0) (5 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (4 0))
   (traces
@@ -11620,6 +11807,7 @@
   (precur (4 0) (5 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul x w) (4 0))
   (traces
@@ -11682,6 +11870,7 @@
   (precur (4 0) (5 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 1 ltx-gen 2) l-1 (4 0))
   (traces
@@ -11745,6 +11934,7 @@
   (precur (4 0) (5 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (contracted (x-0 x) (w (mul (rec x) l-0)) (l-1 l-0)) (one) (4 0))
@@ -11808,6 +11998,7 @@
   (precur (4 0) (5 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 3 ltx-gen 2) l-1 (4 0))
   (traces
@@ -11872,6 +12063,7 @@
   (precur (4 0) (5 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (4 0))
   (traces
@@ -11940,6 +12132,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-1) (6 0))
   (traces
@@ -12009,6 +12202,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-1) (6 0))
   (traces
@@ -12081,6 +12275,7 @@
   (precur (4 0) (7 0))
   (gen-st (pv b l-1) (pv self l) (pv b-0 l-0))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 resp 4) (exp (gen) y-1) (7 0))
   (traces
@@ -12151,6 +12346,7 @@
   (precur (4 0) (5 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 1 ltx-gen 2) l-1 (4 0))
   (traces
@@ -12214,6 +12410,7 @@
   (precur (4 0) (5 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (contracted (x-0 x) (l-1 l-0) (w (mul (rec x) l-0))) (one) (4 0))
@@ -12277,6 +12474,7 @@
   (precur (4 0) (5 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 3 ltx-gen 2) l-1 (4 0))
   (traces
@@ -12342,6 +12540,7 @@
   (precur (4 0) (5 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (4 0))
   (traces
@@ -12410,6 +12609,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l-1) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 1 ltx-gen 2) l-2 (4 0))
   (traces
@@ -12482,6 +12682,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (contracted (x-0 x) (l-2 l-1) (w (mul (rec x) l-1))) (one) (4 0))
@@ -12553,6 +12754,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l) (pv self l-1))
   (facts (neq self b) (undisclosed l-1) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 3 ltx-gen 2) l-2 (4 0))
   (traces
@@ -12624,6 +12826,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 5 ltx-gen 2) l-2 (4 0))
   (traces
@@ -12699,6 +12902,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-2 (4 0))
   (traces
@@ -12776,6 +12980,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0) (pv self-0 l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((5 1) (7 0)))
   (rule trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (rec x)) y))
@@ -12854,6 +13059,7 @@
   (precur (3 0))
   (gen-st (pv b l) (pv self l-0) (pv self-0 l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((5 1) (7 0)))
   (rule trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) y) x))
@@ -12927,6 +13133,7 @@
   (precur (3 0) (5 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-0) (0 3))
   (traces
@@ -12995,6 +13202,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener
@@ -13065,6 +13273,7 @@
   (precur (3 0) (5 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-0) (0 3))
   (traces
@@ -13133,6 +13342,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener
@@ -13205,6 +13415,7 @@
   (precur (3 0) (5 0))
   (gen-st (pv b l-1) (pv self l) (pv a l-0))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 resp 4) (exp (gen) y-0) (0 3))
   (traces
@@ -13278,6 +13489,7 @@
   (precur (3 0) (5 0) (8 0))
   (gen-st (pv b l) (pv self l-0) (pv a l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener
@@ -13349,6 +13561,7 @@
   (precur (3 0) (5 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-0) (6 0))
   (traces
@@ -13411,6 +13624,7 @@
   (precur (3 0) (5 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-0) (6 0))
   (traces
@@ -13475,6 +13689,7 @@
   (precur (3 0) (5 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-1) (0 3))
   (traces
@@ -13546,6 +13761,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener
@@ -13619,6 +13835,7 @@
   (precur (3 0) (5 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-1) (0 3))
   (traces
@@ -13690,6 +13907,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener
@@ -13765,6 +13983,7 @@
   (precur (3 0) (5 0))
   (gen-st (pv b l-1) (pv self l) (pv b-0 l-0))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 resp 4) (exp (gen) y-1) (0 3))
   (traces
@@ -13841,6 +14060,7 @@
   (precur (3 0) (5 0) (8 0))
   (gen-st (pv b l) (pv self l-0) (pv b-0 l-1))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (added-listener
@@ -13915,6 +14135,7 @@
   (precur (3 0) (5 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 resp 4) (exp (gen) y-0) (6 0))
   (traces
@@ -13981,6 +14202,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l-1) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 resp 4) (exp (gen) y-0) (7 0))
   (traces
@@ -14051,6 +14273,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 1 ltx-gen 2) l-1 (4 0))
   (traces
@@ -14121,6 +14344,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (contracted (x-1 x) (x-2 x-0) (w (mul (rec x) x-0))) (one) (4 0))
@@ -14190,6 +14414,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 3 ltx-gen 2) l-1 (4 0))
   (traces
@@ -14262,6 +14487,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (4 0))
   (traces
@@ -14334,6 +14560,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 1 ltx-gen 2) l-1 (4 0))
   (traces
@@ -14404,6 +14631,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (contracted (x-1 x) (x-2 x-0) (w (mul (rec x) x-0))) (one) (4 0))
@@ -14473,6 +14701,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 3 ltx-gen 2) l-1 (4 0))
   (traces
@@ -14545,6 +14774,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (4 0))
   (traces
@@ -14619,6 +14849,7 @@
   (precur (4 0) (7 0))
   (gen-st (pv b l-1) (pv self l) (pv a l-0))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 1 ltx-gen 2) l-2 (4 0))
   (traces
@@ -14693,6 +14924,7 @@
   (precur (4 0) (7 0))
   (gen-st (pv b l-1) (pv self l) (pv a l-0))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (contracted (x-1 x) (x-2 x-0) (w (mul (rec x) x-0))) (one) (4 0))
@@ -14766,6 +14998,7 @@
   (precur (4 0) (7 0))
   (gen-st (pv b l-0) (pv self l-1) (pv a l))
   (facts (neq self b) (undisclosed l-1) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 3 ltx-gen 2) l-2 (4 0))
   (traces
@@ -14840,6 +15073,7 @@
   (precur (4 0) (7 0))
   (gen-st (pv b l-0) (pv self l) (pv a l-1))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 6 ltx-gen 2) l-2 (4 0))
   (traces
@@ -14918,6 +15152,7 @@
   (precur (4 0) (7 0))
   (gen-st (pv b l-1) (pv self l) (pv a l-0))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-2 (4 0))
   (traces
@@ -14991,6 +15226,7 @@
   (precur (4 0) (5 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul (rec x) l-0) (5 0))
   (traces
@@ -15054,6 +15290,7 @@
   (precur (4 0) (5 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul (rec x) l-0) (5 0))
   (traces
@@ -15118,6 +15355,7 @@
   (precur (4 0) (5 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul (rec x) l-1) (5 0))
   (traces
@@ -15184,6 +15422,7 @@
   (precur (4 0) (5 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul (rec x) l-0 l-0) (5 0))
   (traces
@@ -15252,6 +15491,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 1 ltx-gen 2) l-1 (4 0))
   (traces
@@ -15325,6 +15565,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (contracted (x-0 x) (y-1 y-0) (w (mul (rec x) y-0))) (one) (4 0))
@@ -15397,6 +15638,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 3 ltx-gen 2) l-1 (4 0))
   (traces
@@ -15472,6 +15714,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (5 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (4 0))
   (traces
@@ -15547,6 +15790,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 1 ltx-gen 2) l-1 (4 0))
   (traces
@@ -15620,6 +15864,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (contracted (x-0 x) (y-1 y-0) (w (mul (rec x) y-0))) (one) (4 0))
@@ -15692,6 +15937,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 3 ltx-gen 2) l-1 (4 0))
   (traces
@@ -15767,6 +16013,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((3 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (4 0))
   (traces
@@ -15844,6 +16091,7 @@
   (precur (4 0) (7 0))
   (gen-st (pv b l-1) (pv self l) (pv b-0 l-0))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 1 ltx-gen 2) l-2 (4 0))
   (traces
@@ -15921,6 +16169,7 @@
   (precur (4 0) (7 0))
   (gen-st (pv b l-1) (pv self l) (pv b-0 l-0))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (contracted (x-0 x) (y-1 y-0) (w (mul (rec x) y-0))) (one) (4 0))
@@ -15997,6 +16246,7 @@
   (precur (4 0) (7 0))
   (gen-st (pv b l-0) (pv self l-1) (pv b-0 l))
   (facts (neq self b) (undisclosed l-1) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 3 ltx-gen 2) l-2 (4 0))
   (traces
@@ -16074,6 +16324,7 @@
   (precur (4 0) (7 0))
   (gen-st (pv b l-0) (pv self l) (pv b-0 l-1))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 6 ltx-gen 2) l-2 (4 0))
   (traces
@@ -16155,6 +16406,7 @@
   (precur (4 0) (7 0))
   (gen-st (pv b l-1) (pv self l) (pv b-0 l-0))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)) ((6 1) (5 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-2 (4 0))
   (traces
@@ -16231,6 +16483,7 @@
   (precur (4 0) (5 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul (rec x) l-0 l-0) (5 0))
   (traces
@@ -16299,6 +16552,7 @@
   (precur (4 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((3 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul (rec x) l-1 l-1) (6 0))
   (traces
@@ -16372,6 +16626,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 resp 4) (exp (gen) y-0) (7 0))
   (traces
@@ -16440,6 +16695,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 resp 4) (exp (gen) y-0) (7 0))
   (traces
@@ -16511,6 +16767,7 @@
   (precur (3 0) (5 0) (8 0))
   (gen-st (pv b l-1) (pv self l) (pv a l-0))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 2 resp 4) (exp (gen) y-0) (8 0))
   (traces
@@ -16580,6 +16837,7 @@
   (precur (3 0) (5 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 1 ltx-gen 2) l-1 (5 0))
   (traces
@@ -16643,6 +16901,7 @@
   (precur (3 0) (5 0) (6 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 4 ltx-gen 2) l-1 (5 0))
   (traces
@@ -16708,6 +16967,7 @@
   (precur (3 0) (5 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (5 0))
   (traces
@@ -16773,6 +17033,7 @@
   (precur (3 0) (5 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul x w) (5 0))
   (traces
@@ -16838,6 +17099,7 @@
   (precur (3 0) (5 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 1 ltx-gen 2) l-1 (5 0))
   (traces
@@ -16904,6 +17166,7 @@
   (precur (3 0) (5 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (contracted (x-0 x) (w (mul (rec x) l-0)) (l-1 l-0)) (one) (5 0))
@@ -16970,6 +17233,7 @@
   (precur (3 0) (5 0) (6 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 4 ltx-gen 2) l-1 (5 0))
   (traces
@@ -17037,6 +17301,7 @@
   (precur (3 0) (5 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (5 0))
   (traces
@@ -17107,6 +17372,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 resp 4) (exp (gen) y-1) (7 0))
   (traces
@@ -17178,6 +17444,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 resp 4) (exp (gen) y-1) (7 0))
   (traces
@@ -17252,6 +17519,7 @@
   (precur (3 0) (5 0) (8 0))
   (gen-st (pv b l-1) (pv self l) (pv b-0 l-0))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 2 resp 4) (exp (gen) y-1) (8 0))
   (traces
@@ -17324,6 +17592,7 @@
   (precur (3 0) (5 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 1 ltx-gen 2) l-1 (5 0))
   (traces
@@ -17389,6 +17658,7 @@
   (precur (3 0) (5 0) (6 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (contracted (x-0 x) (l-1 l-0) (w (mul (rec x) l-0))) (one) (5 0))
@@ -17455,6 +17725,7 @@
   (precur (3 0) (5 0) (6 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 4 ltx-gen 2) l-1 (5 0))
   (traces
@@ -17523,6 +17794,7 @@
   (precur (3 0) (5 0) (6 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (5 0))
   (traces
@@ -17594,6 +17866,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l-1) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 1 ltx-gen 2) l-2 (5 0))
   (traces
@@ -17668,6 +17941,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (contracted (x-0 x) (l-2 l-1) (w (mul (rec x) l-1))) (one) (5 0))
@@ -17741,6 +18015,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l) (pv self l-1))
   (facts (neq self b) (undisclosed l-1) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 4 ltx-gen 2) l-2 (5 0))
   (traces
@@ -17815,6 +18090,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 6 ltx-gen 2) l-2 (5 0))
   (traces
@@ -17892,6 +18168,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-2 (5 0))
   (traces
@@ -17968,6 +18245,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 1 ltx-gen 2) l-1 (5 0))
   (traces
@@ -18040,6 +18318,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (contracted (x-1 x) (x-2 x-0) (w (mul (rec x) x-0))) (one) (5 0))
@@ -18111,6 +18390,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 4 ltx-gen 2) l-1 (5 0))
   (traces
@@ -18186,6 +18466,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (5 0))
   (traces
@@ -18260,6 +18541,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 1 ltx-gen 2) l-1 (5 0))
   (traces
@@ -18332,6 +18614,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (contracted (x-1 x) (x-2 x-0) (w (mul (rec x) x-0))) (one) (5 0))
@@ -18403,6 +18686,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 4 ltx-gen 2) l-1 (5 0))
   (traces
@@ -18478,6 +18762,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (5 0))
   (traces
@@ -18554,6 +18839,7 @@
   (precur (3 0) (5 0) (8 0))
   (gen-st (pv b l-1) (pv self l) (pv a l-0))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 1 ltx-gen 2) l-2 (5 0))
   (traces
@@ -18630,6 +18916,7 @@
   (precur (3 0) (5 0) (8 0))
   (gen-st (pv b l-1) (pv self l) (pv a l-0))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (contracted (x-1 x) (x-2 x-0) (w (mul (rec x) x-0))) (one) (5 0))
@@ -18705,6 +18992,7 @@
   (precur (3 0) (5 0) (8 0))
   (gen-st (pv b l-0) (pv self l-1) (pv a l))
   (facts (neq self b) (undisclosed l-1) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 4 ltx-gen 2) l-2 (5 0))
   (traces
@@ -18782,6 +19070,7 @@
   (precur (3 0) (5 0) (8 0))
   (gen-st (pv b l-0) (pv self l) (pv a l-1))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 7 ltx-gen 2) l-2 (5 0))
   (traces
@@ -18862,6 +19151,7 @@
   (precur (3 0) (5 0) (8 0))
   (gen-st (pv b l-1) (pv self l) (pv a l-0))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-2 (5 0))
   (traces
@@ -18937,6 +19227,7 @@
   (precur (3 0) (5 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul (rec x) l-0) (6 0))
   (traces
@@ -19002,6 +19293,7 @@
   (precur (3 0) (5 0) (6 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul (rec x) l-0) (6 0))
   (traces
@@ -19069,6 +19361,7 @@
   (precur (3 0) (5 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul (rec x) l-1) (6 0))
   (traces
@@ -19137,6 +19430,7 @@
   (precur (3 0) (5 0) (6 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul (rec x) l-0 l-0) (6 0))
   (traces
@@ -19207,6 +19501,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 1 ltx-gen 2) l-1 (5 0))
   (traces
@@ -19282,6 +19577,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (contracted (x-0 x) (y-1 y-0) (w (mul (rec x) y-0))) (one) (5 0))
@@ -19356,6 +19652,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 4 ltx-gen 2) l-1 (5 0))
   (traces
@@ -19434,6 +19731,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((1 1) (6 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (5 0))
   (traces
@@ -19511,6 +19809,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 1 ltx-gen 2) l-1 (5 0))
   (traces
@@ -19586,6 +19885,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (contracted (x-0 x) (y-1 y-0) (w (mul (rec x) y-0))) (one) (5 0))
@@ -19660,6 +19960,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 4 ltx-gen 2) l-1 (5 0))
   (traces
@@ -19738,6 +20039,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((4 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-1 (5 0))
   (traces
@@ -19817,6 +20119,7 @@
   (precur (3 0) (5 0) (8 0))
   (gen-st (pv b l-1) (pv self l) (pv b-0 l-0))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 1 ltx-gen 2) l-2 (5 0))
   (traces
@@ -19896,6 +20199,7 @@
   (precur (3 0) (5 0) (8 0))
   (gen-st (pv b l-1) (pv self l) (pv b-0 l-0))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test
     (contracted (x-0 x) (y-1 y-0) (w (mul (rec x) y-0))) (one) (5 0))
@@ -19974,6 +20278,7 @@
   (precur (3 0) (5 0) (8 0))
   (gen-st (pv b l-0) (pv self l-1) (pv b-0 l))
   (facts (neq self b) (undisclosed l-1) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 4 ltx-gen 2) l-2 (5 0))
   (traces
@@ -20054,6 +20359,7 @@
   (precur (3 0) (5 0) (8 0))
   (gen-st (pv b l-0) (pv self l) (pv b-0 l-1))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 7 ltx-gen 2) l-2 (5 0))
   (traces
@@ -20137,6 +20443,7 @@
   (precur (3 0) (5 0) (8 0))
   (gen-st (pv b l-1) (pv self l) (pv b-0 l-0))
   (facts (neq self b) (undisclosed l) (undisclosed l-1))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)) ((7 1) (6 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 2) l-2 (5 0))
   (traces
@@ -20215,6 +20522,7 @@
   (precur (3 0) (5 0) (6 0))
   (gen-st (pv b l) (pv self l-0))
   (facts (neq self b) (undisclosed l-0) (undisclosed l))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul (rec x) l-0 l-0) (6 0))
   (traces
@@ -20286,6 +20594,7 @@
   (precur (3 0) (5 0) (7 0))
   (gen-st (pv b l-0) (pv self l))
   (facts (neq self b) (undisclosed l) (undisclosed l-0))
+  (leads-to ((1 1) (2 0)) ((4 1) (0 0)))
   (rule trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener x) (mul (rec x) l-1 l-1) (7 0))
   (traces

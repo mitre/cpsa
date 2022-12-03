@@ -15,8 +15,8 @@
   (defrule trust
     (forall ((z strd) (p d akey))
       (implies
-        (and (p "person" z 1) (p "person" "p" z p) (p "person" "d" z d)
-          (non (invk p)))
+        (and (p "person" z (idx 1)) (p "person" "p" z p)
+          (p "person" "d" z d) (non (invk p)))
         (non (invk d))))
     (comment "The trust rule"))
   (defgenrule neqRl_indx

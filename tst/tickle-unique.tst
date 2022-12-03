@@ -16,7 +16,8 @@
   (defrule uniq-tickle
     (forall ((z strd) (nb0 text))
       (implies
-        (and (fact guard-me) (p "resp" z 2) (p "resp" "nb0" z nb0))
+        (and (fact guard-me) (p "resp" z (idx 2))
+          (p "resp" "nb0" z nb0))
         (uniq nb0))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -74,7 +75,8 @@
   (defrule uniq-tickle
     (forall ((z strd) (nb0 text))
       (implies
-        (and (fact guard-me) (p "resp" z 2) (p "resp" "nb0" z nb0))
+        (and (fact guard-me) (p "resp" z (idx 2))
+          (p "resp" "nb0" z nb0))
         (uniq nb0))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))

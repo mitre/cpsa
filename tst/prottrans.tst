@@ -174,11 +174,12 @@
   (defrule unilateral
     (forall ((r strd) (a akey) (nb text))
       (implies
-        (and (p "resp" r 3) (p "resp" "a" r a) (p "resp" "nb" r nb)
-          (non (invk a)) (uniq nb))
+        (and (p "resp" r (idx 3)) (p "resp" "a" r a)
+          (p "resp" "nb" r nb) (non (invk a)) (uniq nb))
         (exists ((i strd))
-          (and (p "init" i 3) (p "init" "a" i a) (p "init" "nb" i nb)
-            (prec r 1 i 1) (prec i 2 r 2)))))
+          (and (p "init" i (idx 3)) (p "init" "a" i a)
+            (p "init" "nb" i nb) (prec r (idx 1) i (idx 1))
+            (prec i (idx 2) r (idx 2))))))
     (comment "Unilateral sas under the predicate mapping:")
     (comment (p "init" 2) "->" (p "resp" 3) "and")
     (comment (p "init" "n") "->" (p "resp" "nb") "and")
