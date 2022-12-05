@@ -7,7 +7,6 @@
 ;;; picks a fresh random exponent and does not allow it to be obtained
 ;;; by the adversary.
 
-
 (herald "Station-to-station protocol" (bound 20) (algebra diffie-hellman))
 
 (defprotocol station-to-station diffie-hellman
@@ -54,7 +53,6 @@
   (deflistener (exp h y))
   (non-orig (privk a) (privk b))
 )
-
 
 (defskeleton station-to-station
   (vars (a b name) (x y rndx))

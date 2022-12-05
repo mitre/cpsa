@@ -32,9 +32,7 @@
 ;;; 2.  Deposit private value in state and retrieve
 ;;;	it at the beginning of each init or resp run.
 ;;; 3.  Discard the private value from state before
-;;;	disclosing it, when testing forward secrecy.  
-
-
+;;;	disclosing it, when testing forward secrecy.
 
 (herald "DHCR: unified model (UM) original"
 	(bound 20)
@@ -96,7 +94,7 @@
      (stor priv-stor (pv self l))
      (send (sig (body self (exp (gen) l) (pubk "sig" self))
 		(privk "sig" self))))
-    (uniq-orig l)    
+    (uniq-orig l)
     (fn-off ("principal-of" (l self))
 	   ("ltx-of" (self l))))
 
@@ -107,7 +105,7 @@
      (load priv-stor (pv self l))
      (stor priv-stor "nil")
      (send l))
-    (gen-st (pv self l)) 
+    (gen-st (pv self l))
     (fn-off ("principal-of" (l self))
 	   ("ltx-of" (self l))))
 
@@ -127,8 +125,7 @@
 
   (lang (sig sign)
 	(body (tuple 3))
-	(pv (tuple 2)))) 
-
+	(pv (tuple 2))))
 
 ; Initiator point of view: both LTX exponents secret
 (defskeleton dhcr-um
@@ -139,8 +136,6 @@
 	 (undisclosed la)
 	 (undisclosed beta)))
 
-
-
 ; Initiator point of view:  peer exponent secret
 (defskeleton dhcr-um
   (vars (a b name) (la l-peer rndx) (beta expt))
@@ -149,7 +144,6 @@
   (facts (neq a b)
 	 ;;	 (undisclosed la)
 	 (undisclosed beta)))
-
 
 ; Initiator point of view:  my exponent secret
 (defskeleton dhcr-um
@@ -171,7 +165,6 @@
 	 ;;	 (undisclosed la)
 	 ))
 
-
 (defskeleton dhcr-um
   (vars (a b name) (la lb rndx) (alpha beta expt))
   (defstrand resp 5 (a a) (b b) (lb lb) (alpha alpha))
@@ -190,8 +183,6 @@
 	 (undisclosed lb)
 	 (undisclosed alpha)))
 
-
-
 ; Responder point of view:  peer exponent secret
 (defskeleton dhcr-um
   (vars (a b name) (lb l-peer rndx) (alpha expt))
@@ -200,7 +191,6 @@
   (facts (neq a b)
 	 ;;	 (undisclosed lb)
 	 (undisclosed alpha)))
-
 
 ; Responder point of view:  my exponent secret
 (defskeleton dhcr-um
@@ -267,4 +257,4 @@
   (defstrand ltx-gen 3 (l ltxb))
   (precedes ((0 3) (3 1)) ((0 3) (2 1)))
   (neq (a b)))
-) 
+)

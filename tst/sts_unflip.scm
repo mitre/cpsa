@@ -7,8 +7,7 @@
 ;;; picks a fresh random exponent and does not allow it to be obtained
 ;;; by the adversary.
 
-;;; This version is weakened by not flipping the second signed msg.  
-
+;;; This version is weakened by not flipping the second signed msg.
 
 (herald "Station-to-station protocol unflipped" (algebra diffie-hellman))
 
@@ -80,4 +79,3 @@
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (uniq-orig (privk b) (privk a))
   )
-

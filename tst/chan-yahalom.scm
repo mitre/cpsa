@@ -26,7 +26,7 @@
 (defskeleton yahalom
   (vars (a b c name) (n-b text) (ch1 ch2 chan))
   (defstrand resp 4 (a a) (b b) (n-b n-b) (ch1 ch1) (ch2 ch2))
-  (auth ch2)   
+  (auth ch2)
   (uniq-orig n-b))
 
 ;;; This is the answer to the previous question, to which we have
@@ -65,7 +65,7 @@
 
 ;;; In particular, we can now check that the session key cannot be
 ;;; compromised, subject to the assumptions we have imposed, using
-;;; (deflistener k).  
+;;; (deflistener k).
 
 (defskeleton yahalom
   (vars (k skey) (n-b n-a n-a-0 n-b-0 text) (a b name)
@@ -79,7 +79,7 @@
   (auth ch2 ch1-0)
   (conf ch2 ch3))
 
-;;; Let's turn now to the initiator's point of view:  
+;;; Let's turn now to the initiator's point of view:
 
 (defskeleton yahalom
   (vars (a b c name) (n-a text) (k skey) (ch3 chan))
@@ -101,7 +101,7 @@
   (uniq-orig k n-a)
   (auth ch3 ch1)
   (conf ch3-0))
-  
+
 ;;; This now authenticates the presence of the responder for the first
 ;;; two nodes, and its agreement on all of the values present there.
 

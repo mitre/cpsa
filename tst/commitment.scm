@@ -1,6 +1,6 @@
-(herald commitment) 
+(herald commitment)
 
-(defprotocol commit basic 
+(defprotocol commit basic
   (defrole bidder
     (vars (a b name) (n data) (quote outcome text))
     (trace
@@ -9,13 +9,13 @@
      (send (cat n quote))
      (recv (enc "result" a b n quote outcome (privk "sig" b)))))
 
-  (defrole bid-trash  
+  (defrole bid-trash
     (vars (a b name) (n data) (outcome trash text))
     (trace
      (send (enc "bid" (hash n trash) (privk "sig" a)))
      (recv (enc "receipt" (hash n trash) (privk "sig" b)))))
 
-  (defrole auctioneer 
+  (defrole auctioneer
     (vars (a b name) (n data) (quote outcome text) (sealed mesg))
     (trace
      (recv (enc "bid" sealed (privk "sig" a)))
@@ -42,5 +42,3 @@
   (defstrand bidder 1 (n n) (quote quote) (a a) (b b))
   (uniq-gen n)
   (non-orig (privk "sig" a)))
-
-

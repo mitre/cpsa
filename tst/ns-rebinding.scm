@@ -10,10 +10,6 @@
 	  (enc (cat t l sk a) kbs))))
    (uniq-orig sk)))
 
-
-
-
-
 (herald "ALternate Needham-Schroeder Public-Key Protocol Variants")
 
 (defprotocol ns basic
@@ -32,13 +28,13 @@
      (send (enc n1 n2 b (pubk a)))
      (recv (enc n2 (pubk b)))))
 
-  (defrule rebind-x 			; This rule tests rebinding in the conclusion of a rule.  
+  (defrule rebind-x 			; This rule tests rebinding in the conclusion of a rule.
     (forall
      ((x y text))
      (implies
       (fact rel1 x y)
       (exists ((x name)) (fact rel2 x y)))))
-  
+
   (comment "Needham-Schroeder with no role origination assumptions"))
 
 ;;; The initiator point-of-view
@@ -97,4 +93,3 @@
   (non-orig (privk a))
   (uniq-orig n2)
   (comment "Responder point-of-view"))
-

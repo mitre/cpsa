@@ -42,4 +42,3 @@
   (vars (subj ca name) (pk akey) (serial data) (chal text))
   (defstrand init 3 (ca ca) (chal chal))
   (non-orig (privk "cert" ca)))
-

@@ -29,7 +29,6 @@
   (defstrand encryptor 1 (k k))
   (precedes ((0 0) (1 0))))
 
-
 (defprotocol weird-gen basic
   (defrole originator
     (vars (k skey))

@@ -3,14 +3,13 @@
 ;;; This is an authenticated form of a Diffie-Hellman key exchange.
 
 ;;; The file contains one model of the station-to-station protocol.
-;;; It weakens the previous model by omitting an assumption.  
+;;; It weakens the previous model by omitting an assumption.
 
 ;;; Namely, we do not assume that *every* initiator or responder
 ;;; properly picks a fresh random exponent and does not allow it to be
 ;;; obtained by the adversary.
 
 (herald "Station-to-station protocol:  Weakened version" (algebra diffie-hellman))
-
 
 (defprotocol station-weak diffie-hellman
   (defrole init
@@ -58,7 +57,6 @@
   (deflistener (exp h y))
   (non-orig (privk a) (privk b))
 )
-
 
 (defskeleton station-weak
   (vars (a b name) (x y rndx))
