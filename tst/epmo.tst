@@ -1,7 +1,7 @@
 (herald "Electronic Purchase with Money Order Protocol"
   (comment "Annotated with trust management formulas"))
 
-(comment "CPSA 4.3.1")
+(comment "CPSA 4.4.0")
 (comment "All input read from tst/epmo.scm")
 
 (defprotocol epmo basic

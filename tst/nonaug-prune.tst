@@ -1,4 +1,4 @@
-(comment "CPSA 4.3.1")
+(comment "CPSA 4.4.0")
 (comment "All input read from tst/nonaug-prune.scm")
 
 (defprotocol nonaug-prune basic

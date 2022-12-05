@@ -129,7 +129,7 @@ module CPSA.Algebra (name, alias,
     carriedBy,
     constituent,
     decryptionKey,
-    invertKey, 
+    invertKey,
     decompose,
     buildable,
     components,
@@ -137,7 +137,7 @@ module CPSA.Algebra (name, alias,
     escapeSet,
     loadTerm,
     loadLocnTerm,
-    indxOfInt, strdOfInt, 
+    indxOfInt, strdOfInt,
     isNum,
     subNums,
     consts,
@@ -146,7 +146,7 @@ module CPSA.Algebra (name, alias,
     isVarExpr,
     isRndx,
     exprVars,
-    VarListSpec, 
+    VarListSpec,
 
     Place (..),
     places,
@@ -192,7 +192,7 @@ module CPSA.Algebra (name, alias,
     displayTerm,
     displayTermNoPt,
     notPt,
-    displayEnv, displayEnvSansPts, 
+    displayEnv, displayEnvSansPts,
     displaySubst,
     varListSpecOfVars) where
 
@@ -575,7 +575,7 @@ isIndxConst _ = False
 
 intOfIndex :: Term -> Maybe Int
 intOfIndex (Y q) = Just q
-intOfIndex _ = Nothing 
+intOfIndex _ = Nothing
 
 -- Extract the identifier from a variable
 varId :: Term -> Id
@@ -692,13 +692,12 @@ extendVarEnv (VarEnv env) x t =
       Just t' -> if t == t' then Just (VarEnv env) else Nothing
 
 -- Return just the inverse of an asymmetric key, or nothing if a term
--- isn't an asymmetric key.  Assumes arg is well-formed. 
+-- isn't an asymmetric key.  Assumes arg is well-formed.
 
 invertKey :: Term -> Maybe Term
 invertKey (F (Akey op) [F (Invk _) [t]]) = Just (F (Akey op) [t])
 invertKey (F (Akey op) [t]) = Just (F (Akey op) [F (Invk op) [t]])
-invertKey _ = Nothing 
-                              
+invertKey _ = Nothing
 
 -- Is the sort of the term a base sort?
 isAtom :: Term -> Bool
@@ -1059,7 +1058,6 @@ carriedRelPlaces target source avoid =
           f paths (0 : path) t
       f paths _ _ = paths
 
-                    
 -- Replace a variable within a term at a given place.
 replace :: Term -> Place -> Term -> Term
 replace var (Place ints) source =
@@ -2280,7 +2278,7 @@ loadTerm _ vars False (S pos s) =
 loadTerm _ _ _ (Q _ t) =
     return (C t)
 
--- special case to read index values: 
+-- special case to read index values:
 loadTerm _ _ _ (L _ [S _ "idx", N _ i]) = return $ Y i
 
 loadTerm sig vars strict (L pos (S _ s : l)) =
@@ -2576,7 +2574,6 @@ sortNameAndVarName (G m)
                                  Id (_,name) -> name))
     | otherwise = error ("sortNameAndVarName:  Non-var group member " ++ (show (G m)))
 
-               
 sortNameAndVarName t = error ("sortNameAndVarName:  Non-var " ++ (show t))
 
 type VarListSpec = [(String,[String])]
@@ -2588,7 +2585,7 @@ addSortNameToVarListSpec (sn,vn) ((sn',vns) : rest)
     | otherwise =
         do
           added <- addSortNameToVarListSpec (sn,vn) rest
-          return $ ((sn',vns) : added)  
+          return $ ((sn',vns) : added)
 
 varListSpecOfVars :: [Term] -> VarListSpec
 varListSpecOfVars [] = []
@@ -2800,7 +2797,7 @@ displayEnvSansPts :: [Term] -> Context -> Context -> Env -> [SExpr ()]
 displayEnvSansPts vars ctx ctx' (Env (_, r)) =
     map (\(x, t) -> L () [displayTerm ctx x, displayTerm ctx'' t]) r'
     where
-      nonPt x = not (F Pval [x] `elem` vars) 
+      nonPt x = not (F Pval [x] `elem` vars)
       r' = map (\(x, t) -> (I x, inferSort t)) $ M.assocs $ M.filter nonPt r
       ctx'' = addToContext ctx' (map snd r')
 

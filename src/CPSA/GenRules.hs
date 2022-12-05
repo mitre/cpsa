@@ -1,5 +1,5 @@
 
--- Generates rules when loading protocols from S-Expressions.  
+-- Generates rules when loading protocols from S-Expressions.
 
 -- Copyright (c) 2009 The MITRE Corporation
 --
@@ -47,19 +47,17 @@ zl a = z (length a) a
 
 --}
 
-
-    
 -- Protocol Rules
 
 type Conjunction = [AForm]
 
 conjunctionOfConj :: Conj -> Conjunction
-conjunctionOfConj = map snd 
+conjunctionOfConj = map snd
 
 type Conjunctor = [Term] -> Conjunction -- Function which, given new
                                         -- free variables, plugs them
                                         -- in to yield a conjunction
--- [Term] -> 
+-- [Term] ->
 type Existor = Conjunctor
 
 -- Used to say:   -- Function which, given new
@@ -67,20 +65,17 @@ type Existor = Conjunctor
                                         -- existentially, plugs them
                                         -- in to yield a conjunctor
 
-
- 
-
 ruleOfClauses :: Sig -> Gen -> String ->
                  VarListSpec -> Conjunctor ->
                  [([Term],Existor)] -> (Gen,Rule)
 ruleOfClauses sig g rn sortedVarLists antecedent evarDisjuncts =
     let (g',uvars) = sortedVarsOfStrings sig g sortedVarLists in
     let disjuncts =
-            map 
+            map
             (\(evars,existor) ->
                  (evars,(existor -- evars
                           -- use only the members
-                          -- of uvars that avoid names in evars 
+                          -- of uvars that avoid names in evars
                          (avoidByName evars uvars))))
             evarDisjuncts in
     (g',
@@ -98,13 +93,13 @@ ruleOfClauses sig g rn sortedVarLists antecedent evarDisjuncts =
           if (name == varName v)
           then Just v
           else varOfName name rest
-          
+
       avoidByName evars uvars =
           map (\uv ->
                    case varOfName (varName uv) evars of
                      Nothing -> uv
-                     Just ev -> ev)                          
-          uvars 
+                     Just ev -> ev)
+          uvars
 
 applyToSoleEntry :: (a -> b) ->  String -> [a] -> b
 applyToSoleEntry f _ [a] = f a
@@ -122,7 +117,7 @@ applyToStrandVarAndParams f (a : rest) _ = f a rest
 
 neqRules :: Sig -> Gen -> (Gen, [Rule])
 neqRules sig g =
-    foldr  
+    foldr
      (\sortName (g,rs) ->
           let (g', r) =
                   (ruleOfClauses sig g ("neqRl_" ++ sortName)
@@ -234,13 +229,12 @@ varsUsedHeight :: Role -> [Term] -> FoundAt
 varsUsedHeight rl vars =
     loop 0 vars
     where
-      occ = flip firstOccurs rl -- return *index* 
-      loop i [] = FoundAt (1+i) -- convert to height 
+      occ = flip firstOccurs rl -- return *index*
+      loop i [] = FoundAt (1+i) -- convert to height
       loop i (v : rest) =
           case occ v of
             Nothing -> Missing v
             Just j -> loop (max i j) rest
-
 
 boundVarNamesOfVarListSpec :: VarListSpec -> [String]
 boundVarNamesOfVarListSpec [] = []
@@ -248,7 +242,7 @@ boundVarNamesOfVarListSpec ((_,names) : rest) =
     L.nub $ names ++ boundVarNamesOfVarListSpec rest
 
 freeVarsInExistential :: ([Term],Existor) -> [Term]
-freeVarsInExistential (vars,c) = 
+freeVarsInExistential (vars,c) =
     let bvns = map varName vars in
     concatMap
     (\a -> filter (not . (flip elem bvns) . varName)
@@ -258,13 +252,13 @@ freeVarsInExistential (vars,c) =
 freeVarsInDisjunction :: [([Term],Existor)] -> [Term]
 freeVarsInDisjunction vcs =
     L.nub
-     (foldr (\vc acc -> (freeVarsInExistential vc) ++ acc) 
+     (foldr (\vc acc -> (freeVarsInExistential vc) ++ acc)
       []
       vcs)
 
 freeVarsInConjLists :: [([Term], Conj)] -> [Term]
 freeVarsInConjLists [] = []
-freeVarsInConjLists ((vars,conj) : rest) =    
+freeVarsInConjLists ((vars,conj) : rest) =
     ((foldr (\(_,aForm) soFar -> aFreeVars soFar aForm)
                 []
                 conj)
@@ -284,7 +278,7 @@ freeVarsSubsetByName fvars pvars =
               loop rest (fv : soFar)
           | otherwise =
               loop rest soFar
-          
+
 --   freeVarsNamedIn [] pvars = []
 --   freeVarsNamedIn (fv : rest) pvars =
 --       if (varName fv) `elem` (map varName pvars)
@@ -300,13 +294,12 @@ conclHeight rl (disj : rest) =
           case varsUsedHeight rl $ freeVarsInConjLists [disj] of
             Missing v -> Missing v
             FoundAt i -> FoundAt (max i j)
-    
 
 renameApart :: String -> [Term] -> String
 renameApart prefix vars =
     if not (prefix `elem` vns) then prefix
     else
-        loop 0 
+        loop 0
     where
       vns = map varName vars
       loop :: Int -> String
@@ -316,13 +309,11 @@ renameApart prefix vars =
           else
               loop (i+1)
 
-                   
-
 ruleOfDisjAtHeight :: Sig -> Gen -> Role -> String -> [([Term],Existor)] -> Int -> (Gen, Rule)
 ruleOfDisjAtHeight sig g rl rulename disj ht =
-    let fvs = freeVarsInDisjunction disj in 
+    let fvs = freeVarsInDisjunction disj in
     ruleOfClauses
-    sig g rulename 
+    sig g rulename
             (("strd", [renameApart "z" (concatMap fst disj)])
              : varListSpecOfVars (freeVarsSubsetByName fvs (rvars rl)))
             (\vars ->
@@ -345,7 +336,7 @@ ruleOfDisjAtHeight sig g rl rulename disj ht =
                  vars
                  "ruleOfDisjAtHeight:  vars not strand+prams?")
             disj
-            
+
     where
       errorWithMsg v tail =
           error ("ruleOfDisjAtHeight:  Parameter " ++
@@ -354,9 +345,9 @@ ruleOfDisjAtHeight sig g rl rulename disj ht =
 genOneAssumeRl :: Sig -> Gen -> Role -> Int -> [([Term], Conj)] -> (Gen, Rule)
 genOneAssumeRl sig g rl n disjuncts =
     case conclHeight rl disjuncts of
-      Missing v -> error ("genOneAssumeRl:  Variable not in role " ++ (rname rl) 
+      Missing v -> error ("genOneAssumeRl:  Variable not in role " ++ (rname rl)
                          ++ ": " ++ (show (varName v)))
-      FoundAt ht -> 
+      FoundAt ht ->
           ruleOfDisjAtHeight
           sig g rl ("assume-" ++ (rname rl) ++ "-" ++ (show n))
                   (map (\(evars,conj) ->
@@ -369,14 +360,14 @@ genOneAssumeRl sig g rl n disjuncts =
                    disjuncts)
                   ht
 
---   
+--
 --       where
 --         freeVars bndList conjunct = (aFreeVars [] conjunct) L.\\ bndList
---   
+--
 --         vars = L.nub (concatMap (\(vars,conj) ->
 --                                      concatMap (freeVars vars) (map snd conj))
 --                       disjuncts)
-    
+
 genAssumeRls :: Sig -> Gen -> Role -> [[([Term], Conj)]] -> (Gen, [Rule])
 genAssumeRls sig g rl disjunctLists =
     (g',rls)
@@ -386,15 +377,14 @@ genAssumeRls sig g rl disjunctLists =
                        (let (g', new_rule) = genOneAssumeRl sig g rl n ds in
                         (g', new_rule : rs, n+1)))
                (g, [], (0 :: Int))
-               disjunctLists  
-
+               disjunctLists
 
 genOneRelyGuarRl :: Sig -> Gen -> Role -> Int -> String -> [([Term], Conj)] -> (Gen, Rule)
 genOneRelyGuarRl sig g rl ht kind disjuncts =
     case conclHeight rl disjuncts of
-      Missing v -> error ("genOneRelyGuarRl:  Variable not in role " ++ (rname rl) 
+      Missing v -> error ("genOneRelyGuarRl:  Variable not in role " ++ (rname rl)
                          ++ ": " ++ (show (varName v)))
-      FoundAt fndHt | fndHt <= ht -> 
+      FoundAt fndHt | fndHt <= ht ->
           ruleOfDisjAtHeight
           sig g rl (kind ++ "-" ++ (rname rl) ++ "-" ++ (show ht))
                   (map (\(evars,conj) ->
@@ -409,7 +399,6 @@ genOneRelyGuarRl sig g rl ht kind disjuncts =
         | otherwise -> error ("genOneRelyGuarRl:  Variable found above ht " ++ (show ht) ++
                               " in " ++ (rname rl))
 
-
 genStateRls :: Sig -> Gen -> Role -> [Term] -> (Gen, [Rule])
 genStateRls sig g rl ts =
     (g',rls)
@@ -419,7 +408,7 @@ genStateRls sig g rl ts =
                        (let (g', new_rule) = f g t n in
                         (g', new_rule : rs, n+1)))
                (g, [], (0 :: Int))
-               ts      
+               ts
 
       -- vSpec t = ("strd", ["z"]) : varListSpecOfVars (varsInTerm t)
 
@@ -433,11 +422,11 @@ genStateRls sig g rl ts =
                 (ruleOfDisjAtHeight
                  sig g rl ("gen-st-" ++ (rname rl) ++ "-" ++ (show n))
                  [ -- One disjunct, no existentially bound variables
-                   ([], 
-                   -- One conjunctor:  
+                   ([],
+                   -- One conjunctor:
                     (\pvars ->
                          case envsRoleParams rl g pvars of
-                           (_,e) : _ -> [GenStV (instantiate e t)] 
+                           (_,e) : _ -> [GenStV (instantiate e t)]
                            [] -> error ("genStateRls:  Parameter matching failed "
                                        ++  (show pvars) ++ (show t))))]
                  ht)
@@ -451,9 +440,9 @@ genFactRls sig g rl predarglists =
                      (let (g', new_rule) = f g pred args n in
                       (g', new_rule : rs, n+1)))
                     (g, [], (0 :: Int))
-                    predarglists      
+                    predarglists
 
-      -- vSpec t = ("strd", ["z"]) : varListSpecOfVars (varsInTerm t) 
+      -- vSpec t = ("strd", ["z"]) : varListSpecOfVars (varsInTerm t)
 
       f g pred args n =
           case varsUsedHeight rl (concatMap varsInTerm args) of
@@ -463,10 +452,10 @@ genFactRls sig g rl predarglists =
                               ++ (show $ varName v))
             FoundAt ht ->
                 (ruleOfDisjAtHeight
-                 sig g rl ("fact-" ++ (rname rl) ++ "-" ++ pred ++ (show n))                         
+                 sig g rl ("fact-" ++ (rname rl) ++ "-" ++ pred ++ (show n))
                  [ -- One disjunct, no existentially bound variables
-                   ([], 
-                   -- One conjunctor:  
+                   ([],
+                   -- One conjunctor:
                     (\pvars ->
                          case envsRoleParams rl g pvars of
                            (_,e) : _ ->  [AFact pred (map (instantiate e) args)]
@@ -474,7 +463,7 @@ genFactRls sig g rl predarglists =
                                        ++  (show pvars) ++ (concatMap show args))))]
                  ht)
 
-      {-- 
+      {--
     (g',rls)
     where
       (g',rls,_) =

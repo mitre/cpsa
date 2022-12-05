@@ -79,8 +79,8 @@ loadOtherPreskel sig _ _ ps ks _ = return ((sig, ps, ks), Nothing)
 data Prot = Prot
     { pname :: String,          -- Protocol name
       pgen :: Gen,                -- Generator for preskeletons
-      roles :: [Role], 
-      psig :: Sig }             -- the protocol's signature 
+      roles :: [Role],
+      psig :: Sig }             -- the protocol's signature
     deriving Show
 
 -- The Role record contains information extraced from roles for use
@@ -111,7 +111,6 @@ loadProt _ _ _ pos _ =
 loadLang :: MonadFail m => Pos -> Sig -> [SExpr Pos] -> m Sig
 loadLang pos _ xs | hasKey "lang" xs = loadSig pos (assoc "lang" xs)
 loadLang _ sig _ | otherwise = return sig
-
 
 -- A generator is threaded thoughout the protocol loading process so
 -- as to ensure no variable occurs in two roles.  It also ensures that
@@ -243,14 +242,14 @@ data Preskel = Preskel
       nons :: [Term],
       pnons :: [Term],
       uniqs :: [Term],
-      uniqgens :: [Term],       -- adding nov 2022                 
+      uniqgens :: [Term],       -- adding nov 2022
       -- absents :: [(Term, Term)], -- adding nov 2022
       origs :: [(Term, (Term, Int))],
-      -- adding nov 2022; it's like origs but for uniqgen:  
+      -- adding nov 2022; it's like origs but for uniqgen:
       genNodes :: [(Term, (Term, Int))],
       genSts :: [Term],         -- adding nov 2022
       -- adding nov 2022; like orderings but for the state transition
-      -- relation: 
+      -- relation:
       leadsTos :: [((Term, Int), (Term, Int))],       -- Pair
       auths :: [Term],
       confs :: [Term],
@@ -272,7 +271,7 @@ loadPreskel sig pos prot gen (S _ _ : L _ (S _ "vars" : vars) : xs) =
       uniqs <- loadBaseTerms sig kvars (assoc uniqOrigKey xs)
       origs <- loadOrigs sig kvars heights (assoc origsKey xs)
       uniqgens <- loadBaseTerms sig kvars (assoc uGenKey xs)
-      -- absents <-  mapM (loadAbsentPair sig kvars) (assoc absKey xs) 
+      -- absents <-  mapM (loadAbsentPair sig kvars) (assoc absKey xs)
       genNodes <- loadOrigs sig kvars heights (assoc gensKey xs)
       leadsTos <- loadOrderings heights (assoc leadsToKey xs)
       genSts <- mapM (loadTerm sig kvars False) (assoc genStKey xs)
@@ -293,11 +292,11 @@ loadPreskel sig pos prot gen (S _ _ : L _ (S _ "vars" : vars) : xs) =
                         pnons = pnons,
                         uniqs = uniqs,
                         uniqgens = uniqgens,
-                        -- absents = absents, 
+                        -- absents = absents,
                         origs = map g origs,
                         genNodes = map g genNodes,
                         genSts = genSts,
-                        leadsTos = map f leadsTos, 
+                        leadsTos = map f leadsTos,
                         auths = auths,
                         confs = confs,
                         facts = facts,
@@ -342,8 +341,6 @@ lookupRole pos prot role =
       Nothing ->
           fail (shows pos $ "Role " ++ role ++ " not found in " ++ pname prot)
       Just r -> return r
-
-
 
 loadMaplet :: MonadFail m => Sig -> [Term] -> [Term] ->
               SExpr Pos -> m (Term, Term)
@@ -429,7 +426,7 @@ loadBaseTerm sig vars x =
               return (v,t)
         False -> fail (shows (annotation x) "Expecting an atom")
   loadAbsentPair _ _ x =
-    fail (shows (annotation x) "Expecting a pair, atom and term")                     
+    fail (shows (annotation x) "Expecting a pair, atom and term")
 --}
 loadOrigs :: MonadFail m => Sig -> [Term] -> Strands ->
              [SExpr Pos] -> m [(Term, Node)]
@@ -558,7 +555,7 @@ uGenKey = "uniq-gen"
 
 --   -- The key used to extract absent declarations
 --   absKey :: String
---   absKey = "absent" 
+--   absKey = "absent"
 
 -- The key used in preskeletons for authenticated channels
 authKey :: String
@@ -572,19 +569,17 @@ confKey = "conf"
 origsKey :: String
 origsKey = "origs"
 
--- The key used to extract the nodes of generation 
+-- The key used to extract the nodes of generation
 gensKey :: String
 gensKey = "gens"
 
--- The key used to extract the leads-to node pairs 
+-- The key used to extract the leads-to node pairs
 leadsToKey :: String
 leadsToKey = "leads-to"
 
--- The key used to extract the gen-state node pairs 
+-- The key used to extract the gen-state node pairs
 genStKey :: String
 genStKey = "gen-st"
-
-          
 
 -- The key used to extract facts
 factsKey :: String
@@ -667,7 +662,7 @@ mapSkel env pov k =
       nons = map (instantiate env) (nons k),
       pnons = map (instantiate env) (pnons k),
       uniqs = map (instantiate env) (uniqs k),
-      uniqgens = map (instantiate env) (uniqgens k), 
+      uniqgens = map (instantiate env) (uniqgens k),
       origs = mapOrig (instantiate env) (sansPtOrigs (origs k)),
       genNodes = mapOrig (instantiate env) (genNodes k),
       genSts = map (instantiate env) (genSts k),
@@ -708,13 +703,12 @@ sansPts = filter notPt
 sansPtOrigs :: [(Term, (Term, Int))] -> [(Term, (Term, Int))]
 sansPtOrigs = filter (\(pt, _) -> notPt pt)
 
-
 -- Convert one skeleton into a declaration and a conjunction.  The
 -- declaration is used as the bound variables in a quantifier.  The
 -- context is extended so it can be used as input for another
 -- skeleton.
 
--- JDG:  Must extend.  
+-- JDG:  Must extend.
 skel :: Context -> Preskel -> (Context, [SExpr ()], [SExpr ()])
 skel ctx k =
   let vars = (sansPts $ kvars k ++ kstrands k) in
@@ -731,7 +725,7 @@ skel ctx k =
    map (unary "ugen" kctx) (noGenUniqs k) ++
    map (uniqAtForm kctx) (sansPtOrigs (origs k)) ++
    map (ternary "ugen-at" kctx) (genNodes k) ++
-   map (unary "gen-st" kctx) (genSts k) ++ 
+   map (unary "gen-st" kctx) (genSts k) ++
    map (leadsToForm kctx) (leadsTos k) ++
    map (unary "auth" kctx) (auths k) ++
    map (unary "conf" kctx) (confs k) ++

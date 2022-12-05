@@ -14,7 +14,7 @@ module CPSA.Protocol (Event (..), evtCm, evtTerm, evtChan, evtMap, evt,
     rconf, rauth, rcomment, rsearch, rnorig, rpnorig, ruorig, rugen, rabs,
     rpconf, rpauth, rpriority, mkRole, tchans, varSubset, varsInTerms,
     addVars, firstOccurs, paramOfName, envsRoleParams,
-    AForm (..), NodeTerm, Goal (..), Conj, 
+    AForm (..), NodeTerm, Goal (..), Conj,
     aFormOrder, aFreeVars, instantiateAForm, instantiateConj, Rule (..),
     Prot, mkProt, pname, alg, pgen, psig, roles,
     nullaryrules, unaryrules, generalrules, rules, userrules, generatedrules,
@@ -164,11 +164,11 @@ generationPos :: Term -> Trace -> Maybe Int
 generationPos t c =
     loop 0 c
     where
-      maybeInv = invertKey t 
+      maybeInv = invertKey t
 
       testMaybe Nothing _ = False
       testMaybe (Just tInv) ct = tInv `constituent` ct
-      test t ct = t `constituent` ct                  
+      test t ct = t `constituent` ct
 
       loop _ [] = Nothing       -- Term does not occur
       loop pos (Out t' : c)
@@ -404,7 +404,7 @@ traceAbsent trace ugens =
         f ts evt = S.union ts $ subNums $ evtTerm evt
 
 -- Return just the index of the first occurrence of v in the trace, or
--- nothing.  
+-- nothing.
 firstOccurs :: Term -> Role -> Maybe Int
 firstOccurs v r = firstOccursAt v (rtrace r)
 
@@ -418,7 +418,7 @@ paramOfName name rl =
           | otherwise = seek rest
 
 envsRoleParams :: Role -> Gen -> [Term] -> [(Gen, Env)]
-envsRoleParams rl g =    
+envsRoleParams rl g =
     foldl
     (\ges v -> concatMap
                (\ge -> case paramOfName (varName v) rl of
@@ -430,9 +430,9 @@ envsRoleParams rl g =
                                     [ge]
                                xs -> --  z ("! " ++ (show v) ++ " for " ++ (show p)
                                      -- ++ " in " ++ (show xs))
-                                     xs 
+                                     xs
                          Nothing -> -- vars not locally bound may
-                                    -- occur elsewhere in formula 
+                                    -- occur elsewhere in formula
                                    [ge])
                ges)
     [(g,emptyEnv)]
@@ -474,7 +474,6 @@ data Goal =
     deriving Show
 
 type Conj = [(Pos, AForm)]
-
 
 --   -- A HornRule has at most one disjunct, no existential
 --   data HornRule =
@@ -774,7 +773,7 @@ instantiateAForm e (LeadsTo (s,t) (s',t')) =
 
 instantiateConj :: Env -> Conj -> Conj
 instantiateConj e =
-    map (\(p,a) -> (p, instantiateAForm e a)) 
+    map (\(p,a) -> (p, instantiateAForm e a))
 
 data Rule
   = Rule { rlname :: String,    -- Name of rule

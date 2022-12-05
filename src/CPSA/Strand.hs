@@ -47,7 +47,6 @@ zP x y = unsafePerformIO (print x >> return y)
 zz :: Show a => a -> a
 zz x = zP x x
 
-       
 zShow :: Show a => a -> a
 zShow x = zP (show x) x
 
@@ -127,7 +126,7 @@ useWellFormedTerms = False -- True
 
 -- Don't do variable separation if False
 useVariableSeparation :: Bool
-useVariableSeparation = True -- False 
+useVariableSeparation = True -- False
 
 -- Instances and Strand Identifiers
 
@@ -606,7 +605,7 @@ checkPOV k =
                    ++ " insts, but its prob has length "
                    ++ (show (L.length (prob k))))
                 k)
---}                                
+--}
 
 -- Suppose that a Preskel k has been created by rebinding some fields
 -- in an earlier skeleton.  The fields that newPreskel would compute
@@ -702,7 +701,7 @@ preskelWellFormed k =
     all chanCheck (kauth k) &&
     wellOrdered k && acyclicOrder k &&
     roleOrigCheck k &&
-    roleGenCheck k && 
+    roleGenCheck k &&
     (povCheck k || --   (zP (show (povCheck k) ++ " pov length " ++
                    --     (show (case pov k of
                    --             Nothing -> 0
@@ -711,14 +710,14 @@ preskelWellFormed k =
     where
       terms = kterms k
       vs = kvars k
-      f b t = b && t `elem` vs 
+      f b t = b && t `elem` vs
 --      f False _ = False
---      f True t = t `elem` vs 
+--      f True t = t `elem` vs
       nonCheck t = all (not . carriedBy t) terms
       uniqueCheck t = any (carriedBy t) terms
       uniqgenCheck t = any (constituent t) terms
       absentCheck (x, y) = varSubset [x, y] vs
-      genStCheck t = foldVars f True t 
+      genStCheck t = foldVars f True t
       chanCheck c = elem c vs
       povCheck k = case pov k of
                      Nothing -> True
@@ -853,7 +852,6 @@ kchans k = ichans (insts k)
 ichans :: [Instance] -> [Term]
 ichans insts =
   L.nub $ M.catMaybes [evtChan evt | i <- insts, evt <- trace i]
-
 
 -- The node orderings form an acyclic order if there are no cycles.
 -- Use depth first search to detect cycles.  A graph with no node with
@@ -1415,7 +1413,7 @@ purge (k0, k, n, phi, hsubst) s s' =
               (map (permuteNode perm) (kprecur k))
               (kgenSt k)
               (kconf k)
-              (kauth k) 
+              (kauth k)
               (map (updateFact $ updateStrand s s')
                        (deleteStrandFacts s (kfacts k)))
               (updatePriority perm (kpriority k))
@@ -1466,13 +1464,12 @@ soothePreskel k =
   where
     vs = kvars k
     terms = kterms k
-    f b t = b && t `elem` vs 
+    f b t = b && t `elem` vs
     varCheck t = varSubset [t] terms
     carriedCheck t = any (carriedBy t) terms
-    genStCheck t = foldVars f True t  
+    genStCheck t = foldVars f True t
     chanCheck t = varSubset [t] $ kchans k
     absentCheck (x, y) = varSubset [x, y] $ kvars k
-
 
 -- This is the starting point of the Preskeleton Reduction System
 
@@ -1594,7 +1591,7 @@ addUniqOrigOrderings k orderings t =
           where
             f orderings s =
                 -- JDG:  Was gainedPos:  usedPos seemed more correct
-                -- before further checking... 
+                -- before further checking...
                 case gainedPos t (trace (strandInst k s)) of
                   Nothing -> orderings
                   Just pos -> adjoin (n, (s, pos)) orderings
@@ -2149,17 +2146,16 @@ addAbsence k n cause x t =
 homomorphism :: Preskel -> Preskel -> [Sid] -> [Env]
 homomorphism k k' mapping =
     do
-      (_, env) <- findReplacement k k' mapping 
+      (_, env) <- findReplacement k k' mapping
       case validateEnv k k' mapping env of
         True -> [env]
         False -> []
 
-
-{--     filter (validateEnv k k mapping) 
+{--     filter (validateEnv k k mapping)
                $ map snd
                      $ findReplacement k k' mapping
                      --}
-                 
+
 {--  where
          maybeShow x = if (5 == L.length (insts k') &&
                            4 == L.length (insts k))
@@ -2170,11 +2166,10 @@ homomorphism k k' mapping =
 
                             {--
                                 ((show (trace ((insts k') !! 0))) ++
-                                 " should match pattern " ++ 
+                                 " should match pattern " ++
                                  (show (trace ((insts k) !! 0))) ++
                                 " mapping " ++ (show mapping))
                             --}
-
 
 findReplacement :: Preskel -> Preskel -> [Sid] -> [(Gen, Env)]
 findReplacement k k' mapping =
@@ -2184,13 +2179,12 @@ findReplacement k k' mapping =
          v
 --            if (5 == L.length (insts k') &&
 --                4 == L.length (insts k))
---            then 
+--            then
 --                zP (show (L.length v)) v
 --            else v
-    else [] 
+    else []
         -- error ("Yarg! JDR " ++ (show (L.length mapping)) ++ " vs " ++
         --       (show (L.length (insts k))))
-            
 
 matchStrand :: Preskel -> Preskel -> [Sid] -> (Gen, Env) -> Sid -> [(Gen, Env)]
 matchStrand k k' mapping env s =
@@ -2215,7 +2209,7 @@ validateEnv k k' mapping env =
       instantiatePair env (t1, t2) =
         (instantiate env t1, instantiate env t2)
 
-{-- Degugging apparatus: 
+{-- Degugging apparatus:
       allShowingFailingIndex _ [] = True
       allShowingFailingIndex i (True : rest) = allShowingFailingIndex (i+1) rest
       allShowingFailingIndex i (False : _) =
@@ -2256,7 +2250,7 @@ separateVariablesLimit :: Int
 separateVariablesLimit = 1024
 
 generalize :: Preskel -> [Candidate]
-generalize k = deleteTerminal k ++ 
+generalize k = deleteTerminal k ++
                deleteNodes k ++
                forgetAssumption k ++
                weakenOrderings k ++
@@ -2264,7 +2258,7 @@ generalize k = deleteTerminal k ++
                 then take separateVariablesLimit (separateVariables k)
                 else [])
 
--- terminal strand deletion 
+-- terminal strand deletion
 
 strandTerminal :: Preskel -> Sid -> Bool
 strandTerminal k s =
@@ -2294,14 +2288,12 @@ deleteTerminal k =
       report [] = []
       report ((k', mapping, _) : rest) = (k',mapping) : report rest
 
-
  {-- debugging apparatus:
    (zP
            ("dT: strand " ++ (show s) ++ " insts: " ++ (show (L.length (insts k'))) ++
             " prob: " ++ (show (prob k')))
            (k',mapping)) : report rest
            --}
-             
 
 -- Node deletion
 
@@ -2327,7 +2319,7 @@ deleteNodes k =
 
 candWithCoreFacts :: Candidate -> Candidate
 candWithCoreFacts (k,sids) =
-    (withCoreFacts k, sids) 
+    (withCoreFacts k, sids)
 
 deleteNode :: Preskel -> Vertex -> [(Preskel, [Sid])]
 deleteNode k n
@@ -2358,15 +2350,11 @@ deleteNode k n
       p = pos n
       s = sid (strand n)
 
-          
-
-
-{-- 
+{--
 candWithNeededFacts :: Candidate -> [Candidate]
 candWithNeededFacts (k,sids) =
-    map (\k' -> (k',sids)) $ simplify k 
+    map (\k' -> (k',sids)) $ simplify k
 --}
-
 
 -- Update orderings when a strand is eliminated (p == 0)
 deleteOrderings :: Sid -> [Pair] -> [Pair]
@@ -2413,7 +2401,7 @@ deleteNodeRest k gen n insts' orderings prob facts =
 
       lostgen (s,i) t = case generationPos t (trace ((insts k) !! s)) of
                           Nothing -> False
-                          Just pos -> i <= pos 
+                          Just pos -> i <= pos
 
       -- Drop uniques that aren't carried anywhere
       unique' = filter carriedIn (kunique k)
@@ -2443,7 +2431,7 @@ deleteStrandFacts s facts =
 -- Correct this!  When we know how to filter based on strand and
 -- index.  !!!!
 deleteNodeFacts :: Sid -> Int -> [Fact] -> [Fact]
-deleteNodeFacts s p facts =                  
+deleteNodeFacts s p facts =
   filter f facts
   where
     f (Fact _ fts) = checkRest fts
@@ -2457,19 +2445,19 @@ deleteNodeFacts s p facts =
     checkRest (_ : rest) = checkRest rest
 
 permOfSidList :: [Sid] -> Sid -> Sid
-permOfSidList = (!!) 
+permOfSidList = (!!)
 
 withCoreFacts :: Preskel -> Preskel
 withCoreFacts k =
     case pov k of
-      Nothing -> k              -- Can't recover pov 
+      Nothing -> k              -- Can't recover pov
       Just k0 ->
           case L.length (prob k) == L.length (insts k0) of
             False -> error ("Strands.withCoreFacts:  Mapping from POV to skeleton wrong length, "
                             ++ show (prob k) ++ " should map "
                                    ++ (show (L.length (insts k0))) ++ " strands into "
                                           ++ (show (L.length (insts k))))
-            True -> 
+            True ->
                 case (homomorphism k0 k (prob k)) of
                   [] -> k
                   (env : _) ->  -- If there are multiple envs, this
@@ -2479,12 +2467,10 @@ withCoreFacts k =
                                 -- latter may have made a different
                                 -- choice of env in its facts.
                                 -- (Delete this if it turns out
-                                -- wrong.) 
+                                -- wrong.)
                       k { kfacts =
                               map (instUpdateFact env (permOfSidList (prob k)))
-                                      (kfacts k0) } 
-
-      
+                                      (kfacts k0) }
 
 -- Node ordering weakening
 
@@ -2563,7 +2549,7 @@ skelPnons k =
 
 forgetUniqueTerm :: Preskel -> [Candidate]
 forgetUniqueTerm k =
-    map (addIdentity . delUniq) (skelUniques k)            
+    map (addIdentity . delUniq) (skelUniques k)
     where
       delUniq t =
           renewPreskel
@@ -2935,7 +2921,7 @@ nodePairsOfSkel k =
                (maybeList
                 [strdLookup e z1, indxLookup e i1,
                  strdLookup e z2, indxLookup e i2]))
-              (satisfy (LeadsTo (z1,i1) (z2,i2)) k (g4,emptyEnv)) of 
+              (satisfy (LeadsTo (z1,i1) (z2,i2)) k (g4,emptyEnv)) of
        Nothing -> []
        Just l -> l)
 
@@ -3426,24 +3412,24 @@ simplify :: Preskel -> [Preskel]
 simplify k =
     if checkNullary k
     then
-        case rewrite $ withCoreFacts k of  
+        case rewrite $ withCoreFacts k of
           Nothing -> [k]
           Just ks -> ks
     else
         []
-        
+
 {--
   case rewriteNullary k of
-    Nothing -> []               -- Big win:  false consequence 
-    Just k -> 
-        case rewrite $ withCoreFacts k of  
+    Nothing -> []               -- Big win:  false consequence
+    Just k ->
+        case rewrite $ withCoreFacts k of
           Nothing -> [k]
           Just ks -> ks
---} 
+--}
 checkNullary :: Preskel -> Bool
 checkNullary k =
-    L.and $ map inapplicable nrs 
-    where 
+    L.and $ map inapplicable nrs
+    where
       nrs = nullaryrules $ protocol k
       inapplicable nr = null $ conjoin (antec $ rlgoal nr) k (gen k, emptyEnv)
 
@@ -3456,7 +3442,7 @@ rewriteNullary k =
       loop [] = Just k
       loop (nr : rest) =
           case conjoin (antec $ rlgoal nr) k (gen k, emptyEnv) of
-            [] -> loop rest     -- antecedent: no satisfying instances  
+            [] -> loop rest     -- antecedent: no satisfying instances
             _  -> Nothing       -- satisfying instances, hence false!
 --}
 
@@ -3482,7 +3468,7 @@ rewriteUnary k =
                       Just k' -> loop k' -- (zP "/" k')
                                  rest True True)
 
--- only interested in case ur is unary:  
+-- only interested in case ur is unary:
 
 rewriteUnaryOne :: Preskel -> Rule -> [(Gen, Env)] -> Maybe Preskel
 rewriteUnaryOne k ur vas =
@@ -3491,11 +3477,9 @@ rewriteUnaryOne k ur vas =
       [([],conjuncts)] ->
           foldM (rewriteUnaryOneOnce (rlname ur) conjuncts) k vas
       _ ->
-          fail ("rewriteUnaryOne:  Hey, not really unary, rule " ++ (rlname ur)) 
+          fail ("rewriteUnaryOne:  Hey, not really unary, rule " ++ (rlname ur))
     -- Screwed up set of unary rules in the last case.  Should never
-    -- occur.  
-
-
+    -- occur.
 
 rewriteUnaryOneOnce :: String -> [AForm] -> Preskel -> (Gen, Env) -> Maybe Preskel
 rewriteUnaryOneOnce _ [] k _ = Just k
@@ -3973,10 +3957,10 @@ rewrite k =
                   Unch     -> Nothing
                   Found k' -> Just [k']
           else
-              Just [] 
+              Just []
 
       nullUnaryThrough =
-          concatMap (\k -> maybe [k] id (nullUnary k)) 
+          concatMap (\k -> maybe [k] id (nullUnary k))
 
       -- iterate todos done action, which yields Maybe [Preskel]
       iterate _ [] [_] False = Nothing          -- zP ">>" Nothing
@@ -3991,7 +3975,7 @@ rewrite k =
             Nothing  -> iterate (dc-1) rest (k : done) b
             Just new ->
                 let new' = factorIsomorphic (nullUnaryThrough new) in
-                -- nullUnaryThrough new in 
+                -- nullUnaryThrough new in
                 -- Could alternatively factor the new ones for
                 -- isomorphic copies, but that sounds anomalous
                 -- *Don't* Skip it for now.
@@ -4624,10 +4608,10 @@ rstateNode name n k (g, e) =
       _ -> error ("In rule " ++ name ++ ", state-node did not get a node term")
 
 applyLeadsTo :: Preskel -> [Pair] -> Preskel
-applyLeadsTo k pairs =    
+applyLeadsTo k pairs =
     case rewriteUnaryOneOnce rn atomicFormulae k ge of
       Nothing -> k
-      Just k' -> k' 
+      Just k' -> k'
     where
       rn = "(reading leads-to field)"
       ge = (gen k, emptyEnv)
@@ -4636,5 +4620,3 @@ applyLeadsTo k pairs =
       commpairOfPair ((s1,i1), (s2,i2)) =
           Commpair (strdOfInt s1, indxOfInt i1)
                    (strdOfInt s2, indxOfInt i2)
-                   
-             

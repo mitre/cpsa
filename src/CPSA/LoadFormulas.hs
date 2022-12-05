@@ -9,11 +9,11 @@
 module CPSA.LoadFormulas
     (loadSentence,
      sortedVarsOfStrings,
-     sortedVarsOfNames, 
+     sortedVarsOfNames,
      varsInTerm,
      loadTerms,
-     loadFactList, loadDisjuncts, loadConclusions, loadConclusion, 
-     VarListSpec, Mode(..), 
+     loadFactList, loadDisjuncts, loadConclusions, loadConclusion,
+     VarListSpec, Mode(..),
      lookupRole) where
 
 import Control.Monad
@@ -34,14 +34,12 @@ zz :: Show a => a -> a
 zz x = z x x
 --}
 
--- Moved this to Algebra.hs:  
+-- Moved this to Algebra.hs:
 -- type VarListSpec = [(String,[String])]
-
 
 showst :: Term -> ShowS
 showst t =
     shows $ displayTerm (addToContext emptyContext [t]) t
-
 
 sortedVarsOfNames :: Sig -> Gen -> String -> [String] -> (Gen, [Term])
 sortedVarsOfNames sig g sortName =
@@ -64,8 +62,7 @@ varsInTerm t =
 
 {--
 
--- These two next procedures were unused.  
-
+-- These two next procedures were unused.
 
 varOfName :: MonadFail m => [AForm] -> String -> m Term
 varOfName aforms s =
@@ -88,8 +85,8 @@ varOfName aforms s =
 -- the variable specification.
 
 -- This procedure fails if there is no variable of a given name, or if
--- there are more than one.  
-    
+-- there are more than one.
+
 varsOfVarSpecList :: MonadFail m => [AForm] -> VarListSpec -> m [Term]
 varsOfVarSpecList aforms [] = return []
 varsOfVarSpecList aforms ((_, names) : rest) =
@@ -104,7 +101,6 @@ loadTerms :: MonadFail m => Sig -> [Term] -> [SExpr Pos] -> m [Term]
 loadTerms sig vars =
     mapM (loadTerm sig vars False)
 
-
 loadFactList :: MonadFail m => Sig -> [Term] ->
                 [SExpr Pos] -> m [(String, [Term])]
 loadFactList sig vars =
@@ -115,8 +111,8 @@ loadAFact sig vars (L _ (S _ name : fs)) =
     do
       fs <- mapM (loadTerm sig vars False) fs
       return $ (name, fs)
-loadAFact _ _ x = fail (shows (annotation x) "Malformed fact")         
-         
+loadAFact _ _ x = fail (shows (annotation x) "Malformed fact")
+
 lookupRole :: MonadFail m => Pos -> Prot -> String -> m Role
 lookupRole _ p role  | role == "" =
     return $ listenerRole p
@@ -125,8 +121,6 @@ lookupRole pos p role =
       Nothing ->
           fail (shows pos $ "Role " ++ role ++ " not found in " ++ pname p)
       Just r -> return r
-
-          
 
 data Mode
   = RoleSpec
@@ -172,7 +166,6 @@ loadConclusions sig prot g vars (x : rest) =
       (g,newConcl) <- loadConclusion sig (annotation x) prot g vars x
       (g',concls) <- loadConclusions sig prot g vars rest
       return (g', newConcl : concls)
-
 
 -- The conclusion must be a disjunction.  Each disjunct may introduce
 -- existentially quantified variables.
@@ -249,9 +242,8 @@ loadUsedVars sig pos prot vars unbound x =
     let f vars (_, form) = aFreeVars vars form
     case unbound L.\\ foldl f [] as of
       [] -> return as
-      (v : _) -> fail (shows (annotation x) (showst v " not used"))   
+      (v : _) -> fail (shows (annotation x) (showst v " not used"))
 
-                 
 -- Load a conjunction of atomic formulas, but don't ensure that all
 -- declared variables are used.
 
@@ -261,7 +253,7 @@ loadLiberalVars sig pos prot vars _ x =
   do
     as <- loadConjunction sig pos prot vars x
     return as
-           
+
 -- Load a conjunction of atomic formulas
 
 loadConjunction :: MonadFail m => Sig -> Pos -> Prot -> [Term] ->

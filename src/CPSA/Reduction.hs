@@ -95,7 +95,6 @@ useFlush = True                -- False
 dieOnGeneralization :: Bool
 dieOnGeneralization = False -- True
 
-
 -- Parameter driven S-expression printer
 wrt :: Options -> Handle -> SExpr a -> IO ()
 wrt p h sexpr =
@@ -158,7 +157,7 @@ merge (Seen xs) (Seen ys) = Seen (xs ++ ys)
 -- the labels of the seen children.
 
 -- The Genlz case contains the result of a generalization step,
--- structured like a Reduct case.  
+-- structured like a Reduct case.
 
 data Reduct t g s e
     = ReductStable !(LPreskel)
@@ -192,7 +191,7 @@ solve p h (k : ks) n =
         [] ->                  -- Input cannot be made into a skeleton
             do
               let lk = LPreskel k n 0 Nothing
-              wrt p h (commentPreskel lk [] (unrealized k) Ordinary Dead -- Mark this case dead 
+              wrt p h (commentPreskel lk [] (unrealized k) Ordinary Dead -- Mark this case dead
                        "Input cannot be made into a skeleton--nothing to do")
               solve p h ks (n + 1)
         [k'] ->
@@ -296,14 +295,14 @@ step p h ks m oseen n seen todo toobig (ReductStable lk : reducts) =
             wrt p h (commentPreskel lk [] [] Shape Nada "")
       -- zP ("unseen", label lk) $
             step p h ks m oseen n seen todo toobig reducts
-                 
+
 step p h ks m oseen n seen todo toobig (Genlz lk size kids dups : reducts)
     | dieOnGeneralization =
         do
           let ns = unrealized (content lk)
           wrt p h (commentPreskel lk [] ns Ordinary Dead "died of generalization")
-          step p h ks m oseen n seen todo toobig reducts 
-    | otherwise = 
+          step p h ks m oseen n seen todo toobig reducts
+    | otherwise =
       step p h ks m oseen n seen todo toobig (Reduct lk size kids dups : reducts)
 
 step p h ks m oseen n seen todo toobig (Reduct lk size kids dups : reducts)

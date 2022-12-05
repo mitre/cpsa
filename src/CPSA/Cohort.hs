@@ -23,7 +23,6 @@ import System.IO.Unsafe
 z :: Show a => a -> b -> b
 z x y = unsafePerformIO (print x >> return y)
 
-
   zShow :: Show a => a -> a
 zShow x = z (show x) x
 
@@ -323,7 +322,6 @@ prioritizeVertices k vs =
        prios (_, p) (_, p') = compare p' p
        keep (_, p) = p >= minPriority
 
-                     
 priority :: Preskel -> Node -> Int
 priority k (s, i) =
   case lookup (s, i) (kpriority k) of
@@ -470,7 +468,7 @@ mgs cohort =
     f (k, phi) (k', phi') =
         let ans = any (not. null . homomorphism k' k)
                   (composeFactors (strandids k) (strandids k') phi phi') in
-        ans 
+        ans
 
 -- Given two permutations p and p', with ranges r and r', this
 -- function returns the list of permutations p'' such that
@@ -732,7 +730,7 @@ exprDHSubcohort k a ct pos eks n escape cause =
 
 {--
 
-The previous version:  
+The previous version:
 
 maximize :: Preskel -> [Preskel]
 maximize k =
@@ -752,22 +750,22 @@ maximize :: Preskel -> [Preskel]
 maximize k =
     iter $ generalize k
     where
-      iter [] = [] 
+      iter [] = []
       iter ((k',mapping) : rest) =
           case specialization k k' mapping of
             [] -> iter rest
             -- Since specialization now simplifies, the ks are
             -- automatically closed under the rules.
-            ks -> ks 
+            ks -> ks
 
 -- Test to see if realized skeleton k is a specialization of
 -- preskeleton k' using the given strand mapping.  Returns the
 -- skeleton associated with k' if it refines k.
 
 specialization :: Preskel -> Preskel -> [Sid] -> [Preskel]
-specialization k k' mapping 
+specialization k k' mapping
     | not (preskelWellFormed k') = []     --  (showSome k' [] )
-    | otherwise =        
+    | otherwise =
         do
           k'' <- toSkeleton useThinningDuringGeneralization k'
           -- (showSome k'' k'') inside *realized* to debug
@@ -783,17 +781,17 @@ specialization k k' mapping
           refines k (Just k') mapping =
               not $ null $ homomorphism k' k mapping
 
-{--  Debugging apparatus:  
+{--  Debugging apparatus:
           showSome k'' v =
               if (5 == L.length (insts k)) && (1+L.length (insts k'') == L.length (insts k))
-              then 
+              then
                   (z
                    ("length: " ++ (show (L.length (insts k''))) ++
                     ", unrealized: " ++ (show (unrealized k'')) ++
-                    ", prev nodes: " ++ (show (addSendingBefore S.empty (vertex k'' (0,0)))) ++ 
+                    ", prev nodes: " ++ (show (addSendingBefore S.empty (vertex k'' (0,0)))) ++
 --                       ", after: " ++ (show
 --                                       (cmsInNodes
---                                        (addSendingBefore S.empty (vertex k'' (0,0))))) ++ 
+--                                        (addSendingBefore S.empty (vertex k'' (0,0))))) ++
                     ", prob: " ++ (show (prob k'')) ++
                     ", POV OK: " ++ (show (refines k'' (pov k'') (prob k''))) ++
                     ", refines: " ++ (show (refines k (Just k'') mapping)) ++
@@ -804,7 +802,5 @@ specialization k k' mapping
                    v)
               else v
 
---          maybeOK x = if (12 < L.length (insts k)) then z "OK" x else x 
+--          maybeOK x = if (12 < L.length (insts k)) then z "OK" x else x
 --}
-          
-                  
