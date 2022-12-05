@@ -1,5 +1,26 @@
 CPSA NEWS -- history of user-visible changes.
 
+* Changes in version 4.4.0
+
+** Many small bugs were corrected.  For instance, bugs that prevented
+   generalization from running to completion led to redundant shapes.
+   Imprecision in uniq-gen led to omissions.  Cpsa4sas has been
+   brought up to date to work accurately with protocols that use
+   state.
+
+** Annotations within traces are now permitted, namely rely, guarantee,
+   and cheq, enabling the specifier to indicate what a principal
+   learns on receiving a message; what the principal must ensure
+   before transmitting a message; and how a message should be further
+   destructured when additional information has been received.  The
+   latter allows commitment protocols, with the cheq annotation
+   drawing the conclusions when decommitment occurs.
+
+** The manual has been updated for CPSA 4, and equipped with a large
+   number of (we hope) interesting examples.  See
+   doc/src/cpsa4manual/examples/ for the examples.   
+   
+
 * Changes in version 4.3.1
 
 ** Algebra signature extensions may be specified in a protocol.
