@@ -1,0 +1,187 @@
+\chapter{Introduction}
+\label{ch:intro}
+
+{\cpsa}, the Cryptographic Protocol Shapes Analyzer, is a software tool
+designed to assist in the design and analysis of cryptographic protocols.
+A cryptographic protocol is a specific pattern of interaction between
+principals.  TLS and IKE are some examples of well-known cryptographic protocols.
+
+The tool takes as input a protocol definition and a partial
+description of an execution, each built within a particular formal
+model by the user.  It attempts to produce descriptions of \emph{all}
+possible executions of the protocol that complete the partial
+description, consistent with the presence of a powerful network adversary
+capable of diverting, altering, replaying, or dropping network messages.
+Such an adversary may be able to manipulate honest participants into an
+unexpected execution, breaking a secrecy or authentication property that
+the protocol was intended to achieve.
+
+Naturally, there are infinitely many possible executions of a useful
+protocol, since different participants can run it with varying
+parameters, and the participants can run it repeatedly.  However, for
+many naturally occurring protocols, there are only finitely many of
+these runs that are \emph{essentially} different.  Indeed, there are
+frequently very few, often just one or two, even in cases where the
+protocol is flawed.  We call these minimal, essentially different
+executions the \emph{shapes} of the protocol.  Authentication and
+secrecy properties are easy to ``read off'' from the shapes, as are
+attacks and anomalies.
+
+The analysis performed by {\cpsa} is done within a pure Dolev-Yao
+model~\cite{DolevYao83}; as such, the analysis reveals only structural
+flaws in the protocols it analyzes.  It cannot detect flaws in underlying
+cryptographic algorithms or in actual implementations of protocol participants.
+
+The purpose of this document is to provide the background required to
+make effective use of the {\cpsa} software distribution.
+
+\section{Recommended reading}
+
+If you are new to {\cpsa}, it is recommended that you first read
+Part~\ref{part:basic}, which is introductory in nature and presented
+as a tutorial.  Chapter~\ref{ch:setup} discusses how to download,
+install, and run the tool.  Chapter~\ref{ch:basic} begins the tutorial
+describing how to use the tool, and Chapter~\ref{ch:algebra} describes
+some of the more important additional features.
+
+Readers, especially those without direct access to an experienced user
+of the tool, are encouraged to attempt the ``explorations'' present
+from Chapter~\ref{ch:basic} onwards.  The purpose of the explorations
+is to give the reader experience in the use of the tool and a chance
+to test his or her understanding of its features.  After reading
+through the first part, you should be ready to attempt to use the tool
+to analyze a protocol that interests you, whether it be an existing
+protocol or one you need to design.
+
+When you are ready for a deeper base of knowledge, read
+Part~\ref{part:intermediate}.  The chapters in
+Part~\ref{part:intermediate} will be helpful as you cross from trying
+to understand how to use the tool to trying to impact your work on
+protocol design through use of the tool.  Chapter~\ref{ch:algorithm}
+will be of general use as you try to understand the analyses {\cpsa}
+conducts, and Chapter~\ref{ch:declarations} will help you narrow the
+tool's focus to what interests you.
+
+Part~\ref{part:advanced} deals with special-purpose features of the tool.
+Chapter~\ref {chap:channels:state} deals with stateful protocols and
+Chapter~\ref{ch:goals} deals with logic-based protocol goals.  You
+should read these chapters if those features seem important to you.
+
+Part~\ref{part:reference} is reference material.
+Chapter~\ref{ch:troubleshooting} contains reference material about
+dealing with errors of various sorts that arise during the use of
+{\cpsa}, while Chapter~\ref{ch:input} documents the complete syntax of
+the tool.
+
+\section{Tool components}
+
+The distribution includes a number of separate executable command-line
+tools.  Of these, three are key components of the core expected
+workflow: \texttt{cpsa}, \texttt{cpsagraph}, and \texttt{cpsashape}.
+The other tools are auxiliary utilities most general users will not
+need to use, although \texttt{cpsadiff} is of some use to a general
+user when updating the tool.
+
+The \texttt{cpsa} program takes as input one or more analysis problems
+(at least, a protocol and a partial description of an execution), and
+analyzes them one at a time.  It outputs the full, step-by-step
+analysis for each problem, ultimately describing all possible full
+executions that complete the partial execution.
+
+The \texttt{cpsashape} program takes an analysis and reduces it to an
+analysis that skips directly from analysis input to the set of shapes
+associated with that input.
+
+The \texttt{cpsagraph} program takes an analysis (from either
+\texttt{cpsa} or \texttt{cpsashape}) and formats it into an
+\textsc{xhtml} file and includes \textsc{svg}(scalable vector
+graphics) diagrams of each partial execution as well as the overall
+branching pattern of the analysis.
+
+%The shapes analysis is performed within a pure Dolev-Yao
+%model~\cite{DolevYao83}.  {\cpsa}'s search is based on a high-level
+%algorithm that was claimed to be complete, i.e.\@ every shape can in
+%fact be found in a finite number of
+%steps~\cite{DoghmiGuttmanThayer07,Guttman11}.  Further theoretical
+%work showed classes of executions that are not found by the algorithm,
+%however it also showed that every omitted execution requires an
+%unnatural interpretation of a protocol's roles.  Hence the algorithm
+%is complete relative to natural role semantics.
+%Appendix~\ref{sec:omitted executions} discusses omitted executions.
+
+%\section{Overview}
+%
+%A {\cpsa} release includes several programs, an analyzer, and various
+%tools used to interpret the results.  The analyzer, \texttt{cpsa},
+%provides support for several algebras, one of which is the Basic
+%Crypto Algebra.  Programs that assist in the interpretation of results
+%are \texttt{cpsashape} and \texttt{cpsagraph}.  The analyzer prints
+%the steps it used to solve each problem.  The \texttt{cpsashapes}
+%program extracts the shapes discovered by an analyzer run.  The
+%\texttt{cpsagraph} program graphs both forms of output using Scalable
+%Vector Graphics~(\textsc{svg}).  A standards-compliant browser such as
+%FireFox or Safari displays the generated diagrams.
+
+The expected work flow follows.  An analysis problem is entered using
+an ordinary text editor, preferably one with support for Lisp syntax.
+The \texttt{cpsa} program uses an S-expression-based syntax for both
+input and output.  S-expression is an abbreviation for a Symbolic
+Expression (as in the Lisp programming language).
+
+The body of the input consists of two forms: \texttt{defprotocol}
+statements that describe a protocol, and \texttt{defskeleton}
+statements that describe a partial execution of a protocol.  The exact
+details of both forms depend on the message algebra specified by the
+protocol.
+%Protocols that specify \texttt{basic} as their algebra get
+%an implementation of the Basic Crypto Algebra~(\textsc{bca}) described
+%in the next section.  A complete grammar for \texttt{cpsa} input is
+%displayed in Table~\ref{tab:syntax} on Page~\pageref{tab:syntax}.
+
+%Problem statement errors in the input are detected by running the
+%analyzer.  Many error reports are of the form that allow editors such
+%as Emacs to move its cursor to location of the problem.
+
+%There are two classes of problem statement errors: syntax and semantic
+%errors.  Correcting syntax errors is straightforward, but correcting
+%semantic errors requires an understanding of the core data structures.
+%Section~\ref{sec:semantic errors} describes their correction.
+
+%Once the problem statement errors have been eliminated, the analyzer
+Assuming there are no errors in the input, the analyzer
+will produce output as a text document.  The text document
+contains each step used to derive a shape from a problem statement.
+It is common to filter the output using the \texttt{cpsashapes}
+program, and look only at the computed shapes associated with each
+problem statement.
+
+The \texttt{cpsagraph} program is applied to the output to produce a
+more readable, hyperlinked \textsc{xhtml} document that can be displayed
+in a standards-compliant web browser.  See Chapter~\ref{ch:tools} for
+more information on the programs that come with a {\cpsa} distribution.
+
+% The guide is no longer maintained.
+%
+%% The {\cpsa} User Guide contains
+%% the up-to-date description of \texttt{cpsagraph} generated documents.
+%% The guide is also the place to find command-line usage information for
+%% all programs in a release.  The user guide is an \textsc{xhtml}
+%% document delivered with the software.
+
+%The input may optionally start with a \texttt{herald} form.  The form
+%contains a title for the run and an association list.  The association
+%list allows options normally specified on the command line to be
+%specified within an input file.  In the following example, the herald
+%form specifies a strand bound of 12 in a way that is equivalent to the
+%command line option \texttt{--bound=12}.
+
+%\begin{quote}
+%\begin{verbatim}
+%(herald Needham-Schroeder (bound 12))
+%\end{verbatim}
+%\end{quote}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "cpsa4manual"
+%%% End:

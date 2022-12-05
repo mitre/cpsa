@@ -1,0 +1,1315 @@
+\chapter{Logical Security Goals and Rules}
+\label{ch:goals}
+
+\newtheorem{axiom}{Trust Assumption}
+
+How easy is it to read off authentication and secrecy properties?
+What precisely is it that an expert sees?  This chapter describes
+{\cpsa}'s support for reasoning about security goals using first-order
+logic.  With security goals expressed in first-order logic, intuition
+is replaced by determining if a formula is true in all executions of
+the protocol.
+
+% \emph{Something about the benefits of first-order logic goes here.}
+
+This treatment of security goals relies heavily on a branch of
+first-order logic called model theory.  It deals with the relationship
+between descriptions in first-order languages and the structures that
+satisfy these descriptions.  In our case, the structures are skeletons
+that denote a collection of executions of a protocol.  This chapter
+describes the language of security goals and its structures without
+requiring the reader to have studied model theory.
+
+The model theoretical foundation of this approach to security goals
+appears in~\cite{Guttman14}.  A practical use of security goals in
+protocol standardization is described
+in~\cite{guttman2014security,RoweEtAl2016}.  The precise semantics of
+the goal language is in~\cite{Ramsdell12}.  The syntax of
+security goals appears in Table~\ref{tab:goal_syntax}.
+
+The {\cpsa} distribution contains, in its examples directory, the
+input file \texttt{goals.scm}.  The reader is encouraged to run the
+examples and examine the output while reading this chapter.
+
+%% Use a margin width of 62 for S-expressions
+
+\begin{figure}
+\begin{center}
+\includegraphics{cpsadiagrams-0.mps}\hfil
+\includegraphics{cpsadiagrams-1.mps}\\
+\end{center}
+\begin{center}
+\begin{minipage}{3in}
+\begin{verbatim}
+(defprotocol ns basic
+  (defrole init
+    (vars (a b name) (n1 n2 text))
+    (trace
+     (send (enc n1 a (pubk b)))
+     (recv (enc n1 n2 (pubk a)))
+     (send (enc n2 (pubk b)))))
+  (defrole resp
+    (vars (b a name) (n2 n1 text))
+    (trace
+     (recv (enc n1 a (pubk b)))
+     (send (enc n1 n2 (pubk a)))
+     (recv (enc n2 (pubk b))))))
+\end{verbatim}
+\end{minipage}
+\end{center}
+\caption{Needham-Schroeder Initiator and Responder Roles}
+\label{fig:ns roles 2}
+\end{figure}
+
+\begin{figure}
+\begin{verbatim}
+(defgoal ns                ; Goal
+  (forall ((b name) (n1 text) (z0 node))
+    (implies
+     (and (p "init" z0 3)
+      (p "init" "n1" z0 n1) (p "init" "b" z0 b)
+      (non (privk b)) (uniq n1))
+     (exists ((z1 node))
+      (and (p "resp" z1 2) (p "resp" "b" z1 b))))))
+
+(defskeleton ns            ; Point of view skeleton
+  (vars (a b name) (n1 n2 text))
+  (defstrand init 3 (a a) (b b) (n1 n1) (n2 n2))
+  (non-orig (privk b))
+  (uniq-orig n1))
+\end{verbatim}
+{\centering
+\includegraphics{cpsadiagrams-9.mps}}
+\begin{verbatim}
+(defskeleton ns            ; Shape
+  (vars (n1 n2 text) (a b name))
+  (defstrand init 3 (n1 n1) (n2 n2) (a a) (b b))
+  (defstrand resp 2 (n2 n2-0) (n1 n1) (b b) (a a))
+  (precedes ((0 0) (1 0)) ((1 1) (0 1)))
+  (non-orig (privk b))
+  (uniq-orig n1)
+  (satisfies yes))
+\end{verbatim}
+\caption{Needham-Schroeder Initiator Point of View}
+\label{fig:ns init}
+\end{figure}
+
+\index{Needham-Schroeder!logical goals in}
+\index{examples!Needham-Schroeder!logical goals in}
+In this chapter we return to the Needham-Schroeder protocol discussed
+in Chapter~\ref{ch:basic}.  The roles are displayed in
+Figure~\ref{fig:ns roles 2}.
+
+The protocol is analyzed from the point of view of a complete run of
+one instance of the initiator role.  The input security goal, followed
+by the point of view skeleton it generates and the shape produced by
+{\cpsa}, are shown in Figure~\ref{fig:ns init}.  The syntax and
+semantics of the goal will be explained later.  Roughly speaking, it
+asserts that if a realized skeleton contains a full length initiator
+strand, its private key is uncompromised, and it uniquely generates
+\texttt{n1}, then the skeleton will contain a responder strand that
+agrees with the initiator on the name \texttt{b}.  The shape produced
+by {\cpsa} contains the annotation \texttt{(satisfies yes)}.  This
+indicates that its structure satisfies the description given by the
+security goal.  It will be explained later why the properties of
+{\cpsa} allows us to conclude that this goal is true in all executions
+of the protocol, and therefore conclude that the Needham-Schroeder
+protocol achieves this authentication goal.
+
+\section{Overview}\label{sec:goalsoverview}
+
+In addition to \texttt{defskeleton} S-expressions, a {\cpsa} input
+file may contain \texttt{defgoal} S-expressions.  Like a
+\texttt{defskeleton}, a \texttt{defgoal} takes as its first parameter
+the name of a protocol which the tool expects has been previously
+defined in the input file.  The second parameter to a \texttt{defgoal}
+is a \emph{geometric} sentence in first-order logic.  A geometric
+sentence contains one implication.  The antecedent is a conjunction
+of atomic formulas.  The free variables that occur in the antecedent
+are universally quantified.  The conclusion is a disjunction of
+existentially quantified conjunctions of atomic formulas.
+
+Alternately, a \texttt{defskeleton} can be augmentend with a
+\texttt{goal}, which may specify one or more geometric
+formulas to check.
+
+When the tool is run, a \texttt{defgoal} is converted to a
+\texttt{defskeleton} that represents as narrowly as possible the
+left-hand side of the implication and has a \texttt{goal} recorded for
+the right-hand side.  The tool then analyzes \texttt{defskeleton}s as
+usual, but realized skeletons found during the course of analysis of a
+\texttt{defskeleton} with a \texttt{goal} are augmented with
+a \texttt{satisfies} S-expression indicating whether the goal is met or
+not.
+
+The tool \texttt{cpsagoalsat} will examine the output from a {\cpsa}
+run, and, for each goal formula, will determine whether the analysis
+ensures that the goal is met.  If not, it identifies the labels of all
+the skeletons that furnish counterexamples to the goal.  See
+Section~\ref{ch:tools}.
+
+The remainder of this chapter is devoted to explaining the syntax
+and semantics of this feature in greater detail.
+
+\section{Syntax}\label{sec:goalsyntax}
+
+To be precise, a security goal is an order-sorted first-order logic
+sentence in a restricted form.  The sentence in Figure~\ref{fig:ns
+  init} has the form shared by all security goals.  It is a
+universally quantified implication.  The antecedent is a conjunction
+of atomic formulas.  For this sentence, the conclusion is an
+existentially quantified conjunction of atomic formulas, but in
+general, the conclusion is a disjunction of existentially quantified
+conjunctions of atomic formulas.  In what follows, \sym{(false)} is a
+synonym for the empty disjunction, \sym{(or)}.
+
+\begin{table}
+\begin{center}\scshape
+  \begin{tabular}{rcl}
+ goal&$\leftarrow$&(\sym{defgoal} id sentence+ alist)
+\\ sentence&$\leftarrow$&(\sym{forall} (gvdecl$\ast$) implication)
+\\ gvdecl&$\leftarrow$&(id+ sort)~$\mid$~(id+ \sym{strd})
+\\ implication&$\leftarrow$&(\sym{implies} conjunction conclusion)
+\\ conjunction&$\leftarrow$&atomic~$\mid$~(\sym{and} atomic+)
+\\ conclusion&$\leftarrow$&(\sym{false})~$\mid$~existential
+\\ &$\mid$& (\sym{or} existential+)
+\\ existential&$\leftarrow$&conjunction~$\mid$~(\sym{exists} (gvdecl$\ast$) conjunction)
+\\ atomic&$\leftarrow$&(\sym{p} string strdvar integer)
+\\ &$\mid$&(\sym{p} string string strdvar term)
+\\ &$\mid$&(\sym{prec} strdvar integer strdvar integer)
+\\ &$\mid$&(\sym{leads-to} strdvar integer strdvar integer)
+\\ &$\mid$&(\sym{non} term)~$\mid$~(\sym{pnon} term)
+\\ &$\mid$&(\sym{uniq} term)~$\mid$~(\sym{uniq-at} term strdvar integer)
+\\ &$\mid$&(\sym{ugen} term)~$\mid$~(\sym{ugen-at} term strdvar integer)
+\\ &$\mid$&(\sym{=} strdvar strdvar)~$\mid$~(\sym{=} term term)
+    \\ &$\mid$&(\sym{fact} id term*)
+                %~$\mid$~(\sym{absent} (term term)+)
+\\ strdvar&$\leftarrow$&symbol
+  \end{tabular}
+\end{center}
+\caption[Goal syntax]{Goal syntax.  See Tables~\ref{tab:basic_term}
+  and~\ref{tab:dh_term} for the algebra syntax, which defines the
+  $\scap{term}$ and $\scap{sort}$ symbols.}
+\label{tab:goal_syntax}
+\end{table}
+
+\ttindex{defgoal}\ttindex{forall}\ttindex{implies}\ttindex{false}\ttindex{exists}
+\ttindex{and}\ttindex{or}
+
+Variables are declared as they are for roles and skeletons with one
+exception, there is a new sort symbol \sym{strd}.  Notice that in the
+sentence, variables \sym{z0} and \sym{z1} have sort \sym{strd}.  Every
+universally quantified variable must occur in the antecedent of the
+implication.
+
+The signature as been expanded to include the natural numbers.  A
+natural number has sort \sym{nat}.
+
+The predicates used to construct an atomic formula (\textsc{atomic})
+are listed in Table~\ref{tab:predicates}.  There are two classes of
+predicates, protocol specific and protocol independent predicates, and
+two kinds of protocol specific predicates, role position and role
+parameter predicates.  Protocol specific predicates are distinguished
+from protocol independent predicates by being composed of three
+tokens, the first of which is \texttt{p}.
+
+The first line of the table gives the syntax of a role strand length
+predicate.  It contains two tokens, \texttt{p} and a string that names
+a role.  That is, for role~$r$, there is a role strand length
+predicate, \mbox{\texttt{p} $r$}.  Thus \verb|(p "init" z0 3)| is an
+atomic formula using the role strand length predicate for length 3 in the
+\texttt{init} role of the protocol in Figure~\ref{fig:ns roles}.
+
+The second line gives the syntax of a role parameter predicate.  It
+contains three tokens, \texttt{p}, a string that names a role, and a
+string that names a role variable.  For role~$r$, there is role
+parameter predicate for each variable declared by~$r$.  Thus
+\verb|(p "init" "n1" z0 n1)| is an atomic formula using the role
+parameter predicate for parameter \text{n1} in the \texttt{init} role
+of the protocol.
+
+The empty string names the listener role of a protocol.  The role
+has the variable \texttt{x} of sort \texttt{mesg} as its only role
+variable.  There are two positions in the listener role.  Its trace is
+\texttt{(trace (recv x) (send x))}.
+
+When a variable of sort \sym{strd} occurs in a formula, its length
+must be specified using a role strand length formula.  When an algebra
+variable occurs in a formula, its association with the parameter of
+some role must be specified using a role parameter formula.
+
+\begin{table}
+\begin{center}
+  \begin{tabular}{lcl}
+    Symbol & Sort & Description\\
+    \hline
+    \scshape\sym{p} role & $\dom{strd}\times\dom{nat}$ & \mbox{Role
+                                                         strand length} \\
+    \scshape\sym{p} role param & $\dom{strd}\times\dom{mesg}$
+                  & \mbox{Role parameter} \\
+    \sym{prec}& $\dom{strd}\times\dom{nat}\times\dom{strd}\times\dom{nat}$
+                  & \mbox{Precedes} \\
+    \sym{leads-to}& $\dom{strd}\times\dom{nat}\times\dom{strd}\times\dom{nat}$
+                  & \mbox{Leads to} \\
+    \sym{non}& \dom{atom}
+                  & \mbox{Non-origination} \\
+    \sym{pnon}& \dom{atom}
+                  & \mbox{Penetrator non-origination} \\
+    \sym{uniq}& \dom{atom}
+                  & \mbox{Unique origination} \\
+    \sym{uniq-at}& $\dom{atom}\times\dom{strd}\times\dom{nat}$
+                  & \mbox{Unique origination at a node} \\
+    \sym{ugen}& \dom{atom}
+                  & \mbox{Unique generation} \\
+    \sym{ugen-at}& $\dom{atom}\times\dom{strd}\times\dom{nat}$
+                  & \mbox{Unique generation on strand} \\
+    $=$ & $\dom{all}\times\dom{all}$ & Equality \\
+    \sym{fact} & $\dom{id}\times\dom{all}*$ & User defined fact
+                                              predicating \dom{id}
+    %   \\
+%       \sym{absent} & $\dom{atom}\times\dom{mesg}$ & Random exponent
+%                                                     absence 
+  \end{tabular}
+\end{center}
+\caption{Predicates}\label{tab:predicates}
+\end{table}
+
+\index{goals!predicate symbols}
+\index{p@\texttt{p} (goal predicate symbol)}
+\ttindex{prec}
+\index{leads-to@\texttt{leads-to} (goal predicate symbol)}
+\index{non@\texttt{non} (goal predicate symbol)}
+\index{pnon@\texttt{pnon} (goal predicate symbol)}
+\index{uniq@\texttt{uniq} (goal predicate symbol)}
+\index{uniq-at@\texttt{uniq-at} (goal predicate symbol)}
+\index{ugen@\texttt{ugen} (goal predicate symbol)}
+\index{ugen-at@\texttt{ugen-at} (goal predicate symbol)}
+\index{fact@\texttt{fact} (goal predicate symbol)}
+%\index{absent@\texttt{absent} (goal predicate symbol)}
+
+
+\index{=@\texttt{=} (goal predicate symbol)}
+
+\section{Semantics}\label{sec:semantics}
+
+In a \texttt{defgoal} sentence, the antecedent specifies the point of
+view skeleton.  We focus on the antecedent.  In the example,
+
+\begin{quote}
+\begin{verbatim}
+(defstrand init 3 (a a) (b b) (n1 n1) (n2 n2))
+\end{verbatim}
+\end{quote}
+is extracted from
+\begin{quote}
+\begin{verbatim}
+(and (p "init" z0 3)
+  (p "init" "n1" z0 n1) (p "init" "b" z0 b)).
+\end{verbatim}
+\end{quote}
+Notice that {\cpsa} adds a binding for \texttt{a} and \texttt{n2} just
+as it does had
+\begin{quote}
+\begin{verbatim}
+(defstrand init 3 (b b) (n1 n1))
+\end{verbatim}
+\end{quote}
+been given as input.
+
+Our aim now is to specify how to decide if a security goal is true in
+all possible executions of a protocol.  A skeleton defines a set of
+executions that contain the skeleton's structure.  We say a skeleton
+\emph{satisfies} a formula if the skeleton contains all of the
+structure specified by the formula.  To decide if a skeleton
+satisfies a formula, we decide if it satisfies each of its atomic
+formulas, and combine the results using the rules of first-order
+logic.
+
+Atomic formula \texttt{(p "init" z0 3)} is called a role strand length
+formula.  A skeleton~$k$ satisfies the formula if \texttt{z0} maps to
+a strand~$s$ in~$k$ such that
+\begin{enumerate}
+\item the trace of strand~$s$ in~$k$ has a length greater than 2, and
+\item the trace when truncated to length 3 is an instance of the init
+  role.
+\end{enumerate}
+Consider the shape in Figure~\ref{fig:ns init}.  It satisfies
+\texttt{(p "init" z0 3)} when \texttt{z0} maps to~0.
+
+Atomic formula \texttt{(p "init" "n1" z0 n1)} is called a role
+parameter formula.  A skeleton~$k$ satisfies the formula if
+\texttt{z0} maps to strand~$s$ in~$k$, \texttt{n1} first occurs in at
+position~$i$ in the trace of the init role, and \texttt{n1} maps to a
+message algebra term~$t$ in~$k$ such that
+\begin{enumerate}
+\item the trace of strand~$s$ in~$k$ has a length greater than~$i$,
+\item the trace truncated to length $i+1$ is an instance of the
+  init role, and
+\item the truncated trace is compatible with mapping the init role's
+  \texttt{"n1"} role variable to~$t$.
+\end{enumerate}
+The shape in Figure~\ref{fig:ns init} satisfies \texttt{(p "init" "n1"
+  z0 n1)} when \texttt{z0} maps to~0 and \texttt{n1} maps to the
+message algebra term \texttt{n1}.
+
+Collectively, a skeleton satisfies the formula
+\begin{quote}
+\begin{verbatim}
+(and (p "init" z0 3)
+     (p "init" "a" z0 a) (p "init" "b" z0 b)
+     (p "init" "n1" z0 n1) (p "init" "n2" z0 n2))
+\end{verbatim}
+\end{quote}
+if the skeleton contains the structure specified by
+\begin{quote}
+\begin{verbatim}
+(defstrand init 3 (a a) (b b) (n1 n1) (n2 n2)).
+\end{verbatim}
+\end{quote}
+
+The antecedent in Figure~\ref{fig:ns init} contains two origination
+assertions.  The formula \texttt{(non (privk b))} is extracted as
+\texttt{(privk b)}.  A skeleton~$k$ satisfies the formula if
+\texttt{b} maps to a message algebra term~$t$ in~$k$ such that~$k$
+assumes that~$t$ is non-originating.  The unique origination formula for
+\texttt{n1} is similarly extracted.
+
+Putting it all together, the mapping
+\[\{\mathtt{n1}\mapsto\mathtt{n1},
+\mathtt{n2}\mapsto\mathtt{n2}, \mathtt{a}\mapsto\mathtt{a},
+\mathtt{b}\mapsto\mathtt{b},\mbox{\tt z0}\mapsto0\}\] shows that
+the shape in Figure~\ref{fig:ns init} satisfies the antecedent of the
+security goal.
+
+The \texttt{prec} predicate is used to assert a node precedes another
+node.  The conclusion in Figure~\ref{fig:ns init} with \texttt{(prec
+  z1 1 z0 2)} added is satisfied by the shape using the mapping
+$\mbox{\tt z0}\mapsto0$ and $\mbox{\tt z1}\mapsto1$.
+
+The \texttt{uniq-at} predicate is used to assert not only that an atom
+uniquely originates, but also the node at which it originates.  In the
+Figure~\ref{fig:ns init} goal, the \texttt{(uniq n1)} formula could
+have been replaced by \texttt{(uniq-at n1 z0 0)}.  The extracted point
+of view skeleton is the same.
+
+The \texttt{ugen} and \texttt{ugen-at} predicates are similar, except
+that they refer to an earliest outbound occurrence, whether carried or
+not.  If an atom is an asymmetric key, it and its inverse are
+generated together at the first outbound occurrence of either one.
+
+\iffalse{
+    %
+    In the Diffie-Hellman algebra (see Section~\ref{sec:input:dh}), a
+    random exponent $x\colon\sym{rndx}$ is \texttt{absent} from a term
+    $t\colon\sym{expt}$ if the latter is a monomial in which $x$ is of
+    degree 0.  Homomorphisms must preserve this positive formula,
+    meaning that, given a skeleton satisfying
+    $\texttt{absent}(x,\alpha)$, a map such as $\alpha\mapsto xy$ is
+    not a homomorphism instantiating $\alpha$.  It would map $\alpha$
+    to a monomial in which $x$ has degree 1.  }
+  %
+\fi
+
+Recall that our aim in analyzing a protocol is to find out what
+security goals are true in all of its possible executions.  We are
+interested in runs of {\cpsa} that show that when every shape
+satisfies a goal, it is true in every execution.
+
+When {\cpsa} performs a shape analysis, every shape it generates
+refines the input skeleton.  Skeleton refinement is defined
+in~Chapter~\ref{ch:algorithm}.  The definition makes precise the
+notion of structure containment, as skeleton~$A$ refines skeleton~$B$
+if and only if~$A$ contains the structure of skeleton~$B$.
+
+The skeleton~$k_0$ extracted from the antecedent of a security goal
+has the property that a skeleton refines~$k_0$ if and only if it
+satisfies the antecedent.  A skeleton with this property is called the
+\emph{characteristic skeleton} of the antecedent.
+
+Given a goal~\(\Phi\), consider a shape analysis starting from the
+characteristic skeleton~$k_0$ of its antecedent.  Assume {\cpsa} finds
+shapes $k_1,\ldots,k_n$ and that {\cpsa} determines that each~$k_i$
+satisfies~$\Phi$.  Consider the executions that contain the structure
+in~$k_0$.  {\cpsa} tells us that each execution is in the executions
+that contain the structure of some~$k_i$.  Furthermore, because~$k_0$
+is a characteristic skeleton, each~$k_i$ satisfies the antecedent
+of~$\Phi$.  Executions that do not contain the structure in~$k_0$ do
+not satisfy the antecedent.  Therefore,~$\Phi$ is true in all
+executions of the protocol and maximally informative.
+
+\section{Examples}\label{sec:examples}
+
+This section contains examples of both authentication and secrecy
+goals.  The first example shows the feedback the user receives when a
+shape does not satisfy a security goal.  The second example shows how
+to use a listener to state a secrecy goal.
+
+\subsection{Needham-Schroeder Responder}\label{sec:ns resp}
+
+\begin{figure}
+\begin{verbatim}
+(defgoal ns                ; Goal
+  (forall ((a b name) (n2 text) (z0 strd))
+    (implies
+      (and (p "resp" z0 3) (p "resp" "n2" z0 n2)
+        (p "resp" "a" z0 a) (p "resp" "b" z0 b)
+        (non (privk a)) (uniq n2))
+      (exists ((z1 strd))
+        (and (p "init" z1 2) (p "init" "b" z1 b))))))
+
+(defskeleton ns            ; Point of view skeleton
+  (vars (a b name) (n1 n2 text))
+  (defstrand resp 3 (a a) (b b) (n1 n1) (n2 n2))
+  (non-orig (privk a))
+  (uniq-orig n2))
+\end{verbatim}
+\begin{center}
+\includegraphics{cpsadiagrams-10.mps}
+\end{center}
+\begin{verbatim}
+(defskeleton ns            ; Shape
+  (vars (n1 n2 text) (a b b-0 name))
+  (defstrand resp 3 (n2 n2) (n1 n1) (b b) (a a))
+  (defstrand init 3 (n1 n1) (n2 n2) (a a) (b b-0))
+  (precedes ((0 1) (1 1)) ((1 2) (0 2)))
+  (non-orig (privk a))
+  (uniq-orig n2)
+  (satisfies (no (a a) (b b) (n2 n2) (z0 0))))
+\end{verbatim}
+\caption{Needham-Schroeder Responder Point of View}
+\label{fig:ns resp}
+\end{figure}
+
+Figure~\ref{fig:ns resp} contains an analysis of Needham-Schroeder
+from the point of view of a complete run of the responder under the
+assumption that the responder's private key is uncompromised and the
+nonce it generates uniquely originates.
+
+The conclusion of the goal asserts that in an execution compatible
+with the point of view, there must be an initiator strand that agrees
+with the responder strand on the name \texttt{b}.  The shape produced
+by {\cpsa} is a counterexample to this assertion.  Because of this,
+{\cpsa} annotates the shape with
+\begin{quote}
+\begin{verbatim}
+(satisfies (no (a a) (b b) (n2 n2) (z0 0))).
+\end{verbatim}
+\end{quote}
+The annotation includes a variable mapping for the shape that
+satisfies the antecedent of the goal but does not satisfy its
+conclusion.  The reason the shape does not satisfy the goal is because
+the mapping \texttt{(b b)} maps the initiator's \texttt{b} parameter
+to \texttt{b}, not \texttt{b-0} as is required to model the shape.
+
+Galvin Lowe identified this authentication failure in
+Needham-Schroeder and provided a fix.  In the Needham-Schroeder-Lowe
+Protocol, the name \texttt{b} is included within the encryption in second
+message of both roles.  With this modification, the shape found by
+{\cpsa} satisfies the security goal in Figure~\ref{fig:ns resp}, so
+Needham-Schroeder-Lowe achieves this authentication goal.
+
+\subsection{A Needham-Schroeder Secrecy Goal}\label{sec:secrecy goal}
+
+\begin{figure}
+\begin{quote}\small
+\begin{verbatim}
+(defgoal ns
+  (forall ((a b name) (n1 text) (z0 z1 strd))
+    (implies
+      (and (p "init" z0 3) (p "init" "n1" z0 n1)
+        (p "init" "a" z0 a) (p "init" "b" z0 b)
+        (p "" z1 1) (p "" "x" z1 n1)  ; Listener
+        (non (privk a)) (non (privk b))
+        (uniq n1))
+      (false))))
+\end{verbatim}
+\end{quote}
+\caption{Needham-Schroeder Secrecy Goal}\label{fig:ns secrecy}
+\end{figure}
+
+Figure~\ref{fig:ns secrecy} contains an analysis of Needham-Schroeder
+from the point of view of a complete run of the initiator under the
+assumption that the responder's and its peer's private keys are
+uncompromised and the nonce~\texttt{n1} it generates uniquely
+originates.  Futhermore, the point of view asserts that the nonce is
+leaked using a listener.
+\begin{quote}
+\begin{verbatim}
+(p "" z1 1) (p "" "x" z1 n1)    ; Listener
+\end{verbatim}
+\end{quote}
+
+{\cpsa} finds no shapes, so Needham-Schroeder achieves this secrecy
+goal and does not leak~\texttt{n1}.
+
+\section{The Rest of the Story}\label{sec:whole story}
+
+The examples in the previous section demonstrate the typical way
+security goals are analyzed with {\cpsa}.  However, there are more
+features that may be useful.
+
+A \texttt{defgoal} form may contain more than one sentence.  See
+Figure~\ref{fig:ns init goals} for an example.  When presented with
+more than one sentence, {\cpsa} extracts the point of view skeleton
+from the first sentence.
+
+It is wise to ensure that the antecedent in every sentence is
+identical.  When {\cpsa} performs satisfaction-checking on
+sentence~$\Phi$, it only determines if each shape it finds is
+satisfied.  If the point of view skeleton is not the characteristic
+skeleton of the antecedent of~$\Phi$, the fact that all skeletons
+satisfy~$\Phi$ cannot be used to conclude that~$\Phi$ is true in all
+executions of the protocol.
+
+\begin{figure}
+\begin{quote}\small
+\begin{verbatim}
+(defgoal ns
+  (forall ((a b name) (n text) (z0 strd))
+    (implies
+      (and (p "init" z0 2) (p "init" "n1" z0 n)
+        (p "init" "a" z0 a) (p "init" "b" z0 b)
+        (non (privk a)) (non (privk b)) (uniq n))
+      (exists ((z1 strd))
+        (and (p "resp" z1 2) (p "resp" "b" z1 b)))))
+  (forall ((a b name) (n text) (z0 strd))
+    (implies
+      (and (p "init" z0 2) (p "init" "n1" z0 n)
+        (p "init" "a" z0 a) (p "init" "b" z0 b)
+        (non (privk a)) (non (privk b)) (uniq n))
+      (exists ((z1 strd))
+        (and (p "resp" z1 2) (p "resp" "a" z1 a))))))
+\end{verbatim}
+\end{quote}
+\caption{Two Initiator Authentication Goals}\label{fig:ns init goals}
+\end{figure}
+
+{\cpsa} performs satisfaction-checking when an input skeleton in annotated
+with one or more security goals.  The annotation uses the
+\texttt{goals} key.
+
+\begin{quote}
+  \begin{alltt}
+(defskeleton
+   \ldots
+   (goals \textsc{sent\ensuremath{+}}))
+  \end{alltt}
+\end{quote}
+
+The program \texttt{cpsasas}, discussed in the next section, can be
+used to generate a formula with an antecedent such that the input
+skeleton is the characteristic skeleton of the antecedent.
+
+\subsection{Shape Analysis Sentences}\label{sec:sas}
+
+A shape analysis sentence expresses all that can be learned from a run
+of {\cpsa} as a security goal.  If a security goal can be derived from
+a shape analysis sentence, then the protocol achieves the security
+goal, that is, the goal is true in all executions of the protocol.
+
+The program \texttt{cpsasas} extracts shape analysis sentences from
+the output of {\cpsa}.  Consider the first example in this paper
+(Figure~\ref{fig:ns init}), which is in the sample file
+\texttt{goals.scm}.  To generate a maximally informative security goal
+from the initiator point of view with \texttt{ghci} and
+\texttt{Make.hs}, type
+\begin{quote}
+\begin{verbatim}
+$ ghci Make.hs
+*Make> sas "goals"
+\end{verbatim}
+\end{quote}
+When using GNU make, type ``\texttt{make goals\_sas.text}''.  The
+resulting shape analysis sentence is displayed in Figure~\ref{fig:ns
+  sas}.
+
+\begin{figure}\small
+\begin{verbatim}
+(defgoal ns
+  (forall ((n1 n2 text) (b a name) (z strd))
+    (implies
+      (and (p "init" z 3) (p "init" "n1" z n1)
+        (p "init" "n2" z n2) (p "init" "a" z a)
+        (p "init" "b" z b) (non (privk b)) (uniq-at n1 z 0))
+      (exists ((n2-0 text) (z-0 strd))
+        (and (p "resp" z-0 2) (p "resp" "n2" z-0 n2-0)
+          (p "resp" "n1" z-0 n1) (p "resp" "b" z-0 b)
+          (p "resp" "a" z-0 a) (prec z 0 z-0 0)
+          (prec z-0 1 z 1))))))
+\end{verbatim}
+\caption{Initiator Shape Analysis Sentence}\label{fig:ns sas}
+\end{figure}
+
+A shape analysis sentences asserts that either a realized skeleton
+does not satisfy its antecedent or it satisfies one or more of the
+disjuncts in its conclusion.  {\cpsa} has been designed so that this
+assertion is true.  Therefore, every shape analysis sentence is true
+in all executions.
+
+A security goal is true in all executions if it can be derived from a
+shape analysis sentence~\cite{Ramsdell12}.  In practice,
+theorem-proving using shape analysis sentences is rarely employed.
+It's clumsy and it requires too much expertise.  The main use of
+\texttt{cpsasas} is for generating a formula that is edited to become
+a desired security goal.
+
+\section{Rules}\label{sec: rules}
+
+Support for rules was introduced in version 3.6.0 of {\cpsa}.
+
+Each protocol includes a small collection of rules.  A rule is a
+sentence in the goal language presented in Section~\ref{sec:goalsyntax}.
+Rules are defined after the roles of a protocol are defined.  The
+syntax of a rule follows.
+
+\begin{center}\scshape
+  \begin{tabular}{rcl}
+    rule&$\leftarrow$&(\sym{defrule} name sent comments)
+  \end{tabular}
+\end{center}
+
+A rule is an axiom added to a protocol.  {\cpsa} uses the axiom as a
+rewrite rule to derive zero or more new skeletons from a skeleton
+produced during a step.  An example of a protocol with a rule is in
+Figure~\ref{fig:doorsep} on Page~\pageref{fig:doorsep}.
+
+The trust rule states that when CPSA finds a person strand of length
+at least one, and the inverse of it's \texttt{p} parameter is
+non-originating, CPSA should assume the inverse of it's \texttt{d}
+parameter is non-originating.
+
+\subsection{Facts}\label{sec:facts}
+Each skeleton includes a small database of facts.  A fact is a named
+relation among fact terms.  A fact term\index{fact term} is either a
+strand of the skeleton or an algebra term.  A set of facts is defined
+anywhere after strands are defined using the \sym{facts} form.  The
+syntax of facts follows.
+
+\begin{center}\scshape
+  \begin{tabular}{rcl}
+    facts&$\leftarrow$&(\sym{facts} fact$\ast$) \\
+    fact&$\leftarrow$&(symbol fterm$\ast$) \\
+    fterm&$\leftarrow$&mesg $\mid$ nat
+  \end{tabular}
+\end{center}
+
+For example, in a skeleton, a user may want to note that strand 0 owns
+the private key for~\texttt{a} by assuming.
+
+\begin{center}
+  \verb|(facts (owns 0 (privk a)))|
+\end{center}
+
+Facts are most useful when combined with rules.  Here is an example of
+their combination.  Suppose a point of view skeleton has two names,
+\texttt{a} and~\texttt{b}, and the problem is modeling a situation in
+which the two names are known to differ.  To enforce this constraint, add
+\begin{center}
+  \verb|(facts (neq a b))|
+\end{center}
+to the point of view skeleton and the \texttt{neq} rule below to the
+protocol.
+
+%below, eliminates skeletons that
+%violate the constraint.
+\begin{quote}
+\begin{verbatim}
+(defrule neq
+  (forall ((a mesg))
+    (implies
+      (fact neq a a)
+      (false))))
+\end{verbatim}
+\end{quote}
+
+\subsection{DoorSEP}
+
+\begin{sloppypar}
+As a motivating scenario consider the Door Simple Example Protocol
+(DoorSEP), derived from an expository protocol that was designed to
+have a weakness.  Despite this, the protocol achieves the needs of an
+application, given a trust assumption.
+\end{sloppypar}
+
+Imagine a door~$D$ which is equipped with a badge reader, and a
+person~$P$ equipped with a badge.  When the person swipes the badge,
+the protocol executes.  Principals such as doors or persons are
+identified by the public parts of their key pairs, with \iv{D} and
+\iv{P} being the corresponding private keys.  We write \enc{M}{K} for
+the encryption of message~$M$ with key~$K$.  We represent digital
+signatures $\enc{M}{\iv{P}}$ as if they were the result of encrypting
+with $P$'s private key.
+
+$P$ initiates the exchange by creating a fresh symmetric key~$K$,
+signing it, and sending it to the door $D$ encrypted with the door's
+public key.  $D$ extracts the symmetric key after checking the
+signature, freshly generates a token~$T$, and sends it---encrypted
+with the symmetric key---back to $P$.  $P$ demonstrates they are
+authorized to enter by decrypting the token and sending it as
+plaintext to the door.  The two roles of DoorSEP are shown in
+Fig.~\ref{fig:doorsep protocol}, where each vertical column displays
+the behavior of one of the roles.  The {\cpsa} encoding of the roles is
+in Figure~\ref{fig:doorsep}.
+
+\begin{figure}[tb]
+  \[\begin{array}[c]{rc@{\qquad\qquad}cl}
+      & \mbox{person}
+      &\mbox{door}
+      &\\
+      \begin{array}[c]{r} ~ \\ ~ \\
+        \mbox{Fresh: $K$}
+      \end{array}
+      & \xymatrix@R=2mm@C=7em{
+      \bullet\ar@{=>}[d]\ar[r]^{\enc{\enc{K}{\iv{P}}}{D}}
+      &\\
+      \bullet\ar@{=>}[d]& \ar[l]_{\enc{T}{K}}\\
+      \bullet \ar[r]^T & }
+      &
+        \xymatrix@R=2mm@C=7em{
+        \ar[r]^{\enc{\enc{K}{\iv{P}}}{D}}    &\bullet\ar@{=>}[d]\\
+      &\bullet\ar@{=>}[d] \ar[l]_{\enc{T}{K}}\\
+      \ar[r]^T      &\bullet}
+      &
+        \begin{array}[c]{r} ~ \\ ~ \\
+          \mbox{Fresh: $T$}
+        \end{array}
+  \end{array}\]
+  \caption{DoorSEP Protocol}\label{fig:doorsep protocol}
+\end{figure}
+
+%   \[
+%   \begin{array}{l@{{}:{}}l}
+%     P\to D & \enc{\enc{K}{\iv{P}}}{D}\\
+%     D\to P & \enc{T}{K}\\
+%     P\to D & T.
+%   \end{array}
+%   \]
+
+{\cpsa} finds an undesirable execution of DoorSEP.  Assume the
+person's private key \iv{P} is uncompromised and the door has received
+the token it sent out.  Then {\cpsa} finds that~$P$ freshly created
+the symmetric key~$K$.  However, nothing ensures that the person meant
+to open door $D$.  If $P$ ever initiates a run with a compromised
+door~$C$, the adversary can perform a man-in-the-middle attack,
+decrypting using the compromised key $C^{-1}$ and re-encrypting with
+$D$'s public key, as elided in the $\cdots$ in Fig.~\ref{fig:doorsep
+  first shape}.  To verify this result with {\cpsa}, remove the trust
+axiom in the doorsep protocol in \texttt{examples/rules.scm} and run
+{\cpsa}.
+%
+\begin{figure}[tb]
+  \[\xymatrix@R=2mm@C=7em{
+    \txt{\strut person}&&\txt{\strut door}\\
+    \bullet \ar[r]^{\enc{\enc{K}{\iv{P}}}{C}} & \cdots\ar[r]^{\enc{\enc{K}{\iv{P}}}{D}} &
+    \bullet\ar@{=>}[d] \\
+    & \null &   \bullet\ar@{=>}[d]\ar[l]_{\enc{T}{K}}\\
+    &\null\ar[r]^T & \bullet}\]
+  \begin{center}
+    Uncompromised: $P\quad$ Fresh: $K, T$
+  \end{center}
+  \caption{DoorSEP Weakness}\label{fig:doorsep first shape}
+\end{figure}
+%
+%   \[
+%   \begin{array}{l@{{}:{}}l}
+%     P\to A & \enc{\enc{K}{\iv{P}}}{C}\\
+%     A\to D & \enc{\enc{K}{\iv{P}}}{D}\\
+%     D\to A & \enc{T}{K}\\
+%     A\to D & T.
+%   \end{array}
+%   \]
+%
+Thus, without additional assumptions, the door cannot authenticate the
+person requesting entry.
+
+\begin{figure}\small
+\begin{verbatim}
+(defprotocol doorsep basic
+  (defrole person
+    (vars (d p akey) (k skey) (t text))
+    (trace
+     (send (enc (enc k (invk p)) d))
+     (recv (enc t k))
+     (send t)))
+  (defrole door
+    (vars (d p akey) (k skey) (t text))
+    (trace
+     (recv (enc (enc k (invk p)) d))
+     (send (enc t k))
+     (recv t)))
+  (defrule trust
+    (forall ((z strd) (p d akey))
+            (implies
+             (and (p "person" z 1)
+                  (p "person" "p" z p)
+                  (p "person" "d" z d)
+                  (non (invk p)))
+             (non (invk d))))
+    (comment "The trust rule"))
+  (comment "Doorsep protocol using unnamed asymmetric keys"))
+
+(defskeleton doorsep
+  (vars (p akey))
+  (defstrand door 3 (p p))
+  (non-orig (invk p))
+  (comment "Analyze from the doors's perspective"))
+\end{verbatim}
+\caption{Door Simple Example Protocol}\label{fig:doorsep}
+\end{figure}
+
+But possibly we can trust the person to swipe her badge only in front
+of doors our organization controls.  And we can we ensure that our
+doors have uncompromised private keys.  If so, then the adversary
+cannot exercise the flaw.
+
+We regard this as a \emph{trust assumption}, and we can express it as
+an axiom:
+%
+\begin{axiom}\label{axiom:trust assumption}
+  If an uncompromised signing key ${\iv{P}}$ is used to prepare an
+  instance of the first DoorSEP message, then its owning principal has
+  ensured that the selected door $D$ has an uncompromised private key.
+\end{axiom}
+%
+The responsibility for ensuring the truth of this axiom may be split
+between $P$ and the organization controlling $D$.  $P$ makes sure to
+swipe her badge only at legitimate doors of the organization's
+buildings.  The organization maintains a security posture that
+protects the corresponding private keys.
+
+\medskip\noindent\textbf{Is DoorSEP good enough}, assuming the trust
+axiom?  Add the trust axiom back to the doorsep protocol in
+\texttt{doc/rules.scm} and see.  You should find that the protocol
+does its job; namely, ensuring that the door opens only when an
+authorized person requests it to open.
+
+\subsection{Generated rules}
+\label{sec:goals:rules:gen}
+
+{\cpsa} generates certain rules either automatically in all cases or
+else as a consequence of user inputs.  The rules generated for a given
+protocol input may be found in the printed output for that protocol;
+these are the formulas appearing in \texttt{defgenrule} forms in the
+\texttt{.txt} and \texttt{.xhtml} files.
+
+\paragraph{Negated equalities.}  Since negated equalities are often
+needed to express assumptions users are interested in, {\cpsa}
+generates three rules with the body:
+%
+\begin{verbatim}(implies (fact neq x x)
+         (false))
+\end{verbatim}
+%
+This rule has the effect of terminating a branch of analysis if two
+expressions that the user has stipulated should not be equal become
+unified to the same value.  Three rules are generated since the
+variable \verb|x| may be of sort \verb|mesg|, or of sort \verb|strd|
+for a strand in the skeleton, or of sort \verb|indx| meaning the index
+of a node along a strand.  To stipulate a negated equality between two
+expressions $e_1,e_2$, the user may write in the input file:
+%
+\begin{tabbing}
+\texttt{(de}\=\texttt{fskeleton protocol}  \\
+  \>\dots strand declarations, etc. \dots \\
+  \>\texttt{(facts (neq} $e_1$ $e_2$\texttt{)))}
+\end{tabbing}
+%
+Negated equality assertions may also appear in the conclusions of
+user-defined rules, or anywhere else that an atomic formula may
+appear.
+
+A good number of additional rules are generated to implement {\cpsa}
+4's model of state (see Section~\ref{sec:channels:state:state},
+esp. Figs.~\ref{fig:leads:to}--\ref{fig:derived:state:rules} and
+pp.~\pageref{state:gen:rules:start}--\pageref{state:gen:rules:end}).
+
+\paragraph{``Assume'' declarations.}  A formula may be provided after
+the \verb|trace| declaration in a \verb|defprotocol| declaration in an
+\verb|assume| clause.  For instance:\footnote{See the file
+  \texttt{dhcr\_um\_expt\_assume.scm} in the manual examples
+  directory.}
+%
+\begin{verbatim}(defrole init
+    (vars ...)
+    (trace ...) 
+    ... 
+    (assume (fact neq (exp (gen) upsilon) (gen))))
+\end{verbatim}
+%
+In this case, the {\cpsa} loader checks that all of the free variables
+(just \verb|upsilon| here) appear in the trace.  If $i$ is the first
+height at which all of the variables have occurred, {\cpsa} generates
+a rule stating that any instance of the rule of height $\ge i$
+satisfies this property of the instances of the role parameters.  In
+this case, $i=4$, so the generated formula states:
+%
+\begin{verbatim}(defgenrule assume-init-0
+    (forall ((z strd) (upsilon expt))
+      (implies (and (p "init" z 4) (p "init" "upsilon" z upsilon))
+        (fact neq (exp (gen) upsilon) (gen)))))
+\end{verbatim}
+%
+Here, the assumption is the uninterpreted predicate symbol \verb|neq|
+applied to two expressions.  However, the assumption may also involve
+conjunction and existential quantifiers.  {\cpsa} also permits
+disjunctions, but these typically cause unreasonable branching and bad
+performance.
+
+In case the assumption is a fact, such as the \verb|neq| assertion
+above, one can write
+%
+\begin{verbatim}(defrole init
+    (vars ...)
+    (trace ...) 
+    ... 
+    (facts (neq (gen) (exp (gen) upsilon))))
+\end{verbatim}
+%
+instead of writing the assume annotation above.  Many facts may be
+listed as clauses here, with the effect of a conjunction.  The keyword
+here is the plural \verb|facts|, and the singular \verb|fact| does not
+appear in the individual clauses.
+
+The \verb|facts| annotation may also appear in a \verb|defskeleton|
+query.
+%
+\begin{verbatim}(defskeleton dhcr-um
+  (vars (a b name) (beta expt))
+  (defstrand init 5 (a a) (b b) (beta beta))
+  (non-orig (privk "sig" b))
+  (facts (neq a b) (undisclosed beta)))
+\end{verbatim}
+%
+Currently, {\cpsa} does not recognize the \verb|assume| keyword in
+\verb|defskeleton| queries.
+
+\subsection{Rules generated for trace annotations}
+\label{sec:goals:rules:gen:trace}
+%
+{\cpsa} now allows a few types of annotations to be interspersed
+within the trace declaration within a role.  These are:
+%
+\begin{description}
+  \item[cheq,] used to ensure that two values are equal in any
+  instance of the role that progresses beyond this point; 
+  \item[rely,] used after a reception to declare a formula containing
+  only free variables appearing up to and including this reception.
+  Every instance of the role long enough to include a successful
+  instance of this reception must satisfy the formula; 
+  \item[guar,] used before a transmission to declare a formula
+  containing only free variables appearing up to and including the
+  following transmission.  Every instance of the role long enough to
+  include an instance of the following transmission must satisfy the
+  formula.
+\end{description}
+%
+All of these trace annotations will cause similar rules to be
+generated.  However, when Zappa compiles role definitions to Rust
+code, they are compiled to have different operational effects.  Trace
+annotations do not add to the height of the trace.  They simply
+express constraints on what happens in the ``real'' events around
+them.
+
+\paragraph{Checking equality.}  Many protocols use \emph{commitments}
+%
+\begin{figure}\small
+\begin{verbatim}(defrole auctioneer 
+    (vars (a b name) (n data) (quote outcome text) (sealed mesg))
+    (trace
+     (recv (enc "bid" sealed (privk "sig" a)))
+     (send (enc "receipt" sealed (privk "sig" b)))
+     (recv (cat n quote))
+     (cheq sealed (hash a b n quote))
+     (send (enc "result" a b n quote outcome (privk "sig" b)))))\end{verbatim}
+  
+   \caption[Decommitment with \texttt{cheq}]{A role that accepts a
+     commitment and decommits it with \texttt{cheq}}
+  \label{fig:commit:cheq}
+\end{figure}
+%
+that are messages that the recipient obtains early in a session, but
+cannot fully destructure.  Subsequent messages may \emph{decommit} by
+providing information that allows the recipient to further destructure
+an earlier message.  A \emph{check-equality} annotation, written:
+%
+\begin{verbatim}  (cheq var term)\end{verbatim}
+%
+may be used in these situations.  
+
+For instance, in Fig.~\ref{fig:commit:cheq}, an auctioneer receives a
+sealed bid in its first event.\footnote{See the file
+  \texttt{commitment.scm} in the manual examples directory.}
+%
+\begin{figure}\small
+%
+\begin{verbatim}  (defgenrule cheq-auctioneer-4
+    (forall ((z strd) (quote text) (n data) (b a name) (sealed mesg))
+      (implies
+        (and (p "auctioneer" z 4) (p "auctioneer" "quote" z quote)
+          (p "auctioneer" "n" z n) (p "auctioneer" "b" z b)
+          (p "auctioneer" "a" z a) (p "auctioneer" "sealed" z sealed))
+        (= sealed (hash a b n quote)))))
+\end{verbatim}
+%  
+  \caption[Generated rule, \texttt{cheq}]{Generated rule for the
+    auctioneer's \texttt{cheq}}
+  \label{fig:commit:cheq:rule}
+\end{figure}
+%
+If, after returning a receipt for the bid, the auctioneer
+subsequently---presumably, when the auction has closed---receives a
+nonce and a quote, and checks that the sealed bid is a hash reflecting
+these values.  If so, it delivers an outcome, e.g.~a contract if this
+is the winning bid or a message of regret otherwise.
+
+{\cpsa} generates a rule that states that ``long-enough'' instances of
+the auctioneer role will satisfy the equality expressed in
+Fig.~\ref{fig:commit:cheq:rule}, for that instance's values of the
+role parameters.  In this case, ``long enough'' instances are of
+height 4, since the final send is the fourth event; the \verb|cheq|
+annotation does not count as an event.  The relevant role parameters
+are the ones named \verb|"sealed"|, \verb|"a"|, \verb|"b"|,
+\verb|"n"|, and \verb|"quote"|.
+
+\paragraph{Expressing rely and guarantee statements.}  In work on
+trust management, and on compiling cryptographic
+protocols~\cite{GuttmanEtAl04,GuttmanEtAl05,McCarthyEtAl07}, we
+introduced the idea of a \emph{rely formula} that expresses what a
+principal learns when a message is received, possibly assuming that
+certain peers are uncompromised.  We also introduced the idea of a
+(dual) \emph{guarantee formula} that must be true in order for a
+principal to transmit a message.  In particular, if a message sent by
+a principal $A$ has a particular guarantee formula $\phi$, and a peer
+$B$ receives it and authenticates its origin with $A$ in this step of
+the protocol, then $B$ may rely on a formula with the meaning, $A$
+\emph{says} $\phi$.
+
+This example will be \emph{sound} in the sense that the authentication
+property ensures that $A$ really did say (i.e.~guarantee) $\phi$ in
+any execution in which $B$ relies on the claim.  The soundness of rely
+statements may be checked by analyzing the protocol with the rely
+statements are omitted, and querying them as goal statements under the
+relevant non-compromise assumptions.  We will now assume that this
+soundness checking has been done, and that any relevant non-compromise
+assumptions are made in the protocol definition.  
+
+Thus, a \emph{rely} formula definitely holds true whenever the
+principal successfully completes the preceding receive event.  Indeed,
+the operational interpretation of a \emph{rely} formula is that the
+principal will add an assertion to a database of its knowledge.
+{\cpsa} transforms a \emph{rely} formula after a reception which is at
+height $i$ in a trace into a rule stating:  ``long-enough'' instances
+of the role will satisfy the formula, for that instance's values of
+the role parameters.
+
+This transformation is similar to what {\cpsa} does for a \texttt{cheq}
+annotation, except that instead of an equation, the conclusion may
+involve other atomic formulas, conjunctions, and existential
+quantifiers.  Disjunctions are permitted, but will usually lead to
+intractable {\cpsa} analysis.
+
+A \emph{guarantee} formula has a dual relation with a subsequent
+transmission.  Just as the received message may determine the
+instances of parameters appearing in a rely formula, a guarantee
+formula may dually select instances of parameters that will appear in
+the subsequent transmission.  As a rely formula is interpreted
+operationally as an assert to a database held by the principal, a
+guarantee formula is interpreted operationally as a query against that
+database.  Hence, assertions caused by previous rely formulas may
+influence the parameter instances selected by subsequent guarantee
+formulas.
+
+\paragraph{A rely-guarantee example.}  Consider a protocol in which a
+customer will interact with a merchant and a bank to purchase an item
+at a cost; the merchant will be paid by a debit from the customer's
+account at the bank.  Each participant should obtain evidence that the
+expected peers are participating in a corresponding session.
+Moreover, the merchant does not need to know the customer's account
+number, and therefore should not see this information.  The bank does
+not need to know what item the customer is buying, and therefore
+should not see that.  Outsiders should not see the details at all.
+How best to achieve this goal?
+
+Each party will need to generate a digital signature, since in case of
+dispute a third party must be able to reconstruct who committed to
+paying whom, and to sending what merchandise.  Moreover, public key
+encryption will be needed, at least for a handshake, since the parties
+must protect secrets from the outsiders and from the third party.
+Thus, there is no way to avoid having three digital signatures
+generated, along with a similar number of public key encryptions, with
+corresponding verification and decryption actions.  A protocol that
+achieves this goal is found in~\texttt{examples/minipay.scm}.
+
+Each party is making assertions, in effect.  The customer asserts his
+desire to buy the item for the cost.  The bank asserts that it will
+transfer the funds to the merchant.  The merchant asserts that it will
+ship the item.  Moreover, the protocol should ensure that each party
+knows that the others have made these commitments.  For instance, the
+merchant is willing to ship the goods because it knows that the bank
+will transfer the payment.  Thus, each party makes a \emph{guarantee},
+and each party learns that it may \emph{rely} on its peers having made
+their guarantee.  A fine point is the bank's rely formula; it learns
+that the customer has requested \emph{some} item in exchange for the
+cost, but not which one.  Thus, the item is existentially bound in the
+bank's rely formula.
+
+This yields the rely and guarantee formulas displayed in
+Fig.~\ref{fig:minipay:rely:guar}; the protocol with these trust
+annotations may be found in~\texttt{examples/minipay-rely-guar.scm}.
+%
+\begin{figure}\small
+\begin{verbatim}  (defrole cust (vars ...)
+    (trace
+      (guar (fact buy-via c m b item cost n))
+      (send ...)
+      (recv ...)           ; from bank 
+      (rely (fact will-transfer c m b cost n mtr btr))
+      (recv ...)           ; from merchant 
+      (rely (fact will-ship c m b item mtr))))
+
+  (defrole merc (vars ...)
+    (trace
+      (recv ...)           ; from customer
+      (send ...)
+      (recv ...)           ; from bank
+      (rely (and (fact buy-via c m b item cost n)
+                 (fact will-transfer c m b cost n mtr btr)))
+      (guar (fact will-ship c m b item mtr))
+      (send ...)))
+
+  (defrole bank (vars ...)
+    (trace
+      (recv ...)
+      (rely (exists ((item merchandise))
+                    (fact buy-via c m b item cost n)))
+      ;; Do not proceed unless customer signature trustworthy.      
+      ;; Given that, now commit to transferring the funds 
+      (guar (and (non (privk "sig" c))
+                 (fact will-transfer c m b cost n mtr btr)))
+      (send ...))) \end{verbatim}
+  
+  \caption[Minipay rely/guarantee formulas]{Rely and gauantee formulas
+    in \texttt{minipay.scm}}
+  \label{fig:minipay:rely:guar}
+\end{figure}
+%
+The principals in a particular session are required not to proceed
+past a guarantee formula unless the instances of the variables are
+known to satisfy the property claimed.  The rely formulas summarize
+what they have learned in the preceding reception.
+
+But:  How do we know these formulas are in fact true in every
+execution that includes the preceding reception, or at least every
+execution satisfying some reasonable assumptions about uncompromised
+keys?
+
+We can use goal formulas to check this.  In a separate file,
+\texttt{examples/minipay-guar.scm}, we define the protocol with the
+same message structure and guarantee formulas, but with no rely
+formulas.  We now pose goal statements for {\cpsa} to resolve; these
+are shown in
+Fig.~\ref{fig:rely:goals:cust}--\ref{fig:rely:goals:others}.  In these
+formulas, the conclusions are the rely statements that must be
+justified.  The hypotheses say that there is a strand $z$
+instantiating the relevant role long enough to reach the rely
+statement position.  They also connect the variables in the rely
+formula with the parameters of $z$.  Moreover, each customer goal
+assumes only the relevant peer's signature key to be non-compromised.
+The merchant assumes only the bank's signing key non-compromised,
+which is desirable since it may have no long-term association with the
+customer.  The bank presumably has an association with the customer,
+established when the customer opened the account; the customer's
+signing key could be established at that time.
+
+The goals may be constructed from the generated rules {\cpsa} provides
+when processing~\texttt{examples/minipay-rely-guar.scm}, essentially
+adding the non-compromise assumptions.
+%
+\begin{figure}\small
+\begin{verbatim}(defgoal minipay-guar
+  (forall
+   ((z strd) (c m b name) (cost amount) (n data) (mtr btr text))
+   (implies
+    (and (p "cust" z 2)
+         (p "cust" "c" z c)
+         (p "cust" "m" z m)
+         (p "cust" "b" z b)
+         (p "cust" "cost" z cost)
+         (p "cust" "n" z n)
+         (p "cust" "mtr" z mtr)
+         (p "cust" "btr" z btr)
+         (non (privk "sig" b)))
+    (fact will-transfer c m b cost n mtr btr))))
+
+(defgoal minipay-guar
+  (forall
+   ((z strd) (c m b name) (item merchandise) (n data) (mtr btr text))
+   (implies
+    (and (p "cust" z 3)
+         (p "cust" "c" z c)
+         (p "cust" "m" z m)
+         (p "cust" "b" z b)
+         (p "cust" "item" z item)
+         (p "cust" "n" z n) 
+         (p "cust" "mtr" z mtr)
+         (p "cust" "btr" z btr)  
+         (non (privk "sig" m)))
+    (fact will-ship c m b item mtr))))
+\end{verbatim}
+  \caption[Goal statements, 1]{Goal statements to validate customer's rely formulas}
+  \label{fig:rely:goals:cust}
+\end{figure}
+
+\begin{figure}\small
+\begin{verbatim}(defgoal minipay-guar
+  (forall
+   ((z strd) (c m b name) (item merchandise) (cost amount) (n data) (mtr btr text))
+   (implies
+    (and (p "merc" z 3)
+         (p "merc" "c" z c)
+         (p "merc" "m" z m)
+         (p "merc" "b" z b)
+         (p "merc" "item" z item)
+         (p "merc" "cost" z cost)
+         (p "merc" "n" z n)
+         (p "merc" "mtr" z mtr)
+         (p "merc" "btr" z btr)
+         (non (privk "sig" b)))
+    (and (fact will-transfer c m b cost n mtr btr)
+         (fact buy-via c m b item cost n)))))
+
+(defgoal minipay-guar
+  (forall 
+   ((z strd) (c m b name) (cost amount) (n data))
+   (implies
+    (and (p "bank" z 1)
+         (p "bank" "c" z c)
+         (p "bank" "m" z m)
+         (p "bank" "b" z b)      
+         (p "bank" "cost" z cost)
+         (p "bank" "n" z n)
+         (non (privk "sig" c)))
+    (exists ((item merchandise))
+            (fact buy-via c m b item cost n))))) \end{verbatim}
+  \caption[Goal statements]{Goal statements to validate other rely formulas}
+  \label{fig:rely:goals:others}
+\end{figure}
+%
+Since {\cpsa} validates these goal formulas in the
+\texttt{minipay-guar} protocol that contains the guarantee formulas
+but not the rely formulas, the generated rules introduced by the rely
+formulas are also sound subject to the stated non-compromise
+assumptions.  
+
+We regard this rely-guarantee method as a systematic way to formalize
+the trust assumptions, and the effects, of protocols that accomplish
+real-world tasks, in this case purchase and payment.  
+
+
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "cpsa4manual"
+%%% End:

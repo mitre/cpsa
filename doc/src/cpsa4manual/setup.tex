@@ -1,0 +1,206 @@
+\chapter{Setup and Installation}
+\label{ch:setup}
+
+\section{Basic Installation}
+
+The use of {\cpsa} requires Haskell, the programming language in which
+{\cpsa} is coded.  Our recommendation is to use the Haskell Platform,
+which is available for Windows, Mac, and Linux.  The ``Core'' platform
+is sufficient, but the ``Full'' platform is also fine.  On Linux,
+install the \texttt{haskell-platform} package.  Otherwise, follow the
+download and installation instructions at:
+
+\begin{center}
+\url{http://www.haskell.org/platform/}
+\end{center}
+
+To install {\cpsa}, run in a terminal or command prompt:
+
+\noindent \texttt{\$ cabal update} (to get the latest package list; this may take a while.)\\
+\texttt{\$ cabal install cpsa}
+
+Note that if you are behind a proxy, you may have to set the http
+proxy for your shell if you haven't already. For example, on a mac:\\
+\texttt{\$ export http\_proxy=http://proxy.myorg:port}\\
+On Windows:\\
+\texttt{\$ set HTTP\_PROXY=http://proxy.myorg:port}
+
+Cabal will install {\cpsa} in a directory specified in its config file
+(usually in ~/.cabal/config, unless you've installed Haskell in a
+different directory). Instructions for changing your path are included
+in the config file. The final step in the cabal install process should
+print the location that {\cpsa} has been installed in.
+
+\subsection{Getting the Source}
+If you have trouble with \texttt{cabal}, or if you'd like extra
+features such as the {\cpsa} test suite of example protocols, you can
+download the current source distribution directly~at:
+
+\begin{center}
+  \url{http://github.com/mitre/cpsa}
+\end{center}
+
+There is a directory named \texttt{cpsa} at the top-level of the
+repository.  It contains a copy of the {\cpsa} sources downloaded and
+compiled using \texttt{cabal}.  On all platforms, to install from this
+source, change into the \texttt{cpsa} directory and type:
+
+\begin{verbatim}
+$ cabal update
+$ cabal install parallel
+$ cabal configure
+$ cabal build
+$ cabal install
+\end{verbatim}
+
+Alternatively, there are other install options described in
+\texttt{README.txt} in the \texttt{cpsa} directory.
+
+\section{Finding Documentation}
+{\cpsa} comes with documentation, but it can be difficult to locate by
+hand when the tool has been installed through cabal.  Run
+
+\texttt{\$ cpsa -h}
+
+\noindent
+to see the program's help message, including the documentation
+directory, where this manual should be found.
+
+\section{Running {\cpsa}}
+\label{sec:running}
+
+To analyze a protocol you have put in prob.scm type:
+\begin{verbatim}
+$ cpsa -o prob.txt prob.scm
+$ cpsashapes -o prob_shapes.txt prob.txt
+$ cpsagraph -o prob_shapes.xhtml prob_shapes.txt
+\end{verbatim}
+
+See Section~\ref{sec:options} for command-line options.
+
+The \texttt{cpsashapes} command is optional, but recommended; it cuts
+down {\cpsa}'s output to only show final results. Unless you're
+doing detailed debugging, using it will make the output much easier to
+read.
+
+To analyze a protocol without using the \texttt{cpsashapes} comment, type:
+\begin{verbatim}
+$ cpsa -o prob.txt prob.scm
+$ cpsagraph -o prob.xhtml prob.txt
+\end{verbatim}
+
+The .xhtml results can be opened in a web browser.
+
+\subsection{{\cpsa} Projects}\label{sec:cpsainit}
+
+A {\cpsa} project is a directory containing some {\cpsa} input files
+and items that orchestrate the use of the various {\cpsa} tools.  To
+create a project, in a fresh directory, run \texttt{cpsainit}.
+
+\begin{verbatim}
+$ mkdir project
+$ cd project
+$ cpsainit
+Created Makefile
+Created cpsa.mk
+Created Make.hs
+Created template.lisp
+\end{verbatim}
+
+The \texttt{cpsainit} will not overwrite a file if it is already
+present in the current directory.  The file \texttt{template.lisp}
+contains a starting point for writing {\cpsa} input files.  Rename the
+file to one that uses the \texttt{.scm} extension and fill in the
+holes.  The distribution provides two ways to relieve users of the
+tedium of issuing individual commands.
+
+\subsection{Using the {\cpsa} Makefile}
+
+%% \begin{figure}
+%%   \begin{quote}
+%%     \begin{verbatim}
+%% CPSAFLAGS = +RTS -M512m -RTS
+
+%% SRCS := $(wildcard *.scm) $(wildcard *.lsp)
+
+%% include cpsa.mk
+
+%% all:    $(SRCS:%.scm=%_shapes.xhtml) $(SRCS:%.scm=%.xhtml) \
+%%         $(SRCS:%.lsp=%_shapes.xhtml) $(SRCS:%.lsp=%.xhtml)
+
+%% clean:
+%%         -rm *.txt *.xhtml
+%% \end{verbatim}
+%%   \end{quote}
+%%   \caption{\texttt{Makefile}}\label{fig:makefile}
+%% \end{figure}
+
+%% The easiest way to orchestrate {\cpsa} programs is to use GNU make.
+%% The distribution comes with the file \texttt{cpsa.mk} for inclusion
+%% into your makefile.  Figure~\ref{fig:makefile} contains a sample
+%% makefile. If you cut-and-paste, be sure to convert the leading spaces
+%% in the last line into a tab character.  To analyze protocols, copy
+%% these two files into a directory containing your protocol sources, and
+%% type \texttt{make}.
+
+The easiest way to orchestrate {\cpsa} programs is to use GNU make.  A
+{\cpsa} project contains the files \texttt{Makefile} and
+\texttt{cpsa.mk}.  To analyze the problems in your project, type
+\texttt{make}.  Edit the file \texttt{Makefile} to adjust program
+flags to suit your needs.  For example, you many want to enable the
+use of multiple processors during protocol analysis as described in
+Section~\ref{sec:parallelism}.
+
+The {\cpsa} program is Emacs friendly. If you run the above makefile
+via \texttt{M-x compile}, the results will be displayed in a buffer in
+Compilation Mode. The command \texttt{C-x `} will visit the locus of
+the next error message or match (next-error) in your {\cpsa} input
+file.
+
+\subsection{Using the Haskell Makefile}
+
+This approach is designed to be easy for Windows users, who do not want
+to bother installing Cygwin or MSYS.
+
+Locate \texttt{Make.hs} in your project directory. If using Windows,
+double-click on the file and it will open up a new window with a
+prompt. On a Mac or Linux machine, run \texttt{\$ ghci Make.hs}
+
+From the \texttt{Make.hs} prompt, you can use the following commands:
+
+\begin{itemize}
+\item \texttt{build}: Run {\cpsa} on all protocols (.scm files) in the
+  directory, and produce .xhtml output files displaying the results.
+\item \texttt{clean}: Remove all {\cpsa} output files, to ensure that any
+  changes to protocol files are reflected in the output.
+\begin{itemize}
+\item Because intermediate files are used for behind-the-scenes
+  processing, it can be possible to have the results in the .xhtml
+  output files not reflect the most up-to-date protocol file
+  contents. If you make changes and don't see them reflected in the
+  output, try running \texttt{clean}. Getting into the habit of
+  running \texttt{clean} before \texttt{build} is a good idea.
+\end{itemize}
+\item \texttt{cpsa} \texttt{"\textit{protocolname}"} Run {\cpsa} on just the
+  protocol provided. Note that the file extension (.scm) should
+  \textit{not} be included in the name; if your protocol is in
+  \texttt{foo.scm}, you would run \texttt{cpsa "foo"}. Most useful if you
+  have an exceptionally large number of protocols in a single
+  directory.
+\item \texttt{:q} Quit.
+\end{itemize}
+
+\subsection{Memory usage}
+
+On large problems, {\cpsa} can consume large amounts of memory.  To
+protect against memory exhaustion, run {\cpsa} with the command-line
+options \verb|+RTS -M512m -RTS|.  The initial makefile includes these
+options by default.
+
+\subsection{Parallelism}\label{sec:parallelism}
+
+CPSA is built so it can make use of multiple processors.  To make use
+of more than one processor, start CPSA with a runtime flag that
+specifies the number of processors to be used, such as
+\verb|+RTS -N4 -RTS|.  The GHC documentation describes the \texttt{-N}
+option in detail.

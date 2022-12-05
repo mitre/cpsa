@@ -1,0 +1,447 @@
+\chapter {Troubleshooting}
+\label{ch:troubleshooting}
+
+The {\cpsa} tool is a complicated one and many errors are possible in
+its use.  In this chapter we discuss these errors, from the simplest
+to the most complex, and offer suggestions as to how to resolve them.
+
+\section{Non-termination}
+\label{sec:bounds}
+
+The {\cpsa} tool is not guaranteed to complete its search on all
+well-formed inputs.  The problem space {\cpsa} attempts to perform
+includes some Turing-undecidable problems.
+
+Because of this, the tool has two bail-out conditions that users should be
+aware of:
+
+\begin{itemize}
+
+\index{strand bound}
+\item The {\bf strand bound} causes the tool to abort its analysis if any
+skeleton it analyzes has more strands than the bound.  By default, the strand
+bound is 12.
+
+\index{step limit}
+\item The {\bf step limit} causes the tool to abort its analysis if during
+the analysis of a single input \texttt{defskeleton} or \texttt{defgoal}, the
+number of skeletons it processes exceeds the limit.  By default, the step limit
+is 2000.
+
+\index{depth limit}
+\item The {\bf depth limit} causes the tool to not analyze skeletons
+  more steps away from the initial point of view than the bound.
+  There is no depth limit by default.  Skeletons that are unrealized and not
+  analyzed due to the depth limit are marked with ``\texttt{(fringe)}''.
+
+\end{itemize}
+
+If you execute an analysis and the tool says ``Strand bound exceeded''
+or ``Step limit reached,'' then that bail-out condition has come into play.
+This may indicate an analysis that would never terminate, but it may also be
+the case that the strand bound or step limit is too small, and a larger one will
+enable the analysis to complete.
+
+Unlike the strand bound and the step limit, the depth limit never
+triggers an error condition, and can thus be useful for multi-skeleton
+analyses in which one of the earlier skeletons would otherwise have a
+non-terminating analysis.
+
+The step limit, depth limit, and strand bound can be adjusted through the
+\texttt{limit}, \texttt{depth}, and \texttt{bound} options, respectively.  See
+Section~\ref{sec:options}.
+
+\index{interrupting}
+Note that sometimes, a user may become impatient waiting for an
+analysis to either complete or bail out.  When this happens, the user should
+not hesitate to interrupt the tool; the tool will output a partial result that can
+be graphed so the user can examing the analysis done so far.
+
+An analysis that doesn't terminate does not necessarily represent an
+insecure protocol, it may just indicate a protocol where a more clever
+analysis is required than {\cpsa}'s automated one.
+
+\subsection{Tweaking the search}
+There are cases in which the default {\cpsa} analysis does not
+terminate, but a non-default analysis would terminate.  The tool has
+several settings that influence the search but can be tweaked:
+
+\begin{itemize}
+\index{try-old-strands option}
+\index{reverse-nodes option}
+\index{options!try-old-strands}
+\index{options!reverse-nodes}
+\item {\bf Node precedence.}  In a skeleton with multiple unrealized
+  receptions, the tool will, by default, focus on the topmost
+  unrealized node of the rightmost strand that contains an unrealized
+  node.  If you find that an analysis gets into a large search space
+  due to exploring those unrealized receptions first, you could alter
+  this order with the \texttt{reverse-nodes} or
+  \texttt{try-old-strands} options.  The latter will prioritize the
+  leftmost strands over the rightmost, while the former will
+  prioritize the bottom-most unrealized node in the strand rather than
+  the topmost.
+
+\index{check-nonces option}
+\index{options!check-nonces}
+\item {\bf Critical term precedence.}  Occasionally, a reception will
+  arise that is unrealized and multiple critical terms are available.
+  In particular, there are cases where a term contains both a
+  hard-to-explain encryption and a restricted nonce.  For instance, in
+  the Kerberos protocol, the ticket $\enc{k,a,b}{SK(b,s)}$ can serve
+  as both a critical encryption (because $SK(b,s)$ may be declared
+  non-originating) and a critical term (because $k$ is uniquely
+  originating).  By default, {\cpsa} will treat the encryption as the
+  critical term because this tends to lead to learning more in fewer
+  steps, but this choice can be reversed by using the
+  \texttt{check-nonces} option.
+
+\index{priority}
+\item {\bf Priority.}  The tool contains an ability to declare a
+  priority for certain receptions that differs from the default.
+  Priority takes precedence over all other search orderings.  See
+  Section~\ref{sec:decl_syntax} for the format requirements for
+  declaring priorities, and the \texttt{priority\_test.scm} example in the
+  examples directory.
+
+  Note that the default priority is 5, and priority 0 indicates that
+  the tool should never bother solving tests at those nodes.  This may
+  be of use, for instance, if solving one particular node leads to
+  infinite analysis, but other nodes would result in a quick
+  determination that a skeleton is dead.
+\end{itemize}
+
+\section{Error messages}
+\label{sec:errors}
+
+In this section, we provide an alphabetical listing of error messages
+/ failures that may arise during {\cpsa} execution.  If you get an error
+message not included here, it likely represents a bug and should be reported
+to the tool maintainers.
+
+\begin{itemize}
+\item \textbf{``[ASSERT FAILED] [...]''}.  This kind of error should
+  not occur.  If you see this happen, please contact the tool maintainers
+  and make a bug report!
+
+\item \textbf{``Aborting after applying 500 rules and more are
+  applicable''}.  This most likely indicates a circular use of rules.
+
+\item \textbf{``Algebra.absenceSubst: bad absence assertion''} or
+  \textbf{``Algebra.nullifyOne: unexpected pattern''} The
+  \texttt{absent} declaration must be declared on a pair where the
+  first element is an \scap{rndx} variable and the second element is either
+  an exponent or a \scap{base} term.  These errors should not occur if you
+  did not give {\cpsa} an input with an absent declaration.
+
+\item \textbf{``Algebra.inv: Cannot invert a variable of sort mesg''}.
+  Variables of the \texttt{mesg} sort should never be used as the key
+  in an encryption.  {\cpsa} uses a single function symbol to represent
+  both symmetric and asymmetric encryption, and when the key is a variable
+  of sort \texttt{mesg}, it is ambiguous which is meant.  As a result,
+  it is unclear what the decryption key would be for such a message.  When
+  {\cpsa} tries to calculate the decryption key when the encryption key
+  is a variable of sort \texttt{mesg}, this error is produced.
+
+\item \textbf{``Atom not unique at node''}.  This occurs when a
+  formula has been specified including a \texttt{uniq-at} predicate in
+  the antecedent that is untrue.
+
+\item \textbf{``Bad char [...]''}.  This error message comes from a
+  low-level parser trying to understand S-expressions.  When parsing
+  an S-expression, any non-whitespace that isn't a parenthesis is an
+  ``atom'' but we expect atoms to be symbols, numbers, or quoted
+  strings, and only certain characters are allowed in these.  An atom
+  that starts with a digit is expected to be a number, for instance, so
+  subsequent non-digits will cause an error of this kind.  The characters
+  allowed in symbols include all alphanumeric characters and the following
+  punctuation marks: \verb|+, -, *, /, <, =, >, !, ?, :, $,|  \verb|%, _, &, ~, ^|.
+
+\item \textbf{``Bad height'' / ``Bad position in role'' / ``Negative
+  position in role''}.  A \texttt{defstrand} includes a specification
+  of a height (the length of the instance) but that height must be
+  positive and must not exceed the length of the role.
+
+\item \textbf{``Bad str-prec''}.  Your goal included a
+  \texttt{str-prec} predicate among node variables associated with
+  different roles.  In other words, your formula has attempted to make
+  a single strand that includes events from distinct roles.
+
+\item \textbf{``Close of unopened list''}.  Your input has an erroneous
+  close-paren.
+
+\item \textbf{``Disallowed bare exponent''}.  See Section~\ref{sec:dh}.
+  The tool requires that within roles and skeletons, exponents occur only
+  inside an exponentiation function.
+
+\item \textbf{``Domain does not match range''}.  This error message
+  occurs when {\cpsa} is trying to understand the variable assignment
+  you have specified in a \texttt{defstrand}.  You may have defined
+  the value of a parameter more than once, or your definition may have
+  a type mismatch.  For instance if $a$ is a parameter role expected
+  to be of the name type, and you declare $t$ to be a text variable,
+  then including \texttt{(a t)} in a defstrand will produce this
+  error.
+
+\item \textbf{``Duplicate role [...] in protocol [...]''}.  Fairly
+  self-explanatory: the roles in a protocol must have distinct names.
+  This error occurs if you have two protocols with the same name.
+
+\item \textbf{``Duplicate variable declaration for [...]''}.  Fairly
+  self-explanatory: within any \texttt{vars} statement, any symbol may
+  be used for a variable name, but each variable name can be declared only once.
+
+\item \textbf{``End of input in string''}.  You included a quote-delimited
+  string but didn't close it before the end of the input file.
+
+\item \textbf{``Equals not allowed in antecedent''}.  The \texttt{equals}
+  predicate may only be used on the conclusion side of a \texttt{defgoal}.
+
+\item \textbf{``Expansion limit exceeded''}.  This most likely indicates
+  a circular use of macros.  The limit of expansion of a macro within a macro is
+  hard-coded in the tool as depth 1000.
+
+\item \textbf{``Expecting [...] to be [a/an ...]''}.  You have a type
+  error in your use of a function symbol.  For instance if
+  \texttt{(pubk a)} is to be loaded within a particular variable
+  declaration scope, the $a$ variable should be of the $\scap{name}$
+  sort.
+
+\item \textbf{``Expecting a node variable'' / ``Expecting an algebra
+  term''}.  Certain predicates within a \texttt{defgoal} expect one of
+  their inputs to be a declared node variable (or to be a non-node
+  variable).  If a variable used in such an input is declared
+  otherwise, this error message is produced.
+
+\item \textbf{``Expecting an atom''}.  Certain declarations, in particular
+  the \texttt{uniq-orig}, \texttt{uniq-gen}, and \texttt{non-orig} ones,
+  are expected to be used on atomic terms rather than compound ones.
+
+\item \textbf{``Expecting terms in algebra [...]''}.  The tool
+  actually expects to know the message algebra to use up front, before
+  it begins parsing.  The algebra is the basic one by default, or you
+  may specify through a command-line argument or a herald to use the
+  Diffie-Hellman algebra.  Each \texttt{defprotocol} in the input
+  specifies an algebra to use, and this error occurs when that algebra
+  doesn't match the one {\cpsa} is prepared to parse.  To resolve:
+  check that you aren't requesting the wrong algebra, and check that
+  you have properly spelled the name of the algebra in your
+  \texttt{defprotocol}.
+
+\item \textbf{``Identifier [...] unknown''}.  This is a relatively common
+  user-caused error that occurs when you try to use a variable not declared
+  in your \texttt{vars} declaration.
+
+\item \textbf{``Include depth exceeded with file [...]''}.  Most
+  likely, this indicates a circular use of the \texttt{include}
+  command.  The limit of inclusion within an included file is depth
+  16.
+
+\item \textbf{``Keyword [...] unknown''}.  The tool was expecting the symbol
+  to specify an algebra function symbol, but it didn't match any of the available
+  ones.  This most commonly indicates that the user forgot to include a
+  function symbol name at the beginning of a list when describing a term.  One of
+  the most common forms of this mistake is to include \texttt{(send (a b))} in
+  a trace of a role, when the user intended to model the sending of the pair $(a,b)$.
+  The proper input would be \texttt{(send (cat a b))}.
+
+  Because of this type of mistake, it is recommended to avoid using variables
+  in your model that are the same as function symbol names such as
+  ``ltk'' or ``pubk''.
+
+\item \textbf{``In a rule equality check, cannot find a binding for
+  some variable''}.  An equality in a rule is receiving a variable
+  that has not been bound by a length or parameter predicate.  Try
+  moving the equality to the end of the conjunction in which it
+  occurs.
+
+\item \textbf{``In rule [...], parameter predicate for [...] did not
+  get a strand''}.  This message occurs when a strand variable is not
+  bound by a length predicate.
+
+\item \textbf{``In rule [...], [...] did not get a strand''}.
+  This message occurs when a strand variable is not bound by a length
+  predicate.
+
+\item \textbf{``In rule [...], [...] did not get a term}.  This
+  message occurs when an algebra variable is not bound by a parameter
+  predicate.
+
+\item \textbf{``Malformed [...]''}.  Generally speaking, this indicates
+  a syntax error.  Consult the grammar in Chapter~\ref{ch:input} for the
+  syntax requirements for the type of object the tool claims was malformed.
+  Double-check that you have spelled required keywords correctly, and that
+  your parentheses are matched.
+
+\item \textbf{``Malformed association list''}.  This refers to one of
+  the ``-alist'' symbols in the grammar; these may occur in skeletons,
+  goals, protocols, or roles.
+
+  Association lists are lists of S-expressions, each of which is a
+  list that starts with a symbol.  This error would occur if you had,
+  for instance, a symbol or a number, or an S-expression starting with
+  a number as an input to a \texttt{defrole} or \texttt{defskeleton}.
+
+\item \textbf{``Malformed input''}.  Top level S-expressions in your
+  input file must be one of the following: \texttt{defprotocol,
+    defskeleton, defgoal, comment,} or \texttt{herald}.  The tool also
+  recognizes \texttt{defpreskeleton} as a synonym for
+  \texttt{defskeleton}.  If you have an S-expression at the top level
+  that is other than one of these, this is the error message you will
+  see.
+
+\item \textbf{``Malformed pair -- nodes in same strand''}.  In a \texttt{defskeleton}
+  you are prohibited from specifying orderings between nodes in the same strand.
+
+  This is not the case for \texttt{leadsto} relationships.
+
+\item \textbf{``No strands''}.  Your \texttt{defskeleton} did not include
+  any strands at all; it must include at least one.
+
+\item \textbf{``Node occurs in more than one role predicate''}.  Node variables
+  in a goal must occur within a role position predicate, but should not occur within
+  more than one within their defined scope.
+
+\item \textbf{``Priority declaration disallowed on [...]''}.  Prioritization
+  has no effect except on events that need an explanation.  If you try to
+  change the default priority of a send or state initialization event, this
+  is assumed to be a mistake and the tool produces this error.
+
+\item \textbf{``Protocol [...] unknown''}.  This error occurs when you
+  have a \texttt{defskeleton} or \texttt{defgoal} with a protocol name
+  not matching any \texttt{defprotocol} so far present in the file.
+
+\item \textbf{``Role [...] not found in [...]''}.  You included a
+  \texttt{defstrand} referencing a role that does not exist in the
+  protocol definition.
+
+\item \textbf{``Role in parameter pred differs from role position
+  pred''}.  A node variable in a formula should occur in a role
+  position predicate but may also occur in node parameter predicates.
+  However, node parameter predicates for a given node variable should
+  match the role of the role position predicate the variable occurs
+  in.
+
+\item \textbf{``Role not well formed: role trace is a prefix of a listener''}.  {\cpsa}
+  disallows the use of roles that begin with the reception of some
+  message followed by the transmission of that same message, because
+  there is an ambiguity as to whether an instance is a listener or an
+  instance of a protocol role.  This should not be a problem because
+  beginning a role in this manner is quite unusual, but if it is
+  necessary to you to do so we recommend the reception be paired with
+  a tag constant such as \texttt{(cat "regular role" [...])}.
+
+\item \textbf{``Role not well formed: non-orig [...] carried''}.  The \texttt{non-orig}
+  declaration specifies that a certain atomic value not be carried
+  (see Section~\ref{sec:secrecy_assumptions}).  You have made such a declaration but a
+  plain (full-height) instance of your role violates the rule.
+
+  \item \textbf{``Role not well formed: uniq-orig [...] doesn't
+    originate''}.  The \texttt{uniq-orig} declaration states not only
+  that the declared value originates on a regular strand uniquely (see
+  Section~\ref{sec:secrecy_assumptions}), but also states that the
+  apparent origination point is the unique origination point of that
+  value.  As such, you may only use the \texttt{uniq-orig} declaration
+  on a value that does originate somewhere.  If you declare a value
+  \texttt{uniq-orig} on a role but it does not originate on that role,
+  you get this error.
+
+\item \textbf{``Role not well formed: variable [...] not acquired''}.
+  Variables of the $\scap{mesg}$ sort must be ``acquired'' when used
+  in roles.  This means that the first occurrence of the variable must
+  be a \emph{carried} occurrence in a reception event.  See
+  Section~\ref{sec:secrecy_assumptions} fr an explanation of
+  ``carried.''
+
+\item \textbf{``Role not well formed: variable [...] not obtained''}.
+  Variables of the $\scap{base}$ or $\scap{expr}$ sort must be
+  ``obtained'' when used in roles, meaning that the first occurrence
+  must be in a reception.
+
+\item \textbf{``[Role / Skeleton] not well formed: inequality
+  conditions violated''}.  A \texttt{neq} declaration is false where
+  it is first declared: in a role or skeleton definition.
+
+\item \textbf{``[Role / Skeleton] not well formed: lt declarations form a cycle''}.  The
+  \texttt{lt} declarations present in a role or in a skeleton are already violated in
+  the role or skeleton definition.
+
+\item \textbf{``[Role / Skeleton] not well formed: subsort requirements violated''}.  The
+  \texttt{subsort} declarations present in the role or skeleton being defined are already
+  violated.
+
+\item \textbf{``Skeleton not well formed: a variable in [...] is not in some trace''}.
+  A \texttt{defskeleton} causes this error when a variable used in a declaration
+  does not appear in any of the traces.
+
+\item \textbf{``Skeleton not well formed: cycle found in ordered pairs''}.
+  The ordering edges (strand succession plus ordered pairs) of a skeleton should form
+  an acyclic graph.  A cycle represents circular causality which should not be possible in
+  any real execution.
+
+\item \textbf{``Skeleton not well formed: non-orig [...] carried''}.  The \texttt{non-orig}
+  declaration specifies that a certain atomic value not be carried
+  (see Section~\ref{sec:secrecy_assumptions}).  You have made such a declaration but your
+  \texttt{defskeleton} violates the rule.
+
+\item \textbf{``Skeleton not well formed: ordered pairs not well formed''}.
+  This error occurs when an ordering is specified between the wrong types of events.
+  In {\cpsa}, an ordering must be such that the earlier node has an outgoing type, so
+  for instance an ordering directly between two reception events is disallowed.
+
+  \item \textbf{``Skeleton not well formed: uniq-orig [...] doesn't
+    originate''}.  The \texttt{uniq-orig} declaration states not only
+  that the declared value originates on a regular strand uniquely (see
+  Section~\ref{sec:secrecy_assumptions}), but also states that the
+  apparent origination point is the unique origination point of that
+  value.  As such, you may only use the \texttt{uniq-orig} declaration
+  on a value that does originate somewhere.  If you declare a value
+  \texttt{uniq-orig} on a skeleton but it does not originate in the
+  skeleton, you get this error.
+
+  Similarly, \textbf{``...: uniq-gen [...] doesn't generate''}
+  represents a detected error in that \texttt{uniq-gen} states that
+  not only does the given value generate (see
+  Section~\ref{sec:secrecy_assumptions}) uniquely, but that its apparent
+  generation point is that generation point.  As such, a generation
+  point is expected.
+
+\item \textbf{``Sort [...] not recognized''}.  You attempted to declare a variable
+  to be of a sort not present in the algebra.  Check to ensure that if you are using
+  Diffie-Hellman-related sorts that you are using the \texttt{diffie-hellman} algebra.
+
+\item \textbf{``Terms in [role/skeleton] not well formed''}.  This error occurs
+  when you have constructed a term using a function symbol that
+  expects inputs of a certain sort, but your inputs are not of that
+  sort.  For instance, in \texttt{(ltk a b)}, \texttt{a} and
+  \texttt{b} must be variables of the \texttt{name} sort, or they are not
+  well-formed.  To resolve: double-check your variable declarations and
+  your use of function symbols.
+
+  This may also occur if you use the \texttt{node} sort in a role or skeleton; that
+  sort should only be used in a goal declaration.
+
+\item \textbf{``Too many locations in declaration''}.  You have a
+  native declaration that appears to include two or more
+  locations in it.  All native declarations allow at most one
+  location.
+
+\item \textbf{``Type mismatch in equals''}.  The \texttt{equals} predicate
+  in a \texttt{defgoal} can be used to compare node variables or to compare
+  algebra variables, but cannot be used to compare node variables to algebra
+  variables.
+
+\item \textbf{``Unbound variable in [...]''}.  In a \texttt{defgoal},
+  variables must meet specific binding requirements.  See Chapter~\ref{ch:goals}
+  for details.  This error indicates that you have provided a formula that the
+  tool rejects for this reason.
+
+\item \textbf{``Unexpected end of input in list''}.  One of the most frequent
+  user errors - you didn't include close parens for all your S-expressions.
+
+\end{itemize}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "cpsa4manual"
+%%% End:

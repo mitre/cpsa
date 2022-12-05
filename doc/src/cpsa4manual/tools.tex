@@ -1,0 +1,125 @@
+\chapter{CPSA Tools}
+\label{ch:tools}
+
+This chapter describes programs that complement the {\cpsa} program.
+All the tools accept a \texttt{--help} option that describes the
+tool's usage and a \texttt{--version} option that prints the version
+of the tool.
+
+\begin{description}
+\item[\texttt{cpsa4init}:] Populates a directory with files used to
+  create a {\cpsa} project.  See Section~\ref{sec:cpsainit}.
+
+\item[\texttt{cpsa4shape}:] Cuts down {\cpsa}'s output to only show
+  final results---the shapes.
+
+\item[\texttt{cpsa4graph}:] Constructs an \textsc{xhtml} document that
+  visualizes the output of a {\cpsa} run or the output of
+  \texttt{cpsa4shape}.
+
+\item[\texttt{cpsa4goalsat}:]  Prints the labels of skeletons that do
+  not satisfy a \texttt{defgoal}.  See
+  Section~\ref{sec:goalsoverview}.  For each point of view skeleton
+  specified by a goal, the program prints a list.  The first element
+  of the list is the label of the point of view skeleton.  The
+  remaining elements of the list are labels of the skeletons that do
+  not satisfy the goal.
+
+\item[\texttt{cpsa4prot}:] Translates protocols expressed in Alice and
+  Bob notation into {\cpsa}'s \texttt{defprotocol} syntax.  It
+  translates \texttt{defprot} forms, and passes all else through
+  unchanged.  The syntax of \texttt{defprot} forms is presented in
+  Table~\ref{tab:defprot}.
+
+  The basic layout of a \texttt{defprot} is a chronological
+  description of things that happen in the intended execution of the
+  protocol.  The s-expression \texttt{(msg A B M)} is used to indicate
+  that role \texttt{A} sends \texttt{M}, while role \texttt{B}
+  receives it.  Other features of \texttt{cpsa4prot} are given in Table~\ref{tab:defprot_commands}.
+
+  See Figure~\ref{fig:defprot} for an
+  example.
+
+\item[\texttt{cpsa4sas}:]  Generates Shape Analysis Sentences from the
+  output of {\cpsa}.  See Section~\ref{sec:sas}.
+
+\item[\texttt{cpsa4pp}:] Pretty prints {\cpsa} input.  It can also be
+  used to translate S-expression syntax into \textsc{json} for use
+  with tools written in other languages such as Python.
+
+\item[\texttt{cpsa42latex}:] Translates {\cpsa} macros specifying
+  message formats into equivalent {\LaTeX} macros. Algebra primitives
+  such as \texttt{enc} and \texttt{pubk} are mapped to unspecified
+  {\LaTeX} macros with the same name and arity (sometimes with an
+  optional tag), allowing the user to easily customize how they would
+  like these primitives to be typeset.
+
+\item[\texttt{cpsa4json}:]  Translates {\cpsa} input in \textsc{json}
+  syntax into S-expression syntax.
+
+\item[\texttt{cpsa4diff}:]  Compares the skeletons in two files.  If a
+  difference is detected, it prints the first difference and exits.
+
+\end{description}
+
+\begin{table}
+\begin{center}\scshape
+\begin{tabular}{rcl}
+prot&$\leftarrow$&(\sym{defprot} id alg vars form$\ast$ rule$\ast$ prot-alist)
+\\ vars&$\leftarrow$&(\sym{vars} vdecl$\ast$)
+\\ form&$\leftarrow$&(\sym{msg} role role chmsg)
+\\ &$\mid$&(\sym{msg} role role chmsg chmsg)
+\\ &$\mid$&(\sym{from} role chmsg)
+\\ &$\mid$&(\sym{to} role chmsg)
+\\ &$\mid$&(\sym{assume} role role-alist)
+\\ &$\mid$&(\sym{clone} role role)
+\\ chmmsg&$\leftarrow$&(\sym{chmsg} id term) $\mid$ (\sym{chmsg} term)
+$\mid$ term
+\end{tabular}
+\end{center}
+\caption{\texttt{defprot} Grammar}\label{tab:defprot}
+\end{table}
+
+\begin{table}
+  \begin{center}
+    \begin{tabular}{c|c}
+      Form & Meaning \\
+      \hline
+      (\texttt{msg A B M}) & \texttt{A} sends \texttt{M} to \texttt{B} \\
+      (\texttt{msg A B M N}) & \texttt{A} sends \texttt{M} and \texttt{B} receives it as \texttt{N}\\
+      (\texttt{from A M}) & \texttt{A} sends \texttt{M}\\
+      (\texttt{to A M}) & \texttt{A} receives \texttt{M}\\
+      (\texttt{assume A M}) & Add the assumption \texttt{M} to the role \texttt{A}\\
+      (\texttt{clone A B}) & Create a role \texttt{B} which includes all behavior described for \texttt{A} to this point.
+    \end{tabular}
+  \end{center}
+  \caption{\texttt{defprot} commands}\label{tab:defprot_commands}
+  \end{table}
+
+\begin{figure}
+  \begin{quote}
+    \begin{verbatim}
+$ cat blanchet.prot
+(defprot blanchet basic
+  (vars (a b akey) (s skey) (d data))
+  (msg init resp (enc (enc s (invk a)) b))
+  (msg resp init (enc d s))
+  (assume init (uniq-orig s))
+  (assume resp (uniq-orig d))
+  (comment "Blanchet's protocol"))
+$ cpsa4prot blanchet.prot
+(defprotocol blanchet basic
+  (defrole init
+    (vars (a b akey) (s skey) (d data))
+    (trace (send (enc (enc s (invk a)) b)) (recv (enc d s)))
+    (uniq-orig s))
+  (defrole resp
+    (vars (a b akey) (s skey) (d data))
+    (trace (recv (enc (enc s (invk a)) b)) (send (enc d s)))
+    (uniq-orig d))
+  (comment "Blanchet's protocol"))
+$
+    \end{verbatim}
+  \end{quote}
+\caption{\texttt{defprot} Example}\label{fig:defprot}
+\end{figure}

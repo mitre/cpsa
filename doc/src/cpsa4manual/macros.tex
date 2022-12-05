@@ -1,0 +1,78 @@
+\newcounter{running}[section]
+\newenvironment{renumerate}{\begin{enumerate}\setcounter{enumi}{\value{running}}}%
+{\setcounter{running}{\value{enumi}}\end{enumerate}}
+
+
+\newcommand{\cpsa}{\textsc{cpsa}}
+\newcommand{\version}{4.3}
+\newcommand{\cpsacopying}{\begingroup
+  \renewcommand{\thefootnote}{}\footnotetext{{\copyright} 2016-2020 The
+    MITRE Corporation.  Permission to copy without fee all or part of
+    this material is granted provided that the copies are not made or
+    distributed for direct commercial advantage, this copyright notice
+    and the title of the publication and its date appear, and notice
+    in given that copying is by permission of The MITRE
+    Corporation.}\endgroup}
+\newcommand{\pov}{\textsc{pov}}
+\newcommand{\cow}{\textsc{cow}}
+\newcommand{\cn}[1]{\ensuremath{\operatorname{\mathsf{#1}}}}
+\newcommand{\dom}[1]{\ensuremath{\operatorname{\mathbf{#1}}}}
+\newcommand{\fn}[1]{\ensuremath{\operatorname{\mathit{#1}}}}
+\newcommand{\seq}[1]{\ensuremath{\langle#1\rangle}}
+\newcommand{\enc}[2]{\ensuremath{\{\!|#1|\!\}_{#2}}}
+\newcommand{\iv}[1]{\ensuremath{{#1}^{-1}}}
+\newcommand{\hash}[1]{\ensuremath{\##1}}
+\newcommand{\comp}[2]{{\mathord{#1}}\circ{\mathord{#2}}}
+\newcommand{\sembrack}[1]{[\![#1]\!]}
+\newcommand{\semfn}[1]{\mathcal{#1}}
+\newcommand{\sem}[2]{\semfn{#1}\sembrack{#2}}
+\newcommand{\mcsu}{\ensuremath{\mathcal{C}}}
+\newcommand{\probs}{\ensuremath{\mathcal{E}}}
+\newcommand{\srt}[1]{\ensuremath{\mathsf{#1}}}
+\newcommand{\eqq}{\stackrel{?}{=}}
+\newcommand{\inbnd}{\mathord -}
+\newcommand{\outbnd}{\mathord +}
+\newcommand{\nat}{\mathbb{N}}
+\newcommand{\all}[1]{\mathop{\forall#1}}
+\newcommand{\some}[1]{\mathop{\exists#1}}
+\newcommand{\baseterms}{\mathbb{B}}
+\newcommand{\cons}{\mathbin{::}}
+\newcommand{\ith}{\imath^\mathrm{th}}
+\newcommand{\jth}{\jmath^\mathrm{th}}
+\newcommand{\append}{\mathbin{{}^\smallfrown}}
+\newcommand{\prefix}[2]{#1|_{#2}}
+\newcommand{\orig}{\mathcal{O}}
+\newcommand{\gain}{\mathcal{G}}
+%\newcommand{\pow}[1]{\mathcal{P}(#1)}
+%\newcommand{\pow}[1]{\wp(#1)}
+\newcommand{\pow}[1]{2^{#1}}
+\newcommand{\termat}{\mathbin{@}}
+\newcommand{\idsigma}{\sigma_{\mathrm{id}}}
+\newcommand{\idphi}{\phi_{\mathrm{id}}}
+\newcommand{\kprec}[1]{\mathbin{\prec_{#1}}}
+\newcommand{\terms}{\ensuremath{\mathcal{T}}}
+\newcommand{\alg}[1]{\ensuremath{\mathfrak#1}}
+\newcommand{\ops}[1]{\ensuremath{\mathbb#1}}
+\newcommand{\bundle}{\ensuremath{\mathcal{B}}}
+\newcommand{\der}[3]{\ensuremath{\dctx{#2}{#3}\vdash#1}}
+\newcommand{\dctx}[2]{\ensuremath{#1:#2}}
+\newcommand{\flow}[3]{\ensuremath{#1,#2\rhd#3}}
+\newcommand{\infer}[2]{\begin{array}{c}#1\\\hline#2\end{array}}
+\hyphenation{pre-skel-e-ton}
+\newcommand{\homomorphism}[1]{\stackrel{#1}{\longmapsto}}
+\newcommand{\reduction}[1]{\stackrel{#1}{\longrightarrow}}
+\newcommand{\longtwoheadrightarrow}{\relax
+\smash{\relbar\joinrel\twoheadrightarrow}\vphantom\rightarrow}
+\newcommand{\setreduction}[1]{\stackrel{#1}{\longtwoheadrightarrow}}
+\newcommand{\ttindex}[1]{\index{#1@\texttt{#1}}}
+\newcommand{\ttindexalt}[2]{\index{#1@\texttt{#1}{#2}}}
+\theoremstyle{definition}
+\newtheorem{exercise}{Exploration}[chapter]
+\newcommand{\scap}[1]{\ensuremath{\mathop{\relax
+                    \smash{\mbox{\sc#1}}}\!\mathop{\vphantom{#1}}\nolimits}}
+\newcommand{\sym}[1]{\textup{\texttt{#1}}}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "cpsa4manual" 
+%%% End:

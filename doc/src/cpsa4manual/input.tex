@@ -1,0 +1,570 @@
+\chapter{CPSA Program}
+\label{ch:input}
+
+\section{CPSA pre-processing}
+
+The {\cpsa} tool performs a pre-processing step before it interprets
+its input.  There are two important features that take place during
+pre-processing: macros and file inclusion.
+
+\paragraph{File inclusion.}
+\ttindex{include} {\cpsa} input files that become large enough become
+unweildy, and the user may wish to break them down into logical
+components and include one file in another.  For instance, one might
+wish to separate protocol definitions out so they can be reused, or
+a user might wish to put together a file of macros they find useful.
+To include one file in another, add \texttt{(include "filename")}
+as a top-level S-expression where you wish that file to be included.
+Inclusion recognizes only relative paths.
+
+\paragraph{Macros.}
+\ttindex{defmacro} \index{macros} The {\cpsa} pre-processor interprets
+macros.
+
+\index{examples!Envelope protocol!macros in}
+To define a macro in a {\cpsa} input file, use the \texttt{defmacro}
+keyword in an S-expression.  The \texttt{envelope.scm} file in the
+examples directory uses the following macro:
+
+\begin{verbatim}
+;; This is the refusal token
+(defmacro (refuse n pcr v k aik)
+  (enc "quote" (extend "refuse" (extend n pcr)) (enc v k) aik))
+\end{verbatim}
+
+The first input to the defmacro defines the format that will trigger
+the macro.  In this case, the first macros are defined for an
+S-expression with keyword \texttt{refuse} and five additional inputs.
+The second input to the defmacro describes what the macro should be
+replaced with.  Symbols that exactly match the subsequent symbols in
+the first input are interpreted as standing for the inputs when the
+macro is used.  So for instance \texttt{(refuse a b c d e)} would be
+replaced by
+
+\begin{verbatim}
+(enc "quote" (extend "refuse" (extend a b)) (env c d) e)
+\end{verbatim}
+
+\noindent
+wherever it appears in what follows.  \index{macros!nesting} Macros
+can call on other macros, but there is a depth limit to the amount of
+recursion that this can entail.  In the example, \texttt{extend} is
+actually another macro.
+
+\ttindexalt{\^}{(macro splicing)}
+\index{macros!splicing} Normally a \texttt{defmacro} will
+replace a symbol with a single S-expression, but the \texttt{\^}
+(splice) keyword can be used to indicate that a macro should be
+replaced with more than one S-expression.  This may be of use, for
+instance, to describe a portion of a role's trace, when defining
+multiple roles with some behavior in common.  For instance:
+
+\begin{verbatim}
+(defmacro (handshake n a b)
+  (^ (send (enc "hello" a b n (pubk b)))
+     (recv (enc "hello-received" a n (pubk a))))
+\end{verbatim}
+
+Note that the pre-processor actually handles the splice keyword as a
+separate pre-processing step after macro expansion.  For this reason,
+use of \texttt{\^} outside of macros can produce unanticipated behavior.
+
+\section{CPSA input syntax}
+\label{sec:input}
+
+The complete syntax for the analyzer using the Basic Crypto Algebra is
+shown in Table~\ref{tab:syntax}.  The start grammar symbol is
+\textsc{file}, and the terminal grammar symbols are: \textsc{(, ),
+  symbol, string, integer,} and the constants set in typewriter font.
+
+The \textsc{alist}, \textsc{prot-alist}, \textsc{role-alist},
+and \textsc{skel-alist} productions are Lisp style association lists,
+that is, lists of key-value pairs, where every key is a symbol.
+Key-value pairs with unrecognized keys are ignored, and are available
+for use by other tools.  On output, unrecognized key-value pairs are
+preserved when printing protocols, but elided when printing skeletons.
+
+\begin{table}
+\begin{center}\scshape
+\begin{tabular}{rcl}
+file&$\leftarrow$&herald?~form+
+\\herald&$\leftarrow$&
+(\sym{herald}~$[\mbox{symbol}\mid\mbox{string}]$~alist)
+\\form&$\leftarrow$&(\sym{comment}~$\ldots)\mid\mbox{protocol}\mid\mbox{skeleton}\mid\mbox{goal}$
+\\ protocol&$\leftarrow$&
+(\sym{defprotocol} id alg role+ rule$\ast$ prot-alist)
+\\ id&$\leftarrow$&symbol
+\\ alg&$\leftarrow$&\sym{basic}~$\mid$~\sym{diffie-hellman}
+\\ role&$\leftarrow$&
+(\sym{defrole} id vars trace role-alist)
+\\ vars&$\leftarrow$&
+(\sym{vars} vdecl$\ast$)
+\\ vdecl&$\leftarrow$&(id+ sort)
+\\ trace&$\leftarrow$&(\sym{trace} \{event $\mid$ annot\}+)
+\\ event&$\leftarrow$&({dir id? term})
+\\ dir&$\leftarrow$&$\sym{send}\mid\sym{recv}\mid\sym{load}\mid\sym{stor}$
+\\ annot&$\leftarrow$&(\sym{cheq} id term) $\mid$ 
+                       (\sym{rely} conclusion) $\mid$ (\sym{guarantee} conclusion)
+\\ rule&$\leftarrow$&(\sym{defrule} id sentence alist)
+\\ role-alist&$\leftarrow$&role-decl\mbox{ role-alist }$\mid$~\mbox{alist role-alist}
+\\ alist&$\leftarrow$&(symbol~$\ldots$)?\mbox{ alist?}
+\\ skeleton&$\leftarrow$&
+(\sym{defskeleton} id vars strand+ skel-alist)
+\\ strand&$\leftarrow$& (\sym{defstrand} id integer maplet$\ast$)
+\\ &$\mid$&(\sym{defstrandmax} id integer? maplet$\ast$)
+\\ &$\mid$&(\sym{deflistener} term)
+\\ maplet&$\leftarrow$&
+(term term)
+\\ skel-alist&$\leftarrow$&\mbox{skel-decl skel-alist }$\mid$~\mbox{alist skel-alist}
+\\ &$\mid$&$(\sym{precedes}\mbox{ node-pair}\ast)\mbox{ skel-alist}$
+\\ &$\mid$&$(\sym{leadsto}\mbox{ node-pair}\ast)\mbox{ skel-alist}$
+\\ &$\mid$&(\sym{goal} sentence+)$\mid$~$(\sym{facts} (\mbox{id term*}))$
+\\ node-pair&$\leftarrow$&(node node)
+\\ node&$\leftarrow$&(integer integer)
+\\ goal&$\leftarrow$&(\sym{defgoal} id sentence+ alist)
+\end{tabular}
+\end{center}
+\caption[{\cpsa} Input Syntax]{{\cpsa} Input Syntax.  See
+  Tables~\ref{tab:basic_term} and~\ref{tab:dh_term} for algebra syntax
+  (for the $\scap{term}$ and $\scap{sort}$ symbols),
+  Table~\ref{tab:decl_syntax} for declaration syntax (for the
+  $\scap{role-decl}$ and $\scap{skel-decl}$ symbols), and
+  Table~\ref{tab:goal_syntax} for goal syntax (for the
+  $\scap{sentence}$ and $\scap{conclusion}$ symbols).}
+\label{tab:syntax}
+\end{table}
+
+The contents of a file can be interpreted as a sequence of
+S-expressions.  The S-expressions used are restricted so that most
+dialects of Lisp can read them, and characters within symbols and
+strings never need quoting.  Every list is proper.  An S-expression
+atom is either a \textsc{symbol}, an \textsc{integer}, or a
+\textsc{string}.  The characters that make up a symbol are the
+letters, the digits, and the special characters in
+``\verb|-*/<=>!?:$%_&~^+|''.  A symbol may not begin with a digit or a
+sign followed by a digit.  The characters that make up a string are
+the printing characters omitting double quote and backslash, except
+when double quote and backslash are escaped using the backslash
+character.  Double quotes delimit a string.  A comment\index{comments}
+begins with a semicolon, or is an S-expression list at top-level that
+starts with the \texttt{comment} symbol.
+
+\section{Algebra reference}\label{sec:algebra_ref}
+
+\subsection{Basic crypto algebra}
+
+\begin{table}
+\centering
+%
+\begin{tabular}{|lll|}\multicolumn{3}{c}{Sorts}\\ \hline
+  Sorts:
+  & \multicolumn{2}{l|}{\scap{name}, \scap{text},
+    \scap{data}, \scap{tag}, \scap{skey}, \scap{akey}  $<$
+    \scap{mesg}} \\
+  &  \multicolumn{2}{l|}{\scap{chan}, \scap{locn} $<$ \scap{mesg}} \\
+  \hline \multicolumn{3}{c}{Operations}\\ \hline
+  $\enc{\cdot}{(\cdot)}\phantom{\colon}$ &
+  $\scap{mesg}\times\scap{mesg}\rightarrow\scap{mesg} $&
+  Encryption\\ $(\cdot,\cdot)\phantom{\colon}$ &
+  $\scap{mesg}\times\scap{mesg}\rightarrow\scap{mesg}$
+  &Pairing\\
+  $\#(\cdot)\phantom{\colon}$ & $\scap{mesg} \rightarrow \scap{mesg}$ & Hashing \\
+  $K_{(\cdot)}\phantom{\colon}$ &
+  $\scap{name}\rightarrow\scap{akey}$ &Public key of
+  name\\ $K^{s}_{(\cdot)}\phantom{\colon}$ &
+  $\scap{name}\rightarrow\scap{akey}$ & $s$-Public key of
+  name\\ $(\cdot)^{-1}\phantom{\colon}$ &
+  $\scap{akey}\rightarrow\scap{akey}$ &Inverse of
+  key\\ $\cn{ltk}(\cdot,\cdot)\phantom{\colon}$ &
+  $\scap{name}\times\scap{name}\rightarrow\scap{skey}$ & Long-term key\\
+  \hline
+%
+\multicolumn{3}{c}{Constants}\\ \hline
+$Tags$ $\phantom{\colon}$ & $\scap{tag}$ & Tag constants \\ \hline
+\multicolumn{3}{c}{Equations}\\ \hline
+%
+$(a^{-1})^{-1} = a$ & $a \colon \scap{akey}$ &  \\ \hline
+\multicolumn{3}{c}{Derivations}\\ \hline
+$m_0, m_1 \vDash \enc{m_0}{m_1}$ & $m_0, m_1 \colon \scap{mesg}$ & Encryption \\
+$m_0, m_1 \vDash (m_0, m_1)$ & $m_0, m_1 \colon \scap{mesg}$ & Pairing \\
+$(m_0, m_1) \vDash \{m_0, m_1\}$ & $m_0, m_1 \colon \scap{mesg}$ & Destructuring \\
+$\enc{m}{k}, \mathrm{inv}(k) \vDash m$ & $m, k \colon \scap{mesg}$ & Decryption \\
+$m \vDash \#(m)$ & $m \colon \scap{mesg}$ & Hashing\\
+\hline
+%
+\end{tabular}
+\caption{The Basic Cryptoalgebra}
+\label{tab:basic_algebra_signature}
+\end{table}
+
+The basic crypto algebra is an order-sorted algebra with signature
+described in Table~\ref{tab:basic_algebra_signature}.  The algebra is
+the free order-sorted algebra generated by the function symbols,
+sorts, and constants given, modulo the one equation.
+
+Additionally, {\cpsa} reasons about derivability of values from other
+values, and the basic derivation rules are given in the table, where
+$\mathrm{inv}$ is defined as follows (with $\bot$ indicating
+``undefined''):
+\begin{equation}
+%
+\mathrm{inv}(a) = \left\{
+%
+\begin{array}{ll}
+%
+a^{-1} & \mbox{if $a : \scap{akey}$}\\
+%
+a & \mbox{if $a$ is not a variable of sort $\scap{mesg}$} \\
+%
+\bot & \mbox{otherwise}.
+%
+\end{array}
+%
+\right.  %}
+\end{equation}
+
+Because $\mathrm{inv}$ is undefined on variables of sort
+$\scap{mesg}$, {\cpsa} cannot handle protocols or skeletons in which a
+value is encrypted with such a variable.  This is a consequence of the
+choice we made in the design of {\cpsa} to use only one encryption
+function symbol, despite there being two forms of encryption
+(symmetric and asymmetric).  When encrypting with a variable of sort
+$\scap{mesg}$, the type of encryption is ambiguous.
+
+Table~\ref{tab:basic_term} describes the grammar for basic crypto
+algbera messages in the input syntax.
+
+\begin{table}
+\centering{\scshape
+\begin{tabular}{rcl}
+\\ alg&$\leftarrow$&$\sym{basic}$
+\\
+  sort&$\leftarrow$&$\sym{text}\mid\sym{data}\mid\sym{name}\mid\sym{tag}\mid\sym{skey}\mid\sym{akey}$\\
+  &$\mid$&$\sym{chan}\mid\sym{locn}\mid\sym{mesg}\mid$ id
+\\ id&$\leftarrow$&symbol
+\\ term&$\leftarrow$&
+$\mbox{id}\mid(\sym{pubk}\mbox{ id})
+\mid(\sym{privk}\mbox{ id})
+\mid(\sym{invk}\mbox{ id})$
+\\ &$\mid$&$(\sym{pubk}\mbox{ id}\mbox{ string})
+\mid(\sym{privk}\mbox{ id}\mbox{ string})$
+\\ &$\mid$&$(\sym{ltk}\mbox{ id id})\mid\mbox{string}\mid(\sym{cat}\mbox{ term+})$
+\\ &$\mid$&$(\sym{enc}\mbox{ term+ term})\mid(\sym{hash}\mbox{ term+})$
+\\ &$\mid$&$(\mbox{id term+})$
+\end{tabular}}
+\caption{{\cpsa} Basic Algebra Syntax; {sorts}, operators \textsc{id}
+  from \textsc{Lang} field}\label{tab:basic_term}
+\end{table}
+
+Each of these function symbols has a specific interpretation in the
+algebra signature; for instance, \texttt{enc} refers to the
+$\enc{\cdot}{\cdot}$ function symbol, and \texttt{pubk} refers to the
+$K_{(\cdot)}$ function symbol when it has one input, but to
+$K^s_{(\cdot)}$ when it has two inputs, where the second is $s$.
+\texttt{privk} refers to the composition of either $K_{(\cdot)}$ or
+$K^s_{(\cdot)}$ with $(\cdot)^{-1}$.
+
+\subsection{The Diffie-Hellman crypto algebra}
+\label{sec:input:dh}
+
+The Diffie-Hellman crypto algebra is an order-sorted algebra with signature
+described in Table~\ref{tab:dh_algebra_signature}.  The algebra is
+the free order-sorted algebra generated by the function symbols,
+sorts, and constants given, modulo the equations.
+
+\begin{table}
+\centering
+%
+\begin{tabular}{|lll|}
+\multicolumn{3}{c}{Sorts}\\ \hline
+Sorts: & \multicolumn{2}{l|}{\scap{name}, \scap{text}, \scap{data}, \scap{tag}, \scap{skey}, \scap{akey}, \scap{base}  $<$ \scap{mesg}} \\
+       & \multicolumn{2}{l|}{\scap{rndx} $<$ \scap{expt} $<$ \scap{mesg}} \\
+  &  \multicolumn{2}{l|}{\scap{chan}, \scap{locn} $<$ \scap{mesg}} 
+\\ \hline \multicolumn{3}{c}{Operations}\\ \hline
+$\enc{\cdot}{(\cdot)}\phantom{\colon}$ &
+$\scap{mesg}\times\scap{mesg}\rightarrow\scap{mesg} $& Encryption\\
+$(\cdot,\cdot)\phantom{\colon}$ &
+$\scap{mesg}\times\scap{mesg}\rightarrow\scap{mesg}$ &Pairing\\
+$\#(\cdot)\phantom{\colon}$ & $\scap{mesg} \rightarrow \scap{mesg}$ & Hashing \\
+$K_{(\cdot)}\phantom{\colon}$ &
+$\scap{name}\rightarrow\scap{akey}$ &Public key of name\\
+$K^{s}_{(\cdot)}\phantom{\colon}$ &
+$\scap{name}\rightarrow\scap{akey}$ & $s$-Public key of name\\
+$(\cdot)^{-1}\phantom{\colon}$ & $\scap{akey}\rightarrow\scap{akey}$ &Inverse of key\\
+$\cn{ltk}(\cdot,\cdot)\phantom{\colon}$ &
+$\scap{name}\times\scap{name}\rightarrow\scap{skey}$ & Long-term key \\
+$\cn{bltk}(\cdot,\cdot)\phantom{\colon}$ &
+$\scap{name}\times\scap{name}\rightarrow\scap{skey}$ & Bi-directional LTK \\
+$(\cdot)^{(\cdot)}\phantom{\colon}$ & $\scap{base} \times \scap{expt} \rightarrow \scap{base}$ &
+Exponentiation \\
+$(\cdot \cdot)\phantom{\colon}$ & $\scap{expt} \times \scap{expt} \rightarrow \scap{expt}$ &
+Multiplication \\
+$i(\cdot) \phantom{\colon}$ & $\scap{expt} \rightarrow \scap{expt}$ & Mult. Inverse\\
+\hline
+%
+\multicolumn{3}{c}{Constants}\\ \hline
+$Tags$ $\phantom{\colon}$ & $\scap{mesg}$ & Tag constants \\
+$g \phantom{\colon}$ & $\scap{base}$ & Generator \\
+$1 \phantom{\colon}$ & $\scap{expt}$ & Mult. Identity \\ \hline
+
+\multicolumn{3}{c}{Equations}\\ \hline
+%
+$(a^{-1})^{-1} = a$ & & $a \colon \scap{akey}$\\
+$\cn{bltk}(a,b) = \cn{bltk}(b,a)$ & & $a, b \colon \scap{name}$ \\
+$xy = yx$ & $x(yz) = (xy)z$ & $x, y \colon \scap{expt}$\\
+$x1 = x$ & $x(i(x)) = 1$ & $x \colon \scap{expt}$ \\
+$h^1 = h$ & $(h^x)^y = h^{(xy)}$ & $h \colon \scap{base}, x, y \colon \scap{expt}$ \\
+\hline
+\multicolumn{3}{c}{Derivations}\\ \hline
+$m_0, m_1 \vDash \enc{m_0}{m_1}$ & $m_0, m_1 \colon \scap{mesg}$ & Encryption \\
+$m_0, m_1 \vDash (m_0, m_1)$ & $m_0, m_1 \colon \scap{mesg}$ & Pairing \\
+$(m_0, m_1) \vDash \{m_0, m_1\}$ & $m_0, m_1 \colon \scap{mesg}$ & Destructuring \\
+$\enc{m}{k}, \mathrm{inv}(k) \vDash m$ & $m, k \colon \scap{mesg}$ & Decryption \\
+$m \vDash \#(m)$ & $m \colon \scap{mesg}$ & Hashing\\
+$x, y \vDash xy$ & $x, y \colon \scap{expt}$ & Multiplication\\
+$x \vDash i(x)$ & $x \colon \scap{expt}$ & Inversion\\
+$h, x \vDash h^x$ & $h \colon \scap{base}, x \colon \scap{expt}$ & Exponentiation\\
+\hline
+%
+\end{tabular}
+%\caption[]{The Diffie-Hellman Cryptoalgebra, continued.}
+%\label{tab:dh_algebra_signature2}
+\caption{The Diffie-Hellman Cryptoalgebra}
+\label{tab:dh_algebra_signature}
+\end{table}
+
+\ttindex{expt}
+In Section~\ref{sec:dh} we discussed modeling Diffie-Hellman in
+{\cpsa}, but we said almost nothing about the $\scap{expt}$ sort that
+features prominently in the algebra signature.  Our message model for
+Diffie-Hellman has two sorts of exponents.  The $\scap{rndx}$ sort is
+for exponents that are to be thought of as atomic values.  Randomly
+chosen exponents should always be of this sort, which is why
+\texttt{rndx} appears exclusively in our examples, while \texttt{expt}
+does not.  The $\scap{expt}$ sort is for compound expressions
+involving exponents.  There may also be variables of this sort, but
+they should not appear in protocol roles, and even using them in a
+\texttt{defskeleton} is unusual.  However, they do appear in the
+output with some frequency, due to one of two kinds of bits of
+reasoning: first, a base variable (say, $h$) may be rewritten as an
+explicit power of $g$.  When this happens, since $h$ could stand for
+any power of $g$ including a power with a complex variable, if we
+rewrite $h$ as $g^z$, $z$ will need to be of the generic $\scap{expt}$
+sort so that those possibilities are covered.  Second, {\cpsa} will
+sometimes assume the presence of a value in some instance related to
+another one, and a generic $\scap{expt}$ variable is used to capture
+the somewhat arbitrary relationship between the two.
+
+Table~\ref{tab:dh_term} describes the grammar for Diffie-Hellman
+crypto algbera messages in the input syntax.  Symbols in the grammar
+appearing in the grammar for the basic crypto algebra retain their
+same interpretation.  Additionally, the \texttt{gen} and \texttt{one}
+symbols, used as 0-ary function symbols, specify the $g$ and $1$
+constants, respectively.
+
+\begin{table}
+\centering{\scshape
+\begin{tabular}{rcl}
+\\ alg&$\leftarrow$&$\sym{diffie-hellman}$
+\\
+  sort&$\leftarrow$&$\sym{text}\mid\sym{data}\mid\sym{name}\mid\sym{tag}\mid\sym{skey}\mid\sym{akey}$
+\\ &$\mid$ & $\sym{rndx}~\mid\sym{expt}\mid\sym{base}\mid\sym{chan}\mid\sym{locn}\mid\sym{mesg}\mid$ id
+\\ id&$\leftarrow$&symbol
+\\ term&$\leftarrow$&
+$\mbox{id}\mid(\sym{pubk}\mbox{ id})
+\mid(\sym{privk}\mbox{ id})
+\mid(\sym{invk}\mbox{ id})$
+\\ &$\mid$&$(\sym{pubk}\mbox{ id}\mbox{ string}) 
+\mid(\sym{privk}\mbox{ id}\mbox{ string})$
+\\ &$\mid$&$(\sym{ltk}\mbox{ id id})\mid\mbox{string}\mid(\sym{cat}\mbox{ term+})$
+\\ &$\mid$&$(\sym{enc}\mbox{ term+ term})\mid(\sym{hash}\mbox{ term+})$
+\\ &$\mid$&$(\sym{exp}\mbox{ term term })\mid(\sym{gen})\mid(\sym{mul}\mbox{ term term})$
+\\ &$\mid$&$(\sym{rec}\mbox{ term})\mid (\mbox{id term+})$
+\end{tabular}}
+\caption{{\cpsa} Diffie-Hellman Algebra Syntax}\label{tab:dh_term}
+\end{table}
+\section{Declaration syntax}
+\label{sec:decl_syntax}
+
+Table~\ref{tab:decl_syntax} gives a grammar for the syntax of native
+and user-defined declarations.  For the purposes of this table, there
+are two top-level symbols: \textsc{role-decl} and \textsc{skel-decl}.
+
+\begin{table}
+\begin{center}\scshape
+  \begin{tabular}{rcl}
+\\ role-decl&$\leftarrow$&(one-term-decl ht-term+)
+%   \\ &$\mid$&(two-term-decl ht-termpair+)
+%   \\ &$\mid$&(\sym{neqlist} ht-termlist+)
+%   \\ &$\mid$&(\sym{subsort} ht-subsort+)
+%   \\ &$\mid$&(\sym{fn-of} ht-function+)
+%   \\ &$\mid$&(\sym{decl} symbol ht-general+)
+\\ &$\mid$&(\sym{critical-sections} (integer integer)+)
+\\ &$\mid$&(\sym{priority} (height integer)+)
+\\ &$\mid$&(\sym{facts} (id term*)*)~$\mid$~(\sym{assume} conclusion*)
+\\ one-term-decl&$\leftarrow$&\sym{non-orig}~$\mid$~\sym{pen-non-orig}~$\mid$~\sym{uniq-orig}~$\mid$~\sym{uniq-gen}
+\\ &$\mid$&\sym{conf}~$\mid$~\sym{auth}~$\mid$~\sym{gen-st}
+%\\ two-term-decl&$\leftarrow$&\sym{absent}  % \sym{neq}~$\mid$~\sym{lt}
+\\ height&$\leftarrow$&integer
+\\ ht-term&$\leftarrow$&term~$\mid$~(term height)
+%   \\ ht-termpair&$\leftarrow$&(term term)~$\mid$~(term term height)
+%   \\ ht-termlist&$\leftarrow$&(term+)~$\mid$~(term+ height)
+%   \\ ht-subsort&$\leftarrow$&(aux ht-term+)
+%   \\ ht-function&$\leftarrow$&(aux ht-termpair+)
+%   \\ ht-general&$\leftarrow$&((term$\ast$) (height$\ast$))
+%   \\ aux&$\leftarrow$&string~$\mid$~symbol~$\mid$~integer
+\\ skel-decl&$\leftarrow$&(one-term-decl term+)
+\\ &$\mid$&(two-term-decl (term term)+)
+%   \\ &$\mid$&(\sym{neqlist} (term+)+)
+%   \\ &$\mid$&(\sym{subsort} subsort+)
+%   \\ &$\mid$&(\sym{fn-of} function+)
+%   \\ &$\mid$&(\sym{decl} symbol general+)
+\\ &$\mid$&(\sym{facts} (id term*)*)
+\\ &$\mid$&(\sym{priority} (node integer)+)
+%   \\ subsort&$\leftarrow$&(aux term+)
+%   \\ function&$\leftarrow$&(aux (term term)+)
+%   \\ general&$\leftarrow$&((term$\ast$) (node$\ast$))
+\\ node&$\leftarrow$&(integer integer)
+  \end{tabular}
+\end{center}
+\caption[Declaration syntax]{Declaration syntax.  See
+  Tables~\ref{tab:basic_term} and~\ref{tab:dh_term} for the algebra
+  syntax, which defines the $\scap{term}$ symbols.  See
+  Table~\ref{tab:goal_syntax} for formulas \textsc{conclusion}.  }
+\label{tab:decl_syntax}
+\end{table}
+
+\section{Command-line options}
+\label{sec:options}
+
+The following command-line options are defined for the {\cpsa} program:
+
+\begin{itemize}
+\index{options!output}
+\item `o' (``output'') -- specifies a file to which the output will be written.
+  Usage: \texttt{-o FILE} or \texttt{--output=FILE}.
+  \index{options!limit} \index{step limit}
+\item `l' (``limit'') -- specifies a step limit (see
+  Section~\ref{sec:bounds}).  By default, the step limit is 2000.
+  Usage: \texttt{-l INT} or \texttt{--limit=INT}.
+  \index{options!bound} \index{strand bound}
+\item `d' (``depth'') -- specifies a depth limit (see
+  Section~\ref{sec:bounds}).  The depth limit is infinite by default.
+  Usage: \texttt{-d INT} or
+  \texttt{--depth=INT}. \index{options!depth} \index{depth limit}
+\item `b' (``bound'') -- specifies a strand bound (see Section~\ref{sec:bounds}).
+  By default, the strand bound is 12.
+  Usage: \texttt{-b INT} or \texttt{--bound=INT}.
+\index{options!margin}
+\item `m' (``margin'') -- specifies the number of characters allowed
+  per line in the output. By default, the margin is 72.
+  Usage: \texttt{-m INT} or \texttt{--margin=INT}.
+\index{options!expand}
+\item `e' (``expand'') -- expands macros only.  For use in debugging
+  macros; when run with this option, the tool does not analyze its
+  input.
+\index{options!noanalyze}
+\item `z' (``noanalyze'') -- loads the input but does not analyze.
+    This could be used for checking whether any errors are present in
+    the input.
+\index{options!noisochk}
+\item `n' (``noisochk'') -- disable isomorphism checks.  {\bf Not
+  recommended except in rare circumstances.}  When the tool produces a
+  new skeleton, it only gets a number in the output if no isomorphic
+  skeleton has already been found.  With isomorphism checking
+  disabled, many analyses that otherwise terminate will not terminate.
+  However, there is one advantage.  \index{seen child} Normally, when
+  a skeleton is found more than once in an analysis, its operation
+  field (see Section~\ref{sec:kerberos2}) is displayed only for the
+  first time that skeleton is found.  Other instances are not
+  annotated with an operation field but instead simply link to the
+  isomorphic skeleton.
+\index{options!check-nonces} \index{check-nonces option}
+\item `c' (``check-nonces'') -- check nonces first.  Normally, the
+  tool will consider the largest possible critical term when attempting
+  to solve an unrealized node.  This option flips the default behavior.
+  Some analyses terminate only with this option, while others perform
+  better with this option.
+\index{options!try-old-strands} \index{try-old-strands option}
+\item `t' (``try-old-strands'') -- try old strands first.  Normally,
+  when there are unrealized nodes on multiple strands, the tool will
+  focus on the highest-numbered (rightmost in the diagram) strand with
+  unrealized nodes.  This option flips the default behavior.  Some
+  analyses terminate only with this option, while others perform
+  better with this option.
+\index{options!reverse-nodes} \index{reverse-nodes option}
+\item `r' (``reverse-nodes'') -- try younger nodes first.  Normally,
+  when a strand containing unrealized nodes is chosen for analysis, if
+  there are multiple unrealized nodes, the earliest (oldest) node is
+  analyzed.  This option flips the default behavior.  Some analyses
+  terminate only with this option, while others perform better with
+  this option.
+\index{options!goals-sat} \index{goals-sat option}
+\item `g' (``goals-sat'') -- stop when goals are satisfied.  Normally,
+  a \texttt{defgoal} is converted to a skeleton and analyzed, and only
+  shapes are compared to the goals.  With this option enabled, the
+  goals are checked against every intermediate skeleton, and branches
+  of the analysis in which the goals are satisfied are not further
+  pursued.  The output analysis will show the skeletons in which the
+  goals were first satisfied, and any shapes in which the goals were
+  not satisfied.  In a sense, running {\cpsa} with this option asks
+  the question: what are all the ways in which this goal may not be
+  satisfied?
+\index{options!algebra} \index{algebra} \index{Diffie-Hellman!algebra}
+\item `a' (``algebra'') -- sets the algebra to use for the input.  The
+  analysis tool expects to run with a single algebra for an entire
+  session.  By default the tool uses the \texttt{basic} algebra; an
+  input file using the Diffie-Hellman algebra will cause an error
+  unless you specify the \texttt{diffie-hellman} algebra via this
+  option.
+  Usage: \texttt{-a STRING} or \texttt{--algebra=STRING}.
+\index{options!show-algebras}
+\item `s' (``show-algebras'') -- causes the tool to print a list of the
+  allowed algebras, instead of performing any analysis.
+\index{options!help}
+\item `h' (``help'') -- causes the tool to print a list of
+  command-line options, and also to print the directory in which the
+  package's documentation exists.  When run with this option, the tool
+  will not perform any analysis.
+\index{options!version}
+\item `v' (``version'') -- causes the tool to simply print its version
+  number rather than performing any analysis.
+
+\end{itemize}
+
+Additionally,
+
+\begin{itemize}
+  \item To protect {\cpsa} against memory exhaustion, run {\cpsa} with
+    the command-line options \verb|+RTS -M512m -RTS|.
+
+  \item To make use use of parallelism on an $n$-processor machine,
+    start {\cpsa} with the command-line options \verb|+RTS -N|$n$\verb| -RTS|.
+\end{itemize}
+
+See the GHC User's Guide \cite{ghcUsersGuide} for documentation on these and other options.
+
+\subsection{Heralds}
+\label{sec:heralds}
+\index{herald}
+At the top of each {\cpsa} input file is, optionally, a \texttt{herald}
+that is an alternate way to specify command-line options.  All of the
+examples in the examples directory contain heralds.  The herald, in
+addition to setting certain options for the analyzer, is also included
+in the output file, which may be useful to the analyst in
+distinguishing one analysis from a similar, related one.
+
+Options are included in the herald by constructing an S-expression
+with first element equal to the long name of an option, and the second
+element (if any) set to be the parameter for that option.  For instance,
+\texttt{(algebra diffie-hellman)} is included for all the examples that
+use the \texttt{diffie-hellman} algebra.
+
+Command-line options override the herald.  Also, certain command-line
+options are not allowed in the herald, specifically, ``output'',
+``help'', ``version'', and ``show-algebras''.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "cpsa4manual"
+%%% End:

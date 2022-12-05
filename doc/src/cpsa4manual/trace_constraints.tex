@@ -1,0 +1,22 @@
+
+\chapter{Trace constraints}
+\label{chap:trace:constraints}
+
+In some cases, one wants to declare properties that all of the
+``real'' instances of a role must satisfy.  For instance, possibly two
+parameters will never receive the same value, e.g.~because a server is
+required to check that the client name in a transaction is different
+from its own name.  {\cpsa} presents several ways of ensuring such
+constraints, some of which may be logically indistinguishable as far
+as {\cpsa} is concerned, while representing different operational
+consequences for other tools, such as the Zappa {\cpsa}-to-Rust
+compiler.
+
+%%  Must include:  rely; guarantee; cheq  
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "cpsa4manual"
+%%% End:

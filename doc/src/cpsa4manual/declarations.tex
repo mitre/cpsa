@@ -1,0 +1,438 @@
+\chapter{Constraining CPSA's search}
+\label{ch:declarations}
+
+If you have read Chapters~\ref{ch:basic} and~\ref{ch:algebra}, you
+have seen the \texttt{uniq-orig} and \texttt{non-orig} features, which
+are the first representatives of a large class of features called
+\emph{declarations}.  These ``declare'' certain assumed properties about
+an execution in order to constrain the tool's search.  In this chapter,
+we will describe more precisely the notion of execution that motivates
+the {\cpsa} analysis, and precisely define these and other declarations
+available for use in the tool.
+
+\section{Bundles: A Strand-Based Execution Model}
+\label{sec:bundles}
+
+\index{strand spaces} \index{event} The {\cpsa} tool is based on
+strand space theory~\cite{DoghmiGuttmanThayer07}.  A strand is simply
+a sequence of \emph{events}, which are transmissions or receptions of
+messages.
+
+A bundle is a set of strands, along with a satisfaction relation
+$\rightarrow$ from transmissions to receptions, where for every
+reception event $e_1$ of a message $m$, there is a unique transmission
+event $e_0$ of $m$ such that $e_0 \rightarrow e_1$, and such that the
+graph formed on the events of the strands with edges defined by
+$\rightarrow$ and strand succession is acyclic.
+
+Bundles express an explanatory framework in which a set of sequential
+viewpoints of transmissions and receptions is self-contained.  Although
+bundles do not totally order the events, they express the orderings that
+are essential due to causality.
+
+The most basic notion of a protocol is simply a set of roles which are
+each themselves strands representing a template of behavior.  A bundle
+is a bundle \emph{of a protocol} $P$ if every strand in the bundle is
+either an instance of a role in $P$ or an instance of a penetrator
+role.  There are two types of penetrator roles: derivation roles and
+the ``create'' role.  The derivation roles are determined by the
+message model; one matches each derivability rule in the algebra used.
+The create role consists of a one-event strand in which certain basic
+values may be transmitted.  This always includes all constants (such
+as tag constants or the generator $g$ in the Diffie-Hellman algebra),
+and also includes all values of basic sorts: the sorts other than
+$\scap{mesg}$ in the basic algebra, and those sorts plus the
+$\scap{rndx}$ sort in the Diffie-Hellman algebra.
+
+\section{Secrecy assumptions}
+\label{sec:secrecy_assumptions}
+A priori, the analysis of (say) the initiator's point of view in
+Needham-Schroeder is tasked with exploring all bundles of the
+Needham-Schroeder protocol in which an initiator instance of
+sufficient length is included.  As it turns out, there is a most
+general shape, namely, the full-length initiator instance, alone.
+However, the bundle this shape describes is not of great interest,
+because the nonce chosen by the initiator appears in a ``create''
+instance.
+
+An assumption of secrecy is, in essence, a statement that the analyst
+is interested only in certain bundles.  In the case of this nonce, for
+instance, we assume the nonce is secret and are thus uninterested in
+bundles in which that nonce appears in a ``create'' instance.
+
+There are four declarations that may be used in {\cpsa} to represent
+a secrecy assumption, but these assumptions are distinct from each other
+and each have a particular semantic and syntactic meaning.
+
+\index{carried subterm}
+To describe these assumptions, we first need some terminology.  We
+use ``carried'' to refer to subterms of a term that can potentially be
+obtained from that term via decomposition. A pair carries each of its
+elements, and an encryption carries its plaintext.  We extend this
+notion transitively, so for instance $\enc{n1, n2}{K(a)}$ carries $n1$
+since it carries the plaintext $(n1, n2)$ which in turn carries $n1$.
+
+\index{origination} We say that a value \emph{originates} on a strand
+when its first \emph{carried} occurrence is in a transmission.
+
+\begin{itemize}
+\index{origination!unique}
+\item A value \emph{uniquely originates} in a bundle if it originates
+  on exactly one strand.  Note that if the unique origination point of
+  a value is on a regular strand, then it cannot be produced in a
+  ``create'' instance because that would constitute a second point of
+  origination.
+
+\index{origination!non-origination}
+\item A value is \emph{non-originating} in a bundle if it does not
+  originate on any strands.  A simple lemma can show that a value is
+  non-originating only if it is not carried in any message in the
+  bundle.
+
+\index{origination!penetrator non-origination}
+\item A value is \emph{penetrator non-originating} in a bundle of
+  a protocol if it does not originate on any penetrator strands.
+  Clearly, such a value cannot be produced in a ``create'' instance.
+\end{itemize}
+
+\ttindex{uniq-orig} \ttindex{non-orig} \ttindex{pen-non-orig} The
+presence of a \texttt{uniq-orig}, \texttt{non-orig}, or
+\texttt{pen-non-orig} declaration of a value is a statement by the
+user that they are only interested in bundles in which the declared
+value uniquely originates, is non-originating, or is penetrator
+non-originating, respectively.
+
+\ttindex{uniq-gen} \index{generation} The fourth declaration that
+imposes a secrecy assumption is the \texttt{uniq-gen} declaration.  We
+say that a value \emph{generates} on a strand when its first
+occurrence (carried or not) in that strand is in a transmission.  The
+presence of a \texttt{uniq-gen} declaration of a value equates to a
+restriction to bundles in which the declared value generates on only
+one strand.  Note that if a value that generates uniquely generates on
+a regular strand, it cannot be produced in a ``create'' instance.
+
+The \texttt{uniq-orig} (resp. \texttt{uniq-gen}) declaration can only
+be used in {\cpsa} input for values that do originate (resp. generate)
+on the role or in the skeleton in which the declaration appears.  This
+forces the use of such declarations to create a secrecy assumption.
+
+\begin{exercise}
+Experiment with variants of your favorite simple protocol in which you
+try replacing \texttt{uniq-orig} with \texttt{uniq-gen} and/or
+\texttt{non-orig} with \texttt{pen-non-orig}.  What do you find?
+\end{exercise}
+
+\begin{exercise}
+Suppose a protocol you wish to model involves key management, and
+includes keys being encrypted and transmitted and received in
+encrypted form.  What declaration should you use to model a long-term
+(not recently chosen) key as secret, if you are concerned about the
+actual possibility of that key leaking?
+\end{exercise}
+
+Note: these four declarations (\texttt{uniq-orig, non-orig,
+  pen-non-orig,} and \texttt{uniq-gen}) may only be applied to basic
+values.  One of the main purposes of such declarations is to restrict
+the use of the ``create'' role in bundles, so such declarations on
+values that cannot be produced in the ``create'' role is undesirable.
+
+
+\section{Diffie-Hellman declarations}
+A declaration arises as a part of the algorithm {\cpsa} uses for
+Diffie-Hellman protocols.  Like other declarations, these may be
+provided as part of a protocol or skeleton input.
+
+\begin{itemize}
+
+  \item \ttindex{absent} The \texttt{absent} declaration specifies
+    that a particular \scap{rndx} variable does not occur in a base or
+    exponent expression.  This declaration is automatically added to
+    specify $x$ is absent within $y$ whenever $y$ is a base or
+    exponent expression that occurs in a strand in which $x$ is
+    declared \texttt{uniq-gen} before the point where $x$ is
+    generated.  This declaration is also added by the algorithm in
+    rare circumstances.
+%z
+\end{itemize}
+
+
+
+\iffalse 
+
+\section{Distinctness assumptions}
+\label{sec:distinct_decls}
+
+\index{inequality declarations}
+\index{distinctness declarations}
+One inconvenient consequence of representing protocol roles as strands
+is that certain kinds of checks are not easy to represent.  The
+structure of received terms implies that the participant executing the
+protocol is capable of parsing and checking such formats.  However,
+there is no way, with format, to represent a check that two values are
+unequal.
+
+The tool includes four special declarations that may be used to
+describe distinctness of values.
+
+\begin{itemize}
+
+\ttindex{neq}
+\item A pair of values may be declared unequal with the \texttt{neq}
+  declaration.  For instance, \texttt{(neq (a b))} restricts the
+  analysis to consider bundles in which $a \neq b$.  See
+  \texttt{neq\_test.scm} in the examples directory for examples of use.
+
+\ttindex{neqlist}
+\item A larger list of values may be declared distinct with the
+  \texttt{neqlist} declaration.  For instance, \texttt{(neqlist (a b c
+    d))} adds a requirement that $a, b, c$, and $d$ all be distinct
+  from one another.  This may be useful as shorthand, rather than the more
+  cumbersome \texttt{(neq (a b) (a c) (a d) (b c) (b d) (c d))}.
+
+\ttindex{subsort}
+\item The $\scap{data}$ and $\scap{text}$ sorts are identical to one
+  another, but they are distinct and thus allow a user to separate the
+  purpose of certain parameters from others, and exclude analyses in
+  which parameters are confused across types.  The \texttt{subsort}
+  declaration may be used to sub-categorize values into disjoint
+  classes, which may never be confused for each other.  For instance,
+  an e-commerce protocol may involve prices, quantities, item numbers,
+  et cetera.  Each subsort is named with a string.  For instance,
+  \texttt{(subsort ("A" a1 a2 a3) ("B" b1 b2))} defines two classes of
+  values, ``A'' and ``B'', and requires that no ``A'' value be equal
+  to any other value with a subsort other than ``A''.  So in
+  particular, all the $a$ variables are distinct from the $b$
+  variables and vice versa, but the $a$ variables are not required to
+  be distinct from each other.  See \texttt{subsort\_test.scm} in the
+  examples directory for examples of use.
+
+\ttindex{lt}
+\item Finally, one particular reason two values may be unequal is if
+  they are compared and put in an order.  For instance, in an auction,
+  a bid may be rejected only if another bid is strictly higher.  Or, a
+  value in a protocol model may be intended to represent time, and
+  some of these may be strictly orderable with respect to each other.
+  The \texttt{lt} declaration (short for ``less than'') asserts a
+  strict comparability between two values in a partial order.  For
+  instance, \texttt{(lt (a b))} declares that $b$ is less than $a$.
+  The presence of \texttt{lt} declarations on pairs of values
+  restricts the tool to bundles in which the implied orderings form no
+  cycles.  See \texttt{lt\_test.scm} in the examples directory for
+  examples of use.
+\end{itemize}
+
+For each of these declarations, {\cpsa} checks the conditions required
+at every skeleton it considers.  Those skeletons for which any
+required condition is violated are discarded.  You will never see a
+skeleton with (for instance) \texttt{(neq (a a))} in it.
+
+\section{Functional dependence assumptions}
+
+Another disadvantage of the lightweight way {\cpsa} represents
+protocols is that it does not understand the relationships between
+values involved in messages.  For instance, an e-commerce protocol
+may involve both identifiers for merchandise and prices.  An honest
+merchant would assign a consistent price to any particular item,
+but protocol roles and secrecy or distinctness assumptions cannot
+describe this particular scenario.
+
+\ttindex{fn-of} \index{functional dependence}
+For this purpose, {\cpsa} allows the declaration of a functional
+dependence using the \texttt{fn-of} declaration (short for ``function
+of'').  Like the \texttt{subsort} declaration, a subtag is required
+to identify the function, so that multiple independent functions could
+be described if necessary.  An example:
+
+\begin{center}
+\verb|(fn-of ("f" (y x) (z w)))|
+\end{center}
+
+This declaration says that there is a function $f$ such that $y=f(x)$
+and $z=f(w)$.  In the e-commerce example, if $f$ was the ``price of''
+function, then $x$ and $w$ would be items and $y$ and $z$ would be
+their respective prices.  The presence of a set of \texttt{fn-of}
+declarations restricts the tool's search so that in this case, if
+$x = w$ then $y = z$.
+
+\index{Yahalom protocol}\index{examples!Yahalom}
+The \texttt{fn-of} declaration is a powerful tool that can emulate
+function symbols in the algebra.  See \texttt{yahalom.scm} in the
+examples repository for an example protocol involving the \texttt{ltk}
+function symbol.  We can totally emulate the use of this function symbol
+via the \texttt{fn-of} declaration: see \texttt{fnof\_yahalom.scm} for how
+this is done.
+
+\index{init@\texttt{init}!use for introducing variables} It is important to note
+that one limitation of the \texttt{fn-of} declaration is that it
+cannot introduce variables not used in a skeleton or role.  The
+emulation of the \texttt{ltk} symbol in \texttt{fnof\_yahalom.scm}, for
+instance, requires three variables (the long-term key variable and the
+two names) where there were formerly only two.  {\cpsa} will ignore
+declarations involving variables not present anywhere, so in order to
+make sure these declarations are not ignored, we need to use the
+variables in the trace.  We use the \texttt{init} event (see
+Chapter~\ref{chap:channels:state}) to introduce these variables, since we know
+that without state events this will have no effect on the penetrator's
+abilities.
+
+\subsection{Equality constraints}
+
+\index{equality} \ttindex{eq} The \texttt{fn-of} declaration allows a
+user to express functional dependence relationships between values.
+In simpler inputs, it may be desirable to simply declare that two
+values are equal; this is particularly useful for Diffie-Hellman
+protocols, for instance, to declare that two separate parties agree on
+a session key.  The \texttt{eq} declaration simply declares that two
+values must be equal.  An example:
+
+\begin{center}
+  \verb|(eq ((exp (gen) (mul x y)) (exp (gen) (mul z w))))|
+\end{center}
+
+This declaration guarantees that $g^{xy} = g^{zw}$.
+
+\section{Role declarations and conditional role declarations}
+\label{sec:role_decls2}
+
+\index{role declarations} When a declaration is present in a
+\texttt{defskeleton} in an input file, the constraint is applied to
+all analyses that descends from that skeleton.  In
+Section~\ref{sec:blanchet} we discussed the notion of a role
+declaration and how such a declaration differs in meaning from a
+skeleton declaration.
+
+Here we discuss more precisely when a role declaration affects a
+skeleton.  Skeletons are made up of \emph{instances}, which follow
+the structure of a role, but instances do not have to be full-length.
+The declarations inherited in an instance of a role from the role
+may vary based on the length of the instance.
+
+Declarations are, most importantly, declarations on a term or list of
+terms.  A declaration is not inherited in an instance of height $h$
+(that is, an instance of the first $h$ events in the role) unless all the
+variables present in terms in the declaration are present in the first $h$
+events in the role's trace.
+
+The tool also regards declarations as about a node or list of nodes,
+although in most cases that list is empty.  There are two exceptions.
+\ttindex{uniq-gen} \ttindex{uniq-orig} The \texttt{uniq-gen} and
+\texttt{uniq-orig} declarations refer to the node at which the
+declared value generates or originates, but in an automatic and
+hidden way.
+
+Role declarations refer to a node which is a particular event in the
+role's trace.  In addition to the rule about variables in a
+declaration's terms, a declaration is only inherited if all its nodes
+are present in the instance.
+
+\index{role declarations!conditional} All the declarations natively
+included in the tool may include a node when used in a role.  This
+allows the user to describe declarations that are conditional on
+sufficient progress being made through the role's trace.  This may
+be appropriate when, for instance, a participant receives a certificate
+and comes to trust a party it has already started communicating with.
+
+A declaration is made conditional by replacing a term (or list of
+terms) with a list whose first element is the term (or list of terms)
+and whose second element is the node.  Most {\cpsa} declarations allow
+many declarations to be made in one S-expression; for instance
+\texttt{(non-orig k1 k2 k3)} is actually three distinct declarations
+rather than one.  To make the $k1$ declaration conditional on reaching
+node 3, we would write \texttt{(non-orig (k1 2) k2 k3)}.  See
+Table~\ref{tab:decl_syntax} for full detail on the syntax for
+conditional declarations.
+
+\section{Diffie-Hellman declarations}
+There are two declarations that arise as a part of the algorithm
+{\cpsa} uses for Diffie-Hellman protocols.  Like other declarations,
+these may also be provided as part of a protocol or skeleton input.
+
+\begin{itemize}
+
+  \item \ttindex{absent} The \texttt{absent} declaration specifies
+    that a particular \scap{rndx} variable does not occur in a base or
+    exponent expression.  This declaration is automatically added to
+    specify $x$ is absent within $y$ whenever $y$ is a base or
+    exponent expression that occurs in a strand in which $x$ is
+    declared \texttt{uniq-gen} before the point where $x$ is
+    generated.  This declaration is also added by the algorithm in
+    rare circumstances.
+
+  \item \ttindex{precur} The \texttt{precur} declaration specifies
+    that a particular node is present in the skeleton to be the
+    ``precursor'' for some other value.  This is used to prevent
+    {\cpsa} from failing to terminate in certain cases.
+\end{itemize}
+
+\section{Other declarations}
+\label{sec:other_decls}
+
+The tool makes use of declaration-like syntax for several other
+purposes.
+
+\paragraph{Precedes.}
+\ttindex{precedes} In {\cpsa} text output, you may notice an
+S-expression that starts with \texttt{precedes}.  This is how {\cpsa}
+records the orderings present in a skeleton, before it is graphed.
+You may also use precedes declarations within a \texttt{defskeleton},
+to set up orderings between strands.
+
+\ttindex{leadsto}
+\paragraph{Leadsto.}  Similarly, the \texttt{leadsto} field of
+a \texttt{defskeleton} specifies state causality orderings.  See
+Chapter~\ref{chap:channels:state} for more detail on what this means.
+
+\paragraph{Priority.}
+\ttindex{priority} The tool contains an ability to declare a priority
+for certain receptions that differs from the default.  Priority takes
+precedence over all other search orderings.  See
+Section~\ref{sec:decl_syntax} for the format requirements for
+declaring priorities, and the \texttt{priority\_test.scm} example in the
+examples directory.
+
+Note that the default priority is 5, and priority 0 indicates that the
+tool should never bother solving tests at those nodes.  This may be of
+use, for instance, if solving one particular node leads to infinite
+analysis, but other nodes would result in a quick determination that a
+skeleton is dead.
+
+\paragraph{User-defined declarations.}
+The final type of declaration supported by {\cpsa} is totally general,
+but does not affect the search.  Instead, this type of declaration is
+merely kept around as a note about the skeleton in question, but a
+note that is aware of its use of algebra variables and nodes and
+evolves as the skeleton evolves.
+
+\index{user-defined declarations} \ttindex{decl} This feature is meant
+for advanced users only, who may wish to write their own custom
+post-processing tools.  For this reason we do not give an example
+involving user-defined declarations; for the proper syntax, consult
+Table~\ref{tab:decl_syntax}.  The keyword to identify a user-defined
+declaration is \texttt{decl}.
+
+\fi
+
+
+
+\section{A Caution about typos}
+Declarations are typically found syntactically in ``association
+lists'' which include declarations and may also include other fields,
+whether in protocol declarations, role declarations within them, or in
+skeleton query declarations.  For instance, the {\cpsa} tool creates
+associations in its \texttt{defskeleton} outputs specifying things
+like the algorithmic method used to produce this skeleton, or the
+label of the parent, etc.  {\cpsa} handles comments in the same way.
+Any association list entry \verb|(header| \dots
+\emph{stuff}\dots\verb|)| in which the header is unrecognized is
+treated as a comment, and preserved in the output.  This is convenient
+not just for documenting your specifications, but also for defining
+material to be used not by {\cpsa} itself but by downstream tools.
+
+Be careful when using declarations that you do not mis-spell the
+keywords!  If you do, they will typically be treated just like a
+comment and ignored, so they will not have the effect you intended.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "cpsa4manual"
+%%% End:
