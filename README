@@ -15,7 +15,7 @@ have done, given the participant's view.  The search is complete,
 i.e. we proved every shape can in fact be found in a finite number of
 steps, relative to a procedural semantics of protocol roles.
 
-CPSA4 is based on a refactoring of CPSA2.  It is destinct from CPSA3.
+CPSA4 is based on a refactoring of CPSA2.  It is distinct from CPSA3.
 It is used to experiment with new features.  It is where a different
 security goal language, the strand-oriented language described in
 "Deducing Security Goals From Shape Analysis Sentences"
