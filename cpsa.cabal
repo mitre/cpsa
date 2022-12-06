@@ -240,8 +240,9 @@ Extra-Source-Files:
   tst/role_uniq.scm tst/role_uniq.tst tst/rule-node.scm
   tst/rule-node.tst tst/rule-order.scm tst/rule-order.tst
   tst/sigenc.scm tst/sigenc.tst tst/sorted_epmo_acctnum.scm
-  tst/sorted_epmo_acctnum.tst tst/sts.scm tst/sts_unflip.scm
-  tst/sts_weak.scm tst/subatomic-open-closed-test-genrule.scm
+  tst/sorted_epmo_acctnum.tst tst/sts.scm tst/sts.tst
+  tst/sts_unflip.scm tst/sts_unflip.tst tst/sts_weak.scm
+  tst/sts_weak.tst tst/subatomic-open-closed-test-genrule.scm
   tst/subatomic-open-closed-test-genrule.tst
   tst/subatomic-open-closed.scm tst/subatomic-open-closed.tst
   tst/sync_locn_envelope.scm tst/sync_locn_envelope.tst
