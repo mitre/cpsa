@@ -401,7 +401,7 @@ loadPrimary _ pos _ _ _ = fail (shows pos "Bad formula")
 loadAlgTerm :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
 loadAlgTerm sig ts x =
   do
-    t <- loadTerm sig ts True x
+    t <- loadTerm sig ts False x
     case isStrdVar t || isIndxVar t || isIndxConst t || isChan t || isLocn t of
       True -> fail (shows (annotation x) "Expecting an algebra term")
       False -> return t
@@ -410,7 +410,7 @@ loadAlgTerm sig ts x =
 loadAlgChanTerm :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
 loadAlgChanTerm sig ts x =
   do
-    t <- loadTerm sig ts True x
+    t <- loadTerm sig ts False x
     case isStrdVar t || isIndxVar t || isIndxConst t of
       True -> fail (shows (annotation x)
                     "Expecting an algebra term or a channel")

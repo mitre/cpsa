@@ -3175,8 +3175,9 @@ geq t t' _ (g, e)
   -- This always happens for goals because they must be role specific
   -- but it is not always true for rules.
   | not (matched e t) || not (matched e t') =
-      error ("In a rule equality check, " ++
-             "cannot find a binding for some variable")
+      []
+--         error ("In a rule equality check, " ++
+--                "cannot find a binding for some variable")
   | ti == ti' = [(g, e)]
   | otherwise = []
   where
