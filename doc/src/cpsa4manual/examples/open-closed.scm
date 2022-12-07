@@ -1,6 +1,5 @@
-(herald open-closed-alt 
+(herald open-closed-alt
 	(bound 40))
-
 
 (defprotocol open-closed basic
   (defrole dev-up
@@ -25,11 +24,11 @@
   (defrole owner-delg-key
     (vars (k skey) (n nb text) (d o b name) (to-b from-b chan))
     (trace
-     (recv from-b (cat "req-key" b nb)) 
+     (recv from-b (cat "req-key" b nb))
      (send to-b (delegate b d o nb n (hash-dk (cat b nb n k))))
      (recv (hash b nb n)))
      (conf to-b)
-     (auth from-b) 
+     (auth from-b)
     (uniq-orig n))
 
   (defrole passer-recv-key
@@ -40,7 +39,7 @@
      (send (hash b nb n))
      (load del-key-locn ign)
      (stor del-key-locn (key-rec b d o nb n kp)))
-    (uniq-orig nb) 
+    (uniq-orig nb)
     (auth to-b))
 
   (defrole passer-open
@@ -63,7 +62,7 @@
      (load lk (dev-key-state d o k))
      (recv (cat b n (enc (open-req b d o nb n) (hash-dk (cat b nb n k)))))
      (load ls (door-state d any))
-     (load lk (dev-key-state d o k))	; Important to re-check this is unchanged 
+     (load lk (dev-key-state d o k))	; Important to re-check this is unchanged
      (stor ls (door-state d (opened b nb n)))
      (send (hash (open-req b d o nb n))))
     (gen-st (dev-key-state d o k))
@@ -73,9 +72,9 @@
     (vars (k skey) (n nb text) (any mesg) (d o b name) (lk ls locn))
     (trace
      (load lk (dev-key-state d o k))
-     (recv (cat b n (enc (close-req b d o nb n) (hash-dk (cat b nb n k)))))     
+     (recv (cat b n (enc (close-req b d o nb n) (hash-dk (cat b nb n k)))))
      (load ls (door-state d any))
-     (load lk (dev-key-state d o k))	; Important to re-check this is unchanged 
+     (load lk (dev-key-state d o k))	; Important to re-check this is unchanged
      (stor ls (door-state d (closed o)))
      (send (hash (close-req b d o nb n))))
     (gen-st (dev-key-state d o k))
@@ -147,7 +146,3 @@
   (defstrand owner-power-dev 2 (k k))
   (defstrand dev-pass 4 (k k))
   (uniq-orig k))
-
-
- 
-

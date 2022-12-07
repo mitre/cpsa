@@ -27,6 +27,40 @@ in~\cite{guttman2014security,RoweEtAl2016}.  The precise semantics of
 the goal language is in~\cite{Ramsdell12}.  The syntax of
 security goals appears in Table~\ref{tab:goal_syntax}.
 
+\begin{table}
+\begin{center}\scshape
+  \begin{tabular}{rcl}
+ goal&$\leftarrow$&(\sym{defgoal} id sentence+ alist)
+\\ sentence&$\leftarrow$&(\sym{forall} (gvdecl$\ast$) implication)
+\\ gvdecl&$\leftarrow$&(id+ sort)~$\mid$~(id+ \sym{strd})~$\mid$~(id+ \sym{indx})
+\\ implication&$\leftarrow$&(\sym{implies} conjunction conclusion)
+\\ conjunction&$\leftarrow$&atomic~$\mid$~(\sym{and} atomic+)
+\\ conclusion&$\leftarrow$&(\sym{false})~$\mid$~existential
+\\ &$\mid$& (\sym{or} existential+)
+\\ existential&$\leftarrow$&conjunction~$\mid$~(\sym{exists} (gvdecl$\ast$) conjunction)
+\\ atomic&$\leftarrow$&(\sym{p} string strdvar integer)
+\\ &$\mid$&(\sym{p} string string strdvar term)
+\\ &$\mid$&(\sym{prec} strdvar index strdvar index)
+\\ &$\mid$&(\sym{leads-to} strdvar index strdvar index)
+\\ &$\mid$&(\sym{non} term)~$\mid$~(\sym{pnon} term)
+\\ &$\mid$&(\sym{uniq} term)~$\mid$~(\sym{uniq-at} term strdvar index)
+\\ &$\mid$&(\sym{ugen} term)~$\mid$~(\sym{ugen-at} term strdvar index)
+\\ &$\mid$&(\sym{=} strdvar strdvar)~$\mid$~(\sym{=} term term)
+    \\ &$\mid$&(\sym{fact} id term*)
+                %~$\mid$~(\sym{absent} (term term)+)
+\\ strdvar&$\leftarrow$&symbol
+\\ index&$\leftarrow$&symbol~$\mid$~integer
+  \end{tabular}
+\end{center}
+\caption[Goal syntax]{Goal syntax.  See Tables~\ref{tab:basic_term}
+  and~\ref{tab:dh_term} for the algebra syntax, which defines the
+  $\scap{term}$ and $\scap{sort}$ symbols.}
+\label{tab:goal_syntax}
+\end{table}
+
+\ttindex{defgoal}\ttindex{forall}\ttindex{implies}\ttindex{false}\ttindex{exists}
+\ttindex{and}\ttindex{or}
+
 The {\cpsa} distribution contains, in its examples directory, the
 input file \texttt{goals.scm}.  The reader is encouraged to run the
 examples and examine the output while reading this chapter.
@@ -64,7 +98,7 @@ examples and examine the output while reading this chapter.
 \begin{figure}
 \begin{verbatim}
 (defgoal ns                ; Goal
-  (forall ((b name) (n1 text) (z0 node))
+  (forall ((b name) (n1 text) (z0 strd))
     (implies
      (and (p "init" z0 3)
       (p "init" "n1" z0 n1) (p "init" "b" z0 b)
@@ -148,147 +182,8 @@ ensures that the goal is met.  If not, it identifies the labels of all
 the skeletons that furnish counterexamples to the goal.  See
 Section~\ref{ch:tools}.
 
-The remainder of this chapter is devoted to explaining the syntax
-and semantics of this feature in greater detail.
-
-\section{Syntax}\label{sec:goalsyntax}
-
-To be precise, a security goal is an order-sorted first-order logic
-sentence in a restricted form.  The sentence in Figure~\ref{fig:ns
-  init} has the form shared by all security goals.  It is a
-universally quantified implication.  The antecedent is a conjunction
-of atomic formulas.  For this sentence, the conclusion is an
-existentially quantified conjunction of atomic formulas, but in
-general, the conclusion is a disjunction of existentially quantified
-conjunctions of atomic formulas.  In what follows, \sym{(false)} is a
-synonym for the empty disjunction, \sym{(or)}.
-
-\begin{table}
-\begin{center}\scshape
-  \begin{tabular}{rcl}
- goal&$\leftarrow$&(\sym{defgoal} id sentence+ alist)
-\\ sentence&$\leftarrow$&(\sym{forall} (gvdecl$\ast$) implication)
-\\ gvdecl&$\leftarrow$&(id+ sort)~$\mid$~(id+ \sym{strd})
-\\ implication&$\leftarrow$&(\sym{implies} conjunction conclusion)
-\\ conjunction&$\leftarrow$&atomic~$\mid$~(\sym{and} atomic+)
-\\ conclusion&$\leftarrow$&(\sym{false})~$\mid$~existential
-\\ &$\mid$& (\sym{or} existential+)
-\\ existential&$\leftarrow$&conjunction~$\mid$~(\sym{exists} (gvdecl$\ast$) conjunction)
-\\ atomic&$\leftarrow$&(\sym{p} string strdvar integer)
-\\ &$\mid$&(\sym{p} string string strdvar term)
-\\ &$\mid$&(\sym{prec} strdvar integer strdvar integer)
-\\ &$\mid$&(\sym{leads-to} strdvar integer strdvar integer)
-\\ &$\mid$&(\sym{non} term)~$\mid$~(\sym{pnon} term)
-\\ &$\mid$&(\sym{uniq} term)~$\mid$~(\sym{uniq-at} term strdvar integer)
-\\ &$\mid$&(\sym{ugen} term)~$\mid$~(\sym{ugen-at} term strdvar integer)
-\\ &$\mid$&(\sym{=} strdvar strdvar)~$\mid$~(\sym{=} term term)
-    \\ &$\mid$&(\sym{fact} id term*)
-                %~$\mid$~(\sym{absent} (term term)+)
-\\ strdvar&$\leftarrow$&symbol
-  \end{tabular}
-\end{center}
-\caption[Goal syntax]{Goal syntax.  See Tables~\ref{tab:basic_term}
-  and~\ref{tab:dh_term} for the algebra syntax, which defines the
-  $\scap{term}$ and $\scap{sort}$ symbols.}
-\label{tab:goal_syntax}
-\end{table}
-
-\ttindex{defgoal}\ttindex{forall}\ttindex{implies}\ttindex{false}\ttindex{exists}
-\ttindex{and}\ttindex{or}
-
-Variables are declared as they are for roles and skeletons with one
-exception, there is a new sort symbol \sym{strd}.  Notice that in the
-sentence, variables \sym{z0} and \sym{z1} have sort \sym{strd}.  Every
-universally quantified variable must occur in the antecedent of the
-implication.
-
-The signature as been expanded to include the natural numbers.  A
-natural number has sort \sym{nat}.
-
-The predicates used to construct an atomic formula (\textsc{atomic})
-are listed in Table~\ref{tab:predicates}.  There are two classes of
-predicates, protocol specific and protocol independent predicates, and
-two kinds of protocol specific predicates, role position and role
-parameter predicates.  Protocol specific predicates are distinguished
-from protocol independent predicates by being composed of three
-tokens, the first of which is \texttt{p}.
-
-The first line of the table gives the syntax of a role strand length
-predicate.  It contains two tokens, \texttt{p} and a string that names
-a role.  That is, for role~$r$, there is a role strand length
-predicate, \mbox{\texttt{p} $r$}.  Thus \verb|(p "init" z0 3)| is an
-atomic formula using the role strand length predicate for length 3 in the
-\texttt{init} role of the protocol in Figure~\ref{fig:ns roles}.
-
-The second line gives the syntax of a role parameter predicate.  It
-contains three tokens, \texttt{p}, a string that names a role, and a
-string that names a role variable.  For role~$r$, there is role
-parameter predicate for each variable declared by~$r$.  Thus
-\verb|(p "init" "n1" z0 n1)| is an atomic formula using the role
-parameter predicate for parameter \text{n1} in the \texttt{init} role
-of the protocol.
-
-The empty string names the listener role of a protocol.  The role
-has the variable \texttt{x} of sort \texttt{mesg} as its only role
-variable.  There are two positions in the listener role.  Its trace is
-\texttt{(trace (recv x) (send x))}.
-
-When a variable of sort \sym{strd} occurs in a formula, its length
-must be specified using a role strand length formula.  When an algebra
-variable occurs in a formula, its association with the parameter of
-some role must be specified using a role parameter formula.
-
-\begin{table}
-\begin{center}
-  \begin{tabular}{lcl}
-    Symbol & Sort & Description\\
-    \hline
-    \scshape\sym{p} role & $\dom{strd}\times\dom{nat}$ & \mbox{Role
-                                                         strand length} \\
-    \scshape\sym{p} role param & $\dom{strd}\times\dom{mesg}$
-                  & \mbox{Role parameter} \\
-    \sym{prec}& $\dom{strd}\times\dom{nat}\times\dom{strd}\times\dom{nat}$
-                  & \mbox{Precedes} \\
-    \sym{leads-to}& $\dom{strd}\times\dom{nat}\times\dom{strd}\times\dom{nat}$
-                  & \mbox{Leads to} \\
-    \sym{non}& \dom{atom}
-                  & \mbox{Non-origination} \\
-    \sym{pnon}& \dom{atom}
-                  & \mbox{Penetrator non-origination} \\
-    \sym{uniq}& \dom{atom}
-                  & \mbox{Unique origination} \\
-    \sym{uniq-at}& $\dom{atom}\times\dom{strd}\times\dom{nat}$
-                  & \mbox{Unique origination at a node} \\
-    \sym{ugen}& \dom{atom}
-                  & \mbox{Unique generation} \\
-    \sym{ugen-at}& $\dom{atom}\times\dom{strd}\times\dom{nat}$
-                  & \mbox{Unique generation on strand} \\
-    $=$ & $\dom{all}\times\dom{all}$ & Equality \\
-    \sym{fact} & $\dom{id}\times\dom{all}*$ & User defined fact
-                                              predicating \dom{id}
-    %   \\
-%       \sym{absent} & $\dom{atom}\times\dom{mesg}$ & Random exponent
-%                                                     absence 
-  \end{tabular}
-\end{center}
-\caption{Predicates}\label{tab:predicates}
-\end{table}
-
-\index{goals!predicate symbols}
-\index{p@\texttt{p} (goal predicate symbol)}
-\ttindex{prec}
-\index{leads-to@\texttt{leads-to} (goal predicate symbol)}
-\index{non@\texttt{non} (goal predicate symbol)}
-\index{pnon@\texttt{pnon} (goal predicate symbol)}
-\index{uniq@\texttt{uniq} (goal predicate symbol)}
-\index{uniq-at@\texttt{uniq-at} (goal predicate symbol)}
-\index{ugen@\texttt{ugen} (goal predicate symbol)}
-\index{ugen-at@\texttt{ugen-at} (goal predicate symbol)}
-\index{fact@\texttt{fact} (goal predicate symbol)}
-%\index{absent@\texttt{absent} (goal predicate symbol)}
-
-
-\index{=@\texttt{=} (goal predicate symbol)}
+The remainder of this chapter is devoted to explaining the semantics
+of this feature in greater detail.
 
 \section{Semantics}\label{sec:semantics}
 
@@ -931,8 +826,8 @@ the \verb|trace| declaration in a \verb|defprotocol| declaration in an
 %
 \begin{verbatim}(defrole init
     (vars ...)
-    (trace ...) 
-    ... 
+    (trace ...)
+    ...
     (assume (fact neq (exp (gen) upsilon) (gen))))
 \end{verbatim}
 %
@@ -960,8 +855,8 @@ above, one can write
 %
 \begin{verbatim}(defrole init
     (vars ...)
-    (trace ...) 
-    ... 
+    (trace ...)
+    ...
     (facts (neq (gen) (exp (gen) upsilon))))
 \end{verbatim}
 %
@@ -991,11 +886,11 @@ within the trace declaration within a role.  These are:
 %
 \begin{description}
   \item[cheq,] used to ensure that two values are equal in any
-  instance of the role that progresses beyond this point; 
+  instance of the role that progresses beyond this point;
   \item[rely,] used after a reception to declare a formula containing
   only free variables appearing up to and including this reception.
   Every instance of the role long enough to include a successful
-  instance of this reception must satisfy the formula; 
+  instance of this reception must satisfy the formula;
   \item[guar,] used before a transmission to declare a formula
   containing only free variables appearing up to and including the
   following transmission.  Every instance of the role long enough to
@@ -1013,7 +908,7 @@ them.
 \paragraph{Checking equality.}  Many protocols use \emph{commitments}
 %
 \begin{figure}\small
-\begin{verbatim}(defrole auctioneer 
+\begin{verbatim}(defrole auctioneer
     (vars (a b name) (n data) (quote outcome text) (sealed mesg))
     (trace
      (recv (enc "bid" sealed (privk "sig" a)))
@@ -1021,7 +916,7 @@ them.
      (recv (cat n quote))
      (cheq sealed (hash a b n quote))
      (send (enc "result" a b n quote outcome (privk "sig" b)))))\end{verbatim}
-  
+
    \caption[Decommitment with \texttt{cheq}]{A role that accepts a
      commitment and decommits it with \texttt{cheq}}
   \label{fig:commit:cheq}
@@ -1034,7 +929,7 @@ an earlier message.  A \emph{check-equality} annotation, written:
 %
 \begin{verbatim}  (cheq var term)\end{verbatim}
 %
-may be used in these situations.  
+may be used in these situations.
 
 For instance, in Fig.~\ref{fig:commit:cheq}, an auctioneer receives a
 sealed bid in its first event.\footnote{See the file
@@ -1050,7 +945,7 @@ sealed bid in its first event.\footnote{See the file
           (p "auctioneer" "a" z a) (p "auctioneer" "sealed" z sealed))
         (= sealed (hash a b n quote)))))
 \end{verbatim}
-%  
+%
   \caption[Generated rule, \texttt{cheq}]{Generated rule for the
     auctioneer's \texttt{cheq}}
   \label{fig:commit:cheq:rule}
@@ -1091,7 +986,7 @@ statements may be checked by analyzing the protocol with the rely
 statements are omitted, and querying them as goal statements under the
 relevant non-compromise assumptions.  We will now assume that this
 soundness checking has been done, and that any relevant non-compromise
-assumptions are made in the protocol definition.  
+assumptions are made in the protocol definition.
 
 Thus, a \emph{rely} formula definitely holds true whenever the
 principal successfully completes the preceding receive event.  Indeed,
@@ -1162,9 +1057,9 @@ annotations may be found in~\texttt{examples/minipay-rely-guar.scm}.
     (trace
       (guar (fact buy-via c m b item cost n))
       (send ...)
-      (recv ...)           ; from bank 
+      (recv ...)           ; from bank
       (rely (fact will-transfer c m b cost n mtr btr))
-      (recv ...)           ; from merchant 
+      (recv ...)           ; from merchant
       (rely (fact will-ship c m b item mtr))))
 
   (defrole merc (vars ...)
@@ -1182,12 +1077,12 @@ annotations may be found in~\texttt{examples/minipay-rely-guar.scm}.
       (recv ...)
       (rely (exists ((item merchandise))
                     (fact buy-via c m b item cost n)))
-      ;; Do not proceed unless customer signature trustworthy.      
-      ;; Given that, now commit to transferring the funds 
+      ;; Do not proceed unless customer signature trustworthy.
+      ;; Given that, now commit to transferring the funds
       (guar (and (non (privk "sig" c))
                  (fact will-transfer c m b cost n mtr btr)))
       (send ...))) \end{verbatim}
-  
+
   \caption[Minipay rely/guarantee formulas]{Rely and gauantee formulas
     in \texttt{minipay.scm}}
   \label{fig:minipay:rely:guar}
@@ -1250,9 +1145,9 @@ adding the non-compromise assumptions.
          (p "cust" "m" z m)
          (p "cust" "b" z b)
          (p "cust" "item" z item)
-         (p "cust" "n" z n) 
+         (p "cust" "n" z n)
          (p "cust" "mtr" z mtr)
-         (p "cust" "btr" z btr)  
+         (p "cust" "btr" z btr)
          (non (privk "sig" m)))
     (fact will-ship c m b item mtr))))
 \end{verbatim}
@@ -1279,13 +1174,13 @@ adding the non-compromise assumptions.
          (fact buy-via c m b item cost n)))))
 
 (defgoal minipay-guar
-  (forall 
+  (forall
    ((z strd) (c m b name) (cost amount) (n data))
    (implies
     (and (p "bank" z 1)
          (p "bank" "c" z c)
          (p "bank" "m" z m)
-         (p "bank" "b" z b)      
+         (p "bank" "b" z b)
          (p "bank" "cost" z cost)
          (p "bank" "n" z n)
          (non (privk "sig" c)))
@@ -1299,15 +1194,11 @@ Since {\cpsa} validates these goal formulas in the
 \texttt{minipay-guar} protocol that contains the guarantee formulas
 but not the rely formulas, the generated rules introduced by the rely
 formulas are also sound subject to the stated non-compromise
-assumptions.  
+assumptions.
 
 We regard this rely-guarantee method as a systematic way to formalize
 the trust assumptions, and the effects, of protocols that accomplish
-real-world tasks, in this case purchase and payment.  
-
-
-
-
+real-world tasks, in this case purchase and payment.
 
 %%% Local Variables:
 %%% mode: latex

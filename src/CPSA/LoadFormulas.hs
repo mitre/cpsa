@@ -451,8 +451,6 @@ loadIndxTerm sig ts x =
 
 -- Load a term and make sure it describes a node
 
--- Load a term and make sure it describes a node
-
 loadNodeTerm :: MonadFail m => Sig -> [Term] -> SExpr Pos ->
                 SExpr Pos -> m NodeTerm
 loadNodeTerm sig ts x (N _ i) | i >= 0 =

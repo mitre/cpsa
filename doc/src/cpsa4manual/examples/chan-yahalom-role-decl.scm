@@ -38,7 +38,7 @@
   (deflistener k)
   (uniq-orig n-b))
 
-;;; Let's turn now to the initiator's point of view:  
+;;; Let's turn now to the initiator's point of view:
 
 (defskeleton yahalom
   (vars (a b c name) (n-a text) (k skey) (ch3 chan))
@@ -53,13 +53,13 @@
 (defskeleton yahalom
   (vars (a b c name) (n-a text) (k skey) (ch3 chan))
   (defstrand init 3 (k k) (n-a n-a))
-  (defstrand resp 3 (k k)) 
+  (defstrand resp 3 (k k))
   (uniq-orig n-a))
 
 (defskeleton yahalom
   (vars (a b c name) (n-a text) (k skey) (ch3 chan))
   (defstrand init 3 (k k) (n-a n-a))
-  (defstrand resp 4 (k k)) 
+  (defstrand resp 4 (k k))
   (uniq-orig n-a))
 
 ;;; Finally, the server knows only that the responder has requested a
@@ -76,7 +76,3 @@
   (vars (c a b name) (n-a n-b text) (k skey) (ch1 ch2 ch3 chan))
   (defstrand serv 3 (k k))
   (deflistener k))
-
-
-
-

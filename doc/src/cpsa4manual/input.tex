@@ -103,7 +103,7 @@ file&$\leftarrow$&herald?~form+
 \\ trace&$\leftarrow$&(\sym{trace} \{event $\mid$ annot\}+)
 \\ event&$\leftarrow$&({dir id? term})
 \\ dir&$\leftarrow$&$\sym{send}\mid\sym{recv}\mid\sym{load}\mid\sym{stor}$
-\\ annot&$\leftarrow$&(\sym{cheq} id term) $\mid$ 
+\\ annot&$\leftarrow$&(\sym{cheq} id term) $\mid$
                        (\sym{rely} conclusion) $\mid$ (\sym{guarantee} conclusion)
 \\ rule&$\leftarrow$&(\sym{defrule} id sentence alist)
 \\ role-alist&$\leftarrow$&role-decl\mbox{ role-alist }$\mid$~\mbox{alist role-alist}
@@ -279,7 +279,7 @@ sorts, and constants given, modulo the equations.
 \multicolumn{3}{c}{Sorts}\\ \hline
 Sorts: & \multicolumn{2}{l|}{\scap{name}, \scap{text}, \scap{data}, \scap{tag}, \scap{skey}, \scap{akey}, \scap{base}  $<$ \scap{mesg}} \\
        & \multicolumn{2}{l|}{\scap{rndx} $<$ \scap{expt} $<$ \scap{mesg}} \\
-  &  \multicolumn{2}{l|}{\scap{chan}, \scap{locn} $<$ \scap{mesg}} 
+  &  \multicolumn{2}{l|}{\scap{chan}, \scap{locn} $<$ \scap{mesg}}
 \\ \hline \multicolumn{3}{c}{Operations}\\ \hline
 $\enc{\cdot}{(\cdot)}\phantom{\colon}$ &
 $\scap{mesg}\times\scap{mesg}\rightarrow\scap{mesg} $& Encryption\\
@@ -374,7 +374,7 @@ constants, respectively.
 $\mbox{id}\mid(\sym{pubk}\mbox{ id})
 \mid(\sym{privk}\mbox{ id})
 \mid(\sym{invk}\mbox{ id})$
-\\ &$\mid$&$(\sym{pubk}\mbox{ id}\mbox{ string}) 
+\\ &$\mid$&$(\sym{pubk}\mbox{ id}\mbox{ string})
 \mid(\sym{privk}\mbox{ id}\mbox{ string})$
 \\ &$\mid$&$(\sym{ltk}\mbox{ id id})\mid\mbox{string}\mid(\sym{cat}\mbox{ term+})$
 \\ &$\mid$&$(\sym{enc}\mbox{ term+ term})\mid(\sym{hash}\mbox{ term+})$

@@ -1,17 +1,15 @@
 (herald minipay-rely-guar
-	(try-old-strands) 
+	(try-old-strands)
 	(bound 16)
 	;; (limit 5000)
 	)
-
-
 
 (defprotocol minipay-rely-guar basic
   (defrole cust
     (vars (c m b name) (cost amount) (item merchandise)
 	  (merc-conf bank-conf btr mtr text) (account acct) (n ncb ncm data))
     (trace
-     ;; the customer chooses an item and cost... 
+     ;; the customer chooses an item and cost...
      (guar (fact buy-via c m b item cost n))
      ;; the customer submits item and cost,
      ;; as well as confidential values merc-conf, bank-conf
@@ -20,14 +18,14 @@
      ;; bank never learns item.
      (send (enc n cost item merc-conf ncm
 		(hash n (hash ncb bank-conf))
-		(sign (order c m b cost 
+		(sign (order c m b cost
 			     (enc n cost account bank-conf ncb
 				  (hash n (hash ncm item merc-conf))
 				  (pubk "enc" b)))
 		      (privk "sig" c))
 		(pubk "enc" m)))
-     
-     ;; signed payment info from bank 
+
+     ;; signed payment info from bank
      (recv (sign (bconf (hash c m b n cost
 			      (hash n (hash ncm item merc-conf)))
 			btr mtr)
@@ -53,14 +51,14 @@
 		(sign (order c m b cost for-bank)
 		      (privk "sig" c))
 		(pubk "enc" m)))
-     ;; transmit payment request to bank 
+     ;; transmit payment request to bank
      (send (enc (payreq c m b (hash cost n) (hash ncm item merc-conf) mtr
 			 (cat (sign (order c m b cost for-bank)
 				    (privk "sig" c))
 			      for-bank))
 		 (pubk "enc" b)))
-     ;; receive payment offer and decommit for bank-conf 
-     (recv (enc bank-conf-decommit 
+     ;; receive payment offer and decommit for bank-conf
+     (recv (enc bank-conf-decommit
 		(sign (bconf (hash c m b n cost (hash n (hash ncm item merc-conf))) btr mtr)
 		      (privk "sig" b))
 		(pubk "enc" m)))
@@ -68,7 +66,7 @@
      (rely (and (fact buy-via c m b item cost n)
 		(fact will-transfer c m b cost n mtr btr)))
 
-     ;; Now commit to shipping the goods 
+     ;; Now commit to shipping the goods
      (guar (fact will-ship c m b item mtr))
      ;; return signed info to customer
      (send (sign (bconf (hash c m b n cost (hash n (hash ncm item merc-conf))) btr mtr)
@@ -84,7 +82,7 @@
 	  (merc-conf bank-conf btr mtr text) (merc-conf-decommit mesg) (account acct) (n ncb data))
     (trace
      ;; receive payment requests from merchant and customer,
-     ;; including decommit for merc-conf 
+     ;; including decommit for merc-conf
      (recv (enc (payreq c m b (hash cost n) merc-conf-decommit mtr
 			(cat
 			 (sign (order c m b cost
@@ -98,12 +96,12 @@
      (rely (exists ((item merchandise))
 		   (fact buy-via c m b item cost n)))
 
-     ;; Do not proceed unless customer signature trustworthy      
-     ;; Given that, now commit to transferring the funds 
+     ;; Do not proceed unless customer signature trustworthy
+     ;; Given that, now commit to transferring the funds
      (guar (and (non (privk "sig" c))
 		(fact will-transfer c m b cost n mtr btr)))
-     ;; send payment offer 
-     (send (enc (hash ncb bank-conf) 
+     ;; send payment offer
+     (send (enc (hash ncb bank-conf)
 		(sign (bconf (hash c m b n cost (hash n merc-conf-decommit)) btr mtr)
 		      (privk "sig" b))
 		(pubk "enc" m))))
@@ -120,8 +118,6 @@
 	(mconf (tuple 3))
 	(payreq (tuple 7))))
 
-
-
 (defskeleton minipay-rely-guar
   (vars (c m b name) (cost item merc-conf bank-conf text) (account n data))
   (defstrand cust 3 (c c) (m m) (b b) (n n))
@@ -131,7 +127,7 @@
 
 (defskeleton minipay-rely-guar
   (vars (c m b name) (cost item merc-conf bank-conf text) (account n data))
-  (defstrand merc 3 (c c) (m m) (b b))  
+  (defstrand merc 3 (c c) (m m) (b b))
   (non-orig (privk "sig" b) (privk "sig" m)
 	    (privk "enc" m) (privk "enc" b)))
 
@@ -155,7 +151,6 @@
   (non-orig (privk "sig" b)
 	    (privk "enc" b)))
 
-
 (comment
  (defskeleton minipay-rely-guar
    (vars (account acct) (cost amount) (n ncb ncm data) (item merchandise)
@@ -178,32 +173,31 @@
      (b b))
    (precedes ((1 0) (2 0)) ((2 1) (0 0)))
    (non-orig (privk "enc" m) (privk "sig" c)
-	     ;; add merchant sig key, bank sig key 
-	     (privk "sig" m) (privk "sig" b)) 
+	     ;; add merchant sig key, bank sig key
+	     (privk "sig" m) (privk "sig" b))
    (uniq-orig btr mtr-0 ncm n ncb)
    (facts (neq n ncb) (neq n ncm) (neq ncm ncb))))
 
-
 (defskeleton minipay-rely-guar
   (vars (c m b name) (cost item merc-conf bank-conf text) (account acct) (n data))
-  (defstrand merc 4 (c c) (m m) (b b))  
+  (defstrand merc 4 (c c) (m m) (b b))
   (non-orig (privk "sig" b) (privk "sig" m)
 	    (privk "enc" m) (privk "enc" b)))
 
 (defskeleton minipay-rely-guar
   (vars (c m b name) (cost item merc-conf bank-conf text) (account acct) (n data))
-  (defstrand merc 4 (c c) (m m) (b b))  
+  (defstrand merc 4 (c c) (m m) (b b))
   (non-orig (privk "sig" b)))
 
 (defskeleton minipay-rely-guar
   (vars (c m b name) (cost item merc-conf bank-conf text) (account acct) (n data))
-  (defstrand merc 1 (c c) (m m) (b b))  
+  (defstrand merc 1 (c c) (m m) (b b))
   (non-orig (privk "sig" c)
 	    (privk "enc" m)))
 
 (defskeleton minipay-rely-guar
   (vars (c m b name) (cost item merc-conf bank-conf text) (account acct) (n data))
-  (defstrand merc 1 (c c) (m m) (b b))  
+  (defstrand merc 1 (c c) (m m) (b b))
   (non-orig (privk "sig" c)
 	    (privk "enc" m)
 	    (privk "enc" b)))

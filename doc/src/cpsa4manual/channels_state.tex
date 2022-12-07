@@ -20,7 +20,7 @@ offer security guarantees to the messages they carry.  The treatment
 of channels also helped determine an approach to representing
 long-term, cross-session mutable state in {\cpsa}.  The goal of this
 chapter is to explain how to use the {\cpsa} channel mechanism, and to
-build on that understanding to work with long-term mutable state.  
+build on that understanding to work with long-term mutable state.
 
 \paragraph{Channel security guarantees.}  The most important
 guarantees are \emph{authenticated} channels and \emph{confidential}
@@ -114,7 +114,7 @@ confidentiality and authenticity holds in a limited form, i.e.~for
 generated values.  This is the reason why {\cpsa} implements state via
 the same ideas as confidential and authenticated channels, although
 state requires some additional properties that will be described below
-in Section~\ref{sec:channels:state:state}.   
+in Section~\ref{sec:channels:state:state}.
 
 \section{Channels}
 \label{sec:channels:state:ch}
@@ -128,11 +128,11 @@ may be declared to range over channels, for instance:
 \end{verbatim}
 %
 Second, a transmission event or reception event may have an additional
-component that is a variable of sort \verb|chan|, taking the forms:  
+component that is a variable of sort \verb|chan|, taking the forms:
 %
 \begin{verbatim}
     (send ch-name-1 sent-msg)
-    (recv ch-name-2 recvd-msg) 
+    (recv ch-name-2 recvd-msg)
 \end{verbatim}
 %
 Finally, we may assert the \emph{authenticated} or \emph{confidential}
@@ -140,7 +140,7 @@ property of a channel, using the annotations:
 %
 \begin{verbatim}
     (auth ch-name-1 ch-name-2)
-    (conf ch-name-2) 
+    (conf ch-name-2)
 \end{verbatim}
 %
 As with annotations such as \verb|uniq-orig| and \verb|non-orig|,
@@ -199,7 +199,6 @@ Indeed, a choice of a particular primitive early in the design process
 obscures what actual properties are needed for the protocol to achieve
 its goals.
 
-
 \paragraph{Yahalom:  Protocol idea.}  In the Yahalom protocol, the
 initiator $A$ provides a nonce $N_A$ to the responder $B$, who passes
 that along with its own nonce $N_B$ and both names $A,B$ to a key
@@ -234,7 +233,7 @@ In Fig.~\ref{fig:yahalom:ch:role} we show the three roles of the
 protocol with the behavior and channel assumptions mentioned at the
 end of Section~\ref{sec:channels:state:ch:yahalom}.  {\cpsa} will
 automatically instantiate the channel assumptions for each role every
-time it incorporates an instance of the role.   
+time it incorporates an instance of the role.
 %
 \begin{figure}\small
 %
@@ -277,7 +276,7 @@ nonce $N_A$, but the responder does not need to.
 \begin{figure}
   \centering
   \begin{minipage}[c][2.5in][c]{.4\linewidth}
-    \includegraphics[height=2.5in]{yahalom_ch_resp_pov.png} 
+    \includegraphics[height=2.5in]{yahalom_ch_resp_pov.png}
   \end{minipage}
   \begin{minipage}[c][2.5in][c]{.5\linewidth}\small
 \begin{verbatim}(defstrand resp 4 (k k) (n-a n-a)
@@ -327,8 +326,7 @@ We can infer from this analysis that symmetric authenticated
 encryption long term key shared between the key server and each client
 is a good way to implement the channels \verb|ch2| and \verb|ch3|,
 since the key server relies on their confidentiality property and the
-clients rely on their authentication property.  
-
+clients rely on their authentication property.
 
 \subsection{Yahalom with Channels, 2:  Per-strand assumptions}
 \label{sec:channels:state:ch:strand:level}
@@ -346,7 +344,7 @@ ask:
 \begin{verbatim}(defskeleton yahalom
   (vars (a b c name) (n-b text) (ch1 ch2 chan))
   (defstrand resp 4 (a a) (b b) (n-b n-b) (ch1 ch1) (ch2 ch2))
-  (auth ch2)   
+  (auth ch2)
   (uniq-orig n-b))\end{verbatim}}
 %
 This yields the output in Fig.~\ref{fig:yahalom:q:resp:pov:1}.
@@ -386,7 +384,7 @@ may have led {\cpsa} to discard some branches of analysis as
 impossible, which might then never be displayed.
 
 The analysis from the initiator's point of view can then follow the
-same pattern.  
+same pattern.
 
 \section{State}
 \label{sec:channels:state:state}
@@ -466,7 +464,7 @@ This {\cpsa} representation lets us add to (1)--(4) another
 conclusion:  When $n_0\leadsto n_1$,
 %
 \begin{renumerate}
-  \item if also $n_2\leadsto n_1$, then $n_0=n_2$.  
+  \item if also $n_2\leadsto n_1$, then $n_0=n_2$.
 \end{renumerate}
 
 \subsection{The axioms of state}
@@ -491,11 +489,11 @@ $n_0=n_1$.
   %
   \[(i)\qquad
     \xymatrix@R=1mm@C=4mm{&
-      *+[F]{n}\ar@{~>}[ddl]\ar@{.>}[ddr]^{\prec} & & & & 
+      *+[F]{n}\ar@{~>}[ddl]\ar@{.>}[ddr]^{\prec} & & & &
       *+[F]{n}\ar@{~>}[ddl]\ar@{.>}[ddr]^{\prec} \\
       & & & \Longrightarrow &    \\
       *+[F]{m_0} & & *+[F]{m_1} & &
-      *+[F]{m_0} & \textcolor{red}{\preceq} & *+[F]{m_1} } 
+      *+[F]{m_0} & \textcolor{red}{\preceq} & *+[F]{m_1} }
     %
   \]\vspace{3ex}
   %
@@ -505,7 +503,7 @@ $n_0=n_1$.
       *+[F]{m_0}\ar@{.>}[ddr]_{\prec} &\textcolor{red}{\preceq} &
       *+[F]{m_1}\ar@{~>}[ddl]\\
       & & & \Longrightarrow   \\
-      & n && && n}    
+      & n && && n}
   \]
   \caption[Leads-to axioms]{Two axioms about state events on the same
     location $\ell$}
@@ -575,8 +573,8 @@ possibilities must each be explored.
       *+[F]{n_0}\ar@{~>}[ddl]\ar@{~>}[ddr] & \\
       & & & \Longrightarrow &  \textcolor{red}{\mathsf{false}}  \\
       *+[F]{n_1} &\prec & {m}}
-    % 
-  \]  
+    %
+  \]
   \caption{Three derived rules for state:  Scissors, no interruption,
     and cake}
   \label{fig:derived:state:rules}
@@ -603,7 +601,7 @@ events concern the same location $\ell$, the rules are:
 
   Thus, it says that a transition $n_1$ caps off the period when other
   events $m$ (which are pure observations by the scissors rule) may
-  result from $n_0$.  
+  result from $n_0$.
 \end{description}
 %
 We present these diagrammatically in
@@ -639,7 +637,7 @@ $\preceq$ is a (weak) partial order.
   leads-to edge $n_0\leadsto m$ implies $n_0\prec m$, yielding a
   contradiction.
 \end{description}
-   
+
 \subsection{Syntax for state}
 \label{sec:channels:state:syntax}
 
@@ -665,22 +663,22 @@ Thus, Fig.~\ref{fig:dev:open}, which uses a number of operators from a
 %
 shows a role that manipulates two variables \texttt{lk, ls} of sort
 \verb|locn|.  Its intent is to open a door in response to a suitable
-encrypted command, conforming its action.  
+encrypted command, conforming its action.
 %
 \begin{figure}\small
-  % 
+  %
 \begin{verbatim}(defrole dev-open
     (vars (k skey) (n nb text) (any mesg) (d o b name) (lk ls locn))
     (trace
      (load lk (dev-key-state d o k))
      (recv (cat b n (enc (open-req b d o nb n) (hash-dk (cat b nb n k)))))
      (load ls (door-state d any))
-     (load lk (dev-key-state d o k))         ; check k unchanged 
+     (load lk (dev-key-state d o k))         ; check k unchanged
      (stor ls (door-state d (opened b nb n)))
      (send (hash (open-req b d o nb n))))
     (gen-st (dev-key-state d o k))
     (facts (same-dev ls lk)))\end{verbatim}
-  % 
+  %
   \caption{Device-open role causing door to open}
   \label{fig:dev:open}
 \end{figure}
@@ -738,7 +736,7 @@ a transition for both.  In other cases, a state segment loads from
 both $\ell_1$ and $\ell_2$, but instead of storing back to either of
 them, it simply uses those values to control future message
 transmissions and receptions.  In the latter cases, the state segment
-is a pure observation for both $\ell_1$ and $\ell_2$.  
+is a pure observation for both $\ell_1$ and $\ell_2$.
 
 \paragraph{Rules for protocols with
   state.}  \label{state:gen:rules:start} {\cpsa} generates three types
@@ -842,7 +840,7 @@ Finally, the third kind of rule concerns \emph{critical sections}.
 %
 %
 \begin{figure}\small
-  % 
+  %
 \begin{verbatim}  (defgenrule cau-dev-up-2
     (forall ((z z1 strd) (i indx))
       (implies
@@ -851,10 +849,10 @@ Finally, the third kind of rule concerns \emph{critical sections}.
 
   (defgenrule eff-dev-up-3
     (forall ((z z1 strd) (i indx))
-      (implies 
+      (implies
         (and (p "dev-up" z 4) (prec z 3 z1 i))
         (or (= z z1) (and (p "dev-up" z 5) (prec z 4 z1 i))))))\end{verbatim}
-%  
+%
   \caption{Critical section:  Generated rules}
   \label{fig:critical:section:rules}
 \end{figure}
@@ -923,7 +921,6 @@ informative.  The craft of using {\cpsa} to understand state in
 protocols is often to restrict the \texttt{gen-st} declarations so
 that {\cpsa} does not distinguish among state histories of
 (irrelevantly) different lengths.
-
 
 %%% Local Variables:
 %%% mode: latex

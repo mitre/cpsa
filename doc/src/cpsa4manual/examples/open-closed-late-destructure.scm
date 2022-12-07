@@ -1,6 +1,5 @@
-(herald open-closed-alt-late-destructure 
+(herald open-closed-alt-late-destructure
 	(bound 40))
-
 
 (defprotocol subatomic-open-closed basic
   (defrole dev-up
@@ -26,11 +25,11 @@
   (defrole owner-delg-key
     (vars (k skey) (n nb text) (d o b name) (to-b from-b chan))
     (trace
-     (recv from-b (cat "req-key" b nb)) 
+     (recv from-b (cat "req-key" b nb))
      (send to-b (delegate b d o nb n (hash-dk (cat b nb n k))))
      (recv (hash b nb n)))
      (conf to-b)
-     (auth from-b) 
+     (auth from-b)
     (uniq-orig n))
 
   (defrole passer-recv-key
@@ -41,7 +40,7 @@
      (send (hash b nb n))
      (load del-key-locn ign)
      (stor del-key-locn (key-rec b d o nb n kp)))
-    (uniq-orig nb) 
+    (uniq-orig nb)
     (auth to-b))
 
   (defrole passer-open
@@ -65,7 +64,7 @@
      (load ls (door-state d any))
      (load lk (dev-key-state d o k))
      (cheq request (enc (open-req b d o nb n)
-			(hash-dk (cat b nb n k)))) 
+			(hash-dk (cat b nb n k))))
      (stor ls (door-state d (opened b nb n)))
      (send (hash (open-req b d o nb n))))
     (gen-st (dev-key-state d o k))
@@ -74,7 +73,7 @@
   (defrole dev-closed
     (vars (k skey) (n nb text) (any new-key-state request mesg) (d o b name) (lk ls locn))
     (trace
-     (recv (cat b n nb request))     
+     (recv (cat b n nb request))
      (load ls (door-state d any))
      (load lk (dev-key-state d o k))
      (cheq request (enc (close-req b d o nb n)
@@ -82,7 +81,7 @@
      (stor ls (door-state d (closed o)))
      (send (hash (close-req b d o nb n))))
     (gen-st (dev-key-state d o k))
-    (facts (same-dev ls lk))) 
+    (facts (same-dev ls lk)))
 
   (defrole dev-pass
     (vars (k skey) (n nb text) (d o b name) (lk ls locn))
@@ -152,12 +151,10 @@
   (defstrand dev-pass 4 (k k))
   (uniq-orig k))
 
-
 (comment
  (defskeleton subatomic-open-closed
   (vars (k skey) (d o name) (n text) (start-ch chan))
   (defstrand dev-pass 4 (k k) (d d) (o o))
   (gen-st (dev-key-state d o k)))
 
-
- ) 
+ )

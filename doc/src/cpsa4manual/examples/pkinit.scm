@@ -31,11 +31,7 @@
 ;;; which has no extension for which the conclusion is also
 ;;; satisfied. The shapes for the other analyses contain the
 ;;; annotation (satisfies yes) indicating that the goal is satisfied
-;;; in the shape (and hence in any realized skeleton). 
-
-
-
-
+;;; in the shape (and hence in any realized skeleton).
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;                       ;;
@@ -43,9 +39,8 @@
 ;;                       ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
 ;; This is the flawed version of the Kerberos public key initial
-;; round. 
+;; round.
 (defprotocol pkinit-flawed basic
   (defrole client
     (vars (c t as name) (n2 n1 text) (tc tk tgt data) (k ak skey))
@@ -61,7 +56,6 @@
         (cat (enc (enc k n2 (privk as)) (pubk c)) c tgt
           (enc ak n1 tk t k))))
     (uniq-orig k ak)))
-
 
 ;; This is the fix the authors proposed to the standards group. It
 ;; adds the value c in a new field inside the server's signature.
@@ -100,9 +94,8 @@
                        (privk as)) (pubk c)) c tgt (enc ak n1 tk t k))))
     (uniq-orig k ak)))
 
-
 ;;;;;;;;;;;;;;;;;;;;;
-;;                 ;; 
+;;                 ;;
 ;; Goal Statements ;;
 ;;                 ;;
 ;;;;;;;;;;;;;;;;;;;;;
@@ -157,7 +150,6 @@
                         (p "auth" "as" z-0 as)
                         (p "auth" "k" z-0 k)
                         (p "auth" "c" z-0 c))))))
-
 
 ;;;;;;;;
 
