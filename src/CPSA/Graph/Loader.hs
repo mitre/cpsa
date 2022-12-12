@@ -15,7 +15,7 @@ module CPSA.Graph.Loader (Preskel, Dir (..), Vertex, protocol, role, env,
                           inst, part, lastVertex, vertices, Node, vnode,
                           strands, label, parent, seen, unrealized, shape,
                           empty, protSrc, preskelSrc, initial, strand, pos,
-                          prev, next, msg, dir, succs, preds,
+                          leadstosuccs, prev, next, msg, dir, succs, preds,
                           State, loadFirst, loadNext)
                           where
 
@@ -69,6 +69,7 @@ data Vertex = Vertex
       next :: Maybe Vertex,     -- Strand next
       preds :: [Vertex],        -- Cross strand predecessors
       succs :: [Vertex],        -- Cross strand successors
+      leadstosuccs :: [Vertex], -- Cross strand "leadsto" successors
       strand :: Int,            -- Strand ID
       pos :: Int }              -- Position in strand
 
@@ -261,7 +262,10 @@ loadInsts s pos p tag revInsts _ xs =
       let shape = maybe False (const True) (assoc "shape" xs)
       let empty = elem "empty cohort" (qassoc "comment" xs)
       let orderings = maybe [] id (assoc "precedes" xs)
-      pairs <- loadOrderings heights orderings
+      let lt = maybe [] id (assoc "leads-to" xs)
+      pairs <- loadOrderings heights orderings True
+      leadsto <- loadOrderings heights lt False
+      let leadsto' = filter (\((s0,_),(s1,_)) -> s0 /= s1) leadsto
       let graph = adj heights pairs
       let pairs' = reduce graph pairs
       let strands = length insts
@@ -291,6 +295,7 @@ loadInsts s pos p tag revInsts _ xs =
                             next = getNext ht (s, p),
                             preds = getPreds (s, p),
                             succs = getSuccs (s, p),
+                            leadstosuccs = getLeadstoSuccs (s, p),
                             strand = s,
                             pos = p } |
                           (p, evt) <- zip [0..] (trace inst) ] |
@@ -314,6 +319,7 @@ loadInsts s pos p tag revInsts _ xs =
                   | otherwise = Nothing
               getPreds n = [ getNode n0 | (n0, n1) <- pairs', n == n1 ]
               getSuccs n = [ getNode n1 | (n0, n1) <- pairs', n == n0 ]
+              getLeadstoSuccs n = [ getNode n1 | (n0, n1) <- leadsto', n == n0 ]
               unrealized' =
                   maybe Nothing (Just . map getNode) unrealized
 
@@ -446,26 +452,26 @@ nsassoc key xs =
             ns <- mapM num val
             return (Just ns)
 
-loadOrderings :: MonadFail m => [Int] -> [SExpr Pos] -> m [Pair]
-loadOrderings heights x =
+loadOrderings :: MonadFail m => [Int] -> [SExpr Pos] -> Bool -> m [Pair]
+loadOrderings heights x strict =
     foldM f [] x
     where
       f ns x =
           do
-            np <- loadPair heights x
+            np <- loadPair heights x strict
             return (adjoin np ns)
 
-loadPair :: MonadFail m => [Int] -> SExpr Pos -> m Pair
-loadPair heights (L pos [x0, x1]) =
+loadPair :: MonadFail m => [Int] -> SExpr Pos -> Bool -> m Pair
+loadPair heights (L pos [x0, x1]) strict =
     do
       n0 <- loadNode heights x0
       n1 <- loadNode heights x1
-      case sameStrands n0 n1 of  -- Same strand
+      case (strict && sameStrands n0 n1) of  -- Same strand
         True -> fail (shows pos "Malformed pair -- nodes in same strand")
         False -> return (n0, n1)
     where
       sameStrands (s0, _) (s1, _) = s0 == s1
-loadPair _ x = fail (shows (annotation x) "Malformed pair")
+loadPair _ x _ = fail (shows (annotation x) "Malformed pair")
 
 loadNode :: MonadFail m => [Int] -> SExpr Pos -> m Node
 loadNode heights (L pos [N _ s, N _ p])

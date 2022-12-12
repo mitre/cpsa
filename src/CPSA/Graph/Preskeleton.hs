@@ -14,6 +14,7 @@ import CPSA.Graph.Config
 import CPSA.Graph.SVG
 import CPSA.Graph.Loader
 import CPSA.Graph.Layout
+import qualified Data.List as L
 
 -- Compute a node's position.
 npos :: Config -> Rank -> Node -> (Float, Float)
@@ -35,10 +36,10 @@ dim conf strands maxRank =
 
 -- Add a cross strand arrow
 addEdge :: Config -> Rank -> Vertex -> Float -> Float ->
-           [Element] -> Vertex -> [Element]
-addEdge conf rank src x1 y1 elements n =
+           String -> [Element] -> Vertex -> [Element]
+addEdge conf rank src x1 y1 color elements n =
     let (x2, y2) = npos conf rank (vnode n) in
-    arrow conf (sameMsg src n) x1 y1 x2 y2 : elements
+    arrow conf (sameMsg src n) x1 y1 x2 y2 color : elements
 
 sameMsg :: Vertex -> Vertex -> Bool
 sameMsg src dest =
@@ -59,8 +60,9 @@ addNode conf k rank elements node =
     let (x, y) = npos conf rank (vnode node)
         bullet = circ conf (nodeColor k node) x y
         es = tooltip (show $ msg node) [bullet] : elements
-        es' = foldl (addEdge conf rank node x y) es (succs node) in
-    maybe es' (addNode conf k rank es') (next node)
+        es' = foldl (addEdge conf rank node x y "black") es (succs node L.\\ leadstosuccs node)
+        es'' = foldl (addEdge conf rank node x y "blue") es' (leadstosuccs node) in
+    maybe es'' (addNode conf k rank es'') (next node)
 
 nodeColor :: Preskel -> Vertex -> Maybe String
 nodeColor k node =

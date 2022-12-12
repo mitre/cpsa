@@ -75,8 +75,8 @@ line conf x1 y1 x2 y2 =
       style = [("stroke-width", showL (stroke conf)), ("stroke", "gray")]
 
 -- An arrow that is curved when its horizontal length exceeds a limit.
-arrow :: Config -> Bool -> Float -> Float -> Float -> Float -> Element
-arrow conf solid x1 y1 x3 y3 =
+arrow :: Config -> Bool -> Float -> Float -> Float -> Float -> String -> Element
+arrow conf solid x1 y1 x3 y3 color =
     ec "path" [("d", path), ("style", props style)] []
     where
       (x2, y2) = shorten (br conf) x1 y1 x3 y3
@@ -90,7 +90,7 @@ arrow conf solid x1 y1 x3 y3 =
       style = if solid then solidStyle else dashedStyle
       solidStyle =
           [("stroke-width", showL (stroke conf)),
-           ("stroke", "black"),
+           ("stroke", color),
            ("marker-end", "url(#arrow)"),
            ("fill", "none")]
       dashedStyle = ("stroke-dasharray",
