@@ -2859,8 +2859,8 @@ goalSat k g =
         (gen, e) <- conjoin (antec g) k (gen k, emptyEnv),
         conclusion (gen, e) ])
   where
-    conclusion e = all (disjunct e) $ concl g
-    disjunct e a = null $ conjoin a k e
+    conclusion e = all (disjunct e) $ consq g
+    disjunct e (ebvs,a) = null $ conjoinEbvs a ebvs k e
 
 sat :: Preskel -> [(Goal, [Env])]
 sat k =
@@ -2874,37 +2874,47 @@ conjoin :: [AForm] -> Sem
 conjoin [] _ e = [e]
 conjoin (a: as) k e =
   do
-    e <- checkSem (satisfy a) k e
+    e <- checkSem (satisfy a []) k e
     conjoin as k e
 
+conjoinEbvs :: [AForm] -> [Term] -> Sem
+conjoinEbvs [] _ _ e = [e]
+conjoinEbvs (a: as) ebvs k e =
+    do
+    e <- checkSem (satisfy a ebvs) k e
+    conjoinEbvs as ebvs k e
+
 -- Extends an environment (a variable assignment) according to the
--- given atomic formula.
-satisfy :: AForm -> Sem
-satisfy (Length r z h) = glength r z h
-satisfy (Param r v i z t) = gparam r v i z t
-satisfy (Prec n n') = gprec n n'
-satisfy (Non t) = ggnon t
-satisfy (Pnon t) = ggpnon t
-satisfy (Uniq t) = gguniq t
-satisfy (UniqAt t n) = guniqAt t n
-satisfy (Ugen t) = gggen t
-satisfy (UgenAt t n) = gugenAt t n
-satisfy (GenStV t) = ggenstv t
-satisfy (Conf t) = ggconf t
-satisfy (Auth t) = ggauth t
-satisfy (AFact name fs) = gafact name fs
-satisfy (Equals t t') = geq t t'
-satisfy (Component t t') = gcomponent t t'
-satisfy (Commpair n n') = gcommpair n n'
-satisfy (SameLocn n n') = gsamelocn n n'
-satisfy (StateNode n) = gstateNode n
-satisfy (Trans (t, t')) = gafact "trans" [t, t']
-satisfy (LeadsTo n n') =
+-- given atomic formula.  The second argument is the set of
+-- existentially bound variables, which we will use only in geq to
+-- handle adding identities involving the existentially bound
+-- variables.  
+satisfy :: AForm -> [Term] -> Sem
+satisfy (Length r z h) _ = glength r z h
+satisfy (Param r v i z t) _ = gparam r v i z t
+satisfy (Prec n n') _ = gprec n n'
+satisfy (Non t) _ = ggnon t
+satisfy (Pnon t) _ = ggpnon t
+satisfy (Uniq t) _ = gguniq t
+satisfy (UniqAt t n) _ = guniqAt t n
+satisfy (Ugen t) _ = gggen t
+satisfy (UgenAt t n) _ = gugenAt t n
+satisfy (GenStV t) _ = ggenstv t
+satisfy (Conf t) _ = ggconf t
+satisfy (Auth t) _ = ggauth t
+satisfy (AFact name fs) _ = gafact name fs
+satisfy (Equals t t') ebvs = geq ebvs t t'
+satisfy (Component t t') _ = gcomponent t t'
+satisfy (Commpair n n') _ = gcommpair n n'
+satisfy (SameLocn n n') _ = gsamelocn n n'
+satisfy (StateNode n) _ = gstateNode n
+satisfy (Trans (t, t')) _ = gafact "trans" [t, t']
+satisfy (LeadsTo n n') _ =
     \k ge ->
         do
-          ge <- satisfy (Commpair n n') k ge
-          ge <- satisfy (Prec n n') k ge
-          ge <- satisfy (StateNode n) k ge
+          ge <- satisfy (Commpair n n') [] k ge
+          ge <- satisfy (Prec n n') [] k ge
+          ge <- satisfy (StateNode n) [] k ge
           -- Commpair entails StateNode n' too
           return ge
 
@@ -2921,7 +2931,7 @@ nodePairsOfSkel k =
                (maybeList
                 [strdLookup e z1, indxLookup e i1,
                  strdLookup e z2, indxLookup e i2]))
-              (satisfy (LeadsTo (z1,i1) (z2,i2)) k (g4,emptyEnv)) of
+              (satisfy (LeadsTo (z1,i1) (z2,i2)) [] k (g4,emptyEnv)) of
        Nothing -> []
        Just l -> l)
 
@@ -3169,30 +3179,46 @@ fmatch t (FTerm t') e =
   match t t' e
 
 -- Equality
-geq :: Term -> Term -> Sem
-geq t t' _ (g, e)
+geq :: [Term] -> Term -> Term -> Sem
+geq ebvs t t' _ (g, e)
   -- Ensure all variables in t and t' are in the domain of e.
   -- This always happens for goals because they must be role specific
   -- but it is not always true for rules.
-  | not (matched e t) || not (matched e t') =
-      []
---         error ("In a rule equality check, " ++
---                "cannot find a binding for some variable")
+  | not (unmatchedVarsWithin e t ebvs) = 
+      error ("In a rule equality check, " ++
+             "cannot find a binding for some variable in " ++ (show t))
+  | not (unmatchedVarsWithin e t' ebvs) =
+      error ("In a rule equality check, " ++
+             "cannot find a binding for some variable in " ++ (show t'))
+
   | ti == ti' = [(g, e)]
+  | not (null ebvs) =
+      map (\(g,s) ->
+               (g, substUpdate e s)) -- update the env with the subst  
+          $ filter
+                (\(_,s) ->      -- where all modified vars are ebvs
+                 substDomainWithin s ebvs) 
+                $ unify t t' (g, emptySubst)
   | otherwise = []
   where
     ti = instantiate e t
     ti' = instantiate e t'
 
+{--
+  do
+    subst <- unify t t' (g, emptySubst)
+    return (fst subst, substUpdate e (snd subst))
+--} 
+
 gcomponent :: Term -> Term -> Sem
 gcomponent t t' k (g, e) =
-    let result = foldl (\ges cmpt -> (geq t cmpt k (g, e)) ++ ges)
+    let result = foldl (\ges cmpt -> (geq [] t cmpt k (g, e)) ++ ges)
                  []
                  (components t') in
     --    zP ("> " ++ (show (length result))) result
     result
 
---   satisfy (StateNode n) = gstateNode n
+--   satisfy (StateNode n) [] = gstateNode n
 
 isStateChMsg :: ChMsg -> Bool
 isStateChMsg (Plain _) = False
@@ -4005,8 +4031,8 @@ tryRule k r =
   [(g, e) | (g, e) <- conjoin (antec $ rlgoal r) k (gen k, emptyEnv),
             conclusion (g, e) ]
   where
-    conclusion e = all (disjunct e) $ concl $ rlgoal r
-    disjunct e a = null $ conjoin a k e
+    conclusion e = all (disjunct e) $ consq $ rlgoal r
+    disjunct e (ebvs,a) = null $ conjoinEbvs a ebvs k e
 
 {--
 

@@ -165,12 +165,14 @@ module CPSA.Algebra (name, alias,
     unify,
     compose,
     absentSubst,
+    substDomainWithin, 
 
     Env,
     emptyEnv,
     instantiate,
     matched,
     match,
+    unmatchedVarsWithin, 
     substitution,
     strandBoundEnv,
     reify,
@@ -203,7 +205,7 @@ import Data.Set (Set)
 import qualified Data.Map as M
 import Data.Map (Map)
 import Data.Char (isDigit)
-import CPSA.Lib.Utilities (replaceNth, adjoin, assertError)
+import CPSA.Lib.Utilities (replaceNth, adjoin, subset, assertError)
 import CPSA.Lib.SExpr (SExpr(..), Pos, annotation)
 import CPSA.Signature (Sig)
 import qualified CPSA.Signature as Sig
@@ -286,6 +288,12 @@ isExprVar t =
 -- Assumes isGroupVar t, isBasisVar t, or isExprVar is True!
 getGroupVar :: Group -> Id
 getGroupVar x = head $ M.keys x
+
+groupVarsOfGroup :: Group -> [Group]
+groupVarsOfGroup =
+    M.foldrWithKey
+         (\id desc soFar -> (M.singleton id desc) : soFar)
+         []
 
 -- Create group var as a basis element if be is Rndx
 groupVarG :: Sort -> Id -> Group
@@ -1229,6 +1237,46 @@ idMapped _ (Z _) = True
 idMapped subst (X x) = M.member x subst
 idMapped _ (Y _) = True
 
+
+-- Set (specifically, list) of variables that occur in a term, but
+-- their identifier is *not* a key in the map.  
+idUnmapped :: IdMap -> Term -> [Term]
+idUnmapped map (I x)
+           | M.member x map = []
+           | otherwise = [(I x)]
+idUnmapped map (D x)
+           | M.member x map = []
+           | otherwise = [(D x)]
+idUnmapped map (X x)
+           | M.member x map = []
+           | otherwise = [(X x)]
+
+idUnmapped _ (C _) = []
+idUnmapped _ (Z _) = []
+idUnmapped _ (Y _) = []
+ 
+idUnmapped map (G t) =
+    L.map G
+         $ filter (\g -> not $ M.member (getGroupVar g) map)
+               $ groupVarsOfGroup t
+
+idUnmapped map t@(F s u) 
+    | varSym s && any (idMapped map) u = [] 
+    | varSym s && not(any (idMapped map) u) = [t]
+    | otherwise = 
+        concatMap (idUnmapped map) u
+
+
+
+-- Set (specifically, list) of identifiers that are keys in a map, ie
+-- the domain of the mapping.
+
+idMapDomain :: IdMap -> [Id]
+idMapDomain map = 
+    M.foldrWithKey (\k _ ks -> k:ks) [] map
+
+
+
 -- Unification and substitution
 
 expSubst :: IdMap -> Term -> Group -> Term
@@ -1303,6 +1351,20 @@ allId _ (Y _) = True
 substitute :: Subst -> Term -> Term
 substitute (Subst s) t =
     idSubst s t
+
+-- Domain of a substitution
+substDomain :: Subst -> [Id]
+substDomain (Subst s) = idMapDomain s 
+
+-- Determine whether every Id in the domain of a subst is the varId of
+-- one of the given terms.  Assume that each given term is a variable!
+
+substDomainWithin :: Subst -> [Term] -> Bool
+substDomainWithin subst vars =
+    subset dom (map varId vars)
+    where
+      dom = substDomain subst
+                     
 
 -- Composition of substitutions
 
@@ -1604,10 +1666,24 @@ instantiate (Env (_, r)) t = idSubst r t
 matched :: Env -> Term -> Bool
 matched (Env (_, r)) t = idMapped r t
 
+-- We assume that each term in the list is actually a variable!
+--
+-- Maybe we should check by isVar.
+
+unmatchedVarsWithin :: Env -> Term -> [Term] -> Bool 
+unmatchedVarsWithin (Env (_, r)) t vars =
+    all (flip elem vars) unmatchedIds
+    where
+      unmatchedIds = idUnmapped r t
+
+
 -- Apply a substitution to the range of an environment
 substUpdate :: Env -> Subst -> Env
 substUpdate (Env (x, r)) s =
   Env (x, M.map (substitute s) r)
+
+-- envDomain :: Env -> [Id]
+-- envDomain (Env (_, r)) = idMapDomain r 
 
 -- The matcher has the property that when pattern P and term T match
 -- then instantiate (match P T emptyEnv) P = T.
