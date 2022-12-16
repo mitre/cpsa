@@ -27,7 +27,12 @@ main =
       let interp = algInterp name algs
       (p, (output, alg, margin)) <- start options interp
       h <- outputHandle output
-      -- Handle the herald
+      herald p margin h alg
+
+-- Handle the herald
+herald :: PosHandle -> Int -> Handle -> String -> IO ()
+herald p margin h alg =
+    do
       x <- readSExpr p
       case x of
         Nothing -> abort "Empty input"
@@ -38,6 +43,8 @@ main =
             sig <- loadSig pos (assoc "lang" xs)
             let nom = getAlgName xs alg
             select p margin h sig nom Nothing
+        Just (L _ (S _ "comment" : _)) ->
+          herald p margin h alg
         x ->
           select p margin h defaultSig alg x
 
