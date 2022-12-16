@@ -46,10 +46,10 @@ loadPOV sig name origin ps (L pos (S _ "defprotocol" : xs)) =
     do
       p <- loadProt sig name origin pos xs
       return ((sig, p : ps, []), Nothing)
-loadPOV sig _ _ ps (L pos (S _ "defskeleton" : xs)) =
+loadPOV _ _ _ ps (L pos (S _ "defskeleton" : xs)) =
     do
       p <- findProt pos ps xs
-      k <- loadPreskel sig pos p (pgen p) xs
+      k <- loadPreskel (psig p) pos p (pgen p) xs
       case isFringe k of
         False -> return ((psig p, ps, [k]), Nothing) -- Found POV
         _ -> return ((psig p, ps, []), Nothing) -- Not POV
