@@ -87,15 +87,15 @@ loadProt sig nom origin pos (S _ name : S _ alg : x : xs)
                          []   -- loader-generated rules was rls
                          []
 
-          (gen, rls) <- initRules sig gen' fakeProt rolesAndPreRules
+          (gen, forgettableRls, memorableRls) <- initRules sig gen' fakeProt rolesAndPreRules
 
           (gen, newRls, comment) <- loadRules sig fakeProt gen rest
           -- Check for duplicate role names
           (validate
            (mkProt name alg gen sig rs r
-                       (newRls ++ rls)
-                       newRls   -- user-written rules
-                       rls -- loader-generated rules
+                       (newRls ++ forgettableRls ++ memorableRls)
+                       (newRls ++ memorableRls)  -- user-written rules
+                       forgettableRls -- loader-regenerated rules
                        comment)
            rs)
     where
@@ -516,7 +516,7 @@ iterPreRules f sig gen prot rlPreRules =
          (gen,[])
          rlPreRules
 
-initRules :: MonadFail m => Sig -> Gen -> Prot -> [(Role,PreRules)] -> m (Gen, [Rule])
+initRules :: MonadFail m => Sig -> Gen -> Prot -> [(Role,PreRules)] -> m (Gen, [Rule], [Rule])
 initRules sig g prot prs =
     -- Must generate neqRules, factRules, assumeRules, relyRules,
     -- guarRules, cheqRules, and,
@@ -551,8 +551,10 @@ initRules sig g prot prs =
       (g,csRls) <- iterPreRules initPreRuleCS sig g prot prs
       (g,gsRls) <- iterPreRules initPreRulesGensts sig g prot prs
 
-      return (g, neqs ++ fixedStateRls ++ fcRls ++ asRls ++
-               rlRls ++ grRls ++ cqRls ++ trRls ++ csRls ++ gsRls)
+      return (g,
+               neqs ++ fixedStateRls ++ fcRls ++
+                    asRls ++ trRls ++ csRls ++ gsRls, 
+               rlRls ++ grRls ++ cqRls)
 
 {--
   showRoleGenStates :: [(Role,PreRules)] -> [(String,String)]

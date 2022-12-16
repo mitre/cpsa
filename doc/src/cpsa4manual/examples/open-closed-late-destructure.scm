@@ -1,5 +1,5 @@
-(herald open-closed-alt-late-destructure
-	(bound 40))
+(herald open-closed-late-destructure
+	(bound 35))
 
 (defprotocol subatomic-open-closed basic
   (defrole dev-up

@@ -529,9 +529,14 @@ satisfies :: Preskel -> [SExpr ()]
 satisfies k =
   map f (sat k) where
     f (_, []) = S () "yes"
-    f (g, e : _) =
-      L () (S () "no" : displayEnv (ctx $ uvars g) (ctx $ kvars k) e)
+    f (g, ge : _) =
+      L () (S () "no" :
+            (displayForm
+             (ctx $ (uvars g) ++ (evars g) ++ (kvars k))
+             (unSatReport k g ge)) : 
+            (displayEnv (ctx $ uvars g) (ctx $ kvars k) (snd ge)))
     ctx ts = addToContext emptyContext ts
+    evars g = concatMap fst $ consq g
 
 -- Prints structure preserving maps (homomorphisms)
 maps :: Preskel -> [SExpr ()]

@@ -20,7 +20,7 @@ module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     inheritRconf, inheritRauth, addListener, addBaseListener, addAbsence,
     Cause (..), Direction (..), Method (..), Operation (..),
     operation, krules, pprob, prob, homomorphism, toSkeleton, generalize,
-    collapse, sat, FTerm (..), Fact (..), simplify, rewrite,
+    collapse, sat, unSatReport, FTerm (..), Fact (..), simplify, rewrite,
     localSignal, rewriteUnaryOneOnce, nodePairsOfSkel, applyLeadsTo) where
 
 import Control.Monad
@@ -2853,16 +2853,16 @@ chkFacts k =
 -- Returns the environments that satisfy the antecedent
 -- but do not extend to satisfy any of the conclusions.
 --
-goalSat :: Preskel -> Goal -> (Goal, [Env])
+goalSat :: Preskel -> Goal -> (Goal, [(Gen, Env)])
 goalSat k g =
-  (g, [ e |
+  (g, [ (gen, e) |
         (gen, e) <- conjoin (antec g) k (gen k, emptyEnv),
         conclusion (gen, e) ])
   where
-    conclusion e = all (disjunct e) $ consq g
-    disjunct e (ebvs,a) = null $ conjoinEbvs a ebvs k e
+    conclusion ge = all (disjunct ge) $ consq g
+    disjunct ge (ebvs,a) = null $ conjoinEbvs a ebvs k ge
 
-sat :: Preskel -> [(Goal, [Env])]
+sat :: Preskel -> [(Goal, [(Gen, Env)])]
 sat k =
   map (goalSat k) (kgoals k)
 
@@ -2871,18 +2871,40 @@ sat k =
 type Sem = Preskel -> (Gen, Env) -> [(Gen, Env)]
 
 conjoin :: [AForm] -> Sem
-conjoin [] _ e = [e]
-conjoin (a: as) k e =
+conjoin [] _ ge = [ge]
+conjoin (a: as) k ge =
   do
-    e <- checkSem (satisfy a []) k e
-    conjoin as k e
+    ge <- checkSem (satisfy a []) k ge
+    conjoin as k ge
 
 conjoinEbvs :: [AForm] -> [Term] -> Sem
-conjoinEbvs [] _ _ e = [e]
-conjoinEbvs (a: as) ebvs k e =
+conjoinEbvs [] _ _ ge = [ge]
+conjoinEbvs (a: as) ebvs k ge =
     do
-    e <- checkSem (satisfy a ebvs) k e
-    conjoinEbvs as ebvs k e
+    ge <- checkSem (satisfy a ebvs) k ge
+    conjoinEbvs as ebvs k ge
+
+-- Suppose a gen-env pair ge that satisfies the antecedent of a goal,
+-- but does not extend to satisfy any of the disjuncts on the
+-- conclusion.  We would like to know, for at least one disjunct of
+-- the conclusion, say the first, an atomic formula in that disjunct
+-- that cannot be satisfied.  unSatReport reports that.
+
+unSatReport :: Preskel -> Goal -> (Gen, Env) -> AForm
+unSatReport k g ge =
+    case varAtomLists of
+      [] -> AFact "false" []
+      (ebvs,as) : _ -> iter ebvs as ge
+          
+    where
+      varAtomLists = consq g
+                     
+      -- doesn't happen if e is a counterexample 
+      iter _ [] _ = AFact "true" [] 
+      iter ebvs (a : as) ge =
+          case satisfy a ebvs k ge of
+            [] -> a
+            ge' : _ -> iter ebvs as ge'
 
 -- Extends an environment (a variable assignment) according to the
 -- given atomic formula.  The second argument is the set of
@@ -3193,12 +3215,12 @@ geq ebvs t t' _ (g, e)
 
   | ti == ti' = [(g, e)]
   | not (null ebvs) =
-      map (\(g,s) ->
-               (g, substUpdate e s)) -- update the env with the subst  
-          $ filter
-                (\(_,s) ->      -- where all modified vars are ebvs
-                 substDomainWithin s ebvs) 
-                $ unify t t' (g, emptySubst)
+      L.map (\(g,s) ->
+                 (g, substUpdate e s)) -- update the env with the subst  
+           $ filter
+                 (\(_,s) ->      -- where all modified vars are ebvs
+                  substDomainWithin s ebvs) 
+                 $ unify t t' (g, emptySubst)
   | otherwise = []
   where
     ti = instantiate e t
