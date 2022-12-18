@@ -1,6 +1,6 @@
 (herald "bltk Test File" (algebra diffie-hellman) (bound 12))
 
-(comment "CPSA 4.3.1")
+(comment "CPSA 4.4.0")
 (comment "All input read from bltk_test.scm")
 (comment "Strand count bounded at 12")
 

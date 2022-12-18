@@ -1,0 +1,1077 @@
+(herald "Yahalom Protocol Without Forwarding" (bound 15))
+
+(comment "CPSA 4.4.0")
+(comment "All input read from chan-yahalom_sas.scm")
+(comment "Strand count bounded at 15")
+
+(defprotocol yahalom basic
+  (defrole init
+    (vars (a b name) (n-a n-b text) (k skey) (ch3 chan))
+    (trace (send (cat a n-a)) (recv ch3 (cat a b k n-a n-b))
+      (send (enc n-b k))))
+  (defrole resp
+    (vars (b a name) (n-a n-b text) (k skey) (ch1 ch2 chan))
+    (trace (recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k))))
+  (defrole serv
+    (vars (a b name) (n-a n-b text) (k skey) (ch1 ch2 ch3 chan))
+    (trace (recv ch1 (cat a b n-a n-b)) (send ch3 (cat a b k n-a n-b))
+      (send ch2 (cat a b k)))
+    (uniq-orig k))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
+
+(defskeleton yahalom
+  (vars (k skey) (n-b n-a text) (a b name) (ch1 ch2 chan))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
+    (ch2 ch2))
+  (uniq-orig n-b)
+  (conf ch2)
+  (goals
+    (forall ((k skey) (n-b n-a text) (a b name) (ch1 ch2 chan) (z strd))
+      (implies
+        (and (p "resp" z 4) (p "resp" "k" z k) (p "resp" "n-a" z n-a)
+          (p "resp" "n-b" z n-b) (p "resp" "b" z b) (p "resp" "a" z a)
+          (p "resp" "ch1" z ch1) (p "resp" "ch2" z ch2)
+          (uniq-at n-b z 1) (auth ch2))
+        (exists ((n-a-0 n-b-0 text) (ch1-0 ch3 chan) (z-0 strd))
+          (and (p "serv" z-0 3) (p "serv" "k" z-0 k)
+            (p "serv" "n-a" z-0 n-a-0) (p "serv" "n-b" z-0 n-b-0)
+            (p "serv" "a" z-0 a) (p "serv" "b" z-0 b)
+            (p "serv" "ch1" z-0 ch1-0) (p "serv" "ch2" z-0 ch2)
+            (p "serv" "ch3" z-0 ch3) (prec z-0 2 z 2)
+            (uniq-at k z-0 1))))))
+  (traces
+    ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k))))
+  (label 0)
+  (realized)
+  (shape)
+  (satisfies yes)
+  (maps
+    ((0) ((k k) (n-b n-b) (n-a n-a) (a a) (b b) (ch1 ch1) (ch2 ch2))))
+  (origs (n-b (0 1))))
+
+(comment "Nothing left to do")
+
+(defprotocol yahalom basic
+  (defrole init
+    (vars (a b name) (n-a n-b text) (k skey) (ch3 chan))
+    (trace (send (cat a n-a)) (recv ch3 (cat a b k n-a n-b))
+      (send (enc n-b k))))
+  (defrole resp
+    (vars (b a name) (n-a n-b text) (k skey) (ch1 ch2 chan))
+    (trace (recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k))))
+  (defrole serv
+    (vars (a b name) (n-a n-b text) (k skey) (ch1 ch2 ch3 chan))
+    (trace (recv ch1 (cat a b n-a n-b)) (send ch3 (cat a b k n-a n-b))
+      (send ch2 (cat a b k)))
+    (uniq-orig k))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
+
+(defskeleton yahalom
+  (vars (k skey) (n-b n-a n-a-0 n-b-0 text) (a b name)
+    (ch1 ch2 ch1-0 ch3 chan))
+  (defstrand serv 3 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b)
+    (ch1 ch1-0) (ch2 ch2) (ch3 ch3))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
+    (ch2 ch2))
+  (precedes ((0 2) (1 2)))
+  (uniq-orig k n-b)
+  (conf ch2 ch3)
+  (auth ch2)
+  (traces
+    ((recv ch1-0 (cat a b n-a-0 n-b-0))
+      (send ch3 (cat a b k n-a-0 n-b-0)) (send ch2 (cat a b k)))
+    ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k))))
+  (label 1)
+  (unrealized (1 3))
+  (origs (k (0 1)) (n-b (1 1)))
+  (comment "2 in cohort - 2 not yet seen"))
+
+(defskeleton yahalom
+  (vars (k skey) (n-b n-a n-a-0 n-b-0 n-a-1 text) (a b a-0 b-0 name)
+    (ch1 ch2 ch1-0 ch3 ch3-0 chan))
+  (defstrand serv 3 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b)
+    (ch1 ch1-0) (ch2 ch2) (ch3 ch3))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
+    (ch2 ch2))
+  (defstrand init 3 (k k) (n-a n-a-1) (n-b n-b) (a a-0) (b b-0)
+    (ch3 ch3-0))
+  (precedes ((0 1) (2 1)) ((0 2) (1 2)) ((1 1) (2 1)) ((2 2) (1 3)))
+  (uniq-orig k n-b)
+  (conf ch2 ch3)
+  (auth ch2)
+  (operation encryption-test (added-strand init 3) (enc n-b k) (1 3))
+  (traces
+    ((recv ch1-0 (cat a b n-a-0 n-b-0))
+      (send ch3 (cat a b k n-a-0 n-b-0)) (send ch2 (cat a b k)))
+    ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k)))
+    ((send (cat a-0 n-a-1)) (recv ch3-0 (cat a-0 b-0 k n-a-1 n-b))
+      (send (enc n-b k))))
+  (label 2)
+  (parent 1)
+  (unrealized (2 1))
+  (comment "2 in cohort - 2 not yet seen"))
+
+(defskeleton yahalom
+  (vars (k skey) (n-b n-a n-a-0 n-b-0 text) (a b name)
+    (ch1 ch2 ch1-0 ch3 chan))
+  (defstrand serv 3 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b)
+    (ch1 ch1-0) (ch2 ch2) (ch3 ch3))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
+    (ch2 ch2))
+  (deflistener k)
+  (precedes ((0 1) (2 0)) ((0 2) (1 2)) ((2 1) (1 3)))
+  (uniq-orig k n-b)
+  (conf ch2 ch3)
+  (auth ch2)
+  (operation encryption-test (added-listener k) (enc n-b k) (1 3))
+  (traces
+    ((recv ch1-0 (cat a b n-a-0 n-b-0))
+      (send ch3 (cat a b k n-a-0 n-b-0)) (send ch2 (cat a b k)))
+    ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k))) ((recv k) (send k)))
+  (label 3)
+  (parent 1)
+  (unrealized (2 0))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton yahalom
+  (vars (k skey) (n-a n-a-0 n-b text) (a b name)
+    (ch1 ch2 ch1-0 ch3 chan))
+  (defstrand serv 3 (k k) (n-a n-a-0) (n-b n-b) (a a) (b b) (ch1 ch1-0)
+    (ch2 ch2) (ch3 ch3))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
+    (ch2 ch2))
+  (defstrand init 3 (k k) (n-a n-a-0) (n-b n-b) (a a) (b b) (ch3 ch3))
+  (precedes ((0 1) (2 1)) ((0 2) (1 2)) ((1 1) (0 0)) ((2 2) (1 3)))
+  (uniq-orig k n-b)
+  (conf ch2 ch3)
+  (auth ch2)
+  (operation nonce-test
+    (contracted (n-b-0 n-b) (a-0 a) (b-0 b) (n-a-1 n-a-0) (ch3-0 ch3)) k
+    (2 1) (ch-msg ch3 (cat a b k n-a-0 n-b)))
+  (traces
+    ((recv ch1-0 (cat a b n-a-0 n-b)) (send ch3 (cat a b k n-a-0 n-b))
+      (send ch2 (cat a b k)))
+    ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k)))
+    ((send (cat a n-a-0)) (recv ch3 (cat a b k n-a-0 n-b))
+      (send (enc n-b k))))
+  (label 4)
+  (parent 2)
+  (realized)
+  (shape)
+  (satisfies yes)
+  (maps
+    ((0 1)
+      ((k k) (n-b n-b) (n-a n-a) (n-a-0 n-a-0) (n-b-0 n-b) (a a) (b b)
+        (ch1 ch1) (ch2 ch2) (ch1-0 ch1-0) (ch3 ch3))))
+  (origs (k (0 1)) (n-b (1 1))))
+
+(defskeleton yahalom
+  (vars (k skey) (n-b n-a n-a-0 n-b-0 n-a-1 text) (a b a-0 b-0 name)
+    (ch1 ch2 ch1-0 ch3 ch3-0 chan))
+  (defstrand serv 3 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b)
+    (ch1 ch1-0) (ch2 ch2) (ch3 ch3))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
+    (ch2 ch2))
+  (defstrand init 3 (k k) (n-a n-a-1) (n-b n-b) (a a-0) (b b-0)
+    (ch3 ch3-0))
+  (precedes ((0 2) (1 2)) ((0 2) (2 1)) ((1 1) (2 1)) ((2 2) (1 3)))
+  (uniq-orig k n-b)
+  (conf ch2 ch3)
+  (auth ch2)
+  (operation nonce-test (displaced 3 0 serv 3) k (2 1)
+    (ch-msg ch3 (cat a b k n-a-0 n-b-0)))
+  (traces
+    ((recv ch1-0 (cat a b n-a-0 n-b-0))
+      (send ch3 (cat a b k n-a-0 n-b-0)) (send ch2 (cat a b k)))
+    ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k)))
+    ((send (cat a-0 n-a-1)) (recv ch3-0 (cat a-0 b-0 k n-a-1 n-b))
+      (send (enc n-b k))))
+  (label 5)
+  (parent 2)
+  (unrealized (2 1))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton yahalom
+  (vars (k skey) (n-b n-a n-a-0 n-b-0 text) (a b name)
+    (ch1 ch2 ch1-0 ch3 chan))
+  (defstrand serv 3 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b)
+    (ch1 ch1-0) (ch2 ch2) (ch3 ch3))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
+    (ch2 ch2))
+  (deflistener k)
+  (precedes ((0 2) (1 2)) ((0 2) (2 0)) ((2 1) (1 3)))
+  (uniq-orig k n-b)
+  (conf ch2 ch3)
+  (auth ch2)
+  (operation nonce-test (displaced 3 0 serv 3) k (2 0)
+    (ch-msg ch3 (cat a b k n-a-0 n-b-0)))
+  (traces
+    ((recv ch1-0 (cat a b n-a-0 n-b-0))
+      (send ch3 (cat a b k n-a-0 n-b-0)) (send ch2 (cat a b k)))
+    ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k))) ((recv k) (send k)))
+  (label 6)
+  (parent 3)
+  (unrealized (2 0))
+  (dead)
+  (comment "empty cohort"))
+
+(defskeleton yahalom
+  (vars (k skey) (n-a n-a-0 n-b text) (a b name)
+    (ch1 ch2 ch1-0 ch3 chan))
+  (defstrand serv 3 (k k) (n-a n-a-0) (n-b n-b) (a a) (b b) (ch1 ch1-0)
+    (ch2 ch2) (ch3 ch3))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
+    (ch2 ch2))
+  (defstrand init 3 (k k) (n-a n-a-0) (n-b n-b) (a a) (b b) (ch3 ch3))
+  (precedes ((0 2) (1 2)) ((0 2) (2 1)) ((1 1) (0 0)) ((2 2) (1 3)))
+  (uniq-orig k n-b)
+  (conf ch2 ch3)
+  (auth ch2)
+  (operation nonce-test
+    (contracted (n-b-0 n-b) (a-0 a) (b-0 b) (n-a-1 n-a-0) (ch3-0 ch3)) k
+    (2 1) (ch-msg ch2 (cat a b k)) (ch-msg ch3 (cat a b k n-a-0 n-b)))
+  (traces
+    ((recv ch1-0 (cat a b n-a-0 n-b)) (send ch3 (cat a b k n-a-0 n-b))
+      (send ch2 (cat a b k)))
+    ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k)))
+    ((send (cat a n-a-0)) (recv ch3 (cat a b k n-a-0 n-b))
+      (send (enc n-b k))))
+  (label 7)
+  (parent 5)
+  (seen 4)
+  (realized)
+  (comment "1 in cohort - 0 not yet seen"))
+
+(comment "Nothing left to do")
+
+(defprotocol yahalom basic
+  (defrole init
+    (vars (a b name) (n-a n-b text) (k skey) (ch3 chan))
+    (trace (send (cat a n-a)) (recv ch3 (cat a b k n-a n-b))
+      (send (enc n-b k))))
+  (defrole resp
+    (vars (b a name) (n-a n-b text) (k skey) (ch1 ch2 chan))
+    (trace (recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k))))
+  (defrole serv
+    (vars (a b name) (n-a n-b text) (k skey) (ch1 ch2 ch3 chan))
+    (trace (recv ch1 (cat a b n-a n-b)) (send ch3 (cat a b k n-a n-b))
+      (send ch2 (cat a b k)))
+    (uniq-orig k))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
+
+(defskeleton yahalom
+  (vars (k skey) (n-b n-a n-a-0 n-b-0 text) (a b name)
+    (ch1 ch2 ch1-0 ch3 chan))
+  (defstrand serv 3 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b)
+    (ch1 ch1-0) (ch2 ch2) (ch3 ch3))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
+    (ch2 ch2))
+  (uniq-orig k n-b)
+  (conf ch2 ch3)
+  (auth ch2 ch1-0)
+  (goals
+    (forall
+      ((k skey) (n-b n-a n-a-0 n-b-0 text) (a b name)
+        (ch1 ch2 ch1-0 ch3 chan) (z z-0 strd))
+      (implies
+        (and (p "resp" z 4) (p "serv" z-0 3) (p "resp" "k" z k)
+          (p "resp" "n-a" z n-a) (p "resp" "n-b" z n-b)
+          (p "resp" "b" z b) (p "resp" "a" z a) (p "resp" "ch1" z ch1)
+          (p "resp" "ch2" z ch2) (p "serv" "k" z-0 k)
+          (p "serv" "n-a" z-0 n-a-0) (p "serv" "n-b" z-0 n-b-0)
+          (p "serv" "a" z-0 a) (p "serv" "b" z-0 b)
+          (p "serv" "ch1" z-0 ch1-0) (p "serv" "ch2" z-0 ch2)
+          (p "serv" "ch3" z-0 ch3) (uniq-at k z-0 1) (uniq-at n-b z 1)
+          (auth ch2) (auth ch1-0) (conf ch2) (conf ch3))
+        (exists ((z-1 strd))
+          (and (= n-a-0 n-a) (= n-b-0 n-b) (= ch1-0 ch1)
+            (p "init" z-1 3) (p "serv" "n-a" z-0 n-a)
+            (p "serv" "n-b" z-0 n-b) (p "serv" "ch1" z-0 ch1)
+            (p "init" "k" z-1 k) (p "init" "n-a" z-1 n-a)
+            (p "init" "n-b" z-1 n-b) (p "init" "a" z-1 a)
+            (p "init" "b" z-1 b) (p "init" "ch3" z-1 ch3)
+            (prec z 1 z-0 0) (prec z-0 1 z-1 1) (prec z-0 2 z 2)
+            (prec z-1 2 z 3) (auth ch1))))))
+  (traces
+    ((recv ch1-0 (cat a b n-a-0 n-b-0))
+      (send ch3 (cat a b k n-a-0 n-b-0)) (send ch2 (cat a b k)))
+    ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k))))
+  (label 8)
+  (unrealized (0 0) (1 2) (1 3))
+  (preskeleton)
+  (origs (k (0 1)) (n-b (1 1)))
+  (comment "Not a skeleton"))
+
+(defskeleton yahalom
+  (vars (k skey) (n-b n-a n-a-0 n-b-0 text) (a b name)
+    (ch1 ch2 ch1-0 ch3 chan))
+  (defstrand serv 3 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b)
+    (ch1 ch1-0) (ch2 ch2) (ch3 ch3))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
+    (ch2 ch2))
+  (precedes ((0 1) (1 2)))
+  (uniq-orig k n-b)
+  (conf ch2 ch3)
+  (auth ch2 ch1-0)
+  (traces
+    ((recv ch1-0 (cat a b n-a-0 n-b-0))
+      (send ch3 (cat a b k n-a-0 n-b-0)) (send ch2 (cat a b k)))
+    ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k))))
+  (label 9)
+  (parent 8)
+  (unrealized (0 0) (1 2) (1 3))
+  (origs (k (0 1)) (n-b (1 1)))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton yahalom
+  (vars (k skey) (n-b n-a n-a-0 n-b-0 text) (a b name)
+    (ch1 ch2 ch1-0 ch3 chan))
+  (defstrand serv 3 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b)
+    (ch1 ch1-0) (ch2 ch2) (ch3 ch3))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
+    (ch2 ch2))
+  (precedes ((0 2) (1 2)))
+  (uniq-orig k n-b)
+  (conf ch2 ch3)
+  (auth ch2 ch1-0)
+  (operation channel-test (displaced 2 0 serv 3)
+    (ch-msg ch2 (cat a b k)) (1 2))
+  (traces
+    ((recv ch1-0 (cat a b n-a-0 n-b-0))
+      (send ch3 (cat a b k n-a-0 n-b-0)) (send ch2 (cat a b k)))
+    ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k))))
+  (label 10)
+  (parent 9)
+  (unrealized (0 0) (1 3))
+  (origs (k (0 1)) (n-b (1 1)))
+  (comment "2 in cohort - 2 not yet seen"))
+
+(defskeleton yahalom
+  (vars (k skey) (n-b n-a n-a-0 n-b-0 n-a-1 text) (a b a-0 b-0 name)
+    (ch1 ch2 ch1-0 ch3 ch3-0 chan))
+  (defstrand serv 3 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b)
+    (ch1 ch1-0) (ch2 ch2) (ch3 ch3))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
+    (ch2 ch2))
+  (defstrand init 3 (k k) (n-a n-a-1) (n-b n-b) (a a-0) (b b-0)
+    (ch3 ch3-0))
+  (precedes ((0 1) (2 1)) ((0 2) (1 2)) ((1 1) (2 1)) ((2 2) (1 3)))
+  (uniq-orig k n-b)
+  (conf ch2 ch3)
+  (auth ch2 ch1-0)
+  (operation encryption-test (added-strand init 3) (enc n-b k) (1 3))
+  (traces
+    ((recv ch1-0 (cat a b n-a-0 n-b-0))
+      (send ch3 (cat a b k n-a-0 n-b-0)) (send ch2 (cat a b k)))
+    ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k)))
+    ((send (cat a-0 n-a-1)) (recv ch3-0 (cat a-0 b-0 k n-a-1 n-b))
+      (send (enc n-b k))))
+  (label 11)
+  (parent 10)
+  (unrealized (0 0) (2 1))
+  (comment "2 in cohort - 2 not yet seen"))
+
+(defskeleton yahalom
+  (vars (k skey) (n-b n-a n-a-0 n-b-0 text) (a b name)
+    (ch1 ch2 ch1-0 ch3 chan))
+  (defstrand serv 3 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b)
+    (ch1 ch1-0) (ch2 ch2) (ch3 ch3))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
+    (ch2 ch2))
+  (deflistener k)
+  (precedes ((0 1) (2 0)) ((0 2) (1 2)) ((2 1) (1 3)))
+  (uniq-orig k n-b)
+  (conf ch2 ch3)
+  (auth ch2 ch1-0)
+  (operation encryption-test (added-listener k) (enc n-b k) (1 3))
+  (traces
+    ((recv ch1-0 (cat a b n-a-0 n-b-0))
+      (send ch3 (cat a b k n-a-0 n-b-0)) (send ch2 (cat a b k)))
+    ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k))) ((recv k) (send k)))
+  (label 12)
+  (parent 10)
+  (unrealized (0 0) (2 0))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton yahalom
+  (vars (k skey) (n-a n-a-0 n-b text) (a b name)
+    (ch1 ch2 ch1-0 ch3 chan))
+  (defstrand serv 3 (k k) (n-a n-a-0) (n-b n-b) (a a) (b b) (ch1 ch1-0)
+    (ch2 ch2) (ch3 ch3))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
+    (ch2 ch2))
+  (defstrand init 3 (k k) (n-a n-a-0) (n-b n-b) (a a) (b b) (ch3 ch3))
+  (precedes ((0 1) (2 1)) ((0 2) (1 2)) ((1 1) (0 0)) ((2 2) (1 3)))
+  (uniq-orig k n-b)
+  (conf ch2 ch3)
+  (auth ch2 ch1-0)
+  (operation nonce-test
+    (contracted (n-b-0 n-b) (a-0 a) (b-0 b) (n-a-1 n-a-0) (ch3-0 ch3)) k
+    (2 1) (ch-msg ch3 (cat a b k n-a-0 n-b)))
+  (traces
+    ((recv ch1-0 (cat a b n-a-0 n-b)) (send ch3 (cat a b k n-a-0 n-b))
+      (send ch2 (cat a b k)))
+    ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k)))
+    ((send (cat a n-a-0)) (recv ch3 (cat a b k n-a-0 n-b))
+      (send (enc n-b k))))
+  (label 13)
+  (parent 11)
+  (unrealized (0 0))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton yahalom
+  (vars (k skey) (n-b n-a n-a-0 n-b-0 n-a-1 text) (a b a-0 b-0 name)
+    (ch1 ch2 ch1-0 ch3 ch3-0 chan))
+  (defstrand serv 3 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b)
+    (ch1 ch1-0) (ch2 ch2) (ch3 ch3))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
+    (ch2 ch2))
+  (defstrand init 3 (k k) (n-a n-a-1) (n-b n-b) (a a-0) (b b-0)
+    (ch3 ch3-0))
+  (precedes ((0 2) (1 2)) ((0 2) (2 1)) ((1 1) (2 1)) ((2 2) (1 3)))
+  (uniq-orig k n-b)
+  (conf ch2 ch3)
+  (auth ch2 ch1-0)
+  (operation nonce-test (displaced 3 0 serv 3) k (2 1)
+    (ch-msg ch3 (cat a b k n-a-0 n-b-0)))
+  (traces
+    ((recv ch1-0 (cat a b n-a-0 n-b-0))
+      (send ch3 (cat a b k n-a-0 n-b-0)) (send ch2 (cat a b k)))
+    ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k)))
+    ((send (cat a-0 n-a-1)) (recv ch3-0 (cat a-0 b-0 k n-a-1 n-b))
+      (send (enc n-b k))))
+  (label 14)
+  (parent 11)
+  (unrealized (0 0) (2 1))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton yahalom
+  (vars (k skey) (n-b n-a n-a-0 n-b-0 text) (a b name)
+    (ch1 ch2 ch1-0 ch3 chan))
+  (defstrand serv 3 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b)
+    (ch1 ch1-0) (ch2 ch2) (ch3 ch3))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
+    (ch2 ch2))
+  (deflistener k)
+  (precedes ((0 2) (1 2)) ((0 2) (2 0)) ((2 1) (1 3)))
+  (uniq-orig k n-b)
+  (conf ch2 ch3)
+  (auth ch2 ch1-0)
+  (operation nonce-test (displaced 3 0 serv 3) k (2 0)
+    (ch-msg ch3 (cat a b k n-a-0 n-b-0)))
+  (traces
+    ((recv ch1-0 (cat a b n-a-0 n-b-0))
+      (send ch3 (cat a b k n-a-0 n-b-0)) (send ch2 (cat a b k)))
+    ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k))) ((recv k) (send k)))
+  (label 15)
+  (parent 12)
+  (unrealized (0 0) (2 0))
+  (dead)
+  (comment "empty cohort"))
+
+(defskeleton yahalom
+  (vars (k skey) (n-a n-b text) (a b name) (ch1 ch2 ch3 chan))
+  (defstrand serv 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
+    (ch2 ch2) (ch3 ch3))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
+    (ch2 ch2))
+  (defstrand init 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch3 ch3))
+  (precedes ((0 1) (2 1)) ((0 2) (1 2)) ((1 1) (0 0)) ((2 2) (1 3)))
+  (uniq-orig k n-b)
+  (conf ch2 ch3)
+  (auth ch1 ch2)
+  (operation channel-test (displaced 3 1 resp 2)
+    (ch-msg ch1-0 (cat a b n-a-0 n-b)) (0 0))
+  (traces
+    ((recv ch1 (cat a b n-a n-b)) (send ch3 (cat a b k n-a n-b))
+      (send ch2 (cat a b k)))
+    ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k)))
+    ((send (cat a n-a)) (recv ch3 (cat a b k n-a n-b))
+      (send (enc n-b k))))
+  (label 16)
+  (parent 13)
+  (realized)
+  (shape)
+  (satisfies yes)
+  (maps
+    ((0 1)
+      ((k k) (n-b n-b) (n-a n-a) (n-a-0 n-a) (n-b-0 n-b) (a a) (b b)
+        (ch1 ch1) (ch2 ch2) (ch1-0 ch1) (ch3 ch3))))
+  (origs (k (0 1)) (n-b (1 1))))
+
+(defskeleton yahalom
+  (vars (k skey) (n-a n-a-0 n-b text) (a b name)
+    (ch1 ch2 ch1-0 ch3 chan))
+  (defstrand serv 3 (k k) (n-a n-a-0) (n-b n-b) (a a) (b b) (ch1 ch1-0)
+    (ch2 ch2) (ch3 ch3))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
+    (ch2 ch2))
+  (defstrand init 3 (k k) (n-a n-a-0) (n-b n-b) (a a) (b b) (ch3 ch3))
+  (precedes ((0 2) (1 2)) ((0 2) (2 1)) ((1 1) (0 0)) ((2 2) (1 3)))
+  (uniq-orig k n-b)
+  (conf ch2 ch3)
+  (auth ch2 ch1-0)
+  (operation nonce-test
+    (contracted (n-b-0 n-b) (a-0 a) (b-0 b) (n-a-1 n-a-0) (ch3-0 ch3)) k
+    (2 1) (ch-msg ch2 (cat a b k)) (ch-msg ch3 (cat a b k n-a-0 n-b)))
+  (traces
+    ((recv ch1-0 (cat a b n-a-0 n-b)) (send ch3 (cat a b k n-a-0 n-b))
+      (send ch2 (cat a b k)))
+    ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k)))
+    ((send (cat a n-a-0)) (recv ch3 (cat a b k n-a-0 n-b))
+      (send (enc n-b k))))
+  (label 17)
+  (parent 14)
+  (unrealized (0 0))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton yahalom
+  (vars (k skey) (n-a n-b text) (a b name) (ch1 ch2 ch3 chan))
+  (defstrand serv 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
+    (ch2 ch2) (ch3 ch3))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
+    (ch2 ch2))
+  (defstrand init 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch3 ch3))
+  (precedes ((0 2) (1 2)) ((0 2) (2 1)) ((1 1) (0 0)) ((2 2) (1 3)))
+  (uniq-orig k n-b)
+  (conf ch2 ch3)
+  (auth ch1 ch2)
+  (operation channel-test (displaced 3 1 resp 2)
+    (ch-msg ch1-0 (cat a b n-a-0 n-b)) (0 0))
+  (traces
+    ((recv ch1 (cat a b n-a n-b)) (send ch3 (cat a b k n-a n-b))
+      (send ch2 (cat a b k)))
+    ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k)))
+    ((send (cat a n-a)) (recv ch3 (cat a b k n-a n-b))
+      (send (enc n-b k))))
+  (label 18)
+  (parent 17)
+  (seen 16)
+  (realized)
+  (comment "1 in cohort - 0 not yet seen"))
+
+(comment "Nothing left to do")
+
+(defprotocol yahalom basic
+  (defrole init
+    (vars (a b name) (n-a n-b text) (k skey) (ch3 chan))
+    (trace (send (cat a n-a)) (recv ch3 (cat a b k n-a n-b))
+      (send (enc n-b k))))
+  (defrole resp
+    (vars (b a name) (n-a n-b text) (k skey) (ch1 ch2 chan))
+    (trace (recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k))))
+  (defrole serv
+    (vars (a b name) (n-a n-b text) (k skey) (ch1 ch2 ch3 chan))
+    (trace (recv ch1 (cat a b n-a n-b)) (send ch3 (cat a b k n-a n-b))
+      (send ch2 (cat a b k)))
+    (uniq-orig k))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
+
+(defskeleton yahalom
+  (vars (k skey) (n-b n-a n-a-0 n-b-0 text) (a b name)
+    (ch1 ch2 ch1-0 ch3 chan))
+  (deflistener k)
+  (defstrand serv 3 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b)
+    (ch1 ch1-0) (ch2 ch2) (ch3 ch3))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
+    (ch2 ch2))
+  (uniq-orig k n-b)
+  (conf ch2 ch1-0)
+  (auth ch2 ch3)
+  (goals
+    (forall
+      ((k skey) (n-b n-a n-a-0 n-b-0 text) (a b name)
+        (ch1 ch2 ch1-0 ch3 chan) (z z-0 z-1 strd))
+      (implies
+        (and (p "resp" z 4) (p "serv" z-0 3) (p "" z-1 2)
+          (p "resp" "k" z k) (p "resp" "n-a" z n-a)
+          (p "resp" "n-b" z n-b) (p "resp" "b" z b) (p "resp" "a" z a)
+          (p "resp" "ch1" z ch1) (p "resp" "ch2" z ch2)
+          (p "serv" "k" z-0 k) (p "serv" "n-a" z-0 n-a-0)
+          (p "serv" "n-b" z-0 n-b-0) (p "serv" "a" z-0 a)
+          (p "serv" "b" z-0 b) (p "serv" "ch1" z-0 ch1-0)
+          (p "serv" "ch2" z-0 ch2) (p "serv" "ch3" z-0 ch3)
+          (p "" "x" z-1 k) (uniq-at k z-0 1) (uniq-at n-b z 1)
+          (auth ch2) (auth ch1-0) (conf ch2) (conf ch3)) (false))))
+  (traces ((recv k) (send k))
+    ((recv ch1-0 (cat a b n-a-0 n-b-0))
+      (send ch3 (cat a b k n-a-0 n-b-0)) (send ch2 (cat a b k)))
+    ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k))))
+  (label 19)
+  (unrealized (0 0) (2 2) (2 3))
+  (preskeleton)
+  (origs (k (1 1)) (n-b (2 1)))
+  (comment "Not a skeleton"))
+
+(defskeleton yahalom
+  (vars (k skey) (n-b n-a n-a-0 n-b-0 text) (a b name)
+    (ch1 ch2 ch1-0 ch3 chan))
+  (deflistener k)
+  (defstrand serv 3 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b)
+    (ch1 ch1-0) (ch2 ch2) (ch3 ch3))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
+    (ch2 ch2))
+  (precedes ((1 1) (0 0)) ((1 1) (2 2)))
+  (uniq-orig k n-b)
+  (conf ch2 ch1-0)
+  (auth ch2 ch3)
+  (traces ((recv k) (send k))
+    ((recv ch1-0 (cat a b n-a-0 n-b-0))
+      (send ch3 (cat a b k n-a-0 n-b-0)) (send ch2 (cat a b k)))
+    ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k))))
+  (label 20)
+  (parent 19)
+  (unrealized (2 2))
+  (origs (k (1 1)) (n-b (2 1)))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton yahalom
+  (vars (k skey) (n-b n-a n-a-0 n-b-0 text) (a b name)
+    (ch1 ch2 ch1-0 ch3 chan))
+  (deflistener k)
+  (defstrand serv 3 (k k) (n-a n-a-0) (n-b n-b-0) (a a) (b b)
+    (ch1 ch1-0) (ch2 ch2) (ch3 ch3))
+  (defstrand resp 4 (k k) (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1)
+    (ch2 ch2))
+  (precedes ((1 1) (0 0)) ((1 2) (2 2)))
+  (uniq-orig k n-b)
+  (conf ch2 ch1-0)
+  (auth ch2 ch3)
+  (operation channel-test (displaced 3 1 serv 3)
+    (ch-msg ch2 (cat a b k)) (2 2))
+  (traces ((recv k) (send k))
+    ((recv ch1-0 (cat a b n-a-0 n-b-0))
+      (send ch3 (cat a b k n-a-0 n-b-0)) (send ch2 (cat a b k)))
+    ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k))))
+  (label 21)
+  (parent 20)
+  (realized)
+  (shape)
+  (satisfies yes)
+  (maps
+    ((0 1 2)
+      ((k k) (n-b n-b) (n-a n-a) (n-a-0 n-a-0) (n-b-0 n-b-0) (a a) (b b)
+        (ch1 ch1) (ch2 ch2) (ch1-0 ch1-0) (ch3 ch3))))
+  (origs (k (1 1)) (n-b (2 1))))
+
+(comment "Nothing left to do")
+
+(defprotocol yahalom basic
+  (defrole init
+    (vars (a b name) (n-a n-b text) (k skey) (ch3 chan))
+    (trace (send (cat a n-a)) (recv ch3 (cat a b k n-a n-b))
+      (send (enc n-b k))))
+  (defrole resp
+    (vars (b a name) (n-a n-b text) (k skey) (ch1 ch2 chan))
+    (trace (recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k))))
+  (defrole serv
+    (vars (a b name) (n-a n-b text) (k skey) (ch1 ch2 ch3 chan))
+    (trace (recv ch1 (cat a b n-a n-b)) (send ch3 (cat a b k n-a n-b))
+      (send ch2 (cat a b k)))
+    (uniq-orig k))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
+
+(defskeleton yahalom
+  (vars (k skey) (n-a n-b text) (a b name) (ch3 chan))
+  (defstrand init 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch3 ch3))
+  (uniq-orig n-a)
+  (conf ch3)
+  (goals
+    (forall ((k skey) (n-a n-b text) (a b name) (ch3 chan) (z strd))
+      (implies
+        (and (p "init" z 3) (p "init" "k" z k) (p "init" "n-a" z n-a)
+          (p "init" "n-b" z n-b) (p "init" "a" z a) (p "init" "b" z b)
+          (p "init" "ch3" z ch3) (uniq-at n-a z 0) (auth ch3))
+        (exists ((ch1 chan) (z-0 strd))
+          (and (p "serv" z-0 2) (p "serv" "k" z-0 k)
+            (p "serv" "n-a" z-0 n-a) (p "serv" "n-b" z-0 n-b)
+            (p "serv" "a" z-0 a) (p "serv" "b" z-0 b)
+            (p "serv" "ch1" z-0 ch1) (p "serv" "ch3" z-0 ch3)
+            (prec z 0 z-0 0) (prec z-0 1 z 1) (uniq-at k z-0 1))))))
+  (traces
+    ((send (cat a n-a)) (recv ch3 (cat a b k n-a n-b))
+      (send (enc n-b k))))
+  (label 22)
+  (realized)
+  (shape)
+  (satisfies yes)
+  (maps ((0) ((k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch3 ch3))))
+  (origs (n-a (0 0))))
+
+(comment "Nothing left to do")
+
+(defprotocol yahalom basic
+  (defrole init
+    (vars (a b name) (n-a n-b text) (k skey) (ch3 chan))
+    (trace (send (cat a n-a)) (recv ch3 (cat a b k n-a n-b))
+      (send (enc n-b k))))
+  (defrole resp
+    (vars (b a name) (n-a n-b text) (k skey) (ch1 ch2 chan))
+    (trace (recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k))))
+  (defrole serv
+    (vars (a b name) (n-a n-b text) (k skey) (ch1 ch2 ch3 chan))
+    (trace (recv ch1 (cat a b n-a n-b)) (send ch3 (cat a b k n-a n-b))
+      (send ch2 (cat a b k)))
+    (uniq-orig k))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
+
+(defskeleton yahalom
+  (vars (k skey) (n-a n-b text) (a b name) (ch3 ch3-0 ch1 chan))
+  (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
+    (ch3 ch3-0))
+  (defstrand init 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch3 ch3))
+  (precedes ((0 1) (1 1)) ((1 0) (0 0)))
+  (uniq-orig k n-a)
+  (conf ch3-0)
+  (auth ch3 ch1)
+  (goals
+    (forall
+      ((k skey) (n-a n-b text) (a b name) (ch3 ch3-0 ch1 chan)
+        (z z-0 strd))
+      (implies
+        (and (p "init" z 3) (p "serv" z-0 2) (p "init" "k" z k)
+          (p "init" "n-a" z n-a) (p "init" "n-b" z n-b)
+          (p "init" "a" z a) (p "init" "b" z b) (p "init" "ch3" z ch3)
+          (p "serv" "k" z-0 k) (p "serv" "n-a" z-0 n-a)
+          (p "serv" "n-b" z-0 n-b) (p "serv" "a" z-0 a)
+          (p "serv" "b" z-0 b) (p "serv" "ch1" z-0 ch1)
+          (p "serv" "ch3" z-0 ch3-0) (prec z 0 z-0 0) (prec z-0 1 z 1)
+          (uniq-at k z-0 1) (uniq-at n-a z 0) (auth ch3) (auth ch1)
+          (conf ch3-0))
+        (exists ((z-1 strd))
+          (and (= ch3-0 ch3) (p "resp" z-1 2) (p "serv" "ch3" z-0 ch3)
+            (p "resp" "n-a" z-1 n-a) (p "resp" "n-b" z-1 n-b)
+            (p "resp" "b" z-1 b) (p "resp" "a" z-1 a)
+            (p "resp" "ch1" z-1 ch1) (prec z 0 z-1 0) (prec z-1 1 z-0 0)
+            (conf ch3))))))
+  (traces
+    ((recv ch1 (cat a b n-a n-b)) (send ch3-0 (cat a b k n-a n-b)))
+    ((send (cat a n-a)) (recv ch3 (cat a b k n-a n-b))
+      (send (enc n-b k))))
+  (label 23)
+  (unrealized (0 0) (1 1))
+  (origs (k (0 1)) (n-a (1 0)))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton yahalom
+  (vars (k skey) (n-a n-b text) (a b name) (ch3 ch1 chan))
+  (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
+    (ch3 ch3))
+  (defstrand init 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch3 ch3))
+  (precedes ((0 1) (1 1)) ((1 0) (0 0)))
+  (uniq-orig k n-a)
+  (conf ch3)
+  (auth ch3 ch1)
+  (operation channel-test (displaced 2 0 serv 2)
+    (ch-msg ch3-0 (cat a b k n-a n-b)) (1 1))
+  (traces ((recv ch1 (cat a b n-a n-b)) (send ch3 (cat a b k n-a n-b)))
+    ((send (cat a n-a)) (recv ch3 (cat a b k n-a n-b))
+      (send (enc n-b k))))
+  (label 24)
+  (parent 23)
+  (unrealized (0 0))
+  (origs (k (0 1)) (n-a (1 0)))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton yahalom
+  (vars (k skey) (n-a n-b text) (a b name) (ch3 ch1 chan))
+  (defstrand serv 2 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
+    (ch3 ch3))
+  (defstrand init 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch3 ch3))
+  (defstrand resp 2 (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1))
+  (precedes ((0 1) (1 1)) ((1 0) (2 0)) ((2 1) (0 0)))
+  (uniq-orig k n-a)
+  (conf ch3)
+  (auth ch3 ch1)
+  (operation channel-test (added-strand resp 2)
+    (ch-msg ch1 (cat a b n-a n-b)) (0 0))
+  (traces ((recv ch1 (cat a b n-a n-b)) (send ch3 (cat a b k n-a n-b)))
+    ((send (cat a n-a)) (recv ch3 (cat a b k n-a n-b))
+      (send (enc n-b k)))
+    ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))))
+  (label 25)
+  (parent 24)
+  (realized)
+  (shape)
+  (satisfies yes)
+  (maps
+    ((0 1)
+      ((k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch3 ch3) (ch3-0 ch3)
+        (ch1 ch1))))
+  (origs (k (0 1)) (n-a (1 0))))
+
+(comment "Nothing left to do")
+
+(defprotocol yahalom basic
+  (defrole init
+    (vars (a b name) (n-a n-b text) (k skey) (ch3 chan))
+    (trace (send (cat a n-a)) (recv ch3 (cat a b k n-a n-b))
+      (send (enc n-b k))))
+  (defrole resp
+    (vars (b a name) (n-a n-b text) (k skey) (ch1 ch2 chan))
+    (trace (recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k))))
+  (defrole serv
+    (vars (a b name) (n-a n-b text) (k skey) (ch1 ch2 ch3 chan))
+    (trace (recv ch1 (cat a b n-a n-b)) (send ch3 (cat a b k n-a n-b))
+      (send ch2 (cat a b k)))
+    (uniq-orig k))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
+
+(defskeleton yahalom
+  (vars (k skey) (n-a n-b text) (a b name) (ch1 ch2 ch3 chan))
+  (defstrand serv 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
+    (ch2 ch2) (ch3 ch3))
+  (uniq-orig k)
+  (conf ch1)
+  (auth ch2 ch3)
+  (goals
+    (forall
+      ((k skey) (n-a n-b text) (a b name) (ch1 ch2 ch3 chan) (z strd))
+      (implies
+        (and (p "serv" z 3) (p "serv" "k" z k) (p "serv" "n-a" z n-a)
+          (p "serv" "n-b" z n-b) (p "serv" "a" z a) (p "serv" "b" z b)
+          (p "serv" "ch1" z ch1) (p "serv" "ch2" z ch2)
+          (p "serv" "ch3" z ch3) (uniq-at k z 1) (auth ch1) (conf ch2)
+          (conf ch3))
+        (exists ((z-0 strd))
+          (and (p "resp" z-0 2) (p "resp" "n-a" z-0 n-a)
+            (p "resp" "n-b" z-0 n-b) (p "resp" "b" z-0 b)
+            (p "resp" "a" z-0 a) (p "resp" "ch1" z-0 ch1)
+            (prec z-0 1 z 0))))))
+  (traces
+    ((recv ch1 (cat a b n-a n-b)) (send ch3 (cat a b k n-a n-b))
+      (send ch2 (cat a b k))))
+  (label 26)
+  (realized)
+  (shape)
+  (satisfies yes)
+  (maps
+    ((0)
+      ((k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1) (ch2 ch2)
+        (ch3 ch3))))
+  (origs (k (0 1))))
+
+(comment "Nothing left to do")
+
+(defprotocol yahalom basic
+  (defrole init
+    (vars (a b name) (n-a n-b text) (k skey) (ch3 chan))
+    (trace (send (cat a n-a)) (recv ch3 (cat a b k n-a n-b))
+      (send (enc n-b k))))
+  (defrole resp
+    (vars (b a name) (n-a n-b text) (k skey) (ch1 ch2 chan))
+    (trace (recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
+      (recv ch2 (cat a b k)) (recv (enc n-b k))))
+  (defrole serv
+    (vars (a b name) (n-a n-b text) (k skey) (ch1 ch2 ch3 chan))
+    (trace (recv ch1 (cat a b n-a n-b)) (send ch3 (cat a b k n-a n-b))
+      (send ch2 (cat a b k)))
+    (uniq-orig k))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
+
+(defskeleton yahalom
+  (vars (k skey) (n-a n-b text) (a b name) (ch1 ch2 ch3 chan))
+  (deflistener k)
+  (defstrand serv 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
+    (ch2 ch2) (ch3 ch3))
+  (uniq-orig k)
+  (conf ch2 ch3)
+  (auth ch1)
+  (goals
+    (forall
+      ((k skey) (n-a n-b text) (a b name) (ch1 ch2 ch3 chan)
+        (z z-0 strd))
+      (implies
+        (and (p "serv" z 3) (p "" z-0 2) (p "serv" "k" z k)
+          (p "serv" "n-a" z n-a) (p "serv" "n-b" z n-b)
+          (p "serv" "a" z a) (p "serv" "b" z b) (p "serv" "ch1" z ch1)
+          (p "serv" "ch2" z ch2) (p "serv" "ch3" z ch3) (p "" "x" z-0 k)
+          (uniq-at k z 1) (auth ch1) (conf ch2) (conf ch3)) (false))))
+  (traces ((recv k) (send k))
+    ((recv ch1 (cat a b n-a n-b)) (send ch3 (cat a b k n-a n-b))
+      (send ch2 (cat a b k))))
+  (label 27)
+  (unrealized (0 0) (1 0))
+  (preskeleton)
+  (origs (k (1 1)))
+  (comment "Not a skeleton"))
+
+(defskeleton yahalom
+  (vars (k skey) (n-a n-b text) (a b name) (ch1 ch2 ch3 chan))
+  (deflistener k)
+  (defstrand serv 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
+    (ch2 ch2) (ch3 ch3))
+  (precedes ((1 1) (0 0)))
+  (uniq-orig k)
+  (conf ch2 ch3)
+  (auth ch1)
+  (traces ((recv k) (send k))
+    ((recv ch1 (cat a b n-a n-b)) (send ch3 (cat a b k n-a n-b))
+      (send ch2 (cat a b k))))
+  (label 28)
+  (parent 27)
+  (unrealized (0 0) (1 0))
+  (origs (k (1 1)))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton yahalom
+  (vars (k skey) (n-a n-b text) (a b name) (ch1 ch2 ch3 chan))
+  (deflistener k)
+  (defstrand serv 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
+    (ch2 ch2) (ch3 ch3))
+  (defstrand resp 2 (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1))
+  (precedes ((1 1) (0 0)) ((2 1) (1 0)))
+  (uniq-orig k)
+  (conf ch2 ch3)
+  (auth ch1)
+  (operation channel-test (added-strand resp 2)
+    (ch-msg ch1 (cat a b n-a n-b)) (1 0))
+  (traces ((recv k) (send k))
+    ((recv ch1 (cat a b n-a n-b)) (send ch3 (cat a b k n-a n-b))
+      (send ch2 (cat a b k)))
+    ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))))
+  (label 29)
+  (parent 28)
+  (unrealized (0 0))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton yahalom
+  (vars (k skey) (n-a n-b text) (a b name) (ch1 ch2 ch3 chan))
+  (deflistener k)
+  (defstrand serv 3 (k k) (n-a n-a) (n-b n-b) (a a) (b b) (ch1 ch1)
+    (ch2 ch2) (ch3 ch3))
+  (defstrand resp 2 (n-a n-a) (n-b n-b) (b b) (a a) (ch1 ch1))
+  (precedes ((1 2) (0 0)) ((2 1) (1 0)))
+  (uniq-orig k)
+  (conf ch2 ch3)
+  (auth ch1)
+  (operation nonce-test (displaced 3 1 serv 3) k (0 0)
+    (ch-msg ch3 (cat a b k n-a n-b)))
+  (traces ((recv k) (send k))
+    ((recv ch1 (cat a b n-a n-b)) (send ch3 (cat a b k n-a n-b))
+      (send ch2 (cat a b k)))
+    ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))))
+  (label 30)
+  (parent 29)
+  (unrealized (0 0))
+  (dead)
+  (comment "empty cohort"))
+
+(comment "Nothing left to do")

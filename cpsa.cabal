@@ -81,11 +81,9 @@ Extra-Source-Files:
   doc/src/cpsa4manual/input.tex
   doc/src/cpsa4manual/examples/plaindh.scm
   doc/src/cpsa4manual/examples/plaindh.tst
-  doc/src/cpsa4manual/examples/chan-yahalom_shapes.tst
   doc/src/cpsa4manual/examples/dhcr_um_expt_assume.scm
   doc/src/cpsa4manual/examples/dhcr_um_expt_assume.tst
   doc/src/cpsa4manual/examples/commitment.scm
-  doc/src/cpsa4manual/examples/bltk_test_shapes.tst
   doc/src/cpsa4manual/examples/Makefile
   doc/src/cpsa4manual/examples/minipay-rely-guar.scm
   doc/src/cpsa4manual/examples/open-closed.tst
@@ -98,33 +96,21 @@ Extra-Source-Files:
   doc/src/cpsa4manual/examples/minipay.tst
   doc/src/cpsa4manual/examples/bltk_test.scm
   doc/src/cpsa4manual/examples/blanchet.scm
-  doc/src/cpsa4manual/examples/or_shapes.tst
   doc/src/cpsa4manual/examples/chan-yahalom-role-decl.tst
   doc/src/cpsa4manual/examples/pkinit.scm
-  doc/src/cpsa4manual/examples/ns_shapes.tst
   doc/src/cpsa4manual/examples/blanchet.tst
   doc/src/cpsa4manual/examples/pkinit.tst
   doc/src/cpsa4manual/examples/chan-yahalom-role-decl.scm
-  doc/src/cpsa4manual/examples/kerb_shapes.tst
   doc/src/cpsa4manual/examples/or.tst
   doc/src/cpsa4manual/examples/minipay.scm
   doc/src/cpsa4manual/examples/bltk_test.tst
-  doc/src/cpsa4manual/examples/open-closed_shapes.tst
   doc/src/cpsa4manual/examples/cpsa4diff_out.tst
-  doc/src/cpsa4manual/examples/dhcr_um_expt_assume_shapes.tst
   doc/src/cpsa4manual/examples/cpsa4.mk
   doc/src/cpsa4manual/examples/minipay-guar.tst
   doc/src/cpsa4manual/examples/rules.scm
   doc/src/cpsa4manual/examples/minipay-guar.scm
-  doc/src/cpsa4manual/examples/kerberos-variant-guar_shapes.tst
   doc/src/cpsa4manual/examples/kerb.tst
-  doc/src/cpsa4manual/examples/blanchet_shapes.tst
-  doc/src/cpsa4manual/examples/open-closed-late-destructure_shapes.tst
-  doc/src/cpsa4manual/examples/chan-yahalom-role-decl_shapes.tst
-  doc/src/cpsa4manual/examples/new_dhcr_um_expt_assume_shapes.tst
   doc/src/cpsa4manual/examples/kerb.scm
-  doc/src/cpsa4manual/examples/pkinit_shapes.tst
-  doc/src/cpsa4manual/examples/plaindh_shapes.tst
   doc/src/cpsa4manual/examples/open-closed-late-destructure.tst
   doc/src/cpsa4manual/examples/new_dhcr_um_expt_assume.tst
   doc/src/cpsa4manual/examples/chan-yahalom.scm

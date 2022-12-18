@@ -1,6 +1,6 @@
 (herald "Kerberos PKINIT")
 
-(comment "CPSA 4.3.1")
+(comment "CPSA 4.4.0")
 (comment "All input read from pkinit.scm")
 
 (defprotocol pkinit-flawed basic
@@ -75,7 +75,7 @@
   (parent 0)
   (realized)
   (shape)
-  (satisfies (no (c c) (as as) (k k) (z 0)))
+  (satisfies (no (p "auth" "c" z-0 c) (c c) (as as) (k k) (z 0)))
   (maps
     ((0)
       ((c c) (as as) (k k) (t t) (n2 n2) (n1 n1) (tc tc) (tk tk)
@@ -518,7 +518,7 @@
   (parent 13)
   (realized)
   (shape)
-  (satisfies (no (c c) (c-0 c-0) (as as) (k k) (z 0) (z-0 1)))
+  (satisfies (no (= c c-0) (c c) (c-0 c-0) (as as) (k k) (z 0) (z-0 1)))
   (maps
     ((1 0)
       ((c c) (c-0 c-0) (as as) (k k) (t t-0) (n2 n2) (n1 n1-0) (tc tc-0)
@@ -552,7 +552,7 @@
   (parent 13)
   (realized)
   (shape)
-  (satisfies (no (c c) (c-0 c-1) (as as) (k k) (z 1) (z-0 2)))
+  (satisfies (no (= c c-0) (c c) (c-0 c-1) (as as) (k k) (z 1) (z-0 2)))
   (maps
     ((0 1)
       ((c c) (c-0 c-0) (as as) (k k) (t t) (n2 n2) (n1 n1) (tc tc)

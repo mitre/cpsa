@@ -172,7 +172,8 @@ module CPSA.Algebra (name, alias,
     instantiate,
     matched,
     match,
-    unmatchedVarsWithin, 
+    unmatchedVarsWithin,
+    envsAgreeOutside,
     substitution,
     strandBoundEnv,
     reify,
@@ -1260,13 +1261,12 @@ idUnmapped map (G t) =
          $ filter (\g -> not $ M.member (getGroupVar g) map)
                $ groupVarsOfGroup t
 
-idUnmapped map t@(F s u) 
-    | varSym s && any (idMapped map) u = [] 
-    | varSym s && not(any (idMapped map) u) = [t]
-    | otherwise = 
-        concatMap (idUnmapped map) u
+idUnmapped map t@(F s [I x])
+    | varSym s && M.member x map = []
+    | varSym s && not(M.member x map) = [t]
+    | otherwise = idUnmapped map (I x)
 
-
+idUnmapped map (F _ u) = concatMap (idUnmapped map) u
 
 -- Set (specifically, list) of identifiers that are keys in a map, ie
 -- the domain of the mapping.
@@ -1275,7 +1275,54 @@ idMapDomain :: IdMap -> [Id]
 idMapDomain map = 
     M.foldrWithKey (\k _ ks -> k:ks) [] map
 
+{--
 
+-- We're not using these two functions currently, but let's not wipe
+-- them out.  
+
+-- Is map1 a subfunction of map2?  
+
+idMapExtendsTo :: IdMap -> IdMap -> Bool
+idMapExtendsTo map1 map2 =
+    M.foldrWithKey f True map1
+    where
+      f _ _ False = False
+      f key val True = (M.member key map2) &&
+                       (val == (map2 M.! key))
+
+-- Yield the set of Ids that are in the domain of map1 but not map2
+
+idMapDomainMinus :: IdMap -> IdMap -> [Id]
+idMapDomainMinus map1 map2 = 
+    M.foldrWithKey f [] map1
+    where
+      f key _ soFar =
+          if M.member key map2
+          then soFar
+          else key : soFar
+
+--}
+
+-- Is map1 a subfunction of map2, ignoring arguments in ids?  
+
+idMapExtendsOutside :: IdMap -> IdMap -> [Id] -> Bool
+idMapExtendsOutside map1 map2 ids =
+    M.foldrWithKey f True map1
+    where
+      f _ _ False = False
+      f key val True =
+          (key `elem` ids) ||
+            ((M.member key map2) &&
+             (val == (map2 M.! key)))
+    
+
+-- Do maps 1 and 2 differ at most for arguments in ids?
+idMapsAgreeOutside :: IdMap -> IdMap -> [Id] -> Bool
+idMapsAgreeOutside map1 map2 ids =
+    idMapExtendsOutside map1 map2 ids &&
+    idMapExtendsOutside map2 map1 ids
+
+    
 
 -- Unification and substitution
 
@@ -1672,10 +1719,15 @@ matched (Env (_, r)) t = idMapped r t
 
 unmatchedVarsWithin :: Env -> Term -> [Term] -> Bool 
 unmatchedVarsWithin (Env (_, r)) t vars =
-    all (flip elem vars) unmatchedIds
+    all (flip elem vars) unmatchedIds    
     where
       unmatchedIds = idUnmapped r t
 
+envsAgreeOutside :: Env -> Env -> [Term] -> Bool
+envsAgreeOutside (Env (_, r1)) (Env (_, r2)) vars =  
+    idMapsAgreeOutside r1 r2 ids
+    where
+      ids = map varId vars
 
 -- Apply a substitution to the range of an environment
 substUpdate :: Env -> Subst -> Env

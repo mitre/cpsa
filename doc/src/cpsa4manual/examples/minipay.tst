@@ -1,6 +1,6 @@
 (herald minipay (try-old-strands) (bound 16) (limit 5000))
 
-(comment "CPSA 4.3.1")
+(comment "CPSA 4.4.0")
 (comment "All input read from minipay.scm")
 (comment "Step count limited to 5000")
 (comment "Strand count bounded at 16")
@@ -79,6 +79,14 @@
             (bconf (hash c m b n cost (hash n merc-conf-decommit)) btr
               mtr) (privk "sig" b)) (pubk "enc" m))))
     (uniq-orig btr))
+  (defrule cheq-merc-4
+    (forall
+      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "n" z n)
+          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
+          (p "merc" "bank-conf-commit" z bank-conf-commit))
+        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
@@ -88,26 +96,18 @@
   (defgenrule fact-cust-neq2
     (forall ((z strd) (ncb n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb) (p "cust" "n" z n))
-        (fact neq n ncb))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
+          (p "cust" "n" z n)) (fact neq n ncb))))
   (defgenrule fact-cust-neq1
     (forall ((z strd) (ncm n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncm" z ncm) (p "cust" "n" z n))
-        (fact neq n ncm))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncm" z ncm)
+          (p "cust" "n" z n)) (fact neq n ncm))))
   (defgenrule fact-cust-neq0
     (forall ((z strd) (ncb ncm data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb)
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
           (p "cust" "ncm" z ncm)) (fact neq ncm ncb))))
-  (defgenrule cheq-merc-4
-    (forall
-      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
-      (implies
-        (and (p "merc" z 4) (p "merc" "n" z n)
-          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
-          (p "merc" "bank-conf-commit" z bank-conf-commit))
-        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (lang (acct atom) (amount atom) (merchandise atom) (sign sign)
     (order (tuple 5)) (bconf (tuple 3)) (mconf (tuple 3))
     (payreq (tuple 7))))
@@ -49766,6 +49766,14 @@
             (bconf (hash c m b n cost (hash n merc-conf-decommit)) btr
               mtr) (privk "sig" b)) (pubk "enc" m))))
     (uniq-orig btr))
+  (defrule cheq-merc-4
+    (forall
+      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "n" z n)
+          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
+          (p "merc" "bank-conf-commit" z bank-conf-commit))
+        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
@@ -49775,26 +49783,18 @@
   (defgenrule fact-cust-neq2
     (forall ((z strd) (ncb n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb) (p "cust" "n" z n))
-        (fact neq n ncb))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
+          (p "cust" "n" z n)) (fact neq n ncb))))
   (defgenrule fact-cust-neq1
     (forall ((z strd) (ncm n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncm" z ncm) (p "cust" "n" z n))
-        (fact neq n ncm))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncm" z ncm)
+          (p "cust" "n" z n)) (fact neq n ncm))))
   (defgenrule fact-cust-neq0
     (forall ((z strd) (ncb ncm data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb)
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
           (p "cust" "ncm" z ncm)) (fact neq ncm ncb))))
-  (defgenrule cheq-merc-4
-    (forall
-      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
-      (implies
-        (and (p "merc" z 4) (p "merc" "n" z n)
-          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
-          (p "merc" "bank-conf-commit" z bank-conf-commit))
-        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (lang (acct atom) (amount atom) (merchandise atom) (sign sign)
     (order (tuple 5)) (bconf (tuple 3)) (mconf (tuple 3))
     (payreq (tuple 7))))
@@ -50333,6 +50333,14 @@
             (bconf (hash c m b n cost (hash n merc-conf-decommit)) btr
               mtr) (privk "sig" b)) (pubk "enc" m))))
     (uniq-orig btr))
+  (defrule cheq-merc-4
+    (forall
+      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "n" z n)
+          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
+          (p "merc" "bank-conf-commit" z bank-conf-commit))
+        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
@@ -50342,26 +50350,18 @@
   (defgenrule fact-cust-neq2
     (forall ((z strd) (ncb n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb) (p "cust" "n" z n))
-        (fact neq n ncb))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
+          (p "cust" "n" z n)) (fact neq n ncb))))
   (defgenrule fact-cust-neq1
     (forall ((z strd) (ncm n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncm" z ncm) (p "cust" "n" z n))
-        (fact neq n ncm))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncm" z ncm)
+          (p "cust" "n" z n)) (fact neq n ncm))))
   (defgenrule fact-cust-neq0
     (forall ((z strd) (ncb ncm data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb)
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
           (p "cust" "ncm" z ncm)) (fact neq ncm ncb))))
-  (defgenrule cheq-merc-4
-    (forall
-      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
-      (implies
-        (and (p "merc" z 4) (p "merc" "n" z n)
-          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
-          (p "merc" "bank-conf-commit" z bank-conf-commit))
-        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (lang (acct atom) (amount atom) (merchandise atom) (sign sign)
     (order (tuple 5)) (bconf (tuple 3)) (mconf (tuple 3))
     (payreq (tuple 7))))
@@ -50878,6 +50878,14 @@
             (bconf (hash c m b n cost (hash n merc-conf-decommit)) btr
               mtr) (privk "sig" b)) (pubk "enc" m))))
     (uniq-orig btr))
+  (defrule cheq-merc-4
+    (forall
+      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "n" z n)
+          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
+          (p "merc" "bank-conf-commit" z bank-conf-commit))
+        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
@@ -50887,26 +50895,18 @@
   (defgenrule fact-cust-neq2
     (forall ((z strd) (ncb n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb) (p "cust" "n" z n))
-        (fact neq n ncb))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
+          (p "cust" "n" z n)) (fact neq n ncb))))
   (defgenrule fact-cust-neq1
     (forall ((z strd) (ncm n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncm" z ncm) (p "cust" "n" z n))
-        (fact neq n ncm))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncm" z ncm)
+          (p "cust" "n" z n)) (fact neq n ncm))))
   (defgenrule fact-cust-neq0
     (forall ((z strd) (ncb ncm data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb)
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
           (p "cust" "ncm" z ncm)) (fact neq ncm ncb))))
-  (defgenrule cheq-merc-4
-    (forall
-      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
-      (implies
-        (and (p "merc" z 4) (p "merc" "n" z n)
-          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
-          (p "merc" "bank-conf-commit" z bank-conf-commit))
-        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (lang (acct atom) (amount atom) (merchandise atom) (sign sign)
     (order (tuple 5)) (bconf (tuple 3)) (mconf (tuple 3))
     (payreq (tuple 7))))
@@ -51323,6 +51323,14 @@
             (bconf (hash c m b n cost (hash n merc-conf-decommit)) btr
               mtr) (privk "sig" b)) (pubk "enc" m))))
     (uniq-orig btr))
+  (defrule cheq-merc-4
+    (forall
+      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "n" z n)
+          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
+          (p "merc" "bank-conf-commit" z bank-conf-commit))
+        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
@@ -51332,26 +51340,18 @@
   (defgenrule fact-cust-neq2
     (forall ((z strd) (ncb n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb) (p "cust" "n" z n))
-        (fact neq n ncb))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
+          (p "cust" "n" z n)) (fact neq n ncb))))
   (defgenrule fact-cust-neq1
     (forall ((z strd) (ncm n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncm" z ncm) (p "cust" "n" z n))
-        (fact neq n ncm))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncm" z ncm)
+          (p "cust" "n" z n)) (fact neq n ncm))))
   (defgenrule fact-cust-neq0
     (forall ((z strd) (ncb ncm data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb)
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
           (p "cust" "ncm" z ncm)) (fact neq ncm ncb))))
-  (defgenrule cheq-merc-4
-    (forall
-      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
-      (implies
-        (and (p "merc" z 4) (p "merc" "n" z n)
-          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
-          (p "merc" "bank-conf-commit" z bank-conf-commit))
-        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (lang (acct atom) (amount atom) (merchandise atom) (sign sign)
     (order (tuple 5)) (bconf (tuple 3)) (mconf (tuple 3))
     (payreq (tuple 7))))
@@ -72201,6 +72201,14 @@
             (bconf (hash c m b n cost (hash n merc-conf-decommit)) btr
               mtr) (privk "sig" b)) (pubk "enc" m))))
     (uniq-orig btr))
+  (defrule cheq-merc-4
+    (forall
+      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "n" z n)
+          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
+          (p "merc" "bank-conf-commit" z bank-conf-commit))
+        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
@@ -72210,26 +72218,18 @@
   (defgenrule fact-cust-neq2
     (forall ((z strd) (ncb n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb) (p "cust" "n" z n))
-        (fact neq n ncb))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
+          (p "cust" "n" z n)) (fact neq n ncb))))
   (defgenrule fact-cust-neq1
     (forall ((z strd) (ncm n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncm" z ncm) (p "cust" "n" z n))
-        (fact neq n ncm))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncm" z ncm)
+          (p "cust" "n" z n)) (fact neq n ncm))))
   (defgenrule fact-cust-neq0
     (forall ((z strd) (ncb ncm data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb)
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
           (p "cust" "ncm" z ncm)) (fact neq ncm ncb))))
-  (defgenrule cheq-merc-4
-    (forall
-      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
-      (implies
-        (and (p "merc" z 4) (p "merc" "n" z n)
-          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
-          (p "merc" "bank-conf-commit" z bank-conf-commit))
-        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (lang (acct atom) (amount atom) (merchandise atom) (sign sign)
     (order (tuple 5)) (bconf (tuple 3)) (mconf (tuple 3))
     (payreq (tuple 7))))
@@ -72827,6 +72827,14 @@
             (bconf (hash c m b n cost (hash n merc-conf-decommit)) btr
               mtr) (privk "sig" b)) (pubk "enc" m))))
     (uniq-orig btr))
+  (defrule cheq-merc-4
+    (forall
+      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "n" z n)
+          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
+          (p "merc" "bank-conf-commit" z bank-conf-commit))
+        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
@@ -72836,26 +72844,18 @@
   (defgenrule fact-cust-neq2
     (forall ((z strd) (ncb n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb) (p "cust" "n" z n))
-        (fact neq n ncb))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
+          (p "cust" "n" z n)) (fact neq n ncb))))
   (defgenrule fact-cust-neq1
     (forall ((z strd) (ncm n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncm" z ncm) (p "cust" "n" z n))
-        (fact neq n ncm))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncm" z ncm)
+          (p "cust" "n" z n)) (fact neq n ncm))))
   (defgenrule fact-cust-neq0
     (forall ((z strd) (ncb ncm data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb)
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
           (p "cust" "ncm" z ncm)) (fact neq ncm ncb))))
-  (defgenrule cheq-merc-4
-    (forall
-      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
-      (implies
-        (and (p "merc" z 4) (p "merc" "n" z n)
-          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
-          (p "merc" "bank-conf-commit" z bank-conf-commit))
-        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (lang (acct atom) (amount atom) (merchandise atom) (sign sign)
     (order (tuple 5)) (bconf (tuple 3)) (mconf (tuple 3))
     (payreq (tuple 7))))
@@ -73077,6 +73077,14 @@
             (bconf (hash c m b n cost (hash n merc-conf-decommit)) btr
               mtr) (privk "sig" b)) (pubk "enc" m))))
     (uniq-orig btr))
+  (defrule cheq-merc-4
+    (forall
+      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "n" z n)
+          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
+          (p "merc" "bank-conf-commit" z bank-conf-commit))
+        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
@@ -73086,26 +73094,18 @@
   (defgenrule fact-cust-neq2
     (forall ((z strd) (ncb n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb) (p "cust" "n" z n))
-        (fact neq n ncb))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
+          (p "cust" "n" z n)) (fact neq n ncb))))
   (defgenrule fact-cust-neq1
     (forall ((z strd) (ncm n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncm" z ncm) (p "cust" "n" z n))
-        (fact neq n ncm))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncm" z ncm)
+          (p "cust" "n" z n)) (fact neq n ncm))))
   (defgenrule fact-cust-neq0
     (forall ((z strd) (ncb ncm data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb)
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
           (p "cust" "ncm" z ncm)) (fact neq ncm ncb))))
-  (defgenrule cheq-merc-4
-    (forall
-      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
-      (implies
-        (and (p "merc" z 4) (p "merc" "n" z n)
-          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
-          (p "merc" "bank-conf-commit" z bank-conf-commit))
-        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (lang (acct atom) (amount atom) (merchandise atom) (sign sign)
     (order (tuple 5)) (bconf (tuple 3)) (mconf (tuple 3))
     (payreq (tuple 7))))
@@ -73552,6 +73552,14 @@
             (bconf (hash c m b n cost (hash n merc-conf-decommit)) btr
               mtr) (privk "sig" b)) (pubk "enc" m))))
     (uniq-orig btr))
+  (defrule cheq-merc-4
+    (forall
+      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "n" z n)
+          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
+          (p "merc" "bank-conf-commit" z bank-conf-commit))
+        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
@@ -73561,26 +73569,18 @@
   (defgenrule fact-cust-neq2
     (forall ((z strd) (ncb n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb) (p "cust" "n" z n))
-        (fact neq n ncb))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
+          (p "cust" "n" z n)) (fact neq n ncb))))
   (defgenrule fact-cust-neq1
     (forall ((z strd) (ncm n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncm" z ncm) (p "cust" "n" z n))
-        (fact neq n ncm))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncm" z ncm)
+          (p "cust" "n" z n)) (fact neq n ncm))))
   (defgenrule fact-cust-neq0
     (forall ((z strd) (ncb ncm data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb)
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
           (p "cust" "ncm" z ncm)) (fact neq ncm ncb))))
-  (defgenrule cheq-merc-4
-    (forall
-      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
-      (implies
-        (and (p "merc" z 4) (p "merc" "n" z n)
-          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
-          (p "merc" "bank-conf-commit" z bank-conf-commit))
-        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (lang (acct atom) (amount atom) (merchandise atom) (sign sign)
     (order (tuple 5)) (bconf (tuple 3)) (mconf (tuple 3))
     (payreq (tuple 7))))

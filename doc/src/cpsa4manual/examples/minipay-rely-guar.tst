@@ -1,6 +1,6 @@
 (herald minipay-rely-guar (try-old-strands) (bound 16))
 
-(comment "CPSA 4.3.1")
+(comment "CPSA 4.4.0")
 (comment "All input read from minipay-rely-guar.scm")
 (comment "Strand count bounded at 16")
 (comment "Old strands tried first")
@@ -78,6 +78,74 @@
             (bconf (hash c m b n cost (hash n merc-conf-decommit)) btr
               mtr) (privk "sig" b)) (pubk "enc" m))))
     (uniq-orig btr))
+  (defrule rely-cust-3
+    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
+      (implies
+        (and (p "cust" z (idx 3)) (p "cust" "mtr" z mtr)
+          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
+          (p "cust" "c" z c))
+        (fact will-ship c m b item mtr))))
+  (defrule rely-cust-2
+    (forall
+      ((z strd) (btr mtr text) (n data) (cost amount) (b m c name))
+      (implies
+        (and (p "cust" z (idx 2)) (p "cust" "btr" z btr)
+          (p "cust" "mtr" z mtr) (p "cust" "n" z n)
+          (p "cust" "cost" z cost) (p "cust" "b" z b) (p "cust" "m" z m)
+          (p "cust" "c" z c))
+        (fact will-transfer c m b cost n mtr btr))))
+  (defrule rely-merc-3
+    (forall
+      ((z strd) (n data) (cost amount) (item merchandise) (b m c name)
+        (btr mtr text))
+      (implies
+        (and (p "merc" z (idx 3)) (p "merc" "n" z n)
+          (p "merc" "cost" z cost) (p "merc" "item" z item)
+          (p "merc" "b" z b) (p "merc" "m" z m) (p "merc" "c" z c)
+          (p "merc" "btr" z btr) (p "merc" "mtr" z mtr))
+        (and (fact buy-via c m b item cost n)
+          (fact will-transfer c m b cost n mtr btr)))))
+  (defrule rely-bank-1
+    (forall ((z strd) (n data) (cost amount) (b m c name))
+      (implies
+        (and (p "bank" z (idx 1)) (p "bank" "n" z n)
+          (p "bank" "cost" z cost) (p "bank" "b" z b) (p "bank" "m" z m)
+          (p "bank" "c" z c))
+        (exists ((item merchandise))
+          (fact buy-via c m b item cost n)))))
+  (defrule guar-cust-1
+    (forall
+      ((z strd) (n data) (cost amount) (item merchandise) (b m c name))
+      (implies
+        (and (p "cust" z (idx 1)) (p "cust" "n" z n)
+          (p "cust" "cost" z cost) (p "cust" "item" z item)
+          (p "cust" "b" z b) (p "cust" "m" z m) (p "cust" "c" z c))
+        (fact buy-via c m b item cost n))))
+  (defrule guar-merc-4
+    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "mtr" z mtr)
+          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
+          (p "merc" "c" z c))
+        (fact will-ship c m b item mtr))))
+  (defrule guar-bank-2
+    (forall
+      ((z strd) (btr mtr text) (n data) (cost amount) (c b m name))
+      (implies
+        (and (p "bank" z (idx 2)) (p "bank" "btr" z btr)
+          (p "bank" "mtr" z mtr) (p "bank" "n" z n)
+          (p "bank" "cost" z cost) (p "bank" "c" z c) (p "bank" "b" z b)
+          (p "bank" "m" z m))
+        (and (non (privk "sig" c))
+          (fact will-transfer c m b cost n mtr btr)))))
+  (defrule cheq-merc-4
+    (forall
+      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "n" z n)
+          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
+          (p "merc" "bank-conf-commit" z bank-conf-commit))
+        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
@@ -87,82 +155,18 @@
   (defgenrule fact-cust-neq2
     (forall ((z strd) (ncb n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb) (p "cust" "n" z n))
-        (fact neq n ncb))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
+          (p "cust" "n" z n)) (fact neq n ncb))))
   (defgenrule fact-cust-neq1
     (forall ((z strd) (ncm n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncm" z ncm) (p "cust" "n" z n))
-        (fact neq n ncm))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncm" z ncm)
+          (p "cust" "n" z n)) (fact neq n ncm))))
   (defgenrule fact-cust-neq0
     (forall ((z strd) (ncb ncm data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb)
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
           (p "cust" "ncm" z ncm)) (fact neq ncm ncb))))
-  (defgenrule rely-cust-3
-    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
-      (implies
-        (and (p "cust" z 3) (p "cust" "mtr" z mtr)
-          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c)) (fact will-ship c m b item mtr))))
-  (defgenrule rely-cust-2
-    (forall
-      ((z strd) (btr mtr text) (n data) (cost amount) (b m c name))
-      (implies
-        (and (p "cust" z 2) (p "cust" "btr" z btr)
-          (p "cust" "mtr" z mtr) (p "cust" "n" z n)
-          (p "cust" "cost" z cost) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c))
-        (fact will-transfer c m b cost n mtr btr))))
-  (defgenrule rely-merc-3
-    (forall
-      ((z strd) (n data) (cost amount) (item merchandise) (b m c name)
-        (btr mtr text))
-      (implies
-        (and (p "merc" z 3) (p "merc" "n" z n) (p "merc" "cost" z cost)
-          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
-          (p "merc" "c" z c) (p "merc" "btr" z btr)
-          (p "merc" "mtr" z mtr))
-        (and (fact buy-via c m b item cost n)
-          (fact will-transfer c m b cost n mtr btr)))))
-  (defgenrule rely-bank-1
-    (forall ((z strd) (n data) (cost amount) (b m c name))
-      (implies
-        (and (p "bank" z 1) (p "bank" "n" z n) (p "bank" "cost" z cost)
-          (p "bank" "b" z b) (p "bank" "m" z m) (p "bank" "c" z c))
-        (exists ((item merchandise))
-          (fact buy-via c m b item cost n)))))
-  (defgenrule guar-cust-1
-    (forall
-      ((z strd) (n data) (cost amount) (item merchandise) (b m c name))
-      (implies
-        (and (p "cust" z 1) (p "cust" "n" z n) (p "cust" "cost" z cost)
-          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c)) (fact buy-via c m b item cost n))))
-  (defgenrule guar-merc-4
-    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
-      (implies
-        (and (p "merc" z 4) (p "merc" "mtr" z mtr)
-          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
-          (p "merc" "c" z c)) (fact will-ship c m b item mtr))))
-  (defgenrule guar-bank-2
-    (forall
-      ((z strd) (btr mtr text) (n data) (cost amount) (c b m name))
-      (implies
-        (and (p "bank" z 2) (p "bank" "btr" z btr)
-          (p "bank" "mtr" z mtr) (p "bank" "n" z n)
-          (p "bank" "cost" z cost) (p "bank" "c" z c) (p "bank" "b" z b)
-          (p "bank" "m" z m))
-        (and (non (privk "sig" c))
-          (fact will-transfer c m b cost n mtr btr)))))
-  (defgenrule cheq-merc-4
-    (forall
-      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
-      (implies
-        (and (p "merc" z 4) (p "merc" "n" z n)
-          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
-          (p "merc" "bank-conf-commit" z bank-conf-commit))
-        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (lang (acct atom) (amount atom) (merchandise atom) (sign sign)
     (order (tuple 5)) (bconf (tuple 3)) (mconf (tuple 3))
     (payreq (tuple 7))))
@@ -5323,6 +5327,74 @@
             (bconf (hash c m b n cost (hash n merc-conf-decommit)) btr
               mtr) (privk "sig" b)) (pubk "enc" m))))
     (uniq-orig btr))
+  (defrule rely-cust-3
+    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
+      (implies
+        (and (p "cust" z (idx 3)) (p "cust" "mtr" z mtr)
+          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
+          (p "cust" "c" z c))
+        (fact will-ship c m b item mtr))))
+  (defrule rely-cust-2
+    (forall
+      ((z strd) (btr mtr text) (n data) (cost amount) (b m c name))
+      (implies
+        (and (p "cust" z (idx 2)) (p "cust" "btr" z btr)
+          (p "cust" "mtr" z mtr) (p "cust" "n" z n)
+          (p "cust" "cost" z cost) (p "cust" "b" z b) (p "cust" "m" z m)
+          (p "cust" "c" z c))
+        (fact will-transfer c m b cost n mtr btr))))
+  (defrule rely-merc-3
+    (forall
+      ((z strd) (n data) (cost amount) (item merchandise) (b m c name)
+        (btr mtr text))
+      (implies
+        (and (p "merc" z (idx 3)) (p "merc" "n" z n)
+          (p "merc" "cost" z cost) (p "merc" "item" z item)
+          (p "merc" "b" z b) (p "merc" "m" z m) (p "merc" "c" z c)
+          (p "merc" "btr" z btr) (p "merc" "mtr" z mtr))
+        (and (fact buy-via c m b item cost n)
+          (fact will-transfer c m b cost n mtr btr)))))
+  (defrule rely-bank-1
+    (forall ((z strd) (n data) (cost amount) (b m c name))
+      (implies
+        (and (p "bank" z (idx 1)) (p "bank" "n" z n)
+          (p "bank" "cost" z cost) (p "bank" "b" z b) (p "bank" "m" z m)
+          (p "bank" "c" z c))
+        (exists ((item merchandise))
+          (fact buy-via c m b item cost n)))))
+  (defrule guar-cust-1
+    (forall
+      ((z strd) (n data) (cost amount) (item merchandise) (b m c name))
+      (implies
+        (and (p "cust" z (idx 1)) (p "cust" "n" z n)
+          (p "cust" "cost" z cost) (p "cust" "item" z item)
+          (p "cust" "b" z b) (p "cust" "m" z m) (p "cust" "c" z c))
+        (fact buy-via c m b item cost n))))
+  (defrule guar-merc-4
+    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "mtr" z mtr)
+          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
+          (p "merc" "c" z c))
+        (fact will-ship c m b item mtr))))
+  (defrule guar-bank-2
+    (forall
+      ((z strd) (btr mtr text) (n data) (cost amount) (c b m name))
+      (implies
+        (and (p "bank" z (idx 2)) (p "bank" "btr" z btr)
+          (p "bank" "mtr" z mtr) (p "bank" "n" z n)
+          (p "bank" "cost" z cost) (p "bank" "c" z c) (p "bank" "b" z b)
+          (p "bank" "m" z m))
+        (and (non (privk "sig" c))
+          (fact will-transfer c m b cost n mtr btr)))))
+  (defrule cheq-merc-4
+    (forall
+      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "n" z n)
+          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
+          (p "merc" "bank-conf-commit" z bank-conf-commit))
+        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
@@ -5332,82 +5404,18 @@
   (defgenrule fact-cust-neq2
     (forall ((z strd) (ncb n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb) (p "cust" "n" z n))
-        (fact neq n ncb))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
+          (p "cust" "n" z n)) (fact neq n ncb))))
   (defgenrule fact-cust-neq1
     (forall ((z strd) (ncm n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncm" z ncm) (p "cust" "n" z n))
-        (fact neq n ncm))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncm" z ncm)
+          (p "cust" "n" z n)) (fact neq n ncm))))
   (defgenrule fact-cust-neq0
     (forall ((z strd) (ncb ncm data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb)
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
           (p "cust" "ncm" z ncm)) (fact neq ncm ncb))))
-  (defgenrule rely-cust-3
-    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
-      (implies
-        (and (p "cust" z 3) (p "cust" "mtr" z mtr)
-          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c)) (fact will-ship c m b item mtr))))
-  (defgenrule rely-cust-2
-    (forall
-      ((z strd) (btr mtr text) (n data) (cost amount) (b m c name))
-      (implies
-        (and (p "cust" z 2) (p "cust" "btr" z btr)
-          (p "cust" "mtr" z mtr) (p "cust" "n" z n)
-          (p "cust" "cost" z cost) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c))
-        (fact will-transfer c m b cost n mtr btr))))
-  (defgenrule rely-merc-3
-    (forall
-      ((z strd) (n data) (cost amount) (item merchandise) (b m c name)
-        (btr mtr text))
-      (implies
-        (and (p "merc" z 3) (p "merc" "n" z n) (p "merc" "cost" z cost)
-          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
-          (p "merc" "c" z c) (p "merc" "btr" z btr)
-          (p "merc" "mtr" z mtr))
-        (and (fact buy-via c m b item cost n)
-          (fact will-transfer c m b cost n mtr btr)))))
-  (defgenrule rely-bank-1
-    (forall ((z strd) (n data) (cost amount) (b m c name))
-      (implies
-        (and (p "bank" z 1) (p "bank" "n" z n) (p "bank" "cost" z cost)
-          (p "bank" "b" z b) (p "bank" "m" z m) (p "bank" "c" z c))
-        (exists ((item merchandise))
-          (fact buy-via c m b item cost n)))))
-  (defgenrule guar-cust-1
-    (forall
-      ((z strd) (n data) (cost amount) (item merchandise) (b m c name))
-      (implies
-        (and (p "cust" z 1) (p "cust" "n" z n) (p "cust" "cost" z cost)
-          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c)) (fact buy-via c m b item cost n))))
-  (defgenrule guar-merc-4
-    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
-      (implies
-        (and (p "merc" z 4) (p "merc" "mtr" z mtr)
-          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
-          (p "merc" "c" z c)) (fact will-ship c m b item mtr))))
-  (defgenrule guar-bank-2
-    (forall
-      ((z strd) (btr mtr text) (n data) (cost amount) (c b m name))
-      (implies
-        (and (p "bank" z 2) (p "bank" "btr" z btr)
-          (p "bank" "mtr" z mtr) (p "bank" "n" z n)
-          (p "bank" "cost" z cost) (p "bank" "c" z c) (p "bank" "b" z b)
-          (p "bank" "m" z m))
-        (and (non (privk "sig" c))
-          (fact will-transfer c m b cost n mtr btr)))))
-  (defgenrule cheq-merc-4
-    (forall
-      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
-      (implies
-        (and (p "merc" z 4) (p "merc" "n" z n)
-          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
-          (p "merc" "bank-conf-commit" z bank-conf-commit))
-        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (lang (acct atom) (amount atom) (merchandise atom) (sign sign)
     (order (tuple 5)) (bconf (tuple 3)) (mconf (tuple 3))
     (payreq (tuple 7))))
@@ -10800,6 +10808,74 @@
             (bconf (hash c m b n cost (hash n merc-conf-decommit)) btr
               mtr) (privk "sig" b)) (pubk "enc" m))))
     (uniq-orig btr))
+  (defrule rely-cust-3
+    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
+      (implies
+        (and (p "cust" z (idx 3)) (p "cust" "mtr" z mtr)
+          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
+          (p "cust" "c" z c))
+        (fact will-ship c m b item mtr))))
+  (defrule rely-cust-2
+    (forall
+      ((z strd) (btr mtr text) (n data) (cost amount) (b m c name))
+      (implies
+        (and (p "cust" z (idx 2)) (p "cust" "btr" z btr)
+          (p "cust" "mtr" z mtr) (p "cust" "n" z n)
+          (p "cust" "cost" z cost) (p "cust" "b" z b) (p "cust" "m" z m)
+          (p "cust" "c" z c))
+        (fact will-transfer c m b cost n mtr btr))))
+  (defrule rely-merc-3
+    (forall
+      ((z strd) (n data) (cost amount) (item merchandise) (b m c name)
+        (btr mtr text))
+      (implies
+        (and (p "merc" z (idx 3)) (p "merc" "n" z n)
+          (p "merc" "cost" z cost) (p "merc" "item" z item)
+          (p "merc" "b" z b) (p "merc" "m" z m) (p "merc" "c" z c)
+          (p "merc" "btr" z btr) (p "merc" "mtr" z mtr))
+        (and (fact buy-via c m b item cost n)
+          (fact will-transfer c m b cost n mtr btr)))))
+  (defrule rely-bank-1
+    (forall ((z strd) (n data) (cost amount) (b m c name))
+      (implies
+        (and (p "bank" z (idx 1)) (p "bank" "n" z n)
+          (p "bank" "cost" z cost) (p "bank" "b" z b) (p "bank" "m" z m)
+          (p "bank" "c" z c))
+        (exists ((item merchandise))
+          (fact buy-via c m b item cost n)))))
+  (defrule guar-cust-1
+    (forall
+      ((z strd) (n data) (cost amount) (item merchandise) (b m c name))
+      (implies
+        (and (p "cust" z (idx 1)) (p "cust" "n" z n)
+          (p "cust" "cost" z cost) (p "cust" "item" z item)
+          (p "cust" "b" z b) (p "cust" "m" z m) (p "cust" "c" z c))
+        (fact buy-via c m b item cost n))))
+  (defrule guar-merc-4
+    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "mtr" z mtr)
+          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
+          (p "merc" "c" z c))
+        (fact will-ship c m b item mtr))))
+  (defrule guar-bank-2
+    (forall
+      ((z strd) (btr mtr text) (n data) (cost amount) (c b m name))
+      (implies
+        (and (p "bank" z (idx 2)) (p "bank" "btr" z btr)
+          (p "bank" "mtr" z mtr) (p "bank" "n" z n)
+          (p "bank" "cost" z cost) (p "bank" "c" z c) (p "bank" "b" z b)
+          (p "bank" "m" z m))
+        (and (non (privk "sig" c))
+          (fact will-transfer c m b cost n mtr btr)))))
+  (defrule cheq-merc-4
+    (forall
+      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "n" z n)
+          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
+          (p "merc" "bank-conf-commit" z bank-conf-commit))
+        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
@@ -10809,82 +10885,18 @@
   (defgenrule fact-cust-neq2
     (forall ((z strd) (ncb n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb) (p "cust" "n" z n))
-        (fact neq n ncb))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
+          (p "cust" "n" z n)) (fact neq n ncb))))
   (defgenrule fact-cust-neq1
     (forall ((z strd) (ncm n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncm" z ncm) (p "cust" "n" z n))
-        (fact neq n ncm))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncm" z ncm)
+          (p "cust" "n" z n)) (fact neq n ncm))))
   (defgenrule fact-cust-neq0
     (forall ((z strd) (ncb ncm data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb)
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
           (p "cust" "ncm" z ncm)) (fact neq ncm ncb))))
-  (defgenrule rely-cust-3
-    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
-      (implies
-        (and (p "cust" z 3) (p "cust" "mtr" z mtr)
-          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c)) (fact will-ship c m b item mtr))))
-  (defgenrule rely-cust-2
-    (forall
-      ((z strd) (btr mtr text) (n data) (cost amount) (b m c name))
-      (implies
-        (and (p "cust" z 2) (p "cust" "btr" z btr)
-          (p "cust" "mtr" z mtr) (p "cust" "n" z n)
-          (p "cust" "cost" z cost) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c))
-        (fact will-transfer c m b cost n mtr btr))))
-  (defgenrule rely-merc-3
-    (forall
-      ((z strd) (n data) (cost amount) (item merchandise) (b m c name)
-        (btr mtr text))
-      (implies
-        (and (p "merc" z 3) (p "merc" "n" z n) (p "merc" "cost" z cost)
-          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
-          (p "merc" "c" z c) (p "merc" "btr" z btr)
-          (p "merc" "mtr" z mtr))
-        (and (fact buy-via c m b item cost n)
-          (fact will-transfer c m b cost n mtr btr)))))
-  (defgenrule rely-bank-1
-    (forall ((z strd) (n data) (cost amount) (b m c name))
-      (implies
-        (and (p "bank" z 1) (p "bank" "n" z n) (p "bank" "cost" z cost)
-          (p "bank" "b" z b) (p "bank" "m" z m) (p "bank" "c" z c))
-        (exists ((item merchandise))
-          (fact buy-via c m b item cost n)))))
-  (defgenrule guar-cust-1
-    (forall
-      ((z strd) (n data) (cost amount) (item merchandise) (b m c name))
-      (implies
-        (and (p "cust" z 1) (p "cust" "n" z n) (p "cust" "cost" z cost)
-          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c)) (fact buy-via c m b item cost n))))
-  (defgenrule guar-merc-4
-    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
-      (implies
-        (and (p "merc" z 4) (p "merc" "mtr" z mtr)
-          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
-          (p "merc" "c" z c)) (fact will-ship c m b item mtr))))
-  (defgenrule guar-bank-2
-    (forall
-      ((z strd) (btr mtr text) (n data) (cost amount) (c b m name))
-      (implies
-        (and (p "bank" z 2) (p "bank" "btr" z btr)
-          (p "bank" "mtr" z mtr) (p "bank" "n" z n)
-          (p "bank" "cost" z cost) (p "bank" "c" z c) (p "bank" "b" z b)
-          (p "bank" "m" z m))
-        (and (non (privk "sig" c))
-          (fact will-transfer c m b cost n mtr btr)))))
-  (defgenrule cheq-merc-4
-    (forall
-      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
-      (implies
-        (and (p "merc" z 4) (p "merc" "n" z n)
-          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
-          (p "merc" "bank-conf-commit" z bank-conf-commit))
-        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (lang (acct atom) (amount atom) (merchandise atom) (sign sign)
     (order (tuple 5)) (bconf (tuple 3)) (mconf (tuple 3))
     (payreq (tuple 7))))
@@ -11447,6 +11459,74 @@
             (bconf (hash c m b n cost (hash n merc-conf-decommit)) btr
               mtr) (privk "sig" b)) (pubk "enc" m))))
     (uniq-orig btr))
+  (defrule rely-cust-3
+    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
+      (implies
+        (and (p "cust" z (idx 3)) (p "cust" "mtr" z mtr)
+          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
+          (p "cust" "c" z c))
+        (fact will-ship c m b item mtr))))
+  (defrule rely-cust-2
+    (forall
+      ((z strd) (btr mtr text) (n data) (cost amount) (b m c name))
+      (implies
+        (and (p "cust" z (idx 2)) (p "cust" "btr" z btr)
+          (p "cust" "mtr" z mtr) (p "cust" "n" z n)
+          (p "cust" "cost" z cost) (p "cust" "b" z b) (p "cust" "m" z m)
+          (p "cust" "c" z c))
+        (fact will-transfer c m b cost n mtr btr))))
+  (defrule rely-merc-3
+    (forall
+      ((z strd) (n data) (cost amount) (item merchandise) (b m c name)
+        (btr mtr text))
+      (implies
+        (and (p "merc" z (idx 3)) (p "merc" "n" z n)
+          (p "merc" "cost" z cost) (p "merc" "item" z item)
+          (p "merc" "b" z b) (p "merc" "m" z m) (p "merc" "c" z c)
+          (p "merc" "btr" z btr) (p "merc" "mtr" z mtr))
+        (and (fact buy-via c m b item cost n)
+          (fact will-transfer c m b cost n mtr btr)))))
+  (defrule rely-bank-1
+    (forall ((z strd) (n data) (cost amount) (b m c name))
+      (implies
+        (and (p "bank" z (idx 1)) (p "bank" "n" z n)
+          (p "bank" "cost" z cost) (p "bank" "b" z b) (p "bank" "m" z m)
+          (p "bank" "c" z c))
+        (exists ((item merchandise))
+          (fact buy-via c m b item cost n)))))
+  (defrule guar-cust-1
+    (forall
+      ((z strd) (n data) (cost amount) (item merchandise) (b m c name))
+      (implies
+        (and (p "cust" z (idx 1)) (p "cust" "n" z n)
+          (p "cust" "cost" z cost) (p "cust" "item" z item)
+          (p "cust" "b" z b) (p "cust" "m" z m) (p "cust" "c" z c))
+        (fact buy-via c m b item cost n))))
+  (defrule guar-merc-4
+    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "mtr" z mtr)
+          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
+          (p "merc" "c" z c))
+        (fact will-ship c m b item mtr))))
+  (defrule guar-bank-2
+    (forall
+      ((z strd) (btr mtr text) (n data) (cost amount) (c b m name))
+      (implies
+        (and (p "bank" z (idx 2)) (p "bank" "btr" z btr)
+          (p "bank" "mtr" z mtr) (p "bank" "n" z n)
+          (p "bank" "cost" z cost) (p "bank" "c" z c) (p "bank" "b" z b)
+          (p "bank" "m" z m))
+        (and (non (privk "sig" c))
+          (fact will-transfer c m b cost n mtr btr)))))
+  (defrule cheq-merc-4
+    (forall
+      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "n" z n)
+          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
+          (p "merc" "bank-conf-commit" z bank-conf-commit))
+        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
@@ -11456,82 +11536,18 @@
   (defgenrule fact-cust-neq2
     (forall ((z strd) (ncb n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb) (p "cust" "n" z n))
-        (fact neq n ncb))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
+          (p "cust" "n" z n)) (fact neq n ncb))))
   (defgenrule fact-cust-neq1
     (forall ((z strd) (ncm n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncm" z ncm) (p "cust" "n" z n))
-        (fact neq n ncm))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncm" z ncm)
+          (p "cust" "n" z n)) (fact neq n ncm))))
   (defgenrule fact-cust-neq0
     (forall ((z strd) (ncb ncm data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb)
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
           (p "cust" "ncm" z ncm)) (fact neq ncm ncb))))
-  (defgenrule rely-cust-3
-    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
-      (implies
-        (and (p "cust" z 3) (p "cust" "mtr" z mtr)
-          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c)) (fact will-ship c m b item mtr))))
-  (defgenrule rely-cust-2
-    (forall
-      ((z strd) (btr mtr text) (n data) (cost amount) (b m c name))
-      (implies
-        (and (p "cust" z 2) (p "cust" "btr" z btr)
-          (p "cust" "mtr" z mtr) (p "cust" "n" z n)
-          (p "cust" "cost" z cost) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c))
-        (fact will-transfer c m b cost n mtr btr))))
-  (defgenrule rely-merc-3
-    (forall
-      ((z strd) (n data) (cost amount) (item merchandise) (b m c name)
-        (btr mtr text))
-      (implies
-        (and (p "merc" z 3) (p "merc" "n" z n) (p "merc" "cost" z cost)
-          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
-          (p "merc" "c" z c) (p "merc" "btr" z btr)
-          (p "merc" "mtr" z mtr))
-        (and (fact buy-via c m b item cost n)
-          (fact will-transfer c m b cost n mtr btr)))))
-  (defgenrule rely-bank-1
-    (forall ((z strd) (n data) (cost amount) (b m c name))
-      (implies
-        (and (p "bank" z 1) (p "bank" "n" z n) (p "bank" "cost" z cost)
-          (p "bank" "b" z b) (p "bank" "m" z m) (p "bank" "c" z c))
-        (exists ((item merchandise))
-          (fact buy-via c m b item cost n)))))
-  (defgenrule guar-cust-1
-    (forall
-      ((z strd) (n data) (cost amount) (item merchandise) (b m c name))
-      (implies
-        (and (p "cust" z 1) (p "cust" "n" z n) (p "cust" "cost" z cost)
-          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c)) (fact buy-via c m b item cost n))))
-  (defgenrule guar-merc-4
-    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
-      (implies
-        (and (p "merc" z 4) (p "merc" "mtr" z mtr)
-          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
-          (p "merc" "c" z c)) (fact will-ship c m b item mtr))))
-  (defgenrule guar-bank-2
-    (forall
-      ((z strd) (btr mtr text) (n data) (cost amount) (c b m name))
-      (implies
-        (and (p "bank" z 2) (p "bank" "btr" z btr)
-          (p "bank" "mtr" z mtr) (p "bank" "n" z n)
-          (p "bank" "cost" z cost) (p "bank" "c" z c) (p "bank" "b" z b)
-          (p "bank" "m" z m))
-        (and (non (privk "sig" c))
-          (fact will-transfer c m b cost n mtr btr)))))
-  (defgenrule cheq-merc-4
-    (forall
-      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
-      (implies
-        (and (p "merc" z 4) (p "merc" "n" z n)
-          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
-          (p "merc" "bank-conf-commit" z bank-conf-commit))
-        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (lang (acct atom) (amount atom) (merchandise atom) (sign sign)
     (order (tuple 5)) (bconf (tuple 3)) (mconf (tuple 3))
     (payreq (tuple 7))))
@@ -11991,6 +12007,74 @@
             (bconf (hash c m b n cost (hash n merc-conf-decommit)) btr
               mtr) (privk "sig" b)) (pubk "enc" m))))
     (uniq-orig btr))
+  (defrule rely-cust-3
+    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
+      (implies
+        (and (p "cust" z (idx 3)) (p "cust" "mtr" z mtr)
+          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
+          (p "cust" "c" z c))
+        (fact will-ship c m b item mtr))))
+  (defrule rely-cust-2
+    (forall
+      ((z strd) (btr mtr text) (n data) (cost amount) (b m c name))
+      (implies
+        (and (p "cust" z (idx 2)) (p "cust" "btr" z btr)
+          (p "cust" "mtr" z mtr) (p "cust" "n" z n)
+          (p "cust" "cost" z cost) (p "cust" "b" z b) (p "cust" "m" z m)
+          (p "cust" "c" z c))
+        (fact will-transfer c m b cost n mtr btr))))
+  (defrule rely-merc-3
+    (forall
+      ((z strd) (n data) (cost amount) (item merchandise) (b m c name)
+        (btr mtr text))
+      (implies
+        (and (p "merc" z (idx 3)) (p "merc" "n" z n)
+          (p "merc" "cost" z cost) (p "merc" "item" z item)
+          (p "merc" "b" z b) (p "merc" "m" z m) (p "merc" "c" z c)
+          (p "merc" "btr" z btr) (p "merc" "mtr" z mtr))
+        (and (fact buy-via c m b item cost n)
+          (fact will-transfer c m b cost n mtr btr)))))
+  (defrule rely-bank-1
+    (forall ((z strd) (n data) (cost amount) (b m c name))
+      (implies
+        (and (p "bank" z (idx 1)) (p "bank" "n" z n)
+          (p "bank" "cost" z cost) (p "bank" "b" z b) (p "bank" "m" z m)
+          (p "bank" "c" z c))
+        (exists ((item merchandise))
+          (fact buy-via c m b item cost n)))))
+  (defrule guar-cust-1
+    (forall
+      ((z strd) (n data) (cost amount) (item merchandise) (b m c name))
+      (implies
+        (and (p "cust" z (idx 1)) (p "cust" "n" z n)
+          (p "cust" "cost" z cost) (p "cust" "item" z item)
+          (p "cust" "b" z b) (p "cust" "m" z m) (p "cust" "c" z c))
+        (fact buy-via c m b item cost n))))
+  (defrule guar-merc-4
+    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "mtr" z mtr)
+          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
+          (p "merc" "c" z c))
+        (fact will-ship c m b item mtr))))
+  (defrule guar-bank-2
+    (forall
+      ((z strd) (btr mtr text) (n data) (cost amount) (c b m name))
+      (implies
+        (and (p "bank" z (idx 2)) (p "bank" "btr" z btr)
+          (p "bank" "mtr" z mtr) (p "bank" "n" z n)
+          (p "bank" "cost" z cost) (p "bank" "c" z c) (p "bank" "b" z b)
+          (p "bank" "m" z m))
+        (and (non (privk "sig" c))
+          (fact will-transfer c m b cost n mtr btr)))))
+  (defrule cheq-merc-4
+    (forall
+      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "n" z n)
+          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
+          (p "merc" "bank-conf-commit" z bank-conf-commit))
+        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
@@ -12000,82 +12084,18 @@
   (defgenrule fact-cust-neq2
     (forall ((z strd) (ncb n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb) (p "cust" "n" z n))
-        (fact neq n ncb))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
+          (p "cust" "n" z n)) (fact neq n ncb))))
   (defgenrule fact-cust-neq1
     (forall ((z strd) (ncm n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncm" z ncm) (p "cust" "n" z n))
-        (fact neq n ncm))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncm" z ncm)
+          (p "cust" "n" z n)) (fact neq n ncm))))
   (defgenrule fact-cust-neq0
     (forall ((z strd) (ncb ncm data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb)
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
           (p "cust" "ncm" z ncm)) (fact neq ncm ncb))))
-  (defgenrule rely-cust-3
-    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
-      (implies
-        (and (p "cust" z 3) (p "cust" "mtr" z mtr)
-          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c)) (fact will-ship c m b item mtr))))
-  (defgenrule rely-cust-2
-    (forall
-      ((z strd) (btr mtr text) (n data) (cost amount) (b m c name))
-      (implies
-        (and (p "cust" z 2) (p "cust" "btr" z btr)
-          (p "cust" "mtr" z mtr) (p "cust" "n" z n)
-          (p "cust" "cost" z cost) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c))
-        (fact will-transfer c m b cost n mtr btr))))
-  (defgenrule rely-merc-3
-    (forall
-      ((z strd) (n data) (cost amount) (item merchandise) (b m c name)
-        (btr mtr text))
-      (implies
-        (and (p "merc" z 3) (p "merc" "n" z n) (p "merc" "cost" z cost)
-          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
-          (p "merc" "c" z c) (p "merc" "btr" z btr)
-          (p "merc" "mtr" z mtr))
-        (and (fact buy-via c m b item cost n)
-          (fact will-transfer c m b cost n mtr btr)))))
-  (defgenrule rely-bank-1
-    (forall ((z strd) (n data) (cost amount) (b m c name))
-      (implies
-        (and (p "bank" z 1) (p "bank" "n" z n) (p "bank" "cost" z cost)
-          (p "bank" "b" z b) (p "bank" "m" z m) (p "bank" "c" z c))
-        (exists ((item merchandise))
-          (fact buy-via c m b item cost n)))))
-  (defgenrule guar-cust-1
-    (forall
-      ((z strd) (n data) (cost amount) (item merchandise) (b m c name))
-      (implies
-        (and (p "cust" z 1) (p "cust" "n" z n) (p "cust" "cost" z cost)
-          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c)) (fact buy-via c m b item cost n))))
-  (defgenrule guar-merc-4
-    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
-      (implies
-        (and (p "merc" z 4) (p "merc" "mtr" z mtr)
-          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
-          (p "merc" "c" z c)) (fact will-ship c m b item mtr))))
-  (defgenrule guar-bank-2
-    (forall
-      ((z strd) (btr mtr text) (n data) (cost amount) (c b m name))
-      (implies
-        (and (p "bank" z 2) (p "bank" "btr" z btr)
-          (p "bank" "mtr" z mtr) (p "bank" "n" z n)
-          (p "bank" "cost" z cost) (p "bank" "c" z c) (p "bank" "b" z b)
-          (p "bank" "m" z m))
-        (and (non (privk "sig" c))
-          (fact will-transfer c m b cost n mtr btr)))))
-  (defgenrule cheq-merc-4
-    (forall
-      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
-      (implies
-        (and (p "merc" z 4) (p "merc" "n" z n)
-          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
-          (p "merc" "bank-conf-commit" z bank-conf-commit))
-        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (lang (acct atom) (amount atom) (merchandise atom) (sign sign)
     (order (tuple 5)) (bconf (tuple 3)) (mconf (tuple 3))
     (payreq (tuple 7))))
@@ -21462,6 +21482,74 @@
             (bconf (hash c m b n cost (hash n merc-conf-decommit)) btr
               mtr) (privk "sig" b)) (pubk "enc" m))))
     (uniq-orig btr))
+  (defrule rely-cust-3
+    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
+      (implies
+        (and (p "cust" z (idx 3)) (p "cust" "mtr" z mtr)
+          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
+          (p "cust" "c" z c))
+        (fact will-ship c m b item mtr))))
+  (defrule rely-cust-2
+    (forall
+      ((z strd) (btr mtr text) (n data) (cost amount) (b m c name))
+      (implies
+        (and (p "cust" z (idx 2)) (p "cust" "btr" z btr)
+          (p "cust" "mtr" z mtr) (p "cust" "n" z n)
+          (p "cust" "cost" z cost) (p "cust" "b" z b) (p "cust" "m" z m)
+          (p "cust" "c" z c))
+        (fact will-transfer c m b cost n mtr btr))))
+  (defrule rely-merc-3
+    (forall
+      ((z strd) (n data) (cost amount) (item merchandise) (b m c name)
+        (btr mtr text))
+      (implies
+        (and (p "merc" z (idx 3)) (p "merc" "n" z n)
+          (p "merc" "cost" z cost) (p "merc" "item" z item)
+          (p "merc" "b" z b) (p "merc" "m" z m) (p "merc" "c" z c)
+          (p "merc" "btr" z btr) (p "merc" "mtr" z mtr))
+        (and (fact buy-via c m b item cost n)
+          (fact will-transfer c m b cost n mtr btr)))))
+  (defrule rely-bank-1
+    (forall ((z strd) (n data) (cost amount) (b m c name))
+      (implies
+        (and (p "bank" z (idx 1)) (p "bank" "n" z n)
+          (p "bank" "cost" z cost) (p "bank" "b" z b) (p "bank" "m" z m)
+          (p "bank" "c" z c))
+        (exists ((item merchandise))
+          (fact buy-via c m b item cost n)))))
+  (defrule guar-cust-1
+    (forall
+      ((z strd) (n data) (cost amount) (item merchandise) (b m c name))
+      (implies
+        (and (p "cust" z (idx 1)) (p "cust" "n" z n)
+          (p "cust" "cost" z cost) (p "cust" "item" z item)
+          (p "cust" "b" z b) (p "cust" "m" z m) (p "cust" "c" z c))
+        (fact buy-via c m b item cost n))))
+  (defrule guar-merc-4
+    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "mtr" z mtr)
+          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
+          (p "merc" "c" z c))
+        (fact will-ship c m b item mtr))))
+  (defrule guar-bank-2
+    (forall
+      ((z strd) (btr mtr text) (n data) (cost amount) (c b m name))
+      (implies
+        (and (p "bank" z (idx 2)) (p "bank" "btr" z btr)
+          (p "bank" "mtr" z mtr) (p "bank" "n" z n)
+          (p "bank" "cost" z cost) (p "bank" "c" z c) (p "bank" "b" z b)
+          (p "bank" "m" z m))
+        (and (non (privk "sig" c))
+          (fact will-transfer c m b cost n mtr btr)))))
+  (defrule cheq-merc-4
+    (forall
+      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "n" z n)
+          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
+          (p "merc" "bank-conf-commit" z bank-conf-commit))
+        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
@@ -21471,82 +21559,18 @@
   (defgenrule fact-cust-neq2
     (forall ((z strd) (ncb n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb) (p "cust" "n" z n))
-        (fact neq n ncb))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
+          (p "cust" "n" z n)) (fact neq n ncb))))
   (defgenrule fact-cust-neq1
     (forall ((z strd) (ncm n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncm" z ncm) (p "cust" "n" z n))
-        (fact neq n ncm))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncm" z ncm)
+          (p "cust" "n" z n)) (fact neq n ncm))))
   (defgenrule fact-cust-neq0
     (forall ((z strd) (ncb ncm data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb)
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
           (p "cust" "ncm" z ncm)) (fact neq ncm ncb))))
-  (defgenrule rely-cust-3
-    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
-      (implies
-        (and (p "cust" z 3) (p "cust" "mtr" z mtr)
-          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c)) (fact will-ship c m b item mtr))))
-  (defgenrule rely-cust-2
-    (forall
-      ((z strd) (btr mtr text) (n data) (cost amount) (b m c name))
-      (implies
-        (and (p "cust" z 2) (p "cust" "btr" z btr)
-          (p "cust" "mtr" z mtr) (p "cust" "n" z n)
-          (p "cust" "cost" z cost) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c))
-        (fact will-transfer c m b cost n mtr btr))))
-  (defgenrule rely-merc-3
-    (forall
-      ((z strd) (n data) (cost amount) (item merchandise) (b m c name)
-        (btr mtr text))
-      (implies
-        (and (p "merc" z 3) (p "merc" "n" z n) (p "merc" "cost" z cost)
-          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
-          (p "merc" "c" z c) (p "merc" "btr" z btr)
-          (p "merc" "mtr" z mtr))
-        (and (fact buy-via c m b item cost n)
-          (fact will-transfer c m b cost n mtr btr)))))
-  (defgenrule rely-bank-1
-    (forall ((z strd) (n data) (cost amount) (b m c name))
-      (implies
-        (and (p "bank" z 1) (p "bank" "n" z n) (p "bank" "cost" z cost)
-          (p "bank" "b" z b) (p "bank" "m" z m) (p "bank" "c" z c))
-        (exists ((item merchandise))
-          (fact buy-via c m b item cost n)))))
-  (defgenrule guar-cust-1
-    (forall
-      ((z strd) (n data) (cost amount) (item merchandise) (b m c name))
-      (implies
-        (and (p "cust" z 1) (p "cust" "n" z n) (p "cust" "cost" z cost)
-          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c)) (fact buy-via c m b item cost n))))
-  (defgenrule guar-merc-4
-    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
-      (implies
-        (and (p "merc" z 4) (p "merc" "mtr" z mtr)
-          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
-          (p "merc" "c" z c)) (fact will-ship c m b item mtr))))
-  (defgenrule guar-bank-2
-    (forall
-      ((z strd) (btr mtr text) (n data) (cost amount) (c b m name))
-      (implies
-        (and (p "bank" z 2) (p "bank" "btr" z btr)
-          (p "bank" "mtr" z mtr) (p "bank" "n" z n)
-          (p "bank" "cost" z cost) (p "bank" "c" z c) (p "bank" "b" z b)
-          (p "bank" "m" z m))
-        (and (non (privk "sig" c))
-          (fact will-transfer c m b cost n mtr btr)))))
-  (defgenrule cheq-merc-4
-    (forall
-      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
-      (implies
-        (and (p "merc" z 4) (p "merc" "n" z n)
-          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
-          (p "merc" "bank-conf-commit" z bank-conf-commit))
-        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (lang (acct atom) (amount atom) (merchandise atom) (sign sign)
     (order (tuple 5)) (bconf (tuple 3)) (mconf (tuple 3))
     (payreq (tuple 7))))
@@ -27134,6 +27158,74 @@
             (bconf (hash c m b n cost (hash n merc-conf-decommit)) btr
               mtr) (privk "sig" b)) (pubk "enc" m))))
     (uniq-orig btr))
+  (defrule rely-cust-3
+    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
+      (implies
+        (and (p "cust" z (idx 3)) (p "cust" "mtr" z mtr)
+          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
+          (p "cust" "c" z c))
+        (fact will-ship c m b item mtr))))
+  (defrule rely-cust-2
+    (forall
+      ((z strd) (btr mtr text) (n data) (cost amount) (b m c name))
+      (implies
+        (and (p "cust" z (idx 2)) (p "cust" "btr" z btr)
+          (p "cust" "mtr" z mtr) (p "cust" "n" z n)
+          (p "cust" "cost" z cost) (p "cust" "b" z b) (p "cust" "m" z m)
+          (p "cust" "c" z c))
+        (fact will-transfer c m b cost n mtr btr))))
+  (defrule rely-merc-3
+    (forall
+      ((z strd) (n data) (cost amount) (item merchandise) (b m c name)
+        (btr mtr text))
+      (implies
+        (and (p "merc" z (idx 3)) (p "merc" "n" z n)
+          (p "merc" "cost" z cost) (p "merc" "item" z item)
+          (p "merc" "b" z b) (p "merc" "m" z m) (p "merc" "c" z c)
+          (p "merc" "btr" z btr) (p "merc" "mtr" z mtr))
+        (and (fact buy-via c m b item cost n)
+          (fact will-transfer c m b cost n mtr btr)))))
+  (defrule rely-bank-1
+    (forall ((z strd) (n data) (cost amount) (b m c name))
+      (implies
+        (and (p "bank" z (idx 1)) (p "bank" "n" z n)
+          (p "bank" "cost" z cost) (p "bank" "b" z b) (p "bank" "m" z m)
+          (p "bank" "c" z c))
+        (exists ((item merchandise))
+          (fact buy-via c m b item cost n)))))
+  (defrule guar-cust-1
+    (forall
+      ((z strd) (n data) (cost amount) (item merchandise) (b m c name))
+      (implies
+        (and (p "cust" z (idx 1)) (p "cust" "n" z n)
+          (p "cust" "cost" z cost) (p "cust" "item" z item)
+          (p "cust" "b" z b) (p "cust" "m" z m) (p "cust" "c" z c))
+        (fact buy-via c m b item cost n))))
+  (defrule guar-merc-4
+    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "mtr" z mtr)
+          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
+          (p "merc" "c" z c))
+        (fact will-ship c m b item mtr))))
+  (defrule guar-bank-2
+    (forall
+      ((z strd) (btr mtr text) (n data) (cost amount) (c b m name))
+      (implies
+        (and (p "bank" z (idx 2)) (p "bank" "btr" z btr)
+          (p "bank" "mtr" z mtr) (p "bank" "n" z n)
+          (p "bank" "cost" z cost) (p "bank" "c" z c) (p "bank" "b" z b)
+          (p "bank" "m" z m))
+        (and (non (privk "sig" c))
+          (fact will-transfer c m b cost n mtr btr)))))
+  (defrule cheq-merc-4
+    (forall
+      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "n" z n)
+          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
+          (p "merc" "bank-conf-commit" z bank-conf-commit))
+        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
@@ -27143,82 +27235,18 @@
   (defgenrule fact-cust-neq2
     (forall ((z strd) (ncb n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb) (p "cust" "n" z n))
-        (fact neq n ncb))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
+          (p "cust" "n" z n)) (fact neq n ncb))))
   (defgenrule fact-cust-neq1
     (forall ((z strd) (ncm n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncm" z ncm) (p "cust" "n" z n))
-        (fact neq n ncm))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncm" z ncm)
+          (p "cust" "n" z n)) (fact neq n ncm))))
   (defgenrule fact-cust-neq0
     (forall ((z strd) (ncb ncm data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb)
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
           (p "cust" "ncm" z ncm)) (fact neq ncm ncb))))
-  (defgenrule rely-cust-3
-    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
-      (implies
-        (and (p "cust" z 3) (p "cust" "mtr" z mtr)
-          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c)) (fact will-ship c m b item mtr))))
-  (defgenrule rely-cust-2
-    (forall
-      ((z strd) (btr mtr text) (n data) (cost amount) (b m c name))
-      (implies
-        (and (p "cust" z 2) (p "cust" "btr" z btr)
-          (p "cust" "mtr" z mtr) (p "cust" "n" z n)
-          (p "cust" "cost" z cost) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c))
-        (fact will-transfer c m b cost n mtr btr))))
-  (defgenrule rely-merc-3
-    (forall
-      ((z strd) (n data) (cost amount) (item merchandise) (b m c name)
-        (btr mtr text))
-      (implies
-        (and (p "merc" z 3) (p "merc" "n" z n) (p "merc" "cost" z cost)
-          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
-          (p "merc" "c" z c) (p "merc" "btr" z btr)
-          (p "merc" "mtr" z mtr))
-        (and (fact buy-via c m b item cost n)
-          (fact will-transfer c m b cost n mtr btr)))))
-  (defgenrule rely-bank-1
-    (forall ((z strd) (n data) (cost amount) (b m c name))
-      (implies
-        (and (p "bank" z 1) (p "bank" "n" z n) (p "bank" "cost" z cost)
-          (p "bank" "b" z b) (p "bank" "m" z m) (p "bank" "c" z c))
-        (exists ((item merchandise))
-          (fact buy-via c m b item cost n)))))
-  (defgenrule guar-cust-1
-    (forall
-      ((z strd) (n data) (cost amount) (item merchandise) (b m c name))
-      (implies
-        (and (p "cust" z 1) (p "cust" "n" z n) (p "cust" "cost" z cost)
-          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c)) (fact buy-via c m b item cost n))))
-  (defgenrule guar-merc-4
-    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
-      (implies
-        (and (p "merc" z 4) (p "merc" "mtr" z mtr)
-          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
-          (p "merc" "c" z c)) (fact will-ship c m b item mtr))))
-  (defgenrule guar-bank-2
-    (forall
-      ((z strd) (btr mtr text) (n data) (cost amount) (c b m name))
-      (implies
-        (and (p "bank" z 2) (p "bank" "btr" z btr)
-          (p "bank" "mtr" z mtr) (p "bank" "n" z n)
-          (p "bank" "cost" z cost) (p "bank" "c" z c) (p "bank" "b" z b)
-          (p "bank" "m" z m))
-        (and (non (privk "sig" c))
-          (fact will-transfer c m b cost n mtr btr)))))
-  (defgenrule cheq-merc-4
-    (forall
-      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
-      (implies
-        (and (p "merc" z 4) (p "merc" "n" z n)
-          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
-          (p "merc" "bank-conf-commit" z bank-conf-commit))
-        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (lang (acct atom) (amount atom) (merchandise atom) (sign sign)
     (order (tuple 5)) (bconf (tuple 3)) (mconf (tuple 3))
     (payreq (tuple 7))))
@@ -27749,6 +27777,74 @@
             (bconf (hash c m b n cost (hash n merc-conf-decommit)) btr
               mtr) (privk "sig" b)) (pubk "enc" m))))
     (uniq-orig btr))
+  (defrule rely-cust-3
+    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
+      (implies
+        (and (p "cust" z (idx 3)) (p "cust" "mtr" z mtr)
+          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
+          (p "cust" "c" z c))
+        (fact will-ship c m b item mtr))))
+  (defrule rely-cust-2
+    (forall
+      ((z strd) (btr mtr text) (n data) (cost amount) (b m c name))
+      (implies
+        (and (p "cust" z (idx 2)) (p "cust" "btr" z btr)
+          (p "cust" "mtr" z mtr) (p "cust" "n" z n)
+          (p "cust" "cost" z cost) (p "cust" "b" z b) (p "cust" "m" z m)
+          (p "cust" "c" z c))
+        (fact will-transfer c m b cost n mtr btr))))
+  (defrule rely-merc-3
+    (forall
+      ((z strd) (n data) (cost amount) (item merchandise) (b m c name)
+        (btr mtr text))
+      (implies
+        (and (p "merc" z (idx 3)) (p "merc" "n" z n)
+          (p "merc" "cost" z cost) (p "merc" "item" z item)
+          (p "merc" "b" z b) (p "merc" "m" z m) (p "merc" "c" z c)
+          (p "merc" "btr" z btr) (p "merc" "mtr" z mtr))
+        (and (fact buy-via c m b item cost n)
+          (fact will-transfer c m b cost n mtr btr)))))
+  (defrule rely-bank-1
+    (forall ((z strd) (n data) (cost amount) (b m c name))
+      (implies
+        (and (p "bank" z (idx 1)) (p "bank" "n" z n)
+          (p "bank" "cost" z cost) (p "bank" "b" z b) (p "bank" "m" z m)
+          (p "bank" "c" z c))
+        (exists ((item merchandise))
+          (fact buy-via c m b item cost n)))))
+  (defrule guar-cust-1
+    (forall
+      ((z strd) (n data) (cost amount) (item merchandise) (b m c name))
+      (implies
+        (and (p "cust" z (idx 1)) (p "cust" "n" z n)
+          (p "cust" "cost" z cost) (p "cust" "item" z item)
+          (p "cust" "b" z b) (p "cust" "m" z m) (p "cust" "c" z c))
+        (fact buy-via c m b item cost n))))
+  (defrule guar-merc-4
+    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "mtr" z mtr)
+          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
+          (p "merc" "c" z c))
+        (fact will-ship c m b item mtr))))
+  (defrule guar-bank-2
+    (forall
+      ((z strd) (btr mtr text) (n data) (cost amount) (c b m name))
+      (implies
+        (and (p "bank" z (idx 2)) (p "bank" "btr" z btr)
+          (p "bank" "mtr" z mtr) (p "bank" "n" z n)
+          (p "bank" "cost" z cost) (p "bank" "c" z c) (p "bank" "b" z b)
+          (p "bank" "m" z m))
+        (and (non (privk "sig" c))
+          (fact will-transfer c m b cost n mtr btr)))))
+  (defrule cheq-merc-4
+    (forall
+      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "n" z n)
+          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
+          (p "merc" "bank-conf-commit" z bank-conf-commit))
+        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
@@ -27758,82 +27854,18 @@
   (defgenrule fact-cust-neq2
     (forall ((z strd) (ncb n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb) (p "cust" "n" z n))
-        (fact neq n ncb))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
+          (p "cust" "n" z n)) (fact neq n ncb))))
   (defgenrule fact-cust-neq1
     (forall ((z strd) (ncm n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncm" z ncm) (p "cust" "n" z n))
-        (fact neq n ncm))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncm" z ncm)
+          (p "cust" "n" z n)) (fact neq n ncm))))
   (defgenrule fact-cust-neq0
     (forall ((z strd) (ncb ncm data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb)
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
           (p "cust" "ncm" z ncm)) (fact neq ncm ncb))))
-  (defgenrule rely-cust-3
-    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
-      (implies
-        (and (p "cust" z 3) (p "cust" "mtr" z mtr)
-          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c)) (fact will-ship c m b item mtr))))
-  (defgenrule rely-cust-2
-    (forall
-      ((z strd) (btr mtr text) (n data) (cost amount) (b m c name))
-      (implies
-        (and (p "cust" z 2) (p "cust" "btr" z btr)
-          (p "cust" "mtr" z mtr) (p "cust" "n" z n)
-          (p "cust" "cost" z cost) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c))
-        (fact will-transfer c m b cost n mtr btr))))
-  (defgenrule rely-merc-3
-    (forall
-      ((z strd) (n data) (cost amount) (item merchandise) (b m c name)
-        (btr mtr text))
-      (implies
-        (and (p "merc" z 3) (p "merc" "n" z n) (p "merc" "cost" z cost)
-          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
-          (p "merc" "c" z c) (p "merc" "btr" z btr)
-          (p "merc" "mtr" z mtr))
-        (and (fact buy-via c m b item cost n)
-          (fact will-transfer c m b cost n mtr btr)))))
-  (defgenrule rely-bank-1
-    (forall ((z strd) (n data) (cost amount) (b m c name))
-      (implies
-        (and (p "bank" z 1) (p "bank" "n" z n) (p "bank" "cost" z cost)
-          (p "bank" "b" z b) (p "bank" "m" z m) (p "bank" "c" z c))
-        (exists ((item merchandise))
-          (fact buy-via c m b item cost n)))))
-  (defgenrule guar-cust-1
-    (forall
-      ((z strd) (n data) (cost amount) (item merchandise) (b m c name))
-      (implies
-        (and (p "cust" z 1) (p "cust" "n" z n) (p "cust" "cost" z cost)
-          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c)) (fact buy-via c m b item cost n))))
-  (defgenrule guar-merc-4
-    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
-      (implies
-        (and (p "merc" z 4) (p "merc" "mtr" z mtr)
-          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
-          (p "merc" "c" z c)) (fact will-ship c m b item mtr))))
-  (defgenrule guar-bank-2
-    (forall
-      ((z strd) (btr mtr text) (n data) (cost amount) (c b m name))
-      (implies
-        (and (p "bank" z 2) (p "bank" "btr" z btr)
-          (p "bank" "mtr" z mtr) (p "bank" "n" z n)
-          (p "bank" "cost" z cost) (p "bank" "c" z c) (p "bank" "b" z b)
-          (p "bank" "m" z m))
-        (and (non (privk "sig" c))
-          (fact will-transfer c m b cost n mtr btr)))))
-  (defgenrule cheq-merc-4
-    (forall
-      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
-      (implies
-        (and (p "merc" z 4) (p "merc" "n" z n)
-          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
-          (p "merc" "bank-conf-commit" z bank-conf-commit))
-        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (lang (acct atom) (amount atom) (merchandise atom) (sign sign)
     (order (tuple 5)) (bconf (tuple 3)) (mconf (tuple 3))
     (payreq (tuple 7))))
@@ -28285,6 +28317,74 @@
             (bconf (hash c m b n cost (hash n merc-conf-decommit)) btr
               mtr) (privk "sig" b)) (pubk "enc" m))))
     (uniq-orig btr))
+  (defrule rely-cust-3
+    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
+      (implies
+        (and (p "cust" z (idx 3)) (p "cust" "mtr" z mtr)
+          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
+          (p "cust" "c" z c))
+        (fact will-ship c m b item mtr))))
+  (defrule rely-cust-2
+    (forall
+      ((z strd) (btr mtr text) (n data) (cost amount) (b m c name))
+      (implies
+        (and (p "cust" z (idx 2)) (p "cust" "btr" z btr)
+          (p "cust" "mtr" z mtr) (p "cust" "n" z n)
+          (p "cust" "cost" z cost) (p "cust" "b" z b) (p "cust" "m" z m)
+          (p "cust" "c" z c))
+        (fact will-transfer c m b cost n mtr btr))))
+  (defrule rely-merc-3
+    (forall
+      ((z strd) (n data) (cost amount) (item merchandise) (b m c name)
+        (btr mtr text))
+      (implies
+        (and (p "merc" z (idx 3)) (p "merc" "n" z n)
+          (p "merc" "cost" z cost) (p "merc" "item" z item)
+          (p "merc" "b" z b) (p "merc" "m" z m) (p "merc" "c" z c)
+          (p "merc" "btr" z btr) (p "merc" "mtr" z mtr))
+        (and (fact buy-via c m b item cost n)
+          (fact will-transfer c m b cost n mtr btr)))))
+  (defrule rely-bank-1
+    (forall ((z strd) (n data) (cost amount) (b m c name))
+      (implies
+        (and (p "bank" z (idx 1)) (p "bank" "n" z n)
+          (p "bank" "cost" z cost) (p "bank" "b" z b) (p "bank" "m" z m)
+          (p "bank" "c" z c))
+        (exists ((item merchandise))
+          (fact buy-via c m b item cost n)))))
+  (defrule guar-cust-1
+    (forall
+      ((z strd) (n data) (cost amount) (item merchandise) (b m c name))
+      (implies
+        (and (p "cust" z (idx 1)) (p "cust" "n" z n)
+          (p "cust" "cost" z cost) (p "cust" "item" z item)
+          (p "cust" "b" z b) (p "cust" "m" z m) (p "cust" "c" z c))
+        (fact buy-via c m b item cost n))))
+  (defrule guar-merc-4
+    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "mtr" z mtr)
+          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
+          (p "merc" "c" z c))
+        (fact will-ship c m b item mtr))))
+  (defrule guar-bank-2
+    (forall
+      ((z strd) (btr mtr text) (n data) (cost amount) (c b m name))
+      (implies
+        (and (p "bank" z (idx 2)) (p "bank" "btr" z btr)
+          (p "bank" "mtr" z mtr) (p "bank" "n" z n)
+          (p "bank" "cost" z cost) (p "bank" "c" z c) (p "bank" "b" z b)
+          (p "bank" "m" z m))
+        (and (non (privk "sig" c))
+          (fact will-transfer c m b cost n mtr btr)))))
+  (defrule cheq-merc-4
+    (forall
+      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
+      (implies
+        (and (p "merc" z (idx 4)) (p "merc" "n" z n)
+          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
+          (p "merc" "bank-conf-commit" z bank-conf-commit))
+        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd
@@ -28294,82 +28394,18 @@
   (defgenrule fact-cust-neq2
     (forall ((z strd) (ncb n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb) (p "cust" "n" z n))
-        (fact neq n ncb))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
+          (p "cust" "n" z n)) (fact neq n ncb))))
   (defgenrule fact-cust-neq1
     (forall ((z strd) (ncm n data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncm" z ncm) (p "cust" "n" z n))
-        (fact neq n ncm))))
+        (and (p "cust" z (idx 1)) (p "cust" "ncm" z ncm)
+          (p "cust" "n" z n)) (fact neq n ncm))))
   (defgenrule fact-cust-neq0
     (forall ((z strd) (ncb ncm data))
       (implies
-        (and (p "cust" z 1) (p "cust" "ncb" z ncb)
+        (and (p "cust" z (idx 1)) (p "cust" "ncb" z ncb)
           (p "cust" "ncm" z ncm)) (fact neq ncm ncb))))
-  (defgenrule rely-cust-3
-    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
-      (implies
-        (and (p "cust" z 3) (p "cust" "mtr" z mtr)
-          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c)) (fact will-ship c m b item mtr))))
-  (defgenrule rely-cust-2
-    (forall
-      ((z strd) (btr mtr text) (n data) (cost amount) (b m c name))
-      (implies
-        (and (p "cust" z 2) (p "cust" "btr" z btr)
-          (p "cust" "mtr" z mtr) (p "cust" "n" z n)
-          (p "cust" "cost" z cost) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c))
-        (fact will-transfer c m b cost n mtr btr))))
-  (defgenrule rely-merc-3
-    (forall
-      ((z strd) (n data) (cost amount) (item merchandise) (b m c name)
-        (btr mtr text))
-      (implies
-        (and (p "merc" z 3) (p "merc" "n" z n) (p "merc" "cost" z cost)
-          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
-          (p "merc" "c" z c) (p "merc" "btr" z btr)
-          (p "merc" "mtr" z mtr))
-        (and (fact buy-via c m b item cost n)
-          (fact will-transfer c m b cost n mtr btr)))))
-  (defgenrule rely-bank-1
-    (forall ((z strd) (n data) (cost amount) (b m c name))
-      (implies
-        (and (p "bank" z 1) (p "bank" "n" z n) (p "bank" "cost" z cost)
-          (p "bank" "b" z b) (p "bank" "m" z m) (p "bank" "c" z c))
-        (exists ((item merchandise))
-          (fact buy-via c m b item cost n)))))
-  (defgenrule guar-cust-1
-    (forall
-      ((z strd) (n data) (cost amount) (item merchandise) (b m c name))
-      (implies
-        (and (p "cust" z 1) (p "cust" "n" z n) (p "cust" "cost" z cost)
-          (p "cust" "item" z item) (p "cust" "b" z b) (p "cust" "m" z m)
-          (p "cust" "c" z c)) (fact buy-via c m b item cost n))))
-  (defgenrule guar-merc-4
-    (forall ((z strd) (mtr text) (item merchandise) (b m c name))
-      (implies
-        (and (p "merc" z 4) (p "merc" "mtr" z mtr)
-          (p "merc" "item" z item) (p "merc" "b" z b) (p "merc" "m" z m)
-          (p "merc" "c" z c)) (fact will-ship c m b item mtr))))
-  (defgenrule guar-bank-2
-    (forall
-      ((z strd) (btr mtr text) (n data) (cost amount) (c b m name))
-      (implies
-        (and (p "bank" z 2) (p "bank" "btr" z btr)
-          (p "bank" "mtr" z mtr) (p "bank" "n" z n)
-          (p "bank" "cost" z cost) (p "bank" "c" z c) (p "bank" "b" z b)
-          (p "bank" "m" z m))
-        (and (non (privk "sig" c))
-          (fact will-transfer c m b cost n mtr btr)))))
-  (defgenrule cheq-merc-4
-    (forall
-      ((z strd) (n data) (bank-conf-decommit bank-conf-commit mesg))
-      (implies
-        (and (p "merc" z 4) (p "merc" "n" z n)
-          (p "merc" "bank-conf-decommit" z bank-conf-decommit)
-          (p "merc" "bank-conf-commit" z bank-conf-commit))
-        (= bank-conf-commit (hash n bank-conf-decommit)))))
   (lang (acct atom) (amount atom) (merchandise atom) (sign sign)
     (order (tuple 5)) (bconf (tuple 3)) (mconf (tuple 3))
     (payreq (tuple 7))))

@@ -3208,19 +3208,22 @@ geq ebvs t t' _ (g, e)
   -- but it is not always true for rules.
   | not (unmatchedVarsWithin e t ebvs) = 
       error ("In a rule equality check, " ++
-             "cannot find a binding for some variable in " ++ (show t))
+             "cannot find a binding for some variable in " ++ (show t) ++
+             " with ebvs " ++ (show ebvs))
   | not (unmatchedVarsWithin e t' ebvs) =
       error ("In a rule equality check, " ++
-             "cannot find a binding for some variable in " ++ (show t'))
+             "cannot find a binding for some variable in " ++ (show t') ++
+             "with ebvs " ++ (show ebvs))
 
   | ti == ti' = [(g, e)]
   | not (null ebvs) =
-      L.map (\(g,s) ->
-                 (g, substUpdate e s)) -- update the env with the subst  
-           $ filter
-                 (\(_,s) ->      -- where all modified vars are ebvs
-                  substDomainWithin s ebvs) 
-                 $ unify t t' (g, emptySubst)
+      filter (\(_,e') ->      -- where all modified vars are ebvs
+                  envsAgreeOutside e e' ebvs)
+      (L.map (\(g,s) ->
+                 (g, substUpdate e s)) -- update the env with the
+                                       -- subst
+      $ unify t t' (g, emptySubst))
+
   | otherwise = []
   where
     ti = instantiate e t
