@@ -1,0 +1,9 @@
+#! /bin/sh
+
+for i in *.scm
+do
+    b=`basename $i .scm`
+    echo $b
+    cpsa4 +RTS -M512m -N12 -RTS $i | cpsa4sas | cpsa4 +RTS -M512m -N12 -RTS -o y/$b.txt
+done
+
