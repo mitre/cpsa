@@ -2,6 +2,21 @@ CPSA NEWS -- history of user-visible changes.
 
 * Changes in version 4.4.0
 
+** A bug concerning goal satisfaction was found and corrected.
+   When a goal conclusion contains existential quantifiers and
+   equalities involving the existentially bound variables, the bug
+   caused satisfaction not to be reported.  The correction allows the
+   bound variables to receive instantiations satisfying the equations.
+
+** A bug printing rules for cheq, rely, and guar was found and corrected.
+   These rules are now printed out with the defrule keywords rather
+   than the defgenrule keyword.  This is required because the printer
+   does not re-insert the original trace annotations in its output,
+   meaning that the rules would not be re-generated automatically when
+   reading the output file.
+
+* Changes in version 4.4.0
+
 ** Many small bugs were corrected.  For instance, bugs that prevented
    generalization from running to completion led to redundant shapes.
    Imprecision in uniq-gen led to omissions.  Cpsa4sas has been
