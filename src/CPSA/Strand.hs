@@ -3203,7 +3203,8 @@ fmatch t (FTerm t') e =
 -- Equality
 geq :: [Term] -> Term -> Term -> Sem
 geq ebvs t t' _ (g, e)
-  -- Ensure all variables in t and t' are in the domain of e.
+  -- Ensure all variables in t and t' are either in the domain of e,
+  -- or else are among the existentially bound variables ebvs.
   -- This always happens for goals because they must be role specific
   -- but it is not always true for rules.
   | not (unmatchedVarsWithin e t ebvs) = 

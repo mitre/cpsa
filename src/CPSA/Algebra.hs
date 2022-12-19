@@ -293,7 +293,7 @@ getGroupVar x = head $ M.keys x
 groupVarsOfGroup :: Group -> [Group]
 groupVarsOfGroup =
     M.foldrWithKey
-         (\id desc soFar -> (M.singleton id desc) : soFar)
+         (\id (s,_) soFar -> (M.singleton id (s,1)) : soFar)
          []
 
 -- Create group var as a basis element if be is Rndx
@@ -1266,6 +1266,10 @@ idUnmapped map t@(F s [I x])
     | varSym s && not(M.member x map) = [t]
     | otherwise = idUnmapped map (I x)
 
+idUnmapped map (F (Akey str) [F (Invk _) [I x]])
+    | M.member x map = []
+    | not(M.member x map) = [F (Akey str) [I x]]
+
 idUnmapped map (F _ u) = concatMap (idUnmapped map) u
 
 -- Set (specifically, list) of identifiers that are keys in a map, ie
@@ -1719,8 +1723,9 @@ matched (Env (_, r)) t = idMapped r t
 
 unmatchedVarsWithin :: Env -> Term -> [Term] -> Bool 
 unmatchedVarsWithin (Env (_, r)) t vars =
-    all (flip elem vars) unmatchedIds    
+    all (flip elem vars) unmatchedIds 
     where
+      -- problems = filter (not . (flip elem vars)) unmatchedIds 
       unmatchedIds = idUnmapped r t
 
 envsAgreeOutside :: Env -> Env -> [Term] -> Bool
