@@ -1,6 +1,6 @@
 (herald goals)
 
-(comment "CPSA 4.4.0")
+(comment "CPSA 4.4.1")
 (comment "All input read from tst/goals.scm")
 
 (defprotocol ns basic
@@ -183,7 +183,7 @@
   (parent 4)
   (realized)
   (shape)
-  (satisfies (no (a a) (b b) (n2 n2) (z0 0)))
+  (satisfies (no (p "init" "b" z1 b) (a a) (b b) (n2 n2) (z0 0)))
   (maps ((0) ((a a) (b b) (n2 n2) (n1 n1))))
   (origs (n2 (0 1))))
 
@@ -872,7 +872,7 @@
   (parent 30)
   (realized)
   (shape)
-  (satisfies (no (a a) (b b) (n2 n2) (z0 1) (z1 0)))
+  (satisfies (no (fact false) (a a) (b b) (n2 n2) (z0 1) (z1 0)))
   (maps ((0 1) ((a a) (b b) (n2 n2) (n1 n1))))
   (origs (n2 (1 1))))
 
@@ -898,7 +898,7 @@
   (parent 30)
   (realized)
   (shape)
-  (satisfies (no (a a) (b b) (n2 n2) (z0 1) (z1 0)))
+  (satisfies (no (fact false) (a a) (b b) (n2 n2) (z0 1) (z1 0)))
   (maps ((0 1) ((a a) (b b) (n2 n2) (n1 n1))))
   (origs (n2 (1 1))))
 
@@ -1089,8 +1089,8 @@
   (realized)
   (shape)
   (satisfies
-    (no (n1 n1) (n1-0 n1-0) (n2 n2-0) (n2-0 n2) (a a) (b b) (z 0)
-      (z-0 1)))
+    (no (= z z-0) (n1 n1) (n1-0 n1-0) (n2 n2-0) (n2-0 n2) (a a) (b b)
+      (z 0) (z-0 1)))
   (maps ((0 1) ((a a) (b b) (n1 n1) (n1-0 n1-0) (n2 n2-0) (n2-0 n2))))
   (origs (n1 (0 0)) (n1-0 (1 0))))
 
@@ -1187,7 +1187,7 @@
   (parent 42)
   (realized)
   (shape)
-  (satisfies (no (n2 n2) (a a) (b b) (z 1) (z-0 0)))
+  (satisfies (no (fact false) (n2 n2) (a a) (b b) (z 1) (z-0 0)))
   (maps ((0 1) ((n2 n2) (a a) (b b) (n1 a-0))))
   (origs (n2 (1 1))))
 

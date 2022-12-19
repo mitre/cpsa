@@ -1,6 +1,6 @@
 (herald timestamping-service)
 
-(comment "CPSA 4.4.0")
+(comment "CPSA 4.4.1")
 (comment "All input read from tst/timestamping.scm")
 
 (defprotocol timestamping-service basic

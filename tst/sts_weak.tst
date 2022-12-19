@@ -1,7 +1,7 @@
 (herald "Station-to-station protocol:  Weakened version"
   (algebra diffie-hellman))
 
-(comment "CPSA 4.4.0")
+(comment "CPSA 4.4.1")
 (comment "All input read from tst/sts_weak.scm")
 
 (defprotocol station-weak diffie-hellman

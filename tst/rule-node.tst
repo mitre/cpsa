@@ -1,6 +1,6 @@
 (herald rule-node)
 
-(comment "CPSA 4.4.0")
+(comment "CPSA 4.4.1")
 (comment "All input read from tst/rule-node.scm")
 
 (defprotocol rule-order basic

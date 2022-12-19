@@ -1,6 +1,6 @@
 (herald unilateral)
 
-(comment "CPSA 4.4.0")
+(comment "CPSA 4.4.1")
 (comment "All input read from tst/unilateral.scm")
 
 (defprotocol unilateral basic
@@ -369,7 +369,7 @@
   (parent 12)
   (realized)
   (shape)
-  (satisfies (no (b b) (z 0)))
+  (satisfies (no (fact false) (b b) (z 0)))
   (maps ((0) ((b b) (na na) (nb nb) (t1 t1) (t2 t2) (t3 t3))))
   (origs (na (1 1)) (nb (0 0))))
 

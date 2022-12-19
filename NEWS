@@ -1,6 +1,6 @@
 CPSA NEWS -- history of user-visible changes.
 
-* Changes in version 4.4.0
+* Changes in version 4.4.1
 
 ** A bug concerning goal satisfaction was found and corrected.
    When a goal conclusion contains existential quantifiers and

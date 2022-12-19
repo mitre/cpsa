@@ -1,6 +1,6 @@
 (herald commitment)
 
-(comment "CPSA 4.4.0")
+(comment "CPSA 4.4.1")
 (comment "All input read from tst/commitment.scm")
 
 (defprotocol commit basic
@@ -19,19 +19,19 @@
     (trace (recv (enc "bid" sealed (privk "sig" a)))
       (send (enc "receipt" sealed (privk "sig" b))) (recv (cat n quote))
       (send (enc "result" a b n quote outcome (privk "sig" b)))))
-  (defgenrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defgenrule cheq-auctioneer-4
+  (defrule cheq-auctioneer-4
     (forall ((z strd) (quote text) (n data) (b a name) (sealed mesg))
       (implies
         (and (p "auctioneer" z (idx 4)) (p "auctioneer" "quote" z quote)
           (p "auctioneer" "n" z n) (p "auctioneer" "b" z b)
           (p "auctioneer" "a" z a) (p "auctioneer" "sealed" z sealed))
-        (= sealed (hash a b n quote))))))
+        (= sealed (hash a b n quote)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton commit
   (vars (sealed mesg) (n data) (quote outcome text) (a b name))
@@ -107,19 +107,19 @@
     (trace (recv (enc "bid" sealed (privk "sig" a)))
       (send (enc "receipt" sealed (privk "sig" b))) (recv (cat n quote))
       (send (enc "result" a b n quote outcome (privk "sig" b)))))
-  (defgenrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defgenrule cheq-auctioneer-4
+  (defrule cheq-auctioneer-4
     (forall ((z strd) (quote text) (n data) (b a name) (sealed mesg))
       (implies
         (and (p "auctioneer" z (idx 4)) (p "auctioneer" "quote" z quote)
           (p "auctioneer" "n" z n) (p "auctioneer" "b" z b)
           (p "auctioneer" "a" z a) (p "auctioneer" "sealed" z sealed))
-        (= sealed (hash a b n quote))))))
+        (= sealed (hash a b n quote)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton commit
   (vars (sealed mesg) (a b name))
@@ -189,19 +189,19 @@
     (trace (recv (enc "bid" sealed (privk "sig" a)))
       (send (enc "receipt" sealed (privk "sig" b))) (recv (cat n quote))
       (send (enc "result" a b n quote outcome (privk "sig" b)))))
-  (defgenrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false))))
-  (defgenrule cheq-auctioneer-4
+  (defrule cheq-auctioneer-4
     (forall ((z strd) (quote text) (n data) (b a name) (sealed mesg))
       (implies
         (and (p "auctioneer" z (idx 4)) (p "auctioneer" "quote" z quote)
           (p "auctioneer" "n" z n) (p "auctioneer" "b" z b)
           (p "auctioneer" "a" z a) (p "auctioneer" "sealed" z sealed))
-        (= sealed (hash a b n quote))))))
+        (= sealed (hash a b n quote)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton commit
   (vars (n data) (quote outcome text) (a b name))

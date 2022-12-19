@@ -1,6 +1,6 @@
 (herald auth-hash)
 
-(comment "CPSA 4.4.0")
+(comment "CPSA 4.4.1")
 (comment "All input read from tst/auth-hash.scm")
 
 (defprotocol auth-hash basic

@@ -1,7 +1,7 @@
 (herald "DHCR: unified model (UM) three-part" (bound 20) (limit 8000)
   (algebra diffie-hellman))
 
-(comment "CPSA 4.4.0")
+(comment "CPSA 4.4.1")
 (comment "All input read from tst/dhcr_um3.scm")
 (comment "Step count limited to 8000")
 (comment "Strand count bounded at 20")

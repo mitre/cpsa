@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.0")
+(comment "CPSA 4.4.1")
 (comment "All input read from tst/kelly1.scm")
 
 (defprotocol kelly1 basic
