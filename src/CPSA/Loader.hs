@@ -829,6 +829,14 @@ loadInsts sig top p kvars gen insts (L pos (S _ "defstrand" : x) : xs) =
             loadInsts sig top p kvars gen (i : insts) xs
       _ ->
           fail (shows pos "Malformed defstrand")
+loadInsts sig top p kvars gen insts (L pos (S _ "defstrandmax" : x) : xs) =
+    case x of
+      S _ role : env ->
+          do
+            (gen, i) <- loadInstMax sig pos p kvars gen role env
+            loadInsts sig top p kvars gen (i : insts) xs
+      _ ->
+          fail (shows pos "Malformed defstrandmax")
 loadInsts sig top p kvars gen insts (L pos (S _ "deflistener" : x) : xs) =
     case x of
       [term] ->
@@ -881,6 +889,17 @@ loadInst sig pos p kvars gen role height env =
               (gen', env') <- foldM (loadMaplet sig kvars vars)
                               (gen, emptyEnv) env
               return (mkInstance gen' r env' height)
+
+loadInstMax :: MonadFail m => Sig -> Pos -> Prot -> [Term] -> Gen -> String ->
+               [SExpr Pos] -> m (Gen, Instance)
+loadInstMax sig pos p kvars gen role env =
+    do
+      r <- lookupRole pos p role
+      let height = length (rtrace r) 
+      let vars = rvars r
+      (gen', env') <- foldM (loadMaplet sig kvars vars)
+                      (gen, emptyEnv) env
+      return (mkInstance gen' r env' height)
 
 loadMaplet :: MonadFail m => Sig -> [Term] -> [Term] ->
               (Gen, Env) -> SExpr Pos -> m (Gen, Env)
