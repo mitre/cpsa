@@ -1,6 +1,6 @@
 (herald cert-lang)
 
-(comment "CPSA 4.4.1")
+(comment "CPSA 4.4.2")
 (comment "All input read from tst/cert_lang.scm")
 
 (defprotocol cert-uni basic
