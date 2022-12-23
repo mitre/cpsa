@@ -1,6 +1,6 @@
 (herald "Envelope Protocol" (bound 15))
 
-(comment "CPSA 4.4.1")
+(comment "CPSA 4.4.2")
 (comment "All input read from tst/envelope.scm")
 (comment "Strand count bounded at 15")
 
