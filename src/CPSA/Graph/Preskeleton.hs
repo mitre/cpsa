@@ -51,7 +51,8 @@ sameMsg src dest =
 -- Ignore channels for message equality test
 msgEquiv :: SExpr Pos -> SExpr Pos -> Bool
 msgEquiv src dest | src == dest = True
-msgEquiv (L _ [_, _, src]) (L _ [_, _, dest]) = src == dest
+msgEquiv (L _ [S _ ch_src, _, src]) (L _ [S _ ch_dst, _, dest])
+    | ch_src == "ch-msg" && ch_dst == "ch-msg" = src == dest
 msgEquiv _ _ = False
 
 -- Add a strand node
