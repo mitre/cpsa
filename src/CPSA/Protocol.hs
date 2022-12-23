@@ -8,7 +8,7 @@
 
 module CPSA.Protocol (Event (..), evtCm, evtTerm, evtChan, evtMap, evt,
     inbnd, outbnd, Trace, tterms, originates, originationPos,
-    generates, generationPos,
+    generates, generationPos, firstOccursPos, 
     acquiredPos, gainedPos, genGainedPos, usedPos, insPrecedeOuts,
     Role, rname, rvars, rtrace, rnon, rpnon, runique, runiqgen, rabsent,
     rconf, rauth, rcomment, rsearch, rnorig, rpnorig, ruorig, rugen, rabs,
@@ -178,6 +178,27 @@ generationPos t c =
       loop pos (In t' : c)
           | test t (cmTerm t') ||
             testMaybe maybeInv (cmTerm t') = Nothing -- Term does not generate
+          | otherwise = loop (pos + 1) c
+
+firstOccursPos :: Term -> Trace -> Maybe Int
+firstOccursPos t c =
+    loop 0 c
+    where
+      maybeInv = invertKey t
+
+      testMaybe Nothing _ = False
+      testMaybe (Just tInv) ct = tInv `constituent` ct
+      test t ct = t `constituent` ct
+
+      loop _ [] = Nothing       -- Term does not occur
+      loop pos (Out t' : c)
+          | test t (cmTerm t') ||
+            testMaybe maybeInv (cmTerm t') = Just pos -- Found it
+          | otherwise = loop (pos + 1) c
+      loop pos (In t' : c)
+          | test t (cmTerm t') ||
+            testMaybe maybeInv (cmTerm t') = Just pos -- Found it
+                                                      -- incoming 
           | otherwise = loop (pos + 1) c
 
 -- At what position is a term acquired in a trace?

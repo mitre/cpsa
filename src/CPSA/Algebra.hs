@@ -712,7 +712,8 @@ invertKey _ = Nothing
 isAtom :: Term -> Bool
 isAtom (F Base _) = False
 isAtom (F s _) = varSym s
-isAtom (G x) = isBasisVar x
+isAtom (G x) = isBasisVar x     -- Maybe should be:  isGroupVar x.
+                                -- BUT What's at stake?  
 isAtom _ = False
 
 -- Is the term numeric?

@@ -634,6 +634,63 @@ badKey keys (L _ (S pos key : _) : xs)
     | otherwise = badKey keys xs
 badKey _ _ = return ()
 
+-- Given a list of events, and a list of vars, check that the vars in
+-- the Group sorts (rndxs and expts) have the following properties:
+--
+-- 1.  If the earliest occurrence of a rndx is an In event, that's a
+-- state node, ie a load.
+
+-- IMPORTANT:  For now we will not enforce this.  It seems disruptive
+-- to examples that use this for certified long-term values,
+-- tst/dhcr_um{3,x}.scm, for example.
+
+-- 2.  If the earliest occurrence of a group var is in an In event,
+-- then the group var does not *originate* in a later event.  Ie its
+-- earliest *carried* occurrence will not be a later transmission.  
+
+-- 3.  If the earliest occurrence of a group var is an Out event, that
+-- must be an rndx.
+
+badGroupMemberOccurrences :: [Term] -> Trace -> Maybe ([Term], Int) 
+badGroupMemberOccurrences vars events =
+    loop groupVars events 0    
+    where
+      groupVars = filter isVarExpr vars
+      usedAndRemaining e = L.partition (flip occursIn $ evtTerm e)
+
+      checkGroupVar (Out _) v = isRndx v
+      -- See IMPORTANT note above
+      checkGroupVar (In (Plain _)) v = not (isRndx v) || True 
+      checkGroupVar (In (ChMsg c _)) v = not (isRndx v) || isLocn c || True
+
+      loop _ [] _ = Nothing 
+      loop gvs (e : evts) i =
+          let (fsts,rest) = usedAndRemaining e gvs in
+          case L.filter (not . checkGroupVar e) fsts of
+            [] -> loop rest evts (i+1) 
+            bad -> Just (bad,i) 
+
+badOrigNotGen :: [Term] -> Trace -> [(Term,Int)]
+badOrigNotGen vars events =
+    foldr
+    (\v soFar -> case recvButOrig v events of
+                   Nothing -> soFar
+                   Just p -> (v,p) : soFar) [] groupVars 
+    where
+      groupVars = filter isVarExpr vars
+      recvButOrig v c =
+          if (originates v c &&   -- first carried outbound 
+              not(generates v c)) -- first occurs inbound 
+          then 
+              firstOccursPos v c
+          else
+              Nothing 
+
+              
+    
+
+
+
 loadTrace :: MonadFail m => Sig -> Gen -> [Term] ->
              [SExpr Pos] -> m (Gen, [Term], [Term], PreRules, Trace)
 loadTrace sig gen vars xs =
@@ -643,11 +700,22 @@ loadTrace sig gen vars xs =
                     -> Trace -> [SExpr Pos]
                     -> m (Gen, [Term], [Term], PreRules, Trace)
       loadTraceLoop gen newVars uniqs pr events [] =
-          return (gen, (vars ++ (reverse newVars)), (reverse uniqs), pr,
-                  (reverse events))
+          let events' = reverse events in 
+          case badGroupMemberOccurrences vars events' of
+            Nothing ->
+                case badOrigNotGen vars events' of
+                  [] -> return (gen, (vars ++ (reverse newVars)),
+                                       (reverse uniqs), pr, events')
+                  (v,p) : _ ->
+                      fail (shows xs $ " Var received non-carried, the sent carried:  " ++
+                                      (show v) ++ " at event " ++ (show p))
+            Just (_,i) ->
+                fail (shows xs $ " Expts must first be received, rndxs first sent:  " ++
+                                " at event " ++ (show i))
       loadTraceLoop gen newVars uniqs pr events ((L _ [S _ "recv", t]) : rest) =
           do
-            t <- loadTerm sig vars True t
+            t <- loadTerm sig vars -- True
+                 False t
             loadTraceLoop gen newVars uniqs pr ((In $ Plain t) : events) rest
       loadTraceLoop gen newVars uniqs pr events ((L _ [S _ "send", t]) : rest) =
           do
@@ -656,7 +724,8 @@ loadTrace sig gen vars xs =
       loadTraceLoop gen newVars uniqs pr events ((L _ [S _ "recv", ch, t]) : rest) =
           do
             ch <- loadChan sig vars ch
-            t <- loadTerm sig vars True t
+            t <- loadTerm sig vars -- True
+                 False t
             loadTraceLoop gen newVars uniqs pr ((In $ ChMsg ch t) : events) rest
       loadTraceLoop gen newVars uniqs pr events ((L _ [S _ "send", ch, t]) : rest) =
           do
@@ -666,7 +735,8 @@ loadTrace sig gen vars xs =
       loadTraceLoop gen newVars uniqs pr events ((L _ [S pos "load", ch, t]) : rest) =
           do
             ch <- loadLocn sig vars ch
-            t <- loadTerm sig vars True t
+            t <- loadTerm sig vars -- True
+                 False t
             (gen, pt, pt_t) <- loadLocnTerm sig gen (S pos "pt") (S pos "pval") t
             loadTraceLoop gen (pt : newVars) uniqs pr
                               ((In $ ChMsg ch pt_t) : events) rest
