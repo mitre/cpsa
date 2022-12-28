@@ -187,8 +187,8 @@ firstOccursPos t c =
       maybeInv = invertKey t
 
       testMaybe Nothing _ = False
-      testMaybe (Just tInv) ct = tInv `constituent` ct
-      test t ct = t `constituent` ct
+      testMaybe (Just tInv) ct = tInv `occursIn` ct
+      test t ct = t `occursIn` ct
 
       loop _ [] = Nothing       -- Term does not occur
       loop pos (Out t' : c)

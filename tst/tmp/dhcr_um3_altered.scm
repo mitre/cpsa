@@ -28,11 +28,11 @@
 
 (herald "DHCR: unified model (UM) three-part" (bound 20) (limit 8000) (algebra diffie-hellman))
 
-(defmacro (kcfa ltxa ltxb x hy)
-  (hash (exp hy ltxa) (exp (gen) (mul ltxb x)) (exp hy x)))
+(defmacro (kcfa ltxa gltxb x hy)
+  (hash (exp hy ltxa) (exp gltxb x) (exp hy x)))
 
-(defmacro (kcfb ltxa ltxb y hx)
-  (hash (exp (gen) (mul ltxa y)) (exp hx ltxb) (exp hx y)))
+(defmacro (kcfb ltxb gltxa y hx)
+  (hash (exp gltxa y) (exp hx ltxb) (exp hx y)))
 
 (defprotocol dhcr-um3 diffie-hellman
   (defrole init
@@ -40,28 +40,34 @@
     (trace
      (recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
      (send (cat na a b (exp (gen) x)))
-     (recv (cat (exp (gen) y) (enc na nb a b (kcfa ltxa ltxb x (exp (gen) y)))))
+     (recv (cat (exp (gen) y)
+		(enc na nb a b
+		     (kcfa ltxa (exp (gen) ltxb)
+			   x (exp (gen) y)))))
      (send nb)
      )
     (fn-of ("principal-of" (ltxa a) (ltxb b))
            ("ltx-of" (a ltxa) (b ltxb)))
     (uniq-gen x)
     (uniq-orig na)
-    (neq ((exp (gen) y) (gen))))
+    (facts (neq (exp (gen) y) (gen))))
 
   (defrole resp
     (vars (ltxa ltxb expt) (y rndx) (x expt) (a b name) (na nb data))
     (trace
      (recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
      (recv (cat na a b (exp (gen) x)))
-     (send (cat (exp (gen) y) (enc na nb a b (kcfb ltxa ltxb y (exp (gen) x)))))
+     (send (cat (exp (gen) y)
+		(enc na nb a b
+		     (kcfb ltxb (exp (gen) ltxa)
+			   y (exp (gen) x)))))
      (recv nb)
      )
     (fn-of ("principal-of" (ltxa a) (ltxb b))
 	   ("ltx-of" (a ltxa) (b ltxb)))
     (uniq-gen y)
     (uniq-orig nb)
-    (neq ((exp (gen) x) (gen))))
+    (facts (neq (exp (gen) x) (gen))))
 
   (defrole ltx-gen
     (vars (self name) (l rndx))
@@ -119,8 +125,9 @@
 (defskeleton dhcr-um3
   (vars (ltxa ltxb x rndx) (y expt) (a b name))
   (defstrand init 4 (ltxa ltxa) (ltxb ltxb) (x x) (y y) (a a) (b b))
-  (deflistener (kcfa ltxa ltxb x (exp (gen) y)))
+  (deflistener (kcfa ltxa (exp (gen) ltxb) x (exp (gen) y)))
   (defstrand ltx-gen 3 (l ltxa))
   (defstrand ltx-gen 3 (l ltxb))
   (precedes ((0 3) (3 1)) ((0 3) (2 1)))
   (neq (a b)))
+
