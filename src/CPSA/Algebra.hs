@@ -741,7 +741,7 @@ subterm t (F _ u) =
   any (subterm t) u
 subterm (I x) (G t') =
   M.member x t'
-subterm (G t) (G t') | isBasisVar t = -- For constituent
+subterm (G t) (G t') | isBasisVar t = -- For constituent.  COULD ALSO BE :  isGroupVar
   M.member (getGroupVar t) t'
 subterm _ _ = False
 
