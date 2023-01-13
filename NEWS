@@ -1,5 +1,17 @@
 CPSA NEWS -- history of user-visible changes.
 
+* Changes in version 4.4.2
+
+** Introduced defstrandmax into CPSA4 which declares a strand to be of
+   the same length as its role.
+
+** Fixed message equivalence test in cpsa4graph.
+
+** Removed the cribsheet from the manual because it hasn't been
+   updated to reflect CPSA4 syntax.
+
+** JDG???
+
 * Changes in version 4.4.1
 
 ** A bug concerning goal satisfaction was found and corrected.
@@ -14,6 +26,9 @@ CPSA NEWS -- history of user-visible changes.
    does not re-insert the original trace annotations in its output,
    meaning that the rules would not be re-generated automatically when
    reading the output file.
+
+** Fixed cpsa4sas so that it makes use of a lang field specified
+   within a protocol.
 
 * Changes in version 4.4.0
 
