@@ -6,6 +6,13 @@
 ;;; implemented.  Note that key pairs must generate or originate at
 ;;; the same node in a skeleton.
 
+;;; CPSA computes the shapes that would be possible, assuming that the
+;;; responder, given u, could magically determine (invk u).
+;;; Presumably, the specifier who writes a protocol like this is
+;;; committed to this possibility.  I.e. we consider this the
+;;; specifier's responsibility to avoid, not CPSA's responsibility to
+;;; detect.  
+
 (defprotocol uniq-gen-example basic
   (defrole init
     (vars (u akey) (k skey))
