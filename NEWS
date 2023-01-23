@@ -10,7 +10,23 @@ CPSA NEWS -- history of user-visible changes.
 ** Removed the cribsheet from the manual because it hasn't been
    updated to reflect CPSA4 syntax.
 
-** JDG???
+** We now allow (defstrandmax role-name bindings) in defskeleton forms.
+   This declares an instance of the  named role with the given
+   bindings of maximal height for that role.  It is convenient when
+   developing protocols, since the height may vary as the role is
+   revised.
+
+** Exponent variables received in exponentiated values and extracted by a role
+   are now rejected, since this is unimplementable.  The loader raises
+   an error.
+
+** If the earliest occurrence of an exponent variable is in a transmission,
+   the variable must be of rndx sort, not the more  general expt.  
+
+** An asymmetric key and its inverse are both considered to be generated
+   at the first point either of them is created.
+
+** Bugs in generalization that occasionally appear have been eliminated.  
 
 * Changes in version 4.4.1
 
