@@ -2,16 +2,13 @@ CPSA NEWS -- history of user-visible changes.
 
 * Changes in version 4.4.2
 
-** Introduced defstrandmax into CPSA4 which declares a strand to be of
-   the same length as its role.
-
 ** Fixed message equivalence test in cpsa4graph.
 
 ** Removed the cribsheet from the manual because it hasn't been
    updated to reflect CPSA4 syntax.
 
 ** We now allow (defstrandmax role-name bindings) in defskeleton forms.
-   This declares an instance of the  named role with the given
+   This declares an instance of the named role with the given
    bindings of maximal height for that role.  It is convenient when
    developing protocols, since the height may vary as the role is
    revised.
