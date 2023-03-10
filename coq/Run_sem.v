@@ -29,7 +29,7 @@ Proof.
     + rewrite G; auto.
     + contradiction G.
       rewrite alg_eq_correct; auto.
-  - rewrite <- beq_nat_refl; auto.
+  - rewrite Nat.eqb_refl; auto.
 Qed.
 
 Lemma run_expr_implies_expr_sem:
@@ -98,7 +98,7 @@ Proof.
         -- destruct c; inv H.
            destruct (bool_dec (n1 =? n0) true) as [F|F].
            ++ rewrite F in H1; inv H1.
-              apply beq_nat_true in F; subst; auto.
+              apply Nat.eqb_eq in F; subst; auto.
            ++ rewrite not_true_iff_false in F.
               rewrite F in H1; inv H1.
 Qed.
@@ -129,7 +129,7 @@ Proof.
     rewrite H1; auto.
   - simpl.
     rewrite H0.
-    rewrite <- beq_nat_refl; auto.
+    rewrite Nat.eqb_refl; auto.
     rewrite H1.
     destruct (bool_dec (alg_eqb a a) true) as [G|G].
     + rewrite G; auto.
@@ -226,7 +226,7 @@ Proof.
            destruct x; inv H.
            destruct (bool_dec (n2 =? n1) true) as [G|G].
            ++ rewrite G in H2; inv H2.
-              apply beq_nat_true in G; subst.
+              apply Nat.eqb_eq in G; subst.
               destruct (option_dec (lookup n0 (renv rst))) as [G|G].
               ** rewrite G in H1; inv H1.
               ** destruct G.

@@ -55,7 +55,7 @@ Proof.
   rewrite G.
   rewrite skipn_all.
   rewrite app_nil_l.
-  rewrite minus_diag; simpl.
+  rewrite Nat.sub_diag; simpl.
   clear G.
   induction H; simpl; auto.
   rewrite IHins_inputs; auto.
