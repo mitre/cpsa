@@ -1648,7 +1648,7 @@ thin prs =
 thinStrands :: PRS -> [(Sid, Sid)] -> [Sid] -> [PRS]
 thinStrands prs ps [] =         -- All strands analyzied
     case multiPairs ps of       -- Generate multipairs
-      [] -> [prs]
+      [] -> reduce prs
       mps -> thinMany prs mps   -- Try multistrand thinning
 thinStrands prs ps (s:ss) =
   thinStrandPairs prs ps s ss ss
