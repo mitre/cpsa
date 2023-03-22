@@ -716,7 +716,7 @@ preskelWellFormed k =
       nonCheck t = all (not . carriedBy t) terms
       uniqueCheck t = any (carriedBy t) terms
       uniqgenCheck t = any (constituent t) terms
-      absentCheck (x, y) = varSubset [x, y] vs
+      absentCheck (x, y) = varSubset [x, y] vs && x /= y
       genStCheck t = foldVars f True t
       chanCheck c = elem c vs
       povCheck k = case pov k of
