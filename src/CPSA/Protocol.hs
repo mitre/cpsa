@@ -409,7 +409,7 @@ mkRole name vars trace non pnon unique uniqgen absent
 
 traceAbsent :: Trace -> [Term] -> [(Term, Term)]
 traceAbsent trace ugens =
-  concatMap indz_ininsts $ filter isNum ugens
+  concatMap indz_ininsts ugens
   where
     indz_ininsts v =
       case generationPos v trace of
