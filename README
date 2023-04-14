@@ -34,7 +34,7 @@ CPSA4 provides channels.  Channels are designed to model confidential
 and authenticated communication channels.
 
 This program has been built and tested using the Haskell miminal
-installer and Haskell Platform.  THese are available from
+installer and Haskell Platform.  These are available from
 <http://haskell.org> or from an operating system specific source.  The
 name of the Linux package is usually haskell-platform.  If you have
 problems installing Haskell, try using Haskell Stack, and issue the
@@ -46,7 +46,11 @@ Build and install with:
 
 $ cabal build
 $ cabal install --overwrite-policy=always
-: To find the directory containing documentation and samples, type:
+
+DOCUMENTATION LOCATION
+
+To find the directory containing documentation and samples, type:
+
 $ cpsa4 -h
 
 QUICK START (Linux)
