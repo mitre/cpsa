@@ -27,17 +27,18 @@ Definition init: proc :=
 
 Definition resp: proc :=
   mkProc
-  [(0, Chan); (1, Akey); (2, Ikey)]
+  [(0, Chan); (1, Name); (2, Akey); (3, Ikey)]
   [
    (* Recv (blanchet.scm:15:6) *)
-   Bind (3, Mesg) (Recv_ 0);
-   Bind (4, Mesg) (Decr_ 3 2);
-   Bind (5, Mesg) (Decr_ 4 1);
-   Bind (6, Skey) (Frst_ 5);
-   Bind (7, Name) (Scnd_ 5);
+   Bind (4, Mesg) (Recv_ 0);
+   Bind (5, Mesg) (Decr_ 4 3);
+   Bind (6, Mesg) (Decr_ 5 2);
+   Bind (7, Skey) (Frst_ 6);
+   Bind (8, Name) (Scnd_ 6);
+   Same 8 1;
    (* Send (blanchet.scm:16:6) *)
-   Bind (8, Data) (Frsh_);
-   Bind (9, Mesg) (Encr_ 8 6);
-   Send 0 9;
-   Return [8; 6]
+   Bind (9, Data) (Frsh_);
+   Bind (10, Mesg) (Encr_ 9 7);
+   Send 0 10;
+   Return [9; 7]
   ].
