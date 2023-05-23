@@ -73,6 +73,15 @@
 
 (defskeleton station-to-station-unflip
   (vars (a b name) (x y rndx))
+  (defstrand init 2 (a a) (b b) (h (exp (gen) y)) (x x))
+  (defstrand resp 4 (b b) (h (exp (gen) x)) (y y))
+  (precedes ((0 0) (1 0)) ((1 1) (0 1)))
+  ;;  (non-orig (privk a))
+  (uniq-orig (privk b))
+  )
+
+(defskeleton station-to-station-unflip
+  (vars (a b name) (x y rndx))
   (defstrand init 4 (a a) (b b) (h (exp (gen) y)) (x x))
   (defstrand resp 4 (b b) (h (exp (gen) x)) (y y))
   (deflistener (exp (gen) (mul x y)))

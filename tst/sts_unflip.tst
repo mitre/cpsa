@@ -2,7 +2,7 @@
   (algebra diffie-hellman))
 
 (comment "CPSA 4.4.2")
-(comment "All input read from tst/sts_unflip.scm")
+(comment "All input read from sts_unflip.scm")
 
 (defprotocol station-to-station-unflip diffie-hellman
   (defrole init
@@ -1896,6 +1896,222 @@
     (forall ((x mesg)) (implies (fact neq x x) (false)))))
 
 (defskeleton station-to-station-unflip
+  (vars (b a name) (x y rndx))
+  (defstrand init 2 (b b) (h (exp (gen) y)) (x x))
+  (defstrand resp 4 (a a) (b b) (h (exp (gen) x)) (y y))
+  (precedes ((0 0) (1 0)) ((1 1) (0 1)))
+  (uniq-orig (privk b))
+  (uniq-gen x y)
+  (traces
+    ((send (exp (gen) x))
+      (recv
+        (cat (exp (gen) y)
+          (enc (enc (exp (gen) y) (exp (gen) x) (privk b))
+            (exp (gen) (mul x y))))))
+    ((recv (exp (gen) x))
+      (send
+        (cat (exp (gen) y)
+          (enc (enc (exp (gen) y) (exp (gen) x) (privk b))
+            (exp (gen) (mul x y)))))
+      (recv
+        (enc (enc (exp (gen) y) (exp (gen) x) (privk a))
+          (exp (gen) (mul x y)))) (send (privk b))))
+  (label 59)
+  (unrealized (1 2))
+  (origs ((privk b) (1 3)))
+  (comment "3 in cohort - 3 not yet seen"))
+
+(defskeleton station-to-station-unflip
+  (vars (a b name) (y x rndx))
+  (defstrand resp 4 (a a) (b b) (h (exp (gen) x)) (y y))
+  (defstrand init 3 (a a) (b b) (h (exp (gen) y)) (x x))
+  (precedes ((0 1) (1 1)) ((1 0) (0 0)) ((1 2) (0 2)))
+  (uniq-orig (privk b))
+  (uniq-gen y x)
+  (operation encryption-test (displaced 0 2 init 3)
+    (enc (enc (exp (gen) y) (exp (gen) x) (privk a))
+      (exp (gen) (mul y x))) (1 2))
+  (traces
+    ((recv (exp (gen) x))
+      (send
+        (cat (exp (gen) y)
+          (enc (enc (exp (gen) y) (exp (gen) x) (privk b))
+            (exp (gen) (mul y x)))))
+      (recv
+        (enc (enc (exp (gen) y) (exp (gen) x) (privk a))
+          (exp (gen) (mul y x)))) (send (privk b)))
+    ((send (exp (gen) x))
+      (recv
+        (cat (exp (gen) y)
+          (enc (enc (exp (gen) y) (exp (gen) x) (privk b))
+            (exp (gen) (mul y x)))))
+      (send
+        (enc (enc (exp (gen) y) (exp (gen) x) (privk a))
+          (exp (gen) (mul y x))))))
+  (label 60)
+  (parent 59)
+  (realized)
+  (shape)
+  (maps ((1 0) ((b b) (x x) (y y) (a a))))
+  (origs ((privk b) (0 3))))
+
+(defskeleton station-to-station-unflip
+  (vars (b name) (x y rndx))
+  (defstrand init 2 (b b) (h (exp (gen) y)) (x x))
+  (defstrand resp 4 (a b) (b b) (h (exp (gen) x)) (y y))
+  (precedes ((0 0) (1 0)) ((1 1) (0 1)))
+  (uniq-orig (privk b))
+  (uniq-gen x y)
+  (operation encryption-test (displaced 2 1 resp 2)
+    (enc (enc (exp (gen) y) (exp (gen) x) (privk a))
+      (exp (gen) (mul x y))) (1 2))
+  (traces
+    ((send (exp (gen) x))
+      (recv
+        (cat (exp (gen) y)
+          (enc (enc (exp (gen) y) (exp (gen) x) (privk b))
+            (exp (gen) (mul x y))))))
+    ((recv (exp (gen) x))
+      (send
+        (cat (exp (gen) y)
+          (enc (enc (exp (gen) y) (exp (gen) x) (privk b))
+            (exp (gen) (mul x y)))))
+      (recv
+        (enc (enc (exp (gen) y) (exp (gen) x) (privk b))
+          (exp (gen) (mul x y)))) (send (privk b))))
+  (label 61)
+  (parent 59)
+  (realized)
+  (shape)
+  (maps ((0 1) ((b b) (x x) (y y) (a b))))
+  (origs ((privk b) (1 3))))
+
+(defskeleton station-to-station-unflip
+  (vars (b a name) (x y rndx))
+  (defstrand init 2 (b b) (h (exp (gen) y)) (x x))
+  (defstrand resp 4 (a a) (b b) (h (exp (gen) x)) (y y))
+  (deflistener (exp (gen) (mul x y)))
+  (precedes ((0 0) (1 0)) ((1 1) (0 1)) ((1 1) (2 0)) ((2 1) (1 2)))
+  (uniq-orig (privk b))
+  (uniq-gen x y)
+  (operation encryption-test (added-listener (exp (gen) (mul x y)))
+    (enc (enc (exp (gen) y) (exp (gen) x) (privk a))
+      (exp (gen) (mul x y))) (1 2))
+  (traces
+    ((send (exp (gen) x))
+      (recv
+        (cat (exp (gen) y)
+          (enc (enc (exp (gen) y) (exp (gen) x) (privk b))
+            (exp (gen) (mul x y))))))
+    ((recv (exp (gen) x))
+      (send
+        (cat (exp (gen) y)
+          (enc (enc (exp (gen) y) (exp (gen) x) (privk b))
+            (exp (gen) (mul x y)))))
+      (recv
+        (enc (enc (exp (gen) y) (exp (gen) x) (privk a))
+          (exp (gen) (mul x y)))) (send (privk b)))
+    ((recv (exp (gen) (mul x y))) (send (exp (gen) (mul x y)))))
+  (label 62)
+  (parent 59)
+  (unrealized (2 0))
+  (comment "2 in cohort - 2 not yet seen"))
+
+(defskeleton station-to-station-unflip
+  (vars (b a name) (x y rndx))
+  (defstrand init 2 (b b) (h (exp (gen) y)) (x x))
+  (defstrand resp 4 (a a) (b b) (h (exp (gen) x)) (y y))
+  (deflistener (exp (gen) (mul x y)))
+  (deflistener (cat (exp (gen) x) y))
+  (precedes ((0 0) (1 0)) ((1 1) (0 1)) ((1 1) (3 0)) ((2 1) (1 2))
+    ((3 1) (2 0)))
+  (uniq-orig (privk b))
+  (uniq-gen x y)
+  (operation nonce-test (added-listener (cat (exp (gen) x) y))
+    (exp (gen) (mul x y)) (2 0))
+  (traces
+    ((send (exp (gen) x))
+      (recv
+        (cat (exp (gen) y)
+          (enc (enc (exp (gen) y) (exp (gen) x) (privk b))
+            (exp (gen) (mul x y))))))
+    ((recv (exp (gen) x))
+      (send
+        (cat (exp (gen) y)
+          (enc (enc (exp (gen) y) (exp (gen) x) (privk b))
+            (exp (gen) (mul x y)))))
+      (recv
+        (enc (enc (exp (gen) y) (exp (gen) x) (privk a))
+          (exp (gen) (mul x y)))) (send (privk b)))
+    ((recv (exp (gen) (mul x y))) (send (exp (gen) (mul x y))))
+    ((recv (cat (exp (gen) x) y)) (send (cat (exp (gen) x) y))))
+  (label 63)
+  (parent 62)
+  (unrealized (3 0))
+  (dead)
+  (comment "empty cohort"))
+
+(defskeleton station-to-station-unflip
+  (vars (b a name) (x y rndx))
+  (defstrand init 2 (b b) (h (exp (gen) y)) (x x))
+  (defstrand resp 4 (a a) (b b) (h (exp (gen) x)) (y y))
+  (deflistener (exp (gen) (mul x y)))
+  (deflistener (cat (exp (gen) y) x))
+  (precedes ((0 0) (1 0)) ((1 1) (0 1)) ((1 1) (3 0)) ((2 1) (1 2))
+    ((3 1) (2 0)))
+  (uniq-orig (privk b))
+  (uniq-gen x y)
+  (operation nonce-test (added-listener (cat (exp (gen) y) x))
+    (exp (gen) (mul x y)) (2 0))
+  (traces
+    ((send (exp (gen) x))
+      (recv
+        (cat (exp (gen) y)
+          (enc (enc (exp (gen) y) (exp (gen) x) (privk b))
+            (exp (gen) (mul x y))))))
+    ((recv (exp (gen) x))
+      (send
+        (cat (exp (gen) y)
+          (enc (enc (exp (gen) y) (exp (gen) x) (privk b))
+            (exp (gen) (mul x y)))))
+      (recv
+        (enc (enc (exp (gen) y) (exp (gen) x) (privk a))
+          (exp (gen) (mul x y)))) (send (privk b)))
+    ((recv (exp (gen) (mul x y))) (send (exp (gen) (mul x y))))
+    ((recv (cat (exp (gen) y) x)) (send (cat (exp (gen) y) x))))
+  (label 64)
+  (parent 62)
+  (unrealized (3 0))
+  (dead)
+  (comment "empty cohort"))
+
+(comment "Nothing left to do")
+
+(defprotocol station-to-station-unflip diffie-hellman
+  (defrole init
+    (vars (x rndx) (h base) (a b name))
+    (trace (send (exp (gen) x))
+      (recv (cat h (enc (enc h (exp (gen) x) (privk b)) (exp h x))))
+      (send (enc (enc h (exp (gen) x) (privk a)) (exp h x)))
+      (send (privk a)))
+    (uniq-gen x))
+  (defrole resp
+    (vars (y rndx) (h base) (a b name))
+    (trace (recv h)
+      (send
+        (cat (exp (gen) y)
+          (enc (enc (exp (gen) y) h (privk b)) (exp h y))))
+      (recv (enc (enc (exp (gen) y) h (privk a)) (exp h y)))
+      (send (privk b)))
+    (uniq-gen y))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
+
+(defskeleton station-to-station-unflip
   (vars (a b a-0 name) (x y rndx))
   (defstrand init 4 (a a) (b b) (h (exp (gen) y)) (x x))
   (defstrand resp 4 (a a-0) (b b) (h (exp (gen) x)) (y y))
@@ -1921,7 +2137,7 @@
         (enc (enc (exp (gen) y) (exp (gen) x) (privk a-0))
           (exp (gen) (mul x y)))) (send (privk b)))
     ((recv (exp (gen) (mul x y))) (send (exp (gen) (mul x y)))))
-  (label 59)
+  (label 65)
   (unrealized (1 2) (2 0))
   (preskeleton)
   (origs ((privk b) (1 3)) ((privk a) (0 3)))
@@ -1953,8 +2169,8 @@
         (enc (enc (exp (gen) y) (exp (gen) x) (privk a-0))
           (exp (gen) (mul x y)))) (send (privk b)))
     ((recv (exp (gen) (mul x y))) (send (exp (gen) (mul x y)))))
-  (label 60)
-  (parent 59)
+  (label 66)
+  (parent 65)
   (unrealized (1 2) (2 0))
   (origs ((privk b) (1 3)) ((privk a) (0 3)))
   (comment "2 in cohort - 2 not yet seen"))
@@ -1989,8 +2205,8 @@
           (exp (gen) (mul x y)))) (send (privk b)))
     ((recv (exp (gen) (mul x y))) (send (exp (gen) (mul x y))))
     ((recv (cat (exp (gen) x) y)) (send (cat (exp (gen) x) y))))
-  (label 61)
-  (parent 60)
+  (label 67)
+  (parent 66)
   (unrealized (1 2) (3 0))
   (dead)
   (comment "empty cohort"))
@@ -2025,8 +2241,8 @@
           (exp (gen) (mul x y)))) (send (privk b)))
     ((recv (exp (gen) (mul x y))) (send (exp (gen) (mul x y))))
     ((recv (cat (exp (gen) y) x)) (send (cat (exp (gen) y) x))))
-  (label 62)
-  (parent 60)
+  (label 68)
+  (parent 66)
   (unrealized (1 2) (3 0))
   (dead)
   (comment "empty cohort"))
