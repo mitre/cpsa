@@ -2,6 +2,12 @@
 Nsl.v
 Nsl_role.v
 Nsl_proof.v
+Blanchet.v
+Blanchet_role.v
+Blanchet_proof.v
+Blanchet_akey.v
+Blanchet_akey_role.v
+Blanchet_akey_proof.v
 Otway_rees.v
 Otway_rees_role.v
 Otway_rees_proof.v
