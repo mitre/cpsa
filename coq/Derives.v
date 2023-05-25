@@ -217,14 +217,14 @@ Lemma synthb_correct :
 Proof.
   split.
   - intro H.
-    induction H; try apply orb_true_iff; intuition.
+    induction H; try apply orb_true_iff; intuition auto with *.
     destruct x; apply orb_true_iff; left; apply set_mem_correct2; auto.
   - induction x; intro H; simpl in H; apply orb_true_iff in H;
       destruct H; auto;
         try match goal with
             | [ H: set_mem alg_dec _ pub = true |- _ ] =>
               apply set_mem_correct1 in H; auto
-            end; try intuition.
+            end; try intuition auto with *.
     + apply andb_true_iff in H.
       destruct H; auto.
     + apply andb_true_iff in H.

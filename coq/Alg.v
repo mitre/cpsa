@@ -107,7 +107,7 @@ Lemma alg_eq_complete:
 Proof.
   intros.
   unfold alg_eqb.
-  destruct (alg_dec x y); subst; intuition.
+  destruct (alg_dec x y); subst; intuition auto with *.
 Qed.
 
 (** Event *)

@@ -99,7 +99,7 @@ Definition crun_expr (rst: crun_state) (ex: expr):
       end
     | _ => None
     end
-  | Frsh =>
+  | Frsh_ =>
     match cruniqs rst with
     | u :: us =>
       Some (mkCRSt (crenv rst) (crtr rst) us (crs rst), u)

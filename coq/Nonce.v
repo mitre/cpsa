@@ -113,7 +113,7 @@ Proof.
     + apply H2; simpl.
       apply in_inv in H3; intuition.
     + apply H1 in H3.
-      apply in_inv in H3; intuition; subst; simpl; auto.
+      apply in_inv in H3; intuition auto with *; subst; simpl; auto.
 Qed.
 
 (** An easily computed condition for a compiler source target pair to

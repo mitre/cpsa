@@ -57,7 +57,7 @@ Lemma type_eq_complete:
 Proof.
   intros.
   unfold type_eqb.
-  destruct (type_dec x y); subst; intuition.
+  destruct (type_dec x y); subst; intuition auto with *.
 Qed.
 
 (** The inverse type *)

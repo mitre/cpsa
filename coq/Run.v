@@ -94,7 +94,7 @@ Definition run_expr (rst: run_state) (ex: expr):
       end
     | _ => None
     end
-  | Frsh =>
+  | Frsh_ =>
     match runiqs rst with
     | u :: us =>
       Some (mkRSt (renv rst) (rtr rst) us, u)

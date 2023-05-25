@@ -101,7 +101,7 @@ Lemma calg_eq_correct:
 Proof.
   intros.
   unfold calg_eqb.
-  destruct (calg_dec x y); subst; intuition.
+  destruct (calg_dec x y); subst; intuition auto with *.
 Qed.
 
 Lemma calg_eq_complete:
@@ -110,7 +110,7 @@ Lemma calg_eq_complete:
 Proof.
   intros.
   unfold calg_eqb.
-  destruct (calg_dec x y); subst; intuition.
+  destruct (calg_dec x y); subst; intuition auto with *.
 Qed.
 
 (** ** Type of an Algebra Term *)
