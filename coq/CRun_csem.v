@@ -159,48 +159,11 @@ Proof.
     rewrite H0.
     rewrite H1.
     rewrite H2.
-    destruct (bool_dec (calg_eqb (CSk (Lt b c))
-                                 (CSk (Lt b c))) true) as [G|G].
-    + rewrite G; auto.
-    + contradiction G.
-      rewrite calg_eq_correct; auto.
-  - simpl.
-    rewrite H0.
-    rewrite H1.
-    rewrite H2.
     simpl.
     destruct (bool_dec (calg_eqb (cinv b) (cinv b)) true) as [G|G].
     + rewrite G; auto.
     + contradiction G.
       rewrite calg_eq_correct; auto.
-  - simpl.
-    rewrite H0.
-    rewrite H1.
-    simpl.
-    unfold akey_eqb.
-    destruct (akey_dec (Pb b) (Pb b)) as [G|G]; auto.
-    contradict G; auto.
-  - simpl.
-    rewrite H0.
-    rewrite H1.
-    simpl.
-    unfold akey_eqb.
-    destruct (akey_dec (Pb b) (Pb b)) as [G|G]; auto.
-    contradict G; auto.
-  - simpl.
-    rewrite H0.
-    rewrite H1.
-    rewrite H2.
-    unfold akey_eqb.
-    destruct (akey_dec (Pb2 s b) (Pb2 s b)) as [G|G]; auto.
-    contradict G; auto.
-  - simpl.
-    rewrite H0.
-    rewrite H1.
-    rewrite H2.
-    unfold akey_eqb.
-    destruct (akey_dec (Pb2 s b) (Pb2 s b)) as [G|G]; auto.
-    contradict G; auto.
 Qed.
 
 Lemma crun_stmt_implies_stmt_csem:
@@ -268,23 +231,6 @@ Proof.
            eapply CStmt_same; eauto.
         -- rewrite not_true_iff_false in G.
            rewrite G in H; inv H.
-  - alt_option_dec (lookup n (crenv rst)) v G;
-      rewrite G in H.
-    + inv H.
-    + alt_option_dec (lookup n0 (crenv rst)) u F;
-        rewrite F in H.
-      * inv H.
-      * alt_option_dec (lookup n1 (crenv rst)) w E;
-          rewrite E in H.
-        -- inv H.
-        -- destruct u; inv H.
-           destruct w; inv H1.
-           destruct (alt_bool_dec (calg_eqb v (CSk (Lt n2 n3)))) as [D|D];
-             rewrite D in H0.
-           ++ rewrite calg_eq_correct in D; subst.
-              inv H0.
-              eapply CStmt_ltkp; eauto.
-           ++ inv H0.
   - alt_option_dec (lookup n (crenv rst)) x G;
       rewrite G in H.
     + inv H.
@@ -300,49 +246,6 @@ Proof.
            apply calg_eq_correct in E.
            eapply CStmt_invp; eauto.
         -- inv H.
-  - alt_option_dec (lookup n (crenv rst)) x G;
-      rewrite G in H.
-    + inv H.
-    + alt_option_dec (lookup n0 (crenv rst)) y F;
-        rewrite F in H.
-      * inv H.
-      * destruct x; inv H.
-        -- destruct y; inv H1.
-           unfold akey_eqb in H0.
-           destruct (akey_dec a (Pb n1)) as [E|E]; subst.
-           ++ inv H0.
-              eapply CStmt_pub_namp; eauto.
-           ++ inv H0.
-        -- destruct y; inv H1.
-           unfold akey_eqb in H0.
-           destruct (akey_dec a (Pb n1)) as [E|E]; subst.
-           ++ inv H0.
-              eapply CStmt_priv_namp; eauto.
-           ++ inv H0.
-  - alt_option_dec (lookup n (crenv rst)) x G;
-      rewrite G in H.
-    + inv H.
-    + alt_option_dec (lookup n0 (crenv rst)) y F;
-        rewrite F in H.
-      * inv H.
-      * alt_option_dec (lookup n1 (crenv rst)) z E;
-          rewrite E in H.
-        -- inv H.
-        -- destruct x; inv H.
-           ++ destruct y; inv H1.
-              destruct z; inv H0.
-              unfold akey_eqb in H1.
-              destruct (akey_dec a (Pb2 s n2)) as [D|D].
-              ** inv H1.
-                 eapply CStmt_pub_nm2p; eauto.
-              ** inv H1.
-           ++ destruct y; inv H1.
-              destruct z; inv H0.
-              unfold akey_eqb in H1.
-              destruct (akey_dec a (Pb2 s n2)) as [D|D].
-              ** inv H1.
-                 eapply CStmt_priv_nm2p; eauto.
-              ** inv H1.
 Qed.
 
 Lemma stmt_list_csem_implies_crun_stmts:
@@ -376,15 +279,6 @@ Proof.
     rewrite e3.
     apply CStmt_return; auto.
   - inv e2.
-  - apply crun_stmt_implies_stmt_csem in e1.
-    apply IHo in H1.
-    eapply CStmt_pair; eauto.
-  - apply crun_stmt_implies_stmt_csem in e1.
-    apply IHo in H1.
-    eapply CStmt_pair; eauto.
-  - apply crun_stmt_implies_stmt_csem in e1.
-    apply IHo in H1.
-    eapply CStmt_pair; eauto.
   - apply crun_stmt_implies_stmt_csem in e1.
     apply IHo in H1.
     eapply CStmt_pair; eauto.

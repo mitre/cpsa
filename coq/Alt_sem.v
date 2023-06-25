@@ -113,12 +113,6 @@ Proof.
     apply IHo in H8; auto.
   - inv H.
     apply IHo in H8; auto.
-  - inv H.
-    apply IHo in H8; auto.
-  - inv H.
-    apply IHo in H8; auto.
-  - inv H.
-    apply IHo in H8; auto.
 Qed.
 
 Lemma sem_implies_outputs:

@@ -87,17 +87,11 @@ data Stmt
   | Send Vari Decl              -- Send a message
   | Bind Decl Expr              -- Bind a variable to an expression
   | Same Kind Vari Vari         -- Are two values the same?
-  | Ltkp Vari Vari Vari         -- Values related by the ltk function?
   | Invp Kind Vari Vari         -- Values related by the invk function?
-  | Namp Kind Vari Vari         -- Values related by the pubk function?
-  | Nm2p Kind Vari Vari Vari    -- Values related by the pubk2 function?
   | Return [Vari]               -- Return values from the procedure
   | Comment String              -- Insert a comment
 
--- For Invp, Namp, and Nm2p, the kind is associated with the first
--- variable.  A name is associated with the second two variables in
--- Ltkp, the second variable in Namp, and the third variable in Nm2p.
--- A tag is associated with the second variable in Nm2p.
+-- For Invp, the kind is associated with the first variable.
 
 -- Expressions -- The kind is associated with the returned value
 data Expr
@@ -165,18 +159,9 @@ displayStmt first (Bind d e) =
 displayStmt first (Same s x y) =
   mark "(same" [s] ++ " " ++ var first x ++
   " " ++ var first y ++ ")"
-displayStmt first (Ltkp x y z) =
-  "(ltkp " ++ var first x ++ " " ++ var first y ++
-  " " ++ var first z ++ ")"
 displayStmt first (Invp s x y) =
   mark "(invp" [s] ++ " " ++ var first x ++
   " " ++ var first y ++ ")"
-displayStmt first (Namp s x y) =
-  mark "(namp" [s] ++ " " ++ var first x ++
-  " " ++ var first y ++ ")"
-displayStmt first (Nm2p s x y z) =
-  mark "(nm2p" [s] ++ " " ++ var first x ++
-  " " ++ var first y ++ " " ++ var first z ++ ")"
 displayStmt first (Return vs) =
   "(return" ++ foldr f ")" vs
   where

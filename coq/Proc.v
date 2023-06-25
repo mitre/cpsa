@@ -101,10 +101,7 @@ Inductive stmt: Set :=
 | Bind: decl -> expr -> stmt    (* Bind a variable *)
 | Send: pvar -> pvar -> stmt    (* Send a message *)
 | Same: pvar -> pvar -> stmt    (* Check for sameness *)
-| Ltkp: pvar -> pvar -> pvar -> stmt (* Check LTK predicate *)
-| Invp: pvar -> pvar -> stmt    (* Check Inv predicate *)
-| Namp: pvar -> pvar -> stmt    (* Check Name predicate *)
-| Nm2p: pvar -> pvar -> pvar -> stmt. (* Check Name2 predicate *)
+| Invp: pvar -> pvar -> stmt.   (* Check Inv predicate *)
 
 (** Procedures *)
 
