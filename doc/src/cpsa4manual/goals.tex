@@ -818,11 +818,14 @@ A good number of additional rules are generated to implement {\cpsa}
 esp. Figs.~\ref{fig:leads:to}--\ref{fig:derived:state:rules} and
 pp.~\pageref{state:gen:rules:start}--\pageref{state:gen:rules:end}).
 
-\paragraph{``Assume'' declarations.}  A formula may be provided after
-the \verb|trace| declaration in a \verb|defprotocol| declaration in an
-\verb|assume| clause.  For instance:\footnote{See the file
-  \texttt{dhcr\_um\_expt\_assume.scm} in the manual examples
-  directory.}
+\paragraph{``Assume'' declarations.}
+%
+\index{assume declarations}
+%
+A formula may be provided after the \verb|trace| declaration in a
+\verb|defprotocol| declaration in an \verb|assume| clause.  For
+instance:\footnote{See the file \texttt{dhcr\_um\_expt\_assume.scm} in
+  the manual examples directory.}
 %
 \begin{verbatim}(defrole init
     (vars ...)
@@ -885,17 +888,18 @@ Currently, {\cpsa} does not recognize the \verb|assume| keyword in
 within the trace declaration within a role.  These are:
 %
 \begin{description}
-  \item[cheq,] used to ensure that two values are equal in any
-  instance of the role that progresses beyond this point;
-  \item[rely,] used after a reception to declare a formula containing
-  only free variables appearing up to and including this reception.
-  Every instance of the role long enough to include a successful
-  instance of this reception must satisfy the formula;
-  \item[guar,] used before a transmission to declare a formula
-  containing only free variables appearing up to and including the
-  following transmission.  Every instance of the role long enough to
-  include an instance of the following transmission must satisfy the
-  formula.
+%     \item[cheq,] used to ensure that two values are equal in any
+%     instance of the role that progresses beyond this point;
+  \item[rely,] \index{rely declarations} used after a reception to
+  declare a formula containing only free variables appearing up to and
+  including this reception.  Every instance of the role long enough to
+  include a successful instance of this reception must satisfy the
+  formula;
+  \item[guar,] \index{guarantee declarations} used before a
+  transmission to declare a formula containing only free variables
+  appearing up to and including the following transmission.  Every
+  instance of the role long enough to include an instance of the
+  following transmission must satisfy the formula.
 \end{description}
 %
 All of these trace annotations will cause similar rules to be
@@ -905,9 +909,10 @@ annotations do not add to the height of the trace.  They simply
 express constraints on what happens in the ``real'' events around
 them.
 
-\paragraph{Checking equality.}  Many protocols use \emph{commitments}
-%
-\begin{figure}\small
+\iffalse
+{\paragraph{Checking equality.}  Many protocols use \emph{commitments}
+  % 
+  \begin{figure}\small
 \begin{verbatim}(defrole auctioneer
     (vars (a b name) (n data) (quote outcome text) (sealed mesg))
     (trace
@@ -919,24 +924,24 @@ them.
 
    \caption[Decommitment with \texttt{cheq}]{A role that accepts a
      commitment and decommits it with \texttt{cheq}}
-  \label{fig:commit:cheq}
-\end{figure}
-%
-that are messages that the recipient obtains early in a session, but
-cannot fully destructure.  Subsequent messages may \emph{decommit} by
-providing information that allows the recipient to further destructure
-an earlier message.  A \emph{check-equality} annotation, written:
-%
+   \label{fig:commit:cheq}
+ \end{figure}
+ % 
+ that are messages that the recipient obtains early in a session, but
+ cannot fully destructure.  Subsequent messages may \emph{decommit} by
+ providing information that allows the recipient to further destructure
+ an earlier message.  A \emph{check-equality} annotation, written:
+ % 
 \begin{verbatim}  (cheq var term)\end{verbatim}
-%
+% 
 may be used in these situations.
 
 For instance, in Fig.~\ref{fig:commit:cheq}, an auctioneer receives a
 sealed bid in its first event.\footnote{See the file
   \texttt{commitment.scm} in the manual examples directory.}
-%
+% 
 \begin{figure}\small
-%
+  % 
 \begin{verbatim}  (defgenrule cheq-auctioneer-4
     (forall ((z strd) (quote text) (n data) (b a name) (sealed mesg))
       (implies
@@ -945,12 +950,12 @@ sealed bid in its first event.\footnote{See the file
           (p "auctioneer" "a" z a) (p "auctioneer" "sealed" z sealed))
         (= sealed (hash a b n quote)))))
 \end{verbatim}
-%
+  % 
   \caption[Generated rule, \texttt{cheq}]{Generated rule for the
     auctioneer's \texttt{cheq}}
   \label{fig:commit:cheq:rule}
 \end{figure}
-%
+% 
 If, after returning a receipt for the bid, the auctioneer
 subsequently---presumably, when the auction has closed---receives a
 nonce and a quote, and checks that the sealed bid is a hash reflecting
@@ -965,6 +970,8 @@ height 4, since the final send is the fourth event; the \verb|cheq|
 annotation does not count as an event.  The relevant role parameters
 are the ones named \verb|"sealed"|, \verb|"a"|, \verb|"b"|,
 \verb|"n"|, and \verb|"quote"|.
+}
+\fi 
 
 \paragraph{Expressing rely and guarantee statements.}  In work on
 trust management, and on compiling cryptographic
