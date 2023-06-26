@@ -404,40 +404,12 @@ Inductive stmt_csem: cenv -> list cevt -> list calg ->
     chas_enc a = false ->       (* For probabilistic encryption *)
     a = b ->                    (* Sameness check *)
     stmt_csem ev tr us rs (Same x y) ev tr us rs
-| CStmt_ltkp: forall ev tr us rs x y z a b c,
-    lookup x ev = Some a ->
-    lookup y ev = Some (CNm b) ->
-    lookup z ev = Some (CNm c) ->
-    a = CSk (Lt b c) ->         (* Ltk check *)
-    stmt_csem ev tr us rs (Ltkp x y z) ev tr us rs
 | CStmt_invp: forall ev tr us rs x y a b,
     lookup x ev = Some a ->
     lookup y ev = Some b ->
     chas_enc a = false ->       (* For probabilistic encryption *)
     a = cinv b ->               (* Inverse check *)
-    stmt_csem ev tr us rs (Invp x y) ev tr us rs
-| CStmt_pub_namp: forall ev tr us rs x y a b,
-    lookup x ev = Some (CAk a) ->
-    lookup y ev = Some (CNm b) ->
-    a = Pb b ->                (* Name check *)
-    stmt_csem ev tr us rs (Namp x y) ev tr us rs
-| CStmt_priv_namp: forall ev tr us rs x y a b,
-    lookup x ev = Some (CIk a) ->
-    lookup y ev = Some (CNm b) ->
-    a = Pb b ->                (* Name check *)
-    stmt_csem ev tr us rs (Namp x y) ev tr us rs
-| CStmt_pub_nm2p: forall ev tr us rs x y z a s b,
-    lookup x ev = Some (CAk a) ->
-    lookup y ev = Some (CTg s) ->
-    lookup z ev = Some (CNm b) ->
-    a = Pb2 s b ->              (* Tagged name check *)
-    stmt_csem ev tr us rs (Nm2p x y z) ev tr us rs
-| CStmt_priv_nm2p: forall ev tr us rs x y z a s b,
-    lookup x ev = Some (CIk a) ->
-    lookup y ev = Some (CTg s) ->
-    lookup z ev = Some (CNm b) ->
-    a = Pb2 s b ->              (* Tagged name check *)
-    stmt_csem ev tr us rs (Nm2p x y z) ev tr us rs.
+    stmt_csem ev tr us rs (Invp x y) ev tr us rs.
 #[global]
 Hint Constructors stmt_csem : core.
 
@@ -449,11 +421,6 @@ Proof.
   intros.
   inv H.
   - exists [(v, val)]; auto.
-  - exists []; auto.
-  - exists []; auto.
-  - exists []; auto.
-  - exists []; auto.
-  - exists []; auto.
   - exists []; auto.
   - exists []; auto.
   - exists []; auto.
@@ -879,30 +846,6 @@ Proof.
     exists ctr.
     exists cus.
     exists rs.
-    pose proof H7 as H.
-    apply ex_lookup in H7.
-    destruct H7.
-    erewrite lookup_ev in H; eauto.
-    inv H.
-    destruct x; simpl in H2; inv H2.
-    pose proof H11 as H.
-    apply ex_lookup in H11.
-    destruct H11.
-    erewrite lookup_ev in H; eauto.
-    inv H.
-    destruct x; simpl in H4; inv H4.
-    pose proof H15 as H.
-    apply ex_lookup in H15.
-    destruct H15.
-    erewrite lookup_ev in H; eauto.
-    inv H.
-    destruct x; simpl in H5; inv H5.
-    split; auto.
-    eapply CStmt_ltkp; eauto.
-  - exists cev.
-    exists ctr.
-    exists cus.
-    exists rs.
     pose proof H6 as H.
     apply ex_lookup in H6.
     destruct H6.
@@ -920,90 +863,6 @@ Proof.
     apply no_enc_eq in H2; auto; subst.
     split; auto.
     eapply CStmt_invp; eauto.
-  - exists cev.
-    exists ctr.
-    exists cus.
-    exists rs.
-    pose proof H6 as H.
-    apply ex_lookup in H6.
-    destruct H6.
-    erewrite lookup_ev in H; eauto.
-    inv H.
-    destruct x; simpl in H2; inv H2.
-    pose proof H10 as H.
-    apply ex_lookup in H10.
-    destruct H10.
-    erewrite lookup_ev in H; eauto.
-    inv H.
-    destruct x; simpl in H4; inv H4.
-    split; auto.
-    eapply CStmt_pub_namp; eauto.
-  - exists cev.
-    exists ctr.
-    exists cus.
-    exists rs.
-    pose proof H6 as H.
-    apply ex_lookup in H6.
-    destruct H6.
-    erewrite lookup_ev in H; eauto.
-    inv H.
-    destruct x; simpl in H2; inv H2.
-    pose proof H10 as H.
-    apply ex_lookup in H10.
-    destruct H10.
-    erewrite lookup_ev in H; eauto.
-    inv H.
-    destruct x; simpl in H4; inv H4.
-    split; auto.
-    eapply CStmt_priv_namp; eauto.
-  - exists cev.
-    exists ctr.
-    exists cus.
-    exists rs.
-    pose proof H7 as H.
-    apply ex_lookup in H7.
-    destruct H7.
-    erewrite lookup_ev in H; eauto.
-    inv H.
-    destruct x; simpl in H2; inv H2.
-    pose proof H11 as H.
-    apply ex_lookup in H11.
-    destruct H11.
-    erewrite lookup_ev in H; eauto.
-    inv H.
-    destruct x; simpl in H4; inv H4.
-    pose proof H15 as H.
-    apply ex_lookup in H15.
-    destruct H15.
-    erewrite lookup_ev in H; eauto.
-    inv H.
-    destruct x; simpl in H5; inv H5.
-    split; auto.
-    eapply CStmt_pub_nm2p; eauto.
-  - exists cev.
-    exists ctr.
-    exists cus.
-    exists rs.
-    pose proof H7 as H.
-    apply ex_lookup in H7.
-    destruct H7.
-    erewrite lookup_ev in H; eauto.
-    inv H.
-    destruct x; simpl in H2; inv H2.
-    pose proof H11 as H.
-    apply ex_lookup in H11.
-    destruct H11.
-    erewrite lookup_ev in H; eauto.
-    inv H.
-    destruct x; simpl in H4; inv H4.
-    pose proof H15 as H.
-    apply ex_lookup in H15.
-    destruct H15.
-    erewrite lookup_ev in H; eauto.
-    inv H.
-    destruct x; simpl in H5; inv H5.
-    split; auto.
-    eapply CStmt_priv_nm2p; eauto.
 Qed.
 
 (** So far, the proofs have been fairly straightforward.  But that
@@ -1420,14 +1279,8 @@ Inductive stmt_sim:
              (Send c x) ev tr us rs [CSd d a] []
 | Sim_same: forall ev tr us rs x y,
     stmt_sim ev tr us rs (Same x y) ev tr us rs [] []
-| Sim_ltkp: forall ev tr us rs x y z,
-    stmt_sim ev tr us rs (Ltkp x y z) ev tr us rs [] []
 | Sim_invp: forall ev tr us rs x y,
-    stmt_sim ev tr us rs (Invp x y) ev tr us rs [] []
-| Sim_namp: forall ev tr us rs x y,
-    stmt_sim ev tr us rs (Namp x y) ev tr us rs [] []
-| Sim_nm2p: forall ev tr us rs x y z,
-    stmt_sim ev tr us rs (Nm2p x y z) ev tr us rs [] [].
+    stmt_sim ev tr us rs (Invp x y) ev tr us rs [] [].
 #[global]
 Hint Constructors stmt_sim : core.
 
@@ -1494,60 +1347,9 @@ Proof.
     split; auto.
   - pose proof H1 as G.
     apply has_enc_lookup in H1; simpl; auto.
-    pose proof H2 as F.
-    apply has_enc_lookup in H2; simpl; auto.
-    pose proof H3 as E.
-    apply has_enc_lookup in H3; simpl; auto.
-    exists cev.
-    exists rs.
-    exists [].
-    exists [].
-    split; auto.
-  - pose proof H1 as G.
-    apply has_enc_lookup in H1; simpl; auto.
     rewrite inv_has_enc in H3.
     pose proof H2 as F.
     apply has_enc_lookup in H2; simpl; auto.
-    exists cev.
-    exists rs.
-    exists [].
-    exists [].
-    split; auto.
-  - pose proof H1 as G.
-    apply has_enc_lookup in H1; simpl; auto.
-    pose proof H2 as F.
-    apply has_enc_lookup in H2; simpl; auto.
-    exists cev.
-    exists rs.
-    exists [].
-    exists [].
-    split; auto.
-  - pose proof H1 as G.
-    apply has_enc_lookup in H1; simpl; auto.
-    pose proof H2 as F.
-    apply has_enc_lookup in H2; simpl; auto.
-    exists cev.
-    exists rs.
-    exists [].
-    exists [].
-    split; auto.
-  - pose proof H1 as G.
-    apply has_enc_lookup in H1; simpl; auto.
-    pose proof H2 as F.
-    apply has_enc_lookup in H2; simpl; auto.
-    pose proof H3 as E.
-    apply has_enc_lookup in H3; simpl; auto.
-    exists cev.
-    exists rs.
-    exists [].
-    exists [].
-    split; auto.
-  - pose proof H1 as G.
-    apply has_enc_lookup in H1; simpl; auto.
-    pose proof H2 as F.
-    apply has_enc_lookup in H2; simpl; auto.
-    pose proof H3 as E.
-    apply has_enc_lookup in H3; simpl; auto.
     exists cev.
     exists rs.
     exists [].
@@ -1606,10 +1408,6 @@ Proof.
     eapply CStmt_same; eauto.
     rewrite has_enc_to_alg.
     rewrite to_alg_calg; auto.
-  - apply has_enc_lookup in H7; auto.
-    apply has_enc_lookup in H11; auto.
-    apply has_enc_lookup in H15; auto.
-    eapply CStmt_ltkp; eauto.
   - apply has_enc_lookup in H6; auto.
     pose proof H11 as G.
     rewrite inv_has_enc in H11.
@@ -1618,20 +1416,6 @@ Proof.
     rewrite has_enc_to_alg.
     rewrite to_alg_calg; auto.
     destruct b; auto.
-  - apply has_enc_lookup in H6; auto.
-    apply has_enc_lookup in H10; auto.
-    eapply CStmt_pub_namp; eauto.
-  - apply has_enc_lookup in H6; auto.
-    apply has_enc_lookup in H10; auto.
-    eapply CStmt_priv_namp; eauto.
-  - apply has_enc_lookup in H7; auto.
-    apply has_enc_lookup in H11; auto.
-    apply has_enc_lookup in H15; auto.
-    eapply CStmt_pub_nm2p; eauto.
-  - apply has_enc_lookup in H7; auto.
-    apply has_enc_lookup in H11; auto.
-    apply has_enc_lookup in H15; auto.
-    eapply CStmt_priv_nm2p; eauto.
 Qed.
 
 (** Relate sequences of statements
@@ -1935,12 +1719,6 @@ Proof.
     inv H7.
   - inv H.
     inv H7.
-  - inv H.
-    apply IHo in H9; auto.
-  - inv H.
-    apply IHo in H9; auto.
-  - inv H.
-    apply IHo in H9; auto.
   - inv H.
     apply IHo in H9; auto.
   - inv H.

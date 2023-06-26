@@ -194,18 +194,6 @@ Definition crun_stmt (rst: crun_state) (cmd: stmt): option crun_state :=
       Some rst
     else
       None
-  | Ltkp u v w =>
-    x <- lookup u (crenv rst);;
-    y <- lookup v (crenv rst);;
-    z <- lookup w (crenv rst);;
-    match y, z with
-    | CNm b, CNm c =>
-      if calg_eqb x (CSk (Lt b c)) then
-        Some rst
-      else
-        None
-    | _, _ => None
-    end
   | Invp u v =>
     x <- lookup u (crenv rst);;
     y <- lookup v (crenv rst);;
@@ -213,39 +201,6 @@ Definition crun_stmt (rst: crun_state) (cmd: stmt): option crun_state :=
       Some rst
     else
       None
-  | Namp u v =>
-    x <- lookup u (crenv rst);;
-    y <- lookup v (crenv rst);;
-    match x, y with
-    | CAk k, CNm b =>
-      if akey_eqb k (Pb b) then
-        Some rst
-      else
-        None
-    | CIk k, CNm b =>
-      if akey_eqb k (Pb b) then
-        Some rst
-      else
-        None
-    | _, _ => None
-    end
-  | Nm2p u v w =>
-    x <- lookup u (crenv rst);;
-    y <- lookup v (crenv rst);;
-    z <- lookup w (crenv rst);;
-    match x, y, z with
-    | CAk k, CTg s, CNm c =>
-      if akey_eqb k (Pb2 s c) then
-        Some rst
-      else
-        None
-    | CIk k, CTg s, CNm c =>
-      if akey_eqb k (Pb2 s c) then
-        Some rst
-      else
-        None
-    | _, _, _ => None
-    end
   | Return _ => None
 end.
 
@@ -290,33 +245,7 @@ Proof.
   - exists []; simpl.
     destruct (lookup n (crenv rst)); inv H; auto.
     destruct (lookup n0 (crenv rst)); inv H1; auto.
-    destruct (lookup n1 (crenv rst)); inv H0; auto.
-    destruct c0; inv H1; auto.
-    destruct c1; inv H0; auto.
-    destruct (calg_eqb c (CSk (Lt n2 n3))); inv H1; auto.
-  - exists []; simpl.
-    destruct (lookup n (crenv rst)); inv H; auto.
-    destruct (lookup n0 (crenv rst)); inv H1; auto.
     destruct (negb (chas_enc c) && calg_eqb c (cinv c0)); inv H0; auto.
-  - exists []; simpl.
-    destruct (lookup n (crenv rst)); inv H; auto.
-    destruct (lookup n0 (crenv rst)); inv H1; auto.
-    destruct c; inv H0; auto.
-    + destruct c0; inv H1; auto.
-      destruct (akey_eqb a (Pb n1)); inv H0; auto.
-    + destruct c0; inv H1; auto.
-      destruct (akey_eqb a (Pb n1)); inv H0; auto.
-  - exists []; simpl.
-    destruct (lookup n (crenv rst)); inv H; auto.
-    destruct (lookup n0 (crenv rst)); inv H1; auto.
-    destruct (lookup n1 (crenv rst)); inv H0; auto.
-    destruct c; inv H1; auto.
-    + destruct c0; inv H0; auto.
-      destruct c1; inv H1; auto.
-      destruct (akey_eqb a (Pb2 s n2)); inv H0; auto.
-    + destruct c0; inv H0; auto.
-      destruct c1; inv H1; auto.
-      destruct (akey_eqb a (Pb2 s n2)); inv H0; auto.
 Qed.
 
 (** The semantics of lists of statements *)
@@ -353,30 +282,6 @@ Proof.
       destruct (crtr rst); inv H1; auto.
       destruct (cruniqs rst); inv H0; auto.
       destruct (map_m (fun x : nat => lookup x (crenv rst)) l); inv H1; auto.
-    + apply do_some in H.
-      repeat destruct_ex_and.
-      apply crun_stmt_env_extends in H.
-      apply IHstmts in H0.
-      repeat destruct_ex_and; subst.
-      rewrite H.
-      exists (x0 ++ x1).
-      rewrite app_assoc; auto.
-    + apply do_some in H.
-      repeat destruct_ex_and.
-      apply crun_stmt_env_extends in H.
-      apply IHstmts in H0.
-      repeat destruct_ex_and; subst.
-      rewrite H.
-      exists (x0 ++ x1).
-      rewrite app_assoc; auto.
-    + apply do_some in H.
-      repeat destruct_ex_and.
-      apply crun_stmt_env_extends in H.
-      apply IHstmts in H0.
-      repeat destruct_ex_and; subst.
-      rewrite H.
-      exists (x0 ++ x1).
-      rewrite app_assoc; auto.
     + apply do_some in H.
       repeat destruct_ex_and.
       apply crun_stmt_env_extends in H.

@@ -141,40 +141,12 @@ Inductive stmt_sem: env -> list evt -> list alg ->
     has_enc a = false ->        (* For probabilistic encryption *)
     a = b ->                    (* Sameness check *)
     stmt_sem ev tr us (Same x y) ev tr us
-| Stmt_ltkp: forall ev tr us x y z a b c,
-    lookup x ev = Some a ->
-    lookup y ev = Some (Nm b) ->
-    lookup z ev = Some (Nm c) ->
-    a = Sk (Lt b c) ->          (* Ltk check *)
-    stmt_sem ev tr us (Ltkp x y z) ev tr us
 | Stmt_invp: forall ev tr us x y a b,
     lookup x ev = Some a ->
     lookup y ev = Some b ->
     has_enc a = false ->        (* For probabilistic encryption *)
     a = inv b ->                (* Inverse check *)
-    stmt_sem ev tr us (Invp x y) ev tr us
-| Stmt_pub_namp: forall ev tr us x y a b,
-    lookup x ev = Some (Ak a) ->
-    lookup y ev = Some (Nm b) ->
-    a = Pb b ->                (* Name check *)
-    stmt_sem ev tr us (Namp x y) ev tr us
-| Stmt_priv_namp: forall ev tr us x y a b,
-    lookup x ev = Some (Ik a) ->
-    lookup y ev = Some (Nm b) ->
-    a = Pb b ->                (* Name check *)
-    stmt_sem ev tr us (Namp x y) ev tr us
-| Stmt_pub_nm2p: forall ev tr us x y z a s b,
-    lookup x ev = Some (Ak a) ->
-    lookup y ev = Some (Tg s) ->
-    lookup z ev = Some (Nm b) ->
-    a = Pb2 s b ->              (* Tagged name check *)
-    stmt_sem ev tr us (Nm2p x y z) ev tr us
-| Stmt_priv_nm2p: forall ev tr us x y z a s b,
-    lookup x ev = Some (Ik a) ->
-    lookup y ev = Some (Tg s) ->
-    lookup z ev = Some (Nm b) ->
-    a = Pb2 s b ->              (* Tagged name check *)
-    stmt_sem ev tr us (Nm2p x y z) ev tr us.
+    stmt_sem ev tr us (Invp x y) ev tr us.
 #[global]
 Hint Constructors stmt_sem : core.
 
@@ -186,11 +158,6 @@ Proof.
   intros.
   inversion H; subst.
   - exists [(v, val)]; auto.
-  - exists []; auto.
-  - exists []; auto.
-  - exists []; auto.
-  - exists []; auto.
-  - exists []; auto.
   - exists []; auto.
   - exists []; auto.
   - exists []; auto.
