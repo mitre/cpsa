@@ -19,7 +19,7 @@
     (trace (recv (cat b (enc a n-a n-b (ltk b c))))
 	   (send (cat (enc a k (ltk b c))
 		      (enc b k n-a n-b (ltk a c)))))
-    (uniq-orig k))
+    (uniq-gen k))
 
   (defrule uniq-at
     (forall
@@ -38,13 +38,13 @@
   (defstrand resp 5 (a a) (b b) (c c) (n-b n-b) (k k))
   (deflistener k)
   (non-orig (ltk b c) (ltk a c))
-  (uniq-orig n-b))
+  (uniq-gen n-b))
 
 (defskeleton yahalom-plus-uniq-at
   (vars (a b c name) (n-a text))
   (defstrand init 3 (n-a n-a) (a a) (b b) (c c))
   (non-orig (ltk b c) (ltk a c))
-  (uniq-orig n-a))
+  (uniq-gen n-a))
 
 
 

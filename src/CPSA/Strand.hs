@@ -35,7 +35,7 @@ import CPSA.Algebra
 import CPSA.Channel
 import CPSA.Protocol
 
-{--
+--{--
 
 import System.IO.Unsafe
 import Control.Exception (try)
@@ -3126,15 +3126,14 @@ gguniq t k e =
 guniqAt :: Term -> NodeTerm -> Sem
 guniqAt t (z, ht) k (g,e) =
   do
-    (t', ls) <- korig k
-    case indxLookup e ht of
-      Just i -> (case ls of
-                   [(s, j)] | i == j ->
-                                do
-                                  e <- match t t' (g,e)
-                                  strdMatch z s e
-                   _ -> [])
-      Nothing -> []
+    (t', ls) <- zz $ korig k
+    (g,e) <- match t t' (g,e)
+    (case ls of
+       [(s, j)] ->
+           do
+             (g,e) <- strdMatch z s (g,e)
+             indxMatch ht j (g,e)
+       _ -> [])
 
 -- Unique generation
 gggen :: Term -> Sem
@@ -3148,14 +3147,13 @@ gugenAt :: Term -> NodeTerm -> Sem
 gugenAt t (z, ht) k (g,e) =
   do
     (t', ls) <- kugen k
-    case indxLookup e ht of
-      Just i -> (case ls of
-                   [(s, j)] | i == j ->
-                                do
-                                  e <- match t t' (g,e)
-                                  strdMatch z s e
-                   _ -> [])
-      Nothing -> []
+    (g,e) <- match t t' (g,e)
+    (case ls of
+       [(s, j)] ->
+           do
+             (g,e) <- strdMatch z s (g,e)
+             indxMatch ht j (g,e)
+       _ -> [])
 
 ggenstv :: Term -> Sem
 ggenstv t k e =

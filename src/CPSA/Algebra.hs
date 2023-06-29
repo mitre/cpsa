@@ -181,6 +181,7 @@ module CPSA.Algebra (name, alias,
     strdMatch,
     strdLookup,
     strdUpdate,
+    indxMatch, 
     indxLookup,
     indxUpdate,
 
@@ -2272,12 +2273,9 @@ strdUpdate (Env (g, e)) f =
     h (Z z) = Z $ f z
     h t = t
 
---   indxMatch ::  Term -> Int -> (Gen, Env) -> [(Gen, Env)]
---   indxMatch t t' (g, e) =
---          maybe [] (\e -> [(g, e)]) $ indxMatchI t t' e
---
---   indxMatchI ::  Term -> Int -> Env -> Maybe Env
---   indxMatchI t p env = matchI t (Y p) env
+indxMatch ::  Term -> Int -> (Gen, Env) -> [(Gen, Env)]
+indxMatch t p (g, e) =
+    match t (Y p) (g, e)
 
 indxLookup :: Env -> Term -> Maybe Int
 indxLookup env t =
