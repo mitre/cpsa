@@ -54,8 +54,12 @@ There are two syntactic constraints on roles accepted by `cpsa4roletran`.
    The `outputs` contain the terms returned by the generated
    procedure.
 
+The params `field` is an alias for the `inputs` field and the
+`returns` field is an alias for the `outputs` field.
+
 The translator ignores all fields in a role definition except its
-name, `vars`, `trace`, `uniq-orig`, `inputs`, and `outputs`.
+name, `vars`, `trace`, `uniq-orig`, `inputs`, `params`, `outputs`, and
+`returns`.
 
 The translator performs various checks to ensure that each role read
 is well formed.  It ensures the each term in the inputs is either a
