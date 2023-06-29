@@ -444,3 +444,15 @@ Executable cpsa4rolecoq
     CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Lib.Expand
     CPSA.Roletran.Algebra CPSA.Roletran.Protocol CPSA.Roletran.Loader
     CPSA.Roletran.Displayer CPSA.Roletran.Emitter
+
+Executable cpsa4zsl
+  Main-Is:              CPSA/ZSL/Main.hs
+  Default-Language:     Haskell2010
+  Build-Depends:        base >= 4.13 && < 5, containers
+  GHC-Options:
+    -Wall -fno-warn-name-shadowing -fwarn-unused-imports
+  Hs-Source-Dirs:       src
+  Other-Modules:
+    CPSA.Lib.SExpr CPSA.Lib.Utilities CPSA.Signature CPSA.Algebra
+    CPSA.ZSL.Event CPSA.ZSL.Term CPSA.ZSL.ZSL CPSA.ZSL.Protocol
+    CPSA.ZSL.Source
