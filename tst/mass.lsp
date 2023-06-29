@@ -1,3 +1,6 @@
+(herald mass
+	(bound 8))
+
 (defprotocol mass basic
   (defrole init
     (vars (a b name) (n1 n2 text))
