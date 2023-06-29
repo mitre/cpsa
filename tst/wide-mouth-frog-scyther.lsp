@@ -1,5 +1,7 @@
-(herald "Wide-Mouth Frog Protocol from Scyther"
-  (comment "This protocol has an infinite number of shapes"))
+(herald
+ "Wide-Mouth Frog Protocol from Scyther"
+ (bound 8)
+ (comment "This protocol has an infinite number of shapes"))
 
 (defprotocol wide-mouth-frog basic
   (defrole init (vars (a b t name) (ta text) (k skey))
