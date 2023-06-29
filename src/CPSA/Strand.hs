@@ -35,7 +35,7 @@ import CPSA.Algebra
 import CPSA.Channel
 import CPSA.Protocol
 
---{--
+{--
 
 import System.IO.Unsafe
 import Control.Exception (try)
@@ -3126,7 +3126,7 @@ gguniq t k e =
 guniqAt :: Term -> NodeTerm -> Sem
 guniqAt t (z, ht) k (g,e) =
   do
-    (t', ls) <- zz $ korig k
+    (t', ls) <- korig k
     (g,e) <- match t t' (g,e)
     (case ls of
        [(s, j)] ->
