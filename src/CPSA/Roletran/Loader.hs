@@ -79,8 +79,10 @@ loadRole pos (S _ name :
         Just env ->
           do
             u <- mapM (loadBasic env) (assoc "uniq-orig" rest)
-            i <- mapM (loadChanTerm env) (assoc "inputs" rest)
-            o <- mapM (loadTerm env) (assoc "outputs" rest)
+            i <- mapM (loadChanTerm env) -- Allow params as a synonym
+                 (assoc "inputs" rest ++ assoc "params" rest)
+            o <- mapM (loadTerm env) -- Allow returns as a synonym
+                 (assoc "outputs" rest ++ assoc "returns" rest)
             mkRole name pos env c u i o
 loadRole pos _ = fail (shows pos "Malformed role")
 
