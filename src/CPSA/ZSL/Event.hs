@@ -7,7 +7,12 @@ import CPSA.ZSL.Term
 
 -- Events and traces
 
-data Event = Send Var Term | Recv Var Term deriving (Eq, Show)
+data Event =
+  Send Var Term
+  | Recv Var Term
+  | Load Var Term
+  | Stor Var Term
+  deriving (Eq, Show)
 
 type Trace  = [Event]
 type Traces = [Trace]
@@ -17,12 +22,16 @@ type Traces = [Trace]
 substEvent :: Var -> Term -> Event -> Event
 substEvent v t (Send c t') = Send c (substTerm t' v t)
 substEvent v t (Recv c t') = Recv c (substTerm t' v t)
+substEvent v t (Load l t') = Load l (substTerm t' v t)
+substEvent v t (Stor l t') = Stor l (substTerm t' v t)
 
 -- Determine whether an event is well-formed relative to a sort map
 
 eventWf :: SortMap -> Event -> Bool
 eventWf m (Send _ t) = termWf m t
 eventWf m (Recv _ t) = termWf m t
+eventWf m (Load _ t) = termWf m t
+eventWf m (Stor _ t) = termWf m t
 
 -- Environments recording atom-term bindings
 
@@ -45,6 +54,8 @@ applyEnvTrace env = map (applyEnvEvent env)
 sexprOfEvent :: Event -> SExpr ()
 sexprOfEvent (Send c t) = L () [S () "send", S () c, sexprOfTerm t]
 sexprOfEvent (Recv c t) = L () [S () "recv", S () c, sexprOfTerm t]
+sexprOfEvent (Load l t) = L () [S () "load", S () l, sexprOfTerm t]
+sexprOfEvent (Stor l t) = L () [S () "stor", S () l, sexprOfTerm t]
 
 -- Convert a trace into an S-expression
 

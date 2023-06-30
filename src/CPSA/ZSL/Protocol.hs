@@ -38,7 +38,11 @@ toVarDecls sexprs = do
   foldl f (return []) (concat pairs)
   where
     f = \acc p -> acc >>= \ps -> g ps p
-    g ps (S _ v, S _ sortStr) = sortOfStr sortStr >>= \sort -> return $ ((v, sort) : ps)
+    g ps (_, S _ "chan") = return ps
+    g ps (_, S _ "locn") = return ps
+    g ps (S _ v, S _ sortStr) = do
+      sort <- sortOfStr sortStr
+      return $ (v, sort) : ps
     g _ _ = abort "Failed to parse variable declarations"
 
 -- Compile a ZSL role to its CPSA roles
@@ -55,14 +59,14 @@ toCpsaRoles (Role {rname=rname, vars=vars, body=body, rest=rest}) = do
 
 -- Convert an S-expression into a ZSL role
 
-zslRoleOfSExpr :: SExpr Pos -> IO ZslRole
-zslRoleOfSExpr (L _ (S _ "defrole" : S _ rname :
-                     (L _ (S _ "vars" : vars)) :
-                     (L _ (S _ "trace" : sexprs)) :
-                     rest)) = do
+zslRoleOfSExprs :: [SExpr Pos] -> IO ZslRole
+zslRoleOfSExprs (S _ rname :
+                 (L _ (S _ "vars" : vars)) :
+                 (L _ (S _ "trace" : sexprs)) :
+                 rest) = do
   stmt <- stmtOfSExprs sexprs
   return $ Role {rname=rname, vars=vars, body=stmt, rest=rest}
-zslRoleOfSExpr _ = abort "Failed to parse S-expression as ZSL role"
+zslRoleOfSExprs _ = abort "Failed to parse S-expression as ZSL role"
 
 -- Convert a CPSA role into an S-expression
 
@@ -78,7 +82,8 @@ sexprOfCpsaRole (Role {rname=rname, vars=vars, body=body, rest=rest}) =
 data Prot a = Prot {
   pname :: !String,
   alg :: !String,
-  roles :: ![Role a]
+  roles :: ![Role a],
+  rules :: ![SExpr Pos]
   }
 
 type ZslProt = Prot Stmt
@@ -88,24 +93,31 @@ type CpsaProt = Prot Trace
 -- Compile a ZSL protocol to a CPSA protocol
 
 toCpsaProt :: ZslProt -> IO CpsaProt
-toCpsaProt (Prot {pname=pname, alg=alg, roles=zRoles}) =
-  cRolesOpt >>= \cRoles -> return $ Prot {pname=pname, alg=alg, roles=cRoles}
+toCpsaProt (Prot {pname=pname, alg=alg, roles=zRoles, rules=rules}) = do
+  cRoles <- foldl f (return []) zRoles
+  return $ Prot {pname=pname, alg=alg, roles=cRoles, rules=rules}
   where
-    cRolesOpt = foldl f (return []) zRoles
-    f = \acc zRole -> acc >>= \cRoles -> g cRoles zRole
-    g = \cRoles zRole -> toCpsaRoles zRole >>= \cRoles' -> return $ cRoles ++ cRoles'
+    f acc zRole = do
+      cRoles <- acc
+      cRoles' <- toCpsaRoles zRole
+      return $ cRoles ++ cRoles'
 
 -- Convert a list of S-expressions into a ZSL protocol
 
 zslProtOfSExprs :: [SExpr Pos] -> IO ZslProt
-zslProtOfSExprs (S _ pname : S _ alg : sexprs) = do
-  roles <- mapM zslRoleOfSExpr sexprs
-  return $ Prot {pname=pname, alg=alg, roles=roles}
-zslProtOfSExprs _ = abort "Failed to parse S-expressions as a ZSL protocol"
+zslProtOfSExprs (S _ pname : S _ alg : sexprs) = f [] [] sexprs
+  where
+    f roles rules [] =
+      return $ Prot {pname=pname, alg=alg, roles=reverse roles, rules= reverse rules}
+    f roles rules ((L _ (S _ "defrole" : sexprs)) : rest) = do
+      role <- zslRoleOfSExprs sexprs
+      f (role : roles) rules rest
+    f roles rules (sexpr : rest) = f roles (sexpr : rules) rest
+zslProtOfSExprs _ = abort "Failed to parse S-expressions as ZSL protocol"
 
 -- Convert a CPSA protocol into an S-expression
 
 sexprOfCpsaProt :: CpsaProt -> SExpr ()
-sexprOfCpsaProt (Prot {pname=pname, alg=alg, roles=roles}) =
-  L () (S () defprot : map sexprOfCpsaRole roles)
+sexprOfCpsaProt (Prot {pname=pname, alg=alg, roles=roles, rules=rules}) =
+  L () (S () defprot : map sexprOfCpsaRole roles ++ map pos2Unit rules)
   where defprot = "defprotocol " ++ pname ++ " " ++ alg

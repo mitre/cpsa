@@ -80,6 +80,12 @@ stmtOfSExprs sexprs =
     f (L _ [S _ "recv", S _ ch, sexpr]) = do
       t <- termOfSExpr sexpr
       return $ Evnt (Recv ch t)
+    f (L _ [S _ "load", S _ l, sexpr]) = do
+      t <- termOfSExpr sexpr
+      return $ Evnt (Load l t)
+    f (L _ [S _ "stor", S _ l, sexpr]) = do
+      t <- termOfSExpr sexpr
+      return $ Evnt (Stor l t)
     f (L _ [S _ "cheq", S _ v, sexpr]) = do
       t <- termOfSExpr sexpr
       return $ Cheq v t

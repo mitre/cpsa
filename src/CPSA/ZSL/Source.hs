@@ -22,8 +22,9 @@ type CpsaSrc = Src Trace
 -- Translate a ZSL source file into a CPSA source file
 
 toCpsaSrc :: ZslSrc -> IO CpsaSrc
-toCpsaSrc (Src {defns=defns, prot=zProt}) =
-  toCpsaProt zProt >>= \cProt -> return $ Src {defns=defns, prot=cProt}
+toCpsaSrc (Src {defns=defns, prot=zProt}) = do
+  cProt <- toCpsaProt zProt
+  return $ Src {defns=defns, prot=cProt}
 
 -- Convert an S-expression into a ZSL source file
 

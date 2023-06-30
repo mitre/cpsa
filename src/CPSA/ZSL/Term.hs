@@ -4,7 +4,7 @@ module CPSA.ZSL.Term where
 
 import Data.Maybe
 
-import CPSA.Lib.SExpr (SExpr(S, L))
+import CPSA.Lib.SExpr (SExpr(..))
 import CPSA.Lib.Entry (abort)
 
 -- Variables
@@ -15,6 +15,7 @@ type Var = String
 
 data Term =
   Atom Var
+  | Quot String
   | Tupl [Term]
   | Enc [Term]
   | Hash [Term]
@@ -27,6 +28,7 @@ data Term =
 
 substTerm :: Term -> Var -> Term -> Term
 substTerm (Atom v') v t | v == v' = t | otherwise = Atom v'
+substTerm (Quot q) _ _ = Quot q
 substTerm (Tupl ts) v t = Tupl (map (\t' -> substTerm t' v t) ts)
 substTerm (Enc ts) v t = Enc (map (\t' -> substTerm t' v t) ts)
 substTerm (Hash ts) v t = Hash (map (\t' -> substTerm t' v t) ts)
@@ -38,6 +40,7 @@ substTerm (Ltk t1 t2) v t = Ltk (substTerm t1 v t) (substTerm t2 v t)
 
 occursIn :: Var -> Term -> Bool
 occursIn v (Atom v') = v == v'
+occursIn _ (Quot _) = False
 occursIn v (Tupl ts) = foldl (\acc t -> acc || occursIn v t) False ts
 occursIn v (Enc ts) = foldl (\acc t -> acc || occursIn v t) False ts
 occursIn v (Hash ts) = foldl (\acc t -> acc || occursIn v t) False ts
@@ -49,6 +52,7 @@ occursIn v (Ltk t1 t2) = occursIn v t1 || occursIn v t2
 
 termOfSExpr :: SExpr a -> IO Term
 termOfSExpr (S _ v) = return $ Atom v
+termOfSExpr (Q _ q) = return $ Quot q
 termOfSExpr (L _ (S _ "cat" : sexprs)) = do
   ts <- mapM termOfSExpr sexprs
   return $ Tupl ts
@@ -77,6 +81,7 @@ termOfSExpr _ = abort "Failed to parse S-expression as term"
 
 sexprOfTerm :: Term -> SExpr ()
 sexprOfTerm (Atom v) = S () v
+sexprOfTerm (Quot q) = Q () q
 sexprOfTerm (Tupl ts) = L () (S () "cat" : map sexprOfTerm ts)
 sexprOfTerm (Enc ts) = L () (S () "enc" : map sexprOfTerm ts)
 sexprOfTerm (Hash ts) = L () (S () "hash" : map sexprOfTerm ts)
@@ -129,6 +134,7 @@ mapUpdate m v s = \x -> if x == v then Just s else m x
 
 sortOf :: SortMap -> Term -> Maybe Sort
 sortOf m (Atom v) = m v
+sortOf _ (Quot _) = Just Mesg
 sortOf m (Tupl ts)
   | foldl (\acc t -> acc && isJust (sortOf m t)) True ts = Just Mesg
   | otherwise = Nothing
