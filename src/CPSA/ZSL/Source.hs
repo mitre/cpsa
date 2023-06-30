@@ -1,8 +1,9 @@
 -- ZSL and CPSA source files
 
-module CPSA.ZSL.Source where
+module CPSA.ZSL.Source (zslToCpsa) where
 
 import CPSA.Lib.SExpr (SExpr(..), Pos)
+import CPSA.Lib.Entry (abort)
 import CPSA.ZSL.Event
 import CPSA.ZSL.ZSL
 import CPSA.ZSL.Protocol
@@ -24,14 +25,6 @@ toCpsaSrc :: ZslSrc -> Maybe CpsaSrc
 toCpsaSrc (Src {defns=defns, prot=zProt}) =
   toCpsaProt zProt >>= \cProt -> Just (Src {defns=defns, prot=cProt})
 
--- Generate a herald as an S-expression from a given protocol name and
--- algebra
-
-mkHerald :: String -> String -> SExpr ()
-mkHerald name alg =
-  L () [S () "herald", S () ("\"" ++ name ++ "\""), a]
-  where a = L () [S () "algebra", S () alg]
-
 -- Convert an S-expression into a ZSL source file
 
 zslSrcOfSExprs :: [SExpr Pos] -> Maybe ZslSrc
@@ -43,8 +36,29 @@ zslSrcOfSExprs = f []
       Just (Src {defns= reverse defns, prot=prot})
     f defns (sexpr : sexprs) = f (sexpr : defns) sexprs
 
+-- Generate a herald as an S-expression from a given protocol name and
+-- algebra
+
+mkHerald :: String -> String -> SExpr ()
+mkHerald name alg =
+  L () [S () "herald", S () ("\"" ++ name ++ "\""), a]
+  where a = L () [S () "algebra", S () alg]
+
 -- Convert a CPSA source file into a list of S-expressions
 
 sexprsOfCpsaSrc :: CpsaSrc -> [SExpr ()]
 sexprsOfCpsaSrc (Src {defns=defns, prot=prot@(Prot {pname=pname, alg=alg, roles=_})}) =
   mkHerald pname alg : map pos2Unit defns ++ [sexprOfCpsaProt prot]
+
+-- Entry point for ZSL-to-CPSA translation
+
+zslToCpsa :: [SExpr Pos] -> IO [SExpr ()]
+zslToCpsa sexprs = do
+  zslSrc <- f (zslSrcOfSExprs sexprs)
+  cpsaSrc <- g (toCpsaSrc zslSrc)
+  return $ sexprsOfCpsaSrc cpsaSrc
+  where
+    f Nothing = abort "Failed to parse ZSL source file"
+    f (Just zslSrc) = return zslSrc
+    g Nothing = abort "Failed to generate CPSA source file"
+    g (Just cpsaSrc) = return cpsaSrc

@@ -453,6 +453,7 @@ Executable cpsa4zsl
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
   Hs-Source-Dirs:       src
   Other-Modules:
-    CPSA.Lib.SExpr CPSA.Lib.Utilities CPSA.Signature CPSA.Algebra
-    CPSA.ZSL.Event CPSA.ZSL.Term CPSA.ZSL.ZSL CPSA.ZSL.Protocol
-    CPSA.ZSL.Source
+    CPSA.Lib.SExpr CPSA.Lib.Entry CPSA.Lib.Pretty CPSA.Lib.Printer
+    Paths_cpsa CPSA.Lib.Utilities CPSA.Signature CPSA.Algebra
+    CPSA.Lib.Expand CPSA.Options CPSA.ZSL.Event CPSA.ZSL.Term
+    CPSA.ZSL.ZSL CPSA.ZSL.Protocol CPSA.ZSL.Source
