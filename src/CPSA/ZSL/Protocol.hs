@@ -3,6 +3,7 @@
 module CPSA.ZSL.Protocol where
 
 import CPSA.Lib.SExpr (SExpr(..), Pos)
+import CPSA.Lib.Entry (abort)
 import qualified CPSA.Algebra as A
 import CPSA.ZSL.Term
 import CPSA.ZSL.Event
@@ -31,34 +32,37 @@ pos2Unit (L _ l) = L () (map pos2Unit l)
 
 -- Convert an input vars declaration into a list of (Var, Sort) pairs
 
-toVarDecls :: [SExpr Pos] -> Maybe [(Var, Sort)]
+toVarDecls :: [SExpr Pos] -> IO [(Var, Sort)]
 toVarDecls sexprs = do
   pairs <- mapM A.loadVarPair sexprs
-  foldl f (Just []) (concat pairs)
+  foldl f (return []) (concat pairs)
   where
     f = \acc p -> acc >>= \ps -> g ps p
-    g ps (S _ v, S _ sortStr) = sortOfStr sortStr >>= \sort -> Just ((v, sort) : ps)
-    g _ _ = Nothing
+    g ps (S _ v, S _ sortStr) = sortOfStr sortStr >>= \sort -> return $ ((v, sort) : ps)
+    g _ _ = abort "Failed to parse variable declarations"
 
 -- Compile a ZSL role to its CPSA roles
 
-toCpsaRoles :: ZslRole -> Maybe [CpsaRole]
-toCpsaRoles (Role {rname=rname, vars=vars, body=body, rest=rest}) =
-  let f = map (\trace -> Role {rname=rname, vars=vars, body=trace, rest=rest})
-  in do
-    decls <- toVarDecls vars
-    fmap f (compute_traces (toSortMap decls) body)
+toCpsaRoles :: ZslRole -> IO [CpsaRole]
+toCpsaRoles (Role {rname=rname, vars=vars, body=body, rest=rest}) = do
+  decls <- toVarDecls vars
+  traces <- compute_traces (toSortMap decls) body
+  return $ if length traces > 1 then map f (zip traces [1..]) else map g traces
+  where
+    f :: (Trace, Int) -> CpsaRole
+    f (trace, i) = Role {rname=rname ++ show i, vars=vars, body=trace, rest=rest}
+    g trace = Role {rname=rname, vars=vars, body=trace, rest=rest}
 
 -- Convert an S-expression into a ZSL role
 
-zslRoleOfSExpr :: SExpr Pos -> Maybe ZslRole
+zslRoleOfSExpr :: SExpr Pos -> IO ZslRole
 zslRoleOfSExpr (L _ (S _ "defrole" : S _ rname :
                      (L _ (S _ "vars" : vars)) :
                      (L _ (S _ "trace" : sexprs)) :
                      rest)) = do
   stmt <- stmtOfSExprs sexprs
-  Just (Role {rname=rname, vars=vars, body=stmt, rest=rest})
-zslRoleOfSExpr _ = Nothing
+  return $ Role {rname=rname, vars=vars, body=stmt, rest=rest}
+zslRoleOfSExpr _ = abort "Failed to parse S-expression as ZSL role"
 
 -- Convert a CPSA role into an S-expression
 
@@ -83,21 +87,21 @@ type CpsaProt = Prot Trace
 
 -- Compile a ZSL protocol to a CPSA protocol
 
-toCpsaProt :: ZslProt -> Maybe CpsaProt
+toCpsaProt :: ZslProt -> IO CpsaProt
 toCpsaProt (Prot {pname=pname, alg=alg, roles=zRoles}) =
-  cRolesOpt >>= \cRoles -> Just (Prot {pname=pname, alg=alg, roles=cRoles})
+  cRolesOpt >>= \cRoles -> return $ Prot {pname=pname, alg=alg, roles=cRoles}
   where
-    cRolesOpt = foldl f (Just []) zRoles
+    cRolesOpt = foldl f (return []) zRoles
     f = \acc zRole -> acc >>= \cRoles -> g cRoles zRole
-    g = \cRoles zRole -> toCpsaRoles zRole >>= \cRoles' -> Just (cRoles ++ cRoles')
+    g = \cRoles zRole -> toCpsaRoles zRole >>= \cRoles' -> return $ cRoles ++ cRoles'
 
 -- Convert a list of S-expressions into a ZSL protocol
 
-zslProtOfSExprs :: [SExpr Pos] -> Maybe ZslProt
+zslProtOfSExprs :: [SExpr Pos] -> IO ZslProt
 zslProtOfSExprs (S _ pname : S _ alg : sexprs) = do
   roles <- mapM zslRoleOfSExpr sexprs
-  Just (Prot {pname=pname, alg=alg, roles=roles})
-zslProtOfSExprs _ = Nothing
+  return $ Prot {pname=pname, alg=alg, roles=roles}
+zslProtOfSExprs _ = abort "Failed to parse S-expressions as a ZSL protocol"
 
 -- Convert a CPSA protocol into an S-expression
 

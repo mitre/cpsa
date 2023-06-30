@@ -3,6 +3,7 @@
 module CPSA.ZSL.ZSL where
 
 import CPSA.Lib.SExpr (SExpr(..))
+import CPSA.Lib.Entry (abort)
 import CPSA.ZSL.Event
 import CPSA.ZSL.Term
 
@@ -50,40 +51,42 @@ extend_trace' trace env (Brch ss) =
 -- Check that a statement is well-formed relative to a sort map and,
 -- if so, extend a trace with it
 
-extend_trace :: SortMap -> Trace -> Env -> Stmt -> Maybe [(Trace, Env)]
+extend_trace :: SortMap -> Trace -> Env -> Stmt -> IO [(Trace, Env)]
 extend_trace m trace env s =
-  if stmtWf m s then Just (extend_trace' trace env s) else Nothing
+  if stmtWf m s then return $ extend_trace' trace env s else abort "Failed to extend trace"
 
 -- Compute the traces of a well-formed statement
 
-compute_traces :: SortMap -> Stmt -> Maybe Traces
+compute_traces :: SortMap -> Stmt -> IO Traces
 compute_traces m s =
   let f = \exts -> map (\x -> applyEnvTrace (snd x) (fst x)) exts
   in fmap f (extend_trace m [] [] s)
 
--- Convert a single S-expression into a simple statement
-
-stmtOfSExpr :: SExpr a -> Maybe Stmt
-stmtOfSExpr (L _ [S _ "send", S _ ch, sexpr]) = do
-  t <- termOfSExpr sexpr
-  Just (Evnt (Send ch t))
-stmtOfSExpr (L _ [S _ "recv", S _ ch, sexpr]) = do
-  t <- termOfSExpr sexpr
-  Just (Evnt (Recv ch t))
-stmtOfSExpr (L _ [S _ "cheq", S _ v, sexpr]) = do
-  t <- termOfSExpr sexpr
-  Just (Cheq v t)
-stmtOfSExpr (L _ (S _ "branch" : sexprs)) = do
-  stmts <- mapM stmtOfSExpr sexprs
-  Just (Brch stmts)
-stmtOfSExpr _ = Nothing
-
 -- Convert a list of S-expressions into a statement
 
-stmtOfSExprs :: [SExpr a] -> Maybe Stmt
-stmtOfSExprs [] = Nothing
-stmtOfSExprs [sexpr] = stmtOfSExpr sexpr
-stmtOfSExprs (sexpr1 : sexprs) = do
-  s1 <- stmtOfSExpr sexpr1
-  s2 <- stmtOfSExprs sexprs
-  Just (Seqn s1 s2)
+stmtOfSExprs :: [SExpr a] -> IO Stmt
+stmtOfSExprs sexprs =
+  case sexprs of
+    [] -> abort "No S-expressions to parse as ZSL statement"
+    [sexpr] -> f sexpr
+    sexpr : sexprs -> do
+      stmt <- f sexpr
+      stmts <- stmtOfSExprs sexprs
+      return $ Seqn stmt stmts
+  where
+    f (L _ [S _ "send", S _ ch, sexpr]) = do
+      t <- termOfSExpr sexpr
+      return $ Evnt (Send ch t)
+    f (L _ [S _ "recv", S _ ch, sexpr]) = do
+      t <- termOfSExpr sexpr
+      return $ Evnt (Recv ch t)
+    f (L _ [S _ "cheq", S _ v, sexpr]) = do
+      t <- termOfSExpr sexpr
+      return $ Cheq v t
+    f (L _ (S _ "branch" : sexprs)) = do
+      sexprs <- mapM flattenSExpr sexprs
+      stmts <- mapM stmtOfSExprs sexprs
+      return $ Brch stmts
+    f _ = abort "Failed to parse S-expression as ZSL statement"
+    flattenSExpr (L _ sexprs) = return sexprs
+    flattenSExpr _ = abort "Malformed branch construct"

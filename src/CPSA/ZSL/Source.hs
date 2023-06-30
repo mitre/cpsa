@@ -21,19 +21,19 @@ type CpsaSrc = Src Trace
 
 -- Translate a ZSL source file into a CPSA source file
 
-toCpsaSrc :: ZslSrc -> Maybe CpsaSrc
+toCpsaSrc :: ZslSrc -> IO CpsaSrc
 toCpsaSrc (Src {defns=defns, prot=zProt}) =
-  toCpsaProt zProt >>= \cProt -> Just (Src {defns=defns, prot=cProt})
+  toCpsaProt zProt >>= \cProt -> return $ Src {defns=defns, prot=cProt}
 
 -- Convert an S-expression into a ZSL source file
 
-zslSrcOfSExprs :: [SExpr Pos] -> Maybe ZslSrc
+zslSrcOfSExprs :: [SExpr Pos] -> IO ZslSrc
 zslSrcOfSExprs = f []
   where
-    f _ [] = Nothing
+    f _ [] = abort "No S-expressions to parse as ZSL source"
     f defns ((L _ (S _ "defprotocol" : sexprs)) : _) = do
       prot <- zslProtOfSExprs sexprs
-      Just (Src {defns= reverse defns, prot=prot})
+      return $ Src {defns= reverse defns, prot=prot}
     f defns (sexpr : sexprs) = f (sexpr : defns) sexprs
 
 -- Generate a herald as an S-expression from a given protocol name and
@@ -54,11 +54,6 @@ sexprsOfCpsaSrc (Src {defns=defns, prot=prot@(Prot {pname=pname, alg=alg, roles=
 
 zslToCpsa :: [SExpr Pos] -> IO [SExpr ()]
 zslToCpsa sexprs = do
-  zslSrc <- f (zslSrcOfSExprs sexprs)
-  cpsaSrc <- g (toCpsaSrc zslSrc)
+  zslSrc <- zslSrcOfSExprs sexprs
+  cpsaSrc <- toCpsaSrc zslSrc
   return $ sexprsOfCpsaSrc cpsaSrc
-  where
-    f Nothing = abort "Failed to parse ZSL source file"
-    f (Just zslSrc) = return zslSrc
-    g Nothing = abort "Failed to generate CPSA source file"
-    g (Just cpsaSrc) = return cpsaSrc
