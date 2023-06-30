@@ -32,6 +32,17 @@ mkHerald name alg =
   L () [S () "herald", S () ("\"" ++ name ++ "\""), a]
   where a = L () [S () "algebra", S () alg]
 
+-- Convert an S-expression into a ZSL source file
+
+zslSrcOfSExprs :: [SExpr Pos] -> Maybe ZslSrc
+zslSrcOfSExprs = f []
+  where
+    f _ [] = Nothing
+    f defns ((L _ (S _ "defprotocol" : sexprs)) : _) = do
+      prot <- zslProtOfSExprs sexprs
+      Just (Src {defns= reverse defns, prot=prot})
+    f defns (sexpr : sexprs) = f (sexpr : defns) sexprs
+
 -- Convert a CPSA source file into a list of S-expressions
 
 sexprsOfCpsaSrc :: CpsaSrc -> [SExpr ()]

@@ -14,7 +14,7 @@ type Var = String
 
 data Term =
   Atom Var
-  | Pair Term Term
+  | Tupl [Term]
   | Enc Term Term
   | Hash Term
   | Pubk Term
@@ -26,7 +26,7 @@ data Term =
 
 substTerm :: Term -> Var -> Term -> Term
 substTerm (Atom v') v t | v == v' = t | otherwise = Atom v'
-substTerm (Pair t1 t2) v t = Pair (substTerm t1 v t) (substTerm t2 v t)
+substTerm (Tupl ts) v t = Tupl (map (\t' -> substTerm t' v t) ts)
 substTerm (Enc t1 t2) v t = Enc (substTerm t1 v t) (substTerm t2 v t)
 substTerm (Hash t') v t = Hash (substTerm t' v t)
 substTerm (Pubk t') v t = Pubk (substTerm t' v t)
@@ -37,18 +37,47 @@ substTerm (Ltk t1 t2) v t = Ltk (substTerm t1 v t) (substTerm t2 v t)
 
 occursIn :: Var -> Term -> Bool
 occursIn v (Atom v') = v == v'
-occursIn v (Pair t1 t2) = occursIn v t1 || occursIn v t2
+occursIn v (Tupl ts) = foldl (\acc t -> acc || occursIn v t) False ts
 occursIn v (Enc t1 t2) = occursIn v t1 || occursIn v t2
 occursIn v (Hash t) = occursIn v t
 occursIn v (Pubk t) = occursIn v t
 occursIn v (Invk t) = occursIn v t
 occursIn v (Ltk t1 t2) = occursIn v t1 || occursIn v t2
 
--- Convert a term in to an S-expression
+-- Convert an S-expression into a term
+
+termOfSExpr :: SExpr a -> Maybe Term
+termOfSExpr (S _ v) = Just (Atom v)
+termOfSExpr (L _ (S _ "cat" : sexprs)) = do
+  ts <- mapM termOfSExpr sexprs
+  Just (Tupl ts)
+termOfSExpr (L _ [S _ "enc", sexpr1, sexpr2]) = do
+  t1 <- termOfSExpr sexpr1
+  t2 <- termOfSExpr sexpr2
+  Just (Enc t1 t2)
+termOfSExpr (L _ [S _ "hash", sexpr]) = do
+  t <- termOfSExpr sexpr
+  Just (Hash t)
+termOfSExpr (L _ [S _ "pubk", sexpr]) = do
+  t <- termOfSExpr sexpr
+  Just (Pubk t)
+termOfSExpr (L _ [S _ "invk", sexpr]) = do
+  t <- termOfSExpr sexpr
+  Just (Invk t)
+termOfSExpr (L _ [S _ "privk", sexpr]) = do
+  t <- termOfSExpr sexpr
+  Just (Invk (Pubk t))
+termOfSExpr (L _ [S _ "ltk", sexpr1, sexpr2]) = do
+  t1 <- termOfSExpr sexpr1
+  t2 <- termOfSExpr sexpr2
+  Just (Ltk t1 t2)
+termOfSExpr _ = Nothing
+
+-- Convert a term into an S-expression
 
 sexprOfTerm :: Term -> SExpr ()
 sexprOfTerm (Atom v) = S () v
-sexprOfTerm (Pair t1 t2) = L () [S () "cat", sexprOfTerm t1, sexprOfTerm t2]
+sexprOfTerm (Tupl ts) = L () (S () "cat" : map sexprOfTerm ts)
 sexprOfTerm (Enc t1 t2) = L () [S () "enc", sexprOfTerm t1, sexprOfTerm t2]
 sexprOfTerm (Hash t) = L () [S () "hash", sexprOfTerm t]
 sexprOfTerm (Pubk t) = L () [S () "pubk", sexprOfTerm t]
@@ -81,11 +110,6 @@ sortIncl Akey Akey = True
 sortIncl Mesg _    = True
 sortIncl _    _    = False
 
--- A generalization of isJust to two parameters
-
-isJustTwo :: Maybe a -> Maybe a -> Bool
-isJustTwo x y = isJust x && isJust y
-
 -- Partial maps from variables to sorts
 
 type SortMap = Var -> Maybe Sort
@@ -104,11 +128,11 @@ mapUpdate m v s = \x -> if x == v then Just s else m x
 
 sortOf :: SortMap -> Term -> Maybe Sort
 sortOf m (Atom v) = m v
-sortOf m (Pair t1 t2)
-  | isJustTwo (sortOf m t1) (sortOf m t2) = Just Mesg
+sortOf m (Tupl ts)
+  | foldl (\acc t -> acc && isJust (sortOf m t)) True ts = Just Mesg
   | otherwise = Nothing
 sortOf m (Enc t1 t2)
-  | isJustTwo (sortOf m t1) (sortOf m t2) = Just Mesg
+  | isJust (sortOf m t1) && isJust (sortOf m t2) = Just Mesg
   | otherwise = Nothing
 sortOf m (Hash t)
   | isJust (sortOf m t) = Just Mesg

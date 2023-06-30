@@ -49,6 +49,17 @@ toCpsaRoles (Role {rname=rname, vars=vars, body=body, rest=rest}) =
     decls <- toVarDecls vars
     fmap f (compute_traces (toSortMap decls) body)
 
+-- Convert an S-expression into a ZSL role
+
+zslRoleOfSExpr :: SExpr Pos -> Maybe ZslRole
+zslRoleOfSExpr (L _ (S _ "defrole" : S _ rname :
+                     (L _ (S _ "vars" : vars)) :
+                     (L _ (S _ "trace" : sexprs)) :
+                     rest)) = do
+  stmt <- stmtOfSExprs sexprs
+  Just (Role {rname=rname, vars=vars, body=stmt, rest=rest})
+zslRoleOfSExpr _ = Nothing
+
 -- Convert a CPSA role into an S-expression
 
 sexprOfCpsaRole :: CpsaRole -> SExpr ()
@@ -79,6 +90,14 @@ toCpsaProt (Prot {pname=pname, alg=alg, roles=zRoles}) =
     cRolesOpt = foldl f (Just []) zRoles
     f = \acc zRole -> acc >>= \cRoles -> g cRoles zRole
     g = \cRoles zRole -> toCpsaRoles zRole >>= \cRoles' -> Just (cRoles ++ cRoles')
+
+-- Convert a list of S-expressions into a ZSL protocol
+
+zslProtOfSExprs :: [SExpr Pos] -> Maybe ZslProt
+zslProtOfSExprs (S _ pname : S _ alg : sexprs) = do
+  roles <- mapM zslRoleOfSExpr sexprs
+  Just (Prot {pname=pname, alg=alg, roles=roles})
+zslProtOfSExprs _ = Nothing
 
 -- Convert a CPSA protocol into an S-expression
 

@@ -2,12 +2,14 @@
 
 module CPSA.ZSL.ZSL where
 
+import CPSA.Lib.SExpr (SExpr(..))
 import CPSA.ZSL.Event
 import CPSA.ZSL.Term
 
 -- ZSL statements
 
-data Stmt = Evnt Event
+data Stmt =
+  Evnt Event
   | Cheq Var Term
   | Seqn Stmt Stmt
   | Brch [Stmt]
@@ -58,3 +60,30 @@ compute_traces :: SortMap -> Stmt -> Maybe Traces
 compute_traces m s =
   let f = \exts -> map (\x -> applyEnvTrace (snd x) (fst x)) exts
   in fmap f (extend_trace m [] [] s)
+
+-- Convert a single S-expression into a simple statement
+
+stmtOfSExpr :: SExpr a -> Maybe Stmt
+stmtOfSExpr (L _ [S _ "send", S _ ch, sexpr]) = do
+  t <- termOfSExpr sexpr
+  Just (Evnt (Send ch t))
+stmtOfSExpr (L _ [S _ "recv", S _ ch, sexpr]) = do
+  t <- termOfSExpr sexpr
+  Just (Evnt (Recv ch t))
+stmtOfSExpr (L _ [S _ "cheq", S _ v, sexpr]) = do
+  t <- termOfSExpr sexpr
+  Just (Cheq v t)
+stmtOfSExpr (L _ (S _ "branch" : sexprs)) = do
+  stmts <- mapM stmtOfSExpr sexprs
+  Just (Brch stmts)
+stmtOfSExpr _ = Nothing
+
+-- Convert a list of S-expressions into a statement
+
+stmtOfSExprs :: [SExpr a] -> Maybe Stmt
+stmtOfSExprs [] = Nothing
+stmtOfSExprs [sexpr] = stmtOfSExpr sexpr
+stmtOfSExprs (sexpr1 : sexprs) = do
+  s1 <- stmtOfSExpr sexpr1
+  s2 <- stmtOfSExprs sexprs
+  Just (Seqn s1 s2)
