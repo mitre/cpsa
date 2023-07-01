@@ -212,7 +212,10 @@ button conf x y dup t =
     where
       kind =
           case (alive t, dup) of
-            (True, False) -> if shape (vertex t) then Shape else AliveTree
+            (True, False) ->
+                if shape (vertex t) then Shape
+                else if realized (vertex t) then Realized
+                     else AliveTree
             (True, True) -> AliveDup
             (False, False) -> DeadTree
             (False, True) -> DeadDup

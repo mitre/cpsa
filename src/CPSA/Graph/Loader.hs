@@ -14,9 +14,9 @@
 module CPSA.Graph.Loader (Preskel, Dir (..), Vertex, protocol, role, env,
                           inst, part, lastVertex, vertices, Node, vnode,
                           strands, label, parent, seen, unrealized, shape,
-                          empty, protSrc, preskelSrc, initial, strand, pos,
-                          leadstosuccs, prev, next, msg, dir, succs, preds,
-                          State, loadFirst, loadNext)
+                          realized, empty, protSrc, preskelSrc, initial,
+                          strand, pos, leadstosuccs, prev, next, msg,
+                          dir, succs, preds, State, loadFirst, loadNext)
                           where
 
 import qualified Data.List as L
@@ -37,6 +37,7 @@ data Preskel = Preskel
       initial :: [Vertex],      -- The initial node in each strand
       unrealized :: Maybe [Vertex], -- Nodes not realized if available
       shape :: Bool,            -- Is preskel a shape?
+      realized :: Bool,         -- Is preskel realized?
       empty :: Bool,            -- Does preskel have an empty cohort?
       protSrc :: SExpr Pos,     -- Source for the protocol
       preskelSrc :: SExpr Pos } -- Source for this preskeleton
@@ -260,6 +261,7 @@ loadInsts s pos p tag revInsts _ xs =
       let heights = map (length . trace) insts
       unrealized <- loadNodes heights (assoc "unrealized" xs)
       let shape = maybe False (const True) (assoc "shape" xs)
+      let realized = maybe False (const True) (assoc "realized" xs)
       let empty = elem "empty cohort" (qassoc "comment" xs)
       let orderings = maybe [] id (assoc "precedes" xs)
       let lt = maybe [] id (assoc "leads-to" xs)
@@ -282,6 +284,7 @@ loadInsts s pos p tag revInsts _ xs =
                              initial = initial,
                              unrealized = unrealized',
                              shape = shape,
+                             realized = realized,
                              empty = empty,
                              protSrc = src p,
                              preskelSrc = s }
