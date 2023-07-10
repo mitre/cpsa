@@ -53,7 +53,6 @@ makeTree k kids dups =
     where
       live kids dups =
           maybe True null (unrealized k) ||
-          null kids && null dups && not (empty k) ||
           any alive kids || any alive dups
       x [] [] = 1
       -- The width of a duplicate is one
