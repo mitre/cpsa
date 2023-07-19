@@ -51,7 +51,13 @@ protBody (L pos (S _ "defrole" : S _ name : vars :
         where
           f :: (Int, ([SExpr Pos], Env)) -> SExpr Pos
           f (i, (trace, env)) =
-              defrole pos (name ++ show i) vars (map (subst env) trace) alist
+              defrole pos (name ++ show i) vars
+                          (map (subst env) trace)
+                          (map (g env) alist)
+          g :: Env -> SExpr Pos -> SExpr Pos
+          g env (L pos (s@(S _ _) : args)) =
+              L pos (s : map (subst env) args)
+          g _ x = x
 protBody x = [x]
 
 -- Find splits in a trace and return environments made from cheq's.
