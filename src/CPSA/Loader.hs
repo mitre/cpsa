@@ -73,7 +73,7 @@ loadProt sig nom origin pos (S _ name : S _ alg : x : xs)
         do
           sig <- loadLang pos sig xs
           (gen, rolesAndPreRules, rest) <- loadRoles sig origin (x : xs)
-          (gen', r) <- mkListenerRole sig pos gen
+          (gen, r) <- mkListenerRole sig pos gen
           let rs = map fst rolesAndPreRules
 
           -- let _ = zz (showRoleGenStates rolesAndPreRules)
@@ -87,7 +87,7 @@ loadProt sig nom origin pos (S _ name : S _ alg : x : xs)
                          []   -- loader-generated rules was rls
                          []
 
-          (gen, forgettableRls, memorableRls) <- initRules sig gen' fakeProt rolesAndPreRules
+          (gen, forgettableRls, memorableRls) <- initRules sig gen fakeProt rolesAndPreRules
 
           (gen, newRls, comment) <- loadRules sig fakeProt gen rest
           -- Check for duplicate role names
