@@ -166,7 +166,7 @@ module CPSA.Algebra (name, alias,
     unify,
     compose,
     absentSubst,
-    substDomainWithin, 
+    substDomainWithin,
 
     Env,
     emptyEnv,
@@ -182,7 +182,7 @@ module CPSA.Algebra (name, alias,
     strdMatch,
     strdLookup,
     strdUpdate,
-    indxMatch, 
+    indxMatch,
     indxLookup,
     indxUpdate,
 
@@ -715,7 +715,7 @@ isAtom :: Term -> Bool
 isAtom (F Base _) = False
 isAtom (F s _) = varSym s
 isAtom (G x) = isBasisVar x     -- NOT:  isGroupVar x.  Used for nons
-                                -- and uniqs 
+                                -- and uniqs
 isAtom _ = False
 
 -- Is the term numeric?
@@ -1241,9 +1241,8 @@ idMapped _ (Z _) = True
 idMapped subst (X x) = M.member x subst
 idMapped _ (Y _) = True
 
-
 -- Set (specifically, list) of variables that occur in a term, but
--- their identifier is *not* a key in the map.  
+-- their identifier is *not* a key in the map.
 idUnmapped :: IdMap -> Term -> [Term]
 idUnmapped map (I x)
            | M.member x map = []
@@ -1258,7 +1257,7 @@ idUnmapped map (X x)
 idUnmapped _ (C _) = []
 idUnmapped _ (Z _) = []
 idUnmapped _ (Y _) = []
- 
+
 idUnmapped map (G t) =
     L.map G
          $ filter (\g -> not $ M.member (getGroupVar g) map)
@@ -1279,15 +1278,15 @@ idUnmapped map (F _ u) = concatMap (idUnmapped map) u
 -- the domain of the mapping.
 
 idMapDomain :: IdMap -> [Id]
-idMapDomain map = 
+idMapDomain map =
     M.foldrWithKey (\k _ ks -> k:ks) [] map
 
 {--
 
 -- We're not using these two functions currently, but let's not wipe
--- them out.  
+-- them out.
 
--- Is map1 a subfunction of map2?  
+-- Is map1 a subfunction of map2?
 
 idMapExtendsTo :: IdMap -> IdMap -> Bool
 idMapExtendsTo map1 map2 =
@@ -1300,7 +1299,7 @@ idMapExtendsTo map1 map2 =
 -- Yield the set of Ids that are in the domain of map1 but not map2
 
 idMapDomainMinus :: IdMap -> IdMap -> [Id]
-idMapDomainMinus map1 map2 = 
+idMapDomainMinus map1 map2 =
     M.foldrWithKey f [] map1
     where
       f key _ soFar =
@@ -1310,7 +1309,7 @@ idMapDomainMinus map1 map2 =
 
 --}
 
--- Is map1 a subfunction of map2, ignoring arguments in ids?  
+-- Is map1 a subfunction of map2, ignoring arguments in ids?
 
 idMapExtendsOutside :: IdMap -> IdMap -> [Id] -> Bool
 idMapExtendsOutside map1 map2 ids =
@@ -1321,15 +1320,12 @@ idMapExtendsOutside map1 map2 ids =
           (key `elem` ids) ||
             ((M.member key map2) &&
              (val == (map2 M.! key)))
-    
 
 -- Do maps 1 and 2 differ at most for arguments in ids?
 idMapsAgreeOutside :: IdMap -> IdMap -> [Id] -> Bool
 idMapsAgreeOutside map1 map2 ids =
     idMapExtendsOutside map1 map2 ids &&
     idMapExtendsOutside map2 map1 ids
-
-    
 
 -- Unification and substitution
 
@@ -1408,7 +1404,7 @@ substitute (Subst s) t =
 
 -- Domain of a substitution
 substDomain :: Subst -> [Id]
-substDomain (Subst s) = idMapDomain s 
+substDomain (Subst s) = idMapDomain s
 
 -- Determine whether every Id in the domain of a subst is the varId of
 -- one of the given terms.  Assume that each given term is a variable!
@@ -1418,7 +1414,6 @@ substDomainWithin subst vars =
     subset dom (map varId vars)
     where
       dom = substDomain subst
-                     
 
 -- Composition of substitutions
 
@@ -1724,15 +1719,15 @@ matched (Env (_, r)) t = idMapped r t
 --
 -- Maybe we should check by isVar.
 
-unmatchedVarsWithin :: Env -> Term -> [Term] -> Bool 
+unmatchedVarsWithin :: Env -> Term -> [Term] -> Bool
 unmatchedVarsWithin (Env (_, r)) t vars =
-    all (flip elem vars) unmatchedIds 
+    all (flip elem vars) unmatchedIds
     where
-      -- problems = filter (not . (flip elem vars)) unmatchedIds 
+      -- problems = filter (not . (flip elem vars)) unmatchedIds
       unmatchedIds = idUnmapped r t
 
 envsAgreeOutside :: Env -> Env -> [Term] -> Bool
-envsAgreeOutside (Env (_, r1)) (Env (_, r2)) vars =  
+envsAgreeOutside (Env (_, r1)) (Env (_, r2)) vars =
     idMapsAgreeOutside r1 r2 ids
     where
       ids = map varId vars
@@ -1743,7 +1738,7 @@ substUpdate (Env (x, r)) s =
   Env (x, M.map (substitute s) r)
 
 -- envDomain :: Env -> [Id]
--- envDomain (Env (_, r)) = idMapDomain r 
+-- envDomain (Env (_, r)) = idMapDomain r
 
 -- The matcher has the property that when pattern P and term T match
 -- then instantiate (match P T emptyEnv) P = T.
@@ -1760,35 +1755,58 @@ substUpdate (Env (x, r)) s =
 
 type GenEnv = (Gen, Env)
 
+-- Ensure Gen is larger that what is in an environment.
+-- Used for detecting illformed genenvs.
+checkGenEnv :: GenEnv -> Bool
+checkGenEnv ((Gen g), Env (v, r)) =
+    all checkId (S.toList v) &&
+        all checkId (map fst mapAsList) &&
+            all (foldVars f True) (map snd mapAsList)
+    where
+      checkId (Id (i, _)) = g > i
+      mapAsList = M.toList r
+      f acc var = acc && checkId (varId var)
+
+validateGenEnv :: GenEnv -> GenEnv
+validateGenEnv ge | checkGenEnv ge = ge
+                  | otherwise = error ("Bad genenv " ++ show ge)
+
+useCheckGenEnv :: Bool
+useCheckGenEnv = False
+
 match ::  Term -> Term -> GenEnv -> [GenEnv]
-match (I x) t (g, Env (v, r)) =
+match t t' ge | useCheckGenEnv = map validateGenEnv (xmatch t t' ge)
+match t t' ge | otherwise = xmatch t t' ge
+
+xmatch ::  Term -> Term -> GenEnv -> [GenEnv]
+xmatch (I x) t (g, Env (v, r)) =
   case M.lookup x r of
     Nothing -> [(g, Env (v, M.insert x t r))]
     Just t' -> if t == t' then [(g, Env (v, r))] else []
-match (C c) (C c') ge = if c == c' then [ge] else []
-match (F Base [t0]) (F Base [t1]) ge =
+xmatch (C c) (C c') ge = if c == c' then [ge] else []
+xmatch (F Base [t0]) (F Base [t1]) ge =
   matchBase t0 t1 ge
-match (F Bltk u) (F Bltk u') ge =
+xmatch (F Bltk u) (F Bltk u') ge =
   L.nub $ matchLists u u' ge ++ matchLists u (reverse u') ge
-match (F s u) (F s' u') ge
+xmatch (F s u) (F s' u') ge
   | s == s' = matchLists u u' ge
-match (F (Invk op) [t]) t' ge =
-  match t (F (Invk op) [t']) ge
-match (G t) (G t') (g, Env (v, r)) =
+xmatch (F (Invk op) [t]) t' ge =
+  xmatch t (F (Invk op) [t']) ge
+xmatch (G t) (G t') (g, Env (v, r)) =
   do
     (v', g', r') <- matchGroup t t' v g r
     return (g', Env(v', r'))
-match (D x) t (g, Env (v, r)) =
+xmatch (D x) t (g, Env (v, r)) =
   case M.lookup x r of
     Nothing -> [(g, Env (v, M.insert x t r))]
     Just t' -> if t == t' then [(g, Env (v, r))] else []
-match (Z p) (Z p') r = if p == p' then [r] else []
-match (X x) t (g, Env (v, r)) =
+xmatch (Z p) (Z p') r = if p == p' then [r] else []
+xmatch (X x) t (g, Env (v, r)) =
   case M.lookup x r of
     Nothing -> [(g, Env (v, M.insert x t r))]
     Just t' -> if t == t' then [(g, Env (v, r))] else []
-match (Y p) (Y p') r = if p == p' then [r] else []
-match _ _ _ = []
+xmatch (Y p) (Y p') r = if p == p' then [r] else []
+xmatch _ _ _ = []
 
 -- On input t, outputs (b, e) such that if t is of sort base then
 -- t = b^e and b is a variable or (gen).
@@ -1827,13 +1845,13 @@ matchBase (F Exp [t0, G t1]) (F Genr []) ge
 matchBase (I x) (F Exp [t0', G t1']) ge
   = matchExp (I x) (M.empty) t0' t1' ge
 matchBase (I x) (I y) ge
-  = match (I x) (I y) ge
+  = xmatch (I x) (I y) ge
     -- matchExp (I x) (M.empty) (I y) (M.empty) ge
 
 matchBase (I x) (F Genr []) ge
   = matchExp (I x) (M.empty) (F Genr []) (M.empty) ge
 matchBase t0 t1 ge
-  = match t0 t1 ge
+  = xmatch t0 t1 ge
 
 {-
   case M.lookup x r of
@@ -1877,7 +1895,7 @@ matchExp (I x) t1 t0' t1' ge@(g, Env (v, r)) =
       -- if x is already mapped, it needs to be mapped to a power of the base of t0'
       Just t  -- t is destination/flex material
           | fst (calcBase t0') == fst (calcBase t) ->
-            match (G t1) (G (mul t1' (mul (snd $ calcBase t0') (invert (snd $ calcBase t))))) ge
+              xmatch (G t1) (G (mul t1' (mul (snd $ calcBase t0') (invert (snd $ calcBase t))))) ge
           | otherwise -> []
       _ -> matchLists [I x, G t1] [F Exp [t0', G w], G (mul t1' (invert w))]
            (g', Env (S.insert wid v, r))
@@ -1893,7 +1911,7 @@ matchLists :: [Term] -> [Term] -> GenEnv -> [GenEnv]
 matchLists [] [] ge = [ge]
 matchLists (t : u) (t' : u') ge =
   do
-    ge' <- match t t' ge
+    ge' <- xmatch t t' ge
     matchLists u u' ge'
 matchLists _ _ _ = []
 
