@@ -175,6 +175,7 @@ module CPSA.Algebra (name, alias,
     match,
     unmatchedVarsWithin,
     envsAgreeOutside,
+    envOfParamVarPairs, 
     substitution,
     strandBoundEnv,
     reify,
@@ -1732,6 +1733,15 @@ envsAgreeOutside (Env (_, r1)) (Env (_, r2)) vars =
     where
       ids = map varId vars
 
+envOfParamVarPairs :: [(Term,Term)] -> Env 
+envOfParamVarPairs [] = emptyEnv                        
+envOfParamVarPairs ((p,v) : rest) =
+    let Env (l, r) = envOfParamVarPairs rest in
+    if idMapped r p then Env(l, r)
+    else 
+        Env (l, M.insert (varId p) v r)
+    
+
 -- Apply a substitution to the range of an environment
 substUpdate :: Env -> Subst -> Env
 substUpdate (Env (x, r)) s =
@@ -1772,7 +1782,7 @@ validateGenEnv ge | checkGenEnv ge = ge
                   | otherwise = error ("Bad genenv " ++ show ge)
 
 useCheckGenEnv :: Bool
-useCheckGenEnv = False
+useCheckGenEnv = True -- False
 
 match ::  Term -> Term -> GenEnv -> [GenEnv]
 match t t' ge | useCheckGenEnv = map validateGenEnv (xmatch t t' ge)

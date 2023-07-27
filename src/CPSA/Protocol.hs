@@ -438,7 +438,20 @@ paramOfName name rl =
           | name == varName v = Just v -- $ z v v
           | otherwise = seek rest
 
+paramVarPairs :: Role -> [Term] -> [(Term,Term)]
+paramVarPairs rl =
+    foldl
+    (\soFar v ->
+         case paramOfName (varName v) rl of
+           Nothing -> soFar
+           Just p -> (p,v) : soFar)
+    [] 
+
 envsRoleParams :: Role -> Gen -> [Term] -> [(Gen, Env)]
+envsRoleParams rl g vars =
+    [(g, envOfParamVarPairs $ paramVarPairs rl vars)]
+
+{-- 
 envsRoleParams rl g =
     foldl
     (\ges v -> concatMap
@@ -457,6 +470,7 @@ envsRoleParams rl g =
                                    [ge])
                ges)
     [(g,emptyEnv)]
+--}
 
 -- Security Goals
 
