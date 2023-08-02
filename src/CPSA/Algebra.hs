@@ -175,7 +175,7 @@ module CPSA.Algebra (name, alias,
     match,
     unmatchedVarsWithin,
     envsAgreeOutside,
-    envOfParamVarPairs, 
+    envOfParamVarPairs,
     substitution,
     strandBoundEnv,
     reify,
@@ -1733,14 +1733,13 @@ envsAgreeOutside (Env (_, r1)) (Env (_, r2)) vars =
     where
       ids = map varId vars
 
-envOfParamVarPairs :: [(Term,Term)] -> Env 
-envOfParamVarPairs [] = emptyEnv                        
+envOfParamVarPairs :: [(Term,Term)] -> Env
+envOfParamVarPairs [] = emptyEnv
 envOfParamVarPairs ((p,v) : rest) =
     let Env (l, r) = envOfParamVarPairs rest in
     if idMapped r p then Env(l, r)
-    else 
+    else
         Env (l, M.insert (varId p) v r)
-    
 
 -- Apply a substitution to the range of an environment
 substUpdate :: Env -> Subst -> Env
@@ -1771,18 +1770,27 @@ checkGenEnv :: GenEnv -> Bool
 checkGenEnv ((Gen g), Env (v, r)) =
     all checkId (S.toList v) &&
         all checkId (map fst mapAsList) &&
-            all (foldVars f True) (map snd mapAsList)
+            all (checkGenTerm g) (map snd mapAsList)
     where
       checkId (Id (i, _)) = g > i
       mapAsList = M.toList r
-      f acc var = acc && checkId (varId var)
+
+checkGenTerm :: Integer -> Term -> Bool
+checkGenTerm g (I (Id (i, _))) = g > i
+checkGenTerm _ (C _) = True
+checkGenTerm g (F _ xs) = all (checkGenTerm g) xs
+checkGenTerm g (G t) =
+    M.foldlWithKey f True t
+    where
+      f acc (Id (i, _)) (_, _) = acc && g > i
+checkGenTerm _ _ = True
 
 validateGenEnv :: GenEnv -> GenEnv
 validateGenEnv ge | checkGenEnv ge = ge
                   | otherwise = error ("Bad genenv " ++ show ge)
 
 useCheckGenEnv :: Bool
-useCheckGenEnv = True -- False
+useCheckGenEnv = False -- True
 
 match ::  Term -> Term -> GenEnv -> [GenEnv]
 match t t' ge | useCheckGenEnv = map validateGenEnv (xmatch t t' ge)
