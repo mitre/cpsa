@@ -334,7 +334,7 @@ ruleOfDisjAtHeight sig g rl rulename disj ht =
                                                     " not below " ++ (show ht) ++ "in " ++ rulename ++ "."))
                          pvars))
                  vars
-                 "ruleOfDisjAtHeight:  vars not strand+prams?")
+                 "ruleOfDisjAtHeight:  vars not strand+params?")
             disj
 
     where
@@ -353,20 +353,12 @@ genOneAssumeRl sig g rl n disjuncts =
                   (map (\(evars,conj) ->
                             (evars,
                              (\pvars ->
-                              case envsRoleParams rl g pvars of
-                                (_,e) : _ -> (map snd $ instantiateConj e conj)
-                                _ -> error ("genOneAssumeRl:  Parameter matching failed "
-                                            ++  (show pvars) ++ (rname rl)))))
+                                  let e = envsRoleParams rl pvars in 
+                                  map ((instantiateAForm e) . snd) conj))) 
                    disjuncts)
                   ht
 
---
---       where
---         freeVars bndList conjunct = (aFreeVars [] conjunct) L.\\ bndList
---
---         vars = L.nub (concatMap (\(vars,conj) ->
---                                      concatMap (freeVars vars) (map snd conj))
---                       disjuncts)
+
 
 genAssumeRls :: Sig -> Gen -> Role -> [[([Term], Conj)]] -> (Gen, [Rule])
 genAssumeRls sig g rl disjunctLists =
@@ -390,10 +382,8 @@ genOneRelyGuarRl sig g rl ht kind disjuncts =
                   (map (\(evars,conj) ->
                             (evars,
                              (\pvars ->
-                              case envsRoleParams rl g pvars of
-                                (_,e) : _ -> (map snd $ instantiateConj e conj)
-                                _ -> error ("genOneAssumeRl:  Parameter matching failed "
-                                            ++  (show pvars) ++ (rname rl)))))
+                                  let e = envsRoleParams rl pvars in 
+                                  map ((instantiateAForm e) . snd) conj)))
                    disjuncts)
                   ht
         | otherwise -> error ("genOneRelyGuarRl:  Variable found above ht " ++ (show ht) ++
@@ -425,10 +415,8 @@ genStateRls sig g rl ts =
                    ([],
                    -- One conjunctor:
                     (\pvars ->
-                         case envsRoleParams rl g pvars of
-                           (_,e) : _ -> [GenStV (instantiate e t)]
-                           [] -> error ("genStateRls:  Parameter matching failed "
-                                       ++  (show pvars) ++ (show t))))]
+                         let e = envsRoleParams rl pvars in 
+                                  map (instantiateAForm e) [GenStV t]))]
                  ht)
 
 genFactRls :: Sig -> Gen -> Role -> [(String,[Term])] -> (Gen, [Rule])
@@ -457,10 +445,8 @@ genFactRls sig g rl predarglists =
                    ([],
                    -- One conjunctor:
                     (\pvars ->
-                         case envsRoleParams rl g pvars of
-                           (_,e) : _ ->  [AFact pred (map (instantiate e) args)]
-                           _ -> error ("genFactRls:  Parameter matching failed "
-                                       ++  (show pvars) ++ (concatMap show args))))]
+                         let e = envsRoleParams rl pvars in 
+                                  map (instantiateAForm e) [AFact pred args]))]
                  ht)
 
       {--

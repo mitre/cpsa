@@ -36,7 +36,7 @@
 
 (herald "DHCR: unified model (UM) original"
 	(bound 20)
-	(limit 325)
+	(limit 2000)
 	(algebra diffie-hellman))
 
 (defmacro (kcfa l gb x gy)
@@ -135,7 +135,7 @@
 	 (undisclosed l)
 	 (undisclosed l-peer)))
 
-(comment
+
 
 ; Initiator point of view:  peer exponent secret
 (defskeleton dhcr-um
@@ -164,7 +164,7 @@
   (facts (neq a b)
 	 ;;	 (undisclosed l-peer)
 	 ;;	 (undisclosed l)
-	 )))
+	 ))
 
 (comment
 					; Initiator point of view: partner's exponent secret

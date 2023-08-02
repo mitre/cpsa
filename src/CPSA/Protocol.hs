@@ -447,9 +447,9 @@ paramVarPairs rl =
            Just p -> (p,v) : soFar)
     [] 
 
-envsRoleParams :: Role -> Gen -> [Term] -> [(Gen, Env)]
-envsRoleParams rl g vars =
-    [(g, envOfParamVarPairs $ paramVarPairs rl vars)]
+envsRoleParams :: Role -> [Term] -> Env 
+envsRoleParams rl vars =
+    envOfParamVarPairs $ paramVarPairs rl vars
 
 {-- 
 envsRoleParams rl g =
