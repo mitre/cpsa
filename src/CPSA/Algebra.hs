@@ -16,81 +16,47 @@
 
 --------------------------------------------------------------------
 
--- The module implements a many-sorted algebra, but is used as an
--- order-sorted algebra.  It exports a name, and the origin used to
--- generate variables.
+-- The module implements many-sorted algebras, but is used as
+-- order-sorted algebras.  It exports a name, and the origin used to
+-- generate variables.  An algebra is defined by its signature and the
+-- set of generators (variables) used to create terms.  An algebra's
+-- signature defines its sorts and operations.  In this implementation
+-- of algebras, the signature is not fixed.  There is a default
+-- signature, and the lang field in a protocol allows variations from
+-- the default.
 
--- The Diffie-Hellman Order-Sorted Signature is
+-- All signatures have a message top sort called mesg.  All other
+-- sorts are a subsort of mesg.  A signature may have a collection of
+-- data sorts, and akey sorts.  The default algebra has data sorts
+-- named text, data, name, and skey.  A term k of an akey sort obeys
+-- the equation (invk (invk k)) == t.  All signatures include a
+-- infinite set of quoted constants, sometimes called tags.
 
--- Sorts: mesg, text, data, name, skey, akey, tag,
---        string, base, expt, and rndx
---
--- Subsorts: text, data, name, skey, akey,
---           base, expt < mesg and rndx < expt
---
--- Operations:
---   cat : mesg X mesg -> mesg               Pairing
---   enc : mesg X mesg -> mesg               Encryption
---   hash : mesg -> mesg                     Hashing
---   string : mesg                           Tag constants
---   ltk : name X name -> skey               Long term shared key
---   bltk : name X name -> skey              Bidirectional long-term key
---   pubk : name -> akey                     Public key of principal
---   pubk : string X name -> akey            Tagged public key of principal
---   invk : akey -> akey                     Inverse of asymmetric key
---   gen : base                              DH generator
---   exp : base X expt -> base               Exponentiation
---   mul : expt X expt -> expt               Group operation
---   rec : expt -> expt                      Group inverse
---   one : expt                              Group identity
---
--- Atoms: messages of sort text, data, name, skey, akey, and rndx, and
---        messages of the form (exp (gen) x) where x is of sort rndx.
+-- For Diffie-Hellman, there is a base sort, and two exponent sorts,
+-- expt and rndx, and expt is a supersort of rndx.  There is an base
+-- constant (gen), the Diffie-Hellman generator, and operations on
+-- exponents.  Constant (one) is the group identity, (mul x y) is the
+-- group operation, and (rec x) is the group inverse. (exp x y)
+-- exponentiates base x with expt y.
 
--- A free Abelian group has a set of basis elements, and the sort rndx
--- is the sort for basis elements.  Limiting the atoms associated with
--- an exponent to basis elements is the basis elements as atoms
--- principle.  This principle enables CPSA to correctly handle
--- origination assumptions.
+-- The user defined operations for a sigature include tupling,
+-- hashing, encryption and signing.
 
--- The implementation exploits the isomorphism between order-sorted
--- algebras and many-sorted algebras by adding inclusion operations to
--- produce an equivalent Diffie-Hellman Many-Sorted Signature.  There
--- is an inclusion operation for each subsort of mesg.  Diffie-Hellman
--- exponents are handled specially using a canonical representation as
--- monomials.
+-- All signatures have a name sort.  Asymmetric keys can be named
+-- using (pubk x) where x is of sort name.  Symmetric keys can named
+-- using (ltk x y) where x and y are of sort name.
 
--- Sorts: mesg, text, data, name, skey, akey,
---        string, base, expt, and rndx
---
--- Operations:
---   cat : mesg X mesg -> mesg               Pairing
---   enc : mesg X mesg -> mesg               Encryption
---   hash : mesg -> mesg                     Hashing
---   string : mesg                           Tag constants
---   ltk : name X name -> skey               Long term shared key
---   bltk : name X name -> skey              Bidirectional long-term key
---   pubk : name -> akey                     Public key of principal
---   pubk : string X name -> akey            Tagged public key of principal
---   invk : akey -> akey                     Inverse of asymmetric key
---   text : text -> mesg                     Sort text inclusion
---   data : data -> mesg                     Sort date inclusion
---   name : name -> mesg                     Sort name inclusion
---   skey : skey -> mesg                     Sort skey inclusion
---   akey : akey -> mesg                     Sort akey inclusion
---   base : base -> mesg                     Sort base inclusion
---
---  A message of sort expt, a monomial, is represented by a map from
---  identifiers to descriptions.  A description is a pair consisting
---  of a flag saying if the variable is of sort rndx or expt, and a
---  non-zero integer.  For t of sort expt, the monomial associated
---  with t is
+-- A message of sort expt, a monomial, is represented by a map from
+-- identifiers to descriptions.  A description is a pair consisting
+-- of a flag saying if the variable is of sort rndx or expt, and a
+-- non-zero integer.  For t of sort expt, the monomial associated
+-- with t is
 --
 --      x1 ^ c1 * x2 ^ c2 * ... * xn ^ cn
 --
 -- for all xi in the domain of t and t(xi) = (_, ci).
 
--- In both algebras, invk(invk(t)) = t for all t of sort akey,
+-- In all algebras, invk(invk(t)) = t for all t of sort akey,
 -- (exp h (one)) = h, (exp (exp h x) y) = (exp h (mul x y)), and
 -- the Abelian group axioms hold.
 
@@ -539,12 +505,6 @@ compareTermLists _ [] = GT
 instance Ord Term where
     compare = compareTerm
 #endif
-
--- Basic terms are introduced by defining a function used to decide if
--- a term is well-formed.  The context of an occurrence of an identifier
--- determines its sort.  A term that contains just an identifier and its
--- sort information is called a variable.  The sort of a variable is
--- one of mesg, text, data, name, skey, and akey.
 
 -- Terms that represent algebra variables.
 isVar :: Term -> Bool
