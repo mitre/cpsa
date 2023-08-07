@@ -129,6 +129,7 @@ module CPSA.Algebra (name, alias,
     foldCarriedTerms,
     carriedBy,
     constituent,
+    sortedVarsIn,
     decryptionKey,
     invertKey,
     decompose,
@@ -178,6 +179,7 @@ module CPSA.Algebra (name, alias,
     envOfParamVarPairs,
     substitution,
     strandBoundEnv,
+    renamerAndNewVars, 
     reify,
     substUpdate,
     strdMatch,
@@ -824,6 +826,18 @@ constituent t t' | isAtom t =
   subterm t t'
 constituent t _ =
   error $ "Algebra.constituent: Bad atom " ++ show t
+
+
+-- A sorted variable is of one of the forms:
+-- 
+-- I (Id _,_)
+-- F symb [t]   where symb is a varSym
+-- D (Id _,_)
+-- X (Id _,_)
+-- G x          where x isGroupVar
+-- 
+sortedVarsIn :: Term -> [Term]
+sortedVarsIn = L.nub . (foldVars (flip (:)) []) 
 
 -- The key used to decrypt an encrypted term, otherwise Nothing.
 decryptionKey :: Term -> Maybe Term
@@ -2260,6 +2274,34 @@ strandBoundEnv (Env (_, map)) =
      where
        f bnd (Z i) = max bnd (i+1)
        f bnd _ = bnd
+
+-- Suppose that vs is a list of sorted variables with no repetitions.
+-- renamerAndNewVars will clone vs to create a sequence of new
+-- variables vs' with the same sorting info.  It also creates an Env
+-- that will instantiate each old var v in vs by its clone v' in vs'.
+-- It returns the new generator, the environment, and the list of new
+-- variables vs'
+
+-- This code based on Strand.grow.  
+
+renamerAndNewVars :: [Term] -> Gen -> (Gen, Env, [Term])
+renamerAndNewVars vs g =
+    iter vs g emptyEnv []
+    where
+      iter [] g e vs' = (g, e, vs')
+      iter (v : rest) g e vs' =
+          case match v v (g, e) of
+            [] -> error ("Algebra.renamerAndNewVars:  "
+                         ++ "argument must be variable list without repetitions.  Found "
+                         ++ (show vs))
+            _ ->
+                let (g', v') = clone g v in
+                case match v v' (g', e) of
+                  (g'', e') : _ -> iter rest g'' e' (v' : vs')
+                  [] -> error ("Algebra.renamerAndNewVars:  "
+                               ++ "cloned variable failed to match.  "
+                               ++ (show v) ++ " -> " ++ (show v') ++ " under " ++ (show e))
+
 
 -- Add type information to an environment, and return it as a list of
 -- associations.

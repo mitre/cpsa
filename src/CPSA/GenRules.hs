@@ -54,10 +54,28 @@ type Conjunction = [AForm]
 conjunctionOfConj :: Conj -> Conjunction
 conjunctionOfConj = map snd
 
-type Conjunctor = [Term] -> Conjunction -- Function which, given new
-                                        -- free variables, plugs them
-                                        -- in to yield a conjunction
--- [Term] ->
+-- a Renamer is a function that will replace variables within the
+-- AForm that should be regarded as universally bound with the
+-- variable that will be chosen for the universal quantifier.
+
+-- The loader will in fact read these variables as occurrences of the
+-- role parameters
+type Renamer = AForm -> AForm 
+
+type Conjunctor = Conjunction -> Renamer -> Conjunction
+-- Function which, given Conjunction and a fn to plug in new
+-- variables, plugs them in to yield a conjunction
+
+-- The loader ensures that when an existential formula's body is
+-- loaded, anything that can be read as a local, existentially bound
+-- variable will be.  Since these are generated immediately before the
+-- body is read, there can be no occurrences of the role parameters
+-- present in the body.  Likewise, there can be no occurrences of the
+-- local, existentially bound variables outside this body.
+
+-- Hence a renamer for the antecedent may be safely applied here,
+-- without capturing variables that should be locally bound.  
+
 type Existor = Conjunctor
 
 -- Used to say:   -- Function which, given new
@@ -66,40 +84,26 @@ type Existor = Conjunctor
                                         -- in to yield a conjunctor
 
 ruleOfClauses :: Sig -> Gen -> String ->
-                 VarListSpec -> Conjunctor ->
-                 [([Term],Existor)] -> (Gen,Rule)
-ruleOfClauses sig g rn sortedVarLists antecedent evarDisjuncts =
-    let (g',uvars) = sortedVarsOfStrings sig g sortedVarLists in
+                 [Term] ->  -- VarListSpec ->
+                 Conjunction ->
+                 [([Term],Conjunction)] -> (Gen,Rule)
+ruleOfClauses _ g rn fvs antecedent evarDisjuncts = -- sig is vacuous 
+    let (g', env, uvars) = renamerAndNewVars fvs g in 
     let disjuncts =
             map
-            (\(evars,existor) ->
-                 (evars,(existor -- evars
-                          -- use only the members
-                          -- of uvars that avoid names in evars
-                         (avoidByName evars uvars))))
+            (\(evars,c) -> (evars,
+                            (map (instantiateAForm env) c)))
             evarDisjuncts in
     (g',
       (Rule { rlname = rn,
               rlgoal =
                   (Goal
                    { uvars = uvars,
-                     antec = antecedent uvars,
+                     antec = map (instantiateAForm env) antecedent,
                      consq = disjuncts,
                      concl = map snd disjuncts}),
               rlcomment = [] }))
-    where
-      varOfName _ [] = Nothing
-      varOfName name (v : rest) =
-          if (name == varName v)
-          then Just v
-          else varOfName name rest
-
-      avoidByName evars uvars =
-          map (\uv ->
-                   case varOfName (varName uv) evars of
-                     Nothing -> uv
-                     Just ev -> ev)
-          uvars
+ 
 
 applyToSoleEntry :: (a -> b) ->  String -> [a] -> b
 applyToSoleEntry f _ [a] = f a
@@ -119,15 +123,14 @@ neqRules :: Sig -> Gen -> (Gen, [Rule])
 neqRules sig g =
     foldr
      (\sortName (g,rs) ->
-          let (g', r) =
-                  (ruleOfClauses sig g ("neqRl_" ++ sortName)
-                   [(sortName,["x"])]
-                   (applyToSoleEntry
-                    (\x -> [(AFact "neq" [x,x])])
-                    "neqrules:  Impossible var list.")
+          let (g', v) = newVar sig g "x" sortName in 
+          let (g'', r) =
+                  (ruleOfClauses sig g' ("neqRl_" ++ sortName)
+                   [v]
+                   [(AFact "neq" [v,v])]
                    [])       -- false conclusion
           in
-          (g', r : rs))
+            (g'', r : rs))
      (g,[])
      ["indx", "strd", "mesg"]
 
@@ -140,15 +143,14 @@ transRls sig g rl =
      (g, [])
      where
        f g (i,j) =
-           ruleOfClauses sig g ("trRl_" ++ (rname rl) ++ "-at-" ++ (show i))
-             [("strd",["z"])]
-             (applyToSoleEntry
-              (\z -> [(Length rl z (indxOfInt (j+1)))])
-              "transRules:  Impossible var list.")
-             [([],                   -- no existentially bound vars
-               (applyToSoleEntry
-                        (\z -> [(Trans (z, (indxOfInt i)))])
-                        "transRules:  Impossible var list."))]
+           let (g', z) = newVar sig g "z" "strd" in 
+           ruleOfClauses sig g' ("trRl_" ++ (rname rl) ++ "-at-" ++ (show i))
+             [z]
+             [(Length rl z (indxOfInt (j+1)))]
+             [                  --one disjunct
+              ([],              -- no existentially bound vars
+               [(Trans (z, (indxOfInt i)))] -- one conjunct
+               )]
 
 lastRecvInCS :: Role -> Int -> Int -> Int
 lastRecvInCS rl start end =
@@ -183,41 +185,38 @@ csRules sig g rl =
              [lastRecv+1..end-1]
 
        causeRule g rl start ind =
-           ruleOfClauses sig g
+           let (g',z) = newVar sig g "z" "strd" in
+           let (g'', z1) = newVar sig g' "z1" "strd" in
+           let (g''', i) = newVar sig g'' "i" "indx" in
+
+           ruleOfClauses sig g'''
              ("cau-" ++ (rname rl) ++ "-" ++ (show ind))
-             [("strd",["z", "z1"]), ("indx", ["i"])]
-             (applyToThreeEntries
-              (\z z1 i -> [(Length rl z (indxOfInt (ind+1))),
-                           (Prec -- LeadsTo
-                            (z1,i) (z,(indxOfInt ind)))])
-                      "csRules:  Impossible var list.")
-             [([],
-               (applyToThreeEntries
-                (\z z1 _ -> [Equals z z1])
-                "csRules:  Impossible var list.")),
-              ([],
-               (applyToThreeEntries
-                (\z z1 i -> [(Prec (z1,i) (z,(indxOfInt start)))])
-                "csRules:  Impossible var list."))]
+             [z, z1, i]
+             [(Length rl z (indxOfInt (ind+1))),
+              (Prec (z1,i) (z, (indxOfInt ind)))]
+             
+             [([],              -- either z = z1 
+               [Equals z z1]),
+              ([],              -- or z1's i node comes before start
+                                -- of critical section
+               [(Prec (z1,i) (z,(indxOfInt start)))])]
 
        effectRule g rl end ind =
-           ruleOfClauses sig g
+           let (g',z) = newVar sig g "z" "strd" in
+           let (g'', z1) = newVar sig g' "z1" "strd" in
+           let (g''', i) = newVar sig g'' "i" "indx" in
+           
+           ruleOfClauses sig g'''
              ("eff-" ++ (rname rl) ++ "-" ++ (show ind))
-             [("strd",["z", "z1"]), ("indx", ["i"])]
-             (applyToThreeEntries
-              (\z z1 i -> [(Length rl z (indxOfInt (ind+1))),
-                           (Prec --LeadsTo
-                            (z, (indxOfInt ind)) (z1,i))])
-              "csRules:  Impossible var list.")
-             [([],
-               (applyToThreeEntries
-                (\z z1 _ -> [Equals z z1])
-                "csRules:  Impossible var list.")),
-              ([],
-               (applyToThreeEntries
-                (\z z1 i -> [(Length rl z (indxOfInt (end+1))),
-                             (Prec (z, (indxOfInt end)) (z1,i))])
-                "csRules:  Impossible var list."))]
+             [z, z1, i]
+             [(Length rl z (indxOfInt (ind+1))),
+              (Prec (z, (indxOfInt ind)) (z1,i))]             
+             [([],              -- either z = z1 
+               [Equals z z1]), 
+              ([],              -- or z is long and z1's i node comes
+                                -- after end of critical section
+               [(Length rl z (indxOfInt (end+1))),
+                (Prec (z, (indxOfInt end)) (z1,i))])]
 
 data FoundAt = FoundAt Int
              | Missing Term
@@ -241,6 +240,7 @@ boundVarNamesOfVarListSpec [] = []
 boundVarNamesOfVarListSpec ((_,names) : rest) =
     L.nub $ names ++ boundVarNamesOfVarListSpec rest
 
+{-- 
 freeVarsInExistential :: ([Term],Existor) -> [Term]
 freeVarsInExistential (vars,c) =
     let bvns = map varName vars in
@@ -255,6 +255,7 @@ freeVarsInDisjunction vcs =
      (foldr (\vc acc -> (freeVarsInExistential vc) ++ acc)
       []
       vcs)
+--}
 
 freeVarsInConjLists :: [([Term], Conj)] -> [Term]
 freeVarsInConjLists [] = []
@@ -309,59 +310,56 @@ renameApart prefix vars =
           else
               loop (i+1)
 
-ruleOfDisjAtHeight :: Sig -> Gen -> Role -> String -> [([Term],Existor)] -> Int -> (Gen, Rule)
-ruleOfDisjAtHeight sig g rl rulename disj ht =
-    let fvs = freeVarsInDisjunction disj in
-    ruleOfClauses
-    sig g rulename
-            (("strd", [renameApart "z" (concatMap fst disj)])
-             : varListSpecOfVars (freeVarsSubsetByName fvs (rvars rl)))
-            (\vars ->
-                 applyToStrandVarAndParams
-                 (\z pvars ->
-                      (Length rl z (indxOfInt ht))
-                      : (map
-                         (\v ->
-                              case paramOfName (varName v) rl of
-                                Nothing -> errorWithMsg v " not found."
-                                Just p ->
-                                    case firstOccurs p rl of
-                                      Nothing -> errorWithMsg v " not found."
-                                      Just i ->
-                                          if i < ht then (Param rl p (i+1) z v)
-                                          else errorWithMsg v
-                                                   (" introduced for " ++ (varName p) ++ " too high in role " ++ (rname rl) ++": " ++ (show i) ++
-                                                    " not below " ++ (show ht) ++ "in " ++ rulename ++ "."))
-                         pvars))
-                 vars
-                 "ruleOfDisjAtHeight:  vars not strand+params?")
-            disj
+{-
 
+Sig -> Gen -> String -> [Term] ->  
+Conjunction -> [([Term],Conjunction)] -> (Gen,Rule)
+
+--}
+
+ruleOfDisjAtHeight :: Sig -> Gen -> Role -> String -> [([Term],[AForm])] -> Int -> (Gen, Rule)
+ruleOfDisjAtHeight sig g rl rulename disj ht =
+    let fvs = fvsConsq disj in
+    let rvs = L.filter (\t -> L.elem t (rvars rl)) fvs in 
+    let (g',z) = newVar sig g "z" "strd" in 
+    (ruleOfClauses
+     sig g' rulename
+     (fvs ++ [z])
+     ((Length rl z (indxOfInt ht)) : 
+      (map
+       (\v ->
+            case firstOccurs v rl of
+              Nothing -> errorWithMsg v " not found."
+              Just i ->
+                  if i < ht
+                  then (Param rl v (i+1) z v)
+                  else errorWithMsg v 
+                           (" introduced for " ++ (varName v) ++ " too high in role " ++
+                            (rname rl) ++": " ++ (show i) ++
+                            " not below " ++ (show ht) ++ "in " ++ rulename ++ "."))           
+       rvs)) 
+     disj)
     where
       errorWithMsg v tail =
           error ("ruleOfDisjAtHeight:  Parameter " ++
                  (varName v) ++ tail)
 
 genOneAssumeRl :: Sig -> Gen -> Role -> Int -> [([Term], Conj)] -> (Gen, Rule)
-genOneAssumeRl sig g rl n disjuncts =
-    case conclHeight rl disjuncts of
+genOneAssumeRl sig g rl n disjs =
+    case conclHeight rl disjs of
       Missing v -> error ("genOneAssumeRl:  Variable not in role " ++ (rname rl)
-                         ++ ": " ++ (show (varName v)))
+                         ++ ": " ++ (show v))
       FoundAt ht ->
+          let disjuncts = map (\(vs,cs) -> (vs, map snd cs)) disjs in 
           ruleOfDisjAtHeight
           sig g rl ("assume-" ++ (rname rl) ++ "-" ++ (show n))
-                  (map (\(evars,conj) ->
-                            (evars,
-                             (\pvars ->
-                                  let e = envsRoleParams rl pvars in 
-                                  map ((instantiateAForm e) . snd) conj))) 
-                   disjuncts)
-                  ht
+              disjuncts 
+              ht
 
 
 
 genAssumeRls :: Sig -> Gen -> Role -> [[([Term], Conj)]] -> (Gen, [Rule])
-genAssumeRls sig g rl disjunctLists =
+genAssumeRls sig g rl disjs =
     (g',rls)
     where
       (g',rls,_) =
@@ -369,23 +367,19 @@ genAssumeRls sig g rl disjunctLists =
                        (let (g', new_rule) = genOneAssumeRl sig g rl n ds in
                         (g', new_rule : rs, n+1)))
                (g, [], (0 :: Int))
-               disjunctLists
+               disjs
 
 genOneRelyGuarRl :: Sig -> Gen -> Role -> Int -> String -> [([Term], Conj)] -> (Gen, Rule)
-genOneRelyGuarRl sig g rl ht kind disjuncts =
-    case conclHeight rl disjuncts of
+genOneRelyGuarRl sig g rl ht kind disjs =
+    case conclHeight rl disjs of
       Missing v -> error ("genOneRelyGuarRl:  Variable not in role " ++ (rname rl)
                          ++ ": " ++ (show (varName v)))
-      FoundAt fndHt | fndHt <= ht ->
-          ruleOfDisjAtHeight
-          sig g rl (kind ++ "-" ++ (rname rl) ++ "-" ++ (show ht))
-                  (map (\(evars,conj) ->
-                            (evars,
-                             (\pvars ->
-                                  let e = envsRoleParams rl pvars in 
-                                  map ((instantiateAForm e) . snd) conj)))
-                   disjuncts)
-                  ht
+      FoundAt fndHt
+          | fndHt <= ht ->
+              let disjuncts = map (\(vs,cs) -> (vs, map snd cs)) disjs in 
+              (ruleOfDisjAtHeight
+               sig g rl (kind ++ "-" ++ (rname rl) ++ "-" ++ (show ht))
+               disjuncts ht)
         | otherwise -> error ("genOneRelyGuarRl:  Variable found above ht " ++ (show ht) ++
                               " in " ++ (rname rl))
 
@@ -413,10 +407,8 @@ genStateRls sig g rl ts =
                  sig g rl ("gen-st-" ++ (rname rl) ++ "-" ++ (show n))
                  [ -- One disjunct, no existentially bound variables
                    ([],
-                   -- One conjunctor:
-                    (\pvars ->
-                         let e = envsRoleParams rl pvars in 
-                                  map (instantiateAForm e) [GenStV t]))]
+                   -- One conjunct:
+                    [GenStV t])]
                  ht)
 
 genFactRls :: Sig -> Gen -> Role -> [(String,[Term])] -> (Gen, [Rule])
@@ -443,10 +435,8 @@ genFactRls sig g rl predarglists =
                  sig g rl ("fact-" ++ (rname rl) ++ "-" ++ pred ++ (show n))
                  [ -- One disjunct, no existentially bound variables
                    ([],
-                   -- One conjunctor:
-                    (\pvars ->
-                         let e = envsRoleParams rl pvars in 
-                                  map (instantiateAForm e) [AFact pred args]))]
+                   -- One conjunct:
+                    [AFact pred args])]
                  ht)
 
       {--
@@ -588,7 +578,7 @@ invShearsRule sig g =
                                        [(Prec (z0, i0) (z1, i1))]]},
                         rlcomment = [] }))
             (g, _) -> (g, theVacuousRule)
-      (g, _) -> (g, theVacuousRule)
+      (g, _) -> (g, theVacuousRule) 
 
 uninterruptibleRule :: Sig -> Gen -> (Gen, Rule)
 uninterruptibleRule sig g =
