@@ -41,33 +41,33 @@ import System.IO.Unsafe
 import Control.Exception (try)
 import System.IO.Error (ioeGetErrorString)
 
-zP :: Show a => a -> b -> b
-zP x y = unsafePerformIO (print x >> return y)
+z :: Show a => a -> b -> b
+z x y = unsafePerformIO (print x >> return y)
 
 zz :: Show a => a -> a
-zz x = zP x x
+zz x = z x x
 
 zShow :: Show a => a -> a
-zShow x = zP (show x) x
+zShow x = z (show x) x
 
 zb :: Show a => a -> Bool -> Bool
-zb a False = zP a False
+zb a False = z a False
 zb _ b = b
 
 zn :: Show a => a -> Maybe b -> Maybe b
-zn x Nothing = zP x Nothing
+zn x Nothing = z x Nothing
 zn _ y = y
 
 zf :: Show a => a -> Bool -> Bool
-zf x False = zP x False
+zf x False = z x False
 zf _ y = y
 
 zt :: Show a => a -> Bool -> Bool
-zt x True = zP x True
+zt x True = z x True
 zt _ y = y
 
 zl :: Show a => [a] -> [a]
-zl a = zP (length a) a
+zl a = z (length a) a
 
 zi :: Instance -> String
 zi inst =
@@ -601,7 +601,7 @@ checkPOV k =
       Just k0 ->
           if L.length (insts k0) == L.length (prob k)
           then k
-          else (zP ("skel's POV has " ++ (show (L.length (insts k0)))
+          else (z ("skel's POV has " ++ (show (L.length (insts k0)))
                    ++ " insts, but its prob has length "
                    ++ (show (L.length (prob k))))
                 k)
@@ -702,7 +702,7 @@ preskelWellFormed k =
     wellOrdered k && acyclicOrder k &&
     roleOrigCheck k &&
     roleGenCheck k &&
-    (povCheck k || --   (zP (show (povCheck k) ++ " pov length " ++
+    (povCheck k || --   (z (show (povCheck k) ++ " pov length " ++
                    --     (show (case pov k of
                    --             Nothing -> 0
                    --             Just k0 -> L.length (insts k0))))
@@ -2159,7 +2159,7 @@ homomorphism k k' mapping =
 {--  where
          maybeShow x = if (5 == L.length (insts k') &&
                            4 == L.length (insts k))
-                       then (zP "validateEnv failed"
+                       then (z "validateEnv failed"
                              x)
                        else x
                        --}
@@ -2180,7 +2180,7 @@ findReplacement k k' mapping =
 --            if (5 == L.length (insts k') &&
 --                4 == L.length (insts k))
 --            then
---                zP (show (L.length v)) v
+--                z (show (L.length v)) v
 --            else v
     else []
         -- error ("Yarg! JDR " ++ (show (L.length mapping)) ++ " vs " ++
@@ -2216,7 +2216,7 @@ validateEnv k k' mapping env =
           if (5 == L.length (insts k') &&
               4 == L.length (insts k))
           then
-              zP (show i ++ " failed this time")
+              z (show i ++ " failed this time")
               False
           else
               False
@@ -3008,7 +3008,7 @@ checkSem f k (g, e)
 
 localSignal :: Preskel -> (Gen, Env) -> (Gen, Env)
 localSignal _ (g, e) =
---    zP "yiao " (error ("localSignal: Env "  ++ (show e)))
+--    z "yiao " (error ("localSignal: Env "  ++ (show e)))
   (g, e)
 
 -- Role length predicate
@@ -3239,7 +3239,7 @@ gcomponent t t' k (g, e) =
     let result = foldl (\ges cmpt -> (geq [] t cmpt k (g, e)) ++ ges)
                  []
                  (components t') in
-    --    zP ("> " ++ (show (length result))) result
+    --    z ("> " ++ (show (length result))) result
     result
 
 --   satisfy (StateNode n) [] = gstateNode n
@@ -3504,19 +3504,19 @@ rewriteUnary k =
     loop k urs False False
     where
       urs = unaryrules $ protocol k
-      loop _ [] False False = Unch  -- (zP "u" Unch)
+      loop _ [] False False = Unch  -- (z "u" Unch)
       loop k [] False True =
           case preskelWellFormed k of
-            True -> Found k     --  (zP "_" )
+            True -> Found k     --  (z "_" )
             False -> Unsat
       loop k [] True b = loop k urs False b
       loop k (ur : rest) b b' =
           case tryRule k ur of
             [] -> loop k rest b b'
-            vas -> -- zP ("unary " ++ (rlname ur))
+            vas -> -- z ("unary " ++ (rlname ur))
                    (case rewriteUnaryOne k ur vas of
-                      Nothing -> Unsat -- (zP "?" Unsat)
-                      Just k' -> loop k' -- (zP "/" k')
+                      Nothing -> Unsat -- (z "?" Unsat)
+                      Just k' -> loop k' -- (z "/" k')
                                  rest True True)
 
 -- only interested in case ur is unary:
@@ -3991,8 +3991,8 @@ rewriteDepthCount = 2000  -- was 14 and 24, 36
 -- of (zero or more) replacements.
 rewrite :: Preskel -> Maybe [Preskel]
 rewrite k =
-    case nullUnary k of         --  (zP "<" k)
-      Just [] -> Just []        -- zP ">>" (Just [])
+    case nullUnary k of         --  (z "<" k)
+      Just [] -> Just []        -- z ">>" (Just [])
       Just [k'] -> iterate rewriteDepthCount [k'] [] True
       Nothing -> iterate rewriteDepthCount [k] [] False
       Just ks -> error ("rewrite:  nullUnary returned too many results ("
@@ -4014,11 +4014,11 @@ rewrite k =
           concatMap (\k -> maybe [k] id (nullUnary k))
 
       -- iterate todos done action, which yields Maybe [Preskel]
-      iterate _ [] [_] False = Nothing          -- zP ">>" Nothing
+      iterate _ [] [_] False = Nothing          -- z ">>" Nothing
       iterate _ [] done False = error ("rewrite: non-singleton results with no change???  (" ++
                                         (show (L.length done)) ++ ")")
-      iterate _ [] done True = Just done        -- zP ">" (Just done)
-      iterate 0 todos done True = Just (todos ++ done)  -- zP ">!" (Just (todos ++ done))
+      iterate _ [] done True = Just done        -- z ">" (Just done)
+      iterate 0 todos done True = Just (todos ++ done)  -- z ">!" (Just (todos ++ done))
       iterate 0 _ done False = error ("rewrite: exhausted depth bound with no action???  (" ++
                                         (show (L.length done)) ++ ")")
       iterate dc (k : rest) done b =
