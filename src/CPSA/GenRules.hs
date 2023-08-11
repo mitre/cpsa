@@ -60,7 +60,7 @@ conjunctionOfConj = map snd
 
 -- The loader will in fact read these variables as occurrences of the
 -- role parameters
-type Renamer = AForm -> AForm 
+type Renamer = AForm -> AForm
 
 type Conjunctor = Conjunction -> Renamer -> Conjunction
 -- Function which, given Conjunction and a fn to plug in new
@@ -74,7 +74,7 @@ type Conjunctor = Conjunction -> Renamer -> Conjunction
 -- local, existentially bound variables outside this body.
 
 -- Hence a renamer for the antecedent may be safely applied here,
--- without capturing variables that should be locally bound.  
+-- without capturing variables that should be locally bound.
 
 type Existor = Conjunctor
 
@@ -87,8 +87,8 @@ ruleOfClauses :: Sig -> Gen -> String ->
                  [Term] ->  -- VarListSpec ->
                  Conjunction ->
                  [([Term],Conjunction)] -> (Gen,Rule)
-ruleOfClauses _ g rn fvs antecedent evarDisjuncts = -- sig is vacuous 
-    let (g', env, uvars) = renamerAndNewVars fvs g in 
+ruleOfClauses _ g rn fvs antecedent evarDisjuncts = -- sig is vacuous
+    let (g', env, uvars) = renamerAndNewVars fvs g in
     let disjuncts =
             map
             (\(evars,c) -> (evars,
@@ -103,7 +103,6 @@ ruleOfClauses _ g rn fvs antecedent evarDisjuncts = -- sig is vacuous
                      consq = disjuncts,
                      concl = map snd disjuncts}),
               rlcomment = [] }))
- 
 
 applyToSoleEntry :: (a -> b) ->  String -> [a] -> b
 applyToSoleEntry f _ [a] = f a
@@ -123,7 +122,7 @@ neqRules :: Sig -> Gen -> (Gen, [Rule])
 neqRules sig g =
     foldr
      (\sortName (g,rs) ->
-          let (g', v) = newVar sig g "x" sortName in 
+          let (g', v) = newVar sig g "x" sortName in
           let (g'', r) =
                   (ruleOfClauses sig g' ("neqRl_" ++ sortName)
                    [v]
@@ -143,7 +142,7 @@ transRls sig g rl =
      (g, [])
      where
        f g (i,j) =
-           let (g', z) = newVar sig g "z" "strd" in 
+           let (g', z) = newVar sig g "z" "strd" in
            ruleOfClauses sig g' ("trRl_" ++ (rname rl) ++ "-at-" ++ (show i))
              [z]
              [(Length rl z (indxOfInt (j+1)))]
@@ -194,8 +193,8 @@ csRules sig g rl =
              [z, z1, i]
              [(Length rl z (indxOfInt (ind+1))),
               (Prec (z1,i) (z, (indxOfInt ind)))]
-             
-             [([],              -- either z = z1 
+
+             [([],              -- either z = z1
                [Equals z z1]),
               ([],              -- or z1's i node comes before start
                                 -- of critical section
@@ -205,14 +204,14 @@ csRules sig g rl =
            let (g',z) = newVar sig g "z" "strd" in
            let (g'', z1) = newVar sig g' "z1" "strd" in
            let (g''', i) = newVar sig g'' "i" "indx" in
-           
+
            ruleOfClauses sig g'''
              ("eff-" ++ (rname rl) ++ "-" ++ (show ind))
              [z, z1, i]
              [(Length rl z (indxOfInt (ind+1))),
-              (Prec (z, (indxOfInt ind)) (z1,i))]             
-             [([],              -- either z = z1 
-               [Equals z z1]), 
+              (Prec (z, (indxOfInt ind)) (z1,i))]
+             [([],              -- either z = z1
+               [Equals z z1]),
               ([],              -- or z is long and z1's i node comes
                                 -- after end of critical section
                [(Length rl z (indxOfInt (end+1))),
@@ -240,7 +239,7 @@ boundVarNamesOfVarListSpec [] = []
 boundVarNamesOfVarListSpec ((_,names) : rest) =
     L.nub $ names ++ boundVarNamesOfVarListSpec rest
 
-{-- 
+{--
 freeVarsInExistential :: ([Term],Existor) -> [Term]
 freeVarsInExistential (vars,c) =
     let bvns = map varName vars in
@@ -312,7 +311,7 @@ renameApart prefix vars =
 
 {-
 
-Sig -> Gen -> String -> [Term] ->  
+Sig -> Gen -> String -> [Term] ->
 Conjunction -> [([Term],Conjunction)] -> (Gen,Rule)
 
 --}
@@ -320,12 +319,12 @@ Conjunction -> [([Term],Conjunction)] -> (Gen,Rule)
 ruleOfDisjAtHeight :: Sig -> Gen -> Role -> String -> [([Term],[AForm])] -> Int -> (Gen, Rule)
 ruleOfDisjAtHeight sig g rl rulename disj ht =
     let fvs = fvsConsq disj in
-    let rvs = L.filter (\t -> L.elem t (rvars rl)) fvs in 
-    let (g',z) = newVar sig g "z" "strd" in 
+    let rvs = L.filter (\t -> L.elem t (rvars rl)) fvs in
+    let (g',z) = newVar sig g "z" "strd" in
     (ruleOfClauses
      sig g' rulename
      (fvs ++ [z])
-     ((Length rl z (indxOfInt ht)) : 
+     ((Length rl z (indxOfInt ht)) :
       (map
        (\v ->
             case firstOccurs v rl of
@@ -333,11 +332,11 @@ ruleOfDisjAtHeight sig g rl rulename disj ht =
               Just i ->
                   if i < ht
                   then (Param rl v (i+1) z v)
-                  else errorWithMsg v 
+                  else errorWithMsg v
                            (" introduced for " ++ (varName v) ++ " too high in role " ++
                             (rname rl) ++": " ++ (show i) ++
-                            " not below " ++ (show ht) ++ "in " ++ rulename ++ "."))           
-       rvs)) 
+                            " not below " ++ (show ht) ++ "in " ++ rulename ++ "."))
+       rvs))
      disj)
     where
       errorWithMsg v tail =
@@ -350,13 +349,11 @@ genOneAssumeRl sig g rl n disjs =
       Missing v -> error ("genOneAssumeRl:  Variable not in role " ++ (rname rl)
                          ++ ": " ++ (show v))
       FoundAt ht ->
-          let disjuncts = map (\(vs,cs) -> (vs, map snd cs)) disjs in 
+          let disjuncts = map (\(vs,cs) -> (vs, map snd cs)) disjs in
           ruleOfDisjAtHeight
           sig g rl ("assume-" ++ (rname rl) ++ "-" ++ (show n))
-              disjuncts 
+              disjuncts
               ht
-
-
 
 genAssumeRls :: Sig -> Gen -> Role -> [[([Term], Conj)]] -> (Gen, [Rule])
 genAssumeRls sig g rl disjs =
@@ -376,7 +373,7 @@ genOneRelyGuarRl sig g rl ht kind disjs =
                          ++ ": " ++ (show (varName v)))
       FoundAt fndHt
           | fndHt <= ht ->
-              let disjuncts = map (\(vs,cs) -> (vs, map snd cs)) disjs in 
+              let disjuncts = map (\(vs,cs) -> (vs, map snd cs)) disjs in
               (ruleOfDisjAtHeight
                sig g rl (kind ++ "-" ++ (rname rl) ++ "-" ++ (show ht))
                disjuncts ht)
@@ -578,7 +575,7 @@ invShearsRule sig g =
                                        [(Prec (z0, i0) (z1, i1))]]},
                         rlcomment = [] }))
             (g, _) -> (g, theVacuousRule)
-      (g, _) -> (g, theVacuousRule) 
+      (g, _) -> (g, theVacuousRule)
 
 uninterruptibleRule :: Sig -> Gen -> (Gen, Rule)
 uninterruptibleRule sig g =

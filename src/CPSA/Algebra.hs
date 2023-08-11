@@ -145,7 +145,7 @@ module CPSA.Algebra (name, alias,
     envOfParamVarPairs,
     substitution,
     strandBoundEnv,
-    renamerAndNewVars, 
+    renamerAndNewVars,
     reify,
     substUpdate,
     strdMatch,
@@ -787,17 +787,16 @@ constituent t t' | isAtom t =
 constituent t _ =
   error $ "Algebra.constituent: Bad atom " ++ show t
 
-
 -- A sorted variable is of one of the forms:
--- 
+--
 -- I (Id _,_)
 -- F symb [t]   where symb is a varSym
 -- D (Id _,_)
 -- X (Id _,_)
 -- G x          where x isGroupVar
--- 
+--
 sortedVarsIn :: Term -> [Term]
-sortedVarsIn = L.nub . (foldVars (flip (:)) []) 
+sortedVarsIn = L.nub . (foldVars (flip (:)) [])
 
 -- The key used to decrypt an encrypted term, otherwise Nothing.
 decryptionKey :: Term -> Maybe Term
@@ -2242,7 +2241,7 @@ strandBoundEnv (Env (_, map)) =
 -- It returns the new generator, the environment, and the list of new
 -- variables vs'
 
--- This code based on Strand.grow.  
+-- This code based on Strand.grow.
 
 renamerAndNewVars :: [Term] -> Gen -> (Gen, Env, [Term])
 renamerAndNewVars vs g =
@@ -2261,7 +2260,6 @@ renamerAndNewVars vs g =
                   [] -> error ("Algebra.renamerAndNewVars:  "
                                ++ "cloned variable failed to match.  "
                                ++ (show v) ++ " -> " ++ (show v') ++ " under " ++ (show e))
-
 
 -- Add type information to an environment, and return it as a list of
 -- associations.

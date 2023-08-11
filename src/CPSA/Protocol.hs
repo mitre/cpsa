@@ -8,13 +8,13 @@
 
 module CPSA.Protocol (Event (..), evtCm, evtTerm, evtChan, evtMap, evt,
     inbnd, outbnd, Trace, tterms, originates, originationPos,
-    generates, generationPos, firstOccursPos, 
+    generates, generationPos, firstOccursPos,
     acquiredPos, gainedPos, genGainedPos, usedPos, insPrecedeOuts,
     Role, rname, rvars, rtrace, rnon, rpnon, runique, runiqgen, rabsent,
     rconf, rauth, rcomment, rsearch, rnorig, rpnorig, ruorig, rugen, rabs,
     rpconf, rpauth, rpriority, mkRole, tchans, varSubset, varsInTerms,
-    addVars, firstOccurs, paramOfName, envsRoleParams, 
-    AForm (..), NodeTerm, Goal (..), Conj, fvsAForm, fvsConj, fvsAntec, fvsConsq, 
+    addVars, firstOccurs, paramOfName, envsRoleParams,
+    AForm (..), NodeTerm, Goal (..), Conj, fvsAForm, fvsConj, fvsAntec, fvsConsq,
     aFormOrder, aFreeVars, instantiateAForm, instantiateConj, Rule (..),
     Prot, mkProt, pname, alg, pgen, psig, roles,
     nullaryrules, unaryrules, generalrules, rules, userrules, generatedrules,
@@ -198,7 +198,7 @@ firstOccursPos t c =
       loop pos (In t' : c)
           | test t (cmTerm t') ||
             testMaybe maybeInv (cmTerm t') = Just pos -- Found it
-                                                      -- incoming 
+                                                      -- incoming
           | otherwise = loop (pos + 1) c
 
 -- At what position is a term acquired in a trace?
@@ -445,13 +445,13 @@ paramVarPairs rl =
          case paramOfName (varName v) rl of
            Nothing -> soFar
            Just p -> (p,v) : soFar)
-    [] 
+    []
 
-envsRoleParams :: Role -> [Term] -> Env 
+envsRoleParams :: Role -> [Term] -> Env
 envsRoleParams rl vars =
     envOfParamVarPairs $ paramVarPairs rl vars
 
-{-- 
+{--
 envsRoleParams rl g =
     foldl
     (\ges v -> concatMap
@@ -816,16 +816,16 @@ fvsAForm (Param _ _ _ z v) = L.nub $ sortedVarsIn z ++ sortedVarsIn v
 fvsAForm (Prec (z1,i1) (z2,i2)) =
     L.nub $ sortedVarsIn z1 ++ sortedVarsIn i1 ++
      sortedVarsIn z2 ++ sortedVarsIn i2
-                  
+
 fvsAForm (Non t) = L.nub $ sortedVarsIn t
 fvsAForm (Pnon t) = L.nub $ sortedVarsIn t
 fvsAForm (Uniq t) = L.nub $ sortedVarsIn t
 fvsAForm (Ugen t) = L.nub $ sortedVarsIn t
-                    
+
 fvsAForm (UniqAt t (z1,i1)) =
-    L.nub $ sortedVarsIn t ++ sortedVarsIn z1 ++ sortedVarsIn i1 
+    L.nub $ sortedVarsIn t ++ sortedVarsIn z1 ++ sortedVarsIn i1
 fvsAForm (UgenAt t (z1,i1)) =
-    L.nub $ sortedVarsIn t ++ sortedVarsIn z1 ++ sortedVarsIn i1 
+    L.nub $ sortedVarsIn t ++ sortedVarsIn z1 ++ sortedVarsIn i1
 
 fvsAForm (GenStV t) = L.nub $ sortedVarsIn t
 fvsAForm (Conf t) = L.nub $ sortedVarsIn t
@@ -833,18 +833,18 @@ fvsAForm (Auth t) = L.nub $ sortedVarsIn t
 
 fvsAForm (Commpair (z1,i1) (z2,i2)) =
     L.nub $ sortedVarsIn z1 ++ sortedVarsIn i1 ++
-     sortedVarsIn z2 ++ sortedVarsIn i2                   
+     sortedVarsIn z2 ++ sortedVarsIn i2
 fvsAForm (SameLocn (z1,i1) (z2,i2)) =
     L.nub $ sortedVarsIn z1 ++ sortedVarsIn i1 ++
      sortedVarsIn z2 ++ sortedVarsIn i2
 fvsAForm (LeadsTo (z1,i1) (z2,i2)) =
     L.nub $ sortedVarsIn z1 ++ sortedVarsIn i1 ++
      sortedVarsIn z2 ++ sortedVarsIn i2
-                  
+
 fvsAForm (StateNode (z1,i1)) =
-    L.nub $ sortedVarsIn z1 ++ sortedVarsIn i1 
+    L.nub $ sortedVarsIn z1 ++ sortedVarsIn i1
 fvsAForm (Trans (z1,i1)) =
-    L.nub $ sortedVarsIn z1 ++ sortedVarsIn i1 
+    L.nub $ sortedVarsIn z1 ++ sortedVarsIn i1
 
 fvsAForm (Equals t1 t2) = L.nub $ sortedVarsIn t1 ++ sortedVarsIn t2
 fvsAForm (Component t1 t2) = L.nub $ sortedVarsIn t1 ++ sortedVarsIn t2
@@ -858,7 +858,7 @@ fvsAntec :: [AForm] -> [Term]
 fvsAntec afs = L.nub $ concatMap fvsAForm afs
 
 fvsConsq :: [([Term], [AForm])] -> [Term]
-fvsConsq exs = L.nub $ concatMap (\(evs,c) -> (fvsAntec c) L.\\ evs) exs 
+fvsConsq exs = L.nub $ concatMap (\(evs,c) -> (fvsAntec c) L.\\ evs) exs
 
 data Rule
   = Rule { rlname :: String,    -- Name of rule

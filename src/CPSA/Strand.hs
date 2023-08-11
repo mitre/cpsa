@@ -128,6 +128,9 @@ useWellFormedTerms = False -- True
 useVariableSeparation :: Bool
 useVariableSeparation = True -- False
 
+usePovCheck :: Bool
+usePovCheck = True -- False
+
 -- Instances and Strand Identifiers
 
 -- An Instance is an instance of a role, in the sense that each
@@ -702,17 +705,11 @@ preskelWellFormed k =
     wellOrdered k && acyclicOrder k &&
     roleOrigCheck k &&
     roleGenCheck k &&
-    (povCheck k || --   (z (show (povCheck k) ++ " pov length " ++
-                   --     (show (case pov k of
-                   --             Nothing -> 0
-                   --             Just k0 -> L.length (insts k0))))
-                    (povCheck k)) -- )
+    (not usePovCheck || povCheck k)
     where
       terms = kterms k
       vs = kvars k
       f b t = b && t `elem` vs
---      f False _ = False
---      f True t = t `elem` vs
       nonCheck t = all (not . carriedBy t) terms
       uniqueCheck t = any (carriedBy t) terms
       uniqgenCheck t = any (constituent t) terms
@@ -2895,12 +2892,12 @@ unSatReport k g ge =
     case varAtomLists of
       [] -> AFact "false" []
       (ebvs,as) : _ -> iter ebvs as ge
-          
+
     where
       varAtomLists = consq g
-                     
-      -- doesn't happen if e is a counterexample 
-      iter _ [] _ = AFact "true" [] 
+
+      -- doesn't happen if e is a counterexample
+      iter _ [] _ = AFact "true" []
       iter ebvs (a : as) ge =
           case satisfy a ebvs k ge of
             [] -> a
@@ -2910,7 +2907,7 @@ unSatReport k g ge =
 -- given atomic formula.  The second argument is the set of
 -- existentially bound variables, which we will use only in geq to
 -- handle adding identities involving the existentially bound
--- variables.  
+-- variables.
 satisfy :: AForm -> [Term] -> Sem
 satisfy (Length r z h) _ = glength r z h
 satisfy (Param r v i z t) _ = gparam r v i z t
@@ -3205,7 +3202,7 @@ geq ebvs t t' _ (g, e)
   -- or else are among the existentially bound variables ebvs.
   -- This always happens for goals because they must be role specific
   -- but it is not always true for rules.
-  | not (unmatchedVarsWithin e t ebvs) = 
+  | not (unmatchedVarsWithin e t ebvs) =
       error ("In a rule equality check, " ++
              "cannot find a binding for some variable in " ++ (show t) ++
              " with ebvs " ++ (show ebvs))
@@ -3232,7 +3229,7 @@ geq ebvs t t' _ (g, e)
   do
     subst <- unify t t' (g, emptySubst)
     return (fst subst, substUpdate e (snd subst))
---} 
+--}
 
 gcomponent :: Term -> Term -> Sem
 gcomponent t t' k (g, e) =

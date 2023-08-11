@@ -20,7 +20,7 @@ adjoin x xs
 
 subset :: Eq a => [a] -> [a] -> Bool
 subset as bs =
-    all (flip elem bs) as 
+    all (flip elem bs) as
 
 -- Delete the nth item in a list
 deleteNth :: Int -> [a] -> [a]

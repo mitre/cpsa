@@ -533,7 +533,7 @@ satisfies k =
       L () (S () "no" :
             (displayForm
              (ctx $ (uvars g) ++ (evars g) ++ (kvars k))
-             (unSatReport k g ge)) : 
+             (unSatReport k g ge)) :
             (displayEnv (ctx $ uvars g) (ctx $ kvars k) (snd ge)))
     ctx ts = addToContext emptyContext ts
     evars g = concatMap fst $ consq g

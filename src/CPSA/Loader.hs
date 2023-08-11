@@ -553,7 +553,7 @@ initRules sig g prot prs =
 
       return (g,
                neqs ++ fixedStateRls ++ fcRls ++
-                    asRls ++ trRls ++ csRls ++ gsRls, 
+                    asRls ++ trRls ++ csRls ++ gsRls,
                rlRls ++ grRls ++ cqRls)
 
 {--
@@ -646,50 +646,45 @@ badKey _ _ = return ()
 
 -- 2.  If the earliest occurrence of a group var is in an In event,
 -- then the group var does not *originate* in a later event.  Ie its
--- earliest *carried* occurrence will not be a later transmission.  
+-- earliest *carried* occurrence will not be a later transmission.
 
 -- 3.  If the earliest occurrence of a group var is an Out event, that
 -- must be an rndx.
 
-badGroupMemberOccurrences :: [Term] -> Trace -> Maybe ([Term], Int) 
+badGroupMemberOccurrences :: [Term] -> Trace -> Maybe ([Term], Int)
 badGroupMemberOccurrences vars events =
-    loop groupVars events 0    
+    loop groupVars events 0
     where
       groupVars = filter isVarExpr vars
       usedAndRemaining e = L.partition (flip occursIn $ evtTerm e)
 
       checkGroupVar (Out _) v = isRndx v
       -- See IMPORTANT note above
-      checkGroupVar (In (Plain _)) v = not (isRndx v) || True 
+      checkGroupVar (In (Plain _)) v = not (isRndx v) || True
       checkGroupVar (In (ChMsg c _)) v = not (isRndx v) || isLocn c || True
 
-      loop _ [] _ = Nothing 
+      loop _ [] _ = Nothing
       loop gvs (e : evts) i =
           let (fsts,rest) = usedAndRemaining e gvs in
           case L.filter (not . checkGroupVar e) fsts of
-            [] -> loop rest evts (i+1) 
-            bad -> Just (bad,i) 
+            [] -> loop rest evts (i+1)
+            bad -> Just (bad,i)
 
 badOrigNotGen :: [Term] -> Trace -> [(Term,Int)]
 badOrigNotGen vars events =
     foldr
     (\v soFar -> case recvButOrig v events of
                    Nothing -> soFar
-                   Just p -> (v,p) : soFar) [] groupVars 
+                   Just p -> (v,p) : soFar) [] groupVars
     where
       groupVars = filter isVarExpr vars
       recvButOrig v c =
-          if (originates v c &&   -- first carried outbound 
-              not(generates v c)) -- first occurs inbound 
-          then 
+          if (originates v c &&   -- first carried outbound
+              not(generates v c)) -- first occurs inbound
+          then
               firstOccursPos v c
           else
-              Nothing 
-
-              
-    
-
-
+              Nothing
 
 loadTrace :: MonadFail m => Sig -> Gen -> [Term] ->
              [SExpr Pos] -> m (Gen, [Term], [Term], PreRules, Trace)
@@ -700,7 +695,7 @@ loadTrace sig gen vars xs =
                     -> Trace -> [SExpr Pos]
                     -> m (Gen, [Term], [Term], PreRules, Trace)
       loadTraceLoop gen newVars uniqs pr events [] =
-          let events' = reverse events in 
+          let events' = reverse events in
           case badGroupMemberOccurrences vars events' of
             Nothing ->
                 case badOrigNotGen vars events' of
@@ -965,7 +960,7 @@ loadInstMax :: MonadFail m => Sig -> Pos -> Prot -> [Term] -> Gen -> String ->
 loadInstMax sig pos p kvars gen role env =
     do
       r <- lookupRole pos p role
-      let height = length (rtrace r) 
+      let height = length (rtrace r)
       let vars = rvars r
       (gen', env') <- foldM (loadMaplet sig kvars vars)
                       (gen, emptyEnv) env
