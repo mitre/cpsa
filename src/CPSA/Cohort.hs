@@ -23,7 +23,7 @@ import System.IO.Unsafe
 z :: Show a => a -> b -> b
 z x y = unsafePerformIO (print x >> return y)
 
-  zShow :: Show a => a -> a
+zShow :: Show a => a -> a
 zShow x = z (show x) x
 
 zz :: Show a => a -> a
@@ -79,6 +79,10 @@ useThinningDuringGeneralization = False -- True
 
 omitGeneralization :: Bool
 omitGeneralization = False -- True
+
+-- This check is just a sanity check and is normally left off.
+usePovCheck :: Bool
+usePovCheck = False -- True
 
 -- Minimum priority to solve
 minPriority :: Int
@@ -221,10 +225,19 @@ solved ct pos eks escape k n subst absent =
       f (CM _) ts = ts
       f (TM t) ts = S.insert t ts
 
+-- A sanity check for cohort members normally left off.
+povCheck :: Preskel -> Bool
+povCheck k =
+    case pov k of
+      Nothing -> True
+      Just k0 -> not (null (homomorphism k0 k (prob k)))
+
 maybeSolved :: CMT -> Place -> [Term] -> Set CMT ->
                Preskel -> Node -> Subst -> [(Term, Term)] -> Bool
 maybeSolved ct pos eks escape k n subst absent =
-    not useSolvedFilter || solved ct pos eks escape k n subst absent
+    not useSolvedFilter
+            || solved ct pos eks escape k n subst absent
+               && (not usePovCheck || povCheck k)
 
 data Mode = Mode
     { noGeneralization :: Bool,

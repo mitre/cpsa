@@ -128,9 +128,6 @@ useWellFormedTerms = False -- True
 useVariableSeparation :: Bool
 useVariableSeparation = True -- False
 
-usePovCheck :: Bool
-usePovCheck = True -- False
-
 -- Instances and Strand Identifiers
 
 -- An Instance is an instance of a role, in the sense that each
@@ -704,8 +701,7 @@ preskelWellFormed k =
     all chanCheck (kauth k) &&
     wellOrdered k && acyclicOrder k &&
     roleOrigCheck k &&
-    roleGenCheck k &&
-    (not usePovCheck || povCheck k)
+    roleGenCheck k
     where
       terms = kterms k
       vs = kvars k
@@ -716,9 +712,6 @@ preskelWellFormed k =
       absentCheck (x, y) = varSubset [x, y] vs && x /= y
       genStCheck t = foldVars f True t
       chanCheck c = elem c vs
-      povCheck k = case pov k of
-                     Nothing -> True
-                     Just k0 -> not (null (homomorphism k0 k (prob k)))
 
 -- Do notation friendly preskeleton well formed check.
 wellFormedPreskel :: MonadFail m => Preskel -> m Preskel
