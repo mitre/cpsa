@@ -455,3 +455,14 @@ Executable cpsa4debranch
   Other-Modules:
     Paths_cpsa CPSA.Lib.Pretty CPSA.Lib.SExpr
     CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Lib.Expand
+
+Executable cpsa4query
+  Main-Is:              CPSA/Query/Main.hs
+  Default-Language:     Haskell2010
+  Build-Depends:        base
+  GHC-Options:
+    -Wall -fno-warn-name-shadowing -fwarn-unused-imports
+  Hs-Source-Dirs:       src
+  Other-Modules:
+    Paths_cpsa CPSA.Lib.Pretty CPSA.Lib.SExpr
+    CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Lib.Expand
