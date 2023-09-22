@@ -467,4 +467,4 @@ Executable cpsa4query
     Paths_cpsa CPSA.Lib.Pretty CPSA.Lib.SExpr
     CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Lib.Expand
     CPSA.Lib.Utilities
-    CPSA.Query.Loader CPSA.Query.Tree
+    CPSA.Query.Loader CPSA.Query.Tree CPSA.Query.Query

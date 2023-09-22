@@ -8,6 +8,7 @@ import CPSA.Lib.SExpr
 import CPSA.Lib.Entry (filterOptions, filterInterp, abort)
 import CPSA.Query.Loader
 import CPSA.Query.Tree
+import CPSA.Query.Query
 
 -- Returns the input query and S-expression and an interpretation of
 -- the command line options.
@@ -63,7 +64,9 @@ main =
       (query, p, _) <- start filterOptions filterInterp
       putStrLn query
       ks <- loadPreskels p
-      putStrLn (show (forest ks))
+      q <- loadQuery query
+      ans <- execQuery q (forest ks)
+      putStrLn (show ans)
 
 -- Load preskeletons
 loadPreskels :: PosHandle -> IO ([Preskel])
