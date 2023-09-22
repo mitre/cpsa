@@ -6,8 +6,8 @@ import System.Environment
 import Paths_cpsa
 import CPSA.Lib.SExpr
 import CPSA.Lib.Entry (filterOptions, filterInterp, abort)
-
-
+import CPSA.Query.Loader
+import CPSA.Query.Tree
 
 -- Returns the input query and S-expression and an interpretation of
 -- the command line options.
@@ -19,7 +19,6 @@ start options interp =
       opts <- interp flags
       (query, p) <- openInput options files
       return (query, p, opts)
-
 
 opts :: [OptDescr a] -> [String] -> IO ([a], [String])
 opts options argv =
@@ -57,9 +56,28 @@ usage options errs =
       let header = "Usage: " ++ name ++ " [OPTIONS] QUERY [FILE]"
       let footer = "\nDocumentation directory: " ++ datadir
       return (concat errs ++ usageInfo header options ++ footer)
-             
+
 main :: IO ()
 main =
     do
-      (query, _, _) <- start filterOptions filterInterp
+      (query, p, _) <- start filterOptions filterInterp
       putStrLn query
+      ks <- loadPreskels p
+      putStrLn (show (forest ks))
+
+-- Load preskeletons
+loadPreskels :: PosHandle -> IO ([Preskel])
+loadPreskels h =
+    do
+      (_, k, s) <- loadFirst h
+      ks <- loop [k] s
+      return ks
+    where
+      loop ks s =
+          do
+            n <- loadNext s
+            case n of
+              Nothing ->        -- EOF
+                  return $ reverse ks
+              Just (k, s) ->
+                  loop (k:ks) s
