@@ -37,6 +37,8 @@ debranch :: SExpr Pos -> SExpr Pos
 debranch (L pos (S _ "defprotocol" : S _ name : S _ alg : xs)) =
     L pos (S pos "defprotocol" : S pos name : S pos alg :
              concatMap protBody xs)
+debranch (L pos (S _ "defprotocol" : _)) =
+    error (shows pos "Bad protocol")
 debranch x = x
 
 -- Debranch the body of a protocol focusing in on roles.
@@ -58,6 +60,8 @@ protBody (L pos (S _ "defrole" : S _ name : vars :
           g env (L pos (s@(S _ _) : args)) =
               L pos (s : map (subst env) args)
           g _ x = x
+protBody (L pos (S _ "defrole" : _)) =
+    error (shows pos "Bad role")
 protBody x = [x]
 
 -- Find splits in a trace and return environments made from cheq's.

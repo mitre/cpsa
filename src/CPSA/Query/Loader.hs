@@ -11,7 +11,7 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-module CPSA.Query.Loader (Preskel, label, parent, seen, alist,
+module CPSA.Query.Loader (Preskel, label, parent, seen, alist, strip,
                           assoc, nassoc, State, loadFirst, loadNext)
                           where
 
