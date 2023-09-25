@@ -1,9 +1,6 @@
--- Loads preskeletons and returns the results for display.  An error
--- is signaled if the ordering relation is cyclic.  For preskeleton
--- input without labels, a unique label is added.  The representation
--- of each strand includes its trace, but not its environment.
--- Ordering relations implied by transitive closure are eliminated so
--- as to reduce clutter.
+-- Loads preskeletons and supplies functions for dealing with the
+-- preskeleton's alist.  The code is based on what is in
+-- CPSA.Graph.Loader.
 
 -- Copyright (c) 2009 The MITRE Corporation
 --
@@ -26,7 +23,7 @@ data Preskel = Preskel
                                 -- by the loader
       parent :: Maybe Int,      -- Parent from the input
       seen :: [Int], -- Seen preskeletons isomorphic to cohort members
-      alist :: [SExpr ()] }     -- Body of this preskeleton
+      alist :: [SExpr Pos] }     -- Body of this preskeleton
     deriving Show
 
 instance Eq Preskel where
@@ -103,7 +100,7 @@ loadPreskel _ _ tag (S _ _ : (L _ (S _ "vars" : _)) : xs) =
       return Preskel { label = maybe tag id label,
                        parent  = parent,
                        seen = maybe [] (L.sort . L.nub) seen,
-                       alist = map strip xs }
+                       alist = xs }
 loadPreskel _ pos _ _ = fail (shows pos "Malformed skeleton")
 
 -- Strip positions from an S-expression

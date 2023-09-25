@@ -1,14 +1,69 @@
+-- Reads and runs a query on a derivation tree.
+
+-- This programs loads CPSA output and a query.  It assembles the
+-- skeletons in the output into a forest of derivation trees.  It then
+-- runs the query against the selected trees in the forest and returns
+-- the labels of the skeletons that satisfy the query.
+
+-- A query is a file containing S-Expressions.  The first S-Expression
+-- contains the query proper, and the remain S-Expressions are numbers
+-- that select which trees in the forest will be the searched by the
+-- query proper.  The syntax of the query proper is:
+
+-- QUERY ::= (has-key SYMBOL)
+--        |  (not QUERY)
+--        |  (and QUERY*)
+--        |  (or QUERY*)
+
+-- The has-key predicate asks if SYMBOL is a key in a skeleton.  The
+-- remain operations implement the usual way to combine boolean
+-- functions.
+
+-- EXAMPLE
+--
+-- (has-key shape) 0 2
+--
+-- finds the skeletons in tree 0 and tree 2 that have shape as a
+-- key.  If this query is run against the test file output
+-- tst/unilateral.txt, it will find that skeletons 1 and 3 are shapes.
+
+-- TRANSCRIPT
+--
+-- $ cat query.txt
+-- (has-key shape) 0 2
+-- $ cpsa4query query.txt tst/unilateral.txt
+--     1    3
+
+-- Copyright (c) 2009 The MITRE Corporation
+--
+-- This program is free software: you can redistribute it and/or
+-- modify it under the terms of the BSD License as published by the
+-- University of California.
+
 module Main (main) where
 
 import System.IO
 import System.Console.GetOpt
 import System.Environment
 import Paths_cpsa
+import Text.Printf (printf)
 import CPSA.Lib.SExpr
-import CPSA.Lib.Entry (filterOptions, filterInterp, abort)
+import CPSA.Lib.Entry (filterOptions, filterInterp, abort, outputHandle)
 import CPSA.Query.Loader
 import CPSA.Query.Tree
 import CPSA.Query.Query
+
+main :: IO ()
+main =
+    do
+      (query, p, (output, margin)) <- start filterOptions filterInterp
+      putStrLn query
+      ks <- loadPreskels p
+      q <- loadQuery query
+      ans <- execQuery q (forest ks)
+      h <- outputHandle output
+      showAns h margin ans
+      hClose h
 
 -- Returns the input query and S-expression and an interpretation of
 -- the command line options.
@@ -58,16 +113,6 @@ usage options errs =
       let footer = "\nDocumentation directory: " ++ datadir
       return (concat errs ++ usageInfo header options ++ footer)
 
-main :: IO ()
-main =
-    do
-      (query, p, _) <- start filterOptions filterInterp
-      putStrLn query
-      ks <- loadPreskels p
-      q <- loadQuery query
-      ans <- execQuery q (forest ks)
-      putStrLn (show ans)
-
 -- Load preskeletons
 loadPreskels :: PosHandle -> IO ([Preskel])
 loadPreskels h =
@@ -84,3 +129,20 @@ loadPreskels h =
                   return $ reverse ks
               Just (k, s) ->
                   loop (k:ks) s
+
+showAns :: Handle -> Int -> [Int] -> IO ()
+showAns h margin ans =
+    loop ans 0
+    where
+      loop [] 0 = return ()
+      loop [] _ = hPutStrLn h ""
+      loop (i:ints) col
+          | col < margin =
+              do
+                let field = printf "%5d" i
+                hPutStr h field
+                loop ints (col + 5)
+          | otherwise =
+              do
+                hPutStrLn h ""
+                loop (i:ints) 0

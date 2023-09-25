@@ -1,4 +1,6 @@
--- Generate an SVG drawing of a tree of preskeletons
+-- Generate a tree of preskeletons
+
+-- This code is based on what is in CPSA.Graph.Tree
 
 -- Copyright (c) 2009 The MITRE Corporation
 --
