@@ -34,6 +34,12 @@
 -- $ cpsa4query query.txt tst/unilateral.txt
 --     1    3
 
+-- Usage: cpsa4query [OPTIONS] QUERY [FILE]
+--   -o FILE  --output=FILE  output FILE
+--   -m INT   --margin=INT   set output margin (default 72)
+--   -h       --help         show help message
+--   -v       --version      show version number
+
 -- Copyright (c) 2009 The MITRE Corporation
 --
 -- This program is free software: you can redistribute it and/or
@@ -42,13 +48,14 @@
 
 module Main (main) where
 
+import Numeric
 import System.IO
 import System.Console.GetOpt
 import System.Environment
 import Paths_cpsa
 import Text.Printf (printf)
 import CPSA.Lib.SExpr
-import CPSA.Lib.Entry (filterOptions, filterInterp, abort, outputHandle)
+import CPSA.Lib.Entry (abort, success, cpsaVersion, outputHandle)
 import CPSA.Query.Loader
 import CPSA.Query.Tree
 import CPSA.Query.Query
@@ -112,6 +119,53 @@ usage options errs =
       let header = "Usage: " ++ name ++ " [OPTIONS] QUERY [FILE]"
       let footer = "\nDocumentation directory: " ++ datadir
       return (concat errs ++ usageInfo header options ++ footer)
+
+-- Command line option flags
+data Flag
+    = Help                      -- Help
+    | Info                      -- Version information
+    | Margin String             -- Output line length
+    | Output String             -- Output file name
+      deriving Show
+
+defaultMargin :: Int
+defaultMargin = 72
+
+filterOptions :: [OptDescr Flag]
+filterOptions =
+    [ Option ['o'] ["output"]  (ReqArg Output "FILE")  "output FILE",
+      Option ['m'] ["margin"]  (ReqArg Margin "INT")
+      ("set output margin (default " ++ show defaultMargin ++ ")"),
+      Option ['h'] ["help"]    (NoArg Help)          "show help message",
+      Option ['v'] ["version"] (NoArg Info)          "show version number" ]
+
+-- Interpret option flags
+filterInterp :: [Flag] -> IO (Maybe FilePath, Int)
+filterInterp flags =
+    loop flags Nothing defaultMargin
+    where
+      loop [] file margin =
+          return (file, margin)
+      loop (Output name : flags) Nothing margin =
+          loop flags (Just name) margin
+      loop (Margin value : flags) file _ =
+          case readDec value of
+            [(margin, "")] ->
+                loop flags file margin
+            _ ->
+                do
+                  msg <- usage filterOptions ["Bad value for margin\n"]
+                  abort msg
+      loop (Info : _) _ _ =
+          success cpsaVersion
+      loop (Help : _) _ _ =
+          do                    -- Show help then exit with success
+            msg <- usage filterOptions []
+            success msg
+      loop _ _ _ =
+           do                   -- Show help then exit with failure
+             msg <- usage filterOptions ["Bad option combination\n"]
+             abort msg
 
 -- Load preskeletons
 loadPreskels :: PosHandle -> IO ([Preskel])
