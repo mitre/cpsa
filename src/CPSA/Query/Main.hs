@@ -11,6 +11,8 @@
 -- query proper.  The syntax of the query proper is:
 
 -- QUERY ::= (has-key SYMBOL)
+--        |  (null? SYMBOL)
+--        |  (member SEXPR SYMBOL)
 --        |  (not QUERY)
 --        |  (and QUERY*)
 --        |  (or QUERY*)

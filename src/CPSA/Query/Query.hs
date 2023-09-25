@@ -17,6 +17,8 @@ import CPSA.Query.Loader (Preskel (..), assoc)
 
 data Query
     = HasKey String
+    | Nullp String
+    | Member (SExpr Pos) String
     | Not Query
     | And [Query]
     | Or [Query]
@@ -39,7 +41,12 @@ loadQuery file =
                 _ -> return (pq, ints)
 
 parseQuery :: SExpr Pos -> IO Query
-parseQuery (L _ [S _ "has-key", S _ sym]) = return (HasKey sym)
+parseQuery (L _ [S _ "has-key", S _ sym]) =
+    return (HasKey sym)
+parseQuery (L _ [S _ "null?", S _ sym]) =
+    return (Nullp sym)
+parseQuery (L _ [S _ "member", x, S _ sym]) =
+    return (Member x sym)
 parseQuery (L _ [S _ "not", x]) =
     do
       q <- parseQuery x
@@ -86,7 +93,14 @@ execQueryTree q t =
       ans = if runQuery q (vertex t) then [label (vertex t)] else []
 
 runQuery :: Query -> Preskel -> Bool
-runQuery (HasKey sym) k = maybe False (const True) (assoc sym (alist k))
+runQuery (HasKey sym) k =
+    maybe False (const True) (assoc sym (alist k))
+runQuery (Nullp sym) k =
+    maybe False null (assoc sym (alist k))
+runQuery (Member x sym) k =
+    case assoc sym (alist k) of
+      Nothing -> False
+      Just l -> elem x l
 runQuery (Not q) k = not (runQuery q k)
 runQuery (And qs) k = all (\ q -> runQuery q k) qs
 runQuery (Or qs) k = any (\ q -> runQuery q k) qs
