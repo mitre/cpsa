@@ -13,11 +13,18 @@
 -- QUERY ::= (has-key SYMBOL)
 --        |  (null? SYMBOL)
 --        |  (member SEXPR SYMBOL)
+--        |  (has-children?)
+--        |  (has-duplicates?)
 --        |  (not QUERY)
 --        |  (and QUERY*)
 --        |  (or QUERY*)
 
 -- The has-key predicate asks if SYMBOL is a key in a skeleton.  The
+-- null? predicate asks if SYMBOL is a key and the value is the empty
+-- list.  The member predicate asks if SEXPR is a member of the value
+-- associated with key SYMBOL.  The has-children? predicate asks if
+-- the current skeleton has children.  The has-duplicates? predicate
+-- asks if the current skeleton has duplicates as descendents.  The
 -- remain operations implement the usual way to combine boolean
 -- functions.
 
