@@ -75,7 +75,9 @@ branchSplits [L _ (S _ "branch" : branches)] =
 branchSplits (L _ [S _ "cheq", S _ var, term] : events) =
     map f (branchSplits events)
     where
-      f (trace, env) = (trace, (var, subst env term) : env)
+      f (trace, env) = (trace, g ((var, term) : env))
+      substEnv env (v, t) = (v, subst env t)
+      g env = map (substEnv env) env
 branchSplits (event : events) =
     map f (branchSplits events)
     where
