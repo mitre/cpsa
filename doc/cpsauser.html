@@ -63,7 +63,10 @@ is complete relative to natural role semantics.</p>
   (<a href="http://json.org">JSON</a>) to ease processing in other
   languages.  The
   <a href="#cpsajson"><code>cpsa4json</code></a> program translates
-  JSON encoded CPSA into CPSA S-Expressions. Finally,
+  JSON encoded CPSA into CPSA
+  S-Expressions. The <a href="#cpsaquery"><code>cpsa4query</code></a>
+  program queries CPSA output as derivation trees.
+  Finally,
   the <a href="#cpsa42latex"><code>cpsa42latex</code></a> program
   translates CPSA macros into equivalent LaTeX macros.</p>
 
@@ -1052,6 +1055,79 @@ Usage: cpsa4json [OPTIONS] [FILE]
   -m INT   --margin=INT   set output margin (default 72)
   -h       --help         show help message
   -v       --version      show version number</pre>
+</blockquote>
+
+<h2 id="cpsaquery">Querying CPSA Output as Derivation Trees</h2>
+
+<p>The <code>cpsa4query</code> program loads CPSA output and a query.
+It assembles the skeletons in the output into a forest of derivation
+trees.  It then runs the query against the selected trees in the
+forest and returns the labels of the skeletons that satisfy the
+query.</p>
+
+<p>Each tree vertex is a skeleton represented as a S-Expression.
+Information in the skeleton can be accessed by treating it as an
+association list.  The query language allows one to ask questions
+about the association list, such as if it has a given key.  For
+example, you can list the shapes in a tree by asking if the
+association list has the symbol "shape" as a key.</p>
+
+<h3>Usage</h3>
+
+<blockquote>
+  <pre>$ cpsa4query -h
+Usage: cpsa4query [OPTIONS] QUERY [FILE]
+  -o FILE  --output=FILE  output FILE
+  -m INT   --margin=INT   set output margin (default 72)
+  -h       --help         show help message
+  -v       --version      show version number</pre>
+</blockquote>
+
+<h3>Description</h3>
+
+A query is a file containing S-Expressions.  The first S-Expression
+contains the query proper, and the remain S-Expressions are numbers
+that select which trees in the forest will be the searched by the
+query proper.  The syntax of the query proper is:
+
+<blockquote>
+  <pre>QUERY ::= (has-key SYMBOL)
+       |  (null SYMBOL)
+       |  (member SEXPR SYMBOL)
+       |  (has-children)
+       |  (has-duplicates)
+       |  (not QUERY)
+       |  (and QUERY*)
+       |  (or QUERY*)</pre>
+</blockquote>
+  
+The <code>has-key</code> predicate asks if <code>SYMBOL</code> is a
+key in a skeleton.  The <code>null</code> predicate asks
+if <code>SYMBOL</code> is a key and the value is the empty list.  The
+<code>member</code> predicate asks if <code>SEXPR</code> is a member
+of the value associated with key <code>SYMBOL</code>.
+The <code>has-children</code> predicate asks if the current skeleton
+has children.  The <code>has-duplicates</code> predicate asks if the
+current skeleton has duplicates as descendents.  The remaining
+operations implement the usual way to combine boolean functions.
+
+<h3>Example</h3>
+
+<blockquote>
+  <pre>(has-key shape) 0 2</pre>
+</blockquote>
+
+<p>finds the skeletons in tree 0 and tree 2 that have shape as a
+key.  If this query is run against the test file output
+tst/unilateral.txt, it will find that skeletons 1 and 3 are shapes.</p>
+
+<h3>Transcript</h3>
+
+<blockquote>
+  <pre>$ cat query.txt
+(has-key shape) 0 2
+$ cpsa4query query.txt tst/unilateral.txt
+    1    3</pre>
 </blockquote>
 
 <h2>S-expressions</h2>

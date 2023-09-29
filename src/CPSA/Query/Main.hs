@@ -5,16 +5,23 @@
 -- runs the query against the selected trees in the forest and returns
 -- the labels of the skeletons that satisfy the query.
 
+-- Each tree vertex is a skeleton represented as a S-Expression.
+-- Information in the skeleton can be accessed by treating it as an
+-- association list.  The query language allows one to ask questions
+-- about the association list, such as if it has a given key.  For
+-- example, you can list the shapes in a tree by asking if the
+-- association list has the symbol "shape" as a key.
+
 -- A query is a file containing S-Expressions.  The first S-Expression
 -- contains the query proper, and the remain S-Expressions are numbers
 -- that select which trees in the forest will be the searched by the
 -- query proper.  The syntax of the query proper is:
 
 -- QUERY ::= (has-key SYMBOL)
---        |  (null? SYMBOL)
+--        |  (null SYMBOL)
 --        |  (member SEXPR SYMBOL)
---        |  (has-children?)
---        |  (has-duplicates?)
+--        |  (has-children)
+--        |  (has-duplicates)
 --        |  (not QUERY)
 --        |  (and QUERY*)
 --        |  (or QUERY*)
@@ -25,7 +32,7 @@
 -- associated with key SYMBOL.  The has-children? predicate asks if
 -- the current skeleton has children.  The has-duplicates? predicate
 -- asks if the current skeleton has duplicates as descendents.  The
--- remain operations implement the usual way to combine boolean
+-- remaining operations implement the usual way to combine boolean
 -- functions.
 
 -- EXAMPLE

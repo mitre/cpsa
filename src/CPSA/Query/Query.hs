@@ -17,10 +17,10 @@ import CPSA.Query.Loader (Preskel (..), assoc)
 
 data Query
     = HasKey String
-    | Nullp String
+    | Null String
     | Member (SExpr Pos) String
-    | HasChildrenP
-    | HasDuplicatesP
+    | HasChildren
+    | HasDuplicates
     | Not Query
     | And [Query]
     | Or [Query]
@@ -45,14 +45,14 @@ loadQuery file =
 parseQuery :: SExpr Pos -> IO Query
 parseQuery (L _ [S _ "has-key", S _ sym]) =
     return (HasKey sym)
-parseQuery (L _ [S _ "null?", S _ sym]) =
-    return (Nullp sym)
+parseQuery (L _ [S _ "null", S _ sym]) =
+    return (Null sym)
 parseQuery (L _ [S _ "member", x, S _ sym]) =
     return (Member x sym)
-parseQuery (L _ [S _ "has-children?"]) =
-    return HasChildrenP
-parseQuery (L _ [S _ "has-duplicates?"]) =
-    return HasDuplicatesP
+parseQuery (L _ [S _ "has-children"]) =
+    return HasChildren
+parseQuery (L _ [S _ "has-duplicates"]) =
+    return HasDuplicates
 parseQuery (L _ [S _ "not", x]) =
     do
       q <- parseQuery x
@@ -101,15 +101,15 @@ execQueryTree q t =
 runQuery :: Query -> Tree -> Bool
 runQuery (HasKey sym) t =
     maybe False (const True) (assoc sym (alist (vertex t)))
-runQuery (Nullp sym) t =
+runQuery (Null sym) t =
     maybe False null (assoc sym (alist (vertex t)))
 runQuery (Member x sym) t =
     case assoc sym (alist (vertex t)) of
       Nothing -> False
       Just l -> elem x l
-runQuery HasChildrenP t =
+runQuery HasChildren t =
     not (null (children t))
-runQuery HasDuplicatesP t =
+runQuery HasDuplicates t =
     not (null (duplicates t))
 runQuery (Not q) t = not (runQuery q t)
 runQuery (And qs) t = all (\ q -> runQuery q t) qs
