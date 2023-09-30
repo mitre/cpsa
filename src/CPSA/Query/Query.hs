@@ -38,9 +38,7 @@ loadQuery file =
             do
               pq <- parseQuery x
               ints <- getInts p
-              case ints of
-                [] -> fail "no ints in query input"
-                _ -> return (pq, ints)
+              return (pq, ints)
 
 parseQuery :: SExpr Pos -> IO Query
 parseQuery (L _ [S _ "has-key", S _ sym]) =
@@ -82,6 +80,8 @@ getInts p =
               _ -> fail "bad int in query file"
 
 execQuery :: (Query, [Int]) -> Forest -> IO [Int]
+execQuery (q, []) ts =
+    return (concatMap (execQueryTree q) ts)
 execQuery (q, ints) ts =
     do
       ts <- mapM (getTree ts) (nub ints)

@@ -13,9 +13,10 @@
 -- association list has the symbol "shape" as a key.
 
 -- A query is a file containing S-Expressions.  The first S-Expression
--- contains the query proper, and the remain S-Expressions are the
+-- contains the query proper, and the remaining S-Expressions are the
 -- integers that select which trees in the forest will be the searched
--- by the query proper.  The syntax of the query proper is:
+-- by the query proper.  If there are no integers, the entire forest
+-- is searched.  The syntax of the query proper is:
 
 -- QUERY ::= (has-key SYMBOL)
 --        |  (null SYMBOL)
@@ -43,9 +44,9 @@
 -- a key.  If this query is run against the test file output
 -- tst/unilateral.txt, it will find that skeletons 1 and 3 are shapes.
 --
--- (has-key aborted) 2
+-- (has-key aborted)
 --
--- finds the skeletons in the third tree that have aborted as a key.
+-- finds the skeletons in the forest that have aborted as a key.
 -- If this query is run against the test file output
 -- tst/wide-mouth-frog, it will find that skeleton 18 is aborted.
 

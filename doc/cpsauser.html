@@ -1085,10 +1085,11 @@ Usage: cpsa4query [OPTIONS] QUERY [FILE]
 
 <h3>Description</h3>
 
-A query is a file containing S-Expressions.  The first S-Expression
-contains the query proper, and the remain S-Expressions are numbers
+<p>A query is a file containing S-Expressions.  The first S-Expression
+contains the query proper, and the remaining S-Expressions are integers
 that select which trees in the forest will be the searched by the
-query proper.  The syntax of the query proper is:
+query proper.  If there are no integers, the entire forest is
+searched.  The syntax of the query proper is:</p>
 
 <blockquote>
   <pre>QUERY ::= (has-key SYMBOL)
@@ -1123,11 +1124,11 @@ a key.  If this query is run against the test file output
 are shapes.</p>
 
 <blockquote>
-  <pre>(has-key aborted) 2</pre>
+  <pre>(has-key aborted)</pre>
 </blockquote>
 
-<p>finds the skeletons in the third tree that have aborted as a key.
-If this query is run against the test file output
+<p>finds the skeletons in the forest that have aborted as a key.  If
+this query is run against the test file output
 <code>tst/wide-mouth-frog.txt</code>, it will find that skeleton 18 is
 aborted.</p>
 
