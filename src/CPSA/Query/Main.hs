@@ -13,9 +13,9 @@
 -- association list has the symbol "shape" as a key.
 
 -- A query is a file containing S-Expressions.  The first S-Expression
--- contains the query proper, and the remain S-Expressions are numbers
--- that select which trees in the forest will be the searched by the
--- query proper.  The syntax of the query proper is:
+-- contains the query proper, and the remain S-Expressions are the
+-- integers that select which trees in the forest will be the searched
+-- by the query proper.  The syntax of the query proper is:
 
 -- QUERY ::= (has-key SYMBOL)
 --        |  (null SYMBOL)
@@ -35,18 +35,24 @@
 -- remaining operations implement the usual way to combine boolean
 -- functions.
 
--- EXAMPLE
+-- EXAMPLES
 --
--- (has-key shape) 0 2
+-- (has-key shape) 0 1
 --
--- finds the skeletons in tree 0 and tree 2 that have shape as a
--- key.  If this query is run against the test file output
+-- finds the skeletons in the first and second tree that have shape as
+-- a key.  If this query is run against the test file output
 -- tst/unilateral.txt, it will find that skeletons 1 and 3 are shapes.
+--
+-- (has-key aborted) 2
+--
+-- finds the skeletons in the third tree that have aborted as a key.
+-- If this query is run against the test file output
+-- tst/wide-mouth-frog, it will find that skeleton 18 is aborted.
 
 -- TRANSCRIPT
 --
 -- $ cat query.txt
--- (has-key shape) 0 2
+-- (has-key shape) 0 1
 -- $ cpsa4query query.txt tst/unilateral.txt
 --     1    3
 
@@ -80,7 +86,6 @@ main :: IO ()
 main =
     do
       (query, p, (output, margin)) <- start filterOptions filterInterp
-      putStrLn query
       ks <- loadPreskels p
       q <- loadQuery query
       ans <- execQuery q (forest ks)

@@ -88,9 +88,13 @@ execQuery (q, ints) ts =
       return (concatMap (execQueryTree q) ts)
 
 getTree :: Forest -> Int -> IO Tree
-getTree [] int = fail ("Cannot find tree " ++ show int)
-getTree (t:ts) int | label (vertex t) == int = return t
-                   | otherwise = getTree ts int
+getTree _ int  | int < 0 = fail ("Bad tree index " ++ show int)
+getTree ts int =
+    loop ts int
+    where
+      loop [] _ = fail ("Cannot find tree " ++ show int)
+      loop (t:_) 0 = return t
+      loop (_:ts) i = loop ts (i - 1)
 
 execQueryTree :: Query -> Tree -> [Int]
 execQueryTree q t =
