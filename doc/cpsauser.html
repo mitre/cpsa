@@ -1132,6 +1132,20 @@ this query is run against the test file output
 <code>tst/wide-mouth-frog.txt</code>, it will find that skeleton 18 is
 aborted.</p>
 
+<blockquote>
+  <pre>(and (not (has-children))
+     (not (has-duplicates))
+     (has-key unrealized))</pre>
+</blockquote>
+
+<p>finds the skeletons in the forest that are dead.  If
+this query is run against the test file output
+<code>tst/blanchet.txt</code>, it will produce</p>
+
+<blockquote>
+  <pre>    2    6    8   16   20   22   30   34   36   42</pre>
+</blockquote>
+
 <h3>Transcript</h3>
 
 <blockquote>

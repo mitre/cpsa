@@ -9,7 +9,7 @@
 module CPSA.Query.Query (Query, loadQuery, execQuery) where
 
 import System.IO
-import Data.List (nub)
+import Data.List (nub, sort)
 import CPSA.Lib.SExpr
 import CPSA.Lib.Entry
 import CPSA.Query.Tree
@@ -81,11 +81,11 @@ getInts p =
 
 execQuery :: (Query, [Int]) -> Forest -> IO [Int]
 execQuery (q, []) ts =
-    return (concatMap (execQueryTree q) ts)
+    return (sort $ concatMap (execQueryTree q) ts)
 execQuery (q, ints) ts =
     do
       ts <- mapM (getTree ts) (nub ints)
-      return (concatMap (execQueryTree q) ts)
+      return (sort $ concatMap (execQueryTree q) ts)
 
 getTree :: Forest -> Int -> IO Tree
 getTree _ int  | int < 0 = fail ("Bad tree index " ++ show int)
