@@ -4,9 +4,8 @@
     "This version uses sorts to avoid confusion"
     "between a nonce and other data"))
 
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment "All input read from tst/sorted_epmo_acctnum.scm")
-(comment "Strand count bounded at 12")
 
 (defprotocol sorted_epmo_acctnum basic
   (defrole bank

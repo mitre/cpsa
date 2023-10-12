@@ -1,6 +1,6 @@
 (herald open-closed (bound 44))
 
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment "All input read from tst/open-closed-multiloc.scm")
 (comment "Strand count bounded at 44")
 
@@ -118,12 +118,12 @@
     (forall ((z strd))
       (implies (p "dev-close" z (idx 4)) (trans z (idx 2)))))
   (defgenrule eff-dev-up-3
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-up" z (idx 4)) (prec z (idx 3) z1 i))
         (or (= z z1)
           (and (p "dev-up" z (idx 5)) (prec z (idx 4) z1 i))))))
   (defgenrule cau-dev-up-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-up" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1)))))))
 
@@ -298,12 +298,12 @@
     (forall ((z strd))
       (implies (p "dev-close" z (idx 4)) (trans z (idx 2)))))
   (defgenrule eff-dev-up-3
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-up" z (idx 4)) (prec z (idx 3) z1 i))
         (or (= z z1)
           (and (p "dev-up" z (idx 5)) (prec z (idx 4) z1 i))))))
   (defgenrule cau-dev-up-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-up" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1)))))))
 
@@ -476,12 +476,12 @@
     (forall ((z strd))
       (implies (p "dev-close" z (idx 4)) (trans z (idx 2)))))
   (defgenrule eff-dev-up-3
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-up" z (idx 4)) (prec z (idx 3) z1 i))
         (or (= z z1)
           (and (p "dev-up" z (idx 5)) (prec z (idx 4) z1 i))))))
   (defgenrule cau-dev-up-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-up" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1)))))))
 

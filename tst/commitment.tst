@@ -1,6 +1,6 @@
 (herald commitment)
 
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment "All input read from tst/commitment.scm")
 
 (defprotocol commit basic
@@ -20,11 +20,12 @@
       (send (enc "receipt" sealed (privk "sig" b))) (recv (cat n quote))
       (send (enc "result" a b n quote outcome (privk "sig" b)))))
   (defrule cheq-auctioneer-4
-    (forall ((z strd) (quote text) (n data) (b a name) (sealed mesg))
+    (forall ((z strd) (a b name) (n data) (quote text) (sealed mesg))
       (implies
-        (and (p "auctioneer" z (idx 4)) (p "auctioneer" "quote" z quote)
-          (p "auctioneer" "n" z n) (p "auctioneer" "b" z b)
-          (p "auctioneer" "a" z a) (p "auctioneer" "sealed" z sealed))
+        (and (p "auctioneer" z (idx 4))
+          (p "auctioneer" "sealed" z sealed)
+          (p "auctioneer" "quote" z quote) (p "auctioneer" "n" z n)
+          (p "auctioneer" "b" z b) (p "auctioneer" "a" z a))
         (= sealed (hash a b n quote)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -108,11 +109,12 @@
       (send (enc "receipt" sealed (privk "sig" b))) (recv (cat n quote))
       (send (enc "result" a b n quote outcome (privk "sig" b)))))
   (defrule cheq-auctioneer-4
-    (forall ((z strd) (quote text) (n data) (b a name) (sealed mesg))
+    (forall ((z strd) (a b name) (n data) (quote text) (sealed mesg))
       (implies
-        (and (p "auctioneer" z (idx 4)) (p "auctioneer" "quote" z quote)
-          (p "auctioneer" "n" z n) (p "auctioneer" "b" z b)
-          (p "auctioneer" "a" z a) (p "auctioneer" "sealed" z sealed))
+        (and (p "auctioneer" z (idx 4))
+          (p "auctioneer" "sealed" z sealed)
+          (p "auctioneer" "quote" z quote) (p "auctioneer" "n" z n)
+          (p "auctioneer" "b" z b) (p "auctioneer" "a" z a))
         (= sealed (hash a b n quote)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -190,11 +192,12 @@
       (send (enc "receipt" sealed (privk "sig" b))) (recv (cat n quote))
       (send (enc "result" a b n quote outcome (privk "sig" b)))))
   (defrule cheq-auctioneer-4
-    (forall ((z strd) (quote text) (n data) (b a name) (sealed mesg))
+    (forall ((z strd) (a b name) (n data) (quote text) (sealed mesg))
       (implies
-        (and (p "auctioneer" z (idx 4)) (p "auctioneer" "quote" z quote)
-          (p "auctioneer" "n" z n) (p "auctioneer" "b" z b)
-          (p "auctioneer" "a" z a) (p "auctioneer" "sealed" z sealed))
+        (and (p "auctioneer" z (idx 4))
+          (p "auctioneer" "sealed" z sealed)
+          (p "auctioneer" "quote" z quote) (p "auctioneer" "n" z n)
+          (p "auctioneer" "b" z b) (p "auctioneer" "a" z a))
         (= sealed (hash a b n quote)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))

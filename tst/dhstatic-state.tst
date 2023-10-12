@@ -1,6 +1,6 @@
 (herald dhstatic-state (algebra diffie-hellman) (bound 16))
 
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment "All input read from tst/dhstatic-state.scm")
 (comment "Strand count bounded at 16")
 
@@ -79,12 +79,12 @@
   (defgenrule fact-init-neq0
     (forall ((z strd) (b a name))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "b" z b) (p "init" "a" z a))
+        (and (p "init" z (idx 2)) (p "init" "a" z a) (p "init" "b" z b))
         (fact neq a b))))
   (defgenrule fact-resp-neq0
     (forall ((z strd) (b a name))
       (implies
-        (and (p "resp" z (idx 2)) (p "resp" "b" z b) (p "resp" "a" z a))
+        (and (p "resp" z (idx 2)) (p "resp" "a" z a) (p "resp" "b" z b))
         (fact neq a b))))
   (defgenrule trRl_get-cert-at-3
     (forall ((z strd))
@@ -93,16 +93,18 @@
     (forall ((z strd))
       (implies (p "get-cert" z (idx 4)) (trans z (idx 2)))))
   (defgenrule gen-st-init-0
-    (forall ((z strd) (serial-a data) (ra rndx) (ca a name))
+    (forall ((z strd) (a name) (ra rndx) (serial-a data) (ca name))
       (implies
-        (and (p "init" z (idx 1)) (p "init" "serial-a" z serial-a)
-          (p "init" "ra" z ra) (p "init" "ca" z ca) (p "init" "a" z a))
+        (and (p "init" z (idx 1)) (p "init" "ca" z ca)
+          (p "init" "serial-a" z serial-a) (p "init" "ra" z ra)
+          (p "init" "a" z a))
         (gen-st (cat "privkey" a ra serial-a ca)))))
   (defgenrule gen-st-resp-0
-    (forall ((z strd) (serial-b data) (rb rndx) (ca b name))
+    (forall ((z strd) (b name) (rb rndx) (serial-b data) (ca name))
       (implies
-        (and (p "resp" z (idx 1)) (p "resp" "serial-b" z serial-b)
-          (p "resp" "rb" z rb) (p "resp" "ca" z ca) (p "resp" "b" z b))
+        (and (p "resp" z (idx 1)) (p "resp" "ca" z ca)
+          (p "resp" "serial-b" z serial-b) (p "resp" "rb" z rb)
+          (p "resp" "b" z b))
         (gen-st (cat "privkey" b rb serial-b ca)))))
   (lang (cert-req (tupl 3)) (cert (tupl 4)) (sig sign)))
 
@@ -1531,12 +1533,12 @@
   (defgenrule fact-init-neq0
     (forall ((z strd) (b a name))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "b" z b) (p "init" "a" z a))
+        (and (p "init" z (idx 2)) (p "init" "a" z a) (p "init" "b" z b))
         (fact neq a b))))
   (defgenrule fact-resp-neq0
     (forall ((z strd) (b a name))
       (implies
-        (and (p "resp" z (idx 2)) (p "resp" "b" z b) (p "resp" "a" z a))
+        (and (p "resp" z (idx 2)) (p "resp" "a" z a) (p "resp" "b" z b))
         (fact neq a b))))
   (defgenrule trRl_get-cert-at-3
     (forall ((z strd))
@@ -1545,16 +1547,18 @@
     (forall ((z strd))
       (implies (p "get-cert" z (idx 4)) (trans z (idx 2)))))
   (defgenrule gen-st-init-0
-    (forall ((z strd) (serial-a data) (ra rndx) (ca a name))
+    (forall ((z strd) (a name) (ra rndx) (serial-a data) (ca name))
       (implies
-        (and (p "init" z (idx 1)) (p "init" "serial-a" z serial-a)
-          (p "init" "ra" z ra) (p "init" "ca" z ca) (p "init" "a" z a))
+        (and (p "init" z (idx 1)) (p "init" "ca" z ca)
+          (p "init" "serial-a" z serial-a) (p "init" "ra" z ra)
+          (p "init" "a" z a))
         (gen-st (cat "privkey" a ra serial-a ca)))))
   (defgenrule gen-st-resp-0
-    (forall ((z strd) (serial-b data) (rb rndx) (ca b name))
+    (forall ((z strd) (b name) (rb rndx) (serial-b data) (ca name))
       (implies
-        (and (p "resp" z (idx 1)) (p "resp" "serial-b" z serial-b)
-          (p "resp" "rb" z rb) (p "resp" "ca" z ca) (p "resp" "b" z b))
+        (and (p "resp" z (idx 1)) (p "resp" "ca" z ca)
+          (p "resp" "serial-b" z serial-b) (p "resp" "rb" z rb)
+          (p "resp" "b" z b))
         (gen-st (cat "privkey" b rb serial-b ca)))))
   (lang (cert-req (tupl 3)) (cert (tupl 4)) (sig sign)))
 

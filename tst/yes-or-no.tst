@@ -1,7 +1,7 @@
 (herald yes-or-no)
 
-(comment "CPSA 4.4.2")
-(comment "All input read from yes-or-no.scm")
+(comment "CPSA 4.4.3")
+(comment "All input read from tst/yes-or-no.scm")
 
 (defprotocol yes-or-no basic
   (defrole init-positive

@@ -1,8 +1,7 @@
 (herald "Example 1.3 from 1983 Dolev-Yao Paper" (bound 12))
 
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment "All input read from tst/dy.lsp")
-(comment "Strand count bounded at 12")
 
 (defprotocol dy basic
   (defrole init

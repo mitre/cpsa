@@ -1,8 +1,8 @@
 (herald uniq-gen-and-orig-example
   (comment "Non-executable role examples"))
 
-(comment "CPSA 4.4.2")
-(comment "All input read from ugo.scm")
+(comment "CPSA 4.4.3")
+(comment "All input read from tst/ugo.scm")
 
 (defprotocol uniq-gen-example basic
   (defrole init

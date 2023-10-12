@@ -1,7 +1,8 @@
 (herald neuman-stubblebine-reauth (bound 8))
 
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment "All input read from tst/neuman-stubblebine-reauth.lsp")
+(comment "Strand count bounded at 8")
 
 (defprotocol neuman-stubblebine-reauth basic
   (defrole init

@@ -1,6 +1,6 @@
 (herald atomic-open-closed (bound 44))
 
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment "All input read from tst/atomic-open-closed.scm")
 (comment "Strand count bounded at 44")
 
@@ -270,15 +270,15 @@
     (forall ((z strd))
       (implies (p "dev-close" z (idx 4)) (trans z (idx 2)))))
   (defgenrule cau-dev-open-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-open" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1))))))
   (defgenrule cau-dev-close-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-close" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1))))))
   (defgenrule cau-dev-pass-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-pass" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1)))))))
 
@@ -606,15 +606,15 @@
     (forall ((z strd))
       (implies (p "dev-close" z (idx 4)) (trans z (idx 2)))))
   (defgenrule cau-dev-open-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-open" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1))))))
   (defgenrule cau-dev-close-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-close" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1))))))
   (defgenrule cau-dev-pass-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-pass" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1)))))))
 
@@ -1046,15 +1046,15 @@
     (forall ((z strd))
       (implies (p "dev-close" z (idx 4)) (trans z (idx 2)))))
   (defgenrule cau-dev-open-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-open" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1))))))
   (defgenrule cau-dev-close-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-close" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1))))))
   (defgenrule cau-dev-pass-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-pass" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1)))))))
 

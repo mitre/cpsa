@@ -1,5 +1,8 @@
-(comment "CPSA 4.4.2")
+(herald mass2 (bound 8))
+
+(comment "CPSA 4.4.3")
 (comment "All input read from tst/mass2.lsp")
+(comment "Strand count bounded at 8")
 
 (defprotocol mass2 basic
   (defrole init

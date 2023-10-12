@@ -1,6 +1,6 @@
 (herald doorsep (comment "Door Simple Example Protocol"))
 
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment "All input read from tst/doorsep.scm")
 
 (defprotocol doorsep basic

@@ -1,7 +1,7 @@
 (herald "DHCR: unified model (UM) original" (bound 20) (limit 12000)
   (algebra diffie-hellman))
 
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment "All input read from tst/dhcr_um_exercise_resolved_bug.scm")
 (comment "Step count limited to 12000")
 (comment "Strand count bounded at 20")
@@ -124,17 +124,17 @@
     (forall ((z strd))
       (implies (p "ltx-disclose" z (idx 2)) (trans z (idx 0)))))
   (defgenrule gen-st-init-0
-    (forall ((z strd) (l rndx) (a name))
+    (forall ((z strd) (a name) (l rndx))
       (implies
         (and (p "init" z (idx 1)) (p "init" "l" z l) (p "init" "a" z a))
         (gen-st (pv a l)))))
   (defgenrule gen-st-resp-0
-    (forall ((z strd) (l rndx) (b name))
+    (forall ((z strd) (b name) (l rndx))
       (implies
         (and (p "resp" z (idx 1)) (p "resp" "l" z l) (p "resp" "b" z b))
         (gen-st (pv b l)))))
   (defgenrule gen-st-ltx-disclose-0
-    (forall ((z strd) (l rndx) (self name))
+    (forall ((z strd) (self name) (l rndx))
       (implies
         (and (p "ltx-disclose" z (idx 1)) (p "ltx-disclose" "l" z l)
           (p "ltx-disclose" "self" z self)) (gen-st (pv self l)))))

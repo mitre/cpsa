@@ -1,6 +1,6 @@
 (herald subatomic-open-closed-test-genrule (bound 40))
 
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment
   "All input read from tst/subatomic-open-closed-test-genrule.scm")
 (comment "Strand count bounded at 40")
@@ -105,23 +105,23 @@
   (defgenrule fact-dev-up-same-dev0
     (forall ((z strd) (lk ls locn))
       (implies
-        (and (p "dev-up" z (idx 3)) (p "dev-up" "lk" z lk)
-          (p "dev-up" "ls" z ls)) (fact same-dev ls lk))))
+        (and (p "dev-up" z (idx 3)) (p "dev-up" "ls" z ls)
+          (p "dev-up" "lk" z lk)) (fact same-dev ls lk))))
   (defgenrule fact-dev-open-same-dev0
     (forall ((z strd) (lk ls locn))
       (implies
-        (and (p "dev-open" z (idx 3)) (p "dev-open" "lk" z lk)
-          (p "dev-open" "ls" z ls)) (fact same-dev ls lk))))
+        (and (p "dev-open" z (idx 3)) (p "dev-open" "ls" z ls)
+          (p "dev-open" "lk" z lk)) (fact same-dev ls lk))))
   (defgenrule fact-dev-close-same-dev0
     (forall ((z strd) (lk ls locn))
       (implies
-        (and (p "dev-close" z (idx 3)) (p "dev-close" "lk" z lk)
-          (p "dev-close" "ls" z ls)) (fact same-dev ls lk))))
+        (and (p "dev-close" z (idx 3)) (p "dev-close" "ls" z ls)
+          (p "dev-close" "lk" z lk)) (fact same-dev ls lk))))
   (defgenrule fact-dev-pass-same-dev0
     (forall ((z strd) (lk ls locn))
       (implies
-        (and (p "dev-pass" z (idx 2)) (p "dev-pass" "lk" z lk)
-          (p "dev-pass" "ls" z ls)) (fact same-dev ls lk))))
+        (and (p "dev-pass" z (idx 2)) (p "dev-pass" "ls" z ls)
+          (p "dev-pass" "lk" z lk)) (fact same-dev ls lk))))
   (defgenrule trRl_dev-up-at-4
     (forall ((z strd))
       (implies (p "dev-up" z (idx 5)) (trans z (idx 4)))))
@@ -147,51 +147,51 @@
     (forall ((z strd))
       (implies (p "dev-close" z (idx 4)) (trans z (idx 2)))))
   (defgenrule eff-dev-up-3
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-up" z (idx 4)) (prec z (idx 3) z1 i))
         (or (= z z1)
           (and (p "dev-up" z (idx 5)) (prec z (idx 4) z1 i))))))
   (defgenrule cau-dev-up-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-up" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1))))))
   (defgenrule cau-dev-open-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-open" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1))))))
   (defgenrule cau-dev-close-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-close" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1))))))
   (defgenrule cau-dev-pass-1
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-pass" z (idx 2)) (prec z1 i z (idx 1)))
         (or (= z z1) (prec z1 i z (idx 0))))))
   (defgenrule gen-st-dev-open-1
-    (forall ((z strd) (k skey) (o d name))
+    (forall ((z strd) (d o name) (k skey))
       (implies
         (and (p "dev-open" z (idx 1)) (p "dev-open" "k" z k)
           (p "dev-open" "o" z o) (p "dev-open" "d" z d))
         (gen-st (cat "st-k" d o k)))))
   (defgenrule gen-st-dev-open-0
-    (forall ((z strd) (o d name))
+    (forall ((z strd) (d o name))
       (implies
         (and (p "dev-open" z (idx 1)) (p "dev-open" "o" z o)
           (p "dev-open" "d" z d)) (gen-st (cat "st" d o o)))))
   (defgenrule gen-st-dev-close-0
-    (forall ((z strd) (k skey) (o d name))
+    (forall ((z strd) (d o name) (k skey))
       (implies
         (and (p "dev-close" z (idx 1)) (p "dev-close" "k" z k)
           (p "dev-close" "o" z o) (p "dev-close" "d" z d))
         (gen-st (cat "st-k" d o k)))))
   (defgenrule gen-st-dev-pass-1
-    (forall ((z strd) (k skey) (o d name))
+    (forall ((z strd) (d o name) (k skey))
       (implies
         (and (p "dev-pass" z (idx 1)) (p "dev-pass" "k" z k)
           (p "dev-pass" "o" z o) (p "dev-pass" "d" z d))
         (gen-st (cat "st-k" d o k)))))
   (defgenrule gen-st-dev-pass-0
-    (forall ((z strd) (o d name))
+    (forall ((z strd) (d o name))
       (implies
         (and (p "dev-pass" z (idx 1)) (p "dev-pass" "o" z o)
           (p "dev-pass" "d" z d)) (gen-st (cat "st" d o o)))))
@@ -476,23 +476,23 @@
   (defgenrule fact-dev-up-same-dev0
     (forall ((z strd) (lk ls locn))
       (implies
-        (and (p "dev-up" z (idx 3)) (p "dev-up" "lk" z lk)
-          (p "dev-up" "ls" z ls)) (fact same-dev ls lk))))
+        (and (p "dev-up" z (idx 3)) (p "dev-up" "ls" z ls)
+          (p "dev-up" "lk" z lk)) (fact same-dev ls lk))))
   (defgenrule fact-dev-open-same-dev0
     (forall ((z strd) (lk ls locn))
       (implies
-        (and (p "dev-open" z (idx 3)) (p "dev-open" "lk" z lk)
-          (p "dev-open" "ls" z ls)) (fact same-dev ls lk))))
+        (and (p "dev-open" z (idx 3)) (p "dev-open" "ls" z ls)
+          (p "dev-open" "lk" z lk)) (fact same-dev ls lk))))
   (defgenrule fact-dev-close-same-dev0
     (forall ((z strd) (lk ls locn))
       (implies
-        (and (p "dev-close" z (idx 3)) (p "dev-close" "lk" z lk)
-          (p "dev-close" "ls" z ls)) (fact same-dev ls lk))))
+        (and (p "dev-close" z (idx 3)) (p "dev-close" "ls" z ls)
+          (p "dev-close" "lk" z lk)) (fact same-dev ls lk))))
   (defgenrule fact-dev-pass-same-dev0
     (forall ((z strd) (lk ls locn))
       (implies
-        (and (p "dev-pass" z (idx 2)) (p "dev-pass" "lk" z lk)
-          (p "dev-pass" "ls" z ls)) (fact same-dev ls lk))))
+        (and (p "dev-pass" z (idx 2)) (p "dev-pass" "ls" z ls)
+          (p "dev-pass" "lk" z lk)) (fact same-dev ls lk))))
   (defgenrule trRl_dev-up-at-4
     (forall ((z strd))
       (implies (p "dev-up" z (idx 5)) (trans z (idx 4)))))
@@ -518,51 +518,51 @@
     (forall ((z strd))
       (implies (p "dev-close" z (idx 4)) (trans z (idx 2)))))
   (defgenrule eff-dev-up-3
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-up" z (idx 4)) (prec z (idx 3) z1 i))
         (or (= z z1)
           (and (p "dev-up" z (idx 5)) (prec z (idx 4) z1 i))))))
   (defgenrule cau-dev-up-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-up" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1))))))
   (defgenrule cau-dev-open-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-open" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1))))))
   (defgenrule cau-dev-close-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-close" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1))))))
   (defgenrule cau-dev-pass-1
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-pass" z (idx 2)) (prec z1 i z (idx 1)))
         (or (= z z1) (prec z1 i z (idx 0))))))
   (defgenrule gen-st-dev-open-1
-    (forall ((z strd) (k skey) (o d name))
+    (forall ((z strd) (d o name) (k skey))
       (implies
         (and (p "dev-open" z (idx 1)) (p "dev-open" "k" z k)
           (p "dev-open" "o" z o) (p "dev-open" "d" z d))
         (gen-st (cat "st-k" d o k)))))
   (defgenrule gen-st-dev-open-0
-    (forall ((z strd) (o d name))
+    (forall ((z strd) (d o name))
       (implies
         (and (p "dev-open" z (idx 1)) (p "dev-open" "o" z o)
           (p "dev-open" "d" z d)) (gen-st (cat "st" d o o)))))
   (defgenrule gen-st-dev-close-0
-    (forall ((z strd) (k skey) (o d name))
+    (forall ((z strd) (d o name) (k skey))
       (implies
         (and (p "dev-close" z (idx 1)) (p "dev-close" "k" z k)
           (p "dev-close" "o" z o) (p "dev-close" "d" z d))
         (gen-st (cat "st-k" d o k)))))
   (defgenrule gen-st-dev-pass-1
-    (forall ((z strd) (k skey) (o d name))
+    (forall ((z strd) (d o name) (k skey))
       (implies
         (and (p "dev-pass" z (idx 1)) (p "dev-pass" "k" z k)
           (p "dev-pass" "o" z o) (p "dev-pass" "d" z d))
         (gen-st (cat "st-k" d o k)))))
   (defgenrule gen-st-dev-pass-0
-    (forall ((z strd) (o d name))
+    (forall ((z strd) (d o name))
       (implies
         (and (p "dev-pass" z (idx 1)) (p "dev-pass" "o" z o)
           (p "dev-pass" "d" z d)) (gen-st (cat "st" d o o)))))
@@ -953,23 +953,23 @@
   (defgenrule fact-dev-up-same-dev0
     (forall ((z strd) (lk ls locn))
       (implies
-        (and (p "dev-up" z (idx 3)) (p "dev-up" "lk" z lk)
-          (p "dev-up" "ls" z ls)) (fact same-dev ls lk))))
+        (and (p "dev-up" z (idx 3)) (p "dev-up" "ls" z ls)
+          (p "dev-up" "lk" z lk)) (fact same-dev ls lk))))
   (defgenrule fact-dev-open-same-dev0
     (forall ((z strd) (lk ls locn))
       (implies
-        (and (p "dev-open" z (idx 3)) (p "dev-open" "lk" z lk)
-          (p "dev-open" "ls" z ls)) (fact same-dev ls lk))))
+        (and (p "dev-open" z (idx 3)) (p "dev-open" "ls" z ls)
+          (p "dev-open" "lk" z lk)) (fact same-dev ls lk))))
   (defgenrule fact-dev-close-same-dev0
     (forall ((z strd) (lk ls locn))
       (implies
-        (and (p "dev-close" z (idx 3)) (p "dev-close" "lk" z lk)
-          (p "dev-close" "ls" z ls)) (fact same-dev ls lk))))
+        (and (p "dev-close" z (idx 3)) (p "dev-close" "ls" z ls)
+          (p "dev-close" "lk" z lk)) (fact same-dev ls lk))))
   (defgenrule fact-dev-pass-same-dev0
     (forall ((z strd) (lk ls locn))
       (implies
-        (and (p "dev-pass" z (idx 2)) (p "dev-pass" "lk" z lk)
-          (p "dev-pass" "ls" z ls)) (fact same-dev ls lk))))
+        (and (p "dev-pass" z (idx 2)) (p "dev-pass" "ls" z ls)
+          (p "dev-pass" "lk" z lk)) (fact same-dev ls lk))))
   (defgenrule trRl_dev-up-at-4
     (forall ((z strd))
       (implies (p "dev-up" z (idx 5)) (trans z (idx 4)))))
@@ -995,51 +995,51 @@
     (forall ((z strd))
       (implies (p "dev-close" z (idx 4)) (trans z (idx 2)))))
   (defgenrule eff-dev-up-3
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-up" z (idx 4)) (prec z (idx 3) z1 i))
         (or (= z z1)
           (and (p "dev-up" z (idx 5)) (prec z (idx 4) z1 i))))))
   (defgenrule cau-dev-up-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-up" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1))))))
   (defgenrule cau-dev-open-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-open" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1))))))
   (defgenrule cau-dev-close-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-close" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1))))))
   (defgenrule cau-dev-pass-1
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-pass" z (idx 2)) (prec z1 i z (idx 1)))
         (or (= z z1) (prec z1 i z (idx 0))))))
   (defgenrule gen-st-dev-open-1
-    (forall ((z strd) (k skey) (o d name))
+    (forall ((z strd) (d o name) (k skey))
       (implies
         (and (p "dev-open" z (idx 1)) (p "dev-open" "k" z k)
           (p "dev-open" "o" z o) (p "dev-open" "d" z d))
         (gen-st (cat "st-k" d o k)))))
   (defgenrule gen-st-dev-open-0
-    (forall ((z strd) (o d name))
+    (forall ((z strd) (d o name))
       (implies
         (and (p "dev-open" z (idx 1)) (p "dev-open" "o" z o)
           (p "dev-open" "d" z d)) (gen-st (cat "st" d o o)))))
   (defgenrule gen-st-dev-close-0
-    (forall ((z strd) (k skey) (o d name))
+    (forall ((z strd) (d o name) (k skey))
       (implies
         (and (p "dev-close" z (idx 1)) (p "dev-close" "k" z k)
           (p "dev-close" "o" z o) (p "dev-close" "d" z d))
         (gen-st (cat "st-k" d o k)))))
   (defgenrule gen-st-dev-pass-1
-    (forall ((z strd) (k skey) (o d name))
+    (forall ((z strd) (d o name) (k skey))
       (implies
         (and (p "dev-pass" z (idx 1)) (p "dev-pass" "k" z k)
           (p "dev-pass" "o" z o) (p "dev-pass" "d" z d))
         (gen-st (cat "st-k" d o k)))))
   (defgenrule gen-st-dev-pass-0
-    (forall ((z strd) (o d name))
+    (forall ((z strd) (d o name))
       (implies
         (and (p "dev-pass" z (idx 1)) (p "dev-pass" "o" z o)
           (p "dev-pass" "d" z d)) (gen-st (cat "st" d o o)))))

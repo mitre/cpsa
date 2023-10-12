@@ -1,6 +1,6 @@
 (herald "Denning-Sacco Protocol")
 
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment "All input read from tst/denning-sacco.scm")
 
 (defprotocol denning-sacco basic

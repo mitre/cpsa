@@ -1,7 +1,7 @@
 (herald "Envelope Protocol, location-based version" (check-nonces)
   (bound 30) (limit 6000))
 
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment "All input read from tst/sync_locn_envelope.scm")
 (comment "Step count limited to 6000")
 (comment "Strand count bounded at 30")

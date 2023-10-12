@@ -1,6 +1,6 @@
 (herald "ALternate Needham-Schroeder Public-Key Protocol Variants")
 
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment "All input read from tst/ns-rebinding.scm")
 
 (defprotocol ns basic
@@ -27,13 +27,13 @@
   (defgenrule fact-init-rel11
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel1 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel1 n1 n2))))
   (defgenrule fact-init-rel20
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel2 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel2 n1 n2))))
   (comment "Needham-Schroeder with no role origination assumptions"))
 
 (defskeleton ns
@@ -134,13 +134,13 @@
   (defgenrule fact-init-rel11
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel1 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel1 n1 n2))))
   (defgenrule fact-init-rel20
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel2 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel2 n1 n2))))
   (comment "Needham-Schroeder with no role origination assumptions"))
 
 (defskeleton ns
@@ -242,13 +242,13 @@
   (defgenrule fact-init-rel11
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel1 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel1 n1 n2))))
   (defgenrule fact-init-rel20
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel2 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel2 n1 n2))))
   (comment "Needham-Schroeder with no role origination assumptions"))
 
 (defskeleton ns
@@ -329,13 +329,13 @@
   (defgenrule fact-init-rel11
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel1 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel1 n1 n2))))
   (defgenrule fact-init-rel20
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel2 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel2 n1 n2))))
   (comment "Needham-Schroeder with no role origination assumptions"))
 
 (defskeleton ns
@@ -481,13 +481,13 @@
   (defgenrule fact-init-rel11
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel1 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel1 n1 n2))))
   (defgenrule fact-init-rel20
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel2 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel2 n1 n2))))
   (comment "Needham-Schroeder with no role origination assumptions"))
 
 (defskeleton ns
@@ -717,13 +717,13 @@
   (defgenrule fact-init-rel11
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel1 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel1 n1 n2))))
   (defgenrule fact-init-rel20
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel2 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel2 n1 n2))))
   (comment "Needham-Schroeder with no role origination assumptions"))
 
 (defskeleton ns
@@ -842,13 +842,13 @@
   (defgenrule fact-init-rel11
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel1 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel1 n1 n2))))
   (defgenrule fact-init-rel20
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel2 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel2 n1 n2))))
   (comment "Needham-Schroeder with no role origination assumptions"))
 
 (defskeleton ns
