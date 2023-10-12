@@ -8,6 +8,14 @@ CPSA NEWS -- history of user-visible changes.
    trees in the forest and returns the labels of the skeletons that
    satisfy the query.
 
+** Added cpsa4debranch program.  This program allows protocol
+   designers to use a branch instruction when writing roles, which are
+   removed and expanded by this program.
+
+** Updated the default strand bound to 12
+
+** Updated Coq scripts for Coq version 8.17.1
+
 * Changes in version 4.4.2
 
 ** Fixed message equivalence test in cpsa4graph.
