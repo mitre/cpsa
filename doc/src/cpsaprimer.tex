@@ -984,13 +984,13 @@ The operation used to derive a skeleton is recorded with
 \index{operation}\texttt{(operation~}\textsc{test kind term node
   term$\ast$}\texttt{)}, where \textsc{test} is the authentication
 test \texttt{encryption-test}, \texttt{nonce-test}, or
-\texttt{channel-test},
+\texttt{channel-test};
 \textsc{kind} is
 \texttt{(added-strand} \textsc{id} \textsc{integer}\texttt{)},
 \texttt{(displaced} \textsc{integer} \textsc{integer} \textsc{id} \textsc{integer}\texttt{)},
 \texttt{(contracted} \textsc{maplet$\ast$}\texttt{)}, or
-\texttt{(added-listener} \textsc{term}\texttt{)}, \textsc{term} is the
-critical term, \textsc{node} in the test node, and the remaining terms
+\texttt{(added-listener} \textsc{term}\texttt{)}; \textsc{term} is the
+critical term; \textsc{node} in the test node; and the remaining terms
 specify the escape set. When the operation kind is added strand, the
 instance's role name and height are provided.
 For kind displaced, the first number is the strand being merged, the
