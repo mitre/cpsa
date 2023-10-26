@@ -1,3 +1,7 @@
+2023-10-23  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 4.3.3
+
 2022-04-14  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/CPSA/Signature.hs (loadSig): Improved language field loading
