@@ -1,6 +1,6 @@
 (herald uniq-at)
 
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment "All input read from tst/uniq-at.scm")
 
 (defprotocol yahalom-plus-uniq-at basic

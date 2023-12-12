@@ -1,6 +1,6 @@
 (herald rule-node)
 
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment "All input read from tst/rule-node.scm")
 
 (defprotocol rule-order basic
@@ -190,6 +190,19 @@
   (origs)
   (ugens))
 
+(defskeleton rule-order-prec
+  (vars (s text))
+  (defstrand init 2 (s s) (t s))
+  (facts (tell-me 0 (idx 0) 0 (idx 1)))
+  (operation collapsed 1 0)
+  (traces ((send (cat s s)) (recv (cat s s))))
+  (label 10)
+  (parent 9)
+  (realized)
+  (shape)
+  (maps)
+  (origs))
+
 (comment "Nothing left to do")
 
 (defprotocol rule-order-prec basic
@@ -311,5 +324,18 @@
   (maps)
   (origs)
   (ugens))
+
+(defskeleton rule-order-prec
+  (vars (s t text))
+  (defstrand init 2 (s s) (t t))
+  (facts (tell-me 0 (idx 0) 0 (idx 1)))
+  (operation collapsed 1 0)
+  (traces ((send (cat s t)) (recv (cat t s))))
+  (label 13)
+  (parent 12)
+  (realized)
+  (shape)
+  (maps)
+  (origs))
 
 (comment "Nothing left to do")

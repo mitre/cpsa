@@ -1,6 +1,7 @@
 (herald mass (bound 8))
 
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
+
 (comment "All input read from tst/mass.lsp")
 (comment "Strand count bounded at 8")
 

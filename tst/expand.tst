@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment "Expanded macros")
 
 (herald expand (expand) (comment "test macro expansion"))

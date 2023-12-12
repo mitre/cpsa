@@ -401,13 +401,14 @@ lists its unrealized nodes with <code>(unrealized NODE*)</code>. The traces
 associated with each strand is given by the <code>(traces ...)</code> form.
 Finally, the operation used to derive this skeleton from its parent is recorded
 with <code>(operation TEST KIND TERM NODE TERM*)</code>, where <code>TEST</code> is the
-authentication test <code>encryption-test</code> or <code>nonce</code>, <code>KIND</code>
+authentication test <code>encryption-test</code>, <code>nonce</code>,
+or <code>channel-test</code>; <code>KIND</code>
 is <code>(added-strand ID INT)</code>,
 <code>(displaced INT INT ID INT)</code>,
 <code>(contracted MAPLET*)</code>,
-<code>(added-listener TERM)</code>, or
-<code>TERM</code> is the critical term,
-<code>NODE</code> in the test node,
+<code>(added-listener TERM)</code>;
+<code>TERM</code> is the critical term;
+<code>NODE</code> in the test node;
 and the remaining terms specify the escape set.
 When the operation kind is augmenting, the instance's role name and height are
 provided.

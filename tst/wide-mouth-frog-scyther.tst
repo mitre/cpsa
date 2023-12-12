@@ -1,7 +1,7 @@
 (herald "Wide-Mouth Frog Protocol from Scyther" (bound 8)
   (comment "This protocol has an infinite number of shapes"))
 
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment "All input read from tst/wide-mouth-frog-scyther.lsp")
 (comment "Strand count bounded at 8")
 

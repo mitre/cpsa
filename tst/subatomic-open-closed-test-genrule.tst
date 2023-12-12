@@ -1,6 +1,6 @@
 (herald subatomic-open-closed-test-genrule (bound 40))
 
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment
   "All input read from tst/subatomic-open-closed-test-genrule.scm")
 (comment "Strand count bounded at 40")

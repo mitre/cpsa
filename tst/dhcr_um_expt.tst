@@ -1,7 +1,7 @@
 (herald "DHCR: unified model (UM) original" (bound 20) (limit 12000)
   (algebra diffie-hellman))
 
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment "All input read from tst/dhcr_um_expt.scm")
 (comment "Step count limited to 12000")
 (comment "Strand count bounded at 20")
@@ -55736,7 +55736,7 @@
         (na na) (nb nb) (priv-stor priv-stor) (x x) (upsilon y)
         (na-0 na) (nb-0 nb) (priv-stor-0 priv-stor-0))))
   (origs (na (1 2)) (la (3 1)) (pt-2 (3 1)) (l (2 1)) (pt-0 (2 1))
-    (nb (0 3)))
+	 (nb (0 3)))
   (ugens (x (1 2)) (y (0 3))))
 
 (defskeleton dhcr-um

@@ -1,7 +1,7 @@
 (herald "Station-to-station protocol unflipped"
   (algebra diffie-hellman))
 
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment "All input read from tst/sts_unflip.scm")
 
 (defprotocol station-to-station-unflip diffie-hellman

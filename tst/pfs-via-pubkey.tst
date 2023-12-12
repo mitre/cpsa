@@ -1,6 +1,6 @@
 (herald pfs-via-pubkey)
 
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment "All input read from tst/pfs-via-pubkey.scm")
 
 (defprotocol pfs-easy basic
