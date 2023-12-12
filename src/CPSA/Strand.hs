@@ -737,7 +737,7 @@ preskelWellFormed k =
     wellOrdered k && acyclicOrder k &&
     roleOrigCheck k &&
     roleGenCheck k &&  
-    (ugenGoodOrig k || True) 
+    True -- (ugenGoodOrig k || True) 
     where
       terms = kterms k
       vs = kvars k
@@ -1503,7 +1503,7 @@ skeletonize :: Bool -> PRS -> [PRS]
 skeletonize thin prs =
   do
     prs' <- enforceAbsence prs
-    case hasMultipleOrig prs' of
+    case origGenChecks prs' of
       True -> []
       False -> enrich thin prs'
 
@@ -1525,11 +1525,17 @@ enforceAbsence prs@(_, k, _, _, _) =
 -- Determine if a given PRS has a multiple origination of a
 -- non-numeric fresh value.  Also when a value is both uniq
 -- orig and uniq gen, check to see if they start on different strands.
-hasMultipleOrig :: PRS -> Bool
-hasMultipleOrig prs =
+-- When a value is uniq gen and a *different* strand receives it in
+-- non-carried position and then transmits in carried position, that's
+-- also a problem.  
+
+origGenChecks :: PRS -> Bool
+origGenChecks prs =
   any (\(_, l) -> length l > 1) (korig (skel prs)) ||
   any (\(_, l) -> length l > 1) (kugen (skel prs)) ||
-  origUgenDiffStrand (korig (skel prs)) (kugen (skel prs))
+  origUgenDiffStrand (korig (skel prs)) (kugen (skel prs)) ||
+  not(ugenGoodOrig (skel prs))
+  
 
 -- When a value is both uniq orig and uniq gen, check to see if they
 -- start on different strands.
@@ -1562,7 +1568,7 @@ hull thin prs =
 -- Adds orderings so that a skeleton respects origination.
 
 enrich :: Bool -> PRS -> [PRS]
-enrich _ prs | hasMultipleOrig prs = []
+enrich _ prs | origGenChecks prs = []
 enrich thin (k0, k, n, phi, hsubst) =
     let o = foldl (addUniqOrigOrderings k) (orderings k) (kunique k) in
     let o' = foldl (addUniqGenOrderings k) o (kuniqgen k) in
