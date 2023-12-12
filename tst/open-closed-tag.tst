@@ -132,6 +132,7 @@
   (unrealized (0 1) (1 0))
   (preskeleton)
   (origs (k (0 0)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton open-closed
@@ -147,6 +148,7 @@
   (parent 0)
   (unrealized (0 1) (1 0))
   (origs (k (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton open-closed
@@ -302,6 +304,7 @@
   (label 3)
   (realized)
   (origs (n (0 3)))
+  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton open-closed
@@ -318,6 +321,7 @@
   (parent 3)
   (unrealized (0 2))
   (origs (n (0 3)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton open-closed
@@ -345,7 +349,8 @@
   (realized)
   (shape)
   (maps ((0) ((k k) (n n) (d d) (o o) (lk lk) (ls ls))))
-  (origs (pt-0 (1 3)) (n (0 3))))
+  (origs (pt-0 (1 3)) (n (0 3)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -480,6 +485,7 @@
   (unrealized (0 1) (1 0) (1 1))
   (preskeleton)
   (origs (n (1 3)) (k (0 0)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton open-closed
@@ -498,6 +504,7 @@
   (parent 6)
   (unrealized (0 1) (1 0) (1 1))
   (origs (n (1 3)) (k (0 0)))
+  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton open-closed
@@ -518,6 +525,7 @@
   (parent 7)
   (unrealized (0 1) (1 0) (1 1) (1 2))
   (origs (n (1 3)) (k (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton open-closed
@@ -737,7 +745,8 @@
     ((0 1)
       ((k k) (d d) (o o-0) (start-ch start-ch) (n n) (d-0 d) (o-0 o-0)
         (lk lk-0) (ls ls))))
-  (origs (pt-3 (4 2)) (pt-5 (4 4)) (pt (3 3)) (n (1 3)) (k (0 0))))
+  (origs (pt-3 (4 2)) (pt-5 (4 4)) (pt (3 3)) (n (1 3)) (k (0 0)))
+  (ugens))
 
 (defskeleton open-closed
   (vars (old any mesg) (k k-0 skey) (n n-0 text) (d o o-0 name)
@@ -960,6 +969,7 @@
   (label 18)
   (unrealized (1 0))
   (origs (pt-7 (4 3)) (pt-4 (2 4)) (pt-2 (2 2)) (n (1 3)) (k (0 0)))
+  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton open-closed
@@ -997,6 +1007,7 @@
   (seen 19)
   (unrealized (1 0) (1 2))
   (origs (pt-7 (4 3)) (pt-4 (2 4)) (pt-2 (2 2)) (n (1 3)) (k (0 0)))
+  (ugens)
   (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton open-closed
@@ -1038,6 +1049,7 @@
   (seen 21)
   (unrealized (1 2))
   (origs (pt-6 (4 3)) (pt-3 (2 4)) (pt-1 (2 2)) (n (1 3)) (k (0 0)))
+  (ugens)
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton open-closed
@@ -1082,7 +1094,8 @@
       ((old old) (old1 old1) (any any) (n n) (n-0 n-0) (d d) (o o) (k k)
         (k-0 k-0) (start-ch start-ch) (ls ls) (lk lk) (ls-0 ls-0)
         (lk-0 lk-0))))
-  (origs (pt-5 (4 3)) (pt-2 (2 4)) (pt-0 (2 2)) (n (1 3)) (k (0 0))))
+  (origs (pt-5 (4 3)) (pt-2 (2 4)) (pt-0 (2 2)) (n (1 3)) (k (0 0)))
+  (ugens))
 
 (defskeleton open-closed
   (vars (old old1 any any-0 mesg) (k k-0 k-1 skey) (n n-0 n-1 text)

@@ -40,6 +40,7 @@
   (label 0)
   (unrealized (0 2))
   (origs (n-b (0 1)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
@@ -142,7 +143,8 @@
   (shape)
   (maps
     ((0) ((n-b n-b) (b b) (a a) (n-a n-a) (k k) (ch1 ch1) (ch2 ch2))))
-  (origs (k (1 1)) (n-b (0 1))))
+  (origs (k (1 1)) (n-b (0 1)))
+  (ugens))
 
 (defskeleton yahalom
   (vars (k skey) (n-b n-a n-a-0 n-b-0 text) (b a name)
@@ -209,6 +211,7 @@
   (label 6)
   (unrealized (0 2))
   (origs (n-b (0 1)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
@@ -297,6 +300,7 @@
   (label 9)
   (unrealized (0 1))
   (origs (n-a (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
@@ -319,7 +323,8 @@
   (realized)
   (shape)
   (maps ((0) ((n-a n-a) (a a) (b b) (n-b n-b) (k k) (ch3 ch3))))
-  (origs (k (1 1)) (n-a (0 0))))
+  (origs (k (1 1)) (n-a (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -358,6 +363,7 @@
   (label 11)
   (unrealized (0 1))
   (origs)
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
@@ -446,6 +452,7 @@
   (label 14)
   (unrealized (0 1) (1 2))
   (origs (n-a (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
@@ -504,7 +511,8 @@
     ((0 1)
       ((n-a n-a-0) (k k) (a a) (b b) (n-b n-b-0) (ch3 ch3) (b-0 b)
         (a-0 a) (n-a-0 n-a) (n-b-0 n-b) (ch1 ch1) (ch2 ch2))))
-  (origs (k (2 1)) (n-a-0 (0 0))))
+  (origs (k (2 1)) (n-a-0 (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -548,6 +556,7 @@
   (label 17)
   (unrealized (0 1) (1 2))
   (origs (n-a (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
@@ -689,7 +698,8 @@
     ((0 1)
       ((n-a n-a-0) (k k) (a a) (b b) (n-b n-b) (ch3 ch3) (b-0 b) (a-0 a)
         (n-a-0 n-a) (n-b-0 n-b) (ch1 ch1) (ch2 ch2))))
-  (origs (k (2 1)) (n-a-0 (0 0))))
+  (origs (k (2 1)) (n-a-0 (0 0)))
+  (ugens))
 
 (defskeleton yahalom
   (vars (k skey) (n-a n-b n-a-0 n-a-1 n-b-0 text) (a b b-0 a-0 name)
@@ -794,7 +804,8 @@
     ((0)
       ((a a) (b b) (n-a n-a) (n-b n-b) (k k) (ch1 ch1) (ch2 ch2)
         (ch3 ch3))))
-  (origs (k (0 1))))
+  (origs (k (0 1)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -836,6 +847,7 @@
   (unrealized (1 0))
   (preskeleton)
   (origs (k (0 1)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton yahalom
@@ -853,6 +865,7 @@
   (parent 26)
   (unrealized (1 0))
   (origs (k (0 1)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
@@ -873,6 +886,7 @@
   (unrealized (1 0))
   (dead)
   (origs (k (0 1)))
+  (ugens)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

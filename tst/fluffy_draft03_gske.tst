@@ -41,6 +41,7 @@
   (label 0)
   (unrealized (0 1))
   (origs (nb (0 0)))
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fluffy
@@ -66,7 +67,8 @@
   (realized)
   (shape)
   (maps ((0) ((b b) (s s) (nb nb) (gk gk) (g g))))
-  (origs (nb (0 0))))
+  (origs (nb (0 0)))
+  (ugens (gk (1 1))))
 
 (defskeleton fluffy
   (vars (gk skey) (nb g text) (b s name))
@@ -88,7 +90,8 @@
   (realized)
   (shape)
   (maps ((0) ((b b) (s s) (nb nb) (gk gk) (g g))))
-  (origs (nb (0 0))))
+  (origs (nb (0 0)))
+  (ugens (gk (1 1))))
 
 (comment "Nothing left to do")
 
@@ -129,6 +132,7 @@
   (label 3)
   (unrealized (0 0) (0 2))
   (origs)
+  (ugens (gk (0 1)))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fluffy
@@ -191,7 +195,8 @@
   (realized)
   (shape)
   (maps ((0) ((a b) (b b) (s s) (nb nb) (na nb) (gk gk) (g g))))
-  (origs))
+  (origs)
+  (ugens (gk (0 1))))
 
 (defskeleton fluffy
   (vars (gk skey) (nb na g g-0 g-1 text) (a b s name))
@@ -215,7 +220,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (s s) (nb nb) (na na) (gk gk) (g g))))
-  (origs))
+  (origs)
+  (ugens (gk (0 1))))
 
 (defskeleton fluffy
   (vars (gk skey) (nb na g g-0 g-1 text) (a b s name))
@@ -239,7 +245,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (s s) (nb nb) (na na) (gk gk) (g g))))
-  (origs))
+  (origs)
+  (ugens (gk (0 1))))
 
 (defskeleton fluffy
   (vars (gk skey) (nb na g g-0 g-1 text) (a b s name))
@@ -263,7 +270,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (s s) (nb nb) (na na) (gk gk) (g g))))
-  (origs))
+  (origs)
+  (ugens (gk (0 1))))
 
 (defskeleton fluffy
   (vars (gk skey) (nb g g-0 text) (b s name))
@@ -285,7 +293,8 @@
   (realized)
   (shape)
   (maps ((0) ((a b) (b b) (s s) (nb nb) (na nb) (gk gk) (g g))))
-  (origs))
+  (origs)
+  (ugens (gk (0 1))))
 
 (defskeleton fluffy
   (vars (gk skey) (nb na g g-0 g-1 text) (a b s name))
@@ -309,7 +318,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (s s) (nb nb) (na na) (gk gk) (g g))))
-  (origs))
+  (origs)
+  (ugens (gk (0 1))))
 
 (comment "Nothing left to do")
 
@@ -348,6 +358,7 @@
   (label 12)
   (unrealized (0 1))
   (origs (na (0 0)))
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fluffy
@@ -372,7 +383,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (s s) (na na) (gk gk) (g g))))
-  (origs (na (0 0))))
+  (origs (na (0 0)))
+  (ugens (gk (1 1))))
 
 (defskeleton fluffy
   (vars (gk skey) (na g text) (a s name))
@@ -394,7 +406,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (s s) (na na) (gk gk) (g g))))
-  (origs (na (0 0))))
+  (origs (na (0 0)))
+  (ugens (gk (1 1))))
 
 (comment "Nothing left to do")
 
@@ -447,6 +460,7 @@
   (label 15)
   (unrealized (0 1))
   (origs (nb (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fluffy-rule
@@ -469,7 +483,8 @@
   (realized)
   (shape)
   (maps ((0) ((b b) (s s) (nb nb) (gk gk) (g g))))
-  (origs (nb (0 0))))
+  (origs (nb (0 0)))
+  (ugens (gk (1 1))))
 
 (comment "Nothing left to do")
 
@@ -524,6 +539,7 @@
   (label 17)
   (unrealized (0 0) (0 2))
   (origs)
+  (ugens (gk (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fluffy-rule
@@ -568,7 +584,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (s s) (nb nb) (na na) (gk gk) (g g))))
-  (origs))
+  (origs)
+  (ugens (gk (0 1))))
 
 (comment "Nothing left to do")
 
@@ -621,6 +638,7 @@
   (label 20)
   (unrealized (0 1))
   (origs (na (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fluffy-rule
@@ -645,6 +663,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (s s) (na na) (gk gk) (g g))))
-  (origs (na (0 0))))
+  (origs (na (0 0)))
+  (ugens (gk (1 1))))
 
 (comment "Nothing left to do")

@@ -59,6 +59,7 @@
   (label 0)
   (unrealized (0 1))
   (origs (na1 (0 0)) (na0 (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nsl3
@@ -173,7 +174,8 @@
       ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
         (nc0 nc0) (nc1 nc1))))
   (origs (nc0 (2 1)) (nc1 (2 1)) (nb0 (1 1)) (nb1 (1 1)) (na1 (0 0))
-    (na0 (0 0))))
+    (na0 (0 0)))
+  (ugens))
 
 (defskeleton nsl3
   (vars
@@ -333,6 +335,7 @@
   (label 6)
   (unrealized (0 2))
   (origs (nb1 (0 1)) (nb0 (0 1)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nsl3
@@ -455,7 +458,8 @@
       ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
         (nc0 nc0) (nc1 nc1))))
   (origs (na0 (2 0)) (na1 (2 0)) (nc0 (1 1)) (nc1 (1 1)) (nb1 (0 1))
-    (nb0 (0 1))))
+    (nb0 (0 1)))
+  (ugens))
 
 (defskeleton nsl3
   (vars (na0 na1 nb0 nb1 nc0 nc1 nc0-0 nc1-0 nc0-1 nc1-1 text)
@@ -623,6 +627,7 @@
   (label 12)
   (unrealized (0 2))
   (origs (nc1 (0 1)) (nc0 (0 1)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nsl3
@@ -979,7 +984,8 @@
       ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
         (nc0 nc0) (nc1 nc1))))
   (origs (na0 (1 0)) (na1 (1 0)) (nb0 (2 1)) (nb1 (2 1)) (nc1 (0 1))
-    (nc0 (0 1))))
+    (nc0 (0 1)))
+  (ugens))
 
 (defskeleton nsl3
   (vars (nc0 nc1 nb0 nb1 nc0-0 nc1-0 na0 na1 text) (a b c name))

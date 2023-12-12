@@ -32,6 +32,7 @@
   (label 0)
   (unrealized (0 0))
   (origs)
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton bug_example
@@ -84,7 +85,8 @@
   (realized)
   (shape)
   (maps ((0) ((x x) (y (invk k2)))))
-  (origs))
+  (origs)
+  (ugens))
 
 (defskeleton bug_example
   (vars (k1 k2 akey))
@@ -203,6 +205,7 @@
   (label 8)
   (unrealized (0 0))
   (origs)
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton bug_example
@@ -253,7 +256,8 @@
   (realized)
   (shape)
   (maps ((0) ((x x) (y y))))
-  (origs))
+  (origs)
+  (ugens))
 
 (defskeleton bug_example
   (vars (y k1 akey))

@@ -38,6 +38,7 @@
   (label 0)
   (unrealized (0 1) (0 2) (0 3) (0 5))
   (origs (n (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton crushing
@@ -370,6 +371,7 @@
   (realized)
   (shape)
   (maps ((0) ((k k) (n n) (n1 n1) (n2 n1) (n3 n1))))
-  (origs (n (0 0)) (n1 (1 1))))
+  (origs (n (0 0)) (n1 (1 1)))
+  (ugens))
 
 (comment "Nothing left to do")

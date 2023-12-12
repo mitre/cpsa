@@ -27,13 +27,13 @@
   (defgenrule fact-init-rel11
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel1 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel1 n1 n2))))
   (defgenrule fact-init-rel20
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel2 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel2 n1 n2))))
   (comment "Needham-Schroeder with no role origination assumptions"))
 
 (defskeleton ns
@@ -48,6 +48,7 @@
   (label 0)
   (unrealized (0 1))
   (origs (n1 (0 0)))
+  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton ns
@@ -64,6 +65,7 @@
   (parent 0)
   (unrealized (0 1))
   (origs (n1 (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -106,7 +108,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
-  (origs (n1 (0 0))))
+  (origs (n1 (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -134,13 +137,13 @@
   (defgenrule fact-init-rel11
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel1 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel1 n1 n2))))
   (defgenrule fact-init-rel20
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel2 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel2 n1 n2))))
   (comment "Needham-Schroeder with no role origination assumptions"))
 
 (defskeleton ns
@@ -156,6 +159,7 @@
   (label 4)
   (unrealized (0 1))
   (origs (n1 (0 0)))
+  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton ns
@@ -172,6 +176,7 @@
   (parent 4)
   (unrealized (0 1))
   (origs (n1 (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -214,7 +219,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
-  (origs (n1 (0 0))))
+  (origs (n1 (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -242,13 +248,13 @@
   (defgenrule fact-init-rel11
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel1 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel1 n1 n2))))
   (defgenrule fact-init-rel20
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel2 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel2 n1 n2))))
   (comment "Needham-Schroeder with no role origination assumptions"))
 
 (defskeleton ns
@@ -263,6 +269,7 @@
   (label 8)
   (unrealized (0 1))
   (origs (n1 (0 0)))
+  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton ns
@@ -279,6 +286,7 @@
   (parent 8)
   (unrealized (0 1))
   (origs (n1 (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -301,7 +309,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
-  (origs (n1 (0 0))))
+  (origs (n1 (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -329,13 +338,13 @@
   (defgenrule fact-init-rel11
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel1 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel1 n1 n2))))
   (defgenrule fact-init-rel20
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel2 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel2 n1 n2))))
   (comment "Needham-Schroeder with no role origination assumptions"))
 
 (defskeleton ns
@@ -352,6 +361,7 @@
   (unrealized (0 1) (1 0))
   (preskeleton)
   (origs (n1 (0 0)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton ns
@@ -368,6 +378,7 @@
   (parent 11)
   (unrealized (0 1) (1 0))
   (origs (n1 (0 0)))
+  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton ns
@@ -386,6 +397,7 @@
   (parent 12)
   (unrealized (0 1) (1 0))
   (origs (n1 (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -481,13 +493,13 @@
   (defgenrule fact-init-rel11
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel1 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel1 n1 n2))))
   (defgenrule fact-init-rel20
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel2 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel2 n1 n2))))
   (comment "Needham-Schroeder with no role origination assumptions"))
 
 (defskeleton ns
@@ -505,6 +517,7 @@
   (label 17)
   (unrealized (0 1) (1 1))
   (origs (n1 (0 0)) (n1-0 (1 0)))
+  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton ns
@@ -526,6 +539,7 @@
   (seen 20)
   (unrealized (0 1) (1 1))
   (origs (n1 (0 0)) (n1-0 (1 0)))
+  (ugens)
   (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -588,6 +602,7 @@
   (parent 19)
   (unrealized (0 1))
   (origs (n1 (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -635,7 +650,8 @@
   (realized)
   (shape)
   (maps ((0 0) ((a a) (b b) (n1 n1) (n1-0 n1) (n2 n2) (n2-0 n2))))
-  (origs (n1 (0 0))))
+  (origs (n1 (0 0)))
+  (ugens))
 
 (defskeleton ns
   (vars (x x-0 name) (n1 n1-0 n2 n2-0 n2-1 text) (a b name))
@@ -689,7 +705,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((a a) (b b) (n1 n1) (n1-0 n1-0) (n2 n2-0) (n2-0 n2))))
-  (origs (n1 (0 0)) (n1-0 (1 0))))
+  (origs (n1 (0 0)) (n1-0 (1 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -717,13 +734,13 @@
   (defgenrule fact-init-rel11
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel1 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel1 n1 n2))))
   (defgenrule fact-init-rel20
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel2 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel2 n1 n2))))
   (comment "Needham-Schroeder with no role origination assumptions"))
 
 (defskeleton ns
@@ -742,6 +759,7 @@
   (realized)
   (preskeleton)
   (origs (n1 (1 0)) (n1 (0 0)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton ns
@@ -756,6 +774,7 @@
   (parent 26)
   (unrealized (0 1))
   (origs (n1 (0 0)))
+  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton ns
@@ -772,6 +791,7 @@
   (parent 27)
   (unrealized (0 1))
   (origs (n1 (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -814,7 +834,8 @@
   (realized)
   (shape)
   (maps ((0 0) ((a a) (b b) (n1 n1) (n2 n2))))
-  (origs (n1 (0 0))))
+  (origs (n1 (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -842,13 +863,13 @@
   (defgenrule fact-init-rel11
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel1 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel1 n1 n2))))
   (defgenrule fact-init-rel20
     (forall ((z strd) (n2 n1 text))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "n2" z n2)
-          (p "init" "n1" z n1)) (fact rel2 n1 n2))))
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel2 n1 n2))))
   (comment "Needham-Schroeder with no role origination assumptions"))
 
 (defskeleton ns
@@ -863,6 +884,7 @@
   (label 31)
   (unrealized (0 2))
   (origs (n2 (0 1)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -886,6 +908,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (n2 n2) (b b) (n1 n1))))
-  (origs (n2 (0 1))))
+  (origs (n2 (0 1)))
+  (ugens))
 
 (comment "Nothing left to do")

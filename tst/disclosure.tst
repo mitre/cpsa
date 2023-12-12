@@ -27,6 +27,7 @@
   (label 0)
   (unrealized (0 1))
   (origs (n (0 0)))
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton disc
@@ -44,7 +45,8 @@
   (realized)
   (shape)
   (maps ((0) ((n n) (a a) (b b) (k k))))
-  (origs (n (0 0))))
+  (origs (n (0 0)))
+  (ugens))
 
 (defskeleton disc
   (vars (k skey) (n text) (a b name))
@@ -91,6 +93,7 @@
   (realized)
   (shape)
   (maps ((0) ((n n) (a a) (b b) (k k))))
-  (origs (n (0 0))))
+  (origs (n (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")

@@ -58,6 +58,7 @@
   (label 0)
   (unrealized (0 1))
   (origs)
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton timestamping-service
@@ -332,7 +333,8 @@
             (enc n-0 alice_1 h_1 alice_1-0 h_1-0 t_1
               (hash alice_1-0 h_1-0 t_1 l_1) (privk trent))
             (hash alice_1-0 h_1-0 t_1 l_1))))))
-  (origs (n-0 (3 0)) (n (1 1))))
+  (origs (n-0 (3 0)) (n (1 1)))
+  (ugens))
 
 (defskeleton timestamping-service
   (vars (n n-0 data) (h h_1 t_1 l_1 h-0 text)
@@ -479,7 +481,8 @@
     ((0)
       ((trent trent) (alice alice) (alice_1 alice_1) (n n) (h h)
         (h_1 h_1) (t_1 t_1) (l (hash alice_1 h_1 t_1 l_1)))))
-  (origs (n-0 (3 1)) (n (2 0))))
+  (origs (n-0 (3 1)) (n (2 0)))
+  (ugens))
 
 (defskeleton timestamping-service
   (vars (n n-0 data) (h h_1 t_1 l_1 h-0 text)

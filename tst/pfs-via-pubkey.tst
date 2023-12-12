@@ -32,6 +32,7 @@
   (label 0)
   (unrealized (0 1))
   (origs ((privk "sgn" a) (0 2)) (new-akey (0 0)) (n (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton pfs-easy
@@ -74,7 +75,8 @@
   (realized)
   (shape)
   (maps ((0) ((new-akey new-akey) (a a) (b b) (n n) (s s))))
-  (origs ((privk "sgn" a) (0 2)) (new-akey (0 0)) (n (0 0))))
+  (origs ((privk "sgn" a) (0 2)) (new-akey (0 0)) (n (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -105,6 +107,7 @@
   (label 3)
   (unrealized (0 0))
   (origs)
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton pfs-easy
@@ -124,7 +127,8 @@
   (realized)
   (shape)
   (maps ((0) ((new-akey new-akey) (a a) (b b) (n n) (s s))))
-  (origs))
+  (origs)
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -163,6 +167,7 @@
   (unrealized (2 0))
   (preskeleton)
   (origs ((privk "sgn" a) (1 2)) (s (0 1)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton pfs-easy
@@ -184,6 +189,7 @@
   (unrealized (2 0))
   (dead)
   (origs ((privk "sgn" a) (1 2)) (s (0 1)))
+  (ugens)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

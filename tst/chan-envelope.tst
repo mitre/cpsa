@@ -73,6 +73,7 @@
   (unrealized (0 0) (1 2))
   (preskeleton)
   (origs (v (1 3)) (n (1 0)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton envelope
@@ -91,6 +92,7 @@
   (parent 0)
   (unrealized (1 2))
   (origs (v (1 3)) (n (1 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -423,7 +425,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
-  (origs (n (1 0)) (k (2 1)) (v (1 3))))
+  (origs (n (1 0)) (k (2 1)) (v (1 3)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -498,6 +501,7 @@
   (unrealized (0 0) (1 2))
   (preskeleton)
   (origs (v (1 3)) (n (1 0)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton envelope
@@ -518,6 +522,7 @@
   (parent 12)
   (unrealized (0 0) (1 2))
   (origs (v (1 3)) (n (1 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -839,7 +844,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
-  (origs (n (1 0)) (k (2 1)) (v (1 3))))
+  (origs (n (1 0)) (k (2 1)) (v (1 3)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -916,6 +922,7 @@
   (unrealized (0 0) (1 0) (2 2))
   (preskeleton)
   (origs (v (2 3)) (n (2 0)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton envelope
@@ -938,6 +945,7 @@
   (parent 23)
   (unrealized (0 0) (2 2))
   (origs (v (2 3)) (n (2 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -1584,7 +1592,8 @@
   (realized)
   (shape)
   (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
-  (origs (n (2 0)) (k (3 1)) (v (2 3))))
+  (origs (n (2 0)) (k (3 1)) (v (2 3)))
+  (ugens))
 
 (defskeleton envelope
   (vars (n v data) (esk esk-0 skey) (k aik akey) (c c-0 chan))
@@ -1762,7 +1771,8 @@
   (realized)
   (shape)
   (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
-  (origs (n (2 0)) (k (3 1)) (v (2 3))))
+  (origs (n (2 0)) (k (3 1)) (v (2 3)))
+  (ugens))
 
 (defskeleton envelope
   (vars (n v data) (esk skey) (k aik akey) (c c-0 chan))
@@ -1824,7 +1834,8 @@
   (realized)
   (shape)
   (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
-  (origs (n (2 0)) (k (3 1)) (v (2 3))))
+  (origs (n (2 0)) (k (3 1)) (v (2 3)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -1906,6 +1917,7 @@
   (unrealized (0 0) (1 2))
   (preskeleton)
   (origs (v (1 3)) (n (1 0)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton envelope
@@ -1924,6 +1936,7 @@
   (parent 44)
   (unrealized (1 2))
   (origs (v (1 3)) (n (1 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2218,7 +2231,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
-  (origs (n (1 0)) (k (2 1)) (v (1 3))))
+  (origs (n (1 0)) (k (2 1)) (v (1 3)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -2302,6 +2316,7 @@
   (unrealized (0 0) (1 2))
   (preskeleton)
   (origs (v (1 3)) (n (1 0)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton envelope
@@ -2322,6 +2337,7 @@
   (parent 55)
   (unrealized (0 0) (1 2))
   (origs (v (1 3)) (n (1 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2603,7 +2619,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
-  (origs (n (1 0)) (k (2 1)) (v (1 3))))
+  (origs (n (1 0)) (k (2 1)) (v (1 3)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -2689,6 +2706,7 @@
   (unrealized (0 0) (1 0) (2 2))
   (preskeleton)
   (origs (v (2 3)) (n (2 0)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton envelope
@@ -2711,6 +2729,7 @@
   (parent 65)
   (unrealized (0 0) (2 2))
   (origs (v (2 3)) (n (2 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -3381,7 +3400,8 @@
   (realized)
   (shape)
   (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
-  (origs (n (2 0)) (k (3 1)) (v (2 3))))
+  (origs (n (2 0)) (k (3 1)) (v (2 3)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -3472,6 +3492,7 @@
   (unrealized (0 0) (1 2))
   (preskeleton)
   (origs (v (1 3)) (n (1 0)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton envelope
@@ -3490,6 +3511,7 @@
   (parent 82)
   (unrealized (1 2))
   (origs (v (1 3)) (n (1 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -3784,7 +3806,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
-  (origs (n (1 0)) (k (2 1)) (v (1 3))))
+  (origs (n (1 0)) (k (2 1)) (v (1 3)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -3877,6 +3900,7 @@
   (unrealized (0 0) (1 2))
   (preskeleton)
   (origs (v (1 3)) (n (1 0)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton envelope
@@ -3897,6 +3921,7 @@
   (parent 93)
   (unrealized (0 0) (1 2))
   (origs (v (1 3)) (n (1 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -4178,7 +4203,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
-  (origs (n (1 0)) (k (2 1)) (v (1 3))))
+  (origs (n (1 0)) (k (2 1)) (v (1 3)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -4273,6 +4299,7 @@
   (unrealized (0 0) (1 0) (2 2))
   (preskeleton)
   (origs (v (2 3)) (n (2 0)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton envelope
@@ -4295,6 +4322,7 @@
   (parent 103)
   (unrealized (0 0) (2 2))
   (origs (v (2 3)) (n (2 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope

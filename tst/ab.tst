@@ -29,6 +29,7 @@
   (label 0)
   (unrealized (0 1))
   (origs (x (0 0)))
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton ab

@@ -118,12 +118,12 @@
     (forall ((z strd))
       (implies (p "dev-close" z (idx 4)) (trans z (idx 2)))))
   (defgenrule eff-dev-up-3
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-up" z (idx 4)) (prec z (idx 3) z1 i))
         (or (= z z1)
           (and (p "dev-up" z (idx 5)) (prec z (idx 4) z1 i))))))
   (defgenrule cau-dev-up-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-up" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1)))))))
 
@@ -139,6 +139,7 @@
   (unrealized (0 1) (1 0))
   (preskeleton)
   (origs (k (0 0)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton open-closed
@@ -154,6 +155,7 @@
   (parent 0)
   (unrealized (0 1) (1 0))
   (origs (k (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton open-closed
@@ -298,12 +300,12 @@
     (forall ((z strd))
       (implies (p "dev-close" z (idx 4)) (trans z (idx 2)))))
   (defgenrule eff-dev-up-3
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-up" z (idx 4)) (prec z (idx 3) z1 i))
         (or (= z z1)
           (and (p "dev-up" z (idx 5)) (prec z (idx 4) z1 i))))))
   (defgenrule cau-dev-up-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-up" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1)))))))
 
@@ -317,6 +319,7 @@
   (label 3)
   (realized)
   (origs (n (0 3)))
+  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton open-closed
@@ -332,6 +335,7 @@
   (parent 3)
   (unrealized (0 2))
   (origs (n (0 3)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton open-closed
@@ -358,7 +362,8 @@
   (realized)
   (shape)
   (maps ((0) ((k k) (n n) (d d) (o o) (lk lk) (ls ls))))
-  (origs (pt-0 (1 3)) (n (0 3))))
+  (origs (pt-0 (1 3)) (n (0 3)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -476,12 +481,12 @@
     (forall ((z strd))
       (implies (p "dev-close" z (idx 4)) (trans z (idx 2)))))
   (defgenrule eff-dev-up-3
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-up" z (idx 4)) (prec z (idx 3) z1 i))
         (or (= z z1)
           (and (p "dev-up" z (idx 5)) (prec z (idx 4) z1 i))))))
   (defgenrule cau-dev-up-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-up" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1)))))))
 
@@ -500,6 +505,7 @@
   (unrealized (0 1) (1 0) (1 1))
   (preskeleton)
   (origs (n (1 3)) (k (0 0)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton open-closed
@@ -518,6 +524,7 @@
   (parent 6)
   (unrealized (0 1) (1 0) (1 1))
   (origs (n (1 3)) (k (0 0)))
+  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton open-closed
@@ -538,6 +545,7 @@
   (parent 7)
   (unrealized (0 1) (1 0) (1 1) (1 2))
   (origs (n (1 3)) (k (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton open-closed
@@ -764,7 +772,8 @@
     ((0 1)
       ((k k) (d d) (o o) (start-ch start-ch) (n n) (d-0 d) (o-0 o)
         (lk lk-0) (ls ls))))
-  (origs (pt-4 (4 3)) (pt-5 (4 4)) (pt (3 3)) (n (1 3)) (k (0 0))))
+  (origs (pt-4 (4 3)) (pt-5 (4 4)) (pt (3 3)) (n (1 3)) (k (0 0)))
+  (ugens))
 
 (defskeleton open-closed
   (vars (old old1 any mesg) (k k-0 skey) (n n-0 text) (d o name)

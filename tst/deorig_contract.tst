@@ -26,6 +26,7 @@
   (label 0)
   (unrealized (0 2))
   (origs (x2 (0 1)) (x1 (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton deorig-contract
@@ -75,6 +76,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((k k) (x1 x1) (x2 x2))))
-  (origs (x2 (0 1)) (x1 (0 0))))
+  (origs (x2 (0 1)) (x1 (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")

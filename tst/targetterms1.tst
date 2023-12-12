@@ -24,6 +24,7 @@
   (label 0)
   (unrealized (0 1))
   (origs (n1 (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton targetterms
@@ -38,6 +39,7 @@
   (parent 0)
   (unrealized (0 1))
   (origs (n2 (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton targetterms
@@ -56,6 +58,7 @@
   (realized)
   (shape)
   (maps ((0) ((n1 n2) (k k) (a a) (n2 n2))))
-  (origs (n2 (0 0))))
+  (origs (n2 (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")

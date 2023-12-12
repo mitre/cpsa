@@ -2,6 +2,7 @@
 
 (comment "CPSA 4.4.2")
 (comment "All input read from tst/neuman-stubblebine-reauth.lsp")
+(comment "Strand count bounded at 8")
 
 (defprotocol neuman-stubblebine-reauth basic
   (defrole init
@@ -50,6 +51,7 @@
   (label 0)
   (unrealized (0 2) (1 0))
   (origs (rb (0 1)) (rb-prime (1 1)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -941,7 +943,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb ra-prime) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra-prime (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra-prime (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -1663,7 +1666,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb ra-prime) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra (3 0)) (ra-prime (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra (3 0)) (ra-prime (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey) (ra tb rb ra-prime rb-prime rb-0 rb-prime-0 tb-0 text)
@@ -1850,7 +1854,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -2173,7 +2178,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb ra-prime) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra-prime (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra-prime (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -2620,7 +2626,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (3 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (3 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -2749,7 +2756,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb ra-prime) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra-prime (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra-prime (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -2952,7 +2960,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra (3 0)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra (3 0)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -3080,7 +3089,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (4 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (4 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -3201,7 +3211,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra (4 0)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra (4 0)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -3812,7 +3823,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb ra-prime) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra-prime (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra-prime (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -4017,7 +4029,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -4468,7 +4481,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb ra-prime) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra (4 0)) (ra-prime (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra (4 0)) (ra-prime (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -4771,7 +4785,8 @@
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (origs (k (2 1)) (ra (4 0)) (rb (0 1)) (ra-prime (3 1))
-    (rb-prime (1 1))))
+    (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -4904,7 +4919,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -5043,7 +5059,8 @@
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (origs (k (2 1)) (ra (3 0)) (rb (0 1)) (ra-prime (4 1))
-    (rb-prime (1 1))))
+    (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -5264,7 +5281,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -5627,7 +5645,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (4 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (4 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -5766,7 +5785,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb ra-prime) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra-prime (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra-prime (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -5985,7 +6005,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -6125,7 +6146,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (5 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (5 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -6259,7 +6281,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -6693,7 +6716,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (4 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (4 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -6842,7 +6866,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb ra-prime) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra-prime (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra-prime (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -7077,7 +7102,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra (4 0)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra (4 0)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -7215,7 +7241,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (3 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (3 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -7263,7 +7290,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (5 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (5 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -7410,7 +7438,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -7550,7 +7579,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra (5 0)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra (5 0)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -7695,7 +7725,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra (3 0)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra (3 0)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -7845,7 +7876,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (5 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (5 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -7989,7 +8021,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra (5 0)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra (5 0)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -8472,7 +8505,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb ra-prime) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra-prime (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra-prime (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -8799,7 +8833,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (4 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (4 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -8941,7 +8976,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -9089,7 +9125,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (5 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (5 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -9231,7 +9268,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -9376,7 +9414,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -9888,7 +9927,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb ra-prime) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra (5 0)) (ra-prime (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra (5 0)) (ra-prime (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -10037,7 +10077,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (4 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (4 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -10286,7 +10327,8 @@
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (origs (k (2 1)) (ra (5 0)) (rb (0 1)) (ra-prime (4 1))
-    (rb-prime (1 1))))
+    (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -10437,7 +10479,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -10592,7 +10635,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra (4 0)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra (4 0)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey) (ra tb rb ra-prime rb-prime rb-0 ra-prime-0 text)
@@ -10643,7 +10687,8 @@
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (origs (k (2 1)) (ra (4 0)) (rb (0 1)) (ra-prime (5 1))
-    (rb-prime (1 1))))
+    (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -10992,7 +11037,8 @@
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (origs (k (2 1)) (ra (5 0)) (rb (0 1)) (ra-prime (3 1))
-    (rb-prime (1 1))))
+    (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -11143,7 +11189,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -11302,7 +11349,8 @@
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (origs (k (2 1)) (ra (3 0)) (rb (0 1)) (ra-prime (5 1))
-    (rb-prime (1 1))))
+    (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -11556,7 +11604,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -11803,7 +11852,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (5 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (5 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -11855,7 +11905,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb ra-prime) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra-prime (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra-prime (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -12006,7 +12057,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -12154,7 +12206,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (4 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (4 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -12205,7 +12258,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (6 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (6 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -12256,7 +12310,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -12307,7 +12362,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -12461,7 +12517,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -12513,7 +12570,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (6 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (6 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -12566,7 +12624,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -12829,7 +12888,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (5 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (5 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -12885,7 +12945,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb ra-prime) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra-prime (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra-prime (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -13046,7 +13107,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra (5 0)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra (5 0)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -13203,7 +13265,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (4 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (4 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -13257,7 +13320,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -13311,7 +13375,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -13365,7 +13430,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (6 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (6 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -13418,7 +13484,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra (6 0)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra (6 0)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -13579,7 +13646,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra (4 0)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra (4 0)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -13736,7 +13804,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (3 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (3 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -13790,7 +13859,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (6 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (6 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -13844,7 +13914,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -13899,7 +13970,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra (6 0)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra (6 0)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -14063,7 +14135,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra (3 0)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra (3 0)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -14118,7 +14191,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (6 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (6 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -14174,7 +14248,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra (6 0)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra (6 0)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -14229,7 +14304,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb ra-prime) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra-prime (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra-prime (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -14282,7 +14358,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (5 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (5 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -14335,7 +14412,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (5 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (5 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -14389,7 +14467,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -14443,7 +14522,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (6 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (6 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -14497,7 +14577,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -14551,7 +14632,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (4 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (4 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -14606,7 +14688,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (6 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (6 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -14662,7 +14745,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -14722,7 +14806,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb ra-prime) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra (6 0)) (ra-prime (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra (6 0)) (ra-prime (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -14778,7 +14863,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (5 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (5 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -14834,7 +14920,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (5 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (5 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -14890,7 +14977,8 @@
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (origs (k (2 1)) (ra (6 0)) (rb (0 1)) (ra-prime (5 1))
-    (rb-prime (1 1))))
+    (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -14948,7 +15036,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra (5 0)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra (5 0)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -15006,7 +15095,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra (5 0)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra (5 0)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -15065,7 +15155,8 @@
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (origs (k (2 1)) (ra (5 0)) (rb (0 1)) (ra-prime (6 1))
-    (rb-prime (1 1))))
+    (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -15123,7 +15214,8 @@
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (origs (k (2 1)) (ra (6 0)) (rb (0 1)) (ra-prime (4 1))
-    (rb-prime (1 1))))
+    (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -15179,7 +15271,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (4 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (4 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -15237,7 +15330,8 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra (4 0)) (rb (0 1)) (rb-prime (1 1))))
+  (origs (k (2 1)) (ra (4 0)) (rb (0 1)) (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -15296,7 +15390,8 @@
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (origs (k (2 1)) (ra (4 0)) (rb (0 1)) (ra-prime (6 1))
-    (rb-prime (1 1))))
+    (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -15354,7 +15449,8 @@
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (origs (k (2 1)) (ra (6 0)) (rb (0 1)) (ra-prime (3 1))
-    (rb-prime (1 1))))
+    (rb-prime (1 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -15413,7 +15509,8 @@
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (origs (k (2 1)) (ra (3 0)) (rb (0 1)) (ra-prime (6 1))
-    (rb-prime (1 1))))
+    (rb-prime (1 1)))
+  (ugens))
 
 (comment "Strand bound exceeded--aborting run")
 

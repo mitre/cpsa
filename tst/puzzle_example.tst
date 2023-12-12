@@ -29,6 +29,7 @@
   (label 0)
   (unrealized (0 1))
   (origs (na (0 0)) (payload (0 2)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton puzzle
@@ -47,7 +48,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (na na) (payload payload) (s s))))
-  (origs (na (0 0)) (payload (0 2))))
+  (origs (na (0 0)) (payload (0 2)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -79,6 +81,7 @@
   (unrealized (0 1) (1 0))
   (preskeleton)
   (origs (na (0 0)) (payload (0 2)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton puzzle
@@ -94,6 +97,7 @@
   (parent 2)
   (unrealized (0 1))
   (origs (na (0 0)) (payload (0 2)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton puzzle
@@ -114,7 +118,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((a a) (b b) (na na) (payload payload) (s s))))
-  (origs (na (0 0)) (payload (0 2))))
+  (origs (na (0 0)) (payload (0 2)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -148,6 +153,7 @@
   (unrealized (2 0))
   (preskeleton)
   (origs (s (1 1)) (na (0 0)) (payload (0 2)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton puzzle
@@ -165,6 +171,7 @@
   (unrealized (2 0))
   (dead)
   (origs (s (1 1)) (na (0 0)) (payload (0 2)))
+  (ugens)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -200,6 +207,7 @@
   (unrealized (2 0))
   (preskeleton)
   (origs (s (1 1)) (na (0 0)) (payload (0 2)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton puzzle
@@ -217,6 +225,7 @@
   (parent 7)
   (unrealized (2 0))
   (origs (s (1 1)) (na (0 0)) (payload (0 2)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton puzzle
@@ -268,6 +277,7 @@
   (label 10)
   (unrealized (0 2))
   (origs (s (0 1)))
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton puzzle
@@ -319,7 +329,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (payload payload) (s s) (na na))))
-  (origs (s (0 1))))
+  (origs (s (0 1)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -351,6 +362,7 @@
   (unrealized (0 2) (1 0))
   (preskeleton)
   (origs (s (0 1)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton puzzle
@@ -367,6 +379,7 @@
   (unrealized (0 2) (1 0))
   (dead)
   (origs (s (0 1)))
+  (ugens)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -402,6 +415,7 @@
   (unrealized (2 0))
   (preskeleton)
   (origs (s (0 1)) (payload (1 2)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton puzzle
@@ -419,6 +433,7 @@
   (parent 16)
   (unrealized (2 0))
   (origs (s (0 1)) (payload (1 2)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton puzzle

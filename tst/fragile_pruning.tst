@@ -35,6 +35,7 @@
   (label 0)
   (unrealized (0 1) (0 2) (0 3) (0 5))
   (origs (n (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -458,7 +459,8 @@
   (realized)
   (shape)
   (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
-  (origs (n (0 0)) (new (1 1))))
+  (origs (n (0 0)) (new (1 1)))
+  (ugens))
 
 (defskeleton fragile_pruning
   (vars (n new new-0 text) (k akey))
@@ -1124,7 +1126,8 @@
   (realized)
   (shape)
   (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
-  (origs (n (0 0)) (new-0 (2 1)) (new (1 1))))
+  (origs (n (0 0)) (new-0 (2 1)) (new (1 1)))
+  (ugens))
 
 (defskeleton fragile_pruning
   (vars (n new new-0 new-1 text) (k akey))
@@ -1527,7 +1530,8 @@
   (realized)
   (shape)
   (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new))))
-  (origs (n (0 0)) (new-0 (2 1)) (new (1 1))))
+  (origs (n (0 0)) (new-0 (2 1)) (new (1 1)))
+  (ugens))
 
 (defskeleton fragile_pruning
   (vars (n new new-0 new-1 text) (k akey))
@@ -1611,7 +1615,8 @@
   (realized)
   (shape)
   (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-0))))
-  (origs (n (0 0)) (new-0 (2 1)) (new (1 1))))
+  (origs (n (0 0)) (new-0 (2 1)) (new (1 1)))
+  (ugens))
 
 (defskeleton fragile_pruning
   (vars (n new new-0 new-1 text) (k akey))
@@ -2920,7 +2925,8 @@
   (realized)
   (shape)
   (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-1))))
-  (origs (n (0 0)) (new-1 (3 1)) (new-0 (2 1)) (new (1 1))))
+  (origs (n (0 0)) (new-1 (3 1)) (new-0 (2 1)) (new (1 1)))
+  (ugens))
 
 (defskeleton fragile_pruning
   (vars (n new new-0 new-1 new-2 text) (k akey))

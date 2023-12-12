@@ -87,6 +87,7 @@
   (label 0)
   (unrealized (0 1) (0 3))
   (origs (nc (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo
@@ -206,7 +207,8 @@
     ((0)
       ((b b) (c c) (m m) (nb nb) (nc nc) (nm nm) (goods goods)
         (price price))))
-  (origs (nc (0 0)) (nb (2 1)) (nm (1 1))))
+  (origs (nc (0 0)) (nb (2 1)) (nm (1 1)))
+  (ugens))
 
 (defskeleton epmo
   (vars (nb nc nm nm-0 data) (goods price text) (b c m name))
@@ -365,6 +367,7 @@
   (label 7)
   (unrealized (0 2))
   (origs (nb (0 1)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo
@@ -599,7 +602,8 @@
   (realized)
   (shape)
   (maps ((0) ((b b) (c c) (m m) (nc nc) (nm nm) (nb nb) (price price))))
-  (origs (nc (2 0)) (nb (0 1)) (nm (1 1))))
+  (origs (nc (2 0)) (nb (0 1)) (nm (1 1)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -683,6 +687,7 @@
   (label 15)
   (unrealized (0 2))
   (origs (nm (0 1)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo
@@ -775,6 +780,7 @@
     ((0)
       ((b b) (c c) (m m) (nb nb) (nc nc) (nm nm) (goods goods)
         (price price))))
-  (origs (nc (2 0)) (nb (1 1)) (nm (0 1))))
+  (origs (nc (2 0)) (nb (1 1)) (nm (0 1)))
+  (ugens))
 
 (comment "Nothing left to do")

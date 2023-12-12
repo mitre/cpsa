@@ -48,6 +48,7 @@
   (label 0)
   (unrealized (0 3))
   (origs)
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton kelly1
@@ -154,6 +155,7 @@
     ((0)
       ((A A) (C C) (S S) (Ns Ns) (request request) (Check Check)
         (policy policy) (response response))))
-  (origs (Ns (2 2)) (N (1 1))))
+  (origs (Ns (2 2)) (N (1 1)))
+  (ugens))
 
 (comment "Nothing left to do")

@@ -2,7 +2,6 @@
 
 (comment "CPSA 4.4.2")
 (comment "All input read from tst/dy.lsp")
-(comment "Strand count bounded at 12")
 
 (defprotocol dy basic
   (defrole init
@@ -32,6 +31,7 @@
   (unrealized (1 0))
   (preskeleton)
   (origs (m (0 0)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton dy
@@ -47,6 +47,7 @@
   (parent 0)
   (unrealized (1 0))
   (origs (m (0 0)))
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dy
@@ -170,7 +171,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((a a) (b b) (m m))))
-  (origs (m (0 0))))
+  (origs (m (0 0)))
+  (ugens))
 
 (defskeleton dy
   (vars (m text) (a b a-0 a-1 a-2 name))
@@ -3120,7 +3122,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((a a) (b b) (m m))))
-  (origs (m (0 0))))
+  (origs (m (0 0)))
+  (ugens))
 
 (defskeleton dy
   (vars (m text) (a b a-0 a-1 a-2 name))

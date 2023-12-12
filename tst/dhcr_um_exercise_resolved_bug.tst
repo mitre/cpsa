@@ -124,17 +124,17 @@
     (forall ((z strd))
       (implies (p "ltx-disclose" z (idx 2)) (trans z (idx 0)))))
   (defgenrule gen-st-init-0
-    (forall ((z strd) (l rndx) (a name))
+    (forall ((z strd) (a name) (l rndx))
       (implies
         (and (p "init" z (idx 1)) (p "init" "l" z l) (p "init" "a" z a))
         (gen-st (pv a l)))))
   (defgenrule gen-st-resp-0
-    (forall ((z strd) (l rndx) (b name))
+    (forall ((z strd) (b name) (l rndx))
       (implies
         (and (p "resp" z (idx 1)) (p "resp" "l" z l) (p "resp" "b" z b))
         (gen-st (pv b l)))))
   (defgenrule gen-st-ltx-disclose-0
-    (forall ((z strd) (l rndx) (self name))
+    (forall ((z strd) (self name) (l rndx))
       (implies
         (and (p "ltx-disclose" z (idx 1)) (p "ltx-disclose" "l" z l)
           (p "ltx-disclose" "self" z self)) (gen-st (pv self l)))))
@@ -162,6 +162,7 @@
   (label 0)
   (unrealized (0 1) (0 3))
   (origs (na (0 2)))
+  (ugens (x (0 2)))
   (comment "Not closed under rules"))
 
 (defskeleton dhcr-um
@@ -189,6 +190,7 @@
   (parent 0)
   (unrealized (0 0) (0 1) (0 3))
   (origs (na (0 2)))
+  (ugens (x (0 2)))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhcr-um
@@ -1107,7 +1109,8 @@
       ((a self) (b b) (l l-0) (l-peer l) (x x) (gy (exp (gen) y))
         (na na) (nb nb) (priv-stor priv-stor-0))))
   (origs (na (0 2)) (l-0 (3 1)) (pt-2 (3 1)) (l (1 1)) (pt-0 (1 1))
-    (nb (2 3))))
+    (nb (2 3)))
+  (ugens (x (0 2)) (y (2 3))))
 
 (defskeleton dhcr-um
   (vars (ignore ignore-0 mesg) (na nb data) (b self name)
@@ -5847,7 +5850,8 @@
         (gy (exp (gen) (mul y w))) (na na) (nb nb)
         (priv-stor priv-stor-0))))
   (origs (na (0 2)) (l-0 (3 1)) (pt-2 (3 1)) (l (1 1)) (pt-0 (1 1))
-    (nb (2 3))))
+    (nb (2 3)))
+  (ugens (x (0 2)) (y (2 3))))
 
 (defskeleton dhcr-um
   (vars (ignore ignore-0 mesg) (na nb data) (b self name)

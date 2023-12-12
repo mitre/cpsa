@@ -36,6 +36,7 @@
   (label 0)
   (unrealized (0 0) (1 0) (2 2))
   (origs (n (2 0)))
+  (ugens)
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -71,6 +72,7 @@
   (parent 0)
   (unrealized (0 0) (1 0))
   (origs (n (2 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -110,6 +112,7 @@
   (parent 0)
   (unrealized (0 0) (1 0))
   (origs (n (2 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -149,6 +152,7 @@
   (parent 1)
   (unrealized (0 0) (1 2) (2 1))
   (origs (n (1 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -183,6 +187,7 @@
   (parent 2)
   (unrealized (0 0))
   (origs (n (2 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -221,6 +226,7 @@
   (parent 4)
   (unrealized (0 0))
   (origs (n (2 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -259,6 +265,7 @@
   (seen 16)
   (unrealized (0 0) (1 2))
   (origs (n (1 0)))
+  (ugens)
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -276,7 +283,8 @@
   (realized)
   (shape)
   (maps ((0 0 1) ((n n) (A B) (B B) (k k))))
-  (origs (n (1 0))))
+  (origs (n (1 0)))
+  (ugens))
 
 (defskeleton nonaug-prune
   (vars (n text) (k akey) (B name))
@@ -295,7 +303,8 @@
   (realized)
   (shape)
   (maps ((0 1 2) ((n n) (A B) (B B) (k k))))
-  (origs (n (2 0))))
+  (origs (n (2 0)))
+  (ugens))
 
 (defskeleton nonaug-prune
   (vars (n text) (k akey) (B C C-0 name))
@@ -382,6 +391,7 @@
   (seen 14)
   (unrealized (0 0))
   (origs (n (2 0)))
+  (ugens)
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -443,6 +453,7 @@
   (parent 12)
   (unrealized (0 0))
   (origs (n (1 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -504,6 +515,7 @@
   (parent 18)
   (unrealized (0 0))
   (origs (n (2 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -565,6 +577,7 @@
   (seen 13)
   (realized)
   (origs (n (1 0)))
+  (ugens)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -628,6 +641,7 @@
   (seen 14)
   (realized)
   (origs (n (2 0)))
+  (ugens)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -669,7 +683,8 @@
   (realized)
   (shape)
   (maps ((0 1 2) ((n n) (A A) (B A) (k k))))
-  (origs (n (2 0))))
+  (origs (n (2 0)))
+  (ugens))
 
 (defskeleton nonaug-prune
   (vars (n text) (k akey) (A B name))

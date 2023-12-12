@@ -41,6 +41,7 @@
   (unrealized (0 1) (1 0) (1 2) (2 0) (2 2))
   (preskeleton)
   (origs (n3 (2 1)) (n2p (2 1)) (n3p (1 1)) (n2 (1 1)) (n1 (0 0)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton ns
@@ -63,6 +64,7 @@
   (unrealized (0 1) (1 2) (2 2))
   (dead)
   (origs (n3 (2 1)) (n2p (2 1)) (n3p (1 1)) (n2 (1 1)) (n1 (0 0)))
+  (ugens)
   (comment "empty cohort"))
 
 (defskeleton ns
@@ -103,6 +105,7 @@
   (shape)
   (maps
     ((0 1 1) ((a a) (b b) (n1 n1) (n2 n2) (n3 n3p) (n2p n2) (n3p n3p))))
-  (origs (n1 (0 0)) (n3p (1 1)) (n2 (1 1))))
+  (origs (n1 (0 0)) (n3p (1 1)) (n2 (1 1)))
+  (ugens))
 
 (comment "Nothing left to do")

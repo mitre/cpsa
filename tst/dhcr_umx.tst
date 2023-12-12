@@ -71,6 +71,7 @@
   (label 0)
   (unrealized (0 2))
   (origs (na (0 1)))
+  (ugens (ltxb (1 0)) (x (0 1)))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhcr-umx
@@ -178,7 +179,8 @@
     ((0 1)
       ((ltxa ltxa) (ltxb l) (a a) (b b) (x ltxb)
         (y (mul (rec ltxa) ltxa-0 y)) (na na) (nb nb))))
-  (origs (nb (2 2)) (na (0 1))))
+  (origs (nb (2 2)) (na (0 1)))
+  (ugens (l (1 0)) (y (2 2)) (ltxb (0 1))))
 
 (defskeleton dhcr-umx
   (vars (na nb data) (a b name) (ltxa y x ltxa-0 ltxb rndx))
@@ -216,7 +218,8 @@
     ((0 1)
       ((ltxa ltxa-0) (ltxb ltxb) (a a) (b b) (x x)
         (y (mul ltxa y (rec ltxa-0))) (na na) (nb nb))))
-  (origs (na (0 1)) (nb (2 2))))
+  (origs (na (0 1)) (nb (2 2)))
+  (ugens (x (0 1)) (y (2 2)) (ltxb (1 0))))
 
 (defskeleton dhcr-umx
   (vars (na nb data) (a b name) (ltxa ltxa-0 y ltxb x ltxb-0 rndx))
@@ -477,6 +480,7 @@
   (label 10)
   (unrealized (0 2))
   (origs (na (0 1)))
+  (ugens (ltxb (1 0)) (x (0 1)))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhcr-umx
@@ -584,7 +588,8 @@
     ((0 1)
       ((ltxa ltxa) (ltxb l) (a a) (b b) (x ltxb)
         (y (mul (rec ltxa) ltxa-0 y)) (na na) (nb nb))))
-  (origs (nb (2 2)) (na (0 1))))
+  (origs (nb (2 2)) (na (0 1)))
+  (ugens (l (1 0)) (y (2 2)) (ltxb (0 1))))
 
 (defskeleton dhcr-umx
   (vars (na nb data) (a b name) (ltxa y x ltxa-0 ltxb rndx))
@@ -622,7 +627,8 @@
     ((0 1)
       ((ltxa ltxa-0) (ltxb ltxb) (a a) (b b) (x x)
         (y (mul ltxa y (rec ltxa-0))) (na na) (nb nb))))
-  (origs (na (0 1)) (nb (2 2))))
+  (origs (na (0 1)) (nb (2 2)))
+  (ugens (x (0 1)) (y (2 2)) (ltxb (1 0))))
 
 (defskeleton dhcr-umx
   (vars (na nb data) (a b name) (ltxa ltxa-0 y ltxb x ltxb-0 rndx))
@@ -885,6 +891,7 @@
   (unrealized (0 0) (0 2))
   (preskeleton)
   (origs (na (0 1)))
+  (ugens (ltxb (2 0)) (ltxa (1 0)) (x (0 1)))
   (comment "Not a skeleton"))
 
 (defskeleton dhcr-umx
@@ -911,6 +918,7 @@
   (parent 20)
   (unrealized (0 2))
   (origs (na (0 1)))
+  (ugens (ltxb (2 0)) (ltxa (1 0)) (x (0 1)))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhcr-umx
@@ -1045,6 +1053,7 @@
   (parent 22)
   (unrealized (0 2) (2 1))
   (origs (nb (2 2)) (na (0 1)))
+  (ugens (y (2 2)) (ltxb-0 (1 0)) (x (0 1)))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton dhcr-umx
@@ -1077,6 +1086,7 @@
   (parent 22)
   (unrealized (2 0))
   (origs (na (0 1)))
+  (ugens (ltxb (1 0)) (x (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhcr-umx
@@ -1308,6 +1318,7 @@
   (parent 25)
   (unrealized (0 2))
   (origs (nb (2 2)) (na (0 1)))
+  (ugens (l (1 0)) (y (2 2)) (ltxb (0 1)))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhcr-umx
@@ -1342,6 +1353,7 @@
   (parent 25)
   (unrealized (0 2))
   (origs (na (0 1)) (nb (2 2)))
+  (ugens (x (0 1)) (y (2 2)) (ltxb (1 0)))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhcr-umx
@@ -1494,7 +1506,8 @@
     ((0 1 2)
       ((ltxa ltxa) (ltxb l) (a a) (b b) (x ltxb) (y y) (na na) (nb nb)
         (self self) (self-0 self-0))))
-  (origs (nb (3 2)) (na (0 1))))
+  (origs (nb (3 2)) (na (0 1)))
+  (ugens (y (3 2)) (l (2 0)) (ltxa (1 0)) (ltxb (0 1))))
 
 (defskeleton dhcr-umx
   (vars (na nb data) (a b self self-0 name) (ltxa ltxa-0 y ltxb l rndx))
@@ -1620,7 +1633,8 @@
     ((0 1 2)
       ((ltxa ltxa) (ltxb ltxb) (a a) (b b) (x x) (y y) (na na) (nb nb)
         (self self) (self-0 self-0))))
-  (origs (nb (3 2)) (na (0 1))))
+  (origs (nb (3 2)) (na (0 1)))
+  (ugens (y (3 2)) (x (0 1)) (ltxb (2 0)) (ltxa (1 0))))
 
 (defskeleton dhcr-umx
   (vars (na nb data) (a b self self-0 name) (ltxa y x ltxa-0 ltxb rndx))
@@ -1821,7 +1835,8 @@
     ((0 1 1)
       ((ltxa l) (ltxb l) (a a) (b b) (x ltxb) (y y) (na na) (nb nb)
         (self self) (self-0 self))))
-  (origs (nb (2 2)) (na (0 1))))
+  (origs (nb (2 2)) (na (0 1)))
+  (ugens (y (2 2)) (l (1 0)) (ltxb (0 1))))
 
 (defskeleton dhcr-umx
   (vars (na nb data) (a b self name) (ltxa y ltxb l rndx))
@@ -1934,7 +1949,8 @@
     ((0 1 1)
       ((ltxa ltxb) (ltxb ltxb) (a a) (b b) (x x) (y y) (na na) (nb nb)
         (self self) (self-0 self))))
-  (origs (nb (2 2)) (na (0 1))))
+  (origs (nb (2 2)) (na (0 1)))
+  (ugens (y (2 2)) (x (0 1)) (ltxb (1 0))))
 
 (defskeleton dhcr-umx
   (vars (na nb data) (a b self name) (ltxa y x ltxb rndx))
@@ -2331,6 +2347,7 @@
   (unrealized (0 0) (0 3))
   (preskeleton)
   (origs (nb (0 2)))
+  (ugens (ltxb (2 0)) (ltxa (1 0)) (y (0 2)))
   (comment "Not a skeleton"))
 
 (defskeleton dhcr-umx
@@ -2357,6 +2374,7 @@
   (parent 57)
   (unrealized (0 3))
   (origs (nb (0 2)))
+  (ugens (ltxb (2 0)) (ltxa (1 0)) (y (0 2)))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhcr-umx
@@ -2492,6 +2510,7 @@
   (parent 59)
   (unrealized (0 1) (2 2))
   (origs (na (2 1)) (nb (0 2)))
+  (ugens (x (2 1)) (ltxb-0 (1 0)) (y (0 2)))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhcr-umx
@@ -2524,6 +2543,7 @@
   (parent 59)
   (unrealized (2 0))
   (origs (nb (0 2)))
+  (ugens (ltxb (1 0)) (y (0 2)))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhcr-umx
@@ -2722,6 +2742,7 @@
   (parent 62)
   (unrealized (0 1))
   (origs (nb (0 2)) (na (2 1)))
+  (ugens (y (0 2)) (x (2 1)) (ltxb-0 (1 0)))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhcr-umx
@@ -2877,7 +2898,8 @@
     ((0 1 2)
       ((ltxa ltxa) (ltxb ltxb) (a a) (b b) (y y) (x x) (na na) (nb nb)
         (self self) (self-0 self-0))))
-  (origs (na (3 1)) (nb (0 2))))
+  (origs (na (3 1)) (nb (0 2)))
+  (ugens (x (3 1)) (y (0 2)) (ltxb (2 0)) (ltxa (1 0))))
 
 (defskeleton dhcr-umx
   (vars (na nb data) (a b self self-0 name) (y ltxa ltxb x ltxb-0 rndx))
@@ -3084,7 +3106,8 @@
     ((0 1 1)
       ((ltxa ltxb) (ltxb ltxb) (a a) (b b) (y y) (x x) (na na) (nb nb)
         (self self) (self-0 self))))
-  (origs (na (2 1)) (nb (0 2))))
+  (origs (na (2 1)) (nb (0 2)))
+  (ugens (x (2 1)) (y (0 2)) (ltxb (1 0))))
 
 (defskeleton dhcr-umx
   (vars (na nb data) (a b self name) (y ltxb x ltxb-0 rndx))
@@ -3403,6 +3426,7 @@
   (unrealized (0 0) (0 3))
   (preskeleton)
   (origs (nb (0 2)))
+  (ugens (ltxa (1 0)) (y (0 2)))
   (comment "Not a skeleton"))
 
 (defskeleton dhcr-umx
@@ -3427,6 +3451,7 @@
   (parent 84)
   (unrealized (0 3))
   (origs (nb (0 2)))
+  (ugens (ltxa (1 0)) (y (0 2)))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhcr-umx
@@ -3535,7 +3560,8 @@
     ((0 1)
       ((ltxa ltxa) (ltxb ltxb-0) (a a) (b b) (y y)
         (x (mul ltxb x (rec ltxb-0))) (na na) (nb nb) (self self))))
-  (origs (nb (0 2)) (na (2 1))))
+  (origs (nb (0 2)) (na (2 1)))
+  (ugens (y (0 2)) (x (2 1)) (ltxa (1 0))))
 
 (defskeleton dhcr-umx
   (vars (na nb data) (a b self name) (ltxa y ltxa-0 ltxb ltxb-0 x rndx))
@@ -3798,6 +3824,7 @@
   (unrealized (0 0) (0 3))
   (preskeleton)
   (origs (nb (0 2)))
+  (ugens (ltxa (1 0)) (y (0 2)))
   (comment "Not a skeleton"))
 
 (defskeleton dhcr-umx
@@ -3822,6 +3849,7 @@
   (parent 94)
   (unrealized (0 3))
   (origs (nb (0 2)))
+  (ugens (ltxa (1 0)) (y (0 2)))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhcr-umx
@@ -3930,7 +3958,8 @@
     ((0 1)
       ((ltxa ltxa) (ltxb ltxb-0) (a a) (b b) (y y)
         (x (mul ltxb x (rec ltxb-0))) (na na) (nb nb) (self self))))
-  (origs (nb (0 2)) (na (2 1))))
+  (origs (nb (0 2)) (na (2 1)))
+  (ugens (y (0 2)) (x (2 1)) (ltxa (1 0))))
 
 (defskeleton dhcr-umx
   (vars (na nb data) (a b self name) (ltxa y ltxa-0 ltxb ltxb-0 x rndx))
@@ -4201,6 +4230,7 @@
   (unrealized (0 0) (0 2) (1 0))
   (preskeleton)
   (origs (na (0 1)))
+  (ugens (ltxb (3 0)) (ltxa (2 0)) (x (0 1)))
   (comment "Not a skeleton"))
 
 (defskeleton dhcr-umx
@@ -4233,6 +4263,7 @@
   (parent 104)
   (unrealized (0 2) (1 0))
   (origs (na (0 1)))
+  (ugens (ltxb (3 0)) (ltxa (2 0)) (x (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhcr-umx
@@ -4334,6 +4365,7 @@
   (parent 106)
   (unrealized (0 2) (3 0))
   (origs (na (0 1)))
+  (ugens (ltxb (2 0)) (x (0 1)))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhcr-umx
@@ -7299,7 +7331,8 @@
     ((0 1 2 2)
       ((ltxa l) (ltxb l) (x ltxb) (y y) (a a) (b b) (na na) (nb nb)
         (self self) (self-0 self))))
-  (origs (nb (3 2)) (na (0 1))))
+  (origs (nb (3 2)) (na (0 1)))
+  (ugens (y (3 2)) (l (2 0)) (ltxb (0 1))))
 
 (defskeleton dhcr-umx
   (vars (na nb data) (a b self name) (y l x rndx))
@@ -7340,7 +7373,8 @@
     ((0 1 2 2)
       ((ltxa l) (ltxb l) (x x) (y y) (a a) (b b) (na na) (nb nb)
         (self self) (self-0 self))))
-  (origs (nb (3 2)) (na (0 1))))
+  (origs (nb (3 2)) (na (0 1)))
+  (ugens (y (3 2)) (x (0 1)) (l (2 0))))
 
 (defskeleton dhcr-umx
   (vars (na nb data) (a b self self-0 name) (y ltxb l l-0 rndx))
@@ -7559,7 +7593,8 @@
     ((0 1 2 3)
       ((ltxa l-0) (ltxb l) (x ltxb) (y y) (a a) (b b) (na na) (nb nb)
         (self self) (self-0 self-0))))
-  (origs (nb (4 2)) (na (0 1))))
+  (origs (nb (4 2)) (na (0 1)))
+  (ugens (l-0 (2 0)) (y (4 2)) (l (3 0)) (ltxb (0 1))))
 
 (defskeleton dhcr-umx
   (vars (na nb data) (a b self self-0 name) (y ltxb x l rndx))
@@ -7604,6 +7639,7 @@
     ((0 1 2 3)
       ((ltxa l) (ltxb ltxb) (x x) (y y) (a a) (b b) (na na) (nb nb)
         (self self) (self-0 self-0))))
-  (origs (nb (4 2)) (na (0 1))))
+  (origs (nb (4 2)) (na (0 1)))
+  (ugens (l (2 0)) (y (4 2)) (x (0 1)) (ltxb (3 0))))
 
 (comment "Nothing left to do")

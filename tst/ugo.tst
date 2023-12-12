@@ -2,7 +2,7 @@
   (comment "Non-executable role examples"))
 
 (comment "CPSA 4.4.2")
-(comment "All input read from ugo.scm")
+(comment "All input read from tst/ugo.scm")
 
 (defprotocol uniq-gen-example basic
   (defrole init
@@ -34,6 +34,7 @@
   (label 0)
   (unrealized (0 0))
   (origs)
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton uniq-gen-example
@@ -66,7 +67,8 @@
   (realized)
   (shape)
   (maps ((0) ((u u) (k k))))
-  (origs))
+  (origs)
+  (ugens (u (1 0))))
 
 (defskeleton uniq-gen-example
   (vars (k k-0 skey) (u akey))
@@ -119,6 +121,7 @@
   (label 4)
   (unrealized (0 0))
   (origs)
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton uniq-gen-example
@@ -184,7 +187,8 @@
   (realized)
   (shape)
   (maps ((0) ((u u) (k k))))
-  (origs))
+  (origs)
+  (ugens (u (1 0)) ((invk u) (1 0))))
 
 (defskeleton uniq-gen-example
   (vars (k k-0 skey) (u akey))
@@ -220,7 +224,8 @@
   (realized)
   (shape)
   (maps ((0) ((u u) (k k))))
-  (origs))
+  (origs)
+  (ugens (u (1 0)) ((invk u) (1 0))))
 
 (comment "Nothing left to do")
 
@@ -251,6 +256,7 @@
   (label 11)
   (unrealized (0 0))
   (origs)
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton uniq-orig-example
@@ -283,7 +289,8 @@
   (realized)
   (shape)
   (maps ((0) ((u u) (k k))))
-  (origs (u (1 0))))
+  (origs (u (1 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -315,6 +322,7 @@
   (label 14)
   (unrealized (0 0))
   (origs ((invk u) (0 1)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton uniq-orig-example
@@ -347,6 +355,7 @@
   (realized)
   (shape)
   (maps ((0) ((u u) (k k))))
-  (origs (u (1 0)) ((invk u) (0 1))))
+  (origs (u (1 0)) ((invk u) (0 1)))
+  (ugens))
 
 (comment "Nothing left to do")

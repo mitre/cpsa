@@ -55,6 +55,7 @@
   (label 0)
   (unrealized (0 1))
   (origs (k (0 0)))
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton main-ex-src
@@ -113,7 +114,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (c c) (i i) (ssn ssn) (k k))))
-  (origs (k (0 0))))
+  (origs (k (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -157,6 +159,7 @@
   (label 4)
   (unrealized (0 1))
   (origs (k (0 0)))
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton main-ex-src
@@ -213,7 +216,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (c c) (i i) (ssn ssn) (d d) (k k))))
-  (origs (d (1 1)) (k (0 0))))
+  (origs (d (1 1)) (k (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -264,6 +268,7 @@
   (label 8)
   (unrealized (0 1))
   (origs (k (0 0)))
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton main-ex-tgt
@@ -346,7 +351,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (c c) (i i) (ssn ssn) (k k))))
-  (origs (k (0 0)) (y (1 1)) (n (1 1))))
+  (origs (k (0 0)) (y (1 1)) (n (1 1)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -397,6 +403,7 @@
   (label 13)
   (unrealized (0 1))
   (origs (k (0 0)))
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton main-ex-tgt
@@ -497,7 +504,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (c c) (i i) (ssn ssn) (d d) (k k))))
-  (origs (d (1 3)) (y (1 1)) (n (1 1)) (k (0 0))))
+  (origs (d (1 3)) (y (1 1)) (n (1 1)) (k (0 0)))
+  (ugens))
 
 (defskeleton main-ex-tgt
   (vars (k skey) (i ssn d n ssn-0 text) (a b c b-0 akey))
@@ -586,6 +594,7 @@
   (label 20)
   (unrealized (0 1))
   (origs (k (0 0)))
+  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton main-ex-tgt-rule
@@ -630,6 +639,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (c c) (i i) (ssn ssn) (k k))))
-  (origs (y (1 1)) (n (1 1)) (k (0 0))))
+  (origs (y (1 1)) (n (1 1)) (k (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")

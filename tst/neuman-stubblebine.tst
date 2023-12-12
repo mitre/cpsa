@@ -36,6 +36,7 @@
   (label 0)
   (unrealized (0 1))
   (origs (ra (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine
@@ -84,7 +85,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (ks ks) (ra ra) (rb rb) (k k) (tb tb))))
-  (origs (k (1 1)) (ra (0 0))))
+  (origs (k (1 1)) (ra (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -122,6 +124,7 @@
   (label 3)
   (unrealized (0 2))
   (origs (rb (0 1)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine
@@ -380,7 +383,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (ks ks) (ra ra) (rb rb) (k k) (tb tb))))
-  (origs (k (1 1)) (ra (2 0)) (rb (0 1))))
+  (origs (k (1 1)) (ra (2 0)) (rb (0 1)))
+  (ugens))
 
 (defskeleton neuman-stubblebine
   (vars (k skey) (ra rb tb ra-0 rb-0 rb-1 text) (a b ks name))
@@ -411,7 +415,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (ks ks) (ra ra) (rb rb) (k k) (tb tb))))
-  (origs (k (1 1)) (rb (0 1))))
+  (origs (k (1 1)) (rb (0 1)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -451,6 +456,7 @@
   (label 15)
   (unrealized (0 0))
   (origs (k (0 1)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine
@@ -473,6 +479,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (ks ks) (ra ra) (rb rb) (k k) (tb tb))))
-  (origs (k (0 1))))
+  (origs (k (0 1)))
+  (ugens))
 
 (comment "Nothing left to do")

@@ -37,6 +37,7 @@
   (label 0)
   (unrealized (0 1))
   (origs)
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton kerberos
@@ -381,7 +382,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
-  (origs (k (1 1))))
+  (origs (k (1 1)))
+  (ugens))
 
 (defskeleton kerberos
   (vars (k skey) (t t-prime l l-0 text) (a b ks b-0 ks-0 name))
@@ -471,7 +473,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
-  (origs (k (1 1))))
+  (origs (k (1 1)))
+  (ugens))
 
 (defskeleton kerberos
   (vars (k skey) (t t-prime l l-0 text) (a b ks b-0 ks-0 name))
@@ -565,7 +568,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
-  (origs (k (1 1))))
+  (origs (k (1 1)))
+  (ugens))
 
 (defskeleton kerberos
   (vars (k skey) (t t-prime l text) (a b ks name))
@@ -597,7 +601,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
-  (origs (k (1 1))))
+  (origs (k (1 1)))
+  (ugens))
 
 (defskeleton kerberos
   (vars (k skey) (t t-prime l text) (a b ks name))
@@ -629,7 +634,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
-  (origs (k (1 1))))
+  (origs (k (1 1)))
+  (ugens))
 
 (defskeleton kerberos
   (vars (k skey) (t t-prime l text) (a b ks name))
@@ -661,7 +667,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
-  (origs (k (1 1))))
+  (origs (k (1 1)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -699,6 +706,7 @@
   (label 23)
   (unrealized (0 0))
   (origs)
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton kerberos
@@ -859,7 +867,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
-  (origs (k (1 1))))
+  (origs (k (1 1)))
+  (ugens))
 
 (defskeleton kerberos
   (vars (k skey) (t t-prime l text) (a b ks name))
@@ -885,7 +894,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
-  (origs (k (1 1))))
+  (origs (k (1 1)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -924,6 +934,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (ks ks) (t t) (l l) (k k))))
-  (origs (k (0 1))))
+  (origs (k (0 1)))
+  (ugens))
 
 (comment "Nothing left to do")

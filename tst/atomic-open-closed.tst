@@ -270,15 +270,15 @@
     (forall ((z strd))
       (implies (p "dev-close" z (idx 4)) (trans z (idx 2)))))
   (defgenrule cau-dev-open-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-open" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1))))))
   (defgenrule cau-dev-close-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-close" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1))))))
   (defgenrule cau-dev-pass-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-pass" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1)))))))
 
@@ -294,6 +294,7 @@
   (unrealized (0 1) (1 0))
   (preskeleton)
   (origs (k (0 0)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton atomic-open-closed
@@ -309,6 +310,7 @@
   (parent 0)
   (unrealized (0 1) (1 0))
   (origs (k (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton atomic-open-closed
@@ -606,15 +608,15 @@
     (forall ((z strd))
       (implies (p "dev-close" z (idx 4)) (trans z (idx 2)))))
   (defgenrule cau-dev-open-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-open" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1))))))
   (defgenrule cau-dev-close-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-close" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1))))))
   (defgenrule cau-dev-pass-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-pass" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1)))))))
 
@@ -628,6 +630,7 @@
   (label 3)
   (realized)
   (origs (n (0 3)))
+  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton atomic-open-closed
@@ -644,6 +647,7 @@
   (parent 3)
   (unrealized (0 1) (0 2))
   (origs (n (0 3)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton atomic-open-closed
@@ -776,7 +780,8 @@
   (realized)
   (shape)
   (maps ((0) ((k k) (n n) (d d) (o o) (lk lk) (ls ls))))
-  (origs (pt-1 (1 2)) (pt (3 3)) (pt-3 (1 4)) (n (0 3))))
+  (origs (pt-1 (1 2)) (pt (3 3)) (pt-3 (1 4)) (n (0 3)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -1046,15 +1051,15 @@
     (forall ((z strd))
       (implies (p "dev-close" z (idx 4)) (trans z (idx 2)))))
   (defgenrule cau-dev-open-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-open" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1))))))
   (defgenrule cau-dev-close-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-close" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1))))))
   (defgenrule cau-dev-pass-2
-    (forall ((z z1 strd) (i indx))
+    (forall ((i indx) (z1 z strd))
       (implies (and (p "dev-pass" z (idx 3)) (prec z1 i z (idx 2)))
         (or (= z z1) (prec z1 i z (idx 1)))))))
 
@@ -1073,6 +1078,7 @@
   (unrealized (0 1) (1 0) (1 1))
   (preskeleton)
   (origs (n (1 3)) (k (0 0)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton atomic-open-closed
@@ -1091,6 +1097,7 @@
   (parent 9)
   (unrealized (0 1) (1 0) (1 1))
   (origs (n (1 3)) (k (0 0)))
+  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton atomic-open-closed
@@ -1112,6 +1119,7 @@
   (parent 10)
   (unrealized (0 1) (1 0) (1 1) (1 2))
   (origs (n (1 3)) (k (0 0)))
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton atomic-open-closed
@@ -1453,7 +1461,8 @@
     ((0 1)
       ((k k) (d d) (o o) (start-ch start-ch) (n n) (d-0 d) (o-0 o)
         (lk lk) (ls ls))))
-  (origs (pt-2 (5 2)) (pt-4 (5 4)) (pt (3 3)) (n (1 3)) (k (0 0))))
+  (origs (pt-2 (5 2)) (pt-4 (5 4)) (pt (3 3)) (n (1 3)) (k (0 0)))
+  (ugens))
 
 (defskeleton atomic-open-closed
   (vars (old old1 any mesg) (k skey) (n n-0 text) (d o name)

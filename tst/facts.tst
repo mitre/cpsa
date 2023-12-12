@@ -28,6 +28,7 @@
   (label 0)
   (unrealized (0 1))
   (origs (n (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton unilateral
@@ -45,7 +46,8 @@
   (realized)
   (shape)
   (maps ((0) ((k k) (n n))))
-  (origs (n (0 0))))
+  (origs (n (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -73,6 +75,7 @@
   (label 2)
   (unrealized (0 0))
   (origs)
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton unilateral
@@ -90,7 +93,8 @@
   (realized)
   (shape)
   (maps ((0) ((n n) (k k))))
-  (origs (n (1 0))))
+  (origs (n (1 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -128,6 +132,7 @@
   (label 4)
   (unrealized (0 1))
   (origs (n (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton unilateral
@@ -146,7 +151,8 @@
   (shape)
   (satisfies yes)
   (maps ((0) ((n n) (k k))))
-  (origs (n (0 0))))
+  (origs (n (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -183,6 +189,7 @@
   (label 6)
   (unrealized (0 0))
   (origs)
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton unilateral
@@ -201,7 +208,8 @@
   (shape)
   (satisfies yes)
   (maps ((0) ((n n) (k k))))
-  (origs (n (1 0))))
+  (origs (n (1 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -235,6 +243,7 @@
   (label 8)
   (unrealized (0 1))
   (origs (nb (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton iso-unilateral
@@ -256,7 +265,8 @@
   (realized)
   (shape)
   (maps ((0) ((b b) (na na) (nb nb) (t1 t1) (t2 t2) (t3 t3))))
-  (origs (na (1 1)) (nb (0 0))))
+  (origs (na (1 1)) (nb (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -294,6 +304,7 @@
   (label 10)
   (unrealized (0 1))
   (origs (nb (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton iso-unilateral
@@ -316,7 +327,8 @@
   (shape)
   (satisfies yes)
   (maps ((0) ((b b) (na na) (nb nb) (t1 t1) (t2 t2) (t3 t3))))
-  (origs (na (1 1)) (nb (0 0))))
+  (origs (na (1 1)) (nb (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -354,6 +366,7 @@
   (label 12)
   (unrealized (0 1))
   (origs (nb (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton iso-unilateral
@@ -376,6 +389,7 @@
   (shape)
   (satisfies (no (fact false) (b b) (z 0)))
   (maps ((0) ((b b) (na na) (nb nb) (t1 t1) (t2 t2) (t3 t3))))
-  (origs (na (1 1)) (nb (0 0))))
+  (origs (na (1 1)) (nb (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")

@@ -54,6 +54,7 @@
   (label 0)
   (unrealized (0 0))
   (origs (chal (0 1)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton cert-uni
@@ -107,6 +108,7 @@
     ((0)
       ((ca ca) (chal chal) (ch-ca ch-ca) (ch-r ch-r) (subj subj) (pk pk)
         (serial serial))))
-  (origs (chal (0 1))))
+  (origs (chal (0 1)))
+  (ugens))
 
 (comment "Nothing left to do")

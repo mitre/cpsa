@@ -1,8 +1,9 @@
 (herald "Wide-Mouth Frog Protocol"
-  (comment "This protocol has an infinite number of shapes"))
+  (comment "This protocol has an infinite number of shapes") (bound 8))
 
 (comment "CPSA 4.4.2")
 (comment "All input read from tst/wide-mouth-frog.lsp")
+(comment "Strand count bounded at 8")
 
 (defprotocol wide-mouth-frog basic
   (defrole init
@@ -32,7 +33,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (t t) (k k) (b b) (ta ta))))
-  (origs (k (0 0))))
+  (origs (k (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -63,6 +65,7 @@
   (label 1)
   (unrealized (0 0))
   (origs)
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wide-mouth-frog
@@ -81,7 +84,8 @@
   (realized)
   (shape)
   (maps ((0) ((b b) (t t) (k k) (a a) (tb tb))))
-  (origs (k (1 0))))
+  (origs (k (1 0)))
+  (ugens))
 
 (defskeleton wide-mouth-frog
   (vars (k skey) (tb ta text) (b t a name))
@@ -100,7 +104,8 @@
   (realized)
   (shape)
   (maps ((0) ((b b) (t t) (k k) (a a) (tb tb))))
-  (origs))
+  (origs)
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -133,6 +138,7 @@
   (label 4)
   (unrealized (0 0))
   (origs)
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wide-mouth-frog
@@ -153,7 +159,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (t t) (k k) (ta ta) (tb tb))))
-  (origs (k (1 0))))
+  (origs (k (1 0)))
+  (ugens))
 
 (defskeleton wide-mouth-frog
   (vars (k skey) (ta tb ta-0 text) (a b t name))
@@ -195,7 +202,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (t t) (k k) (ta ta) (tb tb))))
-  (origs (k (2 0))))
+  (origs (k (2 0)))
+  (ugens))
 
 (defskeleton wide-mouth-frog
   (vars (k skey) (ta tb ta-0 ta-1 text) (a b t name))
@@ -243,7 +251,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (t t) (k k) (ta ta) (tb tb))))
-  (origs (k (3 0))))
+  (origs (k (3 0)))
+  (ugens))
 
 (defskeleton wide-mouth-frog
   (vars (k skey) (ta tb ta-0 ta-1 ta-2 text) (a b t name))
@@ -297,7 +306,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (t t) (k k) (ta ta) (tb tb))))
-  (origs (k (4 0))))
+  (origs (k (4 0)))
+  (ugens))
 
 (defskeleton wide-mouth-frog
   (vars (k skey) (ta tb ta-0 ta-1 ta-2 ta-3 text) (a b t name))
@@ -358,7 +368,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (t t) (k k) (ta ta) (tb tb))))
-  (origs (k (5 0))))
+  (origs (k (5 0)))
+  (ugens))
 
 (defskeleton wide-mouth-frog
   (vars (k skey) (ta tb ta-0 ta-1 ta-2 ta-3 ta-4 text) (a b t name))
@@ -426,7 +437,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (t t) (k k) (ta ta) (tb tb))))
-  (origs (k (6 0))))
+  (origs (k (6 0)))
+  (ugens))
 
 (defskeleton wide-mouth-frog
   (vars (k skey) (ta tb ta-0 ta-1 ta-2 ta-3 ta-4 ta-5 text)
@@ -502,7 +514,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (t t) (k k) (ta ta) (tb tb))))
-  (origs (k (7 0))))
+  (origs (k (7 0)))
+  (ugens))
 
 (comment "Strand bound exceeded--aborting run")
 

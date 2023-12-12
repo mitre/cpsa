@@ -29,6 +29,7 @@
   (label 0)
   (unrealized (0 1))
   (origs (n (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton targetterms2
@@ -175,7 +176,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (n n))))
-  (origs (n (0 0))))
+  (origs (n (0 0)))
+  (ugens))
 
 (defskeleton targetterms2
   (vars (m mesg) (n text) (a name))

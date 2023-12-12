@@ -26,6 +26,7 @@
   (label 0)
   (unrealized (0 0))
   (origs)
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton pennonorigtest
@@ -41,7 +42,8 @@
   (realized)
   (shape)
   (maps ((0) ((pwd pwd) (userid userid))))
-  (origs))
+  (origs)
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -69,6 +71,7 @@
   (label 2)
   (unrealized (0 0) (1 0))
   (origs)
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton pennonorigtest
@@ -101,7 +104,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((pwd pwd) (userid userid))))
-  (origs))
+  (origs)
+  (ugens))
 
 (defskeleton pennonorigtest
   (vars (pwd text) (userid userid-0 userid-1 name))
@@ -119,6 +123,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((pwd pwd) (userid userid))))
-  (origs))
+  (origs)
+  (ugens))
 
 (comment "Nothing left to do")

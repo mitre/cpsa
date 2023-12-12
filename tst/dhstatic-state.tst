@@ -79,12 +79,12 @@
   (defgenrule fact-init-neq0
     (forall ((z strd) (b a name))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "b" z b) (p "init" "a" z a))
+        (and (p "init" z (idx 2)) (p "init" "a" z a) (p "init" "b" z b))
         (fact neq a b))))
   (defgenrule fact-resp-neq0
     (forall ((z strd) (b a name))
       (implies
-        (and (p "resp" z (idx 2)) (p "resp" "b" z b) (p "resp" "a" z a))
+        (and (p "resp" z (idx 2)) (p "resp" "a" z a) (p "resp" "b" z b))
         (fact neq a b))))
   (defgenrule trRl_get-cert-at-3
     (forall ((z strd))
@@ -93,16 +93,18 @@
     (forall ((z strd))
       (implies (p "get-cert" z (idx 4)) (trans z (idx 2)))))
   (defgenrule gen-st-init-0
-    (forall ((z strd) (serial-a data) (ra rndx) (ca a name))
+    (forall ((z strd) (a name) (ra rndx) (serial-a data) (ca name))
       (implies
-        (and (p "init" z (idx 1)) (p "init" "serial-a" z serial-a)
-          (p "init" "ra" z ra) (p "init" "ca" z ca) (p "init" "a" z a))
+        (and (p "init" z (idx 1)) (p "init" "ca" z ca)
+          (p "init" "serial-a" z serial-a) (p "init" "ra" z ra)
+          (p "init" "a" z a))
         (gen-st (cat "privkey" a ra serial-a ca)))))
   (defgenrule gen-st-resp-0
-    (forall ((z strd) (serial-b data) (rb rndx) (ca b name))
+    (forall ((z strd) (b name) (rb rndx) (serial-b data) (ca name))
       (implies
-        (and (p "resp" z (idx 1)) (p "resp" "serial-b" z serial-b)
-          (p "resp" "rb" z rb) (p "resp" "ca" z ca) (p "resp" "b" z b))
+        (and (p "resp" z (idx 1)) (p "resp" "ca" z ca)
+          (p "resp" "serial-b" z serial-b) (p "resp" "rb" z rb)
+          (p "resp" "b" z b))
         (gen-st (cat "privkey" b rb serial-b ca)))))
   (lang (cert-req (tupl 3)) (cert (tupl 4)) (sig sign)))
 
@@ -120,6 +122,7 @@
   (label 0)
   (unrealized (0 1))
   (origs (n (0 2)))
+  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton dhstatic-state
@@ -140,6 +143,7 @@
   (parent 0)
   (unrealized (0 0) (0 1))
   (origs (n (0 2)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -464,7 +468,8 @@
         (serial-b serial-b) (galpha (exp (gen) ra-0)) (n n)
         (static-key static-key))))
   (origs (pt-1 (5 3)) (serial-b (3 1)) (serial-a (2 1)) (pt (1 3))
-    (n (0 2))))
+    (n (0 2)))
+  (ugens (ra-0 (5 0)) (ra (1 0))))
 
 (defskeleton dhstatic-state
   (vars (ignore ignore-0 mesg) (serial-a serial-b data) (n text)
@@ -1531,12 +1536,12 @@
   (defgenrule fact-init-neq0
     (forall ((z strd) (b a name))
       (implies
-        (and (p "init" z (idx 2)) (p "init" "b" z b) (p "init" "a" z a))
+        (and (p "init" z (idx 2)) (p "init" "a" z a) (p "init" "b" z b))
         (fact neq a b))))
   (defgenrule fact-resp-neq0
     (forall ((z strd) (b a name))
       (implies
-        (and (p "resp" z (idx 2)) (p "resp" "b" z b) (p "resp" "a" z a))
+        (and (p "resp" z (idx 2)) (p "resp" "a" z a) (p "resp" "b" z b))
         (fact neq a b))))
   (defgenrule trRl_get-cert-at-3
     (forall ((z strd))
@@ -1545,16 +1550,18 @@
     (forall ((z strd))
       (implies (p "get-cert" z (idx 4)) (trans z (idx 2)))))
   (defgenrule gen-st-init-0
-    (forall ((z strd) (serial-a data) (ra rndx) (ca a name))
+    (forall ((z strd) (a name) (ra rndx) (serial-a data) (ca name))
       (implies
-        (and (p "init" z (idx 1)) (p "init" "serial-a" z serial-a)
-          (p "init" "ra" z ra) (p "init" "ca" z ca) (p "init" "a" z a))
+        (and (p "init" z (idx 1)) (p "init" "ca" z ca)
+          (p "init" "serial-a" z serial-a) (p "init" "ra" z ra)
+          (p "init" "a" z a))
         (gen-st (cat "privkey" a ra serial-a ca)))))
   (defgenrule gen-st-resp-0
-    (forall ((z strd) (serial-b data) (rb rndx) (ca b name))
+    (forall ((z strd) (b name) (rb rndx) (serial-b data) (ca name))
       (implies
-        (and (p "resp" z (idx 1)) (p "resp" "serial-b" z serial-b)
-          (p "resp" "rb" z rb) (p "resp" "ca" z ca) (p "resp" "b" z b))
+        (and (p "resp" z (idx 1)) (p "resp" "ca" z ca)
+          (p "resp" "serial-b" z serial-b) (p "resp" "rb" z rb)
+          (p "resp" "b" z b))
         (gen-st (cat "privkey" b rb serial-b ca)))))
   (lang (cert-req (tupl 3)) (cert (tupl 4)) (sig sign)))
 
@@ -1571,6 +1578,7 @@
   (label 24)
   (unrealized (0 1))
   (origs)
+  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton dhstatic-state
@@ -1590,6 +1598,7 @@
   (parent 24)
   (unrealized (0 0) (0 1))
   (origs)
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -1910,7 +1919,8 @@
         (serial-a serial-a) (galpha (exp (gen) ra-0)) (n n)
         (static-key static-key))))
   (origs (pt-1 (5 3)) (n (4 2)) (serial-a (3 1)) (serial-b (2 1))
-    (pt (1 3))))
+    (pt (1 3)))
+  (ugens (ra-0 (5 0)) (ra (1 0))))
 
 (defskeleton dhstatic-state
   (vars (ignore ignore-0 mesg) (serial-b serial-a data) (n text)

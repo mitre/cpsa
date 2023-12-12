@@ -27,6 +27,7 @@
   (label 0)
   (unrealized (1 0))
   (origs (m (0 0)))
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton missing-contraction
@@ -44,7 +45,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((m m) (a a) (c a) (n n) (b b))))
-  (origs (m (0 0))))
+  (origs (m (0 0)))
+  (ugens))
 
 (defskeleton missing-contraction
   (vars (n text) (a c b name))
@@ -62,7 +64,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((m n) (a a) (c c) (n n) (b b))))
-  (origs (n (0 0))))
+  (origs (n (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -92,6 +95,7 @@
   (unrealized (1 0))
   (preskeleton)
   (origs (m (0 0)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton missing-contraction
@@ -107,6 +111,7 @@
   (parent 3)
   (unrealized (1 0))
   (origs (m (0 0)))
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton missing-contraction
@@ -124,7 +129,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((m m) (a a) (c a))))
-  (origs (m (0 0))))
+  (origs (m (0 0)))
+  (ugens))
 
 (defskeleton missing-contraction
   (vars (m text) (c a b name))
@@ -142,7 +148,8 @@
   (realized)
   (shape)
   (maps ((1 0) ((m m) (a a) (c c))))
-  (origs (m (1 0))))
+  (origs (m (1 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -172,6 +179,7 @@
   (label 7)
   (unrealized (1 0))
   (origs (m (0 0)))
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton missing-contraction
@@ -189,7 +197,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((m m) (a a) (b b) (c a) (n n))))
-  (origs (m (0 0))))
+  (origs (m (0 0)))
+  (ugens))
 
 (defskeleton missing-contraction
   (vars (n text) (a b c name))
@@ -206,6 +215,7 @@
   (parent 7)
   (unrealized (1 0))
   (origs (n (0 0)))
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton missing-contraction
@@ -224,6 +234,7 @@
   (seen 8)
   (realized)
   (origs (n (0 0)))
+  (ugens)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton missing-contraction
@@ -242,6 +253,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((m n) (a a) (b b) (c b) (n n))))
-  (origs (n (0 0))))
+  (origs (n (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")

@@ -31,6 +31,7 @@
   (label 0)
   (realized)
   (origs)
+  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton ordered
@@ -46,6 +47,7 @@
   (seen 2)
   (realized)
   (origs)
+  (ugens)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton ordered
@@ -61,6 +63,7 @@
   (seen 1)
   (realized)
   (origs)
+  (ugens)
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
@@ -92,6 +95,7 @@
   (label 3)
   (realized)
   (origs)
+  (ugens)
   (comment "Not closed under rules"))
 
 (comment "Nothing left to do")

@@ -34,6 +34,7 @@
   (label 0)
   (unrealized (0 0) (0 1))
   (origs (c (2 0)) (d (1 0)) (a (1 0)) (b (2 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton non_transforming
@@ -87,6 +88,7 @@
   (parent 1)
   (unrealized (0 0) (0 1))
   (origs (a (1 0)) (d (1 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton non_transforming
@@ -125,6 +127,7 @@
   (parent 3)
   (unrealized (0 1))
   (origs (a (1 0)) (d (1 0)))
+  (ugens)
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton non_transforming
@@ -189,7 +192,8 @@
   (realized)
   (shape)
   (maps ((0 1 1) ((a a) (b d) (c a) (d d) (B B0) (B0 B0) (B1 B0))))
-  (origs (a (1 0)) (d (1 0))))
+  (origs (a (1 0)) (d (1 0)))
+  (ugens))
 
 (defskeleton non_transforming
   (vars (a d text) (B0 name))
@@ -212,7 +216,8 @@
   (realized)
   (shape)
   (maps ((0 1 1) ((a a) (b d) (c a) (d d) (B B0) (B0 B0) (B1 B0))))
-  (origs (a (1 0)) (d (1 0))))
+  (origs (a (1 0)) (d (1 0)))
+  (ugens))
 
 (defskeleton non_transforming
   (vars (a text) (B0 name))
@@ -232,7 +237,8 @@
   (realized)
   (shape)
   (maps ((0 1 1) ((a a) (b a) (c a) (d a) (B B0) (B0 B0) (B1 B0))))
-  (origs (a (1 0))))
+  (origs (a (1 0)))
+  (ugens))
 
 (defskeleton non_transforming
   (vars (a b c d text) (B1 name))
@@ -256,7 +262,8 @@
   (realized)
   (shape)
   (maps ((0 1 2) ((a a) (b b) (c c) (d d) (B B1) (B0 B1) (B1 B1))))
-  (origs (c (2 0)) (d (1 0)) (a (1 0)) (b (2 0))))
+  (origs (c (2 0)) (d (1 0)) (a (1 0)) (b (2 0)))
+  (ugens))
 
 (defskeleton non_transforming
   (vars (a c d text) (B1 name))
@@ -279,6 +286,7 @@
   (realized)
   (shape)
   (maps ((0 1 2) ((a a) (b c) (c c) (d d) (B B1) (B0 B1) (B1 B1))))
-  (origs (c (2 0)) (d (1 0)) (a (1 0))))
+  (origs (c (2 0)) (d (1 0)) (a (1 0)))
+  (ugens))
 
 (comment "Nothing left to do")

@@ -35,7 +35,7 @@ import CPSA.Algebra
 import CPSA.Channel
 import CPSA.Protocol
 
-{--
+--{--
 
 import System.IO.Unsafe
 import Control.Exception (try)
@@ -679,6 +679,41 @@ uniqGen k =
       (t, [_]) <- reverse (kugen k)
       return t
 
+originatingStrands :: Preskel -> Term -> [Sid]
+originatingStrands k t =
+    let (_,nodes) = originationNodes (strands k) t in 
+    map (\(s,_) -> s) nodes
+
+genOrigMatch :: Term -> Node -> Node -> Bool
+genOrigMatch _ (s,_) (s',_) | s == s' = True 
+genOrigMatch u (s,i) (s',i') | otherwise =
+    z ("genOrigMatch:  Whoa, for " ++ (show u) ++ ", strands " ++ 
+       (show (s,i)) ++ " vs " ++ (show (s',i')))
+      False 
+
+ugenGoodOrig :: Preskel -> Bool
+ugenGoodOrig k =
+    and
+    [ genOrigMatch u gNode oNode |
+      (u,gNodes) <- (kugen k),
+      gNode <- gNodes,
+      oNode <- (snd (originationNodes (strands k) u)) ]
+                                   
+--       (\(u,genNodes) -> all (all genOrigMatch u genNode)
+--                        (snd (originationNodes (strands k) u)))
+    
+    
+--       all f (kugen k)
+--       where
+--         f (u,gens) = all (\s -> all
+--                                 (\(s',_) -> s == s')
+--                                 gens)
+--                      $ originatingStrands k u
+                   
+--         f (u,gens) = error ("ugenGoodOrig:  Weirdly, " ++ (show u) ++
+--                             " generated at wrong number of nodes " ++ (show gens) ++
+--                             " in " ++ (show k))
+
 -- A preskeleton is well formed if the ordering relation is acyclic,
 -- each atom declared to be uniquely-originating is carried in some
 -- preskeleton term, and every variable that occurs in each base term
@@ -701,7 +736,8 @@ preskelWellFormed k =
     all chanCheck (kauth k) &&
     wellOrdered k && acyclicOrder k &&
     roleOrigCheck k &&
-    roleGenCheck k
+    roleGenCheck k &&  
+    (ugenGoodOrig k || True) 
     where
       terms = kterms k
       vs = kvars k

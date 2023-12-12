@@ -28,6 +28,7 @@
   (label 0)
   (unrealized (0 1))
   (origs (n2 (0 0)) (n1 (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neq-test
@@ -42,7 +43,8 @@
   (realized)
   (shape)
   (maps ((0) ((n1 n1) (n2 n1) (k k))))
-  (origs (n1 (0 0))))
+  (origs (n1 (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -71,6 +73,7 @@
   (unrealized (0 1))
   (dead)
   (origs (n2 (0 0)) (n1 (0 0)))
+  (ugens)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

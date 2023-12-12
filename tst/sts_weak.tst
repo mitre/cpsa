@@ -43,6 +43,7 @@
   (label 0)
   (unrealized (0 1))
   (origs)
+  (ugens (x (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton station-weak
@@ -104,7 +105,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (x x) (y y))))
-  (origs))
+  (origs)
+  (ugens (x (0 0)) (y (1 1))))
 
 (defskeleton station-weak
   (vars (a b b-0 name) (x x-0 rndx))
@@ -255,6 +257,7 @@
   (label 6)
   (unrealized (0 2))
   (origs)
+  (ugens (y (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton station-weak
@@ -320,7 +323,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (y y) (x x))))
-  (origs))
+  (origs)
+  (ugens (y (0 1)) (x (1 0))))
 
 (defskeleton station-weak
   (vars (a b b-0 name) (y x rndx))
@@ -467,6 +471,7 @@
   (label 12)
   (unrealized (0 1))
   (origs)
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton station-weak
@@ -501,7 +506,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((a a) (b b) (x x) (h (exp (gen) x-0)))))
-  (origs))
+  (origs)
+  (ugens))
 
 (defskeleton station-weak
   (vars (a b name) (x y rndx))
@@ -532,7 +538,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((a a) (b b) (x x) (h (exp (gen) y)))))
-  (origs))
+  (origs)
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -574,6 +581,7 @@
   (unrealized (0 2))
   (preskeleton)
   (origs)
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton station-weak
@@ -592,6 +600,7 @@
   (parent 15)
   (unrealized (0 2))
   (origs)
+  (ugens)
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton station-weak
@@ -626,7 +635,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((a a) (b b) (y y) (h (exp (gen) x)))))
-  (origs))
+  (origs)
+  (ugens))
 
 (defskeleton station-weak
   (vars (b name) (y rndx))
@@ -650,7 +660,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((a b) (b b) (y y) (h (exp (gen) y)))))
-  (origs))
+  (origs)
+  (ugens))
 
 (defskeleton station-weak
   (vars (a b name) (y y-0 rndx))
@@ -681,7 +692,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((a a) (b b) (y y) (h (exp (gen) y-0)))))
-  (origs))
+  (origs)
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -734,7 +746,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((a a) (b b) (x x) (y y) (a-0 a-0))))
-  (origs ((privk b) (1 3)) ((privk a) (0 3))))
+  (origs ((privk b) (1 3)) ((privk a) (0 3)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -789,6 +802,7 @@
   (realized)
   (shape)
   (maps ((0 1 2) ((a a) (b b) (x x) (y y) (a-0 a-0))))
-  (origs ((privk b) (1 3)) ((privk a) (0 3))))
+  (origs ((privk b) (1 3)) ((privk a) (0 3)))
+  (ugens))
 
 (comment "Nothing left to do")

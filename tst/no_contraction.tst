@@ -27,6 +27,7 @@
   (unrealized (0 0))
   (preskeleton)
   (origs (n (1 0)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton no-contraction
@@ -42,6 +43,7 @@
   (parent 0)
   (unrealized (0 0))
   (origs (n (1 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton no-contraction
@@ -60,6 +62,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((a a) (n n) (a-0 a) (b b))))
-  (origs (n (1 0))))
+  (origs (n (1 0)))
+  (ugens))
 
 (comment "Nothing left to do")

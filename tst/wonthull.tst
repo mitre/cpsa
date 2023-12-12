@@ -33,6 +33,7 @@
   (label 0)
   (unrealized (0 1))
   (origs (x3 (0 0)) (x2 (0 0)) (x1 (0 0)))
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull
@@ -49,6 +50,7 @@
   (parent 0)
   (unrealized (0 1))
   (origs (x1 (0 0)) (x2 (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull
@@ -106,7 +108,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 y3) (x4 y3))))
-  (origs (y3 (0 0)) (x2 (0 0)) (x1 (0 0))))
+  (origs (y3 (0 0)) (x2 (0 0)) (x1 (0 0)))
+  (ugens))
 
 (defskeleton wonthull
   (vars (x1 y3 text) (a name))
@@ -206,6 +209,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((a a) (x1 x1) (x3 x3))))
-  (origs (x3 (0 0)) (x1 (0 0))))
+  (origs (x3 (0 0)) (x1 (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")

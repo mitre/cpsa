@@ -22,7 +22,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((k k) (a a))))
-  (origs (k (0 0))))
+  (origs (k (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -46,6 +47,7 @@
   (label 1)
   (unrealized (1 0))
   (origs (k (0 0)))
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton weird
@@ -62,7 +64,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((k k) (a a))))
-  (origs (k (0 0))))
+  (origs (k (0 0)))
+  (ugens))
 
 (defskeleton weird
   (vars (k skey) (a name))
@@ -91,7 +94,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((k k) (a a))))
-  (origs (k (0 0))))
+  (origs (k (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -117,7 +121,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((k k) (a a))))
-  (origs (k (0 0))))
+  (origs (k (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -142,6 +147,7 @@
   (realized)
   (dead)
   (origs)
+  (ugens (k (1 0)) (k (0 0)))
   (comment "Input cannot be made into a skeleton--nothing to do"))
 
 (defprotocol weird-gen basic
@@ -165,6 +171,7 @@
   (unrealized (1 0))
   (preskeleton)
   (origs)
+  (ugens (k (0 0)))
   (comment "Not a skeleton"))
 
 (defskeleton weird-gen
@@ -179,7 +186,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((k k) (a a))))
-  (origs))
+  (origs)
+  (ugens (k (0 0))))
 
 (comment "Nothing left to do")
 
@@ -205,6 +213,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((k k) (a a))))
-  (origs))
+  (origs)
+  (ugens (k (0 0))))
 
 (comment "Nothing left to do")

@@ -53,6 +53,7 @@
   (label 0)
   (unrealized (0 0) (0 2))
   (origs)
+  (ugens (x (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_sig
@@ -241,7 +242,8 @@
     ((0)
       ((a a) (b b) (x x) (y y) (g (exp (gen) alpha)) (group group)
         (group-dist group-dist))))
-  (origs))
+  (origs)
+  (ugens (alpha (1 0)) (y (2 2)) (x (0 1))))
 
 (defskeleton dh_sig
   (vars (group group-0 text) (a b a-0 name)
@@ -327,7 +329,8 @@
     ((0)
       ((a a) (b b) (x x) (y (mul y (rec alpha) alpha-0))
         (g (exp (gen) alpha)) (group group) (group-dist group-dist))))
-  (origs))
+  (origs)
+  (ugens (alpha-0 (3 0)) (y (2 2)) (alpha (1 0)) (x (0 1))))
 
 (comment "Nothing left to do")
 
@@ -380,6 +383,7 @@
   (label 8)
   (unrealized (0 0) (0 1) (0 3))
   (origs)
+  (ugens (y (0 2)))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_sig
@@ -564,7 +568,8 @@
     ((0)
       ((a a) (b b) (y y) (x x) (g (exp (gen) alpha)) (group group)
         (group-dist group-dist))))
-  (origs))
+  (origs)
+  (ugens (x (2 1)) (alpha (1 0)) (y (0 2))))
 
 (defskeleton dh_sig
   (vars (group group-0 text) (a b b-0 name)
@@ -761,7 +766,8 @@
     ((0)
       ((a a) (b b) (y y) (x (mul (rec alpha) alpha-0 x))
         (g (exp (gen) alpha)) (group group) (group-dist group-dist))))
-  (origs))
+  (origs)
+  (ugens (x (3 1)) (alpha-0 (2 0)) (alpha (1 0)) (y (0 2))))
 
 (comment "Nothing left to do")
 
@@ -813,6 +819,7 @@
   (label 18)
   (unrealized (0 0) (0 2))
   (origs)
+  (ugens (n (0 3)) (x (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_sig2
@@ -1219,7 +1226,8 @@
     ((0)
       ((a a) (b b) (x x) (y y) (g (exp (gen) alpha)) (n n) (group group)
         (group-dist group-dist))))
-  (origs))
+  (origs)
+  (ugens (y (2 2)) (alpha (1 0)) (n (0 3)) (x (0 1))))
 
 (defskeleton dh_sig2
   (vars (n group group-0 text) (a b a-0 a-1 b-0 name)
@@ -1754,6 +1762,7 @@
   (label 39)
   (unrealized (0 0) (0 1))
   (origs)
+  (ugens (y (0 2)))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_sig2
@@ -1926,7 +1935,8 @@
     ((0)
       ((a a) (b b) (y y) (x x) (g (exp (gen) alpha)) (n n) (group group)
         (group-dist group-dist))))
-  (origs))
+  (origs)
+  (ugens (x (2 1)) (n (2 3)) (alpha (1 0)) (y (0 2))))
 
 (defskeleton dh_sig2
   (vars (n group group-0 text) (a b a-0 b-0 name)

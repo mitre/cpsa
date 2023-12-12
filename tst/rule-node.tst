@@ -38,6 +38,7 @@
   (label 0)
   (realized)
   (origs)
+  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton rule-order
@@ -57,7 +58,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((s s) (t t))))
-  (origs))
+  (origs)
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -96,7 +98,22 @@
   (label 2)
   (realized)
   (origs)
+  (ugens)
   (comment "Not closed under rules"))
+
+(defskeleton rule-order
+  (vars (s text))
+  (defstrand init 2 (s s) (t s))
+  (facts (le 0 (idx 0) 0 (idx 1)) (lt 0 (idx 0) 0 (idx 1)) (le 0 0 0 0))
+  (rule le-lt lt-le prec-lt)
+  (traces ((send (cat s s)) (recv (cat s s))))
+  (label 3)
+  (parent 2)
+  (realized)
+  (shape)
+  (maps)
+  (origs)
+  (ugens))
 
 (defskeleton rule-order
   (vars (s t text))
@@ -110,12 +127,28 @@
   (rule le-lt lt-le prec-lt)
   (traces ((send (cat s t)) (recv (cat t s)))
     ((send (cat t s)) (recv (cat s t))))
-  (label 3)
+  (label 4)
+  (parent 2)
+  (seen 3 5)
+  (realized)
+  (origs)
+  (ugens)
+  (comment "2 in cohort - 0 not yet seen"))
+
+(defskeleton rule-order
+  (vars (s text))
+  (defstrand init 2 (s s) (t s))
+  (facts (lt 0 0 0 1) (le 0 (idx 0) 0 (idx 1)) (lt 0 (idx 0) 0 (idx 1))
+    (le 0 0 0 0))
+  (rule le-lt lt-le prec-lt)
+  (traces ((send (cat s s)) (recv (cat s s))))
+  (label 5)
   (parent 2)
   (realized)
   (shape)
-  (maps ((0 1) ((s s) (t t))))
-  (origs))
+  (maps)
+  (origs)
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -137,9 +170,10 @@
   (vars (s t text))
   (defstrand init 2 (s s) (t t))
   (traces ((send (cat s t)) (recv (cat t s))))
-  (label 4)
+  (label 6)
   (realized)
   (origs)
+  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton rule-order-prec
@@ -148,57 +182,13 @@
   (facts (tell-me 0 (idx 0) 0 (idx 1)))
   (rule prec-tell-me)
   (traces ((send (cat s t)) (recv (cat t s))))
-  (label 5)
-  (parent 4)
-  (realized)
-  (shape)
-  (maps ((0) ((s s) (t t))))
-  (origs))
-
-(comment "Nothing left to do")
-
-(defprotocol rule-order-prec basic
-  (defrole init
-    (vars (s t text))
-    (trace (send (cat s t)) (recv (cat t s))))
-  (defrule prec-tell-me
-    (forall ((z1 z2 strd) (i1 i2 indx))
-      (implies (prec z1 i1 z2 i2) (fact tell-me z1 i1 z2 i2))))
-  (defgenrule neqRl_indx
-    (forall ((x indx)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_strd
-    (forall ((x strd)) (implies (fact neq x x) (false))))
-  (defgenrule neqRl_mesg
-    (forall ((x mesg)) (implies (fact neq x x) (false)))))
-
-(defskeleton rule-order-prec
-  (vars (s t text))
-  (defstrand init 2 (s s) (t t))
-  (defstrand init 2 (s t) (t s))
-  (precedes ((1 0) (0 1)))
-  (traces ((send (cat s t)) (recv (cat t s)))
-    ((send (cat t s)) (recv (cat s t))))
-  (label 6)
-  (realized)
-  (origs)
-  (comment "Not closed under rules"))
-
-(defskeleton rule-order-prec
-  (vars (s t text))
-  (defstrand init 2 (s s) (t t))
-  (defstrand init 2 (s t) (t s))
-  (precedes ((1 0) (0 1)))
-  (facts (tell-me 1 (idx 0) 1 (idx 1)) (tell-me 1 (idx 0) 0 (idx 1))
-    (tell-me 0 (idx 0) 0 (idx 1)))
-  (rule prec-tell-me)
-  (traces ((send (cat s t)) (recv (cat t s)))
-    ((send (cat t s)) (recv (cat s t))))
   (label 7)
   (parent 6)
   (realized)
   (shape)
-  (maps ((0 1) ((s s) (t t))))
-  (origs))
+  (maps ((0) ((s s) (t t))))
+  (origs)
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -219,30 +209,107 @@
 (defskeleton rule-order-prec
   (vars (s t text))
   (defstrand init 2 (s s) (t t))
-  (defstrand init 2 (s s) (t t))
+  (defstrand init 2 (s t) (t s))
   (precedes ((1 0) (0 1)))
   (traces ((send (cat s t)) (recv (cat t s)))
-    ((send (cat s t)) (recv (cat t s))))
+    ((send (cat t s)) (recv (cat s t))))
   (label 8)
   (realized)
   (origs)
+  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton rule-order-prec
   (vars (s t text))
   (defstrand init 2 (s s) (t t))
-  (defstrand init 2 (s s) (t t))
+  (defstrand init 2 (s t) (t s))
   (precedes ((1 0) (0 1)))
   (facts (tell-me 1 (idx 0) 1 (idx 1)) (tell-me 1 (idx 0) 0 (idx 1))
     (tell-me 0 (idx 0) 0 (idx 1)))
   (rule prec-tell-me)
   (traces ((send (cat s t)) (recv (cat t s)))
-    ((send (cat s t)) (recv (cat t s))))
+    ((send (cat t s)) (recv (cat s t))))
   (label 9)
   (parent 8)
   (realized)
   (shape)
   (maps ((0 1) ((s s) (t t))))
-  (origs))
+  (origs)
+  (ugens))
+
+(defskeleton rule-order-prec
+  (vars (s text))
+  (defstrand init 2 (s s) (t s))
+  (facts (tell-me 0 (idx 0) 0 (idx 1)))
+  (operation collapsed 1 0)
+  (traces ((send (cat s s)) (recv (cat s s))))
+  (label 10)
+  (parent 9)
+  (realized)
+  (shape)
+  (maps)
+  (origs)
+  (ugens))
+
+(comment "Nothing left to do")
+
+(defprotocol rule-order-prec basic
+  (defrole init
+    (vars (s t text))
+    (trace (send (cat s t)) (recv (cat t s))))
+  (defrule prec-tell-me
+    (forall ((z1 z2 strd) (i1 i2 indx))
+      (implies (prec z1 i1 z2 i2) (fact tell-me z1 i1 z2 i2))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false)))))
+
+(defskeleton rule-order-prec
+  (vars (s t text))
+  (defstrand init 2 (s s) (t t))
+  (defstrand init 2 (s s) (t t))
+  (precedes ((1 0) (0 1)))
+  (traces ((send (cat s t)) (recv (cat t s)))
+    ((send (cat s t)) (recv (cat t s))))
+  (label 11)
+  (realized)
+  (origs)
+  (ugens)
+  (comment "Not closed under rules"))
+
+(defskeleton rule-order-prec
+  (vars (s t text))
+  (defstrand init 2 (s s) (t t))
+  (defstrand init 2 (s s) (t t))
+  (precedes ((1 0) (0 1)))
+  (facts (tell-me 1 (idx 0) 1 (idx 1)) (tell-me 1 (idx 0) 0 (idx 1))
+    (tell-me 0 (idx 0) 0 (idx 1)))
+  (rule prec-tell-me)
+  (traces ((send (cat s t)) (recv (cat t s)))
+    ((send (cat s t)) (recv (cat t s))))
+  (label 12)
+  (parent 11)
+  (realized)
+  (shape)
+  (maps ((0 1) ((s s) (t t))))
+  (origs)
+  (ugens))
+
+(defskeleton rule-order-prec
+  (vars (s t text))
+  (defstrand init 2 (s s) (t t))
+  (facts (tell-me 0 (idx 0) 0 (idx 1)))
+  (operation collapsed 1 0)
+  (traces ((send (cat s t)) (recv (cat t s))))
+  (label 13)
+  (parent 12)
+  (realized)
+  (shape)
+  (maps)
+  (origs)
+  (ugens))
 
 (comment "Nothing left to do")

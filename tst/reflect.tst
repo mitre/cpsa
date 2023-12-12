@@ -25,6 +25,7 @@
   (label 0)
   (unrealized (0 0))
   (origs)
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton reflect
@@ -41,7 +42,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b))))
-  (origs))
+  (origs)
+  (ugens))
 
 (defskeleton reflect
   (vars (a b akey))
@@ -75,7 +77,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b))))
-  (origs))
+  (origs)
+  (ugens))
 
 (defskeleton reflect
   (vars (a b akey))
@@ -174,6 +177,7 @@
   (label 8)
   (unrealized (0 1))
   (origs)
+  (ugens)
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton reflect
@@ -188,7 +192,8 @@
   (realized)
   (shape)
   (maps ((0) ((a b) (b b))))
-  (origs))
+  (origs)
+  (ugens))
 
 (defskeleton reflect
   (vars (a b akey))
@@ -205,7 +210,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b))))
-  (origs))
+  (origs)
+  (ugens))
 
 (defskeleton reflect
   (vars (a b akey))
@@ -237,7 +243,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b))))
-  (origs))
+  (origs)
+  (ugens))
 
 (defskeleton reflect
   (vars (a b akey))
@@ -256,7 +263,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b))))
-  (origs))
+  (origs)
+  (ugens))
 
 (defskeleton reflect
   (vars (a b akey))
@@ -371,6 +379,7 @@
   (label 19)
   (unrealized (0 0))
   (origs)
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton reflect
@@ -388,7 +397,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b))))
-  (origs))
+  (origs)
+  (ugens))
 
 (defskeleton reflect
   (vars (a b akey))
@@ -422,7 +432,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b (invk a-0)))))
-  (origs))
+  (origs)
+  (ugens))
 
 (defskeleton reflect
   (vars (a b akey))

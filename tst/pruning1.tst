@@ -31,6 +31,7 @@
   (label 0)
   (unrealized (0 1) (0 2))
   (origs (n (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton prune
@@ -113,7 +114,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n n))))
-  (origs (n (0 0))))
+  (origs (n (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -155,6 +157,7 @@
   (realized)
   (shape)
   (maps ((0 1 2) ((n n) (a a) (b b))))
-  (origs (n (0 0))))
+  (origs (n (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")

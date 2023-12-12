@@ -27,7 +27,8 @@
   (realized)
   (shape)
   (maps ((0) ((ch ch) (n n))))
-  (origs (n (0 0))))
+  (origs (n (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -56,7 +57,8 @@
   (realized)
   (shape)
   (maps ((0) ((ch ch) (n n))))
-  (origs (n (0 0))))
+  (origs (n (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -84,6 +86,7 @@
   (label 2)
   (unrealized (0 1))
   (origs (n (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton unilateral
@@ -100,7 +103,8 @@
   (realized)
   (shape)
   (maps ((0) ((ch ch) (n n))))
-  (origs (n (0 0))))
+  (origs (n (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -129,6 +133,7 @@
   (label 4)
   (unrealized (0 1))
   (origs (n (0 0)))
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton unilateral
@@ -146,7 +151,8 @@
   (realized)
   (shape)
   (maps ((0) ((ch ch) (n n))))
-  (origs (n (0 0))))
+  (origs (n (0 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -173,6 +179,7 @@
   (label 6)
   (unrealized (0 0))
   (origs)
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton unilateral
@@ -189,7 +196,8 @@
   (realized)
   (shape)
   (maps ((0) ((n n) (ch ch))))
-  (origs (n (1 0))))
+  (origs (n (1 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -217,6 +225,7 @@
   (label 8)
   (unrealized (0 0))
   (origs)
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton unilateral
@@ -234,7 +243,8 @@
   (realized)
   (shape)
   (maps ((0) ((n n) (ch ch))))
-  (origs (n (1 0))))
+  (origs (n (1 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -262,6 +272,7 @@
   (label 10)
   (unrealized (0 0))
   (origs)
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton unilateral
@@ -279,7 +290,8 @@
   (realized)
   (shape)
   (maps ((0) ((n n) (ch ch))))
-  (origs (n (1 0))))
+  (origs (n (1 0)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -308,6 +320,7 @@
   (label 12)
   (unrealized (0 0))
   (origs)
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton unilateral
@@ -326,6 +339,7 @@
   (realized)
   (shape)
   (maps ((0) ((n n) (ch ch))))
-  (origs (n (1 0))))
+  (origs (n (1 0)))
+  (ugens))
 
 (comment "Nothing left to do")

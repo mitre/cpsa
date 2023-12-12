@@ -41,6 +41,7 @@
   (label 0)
   (unrealized (0 1))
   (origs)
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhencrypt
@@ -61,7 +62,8 @@
   (realized)
   (shape)
   (maps ((0) ((gx gx) (h h) (dhkey dhkey) (n n))))
-  (origs (h (1 1)) (n (1 1))))
+  (origs (h (1 1)) (n (1 1)))
+  (ugens))
 
 (defskeleton dhencrypt
   (vars (dhkey skey) (n text) (gx h akey))
@@ -115,7 +117,8 @@
   (realized)
   (shape)
   (maps ((0) ((gx gx) (h h) (dhkey dhkey) (n n))))
-  (origs))
+  (origs)
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -158,6 +161,7 @@
   (label 5)
   (unrealized (0 2))
   (origs (n (0 1)) (gy (0 1)))
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhencrypt
@@ -179,7 +183,8 @@
   (realized)
   (shape)
   (maps ((0) ((gy gy) (h h) (dhkey dhkey) (n n))))
-  (origs (n (0 1)) (gy (0 1))))
+  (origs (n (0 1)) (gy (0 1)))
+  (ugens))
 
 (defskeleton dhencrypt
   (vars (dhkey skey) (n text) (gy h akey))
@@ -236,7 +241,8 @@
   (realized)
   (shape)
   (maps ((0) ((gy gy) (h h) (dhkey dhkey) (n n))))
-  (origs (n (0 1)) (gy (0 1))))
+  (origs (n (0 1)) (gy (0 1)))
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -282,6 +288,7 @@
   (unrealized (0 1) (1 2))
   (preskeleton)
   (origs (n (1 1)) (gy (1 1)))
+  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton dhencrypt
@@ -298,6 +305,7 @@
   (parent 10)
   (unrealized (0 1) (1 2))
   (origs (n (1 1)) (gy (1 1)))
+  (ugens)
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhencrypt
@@ -319,7 +327,8 @@
   (realized)
   (shape)
   (maps ((1 0) ((gx gx) (gy gy) (n n) (dhkey dhkey) (dhkey-0 dhkey))))
-  (origs (n (0 1)) (gy (0 1))))
+  (origs (n (0 1)) (gy (0 1)))
+  (ugens))
 
 (defskeleton dhencrypt
   (vars (dhkey dhkey-0 skey) (n text) (gx gy akey))
@@ -381,7 +390,8 @@
   (realized)
   (shape)
   (maps ((0 1) ((gx gx) (gy gy) (n n) (dhkey dhkey) (dhkey-0 dhkey))))
-  (origs (gy (1 1)) (n (1 1))))
+  (origs (gy (1 1)) (n (1 1)))
+  (ugens))
 
 (defskeleton dhencrypt
   (vars (dhkey dhkey-0 skey) (n text) (gx gy akey))

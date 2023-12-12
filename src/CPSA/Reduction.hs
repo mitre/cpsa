@@ -462,6 +462,7 @@ commentPreskel lk seen unrealized kind anno msg =
     -- Nodes of origination
     -- Added for cpsasas program
     condAddKeyValues "origs" (starter k || fringe) (origs k) $
+    condAddKeyValues "ugens" (starter k || fringe) (gens k) $ 
     -- Messages
     case msg of
       "" -> []
@@ -559,6 +560,14 @@ origs :: Preskel -> [SExpr ()]
 origs k =
     [ L () [displayTerm ctx t, displayNode n]
       | (t, ns) <- korig k, n <- ns ]
+    where
+      ctx = addToContext emptyContext (kvars k)
+
+-- Prints the nodes of generation for each uniquely generated atom
+gens :: Preskel -> [SExpr ()]
+gens k =
+    [ L () [displayTerm ctx t, displayNode n]
+      | (t, ns) <- kugen k, n <- ns ]
     where
       ctx = addToContext emptyContext (kvars k)
 

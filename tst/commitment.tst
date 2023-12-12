@@ -20,11 +20,12 @@
       (send (enc "receipt" sealed (privk "sig" b))) (recv (cat n quote))
       (send (enc "result" a b n quote outcome (privk "sig" b)))))
   (defrule cheq-auctioneer-4
-    (forall ((z strd) (quote text) (n data) (b a name) (sealed mesg))
+    (forall ((z strd) (a b name) (n data) (quote text) (sealed mesg))
       (implies
-        (and (p "auctioneer" z (idx 4)) (p "auctioneer" "quote" z quote)
-          (p "auctioneer" "n" z n) (p "auctioneer" "b" z b)
-          (p "auctioneer" "a" z a) (p "auctioneer" "sealed" z sealed))
+        (and (p "auctioneer" z (idx 4))
+          (p "auctioneer" "sealed" z sealed)
+          (p "auctioneer" "quote" z quote) (p "auctioneer" "n" z n)
+          (p "auctioneer" "b" z b) (p "auctioneer" "a" z a))
         (= sealed (hash a b n quote)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -45,6 +46,7 @@
   (label 0)
   (unrealized (0 0))
   (origs)
+  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton commit
@@ -62,6 +64,7 @@
   (parent 0)
   (unrealized (0 0))
   (origs)
+  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton commit
@@ -87,7 +90,8 @@
     ((0)
       ((a a) (b b) (n n) (quote quote) (outcome outcome)
         (sealed (hash a b n quote)))))
-  (origs))
+  (origs)
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -108,11 +112,12 @@
       (send (enc "receipt" sealed (privk "sig" b))) (recv (cat n quote))
       (send (enc "result" a b n quote outcome (privk "sig" b)))))
   (defrule cheq-auctioneer-4
-    (forall ((z strd) (quote text) (n data) (b a name) (sealed mesg))
+    (forall ((z strd) (a b name) (n data) (quote text) (sealed mesg))
       (implies
-        (and (p "auctioneer" z (idx 4)) (p "auctioneer" "quote" z quote)
-          (p "auctioneer" "n" z n) (p "auctioneer" "b" z b)
-          (p "auctioneer" "a" z a) (p "auctioneer" "sealed" z sealed))
+        (and (p "auctioneer" z (idx 4))
+          (p "auctioneer" "sealed" z sealed)
+          (p "auctioneer" "quote" z quote) (p "auctioneer" "n" z n)
+          (p "auctioneer" "b" z b) (p "auctioneer" "a" z a))
         (= sealed (hash a b n quote)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -131,6 +136,7 @@
   (label 3)
   (unrealized (0 0))
   (origs)
+  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton commit
@@ -150,7 +156,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (sealed (hash a b-0 n quote)))))
-  (origs))
+  (origs)
+  (ugens))
 
 (defskeleton commit
   (vars (n data) (trash text) (a b name))
@@ -169,7 +176,8 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (sealed (hash n trash)))))
-  (origs))
+  (origs)
+  (ugens))
 
 (comment "Nothing left to do")
 
@@ -190,11 +198,12 @@
       (send (enc "receipt" sealed (privk "sig" b))) (recv (cat n quote))
       (send (enc "result" a b n quote outcome (privk "sig" b)))))
   (defrule cheq-auctioneer-4
-    (forall ((z strd) (quote text) (n data) (b a name) (sealed mesg))
+    (forall ((z strd) (a b name) (n data) (quote text) (sealed mesg))
       (implies
-        (and (p "auctioneer" z (idx 4)) (p "auctioneer" "quote" z quote)
-          (p "auctioneer" "n" z n) (p "auctioneer" "b" z b)
-          (p "auctioneer" "a" z a) (p "auctioneer" "sealed" z sealed))
+        (and (p "auctioneer" z (idx 4))
+          (p "auctioneer" "sealed" z sealed)
+          (p "auctioneer" "quote" z quote) (p "auctioneer" "n" z n)
+          (p "auctioneer" "b" z b) (p "auctioneer" "a" z a))
         (= sealed (hash a b n quote)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -220,6 +229,7 @@
   (unrealized (0 0) (0 2))
   (preskeleton)
   (origs)
+  (ugens (n (1 0)))
   (comment "Not a skeleton"))
 
 (defskeleton commit
@@ -240,6 +250,7 @@
   (parent 6)
   (unrealized (0 2))
   (origs)
+  (ugens (n (1 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton commit
@@ -264,6 +275,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((n n) (quote quote) (outcome outcome) (a a) (b b))))
-  (origs))
+  (origs)
+  (ugens (n (1 0))))
 
 (comment "Nothing left to do")
