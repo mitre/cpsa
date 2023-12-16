@@ -45,7 +45,7 @@
   (facts (neq s t)
 	 ;; (neq s s1)
 	 )
-  (facts (le 0 0 0 1))
+  (facts (le 0 (idx 0) 0 (idx 1)))
   )
 
 (defskeleton rule-order
@@ -53,7 +53,7 @@
   (defstrand init 2 (s s) (t t))
   (defstrand init 2 (s t) (t s))
   (precedes ((1 0) (0 1)))
-  (facts (le 1 0 0 1) (le 0 0 0 1)))
+  (facts (le 1 (idx 0) 0 (idx 1)) (le 0 (idx 0) 0 (idx 1))))
 
 (defprotocol rule-order-prec basic
   (defrole init

@@ -47,6 +47,41 @@
   (uniq-gen (invk u))
   (comment "How is the responder able to send (invk u)?"))
 
+
+(defprotocol uniq-gen-example-alt basic
+  (defrole init
+    (vars (u akey) (k skey))
+    (trace
+     (send (enc (invk u) k))
+     (recv u)
+     (send u))
+    (uniq-gen (invk u))
+    (non-orig k)
+    (comment
+     "Instances of this role generate u and (invk u)"
+     "at their first event."))
+  (defrole resp
+    (vars (u akey) (k skey))
+    (trace
+     (recv (enc (invk u) k))
+     (send u)
+     (recv u))
+    (non-orig k)
+    (comment
+     "Instances of this role appear to generate (invk u)"
+     "at their second event.")))
+
+(defskeleton uniq-gen-example-alt 
+  (vars)
+  (defstrandmax resp)
+  (comment "How is the responder able to send (invk u)?"))
+
+(defskeleton uniq-gen-example-alt 
+  (vars (u akey))
+  (defstrandmax resp (u u))
+  (uniq-gen (invk u))
+  (comment "How is the responder able to send (invk u)?"))
+
 (defprotocol uniq-orig-example basic
   (defrole init
     (vars (u akey) (k skey))

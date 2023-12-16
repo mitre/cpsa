@@ -35,7 +35,7 @@ import CPSA.Algebra
 import CPSA.Channel
 import CPSA.Protocol
 
---{--
+{--
 
 import System.IO.Unsafe
 import Control.Exception (try)
@@ -679,26 +679,43 @@ uniqGen k =
       (t, [_]) <- reverse (kugen k)
       return t
 
+{-- 
 originatingStrands :: Preskel -> Term -> [Sid]
 originatingStrands k t =
     let (_,nodes) = originationNodes (strands k) t in 
     map (\(s,_) -> s) nodes
+--}
 
 genOrigMatch :: Term -> Node -> Node -> Bool
 genOrigMatch _ (s,_) (s',_) | s == s' = True 
-genOrigMatch u (s,i) (s',i') | otherwise =
-    z ("genOrigMatch:  Whoa, for " ++ (show u) ++ ", strands " ++ 
-       (show (s,i)) ++ " vs " ++ (show (s',i')))
+genOrigMatch _ _ _ | otherwise =
+--       z ("genOrigMatch:  Whoa, mismatch for " ++ (show u) ++ ", gen strand " ++ 
+--          (show (s,i)) ++ " vs orig strand " ++ (show (s',i')))
       False 
+
+ugensPlusInverses :: Preskel -> [(Term, [Node])]
+ugensPlusInverses k =
+    concatMap 
+    (\(u,gNodes) -> maybe [(u,gNodes)]
+                    (\u' -> [(u,gNodes), (u', gNodes)])
+                    (invertKey u))
+    (kugen k)
+
 
 ugenGoodOrig :: Preskel -> Bool
 ugenGoodOrig k =
     and
     [ genOrigMatch u gNode oNode |
-      (u,gNodes) <- (kugen k),
+      (u,gNodes) <- ugensPlusInverses k,
       gNode <- gNodes,
-      oNode <- (snd (originationNodes (strands k) u)) ]
-                                   
+      oNode <- origs u ]
+    where
+      origs v = snd (originationNodes (strands k) v)
+
+
+--    (maybe [] (\u' -> origs u')
+--                    (invertKey u)) ++
+
 --       (\(u,genNodes) -> all (all genOrigMatch u genNode)
 --                        (snd (originationNodes (strands k) u)))
     
@@ -1527,13 +1544,14 @@ enforceAbsence prs@(_, k, _, _, _) =
 -- orig and uniq gen, check to see if they start on different strands.
 -- When a value is uniq gen and a *different* strand receives it in
 -- non-carried position and then transmits in carried position, that's
--- also a problem.  
+-- also a problem.  If k is an asymmetric key, its inverse is
+-- generated at the same node at which it is uniquely generated.  
 
 origGenChecks :: PRS -> Bool
 origGenChecks prs =
   any (\(_, l) -> length l > 1) (korig (skel prs)) ||
   any (\(_, l) -> length l > 1) (kugen (skel prs)) ||
-  origUgenDiffStrand (korig (skel prs)) (kugen (skel prs)) ||
+  origUgenDiffStrand (korig (skel prs)) (ugensPlusInverses (skel prs)) ||
   not(ugenGoodOrig (skel prs))
   
 
@@ -1542,10 +1560,18 @@ origGenChecks prs =
 origUgenDiffStrand :: [(Term, [Node])] -> [(Term, [Node])] -> Bool
 origUgenDiffStrand _ [] = False
 origUgenDiffStrand orig ((t, ns) : ugen) =
-  case lookup t orig of
-    Nothing -> origUgenDiffStrand orig ugen
-    Just ns' -> any f ns || origUgenDiffStrand orig ugen
-      where f (s, _) = any (\(s', _) -> s /= s') ns'
+  (case lookup t orig of
+     Nothing -> origUgenDiffStrand orig ugen
+     Just ns' -> any (f ns') ns || origUgenDiffStrand orig ugen)
+  ||
+  (maybe False
+   (\t' -> case lookup t' orig of
+             Nothing -> False
+             Just ns' -> any (f ns') ns)
+   $ invertKey t)  
+    where
+      f ns' (s, _) = any (\(s', _) -> s /= s') ns'
+    
 
 -- Hulling or Ensuring Unique Origination
 hull :: Bool -> PRS -> [PRS]
