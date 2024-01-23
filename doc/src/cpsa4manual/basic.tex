@@ -698,23 +698,31 @@ skeletons will explicitly include declarations that would be inherited
 but were lost due to the removal of the role declaration.
 \end{exercise}
 
-\begin{exercise}
-Starting from your modified version of the Blanchet protocol from
-Exercise~\ref{ex:noroledecls_blanchet}, add a \texttt{uniq-orig} declaration
-on $s$ to the point of view with a responder instance and a listener for $d$.
+\iffalse{
+    % This exercise illustrates the CPSA 3 restriction on uniq-orig
+    % assumptions for values that do not have a point of origination
+    % in the skeleton already.  This restriction no longer exists in
+    % CPSA 4 -- it is not needed -- so we have edited out the
+    % exploration 
+    
+    \begin{exercise}
+      Starting from your modified version of the Blanchet protocol from
+      Exercise~\ref{ex:noroledecls_blanchet}, add a \texttt{uniq-orig} declaration
+      on $s$ to the point of view with a responder instance and a listener for $d$.
 
-This should produce an error message, because {\cpsa} expects that for
-every value declared to be uniquely originating, that value originates
-at some point in the skeleton.  When only the responder's strand and
-the listener are present, $s$ does not originate; it is received by
-the responder before being used in an outgoing message, and it does
-not occur on the listener strand at all.
+      This should produce an error message, because {\cpsa} expects that for
+      every value declared to be uniquely originating, that value originates
+      at some point in the skeleton.  When only the responder's strand and
+      the listener are present, $s$ does not originate; it is received by
+      the responder before being used in an outgoing message, and it does
+      not occur on the listener strand at all.
 
-Now add a \texttt{defstrand} adding an instance of an initiator
-(height 1), using the same $s$, and declare $s$ to be uniquely
-originating.  Check that the resulting shape is the same attack shape
-as in the unmodified \texttt{blanchet.xhtml}.
-\end{exercise}
+      Now add a \texttt{defstrand} adding an instance of an initiator
+      (height 1), using the same $s$, and declare $s$ to be uniquely
+      originating.  Check that the resulting shape is the same attack shape
+      as in the unmodified \texttt{blanchet.xhtml}.
+    \end{exercise}}
+\fi 
 
 %  See Section~\ref{sec:role_decls2} for more about how role
 %  declarations work.
