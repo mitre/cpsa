@@ -17,6 +17,7 @@
 module Main (main) where
 
 import System.IO
+import Data.Char (toLower)
 import Text.Printf (printf)
 import CPSA.Lib.SExpr
 import CPSA.Lib.Entry
@@ -85,8 +86,10 @@ sexprs h (x : xs) =
       hPutStr h "]"
 
 sexpr :: Handle -> SExpr Pos -> IO ()
-sexpr h (S _ s) =
-    hPutStr h s
+sexpr h (S _ []) = -- This should never happen
+    hPutStr h []
+sexpr h (S _ (c : s)) = -- Ensure symbol is a Prolog constant
+    hPutStr h (toLower c : s)
 sexpr h (Q _ q) =
     do
       hPutStr h "\""
