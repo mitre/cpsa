@@ -537,6 +537,10 @@
   (label 18)
   (parent 17)
   (seen 20)
+  (seen-opts
+    (20
+      (operation nonce-test (added-strand resp 2) n1-0 (1 1)
+        (enc n1-0 a (pubk b)))))
   (unrealized (0 1) (1 1))
   (origs (n1 (0 0)) (n1-0 (1 0)))
   (ugens)
@@ -580,6 +584,10 @@
   (label 20)
   (parent 18)
   (seen 22)
+  (seen-opts
+    (22
+      (operation nonce-test (contracted (n2-1 n2-0)) n1-0 (1 1)
+        (enc n1-0 a (pubk b)) (enc n1-0 n2-0 b (pubk a)))))
   (unrealized (0 1) (1 1))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -627,6 +635,10 @@
   (label 22)
   (parent 20)
   (seen 24)
+  (seen-opts
+    (24
+      (operation nonce-test (added-strand resp 2) n1 (0 1)
+        (enc n1 a (pubk b)))))
   (unrealized (0 1))
   (comment "2 in cohort - 1 not yet seen"))
 

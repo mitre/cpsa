@@ -272,6 +272,7 @@
   (label 8)
   (parent 6)
   (seen 5)
+  (seen-opts (5 (operation generalization weakened ((1 2) (2 1)))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -710,6 +711,7 @@
   (label 24)
   (parent 20)
   (seen 19)
+  (seen-opts (19 (operation generalization weakened ((1 2) (2 1)))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

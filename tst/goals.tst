@@ -395,6 +395,10 @@
   (label 13)
   (parent 11)
   (seen 15)
+  (seen-opts
+    (15
+      (operation nonce-test (displaced 4 2 resp 2) n1 (0 0)
+        (enc n1 n2-0 (pubk a)) (enc n1 a (pubk b)))))
   (unrealized (0 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -437,6 +441,11 @@
   (label 15)
   (parent 12)
   (seen 16)
+  (seen-opts
+    (16
+      (operation nonce-test (displaced 4 1 init 3) n2 (0 0)
+        (enc n2 n2 (pubk a)) (enc n2 n2-0 (pubk a))
+        (enc n2 a (pubk b)))))
   (unrealized (0 0))
   (comment "1 in cohort - 0 not yet seen"))
 

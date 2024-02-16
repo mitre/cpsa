@@ -172,6 +172,11 @@
   (label 2)
   (parent 1)
   (seen 2)
+  (seen-opts
+    (2
+      (operation nonce-test (added-strand dev-up 3) k (1 0)
+        (ch-msg start-ch (cat "power-up" d o k))
+        (ch-msg lk (cat pt-0 "st-k" d o k)))))
   (unrealized (0 1) (1 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -552,6 +557,11 @@
   (label 9)
   (parent 8)
   (seen 9)
+  (seen-opts
+    (9
+      (operation nonce-test (added-strand dev-up 3) k (1 0)
+        (ch-msg start-ch (cat "power-up" d o k))
+        (ch-msg lk-0 (cat pt-2 "st-k" d o k)))))
   (unrealized (0 1) (1 0) (1 1) (1 2))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -638,6 +648,10 @@
   (label 12)
   (parent 10)
   (seen 14)
+  (seen-opts
+    (14
+      (operation nonce-test (added-strand dev-up 3) k (3 0)
+        (ch-msg start-ch (cat "power-up" d o k)))))
   (unrealized (0 1) (1 2) (3 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -673,6 +687,10 @@
   (label 13)
   (parent 11)
   (seen 15)
+  (seen-opts
+    (15
+      (operation encryption-test (added-strand dev-up 6) (enc "up" k)
+        (0 1))))
   (unrealized (0 1))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -702,6 +720,11 @@
   (label 14)
   (parent 12)
   (seen 14)
+  (seen-opts
+    (14
+      (operation nonce-test (added-strand dev-up 3) k (3 0)
+        (ch-msg start-ch (cat "power-up" d o k))
+        (ch-msg lk (cat pt-1 "st-k" d o k)))))
   (unrealized (0 1) (1 2) (3 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -781,6 +804,10 @@
   (label 16)
   (parent 13)
   (seen 17)
+  (seen-opts
+    (17
+      (operation nonce-test (added-strand dev-up 3) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k)))))
   (unrealized (5 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -818,6 +845,11 @@
   (label 17)
   (parent 16)
   (seen 17)
+  (seen-opts
+    (17
+      (operation nonce-test (added-strand dev-up 3) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k))
+        (ch-msg lk-0 (cat pt-3 "st-k" d o k)))))
   (unrealized (5 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -1005,6 +1037,11 @@
   (label 19)
   (parent 18)
   (seen 19)
+  (seen-opts
+    (19
+      (operation nonce-test (added-strand dev-up 3) k (1 0)
+        (ch-msg start-ch (cat "power-up" d o k))
+        (ch-msg lk (cat pt-2 "st-k" d o k)))))
   (unrealized (1 0) (1 2))
   (origs (pt-7 (4 3)) (pt-4 (2 4)) (pt-2 (2 2)) (n (1 3)) (k (0 0)))
   (ugens)
@@ -1047,6 +1084,10 @@
   (label 20)
   (parent 19)
   (seen 21)
+  (seen-opts
+    (21
+      (operation channel-test (added-strand dev-open 4)
+        (ch-msg ls (cat pt "st" d "opened")) (1 2))))
   (unrealized (1 2))
   (origs (pt-6 (4 3)) (pt-3 (2 4)) (pt-1 (2 2)) (n (1 3)) (k (0 0)))
   (ugens)
@@ -1140,6 +1181,7 @@
   (label 22)
   (parent 20)
   (seen 21)
+  (seen-opts (21 (operation generalization weakened ((4 3) (5 2)))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

@@ -181,6 +181,11 @@
   (label 2)
   (parent 1)
   (seen 2)
+  (seen-opts
+    (2
+      (operation nonce-test (added-strand dev-up 5) k (1 0)
+        (ch-msg start-ch (cat "power-up" d o k))
+        (ch-msg lk (cat pt-2 "st-k" d o k)))))
   (unrealized (0 1) (1 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -575,6 +580,11 @@
   (label 9)
   (parent 8)
   (seen 9)
+  (seen-opts
+    (9
+      (operation nonce-test (added-strand dev-up 5) k (1 0)
+        (ch-msg start-ch (cat "power-up" d o k))
+        (ch-msg lk-0 (cat pt-4 "st-k" d o k)))))
   (unrealized (0 1) (1 0) (1 1) (1 2))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -664,6 +674,10 @@
   (label 12)
   (parent 10)
   (seen 14)
+  (seen-opts
+    (14
+      (operation nonce-test (added-strand dev-up 5) k (3 0)
+        (ch-msg start-ch (cat "power-up" d o k)))))
   (unrealized (0 1) (1 2) (3 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -700,6 +714,10 @@
   (label 13)
   (parent 11)
   (seen 15)
+  (seen-opts
+    (15
+      (operation encryption-test (added-strand dev-up 6) (enc "up" k)
+        (0 1))))
   (unrealized (0 1))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -730,6 +748,11 @@
   (label 14)
   (parent 12)
   (seen 14)
+  (seen-opts
+    (14
+      (operation nonce-test (added-strand dev-up 5) k (3 0)
+        (ch-msg start-ch (cat "power-up" d o k))
+        (ch-msg lk (cat pt-3 "st-k" d o k)))))
   (unrealized (0 1) (1 2) (3 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -809,6 +832,10 @@
   (label 16)
   (parent 13)
   (seen 17)
+  (seen-opts
+    (17
+      (operation nonce-test (added-strand dev-up 5) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k)))))
   (unrealized (5 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -847,6 +874,11 @@
   (label 17)
   (parent 16)
   (seen 17)
+  (seen-opts
+    (17
+      (operation nonce-test (added-strand dev-up 5) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k))
+        (ch-msg lk-0 (cat pt-5 "st-k" d o k)))))
   (unrealized (5 0))
   (comment "1 in cohort - 0 not yet seen"))
 

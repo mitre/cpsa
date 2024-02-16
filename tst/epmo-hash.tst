@@ -282,6 +282,7 @@
   (label 6)
   (parent 5)
   (seen 4)
+  (seen-opts (4 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

@@ -561,6 +561,7 @@
   (label 8)
   (parent 6)
   (seen 7)
+  (seen-opts (7 (operation generalization deleted (1 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

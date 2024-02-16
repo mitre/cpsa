@@ -337,6 +337,11 @@
   (label 2)
   (parent 1)
   (seen 2)
+  (seen-opts
+    (2
+      (operation nonce-test (added-strand dev-up 3) k (1 0)
+        (ch-msg start-ch (cat "power-up" d o k))
+        (ch-msg lk (cat pt-0 "st-k" d o k)))))
   (unrealized (0 1) (1 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -743,6 +748,10 @@
   (label 7)
   (parent 6)
   (seen 8)
+  (seen-opts
+    (8
+      (operation channel-test (added-strand dev-up 3)
+        (ch-msg lk (cat pt-2 "st-k" d o k)) (3 1))))
   (unrealized (3 1))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -1165,7 +1174,23 @@
       (send (enc "you may pass" n k))) ((recv k) (send k)))
   (label 13)
   (parent 11)
-  (seen 15)
+  (seen 15 15 15 15 15)
+  (seen-opts
+    (15
+      (operation nonce-test (added-strand dev-up 3) k (2 0)
+        (ch-msg start-ch (cat "power-up" d-0 o-0 k))))
+    (15
+      (operation nonce-test (added-strand dev-up 3) k (2 0)
+        (ch-msg start-ch (cat "power-up" d-0 o-0 k))))
+    (15
+      (operation nonce-test (added-strand dev-up 3) k (2 0)
+        (ch-msg start-ch (cat "power-up" d-0 o-0 k))))
+    (15
+      (operation nonce-test (added-strand dev-up 3) k (2 0)
+        (ch-msg start-ch (cat "power-up" d-0 o-0 k))))
+    (15
+      (operation nonce-test (added-strand dev-up 3) k (2 0)
+        (ch-msg start-ch (cat "power-up" d-0 o-0 k)))))
   (unrealized (0 1) (1 1) (1 2) (2 0))
   (comment "6 in cohort - 1 not yet seen"))
 
@@ -1234,6 +1259,11 @@
   (label 15)
   (parent 13)
   (seen 15)
+  (seen-opts
+    (15
+      (operation nonce-test (added-strand dev-up 3) k (2 0)
+        (ch-msg start-ch (cat "power-up" d-0 o-0 k))
+        (ch-msg lk-0 (cat pt-2 "st-k" d-0 o-0 k)))))
   (unrealized (0 1) (1 1) (1 2) (2 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -1304,6 +1334,10 @@
   (label 17)
   (parent 16)
   (seen 18)
+  (seen-opts
+    (18
+      (operation channel-test (added-strand dev-up 3)
+        (ch-msg lk (cat pt-2 "st-k" d o k)) (4 1))))
   (unrealized (0 1) (4 1))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -1378,6 +1412,10 @@
   (label 19)
   (parent 18)
   (seen 21)
+  (seen-opts
+    (21
+      (operation encryption-test (added-strand dev-up 6) (enc "up" k)
+        (0 1))))
   (unrealized (0 1))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -1416,7 +1454,17 @@
     ((recv k) (send k)))
   (label 20)
   (parent 18)
-  (seen 23)
+  (seen 23 23 23)
+  (seen-opts
+    (23
+      (operation nonce-test (displaced 6 3 dev-up 3) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (23
+      (operation nonce-test (added-strand dev-up 3) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (23
+      (operation nonce-test (added-strand dev-up 3) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k)))))
   (unrealized (0 1) (5 0))
   (comment "4 in cohort - 1 not yet seen"))
 
@@ -1499,7 +1547,17 @@
     ((send (enc "open" d o n-0 k))) ((recv k) (send k)))
   (label 22)
   (parent 19)
-  (seen 24)
+  (seen 24 24 24)
+  (seen-opts
+    (24
+      (operation nonce-test (displaced 7 3 dev-up 3) k (6 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (24
+      (operation nonce-test (added-strand dev-up 3) k (6 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (24
+      (operation nonce-test (added-strand dev-up 3) k (6 0)
+        (ch-msg start-ch (cat "power-up" d o k)))))
   (unrealized (6 0))
   (comment "4 in cohort - 1 not yet seen"))
 
@@ -1540,6 +1598,11 @@
   (label 23)
   (parent 20)
   (seen 23)
+  (seen-opts
+    (23
+      (operation nonce-test (added-strand dev-up 3) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k))
+        (ch-msg lk (cat pt-2 "st-k" d o k)))))
   (unrealized (0 1) (5 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -1581,6 +1644,11 @@
   (label 24)
   (parent 22)
   (seen 24)
+  (seen-opts
+    (24
+      (operation nonce-test (added-strand dev-up 3) k (6 0)
+        (ch-msg start-ch (cat "power-up" d o k))
+        (ch-msg lk (cat pt-2 "st-k" d o k)))))
   (unrealized (6 0))
   (comment "1 in cohort - 0 not yet seen"))
 

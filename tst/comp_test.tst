@@ -529,6 +529,7 @@
   (label 19)
   (parent 17)
   (seen 18)
+  (seen-opts (18 (operation generalization separated n-0)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
