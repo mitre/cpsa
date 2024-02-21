@@ -2545,7 +2545,7 @@
   (label 83)
   (parent 76)
   (seen 79)
-  (seen-opts (79 (operation generalization deleted (3 0))))
+  (seen-ops (79 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -2867,7 +2867,7 @@
   (label 92)
   (parent 82)
   (seen 110)
-  (seen-opts
+  (seen-ops
     (110
       (operation encryption-test (displaced 5 4 ca 1)
         (enc gy b (privk ca-0)) (0 0))))
@@ -2981,7 +2981,7 @@
   (label 95)
   (parent 86)
   (seen 118)
-  (seen-opts
+  (seen-ops
     (118
       (operation encryption-test (displaced 5 2 ca 1)
         (enc gy a (privk ca)) (0 0))))
@@ -3093,7 +3093,7 @@
   (label 98)
   (parent 87)
   (seen 127)
-  (seen-opts
+  (seen-ops
     (127
       (operation encryption-test (displaced 5 2 ca 1)
         (enc gx a (privk ca)) (0 0))))
@@ -3211,7 +3211,7 @@
   (label 101)
   (parent 88)
   (seen 137)
-  (seen-opts
+  (seen-ops
     (137
       (operation encryption-test (displaced 6 2 ca 1)
         (enc gx a-0 (privk ca)) (0 0))))
@@ -3255,7 +3255,7 @@
   (label 102)
   (parent 88)
   (seen 138)
-  (seen-opts
+  (seen-ops
     (138
       (operation encryption-test (displaced 6 5 ca 1)
         (enc gx a-0 (privk ca-0)) (0 0))))
@@ -3901,7 +3901,7 @@
   (label 118)
   (parent 94)
   (seen 104)
-  (seen-opts (104 (operation generalization deleted (3 0))))
+  (seen-ops (104 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -4141,7 +4141,7 @@
   (label 124)
   (parent 96)
   (seen 106)
-  (seen-opts (106 (operation generalization deleted (3 0))))
+  (seen-ops (106 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -4658,7 +4658,7 @@
   (label 137)
   (parent 100)
   (seen 109)
-  (seen-opts (109 (operation generalization deleted (3 0))))
+  (seen-ops (109 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -4951,7 +4951,7 @@
   (label 144)
   (parent 102)
   (seen 112)
-  (seen-opts (112 (operation generalization deleted (3 0))))
+  (seen-ops (112 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -5082,7 +5082,7 @@
   (label 147)
   (parent 103)
   (seen 115)
-  (seen-opts (115 (operation generalization deleted (3 0))))
+  (seen-ops (115 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -5247,7 +5247,7 @@
   (label 151)
   (parent 107)
   (seen 105)
-  (seen-opts (105 (operation generalization weakened ((4 0) (1 3)))))
+  (seen-ops (105 (operation generalization weakened ((4 0) (1 3)))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -5285,7 +5285,7 @@
   (label 152)
   (parent 116)
   (seen 111)
-  (seen-opts (111 (operation generalization weakened ((5 0) (1 3)))))
+  (seen-ops (111 (operation generalization weakened ((5 0) (1 3)))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -5325,7 +5325,7 @@
   (label 153)
   (parent 125)
   (seen 122)
-  (seen-opts (122 (operation generalization weakened ((5 0) (1 3)))))
+  (seen-ops (122 (operation generalization weakened ((5 0) (1 3)))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -5436,7 +5436,7 @@
   (label 156)
   (parent 134)
   (seen 131)
-  (seen-opts (131 (operation generalization weakened ((5 0) (1 3)))))
+  (seen-ops (131 (operation generalization weakened ((5 0) (1 3)))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -5477,7 +5477,7 @@
   (label 157)
   (parent 149)
   (seen 139)
-  (seen-opts (139 (operation generalization weakened ((6 0) (1 3)))))
+  (seen-ops (139 (operation generalization weakened ((6 0) (1 3)))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -5513,7 +5513,7 @@
   (label 158)
   (parent 154)
   (seen 109)
-  (seen-opts (109 (operation generalization separated b-0)))
+  (seen-ops (109 (operation generalization separated b-0)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

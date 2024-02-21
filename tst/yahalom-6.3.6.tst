@@ -474,7 +474,7 @@
   (label 17)
   (parent 11)
   (seen 19)
-  (seen-opts
+  (seen-ops
     (19
       (operation nonce-test (added-strand init 3) n-b (2 1)
         (enc a n-a n-b (ltk b s)) (enc b k n-a n-b (ltk a s))
@@ -604,7 +604,7 @@
   (label 21)
   (parent 17)
   (seen 15)
-  (seen-opts (15 (operation generalization deleted (3 0))))
+  (seen-ops (15 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

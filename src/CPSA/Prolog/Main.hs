@@ -66,7 +66,7 @@ tree h t =
       let l = label $ vertex t
       body h l (alist $ vertex t)
       mapM_ (child h l) (children t)
-      mapM_ (cohort h l) (children t ++ duplicates t)
+      mapM_ (dup h l) (seen $ vertex t)
 
 body :: Handle -> Int -> [SExpr Pos] -> IO ()
 body h l xs =
@@ -75,7 +75,7 @@ body h l xs =
       sexprs h xs
       hPutStrLn h ")."
 
-sexprs :: Handle -> [SExpr Pos] -> IO ()
+sexprs :: Handle -> [SExpr a] -> IO ()
 sexprs h [] =
     hPutStr h "[]"
 sexprs h (x : xs) =
@@ -85,7 +85,7 @@ sexprs h (x : xs) =
       rest h xs
       hPutStr h "]"
 
-sexpr :: Handle -> SExpr Pos -> IO ()
+sexpr :: Handle -> SExpr a -> IO ()
 sexpr h (S _ []) = -- This should never happen
     hPutStr h []
 sexpr h (S _ (c : s)) = -- Ensure symbol is a Prolog constant
@@ -100,7 +100,7 @@ sexpr h (N _ n) =
 sexpr h (L _ xs) =
     sexprs h xs
 
-rest :: Handle -> [SExpr Pos] -> IO ()
+rest :: Handle -> [SExpr a] -> IO ()
 rest _ [] =
     return ()
 rest h (x : xs) =
@@ -112,9 +112,23 @@ rest h (x : xs) =
 child :: Handle -> Int -> Tree -> IO ()
 child h l t =
     do
-      hPutStrLn h (printf "child(%d, %d)." l (label $ vertex t))
-      tree h t
+      let lab = label $ vertex t
+      hPutStrLn h (printf "child(%d, %d)." l lab)
+      case assoc "operation" (alist $ vertex t) of
+        Just op ->
+            do
+              hPutStr h (printf "cohort(%d, " l)
+              sexpr h (L () (S () "operation" : map strip op))
+              hPutStrLn h (printf ", %d)." lab)
+              tree h t
+        _ ->
+            do
+              hPutStrLn h (printf "cohort(%d, [], %d)." l lab)
+              tree h t
 
-cohort :: Handle -> Int -> Tree -> IO ()
-cohort h l t =
-    hPutStrLn h (printf "cohort(%d, %d)." l (label $ vertex t))
+dup :: Handle -> Int -> (Int, SExpr a) -> IO ()
+dup h l (lab, op) =
+    do
+      hPutStr h (printf "cohort(%d, " l)
+      sexpr h op
+      hPutStrLn h (printf ", %d)." lab)

@@ -577,7 +577,7 @@
   (label 12)
   (parent 7)
   (seen 7)
-  (seen-opts
+  (seen-ops
     (7
       (operation nonce-test (displaced 5 2 customer 3) nm (4 0)
         (enc nc nm m price (pubk c)))))
@@ -626,7 +626,7 @@
   (label 13)
   (parent 9)
   (seen 8)
-  (seen-opts (8 (operation generalization deleted (2 0))))
+  (seen-ops (8 (operation generalization deleted (2 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -908,7 +908,7 @@
   (label 19)
   (parent 14)
   (seen 8)
-  (seen-opts (8 (operation generalization deleted (2 0))))
+  (seen-ops (8 (operation generalization deleted (2 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -1091,7 +1091,7 @@
   (label 23)
   (parent 17)
   (seen 11)
-  (seen-opts
+  (seen-ops
     (11
       (operation nonce-test (displaced 5 4 bank 2) nb-1 (1 0)
         (enc "hash" c nc nb-1 nb-1 price (pubk hash-0))
@@ -1260,7 +1260,7 @@
   (label 26)
   (parent 20)
   (seen 13)
-  (seen-opts (13 (operation generalization deleted (2 0))))
+  (seen-ops (13 (operation generalization deleted (2 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -1309,7 +1309,7 @@
   (label 27)
   (parent 21)
   (seen 8)
-  (seen-opts (8 (operation generalization deleted (2 0))))
+  (seen-ops (8 (operation generalization deleted (2 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -1635,7 +1635,7 @@
   (label 33)
   (parent 28)
   (seen 13)
-  (seen-opts (13 (operation generalization deleted (2 0))))
+  (seen-ops (13 (operation generalization deleted (2 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -1854,7 +1854,7 @@
   (label 37)
   (parent 31)
   (seen 35)
-  (seen-opts
+  (seen-ops
     (35
       (operation nonce-test (displaced 5 4 merchant 2) nc (0 0)
         (enc c nc goods-0 (pubk m)))))
@@ -1925,7 +1925,7 @@
   (label 38)
   (parent 31)
   (seen 45)
-  (seen-opts
+  (seen-ops
     (45
       (operation nonce-test (displaced 6 3 customer 3) nb-0 (5 0)
         (enc nc nb-0 m price (pubk c)))))
@@ -2047,7 +2047,7 @@
   (label 40)
   (parent 32)
   (seen 24)
-  (seen-opts
+  (seen-ops
     (24
       (operation nonce-test (contracted (acctnum-1 acctnum-0)) nb-0
         (4 0) (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
@@ -2306,7 +2306,7 @@
   (label 44)
   (parent 36)
   (seen 36)
-  (seen-opts
+  (seen-ops
     (36
       (operation nonce-test (displaced 6 3 customer 3) nb-0 (5 0)
         (enc nc nb-0 m price (pubk c)))))
@@ -2938,7 +2938,7 @@
   (label 54)
   (parent 45)
   (seen 53)
-  (seen-opts
+  (seen-ops
     (53
       (operation nonce-test (displaced 6 5 merchant 2) nc (0 0)
         (enc c nc goods-0 (pubk m)))))
@@ -3018,7 +3018,7 @@
   (label 55)
   (parent 45)
   (seen 45)
-  (seen-opts
+  (seen-ops
     (45
       (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
         (enc nc nb-0 m price (pubk c)))))
@@ -3330,7 +3330,7 @@
   (label 60)
   (parent 50)
   (seen 58)
-  (seen-opts
+  (seen-ops
     (58
       (operation nonce-test (displaced 6 5 merchant 2) nc (0 0)
         (enc c nc goods-0 (pubk m)))))
@@ -3408,7 +3408,7 @@
   (label 61)
   (parent 50)
   (seen 72)
-  (seen-opts
+  (seen-ops
     (72
       (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
         (enc nc nb-0 m price (pubk c)))))
@@ -3692,7 +3692,7 @@
   (label 65)
   (parent 51)
   (seen 51)
-  (seen-opts
+  (seen-ops
     (51
       (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
         (enc nc nb-0 m price (pubk c)))))
@@ -4098,7 +4098,7 @@
   (label 71)
   (parent 59)
   (seen 59)
-  (seen-opts
+  (seen-ops
     (59
       (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
         (enc nc nb-0 m price (pubk c)))))
@@ -4880,7 +4880,7 @@
   (label 82)
   (parent 64)
   (seen 64)
-  (seen-opts
+  (seen-ops
     (64
       (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
         (enc nc nb-0 m price (pubk c)))))
@@ -5163,7 +5163,7 @@
   (label 86)
   (parent 72)
   (seen 85)
-  (seen-opts
+  (seen-ops
     (85
       (operation nonce-test (displaced 7 6 merchant 2) nc (0 0)
         (enc c nc goods-0 (pubk m)))))
@@ -5251,7 +5251,7 @@
   (label 87)
   (parent 72)
   (seen 72)
-  (seen-opts
+  (seen-ops
     (72
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
         (enc nc nb-0 m price (pubk c)))))
@@ -5758,7 +5758,7 @@
   (label 94)
   (parent 77)
   (seen 62)
-  (seen-opts
+  (seen-ops
     (62
       (operation nonce-test (displaced 7 6 bank 2) nb-1 (4 0)
         (enc "hash" c nc nb-1 nb-1 price (pubk hash-1))
@@ -6049,7 +6049,7 @@
   (label 98)
   (parent 80)
   (seen 96)
-  (seen-opts
+  (seen-ops
     (96
       (operation nonce-test (displaced 7 6 merchant 2) nc (0 0)
         (enc c nc goods-0 (pubk m)))))
@@ -6137,7 +6137,7 @@
   (label 99)
   (parent 80)
   (seen 118)
-  (seen-opts
+  (seen-ops
     (118
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
         (enc nc nb-0 m price (pubk c)))))
@@ -6858,7 +6858,7 @@
   (label 109)
   (parent 91)
   (seen 107)
-  (seen-opts
+  (seen-ops
     (107
       (operation nonce-test (displaced 7 6 merchant 2) nc (0 0)
         (enc c nc goods-0 (pubk m)))))
@@ -6945,7 +6945,7 @@
   (label 110)
   (parent 91)
   (seen 130)
-  (seen-opts
+  (seen-ops
     (130
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
         (enc nc nb-0 m price (pubk c)))))
@@ -7242,7 +7242,7 @@
   (label 114)
   (parent 93)
   (seen 76)
-  (seen-opts
+  (seen-ops
     (76
       (operation nonce-test (displaced 7 6 bank 2) nb-1 (4 0)
         (enc "hash" c nc nb-1 nb-1 price (pubk hash-0))
@@ -7484,7 +7484,7 @@
   (label 117)
   (parent 97)
   (seen 97)
-  (seen-opts
+  (seen-ops
     (97
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
         (enc nc nb-0 m price (pubk c)))))
@@ -7999,7 +7999,7 @@
   (label 124)
   (parent 102)
   (seen 122)
-  (seen-opts
+  (seen-ops
     (122
       (operation nonce-test (displaced 7 6 merchant 2) nc (0 0)
         (enc c nc goods-0 (pubk m)))))
@@ -8087,7 +8087,7 @@
   (label 125)
   (parent 102)
   (seen 146)
-  (seen-opts
+  (seen-ops
     (146
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
         (enc nc nb-0 m price (pubk c)))))
@@ -8401,7 +8401,7 @@
   (label 129)
   (parent 108)
   (seen 108)
-  (seen-opts
+  (seen-ops
     (108
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
         (enc nc nb-0 m price (pubk c)))))
@@ -8914,7 +8914,7 @@
   (label 136)
   (parent 113)
   (seen 134)
-  (seen-opts
+  (seen-ops
     (134
       (operation nonce-test (displaced 7 6 merchant 2) nc (0 0)
         (enc c nc goods-0 (pubk m)))))
@@ -9001,7 +9001,7 @@
   (label 137)
   (parent 113)
   (seen 157)
-  (seen-opts
+  (seen-ops
     (157
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
         (enc nc nb-0 m price (pubk c)))))
@@ -9239,7 +9239,7 @@
   (label 140)
   (parent 118)
   (seen 139)
-  (seen-opts
+  (seen-ops
     (139
       (operation nonce-test (displaced 8 7 merchant 2) nc (0 0)
         (enc c nc goods-0 (pubk m)))))
@@ -9335,7 +9335,7 @@
   (label 141)
   (parent 118)
   (seen 118)
-  (seen-opts
+  (seen-ops
     (118
       (operation nonce-test (displaced 9 3 customer 3) nb-0 (8 0)
         (enc nc nb-0 m price (pubk c)))))
@@ -9648,7 +9648,7 @@
   (label 145)
   (parent 123)
   (seen 123)
-  (seen-opts
+  (seen-ops
     (123
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
         (enc nc nb-0 m price (pubk c)))))
@@ -10113,7 +10113,7 @@
   (label 151)
   (parent 130)
   (seen 150)
-  (seen-opts
+  (seen-ops
     (150
       (operation nonce-test (displaced 8 7 merchant 2) nc (0 0)
         (enc c nc goods-0 (pubk m)))))
@@ -10209,7 +10209,7 @@
   (label 152)
   (parent 130)
   (seen 130)
-  (seen-opts
+  (seen-ops
     (130
       (operation nonce-test (displaced 9 3 customer 3) nb-0 (8 0)
         (enc nc nb-0 m price (pubk c)))))
@@ -10522,7 +10522,7 @@
   (label 156)
   (parent 135)
   (seen 135)
-  (seen-opts
+  (seen-ops
     (135
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
         (enc nc nb-0 m price (pubk c)))))
@@ -11226,7 +11226,7 @@
   (label 165)
   (parent 146)
   (seen 164)
-  (seen-opts
+  (seen-ops
     (164
       (operation nonce-test (displaced 8 7 merchant 2) nc (0 0)
         (enc c nc goods-0 (pubk m)))))
@@ -11322,7 +11322,7 @@
   (label 166)
   (parent 146)
   (seen 146)
-  (seen-opts
+  (seen-ops
     (146
       (operation nonce-test (displaced 9 3 customer 3) nb-0 (8 0)
         (enc nc nb-0 m price (pubk c)))))
@@ -11872,7 +11872,7 @@
   (label 173)
   (parent 157)
   (seen 172)
-  (seen-opts
+  (seen-ops
     (172
       (operation nonce-test (displaced 8 7 merchant 2) nc (0 0)
         (enc c nc goods-0 (pubk m)))))
@@ -11968,7 +11968,7 @@
   (label 174)
   (parent 157)
   (seen 157)
-  (seen-opts
+  (seen-ops
     (157
       (operation nonce-test (displaced 9 3 customer 3) nb-0 (8 0)
         (enc nc nb-0 m price (pubk c)))))
@@ -13544,7 +13544,7 @@
   (label 200)
   (parent 198)
   (seen 196)
-  (seen-opts (196 (operation generalization deleted (3 0))))
+  (seen-ops (196 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -13649,7 +13649,7 @@
   (label 202)
   (parent 199)
   (seen 196)
-  (seen-opts (196 (operation generalization deleted (3 0))))
+  (seen-ops (196 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -13758,7 +13758,7 @@
   (label 204)
   (parent 199)
   (seen 199)
-  (seen-opts
+  (seen-ops
     (199
       (operation nonce-test (displaced 5 2 customer 3) nm (4 0)
         (enc nc nm m price (pubk c)))))
@@ -13866,7 +13866,7 @@
   (label 206)
   (parent 203)
   (seen 196)
-  (seen-opts (196 (operation generalization deleted (3 0))))
+  (seen-ops (196 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -13980,7 +13980,7 @@
   (label 208)
   (parent 205)
   (seen 202)
-  (seen-opts (202 (operation generalization deleted (3 0))))
+  (seen-ops (202 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -14100,7 +14100,7 @@
   (label 210)
   (parent 205)
   (seen 205)
-  (seen-opts
+  (seen-ops
     (205
       (operation nonce-test (displaced 6 2 customer 3) nm (5 0)
         (enc nc nm m price (pubk c)))))
@@ -14162,7 +14162,7 @@
   (label 211)
   (parent 207)
   (seen 203)
-  (seen-opts
+  (seen-ops
     (203
       (operation nonce-test (displaced 5 4 bank 2) nb-1 (0 0)
         (enc "hash" c nc nb-1 nb-1 price (pubk hash-0))
@@ -14224,7 +14224,7 @@
   (label 212)
   (parent 209)
   (seen 206)
-  (seen-opts (206 (operation generalization deleted (3 0))))
+  (seen-ops (206 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -14352,7 +14352,7 @@
   (label 214)
   (parent 213)
   (seen 209)
-  (seen-opts
+  (seen-ops
     (209
       (operation nonce-test (displaced 6 5 bank 2) nb-1 (0 0)
         (enc "hash" c nc nb-1 nb-1 price (pubk hash-0))

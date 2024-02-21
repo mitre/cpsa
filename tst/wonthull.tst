@@ -69,7 +69,7 @@
   (label 2)
   (parent 0)
   (seen 3)
-  (seen-opts
+  (seen-ops
     (3
       (operation nonce-test (displaced 2 0 init 1) x3 (0 1)
         (enc "okay" y3 x3 (pubk a)) (enc x3 x2 (pubk a)))))
@@ -132,7 +132,7 @@
   (label 5)
   (parent 3)
   (seen 4)
-  (seen-opts (4 (operation generalization separated y3-0)))
+  (seen-ops (4 (operation generalization separated y3-0)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -176,7 +176,7 @@
   (label 7)
   (parent 6)
   (seen 5)
-  (seen-opts (5 (operation generalization deleted (1 0))))
+  (seen-ops (5 (operation generalization deleted (1 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

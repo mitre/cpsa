@@ -204,7 +204,7 @@
   (label 7)
   (parent 6)
   (seen 5)
-  (seen-opts (5 (operation generalization deleted (1 0))))
+  (seen-ops (5 (operation generalization deleted (1 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -233,7 +233,7 @@
   (label 8)
   (parent 6)
   (seen 5)
-  (seen-opts (5 (operation generalization deleted (3 0))))
+  (seen-ops (5 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

@@ -373,7 +373,7 @@
   (label 13)
   (parent 11)
   (seen 10)
-  (seen-opts (10 (operation generalization deleted (1 0))))
+  (seen-ops (10 (operation generalization deleted (1 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

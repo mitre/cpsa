@@ -22,7 +22,9 @@ data Preskel = Preskel
     { label :: Int,             -- Label from the input or generated
                                 -- by the loader
       parent :: Maybe Int,      -- Parent from the input
-      seen :: [Int], -- Seen preskeletons isomorphic to cohort members
+      -- Seen preskeletons isomorphic to cohort members
+      -- with their operation field
+      seen :: [(Int, SExpr Pos)],
       alist :: [SExpr Pos] }     -- Body of this preskeleton
     deriving Show
 
@@ -91,17 +93,25 @@ loadSExpr _ x = fail (shows (annotation x) "Malformed input")
 
 loadPreskel :: MonadFail m => SExpr Pos -> Pos ->
                Int -> [SExpr Pos] -> m Preskel
-loadPreskel _ _ tag (S _ _ : (L _ (S _ "vars" : _)) : xs) =
+loadPreskel _ _ tag (S _ _ : xs) =
     do
       checkAlist xs -- Ensure alist syntax
       label <- nassoc "label" xs
       parent <- nassoc "parent" xs
-      seen <- nsassoc "seen" xs
+      seen <- loadSeen (assoc "seen-ops" xs)
       return Preskel { label = maybe tag id label,
                        parent  = parent,
-                       seen = maybe [] (L.sort . L.nub) seen,
+                       seen = L.sortOn fst seen,
                        alist = xs }
 loadPreskel _ pos _ _ = fail (shows pos "Malformed skeleton")
+
+loadSeen :: MonadFail m => Maybe [SExpr Pos] -> m [(Int, SExpr Pos)]
+loadSeen Nothing = return []
+loadSeen (Just xs) = mapM loadSeenOp xs
+
+loadSeenOp :: MonadFail m => SExpr Pos -> m (Int, SExpr Pos)
+loadSeenOp (L _ [N _ l, x]) = return (l, x)
+loadSeenOp x = fail (shows (annotation x) "Malformed seen operation")
 
 -- Strip positions from an S-expression
 
@@ -146,12 +156,3 @@ nassoc key xs =
 num :: MonadFail m => SExpr Pos -> m Int
 num (N _ n) = return n
 num x = fail (shows (annotation x) "Expecting a number")
-
-nsassoc :: MonadFail m => String -> [SExpr Pos] -> m (Maybe [Int])
-nsassoc key xs =
-    case assoc key xs of
-      Nothing -> return Nothing
-      Just val ->
-          do
-            ns <- mapM num val
-            return (Just ns)

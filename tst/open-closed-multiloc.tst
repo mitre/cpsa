@@ -181,7 +181,7 @@
   (label 2)
   (parent 1)
   (seen 2)
-  (seen-opts
+  (seen-ops
     (2
       (operation nonce-test (added-strand dev-up 5) k (1 0)
         (ch-msg start-ch (cat "power-up" d o k))
@@ -580,7 +580,7 @@
   (label 9)
   (parent 8)
   (seen 9)
-  (seen-opts
+  (seen-ops
     (9
       (operation nonce-test (added-strand dev-up 5) k (1 0)
         (ch-msg start-ch (cat "power-up" d o k))
@@ -674,7 +674,7 @@
   (label 12)
   (parent 10)
   (seen 14)
-  (seen-opts
+  (seen-ops
     (14
       (operation nonce-test (added-strand dev-up 5) k (3 0)
         (ch-msg start-ch (cat "power-up" d o k)))))
@@ -714,7 +714,7 @@
   (label 13)
   (parent 11)
   (seen 15)
-  (seen-opts
+  (seen-ops
     (15
       (operation encryption-test (added-strand dev-up 6) (enc "up" k)
         (0 1))))
@@ -748,7 +748,7 @@
   (label 14)
   (parent 12)
   (seen 14)
-  (seen-opts
+  (seen-ops
     (14
       (operation nonce-test (added-strand dev-up 5) k (3 0)
         (ch-msg start-ch (cat "power-up" d o k))
@@ -832,7 +832,7 @@
   (label 16)
   (parent 13)
   (seen 17)
-  (seen-opts
+  (seen-ops
     (17
       (operation nonce-test (added-strand dev-up 5) k (5 0)
         (ch-msg start-ch (cat "power-up" d o k)))))
@@ -874,7 +874,7 @@
   (label 17)
   (parent 16)
   (seen 17)
-  (seen-opts
+  (seen-ops
     (17
       (operation nonce-test (added-strand dev-up 5) k (5 0)
         (ch-msg start-ch (cat "power-up" d o k))

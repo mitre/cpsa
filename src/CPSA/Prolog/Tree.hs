@@ -82,5 +82,5 @@ assemble table k =
             Just (_, ks) -> map (assemble table) (reverse ks)
       dups k =
           [ makeTree k' [] []   -- Make an empty tree for a duplicate
-            | tag <- seen k,
+            | (tag, _) <- seen k,
               k' <- maybe [] (\(k, _) -> [k]) (M.lookup tag table) ]

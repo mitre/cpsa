@@ -151,7 +151,7 @@
   (label 6)
   (parent 4)
   (seen 7)
-  (seen-opts
+  (seen-ops
     (7
       (operation nonce-test (displaced 3 1 trans 3) n (2 1)
         (enc n (pubk a)))))
@@ -231,7 +231,7 @@
   (label 9)
   (parent 8)
   (seen 7)
-  (seen-opts (7 (operation generalization deleted (1 0))))
+  (seen-ops (7 (operation generalization deleted (1 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -258,7 +258,7 @@
   (label 10)
   (parent 8)
   (seen 7)
-  (seen-opts (7 (operation generalization deleted (3 0))))
+  (seen-ops (7 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

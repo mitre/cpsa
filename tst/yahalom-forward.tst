@@ -260,7 +260,7 @@
   (label 9)
   (parent 4)
   (seen 8)
-  (seen-opts
+  (seen-ops
     (8
       (operation nonce-test
         (contracted (a-0 a) (b-0 b) (c-0 c) (n-a-0 n-a)) n-b (2 1)
@@ -296,7 +296,7 @@
   (label 10)
   (parent 4)
   (seen 12)
-  (seen-opts
+  (seen-ops
     (12
       (operation nonce-test (added-strand init 3) n-b (2 1)
         (enc a n-a n-b (ltk b c)) (enc b k n-a n-b (ltk a c))
@@ -425,7 +425,7 @@
   (label 14)
   (parent 10)
   (seen 8)
-  (seen-opts (8 (operation generalization deleted (3 0))))
+  (seen-ops (8 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -460,7 +460,7 @@
   (label 15)
   (parent 10)
   (seen 18)
-  (seen-opts
+  (seen-ops
     (18
       (operation nonce-test (added-strand init 3) n-b (2 1)
         (enc n-b k-0) (enc a n-a n-b (ltk b c))
@@ -637,7 +637,7 @@
   (label 20)
   (parent 15)
   (seen 14)
-  (seen-opts (14 (operation generalization deleted (4 0))))
+  (seen-ops (14 (operation generalization deleted (4 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -676,7 +676,7 @@
   (label 21)
   (parent 15)
   (seen 26)
-  (seen-opts
+  (seen-ops
     (26
       (operation nonce-test (added-strand init 3) n-b (2 1)
         (enc n-b k-0) (enc a n-a n-b (ltk b c))
@@ -821,7 +821,7 @@
   (label 25)
   (parent 17)
   (seen 8)
-  (seen-opts (8 (operation generalization deleted (3 0))))
+  (seen-ops (8 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -1251,7 +1251,7 @@
   (label 36)
   (parent 27)
   (seen 25)
-  (seen-opts (25 (operation generalization deleted (4 0))))
+  (seen-ops (25 (operation generalization deleted (4 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -1283,7 +1283,7 @@
   (label 37)
   (parent 30)
   (seen 14)
-  (seen-opts (14 (operation generalization deleted (3 0))))
+  (seen-ops (14 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -1349,7 +1349,7 @@
   (label 39)
   (parent 38)
   (seen 25)
-  (seen-opts (25 (operation generalization deleted (3 0))))
+  (seen-ops (25 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

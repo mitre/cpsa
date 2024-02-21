@@ -146,7 +146,7 @@
   (label 6)
   (parent 4)
   (seen 4)
-  (seen-opts
+  (seen-ops
     (4
       (operation encryption-test (added-strand flip 2)
         (enc k2 (hash (invk k1) (invk k2))) (3 0))))
@@ -320,7 +320,7 @@
   (label 14)
   (parent 12)
   (seen 12)
-  (seen-opts
+  (seen-ops
     (12
       (operation encryption-test (added-strand flip2 2)
         (enc y (hash (invk k1) (invk y))) (3 0))))

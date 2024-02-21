@@ -122,7 +122,7 @@
   (label 4)
   (parent 2)
   (seen 6)
-  (seen-opts
+  (seen-ops
     (6
       (operation encryption-test (displaced 2 0 resp 2)
         (enc nb-0 m a a (ltk a s)) (1 0))))

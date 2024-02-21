@@ -456,7 +456,7 @@ commentPreskel lk seen unrealized kind anno msg =
     maybeAddVKeyValues "parent" (\p -> [N () (label p)]) (parent lk) $
     condAddKeyValues "seen" (not $ null sortedSeen)
                      (map (N () . fst) sortedSeen) $
-    condAddKeyValues "seen-opts" (not $ null sortedSeen)
+    condAddKeyValues "seen-ops" (not $ null sortedSeen)
                      (map displaySeen sortedSeen) $
     addKeyValues realizedToken (map displayNode $ L.sort unrealized) $
     addKindKey kind $ addAnnoKey anno $
