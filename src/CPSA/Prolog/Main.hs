@@ -65,6 +65,7 @@ tree h t =
     do
       let l = label $ vertex t
       body h l (alist $ vertex t)
+      strands h l 0 (alist $ vertex t)
       mapM_ (child h l) (children t)
       mapM_ (dup h l) (seen $ vertex t)
 
@@ -74,6 +75,25 @@ body h l xs =
       hPutStr h (printf "skel(%d, " l)
       sexprs h xs
       hPutStrLn h ")."
+
+strands :: Handle -> Int -> Int -> [SExpr Pos] -> IO ()
+strands _ _ _ [] =
+    return ()
+strands h l s (x@(L _ (S _ "defstrand" : _)) : xs) =
+    do
+      hPutStr h (printf "strand(%d, %d, " l s)
+      sexpr h x
+      hPutStrLn h ")."
+      strands h l (s + 1) xs
+strands h l s (x@(L _ (S _ "deflistener" : _)) : xs) =
+    do
+      hPutStr h (printf "strand(%d, %d, " l s)
+      sexpr h x
+      hPutStrLn h ")."
+      strands h l (s + 1) xs
+strands h l s (_ : xs) =
+    do
+      strands h l s xs
 
 sexprs :: Handle -> [SExpr a] -> IO ()
 sexprs h [] =
@@ -89,7 +109,7 @@ sexpr :: Handle -> SExpr a -> IO ()
 sexpr h (S _ []) = -- This should never happen
     hPutStr h []
 sexpr h (S _ (c : s)) = -- Ensure symbol is a Prolog constant
-    hPutStr h (toLower c : s)
+    hPutStr h (map toUnderScore (toLower c : s))
 sexpr h (Q _ q) =
     do
       hPutStr h "\""
@@ -99,6 +119,10 @@ sexpr h (N _ n) =
     hPutStr h (printf "%d" n)
 sexpr h (L _ xs) =
     sexprs h xs
+
+toUnderScore :: Char -> Char
+toUnderScore '-' = '_'
+toUnderScore c = c
 
 rest :: Handle -> [SExpr a] -> IO ()
 rest _ [] =
