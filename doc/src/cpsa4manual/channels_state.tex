@@ -21,6 +21,7 @@ of channels also helped determine an approach to representing
 long-term, cross-session mutable state in {\cpsa}.  The goal of this
 chapter is to explain how to use the {\cpsa} channel mechanism, and to
 build on that understanding to work with long-term mutable state.
+\index{channel}
 
 \paragraph{Channel security guarantees.}  The most important
 guarantees are \emph{authenticated} channels and \emph{confidential}
@@ -31,12 +32,14 @@ of a role of the protocol, rather than by the adversary.
   \item An authenticated channel guarantees to the recipient of a
   message that this message was sent by some instance of a role of the
   protocol.
+  \index{channel!authenticated}
   \item A confidential channel guarantees to the sender that this
   transmission will not be received by the adversary, i.e.~that any
   recipient is an instance of a role of the protocol.  Hence, any
   disclosure of not-yet-public parts of the message occur only if the
   message is received and acted on by one or more instances of
-  protocol roles.
+  protocol roles.  \index{channel!confidential}
+
 \end{itemize}
 %
 A channel that is both \emph{authenticated} and \emph{confidential} is
@@ -143,6 +146,11 @@ property of a channel, using the annotations:
     (conf ch-name-2)
 \end{verbatim}
 %
+\index{channel!annotations}
+\ttindex{auth}
+\ttindex{conf}
+
+
 As with annotations such as \verb|uniq-orig| and \verb|non-orig|,
 these can appear either within a \verb|defskeleton| query form or
 within a \verb|defrole| role declaration.  As in the previous cases,
@@ -430,12 +438,17 @@ not its predecessor.  Although any number of read events may observe
 the same value, a transition event ensures that the new value is the
 only value available from this location.  This fact---that transitions
 erase the past---is the essential characteristic of mutable state.
+\index{mutable state}
+\index{state}
+
 
 \paragraph{``Leads to.''}  When a state transition event $n_0$ writes
 a value $v$ into a state location $\ell$, and a later observation or
 transition event $n_1$ obtains this value $v$ from $\ell$, without any
 other transitions having occurred to $\ell$ in between, we say that
 $n_0$ \emph{leads to} $n_1$, and we write $n_0\leadsto n_1$.
+\index{leads-to relation}
+
 
 Thus, when $n_0\leadsto n_1$ the following conclusions hold:
 \begin{renumerate}
@@ -504,12 +517,13 @@ $n_0=n_1$.
       *+[F]{m_1}\ar@{~>}[ddl]\\
       & & & \Longrightarrow   \\
       & n && && n}
-  \]
+  \] 
   \caption[Leads-to axioms]{Two axioms about state events on the same
     location $\ell$}
   \label{fig:leads:to}
 \end{figure}
 %
+\index{mutable state!axioms}
 
 In each case, the events $n,m_0,m_1$ are all state events on the same
 location $\ell$.
@@ -665,6 +679,8 @@ shows a role that manipulates two variables \texttt{lk, ls} of sort
 \verb|locn|.  Its intent is to open a door in response to a suitable
 encrypted command, conforming its action.
 %
+\ttindex{locn} 
+%
 \begin{figure}\small
   %
 \begin{verbatim}(defrole dev-open
@@ -696,6 +712,9 @@ success by sending the hash of the open request.
 A \verb|load| or \verb|stor| event always contains a location variable
 followed by a message term, just like a channel \verb|send| or
 \verb|recv| (Section~\ref{sec:channels:state:ch}).
+\ttindex{load}
+\ttindex{stor}
+
 
 Observe that the \verb|stor| event immediately follows a \verb|load|
 event, and this is in fact always the case.  Since together they
@@ -763,6 +782,7 @@ if:
 \end{enumerate}
 %
 These are the transition rules.
+\ttindex{trans}
 
 The second kind are the \emph{generated state value rules}.  As we
 mentioned at the start, a generated state value is a value $v$ that is
@@ -771,6 +791,7 @@ generated state value $v$ from a location $\ell$, then $\ell$ is
 acting like an authenticated channel for $v$.  In particular {\cpsa}
 will consider which instances of the roles could previously have
 stored $v$ into $\ell$; one of those must be present.
+\index{generated state value}
 
 A generated state assumption may be introduced as a per-strand
 assumption, akin to the declarations discussed in
@@ -787,6 +808,8 @@ syntactically present in a {\cpsa} \texttt{defskeleton} query such as:
 This \texttt{gen-st} declaration says that the particular tuple
 \texttt{(dev-key-state d o k)} using the values of the variables that
 appear in this strand forms a generated state value.
+\ttindex{gen-st}
+
 
 A generated state assumption may be introduced as a role-level
 assumption, akin to the declarations discussed in
@@ -869,7 +892,7 @@ transaction-like atomicity.  This declaration would cause {\cpsa} to
 generate the rules in Fig.~\ref{fig:critical:section:rules}.  They are
 of value only when the state segment has multiple loads or multiple
 stores.  In this particular example, the critical section declaration
-does not in fact make a difference to the analysis.
+does not in fact make a difference to the analysis. 
 %
 \label{state:gen:rules:end}
 
