@@ -195,6 +195,7 @@
   (label 7)
   (parent 5)
   (seen 8)
+  (seen-ops (8 (operation generalization forgot t)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

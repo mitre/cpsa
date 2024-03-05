@@ -49,6 +49,7 @@
   (label 2)
   (parent 0)
   (seen 1)
+  (seen-ops (1))
   (realized)
   (origs)
   (ugens)

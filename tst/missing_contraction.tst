@@ -232,6 +232,7 @@
   (label 10)
   (parent 9)
   (seen 8)
+  (seen-ops (8 (operation generalization separated n-0)))
   (realized)
   (origs (n (0 0)))
   (ugens)

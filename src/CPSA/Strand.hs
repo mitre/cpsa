@@ -679,28 +679,27 @@ uniqGen k =
       (t, [_]) <- reverse (kugen k)
       return t
 
-{-- 
+{--
 originatingStrands :: Preskel -> Term -> [Sid]
 originatingStrands k t =
-    let (_,nodes) = originationNodes (strands k) t in 
+    let (_,nodes) = originationNodes (strands k) t in
     map (\(s,_) -> s) nodes
 --}
 
 genOrigMatch :: Term -> Node -> Node -> Bool
-genOrigMatch _ (s,_) (s',_) | s == s' = True 
+genOrigMatch _ (s,_) (s',_) | s == s' = True
 genOrigMatch _ _ _ | otherwise =
---       z ("genOrigMatch:  Whoa, mismatch for " ++ (show u) ++ ", gen strand " ++ 
+--       z ("genOrigMatch:  Whoa, mismatch for " ++ (show u) ++ ", gen strand " ++
 --          (show (s,i)) ++ " vs orig strand " ++ (show (s',i')))
-      False 
+      False
 
 ugensPlusInverses :: Preskel -> [(Term, [Node])]
 ugensPlusInverses k =
-    concatMap 
+    concatMap
     (\(u,gNodes) -> maybe [(u,gNodes)]
                     (\u' -> [(u,gNodes), (u', gNodes)])
                     (invertKey u))
     (kugen k)
-
 
 ugenGoodOrig :: Preskel -> Bool
 ugenGoodOrig k =
@@ -712,21 +711,19 @@ ugenGoodOrig k =
     where
       origs v = snd (originationNodes (strands k) v)
 
-
 --    (maybe [] (\u' -> origs u')
 --                    (invertKey u)) ++
 
 --       (\(u,genNodes) -> all (all genOrigMatch u genNode)
 --                        (snd (originationNodes (strands k) u)))
-    
-    
+
 --       all f (kugen k)
 --       where
 --         f (u,gens) = all (\s -> all
 --                                 (\(s',_) -> s == s')
 --                                 gens)
 --                      $ originatingStrands k u
-                   
+
 --         f (u,gens) = error ("ugenGoodOrig:  Weirdly, " ++ (show u) ++
 --                             " generated at wrong number of nodes " ++ (show gens) ++
 --                             " in " ++ (show k))
@@ -753,8 +750,8 @@ preskelWellFormed k =
     all chanCheck (kauth k) &&
     wellOrdered k && acyclicOrder k &&
     roleOrigCheck k &&
-    roleGenCheck k &&  
-    True -- (ugenGoodOrig k || True) 
+    roleGenCheck k &&
+    True -- (ugenGoodOrig k || True)
     where
       terms = kterms k
       vs = kvars k
@@ -1545,7 +1542,7 @@ enforceAbsence prs@(_, k, _, _, _) =
 -- When a value is uniq gen and a *different* strand receives it in
 -- non-carried position and then transmits in carried position, that's
 -- also a problem.  If k is an asymmetric key, its inverse is
--- generated at the same node at which it is uniquely generated.  
+-- generated at the same node at which it is uniquely generated.
 
 origGenChecks :: PRS -> Bool
 origGenChecks prs =
@@ -1553,7 +1550,6 @@ origGenChecks prs =
   any (\(_, l) -> length l > 1) (kugen (skel prs)) ||
   origUgenDiffStrand (korig (skel prs)) (ugensPlusInverses (skel prs)) ||
   not(ugenGoodOrig (skel prs))
-  
 
 -- When a value is both uniq orig and uniq gen, check to see if they
 -- start on different strands.
@@ -1568,10 +1564,9 @@ origUgenDiffStrand orig ((t, ns) : ugen) =
    (\t' -> case lookup t' orig of
              Nothing -> False
              Just ns' -> any (f ns') ns)
-   $ invertKey t)  
+   $ invertKey t)
     where
       f ns' (s, _) = any (\(s', _) -> s /= s') ns'
-    
 
 -- Hulling or Ensuring Unique Origination
 hull :: Bool -> PRS -> [PRS]

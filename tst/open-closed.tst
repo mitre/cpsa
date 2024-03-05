@@ -180,6 +180,11 @@
   (label 2)
   (parent 1)
   (seen 2)
+  (seen-ops
+    (2
+      (operation nonce-test (added-strand dev-up 3) k (1 0)
+        (ch-msg start-ch (cat "power-up" d o k))
+        (ch-msg lk (cat pt-0 "st-k" d o k)))))
   (unrealized (0 1) (1 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -580,6 +585,11 @@
   (label 9)
   (parent 8)
   (seen 9)
+  (seen-ops
+    (9
+      (operation nonce-test (added-strand dev-up 3) k (1 0)
+        (ch-msg start-ch (cat "power-up" d o k))
+        (ch-msg lk-0 (cat pt-2 "st-k" d o k)))))
   (unrealized (0 1) (1 0) (1 1) (1 2))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -681,6 +691,10 @@
   (label 12)
   (parent 10)
   (seen 14)
+  (seen-ops
+    (14
+      (operation nonce-test (added-strand dev-up 3) k (3 0)
+        (ch-msg start-ch (cat "power-up" d o k)))))
   (unrealized (0 1) (1 2) (3 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -726,6 +740,10 @@
   (label 13)
   (parent 11)
   (seen 15)
+  (seen-ops
+    (15
+      (operation encryption-test (added-strand dev-up 6) (enc "up" k)
+        (0 1))))
   (unrealized (0 1))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -760,6 +778,11 @@
   (label 14)
   (parent 12)
   (seen 14)
+  (seen-ops
+    (14
+      (operation nonce-test (added-strand dev-up 3) k (3 0)
+        (ch-msg start-ch (cat "power-up" d o k))
+        (ch-msg lk (cat pt-1 "st-k" d o k)))))
   (unrealized (0 1) (1 2) (3 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -861,6 +884,10 @@
   (label 16)
   (parent 13)
   (seen 17)
+  (seen-ops
+    (17
+      (operation nonce-test (added-strand dev-up 3) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k)))))
   (unrealized (5 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -908,6 +935,11 @@
   (label 17)
   (parent 16)
   (seen 17)
+  (seen-ops
+    (17
+      (operation nonce-test (added-strand dev-up 3) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k))
+        (ch-msg lk (cat pt-1 "st-k" d o k)))))
   (unrealized (5 0))
   (comment "1 in cohort - 0 not yet seen"))
 
