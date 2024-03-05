@@ -686,20 +686,30 @@ originatingStrands k t =
     map (\(s,_) -> s) nodes
 --}
 
+-- Just check that the strands of the two nodes are equal.
+-- Convenient for debugging when needed.
+
 genOrigMatch :: Term -> Node -> Node -> Bool
 genOrigMatch _ (s,_) (s',_) | s == s' = True
 genOrigMatch _ _ _ | otherwise =
 --       z ("genOrigMatch:  Whoa, mismatch for " ++ (show u) ++ ", gen strand " ++
 --          (show (s,i)) ++ " vs orig strand " ++ (show (s',i')))
-      False
+      False 
+
+-- The (Term,Nodes) pairs (t,[n]) where either t or its key-inverse
+-- originates uniquely at n.  
 
 ugensPlusInverses :: Preskel -> [(Term, [Node])]
 ugensPlusInverses k =
-    concatMap
+    concatMap 
     (\(u,gNodes) -> maybe [(u,gNodes)]
                     (\u' -> [(u,gNodes), (u', gNodes)])
                     (invertKey u))
     (kugen k)
+
+-- Consider the preskeleton's ugens and their inverses.  If they have
+-- origination nodes, it's *good* for them to be on the same strands
+-- as the generation nodes.
 
 ugenGoodOrig :: Preskel -> Bool
 ugenGoodOrig k =
@@ -711,22 +721,6 @@ ugenGoodOrig k =
     where
       origs v = snd (originationNodes (strands k) v)
 
---    (maybe [] (\u' -> origs u')
---                    (invertKey u)) ++
-
---       (\(u,genNodes) -> all (all genOrigMatch u genNode)
---                        (snd (originationNodes (strands k) u)))
-
---       all f (kugen k)
---       where
---         f (u,gens) = all (\s -> all
---                                 (\(s',_) -> s == s')
---                                 gens)
---                      $ originatingStrands k u
-
---         f (u,gens) = error ("ugenGoodOrig:  Weirdly, " ++ (show u) ++
---                             " generated at wrong number of nodes " ++ (show gens) ++
---                             " in " ++ (show k))
 
 -- A preskeleton is well formed if the ordering relation is acyclic,
 -- each atom declared to be uniquely-originating is carried in some
@@ -935,8 +929,8 @@ roleGenCheck :: Preskel -> Bool
 roleGenCheck k =
     all strandRoleGen (strands k) -- Check each strand
     where
-      strandRoleGen strand =   -- Check each role ugen used in strand
-          all (uniqRoleGen strand) (filter nonNum (rugen $ role $ inst strand))
+      strandRoleGen strand =   -- Check each role ugen used in strand      
+          all (uniqRoleGen strand) (filter nonNum (rugen $ role $ inst strand))     
       uniqRoleGen strand (ru, pos)
           | pos < height (inst strand) =
               case lookup (instantiate (env $ inst strand) ru) (kugen k) of
@@ -1542,7 +1536,7 @@ enforceAbsence prs@(_, k, _, _, _) =
 -- When a value is uniq gen and a *different* strand receives it in
 -- non-carried position and then transmits in carried position, that's
 -- also a problem.  If k is an asymmetric key, its inverse is
--- generated at the same node at which it is uniquely generated.
+-- generated at the same node at which it is uniquely generated.  
 
 origGenChecks :: PRS -> Bool
 origGenChecks prs =
@@ -1550,6 +1544,7 @@ origGenChecks prs =
   any (\(_, l) -> length l > 1) (kugen (skel prs)) ||
   origUgenDiffStrand (korig (skel prs)) (ugensPlusInverses (skel prs)) ||
   not(ugenGoodOrig (skel prs))
+  
 
 -- When a value is both uniq orig and uniq gen, check to see if they
 -- start on different strands.
@@ -1564,9 +1559,10 @@ origUgenDiffStrand orig ((t, ns) : ugen) =
    (\t' -> case lookup t' orig of
              Nothing -> False
              Just ns' -> any (f ns') ns)
-   $ invertKey t)
+   $ invertKey t)  
     where
       f ns' (s, _) = any (\(s', _) -> s /= s') ns'
+    
 
 -- Hulling or Ensuring Unique Origination
 hull :: Bool -> PRS -> [PRS]
