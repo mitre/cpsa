@@ -5,7 +5,7 @@
 -- forest in Prolog syntax.  To be loadable by Prolog, the output must
 -- be sorted so that clauses of one predicate are colocated.
 
--- The output should be used SWI Prolog as strings must not be atoms.
+-- The output should be used by SWI Prolog as strings must not be atoms.
 -- Load the generated file using consult/1.
 
 -- Copyright (c) 2009 The MITRE Corporation

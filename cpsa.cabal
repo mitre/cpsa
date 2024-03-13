@@ -142,8 +142,8 @@ Extra-Source-Files:
   doc/SDAG.lhs doc/cpsalogo.mp src/index.html src/cpsajson.py
   src/split.py src/cpsa2svg src/cpsa.el src/cpsaperm.scm src/lastlabel.py
   src/cpsaops.scm src/preskel src/cpsa.pl src/unsorted.pl src/pp.pl
-  src/sexpr.pl src/perm.pl src/prover9.pl src/zoom.js src/js2hs
-  src/ghcmemlimit build.xml src/scala/Main.scala
+  src/sexpr.pl src/perm.pl src/prover9.pl src/cpsa4prolog.pl src/zoom.js
+  src/js2hs src/ghcmemlimit build.xml src/scala/Main.scala
   src/scala/Pretty.scala src/scala/Printer.scala src/scala/SExpr.scala
   src/ocaml/Makefile src/ocaml/README src/ocaml/cpsa.d.itarget
   src/ocaml/cpsa.itarget src/ocaml/cpsa.mllib src/ocaml/cpsa.mltop
