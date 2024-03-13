@@ -141,18 +141,18 @@ child h l t =
       case assoc "operation" (alist $ vertex t) of
         Just op ->
             do
-              hPutStr h (printf "cohort(%d, " l)
+              hPutStr h (printf "step(%d, " l) --
               sexpr h (L () (S () "operation" : map strip op))
               hPutStrLn h (printf ", %d)." lab)
               tree h t
         _ ->
             do
-              hPutStrLn h (printf "cohort(%d, [], %d)." l lab)
+              hPutStrLn h (printf "step(%d, [], %d)." l lab)
               tree h t
 
 dup :: Handle -> Int -> (Int, SExpr a) -> IO ()
 dup h l (lab, op) =
     do
-      hPutStr h (printf "cohort(%d, " l)
+      hPutStr h (printf "step(%d, " l)
       sexpr h op
       hPutStrLn h (printf ", %d)." lab)
