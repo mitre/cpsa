@@ -151,6 +151,7 @@ child h l t =
               tree h t
 
 dup :: Handle -> Int -> (Int, SExpr a) -> IO ()
+dup h l (lab, op) | l == lab = return () -- Ignore self loops
 dup h l (lab, op) =
     do
       hPutStr h (printf "step(%d, " l)
