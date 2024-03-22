@@ -328,7 +328,7 @@ exprVars t = error ("Algebra.exprVars: Expecting exponent but got " ++ show t)
 
 -- For Absence
 
--- Seperate a group term based on one variable.
+-- Separate a group term based on one variable.
 -- When the variable is not in the group, return Nothing
 -- Otherwise return a group with just the variable negated,
 -- and a group that contains the rest of the group.
