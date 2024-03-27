@@ -96,3 +96,80 @@ assoc([_ | A], K, V) :-
 
 %% ask_all(Ls) :-
 %%     findall(L, ask(L), Ls).
+
+%% *************************************************************A
+
+%% Goal language
+
+%% p(K, R, S, L) is true if skeleton K has a strand S that is an
+%% instance of role R as a string of length L.
+
+%% Listener case
+p(K, "", S, L) :-
+    !,
+    strand(K, S, [deflistener | _]),
+    L == 2.
+%% Non-listener case
+p(K, R, S, L) :-
+    atom_string(Ra, R),
+    strand(K, S, [defstrand, Ra, L | _]).
+
+%% p(K, R, V, S, T) if true if skeleton K has a strand S that is an
+%% instance of role R as a string that binds role variable V as a
+%% string to term T.
+
+%% Listener case
+p(K, "", S, V, T) :-
+    !,
+    V == "x",
+    strand(K, S, [deflistener, T]).
+p(K, R, V, S, T) :-
+    atom_string(Ra, R),
+    atom_string(Va, V),
+    strand(K, S, [defstrand, Ra, _, Args]),
+    assoc(Va, [T], Args).
+
+%% prec(K, S1, I1, S2, I2) is true if skeleton K has an ordering from
+%% node (S1, I1) to node (S2, I2).
+prec(K, S1, I1, S2, I2) :-
+    skel(K, Alist),
+    assoc(precedes, Ans, Alist),
+    member([[S1, I1], [S2, I2]], Ans).
+
+%% leads_to(K, S1, I1, S2, I2) is true if skeleton K has a leads-to
+%% ordering from node (S1, I1) to node (S2, I2).
+leads_to(K, S1, I1, S2, I2) :-
+    skel(K, Alist),
+    assoc(leads_to, Ans, Alist),
+    member([[S1, I1], [S2, I2]], Ans).
+
+%% non(K, T) is true if skeleton K has a non-originating term T.
+non(K, T) :-
+    skel(K, Alist),
+    assoc(non_orig, Ans, Alist),
+    member(T, Ans).
+
+%% pnon(K, T) is true if skeleton K has a penetrator non-originating
+%% term T.
+pnon(K, T) :-
+    skel(K, Alist),
+    assoc(pen_non_orig, Ans, Alist),
+    member(T, Ans).
+
+%% uniq(K, T) is true if skeleton K has a uniquely originating term T.
+uniq(K, T) :-
+    skel(K, Alist),
+    assoc(uniq_orig, Ans, Alist),
+    member(T, Ans).
+
+%% ugen(K, T) is true if skeleton K has a uniquely generating term T.
+ugen(K, T) :-
+    skel(K, Alist),
+    assoc(uniq_gen, Ans, Alist),
+    member(T, Ans).
+
+%% fact(K, P, As) is true if skeleton K has the fact [P | As].
+fact(K, P, As) :-
+    skel(K, Alist),
+    assoc(facts, Ans, Alist),
+    member([P | As], Ans).
