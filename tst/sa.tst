@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment "All input read from tst/sa.scm")
 
 (defprotocol subatomic-open-closed basic
@@ -473,6 +473,10 @@
   (label 4)
   (parent 2)
   (seen 6)
+  (seen-ops
+    (6
+      (operation nonce-test (added-strand dev-up 4) k (2 0)
+        (ch-msg start-ch (cat "power-up" d-0 o-0 k)))))
   (unrealized (0 0) (0 1) (0 2) (2 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -504,7 +508,29 @@
       (stor ls-0 (cat pt-4 "st" d o)) (send (enc "up" k))))
   (label 5)
   (parent 3)
-  (seen 7)
+  (seen 7 7 7 7 7 7 7)
+  (seen-ops
+    (7
+      (operation channel-test (displaced 3 2 dev-up 4)
+        (ch-msg lk-0 (cat pt-4 "st-k" d-0 o-0 k)) (0 0)))
+    (7
+      (operation channel-test (displaced 3 2 dev-up 4)
+        (ch-msg lk-0 (cat pt-4 "st-k" d-0 o-0 k)) (0 0)))
+    (7
+      (operation channel-test (displaced 3 2 dev-up 4)
+        (ch-msg lk-0 (cat pt-4 "st-k" d-0 o-0 k)) (0 0)))
+    (7
+      (operation channel-test (added-strand dev-up 4)
+        (ch-msg lk (cat pt-2 "st-k" d o k)) (0 0)))
+    (7
+      (operation channel-test (added-strand dev-up 4)
+        (ch-msg lk (cat pt-2 "st-k" d o k)) (0 0)))
+    (7
+      (operation channel-test (added-strand dev-up 4)
+        (ch-msg lk (cat pt-2 "st-k" d o k)) (0 0)))
+    (7
+      (operation channel-test (added-strand dev-up 4)
+        (ch-msg lk (cat pt-2 "st-k" d o k)) (0 0))))
   (unrealized (0 0) (0 1) (0 2))
   (comment "8 in cohort - 1 not yet seen"))
 
@@ -539,9 +565,9 @@
       (stor ls-0 (cat pt-4 "st" d-0 o-0))))
   (label 6)
   (parent 4)
-  (seen 6)
   (unrealized (0 0) (0 1) (0 2) (2 0))
-  (comment "1 in cohort - 0 not yet seen"))
+  (dead)
+  (comment "empty cohort"))
 
 (defskeleton subatomic-open-closed
   (vars (old old1 mesg) (k skey) (n text) (d o name)
@@ -571,7 +597,20 @@
       (stor ls (cat pt-3 "st" d o)) (send (enc "up" k))))
   (label 7)
   (parent 5)
-  (seen 8)
+  (seen 8 8 8 8)
+  (seen-ops
+    (8
+      (operation channel-test (added-strand dev-open 4)
+        (ch-msg ls (cat pt "st" d o o)) (0 1)))
+    (8
+      (operation channel-test (added-strand dev-open 4)
+        (ch-msg ls (cat pt "st" d o o)) (0 1)))
+    (8
+      (operation channel-test (added-strand dev-open 4)
+        (ch-msg ls (cat pt "st" d o o)) (0 1)))
+    (8
+      (operation channel-test (added-strand dev-open 4)
+        (ch-msg ls (cat pt "st" d o o)) (0 1))))
   (unrealized (0 1) (0 2))
   (comment "5 in cohort - 1 not yet seen"))
 
@@ -610,7 +649,14 @@
       (stor ls (cat pt "st" d o o))))
   (label 8)
   (parent 7)
-  (seen 9)
+  (seen 9 9)
+  (seen-ops
+    (9
+      (operation channel-test (added-strand dev-up 4)
+        (ch-msg lk (cat pt-2 "st-k" d o k)) (3 2)))
+    (9
+      (operation channel-test (added-strand dev-up 4)
+        (ch-msg lk (cat pt-2 "st-k" d o k)) (3 2))))
   (unrealized (0 2) (3 2))
   (comment "3 in cohort - 1 not yet seen"))
 
@@ -719,7 +765,17 @@
     ((recv k) (send k)))
   (label 11)
   (parent 9)
-  (seen 14)
+  (seen 14 14 14)
+  (seen-ops
+    (14
+      (operation nonce-test (displaced 5 2 dev-up 4) k (4 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (14
+      (operation nonce-test (added-strand dev-up 4) k (4 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (14
+      (operation nonce-test (added-strand dev-up 4) k (4 0)
+        (ch-msg start-ch (cat "power-up" d o k)))))
   (unrealized (4 0))
   (comment "4 in cohort - 1 not yet seen"))
 
@@ -804,6 +860,10 @@
   (label 13)
   (parent 10)
   (seen 15)
+  (seen-ops
+    (15
+      (operation nonce-test (added-strand dev-up 4) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k)))))
   (unrealized (5 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -842,9 +902,9 @@
     ((recv k) (send k)))
   (label 14)
   (parent 11)
-  (seen 14)
   (unrealized (4 0))
-  (comment "1 in cohort - 0 not yet seen"))
+  (dead)
+  (comment "empty cohort"))
 
 (defskeleton subatomic-open-closed
   (vars (old old1 any mesg) (k skey) (n n-0 text) (d o name)
@@ -882,8 +942,8 @@
     ((send (enc "open" d o n-0 k))) ((recv k) (send k)))
   (label 15)
   (parent 13)
-  (seen 15)
   (unrealized (5 0))
-  (comment "1 in cohort - 0 not yet seen"))
+  (dead)
+  (comment "empty cohort"))
 
 (comment "Nothing left to do")

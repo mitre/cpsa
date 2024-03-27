@@ -372,14 +372,9 @@
       (stor ls (cat pt-2 "st" d o))))
   (label 2)
   (parent 1)
-  (seen 2)
-  (seen-ops
-    (2
-      (operation nonce-test (added-strand dev-up 4) k (1 0)
-        (ch-msg start-ch (cat "power-up" d o k))
-        (ch-msg lk (cat pt-1 "st-k" d o k)))))
   (unrealized (0 1) (1 0))
-  (comment "1 in cohort - 0 not yet seen"))
+  (dead)
+  (comment "empty cohort"))
 
 (comment "Nothing left to do")
 
@@ -1629,14 +1624,9 @@
     ((recv k) (send k)))
   (label 20)
   (parent 17)
-  (seen 20)
-  (seen-ops
-    (20
-      (operation nonce-test (added-strand dev-up 4) k (4 0)
-        (ch-msg start-ch (cat "power-up" d o k))
-        (ch-msg lk (cat pt-2 "st-k" d o k)))))
   (unrealized (0 1) (4 0))
-  (comment "1 in cohort - 0 not yet seen"))
+  (dead)
+  (comment "empty cohort"))
 
 (defskeleton subatomic-open-closed
   (vars (any old old1 mesg) (k skey) (n n-0 text) (d o name)
@@ -1765,14 +1755,9 @@
     ((send (enc "open" d o n-0 k))) ((recv k) (send k)))
   (label 23)
   (parent 19)
-  (seen 23)
-  (seen-ops
-    (23
-      (operation nonce-test (added-strand dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k))
-        (ch-msg lk (cat pt-2 "st-k" d o k)))))
   (unrealized (0 1) (5 0))
-  (comment "1 in cohort - 0 not yet seen"))
+  (dead)
+  (comment "empty cohort"))
 
 (defskeleton subatomic-open-closed
   (vars (old old1 any mesg) (k skey) (n n-0 text) (d o name)
@@ -1811,13 +1796,8 @@
     ((recv k) (send k)))
   (label 24)
   (parent 22)
-  (seen 24)
-  (seen-ops
-    (24
-      (operation nonce-test (added-strand dev-up 4) k (6 0)
-        (ch-msg start-ch (cat "power-up" d o k))
-        (ch-msg lk (cat pt-2 "st-k" d o k)))))
   (unrealized (6 0))
-  (comment "1 in cohort - 0 not yet seen"))
+  (dead)
+  (comment "empty cohort"))
 
 (comment "Nothing left to do")

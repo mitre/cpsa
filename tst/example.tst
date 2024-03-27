@@ -1,6 +1,6 @@
 (herald example)
 
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment "All input read from tst/example.scm")
 
 (defprotocol version-1 basic

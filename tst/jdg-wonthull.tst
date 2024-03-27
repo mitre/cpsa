@@ -1,6 +1,6 @@
 (herald jdg-wonthull (bound 9))
 
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment "All input read from tst/jdg-wonthull.scm")
 (comment "Strand count bounded at 9")
 
@@ -69,6 +69,10 @@
   (label 2)
   (parent 0)
   (seen 3)
+  (seen-ops
+    (3
+      (operation nonce-test (displaced 2 0 init 1) x3 (0 1)
+        (enc "okay" y3 x3 (pubk a)) (enc x3 x2 (pubk a)))))
   (unrealized (0 1))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -170,6 +174,11 @@
   (label 7)
   (parent 3)
   (seen 10)
+  (seen-ops
+    (10
+      (operation nonce-test (added-strand resp 2) x2 (0 1)
+        (enc "okay" x1 x2 (pubk a)) (enc "okay" y3 x2 (pubk a))
+        (enc x1 x2 (pubk a)) (enc x2 x2 (pubk a)))))
   (unrealized (0 1))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -189,6 +198,7 @@
   (label 8)
   (parent 5)
   (seen 4)
+  (seen-ops (4 (operation generalization forgot y3)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -211,6 +221,7 @@
   (label 9)
   (parent 6)
   (seen 5)
+  (seen-ops (5 (operation generalization deleted (1 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -278,6 +289,7 @@
   (label 12)
   (parent 7)
   (seen 5)
+  (seen-ops (5 (operation generalization deleted (2 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -304,6 +316,7 @@
   (label 13)
   (parent 10)
   (seen 12)
+  (seen-ops (12 (operation generalization deleted (1 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -322,6 +335,7 @@
   (label 14)
   (parent 11)
   (seen 5)
+  (seen-ops (5 (operation generalization separated x1-0)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

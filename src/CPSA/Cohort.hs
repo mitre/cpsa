@@ -313,10 +313,11 @@ reduce mode k =
     case findTest mode k u a of
       Nothing -> reduceNoTest mode k
       Just ks ->                -- normal cohort for selected unrealized node
-        Crt (parFoldr
-             (\k soFar -> (simplify k) ++ soFar)
-             []
-             $ factorIsomorphicPreskels ks)
+        Crt (filterSame
+             k (parFoldr
+                (\k soFar -> (simplify k) ++ soFar)
+                []
+                $ factorIsomorphicPreskels ks))
     where
       (a, u) = avoid k
 

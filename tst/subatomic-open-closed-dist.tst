@@ -1,6 +1,6 @@
 (herald subatomic-open-closed (bound 40))
 
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment "All input read from tst/subatomic-open-closed-dist.scm")
 (comment "Strand count bounded at 40")
 
@@ -255,9 +255,9 @@
       (stor ls (cat pt-2 "st" d o))))
   (label 2)
   (parent 1)
-  (seen 2)
   (unrealized (0 1) (1 0))
-  (comment "1 in cohort - 0 not yet seen"))
+  (dead)
+  (comment "empty cohort"))
 
 (comment "Nothing left to do")
 
@@ -482,7 +482,17 @@
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k))))
   (label 4)
   (parent 3)
-  (seen 5)
+  (seen 5 5 5)
+  (seen-ops
+    (5
+      (operation channel-test (added-strand dev-up 4)
+        (ch-msg lk (cat pt-2 "st-k" d o k)) (0 0)))
+    (5
+      (operation channel-test (added-strand dev-up 4)
+        (ch-msg lk (cat pt-2 "st-k" d o k)) (0 0)))
+    (5
+      (operation channel-test (added-strand dev-up 4)
+        (ch-msg lk (cat pt-2 "st-k" d o k)) (0 0))))
   (unrealized (0 0) (0 1))
   (origs (n (0 3)))
   (ugens)
@@ -543,7 +553,20 @@
     ((send start-ch (cat "power-up" d o k))))
   (label 6)
   (parent 5)
-  (seen 7)
+  (seen 7 7 7 7)
+  (seen-ops
+    (7
+      (operation channel-test (added-strand dev-open 4)
+        (ch-msg ls (cat pt "st" d o o)) (0 1)))
+    (7
+      (operation channel-test (added-strand dev-open 4)
+        (ch-msg ls (cat pt "st" d o o)) (0 1)))
+    (7
+      (operation channel-test (added-strand dev-open 4)
+        (ch-msg ls (cat pt "st" d o o)) (0 1)))
+    (7
+      (operation channel-test (added-strand dev-open 4)
+        (ch-msg ls (cat pt "st" d o o)) (0 1))))
   (unrealized (0 1))
   (comment "5 in cohort - 1 not yet seen"))
 
@@ -582,7 +605,14 @@
       (stor ls (cat pt "st" d o o))))
   (label 7)
   (parent 6)
-  (seen 8)
+  (seen 8 8)
+  (seen-ops
+    (8
+      (operation channel-test (added-strand dev-up 4)
+        (ch-msg lk (cat pt-3 "st-k" d o k)) (3 2)))
+    (8
+      (operation channel-test (added-strand dev-up 4)
+        (ch-msg lk (cat pt-3 "st-k" d o k)) (3 2))))
   (unrealized (3 2))
   (comment "3 in cohort - 1 not yet seen"))
 
@@ -876,7 +906,17 @@
       (send (enc "you may pass" n k))))
   (label 11)
   (parent 10)
-  (seen 12)
+  (seen 12 12 12)
+  (seen-ops
+    (12
+      (operation channel-test (added-strand dev-up 4)
+        (ch-msg lk (cat pt-2 "st-k" d-0 o-0 k)) (1 0)))
+    (12
+      (operation channel-test (added-strand dev-up 4)
+        (ch-msg lk (cat pt-2 "st-k" d-0 o-0 k)) (1 0)))
+    (12
+      (operation channel-test (added-strand dev-up 4)
+        (ch-msg lk (cat pt-2 "st-k" d-0 o-0 k)) (1 0))))
   (unrealized (0 1) (1 0) (1 1) (1 2))
   (origs (n (1 3)) (k (0 0)))
   (ugens)
@@ -941,7 +981,20 @@
       (stor ls (cat pt-3 "st" d o))))
   (label 13)
   (parent 12)
-  (seen 14)
+  (seen 14 14 14 14)
+  (seen-ops
+    (14
+      (operation channel-test (added-strand dev-open 4)
+        (ch-msg ls (cat pt "st" d o o)) (1 1)))
+    (14
+      (operation channel-test (added-strand dev-open 4)
+        (ch-msg ls (cat pt "st" d o o)) (1 1)))
+    (14
+      (operation channel-test (added-strand dev-open 4)
+        (ch-msg ls (cat pt "st" d o o)) (1 1)))
+    (14
+      (operation channel-test (added-strand dev-open 4)
+        (ch-msg ls (cat pt "st" d o o)) (1 1))))
   (unrealized (0 1) (1 1) (1 2))
   (comment "5 in cohort - 1 not yet seen"))
 
@@ -979,7 +1032,14 @@
       (stor ls (cat pt "st" d o o))))
   (label 14)
   (parent 13)
-  (seen 15)
+  (seen 15 15)
+  (seen-ops
+    (15
+      (operation channel-test (added-strand dev-up 4)
+        (ch-msg lk (cat pt-3 "st-k" d o k)) (3 2)))
+    (15
+      (operation channel-test (added-strand dev-up 4)
+        (ch-msg lk (cat pt-3 "st-k" d o k)) (3 2))))
   (unrealized (0 1) (1 2) (3 2))
   (comment "3 in cohort - 1 not yet seen"))
 
@@ -1085,7 +1145,17 @@
     ((recv k) (send k)))
   (label 17)
   (parent 15)
-  (seen 20)
+  (seen 20 20 20)
+  (seen-ops
+    (20
+      (operation nonce-test (displaced 5 2 dev-up 4) k (4 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (20
+      (operation nonce-test (added-strand dev-up 4) k (4 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (20
+      (operation nonce-test (added-strand dev-up 4) k (4 0)
+        (ch-msg start-ch (cat "power-up" d o k)))))
   (unrealized (0 1) (4 0))
   (comment "4 in cohort - 1 not yet seen"))
 
@@ -1127,6 +1197,10 @@
   (label 18)
   (parent 16)
   (seen 21)
+  (seen-ops
+    (21
+      (operation encryption-test (added-strand dev-up 6) (enc "up" k)
+        (4 1))))
   (unrealized (0 2) (3 0) (4 1))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -1166,7 +1240,29 @@
     ((recv k) (send k)))
   (label 19)
   (parent 16)
-  (seen 23)
+  (seen 23 23 23 23 23 23 23)
+  (seen-ops
+    (23
+      (operation nonce-test (displaced 6 2 dev-up 4) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (23
+      (operation nonce-test (displaced 6 2 dev-up 4) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (23
+      (operation nonce-test (displaced 6 2 dev-up 4) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (23
+      (operation nonce-test (added-strand dev-up 4) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (23
+      (operation nonce-test (added-strand dev-up 4) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (23
+      (operation nonce-test (added-strand dev-up 4) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (23
+      (operation nonce-test (added-strand dev-up 4) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k)))))
   (unrealized (0 1) (5 0))
   (comment "8 in cohort - 1 not yet seen"))
 
@@ -1203,9 +1299,9 @@
     ((recv k) (send k)))
   (label 20)
   (parent 17)
-  (seen 20)
   (unrealized (0 1) (4 0))
-  (comment "1 in cohort - 0 not yet seen"))
+  (dead)
+  (comment "empty cohort"))
 
 (defskeleton subatomic-open-closed
   (vars (any old old1 mesg) (k skey) (n n-0 text) (d o name)
@@ -1284,7 +1380,41 @@
       (send dist-ch-0 (enc "dist" d o k))) ((recv k) (send k)))
   (label 22)
   (parent 18)
-  (seen 26)
+  (seen 26 26 26 26 26 26 26 26 26 26 26)
+  (seen-ops
+    (26
+      (operation nonce-test (displaced 6 1 dev-up 4) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (26
+      (operation nonce-test (displaced 6 1 dev-up 4) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (26
+      (operation nonce-test (displaced 6 1 dev-up 4) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (26
+      (operation nonce-test (displaced 6 1 dev-up 4) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (26
+      (operation nonce-test (displaced 6 1 dev-up 4) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (26
+      (operation nonce-test (added-strand dev-up 4) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (26
+      (operation nonce-test (added-strand dev-up 4) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (26
+      (operation nonce-test (added-strand dev-up 4) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (26
+      (operation nonce-test (added-strand dev-up 4) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (26
+      (operation nonce-test (added-strand dev-up 4) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (26
+      (operation nonce-test (added-strand dev-up 4) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k)))))
   (unrealized (5 0))
   (comment "12 in cohort - 1 not yet seen"))
 
@@ -1325,9 +1455,9 @@
     ((recv k) (send k)))
   (label 23)
   (parent 19)
-  (seen 23)
   (unrealized (0 1) (5 0))
-  (comment "1 in cohort - 0 not yet seen"))
+  (dead)
+  (comment "empty cohort"))
 
 (defskeleton subatomic-open-closed
   (vars (any old old1 mesg) (k skey) (n n-0 text) (d o name)
@@ -1409,6 +1539,10 @@
   (label 25)
   (parent 21)
   (seen 29)
+  (seen-ops
+    (29
+      (operation nonce-test (added-strand dev-up 4) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k)))))
   (unrealized (5 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -1451,9 +1585,9 @@
       (send dist-ch-0 (enc "dist" d o k))) ((recv k) (send k)))
   (label 26)
   (parent 22)
-  (seen 26)
   (unrealized (5 0))
-  (comment "1 in cohort - 0 not yet seen"))
+  (dead)
+  (comment "empty cohort"))
 
 (defskeleton subatomic-open-closed
   (vars (any old old1 mesg) (k skey) (n n-0 text) (d o d-0 o-0 name)
@@ -1538,6 +1672,10 @@
   (label 28)
   (parent 24)
   (seen 32)
+  (seen-ops
+    (32
+      (operation nonce-test (added-strand dev-up 4) k (5 0)
+        (ch-msg start-ch (cat "power-up" d o k)))))
   (unrealized (5 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -1581,9 +1719,9 @@
     ((recv k) (send k)))
   (label 29)
   (parent 25)
-  (seen 29)
   (unrealized (5 0))
-  (comment "1 in cohort - 0 not yet seen"))
+  (dead)
+  (comment "empty cohort"))
 
 (defskeleton subatomic-open-closed
   (vars (any old old1 mesg) (k skey) (n n-0 text) (d o name)
@@ -1668,7 +1806,17 @@
       (send (enc "may I pass" k))) ((recv k) (send k)))
   (label 31)
   (parent 27)
-  (seen 35)
+  (seen 35 35 35)
+  (seen-ops
+    (35
+      (operation nonce-test (displaced 7 4 dev-up 4) k (6 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (35
+      (operation nonce-test (added-strand dev-up 4) k (6 0)
+        (ch-msg start-ch (cat "power-up" d o k))))
+    (35
+      (operation nonce-test (added-strand dev-up 4) k (6 0)
+        (ch-msg start-ch (cat "power-up" d o k)))))
   (unrealized (6 0))
   (comment "4 in cohort - 1 not yet seen"))
 
@@ -1712,9 +1860,9 @@
     ((recv k) (send k)))
   (label 32)
   (parent 28)
-  (seen 32)
   (unrealized (5 0))
-  (comment "1 in cohort - 0 not yet seen"))
+  (dead)
+  (comment "empty cohort"))
 
 (defskeleton subatomic-open-closed
   (vars (any old old1 mesg) (k skey) (n n-0 text) (d o name)
@@ -1807,6 +1955,10 @@
   (label 34)
   (parent 30)
   (seen 36)
+  (seen-ops
+    (36
+      (operation nonce-test (added-strand dev-up 4) k (6 0)
+        (ch-msg start-ch (cat "power-up" d o k)))))
   (unrealized (6 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -1852,9 +2004,9 @@
       (send (enc "may I pass" k))) ((recv k) (send k)))
   (label 35)
   (parent 31)
-  (seen 35)
   (unrealized (6 0))
-  (comment "1 in cohort - 0 not yet seen"))
+  (dead)
+  (comment "empty cohort"))
 
 (defskeleton subatomic-open-closed
   (vars (any old old1 mesg) (k skey) (n n-0 text) (d o name)
@@ -1899,8 +2051,8 @@
     ((recv k) (send k)))
   (label 36)
   (parent 34)
-  (seen 36)
   (unrealized (6 0))
-  (comment "1 in cohort - 0 not yet seen"))
+  (dead)
+  (comment "empty cohort"))
 
 (comment "Nothing left to do")

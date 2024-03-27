@@ -171,14 +171,9 @@
       (stor lk (cat pt-0 "st-k" d o k))))
   (label 2)
   (parent 1)
-  (seen 2)
-  (seen-ops
-    (2
-      (operation nonce-test (added-strand dev-up 3) k (1 0)
-        (ch-msg start-ch (cat "power-up" d o k))
-        (ch-msg lk (cat pt-0 "st-k" d o k)))))
   (unrealized (0 1) (1 0))
-  (comment "1 in cohort - 0 not yet seen"))
+  (dead)
+  (comment "empty cohort"))
 
 (comment "Nothing left to do")
 
@@ -556,14 +551,8 @@
       (stor lk-0 (cat pt-2 "st-k" d o k))))
   (label 9)
   (parent 8)
-  (seen 9)
-  (seen-ops
-    (9
-      (operation nonce-test (added-strand dev-up 3) k (1 0)
-        (ch-msg start-ch (cat "power-up" d o k))
-        (ch-msg lk-0 (cat pt-2 "st-k" d o k)))))
   (unrealized (0 1) (1 0) (1 1) (1 2))
-  (comment "2 in cohort - 1 not yet seen"))
+  (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton open-closed
   (vars (old mesg) (k skey) (n text) (d o name) (pt pt-0 pt-1 pval)
@@ -719,14 +708,9 @@
       (stor lk (cat pt-1 "st-k" d o k))) ((recv k) (send k)))
   (label 14)
   (parent 12)
-  (seen 14)
-  (seen-ops
-    (14
-      (operation nonce-test (added-strand dev-up 3) k (3 0)
-        (ch-msg start-ch (cat "power-up" d o k))
-        (ch-msg lk (cat pt-1 "st-k" d o k)))))
   (unrealized (0 1) (1 2) (3 0))
-  (comment "1 in cohort - 0 not yet seen"))
+  (dead)
+  (comment "empty cohort"))
 
 (defskeleton open-closed
   (vars (any old old1 mesg) (k k-0 skey) (n n-0 text) (o d o-0 name)
@@ -844,14 +828,9 @@
       (stor ls (cat pt "st" d "opened"))) ((recv k) (send k)))
   (label 17)
   (parent 16)
-  (seen 17)
-  (seen-ops
-    (17
-      (operation nonce-test (added-strand dev-up 3) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k))
-        (ch-msg lk-0 (cat pt-3 "st-k" d o k)))))
   (unrealized (5 0))
-  (comment "1 in cohort - 0 not yet seen"))
+  (dead)
+  (comment "empty cohort"))
 
 (comment "Nothing left to do")
 
@@ -1036,16 +1015,10 @@
       (stor ls (cat pt-7 "st" d "opened"))))
   (label 19)
   (parent 18)
-  (seen 19)
-  (seen-ops
-    (19
-      (operation nonce-test (added-strand dev-up 3) k (1 0)
-        (ch-msg start-ch (cat "power-up" d o k))
-        (ch-msg lk (cat pt-2 "st-k" d o k)))))
   (unrealized (1 0) (1 2))
   (origs (pt-7 (4 3)) (pt-4 (2 4)) (pt-2 (2 2)) (n (1 3)) (k (0 0)))
   (ugens)
-  (comment "2 in cohort - 1 not yet seen"))
+  (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton open-closed
   (vars (old old1 any mesg) (k k-0 skey) (n n-0 text) (d o name)

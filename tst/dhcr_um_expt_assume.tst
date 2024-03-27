@@ -1,7 +1,7 @@
 (herald "DHCR: unified model (UM) original" (bound 20) (limit 12000)
   (algebra diffie-hellman))
 
-(comment "CPSA 4.4.2")
+(comment "CPSA 4.4.3")
 (comment "All input read from tst/dhcr_um_expt_assume.scm")
 (comment "Step count limited to 12000")
 (comment "Strand count bounded at 20")
@@ -1652,6 +1652,7 @@
   (label 26)
   (parent 17)
   (seen 9)
+  (seen-ops (9 (operation generalization deleted (4 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -1912,6 +1913,7 @@
   (label 30)
   (parent 21)
   (seen 16)
+  (seen-ops (16 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -2405,6 +2407,7 @@
   (label 37)
   (parent 31)
   (seen 26)
+  (seen-ops (26 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -4150,6 +4153,7 @@
   (label 66)
   (parent 55)
   (seen 47)
+  (seen-ops (47 (operation generalization deleted (4 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -4467,6 +4471,7 @@
   (label 71)
   (parent 59)
   (seen 54)
+  (seen-ops (54 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -5336,6 +5341,7 @@
   (label 84)
   (parent 72)
   (seen 66)
+  (seen-ops (66 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -10954,6 +10960,7 @@
   (label 159)
   (parent 132)
   (seen 131)
+  (seen-ops (131 (operation generalization deleted (4 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -12321,6 +12328,7 @@
   (label 182)
   (parent 174)
   (seen 186)
+  (seen-ops (186 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -12761,6 +12769,7 @@
   (label 190)
   (parent 183)
   (seen 194)
+  (seen-ops (194 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -12816,6 +12825,7 @@
   (label 191)
   (parent 184)
   (seen 195)
+  (seen-ops (195 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -13029,6 +13039,7 @@
   (label 195)
   (parent 188)
   (seen 186)
+  (seen-ops (186 (operation generalization deleted (4 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -13143,6 +13154,7 @@
   (label 197)
   (parent 192)
   (seen 199)
+  (seen-ops (199 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -13189,6 +13201,7 @@
   (label 198)
   (parent 194)
   (seen 131)
+  (seen-ops (131 (operation generalization forgot nb)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -13242,6 +13255,7 @@
   (label 199)
   (parent 196)
   (seen 194)
+  (seen-ops (194 (operation generalization deleted (4 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -14991,6 +15005,7 @@
   (label 228)
   (parent 217)
   (seen 209)
+  (seen-ops (209 (operation generalization deleted (4 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -15248,6 +15263,7 @@
   (label 232)
   (parent 221)
   (seen 216)
+  (seen-ops (216 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -15998,6 +16014,7 @@
   (label 243)
   (parent 233)
   (seen 228)
+  (seen-ops (228 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -21380,6 +21397,7 @@
   (label 312)
   (parent 287)
   (seen 286)
+  (seen-ops (286 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -22706,6 +22724,7 @@
   (label 333)
   (parent 325)
   (seen 337)
+  (seen-ops (337 (operation generalization deleted (2 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -23169,6 +23188,7 @@
   (label 341)
   (parent 334)
   (seen 345)
+  (seen-ops (345 (operation generalization deleted (2 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -23226,6 +23246,7 @@
   (label 342)
   (parent 335)
   (seen 346)
+  (seen-ops (346 (operation generalization deleted (2 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -23450,6 +23471,7 @@
   (label 346)
   (parent 339)
   (seen 337)
+  (seen-ops (337 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -23570,6 +23592,7 @@
   (label 348)
   (parent 343)
   (seen 350)
+  (seen-ops (350 (operation generalization deleted (2 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -23620,6 +23643,7 @@
   (label 349)
   (parent 345)
   (seen 286)
+  (seen-ops (286 (operation generalization forgot nb)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -23676,6 +23700,7 @@
   (label 350)
   (parent 347)
   (seen 345)
+  (seen-ops (345 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -25543,6 +25568,7 @@
   (label 381)
   (parent 368)
   (seen 360)
+  (seen-ops (360 (operation generalization deleted (4 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -25860,6 +25886,7 @@
   (label 386)
   (parent 372)
   (seen 367)
+  (seen-ops (367 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -26987,6 +27014,7 @@
   (label 403)
   (parent 387)
   (seen 381)
+  (seen-ops (381 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -41960,6 +41988,7 @@
   (label 595)
   (parent 516)
   (seen 514)
+  (seen-ops (514 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -42065,6 +42094,7 @@
   (label 597)
   (parent 519)
   (seen 517)
+  (seen-ops (517 (operation generalization deleted (4 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -46596,6 +46626,7 @@
   (label 662)
   (parent 627)
   (seen 629)
+  (seen-ops (629 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -46646,6 +46677,7 @@
   (label 663)
   (parent 628)
   (seen 629)
+  (seen-ops (629 (operation generalization deleted (4 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -47415,6 +47447,7 @@
   (label 676)
   (parent 642)
   (seen 696)
+  (seen-ops (696 (operation generalization deleted (2 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -48092,6 +48125,7 @@
   (label 686)
   (parent 652)
   (seen 702)
+  (seen-ops (702 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -49443,6 +49477,7 @@
   (label 708)
   (parent 677)
   (seen 727)
+  (seen-ops (727 (operation generalization deleted (2 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -49621,6 +49656,7 @@
   (label 711)
   (parent 680)
   (seen 730)
+  (seen-ops (730 (operation generalization deleted (2 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -50019,6 +50055,7 @@
   (label 717)
   (parent 687)
   (seen 733)
+  (seen-ops (733 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -50199,6 +50236,7 @@
   (label 720)
   (parent 690)
   (seen 736)
+  (seen-ops (736 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -50815,6 +50853,7 @@
   (label 730)
   (parent 700)
   (seen 696)
+  (seen-ops (696 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -51140,6 +51179,7 @@
   (label 736)
   (parent 706)
   (seen 702)
+  (seen-ops (702 (operation generalization deleted (4 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -51372,6 +51412,7 @@
   (label 740)
   (parent 712)
   (seen 755)
+  (seen-ops (755 (operation generalization deleted (2 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -51697,6 +51738,7 @@
   (label 745)
   (parent 718)
   (seen 757)
+  (seen-ops (757 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -51819,6 +51861,7 @@
   (label 747)
   (parent 721)
   (seen 759)
+  (seen-ops (759 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -51882,6 +51925,7 @@
   (label 748)
   (parent 722)
   (seen 762)
+  (seen-ops (762 (operation generalization deleted (5 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -52018,6 +52062,7 @@
   (label 750)
   (parent 724)
   (seen 764)
+  (seen-ops (764 (operation generalization deleted (4 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -52140,6 +52185,7 @@
   (label 752)
   (parent 727)
   (seen 514)
+  (seen-ops (514 (operation generalization forgot nb)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -52192,6 +52238,7 @@
   (label 753)
   (parent 728)
   (seen 426)
+  (seen-ops (426 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -52303,6 +52350,7 @@
   (label 755)
   (parent 731)
   (seen 727)
+  (seen-ops (727 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -52349,6 +52397,7 @@
   (label 756)
   (parent 733)
   (seen 517)
+  (seen-ops (517 (operation generalization forgot nb)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -52511,6 +52560,7 @@
   (label 759)
   (parent 737)
   (seen 733)
+  (seen-ops (733 (operation generalization deleted (4 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -52564,6 +52614,7 @@
   (label 760)
   (parent 738)
   (seen 426)
+  (seen-ops (426 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -52937,6 +52988,7 @@
   (label 766)
   (parent 746)
   (seen 771)
+  (seen-ops (771 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -53003,6 +53055,7 @@
   (label 767)
   (parent 749)
   (seen 774)
+  (seen-ops (774 (operation generalization deleted (5 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -53074,6 +53127,7 @@
   (label 768)
   (parent 751)
   (seen 776)
+  (seen-ops (776 (operation generalization deleted (4 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -53129,6 +53183,7 @@
   (label 769)
   (parent 754)
   (seen 457)
+  (seen-ops (457 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -53179,6 +53234,7 @@
   (label 770)
   (parent 757)
   (seen 456)
+  (seen-ops (456 (operation generalization deleted (4 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -53290,6 +53346,7 @@
   (label 772)
   (parent 761)
   (seen 457)
+  (seen-ops (457 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -53464,6 +53521,7 @@
   (label 775)
   (parent 764)
   (seen 773)
+  (seen-ops (773 (operation generalization deleted (4 2))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -53583,6 +53641,7 @@
   (label 777)
   (parent 771)
   (seen 521)
+  (seen-ops (521 (operation generalization deleted (4 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -53758,6 +53817,7 @@
   (label 780)
   (parent 776)
   (seen 779)
+  (seen-ops (779 (operation generalization deleted (4 2))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -53808,6 +53868,7 @@
   (label 781)
   (parent 778)
   (seen 456)
+  (seen-ops (456 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -53918,6 +53979,7 @@
   (label 783)
   (parent 782)
   (seen 521)
+  (seen-ops (521 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -56204,6 +56266,7 @@
   (label 821)
   (parent 820)
   (seen 819)
+  (seen-ops (819 (operation generalization deleted (4 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -58033,6 +58096,7 @@
   (label 851)
   (parent 850)
   (seen 849)
+  (seen-ops (849 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -61455,6 +61519,7 @@
   (label 907)
   (parent 902)
   (seen 900)
+  (seen-ops (900 (operation generalization deleted (3 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -61560,6 +61625,7 @@
   (label 909)
   (parent 905)
   (seen 903)
+  (seen-ops (903 (operation generalization deleted (4 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -61761,6 +61827,7 @@
   (label 913)
   (parent 911)
   (seen 914)
+  (seen-ops (914 (operation generalization deleted (4 0))))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
