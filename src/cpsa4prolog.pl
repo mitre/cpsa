@@ -127,49 +127,49 @@ p(K, R, V, S, T) :-
     atom_string(Ra, R),
     atom_string(Va, V),
     strand(K, S, [defstrand, Ra, _, Args]),
-    assoc(Va, [T], Args).
+    assoc(Args, Va, [T]).
 
 %% prec(K, S1, I1, S2, I2) is true if skeleton K has an ordering from
 %% node (S1, I1) to node (S2, I2).
 prec(K, S1, I1, S2, I2) :-
     skel(K, Alist),
-    assoc(precedes, Ans, Alist),
+    assoc(Alist, precedes, Ans),
     member([[S1, I1], [S2, I2]], Ans).
 
 %% leads_to(K, S1, I1, S2, I2) is true if skeleton K has a leads-to
 %% ordering from node (S1, I1) to node (S2, I2).
 leads_to(K, S1, I1, S2, I2) :-
     skel(K, Alist),
-    assoc(leads_to, Ans, Alist),
+    assoc(Alist, leads_to, Ans),
     member([[S1, I1], [S2, I2]], Ans).
 
 %% non(K, T) is true if skeleton K has a non-originating term T.
 non(K, T) :-
     skel(K, Alist),
-    assoc(non_orig, Ans, Alist),
+    assoc(Alist, non_orig, Ans),
     member(T, Ans).
 
 %% pnon(K, T) is true if skeleton K has a penetrator non-originating
 %% term T.
 pnon(K, T) :-
     skel(K, Alist),
-    assoc(pen_non_orig, Ans, Alist),
+    assoc(Alist, pen_non_orig, Ans),
     member(T, Ans).
 
 %% uniq(K, T) is true if skeleton K has a uniquely originating term T.
 uniq(K, T) :-
     skel(K, Alist),
-    assoc(uniq_orig, Ans, Alist),
+    assoc(Alist, uniq_orig, Ans),
     member(T, Ans).
 
 %% ugen(K, T) is true if skeleton K has a uniquely generating term T.
 ugen(K, T) :-
     skel(K, Alist),
-    assoc(uniq_gen, Ans, Alist),
+    assoc(Alist, uniq_gen, Ans),
     member(T, Ans).
 
 %% fact(K, P, As) is true if skeleton K has the fact [P | As].
 fact(K, P, As) :-
     skel(K, Alist),
-    assoc(facts, Ans, Alist),
+    assoc(Alist, facts, Ans),
     member([P | As], Ans).
