@@ -30,26 +30,31 @@ security goals appears in Table~\ref{tab:goal_syntax}.
 \begin{table}
 \begin{center}\scshape
   \begin{tabular}{rcl}
- goal&$\leftarrow$&(\sym{defgoal} id sentence+ alist)
-\\ sentence&$\leftarrow$&(\sym{forall} (gvdecl$\ast$) implication)
-\\ gvdecl&$\leftarrow$&(id+ sort)~$\mid$~(id+ \sym{strd})~$\mid$~(id+ \sym{indx})
-\\ implication&$\leftarrow$&(\sym{implies} conjunction conclusion)
-\\ conjunction&$\leftarrow$&atomic~$\mid$~(\sym{and} atomic+)
-\\ conclusion&$\leftarrow$&(\sym{false})~$\mid$~existential
-\\ &$\mid$& (\sym{or} existential+)
-\\ existential&$\leftarrow$&conjunction~$\mid$~(\sym{exists} (gvdecl$\ast$) conjunction)
-\\ atomic&$\leftarrow$&(\sym{p} string strdvar integer)
-\\ &$\mid$&(\sym{p} string string strdvar term)
-\\ &$\mid$&(\sym{prec} strdvar index strdvar index)
-\\ &$\mid$&(\sym{leads-to} strdvar index strdvar index)
-\\ &$\mid$&(\sym{non} term)~$\mid$~(\sym{pnon} term)
-\\ &$\mid$&(\sym{uniq} term)~$\mid$~(\sym{uniq-at} term strdvar index)
-\\ &$\mid$&(\sym{ugen} term)~$\mid$~(\sym{ugen-at} term strdvar index)
-\\ &$\mid$&(\sym{=} strdvar strdvar)~$\mid$~(\sym{=} term term)
-    \\ &$\mid$&(\sym{fact} id term*)
-                %~$\mid$~(\sym{absent} (term term)+)
-\\ strdvar&$\leftarrow$&symbol
-\\ index&$\leftarrow$&symbol~$\mid$~integer
+    goal&$\leftarrow$&(\sym{defgoal} id sentence+ alist)
+    \\ sentence&$\leftarrow$&(\sym{forall} (gvdecl$\ast$) implication)
+    \\ gvdecl&$\leftarrow$&(id+ sort)~$\mid$~(id+ \sym{strd})~$\mid$~(id+ \sym{indx})
+    \\ implication&$\leftarrow$&(\sym{implies} conjunction conclusion)
+    \\ conjunction&$\leftarrow$&atomic~$\mid$~(\sym{and} atomic+)
+    \\ conclusion&$\leftarrow$&(\sym{false})~$\mid$~existential
+    \\ &$\mid$& (\sym{or} existential+)
+    \\ existential&$\leftarrow$&conjunction~$\mid$~(\sym{exists} (gvdecl$\ast$) conjunction)
+    \\ atomic&$\leftarrow$&(\sym{p} string strdvar integer)
+    \\ &$\mid$&(\sym{p} string string strdvar term)
+    \\ &$\mid$&(\sym{prec} strdvar index strdvar index)
+    \\ &$\mid$&(\sym{leads-to} strdvar index strdvar index)
+    \\ &$\mid$&(\sym{non} term)~$\mid$~(\sym{pnon} term)
+    \\ &$\mid$&(\sym{uniq} term)~$\mid$~(\sym{uniq-at} term strdvar index)
+    \\ &$\mid$&(\sym{ugen} term)~$\mid$~(\sym{ugen-at} term strdvar index)
+    \\ &$\mid$&(\sym{conf} term)~$\mid$~(\sym{auth} term)
+    \\ &$\mid$&(\sym{=} strdvar strdvar)~$\mid$~(\sym{=} term term)
+    \\ &$\mid$&(\sym{gen-st} term)~$\mid$~(\sym{trans} strdvar index)
+    \\&$\mid$&(\sym{comm-pr} strdvar index strdvar index)
+    \\&$\mid$&(\sym{state-node} strdvar index) 
+    \\&$\mid$&(\sym{same-locn} strdvar index strdvar index) 
+    \\ &$\mid$&(\sym{component} term term)~$\mid$~(\sym{fact} id term*)
+    % ~$\mid$~(\sym{absent} (term term)+)
+    \\ strdvar&$\leftarrow$&symbol
+    \\ index&$\leftarrow$&symbol~$\mid$~integer
   \end{tabular}
 \end{center}
 \caption[Goal syntax]{Goal syntax.  See Tables~\ref{tab:basic_term}
@@ -66,7 +71,7 @@ input file \texttt{goals.scm}.  The reader is encouraged to run the
 examples and examine the output while reading this chapter.
 
 %% Use a margin width of 62 for S-expressions
-
+\iffalse 
 \begin{figure}
 \begin{center}
 \includegraphics{cpsadiagrams-0.mps}\hfil
@@ -94,7 +99,7 @@ examples and examine the output while reading this chapter.
 \caption{Needham-Schroeder Initiator and Responder Roles}
 \label{fig:ns roles 2}
 \end{figure}
-
+\fi 
 \begin{figure}
 \begin{verbatim}
 (defgoal ns                ; Goal
@@ -132,7 +137,8 @@ examples and examine the output while reading this chapter.
 \index{examples!Needham-Schroeder!logical goals in}
 In this chapter we return to the Needham-Schroeder protocol discussed
 in Chapter~\ref{ch:basic}.  The roles are displayed in
-Figure~\ref{fig:ns roles 2}.
+Figure~%\ref{fig:ns roles 2}.
+\ref{fig:ns defprotocol}.
 
 The protocol is analyzed from the point of view of a complete run of
 one instance of the initiator role.  The input security goal, followed
@@ -291,6 +297,20 @@ The \texttt{ugen} and \texttt{ugen-at} predicates are similar, except
 that they refer to an earliest outbound occurrence, whether carried or
 not.  If an atom is an asymmetric key, it and its inverse are
 generated together at the first outbound occurrence of either one.
+
+Predicates \texttt{conf} and \texttt{auth} hold true of
+\emph{channels}, when those channels are assumed to be confidential or
+authenticated channels as described in
+Chapter~\ref{chap:channels:state}.  The \texttt{gen-st} predicate
+holds true of a message value that cannot be an unexplained value in a
+state location, but can only be the result of a transition caused by a
+regular role (Section~\ref{sec:channels:state:state}).  The
+\texttt{leads-to} predicate relates a pair of nodes when the former
+creates a state value in a location, and the latter reads it from that
+location with no intervening transitions
+(Section~\ref{sec:channels:state:state}).  The \texttt{comm-pr},
+\texttt{comm-pr}, and \texttt{state-node} predicates are used mainly
+internally to {\cpsa}.   
 
 \iffalse{
     %
@@ -553,13 +573,13 @@ a desired security goal.
 Support for rules was introduced in version 3.6.0 of {\cpsa}.
 
 Each protocol includes a small collection of rules.  A rule is a
-sentence in the goal language presented in Section~\ref{sec:goalsyntax}.
-Rules are defined after the roles of a protocol are defined.  The
-syntax of a rule follows.
+sentence in the goal language presented in
+Table~\ref{tab:goal_syntax}.  Rules are defined after the roles of a
+protocol are defined.  The syntax of a rule follows.
 
 \begin{center}\scshape
   \begin{tabular}{rcl}
-    rule&$\leftarrow$&(\sym{defrule} name sent comments)
+    rule&$\leftarrow$&(\sym{defrule} name sentence comments)
   \end{tabular}
 \end{center}
 
