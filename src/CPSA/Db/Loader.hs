@@ -8,9 +8,9 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-module CPSA.Prolog.Loader (Preskel, label, parent, seen, alist, strip,
-                           assoc, nassoc, State, loadFirst, loadNext)
-                          where
+module CPSA.Db.Loader (Preskel, label, parent, seen, alist, strip,
+                       assoc, nassoc, State, loadFirst, loadNext)
+                      where
 
 import qualified Data.List as L
 import CPSA.Lib.SExpr
