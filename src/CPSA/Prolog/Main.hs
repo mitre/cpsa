@@ -8,7 +8,7 @@
 -- The output should be used by SWI Prolog as strings must not be atoms.
 -- Load the generated file using consult/1.
 
--- Copyright (c) 2009 The MITRE Corporation
+-- Copyright (c) 2024 The MITRE Corporation
 --
 -- This program is free software: you can redistribute it and/or
 -- modify it under the terms of the BSD License as published by the
@@ -151,7 +151,7 @@ child h l t =
               tree h t
 
 dup :: Handle -> Int -> (Int, SExpr a) -> IO ()
-dup h l (lab, op) | l == lab = return () -- Ignore self loops
+dup _ l (lab, _) | l == lab = return () -- Ignore self loops
 dup h l (lab, op) =
     do
       hPutStr h (printf "step(%d, " l)

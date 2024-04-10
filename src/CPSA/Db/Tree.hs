@@ -8,13 +8,13 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-module CPSA.Prolog.Tree (Tree (..), Forest, forest) where
+module CPSA.Db.Tree (Tree (..), Forest, forest) where
 
 import qualified Data.Map as M
 import Data.Map (Map)
 import Data.List (foldl')
 import CPSA.Lib.Utilities (seqList)
-import CPSA.Prolog.Loader
+import CPSA.Db.Loader
 
 -- The preskeletons in the output are assembled together for display
 -- into trees based on the parent relation.  In reality, the
