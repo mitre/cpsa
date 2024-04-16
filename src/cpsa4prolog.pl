@@ -2,10 +2,10 @@
 
 %% Library of predicates for analyzing cpsa4prolog output
 
-%% The cpsa4prolog program is a program that is used to analyze the
-%% output of cpsa4.  It translates cpsa4 output into a Prolog database
-%% that captures the essential features of the output in a form that
-%% can be queried using all of the power of Prolog.
+%% The cpsa4prolog program is used to analyze the output of cpsa4.  It
+%% translates cpsa4 output into a Prolog database that captures the
+%% essential features of the output in a form that can be queried
+%% using all of the power of Prolog.
 
 %% cpsa4prolog assembles the skeletons in the output into a forest of
 %% derivation trees.  It then prints the forest in Prolog syntax.  To
