@@ -30,12 +30,6 @@ data Tree = Tree
       duplicates :: !Forest }   -- Preskeletons already seen
     deriving Show
 
-instance Eq Tree where
-    t0 == t1 = vertex t0 == vertex t1
-
-instance Ord Tree where
-    compare t0 t1 = compare (vertex t0) (vertex t1)
-
 makeTree :: Preskel -> [Tree] -> [Tree] -> Tree
 makeTree k kids dups =
     Tree { vertex = k,

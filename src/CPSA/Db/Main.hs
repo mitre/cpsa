@@ -15,6 +15,7 @@ import CPSA.Algebra
 import CPSA.Lib.Entry
 import CPSA.Options
 import CPSA.Db.Loader
+import CPSA.Db.Tree
 
 -- Algebra names
 algs :: [String]
@@ -27,7 +28,8 @@ main =
       let interp = algInterp name algs
       (p, (output, alg, margin)) <- start options interp
       h <- outputHandle output
-      _ <- herald p margin h alg
+      (_, ks) <- herald p margin h alg
+      let _ = forest ks
       hClose h
 
 -- Handle the herald

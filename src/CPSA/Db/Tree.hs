@@ -8,13 +8,13 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-module CPSA.Prolog.Tree (Tree (..), Forest, forest) where
+module CPSA.Db.Tree (Tree (..), Forest, forest) where
 
 import qualified Data.Map as M
 import Data.Map (Map)
 import Data.List (foldl')
 import CPSA.Lib.Utilities (seqList)
-import CPSA.Prolog.Loader
+import CPSA.Db.Structs
 
 -- The preskeletons in the output are assembled together for display
 -- into trees based on the parent relation.  In reality, the
@@ -25,12 +25,12 @@ import CPSA.Prolog.Loader
 -- display.
 
 data Tree = Tree
-    { vertex :: !Preskel,
+    { vertex :: !Skel,
       children :: !Forest,      -- Freshly discovered preskeletons
       duplicates :: !Forest }   -- Preskeletons already seen
     deriving Show
 
-makeTree :: Preskel -> [Tree] -> [Tree] -> Tree
+makeTree :: Skel -> [Tree] -> [Tree] -> Tree
 makeTree k kids dups =
     Tree { vertex = k,
            children = seqList kids,
@@ -39,7 +39,7 @@ makeTree k kids dups =
 type Forest = [Tree]
 
 -- Assemble preskeletons into a forest and then set the alive flag
-forest :: [Preskel] -> Forest
+forest :: [Skel] -> Forest
 forest ks =
     reverse (foldl' f [] ks)
     where
@@ -51,7 +51,7 @@ forest ks =
 -- A child map maps a label to a preskeleton and a list of its
 -- childnen.  The map is derived by looking at the parent field.  The
 -- code assumes a parent precedes its children in the input list.
-childMap :: [Preskel] -> Map Int (Preskel, [Preskel])
+childMap :: [Skel] -> Map Int (Skel, [Skel])
 childMap ks =
     foldl' child M.empty ks
     where
@@ -66,7 +66,7 @@ childMap ks =
                 (k', k : children)
 
 -- Assemble preskeletons into a tree
-assemble :: Map Int (Preskel, [Preskel]) -> Preskel -> Tree
+assemble :: Map Int (Skel, [Skel]) -> Skel -> Tree
 assemble table k =
     makeTree k (kids k) (dups k)
     where
