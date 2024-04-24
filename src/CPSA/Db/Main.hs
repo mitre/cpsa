@@ -1,14 +1,6 @@
--- Prints the output of a CPSA run as a Prolog database.
+-- Summarize CPSA output as a formula in coherent logic
 
--- This programs loads CPSA output.  It assembles the skeletons in the
--- output into a forest of derivation trees.  It then prints the
--- forest in Prolog syntax.  To be loadable by Prolog, the output must
--- be sorted so that clauses of one predicate are colocated.
-
--- The output should be used by SWI Prolog as strings must not be atoms.
--- Load the generated file using consult/1.
-
--- Copyright (c) 2024 The MITRE Corporation
+-- Copyright (c) 2011 The MITRE Corporation
 --
 -- This program is free software: you can redistribute it and/or
 -- modify it under the terms of the BSD License as published by the
@@ -18,109 +10,87 @@ module Main (main) where
 
 import System.IO
 import CPSA.Lib.SExpr
+import CPSA.Signature (Sig, defaultSig, loadSig)
+import CPSA.Algebra
 import CPSA.Lib.Entry
-import CPSA.Lib.Printer
+import CPSA.Options
 import CPSA.Db.Loader
-import CPSA.Db.Tree
+
+-- Algebra names
+algs :: [String]
+algs = [name, alias]
 
 main :: IO ()
 main =
     do
-      (p, (output, margin)) <- start filterOptions filterInterp
-      ks <- loadPreskels p
+      let options = algOptions name
+      let interp = algInterp name algs
+      (p, (output, alg, margin)) <- start options interp
       h <- outputHandle output
-      writeComment h margin cpsaVersion
-      writeComment h margin "Database"
-      db h (pp margin defaultIndent) (forest ks)
+      _ <- herald p margin h alg
       hClose h
 
--- Load preskeletons
-loadPreskels :: PosHandle -> IO ([Preskel])
-loadPreskels h =
+-- Handle the herald
+herald :: PosHandle -> Int -> Handle -> String -> IO State
+herald p margin h alg =
     do
-      (_, k, s) <- loadFirst h
-      ks <- loop [k] s
-      return ks
-    where
-      loop ks s =
+      x <- readSExpr p
+      case x of
+        Nothing -> abort "Empty input"
+        Just x@(L pos (S _ "herald" : _ : xs)) ->
           do
-            n <- loadNext s
-            case n of
-              Nothing ->        -- EOF
-                  return $ reverse ks
-              Just (k, s) ->
-                  loop (k:ks) s
+            writeSExpr h margin x
+            hPutStrLn h ""
+            sig <- loadSig pos (assoc "lang" xs)
+            let nom = getAlgName xs alg
+            select p margin h sig nom Nothing
+        Just (L _ (S _ "comment" : _)) ->
+          herald p margin h alg
+        x ->
+          select p margin h defaultSig alg x
 
-writeCpsaLn :: Handle -> (SExpr a -> String) -> SExpr a -> IO ()
-writeCpsaLn h printer sexpr =
-    hPutStrLn h $ printer sexpr
-
--- Print forest
-db :: Handle -> (SExpr () -> String) -> Forest -> IO ()
-db h printer f =
-    mapM_ (root h printer) f
-
-root :: Handle -> (SExpr () -> String) -> Tree -> IO ()
-root h printer t =
+select :: PosHandle -> Int -> Handle -> Sig ->
+          String -> Maybe (SExpr Pos) -> IO State
+select p margin h sig alg x =
     do
-      hPutStrLn h ""
-      writeCpsaLn h printer (L () [S () "root", N () (label $ vertex t)])
-      tree h printer t
+      writeComment h margin cpsaVersion
+      writeComment h margin "CPSA Database"
+      let stepper = step sig alg origin
+      let state = ([], [])
+      case () of
+        _ | alg == name || alg == alias ->
+            case x of
+              Nothing -> go stepper p state
+              Just x ->
+                do
+                  next <- stepper state x
+                  go stepper p next
+          | otherwise ->
+               abort ("Bad algebra: " ++ alg)
 
-tree :: Handle -> (SExpr () -> String) -> Tree -> IO ()
-tree h printer t =
-    do
-      let l = label $ vertex t
-      body h printer l (alist $ vertex t)
-      strands h printer l 0 (alist $ vertex t)
-      mapM_ (child h printer l) (children t)
-      mapM_ (dup h printer l) (seen $ vertex t)
+go :: (a -> SExpr Pos -> IO a) -> PosHandle -> a -> IO a
+go f p a =
+    loop a
+    where
+      loop a =
+          do
+            x <- readSExpr p
+            case x of
+              Nothing ->
+                  return a
+              Just x ->
+                  do
+                    a <- f a x
+                    loop a
 
-body :: Handle  -> (SExpr () -> String) -> Int -> [SExpr Pos] -> IO ()
-body h printer l xs =
-    writeCpsaLn h printer (L () (S () "skel" : N () l : map strip xs))
+getAlgName :: [SExpr a] -> String -> String
+getAlgName xs name =
+    case assoc "algebra" xs of
+      [] -> name
+      [S _ nom] -> nom
+      _ -> error "Bad algbra field an herald"
 
-strands :: Handle -> (SExpr () -> String) -> Int -> Int -> [SExpr Pos] -> IO ()
-strands _ _ _ _ [] =
-    return ()
-strands h printer l s (x@(L _ (S _ "defstrand" : _)) : xs) =
-    do
-      let y = L () [S () "strand", N () l, N () s, strip x]
-      writeCpsaLn h printer y
-      strands h printer l (s + 1) xs
-strands h printer l s (x@(L _ (S _ "deflistener" : _)) : xs) =
-    do
-      let y = L () [S () "strand", N () l, N () s, strip x]
-      writeCpsaLn h printer y
-      strands h printer l (s + 1) xs
-strands h printer l s (_ : xs) =
-    strands h printer l s xs
-
-child :: Handle -> (SExpr () -> String) -> Int -> Tree -> IO ()
-child h printer l t =
-    do
-      let lab = label $ vertex t
-      writeCpsaLn h printer (L () [S () "child", N () l, N () lab])
-      case assoc "operation" (alist $ vertex t) of
-        Just op ->
-            do
-              let x = L () [S () "step",
-                            N () l,
-                            L () (S () "operation" : map strip op),
-                            N () lab]
-              writeCpsaLn h printer x
-              tree h printer t
-        _ ->
-            do
-              writeCpsaLn h printer (L () [N () l, L () [], N () l])
-              tree h printer t
-
-dup :: Handle -> (SExpr () -> String) -> Int -> (Int, SExpr Pos) -> IO ()
-dup _ _ l (lab, _) | l == lab = return () -- Ignore self loops
-dup h printer l (lab, op) =
-    do
-      let x = L () [S () "step",
-                    N () l,
-                    strip op,
-                    N () lab]
-      writeCpsaLn h printer x
+-- Lookup value in alist, appending values with the same key
+assoc :: String -> [SExpr a] -> [SExpr a]
+assoc key alist =
+    concat [ rest | L _ (S _ head : rest) <- alist, key == head ]
