@@ -80,32 +80,10 @@ displayParam :: Handle -> Int -> Int -> Role -> Int -> SExpr () -> IO ()
 displayParam h m l role s (L () [S () param, val]) =
     do
       let x = L () [S () "p", N () l, Q () (rname role),
-                    N () s, Q () param, val]
+                    Q () param, N () s, val]
       writeSExpr h m x
 displayParam _ _ _ role _ _ =
     fail ("Bad parameter in role " ++ rname role)
-
-{-
-strands :: Handle -> Int -> Int -> [SExpr Pos] -> IO ()
-strands _ _ _ [] =
-    return ()
-strands h l s (x@(L _ (S _ "defstrand" : _)) : xs) =
-    do
-      hPutStr h (printf "strand(%d, %d, " l s)
-      sexpr h x
-      hPutStrLn h ")."
-      strands h l (s + 1) xs
-strands h l s (x@(L _ (S _ "deflistener" : _)) : xs) =
-    do
-      hPutStr h (printf "strand(%d, %d, " l s)
-      sexpr h x
-      hPutStrLn h ")."
-      strands h l (s + 1) xs
-strands h l s (_ : xs) =
-    do
-      strands h l s xs
-
--}
 
 child :: Handle -> Int -> Int -> Tree -> IO ()
 child h m l t =
