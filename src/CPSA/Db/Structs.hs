@@ -8,6 +8,7 @@ import CPSA.Lib.SExpr
 data Role = Role
     { rname :: String,  -- Role name
       rvars :: ![Term], -- Set of role variables
+      rctx :: Context,
       rtrace :: !Trace } -- Events in causal order
     deriving Show
 
@@ -21,6 +22,8 @@ data Prot = Prot
 data Skel = Skel
     { prot :: Prot,
       kvars :: [Term], -- Skeleton vars
+      kctx :: Context,
+      kgen :: Gen,
       ktraces :: [Trace], --Strands
       label :: Int,             -- Label from the input or generated
                                 -- by the loader

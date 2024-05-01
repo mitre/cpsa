@@ -1,4 +1,4 @@
-module CPSA.Db.Loader (State, step) where
+module CPSA.Db.Loader (State, step, strip, massoc) where
 
 import Control.Monad
 import qualified Data.List as L
@@ -67,8 +67,13 @@ loadRole sig gen _ (S _ name :
       c <- loadTrace sig vars (evt : c)
       return (gen, Role { rname = name,
                           rvars = vars,
+                          rctx = makeContext vars,
                           rtrace = c })
 loadRole _ _ pos _ = fail (shows pos "Malformed role")
+
+makeContext :: [Term] -> Context
+makeContext vars =
+    addToContext emptyContext vars
 
 loadTrace :: MonadFail m => Sig -> [Term] -> [SExpr Pos] -> m Trace
 loadTrace sig vars xs = mapM (loadEvt sig vars) xs
@@ -114,6 +119,7 @@ mkListenerRole sig pos g =
       [x] -> return (g, Role {
                            rname = "",
                            rvars = [x],
+                           rctx = makeContext xs,
                            rtrace = [In $ Plain x, Out $ Plain x]})
       _ -> fail (shows pos "mkListenerRole: expecting one variable")
 
@@ -153,7 +159,7 @@ loadStrands sig top p kvars gen insts (L pos (S _ "deflistener" : x) : xs) =
             loadStrands sig top p kvars gen (i : insts) xs
       _ ->
           fail (shows pos "Malformed deflistener")
-loadStrands _ _ p kvars _ insts xs =
+loadStrands _ _ p kvars gen insts xs =
     do
       checkAlist xs -- Ensure alist syntax
       label <- nassoc "label" xs
@@ -163,6 +169,8 @@ loadStrands _ _ p kvars _ insts xs =
         Just l ->
             return Skel { prot = p,
                           kvars = kvars,
+                          kctx = makeContext kvars,
+                          kgen = gen,
                           ktraces = insts,
                           label = l,
                           parent = parent,
@@ -241,13 +249,11 @@ loadSeenOp x = fail (shows (annotation x) "Malformed seen operation")
 
 -- Strip positions from an S-expression
 
-{-
 strip :: SExpr a -> SExpr ()
 strip (S _ s) = S () s
 strip (Q _ s) = Q () s
 strip (N _ n) = N () n
 strip (L _ l) = L () (map strip l)
--}
 
 -- Ensure alist has the proper form
 checkAlist :: MonadFail m => [SExpr Pos] -> m ()

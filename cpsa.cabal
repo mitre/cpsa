@@ -493,7 +493,7 @@ Executable cpsa4db
     Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.Pretty CPSA.Lib.SExpr
     CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Options CPSA.Algebra
     CPSA.Signature CPSA.Db.Loader CPSA.Db.Structs CPSA.Channel
-    CPSA.Protocol CPSA.Db.Tree
+    CPSA.Protocol CPSA.Db.Tree CPSA.Db.Displayer
 
 Executable cpsa4dbprolog
   Main-Is:              CPSA/DbProlog/Main.hs

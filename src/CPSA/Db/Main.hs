@@ -16,6 +16,7 @@ import CPSA.Lib.Entry
 import CPSA.Options
 import CPSA.Db.Loader
 import CPSA.Db.Tree
+import CPSA.Db.Displayer
 
 -- Algebra names
 algs :: [String]
@@ -29,7 +30,7 @@ main =
       (p, (output, alg, margin)) <- start options interp
       h <- outputHandle output
       (_, ks) <- herald p margin h alg
-      let _ = forest ks
+      display h margin (forest $ reverse ks)
       hClose h
 
 -- Handle the herald
