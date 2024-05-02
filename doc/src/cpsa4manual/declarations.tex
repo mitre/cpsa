@@ -74,6 +74,9 @@ since it carries the plaintext $(n1, n2)$ which in turn carries $n1$.
 
 \index{origination} We say that a value \emph{originates} on a strand
 when its first \emph{carried} occurrence is in a transmission.
+\index{generation} We say that a value \emph{generates} on a strand
+when its first occurrence (whether carried or not) in that strand is
+in a transmission.
 
 \begin{itemize}
 \index{origination!unique}
@@ -102,19 +105,36 @@ user that they are only interested in bundles in which the declared
 value uniquely originates, is non-originating, or is penetrator
 non-originating, respectively.
 
-\ttindex{uniq-gen} \index{generation} The fourth declaration that
-imposes a secrecy assumption is the \texttt{uniq-gen} declaration.  We
-say that a value \emph{generates} on a strand when its first
-occurrence (carried or not) in that strand is in a transmission.  The
-presence of a \texttt{uniq-gen} declaration of a value equates to a
-restriction to bundles in which the declared value generates on only
-one strand.  Note that if a value that generates uniquely generates on
-a regular strand, it cannot be produced in a ``create'' instance.
+\ttindex{uniq-gen} The fourth declaration that imposes a secrecy
+assumption is the \texttt{uniq-gen} declaration.  The presence of a
+\texttt{uniq-gen} declaration of a value equates to a restriction to
+bundles in which the declared value generates on only one strand.
+Note that if a value that generates uniquely generates on a regular
+strand, it cannot be produced in a ``create'' instance.
 
 The \texttt{uniq-orig} (resp. \texttt{uniq-gen}) declaration can only
 be used in {\cpsa} input for values that do originate (resp. generate)
 on the role or in the skeleton in which the declaration appears.  This
 forces the use of such declarations to create a secrecy assumption.
+
+Because ``generation'' covers a wider set of occurrences than
+``origination,'' a value that originates uniquely on one strand may
+still generate on a different strand.  For instance, it may be used to
+encrypt a message on that strand.  This means that one can model a key
+(for instance) that is distributed from a point of unique origination,
+and subsequently used to encrypt messages on other strands, without
+modeling a particular mechanism for storing it in the recipient's
+device.  This property of origination and generation can, however,
+cause surprises if the key could surface unexpectedly in other
+strands.  See Chapter~\ref{chap:channels:state} to understand how to
+store values explicitly, when that is desired.
+
+In fact, because ``generation'' covers a wider set of occurrences than
+``origination,'' when a value $v$ originates on a strand, declaring
+$v$ \texttt{uniq-gen} is actually stronger than declaring it
+\texttt{uniq-orig}.  The \texttt{uniq-gen} declaration prohibits
+unexplained key usage, as opposed to the \texttt{uniq-orig}
+declaration that permits it.  
 
 \begin{exercise}
 Experiment with variants of your favorite simple protocol in which you

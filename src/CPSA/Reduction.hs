@@ -468,7 +468,9 @@ commentPreskel lk seen unrealized kind anno msg =
     -- Nodes of origination
     -- Added for cpsasas program
     condAddKeyValues "origs" (starter k || fringe) (origs k) $
-    condAddKeyValues "ugens" (starter k || fringe) (gens k) $
+    condAddKeyValues "ugens" (not (null (gens k)) &&
+                                      (starter k || fringe))
+                         (gens k) $
     -- Messages
     case msg of
       "" -> []
