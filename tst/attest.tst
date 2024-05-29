@@ -50,7 +50,6 @@
   (label 0)
   (unrealized (0 1))
   (origs (k (0 2)) (n (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door
@@ -130,8 +129,7 @@
   (realized)
   (shape)
   (maps ((0) ((p p) (a a) (d d) (k k) (n n) (t t))))
-  (origs (t (2 1)) (k (0 2)) (n (0 0)))
-  (ugens))
+  (origs (t (2 1)) (k (0 2)) (n (0 0))))
 
 (defskeleton attest-door
   (vars (k skey) (n t text) (p a d d-0 p-0 akey))
@@ -218,8 +216,7 @@
   (realized)
   (shape)
   (maps ((0) ((p p) (a a) (d d) (k k) (n n) (t t))))
-  (origs (k (0 2)) (n (0 0)))
-  (ugens))
+  (origs (k (0 2)) (n (0 0))))
 
 (comment "Nothing left to do")
 
@@ -268,7 +265,6 @@
   (label 9)
   (unrealized (0 0))
   (origs (t (0 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door
@@ -288,8 +284,7 @@
   (realized)
   (shape)
   (maps ((0) ((p p) (d d) (k k) (t t))))
-  (origs (n (1 0)) (k (1 2)) (t (0 1)))
-  (ugens))
+  (origs (n (1 0)) (k (1 2)) (t (0 1))))
 
 (comment "Nothing left to do")
 
@@ -347,7 +342,6 @@
   (label 11)
   (unrealized (0 1))
   (origs (k (0 2)) (n (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door-trust
@@ -428,8 +422,7 @@
   (realized)
   (shape)
   (maps ((0) ((p p) (a a) (d d) (k k) (n n) (t t))))
-  (origs (t (2 1)) (k (0 2)) (n (0 0)))
-  (ugens))
+  (origs (t (2 1)) (k (0 2)) (n (0 0))))
 
 (comment "Nothing left to do")
 
@@ -485,7 +478,6 @@
   (label 16)
   (unrealized (0 0))
   (origs (t (0 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door-trust
@@ -505,8 +497,7 @@
   (realized)
   (shape)
   (maps ((0) ((p p) (d d) (k k) (t t))))
-  (origs (n (1 0)) (k (1 2)) (t (0 1)))
-  (ugens))
+  (origs (n (1 0)) (k (1 2)) (t (0 1))))
 
 (comment "Nothing left to do")
 
@@ -571,7 +562,6 @@
   (label 18)
   (unrealized (0 1))
   (origs (k (0 2)) (n (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door-trust-attest
@@ -652,8 +642,7 @@
   (realized)
   (shape)
   (maps ((0) ((p p) (a a) (d d) (k k) (n n) (t t))))
-  (origs (t (2 1)) (k (0 2)) (n (0 0)))
-  (ugens))
+  (origs (t (2 1)) (k (0 2)) (n (0 0))))
 
 (comment "Nothing left to do")
 
@@ -716,7 +705,6 @@
   (label 23)
   (unrealized (0 0))
   (origs (t (0 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door-trust-attest
@@ -795,8 +783,7 @@
   (realized)
   (shape)
   (maps ((0) ((p p) (d d) (k k) (t t))))
-  (origs (n (2 0)) (k (2 2)) (t (0 1)))
-  (ugens))
+  (origs (n (2 0)) (k (2 2)) (t (0 1))))
 
 (defskeleton attest-door-trust-attest
   (vars (k skey) (t n text) (p d a akey))

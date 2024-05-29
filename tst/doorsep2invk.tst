@@ -48,7 +48,6 @@
   (label 0)
   (unrealized (1 0) (1 2))
   (origs (skey+0 (0 0)) (text+0 (1 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton doorsep
@@ -68,7 +67,6 @@
   (parent 0)
   (unrealized (1 2))
   (origs (skey+0 (0 0)) (text+0 (1 1)))
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton doorsep
@@ -94,8 +92,7 @@
     ((1 0)
       ((text+0 text+0) (skey+0 skey+0) (akey+1 peer) (akey+0 peer)
         (akey+3 (invk self)))))
-  (origs (skey+0 (1 0)) (text+0 (0 1)))
-  (ugens))
+  (origs (skey+0 (1 0)) (text+0 (0 1))))
 
 (defskeleton doorsep
   (vars (skey+0 skey) (text+0 text) (akey+0 akey+3 akey))

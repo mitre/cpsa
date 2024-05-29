@@ -48,7 +48,6 @@
   (label 0)
   (unrealized (0 1))
   (origs (n1 (0 0)))
-  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton ns
@@ -65,7 +64,6 @@
   (parent 0)
   (unrealized (0 1))
   (origs (n1 (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -108,8 +106,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
-  (origs (n1 (0 0)))
-  (ugens))
+  (origs (n1 (0 0))))
 
 (comment "Nothing left to do")
 
@@ -159,7 +156,6 @@
   (label 4)
   (unrealized (0 1))
   (origs (n1 (0 0)))
-  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton ns
@@ -176,7 +172,6 @@
   (parent 4)
   (unrealized (0 1))
   (origs (n1 (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -219,8 +214,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
-  (origs (n1 (0 0)))
-  (ugens))
+  (origs (n1 (0 0))))
 
 (comment "Nothing left to do")
 
@@ -269,7 +263,6 @@
   (label 8)
   (unrealized (0 1))
   (origs (n1 (0 0)))
-  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton ns
@@ -286,7 +279,6 @@
   (parent 8)
   (unrealized (0 1))
   (origs (n1 (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -309,8 +301,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
-  (origs (n1 (0 0)))
-  (ugens))
+  (origs (n1 (0 0))))
 
 (comment "Nothing left to do")
 
@@ -361,7 +352,6 @@
   (unrealized (0 1) (1 0))
   (preskeleton)
   (origs (n1 (0 0)))
-  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton ns
@@ -378,7 +368,6 @@
   (parent 11)
   (unrealized (0 1) (1 0))
   (origs (n1 (0 0)))
-  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton ns
@@ -397,7 +386,6 @@
   (parent 12)
   (unrealized (0 1) (1 0))
   (origs (n1 (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -517,7 +505,6 @@
   (label 17)
   (unrealized (0 1) (1 1))
   (origs (n1 (0 0)) (n1-0 (1 0)))
-  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton ns
@@ -543,7 +530,6 @@
         (enc n1-0 a (pubk b)))))
   (unrealized (0 1) (1 1))
   (origs (n1 (0 0)) (n1-0 (1 0)))
-  (ugens)
   (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -610,7 +596,6 @@
   (parent 19)
   (unrealized (0 1))
   (origs (n1 (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -662,8 +647,7 @@
   (realized)
   (shape)
   (maps ((0 0) ((a a) (b b) (n1 n1) (n1-0 n1) (n2 n2) (n2-0 n2))))
-  (origs (n1 (0 0)))
-  (ugens))
+  (origs (n1 (0 0))))
 
 (defskeleton ns
   (vars (x x-0 name) (n1 n1-0 n2 n2-0 n2-1 text) (a b name))
@@ -717,8 +701,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((a a) (b b) (n1 n1) (n1-0 n1-0) (n2 n2-0) (n2-0 n2))))
-  (origs (n1 (0 0)) (n1-0 (1 0)))
-  (ugens))
+  (origs (n1 (0 0)) (n1-0 (1 0))))
 
 (comment "Nothing left to do")
 
@@ -771,7 +754,6 @@
   (realized)
   (preskeleton)
   (origs (n1 (1 0)) (n1 (0 0)))
-  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton ns
@@ -786,7 +768,6 @@
   (parent 26)
   (unrealized (0 1))
   (origs (n1 (0 0)))
-  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton ns
@@ -803,7 +784,6 @@
   (parent 27)
   (unrealized (0 1))
   (origs (n1 (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -846,8 +826,7 @@
   (realized)
   (shape)
   (maps ((0 0) ((a a) (b b) (n1 n1) (n2 n2))))
-  (origs (n1 (0 0)))
-  (ugens))
+  (origs (n1 (0 0))))
 
 (comment "Nothing left to do")
 
@@ -896,7 +875,6 @@
   (label 31)
   (unrealized (0 2))
   (origs (n2 (0 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -920,7 +898,6 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (n2 n2) (b b) (n1 n1))))
-  (origs (n2 (0 1)))
-  (ugens))
+  (origs (n2 (0 1))))
 
 (comment "Nothing left to do")

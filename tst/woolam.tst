@@ -38,7 +38,6 @@
   (label 0)
   (unrealized (0 2) (0 4))
   (origs (n (0 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton woolam
@@ -104,8 +103,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (s s) (b b) (n n))))
-  (origs (n (0 1)))
-  (ugens))
+  (origs (n (0 1))))
 
 (comment "Nothing left to do")
 
@@ -142,7 +140,6 @@
   (label 4)
   (unrealized (0 4))
   (origs (n (0 1)))
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton woolam-msg
@@ -163,8 +160,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (s s) (b b) (n n) (m m))))
-  (origs (n (0 1)))
-  (ugens))
+  (origs (n (0 1))))
 
 (defskeleton woolam-msg
   (vars (m mesg) (n text) (a s b a-0 name))
@@ -227,8 +223,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (s s) (b b) (n n) (m m))))
-  (origs (n-0 (2 1)) (n (0 1)))
-  (ugens))
+  (origs (n-0 (2 1)) (n (0 1))))
 
 (defskeleton woolam-msg
   (vars (n text) (a s b name))
@@ -252,8 +247,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (s s) (b b) (n n) (m (enc n (ltk a s))))))
-  (origs (n (0 1)))
-  (ugens))
+  (origs (n (0 1))))
 
 (defskeleton woolam-msg
   (vars (n text) (a s b a-0 name))
@@ -305,8 +299,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (s s) (b b) (n n) (m (enc n (ltk a s))))))
-  (origs (n-0 (3 1)) (n (0 1)))
-  (ugens))
+  (origs (n-0 (3 1)) (n (0 1))))
 
 (comment "Nothing left to do")
 
@@ -343,7 +336,6 @@
   (label 12)
   (unrealized (0 4))
   (origs (n (0 1)))
-  (ugens)
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton woolam-msg1
@@ -361,8 +353,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (s s) (b b) (n n) (m (cat a n)))))
-  (origs (n (0 1)))
-  (ugens))
+  (origs (n (0 1))))
 
 (defskeleton woolam-msg1
   (vars (m mesg) (n n-0 text) (a s b a-0 name))
@@ -383,8 +374,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (s s) (b b) (n n) (m m))))
-  (origs (n-0 (1 1)) (n (0 1)))
-  (ugens))
+  (origs (n-0 (1 1)) (n (0 1))))
 
 (defskeleton woolam-msg1
   (vars (m mesg) (n text) (a s b name))
@@ -469,8 +459,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (s s) (b b) (n n) (m (enc n (ltk a s))))))
-  (origs (n (0 1)))
-  (ugens))
+  (origs (n (0 1))))
 
 (defskeleton woolam-msg1
   (vars (n n-0 text) (a s b a-0 name))
@@ -495,8 +484,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (s s) (b b) (n n) (m (enc n (ltk a s))))))
-  (origs (n-0 (2 1)) (n (0 1)))
-  (ugens))
+  (origs (n-0 (2 1)) (n (0 1))))
 
 (defskeleton woolam-msg1
   (vars (m mesg) (n n-0 text) (a s b a-0 name))
@@ -522,8 +510,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (s s) (b b) (n n) (m m))))
-  (origs (n-0 (2 1)) (n (0 1)))
-  (ugens))
+  (origs (n-0 (2 1)) (n (0 1))))
 
 (defskeleton woolam-msg1
   (vars (n n-0 text) (s b a name))
@@ -547,8 +534,7 @@
   (realized)
   (shape)
   (maps ((0) ((a b) (s s) (b b) (n n) (m n))))
-  (origs (n (0 1)) (n-0 (2 1)))
-  (ugens))
+  (origs (n (0 1)) (n-0 (2 1))))
 
 (defskeleton woolam-msg1
   (vars (m mesg) (n n-0 n-1 text) (a s b a-0 a-1 name))
@@ -575,7 +561,6 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (s s) (b b) (n n) (m m))))
-  (origs (n-1 (3 1)) (n-0 (2 1)) (n (0 1)))
-  (ugens))
+  (origs (n-1 (3 1)) (n-0 (2 1)) (n (0 1))))
 
 (comment "Nothing left to do")

@@ -23,7 +23,6 @@
   (label 0)
   (realized)
   (origs)
-  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton rule-order
@@ -37,8 +36,7 @@
   (realized)
   (shape)
   (maps ((0) ((s t) (t t))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton rule-order
   (vars (s t text))
@@ -52,7 +50,6 @@
   (seen-ops (1))
   (realized)
   (origs)
-  (ugens)
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

@@ -33,7 +33,6 @@
   (label 0)
   (unrealized (0 1))
   (origs (y (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yes-or-no
@@ -54,8 +53,7 @@
   (realized)
   (shape)
   (maps ((0) ((y y) (ans-key ans-key) (n n) (question question))))
-  (origs (y (0 0)))
-  (ugens))
+  (origs (y (0 0))))
 
 (comment "Nothing left to do")
 
@@ -89,7 +87,6 @@
   (label 2)
   (unrealized (0 1))
   (origs (n (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yes-or-no
@@ -110,8 +107,7 @@
   (realized)
   (shape)
   (maps ((0) ((ans-key ans-key) (n n) (y y) (question question))))
-  (origs (n (0 0)))
-  (ugens))
+  (origs (n (0 0))))
 
 (comment "Nothing left to do")
 
@@ -147,7 +143,6 @@
   (unrealized (1 0))
   (preskeleton)
   (origs (y (0 0)))
-  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton yes-or-no
@@ -163,7 +158,6 @@
   (parent 4)
   (unrealized (1 0))
   (origs (y (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yes-or-no
@@ -185,8 +179,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((y y) (ans-key ans-key) (n n) (question question))))
-  (origs (y (0 0)))
-  (ugens))
+  (origs (y (0 0))))
 
 (comment "Nothing left to do")
 
@@ -222,7 +215,6 @@
   (unrealized (1 0))
   (preskeleton)
   (origs (n (0 0)))
-  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton yes-or-no
@@ -238,7 +230,6 @@
   (parent 7)
   (unrealized (1 0))
   (origs (n (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yes-or-no
@@ -260,7 +251,6 @@
   (realized)
   (shape)
   (maps ((0 1) ((n n) (ans-key ans-key) (y y) (question question))))
-  (origs (n (0 0)))
-  (ugens))
+  (origs (n (0 0))))
 
 (comment "Nothing left to do")

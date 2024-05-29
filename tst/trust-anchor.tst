@@ -25,7 +25,6 @@
   (unrealized (0 0))
   (dead)
   (origs)
-  (ugens)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -50,7 +49,6 @@
   (label 1)
   (realized)
   (origs)
-  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton trust-anchor
@@ -67,7 +65,6 @@
   (unrealized (0 0))
   (dead)
   (origs)
-  (ugens)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

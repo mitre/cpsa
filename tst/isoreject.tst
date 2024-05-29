@@ -29,7 +29,6 @@
   (label 0)
   (unrealized (0 2))
   (origs (nb (0 1)))
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton isoreject
@@ -69,8 +68,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (na na) (nb nb) (nc nc))))
-  (origs (nc (1 1)) (nb (0 1)))
-  (ugens))
+  (origs (nc (1 1)) (nb (0 1))))
 
 (defskeleton isoreject
   (vars (na nb nc text) (a b name))
@@ -91,8 +89,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (na na) (nb nb) (nc nc))))
-  (origs (nb (0 1)))
-  (ugens))
+  (origs (nb (0 1))))
 
 (comment "Nothing left to do")
 
@@ -123,7 +120,6 @@
   (label 4)
   (unrealized (0 1))
   (origs)
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton isoreject
@@ -144,8 +140,7 @@
   (realized)
   (shape)
   (maps ((0) ((b b) (a a) (na na) (nb nb) (nc nc))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton isoreject
   (vars (na nb nc text) (b a name))
@@ -165,7 +160,6 @@
   (realized)
   (shape)
   (maps ((0) ((b b) (a a) (na na) (nb nb) (nc nc))))
-  (origs (nb (1 1)))
-  (ugens))
+  (origs (nb (1 1))))
 
 (comment "Nothing left to do")

@@ -29,7 +29,6 @@
   (label 0)
   (unrealized (0 1))
   (origs (s (0 0)))
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton blanchet
@@ -79,8 +78,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (s s) (d d))))
-  (origs (s (0 0)))
-  (ugens))
+  (origs (s (0 0))))
 
 (comment "Nothing left to do")
 
@@ -109,7 +107,6 @@
   (label 4)
   (unrealized (0 0))
   (origs)
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet
@@ -128,8 +125,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (s s) (d d))))
-  (origs (s (1 0)))
-  (ugens))
+  (origs (s (1 0))))
 
 (comment "Nothing left to do")
 
@@ -159,7 +155,6 @@
   (label 6)
   (realized)
   (origs)
-  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton blanchet
@@ -173,7 +168,6 @@
   (parent 6)
   (unrealized (0 1))
   (origs (s (0 0)))
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton blanchet
@@ -223,8 +217,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (s s) (d d))))
-  (origs (s (0 0)))
-  (ugens))
+  (origs (s (0 0))))
 
 (comment "Nothing left to do")
 
@@ -254,7 +247,6 @@
   (label 11)
   (unrealized (0 0))
   (origs)
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet
@@ -274,7 +266,6 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (s s) (d d))))
-  (origs (s (1 0)))
-  (ugens))
+  (origs (s (1 0))))
 
 (comment "Nothing left to do")

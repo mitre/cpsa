@@ -29,7 +29,6 @@
   (label 0)
   (unrealized (0 1) (1 0))
   (origs (n (0 0)))
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton completeness-test
@@ -48,7 +47,6 @@
   (parent 0)
   (unrealized (0 1))
   (origs (n (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton completeness-test
@@ -89,8 +87,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((b b) (n n) (s s) (a a) (s-0 s))))
-  (origs (n (0 0)))
-  (ugens))
+  (origs (n (0 0))))
 
 (defskeleton completeness-test
   (vars (s s-0 skey) (n n-0 text) (b a a-0 b-0 name))
@@ -114,8 +111,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((b b) (n n) (s s) (a a) (s-0 s-0))))
-  (origs (n (0 0)))
-  (ugens))
+  (origs (n (0 0))))
 
 (comment "Nothing left to do")
 
@@ -147,7 +143,6 @@
   (label 5)
   (unrealized (0 0) (1 1))
   (origs (n (1 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton completeness-test
@@ -188,8 +183,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((b b) (n n) (s s) (a a) (s-0 s))))
-  (origs (n (1 0)))
-  (ugens))
+  (origs (n (1 0))))
 
 (defskeleton completeness-test
   (vars (s s-0 skey) (n n-0 text) (b a a-0 b-0 name))
@@ -212,8 +206,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((b b) (n n) (s s) (a a) (s-0 s-0))))
-  (origs (n (1 0)))
-  (ugens))
+  (origs (n (1 0))))
 
 (comment "Nothing left to do")
 
@@ -244,7 +237,6 @@
   (label 9)
   (unrealized (0 1) (1 0))
   (origs (n (0 0)))
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton completeness-test
@@ -262,7 +254,6 @@
   (parent 9)
   (unrealized (1 1))
   (origs (n (1 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton completeness-test
@@ -302,8 +293,7 @@
   (realized)
   (shape)
   (maps ((1 0) ((b b) (n n) (s s) (a a))))
-  (origs (n (1 0)))
-  (ugens))
+  (origs (n (1 0))))
 
 (defskeleton completeness-test
   (vars (s skey) (n n-0 text) (b a a-0 b-0 name))
@@ -326,8 +316,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((b b) (n n) (s s) (a a))))
-  (origs (n (0 0)))
-  (ugens))
+  (origs (n (0 0))))
 
 (comment "Nothing left to do")
 
@@ -358,7 +347,6 @@
   (label 14)
   (unrealized (0 0) (1 1))
   (origs (n (1 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton completeness-test
@@ -397,8 +385,7 @@
   (realized)
   (shape)
   (maps ((0 2) ((b b) (n n) (s s) (a a))))
-  (origs (n (2 0)))
-  (ugens))
+  (origs (n (2 0))))
 
 (defskeleton completeness-test
   (vars (s skey) (n n-0 text) (b a a-0 b-0 name))
@@ -420,7 +407,6 @@
   (realized)
   (shape)
   (maps ((0 1) ((b b) (n n) (s s) (a a))))
-  (origs (n (1 0)))
-  (ugens))
+  (origs (n (1 0))))
 
 (comment "Nothing left to do")

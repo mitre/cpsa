@@ -45,7 +45,6 @@
   (label 0)
   (unrealized (0 2) (0 4))
   (origs (n-b (0 1)))
-  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton yahalom-plus-uniq-at
@@ -65,7 +64,6 @@
   (parent 0)
   (unrealized (0 2) (0 4))
   (origs (n-b (0 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom-plus-uniq-at
@@ -185,7 +183,6 @@
   (label 5)
   (unrealized (0 1))
   (origs (n-a (0 0)))
-  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton yahalom-plus-uniq-at
@@ -202,7 +199,6 @@
   (parent 5)
   (unrealized (0 1))
   (origs (n-a (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom-plus-uniq-at
@@ -249,7 +245,6 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (c c) (n-a n-a) (n-b n-b) (k k))))
-  (origs (k (1 1)) (n-a (0 0)))
-  (ugens))
+  (origs (k (1 1)) (n-a (0 0))))
 
 (comment "Nothing left to do")

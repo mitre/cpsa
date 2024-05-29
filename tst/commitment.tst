@@ -46,7 +46,6 @@
   (label 0)
   (unrealized (0 0))
   (origs)
-  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton commit
@@ -64,7 +63,6 @@
   (parent 0)
   (unrealized (0 0))
   (origs)
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton commit
@@ -90,8 +88,7 @@
     ((0)
       ((a a) (b b) (n n) (quote quote) (outcome outcome)
         (sealed (hash a b n quote)))))
-  (origs)
-  (ugens))
+  (origs))
 
 (comment "Nothing left to do")
 
@@ -136,7 +133,6 @@
   (label 3)
   (unrealized (0 0))
   (origs)
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton commit
@@ -156,8 +152,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (sealed (hash a b-0 n quote)))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton commit
   (vars (n data) (trash text) (a b name))
@@ -176,8 +171,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (sealed (hash n trash)))))
-  (origs)
-  (ugens))
+  (origs))
 
 (comment "Nothing left to do")
 

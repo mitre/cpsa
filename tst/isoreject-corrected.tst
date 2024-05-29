@@ -31,7 +31,6 @@
   (label 0)
   (unrealized (0 2))
   (origs (nb (0 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton isofix
@@ -72,8 +71,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (na na) (nb nb) (nc nc))))
-  (origs (nb (0 1)))
-  (ugens))
+  (origs (nb (0 1))))
 
 (comment "Nothing left to do")
 
@@ -104,7 +102,6 @@
   (label 3)
   (unrealized (0 1))
   (origs)
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton isofix
@@ -125,7 +122,6 @@
   (realized)
   (shape)
   (maps ((0) ((b b) (a a) (na na) (nb nb) (nc nc))))
-  (origs (nb (1 1)))
-  (ugens))
+  (origs (nb (1 1))))
 
 (comment "Nothing left to do")

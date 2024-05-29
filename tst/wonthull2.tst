@@ -33,7 +33,6 @@
   (label 0)
   (unrealized (0 1))
   (origs (x3 (0 0)))
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -97,8 +96,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 y3) (x4 y3))))
-  (origs (y3 (0 0)))
-  (ugens))
+  (origs (y3 (0 0))))
 
 (defskeleton wonthull2
   (vars (x1 x2 x3 x4 y3 text) (a name))
@@ -465,8 +463,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (x1 y3) (x2 x2) (x3 y3-0) (x4 y3))))
-  (origs (y3-0 (0 0)))
-  (ugens))
+  (origs (y3-0 (0 0))))
 
 (comment "Nothing left to do")
 
@@ -503,7 +500,6 @@
   (label 20)
   (unrealized (0 1))
   (origs (x3-0 (0 0)))
-  (ugens)
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton wonthull2
@@ -523,7 +519,6 @@
   (parent 20)
   (unrealized (0 1))
   (origs (x1 (0 0)))
-  (ugens)
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
@@ -549,7 +544,6 @@
         (enc x3 x3 (pubk a)) (enc x1 x3 (pubk a)))))
   (unrealized (1 0))
   (origs (x3 (0 0)))
-  (ugens)
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -629,8 +623,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
-  (origs (x3 (0 0)))
-  (ugens))
+  (origs (x3 (0 0))))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 text) (a name))
@@ -698,8 +691,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
-  (origs (x3 (0 0)))
-  (ugens))
+  (origs (x3 (0 0))))
 
 (defskeleton wonthull2
   (vars (x1 x3 x1-0 y3 text) (a a-0 name))
@@ -1101,8 +1093,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a))))
-  (origs (y3 (0 0)))
-  (ugens))
+  (origs (y3 (0 0))))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 text) (a name))
@@ -1795,7 +1786,6 @@
   (seen-ops (25 (operation generalization separated x1-0)))
   (realized)
   (origs (x1 (0 0)))
-  (ugens)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6683,8 +6673,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3-0) (a-0 a-0))))
-  (origs (y3-0 (0 0)))
-  (ugens))
+  (origs (y3-0 (0 0))))
 
 (defskeleton wonthull2
   (vars (x3 x1 text) (a name))

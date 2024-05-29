@@ -33,8 +33,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (t t) (k k) (b b) (ta ta))))
-  (origs (k (0 0)))
-  (ugens))
+  (origs (k (0 0))))
 
 (comment "Nothing left to do")
 
@@ -65,7 +64,6 @@
   (label 1)
   (unrealized (0 0))
   (origs)
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wide-mouth-frog
@@ -84,8 +82,7 @@
   (realized)
   (shape)
   (maps ((0) ((b b) (t t) (k k) (a a) (tb tb))))
-  (origs (k (1 0)))
-  (ugens))
+  (origs (k (1 0))))
 
 (defskeleton wide-mouth-frog
   (vars (k skey) (tb ta text) (b t a name))
@@ -104,8 +101,7 @@
   (realized)
   (shape)
   (maps ((0) ((b b) (t t) (k k) (a a) (tb tb))))
-  (origs)
-  (ugens))
+  (origs))
 
 (comment "Nothing left to do")
 
@@ -138,7 +134,6 @@
   (label 4)
   (unrealized (0 0))
   (origs)
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wide-mouth-frog
@@ -159,8 +154,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (t t) (k k) (ta ta) (tb tb))))
-  (origs (k (1 0)))
-  (ugens))
+  (origs (k (1 0))))
 
 (defskeleton wide-mouth-frog
   (vars (k skey) (ta tb ta-0 text) (a b t name))
@@ -202,8 +196,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (t t) (k k) (ta ta) (tb tb))))
-  (origs (k (2 0)))
-  (ugens))
+  (origs (k (2 0))))
 
 (defskeleton wide-mouth-frog
   (vars (k skey) (ta tb ta-0 ta-1 text) (a b t name))
@@ -251,8 +244,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (t t) (k k) (ta ta) (tb tb))))
-  (origs (k (3 0)))
-  (ugens))
+  (origs (k (3 0))))
 
 (defskeleton wide-mouth-frog
   (vars (k skey) (ta tb ta-0 ta-1 ta-2 text) (a b t name))
@@ -306,8 +298,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (t t) (k k) (ta ta) (tb tb))))
-  (origs (k (4 0)))
-  (ugens))
+  (origs (k (4 0))))
 
 (defskeleton wide-mouth-frog
   (vars (k skey) (ta tb ta-0 ta-1 ta-2 ta-3 text) (a b t name))
@@ -368,8 +359,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (t t) (k k) (ta ta) (tb tb))))
-  (origs (k (5 0)))
-  (ugens))
+  (origs (k (5 0))))
 
 (defskeleton wide-mouth-frog
   (vars (k skey) (ta tb ta-0 ta-1 ta-2 ta-3 ta-4 text) (a b t name))
@@ -437,8 +427,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (t t) (k k) (ta ta) (tb tb))))
-  (origs (k (6 0)))
-  (ugens))
+  (origs (k (6 0))))
 
 (defskeleton wide-mouth-frog
   (vars (k skey) (ta tb ta-0 ta-1 ta-2 ta-3 ta-4 ta-5 text)
@@ -514,8 +503,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (t t) (k k) (ta ta) (tb tb))))
-  (origs (k (7 0)))
-  (ugens))
+  (origs (k (7 0))))
 
 (comment "Strand bound exceeded--aborting run")
 

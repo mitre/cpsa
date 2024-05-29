@@ -21,7 +21,6 @@
   (unrealized (1 1))
   (preskeleton)
   (origs (n (0 0)))
-  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton uniq-orig
@@ -36,7 +35,6 @@
   (realized)
   (shape)
   (maps ((0 1) ((n n) (m m))))
-  (origs (n (0 0)))
-  (ugens))
+  (origs (n (0 0))))
 
 (comment "Nothing left to do")

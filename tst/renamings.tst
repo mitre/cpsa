@@ -30,7 +30,6 @@
   (label 0)
   (unrealized (0 0))
   (origs)
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet
@@ -49,8 +48,7 @@
   (realized)
   (shape)
   (maps ((0) ((s s) (d d) (a a) (b b))))
-  (origs (a (1 0)))
-  (ugens))
+  (origs (a (1 0))))
 
 (comment "Nothing left to do")
 
@@ -79,7 +77,6 @@
   (label 2)
   (unrealized (0 1))
   (origs (a (0 0)))
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton blanchet
@@ -129,7 +126,6 @@
   (realized)
   (shape)
   (maps ((0) ((s s) (d d) (a a) (b b))))
-  (origs (a (0 0)))
-  (ugens))
+  (origs (a (0 0))))
 
 (comment "Nothing left to do")

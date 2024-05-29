@@ -30,7 +30,6 @@
   (label 0)
   (unrealized (0 2))
   (origs (k (0 1)))
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton nslsk
@@ -87,8 +86,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (k k) (b b) (n n) (t t))))
-  (origs (k (0 1)))
-  (ugens))
+  (origs (k (0 1))))
 
 (comment "Nothing left to do")
 
@@ -119,7 +117,6 @@
   (label 4)
   (unrealized (0 1))
   (origs (n (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nslsk
@@ -140,8 +137,7 @@
   (realized)
   (shape)
   (maps ((0) ((b b) (n n) (a a) (k k) (t t))))
-  (origs (n (0 0)))
-  (ugens))
+  (origs (n (0 0))))
 
 (comment "Nothing left to do")
 
@@ -172,7 +168,6 @@
   (label 6)
   (unrealized (0 2))
   (origs (k (0 1)))
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton nslsk-tag-term
@@ -229,8 +224,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (k k) (b b) (n n))))
-  (origs (k (0 1)))
-  (ugens))
+  (origs (k (0 1))))
 
 (comment "Nothing left to do")
 
@@ -261,7 +255,6 @@
   (label 10)
   (unrealized (0 1))
   (origs (n (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nslsk-tag-term
@@ -282,7 +275,6 @@
   (realized)
   (shape)
   (maps ((0) ((b b) (n n) (a a) (k k))))
-  (origs (n (0 0)))
-  (ugens))
+  (origs (n (0 0))))
 
 (comment "Nothing left to do")

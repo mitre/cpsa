@@ -28,7 +28,6 @@
   (label 0)
   (unrealized (0 1))
   (origs (na (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -62,8 +61,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (na na) (nb nb))))
-  (origs (na (0 0)))
-  (ugens))
+  (origs (na (0 0))))
 
 (comment "Nothing left to do")
 
@@ -92,7 +90,6 @@
   (label 3)
   (unrealized (0 2))
   (origs (nb (0 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -110,8 +107,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (nb nb) (b b) (na na))))
-  (origs (nb (0 1)))
-  (ugens))
+  (origs (nb (0 1))))
 
 (comment "Nothing left to do")
 
@@ -148,7 +144,6 @@
   (label 5)
   (unrealized (0 1))
   (origs (n (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton unilateral
@@ -165,8 +160,7 @@
   (realized)
   (shape)
   (maps ((0) ((k k) (n n))))
-  (origs (n (0 0)))
-  (ugens))
+  (origs (n (0 0))))
 
 (comment "Nothing left to do")
 
@@ -211,7 +205,6 @@
   (label 7)
   (unrealized (0 2))
   (origs (nb (0 1)))
-  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton ns-with-rule
@@ -245,8 +238,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (nb nb) (b b) (na na))))
-  (origs (nb (0 1)))
-  (ugens))
+  (origs (nb (0 1))))
 
 (defskeleton ns-with-rule
   (vars (na na-0 nb text) (b a b-0 b-1 akey))

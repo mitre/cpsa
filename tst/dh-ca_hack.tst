@@ -50,7 +50,6 @@
   (label 0)
   (unrealized (0 0) (0 2))
   (origs)
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhca
@@ -372,8 +371,7 @@
   (realized)
   (shape)
   (maps ((0) ((gx gx) (h gx) (dhkey dhkey) (a a) (b a) (ca ca) (n n))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx akey) (a ca a-0 name))
@@ -403,8 +401,7 @@
   (realized)
   (shape)
   (maps ((0) ((gx gx) (h gx) (dhkey dhkey) (a a) (b a) (ca ca) (n n))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx akey) (a ca b name))
@@ -433,8 +430,7 @@
   (realized)
   (shape)
   (maps ((0) ((gx gx) (h gx) (dhkey dhkey) (a a) (b a) (ca ca) (n n))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx akey) (a ca b ca-0 name))
@@ -465,8 +461,7 @@
   (realized)
   (shape)
   (maps ((0) ((gx gx) (h gx) (dhkey dhkey) (a a) (b a) (ca ca) (n n))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx akey) (a ca a-0 b ca-0 name))
@@ -498,8 +493,7 @@
   (realized)
   (shape)
   (maps ((0) ((gx gx) (h gx) (dhkey dhkey) (a a) (b a) (ca ca) (n n))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx akey) (a b ca name))
@@ -527,8 +521,7 @@
   (realized)
   (shape)
   (maps ((0) ((gx gx) (h gx) (dhkey dhkey) (a a) (b b) (ca ca) (n n))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx akey) (a b ca name))
@@ -556,8 +549,7 @@
   (realized)
   (shape)
   (maps ((0) ((gx gx) (h gx) (dhkey dhkey) (a a) (b b) (ca ca) (n n))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx akey) (a b ca a-0 name))
@@ -589,8 +581,7 @@
   (realized)
   (shape)
   (maps ((0) ((gx gx) (h gx) (dhkey dhkey) (a a) (b b) (ca ca) (n n))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx h akey) (a b ca name))
@@ -617,8 +608,7 @@
   (realized)
   (shape)
   (maps ((0) ((gx gx) (h h) (dhkey dhkey) (a a) (b b) (ca ca) (n n))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (h akey) (a b ca name))
@@ -644,8 +634,7 @@
   (realized)
   (shape)
   (maps ((0) ((gx h) (h h) (dhkey dhkey) (a a) (b b) (ca ca) (n n))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx h akey) (a b ca a-0 name))
@@ -673,8 +662,7 @@
   (realized)
   (shape)
   (maps ((0) ((gx gx) (h h) (dhkey dhkey) (a a) (b b) (ca ca) (n n))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (h akey) (a b ca b-0 name))
@@ -703,8 +691,7 @@
   (realized)
   (shape)
   (maps ((0) ((gx h) (h h) (dhkey dhkey) (a a) (b b) (ca ca) (n n))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx h akey) (a b ca b-0 name))
@@ -734,8 +721,7 @@
   (realized)
   (shape)
   (maps ((0) ((gx gx) (h h) (dhkey dhkey) (a a) (b b) (ca ca) (n n))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (h akey) (a b ca b-0 ca-0 name))
@@ -765,8 +751,7 @@
   (realized)
   (shape)
   (maps ((0) ((gx h) (h h) (dhkey dhkey) (a a) (b b) (ca ca) (n n))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx h akey) (a b ca a-0 b-0 ca-0 name))
@@ -799,8 +784,7 @@
   (realized)
   (shape)
   (maps ((0) ((gx gx) (h h) (dhkey dhkey) (a a) (b b) (ca ca) (n n))))
-  (origs)
-  (ugens))
+  (origs))
 
 (comment "Nothing left to do")
 
@@ -852,7 +836,6 @@
   (label 28)
   (unrealized (0 0) (0 1) (0 3))
   (origs (n (0 2)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhca
@@ -1203,8 +1186,7 @@
   (realized)
   (shape)
   (maps ((0) ((n n) (gy gy) (h gy) (dhkey dhkey) (a b) (b b) (ca ca))))
-  (origs (n (0 2)))
-  (ugens))
+  (origs (n (0 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (b ca b-0 name))
@@ -1236,8 +1218,7 @@
   (realized)
   (shape)
   (maps ((0) ((n n) (gy gy) (h gy) (dhkey dhkey) (a b) (b b) (ca ca))))
-  (origs (n (0 2)))
-  (ugens))
+  (origs (n (0 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (b ca a name))
@@ -1268,8 +1249,7 @@
   (realized)
   (shape)
   (maps ((0) ((n n) (gy gy) (h gy) (dhkey dhkey) (a b) (b b) (ca ca))))
-  (origs (n (0 2)))
-  (ugens))
+  (origs (n (0 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (b ca a ca-0 name))
@@ -1301,8 +1281,7 @@
   (realized)
   (shape)
   (maps ((0) ((n n) (gy gy) (h gy) (dhkey dhkey) (a b) (b b) (ca ca))))
-  (origs (n (0 2)))
-  (ugens))
+  (origs (n (0 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (b ca a b-0 ca-0 name))
@@ -1337,8 +1316,7 @@
   (realized)
   (shape)
   (maps ((0) ((n n) (gy gy) (h gy) (dhkey dhkey) (a b) (b b) (ca ca))))
-  (origs (n (0 2)))
-  (ugens))
+  (origs (n (0 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (a b ca name))
@@ -1369,8 +1347,7 @@
   (realized)
   (shape)
   (maps ((0) ((n n) (gy gy) (h gy) (dhkey dhkey) (a a) (b b) (ca ca))))
-  (origs (n (0 2)))
-  (ugens))
+  (origs (n (0 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (a b ca name))
@@ -1401,8 +1378,7 @@
   (realized)
   (shape)
   (maps ((0) ((n n) (gy gy) (h gy) (dhkey dhkey) (a a) (b b) (ca ca))))
-  (origs (n (0 2)))
-  (ugens))
+  (origs (n (0 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (a b ca b-0 name))
@@ -1435,8 +1411,7 @@
   (realized)
   (shape)
   (maps ((0) ((n n) (gy gy) (h gy) (dhkey dhkey) (a a) (b b) (ca ca))))
-  (origs (n (0 2)))
-  (ugens))
+  (origs (n (0 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy h akey) (a b ca name))
@@ -1467,8 +1442,7 @@
   (realized)
   (shape)
   (maps ((0) ((n n) (gy gy) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
-  (origs (n (0 2)))
-  (ugens))
+  (origs (n (0 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (h akey) (a b ca name))
@@ -1497,8 +1471,7 @@
   (realized)
   (shape)
   (maps ((0) ((n n) (gy h) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
-  (origs (n (0 2)))
-  (ugens))
+  (origs (n (0 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy h akey) (a b ca b-0 name))
@@ -1531,8 +1504,7 @@
   (realized)
   (shape)
   (maps ((0) ((n n) (gy gy) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
-  (origs (n (0 2)))
-  (ugens))
+  (origs (n (0 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (h akey) (a b ca a-0 name))
@@ -1563,8 +1535,7 @@
   (realized)
   (shape)
   (maps ((0) ((n n) (gy h) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
-  (origs (n (0 2)))
-  (ugens))
+  (origs (n (0 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy h akey) (a b ca a-0 name))
@@ -1597,8 +1568,7 @@
   (realized)
   (shape)
   (maps ((0) ((n n) (gy gy) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
-  (origs (n (0 2)))
-  (ugens))
+  (origs (n (0 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (h akey) (a b ca a-0 ca-0 name))
@@ -1631,8 +1601,7 @@
   (realized)
   (shape)
   (maps ((0) ((n n) (gy h) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
-  (origs (n (0 2)))
-  (ugens))
+  (origs (n (0 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy h akey) (a b ca a-0 b-0 ca-0 name))
@@ -1669,8 +1638,7 @@
   (realized)
   (shape)
   (maps ((0) ((n n) (gy gy) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
-  (origs (n (0 2)))
-  (ugens))
+  (origs (n (0 2))))
 
 (comment "Nothing left to do")
 
@@ -1724,7 +1692,6 @@
   (unrealized (0 0) (0 1) (0 3) (1 0))
   (preskeleton)
   (origs (n (0 2)))
-  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton dhca
@@ -1744,7 +1711,6 @@
   (parent 56)
   (unrealized (0 0) (0 1) (0 3) (1 0))
   (origs (n (0 2)))
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhca
@@ -2085,7 +2051,6 @@
   (unrealized (0 0) (0 2) (1 0) (1 1) (1 3))
   (preskeleton)
   (origs (n (1 2)))
-  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton dhca
@@ -2110,7 +2075,6 @@
   (parent 68)
   (unrealized (0 0) (1 0) (1 1) (1 3))
   (origs (n (1 2)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhca
@@ -2411,8 +2375,7 @@
   (shape)
   (maps
     ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (b ca name))
@@ -2443,8 +2406,7 @@
   (shape)
   (maps
     ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (b ca b-0 name))
@@ -2579,8 +2541,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx gy akey) (a b ca name))
@@ -2614,8 +2575,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (a b ca b-0 name))
@@ -3338,8 +3298,7 @@
   (shape)
   (maps
     ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (b ca name))
@@ -3378,8 +3337,7 @@
   (shape)
   (maps
     ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (b ca b-0 name))
@@ -3418,8 +3376,7 @@
   (shape)
   (maps
     ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (ca b name))
@@ -3495,8 +3452,7 @@
   (shape)
   (maps
     ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (b ca a name))
@@ -3535,8 +3491,7 @@
   (shape)
   (maps
     ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (ca a name))
@@ -3575,8 +3530,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b a) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (b ca a name))
@@ -3616,8 +3570,7 @@
   (shape)
   (maps
     ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (b ca a ca-0 name))
@@ -3657,8 +3610,7 @@
   (shape)
   (maps
     ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (b ca a ca-0 name))
@@ -3699,8 +3651,7 @@
   (shape)
   (maps
     ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (a b ca name))
@@ -3740,8 +3691,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b a) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (b ca a b-0 ca-0 name))
@@ -3783,8 +3733,7 @@
   (shape)
   (maps
     ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (a b ca name))
@@ -3865,8 +3814,7 @@
   (shape)
   (maps
     ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (b ca name))
@@ -3941,8 +3889,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (a b ca name))
@@ -3982,8 +3929,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (a b ca name))
@@ -4021,8 +3967,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (a b ca name))
@@ -4062,8 +4007,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (a b ca b-0 name))
@@ -4103,8 +4047,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (b ca b-0 name))
@@ -4223,8 +4166,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (b ca name))
@@ -4297,8 +4239,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx gy akey) (a b ca name))
@@ -4338,8 +4279,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx akey) (a b ca name))
@@ -4377,8 +4317,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gx) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx akey) (a b ca name))
@@ -4418,8 +4357,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gx) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx gy akey) (a b ca b-0 name))
@@ -4459,8 +4397,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (b ca b-0 name))
@@ -4578,8 +4515,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx akey) (a b ca a-0 name))
@@ -4620,8 +4556,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gx) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx akey) (b ca a name))
@@ -4700,8 +4635,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gx) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx akey) (a b ca a-0 name))
@@ -4743,8 +4677,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gx) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx gy akey) (a b ca a-0 name))
@@ -4785,8 +4718,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx gy akey) (b ca a name))
@@ -4826,8 +4758,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx gy akey) (a b ca a-0 name))
@@ -4869,8 +4800,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx akey) (a b ca a-0 ca-0 name))
@@ -4912,8 +4842,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gx) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx akey) (b ca a ca-0 name))
@@ -4996,8 +4925,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gx) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gx gy akey) (a b ca a-0 b-0 ca-0 name))
@@ -5041,8 +4969,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (b ca a b-0 ca-0 name))
@@ -5125,8 +5052,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (b a b-0 ca name))
@@ -5211,8 +5137,7 @@
   (shape)
   (maps
     ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (defskeleton dhca
   (vars (dhkey skey) (n text) (gy akey) (ca b name))
@@ -5554,7 +5479,6 @@
   (shape)
   (maps
     ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
-  (origs (n (1 2)))
-  (ugens))
+  (origs (n (1 2))))
 
 (comment "Nothing left to do")

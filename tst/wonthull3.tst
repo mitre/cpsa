@@ -32,7 +32,6 @@
   (label 0)
   (unrealized (0 2))
   (origs (x3 (0 0)))
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull3
@@ -50,7 +49,6 @@
   (parent 0)
   (unrealized (0 2))
   (origs (x2 (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull3
@@ -154,8 +152,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 y3) (x4 y3))))
-  (origs (y3 (0 0)))
-  (ugens))
+  (origs (y3 (0 0))))
 
 (defskeleton wonthull3
   (vars (x1 x2 x3 x4 y3 y3-0 text) (a name))
@@ -269,7 +266,6 @@
   (label 10)
   (unrealized (0 2))
   (origs (x3-0 (0 0)))
-  (ugens)
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull3
@@ -291,7 +287,6 @@
   (parent 10)
   (unrealized (1 0))
   (origs (x3 (0 0)))
-  (ugens)
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull3
@@ -318,7 +313,6 @@
         (enc x1-0 x3 (pubk a)))))
   (unrealized (0 2))
   (origs (x1 (0 0)))
-  (ugens)
   (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull3
@@ -362,8 +356,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
-  (origs (x3 (0 0)))
-  (ugens))
+  (origs (x3 (0 0))))
 
 (defskeleton wonthull3
   (vars (x3 x1 text) (a name))
@@ -384,8 +377,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
-  (origs (x3 (0 0)))
-  (ugens))
+  (origs (x3 (0 0))))
 
 (defskeleton wonthull3
   (vars (x1 x3 x1-0 y3 text) (a a-0 name))
@@ -710,8 +702,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a))))
-  (origs (y3 (0 0)))
-  (ugens))
+  (origs (y3 (0 0))))
 
 (defskeleton wonthull3
   (vars (x1 x3 x1-0 y3 y3-0 text) (a name))

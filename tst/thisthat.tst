@@ -39,7 +39,6 @@
   (label 0)
   (unrealized (0 1))
   (origs (n1 (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton thisthat
@@ -372,8 +371,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n1 n1) (n2 n3-0) (n3 n3))))
-  (origs (n3-0 (2 1)) (n3 (1 1)) (n1 (0 0)))
-  (ugens))
+  (origs (n3-0 (2 1)) (n3 (1 1)) (n1 (0 0))))
 
 (defskeleton thisthat
   (vars (n1 n3 n3-0 text) (a b name))

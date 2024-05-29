@@ -38,7 +38,6 @@
   (label 0)
   (unrealized (0 1))
   (origs (k (0 0)) (kp (0 0)))
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dass-simple
@@ -148,8 +147,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (k k) (kp kp) (ta ta) (tb tb))))
-  (origs (k (0 0)) (kp (0 0)))
-  (ugens))
+  (origs (k (0 0)) (kp (0 0))))
 
 (comment "Nothing left to do")
 
@@ -189,7 +187,6 @@
   (label 6)
   (unrealized (0 1))
   (origs (k (0 0)) (kp (0 0)))
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dass+
@@ -348,8 +345,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (k k) (kp kp) (ta ta) (tb tb))))
-  (origs (k (0 0)) (kp (0 0)))
-  (ugens))
+  (origs (k (0 0)) (kp (0 0))))
 
 (defskeleton dass+
   (vars (k k-0 skey) (ta tb ta-0 text) (kp kp-0 akey)
@@ -376,7 +372,6 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (k k) (kp kp) (ta ta) (tb tb))))
-  (origs (k (0 0)) (kp (0 0)))
-  (ugens))
+  (origs (k (0 0)) (kp (0 0))))
 
 (comment "Nothing left to do")

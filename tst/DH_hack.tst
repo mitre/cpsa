@@ -41,7 +41,6 @@
   (label 0)
   (unrealized (0 0))
   (origs)
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
@@ -84,8 +83,7 @@
   (realized)
   (shape)
   (maps ((0) ((x x) (y y) (gcs gcs) (cek cek) (d d))))
-  (origs (cek (2 0)) (d (2 0)) (x (2 0)))
-  (ugens))
+  (origs (cek (2 0)) (d (2 0)) (x (2 0))))
 
 (comment "Nothing left to do")
 
@@ -126,7 +124,6 @@
   (label 3)
   (unrealized (0 0))
   (origs)
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
@@ -169,8 +166,7 @@
   (realized)
   (shape)
   (maps ((0) ((cek cek) (x x) (gcs gcs) (y y) (d d))))
-  (origs (cek (2 0)) (d (2 0)) (x (2 0)))
-  (ugens))
+  (origs (cek (2 0)) (d (2 0)) (x (2 0))))
 
 (comment "Nothing left to do")
 
@@ -211,7 +207,6 @@
   (label 6)
   (unrealized (0 0))
   (origs)
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
@@ -254,8 +249,7 @@
   (realized)
   (shape)
   (maps ((0) ((cek cek) (y y) (gcs gcs) (x x) (d d))))
-  (origs (cek (2 0)) (d (2 0)) (x (2 0)))
-  (ugens))
+  (origs (cek (2 0)) (d (2 0)) (x (2 0))))
 
 (comment "Nothing left to do")
 
@@ -297,7 +291,6 @@
   (label 9)
   (unrealized (0 0))
   (origs)
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
@@ -605,7 +598,6 @@
   (label 20)
   (unrealized (0 0))
   (origs)
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
@@ -676,8 +668,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((cek cek) (x x) (gcs gcs) (y y) (d d))))
-  (origs (cek (3 0)) (d (3 0)) (x (3 0)))
-  (ugens))
+  (origs (cek (3 0)) (d (3 0)) (x (3 0))))
 
 (defskeleton DH_hack
   (vars (d d-0 data) (cek skey) (x y akey) (gcs gcs-0 name))
@@ -762,8 +753,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((cek cek) (x x) (gcs gcs) (y y) (d d))))
-  (origs (cek (3 0)) (d (3 0)) (x (3 0)))
-  (ugens))
+  (origs (cek (3 0)) (d (3 0)) (x (3 0))))
 
 (comment "Nothing left to do")
 
@@ -805,7 +795,6 @@
   (label 27)
   (unrealized (0 0))
   (origs)
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
@@ -852,7 +841,6 @@
   (realized)
   (shape)
   (maps ((0 1) ((cek cek) (y y) (gcs gcs) (x x) (d d))))
-  (origs (cek (3 0)) (d (3 0)) (x (3 0)))
-  (ugens))
+  (origs (cek (3 0)) (d (3 0)) (x (3 0))))
 
 (comment "Nothing left to do")

@@ -29,7 +29,6 @@
   (label 0)
   (unrealized (0 0) (0 1))
   (origs)
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton auth-hash
@@ -61,8 +60,7 @@
   (realized)
   (shape)
   (maps ((0) ((ch ch) (n n))))
-  (origs (n (1 1)))
-  (ugens))
+  (origs (n (1 1))))
 
 (defskeleton auth-hash
   (vars (n text) (ch chan))
@@ -80,7 +78,6 @@
   (realized)
   (shape)
   (maps ((0) ((ch ch) (n n))))
-  (origs (n (2 1)))
-  (ugens))
+  (origs (n (2 1))))
 
 (comment "Nothing left to do")

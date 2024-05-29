@@ -38,7 +38,6 @@
   (label 0)
   (realized)
   (origs)
-  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton rule-order
@@ -57,8 +56,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((s s) (t t))))
-  (origs)
-  (ugens))
+  (origs))
 
 (comment "Nothing left to do")
 
@@ -97,7 +95,6 @@
   (label 2)
   (realized)
   (origs)
-  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton rule-order
@@ -116,8 +113,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((s s) (t t))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton rule-order
   (vars (s text))
@@ -130,8 +126,7 @@
   (realized)
   (shape)
   (maps)
-  (origs)
-  (ugens))
+  (origs))
 
 (comment "Nothing left to do")
 
@@ -156,7 +151,6 @@
   (label 5)
   (realized)
   (origs)
-  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton rule-order-prec
@@ -170,8 +164,7 @@
   (realized)
   (shape)
   (maps ((0) ((s s) (t t))))
-  (origs)
-  (ugens))
+  (origs))
 
 (comment "Nothing left to do")
 
@@ -199,7 +192,6 @@
   (label 7)
   (realized)
   (origs)
-  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton rule-order-prec
@@ -217,8 +209,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((s s) (t t))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton rule-order-prec
   (vars (s text))
@@ -231,8 +222,7 @@
   (realized)
   (shape)
   (maps)
-  (origs)
-  (ugens))
+  (origs))
 
 (comment "Nothing left to do")
 
@@ -260,7 +250,6 @@
   (label 10)
   (realized)
   (origs)
-  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton rule-order-prec
@@ -278,8 +267,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((s s) (t t))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton rule-order-prec
   (vars (s t text))
@@ -292,7 +280,6 @@
   (realized)
   (shape)
   (maps)
-  (origs)
-  (ugens))
+  (origs))
 
 (comment "Nothing left to do")

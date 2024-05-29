@@ -143,7 +143,6 @@
   (unrealized (0 0) (1 3))
   (preskeleton)
   (origs (v (1 4)) (n (1 1)))
-  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton envelope
@@ -165,7 +164,6 @@
   (parent 0)
   (unrealized (1 3))
   (origs (v (1 4)) (n (1 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -593,8 +591,7 @@
       ((v v) (n n) (pcr-id pcr-id) (nonce nonce-0) (k k) (aik aik)
         (tpm tpmconf) (tpmconf tpmconf))))
   (origs (n (1 1)) (nonce-0 (5 0)) (pt-0 (5 3)) (nonce (4 0)) (pt (4 3))
-    (k (2 1)) (v (1 4)))
-  (ugens))
+    (k (2 1)) (v (1 4))))
 
 (comment "Nothing left to do")
 
@@ -742,7 +739,6 @@
   (unrealized (0 0) (1 3))
   (preskeleton)
   (origs (v (1 4)) (n (1 1)))
-  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton envelope
@@ -772,7 +768,6 @@
   (parent 12)
   (unrealized (0 0) (1 3))
   (origs (v (1 4)) (n (1 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -1255,8 +1250,7 @@
       ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
         (nonce nonce-0) (tpm tpmconf) (tpmconf tpmconf))))
   (origs (n (1 1)) (nonce-0 (5 0)) (pt-0 (5 3)) (nonce (4 0)) (pt (4 3))
-    (k (2 1)) (v (1 4)))
-  (ugens))
+    (k (2 1)) (v (1 4))))
 
 (comment "Nothing left to do")
 
@@ -1405,7 +1399,6 @@
   (unrealized (0 0) (1 0) (2 3))
   (preskeleton)
   (origs (v (2 4)) (n (2 1)))
-  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton envelope
@@ -1436,7 +1429,6 @@
   (parent 23)
   (unrealized (0 0) (2 3))
   (origs (v (2 4)) (n (2 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2353,7 +2345,6 @@
   (unrealized (0 0) (1 0) (2 3))
   (preskeleton)
   (origs (v (2 4)) (n (2 1)))
-  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton envelope
@@ -2385,7 +2376,6 @@
   (parent 38)
   (unrealized (0 0) (2 3))
   (origs (v (2 4)) (n (2 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope

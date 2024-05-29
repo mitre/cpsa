@@ -122,7 +122,6 @@
   (label 0)
   (unrealized (0 1))
   (origs (n (0 2)))
-  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton dhstatic-state
@@ -143,7 +142,6 @@
   (parent 0)
   (unrealized (0 0) (0 1))
   (origs (n (0 2)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -1578,7 +1576,6 @@
   (label 24)
   (unrealized (0 1))
   (origs)
-  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton dhstatic-state
@@ -1598,7 +1595,6 @@
   (parent 24)
   (unrealized (0 0) (0 1))
   (origs)
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhstatic-state

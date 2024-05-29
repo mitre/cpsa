@@ -31,7 +31,6 @@
   (label 0)
   (realized)
   (origs)
-  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton ordered
@@ -48,7 +47,6 @@
   (seen-ops (2 (operation generalization weakened ((1 1) (0 0)))))
   (realized)
   (origs)
-  (ugens)
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton ordered
@@ -65,7 +63,6 @@
   (seen-ops (1 (operation generalization weakened ((0 1) (1 0)))))
   (realized)
   (origs)
-  (ugens)
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
@@ -97,7 +94,6 @@
   (label 3)
   (realized)
   (origs)
-  (ugens)
   (comment "Not closed under rules"))
 
 (comment "Nothing left to do")

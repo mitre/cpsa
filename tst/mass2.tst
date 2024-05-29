@@ -31,7 +31,6 @@
   (label 0)
   (unrealized (0 2))
   (origs (n1 (0 1)))
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton mass2
@@ -71,8 +70,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
-  (origs (n1 (0 1)))
-  (ugens))
+  (origs (n1 (0 1))))
 
 (defskeleton mass2
   (vars (n1 n2 n2-0 n2-1 text) (a b name))
@@ -115,8 +113,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
-  (origs (n1 (0 1)))
-  (ugens))
+  (origs (n1 (0 1))))
 
 (defskeleton mass2
   (vars (n1 n2 n2-0 n1-0 text) (a b name))
@@ -139,8 +136,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
-  (origs (n1 (0 1)))
-  (ugens))
+  (origs (n1 (0 1))))
 
 (defskeleton mass2
   (vars (n1 n2 n2-0 n2-1 n2-2 text) (a b name))
@@ -189,8 +185,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
-  (origs (n1 (0 1)))
-  (ugens))
+  (origs (n1 (0 1))))
 
 (defskeleton mass2
   (vars (n1 n2 n2-0 n2-1 n1-0 text) (a b name))
@@ -216,8 +211,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
-  (origs (n1 (0 1)))
-  (ugens))
+  (origs (n1 (0 1))))
 
 (defskeleton mass2
   (vars (n1 n2 n2-0 n2-1 n2-2 n2-3 text) (a b name))
@@ -273,8 +267,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
-  (origs (n1 (0 1)))
-  (ugens))
+  (origs (n1 (0 1))))
 
 (defskeleton mass2
   (vars (n1 n2 n2-0 n2-1 n2-2 n1-0 text) (a b name))
@@ -304,8 +297,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
-  (origs (n1 (0 1)))
-  (ugens))
+  (origs (n1 (0 1))))
 
 (defskeleton mass2
   (vars (n1 n2 n2-0 n2-1 n2-2 n2-3 n2-4 text) (a b name))
@@ -368,8 +360,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
-  (origs (n1 (0 1)))
-  (ugens))
+  (origs (n1 (0 1))))
 
 (defskeleton mass2
   (vars (n1 n2 n2-0 n2-1 n2-2 n2-3 n1-0 text) (a b name))
@@ -402,8 +393,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
-  (origs (n1 (0 1)))
-  (ugens))
+  (origs (n1 (0 1))))
 
 (defskeleton mass2
   (vars (n1 n2 n2-0 n2-1 n2-2 n2-3 n2-4 n2-5 text) (a b name))
@@ -472,8 +462,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
-  (origs (n1 (0 1)))
-  (ugens))
+  (origs (n1 (0 1))))
 
 (defskeleton mass2
   (vars (n1 n2 n2-0 n2-1 n2-2 n2-3 n2-4 n1-0 text) (a b name))
@@ -509,8 +498,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
-  (origs (n1 (0 1)))
-  (ugens))
+  (origs (n1 (0 1))))
 
 (defskeleton mass2
   (vars (n1 n2 n2-0 n2-1 n2-2 n2-3 n2-4 text) (a b name))
@@ -547,8 +535,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
-  (origs (n1 (0 1)))
-  (ugens))
+  (origs (n1 (0 1))))
 
 (defskeleton mass2
   (vars (n1 n2 n2-0 n2-1 n2-2 n2-3 n2-4 n2-5 n1-0 text) (a b name))
@@ -587,8 +574,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
-  (origs (n1 (0 1)))
-  (ugens))
+  (origs (n1 (0 1))))
 
 (comment "Strand bound exceeded--aborting run")
 

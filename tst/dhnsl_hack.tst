@@ -43,7 +43,6 @@
   (label 0)
   (unrealized (0 1))
   (origs (gx (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhnsl
@@ -135,8 +134,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (gx gx) (gy gy) (gz gz) (dhkey dhkey))))
-  (origs (gy (1 1)) (gz (1 1)) (gx (0 0)))
-  (ugens))
+  (origs (gy (1 1)) (gz (1 1)) (gx (0 0))))
 
 (defskeleton dhnsl
   (vars (dhkey dhkey-0 skey) (gx gy gz gz-0 gy-0 gz-1 akey) (a b name))
@@ -233,7 +231,6 @@
   (label 7)
   (unrealized (0 2))
   (origs (gz (0 1)) (gy (0 1)))
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhnsl
@@ -273,7 +270,6 @@
   (parent 7)
   (unrealized (0 2))
   (origs (gy (0 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhnsl
@@ -372,8 +368,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (gx gx) (gy gy) (gz gz) (dhkey dhkey))))
-  (origs (gy (0 1)) (gz (0 1)) (gx (1 0)))
-  (ugens))
+  (origs (gy (0 1)) (gz (0 1)) (gx (1 0))))
 
 (defskeleton dhnsl
   (vars (dhkey skey) (gx gy akey) (a b a-0 b-0 name))

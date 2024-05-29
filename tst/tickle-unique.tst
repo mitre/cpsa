@@ -37,7 +37,6 @@
   (label 0)
   (unrealized (0 2))
   (origs (nb (0 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton tickle
@@ -59,8 +58,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (nb0 nb0) (nb nb) (na nb0))))
-  (origs (nb0 (1 0)) (nb (0 1)))
-  (ugens))
+  (origs (nb0 (1 0)) (nb (0 1))))
 
 (comment "Nothing left to do")
 
@@ -99,7 +97,6 @@
   (label 2)
   (unrealized (0 2))
   (origs (nb (0 1)))
-  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton tickle
@@ -117,7 +114,6 @@
   (unrealized (0 2))
   (dead)
   (origs (nb0 (0 1)) (nb (0 1)))
-  (ugens)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

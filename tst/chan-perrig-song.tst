@@ -26,7 +26,6 @@
   (label 0)
   (unrealized (0 1))
   (origs (na (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton perrig-song
@@ -45,8 +44,7 @@
   (realized)
   (shape)
   (maps ((0) ((na na) (c c) (nb nb) (a a) (b b))))
-  (origs (na (0 0)))
-  (ugens))
+  (origs (na (0 0))))
 
 (comment "Nothing left to do")
 
@@ -73,7 +71,6 @@
   (label 2)
   (unrealized (0 2))
   (origs (nb (0 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton perrig-song
@@ -92,8 +89,7 @@
   (realized)
   (shape)
   (maps ((0) ((nb nb) (c c) (na na) (a a) (b b))))
-  (origs (nb (0 1)))
-  (ugens))
+  (origs (nb (0 1))))
 
 (comment "Nothing left to do")
 
@@ -121,8 +117,7 @@
   (realized)
   (shape)
   (maps ((0) ((na na) (c c) (nb nb) (a a) (b b))))
-  (origs (na (0 0)))
-  (ugens))
+  (origs (na (0 0))))
 
 (comment "Nothing left to do")
 
@@ -150,7 +145,6 @@
   (realized)
   (shape)
   (maps ((0) ((nb nb) (c c) (na na) (a a) (b b))))
-  (origs (nb (0 1)))
-  (ugens))
+  (origs (nb (0 1))))
 
 (comment "Nothing left to do")

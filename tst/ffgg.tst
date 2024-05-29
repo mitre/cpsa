@@ -36,7 +36,6 @@
   (unrealized (1 0))
   (preskeleton)
   (origs (m (0 2)))
-  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton ffgg
@@ -53,7 +52,6 @@
   (parent 0)
   (unrealized (1 0))
   (origs (m (0 2)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ffgg
@@ -129,7 +127,6 @@
   (realized)
   (shape)
   (maps ((0 1) ((b b) (m m) (a a) (n1 n1) (n2 n2) (x x) (y y))))
-  (origs (n1 (2 1)) (n2-0 (2 1)) (n2 (3 1)) (n2-1 (3 1)) (m (0 2)))
-  (ugens))
+  (origs (n1 (2 1)) (n2-0 (2 1)) (n2 (3 1)) (n2-1 (3 1)) (m (0 2))))
 
 (comment "Nothing left to do")

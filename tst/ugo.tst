@@ -35,7 +35,6 @@
   (unrealized (0 0))
   (dead)
   (origs)
-  (ugens)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -72,7 +71,6 @@
   (unrealized (0 0))
   (dead)
   (origs)
-  (ugens)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -108,7 +106,6 @@
   (unrealized (0 0))
   (dead)
   (origs)
-  (ugens)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -145,7 +142,6 @@
   (unrealized (0 0))
   (dead)
   (origs)
-  (ugens)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -177,7 +173,6 @@
   (label 4)
   (unrealized (0 0))
   (origs)
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton uniq-orig-example
@@ -210,8 +205,7 @@
   (realized)
   (shape)
   (maps ((0) ((u u) (k k))))
-  (origs (u (1 0)))
-  (ugens))
+  (origs (u (1 0))))
 
 (comment "Nothing left to do")
 
@@ -243,7 +237,6 @@
   (label 7)
   (unrealized (0 0))
   (origs ((invk u) (0 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton uniq-orig-example
@@ -276,7 +269,6 @@
   (realized)
   (shape)
   (maps ((0) ((u u) (k k))))
-  (origs (u (1 0)) ((invk u) (0 1)))
-  (ugens))
+  (origs (u (1 0)) ((invk u) (0 1))))
 
 (comment "Nothing left to do")

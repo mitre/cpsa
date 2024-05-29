@@ -41,7 +41,6 @@
   (label 0)
   (unrealized (0 1))
   (origs (nb (0 0)))
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fluffy
@@ -358,7 +357,6 @@
   (label 12)
   (unrealized (0 1))
   (origs (na (0 0)))
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fluffy
@@ -460,7 +458,6 @@
   (label 15)
   (unrealized (0 1))
   (origs (nb (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fluffy-rule
@@ -638,7 +635,6 @@
   (label 20)
   (unrealized (0 1))
   (origs (na (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fluffy-rule

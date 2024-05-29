@@ -33,7 +33,6 @@
   (label 0)
   (unrealized (0 1))
   (origs (n (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton targetterms6
@@ -149,8 +148,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (n n))))
-  (origs (n (0 0)))
-  (ugens))
+  (origs (n (0 0))))
 
 (defskeleton targetterms6
   (vars (m mesg) (n text) (a name))
@@ -279,7 +277,6 @@
   (realized)
   (shape)
   (maps ((0 1 2) ((n n) (a a))))
-  (origs (n (0 0)))
-  (ugens))
+  (origs (n (0 0))))
 
 (comment "Nothing left to do")

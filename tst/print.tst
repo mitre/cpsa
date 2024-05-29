@@ -25,7 +25,6 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (f f) (g g) (x x) (y y))))
-  (origs)
-  (ugens))
+  (origs))
 
 (comment "Nothing left to do")

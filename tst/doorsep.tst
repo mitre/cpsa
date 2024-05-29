@@ -37,7 +37,6 @@
   (label 0)
   (unrealized (0 0))
   (origs (t (0 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton doorsep
@@ -88,8 +87,7 @@
   (realized)
   (shape)
   (maps ((0) ((p p) (d d) (k k) (t t))))
-  (origs (k (1 0)) (t (0 1)))
-  (ugens))
+  (origs (k (1 0)) (t (0 1))))
 
 (defskeleton doorsep
   (vars (k skey) (t text) (p d akey))

@@ -37,7 +37,6 @@
   (label 0)
   (unrealized (0 0))
   (origs)
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton pca
@@ -242,8 +241,7 @@
   (realized)
   (shape)
   (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
-  (origs (ki (2 0)))
-  (ugens))
+  (origs (ki (2 0))))
 
 (defskeleton pca
   (vars (a t text) (ki kp ke km ke-0 km-0 akey))
@@ -295,8 +293,7 @@
   (realized)
   (shape)
   (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
-  (origs (ki (3 0)) (ki-0 (2 0)))
-  (ugens))
+  (origs (ki (3 0)) (ki-0 (2 0))))
 
 (defskeleton pca
   (vars (t a a-0 text) (ki kp ke km ki-0 km-0 ke-0 km-1 akey))

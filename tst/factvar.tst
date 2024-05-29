@@ -27,7 +27,6 @@
   (label 0)
   (realized)
   (origs)
-  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton free-fact-var
@@ -42,8 +41,7 @@
   (realized)
   (shape)
   (maps ((0) ((k k) (n n))))
-  (origs)
-  (ugens))
+  (origs))
 
 (comment "Nothing left to do")
 
@@ -72,7 +70,6 @@
   (label 2)
   (unrealized (0 0))
   (origs)
-  (ugens)
   (comment "Not closed under rules"))
 
 (defskeleton free-fact-var
@@ -88,7 +85,6 @@
   (unrealized (0 0))
   (dead)
   (origs)
-  (ugens)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

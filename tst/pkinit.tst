@@ -39,7 +39,6 @@
   (label 0)
   (unrealized (0 1))
   (origs (n2 (0 0)) (n1 (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton pkinit
@@ -71,7 +70,6 @@
     ((0)
       ((c c) (as as) (t t) (n2 n2) (n1 n1) (tc tc) (tk tk) (tgt tgt)
         (k k) (ak ak))))
-  (origs (k (1 1)) (ak-0 (1 1)) (n2 (0 0)) (n1 (0 0)))
-  (ugens))
+  (origs (k (1 1)) (ak-0 (1 1)) (n2 (0 0)) (n1 (0 0))))
 
 (comment "Nothing left to do")

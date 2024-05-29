@@ -29,7 +29,6 @@
   (unrealized (0 1))
   (dead)
   (origs (x (0 0)))
-  (ugens)
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -62,7 +61,6 @@
   (realized)
   (shape)
   (maps ((0 1) ((k k) (z z))))
-  (origs (z (0 0)))
-  (ugens))
+  (origs (z (0 0))))
 
 (comment "Nothing left to do")

@@ -42,7 +42,6 @@
   (label 0)
   (unrealized (0 0))
   (origs)
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton denning-sacco
@@ -188,8 +187,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (ks ks) (k k) (ta ta))))
-  (origs (k (1 2)))
-  (ugens))
+  (origs (k (1 2))))
 
 (defskeleton denning-sacco
   (vars (k skey) (ta text) (b ks a name))
@@ -219,8 +217,7 @@
   (realized)
   (shape)
   (maps ((0) ((a b) (b b) (ks ks) (k k) (ta ta))))
-  (origs (k (1 2)))
-  (ugens))
+  (origs (k (1 2))))
 
 (defskeleton denning-sacco
   (vars (k skey) (ta text) (b ks a name))
@@ -250,8 +247,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (ks ks) (k k) (ta ta))))
-  (origs (k (1 2)))
-  (ugens))
+  (origs (k (1 2))))
 
 (defskeleton denning-sacco
   (vars (k skey) (ta text) (a b ks a-0 b-0 name))
@@ -287,8 +283,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (ks ks) (k k) (ta ta))))
-  (origs (k (1 2)))
-  (ugens))
+  (origs (k (1 2))))
 
 (defskeleton denning-sacco
   (vars (k skey) (ta text) (a b ks b-0 a-0 name))
@@ -324,8 +319,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (ks ks) (k k) (ta ta))))
-  (origs (k (1 2)))
-  (ugens))
+  (origs (k (1 2))))
 
 (defskeleton denning-sacco
   (vars (k skey) (ta text) (b ks b-0 name))
@@ -357,8 +351,7 @@
   (realized)
   (shape)
   (maps ((0) ((a b-0) (b b) (ks ks) (k k) (ta ta))))
-  (origs (k (1 2)))
-  (ugens))
+  (origs (k (1 2))))
 
 (defskeleton denning-sacco
   (vars (k skey) (ta text) (b ks b-0 name))
@@ -389,8 +382,7 @@
   (realized)
   (shape)
   (maps ((0) ((a b) (b b) (ks ks) (k k) (ta ta))))
-  (origs (k (1 2)))
-  (ugens))
+  (origs (k (1 2))))
 
 (defskeleton denning-sacco
   (vars (k skey) (ta text) (a b ks b-0 b-1 name))
@@ -426,7 +418,6 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (ks ks) (k k) (ta ta))))
-  (origs (k (1 2)))
-  (ugens))
+  (origs (k (1 2))))
 
 (comment "Nothing left to do")

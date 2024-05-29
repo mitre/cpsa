@@ -41,7 +41,6 @@
   (label 0)
   (unrealized (0 2))
   (origs ((invk k) (0 3)) (k (0 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton aikprot
@@ -112,8 +111,7 @@
   (realized)
   (shape)
   (maps ((0) ((mf mf) (pc pc) (i i) (x x) (ek ek) (k k) (srk srk))))
-  (origs ((invk k) (0 3)) (k (0 1)))
-  (ugens))
+  (origs ((invk k) (0 3)) (k (0 1))))
 
 (defskeleton aikprot
   (vars (srk skey) (ek k ek-0 ek-1 akey) (mf pc i x mf-0 mf-1 name))
@@ -186,7 +184,6 @@
   (label 5)
   (unrealized (0 0))
   (origs)
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton aikprot
@@ -311,8 +308,7 @@
   (realized)
   (shape)
   (maps ((0) ((i i) (x x) (pc pc) (k k))))
-  (origs (k (3 1)) ((invk k) (3 3)))
-  (ugens))
+  (origs (k (3 1)) ((invk k) (3 3))))
 
 (defskeleton aikprot
   (vars (srk skey) (k ek ek-0 akey) (i x pc mf mf-0 mf-1 name))

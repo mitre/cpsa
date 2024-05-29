@@ -45,7 +45,6 @@
   (label 0)
   (unrealized (0 1))
   (origs (n-a (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
@@ -90,8 +89,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k) (blob blob))))
-  (origs (k (1 1)) (n-a (0 0)) (n-b (2 1)))
-  (ugens))
+  (origs (k (1 1)) (n-a (0 0)) (n-b (2 1))))
 
 (comment "Nothing left to do")
 
@@ -131,7 +129,6 @@
   (label 3)
   (unrealized (0 2))
   (origs (n-b (0 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
@@ -235,7 +232,6 @@
   (label 7)
   (unrealized (0 2))
   (origs (n-b (0 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
@@ -414,8 +410,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
-  (origs (k (1 1)) (n-a (2 0)) (n-b (0 1)))
-  (ugens))
+  (origs (k (1 1)) (n-a (2 0)) (n-b (0 1))))
 
 (defskeleton yahalom
   (vars (blob blob-0 mesg) (k skey) (n-a n-b n-a-0 text)
@@ -996,7 +991,6 @@
   (label 31)
   (unrealized (0 0))
   (origs (k (0 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
@@ -1017,7 +1011,6 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
-  (origs (k (0 1)) (n-b (1 1)))
-  (ugens))
+  (origs (k (0 1)) (n-b (1 1))))
 
 (comment "Nothing left to do")

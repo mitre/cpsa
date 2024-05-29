@@ -34,7 +34,6 @@
   (label 0)
   (unrealized (0 1))
   (origs (n1 (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton mult-keys-sig-enc
@@ -78,8 +77,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
-  (origs (n1 (0 0)))
-  (ugens))
+  (origs (n1 (0 0))))
 
 (comment "Nothing left to do")
 
@@ -113,7 +111,6 @@
   (label 3)
   (unrealized (0 0) (0 2))
   (origs (n2 (0 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton mult-keys-sig-enc
@@ -156,8 +153,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n2 n2) (n1 n1))))
-  (origs (n2 (0 1)))
-  (ugens))
+  (origs (n2 (0 1))))
 
 (defskeleton mult-keys-sig-enc
   (vars (n2 n1 n1-0 text) (a b b-0 b-1 name))
@@ -182,8 +178,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n2 n2) (n1 n1))))
-  (origs (n2 (0 1)))
-  (ugens))
+  (origs (n2 (0 1))))
 
 (comment "Nothing left to do")
 
@@ -217,7 +212,6 @@
   (label 7)
   (unrealized (0 2))
   (origs (n2 (0 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton mult-keys-sig-enc
@@ -241,8 +235,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n2 n2) (n1 n1))))
-  (origs (n2 (0 1)))
-  (ugens))
+  (origs (n2 (0 1))))
 
 (comment "Nothing left to do")
 
@@ -276,7 +269,6 @@
   (label 9)
   (unrealized (0 0) (0 2))
   (origs (n2 (0 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton mult-keys-sig-enc
@@ -363,8 +355,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n2 n2) (n1 n1))))
-  (origs (n2 (0 1)))
-  (ugens))
+  (origs (n2 (0 1))))
 
 (defskeleton mult-keys-sig-enc
   (vars (n2 n1 text) (a b b-0 name))
@@ -416,8 +407,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (n2 n2) (n1 n1))))
-  (origs (n2 (0 1)))
-  (ugens))
+  (origs (n2 (0 1))))
 
 (defskeleton mult-keys-sig-enc
   (vars (n2 n1 n1-0 text) (a b b-0 name))

@@ -527,7 +527,6 @@
   (unrealized (1 0))
   (preskeleton)
   (origs (m (0 0)) (k (0 0)))
-  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton wang
@@ -559,7 +558,6 @@
   (parent 0)
   (unrealized (1 0))
   (origs (m (0 0)) (k (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wang
@@ -786,8 +784,7 @@
   (realized)
   (shape)
   (maps ((1 0) ((b b) (t t) (m m) (r r) (k k) (a a))))
-  (origs (m (1 0)) (k (1 0)))
-  (ugens))
+  (origs (m (1 0)) (k (1 0))))
 
 (defskeleton wang
   (vars (m data) (k skey) (r text) (b t a name))
@@ -889,8 +886,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((b b) (t t) (m m) (r r) (k k) (a a))))
-  (origs (m (0 0)) (k (0 0)))
-  (ugens))
+  (origs (m (0 0)) (k (0 0))))
 
 (comment "Nothing left to do")
 
@@ -1417,7 +1413,6 @@
   (unrealized (1 0))
   (preskeleton)
   (origs (m (0 0)) (k (0 0)))
-  (ugens)
   (comment "Not a skeleton"))
 
 (defskeleton wang
@@ -1449,7 +1444,6 @@
   (parent 7)
   (unrealized (1 0))
   (origs (m (0 0)) (k (0 0)))
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wang
@@ -1497,8 +1491,7 @@
   (realized)
   (shape)
   (maps ((1 0) ((b b) (t t) (m m) (r r) (k k) (a a))))
-  (origs (m (1 0)) (k (1 0)))
-  (ugens))
+  (origs (m (1 0)) (k (1 0))))
 
 (defskeleton wang
   (vars (m data) (k skey) (r text) (b t a name))
@@ -1604,8 +1597,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((b b) (t t) (m m) (r r) (k k) (a a))))
-  (origs (m (0 0)) (k (0 0)))
-  (ugens))
+  (origs (m (0 0)) (k (0 0))))
 
 (comment "Nothing left to do")
 
@@ -2139,7 +2131,6 @@
   (label 11)
   (unrealized (0 1))
   (origs)
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wang
@@ -2218,8 +2209,7 @@
   (realized)
   (shape)
   (maps ((0) ((b b) (t t) (m m) (r r) (k k) (a a))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton wang
   (vars (m data) (k skey) (r text) (b t a name))
@@ -2319,8 +2309,7 @@
   (realized)
   (shape)
   (maps ((0) ((b b) (t t) (m m) (r r) (k k) (a a))))
-  (origs)
-  (ugens))
+  (origs))
 
 (comment "Nothing left to do")
 
@@ -2857,7 +2846,6 @@
   (label 14)
   (unrealized (0 2))
   (origs)
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wang
@@ -2939,8 +2927,7 @@
   (realized)
   (shape)
   (maps ((0) ((b b) (t t) (m m) (r r) (k k) (a a))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton wang
   (vars (m data) (k skey) (r text) (b t a name))
@@ -3043,8 +3030,7 @@
   (realized)
   (shape)
   (maps ((0) ((b b) (t t) (m m) (r r) (k k) (a a))))
-  (origs)
-  (ugens))
+  (origs))
 
 (comment "Nothing left to do")
 
@@ -3591,7 +3577,6 @@
   (label 17)
   (unrealized (0 1) (0 3))
   (origs)
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wang
@@ -3683,8 +3668,7 @@
   (realized)
   (shape)
   (maps ((0) ((b b) (t t) (m m) (r r) (k k) (a a))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton wang
   (vars (m data) (k skey) (r text) (b t a name))
@@ -3797,8 +3781,7 @@
   (realized)
   (shape)
   (maps ((0) ((b b) (t t) (m m) (r r) (k k) (a a))))
-  (origs)
-  (ugens))
+  (origs))
 
 (comment "Nothing left to do")
 
@@ -4332,7 +4315,6 @@
   (label 20)
   (unrealized (0 0))
   (origs)
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wang
@@ -4401,8 +4383,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (t t) (m m) (r r) (k k) (b b))))
-  (origs)
-  (ugens))
+  (origs))
 
 (comment "Nothing left to do")
 
@@ -4986,7 +4967,6 @@
   (label 22)
   (unrealized (0 0))
   (origs)
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wang
@@ -5105,8 +5085,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (t t) (m m) (r r) (k k) (b b))))
-  (origs)
-  (ugens))
+  (origs))
 
 (comment "Nothing left to do")
 
@@ -5640,7 +5619,6 @@
   (label 24)
   (unrealized (0 0) (0 3))
   (origs)
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wang
@@ -5917,8 +5895,7 @@
               (cat "h" a b t (enc "h" (cat "h" (enc m k)))
                 (enc "h" (cat "h" k)))) k r (pubk "encr" t)))
         (x (enc "h" (cat "h" k))))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton wang
   (vars (m data) (k skey) (r text) (a t b name))
@@ -6050,8 +6027,7 @@
               (cat "h" a b t (enc "h" (cat "h" (enc m k)))
                 (enc "h" (cat "h" k)))) k r (pubk "encr" t)))
         (x (enc "h" (cat "h" k))))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton wang
   (vars (m data) (k skey) (r text) (a t b name))
@@ -6193,8 +6169,7 @@
               (cat "h" a b t (enc "h" (cat "h" (enc m k)))
                 (enc "h" (cat "h" k)))) k r (pubk "encr" t)))
         (x (enc "h" (cat "h" k))))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton wang
   (vars (m data) (k skey) (r r-0 text) (a t b name))
@@ -6354,8 +6329,7 @@
               (cat "h" a b t (enc "h" (cat "h" (enc m k)))
                 (enc "h" (cat "h" k)))) k r (pubk "encr" t)))
         (x (enc "h" (cat "h" k))))))
-  (origs)
-  (ugens))
+  (origs))
 
 (comment "Nothing left to do")
 
@@ -6870,7 +6844,6 @@
   (label 30)
   (unrealized (0 0))
   (origs)
-  (ugens)
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton wang
@@ -6901,8 +6874,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (t t) (y y) (x x))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton wang
   (vars (y mesg) (k skey) (r text) (a b t name))
@@ -6954,8 +6926,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (t t) (y y) (x (enc "h" (cat "h" k))))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton wang
   (vars (y mesg) (k skey) (r text) (a b t name))
@@ -7007,8 +6978,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (t t) (y y) (x (enc "h" (cat "h" k))))))
-  (origs)
-  (ugens))
+  (origs))
 
 (comment "Nothing left to do")
 
@@ -7520,7 +7490,6 @@
   (label 34)
   (unrealized (0 0))
   (origs)
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wang
@@ -7573,8 +7542,7 @@
     ((0)
       ((y (enc "h" (cat "h" (enc m k)))) (x (enc "h" (cat "h" k))) (a a)
         (b b) (t t))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton wang
   (vars (m data) (k skey) (r text) (a b t name))
@@ -7636,8 +7604,7 @@
     ((0)
       ((y (enc "h" (cat "h" (enc m k)))) (x (enc "h" (cat "h" k))) (a a)
         (b b) (t t))))
-  (origs)
-  (ugens))
+  (origs))
 
 (comment "Nothing left to do")
 
@@ -8167,7 +8134,6 @@
   (label 37)
   (unrealized (0 0) (0 1))
   (origs)
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wang
@@ -8349,8 +8315,7 @@
     ((0)
       ((a a) (b b) (t t) (r r) (k k)
         (y (enc "h" (cat "h" (enc m k)))))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton wang
   (vars (m data) (k skey) (r text) (a b t name))
@@ -8432,8 +8397,7 @@
     ((0)
       ((a a) (b b) (t t) (r r) (k k)
         (y (enc "h" (cat "h" (enc m k)))))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton wang
   (vars (m data) (k skey) (r text) (a b t name))
@@ -8525,8 +8489,7 @@
     ((0)
       ((a a) (b b) (t t) (r r) (k k)
         (y (enc "h" (cat "h" (enc m k)))))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton wang
   (vars (m data) (k skey) (r r-0 text) (a b t name))
@@ -8636,8 +8599,7 @@
     ((0)
       ((a a) (b b) (t t) (r r) (k k)
         (y (enc "h" (cat "h" (enc m k)))))))
-  (origs)
-  (ugens))
+  (origs))
 
 (comment "Nothing left to do")
 
@@ -9167,7 +9129,6 @@
   (label 43)
   (unrealized (0 0) (0 1))
   (origs)
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wang
@@ -9349,8 +9310,7 @@
     ((0)
       ((a a) (b b) (t t) (r r) (k k)
         (y (enc "h" (cat "h" (enc m k)))))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton wang
   (vars (m data) (k skey) (r text) (a b t name))
@@ -9432,8 +9392,7 @@
     ((0)
       ((a a) (b b) (t t) (r r) (k k)
         (y (enc "h" (cat "h" (enc m k)))))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton wang
   (vars (m data) (k skey) (r text) (a b t name))
@@ -9525,8 +9484,7 @@
     ((0)
       ((a a) (b b) (t t) (r r) (k k)
         (y (enc "h" (cat "h" (enc m k)))))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton wang
   (vars (m data) (k skey) (r r-0 text) (a b t name))
@@ -9636,7 +9594,6 @@
     ((0)
       ((a a) (b b) (t t) (r r) (k k)
         (y (enc "h" (cat "h" (enc m k)))))))
-  (origs)
-  (ugens))
+  (origs))
 
 (comment "Nothing left to do")

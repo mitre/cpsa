@@ -39,7 +39,6 @@
   (label 0)
   (unrealized (0 2))
   (origs (nb (0 1)))
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton or
@@ -151,8 +150,7 @@
   (realized)
   (shape)
   (maps ((0) ((nb nb) (s s) (a a) (b b) (k k) (m m) (x x) (y y))))
-  (origs (k (1 1)) (nb (0 1)))
-  (ugens))
+  (origs (k (1 1)) (nb (0 1))))
 
 (defskeleton or
   (vars (x y mesg) (k skey) (nb m text) (s a name))
@@ -174,8 +172,7 @@
   (realized)
   (shape)
   (maps ((0) ((nb nb) (s s) (a a) (b a) (k k) (m m) (x x) (y y))))
-  (origs (k (1 1)) (nb (0 1)))
-  (ugens))
+  (origs (k (1 1)) (nb (0 1))))
 
 (defskeleton or
   (vars (x y x-0 mesg) (k skey) (nb m na text) (s a name))
@@ -200,8 +197,7 @@
   (realized)
   (shape)
   (maps ((0) ((nb nb) (s s) (a a) (b a) (k k) (m m) (x x) (y y))))
-  (origs (k (1 1)) (nb (0 1)))
-  (ugens))
+  (origs (k (1 1)) (nb (0 1))))
 
 (defskeleton or
   (vars (x y mesg) (k skey) (nb m nb-0 text) (s a name))
@@ -225,8 +221,7 @@
   (realized)
   (shape)
   (maps ((0) ((nb nb) (s s) (a a) (b a) (k k) (m m) (x x) (y y))))
-  (origs (k (1 1)) (nb (0 1)))
-  (ugens))
+  (origs (k (1 1)) (nb (0 1))))
 
 (defskeleton or
   (vars (x y x-0 mesg) (k skey) (nb m nb-0 text) (s a name))
@@ -251,7 +246,6 @@
   (realized)
   (shape)
   (maps ((0) ((nb nb) (s s) (a a) (b a) (k k) (m m) (x x) (y y))))
-  (origs (k (1 1)) (nb (0 1)))
-  (ugens))
+  (origs (k (1 1)) (nb (0 1))))
 
 (comment "Nothing left to do")

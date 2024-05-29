@@ -40,7 +40,6 @@
   (label 0)
   (unrealized (1 2))
   (origs (gy (1 1)) (gx (0 0)) (n (0 2)))
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dh_mim
@@ -60,8 +59,7 @@
   (shape)
   (maps
     ((0 1) ((n n) (gx gx) (gy gy) (dhkey dhkey) (gy-0 gy) (gx-0 gx))))
-  (origs (n (0 2)) (gx (0 0)) (gy (1 1)))
-  (ugens))
+  (origs (n (0 2)) (gx (0 0)) (gy (1 1))))
 
 (defskeleton dh_mim
   (vars (dhkey skey) (n text) (gx gy gy-0 gx-0 akey))
@@ -199,7 +197,6 @@
   (maps
     ((0 1)
       ((n n) (gx gx) (gy gy) (dhkey dhkey) (gy-0 gy-0) (gx-0 gx-0))))
-  (origs (gy (1 1)) (gx (0 0)) (n (0 2)))
-  (ugens))
+  (origs (gy (1 1)) (gx (0 0)) (n (0 2))))
 
 (comment "Nothing left to do")

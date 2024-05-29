@@ -22,8 +22,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((k k) (a a))))
-  (origs (k (0 0)))
-  (ugens))
+  (origs (k (0 0))))
 
 (comment "Nothing left to do")
 
@@ -47,7 +46,6 @@
   (label 1)
   (unrealized (1 0))
   (origs (k (0 0)))
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton weird
@@ -64,8 +62,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((k k) (a a))))
-  (origs (k (0 0)))
-  (ugens))
+  (origs (k (0 0))))
 
 (defskeleton weird
   (vars (k skey) (a name))
@@ -94,8 +91,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((k k) (a a))))
-  (origs (k (0 0)))
-  (ugens))
+  (origs (k (0 0))))
 
 (comment "Nothing left to do")
 
@@ -121,8 +117,7 @@
   (realized)
   (shape)
   (maps ((0 1) ((k k) (a a))))
-  (origs (k (0 0)))
-  (ugens))
+  (origs (k (0 0))))
 
 (comment "Nothing left to do")
 

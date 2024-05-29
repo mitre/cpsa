@@ -86,7 +86,6 @@
   (label 3)
   (unrealized (0 1))
   (origs)
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton uniqgentest
@@ -102,8 +101,7 @@
   (realized)
   (shape)
   (maps ((0) ((k k) (a a))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton uniqgentest
   (vars (k skey) (a name))
@@ -133,8 +131,7 @@
   (realized)
   (shape)
   (maps ((0) ((k k) (a a))))
-  (origs)
-  (ugens))
+  (origs))
 
 (defskeleton uniqgentest
   (vars (k skey) (a name))
@@ -151,7 +148,6 @@
   (realized)
   (shape)
   (maps ((0) ((k k) (a a))))
-  (origs)
-  (ugens))
+  (origs))
 
 (comment "Nothing left to do")

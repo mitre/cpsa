@@ -32,7 +32,6 @@
   (label 0)
   (unrealized (0 1) (0 3))
   (origs (K (0 2)) (a (0 0)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton uncarried-keys
@@ -74,8 +73,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (A A) (B B) (K K))))
-  (origs (K (0 2)) (a (0 0)))
-  (ugens))
+  (origs (K (0 2)) (a (0 0))))
 
 (defskeleton uncarried-keys
   (vars (a text) (K akey) (A B name))
@@ -95,8 +93,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (A A) (B B) (K K))))
-  (origs (K (0 2)) (a (0 0)))
-  (ugens))
+  (origs (K (0 2)) (a (0 0))))
 
 (defskeleton uncarried-keys
   (vars (a text) (A B name))
@@ -116,8 +113,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (A A) (B B) (K (pubk A)))))
-  (origs ((pubk A) (0 2)) (a (0 0)))
-  (ugens))
+  (origs ((pubk A) (0 2)) (a (0 0))))
 
 (defskeleton uncarried-keys
   (vars (a text) (K akey) (A B name))

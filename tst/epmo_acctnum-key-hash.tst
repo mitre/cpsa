@@ -97,7 +97,6 @@
   (label 0)
   (unrealized (0 2))
   (origs (nm (0 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -298,8 +297,7 @@
     ((0)
       ((b b) (m m) (c c) (nm nm) (nc nc) (nb nb) (goods goods)
         (price price))))
-  (origs (nc (2 0)) (nm (0 1)) (nb (1 1)))
-  (ugens))
+  (origs (nc (2 0)) (nm (0 1)) (nb (1 1))))
 
 (defskeleton epmo_acctnum
   (vars (nm nc nb price acctnum goods nm-0 price-0 text) (m c b name))
@@ -475,7 +473,6 @@
   (label 9)
   (unrealized (0 2))
   (origs (nb (0 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -856,8 +853,7 @@
     ((0)
       ((b b) (m m) (c c) (nm nm) (nb nb) (nc nc) (acctnum acctnum)
         (price price))))
-  (origs (nc (2 0)) (nm (1 1)) (nb (0 1)))
-  (ugens))
+  (origs (nc (2 0)) (nm (1 1)) (nb (0 1))))
 
 (defskeleton epmo_acctnum
   (vars (nm nb nc acctnum price acctnum-0 goods nm-0 price-0 text)
