@@ -338,26 +338,26 @@ displayOperation :: Preskel -> Context -> [SExpr ()] -> [SExpr ()]
 displayOperation k ctx rest =
     case operation k of
       New -> rest
-      Contracted subst cause ->
+      Contracted _ subst cause ->
           let substitution = displaySubst ctx subst in
           displayCause (L () (S () "contracted" : substitution)) cause
-      Displaced s s' role height cause ->
+      Displaced _ s s' role height cause ->
           displayCause
           (L () [S () "displaced", N () s, N () s', S () role, N () height])
           cause
-      AddedStrand role height cause ->
+      AddedStrand _ role height cause ->
           displayCause
           (L () [S () "added-strand", S () role, N () height]) cause
-      AddedListener t cause ->
+      AddedListener _ t cause ->
           displayCause
           (L () [S () "added-listener", displayOpCmt ctx $ CM $ Plain t]) cause
-      AddedAbsence t1 t2 cause ->
+      AddedAbsence _ t1 t2 cause ->
           displayCause (L () [S () "added-absence", displayOpCmt ctx $ TM t1,
                                 displayOpCmt ctx $ TM t2]) cause
-      Generalized method ->
+      Generalized _ method ->
           let desc = displayMethod ctx method in
           L () (S () "operation" : S () "generalization" : desc) : rest
-      Collapsed s s' ->
+      Collapsed _ s s' ->
           let desc = [N () s, N () s'] in
           L () (S () "operation" : S () "collapsed" : desc) : rest
     where

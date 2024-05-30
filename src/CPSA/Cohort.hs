@@ -472,7 +472,7 @@ chanSolveNode k n ct =
 
 mgs :: [(Preskel, [Sid])] -> [Preskel]
 mgs cohort =
-  reverse $ map fst $ loop cohort []
+  reverse $ map recordMap $ loop cohort []
   where
     loop [] acc = acc
     loop (kphi : cohort) acc
@@ -483,6 +483,7 @@ mgs cohort =
         let ans = any (not. null . homomorphism k' k)
                   (composeFactors (strandids k) (strandids k') phi phi') in
         ans
+    recordMap (k, phi) = updateStrandMap phi k
 
 -- Given two permutations p and p', with ranges r and r', this
 -- function returns the list of permutations p'' such that
@@ -762,7 +763,7 @@ maximize k =
 
 maximize :: Preskel -> [Preskel]
 maximize k =
-    iter $ generalize k
+    iter $ map recordMap $ generalize k
     where
       iter [] = []
       iter ((k',mapping) : rest) =
@@ -771,6 +772,7 @@ maximize k =
             -- Since specialization now simplifies, the ks are
             -- automatically closed under the rules.
             ks -> ks
+      recordMap (k, sm) = (updateStrandMap sm k, sm)
 
 -- Test to see if realized skeleton k is a specialization of
 -- preskeleton k' using the given strand mapping.  Returns the

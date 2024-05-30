@@ -19,6 +19,7 @@ module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     inheritRnon, inheritRpnon, inheritRunique, inheritRuniqgen, inheritRabsent,
     inheritRconf, inheritRauth, addListener, addBaseListener, addAbsence,
     Cause (..), Direction (..), Method (..), Operation (..),
+    getStrandMap, updateStrandMap,
     operation, krules, pprob, prob, homomorphism, toSkeleton, generalize,
     collapse, sat, unSatReport, FTerm (..), Fact (..), simplify, rewrite,
     localSignal, rewriteUnaryOneOnce, nodePairsOfSkel, applyLeadsTo) where
@@ -482,14 +483,39 @@ data Method
 -- name and instance height.
 data Operation
     = New
-    | Contracted Subst Cause
-    | Displaced Int Int String Int Cause
-    | AddedStrand String Int Cause
-    | AddedListener Term Cause
-    | AddedAbsence Term Term Cause
-    | Generalized Method
-    | Collapsed Int Int
+    | Contracted [Sid] Subst Cause
+    | Displaced [Sid] Int Int String Int Cause
+    | AddedStrand [Sid] String Int Cause
+    | AddedListener [Sid] Term Cause
+    | AddedAbsence [Sid] Term Term Cause
+    | Generalized [Sid] Method
+    | Collapsed [Sid] Int Int
       deriving Show
+
+getStrandMap :: Operation -> [Sid]
+getStrandMap New = []
+getStrandMap (Contracted sm _ _) = sm
+getStrandMap (Displaced sm _ _ _ _ _) = sm
+getStrandMap (AddedStrand sm _ _ _) = sm
+getStrandMap (AddedListener sm _ _) = sm
+getStrandMap (AddedAbsence sm _ _ _) = sm
+getStrandMap (Generalized sm _) = sm
+getStrandMap (Collapsed sm _ _) = sm
+
+addStrandMap :: [Sid] -> Operation -> Operation
+addStrandMap _ New = New
+addStrandMap sm (Contracted _ s c) = Contracted sm s c
+addStrandMap sm (Displaced _ n1 n2 str n3 c) =
+    Displaced sm n1 n2 str n3 c
+addStrandMap sm (AddedStrand _ str n c) = AddedStrand sm str n c
+addStrandMap sm (AddedListener _ t c) = AddedListener sm t c
+addStrandMap sm (AddedAbsence _ t1 t2 c) = AddedAbsence sm t1 t2 c
+addStrandMap sm (Generalized _ m) = Generalized sm m
+addStrandMap sm (Collapsed _ n1 n2) = Collapsed sm n1 n2
+
+updateStrandMap :: [Sid] -> Preskel -> Preskel
+updateStrandMap sm k =
+    k { operation = addStrandMap sm $ operation k }
 
 -- Create a preskeleton.  The point of view field is not filled in.
 -- This version is exported for use by the loader.  This preskeleton
@@ -694,14 +720,14 @@ genOrigMatch _ (s,_) (s',_) | s == s' = True
 genOrigMatch _ _ _ | otherwise =
 --       z ("genOrigMatch:  Whoa, mismatch for " ++ (show u) ++ ", gen strand " ++
 --          (show (s,i)) ++ " vs orig strand " ++ (show (s',i')))
-      False 
+      False
 
 -- The (Term,Nodes) pairs (t,[n]) where either t or its key-inverse
--- originates uniquely at n.  
+-- originates uniquely at n.
 
 ugensPlusInverses :: Preskel -> [(Term, [Node])]
 ugensPlusInverses k =
-    concatMap 
+    concatMap
     (\(u,gNodes) -> maybe [(u,gNodes)]
                     (\u' -> [(u,gNodes), (u', gNodes)])
                     (invertKey u))
@@ -720,7 +746,6 @@ ugenGoodOrig k =
       oNode <- origs u ]
     where
       origs v = snd (originationNodes (strands k) v)
-
 
 -- A preskeleton is well formed if the ordering relation is acyclic,
 -- each atom declared to be uniquely-originating is carried in some
@@ -929,8 +954,8 @@ roleGenCheck :: Preskel -> Bool
 roleGenCheck k =
     all strandRoleGen (strands k) -- Check each strand
     where
-      strandRoleGen strand =   -- Check each role ugen used in strand      
-          all (uniqRoleGen strand) (filter nonNum (rugen $ role $ inst strand))     
+      strandRoleGen strand =   -- Check each role ugen used in strand
+          all (uniqRoleGen strand) (filter nonNum (rugen $ role $ inst strand))
       uniqRoleGen strand (ru, pos)
           | pos < height (inst strand) =
               case lookup (instantiate (env $ inst strand) ru) (kugen k) of
@@ -1338,17 +1363,17 @@ substInst subst gen i =
 
 substOper :: Subst -> Operation -> Operation
 substOper _ New = New
-substOper subst (Contracted s cause) =
-    Contracted (compose subst s) (substCause subst cause)
-substOper _ m@(Displaced _ _ _ _ _) = m
-substOper subst (AddedStrand role height cause) =
-    AddedStrand role height (substCause subst cause)
-substOper subst (AddedListener t cause) =
-    AddedListener (substitute subst t) (substCause subst cause)
-substOper subst (AddedAbsence t1 t2 cause) =
-    AddedAbsence (substitute subst t1) (substitute subst t2) (substCause subst cause)
-substOper _ m@(Generalized _) = m
-substOper _ m@(Collapsed _ _) = m
+substOper subst (Contracted sm s cause) =
+    Contracted sm (compose subst s) (substCause subst cause)
+substOper _ m@(Displaced _ _ _ _ _ _) = m
+substOper subst (AddedStrand sm role height cause) =
+    AddedStrand sm role height (substCause subst cause)
+substOper subst (AddedListener sm t cause) =
+    AddedListener sm (substitute subst t) (substCause subst cause)
+substOper subst (AddedAbsence sm t1 t2 cause) =
+    AddedAbsence sm (substitute subst t1) (substitute subst t2) (substCause subst cause)
+substOper _ m@(Generalized _ _) = m
+substOper _ m@(Collapsed _ _ _) = m
 
 substCause :: Subst -> Cause -> Cause
 substCause subst (Cause dir n t escape) =
@@ -1536,7 +1561,7 @@ enforceAbsence prs@(_, k, _, _, _) =
 -- When a value is uniq gen and a *different* strand receives it in
 -- non-carried position and then transmits in carried position, that's
 -- also a problem.  If k is an asymmetric key, its inverse is
--- generated at the same node at which it is uniquely generated.  
+-- generated at the same node at which it is uniquely generated.
 
 origGenChecks :: PRS -> Bool
 origGenChecks prs =
@@ -1544,7 +1569,6 @@ origGenChecks prs =
   any (\(_, l) -> length l > 1) (kugen (skel prs)) ||
   origUgenDiffStrand (korig (skel prs)) (ugensPlusInverses (skel prs)) ||
   not(ugenGoodOrig (skel prs))
-  
 
 -- When a value is both uniq orig and uniq gen, check to see if they
 -- start on different strands.
@@ -1559,10 +1583,9 @@ origUgenDiffStrand orig ((t, ns) : ugen) =
    (\t' -> case lookup t' orig of
              Nothing -> False
              Just ns' -> any (f ns') ns)
-   $ invertKey t)  
+   $ invertKey t)
     where
       f ns' (s, _) = any (\(s', _) -> s /= s') ns'
-    
 
 -- Hulling or Ensuring Unique Origination
 hull :: Bool -> PRS -> [PRS]
@@ -1967,7 +1990,7 @@ toSkeleton thin k =
 contract :: Preskel -> Node -> Cause -> (Gen, Subst) -> [Ans]
 contract k n cause subst =
     do
-      prs <- ksubst (k, k { operation = Contracted emptySubst cause,
+      prs <- ksubst (k, k { operation = Contracted [] emptySubst cause,
                             krules = [] },
                      n, strandids k, emptySubst) subst
       prs' <- skeletonize useThinningWhileSolving prs
@@ -1999,7 +2022,7 @@ substAndAugment :: Preskel -> Node -> Cause -> Role ->
                    (Gen, Subst) -> Instance -> [PRS]
 substAndAugment k n cause role subst inst =
     do
-      let operation' = AddedStrand (rname role) (height inst) cause
+      let operation' = AddedStrand [] (rname role) (height inst) cause
       prs <- ksubst (k, k { operation = operation',
                             krules = [] }, n,
                      strandids k, emptySubst) subst
@@ -2118,8 +2141,8 @@ unifyTraces (Out t : c) (Out t' : c') subst =
 unifyTraces _ _ _ = []
 
 addedToDisplaced :: Operation -> Int -> Int -> Operation
-addedToDisplaced (AddedStrand role height cause) s s' =
-    Displaced s s' role height cause
+addedToDisplaced (AddedStrand [] role height cause) s s' =
+    Displaced [] s s' role height cause
 addedToDisplaced _ _ _ = error "Strand.addedToDisplaced: Bad operation"
 
 -- Listener Augmentation
@@ -2135,7 +2158,7 @@ addListener k n cause t =
       k' = newPreskel gen' (shared k) insts' orderings' (knon k)
            (kpnon k) (kunique k) (kuniqgen k) (kabsent k) (kprecur k)
            (kgenSt k) (kconf k) (kauth k) (kfacts k) (kpriority k)
-           (AddedListener t cause) [] (pprob k) (prob k) (pov k)
+           (AddedListener [] t cause) [] (pprob k) (prob k) (pov k)
       (gen', inst) = mkListener (protocol k) (gen k) t
       insts' = insts k ++ [inst]
       pair = ((length (insts k), 1), n)
@@ -2164,7 +2187,7 @@ formerAddBaseListener k n cause t =
       k' = newPreskel gen'' (shared k) insts' orderings' (knon k)
            (kpnon k) (kunique k) (kuniqgen k) (kabsent k) precur'
            (kgenSt k) (kconf k) (kauth k) (kfacts k) (kpriority k)
-           (AddedListener t' cause) [] (pprob k) (prob k) (pov k)
+           (AddedListener [] t' cause) [] (pprob k) (prob k) (pov k)
       (gen', t') = basePrecursor (gen k) t
       (gen'', inst) = mkListener (protocol k) gen' t'
       insts' = insts k ++ [inst]
@@ -2184,7 +2207,7 @@ addAbsence k n cause x t =
       k' = newPreskel (gen k) (shared k) (insts k) (orderings k)
            (knon k) (kpnon k) (kunique k) (kuniqgen k) absent' (kprecur k)
            (kgenSt k) (kconf k) (kauth k) (kfacts k) (kpriority k)
-           (AddedAbsence x t cause) (krules k) (pprob k) (prob k) (pov k)
+           (AddedAbsence [] x t cause) (krules k) (pprob k) (prob k) (pov k)
       absent' = (x, t) : kabsent k
 
 -- Homomorphisms
@@ -2436,7 +2459,7 @@ deleteNodeRest :: Preskel -> Gen -> Node -> [Instance] -> [Pair] ->
 deleteNodeRest k gen n insts' orderings prob facts =
     newPreskel gen (shared k) insts' orderings non' pnon' unique'
     uniqgen' absent' precur' genSt' conf'
-    auth' facts prio' (Generalized (Deleted n)) [] (pprob k) prob (pov k)
+    auth' facts prio' (Generalized [] (Deleted n)) [] (pprob k) prob (pov k)
     where
       -- Drop nons that aren't mentioned anywhere
       non' = filter mentionedIn (knon k)
@@ -2548,7 +2571,7 @@ weaken k p orderings =
       k' = newPreskel (gen k) (shared k) (insts k) orderings (knon k)
            (kpnon k) (kunique k) (kuniqgen k) (kabsent k) (kprecur k)
            (kgenSt k) (kconf k) (kauth k) (kfacts k) (kpriority k)
-           (Generalized (Weakened p)) [] (pprob k) (prob k) (pov k)
+           (Generalized [] (Weakened p)) [] (pprob k) (prob k) (pov k)
 
 -- Origination assumption forgetting
 
@@ -2569,7 +2592,7 @@ forgetNonTerm k =
       delNon t =
           renewPreskel
           $ k { knon = L.delete t (knon k),
-                operation = Generalized (Forgot t), krules = [] }
+                operation = Generalized [] (Forgot t), krules = [] }
 
 skelNons :: Preskel -> [Term]
 skelNons k =
@@ -2586,7 +2609,7 @@ forgetPnonTerm k =
       delPnon t =
           renewPreskel
           $ k { kpnon = L.delete t (kpnon k),
-                operation = Generalized (Forgot t), krules = [] }
+                operation = Generalized [] (Forgot t), krules = [] }
 
 skelPnons :: Preskel -> [Term]
 skelPnons k =
@@ -2603,7 +2626,7 @@ forgetUniqueTerm k =
       delUniq t =
           renewPreskel
           $ k { kunique = L.delete t (kunique k),
-                operation = Generalized (Forgot t),
+                operation = Generalized [] (Forgot t),
                 krules = [] }
 
 skelUniques :: Preskel -> [Term]
@@ -2620,7 +2643,7 @@ forgetUniqgenTerm k =
     where
       delUgen t =
           k { kuniqgen = L.delete t (kuniqgen k),
-              operation = Generalized (Forgot t), krules = [] }
+              operation = Generalized [] (Forgot t), krules = [] }
 
 skelUniqgens :: Preskel -> [Term]
 skelUniqgens k =
@@ -2724,11 +2747,12 @@ changeLocations k env gen t locs =
       k0 = newPreskel gen' (shared k) insts' (orderings k) non pnon
            unique0 uniqgen0 (kabsent k) (kprecur k)
            (kgenSt k) (kconf k) (kauth k) (kfacts k) (kpriority k)
-           (Generalized (Separated t))
+           (Generalized [] (Separated t))
            [] (pprob k) (prob k) (pov k)
       k1 = newPreskel gen' (shared k) insts' (orderings k) non pnon
            unique1 uniqgen1 (kabsent k) (kprecur k) (kgenSt k)
-           (kconf k) (kauth k) facts (kpriority k) (Generalized (Separated t))
+           (kconf k) (kauth k) facts (kpriority k) (Generalized []
+                                                    (Separated t))
            [] (pprob k) (prob k) (pov k)
       (gen', insts') = changeStrands locs t gen (strands k)
       non = knon k ++ map (instantiate env) (knon k)
@@ -2791,11 +2815,11 @@ collapseStrands :: Preskel -> Sid -> Sid -> [Preskel]
 collapseStrands k s s' =
     do
       (s, s', subst) <- unifyStrands k s s'
-      prs <- ksubst (k, k { operation = Collapsed s s', krules = [] },
+      prs <- ksubst (k, k { operation = Collapsed [] s s', krules = [] },
                      (0, 0), strandids k, emptySubst) subst
       prs <- compress True prs s s'
-      prs <- skeletonize useThinningDuringCollapsing prs
-      return $ skel prs
+      prs@(_, _, _, sm, _) <- skeletonize useThinningDuringCollapsing prs
+      return $ updateStrandMap sm $ skel prs
 
 -- Facts
 
