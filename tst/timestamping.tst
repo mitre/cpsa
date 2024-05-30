@@ -72,6 +72,7 @@
   (operation encryption-test (added-strand server 2)
     (enc n alice h alice_1 h_1 t_1 (hash alice_1 h_1 t_1 l_1)
       (privk trent)) (0 1))
+  (strand-map 0)
   (traces
     ((send (cat h alice))
       (recv
@@ -107,6 +108,7 @@
   (operation encryption-test (added-strand origin 2)
     (enc n alice h alice_1 h_1 t_1 (hash alice_1 h_1 t_1 l_1)
       (privk trent)) (0 1))
+  (strand-map 0)
   (traces
     ((send (cat h alice))
       (recv
@@ -153,6 +155,7 @@
       (enc n-0 alice_1 h_1 alice_1-0 h_1-0 t_1
         (hash alice_1-0 h_1-0 t_1 l_1) (privk trent))
       (hash alice_1-0 h_1-0 t_1 l_1) (privk trent)) (1 0))
+  (strand-map 0 1)
   (traces
     ((send (cat h alice))
       (recv
@@ -220,6 +223,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand big-bang 1)
     (enc n (privk trent)) (1 0))
+  (strand-map 0 1)
   (traces
     ((send (cat h alice))
       (recv
@@ -265,6 +269,7 @@
   (uniq-orig n n-0)
   (operation encryption-test (added-strand big-bang 1)
     (enc n-0 (privk trent)) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((send (cat h alice))
       (recv
@@ -358,6 +363,7 @@
         (enc n alice h alice_1 h_1 t_1 (hash alice_1 h_1 t_1 l_1)
           (privk trent)) (hash alice_1 h_1 t_1 l_1) (privk trent))
       (pubk trent)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat h alice))
       (recv
@@ -427,6 +433,7 @@
     (enc alice h
       (enc n alice h alice_1 h_1 t_1 (hash alice_1 h_1 t_1 l_1)
         (privk trent)) (hash alice_1 h_1 t_1 l_1) (privk trent)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat h alice))
       (recv
@@ -504,6 +511,7 @@
     (enc alice h
       (enc n alice h alice_1 h_1 t_1 (hash alice_1 h_1 t_1 l_1)
         (privk trent)) (hash alice_1 h_1 t_1 l_1) (privk trent)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat h alice))
       (recv

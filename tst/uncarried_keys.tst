@@ -43,6 +43,7 @@
   (uniq-orig a K)
   (operation nonce-test (added-strand resp 2) a (0 1)
     (enc "start" a A B (pubk B)))
+  (strand-map 0)
   (traces
     ((send (enc "start" a A B (pubk B))) (recv (enc a A B (pubk A)))
       (send (enc a K (pubk B))) (recv (enc a A B K)))
@@ -62,6 +63,7 @@
   (non-orig (invk K) (privk B))
   (uniq-orig a K)
   (operation encryption-test (added-strand resp 4) (enc a A B K) (0 3))
+  (strand-map 0 1)
   (traces
     ((send (enc "start" a A B (pubk B))) (recv (enc a A B (pubk A)))
       (send (enc a K (pubk B))) (recv (enc a A B K)))
@@ -83,6 +85,7 @@
   (non-orig (invk K) (privk B))
   (uniq-orig a K)
   (operation encryption-test (displaced 1 2 resp 4) (enc a A B K) (0 3))
+  (strand-map 0 1)
   (traces
     ((send (enc "start" a A B (pubk B))) (recv (enc a A B (pubk A)))
       (send (enc a K (pubk B))) (recv (enc a A B K)))
@@ -104,6 +107,7 @@
   (uniq-orig a (pubk A))
   (operation encryption-test (displaced 2 1 resp 2) (enc a A B (pubk A))
     (0 3))
+  (strand-map 0 1)
   (traces
     ((send (enc "start" a A B (pubk B))) (recv (enc a A B (pubk A)))
       (send (enc a (pubk A) (pubk B))) (recv (enc a A B (pubk A))))
@@ -124,6 +128,7 @@
   (non-orig (invk K) (privk B))
   (uniq-orig a K)
   (operation encryption-test (added-listener K) (enc a A B K) (0 3))
+  (strand-map 0 1)
   (traces
     ((send (enc "start" a A B (pubk B))) (recv (enc a A B (pubk A)))
       (send (enc a K (pubk B))) (recv (enc a A B K)))

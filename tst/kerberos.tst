@@ -49,6 +49,7 @@
   (uniq-orig k)
   (operation encryption-test (added-strand keyserver 2)
     (enc t l k b (ltk a ks)) (0 1))
+  (strand-map 0)
   (traces
     ((send (cat a b))
       (recv (cat (enc t l k b (ltk a ks)) (enc t l k a (ltk b ks))))
@@ -71,6 +72,7 @@
   (uniq-orig k)
   (operation encryption-test (added-strand keyserver 2)
     (enc t l k b (ltk a ks)) (0 1))
+  (strand-map 0)
   (traces
     ((send (cat a b))
       (recv (cat (enc t l k b (ltk a ks)) (enc t l k a (ltk b ks))))
@@ -95,6 +97,7 @@
   (uniq-orig k)
   (operation encryption-test (added-strand resp 2) (enc t-prime k)
     (0 3))
+  (strand-map 0 1)
   (traces
     ((send (cat a b))
       (recv (cat (enc t l k b (ltk a ks)) (enc t l k a (ltk b ks))))
@@ -119,6 +122,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k)
   (operation encryption-test (added-listener k) (enc t-prime k) (0 3))
+  (strand-map 0 1)
   (traces
     ((send (cat a b))
       (recv (cat (enc t l k b (ltk a ks)) (enc t l k a (ltk b ks))))
@@ -145,6 +149,7 @@
   (uniq-orig k)
   (operation encryption-test (added-strand resp 2) (enc t-prime k)
     (0 3))
+  (strand-map 0 1)
   (traces
     ((send (cat a b))
       (recv (cat (enc t l k b (ltk a ks)) (enc t l k a (ltk b ks))))
@@ -169,6 +174,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k)
   (operation encryption-test (added-listener k) (enc t-prime k) (0 3))
+  (strand-map 0 1)
   (traces
     ((send (cat a b))
       (recv (cat (enc t l k b (ltk a ks)) (enc t l k a (ltk b ks))))
@@ -195,6 +201,7 @@
   (uniq-orig k)
   (operation encryption-test (displaced 3 0 init 3) (enc a-0 t-0 k)
     (2 0))
+  (strand-map 0 1 2)
   (traces
     ((send (cat a b))
       (recv (cat (enc t l k b (ltk a ks)) (enc t l k a (ltk b ks))))
@@ -223,6 +230,7 @@
   (uniq-orig k)
   (operation encryption-test (added-strand init 3) (enc a-0 t-0 k)
     (2 0))
+  (strand-map 0 1 2)
   (traces
     ((send (cat a b))
       (recv (cat (enc t l k b (ltk a ks)) (enc t l k a (ltk b ks))))
@@ -254,6 +262,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k)
   (operation encryption-test (added-listener k) (enc a-0 t-0 k) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((send (cat a b))
       (recv (cat (enc t l k b (ltk a ks)) (enc t l k a (ltk b ks))))
@@ -281,6 +290,7 @@
   (uniq-orig k)
   (operation encryption-test (displaced 3 0 init 3) (enc a-0 t-0 k)
     (2 0))
+  (strand-map 0 1 2)
   (traces
     ((send (cat a b))
       (recv (cat (enc t l k b (ltk a ks)) (enc t l k a (ltk b ks))))
@@ -309,6 +319,7 @@
   (uniq-orig k)
   (operation encryption-test (added-strand init 3) (enc a-0 t-0 k)
     (2 0))
+  (strand-map 0 1 2)
   (traces
     ((send (cat a b))
       (recv (cat (enc t l k b (ltk a ks)) (enc t l k a (ltk b ks))))
@@ -340,6 +351,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k)
   (operation encryption-test (added-listener k) (enc a-0 t-0 k) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((send (cat a b))
       (recv (cat (enc t l k b (ltk a ks)) (enc t l k a (ltk b ks))))
@@ -367,6 +379,7 @@
   (uniq-orig k)
   (operation nonce-test (contracted (b-0 b) (ks-0 ks) (l-0 l)) k (2 0)
     (enc t l k a (ltk b ks)) (enc t l k b (ltk a ks)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat a b))
       (recv (cat (enc t l k b (ltk a ks)) (enc t l k a (ltk b ks))))
@@ -397,6 +410,7 @@
   (operation nonce-test
     (contracted (a-0 a) (t-0 t) (b-1 b) (ks-1 ks) (l-1 l)) k (3 1)
     (enc t l k a (ltk b ks)) (enc t l k b (ltk a ks)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat a b))
       (recv (cat (enc t l k b (ltk a ks)) (enc t l k a (ltk b ks))))
@@ -428,6 +442,7 @@
   (operation nonce-test
     (contracted (a-0 b) (t-0 t) (b-1 a) (ks-1 ks) (l-1 l)) k (3 1)
     (enc t l k a (ltk b ks)) (enc t l k b (ltk a ks)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat a b))
       (recv (cat (enc t l k b (ltk a ks)) (enc t l k a (ltk b ks))))
@@ -457,6 +472,7 @@
   (uniq-orig k)
   (operation nonce-test (contracted (b-0 b) (ks-0 ks) (l-0 l)) k (2 0)
     (enc t l k a (ltk b ks)) (enc t l k b (ltk a ks)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat a b))
       (recv (cat (enc t l k b (ltk a ks)) (enc t l k a (ltk b ks))))
@@ -487,6 +503,7 @@
   (operation nonce-test
     (contracted (a-0 a) (t-0 t) (b-1 b) (ks-1 ks) (l-1 l)) k (3 1)
     (enc t l k a (ltk b ks)) (enc t l k b (ltk a ks)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat a b))
       (recv (cat (enc t l k b (ltk a ks)) (enc t l k a (ltk b ks))))
@@ -518,6 +535,7 @@
   (operation nonce-test
     (contracted (a-0 b) (t-0 t) (b-1 a) (ks-1 ks) (l-1 l)) k (3 1)
     (enc t l k a (ltk b ks)) (enc t l k b (ltk a ks)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat a b))
       (recv (cat (enc t l k b (ltk a ks)) (enc t l k a (ltk b ks))))
@@ -548,6 +566,7 @@
   (uniq-orig k)
   (operation nonce-test (contracted (b-0 b) (ks-0 ks) (l-0 l)) k (2 0)
     (enc t l k a (ltk b ks)) (enc t l k b (ltk a ks)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat a b))
       (recv (cat (enc t l k b (ltk a ks)) (enc t l k a (ltk b ks))))
@@ -580,6 +599,7 @@
   (uniq-orig k)
   (operation nonce-test (contracted (b-0 a) (ks-0 ks) (l-0 l)) k (2 0)
     (enc t l k a (ltk b ks)) (enc t l k b (ltk a ks)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat a b))
       (recv (cat (enc t l k b (ltk a ks)) (enc t l k a (ltk b ks))))
@@ -612,6 +632,7 @@
   (uniq-orig k)
   (operation nonce-test (contracted (b-0 b) (ks-0 ks) (l-0 l)) k (2 0)
     (enc t l k a (ltk b ks)) (enc t l k b (ltk a ks)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat a b))
       (recv (cat (enc t l k b (ltk a ks)) (enc t l k a (ltk b ks))))
@@ -644,6 +665,7 @@
   (uniq-orig k)
   (operation nonce-test (contracted (b-0 a) (ks-0 ks) (l-0 l)) k (2 0)
     (enc t l k a (ltk b ks)) (enc t l k b (ltk a ks)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat a b))
       (recv (cat (enc t l k b (ltk a ks)) (enc t l k a (ltk b ks))))
@@ -711,6 +733,7 @@
   (uniq-orig k)
   (operation encryption-test (added-strand keyserver 2)
     (enc t l k a (ltk b ks)) (0 0))
+  (strand-map 0)
   (traces
     ((recv (cat (enc a t k) (enc t l k a (ltk b ks))))
       (send (enc t-prime k)))
@@ -731,6 +754,7 @@
   (uniq-orig k)
   (operation encryption-test (added-strand keyserver 2)
     (enc t l k a (ltk b ks)) (0 0))
+  (strand-map 0)
   (traces
     ((recv (cat (enc a t k) (enc t l k a (ltk b ks))))
       (send (enc t-prime k)))
@@ -751,6 +775,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k)
   (operation encryption-test (added-strand init 3) (enc a t k) (0 0))
+  (strand-map 0 1)
   (traces
     ((recv (cat (enc a t k) (enc t l k a (ltk b ks))))
       (send (enc t-prime k)))
@@ -776,6 +801,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k)
   (operation encryption-test (added-listener k) (enc a t k) (0 0))
+  (strand-map 0 1)
   (traces
     ((recv (cat (enc a t k) (enc t l k a (ltk b ks))))
       (send (enc t-prime k)))
@@ -798,6 +824,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k)
   (operation encryption-test (added-strand init 3) (enc a t k) (0 0))
+  (strand-map 0 1)
   (traces
     ((recv (cat (enc a t k) (enc t l k a (ltk b ks))))
       (send (enc t-prime k)))
@@ -823,6 +850,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k)
   (operation encryption-test (added-listener k) (enc a t k) (0 0))
+  (strand-map 0 1)
   (traces
     ((recv (cat (enc a t k) (enc t l k a (ltk b ks))))
       (send (enc t-prime k)))
@@ -846,6 +874,7 @@
   (uniq-orig k)
   (operation nonce-test (contracted (b-0 b) (ks-0 ks) (l-0 l)) k (2 1)
     (enc t l k a (ltk b ks)) (enc t l k b (ltk a ks)))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat (enc a t k) (enc t l k a (ltk b ks))))
       (send (enc t-prime k)))
@@ -872,6 +901,7 @@
   (uniq-orig k)
   (operation nonce-test (contracted (b-0 b) (ks-0 ks) (l-0 l)) k (2 1)
     (enc t l k a (ltk b ks)) (enc t l k b (ltk a ks)))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat (enc a t k) (enc t l k a (ltk b ks))))
       (send (enc t-prime k)))

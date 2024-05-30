@@ -48,6 +48,7 @@
   (uniq-orig k ra rb)
   (operation encryption-test (added-strand keyserver 2)
     (enc b ra k tb (ltk a ks)) (0 1))
+  (strand-map 0)
   (traces
     ((send (cat a ra))
       (recv (cat (enc b ra k tb (ltk a ks)) (enc a k tb (ltk b ks)) rb))
@@ -71,6 +72,7 @@
   (uniq-orig k ra rb)
   (operation encryption-test (added-strand resp 2)
     (enc a ra tb (ltk b ks)) (1 0))
+  (strand-map 0 1)
   (traces
     ((send (cat a ra))
       (recv (cat (enc b ra k tb (ltk a ks)) (enc a k tb (ltk b ks)) rb))
@@ -134,6 +136,7 @@
   (uniq-orig k ra rb)
   (operation encryption-test (added-strand keyserver 2)
     (enc a k tb (ltk b ks)) (0 2))
+  (strand-map 0)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -156,6 +159,7 @@
   (uniq-orig k ra rb)
   (operation encryption-test (displaced 2 0 resp 2)
     (enc a ra-0 tb (ltk b ks)) (1 0))
+  (strand-map 0 1)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -178,6 +182,7 @@
   (uniq-orig k ra rb)
   (operation encryption-test (added-strand resp 2)
     (enc a ra-0 tb (ltk b ks)) (1 0))
+  (strand-map 0 1)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -204,6 +209,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb)
   (operation encryption-test (added-strand init 3) (enc rb k) (0 2))
+  (strand-map 0 1)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -230,6 +236,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb)
   (operation encryption-test (added-listener k) (enc rb k) (0 2))
+  (strand-map 0 1)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -256,6 +263,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb)
   (operation encryption-test (added-strand init 3) (enc rb k) (0 2))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -285,6 +293,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb)
   (operation encryption-test (added-listener k) (enc rb k) (0 2))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -311,6 +320,7 @@
   (uniq-orig k ra rb)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (2 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -338,6 +348,7 @@
   (uniq-orig k ra rb)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (3 1) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -366,6 +377,7 @@
   (uniq-orig k ra rb)
   (operation encryption-test (displaced 3 1 keyserver 2)
     (enc b ra-0 k tb (ltk a ks)) (2 1))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -394,6 +406,7 @@
   (uniq-orig k ra rb)
   (operation encryption-test (displaced 4 1 keyserver 2)
     (enc b ra-1 k tb (ltk a ks)) (3 1))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -463,6 +476,7 @@
   (uniq-orig k ra rb)
   (operation encryption-test (added-strand resp 2)
     (enc a ra tb (ltk b ks)) (0 0))
+  (strand-map 0)
   (traces
     ((recv (cat b rb (enc a ra tb (ltk b ks))))
       (send

@@ -54,6 +54,7 @@
   (uniq-gen gk)
   (operation encryption-test (added-strand keyserv 4)
     (enc s g nb gk (ltk s b)) (0 1))
+  (strand-map 0)
   (traces
     ((send (cat "req" s g (enc b nb (ltk s b))))
       (recv (cat "resp" b (enc s g nb gk (ltk s b)))))
@@ -79,6 +80,7 @@
   (uniq-gen gk)
   (operation encryption-test (added-strand keyserv 2)
     (enc s g nb gk (ltk s b)) (0 1))
+  (strand-map 0)
   (traces
     ((send (cat "req" s g (enc b nb (ltk s b))))
       (recv (cat "resp" b (enc s g nb gk (ltk s b)))))
@@ -143,6 +145,7 @@
   (uniq-gen gk)
   (operation encryption-test (added-strand sp 1) (enc b nb (ltk s b))
     (0 0))
+  (strand-map 0)
   (traces
     ((recv (cat "req" s g (enc b nb (ltk s b))))
       (send (cat "resp" b (enc s g nb gk (ltk s b))))
@@ -163,6 +166,7 @@
   (uniq-gen gk)
   (operation encryption-test (added-strand client 1)
     (enc b nb (ltk s b)) (0 0))
+  (strand-map 0)
   (traces
     ((recv (cat "req" s g (enc b nb (ltk s b))))
       (send (cat "resp" b (enc s g nb gk (ltk s b))))
@@ -183,6 +187,7 @@
   (uniq-gen gk)
   (operation encryption-test (displaced 2 1 sp 1) (enc a na (ltk s a))
     (0 2))
+  (strand-map 0 1)
   (traces
     ((recv (cat "req" s g (enc b nb (ltk s b))))
       (send (cat "resp" b (enc s g nb gk (ltk s b))))
@@ -207,6 +212,7 @@
   (uniq-gen gk)
   (operation encryption-test (added-strand sp 1) (enc a na (ltk s a))
     (0 2))
+  (strand-map 0 1)
   (traces
     ((recv (cat "req" s g (enc b nb (ltk s b))))
       (send (cat "resp" b (enc s g nb gk (ltk s b))))
@@ -232,6 +238,7 @@
   (uniq-gen gk)
   (operation encryption-test (added-strand client 1)
     (enc a na (ltk s a)) (0 2))
+  (strand-map 0 1)
   (traces
     ((recv (cat "req" s g (enc b nb (ltk s b))))
       (send (cat "resp" b (enc s g nb gk (ltk s b))))
@@ -257,6 +264,7 @@
   (uniq-gen gk)
   (operation encryption-test (added-strand sp 1) (enc a na (ltk s a))
     (0 2))
+  (strand-map 0 1)
   (traces
     ((recv (cat "req" s g (enc b nb (ltk s b))))
       (send (cat "resp" b (enc s g nb gk (ltk s b))))
@@ -281,6 +289,7 @@
   (uniq-gen gk)
   (operation encryption-test (displaced 2 1 client 1)
     (enc a na (ltk s a)) (0 2))
+  (strand-map 0 1)
   (traces
     ((recv (cat "req" s g (enc b nb (ltk s b))))
       (send (cat "resp" b (enc s g nb gk (ltk s b))))
@@ -305,6 +314,7 @@
   (uniq-gen gk)
   (operation encryption-test (added-strand client 1)
     (enc a na (ltk s a)) (0 2))
+  (strand-map 0 1)
   (traces
     ((recv (cat "req" s g (enc b nb (ltk s b))))
       (send (cat "resp" b (enc s g nb gk (ltk s b))))
@@ -369,6 +379,7 @@
   (uniq-gen gk)
   (operation encryption-test (added-strand keyserv 4)
     (enc s g na gk (ltk s a)) (0 1))
+  (strand-map 0)
   (traces
     ((send (cat "fetch" s g (enc a na (ltk s a))))
       (recv (cat "deliver" a (enc s g na gk (ltk s a)))))
@@ -394,6 +405,7 @@
   (uniq-gen gk)
   (operation encryption-test (added-strand keyserv 2)
     (enc s g na gk (ltk s a)) (0 1))
+  (strand-map 0)
   (traces
     ((send (cat "fetch" s g (enc a na (ltk s a))))
       (recv (cat "deliver" a (enc s g na gk (ltk s a)))))
@@ -470,6 +482,7 @@
   (uniq-gen gk)
   (operation encryption-test (added-strand keyserv 2)
     (enc s g nb gk (ltk s b)) (0 1))
+  (strand-map 0)
   (traces
     ((send (cat "req" s g (enc b nb (ltk s b))))
       (recv (cat "resp" b (enc s g nb gk (ltk s b)))))
@@ -548,6 +561,7 @@
   (uniq-gen gk)
   (operation encryption-test (added-strand sp 1) (enc b nb (ltk s b))
     (0 0))
+  (strand-map 0)
   (traces
     ((recv (cat "req" s g (enc b nb (ltk s b))))
       (send (cat "resp" b (enc s g nb gk (ltk s b))))
@@ -569,6 +583,7 @@
   (uniq-gen gk)
   (operation encryption-test (added-strand client 1)
     (enc a na (ltk s a)) (0 2))
+  (strand-map 0 1)
   (traces
     ((recv (cat "req" s g (enc b nb (ltk s b))))
       (send (cat "resp" b (enc s g nb gk (ltk s b))))
@@ -647,6 +662,7 @@
   (uniq-gen gk)
   (operation encryption-test (added-strand keyserv 4)
     (enc s g na gk (ltk s a)) (0 1))
+  (strand-map 0)
   (traces
     ((send (cat "fetch" s g (enc a na (ltk s a))))
       (recv (cat "deliver" a (enc s g na gk (ltk s a)))))

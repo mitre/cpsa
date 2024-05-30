@@ -117,6 +117,7 @@
   (uniq-orig nm nc nb)
   (operation encryption-test (added-strand bank 2)
     (enc (enc "hash" c nc nb nm price (pubk hash)) (privk b)) (0 2))
+  (strand-map 0)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price (pubk c)))
@@ -147,6 +148,7 @@
   (uniq-orig nm nc nb)
   (operation nonce-test (added-strand customer 3) nm (1 0)
     (enc nc nm m price (pubk c)))
+  (strand-map 0 1)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price (pubk c)))
@@ -181,6 +183,7 @@
   (operation nonce-test (contracted (b-0 b) (acctnum-0 acctnum)) nm
     (1 0) (enc nc nm m price (pubk c))
     (enc c nc nm acctnum price (pubk b)))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price (pubk c)))
@@ -220,6 +223,7 @@
   (operation nonce-test (added-strand bank 2) nm (1 0)
     (enc nc nm m price (pubk c))
     (enc c nc nm acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price (pubk c)))
@@ -257,6 +261,7 @@
   (uniq-orig nm nc nb)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price (pubk c)))
@@ -293,6 +298,7 @@
   (uniq-orig nm nc nb nm-0)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price (pubk c)))
@@ -333,6 +339,7 @@
   (uniq-orig nm nc nb)
   (operation nonce-test (displaced 4 2 customer 3) nm (3 0)
     (enc nc nm m price (pubk c)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price (pubk c)))
@@ -371,6 +378,7 @@
   (uniq-orig nm nc nb)
   (operation nonce-test (displaced 2 3 customer 5) nb (0 2)
     (enc "hash" c nc nb nm price (pubk hash)) (enc nc nb (pubk c)))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price (pubk c)))
@@ -418,6 +426,7 @@
   (uniq-orig nm nc nb nm-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm-0 m price-0 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price (pubk c)))
@@ -457,6 +466,7 @@
   (operation nonce-test (contracted (b-0 b) (acctnum-0 acctnum)) nm
     (1 0) (enc "hash" c nc nb-0 nm price (pubk hash-0))
     (enc nc nm m price (pubk c)) (enc c nc nm acctnum price (pubk b)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price (pubk c)))
@@ -501,6 +511,7 @@
     (enc "hash" c nc nb-0 nm price (pubk hash-0))
     (enc nc nm m price (pubk c))
     (enc c nc nm acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -548,6 +559,7 @@
     (enc "hash" c nc nb-0 nm price (pubk hash-0))
     (enc nc nm m price (pubk c))
     (enc c nc nm acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price (pubk c)))
@@ -599,6 +611,7 @@
   (uniq-orig nm nc nb nm-0)
   (operation nonce-test (displaced 2 4 customer 5) nb (0 2)
     (enc "hash" c nc nb nm price (pubk hash)) (enc nc nb (pubk c)))
+  (strand-map 0 1 3 2)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price (pubk c)))
@@ -645,6 +658,7 @@
   (uniq-orig nm nc nb)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price (pubk c)))
@@ -688,6 +702,7 @@
   (uniq-orig nm nc nb nm-0)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price (pubk c)))
@@ -733,6 +748,7 @@
     (1 0) (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -780,6 +796,7 @@
     (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -829,6 +846,7 @@
     (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 3 2)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -878,6 +896,7 @@
   (uniq-orig nm nc nb)
   (operation nonce-test (displaced 2 4 customer 5) nb (0 2)
     (enc "hash" c nc nb nm price (pubk hash)) (enc nc nb (pubk c)))
+  (strand-map 0 1 3 2)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price (pubk c)))
@@ -929,6 +948,7 @@
   (uniq-orig nm nc nb nm-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm-0 m price-0 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price (pubk c)))
@@ -972,6 +992,7 @@
   (uniq-orig nc nb nb-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -1015,6 +1036,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -1062,6 +1084,7 @@
   (uniq-orig nc nb nb-0)
   (operation nonce-test (displaced 5 2 customer 3) nb-0 (4 0)
     (enc nc nb-0 m price (pubk c)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -1118,6 +1141,7 @@
   (operation encryption-test (displaced 4 2 bank 2)
     (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0)) (privk b-0))
     (3 3))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -1172,6 +1196,7 @@
   (operation encryption-test (added-strand bank 2)
     (enc (enc "hash" c nc nb-0 nb-0 price (pubk hash-0)) (privk b-0))
     (3 3))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -1228,6 +1253,7 @@
   (uniq-orig nm nc nb nm-0)
   (operation nonce-test (displaced 2 5 customer 5) nb (0 2)
     (enc "hash" c nc nb nm price (pubk hash)) (enc nc nb (pubk c)))
+  (strand-map 0 1 4 2 3)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nm m price (pubk c)))
@@ -1279,6 +1305,7 @@
   (uniq-orig nc nb nb-0)
   (operation nonce-test (displaced 2 4 customer 5) nb (0 2)
     (enc "hash" c nc nb nb-0 price (pubk hash)) (enc nc nb (pubk c)))
+  (strand-map 0 1 3 2)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -1330,6 +1357,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm m price-0 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -1375,6 +1403,7 @@
     (1 0) (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc goods-0 (pubk m)) (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -1431,6 +1460,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -1492,6 +1522,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -1547,6 +1578,7 @@
   (uniq-orig nc nb nb-0)
   (operation nonce-test (displaced 5 3 customer 3) nb-0 (4 0)
     (enc nc nb-0 m price (pubk c)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -1603,6 +1635,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (displaced 2 5 customer 5) nb (0 2)
     (enc "hash" c nc nb nb-0 price (pubk hash)) (enc nc nb (pubk c)))
+  (strand-map 0 1 4 2 3)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -1654,6 +1687,7 @@
   (uniq-orig nc nb nb-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -1706,6 +1740,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -1761,6 +1796,7 @@
   (uniq-orig nc nb nb-0)
   (operation nonce-test (displaced 5 3 customer 3) nb-0 (4 0)
     (enc nc nb-0 m price (pubk c)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -1820,6 +1856,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc nc nm m price-0 (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -1886,6 +1923,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc nc nm m price-0 (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -1951,6 +1989,7 @@
   (operation nonce-test (contracted (acctnum-1 acctnum-0)) nb-0 (4 0)
     (enc nc nb-0 m price (pubk c))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -2010,6 +2049,7 @@
   (operation nonce-test (displaced 5 2 bank 2) nb-0 (4 0)
     (enc nc nb-0 m price (pubk c))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -2079,6 +2119,7 @@
   (operation nonce-test (added-strand bank 2) nb-0 (4 0)
     (enc nc nb-0 m price (pubk c))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -2140,6 +2181,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm m price-0 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -2199,6 +2241,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -2264,6 +2307,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -2339,6 +2383,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -2397,6 +2442,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -2455,6 +2501,7 @@
   (uniq-orig nc nb nb-0 nm nm-0)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -2512,6 +2559,7 @@
     (1 0) (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc goods-0 (pubk m)) (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -2576,6 +2624,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -2645,6 +2694,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -2708,6 +2758,7 @@
   (uniq-orig nc nb nb-0)
   (operation nonce-test (displaced 6 3 customer 3) nb-0 (5 0)
     (enc nc nb-0 m price (pubk c)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -2770,6 +2821,7 @@
   (uniq-orig nc nb nb-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -2832,6 +2884,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -2899,6 +2952,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc nc nm m price-0 (pubk c))
     (enc c nc goods-0 (pubk m)) (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -2974,6 +3028,7 @@
     (enc nc nb-0 m price (pubk c)) (enc nc nm m price-0 (pubk c))
     (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -3045,6 +3100,7 @@
   (uniq-orig nc nb nb-0 nm nm-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm-0 m price-1 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -3101,6 +3157,7 @@
   (uniq-orig nc nb nb-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -3161,6 +3218,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -3224,6 +3282,7 @@
   (uniq-orig nc nb nb-0)
   (operation nonce-test (displaced 6 3 customer 3) nb-0 (5 0)
     (enc nc nb-0 m price (pubk c)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -3291,6 +3350,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc nc nm m price-0 (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -3364,6 +3424,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc nc nm m price-0 (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -3439,6 +3500,7 @@
     (enc "hash" c nc nb-0 nb-1 price (pubk hash-1))
     (enc nc nb-1 m price (pubk c))
     (enc c nc nb-1 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -3507,6 +3569,7 @@
     (enc "hash" c nc nb-1 nb-0 price (pubk hash-1))
     (enc nc nb-0 m price (pubk c))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -3575,6 +3638,7 @@
     (enc "hash" c nc nb-1 nb-0 price (pubk hash-1))
     (enc nc nb-0 m price (pubk c))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -3645,6 +3709,7 @@
     (enc "hash" c nc nb-1 nb-0 price (pubk hash-1))
     (enc nc nb-0 m price (pubk c))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -3720,6 +3785,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm m price-0 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -3783,6 +3849,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -3849,6 +3916,7 @@
   (uniq-orig nc nb nb-0 nm nm-0)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -3912,6 +3980,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm m price-0 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -3979,6 +4048,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -4051,6 +4121,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -4133,6 +4204,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -4199,6 +4271,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -4264,6 +4337,7 @@
   (uniq-orig nc nb nb-0 nm nm-0)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -4330,6 +4404,7 @@
     (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -4398,6 +4473,7 @@
     (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -4468,6 +4544,7 @@
     (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -4542,6 +4619,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -4614,6 +4692,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -4691,6 +4770,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -4762,6 +4842,7 @@
     (enc "hash" c nc nb-1 nb-0 price (pubk hash-1))
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -4833,6 +4914,7 @@
     (enc "hash" c nc nb-1 nb-0 price (pubk hash-1))
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -4911,6 +4993,7 @@
   (uniq-orig nc nb nb-0 nm nm-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm-0 m price-1 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -4976,6 +5059,7 @@
   (uniq-orig nc nb nb-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -5045,6 +5129,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -5119,6 +5204,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc nc nm m price-0 (pubk c))
     (enc c nc goods-0 (pubk m)) (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -5202,6 +5288,7 @@
     (enc nc nb-0 m price (pubk c)) (enc nc nm m price-0 (pubk c))
     (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -5280,6 +5367,7 @@
   (uniq-orig nc nb nb-0 nm nm-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm-0 m price-1 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -5348,6 +5436,7 @@
     (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc goods-0 (pubk m)) (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -5420,6 +5509,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -5497,6 +5587,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -5567,6 +5658,7 @@
     (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -5638,6 +5730,7 @@
     (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -5711,6 +5804,7 @@
   (uniq-orig nc nb nb-0)
   (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
     (enc nc nb-0 m price (pubk c)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -5789,6 +5883,7 @@
   (uniq-orig nc nb nb-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -5858,6 +5953,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -5928,6 +6024,7 @@
   (uniq-orig nc nb nb-0)
   (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
     (enc nc nb-0 m price (pubk c)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -6005,6 +6102,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc nc nm m price-0 (pubk c))
     (enc c nc goods-0 (pubk m)) (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -6088,6 +6186,7 @@
     (enc nc nb-0 m price (pubk c)) (enc nc nm m price-0 (pubk c))
     (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -6169,6 +6268,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -6241,6 +6341,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -6318,6 +6419,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -6387,6 +6489,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm m price-0 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -6457,6 +6560,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -6531,6 +6635,7 @@
   (uniq-orig nc nb nb-0 nm nm-0)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -6600,6 +6705,7 @@
   (uniq-orig nc nb nb-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -6668,6 +6774,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -6738,6 +6845,7 @@
   (uniq-orig nc nb nb-0)
   (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
     (enc nc nb-0 m price (pubk c)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -6814,6 +6922,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc nc nm m price-0 (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -6896,6 +7005,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc nc nm m price-0 (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -6976,6 +7086,7 @@
     (enc "hash" c nc nb-0 nb-0 price (pubk hash-1))
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc goods-0 (pubk m)) (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -7048,6 +7159,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -7125,6 +7237,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -7195,6 +7308,7 @@
   (uniq-orig nc nb nb-0)
   (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
     (enc nc nb-0 m price (pubk c)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -7276,6 +7390,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm m price-0 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -7351,6 +7466,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c)) (enc nc nb-2 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -7432,6 +7548,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c)) (enc nc nb-2 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -7523,6 +7640,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c)) (enc nc nb-2 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -7597,6 +7715,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -7670,6 +7789,7 @@
   (uniq-orig nc nb nb-0 nm nm-0)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -7739,6 +7859,7 @@
   (uniq-orig nc nb nb-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -7808,6 +7929,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -7878,6 +8000,7 @@
   (uniq-orig nc nb nb-0)
   (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
     (enc nc nb-0 m price (pubk c)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -7955,6 +8078,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc nc nm m price-0 (pubk c))
     (enc c nc goods-0 (pubk m)) (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -8038,6 +8162,7 @@
     (enc nc nb-0 m price (pubk c)) (enc nc nm m price-0 (pubk c))
     (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -8121,6 +8246,7 @@
   (uniq-orig nc nb nb-0 nm nm-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm-0 m price-1 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -8193,6 +8319,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm m price-0 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -8268,6 +8395,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -8349,6 +8477,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -8440,6 +8569,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -8514,6 +8644,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -8587,6 +8718,7 @@
   (uniq-orig nc nb nb-0 nm nm-0)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -8656,6 +8788,7 @@
   (uniq-orig nc nb nb-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -8724,6 +8857,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -8794,6 +8928,7 @@
   (uniq-orig nc nb nb-0)
   (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
     (enc nc nb-0 m price (pubk c)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -8870,6 +9005,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc nc nm m price-0 (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -8952,6 +9088,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc nc nm m price-0 (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -9031,6 +9168,7 @@
   (uniq-orig nc nb nb-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -9107,6 +9245,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -9190,6 +9329,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c)) (enc nc nb-2 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc nc nm m price-0 (pubk c))
     (enc c nc goods-0 (pubk m)) (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -9281,6 +9421,7 @@
     (enc nc nb-0 m price (pubk c)) (enc nc nm m price-0 (pubk c))
     (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -9368,6 +9509,7 @@
   (uniq-orig nc nb nb-0 nm nm-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm-0 m price-1 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -9440,6 +9582,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm m price-0 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -9515,6 +9658,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c)) (enc nc nb-2 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -9596,6 +9740,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c)) (enc nc nb-2 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -9687,6 +9832,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c)) (enc nc nb-2 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -9761,6 +9907,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -9834,6 +9981,7 @@
   (uniq-orig nc nb nb-0 nm nm-0)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -9905,6 +10053,7 @@
   (uniq-orig nc nb nb-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -9981,6 +10130,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -10064,6 +10214,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc nc nm m price-0 (pubk c))
     (enc c nc goods-0 (pubk m)) (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -10155,6 +10306,7 @@
     (enc nc nb-0 m price (pubk c)) (enc nc nm m price-0 (pubk c))
     (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -10242,6 +10394,7 @@
   (uniq-orig nc nb nb-0 nm nm-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm-0 m price-1 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -10314,6 +10467,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm m price-0 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -10389,6 +10543,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -10470,6 +10625,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -10561,6 +10717,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -10635,6 +10792,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -10708,6 +10866,7 @@
   (uniq-orig nc nb nb-0 nm nm-0)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -10782,6 +10941,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm m price-0 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -10861,6 +11021,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -10942,6 +11103,7 @@
   (uniq-orig nc nb nb-0 nm nm-0)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -11018,6 +11180,7 @@
   (uniq-orig nc nb nb-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -11094,6 +11257,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -11177,6 +11341,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c)) (enc nc nb-2 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc nc nm m price-0 (pubk c))
     (enc c nc goods-0 (pubk m)) (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -11268,6 +11433,7 @@
     (enc nc nb-0 m price (pubk c)) (enc nc nm m price-0 (pubk c))
     (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -11355,6 +11521,7 @@
   (uniq-orig nc nb nb-0 nm nm-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm-0 m price-1 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -11429,6 +11596,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm m price-0 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -11507,6 +11675,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -11588,6 +11757,7 @@
   (uniq-orig nc nb nb-0 nm nm-0)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -11664,6 +11834,7 @@
   (uniq-orig nc nb nb-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -11740,6 +11911,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -11823,6 +11995,7 @@
     (enc nc nb-0 (pubk c)) (enc nc nb-1 (pubk c))
     (enc nc nb-0 m price (pubk c)) (enc nc nm m price-0 (pubk c))
     (enc c nc goods-0 (pubk m)) (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -11914,6 +12087,7 @@
     (enc nc nb-0 m price (pubk c)) (enc nc nm m price-0 (pubk c))
     (enc c nc goods-0 (pubk m))
     (enc c nc nb-0 acctnum-0 price (pubk b-0)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -12001,6 +12175,7 @@
   (uniq-orig nc nb nb-0 nm nm-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm-0 m price-1 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -12079,6 +12254,7 @@
   (uniq-orig nc nb nb-0 nm nm-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm-0 m price-1 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -12159,6 +12335,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm m price-0 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -12238,6 +12415,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -12319,6 +12497,7 @@
   (uniq-orig nc nb nb-0 nm nm-0)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -12401,6 +12580,7 @@
   (uniq-orig nc nb nb-0 nm nm-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm-0 m price-1 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -12480,6 +12660,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm m price-0 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -12558,6 +12739,7 @@
   (uniq-orig nc nb nb-0 nm)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -12639,6 +12821,7 @@
   (uniq-orig nc nb nb-0 nm nm-0)
   (operation nonce-test (added-strand merchant 2) nc (0 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -12721,6 +12904,7 @@
   (uniq-orig nc nb nb-0 nm nm-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm-0 m price-1 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -12804,6 +12988,7 @@
   (uniq-orig nc nb nb-0 nm nm-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (0 0)
     (enc nc nm-0 m price-1 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((recv (enc c nc goods (pubk m)))
       (send (enc nc nb-0 m price (pubk c)))
@@ -12968,6 +13153,7 @@
   (uniq-orig nm nb nc)
   (operation encryption-test (added-strand merchant 4)
     (enc (enc "hash" b m nb nm (pubk hash)) (privk m)) (0 2))
+  (strand-map 0)
   (traces
     ((recv (enc c nc nm acctnum price (pubk b)))
       (send
@@ -12998,6 +13184,7 @@
   (operation encryption-test (displaced 2 0 bank 2)
     (enc (enc "hash" c-0 nc-0 nb nm price-0 (pubk hash)) (privk b))
     (1 2))
+  (strand-map 0 1)
   (traces
     ((recv (enc c nc nm acctnum price (pubk b)))
       (send
@@ -13030,6 +13217,7 @@
   (uniq-orig nm nb nc)
   (operation nonce-test (added-strand customer 5) nb (1 2)
     (enc "hash" c nc nb nm price (pubk hash)) (enc nc nb (pubk c)))
+  (strand-map 0 1)
   (traces
     ((recv (enc c nc nm acctnum price (pubk b)))
       (send
@@ -13071,6 +13259,7 @@
   (uniq-orig nm nb nc)
   (operation nonce-test (contracted (m-0 m)) nm (2 1)
     (enc nc nm m price (pubk c)))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc c nc nm acctnum price (pubk b)))
       (send
@@ -13112,6 +13301,7 @@
   (uniq-orig nm nb nc)
   (operation encryption-test (displaced 3 0 bank 2)
     (enc (enc "hash" c nc nb nm price (pubk hash)) (privk b-0)) (2 3))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc c nc nm acctnum price (pubk b)))
       (send
@@ -13153,6 +13343,7 @@
   (uniq-orig nm nb nc)
   (operation nonce-test (contracted (goods-0 goods)) nc (1 0)
     (enc c nc goods (pubk m)))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc c nc nm acctnum price (pubk b)))
       (send
@@ -13197,6 +13388,7 @@
   (uniq-orig nm nb nc nm-0)
   (operation nonce-test (added-strand merchant 2) nc (1 0)
     (enc c nc goods-0 (pubk m)))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc c nc nm acctnum price (pubk b)))
       (send
@@ -13240,6 +13432,7 @@
   (uniq-orig nm nb nc)
   (operation nonce-test (displaced 3 2 customer 3) nm (0 0)
     (enc nc nm m price (pubk c)))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc c nc nm acctnum price (pubk b)))
       (send
@@ -13283,6 +13476,7 @@
   (uniq-orig nm nb nc nm-0)
   (operation nonce-test (contracted (goods-0 goods)) nc (1 0)
     (enc nc nm-0 m price-0 (pubk c)) (enc c nc goods (pubk m)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc nm acctnum price (pubk b)))
       (send
@@ -13325,6 +13519,7 @@
   (uniq-orig nm nb nc)
   (operation nonce-test (contracted (acctnum-0 acctnum)) nm (0 0)
     (enc nc nm m price (pubk c)) (enc c nc nm acctnum price (pubk b)))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc c nc nm acctnum price (pubk b)))
       (send
@@ -13373,6 +13568,7 @@
   (uniq-orig nm nb nc)
   (operation nonce-test (added-strand bank 2) nm (0 0)
     (enc nc nm m price (pubk c)) (enc c nc nm acctnum-0 price (pubk b)))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc c nc nm acctnum price (pubk b)))
       (send
@@ -13421,6 +13617,7 @@
   (uniq-orig nm nb nc nm-0)
   (operation nonce-test (displaced 4 2 customer 3) nm (0 0)
     (enc nc nm m price (pubk c)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc nm acctnum price (pubk b)))
       (send
@@ -13466,6 +13663,7 @@
   (uniq-orig nm nb nc)
   (operation nonce-test (displaced 4 2 customer 3) nm (3 0)
     (enc nc nm m price (pubk c)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc nm acctnum price (pubk b)))
       (send
@@ -13514,6 +13712,7 @@
   (uniq-orig nm nb nc nm-0)
   (operation nonce-test (contracted (acctnum-0 acctnum)) nm (0 0)
     (enc nc nm m price (pubk c)) (enc c nc nm acctnum price (pubk b)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc nm acctnum price (pubk b)))
       (send
@@ -13565,6 +13764,7 @@
   (uniq-orig nm nb nc nm-0)
   (operation nonce-test (added-strand bank 2) nm (0 0)
     (enc nc nm m price (pubk c)) (enc c nc nm acctnum-0 price (pubk b)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc nm acctnum price (pubk b)))
       (send
@@ -13616,6 +13816,7 @@
   (operation nonce-test (contracted (acctnum-0 acctnum)) nm (0 0)
     (enc "hash" c nc nb-0 nm price (pubk hash-0))
     (enc nc nm m price (pubk c)) (enc c nc nm acctnum price (pubk b)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc nm acctnum price (pubk b)))
       (send
@@ -13667,6 +13868,7 @@
   (operation nonce-test (displaced 4 3 bank 2) nm (0 0)
     (enc "hash" c nc nb-0 nm price (pubk hash-0))
     (enc nc nm m price (pubk c)) (enc c nc nm acctnum-0 price (pubk b)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc nb-0 acctnum price (pubk b)))
       (send
@@ -13720,6 +13922,7 @@
   (operation nonce-test (added-strand bank 2) nm (0 0)
     (enc "hash" c nc nb-0 nm price (pubk hash-0))
     (enc nc nm m price (pubk c)) (enc c nc nm acctnum-0 price (pubk b)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc nm acctnum price (pubk b)))
       (send
@@ -13781,6 +13984,7 @@
   (uniq-orig nm nb nc nm-0)
   (operation nonce-test (displaced 5 2 customer 3) nm (4 0)
     (enc nc nm m price (pubk c)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc nm acctnum price (pubk b)))
       (send
@@ -13833,6 +14037,7 @@
     (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc nb-0 acctnum price (pubk b)))
       (send
@@ -13889,6 +14094,7 @@
     (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc nb-0 acctnum-0 price (pubk b)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc c nc nb-0 acctnum price (pubk b)))
       (send
@@ -13945,6 +14151,7 @@
   (operation nonce-test (contracted (acctnum-0 acctnum)) nm (0 0)
     (enc "hash" c nc nb-0 nm price (pubk hash-0))
     (enc nc nm m price (pubk c)) (enc c nc nm acctnum price (pubk b)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc nm acctnum price (pubk b)))
       (send
@@ -14002,6 +14209,7 @@
     (enc "hash" c nc nb-0 nm-0 price (pubk hash-0))
     (enc nc nm-0 m price (pubk c))
     (enc c nc nm-0 acctnum-0 price (pubk b)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc nb-0 acctnum price (pubk b)))
       (send
@@ -14060,6 +14268,7 @@
   (operation nonce-test (added-strand bank 2) nm (0 0)
     (enc "hash" c nc nb-0 nm price (pubk hash-0))
     (enc nc nm m price (pubk c)) (enc c nc nm acctnum-0 price (pubk b)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc nm acctnum price (pubk b)))
       (send
@@ -14124,6 +14333,7 @@
   (uniq-orig nb nc nb-0)
   (operation nonce-test (displaced 5 2 customer 3) nb-0 (4 0)
     (enc nc nb-0 m price (pubk c)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc nb-0 acctnum price (pubk b)))
       (send
@@ -14189,6 +14399,7 @@
     (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc nb-0 acctnum price (pubk b)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc nb-0 acctnum price (pubk b)))
       (send
@@ -14250,6 +14461,7 @@
     (enc "hash" c nc nb-0 nb-0 price (pubk hash-0))
     (enc nc nb-0 (pubk c)) (enc nc nb-0 m price (pubk c))
     (enc c nc nb-0 acctnum-0 price (pubk b)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc c nc nb-0 acctnum price (pubk b)))
       (send
@@ -14312,6 +14524,7 @@
   (uniq-orig nb nc nm nb-0)
   (operation nonce-test (displaced 6 2 customer 3) nb-0 (5 0)
     (enc nc nb-0 m price (pubk c)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc c nc nb-0 acctnum price (pubk b)))
       (send

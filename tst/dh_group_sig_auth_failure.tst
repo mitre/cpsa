@@ -70,6 +70,7 @@
   (auth group-dist)
   (operation channel-test (added-strand group-init 1)
     (ch-msg group-dist (cat "Group id" group (exp (gen) alpha))) (0 0))
+  (strand-map 0)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -104,6 +105,7 @@
   (operation encryption-test (added-strand resp 3)
     (enc (exp (gen) (mul alpha x y (rec x-0))) (exp (gen) (mul alpha x))
       (privk b)) (0 2))
+  (strand-map 0 1)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul alpha x)) (privk a)))
@@ -142,6 +144,7 @@
   (operation channel-test (displaced 3 1 group-init 1)
     (ch-msg group-dist-0 (cat "Group id" group-0 (exp (gen) alpha-0)))
     (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -183,6 +186,7 @@
   (operation channel-test (added-strand group-init 1)
     (ch-msg group-dist-0 (cat "Group id" group-0 (exp (gen) alpha-0)))
     (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul alpha x)) (privk a)))
@@ -219,6 +223,7 @@
   (conf group-dist)
   (auth group-dist)
   (operation generalization weakened ((0 1) (2 0)))
+  (strand-map 0 1 2)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -265,6 +270,7 @@
   (conf group-dist group-dist-0)
   (auth group-dist group-dist-0)
   (operation generalization weakened ((0 1) (2 0)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul alpha x)) (privk a)))
@@ -305,6 +311,7 @@
   (conf group-dist group-dist-0)
   (auth group-dist group-dist-0)
   (operation generalization weakened ((1 0) (2 0)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul alpha x)) (privk a)))
@@ -401,6 +408,7 @@
   (auth group-dist)
   (operation channel-test (added-strand group-init 1)
     (ch-msg group-dist (cat "Group id" group (exp (gen) alpha))) (0 0))
+  (strand-map 0)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -434,6 +442,7 @@
   (auth group-dist group-dist-0)
   (operation encryption-test (added-strand init 2)
     (enc (exp (gen) (mul x alpha)) (privk a)) (0 1))
+  (strand-map 0 1)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -469,6 +478,7 @@
   (operation channel-test (displaced 3 1 group-init 1)
     (ch-msg group-dist-0 (cat "Group id" group-0 (exp (gen) alpha-0)))
     (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -506,6 +516,7 @@
   (operation channel-test (added-strand group-init 1)
     (ch-msg group-dist-0 (cat "Group id" group-0 (exp (gen) alpha-0)))
     (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha-0)) (privk a)))
@@ -542,6 +553,7 @@
   (operation encryption-test (displaced 2 3 init 4)
     (enc "final" (exp (gen) (mul alpha y)) (exp (gen) (mul alpha x-0))
       (privk a)) (0 3))
+  (strand-map 0 1 2)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul alpha x)) (privk a)))
@@ -593,6 +605,7 @@
   (operation encryption-test (added-strand init 4)
     (enc "final" (exp (gen) (mul alpha y)) (exp (gen) (mul alpha x))
       (privk a)) (0 3))
+  (strand-map 0 1 2)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul alpha x)) (privk a)))
@@ -642,6 +655,7 @@
   (operation encryption-test (displaced 2 4 init 4)
     (enc "final" (exp (gen) (mul y alpha)) (exp (gen) (mul x-0 alpha-0))
       (privk a)) (0 3))
+  (strand-map 0 1 3 2)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul alpha-0 x)) (privk a)))
@@ -691,6 +705,7 @@
   (operation encryption-test (added-strand init 4)
     (enc "final" (exp (gen) (mul y alpha)) (exp (gen) (mul x alpha-0))
       (privk a)) (0 3))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha-0)) (privk a)))
@@ -739,6 +754,7 @@
   (conf group-dist group-dist-0)
   (auth group-dist group-dist-0)
   (operation generalization weakened ((1 0) (3 0)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul alpha-0 x)) (privk a)))
@@ -836,6 +852,7 @@
   (auth group-dist)
   (operation channel-test (added-strand group-init 1)
     (ch-msg group-dist (cat "Group id" group (exp (gen) alpha))) (0 0))
+  (strand-map 0)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -869,6 +886,7 @@
   (operation encryption-test (added-strand resp 3)
     (enc (exp (gen) (mul alpha x y (rec x-0))) (exp (gen) (mul alpha x))
       (privk b)) (0 2))
+  (strand-map 0 1)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul alpha x)) (privk a)))
@@ -906,6 +924,7 @@
   (operation channel-test (displaced 3 1 group-init 1)
     (ch-msg group-dist-0 (cat "Group id" group-0 (exp (gen) alpha-0)))
     (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -946,6 +965,7 @@
   (operation channel-test (added-strand group-init 1)
     (ch-msg group-dist-0 (cat "Group id" group-0 (exp (gen) alpha-0)))
     (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul alpha x)) (privk a)))
@@ -983,6 +1003,7 @@
   (auth group-dist)
   (operation nonce-test (displaced 2 3 resp 5) n (0 4)
     (enc n (exp (gen) (mul y-0 x-0 alpha))))
+  (strand-map 0 1 2)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul alpha x)) (privk a)))
@@ -1023,6 +1044,7 @@
   (auth group-dist group-dist-0)
   (operation nonce-test (added-strand resp 5) n (0 4)
     (enc n (exp (gen) (mul y x alpha))))
+  (strand-map 0 1 2)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -1069,6 +1091,7 @@
   (auth group-dist)
   (operation nonce-test (added-listener (exp (gen) (mul y x alpha))) n
     (0 4) (enc n (exp (gen) (mul y x alpha))))
+  (strand-map 0 1 2)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -1115,6 +1138,7 @@
   (auth group-dist group-dist-0 group-dist-1)
   (operation nonce-test (added-strand resp 5) n (0 4)
     (enc n (exp (gen) (mul y x alpha-0))))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul alpha x)) (privk a)))
@@ -1166,6 +1190,7 @@
   (auth group-dist group-dist-0)
   (operation nonce-test (added-listener (exp (gen) (mul y x alpha-0))) n
     (0 4) (enc n (exp (gen) (mul y x alpha-0))))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul alpha x)) (privk a)))
@@ -1204,6 +1229,7 @@
   (conf group-dist)
   (auth group-dist)
   (operation generalization weakened ((0 1) (2 0)))
+  (strand-map 0 1 2)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul alpha x)) (privk a)))
@@ -1251,6 +1277,7 @@
   (auth group-dist group-dist-0)
   (operation nonce-test (added-strand resp 3)
     (exp (gen) (mul y x alpha)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -1300,6 +1327,7 @@
   (auth group-dist group-dist-0)
   (operation nonce-test (added-strand init 2)
     (exp (gen) (mul y x alpha)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -1345,6 +1373,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul y x)) alpha))
     (exp (gen) (mul y x alpha)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -1389,6 +1418,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul y alpha)) x))
     (exp (gen) (mul y x alpha)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -1433,6 +1463,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul x alpha)) y))
     (exp (gen) (mul y x alpha)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -1483,6 +1514,7 @@
   (auth group-dist group-dist-0 group-dist-1)
   (operation nonce-test (added-strand resp 3)
     (exp (gen) (mul y x alpha-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul alpha x)) (privk a)))
@@ -1539,6 +1571,7 @@
   (auth group-dist group-dist-0 group-dist-1)
   (operation nonce-test (added-strand init 2)
     (exp (gen) (mul y x alpha-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul alpha x)) (privk a)))
@@ -1589,6 +1622,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul y x)) alpha-0))
     (exp (gen) (mul y x alpha-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul alpha x)) (privk a)))
@@ -1638,6 +1672,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul y alpha-0)) x))
     (exp (gen) (mul y x alpha-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul alpha x)) (privk a)))
@@ -1687,6 +1722,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul x alpha-0)) y))
     (exp (gen) (mul y x alpha-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (send (enc (exp (gen) (mul alpha x)) (privk a)))
@@ -1780,6 +1816,7 @@
   (auth group-dist)
   (operation channel-test (added-strand group-init 1)
     (ch-msg group-dist (cat "Group id" group (exp (gen) alpha))) (0 0))
+  (strand-map 0)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -1811,6 +1848,7 @@
   (auth group-dist group-dist-0)
   (operation encryption-test (added-strand init 2)
     (enc (exp (gen) (mul x alpha)) (privk a)) (0 1))
+  (strand-map 0 1)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -1844,6 +1882,7 @@
   (operation channel-test (displaced 3 1 group-init 1)
     (ch-msg group-dist-0 (cat "Group id" group-0 (exp (gen) alpha-0)))
     (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -1880,6 +1919,7 @@
   (operation channel-test (added-strand group-init 1)
     (ch-msg group-dist-0 (cat "Group id" group-0 (exp (gen) alpha-0)))
     (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha-0)) (privk a)))
@@ -1914,6 +1954,7 @@
   (auth group-dist)
   (operation encryption-test (displaced 2 3 init 4)
     (enc n (exp (gen) (mul y-0 x-0 alpha))) (0 3))
+  (strand-map 0 1 2)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul alpha x)) (privk a)))
@@ -1959,6 +2000,7 @@
   (auth group-dist group-dist-0)
   (operation encryption-test (added-strand init 4)
     (enc n (exp (gen) (mul y x alpha))) (0 3))
+  (strand-map 0 1 2)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -2001,6 +2043,7 @@
   (operation encryption-test
     (added-listener (exp (gen) (mul y x alpha)))
     (enc n (exp (gen) (mul y x alpha))) (0 3))
+  (strand-map 0 1 2)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -2039,6 +2082,7 @@
   (auth group-dist group-dist-0)
   (operation encryption-test (displaced 2 4 init 4)
     (enc n (exp (gen) (mul y-0 x-0 alpha-0))) (0 3))
+  (strand-map 0 1 3 2)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul alpha-0 x)) (privk a)))
@@ -2083,6 +2127,7 @@
   (auth group-dist group-dist-0 group-dist-1)
   (operation encryption-test (added-strand init 4)
     (enc n (exp (gen) (mul y x alpha-0))) (0 3))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha-0)) (privk a)))
@@ -2130,6 +2175,7 @@
   (operation encryption-test
     (added-listener (exp (gen) (mul y x alpha-0)))
     (enc n (exp (gen) (mul y x alpha-0))) (0 3))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha-0)) (privk a)))
@@ -2170,6 +2216,7 @@
   (operation channel-test (displaced 4 1 group-init 1)
     (ch-msg group-dist-0 (cat "Group id" group-0 (exp (gen) alpha-0)))
     (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -2215,6 +2262,7 @@
   (operation channel-test (added-strand group-init 1)
     (ch-msg group-dist-0 (cat "Group id" group-0 (exp (gen) alpha-0)))
     (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -2259,6 +2307,7 @@
   (auth group-dist group-dist-0)
   (operation nonce-test (added-strand resp 3)
     (exp (gen) (mul y x alpha)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -2305,6 +2354,7 @@
   (auth group-dist group-dist-0)
   (operation nonce-test (added-strand init 2)
     (exp (gen) (mul y x alpha)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -2346,6 +2396,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul y x)) alpha))
     (exp (gen) (mul y x alpha)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -2386,6 +2437,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul y alpha)) x))
     (exp (gen) (mul y x alpha)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -2426,6 +2478,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul x alpha)) y))
     (exp (gen) (mul y x alpha)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -2471,6 +2524,7 @@
   (auth group-dist group-dist-0 group-dist-1)
   (operation nonce-test (added-strand resp 3)
     (exp (gen) (mul alpha-0 y)) (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul alpha-0 x)) (privk a)))
@@ -2522,6 +2576,7 @@
   (auth group-dist group-dist-0 group-dist-1)
   (operation nonce-test (added-strand init 2)
     (exp (gen) (mul alpha-0 y)) (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul alpha-0 x)) (privk a)))
@@ -2567,6 +2622,7 @@
   (auth group-dist group-dist-0)
   (operation nonce-test (added-listener (cat (exp (gen) alpha-0) y))
     (exp (gen) (mul alpha-0 y)) (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul alpha-0 x)) (privk a)))
@@ -2611,6 +2667,7 @@
   (auth group-dist group-dist-0)
   (operation nonce-test (added-listener (cat (exp (gen) y) alpha-0))
     (exp (gen) (mul alpha-0 y)) (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul alpha-0 x)) (privk a)))
@@ -2658,6 +2715,7 @@
   (operation channel-test (displaced 5 1 group-init 1)
     (ch-msg group-dist-1 (cat "Group id" group-1 (exp (gen) alpha-1)))
     (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha-0)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -2705,6 +2763,7 @@
   (operation channel-test (displaced 5 3 group-init 1)
     (ch-msg group-dist-1 (cat "Group id" group-1 (exp (gen) alpha-1)))
     (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha-0)) (privk a)))
@@ -2755,6 +2814,7 @@
   (operation channel-test (added-strand group-init 1)
     (ch-msg group-dist-1 (cat "Group id" group-1 (exp (gen) alpha-1)))
     (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha-0)) (privk a)))
@@ -2804,6 +2864,7 @@
   (auth group-dist group-dist-0 group-dist-1)
   (operation nonce-test (added-strand resp 3)
     (exp (gen) (mul y x alpha-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha-0)) (privk a)))
@@ -2856,6 +2917,7 @@
   (auth group-dist group-dist-0 group-dist-1)
   (operation nonce-test (added-strand init 2)
     (exp (gen) (mul y x alpha-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha-0)) (privk a)))
@@ -2902,6 +2964,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul y x)) alpha-0))
     (exp (gen) (mul y x alpha-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha-0)) (privk a)))
@@ -2947,6 +3010,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul y alpha-0)) x))
     (exp (gen) (mul y x alpha-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha-0)) (privk a)))
@@ -2992,6 +3056,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul x alpha-0)) y))
     (exp (gen) (mul y x alpha-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha-0)) (privk a)))
@@ -3036,6 +3101,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul y x (rec x-0))) alpha))
     (exp (gen) (mul y x (rec x-0) alpha)) (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -3084,6 +3150,7 @@
   (auth group-dist group-dist-0)
   (operation nonce-test (added-strand resp 3)
     (exp (gen) (mul y x (rec x-0) alpha)) (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -3140,6 +3207,7 @@
   (auth group-dist group-dist-0)
   (operation nonce-test (added-strand init 2)
     (exp (gen) (mul y x (rec x-0) alpha)) (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -3189,6 +3257,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul y x alpha)) x-0))
     (exp (gen) (mul y x (rec x-0) alpha)) (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -3236,6 +3305,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul y (rec x-0) alpha)) x))
     (exp (gen) (mul y x (rec x-0) alpha)) (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -3283,6 +3353,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul x (rec x-0) alpha)) y))
     (exp (gen) (mul y x (rec x-0) alpha)) (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -3332,6 +3403,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul y x alpha)) x-0))
     (exp (gen) (mul y x alpha (rec x-0))) (3 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -3384,6 +3456,7 @@
   (auth group-dist group-dist-0 group-dist-1)
   (operation nonce-test (added-strand resp 3)
     (exp (gen) (mul y x alpha (rec x-0))) (3 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -3444,6 +3517,7 @@
   (auth group-dist group-dist-0 group-dist-1)
   (operation nonce-test (added-strand init 2)
     (exp (gen) (mul y x alpha (rec x-0))) (3 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -3496,6 +3570,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul y x (rec x-0))) alpha))
     (exp (gen) (mul y x alpha (rec x-0))) (3 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -3546,6 +3621,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul y alpha (rec x-0))) x))
     (exp (gen) (mul y x alpha (rec x-0))) (3 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -3596,6 +3672,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul x alpha (rec x-0))) y))
     (exp (gen) (mul y x alpha (rec x-0))) (3 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -3647,6 +3724,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul y x alpha)) x-0))
     (exp (gen) (mul y x alpha (rec x-0))) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha-0)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -3700,6 +3778,7 @@
   (auth group-dist group-dist-0 group-dist-1)
   (operation nonce-test (added-strand resp 3)
     (exp (gen) (mul y x alpha (rec x-0))) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha-0)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -3761,6 +3840,7 @@
   (auth group-dist group-dist-0 group-dist-1)
   (operation nonce-test (added-strand init 2)
     (exp (gen) (mul y x alpha (rec x-0))) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha-0)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -3814,6 +3894,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul y x (rec x-0))) alpha))
     (exp (gen) (mul y x alpha (rec x-0))) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha-0)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -3865,6 +3946,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul y alpha (rec x-0))) x))
     (exp (gen) (mul y x alpha (rec x-0))) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha-0)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -3916,6 +3998,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul x alpha (rec x-0))) y))
     (exp (gen) (mul y x alpha (rec x-0))) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha-0)))
       (recv (enc (exp (gen) (mul x alpha)) (privk a)))
@@ -3967,6 +4050,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul y x (rec x-0))) alpha-0))
     (exp (gen) (mul y x (rec x-0) alpha-0)) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha-0)) (privk a)))
@@ -4020,6 +4104,7 @@
   (auth group-dist group-dist-0 group-dist-1)
   (operation nonce-test (added-strand resp 3)
     (exp (gen) (mul y x (rec x-0) alpha-0)) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha-0)) (privk a)))
@@ -4081,6 +4166,7 @@
   (auth group-dist group-dist-0 group-dist-1)
   (operation nonce-test (added-strand init 2)
     (exp (gen) (mul y x (rec x-0) alpha-0)) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha-0)) (privk a)))
@@ -4134,6 +4220,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul y x alpha-0)) x-0))
     (exp (gen) (mul y x (rec x-0) alpha-0)) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha-0)) (privk a)))
@@ -4185,6 +4272,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul y (rec x-0) alpha-0)) x))
     (exp (gen) (mul y x (rec x-0) alpha-0)) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha-0)) (privk a)))
@@ -4236,6 +4324,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul x (rec x-0) alpha-0)) y))
     (exp (gen) (mul y x (rec x-0) alpha-0)) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha-0)) (privk a)))
@@ -4291,6 +4380,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul y x alpha-0)) x-0))
     (exp (gen) (mul y x alpha-0 (rec x-0))) (4 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha-0)) (privk a)))
@@ -4349,6 +4439,7 @@
   (auth group-dist group-dist-0 group-dist-1 group-dist-2)
   (operation nonce-test (added-strand resp 3)
     (exp (gen) (mul y x alpha-0 (rec x-0))) (4 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha-0)) (privk a)))
@@ -4414,6 +4505,7 @@
   (auth group-dist group-dist-0 group-dist-1 group-dist-2)
   (operation nonce-test (added-strand init 2)
     (exp (gen) (mul y x alpha-0 (rec x-0))) (4 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha-0)) (privk a)))
@@ -4472,6 +4564,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul y x (rec x-0))) alpha-0))
     (exp (gen) (mul y x alpha-0 (rec x-0))) (4 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha-0)) (privk a)))
@@ -4528,6 +4621,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul y alpha-0 (rec x-0))) x))
     (exp (gen) (mul y x alpha-0 (rec x-0))) (4 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha-0)) (privk a)))
@@ -4584,6 +4678,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul x alpha-0 (rec x-0))) y))
     (exp (gen) (mul y x alpha-0 (rec x-0))) (4 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv group-dist (cat "Group id" group (exp (gen) alpha)))
       (recv (enc (exp (gen) (mul x alpha-0)) (privk a)))

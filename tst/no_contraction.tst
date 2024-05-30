@@ -53,6 +53,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 2 1 init 1) (enc n (privk a-0))
     (0 0))
+  (strand-map 0 1)
   (traces ((recv (enc n (privk a))))
     ((send (enc (enc n (privk a)) (pubk b)))))
   (label 2)

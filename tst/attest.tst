@@ -62,6 +62,7 @@
   (rule yes)
   (operation nonce-test (added-strand appraise 2) n (0 1)
     (enc (enc d n (invk p)) a))
+  (strand-map 0)
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t))
@@ -80,6 +81,7 @@
   (non-orig (invk p) (invk a) (invk d))
   (uniq-orig k n t)
   (operation encryption-test (added-strand door 2) (enc t k) (0 3))
+  (strand-map 0 1)
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t))
@@ -99,6 +101,7 @@
   (non-orig (invk p) (invk a) (invk d))
   (uniq-orig k n)
   (operation encryption-test (added-listener k) (enc t k) (0 3))
+  (strand-map 0 1)
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t))
@@ -119,6 +122,7 @@
   (uniq-orig k n t)
   (operation nonce-test (contracted (d-0 d) (p-0 p)) k (2 0)
     (enc (enc k (invk p)) d))
+  (strand-map 0 1 2)
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t))
@@ -143,6 +147,7 @@
   (uniq-orig k n t)
   (operation nonce-test (added-strand squealer 2) k (2 0)
     (enc (enc k (invk p)) d))
+  (strand-map 0 1 2)
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t))
@@ -166,6 +171,7 @@
   (uniq-orig k n)
   (operation nonce-test (added-strand squealer 2) k (2 0)
     (enc (enc k (invk p)) d))
+  (strand-map 0 1 2)
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t))
@@ -185,6 +191,7 @@
   (non-orig (invk p) (invk a) (invk d))
   (uniq-orig k n t)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3)
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t))
@@ -206,6 +213,7 @@
   (non-orig (invk p) (invk a) (invk d))
   (uniq-orig k n)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3)
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t))
@@ -276,6 +284,7 @@
   (uniq-orig k t n)
   (operation encryption-test (added-strand person 3) (enc k (invk p))
     (0 0))
+  (strand-map 0)
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
     ((send (enc (enc d-0 n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d-0))))
@@ -354,6 +363,7 @@
   (rule yes)
   (operation nonce-test (added-strand appraise 2) n (0 1)
     (enc (enc d n (invk p)) a))
+  (strand-map 0)
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t))
@@ -372,6 +382,7 @@
   (non-orig (invk p) (invk a) (invk d))
   (uniq-orig k n t)
   (operation encryption-test (added-strand door 2) (enc t k) (0 3))
+  (strand-map 0 1)
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t))
@@ -391,6 +402,7 @@
   (non-orig (invk p) (invk a) (invk d))
   (uniq-orig k n)
   (operation encryption-test (added-listener k) (enc t k) (0 3))
+  (strand-map 0 1)
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t))
@@ -412,6 +424,7 @@
   (uniq-orig k n t)
   (operation nonce-test (contracted (d-0 d) (p-0 p)) k (2 0)
     (enc (enc k (invk p)) d))
+  (strand-map 0 1 2)
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t))
@@ -489,6 +502,7 @@
   (uniq-orig k t n)
   (operation encryption-test (added-strand person 3) (enc k (invk p))
     (0 0))
+  (strand-map 0)
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
     ((send (enc (enc d-0 n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d-0))))
@@ -574,6 +588,7 @@
   (rule yes)
   (operation nonce-test (added-strand appraise 2) n (0 1)
     (enc (enc d n (invk p)) a))
+  (strand-map 0)
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t))
@@ -592,6 +607,7 @@
   (non-orig (invk p) (invk a) (invk d))
   (uniq-orig k n t)
   (operation encryption-test (added-strand door 2) (enc t k) (0 3))
+  (strand-map 0 1)
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t))
@@ -611,6 +627,7 @@
   (non-orig (invk p) (invk a) (invk d))
   (uniq-orig k n)
   (operation encryption-test (added-listener k) (enc t k) (0 3))
+  (strand-map 0 1)
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t))
@@ -632,6 +649,7 @@
   (uniq-orig k n t)
   (operation nonce-test (contracted (d-0 d) (p-0 p)) k (2 0)
     (enc (enc k (invk p)) d))
+  (strand-map 0 1 2)
   (traces
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t))
@@ -717,6 +735,7 @@
   (rule uncompromised-people-choose-uncompromised-appraisers)
   (operation encryption-test (added-strand person 3) (enc k (invk p))
     (0 0))
+  (strand-map 0)
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
     ((send (enc (enc d-0 n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d-0))))
@@ -736,6 +755,7 @@
   (rule yes)
   (operation nonce-test (added-strand appraise 2) n (1 1)
     (enc (enc d-0 n (invk p)) a))
+  (strand-map 0 1)
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
     ((send (enc (enc d-0 n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d-0)))
@@ -755,6 +775,7 @@
   (uniq-orig k t n)
   (operation encryption-test (contracted (d-0 d)) (enc k (invk p)) (0 0)
     (enc (enc k (invk p)) d))
+  (strand-map 0 1 2)
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d)))
@@ -774,6 +795,7 @@
   (non-orig (invk d) (invk p) (invk a))
   (uniq-orig k t n)
   (operation nonce-test (displaced 1 3 person 5) t (0 2) (enc t k))
+  (strand-map 0 2 1)
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
     ((recv (enc (enc d n (invk p)) a)) (send (enc n a p)))
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
@@ -796,6 +818,7 @@
   (non-orig (invk p) (invk d) (invk a))
   (uniq-orig k t n)
   (operation nonce-test (added-listener k) t (0 2) (enc t k))
+  (strand-map 0 1 2)
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
     ((send (enc (enc d n (invk p)) a)) (recv (enc n a p))
       (send (enc (enc k (invk p)) d)))

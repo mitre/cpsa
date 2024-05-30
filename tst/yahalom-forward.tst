@@ -51,6 +51,7 @@
   (uniq-orig k n-b)
   (operation encryption-test (added-strand serv 2) (enc a k (ltk b c))
     (0 2))
+  (strand-map 0)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -72,6 +73,7 @@
   (uniq-orig k n-b)
   (operation encryption-test (displaced 2 0 resp 2)
     (enc a n-a-0 n-b-0 (ltk b c)) (1 0))
+  (strand-map 0 1)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -94,6 +96,7 @@
   (uniq-orig k n-b)
   (operation encryption-test (added-strand resp 2)
     (enc a n-a-0 n-b-0 (ltk b c)) (1 0))
+  (strand-map 0 1)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -117,6 +120,7 @@
   (non-orig (ltk a c) (ltk b c))
   (uniq-orig k n-b)
   (operation encryption-test (added-strand init 3) (enc n-b k) (0 4))
+  (strand-map 0 1)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -140,6 +144,7 @@
   (non-orig (ltk a c) (ltk b c))
   (uniq-orig k n-b)
   (operation encryption-test (added-listener k) (enc n-b k) (0 4))
+  (strand-map 0 1)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -166,6 +171,7 @@
   (non-orig (ltk a c) (ltk b c))
   (uniq-orig k n-b)
   (operation encryption-test (added-strand init 3) (enc n-b k) (0 4))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -191,6 +197,7 @@
   (non-orig (ltk a c) (ltk b c))
   (uniq-orig k n-b)
   (operation encryption-test (added-listener k) (enc n-b k) (0 4))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -216,6 +223,7 @@
   (uniq-orig k n-b)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (c-0 c) (n-a-0 n-a))
     n-b (2 1) (enc a n-a n-b (ltk b c)) (enc b k n-a n-b (ltk a c)))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -245,6 +253,7 @@
   (uniq-orig k n-b)
   (operation nonce-test (added-strand init 3) n-b (2 1)
     (enc a n-a n-b (ltk b c)) (enc b k n-a n-b (ltk a c)))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -281,6 +290,7 @@
   (uniq-orig k k-0 n-b)
   (operation nonce-test (added-strand serv 2) n-b (2 1)
     (enc a n-a n-b (ltk b c)) (enc b k n-a n-b (ltk a c)))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -317,6 +327,7 @@
   (uniq-orig k k-0 n-b)
   (operation nonce-test (added-strand serv 2) n-b (3 1)
     (enc a n-a n-b (ltk b c)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -348,6 +359,7 @@
   (uniq-orig k k-0 n-b)
   (operation nonce-test (added-strand serv 2) n-b (2 1) (enc n-b k)
     (enc a n-a n-b (ltk b c)) (enc b k n-a n-b (ltk a c)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -380,6 +392,7 @@
   (uniq-orig k n-b)
   (operation nonce-test (added-listener k) n-b (2 1) (enc n-b k)
     (enc a n-a n-b (ltk b c)) (enc b k n-a n-b (ltk a c)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -410,6 +423,7 @@
   (operation nonce-test (contracted (a-0 a) (b-0 b) (c-0 c) (n-a-0 n-a))
     n-b (2 1) (enc a n-a n-b (ltk b c)) (enc b k n-a n-b (ltk a c))
     (enc b k-0 n-a n-b (ltk a c)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -443,6 +457,7 @@
   (operation nonce-test (added-strand init 3) n-b (2 1)
     (enc a n-a n-b (ltk b c)) (enc b k n-a n-b (ltk a c))
     (enc b k-0 n-a n-b (ltk a c)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -482,6 +497,7 @@
   (uniq-orig k k-0 n-b)
   (operation nonce-test (added-strand init 3) n-b (3 1)
     (enc a n-a n-b (ltk b c)) (enc b k-0 n-a n-b (ltk a c)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -515,6 +531,7 @@
   (operation nonce-test (contracted (a-0 a) (b-0 b) (c-0 c) (n-a-0 n-a))
     n-b (2 1) (enc n-b k) (enc a n-a n-b (ltk b c))
     (enc b k n-a n-b (ltk a c)) (enc b k-0 n-a n-b (ltk a c)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -549,6 +566,7 @@
   (operation nonce-test (added-strand init 3) n-b (2 1) (enc n-b k)
     (enc a n-a n-b (ltk b c)) (enc b k n-a n-b (ltk a c))
     (enc b k-0 n-a n-b (ltk a c)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -586,6 +604,7 @@
   (operation nonce-test (added-listener k) n-b (2 1) (enc n-b k)
     (enc a n-a n-b (ltk b c)) (enc b k n-a n-b (ltk a c))
     (enc b k-0 n-a n-b (ltk a c)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -620,6 +639,7 @@
   (operation nonce-test (contracted (a-0 a) (b-0 b) (c-0 c) (n-a-0 n-a))
     n-b (2 1) (enc n-b k-0) (enc a n-a n-b (ltk b c))
     (enc b k n-a n-b (ltk a c)) (enc b k-0 n-a n-b (ltk a c)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -657,6 +677,7 @@
   (operation nonce-test (added-strand serv 2) n-b (2 1) (enc n-b k-0)
     (enc a n-a n-b (ltk b c)) (enc b k n-a n-b (ltk a c))
     (enc b k-0 n-a n-b (ltk a c)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -701,6 +722,7 @@
   (operation nonce-test (added-listener k-0) n-b (2 1) (enc n-b k-0)
     (enc a n-a n-b (ltk b c)) (enc b k n-a n-b (ltk a c))
     (enc b k-0 n-a n-b (ltk a c)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -737,6 +759,7 @@
   (uniq-orig k k-0 k-1 n-b)
   (operation nonce-test (added-strand serv 2) n-b (3 1) (enc n-b k-0)
     (enc a n-a n-b (ltk b c)) (enc b k-0 n-a n-b (ltk a c)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -775,6 +798,7 @@
   (uniq-orig k k-0 n-b)
   (operation nonce-test (added-listener k-0) n-b (3 1) (enc n-b k-0)
     (enc a n-a n-b (ltk b c)) (enc b k-0 n-a n-b (ltk a c)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -806,6 +830,7 @@
   (non-orig (ltk a c) (ltk b c))
   (uniq-orig k k-0 n-b)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -842,6 +867,7 @@
   (operation nonce-test (added-strand serv 2) n-b (2 1) (enc n-b k)
     (enc n-b k-0) (enc a n-a n-b (ltk b c)) (enc b k n-a n-b (ltk a c))
     (enc b k-0 n-a n-b (ltk a c)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -879,6 +905,7 @@
   (operation nonce-test (contracted (a-0 a) (b-0 b) (c-0 c) (n-a-0 n-a))
     n-b (2 1) (enc n-b k) (enc n-b k-0) (enc a n-a n-b (ltk b c))
     (enc b k n-a n-b (ltk a c)) (enc b k-0 n-a n-b (ltk a c)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -917,6 +944,7 @@
   (operation nonce-test (added-listener k) n-b (2 1) (enc n-b k)
     (enc n-b k-0) (enc a n-a n-b (ltk b c)) (enc b k n-a n-b (ltk a c))
     (enc b k-0 n-a n-b (ltk a c)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -956,6 +984,7 @@
   (operation nonce-test (added-listener k-0) n-b (2 1) (enc n-b k)
     (enc n-b k-0) (enc a n-a n-b (ltk b c)) (enc b k n-a n-b (ltk a c))
     (enc b k-0 n-a n-b (ltk a c)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -994,6 +1023,7 @@
     n-b (2 1) (enc n-b k-0) (enc a n-a n-b (ltk b c))
     (enc b k n-a n-b (ltk a c)) (enc b k-0 n-a n-b (ltk a c))
     (enc b k-1 n-a n-b (ltk a c)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -1032,6 +1062,7 @@
   (operation nonce-test (added-listener k-0) n-b (2 1) (enc n-b k-0)
     (enc a n-a n-b (ltk b c)) (enc b k n-a n-b (ltk a c))
     (enc b k-0 n-a n-b (ltk a c)) (enc b k-1 n-a n-b (ltk a c)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -1073,6 +1104,7 @@
   (operation nonce-test (added-listener k-0) n-b (3 1) (enc n-b k-0)
     (enc a n-a n-b (ltk b c)) (enc b k-0 n-a n-b (ltk a c))
     (enc b k-1 n-a n-b (ltk a c)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -1114,6 +1146,7 @@
     n-b (2 1) (enc n-b k) (enc n-b k-0) (enc a n-a n-b (ltk b c))
     (enc b k n-a n-b (ltk a c)) (enc b k-0 n-a n-b (ltk a c))
     (enc b k-1 n-a n-b (ltk a c)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -1155,6 +1188,7 @@
   (operation nonce-test (added-listener k) n-b (2 1) (enc n-b k)
     (enc n-b k-0) (enc a n-a n-b (ltk b c)) (enc b k n-a n-b (ltk a c))
     (enc b k-0 n-a n-b (ltk a c)) (enc b k-1 n-a n-b (ltk a c)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -1198,6 +1232,7 @@
   (operation nonce-test (added-listener k-0) n-b (2 1) (enc n-b k)
     (enc n-b k-0) (enc a n-a n-b (ltk b c)) (enc b k n-a n-b (ltk a c))
     (enc b k-0 n-a n-b (ltk a c)) (enc b k-1 n-a n-b (ltk a c)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -1234,6 +1269,7 @@
   (non-orig (ltk a c) (ltk b c))
   (uniq-orig k k-0 n-b)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -1266,6 +1302,7 @@
   (non-orig (ltk a c) (ltk b c))
   (uniq-orig k k-0 k-1 n-b)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -1300,6 +1337,7 @@
   (non-orig (ltk a c) (ltk b c))
   (uniq-orig k k-0 k-1 n-b)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -1332,6 +1370,7 @@
   (non-orig (ltk a c) (ltk b c))
   (uniq-orig k k-0 k-1 n-b)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -1402,6 +1441,7 @@
   (uniq-orig k n-b)
   (operation encryption-test (added-strand serv 2) (enc a k (ltk b c))
     (0 2))
+  (strand-map 0 1)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -1424,6 +1464,7 @@
   (uniq-orig k n-b)
   (operation encryption-test (displaced 3 0 resp 2)
     (enc a n-a-0 n-b-0 (ltk b c)) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -1448,6 +1489,7 @@
   (uniq-orig k n-b)
   (operation encryption-test (added-strand resp 2)
     (enc a n-a-0 n-b-0 (ltk b c)) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -1507,6 +1549,7 @@
   (uniq-orig k n-a)
   (operation encryption-test (added-strand serv 2)
     (enc b k n-a n-b (ltk a c)) (0 1))
+  (strand-map 0)
   (traces
     ((send (cat a n-a)) (recv (enc b k n-a n-b (ltk a c)))
       (send (enc n-b k)))
@@ -1527,6 +1570,7 @@
   (uniq-orig k n-a)
   (operation encryption-test (added-strand resp 2)
     (enc a n-a n-b (ltk b c)) (1 0))
+  (strand-map 0 1)
   (traces
     ((send (cat a n-a)) (recv (enc b k n-a n-b (ltk a c)))
       (send (enc n-b k)))

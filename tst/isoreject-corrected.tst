@@ -42,6 +42,7 @@
   (uniq-orig nb)
   (operation encryption-test (added-strand init 3)
     (enc "second" nc nb b (privk a)) (0 2))
+  (strand-map 0)
   (traces
     ((recv (cat a na)) (send (enc "first" nb na a (privk b)))
       (recv (enc "second" nc nb b (privk a))))
@@ -61,6 +62,7 @@
   (uniq-orig nb)
   (operation encryption-test (displaced 2 0 resp 2)
     (enc "first" nb na-0 a (privk b)) (1 1))
+  (strand-map 0 1)
   (traces
     ((recv (cat a na)) (send (enc "first" nb na a (privk b)))
       (recv (enc "second" nc nb b (privk a))))
@@ -113,6 +115,7 @@
   (uniq-orig nb)
   (operation encryption-test (added-strand resp 2)
     (enc "first" nb na a (privk b)) (0 1))
+  (strand-map 0)
   (traces
     ((send (cat a na)) (recv (enc "first" nb na a (privk b)))
       (send (enc "second" nc nb b (privk a))))

@@ -63,6 +63,7 @@
   (uniq-orig n1)
   (operation nonce-test (added-strand resp 2) n1 (1 0)
     (enc n1 a (pubk b)))
+  (strand-map 0 1)
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc b n1 n2 (pubk a)))
       (send (enc n2 (pubk b)))) ((recv n1) (send n1))
@@ -82,6 +83,7 @@
   (uniq-orig n2)
   (operation nonce-test (displaced 3 0 init 3) n2-0 (1 0)
     (enc n2-0 a (pubk b)) (enc b n2-0 n2-0 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n2 a (pubk b))) (recv (enc b n2 n2 (pubk a)))
       (send (enc n2 (pubk b)))) ((recv n2) (send n2))
@@ -103,6 +105,7 @@
   (uniq-orig n2)
   (operation nonce-test (added-strand resp 2) n2 (1 0) (enc n2 (pubk b))
     (enc n2 a (pubk b)) (enc b n2 n2 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n2 a (pubk b))) (recv (enc b n2 n2 (pubk a)))
       (send (enc n2 (pubk b)))) ((recv n2) (send n2))
@@ -175,6 +178,7 @@
   (uniq-orig n2)
   (operation nonce-test (added-strand init 3) n2 (1 0)
     (enc b n1 n2 (pubk a)))
+  (strand-map 0 1)
   (traces
     ((recv (enc n1 a (pubk b))) (send (enc b n1 n2 (pubk a)))
       (recv (enc n2 (pubk b)))) ((recv n2) (send n2))
@@ -195,6 +199,7 @@
   (uniq-orig n2)
   (operation nonce-test (displaced 3 2 init 3) n2 (0 2)
     (enc b n1 n2 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc n1 a (pubk b))) (send (enc b n1 n2 (pubk a)))
       (recv (enc n2 (pubk b)))) ((recv n2) (send n2))
@@ -218,6 +223,7 @@
   (uniq-orig n2)
   (operation nonce-test (added-strand init 3) n2 (0 2)
     (enc b n1 n2 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc n1 a (pubk b))) (send (enc b n1 n2 (pubk a)))
       (recv (enc n2 (pubk b)))) ((recv n2) (send n2))

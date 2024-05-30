@@ -69,6 +69,7 @@
   (rule certified-keys-uncompromised)
   (operation encryption-test (added-strand certify 1)
     (cert (cert-body subj serial pk) (privk "cert" ca)) (0 0))
+  (strand-map 0)
   (traces
     ((recv ch-ca (cert (cert-body subj serial pk) (privk "cert" ca)))
       (send ch-r (enc "challenge" chal pk)) (recv ch-r chal))
@@ -92,6 +93,7 @@
   (uniq-orig chal)
   (operation nonce-test (added-strand resp 3) chal (0 2)
     (enc "challenge" chal pk))
+  (strand-map 0 1)
   (traces
     ((recv ch-ca (cert (cert-body subj serial pk) (privk "cert" ca)))
       (send ch-r (enc "challenge" chal pk)) (recv ch-r chal))

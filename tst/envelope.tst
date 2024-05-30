@@ -102,6 +102,7 @@
   (uniq-orig v n k)
   (operation encryption-test (added-strand tpm-create-key 2)
     (enc "created" k (hash (hash "0" n) "obtain") aik) (1 2))
+  (strand-map 0 1)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -125,6 +126,7 @@
   (uniq-orig v n k)
   (operation encryption-test (displaced 3 1 alice 2)
     (enc "create key" (hash (hash "0" n) "obtain") esk-0) (2 0))
+  (strand-map 0 1 2)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -149,6 +151,7 @@
   (non-orig esk pcrkey aik aik-0 (invk k))
   (uniq-orig v n k)
   (operation nonce-test (added-strand tpm-decrypt 4) v (0 0) (enc v k))
+  (strand-map 0 1 2)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -177,6 +180,7 @@
   (uniq-orig v n k)
   (operation encryption-test (displaced 4 2 tpm-create-key 2)
     (enc "created" k pcrvals aik-0) (3 1))
+  (strand-map 0 1 2 3)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -208,6 +212,7 @@
   (uniq-orig v n k)
   (operation encryption-test (added-strand tpm-extend 3)
     (enc (hash (hash "0" n) "obtain") (hash pcrkey)) (3 2))
+  (strand-map 0 1 2 3)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -242,6 +247,7 @@
   (uniq-orig v n k)
   (operation encryption-test (added-strand tpm-extend-enc 3)
     (enc (hash (hash "0" n) "obtain") (hash pcrkey)) (3 2))
+  (strand-map 0 1 2 3)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -276,6 +282,7 @@
   (uniq-orig v n k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc (hash (hash "0" n) "obtain") (hash pcrkey)) (3 2))
+  (strand-map 0 1 2 3)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -310,6 +317,7 @@
   (uniq-orig v n k)
   (operation encryption-test (added-strand tpm-extend 3)
     (enc (hash "0" n) (hash pcrkey)) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -349,6 +357,7 @@
   (uniq-orig v n k)
   (operation encryption-test (added-strand tpm-extend-enc 3)
     (enc (hash "0" n) (hash pcrkey)) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -386,6 +395,7 @@
   (uniq-orig v n k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc (hash "0" n) (hash pcrkey)) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -424,6 +434,7 @@
   (uniq-orig v n k)
   (operation encryption-test (displaced 6 1 alice 1)
     (enc "extend" n esk-0) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -463,6 +474,7 @@
   (uniq-orig v n k)
   (operation encryption-test (added-strand tpm-power-on 2)
     (enc "0" (hash pcrkey)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -505,6 +517,7 @@
   (uniq-orig v n k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc "0" (hash pcrkey)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -631,6 +644,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-create-key 2)
     (enc "created" k (hash (hash "0" n) "obtain") aik) (1 2))
+  (strand-map 0 1)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -656,6 +670,7 @@
   (uniq-orig n v k)
   (operation encryption-test (displaced 3 1 alice 2)
     (enc "create key" (hash (hash "0" n) "obtain") esk-0) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -684,6 +699,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-quote 3)
     (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik) (0 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -718,6 +734,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend 3)
     (enc (hash (hash "0" n) "refuse") (hash pcrkey)) (3 1))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -755,6 +772,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend-enc 3)
     (enc (hash (hash "0" n) "refuse") (hash pcrkey)) (3 1))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -792,6 +810,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc (hash (hash "0" n) "refuse") (hash pcrkey)) (3 1))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -829,6 +848,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend 3)
     (enc (hash "0" n) (hash pcrkey)) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -871,6 +891,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend-enc 3)
     (enc (hash "0" n) (hash pcrkey)) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -911,6 +932,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc (hash "0" n) (hash pcrkey)) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -952,6 +974,7 @@
   (uniq-orig n v k)
   (operation encryption-test (displaced 6 1 alice 1)
     (enc "extend" n esk-0) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -994,6 +1017,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-power-on 2)
     (enc "0" (hash pcrkey)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -1039,6 +1063,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc "0" (hash pcrkey)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -1172,6 +1197,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-create-key 2)
     (enc "created" k (hash (hash "0" n) "obtain") aik) (2 2))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -1199,6 +1225,7 @@
   (uniq-orig n v k)
   (operation encryption-test (displaced 4 2 alice 2)
     (enc "create key" (hash (hash "0" n) "obtain") esk-0) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -1228,6 +1255,7 @@
   (non-orig esk pcrkey aik aik-0 (invk k))
   (uniq-orig n v k)
   (operation nonce-test (added-strand tpm-decrypt 4) v (1 0) (enc v k))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -1261,6 +1289,7 @@
   (uniq-orig n v k)
   (operation encryption-test (displaced 5 3 tpm-create-key 2)
     (enc "created" k pcrvals aik-0) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -1296,6 +1325,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend 3)
     (enc (hash (hash "0" n) "obtain") (hash pcrkey)) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -1334,6 +1364,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend-enc 3)
     (enc (hash (hash "0" n) "obtain") (hash pcrkey)) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -1372,6 +1403,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc (hash (hash "0" n) "obtain") (hash pcrkey)) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -1410,6 +1442,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend 3)
     (enc (hash "0" n) (hash pcrkey)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -1453,6 +1486,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend-enc 3)
     (enc (hash "0" n) (hash pcrkey)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -1494,6 +1528,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc (hash "0" n) (hash pcrkey)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -1536,6 +1571,7 @@
   (uniq-orig n v k)
   (operation encryption-test (displaced 7 2 alice 1)
     (enc "extend" n esk-0) (6 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -1580,6 +1616,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-power-on 2)
     (enc "0" (hash pcrkey)) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -1625,6 +1662,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc "0" (hash pcrkey)) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -1674,6 +1712,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-quote 3)
     (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik) (0 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -1727,6 +1766,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend 3)
     (enc (hash (hash "0" n) "refuse") (hash pcrkey-0)) (8 1))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -1783,6 +1823,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend-enc 3)
     (enc (hash (hash "0" n) "refuse") (hash pcrkey-0)) (8 1))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -1839,6 +1880,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey-0))
     (enc (hash (hash "0" n) "refuse") (hash pcrkey-0)) (8 1))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -1894,6 +1936,7 @@
   (uniq-orig n v k)
   (operation encryption-test (displaced 10 6 tpm-extend-enc 3)
     (enc (hash "0" n) (hash pcrkey-0)) (9 1))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -1955,6 +1998,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend 3)
     (enc (hash "0" n) (hash pcrkey-0)) (9 1))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -2017,6 +2061,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend-enc 3)
     (enc (hash "0" n) (hash pcrkey-0)) (9 1))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -2076,6 +2121,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey-0))
     (enc (hash "0" n) (hash pcrkey-0)) (9 1))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -2137,6 +2183,7 @@
   (uniq-orig n v k)
   (operation encryption-test (displaced 11 2 alice 1)
     (enc "extend" n esk-0) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -2198,6 +2245,7 @@
   (uniq-orig n v k)
   (operation encryption-test (displaced 11 7 tpm-power-on 2)
     (enc "0" (hash pcrkey-0)) (10 1))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -2262,6 +2310,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-power-on 2)
     (enc "0" (hash pcrkey-0)) (10 1))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -2327,6 +2376,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey-0))
     (enc "0" (hash pcrkey-0)) (10 1))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -2471,6 +2521,7 @@
   (uniq-orig v n k)
   (operation encryption-test (added-strand tpm-create-key 2)
     (enc "created" k (hash (hash "0" n) "obtain") aik) (1 2))
+  (strand-map 0 1)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -2494,6 +2545,7 @@
   (uniq-orig v n k)
   (operation encryption-test (displaced 3 1 alice 2)
     (enc "create key" (hash (hash "0" n) "obtain") esk-0) (2 0))
+  (strand-map 0 1 2)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -2518,6 +2570,7 @@
   (non-orig esk pcrkey aik aik-0 (invk k))
   (uniq-orig v n k)
   (operation nonce-test (added-strand tpm-decrypt 4) v (0 0) (enc v k))
+  (strand-map 0 1 2)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -2546,6 +2599,7 @@
   (uniq-orig v n k)
   (operation encryption-test (displaced 4 2 tpm-create-key 2)
     (enc "created" k pcrvals aik-0) (3 1))
+  (strand-map 0 1 2 3)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -2577,6 +2631,7 @@
   (uniq-orig v n k)
   (operation encryption-test (added-strand tpm-extend 3)
     (enc (hash (hash "0" n) "obtain") (hash pcrkey)) (3 2))
+  (strand-map 0 1 2 3)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -2611,6 +2666,7 @@
   (uniq-orig v n k)
   (operation encryption-test (added-strand tpm-extend-enc 3)
     (enc (hash (hash "0" n) "obtain") (hash pcrkey)) (3 2))
+  (strand-map 0 1 2 3)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -2645,6 +2701,7 @@
   (uniq-orig v n k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc (hash (hash "0" n) "obtain") (hash pcrkey)) (3 2))
+  (strand-map 0 1 2 3)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -2680,6 +2737,7 @@
   (uniq-orig v n k)
   (operation encryption-test (added-strand tpm-extend-enc 3)
     (enc (hash "0" n) (hash pcrkey)) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -2717,6 +2775,7 @@
   (uniq-orig v n k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc (hash "0" n) (hash pcrkey)) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -2755,6 +2814,7 @@
   (uniq-orig v n k)
   (operation encryption-test (displaced 6 1 alice 1)
     (enc "extend" n esk-0) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -2794,6 +2854,7 @@
   (uniq-orig v n k)
   (operation encryption-test (added-strand tpm-power-on 2)
     (enc "0" (hash pcrkey)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -2836,6 +2897,7 @@
   (uniq-orig v n k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc "0" (hash pcrkey)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -2972,6 +3034,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-create-key 2)
     (enc "created" k (hash (hash "0" n) "obtain") aik) (1 2))
+  (strand-map 0 1)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -2997,6 +3060,7 @@
   (uniq-orig n v k)
   (operation encryption-test (displaced 3 1 alice 2)
     (enc "create key" (hash (hash "0" n) "obtain") esk-0) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -3025,6 +3089,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-quote 3)
     (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik) (0 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -3059,6 +3124,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend 3)
     (enc (hash (hash "0" n) "refuse") (hash pcrkey)) (3 1))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -3096,6 +3162,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend-enc 3)
     (enc (hash (hash "0" n) "refuse") (hash pcrkey)) (3 1))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -3133,6 +3200,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc (hash (hash "0" n) "refuse") (hash pcrkey)) (3 1))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -3171,6 +3239,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend-enc 3)
     (enc (hash "0" n) (hash pcrkey)) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -3211,6 +3280,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc (hash "0" n) (hash pcrkey)) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -3252,6 +3322,7 @@
   (uniq-orig n v k)
   (operation encryption-test (displaced 6 1 alice 1)
     (enc "extend" n esk-0) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -3294,6 +3365,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-power-on 2)
     (enc "0" (hash pcrkey)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -3339,6 +3411,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc "0" (hash pcrkey)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -3482,6 +3555,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-create-key 2)
     (enc "created" k (hash (hash "0" n) "obtain") aik) (2 2))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -3509,6 +3583,7 @@
   (uniq-orig n v k)
   (operation encryption-test (displaced 4 2 alice 2)
     (enc "create key" (hash (hash "0" n) "obtain") esk-0) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -3538,6 +3613,7 @@
   (non-orig esk pcrkey aik aik-0 (invk k))
   (uniq-orig n v k)
   (operation nonce-test (added-strand tpm-decrypt 4) v (1 0) (enc v k))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -3571,6 +3647,7 @@
   (uniq-orig n v k)
   (operation encryption-test (displaced 5 3 tpm-create-key 2)
     (enc "created" k pcrvals aik-0) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -3606,6 +3683,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend 3)
     (enc (hash (hash "0" n) "obtain") (hash pcrkey)) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -3644,6 +3722,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend-enc 3)
     (enc (hash (hash "0" n) "obtain") (hash pcrkey)) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -3682,6 +3761,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc (hash (hash "0" n) "obtain") (hash pcrkey)) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -3721,6 +3801,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend-enc 3)
     (enc (hash "0" n) (hash pcrkey)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -3762,6 +3843,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc (hash "0" n) (hash pcrkey)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -3804,6 +3886,7 @@
   (uniq-orig n v k)
   (operation encryption-test (displaced 7 2 alice 1)
     (enc "extend" n esk-0) (6 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -3848,6 +3931,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-power-on 2)
     (enc "0" (hash pcrkey)) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -3893,6 +3977,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc "0" (hash pcrkey)) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -3942,6 +4027,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-quote 3)
     (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik) (0 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -3995,6 +4081,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend 3)
     (enc (hash (hash "0" n) "refuse") (hash pcrkey-0)) (8 1))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -4051,6 +4138,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend-enc 3)
     (enc (hash (hash "0" n) "refuse") (hash pcrkey-0)) (8 1))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -4107,6 +4195,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey-0))
     (enc (hash (hash "0" n) "refuse") (hash pcrkey-0)) (8 1))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -4165,6 +4254,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend-enc 3)
     (enc (hash "0" n) (hash pcrkey-0)) (9 1))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -4224,6 +4314,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey-0))
     (enc (hash "0" n) (hash pcrkey-0)) (9 1))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -4285,6 +4376,7 @@
   (uniq-orig n v k)
   (operation encryption-test (displaced 11 2 alice 1)
     (enc "extend" n esk-0) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -4347,6 +4439,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-power-on 2)
     (enc "0" (hash pcrkey-0)) (10 1))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -4412,6 +4505,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey-0))
     (enc "0" (hash pcrkey-0)) (10 1))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -4566,6 +4660,7 @@
   (uniq-orig v n k)
   (operation encryption-test (added-strand tpm-create-key 2)
     (enc "created" k (hash (hash "0" n) "obtain") aik) (1 2))
+  (strand-map 0 1)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -4589,6 +4684,7 @@
   (uniq-orig v n k)
   (operation encryption-test (displaced 3 1 alice 2)
     (enc "create key" (hash (hash "0" n) "obtain") esk-0) (2 0))
+  (strand-map 0 1 2)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -4613,6 +4709,7 @@
   (non-orig esk pcrkey aik aik-0 (invk k))
   (uniq-orig v n k)
   (operation nonce-test (added-strand tpm-decrypt 4) v (0 0) (enc v k))
+  (strand-map 0 1 2)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -4641,6 +4738,7 @@
   (uniq-orig v n k)
   (operation encryption-test (displaced 4 2 tpm-create-key 2)
     (enc "created" k pcrvals aik-0) (3 1))
+  (strand-map 0 1 2 3)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -4672,6 +4770,7 @@
   (uniq-orig v n k)
   (operation encryption-test (added-strand tpm-extend 3)
     (enc (hash (hash "0" n) "obtain") (hash pcrkey)) (3 2))
+  (strand-map 0 1 2 3)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -4706,6 +4805,7 @@
   (uniq-orig v n k)
   (operation encryption-test (added-strand tpm-extend-enc 3)
     (enc (hash (hash "0" n) "obtain") (hash pcrkey)) (3 2))
+  (strand-map 0 1 2 3)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -4740,6 +4840,7 @@
   (uniq-orig v n k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc (hash (hash "0" n) "obtain") (hash pcrkey)) (3 2))
+  (strand-map 0 1 2 3)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -4775,6 +4876,7 @@
   (uniq-orig v n k)
   (operation encryption-test (added-strand tpm-extend-enc 3)
     (enc (hash "0" n) (hash pcrkey)) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -4812,6 +4914,7 @@
   (uniq-orig v n k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc (hash "0" n) (hash pcrkey)) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -4850,6 +4953,7 @@
   (uniq-orig v n k)
   (operation encryption-test (displaced 6 1 alice 1)
     (enc "extend" n esk-0) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -4889,6 +4993,7 @@
   (uniq-orig v n k)
   (operation encryption-test (added-strand tpm-power-on 2)
     (enc "0" (hash pcrkey)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -4931,6 +5036,7 @@
   (uniq-orig v n k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc "0" (hash pcrkey)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces ((recv v) (send v))
     ((send (enc "extend" n esk))
       (send (enc "create key" (hash (hash "0" n) "obtain") esk))
@@ -5077,6 +5183,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-create-key 2)
     (enc "created" k (hash (hash "0" n) "obtain") aik) (1 2))
+  (strand-map 0 1)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -5102,6 +5209,7 @@
   (uniq-orig n v k)
   (operation encryption-test (displaced 3 1 alice 2)
     (enc "create key" (hash (hash "0" n) "obtain") esk-0) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -5130,6 +5238,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-quote 3)
     (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik) (0 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -5164,6 +5273,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend 3)
     (enc (hash (hash "0" n) "refuse") (hash pcrkey)) (3 1))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -5201,6 +5311,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend-enc 3)
     (enc (hash (hash "0" n) "refuse") (hash pcrkey)) (3 1))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -5238,6 +5349,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc (hash (hash "0" n) "refuse") (hash pcrkey)) (3 1))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -5276,6 +5388,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend-enc 3)
     (enc (hash "0" n) (hash pcrkey)) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -5316,6 +5429,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc (hash "0" n) (hash pcrkey)) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -5357,6 +5471,7 @@
   (uniq-orig n v k)
   (operation encryption-test (displaced 6 1 alice 1)
     (enc "extend" n esk-0) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -5399,6 +5514,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-power-on 2)
     (enc "0" (hash pcrkey)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -5444,6 +5560,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc "0" (hash pcrkey)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -5597,6 +5714,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-create-key 2)
     (enc "created" k (hash (hash "0" n) "obtain") aik) (2 2))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -5624,6 +5742,7 @@
   (uniq-orig n v k)
   (operation encryption-test (displaced 4 2 alice 2)
     (enc "create key" (hash (hash "0" n) "obtain") esk-0) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -5653,6 +5772,7 @@
   (non-orig esk pcrkey aik aik-0 (invk k))
   (uniq-orig n v k)
   (operation nonce-test (added-strand tpm-decrypt 4) v (1 0) (enc v k))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -5686,6 +5806,7 @@
   (uniq-orig n v k)
   (operation encryption-test (displaced 5 3 tpm-create-key 2)
     (enc "created" k pcrvals aik-0) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -5721,6 +5842,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend 3)
     (enc (hash (hash "0" n) "obtain") (hash pcrkey)) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -5759,6 +5881,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend-enc 3)
     (enc (hash (hash "0" n) "obtain") (hash pcrkey)) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -5797,6 +5920,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc (hash (hash "0" n) "obtain") (hash pcrkey)) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -5836,6 +5960,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend-enc 3)
     (enc (hash "0" n) (hash pcrkey)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -5877,6 +6002,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc (hash "0" n) (hash pcrkey)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -5919,6 +6045,7 @@
   (uniq-orig n v k)
   (operation encryption-test (displaced 7 2 alice 1)
     (enc "extend" n esk-0) (6 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -5963,6 +6090,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-power-on 2)
     (enc "0" (hash pcrkey)) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -6008,6 +6136,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey))
     (enc "0" (hash pcrkey)) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -6057,6 +6186,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-quote 3)
     (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik) (0 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -6110,6 +6240,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend 3)
     (enc (hash (hash "0" n) "refuse") (hash pcrkey-0)) (8 1))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -6166,6 +6297,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend-enc 3)
     (enc (hash (hash "0" n) "refuse") (hash pcrkey-0)) (8 1))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -6222,6 +6354,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey-0))
     (enc (hash (hash "0" n) "refuse") (hash pcrkey-0)) (8 1))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -6280,6 +6413,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-strand tpm-extend-enc 3)
     (enc (hash "0" n) (hash pcrkey-0)) (9 1))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))
@@ -6340,6 +6474,7 @@
   (uniq-orig n v k)
   (operation encryption-test (added-listener (hash pcrkey-0))
     (enc (hash "0" n) (hash pcrkey-0)) (9 1))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((recv (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik))
       (send (enc "quote" (hash (hash "0" n) "refuse") (enc v k) aik)))

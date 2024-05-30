@@ -60,6 +60,7 @@
   (uniq-orig skey+0 text+0)
   (operation encryption-test (contracted (akey+1 akey+0))
     (enc skey+0 akey+3) (1 0) (enc (enc skey+0 akey+3) akey+0))
+  (strand-map 0 1)
   (traces ((send (enc (enc skey+0 akey+3) akey+0)))
     ((recv (enc (enc skey+0 akey+3) akey+0)) (send (enc text+0 skey+0))
       (recv text+0)))
@@ -78,6 +79,7 @@
   (uniq-orig skey+0 text+0)
   (operation nonce-test (displaced 0 2 init 3) text+0 (1 2)
     (enc text+0 skey+0))
+  (strand-map 1 0)
   (traces
     ((recv (enc (enc skey+0 (invk self)) peer))
       (send (enc text+0 skey+0)) (recv text+0))
@@ -105,6 +107,7 @@
   (uniq-orig skey+0 text+0)
   (operation nonce-test (added-listener skey+0) text+0 (1 2)
     (enc text+0 skey+0))
+  (strand-map 0 1)
   (traces ((send (enc (enc skey+0 akey+3) akey+0)))
     ((recv (enc (enc skey+0 akey+3) akey+0)) (send (enc text+0 skey+0))
       (recv text+0)) ((recv skey+0) (send skey+0)))

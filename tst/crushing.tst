@@ -49,6 +49,7 @@
   (uniq-orig n n1 n2 n3)
   (operation encryption-test (added-strand adder 2) (enc n n1 (invk k))
     (0 1))
+  (strand-map 0)
   (traces
     ((send (enc n k)) (recv (enc n n1 (invk k)))
       (recv (enc n n2 (invk k))) (recv (enc n n3 (invk k)))
@@ -69,6 +70,7 @@
   (uniq-orig n n1 n3)
   (operation encryption-test (displaced 2 1 adder 2) (enc n n2 (invk k))
     (0 2))
+  (strand-map 0 1)
   (traces
     ((send (enc n k)) (recv (enc n n1 (invk k)))
       (recv (enc n n1 (invk k))) (recv (enc n n3 (invk k)))
@@ -90,6 +92,7 @@
   (uniq-orig n n1 n2 n3)
   (operation encryption-test (added-strand adder 2) (enc n n2 (invk k))
     (0 2))
+  (strand-map 0 1)
   (traces
     ((send (enc n k)) (recv (enc n n1 (invk k)))
       (recv (enc n n2 (invk k))) (recv (enc n n3 (invk k)))
@@ -111,6 +114,7 @@
   (uniq-orig n n1)
   (operation encryption-test (displaced 2 1 adder 2) (enc n n3 (invk k))
     (0 3))
+  (strand-map 0 1)
   (traces
     ((send (enc n k)) (recv (enc n n1 (invk k)))
       (recv (enc n n1 (invk k))) (recv (enc n n1 (invk k)))
@@ -132,6 +136,7 @@
   (uniq-orig n n1 n3)
   (operation encryption-test (added-strand adder 2) (enc n n3 (invk k))
     (0 3))
+  (strand-map 0 1)
   (traces
     ((send (enc n k)) (recv (enc n n1 (invk k)))
       (recv (enc n n1 (invk k))) (recv (enc n n3 (invk k)))
@@ -154,6 +159,7 @@
   (uniq-orig n n1 n2)
   (operation encryption-test (displaced 3 1 adder 2) (enc n n3 (invk k))
     (0 3))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n n1 (invk k)))
       (recv (enc n n2 (invk k))) (recv (enc n n1 (invk k)))
@@ -176,6 +182,7 @@
   (uniq-orig n n1 n2)
   (operation encryption-test (displaced 3 2 adder 2) (enc n n3 (invk k))
     (0 3))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n n1 (invk k)))
       (recv (enc n n2 (invk k))) (recv (enc n n2 (invk k)))
@@ -200,6 +207,7 @@
   (uniq-orig n n1 n2 n3)
   (operation encryption-test (added-strand adder 2) (enc n n3 (invk k))
     (0 3))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n n1 (invk k)))
       (recv (enc n n2 (invk k))) (recv (enc n n3 (invk k)))
@@ -223,6 +231,7 @@
   (uniq-orig n n1)
   (operation encryption-test (added-strand twister 2)
     (enc n n1 n1 n1 n (invk k)) (0 5))
+  (strand-map 0 1)
   (traces
     ((send (enc n k)) (recv (enc n n1 (invk k)))
       (recv (enc n n1 (invk k))) (recv (enc n n1 (invk k)))
@@ -248,6 +257,7 @@
   (uniq-orig n n1 n3)
   (operation encryption-test (added-strand twister 2)
     (enc n n1 n1 n3 n (invk k)) (0 5))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n n1 (invk k)))
       (recv (enc n n1 (invk k))) (recv (enc n n3 (invk k)))
@@ -275,6 +285,7 @@
   (uniq-orig n n1 n2)
   (operation encryption-test (added-strand twister 2)
     (enc n n1 n2 n1 n (invk k)) (0 5))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n n1 (invk k)))
       (recv (enc n n2 (invk k))) (recv (enc n n1 (invk k)))
@@ -302,6 +313,7 @@
   (uniq-orig n n1 n2)
   (operation encryption-test (added-strand twister 2)
     (enc n n1 n2 n2 n (invk k)) (0 5))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n n1 (invk k)))
       (recv (enc n n2 (invk k))) (recv (enc n n2 (invk k)))
@@ -331,6 +343,7 @@
   (uniq-orig n n1 n2 n3)
   (operation encryption-test (added-strand twister 2)
     (enc n n1 n2 n3 n (invk k)) (0 5))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n n1 (invk k)))
       (recv (enc n n2 (invk k))) (recv (enc n n3 (invk k)))
@@ -357,6 +370,7 @@
   (uniq-orig n n1)
   (operation encryption-test (displaced 3 0 init 5)
     (enc n n1 n1 n1 (invk k)) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n n1 (invk k)))
       (recv (enc n n1 (invk k))) (recv (enc n n1 (invk k)))

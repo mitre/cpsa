@@ -116,6 +116,7 @@
   (uniq-gen x ltxb)
   (absent (x ltxb))
   (operation collapsed 2 1)
+  (strand-map 0 1 1)
   (traces
     ((recv (cat (exp (gen) ltxb) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -148,6 +149,7 @@
     (enc na nb a b
       (hash (exp (gen) (mul y ltxa)) (exp (gen) (mul x ltxb))
         (exp (gen) (mul y x)))) (0 2))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -195,6 +197,7 @@
     (enc na nb a b
       (hash (exp (gen) (mul y ltxb)) (exp (gen) (mul x ltxb))
         (exp (gen) (mul y x ltxb (rec ltxb-0))))) (0 2))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat (exp (gen) ltxb-0) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -238,6 +241,7 @@
     (enc na nb a b
       (hash (exp (gen) (mul ltxa y)) (exp (gen) (mul ltxb x))
         (exp (gen) (mul x y)))) (0 2))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -275,6 +279,7 @@
     (enc na nb a b
       (hash (exp (gen) (mul y ltxb)) (exp (gen) (mul x ltxb))
         (exp (gen) (mul y x)))) (0 2))
+  (strand-map 0 1)
   (traces
     ((recv (cat (exp (gen) ltxb) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -322,6 +327,7 @@
     (enc na nb a b
       (hash (exp (gen) (mul y ltxb)) (exp (gen) (mul x ltxb))
         (exp (gen) (mul x y)))) (0 2))
+  (strand-map 0 1)
   (traces
     ((recv (cat (exp (gen) ltxb) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -363,6 +369,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul ltxb (rec ltxb-0))) x))
     (exp (gen) (mul x ltxb (rec ltxb-0))) (3 1))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat (exp (gen) ltxb-0) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -412,6 +419,7 @@
         (exp (gen) (mul x y))))
     (hash (exp (gen) (mul ltxa y)) (exp (gen) (mul ltxb x))
       (exp (gen) (mul x y))) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -461,6 +469,7 @@
         (exp (gen) (mul x y))))
     (hash (exp (gen) (mul y ltxb)) (exp (gen) (mul x ltxb))
       (exp (gen) (mul x y))) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat (exp (gen) ltxb) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -508,6 +517,7 @@
   (absent (x ltxa) (x ltxb))
   (operation nonce-test (added-listener (cat (exp (gen) ltxb) x))
     (exp (gen) (mul ltxb x)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -557,6 +567,7 @@
   (absent (x ltxb))
   (operation nonce-test (added-listener (cat (exp (gen) ltxb) x))
     (exp (gen) (mul x ltxb)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat (exp (gen) ltxb) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -698,6 +709,7 @@
     (enc na nb a b
       (hash (exp (gen) (mul y ltxa)) (exp (gen) (mul x ltxb))
         (exp (gen) (mul y x)))) (0 2))
+  (strand-map 0 1)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -742,6 +754,7 @@
     (enc na nb a b
       (hash (exp (gen) (mul y ltxb)) (exp (gen) (mul x ltxb))
         (exp (gen) (mul y x ltxb (rec ltxb-0))))) (0 2))
+  (strand-map 0 1)
   (traces
     ((recv (cat (exp (gen) ltxb-0) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -783,6 +796,7 @@
     (enc na nb a b
       (hash (exp (gen) (mul ltxa y)) (exp (gen) (mul ltxb x))
         (exp (gen) (mul x y)))) (0 2))
+  (strand-map 0 1)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -816,6 +830,7 @@
   (uniq-gen y x ltxb)
   (absent (y x) (y ltxb) (x ltxb))
   (operation nonce-test (displaced 3 0 init 2) (exp (gen) x) (2 1))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat (exp (gen) ltxb) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -861,6 +876,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul x ltxb)) ltxb-0))
     (exp (gen) (mul x ltxb (rec ltxb-0))) (2 1))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat (exp (gen) ltxb-0) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -902,6 +918,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul ltxb (rec ltxb-0))) x))
     (exp (gen) (mul x ltxb (rec ltxb-0))) (2 1))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat (exp (gen) ltxb-0) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -948,6 +965,7 @@
         (exp (gen) (mul x y))))
     (hash (exp (gen) (mul ltxa y)) (exp (gen) (mul ltxb x))
       (exp (gen) (mul x y))) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -992,6 +1010,7 @@
     (x ltxb-0))
   (operation nonce-test (added-listener (cat (exp (gen) ltxb) x))
     (exp (gen) (mul x ltxb)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat (exp (gen) ltxb-0) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -1037,6 +1056,7 @@
   (absent (x ltxa) (x ltxb))
   (operation nonce-test (added-listener (cat (exp (gen) ltxb) x))
     (exp (gen) (mul ltxb x)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -1184,6 +1204,7 @@
     (enc na nb a b
       (hash (exp (gen) (mul ltxa y)) (exp (gen) (mul x ltxb))
         (exp (gen) (mul y x)))) (0 2))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -1227,6 +1248,7 @@
     (enc na nb a b
       (hash (exp (gen) (mul ltxa y)) (exp (gen) (mul ltxb x))
         (exp (gen) (mul x y)))) (0 2))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -1265,6 +1287,7 @@
   (absent (y ltxa) (y x) (y ltxb) (x ltxa) (x ltxb))
   (operation nonce-test (added-listener (cat (exp (gen) y) x))
     (exp (gen) (mul y x)) (2 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -1306,6 +1329,7 @@
   (absent (y ltxa) (y x) (y ltxb) (x ltxa) (x ltxb))
   (operation nonce-test (added-listener (cat (exp (gen) x) y))
     (exp (gen) (mul y x)) (2 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -1354,6 +1378,7 @@
         (exp (gen) (mul x y))))
     (hash (exp (gen) (mul ltxa y)) (exp (gen) (mul ltxb x))
       (exp (gen) (mul x y))) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -1402,6 +1427,7 @@
   (absent (x ltxa) (x ltxb))
   (operation nonce-test (added-listener (cat (exp (gen) ltxb) x))
     (exp (gen) (mul ltxb x)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -1543,6 +1569,7 @@
   (uniq-gen y ltxb)
   (absent (y x) (y ltxb))
   (operation collapsed 2 1)
+  (strand-map 0 1 1)
   (traces
     ((recv (cat (exp (gen) ltxb) (exp (gen) ltxb)))
       (recv (cat na a b (exp (gen) x)))
@@ -1575,6 +1602,7 @@
     (enc na nb a b
       (hash (exp (gen) (mul y ltxa)) (exp (gen) (mul x ltxb))
         (exp (gen) (mul y x)))))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (recv (cat na a b (exp (gen) x)))
@@ -1622,6 +1650,7 @@
     (enc na nb a b
       (hash (exp (gen) (mul y ltxb-0)) (exp (gen) (mul x ltxb-0))
         (exp (gen) (mul y x (rec ltxb) ltxb-0)))))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat (exp (gen) ltxb-0) (exp (gen) ltxb)))
       (recv (cat na a b (exp (gen) (mul x (rec ltxb) ltxb-0))))
@@ -1665,6 +1694,7 @@
     (enc na nb a b
       (hash (exp (gen) (mul ltxa y)) (exp (gen) (mul ltxb x))
         (exp (gen) (mul y x)))))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (recv (cat na a b (exp (gen) x)))
@@ -1703,6 +1733,7 @@
     (enc na nb a b
       (hash (exp (gen) (mul y ltxb)) (exp (gen) (mul x ltxb))
         (exp (gen) (mul y x)))))
+  (strand-map 0 1)
   (traces
     ((recv (cat (exp (gen) ltxb) (exp (gen) ltxb)))
       (recv (cat na a b (exp (gen) x)))
@@ -1750,6 +1781,7 @@
     (enc na nb a b
       (hash (exp (gen) (mul y ltxb)) (exp (gen) (mul x ltxb))
         (exp (gen) (mul y x)))))
+  (strand-map 0 1)
   (traces
     ((recv (cat (exp (gen) ltxb) (exp (gen) ltxb)))
       (recv (cat na a b (exp (gen) x)))
@@ -1791,6 +1823,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec ltxb) ltxb-0)) y))
     (exp (gen) (mul y (rec ltxb) ltxb-0)) (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat (exp (gen) ltxb-0) (exp (gen) ltxb)))
       (recv (cat na a b (exp (gen) (mul x (rec ltxb) ltxb-0))))
@@ -1840,6 +1873,7 @@
         (exp (gen) (mul y x))))
     (hash (exp (gen) (mul ltxa y)) (exp (gen) (mul ltxb x))
       (exp (gen) (mul y x))) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (recv (cat na a b (exp (gen) x)))
@@ -1889,6 +1923,7 @@
         (exp (gen) (mul y x))))
     (hash (exp (gen) (mul y ltxb)) (exp (gen) (mul x ltxb))
       (exp (gen) (mul y x))) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat (exp (gen) ltxb) (exp (gen) ltxb)))
       (recv (cat na a b (exp (gen) x)))
@@ -1936,6 +1971,7 @@
   (absent (y ltxa) (y ltxb) (y x))
   (operation nonce-test (added-listener (cat (exp (gen) ltxa) y))
     (exp (gen) (mul ltxa y)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (recv (cat na a b (exp (gen) x)))
@@ -1985,6 +2021,7 @@
   (absent (y x) (y ltxb))
   (operation nonce-test (added-listener (cat (exp (gen) ltxb) y))
     (exp (gen) (mul y ltxb)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat (exp (gen) ltxb) (exp (gen) ltxb)))
       (recv (cat na a b (exp (gen) x)))
@@ -2127,6 +2164,7 @@
     (enc na nb a b
       (hash (exp (gen) (mul y ltxa)) (exp (gen) (mul x ltxb))
         (exp (gen) (mul y x)))))
+  (strand-map 0 1)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (recv (cat na a b (exp (gen) x)))
@@ -2172,6 +2210,7 @@
     (enc na nb a b
       (hash (exp (gen) (mul y ltxb-0)) (exp (gen) (mul x ltxb-0))
         (exp (gen) (mul y x (rec ltxb) ltxb-0)))))
+  (strand-map 0 1)
   (traces
     ((recv (cat (exp (gen) ltxb-0) (exp (gen) ltxb)))
       (recv (cat na a b (exp (gen) (mul x (rec ltxb) ltxb-0))))
@@ -2213,6 +2252,7 @@
     (enc na nb a b
       (hash (exp (gen) (mul ltxa y)) (exp (gen) (mul ltxb x))
         (exp (gen) (mul y x)))))
+  (strand-map 0 1)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (recv (cat na a b (exp (gen) x)))
@@ -2247,6 +2287,7 @@
   (uniq-gen y ltxb x)
   (absent (y ltxb) (y x) (x ltxb))
   (operation nonce-test (displaced 3 0 resp 3) (exp (gen) y) (2 2))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat (exp (gen) ltxb) (exp (gen) ltxb)))
       (recv (cat na a b (exp (gen) x)))
@@ -2292,6 +2333,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul y ltxb-0)) ltxb))
     (exp (gen) (mul y (rec ltxb) ltxb-0)) (2 2))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat (exp (gen) ltxb-0) (exp (gen) ltxb)))
       (recv (cat na a b (exp (gen) (mul x (rec ltxb) ltxb-0))))
@@ -2333,6 +2375,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec ltxb) ltxb-0)) y))
     (exp (gen) (mul y (rec ltxb) ltxb-0)) (2 2))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat (exp (gen) ltxb-0) (exp (gen) ltxb)))
       (recv (cat na a b (exp (gen) (mul x (rec ltxb) ltxb-0))))
@@ -2379,6 +2422,7 @@
         (exp (gen) (mul y x))))
     (hash (exp (gen) (mul ltxa y)) (exp (gen) (mul ltxb x))
       (exp (gen) (mul y x))) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (recv (cat na a b (exp (gen) x)))
@@ -2423,6 +2467,7 @@
     (x ltxb-0))
   (operation nonce-test (added-listener (cat (exp (gen) ltxb-0) y))
     (exp (gen) (mul y ltxb-0)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat (exp (gen) ltxb-0) (exp (gen) ltxb)))
       (recv (cat na a b (exp (gen) (mul x (rec ltxb) ltxb-0))))
@@ -2469,6 +2514,7 @@
   (absent (y ltxa) (y ltxb) (y x))
   (operation nonce-test (added-listener (cat (exp (gen) ltxa) y))
     (exp (gen) (mul ltxa y)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (recv (cat na a b (exp (gen) x)))
@@ -2633,6 +2679,7 @@
   (uniq-gen x ltxb)
   (absent (x ltxb))
   (operation collapsed 3 2)
+  (strand-map 0 1 2 2)
   (traces
     ((recv (cat (exp (gen) ltxb) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -2677,6 +2724,7 @@
         (exp (gen) (mul x y))))
     (hash (exp (gen) (mul ltxa y)) (exp (gen) (mul ltxb x))
       (exp (gen) (mul x y))) (1 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -2727,6 +2775,7 @@
         (exp (gen) (mul x y))))
     (hash (exp (gen) (mul y ltxb)) (exp (gen) (mul x ltxb))
       (exp (gen) (mul x y))) (1 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat (exp (gen) ltxb) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -2776,6 +2825,7 @@
   (absent (x ltxa) (x ltxb))
   (operation nonce-test (added-listener (cat (exp (gen) ltxb) x))
     (exp (gen) (mul ltxb x)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -2827,6 +2877,7 @@
   (absent (x ltxa) (x ltxb))
   (operation nonce-test (added-listener (cat (exp (gen) x) ltxb))
     (exp (gen) (mul ltxb x)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -2876,6 +2927,7 @@
   (absent (x ltxb))
   (operation nonce-test (added-listener (cat (exp (gen) x) ltxb))
     (exp (gen) (mul x ltxb)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat (exp (gen) ltxb) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -2923,6 +2975,7 @@
   (absent (x ltxb))
   (operation nonce-test (added-listener (cat (exp (gen) ltxb) x))
     (exp (gen) (mul x ltxb)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat (exp (gen) ltxb) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -2972,6 +3025,7 @@
   (uniq-gen ltxa x l)
   (absent (x ltxa) (x l))
   (operation nonce-test (displaced 6 3 ltx-gen 3) l (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) l)))
       (send (cat na a b (exp (gen) x)))
@@ -3020,6 +3074,7 @@
   (uniq-gen x l)
   (absent (x l))
   (operation nonce-test (displaced 5 2 ltx-gen 3) l (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat (exp (gen) l) (exp (gen) l)))
       (send (cat na a b (exp (gen) x)))
@@ -3072,6 +3127,7 @@
     (enc na nb a b
       (hash (exp (gen) (mul y ltxa)) (exp (gen) (mul x ltxb))
         (exp (gen) (mul y x)))) (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -3134,6 +3190,7 @@
     (enc na nb a b
       (hash (exp (gen) (mul y l)) (exp (gen) (mul x l))
         (exp (gen) (mul y x l (rec ltxb))))) (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat (exp (gen) ltxb) (exp (gen) l)))
       (send (cat na a b (exp (gen) x)))
@@ -3201,6 +3258,7 @@
     (enc na nb a b
       (hash (exp (gen) (mul ltxa y)) (exp (gen) (mul x l))
         (exp (gen) (mul x y)))) (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) l)))
       (send (cat na a b (exp (gen) x)))
@@ -3260,6 +3318,7 @@
     (enc na nb a b
       (hash (exp (gen) (mul y l)) (exp (gen) (mul x l))
         (exp (gen) (mul y x)))) (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat (exp (gen) l) (exp (gen) l)))
       (send (cat na a b (exp (gen) x)))
@@ -3321,6 +3380,7 @@
     (enc na nb a b
       (hash (exp (gen) (mul y l)) (exp (gen) (mul x l))
         (exp (gen) (mul x y)))) (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat (exp (gen) l) (exp (gen) l)))
       (send (cat na a b (exp (gen) x)))
@@ -3379,6 +3439,7 @@
   (absent (y x) (y ltxa) (y ltxb) (x ltxa) (x ltxb))
   (operation nonce-test (added-listener (cat (exp (gen) y) ltxa))
     (exp (gen) (mul y ltxa)) (4 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -3442,6 +3503,7 @@
   (absent (y x) (y ltxa) (y ltxb) (x ltxa) (x ltxb))
   (operation nonce-test (added-listener (cat (exp (gen) ltxa) y))
     (exp (gen) (mul y ltxa)) (4 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -3506,6 +3568,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul x l)) ltxb))
     (exp (gen) (mul x l (rec ltxb))) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat (exp (gen) ltxb) (exp (gen) l)))
       (send (cat na a b (exp (gen) x)))
@@ -3571,6 +3634,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul x (rec ltxb))) l))
     (exp (gen) (mul x l (rec ltxb))) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat (exp (gen) ltxb) (exp (gen) l)))
       (send (cat na a b (exp (gen) x)))
@@ -3636,6 +3700,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec ltxb))) x))
     (exp (gen) (mul x l (rec ltxb))) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat (exp (gen) ltxb) (exp (gen) l)))
       (send (cat na a b (exp (gen) x)))
@@ -3708,6 +3773,7 @@
         (exp (gen) (mul x y))))
     (hash (exp (gen) (mul ltxa y)) (exp (gen) (mul x l))
       (exp (gen) (mul x y))) (6 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) l)))
       (send (cat na a b (exp (gen) x)))
@@ -3773,6 +3839,7 @@
   (absent (y x) (y l) (x l))
   (operation nonce-test (added-listener (cat (exp (gen) y) x))
     (exp (gen) (mul y x)) (3 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat (exp (gen) l) (exp (gen) l)))
       (send (cat na a b (exp (gen) x)))
@@ -3832,6 +3899,7 @@
   (absent (y x) (y l) (x l))
   (operation nonce-test (added-listener (cat (exp (gen) x) y))
     (exp (gen) (mul y x)) (3 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat (exp (gen) l) (exp (gen) l)))
       (send (cat na a b (exp (gen) x)))
@@ -3897,6 +3965,7 @@
         (exp (gen) (mul x y))))
     (hash (exp (gen) (mul y l)) (exp (gen) (mul x l))
       (exp (gen) (mul x y))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat (exp (gen) l) (exp (gen) l)))
       (send (cat na a b (exp (gen) x)))
@@ -3960,6 +4029,7 @@
   (uniq-gen y x ltxb l)
   (absent (y x) (y ltxb) (y l) (x ltxb) (x l))
   (operation nonce-test (displaced 8 2 ltx-gen 3) l (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (cat (exp (gen) l) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -4026,6 +4096,7 @@
   (absent (x ltxa) (x l))
   (operation nonce-test (added-listener (cat (exp (gen) x) l))
     (exp (gen) (mul x l)) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) l)))
       (send (cat na a b (exp (gen) x)))
@@ -4099,6 +4170,7 @@
   (absent (x ltxa) (x l))
   (operation nonce-test (added-listener (cat (exp (gen) l) x))
     (exp (gen) (mul x l)) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (cat (exp (gen) ltxa) (exp (gen) l)))
       (send (cat na a b (exp (gen) x)))
@@ -4170,6 +4242,7 @@
   (absent (x l))
   (operation nonce-test (added-listener (cat (exp (gen) x) l))
     (exp (gen) (mul x l)) (6 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat (exp (gen) l) (exp (gen) l)))
       (send (cat na a b (exp (gen) x)))
@@ -4238,6 +4311,7 @@
   (absent (x l))
   (operation nonce-test (added-listener (cat (exp (gen) l) x))
     (exp (gen) (mul x l)) (6 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat (exp (gen) l) (exp (gen) l)))
       (send (cat na a b (exp (gen) x)))
@@ -4305,6 +4379,7 @@
   (absent (y x) (y ltxb) (y l) (x ltxb) (x l))
   (operation nonce-test (added-listener (cat (exp (gen) y) x))
     (exp (gen) (mul y x)) (4 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (cat (exp (gen) l) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))
@@ -4370,6 +4445,7 @@
   (absent (y x) (y ltxb) (y l) (x ltxb) (x l))
   (operation nonce-test (added-listener (cat (exp (gen) x) y))
     (exp (gen) (mul y x)) (4 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv (cat (exp (gen) l) (exp (gen) ltxb)))
       (send (cat na a b (exp (gen) x)))

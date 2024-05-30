@@ -162,6 +162,7 @@
     trRl_get-cert-at-3)
   (operation channel-test (added-strand get-cert 4)
     (ch-msg static-key (cat pt "privkey" a ra serial-a ca)) (0 0))
+  (strand-map 0)
   (traces
     ((load static-key (cat pt "privkey" a ra serial-a ca))
       (recv (sig (cert b galpha ca serial-b) (privk "sig" ca)))
@@ -195,6 +196,7 @@
     trRl_get-cert-at-3)
   (operation encryption-test (added-strand cert 2)
     (sig (cert a (exp (gen) ra) ca serial-a) (privk "sig" ca)) (1 1))
+  (strand-map 0 1)
   (traces
     ((load static-key (cat pt "privkey" a ra serial-a ca))
       (recv (sig (cert b galpha ca serial-b) (privk "sig" ca)))
@@ -232,6 +234,7 @@
     trRl_get-cert-at-3)
   (operation encryption-test (added-strand cert 2)
     (sig (cert b galpha ca serial-b) (privk "sig" ca)) (0 1))
+  (strand-map 0 1 2)
   (traces
     ((load static-key (cat pt "privkey" a ra serial-a ca))
       (recv (sig (cert b galpha ca serial-b) (privk "sig" ca)))
@@ -274,6 +277,7 @@
     trRl_get-cert-at-3)
   (operation encryption-test (added-strand get-cert 1)
     (sig (cert-req b (exp (gen) ra-0) ca) (privk "sig" b)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load static-key (cat pt "privkey" a ra serial-a ca))
       (recv
@@ -326,6 +330,7 @@
     trRl_get-cert-at-3)
   (operation nonce-test (added-strand resp 4) n (0 3)
     (enc n a b serial-a serial-b (exp (gen) (mul ra ra-0))))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load static-key (cat pt "privkey" a ra serial-a ca))
       (recv
@@ -379,6 +384,7 @@
     trRl_get-cert-at-3)
   (operation nonce-test (added-listener (exp (gen) (mul ra ra-0))) n
     (0 3) (enc n a b serial-a serial-b (exp (gen) (mul ra ra-0))))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load static-key (cat pt "privkey" a ra serial-a ca))
       (recv
@@ -432,6 +438,7 @@
   (rule fact-resp-neq0 trRl_get-cert-at-2 trRl_get-cert-at-3)
   (operation channel-test (displaced 4 6 get-cert 4)
     (ch-msg static-key-0 (cat pt-1 "privkey" b ra-1 serial-b ca)) (5 0))
+  (strand-map 0 1 2 3 5 4)
   (traces
     ((load static-key (cat pt "privkey" a ra serial-a ca))
       (recv
@@ -502,6 +509,7 @@
   (operation channel-test (added-strand get-cert 4)
     (ch-msg static-key-0 (cat pt-1 "privkey" b ra-1 serial-b ca-0))
     (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load static-key (cat pt "privkey" a ra serial-a ca))
       (recv
@@ -562,6 +570,7 @@
     trRl_get-cert-at-3)
   (operation nonce-test (added-listener (cat (exp (gen) ra) ra-0))
     (exp (gen) (mul ra ra-0)) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load static-key (cat pt "privkey" a ra serial-a ca))
       (recv
@@ -613,6 +622,7 @@
     trRl_get-cert-at-3)
   (operation nonce-test (added-listener (cat (exp (gen) ra-0) ra))
     (exp (gen) (mul ra ra-0)) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load static-key (cat pt "privkey" a ra serial-a ca))
       (recv
@@ -671,6 +681,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul ra ra-0)) ra-1))
     (exp (gen) (mul ra ra-0 (rec ra-1))) (5 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load static-key (cat pt "privkey" a ra serial-a ca))
       (recv
@@ -740,6 +751,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul ra (rec ra-1))) ra-0))
     (exp (gen) (mul ra ra-0 (rec ra-1))) (5 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load static-key (cat pt "privkey" a ra serial-a ca))
       (recv
@@ -809,6 +821,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul ra-0 (rec ra-1))) ra))
     (exp (gen) (mul ra ra-0 (rec ra-1))) (5 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load static-key (cat pt "privkey" a ra serial-a ca))
       (recv
@@ -872,6 +885,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_get-cert-at-2
     trRl_get-cert-at-3)
   (operation nonce-test (displaced 4 7 get-cert 4) ra-0 (6 0))
+  (strand-map 0 1 2 3 6 4 5)
   (traces
     ((load static-key (cat pt "privkey" a ra serial-a ca))
       (recv
@@ -927,6 +941,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_get-cert-at-2
     trRl_get-cert-at-3)
   (operation nonce-test (displaced 7 1 get-cert 4) ra-0 (6 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load static-key (cat pt "privkey" a ra-0 serial-a ca))
       (recv (sig (cert b (exp (gen) ra) ca serial-b) (privk "sig" ca)))
@@ -984,6 +999,7 @@
   (leads-to ((1 3) (0 0)) ((6 3) (5 0)))
   (rule fact-resp-neq0 trRl_get-cert-at-2 trRl_get-cert-at-3)
   (operation nonce-test (displaced 8 6 get-cert 4) ra-1 (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load static-key (cat pt "privkey" a ra serial-a ca))
       (recv
@@ -1053,6 +1069,7 @@
   (leads-to ((1 3) (0 0)) ((5 3) (4 0)))
   (rule fact-resp-neq0 trRl_get-cert-at-2 trRl_get-cert-at-3)
   (operation nonce-test (displaced 4 8 get-cert 4) ra-1 (7 0))
+  (strand-map 0 1 2 3 7 4 5 6)
   (traces
     ((load static-key (cat pt "privkey" a ra serial-a ca-0))
       (recv
@@ -1130,6 +1147,7 @@
   (leads-to ((1 3) (0 0)) ((6 3) (5 0)))
   (rule fact-resp-neq0 trRl_get-cert-at-2 trRl_get-cert-at-3)
   (operation nonce-test (displaced 8 1 get-cert 4) ra-1 (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load static-key (cat pt "privkey" a ra-1 serial-a ca))
       (recv (sig (cert b (exp (gen) ra) ca serial-b) (privk "sig" ca)))
@@ -1195,6 +1213,7 @@
     trRl_get-cert-at-3)
   (operation encryption-test (displaced 7 3 cert 2)
     (sig (cert self (exp (gen) ra-0) ca serial) (privk "sig" ca)) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load static-key (cat pt "privkey" a ra serial-a ca))
       (recv
@@ -1256,6 +1275,7 @@
     trRl_get-cert-at-3)
   (operation encryption-test (added-strand cert 2)
     (sig (cert self (exp (gen) ra-0) ca serial) (privk "sig" ca)) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load static-key (cat pt "privkey" a ra serial-a ca))
       (recv
@@ -1324,6 +1344,7 @@
   (operation encryption-test (displaced 8 3 cert 2)
     (sig (cert self (exp (gen) ra-1) ca-0 serial) (privk "sig" ca-0))
     (7 1))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load static-key (cat pt "privkey" a ra serial-a ca-0))
       (recv
@@ -1407,6 +1428,7 @@
   (operation encryption-test (added-strand cert 2)
     (sig (cert self (exp (gen) ra-1) ca-0 serial) (privk "sig" ca-0))
     (7 1))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load static-key (cat pt "privkey" a ra serial-a ca-0))
       (recv
@@ -1614,6 +1636,7 @@
     trRl_get-cert-at-3)
   (operation channel-test (added-strand get-cert 4)
     (ch-msg static-key (cat pt "privkey" b ra serial-b ca)) (0 0))
+  (strand-map 0)
   (traces
     ((load static-key (cat pt "privkey" b ra serial-b ca))
       (recv (sig (cert a galpha ca serial-a) (privk "sig" ca)))
@@ -1647,6 +1670,7 @@
     trRl_get-cert-at-3)
   (operation encryption-test (added-strand cert 2)
     (sig (cert b (exp (gen) ra) ca serial-b) (privk "sig" ca)) (1 1))
+  (strand-map 0 1)
   (traces
     ((load static-key (cat pt "privkey" b ra serial-b ca))
       (recv (sig (cert a galpha ca serial-a) (privk "sig" ca)))
@@ -1684,6 +1708,7 @@
     trRl_get-cert-at-3)
   (operation encryption-test (added-strand cert 2)
     (sig (cert a galpha ca serial-a) (privk "sig" ca)) (0 1))
+  (strand-map 0 1 2)
   (traces
     ((load static-key (cat pt "privkey" b ra serial-b ca))
       (recv (sig (cert a galpha ca serial-a) (privk "sig" ca)))
@@ -1726,6 +1751,7 @@
     trRl_get-cert-at-3)
   (operation encryption-test (added-strand get-cert 1)
     (sig (cert-req a (exp (gen) ra-0) ca) (privk "sig" a)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load static-key (cat pt "privkey" b ra serial-b ca))
       (recv
@@ -1777,6 +1803,7 @@
     trRl_get-cert-at-3)
   (operation encryption-test (added-strand init 3)
     (enc n a b serial-a serial-b (exp (gen) (mul ra ra-0))) (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load static-key (cat pt "privkey" b ra serial-b ca))
       (recv
@@ -1829,6 +1856,7 @@
     trRl_get-cert-at-3)
   (operation encryption-test (added-listener (exp (gen) (mul ra ra-0)))
     (enc n a b serial-a serial-b (exp (gen) (mul ra ra-0))) (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load static-key (cat pt "privkey" b ra serial-b ca))
       (recv
@@ -1882,6 +1910,7 @@
   (rule fact-resp-neq0 trRl_get-cert-at-2 trRl_get-cert-at-3)
   (operation channel-test (displaced 4 6 get-cert 4)
     (ch-msg static-key-0 (cat pt-1 "privkey" a ra-1 serial-a ca)) (5 0))
+  (strand-map 0 1 2 3 5 4)
   (traces
     ((load static-key (cat pt "privkey" b ra serial-b ca))
       (recv
@@ -1951,6 +1980,7 @@
   (operation channel-test (added-strand get-cert 4)
     (ch-msg static-key-0 (cat pt-1 "privkey" a ra-1 serial-a ca-0))
     (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load static-key (cat pt "privkey" b ra serial-b ca))
       (recv
@@ -2010,6 +2040,7 @@
     trRl_get-cert-at-3)
   (operation nonce-test (added-listener (cat (exp (gen) ra) ra-0))
     (exp (gen) (mul ra ra-0)) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load static-key (cat pt "privkey" b ra serial-b ca))
       (recv
@@ -2061,6 +2092,7 @@
     trRl_get-cert-at-3)
   (operation nonce-test (added-listener (cat (exp (gen) ra-0) ra))
     (exp (gen) (mul ra ra-0)) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load static-key (cat pt "privkey" b ra serial-b ca))
       (recv
@@ -2119,6 +2151,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul ra ra-0)) ra-1))
     (exp (gen) (mul ra ra-0 (rec ra-1))) (5 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load static-key (cat pt "privkey" b ra serial-b ca))
       (recv
@@ -2187,6 +2220,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul ra (rec ra-1))) ra-0))
     (exp (gen) (mul ra ra-0 (rec ra-1))) (5 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load static-key (cat pt "privkey" b ra serial-b ca))
       (recv
@@ -2255,6 +2289,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul ra-0 (rec ra-1))) ra))
     (exp (gen) (mul ra ra-0 (rec ra-1))) (5 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load static-key (cat pt "privkey" b ra serial-b ca))
       (recv
@@ -2317,6 +2352,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_get-cert-at-2
     trRl_get-cert-at-3)
   (operation nonce-test (displaced 4 7 get-cert 4) ra-0 (6 0))
+  (strand-map 0 1 2 3 6 4 5)
   (traces
     ((load static-key (cat pt "privkey" b ra serial-b ca))
       (recv
@@ -2372,6 +2408,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_get-cert-at-2
     trRl_get-cert-at-3)
   (operation nonce-test (displaced 7 1 get-cert 4) ra-0 (6 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load static-key (cat pt "privkey" b ra-0 serial-b ca))
       (recv (sig (cert a (exp (gen) ra) ca serial-a) (privk "sig" ca)))
@@ -2428,6 +2465,7 @@
   (leads-to ((1 3) (0 0)) ((6 3) (5 0)))
   (rule fact-resp-neq0 trRl_get-cert-at-2 trRl_get-cert-at-3)
   (operation nonce-test (displaced 8 6 get-cert 4) ra-1 (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load static-key (cat pt "privkey" b ra serial-b ca))
       (recv
@@ -2496,6 +2534,7 @@
   (leads-to ((1 3) (0 0)) ((5 3) (4 0)))
   (rule fact-resp-neq0 trRl_get-cert-at-2 trRl_get-cert-at-3)
   (operation nonce-test (displaced 4 8 get-cert 4) ra-1 (7 0))
+  (strand-map 0 1 2 3 7 4 5 6)
   (traces
     ((load static-key (cat pt "privkey" b ra serial-b ca-0))
       (recv
@@ -2571,6 +2610,7 @@
   (leads-to ((1 3) (0 0)) ((6 3) (5 0)))
   (rule fact-resp-neq0 trRl_get-cert-at-2 trRl_get-cert-at-3)
   (operation nonce-test (displaced 8 1 get-cert 4) ra-1 (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load static-key (cat pt "privkey" b ra-1 serial-b ca))
       (recv (sig (cert a (exp (gen) ra) ca serial-a) (privk "sig" ca)))
@@ -2635,6 +2675,7 @@
     trRl_get-cert-at-3)
   (operation encryption-test (displaced 7 3 cert 2)
     (sig (cert self (exp (gen) ra-0) ca serial) (privk "sig" ca)) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load static-key (cat pt "privkey" b ra serial-b ca))
       (recv
@@ -2696,6 +2737,7 @@
     trRl_get-cert-at-3)
   (operation encryption-test (added-strand cert 2)
     (sig (cert self (exp (gen) ra-0) ca serial) (privk "sig" ca)) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load static-key (cat pt "privkey" b ra serial-b ca))
       (recv
@@ -2764,6 +2806,7 @@
   (operation encryption-test (displaced 8 3 cert 2)
     (sig (cert self (exp (gen) ra-1) ca-0 serial) (privk "sig" ca-0))
     (7 1))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load static-key (cat pt "privkey" b ra serial-b ca-0))
       (recv
@@ -2846,6 +2889,7 @@
   (operation encryption-test (added-strand cert 2)
     (sig (cert self (exp (gen) ra-1) ca-0 serial) (privk "sig" ca-0))
     (7 1))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load static-key (cat pt "privkey" b ra serial-b ca-0))
       (recv

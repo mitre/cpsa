@@ -61,6 +61,7 @@
   (non-orig dhkey (invk gx) (privk ca))
   (operation encryption-test (added-strand ca 1) (enc gx a (privk ca))
     (0 0))
+  (strand-map 0)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv (cat h (enc h b (privk ca)) (enc n (enc "dh" gx h dhkey))))
@@ -80,6 +81,7 @@
   (non-orig dhkey (invk gx) (privk ca))
   (operation encryption-test (displaced 2 1 ca 1) (enc h b (privk ca))
     (0 2))
+  (strand-map 0 1)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -101,6 +103,7 @@
   (non-orig dhkey (invk gx) (invk h) (privk ca))
   (operation encryption-test (added-strand ca 1) (enc h b (privk ca))
     (0 2))
+  (strand-map 0 1)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv (cat h (enc h b (privk ca)) (enc n (enc "dh" gx h dhkey))))
@@ -122,6 +125,7 @@
   (non-orig dhkey (invk gx) (privk ca) (privk ca-0))
   (operation encryption-test (added-strand resp 3)
     (enc n (enc "dh" gx gx dhkey)) (0 2))
+  (strand-map 0 1)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -148,6 +152,7 @@
   (non-orig dhkey (invk gx) (privk ca))
   (operation encryption-test (added-listener (enc "dh" gx gx dhkey))
     (enc n (enc "dh" gx gx dhkey)) (0 2))
+  (strand-map 0 1)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -173,6 +178,7 @@
   (non-orig dhkey (invk gx) (invk h) (privk ca) (privk ca-0))
   (operation encryption-test (added-strand resp 3)
     (enc n (enc "dh" gx h dhkey)) (0 2))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv (cat h (enc h b (privk ca)) (enc n (enc "dh" gx h dhkey))))
@@ -199,6 +205,7 @@
   (non-orig dhkey (invk gx) (invk h) (privk ca))
   (operation encryption-test (added-listener (enc "dh" gx h dhkey))
     (enc n (enc "dh" gx h dhkey)) (0 2))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv (cat h (enc h b (privk ca)) (enc n (enc "dh" gx h dhkey))))
@@ -222,6 +229,7 @@
   (non-orig dhkey (invk gx) (privk ca))
   (operation encryption-test (displaced 3 1 ca 1)
     (enc gx b (privk ca-0)) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -249,6 +257,7 @@
   (non-orig dhkey (invk gx) (privk ca) (privk ca-0))
   (operation encryption-test (added-strand ca 1) (enc gx b (privk ca-0))
     (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -278,6 +287,7 @@
   (non-orig dhkey (invk gx) (privk ca))
   (operation encryption-test (displaced 4 1 ca 1)
     (enc h b-0 (privk ca-0)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -305,6 +315,7 @@
   (non-orig dhkey (invk gx) (invk h) (privk ca))
   (operation encryption-test (displaced 4 2 ca 1)
     (enc h b-0 (privk ca-0)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv (cat h (enc h b (privk ca)) (enc n (enc "dh" gx h dhkey))))
@@ -331,6 +342,7 @@
   (non-orig dhkey (invk gx) (invk h) (privk ca) (privk ca-0))
   (operation encryption-test (added-strand ca 1)
     (enc h b-0 (privk ca-0)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv (cat h (enc h b (privk ca)) (enc n (enc "dh" gx h dhkey))))
@@ -357,6 +369,7 @@
   (non-orig dhkey (invk gx) (privk ca))
   (operation encryption-test (displaced 3 1 ca 1)
     (enc gx a-0 (privk ca)) (2 1))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -385,6 +398,7 @@
   (non-orig dhkey (invk gx) (privk ca))
   (operation encryption-test (added-strand ca 1) (enc gx a-0 (privk ca))
     (2 1))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -415,6 +429,7 @@
   (non-orig dhkey (invk gx) (privk ca))
   (operation encryption-test (displaced 4 1 ca 1)
     (enc gx a-0 (privk ca-0)) (2 1))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -444,6 +459,7 @@
   (non-orig dhkey (invk gx) (privk ca) (privk ca-0))
   (operation encryption-test (displaced 4 3 ca 1)
     (enc gx a-0 (privk ca-0)) (2 1))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -476,6 +492,7 @@
   (non-orig dhkey (invk gx) (privk ca) (privk ca-0))
   (operation encryption-test (added-strand ca 1)
     (enc gx a-0 (privk ca-0)) (2 1))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -507,6 +524,7 @@
   (non-orig dhkey (invk gx) (privk ca))
   (operation encryption-test (displaced 4 1 ca 1)
     (enc gx a-0 (privk ca)) (3 1))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -535,6 +553,7 @@
   (non-orig dhkey (invk gx) (privk ca))
   (operation encryption-test (displaced 4 2 ca 1)
     (enc gx a-0 (privk ca)) (3 1))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -565,6 +584,7 @@
   (non-orig dhkey (invk gx) (privk ca))
   (operation encryption-test (added-strand ca 1) (enc gx a-0 (privk ca))
     (3 1))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -595,6 +615,7 @@
   (non-orig dhkey (invk gx) (invk h) (privk ca))
   (operation encryption-test (displaced 4 1 ca 1)
     (enc gx a-0 (privk ca)) (3 1))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv (cat h (enc h b (privk ca)) (enc n (enc "dh" gx h dhkey))))
@@ -622,6 +643,7 @@
   (non-orig dhkey (invk h) (privk ca))
   (operation encryption-test (displaced 4 2 ca 1)
     (enc gx a-0 (privk ca)) (3 1))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc h a (privk ca))) (send (cat h (enc h a (privk ca))))
       (recv (cat h (enc h b (privk ca)) (enc n (enc "dh" h h dhkey))))
@@ -649,6 +671,7 @@
   (non-orig dhkey (invk gx) (invk h) (privk ca))
   (operation encryption-test (added-strand ca 1) (enc gx a-0 (privk ca))
     (3 1))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv (cat h (enc h b (privk ca)) (enc n (enc "dh" gx h dhkey))))
@@ -677,6 +700,7 @@
   (non-orig dhkey (invk h) (privk ca))
   (operation encryption-test (displaced 5 2 ca 1)
     (enc gx a-0 (privk ca-0)) (3 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc h a (privk ca))) (send (cat h (enc h a (privk ca))))
       (recv (cat h (enc h b (privk ca)) (enc n (enc "dh" h h dhkey))))
@@ -707,6 +731,7 @@
   (non-orig dhkey (invk gx) (invk h) (privk ca))
   (operation encryption-test (displaced 5 1 ca 1)
     (enc gx a-0 (privk ca-0)) (3 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv (cat h (enc h b (privk ca)) (enc n (enc "dh" gx h dhkey))))
@@ -736,6 +761,7 @@
   (non-orig dhkey (invk h) (privk ca) (privk ca-0))
   (operation encryption-test (displaced 5 4 ca 1)
     (enc gx a-0 (privk ca-0)) (3 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc h a (privk ca))) (send (cat h (enc h a (privk ca))))
       (recv (cat h (enc h b (privk ca)) (enc n (enc "dh" h h dhkey))))
@@ -768,6 +794,7 @@
   (non-orig dhkey (invk gx) (invk h) (privk ca) (privk ca-0))
   (operation encryption-test (added-strand ca 1)
     (enc gx a-0 (privk ca-0)) (3 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv (cat h (enc h b (privk ca)) (enc n (enc "dh" gx h dhkey))))
@@ -848,6 +875,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gy b (privk ca))
     (0 0))
+  (strand-map 0)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat h (enc h a (privk ca))))
       (send
@@ -869,6 +897,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 2 1 ca 1) (enc h a (privk ca))
     (0 1))
+  (strand-map 0 1)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat gy (enc gy b (privk ca))))
       (send
@@ -891,6 +920,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc h a (privk ca))
     (0 1))
+  (strand-map 0 1)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat h (enc h a (privk ca))))
       (send
@@ -914,6 +944,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand init 4)
     (enc "check" n (enc "dh" gy gy dhkey)) (0 3))
+  (strand-map 0 1)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat gy (enc gy b (privk ca))))
       (send
@@ -942,6 +973,7 @@
   (uniq-orig n)
   (operation encryption-test (added-listener (enc "dh" gy gy dhkey))
     (enc "check" n (enc "dh" gy gy dhkey)) (0 3))
+  (strand-map 0 1)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat gy (enc gy b (privk ca))))
       (send
@@ -968,6 +1000,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand init 4)
     (enc "check" n (enc "dh" h gy dhkey)) (0 3))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat h (enc h a (privk ca))))
       (send
@@ -997,6 +1030,7 @@
   (uniq-orig n)
   (operation encryption-test (added-listener (enc "dh" h gy dhkey))
     (enc "check" n (enc "dh" h gy dhkey)) (0 3))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat h (enc h a (privk ca))))
       (send
@@ -1022,6 +1056,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 3 1 ca 1)
     (enc gy a (privk ca-0)) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat gy (enc gy b (privk ca))))
       (send
@@ -1050,6 +1085,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gy a (privk ca-0))
     (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat gy (enc gy b (privk ca))))
       (send
@@ -1082,6 +1118,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 4 1 ca 1)
     (enc h a-0 (privk ca-0)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat gy (enc gy a (privk ca))))
       (send
@@ -1111,6 +1148,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 4 2 ca 1)
     (enc h a-0 (privk ca-0)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat h (enc h a (privk ca))))
       (send
@@ -1141,6 +1179,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1)
     (enc h a-0 (privk ca-0)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat h (enc h a (privk ca))))
       (send
@@ -1171,6 +1210,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 3 1 ca 1)
     (enc gy b-0 (privk ca)) (2 2))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat gy (enc gy b (privk ca))))
       (send
@@ -1202,6 +1242,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gy b-0 (privk ca))
     (2 2))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat gy (enc gy b (privk ca))))
       (send
@@ -1233,6 +1274,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 4 1 ca 1)
     (enc gy b-0 (privk ca-0)) (2 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat gy (enc gy b (privk ca))))
       (send
@@ -1264,6 +1306,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 4 3 ca 1)
     (enc gy b-0 (privk ca-0)) (2 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat gy (enc gy b (privk ca))))
       (send
@@ -1298,6 +1341,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1)
     (enc gy b-0 (privk ca-0)) (2 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat gy (enc gy b (privk ca))))
       (send
@@ -1332,6 +1376,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 4 1 ca 1)
     (enc gy b-0 (privk ca)) (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat gy (enc gy a (privk ca))))
       (send
@@ -1363,6 +1408,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 4 2 ca 1)
     (enc gy b-0 (privk ca)) (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat gy (enc gy a (privk ca))))
       (send
@@ -1395,6 +1441,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gy b-0 (privk ca))
     (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat gy (enc gy a (privk ca))))
       (send
@@ -1427,6 +1474,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 4 1 ca 1)
     (enc gy b-0 (privk ca)) (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat h (enc h a (privk ca))))
       (send
@@ -1458,6 +1506,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 4 2 ca 1)
     (enc gy b-0 (privk ca)) (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc h b (privk ca))) (recv (cat h (enc h a (privk ca))))
       (send (cat h (enc h b (privk ca)) (enc n (enc "dh" h h dhkey))))
@@ -1488,6 +1537,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gy b-0 (privk ca))
     (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat h (enc h a (privk ca))))
       (send
@@ -1521,6 +1571,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 5 2 ca 1)
     (enc gy b-0 (privk ca-0)) (3 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc h b (privk ca))) (recv (cat h (enc h a (privk ca))))
       (send (cat h (enc h b (privk ca)) (enc n (enc "dh" h h dhkey))))
@@ -1552,6 +1603,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 5 1 ca 1)
     (enc gy b-0 (privk ca-0)) (3 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat h (enc h a (privk ca))))
       (send
@@ -1585,6 +1637,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 5 4 ca 1)
     (enc gy b-0 (privk ca-0)) (3 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc h b (privk ca))) (recv (cat h (enc h a (privk ca))))
       (send (cat h (enc h b (privk ca)) (enc n (enc "dh" h h dhkey))))
@@ -1619,6 +1672,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1)
     (enc gy b-0 (privk ca-0)) (3 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat h (enc h a (privk ca))))
       (send
@@ -1725,6 +1779,7 @@
   (uniq-orig n)
   (operation nonce-test (added-strand init 4) n (1 0)
     (enc n (enc "dh" h gy dhkey)))
+  (strand-map 0 1)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat h (enc h a (privk ca))))
       (send
@@ -1752,6 +1807,7 @@
   (uniq-orig n)
   (operation nonce-test (added-listener (enc "dh" h gy dhkey)) n (1 0)
     (enc n (enc "dh" h gy dhkey)))
+  (strand-map 0 1)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat h (enc h a (privk ca))))
       (send
@@ -1776,6 +1832,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1)
     (enc h a-0 (privk ca-0)) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat h (enc h a (privk ca))))
       (send
@@ -1805,6 +1862,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand CDHcalc1 2)
     (enc "dh" h gy dhkey) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat h (enc h a (privk ca))))
       (send
@@ -1830,6 +1888,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand CDHcalc2 2)
     (enc "dh" h gy dhkey) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat h (enc h a (privk ca))))
       (send
@@ -1855,6 +1914,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 4 3 ca 1)
     (enc gy b-0 (privk ca-0)) (2 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc h b (privk ca))) (recv (cat h (enc h a (privk ca))))
       (send (cat h (enc h b (privk ca)) (enc n (enc "dh" h h dhkey))))
@@ -1884,6 +1944,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1)
     (enc gy b-0 (privk ca-0)) (2 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat h (enc h a (privk ca))))
       (send
@@ -1915,6 +1976,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gy b (privk ca))
     (0 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat h (enc h a (privk ca))))
       (send
@@ -1943,6 +2005,7 @@
   (uniq-orig n)
   (operation nonce-test (added-listener (enc "dh" h h dhkey)) n (1 0)
     (enc n (enc "dh" h h dhkey)) (enc "check" n (enc "dh" h h dhkey)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc h b (privk ca))) (recv (cat h (enc h a (privk ca))))
       (send (cat h (enc h b (privk ca)) (enc n (enc "dh" h h dhkey))))
@@ -1976,6 +2039,7 @@
   (uniq-orig n)
   (operation nonce-test (added-listener (enc "dh" h gy dhkey)) n (1 0)
     (enc n (enc "dh" h gy dhkey)) (enc "check" n (enc "dh" h gy dhkey)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy b (privk ca))) (recv (cat h (enc h a (privk ca))))
       (send
@@ -2089,6 +2153,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gy b (privk ca))
     (1 0))
+  (strand-map 0 1)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -2116,6 +2181,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 3 2 ca 1) (enc gx a (privk ca))
     (1 1))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -2144,6 +2210,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gx a (privk ca))
     (1 1))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -2171,6 +2238,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 3 0 init 4)
     (enc "check" n (enc "dh" gy gy dhkey)) (1 3))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -2200,6 +2268,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand init 4)
     (enc "check" n (enc "dh" gy gy dhkey)) (1 3))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -2234,6 +2303,7 @@
   (uniq-orig n)
   (operation encryption-test (added-listener (enc "dh" gy gy dhkey))
     (enc "check" n (enc "dh" gy gy dhkey)) (1 3))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -2264,6 +2334,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 4 0 init 4)
     (enc "check" n (enc "dh" gx gy dhkey)) (1 3))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -2295,6 +2366,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand init 4)
     (enc "check" n (enc "dh" gx gy dhkey)) (1 3))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -2330,6 +2402,7 @@
   (uniq-orig n)
   (operation encryption-test (added-listener (enc "dh" gx gy dhkey))
     (enc "check" n (enc "dh" gx gy dhkey)) (1 3))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -2359,6 +2432,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 3 2 ca 1) (enc gy b (privk ca))
     (0 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -2390,6 +2464,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gy b (privk ca))
     (0 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -2423,6 +2498,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 4 2 ca 1)
     (enc gy a (privk ca-0)) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -2458,6 +2534,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gy a (privk ca-0))
     (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -2494,6 +2571,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 4 2 ca 1) (enc gx a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -2525,6 +2603,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 4 3 ca 1) (enc gx a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -2558,6 +2637,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gx a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -2593,6 +2673,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 5 2 ca 1)
     (enc gx a-0 (privk ca-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy a (privk ca))) (send (cat gy (enc gy a (privk ca))))
       (recv
@@ -2628,6 +2709,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 5 3 ca 1)
     (enc gx a-0 (privk ca-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -2664,6 +2746,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1)
     (enc gx a-0 (privk ca-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -2701,6 +2784,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 4 2 ca 1)
     (enc gy b-0 (privk ca)) (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -2736,6 +2820,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gy b-0 (privk ca))
     (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -2772,6 +2857,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 5 2 ca 1)
     (enc gy b-0 (privk ca-0)) (3 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -2808,6 +2894,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 5 4 ca 1)
     (enc gy b-0 (privk ca-0)) (3 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -2851,6 +2938,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1)
     (enc gy b-0 (privk ca-0)) (3 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -2889,6 +2977,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 5 2 ca 1)
     (enc gy b-0 (privk ca)) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy a (privk ca))) (send (cat gy (enc gy a (privk ca))))
       (recv
@@ -2924,6 +3013,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 5 3 ca 1)
     (enc gy b-0 (privk ca)) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy a (privk ca))) (send (cat gy (enc gy a (privk ca))))
       (recv
@@ -2965,6 +3055,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gy b-0 (privk ca))
     (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy a (privk ca))) (send (cat gy (enc gy a (privk ca))))
       (recv
@@ -3001,6 +3092,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 5 2 ca 1)
     (enc gy b-0 (privk ca)) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -3036,6 +3128,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 5 3 ca 1)
     (enc gy b-0 (privk ca)) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -3077,6 +3170,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gy b-0 (privk ca))
     (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -3114,6 +3208,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 6 3 ca 1)
     (enc gy b-0 (privk ca-0)) (4 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -3152,6 +3247,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 6 2 ca 1)
     (enc gy b-0 (privk ca-0)) (4 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -3195,6 +3291,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 6 5 ca 1)
     (enc gy b-0 (privk ca-0)) (4 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -3240,6 +3337,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1)
     (enc gy b-0 (privk ca-0)) (4 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -3278,6 +3376,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 4 2 ca 1) (enc gy b (privk ca))
     (0 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -3316,6 +3415,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gy b (privk ca))
     (0 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -3355,6 +3455,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 5 2 ca 1) (enc gy b (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -3394,6 +3495,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 5 4 ca 1)
     (enc gy b-0 (privk ca)) (0 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -3431,6 +3533,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gy b (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -3470,6 +3573,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 5 2 ca 1) (enc gy b (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -3509,6 +3613,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 5 4 ca 1) (enc gy b (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy a (privk ca))) (send (cat gy (enc gy a (privk ca))))
       (recv
@@ -3549,6 +3654,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gy b (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -3588,6 +3694,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 5 2 ca 1) (enc gy b (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -3629,6 +3736,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gy b (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -3670,6 +3778,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 6 4 ca 1)
     (enc gy b-0 (privk ca-0)) (0 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gy a (privk ca))) (send (cat gy (enc gy a (privk ca))))
       (recv
@@ -3710,6 +3819,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 6 2 ca 1) (enc gy b (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -3752,6 +3862,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 6 5 ca 1)
     (enc gy b-0 (privk ca-0)) (0 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -3790,6 +3901,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gy b (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -3832,6 +3944,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 5 2 ca 1) (enc gy a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -3869,6 +3982,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 5 3 ca 1) (enc gy a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy a (privk ca))) (send (cat gy (enc gy a (privk ca))))
       (recv
@@ -3908,6 +4022,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gy a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy a (privk ca))) (send (cat gy (enc gy a (privk ca))))
       (recv
@@ -3947,6 +4062,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 5 3 ca 1) (enc gy a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy a (privk ca))) (send (cat gy (enc gy a (privk ca))))
       (recv
@@ -3986,6 +4102,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gy a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy a (privk ca))) (send (cat gy (enc gy a (privk ca))))
       (recv
@@ -4026,6 +4143,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 6 3 ca 1) (enc gy a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gy a (privk ca))) (send (cat gy (enc gy a (privk ca))))
       (recv
@@ -4066,6 +4184,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 6 2 ca 1) (enc gy a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -4105,6 +4224,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 6 5 ca 1) (enc gy a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gy b-0 (privk ca)))
       (send (cat gy (enc gy b-0 (privk ca))))
@@ -4145,6 +4265,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gy a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gy a (privk ca))) (send (cat gy (enc gy a (privk ca))))
       (recv
@@ -4184,6 +4305,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 5 2 ca 1) (enc gx a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -4219,6 +4341,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 5 3 ca 1) (enc gx a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -4258,6 +4381,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gx a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -4297,6 +4421,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 5 3 ca 1) (enc gx a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -4336,6 +4461,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gx a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -4376,6 +4502,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 6 3 ca 1) (enc gx a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -4416,6 +4543,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 6 2 ca 1) (enc gx a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -4453,6 +4581,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 6 5 ca 1) (enc gx a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gy b-0 (privk ca)))
       (send (cat gy (enc gy b-0 (privk ca))))
@@ -4494,6 +4623,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gx a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -4534,6 +4664,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 6 3 ca 1) (enc gx a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -4575,6 +4706,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 6 2 ca 1)
     (enc gx a-0 (privk ca)) (0 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gx b (privk ca))) (send (cat gx (enc gx b (privk ca))))
       (recv
@@ -4614,6 +4746,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 6 5 ca 1)
     (enc gx a-0 (privk ca)) (0 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -4655,6 +4788,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gx a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -4696,6 +4830,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 6 3 ca 1) (enc gx a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -4737,6 +4872,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 6 5 ca 1)
     (enc gx a-0 (privk ca)) (0 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -4778,6 +4914,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gx a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -4819,6 +4956,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 6 3 ca 1) (enc gx a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -4861,6 +4999,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 6 2 ca 1)
     (enc gx a-0 (privk ca)) (0 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gx b (privk ca))) (send (cat gx (enc gx b (privk ca))))
       (recv
@@ -4902,6 +5041,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gx a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -4945,6 +5085,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 7 3 ca 1) (enc gx a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -4989,6 +5130,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 7 2 ca 1)
     (enc gx a-0 (privk ca)) (0 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -5031,6 +5173,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 7 5 ca 1)
     (enc gx a-0 (privk ca-0)) (0 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -5072,6 +5215,7 @@
   (uniq-orig n)
   (operation encryption-test (displaced 7 6 ca 1)
     (enc gx a-0 (privk ca-0)) (0 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc gy b-0 (privk ca)))
       (send (cat gy (enc gy b-0 (privk ca))))
@@ -5113,6 +5257,7 @@
   (uniq-orig n)
   (operation encryption-test (added-strand ca 1) (enc gx a (privk ca))
     (0 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc gx a (privk ca))) (send (cat gx (enc gx a (privk ca))))
       (recv
@@ -5154,6 +5299,7 @@
   (non-orig dhkey (invk gy) (privk ca))
   (uniq-orig n)
   (operation generalization weakened ((4 0) (3 2)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -5192,6 +5338,7 @@
   (non-orig dhkey (invk gy) (privk ca))
   (uniq-orig n)
   (operation generalization weakened ((5 0) (3 2)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -5230,6 +5377,7 @@
   (non-orig dhkey (invk gy) (privk ca))
   (uniq-orig n)
   (operation generalization weakened ((5 0) (4 2)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gy b-0 (privk ca)))
       (send (cat gy (enc gy b-0 (privk ca))))
@@ -5269,6 +5417,7 @@
   (non-orig dhkey (invk gy) (privk ca))
   (uniq-orig n)
   (operation generalization weakened ((3 0) (1 1)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -5304,6 +5453,7 @@
   (non-orig dhkey (invk gy) (privk ca))
   (uniq-orig n)
   (operation generalization weakened ((3 0) (1 1)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -5340,6 +5490,7 @@
   (non-orig dhkey (invk gy) (privk ca))
   (uniq-orig n)
   (operation generalization weakened ((5 0) (4 2)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gy b-0 (privk ca)))
       (send (cat gy (enc gy b-0 (privk ca))))
@@ -5382,6 +5533,7 @@
   (non-orig dhkey (invk gy) (privk ca))
   (uniq-orig n)
   (operation generalization weakened ((6 0) (4 2)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (enc gy b-0 (privk ca)))
       (send (cat gy (enc gy b-0 (privk ca))))
@@ -5421,6 +5573,7 @@
   (non-orig dhkey (invk gy) (privk ca))
   (uniq-orig n)
   (operation generalization weakened ((3 0) (0 2)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv
@@ -5458,6 +5611,7 @@
   (non-orig dhkey (invk gy) (privk ca))
   (uniq-orig n)
   (operation generalization weakened ((3 0) (0 2)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc gy b (privk ca))) (send (cat gy (enc gy b (privk ca))))
       (recv

@@ -52,6 +52,7 @@
   (uniq-orig n h)
   (operation encryption-test (added-strand resp 2)
     (enc n (enc "dh" gx h dhkey)) (0 1))
+  (strand-map 0)
   (traces
     ((send gx) (recv (cat h (enc n (enc "dh" gx h dhkey))))
       (send (enc "check" n (enc "dh" gx h dhkey))))
@@ -71,6 +72,7 @@
   (non-orig dhkey (invk gx))
   (operation encryption-test (added-listener (enc "dh" gx h dhkey))
     (enc n (enc "dh" gx h dhkey)) (0 1))
+  (strand-map 0)
   (traces
     ((send gx) (recv (cat h (enc n (enc "dh" gx h dhkey))))
       (send (enc "check" n (enc "dh" gx h dhkey))))
@@ -89,6 +91,7 @@
   (non-orig dhkey (invk gx))
   (operation encryption-test (added-strand CDHcalc1 2)
     (enc "dh" gx h dhkey) (1 0))
+  (strand-map 0 1)
   (traces
     ((send gx) (recv (cat h (enc n (enc "dh" gx h dhkey))))
       (send (enc "check" n (enc "dh" gx h dhkey))))
@@ -106,6 +109,7 @@
   (precedes ((1 1) (0 1)))
   (non-orig dhkey (invk gx))
   (operation generalization deleted (1 0))
+  (strand-map 0 2)
   (traces
     ((send gx) (recv (cat h (enc n (enc "dh" gx h dhkey))))
       (send (enc "check" n (enc "dh" gx h dhkey))))
@@ -169,6 +173,7 @@
   (uniq-orig n gy)
   (operation encryption-test (added-strand init 3)
     (enc "check" n (enc "dh" h gy dhkey)) (0 2))
+  (strand-map 0)
   (traces
     ((recv h) (send (cat gy (enc n (enc "dh" h gy dhkey))))
       (recv (enc "check" n (enc "dh" h gy dhkey))))
@@ -190,6 +195,7 @@
   (uniq-orig n gy)
   (operation encryption-test (added-listener (enc "dh" h gy dhkey))
     (enc "check" n (enc "dh" h gy dhkey)) (0 2))
+  (strand-map 0)
   (traces
     ((recv h) (send (cat gy (enc n (enc "dh" h gy dhkey))))
       (recv (enc "check" n (enc "dh" h gy dhkey))))
@@ -209,6 +215,7 @@
   (uniq-orig n gy)
   (operation encryption-test (added-strand CDHcalc2 2)
     (enc "dh" h gy dhkey) (1 0))
+  (strand-map 0 1)
   (traces
     ((recv h) (send (cat gy (enc n (enc "dh" h gy dhkey))))
       (recv (enc "check" n (enc "dh" h gy dhkey))))
@@ -227,6 +234,7 @@
   (non-orig dhkey (invk gy))
   (uniq-orig n gy)
   (operation generalization deleted (1 0))
+  (strand-map 0 2)
   (traces
     ((recv h) (send (cat gy (enc n (enc "dh" h gy dhkey))))
       (recv (enc "check" n (enc "dh" h gy dhkey))))
@@ -309,6 +317,7 @@
   (uniq-orig n gy)
   (operation encryption-test (displaced 0 2 init 3)
     (enc "check" n (enc "dh" gx gy dhkey)) (1 2))
+  (strand-map 1 0)
   (traces
     ((recv gx) (send (cat gy (enc n (enc "dh" gx gy dhkey))))
       (recv (enc "check" n (enc "dh" gx gy dhkey))))
@@ -331,6 +340,7 @@
   (uniq-orig n gy)
   (operation encryption-test (added-strand init 3)
     (enc "check" n (enc "dh" gx gy dhkey-0)) (1 2))
+  (strand-map 0 1)
   (traces ((send gx) (recv (cat gy (enc n (enc "dh" gx gy dhkey)))))
     ((recv gx) (send (cat gy (enc n (enc "dh" gx gy dhkey-0))))
       (recv (enc "check" n (enc "dh" gx gy dhkey-0))))
@@ -351,6 +361,7 @@
   (uniq-orig n gy)
   (operation encryption-test (added-listener (enc "dh" gx gy dhkey-0))
     (enc "check" n (enc "dh" gx gy dhkey-0)) (1 2))
+  (strand-map 0 1)
   (traces ((send gx) (recv (cat gy (enc n (enc "dh" gx gy dhkey)))))
     ((recv gx) (send (cat gy (enc n (enc "dh" gx gy dhkey-0))))
       (recv (enc "check" n (enc "dh" gx gy dhkey-0))))
@@ -371,6 +382,7 @@
   (uniq-orig n gy)
   (operation encryption-test (displaced 3 1 resp 2)
     (enc n (enc "dh" gx gy dhkey-0)) (0 1))
+  (strand-map 0 1 2)
   (traces ((send gx) (recv (cat gy (enc n (enc "dh" gx gy dhkey)))))
     ((recv gx) (send (cat gy (enc n (enc "dh" gx gy dhkey))))
       (recv (enc "check" n (enc "dh" gx gy dhkey))))
@@ -394,6 +406,7 @@
   (uniq-orig n gy)
   (operation encryption-test (added-listener (enc "dh" gx gy dhkey))
     (enc n (enc "dh" gx gy dhkey)) (0 1))
+  (strand-map 0 1 2)
   (traces ((send gx) (recv (cat gy (enc n (enc "dh" gx gy dhkey)))))
     ((recv gx) (send (cat gy (enc n (enc "dh" gx gy dhkey-0))))
       (recv (enc "check" n (enc "dh" gx gy dhkey-0))))

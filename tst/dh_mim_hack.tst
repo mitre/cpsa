@@ -51,6 +51,7 @@
   (uniq-orig n gx gy)
   (operation encryption-test (displaced 2 0 init 3)
     (enc n (enc "dh" gx-0 gy-0 dhkey)) (1 2))
+  (strand-map 0 1)
   (traces ((send gx) (recv gy) (send (enc n (enc "dh" gx gy dhkey))))
     ((recv gx) (send gy) (recv (enc n (enc "dh" gx gy dhkey)))))
   (label 1)
@@ -71,6 +72,7 @@
   (uniq-orig n gx gy)
   (operation encryption-test (added-listener (enc "dh" gx-0 gy dhkey))
     (enc n (enc "dh" gx-0 gy dhkey)) (1 2))
+  (strand-map 0 1)
   (traces
     ((send gx) (recv gy-0) (send (enc n (enc "dh" gx gy-0 dhkey))))
     ((recv gx-0) (send gy) (recv (enc n (enc "dh" gx-0 gy dhkey))))
@@ -91,6 +93,7 @@
   (uniq-orig n gx gy)
   (operation encryption-test (added-strand CDHcalc2 2)
     (enc "dh" gx-0 gy dhkey) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((send gx) (recv gy-0) (send (enc n (enc "dh" gx gy-0 dhkey))))
     ((recv gx-0) (send gy) (recv (enc n (enc "dh" gx-0 gy dhkey))))
@@ -114,6 +117,7 @@
   (uniq-orig n gx gy)
   (operation nonce-test (added-listener (enc "dh" gx gy-0 dhkey)) n
     (1 2) (enc n (enc "dh" gx gy-0 dhkey)))
+  (strand-map 0 1 2 3)
   (traces
     ((send gx) (recv gy-0) (send (enc n (enc "dh" gx gy-0 dhkey))))
     ((recv gx-0) (send gy) (recv (enc n (enc "dh" gx-0 gy dhkey))))
@@ -139,6 +143,7 @@
   (uniq-orig n gx gy)
   (operation encryption-test (added-strand CDHcalc1 2)
     (enc "dh" gx gy-0 dhkey) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send gx) (recv gy-0) (send (enc n (enc "dh" gx gy-0 dhkey))))
     ((recv gx-0) (send gy) (recv (enc n (enc "dh" gx-0 gy dhkey))))
@@ -163,6 +168,7 @@
   (non-orig dhkey (invk gx) (invk gy))
   (uniq-orig n gx gy)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5)
   (traces
     ((send gx) (recv gy-0) (send (enc n (enc "dh" gx gy-0 dhkey))))
     ((recv gx-0) (send gy) (recv (enc n (enc "dh" gx-0 gy dhkey))))
@@ -185,6 +191,7 @@
   (non-orig dhkey (invk gx) (invk gy))
   (uniq-orig n gx gy)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4)
   (traces
     ((send gx) (recv gy-0) (send (enc n (enc "dh" gx gy-0 dhkey))))
     ((recv gx-0) (send gy) (recv (enc n (enc "dh" gx-0 gy dhkey))))

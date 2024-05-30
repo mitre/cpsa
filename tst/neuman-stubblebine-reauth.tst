@@ -66,6 +66,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand keyserver 2)
     (enc a k tb-0 (ltk b ks)) (1 0))
+  (strand-map 0 1)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -92,6 +93,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 3 0 resp 2)
     (enc a ra-0 tb-0 (ltk b ks)) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -119,6 +121,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp 2)
     (enc a ra-0 tb-0 (ltk b ks)) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -151,6 +154,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc rb-prime k) (1 2))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -183,6 +187,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc rb-prime k)
     (1 2))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -217,6 +222,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc rb-prime k) (1 2))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -245,6 +251,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc rb-prime k) (1 2))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -278,6 +285,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc rb-prime k) (1 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -315,6 +323,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc rb-prime k)
     (1 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -354,6 +363,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc rb-prime k) (1 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -387,6 +397,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc rb-prime k) (1 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -421,6 +432,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (3 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -453,6 +465,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (3 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -487,6 +500,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (3 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -521,6 +535,7 @@
   (operation nonce-test
     (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-1 tb-0)) k (4 0)
     (enc a k tb-0 (ltk b ks)) (enc b ra-0 k tb-0 (ltk a ks)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -559,6 +574,7 @@
   (operation nonce-test
     (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-1 tb-0)) k (4 1)
     (enc a k tb-0 (ltk b ks)) (enc b ra-0 k tb-0 (ltk a ks)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -599,6 +615,7 @@
   (operation nonce-test
     (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-1 tb-0)) k (4 0)
     (enc a k tb-0 (ltk b ks)) (enc b ra-0 k tb-0 (ltk a ks)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -636,6 +653,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-0 k) (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -675,6 +693,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-0 k)
     (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -711,6 +730,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 4 1 resp-reauth 2)
     (enc ra-prime-0 k) (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -746,6 +766,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-0 k) (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -781,6 +802,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-0 k)
     (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -814,6 +836,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 4 2 keyserver 2)
     (enc b ra-0 k tb (ltk a ks)) (3 1))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -851,6 +874,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -887,6 +911,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc rb k) (0 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -924,6 +949,7 @@
   (uniq-orig k ra ra-prime rb-prime)
   (operation encryption-test (displaced 4 1 resp-reauth 2) (enc rb-0 k)
     (0 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b ra-prime (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc ra-prime k))))
@@ -963,6 +989,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -996,6 +1023,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc rb k) (0 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -1032,6 +1060,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-0 k) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -1075,6 +1104,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-0 k)
     (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -1116,6 +1146,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 5 1 resp-reauth 2)
     (enc ra-prime-0 k) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -1155,6 +1186,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-0 k) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -1195,6 +1227,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-0 k)
     (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -1233,6 +1266,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 5 2 keyserver 2)
     (enc b ra-1 k tb-0 (ltk a ks)) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -1272,6 +1306,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 5 2 keyserver 2)
     (enc a k tb-0 (ltk b ks)) (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -1308,6 +1343,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (4 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -1346,6 +1382,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (4 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -1385,6 +1422,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -1421,6 +1459,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc rb k) (0 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -1460,6 +1499,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -1493,6 +1533,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc rb k) (0 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -1530,6 +1571,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (4 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -1566,6 +1608,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -1604,6 +1647,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc rb k) (0 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -1643,6 +1687,7 @@
   (uniq-orig k ra ra-prime rb-prime)
   (operation encryption-test (displaced 4 1 resp-reauth 2) (enc rb-0 k)
     (0 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b ra-prime (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc ra-prime k))))
@@ -1684,6 +1729,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -1719,6 +1765,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc rb k) (0 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -1758,6 +1805,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (4 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -1793,6 +1841,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (4 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -1831,6 +1880,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (4 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -1874,6 +1924,7 @@
   (operation nonce-test
     (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-1 tb-0)) k (5 0)
     (enc a k tb-0 (ltk b ks)) (enc b ra-0 k tb-0 (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -1918,6 +1969,7 @@
   (operation nonce-test
     (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-1 tb-0)) k (5 1)
     (enc a k tb-0 (ltk b ks)) (enc b ra-0 k tb-0 (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -1959,6 +2011,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 5 2 keyserver 2)
     (enc a k tb-0 (ltk b ks)) (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -1998,6 +2051,7 @@
   (operation nonce-test
     (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-1 tb-0)) k (5 0)
     (enc a k tb-0 (ltk b ks)) (enc b ra-0 k tb-0 (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -2036,6 +2090,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 5 2 keyserver 2)
     (enc a k tb-0 (ltk b ks)) (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -2076,6 +2131,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -2115,6 +2171,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -2155,6 +2212,7 @@
   (uniq-orig k ra ra-prime rb-prime)
   (operation encryption-test (displaced 5 1 resp-reauth 2) (enc rb-1 k)
     (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b ra-prime (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc ra-prime k))))
@@ -2196,6 +2254,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -2233,6 +2292,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -2273,6 +2333,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-1 k) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -2319,6 +2380,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-1 k)
     (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -2362,6 +2424,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 5 1 resp-reauth 2)
     (enc ra-prime-1 k) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -2404,6 +2467,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-1 k) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -2447,6 +2511,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-1 k)
     (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -2487,6 +2552,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 5 2 keyserver 2)
     (enc b ra-0 k tb (ltk a ks)) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -2526,6 +2592,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (4 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -2562,6 +2629,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (4 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -2600,6 +2668,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (4 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -2645,6 +2714,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -2687,6 +2757,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -2729,6 +2800,7 @@
   (uniq-orig k ra ra-prime rb-prime)
   (operation encryption-test (displaced 5 1 resp-reauth 2) (enc rb-0 k)
     (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b ra-prime (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc ra-prime k))))
@@ -2774,6 +2846,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -2814,6 +2887,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -2851,6 +2925,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (4 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -2889,6 +2964,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (4 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -2930,6 +3006,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (4 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -2976,6 +3053,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-0 k) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -3019,6 +3097,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-0 k)
     (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -3060,6 +3139,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 5 1 resp-reauth 2)
     (enc ra-prime-0 k) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -3104,6 +3184,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-0 k) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -3144,6 +3225,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-0 k)
     (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -3181,6 +3263,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 5 2 keyserver 2)
     (enc b ra-0 k tb (ltk a ks)) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -3227,6 +3310,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-1 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -3277,6 +3361,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-1 k)
     (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -3325,6 +3410,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 1 resp-reauth 2)
     (enc ra-prime-1 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -3371,6 +3457,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-1 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -3418,6 +3505,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-1 k)
     (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -3462,6 +3550,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 2 keyserver 2)
     (enc b ra-1 k tb-0 (ltk a ks)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -3506,6 +3595,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -3546,6 +3636,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -3589,6 +3680,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -3626,6 +3718,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -3666,6 +3759,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 2 keyserver 2)
     (enc a k tb-0 (ltk b ks)) (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -3706,6 +3800,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -3748,6 +3843,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -3791,6 +3887,7 @@
   (uniq-orig k ra ra-prime rb-prime)
   (operation encryption-test (displaced 5 1 resp-reauth 2) (enc rb-1 k)
     (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b ra-prime (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc ra-prime k))))
@@ -3835,6 +3932,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -3874,6 +3972,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -3916,6 +4015,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 0) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -3955,6 +4055,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 1) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -3996,6 +4097,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 0) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -4042,6 +4144,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -4088,6 +4191,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -4135,6 +4239,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -4179,6 +4284,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -4226,6 +4332,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -4267,6 +4374,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -4310,6 +4418,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -4354,6 +4463,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -4399,6 +4509,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -4445,6 +4556,7 @@
   (uniq-orig k ra ra-prime rb-prime)
   (operation encryption-test (displaced 5 1 resp-reauth 2) (enc rb-0 k)
     (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b ra-prime (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc ra-prime k))))
@@ -4493,6 +4605,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -4535,6 +4648,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -4580,6 +4694,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-0 k) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -4625,6 +4740,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-0 k)
     (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -4671,6 +4787,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-0 k) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -4712,6 +4829,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-0 k)
     (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -4749,6 +4867,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 5 2 keyserver 2)
     (enc b ra-0 k tb (ltk a ks)) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -4796,6 +4915,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -4838,6 +4958,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -4882,6 +5003,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -4929,6 +5051,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-0 k) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -4976,6 +5099,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-0 k)
     (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -5019,6 +5143,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 5 1 resp-reauth 2)
     (enc ra-prime-0 k) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -5068,6 +5193,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-0 k) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -5111,6 +5237,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-0 k)
     (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -5155,6 +5282,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -5198,6 +5326,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -5242,6 +5371,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -5291,6 +5421,7 @@
   (operation nonce-test
     (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-1 tb-0)) k (6 0)
     (enc a k tb-0 (ltk b ks)) (enc b ra-0 k tb-0 (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -5342,6 +5473,7 @@
   (operation nonce-test
     (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-1 tb-0)) k (6 1)
     (enc a k tb-0 (ltk b ks)) (enc b ra-0 k tb-0 (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -5390,6 +5522,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 2 keyserver 2)
     (enc a k tb-0 (ltk b ks)) (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -5436,6 +5569,7 @@
   (operation nonce-test
     (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-1 tb-0)) k (6 0)
     (enc a k tb-0 (ltk b ks)) (enc b ra-0 k tb-0 (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -5481,6 +5615,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 2 keyserver 2)
     (enc a k tb-0 (ltk b ks)) (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -5524,6 +5659,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 0) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -5563,6 +5699,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 1) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -5605,6 +5742,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 0) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -5653,6 +5791,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -5698,6 +5837,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -5745,6 +5885,7 @@
   (uniq-orig k ra ra-prime rb-prime)
   (operation encryption-test (displaced 6 1 resp-reauth 2) (enc rb-1 k)
     (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b ra-prime (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc ra-prime k))))
@@ -5792,6 +5933,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -5835,6 +5977,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -5876,6 +6019,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 0) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -5917,6 +6061,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 1) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -5961,6 +6106,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 0) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -6011,6 +6157,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-0 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -6058,6 +6205,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-0 k)
     (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -6103,6 +6251,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 1 resp-reauth 2)
     (enc ra-prime-0 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -6151,6 +6300,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-0 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -6195,6 +6345,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-0 k)
     (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -6236,6 +6387,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 2 keyserver 2)
     (enc b ra-1 k tb (ltk a ks)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -6286,6 +6438,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-2 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -6338,6 +6491,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-2 k)
     (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -6389,6 +6543,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 1 resp-reauth 2)
     (enc ra-prime-2 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -6437,6 +6592,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-2 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -6486,6 +6642,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-2 k)
     (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -6533,6 +6690,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 2 keyserver 2)
     (enc b ra-0 k tb (ltk a ks)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -6580,6 +6738,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -6623,6 +6782,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -6669,6 +6829,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -6720,6 +6881,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -6768,6 +6930,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -6818,6 +6981,7 @@
   (uniq-orig k ra ra-prime rb-prime)
   (operation encryption-test (displaced 6 1 resp-reauth 2) (enc rb-0 k)
     (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b ra-prime (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc ra-prime k))))
@@ -6869,6 +7033,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -6915,6 +7080,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -6960,6 +7126,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -7004,6 +7171,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -7052,6 +7220,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -7102,6 +7271,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -7146,6 +7316,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -7192,6 +7363,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -7240,6 +7412,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 1 resp-reauth 2)
     (enc ra-prime-1 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -7290,6 +7463,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-1 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -7339,6 +7513,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-1 k)
     (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -7387,6 +7562,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 4 resp-reauth 2)
     (enc ra-prime-1 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -7437,6 +7613,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-1 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -7483,6 +7660,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-1 k)
     (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -7527,6 +7705,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 2 keyserver 2)
     (enc b ra-0 k tb (ltk a ks)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -7575,6 +7754,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -7621,6 +7801,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -7670,6 +7851,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -7722,6 +7904,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-1 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -7772,6 +7955,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-1 k)
     (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -7821,6 +8005,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 1 resp-reauth 2)
     (enc ra-prime-1 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -7872,6 +8057,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-1 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -7919,6 +8105,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-1 k)
     (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -7964,6 +8151,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 2 keyserver 2)
     (enc b ra-0 k tb (ltk a ks)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -8015,6 +8203,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 1 resp-reauth 2)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -8065,6 +8254,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 2 keyserver 2)
     (enc b ra-1 k tb-0 (ltk a ks)) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -8116,6 +8306,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -8163,6 +8354,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -8213,6 +8405,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -8258,6 +8451,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -8304,6 +8498,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 2 keyserver 2)
     (enc a k tb-0 (ltk b ks)) (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -8351,6 +8546,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -8399,6 +8595,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -8448,6 +8645,7 @@
   (uniq-orig k ra ra-prime rb-prime)
   (operation encryption-test (displaced 6 1 resp-reauth 2) (enc rb-1 k)
     (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b ra-prime (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc ra-prime k))))
@@ -8498,6 +8696,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -8544,6 +8743,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -8592,6 +8792,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-0 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -8640,6 +8841,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-0 k)
     (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -8689,6 +8891,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-0 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -8734,6 +8937,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-0 k)
     (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -8775,6 +8979,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 2 keyserver 2)
     (enc b ra-1 k tb (ltk a ks)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -8825,6 +9030,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -8870,6 +9076,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 1) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -8917,6 +9124,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -8967,6 +9175,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-0 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -9017,6 +9226,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-0 k)
     (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -9064,6 +9274,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 1 resp-reauth 2)
     (enc ra-prime-0 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -9115,6 +9326,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-0 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -9162,6 +9374,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-0 k)
     (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -9205,6 +9418,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 2 keyserver 2)
     (enc b ra-1 k tb (ltk a ks)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -9257,6 +9471,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -9304,6 +9519,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 1) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -9352,6 +9568,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -9403,6 +9620,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -9455,6 +9673,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -9508,6 +9727,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -9558,6 +9778,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -9611,6 +9832,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -9659,6 +9881,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -9708,6 +9931,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -9758,6 +9982,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -9809,6 +10034,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -9861,6 +10087,7 @@
   (uniq-orig k ra ra-prime rb-prime)
   (operation encryption-test (displaced 6 1 resp-reauth 2) (enc rb-0 k)
     (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b ra-prime (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc ra-prime k))))
@@ -9915,6 +10142,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -9964,6 +10192,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -10012,6 +10241,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 4 init-reauth 4)
     (enc ra-prime-1 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -10064,6 +10294,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-1 k)
     (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -10116,6 +10347,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-1 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -10167,6 +10399,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-1 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -10215,6 +10448,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-1 k)
     (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -10260,6 +10494,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 2 keyserver 2)
     (enc b ra-0 k tb (ltk a ks)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -10313,6 +10548,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -10361,6 +10597,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -10411,6 +10648,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -10464,6 +10702,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-1 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -10516,6 +10755,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-1 k)
     (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -10566,6 +10806,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 4 init 3) (enc ra-prime-1 k)
     (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -10616,6 +10857,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 1 resp-reauth 2)
     (enc ra-prime-1 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -10670,6 +10912,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-1 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -10719,6 +10962,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-1 k)
     (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -10769,6 +11013,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-1 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -10820,6 +11065,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-1 k)
     (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -10872,6 +11118,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-1 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -10920,6 +11167,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-1 k)
     (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -10965,6 +11213,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 2 keyserver 2)
     (enc b ra-0 k tb (ltk a ks)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -11019,6 +11268,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -11068,6 +11318,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -11118,6 +11369,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -11170,6 +11422,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-1 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -11223,6 +11476,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-1 k)
     (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -11274,6 +11528,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 1 resp-reauth 2)
     (enc ra-prime-1 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -11329,6 +11584,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-1 k) (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -11379,6 +11635,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-1 k)
     (5 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -11429,6 +11686,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -11479,6 +11737,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -11530,6 +11789,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -11582,6 +11842,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 2 keyserver 2)
     (enc a k tb-0 (ltk b ks)) (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -11631,6 +11892,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 2 keyserver 2)
     (enc a k tb-0 (ltk b ks)) (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -11681,6 +11943,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -11728,6 +11991,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 1) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -11777,6 +12041,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -11830,6 +12095,7 @@
   (uniq-orig k ra ra-prime rb-prime)
   (operation encryption-test (displaced 7 1 resp-reauth 2) (enc rb-1 k)
     (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b ra-prime (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc ra-prime k))))
@@ -11881,6 +12147,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -11929,6 +12196,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 1) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -11979,6 +12247,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -12032,6 +12301,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -12080,6 +12350,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 1) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -12129,6 +12400,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -12180,6 +12452,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 1 resp-reauth 2)
     (enc ra-prime-1 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -12231,6 +12504,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 5 resp-reauth 2)
     (enc ra-prime-1 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -12281,6 +12555,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 2 keyserver 2)
     (enc b ra-1 k tb (ltk a ks)) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -12333,6 +12608,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -12383,6 +12659,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 1) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -12434,6 +12711,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -12487,6 +12765,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 1 resp-reauth 2)
     (enc ra-prime-1 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -12539,6 +12818,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 2 keyserver 2)
     (enc b ra-1 k tb (ltk a ks)) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -12593,6 +12873,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 1 resp-reauth 2)
     (enc ra-prime-3 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -12646,6 +12927,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 2 keyserver 2)
     (enc b ra-0 k tb (ltk a ks)) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -12699,6 +12981,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -12749,6 +13032,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -12801,6 +13085,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -12857,6 +13142,7 @@
   (uniq-orig k ra ra-prime rb-prime)
   (operation encryption-test (displaced 7 1 resp-reauth 2) (enc rb-0 k)
     (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b ra-prime (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc ra-prime k))))
@@ -12912,6 +13198,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -12963,6 +13250,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -13017,6 +13305,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -13073,6 +13362,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -13125,6 +13415,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -13176,6 +13467,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -13230,6 +13522,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 4 init-reauth 4)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -13284,6 +13577,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 5 resp-reauth 2)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -13338,6 +13632,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 1 resp-reauth 2)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -13391,6 +13686,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 2 keyserver 2)
     (enc b ra-0 k tb (ltk a ks)) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -13445,6 +13741,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -13497,6 +13794,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -13551,6 +13849,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -13606,6 +13905,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -13657,6 +13957,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -13709,6 +14010,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -13763,6 +14065,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 1 resp-reauth 2)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -13817,6 +14120,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 4 resp-reauth 2)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -13871,6 +14175,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 2 keyserver 2)
     (enc b ra-0 k tb (ltk a ks)) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -13926,6 +14231,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -13979,6 +14285,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -14034,6 +14341,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -14090,6 +14398,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 1 resp-reauth 2)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -14145,6 +14454,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 2 keyserver 2)
     (enc b ra-0 k tb (ltk a ks)) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -14201,6 +14511,7 @@
   (uniq-orig k ra ra-prime rb-prime)
   (operation encryption-test (displaced 7 1 resp-reauth 2) (enc rb-1 k)
     (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b ra-prime (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc ra-prime k))))
@@ -14255,6 +14566,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 5 init-reauth 4)
     (enc ra-prime-1 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -14307,6 +14619,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 2 keyserver 2)
     (enc b ra-1 k tb (ltk a ks)) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -14361,6 +14674,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 5 init 3) (enc ra-prime-1 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -14415,6 +14729,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 1 resp-reauth 2)
     (enc ra-prime-1 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -14468,6 +14783,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 2 keyserver 2)
     (enc b ra-1 k tb (ltk a ks)) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -14523,6 +14839,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 2 keyserver 2)
     (enc b ra-1 k tb (ltk a ks)) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -14577,6 +14894,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 1 resp-reauth 2)
     (enc ra-prime-1 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -14632,6 +14950,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 2 keyserver 2)
     (enc b ra-1 k tb (ltk a ks)) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -14691,6 +15010,7 @@
   (uniq-orig k ra ra-prime rb-prime)
   (operation encryption-test (displaced 7 1 resp-reauth 2) (enc rb-0 k)
     (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b ra-prime (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc ra-prime k))))
@@ -14749,6 +15069,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 5 init-reauth 4)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -14805,6 +15126,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 4 init-reauth 4)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -14860,6 +15182,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 2 keyserver 2)
     (enc b ra-0 k tb (ltk a ks)) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -14918,6 +15241,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 4 init-reauth 4)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -14976,6 +15300,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 5 init 3) (enc ra-prime-2 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -15034,6 +15359,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 1 resp-reauth 2)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -15092,6 +15418,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 2 keyserver 2)
     (enc b ra-0 k tb (ltk a ks)) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -15150,6 +15477,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 4 init-reauth 4)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -15207,6 +15535,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 4 init 3) (enc ra-prime-2 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -15265,6 +15594,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 1 resp-reauth 2)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -15323,6 +15653,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 2 keyserver 2)
     (enc b ra-0 k tb (ltk a ks)) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -15381,6 +15712,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 1 resp-reauth 2)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -15444,6 +15776,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -15501,6 +15834,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-2 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -15560,6 +15894,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -15614,6 +15949,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-2 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -15667,6 +16003,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -15719,6 +16056,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -15774,6 +16112,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -15824,6 +16163,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -15874,6 +16214,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-1 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -15927,6 +16268,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-1 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -15981,6 +16323,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-1 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -16031,6 +16374,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-1 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -16081,6 +16425,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-1 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -16135,6 +16480,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-1 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -16190,6 +16536,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-1 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -16241,6 +16588,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-1 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -16293,6 +16641,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-3 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -16353,6 +16702,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-3 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -16414,6 +16764,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-3 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -16471,6 +16822,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-3 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -16527,6 +16879,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -16583,6 +16936,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -16642,6 +16996,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -16696,6 +17051,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -16750,6 +17106,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -16807,6 +17164,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-2 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -16865,6 +17223,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -16919,6 +17278,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-2 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -16973,6 +17333,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -17030,6 +17391,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-2 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -17088,6 +17450,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -17142,6 +17505,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-2 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -17194,6 +17558,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -17251,6 +17616,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-2 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -17309,6 +17675,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -17363,6 +17730,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-2 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -17415,6 +17783,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -17469,6 +17838,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -17526,6 +17896,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -17578,6 +17949,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -17630,6 +18002,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -17685,6 +18058,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -17743,6 +18117,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -17796,6 +18171,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -17850,6 +18226,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-1 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -17906,6 +18283,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-1 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -17961,6 +18339,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-1 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -18013,6 +18392,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-1 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -18065,6 +18445,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-1 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -18121,6 +18502,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-1 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -18178,6 +18560,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-1 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -18231,6 +18614,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-1 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -18284,6 +18668,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-1 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -18339,6 +18724,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-1 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -18395,6 +18781,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-1 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -18447,6 +18834,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-1 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -18498,6 +18886,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-1 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -18555,6 +18944,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-1 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -18613,6 +19003,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-1 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -18667,6 +19058,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-1 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -18722,6 +19114,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -18780,6 +19173,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -18841,6 +19235,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -18897,6 +19292,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -18953,6 +19349,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -19012,6 +19409,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -19074,6 +19472,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2) (enc rb k)
     (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -19131,6 +19530,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc rb k) (0 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -19189,6 +19589,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-2 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -19249,6 +19650,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -19308,6 +19710,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -19364,6 +19767,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-2 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -19420,6 +19824,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-2 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -19481,6 +19886,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -19541,6 +19947,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -19598,6 +20005,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-2 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -19655,6 +20063,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-2 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -19715,6 +20124,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -19774,6 +20184,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -19830,6 +20241,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-2 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -19885,6 +20297,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -19945,6 +20358,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-2 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -20006,6 +20420,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -20063,6 +20478,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-2 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -20119,6 +20535,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -20178,6 +20595,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-2 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -20238,6 +20656,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -20294,6 +20713,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-2 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -20349,6 +20769,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -20410,6 +20831,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc ra-prime-2 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -20472,6 +20894,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc ra-prime-2 k) (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))
@@ -20530,6 +20953,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc ra-prime-2 k)
     (6 2))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k))))

@@ -52,6 +52,7 @@
   (uniq-orig k (invk k))
   (operation encryption-test (added-strand pca 2)
     (enc "aic" i k x (privk pc)) (0 2))
+  (strand-map 0)
   (traces
     ((recv (cat x i (enc "ekc" mf ek (privk mf))))
       (send (cat i k x (enc "ekc" mf ek (privk mf))))
@@ -74,6 +75,7 @@
   (uniq-orig k (invk k))
   (operation encryption-test (added-strand ca 1)
     (enc "ekc" mf-0 ek-0 (privk mf-0)) (1 0))
+  (strand-map 0 1)
   (traces
     ((recv (cat x i (enc "ekc" mf ek (privk mf))))
       (send (cat i k x (enc "ekc" mf ek (privk mf))))
@@ -98,6 +100,7 @@
   (operation encryption-test (contracted (ek-0 ek))
     (enc "aic" i k x (privk pc)) (0 2)
     (enc (enc "aic" i k x (privk pc)) ek))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat x i (enc "ekc" mf ek (privk mf))))
       (send (cat i k x (enc "ekc" mf ek (privk mf))))
@@ -127,6 +130,7 @@
   (operation encryption-test (added-strand pca 2)
     (enc "aic" i k x (privk pc)) (0 2)
     (enc (enc "aic" i k x (privk pc)) ek-0))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat x i (enc "ekc" mf ek (privk mf))))
       (send (cat i k x (enc "ekc" mf ek (privk mf))))
@@ -194,6 +198,7 @@
   (non-orig (privk pc) (privk mf))
   (operation encryption-test (added-strand pca 2)
     (enc "aic" i k x (privk pc)) (0 0))
+  (strand-map 0)
   (traces
     ((recv (enc "aic" i k x (privk pc)))
       (send (enc "aic" i k x (privk pc))))
@@ -213,6 +218,7 @@
   (non-orig (invk ek) (privk pc) (privk mf))
   (operation encryption-test (added-strand ca 1)
     (enc "ekc" mf ek (privk mf)) (1 0))
+  (strand-map 0 1)
   (traces
     ((recv (enc "aic" i k x (privk pc)))
       (send (enc "aic" i k x (privk pc))))
@@ -237,6 +243,7 @@
   (operation encryption-test (added-strand tpm 4)
     (enc "aic" i k x (privk pc)) (0 0)
     (enc (enc "aic" i k x (privk pc)) ek))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc "aic" i k x (privk pc)))
       (send (enc "aic" i k x (privk pc))))
@@ -263,6 +270,7 @@
   (operation encryption-test (added-strand pca 2)
     (enc "aic" i k x (privk pc)) (0 0)
     (enc (enc "aic" i k x (privk pc)) ek))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc "aic" i k x (privk pc)))
       (send (enc "aic" i k x (privk pc))))
@@ -293,6 +301,7 @@
   (uniq-orig k (invk k))
   (operation encryption-test (displaced 4 1 pca 2)
     (enc "aic" i k x (privk pc)) (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc "aic" i k x (privk pc)))
       (send (enc "aic" i k x (privk pc))))
@@ -324,6 +333,7 @@
   (uniq-orig k (invk k))
   (operation encryption-test (added-strand pca 2)
     (enc "aic" i k x (privk pc)) (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc "aic" i k x (privk pc)))
       (send (enc "aic" i k x (privk pc))))
@@ -355,6 +365,7 @@
   (uniq-orig k (invk k))
   (operation encryption-test (displaced 5 2 ca 1)
     (enc "ekc" mf-1 ek-0 (privk mf-1)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc "aic" i k x (privk pc)))
       (send (enc "aic" i k x (privk pc))))
@@ -390,6 +401,7 @@
   (uniq-orig k (invk k))
   (operation encryption-test (added-strand ca 1)
     (enc "ekc" mf-1 ek-0 (privk mf-1)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc "aic" i k x (privk pc)))
       (send (enc "aic" i k x (privk pc))))
@@ -424,6 +436,7 @@
   (operation encryption-test (contracted (ek-0 ek))
     (enc "aic" i k x (privk pc)) (3 2)
     (enc (enc "aic" i k x (privk pc)) ek))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc "aic" i k x (privk pc)))
       (send (enc "aic" i k x (privk pc))))
@@ -459,6 +472,7 @@
   (operation encryption-test (displaced 6 1 pca 2)
     (enc "aic" i k x (privk pc)) (3 2)
     (enc (enc "aic" i k x (privk pc)) ek-0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc "aic" i k x (privk pc)))
       (send (enc "aic" i k x (privk pc))))
@@ -497,6 +511,7 @@
   (operation encryption-test (added-strand pca 2)
     (enc "aic" i k x (privk pc)) (3 2)
     (enc (enc "aic" i k x (privk pc)) ek-0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (enc "aic" i k x (privk pc)))
       (send (enc "aic" i k x (privk pc))))
@@ -535,6 +550,7 @@
   (non-orig srk (invk ek) (privk pc) (privk mf) (privk mf-1))
   (uniq-orig k (invk k))
   (operation generalization deleted (1 0))
+  (strand-map 0 2 3 4 5)
   (traces
     ((recv (enc "aic" i k x (privk pc)))
       (send (enc "aic" i k x (privk pc))))
@@ -567,6 +583,7 @@
     (privk mf-1))
   (uniq-orig k (invk k))
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5)
   (traces
     ((recv (enc "aic" i k x (privk pc)))
       (send (enc "aic" i k x (privk pc))))

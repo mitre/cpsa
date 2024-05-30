@@ -51,6 +51,7 @@
   (auth ch2)
   (operation channel-test (added-strand serv 3) (ch-msg ch2 (cat a b k))
     (0 2))
+  (strand-map 0)
   (traces
     ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
       (recv ch2 (cat a b k)) (recv (enc n-b k)))
@@ -122,6 +123,7 @@
   (conf ch2 ch3)
   (auth ch2)
   (operation encryption-test (added-strand init 3) (enc n-b k) (0 3))
+  (strand-map 0 1)
   (traces
     ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
       (recv ch2 (cat a b k)) (recv (enc n-b k)))
@@ -147,6 +149,7 @@
   (conf ch2 ch3)
   (auth ch2)
   (operation encryption-test (added-listener k) (enc n-b k) (0 3))
+  (strand-map 0 1)
   (traces
     ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
       (recv ch2 (cat a b k)) (recv (enc n-b k)))
@@ -173,6 +176,7 @@
   (operation nonce-test
     (contracted (n-b-0 n-b) (a-0 a) (b-0 b) (n-a-1 n-a-0) (ch3-0 ch3)) k
     (2 1) (ch-msg ch3 (cat a b k n-a-0 n-b)))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
       (recv ch2 (cat a b k)) (recv (enc n-b k)))
@@ -205,6 +209,7 @@
   (auth ch2)
   (operation nonce-test (displaced 3 1 serv 3) k (2 1)
     (ch-msg ch3 (cat a b k n-a-0 n-b-0)))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
       (recv ch2 (cat a b k)) (recv (enc n-b k)))
@@ -231,6 +236,7 @@
   (auth ch2)
   (operation nonce-test (displaced 3 1 serv 3) k (2 0)
     (ch-msg ch3 (cat a b k n-a-0 n-b-0)))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
       (recv ch2 (cat a b k)) (recv (enc n-b k)))
@@ -258,6 +264,7 @@
   (operation nonce-test
     (contracted (n-b-0 n-b) (a-0 a) (b-0 b) (n-a-1 n-a-0) (ch3-0 ch3)) k
     (2 1) (ch-msg ch2 (cat a b k)) (ch-msg ch3 (cat a b k n-a-0 n-b)))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
       (recv ch2 (cat a b k)) (recv (enc n-b k)))
@@ -350,6 +357,7 @@
   (auth ch1 ch2)
   (operation channel-test (displaced 2 0 resp 2)
     (ch-msg ch1-0 (cat a b n-a-0 n-b-0)) (1 0))
+  (strand-map 0 1)
   (traces
     ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
       (recv ch2 (cat a b k)) (recv (enc n-b k)))
@@ -375,6 +383,7 @@
   (auth ch2 ch1-0)
   (operation channel-test (added-strand resp 2)
     (ch-msg ch1-0 (cat a b n-a-0 n-b-0)) (1 0))
+  (strand-map 0 1)
   (traces
     ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
       (recv ch2 (cat a b k)) (recv (enc n-b k)))
@@ -398,6 +407,7 @@
   (auth ch1 ch2)
   (operation channel-test (displaced 2 1 serv 3)
     (ch-msg ch2 (cat a b k)) (0 2))
+  (strand-map 0 1)
   (traces
     ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
       (recv ch2 (cat a b k)) (recv (enc n-b k)))
@@ -423,6 +433,7 @@
   (auth ch2 ch1-0)
   (operation channel-test (displaced 3 1 serv 3)
     (ch-msg ch2 (cat a b k)) (0 2))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
       (recv ch2 (cat a b k)) (recv (enc n-b k)))
@@ -448,6 +459,7 @@
   (conf ch2 ch3)
   (auth ch1 ch2)
   (operation encryption-test (added-strand init 3) (enc n-b k) (0 3))
+  (strand-map 0 1)
   (traces
     ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
       (recv ch2 (cat a b k)) (recv (enc n-b k)))
@@ -472,6 +484,7 @@
   (conf ch2 ch3)
   (auth ch1 ch2)
   (operation encryption-test (added-listener k) (enc n-b k) (0 3))
+  (strand-map 0 1)
   (traces
     ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
       (recv ch2 (cat a b k)) (recv (enc n-b k)))
@@ -498,6 +511,7 @@
   (conf ch2 ch3)
   (auth ch2 ch1-0)
   (operation encryption-test (added-strand init 3) (enc n-b k) (0 3))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
       (recv ch2 (cat a b k)) (recv (enc n-b k)))
@@ -525,6 +539,7 @@
   (conf ch2 ch3)
   (auth ch2 ch1-0)
   (operation encryption-test (added-listener k) (enc n-b k) (0 3))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
       (recv ch2 (cat a b k)) (recv (enc n-b k)))
@@ -551,6 +566,7 @@
   (operation nonce-test
     (contracted (a-0 a) (b-0 b) (n-a-0 n-a) (ch3-0 ch3)) k (2 1)
     (ch-msg ch3 (cat a b k n-a n-b)))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
       (recv ch2 (cat a b k)) (recv (enc n-b k)))
@@ -583,6 +599,7 @@
   (auth ch1 ch2)
   (operation nonce-test (displaced 3 1 serv 3) k (2 1)
     (ch-msg ch3 (cat a b k n-a n-b)))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
       (recv ch2 (cat a b k)) (recv (enc n-b k)))
@@ -608,6 +625,7 @@
   (auth ch1 ch2)
   (operation nonce-test (displaced 3 1 serv 3) k (2 0)
     (ch-msg ch3 (cat a b k n-a n-b)))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
       (recv ch2 (cat a b k)) (recv (enc n-b k)))
@@ -636,6 +654,7 @@
   (auth ch2 ch1-0)
   (operation nonce-test (displaced 4 1 serv 3) k (3 1)
     (ch-msg ch3 (cat a b k n-a-0 n-b-0)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
       (recv ch2 (cat a b k)) (recv (enc n-b k)))
@@ -665,6 +684,7 @@
   (auth ch2 ch1-0)
   (operation nonce-test (displaced 4 1 serv 3) k (3 0)
     (ch-msg ch3 (cat a b k n-a-0 n-b-0)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
       (recv ch2 (cat a b k)) (recv (enc n-b k)))
@@ -692,6 +712,7 @@
   (operation nonce-test
     (contracted (a-0 a) (b-0 b) (n-a-0 n-a) (ch3-0 ch3)) k (2 1)
     (ch-msg ch2 (cat a b k)) (ch-msg ch3 (cat a b k n-a n-b)))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
       (recv ch2 (cat a b k)) (recv (enc n-b k)))
@@ -790,6 +811,7 @@
   (auth ch2 ch1-0)
   (operation nonce-test (displaced 3 1 serv 3) k (2 0)
     (ch-msg ch3 (cat a b k n-a-0 n-b-0)))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a n-a)) (send ch1 (cat a b n-a n-b))
       (recv ch2 (cat a b k)) (recv (enc n-b k)))
@@ -849,6 +871,7 @@
   (auth ch3)
   (operation channel-test (added-strand serv 2)
     (ch-msg ch3 (cat a b k n-a n-b)) (0 1))
+  (strand-map 0)
   (traces
     ((send (cat a n-a)) (recv ch3 (cat a b k n-a n-b))
       (send (enc n-b k)))
@@ -913,6 +936,7 @@
   (auth ch3 ch1)
   (operation channel-test (added-strand resp 2)
     (ch-msg ch1 (cat a b n-a n-b)) (1 0))
+  (strand-map 0 1)
   (traces
     ((send (cat a n-a)) (recv ch3 (cat a b k n-a n-b))
       (send (enc n-b k)))
@@ -935,6 +959,7 @@
   (auth ch3 ch1)
   (operation channel-test (displaced 3 1 serv 2)
     (ch-msg ch3-0 (cat a b k n-a n-b)) (0 1))
+  (strand-map 0 1 2)
   (traces
     ((send (cat a n-a)) (recv ch3 (cat a b k n-a n-b))
       (send (enc n-b k)))
@@ -999,6 +1024,7 @@
   (auth ch1)
   (operation channel-test (added-strand resp 2)
     (ch-msg ch1 (cat a b n-a n-b)) (0 0))
+  (strand-map 0)
   (traces
     ((recv ch1 (cat a b n-a n-b)) (send ch3 (cat a b k n-a n-b))
       (send ch2 (cat a b k)))
@@ -1082,6 +1108,7 @@
   (auth ch1)
   (operation nonce-test (displaced 2 0 serv 3) k (1 0)
     (ch-msg ch3 (cat a b k n-a n-b)))
+  (strand-map 0 1)
   (traces
     ((recv ch1 (cat a b n-a n-b)) (send ch3 (cat a b k n-a n-b))
       (send ch2 (cat a b k))) ((recv k) (send k)))

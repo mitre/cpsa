@@ -50,6 +50,7 @@
   (uniq-orig n1 n3-0)
   (operation nonce-test (added-strand that 2) n1 (0 1)
     (enc n1 a (pubk b)))
+  (strand-map 0)
   (traces
     ((send (enc n1 a (pubk b)))
       (recv (cat (enc n1 n2 (pubk a)) (enc n1 n3 (pubk a))))
@@ -69,6 +70,7 @@
   (uniq-orig n1 n3)
   (operation nonce-test (contracted (n3-0 n3)) n1 (0 1)
     (enc n1 n3 (pubk a)) (enc n1 a (pubk b)))
+  (strand-map 0 1)
   (traces
     ((send (enc n1 a (pubk b)))
       (recv (cat (enc n1 n2 (pubk a)) (enc n1 n3 (pubk a))))
@@ -88,6 +90,7 @@
   (uniq-orig n1 n3)
   (operation nonce-test (contracted (n2 n3)) n1 (0 1)
     (enc n1 n3 (pubk a)) (enc n1 a (pubk b)))
+  (strand-map 0 1)
   (traces
     ((send (enc n1 a (pubk b)))
       (recv (cat (enc n1 n3 (pubk a)) (enc n1 n3 (pubk a))))
@@ -108,6 +111,7 @@
   (uniq-orig n1 n3 n3-0)
   (operation nonce-test (added-strand that 2) n1 (0 1)
     (enc n1 n3 (pubk a)) (enc n1 a (pubk b)))
+  (strand-map 0 1)
   (traces
     ((send (enc n1 a (pubk b)))
       (recv (cat (enc n1 n2 (pubk a)) (enc n1 n3 (pubk a))))
@@ -128,6 +132,7 @@
   (uniq-orig n1 n3)
   (operation nonce-test (displaced 1 2 this 3) n3 (0 2)
     (enc n1 n3 (pubk a)))
+  (strand-map 0 1)
   (traces
     ((send (enc n1 a (pubk b)))
       (recv (cat (enc n1 n3 (pubk a)) (enc n1 n3 (pubk a))))
@@ -149,6 +154,7 @@
   (uniq-orig n1 n3)
   (operation nonce-test (displaced 1 2 that 3) n3 (0 2)
     (enc n1 n3 (pubk a)))
+  (strand-map 0 1)
   (traces
     ((send (enc n1 a (pubk b)))
       (recv (cat (enc n1 n3 (pubk a)) (enc n1 n3 (pubk a))))
@@ -171,6 +177,7 @@
   (uniq-orig n1 n3 n3-0)
   (operation nonce-test (contracted (n2 n3)) n1 (0 1)
     (enc n1 n3 (pubk a)) (enc n1 n3-0 (pubk a)) (enc n1 a (pubk b)))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n1 a (pubk b)))
       (recv (cat (enc n1 n3 (pubk a)) (enc n1 n3 (pubk a))))
@@ -192,6 +199,7 @@
   (uniq-orig n1 n3 n3-0)
   (operation nonce-test (contracted (n2 n3-0)) n1 (0 1)
     (enc n1 n3 (pubk a)) (enc n1 n3-0 (pubk a)) (enc n1 a (pubk b)))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n1 a (pubk b)))
       (recv (cat (enc n1 n3-0 (pubk a)) (enc n1 n3 (pubk a))))
@@ -214,6 +222,7 @@
   (uniq-orig n1 n3 n3-0)
   (operation nonce-test (displaced 1 3 this 3) n3 (0 2)
     (enc n1 n3 (pubk a)))
+  (strand-map 0 2 1)
   (traces
     ((send (enc n1 a (pubk b)))
       (recv (cat (enc n1 n3 (pubk a)) (enc n1 n3 (pubk a))))
@@ -238,6 +247,7 @@
   (uniq-orig n1 n3 n3-0)
   (operation nonce-test (displaced 1 3 that 3) n3 (0 2)
     (enc n1 n3 (pubk a)))
+  (strand-map 0 2 1)
   (traces
     ((send (enc n1 a (pubk b)))
       (recv (cat (enc n1 n3 (pubk a)) (enc n1 n3 (pubk a))))
@@ -262,6 +272,7 @@
   (uniq-orig n1 n3 n3-0)
   (operation nonce-test (displaced 1 3 this 3) n3 (0 2)
     (enc n1 n3 (pubk a)))
+  (strand-map 0 2 1)
   (traces
     ((send (enc n1 a (pubk b)))
       (recv (cat (enc n1 n3-0 (pubk a)) (enc n1 n3 (pubk a))))
@@ -285,6 +296,7 @@
   (uniq-orig n1 n3 n3-0)
   (operation nonce-test (displaced 1 3 that 3) n3 (0 2)
     (enc n1 n3 (pubk a)))
+  (strand-map 0 2 1)
   (traces
     ((send (enc n1 a (pubk b)))
       (recv (cat (enc n1 n3-0 (pubk a)) (enc n1 n3 (pubk a))))
@@ -308,6 +320,7 @@
   (uniq-orig n1 n3 n3-0)
   (operation nonce-test (displaced 1 3 this 3) n3-0 (0 2)
     (enc n1 n3-0 (pubk a)))
+  (strand-map 0 2 1)
   (traces
     ((send (enc n1 a (pubk b)))
       (recv (cat (enc n1 n3-0 (pubk a)) (enc n1 n3 (pubk a))))
@@ -333,6 +346,7 @@
   (uniq-orig n1 n3 n3-0)
   (operation nonce-test (displaced 1 3 that 3) n3-0 (0 2)
     (enc n1 n3-0 (pubk a)))
+  (strand-map 0 2 1)
   (traces
     ((send (enc n1 a (pubk b)))
       (recv (cat (enc n1 n3-0 (pubk a)) (enc n1 n3 (pubk a))))
@@ -358,6 +372,7 @@
   (uniq-orig n1 n3 n3-0)
   (operation nonce-test (displaced 1 3 this 3) n3-0 (0 2)
     (enc n1 n3-0 (pubk a)))
+  (strand-map 0 2 1)
   (traces
     ((send (enc n1 a (pubk b)))
       (recv (cat (enc n1 n3-0 (pubk a)) (enc n1 n3 (pubk a))))
@@ -384,6 +399,7 @@
   (uniq-orig n1 n3 n3-0)
   (operation nonce-test (displaced 1 3 that 3) n3-0 (0 2)
     (enc n1 n3-0 (pubk a)))
+  (strand-map 0 2 1)
   (traces
     ((send (enc n1 a (pubk b)))
       (recv (cat (enc n1 n3-0 (pubk a)) (enc n1 n3 (pubk a))))

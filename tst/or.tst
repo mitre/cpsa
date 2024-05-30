@@ -50,6 +50,7 @@
   (uniq-orig k nb)
   (operation encryption-test (added-strand serv 2) (enc nb k (ltk b s))
     (0 2))
+  (strand-map 0)
   (traces
     ((recv (cat m a b x)) (send (cat m a b x (enc nb m a b (ltk b s))))
       (recv (cat m y (enc nb k (ltk b s)))) (send y))
@@ -71,6 +72,7 @@
   (uniq-orig k nb)
   (operation encryption-test (added-strand serv 2) (enc nb k (ltk b s))
     (0 2))
+  (strand-map 0)
   (traces
     ((recv (cat m a b x)) (send (cat m a b x (enc nb m a b (ltk b s))))
       (recv (cat m y (enc nb k (ltk b s)))) (send y))
@@ -92,6 +94,7 @@
   (uniq-orig k nb)
   (operation encryption-test (displaced 2 0 resp 2)
     (enc nb m-0 a-0 b (ltk b s)) (1 0))
+  (strand-map 0 1)
   (traces
     ((recv (cat m a b x)) (send (cat m a b x (enc nb m a b (ltk b s))))
       (recv (cat m y (enc nb k (ltk b s)))) (send y))
@@ -112,6 +115,7 @@
   (uniq-orig k nb)
   (operation encryption-test (displaced 2 0 resp 2)
     (enc nb m-0 b b (ltk b s)) (1 0))
+  (strand-map 0 1)
   (traces
     ((recv (cat m a a x)) (send (cat m a a x (enc nb m a a (ltk a s))))
       (recv (cat m y (enc nb k (ltk a s)))) (send y))
@@ -138,6 +142,7 @@
   (uniq-orig k nb)
   (operation encryption-test (added-strand init 1)
     (enc na m a b (ltk a s)) (1 0))
+  (strand-map 0 1)
   (traces
     ((recv (cat m a b x)) (send (cat m a b x (enc nb m a b (ltk b s))))
       (recv (cat m y (enc nb k (ltk b s)))) (send y))
@@ -161,6 +166,7 @@
   (uniq-orig k nb)
   (operation encryption-test (displaced 2 0 resp 2)
     (enc na m a a (ltk a s)) (1 0))
+  (strand-map 0 1)
   (traces
     ((recv (cat m a a x)) (send (cat m a a x (enc nb m a a (ltk a s))))
       (recv (cat m y (enc nb k (ltk a s)))) (send y))
@@ -184,6 +190,7 @@
   (uniq-orig k nb)
   (operation encryption-test (added-strand resp 2)
     (enc na m a a (ltk a s)) (1 0))
+  (strand-map 0 1)
   (traces
     ((recv (cat m a a x)) (send (cat m a a x (enc nb m a a (ltk a s))))
       (recv (cat m y (enc nb k (ltk a s)))) (send y))
@@ -209,6 +216,7 @@
   (uniq-orig k nb)
   (operation encryption-test (added-strand init 1)
     (enc nb-0 m a a (ltk a s)) (1 0))
+  (strand-map 0 1)
   (traces
     ((recv (cat m a a x)) (send (cat m a a x (enc nb m a a (ltk a s))))
       (recv (cat m y (enc nb k (ltk a s)))) (send y))
@@ -233,6 +241,7 @@
   (uniq-orig k nb)
   (operation encryption-test (added-strand resp 2)
     (enc nb-0 m a a (ltk a s)) (1 0))
+  (strand-map 0 1)
   (traces
     ((recv (cat m a a x)) (send (cat m a a x (enc nb m a a (ltk a s))))
       (recv (cat m y (enc nb k (ltk a s)))) (send y))

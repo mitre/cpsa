@@ -44,6 +44,7 @@
   (uniq-orig x3)
   (operation nonce-test (added-strand resp 2) x3 (0 1)
     (enc x1 x3 (pubk a)) (enc x3 x2 (pubk a)))
+  (strand-map 0)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x2 (pubk a))))
       (recv (enc "okay" x3 x4 (pubk a))))
@@ -62,6 +63,7 @@
   (uniq-orig x1)
   (operation nonce-test (added-strand resp 2) x1 (0 1)
     (enc x1 x1 (pubk a)) (enc x1 x2 (pubk a)))
+  (strand-map 0)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x2 (pubk a))))
       (recv (enc "okay" x1 x4 (pubk a))))
@@ -87,6 +89,7 @@
   (operation nonce-test (contracted (x3 y3) (x4 y3)) y3 (0 1)
     (enc "okay" y3 y3 (pubk a)) (enc x1 y3 (pubk a))
     (enc y3 x2 (pubk a)))
+  (strand-map 0 1)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x2 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -109,6 +112,7 @@
   (operation nonce-test (added-strand resp 2) x3 (0 1)
     (enc "okay" y3 x3 (pubk a)) (enc x1 x3 (pubk a))
     (enc x3 x2 (pubk a)))
+  (strand-map 0 1)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x2 (pubk a))))
       (recv (enc "okay" x3 x4 (pubk a))))
@@ -130,6 +134,7 @@
   (operation nonce-test (added-strand resp 2) x1 (0 1)
     (enc "okay" y3 x1 (pubk a)) (enc x1 x1 (pubk a))
     (enc x1 x2 (pubk a)))
+  (strand-map 0 1)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x2 (pubk a))))
       (recv (enc "okay" x1 x4 (pubk a))))
@@ -156,6 +161,7 @@
   (operation nonce-test (contracted (x1 y3) (x4 y3)) y3 (0 1)
     (enc "okay" y3 y3 (pubk a)) (enc y3 x2 (pubk a))
     (enc y3 y3 (pubk a)))
+  (strand-map 0 1)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x2 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -176,6 +182,7 @@
   (operation nonce-test (added-strand resp 2) x1 (0 1)
     (enc "okay" y3 x1 (pubk a)) (enc x1 x1 (pubk a))
     (enc x1 x2 (pubk a)))
+  (strand-map 0 1)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x2 (pubk a))))
       (recv (enc "okay" x1 x4 (pubk a))))
@@ -203,6 +210,7 @@
   (operation nonce-test (contracted (x3 x1) (x4 x1)) x1 (0 1)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc x1 x1 (pubk a)) (enc x1 x2 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x2 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -224,6 +232,7 @@
   (operation nonce-test (contracted (x3 y3) (x4 y3)) y3 (0 1)
     (enc "okay" x1 y3 (pubk a)) (enc "okay" y3 y3 (pubk a))
     (enc x1 y3 (pubk a)) (enc y3 x2 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x2 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -249,6 +258,7 @@
   (operation nonce-test (added-strand resp 2) x1 (0 1)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc x1 x1 (pubk a)) (enc x1 x2 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x2 (pubk a))))
       (recv (enc "okay" x1 x4 (pubk a))))
@@ -271,6 +281,7 @@
   (operation nonce-test (contracted (x1 y3-0) (x4 y3-0)) y3-0 (0 1)
     (enc "okay" y3 y3-0 (pubk a)) (enc "okay" y3-0 y3-0 (pubk a))
     (enc y3-0 x2 (pubk a)) (enc y3-0 y3-0 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x2 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -295,6 +306,7 @@
   (operation nonce-test (contracted (x1 y3) (x4 y3)) y3 (0 1)
     (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
     (enc y3 x2 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x2 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -320,6 +332,7 @@
   (operation nonce-test (added-strand resp 2) x1 (0 1)
     (enc "okay" y3 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
     (enc x1 x1 (pubk a)) (enc x1 x2 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x2 (pubk a))))
       (recv (enc "okay" x1 x4 (pubk a))))
@@ -339,6 +352,7 @@
   (non-orig (privk a))
   (uniq-orig y3 y3-0)
   (operation generalization separated y3-0)
+  (strand-map 0 1)
   (traces
     ((send (cat (enc y3 y3-0 (pubk a)) (enc y3-0 x2 (pubk a))))
       (recv (enc "okay" y3-0 y3 (pubk a))))
@@ -360,6 +374,7 @@
   (operation nonce-test (contracted (x4 x1)) x1 (0 1)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc x1 x1 (pubk a)) (enc x1 x2 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x2 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -380,6 +395,7 @@
   (non-orig (privk a))
   (uniq-orig x1)
   (operation generalization deleted (1 0))
+  (strand-map 0 2)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x2 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -405,6 +421,7 @@
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc "okay" y3-0 x1 (pubk a)) (enc x1 x1 (pubk a))
     (enc x1 x2 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x2 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -432,6 +449,7 @@
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc "okay" y3-0 x1 (pubk a)) (enc x1 x1 (pubk a))
     (enc x1 x2 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x2 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -453,6 +471,7 @@
   (non-orig (privk a))
   (uniq-orig y3-0)
   (operation generalization forgot y3)
+  (strand-map 0 1)
   (traces
     ((send (cat (enc y3 y3-0 (pubk a)) (enc y3-0 x2 (pubk a))))
       (recv (enc "okay" y3-0 y3 (pubk a))))
@@ -511,6 +530,7 @@
   (uniq-orig x1)
   (operation nonce-test (displaced 2 1 resp 2) x3-0 (0 1)
     (enc x1-0 x3-0 (pubk a-0)) (enc x3-0 x3 (pubk a-0)))
+  (strand-map 0 1)
   (traces
     ((send (cat (enc x1-0 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -530,6 +550,7 @@
   (uniq-orig x3)
   (operation nonce-test (displaced 2 1 resp 2) x3-0 (0 1)
     (enc x1-0 x3-0 (pubk a)) (enc x3-0 x3 (pubk a)))
+  (strand-map 0 1)
   (traces
     ((send (cat (enc x1-0 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -556,6 +577,7 @@
   (uniq-orig x3-0)
   (operation nonce-test (added-strand resp 2) x3-0 (0 1)
     (enc x1-0 x3-0 (pubk a)) (enc x3-0 x3 (pubk a)))
+  (strand-map 0 1)
   (traces
     ((send (cat (enc x1-0 x3-0 (pubk a)) (enc x3-0 x3 (pubk a))))
       (recv (enc "okay" x3-0 x1 (pubk a))))
@@ -583,6 +605,7 @@
   (uniq-orig x1-0)
   (operation nonce-test (added-strand resp 2) x1-0 (0 1)
     (enc x1-0 x3 (pubk a)) (enc x1-0 x1-0 (pubk a)))
+  (strand-map 0 1)
   (traces
     ((send (cat (enc x1-0 x1-0 (pubk a)) (enc x1-0 x3 (pubk a))))
       (recv (enc "okay" x1-0 x1 (pubk a))))
@@ -614,6 +637,7 @@
   (operation nonce-test (displaced 2 1 resp 2) x1-0 (0 1)
     (enc "okay" x3 x1-0 (pubk a)) (enc x1-0 x3 (pubk a))
     (enc x1 x1-0 (pubk a)))
+  (strand-map 0 1)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -636,6 +660,7 @@
   (operation nonce-test (added-strand resp 2) x1 (0 1)
     (enc "okay" x3 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -657,6 +682,7 @@
   (operation nonce-test (added-strand resp 2) x1 (0 1)
     (enc "okay" x3 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1-0 x1 (pubk a)))
+  (strand-map 0 1)
   (traces
     ((send (cat (enc x1-0 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -682,6 +708,7 @@
   (uniq-orig x3)
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x3 (1 0)
     (enc x3 x3 (pubk a)) (enc x1 x3 (pubk a)))
+  (strand-map 0 1)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -703,6 +730,7 @@
   (uniq-orig x3)
   (operation nonce-test (added-strand resp 2) x3 (1 0)
     (enc x3 x3 (pubk a)) (enc x1-0 x3 (pubk a)))
+  (strand-map 0 1)
   (traces
     ((send (cat (enc x1-0 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -726,6 +754,7 @@
   (operation nonce-test (added-strand resp 2) x3-0 (0 1)
     (enc "okay" y3 x3-0 (pubk a)) (enc x1-0 x3-0 (pubk a))
     (enc x3-0 x3 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1-0 x3-0 (pubk a)) (enc x3-0 x3 (pubk a))))
       (recv (enc "okay" x3-0 x1 (pubk a))))
@@ -756,6 +785,7 @@
   (operation nonce-test (contracted (x1-0 y3) (x3-0 y3)) y3 (0 1)
     (enc "okay" y3 y3 (pubk a)) (enc x1 y3 (pubk a))
     (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -782,6 +812,7 @@
   (operation nonce-test (displaced 3 1 resp 2) x3-0 (0 1)
     (enc "okay" y3 x3-0 (pubk a)) (enc x1-0 x3-0 (pubk a))
     (enc x3-0 x3 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1-0 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -813,6 +844,7 @@
   (operation nonce-test (added-strand resp 2) x1-0 (0 1)
     (enc "okay" y3 x1-0 (pubk a)) (enc x1-0 x3 (pubk a))
     (enc x1-0 x1-0 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1-0 x1-0 (pubk a)) (enc x1-0 x3 (pubk a))))
       (recv (enc "okay" x1-0 x1 (pubk a))))
@@ -853,6 +885,7 @@
   (operation nonce-test (added-strand resp 2) x1-0 (0 1)
     (enc "okay" y3 x1-0 (pubk a)) (enc x1-0 x3 (pubk a))
     (enc x1-0 x1-0 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1-0 x1-0 (pubk a)) (enc x1-0 x3 (pubk a))))
       (recv (enc "okay" x1-0 x1 (pubk a))))
@@ -883,6 +916,7 @@
   (operation nonce-test (contracted (x1 y3) (x1-0 y3)) y3 (0 1)
     (enc "okay" y3 y3 (pubk a)) (enc y3 x3 (pubk a))
     (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -909,6 +943,7 @@
   (operation nonce-test (displaced 3 2 resp 2) x1-0 (0 1)
     (enc "okay" y3 x1-0 (pubk a)) (enc x1-0 x3 (pubk a))
     (enc x1-0 x1-0 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1-0 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a))))
       (recv (enc "okay" x1-0 x1 (pubk a))))
@@ -937,6 +972,7 @@
   (operation nonce-test (displaced 3 2 resp 2) x1 (0 1)
     (enc "okay" x3 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -960,6 +996,7 @@
   (operation nonce-test (added-strand resp 2) x1 (0 1)
     (enc "okay" x3 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -984,6 +1021,7 @@
   (operation nonce-test (displaced 3 2 resp 2) x1 (0 1)
     (enc "okay" x3 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -1007,6 +1045,7 @@
   (operation nonce-test (added-strand resp 2) x1 (0 1)
     (enc "okay" x3 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -1036,6 +1075,7 @@
   (operation nonce-test (displaced 3 1 resp 2) x1-0 (0 1)
     (enc "okay" x3 x1-0 (pubk a)) (enc "okay" y3 x1-0 (pubk a))
     (enc x1-0 x3 (pubk a)) (enc x1 x1-0 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -1061,6 +1101,7 @@
   (operation nonce-test (added-strand resp 2) x1 (0 1)
     (enc "okay" x3 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1-0 x1 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1-0 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -1083,6 +1124,7 @@
   (operation nonce-test (displaced 3 2 resp 2) x1-0 (0 1)
     (enc "okay" x3 x1-0 (pubk a)) (enc "okay" y3 x1-0 (pubk a))
     (enc x1-0 x3 (pubk a)) (enc x1 x1-0 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -1106,6 +1148,7 @@
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x3 (1 0)
     (enc "okay" y3 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -1129,6 +1172,7 @@
   (operation nonce-test (contracted (x1-0 x3) (a-0 a)) x3 (1 0)
     (enc "okay" y3 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -1154,6 +1198,7 @@
   (operation nonce-test (added-strand resp 2) x3 (1 0)
     (enc "okay" y3 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1-0 x3 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1-0 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -1178,6 +1223,7 @@
   (operation nonce-test (added-strand resp 2) x3 (1 0)
     (enc "okay" y3 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1-0 x3 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1-0 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -1208,6 +1254,7 @@
   (operation nonce-test (contracted (x1-0 y3) (x3-0 y3)) y3 (0 1)
     (enc "okay" x1 y3 (pubk a)) (enc "okay" y3 y3 (pubk a))
     (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -1240,6 +1287,7 @@
   (operation nonce-test (contracted (x1-0 x1) (x3-0 x1)) x1 (0 1)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -1269,6 +1317,7 @@
   (operation nonce-test (displaced 4 1 resp 2) x3-0 (0 1)
     (enc "okay" x1-0 x3-0 (pubk a)) (enc "okay" y3 x3-0 (pubk a))
     (enc x1-0 x3-0 (pubk a)) (enc x3-0 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1-0 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -1299,6 +1348,7 @@
   (operation nonce-test (added-strand resp 2) x1-0 (0 1)
     (enc "okay" x1-0 x1-0 (pubk a)) (enc "okay" y3 x1-0 (pubk a))
     (enc x1-0 x3 (pubk a)) (enc x1-0 x1-0 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1-0 x1-0 (pubk a)) (enc x1-0 x3 (pubk a))))
       (recv (enc "okay" x1-0 x1 (pubk a))))
@@ -1330,6 +1380,7 @@
   (uniq-orig y3)
   (operation nonce-test (displaced 3 2 resp 2) y3 (1 0)
     (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -1352,6 +1403,7 @@
   (uniq-orig y3)
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -1381,6 +1433,7 @@
   (uniq-orig x1)
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -1412,6 +1465,7 @@
   (uniq-orig x3)
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x3 (1 0)
     (enc x3 x3 (pubk a)) (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -1436,6 +1490,7 @@
   (uniq-orig x3)
   (operation nonce-test (added-strand resp 2) x3 (1 0)
     (enc x3 x3 (pubk a)) (enc x1-0 x3 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1-0 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -1467,6 +1522,7 @@
   (operation nonce-test (added-strand resp 2) x1-0 (0 1)
     (enc "okay" y3 x1-0 (pubk a)) (enc "okay" y3-0 x1-0 (pubk a))
     (enc x1-0 x3 (pubk a)) (enc x1-0 x1-0 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1-0 x1-0 (pubk a)) (enc x1-0 x3 (pubk a))))
       (recv (enc "okay" x1-0 x1 (pubk a))))
@@ -1501,6 +1557,7 @@
   (operation nonce-test (contracted (x1 y3-0) (x1-0 y3-0)) y3-0 (0 1)
     (enc "okay" y3 y3-0 (pubk a)) (enc "okay" y3-0 y3-0 (pubk a))
     (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -1535,6 +1592,7 @@
   (operation nonce-test (contracted (x1 y3) (x1-0 y3)) y3 (0 1)
     (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
     (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -1567,6 +1625,7 @@
   (operation nonce-test (contracted (x1-0 x1)) x1 (0 1)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -1599,6 +1658,7 @@
   (operation nonce-test (displaced 4 3 resp 2) x1-0 (0 1)
     (enc "okay" x1-0 x1-0 (pubk a)) (enc "okay" y3 x1-0 (pubk a))
     (enc x1-0 x3 (pubk a)) (enc x1-0 x1-0 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1-0 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a))))
       (recv (enc "okay" x1-0 x1 (pubk a))))
@@ -1623,6 +1683,7 @@
   (uniq-orig y3)
   (operation nonce-test (displaced 3 2 resp 2) y3 (1 0)
     (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -1645,6 +1706,7 @@
   (uniq-orig y3)
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -1674,6 +1736,7 @@
   (uniq-orig y3)
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -1705,6 +1768,7 @@
   (uniq-orig x1-0)
   (operation nonce-test (displaced 3 2 resp 2) x1-0 (1 0)
     (enc x1-0 x1-0 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1-0 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a))))
       (recv (enc "okay" x1-0 x1 (pubk a))))
@@ -1729,6 +1793,7 @@
   (uniq-orig x1-0)
   (operation nonce-test (added-strand resp 2) x1-0 (1 0)
     (enc x1-0 x1-0 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1-0 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a))))
       (recv (enc "okay" x1-0 x1 (pubk a))))
@@ -1757,6 +1822,7 @@
   (non-orig (privk a))
   (uniq-orig y3-0)
   (operation generalization separated y3-0)
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc y3 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3 (pubk a))))
@@ -1776,6 +1842,7 @@
   (non-orig (privk a))
   (uniq-orig x1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -1803,6 +1870,7 @@
     (enc "okay" x3 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -1832,6 +1900,7 @@
     (enc "okay" x3 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -1860,6 +1929,7 @@
     (enc "okay" x3 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -1887,6 +1957,7 @@
     (enc "okay" x3 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -1914,6 +1985,7 @@
     (enc "okay" x3 x1-0 (pubk a)) (enc "okay" x1 x1-0 (pubk a))
     (enc "okay" y3 x1-0 (pubk a)) (enc x1-0 x3 (pubk a))
     (enc x1 x1-0 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -1939,6 +2011,7 @@
     (enc "okay" x3 x1-0 (pubk a)) (enc "okay" x1 x1-0 (pubk a))
     (enc "okay" y3 x1-0 (pubk a)) (enc x1-0 x3 (pubk a))
     (enc x1 x1-0 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -1966,6 +2039,7 @@
     (enc "okay" x3 x1-0 (pubk a)) (enc "okay" x1 x1-0 (pubk a))
     (enc "okay" y3 x1-0 (pubk a)) (enc x1-0 x3 (pubk a))
     (enc x1 x1-0 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -1992,6 +2066,7 @@
   (operation nonce-test (contracted (x1-0 x3) (a-0 a)) x3 (1 0)
     (enc "okay" x1 x3 (pubk a)) (enc "okay" y3 x3 (pubk a))
     (enc x3 x3 (pubk a)) (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -2016,6 +2091,7 @@
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x3 (1 0)
     (enc "okay" x1 x3 (pubk a)) (enc "okay" y3 x3 (pubk a))
     (enc x3 x3 (pubk a)) (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -2041,6 +2117,7 @@
   (operation nonce-test (added-strand resp 2) x3 (1 0)
     (enc "okay" x1-0 x3 (pubk a)) (enc "okay" y3 x3 (pubk a))
     (enc x3 x3 (pubk a)) (enc x1-0 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1-0 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -2066,6 +2143,7 @@
   (operation nonce-test (contracted (x1-0 x3) (a-0 a)) x3 (1 0)
     (enc "okay" x3 x3 (pubk a)) (enc "okay" y3 x3 (pubk a))
     (enc x3 x3 (pubk a)) (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -2090,6 +2168,7 @@
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x3 (1 0)
     (enc "okay" x3 x3 (pubk a)) (enc "okay" y3 x3 (pubk a))
     (enc x3 x3 (pubk a)) (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -2113,6 +2192,7 @@
   (uniq-orig y3)
   (operation nonce-test (displaced 4 2 resp 2) y3 (1 0)
     (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -2136,6 +2216,7 @@
   (uniq-orig y3)
   (operation nonce-test (displaced 4 3 resp 2) y3 (1 0)
     (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -2174,6 +2255,7 @@
   (uniq-orig y3)
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -2213,6 +2295,7 @@
   (uniq-orig x1)
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -2243,6 +2326,7 @@
   (uniq-orig x1)
   (operation nonce-test (displaced 4 2 resp 2) x1 (1 0)
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -2272,6 +2356,7 @@
   (uniq-orig x1)
   (operation nonce-test (displaced 4 3 resp 2) x1 (1 0)
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -2306,6 +2391,7 @@
   (uniq-orig x1)
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -2344,6 +2430,7 @@
   (uniq-orig x3)
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x3 (1 0)
     (enc x3 x3 (pubk a)) (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -2367,6 +2454,7 @@
   (uniq-orig x3)
   (operation nonce-test (displaced 4 2 resp 2) x3 (1 0)
     (enc x3 x3 (pubk a)) (enc x1-0 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1-0 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -2396,6 +2484,7 @@
   (uniq-orig x3)
   (operation nonce-test (displaced 4 3 resp 2) x3 (1 0)
     (enc x3 x3 (pubk a)) (enc x1-0 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1-0 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -2430,6 +2519,7 @@
   (uniq-orig x3)
   (operation nonce-test (added-strand resp 2) x3 (1 0)
     (enc x3 x3 (pubk a)) (enc x1-0 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1-0 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -2467,6 +2557,7 @@
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -2501,6 +2592,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc x1 y3 (pubk a))
     (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -2526,6 +2618,7 @@
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc x1 y3 (pubk a))
     (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -2550,6 +2643,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -2581,6 +2675,7 @@
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc "okay" y3-0 y3 (pubk a)) (enc x1 y3 (pubk a))
     (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -2612,6 +2707,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" y3-0 y3 (pubk a)) (enc x1 y3 (pubk a))
     (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -2639,6 +2735,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" y3 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -2675,6 +2772,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" y3 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -2706,6 +2804,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" y3 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -2732,6 +2831,7 @@
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x3 (1 0)
     (enc "okay" y3-0 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -2758,6 +2858,7 @@
   (operation nonce-test (contracted (x1-0 x3) (a-0 a)) x3 (1 0)
     (enc "okay" y3-0 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -2785,6 +2886,7 @@
   (operation nonce-test (added-strand resp 2) x3 (1 0)
     (enc "okay" y3-0 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1-0 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1-0 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -2817,6 +2919,7 @@
   (operation nonce-test (added-strand resp 2) x3 (1 0)
     (enc "okay" y3-0 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1-0 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1-0 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -2854,6 +2957,7 @@
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -2889,6 +2993,7 @@
   (uniq-orig y3-0)
   (operation nonce-test (displaced 4 3 resp 2) y3-0 (1 0)
     (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -2921,6 +3026,7 @@
   (uniq-orig y3-0)
   (operation nonce-test (added-strand resp 2) y3-0 (1 0)
     (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -2959,6 +3065,7 @@
   (uniq-orig y3-0)
   (operation nonce-test (added-strand resp 2) y3-0 (1 0)
     (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -3001,6 +3108,7 @@
   (uniq-orig y3)
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -3031,6 +3139,7 @@
   (uniq-orig y3)
   (operation nonce-test (displaced 4 2 resp 2) y3 (1 0)
     (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -3065,6 +3174,7 @@
   (uniq-orig y3)
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -3103,6 +3213,7 @@
   (uniq-orig x1)
   (operation nonce-test (displaced 4 3 resp 2) x1 (1 0)
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -3133,6 +3244,7 @@
   (uniq-orig x1)
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -3168,6 +3280,7 @@
   (uniq-orig x1)
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -3206,6 +3319,7 @@
   (uniq-orig x1-0)
   (operation nonce-test (displaced 4 2 resp 2) x1-0 (1 0)
     (enc x1-0 x1-0 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1-0 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a))))
       (recv (enc "okay" x1-0 x1 (pubk a))))
@@ -3237,6 +3351,7 @@
   (uniq-orig x1)
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x1 (1 0)
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -3260,6 +3375,7 @@
   (uniq-orig x1-0)
   (operation nonce-test (displaced 4 3 resp 2) x1-0 (1 0)
     (enc x1-0 x1-0 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1-0 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a))))
       (recv (enc "okay" x1-0 x1 (pubk a))))
@@ -3295,6 +3411,7 @@
   (uniq-orig x1-0)
   (operation nonce-test (added-strand resp 2) x1-0 (1 0)
     (enc x1-0 x1-0 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1-0 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a))))
       (recv (enc "okay" x1-0 x1 (pubk a))))
@@ -3330,6 +3447,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc y3 x3 (pubk a))
     (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -3355,6 +3473,7 @@
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc y3 x3 (pubk a))
     (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -3379,6 +3498,7 @@
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc y3 x3 (pubk a))
     (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -3410,6 +3530,7 @@
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc "okay" y3-0 y3 (pubk a)) (enc y3 x3 (pubk a))
     (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -3435,6 +3556,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" y3-0 y3 (pubk a)) (enc y3 x3 (pubk a))
     (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -3462,6 +3584,7 @@
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc "okay" y3-0 y3 (pubk a)) (enc y3 x3 (pubk a))
     (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -3498,6 +3621,7 @@
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc "okay" y3-0 y3 (pubk a)) (enc y3 x3 (pubk a))
     (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -3529,6 +3653,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" y3-0 y3 (pubk a)) (enc y3 x3 (pubk a))
     (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -3552,6 +3677,7 @@
   (uniq-orig x1)
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x1 (1 0)
     (enc "okay" y3 x1 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -3576,6 +3702,7 @@
   (uniq-orig x1-0)
   (operation nonce-test (added-strand resp 2) x1-0 (1 0)
     (enc "okay" y3 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1-0 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a))))
       (recv (enc "okay" x1-0 x1 (pubk a))))
@@ -3602,6 +3729,7 @@
   (uniq-orig x1)
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x1 (1 0)
     (enc "okay" y3-0 x1 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -3628,6 +3756,7 @@
   (uniq-orig x1-0)
   (operation nonce-test (added-strand resp 2) x1-0 (1 0)
     (enc "okay" y3-0 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1-0 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a))))
       (recv (enc "okay" x1-0 x1 (pubk a))))
@@ -3659,6 +3788,7 @@
   (non-orig (privk a) (privk a-0))
   (uniq-orig y3-0)
   (operation generalization separated a-0)
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc y3 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3 (pubk a))))
@@ -3679,6 +3809,7 @@
   (non-orig (privk a))
   (uniq-orig y3)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -3700,6 +3831,7 @@
   (non-orig (privk a))
   (uniq-orig x3)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -3721,6 +3853,7 @@
   (non-orig (privk a))
   (uniq-orig x3)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -3742,6 +3875,7 @@
   (non-orig (privk a))
   (uniq-orig x3)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -3769,6 +3903,7 @@
     (enc "okay" x3 x3 (pubk a)) (enc "okay" x1 x3 (pubk a))
     (enc "okay" y3 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -3796,6 +3931,7 @@
     (enc "okay" x3 x3 (pubk a)) (enc "okay" x1 x3 (pubk a))
     (enc "okay" y3 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -3817,6 +3953,7 @@
   (non-orig (privk a))
   (uniq-orig x3)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -3838,6 +3975,7 @@
   (non-orig (privk a))
   (uniq-orig x3)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -3863,6 +4001,7 @@
   (operation nonce-test (displaced 4 3 resp 2) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc x1 y3 (pubk a))
     (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -3897,6 +4036,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc x1 y3 (pubk a))
     (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -3924,6 +4064,7 @@
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc x1 y3 (pubk a))
     (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -3960,6 +4101,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -3991,6 +4133,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" x1 y3 (pubk a)) (enc x1 y3 (pubk a))
     (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -4020,6 +4163,7 @@
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc "okay" y3-0 y3 (pubk a)) (enc x1 y3 (pubk a))
     (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -4057,6 +4201,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" y3-0 y3 (pubk a)) (enc x1 y3 (pubk a))
     (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -4087,6 +4232,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -4120,6 +4266,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -4148,6 +4295,7 @@
   (operation nonce-test (displaced 5 3 resp 2) x1 (1 0)
     (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -4182,6 +4330,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -4223,6 +4372,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" y3 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -4254,6 +4404,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" y3 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -4280,6 +4431,7 @@
   (operation nonce-test (displaced 4 3 resp 2) x1 (1 0)
     (enc "okay" y3 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -4310,6 +4462,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -4335,6 +4488,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -4373,6 +4527,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -4410,6 +4565,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -4433,6 +4589,7 @@
   (non-orig (privk a))
   (uniq-orig x3)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -4458,6 +4615,7 @@
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x3 (1 0)
     (enc "okay" y3 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -4484,6 +4642,7 @@
   (operation nonce-test (contracted (x1-0 x3) (a-0 a)) x3 (1 0)
     (enc "okay" y3 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -4511,6 +4670,7 @@
   (operation nonce-test (added-strand resp 2) x3 (1 0)
     (enc "okay" y3 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1-0 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1-0 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -4537,6 +4697,7 @@
   (operation nonce-test (added-strand resp 2) x3 (1 0)
     (enc "okay" y3 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1-0 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1-0 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -4572,6 +4733,7 @@
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x3 (1 0)
     (enc "okay" x1 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -4598,6 +4760,7 @@
   (operation nonce-test (contracted (x1-0 x3) (a-0 a)) x3 (1 0)
     (enc "okay" x1 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -4627,6 +4790,7 @@
   (operation nonce-test (added-strand resp 2) x3 (1 0)
     (enc "okay" y3-0 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1-0 x3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1-0 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -4660,6 +4824,7 @@
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x3 (1 0)
     (enc "okay" y3-0 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -4688,6 +4853,7 @@
   (operation nonce-test (contracted (x1-0 x3) (a-0 a)) x3 (1 0)
     (enc "okay" y3-0 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -4718,6 +4884,7 @@
   (operation nonce-test (added-strand resp 2) x3 (1 0)
     (enc "okay" y3-0 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1-0 x3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1-0 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -4760,6 +4927,7 @@
   (uniq-orig x1)
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -4796,6 +4964,7 @@
   (uniq-orig x1)
   (operation nonce-test (displaced 5 3 resp 2) x1 (1 0)
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -4837,6 +5006,7 @@
   (uniq-orig x1)
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -4881,6 +5051,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
     (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -4908,6 +5079,7 @@
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
     (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -4940,6 +5112,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -4965,6 +5138,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -4992,6 +5166,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" x1 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
     (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -5022,6 +5197,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -5051,6 +5227,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" y3 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -5078,6 +5255,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" y3 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -5106,6 +5284,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -5134,6 +5313,7 @@
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x3 (1 0)
     (enc "okay" x1 x3 (pubk a)) (enc "okay" y3-0 x3 (pubk a))
     (enc x3 x3 (pubk a)) (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -5162,6 +5342,7 @@
   (operation nonce-test (contracted (x1-0 x3) (a-0 a)) x3 (1 0)
     (enc "okay" x1 x3 (pubk a)) (enc "okay" y3-0 x3 (pubk a))
     (enc x3 x3 (pubk a)) (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -5192,6 +5373,7 @@
   (operation nonce-test (added-strand resp 2) x3 (1 0)
     (enc "okay" x1-0 x3 (pubk a)) (enc "okay" y3-0 x3 (pubk a))
     (enc x3 x3 (pubk a)) (enc x1-0 x3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1-0 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -5226,6 +5408,7 @@
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x3 (1 0)
     (enc "okay" x3 x3 (pubk a)) (enc "okay" y3-0 x3 (pubk a))
     (enc x3 x3 (pubk a)) (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -5254,6 +5437,7 @@
   (operation nonce-test (contracted (x1-0 x3) (a-0 a)) x3 (1 0)
     (enc "okay" x3 x3 (pubk a)) (enc "okay" y3-0 x3 (pubk a))
     (enc x3 x3 (pubk a)) (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -5281,6 +5465,7 @@
   (uniq-orig x1)
   (operation nonce-test (displaced 5 4 resp 2) x1 (1 0)
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -5318,6 +5503,7 @@
   (uniq-orig x1)
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -5360,6 +5546,7 @@
   (uniq-orig x1)
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -5405,6 +5592,7 @@
   (operation nonce-test (added-strand resp 2) y3-0 (1 0)
     (enc "okay" y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
     (enc y3-0 y3-0 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -5439,6 +5627,7 @@
   (operation nonce-test (contracted (a-0 a)) y3-0 (1 0)
     (enc "okay" y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
     (enc y3-0 y3-0 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -5467,6 +5656,7 @@
   (operation nonce-test (added-strand resp 2) y3-0 (1 0)
     (enc "okay" y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
     (enc y3-0 y3-0 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -5508,6 +5698,7 @@
   (operation nonce-test (added-strand resp 2) y3-0 (1 0)
     (enc "okay" y3-1 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
     (enc y3-0 y3-0 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -5545,6 +5736,7 @@
   (operation nonce-test (contracted (a-0 a)) y3-0 (1 0)
     (enc "okay" y3-1 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
     (enc y3-0 y3-0 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -5577,6 +5769,7 @@
   (operation nonce-test (added-strand resp 2) y3-0 (1 0)
     (enc "okay" y3-1 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
     (enc y3-0 y3-0 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -5624,6 +5817,7 @@
   (operation nonce-test (added-strand resp 2) y3-0 (1 0)
     (enc "okay" y3-1 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
     (enc y3-0 y3-0 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -5665,6 +5859,7 @@
   (operation nonce-test (contracted (a-0 a)) y3-0 (1 0)
     (enc "okay" y3-1 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
     (enc y3-0 y3-0 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -5697,6 +5892,7 @@
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc "okay" y3-1 y3 (pubk a)) (enc y3 x3 (pubk a))
     (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -5730,6 +5926,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" y3-1 y3 (pubk a)) (enc y3 x3 (pubk a))
     (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -5758,6 +5955,7 @@
   (operation nonce-test (displaced 5 2 resp 2) y3 (1 0)
     (enc "okay" y3-1 y3 (pubk a)) (enc y3 x3 (pubk a))
     (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -5792,6 +5990,7 @@
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc "okay" y3-1 y3 (pubk a)) (enc y3 x3 (pubk a))
     (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -5832,6 +6031,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc y3 x3 (pubk a))
     (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -5859,6 +6059,7 @@
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc y3 x3 (pubk a))
     (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -5897,6 +6098,7 @@
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc "okay" y3-1 y3 (pubk a)) (enc y3 x3 (pubk a))
     (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -5934,6 +6136,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" y3-1 y3 (pubk a)) (enc y3 x3 (pubk a))
     (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -5961,6 +6164,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -5988,6 +6192,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -6020,6 +6225,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -6058,6 +6264,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -6091,6 +6298,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -6121,6 +6329,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -6164,6 +6373,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -6201,6 +6411,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -6227,6 +6438,7 @@
   (uniq-orig x1)
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x1 (1 0)
     (enc "okay" y3 x1 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -6253,6 +6465,7 @@
   (uniq-orig x1-0)
   (operation nonce-test (added-strand resp 2) x1-0 (1 0)
     (enc "okay" y3 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1-0 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a))))
       (recv (enc "okay" x1-0 x1 (pubk a))))
@@ -6278,6 +6491,7 @@
   (non-orig (privk a))
   (uniq-orig x1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -6302,6 +6516,7 @@
   (uniq-orig x1)
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -6328,6 +6543,7 @@
   (uniq-orig x1-0)
   (operation nonce-test (added-strand resp 2) x1-0 (1 0)
     (enc "okay" y3-0 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1-0 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a))))
       (recv (enc "okay" x1-0 x1 (pubk a))))
@@ -6365,6 +6581,7 @@
   (uniq-orig x1)
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x1 (1 0)
     (enc "okay" y3-0 x1 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -6392,6 +6609,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
     (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -6419,6 +6637,7 @@
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
     (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -6444,6 +6663,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
     (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -6471,6 +6691,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
     (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -6501,6 +6722,7 @@
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
     (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -6528,6 +6750,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" y3-0 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
     (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -6558,6 +6781,7 @@
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc "okay" y3-0 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
     (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -6585,6 +6809,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
     (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -6612,6 +6837,7 @@
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -6639,6 +6865,7 @@
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -6662,6 +6889,7 @@
   (non-orig (privk a))
   (uniq-orig y3-0)
   (operation generalization forgot (privk a-0))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc y3 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3 (pubk a))))
@@ -6686,6 +6914,7 @@
   (non-orig (privk a))
   (uniq-orig x3)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -6710,6 +6939,7 @@
   (non-orig (privk a))
   (uniq-orig x3)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -6736,6 +6966,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" x1 y3 (pubk a)) (enc "okay" y3 y3 (pubk a))
     (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -6765,6 +6996,7 @@
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
     (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -6798,6 +7030,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
     (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -6826,6 +7059,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -6856,6 +7090,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" x1 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
     (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -6887,6 +7122,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -6919,6 +7155,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -6954,6 +7191,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -6984,6 +7222,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -7020,6 +7259,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -7052,6 +7292,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -7087,6 +7328,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -7112,6 +7354,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -7134,6 +7377,7 @@
   (non-orig (privk a))
   (uniq-orig x1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -7160,6 +7404,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -7190,6 +7435,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -7219,6 +7465,7 @@
   (operation nonce-test (contracted (x1-0 x3) (a-0 a)) x3 (1 0)
     (enc "okay" x1 x3 (pubk a)) (enc "okay" y3 x3 (pubk a))
     (enc x3 x3 (pubk a)) (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -7245,6 +7492,7 @@
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x3 (1 0)
     (enc "okay" x1 x3 (pubk a)) (enc "okay" y3 x3 (pubk a))
     (enc x3 x3 (pubk a)) (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -7273,6 +7521,7 @@
   (operation nonce-test (added-strand resp 2) x3 (1 0)
     (enc "okay" x1-0 x3 (pubk a)) (enc "okay" y3 x3 (pubk a))
     (enc x3 x3 (pubk a)) (enc x1-0 x3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1-0 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -7300,6 +7549,7 @@
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x3 (1 0)
     (enc "okay" x3 x3 (pubk a)) (enc "okay" y3 x3 (pubk a))
     (enc x3 x3 (pubk a)) (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -7326,6 +7576,7 @@
   (operation nonce-test (contracted (x1-0 x3) (a-0 a)) x3 (1 0)
     (enc "okay" x3 x3 (pubk a)) (enc "okay" y3 x3 (pubk a))
     (enc x3 x3 (pubk a)) (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -7354,6 +7605,7 @@
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x3 (1 0)
     (enc "okay" x1 x3 (pubk a)) (enc "okay" y3-0 x3 (pubk a))
     (enc x3 x3 (pubk a)) (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -7385,6 +7637,7 @@
   (operation nonce-test (contracted (x1-0 x3) (a-0 a)) x3 (1 0)
     (enc "okay" x1 x3 (pubk a)) (enc "okay" y3-0 x3 (pubk a))
     (enc x3 x3 (pubk a)) (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -7417,6 +7670,7 @@
   (operation nonce-test (added-strand resp 2) x3 (1 0)
     (enc "okay" x1-0 x3 (pubk a)) (enc "okay" y3-0 x3 (pubk a))
     (enc x3 x3 (pubk a)) (enc x1-0 x3 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1-0 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -7454,6 +7708,7 @@
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x3 (1 0)
     (enc "okay" x3 x3 (pubk a)) (enc "okay" y3-0 x3 (pubk a))
     (enc x3 x3 (pubk a)) (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -7485,6 +7740,7 @@
   (operation nonce-test (contracted (x1-0 x3) (a-0 a)) x3 (1 0)
     (enc "okay" x3 x3 (pubk a)) (enc "okay" y3-0 x3 (pubk a))
     (enc x3 x3 (pubk a)) (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -7517,6 +7773,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -7557,6 +7814,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -7588,6 +7846,7 @@
   (operation nonce-test (displaced 6 3 resp 2) x1 (1 0)
     (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -7628,6 +7887,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -7674,6 +7934,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -7704,6 +7965,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -7748,6 +8010,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -7792,6 +8055,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -7822,6 +8086,7 @@
     (enc "okay" x1 y3 (pubk a)) (enc "okay" y3 y3 (pubk a))
     (enc "okay" y3-0 y3 (pubk a)) (enc x1 y3 (pubk a))
     (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -7851,6 +8116,7 @@
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -7882,6 +8148,7 @@
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -7914,6 +8181,7 @@
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -7946,6 +8214,7 @@
     (enc "okay" x3 x3 (pubk a)) (enc "okay" x1 x3 (pubk a))
     (enc "okay" y3-0 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -7978,6 +8247,7 @@
     (enc "okay" x3 x3 (pubk a)) (enc "okay" x1 x3 (pubk a))
     (enc "okay" y3-0 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -8007,6 +8277,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -8037,6 +8308,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -8076,6 +8348,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -8120,6 +8393,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -8160,6 +8434,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -8192,6 +8467,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -8241,6 +8517,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -8285,6 +8562,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -8314,6 +8592,7 @@
   (operation nonce-test (contracted (a-0 a)) y3-0 (1 0)
     (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
     (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -8346,6 +8625,7 @@
   (operation nonce-test (added-strand resp 2) y3-0 (1 0)
     (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
     (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -8384,6 +8664,7 @@
   (operation nonce-test (contracted (a-0 a)) y3-0 (1 0)
     (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
     (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -8416,6 +8697,7 @@
   (operation nonce-test (contracted (a-0 a)) y3-0 (1 0)
     (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
     (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -8451,6 +8733,7 @@
   (operation nonce-test (added-strand resp 2) y3-0 (1 0)
     (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
     (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -8493,6 +8776,7 @@
   (operation nonce-test (contracted (a-0 a)) y3-0 (1 0)
     (enc "okay" y3-1 y3-0 (pubk a)) (enc "okay" y3-2 y3-0 (pubk a))
     (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -8528,6 +8812,7 @@
   (operation nonce-test (added-strand resp 2) y3-0 (1 0)
     (enc "okay" y3-1 y3-0 (pubk a)) (enc "okay" y3-2 y3-0 (pubk a))
     (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -8570,6 +8855,7 @@
   (operation nonce-test (contracted (a-0 a)) y3-0 (1 0)
     (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
     (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -8604,6 +8890,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
     (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -8636,6 +8923,7 @@
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
     (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -8671,6 +8959,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
     (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -8701,6 +8990,7 @@
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
     (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -8737,6 +9027,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" y3-1 y3 (pubk a)) (enc "okay" y3-2 y3 (pubk a))
     (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -8769,6 +9060,7 @@
   (operation nonce-test (added-strand resp 2) y3 (1 0)
     (enc "okay" y3-1 y3 (pubk a)) (enc "okay" y3-2 y3 (pubk a))
     (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -8804,6 +9096,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
     (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -8834,6 +9127,7 @@
   (operation nonce-test (contracted (a-0 a)) y3 (1 0)
     (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
     (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -8863,6 +9157,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -8893,6 +9188,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -8927,6 +9223,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -8957,6 +9254,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -8989,6 +9287,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -9026,6 +9325,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -9058,6 +9358,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -9095,6 +9396,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -9124,6 +9426,7 @@
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -9145,6 +9448,7 @@
   (non-orig (privk a))
   (uniq-orig x1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -9173,6 +9477,7 @@
   (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -9203,6 +9508,7 @@
     (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
     (enc "okay" y3-1 y3 (pubk a)) (enc y3 x3 (pubk a))
     (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -9234,6 +9540,7 @@
     (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
     (enc "okay" y3-1 y3 (pubk a)) (enc y3 x3 (pubk a))
     (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -9266,6 +9573,7 @@
     (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
     (enc "okay" y3-1 y3 (pubk a)) (enc y3 x3 (pubk a))
     (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -9298,6 +9606,7 @@
     (enc "okay" x1 y3 (pubk a)) (enc "okay" y3 y3 (pubk a))
     (enc "okay" y3-0 y3 (pubk a)) (enc x1 y3 (pubk a))
     (enc y3 x3 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -9331,6 +9640,7 @@
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
     (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -9364,6 +9674,7 @@
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
     (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -9397,6 +9708,7 @@
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
     (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -9424,6 +9736,7 @@
   (non-orig (privk a))
   (uniq-orig x1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -9448,6 +9761,7 @@
   (non-orig (privk a))
   (uniq-orig x3)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -9472,6 +9786,7 @@
   (non-orig (privk a))
   (uniq-orig x3)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -9502,6 +9817,7 @@
     (enc "okay" x3 x3 (pubk a)) (enc "okay" x1 x3 (pubk a))
     (enc "okay" y3 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -9532,6 +9848,7 @@
     (enc "okay" x3 x3 (pubk a)) (enc "okay" x1 x3 (pubk a))
     (enc "okay" y3 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -9556,6 +9873,7 @@
   (non-orig (privk a))
   (uniq-orig x3)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -9580,6 +9898,7 @@
   (non-orig (privk a))
   (uniq-orig x3)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -9611,6 +9930,7 @@
     (enc "okay" x3 x3 (pubk a)) (enc "okay" x1 x3 (pubk a))
     (enc "okay" y3-0 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -9645,6 +9965,7 @@
     (enc "okay" x3 x3 (pubk a)) (enc "okay" x1 x3 (pubk a))
     (enc "okay" y3-0 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -9678,6 +9999,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -9713,6 +10035,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -9756,6 +10079,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -9788,6 +10112,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -9833,6 +10158,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" y3-1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -9877,6 +10203,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" y3-1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -9909,6 +10236,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -9941,6 +10269,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -9973,6 +10302,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -10005,6 +10335,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -10047,6 +10378,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -10079,6 +10411,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -10114,6 +10447,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -10160,6 +10494,7 @@
   (operation nonce-test (added-strand resp 2) x1 (1 0)
     (enc "okay" y3-1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -10204,6 +10539,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" y3-1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -10237,6 +10573,7 @@
   (operation nonce-test (contracted (a-0 a)) x1 (1 0)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
     (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -10270,6 +10607,7 @@
     (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
     (enc "okay" y3-2 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
     (enc y3-0 y3-0 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -10306,6 +10644,7 @@
     (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
     (enc "okay" y3-2 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
     (enc y3-0 y3-0 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -10344,6 +10683,7 @@
     (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
     (enc "okay" y3-2 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
     (enc y3-0 y3-0 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -10382,6 +10722,7 @@
     (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
     (enc "okay" y3-2 y3 (pubk a)) (enc y3 x3 (pubk a))
     (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -10415,6 +10756,7 @@
     (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
     (enc "okay" y3-2 y3 (pubk a)) (enc y3 x3 (pubk a))
     (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -10448,6 +10790,7 @@
     (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
     (enc "okay" y3-2 y3 (pubk a)) (enc y3 x3 (pubk a))
     (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -10481,6 +10824,7 @@
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
     (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -10514,6 +10858,7 @@
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
     (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -10548,6 +10893,7 @@
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
     (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -10575,6 +10921,7 @@
   (non-orig (privk a))
   (uniq-orig x1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -10600,6 +10947,7 @@
   (non-orig (privk a))
   (uniq-orig x3)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
@@ -10626,6 +10974,7 @@
   (non-orig (privk a))
   (uniq-orig x3)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x1 (pubk a))))
@@ -10660,6 +11009,7 @@
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
     (enc "okay" y3-2 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -10695,6 +11045,7 @@
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
     (enc "okay" y3-2 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -10731,6 +11082,7 @@
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
     (enc "okay" y3-2 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -10766,6 +11118,7 @@
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
     (enc "okay" y3-2 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -10802,6 +11155,7 @@
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
     (enc "okay" y3-2 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -10839,6 +11193,7 @@
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
     (enc "okay" y3-2 x1 (pubk a)) (enc x1 x3 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))

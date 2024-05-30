@@ -36,6 +36,7 @@
   (non-orig (invk k))
   (uniq-orig x1 x2)
   (operation nonce-test (added-strand resp 3) x1 (0 2) (enc x1 k))
+  (strand-map 0)
   (traces ((send (enc x1 k)) (send (enc x2 k)) (recv (enc x1 x2 k)))
     ((recv (enc x1 k)) (recv (enc y2 k)) (send (enc x1 y3 k))))
   (label 1)

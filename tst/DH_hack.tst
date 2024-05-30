@@ -51,6 +51,7 @@
   (non-orig (invk x) (invk y) (privk gcs))
   (operation encryption-test (added-strand commute 2)
     (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs)) (0 0))
+  (strand-map 0)
   (traces
     ((recv (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
     ((recv (enc x (enc cek (hash (invk x) y)) (enc d cek) (privk gcs)))
@@ -71,6 +72,7 @@
   (uniq-orig d cek x)
   (operation encryption-test (added-strand init1 1)
     (enc x (enc cek (hash (invk x) y)) (enc d cek) (privk gcs)) (1 0))
+  (strand-map 0 1)
   (traces
     ((recv (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
     ((recv (enc x (enc cek (hash (invk x) y)) (enc d cek) (privk gcs)))
@@ -134,6 +136,7 @@
   (non-orig (invk x) (privk gcs))
   (operation encryption-test (added-strand commute 2)
     (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs)) (0 0))
+  (strand-map 0)
   (traces
     ((recv (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
     ((recv (enc x (enc cek (hash (invk x) y)) (enc d cek) (privk gcs)))
@@ -154,6 +157,7 @@
   (uniq-orig d cek x)
   (operation encryption-test (added-strand init1 1)
     (enc x (enc cek (hash (invk x) y)) (enc d cek) (privk gcs)) (1 0))
+  (strand-map 0 1)
   (traces
     ((recv (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
     ((recv (enc x (enc cek (hash (invk x) y)) (enc d cek) (privk gcs)))
@@ -217,6 +221,7 @@
   (non-orig (invk y) (privk gcs))
   (operation encryption-test (added-strand commute 2)
     (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs)) (0 0))
+  (strand-map 0)
   (traces
     ((recv (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
     ((recv (enc x (enc cek (hash (invk x) y)) (enc d cek) (privk gcs)))
@@ -237,6 +242,7 @@
   (uniq-orig d cek x)
   (operation encryption-test (added-strand init1 1)
     (enc x (enc cek (hash (invk x) y)) (enc d cek) (privk gcs)) (1 0))
+  (strand-map 0 1)
   (traces
     ((recv (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
     ((recv (enc x (enc cek (hash (invk x) y)) (enc d cek) (privk gcs)))
@@ -302,6 +308,7 @@
   (non-orig (invk x) (invk y) (privk gcs))
   (operation encryption-test (added-strand commute 2)
     (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs)) (0 0))
+  (strand-map 0 1)
   (traces
     ((recv (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
     ((recv cek) (send cek))
@@ -324,6 +331,7 @@
   (uniq-orig d cek x)
   (operation encryption-test (added-strand init1 1)
     (enc x (enc cek (hash (invk x) y)) (enc d cek) (privk gcs)) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
     ((recv cek) (send cek))
@@ -348,6 +356,7 @@
   (uniq-orig d cek x)
   (operation nonce-test (displaced 4 2 commute 2) cek (1 0)
     (enc cek (hash (invk x) y)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
     ((recv cek) (send cek))
@@ -373,6 +382,7 @@
   (uniq-orig d cek x)
   (operation nonce-test (added-strand commute 2) cek (1 0)
     (enc cek (hash (invk x) y)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
     ((recv cek) (send cek))
@@ -402,6 +412,7 @@
   (uniq-orig d cek x)
   (operation nonce-test (added-listener (hash (invk x) y)) cek (1 0)
     (enc cek (hash (invk x) y)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
     ((recv cek) (send cek))
@@ -428,6 +439,7 @@
   (uniq-orig d cek x)
   (operation nonce-test (added-listener (hash x (invk y))) cek (1 0)
     (enc cek (hash x (invk y))) (enc cek (hash (invk x) y)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
     ((recv cek) (send cek))
@@ -454,6 +466,7 @@
   (uniq-orig d cek x)
   (operation nonce-test (added-listener (hash (invk x) y)) cek (1 0)
     (enc cek (hash x (invk y))) (enc cek (hash (invk x) y)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
     ((recv cek) (send cek))
@@ -481,6 +494,7 @@
   (operation encryption-test (displaced 5 3 init1 1)
     (enc x (enc cek (hash (invk x) y)) (enc d-0 cek) (privk gcs-0))
     (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
     ((recv cek) (send cek))
@@ -510,6 +524,7 @@
   (uniq-orig d cek x)
   (operation nonce-test (added-listener (hash x (invk y))) cek (1 0)
     (enc cek (hash x (invk y))) (enc cek (hash (invk x) y)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
     ((recv cek) (send cek))
@@ -541,6 +556,7 @@
   (uniq-orig d cek x)
   (operation nonce-test (added-listener (hash (invk x) y)) cek (1 0)
     (enc cek (hash x (invk y))) (enc cek (hash (invk x) y)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
     ((recv cek) (send cek))
@@ -609,6 +625,7 @@
   (non-orig (invk x) (privk gcs))
   (operation encryption-test (added-strand commute 2)
     (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs)) (0 0))
+  (strand-map 0 1)
   (traces
     ((recv (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
     ((recv cek) (send cek))
@@ -631,6 +648,7 @@
   (uniq-orig d cek x)
   (operation encryption-test (added-strand init1 1)
     (enc x (enc cek (hash (invk x) y)) (enc d cek) (privk gcs)) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
     ((recv cek) (send cek))
@@ -655,6 +673,7 @@
   (uniq-orig d cek x)
   (operation nonce-test (displaced 4 2 commute 2) cek (1 0)
     (enc cek (hash (invk x) y)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
     ((recv cek) (send cek))
@@ -682,6 +701,7 @@
   (uniq-orig d cek x)
   (operation nonce-test (added-strand commute 2) cek (1 0)
     (enc cek (hash (invk x) y)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
     ((recv cek) (send cek))
@@ -711,6 +731,7 @@
   (uniq-orig d cek x)
   (operation nonce-test (added-listener (hash (invk x) y)) cek (1 0)
     (enc cek (hash (invk x) y)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
     ((recv cek) (send cek))
@@ -738,6 +759,7 @@
   (operation encryption-test (displaced 5 3 init1 1)
     (enc x (enc cek (hash (invk x) y)) (enc d-0 cek) (privk gcs-0))
     (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
     ((recv cek) (send cek))
@@ -806,6 +828,7 @@
   (non-orig (invk y) (privk gcs))
   (operation encryption-test (added-strand commute 2)
     (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs)) (0 0))
+  (strand-map 0 1)
   (traces
     ((recv (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
     ((recv cek) (send cek))
@@ -828,6 +851,7 @@
   (uniq-orig d cek x)
   (operation encryption-test (added-strand init1 1)
     (enc x (enc cek (hash (invk x) y)) (enc d cek) (privk gcs)) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs))))
     ((recv cek) (send cek))

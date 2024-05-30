@@ -64,6 +64,7 @@
   (uniq-orig m n1 n2-0)
   (operation nonce-test (added-strand resp 4) m (1 0)
     (enc n1 n2 m (pubk b)))
+  (strand-map 0 1)
   (traces
     ((send a) (recv (cat b n1 n2)) (send (cat a (enc n1 n2 m (pubk b))))
       (recv (cat n1 x (enc x y n1 (pubk b))))) ((recv m) (send m))
@@ -87,6 +88,7 @@
   (uniq-orig m n1 n2 n2-0 n2-1)
   (operation nonce-test (added-strand resp 4) m (1 0)
     (enc n1 n2 m (pubk b)) (enc n2 m n1 (pubk b)))
+  (strand-map 0 1 2)
   (traces
     ((send a) (recv (cat b n1 n2)) (send (cat a (enc n1 n2 m (pubk b))))
       (recv (cat n1 x (enc x y n1 (pubk b))))) ((recv m) (send m))
@@ -113,6 +115,7 @@
   (uniq-orig m n1 n2 n2-0 n2-1)
   (operation nonce-test (displaced 4 2 resp 4) m (3 2)
     (enc n1 n2 m (pubk b)))
+  (strand-map 0 1 2 3)
   (traces
     ((send a) (recv (cat b n1 n2)) (send (cat a (enc n1 n2 m (pubk b))))
       (recv (cat n1 x (enc x y n1 (pubk b))))) ((recv m) (send m))

@@ -45,6 +45,7 @@
   (non-orig (invk k))
   (uniq-orig n n1 n2 n3 new)
   (operation nonce-test (added-strand adder 2) n (0 1) (enc n k))
+  (strand-map 0)
   (traces
     ((send (enc n k)) (recv (enc n n1 k)) (recv (enc n n2 k))
       (recv (enc n n3 k)) (send (enc n n1 n2 n3 k))
@@ -64,6 +65,7 @@
   (uniq-orig n n2 n3 new)
   (operation nonce-test (contracted (n1 new)) n (0 1) (enc n k)
     (enc n new k))
+  (strand-map 0 1)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n n2 k))
       (recv (enc n n3 k)) (send (enc n new n2 n3 k))
@@ -83,6 +85,7 @@
   (uniq-orig n n3 new)
   (operation nonce-test (contracted (n2 new)) n (0 2) (enc n k)
     (enc n new k))
+  (strand-map 0 1)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n n3 k)) (send (enc n new new n3 k))
@@ -103,6 +106,7 @@
   (uniq-orig n n2 n3 new new-0)
   (operation nonce-test (added-strand adder 2) n (0 2) (enc n k)
     (enc n new k))
+  (strand-map 0 1)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n n2 k))
       (recv (enc n n3 k)) (send (enc n new n2 n3 k))
@@ -123,6 +127,7 @@
   (uniq-orig n new)
   (operation nonce-test (contracted (n3 new)) n (0 3) (enc n k)
     (enc n new k))
+  (strand-map 0 1)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -143,6 +148,7 @@
   (uniq-orig n n3 new new-0)
   (operation nonce-test (added-strand adder 2) n (0 3) (enc n k)
     (enc n new k))
+  (strand-map 0 1)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n n3 k)) (send (enc n new new n3 k))
@@ -164,6 +170,7 @@
   (uniq-orig n n3 new new-0)
   (operation nonce-test (contracted (n2 new)) n (0 2) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n n3 k)) (send (enc n new new n3 k))
@@ -185,6 +192,7 @@
   (uniq-orig n n3 new new-0)
   (operation nonce-test (contracted (n2 new-0)) n (0 2) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n n3 k)) (send (enc n new new-0 n3 k))
@@ -206,6 +214,7 @@
   (uniq-orig n new new-0)
   (operation nonce-test (added-strand adder 2) n (0 5) (enc n k)
     (enc n new k) (enc n new new new k))
+  (strand-map 0 1)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -227,6 +236,7 @@
   (uniq-orig n new)
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new new new k))
+  (strand-map 0 1)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -248,6 +258,7 @@
   (uniq-orig n new new-0)
   (operation nonce-test (contracted (n3 new)) n (0 3) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -269,6 +280,7 @@
   (uniq-orig n new new-0)
   (operation nonce-test (contracted (n3 new-0)) n (0 3) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -290,6 +302,7 @@
   (uniq-orig n new new-0)
   (operation nonce-test (contracted (n3 new)) n (0 3) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -311,6 +324,7 @@
   (uniq-orig n new new-0)
   (operation nonce-test (contracted (n3 new-0)) n (0 3) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -334,6 +348,7 @@
   (uniq-orig n n3 new new-0 new-1)
   (operation nonce-test (added-strand adder 2) n (0 3) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n n3 k)) (send (enc n new new n3 k))
@@ -356,6 +371,7 @@
   (uniq-orig n new new-0)
   (operation nonce-test (contracted (n3 new)) n (0 3) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new k)) (send (enc n new new-0 new k))
@@ -377,6 +393,7 @@
   (uniq-orig n new new-0)
   (operation nonce-test (contracted (n3 new-0)) n (0 3) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-0 k)) (send (enc n new new-0 new-0 k))
@@ -400,6 +417,7 @@
   (uniq-orig n n3 new new-0 new-1)
   (operation nonce-test (added-strand adder 2) n (0 3) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n n3 k)) (send (enc n new new-0 n3 k))
@@ -424,6 +442,7 @@
   (uniq-orig n new new-0)
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new new new k))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -451,6 +470,7 @@
   (uniq-orig n new)
   (operation nonce-test (displaced 3 0 init 5) n (2 0) (enc n k)
     (enc n new k))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -476,6 +496,7 @@
   (uniq-orig n new new-0)
   (operation nonce-test (added-strand adder 2) n (2 0) (enc n k)
     (enc n new k))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -500,6 +521,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (added-strand adder 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new new new k))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -524,6 +546,7 @@
   (uniq-orig n new new-0)
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new new new k))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -548,6 +571,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (added-strand adder 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new new new-0 k))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -572,6 +596,7 @@
   (uniq-orig n new new-0)
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new new new-0 k))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -596,6 +621,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (added-strand adder 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new new new k))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -620,6 +646,7 @@
   (uniq-orig n new new-0)
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new new new k))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -644,6 +671,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (added-strand adder 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new new new-0 k))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -668,6 +696,7 @@
   (uniq-orig n new new-0)
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new new new-0 k))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -692,6 +721,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (contracted (n3 new)) n (0 3) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -716,6 +746,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (contracted (n3 new-0)) n (0 3) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -740,6 +771,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (contracted (n3 new-1)) n (0 3) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-1 k)) (send (enc n new new new-1 k))
@@ -764,6 +796,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (added-strand adder 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new new-0 new k))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new k)) (send (enc n new new-0 new k))
@@ -788,6 +821,7 @@
   (uniq-orig n new new-0)
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new new-0 new k))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new k)) (send (enc n new new-0 new k))
@@ -812,6 +846,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (added-strand adder 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new new-0 new-0 k))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-0 k)) (send (enc n new new-0 new-0 k))
@@ -836,6 +871,7 @@
   (uniq-orig n new new-0)
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new new-0 new-0 k))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-0 k)) (send (enc n new new-0 new-0 k))
@@ -861,6 +897,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (contracted (n3 new)) n (0 3) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new k)) (send (enc n new new-0 new k))
@@ -885,6 +922,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (contracted (n3 new-0)) n (0 3) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-0 k)) (send (enc n new new-0 new-0 k))
@@ -909,6 +947,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (contracted (n3 new-1)) n (0 3) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-1 k)) (send (enc n new new-0 new-1 k))
@@ -933,6 +972,7 @@
   (uniq-orig n new new-0)
   (operation nonce-test (displaced 4 0 init 5) n (3 0) (enc n k)
     (enc n new k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -960,6 +1000,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (added-strand adder 2) n (3 0) (enc n k)
     (enc n new k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -985,6 +1026,7 @@
   (uniq-orig n new new-0)
   (operation nonce-test (displaced 4 0 init 5) n (2 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -1012,6 +1054,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k) (enc n new new new k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -1042,6 +1085,7 @@
   (uniq-orig n new new-0)
   (operation nonce-test (displaced 4 2 adder 2) n (3 0) (enc n k)
     (enc n new k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -1067,6 +1111,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (added-strand adder 2) n (3 0) (enc n k)
     (enc n new k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -1100,6 +1145,7 @@
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k)
     (enc n new new new-0 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -1130,6 +1176,7 @@
   (uniq-orig n new new-0)
   (operation nonce-test (displaced 4 0 init 5) n (3 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -1158,6 +1205,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (added-strand adder 2) n (3 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -1184,6 +1232,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k) (enc n new new new k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -1214,6 +1263,7 @@
   (uniq-orig n new new-0)
   (operation nonce-test (displaced 4 2 adder 2) n (3 0) (enc n k)
     (enc n new k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -1239,6 +1289,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (added-strand adder 2) n (3 0) (enc n k)
     (enc n new k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -1272,6 +1323,7 @@
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k)
     (enc n new new new-0 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -1302,6 +1354,7 @@
   (uniq-orig n new new-0)
   (operation nonce-test (displaced 4 0 init 5) n (3 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -1330,6 +1383,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (added-strand adder 2) n (3 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -1356,6 +1410,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (added-strand adder 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k) (enc n new new new k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -1382,6 +1437,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k) (enc n new new new k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -1409,6 +1465,7 @@
   (operation nonce-test (added-strand adder 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k)
     (enc n new new new-0 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -1437,6 +1494,7 @@
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k)
     (enc n new new new-0 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -1464,6 +1522,7 @@
   (operation nonce-test (added-strand adder 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k)
     (enc n new new new-1 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-1 k)) (send (enc n new new new-1 k))
@@ -1492,6 +1551,7 @@
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k)
     (enc n new new new-1 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-1 k)) (send (enc n new new new-1 k))
@@ -1520,6 +1580,7 @@
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k)
     (enc n new new-0 new k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new k)) (send (enc n new new-0 new k))
@@ -1550,6 +1611,7 @@
   (uniq-orig n new new-0)
   (operation nonce-test (displaced 4 0 init 5) n (3 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new k)) (send (enc n new new-0 new k))
@@ -1578,6 +1640,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (added-strand adder 2) n (3 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new k)) (send (enc n new new-0 new k))
@@ -1606,6 +1669,7 @@
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k)
     (enc n new new-0 new-0 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-0 k)) (send (enc n new new-0 new-0 k))
@@ -1637,6 +1701,7 @@
   (uniq-orig n new new-0)
   (operation nonce-test (displaced 4 0 init 5) n (3 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-0 k)) (send (enc n new new-0 new-0 k))
@@ -1666,6 +1731,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (added-strand adder 2) n (3 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-0 k)) (send (enc n new new-0 new-0 k))
@@ -1694,6 +1760,7 @@
   (operation nonce-test (added-strand adder 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k)
     (enc n new new-0 new k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new k)) (send (enc n new new-0 new k))
@@ -1722,6 +1789,7 @@
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k)
     (enc n new new-0 new k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new k)) (send (enc n new new-0 new k))
@@ -1749,6 +1817,7 @@
   (operation nonce-test (added-strand adder 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k)
     (enc n new new-0 new-0 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-0 k)) (send (enc n new new-0 new-0 k))
@@ -1777,6 +1846,7 @@
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k)
     (enc n new new-0 new-0 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-0 k)) (send (enc n new new-0 new-0 k))
@@ -1805,6 +1875,7 @@
   (operation nonce-test (added-strand adder 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k)
     (enc n new new-0 new-1 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-1 k)) (send (enc n new new-0 new-1 k))
@@ -1833,6 +1904,7 @@
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k)
     (enc n new new-0 new-1 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-1 k)) (send (enc n new new-0 new-1 k))
@@ -1860,6 +1932,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 0 init 5) n (3 0) (enc n k)
     (enc n new k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -1889,6 +1962,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 2 adder 2) n (4 0) (enc n k)
     (enc n new k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -1922,6 +1996,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (added-strand adder 2) n (4 0) (enc n k)
     (enc n new k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -1953,6 +2028,7 @@
   (uniq-orig n new new-0)
   (operation nonce-test (displaced 4 0 init 5) n (3 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -1981,6 +2057,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (added-strand adder 2) n (3 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -2007,6 +2084,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 0 init 5) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -2037,6 +2115,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (added-strand adder 2) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -2064,6 +2143,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 0 init 5) n (3 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -2093,6 +2173,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 2 adder 2) n (4 0) (enc n k)
     (enc n new k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -2126,6 +2207,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (added-strand adder 2) n (4 0) (enc n k)
     (enc n new k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -2157,6 +2239,7 @@
   (uniq-orig n new new-0)
   (operation nonce-test (displaced 4 0 init 5) n (3 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -2185,6 +2268,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (added-strand adder 2) n (3 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -2211,6 +2295,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 0 init 5) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -2241,6 +2326,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (added-strand adder 2) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -2268,6 +2354,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 0 init 5) n (3 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -2299,6 +2386,7 @@
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k) (enc n new-2 k)
     (enc n new new new k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -2332,6 +2420,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 2 adder 2) n (4 0) (enc n k)
     (enc n new k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -2359,6 +2448,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 3 adder 2) n (4 0) (enc n k)
     (enc n new k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -2392,6 +2482,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (added-strand adder 2) n (4 0) (enc n k)
     (enc n new k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -2430,6 +2521,7 @@
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k) (enc n new-2 k)
     (enc n new new new-0 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -2463,6 +2555,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 3 adder 2) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -2491,6 +2584,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (added-strand adder 2) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -2526,6 +2620,7 @@
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k) (enc n new-2 k)
     (enc n new new new-1 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-1 k)) (send (enc n new new new-1 k))
@@ -2559,6 +2654,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 2 adder 2) n (4 0) (enc n k)
     (enc n new k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-1 k)) (send (enc n new new new-1 k))
@@ -2587,6 +2683,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (added-strand adder 2) n (4 0) (enc n k)
     (enc n new k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-1 k)) (send (enc n new new new-1 k))
@@ -2619,6 +2716,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 0 init 5) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new k)) (send (enc n new new-0 new k))
@@ -2649,6 +2747,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (added-strand adder 2) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new k)) (send (enc n new new-0 new k))
@@ -2676,6 +2775,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 0 init 5) n (3 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new k)) (send (enc n new new-0 new k))
@@ -2704,6 +2804,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 0 init 5) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-0 k)) (send (enc n new new-0 new-0 k))
@@ -2735,6 +2836,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (added-strand adder 2) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-0 k)) (send (enc n new new-0 new-0 k))
@@ -2763,6 +2865,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 0 init 5) n (3 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-0 k)) (send (enc n new new-0 new-0 k))
@@ -2795,6 +2898,7 @@
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k) (enc n new-2 k)
     (enc n new new-0 new k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new k)) (send (enc n new new-0 new k))
@@ -2828,6 +2932,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 3 adder 2) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new k)) (send (enc n new new-0 new k))
@@ -2856,6 +2961,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (added-strand adder 2) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new k)) (send (enc n new new-0 new k))
@@ -2891,6 +2997,7 @@
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k) (enc n new-2 k)
     (enc n new new-0 new-0 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-0 k)) (send (enc n new new-0 new-0 k))
@@ -2925,6 +3032,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 3 adder 2) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-0 k)) (send (enc n new new-0 new-0 k))
@@ -2954,6 +3062,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (added-strand adder 2) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-0 k)) (send (enc n new new-0 new-0 k))
@@ -2990,6 +3099,7 @@
   (operation nonce-test (added-strand final 2) n (0 5) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k) (enc n new-2 k)
     (enc n new new-0 new-1 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-1 k)) (send (enc n new new-0 new-1 k))
@@ -3023,6 +3133,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 0 init 5) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-1 k)) (send (enc n new new-0 new-1 k))
@@ -3054,6 +3165,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (added-strand adder 2) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-1 k)) (send (enc n new new-0 new-1 k))
@@ -3082,6 +3194,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 0 init 5) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -3112,6 +3225,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (added-strand adder 2) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -3139,6 +3253,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 0 init 5) n (3 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -3169,6 +3284,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (displaced 6 0 init 5) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-2 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -3198,6 +3314,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 0 init 5) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -3228,6 +3345,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (added-strand adder 2) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -3255,6 +3373,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 0 init 5) n (3 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -3285,6 +3404,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (displaced 6 0 init 5) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-2 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -3316,6 +3436,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (displaced 6 3 adder 2) n (5 0) (enc n k)
     (enc n new k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -3350,6 +3471,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (displaced 6 2 adder 2) n (5 0) (enc n k)
     (enc n new k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -3388,6 +3510,7 @@
   (uniq-orig n new new-0 new-1 new-2 new-3)
   (operation nonce-test (added-strand adder 2) n (5 0) (enc n k)
     (enc n new k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -3425,6 +3548,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 3 adder 2) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -3453,6 +3577,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (added-strand adder 2) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -3487,6 +3612,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (added-strand adder 2) n (4 0) (enc n k)
     (enc n new k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -3521,6 +3647,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (displaced 6 3 adder 2) n (5 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -3557,6 +3684,7 @@
   (uniq-orig n new new-0 new-1 new-2 new-3)
   (operation nonce-test (added-strand adder 2) n (5 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -3590,6 +3718,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 0 init 5) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -3620,6 +3749,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (added-strand adder 2) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -3649,6 +3779,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (displaced 6 2 adder 2) n (5 0) (enc n k)
     (enc n new k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-1 k)) (send (enc n new new new-1 k))
@@ -3685,6 +3816,7 @@
   (uniq-orig n new new-0 new-1 new-2 new-3)
   (operation nonce-test (added-strand adder 2) n (5 0) (enc n k)
     (enc n new k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-1 k)) (send (enc n new new new-1 k))
@@ -3718,6 +3850,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 0 init 5) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-1 k)) (send (enc n new new new-1 k))
@@ -3748,6 +3881,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (added-strand adder 2) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-1 k)) (send (enc n new new new-1 k))
@@ -3777,6 +3911,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (displaced 6 0 init 5) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-2 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new k)) (send (enc n new new-0 new k))
@@ -3808,6 +3943,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (displaced 6 0 init 5) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-2 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-0 k)) (send (enc n new new-0 new-0 k))
@@ -3840,6 +3976,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (displaced 6 3 adder 2) n (5 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new k)) (send (enc n new new-0 new k))
@@ -3876,6 +4013,7 @@
   (uniq-orig n new new-0 new-1 new-2 new-3)
   (operation nonce-test (added-strand adder 2) n (5 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new k)) (send (enc n new new-0 new k))
@@ -3909,6 +4047,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 0 init 5) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new k)) (send (enc n new new-0 new k))
@@ -3939,6 +4078,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (added-strand adder 2) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new k)) (send (enc n new new-0 new k))
@@ -3968,6 +4108,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (displaced 6 3 adder 2) n (5 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-0 k)) (send (enc n new new-0 new-0 k))
@@ -4005,6 +4146,7 @@
   (uniq-orig n new new-0 new-1 new-2 new-3)
   (operation nonce-test (added-strand adder 2) n (5 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-0 k)) (send (enc n new new-0 new-0 k))
@@ -4039,6 +4181,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 0 init 5) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-0 k)) (send (enc n new new-0 new-0 k))
@@ -4070,6 +4213,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (added-strand adder 2) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-0 k)) (send (enc n new new-0 new-0 k))
@@ -4100,6 +4244,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (displaced 6 0 init 5) n (5 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-1 k)) (send (enc n new new-0 new-1 k))
@@ -4134,6 +4279,7 @@
   (uniq-orig n new new-0 new-1 new-2 new-3)
   (operation nonce-test (added-strand adder 2) n (5 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-1 k)) (send (enc n new new-0 new-1 k))
@@ -4165,6 +4311,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (displaced 6 0 init 5) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k) (enc n new-2 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-1 k)) (send (enc n new new-0 new-1 k))
@@ -4197,6 +4344,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (displaced 6 0 init 5) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-2 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -4228,6 +4376,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (displaced 6 0 init 5) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-2 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -4259,6 +4408,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (displaced 6 2 adder 2) n (5 0) (enc n k)
     (enc n new k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -4295,6 +4445,7 @@
   (uniq-orig n new new-0 new-1 new-2 new-3)
   (operation nonce-test (added-strand adder 2) n (5 0) (enc n k)
     (enc n new k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -4332,6 +4483,7 @@
   (uniq-orig n new new-0 new-1 new-2 new-3)
   (operation nonce-test (added-strand adder 2) n (5 0) (enc n k)
     (enc n new k) (enc n new-0 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -4365,6 +4517,7 @@
   (uniq-orig n new new-0 new-1)
   (operation nonce-test (displaced 5 0 init 5) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -4395,6 +4548,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (added-strand adder 2) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -4424,6 +4578,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (displaced 6 0 init 5) n (5 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -4457,6 +4612,7 @@
   (uniq-orig n new new-0 new-1 new-2 new-3)
   (operation nonce-test (added-strand adder 2) n (5 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -4487,6 +4643,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (displaced 6 0 init 5) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k) (enc n new-2 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -4518,6 +4675,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (displaced 6 0 init 5) n (5 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-1 k)) (send (enc n new new new-1 k))
@@ -4551,6 +4709,7 @@
   (uniq-orig n new new-0 new-1 new-2 new-3)
   (operation nonce-test (added-strand adder 2) n (5 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-1 k)) (send (enc n new new new-1 k))
@@ -4581,6 +4740,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (displaced 6 0 init 5) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k) (enc n new-2 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-1 k)) (send (enc n new new new-1 k))
@@ -4612,6 +4772,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (displaced 6 0 init 5) n (5 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new k)) (send (enc n new new-0 new k))
@@ -4645,6 +4806,7 @@
   (uniq-orig n new new-0 new-1 new-2 new-3)
   (operation nonce-test (added-strand adder 2) n (5 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new k)) (send (enc n new new-0 new k))
@@ -4675,6 +4837,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (displaced 6 0 init 5) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k) (enc n new-2 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new k)) (send (enc n new new-0 new k))
@@ -4706,6 +4869,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (displaced 6 0 init 5) n (5 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-0 k)) (send (enc n new new-0 new-0 k))
@@ -4740,6 +4904,7 @@
   (uniq-orig n new new-0 new-1 new-2 new-3)
   (operation nonce-test (added-strand adder 2) n (5 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-0 k)) (send (enc n new new-0 new-0 k))
@@ -4771,6 +4936,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (displaced 6 0 init 5) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k) (enc n new-2 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-0 k)) (send (enc n new new-0 new-0 k))
@@ -4804,6 +4970,7 @@
   (uniq-orig n new new-0 new-1 new-2 new-3)
   (operation nonce-test (displaced 7 0 init 5) n (5 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k) (enc n new-3 k))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-1 k)) (send (enc n new new-0 new-1 k))
@@ -4837,6 +5004,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (displaced 6 0 init 5) n (5 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -4870,6 +5038,7 @@
   (uniq-orig n new new-0 new-1 new-2 new-3)
   (operation nonce-test (added-strand adder 2) n (5 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -4900,6 +5069,7 @@
   (uniq-orig n new new-0 new-1 new-2)
   (operation nonce-test (displaced 6 0 init 5) n (4 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k) (enc n new-2 k))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))
@@ -4932,6 +5102,7 @@
   (uniq-orig n new new-0 new-1 new-2 new-3)
   (operation nonce-test (displaced 7 0 init 5) n (5 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k) (enc n new-3 k))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-0 k)) (send (enc n new new new-0 k))
@@ -4965,6 +5136,7 @@
   (uniq-orig n new new-0 new-1 new-2 new-3)
   (operation nonce-test (displaced 7 0 init 5) n (5 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k) (enc n new-3 k))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new-1 k)) (send (enc n new new new-1 k))
@@ -4998,6 +5170,7 @@
   (uniq-orig n new new-0 new-1 new-2 new-3)
   (operation nonce-test (displaced 7 0 init 5) n (5 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k) (enc n new-3 k))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new k)) (send (enc n new new-0 new k))
@@ -5031,6 +5204,7 @@
   (uniq-orig n new new-0 new-1 new-2 new-3)
   (operation nonce-test (displaced 7 0 init 5) n (5 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k) (enc n new-3 k))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new-0 k))
       (recv (enc n new-0 k)) (send (enc n new new-0 new-0 k))
@@ -5065,6 +5239,7 @@
   (uniq-orig n new new-0 new-1 new-2 new-3)
   (operation nonce-test (displaced 7 0 init 5) n (5 0) (enc n k)
     (enc n new k) (enc n new-0 k) (enc n new-1 k) (enc n new-3 k))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((send (enc n k)) (recv (enc n new k)) (recv (enc n new k))
       (recv (enc n new k)) (send (enc n new new new k))

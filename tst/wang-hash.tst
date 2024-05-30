@@ -336,6 +336,7 @@
   (non-orig (privk "encr" t))
   (uniq-orig m k)
   (operation nonce-test (added-listener k) m (1 0) (enc m k))
+  (strand-map 0 1)
   (traces
     ((send
        (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
@@ -361,6 +362,7 @@
   (operation nonce-test (displaced 0 3 init1 3) k (2 0)
     (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
       (pubk "encr" t)))
+  (strand-map 2 0 1)
   (traces ((recv m) (send m)) ((recv k) (send k))
     ((send
        (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
@@ -391,6 +393,7 @@
   (operation nonce-test (added-strand ttp-rc1 3) k (2 0)
     (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
       (pubk "encr" t)))
+  (strand-map 0 1 2)
   (traces
     ((send
        (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
@@ -439,6 +442,7 @@
   (non-orig (privk "encr" t))
   (uniq-orig m k)
   (operation generalization deleted (1 0))
+  (strand-map 0 2)
   (traces ((recv m) (send m))
     ((send
        (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
@@ -468,6 +472,7 @@
   (non-orig (privk "encr" t))
   (uniq-orig m k)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3)
   (traces
     ((send
        (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
@@ -844,6 +849,7 @@
   (operation nonce-test (displaced 0 2 init1 3) k (1 0)
     (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
       (pubk "encr" t)))
+  (strand-map 1 0)
   (traces ((recv k) (send k))
     ((send
        (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
@@ -875,6 +881,7 @@
   (operation nonce-test (added-strand ttp-rc1 3) k (1 0)
     (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
       (pubk "encr" t)))
+  (strand-map 0 1)
   (traces
     ((send
        (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
@@ -1231,6 +1238,7 @@
     (enc "eortag" (hash a b t (hash (enc m k)) (hash k))
       (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
         (pubk "encr" t)) (privk "sign" b)) (0 1))
+  (strand-map 0)
   (traces
     ((send
        (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
@@ -1274,6 +1282,7 @@
     (enc "eortag" (hash a b t (hash (enc m k)) (hash k))
       (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
         (pubk "encr" t)) (privk "sign" b)) (0 1))
+  (strand-map 0)
   (traces
     ((send
        (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
@@ -1627,6 +1636,7 @@
     (enc "eortag" (hash a b t (hash (enc m k)) (hash k))
       (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
         (pubk "encr" t)) (privk "sign" b)) (0 2))
+  (strand-map 0)
   (traces
     ((send
        (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
@@ -1672,6 +1682,7 @@
     (enc "eortag" (hash a b t (hash (enc m k)) (hash k))
       (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
         (pubk "encr" t)) (privk "sign" b)) (0 2))
+  (strand-map 0)
   (traces
     ((send
        (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
@@ -2031,6 +2042,7 @@
     (enc "eortag" (hash a b t (hash (enc m k)) (hash k))
       (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
         (pubk "encr" t)) (privk "sign" b)) (0 1))
+  (strand-map 0)
   (traces
     ((send
        (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
@@ -2080,6 +2092,7 @@
     (enc "eortag" (hash a b t (hash (enc m k)) (hash k))
       (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
         (pubk "encr" t)) (privk "sign" b)) (0 1))
+  (strand-map 0)
   (traces
     ((send
        (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
@@ -2437,6 +2450,7 @@
     (enc "eootag" (hash a b t (hash (enc m k)) (hash k))
       (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
         (pubk "encr" t)) (privk "sign" a)) (0 0))
+  (strand-map 0)
   (traces
     ((recv
        (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
@@ -2797,6 +2811,7 @@
     (enc "eootag" (hash a b t (hash (enc m k)) (hash k))
       (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
         (pubk "encr" t)) (privk "sign" a)) (0 0))
+  (strand-map 0)
   (traces
     ((recv
        (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
@@ -3164,6 +3179,7 @@
     (enc "eootag" (hash a b t (hash (enc m k)) (hash k))
       (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
         (pubk "encr" t)) (privk "sign" a)) (0 0))
+  (strand-map 0)
   (traces
     ((recv
        (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
@@ -3223,6 +3239,7 @@
   (non-orig (privk "sign" a))
   (operation encryption-test (added-strand init3 2)
     (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)) (0 3))
+  (strand-map 0 1)
   (traces
     ((recv
        (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
@@ -3297,6 +3314,7 @@
   (non-orig (privk "sign" a))
   (operation encryption-test (displaced 1 2 init3 2)
     (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)) (0 3))
+  (strand-map 0 1)
   (traces
     ((recv
        (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
@@ -3364,6 +3382,7 @@
   (non-orig (privk "sign" a))
   (operation encryption-test (displaced 1 2 init5 3)
     (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)) (0 3))
+  (strand-map 0 1)
   (traces
     ((recv
        (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
@@ -3436,6 +3455,7 @@
   (non-orig (privk "sign" a))
   (operation encryption-test (added-strand init5 3)
     (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)) (0 3))
+  (strand-map 0 1)
   (traces
     ((recv
        (cat (cat a b t (hash (enc m k)) (hash k)) (enc m k)
@@ -3816,6 +3836,7 @@
   (operation encryption-test (added-strand ttp-ab1 3)
     (enc "abcf" (enc "abrq" a b t y x (privk "sign" a))
       (privk "sign" t)) (0 0))
+  (strand-map 0)
   (traces
     ((recv
        (enc "abcf" (enc "abrq" a b t y x (privk "sign" a))
@@ -3846,6 +3867,7 @@
   (operation encryption-test (added-strand ttp-rc2 3)
     (enc "abcf" (enc "abrq" a b t y (hash k) (privk "sign" a))
       (privk "sign" t)) (0 0))
+  (strand-map 0)
   (traces
     ((recv
        (enc "abcf" (enc "abrq" a b t y (hash k) (privk "sign" a))
@@ -3889,6 +3911,7 @@
   (operation encryption-test (added-strand ttp-cf2 3)
     (enc "abcf" (enc "abrq" a b t y (hash k) (privk "sign" a))
       (privk "sign" t)) (0 0))
+  (strand-map 0)
   (traces
     ((recv
        (enc "abcf" (enc "abrq" a b t y (hash k) (privk "sign" a))
@@ -4229,6 +4252,7 @@
   (non-orig (privk "encr" t) (privk "sign" a))
   (operation encryption-test (added-strand init3 2)
     (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)) (0 0))
+  (strand-map 0)
   (traces
     ((recv
        (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)))
@@ -4265,6 +4289,7 @@
   (non-orig (privk "encr" t) (privk "sign" a))
   (operation encryption-test (added-strand init5 3)
     (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)) (0 0))
+  (strand-map 0)
   (traces
     ((recv
        (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)))
@@ -4619,6 +4644,7 @@
     (enc "eootag" (hash a b t (hash (enc m k)) (hash k))
       (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
         (pubk "encr" t)) (privk "sign" a)) (0 0))
+  (strand-map 0)
   (traces
     ((recv
        (cat (cat a b t (hash (enc m k)) (hash k))
@@ -4663,6 +4689,7 @@
   (non-orig (privk "encr" t) (privk "sign" a))
   (operation encryption-test (added-strand init3 2)
     (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)) (0 1))
+  (strand-map 0 1)
   (traces
     ((recv
        (cat (cat a b t (hash (enc m k)) (hash k))
@@ -4717,6 +4744,7 @@
   (non-orig (privk "encr" t) (privk "sign" a))
   (operation encryption-test (displaced 1 2 init3 2)
     (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)) (0 1))
+  (strand-map 0 1)
   (traces
     ((recv
        (cat (cat a b t (hash (enc m k)) (hash k))
@@ -4764,6 +4792,7 @@
   (non-orig (privk "encr" t) (privk "sign" a))
   (operation encryption-test (displaced 1 2 init5 3)
     (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)) (0 1))
+  (strand-map 0 1)
   (traces
     ((recv
        (cat (cat a b t (hash (enc m k)) (hash k))
@@ -4816,6 +4845,7 @@
   (non-orig (privk "encr" t) (privk "sign" a))
   (operation encryption-test (added-strand init5 3)
     (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)) (0 1))
+  (strand-map 0 1)
   (traces
     ((recv
        (cat (cat a b t (hash (enc m k)) (hash k))
@@ -5188,6 +5218,7 @@
     (enc "eootag" (hash a b t (hash (enc m k)) (hash k))
       (enc "keytag" (hash a b t (hash (enc m k)) (hash k)) k r
         (pubk "encr" t)) (privk "sign" a)) (0 0))
+  (strand-map 0)
   (traces
     ((recv
        (cat (cat a b t (hash (enc m k)) (hash k))
@@ -5232,6 +5263,7 @@
   (non-orig (privk "encr" t) (privk "sign" a))
   (operation encryption-test (added-strand init3 2)
     (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)) (0 1))
+  (strand-map 0 1)
   (traces
     ((recv
        (cat (cat a b t (hash (enc m k)) (hash k))
@@ -5286,6 +5318,7 @@
   (non-orig (privk "encr" t) (privk "sign" a))
   (operation encryption-test (displaced 1 2 init3 2)
     (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)) (0 1))
+  (strand-map 0 1)
   (traces
     ((recv
        (cat (cat a b t (hash (enc m k)) (hash k))
@@ -5333,6 +5366,7 @@
   (non-orig (privk "encr" t) (privk "sign" a))
   (operation encryption-test (displaced 1 2 init5 3)
     (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)) (0 1))
+  (strand-map 0 1)
   (traces
     ((recv
        (cat (cat a b t (hash (enc m k)) (hash k))
@@ -5385,6 +5419,7 @@
   (non-orig (privk "encr" t) (privk "sign" a))
   (operation encryption-test (added-strand init5 3)
     (enc "abrq" a b t (hash (enc m k)) (hash k) (privk "sign" a)) (0 1))
+  (strand-map 0 1)
   (traces
     ((recv
        (cat (cat a b t (hash (enc m k)) (hash k))

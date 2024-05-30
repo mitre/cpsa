@@ -48,6 +48,7 @@
   (uniq-orig nb0 nb)
   (operation nonce-test (added-strand init 3) nb (0 2)
     (enc b nb0 nb0 nb (pubk a)))
+  (strand-map 0)
   (traces
     ((recv (enc a nb0 (pubk b))) (send (enc b nb0 nb0 nb (pubk a)))
       (recv nb))

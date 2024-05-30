@@ -43,6 +43,7 @@
   (uniq-orig n new-akey (privk "sgn" a))
   (operation encryption-test (added-strand resp 2)
     (enc a n s (privk "sgn" b)) (0 1))
+  (strand-map 0)
   (traces
     ((send (enc a b new-akey n (privk "sgn" a)))
       (recv (enc (enc a n s (privk "sgn" b)) new-akey))
@@ -63,6 +64,7 @@
   (uniq-orig n new-akey (privk "sgn" a))
   (operation encryption-test (displaced 2 0 init 1)
     (enc a b new-akey-0 n (privk "sgn" a)) (1 0))
+  (strand-map 0 1)
   (traces
     ((send (enc a b new-akey n (privk "sgn" a)))
       (recv (enc (enc a n s (privk "sgn" b)) new-akey))
@@ -115,6 +117,7 @@
   (non-orig (privk "sgn" a))
   (operation encryption-test (added-strand init 1)
     (enc a b new-akey n (privk "sgn" a)) (0 0))
+  (strand-map 0)
   (traces
     ((recv (enc a b new-akey n (privk "sgn" a)))
       (send (enc (enc a n s (privk "sgn" b)) new-akey)))

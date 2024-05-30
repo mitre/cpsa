@@ -73,6 +73,7 @@
   (non-orig (privk a) (privk b))
   (uniq-orig n1 n2 n3p)
   (operation collapsed 2 1)
+  (strand-map 0 1 1)
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc n1 n2 n3p (pubk a)))
       (send (enc n2 n3p (pubk b))))
@@ -92,6 +93,7 @@
   (uniq-orig n1 n2 n3p)
   (operation nonce-test (displaced 2 0 init 3) n2 (1 2)
     (enc n1 n2 n3p (pubk a)))
+  (strand-map 0 1)
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc n1 n2 n3p (pubk a)))
       (send (enc n2 n3p (pubk b))))

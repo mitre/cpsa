@@ -66,6 +66,7 @@
   (uniq-orig k)
   (operation encryption-test (added-strand an 2) (enc "sorry" a b k)
     (0 1))
+  (strand-map 0)
   (traces
     ((send (cat i a (enc (enc k b c i (invk a)) b) (enc a b i ssn c)))
       (recv (enc "sorry" a b k)))
@@ -85,6 +86,7 @@
   (uniq-orig k)
   (operation encryption-test (added-listener k) (enc "sorry" a b k)
     (0 1))
+  (strand-map 0)
   (traces
     ((send (cat i a (enc (enc k b c i (invk a)) b) (enc a b i ssn c)))
       (recv (enc "sorry" a b k))) ((recv k) (send k)))
@@ -103,6 +105,7 @@
   (uniq-orig k)
   (operation encryption-test (displaced 2 0 qy 1)
     (enc k b c-0 i-0 (invk a)) (1 0))
+  (strand-map 0 1)
   (traces
     ((send (cat i a (enc (enc k b c i (invk a)) b) (enc a b i ssn c)))
       (recv (enc "sorry" a b k)))
@@ -167,6 +170,7 @@
   (non-orig (invk a) (invk b) (invk c))
   (uniq-orig k d)
   (operation encryption-test (added-strand ay 2) (enc "data" d k) (0 1))
+  (strand-map 0)
   (traces
     ((send (cat i a (enc (enc k b c i (invk a)) b) (enc a b i ssn c)))
       (recv (enc "data" d k)))
@@ -185,6 +189,7 @@
   (non-orig (invk a) (invk b) (invk c))
   (uniq-orig k)
   (operation encryption-test (added-listener k) (enc "data" d k) (0 1))
+  (strand-map 0)
   (traces
     ((send (cat i a (enc (enc k b c i (invk a)) b) (enc a b i ssn c)))
       (recv (enc "data" d k))) ((recv k) (send k)))
@@ -203,6 +208,7 @@
   (uniq-orig k d)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (c-0 c) (i-0 i)) k
     (1 0) (enc (enc k b c i (invk a)) b))
+  (strand-map 0 1)
   (traces
     ((send (cat i a (enc (enc k b c i (invk a)) b) (enc a b i ssn c)))
       (recv (enc "data" d k)))
@@ -275,6 +281,7 @@
   (uniq-orig k y n)
   (operation encryption-test (added-strand an 4) (enc "sorry" a b k)
     (0 1))
+  (strand-map 0)
   (traces
     ((send (cat i a (enc (enc k b c i (invk a)) b) (enc a b i ssn c)))
       (recv (enc "sorry" a b k)))
@@ -294,6 +301,7 @@
   (uniq-orig k)
   (operation encryption-test (added-listener k) (enc "sorry" a b k)
     (0 1))
+  (strand-map 0)
   (traces
     ((send (cat i a (enc (enc k b c i (invk a)) b) (enc a b i ssn c)))
       (recv (enc "sorry" a b k))) ((recv k) (send k)))
@@ -312,6 +320,7 @@
   (uniq-orig k y n)
   (operation encryption-test (displaced 2 0 qy 1)
     (enc k b c-0 i-0 (invk a)) (1 0))
+  (strand-map 0 1)
   (traces
     ((send (cat i a (enc (enc k b c i (invk a)) b) (enc a b i ssn c)))
       (recv (enc "sorry" a b k)))
@@ -333,6 +342,7 @@
   (uniq-orig k y n)
   (operation nonce-test (added-strand sn 2) n (1 2)
     (enc y n i a (enc a b-0 i ssn-0 c) c))
+  (strand-map 0 1)
   (traces
     ((send (cat i a (enc (enc k b c i (invk a)) b) (enc a b i ssn c)))
       (recv (enc "sorry" a b k)))
@@ -409,6 +419,7 @@
   (non-orig (invk a) (invk b) (invk c))
   (uniq-orig k d y n)
   (operation encryption-test (added-strand ay 4) (enc "data" d k) (0 1))
+  (strand-map 0)
   (traces
     ((send (cat i a (enc (enc k b c i (invk a)) b) (enc a b i ssn c)))
       (recv (enc "data" d k)))
@@ -427,6 +438,7 @@
   (non-orig (invk a) (invk b) (invk c))
   (uniq-orig k)
   (operation encryption-test (added-listener k) (enc "data" d k) (0 1))
+  (strand-map 0)
   (traces
     ((send (cat i a (enc (enc k b c i (invk a)) b) (enc a b i ssn c)))
       (recv (enc "data" d k))) ((recv k) (send k)))
@@ -445,6 +457,7 @@
   (uniq-orig k d y n)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (c-0 c) (i-0 i)) k
     (1 0) (enc (enc k b c i (invk a)) b))
+  (strand-map 0 1)
   (traces
     ((send (cat i a (enc (enc k b c i (invk a)) b) (enc a b i ssn c)))
       (recv (enc "data" d k)))
@@ -463,6 +476,7 @@
   (non-orig (invk a) (invk b) (invk c))
   (uniq-orig k d n)
   (operation nonce-test (displaced 2 1 ay 2) y (1 2) (enc y n i a x c))
+  (strand-map 0 1)
   (traces
     ((send (cat i a (enc (enc k b c i (invk a)) b) (enc a b i ssn c)))
       (recv (enc "data" d k)))
@@ -484,6 +498,7 @@
   (uniq-orig k d y n)
   (operation nonce-test (added-strand sy 2) y (1 2)
     (enc y n i a (enc a b-0 i ssn-0 c) c))
+  (strand-map 0 1)
   (traces
     ((send (cat i a (enc (enc k b c i (invk a)) b) (enc a b i ssn c)))
       (recv (enc "data" d k)))
@@ -510,6 +525,7 @@
   (uniq-orig k d n)
   (operation nonce-test (added-strand sy 2) n (1 2)
     (enc n n i a (enc a b-0 i ssn-0 c) c))
+  (strand-map 0 1)
   (traces
     ((send (cat i a (enc (enc k b c i (invk a)) b) (enc a b i ssn c)))
       (recv (enc "data" d k)))
@@ -618,6 +634,7 @@
   (uniq-orig k y n)
   (operation nonce-test (added-strand sn 2) n (1 2)
     (enc y n i a (enc a b-0 i ssn-0 c) c))
+  (strand-map 0 1)
   (traces
     ((send (cat i a (enc (enc k b c i (invk a)) b) (enc a b i ssn c)))
       (recv (enc "sorry" a b k)))

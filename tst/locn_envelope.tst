@@ -173,6 +173,7 @@
   (auth tpm-0)
   (operation encryption-test (added-strand tpm-create-key 2)
     (enc "created" k pcr-id (hash (hash "0" n) "obtain") aik) (1 2))
+  (strand-map 0 1)
   (traces ((recv v) (send v))
     ((send tpm (cat "extend" pcr-id n))
       (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
@@ -200,6 +201,7 @@
   (operation channel-test (displaced 3 1 alice 2)
     (ch-msg tpm-0
       (cat "create-req" pcr-id (hash (hash "0" n) "obtain"))) (2 0))
+  (strand-map 0 1 2)
   (traces ((recv v) (send v))
     ((send tpm (cat "extend" pcr-id n))
       (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
@@ -228,6 +230,7 @@
   (conf tpm)
   (auth tpm)
   (operation nonce-test (added-strand tpm-decrypt 4) v (0 0) (enc v k))
+  (strand-map 0 1 2)
   (traces ((recv v) (send v))
     ((send tpm (cat "extend" pcr-id n))
       (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
@@ -263,6 +266,7 @@
   (rule genStV-if-hashed-tpm-decrypt)
   (operation encryption-test (displaced 4 2 tpm-create-key 2)
     (enc "created" k pcr-id-0 current-value aik-0) (3 1))
+  (strand-map 0 1 2 3)
   (traces ((recv v) (send v))
     ((send tpm (cat "extend" pcr-id n))
       (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
@@ -304,6 +308,7 @@
     trRl_tpm-extend-enc-at-2)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt (hash (hash "0" n) "obtain"))) (3 2))
+  (strand-map 0 1 2 3)
   (traces ((recv v) (send v))
     ((send tpm (cat "extend" pcr-id n))
       (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
@@ -349,6 +354,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces ((recv v) (send v))
     ((send tpm (cat "extend" pcr-id n))
       (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
@@ -396,6 +402,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation nonce-test (contracted (pcr-id-1 pcr-id) (tpm-2 tpm)) n
     (5 0) (ch-msg tpm (cat "extend" pcr-id n)))
+  (strand-map 0 1 2 3 4 5)
   (traces ((recv v) (send v))
     ((send tpm (cat "extend" pcr-id n))
       (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
@@ -602,6 +609,7 @@
   (auth tpm-0)
   (operation encryption-test (added-strand tpm-create-key 2)
     (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik) (1 2))
+  (strand-map 0 1)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -638,6 +646,7 @@
   (operation channel-test (displaced 3 1 alice 2)
     (ch-msg tpm-0
       (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain"))) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -679,6 +688,7 @@
   (operation encryption-test (added-strand tpm-quote 3)
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik)
     (0 0))
+  (strand-map 0 1 2)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -730,6 +740,7 @@
     trRl_tpm-extend-enc-at-2)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt (hash (hash "0" n) "refuse"))) (3 1))
+  (strand-map 0 1 2 3)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -785,6 +796,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -842,6 +854,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation nonce-test (contracted (pcr-id-2 pcr-id-0) (tpm-2 tpm)) n
     (5 0) (ch-msg tpm (cat "extend" pcr-id-0 n)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -1063,6 +1076,7 @@
   (auth tpm-0)
   (operation encryption-test (added-strand tpm-create-key 2)
     (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik) (2 2))
+  (strand-map 0 1 2)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -1100,6 +1114,7 @@
   (operation channel-test (displaced 4 2 alice 2)
     (ch-msg tpm-0
       (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain"))) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -1138,6 +1153,7 @@
   (conf tpm)
   (auth tpm)
   (operation nonce-test (added-strand tpm-decrypt 4) v (1 0) (enc v k))
+  (strand-map 0 1 2 3)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -1183,6 +1199,7 @@
   (rule genStV-if-hashed-tpm-decrypt)
   (operation encryption-test (displaced 5 3 tpm-create-key 2)
     (enc "created" k pcr-id-1 current-value aik-0) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -1233,6 +1250,7 @@
     trRl_tpm-extend-enc-at-2)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt (hash (hash "0" n) "obtain"))) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -1287,6 +1305,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -1343,6 +1362,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation nonce-test (contracted (pcr-id-2 pcr-id-0) (tpm-2 tpm)) n
     (6 0) (ch-msg tpm (cat "extend" pcr-id-0 n)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -1407,6 +1427,7 @@
   (operation encryption-test (added-strand tpm-quote 3)
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik)
     (0 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -1477,6 +1498,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr-0 (cat pt-2 (hash (hash "0" n) "refuse"))) (7 1))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -1552,6 +1574,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr-0 (cat pt-3 (hash "0" n))) (8 1))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -1629,6 +1652,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation nonce-test (contracted (pcr-id-3 pcr-id-0) (tpm-4 tpm)) n
     (9 0) (ch-msg tpm (cat "extend" pcr-id-0 n)))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -1852,6 +1876,7 @@
   (auth tpm-0)
   (operation encryption-test (added-strand tpm-create-key 2)
     (enc "created" k pcr-id (hash (hash "0" n) "obtain") aik) (1 2))
+  (strand-map 0 1)
   (traces ((recv v) (send v))
     ((send tpm (cat "extend" pcr-id n))
       (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
@@ -1879,6 +1904,7 @@
   (operation channel-test (displaced 3 1 alice 2)
     (ch-msg tpm-0
       (cat "create-req" pcr-id (hash (hash "0" n) "obtain"))) (2 0))
+  (strand-map 0 1 2)
   (traces ((recv v) (send v))
     ((send tpm (cat "extend" pcr-id n))
       (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
@@ -1907,6 +1933,7 @@
   (conf tpm)
   (auth tpm)
   (operation nonce-test (added-strand tpm-decrypt 4) v (0 0) (enc v k))
+  (strand-map 0 1 2)
   (traces ((recv v) (send v))
     ((send tpm (cat "extend" pcr-id n))
       (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
@@ -1942,6 +1969,7 @@
   (rule genStV-if-hashed-tpm-decrypt)
   (operation encryption-test (displaced 4 2 tpm-create-key 2)
     (enc "created" k pcr-id-0 current-value aik-0) (3 1))
+  (strand-map 0 1 2 3)
   (traces ((recv v) (send v))
     ((send tpm (cat "extend" pcr-id n))
       (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
@@ -1983,6 +2011,7 @@
     trRl_tpm-extend-enc-at-2)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt (hash (hash "0" n) "obtain"))) (3 2))
+  (strand-map 0 1 2 3)
   (traces ((recv v) (send v))
     ((send tpm (cat "extend" pcr-id n))
       (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
@@ -2028,6 +2057,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces ((recv v) (send v))
     ((send tpm (cat "extend" pcr-id n))
       (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
@@ -2075,6 +2105,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation nonce-test (contracted (pcr-id-1 pcr-id) (tpm-2 tpm)) n
     (5 0) (ch-msg tpm (cat "extend" pcr-id n)))
+  (strand-map 0 1 2 3 4 5)
   (traces ((recv v) (send v))
     ((send tpm (cat "extend" pcr-id n))
       (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
@@ -2292,6 +2323,7 @@
   (auth tpm-0)
   (operation encryption-test (added-strand tpm-create-key 2)
     (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik) (1 2))
+  (strand-map 0 1)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -2328,6 +2360,7 @@
   (operation channel-test (displaced 3 1 alice 2)
     (ch-msg tpm-0
       (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain"))) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -2369,6 +2402,7 @@
   (operation encryption-test (added-strand tpm-quote 3)
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik)
     (0 0))
+  (strand-map 0 1 2)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -2420,6 +2454,7 @@
     trRl_tpm-extend-enc-at-2)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt (hash (hash "0" n) "refuse"))) (3 1))
+  (strand-map 0 1 2 3)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -2475,6 +2510,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -2532,6 +2568,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation nonce-test (contracted (pcr-id-2 pcr-id-0) (tpm-2 tpm)) n
     (5 0) (ch-msg tpm (cat "extend" pcr-id-0 n)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -2764,6 +2801,7 @@
   (auth tpm-0)
   (operation encryption-test (added-strand tpm-create-key 2)
     (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik) (2 2))
+  (strand-map 0 1 2)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -2801,6 +2839,7 @@
   (operation channel-test (displaced 4 2 alice 2)
     (ch-msg tpm-0
       (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain"))) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -2839,6 +2878,7 @@
   (conf tpm)
   (auth tpm)
   (operation nonce-test (added-strand tpm-decrypt 4) v (1 0) (enc v k))
+  (strand-map 0 1 2 3)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -2884,6 +2924,7 @@
   (rule genStV-if-hashed-tpm-decrypt)
   (operation encryption-test (displaced 5 3 tpm-create-key 2)
     (enc "created" k pcr-id-1 current-value aik-0) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -2934,6 +2975,7 @@
     trRl_tpm-extend-enc-at-2)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt (hash (hash "0" n) "obtain"))) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -2988,6 +3030,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -3044,6 +3087,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation nonce-test (contracted (pcr-id-2 pcr-id-0) (tpm-2 tpm)) n
     (6 0) (ch-msg tpm (cat "extend" pcr-id-0 n)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -3108,6 +3152,7 @@
   (operation encryption-test (added-strand tpm-quote 3)
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik)
     (0 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -3178,6 +3223,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr-0 (cat pt-2 (hash (hash "0" n) "refuse"))) (7 1))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -3253,6 +3299,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr-0 (cat pt-3 (hash "0" n))) (8 1))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -3330,6 +3377,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation nonce-test (contracted (pcr-id-3 pcr-id-0) (tpm-4 tpm)) n
     (9 0) (ch-msg tpm (cat "extend" pcr-id-0 n)))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -3552,6 +3600,7 @@
   (auth tpm-0)
   (operation encryption-test (added-strand tpm-create-key 2)
     (enc "created" k pcr-id (hash (hash "0" n) "obtain") aik) (1 2))
+  (strand-map 0 1)
   (traces ((recv v) (send v))
     ((send tpm (cat "extend" pcr-id n))
       (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
@@ -3579,6 +3628,7 @@
   (operation channel-test (displaced 3 1 alice 2)
     (ch-msg tpm-0
       (cat "create-req" pcr-id (hash (hash "0" n) "obtain"))) (2 0))
+  (strand-map 0 1 2)
   (traces ((recv v) (send v))
     ((send tpm (cat "extend" pcr-id n))
       (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
@@ -3607,6 +3657,7 @@
   (conf tpm)
   (auth tpm)
   (operation nonce-test (added-strand tpm-decrypt 4) v (0 0) (enc v k))
+  (strand-map 0 1 2)
   (traces ((recv v) (send v))
     ((send tpm (cat "extend" pcr-id n))
       (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
@@ -3642,6 +3693,7 @@
   (rule genStV-if-hashed-tpm-decrypt)
   (operation encryption-test (displaced 4 2 tpm-create-key 2)
     (enc "created" k pcr-id-0 current-value aik-0) (3 1))
+  (strand-map 0 1 2 3)
   (traces ((recv v) (send v))
     ((send tpm (cat "extend" pcr-id n))
       (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
@@ -3683,6 +3735,7 @@
     trRl_tpm-extend-enc-at-2)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt (hash (hash "0" n) "obtain"))) (3 2))
+  (strand-map 0 1 2 3)
   (traces ((recv v) (send v))
     ((send tpm (cat "extend" pcr-id n))
       (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
@@ -3728,6 +3781,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces ((recv v) (send v))
     ((send tpm (cat "extend" pcr-id n))
       (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
@@ -3775,6 +3829,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation nonce-test (contracted (pcr-id-1 pcr-id) (tpm-2 tpm)) n
     (5 0) (ch-msg tpm (cat "extend" pcr-id n)))
+  (strand-map 0 1 2 3 4 5)
   (traces ((recv v) (send v))
     ((send tpm (cat "extend" pcr-id n))
       (send tpm (cat "create-req" pcr-id (hash (hash "0" n) "obtain")))
@@ -3991,6 +4046,7 @@
   (auth tpm-0)
   (operation encryption-test (added-strand tpm-create-key 2)
     (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik) (1 2))
+  (strand-map 0 1)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -4027,6 +4083,7 @@
   (operation channel-test (displaced 3 1 alice 2)
     (ch-msg tpm-0
       (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain"))) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -4068,6 +4125,7 @@
   (operation encryption-test (added-strand tpm-quote 3)
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik)
     (0 0))
+  (strand-map 0 1 2)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -4119,6 +4177,7 @@
     trRl_tpm-extend-enc-at-2)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt (hash (hash "0" n) "refuse"))) (3 1))
+  (strand-map 0 1 2 3)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -4174,6 +4233,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -4231,6 +4291,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation nonce-test (contracted (pcr-id-2 pcr-id-0) (tpm-2 tpm)) n
     (5 0) (ch-msg tpm (cat "extend" pcr-id-0 n)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -4462,6 +4523,7 @@
   (auth tpm-0)
   (operation encryption-test (added-strand tpm-create-key 2)
     (enc "created" k pcr-id-0 (hash (hash "0" n) "obtain") aik) (2 2))
+  (strand-map 0 1 2)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -4499,6 +4561,7 @@
   (operation channel-test (displaced 4 2 alice 2)
     (ch-msg tpm-0
       (cat "create-req" pcr-id-0 (hash (hash "0" n) "obtain"))) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -4537,6 +4600,7 @@
   (conf tpm)
   (auth tpm)
   (operation nonce-test (added-strand tpm-decrypt 4) v (1 0) (enc v k))
+  (strand-map 0 1 2 3)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -4582,6 +4646,7 @@
   (rule genStV-if-hashed-tpm-decrypt)
   (operation encryption-test (displaced 5 3 tpm-create-key 2)
     (enc "created" k pcr-id-1 current-value aik-0) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -4632,6 +4697,7 @@
     trRl_tpm-extend-enc-at-2)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt (hash (hash "0" n) "obtain"))) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -4686,6 +4752,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr (cat pt-0 (hash "0" n))) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -4742,6 +4809,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation nonce-test (contracted (pcr-id-2 pcr-id-0) (tpm-2 tpm)) n
     (6 0) (ch-msg tpm (cat "extend" pcr-id-0 n)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -4806,6 +4874,7 @@
   (operation encryption-test (added-strand tpm-quote 3)
     (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik)
     (0 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -4876,6 +4945,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr-0 (cat pt-2 (hash (hash "0" n) "refuse"))) (7 1))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -4951,6 +5021,7 @@
   (rule trRl_tpm-extend-enc-at-1 trRl_tpm-extend-enc-at-2)
   (operation channel-test (added-strand tpm-extend-enc 3)
     (ch-msg pcr-0 (cat pt-3 (hash "0" n))) (8 1))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))
@@ -5030,6 +5101,7 @@
   (operation nonce-test
     (contracted (pcr-0 pcr) (pcr-id-3 pcr-id-0) (tpm-4 tpm)) n (9 0)
     (ch-msg tpm (cat "extend" pcr-id-0 n)))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((recv
        (enc "quote" pcr-id (hash (hash "0" n) "refuse") (enc v k) aik))

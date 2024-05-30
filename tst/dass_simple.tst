@@ -49,6 +49,7 @@
   (uniq-orig k kp)
   (operation encryption-test (added-strand resp 2) (enc "resp" tb k)
     (0 1))
+  (strand-map 0)
   (traces
     ((send
        (cat (enc "init" ta k) (enc a kp (privk a))
@@ -70,6 +71,7 @@
   (non-orig (invk kp) (privk a) (privk b))
   (uniq-orig k kp)
   (operation encryption-test (added-listener k) (enc "resp" tb k) (0 1))
+  (strand-map 0)
   (traces
     ((send
        (cat (enc "init" ta k) (enc a kp (privk a))
@@ -90,6 +92,7 @@
   (uniq-orig k kp)
   (operation encryption-test (displaced 2 0 init 1) (enc "init" ta-0 k)
     (1 0))
+  (strand-map 0 1)
   (traces
     ((send
        (cat (enc "init" ta k) (enc a kp (privk a))
@@ -113,6 +116,7 @@
   (uniq-orig k kp)
   (operation encryption-test (added-listener k) (enc "init" ta-0 k)
     (1 0))
+  (strand-map 0 1)
   (traces
     ((send
        (cat (enc "init" ta k) (enc a kp (privk a))
@@ -135,6 +139,7 @@
   (non-orig (invk kp) (privk a) (privk b))
   (uniq-orig k kp)
   (operation nonce-test (contracted (b-0 b)) k (1 0) (enc k (pubk b)))
+  (strand-map 0 1)
   (traces
     ((send
        (cat (enc "init" ta k) (enc a kp (privk a))
@@ -198,6 +203,7 @@
   (uniq-orig k kp)
   (operation encryption-test (added-strand resp 2) (enc "resp" tb k)
     (0 1))
+  (strand-map 0)
   (traces
     ((send
        (cat (enc "init" ta k) (enc a kp (privk a))
@@ -219,6 +225,7 @@
   (non-orig (invk kp) (privk a) (privk b))
   (uniq-orig k kp)
   (operation encryption-test (added-listener k) (enc "resp" tb k) (0 1))
+  (strand-map 0)
   (traces
     ((send
        (cat (enc "init" ta k) (enc a kp (privk a))
@@ -239,6 +246,7 @@
   (uniq-orig k kp)
   (operation encryption-test (displaced 2 0 init 1) (enc "init" ta-0 k)
     (1 0))
+  (strand-map 0 1)
   (traces
     ((send
        (cat (enc "init" ta k) (enc a kp (privk a))
@@ -262,6 +270,7 @@
   (uniq-orig k kp)
   (operation encryption-test (added-listener k) (enc "init" ta-0 k)
     (1 0))
+  (strand-map 0 1)
   (traces
     ((send
        (cat (enc "init" ta k) (enc a kp (privk a))
@@ -285,6 +294,7 @@
   (uniq-orig k kp)
   (operation encryption-test (displaced 2 0 init 1)
     (enc a-0 kp-0 (privk a-0)) (1 0))
+  (strand-map 0 1)
   (traces
     ((send
        (cat (enc "init" ta k) (enc a kp (privk a))
@@ -308,6 +318,7 @@
   (uniq-orig k kp)
   (operation encryption-test (added-strand init 1)
     (enc a-0 kp-0 (privk a-0)) (1 0))
+  (strand-map 0 1)
   (traces
     ((send
        (cat (enc "init" ta k) (enc a kp (privk a))
@@ -333,6 +344,7 @@
   (uniq-orig k kp)
   (operation encryption-test (displaced 2 0 init 1)
     (enc (enc k (pubk b-0)) (invk kp)) (1 0))
+  (strand-map 0 1)
   (traces
     ((send
        (cat (enc "init" ta k) (enc a kp (privk a))
@@ -357,6 +369,7 @@
   (non-orig (invk kp) (privk a) (privk b) (privk a-0))
   (uniq-orig k kp)
   (operation nonce-test (contracted (b-1 b)) k (1 0) (enc k (pubk b)))
+  (strand-map 0 1 2)
   (traces
     ((send
        (cat (enc "init" ta k) (enc a kp (privk a))

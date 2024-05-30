@@ -53,6 +53,7 @@
   (uniq-orig k)
   (operation encryption-test (added-strand init 3)
     (enc a b k ta (privk a)) (0 0))
+  (strand-map 0)
   (traces
     ((recv
        (enc (enc a b k ta (privk a)) (enc b (pubk b) (privk ks))
@@ -80,6 +81,7 @@
     (enc a b k ta (privk a)) (0 0)
     (enc (enc a b k ta (privk a)) (enc b (pubk b) (privk ks))
       (enc a (pubk a) (privk ks)) (pubk b)))
+  (strand-map 0 1)
   (traces
     ((recv
        (enc (enc a b k ta (privk a)) (enc b (pubk b) (privk ks))
@@ -105,6 +107,7 @@
   (uniq-orig k)
   (operation encryption-test (added-strand keyserver 2)
     (enc b (pubk b) (privk ks)) (1 1))
+  (strand-map 0 1)
   (traces
     ((recv
        (enc (enc a b k ta (privk a)) (enc b (pubk b) (privk ks))
@@ -134,6 +137,7 @@
   (uniq-orig k)
   (operation encryption-test (added-strand keyserver 2)
     (enc b (pubk b) (privk ks)) (1 1))
+  (strand-map 0 1)
   (traces
     ((recv
        (enc (enc a b k ta (privk a)) (enc b (pubk b) (privk ks))
@@ -164,6 +168,7 @@
   (uniq-orig k)
   (operation encryption-test (added-strand keyserver 2)
     (enc a (pubk a) (privk ks)) (1 1))
+  (strand-map 0 1 2)
   (traces
     ((recv
        (enc (enc a b k ta (privk a)) (enc b (pubk b) (privk ks))
@@ -199,6 +204,7 @@
   (uniq-orig k)
   (operation encryption-test (displaced 3 2 keyserver 2)
     (enc a-0 (pubk a-0) (privk ks)) (1 1))
+  (strand-map 0 1 2)
   (traces
     ((recv
        (enc (enc b b k ta (privk b)) (enc b (pubk b) (privk ks))
@@ -229,6 +235,7 @@
   (uniq-orig k)
   (operation encryption-test (displaced 3 2 keyserver 2)
     (enc a-0 (pubk a-0) (privk ks)) (1 1))
+  (strand-map 0 1 2)
   (traces
     ((recv
        (enc (enc a b k ta (privk a)) (enc b (pubk b) (privk ks))
@@ -260,6 +267,7 @@
   (uniq-orig k)
   (operation encryption-test (added-strand keyserver 2)
     (enc a (pubk a) (privk ks)) (1 1))
+  (strand-map 0 1 2)
   (traces
     ((recv
        (enc (enc a b k ta (privk a)) (enc b (pubk b) (privk ks))
@@ -296,6 +304,7 @@
   (uniq-orig k)
   (operation encryption-test (added-strand keyserver 2)
     (enc a (pubk a) (privk ks)) (1 1))
+  (strand-map 0 1 2)
   (traces
     ((recv
        (enc (enc a b k ta (privk a)) (enc b (pubk b) (privk ks))
@@ -331,6 +340,7 @@
   (uniq-orig k)
   (operation encryption-test (displaced 3 2 keyserver 2)
     (enc a (pubk a) (privk ks)) (1 1))
+  (strand-map 0 1 2)
   (traces
     ((recv
        (enc (enc b-0 b k ta (privk b-0)) (enc b (pubk b) (privk ks))
@@ -363,6 +373,7 @@
   (uniq-orig k)
   (operation encryption-test (displaced 3 2 keyserver 2)
     (enc a (pubk a) (privk ks)) (1 1))
+  (strand-map 0 1 2)
   (traces
     ((recv
        (enc (enc b b k ta (privk b)) (enc b (pubk b) (privk ks))
@@ -395,6 +406,7 @@
   (uniq-orig k)
   (operation encryption-test (added-strand keyserver 2)
     (enc a (pubk a) (privk ks)) (1 1))
+  (strand-map 0 1 2)
   (traces
     ((recv
        (enc (enc a b k ta (privk a)) (enc b (pubk b) (privk ks))

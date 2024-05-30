@@ -274,7 +274,8 @@ displayRest k ctx rest =
                  (kcomment k ++
                   (displayOptional "rule" (L.sort (map (S ()) (krules k)))
                    (displayOperation k ctx
-                    (displayOptional "traces" traces rest))))))))))))))))
+                    (displayStrandMap k
+                     (displayOptional "traces" traces rest)))))))))))))))))
     where
       priorities = map displayPriority (kpriority k)
       traces = map (L () . displayTrace ctx . trace) (insts k)
@@ -395,3 +396,11 @@ displayCmt ctx (CM (Plain t)) = displayTerm ctx t
 displayCmt ctx (CM (ChMsg ch t)) =
   L () [S () "ch-msg", displayTerm ctx ch, displayTerm ctx t]
 displayCmt ctx (TM t) = displayTerm ctx t
+
+-- Display the strand map
+displayStrandMap :: Preskel -> [SExpr ()] -> [SExpr ()]
+displayStrandMap k rest =
+    case getStrandMap $ operation k of
+      [] -> rest
+      sm -> L () (S () "strand-map" : map (N ()) sm) : rest
+                        

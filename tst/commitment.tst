@@ -74,6 +74,7 @@
   (non-orig (privk "sig" a))
   (operation encryption-test (added-strand bidder 1)
     (enc "bid" (hash a b n quote) (privk "sig" a)) (0 0))
+  (strand-map 0)
   (traces
     ((recv (enc "bid" (hash a b n quote) (privk "sig" a)))
       (send (enc "receipt" (hash a b n quote) (privk "sig" b)))
@@ -143,6 +144,7 @@
   (non-orig (privk "sig" a))
   (operation encryption-test (added-strand bidder 1)
     (enc "bid" (hash a b-0 n quote) (privk "sig" a)) (0 0))
+  (strand-map 0)
   (traces
     ((recv (enc "bid" (hash a b-0 n quote) (privk "sig" a)))
       (send (enc "receipt" (hash a b-0 n quote) (privk "sig" b))))
@@ -162,6 +164,7 @@
   (non-orig (privk "sig" a))
   (operation encryption-test (added-strand bid-trash 1)
     (enc "bid" (hash n trash) (privk "sig" a)) (0 0))
+  (strand-map 0)
   (traces
     ((recv (enc "bid" (hash n trash) (privk "sig" a)))
       (send (enc "receipt" (hash n trash) (privk "sig" b))))
@@ -256,6 +259,7 @@
   (non-orig (privk "sig" a))
   (uniq-gen n)
   (operation nonce-test (displaced 1 2 bidder 3) n (0 2))
+  (strand-map 0 1)
   (traces
     ((recv (enc "bid" (hash a b n quote) (privk "sig" a)))
       (send (enc "receipt" (hash a b n quote) (privk "sig" b)))

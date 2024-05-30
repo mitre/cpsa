@@ -55,6 +55,7 @@
   (uniq-orig gx gy gz-0)
   (operation encryption-test (added-strand resp 2)
     (enc "dh" gy gx dhkey) (0 1))
+  (strand-map 0)
   (traces
     ((send (enc gx a (pubk b)))
       (recv (enc gy (enc "dh" gy gx dhkey) gz b (pubk a)))
@@ -75,6 +76,7 @@
   (uniq-orig gx gy gz-0)
   (operation nonce-test (contracted (b-0 b) (a-0 a)) gx (1 0)
     (enc gx a (pubk b)))
+  (strand-map 0 1)
   (traces
     ((send (enc gx a (pubk b)))
       (recv (enc gy (enc "dh" gy gx dhkey) gz b (pubk a)))
@@ -100,6 +102,7 @@
   (uniq-orig gx gy gz-0 gy-0 gz-1)
   (operation nonce-test (added-strand resp 2) gx (1 0)
     (enc gx a (pubk b)))
+  (strand-map 0 1)
   (traces
     ((send (enc gx a (pubk b)))
       (recv (enc gy (enc "dh" gy gx dhkey) gz b (pubk a)))
@@ -123,6 +126,7 @@
   (operation encryption-test (contracted (gz-0 gz))
     (enc "dh" gy gx dhkey) (0 1)
     (enc gy (enc "dh" gy gx dhkey) gz b (pubk a)))
+  (strand-map 0 1)
   (traces
     ((send (enc gx a (pubk b)))
       (recv (enc gy (enc "dh" gy gx dhkey) gz b (pubk a)))
@@ -149,6 +153,7 @@
   (operation nonce-test (contracted (b-0 b) (a-0 a)) gx (1 0)
     (enc gx a (pubk b))
     (enc gy-0 (enc "dh" gy-0 gx dhkey-0) gz-1 b (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (enc gx a (pubk b)))
       (recv (enc gy (enc "dh" gy gx dhkey) gz b (pubk a)))
@@ -175,6 +180,7 @@
   (operation encryption-test (contracted (gz-1 gz))
     (enc "dh" gy gx dhkey) (0 1)
     (enc gy (enc "dh" gy gx dhkey) gz b (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (enc gx a (pubk b)))
       (recv (enc gy (enc "dh" gy gx dhkey) gz b (pubk a)))
@@ -243,6 +249,7 @@
   (uniq-orig gx gy gz)
   (operation encryption-test (added-strand init 3)
     (enc "dh" gz gx dhkey) (0 2))
+  (strand-map 0)
   (traces
     ((recv (enc gx a (pubk b)))
       (send (enc gy (enc "dh" gy gx dhkey) gz b (pubk a)))
@@ -262,6 +269,7 @@
   (uniq-orig gy)
   (operation encryption-test (displaced 1 0 resp 2)
     (enc "dh" gz gx dhkey) (0 2))
+  (strand-map 0)
   (traces
     ((recv (enc gx a (pubk b)))
       (send (enc gy (enc "dh" gy gx dhkey) gy b (pubk a)))
@@ -282,6 +290,7 @@
   (uniq-orig gx gy gz)
   (operation encryption-test (displaced 2 0 resp 2)
     (enc "dh" h2 gx dhkey) (1 1))
+  (strand-map 0 1)
   (traces
     ((recv (enc gx a (pubk b)))
       (send (enc gy (enc "dh" gy gx dhkey) gz b (pubk a)))
@@ -308,6 +317,7 @@
   (uniq-orig gx gy gz h2 gz-0)
   (operation encryption-test (added-strand resp 2)
     (enc "dh" h2 gx dhkey) (1 1))
+  (strand-map 0 1)
   (traces
     ((recv (enc gx a (pubk b)))
       (send (enc gy (enc "dh" gy gx dhkey) gz b (pubk a)))
@@ -334,6 +344,7 @@
   (operation encryption-test (added-strand init 3)
     (enc "dh" gy gx dhkey) (0 2)
     (enc gy (enc "dh" gy gx dhkey) gy b (pubk a)))
+  (strand-map 0)
   (traces
     ((recv (enc gx a (pubk b)))
       (send (enc gy (enc "dh" gy gx dhkey) gy b (pubk a)))
@@ -356,6 +367,7 @@
   (operation encryption-test (contracted (a-0 a) (b-0 b))
     (enc "dh" gy gx dhkey) (1 1)
     (enc gy (enc "dh" gy gx dhkey) gz b (pubk a)))
+  (strand-map 0 1)
   (traces
     ((recv (enc gx a (pubk b)))
       (send (enc gy (enc "dh" gy gx dhkey) gz b (pubk a)))
@@ -380,6 +392,7 @@
   (uniq-orig gx gy)
   (operation encryption-test (displaced 2 0 resp 2)
     (enc "dh" h2 gx dhkey) (1 1))
+  (strand-map 0 1)
   (traces
     ((recv (enc gx a (pubk b)))
       (send (enc gy (enc "dh" gy gx dhkey) gy b (pubk a)))
@@ -405,6 +418,7 @@
   (uniq-orig gx gy h2 gz)
   (operation encryption-test (added-strand resp 2)
     (enc "dh" h2 gx dhkey) (1 1))
+  (strand-map 0 1)
   (traces
     ((recv (enc gx a (pubk b)))
       (send (enc gy (enc "dh" gy gx dhkey) gy b (pubk a)))
@@ -430,6 +444,7 @@
   (operation encryption-test (contracted (a-0 a) (b-0 b))
     (enc "dh" gy gx dhkey) (1 1)
     (enc gy (enc "dh" gy gx dhkey) gy b (pubk a)))
+  (strand-map 0 1)
   (traces
     ((recv (enc gx a (pubk b)))
       (send (enc gy (enc "dh" gy gx dhkey) gy b (pubk a)))

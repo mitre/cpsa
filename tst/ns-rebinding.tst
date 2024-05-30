@@ -77,6 +77,7 @@
   (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (added-strand resp 2) n1 (0 1)
     (enc n1 a (pubk b)))
+  (strand-map 0)
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc n1 n2 b (pubk a)))
       (send (enc n2 (pubk b))))
@@ -97,6 +98,7 @@
   (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (contracted (n2-0 n2)) n1 (0 1)
     (enc n1 a (pubk b)) (enc n1 n2 b (pubk a)))
+  (strand-map 0 1)
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc n1 n2 b (pubk a)))
       (send (enc n2 (pubk b))))
@@ -185,6 +187,7 @@
   (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (added-strand resp 2) n1 (0 1)
     (enc n1 a (pubk b)))
+  (strand-map 0)
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc n1 n2 b (pubk a)))
       (send (enc n2 (pubk b))))
@@ -205,6 +208,7 @@
   (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (contracted (n2-0 n2)) n1 (0 1)
     (enc n1 a (pubk b)) (enc n1 n2 b (pubk a)))
+  (strand-map 0 1)
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc n1 n2 b (pubk a)))
       (send (enc n2 (pubk b))))
@@ -292,6 +296,7 @@
   (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (added-strand resp 2) n1 (0 1)
     (enc n1 a (pubk b)))
+  (strand-map 0)
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc n1 n2 b (pubk a)))
       (send (enc n2 (pubk b))))
@@ -400,6 +405,7 @@
   (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (added-strand resp 2) n1 (1 0)
     (enc n1 a (pubk b)))
+  (strand-map 0 1)
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc n1 n2 b (pubk a)))
       (send (enc n2 (pubk b)))) ((recv n1) (send n1))
@@ -421,6 +427,7 @@
   (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (displaced 3 0 init 3) n2-0 (1 0)
     (enc n2-0 a (pubk b)) (enc n2-0 n2-0 b (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n2 a (pubk b))) (recv (enc n2 n2 b (pubk a)))
       (send (enc n2 (pubk b)))) ((recv n2) (send n2))
@@ -444,6 +451,7 @@
   (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (added-strand resp 2) n2 (1 0) (enc n2 (pubk b))
     (enc n2 a (pubk b)) (enc n2 n2 b (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n2 a (pubk b))) (recv (enc n2 n2 b (pubk a)))
       (send (enc n2 (pubk b)))) ((recv n2) (send n2))
@@ -540,6 +548,7 @@
   (facts (rel2 x n2) (rel1 n1 n2) (rel2 n1 n2))
   (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation collapsed 1 0)
+  (strand-map 0 0)
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc n1 n2 b (pubk a)))
       (send (enc n2 (pubk b)))))
@@ -561,6 +570,7 @@
   (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (added-strand resp 2) n1-0 (1 1)
     (enc n1-0 a (pubk b)))
+  (strand-map 0 1)
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc n1 n2 b (pubk a)))
       (send (enc n2 (pubk b))))
@@ -588,6 +598,7 @@
   (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (added-strand resp 2) n1 (0 1)
     (enc n1 a (pubk b)))
+  (strand-map 0)
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc n1 n2 b (pubk a)))
       (send (enc n2 (pubk b))))
@@ -611,6 +622,7 @@
   (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (contracted (n2-1 n2-0)) n1-0 (1 1)
     (enc n1-0 a (pubk b)) (enc n1-0 n2-0 b (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc n1 n2 b (pubk a)))
       (send (enc n2 (pubk b))))
@@ -638,6 +650,7 @@
   (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (contracted (n2-0 n2)) n1 (0 1)
     (enc n1 a (pubk b)) (enc n1 n2 b (pubk a)))
+  (strand-map 0 1)
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc n1 n2 b (pubk a)))
       (send (enc n2 (pubk b))))
@@ -663,6 +676,7 @@
   (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (added-strand resp 2) n1 (0 1)
     (enc n1 a (pubk b)))
+  (strand-map 0 1 2)
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc n1 n2 b (pubk a)))
       (send (enc n2 (pubk b))))
@@ -689,6 +703,7 @@
   (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (contracted (n2-1 n2-0)) n1 (0 1)
     (enc n1 a (pubk b)) (enc n1 n2-0 b (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc n1 n2-0 b (pubk a)))
       (send (enc n2-0 (pubk b))))
@@ -797,6 +812,7 @@
   (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (added-strand resp 2) n1 (0 1)
     (enc n1 a (pubk b)))
+  (strand-map 0)
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc n1 n2 b (pubk a)))
       (send (enc n2 (pubk b))))
@@ -817,6 +833,7 @@
   (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (contracted (n2-0 n2)) n1 (0 1)
     (enc n1 a (pubk b)) (enc n1 n2 b (pubk a)))
+  (strand-map 0 1)
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc n1 n2 b (pubk a)))
       (send (enc n2 (pubk b))))
@@ -888,6 +905,7 @@
   (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (added-strand init 3) n2 (0 2)
     (enc n1 n2 b (pubk a)))
+  (strand-map 0)
   (traces
     ((recv (enc n1 a (pubk b))) (send (enc n1 n2 b (pubk a)))
       (recv (enc n2 (pubk b))))

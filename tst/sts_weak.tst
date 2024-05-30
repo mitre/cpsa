@@ -55,6 +55,7 @@
   (uniq-gen x x-0)
   (operation encryption-test (added-strand init 3)
     (enc (exp (gen) x-0) (exp (gen) x) (privk b)) (0 1))
+  (strand-map 0)
   (traces
     ((send (exp (gen) x))
       (recv
@@ -86,6 +87,7 @@
   (uniq-gen x y)
   (operation encryption-test (added-strand resp 2)
     (enc (exp (gen) y) (exp (gen) x) (privk b)) (0 1))
+  (strand-map 0)
   (traces
     ((send (exp (gen) x))
       (recv
@@ -119,6 +121,7 @@
   (operation encryption-test (added-listener (exp (gen) (mul x x-0)))
     (enc (enc (exp (gen) x) (exp (gen) x-0) (privk b-0))
       (exp (gen) (mul x x-0))) (1 1))
+  (strand-map 0 1)
   (traces
     ((send (exp (gen) x))
       (recv
@@ -154,6 +157,7 @@
   (uniq-gen x x-0)
   (operation nonce-test (added-listener (cat (exp (gen) x) x-0))
     (exp (gen) (mul x x-0)) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((send (exp (gen) x))
       (recv
@@ -191,6 +195,7 @@
   (uniq-gen x x-0)
   (operation nonce-test (added-listener (cat (exp (gen) x-0) x))
     (exp (gen) (mul x x-0)) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((send (exp (gen) x))
       (recv
@@ -269,6 +274,7 @@
   (uniq-gen y x)
   (operation encryption-test (added-strand init 3)
     (enc (exp (gen) x) (exp (gen) y) (privk a)) (0 2))
+  (strand-map 0)
   (traces
     ((recv (exp (gen) x))
       (send
@@ -301,6 +307,7 @@
   (operation encryption-test (displaced 2 0 resp 2)
     (enc (enc (exp (gen) y) (exp (gen) x) (privk b-0))
       (exp (gen) (mul x y))) (1 1))
+  (strand-map 0 1)
   (traces
     ((recv (exp (gen) x))
       (send
@@ -337,6 +344,7 @@
   (operation encryption-test (added-listener (exp (gen) (mul y x)))
     (enc (enc (exp (gen) y) (exp (gen) x) (privk b-0))
       (exp (gen) (mul y x))) (1 1))
+  (strand-map 0 1)
   (traces
     ((recv (exp (gen) x))
       (send
@@ -372,6 +380,7 @@
   (uniq-gen y x)
   (operation nonce-test (added-listener (cat (exp (gen) y) x))
     (exp (gen) (mul y x)) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (exp (gen) x))
       (send
@@ -409,6 +418,7 @@
   (uniq-gen y x)
   (operation nonce-test (added-listener (cat (exp (gen) x) y))
     (exp (gen) (mul y x)) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (exp (gen) x))
       (send
@@ -482,6 +492,7 @@
   (non-orig (privk a) (privk b))
   (operation encryption-test (added-strand init 3)
     (enc (exp (gen) x-0) (exp (gen) x) (privk b)) (0 1))
+  (strand-map 0 1)
   (traces
     ((send (exp (gen) x))
       (recv
@@ -516,6 +527,7 @@
   (non-orig (privk a) (privk b))
   (operation encryption-test (added-strand resp 2)
     (enc (exp (gen) y) (exp (gen) x) (privk b)) (0 1))
+  (strand-map 0 1)
   (traces
     ((send (exp (gen) x))
       (recv
@@ -607,6 +619,7 @@
   (non-orig (privk a) (privk b))
   (operation encryption-test (added-strand init 3)
     (enc (exp (gen) x) (exp (gen) y) (privk a)) (0 2))
+  (strand-map 0 1)
   (traces
     ((recv (exp (gen) x))
       (send
@@ -639,6 +652,7 @@
   (non-orig (privk b))
   (operation encryption-test (displaced 2 0 resp 2)
     (enc (exp (gen) y-0) (exp (gen) y-1) (privk a)) (0 2))
+  (strand-map 0 1)
   (traces
     ((recv (exp (gen) y))
       (send
@@ -665,6 +679,7 @@
   (non-orig (privk a) (privk b))
   (operation encryption-test (added-strand resp 2)
     (enc (exp (gen) y-0) (exp (gen) y) (privk a)) (0 2))
+  (strand-map 0 1)
   (traces
     ((recv (exp (gen) y-0))
       (send

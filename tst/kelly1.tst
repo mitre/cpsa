@@ -64,6 +64,7 @@
   (uniq-orig N)
   (operation encryption-test (added-strand appraiser 5)
     (enc policy (pubk S) Ns (privk A)) (0 3))
+  (strand-map 0)
   (traces
     ((send (cat C S request))
       (recv (cat S C (enc response Ns (privk S))))
@@ -95,6 +96,7 @@
   (uniq-orig Ns N)
   (operation encryption-test (added-strand server 3)
     (enc Quote measurements N Ns (pubk S) (privk AIK)) (1 2))
+  (strand-map 0 1)
   (traces
     ((send (cat C S request))
       (recv (cat S C (enc response Ns (privk S))))
@@ -131,6 +133,7 @@
   (uniq-orig Ns N)
   (operation encryption-test (displaced 2 3 server 5)
     (enc response Ns (privk S)) (0 1))
+  (strand-map 0 1 2)
   (traces
     ((send (cat C S request))
       (recv (cat S C (enc response Ns (privk S))))

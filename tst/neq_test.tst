@@ -36,6 +36,7 @@
   (non-orig k)
   (uniq-orig n1)
   (operation nonce-test (displaced 1 0 init 1) n2 (0 1) (enc n1 n2 k))
+  (strand-map 0)
   (traces ((send (cat n1 (enc n1 n1 k))) (recv n1)))
   (label 1)
   (parent 0)

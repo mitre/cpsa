@@ -81,6 +81,7 @@
   (rule ugen-at)
   (operation encryption-test (added-strand serv 2) (enc a k (ltk b c))
     (0 2))
+  (strand-map 0 1)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -105,6 +106,7 @@
   (rule ugen-at)
   (operation encryption-test (displaced 3 0 resp 2)
     (enc a n-a-0 n-b-0 (ltk b c)) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -131,6 +133,7 @@
   (rule ugen-at)
   (operation encryption-test (added-strand resp 2)
     (enc a n-a-0 n-b-0 (ltk b c)) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a n-a)) (send (cat b (enc a n-a n-b (ltk b c))))
       (recv (cat (enc a k (ltk b c)) rest)) (send rest)
@@ -216,6 +219,7 @@
   (rule ugen-at)
   (operation encryption-test (added-strand serv 2)
     (enc b k n-a n-b (ltk a c)) (0 1))
+  (strand-map 0)
   (traces
     ((send (cat a n-a)) (recv (enc b k n-a n-b (ltk a c)))
       (send (enc n-b k)))
@@ -238,6 +242,7 @@
   (rule ugen-at)
   (operation encryption-test (added-strand resp 2)
     (enc a n-a n-b (ltk b c)) (1 0))
+  (strand-map 0 1)
   (traces
     ((send (cat a n-a)) (recv (enc b k n-a n-b (ltk a c)))
       (send (enc n-b k)))

@@ -53,6 +53,7 @@
   (uniq-orig k ak-0 n2 n1)
   (operation encryption-test (added-strand auth 2) (enc k n2 (privk as))
     (0 1))
+  (strand-map 0)
   (traces
     ((send (cat (enc tc n2 (privk c)) c t n1))
       (recv

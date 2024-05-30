@@ -212,6 +212,7 @@
   (rule fact-init-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor (cat pt (pv a l))) (0 0))
+  (strand-map 0)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -251,6 +252,7 @@
   (rule fact-init-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation encryption-test (added-strand ltx-gen 3)
     (sig (body b (exp (gen) l-0) (pubk "sig" b)) (privk "sig" b)) (0 1))
+  (strand-map 0 1)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -300,6 +302,7 @@
   (operation encryption-test (added-strand resp 4)
     (enc na nb a b
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta)))) (0 3))
+  (strand-map 0 1 2)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -356,6 +359,7 @@
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul x upsilon))))
     (enc na nb a b
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul x upsilon)))) (0 3))
+  (strand-map 0 1 2)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -407,6 +411,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 4 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b l-1))) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -465,6 +470,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b l-1))) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -525,6 +531,7 @@
     (added-listener
       (cat (exp (gen) (mul l l-0)) (exp (gen) (mul x upsilon))))
     (hash (exp (gen) (mul l l-0)) (exp (gen) (mul x upsilon))) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -577,6 +584,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 4 ltx-gen 3) (exp (gen) l-0) (3 1))
+  (strand-map 0 3 1 2)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -638,6 +646,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec w))) w)) (exp (gen) l)
     (3 1))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -700,6 +709,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l l-0)) l-1))
     (exp (gen) (mul l l-0 (rec l-1))) (3 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -765,6 +775,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec l-1))) l-0))
     (exp (gen) (mul l l-0 (rec l-1))) (3 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -831,6 +842,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l-0 (rec l-1))) l))
     (exp (gen) (mul l l-0 (rec l-1))) (3 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -893,6 +905,7 @@
   (rule fact-init-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
     (exp (gen) (mul l l-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -948,6 +961,7 @@
   (rule fact-init-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l))
     (exp (gen) (mul l l-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -1000,6 +1014,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 4 2 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l)))
       (recv
@@ -1070,6 +1085,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -1134,6 +1150,7 @@
   (rule fact-init-neq0 fact-resp-neq0 gen-st-ltx-disclose-0
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -1197,6 +1214,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 0 init 3) (exp (gen) x-0) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -1256,6 +1274,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-1 l-0) (w l-0)) (gen) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -1315,6 +1334,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 5 ltx-gen 3) (exp (gen) l-1) (4 0))
+  (strand-map 0 4 1 2 3)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -1380,6 +1400,7 @@
   (rule fact-init-neq0 fact-resp-neq0 gen-st-ltx-disclose-0
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -1448,6 +1469,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 2 ltx-gen 3) (exp (gen) l-1) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -1510,6 +1532,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-1) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -1578,6 +1601,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (5 0)
     (ch-msg priv-stor-1 (cat pt-3 (pv b l-1))))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -1641,6 +1665,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 2 resp 4) (exp (gen) y-0) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l)))
       (recv
@@ -1708,6 +1733,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a-0 l-1))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -1774,6 +1800,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a-0 l-1))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -1843,6 +1870,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a-0 l-1))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -1907,6 +1935,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 2 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l)))
       (recv
@@ -1974,6 +2003,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -2041,6 +2071,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -2114,6 +2145,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -2190,6 +2222,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -2267,6 +2300,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
     (exp (gen) (mul l l-0)) (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -2338,6 +2372,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l))
     (exp (gen) (mul l l-0)) (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -2404,6 +2439,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-0) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l)))
       (recv
@@ -2647,6 +2683,7 @@
   (rule fact-init-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor (cat pt (pv a l))) (0 0))
+  (strand-map 0)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -2685,6 +2722,7 @@
   (rule fact-init-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation encryption-test (added-strand ltx-gen 3)
     (sig (body b (exp (gen) l-0) (pubk "sig" b)) (privk "sig" b)) (0 1))
+  (strand-map 0 1)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -2733,6 +2771,7 @@
   (operation encryption-test (added-strand resp 4)
     (enc na nb a b
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta)))) (0 3))
+  (strand-map 0 1 2)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -2788,6 +2827,7 @@
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul x upsilon))))
     (enc na nb a b
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul x upsilon)))) (0 3))
+  (strand-map 0 1 2)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -2838,6 +2878,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 4 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b l-1))) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -2895,6 +2936,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b l-1))) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -2954,6 +2996,7 @@
     (added-listener
       (cat (exp (gen) (mul l l-0)) (exp (gen) (mul x upsilon))))
     (hash (exp (gen) (mul l l-0)) (exp (gen) (mul x upsilon))) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -3005,6 +3048,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 4 ltx-gen 3) (exp (gen) l-0) (3 1))
+  (strand-map 0 3 1 2)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -3065,6 +3109,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec w))) w)) (exp (gen) l)
     (3 1))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -3126,6 +3171,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l l-0)) l-1))
     (exp (gen) (mul l l-0 (rec l-1))) (3 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -3190,6 +3236,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec l-1))) l-0))
     (exp (gen) (mul l l-0 (rec l-1))) (3 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -3255,6 +3302,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l-0 (rec l-1))) l))
     (exp (gen) (mul l l-0 (rec l-1))) (3 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -3315,6 +3363,7 @@
   (rule fact-init-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
     (exp (gen) (mul l l-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -3369,6 +3418,7 @@
   (rule fact-init-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l))
     (exp (gen) (mul l l-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -3420,6 +3470,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 4 2 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l)))
       (recv
@@ -3489,6 +3540,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -3552,6 +3604,7 @@
   (rule fact-init-neq0 fact-resp-neq0 gen-st-ltx-disclose-0
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -3614,6 +3667,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 0 init 3) (exp (gen) x-0) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -3672,6 +3726,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-1 l-0) (w l-0)) (gen) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -3729,6 +3784,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 5 ltx-gen 3) (exp (gen) l-1) (4 0))
+  (strand-map 0 4 1 2 3)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -3794,6 +3850,7 @@
   (rule fact-init-neq0 fact-resp-neq0 gen-st-ltx-disclose-0
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -3861,6 +3918,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 2 ltx-gen 3) (exp (gen) l-1) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -3922,6 +3980,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-1) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -3989,6 +4048,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (5 0)
     (ch-msg priv-stor-1 (cat pt-3 (pv b l-1))))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -4055,6 +4115,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (5 0)
     (ch-msg priv-stor (cat pt (pv a l-1))))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -4118,6 +4179,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-0 (5 0)
     (ch-msg priv-stor (cat pt (pv a l-0))))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -4172,6 +4234,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 2 resp 4) (exp (gen) y-0) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l)))
       (recv
@@ -4238,6 +4301,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a-0 l-1))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -4303,6 +4367,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a-0 l-1))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -4371,6 +4436,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a-0 l-1))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -4437,6 +4503,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-0 (4 0)
     (ch-msg priv-stor (cat pt (pv a l-0))))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -4495,6 +4562,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 2 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l)))
       (recv
@@ -4561,6 +4629,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -4628,6 +4697,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -4701,6 +4771,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -4777,6 +4848,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -4853,6 +4925,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
     (exp (gen) (mul l l-0)) (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -4923,6 +4996,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l))
     (exp (gen) (mul l l-0)) (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -4992,6 +5066,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
     (exp (gen) (mul l (rec l-0))) (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -5060,6 +5135,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (rec l-0)) l))
     (exp (gen) (mul l (rec l-0))) (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -5126,6 +5202,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 ltx-gen 3) (exp (gen) l-0) (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -5187,6 +5264,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec w))) w)) (exp (gen) l)
     (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -5244,6 +5322,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 3 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -5307,6 +5386,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -5368,6 +5448,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-0) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l)))
       (recv
@@ -5439,6 +5520,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (7 0)
     (ch-msg priv-stor (cat pt (pv a l-1))))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -5510,6 +5592,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (7 0)
     (ch-msg priv-stor-1 (cat pt-3 (pv b l-1))))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -5573,6 +5656,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -5633,6 +5717,7 @@
   (rule fact-init-neq0 gen-st-ltx-disclose-0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -5698,6 +5783,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 0 init 3) (exp (gen) x-0) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a la)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -5759,6 +5845,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-1 l-0) (w l-0)) (gen) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -5820,6 +5907,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 8 ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 7 1 2 3 4 5 6)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -5889,6 +5977,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -5959,6 +6048,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -6023,6 +6113,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -6084,6 +6175,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -6138,6 +6230,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 3 resp 4) (exp (gen) y-0) (6 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -6203,6 +6296,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 2 ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -6279,6 +6373,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec w))) w)) (exp (gen) l)
     (7 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -6351,6 +6446,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 2 ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -6426,6 +6522,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec w))) w)) (exp (gen) l)
     (7 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -6489,6 +6586,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -6547,6 +6645,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv a-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -6615,6 +6714,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv a-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -6687,6 +6787,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv a-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -6759,6 +6860,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv b-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -6833,6 +6935,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv b-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -6911,6 +7014,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv b-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -6982,6 +7086,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -7032,6 +7137,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -7081,6 +7187,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -7138,6 +7245,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 3 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -7214,6 +7322,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -7296,6 +7405,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -7387,6 +7497,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -7469,6 +7580,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-2 l-1) (w l-1)) (gen) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -7545,6 +7657,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 0 init 3) (exp (gen) x-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a la)))
       (recv
@@ -7623,6 +7736,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 2 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -7703,6 +7817,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 10 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 9 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-1)))
       (recv
@@ -7788,6 +7903,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 4 10 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 1 2 3 9 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -7872,6 +7988,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-2) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -7951,6 +8068,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 3 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -8027,6 +8145,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -8108,6 +8227,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -8198,6 +8318,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -8279,6 +8400,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-2 l-1) (w l-1)) (gen) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -8354,6 +8476,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 0 init 3) (exp (gen) x-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a la)))
       (recv
@@ -8432,6 +8555,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 2 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -8511,6 +8635,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 10 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 9 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-1)))
       (recv
@@ -8596,6 +8721,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 4 10 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 1 2 3 9 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -8680,6 +8806,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-2) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -8748,6 +8875,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -8804,6 +8932,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -8852,6 +8981,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization forgot nb)
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -8907,6 +9037,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -8960,6 +9091,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -9026,6 +9158,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 3 resp 4) (exp (gen) y-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -9108,6 +9241,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -9201,6 +9335,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 1 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -9295,6 +9430,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 4 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -9391,6 +9527,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -9486,6 +9623,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -9573,6 +9711,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 1 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -9660,6 +9799,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 4 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -9749,6 +9889,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -9832,6 +9973,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 3 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -9911,6 +10053,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -9983,6 +10126,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -10049,6 +10193,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 3 resp 4) (exp (gen) y-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -10131,6 +10276,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -10223,6 +10369,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 1 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -10317,6 +10464,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 4 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -10413,6 +10561,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -10507,6 +10656,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -10593,6 +10743,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 1 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -10680,6 +10831,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 4 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -10769,6 +10921,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -10851,6 +11004,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 3 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -10930,6 +11084,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -10997,6 +11152,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -11046,6 +11202,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -11096,6 +11253,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -11156,6 +11314,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -11218,6 +11377,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -11287,6 +11447,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 11 3 resp 4) (exp (gen) y-0) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -11355,6 +11516,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -11415,6 +11577,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -11477,6 +11640,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -11546,6 +11710,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 11 3 resp 4) (exp (gen) y-0) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -11609,6 +11774,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization forgot nb)
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -11665,6 +11831,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -11722,6 +11889,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -11781,6 +11949,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -11844,6 +12013,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -11903,6 +12073,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -11961,6 +12132,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -12020,6 +12192,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -12083,6 +12256,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -12140,6 +12314,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -12194,6 +12369,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -12249,6 +12425,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -12309,6 +12486,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -12365,6 +12543,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -12421,6 +12600,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -12477,6 +12657,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -12538,6 +12719,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -12591,6 +12773,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -12640,6 +12823,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -12691,6 +12875,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -12748,6 +12933,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -12805,6 +12991,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -12860,6 +13047,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -12920,6 +13108,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -12972,6 +13161,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization forgot nb)
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -13027,6 +13217,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -13076,6 +13267,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -13131,6 +13323,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -13188,6 +13381,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -13240,6 +13434,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -13291,6 +13486,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -13525,6 +13721,7 @@
   (rule fact-init-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor (cat pt (pv a l))) (0 0))
+  (strand-map 0)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -13563,6 +13760,7 @@
   (rule fact-init-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation encryption-test (added-strand ltx-gen 3)
     (sig (body b (exp (gen) l-0) (pubk "sig" b)) (privk "sig" b)) (0 1))
+  (strand-map 0 1)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -13611,6 +13809,7 @@
   (operation encryption-test (added-strand resp 4)
     (enc na nb a b
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta)))) (0 3))
+  (strand-map 0 1 2)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -13666,6 +13865,7 @@
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul x upsilon))))
     (enc na nb a b
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul x upsilon)))) (0 3))
+  (strand-map 0 1 2)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -13716,6 +13916,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 4 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b l-1))) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -13773,6 +13974,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b l-1))) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -13832,6 +14034,7 @@
     (added-listener
       (cat (exp (gen) (mul l l-0)) (exp (gen) (mul x upsilon))))
     (hash (exp (gen) (mul l l-0)) (exp (gen) (mul x upsilon))) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -13883,6 +14086,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 4 ltx-gen 3) (exp (gen) l-0) (3 1))
+  (strand-map 0 3 1 2)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -13943,6 +14147,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec w))) w)) (exp (gen) l)
     (3 1))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -14004,6 +14209,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l l-0)) l-1))
     (exp (gen) (mul l l-0 (rec l-1))) (3 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -14068,6 +14274,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec l-1))) l-0))
     (exp (gen) (mul l l-0 (rec l-1))) (3 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -14132,6 +14339,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l-0 (rec l-1))) l))
     (exp (gen) (mul l l-0 (rec l-1))) (3 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -14193,6 +14401,7 @@
   (rule fact-init-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
     (exp (gen) (mul l l-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -14246,6 +14455,7 @@
   (rule fact-init-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l))
     (exp (gen) (mul l l-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -14298,6 +14508,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 4 2 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l)))
       (recv
@@ -14367,6 +14578,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -14430,6 +14642,7 @@
   (rule fact-init-neq0 fact-resp-neq0 gen-st-ltx-disclose-0
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -14492,6 +14705,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 0 init 3) (exp (gen) x-0) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -14550,6 +14764,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-1 l-0) (w l-0)) (gen) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -14608,6 +14823,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 5 ltx-gen 3) (exp (gen) l-1) (4 0))
+  (strand-map 0 4 1 2 3)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -14673,6 +14889,7 @@
   (rule fact-init-neq0 fact-resp-neq0 gen-st-ltx-disclose-0
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -14740,6 +14957,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 2 ltx-gen 3) (exp (gen) l-1) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -14801,6 +15019,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-1) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -14868,6 +15087,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (5 0)
     (ch-msg priv-stor-1 (cat pt-3 (pv b l-1))))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -14935,6 +15155,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (5 0)
     (ch-msg priv-stor-0 (cat pt-2 (pv b l-1))))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -14999,6 +15220,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-0 (5 0)
     (ch-msg priv-stor-0 (cat pt-2 (pv b l-0))))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -15054,6 +15276,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 2 resp 4) (exp (gen) y-0) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l)))
       (recv
@@ -15120,6 +15343,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a-0 l-1))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -15185,6 +15409,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a-0 l-1))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -15253,6 +15478,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a-0 l-1))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -15317,6 +15543,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 2 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l)))
       (recv
@@ -15383,6 +15610,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -15450,6 +15678,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -15523,6 +15752,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -15599,6 +15829,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -15675,6 +15906,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
     (exp (gen) (mul l l-0)) (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -15744,6 +15976,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l))
     (exp (gen) (mul l l-0)) (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -15814,6 +16047,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
     (exp (gen) (mul l (rec l-0))) (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -15883,6 +16117,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (rec l-0)) l))
     (exp (gen) (mul l (rec l-0))) (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -15950,6 +16185,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 7 ltx-gen 3) (exp (gen) l-0) (5 0))
+  (strand-map 0 6 1 2 3 4 5)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -16013,6 +16249,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec w))) w)) (exp (gen) l)
     (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -16071,6 +16308,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-0) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l)))
       (recv
@@ -16143,6 +16381,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (7 0)
     (ch-msg priv-stor-0 (cat pt-2 (pv b l-1))))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -16215,6 +16454,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (7 0)
     (ch-msg priv-stor-1 (cat pt-3 (pv b l-1))))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -16279,6 +16519,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -16341,6 +16582,7 @@
   (rule fact-init-neq0 gen-st-ltx-disclose-0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -16406,6 +16648,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 0 init 3) (exp (gen) x-0) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -16468,6 +16711,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-1 l-0) (w l-0)) (gen) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -16528,6 +16772,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 8 ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 7 1 2 3 4 5 6)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -16596,6 +16841,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -16665,6 +16911,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -16730,6 +16977,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -16800,6 +17048,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 9 ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 8 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-1)))
       (recv
@@ -16881,6 +17130,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec w))) w)) (exp (gen) l)
     (7 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -16956,6 +17206,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 9 ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 8 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -17035,6 +17286,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec w))) w)) (exp (gen) l)
     (7 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -17099,6 +17351,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -17159,6 +17412,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv a-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -17227,6 +17481,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv a-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -17299,6 +17554,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv a-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -17364,6 +17620,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6 7)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -17429,6 +17686,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv b-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -17503,6 +17761,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv b-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -17581,6 +17840,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv b-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -17655,6 +17915,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 2 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -17736,6 +17997,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-1)))
       (recv
@@ -17823,6 +18085,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -17914,6 +18177,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -17996,6 +18260,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-2 l-1) (w l-1)) (gen) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -18072,6 +18337,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 0 init 3) (exp (gen) x-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -18151,6 +18417,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 2 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -18232,6 +18499,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 10 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 9 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-1)))
       (recv
@@ -18316,6 +18584,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 4 10 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 1 2 3 9 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -18400,6 +18669,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-2) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -18480,6 +18750,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 2 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -18561,6 +18832,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -18646,6 +18918,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -18735,6 +19008,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -18815,6 +19089,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-2 l-1) (w l-1)) (gen) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -18889,6 +19164,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 0 init 3) (exp (gen) x-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -18968,6 +19244,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 2 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -19049,6 +19326,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 10 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 9 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -19131,6 +19409,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 4 10 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 1 2 3 9 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -19215,6 +19494,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-2) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -19283,6 +19563,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -19341,6 +19622,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -19398,6 +19680,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -19467,6 +19750,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 2 resp 4) (exp (gen) y-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -19553,6 +19837,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -19646,6 +19931,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 1 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -19740,6 +20026,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 4 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -19835,6 +20122,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -19930,6 +20218,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -20017,6 +20306,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 1 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -20104,6 +20394,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 4 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -20192,6 +20483,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -20276,6 +20568,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 2 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -20360,6 +20653,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-1)))
       (recv
@@ -20437,6 +20731,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -20506,6 +20801,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 2 resp 4) (exp (gen) y-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -20592,6 +20888,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -20685,6 +20982,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 1 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -20777,6 +21075,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 4 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -20872,6 +21171,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -20965,6 +21265,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -21052,6 +21353,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 1 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -21137,6 +21439,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 4 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -21225,6 +21528,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -21307,6 +21611,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 2 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -21391,6 +21696,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -21462,6 +21768,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -21518,6 +21825,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -21581,6 +21889,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -21645,6 +21954,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -21717,6 +22027,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 11 2 resp 4) (exp (gen) y-0) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -21789,6 +22100,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -21852,6 +22164,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -21916,6 +22229,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -21988,6 +22302,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 11 2 resp 4) (exp (gen) y-0) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -22059,6 +22374,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6)
   (traces
     ((load priv-stor-1 (cat pt-5 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -22119,6 +22435,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -22180,6 +22497,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -22246,6 +22564,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -22307,6 +22626,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -22368,6 +22688,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -22429,6 +22750,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -22495,6 +22817,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -22554,6 +22877,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -22611,6 +22935,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7)
   (traces
     ((load priv-stor-1 (cat pt-5 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -22668,6 +22993,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7)
   (traces
     ((load priv-stor-1 (cat pt-5 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -22731,6 +23057,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -22789,6 +23116,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5)
   (traces
     ((load priv-stor-1 (cat pt-5 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -22849,6 +23177,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -22907,6 +23236,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -22971,6 +23301,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -23027,6 +23358,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -23079,6 +23411,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -23132,6 +23465,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -23192,6 +23526,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-5 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -23252,6 +23587,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6)
   (traces
     ((load priv-stor-1 (cat pt-5 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -23309,6 +23645,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6)
   (traces
     ((load priv-stor-1 (cat pt-5 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -23372,6 +23709,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -23427,6 +23765,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization forgot nb)
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -23485,6 +23824,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -23536,6 +23876,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -23594,6 +23935,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6 7)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -23654,6 +23996,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7)
   (traces
     ((load priv-stor-1 (cat pt-5 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -23710,6 +24053,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -23764,6 +24108,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -24000,6 +24345,7 @@
   (rule fact-init-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor (cat pt (pv a l))) (0 0))
+  (strand-map 0)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -24038,6 +24384,7 @@
   (rule fact-init-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation encryption-test (added-strand ltx-gen 3)
     (sig (body b (exp (gen) l-0) (pubk "sig" b)) (privk "sig" b)) (0 1))
+  (strand-map 0 1)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -24086,6 +24433,7 @@
   (operation encryption-test (added-strand resp 4)
     (enc na nb a b
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta)))) (0 3))
+  (strand-map 0 1 2)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -24141,6 +24489,7 @@
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul x upsilon))))
     (enc na nb a b
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul x upsilon)))) (0 3))
+  (strand-map 0 1 2)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -24191,6 +24540,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 4 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b l-1))) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -24248,6 +24598,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b l-1))) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -24307,6 +24658,7 @@
     (added-listener
       (cat (exp (gen) (mul l l-0)) (exp (gen) (mul x upsilon))))
     (hash (exp (gen) (mul l l-0)) (exp (gen) (mul x upsilon))) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -24358,6 +24710,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 4 ltx-gen 3) (exp (gen) l-0) (3 1))
+  (strand-map 0 3 1 2)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -24418,6 +24771,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec w))) w)) (exp (gen) l)
     (3 1))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -24479,6 +24833,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l l-0)) l-1))
     (exp (gen) (mul l l-0 (rec l-1))) (3 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -24543,6 +24898,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec l-1))) l-0))
     (exp (gen) (mul l l-0 (rec l-1))) (3 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -24607,6 +24963,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l-0 (rec l-1))) l))
     (exp (gen) (mul l l-0 (rec l-1))) (3 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -24667,6 +25024,7 @@
   (rule fact-init-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
     (exp (gen) (mul l l-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -24720,6 +25078,7 @@
   (rule fact-init-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l))
     (exp (gen) (mul l l-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -24771,6 +25130,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 4 2 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l)))
       (recv
@@ -24840,6 +25200,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -24903,6 +25264,7 @@
   (rule fact-init-neq0 fact-resp-neq0 gen-st-ltx-disclose-0
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -24965,6 +25327,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 0 init 3) (exp (gen) x-0) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -25023,6 +25386,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-1 l-0) (w l-0)) (gen) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -25080,6 +25444,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 5 ltx-gen 3) (exp (gen) l-1) (4 0))
+  (strand-map 0 4 1 2 3)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -25145,6 +25510,7 @@
   (rule fact-init-neq0 fact-resp-neq0 gen-st-ltx-disclose-0
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -25212,6 +25578,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 2 ltx-gen 3) (exp (gen) l-1) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -25273,6 +25640,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-1) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -25340,6 +25708,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (5 0)
     (ch-msg priv-stor-1 (cat pt-3 (pv b l-1))))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -25407,6 +25776,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (5 0)
     (ch-msg priv-stor-0 (cat pt-2 (pv b l-1))))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -25473,6 +25843,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (5 0)
     (ch-msg priv-stor (cat pt (pv a l-1))))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -25536,6 +25907,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-0 (5 0)
     (ch-msg priv-stor-0 (cat pt-2 (pv b l-0))))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -25593,6 +25965,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-0 (5 0)
     (ch-msg priv-stor (cat pt (pv a l-0))))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -25647,6 +26020,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 2 resp 4) (exp (gen) y-0) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l)))
       (recv
@@ -25713,6 +26087,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a-0 l-1))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -25778,6 +26153,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a-0 l-1))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -25846,6 +26222,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv a-0 l-1))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -25912,6 +26289,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-0 (4 0)
     (ch-msg priv-stor (cat pt (pv a l-0))))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -25970,6 +26348,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 2 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l)))
       (recv
@@ -26036,6 +26415,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -26103,6 +26483,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -26176,6 +26557,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -26252,6 +26634,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b-0 l-1))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -26328,6 +26711,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
     (exp (gen) (mul l l-0)) (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -26397,6 +26781,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l))
     (exp (gen) (mul l l-0)) (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -26466,6 +26851,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
     (exp (gen) (mul l (rec l-0))) (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -26535,6 +26921,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (rec l-0)) l))
     (exp (gen) (mul l (rec l-0))) (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -26605,6 +26992,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
     (exp (gen) (mul l (rec l-0))) (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -26673,6 +27061,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) (rec l-0)) l))
     (exp (gen) (mul l (rec l-0))) (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -26738,6 +27127,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 7 ltx-gen 3) (exp (gen) l-0) (5 0))
+  (strand-map 0 6 1 2 3 4 5)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -26801,6 +27191,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec w))) w)) (exp (gen) l)
     (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -26860,6 +27251,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 ltx-gen 3) (exp (gen) l-0) (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -26921,6 +27313,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec w))) w)) (exp (gen) l)
     (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -26977,6 +27370,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 3 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -27040,6 +27434,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -27101,6 +27496,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 2 resp 4) (exp (gen) y-0) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv self l)))
       (recv
@@ -27173,6 +27569,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (7 0)
     (ch-msg priv-stor-0 (cat pt-2 (pv b l-1))))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -27245,6 +27642,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (7 0)
     (ch-msg priv-stor (cat pt (pv a l-1))))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -27316,6 +27714,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (7 0)
     (ch-msg priv-stor-1 (cat pt-3 (pv b l-1))))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -27388,6 +27787,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (7 0)
     (ch-msg priv-stor (cat pt (pv a l-1))))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -27462,6 +27862,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (7 0)
     (ch-msg priv-stor-1 (cat pt-3 (pv b l-1))))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -27534,6 +27935,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (7 0)
     (ch-msg priv-stor-0 (cat pt-2 (pv b l-1))))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -27600,6 +28002,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -27662,6 +28065,7 @@
   (rule fact-init-neq0 gen-st-ltx-disclose-0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -27727,6 +28131,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 0 init 3) (exp (gen) x-0) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -27789,6 +28194,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-1 l-0) (w l-0)) (gen) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -27848,6 +28254,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 8 ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 7 1 2 3 4 5 6)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -27916,6 +28323,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -27985,6 +28393,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -28050,6 +28459,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -28111,6 +28521,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -28171,6 +28582,7 @@
   (rule fact-init-neq0 gen-st-ltx-disclose-0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -28236,6 +28648,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 0 init 3) (exp (gen) x-0) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a la)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -28297,6 +28710,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-1 l-0) (w l-0)) (gen) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -28357,6 +28771,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 8 ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 7 1 2 3 4 5 6)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -28426,6 +28841,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -28496,6 +28912,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -28560,6 +28977,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -28621,6 +29039,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -28675,6 +29094,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 3 resp 4) (exp (gen) y-0) (6 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -28742,6 +29162,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 9 ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 8 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-1)))
       (recv
@@ -28823,6 +29244,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec w))) w)) (exp (gen) l)
     (7 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -28896,6 +29318,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 2 ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -28972,6 +29395,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec w))) w)) (exp (gen) l)
     (7 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -29046,6 +29470,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 9 ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 8 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -29125,6 +29550,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec w))) w)) (exp (gen) l)
     (7 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -29202,6 +29628,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec l) (rec w))) w))
     (exp (gen) (rec l)) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -29277,6 +29704,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 2 ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -29352,6 +29780,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec w))) w)) (exp (gen) l)
     (7 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -29428,6 +29857,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec l) (rec w))) w))
     (exp (gen) (rec l)) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -29494,6 +29924,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -29554,6 +29985,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv a-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -29622,6 +30054,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv a-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -29694,6 +30127,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv a-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -29763,6 +30197,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-0 (7 0)
     (ch-msg priv-stor (cat pt (pv a l-0))))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -29822,6 +30257,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6 7)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -29887,6 +30323,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv b-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -29961,6 +30398,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv b-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -30039,6 +30477,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv b-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -30104,6 +30543,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -30162,6 +30602,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv a-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -30230,6 +30671,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv a-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -30302,6 +30744,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv a-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -30372,6 +30815,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-0 (7 0)
     (ch-msg priv-stor-0 (cat pt-2 (pv b l-0))))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -30438,6 +30882,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv b-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -30512,6 +30957,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv b-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -30590,6 +31036,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv b-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -30661,6 +31108,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -30711,6 +31159,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -30760,6 +31209,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -30818,6 +31268,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 2 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -30899,6 +31350,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-1)))
       (recv
@@ -30986,6 +31438,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -31077,6 +31530,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -31159,6 +31613,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-2 l-1) (w l-1)) (gen) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -31234,6 +31689,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 0 init 3) (exp (gen) x-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -31313,6 +31769,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 2 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -31394,6 +31851,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 10 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 9 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-1)))
       (recv
@@ -31478,6 +31936,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 4 10 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 1 2 3 9 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -31562,6 +32021,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-2) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -31640,6 +32100,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 3 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -31716,6 +32177,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -31798,6 +32260,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -31889,6 +32352,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -31971,6 +32435,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-2 l-1) (w l-1)) (gen) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -32046,6 +32511,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 0 init 3) (exp (gen) x-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a la)))
       (recv
@@ -32124,6 +32590,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 2 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -32204,6 +32671,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 10 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 9 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-1)))
       (recv
@@ -32289,6 +32757,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 4 10 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 1 2 3 9 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -32373,6 +32842,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-2) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -32453,6 +32923,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 2 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -32534,6 +33005,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -32619,6 +33091,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -32708,6 +33181,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -32788,6 +33262,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-2 l-1) (w l-1)) (gen) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -32861,6 +33336,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 0 init 3) (exp (gen) x-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -32940,6 +33416,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 2 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -33021,6 +33498,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 10 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 9 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -33103,6 +33581,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 4 10 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 1 2 3 9 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -33187,6 +33666,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-2) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -33273,6 +33753,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -33363,6 +33844,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -33444,6 +33926,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-2 l-1) (w (rec l-1))) (gen)
     (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -33518,6 +34001,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 0 init 3) (exp (gen) x-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a la)))
       (recv
@@ -33597,6 +34081,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 2 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -33678,6 +34163,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 10 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 9 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -33762,6 +34248,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 4 10 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 1 2 3 9 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -33846,6 +34333,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-2) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -33923,6 +34411,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 3 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -33999,6 +34488,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -34080,6 +34570,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -34170,6 +34661,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -34251,6 +34743,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-2 l-1) (w l-1)) (gen) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -34325,6 +34818,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 0 init 3) (exp (gen) x-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a la)))
       (recv
@@ -34403,6 +34897,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 2 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -34482,6 +34977,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 10 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 9 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-1)))
       (recv
@@ -34567,6 +35063,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 4 10 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 1 2 3 9 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -34651,6 +35148,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-2) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -34738,6 +35236,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -34829,6 +35328,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -34911,6 +35411,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-2 l-1) (w (rec l-1))) (gen)
     (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -34986,6 +35487,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 0 init 3) (exp (gen) x-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a la)))
       (recv
@@ -35065,6 +35567,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 2 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -35146,6 +35649,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 10 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 9 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -35230,6 +35734,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 4 10 ltx-gen 3) (exp (gen) l-2)
     (9 0))
+  (strand-map 0 1 2 3 9 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -35314,6 +35819,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-2) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -35384,6 +35890,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -35446,6 +35953,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -35500,6 +36008,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -35550,6 +36059,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -35610,6 +36120,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -35665,6 +36176,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -35713,6 +36225,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization forgot nb)
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -35768,6 +36281,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -35821,6 +36335,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -35890,6 +36405,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 2 resp 4) (exp (gen) y-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -35976,6 +36492,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -36069,6 +36586,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 1 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -36163,6 +36681,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 4 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -36258,6 +36777,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -36353,6 +36873,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -36440,6 +36961,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 1 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -36527,6 +37049,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 4 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -36615,6 +37138,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -36702,6 +37226,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (9 0)
     (ch-msg priv-stor (cat pt (pv a l-1))))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -36780,6 +37305,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 2 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -36864,6 +37390,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-1)))
       (recv
@@ -36941,6 +37468,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -37007,6 +37535,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 3 resp 4) (exp (gen) y-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -37089,6 +37618,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -37182,6 +37712,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 1 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -37276,6 +37807,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 4 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -37372,6 +37904,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -37467,6 +38000,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -37554,6 +38088,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 1 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -37641,6 +38176,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 4 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -37730,6 +38266,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -37818,6 +38355,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (9 0)
     (ch-msg priv-stor-0 (cat pt-2 (pv b l-1))))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -37894,6 +38432,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 3 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -37973,6 +38512,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -38045,6 +38585,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -38114,6 +38655,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 2 resp 4) (exp (gen) y-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -38200,6 +38742,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -38293,6 +38836,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 1 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -38385,6 +38929,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 4 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -38480,6 +39025,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -38573,6 +39119,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -38660,6 +39207,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 1 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -38745,6 +39293,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 4 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -38833,6 +39382,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -38918,6 +39468,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (9 0)
     (ch-msg priv-stor (cat pt (pv a l-1))))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -38994,6 +39545,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 2 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -39078,6 +39630,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -39167,6 +39720,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -39260,6 +39814,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 1 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -39353,6 +39908,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 4 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -39449,6 +40005,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -39543,6 +40100,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -39630,6 +40188,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 1 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -39716,6 +40275,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 4 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -39805,6 +40365,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -39889,6 +40450,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener l-1) (rec l-1) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -39968,6 +40530,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener l-1) (mul (rec l-1) (rec l-1))
     (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -40042,6 +40605,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -40108,6 +40672,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 3 resp 4) (exp (gen) y-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -40190,6 +40755,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -40282,6 +40848,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 1 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -40376,6 +40943,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 4 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -40472,6 +41040,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -40566,6 +41135,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -40652,6 +41222,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 1 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -40739,6 +41310,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 4 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -40828,6 +41400,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -40915,6 +41488,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (9 0)
     (ch-msg priv-stor-0 (cat pt-2 (pv b l-1))))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -40990,6 +41564,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 3 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -41069,6 +41644,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -41154,6 +41730,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -41247,6 +41824,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 1 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -41340,6 +41918,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 4 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -41437,6 +42016,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv b-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -41532,6 +42112,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -41619,6 +42200,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 1 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -41705,6 +42287,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 11 4 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -41795,6 +42378,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-7 (pv a-0 l-2))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -41880,6 +42464,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener l-1) (rec l-1) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -41960,6 +42545,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener l-1) (mul (rec l-1) (rec l-1))
     (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -42032,6 +42618,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -42083,6 +42670,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -42139,6 +42727,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -42191,6 +42780,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -42240,6 +42830,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -42290,6 +42881,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -42352,6 +42944,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -42421,6 +43014,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 11 3 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -42502,6 +43096,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv
@@ -42577,6 +43172,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -42649,6 +43245,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 11 2 resp 4) (exp (gen) y-0) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -42721,6 +43318,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -42781,6 +43379,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -42848,6 +43447,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 11 3 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -42930,6 +43530,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -43005,6 +43606,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -43074,6 +43676,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 11 3 resp 4) (exp (gen) y-0) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -43142,6 +43745,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -43204,6 +43808,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -43273,6 +43878,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 11 3 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -43354,6 +43960,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-1)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -43427,6 +44034,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -43499,6 +44107,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 11 2 resp 4) (exp (gen) y-0) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -43584,6 +44193,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (10 0)
     (ch-msg priv-stor-1 (cat pt-3 (pv b l-1))))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -43667,6 +44277,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (10 0)
     (ch-msg priv-stor-1 (cat pt-6 (pv self l-1))))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -43741,6 +44352,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -43801,6 +44413,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -43868,6 +44481,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 11 3 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -43950,6 +44564,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -44024,6 +44639,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -44093,6 +44709,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 11 3 resp 4) (exp (gen) y-0) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -44174,6 +44791,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (10 0)
     (ch-msg priv-stor-1 (cat pt-3 (pv b l-1))))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -44258,6 +44876,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (10 0)
     (ch-msg priv-stor-1 (cat pt-6 (pv self l-1))))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -44331,6 +44950,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -44382,6 +45002,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -44430,6 +45051,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization forgot nb)
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -44486,6 +45108,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6)
   (traces
     ((load priv-stor-1 (cat pt-5 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -44545,6 +45168,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -44608,6 +45232,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -44679,6 +45304,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 12 3 resp 4) (exp (gen) y-0) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -44750,6 +45376,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -44815,6 +45442,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -44876,6 +45504,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -44933,6 +45562,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -44994,6 +45624,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -45066,6 +45697,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 12 3 resp 4) (exp (gen) y-0) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -45138,6 +45770,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -45201,6 +45834,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -45260,6 +45894,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -45320,6 +45955,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -45383,6 +46019,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -45454,6 +46091,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 12 3 resp 4) (exp (gen) y-0) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -45525,6 +46163,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -45590,6 +46229,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -45662,6 +46302,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 12 3 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -45746,6 +46387,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -45829,6 +46471,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 12 3 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -45920,6 +46563,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -45995,6 +46639,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -46053,6 +46698,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -46114,6 +46760,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -46186,6 +46833,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 12 3 resp 4) (exp (gen) y-0) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -46258,6 +46906,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -46321,6 +46970,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -46391,6 +47041,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 12 3 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -46476,6 +47127,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -46560,6 +47212,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 12 3 resp 4) (exp (gen) y-0) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -46651,6 +47304,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) y zeta (rec w))) w))
     (exp (gen) (mul (rec x) y zeta)) (0 3))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -46725,6 +47379,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -46774,6 +47429,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -46825,6 +47481,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -46881,6 +47538,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7)
   (traces
     ((load priv-stor-1 (cat pt-5 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -46941,6 +47599,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -47006,6 +47665,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -47067,6 +47727,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7)
   (traces
     ((load priv-stor-1 (cat pt-5 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -47129,6 +47790,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -47186,6 +47848,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -47240,6 +47903,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -47298,6 +47962,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -47364,6 +48029,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -47426,6 +48092,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -47486,6 +48153,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -47542,6 +48210,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5)
   (traces
     ((load priv-stor-1 (cat pt-5 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -47601,6 +48270,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -47662,6 +48332,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -47727,6 +48398,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -47788,6 +48460,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -47851,6 +48524,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -47917,6 +48591,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -47991,6 +48666,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 13 3 resp 4) (exp (gen) y-0) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -48068,6 +48744,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -48149,6 +48826,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 13 3 resp 4) (exp (gen) y-0) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -48222,6 +48900,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -48278,6 +48957,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -48337,6 +49017,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -48403,6 +49084,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -48465,6 +49147,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -48526,6 +49209,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -48590,6 +49274,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -48665,6 +49350,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 13 3 resp 4) (exp (gen) y-0) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -48743,6 +49429,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -48824,6 +49511,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 13 3 resp 4) (exp (gen) y-0) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -48895,6 +49583,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -48946,6 +49635,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -49003,6 +49693,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -49064,6 +49755,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -49121,6 +49813,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -49180,6 +49873,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-5 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -49233,6 +49927,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -49282,6 +49977,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -49337,6 +50033,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -49399,6 +50096,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -49457,6 +50155,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -49514,6 +50213,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -49571,6 +50271,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6)
   (traces
     ((load priv-stor-1 (cat pt-5 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -49630,6 +50331,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -49691,6 +50393,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -49749,6 +50452,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6)
   (traces
     ((load priv-stor-1 (cat pt-5 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -49811,6 +50515,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8)
   (traces
     ((load priv-stor-1 (cat pt-6 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -49875,6 +50580,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -49943,6 +50649,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -50010,6 +50717,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -50083,6 +50791,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -50151,6 +50860,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -50209,6 +50919,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -50272,6 +50983,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -50331,6 +51043,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -50391,6 +51104,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -50453,6 +51167,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -50522,6 +51237,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -50590,6 +51306,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -50663,6 +51380,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -50726,6 +51444,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization forgot nb)
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -50783,6 +51502,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -50836,6 +51556,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -50894,6 +51615,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -50948,6 +51670,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -51005,6 +51728,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6 7)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -51056,6 +51780,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization forgot nb)
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -51111,6 +51836,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -51162,6 +51888,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -51221,6 +51948,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -51276,6 +52004,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -51331,6 +52060,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -51386,6 +52116,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -51445,6 +52176,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -51504,6 +52236,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7)
   (traces
     ((load priv-stor-1 (cat pt-5 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -51567,6 +52300,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -51632,6 +52366,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -51696,6 +52431,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -51766,6 +52502,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -51832,6 +52569,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -51894,6 +52632,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -51955,6 +52694,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -52016,6 +52756,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -52084,6 +52825,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -52149,6 +52891,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -52221,6 +52964,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -52282,6 +53026,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -52335,6 +53080,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -52391,6 +53137,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -52444,6 +53191,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -52496,6 +53244,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -52547,6 +53296,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -52602,6 +53352,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -52656,6 +53407,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -52711,6 +53463,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -52769,6 +53522,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -52826,6 +53580,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -52887,6 +53642,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -52948,6 +53704,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -53014,6 +53771,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -53081,6 +53839,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -53145,6 +53904,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -53213,6 +53973,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -53279,6 +54040,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -53331,6 +54093,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -53386,6 +54149,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -53442,6 +54206,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -53497,6 +54262,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -53556,6 +54322,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -53612,6 +54379,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -53677,6 +54445,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -53737,6 +54506,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6)
   (traces
     ((load priv-stor (cat pt (pv a l)))
       (recv
@@ -53791,6 +54561,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -53848,6 +54619,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -53907,6 +54679,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv
@@ -53966,6 +54739,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -54021,6 +54795,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6 7)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -54076,6 +54851,7 @@
   (rule fact-init-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6)
   (traces
     ((load priv-stor (cat pt (pv a l-0)))
       (recv (sig (body b (exp (gen) l) (pubk "sig" b)) (privk "sig" b)))
@@ -54340,6 +55116,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-0 (cat pt-0 (pv a l))) (1 0))
+  (strand-map 0 1)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -54392,6 +55169,7 @@
     trRl_ltx-gen-at-1)
   (operation encryption-test (added-strand ltx-gen 3)
     (sig (body b (exp (gen) l-0) (pubk "sig" b)) (privk "sig" b)) (1 1))
+  (strand-map 0 1 2)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -54451,6 +55229,7 @@
     (enc na-0 nb-0 a b
       (hash (exp (gen) (mul l-1 l-2)) (exp (gen) (mul y-0 zeta-0))))
     (1 3))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -54516,6 +55295,7 @@
     (enc na-0 nb-0 a b
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y-0 zeta-0))))
     (1 3))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -54586,6 +55366,7 @@
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul x upsilon))))
     (enc na-0 nb-0 a b
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul x upsilon)))) (1 3))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -54643,6 +55424,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 4 0 resp 4) (exp (gen) y-0) (1 3))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -54704,6 +55486,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul (rec x) zeta y (rec w))) w))
     (exp (gen) (mul (rec x) zeta y)) (1 3))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -54768,6 +55551,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 5 3 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-4 (pv b l-1))) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -54842,6 +55626,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-4 (pv b l-1))) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -54917,6 +55702,7 @@
     (added-listener
       (cat (exp (gen) (mul l l-0)) (exp (gen) (mul x upsilon))))
     (hash (exp (gen) (mul l l-0)) (exp (gen) (mul x upsilon))) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -54977,6 +55763,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 4 3 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b l-1))) (0 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -55034,6 +55821,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor (cat pt (pv b l-1))) (0 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -55096,6 +55884,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 0 resp 4) (exp (gen) y-0) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -55159,6 +55948,7 @@
     trRl_ltx-gen-at-1)
   (operation encryption-test (displaced 2 5 ltx-gen 3)
     (sig (body a (exp (gen) l-0) (pubk "sig" a)) (privk "sig" a)) (4 1))
+  (strand-map 0 1 4 2 3)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -55231,6 +56021,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
     (exp (gen) (mul l l-0)) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -55298,6 +56089,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l))
     (exp (gen) (mul l l-0)) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -55360,6 +56152,7 @@
     trRl_ltx-gen-at-1)
   (operation encryption-test (displaced 2 4 ltx-gen 3)
     (sig (body a (exp (gen) l-0) (pubk "sig" a)) (privk "sig" a)) (0 1))
+  (strand-map 0 1 3 2)
   (traces
     ((load priv-stor (cat pt-0 (pv b l)))
       (recv
@@ -55420,6 +56213,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 5 3 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b l-1))) (0 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor-0 (cat pt-2 (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -55482,6 +56276,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor (cat pt (pv b l-1))) (0 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -55546,6 +56341,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 3 resp 4) (exp (gen) y-1) (1 3))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -55622,6 +56418,7 @@
     (added-listener
       (cat (exp (gen) (mul (rec x) y-0 zeta-0 (rec w))) w))
     (exp (gen) (mul (rec x) y-0 zeta-0)) (1 3))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -55698,6 +56495,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-0 (6 0)
     (ch-msg priv-stor-1 (cat pt-3 (pv b l-0))))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -55762,6 +56560,7 @@
   (operation nonce-test (displaced 4 1 init 5) nb (0 4)
     (enc na nb a b
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul x-0 y)))))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt-0 (pv b l)))
       (recv
@@ -55831,6 +56630,7 @@
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul x y)))) nb (0 4)
     (enc na nb a b
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul x y)))))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt-0 (pv b l)))
       (recv
@@ -55893,6 +56693,7 @@
     trRl_ltx-gen-at-1)
   (operation encryption-test (displaced 2 5 ltx-gen 3)
     (sig (body a (exp (gen) l-0) (pubk "sig" a)) (privk "sig" a)) (0 1))
+  (strand-map 0 1 4 2 3)
   (traces
     ((load priv-stor (cat pt-0 (pv b l)))
       (recv
@@ -55955,6 +56756,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 5 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b l-1))) (0 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv
@@ -56027,6 +56829,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor (cat pt (pv b l-0))) (0 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -56102,6 +56905,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 3 resp 4) (exp (gen) y-1) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -56176,6 +56980,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 2 8 ltx-gen 3) (exp (gen) l-0) (6 0))
+  (strand-map 0 1 7 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -56252,6 +57057,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec w))) w)) (exp (gen) l)
     (6 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -56321,6 +57127,7 @@
   (operation encryption-test
     (added-listener (cat (exp (gen) (mul l l-0)) (exp (gen) (mul x y))))
     (hash (exp (gen) (mul l l-0)) (exp (gen) (mul x y))) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt-0 (pv b l)))
       (recv
@@ -56390,6 +57197,7 @@
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul x w y)))) nb (0 4)
     (enc na nb a b
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul x w y)))))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt-0 (pv b l)))
       (recv
@@ -56454,6 +57262,7 @@
     trRl_ltx-gen-at-1)
   (operation encryption-test (displaced 5 4 ltx-gen 3)
     (sig (body a (exp (gen) l-1) (pubk "sig" a)) (privk "sig" a)) (0 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt-0 (pv b l)))
       (recv
@@ -56526,6 +57335,7 @@
     trRl_ltx-gen-at-1)
   (operation encryption-test (added-strand ltx-gen 3)
     (sig (body a (exp (gen) l-1) (pubk "sig" a)) (privk "sig" a)) (0 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv
@@ -56602,6 +57412,7 @@
     trRl_ltx-gen-at-1)
   (operation encryption-test (displaced 6 4 ltx-gen 3)
     (sig (body a (exp (gen) l-1) (pubk "sig" a)) (privk "sig" a)) (0 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -56679,6 +57490,7 @@
     trRl_ltx-gen-at-1)
   (operation encryption-test (added-strand ltx-gen 3)
     (sig (body a (exp (gen) l-1) (pubk "sig" a)) (privk "sig" a)) (0 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -56757,6 +57569,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (displaced 6 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-3 (pv b l-1))) (0 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv
@@ -56833,6 +57646,7 @@
     trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor (cat pt (pv b l-0))) (0 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -56911,6 +57725,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor (cat pt (pv b l-1))) (0 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -56987,6 +57802,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 0 resp 4) (exp (gen) y-0) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -57065,6 +57881,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -57143,6 +57960,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-1 l-0) (w l-0)) (gen) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -57216,6 +58034,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 1 init 3) (exp (gen) x-0) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -57291,6 +58110,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 2 9 ltx-gen 3) (exp (gen) l-1) (8 0))
+  (strand-map 0 1 8 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -57374,6 +58194,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -57457,6 +58278,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 3 ltx-gen 3) (exp (gen) l-1) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -57535,6 +58357,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-1) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -57609,6 +58432,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
     (exp (gen) (mul l l-0)) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt-0 (pv b l)))
       (recv
@@ -57676,6 +58500,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l))
     (exp (gen) (mul l l-0)) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt-0 (pv b l)))
       (recv
@@ -57747,6 +58572,7 @@
     (added-listener
       (cat (exp (gen) (mul l l-0)) (exp (gen) (mul x w y))))
     (hash (exp (gen) (mul l l-0)) (exp (gen) (mul x w y))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt-0 (pv b l)))
       (recv
@@ -57818,6 +58644,7 @@
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta)))) nb (0 4)
     (enc na nb a b
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta)))))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt-0 (pv b l)))
       (recv
@@ -57899,6 +58726,7 @@
     (0 4)
     (enc na nb a b
       (hash (exp (gen) (mul l-0 l-1)) (exp (gen) (mul y zeta)))))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv
@@ -57982,6 +58810,7 @@
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta)))) nb (0 4)
     (enc na nb a b
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta)))))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -58068,6 +58897,7 @@
     (0 4)
     (enc na nb a b
       (hash (exp (gen) (mul l-0 l-1)) (exp (gen) (mul y zeta)))))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -58149,6 +58979,7 @@
     trRl_ltx-gen-at-1)
   (operation encryption-test (displaced 6 4 ltx-gen 3)
     (sig (body a (exp (gen) l-1) (pubk "sig" a)) (privk "sig" a)) (0 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt-0 (pv b l)))
       (recv
@@ -58226,6 +59057,7 @@
     trRl_ltx-gen-at-1)
   (operation encryption-test (added-strand ltx-gen 3)
     (sig (body a (exp (gen) l-1) (pubk "sig" a)) (privk "sig" a)) (0 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv
@@ -58308,6 +59140,7 @@
     trRl_ltx-gen-at-1)
   (operation encryption-test (displaced 7 4 ltx-gen 3)
     (sig (body a (exp (gen) l-1) (pubk "sig" a)) (privk "sig" a)) (0 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -58391,6 +59224,7 @@
     trRl_ltx-gen-at-1)
   (operation encryption-test (added-strand ltx-gen 3)
     (sig (body a (exp (gen) l-1) (pubk "sig" a)) (privk "sig" a)) (0 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -58474,6 +59308,7 @@
   (operation encryption-test (displaced 9 7 ltx-gen 3)
     (sig (body self (exp (gen) l-2) (pubk "sig" self))
       (privk "sig" self)) (0 1))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -58554,6 +59389,7 @@
   (operation encryption-test (added-strand ltx-gen 3)
     (sig (body self (exp (gen) l-2) (pubk "sig" self))
       (privk "sig" self)) (0 1))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -58639,6 +59475,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 10 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-5 (pv a-0 l-1))) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -58720,6 +59557,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 10 3 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-5 (pv a-0 l-1))) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -58805,6 +59643,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-5 (pv a-0 l-1))) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -58888,6 +59727,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor (cat pt (pv b l-1))) (0 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -58973,6 +59813,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 10 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-5 (pv b-0 l-1))) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -59063,6 +59904,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 10 3 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-5 (pv b-0 l-1))) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -59156,6 +59998,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-5 (pv b-0 l-1))) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv
@@ -59240,6 +60083,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
     (exp (gen) (mul l l-0)) (6 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt-0 (pv b l)))
       (recv
@@ -59311,6 +60155,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l))
     (exp (gen) (mul l l-0)) (6 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt-0 (pv b l)))
       (recv
@@ -59384,6 +60229,7 @@
     (added-listener
       (cat (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta))))
     (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta))) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt-0 (pv b l)))
       (recv
@@ -59466,6 +60312,7 @@
     (added-listener
       (cat (exp (gen) (mul l-0 l-1)) (exp (gen) (mul y zeta))))
     (hash (exp (gen) (mul l-0 l-1)) (exp (gen) (mul y zeta))) (6 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv
@@ -59551,6 +60398,7 @@
     (added-listener
       (cat (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta))))
     (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta))) (6 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -59638,6 +60486,7 @@
     (added-listener
       (cat (exp (gen) (mul l-0 l-1)) (exp (gen) (mul y zeta))))
     (hash (exp (gen) (mul l-0 l-1)) (exp (gen) (mul y zeta))) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -59725,6 +60574,7 @@
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta)))) nb (0 4)
     (enc na nb a b
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta)))))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt-0 (pv b l)))
       (recv
@@ -59810,6 +60660,7 @@
     (0 4)
     (enc na nb a b
       (hash (exp (gen) (mul l-0 l-1)) (exp (gen) (mul y zeta)))))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv
@@ -59898,6 +60749,7 @@
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta)))) nb (0 4)
     (enc na nb a b
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta)))))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -59989,6 +60841,7 @@
     (0 4)
     (enc na nb a b
       (hash (exp (gen) (mul l-0 l-1)) (exp (gen) (mul y zeta)))))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -60080,6 +60933,7 @@
     (0 4)
     (enc na nb self b
       (hash (exp (gen) (mul l-0 l-1)) (exp (gen) (mul y zeta)))))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -60168,6 +61022,7 @@
     (0 4)
     (enc na nb self b
       (hash (exp (gen) (mul l-1 l-2)) (exp (gen) (mul y zeta)))))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -60255,6 +61110,7 @@
   (operation encryption-test (displaced 10 8 ltx-gen 3)
     (sig (body self (exp (gen) l-2) (pubk "sig" self))
       (privk "sig" self)) (0 1))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -60339,6 +61195,7 @@
   (operation encryption-test (added-strand ltx-gen 3)
     (sig (body self (exp (gen) l-2) (pubk "sig" self))
       (privk "sig" self)) (0 1))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -60422,6 +61279,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
     (exp (gen) (mul l l-0)) (6 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt-0 (pv b l)))
       (recv
@@ -60502,6 +61360,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l))
     (exp (gen) (mul l l-0)) (6 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt-0 (pv b l)))
       (recv
@@ -60586,6 +61445,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l-1))
     (exp (gen) (mul l-0 l-1)) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv
@@ -60673,6 +61533,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-1) l-0))
     (exp (gen) (mul l-0 l-1)) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv
@@ -60760,6 +61621,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
     (exp (gen) (mul l l-0)) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -60846,6 +61708,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l))
     (exp (gen) (mul l l-0)) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -60935,6 +61798,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l-1))
     (exp (gen) (mul l-0 l-1)) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -61026,6 +61890,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-1) l-0))
     (exp (gen) (mul l-0 l-1)) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -61115,6 +61980,7 @@
     (added-listener
       (cat (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta))))
     (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta))) (6 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt-0 (pv b l)))
       (recv
@@ -61201,6 +62067,7 @@
     (added-listener
       (cat (exp (gen) (mul l-0 l-1)) (exp (gen) (mul y zeta))))
     (hash (exp (gen) (mul l-0 l-1)) (exp (gen) (mul y zeta))) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv
@@ -61291,6 +62158,7 @@
     (added-listener
       (cat (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta))))
     (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta))) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -61383,6 +62251,7 @@
     (added-listener
       (cat (exp (gen) (mul l-0 l-1)) (exp (gen) (mul y zeta))))
     (hash (exp (gen) (mul l-0 l-1)) (exp (gen) (mul y zeta))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -61475,6 +62344,7 @@
     (added-listener
       (cat (exp (gen) (mul l-0 l-1)) (exp (gen) (mul y zeta))))
     (hash (exp (gen) (mul l-0 l-1)) (exp (gen) (mul y zeta))) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -61564,6 +62434,7 @@
     (added-listener
       (cat (exp (gen) (mul l-1 l-2)) (exp (gen) (mul y zeta))))
     (hash (exp (gen) (mul l-1 l-2)) (exp (gen) (mul y zeta))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -61659,6 +62530,7 @@
     (0 4)
     (enc na nb self b
       (hash (exp (gen) (mul l-0 l-1)) (exp (gen) (mul y zeta)))))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -61751,6 +62623,7 @@
     (0 4)
     (enc na nb self b
       (hash (exp (gen) (mul l-1 l-2)) (exp (gen) (mul y zeta)))))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -61842,6 +62715,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (8 0)
     (ch-msg priv-stor-1 (cat pt-4 (pv a l-1))))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv
@@ -61935,6 +62809,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (9 0)
     (ch-msg priv-stor-2 (cat pt-6 (pv a l-1))))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -62025,6 +62900,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
     (exp (gen) (mul l l-0)) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt-0 (pv b l)))
       (recv
@@ -62109,6 +62985,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l))
     (exp (gen) (mul l l-0)) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt-0 (pv b l)))
       (recv
@@ -62197,6 +63074,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l-1))
     (exp (gen) (mul l-0 l-1)) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv
@@ -62288,6 +63166,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-1) l-0))
     (exp (gen) (mul l-0 l-1)) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv
@@ -62380,6 +63259,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
     (exp (gen) (mul l l-0)) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -62472,6 +63352,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l))
     (exp (gen) (mul l l-0)) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -62566,6 +63447,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l-1))
     (exp (gen) (mul l-0 l-1)) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -62661,6 +63543,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-1) l-0))
     (exp (gen) (mul l-0 l-1)) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -62754,6 +63637,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l-1))
     (exp (gen) (mul l-0 l-1)) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -62842,6 +63726,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-1) l-0))
     (exp (gen) (mul l-0 l-1)) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -62932,6 +63817,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-1) l-2))
     (exp (gen) (mul l-1 l-2)) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -63026,6 +63912,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-2) l-1))
     (exp (gen) (mul l-1 l-2)) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -63122,6 +64009,7 @@
     (added-listener
       (cat (exp (gen) (mul l-0 l-1)) (exp (gen) (mul y zeta))))
     (hash (exp (gen) (mul l-0 l-1)) (exp (gen) (mul y zeta))) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -63215,6 +64103,7 @@
     (added-listener
       (cat (exp (gen) (mul l-1 l-2)) (exp (gen) (mul y zeta))))
     (hash (exp (gen) (mul l-1 l-2)) (exp (gen) (mul y zeta))) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -63307,6 +64196,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 10 2 ltx-gen 3) (exp (gen) l-1)
     (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -63400,6 +64290,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l-0 (rec w))) w))
     (exp (gen) l-0) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv
@@ -63494,6 +64385,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 11 ltx-gen 3) (exp (gen) l-1)
     (9 0))
+  (strand-map 0 1 2 3 4 10 5 6 7 8 9)
   (traces
     ((load priv-stor-2 (cat pt-7 (pv self l-1)))
       (recv
@@ -63595,6 +64487,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l-0 (rec w))) w))
     (exp (gen) l-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -63693,6 +64586,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (9 0)
     (ch-msg priv-stor-1 (cat pt-4 (pv a l-1))))
+  (strand-map 0 1 2 3 4 5 6 7 8 9)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv
@@ -63790,6 +64684,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-1 (10 0)
     (ch-msg priv-stor-2 (cat pt-6 (pv a l-1))))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -63889,6 +64784,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-2 (12 0)
     (ch-msg priv-stor-2 (cat pt-7 (pv self l-2))))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -63986,6 +64882,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l-1))
     (exp (gen) (mul l-0 l-1)) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -64079,6 +64976,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-1) l-0))
     (exp (gen) (mul l-0 l-1)) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -64174,6 +65072,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-1) l-2))
     (exp (gen) (mul l-1 l-2)) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -64273,6 +65172,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-2) l-1))
     (exp (gen) (mul l-1 l-2)) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -64364,6 +65264,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8 9)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -64452,6 +65353,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 11 3 resp 4) (exp (gen) y-1) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -64547,6 +65449,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 11 0 resp 4) (exp (gen) y-1) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv
@@ -64645,6 +65548,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -64743,6 +65647,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-2 l-1) (w l-1)) (gen) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -64835,6 +65740,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 11 1 init 3) (exp (gen) x-0) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -64930,6 +65836,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 11 2 ltx-gen 3) (exp (gen) l-2)
     (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -65027,6 +65934,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-1) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -65130,6 +66038,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 11 4 ltx-gen 3) (exp (gen) l-2)
     (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -65225,6 +66134,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 11 5 ltx-gen 3) (exp (gen) l-2)
     (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv
@@ -65321,6 +66231,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-2) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -65418,6 +66329,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8 9 10)
   (traces
     ((load priv-stor-2 (cat pt-7 (pv self l-1)))
       (recv
@@ -65514,6 +66426,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 12 3 resp 4) (exp (gen) y-1) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -65613,6 +66526,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 12 0 resp 4) (exp (gen) y-1) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -65717,6 +66631,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -65819,6 +66734,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-2 l-1) (w l-1)) (gen) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -65915,6 +66831,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 12 1 init 3) (exp (gen) x-0) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -66013,6 +66930,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 12 4 ltx-gen 3) (exp (gen) l-2)
     (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -66112,6 +67030,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 12 2 ltx-gen 3) (exp (gen) l-3)
     (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -66216,6 +67135,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-1) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -66324,6 +67244,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 5 12 ltx-gen 3) (exp (gen) l-2)
     (11 0))
+  (strand-map 0 1 2 3 4 11 5 6 7 8 9 10)
   (traces
     ((load priv-stor-2 (cat pt-7 (pv self l-1)))
       (recv
@@ -66426,6 +67347,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 12 6 ltx-gen 3) (exp (gen) l-2)
     (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -66527,6 +67449,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-2) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -66630,6 +67553,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 11 2 ltx-gen 3) (exp (gen) l-1)
     (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -66726,6 +67650,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l-0 (rec w-0))) w-0))
     (exp (gen) l-0) (9 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv
@@ -66824,6 +67749,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 12 ltx-gen 3) (exp (gen) l-1)
     (10 0))
+  (strand-map 0 1 2 3 4 5 11 6 7 8 9 10)
   (traces
     ((load priv-stor-2 (cat pt-7 (pv self l-1)))
       (recv
@@ -66928,6 +67854,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l-0 (rec w-0))) w-0))
     (exp (gen) l-0) (10 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -67029,6 +67956,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 14 ltx-gen 3) (exp (gen) l-2)
     (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 13 8 9 10 11 12)
   (traces
     ((load priv-stor-2 (cat pt-8 (pv self-0 l-2)))
       (recv
@@ -67137,6 +68065,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l-1 (rec w))) w))
     (exp (gen) l-1) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -67240,6 +68169,7 @@
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-2 (13 0)
     (ch-msg priv-stor-2 (cat pt-7 (pv self l-2))))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -67330,6 +68260,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -67421,6 +68352,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 12 4 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-6 (pv a-0 l-2))) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -67524,6 +68456,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 12 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-6 (pv a-0 l-2))) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -67627,6 +68560,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 12 5 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-6 (pv a-0 l-2))) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv
@@ -67733,6 +68667,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-6 (pv a-0 l-2))) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -67831,6 +68766,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8 9 10)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -67927,6 +68863,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 12 4 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-6 (pv b-0 l-2))) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -68035,6 +68972,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 12 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-6 (pv b-0 l-2))) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -68144,6 +69082,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 12 5 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-6 (pv b-0 l-2))) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv
@@ -68257,6 +69196,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-6 (pv b-0 l-2))) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -68359,6 +69299,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8 9)
   (traces
     ((load priv-stor-2 (cat pt-7 (pv self l-1)))
       (recv
@@ -68459,6 +69400,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 13 4 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-8 (pv a-0 l-2))) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -68567,6 +69509,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 13 2 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-8 (pv a-0 l-3))) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -68675,6 +69618,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 13 5 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-8 (pv a-0 l-2))) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -68783,6 +69727,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 13 6 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-8 (pv a-0 l-2))) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -68894,6 +69839,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-8 (pv a-0 l-2))) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -69005,6 +69951,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 13 4 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-8 (pv b-0 l-2))) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -69120,6 +70067,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 13 2 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-8 (pv b-0 l-3))) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -69234,6 +70182,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 13 5 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-8 (pv b-0 l-2))) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -69349,6 +70298,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 13 6 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-8 (pv b-0 l-2))) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -69466,6 +70416,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-8 (pv b-0 l-2))) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -69574,6 +70525,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8 9 10 11)
   (traces
     ((load priv-stor-2 (cat pt-7 (pv self l-1)))
       (recv
@@ -69670,6 +70622,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6 7 8 9 10)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -69763,6 +70716,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 12 3 resp 4) (exp (gen) y-1) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -69862,6 +70816,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 12 0 resp 4) (exp (gen) y-1) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv
@@ -69965,6 +70920,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -70067,6 +71023,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-2 l-1) (w-0 l-1)) (gen) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -70163,6 +71120,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 12 1 init 3) (exp (gen) x-0) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -70263,6 +71221,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 12 2 ltx-gen 3) (exp (gen) l-2)
     (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -70365,6 +71324,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-1) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -70472,6 +71432,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 12 4 ltx-gen 3) (exp (gen) l-2)
     (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -70572,6 +71533,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 12 6 ltx-gen 3) (exp (gen) l-2)
     (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv
@@ -70672,6 +71634,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-2) (11 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -70773,6 +71736,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6 7 8 9 10 11)
   (traces
     ((load priv-stor-2 (cat pt-7 (pv self l-1)))
       (recv
@@ -70874,6 +71838,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 13 3 resp 4) (exp (gen) y-1) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -70977,6 +71942,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 13 0 resp 4) (exp (gen) y-1) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -71085,6 +72051,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -71191,6 +72158,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-2 l-1) (w-0 l-1)) (gen) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -71291,6 +72259,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 13 1 init 3) (exp (gen) x-0) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -71394,6 +72363,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 13 4 ltx-gen 3) (exp (gen) l-2)
     (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -71498,6 +72468,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 13 2 ltx-gen 3) (exp (gen) l-3)
     (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -71607,6 +72578,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-1) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -71719,6 +72691,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 6 13 ltx-gen 3) (exp (gen) l-2)
     (12 0))
+  (strand-map 0 1 2 3 4 5 12 6 7 8 9 10 11)
   (traces
     ((load priv-stor-2 (cat pt-7 (pv self l-1)))
       (recv
@@ -71825,6 +72798,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 13 7 ltx-gen 3) (exp (gen) l-2)
     (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -71930,6 +72904,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-2) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -72034,6 +73009,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11 12 13)
   (traces
     ((load priv-stor-2 (cat pt-8 (pv self-0 l-2)))
       (recv
@@ -72145,6 +73121,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (14 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14)
   (traces
     ((load priv-stor (cat pt (pv b l-2)))
       (recv
@@ -72255,6 +73232,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 15 0 resp 4) (exp (gen) y-0) (14 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -72362,6 +73340,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (14 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14)
   (traces
     ((load priv-stor (cat pt (pv b l-2)))
       (recv
@@ -72467,6 +73446,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-3 l-2) (w l-2)) (gen) (14 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14)
   (traces
     ((load priv-stor (cat pt (pv b l-2)))
       (recv
@@ -72567,6 +73547,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 15 1 init 3) (exp (gen) x-0) (14 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -72672,6 +73653,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 15 7 ltx-gen 3) (exp (gen) l-3)
     (14 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -72775,6 +73757,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 15 2 ltx-gen 3) (exp (gen) l-3)
     (14 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -72880,6 +73863,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 15 ltx-gen 3) (exp (gen) l-3)
     (14 0))
+  (strand-map 0 1 2 3 4 5 6 7 14 8 9 10 11 12 13)
   (traces
     ((load priv-stor-2 (cat pt-8 (pv self-0 l-2)))
       (recv
@@ -72989,6 +73973,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 15 9 ltx-gen 3) (exp (gen) l-3)
     (14 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -73095,6 +74080,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-3) (14 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14)
   (traces
     ((load priv-stor (cat pt (pv b l-2)))
       (recv
@@ -73204,6 +74190,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 15 ltx-gen 3) (exp (gen) l-2)
     (13 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 14 9 10 11 12 13)
   (traces
     ((load priv-stor-2 (cat pt-8 (pv self-0 l-2)))
       (recv
@@ -73315,6 +74302,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l-1 (rec w))) w))
     (exp (gen) l-1) (13 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -73406,6 +74394,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -73498,6 +74487,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8 9)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -73582,6 +74572,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8)
   (traces
     ((load priv-stor-2 (cat pt-7 (pv self l-1)))
       (recv
@@ -73683,6 +74674,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8 9 10)
   (traces
     ((load priv-stor-2 (cat pt-7 (pv self l-1)))
       (recv
@@ -73775,6 +74767,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8 9)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -73870,6 +74863,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 13 4 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-6 (pv a-0 l-2))) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -73977,6 +74971,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 13 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-6 (pv a-0 l-2))) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -74083,6 +75078,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 13 6 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-6 (pv a-0 l-2))) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv
@@ -74193,6 +75189,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-6 (pv a-0 l-2))) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -74295,6 +75292,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6 7 8 9 10 11)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -74397,6 +75395,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 13 4 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-6 (pv b-0 l-2))) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -74511,6 +75510,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 13 2 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-6 (pv b-0 l-2))) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -74625,6 +75625,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 13 6 ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-6 (pv b-0 l-2))) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-0)))
       (recv
@@ -74742,6 +75743,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-2 (cat pt-6 (pv b-0 l-2))) (12 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -74848,6 +75850,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8 9 10)
   (traces
     ((load priv-stor-2 (cat pt-7 (pv self l-1)))
       (recv
@@ -74954,6 +75957,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 14 4 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-8 (pv a-0 l-2))) (13 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -75067,6 +76071,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 14 2 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-8 (pv a-0 l-3))) (13 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -75179,6 +76184,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 14 6 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-8 (pv a-0 l-2))) (13 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -75291,6 +76297,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 14 7 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-8 (pv a-0 l-2))) (13 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -75405,6 +76412,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-8 (pv a-0 l-2))) (13 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -75521,6 +76529,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 14 4 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-8 (pv b-0 l-2))) (13 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -75641,6 +76650,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 14 2 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-8 (pv b-0 l-3))) (13 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -75759,6 +76769,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 14 6 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-8 (pv b-0 l-2))) (13 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -75878,6 +76889,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 14 7 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-8 (pv b-0 l-2))) (13 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -75999,6 +77011,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-8 (pv b-0 l-2))) (13 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -76111,6 +77124,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (5 0))
+  (strand-map 0 1 2 3 4 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor-2 (cat pt-7 (pv self l-1)))
       (recv
@@ -76209,6 +77223,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor-2 (cat pt-8 (pv self-0 l-2)))
       (recv
@@ -76320,6 +77335,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 16 7 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-9 (pv b-0 l-3))) (15 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -76440,6 +77456,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 16 2 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-9 (pv b-0 l-3))) (15 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -76560,6 +77577,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 16 8 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-9 (pv b-0 l-3))) (15 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15)
   (traces
     ((load priv-stor (cat pt (pv b l-2)))
       (recv
@@ -76680,6 +77698,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 16 9 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-9 (pv b-0 l-3))) (15 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -76802,6 +77821,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-9 (pv b-0 l-3))) (15 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15)
   (traces
     ((load priv-stor (cat pt (pv b l-2)))
       (recv
@@ -76921,6 +77941,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 16 7 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-9 (pv a l-3))) (15 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -77034,6 +78055,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 16 2 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-9 (pv a l-3))) (15 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -77147,6 +78169,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 16 8 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-9 (pv a l-3))) (15 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15)
   (traces
     ((load priv-stor (cat pt (pv b l-2)))
       (recv
@@ -77259,6 +78282,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 16 9 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-9 (pv a l-3))) (15 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -77374,6 +78398,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-9 (pv a l-3))) (15 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15)
   (traces
     ((load priv-stor (cat pt (pv b l-2)))
       (recv
@@ -77481,6 +78506,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11 12 13 14)
   (traces
     ((load priv-stor-2 (cat pt-8 (pv self-0 l-2)))
       (recv
@@ -77586,6 +78612,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11 12 13 14)
   (traces
     ((load priv-stor-2 (cat pt-8 (pv self-0 l-2)))
       (recv
@@ -77700,6 +78727,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (15 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15)
   (traces
     ((load priv-stor (cat pt (pv b l-2)))
       (recv
@@ -77813,6 +78841,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 16 0 resp 4) (exp (gen) y-0) (15 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -77923,6 +78952,7 @@
     trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0
     trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x-0) (15 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15)
   (traces
     ((load priv-stor (cat pt (pv b l-2)))
       (recv
@@ -78031,6 +79061,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-3 l-2) (w l-2)) (gen) (15 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15)
   (traces
     ((load priv-stor (cat pt (pv b l-2)))
       (recv
@@ -78134,6 +79165,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 16 1 init 3) (exp (gen) x-0) (15 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv
@@ -78242,6 +79274,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 16 8 ltx-gen 3) (exp (gen) l-3)
     (15 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -78348,6 +79381,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 16 2 ltx-gen 3) (exp (gen) l-3)
     (15 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -78455,6 +79489,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 9 16 ltx-gen 3) (exp (gen) l-3)
     (15 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 15 9 10 11 12 13 14)
   (traces
     ((load priv-stor-2 (cat pt-8 (pv self-0 l-2)))
       (recv
@@ -78567,6 +79602,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 16 10 ltx-gen 3) (exp (gen) l-3)
     (15 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -78676,6 +79712,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-3) (15 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15)
   (traces
     ((load priv-stor (cat pt (pv b l-2)))
       (recv
@@ -78775,6 +79812,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -78862,6 +79900,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8 9)
   (traces
     ((load priv-stor-2 (cat pt-7 (pv self l-1)))
       (recv
@@ -78953,6 +79992,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -79039,6 +80079,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8 9 10)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -79127,6 +80168,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8 9)
   (traces
     ((load priv-stor-2 (cat pt-7 (pv self l-1)))
       (recv
@@ -79221,6 +80263,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8 9 10 11)
   (traces
     ((load priv-stor-2 (cat pt-7 (pv self l-1)))
       (recv
@@ -79316,6 +80359,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11)
   (traces
     ((load priv-stor-2 (cat pt-8 (pv self-0 l-2)))
       (recv
@@ -79413,6 +80457,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11 12 13)
   (traces
     ((load priv-stor-2 (cat pt-8 (pv self-0 l-2)))
       (recv
@@ -79513,6 +80558,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11 12 13)
   (traces
     ((load priv-stor-2 (cat pt-8 (pv self-0 l-2)))
       (recv
@@ -79628,6 +80674,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 17 8 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-9 (pv b-0 l-3))) (16 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -79752,6 +80799,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 17 2 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-9 (pv b-0 l-3))) (16 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -79875,6 +80923,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 17 9 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-9 (pv b-0 l-3))) (16 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16)
   (traces
     ((load priv-stor (cat pt (pv b l-2)))
       (recv
@@ -79999,6 +81048,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 17 10 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-9 (pv b-0 l-3))) (16 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -80125,6 +81175,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-9 (pv b-0 l-3))) (16 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16)
   (traces
     ((load priv-stor (cat pt (pv b l-2)))
       (recv
@@ -80248,6 +81299,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 17 8 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-9 (pv a l-3))) (16 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -80365,6 +81417,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 17 2 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-9 (pv a l-3))) (16 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -80481,6 +81534,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 17 9 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-9 (pv a l-3))) (16 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16)
   (traces
     ((load priv-stor (cat pt (pv b l-2)))
       (recv
@@ -80597,6 +81651,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 17 10 ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-9 (pv a l-3))) (16 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16)
   (traces
     ((load priv-stor (cat pt (pv b l-1)))
       (recv
@@ -80716,6 +81771,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-3 (cat pt-9 (pv a l-3))) (16 0))
+  (strand-map 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16)
   (traces
     ((load priv-stor (cat pt (pv b l-2)))
       (recv
@@ -80826,6 +81882,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11 12 13 14 15)
   (traces
     ((load priv-stor-2 (cat pt-8 (pv self-0 l-2)))
       (recv
@@ -80923,6 +81980,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -81016,6 +82074,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8 9)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -81101,6 +82160,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8)
   (traces
     ((load priv-stor-2 (cat pt-7 (pv self l-1)))
       (recv
@@ -81203,6 +82263,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8 9 10)
   (traces
     ((load priv-stor-2 (cat pt-7 (pv self l-1)))
       (recv
@@ -81294,6 +82355,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8 9 10)
   (traces
     ((load priv-stor-2 (cat pt-8 (pv self-0 l-2)))
       (recv
@@ -81388,6 +82450,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor-2 (cat pt-8 (pv self-0 l-2)))
       (recv
@@ -81486,6 +82549,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11 12)
   (traces
     ((load priv-stor-2 (cat pt-8 (pv self-0 l-2)))
       (recv
@@ -81589,6 +82653,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11 12 13 14)
   (traces
     ((load priv-stor-2 (cat pt-8 (pv self-0 l-2)))
       (recv
@@ -81686,6 +82751,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8)
   (traces
     ((load priv-stor (cat pt-0 (pv b l-1)))
       (recv
@@ -81774,6 +82840,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8 9)
   (traces
     ((load priv-stor-2 (cat pt-7 (pv self l-1)))
       (recv
@@ -81864,6 +82931,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8 9)
   (traces
     ((load priv-stor-2 (cat pt-8 (pv self-0 l-2)))
       (recv
@@ -81954,6 +83022,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8 9 10 11)
   (traces
     ((load priv-stor-2 (cat pt-8 (pv self-0 l-2)))
       (recv
@@ -82051,6 +83120,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8 9 10 11 12 13)
   (traces
     ((load priv-stor-2 (cat pt-8 (pv self-0 l-2)))
       (recv
@@ -82146,6 +83216,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8)
   (traces
     ((load priv-stor-2 (cat pt-8 (pv self-0 l-2)))
       (recv
@@ -82243,6 +83314,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8 9 10)
   (traces
     ((load priv-stor-2 (cat pt-8 (pv self-0 l-2)))
       (recv
@@ -82332,6 +83404,7 @@
   (rule fact-init-neq0 fact-resp-neq0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (6 0))
+  (strand-map 0 1 2 3 4 5 7 8 9)
   (traces
     ((load priv-stor-2 (cat pt-8 (pv self-0 l-2)))
       (recv
@@ -82594,6 +83667,7 @@
   (rule fact-resp-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor (cat pt (pv b l))) (0 0))
+  (strand-map 0)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -82633,6 +83707,7 @@
   (rule fact-resp-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation encryption-test (added-strand ltx-gen 3)
     (sig (body a (exp (gen) l-0) (pubk "sig" a)) (privk "sig" a)) (0 1))
+  (strand-map 0 1)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -82680,6 +83755,7 @@
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta)))) nb (0 4)
     (enc na nb a b
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta)))))
+  (strand-map 0 1 2)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -82730,6 +83806,7 @@
     (added-listener
       (cat (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta))))
     (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta))) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -82781,6 +83858,7 @@
   (rule fact-resp-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
     (exp (gen) (mul l l-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -82834,6 +83912,7 @@
   (rule fact-resp-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l))
     (exp (gen) (mul l l-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -83067,6 +84146,7 @@
   (rule fact-resp-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor (cat pt (pv b l))) (0 0))
+  (strand-map 0)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -83105,6 +84185,7 @@
   (rule fact-resp-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation encryption-test (added-strand ltx-gen 3)
     (sig (body a (exp (gen) l-0) (pubk "sig" a)) (privk "sig" a)) (0 1))
+  (strand-map 0 1)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -83151,6 +84232,7 @@
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta)))) nb (0 4)
     (enc na nb a b
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta)))))
+  (strand-map 0 1 2)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -83200,6 +84282,7 @@
     (added-listener
       (cat (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta))))
     (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta))) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -83250,6 +84333,7 @@
   (rule fact-resp-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
     (exp (gen) (mul l l-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -83302,6 +84386,7 @@
   (rule fact-resp-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l))
     (exp (gen) (mul l l-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -83355,6 +84440,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-0 (5 0)
     (ch-msg priv-stor (cat pt (pv b l-0))))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -83409,6 +84495,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 ltx-gen 3) (exp (gen) l-0) (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -83468,6 +84555,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec w))) w)) (exp (gen) l)
     (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -83522,6 +84610,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -83577,6 +84666,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 0 resp 4) (exp (gen) y-0) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -83639,6 +84729,7 @@
   (rule fact-resp-neq0 gen-st-ltx-disclose-0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -83702,6 +84793,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-1 l-0) (w l-0)) (gen) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -83761,6 +84853,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 8 ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 7 1 2 3 4 5 6)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -83827,6 +84920,7 @@
   (rule fact-resp-neq0 gen-st-ltx-disclose-0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -83896,6 +84990,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -83958,6 +85053,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -84018,6 +85114,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -84074,6 +85171,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv a-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -84140,6 +85238,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv a-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -84210,6 +85309,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv a-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -84280,6 +85380,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv b-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -84353,6 +85454,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv b-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -84430,6 +85532,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv b-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -84501,6 +85604,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -84551,6 +85655,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -84607,6 +85712,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -84658,6 +85764,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -84891,6 +85998,7 @@
   (rule fact-resp-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor (cat pt (pv b l))) (0 0))
+  (strand-map 0)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -84929,6 +86037,7 @@
   (rule fact-resp-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation encryption-test (added-strand ltx-gen 3)
     (sig (body a (exp (gen) l-0) (pubk "sig" a)) (privk "sig" a)) (0 1))
+  (strand-map 0 1)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -84975,6 +86084,7 @@
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta)))) nb (0 4)
     (enc na nb a b
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta)))))
+  (strand-map 0 1 2)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -85024,6 +86134,7 @@
     (added-listener
       (cat (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta))))
     (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta))) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -85074,6 +86185,7 @@
   (rule fact-resp-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
     (exp (gen) (mul l l-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -85125,6 +86237,7 @@
   (rule fact-resp-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l))
     (exp (gen) (mul l l-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -85179,6 +86292,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-0 (5 0)
     (ch-msg priv-stor-0 (cat pt-2 (pv a l-0))))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -85234,6 +86348,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 7 ltx-gen 3) (exp (gen) l-0) (5 0))
+  (strand-map 0 6 1 2 3 4 5)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -85295,6 +86410,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec w))) w)) (exp (gen) l)
     (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -85350,6 +86466,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -85407,6 +86524,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 0 resp 4) (exp (gen) y-0) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -85470,6 +86588,7 @@
   (rule fact-resp-neq0 gen-st-ltx-disclose-0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -85532,6 +86651,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-1 l-0) (w l-0)) (gen) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -85590,6 +86710,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 8 ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 7 1 2 3 4 5 6)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -85655,6 +86776,7 @@
   (rule fact-resp-neq0 gen-st-ltx-disclose-0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -85723,6 +86845,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -85786,6 +86909,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -85845,6 +86969,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -85903,6 +87028,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv a-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -85969,6 +87095,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv a-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -86039,6 +87166,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv a-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -86103,6 +87231,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6 7)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -86166,6 +87295,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv b-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -86239,6 +87369,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv b-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -86316,6 +87447,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv b-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -86381,6 +87513,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -86439,6 +87572,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -86492,6 +87626,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -86727,6 +87862,7 @@
   (rule fact-resp-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor (cat pt (pv b l))) (0 0))
+  (strand-map 0)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -86765,6 +87901,7 @@
   (rule fact-resp-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation encryption-test (added-strand ltx-gen 3)
     (sig (body a (exp (gen) l-0) (pubk "sig" a)) (privk "sig" a)) (0 1))
+  (strand-map 0 1)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -86811,6 +87948,7 @@
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta)))) nb (0 4)
     (enc na nb a b
       (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta)))))
+  (strand-map 0 1 2)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -86860,6 +87998,7 @@
     (added-listener
       (cat (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta))))
     (hash (exp (gen) (mul l l-0)) (exp (gen) (mul y zeta))) (3 0))
+  (strand-map 0 1 2 3)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -86910,6 +88049,7 @@
   (rule fact-resp-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l) l-0))
     (exp (gen) (mul l l-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -86961,6 +88101,7 @@
   (rule fact-resp-neq0 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-listener (cat (exp (gen) l-0) l))
     (exp (gen) (mul l l-0)) (4 0))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -87014,6 +88155,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-0 (5 0)
     (ch-msg priv-stor-0 (cat pt-2 (pv a l-0))))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -87069,6 +88211,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-0 (5 0)
     (ch-msg priv-stor (cat pt (pv b l-0))))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -87123,6 +88266,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 7 ltx-gen 3) (exp (gen) l-0) (5 0))
+  (strand-map 0 6 1 2 3 4 5)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -87184,6 +88328,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec w))) w)) (exp (gen) l)
     (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -87241,6 +88386,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 7 2 ltx-gen 3) (exp (gen) l-0) (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -87300,6 +88446,7 @@
   (operation nonce-test
     (added-listener (cat (exp (gen) (mul l (rec w))) w)) (exp (gen) l)
     (5 0))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -87354,6 +88501,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -87411,6 +88559,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 0 resp 4) (exp (gen) y-0) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -87474,6 +88623,7 @@
   (rule fact-resp-neq0 gen-st-ltx-disclose-0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -87536,6 +88686,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-1 l-0) (w l-0)) (gen) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -87593,6 +88744,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 8 ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 7 1 2 3 4 5 6)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -87658,6 +88810,7 @@
   (rule fact-resp-neq0 gen-st-ltx-disclose-0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -87726,6 +88879,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -87789,6 +88943,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -87849,6 +89004,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -87904,6 +89060,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 0 resp 4) (exp (gen) y-0) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b lb)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -87966,6 +89123,7 @@
   (rule fact-resp-neq0 gen-st-ltx-disclose-0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand init 3) (exp (gen) x) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -88029,6 +89187,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (contracted (l-1 l-0) (w l-0)) (gen) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -88087,6 +89246,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 1 8 ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 7 1 2 3 4 5 6)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -88153,6 +89313,7 @@
   (rule fact-resp-neq0 gen-st-ltx-disclose-0 trRl_ltx-disclose-at-0
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand resp 4) (exp (gen) y-0) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -88222,6 +89383,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (displaced 8 2 ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -88284,6 +89446,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-gen 3) (exp (gen) l-1) (7 0))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -88344,6 +89507,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -88402,6 +89566,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv a-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -88468,6 +89633,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv a-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -88538,6 +89704,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv a-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -88605,6 +89772,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-0 (7 0)
     (ch-msg priv-stor (cat pt (pv b l-0))))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -88663,6 +89831,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6 7)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -88726,6 +89895,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv b-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -88799,6 +89969,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv b-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -88876,6 +90047,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv b-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -88942,6 +90114,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -88998,6 +90171,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv a-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -89064,6 +90238,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv a-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -89134,6 +90309,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv a-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -89202,6 +90378,7 @@
     trRl_ltx-disclose-at-1 trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation nonce-test (added-strand ltx-disclose 3) l-0 (7 0)
     (ch-msg priv-stor-0 (cat pt-2 (pv a l-0))))
+  (strand-map 0 1 2 3 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -89266,6 +90443,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 1 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv b-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -89339,6 +90517,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (displaced 9 2 ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv b-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -89416,6 +90595,7 @@
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation channel-test (added-strand ltx-gen 2)
     (ch-msg priv-stor-1 (cat pt-4 (pv b-0 l-1))) (8 0))
+  (strand-map 0 1 2 3 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -89487,6 +90667,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -89538,6 +90719,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -89599,6 +90781,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -89653,6 +90836,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5 6)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -89703,6 +90887,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -89762,6 +90947,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7 8)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -89817,6 +91003,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -89870,6 +91057,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -89921,6 +91109,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4 5)
   (traces
     ((load priv-stor-0 (cat pt-3 (pv self l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -89977,6 +91166,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6 7)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -90029,6 +91219,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -90082,6 +91273,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -90133,6 +91325,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5 6)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -90184,6 +91377,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4 5)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
@@ -90231,6 +91425,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (4 0))
+  (strand-map 0 1 2 3 5)
   (traces
     ((load priv-stor (cat pt (pv b l)))
       (recv
@@ -90280,6 +91475,7 @@
   (rule fact-resp-neq0 trRl_ltx-disclose-at-0 trRl_ltx-disclose-at-1
     trRl_ltx-gen-at-0 trRl_ltx-gen-at-1)
   (operation generalization deleted (3 0))
+  (strand-map 0 1 2 4)
   (traces
     ((load priv-stor (cat pt (pv b l-0)))
       (recv (sig (body a (exp (gen) l) (pubk "sig" a)) (privk "sig" a)))
