@@ -147,7 +147,7 @@
   (seen-ops
     (2
       (operation encryption-test (displaced 4 2 ca 1)
-        (enc "ekc" mf-1 ek-1 (privk mf-1)) (3 0))))
+        (enc "ekc" mf-1 ek-1 (privk mf-1)) (3 0)) (strand-map 0 1 2 1)))
   (unrealized (3 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -285,7 +285,7 @@
   (seen-ops
     (7
       (operation encryption-test (displaced 4 2 ca 1)
-        (enc "ekc" mf-0 ek-0 (privk mf-0)) (3 0))))
+        (enc "ekc" mf-0 ek-0 (privk mf-0)) (3 0)) (strand-map 0 1 2 1)))
   (unrealized (3 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -381,7 +381,8 @@
   (label 12)
   (parent 11)
   (seen 10)
-  (seen-ops (10 (operation generalization deleted (1 0))))
+  (seen-ops
+    (10 (operation generalization deleted (1 0)) (strand-map 0 2 3 4)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -533,7 +534,8 @@
   (seen-ops
     (13
       (operation encryption-test (displaced 7 5 ca 1)
-        (enc "ekc" mf-2 ek-1 (privk mf-2)) (6 0))))
+        (enc "ekc" mf-2 ek-1 (privk mf-2)) (6 0))
+      (strand-map 0 1 2 3 4 5 4)))
   (unrealized (6 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -565,7 +567,8 @@
   (label 17)
   (parent 14)
   (seen 10)
-  (seen-ops (10 (operation generalization deleted (1 0))))
+  (seen-ops
+    (10 (operation generalization deleted (1 0)) (strand-map 0 2 3 4)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -598,7 +601,8 @@
   (label 18)
   (parent 15)
   (seen 10)
-  (seen-ops (10 (operation generalization deleted (4 0))))
+  (seen-ops
+    (10 (operation generalization deleted (4 0)) (strand-map 0 1 2 3)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

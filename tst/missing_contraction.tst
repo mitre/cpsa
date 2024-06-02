@@ -229,7 +229,8 @@
   (label 10)
   (parent 9)
   (seen 8)
-  (seen-ops (8 (operation generalization separated n-0)))
+  (seen-ops
+    (8 (operation generalization separated n-0) (strand-map 0 1)))
   (realized)
   (origs (n (0 0)))
   (comment "1 in cohort - 0 not yet seen"))

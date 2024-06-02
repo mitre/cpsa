@@ -3687,7 +3687,8 @@
   (label 58)
   (parent 26)
   (seen 18)
-  (seen-ops (18 (operation generalization deleted (3 0))))
+  (seen-ops
+    (18 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -7883,7 +7884,9 @@
   (label 118)
   (parent 62)
   (seen 47)
-  (seen-ops (47 (operation generalization deleted (3 0))))
+  (seen-ops
+    (47 (operation generalization deleted (3 0))
+      (strand-map 0 1 2 4 5)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

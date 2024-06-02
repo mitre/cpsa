@@ -638,7 +638,7 @@
   (seen-ops
     (14
       (operation nonce-test (added-strand dev-up 3) k (3 0)
-        (ch-msg start-ch (cat "power-up" d o k)))))
+        (ch-msg start-ch (cat "power-up" d o k))) (strand-map 0 1 2 3)))
   (unrealized (0 1) (1 2) (3 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -678,7 +678,7 @@
   (seen-ops
     (15
       (operation encryption-test (added-strand dev-up 6) (enc "up" k)
-        (0 1))))
+        (0 1)) (strand-map 0 1 2 3 4)))
   (unrealized (0 1))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -792,7 +792,8 @@
   (seen-ops
     (17
       (operation nonce-test (added-strand dev-up 3) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k)))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -1061,7 +1062,8 @@
   (seen-ops
     (21
       (operation channel-test (added-strand dev-open 4)
-        (ch-msg ls (cat pt "st" d "opened")) (1 2))))
+        (ch-msg ls (cat pt "st" d "opened")) (1 2))
+      (strand-map 0 1 2 3 4)))
   (unrealized (1 2))
   (origs (pt-6 (4 3)) (pt-3 (2 4)) (pt-1 (2 2)) (n (1 3)) (k (0 0)))
   (comment "3 in cohort - 2 not yet seen"))
@@ -1155,7 +1157,9 @@
   (label 22)
   (parent 20)
   (seen 21)
-  (seen-ops (21 (operation generalization weakened ((4 3) (5 2)))))
+  (seen-ops
+    (21 (operation generalization weakened ((4 3) (5 2)))
+      (strand-map 0 1 2 3 4 5)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

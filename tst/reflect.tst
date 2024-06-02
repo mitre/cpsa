@@ -139,7 +139,7 @@
   (seen-ops
     (4
       (operation encryption-test (added-strand resp 2) (enc a (invk b))
-        (3 0))))
+        (3 0)) (strand-map 0 1 2 1)))
   (unrealized (3 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -158,7 +158,8 @@
   (label 7)
   (parent 5)
   (seen 1)
-  (seen-ops (1 (operation generalization deleted (1 0))))
+  (seen-ops
+    (1 (operation generalization deleted (1 0)) (strand-map 0 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -307,7 +308,7 @@
   (label 15)
   (parent 14)
   (seen 9)
-  (seen-ops (9 (operation generalization deleted (1 0))))
+  (seen-ops (9 (operation generalization deleted (1 0)) (strand-map 0)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -352,7 +353,7 @@
   (seen-ops
     (14
       (operation encryption-test (added-strand resp 2) (enc b (invk a))
-        (3 0))))
+        (3 0)) (strand-map 0 1 2 1)))
   (unrealized (3 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -371,7 +372,8 @@
   (label 18)
   (parent 16)
   (seen 10)
-  (seen-ops (10 (operation generalization deleted (1 0))))
+  (seen-ops
+    (10 (operation generalization deleted (1 0)) (strand-map 0 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -514,7 +516,7 @@
   (seen-ops
     (23
       (operation encryption-test (added-strand resp 2) (enc a (invk b))
-        (3 0))))
+        (3 0)) (strand-map 0 1 2 1)))
   (unrealized (3 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -533,7 +535,8 @@
   (label 26)
   (parent 24)
   (seen 20)
-  (seen-ops (20 (operation generalization deleted (1 0))))
+  (seen-ops
+    (20 (operation generalization deleted (1 0)) (strand-map 0 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

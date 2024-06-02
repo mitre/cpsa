@@ -535,7 +535,8 @@ addAnnoKey Dead xs = addKeyValues "dead" [] xs
 
 displaySeen :: SeenSkel -> SExpr ()
 displaySeen (label, k) =
-    L () (N () label : displayOperation k ctx [])
+    L () (N () label : displayOperation k ctx
+                (displayStrandMap k []))
     where
       ctx = varsContext vars
       vars = kfvars k ++ kvars k

@@ -167,7 +167,7 @@
   (seen-ops
     (3
       (operation encryption-test (displaced 4 2 tpm 1)
-        (enc t ke-0 (invk km-0)) (3 0))))
+        (enc t ke-0 (invk km-0)) (3 0)) (strand-map 0 1 2 1)))
   (unrealized (0 0) (3 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -224,7 +224,7 @@
   (seen-ops
     (4
       (operation encryption-test (displaced 5 3 tpm 1)
-        (enc t ke-1 (invk km-1)) (4 0))))
+        (enc t ke-1 (invk km-1)) (4 0)) (strand-map 0 1 2 3 1)))
   (unrealized (0 0) (4 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -359,7 +359,8 @@
   (label 13)
   (parent 10)
   (seen 9)
-  (seen-ops (9 (operation generalization deleted (1 0))))
+  (seen-ops
+    (9 (operation generalization deleted (1 0)) (strand-map 0 2 3)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -419,7 +420,8 @@
   (label 15)
   (parent 12)
   (seen 11)
-  (seen-ops (11 (operation generalization deleted (1 0))))
+  (seen-ops
+    (11 (operation generalization deleted (1 0)) (strand-map 0 2 3 4)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -510,7 +512,8 @@
   (label 18)
   (parent 14)
   (seen 11)
-  (seen-ops (11 (operation generalization deleted (1 0))))
+  (seen-ops
+    (11 (operation generalization deleted (1 0)) (strand-map 0 2 3 4)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -576,7 +579,7 @@
   (seen-ops
     (14
       (operation encryption-test (displaced 6 4 tpm 1)
-        (enc t ke-1 (invk km-1)) (5 0))))
+        (enc t ke-1 (invk km-1)) (5 0)) (strand-map 0 1 2 3 4 3)))
   (unrealized (2 1) (5 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -602,7 +605,8 @@
   (label 21)
   (parent 16)
   (seen 9)
-  (seen-ops (9 (operation generalization deleted (1 0))))
+  (seen-ops
+    (9 (operation generalization deleted (1 0)) (strand-map 0 2 3)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -706,7 +710,7 @@
   (seen-ops
     (17
       (operation encryption-test (displaced 7 5 tpm 1)
-        (enc t ke-1 (invk km-2)) (6 0))))
+        (enc t ke-1 (invk km-2)) (6 0)) (strand-map 0 1 2 3 4 5 4)))
   (unrealized (3 1) (6 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -732,7 +736,8 @@
   (label 25)
   (parent 19)
   (seen 9)
-  (seen-ops (9 (operation generalization deleted (3 0))))
+  (seen-ops
+    (9 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -761,7 +766,8 @@
   (label 26)
   (parent 22)
   (seen 11)
-  (seen-ops (11 (operation generalization deleted (1 0))))
+  (seen-ops
+    (11 (operation generalization deleted (1 0)) (strand-map 0 2 3 4)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -790,7 +796,8 @@
   (label 27)
   (parent 23)
   (seen 11)
-  (seen-ops (11 (operation generalization deleted (4 0))))
+  (seen-ops
+    (11 (operation generalization deleted (4 0)) (strand-map 0 1 2 3)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

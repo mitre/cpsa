@@ -55,7 +55,7 @@
   (seen-ops
     (2
       (operation nonce-test (added-strand trans2 2) n (1 2) (enc n B k)
-        (enc n B B k))))
+        (enc n B B k)) (strand-map 0 1)))
   (unrealized (0 0) (1 2))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -276,7 +276,7 @@
   (seen-ops
     (16
       (operation nonce-test (added-strand trans2 2) n (1 2) (enc n B k)
-        (enc n n C k) (enc n B B k))))
+        (enc n n C k) (enc n B B k)) (strand-map 0 1 2)))
   (unrealized (0 0) (1 2))
   (origs (n (1 0)))
   (comment "3 in cohort - 2 not yet seen"))
@@ -344,7 +344,7 @@
   (seen-ops
     (9
       (operation nonce-test (displaced 5 2 orig 2) n (4 1)
-        (enc n B B k))))
+        (enc n B B k)) (strand-map 0 1 2 3 3)))
   (unrealized (0 0) (1 0) (2 2) (4 1))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -413,7 +413,7 @@
   (seen-ops
     (14
       (operation nonce-test (contracted (B A)) n (0 0) (enc n A k)
-        (enc n A A k))))
+        (enc n A A k)) (strand-map 0 1 2)))
   (unrealized (0 0))
   (origs (n (2 0)))
   (comment "3 in cohort - 2 not yet seen"))
@@ -461,7 +461,7 @@
   (seen-ops
     (12
       (operation nonce-test (displaced 4 1 orig 2) n (3 1)
-        (enc n B B k))))
+        (enc n B B k)) (strand-map 0 1 2 2)))
   (unrealized (0 0) (1 2) (3 1))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -593,7 +593,7 @@
   (seen-ops
     (31
       (operation nonce-test (displaced 4 1 trans2 2) n (0 0) (enc n A k)
-        (enc n B B k))))
+        (enc n B B k)) (strand-map 0 1 2 3)))
   (unrealized (0 0))
   (comment "4 in cohort - 3 not yet seen"))
 
@@ -614,7 +614,8 @@
   (label 27)
   (parent 21)
   (seen 13)
-  (seen-ops (13 (operation generalization deleted (2 0))))
+  (seen-ops
+    (13 (operation generalization deleted (2 0)) (strand-map 0 1)))
   (realized)
   (origs (n (1 0)))
   (comment "1 in cohort - 0 not yet seen"))
@@ -638,7 +639,8 @@
   (label 28)
   (parent 22)
   (seen 14)
-  (seen-ops (14 (operation generalization deleted (3 0))))
+  (seen-ops
+    (14 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -682,7 +684,9 @@
   (label 30)
   (parent 24)
   (seen 14)
-  (seen-ops (14 (operation generalization weakened ((1 1) (0 0)))))
+  (seen-ops
+    (14 (operation generalization weakened ((1 1) (0 0)))
+      (strand-map 0 1 2)))
   (realized)
   (origs (n (2 0)))
   (comment "1 in cohort - 0 not yet seen"))
@@ -796,7 +800,8 @@
   (label 35)
   (parent 29)
   (seen 32)
-  (seen-ops (32 (operation generalization deleted (3 0))))
+  (seen-ops
+    (32 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -819,7 +824,8 @@
   (label 36)
   (parent 31)
   (seen 14)
-  (seen-ops (14 (operation generalization deleted (3 0))))
+  (seen-ops
+    (14 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -842,7 +848,9 @@
   (label 37)
   (parent 33)
   (seen 32)
-  (seen-ops (32 (operation generalization weakened ((3 1) (0 0)))))
+  (seen-ops
+    (32 (operation generalization weakened ((3 1) (0 0)))
+      (strand-map 0 1 2 3)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -891,7 +899,8 @@
   (label 39)
   (parent 38)
   (seen 32)
-  (seen-ops (32 (operation generalization deleted (4 0))))
+  (seen-ops
+    (32 (operation generalization deleted (4 0)) (strand-map 0 1 2 3)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

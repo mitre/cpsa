@@ -537,7 +537,8 @@
   (label 19)
   (parent 17)
   (seen 18)
-  (seen-ops (18 (operation generalization separated n-0)))
+  (seen-ops
+    (18 (operation generalization separated n-0) (strand-map 0 1 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

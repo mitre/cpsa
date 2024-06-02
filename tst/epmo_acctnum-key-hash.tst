@@ -383,7 +383,8 @@
   (label 8)
   (parent 7)
   (seen 6)
-  (seen-ops (6 (operation generalization deleted (2 0))))
+  (seen-ops
+    (6 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -958,7 +959,8 @@
   (label 21)
   (parent 20)
   (seen 19)
-  (seen-ops (19 (operation generalization deleted (3 0))))
+  (seen-ops
+    (19 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

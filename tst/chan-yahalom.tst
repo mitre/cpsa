@@ -275,7 +275,9 @@
   (label 8)
   (parent 6)
   (seen 5)
-  (seen-ops (5 (operation generalization weakened ((1 2) (2 1)))))
+  (seen-ops
+    (5 (operation generalization weakened ((1 2) (2 1)))
+      (strand-map 0 1 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -723,7 +725,9 @@
   (label 24)
   (parent 20)
   (seen 19)
-  (seen-ops (19 (operation generalization weakened ((1 2) (2 1)))))
+  (seen-ops
+    (19 (operation generalization weakened ((1 2) (2 1)))
+      (strand-map 0 1 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

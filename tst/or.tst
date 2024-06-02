@@ -128,7 +128,7 @@
   (seen-ops
     (6
       (operation encryption-test (displaced 2 0 resp 2)
-        (enc nb-0 m a a (ltk a s)) (1 0))))
+        (enc nb-0 m a a (ltk a s)) (1 0)) (strand-map 0 1)))
   (unrealized (1 0))
   (comment "3 in cohort - 2 not yet seen"))
 
