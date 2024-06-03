@@ -191,6 +191,12 @@ zz :: Show a => a -> a
 zz x = z x x
 --}
 
+-- Switch to determine whether variables of sort base will be
+-- permitted or excluded
+
+variablesOfSortBase :: Bool
+variablesOfSortBase = True -- False 
+
 -- The default name for the algebra handled by this module
 -- One gets Diffie Hellman features too.
 name :: String
@@ -2369,7 +2375,15 @@ mkVar sig pos sort x
   | sort == "pval" = return $ F Pval [I x]
   | sort == "chan" = return $ F Chan [I x]
   | sort == "locn" = return $ F Locn [I x]
-  | sort == "base" = return $ F Base [I x]
+  | sort == "base" =
+      if variablesOfSortBase
+      then
+          return $ F Base [I x]
+      else
+          fail
+          (shows pos
+           "mkVar:  Variables of sort base are now deprecated " ++
+           (show x))
   | sort == "expt" = return $ groupVar Expt x
   | sort == "rndx" = return $ groupVar Rndx x
   | sort == "mesg" = return $ I x
@@ -2393,7 +2407,15 @@ mkVarUnfailingly sig sort x
   | sort == "pval" = F Pval [I x]
   | sort == "chan" = F Chan [I x]
   | sort == "locn" = F Locn [I x]
-  | sort == "base" = F Base [I x]
+  | sort == "base" =      
+      if variablesOfSortBase
+      then
+          F Base [I x]
+      else
+          error
+          (show
+           "mkVarUnfailingly:  Variables of sort base are now deprecated " ++
+           (show x))
   | sort == "expt" = groupVar Expt x
   | sort == "rndx" = groupVar Rndx x
   | sort == "mesg" = I x
