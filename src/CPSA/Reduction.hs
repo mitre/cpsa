@@ -119,13 +119,29 @@ withParent k label parent =
 -- returns it.  What follows is the data structure used to store
 -- information in the seen history used for the isomorphism check.
 -- The integer is the label of the seen skeleton.
-type IPreskel = (Gist, Int)
+type IPreskel = (Preskel, Int)
 
 -- Is the skeleton summarized by gist g isomorphic to one with the
 -- given label?
-wasSeen :: Gist -> IPreskel -> Bool
-wasSeen g (g', _) = isomorphic g g'
+wasSeen :: Preskel -> IPreskel -> Bool
+wasSeen k (k', _) =
+    -- isomorphic (gist k) (gist k')
+    stronglyIsomorphic k k'
 
+stronglyIsomorphic :: Preskel -> Preskel -> Bool
+stronglyIsomorphic k1 k2 =
+    any (unrealizedInvariant k1 k2) $ findIsomorphisms (gist k1) (gist k2)
+    where
+      translateNode sidMap (s,i) = ((sidMap !! s), i)
+
+      setsEq as bs = subset as bs &&
+                     subset bs as 
+
+      unrealizedInvariant k1 k2 (_,_,sidMap) =
+          setsEq (map (translateNode sidMap) $ unrealized k1)
+                 $ unrealized k2
+          
+          
 -- A seen history as a list.
 
 newtype Seen = Seen [IPreskel]
@@ -198,7 +214,7 @@ solve p h (k : ks) n =
             if isomorphic (gist k) (gist k') then -- Input was a skeleton
                 let lk' = LPreskel k' n 0 Nothing in
                 begin p h ks (n + optLimit p) (n + 1)
-                         (hist (gist k', n)) lk'
+                         (hist (k', n)) lk'
             else                -- Input was not a skeleton
                 do
                   let lk = LPreskel k n (-1) Nothing
@@ -206,7 +222,7 @@ solve p h (k : ks) n =
                            Preskeleton "Not a skeleton")
                   let lk' = withParent k' (n + 1) lk
                   begin p h ks (n + optLimit p) (n + 2)
-                           (hist (gist k', n + 1)) lk'
+                           (hist (k', n + 1)) lk'
         _ -> error "Main.solve: can't handle more than one skeleton"
 
 -- Begin by applying rules as much as possible.
@@ -286,7 +302,7 @@ step p h ks m oseen n seen todo toobig (Reduct lk _ _  _  : reducts)
     | nstrands (content lk) >= optBound p = -- Check strand count
         step p h ks m oseen n seen todo (lk : toobig) reducts
 step p h ks m oseen n seen todo toobig (ReductStable lk : reducts) =
-    case recall (wasSeen (gist (content lk))) seen of
+    case recall (wasSeen (content lk)) seen of
       Just (_, _) ->
       --           zP ("seen", label lk) $
           step p h ks m oseen n seen todo toobig reducts
@@ -366,7 +382,7 @@ type SeenSkel = (Int, Preskel)
 duplicates :: Seen -> ([Preskel], [SeenSkel]) -> Preskel ->
               ([Preskel], [SeenSkel])
 duplicates seen (unseen, dups) kid =
-    case recall (wasSeen $ gist kid) seen of
+    case recall (wasSeen kid) seen of
       Just (_, label) -> (unseen, (label, kid) : dups)
       Nothing -> (kid : unseen, dups)
 
@@ -384,12 +400,11 @@ type Next = (Int, Seen, [LPreskel], [SeenSkel])
 -- Update state variables used by step.
 next :: LPreskel -> Next -> Preskel -> Next
 next p (n, seen, todo, dups) k =
-    let g = gist k in
-    case recall (wasSeen g) seen of
+    case recall (wasSeen k) seen of
       Just (_, label) ->
           (n, seen, todo, (label, k) : dups)
       Nothing ->
-          (n + 1, remember (g, n) seen, lk : todo, dups)
+          (n + 1, remember (k, n) seen, lk : todo, dups)
           where
             lk = withParent k n p -- Label a preskeleton here
 
