@@ -604,7 +604,8 @@
   (label 24)
   (parent 23)
   (seen 22)
-  (seen-ops (22 (operation generalization deleted (2 0))))
+  (seen-ops
+    (22 (operation generalization deleted (2 0)) (strand-map 0 1)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

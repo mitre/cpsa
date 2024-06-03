@@ -373,7 +373,8 @@
   (label 13)
   (parent 11)
   (seen 10)
-  (seen-ops (10 (operation generalization deleted (1 0))))
+  (seen-ops
+    (10 (operation generalization deleted (1 0)) (strand-map 0 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

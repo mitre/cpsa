@@ -8,7 +8,8 @@
 
 module CPSA.Displayer (displayProt, displayPreskel, displayNode,
                        displayFact, displayForm,
-                       displayOperation, varsContext) where
+                       displayOperation, displayStrandMap,
+                       varsContext) where
 
 import qualified Data.List as L
 import qualified Data.Set as S

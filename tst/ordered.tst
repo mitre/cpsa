@@ -44,7 +44,9 @@
   (label 1)
   (parent 0)
   (seen 2)
-  (seen-ops (2 (operation generalization weakened ((1 1) (0 0)))))
+  (seen-ops
+    (2 (operation generalization weakened ((1 1) (0 0)))
+      (strand-map 0 1)))
   (realized)
   (origs)
   (comment "1 in cohort - 0 not yet seen"))
@@ -60,7 +62,9 @@
   (label 2)
   (parent 0)
   (seen 1)
-  (seen-ops (1 (operation generalization weakened ((0 1) (1 0)))))
+  (seen-ops
+    (1 (operation generalization weakened ((0 1) (1 0)))
+      (strand-map 0 1)))
   (realized)
   (origs)
   (comment "1 in cohort - 0 not yet seen"))

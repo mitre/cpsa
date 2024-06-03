@@ -535,7 +535,7 @@
   (seen-ops
     (20
       (operation nonce-test (added-strand resp 2) n1-0 (1 1)
-        (enc n1-0 a (pubk b)))))
+        (enc n1-0 a (pubk b))) (strand-map 0 1)))
   (unrealized (0 1) (1 1))
   (origs (n1 (0 0)) (n1-0 (1 0)))
   (comment "2 in cohort - 1 not yet seen"))
@@ -583,7 +583,8 @@
   (seen-ops
     (22
       (operation nonce-test (contracted (n2-1 n2-0)) n1-0 (1 1)
-        (enc n1-0 a (pubk b)) (enc n1-0 n2-0 b (pubk a)))))
+        (enc n1-0 a (pubk b)) (enc n1-0 n2-0 b (pubk a)))
+      (strand-map 0 1 2)))
   (unrealized (0 1) (1 1))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -635,7 +636,7 @@
   (seen-ops
     (24
       (operation nonce-test (added-strand resp 2) n1 (0 1)
-        (enc n1 a (pubk b)))))
+        (enc n1 a (pubk b))) (strand-map 0 1 2)))
   (unrealized (0 1))
   (comment "2 in cohort - 1 not yet seen"))
 

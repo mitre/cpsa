@@ -488,7 +488,7 @@
     (19
       (operation nonce-test (added-strand init 3) n-b (2 1)
         (enc a n-a n-b (ltk b s)) (enc b k n-a n-b (ltk a s))
-        (enc b k-0 n-a n-b (ltk a s)))))
+        (enc b k-0 n-a n-b (ltk a s))) (strand-map 0 1 2 3)))
   (unrealized (2 1))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -618,7 +618,8 @@
   (label 21)
   (parent 17)
   (seen 15)
-  (seen-ops (15 (operation generalization deleted (3 0))))
+  (seen-ops
+    (15 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
