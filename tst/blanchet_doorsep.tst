@@ -28,7 +28,6 @@
   (label 0)
   (unrealized (0 1))
   (origs (s (0 0)))
-  (ugens)
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton blanchet
@@ -39,6 +38,7 @@
   (non-orig (invk b))
   (uniq-orig s)
   (operation encryption-test (added-strand resp 2) (enc d s) (0 1))
+  (strand-map 0)
   (traces ((send (enc (enc s (invk a)) b)) (recv (enc d s)))
     ((recv (enc (enc s (invk a-0)) b-0)) (send (enc d s))))
   (label 1)
@@ -54,6 +54,7 @@
   (non-orig (invk b))
   (uniq-orig s)
   (operation encryption-test (added-listener s) (enc d s) (0 1))
+  (strand-map 0)
   (traces ((send (enc (enc s (invk a)) b)) (recv (enc d s)))
     ((recv s) (send s)))
   (label 2)
@@ -71,6 +72,7 @@
   (uniq-orig s)
   (operation nonce-test (contracted (a-0 a) (b-0 b)) s (1 0)
     (enc (enc s (invk a)) b))
+  (strand-map 0 1)
   (traces ((send (enc (enc s (invk a)) b)) (recv (enc d s)))
     ((recv (enc (enc s (invk a)) b)) (send (enc d s))))
   (label 3)
@@ -78,8 +80,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (s s) (d d))))
-  (origs (s (0 0)))
-  (ugens))
+  (origs (s (0 0))))
 
 (comment "Nothing left to do")
 
@@ -115,7 +116,6 @@
   (label 4)
   (unrealized (0 0))
   (origs (t (0 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton doorsep
@@ -129,6 +129,7 @@
   (rule trust)
   (operation encryption-test (added-strand person 1) (enc k (invk p))
     (0 0))
+  (strand-map 0)
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
     ((send (enc (enc k (invk p)) d-0))))
   (label 5)
@@ -146,6 +147,7 @@
   (facts (trust p))
   (operation encryption-test (contracted (d-0 d)) (enc k (invk p)) (0 0)
     (enc (enc k (invk p)) d))
+  (strand-map 0 1)
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
     ((send (enc (enc k (invk p)) d))))
   (label 6)
@@ -162,6 +164,7 @@
   (uniq-orig k t)
   (facts (trust p))
   (operation nonce-test (displaced 1 2 person 3) t (0 2) (enc t k))
+  (strand-map 0 1)
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
     ((send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t)))
   (label 7)
@@ -169,8 +172,7 @@
   (realized)
   (shape)
   (maps ((0) ((p p) (t t) (d d) (k k))))
-  (origs (k (1 0)) (t (0 1)))
-  (ugens))
+  (origs (k (1 0)) (t (0 1))))
 
 (defskeleton doorsep
   (vars (k skey) (t text) (p d akey))
@@ -182,6 +184,7 @@
   (uniq-orig k t)
   (facts (trust p))
   (operation nonce-test (added-listener k) t (0 2) (enc t k))
+  (strand-map 0 1)
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
     ((send (enc (enc k (invk p)) d))) ((recv k) (send k)))
   (label 8)
@@ -223,7 +226,6 @@
   (label 9)
   (unrealized (0 0))
   (origs (t (0 1)))
-  (ugens)
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton doorsep
@@ -235,6 +237,7 @@
   (uniq-orig k t)
   (operation encryption-test (added-strand person 1) (enc k (invk p))
     (0 0))
+  (strand-map 0)
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
     ((send (enc (enc k (invk p)) d-0))))
   (label 10)
@@ -242,7 +245,6 @@
   (realized)
   (shape)
   (maps ((0) ((p p) (t t) (d d) (k k))))
-  (origs (k (1 0)) (t (0 1)))
-  (ugens))
+  (origs (k (1 0)) (t (0 1))))
 
 (comment "Nothing left to do")
