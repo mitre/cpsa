@@ -132,7 +132,7 @@ module CPSA.Algebra (name, alias,
     substitute,
     unify,
     compose,
-    absentSubst,
+    absentEnv,
     substDomainWithin,
 
     Env,
@@ -1650,14 +1650,14 @@ destroyer t@(G m) | isVar t =
   Just $ Subst (M.fromList [(head $ M.keys m, G M.empty)])
 destroyer _ = Nothing
 
--- Extend a substitution so that it satisfies an absence assertion
-absentSubst :: (Gen, Subst) -> (Term, Term) -> [(Gen, Subst)]
-absentSubst gs (G v, G t) | isGroupVar v =
+-- Extend an environment so that it satisfies an absence assertion
+absentEnv :: GenEnv -> (Term, Term) -> [GenEnv]
+absentEnv gs (G v, G t) | isGroupVar v =
   case separateVar (getGroupVar v) t of
     Nothing -> [gs]
-    Just (v', t') -> unifyGroup v' t' gs
-absentSubst _ ts =
-  error ("Algebra.absentSubst: Bad absent pair " ++ show ts)
+    Just (_, t') -> match (G t') (G t) gs
+absentEnv _ ts =
+  error ("Algebra.absentEnv: Bad absent pair " ++ show ts)
 
 -- Matching and instantiation
 

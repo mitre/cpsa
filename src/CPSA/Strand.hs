@@ -1547,13 +1547,13 @@ enforceAbsence prs@(_, k, _, _, _)
   | null (kabsent k) = [prs]
 enforceAbsence prs@(_, k, _, _, _) =
   do
-    s <- foldl f [(gen k, emptySubst)] (kabsent k)
-    ksubst prs s
+    e <- foldl f [(gen k, emptyEnv)] (kabsent k)
+    ksubst prs (fst e, substitution $ snd e)
   where
-    f ss ts =
+    f es ts =
       do
-        s <- ss
-        absentSubst s ts
+        e <- es
+        absentEnv e ts
 
 -- Determine if a given PRS has a multiple origination of a
 -- non-numeric fresh value.  Also when a value is both uniq

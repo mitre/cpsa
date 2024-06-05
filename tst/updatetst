@@ -9,6 +9,15 @@ do
   fi
 done
 
+for f in *.prot
+do
+  if test -f "$f"
+  then
+    b=`basename $f .prot`
+    mv "$b.txt" "$b.tst"
+  fi
+done
+
 for f in *.lsp
 do
   if test -f "$f"
