@@ -1661,7 +1661,9 @@ absentEnv :: GenEnv -> (Term, Term) -> [GenEnv]
 absentEnv gs (G v, G t) | isGroupVar v =
   case separateVar (getGroupVar v) t of
     Nothing -> [gs]
-    Just (_, t') -> match (G t') (G t) gs
+    Just (_, t') -> match (G t) (G t') gs
+                    --   (z (show v ++ show t)
+                    --     (zz $ match (G t) (G t') gs))
 absentEnv _ ts =
   error ("Algebra.absentEnv: Bad absent pair " ++ show ts)
 
