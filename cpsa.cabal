@@ -291,7 +291,7 @@ Executable cpsa4
     CPSA.Lib.SExpr CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Options
     CPSA.Algebra CPSA.Protocol CPSA.Strand CPSA.Characteristic
     CPSA.Channel CPSA.LoadFormulas CPSA.GenRules CPSA.Loader
-    CPSA.Displayer CPSA.Cohort
+    CPSA.Displayer CPSA.Cohort CPSA.Operation
     CPSA.Lib.Expand CPSA.Reduction CPSA.Signature
 
 Executable cpsa4sas

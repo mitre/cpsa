@@ -20,6 +20,7 @@ import CPSA.Signature (Sig, loadSig)
 import CPSA.Algebra
 import CPSA.Channel
 import CPSA.Protocol
+import CPSA.Operation
 import CPSA.Strand
 import CPSA.Characteristic
 import CPSA.LoadFormulas

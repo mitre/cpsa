@@ -7,8 +7,8 @@
 -- University of California.
 
 module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
-    role, env, trace, height, listenerTerm, Sid, Node, mkPreskel,
-    firstSkeleton, Pair, Preskel, gen, protocol, kgoals, insts, orderings,
+    role, env, trace, height, listenerTerm, mkPreskel,
+    firstSkeleton, Preskel, gen, protocol, kgoals, insts, orderings,
     pov, knon, kpnon, kunique, kuniqgen, kabsent, kprecur, kgenSt,
     kconf, kauth, kfacts, korig, kugen, kpriority, kcomment, nstrands,
     kvars, kfvars, strandids, kterms, kchans, uniqOrig, uniqGen,
@@ -18,8 +18,7 @@ module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     Gist, gist, isomorphic, factorIsomorphicPreskels, contract, augment,
     inheritRnon, inheritRpnon, inheritRunique, inheritRuniqgen, inheritRabsent,
     inheritRconf, inheritRauth, addListener, addBaseListener, addAbsence,
-    Cause (..), Direction (..), Method (..), Operation (..),
-    getStrandMap, updateStrandMap,
+    updateStrandMap,
     operation, krules, pprob, prob, homomorphism, toSkeleton, generalize,
     collapse, sat, unSatReport, FTerm (..), Fact (..), simplify, rewrite,
     localSignal, rewriteUnaryOneOnce, nodePairsOfSkel, applyLeadsTo) where
@@ -35,6 +34,7 @@ import CPSA.Lib.SExpr
 import CPSA.Algebra
 import CPSA.Channel
 import CPSA.Protocol
+import CPSA.Operation
 
 {--
 
@@ -141,8 +141,6 @@ useVariableSeparation = True -- False
 -- sequence.  Duplicates are allowed in the sequence, as two strands
 -- can be instantiated from the same role in the same way.
 
-type Sid = Int                  -- Strand Identifier
-
 data Instance = Instance
     { role :: Role,             -- Role from which this was
                                 -- instantiated
@@ -240,19 +238,7 @@ listenerTerm inst =
             ChMsg _ _ -> Nothing
       _ -> Nothing              -- Not a listener strand
 
--- Nodes, Pairs, and Graphs
-
--- A node is composed of two integers, a strand identifier and a
--- position.  The position identifies an event in the strand's trace.
--- The second integer must be non-negative and less than the strand's
--- height
-
-type Node = (Sid, Int)
-
--- A pair gives an ordering of two nodes, meaning the first node is
--- before the second one.
-
-type Pair = (Node, Node)
+-- Graphs
 
 -- Graphs of preskeletons
 
@@ -460,58 +446,6 @@ type Strand = GraphStrand Event Instance
 type Vertex = GraphNode Event Instance
 
 type Edge = GraphEdge Event Instance
-
--- Data structure for tracking the causes for the creation of
--- preskeletons.
-
-data Cause
-    = Cause Direction Node CMT (Set CMT)
-    deriving Show
-
-data Direction = Encryption | Nonce | Channel deriving Show
-
-data Method
-    = Deleted Node
-    | Weakened Pair
-    | Separated Term
-    | Forgot Term
-    deriving Show
-
--- The operation used to generate the preskeleteton is either new via
--- the loader, a contraction, a regular augmentation, a listener
--- augmentation, or a mininization.  The augmentation includes a role
--- name and instance height.
-data Operation
-    = New
-    | Contracted [Sid] Subst Cause
-    | Displaced [Sid] Int Int String Int Cause
-    | AddedStrand [Sid] String Int Cause
-    | AddedListener [Sid] Term Cause
-    | AddedAbsence [Sid] Term Term Cause
-    | Generalized [Sid] Method
-    | Collapsed [Sid] Int Int
-      deriving Show
-
-getStrandMap :: Operation -> [Sid]
-getStrandMap New = []
-getStrandMap (Contracted sm _ _) = sm
-getStrandMap (Displaced sm _ _ _ _ _) = sm
-getStrandMap (AddedStrand sm _ _ _) = sm
-getStrandMap (AddedListener sm _ _) = sm
-getStrandMap (AddedAbsence sm _ _ _) = sm
-getStrandMap (Generalized sm _) = sm
-getStrandMap (Collapsed sm _ _) = sm
-
-addStrandMap :: [Sid] -> Operation -> Operation
-addStrandMap _ New = New
-addStrandMap sm (Contracted _ s c) = Contracted sm s c
-addStrandMap sm (Displaced _ n1 n2 str n3 c) =
-    Displaced sm n1 n2 str n3 c
-addStrandMap sm (AddedStrand _ str n c) = AddedStrand sm str n c
-addStrandMap sm (AddedListener _ t c) = AddedListener sm t c
-addStrandMap sm (AddedAbsence _ t1 t2 c) = AddedAbsence sm t1 t2 c
-addStrandMap sm (Generalized _ m) = Generalized sm m
-addStrandMap sm (Collapsed _ n1 n2) = Collapsed sm n1 n2
 
 updateStrandMap :: [Sid] -> Preskel -> Preskel
 updateStrandMap sm k =

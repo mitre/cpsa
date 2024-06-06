@@ -15,6 +15,7 @@ import Control.Parallel
 import CPSA.Algebra
 import CPSA.Channel
 import CPSA.Protocol
+import CPSA.Operation
 import CPSA.Strand
 
 {-- Debugging support
