@@ -15,6 +15,7 @@ import CPSA.Lib.ReturnFail
 import CPSA.Lib.SExpr
 import CPSA.Algebra
 import CPSA.Protocol
+import CPSA.Operation
 import CPSA.Strand
 
 {--

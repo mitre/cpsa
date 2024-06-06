@@ -17,6 +17,7 @@ import CPSA.Lib.SExpr
 import CPSA.Algebra
 import CPSA.Channel
 import CPSA.Protocol
+import CPSA.Operation
 import CPSA.Strand
 
 {--
@@ -404,4 +405,3 @@ displayStrandMap k rest =
     case getStrandMap $ operation k of
       [] -> rest
       sm -> L () (S () "strand-map" : map (N ()) sm) : rest
-                        

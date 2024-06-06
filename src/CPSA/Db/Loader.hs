@@ -242,7 +242,7 @@ loadSeen Nothing = return []
 loadSeen (Just xs) = mapM loadSeenOp xs
 
 loadSeenOp :: MonadFail m => SExpr Pos -> m (Int, SExpr Pos)
-loadSeenOp (L _ [N _ l, x]) = return (l, x)
+loadSeenOp (L _ [N _ l, x, _]) = return (l, x)
 loadSeenOp (L pos [N _ l]) =
     return (l, L pos [S pos "operation", S pos "new"])
 loadSeenOp x = fail (shows (annotation x) "Malformed seen operation")

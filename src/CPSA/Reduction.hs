@@ -20,6 +20,7 @@ import CPSA.Lib.Entry
 import CPSA.Options
 import CPSA.Algebra
 import CPSA.Protocol
+import CPSA.Operation
 import CPSA.Strand
 import CPSA.Cohort
 import CPSA.Displayer
