@@ -47,13 +47,14 @@
 
 (defprotocol dhcr-um diffie-hellman
   (defrole init
-    (vars (l x rndx) (gb gy base) (a b name) (na nb data) (priv-stor locn))
+    (vars (l x rndx) (beta upsilon expt)
+	  (a b name) (na nb data) (priv-stor locn))
     (trace
      (load priv-stor (pv a l))
-     (recv (sig (body b gb (pubk "sig" b))
+     (recv (sig (body b (exp (gen) beta) (pubk "sig" b))
 		(privk "sig" b)))
      (send (cat na a b (exp (gen) x)))
-     (recv (cat gy (enc na nb a b (kcfa l gb x gy))))
+     (recv (cat (exp (gen) upsilon) (enc na nb a b (kcfa l (exp (gen) beta) x (exp (gen) upsilon)))))
      (send nb)
      )
     (uniq-gen x)
@@ -64,18 +65,18 @@
            ("ltx-of" (a ltxa) (b ltxb))))
 
   (defrole resp
-    (vars (l y rndx) (ga gx base) (a b name) (na nb data) (priv-stor locn))
+    (vars (l y rndx) (alpha chi expt) (a b name) (na nb data) (priv-stor locn))
     (trace
      (load priv-stor (pv b l))
-     (recv (sig (body a ga (pubk "sig" a))
+     (recv (sig (body a (exp (gen) alpha) (pubk "sig" a))
 		(privk "sig" a)))
-     (recv (cat na a b gx))
-     (send (cat (exp (gen) y) (enc na nb a b (kcfb l ga y gx))))
+     (recv (cat na a b (exp (gen) chi)))
+     (send (cat (exp (gen) y) (enc na nb a b (kcfb l (exp (gen) alpha) y (exp (gen) chi)))))
      (recv nb)
      )
     (uniq-gen y)
     (uniq-orig nb)
-    (facts (neq gx (gen)))
+    (facts (neq (exp (gen) chi) (gen)))
     (gen-st (pv b l))
     (fn-of ("principal-of" (ltxa a) (ltxb b))
 	   ("ltx-of" (a ltxa) (b ltxb))))
@@ -103,22 +104,6 @@
     (fn-of ("principal-of" (l self))
 	   ("ltx-of" (self l))))
 
-  (defrule fact-resp-silly
-    (forall ((z strd) (gx base)
-	     )
-	    (implies (and (p "resp" z 3) (p "resp" "gx" z gx))
-		     (fact silly gx))))
-
-  (defrule fact-resp-neq0
-    (forall ((z strd) ;(gx base)
-	     )
-	    (implies (and (p "resp" z 3) (p "resp" "gx" z (gen))) (false))))
-
-  (defrule fact-init-neq0
-    (forall ((z strd) ;(gx base)
-	     )
-	    (implies (and (p "init" z 4) (p "init" "gy" z (gen))) (false))))
-
   (defrule undisclosed-not-disclosed
     (forall
      ((z strd) (l rndx))
@@ -135,18 +120,18 @@
 ; Initiator point of view: both LTX exponents secret
 (defskeleton dhcr-um
   (vars (a b name) (l l-peer rndx))
-  (defstrand init 4 (a a) (b b) (l l) (gb (exp (gen) l-peer)))
+  (defstrand init 4 (a a) (b b) (l l) (beta l-peer))
   (non-orig (privk "sig" b))
   (facts (neq a b)
 	 (undisclosed l)
 	 (undisclosed l-peer)))
 
-(comment
+
 
 ; Initiator point of view:  peer exponent secret
 (defskeleton dhcr-um
   (vars (a b name) (l l-peer rndx))
-  (defstrand init 4 (a a) (b b) (l l) (gb (exp (gen) l-peer)))
+  (defstrand init 4 (a a) (b b) (l l) (beta l-peer))
   (non-orig (privk "sig" b))
   (facts (neq a b)
 	 ;;	 (undisclosed l)
@@ -155,7 +140,7 @@
 ; Initiator point of view:  my exponent secret
 (defskeleton dhcr-um
   (vars (a b name) (l rndx) (l-peer expt))
-  (defstrand init 4 (a a) (b b) (l l) (gb (exp (gen) l-peer)))
+  (defstrand init 4 (a a) (b b) (l l) (beta l-peer))
   (non-orig (privk "sig" b))
   (facts (neq a b)
 	 ;;	 (undisclosed l-peer)
@@ -165,56 +150,27 @@
 
 (defskeleton dhcr-um
   (vars (a b name) (l rndx) (l-peer expt))
-  (defstrand init 4 (a a) (b b) (l l) (gb (exp (gen) l-peer)))
+  (defstrand init 4 (a a) (b b) (l l) (beta l-peer))
   (non-orig (privk "sig" b))
   (facts (neq a b)
 	 ;;	 (undisclosed l-peer)
 	 ;;	 (undisclosed l)
-	 )))
+	 ))
 
-(comment
-					; Initiator point of view: partner's exponent secret
- (defskeleton dhcr-um
-   (vars (ltxa ltxb rndx) (a b name))
-   (defstrand init 4 (ltxa ltxa) (ltxb ltxb) (a a) (b b))
-   (defstrand ltx-gen 1 (l ltxb))
-   (non-orig ltxb)
-   (neq (a b)))
-
-					; Responder point of view; both exponents secret
- (defskeleton dhcr-um
-   (vars (ltxa ltxb rndx) (a b name))
-   (defstrand resp 4 (ltxa ltxa) (ltxb ltxb) (a a) (b b))
-   (defstrand ltx-gen 1 (l ltxa))
-   (defstrand ltx-gen 1 (l ltxb))
-   (non-orig ltxa ltxb)
-   (neq (a b)))
-
-					; Responder point of view; partner's exponent secre
- (defskeleton dhcr-um
-   (vars (ltxa ltxb rndx) (a b name))
-   (defstrand resp 4 (ltxa ltxa) (ltxb ltxb) (a a) (b b))
-   (defstrand ltx-gen 1 (l ltxa))
-   (non-orig ltxa)
-   (neq (a b)))
-
-;;; Forward secrecy, neither long-term exponent secure
- (defskeleton dhcr-um
+(defskeleton dhcr-um
    (vars (ltxa ltxb x rndx) (y expt) (a b name))
-   (defstrand init 4 (ltxa ltxa) (ltxb ltxb) (x x) (y y) (a a) (b b))
-   (deflistener (kcfa ltxa ltxb x (exp (gen) y)))
-   (defstrand ltx-gen 3 (l ltxa))
-   (defstrand ltx-gen 3 (l ltxb))
-   (precedes ((0 3) (3 1)) ((0 3) (2 1)))
+   (defstrand init 5 (l ltxa) (beta ltxb) (x x) (upsilon y) (a a) (b b))
+   (deflistener (kcfa ltxa (exp (gen) ltxb)  x (exp (gen) y)))
+   (defstrand ltx-disclose 3 (l ltxa))
+   (defstrand ltx-disclose 3 (l ltxb))
+   (precedes ((0 4) (3 0)) ((0 4) (2 0)))
    (neq (a b)))
 
-;;; Forward secrecy, neither long-term exponent secure
- (defskeleton dhcr-um
-   (vars (ltxa ltxb x rndx) (y expt) (a b name))
-   (defstrand init 4 (ltxa ltxa) (ltxb ltxb) (x x) (y y) (a a) (b b))
-   (deflistener (exp (exp (gen) x) y))
-   (defstrand ltx-gen 3 (l ltxa))
-   (defstrand ltx-gen 3 (l ltxb))
-   (precedes ((0 3) (3 1)) ((0 3) (2 1)))
-   (neq (a b)))
- )
+
+(defskeleton dhcr-um
+  (vars (a b name) (l l-peer rndx))
+  (defstrand resp 5 (a a) (b b) (l l) (alpha l-peer))
+  (non-orig (privk "sig" a)) 
+  (facts (neq a b)
+	 (undisclosed l)
+	 (undisclosed l-peer)))

@@ -373,7 +373,7 @@
   (unrealized (0 0) (0 2) (1 1))
   (preskeleton)
   (origs (n (0 3)) (k (1 0)))
-  (ugens)
+  
   (comment "Not a skeleton"))
 
 (defskeleton subatomic-open-closed
@@ -394,7 +394,7 @@
   (parent 0)
   (unrealized (0 0) (0 2) (1 1))
   (origs (n (0 3)) (k (1 0)))
-  (ugens)
+  
   (comment "Not closed under rules"))
 
 (defskeleton subatomic-open-closed
@@ -417,7 +417,7 @@
   (parent 1)
   (unrealized (0 0) (0 1) (0 2) (1 1))
   (origs (n (0 3)) (k (1 0)))
-  (ugens)
+  
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton subatomic-open-closed
@@ -822,7 +822,7 @@
       ((k k) (n n) (d d) (o o) (d-0 d) (o-0 o) (start-ch start-ch)
         (lk lk) (ls ls))))
   (origs (pt-2 (2 3)) (pt (3 3)) (pt-3 (2 4)) (n (0 3)) (k (1 0)))
-  (ugens))
+  )
 
 (defskeleton subatomic-open-closed
   (vars (old old1 any mesg) (k skey) (n n-0 text) (d o name)

@@ -52,7 +52,7 @@
   (label 0)
   (unrealized (0 1))
   (origs (n (0 2)))
-  (ugens)
+  
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton kerberos-variant
@@ -240,7 +240,7 @@
       ((a a) (b b) (ks ks) (n n) (a-ks-lt a-ks-lt) (t t)
         (t-prime t-prime) (l l) (k k) (ticket ticket))))
   (origs (k (1 1)) (n (0 2)))
-  (ugens))
+  )
 
 (comment "Nothing left to do")
 
@@ -293,7 +293,7 @@
   (label 7)
   (unrealized (0 0))
   (origs)
-  (ugens)
+  
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton kerberos-variant
@@ -412,7 +412,7 @@
       ((a a) (b b) (ks ks) (b-ks-lt b-ks-lt) (t t) (n n)
         (t-prime t-prime) (l l) (k k))))
   (origs (k (1 1)))
-  (ugens))
+  )
 
 (comment "Nothing left to do")
 
@@ -468,7 +468,7 @@
   (label 12)
   (realized)
   (origs (k (0 1)))
-  (ugens)
+  
   (comment "Not closed under rules"))
 
 (defskeleton kerberos-variant
@@ -493,6 +493,6 @@
       ((a a) (b b) (ks ks) (a-ks-lt a-ks-lt) (b-ks-lt b-ks-lt) (t t)
         (l l) (k k))))
   (origs (k (0 1)))
-  (ugens))
+  )
 
 (comment "Nothing left to do")

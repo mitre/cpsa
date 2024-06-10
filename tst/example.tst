@@ -26,7 +26,7 @@
   (label 0)
   (unrealized (0 1))
   (origs (s (0 0)))
-  (ugens)
+  
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton version-1
@@ -76,7 +76,7 @@
   (shape)
   (maps ((0) ((a a) (b b) (m m) (s s))))
   (origs (s (0 0)))
-  (ugens))
+  )
 
 (comment "Nothing left to do")
 
@@ -102,7 +102,7 @@
   (label 4)
   (unrealized (0 0))
   (origs)
-  (ugens)
+  
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton version-1
@@ -121,7 +121,7 @@
   (shape)
   (maps ((0) ((a a) (b b) (m m) (s s))))
   (origs)
-  (ugens))
+  )
 
 (comment "Nothing left to do")
 
@@ -153,7 +153,7 @@
   (unrealized (2 0))
   (preskeleton)
   (origs (m (0 1)) (s (1 0)))
-  (ugens)
+  
   (comment "Not a skeleton"))
 
 (defskeleton version-1
@@ -170,7 +170,7 @@
   (parent 6)
   (unrealized (2 0))
   (origs (m (0 1)) (s (1 0)))
-  (ugens)
+  
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton version-1
@@ -221,7 +221,7 @@
   (unrealized (2 0))
   (preskeleton)
   (origs (m (0 1)))
-  (ugens)
+  
   (comment "Not a skeleton"))
 
 (defskeleton version-1
@@ -240,7 +240,7 @@
   (shape)
   (maps ((0 1 2) ((m m) (a a) (b b) (s s))))
   (origs (m (0 1)))
-  (ugens))
+  )
 
 (comment "Nothing left to do")
 
@@ -267,7 +267,7 @@
   (label 11)
   (unrealized (0 1))
   (origs (s (0 0)))
-  (ugens)
+  
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton version-2
@@ -318,7 +318,7 @@
   (shape)
   (maps ((0) ((a a) (b b) (m m) (s s) (n1 n1))))
   (origs (s (0 0)))
-  (ugens))
+  )
 
 (comment "Nothing left to do")
 
@@ -345,7 +345,7 @@
   (label 15)
   (unrealized (0 0))
   (origs)
-  (ugens)
+  
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton version-2
@@ -365,6 +365,6 @@
   (shape)
   (maps ((0) ((a a) (b b) (m m) (n1 n1) (s s))))
   (origs (n1 (1 0)))
-  (ugens))
+  )
 
 (comment "Nothing left to do")

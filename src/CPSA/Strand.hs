@@ -15,7 +15,8 @@ module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     preskelWellFormed, confCm, authCm,
     verbosePreskelWellFormed, Strand, inst, sid, nodes,
     Vertex, strand, pos, preds, event, graphNode, strands, vertex,
-    Gist, gist, isomorphic, factorIsomorphicPreskels, contract, augment,
+    Gist, gist, isomorphic, factorIsomorphicPreskels, findIsomorphisms, 
+    contract, augment,
     inheritRnon, inheritRpnon, inheritRunique, inheritRuniqgen, inheritRabsent,
     inheritRconf, inheritRauth, addListener, addBaseListener, addAbsence,
     updateStrandMap,
@@ -1049,6 +1050,14 @@ isomorphic :: Gist -> Gist -> Bool
 isomorphic g g' =
     sameSkyline g g' &&
     any (tryPerm g g') (permutations g g')
+
+findIsomorphisms :: Gist -> Gist -> [((Gen, Env), (Gen, Env), [Sid])]
+findIsomorphisms g g' =
+    if sameSkyline g g'
+    then
+        filter (tryPerm g g') $ permutations g g'
+    else
+        [] 
 
 sameSkyline :: Gist -> Gist -> Bool
 sameSkyline g g' =

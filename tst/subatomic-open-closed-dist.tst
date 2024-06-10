@@ -212,7 +212,7 @@
   (unrealized (0 1) (1 0))
   (preskeleton)
   (origs (k (0 0)))
-  (ugens)
+  
   (comment "Not a skeleton"))
 
 (defskeleton subatomic-open-closed
@@ -229,7 +229,7 @@
   (parent 0)
   (unrealized (0 1) (1 0))
   (origs (k (0 0)))
-  (ugens)
+  
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
@@ -467,7 +467,7 @@
   (label 3)
   (realized)
   (origs (n (0 3)))
-  (ugens)
+  
   (comment "Not closed under rules"))
 
 (defskeleton subatomic-open-closed
@@ -495,7 +495,7 @@
         (ch-msg lk (cat pt-2 "st-k" d o k)) (0 0))))
   (unrealized (0 0) (0 1))
   (origs (n (0 3)))
-  (ugens)
+  
   (comment "4 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
@@ -651,7 +651,7 @@
   (shape)
   (maps ((0) ((k k) (n n) (d d) (o o) (lk lk) (ls ls))))
   (origs (pt-2 (1 3)) (pt (3 3)) (pt-3 (1 4)) (n (0 3)))
-  (ugens))
+  )
 
 (comment "Nothing left to do")
 
@@ -866,7 +866,7 @@
   (unrealized (0 1) (1 0) (1 2))
   (preskeleton)
   (origs (n (1 3)) (k (0 0)))
-  (ugens)
+  
   (comment "Not a skeleton"))
 
 (defskeleton subatomic-open-closed
@@ -886,7 +886,7 @@
   (parent 9)
   (unrealized (0 1) (1 0) (1 2))
   (origs (n (1 3)) (k (0 0)))
-  (ugens)
+  
   (comment "Not closed under rules"))
 
 (defskeleton subatomic-open-closed
@@ -919,7 +919,7 @@
         (ch-msg lk (cat pt-2 "st-k" d-0 o-0 k)) (1 0))))
   (unrealized (0 1) (1 0) (1 1) (1 2))
   (origs (n (1 3)) (k (0 0)))
-  (ugens)
+  
   (comment "4 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
@@ -1910,7 +1910,7 @@
       ((k k) (d d) (o o) (start-ch start-ch) (n n) (d-0 d) (o-0 o)
         (lk lk) (ls ls))))
   (origs (pt-3 (4 3)) (pt-4 (4 4)) (pt (1 3)) (n (0 3)) (k (3 0)))
-  (ugens))
+  )
 
 (defskeleton subatomic-open-closed
   (vars (any old old1 mesg) (k skey) (n n-0 text) (d o name)

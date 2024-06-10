@@ -129,92 +129,115 @@
 	(body (tuple 3))
 	(pv (tuple 2))))
 
-; Initiator point of view: both LTX exponents secret
-(defskeleton dhcr-um
-  (vars (a b name) (la l-peer rndx) (beta expt))
-  (defstrand init 5 (a a) (b b) (la la) (beta beta))
-  (non-orig (privk "sig" b))
-  (facts (neq a b)
-	 (undisclosed la)
-	 (undisclosed beta)))
-
-; Initiator point of view:  peer exponent secret
-(defskeleton dhcr-um
-  (vars (a b name) (la l-peer rndx) (beta expt))
-  (defstrand init 5 (a a) (b b) (la la) (beta beta))
-  (non-orig (privk "sig" b))
-  (facts (neq a b)
-	 ;;	 (undisclosed la)
-	 (undisclosed beta)))
-
-; Initiator point of view:  my exponent secret
-(defskeleton dhcr-um
-  (vars (a b name) (la rndx))
-  (defstrand init 5 (a a) (b b) (la la) )
-  (non-orig (privk "sig" b))
-  (facts (neq a b)
-	 ;;	 (undisclosed l-peer)
-	 (undisclosed la)))
-
-; Initiator point of view:  neither exponent secret
 
 (defskeleton dhcr-um
-  (vars (a b name) (la rndx))
-  (defstrand init 5 (a a) (b b) (la la))
-  (non-orig (privk "sig" b))
-  (facts (neq a b)
-	 ;;	 (undisclosed l-peer)
-	 ;;	 (undisclosed la)
-	 ))
-
-(defskeleton dhcr-um
-  (vars (a b name) (la lb rndx) (alpha beta expt))
-  (defstrand resp 5 (a a) (b b) (lb lb) (alpha alpha))
-  (defstrand init 5 (a a) (b b) (la la) (beta beta))
+  (vars (ignore ignore-0 mesg) (na nb data) (a b name)
+	(priv-stor priv-stor-0 locn) (y rndx)
+	(zeta expt) (l l-0 rndx))
+  (defstrand resp 5 (na na) (nb nb) (a a) (b b) (priv-stor priv-stor)
+    (lb l) (y y) (alpha l-0) (zeta zeta))
+  (defstrand ltx-gen 2 (ignore ignore) (self b) (priv-stor priv-stor)
+    (l l))
+  (defstrand ltx-gen 3 (ignore ignore-0) (self a)
+    (priv-stor priv-stor-0) (l l-0))
+  (precedes ((1 1) (0 0)) ((2 2) (0 1)))
   (non-orig (privk "sig" a) (privk "sig" b))
-  (facts (neq a b)
-	 (undisclosed la)
-	 (undisclosed lb)))
+  (uniq-orig nb l l-0)
+  (uniq-gen y)
+  (absent (y zeta) (y l) (y l-0))
+  (gen-st (pv b l))
+  (facts (neq a b) (undisclosed l) (undisclosed l-0)))
 
-; Responder point of view: both exponents secret
-(defskeleton dhcr-um
-  (vars (a b name) (lb rndx) (alpha expt))
-  (defstrand resp 5 (a a) (b b) (lb lb) (alpha alpha))
-  (non-orig (privk "sig" a) (privk "sig" b))
-  (facts (neq a b)
-	 (undisclosed lb)
-	 (undisclosed alpha)))
 
-; Responder point of view:  peer exponent secret
-(defskeleton dhcr-um
-  (vars (a b name) (lb l-peer rndx) (alpha expt))
-  (defstrand resp 5 (a a) (b b) (lb lb) (alpha alpha))
-  (non-orig (privk "sig" a))
-  (facts (neq a b)
-	 ;;	 (undisclosed lb)
-	 (undisclosed alpha)))
 
-; Responder point of view:  my exponent secret
-(defskeleton dhcr-um
-  (vars (a b name) (lb rndx) (l-peer expt))
-  (defstrand resp 5 (a a) (b b) (lb lb) )
-  (non-orig (privk "sig" a))
-  (facts (neq a b)
-	 ;;	 (undisclosed l-peer)
-	 (undisclosed lb)))
 
-; Responder point of view:  neither exponent secret
+(comment 
+					; Initiator point of view: both LTX exponents secret
+ (defskeleton dhcr-um
+   (vars (a b name) (la l-peer rndx) (beta expt))
+   (defstrand init 5 (a a) (b b) (la la) (beta beta))
+   (non-orig (privk "sig" b))
+   (facts (neq a b)
+	  (undisclosed la)
+	  (undisclosed beta)))
 
-(defskeleton dhcr-um
-  (vars (a b name) (lb rndx) (l-peer expt))
-  (defstrand resp 5 (a a) (b b) (lb lb))
-  (non-orig (privk "sig" a))
-  (facts (neq a b)
-	 ;;	 (undisclosed l-peer)
-	 ;;	 (undisclosed lb)
-	 ))
+					; Initiator point of view:  peer exponent secret
+ (defskeleton dhcr-um
+   (vars (a b name) (la l-peer rndx) (beta expt))
+   (defstrand init 5 (a a) (b b) (la la) (beta beta))
+   (non-orig (privk "sig" b))
+   (facts (neq a b)
+	  ;;	 (undisclosed la)
+	  (undisclosed beta)))
 
-(defskeleton dhcr-um
+					; Initiator point of view:  my exponent secret
+ (defskeleton dhcr-um
+   (vars (a b name) (la rndx))
+   (defstrand init 5 (a a) (b b) (la la) )
+   (non-orig (privk "sig" b))
+   (facts (neq a b)
+	  ;;	 (undisclosed l-peer)
+	  (undisclosed la)))
+
+					; Initiator point of view:  neither exponent secret
+
+ (defskeleton dhcr-um
+   (vars (a b name) (la rndx))
+   (defstrand init 5 (a a) (b b) (la la))
+   (non-orig (privk "sig" b))
+   (facts (neq a b)
+	  ;;	 (undisclosed l-peer)
+	  ;;	 (undisclosed la)
+	  ))
+
+ (defskeleton dhcr-um
+   (vars (a b name) (la lb rndx) (alpha beta expt))
+   (defstrand resp 5 (a a) (b b) (lb lb) (alpha alpha))
+   (defstrand init 5 (a a) (b b) (la la) (beta beta))
+   (non-orig (privk "sig" a) (privk "sig" b))
+   (facts (neq a b)
+	  (undisclosed la)
+	  (undisclosed lb)))
+
+					; Responder point of view: both exponents secret
+ (defskeleton dhcr-um
+   (vars (a b name) (lb rndx) (alpha expt))
+   (defstrand resp 5 (a a) (b b) (lb lb) (alpha alpha))
+   (non-orig (privk "sig" a) (privk "sig" b))
+   (facts (neq a b)
+	  (undisclosed lb)
+	  (undisclosed alpha)))
+
+					; Responder point of view:  peer exponent secret
+ (defskeleton dhcr-um
+   (vars (a b name) (lb l-peer rndx) (alpha expt))
+   (defstrand resp 5 (a a) (b b) (lb lb) (alpha alpha))
+   (non-orig (privk "sig" a))
+   (facts (neq a b)
+	  ;;	 (undisclosed lb)
+	  (undisclosed alpha)))
+
+					; Responder point of view:  my exponent secret
+ (defskeleton dhcr-um
+   (vars (a b name) (lb rndx) (l-peer expt))
+   (defstrand resp 5 (a a) (b b) (lb lb) )
+   (non-orig (privk "sig" a))
+   (facts (neq a b)
+	  ;;	 (undisclosed l-peer)
+	  (undisclosed lb)))
+
+					; Responder point of view:  neither exponent secret
+
+ (defskeleton dhcr-um
+   (vars (a b name) (lb rndx) (l-peer expt))
+   (defstrand resp 5 (a a) (b b) (lb lb))
+   (non-orig (privk "sig" a))
+   (facts (neq a b)
+	  ;;	 (undisclosed l-peer)
+	  ;;	 (undisclosed lb)
+	  ))
+
+ (defskeleton dhcr-um
    (vars (la x beta rndx) (upsilon expt) (a b name))
    (defstrand init 5 (la la) (beta beta) (x x) (upsilon upsilon) (a a) (b b))
    (deflistener (kcfa la (exp (gen) beta)
@@ -222,6 +245,6 @@
    (defstrand ltx-gen 3 (l la))
    (defstrand ltx-gen 3 (l beta))
    (precedes ((0 4) (3 0)) ((0 4) (2 0)))
-   (neq (a b)))
+   (neq (a b))))
 
 
