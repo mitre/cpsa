@@ -12,9 +12,8 @@ import System.IO
 import CPSA.Lib.SExpr
 import CPSA.Lib.Entry (writeSExpr)
 import CPSA.Algebra
-import CPSA.Channel
-import CPSA.Protocol (Event (..), Trace)
-import CPSA.Db.Loader (strip, massoc)
+import CPSA.Protocol (Trace)
+import CPSA.Db.Loader (strip, massoc, loadStrandMap)
 import CPSA.Db.Structs
 import CPSA.Db.Tree
 
@@ -28,17 +27,17 @@ root h m t =
       hPutStrLn h ""
       let x = L () [S () "root", N () (label $ vertex t)]
       writeSExpr h m x
-      tree h m t
+      tree h m t t
 
-tree :: Handle -> Int -> Tree -> IO ()
-tree h m t =
+tree :: Handle -> Int -> Tree -> Tree -> IO ()
+tree h m r t =
     do
       let skel = vertex t
       let l = label skel
       body h m l (alist skel)
       mapM_ (displayTrace h m skel) (zip [0..] (ktraces skel))
-      mapM_ (child h m l) (children t)
-      mapM_ (dup h m l) (seen $ vertex t)
+      mapM_ (child h m r skel) (children t)
+      mapM_ (dup h m r skel) (seen $ vertex t)
 
 body :: Handle -> Int -> Int -> [SExpr Pos] -> IO ()
 body h m l xs =
@@ -64,18 +63,6 @@ displayRoleMatch h m k (s, trace) role =
             mapM_ (displayParam h m l role s)
                     (displayEnv (rctx role) (kctx k) e)
 
-matchTraces :: Trace -> Trace -> (Gen, Env) -> [(Gen, Env)]
-matchTraces _ [] env = [env]    -- Target can be shorter than pattern
-matchTraces (In t : c) (In t' : c') env =
-    do
-      e <- cmMatch t t' env
-      matchTraces c c' e
-matchTraces (Out t : c) (Out t' : c') env =
-    do
-      e <- cmMatch t t' env
-      matchTraces c c' e
-matchTraces _ _ _ = []
-
 displayParam :: Handle -> Int -> Int -> Role -> Int -> SExpr () -> IO ()
 displayParam h m l role s (L () [S () param, val]) =
     do
@@ -85,9 +72,10 @@ displayParam h m l role s (L () [S () param, val]) =
 displayParam _ _ _ role _ _ =
     fail ("Bad parameter in role " ++ rname role)
 
-child :: Handle -> Int -> Int -> Tree -> IO ()
-child h m l t =
+child :: Handle -> Int -> Tree -> Skel -> Tree -> IO ()
+child h m r k t =
     do
+      let l = label k
       let lab = label $ vertex t
       let x = L () [S () "child", N () l, N () lab]
       writeSExpr h m x
@@ -95,19 +83,78 @@ child h m l t =
         Just op ->
             do
               let y = L () [S () "step", N () l,
-                            L () (S () "operation" : map strip op),
+                            L () (map strip op),
                             N () lab]
               writeSExpr h m y
-              tree h m t
+              case massoc "strand-map" (alist $ vertex t) of
+                Just xs@(_ : _) ->
+                    do
+                      mapping <- mapM loadStrandMap xs
+                      twa h m k (vertex t) (map strip op) mapping
+                _ -> return ()
+              tree h m r t
         _ ->
             do
               let y = L () [S () "step", N () l, L () [], N () lab]
               writeSExpr h m y
-              tree h m t
+              tree h m r t
 
-dup :: Handle -> Int -> Int -> (Int, SExpr a) -> IO ()
-dup _ _ l (lab, _) | l == lab = return () -- Ignore self loops
-dup h m l (lab, op) =
+dup :: Handle -> Int -> Tree -> Skel -> (Int, [SExpr a], [Int]) -> IO ()
+dup _ _ _ k (lab, _, _) | label k == lab = return () -- Ignore self loops
+dup h m r k (lab, op, mapping) =
     do
-      let x = L () [S () "step", N () l, strip op, N () lab]
+      let l = label k
+      let dop = map strip op
+      let x = L () [S () "step", N () l, L () dop, N () lab]
+      writeSExpr h m x
+      case findSkel lab r of
+        Nothing ->
+            return ()
+        Just k' ->
+            do
+              hPutStrLn h (show $ label k')
+              twa h m k k' dop mapping
+
+twa :: Handle -> Int -> Skel -> Skel -> [SExpr ()] -> [Int] -> IO ()
+twa h m k k' op@(S () "generalization" : _) mapping =
+    rtwa h m k k' (L () op) mapping
+twa h m k k' op mapping =
+    ftwa h m k k' (L () op) mapping
+
+ftwa :: Handle -> Int -> Skel -> Skel -> SExpr () -> [Int] -> IO ()
+ftwa h m k k' op mapping =
+    case mtwa k k' mapping of
+      Nothing -> return ()
+      Just env ->
+          do
+            let l = label k
+            let l' = label k'
+            mapM_ (strands h m l l' op) (zip [0..] mapping)
+            mapM_ (bindings h m l l' op) env
+
+rtwa :: Handle -> Int -> Skel -> Skel -> SExpr () -> [Int] -> IO ()
+rtwa h m k k' op mapping =
+    case mtwa k' k mapping of
+      Nothing -> hPutStrLn h "; no mapping" -- return ()
+      Just env ->
+          do
+            let l = label k
+            let l' = label k'
+            mapM_ (strands h m l l' op) (zip mapping [0..])
+            mapM_ (bindings h m l l' op) (map swap env)
+    where
+      swap (x, y) = (y, x)
+
+strands :: Handle -> Int -> Int -> Int -> SExpr () -> (Int, Int) -> IO ()
+strands h m l l' op (s, s') =
+    do
+      let x = L () [S () "stwa", N () l, N () s, op,
+                    N () l', N () s']
+      writeSExpr h m x
+
+bindings :: Handle -> Int -> Int -> Int -> SExpr () ->
+            (SExpr (), SExpr ()) -> IO ()
+bindings h m l l' op (t, t') =
+    do
+      let x = L () [S () "mtwa", N () l, t, op, N () l', t']
       writeSExpr h m x

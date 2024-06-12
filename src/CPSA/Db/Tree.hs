@@ -8,7 +8,7 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-module CPSA.Db.Tree (Tree (..), Forest, forest) where
+module CPSA.Db.Tree (Tree (..), Forest, forest, findSkel) where
 
 import qualified Data.Map as M
 import Data.Map (Map)
@@ -76,5 +76,16 @@ assemble table k =
             Just (_, ks) -> map (assemble table) (reverse ks)
       dups k =
           [ makeTree k' [] []   -- Make an empty tree for a duplicate
-            | (tag, _) <- seen k,
+            | (tag, _, _) <- seen k,
               k' <- maybe [] (\(k, _) -> [k]) (M.lookup tag table) ]
+
+findSkel :: Int -> Tree -> Maybe Skel
+findSkel lab t | lab == label (vertex t) =
+                   Just (vertex t)
+findSkel lab t =
+    f (children t)
+    where f [] = Nothing
+          f (t : ts) =
+              case findSkel lab t of
+                Just k -> Just k
+                Nothing -> f ts

@@ -1,4 +1,4 @@
-module CPSA.Db.Loader (State, step, strip, massoc) where
+module CPSA.Db.Loader (State, step, strip, massoc, loadStrandMap) where
 
 import Control.Monad
 import qualified Data.List as L
@@ -174,7 +174,7 @@ loadStrands _ _ p kvars gen insts xs =
                           ktraces = insts,
                           label = l,
                           parent = parent,
-                          seen = L.sortOn fst seen,
+                          seen = L.sortOn (\(tag, _, _) -> tag) seen,
                           alist = xs }
         Nothing -> fail "Skeleton without a label"
 
@@ -237,15 +237,25 @@ grow (t : ts) gen env =
 
 -- Association lists
 
-loadSeen :: MonadFail m => Maybe [SExpr Pos] -> m [(Int, SExpr Pos)]
+loadSeen :: MonadFail m => Maybe [SExpr Pos] -> m [(Int, [SExpr Pos], [Int])]
 loadSeen Nothing = return []
 loadSeen (Just xs) = mapM loadSeenOp xs
 
-loadSeenOp :: MonadFail m => SExpr Pos -> m (Int, SExpr Pos)
-loadSeenOp (L _ [N _ l, x, _]) = return (l, x)
+loadSeenOp :: MonadFail m => SExpr Pos -> m (Int, [SExpr Pos], [Int])
+loadSeenOp (L _ [N _ l, L _ (S _ "operation" : xs)]) =
+    return (l, xs, [])
+loadSeenOp (L _ [N _ l, L _ (S _ "operation" : xs),
+                 L _ (S _ "strand-map" : nums)]) =
+    do
+      sm <- mapM loadStrandMap nums
+      return (l, xs, sm)
 loadSeenOp (L pos [N _ l]) =
-    return (l, L pos [S pos "operation", S pos "new"])
+    return (l, [S pos "new"], [])
 loadSeenOp x = fail (shows (annotation x) "Malformed seen operation")
+
+loadStrandMap :: MonadFail m => SExpr Pos -> m Int
+loadStrandMap (N _ n) = return n
+loadStrandMap x = fail (shows (annotation x) "Malformed strand map")
 
 -- Strip positions from an S-expression
 
