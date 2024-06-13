@@ -109,10 +109,11 @@ dup h m r k (lab, op, mapping) =
       writeSExpr h m x
       case findSkel lab r of
         Nothing ->
-            return ()
+            hPutStrLn h ("; Cannot find " ++ show lab)
         Just k' ->
             do
-              hPutStrLn h (show $ label k')
+              hPutStrLn h ("; Seen child " ++ show l ++
+                           " -> " ++ show (label k'))
               twa h m k k' dop mapping
 
 twa :: Handle -> Int -> Skel -> Skel -> [SExpr ()] -> [Int] -> IO ()
@@ -124,7 +125,7 @@ twa h m k k' op mapping =
 ftwa :: Handle -> Int -> Skel -> Skel -> SExpr () -> [Int] -> IO ()
 ftwa h m k k' op mapping =
     case mtwa k k' mapping of
-      Nothing -> return ()
+      Nothing -> hPutStrLn h "; No forward mapping"
       Just env ->
           do
             let l = label k
@@ -135,7 +136,7 @@ ftwa h m k k' op mapping =
 rtwa :: Handle -> Int -> Skel -> Skel -> SExpr () -> [Int] -> IO ()
 rtwa h m k k' op mapping =
     case mtwa k' k mapping of
-      Nothing -> hPutStrLn h "; no mapping" -- return ()
+      Nothing -> hPutStrLn h "; No reverse mapping"
       Just env ->
           do
             let l = label k
