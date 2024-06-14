@@ -277,7 +277,9 @@ sorts, and constants given, modulo the equations.
 %
 \begin{tabular}{|lll|}
 \multicolumn{3}{c}{Sorts}\\ \hline
-Sorts: & \multicolumn{2}{l|}{\scap{name}, \scap{text}, \scap{data}, \scap{tag}, \scap{skey}, \scap{akey}, \scap{base}  $<$ \scap{mesg}} \\
+Sorts: & \multicolumn{2}{l|}{\scap{name}, \scap{text}, \scap{data},
+         \scap{tag}, \scap{skey}, \scap{akey}%, \scap{base}
+         $<$ \scap{mesg}} \\
        & \multicolumn{2}{l|}{\scap{rndx} $<$ \scap{expt} $<$ \scap{mesg}} \\
   &  \multicolumn{2}{l|}{\scap{chan}, \scap{locn} $<$ \scap{mesg}}
 \\ \hline \multicolumn{3}{c}{Operations}\\ \hline
@@ -333,27 +335,30 @@ $h, x \vDash h^x$ & $h \colon \scap{base}, x \colon \scap{expt}$ & Exponentiatio
 \label{tab:dh_algebra_signature}
 \end{table}
 
-\ttindex{expt}
-In Section~\ref{sec:dh} we discussed modeling Diffie-Hellman in
-{\cpsa}, but we said almost nothing about the $\scap{expt}$ sort that
-features prominently in the algebra signature.  Our message model for
-Diffie-Hellman has two sorts of exponents.  The $\scap{rndx}$ sort is
-for exponents that are to be thought of as atomic values.  Randomly
-chosen exponents should always be of this sort, which is why
-\texttt{rndx} appears exclusively in our examples, while \texttt{expt}
-does not.  The $\scap{expt}$ sort is for compound expressions
-involving exponents.  There may also be variables of this sort, but
-they should not appear in protocol roles, and even using them in a
-\texttt{defskeleton} is unusual.  However, they do appear in the
-output with some frequency, due to one of two kinds of bits of
-reasoning: first, a base variable (say, $h$) may be rewritten as an
-explicit power of $g$.  When this happens, since $h$ could stand for
-any power of $g$ including a power with a complex variable, if we
-rewrite $h$ as $g^z$, $z$ will need to be of the generic $\scap{expt}$
-sort so that those possibilities are covered.  Second, {\cpsa} will
-sometimes assume the presence of a value in some instance related to
-another one, and a generic $\scap{expt}$ variable is used to capture
-the somewhat arbitrary relationship between the two.
+\ttindex{expt} In Section~\ref{sec:dh} we discussed modeling
+Diffie-Hellman in {\cpsa}, but we said almost nothing about the
+$\scap{expt}$ sort that features prominently in the algebra signature.
+Our message model for Diffie-Hellman has two sorts of exponents.  The
+$\scap{rndx}$ sort is for exponents that are to be thought of as
+atomic values.  Randomly chosen exponents should always be of this
+sort, which is why \texttt{rndx} appears exclusively in our examples,
+while \texttt{expt} does not.  The $\scap{expt}$ sort is for compound
+expressions involving exponents, or values \texttt{(exp (gen) alpha)}
+that are received with unconstrained exponent.  There may also be
+variables of this sort, but they should not first occur in
+transmissions in protocol roles.
+%   ,
+%   and even using them in a \texttt{defskeleton} is unusual.
+%   However, they do appear in the output with some frequency, due to one
+%   of two kinds of bits of reasoning: first, a base variable (say, $h$)
+%   may be rewritten as an explicit power of $g$.  When this happens,
+%   since $h$ could stand for any power of $g$ including a power with a
+%   complex variable, if we rewrite $h$ as $g^z$, $z$ will need to be of
+%   the generic $\scap{expt}$ sort so that those possibilities are
+%   covered.  Second, {\cpsa} will sometimes assume the presence of a
+%   value in some instance related to another one, and a generic
+%   $\scap{expt}$ variable is used to capture the somewhat arbitrary
+%   relationship between the two.
 
 Table~\ref{tab:dh_term} describes the grammar for Diffie-Hellman
 crypto algbera messages in the input syntax.  Symbols in the grammar
@@ -368,7 +373,8 @@ constants, respectively.
 \\ alg&$\leftarrow$&$\sym{diffie-hellman}$
 \\
   sort&$\leftarrow$&$\sym{text}\mid\sym{data}\mid\sym{name}\mid\sym{tag}\mid\sym{skey}\mid\sym{akey}$
-\\ &$\mid$ & $\sym{rndx}~\mid\sym{expt}\mid\sym{base}\mid\sym{chan}\mid\sym{locn}\mid\sym{mesg}\mid$ id
+  \\ &$\mid$ & $\sym{rndx}~\mid\sym{expt}\mid%\sym{base}\mid
+               \sym{chan}\mid\sym{locn}\mid\sym{mesg}\mid$ id
 \\ id&$\leftarrow$&symbol
 \\ term&$\leftarrow$&
 $\mbox{id}\mid(\sym{pubk}\mbox{ id})

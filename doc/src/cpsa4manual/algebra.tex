@@ -15,15 +15,24 @@ In Chapter~\ref{ch:basic}, we introduced the basic cryptoalgebra,
 along with the \texttt{data, text, name, skey,} and \texttt{akey}
 sorts, and the \texttt{pubk, privk, invk, enc,} and \texttt{cat}
 function symbols.  In addition to these, the basic cryptoalgebra
-contains the sorts \ttindex{tag} \texttt{tag} and \texttt{mesg}, and the \texttt{ltk}
-and \texttt{hash} function symbols, and string constants.
+contains the sorts \ttindex{tag} \texttt{tag} and \texttt{mesg}, and
+the \texttt{ltk} and \texttt{hash} function symbols, and string
+constants.
 
-The Diffie-Hellman cryptoalgebra introduces three further sorts,
-\texttt{base, rndx,} and \texttt{expt}, and six new function symbols,
-\texttt{bltk, exp, rec, mul, gen,} and \texttt{one}.  For performance
-reasons, one should always avoid using variables of sort
-\texttt{base}.  Instead, replace the variable with \texttt{(exp (gen)
-  x)}, where \texttt{x} is a variable of sort \texttt{expt}.
+The Diffie-Hellman cryptoalgebra introduces two further sorts,
+\texttt{rndx} and \texttt{expt}, and six new function symbols,
+\texttt{bltk, exp, rec, mul, gen,} and \texttt{one}.
+
+At one time variables of sort \texttt{base} were also permitted, but a
+variable \texttt{b} of sort \texttt{base} has the same meaning as a
+term \texttt{(exp (gen) alpha)} where \texttt{alpha} is of sort
+\texttt{expt}.  Eliminating variables of sort \texttt{base} allows us
+to eliminate some tricky but conceptually unnecessary, even
+practically unnecessary, code.  Thus, replace these variables with
+\texttt{(exp (gen) alpha)}, where \texttt{alpha} is a variable of sort
+\texttt{expt}.  We still refer to these \emph{terms} as having sort
+\texttt{base}, since they may be the bases for further exponentiation,
+but there are no variables of this sort.
 
 In this chapter we will explain these additional features with
 examples.  In Section~\ref{sec:kerberos}, we will discuss the
@@ -309,11 +318,14 @@ partner's public value.  For instance, Alice can calculate $g^{ab}
 Version 3 of {\cpsa} introduces the Diffie-Hellman algebra, which
 allows for analysis of protocols that incorporate Diffie-Hellman
 techniques.  The Diffie-Hellman algebra includes all the function
-symbols and sorts available in the basic algebra, plus three
-additional sorts: two sorts (\texttt{rndx} and \texttt{expt}) for
-exponents such as $x$, and \texttt{base}, for exponentiated values
-such as $g^x$.  The Diffie-Hellman specific functions symbols are as
-follows:
+symbols and sorts available in the basic algebra, plus two additional
+sorts of variable, namely the two sorts \texttt{rndx} and
+\texttt{expt} for exponents such as $x$.
+%   
+%   , for
+%   exponentiated values such as $g^x$.
+%   
+The Diffie-Hellman specific functions symbols are as follows:
 
 \begin{itemize}
 \item \texttt{exp} represents exponentation.  For example, $h^x$ is
@@ -384,17 +396,17 @@ worth drawing attention to.  See Figure~\ref{fig:plaindh defprotocol}
 \label{fig:plaindh defprotocol}
 \end{figure}
 
-\ttindex{rndx} \ttindex{expt}
-Note that the initiator uses a variable $x$ of the \texttt{rndx} sort
-to represent its own random variable, and a variable $y$ of the
-\texttt{expt} sort to represent the exponent present in the base value
-it receives from the initiator.  Distinct values of the \texttt{rndx}
-sort model distinct independent random choices of exponents, while
-\texttt{expt} values merely represent arbitrary exponents which may or
-may not be calculated as some product of other known values.  Here,
-since the initiator chooses their own exponent, we model $x$ as an
-\texttt{rndx} value.  But since the initiator cannot know how the base value
-$g^y$ was calculated, we model $y$ as an \texttt{expt} value.
+\ttindex{rndx} \ttindex{expt} Note that the initiator uses a variable
+$x$ of the \texttt{rndx} sort to represent its own random variable,
+and a variable $y$ of the \texttt{expt} sort to represent the exponent
+present in the base value \texttt{(exp (gen) y)} it receives from the
+initiator.  Distinct values of the \texttt{rndx} sort model distinct
+independent random choices of exponents, while \texttt{expt} values
+merely represent arbitrary exponents which may or may not be
+calculated as some product of other known values.  Here, since the
+initiator chooses their own exponent, we model $x$ as an \texttt{rndx}
+value.  But since the initiator cannot know how the base value $g^y$
+was calculated, we model $y$ as an \texttt{expt} value.
 
 Note that unlike the example in Section~\ref{sec:kerberos},
 where receiving a specifically formatted encryption in a protocol role

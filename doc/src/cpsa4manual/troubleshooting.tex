@@ -130,9 +130,12 @@ to the tool maintainers.
 \item \textbf{``Algebra.absenceSubst: bad absence assertion''} or
   \textbf{``Algebra.nullifyOne: unexpected pattern''} The
   \texttt{absent} declaration must be declared on a pair where the
-  first element is an \scap{rndx} variable and the second element is either
-  an exponent or a \scap{base} term.  These errors should not occur if you
-  did not give {\cpsa} an input with an absent declaration.
+  first element is an \scap{rndx} variable and the second element is 
+  an exponent.
+  % or a \scap{base} term.
+  %
+  These errors should not occur if you did not give {\cpsa} an input
+  with an absent declaration.
 
 \item \textbf{``Algebra.inv: Cannot invert a variable of sort mesg''}.
   Variables of the \texttt{mesg} sort should never be used as the key
@@ -353,10 +356,10 @@ to the tool maintainers.
   Section~\ref{sec:secrecy_assumptions} fr an explanation of
   ``carried.''
 
-\item \textbf{``Role not well formed: variable [...] not obtained''}.
-  Variables of the $\scap{base}$ or $\scap{expr}$ sort must be
-  ``obtained'' when used in roles, meaning that the first occurrence
-  must be in a reception.
+  \item \textbf{``Role not well formed: variable [...] not
+    obtained''}.  Variables of the %$\scap{base}$ or
+  $\scap{expr}$ sort must be ``obtained'' when used in roles, meaning
+  that the first occurrence must be in a reception.
 
 \item \textbf{``[Role / Skeleton] not well formed: inequality
   conditions violated''}.  A \texttt{neq} declaration is false where

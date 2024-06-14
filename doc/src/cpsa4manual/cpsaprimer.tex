@@ -155,11 +155,11 @@ hence the use of the word sort instead of type.  Other aspects of
 {\cpsa}'s use of order-sorted algebras is beyond the scope of this
 paper.
 
-The sorts that correspond to the atomic values are the base
+The sorts that correspond to the atomic values are the basic
 sorts---for \textsc{bca} they are \fn{text}, \fn{data}, \fn{name},
-\fn{akey}, and \fn{skey}.  The non-base sort is
-\fn{mesg}.  Every term is of sort~\fn{mesg}, and every one of the
-other sorts is a subsort of~\fn{mesg}.\index{sort}
+\fn{akey}, and \fn{skey}.  The non-basic sort is \fn{mesg}.  Every
+term is of sort~\fn{mesg}, and every one of the other sorts is a
+subsort of~\fn{mesg}.\index{sort}
 
 The simplest term is a variable, which syntactically is a
 \textsc{symbol} as described in Appendix~\ref{sec:syntax reference}.
@@ -182,7 +182,7 @@ is a quoted constant, as in
 Two names can be used to identify a long
 term symmetric key with the \texttt{ltk} operator.
 
-Terms formed from base sorted variables, and the operators
+Terms formed from basic sorted variables, and the operators
 \texttt{invk}, \texttt{pubk}, \texttt{privk}, and \texttt{ltk} are
 called atoms, because each one represents an atomic value.  A key
 property of an atom is that the receiver of an atom carried in a
@@ -210,8 +210,8 @@ represents symmetric encryption.  Additionally, \texttt{(enc $a$ $b$
 traditional notation and \texttt{(hash $t$)} in S-expression syntax.
 {\cpsa} treats a hashed term as if it were an encryption in which the
 term that is hashed is the encryption key.  As with encryption,
-\texttt{(hash $a$ $b$ $c$ $d$)} is equivalent to \texttt{hash (cat $a$
-  $b$ $c$ $d$))}.  Figure~\ref{fig:ns responder} on
+\texttt{(hash $a$ $b$ $c$ $d$)} is equivalent to \texttt{(hash (cat
+  $a$ $b$ $c$ $d$))}.  Figure~\ref{fig:ns responder} on
 Page~\pageref{fig:ns responder} contains examples of \textsc{bca}
 message terms.  Also see \textsc{term} in Table~\ref{tab:syntax},
 Appendix~\ref{sec:syntax reference}.
