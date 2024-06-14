@@ -4,7 +4,7 @@
 ;;; key from long-term and ephemeral Diffie-Hellman exponents.  We use
 ;;; self-signed certificates to link names to long-term public values.
 
-;;; This file contains the criss-crossed version, in which each
+;;; This file contains the criss-crossed version, in which the each
 ;;; ephemeral is mixed with the peer's static exponent.  Only the key
 ;;; derivation macros differ from the version in dhcr_um.scm
 
@@ -26,10 +26,8 @@
 ;;; strength relative to the standard UM key derivation a
 ;;; participant's *own* long term value may be exposed without an
 ;;; adversary being able to acquire a key shared with them for any
-;;; claimed peer.  A fine point that the analysis exposes is that this
-;;; is true when the peer has had only one long key generated.  Other
-;;; disclosed long terms keys yield counterxamples.  If my peer's long
-;;; term value is exposed of course anyone can impersonate them.
+;;; claimed peer.  If my peer's long term value is exposed of course
+;;; anyone can impersonate them.
 
 ;;; CPSA4 revisions:
 ;;;
@@ -130,6 +128,7 @@
        (p "ltx-gen" z2 2)
        (p "ltx-gen" "self" z2 self))
       (= z1 z2))))
+    
 
   (defrule eq-means-=
     (forall
@@ -143,123 +142,25 @@
 	(pv (tuple 2))))
  
 
-; Initiator point of view: both LTX exponents secret
-(defskeleton dhcr-umx
-  (vars (a b name) (l l-peer rndx))
-  (defstrand init 4 (a a) (b b) (l l) (beta l-peer))
-  (non-orig (privk "sig" a) (privk "sig" b))
-  (facts (neq a b)
-	 (undisclosed l)
-	 (undisclosed l-peer)))
 
-
-
-; Initiator point of view:  peer exponent secret
-(defskeleton dhcr-umx
-  (vars (a b name) (l l-peer rndx))
-  (defstrand init 4 (a a) (b b) (l l) (beta l-peer))
-  (non-orig (privk "sig" a) (privk "sig" b))
-  (facts (neq a b)
-	 ;;	 (undisclosed l)
-	 (undisclosed l-peer)))
-
-;;; Initiator point of view:  peer exponent secret,
-;;; my key generated only once
 (defskeleton dhcr-umx
   (vars (a b name) (l l-peer rndx))
   (defstrand init 4 (a a) (b b) (l l) (beta l-peer))
   (non-orig (privk "sig" a) (privk "sig" b))
   (facts (neq a b)
 	 (ltx-gen-once a)
-	 ;;	 (undisclosed l)
-	 (undisclosed l-peer)))
-
-
-
-; Initiator point of view:  my exponent secret
-(defskeleton dhcr-umx
-  (vars (a b name) (l rndx) (l-peer expt))
-  (defstrand init 4 (a a) (b b) (l l) (beta l-peer))
-  (non-orig (privk "sig" a) (privk "sig" b))
-  (facts (neq a b)
-	 ;;	 (undisclosed l-peer)
-	 (undisclosed l)))
-
-; Initiator point of view:  neither exponent secret
-
-(defskeleton dhcr-umx
-  (vars (a b name) (l rndx) (l-peer expt))
-  (defstrand init 4 (a a) (b b) (l l) (beta l-peer))
-  (non-orig (privk "sig" a) (privk "sig" b))
-  (facts (neq a b)
-	 ;;	 (undisclosed l-peer)
+	 (undisclosed l-peer)
 	 ;;	 (undisclosed l)
 	 ))
 
-
-;;; Responder cases
-
 (defskeleton dhcr-umx
-  (vars (a b name) (l l-peer rndx))
-  (defstrand resp 5 (a a) (b b) (l l) (alpha l-peer))
-  (non-orig (privk "sig" a) (privk "sig" b))
-  (facts (neq a b)
-	 (undisclosed l)
-	 (undisclosed l-peer)))
-
-(defskeleton dhcr-umx
-  (vars (a b name) (l l-peer rndx))
-  (defstrand resp 5 (a a) (b b) (l l) (alpha l-peer))
-  (non-orig (privk "sig" a) (privk "sig" b))
-  (facts (neq a b)
-	 ;; 	 (undisclosed l) 
-	 (undisclosed l-peer)))
-
-(defskeleton dhcr-umx
-  (vars (a b name) (l l-peer rndx))
-  (defstrand resp 5 (a a) (b b) (l l) (alpha l-peer))
-  (non-orig (privk "sig" a) (privk "sig" b))
-  (facts (neq a b)
-	 (ltx-gen-once b)
-	 ;; 	 (undisclosed l)
-	 (undisclosed l-peer)))
-
-(defskeleton dhcr-umx
-  (vars (a b name) (l l-peer rndx))
-  (defstrand resp 5 (a a) (b b) (l l) (alpha l-peer))
-  (non-orig (privk "sig" a) (privk "sig" b))
-  (facts (neq a b)
-	 (undisclosed l)
-	 ;;	 (undisclosed l-peer)
-	 ))
-
-(defskeleton dhcr-umx
-  (vars (a b name) (l l-peer rndx))
-  (defstrand resp 5 (a a) (b b) (l l) (alpha l-peer))
-  (non-orig (privk "sig" a) (privk "sig" b))
-  (facts (neq a b)
-	 ;;      (undisclosed l)
-	 ;;	 (undisclosed l-peer)
-	 ))
-
-;; Forward secrecy for each participant 
-
-(defskeleton dhcr-umx
-   (vars (ltxa ltxb x rndx) (y expt) (a b name))
-   (defstrand init 5 (l ltxa) (beta ltxb) (x x) (eta y) (a a) (b b))
-   (deflistener (kcfa ltxa (exp (gen) ltxb) x (exp (gen) y)))
-   (defstrand ltx-disclose 3 (l ltxa))
-   (defstrand ltx-disclose 3 (l ltxb))
-   (precedes ((0 4) (3 0)) ((0 4) (2 0)))
+   (vars (a b name) (l l-peer rndx))
+   (defstrand resp 5 (a a) (b b) (l l) (alpha l-peer))
    (non-orig (privk "sig" a) (privk "sig" b))
-   (facts (neq a b)))
+   (facts (neq a b)
+	  (ltx-gen-once b)
+	  (undisclosed l-peer)))
 
-(defskeleton dhcr-umx
-  (vars (ltxa ltxb y rndx) (chi expt) (a b name))
-  (defstrand resp 6 (l ltxa) (alpha ltxb) (y y) (chi chi) (a a) (b b))
-  (deflistener (kcfb ltxb (exp (gen) ltxa) y (exp (gen) chi)))
-  (defstrand ltx-disclose 3 (l ltxa))
-  (defstrand ltx-disclose 3 (l ltxb))
-  (precedes ((0 5) (3 0)) ((0 5) (2 0)))
-  (facts (neq a b)))
+
+
 

@@ -152,11 +152,11 @@ mkSkel pos p goals nmap g insts as comment =
     let gs = foldr mkGenSt [] as
     let cf = foldr mkConf [] as
     let au = foldr mkAuth [] as
-    let (nr', ar', ur', ug', cf', au') =
-          foldl addInstOrigs (nr, ar, ur, ug, cf, au) insts
+    let (nr', ar', ur', ug', cf', au', ab') =
+          foldl addInstOrigs (nr, ar, ur, ug, cf, au, []) insts
     let fs = foldr (mkFact nmap) [] as
     let prios = []
-    let k = mkPreskel g p goals insts o nr' ar' ur' ug' [] []
+    let k = mkPreskel g p goals insts o nr' ar' ur' ug' ab' []
             gs cf' au' fs prios comment
     mapM_ (checkUniqAt nmap k) as
     mapM_ (checkUgenAt nmap k) as
@@ -168,15 +168,17 @@ mkSkel pos p goals nmap g insts as comment =
       Fail msg -> fail $ shows pos
                   $ showString "Skeleton not well formed: " msg
 
-addInstOrigs :: ([Term], [Term], [Term], [Term], [Term], [Term]) ->
-                Instance -> ([Term], [Term], [Term], [Term], [Term], [Term])
-addInstOrigs (nr, ar, ur, ug, cf, au) i =
+addInstOrigs :: ([Term], [Term], [Term], [Term], [Term], [Term], [(Term, Term)]) ->
+                Instance ->
+                    ([Term], [Term], [Term], [Term], [Term], [Term], [(Term, Term)])
+addInstOrigs (nr, ar, ur, ug, cf, au, ab) i =
     (foldl (flip adjoin) nr $ inheritRnon i,
      foldl (flip adjoin) ar $ inheritRpnon i,
      foldl (flip adjoin) ur $ inheritRunique i,
      foldl (flip adjoin) ug $ inheritRuniqgen i,
      foldl (flip adjoin) au $ inheritRconf i,
-     foldl (flip adjoin) cf $ inheritRauth i)
+     foldl (flip adjoin) cf $ inheritRauth i,
+     foldl (flip adjoin) ab $ inheritRabsent i)
 
 mkPrec :: [(Term, Sid)] -> (Pos, AForm) -> [Pair] -> [Pair]
 mkPrec nmap (_, Prec n n') o =

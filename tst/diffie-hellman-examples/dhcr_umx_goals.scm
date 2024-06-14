@@ -42,7 +42,8 @@
 
 (herald "DHCR: unified model (UM) with criss-cross key derivation"
 	(bound 30)
-	(limit 8000)
+	(limit 16000) 
+	(goals-sat)
 	(algebra diffie-hellman))
 
 (defmacro (kcfa ltxa gbeta x hy)
@@ -141,125 +142,68 @@
   (lang (sig sign)
 	(body (tuple 3))
 	(pv (tuple 2))))
- 
 
-; Initiator point of view: both LTX exponents secret
-(defskeleton dhcr-umx
-  (vars (a b name) (l l-peer rndx))
-  (defstrand init 4 (a a) (b b) (l l) (beta l-peer))
-  (non-orig (privk "sig" a) (privk "sig" b))
-  (facts (neq a b)
-	 (undisclosed l)
-	 (undisclosed l-peer)))
+(defgoal dhcr-umx
+  (forall
+   ((na nb data) (a b name) (l l-peer x rndx)
+    (eta expt) (z strd))
+   (implies
+    (and
+     (p "init" z 4)
+     (p "init" "na" z na)
+     (p "init" "nb" z nb)     
+     (p "init" "a" z a)
+     (p "init" "b" z b)
+     (p "init" "l" z l)
+     (p "init" "x" z x)
+     (p "init" "beta" z l-peer)     
+     (p "init" "eta" z eta)
+      
+     (non (privk "sig" b))
+     (ugen x)
+     (uniq-at na z 2)
+     (fact neq a b)
+     ;; skip the ltx-gen-once assumption 
+     ;; (fact ltx-gen-once a)
+     (fact undisclosed l-peer))
+    ;; and still get the authentication we need 
+    (exists
+     ((z-1 strd) (y rndx) (w expt))
+     (and
+      (p "resp" z-1 4) 
+      (p "resp" "na" z-1 na)
+      (p "resp" "nb" z-1 nb) (p "resp" "a" z-1 a)
+      (p "resp" "b" z-1 b)       
+      (prec z 2 z-1 2))))))
 
+(defgoal dhcr-umx
+  (forall
+   ((z zl strd) (na nb data) (a b name)  (l x rndx)
+    (eta beta expt))
+   (implies
+    (and
+     (p "init" z 4)
+     (p "init" "na" z na)
+     (p "init" "nb" z nb)     
+     (p "init" "a" z a)
+     (p "init" "b" z b)
+     (p "init" "l" z l)
+     (p "init" "x" z x)
+     (p "init" "beta" z beta)     
+     (p "init" "eta" z eta)
+     (non (privk "sig" b))
+     (ugen x)
+     (uniq-at na z 2)
+     (fact neq a b)
+     ;; skip the ltx-gen-once assumption 
+     ;; (fact ltx-gen-once a)
+     (fact undisclosed beta)
+     ;; and still get the secrecy we need
+     (p "" zl 2)
+     (p "" "x" zl 
+	(kcfa l (exp (gen) beta)
+	      x (exp (gen) eta))))
+    (false))))
 
-
-; Initiator point of view:  peer exponent secret
-(defskeleton dhcr-umx
-  (vars (a b name) (l l-peer rndx))
-  (defstrand init 4 (a a) (b b) (l l) (beta l-peer))
-  (non-orig (privk "sig" a) (privk "sig" b))
-  (facts (neq a b)
-	 ;;	 (undisclosed l)
-	 (undisclosed l-peer)))
-
-;;; Initiator point of view:  peer exponent secret,
-;;; my key generated only once
-(defskeleton dhcr-umx
-  (vars (a b name) (l l-peer rndx))
-  (defstrand init 4 (a a) (b b) (l l) (beta l-peer))
-  (non-orig (privk "sig" a) (privk "sig" b))
-  (facts (neq a b)
-	 (ltx-gen-once a)
-	 ;;	 (undisclosed l)
-	 (undisclosed l-peer)))
-
-
-
-; Initiator point of view:  my exponent secret
-(defskeleton dhcr-umx
-  (vars (a b name) (l rndx) (l-peer expt))
-  (defstrand init 4 (a a) (b b) (l l) (beta l-peer))
-  (non-orig (privk "sig" a) (privk "sig" b))
-  (facts (neq a b)
-	 ;;	 (undisclosed l-peer)
-	 (undisclosed l)))
-
-; Initiator point of view:  neither exponent secret
-
-(defskeleton dhcr-umx
-  (vars (a b name) (l rndx) (l-peer expt))
-  (defstrand init 4 (a a) (b b) (l l) (beta l-peer))
-  (non-orig (privk "sig" a) (privk "sig" b))
-  (facts (neq a b)
-	 ;;	 (undisclosed l-peer)
-	 ;;	 (undisclosed l)
-	 ))
-
-
-;;; Responder cases
-
-(defskeleton dhcr-umx
-  (vars (a b name) (l l-peer rndx))
-  (defstrand resp 5 (a a) (b b) (l l) (alpha l-peer))
-  (non-orig (privk "sig" a) (privk "sig" b))
-  (facts (neq a b)
-	 (undisclosed l)
-	 (undisclosed l-peer)))
-
-(defskeleton dhcr-umx
-  (vars (a b name) (l l-peer rndx))
-  (defstrand resp 5 (a a) (b b) (l l) (alpha l-peer))
-  (non-orig (privk "sig" a) (privk "sig" b))
-  (facts (neq a b)
-	 ;; 	 (undisclosed l) 
-	 (undisclosed l-peer)))
-
-(defskeleton dhcr-umx
-  (vars (a b name) (l l-peer rndx))
-  (defstrand resp 5 (a a) (b b) (l l) (alpha l-peer))
-  (non-orig (privk "sig" a) (privk "sig" b))
-  (facts (neq a b)
-	 (ltx-gen-once b)
-	 ;; 	 (undisclosed l)
-	 (undisclosed l-peer)))
-
-(defskeleton dhcr-umx
-  (vars (a b name) (l l-peer rndx))
-  (defstrand resp 5 (a a) (b b) (l l) (alpha l-peer))
-  (non-orig (privk "sig" a) (privk "sig" b))
-  (facts (neq a b)
-	 (undisclosed l)
-	 ;;	 (undisclosed l-peer)
-	 ))
-
-(defskeleton dhcr-umx
-  (vars (a b name) (l l-peer rndx))
-  (defstrand resp 5 (a a) (b b) (l l) (alpha l-peer))
-  (non-orig (privk "sig" a) (privk "sig" b))
-  (facts (neq a b)
-	 ;;      (undisclosed l)
-	 ;;	 (undisclosed l-peer)
-	 ))
-
-;; Forward secrecy for each participant 
-
-(defskeleton dhcr-umx
-   (vars (ltxa ltxb x rndx) (y expt) (a b name))
-   (defstrand init 5 (l ltxa) (beta ltxb) (x x) (eta y) (a a) (b b))
-   (deflistener (kcfa ltxa (exp (gen) ltxb) x (exp (gen) y)))
-   (defstrand ltx-disclose 3 (l ltxa))
-   (defstrand ltx-disclose 3 (l ltxb))
-   (precedes ((0 4) (3 0)) ((0 4) (2 0)))
-   (non-orig (privk "sig" a) (privk "sig" b))
-   (facts (neq a b)))
-
-(defskeleton dhcr-umx
-  (vars (ltxa ltxb y rndx) (chi expt) (a b name))
-  (defstrand resp 6 (l ltxa) (alpha ltxb) (y y) (chi chi) (a a) (b b))
-  (deflistener (kcfb ltxb (exp (gen) ltxa) y (exp (gen) chi)))
-  (defstrand ltx-disclose 3 (l ltxa))
-  (defstrand ltx-disclose 3 (l ltxb))
-  (precedes ((0 5) (3 0)) ((0 5) (2 0)))
-  (facts (neq a b)))
+;;; Forward secrecy doesn't hold, so let's not try to prove that 
 
