@@ -1,6 +1,6 @@
 (herald jdg-wonthull (bound 9))
 
-(comment "CPSA 4.4.3")
+(comment "CPSA 4.4.4")
 (comment "All input read from tst/jdg-wonthull.scm")
 (comment "Strand count bounded at 9")
 
@@ -33,7 +33,6 @@
   (label 0)
   (unrealized (0 1))
   (origs (x3 (0 0)))
-  
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull
@@ -43,6 +42,7 @@
   (uniq-orig x2)
   (operation nonce-test (displaced 1 0 init 1) x3 (0 1)
     (enc x3 x2 (pubk a)))
+  (strand-map 0)
   (traces
     ((send (cat (enc x1 x2 (pubk a)) (enc x2 x2 (pubk a))))
       (recv (enc "okay" x2 x4 (pubk a)))))
@@ -50,7 +50,6 @@
   (parent 0)
   (unrealized (0 1))
   (origs (x2 (0 0)))
-  
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull
@@ -62,6 +61,7 @@
   (uniq-orig x3)
   (operation nonce-test (added-strand resp 2) x3 (0 1)
     (enc x3 x2 (pubk a)))
+  (strand-map 0)
   (traces
     ((send (cat (enc x1 x2 (pubk a)) (enc x3 x2 (pubk a))))
       (recv (enc "okay" x3 x4 (pubk a))))
@@ -72,7 +72,8 @@
   (seen-ops
     (3
       (operation nonce-test (displaced 2 0 init 1) x3 (0 1)
-        (enc "okay" y3 x3 (pubk a)) (enc x3 x2 (pubk a)))))
+        (enc "okay" y3 x3 (pubk a)) (enc x3 x2 (pubk a)))
+      (strand-map 0 1)))
   (unrealized (0 1))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -85,6 +86,7 @@
   (uniq-orig x2)
   (operation nonce-test (added-strand resp 2) x2 (0 1)
     (enc x1 x2 (pubk a)) (enc x2 x2 (pubk a)))
+  (strand-map 0)
   (traces
     ((send (cat (enc x1 x2 (pubk a)) (enc x2 x2 (pubk a))))
       (recv (enc "okay" x2 x4 (pubk a))))
@@ -103,6 +105,7 @@
   (uniq-orig y3)
   (operation nonce-test (contracted (x3 y3) (x4 y3)) y3 (0 1)
     (enc "okay" y3 y3 (pubk a)) (enc y3 x2 (pubk a)))
+  (strand-map 0 1)
   (traces
     ((send (cat (enc x1 x2 (pubk a)) (enc y3 x2 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -112,8 +115,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 y3) (x4 y3))))
-  (origs (y3 (0 0)))
-  )
+  (origs (y3 (0 0))))
 
 (defskeleton wonthull
   (vars (x1 y3 text) (a name))
@@ -125,6 +127,7 @@
   (operation nonce-test (contracted (x2 y3) (x4 y3)) y3 (0 1)
     (enc "okay" y3 y3 (pubk a)) (enc x1 y3 (pubk a))
     (enc y3 y3 (pubk a)))
+  (strand-map 0 1)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 y3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -145,6 +148,7 @@
   (operation nonce-test (added-strand resp 2) x2 (0 1)
     (enc "okay" y3 x2 (pubk a)) (enc x1 x2 (pubk a))
     (enc x2 x2 (pubk a)))
+  (strand-map 0 1)
   (traces
     ((send (cat (enc x1 x2 (pubk a)) (enc x2 x2 (pubk a))))
       (recv (enc "okay" x2 x4 (pubk a))))
@@ -166,6 +170,7 @@
   (operation nonce-test (added-strand resp 2) x2 (0 1)
     (enc "okay" y3 x2 (pubk a)) (enc x1 x2 (pubk a))
     (enc x2 x2 (pubk a)))
+  (strand-map 0 1)
   (traces
     ((send (cat (enc x1 x2 (pubk a)) (enc x2 x2 (pubk a))))
       (recv (enc "okay" x2 x4 (pubk a))))
@@ -178,7 +183,7 @@
     (10
       (operation nonce-test (added-strand resp 2) x2 (0 1)
         (enc "okay" x1 x2 (pubk a)) (enc "okay" y3 x2 (pubk a))
-        (enc x1 x2 (pubk a)) (enc x2 x2 (pubk a)))))
+        (enc x1 x2 (pubk a)) (enc x2 x2 (pubk a))) (strand-map 0 1 2)))
   (unrealized (0 1))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -190,6 +195,7 @@
   (non-orig (privk a))
   (uniq-orig y3 y3-0)
   (operation generalization separated y3-0)
+  (strand-map 0 1)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3-0 y3 (pubk a))))
       (recv (enc "okay" y3-0 y3-0 (pubk a))))
@@ -198,7 +204,7 @@
   (label 8)
   (parent 5)
   (seen 4)
-  (seen-ops (4 (operation generalization forgot y3)))
+  (seen-ops (4 (operation generalization forgot y3) (strand-map 0 1)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -213,6 +219,7 @@
   (operation nonce-test (contracted (x4 x2)) x2 (0 1)
     (enc "okay" x2 x2 (pubk a)) (enc "okay" y3 x2 (pubk a))
     (enc x1 x2 (pubk a)) (enc x2 x2 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1 x2 (pubk a)) (enc x2 x2 (pubk a))))
       (recv (enc "okay" x2 x2 (pubk a))))
@@ -221,7 +228,8 @@
   (label 9)
   (parent 6)
   (seen 5)
-  (seen-ops (5 (operation generalization deleted (1 0))))
+  (seen-ops
+    (5 (operation generalization deleted (1 0)) (strand-map 0 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -238,6 +246,7 @@
   (operation nonce-test (added-strand resp 2) x2 (0 1)
     (enc "okay" x2 x2 (pubk a)) (enc "okay" y3 x2 (pubk a))
     (enc x1 x2 (pubk a)) (enc x2 x2 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1 x2 (pubk a)) (enc x2 x2 (pubk a))))
       (recv (enc "okay" x2 x4 (pubk a))))
@@ -260,6 +269,7 @@
   (operation nonce-test (contracted (x2 x1) (x4 x1)) x1 (0 1)
     (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
     (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -281,6 +291,7 @@
   (operation nonce-test (contracted (x2 y3) (x4 y3)) y3 (0 1)
     (enc "okay" x1 y3 (pubk a)) (enc "okay" y3 y3 (pubk a))
     (enc x1 y3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2)
   (traces
     ((send (cat (enc x1 y3 (pubk a)) (enc y3 y3 (pubk a))))
       (recv (enc "okay" y3 y3 (pubk a))))
@@ -289,7 +300,8 @@
   (label 12)
   (parent 7)
   (seen 5)
-  (seen-ops (5 (operation generalization deleted (2 0))))
+  (seen-ops
+    (5 (operation generalization deleted (2 0)) (strand-map 0 1)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -307,6 +319,7 @@
     (enc "okay" x1 x2 (pubk a)) (enc "okay" x2 x2 (pubk a))
     (enc "okay" y3 x2 (pubk a)) (enc x1 x2 (pubk a))
     (enc x2 x2 (pubk a)))
+  (strand-map 0 1 2 3)
   (traces
     ((send (cat (enc x1 x2 (pubk a)) (enc x2 x2 (pubk a))))
       (recv (enc "okay" x2 x2 (pubk a))))
@@ -316,7 +329,8 @@
   (label 13)
   (parent 10)
   (seen 12)
-  (seen-ops (12 (operation generalization deleted (1 0))))
+  (seen-ops
+    (12 (operation generalization deleted (1 0)) (strand-map 0 2 3)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -328,6 +342,7 @@
   (non-orig (privk a))
   (uniq-orig x1)
   (operation generalization deleted (1 0))
+  (strand-map 0 2)
   (traces
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
@@ -335,7 +350,8 @@
   (label 14)
   (parent 11)
   (seen 5)
-  (seen-ops (5 (operation generalization separated x1-0)))
+  (seen-ops
+    (5 (operation generalization separated x1-0) (strand-map 0 1)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -374,7 +390,6 @@
   (realized)
   (shape)
   (maps ((0 1) ((a a) (x1 x1) (x3 x3))))
-  (origs (x3 (0 0)))
-  )
+  (origs (x3 (0 0))))
 
 (comment "Nothing left to do")

@@ -1,5 +1,5 @@
 Name:                   cpsa
-Version:                4.4.3
+Version:                4.4.4
 Maintainer:             ramsdell@mitre.org
 Cabal-Version:          >= 1.10
 License:                BSD3
@@ -151,106 +151,169 @@ Extra-Source-Files:
   src/ocaml/main.mli src/ocaml/pp.ml src/ocaml/token.ml
   src/ocaml/token.mli src/ocaml/scanner.mll src/ocaml/sexpr.ml
   src/ocaml/sexpr.mli src/ocaml/sexpr_type.ml
-  tst/DH_hack.scm tst/DH_hack.tst tst/Make4.hs tst/Makefile tst/README
-  tst/ab.scm tst/ab.tst tst/abc.scm tst/abc.tst tst/aik.scm
-  tst/aik.tst tst/atomic-open-closed.scm tst/atomic-open-closed.tst
-  tst/attest.scm tst/attest.tst tst/auth-enc.scm tst/auth-enc.tst
-  tst/auth-hash.scm tst/auth-hash.tst tst/blanchet.scm
-  tst/blanchet.tst tst/blanchet_doorsep.prot tst/blanchet_doorsep.tst
-  tst/bug_example.scm tst/bug_example.tst tst/cert_lang.scm
-  tst/cert_lang.tst tst/chan-envelope.scm tst/chan-envelope.tst
-  tst/chan-perrig-song.scm tst/chan-perrig-song.tst
+  tst/DH_hack.scm tst/DH_hack.tst tst/DH_hack_shapes.tst tst/ab.scm
+  tst/ab.tst tst/ab_shapes.tst tst/abc.scm tst/abc.tst
+  tst/abc_shapes.tst tst/aik.scm tst/aik.tst tst/aik_shapes.tst
+  tst/atomic-open-closed.scm tst/atomic-open-closed.tst
+  tst/atomic-open-closed_shapes.tst tst/attest.scm tst/attest.tst
+  tst/attest_shapes.tst tst/auth-enc.scm tst/auth-enc.tst
+  tst/auth-enc_shapes.tst tst/auth-hash.scm tst/auth-hash.tst
+  tst/auth-hash_shapes.tst tst/blanchet-strandmax.scm
+  tst/blanchet-strandmax.tst tst/blanchet.scm tst/blanchet.tst
+  tst/blanchet_doorsep.tst tst/blanchet_doorsep_shapes.tst
+  tst/blanchet_shapes.tst tst/bug_example.scm tst/bug_example.tst
+  tst/bug_example_shapes.tst tst/cert_lang.scm tst/cert_lang.tst
+  tst/cert_lang_shapes.tst tst/chan-envelope.scm tst/chan-envelope.tst
+  tst/chan-envelope_shapes.tst tst/chan-perrig-song.scm
+  tst/chan-perrig-song.tst tst/chan-perrig-song_shapes.tst
   tst/chan-unilateral.scm tst/chan-unilateral.tst
-  tst/chan-yahalom-role-decl.scm tst/chan-yahalom-role-decl.tst
-  tst/chan-yahalom.scm tst/chan-yahalom.tst tst/checktst
-  tst/commitment.scm tst/commitment.tst tst/comp_test.scm
-  tst/comp_test.tst tst/completeness-test.scm
-  tst/completeness-test.tst tst/cpsagraphall tst/cpsagraphtst
-  tst/cpsashapesall tst/crushing.scm tst/crushing.tst
-  tst/dass-mod.lisp tst/dass.lisp tst/dass_simple.scm
-  tst/dass_simple.tst tst/denning-sacco.scm tst/denning-sacco.tst
-  tst/deorig_contract.scm tst/deorig_contract.tst tst/deorig_mesg.scm
-  tst/deorig_mesg.tst tst/deorig_simple.scm tst/deorig_simple.tst
-  tst/dh-ca_hack.scm tst/dh-ca_hack.tst tst/dh_encrypt_hack.scm
-  tst/dh_encrypt_hack.tst tst/dh_group_sig.scm tst/dh_group_sig.tst
+  tst/chan-unilateral_shapes.tst tst/chan-yahalom-role-decl.scm
+  tst/chan-yahalom-role-decl.tst tst/chan-yahalom-role-decl_shapes.tst
+  tst/chan-yahalom.scm tst/chan-yahalom.tst
+  tst/chan-yahalom_shapes.tst tst/commitment.scm tst/commitment.tst
+  tst/commitment_shapes.tst tst/comp_test.scm tst/comp_test.tst
+  tst/comp_test_shapes.tst tst/completeness-test.scm
+  tst/completeness-test.tst tst/completeness-test_shapes.tst
+  tst/crushing.scm tst/crushing.tst tst/crushing_shapes.tst
+  tst/dass_simple.scm tst/dass_simple.tst tst/dass_simple_shapes.tst
+  tst/denning-sacco.scm tst/denning-sacco.tst
+  tst/denning-sacco_shapes.tst tst/deorig_contract.scm
+  tst/deorig_contract.tst tst/deorig_contract_shapes.tst
+  tst/deorig_mesg.scm tst/deorig_mesg.tst tst/deorig_mesg_shapes.tst
+  tst/deorig_simple.scm tst/deorig_simple.tst
+  tst/deorig_simple_shapes.tst tst/dh-ca_hack.scm tst/dh-ca_hack.tst
+  tst/dh-ca_hack_shapes.tst tst/dh_encrypt_hack.scm
+  tst/dh_encrypt_hack.tst tst/dh_encrypt_hack_shapes.tst
+  tst/dh_group_sig.scm tst/dh_group_sig.tst
   tst/dh_group_sig_auth_failure.scm tst/dh_group_sig_auth_failure.tst
-  tst/dh_mim.lisp tst/dh_mim_hack.scm tst/dh_mim_hack.tst
-  tst/dhcr_um.lisp tst/dhcr_um.scm tst/dhcr_um.tst tst/dhcr_um3.scm
-  tst/dhcr_um3.tst tst/dhcr_um_exercise_resolved_bug.scm
-  tst/dhcr_um_exercise_resolved_bug.tst tst/dhcr_um_expt.scm
-  tst/dhcr_um_expt.tst tst/dhcr_umx.scm tst/dhcr_umx.tst
-  tst/dhke2.lisp tst/dhnsl_hack.scm tst/dhnsl_hack.tst
-  tst/dhstatic-state.scm tst/dhstatic-state.tst tst/disclosure.scm
-  tst/disclosure.tst tst/doorsep.scm tst/doorsep.tst
-  tst/doorsep2invk.scm tst/doorsep2invk.tst tst/ds-short.lisp
-  tst/dy.lsp tst/dy.tst tst/encsig.scm tst/encsig.tst tst/envelope.scm
-  tst/envelope.tst tst/epmo-hash.scm tst/epmo-hash.tst
-  tst/epmo-key-hash.scm tst/epmo-key-hash.tst tst/epmo.scm
-  tst/epmo.tst tst/epmo_acctnum-key-hash.scm
-  tst/epmo_acctnum-key-hash.tst tst/epmo_acctnum.lisp
-  tst/epmo_acctnum.tst tst/expand.scm tst/expand.tst tst/facts.scm
-  tst/facts.tst tst/factvar.scm tst/factvar.tst tst/ffgg.scm
-  tst/ffgg.tst tst/fluffy_draft03_gske.scm tst/fluffy_draft03_gske.tst
-  tst/fragile_pruning.scm tst/fragile_pruning.tst tst/goals.scm
-  tst/goals.tst tst/hashtest-key-hash.scm tst/hashtest-key-hash.tst
-  tst/hashtest.scm tst/hashtest.tst tst/incompleteness_example.scm
-  tst/incompleteness_example.tst tst/isoreject-corrected.scm
-  tst/isoreject-corrected.tst tst/isoreject.scm tst/isoreject.tst
-  tst/jdg-neuman-stubblebine-reauth.tst tst/kelly1.scm tst/kelly1.tst
-  tst/kelly64.lisp tst/kerb5.lisp tst/kerberos.scm tst/kerberos.tst
-  tst/locn_envelope.scm tst/locn_envelope.tst tst/mass.lsp
-  tst/mass.tst tst/mass2.lsp tst/mass2.tst tst/missing_contraction.scm
-  tst/missing_contraction.tst tst/mksas tst/neq_test.scm
-  tst/neq_test.tst tst/neuman-stubblebine-alt.lisp
+  tst/dh_group_sig_auth_failure_shapes.tst tst/dh_group_sig_shapes.tst
+  tst/dh_mim_hack.scm tst/dh_mim_hack.tst tst/dh_mim_hack_shapes.tst
+  tst/dhcr_um.scm tst/dhcr_um.tst tst/dhcr_um3.scm tst/dhcr_um3.tst
+  tst/dhcr_um3_goals.scm tst/dhcr_um3_goals.tst
+  tst/dhcr_um3_shapes.tst tst/dhcr_um_exercise_resolved_bug.tst
+  tst/dhcr_um_exercise_resolved_bug_shapes.tst tst/dhcr_um_expt.tst
+  tst/dhcr_um_expt_assume.tst tst/dhcr_um_expt_shapes.tst
+  tst/dhcr_um_forward.tst tst/dhcr_um_goals.scm tst/dhcr_um_goals.tst
+  tst/dhcr_um_implicit_auth.scm tst/dhcr_um_implicit_auth.tst
+  tst/dhcr_um_shapes.tst tst/dhcr_umx.scm tst/dhcr_umx.tst
+  tst/dhcr_umx_goals.scm tst/dhcr_umx_goals.tst
+  tst/dhcr_umx_implicit_auth.scm tst/dhcr_umx_implicit_auth.tst
+  tst/dhcr_umx_shapes.tst tst/dhnsl_hack.scm tst/dhnsl_hack.tst
+  tst/dhnsl_hack_shapes.tst tst/dhstatic-state.scm
+  tst/dhstatic-state.tst tst/dhstatic-state_shapes.tst
+  tst/disclosure.scm tst/disclosure.tst tst/doorsep.scm
+  tst/doorsep.tst tst/doorsep2invk.scm tst/doorsep2invk.tst
+  tst/doorsep2invk_shapes.tst tst/doorsep_shapes.tst tst/dy.lsp
+  tst/dy.tst tst/dy_shapes.tst tst/encsig.scm tst/encsig.tst
+  tst/encsig_shapes.tst tst/envelope.scm tst/envelope.tst
+  tst/envelope_shapes.tst tst/epmo-hash.scm tst/epmo-hash.tst
+  tst/epmo-hash_shapes.tst tst/epmo-key-hash.scm tst/epmo-key-hash.tst
+  tst/epmo-key-hash_shapes.tst tst/epmo.scm tst/epmo.tst
+  tst/epmo_acctnum-key-hash.scm tst/epmo_acctnum-key-hash.tst
+  tst/epmo_acctnum-key-hash_shapes.tst tst/epmo_acctnum.tst
+  tst/epmo_acctnum_shapes.tst tst/epmo_shapes.tst
+  tst/example_shapes.tst tst/expand.scm tst/expand.tst
+  tst/expand_shapes.tst tst/facts.scm tst/facts.tst
+  tst/facts_shapes.tst tst/factvar.scm tst/factvar.tst
+  tst/factvar_shapes.tst tst/ffgg.scm tst/ffgg.tst tst/ffgg_shapes.tst
+  tst/fluffy_draft03_gske.scm tst/fluffy_draft03_gske.tst
+  tst/fluffy_draft03_gske_shapes.tst tst/fragile_pruning.scm
+  tst/fragile_pruning.tst tst/fragile_pruning_shapes.tst tst/goals.scm
+  tst/goals.tst tst/goals_shapes.tst tst/hashtest-key-hash.scm
+  tst/hashtest-key-hash.tst tst/hashtest-key-hash_shapes.tst
+  tst/hashtest.scm tst/hashtest.tst tst/hashtest_shapes.tst
+  tst/incompleteness_example.scm tst/incompleteness_example.tst
+  tst/incompleteness_example_shapes.tst tst/isoreject-corrected.scm
+  tst/isoreject-corrected.tst tst/isoreject-corrected_shapes.tst
+  tst/isoreject.scm tst/isoreject.tst tst/isoreject_shapes.tst
+  tst/kelly1.scm tst/kelly1.tst tst/kelly1_shapes.tst tst/kerberos.scm
+  tst/kerberos.tst tst/kerberos_shapes.tst tst/locn_envelope.scm
+  tst/locn_envelope.tst tst/locn_envelope_shapes.tst tst/mass.lsp
+  tst/mass.tst tst/mass2.lsp tst/mass2.tst tst/mass2_shapes.tst
+  tst/mass_shapes.tst tst/missing_contraction.scm
+  tst/missing_contraction.tst tst/missing_contraction_shapes.tst
+  tst/neq_test.scm tst/neq_test.tst tst/neq_test_shapes.tst
+  tst/neuman-stubblebine-reauth-tagged.lsp
   tst/neuman-stubblebine-reauth-tagged.tst
-  tst/neuman-stubblebine-reauth.lisp tst/neuman-stubblebine-reauth.lsp
-  tst/neuman-stubblebine-reauth.tst tst/neuman-stubblebine.scm
-  tst/neuman-stubblebine.tst tst/no_contraction.scm
-  tst/no_contraction.tst tst/non_transforming.scm
-  tst/non_transforming.tst tst/nonaug-prune.scm tst/nonaug-prune.tst
-  tst/ns-l.scm tst/ns-l.tst tst/ns-rebinding.scm tst/ns-rebinding.tst
-  tst/ns.scm tst/ns.tst tst/nsl3.scm tst/nsl3.tst tst/nsl4.lisp
-  tst/nsl4cm1.lisp tst/nsl4init.lisp tst/nsl4resp1.lisp
-  tst/nsl4resp2.lisp tst/nsl4resp3.lisp tst/nsl5.lisp tst/nsl5i.lisp
-  tst/nsl5resp3.lisp tst/nslsk.scm tst/nslsk.tst
-  tst/open-closed-multiloc.scm tst/open-closed-multiloc.tst
-  tst/open-closed-tag.scm tst/open-closed-tag.tst tst/open-closed.scm
-  tst/open-closed.tst tst/or.scm tst/or.tst tst/ordered.scm
-  tst/ordered.tst tst/par tst/pca.scm tst/pca.tst
+  tst/neuman-stubblebine-reauth-tagged_shapes.tst
+  tst/neuman-stubblebine-reauth.lsp tst/neuman-stubblebine-reauth.tst
+  tst/neuman-stubblebine-reauth_shapes.tst tst/neuman-stubblebine.scm
+  tst/neuman-stubblebine.tst tst/neuman-stubblebine_shapes.tst
+  tst/no_contraction.scm tst/no_contraction.tst
+  tst/no_contraction_shapes.tst tst/non_transforming.scm
+  tst/non_transforming.tst tst/non_transforming_shapes.tst
+  tst/nonaug-prune.scm tst/nonaug-prune.tst
+  tst/nonaug-prune_shapes.tst tst/ns-l.scm tst/ns-l.tst
+  tst/ns-l_shapes.tst tst/ns-rebinding.scm tst/ns-rebinding.tst
+  tst/ns-rebinding_shapes.tst tst/ns.scm tst/ns.tst tst/ns_shapes.tst
+  tst/nsl3.scm tst/nsl3.tst tst/nsl3_shapes.tst tst/nslsk.scm
+  tst/nslsk.tst tst/nslsk_shapes.tst tst/open-closed-multiloc.scm
+  tst/open-closed-multiloc.tst tst/open-closed-multiloc_shapes.tst
+  tst/open-closed-tag.scm tst/open-closed-tag.tst
+  tst/open-closed-tag_shapes.tst tst/open-closed.scm
+  tst/open-closed.tst tst/open-closed_shapes.tst tst/or.scm tst/or.tst
+  tst/or_shapes.tst tst/ordered.scm tst/ordered.tst
+  tst/ordered_shapes.tst tst/pca.scm tst/pca.tst tst/pca_shapes.tst
   tst/pen-non-orig-test.scm tst/pen-non-orig-test.tst
-  tst/pfs-via-pubkey.scm tst/pfs-via-pubkey.tst tst/pkinit.scm
-  tst/pkinit.tst tst/preprocess.scm tst/preprocess.tst tst/print.scm
-  tst/print.tst tst/prottrans.scm tst/prottrans.tst tst/pruning1.scm
-  tst/pruning1.tst tst/puzzle_example.scm tst/puzzle_example.tst
-  tst/reflect.scm tst/reflect.tst tst/renamings.scm tst/renamings.tst
-  tst/role_uniq.scm tst/role_uniq.tst tst/rule-node.scm
-  tst/rule-node.tst tst/rule-order.scm tst/rule-order.tst
-  tst/sigenc.scm tst/sigenc.tst tst/sorted_epmo_acctnum.scm
-  tst/sorted_epmo_acctnum.tst tst/sts.scm tst/sts.tst
-  tst/sts_unflip.scm tst/sts_unflip.tst tst/sts_weak.scm
-  tst/sts_weak.tst tst/subatomic-open-closed-test-genrule.scm
+  tst/pen-non-orig-test_shapes.tst tst/pfs-via-pubkey.scm
+  tst/pfs-via-pubkey.tst tst/pfs-via-pubkey_shapes.tst tst/pkinit.scm
+  tst/pkinit.tst tst/pkinit_shapes.tst tst/preprocess.scm
+  tst/preprocess.tst tst/preprocess_shapes.tst tst/print.scm
+  tst/print.tst tst/print_shapes.tst tst/prottrans.scm
+  tst/prottrans.tst tst/prottrans_shapes.tst tst/pruning1.scm
+  tst/pruning1.tst tst/pruning1_shapes.tst tst/puzzle_example.scm
+  tst/puzzle_example.tst tst/puzzle_example_shapes.tst tst/reflect.scm
+  tst/reflect.tst tst/reflect_shapes.tst tst/renamings.scm
+  tst/renamings.tst tst/renamings_shapes.tst tst/role_uniq.scm
+  tst/role_uniq.tst tst/role_uniq_shapes.tst tst/rule-node.scm
+  tst/rule-node.tst tst/rule-node_shapes.tst tst/rule-order.scm
+  tst/rule-order.tst tst/rule-order_shapes.tst tst/sigenc.scm
+  tst/sigenc.tst tst/sigenc_shapes.tst tst/sorted_epmo_acctnum.scm
+  tst/sorted_epmo_acctnum.tst tst/sorted_epmo_acctnum_shapes.tst
+  tst/sts.scm tst/sts.tst tst/sts_non_role.scm tst/sts_non_role.tst
+  tst/sts_unflip.tst tst/sts_weakened_reflect.scm
+  tst/sts_weakened_reflect.tst
+  tst/subatomic-open-closed-test-genrule.scm
   tst/subatomic-open-closed-test-genrule.tst
+  tst/subatomic-open-closed-test-genrule_shapes.tst
   tst/subatomic-open-closed.scm tst/subatomic-open-closed.tst
-  tst/sync_locn_envelope.scm tst/sync_locn_envelope.tst
-  tst/targetterms1.scm tst/targetterms1.tst tst/targetterms2.scm
-  tst/targetterms2.tst tst/targetterms6.scm tst/targetterms6.tst
-  tst/targetterms8.scm tst/targetterms8.tst
-  tst/thisthat.scm tst/thisthat.tst tst/tickle-unique.scm
-  tst/tickle-unique.tst tst/timestamping.scm tst/timestamping.tst
-  tst/tnsl5.lisp tst/trust-anchor.scm tst/trust-anchor.tst
-  tst/uncarried_keys.scm tst/uncarried_keys.tst tst/unilateral.scm
-  tst/unilateral.tst tst/uniq-gen-test.scm tst/uniq-gen-test.tst
-  tst/uo.scm tst/uo.tst tst/updatetst tst/wang-hash.scm
-  tst/wang-hash.tst tst/wang-key-hash-tst.tst tst/wang-key-hash.scm
-  tst/wang-key-hash.tst tst/wang.lisp
-  tst/weakened-subatomic-open-closed.tst tst/weird.scm tst/weird.tst
-  tst/wide-mouth-frog-scyther.lsp tst/wide-mouth-frog-scyther.tst
-  tst/wide-mouth-frog.lsp tst/wide-mouth-frog.tst tst/wonthull.scm
-  tst/wonthull.tst tst/wonthull2.scm tst/wonthull2.tst
-  tst/wonthull3.scm tst/wonthull3.tst tst/woolam.scm tst/woolam.tst
-  tst/wrap_decrypt.tst tst/yahalom-6.3.6.scm tst/yahalom-6.3.6.tst
-  tst/yahalom.scm tst/yahalom.tst tst/blanchet-strandmax.scm
-  tst/blanchet-strandmax.tst tst/ugo.scm tst/ugo.tst
+  tst/subatomic-open-closed_shapes.tst tst/sync_locn_envelope.scm
+  tst/sync_locn_envelope.tst tst/sync_locn_envelope_shapes.tst
+  tst/targetterms1.scm tst/targetterms1.tst
+  tst/targetterms1_shapes.tst tst/targetterms2.scm
+  tst/targetterms2.tst tst/targetterms2_shapes.tst
+  tst/targetterms6.scm tst/targetterms6.tst
+  tst/targetterms6_shapes.tst tst/targetterms8.scm
+  tst/targetterms8.tst tst/targetterms8_shapes.tst tst/thisthat.scm
+  tst/thisthat.tst tst/thisthat_shapes.tst tst/tickle-unique.scm
+  tst/tickle-unique.tst tst/tickle-unique_shapes.tst
+  tst/timestamping.scm tst/timestamping.tst
+  tst/timestamping_shapes.tst tst/trust-anchor.scm
+  tst/trust-anchor.tst tst/trust-anchor_shapes.tst tst/ugen-at.scm
+  tst/ugen-at.tst tst/ugo.scm tst/ugo.tst tst/uncarried_keys.scm
+  tst/uncarried_keys.tst tst/uncarried_keys_shapes.tst
+  tst/unilateral.scm tst/unilateral.tst tst/unilateral_shapes.tst
+  tst/uniq-at.scm tst/uniq-at.tst tst/uniq-gen-test.scm
+  tst/uniq-gen-test.tst tst/uniq-gen-test_shapes.tst tst/uo.scm
+  tst/uo.tst tst/uo_shapes.tst tst/wang-hash.scm tst/wang-hash.tst
+  tst/wang-hash_shapes.tst tst/wang-key-hash-tst.tst
+  tst/wang-key-hash-tst_shapes.tst tst/wang-key-hash.scm
+  tst/wang-key-hash.tst tst/wang-key-hash_shapes.tst
+  tst/weakened-subatomic-open-closed.tst
+  tst/weakened-subatomic-open-closed_shapes.tst tst/weird.scm
+  tst/weird.tst tst/weird_shapes.tst tst/wide-mouth-frog-scyther.lsp
+  tst/wide-mouth-frog-scyther.tst
+  tst/wide-mouth-frog-scyther_shapes.tst tst/wide-mouth-frog.lsp
+  tst/wide-mouth-frog.tst tst/wide-mouth-frog_shapes.tst
+  tst/wonthull.scm tst/wonthull.tst tst/wonthull2.scm
+  tst/wonthull2.tst tst/wonthull2_shapes.tst tst/wonthull3.scm
+  tst/wonthull3.tst tst/wonthull3_shapes.tst tst/wonthull_shapes.tst
+  tst/woolam.scm tst/woolam.tst tst/woolam_shapes.tst
+  tst/wrap_decrypt.tst tst/wrap_decrypt_shapes.tst
+  tst/yahalom-6.3.6.scm tst/yahalom-6.3.6.tst
+  tst/yahalom-6.3.6_shapes.tst tst/yahalom-forward.scm
+  tst/yahalom-forward.tst tst/yahalom.scm tst/yahalom.tst
+  tst/yahalom_shapes.tst tst/yes-or-no.scm tst/yes-or-no.tst
   coq/Sem_tactics.v coq/Comp.v coq/Alt_sem.v coq/Match.v coq/Alg.v
   coq/Exec.v coq/Intro.v coq/Nonce.v coq/Preamble.v
   coq/Unilateral_proof.v coq/Makefile coq/Run.v coq/procdoc.tex

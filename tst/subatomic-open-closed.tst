@@ -1,6 +1,6 @@
 (herald subatomic-open-closed (bound 40))
 
-(comment "CPSA 4.4.3")
+(comment "CPSA 4.4.4")
 (comment "All input read from tst/subatomic-open-closed.scm")
 (comment "Strand count bounded at 40")
 

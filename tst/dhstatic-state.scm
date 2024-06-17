@@ -27,12 +27,12 @@
 
   (defrole init
     (vars (a b ca name) (ra rndx) (serial-a serial-b data)
-	  (galpha base) (n text) (static-key locn))
+	  (alpha expt) (n text) (static-key locn))
     (trace
      (load static-key (cat "privkey" a ra serial-a ca))
-     (recv (sig (cert b galpha ca serial-b)
+     (recv (sig (cert b (exp (gen) alpha) ca serial-b)
 		(privk "sig" ca)))
-     (send (enc n a b serial-a serial-b (exp galpha ra)))
+     (send (enc n a b serial-a serial-b (exp (exp (gen) alpha) ra)))
      (recv n))
     (uniq-orig n)
     (gen-st (cat "privkey" a ra serial-a ca))
@@ -41,12 +41,12 @@
 
   (defrole resp
     (vars (a b ca name) (rb rndx) (serial-b serial-a data)
-	  (galpha base) (n text) (static-key locn))
+	  (alpha expt) (n text) (static-key locn))
     (trace
      (load static-key (cat "privkey" b rb serial-b ca))
-     (recv (sig (cert a galpha ca serial-a)
+     (recv (sig (cert a (exp (gen) alpha) ca serial-a)
 		(privk "sig" ca)))
-     (recv (enc n a b serial-a serial-b (exp galpha rb)))
+     (recv (enc n a b serial-a serial-b (exp (exp (gen) alpha) rb)))
      (send n))
     (facts (neq a b))
     (gen-st (cat "privkey" b rb serial-b ca))

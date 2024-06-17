@@ -1,6 +1,6 @@
 (herald neuman-stubblebine-reauth (bound 8))
 
-(comment "CPSA 4.4.3")
+(comment "CPSA 4.4.4")
 (comment "All input read from tst/neuman-stubblebine-reauth-tagged.lsp")
 (comment "Strand count bounded at 8")
 
@@ -54,7 +54,6 @@
   (label 0)
   (unrealized (0 2) (1 0))
   (origs (rb (0 1)) (rb-prime (1 1)))
-  
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -70,6 +69,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand keyserver 2)
     (enc a k tb-0 (ltk b ks)) (1 0))
+  (strand-map 0 1)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -97,6 +97,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 3 0 resp 2)
     (enc a ra-0 tb-0 (ltk b ks)) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -125,6 +126,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp 2)
     (enc a ra-0 tb-0 (ltk b ks)) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -158,6 +160,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc "three" rb-prime k) (1 2))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -190,6 +193,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc "three" rb-prime k)
     (1 2))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -224,6 +228,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init-reauth 4)
     (enc "three" rb-prime k) (1 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -261,6 +266,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc "three" rb-prime k)
     (1 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -296,6 +302,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (3 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -333,6 +340,7 @@
   (operation nonce-test
     (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-1 tb-0)) k (4 0)
     (enc a k tb-0 (ltk b ks)) (enc b ra-0 k tb-0 (ltk a ks)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -369,6 +377,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 4 1 resp-reauth 2)
     (enc "two" ra-prime-0 k) (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -406,6 +415,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc "two" ra-prime-0 k) (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -443,6 +453,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc "two" ra-prime-0 k)
     (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -479,6 +490,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 5 1 resp-reauth 2)
     (enc "two" ra-prime-0 k) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -520,6 +532,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand resp-reauth 2)
     (enc "two" ra-prime-0 k) (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -562,6 +575,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc "two" ra-prime-0 k)
     (4 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -602,6 +616,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc "one" rb k)
     (0 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -640,6 +655,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc "one" rb k) (0 2))
+  (strand-map 0 1 2 3)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -678,6 +694,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (4 0) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -715,6 +732,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 5 2 keyserver 2)
     (enc a k tb-0 (ltk b ks)) (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -756,6 +774,7 @@
   (operation nonce-test
     (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-1 tb-0)) k (5 0)
     (enc a k tb-0 (ltk b ks)) (enc b ra-0 k tb-0 (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -796,6 +815,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (4 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -840,6 +860,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc "one" rb k)
     (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -885,6 +906,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc "one" rb k) (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -927,6 +949,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc "one" rb k)
     (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -969,6 +992,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc "one" rb k) (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -1010,6 +1034,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 2 keyserver 2)
     (enc a k tb-0 (ltk b ks)) (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -1048,6 +1073,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 5 2 keyserver 2)
     (enc b ra-0 k tb (ltk a ks)) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -1073,8 +1099,7 @@
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (origs (k (2 1)) (ra (4 0)) (rb (0 1)) (ra-prime (3 1))
-    (rb-prime (1 1)))
-  )
+    (rb-prime (1 1))))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -1097,6 +1122,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 1) (enc a k tb (ltk b ks)) (enc b ra k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -1139,6 +1165,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (5 1) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -1186,6 +1213,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-strand init 3) (enc "one" rb k)
     (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -1234,6 +1262,7 @@
   (non-orig (ltk a ks) (ltk b ks))
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (added-listener k) (enc "one" rb k) (0 2))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -1279,6 +1308,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 2 keyserver 2)
     (enc b ra-0 k tb (ltk a ks)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -1305,8 +1335,7 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (ra (5 0)) (rb (0 1)) (rb-prime (1 1)))
-  )
+  (origs (k (2 1)) (ra (5 0)) (rb (0 1)) (rb-prime (1 1))))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey) (ra rb ra-prime rb-prime tb ra-0 rb-0 rb-1 text)
@@ -1326,6 +1355,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 6 2 keyserver 2)
     (enc b ra-1 k tb (ltk a ks)) (5 1))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -1353,8 +1383,7 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (ra-prime (4 1)) (rb-prime (1 1)))
-  )
+  (origs (k (2 1)) (rb (0 1)) (ra-prime (4 1)) (rb-prime (1 1))))
 
 (defskeleton neuman-stubblebine-reauth
   (vars (k skey)
@@ -1378,6 +1407,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation nonce-test (contracted (a-0 a) (b-0 b) (ks-0 ks) (tb-0 tb))
     k (6 1) (enc a k tb (ltk b ks)) (enc b ra-0 k tb (ltk a ks)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -1426,6 +1456,7 @@
   (uniq-orig k ra rb ra-prime rb-prime)
   (operation encryption-test (displaced 7 2 keyserver 2)
     (enc b ra-1 k tb (ltk a ks)) (6 1))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((recv (cat a ra)) (send (cat b rb (enc a ra tb (ltk b ks))))
       (recv (cat (enc a k tb (ltk b ks)) (enc "one" rb k))))
@@ -1455,7 +1486,6 @@
     ((0 1)
       ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
         (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
-  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1)))
-  )
+  (origs (k (2 1)) (rb (0 1)) (rb-prime (1 1))))
 
 (comment "Nothing left to do")

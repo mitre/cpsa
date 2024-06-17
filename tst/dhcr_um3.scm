@@ -1,126 +1,254 @@
-; Unified Model.   This version used in the paper, tooldev/dh/conf_dh/dh_ebn.tex
+;;; Unified Model  This version used in the paper, tooldev/dh/conf_dh/dh_ebn.tex
 
-; This file models the "Unified Model" method of determining a fresh
-; key from long-term and ephemeral Diffie-Hellman exponents.  We use
-; function relation declarations to link names to long-term public
-; values.
+;;; This file models the "Unified Model" method of determining a fresh
+;;; key from long-term and ephemeral Diffie-Hellman exponents.  We use
+;;; self-signed certificates to link names to long-term public values.
 
-;;; This file contains the three-part version, in which each ephemeral
-;;; is mixed with the peer's static exponent, and also with the other
-;;; ephemeral.
+;;; This file contains the UM3 version, in which each ephemeral is
+;;; mixed with the peer's static exponent, and the two ephemerals are
+;;; also mixed with each other.  Hence, there are three DH
+;;; combinations that get hashed together.  Only the key derivation
+;;; macros differ from the version in dhcr_um.scm
 
-; A role is provided in which a party signs a fresh long-term
-; Diffie-Hellman value, and then leaks the exponent.  The latter step
-; is used to test forward security.
+;;; A role is provided to expose the long term exponent.  The latter
+;;; step is used to test the notion of forward security, assuming that
+;;; it happens *after* the session which agrees the key in question.  
 
-; Two inputs are analyzed.  In the first, we model that two
-; participants exist that agree on the UM key.  The notion of
-; "implicit authentication" suggests that if one participant exists
-; and another party knows the same key, that party must be either the
-; participant or the participant's intended partner.
+;;; A sequence of queries are analyzed.  Four show what happens given
+;;; an initiator run, depnding which long term values are exposed.
+;;; Then four ask the corresponding questions about the responder.  In
+;;; each group of four, we first assume neither long term exponent is
+;;; exposed, then consider each exposure individually, and then both
+;;; exposed.  
 
-; In this version, we assume that the long-term keys of the
-; participants do not leak.
+;;; Then we consider the forward secrecy question, first from the
+;;; initiator's point of view, and then from the responder's.
 
-; The second input checks whether the key can be learned when the key
-; is generated honestly.  In this version, we do NOT assume that the
-; long-term keys of the participants do not leak.
+;;; The UM3 key derivation achieves forward secrecy.  Its weakness is
+;;; that if a participant's *own* long term value is exposed, an
+;;; adversary can acquire a key shared with them for any claimed peer.
+;;; This remains true if we stipulate that the partcipant generates a
+;;; long trem key only once.  If my peer's long term value is exposed
+;;; of course anyone can impersonate them.
 
-(herald "DHCR: unified model (UM) three-part" (bound 20) (limit 8000) (algebra diffie-hellman))
+;;; CPSA4 revisions:
+;;;
+;;; 1.  Self certify my public value in ltx-gen,
+;;;     and assume signing keys non.
+;;; 2.  Deposit private value in state and retrieve
+;;;	it at the beginning of each init or resp run.
+;;; 3.  Discard the private value from state before
+;;;	disclosing it, when testing forward secrecy.
 
-(defmacro (kcfa ltxa ltxb x hy)
-  (hash (exp hy ltxa) (exp (gen) (mul ltxb x)) (exp hy x)))
+(herald "DHCR: unified model (UM) three-component version"
+	(bound 30)
+	(limit 8000)
+	(algebra diffie-hellman))
 
-(defmacro (kcfb ltxa ltxb y hx)
-  (hash (exp (gen) (mul ltxa y)) (exp hx ltxb) (exp hx y)))
 
-(defprotocol dhcr-um3 diffie-hellman
+
+(defmacro (kcfa ltxa gbeta x hy)
+  (hash (exp hy ltxa) (exp gbeta x) (exp hy x)))
+
+(defmacro (kcfb ltxb galpha y hx)
+  (hash (exp galpha y) (exp hx ltxb) (exp hx y)))
+
+
+(defprotocol dhcr-um diffie-hellman
   (defrole init
-    (vars (ltxa ltxb x rndx) (y expt) (a b name) (na nb data))
+    (vars (l x rndx) (beta eta expt) (a b name) (na nb data) (priv-stor locn))
     (trace
-     (recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
+     (load priv-stor (pv a l))
+     (recv (sig (body b (exp (gen) beta) (pubk "sig" b))
+		(privk "sig" b)))
      (send (cat na a b (exp (gen) x)))
-     (recv (cat (exp (gen) y) (enc na nb a b (kcfa ltxa ltxb x (exp (gen) y)))))
+     (recv (cat (exp (gen) eta)
+		(enc na nb a b
+		     (kcfa l (exp (gen) beta)
+			   x (exp (gen) eta)))))
      (send nb)
      )
-    (fn-of ("principal-of" (ltxa a) (ltxb b))
-           ("ltx-of" (a ltxa) (b ltxb)))
     (uniq-gen x)
     (uniq-orig na)
-    (neq ((exp (gen) y) (gen))))
+    (facts (neq a b))
+    ;; (facts (neq (exp (gen) eta) (gen)))
+    (gen-st (pv a l)))
 
   (defrole resp
-    (vars (ltxa ltxb y rndx) (x expt) (a b name) (na nb data))
+    (vars (l y rndx) (alpha chi expt) (a b name) (na nb data) (priv-stor locn))
     (trace
-     (recv (cat (exp (gen) ltxa) (exp (gen) ltxb)))
-     (recv (cat na a b (exp (gen) x)))
-     (send (cat (exp (gen) y) (enc na nb a b (kcfb ltxa ltxb y (exp (gen) x)))))
+     (load priv-stor (pv b l))
+     (recv (sig (body a (exp (gen) alpha) (pubk "sig" a))
+		(privk "sig" a)))
+     (recv (cat na a b (exp (gen) chi)))
+     (send (cat (exp (gen) y)
+		(enc na nb a b
+		     (kcfb l (exp (gen) alpha)
+			   y (exp (gen) chi)))))
      (recv nb)
+     (send "done")
      )
-    (fn-of ("principal-of" (ltxa a) (ltxb b))
-	   ("ltx-of" (a ltxa) (b ltxb)))
     (uniq-gen y)
     (uniq-orig nb)
-    (neq ((exp (gen) x) (gen))))
+    (facts (neq a b))
+    ;;    (facts (neq (exp (gen) chi) (gen)))
+    (gen-st (pv b l)))
 
   (defrole ltx-gen
-    (vars (self name) (l rndx))
+    (vars (self name) (l rndx)
+	  (priv-stor locn) (ignore mesg))
     (trace
-     (send (cat self (exp (gen) l)))
-     (recv "end-of-protocol")
+     (load priv-stor ignore)
+     (stor priv-stor (pv self l))
+     (send (sig (body self (exp (gen) l) (pubk "sig" self))
+		(privk "sig" self))))
+    (uniq-orig l))
+
+  (defrole ltx-disclose
+    (vars (self name) (l rndx)
+	  (priv-stor locn) (ignore mesg))
+    (trace
+     (load priv-stor (pv self l))
+     (stor priv-stor "nil")
      (send l))
-    (uniq-gen l)
-    (fn-of ("principal-of" (l self))
-	   ("ltx-of" (self l)))))
+    (gen-st (pv self l)))
+
+  (defrule undisclosed-not-disclosed
+    (forall
+     ((z strd) (l rndx))
+     (implies
+      (and (fact undisclosed l)
+	  (p "ltx-disclose" z 2)
+	  (p "ltx-disclose" "l" z l))
+      (false))))
+
+  (defrule ltx-gen-once-inference
+    (forall
+     ((z1 z2 strd) (self name))
+     (implies
+      (and
+       (fact ltx-gen-once self)
+       (p "ltx-gen" z1 2)
+       (p "ltx-gen" "self" z1 self)
+       (p "ltx-gen" z2 2)
+       (p "ltx-gen" "self" z2 self))
+      (= z1 z2))))
+
+  (defrule eq-means-=
+    (forall
+     ((v1 v2 mesg))
+     (implies
+      (fact eq v1 v2)
+      (= v1 v2))))
+
+  (lang (sig sign)
+	(body (tuple 3))
+	(pv (tuple 2))))
+ 
 
 ; Initiator point of view: both LTX exponents secret
-(defskeleton dhcr-um3
-  (vars (ltxa ltxb rndx) (a b name))
-  (defstrand init 4 (ltxa ltxa) (ltxb ltxb) (a a) (b b))
-  (defstrand ltx-gen 1 (l ltxa))
-  (defstrand ltx-gen 1 (l ltxb))
-  (non-orig ltxa ltxb) (neq (a b)))
+(defskeleton dhcr-um
+  (vars (a b name) (l l-peer rndx))
+  (defstrand init 4 (a a) (b b) (l l) (beta l-peer))
+  (non-orig (privk "sig" b))
+  (facts (neq a b)
+	 (undisclosed l)
+	 (undisclosed l-peer)))
 
-; Initiator point of view: partner's exponent secret
-(defskeleton dhcr-um3
-  (vars (ltxa ltxb rndx) (a b name))
-  (defstrand init 4 (ltxa ltxa) (ltxb ltxb) (a a) (b b))
-  (defstrand ltx-gen 1 (l ltxb))
-  (non-orig ltxb)
+
+
+; Initiator point of view:  peer exponent secret
+(defskeleton dhcr-um
+  (vars (a b name) (l l-peer rndx))
+  (defstrand init 4 (a a) (b b) (l l) ((exp (gen) beta) (exp (gen) l-peer)))
+  (non-orig (privk "sig" b))
+  (facts (neq a b)
+	 ;;	 (undisclosed l)
+	 (undisclosed l-peer)))
+
+(defskeleton dhcr-um
+  (vars (a b name) (l l-peer rndx))
+  (defstrand init 4 (a a) (b b) (l l) ((exp (gen) beta) (exp (gen) l-peer)))
+  (non-orig (privk "sig" b))
+  (facts (neq a b)
+	 (ltx-gen-once a)
+	 ;;	 (undisclosed l)
+	 (undisclosed l-peer)))
+
+; Initiator point of view:  my exponent secret
+(defskeleton dhcr-um
+  (vars (a b name) (l rndx) (l-peer expt))
+  (defstrand init 4 (a a) (b b) (l l) (beta l-peer))
+  (non-orig (privk "sig" b))
+  (facts (neq a b)
+	 ;;	 (undisclosed l-peer)
+	 (undisclosed l)))
+
+; Initiator point of view:  neither exponent secret
+
+(defskeleton dhcr-um
+  (vars (a b name) (l rndx) (l-peer expt))
+  (defstrand init 4 (a a) (b b) (l l) (beta l-peer))
+  (non-orig (privk "sig" b))
+  (facts (neq a b)
+	 ;;	 (undisclosed l-peer)
+	 ;;	 (undisclosed l)
+	 ))
+
+
+;;; Responder cases
+
+(defskeleton dhcr-um
+  (vars (a b name) (l l-peer rndx))
+  (defstrand resp 5 (a a) (b b) (l l) (alpha l-peer))
+  (non-orig (privk "sig" a))
+  (facts (neq a b)
+	 (undisclosed l)
+	 (undisclosed l-peer)))
+
+(defskeleton dhcr-um
+  (vars (a b name) (l l-peer rndx))
+  (defstrand resp 5 (a a) (b b) (l l) (alpha l-peer))
+  (non-orig (privk "sig" a))
+  (facts (neq a b)
+	 ;; 	 (undisclosed l)
+	 (undisclosed l-peer)))
+
+(defskeleton dhcr-um
+  (vars (a b name) (l l-peer rndx))
+  (defstrand resp 5 (a a) (b b) (l l) (alpha l-peer))
+  (non-orig (privk "sig" a))
+  (facts (neq a b)
+	 (undisclosed l)
+	 ;;	 (undisclosed l-peer)
+	 ))
+
+(defskeleton dhcr-um
+  (vars (a b name) (l l-peer rndx))
+  (defstrand resp 5 (a a) (b b) (l l) (alpha l-peer))
+  (non-orig (privk "sig" a))
+  (facts (neq a b)
+	 ;;      (undisclosed l)
+	 ;;	 (undisclosed l-peer)
+	 ))
+
+;; Forward secrecy for each participant 
+
+(defskeleton dhcr-um
+   (vars (ltxa ltxb x rndx) (y expt) (a b name))
+   (defstrand init 5 (l ltxa) (beta ltxb) (x x) (eta y) (a a) (b b))
+   (deflistener (kcfa ltxa (exp (gen) ltxb) x (exp (gen) y)))
+   (defstrand ltx-disclose 3 (l ltxa))
+   (defstrand ltx-disclose 3 (l ltxb))
+   (precedes ((0 4) (3 0)) ((0 4) (2 0)))
+   (neq (a b)))
+
+(defskeleton dhcr-um
+  (vars (ltxa ltxb y rndx) (chi expt) (a b name))
+  (defstrand resp 6 (l ltxa) (alpha ltxb) (y y) (chi chi) (a a) (b b))
+  (deflistener (kcfb ltxb (exp (gen) ltxa) y (exp (gen) chi)))
+  (defstrand ltx-disclose 3 (l ltxa))
+  (defstrand ltx-disclose 3 (l ltxb))
+  (precedes ((0 5) (3 0)) ((0 5) (2 0)))
   (neq (a b)))
 
-; Initiator point of view: partner's exponent secret, listener for xy
-(defskeleton dhcr-um3
-  (vars (ltxa ltxb x y rndx) (a b name))
-  (defstrand init 4 (ltxa ltxa) (ltxb ltxb) (a a) (b b) (x x) (y y))
-  (defstrand ltx-gen 1 (l ltxb))
-  (deflistener (exp (gen) (mul x y)))
-  (non-orig ltxb)
-  (neq (a b)))
-
-; Responder point of view; both exponents secret
-(defskeleton dhcr-um3
-  (vars (ltxa ltxb rndx) (a b name))
-  (defstrand resp 4 (ltxa ltxa) (ltxb ltxb) (a a) (b b))
-  (defstrand ltx-gen 1 (l ltxa))
-  (defstrand ltx-gen 1 (l ltxb))
-  (non-orig ltxa ltxb)
-  (neq (a b)))
-
-; Responder point of view; partner's exponent secre
-(defskeleton dhcr-um3
-  (vars (ltxa ltxb rndx) (a b name))
-  (defstrand resp 4 (ltxa ltxa) (ltxb ltxb) (a a) (b b))
-  (defstrand ltx-gen 1 (l ltxa))
-  (non-orig ltxa)
-  (neq (a b)))
-
-;;; Forward secrecy, neither long-term exponent secure
-(defskeleton dhcr-um3
-  (vars (ltxa ltxb x rndx) (y expt) (a b name))
-  (defstrand init 4 (ltxa ltxa) (ltxb ltxb) (x x) (y y) (a a) (b b))
-  (deflistener (kcfa ltxa ltxb x (exp (gen) y)))
-  (defstrand ltx-gen 3 (l ltxa))
-  (defstrand ltx-gen 3 (l ltxb))
-  (precedes ((0 3) (3 1)) ((0 3) (2 1)))
-  (neq (a b)))

@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.3")
+(comment "CPSA 4.4.4")
 (comment "All input read from tst/kerberos-variant-guar.scm")
 
 (defprotocol kerberos-variant basic
@@ -52,7 +52,6 @@
   (label 0)
   (unrealized (0 1))
   (origs (n (0 2)))
-  
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton kerberos-variant
@@ -69,6 +68,7 @@
   (rule guar-keyserver-2 long-term-key-non)
   (operation encryption-test (added-strand keyserver 2)
     (enc t l k a b ks a-ks-lt) (0 1))
+  (strand-map 0)
   (traces
     ((send (cat a b ks)) (recv (cat (enc t l k a b ks a-ks-lt) ticket))
       (send (cat (enc a t n k) ticket)) (recv (enc n t-prime k)))
@@ -97,6 +97,7 @@
   (rule guar-keyserver-2)
   (operation encryption-test (added-strand resp 2) (enc n t-prime k)
     (0 3))
+  (strand-map 0 1)
   (traces
     ((send (cat a b ks)) (recv (cat (enc t l k a b ks a-ks-lt) ticket))
       (send (cat (enc a t n k) ticket)) (recv (enc n t-prime k)))
@@ -127,6 +128,7 @@
   (facts (long-term b ks b-ks-lt) (long-term a ks a-ks-lt))
   (rule guar-keyserver-2)
   (operation encryption-test (added-listener k) (enc n t-prime k) (0 3))
+  (strand-map 0 1)
   (traces
     ((send (cat a b ks)) (recv (cat (enc t l k a b ks a-ks-lt) ticket))
       (send (cat (enc a t n k) ticket)) (recv (enc n t-prime k)))
@@ -156,6 +158,7 @@
   (rule guar-keyserver-2)
   (operation encryption-test (displaced 3 0 init 3) (enc a-0 t-0 n k)
     (2 0))
+  (strand-map 0 1 2)
   (traces
     ((send (cat a b ks)) (recv (cat (enc t l k a b ks a-ks-lt) ticket))
       (send (cat (enc a t n k) ticket)) (recv (enc n t-prime k)))
@@ -188,6 +191,7 @@
   (facts (long-term b ks b-ks-lt) (long-term a ks a-ks-lt))
   (rule guar-keyserver-2)
   (operation encryption-test (added-listener k) (enc a-0 t-0 n k) (2 0))
+  (strand-map 0 1 2)
   (traces
     ((send (cat a b ks)) (recv (cat (enc t l k a b ks a-ks-lt) ticket))
       (send (cat (enc a t n k) ticket)) (recv (enc n t-prime k)))
@@ -222,6 +226,7 @@
   (operation nonce-test
     (contracted (b-0 b) (ks-0 ks) (l-0 l) (b-ks-lt-0 b-ks-lt)) k (2 0)
     (enc "ticket" t l k a b ks b-ks-lt) (enc t l k a b ks a-ks-lt))
+  (strand-map 0 1 2)
   (traces
     ((send (cat a b ks)) (recv (cat (enc t l k a b ks a-ks-lt) ticket))
       (send (cat (enc a t n k) ticket)) (recv (enc n t-prime k)))
@@ -239,8 +244,7 @@
     ((0)
       ((a a) (b b) (ks ks) (n n) (a-ks-lt a-ks-lt) (t t)
         (t-prime t-prime) (l l) (k k) (ticket ticket))))
-  (origs (k (1 1)) (n (0 2)))
-  )
+  (origs (k (1 1)) (n (0 2))))
 
 (comment "Nothing left to do")
 
@@ -293,7 +297,6 @@
   (label 7)
   (unrealized (0 0))
   (origs)
-  
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton kerberos-variant
@@ -309,6 +312,7 @@
   (rule guar-keyserver-2 long-term-key-non)
   (operation encryption-test (added-strand keyserver 2)
     (enc "ticket" t l k a b ks b-ks-lt) (0 0))
+  (strand-map 0)
   (traces
     ((recv (cat (enc a t n k) (enc "ticket" t l k a b ks b-ks-lt)))
       (send (enc n t-prime k)))
@@ -336,6 +340,7 @@
   (facts (long-term b ks b-ks-lt) (long-term a ks a-ks-lt))
   (rule guar-keyserver-2)
   (operation encryption-test (added-strand init 3) (enc a t n k) (0 0))
+  (strand-map 0 1)
   (traces
     ((recv (cat (enc a t n k) (enc "ticket" t l k a b ks b-ks-lt)))
       (send (enc n t-prime k)))
@@ -364,6 +369,7 @@
   (facts (long-term b ks b-ks-lt) (long-term a ks a-ks-lt))
   (rule guar-keyserver-2)
   (operation encryption-test (added-listener k) (enc a t n k) (0 0))
+  (strand-map 0 1)
   (traces
     ((recv (cat (enc a t n k) (enc "ticket" t l k a b ks b-ks-lt)))
       (send (enc n t-prime k)))
@@ -394,6 +400,7 @@
   (operation nonce-test
     (contracted (b-0 b) (ks-0 ks) (l-0 l) (a-ks-lt-0 a-ks-lt)) k (2 1)
     (enc "ticket" t l k a b ks b-ks-lt) (enc t l k a b ks a-ks-lt))
+  (strand-map 0 1 2)
   (traces
     ((recv (cat (enc a t n k) (enc "ticket" t l k a b ks b-ks-lt)))
       (send (enc n t-prime k)))
@@ -411,8 +418,7 @@
     ((0)
       ((a a) (b b) (ks ks) (b-ks-lt b-ks-lt) (t t) (n n)
         (t-prime t-prime) (l l) (k k))))
-  (origs (k (1 1)))
-  )
+  (origs (k (1 1))))
 
 (comment "Nothing left to do")
 
@@ -468,7 +474,6 @@
   (label 12)
   (realized)
   (origs (k (0 1)))
-  
   (comment "Not closed under rules"))
 
 (defskeleton kerberos-variant
@@ -492,7 +497,6 @@
     ((0)
       ((a a) (b b) (ks ks) (a-ks-lt a-ks-lt) (b-ks-lt b-ks-lt) (t t)
         (l l) (k k))))
-  (origs (k (0 1)))
-  )
+  (origs (k (0 1))))
 
 (comment "Nothing left to do")

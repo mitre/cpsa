@@ -195,7 +195,7 @@ zz x = z x x
 -- permitted or excluded
 
 variablesOfSortBase :: Bool
-variablesOfSortBase = True -- False 
+variablesOfSortBase = False -- True 
 
 -- The default name for the algebra handled by this module
 -- One gets Diffie Hellman features too.

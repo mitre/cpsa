@@ -1,6 +1,6 @@
 (herald subatomic-open-closed (bound 40))
 
-(comment "CPSA 4.4.3")
+(comment "CPSA 4.4.4")
 (comment "All input read from tst/subatomic-open-closed-dist.scm")
 (comment "Strand count bounded at 40")
 
@@ -212,7 +212,6 @@
   (unrealized (0 1) (1 0))
   (preskeleton)
   (origs (k (0 0)))
-  
   (comment "Not a skeleton"))
 
 (defskeleton subatomic-open-closed
@@ -229,7 +228,6 @@
   (parent 0)
   (unrealized (0 1) (1 0))
   (origs (k (0 0)))
-  
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
@@ -248,6 +246,7 @@
     trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation nonce-test (added-strand dev-up 4) k (1 0)
     (ch-msg start-ch (cat "power-up" d o k)))
+  (strand-map 0 1)
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
     ((recv k) (send k))
     ((recv start-ch (cat "power-up" d o k)) (load lk (cat pt old))
@@ -467,7 +466,6 @@
   (label 3)
   (realized)
   (origs (n (0 3)))
-  
   (comment "Not closed under rules"))
 
 (defskeleton subatomic-open-closed
@@ -486,16 +484,15 @@
   (seen-ops
     (5
       (operation channel-test (added-strand dev-up 4)
-        (ch-msg lk (cat pt-2 "st-k" d o k)) (0 0)))
+        (ch-msg lk (cat pt-2 "st-k" d o k)) (0 0)) (strand-map 0))
     (5
       (operation channel-test (added-strand dev-up 4)
-        (ch-msg lk (cat pt-2 "st-k" d o k)) (0 0)))
+        (ch-msg lk (cat pt-2 "st-k" d o k)) (0 0)) (strand-map 0))
     (5
       (operation channel-test (added-strand dev-up 4)
-        (ch-msg lk (cat pt-2 "st-k" d o k)) (0 0))))
+        (ch-msg lk (cat pt-2 "st-k" d o k)) (0 0)) (strand-map 0)))
   (unrealized (0 0) (0 1))
   (origs (n (0 3)))
-  
   (comment "4 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
@@ -515,6 +512,7 @@
     trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation channel-test (added-strand dev-up 4)
     (ch-msg lk (cat pt-2 "st-k" d o k)) (0 0))
+  (strand-map 0)
   (traces
     ((load lk (cat pt-2 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -544,6 +542,7 @@
     trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation channel-test (added-strand owner-power-dev 1)
     (ch-msg start-ch (cat "power-up" d o k)) (1 0))
+  (strand-map 0 1)
   (traces
     ((load lk (cat pt-2 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -557,16 +556,16 @@
   (seen-ops
     (7
       (operation channel-test (added-strand dev-open 4)
-        (ch-msg ls (cat pt "st" d o o)) (0 1)))
+        (ch-msg ls (cat pt "st" d o o)) (0 1)) (strand-map 0 1 2))
     (7
       (operation channel-test (added-strand dev-open 4)
-        (ch-msg ls (cat pt "st" d o o)) (0 1)))
+        (ch-msg ls (cat pt "st" d o o)) (0 1)) (strand-map 0 1 2))
     (7
       (operation channel-test (added-strand dev-open 4)
-        (ch-msg ls (cat pt "st" d o o)) (0 1)))
+        (ch-msg ls (cat pt "st" d o o)) (0 1)) (strand-map 0 1 2))
     (7
       (operation channel-test (added-strand dev-open 4)
-        (ch-msg ls (cat pt "st" d o o)) (0 1))))
+        (ch-msg ls (cat pt "st" d o o)) (0 1)) (strand-map 0 1 2)))
   (unrealized (0 1))
   (comment "5 in cohort - 1 not yet seen"))
 
@@ -593,6 +592,7 @@
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation channel-test (added-strand dev-open 4)
     (ch-msg ls (cat pt "st" d o o)) (0 1))
+  (strand-map 0 1 2)
   (traces
     ((load lk (cat pt-2 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -609,10 +609,11 @@
   (seen-ops
     (8
       (operation channel-test (added-strand dev-up 4)
-        (ch-msg lk (cat pt-3 "st-k" d o k)) (3 2)))
+        (ch-msg lk (cat pt-3 "st-k" d o k)) (3 2)) (strand-map 0 1 2 3))
     (8
       (operation channel-test (added-strand dev-up 4)
-        (ch-msg lk (cat pt-3 "st-k" d o k)) (3 2))))
+        (ch-msg lk (cat pt-3 "st-k" d o k)) (3 2))
+      (strand-map 0 1 2 3)))
   (unrealized (3 2))
   (comment "3 in cohort - 1 not yet seen"))
 
@@ -636,6 +637,7 @@
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation channel-test (displaced 4 1 dev-up 4)
     (ch-msg lk (cat pt-5 "st-k" d o k-0)) (3 2))
+  (strand-map 0 1 2 3)
   (traces
     ((load lk (cat pt-2 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -650,8 +652,7 @@
   (realized)
   (shape)
   (maps ((0) ((k k) (n n) (d d) (o o) (lk lk) (ls ls))))
-  (origs (pt-2 (1 3)) (pt (3 3)) (pt-3 (1 4)) (n (0 3)))
-  )
+  (origs (pt-2 (1 3)) (pt (3 3)) (pt-3 (1 4)) (n (0 3))))
 
 (comment "Nothing left to do")
 
@@ -866,7 +867,6 @@
   (unrealized (0 1) (1 0) (1 2))
   (preskeleton)
   (origs (n (1 3)) (k (0 0)))
-  
   (comment "Not a skeleton"))
 
 (defskeleton subatomic-open-closed
@@ -886,7 +886,6 @@
   (parent 9)
   (unrealized (0 1) (1 0) (1 2))
   (origs (n (1 3)) (k (0 0)))
-  
   (comment "Not closed under rules"))
 
 (defskeleton subatomic-open-closed
@@ -910,16 +909,16 @@
   (seen-ops
     (12
       (operation channel-test (added-strand dev-up 4)
-        (ch-msg lk (cat pt-2 "st-k" d-0 o-0 k)) (1 0)))
+        (ch-msg lk (cat pt-2 "st-k" d-0 o-0 k)) (1 0)) (strand-map 0 1))
     (12
       (operation channel-test (added-strand dev-up 4)
-        (ch-msg lk (cat pt-2 "st-k" d-0 o-0 k)) (1 0)))
+        (ch-msg lk (cat pt-2 "st-k" d-0 o-0 k)) (1 0)) (strand-map 0 1))
     (12
       (operation channel-test (added-strand dev-up 4)
-        (ch-msg lk (cat pt-2 "st-k" d-0 o-0 k)) (1 0))))
+        (ch-msg lk (cat pt-2 "st-k" d-0 o-0 k)) (1 0))
+      (strand-map 0 1)))
   (unrealized (0 1) (1 0) (1 1) (1 2))
   (origs (n (1 3)) (k (0 0)))
-  
   (comment "4 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
@@ -942,6 +941,7 @@
     trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation channel-test (added-strand dev-up 4)
     (ch-msg lk (cat pt-2 "st-k" d-0 o-0 k)) (1 0))
+  (strand-map 0 1)
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
     ((load lk (cat pt-2 "st-k" d-0 o-0 k))
       (load ls (cat pt "st" d-0 o-0 o-0)) (recv (enc "may I pass" k))
@@ -973,6 +973,7 @@
     trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation channel-test (displaced 3 0 owner-power-dev 1)
     (ch-msg start-ch-0 (cat "power-up" d-0 o-0 k)) (2 0))
+  (strand-map 0 1 2)
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
     ((load lk (cat pt-2 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -985,16 +986,16 @@
   (seen-ops
     (14
       (operation channel-test (added-strand dev-open 4)
-        (ch-msg ls (cat pt "st" d o o)) (1 1)))
+        (ch-msg ls (cat pt "st" d o o)) (1 1)) (strand-map 0 1 2))
     (14
       (operation channel-test (added-strand dev-open 4)
-        (ch-msg ls (cat pt "st" d o o)) (1 1)))
+        (ch-msg ls (cat pt "st" d o o)) (1 1)) (strand-map 0 1 2))
     (14
       (operation channel-test (added-strand dev-open 4)
-        (ch-msg ls (cat pt "st" d o o)) (1 1)))
+        (ch-msg ls (cat pt "st" d o o)) (1 1)) (strand-map 0 1 2))
     (14
       (operation channel-test (added-strand dev-open 4)
-        (ch-msg ls (cat pt "st" d o o)) (1 1))))
+        (ch-msg ls (cat pt "st" d o o)) (1 1)) (strand-map 0 1 2)))
   (unrealized (0 1) (1 1) (1 2))
   (comment "5 in cohort - 1 not yet seen"))
 
@@ -1021,6 +1022,7 @@
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation channel-test (added-strand dev-open 4)
     (ch-msg ls (cat pt "st" d o o)) (1 1))
+  (strand-map 0 1 2)
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
     ((load lk (cat pt-2 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -1036,10 +1038,11 @@
   (seen-ops
     (15
       (operation channel-test (added-strand dev-up 4)
-        (ch-msg lk (cat pt-3 "st-k" d o k)) (3 2)))
+        (ch-msg lk (cat pt-3 "st-k" d o k)) (3 2)) (strand-map 0 1 2 3))
     (15
       (operation channel-test (added-strand dev-up 4)
-        (ch-msg lk (cat pt-3 "st-k" d o k)) (3 2))))
+        (ch-msg lk (cat pt-3 "st-k" d o k)) (3 2))
+      (strand-map 0 1 2 3)))
   (unrealized (0 1) (1 2) (3 2))
   (comment "3 in cohort - 1 not yet seen"))
 
@@ -1063,6 +1066,7 @@
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation channel-test (displaced 4 2 dev-up 4)
     (ch-msg lk (cat pt-5 "st-k" d o k-0)) (3 2))
+  (strand-map 0 1 2 3)
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
     ((load lk (cat pt-2 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -1098,6 +1102,7 @@
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (added-strand owner-open 2)
     (enc "open" d o n-0 k) (3 0))
+  (strand-map 0 1 2 3)
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
     ((load lk (cat pt-2 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -1134,6 +1139,7 @@
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (added-listener k) (enc "open" d o n-0 k)
     (3 0))
+  (strand-map 0 1 2 3)
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
     ((load lk (cat pt-2 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -1149,13 +1155,16 @@
   (seen-ops
     (20
       (operation nonce-test (displaced 5 2 dev-up 4) k (4 0)
-        (ch-msg start-ch (cat "power-up" d o k))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4))
     (20
       (operation nonce-test (added-strand dev-up 4) k (4 0)
-        (ch-msg start-ch (cat "power-up" d o k))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4))
     (20
       (operation nonce-test (added-strand dev-up 4) k (4 0)
-        (ch-msg start-ch (cat "power-up" d o k)))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4)))
   (unrealized (0 1) (4 0))
   (comment "4 in cohort - 1 not yet seen"))
 
@@ -1183,6 +1192,7 @@
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (displaced 0 5 owner-power-dev 3)
     (enc "dist" d o k) (4 0))
+  (strand-map 4 0 1 2 3)
   (traces
     ((load lk (cat pt-2 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -1200,7 +1210,7 @@
   (seen-ops
     (21
       (operation encryption-test (added-strand dev-up 6) (enc "up" k)
-        (4 1))))
+        (4 1)) (strand-map 0 1 2 3 4)))
   (unrealized (0 2) (3 0) (4 1))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -1228,6 +1238,7 @@
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (added-listener k) (enc "dist" d o k)
     (4 0))
+  (strand-map 0 1 2 3 4)
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
     ((load lk (cat pt-2 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -1244,25 +1255,32 @@
   (seen-ops
     (23
       (operation nonce-test (displaced 6 2 dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4 5))
     (23
       (operation nonce-test (displaced 6 2 dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4 5))
     (23
       (operation nonce-test (displaced 6 2 dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4 5))
     (23
       (operation nonce-test (added-strand dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4 5))
     (23
       (operation nonce-test (added-strand dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4 5))
     (23
       (operation nonce-test (added-strand dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4 5))
     (23
       (operation nonce-test (added-strand dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k)))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4 5)))
   (unrealized (0 1) (5 0))
   (comment "8 in cohort - 1 not yet seen"))
 
@@ -1288,6 +1306,7 @@
     trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation nonce-test (displaced 5 2 dev-up 4) k (4 0)
     (ch-msg start-ch (cat "power-up" d o k)))
+  (strand-map 0 1 2 3 4)
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
     ((load lk (cat pt-2 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -1327,6 +1346,7 @@
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (displaced 1 5 dev-up 6) (enc "up" k)
     (4 1))
+  (strand-map 0 4 1 2 3)
   (traces
     ((load lk (cat pt-3 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -1367,6 +1387,7 @@
   (rule fact-dev-pass-same-dev0 trRl_dev-open-at-1 trRl_dev-open-at-3
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (added-listener k) (enc "up" k) (4 1))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load lk (cat pt-2 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -1384,37 +1405,48 @@
   (seen-ops
     (26
       (operation nonce-test (displaced 6 1 dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4 5))
     (26
       (operation nonce-test (displaced 6 1 dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4 5))
     (26
       (operation nonce-test (displaced 6 1 dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4 5))
     (26
       (operation nonce-test (displaced 6 1 dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4 5))
     (26
       (operation nonce-test (displaced 6 1 dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4 5))
     (26
       (operation nonce-test (added-strand dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4 5))
     (26
       (operation nonce-test (added-strand dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4 5))
     (26
       (operation nonce-test (added-strand dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4 5))
     (26
       (operation nonce-test (added-strand dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4 5))
     (26
       (operation nonce-test (added-strand dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4 5))
     (26
       (operation nonce-test (added-strand dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k)))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
   (comment "12 in cohort - 1 not yet seen"))
 
@@ -1443,6 +1475,7 @@
     trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation nonce-test (displaced 6 2 dev-up 4) k (5 0)
     (ch-msg start-ch (cat "power-up" d o k)))
+  (strand-map 0 1 2 3 4 5)
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
     ((load lk (cat pt-2 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -1483,6 +1516,7 @@
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (contracted (dist-ch-0 dist-ch))
     (enc "dist" d o k) (2 0) (ch-msg dist-ch (enc "dist" d o k)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load lk (cat pt-3 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -1524,6 +1558,7 @@
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (added-listener k) (enc "dist" d o k) (2 0)
     (ch-msg dist-ch-0 (enc "dist" d o k)))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load lk (cat pt-3 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -1542,7 +1577,8 @@
   (seen-ops
     (29
       (operation nonce-test (added-strand dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k)))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -1572,6 +1608,7 @@
     trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation nonce-test (displaced 6 1 dev-up 4) k (5 0)
     (ch-msg start-ch (cat "power-up" d o k)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load lk (cat pt-2 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -1614,6 +1651,7 @@
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (added-strand user-pass 2)
     (enc "may I pass" k) (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load lk (cat pt-3 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -1657,6 +1695,7 @@
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (added-listener k) (enc "may I pass" k)
     (0 2))
+  (strand-map 0 1 2 3 4)
   (traces
     ((load lk (cat pt-3 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -1675,7 +1714,8 @@
   (seen-ops
     (32
       (operation nonce-test (added-strand dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k)))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -1705,6 +1745,7 @@
     trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation nonce-test (displaced 6 4 dev-up 4) k (5 0)
     (ch-msg start-ch (cat "power-up" d o k)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load lk (cat pt-3 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -1748,6 +1789,7 @@
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (displaced 6 3 owner-power-dev 3)
     (enc "dist" d-0 o-0 k) (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load lk (cat pt-3 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -1791,6 +1833,7 @@
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (added-listener k) (enc "dist" d-0 o-0 k)
     (5 0))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load lk (cat pt-3 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -1810,13 +1853,16 @@
   (seen-ops
     (35
       (operation nonce-test (displaced 7 4 dev-up 4) k (6 0)
-        (ch-msg start-ch (cat "power-up" d o k))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4 5 6))
     (35
       (operation nonce-test (added-strand dev-up 4) k (6 0)
-        (ch-msg start-ch (cat "power-up" d o k))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4 5 6))
     (35
       (operation nonce-test (added-strand dev-up 4) k (6 0)
-        (ch-msg start-ch (cat "power-up" d o k)))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4 5 6)))
   (unrealized (6 0))
   (comment "4 in cohort - 1 not yet seen"))
 
@@ -1846,6 +1892,7 @@
     trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation nonce-test (displaced 6 4 dev-up 4) k (5 0)
     (ch-msg start-ch (cat "power-up" d o k)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load lk (cat pt-3 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -1889,6 +1936,7 @@
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (contracted (dist-ch-0 dist-ch))
     (enc "dist" d o k) (5 0) (ch-msg dist-ch (enc "dist" d o k)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load lk (cat pt-3 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -1909,8 +1957,7 @@
     ((3 0)
       ((k k) (d d) (o o) (start-ch start-ch) (n n) (d-0 d) (o-0 o)
         (lk lk) (ls ls))))
-  (origs (pt-3 (4 3)) (pt-4 (4 4)) (pt (1 3)) (n (0 3)) (k (3 0)))
-  )
+  (origs (pt-3 (4 3)) (pt-4 (4 4)) (pt (1 3)) (n (0 3)) (k (3 0))))
 
 (defskeleton subatomic-open-closed
   (vars (any old old1 mesg) (k skey) (n n-0 text) (d o name)
@@ -1939,6 +1986,7 @@
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (added-listener k) (enc "dist" d o k) (5 0)
     (ch-msg dist-ch (enc "dist" d o k)))
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((load lk (cat pt-3 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -1958,7 +2006,8 @@
   (seen-ops
     (36
       (operation nonce-test (added-strand dev-up 4) k (6 0)
-        (ch-msg start-ch (cat "power-up" d o k)))))
+        (ch-msg start-ch (cat "power-up" d o k)))
+      (strand-map 0 1 2 3 4 5 6)))
   (unrealized (6 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -1989,6 +2038,7 @@
     trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation nonce-test (displaced 7 4 dev-up 4) k (6 0)
     (ch-msg start-ch (cat "power-up" d o k)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load lk (cat pt-3 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
@@ -2036,6 +2086,7 @@
     trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation nonce-test (displaced 7 4 dev-up 4) k (6 0)
     (ch-msg start-ch (cat "power-up" d o k)))
+  (strand-map 0 1 2 3 4 5 6)
   (traces
     ((load lk (cat pt-3 "st-k" d o k)) (load ls (cat pt "st" d o o))
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))

@@ -1,6 +1,6 @@
 (herald example)
 
-(comment "CPSA 4.4.3")
+(comment "CPSA 4.4.4")
 (comment "All input read from tst/example.scm")
 
 (defprotocol version-1 basic
@@ -26,7 +26,6 @@
   (label 0)
   (unrealized (0 1))
   (origs (s (0 0)))
-  
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton version-1
@@ -37,6 +36,7 @@
   (non-orig (ltk a b))
   (uniq-orig s)
   (operation encryption-test (added-strand resp 2) (enc m a s) (0 1))
+  (strand-map 0)
   (traces ((send (enc s (ltk a b))) (recv (enc m a s)))
     ((recv (enc s (ltk a b-0))) (send (enc m a s))))
   (label 1)
@@ -52,6 +52,7 @@
   (non-orig (ltk a b))
   (uniq-orig s)
   (operation encryption-test (added-listener s) (enc m a s) (0 1))
+  (strand-map 0)
   (traces ((send (enc s (ltk a b))) (recv (enc m a s)))
     ((recv s) (send s)))
   (label 2)
@@ -68,6 +69,7 @@
   (non-orig (ltk a b))
   (uniq-orig s)
   (operation nonce-test (contracted (b-0 b)) s (1 0) (enc s (ltk a b)))
+  (strand-map 0 1)
   (traces ((send (enc s (ltk a b))) (recv (enc m a s)))
     ((recv (enc s (ltk a b))) (send (enc m a s))))
   (label 3)
@@ -75,8 +77,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (m m) (s s))))
-  (origs (s (0 0)))
-  )
+  (origs (s (0 0))))
 
 (comment "Nothing left to do")
 
@@ -102,7 +103,6 @@
   (label 4)
   (unrealized (0 0))
   (origs)
-  
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton version-1
@@ -113,6 +113,7 @@
   (non-orig (ltk a b))
   (operation encryption-test (added-strand init 1) (enc s (ltk a b))
     (0 0))
+  (strand-map 0)
   (traces ((recv (enc s (ltk a b))) (send (enc m a s)))
     ((send (enc s (ltk a b)))))
   (label 5)
@@ -120,8 +121,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (m m) (s s))))
-  (origs)
-  )
+  (origs))
 
 (comment "Nothing left to do")
 
@@ -153,7 +153,6 @@
   (unrealized (2 0))
   (preskeleton)
   (origs (m (0 1)) (s (1 0)))
-  
   (comment "Not a skeleton"))
 
 (defskeleton version-1
@@ -170,7 +169,6 @@
   (parent 6)
   (unrealized (2 0))
   (origs (m (0 1)) (s (1 0)))
-  
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton version-1
@@ -183,6 +181,7 @@
   (non-orig (ltk a b))
   (uniq-orig s m)
   (operation nonce-test (added-listener s) m (2 0) (enc m a s))
+  (strand-map 0 1 2)
   (traces ((recv (enc s (ltk a b))) (send (enc m a s)))
     ((send (enc s (ltk a b)))) ((recv m) (send m)) ((recv s) (send s)))
   (label 8)
@@ -221,7 +220,6 @@
   (unrealized (2 0))
   (preskeleton)
   (origs (m (0 1)))
-  
   (comment "Not a skeleton"))
 
 (defskeleton version-1
@@ -239,8 +237,7 @@
   (realized)
   (shape)
   (maps ((0 1 2) ((m m) (a a) (b b) (s s))))
-  (origs (m (0 1)))
-  )
+  (origs (m (0 1))))
 
 (comment "Nothing left to do")
 
@@ -267,7 +264,6 @@
   (label 11)
   (unrealized (0 1))
   (origs (s (0 0)))
-  
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton version-2
@@ -278,6 +274,7 @@
   (non-orig (ltk a b))
   (uniq-orig s)
   (operation encryption-test (added-strand resp 2) (enc m a n1 s) (0 1))
+  (strand-map 0)
   (traces ((send (enc s n1 (ltk a b))) (recv (enc m a n1 s)))
     ((recv (enc s n1 (ltk a b-0))) (send (enc m a n1 s))))
   (label 12)
@@ -293,6 +290,7 @@
   (non-orig (ltk a b))
   (uniq-orig s)
   (operation encryption-test (added-listener s) (enc m a n1 s) (0 1))
+  (strand-map 0)
   (traces ((send (enc s n1 (ltk a b))) (recv (enc m a n1 s)))
     ((recv s) (send s)))
   (label 13)
@@ -310,6 +308,7 @@
   (uniq-orig s)
   (operation nonce-test (contracted (b-0 b)) s (1 0)
     (enc s n1 (ltk a b)))
+  (strand-map 0 1)
   (traces ((send (enc s n1 (ltk a b))) (recv (enc m a n1 s)))
     ((recv (enc s n1 (ltk a b))) (send (enc m a n1 s))))
   (label 14)
@@ -317,8 +316,7 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (m m) (s s) (n1 n1))))
-  (origs (s (0 0)))
-  )
+  (origs (s (0 0))))
 
 (comment "Nothing left to do")
 
@@ -345,7 +343,6 @@
   (label 15)
   (unrealized (0 0))
   (origs)
-  
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton version-2
@@ -357,6 +354,7 @@
   (uniq-orig n1)
   (operation encryption-test (added-strand init 1) (enc s n1 (ltk a b))
     (0 0))
+  (strand-map 0)
   (traces ((recv (enc s n1 (ltk a b))) (send (enc m a n1 s)))
     ((send (enc s n1 (ltk a b)))))
   (label 16)
@@ -364,7 +362,6 @@
   (realized)
   (shape)
   (maps ((0) ((a a) (b b) (m m) (n1 n1) (s s))))
-  (origs (n1 (1 0)))
-  )
+  (origs (n1 (1 0))))
 
 (comment "Nothing left to do")

@@ -1,6 +1,6 @@
 (herald isoreject-corrected)
 
-(comment "CPSA 4.4.3")
+(comment "CPSA 4.4.4")
 (comment "All input read from tst/isoreject-corrected.scm")
 
 (defprotocol isofix basic
