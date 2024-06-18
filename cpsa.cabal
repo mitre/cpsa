@@ -160,10 +160,11 @@ Extra-Source-Files:
   tst/auth-enc_shapes.tst tst/auth-hash.scm tst/auth-hash.tst
   tst/auth-hash_shapes.tst tst/blanchet-strandmax.scm
   tst/blanchet-strandmax.tst tst/blanchet.scm tst/blanchet.tst
-  tst/blanchet_doorsep.tst tst/blanchet_doorsep_shapes.tst
-  tst/blanchet_shapes.tst tst/bug_example.scm tst/bug_example.tst
-  tst/bug_example_shapes.tst tst/cert_lang.scm tst/cert_lang.tst
-  tst/cert_lang_shapes.tst tst/chan-envelope.scm tst/chan-envelope.tst
+  tst/blanchet_doorsep.prot tst/blanchet_doorsep.tst
+  tst/blanchet_doorsep_shapes.tst tst/blanchet_shapes.tst
+  tst/bug_example.scm tst/bug_example.tst tst/bug_example_shapes.tst
+  tst/cert_lang.scm tst/cert_lang.tst tst/cert_lang_shapes.tst
+  tst/chan-envelope.scm tst/chan-envelope.tst
   tst/chan-envelope_shapes.tst tst/chan-perrig-song.scm
   tst/chan-perrig-song.tst tst/chan-perrig-song_shapes.tst
   tst/chan-unilateral.scm tst/chan-unilateral.tst
@@ -181,7 +182,8 @@ Extra-Source-Files:
   tst/deorig_contract.tst tst/deorig_contract_shapes.tst
   tst/deorig_mesg.scm tst/deorig_mesg.tst tst/deorig_mesg_shapes.tst
   tst/deorig_simple.scm tst/deorig_simple.tst
-  tst/deorig_simple_shapes.tst tst/dh-ca_hack.scm tst/dh-ca_hack.tst
+  tst/deorig_simple_shapes.tst tst/dh-ca_hack-uniq_cert.scm
+  tst/dh-ca_hack-uniq_cert.tst tst/dh-ca_hack.scm tst/dh-ca_hack.tst
   tst/dh-ca_hack_shapes.tst tst/dh_encrypt_hack.scm
   tst/dh_encrypt_hack.tst tst/dh_encrypt_hack_shapes.tst
   tst/dh_group_sig.scm tst/dh_group_sig.tst
@@ -190,29 +192,28 @@ Extra-Source-Files:
   tst/dh_mim_hack.scm tst/dh_mim_hack.tst tst/dh_mim_hack_shapes.tst
   tst/dhcr_um.scm tst/dhcr_um.tst tst/dhcr_um3.scm tst/dhcr_um3.tst
   tst/dhcr_um3_goals.scm tst/dhcr_um3_goals.tst
-  tst/dhcr_um3_shapes.tst tst/dhcr_um_exercise_resolved_bug.tst
-  tst/dhcr_um_exercise_resolved_bug_shapes.tst tst/dhcr_um_expt.tst
-  tst/dhcr_um_expt_assume.tst tst/dhcr_um_expt_shapes.tst
-  tst/dhcr_um_forward.tst tst/dhcr_um_goals.scm tst/dhcr_um_goals.tst
-  tst/dhcr_um_implicit_auth.scm tst/dhcr_um_implicit_auth.tst
-  tst/dhcr_um_shapes.tst tst/dhcr_umx.scm tst/dhcr_umx.tst
-  tst/dhcr_umx_goals.scm tst/dhcr_umx_goals.tst
-  tst/dhcr_umx_implicit_auth.scm tst/dhcr_umx_implicit_auth.tst
-  tst/dhcr_umx_shapes.tst tst/dhnsl_hack.scm tst/dhnsl_hack.tst
-  tst/dhnsl_hack_shapes.tst tst/dhstatic-state.scm
-  tst/dhstatic-state.tst tst/dhstatic-state_shapes.tst
-  tst/disclosure.scm tst/disclosure.tst tst/doorsep.scm
-  tst/doorsep.tst tst/doorsep2invk.scm tst/doorsep2invk.tst
-  tst/doorsep2invk_shapes.tst tst/doorsep_shapes.tst tst/dy.lsp
-  tst/dy.tst tst/dy_shapes.tst tst/encsig.scm tst/encsig.tst
-  tst/encsig_shapes.tst tst/envelope.scm tst/envelope.tst
-  tst/envelope_shapes.tst tst/epmo-hash.scm tst/epmo-hash.tst
-  tst/epmo-hash_shapes.tst tst/epmo-key-hash.scm tst/epmo-key-hash.tst
-  tst/epmo-key-hash_shapes.tst tst/epmo.scm tst/epmo.tst
-  tst/epmo_acctnum-key-hash.scm tst/epmo_acctnum-key-hash.tst
-  tst/epmo_acctnum-key-hash_shapes.tst tst/epmo_acctnum.tst
-  tst/epmo_acctnum_shapes.tst tst/epmo_shapes.tst
-  tst/example_shapes.tst tst/expand.scm tst/expand.tst
+  tst/dhcr_um3_shapes.tst tst/dhcr_um_exercise_resolved_bug_shapes.tst
+  tst/dhcr_um_expt_shapes.tst tst/dhcr_um_goals.scm
+  tst/dhcr_um_goals.tst tst/dhcr_um_implicit_auth.scm
+  tst/dhcr_um_implicit_auth.tst tst/dhcr_um_shapes.tst
+  tst/dhcr_umx.scm tst/dhcr_umx.tst tst/dhcr_umx_goals.scm
+  tst/dhcr_umx_goals.tst tst/dhcr_umx_implicit_auth.scm
+  tst/dhcr_umx_implicit_auth.tst tst/dhcr_umx_shapes.tst
+  tst/dhnsl_hack.scm tst/dhnsl_hack.tst tst/dhnsl_hack_shapes.tst
+  tst/dhstatic-state.scm tst/dhstatic-state.tst
+  tst/dhstatic-state_shapes.tst tst/disclosure.scm tst/disclosure.tst
+  tst/doorsep.scm tst/doorsep.tst tst/doorsep2invk.scm
+  tst/doorsep2invk.tst tst/doorsep2invk_shapes.tst
+  tst/doorsep_shapes.tst tst/dy.lsp tst/dy.tst tst/dy_shapes.tst
+  tst/encsig.scm tst/encsig.tst tst/encsig_shapes.tst tst/envelope.scm
+  tst/envelope.tst tst/envelope_shapes.tst tst/epmo-hash.scm
+  tst/epmo-hash.tst tst/epmo-hash_shapes.tst tst/epmo-key-hash.scm
+  tst/epmo-key-hash.tst tst/epmo-key-hash_shapes.tst tst/epmo.scm
+  tst/epmo.tst tst/epmo_acctnum-key-hash.scm
+  tst/epmo_acctnum-key-hash.tst tst/epmo_acctnum-key-hash_shapes.tst
+  tst/epmo_acctnum.lsp tst/epmo_acctnum.tst
+  tst/epmo_acctnum_shapes.tst tst/epmo_shapes.tst tst/example.scm
+  tst/example.tst tst/example_shapes.tst tst/expand.scm tst/expand.tst
   tst/expand_shapes.tst tst/facts.scm tst/facts.tst
   tst/facts_shapes.tst tst/factvar.scm tst/factvar.tst
   tst/factvar_shapes.tst tst/ffgg.scm tst/ffgg.tst tst/ffgg_shapes.tst
@@ -222,18 +223,21 @@ Extra-Source-Files:
   tst/goals.tst tst/goals_shapes.tst tst/hashtest-key-hash.scm
   tst/hashtest-key-hash.tst tst/hashtest-key-hash_shapes.tst
   tst/hashtest.scm tst/hashtest.tst tst/hashtest_shapes.tst
-  tst/incompleteness_example.scm tst/incompleteness_example.tst
-  tst/incompleteness_example_shapes.tst tst/isoreject-corrected.scm
-  tst/isoreject-corrected.tst tst/isoreject-corrected_shapes.tst
-  tst/isoreject.scm tst/isoreject.tst tst/isoreject_shapes.tst
-  tst/kelly1.scm tst/kelly1.tst tst/kelly1_shapes.tst tst/kerberos.scm
-  tst/kerberos.tst tst/kerberos_shapes.tst tst/locn_envelope.scm
-  tst/locn_envelope.tst tst/locn_envelope_shapes.tst tst/mass.lsp
-  tst/mass.tst tst/mass2.lsp tst/mass2.tst tst/mass2_shapes.tst
-  tst/mass_shapes.tst tst/missing_contraction.scm
-  tst/missing_contraction.tst tst/missing_contraction_shapes.tst
-  tst/neq_test.scm tst/neq_test.tst tst/neq_test_shapes.tst
-  tst/neuman-stubblebine-reauth-tagged.lsp
+  tst/hull-alt.scm tst/hull-alt.tst tst/incompleteness_example.scm
+  tst/incompleteness_example.tst tst/incompleteness_example_shapes.tst
+  tst/isoreject-corrected.scm tst/isoreject-corrected.tst
+  tst/isoreject-corrected_shapes.tst tst/isoreject.scm
+  tst/isoreject.tst tst/isoreject_shapes.tst
+  tst/jdg-neuman-stubblebine-reauth_shapes.tst tst/jdg-wonthull.scm
+  tst/jdg-wonthull.tst tst/kelly1.scm tst/kelly1.tst
+  tst/kelly1_shapes.tst tst/kerberos-variant-guar.scm
+  tst/kerberos-variant-guar.tst tst/kerberos.scm tst/kerberos.tst
+  tst/kerberos_shapes.tst tst/locn_envelope.scm tst/locn_envelope.tst
+  tst/locn_envelope_shapes.tst tst/mass.lsp tst/mass.tst tst/mass2.lsp
+  tst/mass2.tst tst/mass2_shapes.tst tst/mass_shapes.tst
+  tst/missing_contraction.scm tst/missing_contraction.tst
+  tst/missing_contraction_shapes.tst tst/neq_test.scm tst/neq_test.tst
+  tst/neq_test_shapes.tst tst/neuman-stubblebine-reauth-tagged.lsp
   tst/neuman-stubblebine-reauth-tagged.tst
   tst/neuman-stubblebine-reauth-tagged_shapes.tst
   tst/neuman-stubblebine-reauth.lsp tst/neuman-stubblebine-reauth.tst
@@ -267,12 +271,14 @@ Extra-Source-Files:
   tst/renamings.tst tst/renamings_shapes.tst tst/role_uniq.scm
   tst/role_uniq.tst tst/role_uniq_shapes.tst tst/rule-node.scm
   tst/rule-node.tst tst/rule-node_shapes.tst tst/rule-order.scm
-  tst/rule-order.tst tst/rule-order_shapes.tst tst/sigenc.scm
-  tst/sigenc.tst tst/sigenc_shapes.tst tst/sorted_epmo_acctnum.scm
-  tst/sorted_epmo_acctnum.tst tst/sorted_epmo_acctnum_shapes.tst
-  tst/sts.scm tst/sts.tst tst/sts_non_role.scm tst/sts_non_role.tst
-  tst/sts_unflip.tst tst/sts_weakened_reflect.scm
-  tst/sts_weakened_reflect.tst
+  tst/rule-order.tst tst/rule-order_shapes.tst tst/sa.scm tst/sa.tst
+  tst/sigenc.scm tst/sigenc.tst tst/sigenc_shapes.tst
+  tst/sorted_epmo_acctnum.scm tst/sorted_epmo_acctnum.tst
+  tst/sorted_epmo_acctnum_shapes.tst tst/sts.scm tst/sts.tst
+  tst/sts_non_role.scm tst/sts_non_role.tst
+  tst/sts_weakened_reflect.scm tst/sts_weakened_reflect.tst
+  tst/subatomic-open-closed-dist.scm
+  tst/subatomic-open-closed-dist.tst
   tst/subatomic-open-closed-test-genrule.scm
   tst/subatomic-open-closed-test-genrule.tst
   tst/subatomic-open-closed-test-genrule_shapes.tst
@@ -296,10 +302,9 @@ Extra-Source-Files:
   tst/uniq-at.scm tst/uniq-at.tst tst/uniq-gen-test.scm
   tst/uniq-gen-test.tst tst/uniq-gen-test_shapes.tst tst/uo.scm
   tst/uo.tst tst/uo_shapes.tst tst/wang-hash.scm tst/wang-hash.tst
-  tst/wang-hash_shapes.tst tst/wang-key-hash-tst.tst
-  tst/wang-key-hash-tst_shapes.tst tst/wang-key-hash.scm
-  tst/wang-key-hash.tst tst/wang-key-hash_shapes.tst
-  tst/weakened-subatomic-open-closed.tst
+  tst/wang-hash_shapes.tst tst/wang-key-hash-tst_shapes.tst
+  tst/wang-key-hash.scm tst/wang-key-hash.tst
+  tst/wang-key-hash_shapes.tst
   tst/weakened-subatomic-open-closed_shapes.tst tst/weird.scm
   tst/weird.tst tst/weird_shapes.tst tst/wide-mouth-frog-scyther.lsp
   tst/wide-mouth-frog-scyther.tst
@@ -309,11 +314,11 @@ Extra-Source-Files:
   tst/wonthull2.tst tst/wonthull2_shapes.tst tst/wonthull3.scm
   tst/wonthull3.tst tst/wonthull3_shapes.tst tst/wonthull_shapes.tst
   tst/woolam.scm tst/woolam.tst tst/woolam_shapes.tst
-  tst/wrap_decrypt.tst tst/wrap_decrypt_shapes.tst
-  tst/yahalom-6.3.6.scm tst/yahalom-6.3.6.tst
-  tst/yahalom-6.3.6_shapes.tst tst/yahalom-forward.scm
-  tst/yahalom-forward.tst tst/yahalom.scm tst/yahalom.tst
-  tst/yahalom_shapes.tst tst/yes-or-no.scm tst/yes-or-no.tst
+  tst/wrap_decrypt_shapes.tst tst/yahalom-6.3.6.scm
+  tst/yahalom-6.3.6.tst tst/yahalom-6.3.6_shapes.tst
+  tst/yahalom-forward.scm tst/yahalom-forward.tst tst/yahalom.scm
+  tst/yahalom.tst tst/yahalom_shapes.tst tst/yes-or-no.scm
+  tst/yes-or-no.tst
   coq/Sem_tactics.v coq/Comp.v coq/Alt_sem.v coq/Match.v coq/Alg.v
   coq/Exec.v coq/Intro.v coq/Nonce.v coq/Preamble.v
   coq/Unilateral_proof.v coq/Makefile coq/Run.v coq/procdoc.tex

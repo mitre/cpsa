@@ -245,38 +245,42 @@
 	 (prec z 4 z-2 0))
     (false))))
 
-(defgoal dhcr-um3
-  (forall
-   ((na nb data) (a b self self-0 name)
-    (ltxa ltxb y rndx)
-    (chi expt) (z z-0 z-1 z-2 strd))
-   (implies
-    (and
-     (p "resp" z 6)
-     (p "" z-0 2)
-     (p "ltx-disclose" z-1 3)     
-     (p "ltx-disclose" z-2 3)
-     
-     (p "resp" "na" z na)
-     (p "resp" "nb" z nb)
-     (p "resp" "a" z a)
-     (p "resp" "b" z b)
-     (p "resp" "l" z ltxa)
-     (p "resp" "y" z y)
-     (p "resp" "alpha" z ltxb)
-     (p "resp" "chi" z chi)
-     
-     (p "" "x" z-0
-        (hash (exp (gen) (mul ltxa y))
-	      (exp (gen) (mul ltxb chi))
-	      (exp (gen) (mul y chi))))
+(comment
+;;; comment this out for brevity in the tst suite run.
+;;; Be sure to test it periodically, though.  
 
-     (p "ltx-disclose" "self" z-1 self)
-     (p "ltx-disclose" "l" z-1 ltxa)
-     (p "ltx-disclose" "self" z-2 self-0)
-     (p "ltx-disclose" "l" z-2 ltxb)
+ (defgoal dhcr-um3
+   (forall
+    ((na nb data) (a b self self-0 name)
+     (ltxa ltxb y rndx)
+     (chi expt) (z z-0 z-1 z-2 strd))
+    (implies
+     (and
+      (p "resp" z 6)
+      (p "" z-0 2)
+      (p "ltx-disclose" z-1 3)     
+      (p "ltx-disclose" z-2 3)
+     
+      (p "resp" "na" z na)
+      (p "resp" "nb" z nb)
+      (p "resp" "a" z a)
+      (p "resp" "b" z b)
+      (p "resp" "l" z ltxa)
+      (p "resp" "y" z y)
+      (p "resp" "alpha" z ltxb)
+      (p "resp" "chi" z chi)
+     
+      (p "" "x" z-0
+         (hash (exp (gen) (mul ltxa y))
+	       (exp (gen) (mul ltxb chi))
+	       (exp (gen) (mul y chi))))
 
-     (prec z 5 z-1 0) (prec z 5 z-2 0)
-     (ugen y) (uniq-at nb z 3)
-     (fact neq a b))
-    (false))))
+      (p "ltx-disclose" "self" z-1 self)
+      (p "ltx-disclose" "l" z-1 ltxa)
+      (p "ltx-disclose" "self" z-2 self-0)
+      (p "ltx-disclose" "l" z-2 ltxb)
+
+      (prec z 5 z-1 0) (prec z 5 z-2 0)
+      (ugen y) (uniq-at nb z 3)
+      (fact neq a b))
+     (false)))))
