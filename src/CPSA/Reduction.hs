@@ -30,30 +30,30 @@ import System.IO.Unsafe
 import Control.Exception (try)
 import System.IO.Error (ioeGetErrorString)
 
-zP :: Show a => a -> b -> b
-zP x y = unsafePerformIO (print x >> return y)
+z :: Show a => a -> b -> b
+z x y = unsafePerformIO (print x >> return y)
 
 zz :: Show a => a -> a
-zz x = zP x x
+zz x = z x x
 
 zb :: Show a => a -> Bool -> Bool
-zb a False = zP a False
+zb a False = z a False
 zb _ b = b
 
 zn :: Show a => a -> Maybe b -> Maybe b
-zn x Nothing = zP x Nothing
+zn x Nothing = z x Nothing
 zn _ y = y
 
 zf :: Show a => a -> Bool -> Bool
-zf x False = zP x False
+zf x False = z x False
 zf _ y = y
 
 zt :: Show a => a -> Bool -> Bool
-zt x True = zP x True
+zt x True = z x True
 zt _ y = y
 
 zl :: Show a => [a] -> [a]
-zl a = zP (length a) a
+zl a = z (length a) a
 
 zi :: Instance -> String
 zi inst =
@@ -122,27 +122,26 @@ withParent k label parent =
 -- The integer is the label of the seen skeleton.
 type IPreskel = (Preskel, Int)
 
--- Is the skeleton summarized by gist g isomorphic to one with the
--- given label?
-wasSeen :: Preskel -> IPreskel -> Bool
-wasSeen k (k', _) =
-    -- isomorphic (gist k) (gist k')
-    stronglyIsomorphic k k'
-
-stronglyIsomorphic :: Preskel -> Preskel -> Bool
+stronglyIsomorphic :: Preskel -> Preskel -> [Sid]
 stronglyIsomorphic k1 k2 =
-    any (unrealizedInvariant k1 k2) $ findIsomorphisms (gist k1) (gist k2)
+    loop $ findIsomorphisms (gist k1) (gist k2)
     where
+      loop [] = []
+      loop ((_, _, sm) : maps) =
+          if unrealizedInvariant sm then
+             sm
+          else
+             loop maps
+
       translateNode sidMap (s,i) = ((sidMap !! s), i)
 
       setsEq as bs = subset as bs &&
-                     subset bs as 
+                     subset bs as
 
-      unrealizedInvariant k1 k2 (_,_,sidMap) =
+      unrealizedInvariant sidMap =
           setsEq (map (translateNode sidMap) $ unrealized k1)
                  $ unrealized k2
-          
-          
+
 -- A seen history as a list.
 
 newtype Seen = Seen [IPreskel]
@@ -155,9 +154,16 @@ hist ik = Seen [ik]
 remember :: IPreskel -> Seen -> Seen
 remember ik (Seen seen) = Seen (ik : seen)
 
--- Find an element of the seen history that satisfies a predicate.
-recall :: (IPreskel -> Bool) -> Seen -> Maybe (IPreskel)
-recall f (Seen seen) = L.find f seen
+-- If preskel has been seen, return its label and strand map.
+recall :: Preskel -> Seen -> Maybe (Int, [Sid])
+recall k (Seen seen) =
+    loop seen
+    where
+      loop [] = Nothing
+      loop ((k', n) : seen) =
+          case stronglyIsomorphic k k' of
+            [] -> loop seen
+            sm -> Just (n, sm)
 
 -- Create an empty seen history
 void :: Seen
@@ -303,14 +309,14 @@ step p h ks m oseen n seen todo toobig (Reduct lk _ _  _  : reducts)
     | nstrands (content lk) >= optBound p = -- Check strand count
         step p h ks m oseen n seen todo (lk : toobig) reducts
 step p h ks m oseen n seen todo toobig (ReductStable lk : reducts) =
-    case recall (wasSeen (content lk)) seen of
+    case recall (content lk) seen of
       Just (_, _) ->
-      --           zP ("seen", label lk) $
+      --           z ("seen", label lk) $
           step p h ks m oseen n seen todo toobig reducts
       Nothing ->
           do
             wrt p h (commentPreskel lk [] [] Shape Nada "")
-      -- zP ("unseen", label lk) $
+      -- z ("unseen", label lk) $
             step p h ks m oseen n seen todo toobig reducts
 
 step p h ks m oseen n seen todo toobig (Genlz lk size kids dups : reducts)
@@ -383,8 +389,8 @@ type SeenSkel = (Int, Preskel)
 duplicates :: Seen -> ([Preskel], [SeenSkel]) -> Preskel ->
               ([Preskel], [SeenSkel])
 duplicates seen (unseen, dups) kid =
-    case recall (wasSeen kid) seen of
-      Just (_, label) -> (unseen, (label, kid) : dups)
+    case recall kid seen of
+      Just (label, _) -> (unseen, (label, kid) : dups)
       Nothing -> (kid : unseen, dups)
 
 -- Make a todo list for dump
@@ -401,8 +407,8 @@ type Next = (Int, Seen, [LPreskel], [SeenSkel])
 -- Update state variables used by step.
 next :: LPreskel -> Next -> Preskel -> Next
 next p (n, seen, todo, dups) k =
-    case recall (wasSeen k) seen of
-      Just (_, label) ->
+    case recall k seen of
+      Just (label, _) ->
           (n, seen, todo, (label, k) : dups)
       Nothing ->
           (n + 1, remember (k, n) seen, lk : todo, dups)
