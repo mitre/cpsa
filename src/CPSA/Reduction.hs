@@ -142,6 +142,10 @@ stronglyIsomorphic k1 k2 =
           setsEq (map (translateNode sidMap) $ unrealized k1)
                  $ unrealized k2
 
+composeStrandMap :: [Sid] -> [Sid] -> [Sid]
+composeStrandMap sm1 sm2 =
+    map ((!!) (take (L.length sm1) sm2)) sm1
+
 -- A seen history as a list.
 
 newtype Seen = Seen [IPreskel]
@@ -390,8 +394,18 @@ duplicates :: Seen -> ([Preskel], [SeenSkel]) -> Preskel ->
               ([Preskel], [SeenSkel])
 duplicates seen (unseen, dups) kid =
     case recall kid seen of
-      Just (label, _) -> (unseen, (label, kid) : dups)
+      Just (label, sm) -> (unseen, (label, fixStrandMap kid sm) : dups)
       Nothing -> (kid : unseen, dups)
+
+fixStrandMap :: Preskel -> [Sid] -> Preskel
+fixStrandMap k sm =
+    updateStrandMap (composeStrandMap sm1 sm2) k
+    where
+      (sm1, sm2) =
+          case kop of
+            Generalized _ _ -> (sm, getStrandMap kop)
+            _ -> (getStrandMap kop, sm)
+      kop = operation k
 
 -- Make a todo list for dump
 mktodo :: [Reduct t g s e] -> [LPreskel] -> [LPreskel] -> [LPreskel]
@@ -408,8 +422,8 @@ type Next = (Int, Seen, [LPreskel], [SeenSkel])
 next :: LPreskel -> Next -> Preskel -> Next
 next p (n, seen, todo, dups) k =
     case recall k seen of
-      Just (label, _) ->
-          (n, seen, todo, (label, k) : dups)
+      Just (label, sm) ->
+          (n, seen, todo, (label, fixStrandMap k sm) : dups)
       Nothing ->
           (n + 1, remember (k, n) seen, lk : todo, dups)
           where
