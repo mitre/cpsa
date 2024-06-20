@@ -241,77 +241,73 @@
 	      x (exp (gen) eta))))
     (false))))
 
-(comment
-;;; comment these out for brevity in the tst suite run.  Be sure to
-;;; test them periodically, though.
-
 ;;; Forward secrecy 
 
- (defgoal dhcr-um
-   (forall
-    ((na nb data) (a b self self-0 name)
-     (ltxa ltxb x rndx)
-     (y expt) (z z-0 z-1 z-2 strd))
-    (implies
-     (and (p "init" z 5)
-	  (p "" z-0 2)
-	  (p "ltx-disclose" z-1 3)
-	  (p "ltx-disclose" z-2 3)
+(defgoal dhcr-um
+  (forall
+   ((na nb data) (a b self self-0 name)
+    (ltxa ltxb x rndx)
+    (y expt) (z z-0 z-1 z-2 strd))
+   (implies
+    (and (p "init" z 5)
+	 (p "" z-0 2)
+	 (p "ltx-disclose" z-1 3)
+	 (p "ltx-disclose" z-2 3)
 
-	  (p "init" "na" z na)
-          (p "init" "nb" z nb)
-	  (p "init" "a" z a)
-	  (p "init" "b" z b)
-	  (p "init" "l" z ltxa)
-          (p "init" "x" z x)
-	  (p "init" "beta" z ltxb)
-	  (p "init" "eta" z y)
+	 (p "init" "na" z na)
+         (p "init" "nb" z nb)
+	 (p "init" "a" z a)
+	 (p "init" "b" z b)
+	 (p "init" "l" z ltxa)
+         (p "init" "x" z x)
+	 (p "init" "beta" z ltxb)
+	 (p "init" "eta" z y)
 	 
-          (p "" "x" z-0
-             (hash (exp (gen) (mul ltxa ltxb))
-		   (exp (gen) (mul x y))))
+         (p "" "x" z-0
+            (hash (exp (gen) (mul ltxa ltxb))
+		  (exp (gen) (mul x y))))
 	 
-          (p "ltx-disclose" "self" z-1 self)
-          (p "ltx-disclose" "l" z-1 ltxa)
-          (p "ltx-disclose" "self" z-2 self-0)
-          (p "ltx-disclose" "l" z-2 ltxb)
-	  (ugen x)
-	  (uniq-at na z 2)
-	  (prec z 4 z-1 0)
-	  (prec z 4 z-2 0))
-     (false))))
+         (p "ltx-disclose" "self" z-1 self)
+         (p "ltx-disclose" "l" z-1 ltxa)
+         (p "ltx-disclose" "self" z-2 self-0)
+         (p "ltx-disclose" "l" z-2 ltxb)
+	 (ugen x)
+	 (uniq-at na z 2)
+	 (prec z 4 z-1 0)
+	 (prec z 4 z-2 0))
+    (false))))
 
 
- (defgoal dhcr-um
-   (forall
-    ((na nb data) (a b self self-0 name)
-     (ltxa ltxb y rndx)
-     (chi expt) (z z-0 z-1 z-2 strd))
-    (implies
-     (and
-      (p "resp" z 6)
-      (p "" z-0 2)
-      (p "ltx-disclose" z-1 3)     
-      (p "ltx-disclose" z-2 3)
+(defgoal dhcr-um
+  (forall
+   ((na nb data) (a b self self-0 name)
+    (ltxa ltxb y rndx)
+    (chi expt) (z z-0 z-1 z-2 strd))
+   (implies
+    (and
+     (p "resp" z 6)
+     (p "" z-0 2)
+     (p "ltx-disclose" z-1 3)     
+     (p "ltx-disclose" z-2 3)
      
-      (p "resp" "na" z na)
-      (p "resp" "nb" z nb)
-      (p "resp" "a" z a)
-      (p "resp" "b" z b)
-      (p "resp" "l" z ltxa)
-      (p "resp" "y" z y)
-      (p "resp" "alpha" z ltxb)
-      (p "resp" "chi" z chi)
+     (p "resp" "na" z na)
+     (p "resp" "nb" z nb)
+     (p "resp" "a" z a)
+     (p "resp" "b" z b)
+     (p "resp" "l" z ltxa)
+     (p "resp" "y" z y)
+     (p "resp" "alpha" z ltxb)
+     (p "resp" "chi" z chi)
 
-      (p "" "x" z-0
-         (hash (exp (gen) (mul ltxa ltxb))
-	       (exp (gen) (mul y chi))))
+     (p "" "x" z-0
+        (hash (exp (gen) (mul ltxa ltxb))
+	      (exp (gen) (mul y chi))))
      
-      (p "ltx-disclose" "self" z-1 self)         
-      (p "ltx-disclose" "l" z-1 ltxa)
-      (p "ltx-disclose" "self" z-2 self-0)         
-      (p "ltx-disclose" "l" z-2 ltxb)
-      (prec z 5 z-1 0)
-      (prec z 5 z-2 0)
-      (ugen y) (uniq-at nb z 3))
-     (false)))))
+     (p "ltx-disclose" "self" z-1 self)         
+     (p "ltx-disclose" "l" z-1 ltxa)
+     (p "ltx-disclose" "self" z-2 self-0)         
+     (p "ltx-disclose" "l" z-2 ltxb)
+     (prec z 5 z-1 0)
+     (prec z 5 z-2 0)
+     (ugen y) (uniq-at nb z 3))
+    (false))))

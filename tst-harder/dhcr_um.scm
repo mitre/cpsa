@@ -4,11 +4,8 @@
 ;;; key from long-term and ephemeral Diffie-Hellman exponents.  We use
 ;;; self-signed certificates to link names to long-term public values.
 
-;;; This file contains the UM3 version, in which each ephemeral is
-;;; mixed with the peer's static exponent, and the two ephemerals are
-;;; also mixed with each other.  Hence, there are three DH
-;;; combinations that get hashed together.  Only the key derivation
-;;; macros differ from the version in dhcr_um.scm
+;;; This file contains the standard version, in which the two
+;;; ephemeral are mixed, as are the two static exponents.
 
 ;;; A role is provided to expose the long term exponent.  The latter
 ;;; step is used to test the notion of forward security, assuming that
@@ -24,7 +21,7 @@
 ;;; Then we consider the forward secrecy question, first from the
 ;;; initiator's point of view, and then from the responder's.
 
-;;; The UM3 key derivation achieves forward secrecy.  Its weakness is
+;;; The UM key derivation achieves forward secrecy.  Its weakness is
 ;;; that if a participant's *own* long term value is exposed, an
 ;;; adversary can acquire a key shared with them for any claimed peer.
 ;;; This remains true if we stipulate that the partcipant generates a
@@ -40,19 +37,16 @@
 ;;; 3.  Discard the private value from state before
 ;;;	disclosing it, when testing forward secrecy.
 
-(herald "DHCR: unified model (UM) three-component version"
+(herald "DHCR: unified model (UM) original"
 	(bound 30)
-	(limit 8000)
+	(limit 4000)
 	(algebra diffie-hellman))
 
+(defmacro (kcfa l gb x gy)
+  (hash (exp gb l) (exp gy x)))
 
-
-(defmacro (kcfa ltxa gbeta x hy)
-  (hash (exp hy ltxa) (exp gbeta x) (exp hy x)))
-
-(defmacro (kcfb ltxb galpha y hx)
-  (hash (exp galpha y) (exp hx ltxb) (exp hx y)))
-
+(defmacro (kcfb l ga y gx)
+  (hash (exp ga l) (exp gx y)))
 
 (defprotocol dhcr-um diffie-hellman
   (defrole init
@@ -186,21 +180,14 @@
 
 ; Initiator point of view:  neither exponent secret
 
-(comment
-;;; This query shows the myriad failure cases if there's no assumption
-;;; about long term non-disclosure.  It's commented out because it
-;;; take a long time to run.  It's not suitable for the regular test
-;;; suite for this reason.
-
-;;; It should however be checked from time to time.  
- (defskeleton dhcr-um
-   (vars (a b name) (l rndx) (l-peer expt))
-   (defstrand init 4 (a a) (b b) (l l) (beta l-peer))
-   (non-orig (privk "sig" b))
-   (facts (neq a b)
-	  ;;	 (undisclosed l-peer)
-	  ;;	 (undisclosed l)
-	  )))
+(defskeleton dhcr-um
+  (vars (a b name) (l rndx) (l-peer expt))
+  (defstrand init 4 (a a) (b b) (l l) (beta l-peer))
+  (non-orig (privk "sig" b))
+  (facts (neq a b)
+	 ;;	 (undisclosed l-peer)
+	 ;;	 (undisclosed l)
+	 ))
 
 
 ;;; Responder cases
@@ -230,46 +217,32 @@
 	 ;;	 (undisclosed l-peer)
 	 ))
 
-(comment
-;;; This query shows the myriad failure cases if there's no assumption
-;;; about long term non-disclosure.  It's commented out because it
-;;; take a long time to run.  It's not suitable for the regular test
-;;; suite for this reason.
-
-;;; It should however be checked from time to time.  
- (defskeleton dhcr-um
-   (vars (a b name) (l l-peer rndx))
-   (defstrand resp 5 (a a) (b b) (l l) (alpha l-peer))
-   (non-orig (privk "sig" a))
-   (facts (neq a b)
-	  ;;      (undisclosed l)
-	  ;;	 (undisclosed l-peer)
-	  )))
+(defskeleton dhcr-um
+  (vars (a b name) (l l-peer rndx))
+  (defstrand resp 5 (a a) (b b) (l l) (alpha l-peer))
+  (non-orig (privk "sig" a))
+  (facts (neq a b)
+	 ;;      (undisclosed l)
+	 ;;	 (undisclosed l-peer)
+	 ))
 
 ;; Forward secrecy for each participant 
 
-(comment
-;;; These forward secrecy queries are commented out because they take
-;;; a long time to run (10 minutes plus).  They're not suitable for
-;;; the regular test suite for this reason.
+(defskeleton dhcr-um
+  (vars (ltxa ltxb x rndx) (y expt) (a b name))
+  (defstrand init 5 (l ltxa) (beta ltxb) (x x) (eta y) (a a) (b b))
+  (deflistener (kcfa ltxa (exp (gen) ltxb) x (exp (gen) y)))
+  (defstrand ltx-disclose 3 (l ltxa))
+  (defstrand ltx-disclose 3 (l ltxb))
+  (precedes ((0 4) (3 0)) ((0 4) (2 0)))
+  (neq (a b)))
 
-;;; They should however be checked from time to time.  
-
- (defskeleton dhcr-um
-   (vars (ltxa ltxb x rndx) (y expt) (a b name))
-   (defstrand init 5 (l ltxa) (beta ltxb) (x x) (eta y) (a a) (b b))
-   (deflistener (kcfa ltxa (exp (gen) ltxb) x (exp (gen) y)))
-   (defstrand ltx-disclose 3 (l ltxa))
-   (defstrand ltx-disclose 3 (l ltxb))
-   (precedes ((0 4) (3 0)) ((0 4) (2 0)))
-   (neq (a b)))
-
- (defskeleton dhcr-um
-   (vars (ltxa ltxb y rndx) (chi expt) (a b name))
-   (defstrand resp 6 (l ltxa) (alpha ltxb) (y y) (chi chi) (a a) (b b))
-   (deflistener (kcfb ltxb (exp (gen) ltxa) y (exp (gen) chi)))
-   (defstrand ltx-disclose 3 (l ltxa))
-   (defstrand ltx-disclose 3 (l ltxb))
-   (precedes ((0 5) (3 0)) ((0 5) (2 0)))
-   (neq (a b))))
+(defskeleton dhcr-um
+  (vars (ltxa ltxb y rndx) (chi expt) (a b name))
+  (defstrand resp 6 (l ltxa) (alpha ltxb) (y y) (chi chi) (a a) (b b))
+  (deflistener (kcfb ltxb (exp (gen) ltxa) y (exp (gen) chi)))
+  (defstrand ltx-disclose 3 (l ltxa))
+  (defstrand ltx-disclose 3 (l ltxb))
+  (precedes ((0 5) (3 0)) ((0 5) (2 0)))
+  (neq (a b)))
 

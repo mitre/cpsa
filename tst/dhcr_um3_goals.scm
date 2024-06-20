@@ -211,43 +211,43 @@
 	      x (exp (gen) eta))))
     (false))))
 
-(defgoal dhcr-um3
-  (forall
-   ((na nb data) (a b self self-0 name)
-    (ltxa ltxb x rndx)
-    (y expt) (z z-0 z-1 z-2 strd))
-   (implies
-    (and (p "init" z 5)
-	 (p "" z-0 2)
-	 (p "ltx-disclose" z-1 3)
-	 (p "ltx-disclose" z-2 3)
-
-	 (p "init" "na" z na)
-         (p "init" "nb" z nb)
-	 (p "init" "a" z a)
-	 (p "init" "b" z b)
-	 (p "init" "l" z ltxa)
-         (p "init" "x" z x)
-	 (p "init" "beta" z ltxb)
-	 (p "init" "eta" z y)
-	 
-         (p "" "x" z-0
-            (hash (exp (gen) (mul ltxa ltxb))
-		  (exp (gen) (mul x y))))
-	 
-         (p "ltx-disclose" "self" z-1 self)
-         (p "ltx-disclose" "l" z-1 ltxa)
-         (p "ltx-disclose" "self" z-2 self-0)
-         (p "ltx-disclose" "l" z-2 ltxb)
-	 (ugen x)
-	 (uniq-at na z 2)
-	 (prec z 4 z-1 0)
-	 (prec z 4 z-2 0))
-    (false))))
-
 (comment
 ;;; comment this out for brevity in the tst suite run.
 ;;; Be sure to test it periodically, though.  
+
+ (defgoal dhcr-um3
+   (forall
+    ((na nb data) (a b self self-0 name)
+     (ltxa ltxb x rndx)
+     (y expt) (z z-0 z-1 z-2 strd))
+    (implies
+     (and (p "init" z 5)
+	  (p "" z-0 2)
+	  (p "ltx-disclose" z-1 3)
+	  (p "ltx-disclose" z-2 3)
+
+	  (p "init" "na" z na)
+          (p "init" "nb" z nb)
+	  (p "init" "a" z a)
+	  (p "init" "b" z b)
+	  (p "init" "l" z ltxa)
+          (p "init" "x" z x)
+	  (p "init" "beta" z ltxb)
+	  (p "init" "eta" z y)
+	 
+          (p "" "x" z-0
+             (hash (exp (gen) (mul ltxa ltxb))
+		   (exp (gen) (mul x y))))
+	 
+          (p "ltx-disclose" "self" z-1 self)
+          (p "ltx-disclose" "l" z-1 ltxa)
+          (p "ltx-disclose" "self" z-2 self-0)
+          (p "ltx-disclose" "l" z-2 ltxb)
+	  (ugen x)
+	  (uniq-at na z 2)
+	  (prec z 4 z-1 0)
+	  (prec z 4 z-2 0))
+     (false))))
 
  (defgoal dhcr-um3
    (forall

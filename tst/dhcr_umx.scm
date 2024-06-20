@@ -175,8 +175,7 @@
 	 (undisclosed l-peer)))
 
 
-
-; Initiator point of view:  my exponent secret
+;; Initiator point of view:  my exponent secret
 (defskeleton dhcr-umx
   (vars (a b name) (l rndx) (l-peer expt))
   (defstrand init 4 (a a) (b b) (l l) (beta l-peer))
@@ -184,6 +183,10 @@
   (facts (neq a b)
 	 ;;	 (undisclosed l-peer)
 	 (undisclosed l)))
+
+(comment
+;;; comment this out for brevity in the tst suite run.
+;;; Be sure to test it periodically, though.  
 
 ; Initiator point of view:  neither exponent secret
 
@@ -194,7 +197,7 @@
   (facts (neq a b)
 	 ;;	 (undisclosed l-peer)
 	 ;;	 (undisclosed l)
-	 ))
+	 )))
 
 
 ;;; Responder cases
@@ -233,14 +236,20 @@
 	 ;;	 (undisclosed l-peer)
 	 ))
 
-(defskeleton dhcr-umx
-  (vars (a b name) (l l-peer rndx))
-  (defstrand resp 5 (a a) (b b) (l l) (alpha l-peer))
-  (non-orig (privk "sig" a) (privk "sig" b))
-  (facts (neq a b)
-	 ;;      (undisclosed l)
-	 ;;	 (undisclosed l-peer)
-	 ))
+
+(comment
+;;; comment this out for brevity in the tst suite run.
+;;; Be sure to test it periodically, though.  
+
+
+ (defskeleton dhcr-umx
+   (vars (a b name) (l l-peer rndx))
+   (defstrand resp 5 (a a) (b b) (l l) (alpha l-peer))
+   (non-orig (privk "sig" a) (privk "sig" b))
+   (facts (neq a b)
+	  ;;      (undisclosed l)
+	  ;;	 (undisclosed l-peer)
+	  )))
 
 ;; Forward secrecy for each participant 
 

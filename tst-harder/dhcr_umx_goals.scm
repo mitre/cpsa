@@ -4,8 +4,9 @@
 ;;; key from long-term and ephemeral Diffie-Hellman exponents.  We use
 ;;; self-signed certificates to link names to long-term public values.
 
-;;; This file contains the standard version, in which the two
-;;; ephemeral are mixed, as are the two static exponents.
+;;; This file contains the criss-crossed version, in which each
+;;; ephemeral is mixed with the peer's static exponent.  Only the key
+;;; derivation macros differ from the version in dhcr_um.scm
 
 ;;; A role is provided to expose the long term exponent.  The latter
 ;;; step is used to test the notion of forward security, assuming that
@@ -16,17 +17,19 @@
 ;;; Then four ask the corresponding questions about the responder.  In
 ;;; each group of four, we first assume neither long term exponent is
 ;;; exposed, then consider each exposure individually, and then both
-;;; exposed.  
+;;; exposed.
 
 ;;; Then we consider the forward secrecy question, first from the
 ;;; initiator's point of view, and then from the responder's.
 
-;;; The UM key derivation achieves forward secrecy.  Its weakness is
-;;; that if a participant's *own* long term value is exposed, an
-;;; adversary can acquire a key shared with them for any claimed peer.
-;;; This remains true if we stipulate that the partcipant generates a
-;;; long trem key only once.  If my peer's long term value is exposed
-;;; of course anyone can impersonate them.
+;;; The UMX key derivation fails to achieve forward secrecy.  Its
+;;; strength relative to the standard UM key derivation a
+;;; participant's *own* long term value may be exposed without an
+;;; adversary being able to acquire a key shared with them for any
+;;; claimed peer.  A fine point that the analysis exposes is that this
+;;; is true when the peer has had only one long key generated.  Other
+;;; disclosed long terms keys yield counterxamples.  If my peer's long
+;;; term value is exposed of course anyone can impersonate them.
 
 ;;; CPSA4 revisions:
 ;;;
@@ -37,19 +40,19 @@
 ;;; 3.  Discard the private value from state before
 ;;;	disclosing it, when testing forward secrecy.
 
-(herald "DHCR: unified model (UM) original"
+(herald "DHCR: unified model (UM) with criss-cross key derivation"
 	(bound 30)
-	(limit 8000)
+	(limit 16000) 
 	(goals-sat)
 	(algebra diffie-hellman))
 
-(defmacro (kcfa l gb x gy)
-  (hash (exp gb l) (exp gy x)))
+(defmacro (kcfa ltxa gbeta x hy)
+  (hash (exp hy ltxa) (exp gbeta x)))
 
-(defmacro (kcfb l ga y gx) 
-  (hash (exp ga l) (exp gx y)))
+(defmacro (kcfb ltxb galpha y hx)
+  (hash (exp galpha y) (exp hx ltxb)))
 
-(defprotocol dhcr-um diffie-hellman
+(defprotocol dhcr-umx diffie-hellman
   (defrole init
     (vars (l x rndx) (beta eta expt) (a b name) (na nb data) (priv-stor locn))
     (trace
@@ -140,10 +143,9 @@
 	(body (tuple 3))
 	(pv (tuple 2))))
 
-
-(defgoal dhcr-um
+(defgoal dhcr-umx
   (forall
-   ((na nb data) (a b name) (priv-stor locn) (l l-peer x rndx)
+   ((na nb data) (a b name) (l l-peer x rndx)
     (eta expt) (z strd))
    (implies
     (and
@@ -152,69 +154,31 @@
      (p "init" "nb" z nb)     
      (p "init" "a" z a)
      (p "init" "b" z b)
-     (p "init" "priv-stor" z priv-stor)
      (p "init" "l" z l)
      (p "init" "x" z x)
      (p "init" "beta" z l-peer)     
      (p "init" "eta" z eta)
+      
      (non (privk "sig" b))
      (ugen x)
      (uniq-at na z 2)
      (fact neq a b)
-     (fact undisclosed l)
+     ;; skip the ltx-gen-once assumption 
+     ;; (fact ltx-gen-once a)
      (fact undisclosed l-peer))
+    ;; and still get the authentication we need 
     (exists
      ((z-1 strd) (y rndx) (w expt))
      (and
-      (= eta (mul w y))
       (p "resp" z-1 4) 
       (p "resp" "na" z-1 na)
       (p "resp" "nb" z-1 nb) (p "resp" "a" z-1 a)
-      (p "resp" "b" z-1 b) 
-      (p "resp" "l" z-1 l-peer) (p "resp" "y" z-1 y)
-      (p "resp" "alpha" z-1 l) (p "resp" "chi" z-1 (mul y w))
-      (prec z 2 z-1 2) 
-      (ugen y) (uniq-at nb z-1 3))))))
+      (p "resp" "b" z-1 b)       
+      (prec z 2 z-1 2))))))
 
-
-(defgoal dhcr-um
+(defgoal dhcr-umx
   (forall
-   ((z strd) (na nb data) (a b name) (l l-peer y rndx)
-    (chi expt))
-   (implies
-    (and (p "resp" z 5)
-	 (p "resp" "na" z na)
-	 (p "resp" "nb" z nb)
-         (p "resp" "a" z a)
-	 (p "resp" "b" z b)
-	 (p "resp" "l" z l)
-         (p "resp" "y" z y)
-	 (p "resp" "alpha" z l-peer)
-         (p "resp" "chi" z chi)
-	 (non (privk "sig" a)) (ugen y)
-         (uniq-at nb z 3) (fact neq a b) (fact undisclosed l)
-         (fact undisclosed l-peer))      
-    (exists
-     ((z-1 strd) (x rndx) (w expt))
-     (and (= chi (mul x w))
-	  (p "init" z-1 5)
-          (p "resp" "chi" z (mul x w)) 
-	  (p "init" "na" z-1 na)
-          (p "init" "nb" z-1 nb)
-	  (p "init" "a" z-1 a)
-          (p "init" "b" z-1 b) 
-          (p "init" "l" z-1 l-peer)
-	  (p "init" "x" z-1 x)
-          (p "init" "beta" z-1 l)
-	  (p "init" "eta" z-1 (mul y w))
-	  (prec z 3 z-1 3) (prec z-1 2 z 2)
-	  (prec z-1 4 z 4) (ugen x)
-	  (uniq-at na z-1 2))))))
-
-
-(defgoal dhcr-um
-  (forall
-   ((z zl strd) (na nb data) (a b name) (priv-stor locn) (l x rndx)
+   ((z zl strd) (na nb data) (a b name)  (l x rndx)
     (eta beta expt))
    (implies
     (and
@@ -223,7 +187,6 @@
      (p "init" "nb" z nb)     
      (p "init" "a" z a)
      (p "init" "b" z b)
-     (p "init" "priv-stor" z priv-stor)
      (p "init" "l" z l)
      (p "init" "x" z x)
      (p "init" "beta" z beta)     
@@ -232,86 +195,15 @@
      (ugen x)
      (uniq-at na z 2)
      (fact neq a b)
-     (fact undisclosed l)
+     ;; skip the ltx-gen-once assumption 
+     ;; (fact ltx-gen-once a)
      (fact undisclosed beta)
-     ;; ... gets the secrecy we need
+     ;; and still get the secrecy we need
      (p "" zl 2)
      (p "" "x" zl 
 	(kcfa l (exp (gen) beta)
 	      x (exp (gen) eta))))
     (false))))
 
-(comment
-;;; comment these out for brevity in the tst suite run.  Be sure to
-;;; test them periodically, though.
+;;; Forward secrecy doesn't hold, so let's not try to prove that 
 
-;;; Forward secrecy 
-
- (defgoal dhcr-um
-   (forall
-    ((na nb data) (a b self self-0 name)
-     (ltxa ltxb x rndx)
-     (y expt) (z z-0 z-1 z-2 strd))
-    (implies
-     (and (p "init" z 5)
-	  (p "" z-0 2)
-	  (p "ltx-disclose" z-1 3)
-	  (p "ltx-disclose" z-2 3)
-
-	  (p "init" "na" z na)
-          (p "init" "nb" z nb)
-	  (p "init" "a" z a)
-	  (p "init" "b" z b)
-	  (p "init" "l" z ltxa)
-          (p "init" "x" z x)
-	  (p "init" "beta" z ltxb)
-	  (p "init" "eta" z y)
-	 
-          (p "" "x" z-0
-             (hash (exp (gen) (mul ltxa ltxb))
-		   (exp (gen) (mul x y))))
-	 
-          (p "ltx-disclose" "self" z-1 self)
-          (p "ltx-disclose" "l" z-1 ltxa)
-          (p "ltx-disclose" "self" z-2 self-0)
-          (p "ltx-disclose" "l" z-2 ltxb)
-	  (ugen x)
-	  (uniq-at na z 2)
-	  (prec z 4 z-1 0)
-	  (prec z 4 z-2 0))
-     (false))))
-
-
- (defgoal dhcr-um
-   (forall
-    ((na nb data) (a b self self-0 name)
-     (ltxa ltxb y rndx)
-     (chi expt) (z z-0 z-1 z-2 strd))
-    (implies
-     (and
-      (p "resp" z 6)
-      (p "" z-0 2)
-      (p "ltx-disclose" z-1 3)     
-      (p "ltx-disclose" z-2 3)
-     
-      (p "resp" "na" z na)
-      (p "resp" "nb" z nb)
-      (p "resp" "a" z a)
-      (p "resp" "b" z b)
-      (p "resp" "l" z ltxa)
-      (p "resp" "y" z y)
-      (p "resp" "alpha" z ltxb)
-      (p "resp" "chi" z chi)
-
-      (p "" "x" z-0
-         (hash (exp (gen) (mul ltxa ltxb))
-	       (exp (gen) (mul y chi))))
-     
-      (p "ltx-disclose" "self" z-1 self)         
-      (p "ltx-disclose" "l" z-1 ltxa)
-      (p "ltx-disclose" "self" z-2 self-0)         
-      (p "ltx-disclose" "l" z-2 ltxb)
-      (prec z 5 z-1 0)
-      (prec z 5 z-2 0)
-      (ugen y) (uniq-at nb z 3))
-     (false)))))
