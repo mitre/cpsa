@@ -165,7 +165,11 @@ recall k (Seen seen) =
     where
       loop [] = Nothing
       loop ((k', n) : seen) =
-          case stronglyIsomorphic k k' of
+          let (k1, k2) = if generalized k then
+                             (k', k)
+                         else
+                             (k, k') in
+          case stronglyIsomorphic k1 k2 of
             [] -> loop seen
             sm -> Just (n, sm)
 
@@ -402,10 +406,17 @@ fixStrandMap k sm =
     updateStrandMap (composeStrandMap sm1 sm2) k
     where
       (sm1, sm2) =
-          case kop of
-            Generalized _ _ -> (sm, getStrandMap kop)
-            _ -> (getStrandMap kop, sm)
+          if generalized k then
+              (sm, getStrandMap kop)
+          else
+            (getStrandMap kop, sm)
       kop = operation k
+
+generalized :: Preskel -> Bool
+generalized k =
+    case operation k of
+      Generalized _ _ -> True
+      _ -> False
 
 -- Make a todo list for dump
 mktodo :: [Reduct t g s e] -> [LPreskel] -> [LPreskel] -> [LPreskel]
