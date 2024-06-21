@@ -5613,7 +5613,7 @@
   (seen 109)
   (seen-ops
     (109 (operation generalization separated b-0)
-      (strand-map 0 1 2 3 4)))
+      (strand-map 0 1 2 4 3)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

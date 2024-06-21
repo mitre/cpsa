@@ -183,7 +183,7 @@
     (10
       (operation nonce-test (added-strand resp 2) x2 (0 1)
         (enc "okay" x1 x2 (pubk a)) (enc "okay" y3 x2 (pubk a))
-        (enc x1 x2 (pubk a)) (enc x2 x2 (pubk a))) (strand-map 0 1 2)))
+        (enc x1 x2 (pubk a)) (enc x2 x2 (pubk a))) (strand-map 0 1 3)))
   (unrealized (0 1))
   (comment "3 in cohort - 2 not yet seen"))
 

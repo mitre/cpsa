@@ -75,7 +75,7 @@
     (5
       (operation nonce-test (added-strand resp 2) x1 (0 1)
         (enc "okay" y3 x1 (pubk a)) (enc x1 x1 (pubk a))
-        (enc x1 x2 (pubk a))) (strand-map 0 1)))
+        (enc x1 x2 (pubk a))) (strand-map 0 2)))
   (unrealized (0 1))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -147,7 +147,7 @@
     (10
       (operation nonce-test (added-strand resp 2) x1 (0 1)
         (enc "okay" y3 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
-        (enc x1 x1 (pubk a)) (enc x1 x2 (pubk a))) (strand-map 0 1 2)))
+        (enc x1 x1 (pubk a)) (enc x1 x2 (pubk a))) (strand-map 0 1 3)))
   (unrealized (0 1))
   (comment "4 in cohort - 3 not yet seen"))
 
@@ -195,7 +195,7 @@
     (13
       (operation nonce-test (added-strand resp 2) x1 (0 1)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
-        (enc x1 x1 (pubk a)) (enc x1 x2 (pubk a))) (strand-map 0 1 2)))
+        (enc x1 x1 (pubk a)) (enc x1 x2 (pubk a))) (strand-map 0 2 3)))
   (unrealized (0 1))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -630,7 +630,7 @@
     (33
       (operation nonce-test (added-strand resp 2) x1-0 (0 1)
         (enc "okay" y3 x1-0 (pubk a)) (enc x1-0 x3 (pubk a))
-        (enc x1-0 x1-0 (pubk a))) (strand-map 0 1 2)))
+        (enc x1-0 x1-0 (pubk a))) (strand-map 0 1 3)))
   (unrealized (0 1))
   (comment "5 in cohort - 3 not yet seen"))
 
@@ -702,7 +702,7 @@
     (40
       (operation nonce-test (added-strand resp 2) x1 (0 1)
         (enc "okay" x3 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
-        (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a))) (strand-map 0 1 2)))
+        (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a))) (strand-map 0 1 3)))
   (unrealized (0 1))
   (comment "4 in cohort - 3 not yet seen"))
 
@@ -872,12 +872,12 @@
       (operation nonce-test (displaced 4 1 resp 2) x1-0 (0 1)
         (enc "okay" y3 x1-0 (pubk a-0))
         (enc "okay" y3-0 x1-0 (pubk a-0)) (enc x1-0 x3 (pubk a-0))
-        (enc x1-0 x1-0 (pubk a-0))) (strand-map 0 1 2 3))
+        (enc x1-0 x1-0 (pubk a-0))) (strand-map 0 1 3 2))
     (51
       (operation nonce-test (added-strand resp 2) x1-0 (0 1)
         (enc "okay" y3 x1-0 (pubk a)) (enc "okay" y3-0 x1-0 (pubk a))
         (enc x1-0 x3 (pubk a)) (enc x1-0 x1-0 (pubk a)))
-      (strand-map 0 1 2 3)))
+      (strand-map 0 1 2 4)))
   (unrealized (0 1))
   (comment "6 in cohort - 3 not yet seen"))
 
@@ -911,7 +911,7 @@
       (operation nonce-test (added-strand resp 2) x1-0 (0 1)
         (enc "okay" x1-0 x1-0 (pubk a)) (enc "okay" y3 x1-0 (pubk a))
         (enc x1-0 x3 (pubk a)) (enc x1-0 x1-0 (pubk a)))
-      (strand-map 0 1 2 3)))
+      (strand-map 0 1 3 4)))
   (unrealized (0 1))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -1252,7 +1252,7 @@
       (operation nonce-test (added-strand resp 2) x3 (1 0)
         (enc "okay" x3 x3 (pubk a)) (enc "okay" y3 x3 (pubk a))
         (enc x3 x3 (pubk a)) (enc x1-0 x3 (pubk a)))
-      (strand-map 0 1 2 3)))
+      (strand-map 0 1 2 4)))
   (unrealized (1 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -1469,7 +1469,7 @@
     (98
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" y3 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 4)))
   (unrealized (1 0))
   (comment "4 in cohort - 2 not yet seen"))
 
@@ -1592,11 +1592,11 @@
     (64
       (operation nonce-test (displaced 4 2 resp 2) y3-0 (1 0)
         (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
-      (strand-map 0 1 2 3))
+      (strand-map 0 1 3 2))
     (71
       (operation nonce-test (contracted (a-0 a)) y3-0 (1 0)
         (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
-      (strand-map 0 1 2 3)))
+      (strand-map 0 1 3 2)))
   (unrealized (1 0))
   (comment "5 in cohort - 3 not yet seen"))
 
@@ -1630,7 +1630,7 @@
     (72
       (operation nonce-test (contracted (a-0 a)) y3 (1 0)
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
-      (strand-map 0 1 2 3)))
+      (strand-map 0 1 3 2)))
   (unrealized (1 0))
   (comment "5 in cohort - 3 not yet seen"))
 
@@ -1664,7 +1664,7 @@
     (63
       (operation nonce-test (displaced 4 2 resp 2) x1 (1 0)
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3)))
+      (strand-map 0 1 3 2)))
   (unrealized (1 0))
   (comment "5 in cohort - 3 not yet seen"))
 
@@ -1777,7 +1777,7 @@
     (124
       (operation nonce-test (added-strand resp 2) y3 (1 0)
         (enc "okay" y3-0 y3 (pubk a)) (enc y3 x3 (pubk a))
-        (enc y3 y3 (pubk a))) (strand-map 0 1 2 3)))
+        (enc y3 y3 (pubk a))) (strand-map 0 1 2 4)))
   (unrealized (1 0))
   (comment "4 in cohort - 2 not yet seen"))
 
@@ -1938,7 +1938,7 @@
   (parent 40)
   (seen 71)
   (seen-ops
-    (71 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (71 (operation generalization deleted (2 0)) (strand-map 0 1 4 3)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -2260,7 +2260,7 @@
     (96
       (operation nonce-test (added-strand resp 2) y3 (1 0)
         (enc "okay" x1 y3 (pubk a)) (enc x1 y3 (pubk a))
-        (enc y3 x3 (pubk a))) (strand-map 0 1 2 3))
+        (enc y3 x3 (pubk a))) (strand-map 0 1 2 4))
     (140
       (operation nonce-test (displaced 4 2 resp 2) y3 (1 0)
         (enc "okay" x1 y3 (pubk a)) (enc x1 y3 (pubk a))
@@ -2268,7 +2268,7 @@
     (143
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 3 2)))
   (unrealized (1 0))
   (comment "4 in cohort - 1 not yet seen"))
 
@@ -2300,7 +2300,7 @@
     (96
       (operation nonce-test (displaced 5 3 resp 2) y3 (1 0)
         (enc "okay" y3-0 y3 (pubk a)) (enc x1 y3 (pubk a))
-        (enc y3 x3 (pubk a))) (strand-map 0 1 2 3 4))
+        (enc y3 x3 (pubk a))) (strand-map 0 1 2 4 3))
     (98
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" y3 x1 (pubk a)) (enc x1 x3 (pubk a))
@@ -2340,7 +2340,7 @@
     (98
       (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 3 2 4)))
   (unrealized (1 0))
   (comment "5 in cohort - 4 not yet seen"))
 
@@ -2370,7 +2370,7 @@
     (98
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" y3 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 3 2)))
   (unrealized (1 0))
   (comment "4 in cohort - 3 not yet seen"))
 
@@ -2440,7 +2440,7 @@
     (150
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 5))
     (155
       (operation nonce-test (displaced 5 3 resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
@@ -2532,7 +2532,7 @@
     (103
       (operation nonce-test (added-strand resp 2) x3 (1 0)
         (enc "okay" x1-0 x3 (pubk a)) (enc x3 x3 (pubk a))
-        (enc x1-0 x3 (pubk a))) (strand-map 0 1 2 3)))
+        (enc x1-0 x3 (pubk a))) (strand-map 0 1 2 4)))
   (unrealized (1 0))
   (comment "4 in cohort - 2 not yet seen"))
 
@@ -2568,7 +2568,7 @@
     (103
       (operation nonce-test (displaced 5 3 resp 2) x3 (1 0)
         (enc "okay" y3-0 x3 (pubk a)) (enc x3 x3 (pubk a))
-        (enc x1-0 x3 (pubk a))) (strand-map 0 1 2 3 4)))
+        (enc x1-0 x3 (pubk a))) (strand-map 0 1 2 4 3)))
   (unrealized (1 0))
   (comment "6 in cohort - 4 not yet seen"))
 
@@ -2602,7 +2602,7 @@
     (69
       (operation nonce-test (contracted (a-0 a)) x1 (1 0)
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4))
+      (strand-map 0 1 3 4 2))
     (84
       (operation nonce-test (displaced 5 4 resp 2) x1 (1 0)
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
@@ -2610,7 +2610,7 @@
     (111
       (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4)))
+      (strand-map 0 1 4 2 3)))
   (unrealized (1 0))
   (comment "6 in cohort - 3 not yet seen"))
 
@@ -2693,7 +2693,7 @@
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3)))
+      (strand-map 0 1 2 4)))
   (unrealized (1 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -2794,7 +2794,7 @@
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" y3 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4)))
+      (strand-map 0 1 2 3 5)))
   (unrealized (1 0))
   (comment "4 in cohort - 2 not yet seen"))
 
@@ -2828,7 +2828,7 @@
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4)))
+      (strand-map 0 1 2 4 5)))
   (unrealized (1 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -2985,7 +2985,7 @@
       (operation nonce-test (added-strand resp 2) x3 (1 0)
         (enc "okay" x3 x3 (pubk a)) (enc "okay" y3-0 x3 (pubk a))
         (enc x3 x3 (pubk a)) (enc x1-0 x3 (pubk a)))
-      (strand-map 0 1 2 3 4)))
+      (strand-map 0 1 2 3 5)))
   (unrealized (1 0))
   (comment "4 in cohort - 2 not yet seen"))
 
@@ -3019,15 +3019,15 @@
     (70
       (operation nonce-test (contracted (a-0 a)) x1 (1 0)
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4))
+      (strand-map 0 1 3 2 4))
     (107
       (operation nonce-test (displaced 5 3 resp 2) x1 (1 0)
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4))
+      (strand-map 0 1 2 4 3))
     (114
       (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4)))
+      (strand-map 0 1 4 2 3)))
   (unrealized (1 0))
   (comment "6 in cohort - 3 not yet seen"))
 
@@ -3059,7 +3059,7 @@
     (121
       (operation nonce-test (displaced 4 2 resp 2) y3-0 (1 0)
         (enc "okay" y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
-        (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 2 3)))
+        (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 3 2)))
   (unrealized (1 0))
   (comment "4 in cohort - 3 not yet seen"))
 
@@ -3094,7 +3094,7 @@
     (124
       (operation nonce-test (displaced 5 2 resp 2) y3-0 (1 0)
         (enc "okay" y3-1 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
-        (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 2 3 4))
+        (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 4 2 3))
     (189
       (operation nonce-test (displaced 5 3 resp 2) y3-0 (1 0)
         (enc "okay" y3-1 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
@@ -3133,7 +3133,7 @@
     (64
       (operation nonce-test (displaced 5 2 resp 2) y3-0 (1 0)
         (enc "okay" y3-1 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
-        (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 2 3 2))
+        (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 3 2 3))
     (191
       (operation nonce-test (displaced 5 3 resp 2) y3-0 (1 0)
         (enc "okay" y3-1 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
@@ -3141,7 +3141,7 @@
     (194
       (operation nonce-test (added-strand resp 2) y3-0 (1 0)
         (enc "okay" y3-1 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
-        (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 2 3 4)))
+        (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 2 3 5)))
   (unrealized (1 0))
   (comment "5 in cohort - 2 not yet seen"))
 
@@ -3239,11 +3239,11 @@
     (98
       (operation nonce-test (displaced 5 3 resp 2) y3 (1 0)
         (enc "okay" y3-1 y3 (pubk a)) (enc y3 x3 (pubk a))
-        (enc y3 y3 (pubk a))) (strand-map 0 1 2 3 4))
+        (enc y3 y3 (pubk a))) (strand-map 0 1 2 4 3))
     (200
       (operation nonce-test (added-strand resp 2) y3 (1 0)
         (enc "okay" y3-1 y3 (pubk a)) (enc y3 x3 (pubk a))
-        (enc y3 y3 (pubk a))) (strand-map 0 1 2 3 4))
+        (enc y3 y3 (pubk a))) (strand-map 0 1 2 3 5))
     (202
       (operation nonce-test (displaced 5 2 resp 2) y3 (1 0)
         (enc "okay" y3-1 y3 (pubk a)) (enc y3 x3 (pubk a))
@@ -3277,7 +3277,7 @@
     (120
       (operation nonce-test (displaced 4 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 3 2)))
   (unrealized (1 0))
   (comment "4 in cohort - 3 not yet seen"))
 
@@ -3309,7 +3309,7 @@
     (63
       (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 3 2 3))
     (206
       (operation nonce-test (displaced 5 3 resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
@@ -3345,7 +3345,7 @@
     (124
       (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 3 2 4))
     (207
       (operation nonce-test (displaced 5 3 resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
@@ -3353,7 +3353,7 @@
     (210
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 5)))
   (unrealized (1 0))
   (comment "5 in cohort - 2 not yet seen"))
 
@@ -3447,7 +3447,7 @@
     (130
       (operation nonce-test (added-strand resp 2) x1-0 (1 0)
         (enc "okay" x1-0 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a)))
-      (strand-map 0 1 2 3)))
+      (strand-map 0 1 2 4)))
   (unrealized (1 0))
   (comment "3 in cohort - 1 not yet seen"))
 
@@ -3487,7 +3487,7 @@
     (130
       (operation nonce-test (displaced 5 3 resp 2) x1-0 (1 0)
         (enc "okay" y3-0 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a)))
-      (strand-map 0 1 2 3 4)))
+      (strand-map 0 1 2 4 3)))
   (unrealized (1 0))
   (comment "4 in cohort - 2 not yet seen"))
 
@@ -3570,7 +3570,7 @@
       (operation nonce-test (added-strand resp 2) y3 (1 0)
         (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
-      (strand-map 0 1 2 3)))
+      (strand-map 0 1 2 4)))
   (unrealized (1 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -3664,7 +3664,7 @@
       (operation nonce-test (added-strand resp 2) y3 (1 0)
         (enc "okay" y3-0 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
-      (strand-map 0 1 2 3 4)))
+      (strand-map 0 1 2 3 5)))
   (unrealized (1 0))
   (comment "4 in cohort - 2 not yet seen"))
 
@@ -3698,7 +3698,7 @@
       (operation nonce-test (added-strand resp 2) y3 (1 0)
         (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
-      (strand-map 0 1 2 3 4)))
+      (strand-map 0 1 2 4 5)))
   (unrealized (1 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -4091,7 +4091,7 @@
       (operation nonce-test (added-strand resp 2) y3 (1 0)
         (enc "okay" x1 y3 (pubk a)) (enc "okay" y3 y3 (pubk a))
         (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a)))
-      (strand-map 0 1 2 3)))
+      (strand-map 0 1 2 4)))
   (unrealized (1 0))
   (comment "3 in cohort - 1 not yet seen"))
 
@@ -4153,12 +4153,12 @@
       (operation nonce-test (displaced 5 3 resp 2) y3 (1 0)
         (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
         (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a)))
-      (strand-map 0 1 2 3 4))
+      (strand-map 0 1 2 4 3))
     (177
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4)))
+      (strand-map 0 1 4 2 3)))
   (unrealized (1 0))
   (comment "4 in cohort - 2 not yet seen"))
 
@@ -4192,7 +4192,7 @@
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4)))
+      (strand-map 0 1 4 2 5)))
   (unrealized (1 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -4329,7 +4329,7 @@
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 5)))
+      (strand-map 0 1 3 2 4 5)))
   (unrealized (1 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -4393,7 +4393,7 @@
       (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4)))
+      (strand-map 0 1 3 2 4)))
   (unrealized (1 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -4430,12 +4430,12 @@
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 2))
+      (strand-map 0 1 3 2 4 3))
     (238
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 5))
+      (strand-map 0 1 2 3 4 6))
     (240
       (operation nonce-test (displaced 6 3 resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
@@ -4474,7 +4474,7 @@
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4)))
+      (strand-map 0 1 3 2 4)))
   (unrealized (1 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -4534,7 +4534,7 @@
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3)))
+      (strand-map 0 1 3 2)))
   (unrealized (1 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -4598,7 +4598,7 @@
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4)))
+      (strand-map 0 1 2 3 5)))
   (unrealized (1 0))
   (comment "3 in cohort - 1 not yet seen"))
 
@@ -4640,7 +4640,7 @@
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 5)))
+      (strand-map 0 1 2 3 5 6)))
   (unrealized (1 0))
   (comment "3 in cohort - 1 not yet seen"))
 
@@ -4670,7 +4670,7 @@
   (parent 87)
   (seen 152)
   (seen-ops
-    (152 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (152 (operation generalization deleted (2 0)) (strand-map 0 1 4 3)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -4815,7 +4815,7 @@
       (operation nonce-test (added-strand resp 2) x3 (1 0)
         (enc "okay" x3 x3 (pubk a)) (enc "okay" y3 x3 (pubk a))
         (enc x3 x3 (pubk a)) (enc x1-0 x3 (pubk a)))
-      (strand-map 0 1 2 3 4)))
+      (strand-map 0 1 2 3 5)))
   (unrealized (1 0))
   (comment "4 in cohort - 2 not yet seen"))
 
@@ -4938,7 +4938,7 @@
   (parent 91)
   (seen 159)
   (seen-ops
-    (159 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (159 (operation generalization deleted (2 0)) (strand-map 0 1 4 3)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -4968,7 +4968,7 @@
   (parent 91)
   (seen 160)
   (seen-ops
-    (160 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (160 (operation generalization deleted (2 0)) (strand-map 0 1 4 3)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -5010,12 +5010,12 @@
       (operation nonce-test (displaced 6 3 resp 2) x3 (1 0)
         (enc "okay" x3 x3 (pubk a)) (enc "okay" y3-0 x3 (pubk a))
         (enc x3 x3 (pubk a)) (enc x1-0 x3 (pubk a)))
-      (strand-map 0 1 2 3 4 5))
+      (strand-map 0 1 2 4 3 5))
     (255
       (operation nonce-test (added-strand resp 2) x3 (1 0)
         (enc "okay" x3 x3 (pubk a)) (enc "okay" y3-0 x3 (pubk a))
         (enc x3 x3 (pubk a)) (enc x1-0 x3 (pubk a)))
-      (strand-map 0 1 2 3 4 5)))
+      (strand-map 0 1 2 3 4 6)))
   (unrealized (1 0))
   (comment "5 in cohort - 2 not yet seen"))
 
@@ -5054,7 +5054,7 @@
     (200
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 5 2 3 4)))
   (unrealized (1 0))
   (comment "6 in cohort - 4 not yet seen"))
 
@@ -5090,7 +5090,7 @@
     (202
       (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 4 2 3))
     (260
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
@@ -5129,7 +5129,7 @@
     (111
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 2))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 4 2 3 4))
     (150
       (operation nonce-test (displaced 6 4 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
@@ -5137,7 +5137,7 @@
     (261
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 6))
     (263
       (operation nonce-test (displaced 6 3 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
@@ -5408,7 +5408,7 @@
   (parent 99)
   (seen 219)
   (seen-ops
-    (219 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (219 (operation generalization deleted (2 0)) (strand-map 0 1 4 3)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -5597,11 +5597,11 @@
     (189
       (operation nonce-test (displaced 5 3 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 4 3))
     (207
       (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 4 2 3)))
   (unrealized (1 0))
   (comment "5 in cohort - 3 not yet seen"))
 
@@ -5636,11 +5636,11 @@
     (107
       (operation nonce-test (displaced 6 3 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 3))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 4 3 4))
     (210
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 5 2 3 4))
     (273
       (operation nonce-test (displaced 6 4 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
@@ -5679,11 +5679,11 @@
     (114
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 2))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 4 2 3 4))
     (194
       (operation nonce-test (displaced 6 3 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 4 3 5))
     (274
       (operation nonce-test (displaced 6 4 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
@@ -5691,7 +5691,7 @@
     (277
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 6)))
   (unrealized (1 0))
   (comment "6 in cohort - 2 not yet seen"))
 
@@ -5728,7 +5728,7 @@
       (operation nonce-test (displaced 5 2 resp 2) y3-0 (1 0)
         (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
         (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
-      (strand-map 0 1 2 3 4)))
+      (strand-map 0 1 4 2 3)))
   (unrealized (1 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -5794,12 +5794,12 @@
       (operation nonce-test (displaced 5 2 resp 2) y3-0 (1 0)
         (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
         (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
-      (strand-map 0 1 2 3 2))
+      (strand-map 0 1 3 2 3))
     (281
       (operation nonce-test (added-strand resp 2) y3-0 (1 0)
         (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
         (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
-      (strand-map 0 1 2 3 4)))
+      (strand-map 0 1 2 3 5)))
   (unrealized (1 0))
   (comment "3 in cohort - 1 not yet seen"))
 
@@ -5840,7 +5840,7 @@
       (operation nonce-test (displaced 6 2 resp 2) y3-0 (1 0)
         (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
         (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
-      (strand-map 0 1 2 3 4 5)))
+      (strand-map 0 1 5 2 3 4)))
   (unrealized (1 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -5913,7 +5913,7 @@
       (operation nonce-test (displaced 6 2 resp 2) y3-0 (1 0)
         (enc "okay" y3-1 y3-0 (pubk a)) (enc "okay" y3-2 y3-0 (pubk a))
         (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
-      (strand-map 0 1 2 3 4 2))
+      (strand-map 0 1 4 2 3 4))
     (281
       (operation nonce-test (displaced 6 3 resp 2) y3-0 (1 0)
         (enc "okay" y3-1 y3-0 (pubk a)) (enc "okay" y3-2 y3-0 (pubk a))
@@ -5923,7 +5923,7 @@
       (operation nonce-test (added-strand resp 2) y3-0 (1 0)
         (enc "okay" y3-1 y3-0 (pubk a)) (enc "okay" y3-2 y3-0 (pubk a))
         (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
-      (strand-map 0 1 2 3 4 5)))
+      (strand-map 0 1 2 3 4 6)))
   (unrealized (1 0))
   (comment "5 in cohort - 2 not yet seen"))
 
@@ -5964,12 +5964,12 @@
       (operation nonce-test (displaced 6 2 resp 2) y3-0 (1 0)
         (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
         (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
-      (strand-map 0 1 2 3 2 4))
+      (strand-map 0 1 3 2 3 4))
     (286
       (operation nonce-test (added-strand resp 2) y3-0 (1 0)
         (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
         (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
-      (strand-map 0 1 2 3 4 5)))
+      (strand-map 0 1 2 3 5 6)))
   (unrealized (1 0))
   (comment "3 in cohort - 1 not yet seen"))
 
@@ -6139,12 +6139,12 @@
       (operation nonce-test (displaced 6 3 resp 2) y3 (1 0)
         (enc "okay" y3-2 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
-      (strand-map 0 1 2 3 3 4))
+      (strand-map 0 1 2 4 4 3))
     (289
       (operation nonce-test (added-strand resp 2) y3 (1 0)
         (enc "okay" y3-1 y3 (pubk a)) (enc "okay" y3-2 y3 (pubk a))
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
-      (strand-map 0 1 2 3 4 5))
+      (strand-map 0 1 2 3 4 6))
     (291
       (operation nonce-test (displaced 6 2 resp 2) y3 (1 0)
         (enc "okay" y3-1 y3 (pubk a)) (enc "okay" y3-2 y3 (pubk a))
@@ -6211,12 +6211,12 @@
       (operation nonce-test (displaced 5 3 resp 2) y3 (1 0)
         (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
-      (strand-map 0 1 2 3 4))
+      (strand-map 0 1 2 4 3))
     (291
       (operation nonce-test (added-strand resp 2) y3 (1 0)
         (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
-      (strand-map 0 1 2 3 4)))
+      (strand-map 0 1 2 3 5)))
   (unrealized (1 0))
   (comment "3 in cohort - 1 not yet seen"))
 
@@ -6253,12 +6253,12 @@
       (operation nonce-test (displaced 6 3 resp 2) y3 (1 0)
         (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
-      (strand-map 0 1 2 3 4 5))
+      (strand-map 0 1 2 5 3 4))
     (293
       (operation nonce-test (added-strand resp 2) y3 (1 0)
         (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
-      (strand-map 0 1 2 3 4 5)))
+      (strand-map 0 1 2 3 5 6)))
   (unrealized (1 0))
   (comment "3 in cohort - 1 not yet seen"))
 
@@ -6288,7 +6288,7 @@
   (parent 111)
   (seen 152)
   (seen-ops
-    (152 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
+    (152 (operation generalization deleted (3 0)) (strand-map 0 1 4 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -6350,7 +6350,7 @@
       (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 2)))
+      (strand-map 0 1 3 2 3)))
   (unrealized (1 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -6384,12 +6384,12 @@
       (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4))
+      (strand-map 0 1 3 2 4))
     (297
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4)))
+      (strand-map 0 1 2 3 5)))
   (unrealized (1 0))
   (comment "3 in cohort - 1 not yet seen"))
 
@@ -6426,7 +6426,7 @@
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 2 4)))
+      (strand-map 0 1 3 2 3 4)))
   (unrealized (1 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -6493,7 +6493,7 @@
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 2 4))
+      (strand-map 0 1 3 2 3 4))
     (297
       (operation nonce-test (displaced 6 3 resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
@@ -6503,7 +6503,7 @@
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 5)))
+      (strand-map 0 1 2 3 4 6)))
   (unrealized (1 0))
   (comment "5 in cohort - 2 not yet seen"))
 
@@ -6540,12 +6540,12 @@
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 5))
+      (strand-map 0 1 3 2 4 5))
     (302
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 5)))
+      (strand-map 0 1 2 3 5 6)))
   (unrealized (1 0))
   (comment "3 in cohort - 1 not yet seen"))
 
@@ -6748,7 +6748,7 @@
   (parent 118)
   (seen 213)
   (seen-ops
-    (213 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (213 (operation generalization deleted (2 0)) (strand-map 0 1 4 3)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -6861,7 +6861,7 @@
   (parent 122)
   (seen 219)
   (seen-ops
-    (219 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (219 (operation generalization deleted (2 0)) (strand-map 0 1 4 3)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -7179,7 +7179,7 @@
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 2)))
+      (strand-map 0 1 4 2 3 4)))
   (unrealized (1 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -7346,7 +7346,7 @@
       (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5 2)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 3 2 4 5 3)))
   (unrealized (1 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -7413,7 +7413,7 @@
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 2)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 3 2 4 3)))
   (unrealized (1 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -7447,7 +7447,7 @@
   (seen 179)
   (seen-ops
     (179 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 4 5)))
+      (strand-map 0 1 3 5 4)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -7486,7 +7486,7 @@
       (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 2 5)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 3 2 5 3 4)))
   (unrealized (1 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -7595,7 +7595,7 @@
   (parent 155)
   (seen 244)
   (seen-ops
-    (244 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (244 (operation generalization deleted (2 0)) (strand-map 0 1 4 3)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -7629,7 +7629,7 @@
   (seen 243)
   (seen-ops
     (243 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 4 5)))
+      (strand-map 0 1 4 3 5)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -7801,7 +7801,7 @@
   (seen 249)
   (seen-ops
     (249 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 4 5)))
+      (strand-map 0 1 4 3 5)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -7835,7 +7835,7 @@
   (seen 248)
   (seen-ops
     (248 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 4 5)))
+      (strand-map 0 1 4 3 5)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -7908,7 +7908,7 @@
   (seen 251)
   (seen-ops
     (251 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 4 5)))
+      (strand-map 0 1 4 3 5)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -7942,7 +7942,7 @@
   (seen 252)
   (seen-ops
     (252 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 4 5)))
+      (strand-map 0 1 4 3 5)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -7986,7 +7986,7 @@
       (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 5 6)))
+      (strand-map 0 1 6 2 3 4 5)))
   (unrealized (1 0))
   (comment "4 in cohort - 2 not yet seen"))
 
@@ -8062,7 +8062,7 @@
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 5)))
+      (strand-map 0 1 5 2 3 4)))
   (unrealized (1 0))
   (comment "4 in cohort - 2 not yet seen"))
 
@@ -8106,12 +8106,12 @@
       (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 5 2))
+      (strand-map 0 1 5 2 3 4 5))
     (324
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 5 6))
+      (strand-map 0 1 2 3 4 5 7))
     (326
       (operation nonce-test (displaced 7 3 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
@@ -8183,7 +8183,7 @@
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 2))
+      (strand-map 0 1 4 2 3 4))
     (240
       (operation nonce-test (displaced 6 4 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
@@ -8193,7 +8193,7 @@
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 5)))
+      (strand-map 0 1 2 3 4 6)))
   (unrealized (1 0))
   (comment "4 in cohort - 1 not yet seen"))
 
@@ -8232,7 +8232,7 @@
       (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 2 5))
+      (strand-map 0 1 4 2 3 4 5))
     (242
       (operation nonce-test (displaced 7 4 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
@@ -8242,7 +8242,7 @@
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 5 6)))
+      (strand-map 0 1 2 3 4 6 7)))
   (unrealized (1 0))
   (comment "4 in cohort - 1 not yet seen"))
 
@@ -8373,7 +8373,7 @@
   (seen 267)
   (seen-ops
     (267 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 4 5)))
+      (strand-map 0 1 4 3 5)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -8408,7 +8408,7 @@
   (seen 307)
   (seen-ops
     (307 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 4 5)))
+      (strand-map 0 1 5 4 3)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -8545,12 +8545,12 @@
       (operation nonce-test (displaced 6 3 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 3))
+      (strand-map 0 1 2 4 3 4))
     (297
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 5)))
+      (strand-map 0 1 5 2 3 4)))
   (unrealized (1 0))
   (comment "4 in cohort - 2 not yet seen"))
 
@@ -8587,17 +8587,17 @@
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 2))
+      (strand-map 0 1 4 2 3 4))
     (281
       (operation nonce-test (displaced 6 3 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 5))
+      (strand-map 0 1 2 4 3 5))
     (332
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 5)))
+      (strand-map 0 1 2 3 4 6)))
   (unrealized (1 0))
   (comment "4 in cohort - 1 not yet seen"))
 
@@ -8636,12 +8636,12 @@
       (operation nonce-test (displaced 7 3 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 3 5))
+      (strand-map 0 1 2 4 3 4 5))
     (300
       (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 5 6)))
+      (strand-map 0 1 6 2 3 4 5)))
   (unrealized (1 0))
   (comment "4 in cohort - 2 not yet seen"))
 
@@ -8714,12 +8714,12 @@
       (operation nonce-test (displaced 7 3 resp 2) x1 (1 0)
         (enc "okay" y3-2 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 3 5))
+      (strand-map 0 1 2 4 3 4 5))
     (210
       (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 5 2))
+      (strand-map 0 1 5 2 3 4 5))
     (332
       (operation nonce-test (displaced 7 4 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
@@ -8729,7 +8729,7 @@
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 5 6)))
+      (strand-map 0 1 2 3 4 5 7)))
   (unrealized (1 0))
   (comment "6 in cohort - 2 not yet seen"))
 
@@ -8768,17 +8768,17 @@
       (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 2 5))
+      (strand-map 0 1 4 2 3 4 5))
     (286
       (operation nonce-test (displaced 7 3 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 5 6))
+      (strand-map 0 1 2 4 3 5 6))
     (336
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 5 6)))
+      (strand-map 0 1 2 3 4 6 7)))
   (unrealized (1 0))
   (comment "4 in cohort - 1 not yet seen"))
 
@@ -8885,7 +8885,7 @@
       (operation nonce-test (displaced 6 2 resp 2) y3-0 (1 0)
         (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
         (enc "okay" y3-2 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
-        (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 2 3 4 2)))
+        (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 4 2 3 4)))
   (unrealized (1 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -8998,7 +8998,7 @@
       (operation nonce-test (displaced 7 2 resp 2) y3-0 (1 0)
         (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
         (enc "okay" y3-2 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
-        (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 2 3 4 5 2)))
+        (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 5 2 3 4 5)))
   (unrealized (1 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -9079,7 +9079,7 @@
       (operation nonce-test (displaced 7 2 resp 2) y3-0 (1 0)
         (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
         (enc "okay" y3-2 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
-        (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 2 3 4 2 5)))
+        (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 4 2 3 4 5)))
   (unrealized (1 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -9150,7 +9150,7 @@
   (seen 296)
   (seen-ops
     (296 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 4 5)))
+      (strand-map 0 1 3 5 4)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -9189,7 +9189,7 @@
       (operation nonce-test (displaced 7 3 resp 2) y3 (1 0)
         (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-2 y3 (pubk a))
         (enc "okay" y3-1 y3 (pubk a)) (enc y3 x3 (pubk a))
-        (enc y3 y3 (pubk a))) (strand-map 0 1 2 3 3 4 5)))
+        (enc y3 y3 (pubk a))) (strand-map 0 1 2 4 4 5 3)))
   (unrealized (1 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -9256,7 +9256,7 @@
       (operation nonce-test (displaced 6 3 resp 2) y3 (1 0)
         (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-2 y3 (pubk a))
         (enc "okay" y3-1 y3 (pubk a)) (enc y3 x3 (pubk a))
-        (enc y3 y3 (pubk a))) (strand-map 0 1 2 3 3 4)))
+        (enc y3 y3 (pubk a))) (strand-map 0 1 2 4 4 3)))
   (unrealized (1 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -9290,7 +9290,7 @@
   (seen 179)
   (seen-ops
     (179 (operation generalization deleted (3 0))
-      (strand-map 0 1 2 4 5)))
+      (strand-map 0 1 2 5 4)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -9329,7 +9329,7 @@
       (operation nonce-test (displaced 7 3 resp 2) y3 (1 0)
         (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-2 y3 (pubk a))
         (enc "okay" y3-1 y3 (pubk a)) (enc y3 x3 (pubk a))
-        (enc y3 y3 (pubk a))) (strand-map 0 1 2 3 3 4 5)))
+        (enc y3 y3 (pubk a))) (strand-map 0 1 2 5 5 3 4)))
   (unrealized (1 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -9359,7 +9359,7 @@
   (parent 202)
   (seen 244)
   (seen-ops
-    (244 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
+    (244 (operation generalization deleted (3 0)) (strand-map 0 1 4 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -9393,7 +9393,7 @@
   (seen 294)
   (seen-ops
     (294 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 4 5)))
+      (strand-map 0 1 4 5 3)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -9460,7 +9460,7 @@
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2 4)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 3 2 3 4)))
   (unrealized (1 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -9563,7 +9563,7 @@
       (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2 4 5)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 3 2 3 4 5)))
   (unrealized (1 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -9636,7 +9636,7 @@
       (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2 4 5)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 3 2 3 4 5)))
   (unrealized (1 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -9754,7 +9754,7 @@
   (seen 304)
   (seen-ops
     (304 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 4 5)))
+      (strand-map 0 1 4 3 5)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -9820,7 +9820,7 @@
   (seen 307)
   (seen-ops
     (307 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 4 5)))
+      (strand-map 0 1 4 3 5)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -9855,7 +9855,7 @@
   (seen 267)
   (seen-ops
     (267 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 4 5)))
+      (strand-map 0 1 5 4 3)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -9927,7 +9927,7 @@
   (seen 269)
   (seen-ops
     (269 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 4 5 6)))
+      (strand-map 0 1 3 5 6 4)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -9962,7 +9962,7 @@
   (seen 267)
   (seen-ops
     (267 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 4 5)))
+      (strand-map 0 1 3 5 4)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -9999,7 +9999,7 @@
   (seen 268)
   (seen-ops
     (268 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 4 5 6)))
+      (strand-map 0 1 3 6 4 5)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -10228,7 +10228,7 @@
   (seen 317)
   (seen-ops
     (317 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 4 5 6)))
+      (strand-map 0 1 4 3 5 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -10265,7 +10265,7 @@
   (seen 318)
   (seen-ops
     (318 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 4 5 6)))
+      (strand-map 0 1 4 3 5 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -10348,7 +10348,7 @@
       (operation nonce-test (displaced 8 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc "okay" y3-2 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5 6 2)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 6 2 3 4 5 6)))
   (unrealized (1 0))
   (comment "3 in cohort - 1 not yet seen"))
 
@@ -10426,7 +10426,7 @@
       (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc "okay" y3-2 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5 2)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 5 2 3 4 5)))
   (unrealized (1 0))
   (comment "3 in cohort - 1 not yet seen"))
 
@@ -10473,7 +10473,7 @@
       (operation nonce-test (displaced 8 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc "okay" y3-2 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5 2 6)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 5 2 3 4 5 6)))
   (unrealized (1 0))
   (comment "3 in cohort - 1 not yet seen"))
 
@@ -10652,12 +10652,12 @@
       (operation nonce-test (displaced 7 3 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 3 5))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 4 3 4 5))
     (297
       (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc "okay" y3-2 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5 2)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 5 2 3 4 5)))
   (unrealized (1 0))
   (comment "3 in cohort - 1 not yet seen"))
 
@@ -10769,12 +10769,12 @@
       (operation nonce-test (displaced 8 3 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 3 5 6))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 4 3 4 5 6))
     (300
       (operation nonce-test (displaced 8 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc "okay" y3-2 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5 6 2)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 6 2 3 4 5 6)))
   (unrealized (1 0))
   (comment "3 in cohort - 1 not yet seen"))
 
@@ -10816,12 +10816,12 @@
       (operation nonce-test (displaced 8 3 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 3 5 6))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 4 3 4 5 6))
     (302
       (operation nonce-test (displaced 8 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc "okay" y3-2 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5 2 6)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 5 2 3 4 5 6)))
   (unrealized (1 0))
   (comment "3 in cohort - 1 not yet seen"))
 
@@ -11050,7 +11050,7 @@
   (seen 345)
   (seen-ops
     (345 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 4 5 6)))
+      (strand-map 0 1 3 5 4 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -11085,7 +11085,7 @@
   (seen 267)
   (seen-ops
     (267 (operation generalization deleted (3 0))
-      (strand-map 0 1 2 4 5)))
+      (strand-map 0 1 2 5 4)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -11122,7 +11122,7 @@
   (seen 343)
   (seen-ops
     (343 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 4 5 6)))
+      (strand-map 0 1 4 5 6 3)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

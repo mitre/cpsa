@@ -142,9 +142,17 @@ stronglyIsomorphic k1 k2 =
           setsEq (map (translateNode sidMap) $ unrealized k1)
                  $ unrealized k2
 
+-- Suppose homomorphism H has strand map sm1 and homomorphism J has
+-- strand map sm2, where H's target is J's source.
+
+-- Then the strand map of J o H is composeStrandMap sm1 sm2.
+
 composeStrandMap :: [Sid] -> [Sid] -> [Sid]
-composeStrandMap sm1 sm2 =
-    map ((!!) (take (L.length sm1) sm2)) sm1
+composeStrandMap sm1 sm2 = map ((!!) sm2) sm1
+
+--        take (min (length sm1) (length sm2))
+--                (map ((!!) sm2) )
+--    map ((!!) (take (L.length sm1) sm2)) sm1
 
 -- A seen history as a list.
 
@@ -399,13 +407,19 @@ duplicates seen (unseen, dups) kid =
 
 fixStrandMap :: Preskel -> [Sid] -> Preskel
 fixStrandMap k sm =
-    updateStrandMap (composeStrandMap sm1 sm2) k
+    updateStrandMap (composeStrandMap sm1 sm2)
+                     --    (if sm1Challenging sm1
+                     --     then z ("sm1 is challenging: " ++ (show sm1)) sm1
+                     --     else sm1)
+                     --    sm2
+    k
     where
       (sm1, sm2) =
           case kop of
             Generalized _ _ -> (sm, getStrandMap kop)
             _ -> (getStrandMap kop, sm)
       kop = operation k
+      -- sm1Challenging = any ((<=) (L.length sm)) 
 
 -- Make a todo list for dump
 mktodo :: [Reduct t g s e] -> [LPreskel] -> [LPreskel] -> [LPreskel]

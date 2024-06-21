@@ -3,7 +3,7 @@
   (comment "This version includes account numbers in exchanges"))
 
 (comment "CPSA 4.4.4")
-(comment "All input read from epmo_acctnum.lsp")
+(comment "All input read from tst/epmo_acctnum.lsp")
 (comment "Step count limited to 5000")
 
 (defprotocol epmo_acctnum basic
@@ -1958,7 +1958,7 @@
   (seen-ops
     (45
       (operation nonce-test (displaced 6 3 customer 3) nb-0 (5 0)
-        (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5)))
+        (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 5 4)))
   (unrealized (0 0) (0 2) (1 0) (5 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -3523,7 +3523,7 @@
   (seen-ops
     (74
       (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
-        (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 6)))
+        (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 6 5)))
   (unrealized (0 0) (0 2) (1 0) (6 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -6490,7 +6490,7 @@
   (seen-ops
     (124
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
-        (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 6 7)))
+        (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 7 6)))
   (unrealized (0 0) (0 2) (1 0) (7 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -7453,7 +7453,7 @@
   (seen-ops
     (137
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
-        (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 6 7)))
+        (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 7 6)))
   (unrealized (0 0) (0 2) (1 0) (7 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -8608,7 +8608,7 @@
   (seen-ops
     (154
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
-        (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 6 7)))
+        (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 7 6)))
   (unrealized (0 0) (0 2) (1 0) (7 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -9612,7 +9612,7 @@
   (seen-ops
     (167
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
-        (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 6 7)))
+        (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 7 6)))
   (unrealized (0 0) (0 2) (1 0) (7 0))
   (comment "1 in cohort - 0 not yet seen"))
 
