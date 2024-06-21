@@ -1,6 +1,6 @@
 Name:                   cpsa
 Version:                4.4.4
-Maintainer:             ramsdell@mitre.org
+Maintainer:             guttman@mitre.org
 Cabal-Version:          >= 1.10
 License:                BSD3
 License-File:           license.txt

@@ -479,7 +479,7 @@
   (seen 16)
   (seen-ops
     (16 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 3)))
+      (strand-map 0 1 5 3 4)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -809,7 +809,7 @@
   (seen 52)
   (seen-ops
     (52 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 3)))
+      (strand-map 0 1 5 3 4)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -1715,7 +1715,7 @@
   (seen 53)
   (seen-ops
     (53 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 3)))
+      (strand-map 0 1 6 3 4 5)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -1855,7 +1855,7 @@
   (seen 57)
   (seen-ops
     (57 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 3)))
+      (strand-map 0 1 6 3 4 5)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -2030,7 +2030,7 @@
   (seen 62)
   (seen-ops
     (62 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 3)))
+      (strand-map 0 1 7 3 4 5 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -2440,7 +2440,7 @@
   (seen 74)
   (seen-ops
     (74 (operation generalization deleted (3 0))
-      (strand-map 0 1 2 5 6 4)))
+      (strand-map 0 1 2 6 4 5)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -4130,7 +4130,7 @@
   (seen 40)
   (seen-ops
     (40 (operation generalization deleted (3 0))
-      (strand-map 0 1 5 2 4 6)))
+      (strand-map 0 1 4 5 2 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -4206,7 +4206,7 @@
   (seen 123)
   (seen-ops
     (123 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 3)))
+      (strand-map 0 1 7 3 4 5 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -4327,7 +4327,7 @@
   (seen 123)
   (seen-ops
     (123 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 3 7)))
+      (strand-map 0 1 6 3 4 5 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -4367,7 +4367,7 @@
   (seen 124)
   (seen-ops
     (124 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 3 7)))
+      (strand-map 0 1 6 3 4 5 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -4410,7 +4410,7 @@
   (seen 125)
   (seen-ops
     (125 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 3 7 8)))
+      (strand-map 0 1 6 3 4 5 7 8)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -5745,7 +5745,7 @@
   (seen 16)
   (seen-ops
     (16 (operation generalization deleted (4 0))
-      (strand-map 0 1 5 2 3)))
+      (strand-map 0 1 3 5 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -5811,7 +5811,7 @@
   (seen 164)
   (seen-ops
     (164 (operation generalization deleted (3 0))
-      (strand-map 0 1 2 5 6 4)))
+      (strand-map 0 1 2 6 4 5)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -5916,7 +5916,7 @@
   (seen 168)
   (seen-ops
     (168 (operation generalization deleted (3 0))
-      (strand-map 0 1 2 5 6 7 4)))
+      (strand-map 0 1 2 7 4 5 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -6368,7 +6368,7 @@
   (seen 171)
   (seen-ops
     (171 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 3 6 7)))
+      (strand-map 0 1 5 3 4 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -6564,7 +6564,7 @@
   (seen 175)
   (seen-ops
     (175 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 3 6)))
+      (strand-map 0 1 5 3 4 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -6727,7 +6727,7 @@
   (seen 179)
   (seen-ops
     (179 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 3 6 7)))
+      (strand-map 0 1 5 3 4 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -6844,7 +6844,7 @@
   (seen 16)
   (seen-ops
     (16 (operation generalization deleted (3 0))
-      (strand-map 0 1 5 2 4)))
+      (strand-map 0 1 4 5 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -6910,7 +6910,7 @@
   (seen 17)
   (seen-ops
     (17 (operation generalization deleted (3 0))
-      (strand-map 0 1 5 2 4 6)))
+      (strand-map 0 1 4 5 2 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -8778,7 +8778,7 @@
   (seen 110)
   (seen-ops
     (110 (operation generalization deleted (3 0))
-      (strand-map 0 1 2 5 6 4)))
+      (strand-map 0 1 2 6 4 5)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -9858,7 +9858,7 @@
   (seen 98)
   (seen-ops
     (98 (operation generalization deleted (3 0))
-      (strand-map 0 1 5 2 4 6 7)))
+      (strand-map 0 1 4 5 2 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -9901,7 +9901,7 @@
   (seen 272)
   (seen-ops
     (272 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 3)))
+      (strand-map 0 1 8 3 4 5 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -9983,7 +9983,7 @@
   (seen 272)
   (seen-ops
     (272 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 3 7 8)))
+      (strand-map 0 1 6 3 4 5 7 8)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -10030,7 +10030,7 @@
   (seen 273)
   (seen-ops
     (273 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 3 7 8 9)))
+      (strand-map 0 1 6 3 4 5 7 8 9)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -10187,7 +10187,7 @@
   (seen 278)
   (seen-ops
     (278 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 3)))
+      (strand-map 0 1 7 3 4 5 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -11001,7 +11001,7 @@
   (seen 302)
   (seen-ops
     (302 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 3)))
+      (strand-map 0 1 8 3 4 5 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -14926,7 +14926,7 @@
   (seen 373)
   (seen-ops
     (373 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 3 6 7)))
+      (strand-map 0 1 5 3 4 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -15003,7 +15003,7 @@
   (seen 361)
   (seen-ops
     (361 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 3 6 7)))
+      (strand-map 0 1 5 3 4 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -15158,7 +15158,7 @@
   (seen 377)
   (seen-ops
     (377 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 3 6 7 8)))
+      (strand-map 0 1 5 3 4 6 7 8)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -15205,7 +15205,7 @@
   (seen 378)
   (seen-ops
     (378 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 3 6 7 8 9)))
+      (strand-map 0 1 5 3 4 6 7 8 9)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -15493,7 +15493,7 @@
   (seen 384)
   (seen-ops
     (384 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 3 6 7)))
+      (strand-map 0 1 5 3 4 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -15536,7 +15536,7 @@
   (seen 385)
   (seen-ops
     (385 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 3 6 7 8)))
+      (strand-map 0 1 5 3 4 6 7 8)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -15683,7 +15683,7 @@
   (seen 388)
   (seen-ops
     (388 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 3 6 7 8)))
+      (strand-map 0 1 5 3 4 6 7 8)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -15766,7 +15766,7 @@
   (seen 368)
   (seen-ops
     (368 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 3 6 7 8)))
+      (strand-map 0 1 5 3 4 6 7 8)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -15968,7 +15968,7 @@
   (seen 393)
   (seen-ops
     (393 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 3 6 7 8)))
+      (strand-map 0 1 5 3 4 6 7 8)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -16011,7 +16011,7 @@
   (seen 394)
   (seen-ops
     (394 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 3 6 7 8)))
+      (strand-map 0 1 5 3 4 6 7 8)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -16058,7 +16058,7 @@
   (seen 395)
   (seen-ops
     (395 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 3 6 7 8 9)))
+      (strand-map 0 1 5 3 4 6 7 8 9)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -17229,7 +17229,7 @@
   (seen 523)
   (seen-ops
     (523 (operation generalization deleted (3 0))
-      (strand-map 0 1 2 7 4 5 6)))
+      (strand-map 0 1 2 5 6 7 4)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -18167,7 +18167,7 @@
   (seen 179)
   (seen-ops
     (179 (operation generalization deleted (3 0))
-      (strand-map 0 1 2 4 6 7 5)))
+      (strand-map 0 1 2 4 7 5 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -18290,7 +18290,7 @@
   (seen 204)
   (seen-ops
     (204 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 3 6 7)))
+      (strand-map 0 1 5 3 4 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -18412,7 +18412,7 @@
   (seen 200)
   (seen-ops
     (200 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 3 6)))
+      (strand-map 0 1 5 3 4 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -18774,7 +18774,7 @@
   (seen 129)
   (seen-ops
     (129 (operation generalization deleted (3 0))
-      (strand-map 0 1 8 2 4 5 6 7)))
+      (strand-map 0 1 4 5 6 7 8 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -18896,7 +18896,7 @@
   (seen 124)
   (seen-ops
     (124 (operation generalization deleted (3 0))
-      (strand-map 0 1 7 2 4 5 6)))
+      (strand-map 0 1 4 5 6 7 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -19084,7 +19084,7 @@
   (seen 62)
   (seen-ops
     (62 (operation generalization deleted (3 0))
-      (strand-map 0 1 7 2 4 5 6)))
+      (strand-map 0 1 4 5 6 7 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -19163,7 +19163,7 @@
   (seen 64)
   (seen-ops
     (64 (operation generalization deleted (3 0))
-      (strand-map 0 1 7 2 4 5 6 8)))
+      (strand-map 0 1 4 5 6 7 2 8)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -19489,7 +19489,7 @@
   (seen 498)
   (seen-ops
     (498 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 3)))
+      (strand-map 0 1 8 3 4 5 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -19575,7 +19575,7 @@
   (seen 500)
   (seen-ops
     (500 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 3 9)))
+      (strand-map 0 1 8 3 4 5 6 7 9)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -19619,7 +19619,7 @@
   (seen 501)
   (seen-ops
     (501 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 3)))
+      (strand-map 0 1 8 3 4 5 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -19827,7 +19827,7 @@
   (seen 226)
   (seen-ops
     (226 (operation generalization deleted (3 0))
-      (strand-map 0 1 2 5 6 4)))
+      (strand-map 0 1 2 6 4 5)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -19867,7 +19867,7 @@
   (seen 240)
   (seen-ops
     (240 (operation generalization deleted (3 0))
-      (strand-map 0 1 6 5 7 4 2)))
+      (strand-map 0 1 7 6 4 2 5)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -20574,7 +20574,7 @@
   (seen 436)
   (seen-ops
     (436 (operation generalization deleted (3 0))
-      (strand-map 0 1 2 6 4 5)))
+      (strand-map 0 1 2 5 6 4)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -20954,7 +20954,7 @@
   (seen 240)
   (seen-ops
     (240 (operation generalization deleted (3 0))
-      (strand-map 0 1 2 5 6 7 4)))
+      (strand-map 0 1 2 7 4 5 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -20994,7 +20994,7 @@
   (seen 249)
   (seen-ops
     (249 (operation generalization deleted (3 0))
-      (strand-map 0 1 2 6 5 7 4)))
+      (strand-map 0 1 2 7 5 4 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -21037,7 +21037,7 @@
   (seen 263)
   (seen-ops
     (263 (operation generalization deleted (3 0))
-      (strand-map 0 1 2 6 7 8 4 5)))
+      (strand-map 0 1 2 7 8 4 5 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -21117,7 +21117,7 @@
   (seen 1125)
   (seen-ops
     (1125 (operation generalization deleted (3 0))
-      (strand-map 0 1 2 7 6 4 5)))
+      (strand-map 0 1 2 6 7 5 4)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -22097,7 +22097,7 @@
   (seen 464)
   (seen-ops
     (464 (operation generalization deleted (3 0))
-      (strand-map 0 1 2 7 6 4 5)))
+      (strand-map 0 1 2 6 7 5 4)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -22693,7 +22693,7 @@
   (seen 1142)
   (seen-ops
     (1142 (operation generalization deleted (3 0))
-      (strand-map 0 1 6 2 7 8 4 5)))
+      (strand-map 0 1 4 7 8 2 5 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -22958,7 +22958,7 @@
   (seen 1363)
   (seen-ops
     (1363 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 3)))
+      (strand-map 0 1 8 3 4 5 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -23167,7 +23167,7 @@
   (seen 592)
   (seen-ops
     (592 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 3 7 8 9)))
+      (strand-map 0 1 6 3 4 5 7 8 9)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -23567,7 +23567,7 @@
   (seen 604)
   (seen-ops
     (604 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 3)))
+      (strand-map 0 1 7 3 4 5 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -23724,7 +23724,7 @@
   (seen 609)
   (seen-ops
     (609 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 3)))
+      (strand-map 0 1 8 3 4 5 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -23835,7 +23835,7 @@
   (seen 101)
   (seen-ops
     (101 (operation generalization deleted (3 0))
-      (strand-map 0 1 6 2 4 5)))
+      (strand-map 0 1 4 5 6 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -24574,7 +24574,7 @@
   (seen 231)
   (seen-ops
     (231 (operation generalization deleted (3 0))
-      (strand-map 0 1 6 2 4 5 7)))
+      (strand-map 0 1 4 5 6 2 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -24617,7 +24617,7 @@
   (seen 632)
   (seen-ops
     (632 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 3)))
+      (strand-map 0 1 8 3 4 5 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -24789,7 +24789,7 @@
   (seen 628)
   (seen-ops
     (628 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 3)))
+      (strand-map 0 1 7 3 4 5 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -24829,7 +24829,7 @@
   (seen 627)
   (seen-ops
     (627 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 3)))
+      (strand-map 0 1 7 3 4 5 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -24870,7 +24870,7 @@
   (seen 1479)
   (seen-ops
     (1479 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 3)))
+      (strand-map 0 1 7 3 4 5 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -25016,7 +25016,7 @@
   (seen 631)
   (seen-ops
     (631 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 3 7)))
+      (strand-map 0 1 6 3 4 5 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -25062,7 +25062,7 @@
   (seen 633)
   (seen-ops
     (633 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 3 8 9)))
+      (strand-map 0 1 7 3 4 5 6 8 9)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -25105,7 +25105,7 @@
   (seen 632)
   (seen-ops
     (632 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 3 8)))
+      (strand-map 0 1 7 3 4 5 6 8)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -25323,7 +25323,7 @@
   (seen 647)
   (seen-ops
     (647 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 3)))
+      (strand-map 0 1 7 3 4 5 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -25635,7 +25635,7 @@
   (seen 664)
   (seen-ops
     (664 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 3)))
+      (strand-map 0 1 8 3 4 5 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -25678,7 +25678,7 @@
   (seen 663)
   (seen-ops
     (663 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 3)))
+      (strand-map 0 1 8 3 4 5 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -25722,7 +25722,7 @@
   (seen 662)
   (seen-ops
     (662 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 3)))
+      (strand-map 0 1 8 3 4 5 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -25865,7 +25865,7 @@
   (seen 242)
   (seen-ops
     (242 (operation generalization deleted (3 0))
-      (strand-map 0 1 7 2 4 5 6)))
+      (strand-map 0 1 4 5 6 7 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -26154,7 +26154,7 @@
   (seen 667)
   (seen-ops
     (667 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 3)))
+      (strand-map 0 1 8 3 4 5 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -26482,7 +26482,7 @@
   (seen 74)
   (seen-ops
     (74 (operation generalization deleted (3 0))
-      (strand-map 0 1 4 5 2 6)))
+      (strand-map 0 1 5 2 4 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -26618,7 +26618,7 @@
   (seen 168)
   (seen-ops
     (168 (operation generalization deleted (3 0))
-      (strand-map 0 1 4 7 5 2 6)))
+      (strand-map 0 1 6 2 5 7 4)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -26697,7 +26697,7 @@
   (seen 680)
   (seen-ops
     (680 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 3)))
+      (strand-map 0 1 8 3 4 5 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -26894,7 +26894,7 @@
   (seen 685)
   (seen-ops
     (685 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 3)))
+      (strand-map 0 1 8 3 4 5 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -27062,7 +27062,7 @@
   (seen 690)
   (seen-ops
     (690 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 9 3)))
+      (strand-map 0 1 9 3 4 5 6 7 8)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -27240,7 +27240,7 @@
   (seen 699)
   (seen-ops
     (699 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 3)))
+      (strand-map 0 1 8 3 4 5 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -27411,7 +27411,7 @@
   (seen 112)
   (seen-ops
     (112 (operation generalization deleted (3 0))
-      (strand-map 0 1 7 2 4 5 6)))
+      (strand-map 0 1 4 5 6 7 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -28072,7 +28072,7 @@
   (seen 726)
   (seen-ops
     (726 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 3)))
+      (strand-map 0 1 8 3 4 5 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -28115,7 +28115,7 @@
   (seen 725)
   (seen-ops
     (725 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 3)))
+      (strand-map 0 1 8 3 4 5 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -28311,7 +28311,7 @@
   (seen 729)
   (seen-ops
     (729 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 3 9)))
+      (strand-map 0 1 8 3 4 5 6 7 9)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -28357,7 +28357,7 @@
   (seen 254)
   (seen-ops
     (254 (operation generalization deleted (3 0))
-      (strand-map 0 1 9 2 4 5 6 7 8)))
+      (strand-map 0 1 4 5 6 7 8 9 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -28407,7 +28407,7 @@
   (seen 721)
   (seen-ops
     (721 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 9 10 3)))
+      (strand-map 0 1 10 3 4 5 6 7 8 9)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -28748,7 +28748,7 @@
   (seen 255)
   (seen-ops
     (255 (operation generalization deleted (3 0))
-      (strand-map 0 1 7 2 4 5 6 8)))
+      (strand-map 0 1 4 5 6 7 2 8)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -28977,7 +28977,7 @@
   (seen 732)
   (seen-ops
     (732 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 3)))
+      (strand-map 0 1 8 3 4 5 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -29318,7 +29318,7 @@
   (seen 265)
   (seen-ops
     (265 (operation generalization deleted (3 0))
-      (strand-map 0 1 8 2 4 5 6 7)))
+      (strand-map 0 1 4 5 6 7 8 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -29639,7 +29639,7 @@
   (seen 747)
   (seen-ops
     (747 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 9 3)))
+      (strand-map 0 1 9 3 4 5 6 7 8)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -29739,7 +29739,7 @@
   (seen 744)
   (seen-ops
     (744 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 9 3)))
+      (strand-map 0 1 9 3 4 5 6 7 8)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -29786,7 +29786,7 @@
   (seen 743)
   (seen-ops
     (743 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 9 3)))
+      (strand-map 0 1 9 3 4 5 6 7 8)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -29834,7 +29834,7 @@
   (seen 742)
   (seen-ops
     (742 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 9 3)))
+      (strand-map 0 1 9 3 4 5 6 7 8)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -32721,7 +32721,7 @@
   (seen 333)
   (seen-ops
     (333 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 3 7)))
+      (strand-map 0 1 6 3 4 5 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -32858,7 +32858,7 @@
   (seen 337)
   (seen-ops
     (337 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 3 7 8)))
+      (strand-map 0 1 6 3 4 5 7 8)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -34067,7 +34067,7 @@
   (seen 835)
   (seen-ops
     (835 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 9 3)))
+      (strand-map 0 1 9 3 4 5 6 7 8)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -34160,7 +34160,7 @@
   (seen 837)
   (seen-ops
     (837 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 9 3 10)))
+      (strand-map 0 1 9 3 4 5 6 7 8 10)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -34208,7 +34208,7 @@
   (seen 838)
   (seen-ops
     (838 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 7 8 9 3)))
+      (strand-map 0 1 9 3 4 5 6 7 8)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -34377,7 +34377,7 @@
   (seen 853)
   (seen-ops
     (853 (operation generalization deleted (3 0))
-      (strand-map 0 1 2 5 6 7 4)))
+      (strand-map 0 1 2 7 4 5 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -34687,7 +34687,7 @@
   (seen 53)
   (seen-ops
     (53 (operation generalization deleted (4 0))
-      (strand-map 0 1 5 2 3 6)))
+      (strand-map 0 1 3 5 2 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -34763,7 +34763,7 @@
   (seen 863)
   (seen-ops
     (863 (operation generalization deleted (3 0))
-      (strand-map 0 1 2 5 6 7 4)))
+      (strand-map 0 1 2 7 4 5 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -34844,7 +34844,7 @@
   (seen 57)
   (seen-ops
     (57 (operation generalization deleted (4 0))
-      (strand-map 0 1 5 2 3 6)))
+      (strand-map 0 1 3 5 2 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -34916,7 +34916,7 @@
   (seen 867)
   (seen-ops
     (867 (operation generalization deleted (3 0))
-      (strand-map 0 1 2 5 6 7 4)))
+      (strand-map 0 1 2 7 4 5 6)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -35067,7 +35067,7 @@
   (seen 62)
   (seen-ops
     (62 (operation generalization deleted (4 0))
-      (strand-map 0 1 5 2 3 6 7)))
+      (strand-map 0 1 3 5 2 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -35146,7 +35146,7 @@
   (seen 873)
   (seen-ops
     (873 (operation generalization deleted (3 0))
-      (strand-map 0 1 2 5 6 7 8 4)))
+      (strand-map 0 1 2 8 4 5 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -35265,7 +35265,7 @@
   (seen 881)
   (seen-ops
     (881 (operation generalization deleted (3 0))
-      (strand-map 0 1 2 5 6 7 8 4)))
+      (strand-map 0 1 2 8 4 5 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -35308,7 +35308,7 @@
   (seen 882)
   (seen-ops
     (882 (operation generalization deleted (3 0))
-      (strand-map 0 1 2 5 6 7 8 4)))
+      (strand-map 0 1 2 8 4 5 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -35391,7 +35391,7 @@
   (seen 124)
   (seen-ops
     (124 (operation generalization deleted (4 0))
-      (strand-map 0 1 7 2 3 5 6)))
+      (strand-map 0 1 3 5 6 7 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -35548,7 +35548,7 @@
   (seen 62)
   (seen-ops
     (62 (operation generalization deleted (4 0))
-      (strand-map 0 1 7 2 3 5 6)))
+      (strand-map 0 1 3 5 6 7 2)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -35627,7 +35627,7 @@
   (seen 885)
   (seen-ops
     (885 (operation generalization deleted (3 0))
-      (strand-map 0 1 2 5 6 7 8 4)))
+      (strand-map 0 1 2 8 4 5 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -35796,7 +35796,7 @@
   (seen 890)
   (seen-ops
     (890 (operation generalization deleted (3 0))
-      (strand-map 0 1 2 5 6 7 8 4)))
+      (strand-map 0 1 2 8 4 5 6 7)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

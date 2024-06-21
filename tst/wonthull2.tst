@@ -9393,7 +9393,7 @@
   (seen 294)
   (seen-ops
     (294 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 3)))
+      (strand-map 0 1 5 3 4)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -9927,7 +9927,7 @@
   (seen 269)
   (seen-ops
     (269 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 5 6 4)))
+      (strand-map 0 1 3 6 4 5)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -9999,7 +9999,7 @@
   (seen 268)
   (seen-ops
     (268 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 6 4 5)))
+      (strand-map 0 1 3 5 6 4)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -11122,7 +11122,7 @@
   (seen 343)
   (seen-ops
     (343 (operation generalization deleted (2 0))
-      (strand-map 0 1 4 5 6 3)))
+      (strand-map 0 1 6 3 4 5)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

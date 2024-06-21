@@ -1,3 +1,9 @@
+2024-06-21  Joshua D. Guttman  <guttman@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 4.3.4.  This version has
+	important bug fixes especially for the Diffie-Hellman "absence"
+	computation.  
+
 2023-10-23  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* cpsa.cabal (Version): Tagged as version 4.3.3

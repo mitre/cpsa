@@ -139,11 +139,11 @@ then browse the files it suggests while reading CPSA documentation.
 ADDITIONAL PROGRAMS
 
 The src directory of the source distributions includes programs
-written in Scheme, Prolog, Elisp, and OCamlq for performing tasks.  Use them
-as templates for your special purpose CPSA analysis and transformation
-needs.  Also, when given the --json option, the CPSA pretty printer
-cpsapp will transform CPSA S-expressions into JavaScript Object
-Notation (JSON).
+written in Scheme, Prolog, Elisp, and OCaml for performing tasks.  Use
+them as templates for your special purpose CPSA analysis and
+transformation needs.  Also, when given the --json option, the CPSA
+pretty printer cpsapp will transform CPSA S-expressions into
+JavaScript Object Notation (JSON).
 
 On Linux, the GHC runtime can request so much memory that thrashing
 results.  The script in src/ghcmemlimit sets an environment variable

@@ -1,5 +1,38 @@
 CPSA NEWS -- history of user-visible changes.
 
+* Changes in version 4.4.4
+
+** We corrected a significant bug in the handling of absence
+   assumptions in Diffie-Hellman.  As a consequence, CPSA pursues
+   analysis paths that were previously discarded.
+
+** We eliminated DH variables of sort base.  These are logically
+   superfluous, because expt variables can specify exactly the same
+   cases, and they require similar code to handle delicate conditions,
+   the absence assumptions being an example.
+
+** We modified the way skeletons are printed to be more explicit
+   about many properties of the skeletons and the operations that
+   connect them.  In particular, strand-maps are now printed, so that
+   it is easy for other programs to determine the homomorphisms
+   between skeletons in the analysis process.  Information is also
+   available on the operation that leads from a skeleton to another
+   when the latter is one of its already-seen children.
+
+** The test directory has now been updated with much better DH test
+   files.  Long-running tests have been gathered in the tst-harder
+   subdirectory.
+
+** The manual has been updated to reflect the removal of variables
+   of DH base sort.  It also now explains the relation between unique
+   origination and unique generation better, among other improvements.  
+
+** the new program cpsa4prolog now generates a prolog file with much
+   information about a whole CPSA analysis run.  Further programs will
+   offer tighter results.
+
+
+
 * Changes in version 4.4.3
 
 ** Added the cpsa4query program which loads CPSA output and a query.
