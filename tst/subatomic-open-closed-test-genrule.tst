@@ -842,11 +842,11 @@
   (seen-ops
     (8
       (operation channel-test (added-strand dev-up 4)
-        (ch-msg lk (cat pt-3 "st-k" d o k)) (3 2)) (strand-map 0 2 3 1))
+        (ch-msg lk (cat pt-3 "st-k" d o k)) (3 2)) (strand-map 0 1 2 3))
     (8
       (operation channel-test (added-strand dev-up 4)
         (ch-msg lk (cat pt-3 "st-k" d o k)) (3 2))
-      (strand-map 0 2 3 1)))
+      (strand-map 0 1 2 3)))
   (unrealized (3 2))
   (comment "3 in cohort - 1 not yet seen"))
 
@@ -1387,11 +1387,11 @@
   (seen-ops
     (15
       (operation channel-test (added-strand dev-up 4)
-        (ch-msg lk (cat pt-3 "st-k" d o k)) (3 2)) (strand-map 0 1 3 2))
+        (ch-msg lk (cat pt-3 "st-k" d o k)) (3 2)) (strand-map 0 1 2 3))
     (15
       (operation channel-test (added-strand dev-up 4)
         (ch-msg lk (cat pt-3 "st-k" d o k)) (3 2))
-      (strand-map 0 1 3 2)))
+      (strand-map 0 1 2 3)))
   (unrealized (0 1) (1 2) (3 2))
   (comment "3 in cohort - 1 not yet seen"))
 
@@ -1555,7 +1555,7 @@
   (seen-ops
     (21
       (operation encryption-test (added-strand dev-up 6) (enc "up" k)
-        (0 1)) (strand-map 0 1 2 3 4 5)))
+        (0 1)) (strand-map 0 1 5 2 3 4)))
   (unrealized (0 1))
   (comment "3 in cohort - 2 not yet seen"))
 

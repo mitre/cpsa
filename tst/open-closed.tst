@@ -731,7 +731,7 @@
   (seen-ops
     (15
       (operation encryption-test (added-strand dev-up 6) (enc "up" k)
-        (0 1)) (strand-map 0 1 2 3 4)))
+        (0 1)) (strand-map 0 1 4 2 3)))
   (unrealized (0 1))
   (comment "3 in cohort - 2 not yet seen"))
 

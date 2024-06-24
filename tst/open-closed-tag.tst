@@ -638,7 +638,7 @@
   (seen-ops
     (14
       (operation nonce-test (added-strand dev-up 3) k (3 0)
-        (ch-msg start-ch (cat "power-up" d o k))) (strand-map 0 1 3 2)))
+        (ch-msg start-ch (cat "power-up" d o k))) (strand-map 0 1 2 3)))
   (unrealized (0 1) (1 2) (3 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -678,7 +678,7 @@
   (seen-ops
     (15
       (operation encryption-test (added-strand dev-up 6) (enc "up" k)
-        (0 1)) (strand-map 0 1 2 3 4)))
+        (0 1)) (strand-map 0 1 4 2 3)))
   (unrealized (0 1))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -793,7 +793,7 @@
     (17
       (operation nonce-test (added-strand dev-up 3) k (5 0)
         (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 3 4 5 2)))
+      (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
   (comment "2 in cohort - 1 not yet seen"))
 

@@ -13,6 +13,7 @@ module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     kconf, kauth, kfacts, korig, kugen, kpriority, kcomment, nstrands,
     kvars, kfvars, strandids, kterms, kchans, uniqOrig, uniqGen,
     preskelWellFormed, confCm, authCm,
+    showPreskelSelectively, showPreskelUnselectively,
     verbosePreskelWellFormed, Strand, inst, sid, nodes,
     Vertex, strand, pos, preds, event, graphNode, strands, vertex,
     Gist, gist, isomorphic, factorIsomorphicPreskels, findIsomorphisms, 
@@ -173,6 +174,19 @@ mkInstance gen role env height =
         case bldInstance role trace' gen' of
           (gen'', inst) : _ -> (gen'', inst)
           [] -> error "Strand.mkInstance: Not an instance"
+
+maybeShowInstance :: [String] -> Instance -> Maybe String
+maybeShowInstance rolenames inst =
+    if rname (role inst) `L.elem` rolenames
+    then
+        Just $ f inst
+    else
+        Nothing 
+    where
+      f inst =
+          "(" ++ (rname (role inst)) ++ " " ++ (show (height inst)) ++
+            (show (env inst)) ++ ")"
+
 
 -- For each term that matches itself in the environment, extend the
 -- mapping so that the term maps to one with a fresh set of variables.
@@ -469,6 +483,24 @@ mkPreskel gen protocol gs insts orderings non pnon
           conf auth facts prio New [] prob prob Nothing
       shared = Shared { prot = protocol, goals = gs }
       prob = strandids k        -- Fixed point on k is okay.
+
+showPreskelSelectively :: [String] -> Preskel -> String
+showPreskelSelectively rolenames k =
+    "(k: " ++
+        (revConcatStrs
+         (foldr (\maybeStr soFar -> case maybeStr of
+                                      Nothing -> soFar
+                                      Just s -> ("\n" ++ s) : soFar)               
+          []
+          (map (maybeShowInstance rolenames) (insts k))))
+        ++ ")"
+        where
+          revConcatStrs [] = ""
+          revConcatStrs (a : rest) = revConcatStrs rest ++ a
+
+showPreskelUnselectively :: Preskel -> String
+showPreskelUnselectively k =
+    showPreskelSelectively (map (rname . role) (insts k)) k 
 
 -- Strand functions
 
@@ -4284,7 +4316,9 @@ rCompress k s s' =
         (kauth k)
         (map (updateFact $ updateStrand s s') (kfacts k))
         (updatePriority perm (kpriority k))
-        (operation k)
+        (let op = operation k in 
+         addStrandMap (updatePerm s s' (getStrandMap op))
+                      op)
         (krules k)
         (pprob k)
         (updateProb perm (prob k))
