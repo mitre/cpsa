@@ -55,7 +55,7 @@ matchStrand k k' mapping env s =
       s' = mapping !! s
 
 matchTraces :: Trace -> Trace -> (Gen, Env) -> [(Gen, Env)]
-matchTraces [] _ env = [env]    -- Pattern can be shorter
+matchTraces _ [] env = [env]    -- Target can be shorter
 matchTraces (In t : c) (In t' : c') env =
     do
       e <- cmMatch t t' env
