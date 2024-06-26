@@ -1,10 +1,11 @@
 #! /bin/sh
 
-for i in tst/*.tst
+TST=${1:-tst}
+
+for i in $TST/*.tst
 do
     echo $i
-    dirn=`dirname $i`
     basen=`basename $i .tst`
-    cabal run cpsa4db -- -o $dirn/$basen.db $i
-    cabal run cpsa4dbprolog $dirn/$basen.db | sort > $dirn/$basen.pl
+    cabal run cpsa4db -- -o $TST/$basen.db $i
+    cabal run cpsa4dbprolog $TST/$basen.db | sort > $TST/$basen.pl
 done    
