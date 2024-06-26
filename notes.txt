@@ -1,5 +1,16 @@
 This contains repository notes, not to be distributed with CPSA.
 
+CABAL FILE MAINTENANCE
+
+To build tst portion of the extra source files field of the Cabal
+file, git clean the tst directory, type "ls -1 tst/*.tst > x", and add
+two spaces to the beginning of each line in file x.  In the cabal
+file, delete the tst section of the field, add in two lines, insert
+file x between the lines, add "tst/README" and "tst/Makefile", fill
+the region, and then delete the two lines.
+
+MAKE A DISTRIBUTION
+
 To make a source distribution, type:
 
 make sdist

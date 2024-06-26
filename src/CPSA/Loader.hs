@@ -789,9 +789,9 @@ loadChan :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
 loadChan sig vars x =
   do
     ch <- loadTerm sig vars False x
-    case isChan ch || isLocn ch of
+    case isChan ch of
       True -> return ch
-      False -> fail (shows (annotation x) "Expecting a channel or location")
+      False -> fail (shows (annotation x) "Expecting a channel")
 
 loadLocn :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
 loadLocn sig vars x =
