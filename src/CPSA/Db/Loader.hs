@@ -97,6 +97,16 @@ loadEvt sig vars (L _ [S _ "send", ch, t]) =
       ch <- loadChan sig vars ch
       t <- loadTerm sig vars False t
       return (Out $ ChMsg ch t)
+loadEvt sig vars (L _ [S _ "load", ch, t]) =
+    do
+      ch <- loadLocn sig vars ch
+      t <- loadTerm sig vars False t
+      return (In $ ChMsg ch t)
+loadEvt sig vars (L _ [S _ "stor", ch, t]) =
+    do
+      ch <- loadLocn sig vars ch
+      t <- loadTerm sig vars False t
+      return (Out $ ChMsg ch t)
 loadEvt _ _ (L pos [S _ dir, _]) =
     fail (shows pos $ "Unrecognized direction " ++ dir)
 loadEvt _ _ x = fail (shows (annotation x) "Malformed event")
@@ -108,6 +118,14 @@ loadChan sig vars x =
     case isChan ch of
       True -> return ch
       False -> fail (shows (annotation x) "Expecting a channel")
+
+loadLocn :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
+loadLocn sig vars x =
+  do
+    ch <- loadTerm sig vars False x
+    case isLocn ch of
+      True -> return ch
+      False -> fail (shows (annotation x) "Expecting a location")
 
 -- This is the only place a role is generated with an empty name.
 -- This is what marks a strand as a listener.
