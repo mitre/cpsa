@@ -40,9 +40,9 @@ herald p margin h alg =
       x <- readSExpr p
       case x of
         Nothing -> abort "Empty input"
-        Just x@(L pos (S _ "herald" : _ : xs)) ->
+        Just (L pos (S _ "herald" : name : xs)) ->
           do
-            writeSExpr h margin x
+            writeSExpr h margin (L pos [S pos "herald", name, L pos xs])
             hPutStrLn h ""
             sig <- loadSig pos (assoc "lang" xs)
             let nom = getAlgName xs alg

@@ -1,0 +1,10 @@
+#! /bin/sh
+
+for i in tst/*.tst
+do
+    echo $i
+    dirn=`dirname $i`
+    basen=`basename $i .tst`
+    cabal run cpsa4db -- -o $dirn/$basen.db $i
+    cabal run cpsa4dbprolog $dirn/$basen.db | sort > $dirn/$basen.pl
+done    
