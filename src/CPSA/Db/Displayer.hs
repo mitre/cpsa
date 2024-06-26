@@ -57,7 +57,7 @@ displayRoleMatch h m k (s, trace) role =
           do
             let l = label k
             let len = length trace
-            let x = L () [S () "p", N () l, Q () (rname role),
+            let x = L () [S () "l", N () l, Q () (rname role),
                           N () s, N () len]
             writeSExpr h m x
             mapM_ (displayParam h m l role s)
