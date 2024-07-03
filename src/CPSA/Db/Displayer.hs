@@ -42,9 +42,37 @@ tree h m r t =
 body :: Handle -> Int -> Int -> [SExpr Pos] -> IO ()
 body h m l xs =
     do
-      let x = L () [S () "skel", N () l, L () (map strip xs)]
+      let alist = map strip xs
+      let x = L () [S () "skel", N () l, L () alist]
+      writeSExpr h m x
+      displayVals h m "uniq" l (massoc "uniq-orig" alist)
+      displayVals h m "ugen" l (massoc "uniq-gen" alist)
+      displayVals h m "non" l (massoc "non-orig" alist)
+      displayVals h m "pnon" l (massoc "pen-non-orig" alist)
+      displayVals h m "conf" l (massoc "conf" alist)
+      displayVals h m "auth" l (massoc "conf" alist)
+      displayItems h m "prec" l (massoc "precedes" alist)
+      displayItems h m "leads-to" l (massoc "leads-to" alist)
+      displayItems h m "fact" l (massoc "facts" alist)
+      
+displayVals :: Handle -> Int -> String -> Int -> Maybe [SExpr ()] -> IO ()
+displayVals _ _ _ _ Nothing = return ()
+displayVals h m key l (Just vals) =
+    do
+      let x = L () (S () key : N () l : vals)
       writeSExpr h m x
 
+displayItems :: Handle -> Int -> String -> Int -> Maybe [SExpr ()] -> IO ()
+displayItems _ _ _ _ Nothing = return ()
+displayItems h m key l (Just facts) =
+    mapM_ f facts
+    where
+      f (L () fact) =
+          do
+            let x = L () (S () key : N () l : fact)
+            writeSExpr h m x
+      f x = fail (shows (annotation x) "Malformed item")
+                 
 displayTrace :: Handle -> Int -> Skel -> (Int, Trace) -> IO ()
 displayTrace h m k strace =
       mapM_ (displayRoleMatch h m k strace) (roles $ prot k)

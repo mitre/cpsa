@@ -302,7 +302,7 @@ hasKey :: String -> [SExpr a] -> Bool
 hasKey key alist = any (keyPred key) alist
 
 -- Lookup value in alist, appending values with the same key
-massoc :: String -> [SExpr Pos] -> Maybe [SExpr Pos]
+massoc :: String -> [SExpr a] -> Maybe [SExpr a]
 massoc key alist =
     loop alist Nothing
     where
