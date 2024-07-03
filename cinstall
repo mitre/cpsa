@@ -1,0 +1,5 @@
+#! /bin/sh
+
+# Install command for Cabal
+
+cabal install --overwrite-policy=always

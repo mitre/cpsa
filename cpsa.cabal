@@ -50,7 +50,8 @@ Data-Files:
 
 Data-Dir:               doc
 Extra-Source-Files:
-  Makefile ChangeLog README NEWS mkghci cpsatst fixperms setup.bat doc/README
+  Makefile ChangeLog README NEWS mkghci cpsatst fixperms setup.bat
+  cinstall dbtst doc/README
   doc/src/cpsa.bib doc/src/cmstrands.mp doc/src/macros.tex
   doc/src/cpsa4manual/ns_skel1.pdf doc/src/cpsa4manual/intro.tex
   doc/src/cpsa4manual/cmstrands.mp doc/src/cpsa4manual/state-rules.scm
