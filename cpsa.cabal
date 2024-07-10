@@ -471,19 +471,6 @@ Executable cpsa4query
     CPSA.Lib.Utilities
     CPSA.Query.Loader CPSA.Query.Tree CPSA.Query.Query
 
-Executable cpsa4prolog
-  Main-Is:              CPSA/Prolog/Main.hs
-  Default-Language:     Haskell2010
-  Build-Depends:        base, containers
-  GHC-Options:
-    -Wall -fno-warn-name-shadowing -fwarn-unused-imports
-  Hs-Source-Dirs:       src
-  Other-Modules:
-    Paths_cpsa CPSA.Lib.Pretty CPSA.Lib.SExpr
-    CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Lib.Expand
-    CPSA.Lib.Utilities
-    CPSA.Prolog.Loader CPSA.Prolog.Tree
-
 Executable cpsa4db
   Main-Is:              CPSA/Db/Main.hs
   Default-Language:     Haskell2010

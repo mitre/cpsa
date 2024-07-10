@@ -1,5 +1,12 @@
 CPSA NEWS -- history of user-visible changes.
 
+* Changes in version 4.4.5
+
+** The cpsa4prolog program has been removed and replaced with the
+   cpsa4db, cpsa4dbprolog combination.  The combination provides all
+   the functionality of cpsa4prolog and much more.  The use of the
+   combination is described in cpsauser.html.
+
 * Changes in version 4.4.4
 
 ** We corrected a significant bug in the handling of absence
@@ -25,13 +32,11 @@ CPSA NEWS -- history of user-visible changes.
 
 ** The manual has been updated to reflect the removal of variables
    of DH base sort.  It also now explains the relation between unique
-   origination and unique generation better, among other improvements.  
+   origination and unique generation better, among other improvements.
 
 ** the new program cpsa4prolog now generates a prolog file with much
    information about a whole CPSA analysis run.  Further programs will
    offer tighter results.
-
-
 
 * Changes in version 4.4.3
 
@@ -67,12 +72,12 @@ CPSA NEWS -- history of user-visible changes.
    an error.
 
 ** If the earliest occurrence of an exponent variable is in a transmission,
-   the variable must be of rndx sort, not the more  general expt.  
+   the variable must be of rndx sort, not the more  general expt.
 
 ** An asymmetric key and its inverse are both considered to be generated
    at the first point either of them is created.
 
-** Bugs in generalization that occasionally appear have been eliminated.  
+** Bugs in generalization that occasionally appear have been eliminated.
 
 * Changes in version 4.4.1
 
