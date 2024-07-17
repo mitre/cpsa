@@ -295,8 +295,8 @@ data ReduceRes = Stable | Crt [Preskel] | Gnl [Preskel] -- now needed
 
 -- simplify 
 
-simplifyNonIsomorphic :: Preskel -> [Preskel]
-simplifyNonIsomorphic = factorIsomorphicPreskels . simplify
+--   simplifyNonIsomorphic :: Preskel -> [Preskel]
+--   simplifyNonIsomorphic = factorIsomorphicPreskels . simplify
 
 reduceNoTest :: Mode -> Preskel -> ReduceRes
 reduceNoTest mode k =
