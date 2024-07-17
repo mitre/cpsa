@@ -1169,30 +1169,8 @@
       (send (enc "you may pass" n k))) ((recv k) (send k)))
   (label 13)
   (parent 11)
-  (seen 15 15 15 15 15)
-  (seen-ops
-    (15
-      (operation nonce-test (added-strand dev-up 3) k (2 0)
-        (ch-msg start-ch (cat "power-up" d-0 o-0 k)))
-      (strand-map 0 1 2))
-    (15
-      (operation nonce-test (added-strand dev-up 3) k (2 0)
-        (ch-msg start-ch (cat "power-up" d-0 o-0 k)))
-      (strand-map 0 1 2))
-    (15
-      (operation nonce-test (added-strand dev-up 3) k (2 0)
-        (ch-msg start-ch (cat "power-up" d-0 o-0 k)))
-      (strand-map 0 1 2))
-    (15
-      (operation nonce-test (added-strand dev-up 3) k (2 0)
-        (ch-msg start-ch (cat "power-up" d-0 o-0 k)))
-      (strand-map 0 1 2))
-    (15
-      (operation nonce-test (added-strand dev-up 3) k (2 0)
-        (ch-msg start-ch (cat "power-up" d-0 o-0 k)))
-      (strand-map 0 1 2)))
   (unrealized (0 1) (1 1) (1 2) (2 0))
-  (comment "6 in cohort - 1 not yet seen"))
+  (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton atomic-open-closed
   (vars (old old1 mesg) (k skey) (n text) (d o d-0 o-0 name)
@@ -1457,22 +1435,14 @@
     ((recv k) (send k)))
   (label 20)
   (parent 18)
-  (seen 23 23 23)
+  (seen 23)
   (seen-ops
-    (23
-      (operation nonce-test (displaced 6 3 dev-up 3) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 2 3 4 5))
-    (23
-      (operation nonce-test (added-strand dev-up 3) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 2 3 4 5))
     (23
       (operation nonce-test (added-strand dev-up 3) k (5 0)
         (ch-msg start-ch (cat "power-up" d o k)))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (0 1) (5 0))
-  (comment "4 in cohort - 1 not yet seen"))
+  (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton atomic-open-closed
   (vars (any old old1 mesg) (k skey) (n n-0 text) (d o name)
@@ -1554,22 +1524,14 @@
     ((send (enc "open" d o n-0 k))) ((recv k) (send k)))
   (label 22)
   (parent 19)
-  (seen 24 24 24)
+  (seen 24)
   (seen-ops
-    (24
-      (operation nonce-test (displaced 7 3 dev-up 3) k (6 0)
-        (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 2 3 4 5 6))
-    (24
-      (operation nonce-test (added-strand dev-up 3) k (6 0)
-        (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 2 3 4 5 6))
     (24
       (operation nonce-test (added-strand dev-up 3) k (6 0)
         (ch-msg start-ch (cat "power-up" d o k)))
       (strand-map 0 1 2 3 4 5 6)))
   (unrealized (6 0))
-  (comment "4 in cohort - 1 not yet seen"))
+  (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton atomic-open-closed
   (vars (old old1 any mesg) (k skey) (n n-0 text) (d o name)

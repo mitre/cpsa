@@ -480,20 +480,9 @@
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k))))
   (label 4)
   (parent 3)
-  (seen 5 5 5)
-  (seen-ops
-    (5
-      (operation channel-test (added-strand dev-up 4)
-        (ch-msg lk (cat pt-2 "st-k" d o k)) (0 0)) (strand-map 0))
-    (5
-      (operation channel-test (added-strand dev-up 4)
-        (ch-msg lk (cat pt-2 "st-k" d o k)) (0 0)) (strand-map 0))
-    (5
-      (operation channel-test (added-strand dev-up 4)
-        (ch-msg lk (cat pt-2 "st-k" d o k)) (0 0)) (strand-map 0)))
   (unrealized (0 0) (0 1))
   (origs (n (0 3)))
-  (comment "4 in cohort - 1 not yet seen"))
+  (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
   (vars (old old1 mesg) (k skey) (n text) (d o name)
@@ -507,9 +496,9 @@
   (auth start-ch)
   (facts (same-dev ls lk) (no-state-split))
   (leads-to ((1 3) (0 0)))
-  (rule cau-dev-pass-1 eff-dev-up-3 fact-dev-pass-same-dev0
-    fact-dev-up-same-dev0 same-dev-lk-ls trRl_dev-up-at-1
-    trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
+  (rule eff-dev-up-3 fact-dev-pass-same-dev0 fact-dev-up-same-dev0
+    same-dev-lk-ls trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3
+    trRl_dev-up-at-4)
   (operation channel-test (added-strand dev-up 4)
     (ch-msg lk (cat pt-2 "st-k" d o k)) (0 0))
   (strand-map 0)
@@ -552,22 +541,8 @@
     ((send start-ch (cat "power-up" d o k))))
   (label 6)
   (parent 5)
-  (seen 7 7 7 7)
-  (seen-ops
-    (7
-      (operation channel-test (added-strand dev-open 4)
-        (ch-msg ls (cat pt "st" d o o)) (0 1)) (strand-map 0 1 2))
-    (7
-      (operation channel-test (added-strand dev-open 4)
-        (ch-msg ls (cat pt "st" d o o)) (0 1)) (strand-map 0 1 2))
-    (7
-      (operation channel-test (added-strand dev-open 4)
-        (ch-msg ls (cat pt "st" d o o)) (0 1)) (strand-map 0 1 2))
-    (7
-      (operation channel-test (added-strand dev-open 4)
-        (ch-msg ls (cat pt "st" d o o)) (0 1)) (strand-map 0 1 2)))
   (unrealized (0 1))
-  (comment "5 in cohort - 1 not yet seen"))
+  (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
   (vars (old old1 any mesg) (k k-0 skey) (n n-0 text) (d o name)
@@ -586,9 +561,9 @@
   (auth start-ch)
   (facts (same-dev ls lk) (no-state-split))
   (leads-to ((1 3) (0 0)) ((3 3) (0 1)))
-  (rule cau-dev-open-2 cau-dev-pass-1 fact-dev-open-same-dev0
-    fact-dev-pass-same-dev0 gen-st-dev-open-1 invShearsRule
-    same-dev-ls-lk trRl_dev-open-at-1 trRl_dev-open-at-3
+  (rule cau-dev-open-2 cau-dev-pass-1 eff-dev-up-3
+    fact-dev-open-same-dev0 fact-dev-pass-same-dev0 gen-st-dev-open-1
+    invShearsRule same-dev-ls-lk trRl_dev-open-at-1 trRl_dev-open-at-3
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation channel-test (added-strand dev-open 4)
     (ch-msg ls (cat pt "st" d o o)) (0 1))
@@ -605,17 +580,14 @@
       (stor ls (cat pt "st" d o o))))
   (label 7)
   (parent 6)
-  (seen 8 8)
+  (seen 8)
   (seen-ops
-    (8
-      (operation channel-test (added-strand dev-up 4)
-        (ch-msg lk (cat pt-3 "st-k" d o k)) (3 2)) (strand-map 0 1 2 3))
     (8
       (operation channel-test (added-strand dev-up 4)
         (ch-msg lk (cat pt-3 "st-k" d o k)) (3 2))
       (strand-map 0 1 2 3)))
   (unrealized (3 2))
-  (comment "3 in cohort - 1 not yet seen"))
+  (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
   (vars (old old1 any mesg) (k skey) (n n-0 text) (d o name)
@@ -652,7 +624,7 @@
   (realized)
   (shape)
   (maps ((0) ((k k) (n n) (d d) (o o) (lk lk) (ls ls))))
-  (origs (pt-2 (1 3)) (pt (3 3)) (pt-3 (1 4)) (n (0 3))))
+  (origs (pt-2 (1 3)) (pt-3 (1 4)) (pt (3 3)) (n (0 3))))
 
 (comment "Nothing left to do")
 
@@ -905,21 +877,9 @@
       (send (enc "you may pass" n k))))
   (label 11)
   (parent 10)
-  (seen 12 12 12)
-  (seen-ops
-    (12
-      (operation channel-test (added-strand dev-up 4)
-        (ch-msg lk (cat pt-2 "st-k" d-0 o-0 k)) (1 0)) (strand-map 0 1))
-    (12
-      (operation channel-test (added-strand dev-up 4)
-        (ch-msg lk (cat pt-2 "st-k" d-0 o-0 k)) (1 0)) (strand-map 0 1))
-    (12
-      (operation channel-test (added-strand dev-up 4)
-        (ch-msg lk (cat pt-2 "st-k" d-0 o-0 k)) (1 0))
-      (strand-map 0 1)))
   (unrealized (0 1) (1 0) (1 1) (1 2))
   (origs (n (1 3)) (k (0 0)))
-  (comment "4 in cohort - 1 not yet seen"))
+  (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
   (vars (old old1 mesg) (k skey) (n text) (d o d-0 o-0 name)
@@ -936,9 +896,9 @@
   (auth start-ch-0)
   (facts (same-dev ls lk) (no-state-split))
   (leads-to ((2 3) (1 0)))
-  (rule cau-dev-pass-1 eff-dev-up-3 fact-dev-pass-same-dev0
-    fact-dev-up-same-dev0 same-dev-lk-ls trRl_dev-up-at-1
-    trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
+  (rule eff-dev-up-3 fact-dev-pass-same-dev0 fact-dev-up-same-dev0
+    same-dev-lk-ls trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3
+    trRl_dev-up-at-4)
   (operation channel-test (added-strand dev-up 4)
     (ch-msg lk (cat pt-2 "st-k" d-0 o-0 k)) (1 0))
   (strand-map 0 1)
@@ -982,22 +942,8 @@
       (stor ls (cat pt-3 "st" d o))))
   (label 13)
   (parent 12)
-  (seen 14 14 14 14)
-  (seen-ops
-    (14
-      (operation channel-test (added-strand dev-open 4)
-        (ch-msg ls (cat pt "st" d o o)) (1 1)) (strand-map 0 1 2))
-    (14
-      (operation channel-test (added-strand dev-open 4)
-        (ch-msg ls (cat pt "st" d o o)) (1 1)) (strand-map 0 1 2))
-    (14
-      (operation channel-test (added-strand dev-open 4)
-        (ch-msg ls (cat pt "st" d o o)) (1 1)) (strand-map 0 1 2))
-    (14
-      (operation channel-test (added-strand dev-open 4)
-        (ch-msg ls (cat pt "st" d o o)) (1 1)) (strand-map 0 1 2)))
   (unrealized (0 1) (1 1) (1 2))
-  (comment "5 in cohort - 1 not yet seen"))
+  (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
   (vars (old old1 any mesg) (k k-0 skey) (n n-0 text) (d o name)
@@ -1016,9 +962,9 @@
   (auth start-ch)
   (facts (same-dev ls lk) (no-state-split))
   (leads-to ((2 3) (1 0)) ((3 3) (1 1)))
-  (rule cau-dev-open-2 cau-dev-pass-1 fact-dev-open-same-dev0
-    fact-dev-pass-same-dev0 gen-st-dev-open-1 invShearsRule
-    same-dev-ls-lk trRl_dev-open-at-1 trRl_dev-open-at-3
+  (rule cau-dev-open-2 cau-dev-pass-1 eff-dev-up-3
+    fact-dev-open-same-dev0 fact-dev-pass-same-dev0 gen-st-dev-open-1
+    invShearsRule same-dev-ls-lk trRl_dev-open-at-1 trRl_dev-open-at-3
     trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation channel-test (added-strand dev-open 4)
     (ch-msg ls (cat pt "st" d o o)) (1 1))
@@ -1034,17 +980,14 @@
       (stor ls (cat pt "st" d o o))))
   (label 14)
   (parent 13)
-  (seen 15 15)
+  (seen 15)
   (seen-ops
-    (15
-      (operation channel-test (added-strand dev-up 4)
-        (ch-msg lk (cat pt-3 "st-k" d o k)) (3 2)) (strand-map 0 1 2 3))
     (15
       (operation channel-test (added-strand dev-up 4)
         (ch-msg lk (cat pt-3 "st-k" d o k)) (3 2))
       (strand-map 0 1 2 3)))
   (unrealized (0 1) (1 2) (3 2))
-  (comment "3 in cohort - 1 not yet seen"))
+  (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
   (vars (old old1 any mesg) (k skey) (n n-0 text) (d o name)
@@ -1151,22 +1094,14 @@
     ((recv k) (send k)))
   (label 17)
   (parent 15)
-  (seen 20 20 20)
+  (seen 20)
   (seen-ops
-    (20
-      (operation nonce-test (displaced 5 2 dev-up 4) k (4 0)
-        (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 2 3 4))
-    (20
-      (operation nonce-test (added-strand dev-up 4) k (4 0)
-        (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 2 3 4))
     (20
       (operation nonce-test (added-strand dev-up 4) k (4 0)
         (ch-msg start-ch (cat "power-up" d o k)))
       (strand-map 0 1 2 3 4)))
   (unrealized (0 1) (4 0))
-  (comment "4 in cohort - 1 not yet seen"))
+  (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
   (vars (old old1 any mesg) (k skey) (n n-0 text) (d o name)
@@ -1251,38 +1186,14 @@
     ((recv k) (send k)))
   (label 19)
   (parent 16)
-  (seen 23 23 23 23 23 23 23)
+  (seen 23)
   (seen-ops
-    (23
-      (operation nonce-test (displaced 6 2 dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 2 3 4 5))
-    (23
-      (operation nonce-test (displaced 6 2 dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 2 3 4 5))
-    (23
-      (operation nonce-test (displaced 6 2 dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 2 3 4 5))
-    (23
-      (operation nonce-test (added-strand dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 2 3 4 5))
-    (23
-      (operation nonce-test (added-strand dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 2 3 4 5))
-    (23
-      (operation nonce-test (added-strand dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 2 3 4 5))
     (23
       (operation nonce-test (added-strand dev-up 4) k (5 0)
         (ch-msg start-ch (cat "power-up" d o k)))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (0 1) (5 0))
-  (comment "8 in cohort - 1 not yet seen"))
+  (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
   (vars (old old1 any mesg) (k skey) (n n-0 text) (d o name)
@@ -1401,54 +1312,14 @@
       (send dist-ch-0 (enc "dist" d o k))) ((recv k) (send k)))
   (label 22)
   (parent 18)
-  (seen 26 26 26 26 26 26 26 26 26 26 26)
+  (seen 26)
   (seen-ops
-    (26
-      (operation nonce-test (displaced 6 1 dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 2 3 4 5))
-    (26
-      (operation nonce-test (displaced 6 1 dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 2 3 4 5))
-    (26
-      (operation nonce-test (displaced 6 1 dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 2 3 4 5))
-    (26
-      (operation nonce-test (displaced 6 1 dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 2 3 4 5))
-    (26
-      (operation nonce-test (displaced 6 1 dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 2 3 4 5))
-    (26
-      (operation nonce-test (added-strand dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 2 3 4 5))
-    (26
-      (operation nonce-test (added-strand dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 2 3 4 5))
-    (26
-      (operation nonce-test (added-strand dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 2 3 4 5))
-    (26
-      (operation nonce-test (added-strand dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 2 3 4 5))
-    (26
-      (operation nonce-test (added-strand dev-up 4) k (5 0)
-        (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 2 3 4 5))
     (26
       (operation nonce-test (added-strand dev-up 4) k (5 0)
         (ch-msg start-ch (cat "power-up" d o k)))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
-  (comment "12 in cohort - 1 not yet seen"))
+  (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
   (vars (old old1 any mesg) (k skey) (n n-0 text) (d o name)
@@ -1849,22 +1720,14 @@
       (send (enc "may I pass" k))) ((recv k) (send k)))
   (label 31)
   (parent 27)
-  (seen 35 35 35)
+  (seen 35)
   (seen-ops
-    (35
-      (operation nonce-test (displaced 7 4 dev-up 4) k (6 0)
-        (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 2 3 4 5 6))
-    (35
-      (operation nonce-test (added-strand dev-up 4) k (6 0)
-        (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 2 3 4 5 6))
     (35
       (operation nonce-test (added-strand dev-up 4) k (6 0)
         (ch-msg start-ch (cat "power-up" d o k)))
       (strand-map 0 1 2 3 4 5 6)))
   (unrealized (6 0))
-  (comment "4 in cohort - 1 not yet seen"))
+  (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton subatomic-open-closed
   (vars (any old old1 mesg) (k skey) (n n-0 text) (d o name)

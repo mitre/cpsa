@@ -531,14 +531,9 @@
       (send (enc n2-0 (pubk b)))))
   (label 18)
   (parent 17)
-  (seen 20)
-  (seen-ops
-    (20
-      (operation nonce-test (added-strand resp 2) n1-0 (1 1)
-        (enc n1-0 a (pubk b))) (strand-map 0 1)))
   (unrealized (0 1) (1 1))
   (origs (n1 (0 0)) (n1-0 (1 0)))
-  (comment "2 in cohort - 1 not yet seen"))
+  (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
   (vars (x name) (n1 n2 text) (a b name))
@@ -565,7 +560,7 @@
   (precedes ((1 0) (2 0)) ((2 1) (1 1)))
   (non-orig (privk a) (privk b))
   (uniq-orig n1 n1-0)
-  (facts (rel2 x-0 n2) (rel2 x n2-0) (rel1 n1-0 n2-0) (rel1 n1 n2)
+  (facts (rel2 x-0 n2-0) (rel2 x n2) (rel1 n1-0 n2-0) (rel1 n1 n2)
     (rel2 n1-0 n2-0) (rel2 n1 n2))
   (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (added-strand resp 2) n1-0 (1 1)
@@ -579,14 +574,8 @@
     ((recv (enc n1-0 a (pubk b))) (send (enc n1-0 n2-1 b (pubk a)))))
   (label 20)
   (parent 18)
-  (seen 22)
-  (seen-ops
-    (22
-      (operation nonce-test (contracted (n2-1 n2-0)) n1-0 (1 1)
-        (enc n1-0 a (pubk b)) (enc n1-0 n2-0 b (pubk a)))
-      (strand-map 0 1 2)))
   (unrealized (0 1) (1 1))
-  (comment "2 in cohort - 1 not yet seen"))
+  (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
   (vars (x name) (n1 n2 n2-0 text) (a b name))
@@ -618,7 +607,7 @@
   (precedes ((1 0) (2 0)) ((2 1) (1 1)))
   (non-orig (privk a) (privk b))
   (uniq-orig n1 n1-0)
-  (facts (rel2 x-0 n2) (rel2 x n2-0) (rel1 n1-0 n2-0) (rel1 n1 n2)
+  (facts (rel2 x-0 n2-0) (rel2 x n2) (rel1 n1-0 n2-0) (rel1 n1 n2)
     (rel2 n1-0 n2-0) (rel2 n1 n2))
   (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (contracted (n2-1 n2-0)) n1-0 (1 1)
@@ -632,13 +621,8 @@
     ((recv (enc n1-0 a (pubk b))) (send (enc n1-0 n2-0 b (pubk a)))))
   (label 22)
   (parent 20)
-  (seen 24)
-  (seen-ops
-    (24
-      (operation nonce-test (added-strand resp 2) n1 (0 1)
-        (enc n1 a (pubk b))) (strand-map 0 1 2)))
   (unrealized (0 1))
-  (comment "2 in cohort - 1 not yet seen"))
+  (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
   (vars (x name) (n1 n2 text) (a b name))
@@ -672,7 +656,7 @@
   (precedes ((0 0) (3 0)) ((1 0) (2 0)) ((2 1) (1 1)) ((3 1) (0 1)))
   (non-orig (privk a) (privk b))
   (uniq-orig n1 n1-0)
-  (facts (rel2 x-0 n2) (rel2 x n2-0) (rel1 n1-0 n2-0) (rel1 n1 n2)
+  (facts (rel2 x-0 n2-0) (rel2 x n2) (rel1 n1-0 n2-0) (rel1 n1 n2)
     (rel2 n1-0 n2-0) (rel2 n1 n2))
   (rule fact-init-rel11 fact-init-rel20 rebind-x)
   (operation nonce-test (added-strand resp 2) n1 (0 1)
