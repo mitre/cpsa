@@ -1,6 +1,6 @@
 (herald "Example 1.3 from 1983 Dolev-Yao Paper" (bound 12))
 
-(comment "CPSA 4.4.4")
+(comment "CPSA 4.4.5")
 (comment "All input read from tst/dy.lsp")
 
 (defprotocol dy basic

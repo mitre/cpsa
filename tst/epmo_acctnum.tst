@@ -2,7 +2,7 @@
   (bound 12) (limit 5000)
   (comment "This version includes account numbers in exchanges"))
 
-(comment "CPSA 4.4.4")
+(comment "CPSA 4.4.5")
 (comment "All input read from tst/epmo_acctnum.lsp")
 (comment "Step count limited to 5000")
 

@@ -1,6 +1,6 @@
 (herald dhstatic-state (algebra diffie-hellman) (bound 16))
 
-(comment "CPSA 4.4.4")
+(comment "CPSA 4.4.5")
 (comment "All input read from tst/dhstatic-state.scm")
 (comment "Strand count bounded at 16")
 

@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.4")
+(comment "CPSA 4.4.5")
 (comment "All input read from tst/fragile_pruning.scm")
 
 (defprotocol fragile_pruning basic

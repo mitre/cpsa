@@ -1,6 +1,6 @@
 (herald open-closed (bound 44))
 
-(comment "CPSA 4.4.4")
+(comment "CPSA 4.4.5")
 (comment "All input read from tst/open-closed.scm")
 (comment "Strand count bounded at 44")
 

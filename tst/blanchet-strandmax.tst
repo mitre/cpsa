@@ -1,7 +1,7 @@
 (herald "Blanchet's Simple Example Protocol (strand max)"
   (comment "There is a flaw in this protocol by design"))
 
-(comment "CPSA 4.4.4")
+(comment "CPSA 4.4.5")
 (comment "All input read from tst/blanchet-strandmax.scm")
 
 (defprotocol blanchet-max basic

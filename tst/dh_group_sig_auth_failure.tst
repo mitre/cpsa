@@ -1,7 +1,7 @@
 (herald "Signed group DH exchange (version with auth failure)"
   (algebra diffie-hellman) (limit 100))
 
-(comment "CPSA 4.4.4")
+(comment "CPSA 4.4.5")
 (comment "All input read from tst/dh_group_sig_auth_failure.scm")
 (comment "Step count limited to 100")
 

@@ -1,6 +1,6 @@
 (herald auth-enc)
 
-(comment "CPSA 4.4.4")
+(comment "CPSA 4.4.5")
 (comment "All input read from tst/auth-enc.scm")
 
 (defprotocol auth-enc basic

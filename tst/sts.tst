@@ -1,7 +1,7 @@
 (herald "Station-to-station protocol" (bound 20)
   (algebra diffie-hellman))
 
-(comment "CPSA 4.4.4")
+(comment "CPSA 4.4.5")
 (comment "All input read from tst/sts.scm")
 (comment "Strand count bounded at 20")
 

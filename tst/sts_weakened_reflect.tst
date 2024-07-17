@@ -1,7 +1,7 @@
 (herald "station-to-station-reflect protocol" (bound 20)
   (algebra diffie-hellman))
 
-(comment "CPSA 4.4.4")
+(comment "CPSA 4.4.5")
 (comment "All input read from tst/sts_weakened_reflect.scm")
 (comment "Strand count bounded at 20")
 
