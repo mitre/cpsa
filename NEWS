@@ -2,10 +2,16 @@ CPSA NEWS -- history of user-visible changes.
 
 * Changes in version 4.4.5
 
-** The cpsa4prolog program has been removed and replaced with the
-   cpsa4db, cpsa4dbprolog combination.  The combination provides all
-   the functionality of cpsa4prolog and much more.  The use of the
-   combination is described in cpsauser.html.
+** Fixed a strand map bug in 4.4.4.
+
+** Eliminated redundant occurrences of the same children in some executions.  
+
+** Added the programs cpsa4db and cpsa4dbprolog to generate Prolog representations
+   of the content of CPSA runs.  See  cpsauser.html.
+
+** The cpsa4prolog program has been removed and replaced with cpsa4db and cpsa4dbprolog.  
+   That combination provides all the functionality of cpsa4prolog and
+   much more.
 
 * Changes in version 4.4.4
 
