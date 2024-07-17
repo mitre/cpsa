@@ -18,7 +18,7 @@ import CPSA.Protocol
 import CPSA.Operation
 import CPSA.Strand
 
-{-- Debugging support
+--{-- Debugging support
 import System.IO.Unsafe
 
 z :: Show a => a -> b -> b
@@ -293,12 +293,14 @@ parFoldr f b (a : as) =
 
 data ReduceRes = Stable | Crt [Preskel] | Gnl [Preskel] -- now needed
 
+-- simplify 
+
 simplifyNonIsomorphic :: Preskel -> [Preskel]
 simplifyNonIsomorphic = factorIsomorphicPreskels . simplify
 
 reduceNoTest :: Mode -> Preskel -> ReduceRes
 reduceNoTest mode k =
-    case simplifyNonIsomorphic k of
+    case simplify k of
       [k']
           | isomorphic (gist k) (gist k') ->
               if omitGeneralization || noGeneralization mode then Stable
@@ -307,7 +309,9 @@ reduceNoTest mode k =
                      [] -> Stable
                      ks -> Gnl ks)
           | True -> Crt [k']
-      ks -> Crt (filterSame k ks)
+      ks -> Crt (mgsCall $ filterSame k ks)
+    where
+      mgsCall ks = mgs $ map (\k -> (k,(getStrandMap $ operation k))) ks
 
 reduce :: Mode -> Preskel -> ReduceRes
 reduce mode k =

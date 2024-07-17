@@ -406,8 +406,14 @@ duplicates :: Seen -> ([Preskel], [SeenSkel]) -> Preskel ->
               ([Preskel], [SeenSkel])
 duplicates seen (unseen, dups) kid =
     case recall kid seen of
-      Just (label, sm) -> (unseen, (label, fixStrandMap kid sm) : dups)
+      Just (label, sm) -> (unseen, maybeAdd (label, fixStrandMap kid sm) dups)
       Nothing -> (kid : unseen, dups)
+    where
+      maybeAdd (i,k) [] = [(i,k)]
+      maybeAdd (i,k) ((j,k') : rest) =
+          if i<j then (i,k) : (j,k') : rest
+          else if i == j then (j,k') : rest
+               else (j,k') : maybeAdd (i,k) rest
 
 fixStrandMap :: Preskel -> [Sid] -> Preskel
 fixStrandMap k sm =

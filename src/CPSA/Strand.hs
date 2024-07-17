@@ -38,7 +38,7 @@ import CPSA.Channel
 import CPSA.Protocol
 import CPSA.Operation
 
-{--
+--{--
 
 import System.IO.Unsafe
 import Control.Exception (try)
@@ -3494,9 +3494,14 @@ parFactor eqRel as =
 -- Computed in parallel via the pars in parFactor.
 
 factorIsomorphic :: [Preskel] -> [Preskel]
-factorIsomorphic =
-    parFactor
-    (\k1 k2 -> isomorphic (gist k1) (gist k2))
+factorIsomorphic = parFactor (\k1 k2 -> isomorphic (gist k1) (gist k2))
+                   
+{--     let result = parFactor
+                 (\k1 k2 -> isomorphic (gist k1) (gist k2))
+                 ks in
+    z ("Arg: " ++ (show $ L.length ks) ++ " res: " ++ (show $ L.length result))
+      result
+      --}
 
 mergeIsomorphic :: [Preskel] -> [Preskel] -> [Preskel]
 mergeIsomorphic =
@@ -3507,6 +3512,8 @@ factorIsomorphicPreskels :: [Preskel] -> [Preskel]
 factorIsomorphicPreskels = factorIsomorphic
 
 -- Try simplifying k if possible
+-- We ensure no two results are
+-- isomorphic.  
 simplify :: Preskel -> [Preskel]
 simplify k =
     if checkNullary k
@@ -4036,15 +4043,19 @@ rewriteDepthCount = 2000  -- was 14 and 24, 36
 -- Try all rules associated with the protocol of k.
 
 -- Return Nothing if no rule applies, otherwise return Just the list
--- of (zero or more) replacements.
+-- of (zero or more) replacements.  We ensure that no two replacements
+-- are isomorphic.
+
 rewrite :: Preskel -> Maybe [Preskel]
 rewrite k =
-    case nullUnary k of         --  (z "<" k)
-      Just [] -> Just []        -- z ">>" (Just [])
-      Just [k'] -> iterate rewriteDepthCount [k'] [] True
-      Nothing -> iterate rewriteDepthCount [k] [] False
-      Just ks -> error ("rewrite:  nullUnary returned too many results ("
-                        ++ (show (L.length ks)) ++ ")")
+    maybe Nothing
+              (Just . factorIsomorphic)
+              (case nullUnary k of         --  (z "<" k)
+                 Just [] -> Just []        -- z ">>" (Just [])
+                 Just [k'] -> iterate rewriteDepthCount [k'] [] True
+                 Nothing -> iterate rewriteDepthCount [k] [] False
+                 Just ks -> error ("rewrite:  nullUnary returned too many results ("
+                                   ++ (show (L.length ks)) ++ ")"))
     where
       grules = generalrules $ protocol k
 
@@ -4080,7 +4091,8 @@ rewrite k =
                 -- *Don't* Skip it for now.
 
                 iterate dc -- (dc-1)
-                            (mergeIsomorphic new' rest) done True
+                            (mergeIsomorphic new' rest)
+                            done True
 
       -- subiter
       subiter _ [] = Nothing     -- No action, no rules left
@@ -4089,10 +4101,12 @@ rewrite k =
           case tryRule k r of
             [] -> subiter k rs
             vas ->
-                (Just (concatMap (\k' -> maybe [k'] id
-                                        $ subiter k' rs)
-                     $ nullUnaryThrough
-                           $ doRewrite k r vas))
+                (Just
+                 $ factorIsomorphic
+                       (concatMap (\k' -> maybe [k'] id
+                                          $ subiter k' rs)
+                       $ nullUnaryThrough
+                             $ doRewrite k r vas))
 
 -- Returns all environments that satisfy the antecedent
 -- but do not extend to satisfy any of the conclusions.
