@@ -1,6 +1,13 @@
+2024-07-17  Joshua D. Guttman  <guttman@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 4.4.5.  Adds cpsa4db and
+	cpsa4dbprolog to enable prolog access to the goal language and
+	other properties of CPSA output.  Fixes supplementary bugs and
+	eliminates redundant occurrences of seen children.
+
 2024-06-21  Joshua D. Guttman  <guttman@mitre.org>
 
-	* cpsa.cabal (Version): Tagged as version 4.3.4.  This version has
+	* cpsa.cabal (Version): Tagged as version 4.4.4.  This version has
 	important bug fixes especially for the Diffie-Hellman "absence"
 	computation.  
 
