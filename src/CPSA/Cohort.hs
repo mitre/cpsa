@@ -18,7 +18,7 @@ import CPSA.Protocol
 import CPSA.Operation
 import CPSA.Strand
 
---{-- Debugging support
+{-- Debugging support
 import System.IO.Unsafe
 
 z :: Show a => a -> b -> b
