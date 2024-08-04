@@ -8,7 +8,7 @@ University of California. *)
 
 (** * Some General Purpose Tactics *)
 
-Require Import Bool Plus List.
+Require Import Bool List.
 
 Ltac inv H := inversion H; clear H; subst.
 
