@@ -190,7 +190,7 @@ rtwa h m k k' op mapping =
 strands :: Handle -> Int -> Int -> Int -> SExpr () -> (Int, Int) -> IO ()
 strands h m l l' op (s, s') =
     do
-      let x = L () [S () "stwa", N () l, N () s, op,
+      let x = L () [S () "twa", N () l, N () s, op,
                     N () l', N () s']
       writeSExpr h m x
 
@@ -198,5 +198,5 @@ bindings :: Handle -> Int -> Int -> Int -> SExpr () ->
             (SExpr (), SExpr ()) -> IO ()
 bindings h m l l' op (t, t') =
     do
-      let x = L () [S () "mtwa", N () l, t, op, N () l', t']
+      let x = L () [S () "twa", N () l, t, op, N () l', t']
       writeSExpr h m x
