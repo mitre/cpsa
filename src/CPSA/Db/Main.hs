@@ -1,6 +1,15 @@
--- Summarize CPSA output as a formula in coherent logic
+-- Generate a database of facts from CPSA output
 
--- Copyright (c) 2011 The MITRE Corporation
+-- This programs loads CPSA output.  It assembles the skeletons in the
+-- output into a forest of derivation trees.  It then prints the
+-- forest in S-Expression syntax.  To be loadable by Prolog, the
+-- output must be filtered through cpsa4dbprolog and then sorted so
+-- that clauses of one predicate are colocated.
+
+-- The output should be used by SWI Prolog as strings must not be atoms.
+-- Load the generated file using consult/1.
+
+-- Copyright (c) 2024 The MITRE Corporation
 --
 -- This program is free software: you can redistribute it and/or
 -- modify it under the terms of the BSD License as published by the

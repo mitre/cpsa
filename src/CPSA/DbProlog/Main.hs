@@ -1,9 +1,7 @@
--- Prints the output of a CPSA run as a Prolog database.
+-- Prints the database from a CPSA run as a Prolog database.
 
--- This programs loads CPSA output.  It assembles the skeletons in the
--- output into a forest of derivation trees.  It then prints the
--- forest in Prolog syntax.  To be loadable by Prolog, the output must
--- be sorted so that clauses of one predicate are colocated.
+-- To be loadable by Prolog, the output must be sorted so that clauses
+-- of one predicate are colocated.
 
 -- The output should be used by SWI Prolog as strings must not be atoms.
 -- Load the generated file using consult/1.

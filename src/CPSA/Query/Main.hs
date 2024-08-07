@@ -63,7 +63,7 @@
 --   -h       --help         show help message
 --   -v       --version      show version number
 
--- Copyright (c) 2009 The MITRE Corporation
+-- Copyright (c) 2024 The MITRE Corporation
 --
 -- This program is free software: you can redistribute it and/or
 -- modify it under the terms of the BSD License as published by the
