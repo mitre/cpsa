@@ -115,6 +115,10 @@ loadTerm e (S pos name) =
           fail (shows pos (" Variable " ++ name ++ " not declared"))
 loadTerm _ (Q _ str) =
     return $ Const str
+loadTerm _ (N _ num) =
+    return $ Num num
+loadTerm _ (L _ [N _ s, N _ i]) =
+    return $ Pair s i
 loadTerm _ x =
     fail (shows (annotation x) " Malformed term")
 
@@ -122,5 +126,5 @@ getFree :: [Term] -> [Id]
 getFree [] = []
 getFree (Var id : ts) =
     id : getFree ts
-getFree (Const _ : ts) =
+getFree (_ : ts) =
     getFree ts

@@ -43,6 +43,8 @@ predSym (Gen i) = (Gen (i + 1), "pred" ++ show i)
 data Term
     = Var Id
     | Const String
+    | Num Int
+    | Pair Int Int
       deriving Show
 
 -- Every formula begins with the set of free variables.
