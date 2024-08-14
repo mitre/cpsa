@@ -8,21 +8,47 @@
 
 module Main (main) where
 
--- import System.IO
--- import CPSA.Lib.SExpr
+import System.IO
+import CPSA.Lib.SExpr
 import CPSA.Lib.Entry
+import CPSA.Lib.Pretty
 import CPSA.DL.Structs
 import CPSA.DL.Loader
+import CPSA.DL.Simplifier
+import CPSA.DL.Prolog
+import CPSA.DL.Compiler
 
 main :: IO ()
 main =
     do
-      (p, (_, _)) <- start filterOptions filterInterp
+      (p, (output, margin)) <- start filterOptions filterInterp
+      h <- outputHandle output
+      hPutStrLn h "%% Dynamic Logic"
+      hPutStrLn h ""
+      loop h margin origin p
+      hClose h
+
+loop :: Handle -> Int -> Gen -> PosHandle -> IO ()
+loop h m g p =
+    do
       x <- readSExpr p
       case x of
         Nothing ->
-            abort "No input"
+            return ()
         Just x ->
             do
-              (_, _) <- loadQuery origin x
-              return ()
+              putStrLn (show x) -- Debug
+              (g', q) <- loadQuery g x
+              putStrLn (show q) -- Debug
+              (g'', pl) <- compileQuery g' (simplify q)
+              display h m (map pretty pl)
+              loop h m g'' p
+
+display :: Handle -> Int -> [Pretty] -> IO ()
+display _ _ [] =
+    return ()
+display h m (p : ps) =
+    do
+      hPutStrLn h ""
+      hPutStrLn h (pr m p "")
+      display h m ps

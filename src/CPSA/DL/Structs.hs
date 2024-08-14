@@ -16,6 +16,9 @@ instance Eq Id where
 instance Ord Id where
     compare (Id (x, _, _)) (Id (x', _, _)) = compare x x'
 
+idInt :: Id -> Integer
+idInt (Id (num, _, _)) = num
+
 idName :: Id -> String
 idName (Id (_, name, _)) = name
 

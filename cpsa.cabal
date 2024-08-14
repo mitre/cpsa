@@ -505,4 +505,4 @@ Executable cpsa4dl
   Other-Modules:
     Paths_cpsa CPSA.Lib.SExpr CPSA.Lib.Pretty CPSA.Lib.Printer
     CPSA.Lib.Entry CPSA.Lib.Utilities CPSA.DL.Structs
-    CPSA.DL.Loader
+    CPSA.DL.Loader CPSA.DL.Prolog CPSA.DL.Compiler CPSA.DL.Simplifier

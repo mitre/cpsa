@@ -1,6 +1,7 @@
 module CPSA.DL.Loader (loadQuery) where
 
 -- import Control.Monad
+import Data.Char (toUpper)
 import Data.List (nub, (\\))
 import CPSA.Lib.SExpr
 -- import CPSA.Lib.Utilities
@@ -9,13 +10,14 @@ import CPSA.DL.Structs
 type Env = [(String, Id)]
 
 loadQuery :: MonadFail m => Gen -> SExpr Pos -> m (Gen, Query)
-loadQuery g (L _ [S _ "defquery",
-                  L _ (S _ name : decls),
-                  f]) =
+loadQuery g (L _ (S _ "defquery" :
+                  L _ (S _ name : decls) :
+                  x : xs)) =
     do
       (g', env) <- loadDecls g decls
-      (g'', body) <- loadForm g' env f
-      return (g'', Query name (map snd env) body)
+      (g'', body) <- loadForms g' env (x : xs)
+      let free = nub (concat (map fv body))
+      return (g'', Query name (map snd env) (And free body))
 loadQuery _ x =
     fail (shows (annotation x) " Malformed query")
 
@@ -32,7 +34,7 @@ loadDecl :: MonadFail m => Gen -> SExpr Pos -> m (Gen, Id)
 loadDecl g (L _ [S _ name, sort]) =
     do
       srt <- loadSort sort
-      return $ freshId g name srt
+      return $ freshId g (toPVar name) srt
 loadDecl _ x =
     fail (shows (annotation x) " Malformed sort")
 
@@ -108,7 +110,7 @@ loadTerms e xs = mapM (loadTerm e) xs
 
 loadTerm :: MonadFail m => Env -> SExpr Pos -> m Term
 loadTerm e (S pos name) =
-    case lookup name e of
+    case lookup (toPVar name) e of
       Just id ->
           return $ Var id
       Nothing ->
@@ -128,3 +130,11 @@ getFree (Var id : ts) =
     id : getFree ts
 getFree (_ : ts) =
     getFree ts
+
+toPVar :: String -> String
+toPVar (c : s) = map toUnderScore $ toUpper c : s
+toPVar [] = []
+
+toUnderScore :: Char -> Char
+toUnderScore '-' = '_'
+toUnderScore c = c
