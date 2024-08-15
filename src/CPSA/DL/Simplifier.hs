@@ -21,7 +21,7 @@ simpForm (Or _ [f]) =
     simpForm f
 simpForm (Or vs fs) =
     Or vs (map simpForm fs)
-simpForm (Exists _ _ f) =
-    simpForm f
+simpForm (Exists vs vars f) =
+    Exists vs vars (simpForm f)
 simpForm (Diamond vs act f) =
     Diamond vs act (simpForm f)

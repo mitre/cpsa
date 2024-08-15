@@ -23,14 +23,14 @@ prec (Disj _) = 1100
 pretty :: Clause -> Pretty
 pretty (Clause (atom, [])) = blo 0 [prettyAtom atom, str "."]
 pretty (Clause (atom, body)) =
-    blo 4 (prettyAtom atom : str " :-" : brk 1 : rest ++ [str "."])
+    grp 4 (prettyAtom atom : str " :-" : brk 1 : rest ++ [str "."])
     where
       rest = prettyBody p (Conj body)
       p = prec (Conj body)
 
 prettyBody :: Int -> Body -> [Pretty]
 prettyBody p b | p < prec b =
-                   [blo 1 (str "(" : prettyBody p' b ++ [str ")"])]
+                   [grp 1 (str "(" : prettyBody p' b ++ [str ")"])]
                    where p' = prec b
 prettyBody _ (PAtm atom) = [prettyAtom atom]
 prettyBody p (Disj [b]) =
@@ -44,7 +44,7 @@ prettyBody _ bod@(Conj (b : bs)) =
     prettyBody p b ++ prettyRest "," p bs
     where p = prec bod
 prettyBody _ bod@(PNot b) =
-    [blo 2 (str "\\+" : prettyBody p b)]
+    [grp 2 (str "\\+" : prettyBody p b)]
     where p = prec bod
 prettyBody _ _ = error "Bad prolog"
 

@@ -25,11 +25,12 @@ main =
       h <- outputHandle output
       hPutStrLn h "%% Dynamic Logic"
       hPutStrLn h ""
-      loop h margin origin p
+      let (g, k) = freshId origin "K" Label
+      loop h margin k g p
       hClose h
 
-loop :: Handle -> Int -> Gen -> PosHandle -> IO ()
-loop h m g p =
+loop :: Handle -> Int -> Id -> Gen -> PosHandle -> IO ()
+loop h m k g p =
     do
       x <- readSExpr p
       case x of
@@ -40,9 +41,9 @@ loop h m g p =
               putStrLn (show x) -- Debug
               (g', q) <- loadQuery g x
               putStrLn (show q) -- Debug
-              (g'', pl) <- compileQuery g' (simplify q)
+              (g'', pl) <- compileQuery k g' (simplify q)
               display h m (map pretty pl)
-              loop h m g'' p
+              loop h m k g'' p
 
 display :: Handle -> Int -> [Pretty] -> IO ()
 display _ _ [] =

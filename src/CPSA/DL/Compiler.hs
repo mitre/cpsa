@@ -3,37 +3,37 @@ module CPSA.DL.Compiler where
 import CPSA.DL.Structs
 import CPSA.DL.Prolog
 
-compileQuery :: MonadFail m => Gen -> Query -> m (Gen, [Clause])
-compileQuery g (Query sym ids f) =
+compileQuery :: MonadFail m => Id -> Gen -> Query -> m (Gen, [Clause])
+compileQuery k g (Query sym ids f) =
     do
-      (g', pl) <- compileForm g f
-      return (g', [Clause ((sym, map Var ids), [pl])])
+      (g', pl) <- compileForm k g f
+      return (g', [Clause ((sym, map Var (k : ids)), [pl])])
 
-compileForm :: MonadFail m => Gen -> Formula -> m (Gen, Body)
-compileForm g (Atom _ sym ts) =
-    return (g, PAtm (sym, ts))
-compileForm g (Not _ f) =
+compileForm :: MonadFail m => Id -> Gen -> Formula -> m (Gen, Body)
+compileForm k g (Atom _ sym ts) =
+    return (g, PAtm (sym, (Var k : ts)))
+compileForm k g (Not _ f) =
     do
-      (g', b) <- compileForm g f
+      (g', b) <- compileForm k g f
       return (g', PNot b)
-compileForm g (And _ fs) =
+compileForm k g (And _ fs) =
     do
-      (g', bs) <- compileForms g fs
+      (g', bs) <- compileForms k g fs
       return (g', Conj bs)
-compileForm g (Or _ fs) =
+compileForm k g (Or _ fs) =
     do
-      (g', bs) <- compileForms g fs
+      (g', bs) <- compileForms k g fs
       return (g', Disj bs)
-compileForm g (Exists _  _ f) =
-    compileForm g f
-compileForm _ (Diamond _ _ _) =
+compileForm k g (Exists _  _ f) =
+    compileForm k g f
+compileForm _ _ (Diamond _ _ _) =
     fail "cannot handle diamond"
 
-compileForms :: MonadFail m => Gen -> [Formula] -> m (Gen, [Body])
-compileForms g [] =
+compileForms :: MonadFail m => Id -> Gen -> [Formula] -> m (Gen, [Body])
+compileForms _ g [] =
     return (g, [])
-compileForms g (f : fs) =
+compileForms k g (f : fs) =
     do
-      (g', b) <- compileForm g f
-      (g'', bs) <- compileForms g' fs
+      (g', b) <- compileForm k g f
+      (g'', bs) <- compileForms k g' fs
       return (g'', b : bs)
