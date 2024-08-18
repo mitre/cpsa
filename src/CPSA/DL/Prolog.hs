@@ -22,6 +22,11 @@ prec (Disj _) = 1100
 
 pretty :: Clause -> Pretty
 pretty (Clause (atom, [])) = blo 0 [prettyAtom atom, str "."]
+pretty (Clause (atom, [body])) =
+    grp 4 (prettyAtom atom : str " :-" : brk 1 : rest ++ [str "."])
+    where
+      rest = prettyBody p body
+      p = prec body
 pretty (Clause (atom, body)) =
     grp 4 (prettyAtom atom : str " :-" : brk 1 : rest ++ [str "."])
     where
