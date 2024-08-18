@@ -11,7 +11,7 @@ compileQuery k g (Query sym ids f) =
 
 compileForm :: MonadFail m => Id -> Gen -> Formula -> m (Gen, Body)
 compileForm k g (Atom _ sym ts) =
-    return (g, PAtm (sym, (Var k : ts)))
+    return (g, PAtm (sym, Var k : ts))
 compileForm k g (Not _ f) =
     do
       (g', b) <- compileForm k g f

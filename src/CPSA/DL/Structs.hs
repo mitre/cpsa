@@ -1,6 +1,6 @@
 module CPSA.DL.Structs where
 
-data Sort = Mesg | Strand | Label | Index | Node | Length deriving Show
+data Sort = Mesg | Strd | Node | Intr deriving Show
 
 -- Identifiers from the algebra module with sorts added
 

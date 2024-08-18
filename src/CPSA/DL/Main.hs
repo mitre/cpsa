@@ -25,7 +25,7 @@ main =
       h <- outputHandle output
       hPutStrLn h "%% Dynamic Logic"
       hPutStrLn h ""
-      let (g, k) = freshId origin "K" Label
+      let (g, k) = freshId origin "K" Intr
       loop h margin k g p
       hClose h
 

@@ -40,10 +40,9 @@ loadDecl _ x =
 
 loadSort :: MonadFail m => SExpr Pos -> m Sort
 loadSort (S _ "mesg") = return Mesg
-loadSort (S _ "strand") = return Strand
-loadSort (S _ "label") = return Label
-loadSort (S _ "index") = return Index
+loadSort (S _ "strd") = return Strd
 loadSort (S _ "node") = return Node
+loadSort (S _ "intr") = return Intr
 loadSort x = fail (shows (annotation x) " Bad sort: ")
 
 loadForm :: MonadFail m => Gen -> Env -> SExpr Pos -> m (Gen, Formula)
@@ -77,7 +76,7 @@ loadForm g env (L pos [S _ "forall", decls, x]) =
                                   L pos [S pos "not", x]]])
 loadForm g env (L pos [S _ "box", act, x]) =
     loadForm g env (L pos [S pos "not",
-                           L pos [S pos "box", act,
+                           L pos [S pos "diamond", act,
                                   L pos [S pos "not", x]]])
 -- Atoms
 loadForm g env (L _ (S _ sym : xs)) =
