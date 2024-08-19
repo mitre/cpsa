@@ -96,3 +96,28 @@ assoc([_ | A], K, V) :-
 
 %% ask_all(Ls) :-
 %%     findall(L, ask(L), Ls).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Clauses for the Dynamic Logic Runtime
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ntwa(Ka, [Sa, I], O, Kb, [Sb, I]) :-
+    stwa(Ka, Sa, O, Kb, Sb).
+
+mtwastar(K, M, [], K, M).
+mtwastar(Ka, Ma, [], Kb, Mb) :-
+    mtwa(Ka, Ma, _, Kc, Mc),
+    mtwastar(Kc, Mc, [], Kb, Mb).
+
+stwastar(K, M, [], K, M).
+stwastar(Ka, Ma, [], Kb, Mb) :-
+    stwa(Ka, Ma, _, Kc, Mc),
+    stwastar(Kc, Mc, [], Kb, Mb).
+
+ntwastar(K, M, [], K, M).
+ntwastar(Ka, Ma, [], Kb, Mb) :-
+    ntwa(Ka, Ma, _, Kc, Mc),
+    ntwastar(Kc, Mc, [], Kb, Mb).
+
+falsehood(_) :-
+    false.

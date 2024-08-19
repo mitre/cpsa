@@ -38,8 +38,6 @@ loop h m k g p =
             return ()
         Just x ->
             do
-              putStr "%% "
-              putStrLn (show x) -- Debug
               (g', q) <- loadQuery g x
               (g'', pl) <- compileQuery k g' (simplify q)
               display h m (map pretty pl)
