@@ -104,25 +104,25 @@ assoc([_ | A], K, V) :-
 ntwa(Ka, [Sa, I], O, Kb, [Sb, I]) :-
     stwa(Ka, Sa, O, Kb, Sb).
 
-stepstar(K, [], K).
-stepstar(Ka, [], Kb) :-
+step_star(K, K).
+step_star(Ka, Kb) :-
     step(Ka, _, Kc),
-    stepstar(Kc, [], Kb).
+    stepstar(Kc, Kb).
 
-mtwastar(K, M, [], K, M).
-mtwastar(Ka, Ma, [], Kb, Mb) :-
+mtwa_star(K, M, K, M).
+mtwa_star(Ka, Ma, Kb, Mb) :-
     mtwa(Ka, Ma, _, Kc, Mc),
-    mtwastar(Kc, Mc, [], Kb, Mb).
+    mtwa_star(Kc, Mc, Kb, Mb).
 
-stwastar(K, M, [], K, M).
-stwastar(Ka, Ma, [], Kb, Mb) :-
+stwa_star(K, M, K, M).
+stwa_star(Ka, Ma, Kb, Mb) :-
     stwa(Ka, Ma, _, Kc, Mc),
-    stwastar(Kc, Mc, [], Kb, Mb).
+    stwa_star(Kc, Mc, Kb, Mb).
 
-ntwastar(K, M, [], K, M).
-ntwastar(Ka, Ma, [], Kb, Mb) :-
+ntwa_star(K, M, K, M).
+ntwa_star(Ka, Ma, Kb, Mb) :-
     ntwa(Ka, Ma, _, Kc, Mc),
-    ntwastar(Kc, Mc, [], Kb, Mb).
+    ntwa_star(Kc, Mc, Kb, Mb).
 
 falsehood(_) :-
     false.

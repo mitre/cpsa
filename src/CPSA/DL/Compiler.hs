@@ -34,10 +34,7 @@ compileForm k g (Diamond _ act f) =
       (g', b, cls) <- compileForm k g f
       let vs = fv f
       let (g'', sym, cl) = makeClause k g' vs b
-      let suffix = case act of
-                     One -> ""
-                     Star -> "star"
-      return $ compileStep k g'' (cl : cls) suffix sym vs
+      return $ compileStep k g'' (cl : cls) act sym vs
 
 -- Compile a list of formulas.
 compileForms :: MonadFail m => Id -> Gen -> [Formula] ->
@@ -57,16 +54,18 @@ makeClause k g vs body =
     where
       (g', sym) = predSym g
 
-compileStep :: Id -> Gen -> [Clause] -> String ->
+compileStep :: Id -> Gen -> [Clause] -> Act ->
                String -> [Id] -> (Gen, Body, [Clause])
-compileStep k g cls suffix sym vs =
-    (g'',
-     Conj (PAtm ("step" ++ suffix, [Var k, Const "_", Var k']) : twas),
-     cls)
+compileStep k g cls act sym vs =
+    (g'', Conj (step act : twas), cls)
     where
       (g', k') = cloneId g k
       (g'', tvs) = cloneVars g' vs
-      twas = compileTwas suffix k k' tvs
+      step One =
+          PAtm ("step" ++ actSuffix One, [Var k, Const "_", Var k'])
+      step Star =
+          PAtm ("step" ++ actSuffix Star, [Var k, Var k'])
+      twas = compileTwas act k k' tvs
              [PAtm (sym, Var k' : map (Var . snd) tvs)]
 
 cloneVars :: Gen -> [Id] -> (Gen, [(Id, Id)])
@@ -85,19 +84,29 @@ cloneVar g v =
       Node -> cloneId g v
       Intr -> (g, v) -- Don't clone integers
 
-compileTwas :: String -> Id -> Id -> [(Id, Id)] -> [Body] -> [Body]
+compileTwas :: Act -> Id -> Id -> [(Id, Id)] -> [Body] -> [Body]
 compileTwas _ _ _ [] bs = bs
-compileTwas suffix k k' ((v, v') : tvs) bs =
+compileTwas act k k' ((v, v') : tvs) bs =
     case idSort v of
-      Mesg ->
-          PAtm ("mtwa" ++ suffix, [Var k, Var v, Const "_",
-                                       Var k', Var v']) : bs'
-      Strd ->
-          PAtm ("stwa" ++ suffix, [Var k, Var v, Const "_",
-                                       Var k', Var v']) : bs'
-      Node ->
-          PAtm ("ntwa" ++ suffix, [Var k, Var v, Const "_",
-                                       Var k', Var v']) : bs'
-      Intr -> bs' -- Don't translate integers
+      Intr -> bs'
+      _ -> twaAtom act k v k' v' : bs'
     where
-      bs' = compileTwas suffix k k' tvs bs
+      bs' = compileTwas act k k' tvs bs
+
+actSuffix :: Act -> String
+actSuffix One = ""
+actSuffix Star = "_star"
+
+twa :: Sort -> String
+twa Mesg = "mtwa"
+twa Strd = "stwa"
+twa Node = "ntwa"
+twa Intr = error "Bad TWA sort"
+
+twaAtom :: Act -> Id -> Id -> Id -> Id -> Body
+twaAtom One k v k' v' =
+    PAtm (twa (idSort v) ++ actSuffix One,
+          [Var k, Var v, Const "_", Var k', Var v'])
+twaAtom Star k v k' v' =
+    PAtm (twa (idSort v) ++ actSuffix Star,
+          [Var k, Var v, Var k', Var v'])
