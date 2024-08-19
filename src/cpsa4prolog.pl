@@ -104,6 +104,11 @@ assoc([_ | A], K, V) :-
 ntwa(Ka, [Sa, I], O, Kb, [Sb, I]) :-
     stwa(Ka, Sa, O, Kb, Sb).
 
+stepstar(K, [], K).
+stepstar(Ka, [], Kb) :-
+    step(Ka, _, Kc),
+    stepstar(Kc, [], Kb).
+
 mtwastar(K, M, [], K, M).
 mtwastar(Ka, Ma, [], Kb, Mb) :-
     mtwa(Ka, Ma, _, Kc, Mc),

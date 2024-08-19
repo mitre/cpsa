@@ -60,7 +60,9 @@ makeClause k g vs body =
 compileStep :: Id -> Gen -> [Clause] -> String ->
                String -> [Id] -> (Gen, Body, [Clause])
 compileStep k g cls suffix sym vs =
-    (g'', Conj (PAtm ("step", [Var k, Const "_", Var k']) : twas), cls)
+    (g'',
+     Conj (PAtm ("step" ++ suffix, [Var k, Const "_", Var k']) : twas),
+     cls)
     where
       (g', k') = cloneId g k
       (g'', tvs) = cloneVars g' vs
