@@ -107,7 +107,7 @@ ntwa(Ka, [Sa, I], O, Kb, [Sb, I]) :-
 step_star(K, K).
 step_star(Ka, Kb) :-
     step(Ka, _, Kc),
-    stepstar(Kc, Kb).
+    step_star(Kc, Kb).
 
 mtwa_star(K, M, K, M).
 mtwa_star(Ka, Ma, Kb, Mb) :-
