@@ -70,6 +70,8 @@ is complete relative to natural role semantics.</p>
   and <code>cpsa4dbprolog</code></a> programs
   translate CPSA output into Prolog so it can be analyzed using the
   power and flexibility of Prolog.
+  The <a href="#cpsadl"><code>cpsa4dl</code></a> program generates
+  Prolog queries written in a dynamic logic.
   Finally,
   the <a href="#cpsa42latex"><code>cpsa42latex</code></a> program
   translates CPSA macros into equivalent LaTeX macros.</p>
@@ -1231,6 +1233,60 @@ $ cpsa4query query.txt tst/unilateral.txt
 
 <blockquote>
   <pre>$ cpsa4dbprolog [OPTIONS] [FILE]
+  -o FILE  --output=FILE  output FILE
+  -m INT   --margin=INT   set output margin (default 72)
+  -h       --help         show help message
+  -v       --version      show version number</pre>
+</blockquote>
+
+<h2 id="cpsadl">Using Dynamic Logic to generate Prolog Queries</h2>
+
+<p>Each step in a CPSA output contains some direct children and seen
+  children.  When a directed descendent in derived using an
+  authentication test, there is a homomorphism from the parent to the
+  descendent, that is, all of the structure in the parent is contained
+  in the descendent.  When a direct descendent is derived using
+  generalization, there is a homomorphism from the descendent to the
+  parent.</p>
+
+<p>The dynamic logic implemented provides the usual logical operators
+  for specifying properties of a skeleton.  Queries that only use
+  them might as well be written directly in Prolog.</p>
+
+<p>What is special about the dynamic logic is it includes the diamond
+  and box operators that map formulas about descendents of a skeleton
+  using homomorphisms.  For example, if the parent contains the
+  message variable <code>a</code>, and it is mapped to the
+  message variable <code>b</code> in the descendent by the homomorphism,
+  the generated code knows how to honor the mapping.</p>
+
+<p>A diamond operator applied to a formula is satisfied when the
+  formula is satisfied by at least one of the current formula's direct
+  descendents.  A box operator applied to a formula is satisfied when
+  the formula is satisfied by all of the current formula's direct
+  descendents.  When the action associated with a dynamic operator
+  is <code>star</code>, then the operator is applied to all of the
+  skeleton's descendents.  The syntax of a dynamic logic query is:</p>
+
+<blockquote>
+  <pre>QUERY ::= (defquery (SYMBOL DECL*) FORM+)
+DECL ::= (SYMBOL SORT)
+SORT ::= mesg | strd | node | intr
+FORM ::= (SYMBOL TERM*)
+      |  (and FORM+)
+      |  (or FORM+)
+      |  (exists (DECL*) FORM)
+      |  (forall (DECL*) FORM)
+      |  (diamond ACT FORM)
+      |  (box ACT FORM)
+TERM ::= SYMBOL | STRING | INTEGER | (INTEGER INTEGER)
+ACT  ::= one | star</pre>
+</blockquote>
+
+<h3>Usage</h3>
+
+<blockquote>
+  <pre>$ cpsa4dl [OPTIONS] [FILE]
   -o FILE  --output=FILE  output FILE
   -m INT   --margin=INT   set output margin (default 72)
   -h       --help         show help message
