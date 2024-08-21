@@ -17,7 +17,8 @@ loadQuery g (L _ (S _ "defquery" :
       (g', env) <- loadDecls g decls
       (g'', body) <- loadForms g' env (x : xs)
       let free = nub (concat (map fv body))
-      return (g'', Query name (map snd env) (And free body))
+      let name' = map toUnderScore name
+      return (g'', Query name' (map snd env) (And free body))
 loadQuery _ x =
     fail (shows (annotation x) " Malformed query")
 
@@ -99,8 +100,8 @@ loadForms g env (x : xs) =
 loadAct :: MonadFail m => SExpr Pos -> m Act
 loadAct (S _ "one") =
     return One
-loadAct (S _ "star") =
-    return Star
+loadAct (S _ "plus") =
+    return Plus
 loadAct x =
     fail (shows (annotation x) " Bad action")
 

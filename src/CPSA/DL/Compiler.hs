@@ -63,8 +63,8 @@ compileStep k g cls act sym vs =
       (g'', tvs) = cloneVars g' vs
       step One =
           PAtm ("step" ++ actSuffix One, [Var k, Const "_", Var k'])
-      step Star =
-          PAtm ("step" ++ actSuffix Star, [Var k, Var k'])
+      step Plus =
+          PAtm ("step" ++ actSuffix Plus, [Var k, Var k'])
       twas = compileTwas act k k' tvs
              [PAtm (sym, Var k' : map (Var . snd) tvs)]
 
@@ -95,7 +95,7 @@ compileTwas act k k' ((v, v') : tvs) bs =
 
 actSuffix :: Act -> String
 actSuffix One = ""
-actSuffix Star = "_star"
+actSuffix Plus = "_plus"
 
 twa :: Sort -> String
 twa Mesg = "mtwa"
@@ -107,6 +107,6 @@ twaAtom :: Act -> Id -> Id -> Id -> Id -> Body
 twaAtom One k v k' v' =
     PAtm (twa (idSort v) ++ actSuffix One,
           [Var k, Var v, Const "_", Var k', Var v'])
-twaAtom Star k v k' v' =
-    PAtm (twa (idSort v) ++ actSuffix Star,
+twaAtom Plus k v k' v' =
+    PAtm (twa (idSort v) ++ actSuffix Plus,
           [Var k, Var v, Var k', Var v'])
