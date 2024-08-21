@@ -70,6 +70,7 @@ prettyTerms (t : ts) =
 
 prettyTerm :: Term -> Pretty
 prettyTerm (Var id) = str (idName id ++ "_" ++ show (idInt id))
+prettyTerm (Const "_") = str "_"
 prettyTerm (Const c) =
     blo 0 [str "\"", str c, str "\""]
 prettyTerm (Num n) =
