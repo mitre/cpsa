@@ -126,3 +126,8 @@ ntwa_star(Ka, Ma, Kb, Mb) :-
 
 falsehood(_) :-
     false.
+
+truth(_) :-
+    true.
+
+equal(_, A, A).
