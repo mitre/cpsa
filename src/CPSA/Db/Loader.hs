@@ -90,12 +90,12 @@ loadEvt sig vars (L _ [S _ "recv", ch, t]) =
       return (In $ ChMsg ch t)
 loadEvt sig vars (L _ [S _ "send", t]) =
     do
-      t <- loadTerm sig vars True t
+      t <- loadTerm sig vars False t
       return (Out $ Plain t)
 loadEvt sig vars (L _ [S _ "send", ch, t]) =
     do
       ch <- loadChan sig vars ch
-      t <- loadTerm sig vars True t
+      t <- loadTerm sig vars False t
       return (Out $ ChMsg ch t)
 loadEvt sig vars (L _ [S _ "load", ch, t]) =
     do
@@ -105,7 +105,7 @@ loadEvt sig vars (L _ [S _ "load", ch, t]) =
 loadEvt sig vars (L _ [S _ "stor", ch, t]) =
     do
       ch <- loadLocn sig vars ch
-      t <- loadTerm sig vars True t
+      t <- loadTerm sig vars False t
       return (Out $ ChMsg ch t)
 loadEvt _ _ (L pos [S _ dir, _]) =
     fail (shows pos $ "Unrecognized direction " ++ dir)
@@ -172,7 +172,7 @@ loadStrands sig top p kvars gen insts (L pos (S _ "deflistener" : x) : xs) =
     case x of
       [term] ->
           do
-            t <- loadTerm sig kvars True term
+            t <- loadTerm sig kvars False term
             let i = [In $ Plain t, Out $ Plain t]
             loadStrands sig top p kvars gen (i : insts) xs
       _ ->
