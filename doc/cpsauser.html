@@ -1214,7 +1214,7 @@ $ cpsa4query query.txt tst/unilateral.txt
 <p>The generated Prolog must be used with a dialect of Prolog in which
   strings are not be atoms, such as SWI Prolog and not GNU Prolog.
   Load the file using <code>consult/1</code>.  Next load your query.
-  The file <code>src/cpsa4prolog.pl</code> in a source distribution
+  The file <a href="cpsa4prolog.pl"><code>cpsa4prolog.pl</code></a>
   contains useful predicates that may help formulate your query.  The
   comments for each predicate are intended help users understand the
   output format.</p>
@@ -1242,7 +1242,7 @@ $ cpsa4query query.txt tst/unilateral.txt
 <h2 id="cpsadl">Using Dynamic Logic to generate Prolog Queries</h2>
 
 <p>Each step in a CPSA output contains some direct children and seen
-  children.  When a directed descendent in derived using an
+  children.  When a direct descendent in derived using an
   authentication test, there is a homomorphism from the parent to the
   descendent, that is, all of the structure in the parent is contained
   in the descendent.  When a direct descendent is derived using
@@ -1265,7 +1265,7 @@ $ cpsa4query query.txt tst/unilateral.txt
   descendents.  A box operator applied to a formula is satisfied when
   the formula is satisfied by all of the current formula's direct
   descendents.  When the action associated with a dynamic operator
-  is <code>star</code>, then the operator is applied to all of the
+  is <code>plus</code>, then the operator is applied to all of the
   skeleton's descendents.  The syntax of a dynamic logic query is:</p>
 
 <blockquote>
@@ -1280,7 +1280,7 @@ FORM ::= (SYMBOL TERM*)
       |  (diamond ACT FORM)
       |  (box ACT FORM)
 TERM ::= SYMBOL | STRING | INTEGER | (INTEGER INTEGER)
-ACT  ::= one | star</pre>
+ACT  ::= one | plus</pre>
 </blockquote>
 
 <h3>Usage</h3>
