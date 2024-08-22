@@ -3,6 +3,8 @@ dist-newstyle
 tst/*.txt
 tst/*.text
 tst/*.xhtml
+tst/*.db
+tst/*.pl
 dhtst/*.txt
 dhtst/*.text
 dhtst/*.xhtml

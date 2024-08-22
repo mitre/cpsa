@@ -15,6 +15,7 @@ SLIDES = cpsaintroslides
 DESIGN = cpsadesign
 SPEC = cpsaspec
 FOUNDATION = cpsafoundation
+ANALYZE = cpsaanalyze
 BIB = cpsa
 
 TEX_SRCS = macros.tex bcasyntax.tex
@@ -33,7 +34,7 @@ MP_SRCS	= cpsadiagrams.mp carriers.mp termtree.mp blanchet.mp mitrelogo.mp
 	makeindex $*
 
 all:	$(PRIMER).pdf $(GOALS).pdf $(SLIDES).pdf $(DESIGN).pdf\
-	$(SPEC).pdf $(FOUNDATION).pdf
+	$(SPEC).pdf $(FOUNDATION).pdf $(ANALYZE).pdf
 
 $(PRIMER).pdf:	$(MP_SRCS:.mp=-0.mps) $(TEX_SRCS) \
 		 $(PRIMER).tex $(PRIMER).bbl
@@ -50,6 +51,11 @@ $(FOUNDATION).pdf: $(MP_SRCS:.mp=-0.mps) $(TEX_SRCS) \
 		$(FOUNDATION).tex $(FOUNDATION).bbl
 	if test ! -f $(FOUNDATION).aux; then pdflatex $(FOUNDATION).tex; fi
 	pdflatex $(FOUNDATION).tex
+
+$(ANALYZE).pdf: $(MP_SRCS:.mp=-0.mps) $(TEX_SRCS) \
+		$(ANALYZE).tex $(ANALYZE).bbl
+	if test ! -f $(ANALYZE).aux; then pdflatex $(ANALYZE).tex; fi
+	pdflatex $(ANALYZE).tex
 
 $(SLIDES).pdf:	$(MP_SRCS:.mp=-0.mps) $(SLIDES).tex
 	pdflatex $(SLIDES).tex
@@ -68,6 +74,7 @@ $(SPEC).pdf:	$(MP_SRCS:.mp=-0.mps) $(TEX_SRCS) \
 
 CLEAN_FILES := $(PRIMER).pdf $(GOALS).pdf $(SLIDES).pdf \
                $(DESIGN).pdf $(SPEC).pdf $(FOUNDATION).pdf \
+               $(ANALYZE).pdf \
 	$(wildcard *.log *.aux *.toc *.mps *.mpx *.lot *.lof) \
 	$(wildcard *.bbl *.blg *.ind *.idx *.ilg *.out)
 

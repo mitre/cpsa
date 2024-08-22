@@ -84,7 +84,7 @@ loadForm g env (L _ (S _ sym : xs)) =
     do
       ts <- loadTerms env xs
       let free = getFree ts
-      return (g, Atom free sym ts)
+      return (g, Atom free (map toUnderScore sym) ts)
 loadForm _ _ x =
     fail (shows (annotation x) " Malformed formula")
 
