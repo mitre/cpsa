@@ -1219,6 +1219,15 @@ $ cpsa4query query.txt tst/unilateral.txt
   comments for each predicate are intended help users understand the
   output format.</p>
 
+<p>Most Prolog implementations allow one to use list notation to
+  easily consult several files.  If your database is
+  called <code>db.pl</code>, and your query is
+  called <code>query.pl</code>, you can load all three files with:</p>
+
+<blockquote>
+  <pre>?- ['db.pl', 'cpsa4prolog.pl', 'query.pl'].</pre>
+</blockquote>
+
 <h3>Usage</h3>
 
 <blockquote>
