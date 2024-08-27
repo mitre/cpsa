@@ -24,7 +24,7 @@ main =
     argv <- getArgs
     (flags, _) <- opts options argv
     interp flags
-    copy ["init/Makefile", "cpsa4.mk", "Make4.hs"]
+    copy ["init/Makefile", "cpsa4.mk", "Make4.hs", "cpsa4prolog.pl"]
 
 -- Copy the file only if it does not already exist
 
