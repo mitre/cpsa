@@ -9,6 +9,15 @@ import CPSA.Channel (cmMatch)
 import CPSA.Protocol (Trace, Event (..))
 import CPSA.Lib.SExpr
 
+{--
+import System.IO.Unsafe
+z :: Show a => a -> b -> b
+z x y = unsafePerformIO (print x >> return y)
+
+zz :: Show a => a -> a
+zz x = z x x
+--}
+
 data Role = Role
     { rname :: String,  -- Role name
       rvars :: ![Term], -- Set of role variables
@@ -71,11 +80,12 @@ mtwa k k' mapping =
     case homomorphism k k' mapping of
       [] -> Nothing
       env : _ ->
-          Just (map (displayMaplet (kctx k) (kctx k')) maplets)
+          Just (map (displayMaplet (kctx k) rangeCtx) maplets)
           where
             maplets = reify (kvars k) env
+            rangeCtx = addToContext (kctx k') (map snd maplets)
 
 displayMaplet :: Context -> Context -> (Term, Term) ->
                  (SExpr (), SExpr ())
-displayMaplet domain range (x, t)=
+displayMaplet domain range (x, t) =
     (displayTerm domain x, displayTerm range t)
