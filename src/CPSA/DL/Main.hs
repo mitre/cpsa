@@ -24,7 +24,6 @@ main =
       (p, (output, margin)) <- start filterOptions filterInterp
       h <- outputHandle output
       hPutStrLn h "%% Dynamic Logic"
-      hPutStrLn h ""
       let (g, k) = freshId origin "K" Intr
       loop h margin k g p
       hClose h

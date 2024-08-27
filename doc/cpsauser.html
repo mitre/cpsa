@@ -1251,7 +1251,14 @@ $ cpsa4query query.txt tst/unilateral.txt
   -v       --version      show version number</pre>
 </blockquote>
 
-<h2 id="cpsadl">Using Dynamic Logic to generate Prolog Queries</h2>
+<h2 id="cpsadl">Using Dynamic Logic to Generate Prolog Queries</h2>
+
+<p>The <code>cpsa4dl</code> program translates parts of queries
+  written in the dynamic logic into Prolog.  Parts of queries that
+  make use of the fact that descendents of a skeleton that are related
+  to the ancestor by a homomorphism can be produced automatically by
+  specifying those parts in the dynamic language and translating the
+  result into Prolog.</p>
 
 <p>Each step in a CPSA output contains some direct children and seen
   children.  When a direct descendent in derived using an
