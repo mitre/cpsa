@@ -1290,7 +1290,7 @@ $ cpsa4query query.txt tst/unilateral.txt
 <blockquote>
   <pre>QUERY ::= (defquery (SYMBOL DECL*) FORM+)
 DECL ::= (SYMBOL SORT)
-SORT ::= mesg | strd | node | intr
+SORT ::= mesg | strd | node | othr
 FORM ::= (SYMBOL TERM*)
       |  (and FORM+)
       |  (or FORM+)
@@ -1301,6 +1301,9 @@ FORM ::= (SYMBOL TERM*)
 TERM ::= SYMBOL | STRING | INTEGER | (INTEGER INTEGER)
 ACT  ::= one | plus</pre>
 </blockquote>
+
+<p>The constant "_" is treated specially and is translated as a Prolog
+  anonymous variable.</p>
 
 <h3>Usage</h3>
 

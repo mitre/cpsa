@@ -43,7 +43,7 @@ loadSort :: MonadFail m => SExpr Pos -> m Sort
 loadSort (S _ "mesg") = return Mesg
 loadSort (S _ "strd") = return Strd
 loadSort (S _ "node") = return Node
-loadSort (S _ "intr") = return Intr
+loadSort (S _ "othr") = return Othr
 loadSort x = fail (shows (annotation x) " Bad sort: ")
 
 loadForm :: MonadFail m => Gen -> Env -> SExpr Pos -> m (Gen, Formula)

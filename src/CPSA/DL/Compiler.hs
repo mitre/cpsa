@@ -82,13 +82,13 @@ cloneVar g v =
       Mesg -> cloneId g v
       Strd -> cloneId g v
       Node -> cloneId g v
-      Intr -> (g, v) -- Don't clone integers
+      Othr -> (g, v) -- Don't clone integers
 
 compileTwas :: Act -> Id -> Id -> [(Id, Id)] -> [Body] -> [Body]
 compileTwas _ _ _ [] bs = bs
 compileTwas act k k' ((v, v') : tvs) bs =
     case idSort v of
-      Intr -> bs'
+      Othr -> bs'
       _ -> twaAtom act k v k' v' : bs'
     where
       bs' = compileTwas act k k' tvs bs
@@ -101,7 +101,7 @@ twa :: Sort -> String
 twa Mesg = "mtwa"
 twa Strd = "stwa"
 twa Node = "ntwa"
-twa Intr = error "Bad TWA sort"
+twa Othr = error "Bad TWA sort"
 
 twaAtom :: Act -> Id -> Id -> Id -> Id -> Body
 twaAtom One k v k' v' =
