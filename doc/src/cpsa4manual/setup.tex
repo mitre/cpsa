@@ -40,10 +40,10 @@ download the current source distribution directly~at:
   \url{http://github.com/mitre/cpsa}
 \end{center}
 
-There is a directory named \texttt{cpsa} at the top-level of the
+There is a directory named \texttt{cpsa4} at the top-level of the
 repository.  It contains a copy of the {\cpsa} sources downloaded and
 compiled using \texttt{cabal}.  On all platforms, to install from this
-source, change into the \texttt{cpsa} directory and type:
+source, change into the \texttt{cpsa4} directory and type:
 
 \begin{verbatim}
 $ cabal update
@@ -54,13 +54,13 @@ $ cabal install
 \end{verbatim}
 
 Alternatively, there are other install options described in
-\texttt{README.txt} in the \texttt{cpsa} directory.
+\texttt{README.txt} in the \texttt{cpsa4} directory.
 
 \section{Finding Documentation}
 {\cpsa} comes with documentation, but it can be difficult to locate by
 hand when the tool has been installed through cabal.  Run
 
-\texttt{\$ cpsa -h}
+\texttt{\$ cpsa4 -h}
 
 \noindent
 to see the program's help message, including the documentation
@@ -71,22 +71,22 @@ directory, where this manual should be found.
 
 To analyze a protocol you have put in prob.scm type:
 \begin{verbatim}
-$ cpsa -o prob.txt prob.scm
-$ cpsashapes -o prob_shapes.txt prob.txt
-$ cpsagraph -o prob_shapes.xhtml prob_shapes.txt
+$ cpsa4 -o prob.txt prob.scm
+$ cpsa4shapes -o prob_shapes.txt prob.txt
+$ cpsa4graph -o prob_shapes.xhtml prob_shapes.txt
 \end{verbatim}
 
 See Section~\ref{sec:options} for command-line options.
 
-The \texttt{cpsashapes} command is optional, but recommended; it cuts
+The \texttt{cpsa4shapes} command is optional, but recommended; it cuts
 down {\cpsa}'s output to only show final results. Unless you're
 doing detailed debugging, using it will make the output much easier to
 read.
 
-To analyze a protocol without using the \texttt{cpsashapes} comment, type:
+To analyze a protocol without using the \texttt{cpsa4shapes} command, type:
 \begin{verbatim}
-$ cpsa -o prob.txt prob.scm
-$ cpsagraph -o prob.xhtml prob.txt
+$ cpsa4 -o prob.txt prob.scm
+$ cpsa4graph -o prob.xhtml prob.txt
 \end{verbatim}
 
 The .xhtml results can be opened in a web browser.
@@ -95,7 +95,7 @@ The .xhtml results can be opened in a web browser.
 
 A {\cpsa} project is a directory containing some {\cpsa} input files
 and items that orchestrate the use of the various {\cpsa} tools.  To
-create a project, in a fresh directory, run \texttt{cpsainit}.
+create a project, in a fresh directory, run \texttt{cpsa4init}.
 
 \begin{verbatim}
 $ mkdir project
@@ -104,15 +104,12 @@ $ cpsainit
 Created Makefile
 Created cpsa.mk
 Created Make.hs
-Created template.lisp
+Created cpsa4prolog.pl
 \end{verbatim}
 
-The \texttt{cpsainit} will not overwrite a file if it is already
-present in the current directory.  The file \texttt{template.lisp}
-contains a starting point for writing {\cpsa} input files.  Rename the
-file to one that uses the \texttt{.scm} extension and fill in the
-holes.  The distribution provides two ways to relieve users of the
-tedium of issuing individual commands.
+The \texttt{cpsa4init} will not overwrite a file if it is already
+present in the current directory.  The distribution provides two ways
+to relieve users of the tedium of issuing individual commands.
 
 \subsection{Using the {\cpsa} Makefile}
 
@@ -136,7 +133,7 @@ tedium of issuing individual commands.
 %% \end{figure}
 
 %% The easiest way to orchestrate {\cpsa} programs is to use GNU make.
-%% The distribution comes with the file \texttt{cpsa.mk} for inclusion
+%% The distribution comes with the file \texttt{cpsa4.mk} for inclusion
 %% into your makefile.  Figure~\ref{fig:makefile} contains a sample
 %% makefile. If you cut-and-paste, be sure to convert the leading spaces
 %% in the last line into a tab character.  To analyze protocols, copy
@@ -145,7 +142,7 @@ tedium of issuing individual commands.
 
 The easiest way to orchestrate {\cpsa} programs is to use GNU make.  A
 {\cpsa} project contains the files \texttt{Makefile} and
-\texttt{cpsa.mk}.  To analyze the problems in your project, type
+\texttt{cpsa4.mk}.  To analyze the problems in your project, type
 \texttt{make}.  Edit the file \texttt{Makefile} to adjust program
 flags to suit your needs.  For example, you many want to enable the
 use of multiple processors during protocol analysis as described in
@@ -181,10 +178,10 @@ From the \texttt{Make.hs} prompt, you can use the following commands:
   output, try running \texttt{clean}. Getting into the habit of
   running \texttt{clean} before \texttt{build} is a good idea.
 \end{itemize}
-\item \texttt{cpsa} \texttt{"\textit{protocolname}"} Run {\cpsa} on just the
+\item \texttt{cpsa4} \texttt{"\textit{protocolname}"} Run {\cpsa} on just the
   protocol provided. Note that the file extension (.scm) should
   \textit{not} be included in the name; if your protocol is in
-  \texttt{foo.scm}, you would run \texttt{cpsa "foo"}. Most useful if you
+  \texttt{foo.scm}, you would run \texttt{cpsa4 "foo"}. Most useful if you
   have an exceptionally large number of protocols in a single
   directory.
 \item \texttt{:q} Quit.

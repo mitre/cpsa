@@ -77,23 +77,23 @@ the tool.
 
 The distribution includes a number of separate executable command-line
 tools.  Of these, three are key components of the core expected
-workflow: \texttt{cpsa}, \texttt{cpsagraph}, and \texttt{cpsashape}.
+workflow: \texttt{cpsa4}, \texttt{cpsa4graph}, and \texttt{cpsa4shape}.
 The other tools are auxiliary utilities most general users will not
-need to use, although \texttt{cpsadiff} is of some use to a general
+need to use, although \texttt{cpsa4diff} is of some use to a general
 user when updating the tool.
 
-The \texttt{cpsa} program takes as input one or more analysis problems
+The \texttt{cpsa4} program takes as input one or more analysis problems
 (at least, a protocol and a partial description of an execution), and
 analyzes them one at a time.  It outputs the full, step-by-step
 analysis for each problem, ultimately describing all possible full
 executions that complete the partial execution.
 
-The \texttt{cpsashape} program takes an analysis and reduces it to an
+The \texttt{cpsa4shape} program takes an analysis and reduces it to an
 analysis that skips directly from analysis input to the set of shapes
 associated with that input.
 
-The \texttt{cpsagraph} program takes an analysis (from either
-\texttt{cpsa} or \texttt{cpsashape}) and formats it into an
+The \texttt{cpsa4graph} program takes an analysis (from either
+\texttt{cpsa4} or \texttt{cpsa4shape}) and formats it into an
 \textsc{xhtml} file and includes \textsc{svg}(scalable vector
 graphics) diagrams of each partial execution as well as the overall
 branching pattern of the analysis.
@@ -112,19 +112,19 @@ branching pattern of the analysis.
 %\section{Overview}
 %
 %A {\cpsa} release includes several programs, an analyzer, and various
-%tools used to interpret the results.  The analyzer, \texttt{cpsa},
+%tools used to interpret the results.  The analyzer, \texttt{cpsa4},
 %provides support for several algebras, one of which is the Basic
 %Crypto Algebra.  Programs that assist in the interpretation of results
-%are \texttt{cpsashape} and \texttt{cpsagraph}.  The analyzer prints
-%the steps it used to solve each problem.  The \texttt{cpsashapes}
+%are \texttt{cpsa4shape} and \texttt{cpsa4graph}.  The analyzer prints
+%the steps it used to solve each problem.  The \texttt{cpsa4shapes}
 %program extracts the shapes discovered by an analyzer run.  The
-%\texttt{cpsagraph} program graphs both forms of output using Scalable
+%\texttt{cpsa4graph} program graphs both forms of output using Scalable
 %Vector Graphics~(\textsc{svg}).  A standards-compliant browser such as
 %FireFox or Safari displays the generated diagrams.
 
 The expected work flow follows.  An analysis problem is entered using
 an ordinary text editor, preferably one with support for Lisp syntax.
-The \texttt{cpsa} program uses an S-expression-based syntax for both
+The \texttt{cpsa4} program uses an S-expression-based syntax for both
 input and output.  S-expression is an abbreviation for a Symbolic
 Expression (as in the Lisp programming language).
 
@@ -135,7 +135,7 @@ details of both forms depend on the message algebra specified by the
 protocol.
 %Protocols that specify \texttt{basic} as their algebra get
 %an implementation of the Basic Crypto Algebra~(\textsc{bca}) described
-%in the next section.  A complete grammar for \texttt{cpsa} input is
+%in the next section.  A complete grammar for \texttt{cpsa4} input is
 %displayed in Table~\ref{tab:syntax} on Page~\pageref{tab:syntax}.
 
 %Problem statement errors in the input are detected by running the
@@ -151,11 +151,11 @@ protocol.
 Assuming there are no errors in the input, the analyzer
 will produce output as a text document.  The text document
 contains each step used to derive a shape from a problem statement.
-It is common to filter the output using the \texttt{cpsashapes}
+It is common to filter the output using the \texttt{cpsa4shapes}
 program, and look only at the computed shapes associated with each
 problem statement.
 
-The \texttt{cpsagraph} program is applied to the output to produce a
+The \texttt{cpsa4graph} program is applied to the output to produce a
 more readable, hyperlinked \textsc{xhtml} document that can be displayed
 in a standards-compliant web browser.  See Chapter~\ref{ch:tools} for
 more information on the programs that come with a {\cpsa} distribution.
@@ -163,7 +163,7 @@ more information on the programs that come with a {\cpsa} distribution.
 % The guide is no longer maintained.
 %
 %% The {\cpsa} User Guide contains
-%% the up-to-date description of \texttt{cpsagraph} generated documents.
+%% the up-to-date description of \texttt{cpsa4graph} generated documents.
 %% The guide is also the place to find command-line usage information for
 %% all programs in a release.  The user guide is an \textsc{xhtml}
 %% document delivered with the software.

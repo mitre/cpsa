@@ -182,7 +182,7 @@ usual, but realized skeletons found during the course of analysis of a
 a \texttt{satisfies} S-expression indicating whether the goal is met or
 not.
 
-The tool \texttt{cpsagoalsat} will examine the output from a {\cpsa}
+The tool \texttt{cpsa4goalsat} will examine the output from a {\cpsa}
 run, and, for each goal formula, will determine whether the analysis
 ensures that the goal is met.  If not, it identifies the labels of all
 the skeletons that furnish counterexamples to the goal.  See
@@ -511,7 +511,7 @@ with one or more security goals.  The annotation uses the
   \end{alltt}
 \end{quote}
 
-The program \texttt{cpsasas}, discussed in the next section, can be
+The program \texttt{cpsa4sas}, discussed in the next section, can be
 used to generate a formula with an antecedent such that the input
 skeleton is the characteristic skeleton of the antecedent.
 
@@ -522,7 +522,7 @@ of {\cpsa} as a security goal.  If a security goal can be derived from
 a shape analysis sentence, then the protocol achieves the security
 goal, that is, the goal is true in all executions of the protocol.
 
-The program \texttt{cpsasas} extracts shape analysis sentences from
+The program \texttt{cpsa4sas} extracts shape analysis sentences from
 the output of {\cpsa}.  Consider the first example in this paper
 (Figure~\ref{fig:ns init}), which is in the sample file
 \texttt{goals.scm}.  To generate a maximally informative security goal
@@ -565,7 +565,7 @@ A security goal is true in all executions if it can be derived from a
 shape analysis sentence~\cite{Ramsdell12}.  In practice,
 theorem-proving using shape analysis sentences is rarely employed.
 It's clumsy and it requires too much expertise.  The main use of
-\texttt{cpsasas} is for generating a formula that is edited to become
+\texttt{cpsa4sas} is for generating a formula that is edited to become
 a desired security goal.
 
 \section{Rules}\label{sec: rules}
