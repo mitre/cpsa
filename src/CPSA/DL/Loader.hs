@@ -102,6 +102,8 @@ loadAct (S _ "one") =
     return One
 loadAct (S _ "plus") =
     return Plus
+loadAct (S _ "star") =
+    return Star
 loadAct x =
     fail (shows (annotation x) " Bad action")
 

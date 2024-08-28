@@ -128,6 +128,26 @@ ntwa_plus(Ka, Ma, Kb, Mb) :-
     ntwa(Ka, Ma, _, Kc, Mc),
     ntwa_plus(Kc, Mc, Kb, Mb).
 
+step_star(K, K).
+step_star(Ka, Kb) :-
+    step(Ka, _, Kc),
+    step_star(Kc, Kb).
+
+mtwa_star(K, M, K, M).
+mtwa_star(Ka, Ma, Kb, Mb) :-
+    mtwa(Ka, Ma, _, Kc, Mc),
+    mtwa_star(Kc, Mc, Kb, Mb).
+
+stwa_star(K, M, K, M).
+stwa_star(Ka, Ma, Kb, Mb) :-
+    stwa(Ka, Ma, _, Kc, Mc),
+    stwa_star(Kc, Mc, Kb, Mb).
+
+ntwa_star(K, M, K, M).
+ntwa_star(Ka, Ma, Kb, Mb) :-
+    ntwa(Ka, Ma, _, Kc, Mc),
+    ntwa_star(Kc, Mc, Kb, Mb).
+
 falsehood(_) :-
     false.
 

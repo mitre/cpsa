@@ -74,6 +74,7 @@ fv (Diamond fv _ _) = fv
 data Act
     = One
     | Plus
+    | Star
       deriving Show
 
 data Query = Query String [Id] Formula
