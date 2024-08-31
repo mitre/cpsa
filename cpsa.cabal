@@ -44,7 +44,7 @@ Build-Type:             Simple
 Data-Files:
   index.html cpsalogo.svg readme.html cpsauser.html cpsa4.mk Make4.hs
   init/Makefile cpsaprimer.pdf cpsagoals.pdf cpsaintroslides.pdf
-  cpsaspec.pdf cpsafoundation.pdf cpsadesign.pdf cpsaanalyze.pdf
+  cpsaspec.pdf cpsafoundation.pdf cpsadesign.pdf
   cpsa4roletran.md roletran.pdf cpsa4prolog.pl
   ffgg.scm ns.scm blanchet.scm or.scm woolam.scm yahalom.scm goals.scm
   rules.scm cpsa4manual.pdf
@@ -141,7 +141,6 @@ Extra-Source-Files:
   doc/src/mitreslides.sty doc/src/cpsafoundation.tex
   doc/src/cpsaprimer.tex doc/src/carriers.mp doc/src/mitrelogo.mp
   doc/src/cpsagoals.tex doc/src/rulestheory.tex doc/src/cpsadesign.tex
-  doc/src/cpsaanalyze.tex
   doc/SDAG.lhs doc/cpsalogo.mp src/index.html src/cpsajson.py
   src/split.py src/cpsa2svg src/cpsa.el src/cpsaperm.scm src/lastlabel.py
   src/cpsaops.scm src/preskel src/cpsa.pl src/unsorted.pl src/pp.pl
