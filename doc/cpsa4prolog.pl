@@ -101,53 +101,6 @@ assoc([_ | A], K, V) :-
 %% Clauses for the Dynamic Logic Runtime
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-ntwa(Ka, [Sa, I], O, Kb, [Sb, I]) :-
-    stwa(Ka, Sa, O, Kb, Sb).
-
-step_plus(Ka, Kb) :-
-    step(Ka, _, Kb).
-step_plus(Ka, Kb) :-
-    step(Ka, _, Kc),
-    step_plus(Kc, Kb).
-
-mtwa_plus(Ka, Ma, Kb, Mb) :-
-    mtwa(Ka, Ma, _, Kb, Mb).
-mtwa_plus(Ka, Ma, Kb, Mb) :-
-    mtwa(Ka, Ma, _, Kc, Mc),
-    mtwa_plus(Kc, Mc, Kb, Mb).
-
-stwa_plus(Ka, Ma, Kb, Mb) :-
-    stwa(Ka, Ma, _, Kb, Mb).
-stwa_plus(Ka, Ma, Kb, Mb) :-
-    stwa(Ka, Ma, _, Kc, Mc),
-    stwa_plus(Kc, Mc, Kb, Mb).
-
-ntwa_plus(Ka, Ma, Kb, Mb) :-
-    ntwa(Ka, Ma, _, Kb, Mb).
-ntwa_plus(Ka, Ma, Kb, Mb) :-
-    ntwa(Ka, Ma, _, Kc, Mc),
-    ntwa_plus(Kc, Mc, Kb, Mb).
-
-step_star(K, K).
-step_star(Ka, Kb) :-
-    step(Ka, _, Kc),
-    step_star(Kc, Kb).
-
-mtwa_star(K, M, K, M).
-mtwa_star(Ka, Ma, Kb, Mb) :-
-    mtwa(Ka, Ma, _, Kc, Mc),
-    mtwa_star(Kc, Mc, Kb, Mb).
-
-stwa_star(K, M, K, M).
-stwa_star(Ka, Ma, Kb, Mb) :-
-    stwa(Ka, Ma, _, Kc, Mc),
-    stwa_star(Kc, Mc, Kb, Mb).
-
-ntwa_star(K, M, K, M).
-ntwa_star(Ka, Ma, Kb, Mb) :-
-    ntwa(Ka, Ma, _, Kc, Mc),
-    ntwa_star(Kc, Mc, Kb, Mb).
-
 falsehood(_) :-
     false.
 
@@ -155,3 +108,56 @@ truth(_) :-
     true.
 
 equal(_, A, A).
+
+%%% Node TWA
+
+ntwa(Ka, [Sa, I], O, Kb, [Sb, I]) :-
+    stwa(Ka, Sa, O, Kb, Sb).
+
+%%% Plus step -- one or more steps
+
+step_plus(Ka, [O], Kb) :-
+    step(Ka, O, Kb).
+step_plus(Ka, [O|Os], Kb) :-
+    step(Ka, O, Kc),
+    step_plus(Kc, Os, Kb).
+
+mtwa_plus(Ka, Ma, [O], Kb, Mb) :-
+    mtwa(Ka, Ma, O, Kb, Mb).
+mtwa_plus(Ka, Ma, [O|Os], Kb, Mb) :-
+    mtwa(Ka, Ma, O, Kc, Mc),
+    mtwa_plus(Kc, Mc, Os, Kb, Mb).
+
+stwa_plus(Ka, Ma, [O], Kb, Mb) :-
+    stwa(Ka, Ma, O, Kb, Mb).
+stwa_plus(Ka, Ma, [O|Os], Kb, Mb) :-
+    stwa(Ka, Ma, O, Kc, Mc),
+    stwa_plus(Kc, Mc, Os, Kb, Mb).
+
+ntwa_plus(Ka, Ma, [O], Kb, Mb) :-
+    ntwa(Ka, Ma, O, Kb, Mb).
+ntwa_plus(Ka, Ma, [O|Os], Kb, Mb) :-
+    ntwa(Ka, Ma, O, Kc, Mc),
+    ntwa_plus(Kc, Mc, Os, Kb, Mb).
+
+%% Star step -- zero or more steps
+
+step_star(K, [], K).
+step_star(Ka, [O|Os], Kb) :-
+    step(Ka, O, Kc),
+    step_star(Kc, Os, Kb).
+
+mtwa_star(K, M, [], K, M).
+mtwa_star(Ka, Ma, [O|Os], Kb, Mb) :-
+    mtwa(Ka, Ma, O, Kc, Mc),
+    mtwa_star(Kc, Mc, Os, Kb, Mb).
+
+stwa_star(K, M, [], K, M).
+stwa_star(Ka, Ma, [O|Os], Kb, Mb) :-
+    stwa(Ka, Ma, O, Kc, Mc),
+    stwa_star(Kc, Mc, Os, Kb, Mb).
+
+ntwa_star(K, M, [], K, M).
+ntwa_star(Ka, Ma, [O|Os], Kb, Mb) :-
+    ntwa(Ka, Ma, O, Kc, Mc),
+    ntwa_star(Kc, Mc, Os, Kb, Mb).

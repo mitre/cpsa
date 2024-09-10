@@ -45,6 +45,7 @@ predSym (Gen i) = (Gen (i + 1), "pred" ++ show i)
 
 data Term
     = Var Id
+    | Sym String
     | Const String
     | Num Int
     | Pair Int Int

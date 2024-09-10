@@ -61,12 +61,8 @@ compileStep k g cls act sym vs =
     where
       (g', k') = cloneId g k
       (g'', tvs) = cloneVars g' vs
-      step One =
-          PAtm ("step" ++ actSuffix One, [Var k, Const "_", Var k'])
-      step Plus =
-          PAtm ("step" ++ actSuffix Plus, [Var k, Var k'])
-      step Star =
-          PAtm ("step" ++ actSuffix Star, [Var k, Var k'])
+      step act =
+          PAtm ("step" ++ actSuffix act, [Var k, Sym "O", Var k'])
       twas = compileTwas act k k' tvs
              [PAtm (sym, Var k' : map (Var . snd) tvs)]
 
@@ -107,12 +103,6 @@ twa Node = "ntwa"
 twa Othr = error "Bad TWA sort"
 
 twaAtom :: Act -> Id -> Id -> Id -> Id -> Body
-twaAtom One k v k' v' =
-    PAtm (twa (idSort v) ++ actSuffix One,
-          [Var k, Var v, Const "_", Var k', Var v'])
-twaAtom Plus k v k' v' =
-    PAtm (twa (idSort v) ++ actSuffix Plus,
-          [Var k, Var v, Var k', Var v'])
-twaAtom Star k v k' v' =
-    PAtm (twa (idSort v) ++ actSuffix Star,
-          [Var k, Var v, Var k', Var v'])
+twaAtom act k v k' v' =
+    PAtm (twa (idSort v) ++ actSuffix act,
+          [Var k, Var v, Sym "O", Var k', Var v'])
