@@ -260,6 +260,10 @@ loadConjunction :: MonadFail m => Sig -> Pos -> Prot -> [Term] ->
                    SExpr Pos -> m Conj
 loadConjunction sig _ p kvars (L pos (S _ "and" : xs)) =
   loadConjuncts sig pos p kvars xs []
+loadConjunction sig _ p kvars (L pos (S _ "strand" : ss)) =
+  loadStrand sig pos p kvars ss
+loadConjunction sig _ p kvars (L pos (S _ "listener" : ss)) =
+  loadListener sig pos p kvars ss
 loadConjunction sig top p kvars x =
   do
     (pos, a) <- loadPrimary sig top p kvars x
@@ -268,10 +272,64 @@ loadConjunction sig top p kvars x =
 loadConjuncts :: MonadFail m => Sig -> Pos -> Prot -> [Term] ->
                  [SExpr Pos] -> Conj -> m Conj
 loadConjuncts _ _ _ _ [] rest = return (reverse rest)
+-- If the head is a strand formula treat it specially
+loadConjuncts sig _ p kvars ((L pos (S _ "strand" : ss)) : xs) rest =
+  do
+    posas <- loadStrand sig pos p kvars ss
+    loadConjuncts sig pos p kvars xs (posas ++ rest)
+-- If the head is a listener formula treat it specially
+loadConjuncts sig _ p kvars ((L pos (S _ "listener" : ss)) : xs) rest =
+  do
+    posas <- loadListener sig pos p kvars ss
+    loadConjuncts sig pos p kvars xs (posas ++ rest)
 loadConjuncts sig top p kvars (x : xs) rest =
   do
     (pos, a) <- loadPrimary sig top p kvars x
     loadConjuncts sig top p kvars xs ((pos, a) : rest)
+
+-- Load a strand formula
+loadStrand :: MonadFail m => Sig -> Pos -> Prot -> [Term] -> [SExpr Pos] -> m Conj
+loadStrand sig _ p kvars (S pos name : x : N _ h : vmaps) =
+  do
+    r <- lookupRole pos p name
+    s <- loadStrdTerm sig kvars x
+    case h <= 0 || h > length (rtrace r) of
+      True -> fail (shows pos "Bad length")
+      False ->
+        do
+          params <- loadVMaps sig pos p kvars r s h vmaps
+          return ((pos, Length r s (indxOfInt h)) : params)
+loadStrand _ pos _ _ _ = fail (shows pos "Bad strand formula")
+
+-- Load a listener formula
+loadListener :: MonadFail m => Sig -> Pos -> Prot -> [Term] -> [SExpr Pos] -> m Conj
+loadListener sig pos p kvars [S pos1 x, S pos2 y] =
+  do
+    let r = listenerRole p
+    v <- loadAlgChanTerm sig (rvars r) (S pos "x")
+    s <- loadStrdTerm sig kvars (S pos1 x)
+    t <- loadAlgChanTerm sig kvars (S pos2 y)
+    return [(pos1, Length r s (indxOfInt 2)), (pos2, Param r v 2 s t)]
+loadListener _ pos _ _ _ = fail (shows pos "Bad listener formula")
+
+loadVMaps :: MonadFail m => Sig -> Pos -> Prot -> [Term] ->
+             Role -> Term -> Int -> [SExpr Pos] -> m Conj
+loadVMaps _ _ _ _ _ _ _ [] = return []
+loadVMaps sig _ p kvars r s h ((L pos [S var rv, sv]) : vmaps) =
+  do
+    v <- loadAlgChanTerm sig (rvars r) (S var rv)
+    t <- loadAlgChanTerm sig kvars sv
+    case isVar v of
+      False -> fail (shows pos ("Bad parameter -- not a variable " ++ (show v)))
+      True ->
+        case firstOccurs v r of
+          Just i ->
+            do
+              rest <- loadVMaps sig pos p kvars r s h vmaps
+              return ((pos, Param r v (i + 1) s t) : rest)
+          Nothing ->
+            fail (shows pos ("parameter " ++ rv ++ " not in role " ++ rname r))
+loadVMaps _ pos _ _ _ _ _ _ = fail (shows pos "Bad variable map")
 
 -- Load the atomic formulas
 
