@@ -3,15 +3,27 @@
 # Skeleton split
 # Paul D. Rowe -- October 2024
 
+# Two modes depending on the number of arguments.
+
+# Mode 1:
 # Extracts the lemmas of protocols in a CPSA source file,
 # writing a new file containing only the protocols with 
-# the lemmas removed, and each lemma stated as a defgoal.
+# the deflemmas removed, and each lemma stated as a defgoal.
 
 # All other defgoals and defskeletons of the source file 
 # are dropped. 
 
 # If the source file is root.json, the result is written
 # to root_lemmas.json. 
+
+# Mode 2:
+# Takes a CPSA source file with deflemmas and the output 
+# of cpsa4goalsat when the lemmas are treated as defgoals. 
+# Relabels each lemma shown to be true as a defrule, and 
+# deletes all lemmas with counterexamples. If any lemmas
+# were found not to hold, this is recorded in the herald. 
+
+# The result is written to root_lemmas_as_rules.json
 
 import sys
 import os.path
