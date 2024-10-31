@@ -6,6 +6,6 @@ for i in $TST/*.tst
 do
     echo $i
     basen=`basename $i .tst`
-    cabal run cpsa4db -- -o $TST/$basen.db $i
-    cabal run cpsa4dbprolog $TST/$basen.db | sort > $TST/$basen.pl
+    cabal run cpsa4db -v0 -- -o $TST/$basen.db $i
+    cabal run cpsa4dbprolog $TST/$basen.db -v0 | sort > $TST/$basen.pl
 done    

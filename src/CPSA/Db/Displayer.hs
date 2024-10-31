@@ -17,186 +17,43 @@ import CPSA.Db.Loader (strip, massoc, loadStrandMap)
 import CPSA.Db.Structs
 import CPSA.Db.Tree
 
+import Text.Printf (printf)
+
 -- Print forest
 display :: Handle -> Int -> Forest -> IO ()
-display h m f = mapM_ (root h m) f
+display h m f = mapM_ (writeSExpr h m) (concatMap rootFacts f)
 
-root :: Handle -> Int -> Tree -> IO ()
-root h m t =
-    do
-      hPutStrLn h ""
-      let x = L () [S () "root", N () (label $ vertex t)]
-      writeSExpr h m x
-      tree h m t t
+rootFacts :: Tree -> [SExpr ()]
+rootFacts t = L () [S () "root", S () (displaySkel $ label $ vertex t)] :
+    treeFacts t
 
-tree :: Handle -> Int -> Tree -> Tree -> IO ()
-tree h m r t =
-    do
-      let skel = vertex t
-      let l = label skel
-      body h m l (alist skel)
-      mapM_ (displayTrace h m skel) (zip [0..] (ktraces skel))
-      mapM_ (child h m r skel) (children t)
-      mapM_ (dup h m r skel) (seen $ vertex t)
+treeFacts :: Tree -> [SExpr ()]
+treeFacts t = skeletonFacts (vertex t)
+    ++ concatMap treeFacts (children t)
+    ++ concatMap (stepFacts (vertex t) . vertex) (children t)
 
-body :: Handle -> Int -> Int -> [SExpr Pos] -> IO ()
-body h m l xs =
-    do
-      let alist = map strip xs
-      let x = L () [S () "skel", N () l, L () alist]
-      writeSExpr h m x
-      displayItems h m "uniq" l (massoc "uniq-orig" alist)
-      displayItems h m "ugen" l (massoc "uniq-gen" alist)
-      displayItems h m "non" l (massoc "non-orig" alist)
-      displayItems h m "pnon" l (massoc "pen-non-orig" alist)
-      displayItems h m "conf" l (massoc "conf" alist)
-      displayItems h m "auth" l (massoc "conf" alist)
-      displayLists h m "prec" l (massoc "precedes" alist)
-      displayLists h m "leads-to" l (massoc "leads-to" alist)
-      displayItems h m "fact" l (massoc "facts" alist)
-      displayItems h m "unrealized" l (massoc "unrealized" alist)
-      displayKey h m "shape" l (massoc "shape" alist)
-      displayKey h m "dead" l (massoc "dead" alist)
+skeletonFacts :: Skel -> [SExpr ()]
+skeletonFacts s = L () [S () "skeleton", S () (displaySkel $ label s)] : []
+                    -- TODO: add remaining skeleton facts
 
-displayItems :: Handle -> Int -> String -> Int -> Maybe [SExpr ()] -> IO ()
-displayItems _ _ _ _ Nothing = return ()
-displayItems h m key l (Just items) =
-    mapM_ f items
-    where
-      f item =
-          do
-            let x = L () [S () key, N () l, item]
-            writeSExpr h m x
 
-displayLists :: Handle -> Int -> String -> Int -> Maybe [SExpr ()] -> IO ()
-displayLists _ _ _ _ Nothing = return ()
-displayLists h m key l (Just items) =
-    mapM_ f items
-    where
-      f (L () list) =
-          do
-            let x = L () (S () key : N () l : list)
-            writeSExpr h m x
-      f x = fail (shows (annotation x) "Bad list")
+-- traceFacts :: Trace -> [SExpr ()]
 
-displayKey :: Handle -> Int -> String -> Int -> Maybe [SExpr ()] -> IO ()
-displayKey _ _ _ _ Nothing = return ()
-displayKey h m key l (Just _) =
-    do
-      let x = L () [S () key, N () l]
-      writeSExpr h m x
+stepFacts :: Skel -> Skel -> [SExpr ()]
+stepFacts from to = let stepSym = S () (displayStep (label from) (label to)) in
+                    L () [S () "step", S () (displaySkel $ label from),
+                            stepSym,
+                            S () (displaySkel $ label to)] :
+                    case massoc "operation" (alist to) of
+                        Just (op:_) -> [L () [strip op, stepSym]] -- TODO: match on op and use specific arg data
+                        _ -> []
 
-displayTrace :: Handle -> Int -> Skel -> (Int, Trace) -> IO ()
-displayTrace h m k strace =
-      mapM_ (displayRoleMatch h m k strace) (roles $ prot k)
 
-displayRoleMatch :: Handle -> Int -> Skel -> (Int, Trace) -> Role -> IO ()
-displayRoleMatch h m k (s, trace) role =
-    case matchTraces (rtrace role) trace (kgen k, emptyEnv) of
-      [] -> return ()
-      (_, e) : _->
-          do
-            let l = label k
-            let len = length trace
-            let x = L () [S () "l", N () l, Q () (rname role),
-                          N () s, N () len]
-            writeSExpr h m x
-            mapM_ (displayParam h m l role s)
-                    (displayEnv (rctx role) (kctx k) e)
+displaySkel :: Int -> String
+displaySkel = printf "skel_%d"
 
-displayParam :: Handle -> Int -> Int -> Role -> Int -> SExpr () -> IO ()
-displayParam h m l role s (L () [S () param, val]) =
-    do
-      let x = L () [S () "p", N () l, Q () (rname role),
-                    Q () param, N () s, val]
-      writeSExpr h m x
-displayParam _ _ _ role _ _ =
-    fail ("Bad parameter in role " ++ rname role)
+-- displayStrand :: Int -> Int -> String
+-- displayStrand = printf "strand_%d_%d"
 
-child :: Handle -> Int -> Tree -> Skel -> Tree -> IO ()
-child h m r k t =
-    do
-      let l = label k
-      let lab = label $ vertex t
-      let x = L () [S () "child", N () l, N () lab]
-      writeSExpr h m x
-      case massoc "operation" (alist $ vertex t) of
-        Just op ->
-            do
-              let y = L () [S () "step", N () l,
-                            L () (map strip op),
-                            N () lab]
-              writeSExpr h m y
-              case massoc "strand-map" (alist $ vertex t) of
-                Just xs@(_ : _) ->
-                    do
-                      mapping <- mapM loadStrandMap xs
-                      twa h m k (vertex t) (map strip op) mapping
-                _ -> return ()
-              tree h m r t
-        _ ->
-            do
-              let y = L () [S () "step", N () l, L () [], N () lab]
-              writeSExpr h m y
-              tree h m r t
-
-dup :: Handle -> Int -> Tree -> Skel -> (Int, [SExpr a], [Int]) -> IO ()
-dup _ _ _ k (lab, _, _) | label k == lab = return () -- Ignore self loops
-dup h m r k (lab, op, mapping) =
-    do
-      let l = label k
-      let dop = map strip op
-      let x = L () [S () "step", N () l, L () dop, N () lab]
-      writeSExpr h m x
-      case findSkel lab r of
-        Nothing ->
-            hPutStrLn h ("; Cannot find " ++ show lab)
-        Just k' ->
-            do
-              hPutStrLn h ("; Seen child " ++ show l ++
-                           " -> " ++ show (label k'))
-              twa h m k k' dop mapping
-
-twa :: Handle -> Int -> Skel -> Skel -> [SExpr ()] -> [Int] -> IO ()
-twa h m k k' op@(S () "generalization" : _) mapping =
-    rtwa h m k k' (L () op) mapping
-twa h m k k' op mapping =
-    ftwa h m k k' (L () op) mapping
-
-ftwa :: Handle -> Int -> Skel -> Skel -> SExpr () -> [Int] -> IO ()
-ftwa h m k k' op mapping =
-    case mtwa k k' mapping of
-      Nothing -> hPutStrLn h "; No forward mapping"
-      Just env ->
-          do
-            let l = label k
-            let l' = label k'
-            mapM_ (strands h m l l' op) (zip [0..] mapping)
-            mapM_ (bindings h m l l' op) env
-
-rtwa :: Handle -> Int -> Skel -> Skel -> SExpr () -> [Int] -> IO ()
-rtwa h m k k' op mapping =
-    case mtwa k' k mapping of
-      Nothing -> hPutStrLn h "; No reverse mapping"
-      Just env ->
-          do
-            let l = label k
-            let l' = label k'
-            mapM_ (strands h m l l' op) (zip mapping [0..])
-            mapM_ (bindings h m l l' op) (map swap env)
-    where
-      swap (x, y) = (y, x)
-
-strands :: Handle -> Int -> Int -> Int -> SExpr () -> (Int, Int) -> IO ()
-strands h m l l' op (s, s') =
-    do
-      let x = L () [S () "stwa", N () l, N () s, op,
-                    N () l', N () s']
-      writeSExpr h m x
-
-bindings :: Handle -> Int -> Int -> Int -> SExpr () ->
-            (SExpr (), SExpr ()) -> IO ()
-bindings h m l l' op (t, t') =
-    do
-      let x = L () [S () "mtwa", N () l, t, op, N () l', t']
-      writeSExpr h m x
+displayStep :: Int -> Int -> String
+displayStep = printf "step_%d_%d"
