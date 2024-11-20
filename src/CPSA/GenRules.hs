@@ -525,7 +525,7 @@ shearsRule sig g =
       (g, [z0,z1,z2]) ->
           case sortedVarsOfNames sig g "indx" ["i0","i1","i2"] of
             (g, [i0,i1,i2]) ->
-                (g, (Rule { rlname = "shearsRule",
+                (g, (Rule { rlname = "discreteAfter",
                         rlgoal =
                             Goal
                             {uvars = [z0,z1,z2,i0,i1,i2],
@@ -554,7 +554,7 @@ invShearsRule sig g =
       (g, [z0,z1,z2]) ->
           case sortedVarsOfNames sig g "indx" ["i0","i1","i2"] of
             (g, [i0,i1,i2]) ->
-                (g, (Rule { rlname = "invShearsRule",
+                (g, (Rule { rlname = "discreteBefore",
                         rlgoal =
                             Goal
                             {uvars = [z0,z1,z2,i0,i1,i2],
