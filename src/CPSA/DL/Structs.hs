@@ -73,9 +73,10 @@ fv (Exists fv _ _) = fv
 fv (Diamond fv _ _) = fv
 
 data Act
-    = One
-    | Plus
-    | Star
+    = AAtom String [Term]
+    | Cat [Act]
+    | Cup [Act]
+    | Star Act
       deriving Show
 
 data Query = Query String [Id] Formula

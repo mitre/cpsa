@@ -21,3 +21,5 @@ doc/src/*.lof
 doc/src/*.idx
 doc/src/*.ilg
 doc/src/*.ind
+play
+show.sh

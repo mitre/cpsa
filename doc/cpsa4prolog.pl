@@ -1,5 +1,8 @@
 % -*- mode: prolog -*-
 
+%% ['tmp.pl', './doc/cpsa4prolog.pl', 'query.pl'].
+%% swipl tmp.pl ./doc/cpsa4prolog.pl query.pl
+
 %% Library of predicates for analyzing cpsa4dbprolog output
 
 %% The cpsa4db and cpsa4dbprolog programs are used to analyze the
@@ -43,121 +46,28 @@
 %% For the path predicate, the operation field information is not
 %% used.
 
-path(L, [L]) :-
-    root(L).
+dot(_).
+tt(K) :- skel(K).
+ff(_) :- fail.
 
-path(L, [L|Ls]) :-
-    step(P, _, L),
-    path(P, Ls).
+mtwa(M,_,M).
+otwa(X,_,X).
 
-%% A derivation tree is really a directed acyclic graph.  If the links
-%% used for seen children are removed, the derivation tree becomes a
-%% true tree--every child has exactly one parent.  The child/2
-%% predicate encodes that relation.  It is used to traverse the tree
-%% without revisiting a skeleton twice.  One can use it to count the
-%% number of skeletons in a tree, for example.  Here we use it to find
-%% the terminal skeletons without deplicates.  A terminal node is one
-%% that has no successors.
+any_generalization(K) :- generalization(K,_).
+any_encryption_test(K) :- encryption_test(K,_).
+any_nonce_test(K) :- nonce_test(K,_).
+any_channel_test(K) :- channel_test(K,_).
 
-terminal(L) :-
-    step(L, _, _), !,
-    fail.
-terminal(_).
+pprint_solns([]).
+pprint_solns([H|T]) :- pprint_soln(H), pprint_solns(T).
 
-acc(W, W).
-acc(W, X) :-
-    child(W, Y),
-    acc(Y, X).
+pprint_soln([H|T]) :- format('~w |=\n', [H]),
+    labels(L), pprint_kvs(L, T).
 
-%% A query to find the terminal skeletons using these predicates follows.
+pprint_kvs([KH|KT],[SH|ST]) :- format('    ~s = ~w\n', [KH, SH]),
+    pprint_kvs(KT,ST).
+pprint_kvs([],[]) :- write('\n').
 
-%% ask(L) :-
-%%    root(W), acc(W, L), terminal(L).
+labels(['t','m']).
 
-%% SKELETON ASSOCIATION LISTS
-
-%% The body of a skeleton is available as an association list.  It can
-%% be queried using has_key_val(L, K, V), where L is a skeleton label,
-%% K is a key, and V is its value.
-
-has_key_val(L, K, V) :-
-    skel(L, A),
-    assoc(A, K, V).
-
-assoc([[K | V] | _], K, V).
-assoc([_ | A], K, V) :-
-    assoc(A, K, V).
-
-%% A query to find the labels of skeletons that are not eventually
-%% dead follows.
-
-%% ask(L) :-
-%%     root(W), acc(W, L), acc(L, X), terminal(X), \+has_key_val(X, dead, _).
-
-%% ask_all(Ls) :-
-%%     findall(L, ask(L), Ls).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Clauses for the Dynamic Logic Runtime
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-falsehood(_) :-
-    false.
-
-truth(_) :-
-    true.
-
-equal(_, A, A).
-
-%%% Node TWA
-
-ntwa(Ka, [Sa, I], O, Kb, [Sb, I]) :-
-    stwa(Ka, Sa, O, Kb, Sb).
-
-%%% Plus step -- one or more steps
-
-step_plus(Ka, [O], Kb) :-
-    step(Ka, O, Kb).
-step_plus(Ka, [O|Os], Kb) :-
-    step(Ka, O, Kc),
-    step_plus(Kc, Os, Kb).
-
-mtwa_plus(Ka, Ma, [O], Kb, Mb) :-
-    mtwa(Ka, Ma, O, Kb, Mb).
-mtwa_plus(Ka, Ma, [O|Os], Kb, Mb) :-
-    mtwa(Ka, Ma, O, Kc, Mc),
-    mtwa_plus(Kc, Mc, Os, Kb, Mb).
-
-stwa_plus(Ka, Ma, [O], Kb, Mb) :-
-    stwa(Ka, Ma, O, Kb, Mb).
-stwa_plus(Ka, Ma, [O|Os], Kb, Mb) :-
-    stwa(Ka, Ma, O, Kc, Mc),
-    stwa_plus(Kc, Mc, Os, Kb, Mb).
-
-ntwa_plus(Ka, Ma, [O], Kb, Mb) :-
-    ntwa(Ka, Ma, O, Kb, Mb).
-ntwa_plus(Ka, Ma, [O|Os], Kb, Mb) :-
-    ntwa(Ka, Ma, O, Kc, Mc),
-    ntwa_plus(Kc, Mc, Os, Kb, Mb).
-
-%% Star step -- zero or more steps
-
-step_star(K, [], K).
-step_star(Ka, [O|Os], Kb) :-
-    step(Ka, O, Kc),
-    step_star(Kc, Os, Kb).
-
-mtwa_star(K, M, [], K, M).
-mtwa_star(Ka, Ma, [O|Os], Kb, Mb) :-
-    mtwa(Ka, Ma, O, Kc, Mc),
-    mtwa_star(Kc, Mc, Os, Kb, Mb).
-
-stwa_star(K, M, [], K, M).
-stwa_star(Ka, Ma, [O|Os], Kb, Mb) :-
-    stwa(Ka, Ma, O, Kc, Mc),
-    stwa_star(Kc, Mc, Os, Kb, Mb).
-
-ntwa_star(K, M, [], K, M).
-ntwa_star(Ka, Ma, [O|Os], Kb, Mb) :-
-    ntwa(Ka, Ma, O, Kc, Mc),
-    ntwa_star(Kc, Mc, Os, Kb, Mb).
+query :- findall([X,M,T], test_query(X,M,T) ,L), pprint_solns(L).

@@ -2,6 +2,7 @@ module CPSA.DL.Compiler where
 
 import CPSA.DL.Structs
 import CPSA.DL.Prolog
+import Data.Maybe (mapMaybe)
 
 compileQuery :: MonadFail m => Id -> Gen -> Query -> m (Gen, [Clause])
 compileQuery k g (Query sym ids f) =
@@ -29,12 +30,51 @@ compileForm k g (Or _ fs) =
       return (g', Disj bs, cls)
 compileForm k g (Exists _  _ f) =
     compileForm k g f
-compileForm k g (Diamond _ act f) =
+compileForm k g (Diamond vs act f) =
     do
       (g', b, cls) <- compileForm k g f
-      let vs = fv f
-      let (g'', sym, cl) = makeClause k g' vs b
-      return $ compileStep k g'' (cl : cls) act sym vs
+      let (g'', sym') = predSym g'
+      let (g''', sym, cl) = makeClause k g'' vs b
+      let (g'''', connCl) = connectByAct g''' act sym sym' k vs
+      return (g'''', PAtm (sym', map Var (k : vs)), cl : cls ++ connCl)
+
+connectByAct :: Gen -> Act -> String -> String -> Id -> [Id] -> (Gen, [Clause])
+-- Atomic jumps
+connectByAct g (AAtom sym ts) pred1 pred2 k fv =
+    let (g', k') = cloneId g k
+        (g'', fvm) = cloneVars g' fv -- "free variable map"
+        (g''', s) = freshId g'' "O" Othr -- step variable
+        fv' = map snd fvm in
+    (g''', [Clause ((pred2, map Var (k':fv')) , [Conj (
+      PAtm ("step", map Var [k',s,k]) : -- NOTE: this is necessary
+      PAtm (pred1, map Var (k:fv)) :
+      PAtm (sym, Var s: ts) :
+      mapMaybe (twaPred s) fvm
+    )])])
+
+-- \epsilon jumps
+connectByAct g (Cat []) pred1 pred2 k fv =
+    let vs = map Var (k:fv) in
+      (g, [Clause ((pred2, vs) , [PAtm (pred1, vs)])])
+-- Concatination makes new preds
+connectByAct g (Cat [act]) pred1 pred2 k fv = connectByAct g act pred1 pred2 k fv
+connectByAct g (Cat (a:as)) pred1 pred2 k fv =
+    let (g', pred3) = predSym g
+        (g'', cl) = connectByAct g' a pred1 pred3 k fv
+        (g''', cl') = connectByAct g'' (Cat as) pred3 pred2 k fv in
+    (g''', cl ++ cl')
+-- no jump
+connectByAct g (Cup []) _ _ _ _ = (g, [])
+-- union adds all possible connections
+connectByAct g (Cup (a:as)) pred1 pred2 k fv =
+  let (g', cl) = connectByAct g a pred1 pred2 k fv
+      (g'', cl') = connectByAct g' (Cup as) pred1 pred2 k fv in
+  (g'', cl ++ cl')
+-- star adds a self-connection and an epsilon jump
+connectByAct g (Star act) pred1 pred2 k fv =
+  let (g', cl) = connectByAct g act pred1 pred1 k fv
+      (g'', cl') = connectByAct g' (Cat []) pred1 pred2 k fv in
+  (g'', cl ++ cl')
 
 -- Compile a list of formulas.
 compileForms :: MonadFail m => Id -> Gen -> [Formula] ->
@@ -54,17 +94,17 @@ makeClause k g vs body =
     where
       (g', sym) = predSym g
 
-compileStep :: Id -> Gen -> [Clause] -> Act ->
-               String -> [Id] -> (Gen, Body, [Clause])
-compileStep k g cls act sym vs =
-    (g'', Conj (step act : twas), cls)
-    where
-      (g', k') = cloneId g k
-      (g'', tvs) = cloneVars g' vs
-      step act =
-          PAtm ("step" ++ actSuffix act, [Var k, Sym "O", Var k'])
-      twas = compileTwas act k k' tvs
-             [PAtm (sym, Var k' : map (Var . snd) tvs)]
+-- compileStep :: Id -> Gen -> [Clause] -> Act ->
+--                String -> [Id] -> (Gen, Body, [Clause])
+-- compileStep k g cls act sym vs =
+--     (g'', Conj (step act : twas), cls)
+--     where
+--       (g', k') = cloneId g k
+--       (g'', tvs) = cloneVars g' vs
+--       step act =
+--           PAtm ("step" ++ actSuffix act, [Var k, Sym "O", Var k'])
+--       twas = compileTwas act k k' tvs
+--              [PAtm (sym, Var k' : map (Var . snd) tvs)]
 
 cloneVars :: Gen -> [Id] -> (Gen, [(Id, Id)])
 cloneVars g [] = (g, [])
@@ -82,19 +122,12 @@ cloneVar g v =
       Node -> cloneId g v
       Othr -> (g, v) -- Don't clone integers
 
-compileTwas :: Act -> Id -> Id -> [(Id, Id)] -> [Body] -> [Body]
-compileTwas _ _ _ [] bs = bs
-compileTwas act k k' ((v, v') : tvs) bs =
-    case idSort v of
-      Othr -> bs'
-      _ -> twaAtom act k v k' v' : bs'
-    where
-      bs' = compileTwas act k k' tvs bs
 
-actSuffix :: Act -> String
-actSuffix One = ""
-actSuffix Plus = "_plus"
-actSuffix Star = "_star"
+-- step -> var pair -> twa pred
+twaPred :: Id -> (Id,Id) -> Maybe Body
+twaPred s (v,v') =  case idSort v of
+  Othr -> Nothing
+  _ -> Just (PAtm (twa $ idSort v, map Var [v, s, v']))
 
 twa :: Sort -> String
 twa Mesg = "mtwa"
@@ -102,7 +135,3 @@ twa Strd = "stwa"
 twa Node = "ntwa"
 twa Othr = error "Bad TWA sort"
 
-twaAtom :: Act -> Id -> Id -> Id -> Id -> Body
-twaAtom act k v k' v' =
-    PAtm (twa (idSort v) ++ actSuffix act,
-          [Var k, Var v, Sym "O", Var k', Var v'])

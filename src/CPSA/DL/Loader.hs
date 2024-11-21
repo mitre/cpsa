@@ -16,7 +16,7 @@ loadQuery g (L _ (S _ "defquery" :
     do
       (g', env) <- loadDecls g decls
       (g'', body) <- loadForms g' env (x : xs)
-      let free = nub (concat (map fv body))
+      let free = nub (concatMap fv body)
       let name' = map toUnderScore name
       return (g'', Query name' (map snd env) (And free body))
 loadQuery _ x =
@@ -54,11 +54,11 @@ loadForm g env (L _ [S _ "not", x]) =
 loadForm g env (L _ (S _ "and" : x : xs)) =
     do
       (g', fs) <- loadForms g env (x : xs)
-      return (g', And (nub (concat (map fv fs))) fs)
+      return (g', And (nub (concatMap fv fs)) fs)
 loadForm g env (L _ (S _ "or" : x : xs)) =
     do
       (g', fs) <- loadForms g env (x : xs)
-      return (g', Or (nub (concat (map fv fs))) fs)
+      return (g', Or (nub (concatMap fv fs)) fs)
 loadForm g env (L _ [S _ "exists", L _ decls, x]) =
     do
       (g', env') <- loadDecls g decls
@@ -67,9 +67,9 @@ loadForm g env (L _ [S _ "exists", L _ decls, x]) =
       return (g'', Exists (fv f \\ ids) ids f)
 loadForm g env (L _ [S _ "diamond", act, x]) =
     do
-      a <- loadAct act
+      a <- loadAct env act
       (g', f) <- loadForm g env x
-      return (g', Diamond (fv f) a f)
+      return (g', Diamond (nub (fva a ++ fv f)) a f)
 -- Derived forms
 loadForm g env (L pos [S _ "forall", decls, x]) =
     loadForm g env (L pos [S pos "not",
@@ -97,18 +97,39 @@ loadForms g env (x : xs) =
       (g'', fs) <- loadForms g' env xs
       return (g'', f : fs)
 
-loadAct :: MonadFail m => SExpr Pos -> m Act
-loadAct (S _ "one") =
-    return One
-loadAct (S _ "plus") =
-    return Plus
-loadAct (S _ "star") =
-    return Star
-loadAct x =
+loadAct :: MonadFail m => Env -> SExpr Pos -> m Act
+loadAct _ (S _ "dot") =
+    return (AAtom "dot" [])
+loadAct env (L _ ((S _ "cat"): as)) =
+    do
+        asl <- loadActs env as
+        return (Cat asl)
+loadAct env (L _ ((S _ "cup"): as)) =
+    do
+        asl <- loadActs env as
+        return (Cup asl)
+loadAct env (L pos [S _ "plus", a]) =
+    loadAct env (L pos [S pos "cat", a ,L pos [S pos "star", a]])
+loadAct env (L _ [S _ "star", a]) =
+    do
+        act <- loadAct env a
+        return (Star act)
+loadAct env (L _ ((S _ pred): args)) =
+    do
+        argsl <- loadTerms env args
+        return (AAtom pred argsl)
+loadAct _ x =
     fail (shows (annotation x) " Bad action")
 
+loadActs :: MonadFail m => Env -> [SExpr Pos] -> m [Act]
+loadActs _ [] = return []
+loadActs env (x:xs) = do
+    xl <- loadAct env x
+    xsl <- loadActs env xs
+    return (xl:xsl)
+
 loadTerms :: MonadFail m => Env -> [SExpr Pos] -> m [Term]
-loadTerms e xs = mapM (loadTerm e) xs
+loadTerms e = mapM (loadTerm e)
 
 loadTerm :: MonadFail m => Env -> SExpr Pos -> m Term
 loadTerm e (S pos name) =
@@ -132,6 +153,12 @@ getFree (Var id : ts) =
     id : getFree ts
 getFree (_ : ts) =
     getFree ts
+
+fva :: Act -> [Id]
+fva (AAtom _ ts) = getFree ts
+fva (Cat as) = nub (concatMap fva as)
+fva (Cup as) = nub (concatMap fva as)
+fva (Star a) = fva a
 
 toPVar :: String -> String
 toPVar (c : s) = map toUnderScore $ toUpper c : s

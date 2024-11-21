@@ -7,12 +7,12 @@ simplify (Query name args f) =
     Query name args (simpForm f)
 
 simpForm :: Formula -> Formula
-simpForm f@(Atom _ _ _) =
+simpForm f@Atom {} =
     f
 simpForm (Not _ (Not _ f)) =
     simpForm f
 simpForm (Not vs f) =
-    (Not vs (simpForm f))
+    Not vs (simpForm f)
 simpForm (And _ [f]) =
     simpForm f
 simpForm (And vs fs) =
