@@ -255,19 +255,14 @@ loadLiberalVars sig pos prot vars _ x =
     return as
 
 -- Load a conjunction of atomic formulas
-
 loadConjunction :: MonadFail m => Sig -> Pos -> Prot -> [Term] ->
                    SExpr Pos -> m Conj
 loadConjunction sig _ p kvars (L pos (S _ "and" : xs)) =
   loadConjuncts sig pos p kvars xs []
-loadConjunction sig _ p kvars (L pos (S _ "strand" : ss)) =
-  loadStrand sig pos p kvars ss
-loadConjunction sig _ p kvars (L pos (S _ "listener" : ss)) =
-  loadListener sig pos p kvars ss
 loadConjunction sig top p kvars x =
   do
-    (pos, a) <- loadPrimary sig top p kvars x
-    return [(pos, a)]
+    posa <- loadConjuncts sig top p kvars [x] []
+    return posa
 
 loadConjuncts :: MonadFail m => Sig -> Pos -> Prot -> [Term] ->
                  [SExpr Pos] -> Conj -> m Conj
