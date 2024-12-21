@@ -176,8 +176,8 @@ addInstOrigs (nr, ar, ur, ug, cf, au, ab) i =
      foldl (flip adjoin) ar $ inheritRpnon i,
      foldl (flip adjoin) ur $ inheritRunique i,
      foldl (flip adjoin) ug $ inheritRuniqgen i,
-     foldl (flip adjoin) au $ inheritRconf i,
-     foldl (flip adjoin) cf $ inheritRauth i,
+     foldl (flip adjoin) cf $ inheritRconf i,
+     foldl (flip adjoin) au $ inheritRauth i,
      foldl (flip adjoin) ab $ inheritRabsent i)
 
 mkPrec :: [(Term, Sid)] -> (Pos, AForm) -> [Pair] -> [Pair]
