@@ -33,8 +33,12 @@ security goals appears in Table~\ref{tab:goal_syntax}.
     goal&$\leftarrow$&(\sym{defgoal} id sentence+ alist)
     \\ sentence&$\leftarrow$&(\sym{forall} (gvdecl$\ast$) implication)
     \\ gvdecl&$\leftarrow$&(id+ sort)~$\mid$~(id+ \sym{strd})~$\mid$~(id+ \sym{indx})
+    \\ vmap&$\leftarrow$&(id id)
     \\ implication&$\leftarrow$&(\sym{implies} conjunction conclusion)
-    \\ conjunction&$\leftarrow$&atomic~$\mid$~(\sym{and} atomic+)
+    %\\ conjunction&$\leftarrow$&atomic~$\mid$~(\sym{and} atomic+)
+    \\ conjunction&$\leftarrow$&conjunct~$\mid$~(\sym{and} conjunct+)
+    \\ conjunct&$\leftarrow$&atomic~$\mid$~(\sym{strand} id strdvar integer (vmap$\ast$))%~$\mid$~(\sym{listener} id)
+    \\ &$\mid$& (\sym{listener} strdvar id)
     \\ conclusion&$\leftarrow$&(\sym{false})~$\mid$~existential
     \\ &$\mid$& (\sym{or} existential+)
     \\ existential&$\leftarrow$&conjunction~$\mid$~(\sym{exists} (gvdecl$\ast$) conjunction)
@@ -515,7 +519,86 @@ The program \texttt{cpsa4sas}, discussed in the next section, can be
 used to generate a formula with an antecedent such that the input
 skeleton is the characteristic skeleton of the antecedent.
 
-\subsection{Shape Analysis Sentences}\label{sec:sas}
+\section{Syntactic Abbreviations}\label{sec:var syntax}
+Section~\ref{sec:semantics} described how {\cpsa} extracts
+
+\begin{quote}
+\begin{verbatim}
+(defstrand init 3 (a a) (b b) (n1 n1) (n2 n2))
+\end{verbatim}
+\end{quote}
+from the following conjunction of facts
+\begin{quote}
+\begin{verbatim}
+(and (p "init" z0 3)
+  (p "init" "n1" z0 n1) (p "init" "b" z0 b)).
+\end{verbatim}
+\end{quote}
+
+Using a conjunction of facts to represent a single \texttt{defstrand}
+is convenient for defining and implementing a clear semantics, however
+it can be quite cumbersome and error prone to specify these
+conjunctions. We therefore also provide support for syntactic sugar in
+the goal language to allow users to represent these conjunctions in a
+manner much closer to the \texttt{defstrand} form found in a
+skeleton. In particular, the user can write
+
+\begin{quote}
+\begin{verbatim}
+(strand init z0 3 (n1 n1) (b b))
+\end{verbatim}
+\end{quote}
+as a single conjunct in a formula, and {\cpsa} will ingest it with the
+same interpretation as if the user had entered
+\begin{quote}
+\begin{verbatim}
+(and (p "init" z0 3)
+  (p "init" "n1" z0 n1) (p "init" "b" z0 b)).
+\end{verbatim}
+\end{quote}
+
+Thus the goal in Fig.~\ref{fig:ns init} could therefore be written as
+follows instead:
+
+\begin{quote}
+\begin{verbatim}
+(defgoal ns
+  (forall ((b name) (n1 text) (z0 strd))
+    (implies
+     (and (strand init z0 3 (n1 n1) (b b))
+      (non (privk b)) (uniq n1))
+     (exists ((z1 node))
+      (strand resp z1 2 (b b)))))).
+\end{verbatim}
+\end{quote}
+
+This representation has the benefit of being syntactically quite close
+to the skeleton representation, and therefore the connection is more
+visually obvious to the user. Notice the crucial difference that the
+\texttt{(strand  \ldots)} form includes a strand variable
+after the name of the role. While such a variable is not needed for
+skeletons, it is required in formulas to allow other facts to
+reference the strand it represents.
+
+We also provide a similar abbreviation for listener strands. Instead
+of writing
+
+\begin{quote}
+\begin{verbatim}
+(and (p "" z0 1) (p "" "x" z0 n1))
+\end{verbatim}
+\end{quote}
+we can write the following instead
+\begin{quote}
+\begin{verbatim}
+(listener z0 n1).
+\end{verbatim}
+\end{quote}
+
+These abbreviations can be used both in goals and in rules (described
+below in Section~\ref{sec: rules}).
+
+\section{Shape Analysis Sentences}\label{sec:sas}
 
 A shape analysis sentence expresses all that can be learned from a run
 of {\cpsa} as a security goal.  If a security goal can be derived from
@@ -567,6 +650,11 @@ theorem-proving using shape analysis sentences is rarely employed.
 It's clumsy and it requires too much expertise.  The main use of
 \texttt{cpsa4sas} is for generating a formula that is edited to become
 a desired security goal.
+
+In general, {\cpsa} will not use the syntactic abbreviations of the
+previous section in its output, preferring instead the fully
+elaborated conjunction of facts. So the shape analysis sentences will
+not contain these abbreviations.
 
 \section{Rules}\label{sec: rules}
 
