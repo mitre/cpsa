@@ -840,6 +840,7 @@ rules it has generated automatically from rules that were explicitly
 written by the specifier, as described in Section~\ref{sec: rules}.
 
 Finally, the third kind of rule concerns \emph{critical sections}.
+These are generated automatically for each state segment.  
 %
 \begin{figure}\small
 %
@@ -853,11 +854,10 @@ Finally, the third kind of rule concerns \emph{critical sections}.
      (stor ls (door-state d (closed o)))
      (send (enc "up" k)))
     (auth ch)
-    (critical-sections (1 4))
     (facts (same-dev ls lk)))
 \end{verbatim}
 %
-  \caption{Critical section declaration}
+  \caption{State segments are critical sections}
   \label{fig:critical:section}
 \end{figure}
 %
@@ -880,19 +880,16 @@ Finally, the third kind of rule concerns \emph{critical sections}.
   \label{fig:critical:section:rules}
 \end{figure}
 %
-A critical section declaration in the definition of a role takes the
-form \texttt{(critical-sections (i j))}, where the trace must have a
-state segment that starts at or before event \emph{i} and ends at or
-after event $j$, where these are 0-based indices.  It implies that any
-node that precedes one of the load events must precede all of them.
-Any node that follows one of the store events must follow all of them.
-Thus for instance in Fig.~\ref{fig:critical:section}, the load events
-at indices 1, 2 and the store events at indices 3, 4 occur with
-transaction-like atomicity.  This declaration would cause {\cpsa} to
-generate the rules in Fig.~\ref{fig:critical:section:rules}.  They are
-of value only when the state segment has multiple loads or multiple
-stores.  In this particular example, the critical section declaration
-does not in fact make a difference to the analysis. 
+These generated rules imply that any node that precedes one of the
+events in a state segments must precede all of them.  Any node that
+follows one of the store events must follow all of them.  Thus for
+instance in Fig.~\ref{fig:critical:section}, the load events at
+indices 1, 2 and the store events at indices 3, 4 occur with
+transaction-like atomicity.  {\cpsa} generates the rules in
+Fig.~\ref{fig:critical:section:rules}.  They are of value only when
+the state segment has multiple loads or multiple stores.  In this
+particular example, the critical section declaration does not in fact
+make a difference to the analysis.
 %
 \label{state:gen:rules:end}
 
