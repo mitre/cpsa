@@ -29,7 +29,8 @@
       (load ls old1) (stor lk (cat "st-k" d o k))
       (stor ls (cat "st" d o)) (send (enc "up" k)))
     (auth start-ch)
-    (critical-sections (1 4))
+    ;; Critical section declarations are now obsolete.  
+    ;; (critical-sections (1 4))
     (facts (same-dev ls lk)))
   (defrole owner-power-dev
     (vars (k skey) (d o name) (start-ch chan))
@@ -45,7 +46,8 @@
     (vars (k skey) (n text) (any mesg) (d o name) (lk ls locn))
     (trace (recv (enc "open" d o n k)) (load ls (cat "st" d any))
       (load lk (cat "st-k" d o k)) (stor ls (cat "st" d o o)) (send n))
-    (critical-sections (1 3))
+    ;; Critical section declarations are now obsolete.  
+    ;; (critical-sections (1 3))
     (gen-st (cat "st-k" d o k) (cat "st" d (cat o o)))
     (facts (same-dev ls lk)))
   (defrole dev-close
@@ -53,7 +55,8 @@
     (trace (recv (enc "close" d o n k)) (load lk (cat "st-k" d o k))
       (load ls (cat "st" d any)) (stor ls (cat "st" d o)) (send n))
     (gen-st (cat "st-k" d o k))
-    (critical-sections (1 3))
+    ;; Critical section declarations are now obsolete.  
+    ;; (critical-sections (1 3))
     (facts (same-dev ls lk)))
   (defrole dev-pass
     (vars (k skey) (n text) (d o name) (lk ls locn))
@@ -61,7 +64,8 @@
       (recv (enc "may I pass" k)) (send (enc "you may pass" n k)))
     (uniq-orig n)
     (gen-st (cat "st-k" d o k) (cat "st" d (cat o o)))
-    (critical-sections (0 1))
+    ;; Critical section declarations are now obsolete.  
+    ;; (critical-sections (0 1))
     (facts (same-dev ls lk)))
   (defrole user-pass
     (vars (k skey))
