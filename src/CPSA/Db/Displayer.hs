@@ -147,7 +147,7 @@ ftwa :: Skel -> Skel -> [SExpr ()]
 ftwa k k' = case massoc "strand-map" (map strip (alist k')) of
     Just mapping -> zipWith fun [0..] mapping
         where
-            fun f (N () t) = L () [S () "stwa", S () (displaySkel (label k)), S () (displayStrand (label k) f), S () (displaySkel (label k')), S () (displayStrand (label k') t) ]
+            fun f (N () t) = L () [S () "stwa", S () (displayStrand (label k) f), S () (displayStep (label k) (label k')), S () (displayStrand (label k') t) ]
             fun _ _ = Q () "non-number in strand-map"
     _ -> []
 
@@ -155,7 +155,7 @@ rtwa :: Skel -> Skel -> [SExpr ()]
 rtwa k k' = case massoc "strand-map" (map strip (alist k')) of
     Just mapping -> zipWith fun mapping [0..]
         where
-            fun (N () f) t = L () [S () "stwa", S () (displaySkel (label k)), S () (displayStrand (label k) f), S () (displaySkel (label k')), S () (displayStrand (label k') t) ]
+            fun (N () f) t = L () [S () "stwa", S () (displayStrand (label k) f), S () (displayStep (label k) (label k')), S () (displayStrand (label k') t) ]
             fun _ _ = Q () "non-number in strand-map"
     _ -> []
 
