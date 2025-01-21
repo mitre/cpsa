@@ -159,13 +159,18 @@ loadSkel sig pos p (L _ (S _ "vars" : vars) : xs) =
 loadSkel _ pos _ _ = fail (shows pos "Malformed skeleton")
 
 loadStrands :: MonadFail m => Sig -> Pos -> Prot ->
-               [Term] -> Gen -> [Trace] -> [SExpr Pos] -> m Skel
+               [Term] -> Gen -> [(String, [(String, SExpr ())], Trace)] -> [SExpr Pos] -> m Skel
 loadStrands sig top p kvars gen insts (L pos (S _ "defstrand" : x) : xs) =
     case x of
       S _ role : N _ height : env ->
           do
             (gen, i) <- loadInst sig pos p kvars gen role height env
-            loadStrands sig top p kvars gen (i : insts) xs
+            aenv <- mapM getKV env
+            loadStrands sig top p kvars gen ((role, aenv, i) : insts) xs
+          where
+            getKV :: (MonadFail m1) => SExpr Pos -> m1 (String, SExpr ())
+            getKV (L _ [S _ key, val]) = return (key, strip val)
+            getKV _ = fail (shows pos "Malformed defstrand parameters")
       _ ->
           fail (shows pos "Malformed defstrand")
 loadStrands sig top p kvars gen insts (L pos (S _ "deflistener" : x) : xs) =
@@ -174,7 +179,7 @@ loadStrands sig top p kvars gen insts (L pos (S _ "deflistener" : x) : xs) =
           do
             t <- loadTerm sig kvars False term
             let i = [In $ Plain t, Out $ Plain t]
-            loadStrands sig top p kvars gen (i : insts) xs
+            loadStrands sig top p kvars gen (("listener", [], i) : insts) xs
       _ ->
           fail (shows pos "Malformed deflistener")
 loadStrands _ _ p kvars gen insts xs =

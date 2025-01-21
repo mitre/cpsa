@@ -34,6 +34,7 @@ treeFacts t = skeletonFacts (vertex t)
 
 skeletonFacts :: Skel -> [SExpr ()]
 skeletonFacts s =   L () [S () "skel", S () (displaySkel $ label s)] :
+                    strandFacts s ++
                     termProps s "uniq" "uniq-orig" ++
                     termProps s "ugen" "uniq-gen" ++
                     termProps s "non" "non-orig" ++
@@ -48,6 +49,16 @@ skeletonFacts s =   L () [S () "skel", S () (displaySkel $ label s)] :
                     keyClauses "shape" s ++
                     keyClauses "dead" s
                     -- TODO: add remaining skeleton facts
+
+strandFacts :: Skel -> [SExpr ()]
+strandFacts s = concat (zipWith fun (ktraces s) [0..])
+    where 
+        fun (role, env, trace) i = 
+            let skelVar = S () (displaySkel (label s)) in
+            let strandVar = S () (displayStrand (label s) i) in
+                L () [S () "pl", skelVar, S () role, strandVar, N () (length trace)]:
+                map (\(k,v) -> L () [S () "p", skelVar, S () role, strandVar, Q () k, v]) env
+            
 
 
 termProps :: Skel -> String -> String -> [SExpr ()]
@@ -70,7 +81,6 @@ keyClauses :: String -> Skel -> [SExpr ()]
 keyClauses k s = case massoc k (map strip (alist s)) of
     Just _ -> [L () [S () k, S () (displaySkel $ label s)]]
     _ -> []
--- traceFacts :: Trace -> [SExpr ()]
 
 prec :: Skel -> [SExpr  ()]
 prec s =
@@ -80,9 +90,6 @@ prec s =
             f (L () [L () [N () s1, N () i1], L () [N () s2, N () i2]]) =
                 L () [S () "prec", S () (displaySkel $ label s), displayNode (label s) s1 i1, displayNode (label s) s2 i2]
             f _ = L () [S () "prec", S () "error"]
-    -- Just l -> map f l
-        -- where f _ = S () "unrealized"
-        -- (L() [N () strand, N () index])
     _ -> []
 
 leadsto :: Skel -> [SExpr  ()]
@@ -93,9 +100,6 @@ leadsto s =
             f (L () [L () [N () s1, N () i1], L () [N () s2, N () i2]]) =
                 L () [S () "leads-to", S () (displaySkel $ label s), displayNode (label s) s1 i1, displayNode (label s) s2 i2]
             f _ = L () [S () "leads-to", S () "error"]
-    -- Just l -> map f l
-        -- where f _ = S () "unrealized"
-        -- (L() [N () strand, N () index])
     _ -> []
 
 unrealized :: Skel -> [SExpr ()]

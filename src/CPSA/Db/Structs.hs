@@ -37,7 +37,7 @@ data Skel = Skel
       kvars :: [Term], -- Skeleton vars
       kctx :: Context,
       kgen :: Gen,
-      ktraces :: [Trace], --Strands
+      ktraces :: [(String, [(String, SExpr ())], Trace)],
       label :: Int,             -- Label from the input or generated
                                 -- by the loader
       parent :: Maybe Int,      -- Parent from the input
@@ -59,9 +59,10 @@ homomorphism k k' mapping =
 
 matchStrand :: Skel -> Skel -> [Int] -> (Gen, Env) -> Int -> [(Gen, Env)]
 matchStrand k k' mapping env s =
-    matchTraces (ktraces k !! s) (ktraces k' !! s') env
+    matchTraces (trd (ktraces k !! s)) (trd (ktraces k' !! s')) env
     where
       s' = mapping !! s
+      trd (_,_,x) = x
 
 matchTraces :: Trace -> Trace -> (Gen, Env) -> [(Gen, Env)]
 matchTraces _ [] env = [env]    -- Target can be shorter
