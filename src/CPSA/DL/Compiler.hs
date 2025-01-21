@@ -17,6 +17,8 @@ compileForm k g (Not _ f) =
     do
       (g', b, cls) <- compileForm k g f
       return (g', PNot b, cls)
+compileForm k g (And _ []) =
+  return (g, PAtm ("skel", [Var k]), [])
 compileForm k g (And _ fs) =
     do
       (g', bs, cls) <- compileForms k g fs
@@ -153,8 +155,7 @@ twa _ = error "Bad TWA sort"
 -- the sym of the condition predication generating
 -- the existential quantifications
 genCond :: Sort -> String
-genCond Skel = "isSkel"
-genCond Strd = "isStrand"
+genCond Strd = "strand"
 genCond _ = error "Bad quantification sort"
 
 genCondAtom :: Id -> Body
