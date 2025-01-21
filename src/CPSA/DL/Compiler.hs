@@ -60,9 +60,6 @@ compileAct k k' g (AAtom _ sym ts) =
 compileAct k k' g (ANot _ a) =
   let (g', b, cs) = compileAct k k' g a in
   (g', PNot b, cs)
-compileAct k k' g (AAnd _ []) =
-  let (g', o) = freshId g "O" Step in
-  (g', PAtm ("step", [Var k, Var o, Var k']), [])
 compileAct k k' g (AAnd _ as) =
   let (g', bs, cls) = compileActs k k' g as in
     (g', Conj bs, cls)
@@ -72,6 +69,9 @@ compileAct k k' g (AOr _ as) =
 compileAct k k' g (AExists _ xs a) =
   let (g', bs, cls) = compileAct k k' g a in
     (g', Conj (map genCondAtom xs++[bs]), cls)
+compileAct k k' g One =
+  let (g', o) = freshId g "O" Step in
+  (g', PAtm ("step", [Var k, Var o, Var k']), [])
 compileAct k k' g (Concat _ as) =
   let (g', bs, cls) = compileConcat k k' g as in
     (g', Conj bs, cls)
@@ -99,6 +99,9 @@ compileActs k k' g (a:as) =
 compileConcat :: Id -> Id -> Gen -> [Act] ->
                   (Gen, [Body], [Clause])
 compileConcat _ _ g [] = (g, [], [])
+compileConcat k k' g [a] =
+  let (g', b, cls) = compileAct k k' g a in
+    (g', [b], cls)
 compileConcat k k'' g (a:as) =
   let (g', k') = freshId g "K" Skel in
   let (g'', b, cls) = compileAct k k' g' a in
