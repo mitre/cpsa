@@ -71,6 +71,7 @@ prettyTerms (t : ts) =
 
 prettyTerm :: Term -> Pretty
 prettyTerm (Var id) = str (idName id ++ "_" ++ show (idInt id))
+prettyTerm UScore = str "_"
 prettyTerm (Sym s) = str s
 prettyTerm (Const c) =
     blo 0 [str "\"", str c, str "\""]
