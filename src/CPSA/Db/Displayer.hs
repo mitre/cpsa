@@ -56,8 +56,8 @@ strandFacts s = concat (zipWith fun (ktraces s) [0..])
         fun (role, env, trace) i = 
             let skelVar = S () (displaySkel (label s)) in
             let strandVar = S () (displayStrand (label s) i) in
-                L () [S () "pl", skelVar, S () role, strandVar, N () (length trace)]:
-                map (\(k,v) -> L () [S () "p", skelVar, S () role, strandVar, Q () k, v]) env
+                L () [S () "pl", skelVar, Q () role, strandVar, N () (length trace)]:
+                map (\(k,v) -> L () [S () "p", skelVar, Q () role, strandVar, Q () k, v]) env
             
 
 
