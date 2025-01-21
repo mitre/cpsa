@@ -7,7 +7,7 @@ compileQuery :: MonadFail m => Id -> Gen -> Query -> m (Gen, [Clause])
 compileQuery k g (Query sym ids f) =
     do
       (g', pl, cls) <- compileForm k g f
-      return (g', Clause ((sym, map Var (k : ids)), [pl]) : cls)
+      return (g', Clause ((sym, map Var (k : ids)), map (genCondAtom k) (k:ids)++[pl]) : cls)
 
 compileForm :: MonadFail m => Id -> Gen -> Formula ->
                m (Gen, Body, [Clause])
@@ -157,6 +157,8 @@ twa Node = "ntwa"
 twa _ = error "Bad TWA sort"
 
 genCondAtom :: Id -> Id -> Body
+genCondAtom _ k@(Id (_,_,Skel)) = PAtm ("skel", [Var k])
 genCondAtom k v@(Id (_,_,Strd)) = PAtm ("pl", [Var k, UScore, Var v, UScore])
 genCondAtom k v@(Id (_,_,Role)) = PAtm ("hasRole", [Var k, Var v])
-genCondAtom _ _ = error "Bad quantification sort"
+genCondAtom _ (Id (_,_,Mesg)) = PAtm ("true", [])
+genCondAtom _ (Id (_,sym,_)) = error ("Bad quantification sort for " ++ sym)
