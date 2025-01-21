@@ -50,7 +50,7 @@ prettyBody _ bod@(Conj (b : bs)) =
     prettyBody p b ++ prettyRest "," p bs
     where p = prec bod
 prettyBody _ bod@(PNot b) =
-    [grp 2 (str "\\+" : prettyBody p b)]
+    [grp 2 (str "\\+ " : prettyBody p b)]
     where p = prec bod
 prettyBody _ _ = error "Bad prolog"
 
