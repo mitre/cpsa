@@ -30,7 +30,7 @@ compileForm k g (Or _ fs) =
 compileForm k g (Exists _  xs f) =
     do
       (g', b, cls) <- compileForm k g f
-      return (g', Conj (map genCondAtom xs++[b]), cls)
+      return (g', Conj (map (genCondAtom k) xs++[b]), cls)
 compileForm k g (Diamond _ act f) =
     do
       let (g', k') = freshId g "K" Skel
@@ -68,7 +68,7 @@ compileAct k k' g (AOr _ as) =
     (g', Disj bs, cls)
 compileAct k k' g (AExists _ xs a) =
   let (g', bs, cls) = compileAct k k' g a in
-    (g', Conj (map genCondAtom xs++[bs]), cls)
+    (g', Conj (map (genCondAtom k) xs++[bs]), cls)
 compileAct k k' g One =
   (g, PAtm ("step", [Var k, UScore, Var k']), [])
 compileAct k k' g (Concat _ as) =
@@ -154,11 +154,6 @@ twa Strd = "stwa"
 twa Node = "ntwa"
 twa _ = error "Bad TWA sort"
 
--- the sym of the condition predication generating
--- the existential quantifications
-genCond :: Sort -> String
-genCond Strd = "strand"
-genCond _ = error "Bad quantification sort"
-
-genCondAtom :: Id -> Body
-genCondAtom v = PAtm (genCond (idSort v), [Var v])
+genCondAtom :: Id -> Id -> Body
+genCondAtom k v@(Id (_,_,Strd)) = PAtm ("pl", [Var k, UScore, Var v, UScore])
+genCondAtom _ _ = error "Bad quantification sort"
