@@ -79,6 +79,7 @@ data Act
     | AAnd [Id] [Act]
     | AOr [Id] [Act]
     | AExists [Id] [Id] Act
+    | One
     | Concat [Id] [Act]
     | Star [Id] Act
       deriving Show
@@ -89,6 +90,7 @@ fva (ANot vs _) = vs
 fva (AAnd vs _) = vs
 fva (AOr vs _) = vs
 fva (AExists vs _ _) = vs
+fva One = []
 fva (Concat vs _) = vs
 fva (Star vs _) = vs
 
