@@ -35,6 +35,7 @@ treeFacts t = skeletonFacts (vertex t)
 skeletonFacts :: Skel -> [SExpr ()]
 skeletonFacts s =   L () [S () "skel", S () (displaySkel $ label s)] :
                     strandFacts s ++
+                    roleFacts s ++
                     termProps s "uniq" "uniq-orig" ++
                     termProps s "ugen" "uniq-gen" ++
                     termProps s "non" "non-orig" ++
@@ -59,7 +60,10 @@ strandFacts s = concat (zipWith fun (ktraces s) [0..])
                 L () [S () "pl", skelVar, Q () role, strandVar, N () (length trace)]:
                 map (\(k,v) -> L () [S () "p", skelVar, Q () role, strandVar, Q () k, v]) env
             
-
+roleFacts :: Skel -> [SExpr ()]
+roleFacts s = map fun (roles $ prot s)
+    where
+        fun r = L () [S () "hasRole", S () (displaySkel $ label s), Q () (rname r)]
 
 termProps :: Skel -> String -> String -> [SExpr ()]
 termProps s k kl =

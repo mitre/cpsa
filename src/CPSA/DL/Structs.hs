@@ -1,6 +1,6 @@
 module CPSA.DL.Structs where
 
-data Sort = Skel | Step | Mesg | Strd | Node | Othr deriving Show
+data Sort = Skel | Step |Mesg | Strd | Role | Node | Indx | Othr deriving Show
 
 -- Identifiers from the algebra module with sorts added
 

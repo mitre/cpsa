@@ -42,7 +42,9 @@ loadDecl _ x =
 loadSort :: MonadFail m => SExpr Pos -> m Sort
 loadSort (S _ "mesg") = return Mesg
 loadSort (S _ "strd") = return Strd
+loadSort (S _ "role") = return Role
 loadSort (S _ "node") = return Node
+loadSort (S _ "indx") = return Indx
 loadSort (S _ "othr") = return Othr
 loadSort x = fail (shows (annotation x) " Bad sort: ")
 

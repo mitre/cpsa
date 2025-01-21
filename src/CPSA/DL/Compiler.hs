@@ -130,7 +130,9 @@ cloneVar g v =
       Mesg -> cloneId g v
       Strd -> cloneId g v
       Node -> cloneId g v
-      Othr -> (g, v) -- Don't clone integers
+      Indx -> (g, v) -- Don't clone integers
+      Role -> (g, v) -- quoted tag, so never changes
+      Othr -> (g, v)
 
 compileTwas :: Act -> Id -> Id -> [(Id, Id)] -> [Body] -> [Body]
 compileTwas _ _ _ [] bs = bs
@@ -156,4 +158,5 @@ twa _ = error "Bad TWA sort"
 
 genCondAtom :: Id -> Id -> Body
 genCondAtom k v@(Id (_,_,Strd)) = PAtm ("pl", [Var k, UScore, Var v, UScore])
+genCondAtom k v@(Id (_,_,Role)) = PAtm ("hasRole", [Var k, Var v])
 genCondAtom _ _ = error "Bad quantification sort"
