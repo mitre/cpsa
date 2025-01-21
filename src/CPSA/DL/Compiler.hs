@@ -16,9 +16,7 @@ compileForm k g (Atom _ sym ts) =
 compileForm k g (Not _ f) =
     do
       (g', b, cls) <- compileForm k g f
-      let vs = fv f
-      let (g'', sym, cl) = makeClause k g' vs b
-      return (g'', PNot (PAtm (sym, map Var (k : vs))), cl : cls)
+      return (g', PNot b, cls)
 compileForm k g (And _ fs) =
     do
       (g', bs, cls) <- compileForms k g fs
@@ -33,11 +31,10 @@ compileForm k g (Exists _  xs f) =
       return (g', Conj (map genCondAtom xs++[b]), cls)
 compileForm k g (Diamond _ act f) =
     do
-      let (g', k') = freshId g "k" Skel
-      (g', b, cls) <- compileForm k' g f
-      let vs = fv f
-      let (g'', sym, cl) = makeClause k g' vs b
-      return 
+      let (g', k') = freshId g "K" Skel
+      (g'', b, cls) <- compileForm k' g' f
+      let (g''', b', cls') = compileAct k k' g'' act
+      return (g''', Conj [b', b] , cls'++cls)
 
 -- Compile a list of formulas.
 compileForms :: MonadFail m => Id -> Gen -> [Formula] ->
@@ -53,14 +50,17 @@ compileForms k g (f : fs) =
 compileAct :: Id -> Id -> Gen -> Act -> 
               (Gen, Body, [Clause])
 compileAct k k' g (AAtom _ sym ts) =
-  let (g', o) = freshId g "o" Step in
-  (g, Conj [
+  let (g', o) = freshId g "O" Step in
+  (g', Conj [
     PAtm ("step", [Var k, Var o, Var k']),
     PAtm (sym, Var o:ts)
   ], [])
 compileAct k k' g (ANot _ a) =
   let (g', b, cs) = compileAct k k' g a in
   (g', PNot b, cs)
+compileAct k k' g (AAnd _ []) =
+  let (g', o) = freshId g "O" Step in
+  (g', PAtm ("step", [Var k, Var o, Var k']), [])
 compileAct k k' g (AAnd _ as) =
   let (g', bs, cls) = compileActs k k' g as in
     (g', Conj bs, cls)
@@ -75,9 +75,9 @@ compileAct k k' g (Concat _ as) =
     (g', Conj bs, cls)
 compileAct k k' g (Star fvs a) =
   let (g', sym) = predSym g in
-  let (g'', ik) = freshId g' "k" Skel in -- internal skeleton
-  let (g''', ik') = freshId g'' "k" Skel in
-  let (g'''', ik'') = freshId g''' "k" Skel in
+  let (g'', ik) = freshId g' "K" Skel in -- internal skeleton
+  let (g''', ik') = freshId g'' "K" Skel in
+  let (g'''', ik'') = freshId g''' "K" Skel in
   let (g''''', b, cls) = compileAct ik ik' g'''' a in
   let pred from to = (sym, map Var (from:to:fvs)) in
     (g''''', PAtm (pred k k'),
@@ -98,7 +98,7 @@ compileConcat :: Id -> Id -> Gen -> [Act] ->
                   (Gen, [Body], [Clause])
 compileConcat _ _ g [] = (g, [], [])
 compileConcat k k'' g (a:as) =
-  let (g', k') = freshId g "k" Skel in
+  let (g', k') = freshId g "K" Skel in
   let (g'', b, cls) = compileAct k k' g' a in
   let (g''', bs, cls') = compileConcat k' k'' g'' as in
   (g''', b:bs, cls++cls')

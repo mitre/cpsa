@@ -128,7 +128,7 @@ loadAct g env (S pos "epsilon") =
 loadAct g env (L _ ((S _ "concat"):acts)) =
     do
       (g', fs) <- loadActs g env acts
-      return (g', AOr (nub (concat (map fva fs))) fs)
+      return (g', Concat (nub (concat (map fva fs))) fs)
 loadAct g env (L pos [S _ "plus", act]) =
     loadAct g env (L pos [S pos "concat", act, L pos [S pos "star", act]])
 loadAct g env (L _ [S _ "star", act]) =

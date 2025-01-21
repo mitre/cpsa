@@ -43,6 +43,7 @@ prettyBody p (Disj [b]) =
 prettyBody _ bod@(Disj (b : bs)) =
     prettyBody p b ++ prettyRest ";" p bs
     where p = prec bod
+prettyBody _ (Conj []) = [str "true"]
 prettyBody p (Conj [b]) =
     prettyBody p b
 prettyBody _ bod@(Conj (b : bs)) =
