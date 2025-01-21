@@ -46,28 +46,33 @@ display _ (L _ (S _ "comment" : _)) =
     return ()
 display h (L _ (S _ pred : x : xs)) =
     do
-      hPutStr h (printf "%s(" pred)
+      hPutStr h (toPIdent pred)
+      hPutStr h "("
       sexpr h x
       rest h xs
       hPutStrLn h ")."
 display _ _ =
     return ()
 
+toPIdent :: String -> String
+toPIdent [] = []
+toPIdent (c:s) = map toUnderScore (toLower c : s)
+
 sexprs :: Handle -> [SExpr a] -> IO ()
 sexprs h [] =
     hPutStr h "[]"
 sexprs h (x : xs) =
     do
-      hPutStr h "["
+    --   hPutStr h "["
       sexpr h x
       rest h xs
-      hPutStr h "]"
+    --   hPutStr h "]"
 
 sexpr :: Handle -> SExpr a -> IO ()
 sexpr h (S _ []) = -- This should never happen
     hPutStr h []
-sexpr h (S _ (c : s)) = -- Ensure symbol is a Prolog constant
-    hPutStr h (map toUnderScore (toLower c : s))
+sexpr h (S _ s) = -- Ensure symbol is a Prolog constant
+    hPutStr h (toPIdent s)
 sexpr h (Q _ q) =
     do
       hPutStr h "\""
@@ -75,8 +80,17 @@ sexpr h (Q _ q) =
       hPutStr h "\""
 sexpr h (N _ n) =
     hPutStr h (printf "%d" n)
-sexpr h (L _ xs) =
-    sexprs h xs
+sexpr h (L _ ((S _ x):xs)) =
+    do
+        hPutStr h (toPIdent x)
+        hPutStr h "("
+        sexprs h xs
+        hPutStr h ")"
+sexpr h (L _ xs) = 
+    do 
+        hPutStr h "["
+        sexprs h xs
+        hPutStr h "]"
 
 toUnderScore :: Char -> Char
 toUnderScore '-' = '_'
@@ -90,3 +104,4 @@ rest h (x : xs) =
       hPutStr h ", "
       sexpr h x
       rest h xs
+

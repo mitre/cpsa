@@ -27,8 +27,10 @@ compileForm k g (Or _ fs) =
     do
       (g', bs, cls) <- compileForms k g fs
       return (g', Disj bs, cls)
-compileForm k g (Exists _  _ f) =
-    compileForm k g f
+compileForm k g (Exists _  xs f) =
+    do
+      (g', b, cls) <- compileForm k g f
+      return (g', Conj (map genCondAtom xs++[b]), cls)
 compileForm k g (Diamond _ act f) =
     do
       let (g', k') = freshId g "k" Skel
@@ -65,8 +67,9 @@ compileAct k k' g (AAnd _ as) =
 compileAct k k' g (AOr _ as) =
   let (g', bs, cls) = compileActs k k' g as in
     (g', Disj bs, cls)
-compileAct k k' g (AExists _ _ a) =
-  compileAct k k' g a
+compileAct k k' g (AExists _ xs a) =
+  let (g', bs, cls) = compileAct k k' g a in
+    (g', Conj (map genCondAtom xs++[bs]), cls)
 compileAct k k' g (Concat _ as) =
   let (g', bs, cls) = compileConcat k k' g as in
     (g', Conj bs, cls)
@@ -130,12 +133,29 @@ compileTwas _ _ _ [] bs = bs
 compileTwas act k k' ((v, v') : tvs) bs =
     case idSort v of
       Othr -> bs'
-      _ -> twaAtom act k v k' v' : bs'
+      _ -> twaAtom k v k' v' : bs'
     where
       bs' = compileTwas act k k' tvs bs
+
+twaAtom :: Id -> Id -> Id -> Id -> Body
+twaAtom k v k' v' =
+  PAtm (twa (idSort v),
+            [Var k, Var v, Var k', Var v'])
+
+
 
 twa :: Sort -> String
 twa Mesg = "mtwa"
 twa Strd = "stwa"
 twa Node = "ntwa"
 twa _ = error "Bad TWA sort"
+
+-- the sym of the condition predication generating
+-- the existential quantifications
+genCond :: Sort -> String
+genCond Skel = "isSkel"
+genCond Strd = "isStrand"
+genCond _ = error "Bad quantification sort"
+
+genCondAtom :: Id -> Body
+genCondAtom v = PAtm (genCond (idSort v), [Var v])
