@@ -1,6 +1,6 @@
 module CPSA.DL.Structs where
 
-data Sort = Mesg | Strd | Node | Othr deriving Show
+data Sort = Skel | Step | Mesg | Strd | Node | Othr deriving Show
 
 -- Identifiers from the algebra module with sorts added
 
@@ -73,10 +73,23 @@ fv (Exists fv _ _) = fv
 fv (Diamond fv _ _) = fv
 
 data Act
-    = One
-    | Plus
-    | Star
+    = AAtom [Id] String [Term]
+    | ANot [Id] Act
+    | AAnd [Id] [Act]
+    | AOr [Id] [Act]
+    | AExists [Id] [Id] Act
+    | Concat [Id] [Act]
+    | Star [Id] Act
       deriving Show
+
+fva :: Act -> [Id]
+fva (AAtom vs _ _) = vs
+fva (ANot vs _) = vs
+fva (AAnd vs _) = vs
+fva (AOr vs _) = vs
+fva (AExists vs _ _) = vs
+fva (Concat vs _) = vs
+fva (Star vs _) = vs
 
 data Query = Query String [Id] Formula
       deriving Show

@@ -67,9 +67,9 @@ loadForm g env (L _ [S _ "exists", L _ decls, x]) =
       return (g'', Exists (fv f \\ ids) ids f)
 loadForm g env (L _ [S _ "diamond", act, x]) =
     do
-      a <- loadAct act
-      (g', f) <- loadForm g env x
-      return (g', Diamond (fv f) a f)
+      (g', a) <- loadAct g env act
+      (g'', f) <- loadForm g' env x
+      return (g'', Diamond (fv f) a f)
 -- Derived forms
 loadForm g env (L pos [S _ "forall", decls, x]) =
     loadForm g env (L pos [S pos "not",
@@ -97,15 +97,54 @@ loadForms g env (x : xs) =
       (g'', fs) <- loadForms g' env xs
       return (g'', f : fs)
 
-loadAct :: MonadFail m => SExpr Pos -> m Act
-loadAct (S _ "one") =
-    return One
-loadAct (S _ "plus") =
-    return Plus
-loadAct (S _ "star") =
-    return Star
-loadAct x =
-    fail (shows (annotation x) " Bad action")
+loadAct :: MonadFail m => Gen -> Env -> SExpr Pos -> m (Gen, Act)
+-- AAtom
+loadAct g env (L _ [S _ "not", act]) =
+    do
+        (g', a) <- loadAct g env act
+        return (g', ANot (fva a) a)
+loadAct g env (L _ ((S _ "and"):acts)) =
+    do
+      (g', fs) <- loadActs g env acts
+      return (g', AAnd (nub (concat (map fva fs))) fs)
+loadAct g env (L _ ((S _ "or"):acts)) =
+    do
+      (g', fs) <- loadActs g env acts
+      return (g', AOr (nub (concat (map fva fs))) fs)
+loadAct g env (L _ [S _ "exists", L _ decls, act]) =
+    do
+      (g', env') <- loadDecls g decls
+      (g'', a) <- loadAct g' (env' ++ env) act
+      let ids = map snd env'
+      return (g'', AExists (fva a \\ ids) ids a)
+loadAct g env (L pos [S _ "forall", decls, x]) =
+    loadAct g env (L pos [S pos "not",
+                           L pos [S pos "exists", decls,
+                                  L pos [S pos "not", x]]])
+loadAct g env (S pos "one") =
+    loadAct g env (L pos [S pos "and"]) -- empty conjunction is one
+loadAct g env (S pos "epsilon") =
+    loadAct g env (L pos [S pos "concat"]) -- empty concat is epsilon
+loadAct g env (L _ ((S _ "concat"):acts)) =
+    do
+      (g', fs) <- loadActs g env acts
+      return (g', AOr (nub (concat (map fva fs))) fs)
+loadAct g env (L pos [S _ "plus", act]) =
+    loadAct g env (L pos [S pos "concat", act, L pos [S pos "star", act]])
+loadAct g env (L _ [S _ "star", act]) =
+    do
+        (g', a) <- loadAct g env act
+        return (g', Star (fva a) a)
+loadAct _ _ act =
+    fail (shows (annotation act) " Bad action")
+
+loadActs :: MonadFail m => Gen -> Env -> [SExpr Pos] -> m (Gen, [Act])
+loadActs g _ [] = return (g, [])
+loadActs g env (act:acts) =
+    do
+        (g', a) <- loadAct g env act
+        (g'', as) <- loadActs g' env acts
+        return (g'', a:as)
 
 loadTerms :: MonadFail m => Env -> [SExpr Pos] -> m [Term]
 loadTerms e xs = mapM (loadTerm e) xs

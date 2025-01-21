@@ -31,10 +31,11 @@ compileForm k g (Exists _  _ f) =
     compileForm k g f
 compileForm k g (Diamond _ act f) =
     do
-      (g', b, cls) <- compileForm k g f
+      let (g', k') = freshId g "k" Skel
+      (g', b, cls) <- compileForm k' g f
       let vs = fv f
       let (g'', sym, cl) = makeClause k g' vs b
-      return $ compileStep k g'' (cl : cls) act sym vs
+      return 
 
 -- Compile a list of formulas.
 compileForms :: MonadFail m => Id -> Gen -> [Formula] ->
@@ -47,24 +48,64 @@ compileForms k g (f : fs) =
       (g'', bs, cls') <- compileForms k g' fs
       return (g'', b : bs, cls ++ cls')
 
+compileAct :: Id -> Id -> Gen -> Act -> 
+              (Gen, Body, [Clause])
+compileAct k k' g (AAtom _ sym ts) =
+  let (g', o) = freshId g "o" Step in
+  (g, Conj [
+    PAtm ("step", [Var k, Var o, Var k']),
+    PAtm (sym, Var o:ts)
+  ], [])
+compileAct k k' g (ANot _ a) =
+  let (g', b, cs) = compileAct k k' g a in
+  (g', PNot b, cs)
+compileAct k k' g (AAnd _ as) =
+  let (g', bs, cls) = compileActs k k' g as in
+    (g', Conj bs, cls)
+compileAct k k' g (AOr _ as) =
+  let (g', bs, cls) = compileActs k k' g as in
+    (g', Disj bs, cls)
+compileAct k k' g (AExists _ _ a) =
+  compileAct k k' g a
+compileAct k k' g (Concat _ as) =
+  let (g', bs, cls) = compileConcat k k' g as in
+    (g', Conj bs, cls)
+compileAct k k' g (Star fvs a) =
+  let (g', sym) = predSym g in
+  let (g'', ik) = freshId g' "k" Skel in -- internal skeleton
+  let (g''', ik') = freshId g'' "k" Skel in
+  let (g'''', ik'') = freshId g''' "k" Skel in
+  let (g''''', b, cls) = compileAct ik ik' g'''' a in
+  let pred from to = (sym, map Var (from:to:fvs)) in
+    (g''''', PAtm (pred k k'),
+      Clause (pred ik ik'', [b, PAtm (pred ik' ik'')]) :
+      Clause (pred ik ik, []) :
+      cls
+    )
+
+compileActs :: Id -> Id -> Gen -> [Act] -> 
+              (Gen, [Body], [Clause])
+compileActs _ _ g [] = (g, [], [])
+compileActs k k' g (a:as) =
+  let (g', b, cls) = compileAct k k' g a in
+  let (g'', bs, cls') = compileActs k k' g' as in
+    (g'', b:bs, cls++cls')
+
+compileConcat :: Id -> Id -> Gen -> [Act] ->
+                  (Gen, [Body], [Clause])
+compileConcat _ _ g [] = (g, [], [])
+compileConcat k k'' g (a:as) =
+  let (g', k') = freshId g "k" Skel in
+  let (g'', b, cls) = compileAct k k' g' a in
+  let (g''', bs, cls') = compileConcat k' k'' g'' as in
+  (g''', b:bs, cls++cls')
+
 -- Generate a clause from some free variables and a body.
 makeClause :: Id -> Gen -> [Id] -> Body -> (Gen, String, Clause)
 makeClause k g vs body =
     (g', sym, Clause ((sym, map Var (k : vs)), [body]))
     where
       (g', sym) = predSym g
-
-compileStep :: Id -> Gen -> [Clause] -> Act ->
-               String -> [Id] -> (Gen, Body, [Clause])
-compileStep k g cls act sym vs =
-    (g'', Conj (step act : twas), cls)
-    where
-      (g', k') = cloneId g k
-      (g'', tvs) = cloneVars g' vs
-      step act =
-          PAtm ("step" ++ actSuffix act, [Var k, Sym "O", Var k'])
-      twas = compileTwas act k k' tvs
-             [PAtm (sym, Var k' : map (Var . snd) tvs)]
 
 cloneVars :: Gen -> [Id] -> (Gen, [(Id, Id)])
 cloneVars g [] = (g, [])
@@ -77,6 +118,8 @@ cloneVars g (v : vs) =
 cloneVar :: Gen -> Id -> (Gen, Id)
 cloneVar g v =
     case idSort v of
+      Skel -> cloneId g v
+      Step -> cloneId g v
       Mesg -> cloneId g v
       Strd -> cloneId g v
       Node -> cloneId g v
@@ -91,18 +134,8 @@ compileTwas act k k' ((v, v') : tvs) bs =
     where
       bs' = compileTwas act k k' tvs bs
 
-actSuffix :: Act -> String
-actSuffix One = ""
-actSuffix Plus = "_plus"
-actSuffix Star = "_star"
-
 twa :: Sort -> String
 twa Mesg = "mtwa"
 twa Strd = "stwa"
 twa Node = "ntwa"
-twa Othr = error "Bad TWA sort"
-
-twaAtom :: Act -> Id -> Id -> Id -> Id -> Body
-twaAtom act k v k' v' =
-    PAtm (twa (idSort v) ++ actSuffix act,
-          [Var k, Var v, Sym "O", Var k', Var v'])
+twa _ = error "Bad TWA sort"
