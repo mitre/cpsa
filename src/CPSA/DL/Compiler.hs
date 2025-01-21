@@ -70,8 +70,7 @@ compileAct k k' g (AExists _ xs a) =
   let (g', bs, cls) = compileAct k k' g a in
     (g', Conj (map genCondAtom xs++[bs]), cls)
 compileAct k k' g One =
-  let (g', o) = freshId g "O" Step in
-  (g', PAtm ("step", [Var k, Var o, Var k']), [])
+  (g, PAtm ("step", [Var k, UScore, Var k']), [])
 compileAct k k' g (Concat _ as) =
   let (g', bs, cls) = compileConcat k k' g as in
     (g', Conj bs, cls)

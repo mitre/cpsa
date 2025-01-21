@@ -123,8 +123,7 @@ loadAct g env (L pos [S _ "forall", decls, x]) =
     loadAct g env (L pos [S pos "not",
                            L pos [S pos "exists", decls,
                                   L pos [S pos "not", x]]])
-loadAct g env (S pos "one") =
-    loadAct g env (L pos [S pos "and"]) -- empty conjunction is one
+loadAct g _ (S _ "one") = return (g, One)
 loadAct g env (S pos "epsilon") =
     loadAct g env (L pos [S pos "concat"]) -- empty concat is epsilon
 loadAct g env (L _ ((S _ "concat"):acts)) =
