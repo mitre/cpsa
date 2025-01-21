@@ -61,7 +61,7 @@ strandFacts s = concat (zipWith fun (ktraces s) [0..])
                 map (\(k,v) -> L () [S () "p", skelVar, Q () role, strandVar, Q () k, v]) env
             
 roleFacts :: Skel -> [SExpr ()]
-roleFacts s = map fun (roles $ prot s)
+roleFacts s = map fun (filter (\r -> rname r /= "") (roles $ prot s)) -- filter out the listener role
     where
         fun r = L () [S () "hasRole", S () (displaySkel $ label s), Q () (rname r)]
 
