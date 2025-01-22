@@ -71,9 +71,10 @@ loadForm g env (L _ [S _ "exists", L _ decls, x]) =
       return (g'', Exists (fv f \\ ids) ids f)
 loadForm g env (L _ [S _ "diamond", act, x]) =
     do
-      (g', a) <- loadAct g env act
-      (g'', f) <- loadForm g' env x
-      return (g'', Diamond (fv f) a f)
+      (g', f) <- loadForm g env x
+      let fvs = fv f
+      (g'', a) <- loadAct g' env fvs act
+      return (g'', Diamond fvs a f)
 -- Derived forms
 loadForm g env (L pos [S _ "forall", decls, x]) =
     loadForm g env (L pos [S pos "not",
@@ -101,57 +102,57 @@ loadForms g env (x : xs) =
       (g'', fs) <- loadForms g' env xs
       return (g'', f : fs)
 
-loadAct :: MonadFail m => Gen -> Env -> SExpr Pos -> m (Gen, Act)
-loadAct g env (L _ [S _ "not", act]) =
+loadAct :: MonadFail m => Gen -> Env -> [Id] -> SExpr Pos -> m (Gen, Act)
+loadAct g env fv (L _ [S _ "not", act]) =
     do
-        (g', a) <- loadAct g env act
+        (g', a) <- loadAct g env fv act
         return (g', ANot (fva a) a)
-loadAct g env (L _ ((S _ "and"):acts)) =
+loadAct g env fv (L _ ((S _ "and"):acts)) =
     do
-      (g', fs) <- loadActs g env acts
-      return (g', AAnd (nub (concat (map fva fs))) fs)
-loadAct g env (L _ ((S _ "or"):acts)) =
+      (g', fs) <- loadActs g env fv acts
+      return (g', AAnd (nub (fv ++ concatMap fva fs)) fs)
+loadAct g env fv (L _ ((S _ "or"):acts)) =
     do
-      (g', fs) <- loadActs g env acts
-      return (g', AOr (nub (concat (map fva fs))) fs)
-loadAct g env (L _ [S _ "exists", L _ decls, act]) =
+      (g', fs) <- loadActs g env fv acts
+      return (g', AOr (nub (fv ++ concatMap fva fs)) fs)
+loadAct g env fv (L _ [S _ "exists", L _ decls, act]) =
     do
       (g', env') <- loadDecls g decls
-      (g'', a) <- loadAct g' (env' ++ env) act
+      (g'', a) <- loadAct g' (env' ++ env) fv act
       let ids = map snd env'
       return (g'', AExists (fva a \\ ids) ids a)
-loadAct g env (L pos [S _ "forall", decls, x]) =
-    loadAct g env (L pos [S pos "not",
+loadAct g env fv (L pos [S _ "forall", decls, x]) =
+    loadAct g env fv (L pos [S pos "not",
                            L pos [S pos "exists", decls,
                                   L pos [S pos "not", x]]])
-loadAct g _ (S _ "one") = return (g, One)
-loadAct g env (S pos "epsilon") =
-    loadAct g env (L pos [S pos "concat"]) -- empty concat is epsilon
-loadAct g env (L _ ((S _ "concat"):acts)) =
+loadAct g _ fv (S _ "one") = return (g, One fv)
+loadAct g env fv (S pos "epsilon") =
+    loadAct g env fv (L pos [S pos "concat"]) -- empty concat is epsilon
+loadAct g env fv (L _ ((S _ "concat"):acts)) =
     do
-      (g', fs) <- loadActs g env acts
-      return (g', Concat (nub (concat (map fva fs))) fs)
-loadAct g env (L pos [S _ "plus", act]) =
-    loadAct g env (L pos [S pos "concat", act, L pos [S pos "star", act]])
-loadAct g env (L _ [S _ "star", act]) =
+      (g', fs) <- loadActs g env fv acts
+      return (g', Concat (nub (fv ++ concatMap fva fs)) fs)
+loadAct g env fv (L pos [S _ "plus", act]) =
+    loadAct g env fv (L pos [S pos "concat", act, L pos [S pos "star", act]])
+loadAct g env fv (L _ [S _ "star", act]) =
     do
-        (g', a) <- loadAct g env act
+        (g', a) <- loadAct g env fv act
         return (g', Star (fva a) a)
 -- Atoms
-loadAct g env (L _ (S _ sym : xs)) =
+loadAct g env fv (L _ (S _ sym : xs)) =
     do
       ts <- loadTerms env xs
-      let free = getFree ts
+      let free = fv ++ getFree ts
       return (g, AAtom free (map toUnderScore sym) ts)
-loadAct _ _ act =
+loadAct _ _ _ act =
     fail (shows (annotation act) " Bad action")
 
-loadActs :: MonadFail m => Gen -> Env -> [SExpr Pos] -> m (Gen, [Act])
-loadActs g _ [] = return (g, [])
-loadActs g env (act:acts) =
+loadActs :: MonadFail m => Gen -> Env -> [Id] -> [SExpr Pos] -> m (Gen, [Act])
+loadActs g _ _ [] = return (g, [])
+loadActs g env fv (act:acts) =
     do
-        (g', a) <- loadAct g env act
-        (g'', as) <- loadActs g' env acts
+        (g', a) <- loadAct g env fv act
+        (g'', as) <- loadActs g' env fv acts
         return (g'', a:as)
 
 loadTerms :: MonadFail m => Env -> [SExpr Pos] -> m [Term]
