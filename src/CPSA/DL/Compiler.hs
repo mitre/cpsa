@@ -76,8 +76,17 @@ compileAct k d g (AOr _ as) =
 compileAct k d g (AExists _ xs a) =
   let (g', bs, cls) = compileAct k d g a in
     (g', Conj (map (genCondAtom k) xs++[bs]), cls)
-compileAct k d g One = error "TODO: One unimplemented"
-compileAct k d g (Concat _ []) = error "TODO: epsilon unimplemented"
+compileAct k (pred,n) g (One fvs) = 
+  let (g', k') = freshId g "K" Skel in
+  let (g'', o) = freshId g' "O" Step in
+  let (g''', fvs', twaBs) = compileTwas g'' o (take n fvs) in
+  (g''', Conj ([
+    PAtm ("step", [Var k, Var o, Var k'])
+  ] ++ twaBs ++
+  [
+      PAtm (pred, map Var (k:take n fvs'))
+  ]), [])
+compileAct k (pred,n) g (Concat fvs []) = (g, PAtm (pred, map Var (k:take n fvs)), [])
 compileAct k d g (Concat _ [a]) = compileAct k d g a
 compileAct k d g (Concat fvs (a:as)) =
   let (g', sym) = predSym g in
