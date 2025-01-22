@@ -36,6 +36,7 @@ skeletonFacts :: Skel -> [SExpr ()]
 skeletonFacts s =   L () [S () "skel", S () (displaySkel $ label s)] :
                     strandFacts s ++
                     roleFacts s ++
+                    termProps s "label" "label" ++
                     termProps s "uniq" "uniq-orig" ++
                     termProps s "ugen" "uniq-gen" ++
                     termProps s "non" "non-orig" ++
