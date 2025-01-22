@@ -102,7 +102,6 @@ loadForms g env (x : xs) =
       return (g'', f : fs)
 
 loadAct :: MonadFail m => Gen -> Env -> SExpr Pos -> m (Gen, Act)
--- AAtom
 loadAct g env (L _ [S _ "not", act]) =
     do
         (g', a) <- loadAct g env act
@@ -138,6 +137,12 @@ loadAct g env (L _ [S _ "star", act]) =
     do
         (g', a) <- loadAct g env act
         return (g', Star (fva a) a)
+-- Atoms
+loadAct g env (L _ (S _ sym : xs)) =
+    do
+      ts <- loadTerms env xs
+      let free = getFree ts
+      return (g, AAtom free (map toUnderScore sym) ts)
 loadAct _ _ act =
     fail (shows (annotation act) " Bad action")
 
