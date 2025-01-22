@@ -56,7 +56,7 @@ compileAct :: Id -> (String, Int) -> Gen -> Act ->
 compileAct k (pred, n) g (AAtom fvs rel ts) =
   let (g', k') = freshId g "K" Skel in
   let (g'', o) = freshId g' "O" Step in
-  let (g''', fvs', twaBs) = compileTwas g'' o fvs in
+  let (g''', fvs', twaBs) = compileTwas g'' o (take n fvs) in
   (g''', Conj ([
     PAtm ("step", [Var k, Var o, Var k']),
     PAtm (rel, Var o:ts)
@@ -84,7 +84,16 @@ compileAct k d g (Concat fvs (a:as)) =
   let (g'', b, cls) = compileAct k (sym, length fvs) g' a in
   let (g''', b', cls') = compileAct k d g'' (Concat fvs as) in
     (g''', b, Clause ((sym, map Var (k:fvs)), [b']):cls++cls')
-compileAct k k' g (Star fvs a) = error "TODO: Star unimplemented"
+compileAct k (dpred, n) g (Star fvs a) =
+  let (g', ipred) = predSym g in
+  let (g'', k') = freshId g' "K" Skel in
+  let (g''', b, cls) = compileAct k' (ipred,n) g'' a in
+  let iatm = (ipred, map Var (k:take n fvs)) in
+    (g''', PAtm iatm,
+      Clause (iatm, [b]) :
+      Clause (iatm, [PAtm (dpred, map Var (k:take n fvs))]) :
+      cls
+    )
 
 compileActs :: Id -> (String, Int) -> Gen -> [Act] -> 
               (Gen, [Body], [Clause])
