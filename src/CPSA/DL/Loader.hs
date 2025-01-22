@@ -84,6 +84,8 @@ loadForm g env (L pos [S _ "box", act, x]) =
     loadForm g env (L pos [S pos "not",
                            L pos [S pos "diamond", act,
                                   L pos [S pos "not", x]]])
+loadForm g env (L pos [S pos' "neq" , a, b]) =
+    loadForm g env (L pos [S pos' "not", L pos' [S pos' "eq", a, b]])
 -- Atoms
 loadForm g env (L _ (S _ sym : xs)) =
     do
@@ -138,6 +140,8 @@ loadAct g env fv (L _ [S _ "star", act]) =
     do
         (g', a) <- loadAct g env fv act
         return (g', Star (fva a) a)
+loadAct g env fv (L pos [S pos' "neq", a, b]) =
+    loadAct g env fv (L pos [S pos' "not", L pos' [S pos' "eq", a, b]])
 -- Atoms
 loadAct g env fv (L _ (S _ sym : xs)) =
     do

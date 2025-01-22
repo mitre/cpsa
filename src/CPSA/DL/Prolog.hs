@@ -61,6 +61,8 @@ prettyRest op p (b : bs) =
 
 prettyAtom :: PAtom -> Pretty
 prettyAtom (pred, []) = str pred
+prettyAtom ("eq", [_,a,b]) =
+    blo 0 [prettyTerm a, str " = ", prettyTerm b]
 prettyAtom (pred, arg : args) =
     blo 0 (str pred : str "(" : prettyTerm arg : prettyTerms args)
 
