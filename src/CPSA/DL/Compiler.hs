@@ -62,7 +62,7 @@ compileAct k (pred, n) g (AAtom fvs rel ts) =
     PAtm (rel, Var o:ts)
   ] ++ twaBs ++
   [
-      PAtm (pred, map Var (k:take n fvs'))
+      PAtm (pred, map Var (k':take n fvs'))
   ]), [])
 compileAct k d g (ANot _ a) =
   let (g', b, cs) = compileAct k d g a in
@@ -84,7 +84,7 @@ compileAct k (pred,n) g (One fvs) =
     PAtm ("step", [Var k, Var o, Var k'])
   ] ++ twaBs ++
   [
-      PAtm (pred, map Var (k:take n fvs'))
+      PAtm (pred, map Var (k':take n fvs'))
   ]), [])
 compileAct k (pred,n) g (Concat fvs []) = (g, PAtm (pred, map Var (k:take n fvs)), [])
 compileAct k d g (Concat _ [a]) = compileAct k d g a
@@ -95,10 +95,9 @@ compileAct k d g (Concat fvs (a:as)) =
     (g''', b, Clause ((sym, map Var (k:fvs)), [b']):cls++cls')
 compileAct k (dpred, n) g (Star fvs a) =
   let (g', ipred) = predSym g in
-  let (g'', k') = freshId g' "K" Skel in
-  let (g''', b, cls) = compileAct k' (ipred,n) g'' a in
+  let (g'', b, cls) = compileAct k (ipred,n) g' a in
   let iatm = (ipred, map Var (k:take n fvs)) in
-    (g''', PAtm iatm,
+    (g'', PAtm iatm,
       Clause (iatm, [b]) :
       Clause (iatm, [PAtm (dpred, map Var (k:take n fvs))]) :
       cls
