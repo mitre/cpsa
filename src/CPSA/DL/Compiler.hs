@@ -127,7 +127,7 @@ compileTwas g o (v : vs) =
   let (g', vs', bs) = compileTwas g o vs in
   if shouldCopy (idSort v)
     then 
-      let (g'', v') = cloneId g v in
+      let (g'', v') = cloneId g' v in
         (g'', v':vs', PAtm (twa (idSort v), [Var v, Var o, Var v']):bs)
     else (g', v:vs', bs)
 
