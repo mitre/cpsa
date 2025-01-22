@@ -63,6 +63,8 @@ loadForm g env (L _ (S _ "or" : x : xs)) =
       return (g', Or (nub (concat (map fv fs))) fs)
 loadForm g env (S pos "top") =
     loadForm g env (L pos [S pos "and"])
+loadForm g env (S pos "bot") =
+    loadForm g env (L pos [S pos "not", S pos "top"])
 loadForm g env (L _ [S _ "exists", L _ decls, x]) =
     do
       (g', env') <- loadDecls g decls
