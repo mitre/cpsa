@@ -74,7 +74,7 @@ loadForm g env (L _ [S _ "diamond", act, x]) =
       (g', f) <- loadForm g env x
       let fvs = fv f
       (g'', a) <- loadAct g' env fvs act
-      return (g'', Diamond fvs a f)
+      return (g'', Diamond (nub (fvs++fva a)) a f)
 -- Derived forms
 loadForm g env (L pos [S _ "forall", decls, x]) =
     loadForm g env (L pos [S pos "not",
