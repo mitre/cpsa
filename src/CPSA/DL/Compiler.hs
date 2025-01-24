@@ -153,6 +153,7 @@ genCondAtom :: Id -> Id -> Body
 genCondAtom _ k@(Id (_,_,Skel)) = PAtm ("skel", [Var k])
 genCondAtom k v@(Id (_,_,Strd)) = PAtm ("strand", [Var k, Var v])
 genCondAtom k v@(Id (_,_,Role)) = PAtm ("hasRole", [Var k, Var v])
+genCondAtom k v@(Id (_,_,Node)) = PAtm ("isNode", [Var k, Var v])
 genCondAtom _ (Id (_,_,Mesg)) = PAtm ("true", [])
 genCondAtom _ (Id (_,_,Othr)) = PAtm ("true", [])
 genCondAtom _ (Id (_,sym,_)) = error ("Bad quantification sort for " ++ sym)

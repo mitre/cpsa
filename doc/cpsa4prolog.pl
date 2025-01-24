@@ -27,5 +27,8 @@
 
 
 strand(K,Z) :- l_exact(K, _, Z, _).
+isNode(K,node(Z,N)) :- l(K, _, Z, N).
 
 l(K, R, Z, N) :- l_exact(K, R, Z, M), M >= N.
+
+nodeOf(K,node(Z,N),Z) :- l(K, _, Z, N).
