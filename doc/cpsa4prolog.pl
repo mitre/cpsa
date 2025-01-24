@@ -26,6 +26,6 @@
 %% University of California.
 
 
-strand(K,Z) :- pl_exact(K, _, Z, _).
+strand(K,Z) :- l_exact(K, _, Z, _).
 
-pl(K, R, Z, N) :- pl_exact(K, R, Z, M), M >= N.
+l(K, R, Z, N) :- l_exact(K, R, Z, M), M >= N.
