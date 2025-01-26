@@ -266,6 +266,8 @@ roleWellFormed role =
                    $ notListenerPrefix $ rtrace role
       failwith "role trace has stor with no previous load"
                    $ balancedStores $ rtrace role
+      failwith "role trace has multiple loads or stors on same locn"
+                   $ locnsUnique $ rtrace role
     where
       terms = tterms (rtrace role)
       nonCheck (_, t) =
@@ -321,6 +323,23 @@ balancedStores c =
       check ((Out (ChMsg ch _)) : c') loads
           | ch `elem` loads         = check c' loads
           | isLocn ch              = False
+          | otherwise              = check c' []
+      check (_ : c') _             = check c' []
+
+locnsUnique :: Trace -> Bool
+locnsUnique c =
+    check c []
+    where
+      check [] _ = True
+      check ((In (ChMsg ch _)) : c') loads
+          | isLocn ch              = not(ch `elem` loads) &&
+                                     check c' (ch : loads)
+          | otherwise              = check c' []
+      check ((Out (ChMsg ch _)) : c') loads
+          | isLocn ch              =
+              (case deleteWhenPresent ch loads with
+              | Nothing -> False
+              | Just rest -> check c' rest)
           | otherwise              = check c' []
       check (_ : c') _             = check c' []
 
@@ -391,7 +410,8 @@ stateSegments c =
           findSegments ((start,(i-1)) : soFar) (i+1) c
       findEnd soFar start i c@((In (ChMsg _ _)) : _) True =
           findSegments ((start,(i-1)) : soFar)  i c
-      -- in th eprevious case we save the start of c for findSegments
+                       
+      -- in the previous case we save the start of c for findSegments
       -- to decide what to do.
 
       findEnd soFar start i ((In (ChMsg ch _)) : c) False
@@ -400,13 +420,6 @@ stateSegments c =
       findEnd soFar start i ((Out (ChMsg ch _)) : c) _
           | isLocn ch           = findEnd soFar start (i+1) c True
           | otherwise           = findSegments ((start,(i-1)) : soFar) (i+1) c
-
-{--
-  checkCs :: (Int,Int) -> [(Int,Int)] -> Bool
-  checkCs (i,j) =
-  any
-  (\(start,end) -> start <= i && j <= end)
-  --}
 
 failwith :: MonadFail m => String -> Bool -> m ()
 failwith msg test =

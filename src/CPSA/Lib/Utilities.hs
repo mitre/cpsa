@@ -54,6 +54,15 @@ listMax (a : rest) =
       maxRest <- listMax rest
       Just $ max a maxRest
 
+deleteWhenPresent :: Eq a => a -> [a] -> Maybe [a]
+deleteWhenPresent a l =
+    collect a l [] 
+    where
+      collect _ [] _ = Nothing
+      collect a (b : rest) passed 
+          | a == b = Just ((L.reverse passed)  ++ rest)
+          | otherwise = collect a rest (b : passed)
+
 -- given a function of two args and two lists, return the list of
 -- results of applying the function to the successive members.
 --
