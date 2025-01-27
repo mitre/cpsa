@@ -95,7 +95,7 @@
     (vars (self name) (l rndx)
 	  (priv-stor locn) (ignore mesg))
     (trace
-     (load priv-stor ignore)
+     ;;     (load priv-stor ignore)
      (stor priv-stor (pv self l))
      (send (sig (body self (exp (gen) l) (pubk "sig" self))
 		(privk "sig" self))))

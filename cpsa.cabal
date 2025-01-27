@@ -176,11 +176,7 @@ Extra-Source-Files:
   tst/dh_encrypt_hack.tst tst/dh_group_sig.scm tst/dh_group_sig.tst
   tst/dh_group_sig_auth_failure.scm tst/dh_group_sig_auth_failure.tst
   tst/dh_mim.lisp tst/dh_mim_hack.scm tst/dh_mim_hack.tst
-  tst/dhcr_um.lisp tst/dhcr_um.scm tst/dhcr_um.tst tst/dhcr_um3.scm
-  tst/dhcr_um3.tst tst/dhcr_um3_goals.scm tst/dhcr_um3_goals.tst
-  tst/dhcr_um_goals.scm tst/dhcr_um_implicit_auth.scm tst/dhcr_umx.scm
-  tst/dhcr_umx.tst tst/dhcr_umx_goals.scm
-  tst/dhcr_umx_implicit_auth.scm tst/dhke2.lisp tst/dhnsl_hack.scm
+  tst/dhke2.lisp tst/dhnsl_hack.scm
   tst/dhnsl_hack.tst tst/dhstatic-state.scm tst/dhstatic-state.tst
   tst/disclosure.scm tst/disclosure.tst tst/doorsep.scm
   tst/doorsep.tst tst/doorsep2invk.scm tst/doorsep2invk.tst

@@ -173,7 +173,7 @@ loadRole sig gen pos (S _ name :
       let gs = L.filter (varsSeen vs) g
       prios <- mapM (loadRolePriority (length c)) (assoc "priority" rest)
 
-      let stateSegs = stateSegments c
+      let stateSegs = stateSegments c 
     {-- case all (flip checkCs stateSegs) cs of
       False -> fail (shows pos "Critical sections in role not within state segments")
       True -> return () --}
@@ -264,8 +264,13 @@ roleWellFormed role =
       mapM_ origVarCheck $ rvars role
       failwith "role trace is a prefix of a listener"
                    $ notListenerPrefix $ rtrace role
-      failwith "role trace has stor with no previous load"
-                   $ balancedStores $ rtrace role
+      -- 
+      -- Let's try obliterating the requirement that stored locns must
+      -- previously have been loaded!
+      --                     
+      --         failwith "role trace has stor with no previous load"
+      --                      $ balancedStores $ rtrace role
+      -- 
       failwith "role trace has multiple loads or stors on same locn"
                    $ locnsUnique $ rtrace role
     where
@@ -312,6 +317,7 @@ roleWellFormed role =
 --             | otherwise              = check c' Nothing
 --         check (_ : c') _             = check c' Nothing
 
+{--
 balancedStores :: Trace -> Bool
 balancedStores c =
     check c []
@@ -325,9 +331,46 @@ balancedStores c =
           | isLocn ch              = False
           | otherwise              = check c' []
       check (_ : c') _             = check c' []
+--}
+
 
 locnsUnique :: Trace -> Bool
-locnsUnique c =
+locnsUnique [] = True
+locnsUnique ((In (ChMsg ch _)) : c') =
+    if isLocn ch
+    then
+        checkLoads c' [ch]
+    else
+        locnsUnique c'
+    where
+      checkLoads ((In (ChMsg ch _)) : c') seen =
+          if isLocn ch
+          then 
+              not (ch `elem` seen) &&
+              checkLoads c' (ch : seen)
+          else
+              locnsUnique c'
+      checkLoads c' _ = locnsUnique c'
+                        
+locnsUnique ((Out (ChMsg ch _)) : c') =
+    if isLocn ch
+    then
+        checkStores c' [ch]
+    else locnsUnique c'
+    where
+      checkStores ((Out (ChMsg ch _)) : c') seen =
+          if isLocn ch
+          then 
+              not (ch `elem` seen) &&
+              checkStores c' (ch : seen)
+          else
+              locnsUnique c'
+      checkStores c' _ = locnsUnique c'
+
+locnsUnique (_ : c') = locnsUnique c'
+    
+
+{-- 
     check c []
     where
       check [] _ = True
@@ -337,11 +380,13 @@ locnsUnique c =
           | otherwise              = check c' []
       check ((Out (ChMsg ch _)) : c') loads
           | isLocn ch              =
-              (case deleteWhenPresent ch loads with
-              | Nothing -> False
-              | Just rest -> check c' rest)
+              (case deleteWhenPresent ch loads of
+              Nothing -> False
+              Just rest -> check c' rest)
           | otherwise              = check c' []
       check (_ : c') _             = check c' []
+      --}
+
 
 -- Given a trace, return a list of pairs of indices.  The first member
 -- of each pair is the index of a state event.  If the state event is
@@ -388,6 +433,77 @@ stateSegments :: Trace -> [(Int,Int)]
 stateSegments c =
     findSegments [] 0 c
     where
+      -- findSegments soFar index c
+      -- is called when the original trace has the state segments
+      -- soFar that are completed *before* index, and the tail c of
+      -- the original trace remains to be explored.
+      
+      findSegments soFar _ [] = soFar
+                                
+      findSegments soFar i (In (ChMsg ch _) : c)
+          | isLocn ch           = findLower soFar i (i+1) c          
+          | otherwise           = findSegments soFar (i+1) c
+
+      findSegments soFar i ((Out (ChMsg ch _)) : c)
+          | isLocn ch           = findUpper soFar i (i+1) c           
+          | otherwise           = findSegments soFar (i+1) c
+
+      findSegments soFar i (_ : c) =
+          findSegments soFar (i+1) c
+
+      findLower soFar i j [] = (i,j-1) : soFar
+                               
+      findLower soFar i j (In (ChMsg ch _) : c')
+          | isLocn ch           = findLower soFar i (j+1) c'
+          | otherwise           = findSegments ((i,j-1) : soFar) (j+1) c'
+                                  
+      findLower soFar i j (In _ : c') = findSegments ((i,j-1) : soFar) (j+1) c'
+
+      findLower soFar i j (Out m : c') = findUpper soFar i j (Out m : c')
+
+      findUpper soFar i j [] = (i,j-1) : soFar
+
+      findUpper soFar i j (Out (ChMsg ch _) : c')
+          | isLocn ch           = findUpper soFar i (j+1) c'
+          | otherwise           = findSegments ((i,j-1) : soFar) (j+1) c'
+                                  
+      findUpper soFar i j (Out _ : c') = findSegments ((i,j-1) : soFar) (j+1) c'
+
+      findUpper soFar i j (In m : c') = findSegments ((i,j-1) : soFar) j (In m : c')
+
+{--      -- findEnd soFar i j bool c
+
+      -- is called where the original trace has the state segments
+      -- soFar that are completed *before* i, and there is a state
+      -- segment that began at i and may still extend; we are
+      -- currently inspecting index j which is the start of the
+      -- unexplored suffix c; the boolean flag is True if we're in the
+      -- upper storing part of the state segment, and False in the
+      -- lower loading part.
+
+      findEnd soFar i j _ [] = (i,j-1) : soFar
+                                     
+      findEnd soFar i j False ((In (ChMsg ch _)) : c')
+          | isLocn ch           = findEnd soFar i (j+1) False c'
+          | otherwise           = findSegments ((i,j-1) : soFar) (j+1) c'
+      findEnd soFar i j False ((Out (ChMsg ch _)) : c')
+          | isLocn ch           = findEnd soFar i (j+1) True c'
+          | otherwise           = findSegments ((i,j-1) : soFar) (j+1) c'
+                                  
+      findEnd soFar i j True (In m : c') =
+          findSegments ((i,j-1) : soFar) j (In m : c')
+      findEnd soFar i j True (Out (ChMsg ch _) : c') 
+          | isLocn ch           = findEnd soFar i (j+1) True c'
+          | otherwise           = findSegments ((i,j-1) : soFar) (j+1) c'
+              
+      findEnd soFar i j _ (_ : c') =
+          findSegments ((i,j-1) : soFar) (j+1) c'
+--}
+                       
+      
+
+{-    findSegments [] 0 c
+    where
       findSegments soFar _ [] = soFar
       findSegments soFar i ((Out _) : c) =
           findSegments soFar (i+1) c
@@ -420,6 +536,9 @@ stateSegments c =
       findEnd soFar start i ((Out (ChMsg ch _)) : c) _
           | isLocn ch           = findEnd soFar start (i+1) c True
           | otherwise           = findSegments ((start,(i-1)) : soFar) (i+1) c
+
+--}
+
 
 failwith :: MonadFail m => String -> Bool -> m ()
 failwith msg test =
@@ -557,7 +676,8 @@ initRules sig g prot prs =
                                           (g',r : rules))
                        (g',[])
                        [scissorsRule sig, cakeRule sig, uninterruptibleRule sig,
-                                     shearsRule sig, invShearsRule sig]
+                        shearsRule sig, invShearsRule sig,
+                        causeRule sig, effectRule sig]
               else (g',[])
 
       (g,fcRls) <- iterPreRules initPreRulesFacts sig g prot prs

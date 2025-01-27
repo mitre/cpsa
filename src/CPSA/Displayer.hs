@@ -285,7 +285,7 @@ displayRest k ctx rest =
 displayFacts :: Context -> [Fact] -> [SExpr ()]
 displayFacts ctx =
     foldr
-    (\(Fact name fs) soFar ->
+    (\(Fact name fs) soFar -> 
          case name of
            "trans" -> soFar
            _ -> (L () (S () name : map (displayFterm ctx) fs)) : soFar)
@@ -363,6 +363,7 @@ displayOperation k ctx rest =
       Collapsed _ s s' ->
           let desc = [N () s, N () s'] in
           L () (S () "operation" : S () "collapsed" : desc) : rest
+      AppliedRules _ ->  L () (S () "operation" : [(S () "applied-rules")]) : rest
     where
       displayCause op (Cause dir node critical escape) =
           L () (S () "operation" :

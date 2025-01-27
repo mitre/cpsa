@@ -170,18 +170,35 @@ csRules sig g rl =
            (g', csRules ++ rs)))
      (g,[])
      where
-       f g start end =
-           let lastRecv = lastRecvInCS rl start end in
-           let (g',rs) = foldr (\ind (g,soFar) ->
-                                    let (g',r) = causeRule g rl start ind in
-                                    (g', (r : soFar)))
-                         (g,[])
-                         [start+1..lastRecv] in
-           foldr (\ind (g,soFar) ->
-                      let (g',r) = effectRule g rl end ind in
-                      (g', (r : soFar)))
-             (g',rs)
-             [lastRecv+1..end-1]
+       f g start end = stateSegStrRule g rl start end
+       -- let lastRecv = lastRecvInCS rl start end in
+--              if start == end then (g,[])
+--              else 
+--                  let (g',rc) = causeRule g rl start end in
+--                  let (g'',re) = effectRule g' rl end start in
+--                  let (g''',rf) = fullCSRule g'' rl start end in
+--                  (g''', [rf, rc, re])
+
+
+       stateSegStrRule g rl start end =
+           let (g',z) = newVar sig g "z" "strd" in
+           
+           -- (a -> b -> b) -> b -> t a -> b
+           foldr
+           (\j (g'',soFar) ->
+            let (g''',r) = (ruleOfClauses sig g''
+                            ("st-sg-" ++ (rname rl) ++ "-" ++ (show j))
+                            [z]
+                            [(Length rl z (indxOfInt (j+1)))]
+                            [([],
+                              [AFact "st-sg-str"
+                               [z, (indxOfInt start), (indxOfInt j)]])]) in
+            (g''', r : soFar))
+           (g',[])
+           [start+1..end]
+           
+
+{--            
 
        causeRule g rl start ind =
            let (g',z) = newVar sig g "z" "strd" in
@@ -216,6 +233,16 @@ csRules sig g rl =
                                 -- after end of critical section
                [(Length rl z (indxOfInt (end+1))),
                 (Prec (z, (indxOfInt end)) (z1,i))])]
+
+       fullCSRule g rl start end =
+           let (g',z) = newVar sig g "z" "strd" in
+           (ruleOfClauses sig g'
+            ("full-cs-" ++ (rname rl) ++ "-" ++ (show start))
+            [z]
+            [(Length rl z (indxOfInt (start+1)))]
+            [([], 
+              [(Length rl z (indxOfInt (end+1)))])])
+--}
 
 data FoundAt = FoundAt Int
              | Missing Term
@@ -616,3 +643,49 @@ cakeRule sig g =
                          rlcomment = [] }))
             (g, _) -> (g, theVacuousRule)
       (g, _) -> (g, theVacuousRule)
+
+
+causeRule :: Sig -> Gen -> (Gen, Rule)
+causeRule sig g =
+    case sortedVarsOfNames sig g "strd" ["z","z1"] of
+      (g, [z,z1]) ->
+          case sortedVarsOfNames sig g "indx" ["i","j","i1"] of
+            (g, [i,j,i1]) ->
+                (g,
+                 (Rule { rlname = "causeRule",
+                         rlgoal =
+                             Goal
+                             {uvars = [z,z1, i,j,i1],
+                              antec = [ (AFact "st-sg-str" [z,i,j]),
+                                        (Prec (z1,i1) (z,j)) ],
+                              consq = [([], [Equals z z1]),
+                                       ([], [Prec (z1,i1) (z,i)]) ], -- disjunction 
+                              concl = [[Equals z z1],
+                                       [Prec (z1,i1) (z,i)]]},
+                         rlcomment = [] }))
+            (g, _) -> (g, theVacuousRule)
+      (g, _) -> (g, theVacuousRule)
+
+                                
+effectRule :: Sig -> Gen -> (Gen, Rule)
+effectRule sig g =
+    case sortedVarsOfNames sig g "strd" ["z","z1"] of
+      (g, [z,z1]) ->
+          case sortedVarsOfNames sig g "indx" ["i","j","i1"] of
+            (g, [i,j,i1]) ->
+                (g,
+                 (Rule { rlname = "effectRule",
+                         rlgoal =
+                             Goal
+                             {uvars = [z,z1, i,j,i1],
+                              antec = [ (AFact "st-sg-str" [z,i,j]),
+                                        (Prec (z,i) (z1,i1)) ],
+                              consq = [([], [Equals z z1]),
+                                       ([], [Prec (z,j) (z1,i1)]) ], -- disjunction 
+                              concl = [[Equals z z1],
+                                       [Prec (z,j) (z1,i1)]]},
+                         rlcomment = [] }))
+            (g, _) -> (g, theVacuousRule)
+      (g, _) -> (g, theVacuousRule)
+
+                                

@@ -1,4 +1,4 @@
--- Instance and preskeleton data structures and support functions.
+- Instance and preskeleton data structures and support functions.
 
 -- Copyright (c) 2009 The MITRE Corporation
 --
@@ -297,6 +297,13 @@ instance Show (GraphNode e i) where
 -- The node of a vertex
 graphNode :: GraphNode e i -> Node
 graphNode n = (sid (strand n), pos n)
+
+isStateNode :: GraphNode Event i -> Bool
+isStateNode n =
+    case (event n) of
+      In (ChMsg ch _) -> isLocn ch
+      Out (ChMsg ch _) -> isLocn ch
+      _ -> False 
 
 type GraphEdge e i = (GraphNode e i, GraphNode e i)
 
@@ -1349,6 +1356,7 @@ substOper subst (AddedAbsence sm t1 t2 cause) =
     AddedAbsence sm (substitute subst t1) (substitute subst t2) (substCause subst cause)
 substOper _ m@(Generalized _ _) = m
 substOper _ m@(Collapsed _ _ _) = m
+substOper _ m@(AppliedRules _) = m
 
 substCause :: Subst -> Cause -> Cause
 substCause subst (Cause dir n t escape) =
@@ -1378,7 +1386,9 @@ compress validate (k0, k, n, phi, hsubst) s s' =
               (kauth k)
               (map (updateFact $ updateStrand s s') (kfacts k))
               (updatePriority perm (kpriority k))
-              (operation k)
+              (operation k) -- strand map not updated here, but it's
+                            -- corrected from the PRS component
+                            -- returned below 
               (krules k)
               (pprob k)
               (updateProb perm (prob k))
@@ -2302,7 +2312,8 @@ generalize k = deleteTerminal k ++
                forgetAssumption k ++
                weakenOrderings k ++
                (if useVariableSeparation
-                then take separateVariablesLimit (separateVariables k)
+                then (take separateVariablesLimit
+                      (separateVariables k))
                 else [])
 
 -- terminal strand deletion
@@ -2326,7 +2337,8 @@ deleteTerminal k =
              (deleteOrderings s (tc k))
              (updatePerm s s (prob k))
              (map (updateFact (updateStrand s s))
-                      (deleteStrandFacts s $ kfacts k))),
+                      (deleteStrandFacts s $ kfacts k))
+             (deleteNth s (strandids k))),
             deleteNth s (strandids k),
             s)
           | s <- [0 .. (L.length (insts k))-1],
@@ -2360,7 +2372,7 @@ deleteNodes :: Preskel -> [Candidate]
 deleteNodes k =
     do
       strand <- strands k
-      node <- nodes strand
+      node <- nodes strand   
       cand <- deleteNode k node
       return $ candWithCoreFacts cand
 
@@ -2381,6 +2393,7 @@ deleteNode k n
                    (map
                      (updateFact (updateStrand s s))
                      (deleteStrandFacts s $ kfacts k))
+                   mapping
           return (k', mapping)
     | otherwise =
         do
@@ -2392,6 +2405,7 @@ deleteNode k n
                    (shortenOrderings (s, p) (tc k))
                    (prob k)
                    (deleteNodeFacts s p (kfacts k))
+                   mapping
           return (k', mapping)
     where
       p = pos n
@@ -2430,11 +2444,11 @@ shortenOrderings (s, i) ps =
           | otherwise = [p]
 
 deleteNodeRest :: Preskel -> Gen -> Node -> [Instance] -> [Pair] ->
-                  [Sid] -> [Fact] -> Preskel
-deleteNodeRest k gen n insts' orderings prob facts =
+                  [Sid] -> [Fact] -> [Sid] -> Preskel
+deleteNodeRest k gen n insts' orderings prob facts mapping =
     newPreskel gen (shared k) insts' orderings non' pnon' unique'
     uniqgen' absent' precur' genSt' conf'
-    auth' facts prio' (Generalized [] (Deleted n)) [] (pprob k) prob (pov k)
+    auth' facts prio' (Generalized mapping (Deleted n)) [] (pprob k) prob (pov k)
     where
       -- Drop nons that aren't mentioned anywhere
       non' = filter mentionedIn (knon k)
@@ -2475,8 +2489,9 @@ deleteStrandFacts s facts =
     g (FSid s') = s /= s'
     g (FTerm _) = True
 
--- Correct this!  When we know how to filter based on strand and
--- index.  !!!!
+-- Omit facts that contain a strand and index that refer to the strand
+-- being deleted unless the index is before the deletion point.
+
 deleteNodeFacts :: Sid -> Int -> [Fact] -> [Fact]
 deleteNodeFacts s p facts =
   filter f facts
@@ -2546,7 +2561,7 @@ weaken k p orderings =
       k' = newPreskel (gen k) (shared k) (insts k) orderings (knon k)
            (kpnon k) (kunique k) (kuniqgen k) (kabsent k) (kprecur k)
            (kgenSt k) (kconf k) (kauth k) (kfacts k) (kpriority k)
-           (Generalized [] (Weakened p)) [] (pprob k) (prob k) (pov k)
+           (Generalized (strandids k) (Weakened p)) [] (pprob k) (prob k) (pov k)
 
 -- Origination assumption forgetting
 
@@ -2722,11 +2737,11 @@ changeLocations k env gen t locs =
       k0 = newPreskel gen' (shared k) insts' (orderings k) non pnon
            unique0 uniqgen0 (kabsent k) (kprecur k)
            (kgenSt k) (kconf k) (kauth k) (kfacts k) (kpriority k)
-           (Generalized [] (Separated t))
+           (Generalized (strandids k) (Separated t))
            [] (pprob k) (prob k) (pov k)
       k1 = newPreskel gen' (shared k) insts' (orderings k) non pnon
            unique1 uniqgen1 (kabsent k) (kprecur k) (kgenSt k)
-           (kconf k) (kauth k) facts (kpriority k) (Generalized []
+           (kconf k) (kauth k) facts (kpriority k) (Generalized (strandids k)
                                                     (Separated t))
            [] (pprob k) (prob k) (pov k)
       (gen', insts') = changeStrands locs t gen (strands k)
@@ -3518,7 +3533,7 @@ simplify :: Preskel -> [Preskel]
 simplify k =
     if checkNullary k
     then
-        case rewrite $ withCoreFacts k of
+        case rewrite k of -- $ withCoreFacts k of -- YIKES!
           Nothing -> [k]
           Just ks -> ks
     else

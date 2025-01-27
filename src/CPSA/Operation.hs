@@ -58,7 +58,9 @@ data Operation
     | AddedAbsence [Sid] Term Term Cause
     | Generalized [Sid] Method
     | Collapsed [Sid] Int Int
+    | AppliedRules [Sid] 
       deriving Show
+
 
 getStrandMap :: Operation -> [Sid]
 getStrandMap New = []
@@ -69,6 +71,7 @@ getStrandMap (AddedListener sm _ _) = sm
 getStrandMap (AddedAbsence sm _ _ _) = sm
 getStrandMap (Generalized sm _) = sm
 getStrandMap (Collapsed sm _ _) = sm
+getStrandMap (AppliedRules sm) = sm
 
 addStrandMap :: [Sid] -> Operation -> Operation
 addStrandMap _ New = New
@@ -80,3 +83,4 @@ addStrandMap sm (AddedListener _ t c) = AddedListener sm t c
 addStrandMap sm (AddedAbsence _ t1 t2 c) = AddedAbsence sm t1 t2 c
 addStrandMap sm (Generalized _ m) = Generalized sm m
 addStrandMap sm (Collapsed _ n1 n2) = Collapsed sm n1 n2
+addStrandMap sm (AppliedRules _) = AppliedRules sm

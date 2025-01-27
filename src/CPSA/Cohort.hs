@@ -300,7 +300,9 @@ data ReduceRes = Stable | Crt [Preskel] | Gnl [Preskel] -- now needed
 
 reduceNoTest :: Mode -> Preskel -> ReduceRes
 reduceNoTest mode k =
-    case simplify k of
+    case [k] --   simplify (k { operation = AppliedRules (strandids k),
+         --                          krules = [] })
+    of
       [k']
           | isomorphic (gist k) (gist k') ->
               if omitGeneralization || noGeneralization mode then Stable
@@ -768,16 +770,21 @@ maximize k =
 
 maximize :: Preskel -> [Preskel]
 maximize k =
-    iter $ map recordMap $ generalize k
+    iter $ concatMap simplify $ map recordMap $ generalize k
     where
       iter [] = []
-      iter ((k',mapping) : rest) =
+      iter (k' : rest) =
+          let mapping = getStrandMap (operation k') in 
           case specialization k k' mapping of
             [] -> iter rest
             -- Since specialization now simplifies, the ks are
             -- automatically closed under the rules.
             ks -> ks
-      recordMap (k, sm) = (updateStrandMap sm k, sm)
+      recordMap (k, sm) = if sm == getStrandMap (operation k)
+                          then k
+                          else -- z (show $ getStrandMap (operation
+                               -- k)) $
+                              updateStrandMap sm k -- (, sm) 
 
 -- Test to see if realized skeleton k is a specialization of
 -- preskeleton k' using the given strand mapping.  Returns the
@@ -793,8 +800,8 @@ specialization k k' mapping
           case (realized k'') &&  (not (isomorphic (gist k) (gist k''))) &&
                (refines k'' (pov k'') (prob k'')) &&
                (refines k (Just k'') mapping) of
-            True -> simplify k'' -- maybeOK $
-            False -> []
+            True -> [k''] -- maybeOK $
+            False -> []   -- showSome k'' []
         where
           realized = null . unrealized
           refines _ Nothing _ =
@@ -803,16 +810,16 @@ specialization k k' mapping
               not $ null $ homomorphism k' k mapping
 
 {--  Debugging apparatus:
+
           showSome k'' v =
-              if (5 == L.length (insts k)) && (1+L.length (insts k'') == L.length (insts k))
+              if (5 == L.length (insts k)) && (1+L.length (insts k'') == L.length (insts k)
+                                              && null (unrealized k''))
               then
                   (z
                    ("length: " ++ (show (L.length (insts k''))) ++
-                    ", unrealized: " ++ (show (unrealized k'')) ++
-                    ", prev nodes: " ++ (show (addSendingBefore S.empty (vertex k'' (0,0)))) ++
---                       ", after: " ++ (show
---                                       (cmsInNodes
---                                        (addSendingBefore S.empty (vertex k'' (0,0))))) ++
+--                    ", unrealized: " ++ (show (unrealized k'')) ++
+--                    ", prev nodes: " ++ (show (addSendingBefore S.empty (vertex k'' (0,0)))) ++
+                    ", map: " ++ (show (getStrandMap (operation k''))) ++
                     ", prob: " ++ (show (prob k'')) ++
                     ", POV OK: " ++ (show (refines k'' (pov k'') (prob k''))) ++
                     ", refines: " ++ (show (refines k (Just k'') mapping)) ++
