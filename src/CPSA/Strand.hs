@@ -1,4 +1,4 @@
-- Instance and preskeleton data structures and support functions.
+-- Instance and preskeleton data structures and support functions.
 
 -- Copyright (c) 2009 The MITRE Corporation
 --
@@ -2307,7 +2307,7 @@ separateVariablesLimit :: Int
 separateVariablesLimit = 1024
 
 generalize :: Preskel -> [Candidate]
-generalize k = deleteTerminal k ++
+generalize k = -- deleteTerminal k ++  --Is this redundant?  
                deleteNodes k ++
                forgetAssumption k ++
                weakenOrderings k ++

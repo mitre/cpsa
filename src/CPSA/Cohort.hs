@@ -307,7 +307,7 @@ reduceNoTest mode k =
           | isomorphic (gist k) (gist k') ->
               if omitGeneralization || noGeneralization mode then Stable
               else
-                  (case filterSame k (maximize k) of
+                  (case maximize k of
                      [] -> Stable
                      ks -> Gnl ks)
           | True -> Crt [k']
