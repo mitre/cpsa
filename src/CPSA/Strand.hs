@@ -1,10 +1,22 @@
-- Instance and preskeleton data structures and support functions.
+-- Instance and preskeleton data structures and support functions.
 
 -- Copyright (c) 2009 The MITRE Corporation
 --
 -- This program is free software: you can redistribute it and/or
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use if" #-}
+{-# HLINT ignore "Redundant bracket" #-}
+{-# HLINT ignore "Move brackets to avoid $" #-}
+{-# HLINT ignore "Redundant map" #-}
+{-# HLINT ignore "Use section" #-}
+{-# HLINT ignore "Redundant return" #-}
+{-# HLINT ignore "Use fmap" #-}
+{-# HLINT ignore "Use =<<" #-}
+{-# HLINT ignore "Eta reduce" #-}
+{-# HLINT ignore "Replace case with fromMaybe" #-}
+{-# HLINT ignore "Use all" #-}
 
 module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     role, env, trace, height, listenerTerm, mkPreskel,
@@ -38,11 +50,13 @@ import CPSA.Channel
 import CPSA.Protocol
 import CPSA.Operation
 
+
 {--
 
 import System.IO.Unsafe
 import Control.Exception (try)
 import System.IO.Error (ioeGetErrorString)
+import Control.DeepSeq
 
 z :: Show a => a -> b -> b
 z x y = unsafePerformIO (print x >> return y)
@@ -52,6 +66,52 @@ zz x = z x x
 
 zShow :: Show a => a -> a
 zShow x = z (show x) x
+
+zShow' :: Show a => String -> a -> String 
+zShow' s x = (show (s, x)) 
+
+kShow :: String -> Int -> Preskel -> String 
+kShow s n k = 
+    if L.length (strands k) == n then 
+      zShow' s k
+    else 
+      "no show" 
+
+goodParent :: Preskel -> Bool
+goodParent k = 
+  let xs = insts k in 
+  (L.length xs == 5) &&
+    ("short-init" == (rname $ role (xs !! 2))) &&
+    ("short-short-init" == (rname $ role (xs !! 3))) &&
+    ("resp" == (rname $ role (xs !! 4)))
+
+goodChild :: Preskel -> Bool 
+goodChild k = 
+  let xs = insts k in 
+  L.length xs == 4 &&
+    "short-short-init" == (rname $ role (xs !! 2)) &&
+    "resp" == (rname $ role (xs !! 3))
+
+tShow1 :: Show a => Preskel -> Preskel -> a -> String 
+tShow1 k k' m = 
+  if goodParent k && goodChild k' then 
+    z (show ("gparent", k)) (show k)
+  else 
+    ""
+
+tShow2 :: Show a => Preskel -> Preskel -> a -> String 
+tShow2 k k' m = 
+  if goodParent k && goodChild k' then
+    z (show ("gchild", k')) (show k')
+  else 
+    ""
+
+tShow3 :: Show a => Preskel -> Preskel -> a -> String 
+tShow3 k k' m = 
+  if goodParent k && goodChild k' then 
+    z (show ("gmapping", m)) (show m)
+  else 
+    ""
 
 zb :: Show a => a -> Bool -> Bool
 zb a False = z a False
@@ -71,6 +131,9 @@ zt _ y = y
 
 zl :: Show a => [a] -> [a]
 zl a = z (length a) a
+
+zp :: Show a => (a, b) -> (a, b)
+zp (x, y) = z (show x) (x, y)
 
 zi :: Instance -> String
 zi inst =
@@ -298,12 +361,12 @@ instance Show (GraphNode e i) where
 graphNode :: GraphNode e i -> Node
 graphNode n = (sid (strand n), pos n)
 
-isStateNode :: GraphNode Event i -> Bool
+{- isStateNode :: GraphNode Event i -> Bool
 isStateNode n =
     case (event n) of
       In (ChMsg ch _) -> isLocn ch
       Out (ChMsg ch _) -> isLocn ch
-      _ -> False 
+      _ -> False  -}
 
 type GraphEdge e i = (GraphNode e i, GraphNode e i)
 
@@ -2307,7 +2370,7 @@ separateVariablesLimit :: Int
 separateVariablesLimit = 1024
 
 generalize :: Preskel -> [Candidate]
-generalize k = deleteTerminal k ++
+generalize k = --deleteTerminal k ++ -- Won't deleteNodes try this too without checking orderings first?
                deleteNodes k ++
                forgetAssumption k ++
                weakenOrderings k ++
@@ -2318,7 +2381,7 @@ generalize k = deleteTerminal k ++
 
 -- terminal strand deletion
 
-strandTerminal :: Preskel -> Sid -> Bool
+{--strandTerminal :: Preskel -> Sid -> Bool
 strandTerminal k s =
     not(any (\((s1,_),_) -> s == s1) (orderings k))
 
@@ -2345,7 +2408,7 @@ deleteTerminal k =
                  strandNonPov k s,
                  strandTerminal k s]
       report [] = []
-      report ((k', mapping, _) : rest) = (k',mapping) : report rest
+      report ((k', mapping, _) : rest) = (k',mapping) : report rest --}
 
  {-- debugging apparatus:
    (zP
@@ -2373,19 +2436,35 @@ deleteNodes k =
     do
       strand <- strands k
       node <- nodes strand   
-      cand <- deleteNode k node
-      return $ candWithCoreFacts cand
+      cand <- deleteNode (withCoreFacts k) node
+      --tShow1 (withCoreFacts k) (fst cand) (snd cand) `deepseq` tShow2 k (fst cand) (snd cand) `deepseq` tShow3 k (fst cand) (snd cand) `deepseq` 
+      return cand --return $ candWithCoreFacts cand
 
-candWithCoreFacts :: Candidate -> Candidate
+{- candWithCoreFacts :: Candidate -> Candidate
 candWithCoreFacts (k,sids) =
-    (withCoreFacts k, sids)
+    (withCoreFacts k, sids) -}
 
 deleteNode :: Preskel -> Vertex -> [(Preskel, [Sid])]
 deleteNode k n
     | p == 0 && elem s (prob k) = []
-    | p == 0 =
-        do
+    | p == 0 = 
+      let mapping = deleteNth s (strandids k) in 
+      --let k1 = kShow "parent" 5 k
+      let k' = deleteNodeRest k (gen k) (s, p)
+                (deleteNth s (insts k))
+                (deleteOrderings s (tc k))
+                (updatePerm s s (prob k))
+                (map
+                  (updateFact (updateStrand s s))
+                  (deleteStrandFacts s $ kfacts k))
+                mapping in 
+      --let k'' = kShow "child" 4 k' 
+      --let mapping' = zShow' "mapping" mapping 
+      --tShow1 k k' mapping `deepseq` tShow2 k k' mapping `deepseq` tShow3 k k' mapping `deepseq` 
+      [(k', mapping)]
+        {- do
           let mapping = deleteNth s (strandids k)
+          --let k1 = kShow "parent" 5 k
           let k' = deleteNodeRest k (gen k) (s, p)
                    (deleteNth s (insts k))
                    (deleteOrderings s (tc k))
@@ -2394,7 +2473,10 @@ deleteNode k n
                      (updateFact (updateStrand s s))
                      (deleteStrandFacts s $ kfacts k))
                    mapping
-          return (k', mapping)
+          --let k'' = kShow "child" 4 k' 
+          --let mapping' = zShow' "mapping" mapping 
+          tShow1 k k' mapping `deepseq` tShow2 k k' mapping `deepseq` tShow3 k k' mapping `deepseq` return (k', mapping) -}
+          --(kShow "parent" 5 k, kShow "child" 4 k', zShow' "mapping" mapping) `deepseq` return (k', mapping)
     | otherwise =
         do
           let mapping = strandids k
@@ -4321,6 +4403,17 @@ rSubst k (gen, subst) =
         genStV' conf' auth' facts' (kpriority k)
         operation' (krules k) (pprob k) (prob k) (pov k)
 
+compressUpdate :: Int -> Int -> [Sid] -> [Sid]
+compressUpdate i j xs = 
+  case (i < L.length xs, j < L.length xs) of 
+    (True, True) -> 
+      error ("compressUpdate:  Cannot displace existing strand " ++ (show i) ++ " onto existing strand " ++ (show j))
+    (True, False) ->
+      let x = xs !! i in  
+      L.delete x xs ++ [x]
+    (_, _) -> xs -- Compressing a new strand onto an old or onto another new strand does not change strand map.
+
+  
 -- Does rCompress assume that s \not= s'?  s is old, s' is new
 rCompress :: Preskel -> Sid -> Sid -> [Preskel]
 rCompress k s s' =
@@ -4346,7 +4439,7 @@ rCompress k s s' =
         (map (updateFact $ updateStrand s s') (kfacts k))
         (updatePriority perm (kpriority k))
         (let op = operation k in 
-         addStrandMap (updatePerm s s' (getStrandMap op))
+         addStrandMap (compressUpdate s s' (getStrandMap op))
                       op)
         (krules k)
         (pprob k)

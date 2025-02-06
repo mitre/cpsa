@@ -5,6 +5,13 @@
 -- This program is free software: you can redistribute it and/or
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Use if" #-}
+{-# HLINT ignore "Redundant bracket" #-}
+{-# HLINT ignore "Fuse concatMap/map" #-}
+{-# HLINT ignore "Move brackets to avoid $" #-}
+{-# HLINT ignore "Use uncurry" #-}
+{-# HLINT ignore "Use map once" #-}
 
 module CPSA.Cohort (Mode(..), ReduceRes(..), reduce, unrealized) where
 
@@ -20,12 +27,56 @@ import CPSA.Strand
 
 {-- Debugging support
 import System.IO.Unsafe
+import Control.DeepSeq
 
 z :: Show a => a -> b -> b
 z x y = unsafePerformIO (print x >> return y)
 
 zShow :: Show a => a -> a
 zShow x = z (show x) x
+
+kShow :: Preskel -> Preskel 
+kShow k = 
+    if L.length (strands k) == 5 then 
+      zShow k
+    else 
+      k 
+goodParent :: Preskel -> Bool
+goodParent k = 
+  let xs = insts k in 
+  (L.length xs == 5) &&
+    ("short-init" == (rname $ role (xs !! 2))) &&
+    ("short-short-init" == (rname $ role (xs !! 3))) &&
+    ("resp" == (rname $ role (xs !! 4)))
+
+goodChild :: Preskel -> Bool 
+goodChild k = 
+  let xs = insts k in 
+  L.length xs == 4 &&
+    "short-short-init" == (rname $ role (xs !! 2)) &&
+    "resp" == (rname $ role (xs !! 3))
+
+tShow1 :: Show a => Preskel -> Preskel -> a -> Preskel 
+tShow1 k k' _ = 
+  if goodParent k && goodChild k' then 
+    z (show ("parent", k)) k
+  else 
+    k
+
+tShow2 :: Show a => Preskel -> Preskel -> a -> Preskel 
+tShow2 k k' _ = 
+  if goodParent k && goodChild k' then
+    --z (show ("child", k')) k'
+    z (show "perm: " ++ show (compressUpdate 4 2 [0,1,3,4])) k'
+  else 
+    k'
+
+tShow3 :: Show a => Preskel -> Preskel -> a -> a
+tShow3 k k' m = 
+  if goodParent k && goodChild k' then 
+    z (show ("mapping", m)) m
+  else 
+    m
 
 zz :: Show a => a -> a
 zz x = z x x
@@ -300,20 +351,25 @@ data ReduceRes = Stable | Crt [Preskel] | Gnl [Preskel] -- now needed
 
 reduceNoTest :: Mode -> Preskel -> ReduceRes
 reduceNoTest mode k =
-    case [k] --   simplify (k { operation = AppliedRules (strandids k),
+  if omitGeneralization || noGeneralization mode then Stable
+  else
+      (case maximize k of --filterSame k (maximize k) of
+          [] -> Stable
+          ks -> Gnl ks)
+    {- case [k] --   simplify (k { operation = AppliedRules (strandids k),
          --                          krules = [] })
     of
       [k']
           | isomorphic (gist k) (gist k') ->
               if omitGeneralization || noGeneralization mode then Stable
               else
-                  (case filterSame k (maximize k) of
+                  (case maximize k of --filterSame k (maximize k) of
                      [] -> Stable
                      ks -> Gnl ks)
-          | True -> Crt [k']
-      ks -> Crt (mgsCall $ filterSame k ks)
+          | True -> Crt [k'] -}
+      {- ks -> Crt (mgsCall $ filterSame k ks)
     where
-      mgsCall ks = mgs $ map (\k -> (k,(getStrandMap $ operation k))) ks
+      mgsCall ks = mgs $ map (\k -> (k,(getStrandMap $ operation k))) ks -}
 
 reduce :: Mode -> Preskel -> ReduceRes
 reduce mode k =
@@ -770,19 +826,18 @@ maximize k =
 
 maximize :: Preskel -> [Preskel]
 maximize k =
-    iter $ concatMap simplify $ map recordMap $ generalize k
+    iter $ concatMap simplify $ map recordMap $ generalize k 
     where
       iter [] = []
       iter (k' : rest) =
-          let mapping = getStrandMap (operation k') in 
-          case specialization k k' mapping of
-            [] -> iter rest
-            -- Since specialization now simplifies, the ks are
-            -- automatically closed under the rules.
-            ks -> ks
-      recordMap (k, sm) = if sm == getStrandMap (operation k)
-                          then k
-                          else -- z (show $ getStrandMap (operation
+          let mapping = getStrandMap (operation k') in
+           case specialization k k' mapping of
+             [] -> --tShow1 k k' mapping `deepseq` tShow2 k k' mapping `deepseq` tShow3 k k' mapping `deepseq` 
+                iter rest
+             ks -> ks  -- Don't add iter rest. Just take the first successful one.
+      recordMap (k, sm) = --if sm == getStrandMap (operation kk)
+                          --then kk
+                          --else -- z (show $ getStrandMap (operation
                                -- k)) $
                               updateStrandMap sm k -- (, sm) 
 
@@ -801,7 +856,7 @@ specialization k k' mapping
                (refines k'' (pov k'') (prob k'')) &&
                (refines k (Just k'') mapping) of
             True -> [k''] -- maybeOK $
-            False -> []   -- showSome k'' []
+            False -> [] 
         where
           realized = null . unrealized
           refines _ Nothing _ =
