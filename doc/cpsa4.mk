@@ -37,6 +37,9 @@
 
 # Generate a Prolog database from a CPSA output file
 %.pl:		%.txt
-	cpsa4db $(DBFLAGS) $< | cpsa4dbprolog | sort > $@
+	cabal run -v0 cpsa4db -- $(DBFLAGS) $< | cabal run -v0 cpsa4dbprolog | sort > $@
+
+%.pl:		%.text
+	cabal run cpsa4dl -- -o $@ $<
 
 .PRECIOUS:	%.txt %_shapes.txt
