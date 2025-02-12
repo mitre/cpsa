@@ -416,12 +416,20 @@ duplicates seen (unseen, dups) kid =
                else (j,k') : maybeAdd (i,k) rest
 
 fixStrandMap :: Preskel -> [Sid] -> Preskel
-fixStrandMap k sm =
-    updateStrandMap (composeStrandMap sm1 sm2)
-                     --    (if sm1Challenging sm1
-                     --     then z ("sm1 is challenging: " ++ (show sm1)) sm1
-                     --     else sm1)
-                     --    sm2
+fixStrandMap k _ = k 
+
+{--
+  fixStrandMap k sm =
+    updateStrandMap (composeStrandMap -- sm1 sm2
+                     (if sm1Challenging sm1
+                      then (z ("sm1 is challenging: " ++ (show sm1) ++
+                               (if generalized k
+                                then " generalizing "
+                                else " ") ++
+                               (show sm2))
+                            sm1)
+                      else sm1)
+                     sm2)
     k
     where
       (sm1, sm2) =
@@ -430,7 +438,8 @@ fixStrandMap k sm =
           else
             (getStrandMap kop, sm)
       kop = operation k
-      -- sm1Challenging = any ((<=) (L.length sm)) 
+      sm1Challenging = any ((<=) (L.length sm))
+      --}
 
 generalized :: Preskel -> Bool
 generalized k =

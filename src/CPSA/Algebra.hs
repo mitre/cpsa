@@ -134,6 +134,8 @@ module CPSA.Algebra (name, alias,
     compose,
     absentEnv,
     substDomainWithin,
+    substInvertibleOn,
+    substInvertibly, 
 
     Env,
     emptyEnv,
@@ -146,7 +148,9 @@ module CPSA.Algebra (name, alias,
     substitution,
     strandBoundEnv,
     renamerAndNewVars,
+    envIdentityOnVars,
     reify,
+    matchRename,
     substUpdate,
     strdMatch,
     strdLookup,
@@ -1395,6 +1399,20 @@ substDomainWithin subst vars =
     where
       dom = substDomain subst
 
+substInvertibly :: Gen -> Subst -> Term -> Maybe Term
+substInvertibly gen subst t =
+    case match ts t (gen,emptyEnv) of
+      [] -> Nothing
+      _ -> Just ts 
+    where
+      ts = substitute subst t
+
+substInvertibleOn :: Gen -> Subst -> Term -> Bool
+substInvertibleOn gen subst t =
+    case substInvertibly gen subst t of
+      Nothing -> False
+      Just _ -> True 
+
 -- Composition of substitutions
 
 -- substitute (compose s0 s1) t = substitute s0 (substitute s1 t)
@@ -1721,6 +1739,10 @@ envOfParamVarPairs ((p,v) : rest) =
     if idMapped r p then Env(l, r)
     else
         Env (l, M.insert (varId p) v r)
+
+envIdentityOnVars :: [Term] -> Env
+envIdentityOnVars vars =
+    envOfParamVarPairs $ L.zip vars vars
 
 -- Apply a substitution to the range of an environment
 substUpdate :: Env -> Subst -> Env
@@ -2301,6 +2323,29 @@ reify domain (Env (_, env)) =
       loop (X x : _) (y, t)
           | x == y = (X x, t)
       loop (_ : domain) pair = loop domain pair
+
+-- Extend the given Generator/Environment pair to list of such pairs
+-- that map t to t' with range consisting only of vars; test that
+-- there's a reverse map with range only variables
+
+matchRename :: Term -> Term -> GenEnv -> [GenEnv]
+matchRename t t' ge =
+    case filter matchRangeIsVars $ match t t' ge of 
+      [] -> []
+      cands ->
+          (case filter matchRangeIsVars $ match t' t ge of
+             [] -> []
+             _ -> cands)
+
+matchRangeIsVars :: GenEnv -> Bool
+matchRangeIsVars (_, (Env (_, env))) =
+    allMap isVar env
+    where
+      allMap pred =
+          M.foldr (\v soFar -> soFar && pred v) True
+
+           
+
 
 strdMatch ::  Term -> Int -> GenEnv -> [GenEnv]
 strdMatch t p env = match t (Z p) env

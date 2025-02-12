@@ -7,7 +7,7 @@
 -- University of California.
 
 module CPSA.Channel (ChMsg (..), cmTerm, cmTerms, cmMap, cmChan,
-                     cmMatch, cmUnify, cmtSubstitute,
+                     cmMatch, cmMatchRename, cmUnify, cmtSubstitute,
                      cmFoldCarriedTerms,
                      CMT (..),
                      cmtMap, cmtTerms, cmtUnify, cmtTerm,
@@ -59,6 +59,16 @@ cmMatch (ChMsg ch t) (ChMsg ch' t') ge =
     ge <- match ch ch' ge
     match t t' ge
 cmMatch _ _ _ = []
+
+-- Match insisting on renamings
+cmMatchRename :: ChMsg -> ChMsg -> (Gen, Env) -> [(Gen, Env)]
+cmMatchRename (Plain t) (Plain t') ge =
+    matchRename t t' ge
+cmMatchRename (ChMsg ch t) (ChMsg ch' t') ge =
+    do
+      ge <- matchRename ch ch' ge
+      matchRename t t' ge
+cmMatchRename _ _ _ = [] 
 
 -- Unification
 

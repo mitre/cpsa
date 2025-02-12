@@ -16,7 +16,7 @@ module CPSA.Protocol (Event (..), evtCm, evtTerm, evtChan, evtMap, evt,
     addVars, firstOccurs, paramOfName, envsRoleParams,
     AForm (..), NodeTerm, Goal (..), Conj, fvsAForm, fvsConj, fvsAntec, fvsConsq,
     aFormOrder, aFreeVars, instantiateAForm, instantiateConj, Rule (..),
-    Prot, mkProt, pname, alg, pgen, psig, roles,
+    Prot, mkProt, pname, alg, pgen, psig, roles, checkForDivergenceInStoreSegments,
     nullaryrules, unaryrules, generalrules, rules, userrules, generatedrules,
     listenerRole, varsAllAtoms, pcomment) where
 
@@ -29,10 +29,10 @@ import CPSA.Algebra
 import CPSA.Channel
 import CPSA.Signature (Sig)
 
-{--
+--{--
 import System.IO.Unsafe
-import Control.Exception (try)
-import System.IO.Error (ioeGetErrorString)
+-- import Control.Exception (try)
+-- import System.IO.Error (ioeGetErrorString)
 
 z :: Show a => a -> b -> b
 z x y = unsafePerformIO (print x >> return y)
@@ -451,26 +451,204 @@ envsRoleParams :: Role -> [Term] -> Env
 envsRoleParams rl vars =
     envOfParamVarPairs $ paramVarPairs rl vars
 
-{--
-envsRoleParams rl g =
-    foldl
-    (\ges v -> concatMap
-               (\ge -> case paramOfName (varName v) rl of
-                         Just p ->
-                             case match p v ge -- (z ("ingoing env: "
-                                               -- ++ (show ge)) ge)
-                             of
-                               [] ->  -- debug with z ("?" ++ (varName v))
-                                    [ge]
-                               xs -> --  z ("! " ++ (show v) ++ " for " ++ (show p)
-                                     -- ++ " in " ++ (show xs))
-                                     xs
-                         Nothing -> -- vars not locally bound may
-                                    -- occur elsewhere in formula
-                                   [ge])
-               ges)
-    [(g,emptyEnv)]
+-- For two events, determine if, ignoring the msg contents, they could
+-- possibly unify.  If so, determine if they are both non-store
+-- events, if only one is, or if both are.   
+
+data AgreeData = Disagree
+               | NonStore
+               | HalfStore
+               | FullStore
+
+divergeAgreeStore :: Event -> AgreeData
+divergeAgreeStore (Out (ChMsg ch2 _))
+    | isLocn ch2 = FullStore
+    | otherwise = HalfStore
+
+divergeAgreeStore _ = HalfStore
+
+divergeAgreeOutChan :: Event -> AgreeData
+divergeAgreeOutChan (Out (ChMsg ch2 _))
+    | isLocn ch2 = HalfStore
+    | otherwise = NonStore
+
+divergeAgreeOutChan _ = Disagree
+
+divergeAgreeOutPlain :: Event -> AgreeData
+divergeAgreeOutPlain (Out (ChMsg ch2 _))
+    | isLocn ch2 = HalfStore
+    | otherwise = Disagree
+
+divergeAgreeOutPlain (Out (Plain _)) = NonStore
+divergeAgreeOutPlain _               = Disagree
+
+divergeAgreeInChan :: Event -> AgreeData
+divergeAgreeInChan (Out (ChMsg ch2 _))
+    | isLocn ch2 = HalfStore
+    | otherwise = Disagree
+
+divergeAgreeInChan (Out (Plain _)) = Disagree
+divergeAgreeInChan (In (ChMsg _ _)) = NonStore
+divergeAgreeInChan _ = Disagree
+
+divergeAgreeInPlain :: Event -> AgreeData
+divergeAgreeInPlain (Out (ChMsg ch2 _))
+    | isLocn ch2 = HalfStore
+    | otherwise = Disagree
+                  
+divergeAgreeInPlain (In (Plain _)) = NonStore
+divergeAgreeInPlain _ = Disagree
+
+-- 
+
+divergeEventsAgree :: Event -> Event -> AgreeData
+divergeEventsAgree (Out (ChMsg ch1 _))
+    | isLocn ch1  = divergeAgreeStore
+    | otherwise = divergeAgreeOutChan
+
+divergeEventsAgree (Out _)              = divergeAgreeOutPlain
+divergeEventsAgree (In (ChMsg _ _))     = divergeAgreeInChan
+divergeEventsAgree (In _)               = divergeAgreeInPlain
+
+-- By a varTrail, we mean a list of terms without repetitions
+-- consisting only of sorted variables, and we want to apply
+-- substitutions to them, assuring that the subst is acting as a
+-- renaming on them.  This means that it should be convertible, and it
+-- not yield repeated entries, i.e. it should be injective on these
+-- variables.
+
+type VarTrail = [Term]
+
+substVarTrail :: Gen -> Subst -> VarTrail -> Maybe VarTrail
+substVarTrail gen subst varList =
+    case mapM (substInvertibly gen subst) varList of
+      Nothing -> Nothing
+      Just image ->
+          if repeatedEntries image then Nothing
+          else if any (not . isVar) image then Nothing
+          else Just image
+    where
+      repeatedEntries [] = False
+      repeatedEntries (a : rest) =
+          a `elem` rest ||
+          repeatedEntries rest
+
+                          
+eventVars :: Event -> [Term]
+eventVars e =
+    foldr (\t soFar -> union (sortedVarsIn t) soFar)
+          [] 
+          (cmTerms $ evtCm e) 
+
+data DivergeOutcome = Safe | Unsafe Int
+
+combineOutcomes :: [DivergeOutcome] -> DivergeOutcome
+combineOutcomes [] = Safe
+combineOutcomes (Unsafe i : _) = Unsafe i
+combineOutcomes (Safe : rest) = combineOutcomes rest
+
+type DivergeRest = VarTrail -> Gen -> Bool -> Int -> DivergeOutcome
+
+divergeDescendSensitive :: Event -> Event -> [Event]  -> [Event] -> DivergeRest
+divergeDescendSensitive e1 e2 rest1 rest2 vars g _ i =
+    let gsubsts = cmUnify (evtCm e1) (evtCm e2) (g,emptySubst) in 
+    case mapM (\(g,subst) -> substVarTrail g subst vars) gsubsts of
+      Nothing -> Unsafe i
+      Just varLists -> 
+          combineOutcomes
+          (map
+           (\((g,s),vars) ->    -- vars are already substituted above
+            let sub = substitute s in 
+            let newVars = union (eVars sub e1)
+                          (union (eVars sub e2) vars) in
+            (divergeLoop
+             (map (evtMap $ sub) rest1)
+             (map (evtMap $ sub) rest2)
+             newVars g True (i+1)))
+          $ zip gsubsts varLists)
+    where
+      eVars f e = L.nub $ map f $ eventVars e
+
+divergeDescend :: Event -> Event -> [Event]  -> [Event] -> DivergeRest
+divergeDescend e1 e2 rest1 rest2 vars g inStore i =
+    let gsubsts = cmUnify (evtCm e1) (evtCm e2) (g,emptySubst) in 
+    combineOutcomes
+    (map
+     (\((g,s)) ->    -- vars are not yet substituted
+      let sub = substitute s in 
+      let newVars = union (eVars sub e1)
+                    $ union (eVars sub e2) $ map sub vars in
+      (divergeLoop
+       (map (evtMap sub) rest1)
+       (map (evtMap sub) rest2)
+       newVars g inStore (i+1)))
+     gsubsts)
+    where
+      eVars f e = L.nub $ map f $ eventVars e
+
+divergeLoop :: [Event]  -> [Event] -> DivergeRest
+divergeLoop [] [] _ _ _ _ = Safe 
+divergeLoop [] _ _ _ inStore i = if inStore then Unsafe i else Safe
+divergeLoop _ [] _ _ inStore i = if inStore then Unsafe i else Safe
+
+divergeLoop (e1 : rest1) (e2 : rest2) vars g inStore i =
+    case divergeEventsAgree e1 e2 of
+      HalfStore -> if inStore then Unsafe i else Safe
+      Disagree -> Safe 
+
+      -- A NonStore makes inStore false the *next* time through
+      NonStore -> divergeDescend e1 e2 rest1 rest2 vars g False i
+                  
+      -- A FullStore makes inStore true the *next*  time through
+      FullStore ->
+          if inStore
+          then divergeDescendSensitive
+               e1 e2 rest1 rest2 vars g True i
+          else divergeDescend
+               e1 e2 rest1 rest2 vars g True i
+
+
+{-- 
+
+
+             
+divergeLoop :: [Event] -> [Event] -> DivergeRest
+divergeLoop tr1 tr2 vars g inStore i
+    | i == L.length tr1 && i == L.length tr2 = Safe
+    | i == L.length tr1 || i == L.length tr2 =
+        if inStore then Unsafe i else Safe
+    | otherwise =
+        let e1 = tr1 !! i in
+        let e2 = tr2 !! i in
+        
+
+
 --}
+
+                                   
+
+                                   
+
+rolesDivergeInStoreSeg :: Role -> Role -> Gen -> DivergeOutcome 
+rolesDivergeInStoreSeg r1 r2 g =
+    divergeLoop (rtrace r1) (rtrace r2) [] 
+                g False 0
+
+checkForDivergenceInStoreSegments :: Prot -> Maybe (String, String, Int)  
+checkForDivergenceInStoreSegments p =
+    loop $ L.reverse $ roles p
+    where
+      loop [] = Nothing 
+      loop (r : rest) =
+          case subloop r rest of
+            Nothing -> loop rest
+            Just (name, name', i)  -> Just (name, name', i)
+
+      subloop _ [] = Nothing
+      subloop r (r' : rest) =          
+          case rolesDivergeInStoreSeg r r' (pgen p) of
+            Unsafe i -> zz $ Just (rname r, rname r', i)                                                 
+            Safe -> subloop r rest
 
 -- Security Goals
 

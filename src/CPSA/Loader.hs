@@ -100,7 +100,15 @@ loadProt sig nom origin pos (S _ name : S _ alg : x : xs)
                        comment)
            rs)
     where
-      validate prot [] = return prot
+      validate prot [] =
+          case checkForDivergenceInStoreSegments prot of
+            Nothing -> return prot
+            Just (name, name', i) ->
+                fail ("checkForDivergenceInStoreSegments:  Roles " ++ name ++
+                        " and " ++ name' ++ " agree up to step " ++ (show i) ++
+                        " but diverge in a store segment.  " ++ 
+                        " Distinguish them prior to second event in store segment")
+
       validate prot (r : rs) =
           case L.find (\r' -> rname r == rname r') rs of
             Nothing -> validate prot rs

@@ -22,6 +22,12 @@ subset :: Eq a => [a] -> [a] -> Bool
 subset as bs =
     all (flip elem bs) as
 
+union :: Eq a => [a] -> [a] -> [a]
+union [] bs = bs
+union (a:as) bs =
+    if a `elem` bs then union as bs
+    else a : union as bs
+
 -- Delete the nth item in a list
 deleteNth :: Int -> [a] -> [a]
 deleteNth n (x : xs)
@@ -75,6 +81,13 @@ mapTwo f as bs =
 foldrTwo :: (a -> b -> c -> c) -> c -> [a] -> [b] -> c
 foldrTwo f seed as bs =
     foldr (\(a,b) c -> f a b c) seed (zip as bs)
+
+-- Return the first non-Nothing member of a list if any is present,
+-- and otherwise Nothing
+someOfList :: [Maybe a] -> Maybe a
+someOfList [] = Nothing
+someOfList (Nothing : rest) = someOfList rest
+someOfList (Just v : _) = Just v
 
 -- Returns a list of the natural numbers less that the argument.
 {-# INLINE nats #-}
