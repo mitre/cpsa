@@ -95,6 +95,14 @@
         (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
           (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
         (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule causeRule
+    (forall ((z z1 strd) (i j i1 indx))
+      (implies (and (fact st-sg-str z i j) (prec z1 i1 z j))
+        (or (= z z1) (prec z1 i1 z i)))))
+  (defgenrule effectRule
+    (forall ((z z1 strd) (i j i1 indx))
+      (implies (and (fact st-sg-str z i j) (prec z i z1 i1))
+        (or (= z z1) (prec z j z1 i1)))))
   (defgenrule trRl_dev-up-at-4
     (forall ((z strd))
       (implies (p "dev-up" z (idx 5)) (trans z (idx 4)))))
@@ -118,7 +126,23 @@
       (implies (p "dev-close" z (idx 4)) (trans z (idx 3)))))
   (defgenrule trRl_dev-close-at-2
     (forall ((z strd))
-      (implies (p "dev-close" z (idx 4)) (trans z (idx 2))))))
+      (implies (p "dev-close" z (idx 4)) (trans z (idx 2)))))
+  (defgenrule st-sg-dev-up-2
+    (forall ((z strd))
+      (implies (p "dev-up" z (idx 3))
+        (fact st-sg-str z (idx 1) (idx 2)))))
+  (defgenrule st-sg-dev-up-4
+    (forall ((z strd))
+      (implies (p "dev-up" z (idx 5))
+        (fact st-sg-str z (idx 3) (idx 4)))))
+  (defgenrule st-sg-dev-open-3
+    (forall ((z strd))
+      (implies (p "dev-open" z (idx 4))
+        (fact st-sg-str z (idx 2) (idx 3)))))
+  (defgenrule st-sg-dev-close-3
+    (forall ((z strd))
+      (implies (p "dev-close" z (idx 4))
+        (fact st-sg-str z (idx 2) (idx 3))))))
 
 (defskeleton open-closed
   (vars (k skey) (d o name) (start-ch chan))
@@ -160,7 +184,8 @@
   (uniq-orig k)
   (conf start-ch)
   (auth start-ch)
-  (rule trRl_dev-up-at-1 trRl_dev-up-at-2)
+  (facts (st-sg-str 2 (idx 1) (idx 2)))
+  (rule st-sg-dev-up-2 trRl_dev-up-at-1 trRl_dev-up-at-2)
   (operation nonce-test (added-strand dev-up 3) k (1 0)
     (ch-msg start-ch (cat "power-up" d o k)))
   (strand-map 0 1)
@@ -267,6 +292,14 @@
         (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
           (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
         (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule causeRule
+    (forall ((z z1 strd) (i j i1 indx))
+      (implies (and (fact st-sg-str z i j) (prec z1 i1 z j))
+        (or (= z z1) (prec z1 i1 z i)))))
+  (defgenrule effectRule
+    (forall ((z z1 strd) (i j i1 indx))
+      (implies (and (fact st-sg-str z i j) (prec z i z1 i1))
+        (or (= z z1) (prec z j z1 i1)))))
   (defgenrule trRl_dev-up-at-4
     (forall ((z strd))
       (implies (p "dev-up" z (idx 5)) (trans z (idx 4)))))
@@ -290,7 +323,23 @@
       (implies (p "dev-close" z (idx 4)) (trans z (idx 3)))))
   (defgenrule trRl_dev-close-at-2
     (forall ((z strd))
-      (implies (p "dev-close" z (idx 4)) (trans z (idx 2))))))
+      (implies (p "dev-close" z (idx 4)) (trans z (idx 2)))))
+  (defgenrule st-sg-dev-up-2
+    (forall ((z strd))
+      (implies (p "dev-up" z (idx 3))
+        (fact st-sg-str z (idx 1) (idx 2)))))
+  (defgenrule st-sg-dev-up-4
+    (forall ((z strd))
+      (implies (p "dev-up" z (idx 5))
+        (fact st-sg-str z (idx 3) (idx 4)))))
+  (defgenrule st-sg-dev-open-3
+    (forall ((z strd))
+      (implies (p "dev-open" z (idx 4))
+        (fact st-sg-str z (idx 2) (idx 3)))))
+  (defgenrule st-sg-dev-close-3
+    (forall ((z strd))
+      (implies (p "dev-close" z (idx 4))
+        (fact st-sg-str z (idx 2) (idx 3))))))
 
 (defskeleton open-closed
   (vars (k skey) (n text) (d o name) (pt pt-0 pval) (lk ls locn))
@@ -330,8 +379,9 @@
   (precedes ((1 3) (0 2)))
   (uniq-orig n)
   (gen-st (cat "st" d "opened"))
+  (facts (st-sg-str 1 (idx 2) (idx 3)))
   (leads-to ((1 3) (0 2)))
-  (rule trRl_dev-open-at-2 trRl_dev-open-at-3)
+  (rule st-sg-dev-open-3 trRl_dev-open-at-2 trRl_dev-open-at-3)
   (operation channel-test (added-strand dev-open 4)
     (ch-msg ls (cat pt-0 "st" d "opened")) (0 2))
   (strand-map 0)
@@ -442,6 +492,14 @@
         (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
           (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
         (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule causeRule
+    (forall ((z z1 strd) (i j i1 indx))
+      (implies (and (fact st-sg-str z i j) (prec z1 i1 z j))
+        (or (= z z1) (prec z1 i1 z i)))))
+  (defgenrule effectRule
+    (forall ((z z1 strd) (i j i1 indx))
+      (implies (and (fact st-sg-str z i j) (prec z i z1 i1))
+        (or (= z z1) (prec z j z1 i1)))))
   (defgenrule trRl_dev-up-at-4
     (forall ((z strd))
       (implies (p "dev-up" z (idx 5)) (trans z (idx 4)))))
@@ -465,7 +523,23 @@
       (implies (p "dev-close" z (idx 4)) (trans z (idx 3)))))
   (defgenrule trRl_dev-close-at-2
     (forall ((z strd))
-      (implies (p "dev-close" z (idx 4)) (trans z (idx 2))))))
+      (implies (p "dev-close" z (idx 4)) (trans z (idx 2)))))
+  (defgenrule st-sg-dev-up-2
+    (forall ((z strd))
+      (implies (p "dev-up" z (idx 3))
+        (fact st-sg-str z (idx 1) (idx 2)))))
+  (defgenrule st-sg-dev-up-4
+    (forall ((z strd))
+      (implies (p "dev-up" z (idx 5))
+        (fact st-sg-str z (idx 3) (idx 4)))))
+  (defgenrule st-sg-dev-open-3
+    (forall ((z strd))
+      (implies (p "dev-open" z (idx 4))
+        (fact st-sg-str z (idx 2) (idx 3)))))
+  (defgenrule st-sg-dev-close-3
+    (forall ((z strd))
+      (implies (p "dev-close" z (idx 4))
+        (fact st-sg-str z (idx 2) (idx 3))))))
 
 (defskeleton open-closed
   (vars (k skey) (n text) (d o d-0 o-0 name) (pt pt-0 pval)
@@ -534,7 +608,8 @@
   (gen-st (cat "st" d-0 "opened"))
   (conf start-ch)
   (auth start-ch)
-  (rule trRl_dev-up-at-1 trRl_dev-up-at-2)
+  (facts (st-sg-str 2 (idx 1) (idx 2)))
+  (rule st-sg-dev-up-2 trRl_dev-up-at-1 trRl_dev-up-at-2)
   (operation nonce-test (added-strand dev-up 3) k (1 0)
     (ch-msg start-ch (cat "power-up" d o k)))
   (strand-map 0 1)
@@ -561,8 +636,8 @@
   (gen-st (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
+  (facts (st-sg-str 2 (idx 1) (idx 2)))
   (leads-to ((2 2) (1 0)))
-  (rule trRl_dev-up-at-1 trRl_dev-up-at-2)
   (operation nonce-test
     (contracted (d-0 d) (o-0 o) (lk-0 lk) (pt-2 pt-1)) k (1 0)
     (ch-msg start-ch (cat "power-up" d o k))
@@ -592,8 +667,8 @@
   (gen-st (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
+  (facts (st-sg-str 2 (idx 1) (idx 2)))
   (leads-to ((2 2) (1 0)))
-  (rule trRl_dev-up-at-1 trRl_dev-up-at-2)
   (operation encryption-test (added-strand user-pass 1)
     (enc "may I pass" k) (1 1))
   (strand-map 0 1 2)
@@ -621,8 +696,8 @@
   (gen-st (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
+  (facts (st-sg-str 2 (idx 1) (idx 2)))
   (leads-to ((2 2) (1 0)))
-  (rule trRl_dev-up-at-1 trRl_dev-up-at-2)
   (operation encryption-test (added-listener k) (enc "may I pass" k)
     (1 1))
   (strand-map 0 1 2)
@@ -638,7 +713,7 @@
   (seen-ops
     (14
       (operation nonce-test (added-strand dev-up 3) k (3 0)
-        (ch-msg start-ch (cat "power-up" d o k))) (strand-map 0 1 2 3)))
+        (ch-msg start-ch (cat "power-up" d o k))) (strand-map 0 1 3 2)))
   (unrealized (0 1) (1 2) (3 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -657,9 +732,9 @@
   (gen-st (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
+  (facts (st-sg-str 4 (idx 2) (idx 3)) (st-sg-str 2 (idx 1) (idx 2)))
   (leads-to ((2 2) (1 0)) ((4 3) (1 2)))
-  (rule trRl_dev-open-at-2 trRl_dev-open-at-3 trRl_dev-up-at-1
-    trRl_dev-up-at-2)
+  (rule st-sg-dev-open-3 trRl_dev-open-at-2 trRl_dev-open-at-3)
   (operation channel-test (added-strand dev-open 4)
     (ch-msg ls (cat pt "st" d "opened")) (1 2))
   (strand-map 0 1 2 3)
@@ -678,7 +753,7 @@
   (seen-ops
     (15
       (operation encryption-test (added-strand dev-up 6) (enc "up" k)
-        (0 1)) (strand-map 0 1 4 2 3)))
+        (0 1)) (strand-map 0 1 3 4 2)))
   (unrealized (0 1))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -695,8 +770,8 @@
   (gen-st (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
+  (facts (st-sg-str 2 (idx 1) (idx 2)))
   (leads-to ((2 2) (1 0)))
-  (rule trRl_dev-up-at-1 trRl_dev-up-at-2)
   (operation nonce-test (displaced 4 2 dev-up 3) k (3 0)
     (ch-msg start-ch (cat "power-up" d o k)))
   (strand-map 0 1 2 3)
@@ -729,9 +804,10 @@
   (gen-st (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
+  (facts (st-sg-str 4 (idx 3) (idx 4)) (st-sg-str 3 (idx 2) (idx 3))
+    (st-sg-str 4 (idx 1) (idx 2)))
   (leads-to ((3 3) (1 2)) ((4 2) (1 0)))
-  (rule trRl_dev-open-at-2 trRl_dev-open-at-3 trRl_dev-up-at-1
-    trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
+  (rule st-sg-dev-up-4 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation encryption-test (displaced 2 5 dev-up 6) (enc "up" k)
     (0 1))
   (strand-map 0 1 4 2 3)
@@ -772,9 +848,8 @@
   (gen-st (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
+  (facts (st-sg-str 4 (idx 2) (idx 3)) (st-sg-str 2 (idx 1) (idx 2)))
   (leads-to ((2 2) (1 0)) ((4 3) (1 2)))
-  (rule trRl_dev-open-at-2 trRl_dev-open-at-3 trRl_dev-up-at-1
-    trRl_dev-up-at-2)
   (operation encryption-test (added-listener k) (enc "up" k) (0 1))
   (strand-map 0 1 2 3 4)
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
@@ -793,7 +868,7 @@
     (17
       (operation nonce-test (added-strand dev-up 3) k (5 0)
         (ch-msg start-ch (cat "power-up" d o k)))
-      (strand-map 0 1 2 3 4 5)))
+      (strand-map 0 1 3 4 5 2)))
   (unrealized (5 0))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -814,9 +889,8 @@
   (gen-st (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
+  (facts (st-sg-str 4 (idx 2) (idx 3)) (st-sg-str 2 (idx 1) (idx 2)))
   (leads-to ((2 2) (1 0)) ((4 3) (1 2)))
-  (rule trRl_dev-open-at-2 trRl_dev-open-at-3 trRl_dev-up-at-1
-    trRl_dev-up-at-2)
   (operation nonce-test (displaced 6 2 dev-up 3) k (5 0)
     (ch-msg start-ch (cat "power-up" d o k)))
   (strand-map 0 1 2 3 4 5)
@@ -928,6 +1002,14 @@
         (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
           (leads-to z1 i1 z2 i2) (prec z0 i0 z2 i2))
         (or (and (= z0 z1) (= i0 i1)) (prec z0 i0 z1 i1)))))
+  (defgenrule causeRule
+    (forall ((z z1 strd) (i j i1 indx))
+      (implies (and (fact st-sg-str z i j) (prec z1 i1 z j))
+        (or (= z z1) (prec z1 i1 z i)))))
+  (defgenrule effectRule
+    (forall ((z z1 strd) (i j i1 indx))
+      (implies (and (fact st-sg-str z i j) (prec z i z1 i1))
+        (or (= z z1) (prec z j z1 i1)))))
   (defgenrule trRl_dev-up-at-4
     (forall ((z strd))
       (implies (p "dev-up" z (idx 5)) (trans z (idx 4)))))
@@ -951,7 +1033,23 @@
       (implies (p "dev-close" z (idx 4)) (trans z (idx 3)))))
   (defgenrule trRl_dev-close-at-2
     (forall ((z strd))
-      (implies (p "dev-close" z (idx 4)) (trans z (idx 2))))))
+      (implies (p "dev-close" z (idx 4)) (trans z (idx 2)))))
+  (defgenrule st-sg-dev-up-2
+    (forall ((z strd))
+      (implies (p "dev-up" z (idx 3))
+        (fact st-sg-str z (idx 1) (idx 2)))))
+  (defgenrule st-sg-dev-up-4
+    (forall ((z strd))
+      (implies (p "dev-up" z (idx 5))
+        (fact st-sg-str z (idx 3) (idx 4)))))
+  (defgenrule st-sg-dev-open-3
+    (forall ((z strd))
+      (implies (p "dev-open" z (idx 4))
+        (fact st-sg-str z (idx 2) (idx 3)))))
+  (defgenrule st-sg-dev-close-3
+    (forall ((z strd))
+      (implies (p "dev-close" z (idx 4))
+        (fact st-sg-str z (idx 2) (idx 3))))))
 
 (defskeleton open-closed
   (vars (old old1 any mesg) (k k-0 skey) (n n-0 text) (d o name)
@@ -1002,8 +1100,11 @@
   (gen-st (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
-  (rule gen-state-pass trRl_dev-open-at-2 trRl_dev-open-at-3
-    trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
+  (facts (st-sg-str 2 (idx 1) (idx 2)) (st-sg-str 2 (idx 3) (idx 4))
+    (st-sg-str 4 (idx 2) (idx 3)))
+  (rule gen-state-pass st-sg-dev-open-3 st-sg-dev-up-2 st-sg-dev-up-4
+    trRl_dev-open-at-2 trRl_dev-open-at-3 trRl_dev-up-at-1
+    trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
     ((load lk (cat pt "st-k" d o k)) (recv (enc "may I pass" k))
       (load ls (cat pt-0 "st" d "opened"))
@@ -1038,9 +1139,9 @@
   (gen-st (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
+  (facts (st-sg-str 2 (idx 1) (idx 2)) (st-sg-str 2 (idx 3) (idx 4))
+    (st-sg-str 4 (idx 2) (idx 3)))
   (leads-to ((2 2) (1 0)))
-  (rule trRl_dev-open-at-2 trRl_dev-open-at-3 trRl_dev-up-at-1
-    trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation nonce-test (contracted (pt-7 pt-1)) k (1 0)
     (ch-msg start-ch (cat "power-up" d o k))
     (ch-msg lk (cat pt-1 "st-k" d o k)))
@@ -1085,9 +1186,9 @@
   (gen-st (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
+  (facts (st-sg-str 2 (idx 1) (idx 2)) (st-sg-str 2 (idx 3) (idx 4))
+    (st-sg-str 4 (idx 2) (idx 3)))
   (leads-to ((2 2) (1 0)) ((4 3) (1 2)))
-  (rule trRl_dev-open-at-2 trRl_dev-open-at-3 trRl_dev-up-at-1
-    trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation channel-test (displaced 5 4 dev-open 4)
     (ch-msg ls (cat pt-6 "st" d "opened")) (1 2))
   (strand-map 0 1 2 3 4)
@@ -1133,9 +1234,11 @@
   (gen-st (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
+  (facts (st-sg-str 5 (idx 2) (idx 3)) (st-sg-str 2 (idx 1) (idx 2))
+    (st-sg-str 2 (idx 3) (idx 4)) (st-sg-str 4 (idx 2) (idx 3)))
   (leads-to ((2 2) (1 0)) ((5 3) (1 2)))
-  (rule discreteBefore trRl_dev-open-at-2 trRl_dev-open-at-3
-    trRl_dev-up-at-1 trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
+  (rule discreteBefore st-sg-dev-open-3 trRl_dev-open-at-2
+    trRl_dev-open-at-3)
   (operation channel-test (added-strand dev-open 4)
     (ch-msg ls (cat pt "st" d "opened")) (1 2))
   (strand-map 0 1 2 3 4)
@@ -1156,11 +1259,14 @@
       (stor ls (cat pt "st" d "opened"))))
   (label 22)
   (parent 20)
-  (seen 21)
-  (seen-ops
-    (21 (operation generalization weakened ((4 3) (5 2)))
-      (strand-map 0 1 2 3 4)))
   (realized)
-  (comment "1 in cohort - 0 not yet seen"))
+  (shape)
+  (maps
+    ((0 1 2 3 4)
+      ((old old) (old1 old1) (any any) (n n) (n-0 n-0) (d d) (o o) (k k)
+        (k-0 k-0) (start-ch start-ch) (ls ls) (lk lk) (ls-0 ls-0)
+        (lk-0 lk-0))))
+  (origs (pt (5 3)) (pt-6 (4 3)) (pt-3 (2 4)) (pt-1 (2 2)) (n (1 3))
+    (k (0 0))))
 
 (comment "Nothing left to do")

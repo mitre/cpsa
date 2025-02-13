@@ -1970,7 +1970,7 @@
   (seen-ops
     (45
       (operation nonce-test (displaced 6 3 customer 3) nb-0 (5 0)
-        (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 5 4)))
+        (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5)))
   (unrealized (0 0) (0 2) (1 0) (5 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -3477,7 +3477,7 @@
   (seen-ops
     (72
       (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
-        (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 6 5)))
+        (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 6)))
   (unrealized (0 0) (0 2) (1 0) (6 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -6245,7 +6245,7 @@
   (seen-ops
     (118
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
-        (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 7 6)))
+        (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 6 7)))
   (unrealized (0 0) (0 2) (1 0) (7 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -7064,7 +7064,7 @@
   (seen-ops
     (130
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
-        (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 7 6)))
+        (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 6 7)))
   (unrealized (0 0) (0 2) (1 0) (7 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -8222,7 +8222,7 @@
   (seen-ops
     (146
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
-        (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 7 6)))
+        (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 6 7)))
   (unrealized (0 0) (0 2) (1 0) (7 0))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -9148,7 +9148,7 @@
   (seen-ops
     (157
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
-        (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 7 6)))
+        (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 6 7)))
   (unrealized (0 0) (0 2) (1 0) (7 0))
   (comment "1 in cohort - 0 not yet seen"))
 

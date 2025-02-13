@@ -456,7 +456,7 @@
   (seen-ops
     (21
       (operation nonce-test (displaced 4 2 adder 2) n (3 0) (enc n k)
-        (enc n new k)) (strand-map 0 1 3 2)))
+        (enc n new k)) (strand-map 0 1 2 3)))
   (unrealized (3 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -1071,7 +1071,7 @@
   (seen-ops
     (45
       (operation nonce-test (displaced 5 3 adder 2) n (4 0) (enc n k)
-        (enc n new k)) (strand-map 0 1 2 4 3)))
+        (enc n new k)) (strand-map 0 1 2 3 4)))
   (unrealized (4 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -1162,7 +1162,7 @@
   (seen-ops
     (48
       (operation nonce-test (displaced 5 3 adder 2) n (4 0) (enc n k)
-        (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 4 3)))
+        (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 3 4)))
   (unrealized (4 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -1249,7 +1249,7 @@
   (seen-ops
     (51
       (operation nonce-test (displaced 5 3 adder 2) n (4 0) (enc n k)
-        (enc n new k)) (strand-map 0 1 2 4 3)))
+        (enc n new k)) (strand-map 0 1 2 3 4)))
   (unrealized (4 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -1340,7 +1340,7 @@
   (seen-ops
     (54
       (operation nonce-test (displaced 5 3 adder 2) n (4 0) (enc n k)
-        (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 4 3)))
+        (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 3 4)))
   (unrealized (4 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -1599,7 +1599,7 @@
   (seen-ops
     (63
       (operation nonce-test (displaced 5 3 adder 2) n (4 0) (enc n k)
-        (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 4 3)))
+        (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 3 4)))
   (unrealized (4 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -1689,7 +1689,7 @@
   (seen-ops
     (66
       (operation nonce-test (displaced 5 3 adder 2) n (4 0) (enc n k)
-        (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 4 3)))
+        (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 3 4)))
   (unrealized (4 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -1982,7 +1982,7 @@
   (seen-ops
     (77
       (operation nonce-test (displaced 5 3 adder 2) n (4 0) (enc n k)
-        (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 4 3)))
+        (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 3 4)))
   (unrealized (4 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -2196,7 +2196,7 @@
   (seen-ops
     (84
       (operation nonce-test (displaced 5 3 adder 2) n (4 0) (enc n k)
-        (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 4 3)))
+        (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 3 4)))
   (unrealized (4 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -2413,7 +2413,7 @@
   (seen-ops
     (91
       (operation nonce-test (displaced 6 4 adder 2) n (5 0) (enc n k)
-        (enc n new k)) (strand-map 0 1 2 3 5 4)))
+        (enc n new k)) (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
   (comment "4 in cohort - 3 not yet seen"))
 
@@ -2548,7 +2548,7 @@
   (seen-ops
     (94
       (operation nonce-test (displaced 6 4 adder 2) n (5 0) (enc n k)
-        (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 3 5 4)))
+        (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -2648,7 +2648,7 @@
   (seen-ops
     (97
       (operation nonce-test (displaced 6 4 adder 2) n (5 0) (enc n k)
-        (enc n new k) (enc n new-1 k)) (strand-map 0 1 2 3 5 4)))
+        (enc n new k) (enc n new-1 k)) (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -2931,7 +2931,7 @@
   (seen-ops
     (106
       (operation nonce-test (displaced 6 4 adder 2) n (5 0) (enc n k)
-        (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 3 5 4)))
+        (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -3032,7 +3032,7 @@
   (seen-ops
     (109
       (operation nonce-test (displaced 6 4 adder 2) n (5 0) (enc n k)
-        (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 3 5 4)))
+        (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -3136,7 +3136,7 @@
     (112
       (operation nonce-test (displaced 6 4 adder 2) n (5 0) (enc n k)
         (enc n new k) (enc n new-0 k) (enc n new-1 k))
-      (strand-map 0 1 2 3 5 4)))
+      (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -3480,7 +3480,7 @@
   (seen-ops
     (126
       (operation nonce-test (displaced 6 4 adder 2) n (5 0) (enc n k)
-        (enc n new k) (enc n new-1 k)) (strand-map 0 1 2 3 5 4)))
+        (enc n new k) (enc n new-1 k)) (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -3515,7 +3515,7 @@
   (seen-ops
     (125
       (operation nonce-test (displaced 6 4 adder 2) n (5 0) (enc n k)
-        (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 3 5 4))
+        (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 3 4 5))
     (150
       (operation nonce-test (displaced 6 3 adder 2) n (5 0) (enc n k)
         (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 3 4 5)))
@@ -3694,7 +3694,7 @@
     (130
       (operation nonce-test (displaced 6 4 adder 2) n (5 0) (enc n k)
         (enc n new k) (enc n new-0 k) (enc n new-1 k))
-      (strand-map 0 1 2 3 5 4)))
+      (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -3829,7 +3829,7 @@
     (134
       (operation nonce-test (displaced 6 4 adder 2) n (5 0) (enc n k)
         (enc n new k) (enc n new-0 k) (enc n new-1 k))
-      (strand-map 0 1 2 3 5 4)))
+      (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -4033,7 +4033,7 @@
     (140
       (operation nonce-test (displaced 6 4 adder 2) n (5 0) (enc n k)
         (enc n new k) (enc n new-0 k) (enc n new-1 k))
-      (strand-map 0 1 2 3 5 4)))
+      (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -4169,7 +4169,7 @@
     (144
       (operation nonce-test (displaced 6 4 adder 2) n (5 0) (enc n k)
         (enc n new k) (enc n new-0 k) (enc n new-1 k))
-      (strand-map 0 1 2 3 5 4)))
+      (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -4479,7 +4479,7 @@
     (154
       (operation nonce-test (displaced 6 4 adder 2) n (5 0) (enc n k)
         (enc n new k) (enc n new-0 k) (enc n new-1 k))
-      (strand-map 0 1 2 3 5 4)))
+      (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
   (comment "3 in cohort - 2 not yet seen"))
 

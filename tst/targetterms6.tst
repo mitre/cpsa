@@ -210,7 +210,7 @@
   (parent 6)
   (seen 5)
   (seen-ops
-    (5 (operation generalization deleted (1 0)) (strand-map 0 3 2)))
+    (5 (operation generalization deleted (1 0)) (strand-map 0 2 3)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 

@@ -382,7 +382,7 @@
   (parent 11)
   (seen 10)
   (seen-ops
-    (10 (operation generalization deleted (1 0)) (strand-map 0 4 2 3)))
+    (10 (operation generalization deleted (1 0)) (strand-map 0 2 3 4)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -568,7 +568,7 @@
   (parent 14)
   (seen 10)
   (seen-ops
-    (10 (operation generalization deleted (1 0)) (strand-map 0 3 4 2)))
+    (10 (operation generalization deleted (1 0)) (strand-map 0 2 3 4)))
   (realized)
   (comment "1 in cohort - 0 not yet seen"))
 
