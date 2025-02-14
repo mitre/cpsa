@@ -71,7 +71,7 @@ nodeColor k node =
     OutDir -> Nothing           -- Transmission nodes are black
     LoadDir
       | elem node (maybe [] id (unrealized k)) -> Just "orange"
-      | otherwise -> Just "gray" -- Realized nodes are gray
+      | otherwise -> Just "lightsteelblue" -- Realized nodes are lightsteelblue
     StorDir
       | elem node (maybe [] id (unrealized k)) -> Just "orange"
       | otherwise -> Just "gray" -- Realized nodes are gray
