@@ -684,8 +684,9 @@ initRules sig g prot prs =
                                           (g',r : rules))
                        (g',[])
                        [scissorsRule sig, cakeRule sig, uninterruptibleRule sig,
-                        shearsRule sig, invShearsRule sig,
-                        causeRule sig, effectRule sig]
+                        shearsRule sig, invShearsRule sig
+                       -- , causeRule sig, effectRule sig
+                       ]
               else (g',[])
 
       (g,fcRls) <- iterPreRules initPreRulesFacts sig g prot prs

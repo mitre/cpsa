@@ -56,7 +56,7 @@ import CPSA.Operation
 import System.IO.Unsafe
 import Control.Exception (try)
 import System.IO.Error (ioeGetErrorString)
-import Control.DeepSeq
+-- import Control.DeepSeq
 
 z :: Show a => a -> b -> b
 z x y = unsafePerformIO (print x >> return y)

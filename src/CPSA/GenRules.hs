@@ -151,16 +151,37 @@ transRls sig g rl =
                [(Trans (z, (indxOfInt i)))] -- one conjunct
                )]
 
-lastRecvInCS :: Role -> Int -> Int -> Int
-lastRecvInCS rl start end =
-    loop start $ drop (start+1) $ rtrace rl
-    -- i is always the index before the index of the first entry still
-    -- in c.
-    where
-      loop i ((In (ChMsg ch _)) : c)
-           | i < end && isLocn ch       = loop (i+1) c
-           | otherwise                  = i
-      loop i _                          = i
+-- Suppose that start is the index of the first event in a state
+-- sequence, and end is the index of the last event in it.
+-- If there are no loads, then return Right start since this is the
+-- first send.  If there are some loads, return Left i where i is the
+-- index of the last of the loads.
+
+lastRecvOrFirstSendInCS :: Role -> Int -> Int -> Either Int Int 
+lastRecvOrFirstSendInCS rl start end =
+    case drop start $ rtrace rl -- zero-based, so this retains the
+                                -- start node
+    of
+      (In (ChMsg ch _) : c)
+          | start <= end && isLocn ch  -> loopLeft start c
+          | otherwise                  -> error ("lastRecvOrFirstSendInCS:  Huh? " ++
+                                                 (rname rl) ++ " at " ++ (show start) ++
+                                                 " should be a state event")
+      (Out (ChMsg ch _) : _)
+          | start <= end && isLocn ch  -> Right start
+          | otherwise                  -> error ("lastRecvOrFirstSendInCS:  Huh? " ++
+                                                 (rname rl) ++ " at " ++ (show start) ++
+                                               " should be a state event")
+      _ -> error ("lastRecvOrFirstSendInCS:  Huh? " ++
+                  (rname rl) ++ " at " ++ (show start) ++
+                  " should be a state event")
+    where -- i points to the index of a node that was definitely a
+          -- load 
+      loopLeft i ((In (ChMsg ch _)) : c)
+          | i <= end && isLocn ch       = loopLeft (i+1) c
+          | otherwise                   = Left i
+      loopLeft i _                      = Left i   
+    
 
 csRules :: Sig -> Gen -> Role -> [(Int,Int)] -> (Gen, [Rule])
 csRules sig g rl =
@@ -170,16 +191,27 @@ csRules sig g rl =
            (g', csRules ++ rs)))
      (g,[])
      where
-       f g start end = stateSegStrRule g rl start end
-       -- let lastRecv = lastRecvInCS rl start end in
---              if start == end then (g,[])
---              else 
---                  let (g',rc) = causeRule g rl start end in
---                  let (g'',re) = effectRule g' rl end start in
---                  let (g''',rf) = fullCSRule g'' rl start end in
---                  (g''', [rf, rc, re])
+       f g start end =
+           case lastRecvOrFirstSendInCS rl start end of
+             Right firstStor ->
+                 if firstStor == end then (g,[]) -- single store
+                 else let (g',re) = effectRule g rl end firstStor in
+                      (g',[re])
+             Left lastRecv ->
+                 let (g',crules) =
+                         if start == lastRecv then (g,[])
+                         else let (g',rc) = causeRule g rl start lastRecv in
+                              (g',[rc]) in
+                 let (g'',erules) =
+                         if lastRecv+1 == end then (g',[])
+                         else let (g'',re) = effectRule g' rl end (lastRecv+1) in
+                              (g'',[re]) in
+                 (g'', crules ++ erules)
 
+    -- Alternate:
+    -- stateSegStrRule g rl start end
 
+  {-- 
        stateSegStrRule g rl start end =
            let (g',z) = newVar sig g "z" "strd" in
            
@@ -198,9 +230,9 @@ csRules sig g rl =
            [start+1..end]
            
 
-{--            
+--}
 
-       causeRule g rl start ind =
+       causeRule g rl start ind =           
            let (g',z) = newVar sig g "z" "strd" in
            let (g'', z1) = newVar sig g' "z1" "strd" in
            let (g''', i) = newVar sig g'' "i" "indx" in
@@ -234,7 +266,12 @@ csRules sig g rl =
                [(Length rl z (indxOfInt (end+1))),
                 (Prec (z, (indxOfInt end)) (z1,i))])]
 
-       fullCSRule g rl start end =
+       {--
+       -- Really we don't want to use this, since we'd have to have no
+       -- ambiguity across all of the loads and stores.  That's an
+       -- unreasonable thing to ask of the specifier.  
+
+         fullCSRule g rl start end =
            let (g',z) = newVar sig g "z" "strd" in
            (ruleOfClauses sig g'
             ("full-cs-" ++ (rname rl) ++ "-" ++ (show start))
@@ -242,7 +279,8 @@ csRules sig g rl =
             [(Length rl z (indxOfInt (start+1)))]
             [([], 
               [(Length rl z (indxOfInt (end+1)))])])
---}
+              --}
+
 
 data FoundAt = FoundAt Int
              | Missing Term
@@ -644,7 +682,7 @@ cakeRule sig g =
             (g, _) -> (g, theVacuousRule)
       (g, _) -> (g, theVacuousRule)
 
-
+{-- 
 causeRule :: Sig -> Gen -> (Gen, Rule)
 causeRule sig g =
     case sortedVarsOfNames sig g "strd" ["z","z1"] of
@@ -689,3 +727,4 @@ effectRule sig g =
       (g, _) -> (g, theVacuousRule)
 
                                 
+--}
