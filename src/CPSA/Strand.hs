@@ -2635,16 +2635,36 @@ weakenOrderings :: Preskel -> [Candidate]
 weakenOrderings k =
     concatMap (weakenOrdering k) (orderings k) -- ++ map (weakenOrderingStateSeg k) (orderings k)
 
-weakenOrdering :: Preskel -> Pair -> [Candidate]
+weakenOrderingOld :: Preskel -> Pair -> [Candidate]
 weakenOrdering k (n, n') =
+  case (nodeIsStateNode k n, nodeIsStateNode k n') of 
+    (False, False) -> weaken k (n, n') (L.delete (n, n') (tc k))                      
+    (True, False) ->
+        weaken k (n, n') (filter (\(m, m') -> m' /= n' ||
+                                  (not $ sameStateSeg k m n))
+                          (tc k))
+    (False, True) ->
+        weaken k (n, n') (filter (\(m, m') -> m /= n ||
+                                  (not $ sameStateSeg k m' n'))
+                          (tc k))
+    (True, True) -> 
+      weaken k (n, n') (filter (\(m, m') ->
+                                    ((not $ sameStateSeg k m n) &&
+                                     (not $ sameStateSeg k m' n')))
+                        (tc k))
+
+weakenOrderingOld k (n, n') =
   case (nodeIsStateNode k n, nodeIsStateNode k n') of 
     (False, False) -> weaken k (n, n') (L.delete (n, n') (tc k))
     (True, False) -> weaken k (n, n') (filter (\(m, m') -> m' /= n' || (not $ sameStateSeg k m n)) (tc k))
     (False, True) -> weaken k (n, n') (filter (\(m, m') -> m /= n || (not $ sameStateSeg k m' n')) (tc k))
     (True, True) -> 
-      weaken k (n, n') (filter (\(m, m') -> m' /= n' || (not $ sameStateSeg k m n)) (tc k)) ++
-      weaken k (n, n') (filter (\(m, m') -> m /= n || (not $ sameStateSeg k m' n')) (tc k))
+      weaken k (n, n') (filter (\(m, m') -> m' /= n' ||
+                                            ((not $ sameStateSeg k m n) &&
+                                             (not $ sameStateSeg k m' n')))
+                        (tc k))
 
+      
 weaken :: Preskel -> Pair -> [Pair] -> [Candidate]
 weaken k p orderings =
     [addIdentity k']

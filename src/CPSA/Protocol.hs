@@ -7,7 +7,8 @@
 -- University of California.
 
 module CPSA.Protocol (Event (..), evtCm, evtTerm, evtChan, evtMap, evt,
-    inbnd, outbnd, Trace, tterms, originates, originationPos,
+    inbnd, outbnd, evtIsLoad, evtIsStor, evtIsState,
+    Trace, tterms, originates, originationPos,
     generates, generationPos, firstOccursPos,
     acquiredPos, gainedPos, genGainedPos, usedPos, insPrecedeOuts,
     Role, rname, rvars, rtrace, rnon, rpnon, runique, runiqgen, rabsent,
@@ -119,6 +120,18 @@ inbnd _ = Nothing
 outbnd :: Event -> Maybe ChMsg
 outbnd (Out t) = Just t
 outbnd _ = Nothing
+
+
+evtIsLoad :: Event -> Bool
+evtIsLoad (In (ChMsg ch _))  = isLocn ch
+evtIsLoad _ = False
+
+evtIsStor :: Event -> Bool
+evtIsStor (Out (ChMsg ch _))  = isLocn ch
+evtIsStor _ = False
+              
+evtIsState :: Event -> Bool
+evtIsState evt = evtIsLoad evt || evtIsStor evt
 
 -- A trace is a list of events.  The terms in the trace are
 -- stored in causal order.
