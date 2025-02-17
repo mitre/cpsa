@@ -2633,34 +2633,47 @@ withCoreFacts k =
 
 weakenOrderings :: Preskel -> [Candidate]
 weakenOrderings k =
-    concatMap (weakenOrdering k) (orderings k) -- ++ map (weakenOrderingStateSeg k) (orderings k)
+    map (weakenOrdering k) (orderings k)
 
-weakenOrdering :: Preskel -> Pair -> [Candidate]
+weakenOrdering :: Preskel -> Pair -> Candidate
 weakenOrdering k (n, n') =
-  case (nodeIsStateNode k n, nodeIsStateNode k n') of 
-    (False, False) -> weaken k (n, n') (L.delete (n, n') (tc k))
-    (True, False) -> weaken k (n, n') (filter (\(m, m') -> m' /= n' || (not $ sameStateSeg k m n)) (tc k))
-    (False, True) -> weaken k (n, n') (filter (\(m, m') -> m /= n || (not $ sameStateSeg k m' n')) (tc k))
-    (True, True) -> 
-      weaken k (n, n') (filter (\(m, m') -> m' /= n' || (not $ sameStateSeg k m n)) (tc k)) ++
-      weaken k (n, n') (filter (\(m, m') -> m /= n || (not $ sameStateSeg k m' n')) (tc k))
+    weaken k (n, n')
+               (filter
+                (\(m, m') -> not(sameContractedEvent k n m && sameContractedEvent k n' m'))
+                (tc k))
+ 
+sameContractedEvent :: Preskel -> Node -> Node -> Bool
+sameContractedEvent k (s, i) (s', i') =
+    (s == s') &&
+    (i == i' ||
+     (nodeIsStateNode k (s, i) && nodeIsStateNode k (s', i') &&
+      case compare i i' of
+        LT -> validSubSeg (nodeIsStor k (s, i)) k s i i'
+        EQ -> True
+        GT -> validSubSeg (nodeIsStor k (s, i')) k s i' i))
+    where
+      -- Boolean argument says whether we have crossed into the stor part
+      validSubSeg False k s i i' =
+          if i == i' then True else
+              case nodeIsStateNode k (s, i + 1) of
+                False -> False
+                True -> validSubSeg (nodeIsStor k (s, i + 1)) k s (i + 1) i'
+      validSubSeg True k s i i' =
+          if i == i' then nodeIsStor k (s, i) else
+              case nodeIsStor k (s, i + 1) of
+                False -> False
+                True -> validSubSeg True k s (i + 1) i'
 
-weaken :: Preskel -> Pair -> [Pair] -> [Candidate]
+weaken :: Preskel -> Pair -> [Pair] -> Candidate
 weaken k p orderings =
-    [addIdentity k']
+    addIdentity k'
     where
       k' = newPreskel (gen k) (shared k) (insts k) orderings (knon k)
            (kpnon k) (kunique k) (kuniqgen k) (kabsent k) (kprecur k)
            (kgenSt k) (kconf k) (kauth k) (kfacts k) (kpriority k)
            (Generalized (strandids k) (Weakened p)) [] (pprob k) (prob k) (pov k)
 
-weakenOrderingStateSeg :: Preskel -> Pair -> [Candidate]
-weakenOrderingStateSeg k (n, n') = 
-  -- Remove from transitive closure any edges with same target and a source 
-  -- in the same state segment
-  weaken k (n, n') (filter (\(m, m') -> m' /= n' || (not $ sameStateSeg k m n)) (tc k))
-
-sameStateSeg :: Preskel -> Node -> Node -> Bool
+{- sameStateSeg :: Preskel -> Node -> Node -> Bool
 sameStateSeg k (s, i) (s', i') = 
   -- Not in same state segment if on different strands or not a state node
   case s == s' && nodeIsStateNode k (s, i) && nodeIsStateNode k (s', i') of 
@@ -2681,7 +2694,7 @@ sameStateSeg k (s, i) (s', i') =
       case nodeIsStor k (s, i + 1) of 
         False -> False 
         True -> validSubSeg True k s (i + 1) i'
-
+ -}
 
 -- Origination assumption forgetting
 
@@ -3437,12 +3450,12 @@ nodeIsStateNode k p =
       Nothing -> False
       Just (_,chm) -> isStateChMsg chm
 
-nodeIsLoad :: Preskel -> Node -> Bool 
+{- nodeIsLoad :: Preskel -> Node -> Bool 
 nodeIsLoad k p = 
   case dirChMsgOfNode p k of 
     Nothing -> False 
     Just (Send, _) -> False 
-    Just (Recv, chm) -> isStateChMsg chm 
+    Just (Recv, chm) -> isStateChMsg chm  -}
 
 nodeIsStor :: Preskel -> Node -> Bool 
 nodeIsStor k p = 
