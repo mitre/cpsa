@@ -825,7 +825,7 @@ maximize k =
 
 maximize :: Preskel -> [Preskel]
 maximize k =
-    iter $ factorIsomorphicPreskels $ concatMap simplify $ map recordMap $ generalize k 
+    iter $ factorIsomorphicPreskels $ concatMap simplify $ map recordMap $ generalize k
     where
       iter [] = []
       iter (k' : rest) =

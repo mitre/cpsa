@@ -115,8 +115,20 @@ setLiveness t = updateLiveness (live t) t
 -- unrealized.  Because of duplicates, process of computing the list
 -- must be iterated.
 live :: Tree -> Set Preskel
-live t =
-    loop (init S.empty t)
+live t
+    -- if it has no children, but has unrealized nodes, it's dead
+    | children t ++ duplicates t == [] && maybe False (not . null) (unrealized (vertex t)) = S.empty 
+    -- if it has no children, and no unrealized nodes, it must be a shape
+    | children t ++ duplicates t == [] = S.singleton (vertex t)
+    | otherwise =
+        let ks = foldl' S.union S.empty $ map live (children t ++ duplicates t) in 
+        if ks == S.empty 
+            -- if no children or seen children are alive, it's dead
+            then S.empty
+            -- otherwise it's alive so add it to the set. 
+            else (S.insert (vertex t) ks)
+{- live t =
+    loop (zz (init S.empty t))
     where
       decend ks t =
           let ks' = foldl' decend ks (kids t) in
@@ -138,7 +150,7 @@ live t =
           where
             live ks t
                  | alive t = S.insert (vertex t) ks
-                 | otherwise = ks
+                 | otherwise = ks -}
 
 updateLiveness :: Set Preskel -> Tree -> Tree
 updateLiveness live t =

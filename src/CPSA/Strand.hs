@@ -2641,7 +2641,7 @@ weakenOrdering k (n, n') =
                (filter
                 (\(m, m') -> not(sameContractedEvent k n m && sameContractedEvent k n' m'))
                 (tc k))
- 
+
 sameContractedEvent :: Preskel -> Node -> Node -> Bool
 sameContractedEvent k (s, i) (s', i') =
     (s == s') &&
