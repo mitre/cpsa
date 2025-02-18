@@ -121,6 +121,8 @@ loadAct g env fv (L _ ((S _ "or"):acts)) =
     do
       (g', fs) <- loadActs g env fv acts
       return (g', AOr (nub (fv ++ concatMap fva fs)) fs)
+loadAct g env fv (L pos [S pos' "implies" , a, b]) =
+    loadAct g env fv (L pos [S pos' "or", L pos' [S pos' "not", a], b])
 loadAct g env fv (L _ [S _ "exists", L _ decls, act]) =
     do
       (g', env') <- loadDecls g decls
