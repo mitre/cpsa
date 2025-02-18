@@ -108,24 +108,50 @@ assemble table k =
 
 -- Set the alive flag in each preskeleton.
 setLiveness :: Tree -> Tree
-setLiveness t = updateLiveness (live t) t
+setLiveness t =
+    let dupTrees = dups t $ dupIdxs False t in
+    updateLiveness (live dupTrees t) t
+
+
+-- Find the labels of all duplicated trees
+dupIdxs :: Bool -> Tree -> [Int]
+dupIdxs isDup t = if isDup then [label $ vertex t]
+    else concatMap (dupIdxs False) (children t) ++ concatMap (dupIdxs True) (duplicates t)
+
+-- Find the originals of the duplicated trees
+dups :: Tree -> [Int] -> [Tree]
+dups t xs =
+    dups' xs t t
+    where
+        dups' [] _ _ = [] -- Found all the duplicates
+        dups' (x:xs) root t =
+            if label (vertex t) == x
+                then t : dups' xs root root -- Found x, return to root and find next duplicate
+                else concatMap (dups' (x:xs) root) (children t) -- Search children for x
+
+-- Get the original of a duplicate by label
+getDup :: [Tree] -> Int -> [Tree]
+getDup [] _ = []
+getDup (t:ts) i = if i == label (vertex t) then [t] else getDup ts i
 
 -- Extract the non-dead preskeletons from a tree.  A preskeleton is
--- dead if it is known to be unrealized, and all of its children are
--- unrealized.  Because of duplicates, process of computing the list
--- must be iterated.
-live :: Tree -> Set Preskel
-live t
+-- dead if it is unrealized with no seen or unseen children, or if
+-- all its seen and unseen children are dead.
+live :: [Tree] -> Tree -> Set Preskel
+live dups t
     -- if it has no children, but has unrealized nodes, it's dead
-    | children t ++ duplicates t == [] && maybe False (not . null) (unrealized (vertex t)) = S.empty 
+    | children t ++ duplicates t == [] && maybe False (not . null) (unrealized (vertex t)) = S.empty
     -- if it has no children, and no unrealized nodes, it must be a shape
     | children t ++ duplicates t == [] = S.singleton (vertex t)
     | otherwise =
-        let ks = foldl' S.union S.empty $ map live (children t ++ duplicates t) in 
-        if ks == S.empty 
+        -- Find originals of all duplicate children
+        let dups' = concatMap (getDup dups) $ map (label . vertex) $ duplicates t in
+        -- compute all live skeletons at or below seen and unseen children
+        let ks = foldl' S.union S.empty $ map (live dups) (children t ++ dups') in
+        if ks == S.empty
             -- if no children or seen children are alive, it's dead
             then S.empty
-            -- otherwise it's alive so add it to the set. 
+            -- otherwise it's alive so add it to the set.
             else (S.insert (vertex t) ks)
 {- live t =
     loop (zz (init S.empty t))
