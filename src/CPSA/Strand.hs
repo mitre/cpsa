@@ -2673,29 +2673,6 @@ weaken k p orderings =
            (kgenSt k) (kconf k) (kauth k) (kfacts k) (kpriority k)
            (Generalized (strandids k) (Weakened p)) [] (pprob k) (prob k) (pov k)
 
-{- sameStateSeg :: Preskel -> Node -> Node -> Bool
-sameStateSeg k (s, i) (s', i') = 
-  -- Not in same state segment if on different strands or not a state node
-  case s == s' && nodeIsStateNode k (s, i) && nodeIsStateNode k (s', i') of 
-    False -> False 
-    True -> case compare i i' of 
-      LT -> validSubSeg (nodeIsStor k (s, i)) k s i i'
-      EQ -> True
-      GT -> validSubSeg (nodeIsStor k (s, i')) k s i' i
-  where 
-    -- Boolean argument says whether we have crossed into the stor part
-    validSubSeg False k s i i' = 
-      if i == i' then True else 
-      case nodeIsStateNode k (s, i + 1) of 
-        False -> False 
-        True -> validSubSeg (nodeIsStor k (s, i + 1)) k s (i + 1) i' 
-    validSubSeg True k s i i' = 
-      if i == i' then nodeIsStor k (s, i) else 
-      case nodeIsStor k (s, i + 1) of 
-        False -> False 
-        True -> validSubSeg True k s (i + 1) i'
- -}
-
 -- Origination assumption forgetting
 
 -- Delete each non-originating term that is not specified by a
@@ -3450,12 +3427,13 @@ nodeIsStateNode k p =
       Nothing -> False
       Just (_,chm) -> isStateChMsg chm
 
+-- Not currently used
 {- nodeIsLoad :: Preskel -> Node -> Bool 
 nodeIsLoad k p = 
   case dirChMsgOfNode p k of 
     Nothing -> False 
     Just (Send, _) -> False 
-    Just (Recv, chm) -> isStateChMsg chm  -}
+    Just (Recv, chm) -> isStateChMsg chm -}
 
 nodeIsStor :: Preskel -> Node -> Bool 
 nodeIsStor k p = 

@@ -30,7 +30,7 @@ import CPSA.Algebra
 import CPSA.Channel
 import CPSA.Signature (Sig)
 
---{--
+{--
 import System.IO.Unsafe
 -- import Control.Exception (try)
 -- import System.IO.Error (ioeGetErrorString)
@@ -660,7 +660,7 @@ checkForDivergenceInStoreSegments p =
       subloop _ [] = Nothing
       subloop r (r' : rest) =          
           case rolesDivergeInStoreSeg r r' (pgen p) of
-            Unsafe i -> zz $ Just (rname r, rname r', i)                                                 
+            Unsafe i -> Just (rname r, rname r', i)
             Safe -> subloop r rest
 
 -- Security Goals
