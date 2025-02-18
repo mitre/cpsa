@@ -57,6 +57,8 @@ loadForm g env (L _ (S _ "and" : xs)) =
     do
       (g', fs) <- loadForms g env (xs)
       return (g', And (nub (concat (map fv fs))) fs)
+loadForm g env (L pos [S pos' "implies" , a, b]) =
+    loadForm g env (L pos [S pos' "or", L pos' [S pos' "not", a], b])
 loadForm g env (L _ (S _ "or" : x : xs)) =
     do
       (g', fs) <- loadForms g env (x : xs)
