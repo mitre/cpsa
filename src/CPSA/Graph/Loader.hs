@@ -14,7 +14,7 @@
 module CPSA.Graph.Loader (Preskel, Dir (..), Vertex, protocol, role, env,
                           inst, part, lastVertex, vertices, Node, vnode,
                           strands, label, parent, seen, unrealized, shape,
-                          empty, realized, protSrc, preskelSrc, initial,
+                          empty, realized, closed, protSrc, preskelSrc, initial,
                           strand, pos, leadstosuccs, prev, next, msg,
                           dir, succs, preds, State, loadFirst, loadNext)
                           where
@@ -39,6 +39,7 @@ data Preskel = Preskel
       shape :: Bool,            -- Is preskel a shape?
       empty :: Bool,            -- Does preskel have an empty cohort?
       realized :: Bool,         -- Is preskel realized?
+      closed :: Bool,           -- Is preskel closed under rules?
       protSrc :: SExpr Pos,     -- Source for the protocol
       preskelSrc :: SExpr Pos } -- Source for this preskeleton
     deriving Show
@@ -263,6 +264,7 @@ loadInsts s pos p tag revInsts _ xs =
       let shape = maybe False (const True) (assoc "shape" xs)
       let empty = elem "empty cohort" (qassoc "comment" xs)
       let realized = maybe False (const True) (assoc "realized" xs)
+      let closed = not $ elem "Not closed under rules" (qassoc "comment" xs)
       let orderings = maybe [] id (assoc "precedes" xs)
       let lt = maybe [] id (assoc "leads-to" xs)
       pairs <- loadOrderings heights orderings True
@@ -286,6 +288,7 @@ loadInsts s pos p tag revInsts _ xs =
                              shape = shape,
                              empty = empty,
                              realized = realized,
+                             closed = closed,
                              protSrc = src p,
                              preskelSrc = s }
             where

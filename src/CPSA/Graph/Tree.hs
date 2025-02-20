@@ -138,45 +138,24 @@ getDup (t:ts) i = if i == label (vertex t) then [t] else getDup ts i
 -- dead if it is unrealized with no seen or unseen children, or if
 -- all its seen and unseen children are dead.
 live :: [Tree] -> Tree -> Set Preskel
-live dups t
-    -- if it has no children, but has unrealized nodes, it's dead
-    | children t ++ duplicates t == [] && maybe False (not . null) (unrealized (vertex t)) = S.empty
-    -- if it has no children, and no unrealized nodes, it must be a shape
-    | children t ++ duplicates t == [] = S.singleton (vertex t)
-    | otherwise =
-        -- Find originals of all duplicate children
+live dups t 
+    | shape (vertex t) = -- It's a shape so live
         let dups' = concatMap (getDup dups) $ map (label . vertex) $ duplicates t in
-        -- compute all live skeletons at or below seen and unseen children
+        let ks = foldl' S.union S.empty $ map (live dups) (children t ++ dups') in
+        S.insert (vertex t) ks 
+    | empty (vertex t) = -- empty cohort should always signal dead (no children)
+        S.empty 
+    | null $ children t ++ duplicates t = -- No seen or unseen children
+        case (realized (vertex t), closed (vertex t)) of 
+            (True, _) -> S.empty -- Dies on skeletonization or rule application
+            (False, True) -> S.singleton (vertex t) -- Aborted and live
+            (False, False) -> S.empty -- Dies on rule application
+    | otherwise = -- has children. Dead if no children or seen children are alive
+        let dups' = concatMap (getDup dups) $ map (label . vertex) $ duplicates t in
         let ks = foldl' S.union S.empty $ map (live dups) (children t ++ dups') in
         if ks == S.empty
-            -- if no children or seen children are alive, it's dead
             then S.empty
-            -- otherwise it's alive so add it to the set.
-            else (S.insert (vertex t) ks)
-{- live t =
-    loop (zz (init S.empty t))
-    where
-      decend ks t =
-          let ks' = foldl' decend ks (kids t) in
-          if S.member (vertex t) ks' || dead ks' t then
-              ks'
-          else
-              S.insert (vertex t) ks'
-      dead ks t =
-          all (not . (flip S.member ks) . vertex) (kids t)
-      kids t = duplicates t ++ children t
-      loop old =
-          let new = decend old t in
-          if S.size new == S.size old then
-              old
-          else
-              loop new
-      init ks t =
-          foldl' init (live ks t) (children t)
-          where
-            live ks t
-                 | alive t = S.insert (vertex t) ks
-                 | otherwise = ks -}
+        else S.insert (vertex t) ks
 
 updateLiveness :: Set Preskel -> Tree -> Tree
 updateLiveness live t =
