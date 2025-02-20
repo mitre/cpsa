@@ -13,6 +13,7 @@ import Data.Map (Map)
 import Data.List (foldl')
 import qualified Data.Set as S
 import Data.Set (Set)
+import Data.Maybe (mapMaybe)
 import CPSA.Lib.Utilities (seqList)
 import CPSA.Graph.XMLOutput
 import CPSA.Graph.Config
@@ -109,50 +110,32 @@ assemble table k =
 -- Set the alive flag in each preskeleton.
 setLiveness :: Tree -> Tree
 setLiveness t =
-    let dupTrees = dups t $ dupIdxs False t in
-    updateLiveness (live dupTrees t) t
+    updateLiveness (live (vertexMap t) t) t
 
 
--- Find the labels of all duplicated trees
-dupIdxs :: Bool -> Tree -> [Int]
-dupIdxs isDup t = if isDup then [label $ vertex t]
-    else concatMap (dupIdxs False) (children t) ++ concatMap (dupIdxs True) (duplicates t)
-
--- Find the originals of the duplicated trees
-dups :: Tree -> [Int] -> [Tree]
-dups t xs =
-    dups' xs t t
+-- Make a map of all the vertices in a tree 
+vertexMap :: Tree -> Map Int Tree
+vertexMap t =
+    loop t $ M.insert (label $ vertex t) t M.empty
     where
-        dups' [] _ _ = [] -- Found all the duplicates
-        dups' (x:xs) root t =
-            if label (vertex t) == x
-                then t : dups' xs root root -- Found x, return to root and find next duplicate
-                else concatMap (dups' (x:xs) root) (children t) -- Search children for x
+        loop t m =
+            foldl (\m' t' -> loop t' $ M.insert (label $ vertex t') t' m')
+                  m (children t)
 
--- Get the original of a duplicate by label
-getDup :: [Tree] -> Int -> [Tree]
-getDup [] _ = []
-getDup (t:ts) i = if i == label (vertex t) then [t] else getDup ts i
-
--- Extract the non-dead preskeletons from a tree.  A preskeleton is
--- dead if it is unrealized with no seen or unseen children, or if
--- all its seen and unseen children are dead.
-live :: [Tree] -> Tree -> Set Preskel
-live dups t 
+-- Extract the non-dead preskeletons from a tree.  
+live :: Map Int Tree -> Tree -> Set Preskel
+live vmap t
     | shape (vertex t) = -- It's a shape so live
-        let dups' = concatMap (getDup dups) $ map (label . vertex) $ duplicates t in
-        let ks = foldl' S.union S.empty $ map (live dups) (children t ++ dups') in
-        S.insert (vertex t) ks 
-    | empty (vertex t) = -- empty cohort should always signal dead (no children)
-        S.empty 
-    | null $ children t ++ duplicates t = -- No seen or unseen children
-        case (realized (vertex t), closed (vertex t)) of 
-            (True, _) -> S.empty -- Dies on skeletonization or rule application
-            (False, True) -> S.singleton (vertex t) -- Aborted and live
-            (False, False) -> S.empty -- Dies on rule application
+        let dups' = mapMaybe ((`M.lookup` vmap) . label . vertex) $ duplicates t in
+        let ks = foldl' S.union S.empty $ map (live vmap) (children t ++ dups') in
+        S.insert (vertex t) ks
+    | dead (vertex t) = S.empty -- Marked as dead
+    | aborted (vertex t) = S.singleton (vertex t) -- Aborted means it hasn't died
+    | null $ children t ++ duplicates t = S.empty -- No seen or unseen children.
+                                                  -- Can occur when rules kill input.
     | otherwise = -- has children. Dead if no children or seen children are alive
-        let dups' = concatMap (getDup dups) $ map (label . vertex) $ duplicates t in
-        let ks = foldl' S.union S.empty $ map (live dups) (children t ++ dups') in
+        let dups' = mapMaybe ((`M.lookup` vmap) . label . vertex) (duplicates t) in
+        let ks = foldl' S.union S.empty $ map (live vmap) (children t ++ dups') in
         if ks == S.empty
             then S.empty
         else S.insert (vertex t) ks
