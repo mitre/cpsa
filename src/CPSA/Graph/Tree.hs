@@ -53,9 +53,11 @@ makeTree k kids dups =
            height = y kids dups }
     where
       live kids dups =
-          maybe True null (unrealized k) ||
-          null kids && null dups && not (empty k) ||
-          any alive kids || any alive dups
+          not (dead k) && -- if marked dead, def not alive
+          (shape k || -- a shape is def alive
+           maybe True null (unrealized k) ||
+           null kids && null dups && not (empty k) ||
+           any alive kids || any alive dups) -- alive if any kids or dups are alive
       x [] [] = 1
       -- The width of a duplicate is one
       x kids dups = sum (map width kids) + length dups
@@ -110,7 +112,8 @@ assemble table k =
 -- Set the alive flag in each preskeleton.
 setLiveness :: Tree -> Tree
 setLiveness t =
-    updateLiveness (live (vertexMap t) t) t
+    --updateLiveness (live (vertexMap t) t) t
+    updateLiveness (live t) t 
 
 
 -- Make a map of all the vertices in a tree 
@@ -123,7 +126,7 @@ vertexMap t =
                   m (children t)
 
 -- Extract the non-dead preskeletons from a tree.  
-live :: Map Int Tree -> Tree -> Set Preskel
+{- live :: Map Int Tree -> Tree -> Set Preskel
 live vmap t
     | shape (vertex t) = -- It's a shape so live
         let dups' = mapMaybe ((`M.lookup` vmap) . label . vertex) $ duplicates t in
@@ -138,7 +141,33 @@ live vmap t
         let ks = foldl' S.union S.empty $ map (live vmap) (children t ++ dups') in
         if ks == S.empty
             then S.empty
-        else S.insert (vertex t) ks
+        else S.insert (vertex t) ks -}
+
+live :: Tree -> Set Preskel
+live t =
+    loop (init S.empty t)
+    where
+      decend ks t =
+          let ks' = foldl' decend ks (kids t) in
+          if isDead ks' t then
+              S.delete (vertex t) ks' -- if t is dead, try to remove it from ks'
+          else
+              S.insert (vertex t) ks' -- otherwise, we think it's live so add it
+      isDead ks t =
+          all (not . (flip S.member ks) . vertex) (kids t) || (dead (vertex t))
+      kids t = duplicates t ++ children t
+      loop old =
+          let new = decend old t in
+          if S.size new == S.size old then
+              old
+          else
+              loop new
+      init ks t =
+          foldl' init (isLive ks t) (children t)
+          where
+            isLive ks t'
+                 | alive t' = S.insert (vertex t) ks
+                 | otherwise = ks        
 
 updateLiveness :: Set Preskel -> Tree -> Tree
 updateLiveness live t =
