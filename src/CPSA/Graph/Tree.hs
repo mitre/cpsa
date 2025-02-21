@@ -53,11 +53,9 @@ makeTree k kids dups =
            height = y kids dups }
     where
       live kids dups =
-          not (dead k) && -- if marked dead, def not alive
-          (shape k || -- a shape is def alive
            maybe True null (unrealized k) ||
            null kids && null dups && not (empty k) ||
-           any alive kids || any alive dups) -- alive if any kids or dups are alive
+           any alive kids || any alive dups
       x [] [] = 1
       -- The width of a duplicate is one
       x kids dups = sum (map width kids) + length dups
@@ -112,8 +110,8 @@ assemble table k =
 -- Set the alive flag in each preskeleton.
 setLiveness :: Tree -> Tree
 setLiveness t =
-    --updateLiveness (live (vertexMap t) t) t
-    updateLiveness (live t) t 
+    updateLiveness (live (vertexMap t) t) t
+    --updateLiveness (live t) t 
 
 
 -- Make a map of all the vertices in a tree 
@@ -126,7 +124,7 @@ vertexMap t =
                   m (children t)
 
 -- Extract the non-dead preskeletons from a tree.  
-{- live :: Map Int Tree -> Tree -> Set Preskel
+live :: Map Int Tree -> Tree -> Set Preskel
 live vmap t
     | shape (vertex t) = -- It's a shape so live
         let dups' = mapMaybe ((`M.lookup` vmap) . label . vertex) $ duplicates t in
@@ -141,9 +139,9 @@ live vmap t
         let ks = foldl' S.union S.empty $ map (live vmap) (children t ++ dups') in
         if ks == S.empty
             then S.empty
-        else S.insert (vertex t) ks -}
+        else S.insert (vertex t) ks
 
-live :: Tree -> Set Preskel
+{- live :: Tree -> Set Preskel
 live t =
     loop (init S.empty t)
     where
@@ -167,7 +165,7 @@ live t =
           where
             isLive ks t'
                  | alive t' = S.insert (vertex t) ks
-                 | otherwise = ks        
+                 | otherwise = ks     -}    
 
 updateLiveness :: Set Preskel -> Tree -> Tree
 updateLiveness live t =
