@@ -38,7 +38,7 @@ compileForm k g (Diamond _ act f) =
       let (g'', fvs') = cloneIds g' fvs
       let (g''', sym) = predSym g''
       let (g'''', bo, clso) = compileAct k fvs k' fvs' g''' act
-      (g'''', bk, clsk) <- compileForm k' g'''' f
+      (g'''', bk, clsk) <- compileForm k g'''' f
       return (g'''', Conj [bo, PAtm (sym, Var k' : map Var fvs')], clso ++ Clause ((sym, Var k : map Var fvs), [bk]) : clsk)
 
 -- Compile a list of formulas.
