@@ -1,4 +1,4 @@
-module CPSA.DL.Simplifier (simplify) where
+module CPSA.DL.Simplifier (simplify, hasEpsilon) where
 
 import CPSA.DL.Structs
 
@@ -25,3 +25,13 @@ simpForm (Exists vs vars f) =
     Exists vs vars (simpForm f)
 simpForm (Diamond vs act f) =
     Diamond vs act (simpForm f)
+
+hasEpsilon :: Act -> Bool
+hasEpsilon AAtom {} = False
+hasEpsilon (ANot _ a) = not (hasEpsilon a)
+hasEpsilon (AAnd _ as) = all hasEpsilon as
+hasEpsilon (AOr _ as) = any hasEpsilon as
+hasEpsilon (AExists _ _ a) = hasEpsilon a
+hasEpsilon (One _) = False
+hasEpsilon (Concat _ as) = all hasEpsilon as
+hasEpsilon Star {} = True

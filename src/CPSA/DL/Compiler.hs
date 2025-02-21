@@ -1,6 +1,7 @@
 module CPSA.DL.Compiler where
 
 import CPSA.DL.Structs
+import CPSA.DL.Simplifier (hasEpsilon)
 import CPSA.DL.Prolog
 
 compileQuery :: MonadFail m => Id -> Gen -> Query -> m (Gen, [Clause])
@@ -106,7 +107,10 @@ compileAct k fvs k'' fvs'' g (Star _ a) =
   let (g'''', b, cls) = compileAct k fvs k' fvs' g''' a in
     (g'''', PAtm (ipred, Var k : map Var fvs ++ Var k'' : map Var fvs''),
       Clause ((ipred, Var k : map Var fvs ++ Var k : map Var fvs), []) :
-      Clause ((ipred, Var k : map Var fvs ++ Var k'' : map Var fvs''), [b, PAtm (ipred, Var k' : map Var fvs' ++ Var k'' : map Var fvs'')]) :
+      Clause ((ipred, Var k : map Var fvs ++ Var k'' : map Var fvs''),
+        b :
+        [PAtm ("dif", [Var k, Var k']) | hasEpsilon a] ++
+        [PAtm (ipred, Var k' : map Var fvs' ++ Var k'' : map Var fvs'')]) :
       cls
     )
 
