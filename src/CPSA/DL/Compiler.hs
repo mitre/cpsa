@@ -31,12 +31,15 @@ compileForm k g (Exists _  xs f) =
     do
       (g', b, cls) <- compileForm k g f
       return (g', Conj (map (genCondAtom k) xs++[b]), cls)
-compileForm k g (Diamond fvs act f) =
+compileForm k g (Diamond _ act f) =
     do
-      let (g', sym) = predSym g
-      let (g'', bo, clso) = compileAct k (sym, length fvs) g' act
-      (g''', bk, clsk) <- compileForm k g'' f
-      return (g''', bo , clso++(Clause ((sym, map Var (k:fvs)), [bk]):clsk))
+      let fvs = fv f
+      let (g', k') = cloneId g k
+      let (g'', fvs') = cloneIds g' fvs
+      let (g''', sym) = predSym g''
+      let (g'''', bo, clso) = compileAct k fvs k' fvs' g''' act
+      (g'''', bk, clsk) <- compileForm k' g'''' f
+      return (g'''', Conj [bo, PAtm (sym, Var k' : map Var fvs')], clso ++ Clause ((sym, Var k : map Var fvs), [bk]) : clsk)
 
 -- Compile a list of formulas.
 compileForms :: MonadFail m => Id -> Gen -> [Formula] ->
@@ -49,66 +52,70 @@ compileForms k g (f : fs) =
       (g'', bs, cls') <- compileForms k g' fs
       return (g'', b : bs, cls ++ cls')
 
--- the second argument is the predicate symbol
--- and the number of non-skel arguments
-compileAct :: Id -> (String, Int) -> Gen -> Act -> 
+-- The parameters in order are:
+--   the source skeleton
+--   the source free vars (fvs)
+--   the target skeleton
+--   the target fvs
+--   the generator
+--   the action itself
+compileAct :: Id -> [Id] -> Id -> [Id] -> Gen -> Act ->
               (Gen, Body, [Clause])
-compileAct k (pred, n) g (AAtom fvs rel ts) =
-  let (g', k') = freshId g "K" Skel in
-  let (g'', o) = freshId g' "O" Step in
-  let (g''', fvs', twaBs) = compileTwas g'' o (take n fvs) in
-  (g''', Conj ([
-    PAtm ("step", [Var k, Var o, Var k']),
-    PAtm (rel, Var o:ts)
-  ] ++ twaBs ++
-  [
-      PAtm (pred, map Var (k':take n fvs'))
-  ]), [])
-compileAct k d g (ANot _ a) =
-  let (g', b, cs) = compileAct k d g a in
+compileAct k fvs k' fvs' g (AAtom _ rel ts) =
+  let (g', o) = freshId g "O" Step in
+  let twas = compileTwas o fvs fvs' in
+  (g', Conj (
+      PAtm ("step", [Var k, Var o, Var k']) :
+      PAtm (rel, Var o:ts) :
+      twas)
+  , [])
+compileAct k fvs k' fvs' g (ANot _ a) =
+  let (g', b, cs) = compileAct k fvs k' fvs' g a in
   (g', PNot b, cs)
-compileAct k d g (AAnd _ as) =
-  let (g', bs, cls) = compileActs k d g as in
+compileAct k fvs k' fvs' g (AAnd _ as) =
+  let (g', bs, cls) = compileActs k fvs k' fvs' g as in
     (g', Conj bs, cls)
-compileAct k d g (AOr _ as) =
-  let (g', bs, cls) = compileActs k d g as in
+compileAct k fvs k' fvs' g (AOr _ as) =
+  let (g', bs, cls) = compileActs k fvs k' fvs' g as in
     (g', Disj bs, cls)
-compileAct k d g (AExists _ xs a) =
-  let (g', bs, cls) = compileAct k d g a in
-    (g', Conj (map (genCondAtom k) xs++[bs]), cls)
-compileAct k (pred,n) g (One fvs) = 
-  let (g', k') = freshId g "K" Skel in
-  let (g'', o) = freshId g' "O" Step in
-  let (g''', fvs', twaBs) = compileTwas g'' o (take n fvs) in
-  (g''', Conj ([
-    PAtm ("step", [Var k, Var o, Var k'])
-  ] ++ twaBs ++
-  [
-      PAtm (pred, map Var (k':take n fvs'))
-  ]), [])
-compileAct k (pred,n) g (Concat fvs []) = (g, PAtm (pred, map Var (k:take n fvs)), [])
-compileAct k d g (Concat _ [a]) = compileAct k d g a
-compileAct k d g (Concat fvs (a:as)) =
-  let (g', sym) = predSym g in
-  let (g'', b, cls) = compileAct k (sym, length fvs) g' a in
-  let (g''', b', cls') = compileAct k d g'' (Concat fvs as) in
-    (g''', b, Clause ((sym, map Var (k:fvs)), [b']):cls++cls')
-compileAct k (dpred, n) g (Star fvs a) =
+compileAct k fvs k' fvs' g (AExists _ xs a) =
+  let (g', xs') = cloneIds g xs in
+  let (g'', bs, cls) = compileAct k (fvs++xs) k' (fvs'++xs') g' a in
+    (g'', Conj (map (genCondAtom k) xs++[bs]), cls)
+compileAct k fvs k' fvs' g (One _) =
+  let (g', o) = freshId g "O" Step in
+  let twas = compileTwas o fvs fvs' in
+  (g', Conj (
+    PAtm ("step", [Var k, Var o, Var k']) : twas)
+  , [])
+compileAct k fvs k' fvs' g (Concat _ []) = (g, Conj (
+                                PAtm ("eq", [Var k, Var k, Var k']):
+                                zipWith (\a b -> PAtm ("eq", [Var k, Var a, Var b])) fvs fvs'
+                              ), [])
+compileAct k fvs k' fvs' g (Concat _ [a]) = compileAct k fvs k' fvs' g a
+compileAct k fvs k'' fvs'' g (Concat _ (a:as)) =
+  let (g', k') = cloneId g k in
+  let (g'', fvs') = cloneIds g' fvs in
+  let (g''', b, cls) = compileAct k fvs k' fvs' g'' a in
+  let (g'''', b', cls') = compileAct k' fvs' k'' fvs'' g''' (Concat fvs as) in
+    (g'''', Conj [b, b'], cls++cls')
+compileAct k fvs k'' fvs'' g (Star _ a) =
   let (g', ipred) = predSym g in
-  let (g'', b, cls) = compileAct k (ipred,n) g' a in
-  let iatm = (ipred, map Var (k:take n fvs)) in
-    (g'', PAtm iatm,
-      Clause (iatm, [b]) :
-      Clause (iatm, [PAtm (dpred, map Var (k:take n fvs))]) :
+  let (g'', k') = cloneId g' k in
+  let (g''', fvs') = cloneIds g'' fvs in
+  let (g'''', b, cls) = compileAct k fvs k' fvs' g''' a in
+    (g'''', PAtm (ipred, Var k : map Var fvs ++ Var k'' : map Var fvs''),
+      Clause ((ipred, Var k : map Var fvs ++ Var k : map Var fvs), []) :
+      Clause ((ipred, Var k : map Var fvs ++ Var k'' : map Var fvs''), [b, PAtm (ipred, Var k' : map Var fvs' ++ Var k'' : map Var fvs'')]) :
       cls
     )
 
-compileActs :: Id -> (String, Int) -> Gen -> [Act] -> 
+compileActs :: Id -> [Id] -> Id -> [Id] -> Gen -> [Act] ->
               (Gen, [Body], [Clause])
-compileActs _ _ g [] = (g, [], [])
-compileActs k d g (a:as) =
-  let (g', b, cls) = compileAct k d g a in
-  let (g'', bs, cls') = compileActs k d g' as in
+compileActs _ _ _ _ g [] = (g, [], [])
+compileActs k fvs k' fvs' g (a:as) =
+  let (g', b, cls) = compileAct k fvs k' fvs' g a in
+  let (g'', bs, cls') = compileActs k fvs k' fvs' g' as in
     (g'', b:bs, cls++cls')
 
 
@@ -119,17 +126,12 @@ makeClause k g vs body =
     where
       (g', sym) = predSym g
 
--- copies the variables and includes all the TWA relations
--- the second argument is a Prolog variable for the operation
-compileTwas :: Gen -> Id -> [Id] -> (Gen, [Id], [Body])
-compileTwas g _ [] = (g, [], [])
-compileTwas g o (v : vs) =
-  let (g', vs', bs) = compileTwas g o vs in
-  if shouldCopy (idSort v)
-    then 
-      let (g'', v') = cloneId g' v in
-        (g'', v':vs', PAtm (twa (idSort v), [Var v, Var o, Var v']):bs)
-    else (g', v:vs', bs)
+-- the first argument is the step, the next two are the variable lists
+-- uncopied variables must be identical
+compileTwas :: Id -> [Id] -> [Id] -> [Body]
+compileTwas o = zipWith (\a b -> if shouldCopy (idSort a)
+  then PAtm (twa (idSort a), [Var a, Var o, Var b])
+  else PAtm ("eq", [Var o, Var a, Var b]))
 
 
 shouldCopy :: Sort -> Bool

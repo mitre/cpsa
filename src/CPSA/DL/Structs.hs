@@ -38,6 +38,12 @@ freshId (Gen i) name sort = (Gen (i + 1), Id (i, name, sort))
 cloneId :: Gen -> Id -> (Gen, Id)
 cloneId gen x = freshId gen (idName x) (idSort x)
 
+cloneIds :: Gen -> [Id] -> (Gen, [Id])
+cloneIds g [] = (g, [])
+cloneIds g (id:ids) = let (g',id') = cloneId g id in
+    let (g'',ids') = cloneIds g' ids in
+        (g'', id':ids')
+
 predSym :: Gen -> (Gen, String)
 predSym (Gen i) = (Gen (i + 1), "pred" ++ show i)
 
