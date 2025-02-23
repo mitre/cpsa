@@ -94,12 +94,24 @@ compileAct k fvs k' fvs' g (Concat _ []) = (g, Conj (
                                 zipWith (\a b -> PAtm ("eq", [Var k, Var a, Var b])) fvs fvs'
                               ), [])
 compileAct k fvs k' fvs' g (Concat _ [a]) = compileAct k fvs k' fvs' g a
-compileAct k fvs k'' fvs'' g (Concat _ (a:as)) =
-  let (g', k') = cloneId g k in
-  let (g'', fvs') = cloneIds g' fvs in
-  let (g''', b, cls) = compileAct k fvs k' fvs' g'' a in
-  let (g'''', b', cls') = compileAct k' fvs' k'' fvs'' g''' (Concat fvs as) in
-    (g'''', Conj [b, b'], cls++cls')
+compileAct k fvs k' fvs' g (Concat _ as) =
+  let l = length as in
+  let (g', syms) = predSyms g l in
+  let (g'', bs, clss) = compileActs k fvs k' fvs' g' as in
+  let (g''', kfvs) = clonedKVars g'' (l-1) in
+  -- skeleton free variables pairs
+  let kfvsprs = pairs ((k,fvs):kfvs++[(k',fvs')]) in
+  let b = Conj (zipWith (\sym ((k'',fv''),(k''',fv'''))-> PAtm (sym, map Var (k'':fv''++k''':fv'''))) syms kfvsprs) in
+  let cls = zipWith (\sym b -> Clause ((sym, map Var ((k:fvs)++(k':fvs'))), [b])) syms bs ++ clss in
+    (g''', b, cls)
+  where
+    pairs xs = zip xs (tail xs)
+    clonedKVars g 0 = (g, [])
+    clonedKVars g n = 
+      let (g', k'') = cloneId g k in
+      let (g'', fvs'') = cloneIds g' fvs in
+      let (g''', xs) = clonedKVars g'' (n-1) in 
+        (g''', (k'', fvs''):xs)
 compileAct k fvs k'' fvs'' g (Star _ a) =
   let (g', ipred) = predSym g in
   let (g'', k') = cloneId g' k in

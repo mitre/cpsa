@@ -47,6 +47,12 @@ cloneIds g (id:ids) = let (g',id') = cloneId g id in
 predSym :: Gen -> (Gen, String)
 predSym (Gen i) = (Gen (i + 1), "pred" ++ show i)
 
+predSyms :: Gen -> Int -> (Gen, [String])
+predSyms g 0 = (g, [])
+predSyms g n =  let (g', sym) = predSym g in
+                let (g'', syms) = predSyms g' (n-1) in
+                    (g'', sym:syms)
+
 -- A term is a variable or a constant.
 
 data Term
