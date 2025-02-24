@@ -3433,7 +3433,7 @@ nodeIsLoad k p =
   case dirChMsgOfNode p k of 
     Nothing -> False 
     Just (Send, _) -> False 
-    Just (Recv, chm) -> isStateChMsg chm -} 
+    Just (Recv, chm) -> isStateChMsg chm -}
 
 nodeIsStor :: Preskel -> Node -> Bool 
 nodeIsStor k p = 

@@ -377,10 +377,9 @@ reduce mode k =
       Nothing -> reduceNoTest mode k
       Just ks ->                -- normal cohort for selected unrealized node
         Crt (filterSame
-             k (parFoldr
+             k (factorIsomorphicPreskels (parFoldr -- remove isomorphic duplcates *after* simplify
                 (\k soFar -> (simplify k) ++ soFar)
-                []
-                $ factorIsomorphicPreskels ks))
+                [] ks)))
     where
       (a, u) = avoid k
 
@@ -826,7 +825,7 @@ maximize k =
 
 maximize :: Preskel -> [Preskel]
 maximize k =
-    iter $ concatMap simplify $ map recordMap $ generalize k 
+    iter $ factorIsomorphicPreskels $ concatMap simplify $ map recordMap $ generalize k
     where
       iter [] = []
       iter (k' : rest) =

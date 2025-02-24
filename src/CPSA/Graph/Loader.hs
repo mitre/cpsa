@@ -14,9 +14,9 @@
 module CPSA.Graph.Loader (Preskel, Dir (..), Vertex, protocol, role, env,
                           inst, part, lastVertex, vertices, Node, vnode,
                           strands, label, parent, seen, unrealized, shape,
-                          empty, realized, protSrc, preskelSrc, initial,
-                          strand, pos, leadstosuccs, prev, next, msg,
-                          dir, succs, preds, State, loadFirst, loadNext)
+                          empty, realized, rulesApply, protSrc, preskelSrc, initial,
+                          strand, pos, leadstosuccs, prev, next, msg, aborted, 
+                          dead, dir, succs, preds, State, loadFirst, loadNext)
                           where
 
 import qualified Data.List as L
@@ -39,6 +39,9 @@ data Preskel = Preskel
       shape :: Bool,            -- Is preskel a shape?
       empty :: Bool,            -- Does preskel have an empty cohort?
       realized :: Bool,         -- Is preskel realized?
+      rulesApply :: Bool,           -- Is preskel closed under rules?
+      aborted :: Bool,          -- Has the search been aborted?
+      dead :: Bool,             -- Is the skeleton marked as dead?
       protSrc :: SExpr Pos,     -- Source for the protocol
       preskelSrc :: SExpr Pos } -- Source for this preskeleton
     deriving Show
@@ -263,6 +266,9 @@ loadInsts s pos p tag revInsts _ xs =
       let shape = maybe False (const True) (assoc "shape" xs)
       let empty = elem "empty cohort" (qassoc "comment" xs)
       let realized = maybe False (const True) (assoc "realized" xs)
+      let rulesApply = elem "Not closed under rules" (qassoc "comment" xs)
+      let aborted = maybe False (const True) (assoc "aborted" xs)
+      let dead = maybe False (const True) (assoc "dead" xs)
       let orderings = maybe [] id (assoc "precedes" xs)
       let lt = maybe [] id (assoc "leads-to" xs)
       pairs <- loadOrderings heights orderings True
@@ -286,6 +292,9 @@ loadInsts s pos p tag revInsts _ xs =
                              shape = shape,
                              empty = empty,
                              realized = realized,
+                             rulesApply = rulesApply,
+                             aborted = aborted,
+                             dead = dead,
                              protSrc = src p,
                              preskelSrc = s }
             where
