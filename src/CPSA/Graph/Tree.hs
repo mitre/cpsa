@@ -13,7 +13,7 @@ import Data.Map (Map)
 import Data.List (foldl')
 import qualified Data.Set as S
 import Data.Set (Set)
-import Data.Maybe (mapMaybe, fromMaybe)
+import Data.Maybe (mapMaybe)
 import CPSA.Lib.Utilities (seqList)
 import CPSA.Graph.XMLOutput
 import CPSA.Graph.Config
@@ -48,14 +48,10 @@ makeTree k kids dups =
     Tree { vertex = k,
            children = seqList kids,
            duplicates = seqList dups,
-           alive = live kids dups,
+           alive = True, -- This will be repaired later
            width = x kids dups,
            height = y kids dups }
     where
-      live kids dups =
-           maybe True null (unrealized k) ||
-           null kids && null dups && not (empty k) ||
-           any alive kids || any alive dups
       x [] [] = 1
       -- The width of a duplicate is one
       x kids dups = sum (map width kids) + length dups
@@ -111,8 +107,6 @@ assemble table k =
 setLiveness :: Tree -> Tree
 setLiveness t =
     updateLiveness (live (vertexMap t) t) t
-    --updateLiveness (live t) t 
-
 
 -- Make a map of all the vertices in a tree 
 vertexMap :: Tree -> Map Int Tree
@@ -123,7 +117,7 @@ vertexMap t =
             foldl (\m' t' -> loop t' $ M.insert (label $ vertex t') t' m')
                   m (children t)
 
--- 
+-- Extract all preskeletons from a tree.
 preskeletons :: Tree -> Set Preskel
 preskeletons t =  let ks = foldl' S.union S.empty $ map preskeletons (children t) in
     S.insert (vertex t) ks
@@ -156,7 +150,6 @@ live vmap t = loop liveLeaves
         -- add all of the preskeletons whose set of children
         -- is not disjoint from the preskels currently marked live
         ascend old = S.union (S.filter (not . S.disjoint old . allKids) preskels) old
-
 
 updateLiveness :: Set Preskel -> Tree -> Tree
 updateLiveness live t =
