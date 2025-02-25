@@ -32,6 +32,7 @@ hasEpsilon (ANot _ a) = not (hasEpsilon a)
 hasEpsilon (AAnd _ as) = all hasEpsilon as
 hasEpsilon (AOr _ as) = any hasEpsilon as
 hasEpsilon (AExists _ _ a) = hasEpsilon a
+hasEpsilon ATest {} = True
 hasEpsilon (One _) = False
 hasEpsilon (Concat _ as) = all hasEpsilon as
 hasEpsilon Star {} = True

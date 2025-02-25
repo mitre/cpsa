@@ -38,7 +38,7 @@ compileForm k g (Diamond _ act f) =
       let (g', k') = cloneId g k
       let (g'', fvs') = cloneIds g' fvs
       let (g''', sym) = predSym g''
-      let (g'''', bo, clso) = compileAct k fvs k' fvs' g''' act
+      (g'''', bo, clso) <- compileAct k fvs k' fvs' g''' act
       (g'''', bk, clsk) <- compileForm k g'''' f
       return (g'''', Conj [bo, PAtm (sym, Var k' : map Var fvs')], clso ++ Clause ((sym, Var k : map Var fvs), [bk]) : clsk)
 
@@ -60,50 +60,62 @@ compileForms k g (f : fs) =
 --   the target fvs
 --   the generator
 --   the action itself
-compileAct :: Id -> [Id] -> Id -> [Id] -> Gen -> Act ->
-              (Gen, Body, [Clause])
+compileAct :: MonadFail m => Id -> [Id] -> Id -> [Id] -> Gen -> Act ->
+              m (Gen, Body, [Clause])
 compileAct k fvs k' fvs' g (AAtom _ rel ts) =
   let (g', o) = freshId g "O" Step in
   let twas = compileTwas o fvs fvs' in
-  (g', Conj (
+  return (g', Conj (
       PAtm ("step", [Var k, Var o, Var k']) :
       PAtm (rel, Var o:ts) :
       twas)
   , [])
 compileAct k fvs k' fvs' g (ANot _ a) =
-  let (g', b, cs) = compileAct k fvs k' fvs' g a in
-  (g', PNot b, cs)
+  do
+    (g', b, cs) <- compileAct k fvs k' fvs' g a
+    return (g', PNot b, cs)
 compileAct k fvs k' fvs' g (AAnd _ as) =
-  let (g', bs, cls) = compileActs k fvs k' fvs' g as in
-    (g', Conj bs, cls)
+  do
+    (g', bs, cls) <- compileActs k fvs k' fvs' g as
+    return (g', Conj bs, cls)
 compileAct k fvs k' fvs' g (AOr _ as) =
-  let (g', bs, cls) = compileActs k fvs k' fvs' g as in
-    (g', Disj bs, cls)
+  do
+    (g', bs, cls) <- compileActs k fvs k' fvs' g as
+    return (g', Disj bs, cls)
 compileAct k fvs k' fvs' g (AExists _ xs a) =
-  let (g', xs') = cloneIds g xs in
-  let (g'', bs, cls) = compileAct k (fvs++xs) k' (fvs'++xs') g' a in
-    (g'', Conj (map (genCondAtom k) xs++[bs]), cls)
+  do
+    let (g', xs') = cloneIds g xs
+    (g'', bs, cls) <- compileAct k (fvs++xs) k' (fvs'++xs') g' a
+    return (g'', Conj (map (genCondAtom k) xs++[bs]), cls)
+compileAct k fvs k' fvs' g (ATest _ f) =
+  do
+    (g', bf, clsf) <- compileForm k g f
+    return (g', Conj (
+        bf:
+        PAtm ("eq", [Var k, Var k, Var k']):
+        zipWith (\a b -> PAtm ("eq", [Var k, Var a, Var b])) fvs fvs'),
+      clsf)
 compileAct k fvs k' fvs' g (One _) =
-  let (g', o) = freshId g "O" Step in
-  let twas = compileTwas o fvs fvs' in
-  (g', Conj (
-    PAtm ("step", [Var k, Var o, Var k']) : twas)
-  , [])
-compileAct k fvs k' fvs' g (Concat _ []) = (g, Conj (
+  do
+    let (g', o) = freshId g "O" Step
+    let twas = compileTwas o fvs fvs'
+    return (g', Conj (
+      PAtm ("step", [Var k, Var o, Var k']) : twas), [])
+compileAct k fvs k' fvs' g (Concat _ []) = return (g, Conj (
                                 PAtm ("eq", [Var k, Var k, Var k']):
-                                zipWith (\a b -> PAtm ("eq", [Var k, Var a, Var b])) fvs fvs'
-                              ), [])
+                                zipWith (\a b -> PAtm ("eq", [Var k, Var a, Var b])) fvs fvs'), [])
 compileAct k fvs k' fvs' g (Concat _ [a]) = compileAct k fvs k' fvs' g a
 compileAct k fvs k' fvs' g (Concat _ as) =
-  let l = length as in
-  let (g', syms) = predSyms g l in
-  let (g'', bs, clss) = compileActs k fvs k' fvs' g' as in
-  let (g''', kfvs) = clonedKVars g'' (l-1) in
-  -- skeleton free variables pairs
-  let kfvsprs = pairs ((k,fvs):kfvs++[(k',fvs')]) in
-  let b = Conj (zipWith (\sym ((k'',fv''),(k''',fv'''))-> PAtm (sym, map Var (k'':fv''++k''':fv'''))) syms kfvsprs) in
-  let cls = zipWith (\sym b -> Clause ((sym, map Var ((k:fvs)++(k':fvs'))), [b])) syms bs ++ clss in
-    (g''', b, cls)
+  do
+    let l = length as
+    let (g', syms) = predSyms g l
+    (g'', bs, clss) <- compileActs k fvs k' fvs' g' as
+    let (g''', kfvs) = clonedKVars g'' (l-1)
+    -- skeleton free variables pairs
+    let kfvsprs = pairs ((k,fvs):kfvs++[(k',fvs')])
+    let b = Conj (zipWith (\sym ((k'',fv''),(k''',fv'''))-> PAtm (sym, map Var (k'':fv''++k''':fv'''))) syms kfvsprs)
+    let cls = zipWith (\sym b -> Clause ((sym, map Var ((k:fvs)++(k':fvs'))), [b])) syms bs ++ clss
+    return (g''', b, cls)
   where
     pairs xs = zip xs (tail xs)
     clonedKVars g 0 = (g, [])
@@ -113,26 +125,27 @@ compileAct k fvs k' fvs' g (Concat _ as) =
       let (g''', xs) = clonedKVars g'' (n-1) in 
         (g''', (k'', fvs''):xs)
 compileAct k fvs k'' fvs'' g (Star _ a) =
-  let (g', ipred) = predSym g in
-  let (g'', k') = cloneId g' k in
-  let (g''', fvs') = cloneIds g'' fvs in
-  let (g'''', b, cls) = compileAct k fvs k' fvs' g''' a in
-    (g'''', PAtm (ipred, Var k : map Var fvs ++ Var k'' : map Var fvs''),
+  do
+    let (g', ipred) = predSym g
+    let (g'', k') = cloneId g' k
+    let (g''', fvs') = cloneIds g'' fvs
+    (g'''', b, cls) <- compileAct k fvs k' fvs' g''' a
+    return (g'''', PAtm (ipred, Var k : map Var fvs ++ Var k'' : map Var fvs''),
       Clause ((ipred, Var k : map Var fvs ++ Var k : map Var fvs), []) :
       Clause ((ipred, Var k : map Var fvs ++ Var k'' : map Var fvs''),
         b :
         [PAtm ("dif", [Var k, Var k']) | hasEpsilon a] ++
         [PAtm (ipred, Var k' : map Var fvs' ++ Var k'' : map Var fvs'')]) :
-      cls
-    )
+      cls)
 
-compileActs :: Id -> [Id] -> Id -> [Id] -> Gen -> [Act] ->
-              (Gen, [Body], [Clause])
-compileActs _ _ _ _ g [] = (g, [], [])
+compileActs :: MonadFail m => Id -> [Id] -> Id -> [Id] -> Gen -> [Act] ->
+              m (Gen, [Body], [Clause])
+compileActs _ _ _ _ g [] = return (g, [], [])
 compileActs k fvs k' fvs' g (a:as) =
-  let (g', b, cls) = compileAct k fvs k' fvs' g a in
-  let (g'', bs, cls') = compileActs k fvs k' fvs' g' as in
-    (g'', b:bs, cls++cls')
+  do
+    (g', b, cls) <- compileAct k fvs k' fvs' g a
+    (g'', bs, cls') <- compileActs k fvs k' fvs' g' as
+    return (g'', b:bs, cls++cls')
 
 
 -- Generate a clause from some free variables and a body.

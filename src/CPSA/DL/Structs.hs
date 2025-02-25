@@ -91,6 +91,7 @@ data Act
     | AAnd [Id] [Act]
     | AOr [Id] [Act]
     | AExists [Id] [Id] Act
+    | ATest [Id] Formula
     | One [Id]
     | Concat [Id] [Act]
     | Star [Id] Act
@@ -102,6 +103,7 @@ fva (ANot vs _) = vs
 fva (AAnd vs _) = vs
 fva (AOr vs _) = vs
 fva (AExists vs _ _) = vs
+fva (ATest vs _) = vs
 fva (One vs) = vs
 fva (Concat vs _) = vs
 fva (Star vs _) = vs

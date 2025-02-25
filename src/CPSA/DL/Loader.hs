@@ -133,6 +133,10 @@ loadAct g env fv (L pos [S _ "forall", decls, x]) =
     loadAct g env fv (L pos [S pos "not",
                            L pos [S pos "exists", decls,
                                   L pos [S pos "not", x]]])
+loadAct g env fv (L _ [S _ "test", form]) = 
+    do
+        (g', f) <- loadForm g env form
+        return (g', ATest fv f)
 loadAct g _ fv (S _ "one") = return (g, One fv)
 loadAct g env fv (S pos "epsilon") =
     loadAct g env fv (L pos [S pos "concat"]) -- empty concat is epsilon
