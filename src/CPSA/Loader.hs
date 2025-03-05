@@ -270,6 +270,8 @@ roleWellFormed role =
       mapM_ uniqueCheck $ runique role
       mapM_ uniqgenCheck $ runiqgen role
       mapM_ origVarCheck $ rvars role
+      mapM_ (checkChanDecl "conf") $ rconf role
+      mapM_ (checkChanDecl "auth") $ rauth role 
       failwith "role trace is a prefix of a listener"
                    $ notListenerPrefix $ rtrace role
       -- 
@@ -307,6 +309,23 @@ roleWellFormed role =
           failwith (showString "variable " $ showst v " not acquired")
                        $ not (isAcquiredVar v) ||
                          isJust (acquiredPos v (rtrace role))
+
+      chansUsed =
+          iter c []               
+          where
+            c = rtrace role
+            iter [] soFar = soFar
+            iter (e : rest) soFar =
+                case evtChan e of
+                  Just ch -> iter rest $ adjoin ch soFar
+                  Nothing -> iter rest soFar
+
+      checkChanDecl str ch =
+          failwith
+          ((show ch) ++ " declared " ++ str ++
+           " but not used in role " ++
+           (rname role))
+          $ ch `elem` chansUsed 
 
 --   noBareStore :: Trace -> Bool
 --   noBareStore c =
