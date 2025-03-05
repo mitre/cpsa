@@ -13,6 +13,7 @@ import Data.Map (Map)
 import Data.List (foldl')
 import qualified Data.Set as S
 import Data.Set (Set)
+import Data.Maybe (mapMaybe)
 import CPSA.Lib.Utilities (seqList)
 import CPSA.Graph.XMLOutput
 import CPSA.Graph.Config
@@ -47,14 +48,10 @@ makeTree k kids dups =
     Tree { vertex = k,
            children = seqList kids,
            duplicates = seqList dups,
-           alive = live kids dups,
+           alive = True, -- This will be repaired later
            width = x kids dups,
            height = y kids dups }
     where
-      live kids dups =
-          maybe True null (unrealized k) ||
-          null kids && null dups && not (empty k) ||
-          any alive kids || any alive dups
       x [] [] = 1
       -- The width of a duplicate is one
       x kids dups = sum (map width kids) + length dups
@@ -108,37 +105,51 @@ assemble table k =
 
 -- Set the alive flag in each preskeleton.
 setLiveness :: Tree -> Tree
-setLiveness t = updateLiveness (live t) t
+setLiveness t =
+    updateLiveness (live (vertexMap t) t) t
 
--- Extract the non-dead preskeletons from a tree.  A preskeleton is
--- dead if it is known to be unrealized, and all of its children are
--- unrealized.  Because of duplicates, process of computing the list
--- must be iterated.
-live :: Tree -> Set Preskel
-live t =
-    loop (init S.empty t)
+-- Make a map of all the vertices in a tree 
+vertexMap :: Tree -> Map Int Tree
+vertexMap t =
+    loop t $ M.insert (label $ vertex t) t M.empty
     where
-      decend ks t =
-          let ks' = foldl' decend ks (kids t) in
-          if S.member (vertex t) ks' || dead ks' t then
-              ks'
-          else
-              S.insert (vertex t) ks'
-      dead ks t =
-          all (not . (flip S.member ks) . vertex) (kids t)
-      kids t = duplicates t ++ children t
-      loop old =
-          let new = decend old t in
-          if S.size new == S.size old then
-              old
-          else
-              loop new
-      init ks t =
-          foldl' init (live ks t) (children t)
-          where
-            live ks t
-                 | alive t = S.insert (vertex t) ks
-                 | otherwise = ks
+        loop t m =
+            foldl (\m' t' -> loop t' $ M.insert (label $ vertex t') t' m')
+                  m (children t)
+
+-- Extract all preskeletons from a tree.
+preskeletons :: Tree -> Set Preskel
+preskeletons t =  let ks = foldl' S.union S.empty $ map preskeletons (children t) in
+    S.insert (vertex t) ks
+
+-- Extract the non-dead preskeletons from a tree.  
+live :: Map Int Tree -> Tree -> Set Preskel
+live vmap t = loop liveLeaves
+    where
+        preskels = preskeletons t
+        liveLeaf :: Preskel -> Bool
+        liveLeaf k = shape k || aborted k
+        liveLeaves = S.filter liveLeaf preskels
+
+        getTree :: Preskel -> Maybe Tree
+        getTree = (`M.lookup` vmap) . label
+
+        allKids :: Preskel -> Set Preskel
+        allKids k = S.fromList (map vertex (
+                maybe [] children (getTree k) ++
+                mapMaybe (getTree . vertex) (maybe [] duplicates (getTree k))
+            ))
+
+        loop :: Set Preskel -> Set Preskel
+        loop old = let new = ascend old in
+            if S.size new == S.size old then
+                old
+            else
+                loop new
+        ascend :: Set Preskel -> Set Preskel
+        -- add all of the preskeletons whose set of children
+        -- is not disjoint from the preskels currently marked live
+        ascend old = S.union (S.filter (not . S.disjoint old . allKids) preskels) old
 
 updateLiveness :: Set Preskel -> Tree -> Tree
 updateLiveness live t =
