@@ -886,6 +886,57 @@ axiom?  Add the trust axiom back to the doorsep protocol in
 does its job; namely, ensuring that the door opens only when an
 authorized person requests it to open.
 
+\paragraph{A trick to control rules.}  Sometimes, one would like to
+explore two versions of a protocol:  One that contains a particular
+rule, and another that doesn't.  Some {\cpsa} queries should be
+executed with the rule in force, and others without the rule.  For
+instance, one may want to know which security properties hold even
+without the assumption made in the rule.  
+
+To do this, one can add a sort of flag to the rule as an additional
+premise.  For instance, in the DoorSEP case, we could have written the
+rule as shown in Fig.~\ref{fig:doorsep:alt}, with the additional
+premise \texttt{(fact use-trust-rule)}.  
+
+\begin{figure}
+  \centering
+  \begin{verbatim}  (defrule trust-sometimes
+    (forall ((z strd) (p d akey))
+            (implies
+             (and (fact use-trust-rule)
+                  (p "person" z 1)
+                  (p "person" "p" z p)
+                  (p "person" "d" z d)
+                  (non (invk p)))
+             (non (invk d))))
+    (comment "The trust rule.  Assume (fact use-trust-rule) to enable it"))
+
+. . .
+
+(defskeleton doorsep
+  (vars (p akey))
+  (defstrand door 3 (p p))
+  (non-orig (invk p))
+  (facts (use-trust-rule))
+  (comment "Analyze from the doors perspective, with trust rule"))
+\end{verbatim}
+%
+  %
+  \caption{Rule with a flag to control its use}
+  \label{fig:doorsep:alt}
+\end{figure}
+
+Now, a query that should not use the \texttt{trust-sometimes} rule can
+be stated as usual, as in Fig.~\ref{fig:doorsep}.  A query that should
+use the rule can add the \texttt{use-trust-rule} fact to the
+\texttt{defskeleton} form, as shown in Fig.~\ref{fig:doorsep:alt}.  As
+a consequence, the additional premise will be satisfied any time that
+{\cpsa} would apply the rule.
+
+This also illustrates the way that a fact that is written
+\texttt{(fact use-trust-rule)} in a goal or rule is declared
+\texttt{(facts (use-trust-rule))} in a \texttt{defskeleton} form.
+
 \subsection{Generated rules}
 \label{sec:goals:rules:gen}
 
