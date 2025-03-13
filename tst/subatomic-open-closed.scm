@@ -32,7 +32,8 @@
      (stor ls (dev-state-closed d o))
      (send (enc "up" k)))
     (auth start-ch)
-    (critical-sections (1 4))
+    ;; Critical section declarations are now obsolete.  
+    ;; (critical-sections (1 4))
     (facts (same-dev ls lk)))
 
   (defrole owner-power-dev
@@ -62,7 +63,8 @@
      (load lk (dev-key-state d o k))
      (stor ls (dev-state-opened d o))
      (send n))
-    (critical-sections (1 3))
+    ;; Critical section declarations are now obsolete.  
+    ;; (critical-sections (1 3))
     (gen-st (dev-key-state d o k) (dev-state-opened d o))
     (facts (same-dev ls lk)))
 
@@ -75,7 +77,8 @@
      (stor ls (dev-state-closed d o))
      (send n))
     (gen-st (dev-key-state d o k))
-    (critical-sections (1 3))
+    ;; Critical section declarations are now obsolete.  
+    ;; (critical-sections (1 3))
     (facts (same-dev ls lk)))
 
   (defrole dev-pass
@@ -87,7 +90,8 @@
      (send (enc "you may pass" n k)))
     (uniq-orig n)
     (gen-st (dev-key-state d o k) (dev-state-opened d o))
-    (critical-sections (0 1))
+    ;; Critical section declarations are now obsolete.  
+    ;; (critical-sections (0 1))
     (facts (same-dev ls lk)))
 
   (defrole user-pass

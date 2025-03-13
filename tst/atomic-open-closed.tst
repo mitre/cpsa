@@ -232,14 +232,14 @@
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defgenrule shearsRule
+  (defgenrule discreteAfter
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defgenrule invShearsRule
+  (defgenrule discreteBefore
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
@@ -569,14 +569,14 @@
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defgenrule shearsRule
+  (defgenrule discreteAfter
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defgenrule invShearsRule
+  (defgenrule discreteBefore
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
@@ -724,8 +724,8 @@
   (auth start-ch)
   (facts (same-dev ls lk))
   (leads-to ((1 2) (0 1)) ((3 3) (0 2)))
-  (rule cau-dev-pass-2 dev-open-atomic1 gen-state-open
-    intro-same-dev-open intro-same-dev-pass invShearsRule same-dev-ls-lk
+  (rule cau-dev-pass-2 dev-open-atomic1 discreteBefore gen-state-open
+    intro-same-dev-open intro-same-dev-pass same-dev-ls-lk
     trRl_dev-open-at-2 trRl_dev-open-at-3 trRl_dev-up-at-1
     trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation channel-test (added-strand dev-open 4)
@@ -1018,14 +1018,14 @@
         (and (leads-to z0 i0 z2 i2) (trans z1 i1)
           (same-locn z0 i0 z1 i1) (prec z0 i0 z1 i1) (prec z1 i1 z2 i2))
         (false))))
-  (defgenrule shearsRule
+  (defgenrule discreteAfter
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
           (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
           (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
-  (defgenrule invShearsRule
+  (defgenrule discreteBefore
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
         (and (trans z0 i0) (trans z1 i1) (same-locn z0 i0 z1 i1)
@@ -1292,8 +1292,8 @@
   (auth start-ch)
   (facts (same-dev ls lk))
   (leads-to ((3 2) (1 1)) ((4 3) (1 2)))
-  (rule cau-dev-pass-2 dev-open-atomic1 gen-state-open
-    intro-same-dev-open intro-same-dev-pass invShearsRule same-dev-ls-lk
+  (rule cau-dev-pass-2 dev-open-atomic1 discreteBefore gen-state-open
+    intro-same-dev-open intro-same-dev-pass same-dev-ls-lk
     trRl_dev-open-at-2 trRl_dev-open-at-3 trRl_dev-up-at-1
     trRl_dev-up-at-2 trRl_dev-up-at-3 trRl_dev-up-at-4)
   (operation channel-test (added-strand dev-open 4)

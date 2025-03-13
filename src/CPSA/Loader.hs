@@ -174,9 +174,14 @@ loadRole sig gen pos (S _ name :
       prios <- mapM (loadRolePriority (length c)) (assoc "priority" rest)
 
       let stateSegs = stateSegments c
-      case all (flip checkCs stateSegs) cs of
-        False -> fail (shows pos "Critical sections in role not within state segments")
-        True -> return ()
+    {-- case all (flip checkCs stateSegs) cs of
+      False -> fail (shows pos "Critical sections in role not within state segments")
+      True -> return () --}
+
+      case cs of
+        [] -> return ()
+        _ -> fail (shows pos ("Critical sections in role are no longer needed;  " ++
+                              "all state segments are now critical sections"))
 
       let r = mkRole name vs c ns as us gs b d h comment prios reverseSearch
 
@@ -396,10 +401,12 @@ stateSegments c =
           | isLocn ch           = findEnd soFar start (i+1) c True
           | otherwise           = findSegments ((start,(i-1)) : soFar) (i+1) c
 
-checkCs :: (Int,Int) -> [(Int,Int)] -> Bool
-checkCs (i,j) =
-    any
-    (\(start,end) -> start <= i && j <= end)
+{--
+  checkCs :: (Int,Int) -> [(Int,Int)] -> Bool
+  checkCs (i,j) =
+  any
+  (\(start,end) -> start <= i && j <= end)
+  --}
 
 failwith :: MonadFail m => String -> Bool -> m ()
 failwith msg test =
