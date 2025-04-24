@@ -308,7 +308,9 @@ mul t t' =
       Just c                    -- so add a mapping
     g (b, c) (Just (b', c'))    -- Variable x maps to c'
       | b /= b' = assertError
-        ("Algebra.mul: sort mismatch " ++ show t ++ " - " ++ show t')
+        ("Algebra.mul: sort mismatch " ++
+         show t ++ show " times " ++ show t' ++
+         ": " ++ show b ++ " vs " ++ show b')
       | c + c' == 0 = Nothing          -- Delete the mapping
       | otherwise = Just $ (b, c + c') -- Adjust the mapping
 
