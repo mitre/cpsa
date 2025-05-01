@@ -13,7 +13,7 @@
 
 module CPSA.Graph.Loader (Preskel, Dir (..), Vertex, protocol, role, env,
                           inst, part, lastVertex, vertices, Node, vnode,
-                          strands, label, parent, seen, unrealized, shape,
+                          strands, label, parent, seen, unrealized, shape, noSkel,
                           empty, realized, rulesApply, protSrc, preskelSrc, initial,
                           strand, pos, leadstosuccs, prev, next, msg, aborted, 
                           dead, dir, succs, preds, State, loadFirst, loadNext)
@@ -42,6 +42,7 @@ data Preskel = Preskel
       rulesApply :: Bool,           -- Is preskel closed under rules?
       aborted :: Bool,          -- Has the search been aborted?
       dead :: Bool,             -- Is the skeleton marked as dead?
+      noSkel :: Bool,          -- Cannot be made into a skeleton
       protSrc :: SExpr Pos,     -- Source for the protocol
       preskelSrc :: SExpr Pos } -- Source for this preskeleton
     deriving Show
@@ -269,6 +270,7 @@ loadInsts s pos p tag revInsts _ xs =
       let rulesApply = elem "Not closed under rules" (qassoc "comment" xs)
       let aborted = maybe False (const True) (assoc "aborted" xs)
       let dead = maybe False (const True) (assoc "dead" xs)
+      let noSkel = elem "Input cannot be made into a skeleton--nothing to do" (qassoc "comment" xs)
       let orderings = maybe [] id (assoc "precedes" xs)
       let lt = maybe [] id (assoc "leads-to" xs)
       pairs <- loadOrderings heights orderings True
@@ -295,6 +297,7 @@ loadInsts s pos p tag revInsts _ xs =
                              rulesApply = rulesApply,
                              aborted = aborted,
                              dead = dead,
+                             noSkel = noSkel,
                              protSrc = src p,
                              preskelSrc = s }
             where

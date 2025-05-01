@@ -8,12 +8,14 @@
 
 module CPSA.Graph.Tree (Tree (..), Forest, forest, tree) where
 
+--import System.IO.Unsafe
 import qualified Data.Map as M
 import Data.Map (Map)
 import Data.List (foldl')
+--import Data.List (elem)
 import qualified Data.Set as S
 import Data.Set (Set)
-import Data.Maybe (mapMaybe)
+--import Data.Maybe (mapMaybe)
 import CPSA.Lib.Utilities (seqList)
 import CPSA.Graph.XMLOutput
 import CPSA.Graph.Config
@@ -27,6 +29,12 @@ import CPSA.Graph.Loader
 -- have been seen before.  These members are called a tree node's
 -- duplicates, and their children are displayed somewhere else in the
 -- display.
+{- 
+z :: Show a => a -> b -> b
+z x y = unsafePerformIO (print x >> return y)
+
+zz :: Show a => a -> a
+zz x = z x x -}
 
 data Tree = Tree
     { vertex :: !Preskel,
@@ -122,13 +130,18 @@ preskeletons :: Tree -> Set Preskel
 preskeletons t =  let ks = foldl' S.union S.empty $ map preskeletons (children t) in
     S.insert (vertex t) ks
 
+-- Extract all the subtrees from a tree.
+{- trees :: Tree -> Set Tree
+trees t = let ks = foldl' S.union S.empty $ map trees (children t) in 
+    S.insert t ks -}
+
 -- Extract the non-dead preskeletons from a tree.  
-live :: Map Int Tree -> Tree -> Set Preskel
+{- live :: Map Int Tree -> Tree -> Set Preskel
 live vmap t = loop liveLeaves
     where
         preskels = preskeletons t
         liveLeaf :: Preskel -> Bool
-        liveLeaf k = shape k || aborted k
+        liveLeaf k = shape k || aborted k || (not (realized k) && not (dead k))
         liveLeaves = S.filter liveLeaf preskels
 
         getTree :: Preskel -> Maybe Tree
@@ -149,7 +162,84 @@ live vmap t = loop liveLeaves
         ascend :: Set Preskel -> Set Preskel
         -- add all of the preskeletons whose set of children
         -- is not disjoint from the preskels currently marked live
+        ascend old = S.union (S.filter (not . S.disjoint old . allKids) preskels) old -}
+
+    
+
+live :: Map Int Tree -> Tree -> Set Preskel
+live vmap t = loop liveLeaves
+    where
+        preskels = preskeletons t
+        
+        -- Aborting and/or ctrl+c might leave a live fringe. 
+        -- The cases below check for those conditions.
+        getLiveLeaves :: [Int] -> Set Preskel -> Tree -> Set Preskel 
+        getLiveLeaves as ps t = 
+            let k = vertex t 
+                l = label k in 
+                -- aborted skeletons are live fringe and have no children
+                if aborted k then 
+                    S.insert k ps 
+                -- shapes are always live but may have children
+                else if shape k then 
+                    S.insert k (foldl (getLiveLeaves (l:as)) ps (children t))
+                -- if it can't be made into a skeleton, it's not a live leaf
+                else if noSkel k then 
+                    ps
+                -- if rules apply but it has no children, it dies on 
+                -- rule application. Not a live leaf.
+                else if children t == [] && rulesApply k then 
+                    ps
+                -- realized skeletons that aren't shapes
+                -- but have no children are live fringe
+                else if children t == [] && realized k then 
+                    S.insert k ps 
+                -- If it has no children or seen children, isn't realized or dead
+                -- it's live fringe
+                else if children t == [] && duplicates t == [] &&
+                    not (realized k) && not (dead k) then 
+                    S.insert k ps
+                -- If it only has seen children, and they are all 
+                -- ancestors, it's not a live leaf
+                else if children t == [] && not (realized k) && 
+                    not (dead k) && duplicates t /= [] &&
+                    isSubList (map (label . vertex) $ duplicates t) as then 
+                        ps
+                -- otherwise it's not a live leaf. Descend without adding
+                else 
+                    foldl (getLiveLeaves (l:as)) ps (children t)
+
+        isSubList :: Eq a => [a] -> [a] -> Bool
+        isSubList [] _ = True
+        isSubList _ [] = False
+        isSubList (x:xs) ys = elem x ys && isSubList xs ys
+
+        liveLeaves = getLiveLeaves [] S.empty t
+
+        getTree :: Preskel -> Tree
+        getTree k =
+            case (`M.lookup` vmap) $ label k of
+                -- Will only be used on skeletons in the vmap
+                Nothing -> error $ "getTree': Preskel not found: " ++ show k
+                Just t -> t
+
+        allKids :: Preskel -> Set Preskel
+        allKids k = S.fromList (map vertex (
+                children (getTree k) ++
+                map (getTree . vertex) (duplicates (getTree k))
+            ))
+
+        loop :: Set Preskel -> Set Preskel
+        loop old = let new = ascend old in
+            if S.size new == S.size old then
+                old
+            else
+                loop new
+        ascend :: Set Preskel -> Set Preskel
+        -- add all of the preskeletons whose set of children
+        -- is not disjoint from the preskels currently marked live
         ascend old = S.union (S.filter (not . S.disjoint old . allKids) preskels) old
+
 
 updateLiveness :: Set Preskel -> Tree -> Tree
 updateLiveness live t =
