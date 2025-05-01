@@ -142,6 +142,8 @@ stronglyIsomorphic k1 k2 =
           setsEq (map (translateNode sidMap) $ unrealized k1)
                  $ unrealized k2
 
+{--
+
 -- Suppose homomorphism H has strand map sm1 and homomorphism J has
 -- strand map sm2, where H's target is J's source.
 
@@ -153,6 +155,8 @@ composeStrandMap sm1 sm2 = map ((!!) sm2) sm1
 --        take (min (length sm1) (length sm2))
 --                (map ((!!) sm2) )
 --    map ((!!) (take (L.length sm1) sm2)) sm1
+
+--}
 
 -- A seen history as a list.
 
@@ -454,7 +458,7 @@ mktodo reducts todo toobig =
     where
       f sofar (Reduct lk _ _ _) = lk : sofar
       f sofar (Genlz lk _ _ _) = lk : sofar
-      f sofar (ReductStable _) = sofar
+      f sofar (ReductStable lk) = lk : sofar
 
 type Next = (Int, Seen, [LPreskel], [SeenSkel])
 
