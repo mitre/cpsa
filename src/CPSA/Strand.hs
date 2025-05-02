@@ -4100,7 +4100,7 @@ ureq rule x y k (g, e)
           (Just s, Just t)
             | s == t -> Some (k, (g, e))
             | s < (L.length (insts k)) && t < (L.length (insts k))  ->
-                (case rDisplace e (k {gen = g}) s t of
+                (case rDisplace e (k {gen = gmerge g (gen k)}) s t of
                   []              -> None
                   [(k', (g',e'))] -> Some (k', (g',e'))
                   l               ->
@@ -4817,7 +4817,7 @@ req name x y k (g, e)
       (Just s, Just t)
         | s == t -> [(k, (g, e))]
         | s < (L.length (insts k)) && t < (L.length (insts k)) ->
-          rDisplace e (k {gen = g})  s t
+          rDisplace e (k {gen = gmerge g (gen k)})  s t
         | otherwise ->
             error ("req:  indices too large, (" ++ (show s) ++ ", " ++ (show t) ++ " in env " ++ (show e))
       _ ->
