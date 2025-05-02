@@ -1,5 +1,16 @@
 CPSA NEWS -- history of user-visible changes.
 
+* Changes in version 4.4.6
+
+** Removed an obscure bug in which the generators
+   were used wrong, causing a unification failure.   
+
+** We improved the generalization code to avoid redundancies.
+
+** We improved the overall functionality by allowing state
+   operations in which stores are not preceded by a load on that
+   location.
+
 * Changes in version 4.4.5
 
 ** Fixed a strand map bug in 4.4.4.
