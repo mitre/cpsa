@@ -13,7 +13,7 @@ University of California. *)
     matches [x] to [y] and produces substitution [sb], then
     [subst_term sb x] equals [y]. *)
 
-Require Import FunInd String List Nat Bool Arith.
+From Stdlib Require Import FunInd String List Nat Bool Arith.
 Require Import Preamble Monad Alg Match.
 
 Definition subst_skey (sb: sbst) (x: skey): skey :=

@@ -1,3 +1,8 @@
+2025-05-02  John D. Ramsdell  <ramsdell@mitre.org>
+
+	* src/cpsa/RoleCoq/Main.hs (emit): Updated Roletran to use rocq
+	9.0.0. 
+
 2024-07-17  Joshua D. Guttman  <guttman@mitre.org>
 
 	* cpsa.cabal (Version): Tagged as version 4.4.5.  Adds cpsa4db and

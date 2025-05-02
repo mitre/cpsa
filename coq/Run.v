@@ -23,7 +23,8 @@ University of California. *)
     - a list of the uniques that occur at the transmissions in the
       current trace. *)
 
-Require Import Nat Bool Preamble Monad Proc Alg.
+From Stdlib Require Import Nat Bool.
+Require Import Preamble Monad Proc Alg.
 Import List.ListNotations.
 Open Scope list_scope.
 (** printing <- #←# *)

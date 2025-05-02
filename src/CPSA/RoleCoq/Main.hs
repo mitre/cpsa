@@ -45,7 +45,8 @@ emit h margin prot =
     hPutStrLn h ("(** Protocol: " ++ pname prot ++
                   " (" ++ displayPos (ppos prot) ++ ") *)")
     hPutStrLn h ""
-    hPutStrLn h "Require Import String List Alg Role."
+    hPutStrLn h "From Stdlib Require Import String List."
+    hPutStrLn h "Require Import Alg Role."
     hPutStrLn h "Import List.ListNotations."
     hPutStrLn h "Open Scope list_scope."
     hPutStrLn h "Open Scope string."

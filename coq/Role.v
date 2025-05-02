@@ -6,7 +6,8 @@ This program is free software: you can redistribute it and/or
 modify it under the terms of the BSD License as published by the
 University of California. *)
 
-Require Import List ListSet Bool Program Monad Proc Alg.
+From Stdlib Require Import List ListSet Bool Program.
+Require Import Monad Proc Alg.
 
 (** * Protocol Roles *)
 

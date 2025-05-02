@@ -8,7 +8,8 @@ University of California. *)
 
 (** * Derivability *)
 
-Require Import List ListSet Bool Lia Alg Sem_tactics.
+From Stdlib Require Import List ListSet Bool Lia.
+Require Import Alg Sem_tactics.
 
 (** [derives pub t] when [t] can be derived using the terms in [pub]. *)
 

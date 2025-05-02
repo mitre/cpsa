@@ -8,7 +8,8 @@ University of California. *)
 
 (** * The Message Algebra *)
 
-Require Import FunInd Nat Bool DecBool Monad Proc.
+From Stdlib Require Import FunInd Nat Bool DecBool.
+Require Import Monad Proc.
 (** printing <- #←# *)
 
 Notation var := nat (only parsing).

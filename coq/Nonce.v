@@ -13,7 +13,8 @@ University of California. *)
     that basic values that uniquely originate are generated just
     before the transmission of the message in which they originate. *)
 
-Require Import FunInd Bool Preamble Monad Proc Alg Role Sem Run Run_sem.
+From Stdlib Require Import FunInd Bool.
+Require Import Preamble Monad Proc Alg Role Sem Run Run_sem.
 (** printing <- #←# *)
 
 (** Find a nonce [u] of type [t] that is carried by [x].  Remove [u]

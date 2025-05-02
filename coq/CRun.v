@@ -23,7 +23,8 @@ University of California. *)
     - a list of the uniques that occur at the transmissions in the
       current trace. *)
 
-Require Import FunInd Nat Bool Preamble Monad Proc Alg CSem.
+From Stdlib Require Import FunInd Nat Bool.
+Require Import Preamble Monad Proc Alg CSem.
 Import List.ListNotations.
 Open Scope list_scope.
 (** printing <- #←# *)
