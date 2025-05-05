@@ -319,7 +319,7 @@ Executable cpsa4prot
 Executable cpsa4goalsat
   Main-Is:              CPSA/GoalSat/Main.hs
   Default-Language:     Haskell2010
-  Build-Depends:        base
+  Build-Depends:        base >= 3 && < 5
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
   Hs-Source-Dirs:       src
@@ -330,7 +330,7 @@ Executable cpsa4goalsat
 Executable cpsa4diff
   Main-Is:              CPSA/Diff/Main.hs
   Default-Language:     Haskell2010
-  Build-Depends:        base
+  Build-Depends:        base >= 3 && < 5
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
   Hs-Source-Dirs:       src
@@ -341,7 +341,7 @@ Executable cpsa4diff
 Executable cpsa4graph
   Main-Is:              CPSA/Graph/Main.hs
   Default-Language:     Haskell2010
-  Build-Depends:        base >= 4.13, containers
+  Build-Depends:        base >= 4.13 && < 5, containers
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
   Hs-Source-Dirs:       src
@@ -356,7 +356,7 @@ Executable cpsa4graph
 Executable cpsa4shapes
   Main-Is:              CPSA/Shapes/Main.hs
   Default-Language:     Haskell2010
-  Build-Depends:        base >= 4.13, containers
+  Build-Depends:        base >= 4.13 && < 5, containers
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
   Hs-Source-Dirs:       src
@@ -367,7 +367,7 @@ Executable cpsa4shapes
 Executable cpsa4pp
   Main-Is:              CPSA/Pretty/Main.hs
   Default-Language:     Haskell2010
-  Build-Depends:        base
+  Build-Depends:        base >= 4.13 && < 5
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
   Hs-Source-Dirs:       src
@@ -378,7 +378,7 @@ Executable cpsa4pp
 Executable cpsa4json
   Main-Is:              CPSA/JSON/Main.hs
   Default-Language:     Haskell2010
-  Build-Depends:        base
+  Build-Depends:        base >= 3 && < 5
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
   Hs-Source-Dirs:       src
@@ -389,7 +389,7 @@ Executable cpsa4json
 Executable cpsa4init
   Main-Is:              CPSA/Init/Main.hs
   Default-Language:     Haskell2010
-  Build-Depends:        base, directory
+  Build-Depends:        base >= 3 && < 5, directory
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
   Hs-Source-Dirs:       src
@@ -399,7 +399,7 @@ Executable cpsa4init
 Executable cpsa42latex
   Main-Is:              CPSA/Latex/Main.hs
   Default-Language:     Haskell2010
-  Build-Depends:        base
+  Build-Depends:        base >= 3 && < 5
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
   Hs-Source-Dirs:       src
@@ -447,7 +447,7 @@ Executable cpsa4rolecoq
 Executable cpsa4debranch
   Main-Is:              CPSA/Debranch/Main.hs
   Default-Language:     Haskell2010
-  Build-Depends:        base
+  Build-Depends:        base >= 3 && < 5
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
   Hs-Source-Dirs:       src
@@ -458,7 +458,7 @@ Executable cpsa4debranch
 Executable cpsa4query
   Main-Is:              CPSA/Query/Main.hs
   Default-Language:     Haskell2010
-  Build-Depends:        base, containers
+  Build-Depends:        base  >= 3 && < 5, containers
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
   Hs-Source-Dirs:       src
@@ -484,7 +484,7 @@ Executable cpsa4db
 Executable cpsa4dbprolog
   Main-Is:              CPSA/DbProlog/Main.hs
   Default-Language:     Haskell2010
-  Build-Depends:        base, containers
+  Build-Depends:        base  >= 3 && < 5, containers
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
   Hs-Source-Dirs:       src
@@ -495,7 +495,7 @@ Executable cpsa4dbprolog
 Executable cpsa4dl
   Main-Is:              CPSA/DL/Main.hs
   Default-Language:     Haskell2010
-  Build-Depends:        base, containers
+  Build-Depends:        base >= 3 && < 5, containers
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports
   Hs-Source-Dirs:       src
