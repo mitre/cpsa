@@ -1,3 +1,12 @@
+2025-05-05  Joshua D. Guttman  <guttman@mitre.org>
+
+	* cpsa.cabal (Version): Tagged as version 4.4.6. Removed an
+	obscure bug in which the generators were used wrong, causing a
+	unification failure.  We improved the generalization code to avoid
+	redundancies.  We improved the overall functionality by allowing
+	state operations in which stores are not preceded by a load on
+	that location.
+
 2025-05-02  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/cpsa/RoleCoq/Main.hs (emit): Updated Roletran to use rocq
