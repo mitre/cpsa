@@ -596,7 +596,8 @@ shearsRule sig g =
                             {uvars = [z0,z1,z2,i0,i1,i2],
                              antec = [ -- useful for debugging:
                                        -- (AFact "no-state-split" []),
-                                       (Trans (z0,i0)), (Trans (z1,i1)), (Trans (z2,i2)),
+                                       (Trans (z0,i0)), --(Trans (z1,i1)), 
+                                       (Trans (z2,i2)),
                                        (LeadsTo (z0,i0) (z1,i1)), (SameLocn (z0,i0) (z2,i2)),
                                        (Prec (z0,i0) (z2,i2)) ],
                              consq = [([],                -- no bvs

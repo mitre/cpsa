@@ -5,18 +5,6 @@
 -- This program is free software: you can redistribute it and/or
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Use if" #-}
-{-# HLINT ignore "Redundant bracket" #-}
-{-# HLINT ignore "Move brackets to avoid $" #-}
-{-# HLINT ignore "Redundant map" #-}
-{-# HLINT ignore "Use section" #-}
-{-# HLINT ignore "Redundant return" #-}
-{-# HLINT ignore "Use fmap" #-}
-{-# HLINT ignore "Use =<<" #-}
-{-# HLINT ignore "Eta reduce" #-}
-{-# HLINT ignore "Replace case with fromMaybe" #-}
-{-# HLINT ignore "Use all" #-}
 
 module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     role, env, trace, height, listenerTerm, mkPreskel,
