@@ -15,7 +15,7 @@ all:	$(COQMK)
 	$(MAKE) -f $(COQMK) $(DOC)
 
 $(COQMK): $(PROJ)
-	coq_makefile -o $(COQMK) -f $(PROJ)
+	$(COQBIN)rocq makefile -o $(COQMK) -f $(PROJ)
 
 $(PROJ):
 	@echo make $@

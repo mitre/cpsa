@@ -12,7 +12,8 @@ University of California. *)
     applying [sb] to [x] gives [y].  The match function defined within
     computes substitutions. *)
 
-Require Import String Monad Alg Role.
+From Stdlib Require Import String.
+Require Import Monad Alg Role.
 Import List.ListNotations.
 Open Scope list_scope.
 (** printing <- #←# *)

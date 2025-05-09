@@ -22,7 +22,8 @@ University of California. *)
     of the code is specified by mutually inductive predicates.  This
     means code generation must be guided by a proof script. *)
 
-Require Import List Monad Proc Alg Sem
+From Stdlib Require Import List.
+Require Import Monad Proc Alg Sem
         Unilateral_role Unilateral_proof.
 Import List.ListNotations.
 Open Scope list_scope.

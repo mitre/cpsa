@@ -8,7 +8,7 @@ University of California. *)
 
 (** * Monadic Operations on Option Types *)
 
-Require Import List.
+From Stdlib Require Import List.
 Import List.ListNotations.
 Open Scope list_scope.
 (** printing <- #←# *)

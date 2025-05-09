@@ -8,7 +8,8 @@ University of California. *)
 
 (** * Unilateral Protocol Generated Code Verification *)
 
-Require Import List Program Monad Proc Alg.
+From Stdlib Require Import List Program.
+Require Import Monad Proc Alg.
 Require Import Sem Sem_tactics Unilateral Unilateral_role.
 Import List.ListNotations.
 Open Scope list_scope.

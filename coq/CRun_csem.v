@@ -9,7 +9,7 @@ University of California. *)
 (** This library contains proofs that the semantics specified in
     [Roletran.Run] and [Roletran.Sem] agree. *)
 
-Require Import FunInd List Bool Arith.
+From Stdlib Require Import FunInd List Bool Arith.
 Require Import Preamble Proc Alg Role CSem CRun.
 Open Scope nat_scope.
 

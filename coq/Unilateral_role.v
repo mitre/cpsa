@@ -1,6 +1,7 @@
 (** Protocol: unilateral (../rtst/unilateral.scm:5:1) *)
 
-Require Import String List Alg Role.
+From Stdlib Require Import String List.
+Require Import Alg Role.
 Import List.ListNotations.
 Open Scope list_scope.
 Open Scope string.

@@ -8,7 +8,7 @@ University of California. *)
 
 (** * Representation of Generated Code *)
 
-Require Export String List.
+From Stdlib Require Export String List.
 
 (** A procedure variable is a nat *)
 

@@ -43,7 +43,7 @@ University of California. *)
 
     - the terms compared with an inverse key predicate check. *)
 
-Require Import FunInd ListSet Bool Arith Program Lia.
+From Stdlib Require Import FunInd ListSet Bool Arith Program Lia.
 Require Import Preamble Monad Proc Alg Sem.
 Import List.ListNotations.
 Open Scope list_scope.
@@ -1684,7 +1684,7 @@ Proof.
   intros.
   unfold mk_ins.
   rewrite skipn_app.
-  rewrite app_length.
+  rewrite length_app.
   rewrite ins_inputs_length; auto.
   assert (G: length ev +
              length ds -
