@@ -298,13 +298,13 @@ loadStrand _ pos _ _ _ = fail (shows pos "Bad strand formula")
 
 -- Load a listener formula
 loadListener :: MonadFail m => Sig -> Pos -> Prot -> [Term] -> [SExpr Pos] -> m Conj
-loadListener sig pos p kvars [S pos1 x, S pos2 y] =
+loadListener sig pos p kvars [S pos1 x, z] =
   do
     let r = listenerRole p
     v <- loadAlgChanTerm sig (rvars r) (S pos "x")
     s <- loadStrdTerm sig kvars (S pos1 x)
-    t <- loadAlgChanTerm sig kvars (S pos2 y)
-    return [(pos1, Length r s (indxOfInt 2)), (pos2, Param r v 2 s t)]
+    t <- loadAlgTerm sig kvars z
+    return [(pos1, Length r s (indxOfInt 2)), (getPos z, Param r v 2 s t)]
 loadListener _ pos _ _ _ = fail (shows pos "Bad listener formula")
 
 loadVMaps :: MonadFail m => Sig -> Pos -> Prot -> [Term] ->

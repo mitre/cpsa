@@ -35,7 +35,7 @@ the current line.
 
 module CPSA.Lib.SExpr (SExpr(..), showQuoted, stringSExpr, annotation,
                        -- * S-expression Reader
-                       Pos, PosHandle, posHandle, load) where
+                       Pos, PosHandle, posHandle, load, getPos) where
 
 import Data.Char (isSpace, isDigit, isAlphaNum, isPrint)
 import Data.IORef (IORef, newIORef, readIORef, writeIORef)
@@ -86,6 +86,12 @@ instance Show (SExpr a) where
         where
           showl [] = id
           showl (x:xs) = showChar ' ' . shows x . showl xs
+
+getPos :: SExpr a -> a
+getPos (S a _) = a
+getPos (Q a _) = a
+getPos (N a _) = a
+getPos (L a _) = a
 
 -- | Add quotes to a string so it reads as an S-expression string.
 showQuoted :: String -> ShowS
