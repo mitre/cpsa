@@ -3376,9 +3376,9 @@ geq ebvs t t' _ (g, e)
              "with ebvs " ++ (show ebvs))
 
   | ti == ti' = [(g, e)]
-  | not (null ebvs) =
+  | not (null ebvsStillFree) =
       filter (\(_,e') ->      -- where all modified vars are ebvs
-                  envsAgreeOutside e e' ebvs)
+                  envsAgreeOutside e e' ebvsStillFree)
       (L.map (\(g,s) ->
                  (g, substUpdate e s)) -- update the env with the
                                        -- subst
@@ -3388,6 +3388,7 @@ geq ebvs t t' _ (g, e)
   where
     ti = instantiate e t
     ti' = instantiate e t'
+    ebvsStillFree = varsMinusEnvDomain e ebvs
 
 {--
   do

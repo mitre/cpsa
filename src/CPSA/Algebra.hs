@@ -144,6 +144,7 @@ module CPSA.Algebra (name, alias,
     match,
     unmatchedVarsWithin,
     envsAgreeOutside,
+    varsMinusEnvDomain, 
     envOfParamVarPairs,
     substitution,
     strandBoundEnv,
@@ -1727,6 +1728,11 @@ unmatchedVarsWithin (Env (_, r)) t vars =
     where
       -- problems = filter (not . (flip elem vars)) unmatchedIds
       unmatchedIds = idUnmapped r t
+
+varsMinusEnvDomain :: Env -> [Term] -> [Term]
+varsMinusEnvDomain (Env (_, r)) =
+    filter (\v -> isVar v &&
+                  not(idMapped r v))
 
 envsAgreeOutside :: Env -> Env -> [Term] -> Bool
 envsAgreeOutside (Env (_, r1)) (Env (_, r2)) vars =
