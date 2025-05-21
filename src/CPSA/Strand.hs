@@ -39,25 +39,28 @@ import CPSA.Protocol
 import CPSA.Operation
 
 
-{--
+--{--
 
 import System.IO.Unsafe
-import Control.Exception (try)
-import System.IO.Error (ioeGetErrorString)
+--PDR import Control.Exception (try)
+--PDR import System.IO.Error (ioeGetErrorString)
 -- import Control.DeepSeq
 
 z :: Show a => a -> b -> b
 z x y = unsafePerformIO (print x >> return y)
 
-zz :: Show a => a -> a
+{-- zz :: Show a => a -> a
 zz x = z x x
 
 zShow :: Show a => a -> a
-zShow x = z (show x) x
+zShow x = z (show x) x --}
 
 zShow' :: Show a => String -> a -> String 
 zShow' s x = (show (s, x)) 
 
+zShowP :: Show a => String -> a -> a 
+zShowP s x = z (zShow' s x) x 
+{--
 kShow :: String -> Int -> Preskel -> String 
 kShow s n k = 
     if L.length (strands k) == n then 
@@ -3042,8 +3045,9 @@ conjoinEbvs :: [AForm] -> [Term] -> Sem
 conjoinEbvs [] _ _ ge = [ge]
 conjoinEbvs (a: as) ebvs k ge =
     do
-    ge <- checkSem (satisfy a ebvs) k ge
+    ge <- checkSem (cSatisfy a ebvs) k ge
     conjoinEbvs as ebvs k ge
+
 
 -- Suppose a gen-env pair ge that satisfies the antecedent of a goal,
 -- but does not extend to satisfy any of the disjuncts on the
@@ -3100,6 +3104,77 @@ satisfy (LeadsTo n n') _ =
           ge <- satisfy (StateNode n) [] k ge
           -- Commpair entails StateNode n' too
           return ge
+
+cSatisfy :: AForm -> [Term] -> Sem
+-- Alias for satisfy except for Conf and Auth. 
+-- Slowly replace over time.
+cSatisfy (Length r z h) _ = glength r z h
+cSatisfy (Param r v i z t) _ = gparam r v i z t
+cSatisfy (Prec n n') _ = gprec n n'
+cSatisfy (Non t) _ = ggnon t
+cSatisfy (Pnon t) _ = ggpnon t
+cSatisfy (Uniq t) _ = gguniq t
+cSatisfy (UniqAt t n) _ = guniqAt t n
+cSatisfy (Ugen t) _ = gggen t
+cSatisfy (UgenAt t n) _ = gugenAt t n
+cSatisfy (GenStV t) _ = ggenstv t
+cSatisfy (Conf t) ebvs = gcconf ebvs t
+cSatisfy (Auth t) ebvs = gcauth' ebvs t
+cSatisfy (AFact name fs) _ = gafact name fs
+cSatisfy (Equals t t') ebvs = geq ebvs t t'
+cSatisfy (Component t t') _ = gcomponent t t'
+cSatisfy (Commpair n n') _ = gcommpair n n'
+cSatisfy (SameLocn n n') _ = gsamelocn n n'
+cSatisfy (StateNode n) _ = gstateNode n
+cSatisfy (Trans (t, t')) _ = gafact "trans" [t, t']
+cSatisfy (LeadsTo n n') ebvs =
+    \k ge ->
+        do
+          ge <- cSatisfy (Commpair n n') ebvs k ge
+          ge <- cSatisfy (Prec n n') ebvs k ge
+          ge <- cSatisfy (StateNode n) ebvs k ge
+          -- Commpair entails StateNode n' too
+          return ge
+
+gcconf :: [Term] -> Term -> Sem
+gcconf ebvs c k (g, e) = -- c must be a channel
+  case (matched e c, c `elem` ebvs) of 
+    (True, _) -> 
+      case c `elem` (kconf k) of
+        True -> [(g, e)]
+        False -> []
+    (False, True) ->
+      do 
+        c' <- (kconf k)
+        match c c' (g, e)
+    (False, False) -> error ("Strand.gcconf: " ++ show c ++ " not in env or ebvs")
+
+gcauth :: [Term] -> Term -> Sem
+gcauth ebvs c k (g, e) = -- c must be a channel
+  case (matched e c, c `elem` ebvs) of 
+    (True, _) -> 
+      case c `elem` (kauth k) of
+        True -> zShowP "TT" [(g, e)]
+        False -> zShowP "TF" []
+    (False, True) ->
+      do 
+        c' <- (kauth k)
+        zShowP "FT" $ match c c' (g, e)
+    (False, False) -> error ("Strand.gcauth: " ++ show c ++ " not in env or ebvs")
+
+gcauth' :: [Term] -> Term -> Sem 
+gcauth' ebvs c k (g, e) = 
+  filter (\(_, e') -> envsAgreeOutside e e' ebvsStillFree) $
+    concatMap (\t -> match c t (g, e)) (kauth k)
+  {- do 
+    t <- (kauth k)
+    (g', e') <- match c t (g, e)
+    if envsAgreeOutside e e' ebvsStillFree 
+      then return (g', e')
+      else return [] -}
+    where 
+    ebvsStillFree = varsMinusEnvDomain e ebvs
+
 
 nodePairsOfSkel :: Preskel -> [Pair] -- Maybe ((Sid,Int),(Sid,Int))
 nodePairsOfSkel k =
@@ -3375,6 +3450,67 @@ geq ebvs t t' _ (g, e)
              "cannot find a binding for some variable in " ++ (show t') ++
              "with ebvs " ++ (show ebvs))
 
+  {- | ti == ti' = [(g, e)]
+  | not (null ebvsStillFree) =
+      filter (\(_,e') ->      -- where all modified vars are ebvs
+                  envsAgreeOutside e e' ebvsStillFree)
+      (L.map (\(g,s) ->
+                 (g, substUpdate e s)) -- update the env with the
+                                       -- subst
+      $ unify t t' (g, emptySubst))
+ -}
+  | otherwise = 
+    case (matched e t, matched e t') of 
+      (True, True) -> 
+        case ti == ti' of 
+          True -> [(g, e)]
+          False -> []
+      (False, True) -> 
+        do 
+          -- Match t to the already mapped t'
+          (g', e') <- match t t' (g, e)
+          -- Check that e' agrees with e on non-free variables
+          if envsAgreeOutside e e' ebvsStillFree
+          then return (g', e')
+          else []
+      (True, False) -> 
+        do 
+          -- Match t' to the already mapped t
+          (g', e') <- match t' t (g, e)
+          -- Check that e' agrees with e on non-free variables
+          if envsAgreeOutside e e' ebvsStillFree
+          then return (g', e')
+          else []
+      (False, False) -> 
+        do 
+          -- Either direction for match should work
+          (g', s) <- unify t t' (g, emptySubst)
+          --let s' = remedy s e ebvsStillFree
+          -- Check that e' agrees with e on non-free variables
+          let e' = substUpdate e s 
+          if envsAgreeOutside e e' ebvsStillFree
+          then return (g', e')
+          else []
+  where
+    ti = instantiate e t
+    ti' = instantiate e t'
+    ebvsStillFree = varsMinusEnvDomain e ebvs
+{-- Equality
+geq :: [Term] -> Term -> Term -> Sem
+geq ebvs t t' _ (g, e)
+  -- Ensure all variables in t and t' are either in the domain of e,
+  -- or else are among the existentially bound variables ebvs.
+  -- This always happens for goals because they must be role specific
+  -- but it is not always true for rules.
+  | not (unmatchedVarsWithin e t ebvs) =
+      error ("In a rule equality check, " ++
+             "cannot find a binding for some variable in " ++ (show t) ++
+             " with ebvs " ++ (show ebvs))
+  | not (unmatchedVarsWithin e t' ebvs) =
+      error ("In a rule equality check, " ++
+             "cannot find a binding for some variable in " ++ (show t') ++
+             "with ebvs " ++ (show ebvs))
+
   | ti == ti' = [(g, e)]
   | not (null ebvsStillFree) =
       filter (\(_,e') ->      -- where all modified vars are ebvs
@@ -3384,12 +3520,12 @@ geq ebvs t t' _ (g, e)
                                        -- subst
       $ unify t t' (g, emptySubst))
 
-  | otherwise = []
+  | otherwise = []   
   where
     ti = instantiate e t
     ti' = instantiate e t'
     ebvsStillFree = varsMinusEnvDomain e ebvs
-
+--}
 {--
   do
     subst <- unify t t' (g, emptySubst)

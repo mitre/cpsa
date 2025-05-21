@@ -155,6 +155,9 @@ go name origin files herald opts sexprs =
               case optTryYoungNodesFirst opts of
                 True -> writeComment h m "Younger nodes tried first"
                 False -> return ()
+              case optGoalsSat opts of
+                True -> writeComment h m "Stop when goals satisfied"
+                False -> return ()
               -- Analyze
               solve opts h preskels 0
 

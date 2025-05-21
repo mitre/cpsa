@@ -145,6 +145,8 @@ module CPSA.Algebra (name, alias,
     unmatchedVarsWithin,
     envsAgreeOutside,
     varsMinusEnvDomain, 
+    varsInEnvDomain,
+    ebVarsNotMapped,
     envOfParamVarPairs,
     substitution,
     strandBoundEnv,
@@ -1519,6 +1521,50 @@ type GenSubst = (Gen, Subst)
 unifyChase :: Term -> Term -> GenSubst -> [GenSubst]
 unifyChase t t' (g, s) = unifyTerms (chase s t) (chase s t') (g, s)
 
+{- funifyTerms :: Term -> Term -> Env -> GenSubst -> [GenSubst]
+funifyTerms (I x) (I y) e (g, Subst s)
+    | x == y = [(g, Subst s)]
+    | matched e (I x) && matched e (I y) = []
+    | not $ matched e (I x) = [(g, Subst $ M.insert x (I y) s)]
+    | otherwise = [(g, Subst $ M.insert y (I x) s)]
+funifyTerms (I x) t e (g, Subst s)
+    | occurs x t || matched e (I x) = []
+    | otherwise = [(g, Subst $ M.insert x t s)]
+funifyTerms t (I x) e s = funifyTerms (I x) t e s 
+funifyTerms (C c) (C c') e s
+    | c == c' = [s]
+    | otherwise = []
+funifyTerms (F (Invk "akey") [I x]) (F Pubk [I y]) e s =
+    funifyTerms (I x) (F (Invk "akey") [F Pubk [I y]]) e s
+funifyTerms (F (Invk "akey") [I x]) (F Pubk [C c, I y]) e s =
+    funifyTerms (I x) (F (Invk "akey") [F Pubk [C c, I y]]) e s
+funifyTerms (F Pubk [I x]) (F (Invk "akey") [I y]) e s =
+    funifyTerms (I y) (F (Invk "akey") [F Pubk [I x]]) e s
+funifyTerms (F Pubk [C c, I x]) (F (Invk "akey") [I y]) e s =
+    funifyTerms (I y) (F (Invk "akey") [F Pubk [C c, I x]]) e s
+funifyTerms (F Bltk u) (F Bltk u') e s =
+    L.nub $ funifyTermLists u u' e s ++ funifyTermLists u (reverse u') e s
+funifyTerms (F Base [t0]) (F Base [t1]) e s =
+    funifyBase (chase (snd s) t0) (chase (snd s) t1) e s
+funifyTerms (F sym u) (F sym' u') e s
+    | sym == sym' = funifyTermLists u u' e s
+    | otherwise = []
+funifyTerms (G t) (G t') e s =
+    funifyGroup t t' e s
+funifyTerms (D x) (D y) e (g, Subst s)
+    | x == y = [(g, Subst s)]
+    | matched e (D x) && matched e (D y) = []
+    | not $ matched e (D x) = [(g, Subst $ M.insert x (D y) s)]
+    | otherwise = [(g, Subst $ M.insert y (D x) s)]
+funifyTerms (D x) (Z p) e (g, Subst s)
+    | matched e (D x) = []
+    | otherwise = [(g, Subst $ M.insert x (Z p) s)]
+funifyTerms t (D x) e s = funifyTerms (D x) t e s
+funifyTerms (Z p) (Z p') _ s
+    | p == p' = [s]
+    | otherwise = []
+funifyTerms _ _ _ _ = [] -}
+
 unifyTerms :: Term -> Term -> GenSubst -> [GenSubst]
 unifyTerms (I x) (I y) (g, Subst s)
     | x == y = [(g, Subst s)]
@@ -1577,6 +1623,11 @@ unifyBase (I x) (F Genr []) gs
   = unifyExp (I x) (M.empty) (F Genr []) (M.empty) gs
 unifyBase t0 t1 gs
   = unifyTerms t0 t1 gs
+
+{- funifyBase :: Term -> Term -> Env -> GenSubst -> [GenSubst]
+funifyBase (F Exp [t0, G t1]) (F Exp [t0', G t1']) e s
+  = funifyExp t0 t1 t0' t1' e s
+funifyBase (F Exp [t0, G t1]) (I x) e s -}
 
 -- unifyExp: not guaranteed that inputs are not F Exp expressions.
 -- guaranteed that t0 and t0' are (I x), (F Genr _), or (F Exp _).
@@ -1733,6 +1784,19 @@ varsMinusEnvDomain :: Env -> [Term] -> [Term]
 varsMinusEnvDomain (Env (_, r)) =
     filter (\v -> isVar v &&
                   not(idMapped r v))
+
+varsInEnvDomain :: Env -> [Term] -> [Term]
+varsInEnvDomain (Env (_, r)) =
+    filter (\v -> isVar v &&
+                  idMapped r v)                  
+
+ebVarsNotMapped :: Env -> [Term] -> Term -> [Term]
+ebVarsNotMapped e ebvs t =
+  filter (\v -> (v `elem` tvars)) notMapped -- ebvs in t not mapped by e
+  where
+    tvars = sortedVarsIn t -- variables in t
+    notMapped = varsMinusEnvDomain e ebvs -- ebvs not mapped by e
+  
 
 envsAgreeOutside :: Env -> Env -> [Term] -> Bool
 envsAgreeOutside (Env (_, r1)) (Env (_, r2)) vars =
