@@ -22,7 +22,7 @@ module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     inheritRconf, inheritRauth, addListener, addBaseListener, addAbsence,
     updateStrandMap,
     operation, krules, pprob, prob, homomorphism, toSkeleton, generalize,
-    collapse, sat, unSatReport, FTerm (..), Fact (..), simplify, rewrite,
+    collapse, goalCounterExamples, unSatReport, FTerm (..), Fact (..), simplify, rewrite,
     localSignal, rewriteUnaryOneOnce, nodePairsOfSkel, applyLeadsTo) where
 
 import Control.Monad
@@ -3014,18 +3014,27 @@ chkFacts k =
 -- Returns the environments that satisfy the antecedent
 -- but do not extend to satisfy any of the conclusions.
 --
-goalSat :: Preskel -> Goal -> (Goal, [(Gen, Env)])
-goalSat k g =
+counterExamples :: Preskel -> Goal -> (Goal, [(Gen, Env)])
+counterExamples k g =
   (g, [ (gen, e) |
         (gen, e) <- conjoin (antec g) k (gen k, emptyEnv),
-        conclusion (gen, e) ])
-  where
-    conclusion ge = all (disjunct ge) $ consq g
-    disjunct ge (ebvs,a) = null $ conjoinEbvs a ebvs k ge
+        not $ conclusionSucceeds (gen, e) ])
+    where
+      conclusionSucceeds ge =
+          any (disjunctSucceeds ge) $ consq g
+      disjunctSucceeds ge (ebvs,a) =
+          (not . null) $ conjoinEbvs a ebvs k ge
 
-sat :: Preskel -> [(Goal, [(Gen, Env)])]
-sat k =
-  map (goalSat k) (kgoals k)
+                         
+goalCounterExamples :: Preskel -> [(Goal, [(Gen, Env)])]
+goalCounterExamples k =
+    L.foldr
+     (\goal soFar ->
+          case counterExamples k goal of
+            (_, []) -> soFar
+            (_, ges) -> (goal,ges) : soFar)
+     [] 
+     (kgoals k)
 
 -- Conjunction
 
@@ -3035,15 +3044,15 @@ conjoin :: [AForm] -> Sem
 conjoin [] _ ge = [ge]
 conjoin (a: as) k ge =
   do
-    ge <- checkSem (satisfy a []) k ge
+    ge <- satisfy a [] k ge  -- checkSem
     conjoin as k ge
 
 conjoinEbvs :: [AForm] -> [Term] -> Sem
 conjoinEbvs [] _ _ ge = [ge]
 conjoinEbvs (a: as) ebvs k ge =
     do
-    ge <- checkSem (satisfy a ebvs) k ge
-    conjoinEbvs as ebvs k ge
+      ge' <- satisfy a ebvs k ge  -- checkSem             
+      conjoinEbvs as ebvs k ge'
 
 -- Suppose a gen-env pair ge that satisfies the antecedent of a goal,
 -- but does not extend to satisfy any of the disjuncts on the
