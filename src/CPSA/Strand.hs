@@ -3389,8 +3389,8 @@ geq ebvs t t' _ (g, e)
         case ti == ti' of
           True -> [(g, e)]
           False -> []
-      (False, True) -> match t t' (g, e)
-      (True, False) -> match t' t (g, e)
+      (False, True) -> match t ti' (g, e)
+      (True, False) -> match t' ti (g, e)
       (False, False) ->
         error ("Strand.geq: Both terms have unbound variables")
   where
