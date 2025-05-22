@@ -3374,21 +3374,19 @@ geq ebvs t t' _ (g, e)
       error ("In a rule equality check, " ++
              "cannot find a binding for some variable in " ++ (show t') ++
              "with ebvs " ++ (show ebvs))
-
-  | ti == ti' = [(g, e)]
-  | not (null ebvsStillFree) =
-      filter (\(_,e') ->      -- where all modified vars are ebvs
-                  envsAgreeOutside e e' ebvsStillFree)
-      (L.map (\(g,s) ->
-                 (g, substUpdate e s)) -- update the env with the
-                                       -- subst
-      $ unify t t' (g, emptySubst))
-
-  | otherwise = []
+  | otherwise =
+    case (matched e t, matched e t') of
+      (True, True) ->
+        case ti == ti' of
+          True -> [(g, e)]
+          False -> []
+      (False, True) -> match t t' (g, e)
+      (True, False) -> match t' t (g, e)
+      (False, False) ->
+        error ("Strand.geq: Both terms have unbound variables")
   where
     ti = instantiate e t
     ti' = instantiate e t'
-    ebvsStillFree = varsMinusEnvDomain e ebvs
 
 {--
   do
