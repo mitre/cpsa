@@ -150,6 +150,7 @@ module CPSA.Algebra (name, alias,
     strandBoundEnv,
     renamerAndNewVars,
     envIdentityOnVars,
+    envStrandsWithin, 
     reify,
     matchRename,
     substUpdate,
@@ -1751,6 +1752,13 @@ envOfParamVarPairs ((p,v) : rest) =
 envIdentityOnVars :: [Term] -> Env
 envIdentityOnVars vars =
     envOfParamVarPairs $ L.zip vars vars
+
+envStrandsWithin :: Env -> [Int] -> Bool
+envStrandsWithin (Env (_, r)) strands =
+    M.foldr f True r
+    where
+      f (Z i) soFar = soFar && elem i strands
+      f _ soFar = soFar 
 
 -- Apply a substitution to the range of an environment
 substUpdate :: Env -> Subst -> Env

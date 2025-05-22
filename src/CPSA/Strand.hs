@@ -3018,12 +3018,14 @@ counterExamples :: Preskel -> Goal -> (Goal, [(Gen, Env)])
 counterExamples k g =
   (g, [ (gen, e) |
         (gen, e) <- conjoin (antec g) k (gen k, emptyEnv),
+        envStrandsWithin e (prob k), 
         not $ conclusionSucceeds (gen, e) ])
     where
       conclusionSucceeds ge =
           any (disjunctSucceeds ge) $ consq g
       disjunctSucceeds ge (ebvs,a) =
           (not . null) $ conjoinEbvs a ebvs k ge
+      
 
                          
 goalCounterExamples :: Preskel -> [(Goal, [(Gen, Env)])]
