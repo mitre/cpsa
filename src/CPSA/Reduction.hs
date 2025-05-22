@@ -349,7 +349,9 @@ step p h ks m oseen n seen todo toobig (Genlz lk size kids dups : reducts)
       step p h ks m oseen n seen todo toobig (Reduct lk size kids dups : reducts)
 
 step p h ks m oseen n seen todo toobig (Reduct lk size kids dups : reducts)
-    | optGoalsSat p && satCheck lk = -- Stop if goals satisfied mode?
+    | optGoalsSat p &&
+      goalsPresent lk &&
+      noCounterExamples lk = -- Stop if goals satisfied mode?
         do
           let ns = unrealized (content lk)
           let shape = if null ns then Shape else Fringe
@@ -541,7 +543,7 @@ commentPreskel lk seen unrealized kind anno msg =
     addKeyValues realizedToken (map displayNode $ L.sort unrealized) $
     addKindKey kind $ addAnnoKey anno $
     condAddKeyValues "satisfies" (kind == Shape && (not $ null $ kgoals k))
-    (satisfies k) $
+    (reportSatisfies k) $
     -- Structure preserving maps
     -- Added for cpsasas program
     condAddKeyValues "maps" fringe (maps k) $
@@ -623,18 +625,21 @@ displaySeen (label, k) =
 
 -- Variable assignments and security goals
 
-satisfies :: Preskel -> [SExpr ()]
-satisfies k =
-  map f (sat k) where
-    f (_, []) = S () "yes"
-    f (g, ge : _) =
-      L () (S () "no" :
-            (displayForm
-             (ctx $ (uvars g) ++ (evars g) ++ (kvars k))
-             (unSatReport k g ge)) :
-            (displayEnv (ctx $ uvars g) (ctx $ kvars k) (snd ge)))
-    ctx ts = addToContext emptyContext ts
-    evars g = concatMap fst $ consq g
+reportSatisfies :: Preskel -> [SExpr ()]
+reportSatisfies k =
+    case goalCounterExamples k of
+      [] -> [S () "yes"]
+      goalGEs -> map f goalGEs
+    where
+      f (_, []) = error "reportSatisfies:  How did goalCounterExamples give nil?"
+      f (g, ge : _) = 
+          L () (S () "no" :
+                (displayForm
+                 (ctx $ (uvars g) ++ (evars g) ++ (kvars k))
+                 (unSatReport k g ge)) :
+                (displayEnv (ctx $ uvars g) (ctx $ kvars k) (snd ge)))
+      ctx ts = addToContext emptyContext ts
+      evars g = concatMap fst $ consq g
 
 -- Prints structure preserving maps (homomorphisms)
 maps :: Preskel -> [SExpr ()]
@@ -668,10 +673,10 @@ gens k =
     where
       ctx = addToContext emptyContext (kvars k)
 
-satCheck :: LPreskel -> Bool
-satCheck lk =
-  not (null tests) && all f tests
-  where
-    tests = sat $ content lk
-    f (_, []) = True
-    f _ = False
+goalsPresent :: LPreskel -> Bool
+goalsPresent lk =
+    (not . null) $ kgoals $ content lk
+
+noCounterExamples :: LPreskel -> Bool
+noCounterExamples lk =
+    (null. goalCounterExamples) $ content lk
