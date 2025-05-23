@@ -457,7 +457,8 @@ graphAllCloseLoop orderings repeat ((n0, n1) : pairs) =
 
 data Shared = Shared
     { prot  :: Prot,
-      goals :: [Goal] }
+      goals :: [Goal],
+      comments :: [SExpr ()] }
 
 instance Show Shared where
     showsPrec _ s = shows (prot s)
@@ -467,6 +468,9 @@ protocol k = prot $ shared k
 
 kgoals :: Preskel -> [Goal]
 kgoals k = goals $ shared k
+
+kcomment :: Preskel -> [SExpr ()]
+kcomment k = comments $ shared k
 
 -- Preskeletons
 
@@ -491,7 +495,6 @@ data Preskel = Preskel
       kfacts :: ![Fact],          -- A list of facts
       kfvars :: [Term],           -- Fact vars not in instances
       kpriority :: [(Node, Int)], -- Override node priority
-      kcomment :: [SExpr ()],   -- Comments from the input
       korig :: ![(Term, [Node])], -- This is an association list with a
                                 -- pair for each element of kunique.
                                 -- The value associated with a term
@@ -533,13 +536,12 @@ mkPreskel :: Gen -> Prot -> [Goal] -> [Instance] -> [Pair] ->
              [Term] -> [Fact] -> [(Node, Int)] -> [SExpr ()] -> Preskel
 mkPreskel gen protocol gs insts orderings non pnon
           unique uniqgen absent precur genStVs
-          conf auth facts prio comment =
-    k { kcomment = comment }
+          conf auth facts prio comment = k
     where
       k = newPreskel gen shared insts orderings non pnon
           unique uniqgen absent precur genStVs
           conf auth facts prio New [] prob prob Nothing
-      shared = Shared { prot = protocol, goals = gs }
+      shared = Shared { prot = protocol, goals = gs, comments = comment }
       prob = strandids k        -- Fixed point on k is okay.
 
 showPreskelSelectively :: [String] -> Preskel -> String
@@ -625,7 +627,6 @@ newPreskel gen shared insts orderings non pnon unique
                       kfacts = facts',
                       kfvars = factVars insts facts',
                       kpriority = prio,
-                      kcomment = [],
                       korig = orig,
                       kugen = ugen,
                       tc = map graphPair tc,
@@ -668,28 +669,27 @@ checkPOV k =
 
 renewPreskel :: Preskel -> Preskel
 renewPreskel k =
-    let k' = newPreskel
-             (gen k)
-             (shared k)
-             (insts k)
-             (orderings k)
-             (knon k)
-             (kpnon k)
-             (kunique k)
-             (kuniqgen k)
-             (kabsent k)
-             (kprecur k)
-             (kgenSt k)
-             (kconf k)
-             (kauth k)
-             (kfacts k)
-             (kpriority k)
-             (operation k)
-             (krules k)
-             (pprob k)
-             (prob k)
-             (pov k) in
-    k' { kcomment = kcomment k}
+    newPreskel
+        (gen k)
+        (shared k)
+        (insts k)
+        (orderings k)
+        (knon k)
+        (kpnon k)
+        (kunique k)
+        (kuniqgen k)
+        (kabsent k)
+        (kprecur k)
+        (kgenSt k)
+        (kconf k)
+        (kauth k)
+        (kfacts k)
+        (kpriority k)
+        (operation k)
+        (krules k)
+        (pprob k)
+        (prob k)
+        (pov k)
 
 checkVars :: Preskel -> Preskel
 checkVars k =
