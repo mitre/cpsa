@@ -376,7 +376,11 @@ loadPair heights (L pos [x0, x1]) =
       n0 <- loadNode heights x0
       n1 <- loadNode heights x1
       case sameStrands n0 n1 of  -- Same strand
-        True -> fail (shows pos "Malformed pair -- nodes in same strand")
+        True -> return (n0, n1)
+        -- The True case used to be:  
+        -- fail (shows pos "Malformed pair -- nodes in same strand")
+        -- but this check seems unnecessary.  The pair is then either
+        -- inconsistent because it causes a cycle or else irrelevant.  
         False -> return (n0, n1)
     where
       sameStrands (s0, _) (s1, _) = s0 == s1
