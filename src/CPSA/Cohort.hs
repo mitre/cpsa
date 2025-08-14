@@ -833,8 +833,7 @@ maximize k =
           let mapping = getStrandMap (operation k') in
           -- case z "}" (specialization k (z "{" k') mapping)
           case specialization k k' mapping of
-            [] -> -- tShow1 k k' mapping `deepseq` tShow2 k k' mapping `deepseq` tShow3 k k' mapping `deepseq` 
-            iter rest
+            [] -> iter rest  -- Was:  -- tShow1 k k' mapping `deepseq` tShow2 k k' mapping `deepseq` tShow3 k k' mapping `deepseq` 
             ks -> ks  -- Don't add iter rest. Just take the first successful one.
       recordMap (k, sm) = --if sm == getStrandMap (operation kk)
                           --then kk

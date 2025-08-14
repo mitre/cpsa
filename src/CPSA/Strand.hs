@@ -2444,8 +2444,7 @@ deleteNodes k =
                 node
       -- (withCoreFacts k)
       --tShow1 (withCoreFacts k) (fst cand) (snd cand) `deepseq` tShow2 k (fst cand) (snd cand) `deepseq` tShow3 k (fst cand) (snd cand) `deepseq` 
-      return -- $ z ")"
-      cand
+      return cand  -- $ z ")" cand 
 
 deleteNode :: Preskel -> Vertex -> [(Preskel, [Sid])]
 deleteNode k n
@@ -2485,8 +2484,7 @@ deleteNode k n
     | otherwise =
         do
           let mapping = strandids k
-          let i = -- z "^" $
-              inst (strand n)
+          let i = inst (strand n)   -- z "^" $ inst (strand n)
           (gen', i') <- bldInstance (role i) (take p (trace i)) (gen k)
           let k' = deleteNodeRest k gen' (s, p)
                    (replaceNth i' s (insts k))
@@ -2494,8 +2492,8 @@ deleteNode k n
                    (prob k)
                    (deleteNodeFacts s p (kfacts k))
                    mapping
-          return -- $ z "v"
-          (k', mapping)
+          return (k', mapping)  -- $ z "v" (k', mapping)
+          
     where
       p = pos n
       s = sid (strand n)
