@@ -281,7 +281,7 @@ Source-Repository head
 Executable cpsa4
   Main-Is:              CPSA/Main.hs
   Default-Language:     Haskell2010
-  Build-Depends:        base >= 4.13 && < 5, containers, parallel
+  Build-Depends:        base >= 4.13 && < 5, containers, parallel, deepseq
   GHC-Options:
     -Wall -fno-warn-name-shadowing -fwarn-unused-imports -threaded -rtsopts
   Hs-Source-Dirs:       src

@@ -63,13 +63,13 @@ tShow1 k k' _ =
   else 
     k
 
-tShow2 :: Show a => Preskel -> Preskel -> a -> Preskel 
-tShow2 k k' _ = 
-  if goodParent k && goodChild k' then
-    --z (show ("child", k')) k'
-    z (show "perm: " ++ show (compressUpdate 4 2 [0,1,3,4])) k'
-  else 
-    k'
+--   tShow2 :: Show a => Preskel -> Preskel -> a -> Preskel 
+--   tShow2 k k' _ = 
+--     if goodParent k && goodChild k' then
+--       --z (show ("child", k')) k'
+--       z (show "perm: " ++ show (compressUpdate 4 2 [0,1,3,4])) k'
+--     else 
+--       k'
 
 tShow3 :: Show a => Preskel -> Preskel -> a -> a
 tShow3 k k' m = 
@@ -831,10 +831,11 @@ maximize k =
       iter [] = []
       iter (k' : rest) =
           let mapping = getStrandMap (operation k') in
-           case specialization k k' mapping of
-             [] -> --tShow1 k k' mapping `deepseq` tShow2 k k' mapping `deepseq` tShow3 k k' mapping `deepseq` 
-                iter rest
-             ks -> ks  -- Don't add iter rest. Just take the first successful one.
+          -- case z "}" (specialization k (z "{" k') mapping)
+          case specialization k k' mapping of
+            [] -> -- tShow1 k k' mapping `deepseq` tShow2 k k' mapping `deepseq` tShow3 k k' mapping `deepseq` 
+            iter rest
+            ks -> ks  -- Don't add iter rest. Just take the first successful one.
       recordMap (k, sm) = --if sm == getStrandMap (operation kk)
                           --then kk
                           --else -- z (show $ getStrandMap (operation

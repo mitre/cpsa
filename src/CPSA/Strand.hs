@@ -772,6 +772,19 @@ ugenGoodOrig k =
     where
       origs v = snd (originationNodes (strands k) v)
 
+-- An auxiliary:  For uniq-gen, we want to make sure that *either* the
+-- atom occurs in the trace *or else* the atom is an asymmetric key
+-- and the inverse key occurs.  This matches the logic of
+-- originationPos and OccursPos in Protocol.hs.
+
+constituentModInv :: Term -> Term -> Bool
+constituentModInv atom t =
+    constituent atom t ||
+    case invertKey atom of
+      Nothing -> False
+      Just ik -> constituent ik t
+                
+
 -- A preskeleton is well formed if the ordering relation is acyclic,
 -- each atom declared to be uniquely-originating is carried in some
 -- preskeleton term, and every variable that occurs in each base term
@@ -802,7 +815,7 @@ preskelWellFormed k =
       f b t = b && t `elem` vs
       nonCheck t = all (not . carriedBy t) terms
       uniqueCheck t = any (carriedBy t) terms
-      uniqgenCheck t = any (constituent t) terms
+      uniqgenCheck t = any (constituentModInv t) terms
       absentCheck (x, y) = varSubset [x, y] vs && x /= y
       genStCheck t = foldVars f True t
       chanCheck c = elem c vs
@@ -849,7 +862,7 @@ verbosePreskelWellFormed k =
                        $ any (carriedBy t) terms
       uniqgenCheck t =
           failwith (showString "uniq-gen " $ showst t " does not occur")
-                       $ any (constituent t) terms
+                       $ any (constituentModInv t) terms
       absentCheck (x, y) =
           do
             failwith (showString "absent " $ showst x " does not occur")
@@ -2424,31 +2437,32 @@ delete node n in k
 deleteNodes :: Preskel -> [Candidate]
 deleteNodes k =
     do
-      strand <- strands k
-      node <- nodes strand   
-      cand <- deleteNode k node
+      str <- strands k
+      node <- nodes str   
+      cand <- deleteNode k 
+              -- $ z ("( " ++ (show $ (sid (strand node), pos node)))
+                node
       -- (withCoreFacts k)
       --tShow1 (withCoreFacts k) (fst cand) (snd cand) `deepseq` tShow2 k (fst cand) (snd cand) `deepseq` tShow3 k (fst cand) (snd cand) `deepseq` 
-      return cand --return $ candWithCoreFacts cand
-
-{- candWithCoreFacts :: Candidate -> Candidate
-candWithCoreFacts (k,sids) =
-    (withCoreFacts k, sids) -}
+      return -- $ z ")"
+      cand
 
 deleteNode :: Preskel -> Vertex -> [(Preskel, [Sid])]
 deleteNode k n
     | p == 0 && elem s (prob k) = []
     | p == 0 = 
       let mapping = deleteNth s (strandids k) in 
+      let _ =  () in 
       --let k1 = kShow "parent" 5 k
-      let k' = deleteNodeRest k (gen k) (s, p)
-                (deleteNth s (insts k))
-                (deleteOrderings s (tc k))
-                (updatePerm s s (prob k))
-                (map
-                  (updateFact (updateStrand s s))
-                  (deleteStrandFacts s $ kfacts k))
-                mapping in 
+      let k' = -- z "." $
+               deleteNodeRest k (gen k) (s, p)
+               (deleteNth s (insts k))
+               (deleteOrderings s (tc k))
+               (updatePerm s s (prob k))
+               (map
+                (updateFact (updateStrand s s))
+                (deleteStrandFacts s $ kfacts k))
+               mapping in 
       --let k'' = kShow "child" 4 k' 
       --let mapping' = zShow' "mapping" mapping 
       --tShow1 k k' mapping `deepseq` tShow2 k k' mapping `deepseq` tShow3 k k' mapping `deepseq` 
@@ -2471,7 +2485,8 @@ deleteNode k n
     | otherwise =
         do
           let mapping = strandids k
-          let i = inst (strand n)
+          let i = -- z "^" $
+              inst (strand n)
           (gen', i') <- bldInstance (role i) (take p (trace i)) (gen k)
           let k' = deleteNodeRest k gen' (s, p)
                    (replaceNth i' s (insts k))
@@ -2479,7 +2494,8 @@ deleteNode k n
                    (prob k)
                    (deleteNodeFacts s p (kfacts k))
                    mapping
-          return (k', mapping)
+          return -- $ z "v"
+          (k', mapping)
     where
       p = pos n
       s = sid (strand n)

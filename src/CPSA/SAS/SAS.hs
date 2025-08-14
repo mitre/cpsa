@@ -371,7 +371,7 @@ loadOrderings strands (x : xs) =
       return (adjoin np nps)
 
 loadPair :: MonadFail m => [Int] -> SExpr Pos -> m Pair
-loadPair heights (L pos [x0, x1]) =
+loadPair heights (L _ [x0, x1]) =
     do
       n0 <- loadNode heights x0
       n1 <- loadNode heights x1
