@@ -266,7 +266,7 @@ loadConjunction sig top p kvars x =
 
 loadConjuncts :: MonadFail m => Sig -> Pos -> Prot -> [Term] ->
                  [SExpr Pos] -> Conj -> m Conj
-loadConjuncts _ _ _ _ [] rest = return (reverse rest)
+loadConjuncts _ _ _ _ [] rest = return $ L.sortBy (\(_, x) (_, y) -> aFormOrder x y) rest--(reverse rest) 
 -- If the head is a strand formula treat it specially
 loadConjuncts sig _ p kvars ((L pos (S _ "strand" : ss)) : xs) rest =
   do
