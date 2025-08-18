@@ -4526,7 +4526,7 @@ rparam name r v h z t k (g, e) =
         ns = nstrands k
     Nothing ->
       error ("In rule " ++ name ++
-             ", parameter predicate did not get a strand")
+             ", parameter predicate " ++ (show v) ++ " did not get a strand")
 
 rParam :: String -> Preskel -> (Gen, Env) ->
           Term -> Term -> [(Preskel, (Gen, Env))]
@@ -4834,17 +4834,39 @@ req name x y k (g, e)
             error ("req:  indices too large, (" ++ (show s) ++ ", " ++ (show t) ++ " in env " ++ (show e))
       _ ->
         error ("In rule " ++ name ++ ", = did not get a strand")
-  | otherwise =
+  | u == v = [(k, (g, e))]
+  | otherwise = rUnify k (g, e) u v
+  where
+    u = if matched e x
+        then instantiate e x
+        else x
+
+    v = if matched e y
+        then instantiate e y 
+        else y 
+
+
+{-- 
+
+otherwise =
     case (matched e x, matched e y) of
       (True, True)
         | u == v -> [(k, (g, e))]
         | otherwise ->
           rUnify k (g, e) u v
-      _ ->
-        error ("In rule " ++ name ++ ", = did not get a term")
+      (False ,_) -> error ("In rule " ++ name ++
+                           ", = did not get a term fully instantiated for " ++
+                           (show x))
+      (_, False) -> error ("In rule " ++ name ++
+                              ", = did not get a term fully instantiated for " ++
+                              (show y))
+      -- _ ->
+      -- error ("In rule " ++ name ++ ", = did not get a term")
     where
-      u = instantiate e x
+      u = instantiate e x 
       v = instantiate e y
+
+--}
 
 rcommpair :: String -> NodeTerm -> NodeTerm -> Rewrite
 rcommpair name n n' k (g, e) =
