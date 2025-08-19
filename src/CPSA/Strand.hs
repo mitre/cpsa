@@ -182,6 +182,15 @@ useWellFormedTerms = False -- True
 useVariableSeparation :: Bool
 useVariableSeparation = True -- False
 
+-- Should we do the full node deletion?
+-- Or should we only delete listener strands
+-- that are not in the image of the point of
+-- view. 
+-- This latter is the effect of setting this
+-- switch to True.  
+useOnlyListenerDeletion :: Bool
+useOnlyListenerDeletion = False -- True
+
 -- Instances and Strand Identifiers
 
 -- An Instance is an instance of a role, in the sense that each
@@ -2436,15 +2445,40 @@ delete node n in k
 
 deleteNodes :: Preskel -> [Candidate]
 deleteNodes k =
-    do
-      str <- strands k
-      node <- nodes str   
-      cand <- deleteNode k 
-              -- $ z ("( " ++ (show $ (sid (strand node), pos node)))
-                node
-      -- (withCoreFacts k)
-      --tShow1 (withCoreFacts k) (fst cand) (snd cand) `deepseq` tShow2 k (fst cand) (snd cand) `deepseq` tShow3 k (fst cand) (snd cand) `deepseq` 
-      return cand  -- $ z ")" cand 
+    if useOnlyListenerDeletion
+    -- if true, only listeners are
+    -- candidates for node deletion.
+    -- Recommended *only* to crank down
+    -- the burden of generalization 
+    then
+        do
+          str <- listeners k
+          node <- nodes str
+          cand <- deleteNode k node
+          return cand
+                  
+    else
+        do
+          str <- strands k
+          node <- nodes str   
+          cand <- deleteNode k node    
+          return cand  -- $ z ")" cand
+        
+{--
+-- $ z ("( " ++ (show $ (sid (strand node), pos node)))
+
+-- (withCoreFacts k)
+--tShow1 (withCoreFacts k) (fst cand) (snd cand) `deepseq` tShow2 k (fst cand) (snd cand) `deepseq` tShow3 k (fst cand) (snd cand) `deepseq` 
+--}
+
+isListener :: Strand -> Bool
+isListener str =
+    case trace $ inst str of
+      [ (In (Plain t1)), (Out (Plain t2)) ] -> t1 == t2
+      _ -> False
+
+listeners :: Preskel -> [Strand] 
+listeners k = L.filter isListener $ strands k
 
 deleteNode :: Preskel -> Vertex -> [(Preskel, [Sid])]
 deleteNode k n
