@@ -183,13 +183,17 @@ useVariableSeparation :: Bool
 useVariableSeparation = True -- False
 
 -- Should we do the full node deletion?
--- Or should we only delete listener strands
--- that are not in the image of the point of
--- view. 
--- This latter is the effect of setting this
--- switch to True.  
-useOnlyListenerDeletion :: Bool
-useOnlyListenerDeletion = False -- True
+-- To do nothing *other* than node deletions, set this to True
+generalizeOnlyByDeletion :: Bool
+generalizeOnlyByDeletion = False -- True 
+
+
+-- When doing deletion, should we delete *only* listener strands?
+-- To restrict to that, set this to True; otherwise all kinds of nodes
+-- will be candidates 
+  
+generalizeDeleteOnlyListeners :: Bool
+generalizeDeleteOnlyListeners = False -- True
 
 -- Instances and Strand Identifiers
 
@@ -2381,13 +2385,15 @@ separateVariablesLimit = 1024
 
 generalize :: Preskel -> [Candidate]
 generalize k =
-    (deleteNodes k' ++
-     forgetAssumption k' ++
-     weakenOrderings k' ++
-     (if useVariableSeparation
-      then (take separateVariablesLimit
-                     (separateVariables k'))
-      else []))
+    deleteNodes k' ++
+    if generalizeOnlyByDeletion then []
+    else 
+        (forgetAssumption k' ++
+         weakenOrderings k' ++
+         (if useVariableSeparation
+          then (take separateVariablesLimit
+                (separateVariables k'))
+          else []))
     where
       k' = withCoreFacts k
 
@@ -2445,7 +2451,7 @@ delete node n in k
 
 deleteNodes :: Preskel -> [Candidate]
 deleteNodes k =
-    if useOnlyListenerDeletion
+    if generalizeDeleteOnlyListeners
     -- if true, only listeners are
     -- candidates for node deletion.
     -- Recommended *only* to crank down
