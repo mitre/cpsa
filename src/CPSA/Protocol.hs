@@ -360,7 +360,6 @@ mkRole name vars trace non pnon unique uniqgen absent
            rpnon = pnon,
            runique = L.nub unique,
            runiqgen = uniqgen',
-           rabsent = absent',
            rconf = L.nub conf,
            rauth = L.nub auth,
            rcomment = comment,
@@ -372,7 +371,8 @@ mkRole name vars trace non pnon unique uniqgen absent
            rpconf = map addChanPos $ L.nub conf,
            rpauth = map addChanPos $ L.nub auth,
            rpriority = addDefaultPrio priority,
-           rsearch = rev
+           rsearch = rev,
+           rabsent = absent'
          }
     where
       uniqgen' = L.nub uniqgen
@@ -420,13 +420,19 @@ mkRole name vars trace non pnon unique uniqgen absent
                 Nothing -> defaultPriority
                 Just p -> p
 
+{--
+  error
+  ("Protocol.mkRole: Atom " ++ (show v) ++
+  " does not generate")
+  --}
+
 traceAbsent :: Trace -> [Term] -> [(Term, Term)]
 traceAbsent trace ugens =
   concatMap indz_ininsts $ filter isNum ugens
   where
     indz_ininsts v =
       case generationPos v trace of
-        Nothing -> error "Protocol.mkRole: Atom does not generate"
+        Nothing -> indz_ininsts_var v 0
         Just p -> indz_ininsts_var v p
     -- ind-zero instances for a specific variable v that generates at height p
     indz_ininsts_var v p =

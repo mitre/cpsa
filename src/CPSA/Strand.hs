@@ -39,7 +39,7 @@ import CPSA.Protocol
 import CPSA.Operation
 
 
-{--
+--{--
 
 import System.IO.Unsafe
 import Control.Exception (try)
@@ -2274,16 +2274,14 @@ addAbsence k n cause x t =
 
 -- Homomorphisms
 
--- Find a substitution that demonstrates the existence of a
+-- Find an environment that demonstrates the existence of a
 -- homomorphism from k to k' using the given strand mapping function.
 
-homomorphism :: Preskel -> Preskel -> [Sid] -> [Env]
+homomorphism :: Preskel -> Preskel -> [Sid] -> [(Gen,Env)]
 homomorphism k k' mapping =
     do
-      (_, env) <- findReplacement k k' mapping
-      case validateEnv k k' mapping env of
-        True -> [env]
-        False -> []
+      (gen, env) <- findReplacement k k' mapping
+      validateEnv k k' mapping (gen,env) 
 
 {--     filter (validateEnv k k mapping)
                $ map snd
@@ -2317,31 +2315,85 @@ findReplacement k k' mapping =
 --                z (show (L.length v)) v
 --            else v
     else []
-        -- error ("Yarg! JDR " ++ (show (L.length mapping)) ++ " vs " ++
-        --       (show (L.length (insts k))))
-
+      
+-- Find extensions of the given environment that also cause strand s
+-- in k to match the trace of mapping !! s in k'
 matchStrand :: Preskel -> Preskel -> [Sid] -> (Gen, Env) -> Sid -> [(Gen, Env)]
 matchStrand k k' mapping env s =
     matchTraces (trace (strandInst k s)) (trace (strandInst k' s')) env
     where
       s' = mapping !! s
+{--
 
-validateEnv :: Preskel -> Preskel -> [Sid] -> Env -> Bool
-validateEnv k k' mapping env =
-    all (flip elem (knon k')) (map (instantiate env) (knon k)) &&
-    all (flip elem (kpnon k')) (map (instantiate env) (kpnon k)) &&
-    all (flip elem (kunique k')) (map (instantiate env) (kunique k)) &&
-    all (flip elem (kuniqgen k')) (map (instantiate env) (kuniqgen k)) &&
-    all (flip elem (kabsent k')) (map (instantiatePair env) (kabsent k)) &&
-     --    all (flip elem (kprecur k')) (map (permuteNode mapping) (kprecur k)) &&
-    all (flip elem (kfacts k'))
-            (map (instUpdateFact env (mapping !!)) (kfacts k)) &&
-    all (flip elem (kgenSt k')) (map (instantiate env) (kgenSt k)) &&
-    validateEnvOrig k k' mapping env &&
-    all (flip elem (tc k')) (permuteOrderings mapping (orderings k))
+-- Find extensions of the given environment env that also cause strand
+-- s in k to match the trace of mapping !! s in k', rejecting any
+-- candidates env' that affect the binding of vars already in the
+-- domain of env.  These would yield too tight an effect on earlier
+-- strands, ie env' applied to s' in k would be a proper instance of
+-- mapping !! s' in k'.  
+
+matchStrandConservatively :: Preskel -> Preskel -> [Sid] -> (Gen, Env) -> Sid -> [(Gen, Env)]
+matchStrand k k' mapping env s =
+    L.filter (envDisjointExtension env)
+         $ matchTraces (trace (strandInst k s)) (trace (strandInst k' s')) env
+    where
+      s' = mapping !! s        
+--}
+
+validateEnv :: Preskel -> Preskel -> [Sid] -> (Gen,Env) -> [(Gen,Env)]
+validateEnv k k' mapping (gen,env) =
+    case (all (flip elem (knon k')) (map (instantiate env) (knon k)) &&
+          all (flip elem (kpnon k')) (map (instantiate env) (kpnon k)) &&
+          all (flip elem (kunique k')) (map (instantiate env) (kunique k)) &&
+          all (flip elem (kuniqgen k')) (map (instantiate env) (kuniqgen k)) &&
+          all (flip elem (kabsent k')) (map (instantiatePair env) (kabsent k)) &&
+          -- all (flip elem (kprecur k')) (map (permuteNode mapping) (kprecur k)) &&
+          all (flip elem (kgenSt k')) (map (instantiate env) (kgenSt k)) &&
+          validateEnvOrig k k' mapping env &&
+          all (flip elem (tc k')) (permuteOrderings mapping (orderings k)) &&
+          all (flip elem (kfacts k'))
+                  (map (instUpdateFact env (mapping !!)) covered)) of
+      False -> []
+      True -> validateExtendEnv mapping (gen,env) uncovered (kfacts k')
     where
       instantiatePair env (t1, t2) =
         (instantiate env t1, instantiate env t2)
+      ftermMatched (FSid _) = True
+      ftermMatched (FTerm t) = matched env t
+      factMatched (Fact _ fterms) = all ftermMatched fterms
+      (covered,uncovered) = L.partition factMatched (kfacts k)
+
+matchFact :: Fact -> Fact -> (Gen,Env) -> [(Gen,Env)]
+matchFact (Fact rel1 args1) (Fact rel2 args2) (gen,env) =
+    case rel1 == rel2 of
+      False -> []
+      True -> matchArgs args1 args2 (gen,env)
+    where
+      matchArgs [] [] (gen,env) = [(gen,env)]
+      matchArgs [] _ _ = []
+      matchArgs _ [] _ = []
+      matchArgs (a1 : rest1) (a2 : rest2) (gen,env) =
+          case (a1,a2) of
+            (FSid i, FSid j) -> if i == j then [(gen,env)] else []
+            (FSid _, _) -> []
+            (_, FSid _) -> []
+            (FTerm t1, FTerm t2) ->
+                do
+                  (g,e) <- match t1 t2 (gen,env)
+                  matchArgs rest1 rest2 (g,e) 
+
+validateExtendEnv :: [Sid] -> (Gen,Env) -> [Fact] -> [Fact] -> [(Gen,Env)]
+validateExtendEnv _ (gen,env) [] _ = [(gen,env)] 
+validateExtendEnv mapping (gen,env) (fact : uncoveredRest) targetFacts =
+    do
+      target <- targetFacts
+      (g,e) <- matchFact updFact target (gen,env)
+      validateExtendEnv mapping (g,e) uncoveredRest targetFacts 
+    where
+      updFact = updateFact (mapping !!) fact -- z "!!!!" $... 
+      
+ 
+                  
 
 {-- Degugging apparatus:
       allShowingFailingIndex _ [] = True
@@ -2649,14 +2701,14 @@ withCoreFacts k =
             True ->
                 case (homomorphism k0 k (prob k)) of
                   [] -> k
-                  (env : _) ->  -- If there are multiple envs, this
-                                -- could mean that some don't extend
-                                -- under *simplify* to a result k1
-                                -- such that k0 -> k1 -> k.  The
-                                -- latter may have made a different
-                                -- choice of env in its facts.
-                                -- (Delete this if it turns out
-                                -- wrong.)
+                  ((_,env) : _) -> -- If there are multiple envs, this
+                                   -- could mean that some don't extend
+                                   -- under *simplify* to a result k1
+                                   -- such that k0 -> k1 -> k.  The
+                                   -- latter may have made a different
+                                   -- choice of env in its facts.
+                                   -- (Delete this if it turns out
+                                   -- wrong.)
                       k { kfacts =
                               map (instUpdateFact env (permOfSidList (prob k)))
                                       (kfacts k0) }

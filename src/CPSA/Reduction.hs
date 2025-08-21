@@ -653,7 +653,9 @@ maps k =
           case pov k of
             Nothing -> []
             Just k' ->
-                map (displayEnvSansPts vars (ctx k') (ctx k)) (homomorphism k' k (prob k))
+                map (\(_,env) ->
+                         displayEnvSansPts vars (ctx k') (ctx k) env)
+                        (homomorphism k' k (prob k))
       ctx k = addToContext emptyContext (kvars k)
       vars = kvars k
 

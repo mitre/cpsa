@@ -144,7 +144,8 @@ module CPSA.Algebra (name, alias,
     match,
     unmatchedVarsWithin,
     envsAgreeOutside,
-    varsMinusEnvDomain, 
+    varsMinusEnvDomain,
+    envDisjointExtension,
     envOfParamVarPairs,
     substitution,
     strandBoundEnv,
@@ -720,7 +721,7 @@ subterm t (F _ u) =
   any (subterm t) u
 subterm (I x) (G t') =
   M.member x t'
-subterm (G t) (G t') | isBasisVar t = -- For constituent.  COULD ALSO BE :  isGroupVar
+subterm (G t) (G t') | isGroupVar t = -- For constituent.  COULD ALSO BE :  isBasisVar
   M.member (getGroupVar t) t'
 subterm _ _ = False
 
@@ -1758,7 +1759,19 @@ envStrandsWithin (Env (_, r)) strands =
     M.foldr f True r
     where
       f (Z i) soFar = soFar && elem i strands
-      f _ soFar = soFar 
+      f _ soFar = soFar
+
+-- Is e2 the disjoint union of e1 with an environment with disjoint
+-- domain?  I.e., is the domain of e1 a subset of the domain of e2,
+-- and e2 agrees with e1 on the domain of e1?  
+
+envDisjointExtension :: Env -> Env -> Bool
+envDisjointExtension (Env (_, r1)) (Env (_, r2)) =
+    subset d1 d2 && 
+           idMapsAgreeOutside r1 r2 d1
+    where
+      d1 = idMapDomain r1
+      d2 = idMapDomain r2 
 
 -- Apply a substitution to the range of an environment
 substUpdate :: Env -> Subst -> Env

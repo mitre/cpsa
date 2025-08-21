@@ -143,7 +143,7 @@ loadRole sig gen pos (S _ name :
       (gen, vars) <- loadVars sig gen vars
       (gen, vars, pt_u, pr_t, c) <-
           -- critical section indices computed below
-          loadTrace sig gen vars (evt : c)
+          loadTrace sig name gen vars (evt : c)
       n <- loadPosBaseTerms sig vars (assoc "non-orig" rest)
       a <- loadPosBaseTerms sig vars (assoc "pen-non-orig" rest)
       u <- loadBaseTerms sig vars (assoc "uniq-orig" rest)
@@ -855,9 +855,9 @@ badOrigNotGen vars events =
           else
               Nothing
 
-loadTrace :: MonadFail m => Sig -> Gen -> [Term] ->
+loadTrace :: MonadFail m => Sig -> String -> Gen -> [Term] ->
              [SExpr Pos] -> m (Gen, [Term], [Term], PreRules, Trace)
-loadTrace sig gen vars xs =
+loadTrace sig name gen vars xs =
     loadTraceLoop gen [] [] emptyPreRules [] xs
     where
       loadTraceLoop :: MonadFail m => Gen -> [Term] -> [Term] -> PreRules
@@ -871,11 +871,12 @@ loadTrace sig gen vars xs =
                   [] -> return (gen, (vars ++ (reverse newVars)),
                                        (reverse uniqs), pr, events')
                   (v,p) : _ ->
-                      fail (shows xs $ " Var received non-carried, the sent carried:  " ++
+                      fail (shows xs $ " Var received non-carried in role " ++ name ++
+                                      ", then sent carried:  " ++
                                       (show v) ++ " at event " ++ (show p))
-            Just (_,i) ->
-                fail (shows xs $ " Expts must first be received, rndxs first sent:  " ++
-                                " at event " ++ (show i))
+            Just (bad,i) ->
+                fail (shows bad $ " Expts must first be received, rndxs first sent:  " ++
+                                " at event " ++ (show i) ++ " in role " ++ name)
       loadTraceLoop gen newVars uniqs pr events ((L _ [S _ "recv", t]) : rest) =
           do
             t <- loadTerm sig vars -- True
@@ -915,16 +916,16 @@ loadTrace sig gen vars xs =
 
       loadTraceLoop gen newVars uniqs pr events ((L _ [S pos "rely", form]) : rest) =
           case events of
-            [] -> fail (shows pos $ "Rely precedes first event:  " ++ (show form))
+            [] -> fail (shows pos $ "Rely precedes first event in role " ++ name ++ ":  " ++ (show form))
             (In _) : _ ->
                 loadTraceLoop gen newVars uniqs
                               (preRulesAddRely pr ((L.length events), form))
                               events rest
-            _ -> fail (shows pos $ "Rely must follow recv or load:  " ++ (show form))
+            _ -> fail (shows pos $ "Rely must follow recv or load in role " ++ name ++ ":  " ++ (show form))
 
       loadTraceLoop gen newVars uniqs pr events ((L _ [S pos "guar", form]) : rest) =
           case rest of
-            [] -> fail (shows pos $ "Guarantee follows last event:  " ++ (show form))
+            [] -> fail (shows pos $ "Guarantee follows last event in role " ++ name ++ ":  " ++ (show form))
             (L _ (S _ "stor" : _) : _) ->
                 loadTraceLoop gen newVars uniqs
                                   (preRulesAddGuar pr (1+(L.length events), form))
@@ -933,11 +934,11 @@ loadTrace sig gen vars xs =
                 loadTraceLoop gen newVars uniqs
                                   (preRulesAddGuar pr (1+(L.length events), form))
                                   events rest
-            _ -> fail (shows pos $ "Guarantee must precede send or stor:  " ++ (show form))
+            _ -> fail (shows pos $ "Guarantee must precede send or stor in role " ++ name ++ ":  " ++ (show form))
 
       loadTraceLoop gen newVars uniqs pr events ((L _ [S pos "cheq", src, tgt]) : rest) =
           case rest of
-            [] -> fail (shows pos $ "cheq must precede some event:  " ++ (show src) ++ ", " ++ (show tgt))
+            [] -> fail (shows pos $ "cheq must precede some event in role " ++ name ++ ":  " ++ (show src) ++ ", " ++ (show tgt))
             _ ->
                 do
                   src <- loadTerm sig vars False src
@@ -948,10 +949,10 @@ loadTrace sig gen vars xs =
                                 events rest
 
       loadTraceLoop _ _ _ _ _ ((L pos [S _ dir, _, _]) : _) =
-          fail (shows pos $ "Unrecognized direction " ++ dir)
+          fail (shows pos $ "Unrecognized direction in role " ++ name ++ " " ++ dir)
 
       loadTraceLoop _ _ _ _ _ (x : _) =
-          fail (shows (annotation x) "Malformed event")
+          fail (shows (annotation x) "Malformed event in role " ++ name)
 
 loadChan :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
 loadChan sig vars x =
