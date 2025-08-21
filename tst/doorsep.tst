@@ -1,6 +1,6 @@
 (herald doorsep (comment "Door Simple Example Protocol"))
 
-(comment "CPSA 4.4.5")
+(comment "CPSA 4.4.6")
 (comment "All input read from tst/doorsep.scm")
 
 (defprotocol doorsep basic
@@ -15,8 +15,8 @@
   (defrule trust
     (forall ((z strd) (p d akey))
       (implies
-        (and (p "person" z (idx 1)) (p "person" "p" z p)
-          (p "person" "d" z d) (non (invk p)))
+        (and (p "person" z (idx 1)) (p "person" "d" z d)
+          (p "person" "p" z p) (non (invk p)))
         (non (invk d))))
     (comment "The trust rule"))
   (defgenrule neqRl_indx
@@ -46,6 +46,7 @@
   (precedes ((1 0) (0 0)))
   (non-orig (invk p) (invk d-0))
   (uniq-orig k t)
+  (comment "Analyze from the doors's perspective")
   (rule trust)
   (operation encryption-test (added-strand person 1) (enc k (invk p))
     (0 0))
@@ -64,6 +65,7 @@
   (precedes ((1 0) (0 0)))
   (non-orig (invk p) (invk d))
   (uniq-orig k t)
+  (comment "Analyze from the doors's perspective")
   (operation encryption-test (contracted (d-0 d)) (enc k (invk p)) (0 0)
     (enc (enc k (invk p)) d))
   (strand-map 0 1)
@@ -81,6 +83,7 @@
   (precedes ((0 1) (1 1)) ((1 0) (0 0)) ((1 2) (0 2)))
   (non-orig (invk d) (invk p))
   (uniq-orig k t)
+  (comment "Analyze from the doors's perspective")
   (operation nonce-test (displaced 1 2 person 3) t (0 2) (enc t k))
   (strand-map 0 1)
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
@@ -100,6 +103,7 @@
   (precedes ((1 0) (0 0)) ((1 0) (2 0)) ((2 1) (0 2)))
   (non-orig (invk p) (invk d))
   (uniq-orig k t)
+  (comment "Analyze from the doors's perspective")
   (operation nonce-test (added-listener k) t (0 2) (enc t k))
   (strand-map 0 1)
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))

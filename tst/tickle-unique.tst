@@ -1,6 +1,6 @@
 (herald tickle-unique)
 
-(comment "CPSA 4.4.5")
+(comment "CPSA 4.4.6")
 (comment "All input read from tst/tickle-unique.scm")
 
 (defprotocol tickle basic
@@ -16,8 +16,8 @@
   (defrule uniq-tickle
     (forall ((z strd) (nb0 text))
       (implies
-        (and (fact guard-me) (p "resp" z (idx 2))
-          (p "resp" "nb0" z nb0))
+        (and (p "resp" z (idx 2)) (p "resp" "nb0" z nb0)
+          (fact guard-me))
         (uniq nb0))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -76,8 +76,8 @@
   (defrule uniq-tickle
     (forall ((z strd) (nb0 text))
       (implies
-        (and (fact guard-me) (p "resp" z (idx 2))
-          (p "resp" "nb0" z nb0))
+        (and (p "resp" z (idx 2)) (p "resp" "nb0" z nb0)
+          (fact guard-me))
         (uniq nb0))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))

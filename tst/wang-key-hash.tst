@@ -1,6 +1,6 @@
 (herald "Wang's Fair Exchange Protocol" (bound 10))
 
-(comment "CPSA 4.4.5")
+(comment "CPSA 4.4.6")
 (comment "All input read from tst/wang-key-hash.scm")
 (comment "Strand count bounded at 10")
 
@@ -536,6 +536,7 @@
   (precedes ((0 0) (1 0)))
   (non-orig (privk "encr" t))
   (uniq-orig m k)
+  (comment "Experiment 1 to prove Lemma 4.1.")
   (traces
     ((send
        (cat
@@ -568,6 +569,7 @@
   (precedes ((0 0) (2 0)) ((2 1) (1 0)))
   (non-orig (privk "encr" t))
   (uniq-orig m k)
+  (comment "Experiment 1 to prove Lemma 4.1.")
   (operation nonce-test (added-listener k) m (1 0) (enc m k))
   (strand-map 0 1)
   (traces
@@ -601,6 +603,7 @@
   (precedes ((1 1) (0 0)) ((2 2) (1 0)))
   (non-orig (privk "encr" t))
   (uniq-orig m k)
+  (comment "Experiment 1 to prove Lemma 4.1.")
   (operation nonce-test (displaced 0 3 init1 3) k (2 0)
     (enc "keytag"
       (enc "h"
@@ -650,6 +653,7 @@
   (precedes ((0 0) (3 0)) ((2 1) (1 0)) ((3 2) (2 0)))
   (non-orig (privk "encr" t))
   (uniq-orig m k)
+  (comment "Experiment 1 to prove Lemma 4.1.")
   (operation nonce-test (added-strand ttp-rc1 3) k (2 0)
     (enc "keytag"
       (enc "h"
@@ -753,6 +757,7 @@
   (precedes ((1 2) (0 0)))
   (non-orig (privk "encr" t))
   (uniq-orig m k)
+  (comment "Experiment 1 to prove Lemma 4.1.")
   (operation generalization deleted (1 0))
   (strand-map 0 2)
   (traces ((recv m) (send m))
@@ -799,6 +804,7 @@
   (precedes ((0 0) (2 0)) ((2 2) (1 0)))
   (non-orig (privk "encr" t))
   (uniq-orig m k)
+  (comment "Experiment 1 to prove Lemma 4.1.")
   (operation generalization deleted (2 0))
   (strand-map 0 1 3)
   (traces
@@ -1427,6 +1433,7 @@
   (precedes ((0 0) (1 0)))
   (non-orig (privk "encr" t))
   (uniq-orig m k)
+  (comment "Experiment 2 to prove Lemma 4.1.")
   (traces
     ((send
        (cat
@@ -1458,6 +1465,7 @@
   (precedes ((1 2) (0 0)))
   (non-orig (privk "encr" t))
   (uniq-orig m k)
+  (comment "Experiment 2 to prove Lemma 4.1.")
   (operation nonce-test (displaced 0 2 init1 3) k (1 0)
     (enc "keytag"
       (enc "h"
@@ -1508,6 +1516,7 @@
   (precedes ((0 0) (2 0)) ((2 2) (1 0)))
   (non-orig (privk "encr" t))
   (uniq-orig m k)
+  (comment "Experiment 2 to prove Lemma 4.1.")
   (operation nonce-test (added-strand ttp-rc1 3) k (1 0)
     (enc "keytag"
       (enc "h"
@@ -2146,6 +2155,7 @@
   (defstrand resp1 2 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 1) (0 1)))
   (non-orig (privk "sign" b))
+  (comment "First of three experiments to prove Lemma 4.2, clause 1.")
   (operation encryption-test (added-strand resp1 2)
     (enc "eortag"
       (enc "h"
@@ -2231,6 +2241,7 @@
     (x (enc "h" (cat "h" k))) (a a) (b b) (t t))
   (precedes ((1 1) (0 1)))
   (non-orig (privk "sign" b))
+  (comment "First of three experiments to prove Lemma 4.2, clause 1.")
   (operation encryption-test (added-strand resp3 2)
     (enc "eortag"
       (enc "h"
@@ -2863,6 +2874,7 @@
   (defstrand resp1 2 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 1) (0 2)))
   (non-orig (privk "sign" b))
+  (comment "Second of three experiments to prove Lemma 4.2, clause 1.")
   (operation encryption-test (added-strand resp1 2)
     (enc "eortag"
       (enc "h"
@@ -2951,6 +2963,7 @@
     (x (enc "h" (cat "h" k))) (a a) (b b) (t t))
   (precedes ((1 1) (0 2)))
   (non-orig (privk "sign" b))
+  (comment "Second of three experiments to prove Lemma 4.2, clause 1.")
   (operation encryption-test (added-strand resp3 2)
     (enc "eortag"
       (enc "h"
@@ -3596,6 +3609,7 @@
   (defstrand resp1 2 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 1) (0 1)))
   (non-orig (privk "sign" b))
+  (comment "Third of three experiments to prove Lemma 4.2, clause 1.")
   (operation encryption-test (added-strand resp1 2)
     (enc "eortag"
       (enc "h"
@@ -3694,6 +3708,7 @@
     (x (enc "h" (cat "h" k))) (a a) (b b) (t t))
   (precedes ((1 1) (0 1)))
   (non-orig (privk "sign" b))
+  (comment "Third of three experiments to prove Lemma 4.2, clause 1.")
   (operation encryption-test (added-strand resp3 2)
     (enc "eortag"
       (enc "h"
@@ -4336,6 +4351,7 @@
   (defstrand init5 1 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)))
   (non-orig (privk "sign" a))
+  (comment "First of two experiments to prove Lemma 4.2, clause 2.")
   (operation encryption-test (added-strand init5 1)
     (enc "eootag"
       (enc "h"
@@ -4989,6 +5005,7 @@
   (defstrand init5 1 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)))
   (non-orig (privk "sign" a))
+  (comment "Second of two experiments to prove Lemma 4.2, clause 2.")
   (operation encryption-test (added-strand init5 1)
     (enc "eootag"
       (enc "h"
@@ -5648,6 +5665,7 @@
   (defstrand init5 1 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)))
   (non-orig (privk "sign" a))
+  (comment "Experiments to prove Lemma 4.2, clause 3.")
   (operation encryption-test (added-strand init5 1)
     (enc "eootag"
       (enc "h"
@@ -5776,6 +5794,7 @@
   (defstrand init3 2 (m m) (k k) (r r-0) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)) ((2 1) (0 3)))
   (non-orig (privk "sign" a))
+  (comment "Experiments to prove Lemma 4.2, clause 3.")
   (operation encryption-test (added-strand init3 2)
     (enc "abrq" a b t (enc "h" (cat "h" (enc m k)))
       (enc "h" (cat "h" k)) (privk "sign" a)) (0 3))
@@ -5926,6 +5945,7 @@
   (defstrand init3 2 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)) ((1 1) (0 3)))
   (non-orig (privk "sign" a))
+  (comment "Experiments to prove Lemma 4.2, clause 3.")
   (operation encryption-test (displaced 1 2 init3 2)
     (enc "abrq" a b t (enc "h" (cat "h" (enc m k)))
       (enc "h" (cat "h" k)) (privk "sign" a)) (0 3))
@@ -6059,6 +6079,7 @@
   (defstrand init5 3 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)) ((1 2) (0 3)))
   (non-orig (privk "sign" a))
+  (comment "Experiments to prove Lemma 4.2, clause 3.")
   (operation encryption-test (displaced 1 2 init5 3)
     (enc "abrq" a b t (enc "h" (cat "h" (enc m k)))
       (enc "h" (cat "h" k)) (privk "sign" a)) (0 3))
@@ -6203,6 +6224,7 @@
   (defstrand init5 3 (m m) (k k) (r r-0) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)) ((2 2) (0 3)))
   (non-orig (privk "sign" a))
+  (comment "Experiments to prove Lemma 4.2, clause 3.")
   (operation encryption-test (added-strand init5 3)
     (enc "abrq" a b t (enc "h" (cat "h" (enc m k)))
       (enc "h" (cat "h" k)) (privk "sign" a)) (0 3))
@@ -6874,6 +6896,7 @@
   (defstrand ttp-ab1 3 (y y) (x x) (a a) (b b) (t t))
   (precedes ((1 2) (0 0)))
   (non-orig (privk "sign" t))
+  (comment "Experiments to prove Lemma 4.3, clause 1.")
   (operation encryption-test (added-strand ttp-ab1 3)
     (enc "abcf" (enc "abrq" a b t y x (privk "sign" a))
       (privk "sign" t)) (0 0))
@@ -6906,6 +6929,7 @@
   (defstrand ttp-rc2 3 (y y) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 2) (0 0)))
   (non-orig (privk "sign" t))
+  (comment "Experiments to prove Lemma 4.3, clause 1.")
   (operation encryption-test (added-strand ttp-rc2 3)
     (enc "abcf"
       (enc "abrq" a b t y (enc "h" (cat "h" k)) (privk "sign" a))
@@ -6959,6 +6983,7 @@
   (defstrand ttp-cf2 3 (y y) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 2) (0 0)))
   (non-orig (privk "sign" t))
+  (comment "Experiments to prove Lemma 4.3, clause 1.")
   (operation encryption-test (added-strand ttp-cf2 3)
     (enc "abcf"
       (enc "abrq" a b t y (enc "h" (cat "h" k)) (privk "sign" a))
@@ -7522,6 +7547,7 @@
   (defstrand init3 2 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 1) (0 0)))
   (non-orig (privk "encr" t) (privk "sign" a))
+  (comment "Experiment 1 to prove Lemma 4.3, clause 2.")
   (operation encryption-test (added-strand init3 2)
     (enc "abrq" a b t (enc "h" (cat "h" (enc m k)))
       (enc "h" (cat "h" k)) (privk "sign" a)) (0 0))
@@ -7575,6 +7601,7 @@
   (defstrand init5 3 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 2) (0 0)))
   (non-orig (privk "encr" t) (privk "sign" a))
+  (comment "Experiment 1 to prove Lemma 4.3, clause 2.")
   (operation encryption-test (added-strand init5 3)
     (enc "abrq" a b t (enc "h" (cat "h" (enc m k)))
       (enc "h" (cat "h" k)) (privk "sign" a)) (0 0))
@@ -8168,6 +8195,7 @@
   (defstrand init5 1 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)))
   (non-orig (privk "encr" t) (privk "sign" a))
+  (comment "Experiment 2 to prove Lemma 4.3, clause 2.")
   (operation encryption-test (added-strand init5 1)
     (enc "eootag"
       (enc "h"
@@ -8251,6 +8279,7 @@
   (defstrand init3 2 (m m) (k k) (r r-0) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)) ((2 1) (0 1)))
   (non-orig (privk "encr" t) (privk "sign" a))
+  (comment "Experiment 2 to prove Lemma 4.3, clause 2.")
   (operation encryption-test (added-strand init3 2)
     (enc "abrq" a b t (enc "h" (cat "h" (enc m k)))
       (enc "h" (cat "h" k)) (privk "sign" a)) (0 1))
@@ -8351,6 +8380,7 @@
   (defstrand init3 2 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)) ((1 1) (0 1)))
   (non-orig (privk "encr" t) (privk "sign" a))
+  (comment "Experiment 2 to prove Lemma 4.3, clause 2.")
   (operation encryption-test (displaced 1 2 init3 2)
     (enc "abrq" a b t (enc "h" (cat "h" (enc m k)))
       (enc "h" (cat "h" k)) (privk "sign" a)) (0 1))
@@ -8434,6 +8464,7 @@
   (defstrand init5 3 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)) ((1 2) (0 1)))
   (non-orig (privk "encr" t) (privk "sign" a))
+  (comment "Experiment 2 to prove Lemma 4.3, clause 2.")
   (operation encryption-test (displaced 1 2 init5 3)
     (enc "abrq" a b t (enc "h" (cat "h" (enc m k)))
       (enc "h" (cat "h" k)) (privk "sign" a)) (0 1))
@@ -8528,6 +8559,7 @@
   (defstrand init5 3 (m m) (k k) (r r-0) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)) ((2 2) (0 1)))
   (non-orig (privk "encr" t) (privk "sign" a))
+  (comment "Experiment 2 to prove Lemma 4.3, clause 2.")
   (operation encryption-test (added-strand init5 3)
     (enc "abrq" a b t (enc "h" (cat "h" (enc m k)))
       (enc "h" (cat "h" k)) (privk "sign" a)) (0 1))
@@ -9168,6 +9200,7 @@
   (defstrand init5 1 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)))
   (non-orig (privk "encr" t) (privk "sign" a))
+  (comment "Experiment 3 to prove Lemma 4.3, clause 2.")
   (operation encryption-test (added-strand init5 1)
     (enc "eootag"
       (enc "h"
@@ -9251,6 +9284,7 @@
   (defstrand init3 2 (m m) (k k) (r r-0) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)) ((2 1) (0 1)))
   (non-orig (privk "encr" t) (privk "sign" a))
+  (comment "Experiment 3 to prove Lemma 4.3, clause 2.")
   (operation encryption-test (added-strand init3 2)
     (enc "abrq" a b t (enc "h" (cat "h" (enc m k)))
       (enc "h" (cat "h" k)) (privk "sign" a)) (0 1))
@@ -9351,6 +9385,7 @@
   (defstrand init3 2 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)) ((1 1) (0 1)))
   (non-orig (privk "encr" t) (privk "sign" a))
+  (comment "Experiment 3 to prove Lemma 4.3, clause 2.")
   (operation encryption-test (displaced 1 2 init3 2)
     (enc "abrq" a b t (enc "h" (cat "h" (enc m k)))
       (enc "h" (cat "h" k)) (privk "sign" a)) (0 1))
@@ -9434,6 +9469,7 @@
   (defstrand init5 3 (m m) (k k) (r r) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)) ((1 2) (0 1)))
   (non-orig (privk "encr" t) (privk "sign" a))
+  (comment "Experiment 3 to prove Lemma 4.3, clause 2.")
   (operation encryption-test (displaced 1 2 init5 3)
     (enc "abrq" a b t (enc "h" (cat "h" (enc m k)))
       (enc "h" (cat "h" k)) (privk "sign" a)) (0 1))
@@ -9528,6 +9564,7 @@
   (defstrand init5 3 (m m) (k k) (r r-0) (a a) (b b) (t t))
   (precedes ((1 0) (0 0)) ((2 2) (0 1)))
   (non-orig (privk "encr" t) (privk "sign" a))
+  (comment "Experiment 3 to prove Lemma 4.3, clause 2.")
   (operation encryption-test (added-strand init5 3)
     (enc "abrq" a b t (enc "h" (cat "h" (enc m k)))
       (enc "h" (cat "h" k)) (privk "sign" a)) (0 1))

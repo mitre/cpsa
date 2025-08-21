@@ -1,6 +1,6 @@
 (herald "Main Example")
 
-(comment "CPSA 4.4.5")
+(comment "CPSA 4.4.6")
 (comment "All input read from tst/comp_test.scm")
 
 (defprotocol main-ex-src basic
@@ -64,6 +64,18 @@
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk a) (invk b) (invk c))
   (uniq-orig k)
+  (comment
+    (defgoal main-ex-src
+      (forall ((i ssn text) (k skey) (a b c akey) (z strd))
+        (implies
+          (and (p "qn" z 2) (p "qn" "i" z i) (p "qn" "ssn" z ssn)
+            (p "qn" "k" z k) (p "qn" "a" z a) (p "qn" "b" z b)
+            (p "qn" "c" z c) (non (invk a)) (non (invk b))
+            (non (invk c)) (uniq-at k z 0))
+          (exists ((x mesg) (z-0 strd))
+            (and (p "an" z-0 2) (p "an" "x" z-0 x) (p "an" "i" z-0 i)
+              (p "an" "k" z-0 k) (p "an" "a" z-0 a) (p "an" "b" z-0 b)
+              (p "an" "c" z-0 c) (prec z 0 z-0 0) (prec z-0 1 z 1)))))))
   (operation encryption-test (added-strand an 2) (enc "sorry" a b k)
     (0 1))
   (strand-map 0)
@@ -84,6 +96,18 @@
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk a) (invk b) (invk c))
   (uniq-orig k)
+  (comment
+    (defgoal main-ex-src
+      (forall ((i ssn text) (k skey) (a b c akey) (z strd))
+        (implies
+          (and (p "qn" z 2) (p "qn" "i" z i) (p "qn" "ssn" z ssn)
+            (p "qn" "k" z k) (p "qn" "a" z a) (p "qn" "b" z b)
+            (p "qn" "c" z c) (non (invk a)) (non (invk b))
+            (non (invk c)) (uniq-at k z 0))
+          (exists ((x mesg) (z-0 strd))
+            (and (p "an" z-0 2) (p "an" "x" z-0 x) (p "an" "i" z-0 i)
+              (p "an" "k" z-0 k) (p "an" "a" z-0 a) (p "an" "b" z-0 b)
+              (p "an" "c" z-0 c) (prec z 0 z-0 0) (prec z-0 1 z 1)))))))
   (operation encryption-test (added-listener k) (enc "sorry" a b k)
     (0 1))
   (strand-map 0)
@@ -103,6 +127,18 @@
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk a) (invk b) (invk c))
   (uniq-orig k)
+  (comment
+    (defgoal main-ex-src
+      (forall ((i ssn text) (k skey) (a b c akey) (z strd))
+        (implies
+          (and (p "qn" z 2) (p "qn" "i" z i) (p "qn" "ssn" z ssn)
+            (p "qn" "k" z k) (p "qn" "a" z a) (p "qn" "b" z b)
+            (p "qn" "c" z c) (non (invk a)) (non (invk b))
+            (non (invk c)) (uniq-at k z 0))
+          (exists ((x mesg) (z-0 strd))
+            (and (p "an" z-0 2) (p "an" "x" z-0 x) (p "an" "i" z-0 i)
+              (p "an" "k" z-0 k) (p "an" "a" z-0 a) (p "an" "b" z-0 b)
+              (p "an" "c" z-0 c) (prec z 0 z-0 0) (prec z-0 1 z 1)))))))
   (operation encryption-test (displaced 2 0 qy 1)
     (enc k b c-0 i-0 (invk a)) (1 0))
   (strand-map 0 1)
@@ -576,16 +612,16 @@
   (defrule src
     (forall ((z strd) (i ssn text) (k skey) (a b c akey))
       (implies
-        (and (p "qn" z (idx 2)) (p "qn" "i" z i) (p "qn" "ssn" z ssn)
-          (p "qn" "k" z k) (p "qn" "a" z a) (p "qn" "b" z b)
-          (p "qn" "c" z c) (non (invk a)) (non (invk b)) (non (invk c))
+        (and (p "qn" z (idx 2)) (p "qn" "c" z c) (p "qn" "b" z b)
+          (p "qn" "a" z a) (p "qn" "k" z k) (p "qn" "ssn" z ssn)
+          (p "qn" "i" z i) (non (invk c)) (non (invk b)) (non (invk a))
           (uniq k))
         (exists ((z-0 strd) (x mesg))
-          (and (p "an" z-0 (idx 4)) (p "an" "x" z-0 x)
-            (p "an" "i" z-0 i) (p "an" "k" z-0 k) (p "an" "a" z-0 a)
-            (p "an" "b" z-0 b) (p "an" "c" z-0 c)
-            (prec z (idx 0) z-0 (idx 0))
-            (prec z-0 (idx 3) z (idx 1)))))))
+          (and (p "an" z-0 (idx 4)) (p "an" "c" z-0 c)
+            (p "an" "b" z-0 b) (p "an" "a" z-0 a) (p "an" "k" z-0 k)
+            (p "an" "i" z-0 i) (p "an" "x" z-0 x)
+            (prec z-0 (idx 3) z (idx 1))
+            (prec z (idx 0) z-0 (idx 0)))))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
   (defgenrule neqRl_strd

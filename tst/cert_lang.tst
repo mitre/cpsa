@@ -1,6 +1,6 @@
 (herald cert-lang)
 
-(comment "CPSA 4.4.5")
+(comment "CPSA 4.4.6")
 (comment "All input read from tst/cert_lang.scm")
 
 (defprotocol cert-uni basic
@@ -29,8 +29,8 @@
   (defrule certified-keys-uncompromised
     (forall ((zca strd) (subj ca name) (pk akey))
       (implies
-        (and (p "certify" zca (idx 1)) (p "certify" "subj" zca subj)
-          (p "certify" "ca" zca ca) (p "certify" "pk" zca pk)
+        (and (p "certify" zca (idx 1)) (p "certify" "pk" zca pk)
+          (p "certify" "ca" zca ca) (p "certify" "subj" zca subj)
           (non (privk "cert" ca)))
         (non (invk pk)))))
   (defgenrule neqRl_indx

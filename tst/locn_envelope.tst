@@ -1,7 +1,7 @@
 (herald "Envelope Protocol, location-based version" (bound 30)
   (limit 1200))
 
-(comment "CPSA 4.4.5")
+(comment "CPSA 4.4.6")
 (comment "All input read from tst/locn_envelope.scm")
 (comment "Step count limited to 1200")
 (comment "Strand count bounded at 30")
@@ -97,9 +97,8 @@
   (defgenrule discreteAfter
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
+        (and (trans z0 i0) (trans z2 i2) (leads-to z0 i0 z1 i1)
+          (same-locn z0 i0 z2 i2) (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (defgenrule discreteBefore
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
@@ -527,9 +526,8 @@
   (defgenrule discreteAfter
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
+        (and (trans z0 i0) (trans z2 i2) (leads-to z0 i0 z1 i1)
+          (same-locn z0 i0 z2 i2) (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (defgenrule discreteBefore
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
@@ -1000,9 +998,8 @@
   (defgenrule discreteAfter
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
+        (and (trans z0 i0) (trans z2 i2) (leads-to z0 i0 z1 i1)
+          (same-locn z0 i0 z2 i2) (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (defgenrule discreteBefore
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
@@ -1791,10 +1788,10 @@
   (defrule ordered-extends
     (forall ((y z strd) (pcr locn))
       (implies
-        (and (p "tpm-extend-enc" y (idx 3))
-          (p "tpm-extend-enc" z (idx 3))
-          (p "tpm-extend-enc" "pcr" y pcr)
-          (p "tpm-extend-enc" "pcr" z pcr))
+        (and (p "tpm-extend-enc" z (idx 3))
+          (p "tpm-extend-enc" y (idx 3))
+          (p "tpm-extend-enc" "pcr" z pcr)
+          (p "tpm-extend-enc" "pcr" y pcr))
         (or
           (= y z)
           (prec y (idx 2) z (idx 1))
@@ -1825,9 +1822,8 @@
   (defgenrule discreteAfter
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
+        (and (trans z0 i0) (trans z2 i2) (leads-to z0 i0 z1 i1)
+          (same-locn z0 i0 z2 i2) (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (defgenrule discreteBefore
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
@@ -2232,10 +2228,10 @@
   (defrule ordered-extends
     (forall ((y z strd) (pcr locn))
       (implies
-        (and (p "tpm-extend-enc" y (idx 3))
-          (p "tpm-extend-enc" z (idx 3))
-          (p "tpm-extend-enc" "pcr" y pcr)
-          (p "tpm-extend-enc" "pcr" z pcr))
+        (and (p "tpm-extend-enc" z (idx 3))
+          (p "tpm-extend-enc" y (idx 3))
+          (p "tpm-extend-enc" "pcr" z pcr)
+          (p "tpm-extend-enc" "pcr" y pcr))
         (or
           (= y z)
           (prec y (idx 2) z (idx 1))
@@ -2266,9 +2262,8 @@
   (defgenrule discreteAfter
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
+        (and (trans z0 i0) (trans z2 i2) (leads-to z0 i0 z1 i1)
+          (same-locn z0 i0 z2 i2) (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (defgenrule discreteBefore
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
@@ -2716,10 +2711,10 @@
   (defrule ordered-extends
     (forall ((y z strd) (pcr locn))
       (implies
-        (and (p "tpm-extend-enc" y (idx 3))
-          (p "tpm-extend-enc" z (idx 3))
-          (p "tpm-extend-enc" "pcr" y pcr)
-          (p "tpm-extend-enc" "pcr" z pcr))
+        (and (p "tpm-extend-enc" z (idx 3))
+          (p "tpm-extend-enc" y (idx 3))
+          (p "tpm-extend-enc" "pcr" z pcr)
+          (p "tpm-extend-enc" "pcr" y pcr))
         (or
           (= y z)
           (prec y (idx 2) z (idx 1))
@@ -2750,9 +2745,8 @@
   (defgenrule discreteAfter
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
+        (and (trans z0 i0) (trans z2 i2) (leads-to z0 i0 z1 i1)
+          (same-locn z0 i0 z2 i2) (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (defgenrule discreteBefore
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
@@ -3541,12 +3535,12 @@
   (defrule pcr-id-identifies-pcr
     (forall ((y z strd) (pcr-id text) (pcr pcr-0 locn))
       (implies
-        (and (p "tpm-extend-enc" y (idx 3))
-          (p "tpm-extend-enc" z (idx 3))
-          (p "tpm-extend-enc" "pcr-id" y pcr-id)
-          (p "tpm-extend-enc" "pcr-id" z pcr-id)
+        (and (p "tpm-extend-enc" z (idx 3))
+          (p "tpm-extend-enc" y (idx 3))
+          (p "tpm-extend-enc" "pcr" z pcr-0)
           (p "tpm-extend-enc" "pcr" y pcr)
-          (p "tpm-extend-enc" "pcr" z pcr-0))
+          (p "tpm-extend-enc" "pcr-id" z pcr-id)
+          (p "tpm-extend-enc" "pcr-id" y pcr-id))
         (= pcr pcr-0))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -3574,9 +3568,8 @@
   (defgenrule discreteAfter
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
+        (and (trans z0 i0) (trans z2 i2) (leads-to z0 i0 z1 i1)
+          (same-locn z0 i0 z2 i2) (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (defgenrule discreteBefore
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
@@ -3981,12 +3974,12 @@
   (defrule pcr-id-identifies-pcr
     (forall ((y z strd) (pcr-id text) (pcr pcr-0 locn))
       (implies
-        (and (p "tpm-extend-enc" y (idx 3))
-          (p "tpm-extend-enc" z (idx 3))
-          (p "tpm-extend-enc" "pcr-id" y pcr-id)
-          (p "tpm-extend-enc" "pcr-id" z pcr-id)
+        (and (p "tpm-extend-enc" z (idx 3))
+          (p "tpm-extend-enc" y (idx 3))
+          (p "tpm-extend-enc" "pcr" z pcr-0)
           (p "tpm-extend-enc" "pcr" y pcr)
-          (p "tpm-extend-enc" "pcr" z pcr-0))
+          (p "tpm-extend-enc" "pcr-id" z pcr-id)
+          (p "tpm-extend-enc" "pcr-id" y pcr-id))
         (= pcr pcr-0))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -4014,9 +4007,8 @@
   (defgenrule discreteAfter
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
+        (and (trans z0 i0) (trans z2 i2) (leads-to z0 i0 z1 i1)
+          (same-locn z0 i0 z2 i2) (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (defgenrule discreteBefore
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
@@ -4464,12 +4456,12 @@
   (defrule pcr-id-identifies-pcr
     (forall ((y z strd) (pcr-id text) (pcr pcr-0 locn))
       (implies
-        (and (p "tpm-extend-enc" y (idx 3))
-          (p "tpm-extend-enc" z (idx 3))
-          (p "tpm-extend-enc" "pcr-id" y pcr-id)
-          (p "tpm-extend-enc" "pcr-id" z pcr-id)
+        (and (p "tpm-extend-enc" z (idx 3))
+          (p "tpm-extend-enc" y (idx 3))
+          (p "tpm-extend-enc" "pcr" z pcr-0)
           (p "tpm-extend-enc" "pcr" y pcr)
-          (p "tpm-extend-enc" "pcr" z pcr-0))
+          (p "tpm-extend-enc" "pcr-id" z pcr-id)
+          (p "tpm-extend-enc" "pcr-id" y pcr-id))
         (= pcr pcr-0))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -4497,9 +4489,8 @@
   (defgenrule discreteAfter
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
+        (and (trans z0 i0) (trans z2 i2) (leads-to z0 i0 z1 i1)
+          (same-locn z0 i0 z2 i2) (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (defgenrule discreteBefore
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))

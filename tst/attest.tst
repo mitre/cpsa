@@ -1,6 +1,6 @@
 (herald attest-door)
 
-(comment "CPSA 4.4.5")
+(comment "CPSA 4.4.6")
 (comment "All input read from tst/attest.scm")
 
 (defprotocol attest-door basic
@@ -59,6 +59,7 @@
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk p) (invk a) (invk d))
   (uniq-orig k n)
+  (comment "Analyze from the person's perspective")
   (rule yes)
   (operation nonce-test (added-strand appraise 2) n (0 1)
     (enc (enc d n (invk p)) a))
@@ -80,6 +81,7 @@
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((2 1) (0 3)))
   (non-orig (invk p) (invk a) (invk d))
   (uniq-orig k n t)
+  (comment "Analyze from the person's perspective")
   (operation encryption-test (added-strand door 2) (enc t k) (0 3))
   (strand-map 0 1)
   (traces
@@ -100,6 +102,7 @@
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((2 1) (0 3)))
   (non-orig (invk p) (invk a) (invk d))
   (uniq-orig k n)
+  (comment "Analyze from the person's perspective")
   (operation encryption-test (added-listener k) (enc t k) (0 3))
   (strand-map 0 1)
   (traces
@@ -120,6 +123,7 @@
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((2 1) (0 3)))
   (non-orig (invk p) (invk a) (invk d))
   (uniq-orig k n t)
+  (comment "Analyze from the person's perspective")
   (operation nonce-test (contracted (d-0 d) (p-0 p)) k (2 0)
     (enc (enc k (invk p)) d))
   (strand-map 0 1 2)
@@ -145,6 +149,7 @@
     ((3 1) (2 0)))
   (non-orig (invk p) (invk a) (invk d))
   (uniq-orig k n t)
+  (comment "Analyze from the person's perspective")
   (operation nonce-test (added-strand squealer 2) k (2 0)
     (enc (enc k (invk p)) d))
   (strand-map 0 1 2)
@@ -169,6 +174,7 @@
     ((3 1) (2 0)))
   (non-orig (invk p) (invk a) (invk d))
   (uniq-orig k n)
+  (comment "Analyze from the person's perspective")
   (operation nonce-test (added-strand squealer 2) k (2 0)
     (enc (enc k (invk p)) d))
   (strand-map 0 1 2)
@@ -190,6 +196,7 @@
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((2 1) (0 3)))
   (non-orig (invk p) (invk a) (invk d))
   (uniq-orig k n t)
+  (comment "Analyze from the person's perspective")
   (operation generalization deleted (2 0))
   (strand-map 0 1 3)
   (traces
@@ -212,6 +219,7 @@
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((2 1) (0 3)))
   (non-orig (invk p) (invk a) (invk d))
   (uniq-orig k n)
+  (comment "Analyze from the person's perspective")
   (operation generalization deleted (2 0))
   (strand-map 0 1 3)
   (traces
@@ -282,6 +290,7 @@
   (precedes ((1 2) (0 0)))
   (non-orig (invk p) (invk d))
   (uniq-orig k t n)
+  (comment "Analyze from the door's perspective")
   (operation encryption-test (added-strand person 3) (enc k (invk p))
     (0 0))
   (strand-map 0)
@@ -327,8 +336,8 @@
   (defrule trust
     (forall ((z w strd) (d akey))
       (implies
-        (and (p "appraise" z (idx 2)) (p "appraise" "d" z d)
-          (p "squealer" w (idx 2)) (p "squealer" "d" w d))
+        (and (p "squealer" w (idx 2)) (p "appraise" z (idx 2))
+          (p "squealer" "d" w d) (p "appraise" "d" z d))
         (false)))
     (comment "Passing attestation means not a squealer"))
   (defgenrule neqRl_indx
@@ -360,6 +369,7 @@
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk p) (invk a) (invk d))
   (uniq-orig k n)
+  (comment "Analyze from the person's perspective")
   (rule yes)
   (operation nonce-test (added-strand appraise 2) n (0 1)
     (enc (enc d n (invk p)) a))
@@ -381,6 +391,7 @@
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((2 1) (0 3)))
   (non-orig (invk p) (invk a) (invk d))
   (uniq-orig k n t)
+  (comment "Analyze from the person's perspective")
   (operation encryption-test (added-strand door 2) (enc t k) (0 3))
   (strand-map 0 1)
   (traces
@@ -401,6 +412,7 @@
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((2 1) (0 3)))
   (non-orig (invk p) (invk a) (invk d))
   (uniq-orig k n)
+  (comment "Analyze from the person's perspective")
   (operation encryption-test (added-listener k) (enc t k) (0 3))
   (strand-map 0 1)
   (traces
@@ -422,6 +434,7 @@
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((2 1) (0 3)))
   (non-orig (invk p) (invk a) (invk d))
   (uniq-orig k n t)
+  (comment "Analyze from the person's perspective")
   (operation nonce-test (contracted (d-0 d) (p-0 p)) k (2 0)
     (enc (enc k (invk p)) d))
   (strand-map 0 1 2)
@@ -469,8 +482,8 @@
   (defrule trust
     (forall ((z w strd) (d akey))
       (implies
-        (and (p "appraise" z (idx 2)) (p "appraise" "d" z d)
-          (p "squealer" w (idx 2)) (p "squealer" "d" w d))
+        (and (p "squealer" w (idx 2)) (p "appraise" z (idx 2))
+          (p "squealer" "d" w d) (p "appraise" "d" z d))
         (false)))
     (comment "Passing attestation means not a squealer"))
   (defgenrule neqRl_indx
@@ -500,6 +513,7 @@
   (precedes ((1 2) (0 0)))
   (non-orig (invk p) (invk d))
   (uniq-orig k t n)
+  (comment "Analyze from the door's perspective")
   (operation encryption-test (added-strand person 3) (enc k (invk p))
     (0 0))
   (strand-map 0)
@@ -545,15 +559,15 @@
   (defrule trust
     (forall ((z w strd) (d akey))
       (implies
-        (and (p "appraise" z (idx 2)) (p "appraise" "d" z d)
-          (p "squealer" w (idx 2)) (p "squealer" "d" w d))
+        (and (p "squealer" w (idx 2)) (p "appraise" z (idx 2))
+          (p "squealer" "d" w d) (p "appraise" "d" z d))
         (false)))
     (comment "Passing attestation means not a squealer"))
   (defrule uncompromised-people-choose-uncompromised-appraisers
     (forall ((z strd) (a p akey))
       (implies
-        (and (p "person" z (idx 3)) (p "person" "p" z p)
-          (p "person" "a" z a) (non (invk p)))
+        (and (p "person" z (idx 3)) (p "person" "a" z a)
+          (p "person" "p" z p) (non (invk p)))
         (non (invk a)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -585,6 +599,7 @@
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk p) (invk a) (invk d))
   (uniq-orig k n)
+  (comment "Analyze from the person's perspective")
   (rule yes)
   (operation nonce-test (added-strand appraise 2) n (0 1)
     (enc (enc d n (invk p)) a))
@@ -606,6 +621,7 @@
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((2 1) (0 3)))
   (non-orig (invk p) (invk a) (invk d))
   (uniq-orig k n t)
+  (comment "Analyze from the person's perspective")
   (operation encryption-test (added-strand door 2) (enc t k) (0 3))
   (strand-map 0 1)
   (traces
@@ -626,6 +642,7 @@
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((2 1) (0 3)))
   (non-orig (invk p) (invk a) (invk d))
   (uniq-orig k n)
+  (comment "Analyze from the person's perspective")
   (operation encryption-test (added-listener k) (enc t k) (0 3))
   (strand-map 0 1)
   (traces
@@ -647,6 +664,7 @@
   (precedes ((0 0) (1 0)) ((0 2) (2 0)) ((1 1) (0 1)) ((2 1) (0 3)))
   (non-orig (invk p) (invk a) (invk d))
   (uniq-orig k n t)
+  (comment "Analyze from the person's perspective")
   (operation nonce-test (contracted (d-0 d) (p-0 p)) k (2 0)
     (enc (enc k (invk p)) d))
   (strand-map 0 1 2)
@@ -694,15 +712,15 @@
   (defrule trust
     (forall ((z w strd) (d akey))
       (implies
-        (and (p "appraise" z (idx 2)) (p "appraise" "d" z d)
-          (p "squealer" w (idx 2)) (p "squealer" "d" w d))
+        (and (p "squealer" w (idx 2)) (p "appraise" z (idx 2))
+          (p "squealer" "d" w d) (p "appraise" "d" z d))
         (false)))
     (comment "Passing attestation means not a squealer"))
   (defrule uncompromised-people-choose-uncompromised-appraisers
     (forall ((z strd) (a p akey))
       (implies
-        (and (p "person" z (idx 3)) (p "person" "p" z p)
-          (p "person" "a" z a) (non (invk p)))
+        (and (p "person" z (idx 3)) (p "person" "a" z a)
+          (p "person" "p" z p) (non (invk p)))
         (non (invk a)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -732,6 +750,7 @@
   (precedes ((1 2) (0 0)))
   (non-orig (invk p) (invk d) (invk a))
   (uniq-orig k t n)
+  (comment "Analyze from the door's perspective")
   (rule uncompromised-people-choose-uncompromised-appraisers)
   (operation encryption-test (added-strand person 3) (enc k (invk p))
     (0 0))
@@ -752,6 +771,7 @@
   (precedes ((1 0) (2 0)) ((1 2) (0 0)) ((2 1) (1 1)))
   (non-orig (invk p) (invk d) (invk d-0) (invk a))
   (uniq-orig k t n)
+  (comment "Analyze from the door's perspective")
   (rule yes)
   (operation nonce-test (added-strand appraise 2) n (1 1)
     (enc (enc d-0 n (invk p)) a))
@@ -773,6 +793,7 @@
   (precedes ((1 0) (2 0)) ((1 2) (0 0)) ((2 1) (1 1)))
   (non-orig (invk p) (invk d) (invk a))
   (uniq-orig k t n)
+  (comment "Analyze from the door's perspective")
   (operation encryption-test (contracted (d-0 d)) (enc k (invk p)) (0 0)
     (enc (enc k (invk p)) d))
   (strand-map 0 1 2)
@@ -794,6 +815,7 @@
     ((2 4) (0 2)))
   (non-orig (invk d) (invk p) (invk a))
   (uniq-orig k t n)
+  (comment "Analyze from the door's perspective")
   (operation nonce-test (displaced 1 3 person 5) t (0 2) (enc t k))
   (strand-map 0 2 1)
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
@@ -817,6 +839,7 @@
     ((3 1) (0 2)))
   (non-orig (invk p) (invk d) (invk a))
   (uniq-orig k t n)
+  (comment "Analyze from the door's perspective")
   (operation nonce-test (added-listener k) t (0 2) (enc t k))
   (strand-map 0 1 2)
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))

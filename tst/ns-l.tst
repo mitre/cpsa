@@ -1,7 +1,7 @@
 (herald "Needham-Schroeder-Low Public-Key Protocol"
   (comment "With deflistener's"))
 
-(comment "CPSA 4.4.5")
+(comment "CPSA 4.4.6")
 (comment "All input read from tst/ns-l.scm")
 
 (defprotocol ns basic
@@ -44,6 +44,7 @@
   (precedes ((0 0) (1 0)))
   (non-orig (privk a) (privk b))
   (uniq-orig n1)
+  (comment "Initiator point-of-view with a listener")
   (traces
     ((send (enc n1 a (pubk b))) (recv (enc b n1 n2 (pubk a)))
       (send (enc n2 (pubk b)))) ((recv n1) (send n1)))
@@ -61,6 +62,7 @@
   (precedes ((0 0) (2 0)) ((2 1) (1 0)))
   (non-orig (privk a) (privk b))
   (uniq-orig n1)
+  (comment "Initiator point-of-view with a listener")
   (operation nonce-test (added-strand resp 2) n1 (1 0)
     (enc n1 a (pubk b)))
   (strand-map 0 1)
@@ -81,6 +83,7 @@
   (precedes ((0 0) (2 0)) ((0 2) (1 0)) ((2 1) (1 0)))
   (non-orig (privk a) (privk b))
   (uniq-orig n2)
+  (comment "Initiator point-of-view with a listener")
   (operation nonce-test (displaced 3 0 init 3) n2-0 (1 0)
     (enc n2-0 a (pubk b)) (enc b n2-0 n2-0 (pubk a)))
   (strand-map 0 1 2)
@@ -103,6 +106,7 @@
     ((3 1) (1 0)))
   (non-orig (privk a) (privk b))
   (uniq-orig n2)
+  (comment "Initiator point-of-view with a listener")
   (operation nonce-test (added-strand resp 2) n2 (1 0) (enc n2 (pubk b))
     (enc n2 a (pubk b)) (enc b n2 n2 (pubk a)))
   (strand-map 0 1 2)
@@ -159,6 +163,7 @@
   (precedes ((0 1) (1 0)))
   (non-orig (privk a))
   (uniq-orig n2)
+  (comment "Responder point-of-view with a listener")
   (traces
     ((recv (enc n1 a (pubk b))) (send (enc b n1 n2 (pubk a)))
       (recv (enc n2 (pubk b)))) ((recv n2) (send n2)))
@@ -176,6 +181,7 @@
   (precedes ((0 1) (2 1)) ((2 2) (1 0)))
   (non-orig (privk a))
   (uniq-orig n2)
+  (comment "Responder point-of-view with a listener")
   (operation nonce-test (added-strand init 3) n2 (1 0)
     (enc b n1 n2 (pubk a)))
   (strand-map 0 1)
@@ -197,6 +203,7 @@
   (precedes ((0 1) (2 1)) ((2 2) (0 2)) ((2 2) (1 0)))
   (non-orig (privk a))
   (uniq-orig n2)
+  (comment "Responder point-of-view with a listener")
   (operation nonce-test (displaced 3 2 init 3) n2 (0 2)
     (enc b n1 n2 (pubk a)))
   (strand-map 0 1 2)
@@ -221,6 +228,7 @@
   (precedes ((0 1) (2 1)) ((0 1) (3 1)) ((2 2) (1 0)) ((3 2) (0 2)))
   (non-orig (privk a))
   (uniq-orig n2)
+  (comment "Responder point-of-view with a listener")
   (operation nonce-test (added-strand init 3) n2 (0 2)
     (enc b n1 n2 (pubk a)))
   (strand-map 0 1 2)

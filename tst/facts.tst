@@ -1,6 +1,6 @@
 (herald facts)
 
-(comment "CPSA 4.4.5")
+(comment "CPSA 4.4.6")
 (comment "All input read from tst/facts.scm")
 
 (defprotocol unilateral basic
@@ -116,7 +116,7 @@
   (defstrand init 2 (n n) (k k))
   (non-orig (invk k))
   (uniq-orig n)
-  (facts (foo 0 k) (bar 0 (invk k)))
+  (facts (bar 0 (invk k)) (foo 0 k))
   (goals
     (forall ((n text) (k akey) (z strd))
       (implies
@@ -139,7 +139,16 @@
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk k))
   (uniq-orig n)
-  (facts (foo 0 k) (bar 0 (invk k)))
+  (facts (bar 0 (invk k)) (foo 0 k))
+  (goals
+    (forall ((n text) (k akey) (z strd))
+      (implies
+        (and (p "init" z 2) (p "init" "n" z n) (p "init" "k" z k)
+          (non (invk k)) (uniq-at n z 0) (fact foo z k)
+          (fact bar z (invk k)))
+        (exists ((z-0 strd))
+          (and (p "resp" z-0 2) (p "resp" "n" z-0 n)
+            (p "resp" "k" z-0 k) (prec z 0 z-0 0) (prec z-0 1 z 1))))))
   (operation nonce-test (added-strand resp 2) n (0 1) (enc n k))
   (strand-map 0)
   (traces ((send (enc n k)) (recv n)) ((recv (enc n k)) (send n)))
@@ -196,6 +205,15 @@
   (non-orig (invk k))
   (pen-non-orig n)
   (uniq-orig n)
+  (goals
+    (forall ((n text) (k akey) (z strd))
+      (implies
+        (and (p "resp" z 2) (p "resp" "n" z n) (p "resp" "k" z k)
+          (non (invk k)) (pnon n))
+        (exists ((k-0 akey) (z-0 strd))
+          (and (p "init" z-0 1) (p "init" "n" z-0 n)
+            (p "init" "k" z-0 k-0) (prec z-0 0 z 0)
+            (uniq-at n z-0 0))))))
   (operation nonce-test (added-strand init 1) n (0 0))
   (strand-map 0)
   (traces ((recv (enc n k)) (send n)) ((send (enc n k-0))))
@@ -308,6 +326,10 @@
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (privk b))
   (uniq-orig na nb)
+  (goals
+    (forall ((b name) (z strd))
+      (implies (and (p "init" z 2) (p "init" "b" z b) (non (privk b)))
+        (exists ((y strd)) (and (p "resp" y 2) (p "resp" "b" y b))))))
   (operation encryption-test (added-strand resp 2)
     (enc na nb b t2 (privk b)) (0 1))
   (strand-map 0)
@@ -369,6 +391,10 @@
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (privk b))
   (uniq-orig na nb)
+  (goals
+    (forall ((b name) (z strd))
+      (implies (and (p "init" z 2) (p "init" "b" z b) (non (privk b)))
+        (false))))
   (operation encryption-test (added-strand resp 2)
     (enc na nb b t2 (privk b)) (0 1))
   (strand-map 0)

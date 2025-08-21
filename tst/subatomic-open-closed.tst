@@ -1,6 +1,6 @@
 (herald subatomic-open-closed (bound 40))
 
-(comment "CPSA 4.4.5")
+(comment "CPSA 4.4.6")
 (comment "All input read from tst/subatomic-open-closed.scm")
 (comment "Strand count bounded at 40")
 
@@ -48,18 +48,18 @@
   (defrule power-deliver-once
     (forall ((z1 z2 strd) (k skey))
       (implies
-        (and (p "dev-up" z1 (idx 2)) (p "dev-up" z2 (idx 2))
-          (p "dev-up" "k" z1 k) (p "dev-up" "k" z2 k))
+        (and (p "dev-up" z2 (idx 2)) (p "dev-up" z1 (idx 2))
+          (p "dev-up" "k" z2 k) (p "dev-up" "k" z1 k))
         (= z1 z2))))
   (defrule same-dev-ls-lk
     (forall ((ls lk lk-0 locn))
       (implies
-        (and (fact same-dev ls lk) (fact same-dev ls lk-0))
+        (and (fact same-dev ls lk-0) (fact same-dev ls lk))
         (= lk lk-0))))
   (defrule same-dev-lk-ls
     (forall ((lk ls ls-0 locn))
       (implies
-        (and (fact same-dev ls lk) (fact same-dev ls-0 lk))
+        (and (fact same-dev ls-0 lk) (fact same-dev ls lk))
         (= ls ls-0))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -87,9 +87,8 @@
   (defgenrule discreteAfter
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
+        (and (trans z0 i0) (trans z2 i2) (leads-to z0 i0 z1 i1)
+          (same-locn z0 i0 z2 i2) (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (defgenrule discreteBefore
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
@@ -301,18 +300,18 @@
   (defrule power-deliver-once
     (forall ((z1 z2 strd) (k skey))
       (implies
-        (and (p "dev-up" z1 (idx 2)) (p "dev-up" z2 (idx 2))
-          (p "dev-up" "k" z1 k) (p "dev-up" "k" z2 k))
+        (and (p "dev-up" z2 (idx 2)) (p "dev-up" z1 (idx 2))
+          (p "dev-up" "k" z2 k) (p "dev-up" "k" z1 k))
         (= z1 z2))))
   (defrule same-dev-ls-lk
     (forall ((ls lk lk-0 locn))
       (implies
-        (and (fact same-dev ls lk) (fact same-dev ls lk-0))
+        (and (fact same-dev ls lk-0) (fact same-dev ls lk))
         (= lk lk-0))))
   (defrule same-dev-lk-ls
     (forall ((lk ls ls-0 locn))
       (implies
-        (and (fact same-dev ls lk) (fact same-dev ls-0 lk))
+        (and (fact same-dev ls-0 lk) (fact same-dev ls lk))
         (= ls ls-0))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -340,9 +339,8 @@
   (defgenrule discreteAfter
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
+        (and (trans z0 i0) (trans z2 i2) (leads-to z0 i0 z1 i1)
+          (same-locn z0 i0 z2 i2) (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (defgenrule discreteBefore
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
@@ -538,7 +536,7 @@
 (defskeleton subatomic-open-closed
   (vars (old old1 any mesg) (k k-0 skey) (n n-0 text) (d o name)
     (pt pt-0 pt-1 pt-2 pt-3 pt-4 pt-5 pval) (start-ch chan)
-    (ls lk locn))
+    (lk ls locn))
   (defstrand dev-pass 4 (k k) (n n) (d d) (o o) (lk lk) (ls ls))
   (defstrand dev-up 5 (old old) (old1 old1) (k k) (d d) (o o)
     (start-ch start-ch) (lk lk) (ls ls))
@@ -657,18 +655,18 @@
   (defrule power-deliver-once
     (forall ((z1 z2 strd) (k skey))
       (implies
-        (and (p "dev-up" z1 (idx 2)) (p "dev-up" z2 (idx 2))
-          (p "dev-up" "k" z1 k) (p "dev-up" "k" z2 k))
+        (and (p "dev-up" z2 (idx 2)) (p "dev-up" z1 (idx 2))
+          (p "dev-up" "k" z2 k) (p "dev-up" "k" z1 k))
         (= z1 z2))))
   (defrule same-dev-ls-lk
     (forall ((ls lk lk-0 locn))
       (implies
-        (and (fact same-dev ls lk) (fact same-dev ls lk-0))
+        (and (fact same-dev ls lk-0) (fact same-dev ls lk))
         (= lk lk-0))))
   (defrule same-dev-lk-ls
     (forall ((lk ls ls-0 locn))
       (implies
-        (and (fact same-dev ls lk) (fact same-dev ls-0 lk))
+        (and (fact same-dev ls-0 lk) (fact same-dev ls lk))
         (= ls ls-0))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -696,9 +694,8 @@
   (defgenrule discreteAfter
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
+        (and (trans z0 i0) (trans z2 i2) (leads-to z0 i0 z1 i1)
+          (same-locn z0 i0 z2 i2) (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (defgenrule discreteBefore
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
@@ -927,7 +924,7 @@
 (defskeleton subatomic-open-closed
   (vars (old old1 any mesg) (k k-0 skey) (n n-0 text) (d o name)
     (pt pt-0 pt-1 pt-2 pt-3 pt-4 pt-5 pval) (start-ch chan)
-    (ls lk locn))
+    (lk ls locn))
   (defstrand owner-power-dev 2 (k k) (d d) (o o) (start-ch start-ch))
   (defstrand dev-pass 4 (k k) (n n) (d d) (o o) (lk lk) (ls ls))
   (defstrand dev-up 5 (old old) (old1 old1) (k k) (d d) (o o)

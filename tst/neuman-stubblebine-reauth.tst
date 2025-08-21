@@ -1,6 +1,6 @@
 (herald neuman-stubblebine-reauth (bound 8))
 
-(comment "CPSA 4.4.5")
+(comment "CPSA 4.4.6")
 (comment "All input read from tst/neuman-stubblebine-reauth.lsp")
 (comment "Strand count bounded at 8")
 

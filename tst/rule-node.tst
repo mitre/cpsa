@@ -1,6 +1,6 @@
 (herald rule-node)
 
-(comment "CPSA 4.4.5")
+(comment "CPSA 4.4.6")
 (comment "All input read from tst/rule-node.scm")
 
 (defprotocol rule-order basic
@@ -11,7 +11,7 @@
     (forall ((z1 z2 strd) (i1 i2 indx))
       (implies
         (fact le z1 i1 z2 i2)
-        (or (and (= z1 z2) (= i1 i2)) (fact lt z1 i1 z2 i2)))))
+        (or (and (= i1 i2) (= z1 z2)) (fact lt z1 i1 z2 i2)))))
   (defrule lt-le
     (forall ((z1 z2 strd) (i1 i2 indx))
       (implies (fact lt z1 i1 z2 i2) (fact le z1 i1 z2 i2))))
@@ -68,7 +68,7 @@
     (forall ((z1 z2 strd) (i1 i2 indx))
       (implies
         (fact le z1 i1 z2 i2)
-        (or (and (= z1 z2) (= i1 i2)) (fact lt z1 i1 z2 i2)))))
+        (or (and (= i1 i2) (= z1 z2)) (fact lt z1 i1 z2 i2)))))
   (defrule lt-le
     (forall ((z1 z2 strd) (i1 i2 indx))
       (implies (fact lt z1 i1 z2 i2) (fact le z1 i1 z2 i2))))

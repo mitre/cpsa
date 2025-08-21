@@ -1,6 +1,6 @@
 (herald open-closed (bound 44))
 
-(comment "CPSA 4.4.5")
+(comment "CPSA 4.4.6")
 (comment "All input read from tst/open-closed-tag.scm")
 (comment "Strand count bounded at 44")
 
@@ -43,21 +43,21 @@
   (defrule gen-state-close
     (forall ((z strd) (d o name) (k skey))
       (implies
-        (and (p "dev-close" z (idx 1)) (p "dev-close" "d" z d)
-          (p "dev-close" "o" z o) (p "dev-close" "k" z k)
-          (p "dev-close" "any" z "opened"))
+        (and (p "dev-close" z (idx 1)) (p "dev-close" "any" z "opened")
+          (p "dev-close" "k" z k) (p "dev-close" "o" z o)
+          (p "dev-close" "d" z d))
         (gen-st (cat "st" d "opened")))))
   (defrule gen-state-pass
     (forall ((z strd) (d o name) (k skey))
       (implies
-        (and (p "dev-pass" z (idx 1)) (p "dev-pass" "d" z d)
-          (p "dev-pass" "o" z o) (p "dev-pass" "k" z k))
+        (and (p "dev-pass" z (idx 1)) (p "dev-pass" "k" z k)
+          (p "dev-pass" "o" z o) (p "dev-pass" "d" z d))
         (gen-st (cat "st" d "opened")))))
   (defrule power-deliver-once
     (forall ((z1 z2 strd) (k skey))
       (implies
-        (and (p "dev-up" z1 (idx 2)) (p "dev-up" z2 (idx 2))
-          (p "dev-up" "k" z1 k) (p "dev-up" "k" z2 k))
+        (and (p "dev-up" z2 (idx 2)) (p "dev-up" z1 (idx 2))
+          (p "dev-up" "k" z2 k) (p "dev-up" "k" z1 k))
         (= z1 z2))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -85,9 +85,8 @@
   (defgenrule discreteAfter
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
+        (and (trans z0 i0) (trans z2 i2) (leads-to z0 i0 z1 i1)
+          (same-locn z0 i0 z2 i2) (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (defgenrule discreteBefore
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
@@ -235,21 +234,21 @@
   (defrule gen-state-close
     (forall ((z strd) (d o name) (k skey))
       (implies
-        (and (p "dev-close" z (idx 1)) (p "dev-close" "d" z d)
-          (p "dev-close" "o" z o) (p "dev-close" "k" z k)
-          (p "dev-close" "any" z "opened"))
+        (and (p "dev-close" z (idx 1)) (p "dev-close" "any" z "opened")
+          (p "dev-close" "k" z k) (p "dev-close" "o" z o)
+          (p "dev-close" "d" z d))
         (gen-st (cat "st" d "opened")))))
   (defrule gen-state-pass
     (forall ((z strd) (d o name) (k skey))
       (implies
-        (and (p "dev-pass" z (idx 1)) (p "dev-pass" "d" z d)
-          (p "dev-pass" "o" z o) (p "dev-pass" "k" z k))
+        (and (p "dev-pass" z (idx 1)) (p "dev-pass" "k" z k)
+          (p "dev-pass" "o" z o) (p "dev-pass" "d" z d))
         (gen-st (cat "st" d "opened")))))
   (defrule power-deliver-once
     (forall ((z1 z2 strd) (k skey))
       (implies
-        (and (p "dev-up" z1 (idx 2)) (p "dev-up" z2 (idx 2))
-          (p "dev-up" "k" z1 k) (p "dev-up" "k" z2 k))
+        (and (p "dev-up" z2 (idx 2)) (p "dev-up" z1 (idx 2))
+          (p "dev-up" "k" z2 k) (p "dev-up" "k" z1 k))
         (= z1 z2))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -277,9 +276,8 @@
   (defgenrule discreteAfter
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
+        (and (trans z0 i0) (trans z2 i2) (leads-to z0 i0 z1 i1)
+          (same-locn z0 i0 z2 i2) (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (defgenrule discreteBefore
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
@@ -430,21 +428,21 @@
   (defrule gen-state-close
     (forall ((z strd) (d o name) (k skey))
       (implies
-        (and (p "dev-close" z (idx 1)) (p "dev-close" "d" z d)
-          (p "dev-close" "o" z o) (p "dev-close" "k" z k)
-          (p "dev-close" "any" z "opened"))
+        (and (p "dev-close" z (idx 1)) (p "dev-close" "any" z "opened")
+          (p "dev-close" "k" z k) (p "dev-close" "o" z o)
+          (p "dev-close" "d" z d))
         (gen-st (cat "st" d "opened")))))
   (defrule gen-state-pass
     (forall ((z strd) (d o name) (k skey))
       (implies
-        (and (p "dev-pass" z (idx 1)) (p "dev-pass" "d" z d)
-          (p "dev-pass" "o" z o) (p "dev-pass" "k" z k))
+        (and (p "dev-pass" z (idx 1)) (p "dev-pass" "k" z k)
+          (p "dev-pass" "o" z o) (p "dev-pass" "d" z d))
         (gen-st (cat "st" d "opened")))))
   (defrule power-deliver-once
     (forall ((z1 z2 strd) (k skey))
       (implies
-        (and (p "dev-up" z1 (idx 2)) (p "dev-up" z2 (idx 2))
-          (p "dev-up" "k" z1 k) (p "dev-up" "k" z2 k))
+        (and (p "dev-up" z2 (idx 2)) (p "dev-up" z1 (idx 2))
+          (p "dev-up" "k" z2 k) (p "dev-up" "k" z1 k))
         (= z1 z2))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -472,9 +470,8 @@
   (defgenrule discreteAfter
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
+        (and (trans z0 i0) (trans z2 i2) (leads-to z0 i0 z1 i1)
+          (same-locn z0 i0 z2 i2) (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (defgenrule discreteBefore
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
@@ -733,28 +730,28 @@
     (start-ch chan) (ls lk locn))
   (defstrand owner-power-dev 2 (k k) (d d) (o o) (start-ch start-ch))
   (defstrand dev-pass 4 (k k) (n n) (d d) (o o) (lk lk) (ls ls))
-  (deflistener k)
   (defstrand dev-up 3 (old old) (k k) (d d) (o o) (start-ch start-ch)
     (lk lk))
-  (precedes ((0 0) (3 0)) ((2 1) (1 1)) ((3 2) (1 0)) ((3 2) (2 0)))
+  (deflistener k)
+  (precedes ((0 0) (2 0)) ((2 2) (1 0)) ((2 2) (3 0)) ((3 1) (1 1)))
   (uniq-orig k n)
   (gen-st (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
-  (leads-to ((3 2) (1 0)))
+  (leads-to ((2 2) (1 0)))
   (rule power-deliver-once trRl_dev-up-at-1 trRl_dev-up-at-2)
   (operation nonce-test (added-strand dev-up 3) k (3 0)
     (ch-msg start-ch (cat "power-up" d o k)))
-  (strand-map 0 1 3 2)
+  (strand-map 0 1 2 3)
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
     ((load lk (cat pt-1 "st-k" d o k)) (recv (enc "may I pass" k))
       (load ls (cat pt "st" d "opened"))
-      (send (enc "you may pass" n k))) ((recv k) (send k))
+      (send (enc "you may pass" n k)))
     ((recv start-ch (cat "power-up" d o k)) (load lk (cat pt-0 old))
-      (stor lk (cat pt-1 "st-k" d o k))))
+      (stor lk (cat pt-1 "st-k" d o k))) ((recv k) (send k)))
   (label 14)
   (parent 12)
-  (unrealized (0 1) (1 2) (2 0))
+  (unrealized (0 1) (1 2) (3 0))
   (dead)
   (comment "empty cohort"))
 
@@ -835,39 +832,39 @@
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton open-closed
-  (vars (any old mesg) (k k-0 skey) (n n-0 text) (d o o-0 name)
+  (vars (old any mesg) (k k-0 skey) (n n-0 text) (d o o-0 name)
     (pt pt-0 pt-1 pt-2 pt-3 pval) (start-ch chan) (ls lk lk-0 locn))
   (defstrand owner-power-dev 2 (k k) (d d) (o o) (start-ch start-ch))
-  (defstrand dev-pass 4 (k k) (n n) (d d) (o o) (lk lk-0) (ls ls))
-  (defstrand user-pass 1 (k k))
-  (defstrand dev-open 4 (any any) (k k-0) (n n-0) (d d) (o o-0) (lk lk)
-    (ls ls))
-  (deflistener k)
+  (defstrand dev-pass 4 (k k) (n n) (d d) (o o) (lk lk) (ls ls))
   (defstrand dev-up 3 (old old) (k k) (d d) (o o) (start-ch start-ch)
-    (lk lk-0))
-  (precedes ((0 0) (5 0)) ((2 0) (1 1)) ((3 3) (1 2)) ((4 1) (0 1))
-    ((5 2) (1 0)) ((5 2) (4 0)))
+    (lk lk))
+  (defstrand user-pass 1 (k k))
+  (defstrand dev-open 4 (any any) (k k-0) (n n-0) (d d) (o o-0)
+    (lk lk-0) (ls ls))
+  (deflistener k)
+  (precedes ((0 0) (2 0)) ((2 2) (1 0)) ((2 2) (5 0)) ((3 0) (1 1))
+    ((4 3) (1 2)) ((5 1) (0 1)))
   (uniq-orig k n)
   (gen-st (cat "st" d "opened"))
   (conf start-ch)
   (auth start-ch)
-  (leads-to ((3 3) (1 2)) ((5 2) (1 0)))
+  (leads-to ((2 2) (1 0)) ((4 3) (1 2)))
   (rule power-deliver-once trRl_dev-up-at-1 trRl_dev-up-at-2)
   (operation nonce-test (added-strand dev-up 3) k (5 0)
     (ch-msg start-ch (cat "power-up" d o k)))
-  (strand-map 0 1 3 4 5 2)
+  (strand-map 0 1 2 3 4 5)
   (traces ((send start-ch (cat "power-up" d o k)) (recv (enc "up" k)))
-    ((load lk-0 (cat pt-3 "st-k" d o k)) (recv (enc "may I pass" k))
+    ((load lk (cat pt-1 "st-k" d o k)) (recv (enc "may I pass" k))
       (load ls (cat pt "st" d "opened"))
-      (send (enc "you may pass" n k))) ((send (enc "may I pass" k)))
-    ((load lk (cat pt-0 "st-k" d o-0 k-0))
-      (recv (enc "open" d o-0 n-0 k-0)) (load ls (cat pt-1 "st" d any))
-      (stor ls (cat pt "st" d "opened"))) ((recv k) (send k))
-    ((recv start-ch (cat "power-up" d o k)) (load lk-0 (cat pt-2 old))
-      (stor lk-0 (cat pt-3 "st-k" d o k))))
+      (send (enc "you may pass" n k)))
+    ((recv start-ch (cat "power-up" d o k)) (load lk (cat pt-0 old))
+      (stor lk (cat pt-1 "st-k" d o k))) ((send (enc "may I pass" k)))
+    ((load lk-0 (cat pt-2 "st-k" d o-0 k-0))
+      (recv (enc "open" d o-0 n-0 k-0)) (load ls (cat pt-3 "st" d any))
+      (stor ls (cat pt "st" d "opened"))) ((recv k) (send k)))
   (label 17)
   (parent 16)
-  (unrealized (4 0))
+  (unrealized (5 0))
   (dead)
   (comment "empty cohort"))
 
@@ -912,21 +909,21 @@
   (defrule gen-state-close
     (forall ((z strd) (d o name) (k skey))
       (implies
-        (and (p "dev-close" z (idx 1)) (p "dev-close" "d" z d)
-          (p "dev-close" "o" z o) (p "dev-close" "k" z k)
-          (p "dev-close" "any" z "opened"))
+        (and (p "dev-close" z (idx 1)) (p "dev-close" "any" z "opened")
+          (p "dev-close" "k" z k) (p "dev-close" "o" z o)
+          (p "dev-close" "d" z d))
         (gen-st (cat "st" d "opened")))))
   (defrule gen-state-pass
     (forall ((z strd) (d o name) (k skey))
       (implies
-        (and (p "dev-pass" z (idx 1)) (p "dev-pass" "d" z d)
-          (p "dev-pass" "o" z o) (p "dev-pass" "k" z k))
+        (and (p "dev-pass" z (idx 1)) (p "dev-pass" "k" z k)
+          (p "dev-pass" "o" z o) (p "dev-pass" "d" z d))
         (gen-st (cat "st" d "opened")))))
   (defrule power-deliver-once
     (forall ((z1 z2 strd) (k skey))
       (implies
-        (and (p "dev-up" z1 (idx 2)) (p "dev-up" z2 (idx 2))
-          (p "dev-up" "k" z1 k) (p "dev-up" "k" z2 k))
+        (and (p "dev-up" z2 (idx 2)) (p "dev-up" z1 (idx 2))
+          (p "dev-up" "k" z2 k) (p "dev-up" "k" z1 k))
         (= z1 z2))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -954,9 +951,8 @@
   (defgenrule discreteAfter
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))
       (implies
-        (and (trans z0 i0) (trans z1 i1) (trans z2 i2)
-          (leads-to z0 i0 z1 i1) (same-locn z0 i0 z2 i2)
-          (prec z0 i0 z2 i2))
+        (and (trans z0 i0) (trans z2 i2) (leads-to z0 i0 z1 i1)
+          (same-locn z0 i0 z2 i2) (prec z0 i0 z2 i2))
         (or (and (= z1 z2) (= i1 i2)) (prec z1 i1 z2 i2)))))
   (defgenrule discreteBefore
     (forall ((z0 z1 z2 strd) (i0 i1 i2 indx))

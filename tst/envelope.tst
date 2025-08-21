@@ -1,6 +1,6 @@
 (herald "Envelope Protocol" (bound 15))
 
-(comment "CPSA 4.4.5")
+(comment "CPSA 4.4.6")
 (comment "All input read from tst/envelope.scm")
 (comment "Strand count bounded at 15")
 
@@ -2461,9 +2461,9 @@
   (defrule ordered-extends
     (forall ((y z strd) (pcrkey skey))
       (implies
-        (and (p "tpm-extend" y (idx 3)) (p "tpm-extend" z (idx 3))
-          (p "tpm-extend" "pcrkey" y pcrkey)
-          (p "tpm-extend" "pcrkey" z pcrkey))
+        (and (p "tpm-extend" z (idx 3)) (p "tpm-extend" y (idx 3))
+          (p "tpm-extend" "pcrkey" z pcrkey)
+          (p "tpm-extend" "pcrkey" y pcrkey))
         (or
           (= y z)
           (prec y (idx 2) z (idx 3))
@@ -2970,9 +2970,9 @@
   (defrule ordered-extends
     (forall ((y z strd) (pcrkey skey))
       (implies
-        (and (p "tpm-extend" y (idx 3)) (p "tpm-extend" z (idx 3))
-          (p "tpm-extend" "pcrkey" y pcrkey)
-          (p "tpm-extend" "pcrkey" z pcrkey))
+        (and (p "tpm-extend" z (idx 3)) (p "tpm-extend" y (idx 3))
+          (p "tpm-extend" "pcrkey" z pcrkey)
+          (p "tpm-extend" "pcrkey" y pcrkey))
         (or
           (= y z)
           (prec y (idx 2) z (idx 3))
@@ -3486,9 +3486,9 @@
   (defrule ordered-extends
     (forall ((y z strd) (pcrkey skey))
       (implies
-        (and (p "tpm-extend" y (idx 3)) (p "tpm-extend" z (idx 3))
-          (p "tpm-extend" "pcrkey" y pcrkey)
-          (p "tpm-extend" "pcrkey" z pcrkey))
+        (and (p "tpm-extend" z (idx 3)) (p "tpm-extend" y (idx 3))
+          (p "tpm-extend" "pcrkey" z pcrkey)
+          (p "tpm-extend" "pcrkey" y pcrkey))
         (or
           (= y z)
           (prec y (idx 2) z (idx 3))
@@ -4590,9 +4590,9 @@
   (defrule ordered-extends
     (forall ((y z strd) (pcrkey skey))
       (implies
-        (and (p "tpm-extend" y (idx 3)) (p "tpm-extend" z (idx 3))
-          (p "tpm-extend" "pcrkey" y pcrkey)
-          (p "tpm-extend" "pcrkey" z pcrkey))
+        (and (p "tpm-extend" z (idx 3)) (p "tpm-extend" y (idx 3))
+          (p "tpm-extend" "pcrkey" z pcrkey)
+          (p "tpm-extend" "pcrkey" y pcrkey))
         (or
           (= y z)
           (prec y (idx 2) z (idx 3))
@@ -4600,12 +4600,12 @@
   (defrule esk-same-as-pcrkey
     (forall ((y z strd) (esk pcrkey pcrkey-0 skey))
       (implies
-        (and (p "tpm-extend-enc" y (idx 3))
-          (p "tpm-extend-enc" z (idx 3))
-          (p "tpm-extend-enc" "esk" y esk)
-          (p "tpm-extend-enc" "esk" z esk)
+        (and (p "tpm-extend-enc" z (idx 3))
+          (p "tpm-extend-enc" y (idx 3))
+          (p "tpm-extend-enc" "pcrkey" z pcrkey-0)
           (p "tpm-extend-enc" "pcrkey" y pcrkey)
-          (p "tpm-extend-enc" "pcrkey" z pcrkey-0))
+          (p "tpm-extend-enc" "esk" z esk)
+          (p "tpm-extend-enc" "esk" y esk))
         (= pcrkey pcrkey-0))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -5109,9 +5109,9 @@
   (defrule ordered-extends
     (forall ((y z strd) (pcrkey skey))
       (implies
-        (and (p "tpm-extend" y (idx 3)) (p "tpm-extend" z (idx 3))
-          (p "tpm-extend" "pcrkey" y pcrkey)
-          (p "tpm-extend" "pcrkey" z pcrkey))
+        (and (p "tpm-extend" z (idx 3)) (p "tpm-extend" y (idx 3))
+          (p "tpm-extend" "pcrkey" z pcrkey)
+          (p "tpm-extend" "pcrkey" y pcrkey))
         (or
           (= y z)
           (prec y (idx 2) z (idx 3))
@@ -5119,12 +5119,12 @@
   (defrule esk-same-as-pcrkey
     (forall ((y z strd) (esk pcrkey pcrkey-0 skey))
       (implies
-        (and (p "tpm-extend-enc" y (idx 3))
-          (p "tpm-extend-enc" z (idx 3))
-          (p "tpm-extend-enc" "esk" y esk)
-          (p "tpm-extend-enc" "esk" z esk)
+        (and (p "tpm-extend-enc" z (idx 3))
+          (p "tpm-extend-enc" y (idx 3))
+          (p "tpm-extend-enc" "pcrkey" z pcrkey-0)
           (p "tpm-extend-enc" "pcrkey" y pcrkey)
-          (p "tpm-extend-enc" "pcrkey" z pcrkey-0))
+          (p "tpm-extend-enc" "esk" z esk)
+          (p "tpm-extend-enc" "esk" y esk))
         (= pcrkey pcrkey-0))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -5635,9 +5635,9 @@
   (defrule ordered-extends
     (forall ((y z strd) (pcrkey skey))
       (implies
-        (and (p "tpm-extend" y (idx 3)) (p "tpm-extend" z (idx 3))
-          (p "tpm-extend" "pcrkey" y pcrkey)
-          (p "tpm-extend" "pcrkey" z pcrkey))
+        (and (p "tpm-extend" z (idx 3)) (p "tpm-extend" y (idx 3))
+          (p "tpm-extend" "pcrkey" z pcrkey)
+          (p "tpm-extend" "pcrkey" y pcrkey))
         (or
           (= y z)
           (prec y (idx 2) z (idx 3))
@@ -5645,12 +5645,12 @@
   (defrule esk-same-as-pcrkey
     (forall ((y z strd) (esk pcrkey pcrkey-0 skey))
       (implies
-        (and (p "tpm-extend-enc" y (idx 3))
-          (p "tpm-extend-enc" z (idx 3))
-          (p "tpm-extend-enc" "esk" y esk)
-          (p "tpm-extend-enc" "esk" z esk)
+        (and (p "tpm-extend-enc" z (idx 3))
+          (p "tpm-extend-enc" y (idx 3))
+          (p "tpm-extend-enc" "pcrkey" z pcrkey-0)
           (p "tpm-extend-enc" "pcrkey" y pcrkey)
-          (p "tpm-extend-enc" "pcrkey" z pcrkey-0))
+          (p "tpm-extend-enc" "esk" z esk)
+          (p "tpm-extend-enc" "esk" y esk))
         (= pcrkey pcrkey-0))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))

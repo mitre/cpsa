@@ -1,6 +1,6 @@
 (herald "Envelope Protocol With Channels" (bound 15))
 
-(comment "CPSA 4.4.5")
+(comment "CPSA 4.4.6")
 (comment "All input read from tst/chan-envelope.scm")
 (comment "Strand count bounded at 15")
 
@@ -1916,8 +1916,8 @@
   (defrule ordered-extends
     (forall ((y z strd) (c chan))
       (implies
-        (and (p "tpm-extend" y (idx 3)) (p "tpm-extend" z (idx 3))
-          (p "tpm-extend" "c" y c) (p "tpm-extend" "c" z c))
+        (and (p "tpm-extend" z (idx 3)) (p "tpm-extend" y (idx 3))
+          (p "tpm-extend" "c" z c) (p "tpm-extend" "c" y c))
         (or
           (= y z)
           (prec y (idx 2) z (idx 3))
@@ -2319,8 +2319,8 @@
   (defrule ordered-extends
     (forall ((y z strd) (c chan))
       (implies
-        (and (p "tpm-extend" y (idx 3)) (p "tpm-extend" z (idx 3))
-          (p "tpm-extend" "c" y c) (p "tpm-extend" "c" z c))
+        (and (p "tpm-extend" z (idx 3)) (p "tpm-extend" y (idx 3))
+          (p "tpm-extend" "c" z c) (p "tpm-extend" "c" y c))
         (or
           (= y z)
           (prec y (idx 2) z (idx 3))
@@ -2712,8 +2712,8 @@
   (defrule ordered-extends
     (forall ((y z strd) (c chan))
       (implies
-        (and (p "tpm-extend" y (idx 3)) (p "tpm-extend" z (idx 3))
-          (p "tpm-extend" "c" y c) (p "tpm-extend" "c" z c))
+        (and (p "tpm-extend" z (idx 3)) (p "tpm-extend" y (idx 3))
+          (p "tpm-extend" "c" z c) (p "tpm-extend" "c" y c))
         (or
           (= y z)
           (prec y (idx 2) z (idx 3))
@@ -3505,8 +3505,8 @@
   (defrule ordered-extends
     (forall ((y z strd) (c chan))
       (implies
-        (and (p "tpm-extend" y (idx 3)) (p "tpm-extend" z (idx 3))
-          (p "tpm-extend" "c" y c) (p "tpm-extend" "c" z c))
+        (and (p "tpm-extend" z (idx 3)) (p "tpm-extend" y (idx 3))
+          (p "tpm-extend" "c" z c) (p "tpm-extend" "c" y c))
         (or
           (= y z)
           (prec y (idx 2) z (idx 3))
@@ -3514,11 +3514,10 @@
   (defrule esk-same-as-chan
     (forall ((y z strd) (esk skey) (c c-0 chan))
       (implies
-        (and (p "tpm-extend-enc" y (idx 3))
-          (p "tpm-extend-enc" z (idx 3))
-          (p "tpm-extend-enc" "esk" y esk)
-          (p "tpm-extend-enc" "esk" z esk) (p "tpm-extend-enc" "c" y c)
-          (p "tpm-extend-enc" "c" z c-0))
+        (and (p "tpm-extend-enc" z (idx 3))
+          (p "tpm-extend-enc" y (idx 3)) (p "tpm-extend-enc" "c" z c-0)
+          (p "tpm-extend-enc" "c" y c) (p "tpm-extend-enc" "esk" z esk)
+          (p "tpm-extend-enc" "esk" y esk))
         (= c c-0))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -3917,8 +3916,8 @@
   (defrule ordered-extends
     (forall ((y z strd) (c chan))
       (implies
-        (and (p "tpm-extend" y (idx 3)) (p "tpm-extend" z (idx 3))
-          (p "tpm-extend" "c" y c) (p "tpm-extend" "c" z c))
+        (and (p "tpm-extend" z (idx 3)) (p "tpm-extend" y (idx 3))
+          (p "tpm-extend" "c" z c) (p "tpm-extend" "c" y c))
         (or
           (= y z)
           (prec y (idx 2) z (idx 3))
@@ -3926,11 +3925,10 @@
   (defrule esk-same-as-chan
     (forall ((y z strd) (esk skey) (c c-0 chan))
       (implies
-        (and (p "tpm-extend-enc" y (idx 3))
-          (p "tpm-extend-enc" z (idx 3))
-          (p "tpm-extend-enc" "esk" y esk)
-          (p "tpm-extend-enc" "esk" z esk) (p "tpm-extend-enc" "c" y c)
-          (p "tpm-extend-enc" "c" z c-0))
+        (and (p "tpm-extend-enc" z (idx 3))
+          (p "tpm-extend-enc" y (idx 3)) (p "tpm-extend-enc" "c" z c-0)
+          (p "tpm-extend-enc" "c" y c) (p "tpm-extend-enc" "esk" z esk)
+          (p "tpm-extend-enc" "esk" y esk))
         (= c c-0))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -4319,8 +4317,8 @@
   (defrule ordered-extends
     (forall ((y z strd) (c chan))
       (implies
-        (and (p "tpm-extend" y (idx 3)) (p "tpm-extend" z (idx 3))
-          (p "tpm-extend" "c" y c) (p "tpm-extend" "c" z c))
+        (and (p "tpm-extend" z (idx 3)) (p "tpm-extend" y (idx 3))
+          (p "tpm-extend" "c" z c) (p "tpm-extend" "c" y c))
         (or
           (= y z)
           (prec y (idx 2) z (idx 3))
@@ -4328,11 +4326,10 @@
   (defrule esk-same-as-chan
     (forall ((y z strd) (esk skey) (c c-0 chan))
       (implies
-        (and (p "tpm-extend-enc" y (idx 3))
-          (p "tpm-extend-enc" z (idx 3))
-          (p "tpm-extend-enc" "esk" y esk)
-          (p "tpm-extend-enc" "esk" z esk) (p "tpm-extend-enc" "c" y c)
-          (p "tpm-extend-enc" "c" z c-0))
+        (and (p "tpm-extend-enc" z (idx 3))
+          (p "tpm-extend-enc" y (idx 3)) (p "tpm-extend-enc" "c" z c-0)
+          (p "tpm-extend-enc" "c" y c) (p "tpm-extend-enc" "esk" z esk)
+          (p "tpm-extend-enc" "esk" y esk))
         (= c c-0))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))

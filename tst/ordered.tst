@@ -1,6 +1,6 @@
 (herald ordered)
 
-(comment "CPSA 4.4.5")
+(comment "CPSA 4.4.6")
 (comment "All input read from tst/ordered.scm")
 
 (defprotocol ordered basic
@@ -10,7 +10,7 @@
   (defrule order
     (forall ((y z strd))
       (implies
-        (and (p "dec" y (idx 2)) (p "dec" z (idx 2)))
+        (and (p "dec" z (idx 2)) (p "dec" y (idx 2)))
         (or
           (prec y (idx 1) z (idx 0))
           (prec z (idx 1) y (idx 0))
@@ -37,7 +37,7 @@
   (vars (a b text) (k k-0 akey))
   (defstrand dec 2 (t a) (k k))
   (defstrand dec 2 (t b) (k k-0))
-  (precedes ((1 1) (0 0)))
+  (precedes ((0 1) (1 0)))
   (facts (neq a b))
   (rule order)
   (traces ((recv (enc a k)) (send a)) ((recv (enc b k-0)) (send b)))
@@ -52,7 +52,7 @@
   (vars (a b text) (k k-0 akey))
   (defstrand dec 2 (t a) (k k))
   (defstrand dec 2 (t b) (k k-0))
-  (precedes ((0 1) (1 0)))
+  (precedes ((1 1) (0 0)))
   (facts (neq a b))
   (rule order)
   (traces ((recv (enc a k)) (send a)) ((recv (enc b k-0)) (send b)))
@@ -72,7 +72,7 @@
   (defrule order
     (forall ((y z strd))
       (implies
-        (and (p "dec" y (idx 2)) (p "dec" z (idx 2)))
+        (and (p "dec" z (idx 2)) (p "dec" y (idx 2)))
         (or
           (prec y (idx 1) z (idx 0))
           (prec z (idx 1) y (idx 0))

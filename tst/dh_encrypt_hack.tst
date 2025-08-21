@@ -1,6 +1,6 @@
 (herald dhencrypt (algebra basic))
 
-(comment "CPSA 4.4.5")
+(comment "CPSA 4.4.6")
 (comment "All input read from tst/dh_encrypt_hack.scm")
 
 (defprotocol dhencrypt basic
@@ -50,6 +50,7 @@
   (precedes ((1 1) (0 1)))
   (non-orig dhkey (invk gx) (invk h))
   (uniq-orig n h)
+  (comment "Initiator full point of view")
   (operation encryption-test (added-strand resp 2)
     (enc n (enc "dh" gx h dhkey)) (0 1))
   (strand-map 0)
@@ -70,6 +71,7 @@
   (deflistener (enc "dh" gx h dhkey))
   (precedes ((1 1) (0 1)))
   (non-orig dhkey (invk gx))
+  (comment "Initiator full point of view")
   (operation encryption-test (added-listener (enc "dh" gx h dhkey))
     (enc n (enc "dh" gx h dhkey)) (0 1))
   (strand-map 0)
@@ -89,6 +91,7 @@
   (defstrand CDHcalc1 2 (dhkey dhkey) (gx gx) (gy h))
   (precedes ((1 1) (0 1)) ((2 1) (1 0)))
   (non-orig dhkey (invk gx))
+  (comment "Initiator full point of view")
   (operation encryption-test (added-strand CDHcalc1 2)
     (enc "dh" gx h dhkey) (1 0))
   (strand-map 0 1)
@@ -108,6 +111,7 @@
   (defstrand CDHcalc1 2 (dhkey dhkey) (gx gx) (gy h))
   (precedes ((1 1) (0 1)))
   (non-orig dhkey (invk gx))
+  (comment "Initiator full point of view")
   (operation generalization deleted (1 0))
   (strand-map 0 2)
   (traces
@@ -171,6 +175,7 @@
   (precedes ((0 1) (1 1)) ((1 2) (0 2)))
   (non-orig dhkey (invk gy) (invk h))
   (uniq-orig n gy)
+  (comment "Responder full point of view")
   (operation encryption-test (added-strand init 3)
     (enc "check" n (enc "dh" h gy dhkey)) (0 2))
   (strand-map 0)
@@ -193,6 +198,7 @@
   (precedes ((0 1) (1 0)) ((1 1) (0 2)))
   (non-orig dhkey (invk gy))
   (uniq-orig n gy)
+  (comment "Responder full point of view")
   (operation encryption-test (added-listener (enc "dh" h gy dhkey))
     (enc "check" n (enc "dh" h gy dhkey)) (0 2))
   (strand-map 0)
@@ -213,6 +219,7 @@
   (precedes ((0 1) (2 0)) ((1 1) (0 2)) ((2 1) (1 0)))
   (non-orig dhkey (invk gy))
   (uniq-orig n gy)
+  (comment "Responder full point of view")
   (operation encryption-test (added-strand CDHcalc2 2)
     (enc "dh" h gy dhkey) (1 0))
   (strand-map 0 1)
@@ -233,6 +240,7 @@
   (precedes ((0 1) (1 0)) ((1 1) (0 2)))
   (non-orig dhkey (invk gy))
   (uniq-orig n gy)
+  (comment "Responder full point of view")
   (operation generalization deleted (1 0))
   (strand-map 0 2)
   (traces
@@ -299,6 +307,8 @@
   (precedes ((1 1) (0 1)))
   (non-orig dhkey dhkey-0 (invk gx) (invk gy))
   (uniq-orig n gy)
+  (comment
+    "Point of view where the natural result should be the only shape")
   (traces ((send gx) (recv (cat gy (enc n (enc "dh" gx gy dhkey)))))
     ((recv gx) (send (cat gy (enc n (enc "dh" gx gy dhkey-0))))
       (recv (enc "check" n (enc "dh" gx gy dhkey-0)))))
@@ -315,6 +325,8 @@
   (precedes ((0 1) (1 1)) ((1 2) (0 2)))
   (non-orig dhkey (invk gx) (invk gy))
   (uniq-orig n gy)
+  (comment
+    "Point of view where the natural result should be the only shape")
   (operation encryption-test (displaced 0 2 init 3)
     (enc "check" n (enc "dh" gx gy dhkey)) (1 2))
   (strand-map 1 0)
@@ -338,6 +350,8 @@
   (precedes ((1 1) (0 1)) ((1 1) (2 1)) ((2 2) (1 2)))
   (non-orig dhkey dhkey-0 (invk gx) (invk gy))
   (uniq-orig n gy)
+  (comment
+    "Point of view where the natural result should be the only shape")
   (operation encryption-test (added-strand init 3)
     (enc "check" n (enc "dh" gx gy dhkey-0)) (1 2))
   (strand-map 0 1)
@@ -359,6 +373,8 @@
   (precedes ((1 1) (0 1)) ((1 1) (2 0)) ((2 1) (1 2)))
   (non-orig dhkey dhkey-0 (invk gx) (invk gy))
   (uniq-orig n gy)
+  (comment
+    "Point of view where the natural result should be the only shape")
   (operation encryption-test (added-listener (enc "dh" gx gy dhkey-0))
     (enc "check" n (enc "dh" gx gy dhkey-0)) (1 2))
   (strand-map 0 1)
@@ -380,6 +396,8 @@
   (precedes ((1 1) (0 1)) ((1 1) (2 1)) ((2 2) (1 2)))
   (non-orig dhkey (invk gx) (invk gy))
   (uniq-orig n gy)
+  (comment
+    "Point of view where the natural result should be the only shape")
   (operation encryption-test (displaced 3 1 resp 2)
     (enc n (enc "dh" gx gy dhkey-0)) (0 1))
   (strand-map 0 1 2)
@@ -404,6 +422,8 @@
   (precedes ((1 1) (2 1)) ((1 1) (3 0)) ((2 2) (1 2)) ((3 1) (0 1)))
   (non-orig dhkey dhkey-0 (invk gx) (invk gy))
   (uniq-orig n gy)
+  (comment
+    "Point of view where the natural result should be the only shape")
   (operation encryption-test (added-listener (enc "dh" gx gy dhkey))
     (enc n (enc "dh" gx gy dhkey)) (0 1))
   (strand-map 0 1 2)

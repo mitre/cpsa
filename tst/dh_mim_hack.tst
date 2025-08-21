@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.5")
+(comment "CPSA 4.4.6")
 (comment "All input read from tst/dh_mim_hack.scm")
 
 (defprotocol dh_mim basic
@@ -49,6 +49,7 @@
   (precedes ((0 0) (1 0)) ((0 2) (1 2)) ((1 1) (0 1)))
   (non-orig dhkey (invk gx) (invk gy))
   (uniq-orig n gx gy)
+  (comment "Agreement on the encrypted text only")
   (operation encryption-test (displaced 2 0 init 3)
     (enc n (enc "dh" gx-0 gy-0 dhkey)) (1 2))
   (strand-map 0 1)
@@ -70,6 +71,7 @@
   (precedes ((0 2) (1 2)) ((1 1) (2 0)) ((2 1) (1 2)))
   (non-orig dhkey (invk gx) (invk gy))
   (uniq-orig n gx gy)
+  (comment "Agreement on the encrypted text only")
   (operation encryption-test (added-listener (enc "dh" gx-0 gy dhkey))
     (enc n (enc "dh" gx-0 gy dhkey)) (1 2))
   (strand-map 0 1)
@@ -91,6 +93,7 @@
   (precedes ((0 2) (1 2)) ((1 1) (3 0)) ((2 1) (1 2)) ((3 1) (2 0)))
   (non-orig dhkey (invk gx) (invk gy))
   (uniq-orig n gx gy)
+  (comment "Agreement on the encrypted text only")
   (operation encryption-test (added-strand CDHcalc2 2)
     (enc "dh" gx-0 gy dhkey) (2 0))
   (strand-map 0 1 2)
@@ -115,6 +118,7 @@
     ((3 1) (2 0)) ((4 1) (1 2)))
   (non-orig dhkey (invk gx) (invk gy))
   (uniq-orig n gx gy)
+  (comment "Agreement on the encrypted text only")
   (operation nonce-test (added-listener (enc "dh" gx gy-0 dhkey)) n
     (1 2) (enc n (enc "dh" gx gy-0 dhkey)))
   (strand-map 0 1 2 3)
@@ -141,6 +145,7 @@
     ((3 1) (2 0)) ((4 1) (1 2)) ((5 1) (4 0)))
   (non-orig dhkey (invk gx) (invk gy))
   (uniq-orig n gx gy)
+  (comment "Agreement on the encrypted text only")
   (operation encryption-test (added-strand CDHcalc1 2)
     (enc "dh" gx gy-0 dhkey) (4 0))
   (strand-map 0 1 2 3 4)
@@ -167,6 +172,7 @@
     ((3 1) (1 2)) ((4 1) (3 0)))
   (non-orig dhkey (invk gx) (invk gy))
   (uniq-orig n gx gy)
+  (comment "Agreement on the encrypted text only")
   (operation generalization deleted (2 0))
   (strand-map 0 1 3 4 5)
   (traces
@@ -190,6 +196,7 @@
     ((3 1) (1 2)))
   (non-orig dhkey (invk gx) (invk gy))
   (uniq-orig n gx gy)
+  (comment "Agreement on the encrypted text only")
   (operation generalization deleted (3 0))
   (strand-map 0 1 2 4)
   (traces

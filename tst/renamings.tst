@@ -2,7 +2,7 @@
   (comment "There is a flaw in this protocol by design")
   (comment "It also shows how variable renaming works"))
 
-(comment "CPSA 4.4.5")
+(comment "CPSA 4.4.6")
 (comment "All input read from tst/renamings.scm")
 
 (defprotocol blanchet basic
@@ -39,6 +39,7 @@
   (precedes ((1 0) (0 0)))
   (non-orig (privk s) (privk d))
   (uniq-orig a)
+  (comment "Analyze from the responder's perspective")
   (operation encryption-test (added-strand init 1) (enc a (privk s))
     (0 0))
   (strand-map 0)
@@ -87,6 +88,7 @@
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (privk d))
   (uniq-orig a)
+  (comment "Analyze from the initiator's perspective")
   (operation encryption-test (added-strand resp 2) (enc b a) (0 1))
   (strand-map 0)
   (traces ((send (enc (enc a (privk s)) (pubk d))) (recv (enc b a)))
@@ -103,6 +105,7 @@
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (privk d))
   (uniq-orig a)
+  (comment "Analyze from the initiator's perspective")
   (operation encryption-test (added-listener a) (enc b a) (0 1))
   (strand-map 0)
   (traces ((send (enc (enc a (privk s)) (pubk d))) (recv (enc b a)))
@@ -120,6 +123,7 @@
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (privk d))
   (uniq-orig a)
+  (comment "Analyze from the initiator's perspective")
   (operation nonce-test (contracted (d-0 s) (a-0 d)) a (1 0)
     (enc (enc a (privk s)) (pubk d)))
   (strand-map 0 1)

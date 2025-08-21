@@ -1,6 +1,6 @@
 (herald "pen-non-orig test")
 
-(comment "CPSA 4.4.5")
+(comment "CPSA 4.4.6")
 (comment "All input read from tst/pen-non-orig-test.scm")
 
 (defprotocol pennonorigtest basic

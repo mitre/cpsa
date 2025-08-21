@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.5")
+(comment "CPSA 4.4.6")
 (comment "All input read")
 
 (defprotocol blanchet basic
@@ -37,6 +37,7 @@
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk b))
   (uniq-orig s)
+  (comment "Analyze from the initiator's perspective")
   (operation encryption-test (added-strand resp 2) (enc d s) (0 1))
   (strand-map 0)
   (traces ((send (enc (enc s (invk a)) b)) (recv (enc d s)))
@@ -53,6 +54,7 @@
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk b))
   (uniq-orig s)
+  (comment "Analyze from the initiator's perspective")
   (operation encryption-test (added-listener s) (enc d s) (0 1))
   (strand-map 0)
   (traces ((send (enc (enc s (invk a)) b)) (recv (enc d s)))
@@ -70,6 +72,7 @@
   (precedes ((0 0) (1 0)) ((1 1) (0 1)))
   (non-orig (invk b))
   (uniq-orig s)
+  (comment "Analyze from the initiator's perspective")
   (operation nonce-test (contracted (a-0 a) (b-0 b)) s (1 0)
     (enc (enc s (invk a)) b))
   (strand-map 0 1)
@@ -95,8 +98,8 @@
   (defrule trust
     (forall ((z strd) (p d akey) (k skey))
       (implies
-        (and (p "person" z (idx 1)) (p "person" "p" z p)
-          (p "person" "d" z d) (p "person" "k" z k) (fact trust p))
+        (and (p "person" z (idx 1)) (p "person" "k" z k)
+          (p "person" "d" z d) (p "person" "p" z p) (fact trust p))
         (and (non (invk d)) (uniq k)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -126,6 +129,7 @@
   (non-orig (invk p) (invk d-0))
   (uniq-orig k t)
   (facts (trust p))
+  (comment "Analyze from the door's perspective")
   (rule trust)
   (operation encryption-test (added-strand person 1) (enc k (invk p))
     (0 0))
@@ -145,6 +149,7 @@
   (non-orig (invk p) (invk d))
   (uniq-orig k t)
   (facts (trust p))
+  (comment "Analyze from the door's perspective")
   (operation encryption-test (contracted (d-0 d)) (enc k (invk p)) (0 0)
     (enc (enc k (invk p)) d))
   (strand-map 0 1)
@@ -163,6 +168,7 @@
   (non-orig (invk p) (invk d))
   (uniq-orig k t)
   (facts (trust p))
+  (comment "Analyze from the door's perspective")
   (operation nonce-test (displaced 1 2 person 3) t (0 2) (enc t k))
   (strand-map 0 1)
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
@@ -183,6 +189,7 @@
   (non-orig (invk p) (invk d))
   (uniq-orig k t)
   (facts (trust p))
+  (comment "Analyze from the door's perspective")
   (operation nonce-test (added-listener k) t (0 2) (enc t k))
   (strand-map 0 1)
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t))
@@ -206,8 +213,8 @@
   (defrule trust
     (forall ((z strd) (p d akey) (k skey))
       (implies
-        (and (p "person" z (idx 1)) (p "person" "p" z p)
-          (p "person" "d" z d) (p "person" "k" z k) (fact trust p))
+        (and (p "person" z (idx 1)) (p "person" "k" z k)
+          (p "person" "d" z d) (p "person" "p" z p) (fact trust p))
         (and (non (invk d)) (uniq k)))))
   (defgenrule neqRl_indx
     (forall ((x indx)) (implies (fact neq x x) (false))))
@@ -235,6 +242,7 @@
   (precedes ((1 0) (0 0)))
   (non-orig (invk p))
   (uniq-orig k t)
+  (comment "Analyze from the door's perspective when we don't trust p")
   (operation encryption-test (added-strand person 1) (enc k (invk p))
     (0 0))
   (strand-map 0)
