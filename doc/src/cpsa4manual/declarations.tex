@@ -174,6 +174,87 @@ provided as part of a protocol or skeleton input.
 %z
 \end{itemize}
 
+\section{Declaring skeletons}
+\label{sec:defskeleton}
+
+\ttindex{defskeleton} To ask {\cpsa} a query, one uses a
+\texttt{defskeleton} form.  The detailed syntax definition is in
+Table~\ref{tab:syntax}.  We give here a summary of the core elements
+and how to use them.  A \texttt{defskeleton} form such as those in
+Figs.~\ref{fig:ns init pov}--\ref{fig:ns resp pov} has the form
+%
+\begin{center}
+  \tt
+  \begin{tabular}{l}
+    (defskeleton prot-name \\
+    \quad (vars ...) \\
+    \quad strand-decls ... \\
+    \quad assumptions ... \\
+    \quad comments)
+  \end{tabular}
+\end{center}
+%
+\texttt{prot-name} is the name of the protocol.  The \texttt{(vars
+  ...)} give the names and sorts of the values appearing in the
+resulting skeleton, for instance values that may be parameters of one
+or more role instances in the skeleton, and may appear in the
+assumptions.  The assumptions include unique origination and
+non-origination claims, as well as channel properties and state
+annotations (Chapter~\ref{chap:channels:state}) and facts
+(Section~\ref{sec:facts}).  Comments are for the convenience of the
+specifier.  The \texttt{strand-decls} consist of one or more forms
+%
+\begin{itemize}
+  \item \texttt{(defstrand role height bindings)} for an instance of
+  \texttt{role} of the given height,\ttindex{defstrand}
+  \item \texttt{(defstrandmax role bindings)} to indicate an instance of
+  \texttt{role} of its full maximum height, or\ttindex{defstrandmax}
+  \item \texttt{(deflistener t)} to indicate that the term \texttt{t}
+  is heard transmitted publicly.\ttindex{deflistener} 
+\end{itemize}
+%
+Generally, a \texttt{defskeleton} $q$ containing a
+\texttt{(deflistener t)} declaration is used to see whether the term
+\texttt{t} remains confidential in the situation described by the
+remainder $q'$ of the \texttt{defskeleton}.  If {\cpsa} determines that
+there are no shapes for this query, then there is no extension of $q'$
+in which the participants emit messages allowing the adversary to
+extract \texttt{t}.  Typically, this is what the specifier intends to
+find:  These are non-disclosure queries.  
+
+A \texttt{defskeleton} form most frequently contains a single
+\texttt{defstrand} or \texttt{defstrandmax}, in which case {\cpsa}
+will determine what other behaviors this participant can rely on
+having occurred when a run of this role takes this number of steps.
+Thus, it determines what is learnt \emph{from the point of view} of
+this participant.  These are authentication queries from that
+participant's point of view.
+
+When a single-strand authentication query gives some information about
+other local sessions, but we would like also to know whether
+additional conclusions follow if we assume unique origination or
+non-origination for values in those local sessions, then we can would
+use multiple \texttt{defstrand}s.
+
+The bindings (aka ``maplets'') in a strand declaration are pairs
+\texttt{(p v)} where \texttt{p} is a parameter of the role being
+declared and \texttt{v} is a value defined from the variables declared
+for this skeleton.  Most often \texttt{v} just is one of these
+variables.  These bindings can be confusing, since the role parameter
+and the variable in the skeleton may have the same name, so we have a
+binding \texttt{(b b)} or \texttt{(n1 n1)}, as in Fig.~\ref{fig:ns
+  init pov}.  However, the two \texttt{b}s are different:  The first
+is the parameter declared in the \texttt{init} role in
+Fig.~\ref{fig:ns defprotocol}, while the second is the skeleton
+variable declared in the variable form \texttt{(vars (b name) (n1
+  text))}.  A binding must appear in the strand declaration only if we
+need to assert something about it.  In Fig.~\ref{fig:ns init pov},
+those two bindings appear because the skeleton variable \texttt{n1} is
+assumed uniquely originating, and \texttt{b} appears because
+\texttt{(privk b)} is assumed non-originating.  Any other parameters
+may be omitted, in which case {\cpsa} supplies an unconstrained value
+for it.  
+
 \iffalse
 
 \section{Distinctness assumptions}
