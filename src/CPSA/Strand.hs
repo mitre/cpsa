@@ -1478,8 +1478,9 @@ compress validate (k0, k, n, phi, hsubst) s s' =
 
 permuteOrderings :: [Sid] -> [Pair] -> [Pair]
 permuteOrderings perm orderings =
-    L.filter (\((z0,_),(z1,_)) -> z0 /= z1)
-         $ map (permutePair perm) orderings
+    --L.filter (\((z0,_),(z1,_)) -> z0 /= z1)
+      --   $ 
+    map (permutePair perm) orderings
 
 updatePerm :: Int -> Int -> [Sid] -> [Sid]
 updatePerm old new perm =
@@ -2381,9 +2382,10 @@ validateEnv k k' mapping (gen,env) =
           all (flip elem (kgenSt k')) (map (instantiate env) (kgenSt k)) &&
           validateEnvOrig k k' mapping env &&
           all (flip elem (tc k'))
-                  (permuteOrderings mapping (orderings k))) &&
+                  (L.filter (\((z0,_),(z1,_)) -> z0 /= z1)
+                   (permuteOrderings mapping (orderings k))) &&
           all (flip elem (kfacts k'))
-                  (map (instUpdateFact env (mapping !!)) covered) of
+                  (map (instUpdateFact env (mapping !!)) covered)) of
       False -> []
       True -> validateExtendEnv mapping (gen,env) uncovered (kfacts k')
     where
