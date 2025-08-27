@@ -31,7 +31,7 @@ import Control.Exception (try)
 import System.IO.Error (ioeGetErrorString)
 
 z :: Show a => a -> b -> b
-z x y = unsafePerformIO (print x >> return y)
+z x y = unsafePerformIO (print x >> hFlush stdout >> return y)
 
 zz :: Show a => a -> a
 zz x = z x x
@@ -647,15 +647,16 @@ maps k =
     map (amap $ strandMap k) (envMaps k)
     where
       amap strands env = L () [L () strands, L () env]
-      strandMap k = map (N ()) (map f (pprob k))
-      f s = prob k !! s
+      strandMap k = map (N ()) (prob k)
+                    -- (map f (pprob k))
+                    -- f s = prob k !! s
       envMaps k =
           case pov k of
             Nothing -> []
             Just k' ->
                 map (\(_,env) ->
                          displayEnvSansPts vars (ctx k') (ctx k) env)
-                        (homomorphism k' k (prob k))
+                $ homomorphism k' k (prob k)
       ctx k = addToContext emptyContext (kvars k)
       vars = kvars k
 

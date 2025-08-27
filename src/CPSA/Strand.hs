@@ -39,15 +39,16 @@ import CPSA.Protocol
 import CPSA.Operation
 
 
-{--
+--{--
 
+import System.IO
 import System.IO.Unsafe
 import Control.Exception (try)
 import System.IO.Error (ioeGetErrorString)
 -- import Control.DeepSeq
 
 z :: Show a => a -> b -> b
-z x y = unsafePerformIO (print x >> return y)
+z x y = unsafePerformIO (print x >> hFlush stdout >> return y)
 
 zz :: Show a => a -> a
 zz x = z x x
@@ -592,8 +593,10 @@ firstSkeleton :: Preskel -> [Preskel]
 firstSkeleton k =
     do
       k <- wellFormedPreskel k
-      k' <- toSkeleton False k   -- only k' should have pov = Nothing
-      return $ k' { pprob = prob k', prob = strandids k', pov = Just k' }
+      k' <- toSkeleton False k   -- only k and k' should have pov = Nothing
+      return $ k' { pprob = prob k',
+                            prob = -- strandids k' 
+                            prob k', pov = Just k }
 
 -- Create a preskeleton.  The node ordering relation is put into the
 -- preds field of each instance in this function.  The maybe uniquely
@@ -1474,7 +1477,9 @@ compress validate (k0, k, n, phi, hsubst) s s' =
       return (k0, k'', permuteNode perm n, map (perm !!) phi, hsubst)
 
 permuteOrderings :: [Sid] -> [Pair] -> [Pair]
-permuteOrderings perm orderings = map (permutePair perm) orderings
+permuteOrderings perm orderings =
+    L.filter (\((z0,_),(z1,_)) -> z0 /= z1)
+         $ map (permutePair perm) orderings
 
 updatePerm :: Int -> Int -> [Sid] -> [Sid]
 updatePerm old new perm =
@@ -2031,7 +2036,7 @@ validateMappingSubst k phi subst k' =
       checkOrig (u, ns) =
           case lookup (substitute subst u) (korig k') of
             Nothing -> False
-            Just ns' -> all (flip elem ns') (map (permuteNode phi) ns)
+            Just ns' -> all (flip elem ns') (map (permuteNode phi) ns) 
       checkGen (u, ns) =
           case lookup (substitute subst u) (kugen k') of
             Nothing -> False
@@ -2281,9 +2286,19 @@ homomorphism :: Preskel -> Preskel -> [Sid] -> [(Gen,Env)]
 homomorphism k k' mapping =
     do
       (gen, env) <- findReplacement k k' mapping
-      validateEnv k k' mapping (gen,env) 
+      validateEnv k k' mapping (gen,env)
 
-{--     filter (validateEnv k k mapping)
+{-- 
+
+homomorphismReport :: Preskel -> Preskel -> [Sid] -> [(Gen,Env)]
+homomorphismReport k k' mapping =
+    case (do
+           (gen, env) <- findReplacementReport k k' mapping
+           validateEnvReport k k' mapping (gen,env)) of
+      [] -> z "no homs to report" []
+      ges -> z ("yes homs: " ++ (show (L.length ges))) ges 
+
+    filter (validateEnv k k mapping)
                $ map snd
                      $ findReplacement k k' mapping
                      --}
@@ -2309,18 +2324,25 @@ findReplacement k k' mapping =
     then let v = (let gg = gmerge (gen k) (gen k') in
                   foldM (matchStrand k k' mapping) (gg, emptyEnv) (strandids k))  in
          v
---            if (5 == L.length (insts k') &&
---                4 == L.length (insts k))
---            then
---                z (show (L.length v)) v
---            else v
     else []
+
+{--         
+
+findReplacementReport :: Preskel -> Preskel -> [Sid] -> [(Gen, Env)]
+findReplacementReport k k' mapping =
+    let ges = findReplacement k k' mapping in
+    case ges of
+      [] -> z "no replacement" []
+      ges -> ges
+      
+--}
+         
       
 -- Find extensions of the given environment that also cause strand s
 -- in k to match the trace of mapping !! s in k'
 matchStrand :: Preskel -> Preskel -> [Sid] -> (Gen, Env) -> Sid -> [(Gen, Env)]
 matchStrand k k' mapping env s =
-    matchTraces (trace (strandInst k s)) (trace (strandInst k' s')) env
+    matchTraces (trace (strandInst k s)) (trace (strandInst k' s')) env 
     where
       s' = mapping !! s
 {--
@@ -2338,6 +2360,14 @@ matchStrand k k' mapping env s =
          $ matchTraces (trace (strandInst k s)) (trace (strandInst k' s')) env
     where
       s' = mapping !! s        
+
+
+validateEnvReport :: Preskel -> Preskel -> [Sid] -> (Gen,Env) -> [(Gen,Env)]
+validateEnvReport k k' mapping (gen,env) =
+    case (validateEnv k k' mapping (gen,env)) of
+      [] -> z "invalid env" []
+      ges -> z (show $ L.length ges) ges
+
 --}
 
 validateEnv :: Preskel -> Preskel -> [Sid] -> (Gen,Env) -> [(Gen,Env)]
@@ -2350,9 +2380,10 @@ validateEnv k k' mapping (gen,env) =
           -- all (flip elem (kprecur k')) (map (permuteNode mapping) (kprecur k)) &&
           all (flip elem (kgenSt k')) (map (instantiate env) (kgenSt k)) &&
           validateEnvOrig k k' mapping env &&
-          all (flip elem (tc k')) (permuteOrderings mapping (orderings k)) &&
+          all (flip elem (tc k'))
+                  (permuteOrderings mapping (orderings k))) &&
           all (flip elem (kfacts k'))
-                  (map (instUpdateFact env (mapping !!)) covered)) of
+                  (map (instUpdateFact env (mapping !!)) covered) of
       False -> []
       True -> validateExtendEnv mapping (gen,env) uncovered (kfacts k')
     where

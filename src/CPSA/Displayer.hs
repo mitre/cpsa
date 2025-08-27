@@ -260,7 +260,7 @@ displayPreskel k rest =
 -- Display the remainder of a preskeleton
 displayRest :: Preskel -> Context -> [SExpr ()] -> [SExpr ()]
 displayRest k ctx rest =
-    displayOptional "precedes" (displayOrdering (orderings k))
+    (displayOptional "precedes" (displayOrdering (orderings k))
      (displayOptional "non-orig" (displayTerms ctx (sansPts (knon k)))
       (displayOptional "pen-non-orig" (displayTerms ctx (sansPts (kpnon k)))
        (displayOptional "uniq-orig" (displayTerms ctx (sansPts (kunique k)))
@@ -277,10 +277,16 @@ displayRest k ctx rest =
                   (displayOptional "rule" (L.sort (map (S ()) (krules k)))
                    (displayOperation k ctx
                     (displayStrandMap k
-                     (displayOptional "traces" traces rest)))))))))))))))))
+                     (displayOptional "traces" traces rest))))))))))))))))))
     where
       priorities = map displayPriority (kpriority k)
       traces = map (L () . displayTrace ctx . trace) (insts k)
+
+{--
+displayPOV :: Maybe Preskel -> [SExpr ()]
+displayPOV Nothing = [S () "None"]
+displayPOV (Just _) = [S () "Some"]
+--}
 
 displayFacts :: Context -> [Fact] -> [SExpr ()]
 displayFacts ctx =

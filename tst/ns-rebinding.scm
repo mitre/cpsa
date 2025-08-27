@@ -93,3 +93,11 @@
   (non-orig (privk a))
   (uniq-orig n2)
   (comment "Responder point-of-view"))
+
+(defskeleton ns
+  (vars (x name) (n1 n2 text) (a b name))
+  (defstrand init 3 (n1 n1) (n2 n2) (a a) (b b))
+  (non-orig (privk a) (privk b))
+  (uniq-orig n1)
+  (facts (rel2 x n2) (rel1 n1 n2) (rel2 n1 n2))
+  (comment "Double initiator point-of-view, same nonce"))

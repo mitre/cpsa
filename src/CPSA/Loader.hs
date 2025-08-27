@@ -1181,9 +1181,10 @@ loadRest sig pos vars p gen gs insts orderings
       let (nr', ar', ur', ug', ab', cn', au') =
             foldl addInstOrigs (nr, ar, ur, ug, ab, cn, au) insts
       prios <- mapM (loadPriorities heights) pl
-      let k = mkPreskel gen p gs insts o nr' ar' ur'
-              ug' ab' pr genSts cn' au' fs prios comment
+      let k0 = mkPreskel gen p gs insts o nr' ar' ur'
+               ug' ab' pr genSts cn' au' fs prios comment
           ab'' = L.concatMap (\(x, y) -> [x, y]) ab'
+      let k = k0 {pov = Just k0}
       case termsWellFormed $ nr' ++ ar' ++ ur' ++ ug' ++ ab'' ++ kterms k of
         False -> fail (shows pos "Terms in skeleton not well formed")
         True -> return ()

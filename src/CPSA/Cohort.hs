@@ -25,7 +25,7 @@ import CPSA.Protocol
 import CPSA.Operation
 import CPSA.Strand
 
-{-- Debugging support
+--{-- Debugging support
 import System.IO.Unsafe
 import Control.DeepSeq
 
@@ -134,7 +134,7 @@ omitGeneralization = False -- True
 
 -- This check is just a sanity check and is normally left off.
 usePovCheck :: Bool
-usePovCheck = False -- True
+usePovCheck = True -- False
 
 -- Minimum priority to solve
 minPriority :: Int
@@ -289,7 +289,12 @@ maybeSolved :: CMT -> Place -> [Term] -> Set CMT ->
 maybeSolved ct pos eks escape k n subst absent =
     not useSolvedFilter
             || solved ct pos eks escape k n subst absent
-               && (not usePovCheck || povCheck k)
+               && (not usePovCheck || povCheck k ||
+                           (z ("povCheck failed " ++
+                               (show (case pov k of
+                                        Nothing -> Nothing
+                                        Just k0 -> Just (prob k0))))
+                            False))
 
 data Mode = Mode
     { noGeneralization :: Bool,
