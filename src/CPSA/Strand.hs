@@ -2383,10 +2383,7 @@ validateEnv k k' mapping (gen,env) =
           validateEnvOrig k k' mapping env &&
           (case normalizeOrderings True (permuteOrderings mapping (orderings k)) of 
             [o] -> all (flip elem (tc k')) o
-            _ -> False) &&            
-          -- all (flip elem (tc k'))
-          --         (L.filter (\((z0,n0),(z1,n1)) -> z0 /= z1 || n0 < n1)
-          --          (permuteOrderings mapping (orderings k))) &&
+            _ -> False) &&
           all (flip elem (kfacts k'))
                   (map (instUpdateFact env (mapping !!)) covered)) of
       False -> []
