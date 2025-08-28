@@ -2381,9 +2381,12 @@ validateEnv k k' mapping (gen,env) =
           -- all (flip elem (kprecur k')) (map (permuteNode mapping) (kprecur k)) &&
           all (flip elem (kgenSt k')) (map (instantiate env) (kgenSt k)) &&
           validateEnvOrig k k' mapping env &&
-          all (flip elem (tc k'))
-                  (L.filter (\((z0,_),(z1,_)) -> z0 /= z1)
-                   (permuteOrderings mapping (orderings k))) &&
+          (case normalizeOrderings True (permuteOrderings mapping (orderings k)) of 
+            [o] -> all (flip elem (tc k')) o
+            _ -> False) &&            
+          -- all (flip elem (tc k'))
+          --         (L.filter (\((z0,n0),(z1,n1)) -> z0 /= z1 || n0 < n1)
+          --          (permuteOrderings mapping (orderings k))) &&
           all (flip elem (kfacts k'))
                   (map (instUpdateFact env (mapping !!)) covered)) of
       False -> []
