@@ -533,8 +533,16 @@ chanSolveNode k n ct =
 
 mgs :: [(Preskel, [Sid])] -> [Preskel]
 mgs cohort =
-  --reverse $ map recordMap $ loop (dropNonInjective cohort) []
-  reverse $ map recordMap $ loop cohort []
+  -- Version to keep non-injective cohort members
+  -- But not to use them in the most general calculation
+  --let (inj, ninj) = splitInjectives cohort in 
+  --reverse $ map recordMap $ ninj ++ loop inj []
+
+  -- Version to drop non-injective cohort members
+  reverse $ map recordMap $ loop (dropNonInjectives cohort) []
+
+  -- Original version
+  --reverse $ map recordMap $ loop cohort []
   where
     loop [] acc = acc
     loop (kphi : cohort) acc
@@ -547,9 +555,17 @@ mgs cohort =
         ans
     recordMap (k, phi) = updateStrandMap phi k
 
--- dropNonInjective :: [(Preskel, [Sid])] -> [(Preskel, [Sid])]
--- dropNonInjective cohort = 
---   filter (isInjective . snd) cohort
+dropNonInjectives :: [(Preskel, [Sid])] -> [(Preskel, [Sid])]
+dropNonInjectives cohort = 
+  filter (isInjective . snd) cohort
+  where 
+    isInjective phi = L.nub phi == phi
+
+-- splitInjectives :: [(Preskel, [Sid])] -> ([(Preskel, [Sid])], [(Preskel, [Sid])])
+-- splitInjectives cohort = 
+--   let injectives = filter (isInjective . snd) cohort in
+--   let noninjectives = filter (not . isInjective . snd) cohort in
+--   (injectives, noninjectives)
 --   where 
 --     isInjective phi = L.nub phi == phi
 

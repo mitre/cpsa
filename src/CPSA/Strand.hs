@@ -181,7 +181,7 @@ useWellFormedTerms = False -- True
 
 -- Don't do variable separation if False
 useVariableSeparation :: Bool
-useVariableSeparation = True -- False
+useVariableSeparation = False -- True -- False
 
 -- Should we do the full node deletion?
 -- To do nothing *other* than node deletions, set this to True
