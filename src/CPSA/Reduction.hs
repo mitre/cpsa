@@ -657,7 +657,7 @@ maps k =
                 map (\(_,env) ->
                          displayEnvSansPts vars (ctx k') (ctx k) env)
                 $ homomorphism k' k (prob k)
-      ctx k = addToContext emptyContext (kvars k)
+      ctx k = addToContext emptyContext ((kvars k) ++ (kfvars k))
       vars = kvars k
 
 -- Prints the nodes of origination for each uniquely originating atom
