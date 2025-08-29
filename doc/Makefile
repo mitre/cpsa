@@ -1,4 +1,5 @@
 CPSAFLAGS = +RTS -M512m -RTS
+GRAPHFLAGS = -p
 
 SRCS := $(wildcard *.scm) $(wildcard *.lsp)
 

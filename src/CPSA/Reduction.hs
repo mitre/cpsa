@@ -546,7 +546,7 @@ commentPreskel lk seen unrealized kind anno msg =
     (reportSatisfies k) $
     -- Structure preserving maps
     -- Added for cpsasas program
-    condAddKeyValues "maps" fringe (maps k) $
+    condAddKeyValues "maps" True (maps k) $
     -- Nodes of origination
     -- Added for cpsasas program
     condAddKeyValues "origs" (starter k || fringe) (origs k) $

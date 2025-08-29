@@ -5,13 +5,6 @@
 -- This program is free software: you can redistribute it and/or
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Use if" #-}
-{-# HLINT ignore "Redundant bracket" #-}
-{-# HLINT ignore "Fuse concatMap/map" #-}
-{-# HLINT ignore "Move brackets to avoid $" #-}
-{-# HLINT ignore "Use uncurry" #-}
-{-# HLINT ignore "Use map once" #-}
 
 module CPSA.Cohort (Mode(..), ReduceRes(..), reduce, unrealized) where
 
@@ -25,7 +18,7 @@ import CPSA.Protocol
 import CPSA.Operation
 import CPSA.Strand
 
---{-- Debugging support
+{-- Debugging support
 import System.IO.Unsafe
 import Control.DeepSeq
 
@@ -289,12 +282,13 @@ maybeSolved :: CMT -> Place -> [Term] -> Set CMT ->
 maybeSolved ct pos eks escape k n subst absent =
     not useSolvedFilter
             || solved ct pos eks escape k n subst absent
-               && (not usePovCheck || povCheck k ||
-                           (z ("povCheck failed " ++
-                               (show (case pov k of
-                                        Nothing -> Nothing
-                                        Just k0 -> Just (prob k0))))
-                            False))
+               && (not usePovCheck || povCheck k)
+                          -- ||
+                          --  (z ("povCheck failed " ++
+                          --      (show (case pov k of
+                          --               Nothing -> Nothing
+                          --               Just k0 -> Just (prob k0))))
+                          --   False))
 
 data Mode = Mode
     { noGeneralization :: Bool,
@@ -539,6 +533,7 @@ chanSolveNode k n ct =
 
 mgs :: [(Preskel, [Sid])] -> [Preskel]
 mgs cohort =
+  --reverse $ map recordMap $ loop (dropNonInjective cohort) []
   reverse $ map recordMap $ loop cohort []
   where
     loop [] acc = acc
@@ -552,21 +547,25 @@ mgs cohort =
         ans
     recordMap (k, phi) = updateStrandMap phi k
 
+-- dropNonInjective :: [(Preskel, [Sid])] -> [(Preskel, [Sid])]
+-- dropNonInjective cohort = 
+--   filter (isInjective . snd) cohort
+--   where 
+--     isInjective phi = L.nub phi == phi
+
 -- Given two permutations p and p', with ranges r and r', this
 -- function returns the list of permutations p'' such that
 --
 --    p'' o p' = p.
 --
--- This function assumes p' is injective and the returns permutations
--- that also must be.
+-- This function no longer assumes p' is injective but it returns permutations
+-- that are.
 
 composeFactors :: [Int] -> [Int] -> [Int] -> [Int] -> [[Int]]
 composeFactors r r' p p' =
-  perms (zip p' p) (filter (flip notElem p) r) r'
-
--- The correctness of this function depends on the fact that the
--- length of range is at most one so that the result is always
--- injective.
+  filter isInjective $ perms (zip p' p) r r'
+  where isInjective phi = L.nub phi == phi
+  --perms (zip p' p) (filter (flip notElem p) r) r' -- JDR-era code
 
 perms :: [(Int, Int)] -> [Int] -> [Int] -> [[Int]]
 perms _ _ [] = [[]]
