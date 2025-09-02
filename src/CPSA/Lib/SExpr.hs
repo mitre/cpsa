@@ -34,6 +34,7 @@ the current line.
 -- University of California.
 
 module CPSA.Lib.SExpr (SExpr(..), showQuoted, stringSExpr, annotation,
+                       filterListsByHead, 
                        -- * S-expression Reader
                        Pos, PosHandle, posHandle, load, getPos) where
 
@@ -386,3 +387,66 @@ abort p msg =
     do
       hClose $ pHandle p
       fail msg
+
+-- Report whether an sexp is a target string.
+
+observeSymbol :: String -> SExpr a -> Bool
+observeSymbol tgt (S _ s) = tgt == s
+observeSymbol _ _ = False
+
+observeHead :: String -> SExpr a -> Bool
+observeHead tgt (L _ (x : _)) = observeSymbol tgt x
+observeHead _ _ = False
+
+confrontNothing :: [Maybe a] -> Maybe [a]
+confrontNothing [] = Just []
+confrontNothing (Nothing : _) = Nothing
+confrontNothing (Just a : rest) =
+    case confrontNothing rest of
+      Nothing -> Nothing
+      Just rest' -> Just (a : rest')
+
+{--
+filterEmpties :: SExpr a -> Maybe (SExpr a)
+filterEmpties (L _ []) = Nothing
+filterEmpties (L p xs) =
+    case confrontNothing (map filterEmpties xs) of
+      Nothing -> Nothing
+      Just ys -> Just (L p ys)
+
+filterEmpties s = Just s
+--}
+
+-- Go through an sexp and, if it is a list sexp, discard any immediate
+-- subexprs that do not satisfy predicate pred.  Return Nothing if all
+-- subexprs would be discarded.  Non-list sexps are unchanged.
+
+filterListExprs :: (SExpr a -> Bool) -> SExpr a -> Maybe (SExpr a)
+filterListExprs _ (L _ []) = Nothing
+filterListExprs pred (L p (x:xs)) 
+    | pred x = Just (L p (x : filter pred xs))
+    | otherwise = 
+        case xs of
+          [] -> Nothing
+          (y:ys) -> filterListExprs pred (L (getPos y) (y:ys))
+filterListExprs _ s = Just s 
+
+-- Descend n layers through an sexp, filtering the sublists at that
+-- level.
+
+filterSubExprs :: Int -> (SExpr a -> Bool) -> SExpr a -> Maybe (SExpr a)
+filterSubExprs 0 pred s = filterListExprs pred s
+filterSubExprs i pred (L p xs) =
+    case confrontNothing $ map (filterSubExprs (i-1) pred) xs of
+      Nothing -> Nothing
+      Just ys -> Just (L p ys)
+
+filterSubExprs _ _ s = Just s                 
+
+filterListsByHead :: String -> SExpr a -> Maybe (SExpr a)
+filterListsByHead avoidStr sexpr =
+    filterSubExprs 0 (not . (observeHead avoidStr)) sexpr
+
+                   
+                        
+        

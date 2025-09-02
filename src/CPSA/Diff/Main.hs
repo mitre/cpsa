@@ -41,12 +41,28 @@ main =
 go :: Params -> PosHandle -> PosHandle -> IO ()
 go params old new =
     do
-      o <- readSkel old
-      n <- readSkel new
+      o1 <- readSkel old
+      n1 <- readSkel new
+            
+      let o = maybeFilter params o1
+      let n = maybeFilter params n1 
+
       case (o, n) of
         (Nothing, Nothing) -> return ()
         (Just o, Just n) | o == n -> go params old new
         _ -> showDiff params o n
+
+maybeFilter :: Params -> Maybe (SExpr Pos) -> Maybe (SExpr Pos)
+maybeFilter _ Nothing = Nothing
+maybeFilter params (Just s) =
+    loop s $ ignoreKws params
+    where
+      loop s [] = Just s
+      loop s (i : ignKws) =
+          case filterListsByHead i s of
+            Nothing -> Nothing
+            Just s' -> loop s' ignKws
+
 
 showDiff :: Params -> Maybe (SExpr Pos) -> Maybe (SExpr Pos) -> IO ()
 showDiff params o n =
@@ -94,7 +110,8 @@ readSkel p =
 
 data Params = Params
     { file :: Maybe FilePath,   -- Nothing specifies standard output
-      margin :: Int }           -- Output line length
+      margin :: Int,            -- Output line length
+      ignoreKws :: [String] }   -- Keywords to ignore in skeletons
     deriving Show
 
 indent :: Int
@@ -106,6 +123,7 @@ data Flag
     | Info                      -- Version information
     | Margin String             -- Output line length
     | Output String             -- Output file name
+    | Ignore String             -- Keyword for skeleton sub-list to ignore 
       deriving Show
 
 options :: [OptDescr Flag]
@@ -113,6 +131,7 @@ options =
     [ Option ['o'] ["output"]   (ReqArg Output "FILE") "output FILE",
       Option ['m'] ["margin"]   (ReqArg Margin "INT")
       ("set output margin (default " ++ show defaultMargin ++ ")"),
+      Option ['i'] ["ignore"]   (ReqArg Ignore "STRING") "ignore keyword", 
       Option ['h'] ["help"]     (NoArg Help)           "show help message",
       Option ['v'] ["version"]  (NoArg Info)           "show version number" ]
 
@@ -138,7 +157,8 @@ use options errs =
 interp :: [Flag] -> IO Params
 interp flags =
     loop flags (Params { file = Nothing, -- By default, no output file
-                         margin = defaultMargin })
+                         margin = defaultMargin,
+                         ignoreKws = [] })
     where
       loop [] params = return params
       loop (Output name : flags) params
@@ -152,6 +172,9 @@ interp flags =
                 do
                   msg <- use options ["Bad value for margin\n"]
                   abort msg
+      loop (Ignore kw : flags) params =
+          loop flags $ params { ignoreKws =
+                                    kw : ignoreKws params}
       loop (Info : _) _ =
           success cpsaVersion
       loop (Help : _) _ =

@@ -1,9 +1,34 @@
 CPSA NEWS -- history of user-visible changes.
 
+* Changes in version 4.4.7
+
+** Improved error messages for users specifying
+   protocols using DH random values in more complicated ways.
+
+** Corrected subtle aspects of the code to determine
+   whether a strand map induces a homomorphism between
+   skeletons.
+
+** Cleaned up the early phases of a protocol analysis query.
+   Now each skeleton in an analysis (other than the initial
+   (pre)skeleton) has that initial skeleton as its point of
+   view pov.  The strand map from that point of view is
+   available in the prob field.
+
+   This was false previously if the user's query was a
+   preskeleton but not a skeleton, in which case the pov was
+   the resulting skeleton.  If skeletonization could succeed
+   in different ways, then the parts of the tree that
+   descended from each had different povs.
+
+** Strand maps and environments are now printed for all skeletons,
+   not just those at the fringe.  This information is brief,
+   and helps ensure predictable results.
+
 * Changes in version 4.4.6
 
 ** Removed an obscure bug in which the generators
-   were used wrong, causing a unification failure.   
+   were used wrong, causing a unification failure.
 
 ** We improved the generalization code to avoid redundancies.
 
