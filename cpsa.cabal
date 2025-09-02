@@ -303,7 +303,7 @@ Executable cpsa4
   Default-Language:     Haskell2010
   Build-Depends:        base >= 4.13 && < 5, containers, parallel, deepseq
   GHC-Options:
-    -Wall -fno-warn-name-shadowing -fwarn-unused-imports -threaded -rtsopts
+    -Wall -fno-warn-name-shadowing -fwarn-unused-imports -threaded -rtsopts -prof -fprof-auto -with-rtsopts=-p
   Hs-Source-Dirs:       src
   Other-Modules:
     Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.ReturnFail CPSA.Lib.Pretty

@@ -2,10 +2,11 @@
 
 # Suggested CPSA flags include a memory use limit:
 # CPSAFLAGS = +RTS -M512m -N -RTS
+CPSAFLAGS = +RTS -p -RTS
 
 # Analyze protocols for shapes
 %.txt:		%.scm
-	$(CPSATIME) cpsa4 $(CPSAFLAGS) -o $@ $<
+	$(CPSATIME) cabal run cpsa4 $(CPSAFLAGS) -- -o $@ $<
 
 # Preprocess by transforming defprot forms into defprotocol
 %.scm:		%.prot
@@ -13,7 +14,7 @@
 
 # Analyze protocols for shapes, but don't fail when CPSA does
 %.txt:		%.lsp
-	-$(CPSATIME) cpsa4 $(CPSAFLAGS) -o $@ $<
+	-$(CPSATIME) cabal run cpsa4 $(CPSAFLAGS) -- -o $@ $<
 
 # Extract shapes
 %_shapes.txt:	%.txt
@@ -38,5 +39,9 @@
 # Generate a Prolog database from a CPSA output file
 %.pl:		%.txt
 	cpsa4db $(DBFLAGS) $< | cpsa4dbprolog | sort > $@
+
+# Analyze protocols for shapes, but don't fail when CPSA does
+%.prof.html:		%.prof
+	profiteur $< $@
 
 .PRECIOUS:	%.txt %_shapes.txt
