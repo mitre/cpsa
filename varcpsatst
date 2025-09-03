@@ -1,0 +1,55 @@
+#! /bin/sh
+
+# This script runs the test suite, and then reduces the data for
+# inspection.  If you see "cpsa4 failed", something is very wrong.  If
+# differences appear in the output, there might be a problem.
+
+# The following scripts in the tst directory might also serve as a
+# template for your needs, but probably not.  Look at doc/cpsa.mk
+# first.
+
+# ./cpsashapesall
+# ./cpsagraphall
+
+CPSAFLAGS="+RTS -M512m -N -RTS"
+TST=${1:-tst}
+
+# Analyze the results of a CPSA run.
+analyze () {
+    echo cpsa4diff "$1.tst" "$1.txt"
+    cabal run cpsa4diff -v0 -- -i maps -i origs "$1.tst" "$1.txt"
+    echo cpsa4graph -o "$1.xhtml" "$1.txt"
+    cabal run cpsa4graph -v0 -- -o "$1.xhtml" "$1.txt"
+    echo cpsa4shapes -o "${1}_shapes.txt" "$1.txt"
+    cabal run cpsa4shapes -v0 -- -o "${1}_shapes.txt" "$1.txt"
+    echo cpsa4graph -o "${1}_shapes.xhtml" "${1}_shapes.txt"
+    cabal run cpsa4graph -v0 -- -o "${1}_shapes.xhtml" "${1}_shapes.txt"
+    echo cpsa4sas -o "${1}_sas.text" "${1}.txt"
+    cabal run cpsa4sas -v0 -- -o "${1}_sas.text" "${1}.txt"
+}
+
+for i in ${TST}/*.scm
+do
+    b=${TST}/`basename "$i" .scm`
+    echo cpsa4 ${CPSAFLAGS} -o "$b.txt" "$i"
+    time cabal run cpsa4 -v0 -- ${CPSAFLAGS} -o "$b.txt" "$i" || echo cpsa4 failed.
+    analyze "$b"
+done
+
+for i in ${TST}/*.prot
+do
+    b=${TST}/`basename "$i" .prot`
+    echo cpsa4prot  "$i" '|' cpsa4 ${CPSAFLAGS} -o "$b.txt"
+    cabal run cpsa4prot -v0 -- "$i" | \
+	time cabal run cpsa4 -v0 -- ${CPSAFLAGS} -o "$b.txt" || \
+	echo cpsa4 failed.
+    analyze "$b"
+done
+
+for i in ${TST}/*.lsp
+do
+    b=${TST}/`basename "$i" .lsp`
+    echo cpsa4 ${CPSAFLAGS} -o "$b.txt" "$i"
+    time cabal run cpsa4 -v0 -- ${CPSAFLAGS} -o "$b.txt" "$i"
+    analyze "$b"
+done
