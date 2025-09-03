@@ -1,6 +1,6 @@
 (herald "Pre-processing test example: modified NS with two responders")
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/preprocess.scm")
 
 (defprotocol ns basic
@@ -40,6 +40,8 @@
   (label 0)
   (unrealized (0 1) (1 0) (1 2) (2 0) (2 2))
   (preskeleton)
+  (maps
+    ((0 1 2) ((a a) (b b) (n1 n1) (n2 n2) (n3 n3) (n2p n2p) (n3p n3p))))
   (origs (n3 (2 1)) (n2p (2 1)) (n3p (1 1)) (n2 (1 1)) (n1 (0 0)))
   (comment "Not a skeleton"))
 
@@ -62,6 +64,8 @@
   (parent 0)
   (unrealized (0 1) (1 2) (2 2))
   (dead)
+  (maps
+    ((0 1 2) ((a a) (b b) (n1 n1) (n2 n2) (n3 n3) (n2p n2p) (n3p n3p))))
   (origs (n3 (2 1)) (n2p (2 1)) (n3p (1 1)) (n2 (1 1)) (n1 (0 0)))
   (comment "empty cohort"))
 
@@ -82,6 +86,8 @@
   (label 2)
   (parent 1)
   (unrealized (1 2))
+  (maps
+    ((0 1 1) ((a a) (b b) (n1 n1) (n2 n2) (n3 n3p) (n2p n2) (n3p n3p))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns

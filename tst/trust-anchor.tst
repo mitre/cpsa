@@ -1,7 +1,7 @@
 (herald trust-anchor
   (comment "Tests rule application on initial skeleton"))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/trust-anchor.scm")
 
 (defprotocol trust-anchor basic
@@ -24,6 +24,7 @@
   (label 0)
   (unrealized (0 0))
   (dead)
+  (maps ((0) ((f f) (ca ca))))
   (origs)
   (comment "empty cohort"))
 
@@ -48,6 +49,7 @@
       (send (enc f (pubk f) (privk ca)))))
   (label 1)
   (realized)
+  (maps ((0) ((f f) (ca ca))))
   (origs)
   (comment "Not closed under rules"))
 
@@ -64,6 +66,7 @@
   (parent 1)
   (unrealized (0 0))
   (dead)
+  (maps ((0) ((f f) (ca ca))))
   (origs)
   (comment "empty cohort"))
 

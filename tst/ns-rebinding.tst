@@ -1,6 +1,6 @@
 (herald "ALternate Needham-Schroeder Public-Key Protocol Variants")
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/ns-rebinding.scm")
 
 (defprotocol ns basic
@@ -47,6 +47,7 @@
       (send (enc n2 (pubk b)))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
   (origs (n1 (0 0)))
   (comment "Not closed under rules"))
 
@@ -64,6 +65,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
   (origs (n1 (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -86,6 +88,7 @@
   (label 2)
   (parent 1)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -158,6 +161,7 @@
       (send (enc n2 (pubk b)))))
   (label 4)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
   (origs (n1 (0 0)))
   (comment "Not closed under rules"))
 
@@ -175,6 +179,7 @@
   (label 5)
   (parent 4)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
   (origs (n1 (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -197,6 +202,7 @@
   (label 6)
   (parent 5)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -268,6 +274,7 @@
       (send (enc n2 (pubk b)))))
   (label 8)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
   (origs (n1 (0 0)))
   (comment "Not closed under rules"))
 
@@ -285,6 +292,7 @@
   (label 9)
   (parent 8)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
   (origs (n1 (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -359,6 +367,7 @@
   (label 11)
   (unrealized (0 1) (1 0))
   (preskeleton)
+  (maps ((0 1) ((a a) (b b) (n1 n1) (n2 n2))))
   (origs (n1 (0 0)))
   (comment "Not a skeleton"))
 
@@ -376,6 +385,7 @@
   (label 12)
   (parent 11)
   (unrealized (0 1) (1 0))
+  (maps ((0 1) ((a a) (b b) (n1 n1) (n2 n2))))
   (origs (n1 (0 0)))
   (comment "Not closed under rules"))
 
@@ -395,6 +405,7 @@
   (label 13)
   (parent 12)
   (unrealized (0 1) (1 0))
+  (maps ((0 1) ((a a) (b b) (n1 n1) (n2 n2))))
   (origs (n1 (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -418,6 +429,7 @@
   (label 14)
   (parent 13)
   (unrealized (0 1) (1 0))
+  (maps ((0 1) ((a a) (b b) (n1 n1) (n2 n2))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -440,6 +452,7 @@
   (label 15)
   (parent 14)
   (unrealized (0 1) (1 0))
+  (maps ((0 1) ((a a) (b b) (n1 n2) (n2 n2))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -466,6 +479,7 @@
   (parent 15)
   (unrealized (0 1) (1 0))
   (dead)
+  (maps ((0 1) ((a a) (b b) (n1 n2) (n2 n2))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -517,6 +531,7 @@
       (send (enc n2-0 (pubk b)))))
   (label 17)
   (unrealized (0 1) (1 1))
+  (maps ((0 1) ((a a) (b b) (n1 n1) (n1-0 n1-0) (n2 n2) (n2-0 n2-0))))
   (origs (n1 (0 0)) (n1-0 (1 0)))
   (comment "Not closed under rules"))
 
@@ -538,6 +553,7 @@
   (label 18)
   (parent 17)
   (unrealized (0 1) (1 1))
+  (maps ((0 1) ((a a) (b b) (n1 n1) (n1-0 n1-0) (n2 n2) (n2-0 n2-0))))
   (origs (n1 (0 0)) (n1-0 (1 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -556,6 +572,7 @@
   (label 19)
   (parent 18)
   (unrealized (0 1))
+  (maps ((0 0) ((a a) (b b) (n1 n1) (n1-0 n1) (n2 n2) (n2-0 n2))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -581,6 +598,7 @@
   (label 20)
   (parent 18)
   (unrealized (0 1) (1 1))
+  (maps ((0 1) ((a a) (b b) (n1 n1) (n1-0 n1-0) (n2 n2) (n2-0 n2-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -602,6 +620,7 @@
   (label 21)
   (parent 19)
   (unrealized (0 1))
+  (maps ((0 0) ((a a) (b b) (n1 n1) (n1-0 n1) (n2 n2) (n2-0 n2))))
   (origs (n1 (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -628,6 +647,7 @@
   (label 22)
   (parent 20)
   (unrealized (0 1))
+  (maps ((0 1) ((a a) (b b) (n1 n1) (n1-0 n1-0) (n2 n2) (n2-0 n2-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -649,6 +669,7 @@
   (label 23)
   (parent 21)
   (realized)
+  (maps ((0 0) ((a a) (b b) (n1 n1) (n1-0 n1) (n2 n2) (n2-0 n2))))
   (origs (n1 (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -677,6 +698,7 @@
   (label 24)
   (parent 22)
   (unrealized (0 1))
+  (maps ((0 1) ((a a) (b b) (n1 n1) (n1-0 n1-0) (n2 n2) (n2-0 n2-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -781,6 +803,7 @@
   (label 27)
   (realized)
   (preskeleton)
+  (maps ((0 1) ((a a) (b b) (n1 n1) (n2 n2) (n2-0 n2-0))))
   (origs (n1 (1 0)) (n1 (0 0)))
   (comment "Not a skeleton"))
 
@@ -796,7 +819,7 @@
   (label 28)
   (parent 27)
   (unrealized (0 1))
-  (origs (n1 (0 0)))
+  (maps ((0 0) ((a a) (b b) (n1 n1) (n2 n2) (n2-0 n2))))
   (comment "Not closed under rules"))
 
 (defskeleton ns
@@ -813,7 +836,7 @@
   (label 29)
   (parent 28)
   (unrealized (0 1))
-  (origs (n1 (0 0)))
+  (maps ((0 0) ((a a) (b b) (n1 n1) (n2 n2) (n2-0 n2))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -835,6 +858,8 @@
   (label 30)
   (parent 29)
   (unrealized (0 1))
+  (maps ((0 0) ((a a) (b b) (n1 n1) (n2 n2) (n2-0 n2))))
+  (origs (n1 (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -857,7 +882,7 @@
   (parent 30)
   (realized)
   (shape)
-  (maps ((0 0) ((a a) (b b) (n1 n1) (n2 n2))))
+  (maps ((0 0) ((a a) (b b) (n1 n1) (n2 n2) (n2-0 n2))))
   (origs (n1 (0 0))))
 
 (comment "Nothing left to do")
@@ -906,6 +931,7 @@
       (recv (enc n2 (pubk b)))))
   (label 32)
   (unrealized (0 2))
+  (maps ((0) ((a a) (n2 n2) (b b) (n1 n1))))
   (origs (n2 (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -933,5 +959,127 @@
   (shape)
   (maps ((0) ((a a) (n2 n2) (b b) (n1 n1))))
   (origs (n2 (0 1))))
+
+(comment "Nothing left to do")
+
+(defprotocol ns basic
+  (defrole init
+    (vars (a b name) (n1 n2 text))
+    (trace (send (enc n1 a (pubk b))) (recv (enc n1 n2 b (pubk a)))
+      (send (enc n2 (pubk b))))
+    (facts (rel1 n1 n2) (rel2 n1 n2)))
+  (defrole resp
+    (vars (b a name) (n2 n1 text))
+    (trace (recv (enc n1 a (pubk b))) (send (enc n1 n2 b (pubk a)))
+      (recv (enc n2 (pubk b)))))
+  (defrule rebind-x
+    (forall ((x y text))
+      (implies
+        (fact rel1 x y)
+        (exists ((x-0 name)) (fact rel2 x-0 y)))))
+  (defgenrule neqRl_indx
+    (forall ((x indx)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_strd
+    (forall ((x strd)) (implies (fact neq x x) (false))))
+  (defgenrule neqRl_mesg
+    (forall ((x mesg)) (implies (fact neq x x) (false))))
+  (defgenrule fact-init-rel11
+    (forall ((z strd) (n2 n1 text))
+      (implies
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel1 n1 n2))))
+  (defgenrule fact-init-rel20
+    (forall ((z strd) (n2 n1 text))
+      (implies
+        (and (p "init" z (idx 2)) (p "init" "n1" z n1)
+          (p "init" "n2" z n2)) (fact rel2 n1 n2))))
+  (comment "Needham-Schroeder with no role origination assumptions"))
+
+(defskeleton ns
+  (vars (x name) (n1 n2 text) (a b name))
+  (defstrand init 3 (n1 n1) (n2 n2) (a a) (b b))
+  (non-orig (privk a) (privk b))
+  (uniq-orig n1)
+  (facts (rel2 x n2) (rel1 n1 n2) (rel2 n1 n2))
+  (comment "Double initiator point-of-view, same nonce")
+  (traces
+    ((send (enc n1 a (pubk b))) (recv (enc n1 n2 b (pubk a)))
+      (send (enc n2 (pubk b)))))
+  (label 34)
+  (unrealized (0 1))
+  (maps ((0) ((x x) (n1 n1) (n2 n2) (a a) (b b))))
+  (origs (n1 (0 0)))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton ns
+  (vars (x name) (n1 n2 n2-0 text) (a b name))
+  (defstrand init 3 (n1 n1) (n2 n2) (a a) (b b))
+  (defstrand resp 2 (n2 n2-0) (n1 n1) (b b) (a a))
+  (precedes ((0 0) (1 0)) ((1 1) (0 1)))
+  (non-orig (privk a) (privk b))
+  (uniq-orig n1)
+  (facts (rel2 x n2) (rel1 n1 n2) (rel2 n1 n2))
+  (comment "Double initiator point-of-view, same nonce")
+  (operation nonce-test (added-strand resp 2) n1 (0 1)
+    (enc n1 a (pubk b)))
+  (strand-map 0)
+  (traces
+    ((send (enc n1 a (pubk b))) (recv (enc n1 n2 b (pubk a)))
+      (send (enc n2 (pubk b))))
+    ((recv (enc n1 a (pubk b))) (send (enc n1 n2-0 b (pubk a)))))
+  (label 35)
+  (parent 34)
+  (unrealized (0 1))
+  (maps ((0) ((x x) (n1 n1) (n2 n2) (a a) (b b))))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton ns
+  (vars (x name) (n1 n2 text) (a b name))
+  (defstrand init 3 (n1 n1) (n2 n2) (a a) (b b))
+  (defstrand resp 2 (n2 n2) (n1 n1) (b b) (a a))
+  (precedes ((0 0) (1 0)) ((1 1) (0 1)))
+  (non-orig (privk a) (privk b))
+  (uniq-orig n1)
+  (facts (rel2 x n2) (rel1 n1 n2) (rel2 n1 n2))
+  (comment "Double initiator point-of-view, same nonce")
+  (operation nonce-test (contracted (n2-0 n2)) n1 (0 1)
+    (enc n1 a (pubk b)) (enc n1 n2 b (pubk a)))
+  (strand-map 0 1)
+  (traces
+    ((send (enc n1 a (pubk b))) (recv (enc n1 n2 b (pubk a)))
+      (send (enc n2 (pubk b))))
+    ((recv (enc n1 a (pubk b))) (send (enc n1 n2 b (pubk a)))))
+  (label 36)
+  (parent 35)
+  (realized)
+  (maps ((0) ((x x) (n1 n1) (n2 n2) (a a) (b b))))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton ns
+  (vars (n2 text) (x x-0 name) (n1 n2-0 text) (a b name))
+  (defstrand init 3 (n1 n1) (n2 n2-0) (a a) (b b))
+  (defstrand resp 2 (n2 n2-0) (n1 n1) (b b) (a a))
+  (precedes ((0 0) (1 0)) ((1 1) (0 1)))
+  (non-orig (privk a) (privk b))
+  (uniq-orig n1)
+  (facts (rel2 x-0 n2-0) (rel1 n1 n2-0) (rel2 n1 n2-0) (rel2 x n2)
+    (rel1 n1 n2) (rel2 n1 n2))
+  (comment "Double initiator point-of-view, same nonce")
+  (rule fact-init-rel11 fact-init-rel20 rebind-x)
+  (operation generalization separated n2-0)
+  (strand-map 0 1)
+  (traces
+    ((send (enc n1 a (pubk b))) (recv (enc n1 n2-0 b (pubk a)))
+      (send (enc n2-0 (pubk b))))
+    ((recv (enc n1 a (pubk b))) (send (enc n1 n2-0 b (pubk a)))))
+  (label 37)
+  (parent 36)
+  (seen 36)
+  (seen-ops
+    (36 (operation generalization weakened ((0 0) (1 0)))
+      (strand-map 0 1)))
+  (realized)
+  (maps ((0) ((x x-0) (n1 n1) (n2 n2) (a a) (b b))))
+  (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

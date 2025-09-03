@@ -1,6 +1,6 @@
 (herald "Anonymous identity protocol from TCG")
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/aik.scm")
 
 (defprotocol aikprot basic
@@ -40,6 +40,7 @@
       (send (cat (enc "aic" i k x (privk pc)) (enc k (invk k) srk)))))
   (label 0)
   (unrealized (0 2))
+  (maps ((0) ((mf mf) (pc pc) (i i) (x x) (ek ek) (k k) (srk srk))))
   (origs ((invk k) (0 3)) (k (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -63,6 +64,7 @@
   (label 1)
   (parent 0)
   (unrealized (1 0))
+  (maps ((0) ((mf mf) (pc pc) (i i) (x x) (ek ek) (k k) (srk srk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton aikprot
@@ -87,6 +89,7 @@
   (label 2)
   (parent 1)
   (unrealized (0 2))
+  (maps ((0) ((mf mf) (pc pc) (i i) (x x) (ek ek) (k k) (srk srk))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton aikprot
@@ -149,6 +152,7 @@
       (operation encryption-test (displaced 4 2 ca 1)
         (enc "ekc" mf-1 ek-1 (privk mf-1)) (3 0)) (strand-map 0 1 2 1)))
   (unrealized (3 0))
+  (maps ((0) ((mf mf) (pc pc) (i i) (x x) (ek ek) (k k) (srk srk))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
@@ -187,6 +191,7 @@
       (send (enc "aic" i k x (privk pc)))))
   (label 5)
   (unrealized (0 0))
+  (maps ((0) ((i i) (x x) (pc pc) (k k))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -207,6 +212,7 @@
   (label 6)
   (parent 5)
   (unrealized (1 0))
+  (maps ((0) ((i i) (x x) (pc pc) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton aikprot
@@ -228,6 +234,7 @@
   (label 7)
   (parent 6)
   (unrealized (0 0))
+  (maps ((0) ((i i) (x x) (pc pc) (k k))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton aikprot
@@ -257,6 +264,7 @@
   (label 8)
   (parent 7)
   (unrealized (3 2))
+  (maps ((0) ((i i) (x x) (pc pc) (k k))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton aikprot
@@ -287,6 +295,7 @@
       (operation encryption-test (displaced 4 2 ca 1)
         (enc "ekc" mf-0 ek-0 (privk mf-0)) (3 0)) (strand-map 0 1 2 1)))
   (unrealized (3 0))
+  (maps ((0) ((i i) (x x) (pc pc) (k k))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton aikprot
@@ -349,6 +358,7 @@
   (label 11)
   (parent 8)
   (unrealized (4 0))
+  (maps ((0) ((i i) (x x) (pc pc) (k k))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton aikprot
@@ -384,6 +394,7 @@
   (seen-ops
     (10 (operation generalization deleted (1 0)) (strand-map 0 2 3 4)))
   (realized)
+  (maps ((0) ((i i) (x x) (pc pc) (k k))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton aikprot
@@ -419,6 +430,7 @@
   (label 13)
   (parent 11)
   (unrealized (3 2))
+  (maps ((0) ((i i) (x x) (pc pc) (k k))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton aikprot
@@ -454,6 +466,7 @@
   (label 14)
   (parent 13)
   (realized)
+  (maps ((0) ((i i) (x x) (pc pc) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton aikprot
@@ -490,6 +503,7 @@
   (label 15)
   (parent 13)
   (realized)
+  (maps ((0) ((i i) (x x) (pc pc) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton aikprot
@@ -537,6 +551,7 @@
         (enc "ekc" mf-2 ek-1 (privk mf-2)) (6 0))
       (strand-map 0 1 2 3 4 5 4)))
   (unrealized (6 0))
+  (maps ((0) ((i i) (x x) (pc pc) (k k))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton aikprot
@@ -570,6 +585,7 @@
   (seen-ops
     (10 (operation generalization deleted (1 0)) (strand-map 0 2 3 4)))
   (realized)
+  (maps ((0) ((i i) (x x) (pc pc) (k k))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton aikprot
@@ -604,6 +620,7 @@
   (seen-ops
     (10 (operation generalization deleted (4 0)) (strand-map 0 1 2 3)))
   (realized)
+  (maps ((0) ((i i) (x x) (pc pc) (k k))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

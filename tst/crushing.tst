@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/crushing.scm")
 
 (defprotocol crushing basic
@@ -37,6 +37,7 @@
       (recv (enc n n1 n2 n3 n (invk k)))))
   (label 0)
   (unrealized (0 1) (0 2) (0 3) (0 5))
+  (maps ((0) ((k k) (n n) (n1 n1) (n2 n2) (n3 n3))))
   (origs (n (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -59,6 +60,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 2) (0 3) (0 5))
+  (maps ((0) ((k k) (n n) (n1 n1) (n2 n2) (n3 n3))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton crushing
@@ -80,6 +82,7 @@
   (label 2)
   (parent 1)
   (unrealized (0 3) (0 5))
+  (maps ((0) ((k k) (n n) (n1 n1) (n2 n1) (n3 n3))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton crushing
@@ -103,6 +106,7 @@
   (label 3)
   (parent 1)
   (unrealized (0 3) (0 5))
+  (maps ((0) ((k k) (n n) (n1 n1) (n2 n2) (n3 n3))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton crushing
@@ -124,6 +128,7 @@
   (label 4)
   (parent 2)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 n1) (n2 n1) (n3 n1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton crushing
@@ -147,6 +152,7 @@
   (label 5)
   (parent 2)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 n1) (n2 n1) (n3 n3))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton crushing
@@ -170,6 +176,7 @@
   (label 6)
   (parent 3)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 n1) (n2 n2) (n3 n1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton crushing
@@ -193,6 +200,7 @@
   (label 7)
   (parent 3)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 n1) (n2 n2) (n3 n2))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton crushing
@@ -219,6 +227,7 @@
   (label 8)
   (parent 3)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 n1) (n2 n2) (n3 n3))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton crushing
@@ -243,6 +252,7 @@
   (label 9)
   (parent 4)
   (unrealized (2 0))
+  (maps ((0) ((k k) (n n) (n1 n1) (n2 n1) (n3 n1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton crushing
@@ -271,6 +281,7 @@
   (parent 5)
   (unrealized (3 0))
   (dead)
+  (maps ((0) ((k k) (n n) (n1 n1) (n2 n1) (n3 n3))))
   (comment "empty cohort"))
 
 (defskeleton crushing
@@ -299,6 +310,7 @@
   (parent 6)
   (unrealized (3 0))
   (dead)
+  (maps ((0) ((k k) (n n) (n1 n1) (n2 n2) (n3 n1))))
   (comment "empty cohort"))
 
 (defskeleton crushing
@@ -327,6 +339,7 @@
   (parent 7)
   (unrealized (3 0))
   (dead)
+  (maps ((0) ((k k) (n n) (n1 n1) (n2 n2) (n3 n2))))
   (comment "empty cohort"))
 
 (defskeleton crushing
@@ -358,6 +371,7 @@
   (parent 8)
   (unrealized (4 0))
   (dead)
+  (maps ((0) ((k k) (n n) (n1 n1) (n2 n2) (n3 n3))))
   (comment "empty cohort"))
 
 (defskeleton crushing

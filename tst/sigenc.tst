@@ -1,7 +1,7 @@
 (herald "Signed Encrypted Message Example"
   (comment "Shows examples of key usage of asymmetric keys"))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/sigenc.scm")
 
 (defprotocol mult-keys-sig-enc basic
@@ -33,6 +33,7 @@
       (send (enc (enc n2 (privk "sig" a)) (pubk "enc" b)))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
   (origs (n1 (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -55,6 +56,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton mult-keys-sig-enc
@@ -112,6 +114,7 @@
       (recv (enc (enc n2 (privk "sig" a)) (pubk "enc" b)))))
   (label 3)
   (unrealized (0 0) (0 2))
+  (maps ((0) ((a a) (b b) (n2 n2) (n1 n1))))
   (origs (n2 (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -133,6 +136,7 @@
   (label 4)
   (parent 3)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (n2 n2) (n1 n1))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton mult-keys-sig-enc
@@ -216,6 +220,7 @@
       (recv (enc (enc n2 (privk "sig" a)) (pubk "enc" b)))))
   (label 7)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (n2 n2) (n1 n1))))
   (origs (n2 (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -274,6 +279,7 @@
       (recv (enc (enc n2 (privk "sig" a)) (pubk "enc" b)))))
   (label 9)
   (unrealized (0 0) (0 2))
+  (maps ((0) ((a a) (b b) (n2 n2) (n1 n1))))
   (origs (n2 (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -295,6 +301,7 @@
   (label 10)
   (parent 9)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (n2 n2) (n1 n1))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton mult-keys-sig-enc
@@ -317,6 +324,7 @@
   (label 11)
   (parent 10)
   (unrealized (1 1))
+  (maps ((0) ((a a) (b b) (n2 n2) (n1 n1))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton mult-keys-sig-enc
@@ -341,6 +349,7 @@
   (label 12)
   (parent 10)
   (unrealized (2 1))
+  (maps ((0) ((a a) (b b) (n2 n2) (n1 n1))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton mult-keys-sig-enc
@@ -394,6 +403,7 @@
   (seen-ops
     (15 (operation generalization deleted (1 1)) (strand-map 0 1 2)))
   (realized)
+  (maps ((0) ((a a) (b b) (n2 n2) (n1 n1))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton mult-keys-sig-enc
@@ -449,6 +459,7 @@
   (seen-ops
     (13 (operation generalization deleted (1 0)) (strand-map 0 2)))
   (realized)
+  (maps ((0) ((a a) (b b) (n2 n2) (n1 n1))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton mult-keys-sig-enc
@@ -480,6 +491,7 @@
   (seen-ops
     (15 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps ((0) ((a a) (b b) (n2 n2) (n1 n1))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

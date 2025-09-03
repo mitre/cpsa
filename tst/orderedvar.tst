@@ -1,6 +1,6 @@
 (herald ordered)
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/orderedvar.scm")
 
 (defprotocol ordered basic
@@ -30,6 +30,7 @@
   (traces ((recv (enc a k)) (send a)) ((recv (enc b k-0)) (send b)))
   (label 0)
   (realized)
+  (maps ((0 1) ((a a) (b b) (k k) (k-0 k-0))))
   (origs)
   (comment "Not closed under rules"))
 
@@ -91,6 +92,7 @@
   (traces ((recv (enc b k)) (send b)))
   (label 3)
   (realized)
+  (maps ((0) ((b b) (k k))))
   (origs)
   (comment "Not closed under rules"))
 

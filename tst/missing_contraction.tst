@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/missing_contraction.scm")
 
 (defprotocol missing-contraction basic
@@ -26,6 +26,7 @@
     ((recv (enc a m (pubk c)))))
   (label 0)
   (unrealized (1 0))
+  (maps ((0 1) ((m m) (a a) (c c) (n n) (b b))))
   (origs (m (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -93,6 +94,7 @@
   (label 3)
   (unrealized (1 0))
   (preskeleton)
+  (maps ((0 1) ((m m) (a a) (c c))))
   (origs (m (0 0)))
   (comment "Not a skeleton"))
 
@@ -108,6 +110,7 @@
   (label 4)
   (parent 3)
   (unrealized (1 0))
+  (maps ((0 1) ((m m) (a a) (c c))))
   (origs (m (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -175,6 +178,7 @@
     ((recv (enc a m (pubk c)))))
   (label 7)
   (unrealized (1 0))
+  (maps ((0 1) ((m m) (a a) (b b) (c c) (n n))))
   (origs (m (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -211,6 +215,7 @@
   (label 9)
   (parent 7)
   (unrealized (1 0))
+  (maps ((0 1) ((m n) (a a) (b b) (c c) (n n))))
   (origs (n (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -232,6 +237,7 @@
   (seen-ops
     (8 (operation generalization separated n-0) (strand-map 0 1)))
   (realized)
+  (maps ((0 1) ((m n) (a a) (b b) (c a) (n n))))
   (origs (n (0 0)))
   (comment "1 in cohort - 0 not yet seen"))
 

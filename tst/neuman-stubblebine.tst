@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/neuman-stubblebine.scm")
 
 (defprotocol neuman-stubblebine basic
@@ -35,6 +35,7 @@
       (send (cat (enc a k tb (ltk b ks)) (enc rb k)))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (ks ks) (ra ra) (rb rb) (k k) (tb tb))))
   (origs (ra (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -59,6 +60,7 @@
   (label 1)
   (parent 0)
   (unrealized (1 0))
+  (maps ((0) ((a a) (b b) (ks ks) (ra ra) (rb rb) (k k) (tb tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine
@@ -123,6 +125,7 @@
       (recv (cat (enc a k tb (ltk b ks)) (enc rb k)))))
   (label 3)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (ks ks) (ra ra) (rb rb) (k k) (tb tb))))
   (origs (rb (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -147,6 +150,7 @@
   (label 4)
   (parent 3)
   (unrealized (0 2) (1 0))
+  (maps ((0) ((a a) (b b) (ks ks) (ra ra) (rb rb) (k k) (tb tb))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton neuman-stubblebine
@@ -169,6 +173,7 @@
   (label 5)
   (parent 4)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (ks ks) (ra ra) (rb rb) (k k) (tb tb))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton neuman-stubblebine
@@ -195,6 +200,7 @@
   (label 6)
   (parent 4)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (ks ks) (ra ra) (rb rb) (k k) (tb tb))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton neuman-stubblebine
@@ -224,6 +230,7 @@
   (label 7)
   (parent 5)
   (unrealized (2 1))
+  (maps ((0) ((a a) (b b) (ks ks) (ra ra) (rb rb) (k k) (tb tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine
@@ -248,6 +255,7 @@
   (parent 5)
   (unrealized (2 0))
   (dead)
+  (maps ((0) ((a a) (b b) (ks ks) (ra ra) (rb rb) (k k) (tb tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine
@@ -280,6 +288,7 @@
   (label 9)
   (parent 6)
   (unrealized (3 1))
+  (maps ((0) ((a a) (b b) (ks ks) (ra ra) (rb rb) (k k) (tb tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine
@@ -307,6 +316,7 @@
   (parent 6)
   (unrealized (3 0))
   (dead)
+  (maps ((0) ((a a) (b b) (ks ks) (ra ra) (rb rb) (k k) (tb tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine
@@ -334,6 +344,7 @@
   (label 11)
   (parent 7)
   (unrealized (2 1))
+  (maps ((0) ((a a) (b b) (ks ks) (ra ra) (rb rb) (k k) (tb tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine
@@ -364,6 +375,7 @@
   (label 12)
   (parent 9)
   (unrealized (3 1))
+  (maps ((0) ((a a) (b b) (ks ks) (ra ra) (rb rb) (k k) (tb tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine
@@ -463,6 +475,7 @@
         (cat (enc b ra k tb (ltk a ks)) (enc a k tb (ltk b ks)) rb))))
   (label 15)
   (unrealized (0 0))
+  (maps ((0) ((a a) (b b) (ks ks) (ra ra) (rb rb) (k k) (tb tb))))
   (origs (k (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 

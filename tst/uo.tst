@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/uo.scm")
 
 (defprotocol uniq-orig basic
@@ -20,6 +20,7 @@
   (label 0)
   (unrealized (1 1))
   (preskeleton)
+  (maps ((0 1) ((n n) (m m))))
   (origs (n (0 0)))
   (comment "Not a skeleton"))
 

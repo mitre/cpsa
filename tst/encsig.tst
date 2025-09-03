@@ -1,7 +1,7 @@
 (herald "Encrypted Signed Message Example"
   (comment "Shows examples of key usage of asymmetric keys"))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/encsig.scm")
 
 (defprotocol mult-keys-enc-sig basic
@@ -33,6 +33,7 @@
       (send (enc (enc n2 (pubk "enc" b)) (privk "sig" a)))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
   (origs (n1 (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -90,6 +91,7 @@
       (recv (enc (enc n2 (pubk "enc" b)) (privk "sig" a)))))
   (label 2)
   (unrealized (0 0) (0 2))
+  (maps ((0) ((a a) (b b) (n2 n2) (n1 n1))))
   (origs (n2 (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -111,6 +113,7 @@
   (label 3)
   (parent 2)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (n2 n2) (n1 n1))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton mult-keys-enc-sig
@@ -194,6 +197,7 @@
       (recv (enc (enc n2 (pubk "enc" b)) (privk "sig" a)))))
   (label 6)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (n2 n2) (n1 n1))))
   (origs (n2 (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -252,6 +256,7 @@
       (recv (enc (enc n2 (pubk "enc" b)) (privk "sig" a)))))
   (label 8)
   (unrealized (0 0) (0 2))
+  (maps ((0) ((a a) (b b) (n2 n2) (n1 n1))))
   (origs (n2 (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -273,6 +278,7 @@
   (label 9)
   (parent 8)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (n2 n2) (n1 n1))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton mult-keys-enc-sig
@@ -321,6 +327,7 @@
   (label 11)
   (parent 9)
   (unrealized (2 1))
+  (maps ((0) ((a a) (b b) (n2 n2) (n1 n1))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton mult-keys-enc-sig
@@ -376,6 +383,7 @@
   (seen-ops
     (10 (operation generalization deleted (1 0)) (strand-map 0 2)))
   (realized)
+  (maps ((0) ((a a) (b b) (n2 n2) (n1 n1))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton mult-keys-enc-sig

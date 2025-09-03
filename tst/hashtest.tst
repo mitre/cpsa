@@ -1,6 +1,6 @@
 (herald "Hashtest")
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/hashtest.scm")
 
 (defprotocol hashtest basic
@@ -27,6 +27,7 @@
   (traces ((send (enc n k)) (recv (hash n))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((n n) (k k))))
   (origs (n (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -44,6 +45,7 @@
   (label 1)
   (parent 0)
   (unrealized (1 0))
+  (maps ((0) ((n n) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton hashtest
@@ -60,6 +62,7 @@
   (parent 0)
   (unrealized (1 0))
   (dead)
+  (maps ((0) ((n n) (k k))))
   (comment "empty cohort"))
 
 (defskeleton hashtest

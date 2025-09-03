@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/completeness-test.scm")
 
 (defprotocol completeness-test basic
@@ -28,6 +28,7 @@
       (send (enc "ok" s-0))) ((recv (enc "ok" s))))
   (label 0)
   (unrealized (0 1) (1 0))
+  (maps ((0 1) ((b b) (n n) (s s) (a a) (s-0 s-0))))
   (origs (n (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -47,6 +48,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 1))
+  (maps ((0 1) ((b b) (n n) (s s) (a a) (s-0 s))))
   (origs (n (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -68,6 +70,7 @@
   (label 2)
   (parent 0)
   (unrealized (0 1))
+  (maps ((0 1) ((b b) (n n) (s s) (a a) (s-0 s-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton completeness-test
@@ -146,6 +149,7 @@
       (send (enc "ok" s-0))))
   (label 5)
   (unrealized (0 0) (1 1))
+  (maps ((0 1) ((b b) (n n) (s s) (a a) (s-0 s-0))))
   (origs (n (1 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -167,6 +171,7 @@
   (label 6)
   (parent 5)
   (unrealized (0 0))
+  (maps ((0 1) ((b b) (n n) (s s) (a a) (s-0 s-0))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton completeness-test
@@ -243,6 +248,7 @@
     ((recv (enc "ok" s))))
   (label 9)
   (unrealized (0 1) (1 0))
+  (maps ((0 1) ((b b) (n n) (s s) (a a))))
   (origs (n (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -261,6 +267,7 @@
   (label 10)
   (parent 9)
   (unrealized (1 1))
+  (maps ((1 0) ((b b) (n n) (s s) (a a))))
   (origs (n (1 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -281,6 +288,7 @@
   (label 11)
   (parent 9)
   (unrealized (0 1))
+  (maps ((0 1) ((b b) (n n) (s s) (a a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton completeness-test
@@ -357,6 +365,7 @@
     ((send (enc a n (pubk b))) (recv (enc n (pubk a)))))
   (label 14)
   (unrealized (0 0) (1 1))
+  (maps ((0 1) ((b b) (n n) (s s) (a a))))
   (origs (n (1 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -377,6 +386,7 @@
   (label 15)
   (parent 14)
   (unrealized (0 0))
+  (maps ((0 1) ((b b) (n n) (s s) (a a))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton completeness-test

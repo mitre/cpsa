@@ -1,7 +1,7 @@
 (herald "Signed group DH exchange (improved version)"
   (algebra diffie-hellman) (limit 100))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/dh_group_sig.scm")
 (comment "Step count limited to 100")
 
@@ -69,6 +69,10 @@
       (recv (enc na nb (exp (gen) (mul x y alpha)))) (send nb)))
   (label 0)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((a a) (b b) (x x) (y y) (alpha alpha) (group group) (na na)
+        (nb nb) (group-dist group-dist))))
   (origs)
   (ugens (x (0 1)) (na (0 3)))
   (comment "1 in cohort - 1 not yet seen"))
@@ -103,6 +107,10 @@
   (label 1)
   (parent 0)
   (unrealized (0 2))
+  (maps
+    ((0)
+      ((a a) (b b) (x x) (y y) (alpha alpha) (group group) (na na)
+        (nb nb) (group-dist group-dist))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_sig
@@ -145,6 +153,10 @@
   (label 2)
   (parent 1)
   (unrealized (0 4) (2 0))
+  (maps
+    ((0)
+      ((a a) (b b) (x x) (y (mul y (rec alpha) alpha-0)) (alpha alpha)
+        (group group) (na na) (nb nb) (group-dist group-dist))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dh_sig
@@ -185,6 +197,10 @@
   (label 3)
   (parent 2)
   (unrealized (0 4))
+  (maps
+    ((0)
+      ((a a) (b b) (x x) (y y) (alpha alpha) (group group) (na na)
+        (nb nb) (group-dist group-dist))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dh_sig
@@ -230,6 +246,10 @@
   (label 4)
   (parent 2)
   (unrealized (0 4))
+  (maps
+    ((0)
+      ((a a) (b b) (x x) (y (mul y (rec alpha) alpha-0)) (alpha alpha)
+        (group group) (na na) (nb nb) (group-dist group-dist))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_sig
@@ -324,6 +344,10 @@
   (label 6)
   (parent 3)
   (unrealized (3 0))
+  (maps
+    ((0)
+      ((a a) (b b) (x x) (y y) (alpha alpha) (group group) (na na)
+        (nb nb) (group-dist group-dist))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dh_sig
@@ -373,6 +397,10 @@
   (label 7)
   (parent 4)
   (unrealized (4 0))
+  (maps
+    ((0)
+      ((a a) (b b) (x x) (y (mul y (rec alpha) alpha-0)) (alpha alpha)
+        (group group) (na na) (nb nb) (group-dist group-dist))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dh_sig
@@ -421,6 +449,10 @@
   (parent 6)
   (unrealized (4 0))
   (dead)
+  (maps
+    ((0)
+      ((a a) (b b) (x x) (y y) (alpha alpha) (group group) (na na)
+        (nb nb) (group-dist group-dist))))
   (comment "empty cohort"))
 
 (defskeleton dh_sig
@@ -469,6 +501,10 @@
   (parent 6)
   (unrealized (4 0))
   (dead)
+  (maps
+    ((0)
+      ((a a) (b b) (x x) (y y) (alpha alpha) (group group) (na na)
+        (nb nb) (group-dist group-dist))))
   (comment "empty cohort"))
 
 (defskeleton dh_sig
@@ -517,6 +553,10 @@
   (parent 6)
   (unrealized (4 0))
   (dead)
+  (maps
+    ((0)
+      ((a a) (b b) (x x) (y y) (alpha alpha) (group group) (na na)
+        (nb nb) (group-dist group-dist))))
   (comment "empty cohort"))
 
 (defskeleton dh_sig
@@ -570,6 +610,10 @@
   (parent 7)
   (unrealized (5 0))
   (dead)
+  (maps
+    ((0)
+      ((a a) (b b) (x x) (y (mul y (rec alpha) alpha-0)) (alpha alpha)
+        (group group) (na na) (nb nb) (group-dist group-dist))))
   (comment "empty cohort"))
 
 (defskeleton dh_sig
@@ -623,6 +667,10 @@
   (parent 7)
   (unrealized (5 0))
   (dead)
+  (maps
+    ((0)
+      ((a a) (b b) (x x) (y (mul y (rec alpha) alpha-0)) (alpha alpha)
+        (group group) (na na) (nb nb) (group-dist group-dist))))
   (comment "empty cohort"))
 
 (defskeleton dh_sig
@@ -676,6 +724,10 @@
   (parent 7)
   (unrealized (5 0))
   (dead)
+  (maps
+    ((0)
+      ((a a) (b b) (x x) (y (mul y (rec alpha) alpha-0)) (alpha alpha)
+        (group group) (na na) (nb nb) (group-dist group-dist))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -744,6 +796,10 @@
       (send (enc na nb (exp (gen) (mul y x alpha)))) (recv nb)))
   (label 14)
   (unrealized (0 0) (0 1) (0 3))
+  (maps
+    ((0)
+      ((a a) (b b) (y y) (x x) (alpha alpha) (group group) (na na)
+        (nb nb) (group-dist group-dist))))
   (origs)
   (ugens (y (0 2)) (nb (0 4)))
   (comment "1 in cohort - 1 not yet seen"))
@@ -778,6 +834,10 @@
   (label 15)
   (parent 14)
   (unrealized (0 1) (0 3))
+  (maps
+    ((0)
+      ((a a) (b b) (y y) (x x) (alpha alpha) (group group) (na na)
+        (nb nb) (group-dist group-dist))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_sig
@@ -815,6 +875,10 @@
   (label 16)
   (parent 15)
   (unrealized (0 3) (0 5) (2 0))
+  (maps
+    ((0)
+      ((a a) (b b) (y y) (x (mul (rec alpha) x alpha-0)) (alpha alpha)
+        (group group) (na na) (nb nb) (group-dist group-dist))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dh_sig
@@ -852,6 +916,10 @@
   (label 17)
   (parent 16)
   (unrealized (0 3) (0 5))
+  (maps
+    ((0)
+      ((a a) (b b) (y y) (x x) (alpha alpha) (group group) (na na)
+        (nb nb) (group-dist group-dist))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_sig
@@ -893,6 +961,10 @@
   (label 18)
   (parent 16)
   (unrealized (0 3) (0 5))
+  (maps
+    ((0)
+      ((a a) (b b) (y y) (x (mul (rec alpha) x alpha-0)) (alpha alpha)
+        (group group) (na na) (nb nb) (group-dist group-dist))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_sig
@@ -937,6 +1009,10 @@
   (label 19)
   (parent 17)
   (unrealized (0 5))
+  (maps
+    ((0)
+      ((a a) (b b) (y y) (x x) (alpha alpha) (group group) (na na)
+        (nb nb) (group-dist group-dist))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dh_sig
@@ -986,6 +1062,10 @@
   (label 20)
   (parent 18)
   (unrealized (0 5))
+  (maps
+    ((0)
+      ((a a) (b b) (y y) (x (mul (rec alpha) alpha-0 x)) (alpha alpha)
+        (group group) (na na) (nb nb) (group-dist group-dist))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_sig
@@ -1082,6 +1162,10 @@
   (label 22)
   (parent 19)
   (unrealized (3 0))
+  (maps
+    ((0)
+      ((a a) (b b) (y y) (x x) (alpha alpha) (group group) (na na)
+        (nb nb) (group-dist group-dist))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dh_sig
@@ -1133,6 +1217,10 @@
   (label 23)
   (parent 20)
   (unrealized (4 0))
+  (maps
+    ((0)
+      ((a a) (b b) (y y) (x (mul (rec alpha) alpha-0 x)) (alpha alpha)
+        (group group) (na na) (nb nb) (group-dist group-dist))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dh_sig
@@ -1184,6 +1272,10 @@
   (parent 22)
   (unrealized (4 0))
   (dead)
+  (maps
+    ((0)
+      ((a a) (b b) (y y) (x x) (alpha alpha) (group group) (na na)
+        (nb nb) (group-dist group-dist))))
   (comment "empty cohort"))
 
 (defskeleton dh_sig
@@ -1235,6 +1327,10 @@
   (parent 22)
   (unrealized (4 0))
   (dead)
+  (maps
+    ((0)
+      ((a a) (b b) (y y) (x x) (alpha alpha) (group group) (na na)
+        (nb nb) (group-dist group-dist))))
   (comment "empty cohort"))
 
 (defskeleton dh_sig
@@ -1286,6 +1382,10 @@
   (parent 22)
   (unrealized (4 0))
   (dead)
+  (maps
+    ((0)
+      ((a a) (b b) (y y) (x x) (alpha alpha) (group group) (na na)
+        (nb nb) (group-dist group-dist))))
   (comment "empty cohort"))
 
 (defskeleton dh_sig
@@ -1342,6 +1442,10 @@
   (parent 23)
   (unrealized (5 0))
   (dead)
+  (maps
+    ((0)
+      ((a a) (b b) (y y) (x (mul (rec alpha) alpha-0 x)) (alpha alpha)
+        (group group) (na na) (nb nb) (group-dist group-dist))))
   (comment "empty cohort"))
 
 (defskeleton dh_sig
@@ -1398,6 +1502,10 @@
   (parent 23)
   (unrealized (5 0))
   (dead)
+  (maps
+    ((0)
+      ((a a) (b b) (y y) (x (mul (rec alpha) alpha-0 x)) (alpha alpha)
+        (group group) (na na) (nb nb) (group-dist group-dist))))
   (comment "empty cohort"))
 
 (defskeleton dh_sig
@@ -1454,6 +1562,10 @@
   (parent 23)
   (unrealized (5 0))
   (dead)
+  (maps
+    ((0)
+      ((a a) (b b) (y y) (x (mul (rec alpha) alpha-0 x)) (alpha alpha)
+        (group group) (na na) (nb nb) (group-dist group-dist))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

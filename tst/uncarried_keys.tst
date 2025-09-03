@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/uncarried_keys.scm")
 
 (defprotocol uncarried-keys basic
@@ -31,6 +31,7 @@
       (send (enc a K (pubk B))) (recv (enc a A B K))))
   (label 0)
   (unrealized (0 1) (0 3))
+  (maps ((0) ((a a) (A A) (B B) (K K))))
   (origs (K (0 2)) (a (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -51,6 +52,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 3))
+  (maps ((0) ((a a) (A A) (B B) (K K))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton uncarried-keys
@@ -138,6 +140,7 @@
   (parent 1)
   (unrealized (2 0))
   (dead)
+  (maps ((0) ((a a) (A A) (B B) (K K))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

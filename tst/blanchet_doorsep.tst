@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read")
 
 (defprotocol blanchet basic
@@ -27,6 +27,7 @@
   (traces ((send (enc (enc s (invk a)) b)) (recv (enc d s))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (s s) (d d))))
   (origs (s (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -45,6 +46,7 @@
   (label 1)
   (parent 0)
   (unrealized (1 0))
+  (maps ((0) ((a a) (b b) (s s) (d d))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet
@@ -63,6 +65,7 @@
   (parent 0)
   (unrealized (1 0))
   (dead)
+  (maps ((0) ((a a) (b b) (s s) (d d))))
   (comment "empty cohort"))
 
 (defskeleton blanchet
@@ -118,6 +121,7 @@
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t)))
   (label 4)
   (unrealized (0 0))
+  (maps ((0) ((p p) (t t) (d d) (k k))))
   (origs (t (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -139,6 +143,7 @@
   (label 5)
   (parent 4)
   (unrealized (0 0) (0 2))
+  (maps ((0) ((p p) (t t) (d d) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton doorsep
@@ -158,6 +163,7 @@
   (label 6)
   (parent 5)
   (unrealized (0 2))
+  (maps ((0) ((p p) (t t) (d d) (k k))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton doorsep
@@ -198,6 +204,7 @@
   (parent 6)
   (unrealized (2 0))
   (dead)
+  (maps ((0) ((p p) (t t) (d d) (k k))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -232,6 +239,7 @@
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t)))
   (label 9)
   (unrealized (0 0))
+  (maps ((0) ((p p) (t t) (d d) (k k))))
   (origs (t (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 

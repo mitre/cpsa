@@ -1,6 +1,6 @@
 (herald "DH Hack" (bound 15))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/DH_hack.scm")
 (comment "Strand count bounded at 15")
 
@@ -40,6 +40,7 @@
        (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs)))))
   (label 0)
   (unrealized (0 0))
+  (maps ((0) ((x x) (y y) (gcs gcs) (cek cek) (d d))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -60,6 +61,7 @@
   (label 1)
   (parent 0)
   (unrealized (1 0))
+  (maps ((0) ((x x) (y y) (gcs gcs) (cek cek) (d d))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
@@ -125,6 +127,7 @@
        (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs)))))
   (label 3)
   (unrealized (0 0))
+  (maps ((0) ((cek cek) (x x) (gcs gcs) (y y) (d d))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -145,6 +148,7 @@
   (label 4)
   (parent 3)
   (unrealized (1 0))
+  (maps ((0) ((cek cek) (x x) (gcs gcs) (y y) (d d))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
@@ -210,6 +214,7 @@
        (enc x (enc cek (hash x (invk y))) (enc d cek) (privk gcs)))))
   (label 6)
   (unrealized (0 0))
+  (maps ((0) ((cek cek) (y y) (gcs gcs) (x x) (d d))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -230,6 +235,7 @@
   (label 7)
   (parent 6)
   (unrealized (1 0))
+  (maps ((0) ((cek cek) (y y) (gcs gcs) (x x) (d d))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
@@ -296,6 +302,7 @@
     ((recv cek) (send cek)))
   (label 9)
   (unrealized (0 0))
+  (maps ((0 1) ((cek cek) (x x) (y y) (gcs gcs) (d d))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -318,6 +325,7 @@
   (label 10)
   (parent 9)
   (unrealized (2 0))
+  (maps ((0 1) ((cek cek) (x x) (y y) (gcs gcs) (d d))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
@@ -343,6 +351,7 @@
   (label 11)
   (parent 10)
   (unrealized (1 0))
+  (maps ((0 1) ((cek cek) (x x) (y y) (gcs gcs) (d d))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton DH_hack
@@ -368,6 +377,7 @@
   (label 12)
   (parent 11)
   (unrealized (1 0))
+  (maps ((0 1) ((cek cek) (x x) (y y) (gcs gcs) (d d))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton DH_hack
@@ -398,6 +408,7 @@
   (label 13)
   (parent 11)
   (unrealized (1 0) (4 0))
+  (maps ((0 1) ((cek cek) (x x) (y y) (gcs gcs) (d d))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
@@ -425,6 +436,7 @@
   (parent 11)
   (unrealized (4 0))
   (dead)
+  (maps ((0 1) ((cek cek) (x x) (y y) (gcs gcs) (d d))))
   (comment "empty cohort"))
 
 (defskeleton DH_hack
@@ -452,6 +464,7 @@
   (parent 12)
   (unrealized (4 0))
   (dead)
+  (maps ((0 1) ((cek cek) (x x) (y y) (gcs gcs) (d d))))
   (comment "empty cohort"))
 
 (defskeleton DH_hack
@@ -479,6 +492,7 @@
   (parent 12)
   (unrealized (4 0))
   (dead)
+  (maps ((0 1) ((cek cek) (x x) (y y) (gcs gcs) (d d))))
   (comment "empty cohort"))
 
 (defskeleton DH_hack
@@ -508,6 +522,7 @@
   (label 17)
   (parent 13)
   (unrealized (1 0))
+  (maps ((0 1) ((cek cek) (x x) (y y) (gcs gcs) (d d))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton DH_hack
@@ -540,6 +555,7 @@
   (parent 17)
   (unrealized (5 0))
   (dead)
+  (maps ((0 1) ((cek cek) (x x) (y y) (gcs gcs) (d d))))
   (comment "empty cohort"))
 
 (defskeleton DH_hack
@@ -572,6 +588,7 @@
   (parent 17)
   (unrealized (5 0))
   (dead)
+  (maps ((0 1) ((cek cek) (x x) (y y) (gcs gcs) (d d))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -613,6 +630,7 @@
     ((recv cek) (send cek)))
   (label 20)
   (unrealized (0 0))
+  (maps ((0 1) ((cek cek) (x x) (gcs gcs) (y y) (d d))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -635,6 +653,7 @@
   (label 21)
   (parent 20)
   (unrealized (2 0))
+  (maps ((0 1) ((cek cek) (x x) (gcs gcs) (y y) (d d))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
@@ -660,6 +679,7 @@
   (label 22)
   (parent 21)
   (unrealized (1 0))
+  (maps ((0 1) ((cek cek) (x x) (gcs gcs) (y y) (d d))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton DH_hack
@@ -717,6 +737,7 @@
   (label 24)
   (parent 22)
   (unrealized (4 0))
+  (maps ((0 1) ((cek cek) (x x) (gcs gcs) (y y) (d d))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack
@@ -744,6 +765,7 @@
   (parent 22)
   (unrealized (4 0))
   (dead)
+  (maps ((0 1) ((cek cek) (x x) (gcs gcs) (y y) (d d))))
   (comment "empty cohort"))
 
 (defskeleton DH_hack
@@ -816,6 +838,7 @@
     ((recv cek) (send cek)))
   (label 27)
   (unrealized (0 0))
+  (maps ((0 1) ((cek cek) (y y) (gcs gcs) (x x) (d d))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -838,6 +861,7 @@
   (label 28)
   (parent 27)
   (unrealized (2 0))
+  (maps ((0 1) ((cek cek) (y y) (gcs gcs) (x x) (d d))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton DH_hack

@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/wonthull3.scm")
 
 (defprotocol wonthull3 basic
@@ -31,6 +31,7 @@
       (recv (enc "okay" x3 x4 (pubk a)))))
   (label 0)
   (unrealized (0 2))
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x3) (x4 x4))))
   (origs (x3 (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -49,6 +50,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 2))
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x2) (x4 x4))))
   (origs (x2 (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -70,6 +72,7 @@
   (label 2)
   (parent 0)
   (unrealized (0 2) (1 0))
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x3) (x4 x4))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull3
@@ -90,6 +93,7 @@
   (label 3)
   (parent 1)
   (unrealized (0 2) (1 0))
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x2) (x4 x4))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull3
@@ -116,6 +120,7 @@
         (enc x3 (pubk a)) (enc "okay" y3 x3 (pubk a))
         (enc x3 x2 (pubk a))) (strand-map 0 1)))
   (unrealized (0 2))
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x3) (x4 x4))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull3
@@ -136,6 +141,7 @@
   (label 5)
   (parent 3)
   (unrealized (0 2))
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x2) (x4 x4))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull3
@@ -185,6 +191,7 @@
       (operation nonce-test (displaced 3 0 init 2) x3 (2 0)
         (enc x3 (pubk a))) (strand-map 0 1 1)))
   (unrealized (0 2) (2 0))
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x3) (x4 x4))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull3
@@ -209,6 +216,7 @@
   (seen-ops
     (6 (operation generalization separated y3-0) (strand-map 0 1)))
   (realized)
+  (maps ((0) ((a a) (x1 x1) (x2 y3) (x3 y3) (x4 y3))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull3
@@ -237,6 +245,7 @@
       (operation nonce-test (displaced 3 0 init 2) x2 (2 0)
         (enc x2 (pubk a))) (strand-map 0 1 1)))
   (unrealized (0 2) (2 0))
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x2) (x4 x4))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
@@ -275,6 +284,8 @@
       (send (enc "okay" x3 x1 (pubk a-0)))))
   (label 10)
   (unrealized (0 2))
+  (maps
+    ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3-0) (a-0 a-0))))
   (origs (x3-0 (0 0)))
   (comment "3 in cohort - 3 not yet seen"))
 
@@ -297,6 +308,7 @@
   (label 11)
   (parent 10)
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (origs (x3 (0 0)))
   (comment "3 in cohort - 3 not yet seen"))
 
@@ -324,6 +336,7 @@
         (enc x1-0 (pubk a)) (enc "okay" x3 x1-0 (pubk a))
         (enc x1-0 x3 (pubk a))) (strand-map 0 1)))
   (unrealized (0 2))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x1) (a-0 a))))
   (origs (x1 (0 0)))
   (comment "2 in cohort - 1 not yet seen"))
 
@@ -348,6 +361,8 @@
   (label 13)
   (parent 10)
   (unrealized (0 2) (2 0))
+  (maps
+    ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3-0) (a-0 a-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull3
@@ -414,6 +429,7 @@
   (label 16)
   (parent 11)
   (unrealized (1 0) (2 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull3
@@ -436,6 +452,7 @@
   (label 17)
   (parent 12)
   (unrealized (0 2) (2 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull3
@@ -465,6 +482,8 @@
         (enc x3-0 (pubk a-0)) (enc "okay" y3 x3-0 (pubk a-0))
         (enc x3-0 x3 (pubk a-0))) (strand-map 0 1 2)))
   (unrealized (0 2))
+  (maps
+    ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3-0) (a-0 a-0))))
   (comment "4 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull3
@@ -487,6 +506,7 @@
   (label 19)
   (parent 16)
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull3
@@ -509,6 +529,7 @@
   (label 20)
   (parent 17)
   (unrealized (0 2))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x1) (a-0 a))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull3
@@ -542,6 +563,7 @@
         (enc x3 (pubk a)) (enc x3 x3 (pubk a)) (enc x1 x3 (pubk a)))
       (strand-map 0 1 2)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (comment "4 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull3
@@ -569,6 +591,7 @@
       (operation nonce-test (contracted (a-0 a)) y3 (1 0)
         (enc y3 (pubk a)) (enc y3 x3 (pubk a))) (strand-map 0 1 2)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a-0))))
   (comment "4 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull3
@@ -601,6 +624,8 @@
       (operation nonce-test (displaced 4 0 init 2) x3-0 (3 0)
         (enc x3-0 (pubk a))) (strand-map 0 1 2 2)))
   (unrealized (0 2) (3 0))
+  (maps
+    ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3-0) (a-0 a-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull3
@@ -627,6 +652,7 @@
   (seen-ops
     (14 (operation generalization deleted (2 0)) (strand-map 0 1)))
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull3
@@ -653,6 +679,7 @@
   (seen-ops
     (15 (operation generalization deleted (2 0)) (strand-map 0 1)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull3
@@ -684,6 +711,7 @@
       (operation nonce-test (displaced 4 0 init 2) x3 (3 0)
         (enc x3 (pubk a))) (strand-map 0 1 2 2)))
   (unrealized (1 0) (3 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull3
@@ -710,6 +738,7 @@
   (seen-ops
     (14 (operation generalization deleted (2 0)) (strand-map 0 1)))
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull3
@@ -766,6 +795,7 @@
       (operation nonce-test (displaced 4 0 init 2) x1 (3 0)
         (enc x1 (pubk a))) (strand-map 0 1 2 2)))
   (unrealized (0 2) (3 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull3
@@ -791,6 +821,7 @@
   (seen-ops
     (15 (operation generalization deleted (2 0)) (strand-map 0 1)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull3
@@ -816,6 +847,7 @@
   (label 31)
   (parent 21)
   (unrealized (1 0) (3 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull3
@@ -838,6 +870,7 @@
   (label 32)
   (parent 22)
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a-0))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull3
@@ -866,6 +899,7 @@
         (enc y3 (pubk a)) (enc "okay" y3 y3 (pubk a))
         (enc y3 x3 (pubk a))) (strand-map 0 1 2)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a-0))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull3
@@ -891,6 +925,7 @@
   (label 34)
   (parent 22)
   (unrealized (1 0) (3 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull3
@@ -923,6 +958,7 @@
         (enc x3 x3 (pubk a)) (enc x1-0 x3 (pubk a)))
       (strand-map 0 1 2 2)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (comment "4 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull3
@@ -948,6 +984,7 @@
   (seen-ops
     (14 (operation generalization deleted (2 0)) (strand-map 0 1)))
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull3
@@ -970,6 +1007,7 @@
   (label 37)
   (parent 32)
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a-0))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull3
@@ -995,6 +1033,7 @@
   (label 38)
   (parent 32)
   (unrealized (1 0) (3 0))
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull3
@@ -1021,6 +1060,7 @@
     (28 (operation generalization weakened ((2 1) (1 0)))
       (strand-map 0 1 2)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull3
@@ -1046,6 +1086,7 @@
   (label 40)
   (parent 33)
   (unrealized (1 0) (3 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull3
@@ -1081,6 +1122,7 @@
         (enc y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
         (enc y3 x3 (pubk a))) (strand-map 0 1 2 3)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a-0))))
   (comment "4 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull3
@@ -1110,6 +1152,7 @@
   (seen-ops
     (25 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull3
@@ -1139,6 +1182,7 @@
   (seen-ops
     (24 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull3
@@ -1172,6 +1216,7 @@
       (operation nonce-test (displaced 5 0 init 2) x3 (4 0)
         (enc x3 (pubk a))) (strand-map 0 1 2 3 3)))
   (unrealized (1 0) (4 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull3
@@ -1198,6 +1243,7 @@
   (seen-ops
     (14 (operation generalization deleted (2 0)) (strand-map 0 1)))
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull3
@@ -1224,6 +1270,7 @@
   (label 46)
   (parent 37)
   (unrealized (1 0) (3 0))
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull3
@@ -1256,6 +1303,7 @@
         (enc x3 x3 (pubk a)) (enc x1 x3 (pubk a)))
       (strand-map 0 1 2 3)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a-0))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull3
@@ -1288,6 +1336,7 @@
         (enc "okay" y3 y3-0 (pubk a)) (enc y3-0 x3 (pubk a)))
       (strand-map 0 1 2 2)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a-0))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull3
@@ -1316,6 +1365,7 @@
   (seen-ops
     (28 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull3
@@ -1348,6 +1398,7 @@
       (operation nonce-test (displaced 5 0 init 2) y3 (4 0)
         (enc y3 (pubk a))) (strand-map 0 1 2 3 3)))
   (unrealized (1 0) (4 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull3
@@ -1373,6 +1424,7 @@
   (label 51)
   (parent 46)
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a-0))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull3
@@ -1402,6 +1454,7 @@
   (seen-ops
     (24 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull3
@@ -1435,6 +1488,7 @@
       (operation nonce-test (displaced 5 0 init 2) x3 (4 0)
         (enc x3 (pubk a))) (strand-map 0 1 2 3 3)))
   (unrealized (1 0) (4 0))
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull3
@@ -1464,6 +1518,7 @@
   (seen-ops
     (39 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull3
@@ -1497,6 +1552,7 @@
       (operation nonce-test (displaced 5 0 init 2) y3 (4 0)
         (enc y3 (pubk a))) (strand-map 0 1 2 3 3)))
   (unrealized (1 0) (4 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull3
@@ -1526,6 +1582,7 @@
   (seen-ops
     (24 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull3
@@ -1559,6 +1616,7 @@
       (operation nonce-test (displaced 5 0 init 2) x3 (4 0)
         (enc x3 (pubk a))) (strand-map 0 1 2 3 3)))
   (unrealized (1 0) (4 0))
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

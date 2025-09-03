@@ -1,6 +1,6 @@
 (herald facts)
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/facts.scm")
 
 (defprotocol unilateral basic
@@ -27,6 +27,7 @@
   (traces ((send (enc n k)) (recv n)))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((k k) (n n))))
   (origs (n (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -73,6 +74,7 @@
   (traces ((recv (enc n k)) (send n)))
   (label 2)
   (unrealized (0 0))
+  (maps ((0) ((n n) (k k))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -129,6 +131,7 @@
   (traces ((send (enc n k)) (recv n)))
   (label 4)
   (unrealized (0 1))
+  (maps ((0) ((n n) (k k))))
   (origs (n (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -194,6 +197,7 @@
   (traces ((recv (enc n k)) (send n)))
   (label 6)
   (unrealized (0 0))
+  (maps ((0) ((n n) (k k))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -256,6 +260,7 @@
       (recv (cat na nb b t3 (enc na nb b t2 (privk b))))))
   (label 8)
   (unrealized (0 1))
+  (maps ((0) ((b b) (na na) (nb nb) (t1 t1) (t2 t2) (t3 t3))))
   (origs (nb (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -316,6 +321,7 @@
       (recv (cat na nb b t3 (enc na nb b t2 (privk b))))))
   (label 10)
   (unrealized (0 1))
+  (maps ((0) ((b b) (na na) (nb nb) (t1 t1) (t2 t2) (t3 t3))))
   (origs (nb (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -381,6 +387,7 @@
       (recv (cat na nb b t3 (enc na nb b t2 (privk b))))))
   (label 12)
   (unrealized (0 1))
+  (maps ((0) ((b b) (na na) (nb nb) (t1 t1) (t2 t2) (t3 t3))))
   (origs (nb (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 

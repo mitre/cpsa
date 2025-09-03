@@ -1,6 +1,6 @@
 (herald attest-door)
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/attest.scm")
 
 (defprotocol attest-door basic
@@ -49,6 +49,7 @@
       (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t)))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((p p) (a a) (d d) (k k) (n n) (t t))))
   (origs (k (0 2)) (n (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -71,6 +72,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 3))
+  (maps ((0) ((p p) (a a) (d d) (k k) (n n) (t t))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton attest-door
@@ -92,6 +94,7 @@
   (label 2)
   (parent 1)
   (unrealized (2 0))
+  (maps ((0) ((p p) (a a) (d d) (k k) (n n) (t t))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton attest-door
@@ -113,6 +116,7 @@
   (label 3)
   (parent 1)
   (unrealized (2 0))
+  (maps ((0) ((p p) (a a) (d d) (k k) (n n) (t t))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door
@@ -162,6 +166,7 @@
   (label 5)
   (parent 2)
   (realized)
+  (maps ((0) ((p p) (a a) (d d) (k k) (n n) (t t))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door
@@ -186,6 +191,7 @@
   (label 6)
   (parent 3)
   (realized)
+  (maps ((0) ((p p) (a a) (d d) (k k) (n n) (t t))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door
@@ -209,6 +215,7 @@
   (seen 8)
   (seen-ops (8 (operation generalization forgot t) (strand-map 0 1 2)))
   (realized)
+  (maps ((0) ((p p) (a a) (d d) (k k) (n n) (t t))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton attest-door
@@ -280,6 +287,7 @@
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t)))
   (label 9)
   (unrealized (0 0))
+  (maps ((0) ((p p) (d d) (k k) (t t))))
   (origs (t (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -359,6 +367,7 @@
       (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t)))
   (label 11)
   (unrealized (0 1))
+  (maps ((0) ((p p) (a a) (d d) (k k) (n n) (t t))))
   (origs (k (0 2)) (n (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -381,6 +390,7 @@
   (label 12)
   (parent 11)
   (unrealized (0 3))
+  (maps ((0) ((p p) (a a) (d d) (k k) (n n) (t t))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton attest-door-trust
@@ -402,6 +412,7 @@
   (label 13)
   (parent 12)
   (unrealized (2 0))
+  (maps ((0) ((p p) (a a) (d d) (k k) (n n) (t t))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door-trust
@@ -424,6 +435,7 @@
   (parent 12)
   (unrealized (2 0))
   (dead)
+  (maps ((0) ((p p) (a a) (d d) (k k) (n n) (t t))))
   (comment "empty cohort"))
 
 (defskeleton attest-door-trust
@@ -503,6 +515,7 @@
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t)))
   (label 16)
   (unrealized (0 0))
+  (maps ((0) ((p p) (d d) (k k) (t t))))
   (origs (t (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -589,6 +602,7 @@
       (send (enc (enc k (invk p)) d)) (recv (enc t k)) (send t)))
   (label 18)
   (unrealized (0 1))
+  (maps ((0) ((p p) (a a) (d d) (k k) (n n) (t t))))
   (origs (k (0 2)) (n (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -611,6 +625,7 @@
   (label 19)
   (parent 18)
   (unrealized (0 3))
+  (maps ((0) ((p p) (a a) (d d) (k k) (n n) (t t))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton attest-door-trust-attest
@@ -632,6 +647,7 @@
   (label 20)
   (parent 19)
   (unrealized (2 0))
+  (maps ((0) ((p p) (a a) (d d) (k k) (n n) (t t))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door-trust-attest
@@ -654,6 +670,7 @@
   (parent 19)
   (unrealized (2 0))
   (dead)
+  (maps ((0) ((p p) (a a) (d d) (k k) (n n) (t t))))
   (comment "empty cohort"))
 
 (defskeleton attest-door-trust-attest
@@ -740,6 +757,7 @@
   (traces ((recv (enc (enc k (invk p)) d)) (send (enc t k)) (recv t)))
   (label 23)
   (unrealized (0 0))
+  (maps ((0) ((p p) (d d) (k k) (t t))))
   (origs (t (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -761,6 +779,7 @@
   (label 24)
   (parent 23)
   (unrealized (1 1))
+  (maps ((0) ((p p) (d d) (k k) (t t))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door-trust-attest
@@ -783,6 +802,7 @@
   (label 25)
   (parent 24)
   (unrealized (0 0) (0 2))
+  (maps ((0) ((p p) (d d) (k k) (t t))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton attest-door-trust-attest
@@ -804,6 +824,7 @@
   (label 26)
   (parent 25)
   (unrealized (0 2))
+  (maps ((0) ((p p) (d d) (k k) (t t))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton attest-door-trust-attest
@@ -851,6 +872,7 @@
   (parent 26)
   (unrealized (3 0))
   (dead)
+  (maps ((0) ((p p) (d d) (k k) (t t))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

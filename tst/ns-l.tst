@@ -1,7 +1,7 @@
 (herald "Needham-Schroeder-Low Public-Key Protocol"
   (comment "With deflistener's"))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/ns-l.scm")
 
 (defprotocol ns basic
@@ -34,6 +34,7 @@
   (label 0)
   (unrealized (0 1) (1 0))
   (preskeleton)
+  (maps ((0 1) ((a a) (b b) (n1 n1) (n2 n2))))
   (origs (n1 (0 0)))
   (comment "Not a skeleton"))
 
@@ -51,6 +52,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 1) (1 0))
+  (maps ((0 1) ((a a) (b b) (n1 n1) (n2 n2))))
   (origs (n1 (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -73,6 +75,7 @@
   (label 2)
   (parent 1)
   (unrealized (0 1) (1 0))
+  (maps ((0 1) ((a a) (b b) (n1 n1) (n2 n2))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -94,6 +97,7 @@
   (label 3)
   (parent 2)
   (unrealized (0 1) (1 0))
+  (maps ((0 1) ((a a) (b b) (n1 n2) (n2 n2))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -119,6 +123,7 @@
   (parent 3)
   (unrealized (0 1) (1 0))
   (dead)
+  (maps ((0 1) ((a a) (b b) (n1 n2) (n2 n2))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -153,6 +158,7 @@
   (label 5)
   (unrealized (0 2) (1 0))
   (preskeleton)
+  (maps ((0 1) ((a a) (n2 n2) (b b) (n1 n1))))
   (origs (n2 (0 1)))
   (comment "Not a skeleton"))
 
@@ -170,6 +176,7 @@
   (label 6)
   (parent 5)
   (unrealized (0 2) (1 0))
+  (maps ((0 1) ((a a) (n2 n2) (b b) (n1 n1))))
   (origs (n2 (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -193,6 +200,7 @@
   (label 7)
   (parent 6)
   (unrealized (0 2))
+  (maps ((0 1) ((a a) (n2 n2) (b b) (n1 n1))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton ns

@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/isoreject.scm")
 
 (defprotocol isoreject basic
@@ -28,6 +28,7 @@
       (recv (enc nc nb b (privk a)))))
   (label 0)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (na na) (nb nb) (nc nc))))
   (origs (nb (0 1)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -49,6 +50,7 @@
   (label 1)
   (parent 0)
   (unrealized (1 1))
+  (maps ((0) ((a a) (b b) (na na) (nb nb) (nc nc))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton isoreject
@@ -122,6 +124,7 @@
       (send (enc nc nb b (privk a)))))
   (label 4)
   (unrealized (0 1))
+  (maps ((0) ((b b) (a a) (na na) (nb nb) (nc nc))))
   (origs)
   (comment "2 in cohort - 2 not yet seen"))
 

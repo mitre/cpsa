@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/targetterms2.scm")
 
 (defprotocol targetterms2 basic
@@ -28,6 +28,7 @@
       (recv (enc n (enc n (enc n (pubk a)) (pubk a)) (pubk a)))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (n n))))
   (origs (n (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -47,6 +48,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (n n))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton targetterms2
@@ -67,6 +69,7 @@
   (label 2)
   (parent 1)
   (unrealized (0 1))
+  (maps ((0) ((a a) (n n))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton targetterms2
@@ -88,6 +91,7 @@
   (label 3)
   (parent 1)
   (unrealized (1 1))
+  (maps ((0) ((a a) (n n))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton targetterms2
@@ -110,6 +114,7 @@
   (label 4)
   (parent 2)
   (unrealized (0 1))
+  (maps ((0) ((a a) (n n))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton targetterms2
@@ -131,6 +136,7 @@
   (label 5)
   (parent 3)
   (unrealized (1 1))
+  (maps ((0) ((a a) (n n))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton targetterms2
@@ -161,6 +167,7 @@
       (operation nonce-test (displaced 3 1 trans 3) n (2 1)
         (enc n (pubk a))) (strand-map 0 1 2)))
   (unrealized (2 1))
+  (maps ((0) ((a a) (n n))))
   (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton targetterms2
@@ -211,6 +218,7 @@
   (label 8)
   (parent 6)
   (unrealized (2 1))
+  (maps ((0) ((a a) (n n))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton targetterms2
@@ -241,6 +249,7 @@
   (seen-ops
     (7 (operation generalization deleted (1 0)) (strand-map 0 2 3)))
   (realized)
+  (maps ((0) ((a a) (n n))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton targetterms2
@@ -270,6 +279,7 @@
   (seen-ops
     (7 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps ((0) ((a a) (n n))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

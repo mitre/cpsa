@@ -1,6 +1,6 @@
 (herald perrig-song)
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/chan-perrig-song.scm")
 
 (defprotocol perrig-song basic
@@ -25,6 +25,7 @@
   (traces ((send na) (recv c (cat na nb a b))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((na na) (c c) (nb nb) (a a) (b b))))
   (origs (na (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -71,6 +72,7 @@
   (traces ((recv na) (send c (cat na nb a b)) (recv nb)))
   (label 2)
   (unrealized (0 2))
+  (maps ((0) ((nb nb) (c c) (na na) (a a) (b b))))
   (origs (nb (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 

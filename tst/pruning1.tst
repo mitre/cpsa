@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/pruning1.scm")
 
 (defprotocol prune basic
@@ -30,6 +30,7 @@
       (recv (enc n (privk b) (pubk a)))))
   (label 0)
   (unrealized (0 1) (0 2))
+  (maps ((0) ((a a) (b b) (n n))))
   (origs (n (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -49,6 +50,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 1) (0 2))
+  (maps ((0) ((a a) (b b) (n n))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton prune
@@ -69,6 +71,7 @@
   (label 2)
   (parent 1)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (n n))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton prune
@@ -91,6 +94,7 @@
   (label 3)
   (parent 2)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (n n))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton prune

@@ -1,7 +1,7 @@
 (herald "Unique generation test protocols."
   (comment "Skeletons 2, 4, and 7 should have no shapes."))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/uniq-gen-test.scm")
 
 (defprotocol uniqgentest basic
@@ -26,6 +26,7 @@
   (traces ((send (enc a k)) (recv (enc a a k))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((k k) (a a))))
   (origs)
   (ugens (k (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
@@ -61,6 +62,7 @@
   (parent 0)
   (unrealized (1 0))
   (dead)
+  (maps ((0) ((k k) (a a))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -87,6 +89,7 @@
   (traces ((send (enc a k)) (recv (enc a a k))))
   (label 3)
   (unrealized (0 1))
+  (maps ((0) ((k k) (a a))))
   (origs)
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -119,6 +122,7 @@
   (label 5)
   (parent 3)
   (unrealized (1 0))
+  (maps ((0) ((k k) (a a))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton uniqgentest

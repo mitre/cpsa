@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/no_contraction.scm")
 
 (defprotocol no-contraction basic
@@ -26,6 +26,7 @@
   (label 0)
   (unrealized (0 0))
   (preskeleton)
+  (maps ((0 1) ((a a) (n n) (a-0 a-0) (b b))))
   (origs (n (1 0)))
   (comment "Not a skeleton"))
 
@@ -41,6 +42,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 0))
+  (maps ((0 1) ((a a) (n n) (a-0 a-0) (b b))))
   (origs (n (1 0)))
   (comment "1 in cohort - 1 not yet seen"))
 

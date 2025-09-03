@@ -1,6 +1,6 @@
 (herald rule-order)
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/rule-order.scm")
 
 (defprotocol rule-order basic
@@ -22,6 +22,7 @@
   (traces ((send (cat s t))))
   (label 0)
   (realized)
+  (maps ((0) ((s s) (t t))))
   (origs)
   (comment "Not closed under rules"))
 

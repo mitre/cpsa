@@ -1,6 +1,6 @@
 (herald dhencrypt (algebra basic))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/dh_encrypt_hack.scm")
 
 (defprotocol dhencrypt basic
@@ -40,6 +40,7 @@
       (send (enc "check" n (enc "dh" gx h dhkey)))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((gx gx) (h h) (dhkey dhkey) (n n))))
   (origs)
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -82,6 +83,7 @@
   (label 2)
   (parent 0)
   (unrealized (1 0))
+  (maps ((0) ((gx gx) (h h) (dhkey dhkey) (n n))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhencrypt
@@ -103,6 +105,7 @@
   (label 3)
   (parent 2)
   (realized)
+  (maps ((0) ((gx gx) (h h) (dhkey dhkey) (n n))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhencrypt
@@ -165,6 +168,7 @@
       (recv (enc "check" n (enc "dh" h gy dhkey)))))
   (label 5)
   (unrealized (0 2))
+  (maps ((0) ((gy gy) (h h) (dhkey dhkey) (n n))))
   (origs (n (0 1)) (gy (0 1)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -209,6 +213,7 @@
   (label 7)
   (parent 5)
   (unrealized (1 0))
+  (maps ((0) ((gy gy) (h h) (dhkey dhkey) (n n))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhencrypt
@@ -231,6 +236,7 @@
   (label 8)
   (parent 7)
   (realized)
+  (maps ((0) ((gy gy) (h h) (dhkey dhkey) (n n))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhencrypt
@@ -297,6 +303,7 @@
   (label 10)
   (unrealized (0 1) (1 2))
   (preskeleton)
+  (maps ((0 1) ((gx gx) (gy gy) (n n) (dhkey dhkey) (dhkey-0 dhkey-0))))
   (origs (n (1 1)) (gy (1 1)))
   (comment "Not a skeleton"))
 
@@ -315,6 +322,7 @@
   (label 11)
   (parent 10)
   (unrealized (0 1) (1 2))
+  (maps ((0 1) ((gx gx) (gy gy) (n n) (dhkey dhkey) (dhkey-0 dhkey-0))))
   (origs (n (1 1)) (gy (1 1)))
   (comment "3 in cohort - 3 not yet seen"))
 
@@ -363,6 +371,7 @@
   (label 13)
   (parent 11)
   (unrealized (0 1))
+  (maps ((0 1) ((gx gx) (gy gy) (n n) (dhkey dhkey) (dhkey-0 dhkey-0))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhencrypt
@@ -386,6 +395,7 @@
   (parent 11)
   (unrealized (0 1) (2 0))
   (dead)
+  (maps ((0 1) ((gx gx) (gy gy) (n n) (dhkey dhkey) (dhkey-0 dhkey-0))))
   (comment "empty cohort"))
 
 (defskeleton dhencrypt
@@ -437,6 +447,7 @@
   (parent 13)
   (unrealized (0 1) (3 0))
   (dead)
+  (maps ((0 1) ((gx gx) (gy gy) (n n) (dhkey dhkey) (dhkey-0 dhkey-0))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

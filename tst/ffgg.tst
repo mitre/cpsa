@@ -1,7 +1,7 @@
 (herald "The ffgg Protocol"
   (comment "From A Necessarily Parallel Attack by Jon K. Millen"))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/ffgg.scm")
 
 (defprotocol ffgg basic
@@ -35,6 +35,7 @@
   (label 0)
   (unrealized (1 0))
   (preskeleton)
+  (maps ((0 1) ((b b) (m m) (a a) (n1 n1) (n2 n2) (x x) (y y))))
   (origs (m (0 2)))
   (comment "Not a skeleton"))
 
@@ -51,6 +52,7 @@
   (label 1)
   (parent 0)
   (unrealized (1 0))
+  (maps ((0 1) ((b b) (m m) (a a) (n1 n1) (n2 n2) (x x) (y y))))
   (origs (m (0 2)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -74,6 +76,7 @@
   (label 2)
   (parent 1)
   (unrealized (1 0))
+  (maps ((0 1) ((b b) (m m) (a a) (n1 n1) (n2 n2) (x x) (y y))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ffgg
@@ -101,6 +104,7 @@
   (label 3)
   (parent 2)
   (unrealized (3 2))
+  (maps ((0 1) ((b b) (m m) (a a) (n1 n1) (n2 n2) (x x) (y y))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ffgg

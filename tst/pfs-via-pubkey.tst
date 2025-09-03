@@ -1,6 +1,6 @@
 (herald pfs-via-pubkey)
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/pfs-via-pubkey.scm")
 
 (defprotocol pfs-easy basic
@@ -31,6 +31,7 @@
       (send (privk "sgn" a))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((new-akey new-akey) (a a) (b b) (n n) (s s))))
   (origs ((privk "sgn" a) (0 2)) (new-akey (0 0)) (n (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -53,6 +54,7 @@
   (label 1)
   (parent 0)
   (unrealized (1 0))
+  (maps ((0) ((new-akey new-akey) (a a) (b b) (n n) (s s))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton pfs-easy
@@ -106,6 +108,7 @@
       (send (enc (enc a n s (privk "sgn" b)) new-akey))))
   (label 3)
   (unrealized (0 0))
+  (maps ((0) ((new-akey new-akey) (a a) (b b) (n n) (s s))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -165,6 +168,8 @@
   (label 5)
   (unrealized (2 0))
   (preskeleton)
+  (maps
+    ((0 1 2) ((s s) (n n) (a a) (b b) (new-akey new-akey) (s-0 s-0))))
   (origs ((privk "sgn" a) (1 2)) (s (0 1)))
   (comment "Not a skeleton"))
 
@@ -186,6 +191,8 @@
   (parent 5)
   (unrealized (2 0))
   (dead)
+  (maps
+    ((0 1 2) ((s s) (n n) (a a) (b b) (new-akey new-akey) (s-0 s-0))))
   (origs ((privk "sgn" a) (1 2)) (s (0 1)))
   (comment "empty cohort"))
 

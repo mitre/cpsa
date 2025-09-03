@@ -1,6 +1,6 @@
 (herald open-closed (bound 44))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/open-closed.scm")
 (comment "Strand count bounded at 44")
 
@@ -156,6 +156,7 @@
   (label 0)
   (unrealized (0 1) (1 0))
   (preskeleton)
+  (maps ((0 1) ((k k) (d d) (o o) (start-ch start-ch))))
   (origs (k (0 0)))
   (comment "Not a skeleton"))
 
@@ -171,6 +172,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 1) (1 0))
+  (maps ((0 1) ((k k) (d d) (o o) (start-ch start-ch))))
   (origs (k (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -199,6 +201,7 @@
   (parent 1)
   (unrealized (0 1) (1 0))
   (dead)
+  (maps ((0 1) ((k k) (d d) (o o) (start-ch start-ch))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -353,6 +356,7 @@
       (load ls (cat pt-0 "st" d o o)) (send (enc "you may pass" n k))))
   (label 3)
   (realized)
+  (maps ((0) ((k k) (n n) (d d) (o o) (lk lk) (ls ls))))
   (origs (n (0 3)))
   (comment "Not closed under rules"))
 
@@ -369,6 +373,7 @@
   (label 4)
   (parent 3)
   (unrealized (0 2))
+  (maps ((0) ((k k) (n n) (d d) (o o) (lk lk) (ls ls))))
   (origs (n (0 3)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -562,6 +567,10 @@
   (label 6)
   (unrealized (0 1) (1 0) (1 1))
   (preskeleton)
+  (maps
+    ((0 1)
+      ((k k) (d d) (o o) (start-ch start-ch) (n n) (d-0 d-0) (o-0 o-0)
+        (lk lk) (ls ls))))
   (origs (n (1 3)) (k (0 0)))
   (comment "Not a skeleton"))
 
@@ -580,6 +589,10 @@
   (label 7)
   (parent 6)
   (unrealized (0 1) (1 0) (1 1))
+  (maps
+    ((0 1)
+      ((k k) (d d) (o o) (start-ch start-ch) (n n) (d-0 d-0) (o-0 o-0)
+        (lk lk) (ls ls))))
   (origs (n (1 3)) (k (0 0)))
   (comment "Not closed under rules"))
 
@@ -601,6 +614,10 @@
   (label 8)
   (parent 7)
   (unrealized (0 1) (1 0) (1 1) (1 2))
+  (maps
+    ((0 1)
+      ((k k) (d d) (o o) (start-ch start-ch) (n n) (d-0 d-0) (o-0 o-0)
+        (lk lk) (ls ls))))
   (origs (n (1 3)) (k (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -632,6 +649,10 @@
   (label 9)
   (parent 8)
   (unrealized (0 1) (1 0) (1 1) (1 2))
+  (maps
+    ((0 1)
+      ((k k) (d d) (o o) (start-ch start-ch) (n n) (d-0 d-0) (o-0 o-0)
+        (lk lk) (ls ls))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton open-closed
@@ -667,6 +688,10 @@
   (label 10)
   (parent 9)
   (unrealized (0 1) (1 1) (1 2))
+  (maps
+    ((0 1)
+      ((k k) (d d) (o o) (start-ch start-ch) (n n) (d-0 d) (o-0 o)
+        (lk lk) (ls ls))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton open-closed
@@ -700,6 +725,10 @@
   (label 11)
   (parent 10)
   (unrealized (0 1) (1 2))
+  (maps
+    ((0 1)
+      ((k k) (d d) (o o) (start-ch start-ch) (n n) (d-0 d) (o-0 o)
+        (lk lk) (ls ls))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton open-closed
@@ -733,6 +762,10 @@
   (label 12)
   (parent 10)
   (unrealized (0 1) (1 2) (3 0))
+  (maps
+    ((0 1)
+      ((k k) (d d) (o o) (start-ch start-ch) (n n) (d-0 d) (o-0 o)
+        (lk lk) (ls ls))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton open-closed
@@ -777,6 +810,10 @@
   (label 13)
   (parent 11)
   (unrealized (0 1))
+  (maps
+    ((0 1)
+      ((k k) (d d) (o o) (start-ch start-ch) (n n) (d-0 d) (o-0 o)
+        (lk lk) (ls ls))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton open-closed
@@ -813,6 +850,10 @@
   (parent 12)
   (unrealized (0 1) (1 2) (2 0))
   (dead)
+  (maps
+    ((0 1)
+      ((k k) (d d) (o o) (start-ch start-ch) (n n) (d-0 d) (o-0 o)
+        (lk lk) (ls ls))))
   (comment "empty cohort"))
 
 (defskeleton open-closed
@@ -911,6 +952,10 @@
   (label 16)
   (parent 13)
   (unrealized (5 0))
+  (maps
+    ((0 1)
+      ((k k) (d d) (o o) (start-ch start-ch) (n n) (d-0 d) (o-0 o)
+        (lk lk) (ls ls))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton open-closed
@@ -959,6 +1004,10 @@
   (parent 16)
   (unrealized (4 0))
   (dead)
+  (maps
+    ((0 1)
+      ((k k) (d d) (o o) (start-ch start-ch) (n n) (d-0 d) (o-0 o)
+        (lk lk-0) (ls ls))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

@@ -1,6 +1,6 @@
 (herald "Needham-Schroeder Public-Key Protocol Variants")
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/ns.scm")
 
 (defprotocol ns basic
@@ -31,6 +31,7 @@
       (send (enc n2 (pubk b)))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
   (origs (n1 (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -52,6 +53,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -109,6 +111,7 @@
       (send (enc n2-0 (pubk b)))))
   (label 3)
   (unrealized (0 1) (1 1))
+  (maps ((0 1) ((a a) (b b) (n1 n1) (n1-0 n1-0) (n2 n2) (n2-0 n2-0))))
   (origs (n1 (0 0)) (n1-0 (1 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -126,6 +129,7 @@
   (label 4)
   (parent 3)
   (unrealized (0 1))
+  (maps ((0 0) ((a a) (b b) (n1 n1) (n1-0 n1) (n2 n2) (n2-0 n2))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -149,6 +153,7 @@
   (label 5)
   (parent 3)
   (unrealized (0 1) (1 1))
+  (maps ((0 1) ((a a) (b b) (n1 n1) (n1-0 n1-0) (n2 n2) (n2-0 n2-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -169,6 +174,7 @@
   (label 6)
   (parent 4)
   (unrealized (0 1))
+  (maps ((0 0) ((a a) (b b) (n1 n1) (n1-0 n1) (n2 n2) (n2-0 n2))))
   (origs (n1 (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -193,6 +199,7 @@
   (label 7)
   (parent 5)
   (unrealized (0 1))
+  (maps ((0 1) ((a a) (b b) (n1 n1) (n1-0 n1-0) (n2 n2) (n2-0 n2-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -240,6 +247,7 @@
   (label 9)
   (parent 7)
   (unrealized (0 1))
+  (maps ((0 1) ((a a) (b b) (n1 n1) (n1-0 n1-0) (n2 n2) (n2-0 n2-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -303,6 +311,7 @@
   (label 11)
   (realized)
   (preskeleton)
+  (maps ((0 1) ((a a) (b b) (n1 n1) (n2 n2) (n2-0 n2-0))))
   (origs (n1 (1 0)) (n1 (0 0)))
   (comment "Not a skeleton"))
 
@@ -318,7 +327,7 @@
   (label 12)
   (parent 11)
   (unrealized (0 1))
-  (origs (n1 (0 0)))
+  (maps ((0 0) ((a a) (b b) (n1 n1) (n2 n2) (n2-0 n2))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -339,6 +348,8 @@
   (label 13)
   (parent 12)
   (unrealized (0 1))
+  (maps ((0 0) ((a a) (b b) (n1 n1) (n2 n2) (n2-0 n2))))
+  (origs (n1 (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -360,7 +371,7 @@
   (parent 13)
   (realized)
   (shape)
-  (maps ((0 0) ((a a) (b b) (n1 n1) (n2 n2))))
+  (maps ((0 0) ((a a) (b b) (n1 n1) (n2 n2) (n2-0 n2))))
   (origs (n1 (0 0))))
 
 (comment "Nothing left to do")
@@ -393,6 +404,7 @@
       (recv (enc n2 (pubk b)))))
   (label 15)
   (unrealized (0 2))
+  (maps ((0) ((a a) (n2 n2) (b b) (n1 n1))))
   (origs (n2 (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -453,6 +465,7 @@
       (send (enc n2 (pubk b)))))
   (label 17)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
   (origs (n1 (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -473,6 +486,7 @@
   (label 18)
   (parent 17)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns-role-origs
@@ -530,6 +544,7 @@
       (recv (enc n2 (pubk b)))))
   (label 20)
   (unrealized (0 2))
+  (maps ((0) ((b b) (a a) (n2 n2) (n1 n1))))
   (origs (n2 (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -551,6 +566,7 @@
   (label 21)
   (parent 20)
   (unrealized (0 0) (0 2))
+  (maps ((0) ((b b) (a a) (n2 n2) (n1 n1))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton ns-role-origs
@@ -595,6 +611,7 @@
   (label 23)
   (parent 21)
   (unrealized (0 0) (0 2))
+  (maps ((0) ((b b) (a a) (n2 n2) (n1 n1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns-role-origs
@@ -620,6 +637,7 @@
   (seen-ops
     (22 (operation generalization deleted (2 0)) (strand-map 0 1)))
   (realized)
+  (maps ((0) ((b b) (a a) (n2 n2) (n1 n1))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
@@ -652,6 +670,7 @@
       (send (enc n2 (pubk b)))))
   (label 25)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2) (n3 n3))))
   (origs (n1 (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -672,6 +691,7 @@
   (label 26)
   (parent 25)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (n1 n3) (n2 n2) (n3 n3))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns2
@@ -762,6 +782,7 @@
   (label 29)
   (unrealized (1 0))
   (preskeleton)
+  (maps ((0 1) ((a a) (b b) (n2 n2) (n1 n1))))
   (origs (n2 (0 1)))
   (comment "Not a skeleton"))
 
@@ -778,6 +799,7 @@
   (label 30)
   (parent 29)
   (unrealized (1 0))
+  (maps ((0 1) ((a a) (b b) (n2 n2) (n1 n1))))
   (origs (n2 (0 1)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -801,6 +823,7 @@
   (parent 30)
   (unrealized (1 0))
   (dead)
+  (maps ((0 1) ((a a) (b b) (n2 n2) (n1 n1))))
   (comment "empty cohort"))
 
 (defskeleton nsl-typeless

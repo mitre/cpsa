@@ -1,6 +1,6 @@
 (herald rule-node)
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/rule-node.scm")
 
 (defprotocol rule-order basic
@@ -37,6 +37,7 @@
     ((send (cat t s)) (recv (cat s t))))
   (label 0)
   (realized)
+  (maps ((0 1) ((s s) (t t))))
   (origs)
   (comment "Not closed under rules"))
 
@@ -94,6 +95,7 @@
     ((send (cat t s)) (recv (cat s t))))
   (label 2)
   (realized)
+  (maps ((0 1) ((s s) (t t))))
   (origs)
   (comment "Not closed under rules"))
 
@@ -126,7 +128,7 @@
   (parent 3)
   (realized)
   (shape)
-  (maps)
+  (maps ((0 0) ((s s) (t s))))
   (origs))
 
 (comment "Nothing left to do")
@@ -151,6 +153,7 @@
   (traces ((send (cat s t)) (recv (cat t s))))
   (label 5)
   (realized)
+  (maps ((0) ((s s) (t t))))
   (origs)
   (comment "Not closed under rules"))
 
@@ -192,6 +195,7 @@
     ((send (cat t s)) (recv (cat s t))))
   (label 7)
   (realized)
+  (maps ((0 1) ((s s) (t t))))
   (origs)
   (comment "Not closed under rules"))
 
@@ -223,7 +227,7 @@
   (parent 8)
   (realized)
   (shape)
-  (maps)
+  (maps ((0 0) ((s s) (t s))))
   (origs))
 
 (comment "Nothing left to do")
@@ -251,6 +255,7 @@
     ((send (cat s t)) (recv (cat t s))))
   (label 10)
   (realized)
+  (maps ((0 1) ((s s) (t t))))
   (origs)
   (comment "Not closed under rules"))
 
@@ -282,7 +287,7 @@
   (parent 11)
   (realized)
   (shape)
-  (maps)
+  (maps ((0 0) ((s s) (t t))))
   (origs))
 
 (comment "Nothing left to do")

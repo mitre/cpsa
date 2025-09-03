@@ -1,6 +1,6 @@
 (herald disclosure)
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/disclosure.scm")
 
 (defprotocol disc basic
@@ -26,6 +26,7 @@
   (traces ((send (enc a b n k)) (recv n)))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((n n) (a a) (b b) (k k))))
   (origs (n (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -60,6 +61,7 @@
   (label 2)
   (parent 0)
   (unrealized (1 0))
+  (maps ((0) ((n n) (a a) (b b) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton disc
@@ -77,6 +79,7 @@
   (label 3)
   (parent 2)
   (realized)
+  (maps ((0) ((n n) (a a) (b b) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton disc

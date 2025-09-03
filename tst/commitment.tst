@@ -1,6 +1,6 @@
 (herald commitment)
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/commitment.scm")
 
 (defprotocol commit basic
@@ -45,6 +45,10 @@
       (send (enc "result" a b n quote outcome (privk "sig" b)))))
   (label 0)
   (unrealized (0 0))
+  (maps
+    ((0)
+      ((a a) (b b) (n n) (quote quote) (outcome outcome)
+        (sealed sealed))))
   (origs)
   (comment "Not closed under rules"))
 
@@ -62,6 +66,10 @@
   (label 1)
   (parent 0)
   (unrealized (0 0))
+  (maps
+    ((0)
+      ((a a) (b b) (n n) (quote quote) (outcome outcome)
+        (sealed (hash a b n quote)))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -133,6 +141,7 @@
       (send (enc "receipt" sealed (privk "sig" b)))))
   (label 3)
   (unrealized (0 0))
+  (maps ((0) ((a a) (b b) (sealed sealed))))
   (origs)
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -225,6 +234,7 @@
   (label 6)
   (unrealized (0 0) (0 2))
   (preskeleton)
+  (maps ((0 1) ((n n) (quote quote) (outcome outcome) (a a) (b b))))
   (origs)
   (ugens (n (1 0)))
   (comment "Not a skeleton"))
@@ -246,6 +256,7 @@
   (label 7)
   (parent 6)
   (unrealized (0 2))
+  (maps ((0 1) ((n n) (quote quote) (outcome outcome) (a a) (b b))))
   (origs)
   (ugens (n (1 0)))
   (comment "1 in cohort - 1 not yet seen"))

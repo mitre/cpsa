@@ -1,6 +1,6 @@
 (herald doorsep2invk (comment "Door Simple Example Protocol"))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/doorsep2invk.scm")
 
 (defprotocol doorsep basic
@@ -47,6 +47,10 @@
       (recv text+0)) ((send (enc (enc skey+0 akey+3) akey+0))))
   (label 0)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0 1)
+      ((text+0 text+0) (skey+0 skey+0) (akey+1 akey+1) (akey+0 akey+0)
+        (akey+3 akey+3))))
   (origs (text+0 (0 1)) (skey+0 (1 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -79,6 +83,10 @@
   (label 1)
   (parent 0)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((text+0 text+0) (skey+0 skey+0) (akey+1 akey+0) (akey+0 akey+0)
+        (akey+3 akey+3))))
   (origs (text+0 (0 1)) (skey+0 (1 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -152,6 +160,10 @@
   (parent 1)
   (unrealized (2 0))
   (dead)
+  (maps
+    ((0 1)
+      ((text+0 text+0) (skey+0 skey+0) (akey+1 akey+0) (akey+0 akey+0)
+        (akey+3 akey+3))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

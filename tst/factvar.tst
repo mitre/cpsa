@@ -1,6 +1,6 @@
 (herald factvar)
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/factvar.scm")
 
 (defprotocol free-fact-var basic
@@ -26,6 +26,7 @@
   (traces ((recv (enc n k))))
   (label 0)
   (realized)
+  (maps ((0) ((k k) (n n))))
   (origs)
   (comment "Not closed under rules"))
 
@@ -69,6 +70,7 @@
   (traces ((recv (enc n k))))
   (label 2)
   (unrealized (0 0))
+  (maps ((0) ((n n) (k k))))
   (origs)
   (comment "Not closed under rules"))
 
@@ -84,6 +86,7 @@
   (parent 2)
   (unrealized (0 0))
   (dead)
+  (maps ((0) ((n n) (k k))))
   (origs)
   (comment "empty cohort"))
 

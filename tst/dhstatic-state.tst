@@ -1,6 +1,6 @@
 (herald dhstatic-state (algebra diffie-hellman) (bound 16))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/dhstatic-state.scm")
 (comment "Strand count bounded at 16")
 
@@ -136,6 +136,11 @@
       (recv n)))
   (label 0)
   (unrealized (0 1))
+  (maps
+    ((0)
+      ((ca ca) (b b) (a a) (ra ra) (serial-a serial-a)
+        (serial-b serial-b) (alpha alpha) (n n)
+        (static-key static-key))))
   (origs (n (0 2)))
   (comment "Not closed under rules"))
 
@@ -158,6 +163,11 @@
   (label 1)
   (parent 0)
   (unrealized (0 0) (0 1))
+  (maps
+    ((0)
+      ((ca ca) (b b) (a a) (ra ra) (serial-a serial-a)
+        (serial-b serial-b) (alpha alpha) (n n)
+        (static-key static-key))))
   (origs (n (0 2)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -192,6 +202,11 @@
   (label 2)
   (parent 1)
   (unrealized (0 1) (1 1))
+  (maps
+    ((0)
+      ((ca ca) (b b) (a a) (ra ra) (serial-a serial-a)
+        (serial-b serial-b) (alpha alpha) (n n)
+        (static-key static-key))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -229,6 +244,11 @@
   (label 3)
   (parent 2)
   (unrealized (0 1))
+  (maps
+    ((0)
+      ((ca ca) (b b) (a a) (ra ra) (serial-a serial-a)
+        (serial-b serial-b) (alpha alpha) (n n)
+        (static-key static-key))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -270,6 +290,11 @@
   (label 4)
   (parent 3)
   (unrealized (3 0))
+  (maps
+    ((0)
+      ((ca ca) (b b) (a a) (ra ra) (serial-a serial-a)
+        (serial-b serial-b) (alpha alpha) (n n)
+        (static-key static-key))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -314,6 +339,11 @@
   (label 5)
   (parent 4)
   (unrealized (0 3))
+  (maps
+    ((0)
+      ((ca ca) (b b) (a a) (ra ra) (serial-a serial-a)
+        (serial-b serial-b) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -371,6 +401,11 @@
   (label 6)
   (parent 5)
   (unrealized (5 0) (5 1))
+  (maps
+    ((0)
+      ((ca ca) (b b) (a a) (ra ra) (serial-a serial-a)
+        (serial-b serial-b) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -417,6 +452,11 @@
   (label 7)
   (parent 5)
   (unrealized (5 0))
+  (maps
+    ((0)
+      ((ca ca) (b b) (a a) (ra ra) (serial-a serial-a)
+        (serial-b serial-b) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -549,6 +589,11 @@
   (label 9)
   (parent 6)
   (unrealized (5 1))
+  (maps
+    ((0)
+      ((ca ca) (b b) (a a) (ra ra) (serial-a serial-a)
+        (serial-b serial-b) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -598,6 +643,11 @@
   (label 10)
   (parent 7)
   (unrealized (6 0))
+  (maps
+    ((0)
+      ((ca ca) (b b) (a a) (ra ra) (serial-a serial-a)
+        (serial-b serial-b) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -647,6 +697,11 @@
   (label 11)
   (parent 7)
   (unrealized (6 0))
+  (maps
+    ((0)
+      ((ca ca) (b b) (a a) (ra ra) (serial-a serial-a)
+        (serial-b serial-b) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -715,6 +770,11 @@
   (label 12)
   (parent 9)
   (unrealized (7 0))
+  (maps
+    ((0)
+      ((ca ca) (b b) (a a) (ra ra) (serial-a serial-a)
+        (serial-b serial-b) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -783,6 +843,11 @@
   (label 13)
   (parent 9)
   (unrealized (7 0))
+  (maps
+    ((0)
+      ((ca ca) (b b) (a a) (ra ra) (serial-a serial-a)
+        (serial-b serial-b) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -851,6 +916,11 @@
   (label 14)
   (parent 9)
   (unrealized (7 0))
+  (maps
+    ((0)
+      ((ca ca) (b b) (a a) (ra ra) (serial-a serial-a)
+        (serial-b serial-b) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -907,6 +977,11 @@
   (label 15)
   (parent 10)
   (unrealized (5 0) (6 1))
+  (maps
+    ((0)
+      ((ca ca) (b self) (a a) (ra ra) (serial-a serial-a)
+        (serial-b serial-b) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -956,6 +1031,10 @@
   (parent 11)
   (unrealized (6 0))
   (dead)
+  (maps
+    ((0)
+      ((ca ca) (b b) (a a) (ra ra-0) (serial-a serial-a)
+        (serial-b serial-b) (alpha ra) (n n) (static-key static-key))))
   (comment "empty cohort"))
 
 (defskeleton dhstatic-state
@@ -1023,6 +1102,11 @@
   (parent 12)
   (unrealized (7 0))
   (dead)
+  (maps
+    ((0)
+      ((ca ca) (b b) (a a) (ra ra) (serial-a serial-a)
+        (serial-b serial-b) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "empty cohort"))
 
 (defskeleton dhstatic-state
@@ -1101,6 +1185,11 @@
   (label 18)
   (parent 13)
   (unrealized (6 0) (7 1))
+  (maps
+    ((0)
+      ((ca ca-0) (b self) (a a) (ra ra) (serial-a serial-a)
+        (serial-b serial-b) (alpha ra-1) (n n)
+        (static-key static-key))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -1168,6 +1257,10 @@
   (parent 14)
   (unrealized (7 0))
   (dead)
+  (maps
+    ((0)
+      ((ca ca) (b b) (a a) (ra ra-1) (serial-a serial-a)
+        (serial-b serial-b) (alpha ra) (n n) (static-key static-key))))
   (comment "empty cohort"))
 
 (defskeleton dhstatic-state
@@ -1225,6 +1318,11 @@
   (parent 15)
   (unrealized (5 0))
   (dead)
+  (maps
+    ((0)
+      ((ca ca) (b self) (a a) (ra ra) (serial-a serial-a)
+        (serial-b serial-b) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "empty cohort"))
 
 (defskeleton dhstatic-state
@@ -1287,6 +1385,11 @@
   (parent 15)
   (unrealized (5 0))
   (dead)
+  (maps
+    ((0)
+      ((ca ca) (b self) (a a) (ra ra) (serial-a serial-a)
+        (serial-b serial-b) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "empty cohort"))
 
 (defskeleton dhstatic-state
@@ -1367,6 +1470,11 @@
   (parent 18)
   (unrealized (6 0))
   (dead)
+  (maps
+    ((0)
+      ((ca ca-0) (b self) (a a) (ra ra) (serial-a serial-a)
+        (serial-b serial-b) (alpha ra-1) (n n)
+        (static-key static-key))))
   (comment "empty cohort"))
 
 (defskeleton dhstatic-state
@@ -1454,6 +1562,11 @@
   (parent 18)
   (unrealized (6 0))
   (dead)
+  (maps
+    ((0)
+      ((ca ca-0) (b self) (a a) (ra ra) (serial-a serial-a)
+        (serial-b serial-b) (alpha ra-1) (n n)
+        (static-key static-key))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -1589,6 +1702,11 @@
       (send n)))
   (label 24)
   (unrealized (0 1))
+  (maps
+    ((0)
+      ((ca ca) (a a) (b b) (rb rb) (serial-b serial-b)
+        (serial-a serial-a) (alpha alpha) (n n)
+        (static-key static-key))))
   (origs)
   (comment "Not closed under rules"))
 
@@ -1610,6 +1728,11 @@
   (label 25)
   (parent 24)
   (unrealized (0 0) (0 1))
+  (maps
+    ((0)
+      ((ca ca) (a a) (b b) (rb rb) (serial-b serial-b)
+        (serial-a serial-a) (alpha alpha) (n n)
+        (static-key static-key))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -1643,6 +1766,11 @@
   (label 26)
   (parent 25)
   (unrealized (0 1) (1 1))
+  (maps
+    ((0)
+      ((ca ca) (a a) (b b) (rb ra) (serial-b serial-b)
+        (serial-a serial-a) (alpha alpha) (n n)
+        (static-key static-key))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -1680,6 +1808,11 @@
   (label 27)
   (parent 26)
   (unrealized (0 1))
+  (maps
+    ((0)
+      ((ca ca) (a a) (b b) (rb ra) (serial-b serial-b)
+        (serial-a serial-a) (alpha alpha) (n n)
+        (static-key static-key))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -1721,6 +1854,11 @@
   (label 28)
   (parent 27)
   (unrealized (3 0))
+  (maps
+    ((0)
+      ((ca ca) (a a) (b b) (rb ra) (serial-b serial-b)
+        (serial-a serial-a) (alpha alpha) (n n)
+        (static-key static-key))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -1765,6 +1903,11 @@
   (label 29)
   (parent 28)
   (unrealized (0 2))
+  (maps
+    ((0)
+      ((ca ca) (a a) (b b) (rb ra) (serial-b serial-b)
+        (serial-a serial-a) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -1820,6 +1963,11 @@
   (label 30)
   (parent 29)
   (unrealized (5 0) (5 1))
+  (maps
+    ((0)
+      ((ca ca) (a a) (b b) (rb ra) (serial-b serial-b)
+        (serial-a serial-a) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -1866,6 +2014,11 @@
   (label 31)
   (parent 29)
   (unrealized (5 0))
+  (maps
+    ((0)
+      ((ca ca) (a a) (b b) (rb ra) (serial-b serial-b)
+        (serial-a serial-a) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -1996,6 +2149,11 @@
   (label 33)
   (parent 30)
   (unrealized (5 1))
+  (maps
+    ((0)
+      ((ca ca) (a a) (b b) (rb ra) (serial-b serial-b)
+        (serial-a serial-a) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -2045,6 +2203,11 @@
   (label 34)
   (parent 31)
   (unrealized (6 0))
+  (maps
+    ((0)
+      ((ca ca) (a a) (b b) (rb ra) (serial-b serial-b)
+        (serial-a serial-a) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -2094,6 +2257,11 @@
   (label 35)
   (parent 31)
   (unrealized (6 0))
+  (maps
+    ((0)
+      ((ca ca) (a a) (b b) (rb ra) (serial-b serial-b)
+        (serial-a serial-a) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -2161,6 +2329,11 @@
   (label 36)
   (parent 33)
   (unrealized (7 0))
+  (maps
+    ((0)
+      ((ca ca) (a a) (b b) (rb ra) (serial-b serial-b)
+        (serial-a serial-a) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -2228,6 +2401,11 @@
   (label 37)
   (parent 33)
   (unrealized (7 0))
+  (maps
+    ((0)
+      ((ca ca) (a a) (b b) (rb ra) (serial-b serial-b)
+        (serial-a serial-a) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -2295,6 +2473,11 @@
   (label 38)
   (parent 33)
   (unrealized (7 0))
+  (maps
+    ((0)
+      ((ca ca) (a a) (b b) (rb ra) (serial-b serial-b)
+        (serial-a serial-a) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -2351,6 +2534,11 @@
   (label 39)
   (parent 34)
   (unrealized (5 0) (6 1))
+  (maps
+    ((0)
+      ((ca ca) (a self) (b b) (rb ra) (serial-b serial-b)
+        (serial-a serial-a) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -2400,6 +2588,10 @@
   (parent 35)
   (unrealized (6 0))
   (dead)
+  (maps
+    ((0)
+      ((ca ca) (a a) (b b) (rb ra-0) (serial-b serial-b)
+        (serial-a serial-a) (alpha ra) (n n) (static-key static-key))))
   (comment "empty cohort"))
 
 (defskeleton dhstatic-state
@@ -2465,6 +2657,11 @@
   (parent 36)
   (unrealized (7 0))
   (dead)
+  (maps
+    ((0)
+      ((ca ca) (a a) (b b) (rb ra) (serial-b serial-b)
+        (serial-a serial-a) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "empty cohort"))
 
 (defskeleton dhstatic-state
@@ -2543,6 +2740,11 @@
   (label 42)
   (parent 37)
   (unrealized (6 0) (7 1))
+  (maps
+    ((0)
+      ((ca ca-0) (a self) (b b) (rb ra) (serial-b serial-b)
+        (serial-a serial-a) (alpha ra-1) (n n)
+        (static-key static-key))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhstatic-state
@@ -2608,6 +2810,10 @@
   (parent 38)
   (unrealized (7 0))
   (dead)
+  (maps
+    ((0)
+      ((ca ca) (a a) (b b) (rb ra-1) (serial-b serial-b)
+        (serial-a serial-a) (alpha ra) (n n) (static-key static-key))))
   (comment "empty cohort"))
 
 (defskeleton dhstatic-state
@@ -2665,6 +2871,11 @@
   (parent 39)
   (unrealized (5 0))
   (dead)
+  (maps
+    ((0)
+      ((ca ca) (a self) (b b) (rb ra) (serial-b serial-b)
+        (serial-a serial-a) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "empty cohort"))
 
 (defskeleton dhstatic-state
@@ -2727,6 +2938,11 @@
   (parent 39)
   (unrealized (5 0))
   (dead)
+  (maps
+    ((0)
+      ((ca ca) (a self) (b b) (rb ra) (serial-b serial-b)
+        (serial-a serial-a) (alpha ra-0) (n n)
+        (static-key static-key))))
   (comment "empty cohort"))
 
 (defskeleton dhstatic-state
@@ -2807,6 +3023,11 @@
   (parent 42)
   (unrealized (6 0))
   (dead)
+  (maps
+    ((0)
+      ((ca ca-0) (a self) (b b) (rb ra) (serial-b serial-b)
+        (serial-a serial-a) (alpha ra-1) (n n)
+        (static-key static-key))))
   (comment "empty cohort"))
 
 (defskeleton dhstatic-state
@@ -2894,6 +3115,11 @@
   (parent 42)
   (unrealized (6 0))
   (dead)
+  (maps
+    ((0)
+      ((ca ca-0) (a self) (b b) (rb ra) (serial-b serial-b)
+        (serial-a serial-a) (alpha ra-1) (n n)
+        (static-key static-key))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

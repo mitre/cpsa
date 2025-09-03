@@ -1,7 +1,7 @@
 (herald "Wide-Mouth Frog Protocol from Scyther" (bound 8)
   (comment "This protocol has an infinite number of shapes"))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/wide-mouth-frog-scyther.lsp")
 (comment "Strand count bounded at 8")
 
@@ -63,6 +63,7 @@
   (traces ((recv (enc t tb a k (ltk b t)))))
   (label 1)
   (unrealized (0 0))
+  (maps ((0) ((b b) (t t) (k k) (a a) (tb tb))))
   (origs)
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -135,6 +136,7 @@
       (send (enc t tb a k (ltk b t)))))
   (label 4)
   (unrealized (0 0))
+  (maps ((0) ((a a) (b b) (t t) (k k) (ta ta) (tb tb))))
   (origs)
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -177,6 +179,7 @@
   (label 6)
   (parent 4)
   (unrealized (1 0))
+  (maps ((0) ((a t) (b b) (t t) (k k) (ta ta) (tb tb))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wide-mouth-frog
@@ -224,6 +227,7 @@
   (label 8)
   (parent 6)
   (unrealized (2 0))
+  (maps ((0) ((a t) (b t) (t t) (k k) (ta ta) (tb tb))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wide-mouth-frog
@@ -277,6 +281,7 @@
   (label 10)
   (parent 8)
   (unrealized (3 0))
+  (maps ((0) ((a t) (b t) (t t) (k k) (ta ta) (tb tb))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wide-mouth-frog
@@ -336,6 +341,7 @@
   (label 12)
   (parent 10)
   (unrealized (4 0))
+  (maps ((0) ((a t) (b t) (t t) (k k) (ta ta) (tb tb))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wide-mouth-frog
@@ -403,6 +409,7 @@
   (label 14)
   (parent 12)
   (unrealized (5 0))
+  (maps ((0) ((a t) (b t) (t t) (k k) (ta ta) (tb tb))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wide-mouth-frog
@@ -476,6 +483,7 @@
   (label 16)
   (parent 14)
   (unrealized (6 0))
+  (maps ((0) ((a t) (b t) (t t) (k k) (ta ta) (tb tb))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wide-mouth-frog
@@ -559,4 +567,5 @@
   (parent 16)
   (unrealized (7 0))
   (aborted)
+  (maps ((0) ((a t) (b t) (t t) (k k) (ta ta) (tb tb))))
   (comment "aborted"))

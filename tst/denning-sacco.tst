@@ -1,6 +1,6 @@
 (herald "Denning-Sacco Protocol")
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/denning-sacco.scm")
 
 (defprotocol denning-sacco basic
@@ -41,6 +41,7 @@
          (enc a (pubk a) (privk ks)) (pubk b)))))
   (label 0)
   (unrealized (0 0))
+  (maps ((0) ((a a) (b b) (ks ks) (k k) (ta ta))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -68,6 +69,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 0))
+  (maps ((0) ((a a) (b b) (ks ks) (k k) (ta ta))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton denning-sacco
@@ -95,6 +97,7 @@
   (label 2)
   (parent 1)
   (unrealized (1 1))
+  (maps ((0) ((a a) (b b) (ks ks) (k k) (ta ta))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton denning-sacco
@@ -125,6 +128,7 @@
   (label 3)
   (parent 2)
   (unrealized (1 1))
+  (maps ((0) ((a a) (b b) (ks ks) (k k) (ta ta))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton denning-sacco
@@ -155,6 +159,7 @@
   (label 4)
   (parent 2)
   (unrealized (1 1))
+  (maps ((0) ((a a) (b b) (ks ks) (k k) (ta ta))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton denning-sacco

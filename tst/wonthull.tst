@@ -1,6 +1,6 @@
 (herald wonthull (bound 9))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/wonthull.scm")
 (comment "Strand count bounded at 9")
 
@@ -32,6 +32,7 @@
       (recv (enc "okay" x3 x4 (pubk a)))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x3) (x4 x4))))
   (origs (x3 (0 0)) (x2 (0 0)) (x1 (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -49,6 +50,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x2) (x4 x4))))
   (origs (x1 (0 0)) (x2 (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -75,6 +77,7 @@
         (enc "okay" y3 x3 (pubk a)) (enc x3 x2 (pubk a)))
       (strand-map 0 1)))
   (unrealized (0 1))
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x3) (x4 x4))))
   (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull
@@ -94,6 +97,7 @@
   (label 3)
   (parent 1)
   (unrealized (0 1))
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x2) (x4 x4))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull
@@ -138,6 +142,7 @@
   (seen-ops
     (4 (operation generalization separated y3-0) (strand-map 0 1)))
   (realized)
+  (maps ((0) ((a a) (x1 x1) (x2 y3) (x3 y3) (x4 y3))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull
@@ -159,8 +164,15 @@
     ((recv (enc x2 x2 (pubk a))) (send (enc "okay" x2 x2 (pubk a)))))
   (label 6)
   (parent 3)
+  (seen 5)
+  (seen-ops
+    (5
+      (operation nonce-test (contracted (x2 y3) (x4 y3)) y3 (0 1)
+        (enc "okay" y3 y3 (pubk a)) (enc x1 y3 (pubk a))
+        (enc y3 y3 (pubk a))) (strand-map 0 1 1)))
   (unrealized (0 1))
-  (comment "1 in cohort - 1 not yet seen"))
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x2) (x4 x4))))
+  (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull
   (vars (x1 x2 y3 text) (a name))
@@ -185,6 +197,7 @@
   (seen-ops
     (5 (operation generalization deleted (1 0)) (strand-map 0 2)))
   (realized)
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x2) (x4 x2))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

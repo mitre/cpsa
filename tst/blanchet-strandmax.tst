@@ -1,7 +1,7 @@
 (herald "Blanchet's Simple Example Protocol (strand max)"
   (comment "There is a flaw in this protocol by design"))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/blanchet-strandmax.scm")
 
 (defprotocol blanchet-max basic
@@ -28,6 +28,7 @@
   (traces ((send (enc (enc s (privk a)) (pubk b))) (recv (enc d s))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (s s) (d d))))
   (origs (s (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -46,6 +47,7 @@
   (label 1)
   (parent 0)
   (unrealized (1 0))
+  (maps ((0) ((a a) (b b) (s s) (d d))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet-max
@@ -64,6 +66,7 @@
   (parent 0)
   (unrealized (1 0))
   (dead)
+  (maps ((0) ((a a) (b b) (s s) (d d))))
   (comment "empty cohort"))
 
 (defskeleton blanchet-max
@@ -114,6 +117,7 @@
     ((recv d) (send d)))
   (label 4)
   (unrealized (0 1))
+  (maps ((0 1) ((a a) (b b) (s s) (d d))))
   (origs (s (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -134,6 +138,7 @@
   (label 5)
   (parent 4)
   (unrealized (1 0) (2 0))
+  (maps ((0 1) ((a a) (b b) (s s) (d d))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet-max
@@ -153,6 +158,7 @@
   (parent 4)
   (unrealized (2 0))
   (dead)
+  (maps ((0 1) ((a a) (b b) (s s) (d d))))
   (comment "empty cohort"))
 
 (defskeleton blanchet-max
@@ -173,6 +179,7 @@
   (label 7)
   (parent 5)
   (unrealized (1 0))
+  (maps ((0 1) ((a a) (b b) (s s) (d d))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet-max
@@ -196,6 +203,7 @@
   (parent 7)
   (unrealized (3 0))
   (dead)
+  (maps ((0 1) ((a a) (b b) (s s) (d d))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -224,6 +232,7 @@
   (traces ((recv (enc (enc s (privk a)) (pubk b))) (send (enc d s))))
   (label 9)
   (unrealized (0 0))
+  (maps ((0) ((a a) (b b) (s s) (d d))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -276,6 +285,7 @@
   (label 11)
   (unrealized (0 0) (1 0))
   (preskeleton)
+  (maps ((0 1) ((a a) (b b) (s s) (d d))))
   (origs (d (0 1)))
   (comment "Not a skeleton"))
 
@@ -292,6 +302,7 @@
   (label 12)
   (parent 11)
   (unrealized (0 0))
+  (maps ((0 1) ((a a) (b b) (s s) (d d))))
   (origs (d (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -342,6 +353,7 @@
   (traces ((send (enc (enc s (invk a)) b)) (recv (enc d s))))
   (label 14)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (s s) (d d))))
   (origs (s (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -360,6 +372,7 @@
   (label 15)
   (parent 14)
   (unrealized (1 0))
+  (maps ((0) ((a a) (b b) (s s) (d d))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet-max-akey
@@ -378,6 +391,7 @@
   (parent 14)
   (unrealized (1 0))
   (dead)
+  (maps ((0) ((a a) (b b) (s s) (d d))))
   (comment "empty cohort"))
 
 (defskeleton blanchet-max-akey
@@ -428,6 +442,7 @@
     ((recv d) (send d)))
   (label 18)
   (unrealized (0 1))
+  (maps ((0 1) ((a a) (b b) (s s) (d d))))
   (origs (s (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -448,6 +463,7 @@
   (label 19)
   (parent 18)
   (unrealized (1 0) (2 0))
+  (maps ((0 1) ((a a) (b b) (s s) (d d))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet-max-akey
@@ -467,6 +483,7 @@
   (parent 18)
   (unrealized (2 0))
   (dead)
+  (maps ((0 1) ((a a) (b b) (s s) (d d))))
   (comment "empty cohort"))
 
 (defskeleton blanchet-max-akey
@@ -487,6 +504,7 @@
   (label 21)
   (parent 19)
   (unrealized (1 0))
+  (maps ((0 1) ((a a) (b b) (s s) (d d))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet-max-akey
@@ -510,6 +528,7 @@
   (parent 21)
   (unrealized (3 0))
   (dead)
+  (maps ((0 1) ((a a) (b b) (s s) (d d))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -538,6 +557,7 @@
   (traces ((recv (enc (enc s (invk a)) b)) (send (enc d s))))
   (label 23)
   (unrealized (0 0))
+  (maps ((0) ((a a) (b b) (s s) (d d))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -590,6 +610,7 @@
   (label 25)
   (unrealized (0 0) (1 0))
   (preskeleton)
+  (maps ((0 1) ((a a) (b b) (s s) (d d))))
   (origs (d (0 1)))
   (comment "Not a skeleton"))
 
@@ -606,6 +627,7 @@
   (label 26)
   (parent 25)
   (unrealized (0 0))
+  (maps ((0 1) ((a a) (b b) (s s) (d d))))
   (origs (d (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -656,6 +678,7 @@
   (traces ((send (enc (enc s b (privk a)) (pubk b))) (recv (enc d s))))
   (label 28)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (s s) (d d))))
   (origs (s (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -674,6 +697,7 @@
   (label 29)
   (parent 28)
   (unrealized (1 0))
+  (maps ((0) ((a a) (b b) (s s) (d d))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet-max-fixed
@@ -692,6 +716,7 @@
   (parent 28)
   (unrealized (1 0))
   (dead)
+  (maps ((0) ((a a) (b b) (s s) (d d))))
   (comment "empty cohort"))
 
 (defskeleton blanchet-max-fixed
@@ -742,6 +767,7 @@
     ((recv d) (send d)))
   (label 32)
   (unrealized (0 1))
+  (maps ((0 1) ((a a) (b b) (s s) (d d))))
   (origs (s (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -762,6 +788,7 @@
   (label 33)
   (parent 32)
   (unrealized (1 0) (2 0))
+  (maps ((0 1) ((a a) (b b) (s s) (d d))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet-max-fixed
@@ -781,6 +808,7 @@
   (parent 32)
   (unrealized (2 0))
   (dead)
+  (maps ((0 1) ((a a) (b b) (s s) (d d))))
   (comment "empty cohort"))
 
 (defskeleton blanchet-max-fixed
@@ -801,6 +829,7 @@
   (label 35)
   (parent 33)
   (unrealized (1 0))
+  (maps ((0 1) ((a a) (b b) (s s) (d d))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet-max-fixed
@@ -824,6 +853,7 @@
   (parent 35)
   (unrealized (3 0))
   (dead)
+  (maps ((0 1) ((a a) (b b) (s s) (d d))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -852,6 +882,7 @@
   (traces ((recv (enc (enc s b (privk a)) (pubk b))) (send (enc d s))))
   (label 37)
   (unrealized (0 0))
+  (maps ((0) ((a a) (b b) (s s) (d d))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -904,6 +935,7 @@
   (label 39)
   (unrealized (0 0) (1 0))
   (preskeleton)
+  (maps ((0 1) ((a a) (b b) (s s) (d d))))
   (origs (d (0 1)))
   (comment "Not a skeleton"))
 
@@ -920,6 +952,7 @@
   (label 40)
   (parent 39)
   (unrealized (0 0))
+  (maps ((0 1) ((a a) (b b) (s s) (d d))))
   (origs (d (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -940,6 +973,7 @@
   (label 41)
   (parent 40)
   (unrealized (1 0))
+  (maps ((0 1) ((a a) (b b) (s s) (d d))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet-max-fixed
@@ -961,6 +995,7 @@
   (parent 41)
   (unrealized (3 0))
   (dead)
+  (maps ((0 1) ((a a) (b b) (s s) (d d))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

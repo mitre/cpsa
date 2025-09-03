@@ -1,6 +1,6 @@
 (herald "Role Unique Origination")
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/role_uniq.scm")
 
 (defprotocol blanchet basic
@@ -28,6 +28,7 @@
   (traces ((send (enc (enc s (invk a)) b)) (recv (enc d s))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (s s) (d d))))
   (origs (s (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -46,6 +47,7 @@
   (label 1)
   (parent 0)
   (unrealized (1 0))
+  (maps ((0) ((a a) (b b) (s s) (d d))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet
@@ -64,6 +66,7 @@
   (parent 0)
   (unrealized (1 0))
   (dead)
+  (maps ((0) ((a a) (b b) (s s) (d d))))
   (comment "empty cohort"))
 
 (defskeleton blanchet
@@ -112,6 +115,7 @@
   (traces ((recv (enc (enc s (invk a)) b)) (send (enc d s))))
   (label 4)
   (unrealized (0 0))
+  (maps ((0) ((a a) (b b) (s s) (d d))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -162,6 +166,7 @@
   (traces ((send (enc (enc s (invk a)) b)) (recv (enc d s))))
   (label 6)
   (realized)
+  (maps ((0) ((a a) (b b) (s s) (d d))))
   (origs)
   (comment "Not closed under rules"))
 
@@ -176,6 +181,7 @@
   (label 7)
   (parent 6)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (s s) (d d))))
   (origs (s (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -194,6 +200,7 @@
   (label 8)
   (parent 7)
   (unrealized (1 0))
+  (maps ((0) ((a a) (b b) (s s) (d d))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet
@@ -212,6 +219,7 @@
   (parent 7)
   (unrealized (1 0))
   (dead)
+  (maps ((0) ((a a) (b b) (s s) (d d))))
   (comment "empty cohort"))
 
 (defskeleton blanchet
@@ -261,6 +269,7 @@
   (traces ((recv (enc (enc s (invk a)) b)) (send (enc d s))))
   (label 11)
   (unrealized (0 0))
+  (maps ((0) ((a a) (b b) (s s) (d d))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 

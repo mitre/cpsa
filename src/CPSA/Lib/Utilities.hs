@@ -28,6 +28,15 @@ union (a:as) bs =
     if a `elem` bs then union as bs
     else a : union as bs
 
+setMinus :: Eq a => [a] -> [a] -> [a]
+setMinus [] _ = []
+setMinus (a : arest) bs
+    | a `elem` bs = setMinus arest bs
+    | otherwise = a : setMinus arest bs
+
+                  
+    
+
 -- Delete the nth item in a list
 deleteNth :: Int -> [a] -> [a]
 deleteNth n (x : xs)

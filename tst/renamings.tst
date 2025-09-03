@@ -2,7 +2,7 @@
   (comment "There is a flaw in this protocol by design")
   (comment "It also shows how variable renaming works"))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/renamings.scm")
 
 (defprotocol blanchet basic
@@ -29,6 +29,7 @@
   (traces ((recv (enc (enc a (privk s)) (pubk d))) (send (enc b a))))
   (label 0)
   (unrealized (0 0))
+  (maps ((0) ((s s) (d d) (a a) (b b))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -78,6 +79,7 @@
   (traces ((send (enc (enc a (privk s)) (pubk d))) (recv (enc b a))))
   (label 2)
   (unrealized (0 1))
+  (maps ((0) ((s s) (d d) (a a) (b b))))
   (origs (a (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -96,6 +98,7 @@
   (label 3)
   (parent 2)
   (unrealized (1 0))
+  (maps ((0) ((s s) (d d) (a a) (b b))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton blanchet
@@ -114,6 +117,7 @@
   (parent 2)
   (unrealized (1 0))
   (dead)
+  (maps ((0) ((s s) (d d) (a a) (b b))))
   (comment "empty cohort"))
 
 (defskeleton blanchet

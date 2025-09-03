@@ -1,6 +1,6 @@
 (herald "Needham-Schroeder Public-Key Protocol This-That Variant")
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/thisthat.scm")
 
 (defprotocol thisthat basic
@@ -38,6 +38,7 @@
       (recv (cat (enc "this" n2 (pubk b)) (enc "that" n3 (pubk b))))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2) (n3 n3))))
   (origs (n1 (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -60,6 +61,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2) (n3 n3))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton thisthat
@@ -81,6 +83,7 @@
   (label 2)
   (parent 1)
   (unrealized (0 1) (0 2))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2) (n3 n3))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton thisthat
@@ -102,6 +105,7 @@
   (label 3)
   (parent 2)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n3) (n3 n3))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton thisthat
@@ -125,6 +129,7 @@
   (label 4)
   (parent 2)
   (unrealized (0 1) (0 2))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2) (n3 n3))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton thisthat
@@ -148,6 +153,7 @@
   (parent 3)
   (unrealized (0 2))
   (dead)
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n3) (n3 n3))))
   (comment "empty cohort"))
 
 (defskeleton thisthat
@@ -171,6 +177,7 @@
   (parent 3)
   (unrealized (0 2))
   (dead)
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n3) (n3 n3))))
   (comment "empty cohort"))
 
 (defskeleton thisthat
@@ -194,6 +201,7 @@
   (label 7)
   (parent 4)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n3) (n3 n3))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton thisthat
@@ -217,6 +225,7 @@
   (label 8)
   (parent 4)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n3-0) (n3 n3))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton thisthat
@@ -243,6 +252,7 @@
   (parent 7)
   (unrealized (0 2))
   (dead)
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n3) (n3 n3))))
   (comment "empty cohort"))
 
 (defskeleton thisthat
@@ -269,6 +279,7 @@
   (parent 7)
   (unrealized (0 2))
   (dead)
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n3) (n3 n3))))
   (comment "empty cohort"))
 
 (defskeleton thisthat
@@ -294,6 +305,7 @@
   (label 11)
   (parent 8)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n3-0) (n3 n3))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton thisthat
@@ -319,6 +331,7 @@
   (label 12)
   (parent 8)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n3-0) (n3 n3))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton thisthat
@@ -346,6 +359,7 @@
   (parent 11)
   (unrealized (0 2))
   (dead)
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n3-0) (n3 n3))))
   (comment "empty cohort"))
 
 (defskeleton thisthat
@@ -373,6 +387,7 @@
   (parent 11)
   (unrealized (0 2))
   (dead)
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n3-0) (n3 n3))))
   (comment "empty cohort"))
 
 (defskeleton thisthat
@@ -428,6 +443,7 @@
   (parent 12)
   (unrealized (0 2))
   (dead)
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n3-0) (n3 n3))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

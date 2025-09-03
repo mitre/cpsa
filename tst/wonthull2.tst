@@ -1,6 +1,6 @@
 (herald wonthull2 (bound 9))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/wonthull2.scm")
 (comment "Strand count bounded at 9")
 
@@ -32,6 +32,7 @@
       (recv (enc "okay" x3 x4 (pubk a)))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x3) (x4 x4))))
   (origs (x3 (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -52,6 +53,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x3) (x4 x4))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
@@ -77,6 +79,7 @@
         (enc "okay" y3 x1 (pubk a)) (enc x1 x1 (pubk a))
         (enc x1 x2 (pubk a))) (strand-map 0 1)))
   (unrealized (0 1))
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x1) (x4 x4))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -121,6 +124,7 @@
   (label 4)
   (parent 1)
   (unrealized (0 1))
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x3) (x4 x4))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
@@ -149,6 +153,7 @@
         (enc "okay" y3 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x1 (pubk a)) (enc x1 x2 (pubk a))) (strand-map 0 1 2)))
   (unrealized (0 1))
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x1) (x4 x4))))
   (comment "4 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
@@ -169,6 +174,7 @@
   (label 6)
   (parent 2)
   (realized)
+  (maps ((0) ((a a) (x1 y3) (x2 x2) (x3 y3) (x4 y3))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -190,14 +196,19 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
   (label 7)
   (parent 2)
-  (seen 13)
+  (seen 6 13)
   (seen-ops
+    (6
+      (operation nonce-test (contracted (x1 y3) (x4 y3)) y3 (0 1)
+        (enc "okay" y3 y3 (pubk a)) (enc y3 x2 (pubk a))
+        (enc y3 y3 (pubk a))) (strand-map 0 1 1))
     (13
       (operation nonce-test (added-strand resp 2) x1 (0 1)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
         (enc x1 x1 (pubk a)) (enc x1 x2 (pubk a))) (strand-map 0 1 2)))
   (unrealized (0 1))
-  (comment "2 in cohort - 1 not yet seen"))
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x1) (x4 x4))))
+  (comment "3 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x1 x2 y3 text) (a name))
@@ -219,6 +230,7 @@
   (label 8)
   (parent 4)
   (realized)
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x1) (x4 x1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -244,6 +256,7 @@
   (seen-ops
     (3 (operation generalization deleted (2 0)) (strand-map 0 1)))
   (realized)
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 y3) (x4 y3))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -268,8 +281,16 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
   (label 10)
   (parent 4)
+  (seen 12)
+  (seen-ops
+    (12
+      (operation nonce-test (contracted (x1 y3) (x4 y3)) y3 (0 1)
+        (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
+        (enc y3 x2 (pubk a)) (enc y3 y3 (pubk a)))
+      (strand-map 0 1 1 2)))
   (unrealized (0 1))
-  (comment "1 in cohort - 1 not yet seen"))
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x1) (x4 x4))))
+  (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x2 y3 y3-0 text) (a name))
@@ -295,6 +316,7 @@
   (seen-ops
     (6 (operation generalization deleted (1 0)) (strand-map 0 2)))
   (realized)
+  (maps ((0) ((a a) (x1 y3-0) (x2 x2) (x3 y3-0) (x4 y3-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -320,6 +342,7 @@
   (seen-ops
     (16 (operation generalization deleted (2 0)) (strand-map 0 1)))
   (realized)
+  (maps ((0) ((a a) (x1 y3) (x2 x2) (x3 y3) (x4 y3))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -344,8 +367,16 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
   (label 13)
   (parent 5)
+  (seen 11)
+  (seen-ops
+    (11
+      (operation nonce-test (contracted (x1 y3-0) (x4 y3-0)) y3-0 (0 1)
+        (enc "okay" y3 y3-0 (pubk a)) (enc "okay" y3-0 y3-0 (pubk a))
+        (enc y3-0 x2 (pubk a)) (enc y3-0 y3-0 (pubk a)))
+      (strand-map 0 1 2 2)))
   (unrealized (0 1))
-  (comment "1 in cohort - 1 not yet seen"))
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x1) (x4 x4))))
+  (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x2 y3 y3-0 text) (a name))
@@ -364,6 +395,7 @@
   (label 14)
   (parent 6)
   (realized)
+  (maps ((0) ((a a) (x1 y3) (x2 x2) (x3 y3-0) (x4 y3))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -389,6 +421,7 @@
   (seen-ops
     (6 (operation generalization deleted (1 0)) (strand-map 0 2)))
   (realized)
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x1) (x4 x1))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -410,6 +443,7 @@
   (seen-ops
     (3 (operation generalization separated x1-0) (strand-map 0 1)))
   (realized)
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x1) (x4 x1))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -439,6 +473,7 @@
   (seen-ops
     (12 (operation generalization deleted (1 0)) (strand-map 0 2 3)))
   (realized)
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x1) (x4 x1))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -468,6 +503,7 @@
   (seen-ops
     (15 (operation generalization deleted (1 0)) (strand-map 0 2 3)))
   (realized)
+  (maps ((0) ((a a) (x1 x1) (x2 x2) (x3 x1) (x4 x1))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -525,6 +561,8 @@
       (send (enc "okay" x3 x1 (pubk a-0)))))
   (label 20)
   (unrealized (0 1))
+  (maps
+    ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3-0) (a-0 a-0))))
   (origs (x3-0 (0 0)))
   (comment "4 in cohort - 4 not yet seen"))
 
@@ -545,6 +583,7 @@
   (label 21)
   (parent 20)
   (unrealized (0 1))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x1) (a-0 a))))
   (origs (x1 (0 0)))
   (comment "3 in cohort - 3 not yet seen"))
 
@@ -571,6 +610,7 @@
       (operation nonce-test (contracted (x1-0 x3) (a-0 a)) x3 (1 0)
         (enc x3 x3 (pubk a)) (enc x1 x3 (pubk a))) (strand-map 0 1)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (origs (x3 (0 0)))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -600,6 +640,8 @@
         (enc "okay" y3 x3-0 (pubk a-0)) (enc x1-0 x3-0 (pubk a-0))
         (enc x3-0 x3 (pubk a-0))) (strand-map 0 1 2)))
   (unrealized (0 1))
+  (maps
+    ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3-0) (a-0 a-0))))
   (comment "5 in cohort - 4 not yet seen"))
 
 (defskeleton wonthull2
@@ -632,6 +674,8 @@
         (enc "okay" y3 x1-0 (pubk a)) (enc x1-0 x3 (pubk a))
         (enc x1-0 x1-0 (pubk a))) (strand-map 0 1 2)))
   (unrealized (0 1))
+  (maps
+    ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x1-0) (a-0 a-0))))
   (comment "5 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
@@ -676,6 +720,7 @@
   (label 26)
   (parent 21)
   (unrealized (0 1))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton wonthull2
@@ -704,6 +749,7 @@
         (enc "okay" x3 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a))) (strand-map 0 1 2)))
   (unrealized (0 1))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x1) (a-0 a))))
   (comment "4 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
@@ -746,6 +792,7 @@
   (label 29)
   (parent 22)
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton wonthull2
@@ -779,6 +826,8 @@
         (enc "okay" y3 x3-0 (pubk a-0)) (enc x1-0 x3-0 (pubk a-0))
         (enc x3-0 x3 (pubk a-0))) (strand-map 0 1 2 3)))
   (unrealized (0 1))
+  (maps
+    ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3-0) (a-0 a-0))))
   (comment "5 in cohort - 4 not yet seen"))
 
 (defskeleton wonthull2
@@ -806,6 +855,7 @@
       (operation nonce-test (contracted (a-0 a)) y3 (1 0)
         (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))) (strand-map 0 1 2)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a-0))))
   (comment "4 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
@@ -836,6 +886,7 @@
       (operation nonce-test (contracted (x1-0 x3) (a-0 a)) x3 (1 0)
         (enc x3 x3 (pubk a)) (enc x1 x3 (pubk a))) (strand-map 0 1 2)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (comment "4 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -879,6 +930,8 @@
         (enc x1-0 x3 (pubk a)) (enc x1-0 x1-0 (pubk a)))
       (strand-map 0 1 2 3)))
   (unrealized (0 1))
+  (maps
+    ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x1-0) (a-0 a-0))))
   (comment "6 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
@@ -905,15 +958,21 @@
       (send (enc "okay" x1-0 x1-0 (pubk a)))))
   (label 34)
   (parent 24)
-  (seen 57)
+  (seen 35 57)
   (seen-ops
+    (35
+      (operation nonce-test (contracted (x1 y3) (x1-0 y3)) y3 (0 1)
+        (enc "okay" y3 y3 (pubk a)) (enc y3 x3 (pubk a))
+        (enc y3 y3 (pubk a))) (strand-map 0 1 2 2))
     (57
       (operation nonce-test (added-strand resp 2) x1-0 (0 1)
         (enc "okay" x1-0 x1-0 (pubk a)) (enc "okay" y3 x1-0 (pubk a))
         (enc x1-0 x3 (pubk a)) (enc x1-0 x1-0 (pubk a)))
       (strand-map 0 1 2 3)))
   (unrealized (0 1))
-  (comment "3 in cohort - 2 not yet seen"))
+  (maps
+    ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x1-0) (a-0 a-0))))
+  (comment "5 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 y3 text) (a a-0 name))
@@ -940,6 +999,7 @@
       (operation nonce-test (contracted (a-0 a)) y3 (1 0)
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a))) (strand-map 0 1 2)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
   (comment "4 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
@@ -969,6 +1029,8 @@
       (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x1 (1 0)
         (enc x1 x1 (pubk a))) (strand-map 0 1 2)))
   (unrealized (1 0))
+  (maps
+    ((0 1) ((x1 x1) (x3 x1-0) (a a) (x1-0 x1-0) (x3-0 x1-0) (a-0 a-0))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -991,6 +1053,7 @@
   (label 37)
   (parent 26)
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -1019,6 +1082,7 @@
   (seen-ops
     (37 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -1041,6 +1105,7 @@
   (label 39)
   (parent 26)
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x1) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -1073,6 +1138,7 @@
         (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 2)))
   (unrealized (0 1))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "5 in cohort - 4 not yet seen"))
 
 (defskeleton wonthull2
@@ -1098,6 +1164,7 @@
   (seen-ops
     (25 (operation generalization deleted (2 0)) (strand-map 0 1)))
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -1123,6 +1190,7 @@
   (label 42)
   (parent 27)
   (unrealized (0 1))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x1) (a-0 a))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
@@ -1172,6 +1240,7 @@
   (seen-ops
     (28 (operation generalization deleted (2 0)) (strand-map 0 1)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -1197,6 +1266,7 @@
   (seen-ops
     (25 (operation generalization deleted (2 0)) (strand-map 0 1)))
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -1222,6 +1292,7 @@
   (label 46)
   (parent 29)
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
@@ -1246,14 +1317,15 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
   (label 47)
   (parent 29)
-  (seen 78)
+  (seen 79)
   (seen-ops
-    (78
+    (79
       (operation nonce-test (added-strand resp 2) x3 (1 0)
         (enc "okay" x3 x3 (pubk a)) (enc "okay" y3 x3 (pubk a))
         (enc x3 x3 (pubk a)) (enc x1-0 x3 (pubk a)))
       (strand-map 0 1 2 3)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -1278,17 +1350,18 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x1 y3 (pubk a)))))
   (label 48)
   (parent 30)
-  (seen 54 74)
+  (seen 54 75)
   (seen-ops
     (54
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a))) (strand-map 0 1 2 2))
-    (74
+    (75
       (operation nonce-test (contracted (a-0 a)) y3 (1 0)
         (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a)))
       (strand-map 0 1 2 3)))
   (unrealized (1 0))
-  (comment "5 in cohort - 3 not yet seen"))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a-0))))
+  (comment "6 in cohort - 4 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 text) (a a-0 name))
@@ -1312,13 +1385,14 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
   (label 49)
   (parent 30)
-  (seen 75)
+  (seen 76)
   (seen-ops
-    (75
+    (76
       (operation nonce-test (contracted (a-0 a)) x1 (1 0)
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
   (comment "5 in cohort - 4 not yet seen"))
 
 (defskeleton wonthull2
@@ -1343,13 +1417,14 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1-0 x3 (pubk a)))))
   (label 50)
   (parent 30)
-  (seen 73)
+  (seen 74)
   (seen-ops
-    (73
+    (74
       (operation nonce-test (contracted (x1-0 x3) (a-0 a)) x3 (1 0)
         (enc x3 x3 (pubk a)) (enc x1 x3 (pubk a)))
       (strand-map 0 1 2 3)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (comment "5 in cohort - 4 not yet seen"))
 
 (defskeleton wonthull2
@@ -1378,15 +1453,22 @@
       (send (enc "okay" y3-0 x1-0 (pubk a)))))
   (label 51)
   (parent 30)
-  (seen 61)
+  (seen 59 62)
   (seen-ops
-    (61
+    (59
+      (operation nonce-test (contracted (x1 y3) (x1-0 y3)) y3 (0 1)
+        (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
+        (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+      (strand-map 0 1 2 2 3))
+    (62
       (operation nonce-test (displaced 5 4 resp 2) x1-0 (0 1)
         (enc "okay" x1-0 x1-0 (pubk a)) (enc "okay" y3 x1-0 (pubk a))
         (enc "okay" y3-0 x1-0 (pubk a)) (enc x1-0 x3 (pubk a))
         (enc x1-0 x1-0 (pubk a))) (strand-map 0 1 2 3 2)))
   (unrealized (0 1))
-  (comment "2 in cohort - 1 not yet seen"))
+  (maps
+    ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x1-0) (a-0 a-0))))
+  (comment "3 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 text) (a a-0 name))
@@ -1407,6 +1489,7 @@
   (label 52)
   (parent 31)
   (unrealized (1 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a-0))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
@@ -1430,13 +1513,14 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a)))))
   (label 53)
   (parent 31)
-  (seen 94)
+  (seen 96)
   (seen-ops
-    (94
+    (96
       (operation nonce-test (displaced 4 2 resp 2) y3 (1 0)
         (enc "okay" y3-0 y3 (pubk a)) (enc x1 y3 (pubk a))
         (enc y3 x3 (pubk a))) (strand-map 0 1 2 3)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a-0))))
   (comment "4 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
@@ -1460,17 +1544,18 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a)))))
   (label 54)
   (parent 31)
-  (seen 95 98)
+  (seen 97 100)
   (seen-ops
-    (95
+    (97
       (operation nonce-test (displaced 4 2 resp 2) x1 (1 0)
         (enc "okay" y3 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3))
-    (98
+    (100
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" y3 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
   (comment "4 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -1495,6 +1580,7 @@
   (seen-ops
     (28 (operation generalization deleted (2 0)) (strand-map 0 1)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -1525,6 +1611,7 @@
         (enc "okay" y3-0 x3 (pubk a)) (enc x3 x3 (pubk a))
         (enc x1-0 x3 (pubk a))) (strand-map 0 1 2 2)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (comment "5 in cohort - 4 not yet seen"))
 
 (defskeleton wonthull2
@@ -1553,15 +1640,22 @@
       (send (enc "okay" x1-0 x1-0 (pubk a)))))
   (label 57)
   (parent 33)
-  (seen 61)
+  (seen 58 62)
   (seen-ops
-    (61
+    (58
+      (operation nonce-test (contracted (x1 y3-0) (x1-0 y3-0)) y3-0
+        (0 1) (enc "okay" y3 y3-0 (pubk a))
+        (enc "okay" y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
+        (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 2 3 3))
+    (62
       (operation nonce-test (displaced 5 4 resp 2) x1-0 (0 1)
         (enc "okay" x1-0 x1-0 (pubk a)) (enc "okay" y3 x1-0 (pubk a))
         (enc "okay" y3-0 x1-0 (pubk a)) (enc x1-0 x3 (pubk a))
         (enc x1-0 x1-0 (pubk a))) (strand-map 0 1 2 2 3)))
   (unrealized (0 1))
-  (comment "2 in cohort - 1 not yet seen"))
+  (maps
+    ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x1-0) (a-0 a-0))))
+  (comment "3 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 y3 y3-0 text) (a a-0 name))
@@ -1587,17 +1681,19 @@
       (send (enc "okay" y3-0 y3-0 (pubk a)))))
   (label 58)
   (parent 33)
-  (seen 64 71)
+  (seen 65 72)
   (seen-ops
-    (64
+    (65
       (operation nonce-test (displaced 4 2 resp 2) y3-0 (1 0)
         (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
       (strand-map 0 1 2 3))
-    (71
+    (72
       (operation nonce-test (contracted (a-0 a)) y3-0 (1 0)
         (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
       (strand-map 0 1 2 3)))
   (unrealized (1 0))
+  (maps
+    ((0 1) ((x1 y3-0) (x3 x3) (a a) (x1-0 y3-0) (x3-0 y3-0) (a-0 a-0))))
   (comment "5 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
@@ -1622,16 +1718,17 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a)))))
   (label 59)
   (parent 33)
-  (seen 54 72)
+  (seen 54 73)
   (seen-ops
     (54
       (operation nonce-test (displaced 4 3 resp 2) y3 (1 0)
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a))) (strand-map 0 1 2 3))
-    (72
+    (73
       (operation nonce-test (contracted (a-0 a)) y3 (1 0)
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
       (strand-map 0 1 2 3)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
   (comment "5 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
@@ -1656,17 +1753,46 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
   (label 60)
   (parent 34)
-  (seen 38 63)
+  (seen 38 64)
   (seen-ops
     (38
       (operation nonce-test (contracted (a-0 a)) x1 (1 0)
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a))) (strand-map 0 1 2 3))
-    (63
+    (64
       (operation nonce-test (displaced 4 2 resp 2) x1 (1 0)
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
   (comment "5 in cohort - 3 not yet seen"))
+
+(defskeleton wonthull2
+  (vars (x1 y3 text) (a a-0 name))
+  (defstrand init 2 (x1 y3) (x2 y3) (x3 y3) (x4 x1) (a a))
+  (defstrand resp 2 (y1 x1) (y2 y3) (y3 y3) (a a-0))
+  (defstrand resp 2 (y1 y3) (y2 y3) (y3 y3) (a a))
+  (precedes ((0 0) (1 0)) ((0 0) (2 0)) ((1 1) (0 1)) ((2 1) (0 1)))
+  (non-orig (privk a))
+  (uniq-orig y3)
+  (operation nonce-test (displaced 4 2 resp 2) x1-0 (0 1)
+    (enc "okay" x1-0 x1-0 (pubk a)) (enc "okay" y3 x1-0 (pubk a))
+    (enc x1-0 x3 (pubk a)) (enc x1-0 x1-0 (pubk a)))
+  (strand-map 0 1 2 2)
+  (traces
+    ((send (cat (enc y3 y3 (pubk a)) (enc y3 y3 (pubk a))))
+      (recv (enc "okay" y3 x1 (pubk a))))
+    ((recv (enc x1 y3 (pubk a-0))) (send (enc "okay" y3 x1 (pubk a-0))))
+    ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a)))))
+  (label 61)
+  (parent 34)
+  (seen 83)
+  (seen-ops
+    (83
+      (operation nonce-test (contracted (x1 y3) (a-0 a)) y3 (1 0)
+        (enc y3 y3 (pubk a))) (strand-map 0 1 2)))
+  (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 y3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
+  (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x1 x1-0 y3 text) (a a-0 name))
@@ -1691,10 +1817,17 @@
       (send (enc "okay" y3 x1-0 (pubk a))))
     ((recv (enc x1-0 x1-0 (pubk a)))
       (send (enc "okay" x1-0 x1-0 (pubk a)))))
-  (label 61)
+  (label 62)
   (parent 34)
+  (seen 118)
+  (seen-ops
+    (118
+      (operation nonce-test (displaced 4 2 resp 2) x1-0 (1 0)
+        (enc x1-0 x1-0 (pubk a))) (strand-map 0 1 2 3)))
   (unrealized (1 0))
-  (comment "4 in cohort - 4 not yet seen"))
+  (maps
+    ((0 1) ((x1 x1) (x3 x1-0) (a a) (x1-0 x1-0) (x3-0 x1-0) (a-0 a-0))))
+  (comment "4 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 y3 text) (a a-0 name))
@@ -1712,9 +1845,10 @@
       (recv (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a-0))) (send (enc "okay" x3 y3 (pubk a-0))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a)))))
-  (label 62)
+  (label 63)
   (parent 35)
   (unrealized (1 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
@@ -1736,15 +1870,16 @@
     ((recv (enc y3 x3 (pubk a-0))) (send (enc "okay" x3 y3 (pubk a-0))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a)))))
-  (label 63)
+  (label 64)
   (parent 35)
-  (seen 120)
+  (seen 123)
   (seen-ops
-    (120
+    (123
       (operation nonce-test (displaced 4 2 resp 2) y3 (1 0)
         (enc "okay" y3-0 y3 (pubk a)) (enc y3 x3 (pubk a))
         (enc y3 y3 (pubk a))) (strand-map 0 1 2 3)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
   (comment "4 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
@@ -1766,19 +1901,20 @@
     ((recv (enc y3 x3 (pubk a-0))) (send (enc "okay" x3 y3 (pubk a-0))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a)))))
-  (label 64)
+  (label 65)
   (parent 35)
-  (seen 121 124)
+  (seen 124 127)
   (seen-ops
-    (121
+    (124
       (operation nonce-test (displaced 4 2 resp 2) y3 (1 0)
         (enc "okay" y3-0 y3 (pubk a)) (enc y3 x3 (pubk a))
         (enc y3 y3 (pubk a))) (strand-map 0 1 2 3))
-    (124
+    (127
       (operation nonce-test (added-strand resp 2) y3 (1 0)
         (enc "okay" y3-0 y3 (pubk a)) (enc y3 x3 (pubk a))
         (enc y3 y3 (pubk a))) (strand-map 0 1 2 3)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
   (comment "4 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -1799,9 +1935,11 @@
       (send (enc "okay" x1-0 x1 (pubk a-0))))
     ((recv (enc x1-0 x1-0 (pubk a)))
       (send (enc "okay" y3 x1-0 (pubk a)))))
-  (label 65)
+  (label 66)
   (parent 36)
   (unrealized (1 0))
+  (maps
+    ((0 1) ((x1 x1) (x3 x1-0) (a a) (x1-0 x1-0) (x3-0 x1-0) (a-0 a-0))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -1826,15 +1964,17 @@
       (send (enc "okay" y3 x1-0 (pubk a))))
     ((recv (enc x1-0 x1-0 (pubk a)))
       (send (enc "okay" y3-0 x1-0 (pubk a)))))
-  (label 66)
+  (label 67)
   (parent 36)
-  (seen 65)
+  (seen 66)
   (seen-ops
-    (65
+    (66
       (operation nonce-test (displaced 4 2 resp 2) x1-0 (1 0)
         (enc "okay" y3-0 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a)))
       (strand-map 0 1 2 2)))
   (unrealized (1 0))
+  (maps
+    ((0 1) ((x1 x1) (x3 x1-0) (a a) (x1-0 x1-0) (x3-0 x1-0) (a-0 a-0))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -1853,9 +1993,10 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x3 y3 (pubk a))))
     ((recv (enc y3 y3-0 (pubk a)))
       (send (enc "okay" y3-0 y3 (pubk a)))))
-  (label 67)
+  (label 68)
   (parent 37)
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3-0) (a-0 a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -1871,12 +2012,13 @@
     ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
       (recv (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 68)
+  (label 69)
   (parent 39)
   (seen 25)
   (seen-ops
     (25 (operation generalization separated x1-0) (strand-map 0 1)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x1) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (origs (x1 (0 0)))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -1903,12 +2045,13 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 69)
+  (label 70)
   (parent 40)
-  (seen 75)
+  (seen 76)
   (seen-ops
-    (75 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (76 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -1934,12 +2077,13 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 70)
+  (label 71)
   (parent 40)
-  (seen 71)
+  (seen 72)
   (seen-ops
-    (71 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (72 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -1963,12 +2107,13 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a)))))
-  (label 71)
+  (label 72)
   (parent 40)
   (seen 37)
   (seen-ops
     (37 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -1994,9 +2139,11 @@
       (send (enc "okay" y3 y3-0 (pubk a))))
     ((recv (enc y3-0 x3 (pubk a)))
       (send (enc "okay" y3-0 y3-0 (pubk a)))))
-  (label 72)
+  (label 73)
   (parent 40)
   (realized)
+  (maps
+    ((0 1) ((x1 y3-0) (x3 x3) (a a) (x1-0 y3-0) (x3-0 y3-0) (a-0 a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -2020,9 +2167,10 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
-  (label 73)
+  (label 74)
   (parent 42)
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -2046,12 +2194,13 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x1 y3 (pubk a)))))
-  (label 74)
+  (label 75)
   (parent 42)
   (seen 43)
   (seen-ops
     (43 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -2075,12 +2224,13 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 75)
+  (label 76)
   (parent 42)
-  (seen 132)
+  (seen 135)
   (seen-ops
-    (132 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
+    (135 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -2103,9 +2253,10 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
-  (label 76)
+  (label 77)
   (parent 46)
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -2128,9 +2279,10 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
-  (label 77)
+  (label 78)
   (parent 46)
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -2155,9 +2307,10 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 78)
+  (label 79)
   (parent 46)
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -2180,9 +2333,10 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 79)
+  (label 80)
   (parent 47)
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -2205,9 +2359,10 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 80)
+  (label 81)
   (parent 47)
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -2229,10 +2384,36 @@
     ((recv (enc y3 x3 (pubk a-0))) (send (enc "okay" x3 y3 (pubk a-0))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x1 y3 (pubk a)))))
-  (label 81)
+  (label 82)
   (parent 48)
   (unrealized (1 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a-0))))
   (comment "4 in cohort - 4 not yet seen"))
+
+(defskeleton wonthull2
+  (vars (x1 text) (a name))
+  (defstrand init 2 (x1 x1) (x2 x1) (x3 x1) (x4 x1) (a a))
+  (defstrand resp 2 (y1 x1) (y2 x1) (y3 x1) (a a))
+  (defstrand resp 2 (y1 x1) (y2 x1) (y3 x1) (a a))
+  (precedes ((0 0) (1 0)) ((0 0) (2 0)) ((1 1) (0 1)) ((2 1) (0 1)))
+  (non-orig (privk a))
+  (uniq-orig x1)
+  (operation nonce-test (contracted (x3 x1) (a-0 a) (y3 x1)) x1 (1 0)
+    (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 2)
+  (traces
+    ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
+      (recv (enc "okay" x1 x1 (pubk a))))
+    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
+    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
+  (label 83)
+  (parent 48)
+  (seen 69)
+  (seen-ops
+    (69 (operation generalization deleted (2 0)) (strand-map 0 1)))
+  (realized)
+  (maps ((0 1) ((x1 x1) (x3 x1) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
+  (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 text) (a a-0 name))
@@ -2253,23 +2434,24 @@
     ((recv (enc y3 x3 (pubk a-0))) (send (enc "okay" x3 y3 (pubk a-0))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x1 y3 (pubk a)))))
-  (label 82)
+  (label 84)
   (parent 48)
-  (seen 96 140 143)
+  (seen 98 143 146)
   (seen-ops
-    (96
+    (98
       (operation nonce-test (added-strand resp 2) y3 (1 0)
         (enc "okay" x1 y3 (pubk a)) (enc x1 y3 (pubk a))
         (enc y3 x3 (pubk a))) (strand-map 0 1 2 3))
-    (140
+    (143
       (operation nonce-test (displaced 4 2 resp 2) y3 (1 0)
         (enc "okay" x1 y3 (pubk a)) (enc x1 y3 (pubk a))
         (enc y3 x3 (pubk a))) (strand-map 0 1 2 3))
-    (143
+    (146
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a-0))))
   (comment "4 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -2293,24 +2475,25 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x1 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a)))))
-  (label 83)
+  (label 85)
   (parent 48)
-  (seen 96 98 142)
+  (seen 98 100 145)
   (seen-ops
-    (96
+    (98
       (operation nonce-test (displaced 5 3 resp 2) y3 (1 0)
         (enc "okay" y3-0 y3 (pubk a)) (enc x1 y3 (pubk a))
         (enc y3 x3 (pubk a))) (strand-map 0 1 2 3 4))
-    (98
+    (100
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" y3 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 2 3))
-    (142
+    (145
       (operation nonce-test (displaced 5 2 resp 2) y3 (1 0)
         (enc "okay" y3-0 y3 (pubk a)) (enc x1 y3 (pubk a))
         (enc y3 x3 (pubk a))) (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
-  (comment "5 in cohort - 2 not yet seen"))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a-0))))
+  (comment "6 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 text) (a a-0 name))
@@ -2333,16 +2516,17 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 84)
+  (label 86)
   (parent 49)
-  (seen 98)
+  (seen 100)
   (seen-ops
-    (98
+    (100
       (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
-  (comment "5 in cohort - 4 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "6 in cohort - 5 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 text) (a a-0 name))
@@ -2363,15 +2547,16 @@
     ((recv (enc x1 x3 (pubk a-0))) (send (enc "okay" x3 x1 (pubk a-0))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 85)
+  (label 87)
   (parent 49)
-  (seen 98)
+  (seen 100)
   (seen-ops
-    (98
+    (100
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" y3 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
   (comment "4 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
@@ -2393,19 +2578,20 @@
     ((recv (enc x1 x3 (pubk a-0))) (send (enc "okay" x3 x1 (pubk a-0))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 86)
+  (label 88)
   (parent 49)
-  (seen 149 153)
+  (seen 154 158)
   (seen-ops
-    (149
+    (154
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3))
-    (153
+    (158
       (operation nonce-test (displaced 4 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
   (comment "4 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -2429,23 +2615,24 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 87)
+  (label 89)
   (parent 49)
-  (seen 85 150 155)
+  (seen 87 155 160)
   (seen-ops
-    (85
+    (87
       (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2))
-    (150
+    (155
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4))
-    (155
+    (160
       (operation nonce-test (displaced 5 3 resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
   (comment "5 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -2467,9 +2654,10 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
-  (label 88)
+  (label 90)
   (parent 50)
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -2491,7 +2679,7 @@
     ((recv (enc x1 x3 (pubk a-0))) (send (enc "okay" x3 x1 (pubk a-0))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1-0 x3 (pubk a)))))
-  (label 89)
+  (label 91)
   (parent 50)
   (seen 46)
   (seen-ops
@@ -2500,6 +2688,7 @@
         (enc "okay" y3 x3 (pubk a)) (enc x3 x3 (pubk a))
         (enc x1-0 x3 (pubk a))) (strand-map 0 1 2 3)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (comment "5 in cohort - 4 not yet seen"))
 
 (defskeleton wonthull2
@@ -2521,19 +2710,20 @@
     ((recv (enc x1 x3 (pubk a-0))) (send (enc "okay" x3 x1 (pubk a-0))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1-0 x3 (pubk a)))))
-  (label 90)
+  (label 92)
   (parent 50)
-  (seen 46 103)
+  (seen 46 105)
   (seen-ops
     (46
       (operation nonce-test (displaced 4 2 resp 2) x3 (1 0)
         (enc "okay" x1-0 x3 (pubk a)) (enc x3 x3 (pubk a))
         (enc x1-0 x3 (pubk a))) (strand-map 0 1 2 3))
-    (103
+    (105
       (operation nonce-test (added-strand resp 2) x3 (1 0)
         (enc "okay" x1-0 x3 (pubk a)) (enc x3 x3 (pubk a))
         (enc x1-0 x3 (pubk a))) (strand-map 0 1 2 3)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (comment "4 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -2557,19 +2747,20 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a)))))
-  (label 91)
+  (label 93)
   (parent 50)
-  (seen 89 103)
+  (seen 91 105)
   (seen-ops
-    (89
+    (91
       (operation nonce-test (displaced 5 2 resp 2) x3 (1 0)
         (enc "okay" y3-0 x3 (pubk a)) (enc x3 x3 (pubk a))
         (enc x1-0 x3 (pubk a))) (strand-map 0 1 2 3 2))
-    (103
+    (105
       (operation nonce-test (displaced 5 3 resp 2) x3 (1 0)
         (enc "okay" y3-0 x3 (pubk a)) (enc x3 x3 (pubk a))
         (enc x1-0 x3 (pubk a))) (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (comment "6 in cohort - 4 not yet seen"))
 
 (defskeleton wonthull2
@@ -2595,24 +2786,28 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 92)
+  (label 94)
   (parent 51)
-  (seen 69 84 111)
+  (seen 70 86 113 119)
   (seen-ops
-    (69
+    (70
       (operation nonce-test (contracted (a-0 a)) x1 (1 0)
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4))
-    (84
+    (86
       (operation nonce-test (displaced 5 4 resp 2) x1 (1 0)
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4))
-    (111
+    (113
       (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4)))
+      (strand-map 0 1 2 3 4))
+    (119
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2)))
   (unrealized (1 0))
-  (comment "6 in cohort - 3 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "8 in cohort - 4 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 text) (a name))
@@ -2631,13 +2826,14 @@
       (recv (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a)))))
-  (label 93)
+  (label 95)
   (parent 52)
   (seen 43)
   (seen-ops
     (43 (operation generalization weakened ((2 1) (1 0)))
       (strand-map 0 1 2)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -2660,9 +2856,10 @@
     ((recv (enc y3 x3 (pubk a-0))) (send (enc "okay" x3 y3 (pubk a-0))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a)))))
-  (label 94)
+  (label 96)
   (parent 52)
   (unrealized (1 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a-0))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
@@ -2685,16 +2882,17 @@
     ((recv (enc x1 x3 (pubk a-0))) (send (enc "okay" x3 x1 (pubk a-0))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a)))))
-  (label 95)
+  (label 97)
   (parent 52)
-  (seen 174)
+  (seen 180)
   (seen-ops
-    (174
+    (180
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
   (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -2719,16 +2917,17 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x1 y3 (pubk a)))))
-  (label 96)
+  (label 98)
   (parent 53)
-  (seen 173)
+  (seen 179)
   (seen-ops
-    (173
+    (179
       (operation nonce-test (displaced 5 2 resp 2) y3 (1 0)
         (enc "okay" x1 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
         (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a)))
       (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a-0))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -2751,12 +2950,13 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a)))))
-  (label 97)
+  (label 99)
   (parent 53)
   (seen 43)
   (seen-ops
     (43 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -2781,22 +2981,27 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 98)
+  (label 100)
   (parent 53)
-  (seen 174 177)
+  (seen 150 180 183)
   (seen-ops
-    (174
+    (150
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" y3 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 3))
+    (180
       (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
         (enc "okay" y3 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4))
-    (177
+    (183
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" y3 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
-  (comment "4 in cohort - 2 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "6 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 text) (a a-0 name))
@@ -2820,16 +3025,17 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 99)
+  (label 101)
   (parent 54)
-  (seen 178)
+  (seen 184)
   (seen-ops
-    (178
+    (184
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
   (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -2852,12 +3058,13 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a)))))
-  (label 100)
+  (label 102)
   (parent 54)
-  (seen 132)
+  (seen 135)
   (seen-ops
-    (132 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
+    (135 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -2880,12 +3087,13 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a)))))
-  (label 101)
+  (label 103)
   (parent 56)
   (seen 44)
   (seen-ops
     (44 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -2908,12 +3116,13 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a)))))
-  (label 102)
+  (label 104)
   (parent 56)
   (seen 45)
   (seen-ops
     (45 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -2938,7 +3147,7 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1-0 x3 (pubk a)))))
-  (label 103)
+  (label 105)
   (parent 56)
   (seen 46)
   (seen-ops
@@ -2948,6 +3157,7 @@
         (enc x3 x3 (pubk a)) (enc x1-0 x3 (pubk a)))
       (strand-map 0 1 2 2 3)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (comment "4 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
@@ -2972,21 +3182,22 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 104)
+  (label 106)
   (parent 56)
-  (seen 47 183)
+  (seen 47 190)
   (seen-ops
     (47
       (operation nonce-test (displaced 5 2 resp 2) x3 (1 0)
         (enc "okay" x3 x3 (pubk a)) (enc "okay" y3-0 x3 (pubk a))
         (enc x3 x3 (pubk a)) (enc x1-0 x3 (pubk a)))
       (strand-map 0 1 2 2 3))
-    (183
+    (190
       (operation nonce-test (added-strand resp 2) x3 (1 0)
         (enc "okay" x3 x3 (pubk a)) (enc "okay" y3-0 x3 (pubk a))
         (enc x3 x3 (pubk a)) (enc x1-0 x3 (pubk a)))
       (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (comment "4 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -3012,24 +3223,32 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 105)
+  (label 107)
   (parent 57)
-  (seen 70 107 114)
+  (seen 71 109 116 119 174)
   (seen-ops
-    (70
+    (71
       (operation nonce-test (contracted (a-0 a)) x1 (1 0)
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4))
-    (107
+    (109
       (operation nonce-test (displaced 5 3 resp 2) x1 (1 0)
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4))
-    (114
+    (116
       (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4)))
+      (strand-map 0 1 2 3 4))
+    (119
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 2 3))
+    (174
+      (operation nonce-test (displaced 5 4 resp 2) x1 (1 0)
+        (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 2 3)))
   (unrealized (1 0))
-  (comment "6 in cohort - 3 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "8 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 y3 y3-0 text) (a a-0 name))
@@ -3052,15 +3271,17 @@
     ((recv (enc y3-0 x3 (pubk a))) (send (enc "okay" y3 y3-0 (pubk a))))
     ((recv (enc y3-0 y3-0 (pubk a)))
       (send (enc "okay" y3-0 y3-0 (pubk a)))))
-  (label 106)
+  (label 108)
   (parent 58)
-  (seen 121)
+  (seen 124)
   (seen-ops
-    (121
+    (124
       (operation nonce-test (displaced 4 2 resp 2) y3-0 (1 0)
         (enc "okay" y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
         (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 2 3)))
   (unrealized (1 0))
+  (maps
+    ((0 1) ((x1 y3-0) (x3 x3) (a a) (x1-0 y3-0) (x3-0 y3-0) (a-0 a-0))))
   (comment "4 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
@@ -3087,20 +3308,26 @@
       (send (enc "okay" y3-0 y3-0 (pubk a))))
     ((recv (enc y3-0 y3-0 (pubk a)))
       (send (enc "okay" y3-1 y3-0 (pubk a)))))
-  (label 107)
+  (label 109)
   (parent 58)
-  (seen 124 189)
+  (seen 127 151 196)
   (seen-ops
-    (124
+    (127
       (operation nonce-test (displaced 5 2 resp 2) y3-0 (1 0)
         (enc "okay" y3-1 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
         (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 2 3 4))
-    (189
+    (151
+      (operation nonce-test (displaced 5 2 resp 2) y3-0 (1 0)
+        (enc "okay" y3-0 y3-1 (pubk a)) (enc y3-1 x3 (pubk a))
+        (enc y3-1 y3-1 (pubk a))) (strand-map 0 1 2 3 2))
+    (196
       (operation nonce-test (displaced 5 3 resp 2) y3-0 (1 0)
         (enc "okay" y3-1 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
         (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
-  (comment "5 in cohort - 3 not yet seen"))
+  (maps
+    ((0 1) ((x1 y3-0) (x3 x3) (a a) (x1-0 y3-0) (x3-0 y3-0) (a-0 a-0))))
+  (comment "6 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 y3 y3-0 y3-1 text) (a a-0 name))
@@ -3126,23 +3353,25 @@
       (send (enc "okay" y3-0 y3-0 (pubk a))))
     ((recv (enc y3-0 x3 (pubk a)))
       (send (enc "okay" y3-1 y3-0 (pubk a)))))
-  (label 108)
+  (label 110)
   (parent 58)
-  (seen 64 191 194)
+  (seen 65 198 201)
   (seen-ops
-    (64
+    (65
       (operation nonce-test (displaced 5 2 resp 2) y3-0 (1 0)
         (enc "okay" y3-1 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
         (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 2 3 2))
-    (191
+    (198
       (operation nonce-test (displaced 5 3 resp 2) y3-0 (1 0)
         (enc "okay" y3-1 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
         (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 2 3 4))
-    (194
+    (201
       (operation nonce-test (added-strand resp 2) y3-0 (1 0)
         (enc "okay" y3-1 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
         (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
+  (maps
+    ((0 1) ((x1 y3-0) (x3 x3) (a a) (x1-0 y3-0) (x3-0 y3-0) (a-0 a-0))))
   (comment "5 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -3166,7 +3395,7 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a)))))
-  (label 109)
+  (label 111)
   (parent 59)
   (seen 54)
   (seen-ops
@@ -3175,6 +3404,7 @@
         (enc "okay" y3-1 y3 (pubk a)) (enc y3 x3 (pubk a))
         (enc y3 y3 (pubk a))) (strand-map 0 1 2 3 3)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
   (comment "5 in cohort - 4 not yet seen"))
 
 (defskeleton wonthull2
@@ -3196,19 +3426,20 @@
     ((recv (enc y3 x3 (pubk a-0))) (send (enc "okay" x3 y3 (pubk a-0))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a)))))
-  (label 110)
+  (label 112)
   (parent 59)
-  (seen 95 199)
+  (seen 97 206)
   (seen-ops
-    (95
+    (97
       (operation nonce-test (displaced 4 3 resp 2) y3 (1 0)
         (enc "okay" y3 y3 (pubk a)) (enc y3 x3 (pubk a))
         (enc y3 y3 (pubk a))) (strand-map 0 1 2 3))
-    (199
+    (206
       (operation nonce-test (added-strand resp 2) y3 (1 0)
         (enc "okay" y3 y3 (pubk a)) (enc y3 x3 (pubk a))
         (enc y3 y3 (pubk a))) (strand-map 0 1 2 3)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
   (comment "4 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -3232,24 +3463,29 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a)))))
-  (label 111)
+  (label 113)
   (parent 59)
-  (seen 98 200 202)
+  (seen 100 151 207 209)
   (seen-ops
-    (98
+    (100
       (operation nonce-test (displaced 5 3 resp 2) y3 (1 0)
         (enc "okay" y3-1 y3 (pubk a)) (enc y3 x3 (pubk a))
         (enc y3 y3 (pubk a))) (strand-map 0 1 2 3 4))
-    (200
+    (151
+      (operation nonce-test (displaced 5 3 resp 2) y3 (1 0)
+        (enc "okay" y3-1 y3 (pubk a)) (enc y3 x3 (pubk a))
+        (enc y3 y3 (pubk a))) (strand-map 0 1 2 3 3))
+    (207
       (operation nonce-test (added-strand resp 2) y3 (1 0)
         (enc "okay" y3-1 y3 (pubk a)) (enc y3 x3 (pubk a))
         (enc y3 y3 (pubk a))) (strand-map 0 1 2 3 4))
-    (202
+    (209
       (operation nonce-test (displaced 5 2 resp 2) y3 (1 0)
         (enc "okay" y3-1 y3 (pubk a)) (enc y3 x3 (pubk a))
         (enc y3 y3 (pubk a))) (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
-  (comment "5 in cohort - 2 not yet seen"))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
+  (comment "6 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 text) (a a-0 name))
@@ -3270,15 +3506,16 @@
     ((recv (enc x1 x3 (pubk a-0))) (send (enc "okay" x3 x1 (pubk a-0))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 112)
+  (label 114)
   (parent 60)
-  (seen 120)
+  (seen 123)
   (seen-ops
-    (120
+    (123
       (operation nonce-test (displaced 4 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
   (comment "4 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
@@ -3302,19 +3539,20 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 113)
+  (label 115)
   (parent 60)
-  (seen 63 206)
+  (seen 64 213)
   (seen-ops
-    (63
+    (64
       (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2))
-    (206
+    (213
       (operation nonce-test (displaced 5 3 resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
   (comment "5 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
@@ -3338,57 +3576,92 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 114)
+  (label 116)
   (parent 60)
-  (seen 124 207 210)
+  (seen 127 151 214 217)
   (seen-ops
-    (124
+    (127
       (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4))
-    (207
+    (151
+      (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
+        (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2))
+    (214
       (operation nonce-test (displaced 5 3 resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4))
-    (210
+    (217
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
-  (comment "5 in cohort - 2 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "6 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
-  (vars (x1 x1-0 y3 text) (a a-0 name))
-  (defstrand init 2 (x1 x1-0) (x2 x1-0) (x3 x1-0) (x4 x1) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x1-0) (y3 x1-0) (a a-0))
-  (defstrand resp 2 (y1 x1-0) (y2 x1-0) (y3 y3) (a a))
-  (defstrand resp 2 (y1 x1-0) (y2 x1-0) (y3 x1-0) (a a))
-  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((1 1) (0 1)) ((2 1) (1 0))
-    ((3 1) (0 1)))
+  (vars (x1 y3 text) (a a-0 name))
+  (defstrand init 2 (x1 y3) (x2 y3) (x3 y3) (x4 x1) (a a))
+  (defstrand resp 2 (y1 x1) (y2 y3) (y3 y3) (a a-0))
+  (defstrand resp 2 (y1 y3) (y2 y3) (y3 y3) (a a))
+  (precedes ((0 0) (2 0)) ((1 1) (0 1)) ((2 1) (1 0)))
   (non-orig (privk a))
-  (uniq-orig x1-0)
-  (operation nonce-test (displaced 4 2 resp 2) x1-0 (1 0)
-    (enc x1-0 x1-0 (pubk a)))
-  (strand-map 0 1 2 3)
+  (uniq-orig y3)
+  (operation nonce-test (displaced 3 2 resp 2) y3 (1 0)
+    (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2)
   (traces
-    ((send (cat (enc x1-0 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a))))
-      (recv (enc "okay" x1-0 x1 (pubk a))))
-    ((recv (enc x1 x1-0 (pubk a-0)))
-      (send (enc "okay" x1-0 x1 (pubk a-0))))
-    ((recv (enc x1-0 x1-0 (pubk a)))
-      (send (enc "okay" y3 x1-0 (pubk a))))
-    ((recv (enc x1-0 x1-0 (pubk a)))
-      (send (enc "okay" x1-0 x1-0 (pubk a)))))
-  (label 115)
+    ((send (cat (enc y3 y3 (pubk a)) (enc y3 y3 (pubk a))))
+      (recv (enc "okay" y3 x1 (pubk a))))
+    ((recv (enc x1 y3 (pubk a-0))) (send (enc "okay" y3 x1 (pubk a-0))))
+    ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a)))))
+  (label 117)
   (parent 61)
-  (seen 128)
+  (seen 131)
   (seen-ops
-    (128
-      (operation nonce-test (displaced 4 3 resp 2) x1-0 (1 0)
-        (enc "okay" y3 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a)))
+    (131
+      (operation nonce-test (added-strand resp 2) y3 (1 0)
+        (enc "okay" y3 y3 (pubk a)) (enc y3 y3 (pubk a)))
+      (strand-map 0 1 2)))
+  (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 y3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
+  (comment "2 in cohort - 1 not yet seen"))
+
+(defskeleton wonthull2
+  (vars (x1 y3 y3-0 text) (a a-0 name))
+  (defstrand init 2 (x1 y3) (x2 y3) (x3 y3) (x4 x1) (a a))
+  (defstrand resp 2 (y1 x1) (y2 y3) (y3 y3) (a a-0))
+  (defstrand resp 2 (y1 y3) (y2 y3) (y3 y3) (a a))
+  (defstrand resp 2 (y1 y3) (y2 y3) (y3 y3-0) (a a))
+  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((1 1) (0 1)) ((2 1) (0 1))
+    ((3 1) (1 0)))
+  (non-orig (privk a))
+  (uniq-orig y3)
+  (operation nonce-test (added-strand resp 2) y3 (1 0)
+    (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2)
+  (traces
+    ((send (cat (enc y3 y3 (pubk a)) (enc y3 y3 (pubk a))))
+      (recv (enc "okay" y3 x1 (pubk a))))
+    ((recv (enc x1 y3 (pubk a-0))) (send (enc "okay" y3 x1 (pubk a-0))))
+    ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
+    ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a)))))
+  (label 118)
+  (parent 61)
+  (seen 131 150)
+  (seen-ops
+    (131
+      (operation nonce-test (displaced 4 2 resp 2) y3 (1 0)
+        (enc "okay" y3-0 y3 (pubk a)) (enc y3 y3 (pubk a)))
+      (strand-map 0 1 2 3))
+    (150
+      (operation nonce-test (contracted (x1 y3) (a-0 a)) y3 (1 0)
+        (enc "okay" y3-0 y3 (pubk a)) (enc y3 y3 (pubk a)))
       (strand-map 0 1 2 3)))
   (unrealized (1 0))
-  (comment "3 in cohort - 2 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 y3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
+  (comment "3 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x1 y3 text) (a name))
@@ -3409,10 +3682,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 116)
-  (parent 61)
+  (label 119)
+  (parent 62)
+  (seen 83)
+  (seen-ops
+    (83 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
-  (comment "1 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x1) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
+  (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x1 x1-0 y3 text) (a a-0 name))
@@ -3436,19 +3713,21 @@
       (send (enc "okay" y3 x1-0 (pubk a))))
     ((recv (enc x1-0 x1-0 (pubk a)))
       (send (enc "okay" x1-0 x1-0 (pubk a)))))
-  (label 117)
-  (parent 61)
-  (seen 128 130)
+  (label 120)
+  (parent 62)
+  (seen 131 133)
   (seen-ops
-    (128
+    (131
       (operation nonce-test (displaced 4 2 resp 2) x1-0 (1 0)
         (enc "okay" x1-0 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a)))
       (strand-map 0 1 2 3))
-    (130
+    (133
       (operation nonce-test (added-strand resp 2) x1-0 (1 0)
         (enc "okay" x1-0 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a)))
       (strand-map 0 1 2 3)))
   (unrealized (1 0))
+  (maps
+    ((0 1) ((x1 x1) (x3 x1-0) (a a) (x1-0 x1-0) (x3-0 x1-0) (a-0 a-0))))
   (comment "3 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -3476,19 +3755,21 @@
       (send (enc "okay" x1-0 x1-0 (pubk a))))
     ((recv (enc x1-0 x1-0 (pubk a)))
       (send (enc "okay" y3-0 x1-0 (pubk a)))))
-  (label 118)
-  (parent 61)
-  (seen 115 130)
+  (label 121)
+  (parent 62)
+  (seen 118 133)
   (seen-ops
-    (115
+    (118
       (operation nonce-test (displaced 5 2 resp 2) x1-0 (1 0)
         (enc "okay" y3-0 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a)))
       (strand-map 0 1 2 3 2))
-    (130
+    (133
       (operation nonce-test (displaced 5 3 resp 2) x1-0 (1 0)
         (enc "okay" y3-0 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a)))
       (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
+  (maps
+    ((0 1) ((x1 x1) (x3 x1-0) (a a) (x1-0 x1-0) (x3-0 x1-0) (a-0 a-0))))
   (comment "4 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -3508,13 +3789,14 @@
       (recv (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a)))))
-  (label 119)
-  (parent 62)
+  (label 122)
+  (parent 63)
   (seen 37)
   (seen-ops
     (37 (operation generalization weakened ((2 1) (1 0)))
       (strand-map 0 1 2)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3537,9 +3819,10 @@
     ((recv (enc y3 x3 (pubk a-0))) (send (enc "okay" x3 y3 (pubk a-0))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a)))))
-  (label 120)
-  (parent 62)
+  (label 123)
+  (parent 63)
   (unrealized (1 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -3562,16 +3845,17 @@
     ((recv (enc y3 x3 (pubk a-0))) (send (enc "okay" x3 y3 (pubk a-0))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a)))))
-  (label 121)
-  (parent 62)
-  (seen 220)
+  (label 124)
+  (parent 63)
+  (seen 226)
   (seen-ops
-    (220
+    (226
       (operation nonce-test (added-strand resp 2) y3 (1 0)
         (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
       (strand-map 0 1 2 3)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
   (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -3596,9 +3880,10 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a)))))
-  (label 122)
-  (parent 63)
+  (label 125)
+  (parent 64)
   (unrealized (1 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -3621,12 +3906,13 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a)))))
-  (label 123)
-  (parent 63)
+  (label 126)
+  (parent 64)
   (seen 37)
   (seen-ops
     (37 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3651,22 +3937,32 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a)))))
-  (label 124)
-  (parent 63)
-  (seen 220 223)
+  (label 127)
+  (parent 64)
+  (seen 150 186 226 229)
   (seen-ops
-    (220
+    (150
+      (operation nonce-test (contracted (x3 y3) (a-0 a)) y3 (1 0)
+        (enc "okay" y3-0 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
+        (enc y3 y3 (pubk a))) (strand-map 0 1 2 3 3))
+    (186
+      (operation nonce-test (displaced 5 2 resp 2) y3 (1 0)
+        (enc "okay" y3-0 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
+        (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+      (strand-map 0 1 2 3 3))
+    (226
       (operation nonce-test (displaced 5 2 resp 2) y3 (1 0)
         (enc "okay" y3-0 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
       (strand-map 0 1 2 3 4))
-    (223
+    (229
       (operation nonce-test (added-strand resp 2) y3 (1 0)
         (enc "okay" y3-0 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
       (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
-  (comment "4 in cohort - 2 not yet seen"))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
+  (comment "6 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 y3 y3-0 text) (a a-0 name))
@@ -3690,16 +3986,17 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a)))))
-  (label 125)
-  (parent 64)
-  (seen 225)
+  (label 128)
+  (parent 65)
+  (seen 231)
   (seen-ops
-    (225
+    (231
       (operation nonce-test (added-strand resp 2) y3 (1 0)
         (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
       (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
   (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -3722,12 +4019,13 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a)))))
-  (label 126)
-  (parent 64)
+  (label 129)
+  (parent 65)
   (seen 37)
   (seen-ops
     (37 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3746,12 +4044,13 @@
       (recv (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a)))))
-  (label 127)
-  (parent 65)
-  (seen 68)
+  (label 130)
+  (parent 66)
+  (seen 69)
   (seen-ops
-    (68 (operation generalization deleted (2 0)) (strand-map 0 1)))
+    (69 (operation generalization deleted (2 0)) (strand-map 0 1)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x1) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3776,9 +4075,11 @@
       (send (enc "okay" y3 x1-0 (pubk a))))
     ((recv (enc x1-0 x1-0 (pubk a)))
       (send (enc "okay" x1-0 x1-0 (pubk a)))))
-  (label 128)
-  (parent 65)
+  (label 131)
+  (parent 66)
   (unrealized (1 0))
+  (maps
+    ((0 1) ((x1 x1) (x3 x1-0) (a a) (x1-0 x1-0) (x3-0 x1-0) (a-0 a-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -3800,12 +4101,13 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 129)
-  (parent 66)
-  (seen 127)
+  (label 132)
+  (parent 67)
+  (seen 130)
   (seen-ops
-    (127 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
+    (130 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x1) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3833,15 +4135,17 @@
       (send (enc "okay" y3-0 x1-0 (pubk a))))
     ((recv (enc x1-0 x1-0 (pubk a)))
       (send (enc "okay" x1-0 x1-0 (pubk a)))))
-  (label 130)
-  (parent 66)
-  (seen 128)
+  (label 133)
+  (parent 67)
+  (seen 131)
   (seen-ops
-    (128
+    (131
       (operation nonce-test (displaced 5 2 resp 2) x1-0 (1 0)
         (enc "okay" x1-0 x1-0 (pubk a)) (enc "okay" y3-0 x1-0 (pubk a))
         (enc x1-0 x1-0 (pubk a))) (strand-map 0 1 2 2 3)))
   (unrealized (1 0))
+  (maps
+    ((0 1) ((x1 x1) (x3 x1-0) (a a) (x1-0 x1-0) (x3-0 x1-0) (a-0 a-0))))
   (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -3860,9 +4164,10 @@
     ((recv (enc y3 x3 (pubk a-0))) (send (enc "okay" x3 y3 (pubk a-0))))
     ((recv (enc y3 y3-0 (pubk a)))
       (send (enc "okay" y3-0 y3 (pubk a)))))
-  (label 131)
-  (parent 67)
+  (label 134)
+  (parent 68)
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3-0) (a-0 a-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -3880,12 +4185,13 @@
       (recv (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a)))))
-  (label 132)
-  (parent 72)
+  (label 135)
+  (parent 73)
   (seen 43)
   (seen-ops
     (43 (operation generalization separated y3-0) (strand-map 0 1 2)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3903,12 +4209,13 @@
       (recv (enc "okay" x3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
-  (label 133)
-  (parent 73)
+  (label 136)
+  (parent 74)
   (seen 25)
   (seen-ops
     (25 (operation generalization deleted (2 0)) (strand-map 0 1)))
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3926,12 +4233,13 @@
       (recv (enc "okay" x3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
-  (label 134)
-  (parent 76)
+  (label 137)
+  (parent 77)
   (seen 25)
   (seen-ops
     (25 (operation generalization deleted (2 0)) (strand-map 0 1)))
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3949,12 +4257,13 @@
       (recv (enc "okay" x3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
-  (label 135)
-  (parent 77)
+  (label 138)
+  (parent 78)
   (seen 28)
   (seen-ops
     (28 (operation generalization deleted (2 0)) (strand-map 0 1)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -3980,9 +4289,10 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 136)
-  (parent 78)
+  (label 139)
+  (parent 79)
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -4008,9 +4318,10 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 137)
-  (parent 78)
+  (label 140)
+  (parent 79)
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -4028,12 +4339,13 @@
       (recv (enc "okay" x3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 138)
-  (parent 79)
+  (label 141)
+  (parent 80)
   (seen 25)
   (seen-ops
     (25 (operation generalization deleted (2 0)) (strand-map 0 1)))
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4051,12 +4363,13 @@
       (recv (enc "okay" x3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 139)
-  (parent 80)
+  (label 142)
+  (parent 81)
   (seen 28)
   (seen-ops
     (28 (operation generalization deleted (2 0)) (strand-map 0 1)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4079,21 +4392,25 @@
     ((recv (enc y3 x3 (pubk a-0))) (send (enc "okay" x3 y3 (pubk a-0))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x1 y3 (pubk a)))))
-  (label 140)
-  (parent 81)
-  (seen 95 173)
+  (label 143)
+  (parent 82)
+  (seen 97 179 220)
   (seen-ops
-    (95
+    (97
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 2))
-    (173
+    (179
       (operation nonce-test (added-strand resp 2) y3 (1 0)
         (enc "okay" x1 y3 (pubk a)) (enc "okay" y3 y3 (pubk a))
-        (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a)))
-      (strand-map 0 1 2 3)))
+        (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a))) (strand-map 0 1 2 3))
+    (220
+      (operation nonce-test (contracted (x3 x1) (a-0 a) (y3 x1)) x1
+        (1 0) (enc "okay" x1 x1 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 2)))
   (unrealized (1 0))
-  (comment "3 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a-0))))
+  (comment "4 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 text) (a name))
@@ -4115,12 +4432,13 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x1 y3 (pubk a)))))
-  (label 141)
-  (parent 81)
-  (seen 93)
+  (label 144)
+  (parent 82)
+  (seen 95)
   (seen-ops
-    (93 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
+    (95 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4145,21 +4463,22 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x1 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a)))))
-  (label 142)
-  (parent 81)
-  (seen 173 177)
+  (label 145)
+  (parent 82)
+  (seen 179 183)
   (seen-ops
-    (173
+    (179
       (operation nonce-test (displaced 5 3 resp 2) y3 (1 0)
         (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
         (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a)))
       (strand-map 0 1 2 3 4))
-    (177
+    (183
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a-0))))
   (comment "4 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -4184,16 +4503,17 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a)))))
-  (label 143)
-  (parent 81)
-  (seen 177)
+  (label 146)
+  (parent 82)
+  (seen 183)
   (seen-ops
-    (177
+    (183
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
   (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -4216,12 +4536,13 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x1 y3 (pubk a)))))
-  (label 144)
-  (parent 82)
+  (label 147)
+  (parent 84)
   (seen 43)
   (seen-ops
     (43 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4249,22 +4570,23 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x1 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x1 y3 (pubk a)))))
-  (label 145)
-  (parent 83)
-  (seen 177 233)
+  (label 148)
+  (parent 85)
+  (seen 183 239)
   (seen-ops
-    (177
+    (183
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 2 3 4))
-    (233
+    (239
       (operation nonce-test (displaced 6 2 resp 2) y3 (1 0)
         (enc "okay" x1 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
         (enc x1 y3 (pubk a)) (enc y3 x3 (pubk a)))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (1 0))
-  (comment "3 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a-0))))
+  (comment "4 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 text) (a name))
@@ -4288,13 +4610,78 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x1 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a)))))
-  (label 146)
-  (parent 83)
-  (seen 97)
+  (label 149)
+  (parent 85)
+  (seen 99)
   (seen-ops
-    (97 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
+    (99 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
+
+(defskeleton wonthull2
+  (vars (x1 y3 text) (a name))
+  (defstrand init 2 (x1 x1) (x2 x1) (x3 x1) (x4 x1) (a a))
+  (defstrand resp 2 (y1 x1) (y2 x1) (y3 x1) (a a))
+  (defstrand resp 2 (y1 x1) (y2 x1) (y3 x1) (a a))
+  (defstrand resp 2 (y1 x1) (y2 x1) (y3 y3) (a a))
+  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((1 1) (0 1)) ((2 1) (0 1))
+    ((3 1) (1 0)))
+  (non-orig (privk a))
+  (uniq-orig x1)
+  (operation nonce-test (contracted (x3 x1) (a-0 a) (y3-0 x1)) x1 (1 0)
+    (enc "okay" y3 x1 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 2 3)
+  (traces
+    ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
+      (recv (enc "okay" x1 x1 (pubk a))))
+    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
+    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
+    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a)))))
+  (label 150)
+  (parent 85)
+  (seen 130)
+  (seen-ops
+    (130 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
+  (realized)
+  (maps ((0 1) ((x1 x1) (x3 x1) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
+  (comment "1 in cohort - 0 not yet seen"))
+
+(defskeleton wonthull2
+  (vars (x3 y3 text) (a a-0 name))
+  (defstrand init 2 (x1 x3) (x2 x3) (x3 x3) (x4 x3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a-0))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 y3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
+  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((1 1) (0 1)) ((2 1) (1 0))
+    ((3 1) (0 1)))
+  (non-orig (privk a))
+  (uniq-orig x3)
+  (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
+    (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
+    (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 2)
+  (traces
+    ((send (cat (enc x3 x3 (pubk a)) (enc x3 x3 (pubk a))))
+      (recv (enc "okay" x3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a-0))) (send (enc "okay" x3 x3 (pubk a-0))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
+  (label 151)
+  (parent 86)
+  (seen 150 186)
+  (seen-ops
+    (150
+      (operation nonce-test (contracted (a-0 a)) x3 (1 0)
+        (enc "okay" y3 x3 (pubk a)) (enc x3 x3 (pubk a)))
+      (strand-map 0 1 2 3))
+    (186
+      (operation nonce-test (displaced 4 3 resp 2) x3 (1 0)
+        (enc "okay" y3 x3 (pubk a)) (enc x3 x3 (pubk a)))
+      (strand-map 0 1 2 3)))
+  (unrealized (1 0))
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x3) (x3-0 x3) (a-0 a-0))))
+  (comment "3 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 text) (a a-0 name))
@@ -4321,17 +4708,23 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 147)
-  (parent 84)
-  (seen 178)
+  (label 152)
+  (parent 86)
+  (seen 184 244)
   (seen-ops
-    (178
+    (184
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 5)))
+      (strand-map 0 1 2 3 4 5))
+    (244
+      (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 2 4)))
   (unrealized (1 0))
-  (comment "3 in cohort - 2 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "4 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 text) (a name))
@@ -4355,12 +4748,13 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 148)
-  (parent 84)
-  (seen 100)
+  (label 153)
+  (parent 86)
+  (seen 102)
   (seen-ops
-    (100 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (102 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4385,17 +4779,23 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 149)
-  (parent 84)
-  (seen 174)
+  (label 154)
+  (parent 86)
+  (seen 180 186)
   (seen-ops
-    (174
+    (180
       (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4)))
+      (strand-map 0 1 2 3 4))
+    (186
+      (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 2)))
   (unrealized (1 0))
-  (comment "3 in cohort - 2 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "4 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 y3-1 text) (a a-0 name))
@@ -4422,27 +4822,37 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 150)
-  (parent 84)
-  (seen 98 238 240)
+  (label 155)
+  (parent 86)
+  (seen 100 151 224 246 248)
   (seen-ops
-    (98
+    (100
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 2))
-    (238
+    (151
+      (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
+        (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+        (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 2 2))
+    (224
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 4))
+    (246
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 5))
-    (240
+    (248
       (operation nonce-test (displaced 6 3 resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (1 0))
-  (comment "5 in cohort - 2 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "8 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 text) (a a-0 name))
@@ -4466,16 +4876,17 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 151)
-  (parent 85)
-  (seen 177)
+  (label 156)
+  (parent 87)
+  (seen 183)
   (seen-ops
-    (177
+    (183
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
   (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -4498,12 +4909,13 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 152)
-  (parent 85)
-  (seen 132)
+  (label 157)
+  (parent 87)
+  (seen 135)
   (seen-ops
-    (132 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
+    (135 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4526,16 +4938,17 @@
     ((recv (enc x1 x3 (pubk a-0))) (send (enc "okay" x3 x1 (pubk a-0))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 153)
-  (parent 85)
-  (seen 174)
+  (label 158)
+  (parent 87)
+  (seen 180)
   (seen-ops
-    (174
+    (180
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
   (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -4558,9 +4971,10 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 154)
-  (parent 86)
+  (label 159)
+  (parent 88)
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -4585,21 +4999,22 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 155)
-  (parent 86)
-  (seen 153 240)
+  (label 160)
+  (parent 88)
+  (seen 158 248)
   (seen-ops
-    (153
+    (158
       (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 2))
-    (240
+    (248
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
   (comment "3 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -4627,21 +5042,22 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 156)
-  (parent 87)
-  (seen 151 242)
+  (label 161)
+  (parent 89)
+  (seen 156 249)
   (seen-ops
-    (151
+    (156
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 2 4))
-    (242
+    (249
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
   (comment "3 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -4666,12 +5082,13 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 157)
-  (parent 87)
-  (seen 152)
+  (label 162)
+  (parent 89)
+  (seen 157)
   (seen-ops
-    (152 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (157 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4689,12 +5106,13 @@
       (recv (enc "okay" x3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
-  (label 158)
-  (parent 88)
+  (label 163)
+  (parent 90)
   (seen 28)
   (seen-ops
     (28 (operation generalization deleted (2 0)) (strand-map 0 1)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4717,12 +5135,13 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
-  (label 159)
-  (parent 89)
-  (seen 158)
+  (label 164)
+  (parent 91)
+  (seen 163)
   (seen-ops
-    (158 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
+    (163 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4745,12 +5164,13 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
-  (label 160)
-  (parent 89)
-  (seen 133)
+  (label 165)
+  (parent 91)
+  (seen 136)
   (seen-ops
-    (133 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
+    (136 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4775,9 +5195,10 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1-0 x3 (pubk a)))))
-  (label 161)
-  (parent 89)
+  (label 166)
+  (parent 91)
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
@@ -4802,21 +5223,22 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 162)
-  (parent 89)
-  (seen 78 250)
+  (label 167)
+  (parent 91)
+  (seen 79 259)
   (seen-ops
-    (78
+    (79
       (operation nonce-test (displaced 5 3 resp 2) x3 (1 0)
         (enc "okay" x3 x3 (pubk a)) (enc "okay" y3 x3 (pubk a))
         (enc x3 x3 (pubk a)) (enc x1-0 x3 (pubk a)))
       (strand-map 0 1 2 3 4))
-    (250
+    (259
       (operation nonce-test (added-strand resp 2) x3 (1 0)
         (enc "okay" x3 x3 (pubk a)) (enc "okay" y3 x3 (pubk a))
         (enc x3 x3 (pubk a)) (enc x1-0 x3 (pubk a)))
       (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (comment "4 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -4839,12 +5261,13 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
-  (label 163)
-  (parent 90)
-  (seen 135)
+  (label 168)
+  (parent 92)
+  (seen 138)
   (seen-ops
-    (135 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
+    (138 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4867,12 +5290,13 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
-  (label 164)
-  (parent 90)
-  (seen 134)
+  (label 169)
+  (parent 92)
+  (seen 137)
   (seen-ops
-    (134 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
+    (137 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4900,16 +5324,17 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1-0 x3 (pubk a)))))
-  (label 165)
-  (parent 91)
-  (seen 161)
+  (label 170)
+  (parent 93)
+  (seen 166)
   (seen-ops
-    (161
+    (166
       (operation nonce-test (displaced 6 2 resp 2) x3 (1 0)
         (enc "okay" x1-0 x3 (pubk a)) (enc "okay" y3-0 x3 (pubk a))
         (enc x3 x3 (pubk a)) (enc x1-0 x3 (pubk a)))
       (strand-map 0 1 2 3 2 4)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (comment "4 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
@@ -4934,12 +5359,13 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a)))))
-  (label 166)
-  (parent 91)
-  (seen 159)
+  (label 171)
+  (parent 93)
+  (seen 164)
   (seen-ops
-    (159 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (164 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4964,12 +5390,13 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a)))))
-  (label 167)
-  (parent 91)
-  (seen 160)
+  (label 172)
+  (parent 93)
+  (seen 165)
   (seen-ops
-    (160 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (165 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -4997,27 +5424,67 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 168)
-  (parent 91)
-  (seen 162 183 255)
+  (label 173)
+  (parent 93)
+  (seen 167 190 264)
   (seen-ops
-    (162
+    (167
       (operation nonce-test (displaced 6 2 resp 2) x3 (1 0)
         (enc "okay" x3 x3 (pubk a)) (enc "okay" y3-0 x3 (pubk a))
         (enc x3 x3 (pubk a)) (enc x1-0 x3 (pubk a)))
       (strand-map 0 1 2 3 2 4))
-    (183
+    (190
       (operation nonce-test (displaced 6 3 resp 2) x3 (1 0)
         (enc "okay" x3 x3 (pubk a)) (enc "okay" y3-0 x3 (pubk a))
         (enc x3 x3 (pubk a)) (enc x1-0 x3 (pubk a)))
       (strand-map 0 1 2 3 4 5))
-    (255
+    (264
       (operation nonce-test (added-strand resp 2) x3 (1 0)
         (enc "okay" x3 x3 (pubk a)) (enc "okay" y3-0 x3 (pubk a))
         (enc x3 x3 (pubk a)) (enc x1-0 x3 (pubk a)))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (comment "5 in cohort - 2 not yet seen"))
+
+(defskeleton wonthull2
+  (vars (x3 y3 text) (a a-0 name))
+  (defstrand init 2 (x1 x3) (x2 x3) (x3 x3) (x4 x3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a-0))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 y3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
+  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((1 1) (0 1)) ((2 1) (0 1))
+    ((3 1) (1 0)))
+  (non-orig (privk a))
+  (uniq-orig x3)
+  (operation nonce-test (displaced 5 3 resp 2) x1 (1 0)
+    (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 2)
+  (traces
+    ((send (cat (enc x3 x3 (pubk a)) (enc x3 x3 (pubk a))))
+      (recv (enc "okay" x3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a-0))) (send (enc "okay" x3 x3 (pubk a-0))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
+  (label 174)
+  (parent 94)
+  (seen 186 222 251)
+  (seen-ops
+    (186
+      (operation nonce-test (displaced 4 2 resp 2) x3 (1 0)
+        (enc "okay" x3 x3 (pubk a)) (enc x3 x3 (pubk a)))
+      (strand-map 0 1 2 3))
+    (222
+      (operation nonce-test (contracted (a-0 a)) x3 (1 0)
+        (enc "okay" x3 x3 (pubk a)) (enc x3 x3 (pubk a)))
+      (strand-map 0 1 2 3))
+    (251
+      (operation nonce-test (added-strand resp 2) x3 (1 0)
+        (enc "okay" x3 x3 (pubk a)) (enc x3 x3 (pubk a)))
+      (strand-map 0 1 2 3)))
+  (unrealized (1 0))
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x3) (x3-0 x3) (a-0 a-0))))
+  (comment "3 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 y3-1 text) (a a-0 name))
@@ -5043,20 +5510,29 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 169)
-  (parent 92)
-  (seen 84 200)
+  (label 175)
+  (parent 94)
+  (seen 86 207 224 251)
   (seen-ops
-    (84
+    (86
       (operation nonce-test (displaced 6 4 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 4))
-    (200
+    (207
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5))
+    (224
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" y3-0 x1 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 2 4))
+    (251
+      (operation nonce-test (displaced 6 3 resp 2) x1 (1 0)
+        (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2 4)))
   (unrealized (1 0))
-  (comment "6 in cohort - 4 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "9 in cohort - 5 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 text) (a a-0 name))
@@ -5079,24 +5555,29 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 170)
-  (parent 92)
-  (seen 149 202 260)
+  (label 176)
+  (parent 94)
+  (seen 154 209 222 270)
   (seen-ops
-    (149
+    (154
       (operation nonce-test (displaced 5 4 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4))
-    (202
+    (209
       (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4))
-    (260
+    (222
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 2))
+    (270
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
-  (comment "5 in cohort - 2 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "6 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 y3-1 text) (a a-0 name))
@@ -5122,28 +5603,41 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 171)
-  (parent 92)
-  (seen 111 150 261 263)
+  (label 177)
+  (parent 94)
+  (seen 113 155 224 251 267 271 273)
   (seen-ops
-    (111
+    (113
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 2))
-    (150
+    (155
       (operation nonce-test (displaced 6 4 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5))
-    (261
+    (224
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" y3-0 x1 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 2 4))
+    (251
+      (operation nonce-test (displaced 6 3 resp 2) x1 (1 0)
+        (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2 4))
+    (267
+      (operation nonce-test (displaced 6 4 resp 2) x1 (1 0)
+        (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 4))
+    (271
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5))
-    (263
+    (273
       (operation nonce-test (displaced 6 3 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5)))
   (unrealized (1 0))
-  (comment "6 in cohort - 2 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "9 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 text) (a name))
@@ -5165,12 +5659,13 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a)))))
-  (label 172)
-  (parent 94)
-  (seen 93)
+  (label 178)
+  (parent 96)
+  (seen 95)
   (seen-ops
-    (93 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
+    (95 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5195,17 +5690,22 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x1 y3 (pubk a)))))
-  (label 173)
-  (parent 94)
-  (seen 174)
+  (label 179)
+  (parent 96)
+  (seen 180 233)
   (seen-ops
-    (174
+    (180
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 2)))
+      (strand-map 0 1 2 3 2))
+    (233
+      (operation nonce-test (contracted (x3 x1) (a-0 a) (y3-0 x1)) x1
+        (1 0) (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2)))
   (unrealized (1 0))
-  (comment "2 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a-0))))
+  (comment "3 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 text) (a a-0 name))
@@ -5229,10 +5729,18 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 174)
-  (parent 94)
+  (label 180)
+  (parent 96)
+  (seen 233)
+  (seen-ops
+    (233
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
+        (enc "okay" y3-0 x1 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 3)))
   (unrealized (1 0))
-  (comment "1 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 text) (a name))
@@ -5254,12 +5762,13 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a)))))
-  (label 175)
-  (parent 95)
-  (seen 245)
+  (label 181)
+  (parent 97)
+  (seen 254)
   (seen-ops
-    (245 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
+    (254 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5284,12 +5793,13 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x1 y3 (pubk a)))))
-  (label 176)
-  (parent 96)
-  (seen 144)
+  (label 182)
+  (parent 98)
+  (seen 147)
   (seen-ops
-    (144 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
+    (147 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5317,10 +5827,18 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 177)
-  (parent 96)
+  (label 183)
+  (parent 98)
+  (seen 243)
+  (seen-ops
+    (243
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
+        (enc "okay" y3-0 x1 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 4 3)))
   (unrealized (1 0))
-  (comment "1 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 text) (a a-0 name))
@@ -5347,10 +5865,18 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 178)
-  (parent 98)
+  (label 184)
+  (parent 100)
+  (seen 243)
+  (seen-ops
+    (243
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
+        (enc "okay" y3-0 x1 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 3 4)))
   (unrealized (1 0))
-  (comment "1 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 text) (a name))
@@ -5374,12 +5900,45 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 179)
-  (parent 98)
-  (seen 100)
+  (label 185)
+  (parent 100)
+  (seen 102)
   (seen-ops
-    (100 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
+    (102 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
+  (comment "1 in cohort - 0 not yet seen"))
+
+(defskeleton wonthull2
+  (vars (x3 y3 text) (a a-0 name))
+  (defstrand init 2 (x1 x3) (x2 x3) (x3 x3) (x4 x3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a-0))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 y3) (a a))
+  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((1 1) (0 1)) ((2 1) (1 0))
+    ((3 1) (1 0)))
+  (non-orig (privk a))
+  (uniq-orig x3)
+  (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
+    (enc "okay" y3 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+    (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 3)
+  (traces
+    ((send (cat (enc x3 x3 (pubk a)) (enc x3 x3 (pubk a))))
+      (recv (enc "okay" x3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a-0))) (send (enc "okay" x3 x3 (pubk a-0))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a)))))
+  (label 186)
+  (parent 100)
+  (seen 233)
+  (seen-ops
+    (233
+      (operation nonce-test (contracted (a-0 a)) x3 (1 0)
+        (enc "okay" x3 x3 (pubk a)) (enc "okay" y3 x3 (pubk a))
+        (enc x3 x3 (pubk a))) (strand-map 0 1 2 3)))
+  (unrealized (1 0))
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x3) (x3-0 x3) (a-0 a-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5404,12 +5963,13 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 180)
-  (parent 99)
-  (seen 219)
+  (label 187)
+  (parent 101)
+  (seen 225)
   (seen-ops
-    (219 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (225 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5434,12 +5994,13 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
-  (label 181)
-  (parent 103)
-  (seen 77)
+  (label 188)
+  (parent 105)
+  (seen 78)
   (seen-ops
-    (77 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (78 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5464,12 +6025,13 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
-  (label 182)
-  (parent 103)
-  (seen 76)
+  (label 189)
+  (parent 105)
+  (seen 77)
   (seen-ops
-    (76 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (77 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5497,17 +6059,22 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 183)
-  (parent 103)
-  (seen 78)
+  (label 190)
+  (parent 105)
+  (seen 79 131)
   (seen-ops
-    (78
+    (79
       (operation nonce-test (displaced 6 2 resp 2) x3 (1 0)
         (enc "okay" x3 x3 (pubk a)) (enc "okay" x1-0 x3 (pubk a))
         (enc "okay" y3-0 x3 (pubk a)) (enc x3 x3 (pubk a))
-        (enc x1-0 x3 (pubk a))) (strand-map 0 1 2 2 3 4)))
+        (enc x1-0 x3 (pubk a))) (strand-map 0 1 2 2 3 4))
+    (131
+      (operation nonce-test (displaced 6 2 resp 2) x1-0 (1 0)
+        (enc "okay" x1-0 x1-0 (pubk a)) (enc "okay" y3-0 x1-0 (pubk a))
+        (enc x1-0 x1-0 (pubk a))) (strand-map 0 1 2 2 3 3)))
   (unrealized (1 0))
-  (comment "3 in cohort - 2 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
+  (comment "4 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 text) (a name))
@@ -5531,12 +6098,13 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 184)
-  (parent 104)
-  (seen 80)
+  (label 191)
+  (parent 106)
+  (seen 81)
   (seen-ops
-    (80 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (81 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5561,12 +6129,13 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 185)
-  (parent 104)
-  (seen 79)
+  (label 192)
+  (parent 106)
+  (seen 80)
   (seen-ops
-    (79 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (80 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5590,20 +6159,25 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 186)
-  (parent 105)
-  (seen 189 207)
+  (label 193)
+  (parent 107)
+  (seen 196 214 222)
   (seen-ops
-    (189
+    (196
       (operation nonce-test (displaced 5 3 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4))
-    (207
+    (214
       (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4))
+    (222
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 2 3)))
   (unrealized (1 0))
-  (comment "5 in cohort - 3 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "6 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 y3-1 text) (a a-0 name))
@@ -5629,24 +6203,37 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 187)
-  (parent 105)
-  (seen 107 210 273)
+  (label 194)
+  (parent 107)
+  (seen 109 217 224 251 267 283)
   (seen-ops
-    (107
+    (109
       (operation nonce-test (displaced 6 3 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 3))
-    (210
+    (217
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5))
-    (273
+    (224
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" y3-0 x1 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 2 3 4))
+    (251
+      (operation nonce-test (displaced 6 4 resp 2) x1 (1 0)
+        (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 2 3 4))
+    (267
+      (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
+        (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 2))
+    (283
       (operation nonce-test (displaced 6 4 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5)))
   (unrealized (1 0))
-  (comment "6 in cohort - 3 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "9 in cohort - 3 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 y3-1 text) (a a-0 name))
@@ -5672,28 +6259,41 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 188)
-  (parent 105)
-  (seen 114 194 274 277)
+  (label 195)
+  (parent 107)
+  (seen 116 201 224 251 267 284 287)
   (seen-ops
-    (114
+    (116
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 2))
-    (194
+    (201
       (operation nonce-test (displaced 6 3 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5))
-    (274
+    (224
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" y3-0 x1 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 2 3 4))
+    (251
+      (operation nonce-test (displaced 6 4 resp 2) x1 (1 0)
+        (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 2 3 4))
+    (267
+      (operation nonce-test (displaced 6 3 resp 2) x1 (1 0)
+        (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 3))
+    (284
       (operation nonce-test (displaced 6 4 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5))
-    (277
+    (287
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5)))
   (unrealized (1 0))
-  (comment "6 in cohort - 2 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "9 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 y3 y3-0 y3-1 text) (a a-0 name))
@@ -5720,17 +6320,24 @@
       (send (enc "okay" y3-0 y3-0 (pubk a))))
     ((recv (enc y3-0 y3-0 (pubk a)))
       (send (enc "okay" y3-1 y3-0 (pubk a)))))
-  (label 189)
-  (parent 106)
-  (seen 220)
+  (label 196)
+  (parent 108)
+  (seen 186 226)
   (seen-ops
-    (220
+    (186
+      (operation nonce-test (displaced 5 2 resp 2) y3-0 (1 0)
+        (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
+        (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
+      (strand-map 0 1 2 3 2))
+    (226
       (operation nonce-test (displaced 5 2 resp 2) y3-0 (1 0)
         (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
         (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
       (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
-  (comment "3 in cohort - 2 not yet seen"))
+  (maps
+    ((0 1) ((x1 y3-0) (x3 x3) (a a) (x1-0 y3-0) (x3-0 y3-0) (a-0 a-0))))
+  (comment "4 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 y3 y3-0 text) (a name))
@@ -5753,12 +6360,14 @@
     ((recv (enc y3-0 x3 (pubk a))) (send (enc "okay" y3 y3-0 (pubk a))))
     ((recv (enc y3-0 y3-0 (pubk a)))
       (send (enc "okay" y3-0 y3-0 (pubk a)))))
-  (label 190)
-  (parent 106)
-  (seen 119)
+  (label 197)
+  (parent 108)
+  (seen 122)
   (seen-ops
-    (119 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
+    (122 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps
+    ((0 1) ((x1 y3-0) (x3 x3) (a a) (x1-0 y3-0) (x3-0 y3-0) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5786,21 +6395,23 @@
       (send (enc "okay" y3-0 y3-0 (pubk a))))
     ((recv (enc y3-0 x3 (pubk a)))
       (send (enc "okay" y3-1 y3-0 (pubk a)))))
-  (label 191)
-  (parent 106)
-  (seen 121 281)
+  (label 198)
+  (parent 108)
+  (seen 124 291)
   (seen-ops
-    (121
+    (124
       (operation nonce-test (displaced 5 2 resp 2) y3-0 (1 0)
         (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
         (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
       (strand-map 0 1 2 3 2))
-    (281
+    (291
       (operation nonce-test (added-strand resp 2) y3-0 (1 0)
         (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
         (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
       (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
+  (maps
+    ((0 1) ((x1 y3-0) (x3 x3) (a a) (x1-0 y3-0) (x3-0 y3-0) (a-0 a-0))))
   (comment "3 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -5832,17 +6443,24 @@
       (send (enc "okay" y3-1 y3-0 (pubk a))))
     ((recv (enc y3-0 y3-0 (pubk a)))
       (send (enc "okay" y3-0 y3-0 (pubk a)))))
-  (label 192)
-  (parent 107)
-  (seen 223)
+  (label 199)
+  (parent 109)
+  (seen 229 244)
   (seen-ops
-    (223
+    (229
       (operation nonce-test (displaced 6 2 resp 2) y3-0 (1 0)
         (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
         (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
-      (strand-map 0 1 2 3 4 5)))
+      (strand-map 0 1 2 3 4 5))
+    (244
+      (operation nonce-test (displaced 6 2 resp 2) y3-0 (1 0)
+        (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
+        (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
+      (strand-map 0 1 2 3 2 4)))
   (unrealized (1 0))
-  (comment "3 in cohort - 2 not yet seen"))
+  (maps
+    ((0 1) ((x1 y3-0) (x3 x3) (a a) (x1-0 y3-0) (x3-0 y3-0) (a-0 a-0))))
+  (comment "4 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 y3 y3-0 y3-1 text) (a name))
@@ -5868,12 +6486,14 @@
       (send (enc "okay" y3-0 y3-0 (pubk a))))
     ((recv (enc y3-0 y3-0 (pubk a)))
       (send (enc "okay" y3-1 y3-0 (pubk a)))))
-  (label 193)
-  (parent 107)
-  (seen 123)
+  (label 200)
+  (parent 109)
+  (seen 126)
   (seen-ops
-    (123 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (126 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps
+    ((0 1) ((x1 y3-0) (x3 x3) (a a) (x1-0 y3-0) (x3-0 y3-0) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -5905,27 +6525,43 @@
       (send (enc "okay" y3-1 y3-0 (pubk a))))
     ((recv (enc y3-0 x3 (pubk a)))
       (send (enc "okay" y3-2 y3-0 (pubk a)))))
-  (label 194)
-  (parent 107)
-  (seen 124 281 284)
+  (label 201)
+  (parent 109)
+  (seen 127 151 224 251 291 294)
   (seen-ops
-    (124
+    (127
       (operation nonce-test (displaced 6 2 resp 2) y3-0 (1 0)
         (enc "okay" y3-1 y3-0 (pubk a)) (enc "okay" y3-2 y3-0 (pubk a))
         (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
       (strand-map 0 1 2 3 4 2))
-    (281
+    (151
+      (operation nonce-test (displaced 6 2 resp 2) y3-0 (1 0)
+        (enc "okay" y3-0 y3-1 (pubk a)) (enc "okay" y3-2 y3-1 (pubk a))
+        (enc y3-1 x3 (pubk a)) (enc y3-1 y3-1 (pubk a)))
+      (strand-map 0 1 2 3 2 2))
+    (224
+      (operation nonce-test (contracted (x3 y3-0) (a-0 a)) y3-0 (1 0)
+        (enc "okay" y3-1 y3-0 (pubk a)) (enc "okay" y3-2 y3-0 (pubk a))
+        (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 2 3 4 4))
+    (251
+      (operation nonce-test (displaced 6 3 resp 2) y3-0 (1 0)
+        (enc "okay" y3-1 y3-0 (pubk a)) (enc "okay" y3-2 y3-0 (pubk a))
+        (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
+      (strand-map 0 1 2 3 4 4))
+    (291
       (operation nonce-test (displaced 6 3 resp 2) y3-0 (1 0)
         (enc "okay" y3-1 y3-0 (pubk a)) (enc "okay" y3-2 y3-0 (pubk a))
         (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
       (strand-map 0 1 2 3 4 5))
-    (284
+    (294
       (operation nonce-test (added-strand resp 2) y3-0 (1 0)
         (enc "okay" y3-1 y3-0 (pubk a)) (enc "okay" y3-2 y3-0 (pubk a))
         (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (1 0))
-  (comment "5 in cohort - 2 not yet seen"))
+  (maps
+    ((0 1) ((x1 y3-0) (x3 x3) (a a) (x1-0 y3-0) (x3-0 y3-0) (a-0 a-0))))
+  (comment "8 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 y3 y3-0 y3-1 text) (a a-0 name))
@@ -5956,21 +6592,23 @@
       (send (enc "okay" y3-1 y3-0 (pubk a))))
     ((recv (enc y3-0 x3 (pubk a)))
       (send (enc "okay" y3-0 y3-0 (pubk a)))))
-  (label 195)
-  (parent 108)
-  (seen 125 286)
+  (label 202)
+  (parent 110)
+  (seen 128 295)
   (seen-ops
-    (125
+    (128
       (operation nonce-test (displaced 6 2 resp 2) y3-0 (1 0)
         (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
         (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
       (strand-map 0 1 2 3 2 4))
-    (286
+    (295
       (operation nonce-test (added-strand resp 2) y3-0 (1 0)
         (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
         (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (1 0))
+  (maps
+    ((0 1) ((x1 y3-0) (x3 x3) (a a) (x1-0 y3-0) (x3-0 y3-0) (a-0 a-0))))
   (comment "3 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -5997,12 +6635,14 @@
       (send (enc "okay" y3-0 y3-0 (pubk a))))
     ((recv (enc y3-0 x3 (pubk a)))
       (send (enc "okay" y3-1 y3-0 (pubk a)))))
-  (label 196)
-  (parent 108)
-  (seen 126)
+  (label 203)
+  (parent 110)
+  (seen 129)
   (seen-ops
-    (126 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (129 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps
+    ((0 1) ((x1 y3-0) (x3 x3) (a a) (x1-0 y3-0) (x3-0 y3-0) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6030,16 +6670,17 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a)))))
-  (label 197)
-  (parent 109)
-  (seen 99)
+  (label 204)
+  (parent 111)
+  (seen 101)
   (seen-ops
-    (99
+    (101
       (operation nonce-test (displaced 6 3 resp 2) y3 (1 0)
         (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
       (strand-map 0 1 2 3 3 4)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -6064,12 +6705,13 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a)))))
-  (label 198)
-  (parent 109)
-  (seen 100)
+  (label 205)
+  (parent 111)
+  (seen 102)
   (seen-ops
-    (100 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
+    (102 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6094,16 +6736,17 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a)))))
-  (label 199)
-  (parent 109)
-  (seen 95)
+  (label 206)
+  (parent 111)
+  (seen 97)
   (seen-ops
-    (95
+    (97
       (operation nonce-test (displaced 5 3 resp 2) y3 (1 0)
         (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
       (strand-map 0 1 2 3 3)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -6131,27 +6774,42 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-2 y3 (pubk a)))))
-  (label 200)
-  (parent 109)
-  (seen 98 289 291)
+  (label 207)
+  (parent 111)
+  (seen 100 151 224 251 299 301)
   (seen-ops
-    (98
+    (100
       (operation nonce-test (displaced 6 3 resp 2) y3 (1 0)
         (enc "okay" y3-2 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
       (strand-map 0 1 2 3 3 4))
-    (289
+    (151
+      (operation nonce-test (displaced 6 3 resp 2) y3 (1 0)
+        (enc "okay" y3-1 y3 (pubk a)) (enc "okay" y3-2 y3 (pubk a))
+        (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+      (strand-map 0 1 2 3 3 3))
+    (224
+      (operation nonce-test (contracted (x3 y3) (a-0 a)) y3 (1 0)
+        (enc "okay" y3-1 y3 (pubk a)) (enc "okay" y3-2 y3 (pubk a))
+        (enc y3 y3 (pubk a))) (strand-map 0 1 2 3 4 4))
+    (251
+      (operation nonce-test (displaced 6 2 resp 2) y3-1 (1 0)
+        (enc "okay" y3-0 y3-1 (pubk a)) (enc "okay" y3-2 y3-1 (pubk a))
+        (enc y3-1 x3 (pubk a)) (enc y3-1 y3-1 (pubk a)))
+      (strand-map 0 1 2 3 4 4))
+    (299
       (operation nonce-test (added-strand resp 2) y3 (1 0)
         (enc "okay" y3-1 y3 (pubk a)) (enc "okay" y3-2 y3 (pubk a))
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
       (strand-map 0 1 2 3 4 5))
-    (291
+    (301
       (operation nonce-test (displaced 6 2 resp 2) y3 (1 0)
         (enc "okay" y3-1 y3 (pubk a)) (enc "okay" y3-2 y3 (pubk a))
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (1 0))
-  (comment "5 in cohort - 2 not yet seen"))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
+  (comment "8 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 y3 y3-0 text) (a name))
@@ -6173,12 +6831,13 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a)))))
-  (label 201)
-  (parent 110)
-  (seen 245)
+  (label 208)
+  (parent 112)
+  (seen 254)
   (seen-ops
-    (245 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
+    (254 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6203,22 +6862,28 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a)))))
-  (label 202)
-  (parent 110)
-  (seen 174 291)
+  (label 209)
+  (parent 112)
+  (seen 180 186 301)
   (seen-ops
-    (174
+    (180
       (operation nonce-test (displaced 5 3 resp 2) y3 (1 0)
         (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
       (strand-map 0 1 2 3 4))
-    (291
+    (186
+      (operation nonce-test (displaced 5 3 resp 2) y3 (1 0)
+        (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
+        (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+      (strand-map 0 1 2 3 3))
+    (301
       (operation nonce-test (added-strand resp 2) y3 (1 0)
         (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
       (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
-  (comment "3 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
+  (comment "4 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 y3 y3-0 y3-1 text) (a a-0 name))
@@ -6245,22 +6910,28 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a)))))
-  (label 203)
-  (parent 111)
-  (seen 177 293)
+  (label 210)
+  (parent 113)
+  (seen 183 244 302)
   (seen-ops
-    (177
+    (183
       (operation nonce-test (displaced 6 3 resp 2) y3 (1 0)
         (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
       (strand-map 0 1 2 3 4 5))
-    (293
+    (244
+      (operation nonce-test (displaced 6 3 resp 2) y3 (1 0)
+        (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
+        (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+      (strand-map 0 1 2 3 3 4))
+    (302
       (operation nonce-test (added-strand resp 2) y3 (1 0)
         (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
         (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (1 0))
-  (comment "3 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
+  (comment "4 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 y3 y3-0 y3-1 text) (a name))
@@ -6284,12 +6955,13 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a)))))
-  (label 204)
-  (parent 111)
-  (seen 152)
+  (label 211)
+  (parent 113)
+  (seen 157)
   (seen-ops
-    (152 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
+    (157 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6312,12 +6984,13 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 205)
-  (parent 112)
-  (seen 119)
+  (label 212)
+  (parent 114)
+  (seen 122)
   (seen-ops
-    (119 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
+    (122 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6342,16 +7015,17 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 206)
-  (parent 112)
-  (seen 120)
+  (label 213)
+  (parent 114)
+  (seen 123)
   (seen-ops
-    (120
+    (123
       (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 2)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -6376,22 +7050,28 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 207)
-  (parent 112)
-  (seen 220 297)
+  (label 214)
+  (parent 114)
+  (seen 186 226 307)
   (seen-ops
-    (220
+    (186
+      (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 2))
+    (226
       (operation nonce-test (displaced 5 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4))
-    (297
+    (307
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4)))
   (unrealized (1 0))
-  (comment "3 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "4 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 text) (a a-0 name))
@@ -6418,16 +7098,17 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 208)
-  (parent 113)
-  (seen 122)
+  (label 215)
+  (parent 115)
+  (seen 125)
   (seen-ops
-    (122
+    (125
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 2 4)))
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -6452,12 +7133,13 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 209)
-  (parent 113)
-  (seen 123)
+  (label 216)
+  (parent 115)
+  (seen 126)
   (seen-ops
-    (123 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (126 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6485,27 +7167,42 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 210)
-  (parent 113)
-  (seen 124 297 300)
+  (label 217)
+  (parent 115)
+  (seen 127 151 224 251 307 310)
   (seen-ops
-    (124
+    (127
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 2 4))
-    (297
+    (151
+      (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
+        (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+        (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 2 2))
+    (224
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 4))
+    (251
+      (operation nonce-test (displaced 6 3 resp 2) x1 (1 0)
+        (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+        (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 4 4))
+    (307
       (operation nonce-test (displaced 6 3 resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 5))
-    (300
+    (310
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (1 0))
-  (comment "5 in cohort - 2 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "8 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 text) (a a-0 name))
@@ -6532,22 +7229,28 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 211)
-  (parent 114)
-  (seen 225 302)
+  (label 218)
+  (parent 116)
+  (seen 231 244 311)
   (seen-ops
-    (225
+    (231
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 5))
-    (302
+    (244
+      (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 2 4))
+    (311
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (1 0))
-  (comment "3 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "4 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 text) (a name))
@@ -6571,92 +7274,71 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 212)
-  (parent 114)
-  (seen 126)
-  (seen-ops
-    (126 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
-  (realized)
-  (comment "1 in cohort - 0 not yet seen"))
-
-(defskeleton wonthull2
-  (vars (x1 y3 text) (a name))
-  (defstrand init 2 (x1 x1) (x2 x1) (x3 x1) (x4 x1) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x1) (y3 x1) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x1) (y3 y3) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x1) (y3 x1) (a a))
-  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((1 1) (0 1)) ((2 1) (1 0))
-    ((3 1) (0 1)))
-  (non-orig (privk a))
-  (uniq-orig x1)
-  (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x1 (1 0)
-    (enc "okay" y3 x1 (pubk a)) (enc x1 x1 (pubk a)))
-  (strand-map 0 1 2 3)
-  (traces
-    ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
-      (recv (enc "okay" x1 x1 (pubk a))))
-    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
-    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
-    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 213)
-  (parent 115)
-  (seen 215)
-  (seen-ops
-    (215 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
-  (realized)
-  (comment "1 in cohort - 0 not yet seen"))
-
-(defskeleton wonthull2
-  (vars (x1 x1-0 y3 text) (a a-0 name))
-  (defstrand init 2 (x1 x1-0) (x2 x1-0) (x3 x1-0) (x4 x1) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x1-0) (y3 x1-0) (a a-0))
-  (defstrand resp 2 (y1 x1-0) (y2 x1-0) (y3 y3) (a a))
-  (defstrand resp 2 (y1 x1-0) (y2 x1-0) (y3 x1-0) (a a))
-  (defstrand resp 2 (y1 x1-0) (y2 x1-0) (y3 x1-0) (a a))
-  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((0 0) (4 0)) ((1 1) (0 1))
-    ((2 1) (1 0)) ((3 1) (0 1)) ((4 1) (1 0)))
-  (non-orig (privk a))
-  (uniq-orig x1-0)
-  (operation nonce-test (added-strand resp 2) x1-0 (1 0)
-    (enc "okay" y3 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a)))
-  (strand-map 0 1 2 3)
-  (traces
-    ((send (cat (enc x1-0 x1-0 (pubk a)) (enc x1-0 x1-0 (pubk a))))
-      (recv (enc "okay" x1-0 x1 (pubk a))))
-    ((recv (enc x1 x1-0 (pubk a-0)))
-      (send (enc "okay" x1-0 x1 (pubk a-0))))
-    ((recv (enc x1-0 x1-0 (pubk a)))
-      (send (enc "okay" y3 x1-0 (pubk a))))
-    ((recv (enc x1-0 x1-0 (pubk a)))
-      (send (enc "okay" x1-0 x1-0 (pubk a))))
-    ((recv (enc x1-0 x1-0 (pubk a)))
-      (send (enc "okay" x1-0 x1-0 (pubk a)))))
-  (label 214)
-  (parent 115)
-  (unrealized (1 0))
-  (comment "1 in cohort - 1 not yet seen"))
-
-(defskeleton wonthull2
-  (vars (x1 text) (a name))
-  (defstrand init 2 (x1 x1) (x2 x1) (x3 x1) (x4 x1) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x1) (y3 x1) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x1) (y3 x1) (a a))
-  (precedes ((0 0) (1 0)) ((0 0) (2 0)) ((1 1) (0 1)) ((2 1) (0 1)))
-  (non-orig (privk a))
-  (uniq-orig x1)
-  (operation generalization deleted (2 0))
-  (strand-map 0 1 3)
-  (traces
-    ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
-      (recv (enc "okay" x1 x1 (pubk a))))
-    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
-    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 215)
+  (label 219)
   (parent 116)
-  (seen 68)
+  (seen 129)
   (seen-ops
-    (68 (operation generalization deleted (2 0)) (strand-map 0 1)))
+    (129 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
+  (comment "1 in cohort - 0 not yet seen"))
+
+(defskeleton wonthull2
+  (vars (y3 text) (a name))
+  (defstrand init 2 (x1 y3) (x2 y3) (x3 y3) (x4 y3) (a a))
+  (defstrand resp 2 (y1 y3) (y2 y3) (y3 y3) (a a))
+  (defstrand resp 2 (y1 y3) (y2 y3) (y3 y3) (a a))
+  (precedes ((0 0) (2 0)) ((1 1) (0 1)) ((2 1) (1 0)))
+  (non-orig (privk a))
+  (uniq-orig y3)
+  (operation nonce-test (contracted (x1 y3) (a-0 a)) y3 (1 0)
+    (enc "okay" y3 y3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2)
+  (traces
+    ((send (cat (enc y3 y3 (pubk a)) (enc y3 y3 (pubk a))))
+      (recv (enc "okay" y3 y3 (pubk a))))
+    ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
+    ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a)))))
+  (label 220)
+  (parent 117)
+  (seen 69)
+  (seen-ops
+    (69 (operation generalization deleted (2 0)) (strand-map 0 1)))
+  (realized)
+  (maps ((0 1) ((x1 y3) (x3 y3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
+  (comment "1 in cohort - 0 not yet seen"))
+
+(defskeleton wonthull2
+  (vars (x1 y3 y3-0 text) (a a-0 name))
+  (defstrand init 2 (x1 y3) (x2 y3) (x3 y3) (x4 x1) (a a))
+  (defstrand resp 2 (y1 x1) (y2 y3) (y3 y3) (a a-0))
+  (defstrand resp 2 (y1 y3) (y2 y3) (y3 y3) (a a))
+  (defstrand resp 2 (y1 y3) (y2 y3) (y3 y3-0) (a a))
+  (defstrand resp 2 (y1 y3) (y2 y3) (y3 y3) (a a))
+  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((0 0) (4 0)) ((1 1) (0 1))
+    ((2 1) (0 1)) ((3 1) (1 0)) ((4 1) (1 0)))
+  (non-orig (privk a))
+  (uniq-orig y3)
+  (operation nonce-test (added-strand resp 2) y3 (1 0)
+    (enc "okay" y3-0 y3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3)
+  (traces
+    ((send (cat (enc y3 y3 (pubk a)) (enc y3 y3 (pubk a))))
+      (recv (enc "okay" y3 x1 (pubk a))))
+    ((recv (enc x1 y3 (pubk a-0))) (send (enc "okay" y3 x1 (pubk a-0))))
+    ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
+    ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
+    ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a)))))
+  (label 221)
+  (parent 118)
+  (seen 243)
+  (seen-ops
+    (243
+      (operation nonce-test (contracted (x1 y3) (a-0 a)) y3 (1 0)
+        (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
+        (enc y3 y3 (pubk a))) (strand-map 0 1 2 3 4)))
+  (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 y3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6678,10 +7360,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 216)
-  (parent 117)
+  (label 222)
+  (parent 120)
+  (seen 220)
+  (seen-ops
+    (220 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
-  (comment "1 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x1) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
+  (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x1 x1-0 y3 y3-0 text) (a a-0 name))
@@ -6712,15 +7398,17 @@
       (send (enc "okay" y3-0 x1-0 (pubk a))))
     ((recv (enc x1-0 x1-0 (pubk a)))
       (send (enc "okay" x1-0 x1-0 (pubk a)))))
-  (label 217)
-  (parent 118)
-  (seen 214)
+  (label 223)
+  (parent 121)
+  (seen 221)
   (seen-ops
-    (214
+    (221
       (operation nonce-test (displaced 6 2 resp 2) x1-0 (1 0)
         (enc "okay" x1-0 x1-0 (pubk a)) (enc "okay" y3-0 x1-0 (pubk a))
         (enc x1-0 x1-0 (pubk a))) (strand-map 0 1 2 3 2 4)))
   (unrealized (1 0))
+  (maps
+    ((0 1) ((x1 x1) (x3 x1-0) (a a) (x1-0 x1-0) (x3-0 x1-0) (a-0 a-0))))
   (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -6744,12 +7432,13 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 218)
-  (parent 118)
-  (seen 213)
+  (label 224)
+  (parent 121)
+  (seen 150)
   (seen-ops
-    (213 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (150 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x1) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6772,12 +7461,13 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a)))))
-  (label 219)
-  (parent 120)
-  (seen 119)
+  (label 225)
+  (parent 123)
+  (seen 122)
   (seen-ops
-    (119 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
+    (122 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6802,10 +7492,18 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a)))))
-  (label 220)
-  (parent 120)
+  (label 226)
+  (parent 123)
+  (seen 233)
+  (seen-ops
+    (233
+      (operation nonce-test (contracted (x3 y3) (a-0 a)) y3 (1 0)
+        (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
+        (enc "okay" y3-1 y3 (pubk a)) (enc y3 y3 (pubk a)))
+      (strand-map 0 1 2 3 3)))
   (unrealized (1 0))
-  (comment "1 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
+  (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 y3 y3-0 text) (a name))
@@ -6827,12 +7525,13 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a)))))
-  (label 221)
-  (parent 121)
-  (seen 119)
+  (label 227)
+  (parent 124)
+  (seen 122)
   (seen-ops
-    (119 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
+    (122 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6857,12 +7556,13 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a)))))
-  (label 222)
-  (parent 122)
-  (seen 219)
+  (label 228)
+  (parent 125)
+  (seen 225)
   (seen-ops
-    (219 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (225 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6890,10 +7590,18 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a)))))
-  (label 223)
-  (parent 122)
+  (label 229)
+  (parent 125)
+  (seen 243)
+  (seen-ops
+    (243
+      (operation nonce-test (contracted (x3 y3) (a-0 a)) y3 (1 0)
+        (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
+        (enc "okay" y3-1 y3 (pubk a)) (enc y3 y3 (pubk a)))
+      (strand-map 0 1 2 3 4 3)))
   (unrealized (1 0))
-  (comment "1 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
+  (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 y3 y3-0 y3-1 text) (a name))
@@ -6917,12 +7625,13 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a)))))
-  (label 224)
-  (parent 124)
-  (seen 126)
+  (label 230)
+  (parent 127)
+  (seen 129)
   (seen-ops
-    (126 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
+    (129 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -6950,10 +7659,18 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a)))))
-  (label 225)
-  (parent 124)
+  (label 231)
+  (parent 127)
+  (seen 243)
+  (seen-ops
+    (243
+      (operation nonce-test (contracted (x3 y3) (a-0 a)) y3 (1 0)
+        (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-0 y3 (pubk a))
+        (enc "okay" y3-1 y3 (pubk a)) (enc y3 y3 (pubk a)))
+      (strand-map 0 1 2 3 3 4)))
   (unrealized (1 0))
-  (comment "1 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
+  (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 y3 y3-0 text) (a name))
@@ -6977,12 +7694,13 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a)))))
-  (label 226)
-  (parent 125)
-  (seen 244)
+  (label 232)
+  (parent 128)
+  (seen 253)
   (seen-ops
-    (244 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (253 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7005,12 +7723,13 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 227)
-  (parent 128)
-  (seen 305)
+  (label 233)
+  (parent 131)
+  (seen 220)
   (seen-ops
-    (305 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
+    (220 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x1) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7035,12 +7754,13 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 228)
-  (parent 130)
-  (seen 227)
+  (label 234)
+  (parent 133)
+  (seen 233)
   (seen-ops
-    (227 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (233 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x1) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7059,8 +7779,8 @@
     ((recv (enc y3 x3 (pubk a-0))) (send (enc "okay" x3 y3 (pubk a-0))))
     ((recv (enc y3 y3-0 (pubk a)))
       (send (enc "okay" y3-0 y3 (pubk a)))))
-  (label 229)
-  (parent 131)
+  (label 235)
+  (parent 134)
   (realized)
   (shape)
   (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3-0) (a-0 a-0))))
@@ -7084,12 +7804,13 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 230)
-  (parent 136)
-  (seen 138)
+  (label 236)
+  (parent 139)
+  (seen 141)
   (seen-ops
-    (138 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
+    (141 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7110,12 +7831,13 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 231)
-  (parent 137)
-  (seen 139)
+  (label 237)
+  (parent 140)
+  (seen 142)
   (seen-ops
-    (139 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
+    (142 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7138,12 +7860,13 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x1 y3 (pubk a)))))
-  (label 232)
-  (parent 140)
-  (seen 93)
+  (label 238)
+  (parent 143)
+  (seen 95)
   (seen-ops
-    (93 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
+    (95 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7171,17 +7894,22 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x1 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x1 y3 (pubk a)))))
-  (label 233)
-  (parent 142)
-  (seen 177)
+  (label 239)
+  (parent 145)
+  (seen 183 243)
   (seen-ops
-    (177
+    (183
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 2)))
+      (strand-map 0 1 2 3 4 2))
+    (243
+      (operation nonce-test (contracted (x3 x1) (a-0 a) (y3-0 x1)) x1
+        (1 0) (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 2)))
   (unrealized (1 0))
-  (comment "2 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a-0))))
+  (comment "3 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 text) (a name))
@@ -7205,12 +7933,13 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x1 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a)))))
-  (label 234)
-  (parent 142)
-  (seen 172)
+  (label 240)
+  (parent 145)
+  (seen 178)
   (seen-ops
-    (172 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
+    (178 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7235,12 +7964,13 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a)))))
-  (label 235)
-  (parent 143)
-  (seen 100)
+  (label 241)
+  (parent 146)
+  (seen 102)
   (seen-ops
-    (100 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (102 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7268,13 +7998,78 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x1 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x1 y3 (pubk a)))))
-  (label 236)
-  (parent 145)
-  (seen 176)
+  (label 242)
+  (parent 148)
+  (seen 182)
   (seen-ops
-    (176 (operation generalization deleted (3 0))
+    (182 (operation generalization deleted (3 0))
       (strand-map 0 1 2 4 5)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a))))
+  (comment "1 in cohort - 0 not yet seen"))
+
+(defskeleton wonthull2
+  (vars (x1 y3 text) (a name))
+  (defstrand init 2 (x1 x1) (x2 x1) (x3 x1) (x4 x1) (a a))
+  (defstrand resp 2 (y1 x1) (y2 x1) (y3 x1) (a a))
+  (defstrand resp 2 (y1 x1) (y2 x1) (y3 x1) (a a))
+  (defstrand resp 2 (y1 x1) (y2 x1) (y3 y3) (a a))
+  (defstrand resp 2 (y1 x1) (y2 x1) (y3 x1) (a a))
+  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((0 0) (4 0)) ((1 1) (0 1))
+    ((2 1) (0 1)) ((3 1) (1 0)) ((4 1) (1 0)))
+  (non-orig (privk a))
+  (uniq-orig x1)
+  (operation nonce-test (contracted (x3 x1) (a-0 a) (y3-0 x1)) x1 (1 0)
+    (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
+    (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 2 3 4)
+  (traces
+    ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
+      (recv (enc "okay" x1 x1 (pubk a))))
+    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
+    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
+    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
+    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
+  (label 243)
+  (parent 148)
+  (seen 233)
+  (seen-ops
+    (233 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+  (realized)
+  (maps ((0 1) ((x1 x1) (x3 x1) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
+  (comment "1 in cohort - 0 not yet seen"))
+
+(defskeleton wonthull2
+  (vars (x3 y3 text) (a a-0 name))
+  (defstrand init 2 (x1 x3) (x2 x3) (x3 x3) (x4 x3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a-0))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 y3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
+  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((0 0) (4 0)) ((1 1) (0 1))
+    ((2 1) (1 0)) ((3 1) (0 1)) ((4 1) (1 0)))
+  (non-orig (privk a))
+  (uniq-orig x3)
+  (operation nonce-test (added-strand resp 2) x3 (1 0)
+    (enc "okay" y3 x3 (pubk a)) (enc x3 x3 (pubk a)))
+  (strand-map 0 1 2 3)
+  (traces
+    ((send (cat (enc x3 x3 (pubk a)) (enc x3 x3 (pubk a))))
+      (recv (enc "okay" x3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a-0))) (send (enc "okay" x3 x3 (pubk a-0))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
+  (label 244)
+  (parent 151)
+  (seen 243)
+  (seen-ops
+    (243
+      (operation nonce-test (contracted (a-0 a)) x3 (1 0)
+        (enc "okay" x3 x3 (pubk a)) (enc "okay" y3 x3 (pubk a))
+        (enc x3 x3 (pubk a))) (strand-map 0 1 2 3 4)))
+  (unrealized (1 0))
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x3) (x3-0 x3) (a-0 a-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7302,13 +8097,14 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 237)
-  (parent 147)
-  (seen 180)
+  (label 245)
+  (parent 152)
+  (seen 187)
   (seen-ops
-    (180 (operation generalization deleted (2 0))
+    (187 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7338,17 +8134,28 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 238)
-  (parent 147)
-  (seen 178)
+  (label 246)
+  (parent 152)
+  (seen 184 244 314)
   (seen-ops
-    (178
+    (184
       (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5 2)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5 2))
+    (244
+      (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2 4 2))
+    (314
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc "okay" y3-1 x1 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 4 5 4)))
   (unrealized (1 0))
-  (comment "2 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "4 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 text) (a name))
@@ -7372,12 +8179,13 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 239)
-  (parent 149)
-  (seen 175)
+  (label 247)
+  (parent 154)
+  (seen 181)
   (seen-ops
-    (175 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (181 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7405,51 +8213,28 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 240)
-  (parent 149)
-  (seen 174)
+  (label 248)
+  (parent 154)
+  (seen 180 186 234)
   (seen-ops
-    (174
+    (180
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 2)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 2))
+    (186
+      (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2 2))
+    (234
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc "okay" y3-1 x1 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 4 4)))
   (unrealized (1 0))
-  (comment "2 in cohort - 1 not yet seen"))
-
-(defskeleton wonthull2
-  (vars (x3 x1 y3 y3-0 y3-1 text) (a name))
-  (defstrand init 2 (x1 x1) (x2 x3) (x3 x1) (x4 x1) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x3) (y3 x3) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x3) (y3 y3) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x3) (y3 x1) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x1) (y3 y3-0) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x3) (y3 y3-1) (a a))
-  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((0 0) (4 0)) ((0 0) (5 0))
-    ((1 1) (0 1)) ((2 1) (0 1)) ((3 1) (0 1)) ((4 1) (1 0))
-    ((5 1) (1 0)))
-  (non-orig (privk a))
-  (uniq-orig x1)
-  (operation nonce-test (contracted (a-0 a)) x1 (1 0)
-    (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
-    (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-  (strand-map 0 1 2 3 4 5)
-  (traces
-    ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
-      (recv (enc "okay" x1 x1 (pubk a))))
-    ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
-    ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
-    ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
-    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
-    ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 241)
-  (parent 150)
-  (seen 179)
-  (seen-ops
-    (179 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 4 5)))
-  (realized)
-  (comment "1 in cohort - 0 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "4 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 y3-1 text) (a a-0 name))
@@ -7478,17 +8263,101 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 242)
-  (parent 150)
-  (seen 177)
+  (label 249)
+  (parent 155)
+  (seen 183 244 314)
   (seen-ops
-    (177
+    (183
       (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 2 5)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 2 5))
+    (244
+      (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2 2 4))
+    (314
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc "okay" y3-1 x1 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 4 4 5)))
   (unrealized (1 0))
-  (comment "2 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "4 in cohort - 1 not yet seen"))
+
+(defskeleton wonthull2
+  (vars (x3 x1 y3 y3-0 y3-1 text) (a name))
+  (defstrand init 2 (x1 x1) (x2 x3) (x3 x1) (x4 x1) (a a))
+  (defstrand resp 2 (y1 x1) (y2 x3) (y3 x3) (a a))
+  (defstrand resp 2 (y1 x1) (y2 x3) (y3 y3) (a a))
+  (defstrand resp 2 (y1 x1) (y2 x3) (y3 x1) (a a))
+  (defstrand resp 2 (y1 x1) (y2 x1) (y3 y3-0) (a a))
+  (defstrand resp 2 (y1 x1) (y2 x3) (y3 y3-1) (a a))
+  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((0 0) (4 0)) ((0 0) (5 0))
+    ((1 1) (0 1)) ((2 1) (0 1)) ((3 1) (0 1)) ((4 1) (1 0))
+    ((5 1) (1 0)))
+  (non-orig (privk a))
+  (uniq-orig x1)
+  (operation nonce-test (contracted (a-0 a)) x1 (1 0)
+    (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+    (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
+  (traces
+    ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
+      (recv (enc "okay" x1 x1 (pubk a))))
+    ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
+    ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
+    ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
+    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
+    ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
+  (label 250)
+  (parent 155)
+  (seen 185)
+  (seen-ops
+    (185 (operation generalization deleted (2 0))
+      (strand-map 0 1 3 4 5)))
+  (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
+  (comment "1 in cohort - 0 not yet seen"))
+
+(defskeleton wonthull2
+  (vars (x3 y3 y3-0 text) (a a-0 name))
+  (defstrand init 2 (x1 x3) (x2 x3) (x3 x3) (x4 x3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a-0))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 y3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 y3-0) (a a))
+  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((0 0) (4 0)) ((1 1) (0 1))
+    ((2 1) (0 1)) ((3 1) (1 0)) ((4 1) (1 0)))
+  (non-orig (privk a))
+  (uniq-orig x3)
+  (operation nonce-test (displaced 6 3 resp 2) x1 (1 0)
+    (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+    (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 4)
+  (traces
+    ((send (cat (enc x3 x3 (pubk a)) (enc x3 x3 (pubk a))))
+      (recv (enc "okay" x3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a-0))) (send (enc "okay" x3 x3 (pubk a-0))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a)))))
+  (label 251)
+  (parent 155)
+  (seen 186 234)
+  (seen-ops
+    (186
+      (operation nonce-test (displaced 5 2 resp 2) x3 (1 0)
+        (enc "okay" x3 x3 (pubk a)) (enc "okay" y3-0 x3 (pubk a))
+        (enc x3 x3 (pubk a))) (strand-map 0 1 2 3 2))
+    (234
+      (operation nonce-test (contracted (a-0 a)) x3 (1 0)
+        (enc "okay" x3 x3 (pubk a)) (enc "okay" y3-0 x3 (pubk a))
+        (enc x3 x3 (pubk a))) (strand-map 0 1 2 3 4)))
+  (unrealized (1 0))
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x3) (x3-0 x3) (a-0 a-0))))
+  (comment "2 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 text) (a name))
@@ -7512,9 +8381,10 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 243)
-  (parent 151)
+  (label 252)
+  (parent 156)
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -7537,12 +8407,13 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 244)
-  (parent 153)
-  (seen 245)
+  (label 253)
+  (parent 158)
+  (seen 254)
   (seen-ops
-    (245 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
+    (254 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7560,13 +8431,14 @@
       (recv (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 245)
-  (parent 154)
-  (seen 132)
+  (label 254)
+  (parent 159)
+  (seen 135)
   (seen-ops
-    (132 (operation generalization weakened ((2 1) (1 0)))
+    (135 (operation generalization weakened ((2 1) (1 0)))
       (strand-map 0 1 2)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7591,12 +8463,13 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 246)
-  (parent 155)
-  (seen 244)
+  (label 255)
+  (parent 160)
+  (seen 253)
   (seen-ops
-    (244 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (253 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7624,13 +8497,14 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 247)
-  (parent 156)
-  (seen 243)
+  (label 256)
+  (parent 161)
+  (seen 252)
   (seen-ops
-    (243 (operation generalization deleted (2 0))
+    (252 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7655,9 +8529,10 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
-  (label 248)
-  (parent 161)
+  (label 257)
+  (parent 166)
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -7682,9 +8557,10 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
-  (label 249)
-  (parent 161)
+  (label 258)
+  (parent 166)
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -7712,9 +8588,10 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 250)
-  (parent 161)
+  (label 259)
+  (parent 166)
   (unrealized (1 0))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
@@ -7739,9 +8616,10 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 251)
-  (parent 162)
+  (label 260)
+  (parent 167)
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -7766,9 +8644,10 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 252)
-  (parent 162)
+  (label 261)
+  (parent 167)
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
@@ -7796,13 +8675,14 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
-  (label 253)
-  (parent 165)
-  (seen 249)
+  (label 262)
+  (parent 170)
+  (seen 258)
   (seen-ops
-    (249 (operation generalization deleted (2 0))
+    (258 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7830,13 +8710,14 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
-  (label 254)
-  (parent 165)
-  (seen 248)
+  (label 263)
+  (parent 170)
+  (seen 257)
   (seen-ops
-    (248 (operation generalization deleted (2 0))
+    (257 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7866,17 +8747,22 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 255)
-  (parent 165)
-  (seen 250)
+  (label 264)
+  (parent 170)
+  (seen 221 259)
   (seen-ops
-    (250
+    (221
+      (operation nonce-test (displaced 7 2 resp 2) x1-0 (1 0)
+        (enc "okay" x1-0 x1-0 (pubk a)) (enc "okay" y3-0 x1-0 (pubk a))
+        (enc x1-0 x1-0 (pubk a))) (strand-map 0 1 2 3 2 4 4))
+    (259
       (operation nonce-test (displaced 7 2 resp 2) x3 (1 0)
         (enc "okay" x3 x3 (pubk a)) (enc "okay" x1-0 x3 (pubk a))
         (enc "okay" y3-0 x3 (pubk a)) (enc x3 x3 (pubk a))
         (enc x1-0 x3 (pubk a))) (strand-map 0 1 2 3 2 4 5)))
   (unrealized (1 0))
-  (comment "3 in cohort - 2 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1-0) (x3-0 x3) (a-0 a-0))))
+  (comment "4 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 text) (a name))
@@ -7903,13 +8789,14 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 256)
-  (parent 168)
-  (seen 251)
+  (label 265)
+  (parent 173)
+  (seen 260)
   (seen-ops
-    (251 (operation generalization deleted (2 0))
+    (260 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -7937,14 +8824,57 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 257)
-  (parent 168)
-  (seen 252)
+  (label 266)
+  (parent 173)
+  (seen 261)
   (seen-ops
-    (252 (operation generalization deleted (2 0))
+    (261 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
+
+(defskeleton wonthull2
+  (vars (x3 y3 y3-0 text) (a a-0 name))
+  (defstrand init 2 (x1 x3) (x2 x3) (x3 x3) (x4 x3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a-0))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 y3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 y3-0) (a a))
+  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((0 0) (4 0)) ((1 1) (0 1))
+    ((2 1) (1 0)) ((3 1) (0 1)) ((4 1) (0 1)))
+  (non-orig (privk a))
+  (uniq-orig x3)
+  (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
+    (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
+    (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 2)
+  (traces
+    ((send (cat (enc x3 x3 (pubk a)) (enc x3 x3 (pubk a))))
+      (recv (enc "okay" x3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a-0))) (send (enc "okay" x3 x3 (pubk a-0))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a)))))
+  (label 267)
+  (parent 175)
+  (seen 224 244 251)
+  (seen-ops
+    (224
+      (operation nonce-test (contracted (a-0 a)) x3 (1 0)
+        (enc "okay" y3 x3 (pubk a)) (enc x3 x3 (pubk a)))
+      (strand-map 0 1 2 3 4))
+    (244
+      (operation nonce-test (displaced 5 4 resp 2) x3 (1 0)
+        (enc "okay" y3 x3 (pubk a)) (enc x3 x3 (pubk a)))
+      (strand-map 0 1 2 3 4))
+    (251
+      (operation nonce-test (displaced 5 3 resp 2) x3 (1 0)
+        (enc "okay" y3 x3 (pubk a)) (enc x3 x3 (pubk a)))
+      (strand-map 0 1 2 3 4)))
+  (unrealized (1 0))
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x3) (x3-0 x3) (a-0 a-0))))
+  (comment "4 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 y3-1 text) (a a-0 name))
@@ -7973,22 +8903,32 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 258)
-  (parent 169)
-  (seen 147 289)
+  (label 268)
+  (parent 175)
+  (seen 152 299 314 331)
   (seen-ops
-    (147
+    (152
       (operation nonce-test (displaced 7 4 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 4 5))
-    (289
+    (299
       (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 5 6)))
+      (strand-map 0 1 2 3 4 5 6))
+    (314
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2 4 5))
+    (331
+      (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+        (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 4 2 5)))
   (unrealized (1 0))
-  (comment "4 in cohort - 2 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "6 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 y3-1 text) (a name))
@@ -8015,13 +8955,14 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 259)
-  (parent 169)
-  (seen 198)
+  (label 269)
+  (parent 175)
+  (seen 205)
   (seen-ops
-    (198 (operation generalization deleted (2 0))
+    (205 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8049,22 +8990,32 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 260)
-  (parent 169)
-  (seen 149 291)
+  (label 270)
+  (parent 175)
+  (seen 154 234 251 301)
   (seen-ops
-    (149
+    (154
       (operation nonce-test (displaced 6 4 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 4))
-    (291
+    (234
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2 4))
+    (251
+      (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+        (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 4 2))
+    (301
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (1 0))
-  (comment "4 in cohort - 2 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "6 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 y3-1 y3-2 text) (a a-0 name))
@@ -8093,32 +9044,47 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-2 x1 (pubk a)))))
-  (label 261)
-  (parent 169)
-  (seen 150 200 324 326)
+  (label 271)
+  (parent 175)
+  (seen 155 207 224 251 267 333 335)
   (seen-ops
-    (150
+    (155
       (operation nonce-test (displaced 7 4 resp 2) x1 (1 0)
         (enc "okay" y3-2 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 4 5))
-    (200
+    (207
       (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 5 2))
-    (324
+    (224
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2 4 4))
+    (251
+      (operation nonce-test (displaced 7 3 resp 2) x1 (1 0)
+        (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+        (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 2 4 4))
+    (267
+      (operation nonce-test (displaced 7 4 resp 2) x1 (1 0)
+        (enc "okay" y3-1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
+        (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 4 4 4))
+    (333
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 5 6))
-    (326
+    (335
       (operation nonce-test (displaced 7 3 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 5 6)))
   (unrealized (1 0))
-  (comment "6 in cohort - 2 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "9 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 text) (a name))
@@ -8142,12 +9108,13 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 262)
-  (parent 170)
-  (seen 201)
+  (label 272)
+  (parent 176)
+  (seen 208)
   (seen-ops
-    (201 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (208 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8175,27 +9142,37 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 263)
-  (parent 170)
-  (seen 202 240 326)
+  (label 273)
+  (parent 176)
+  (seen 209 234 248 251 335)
   (seen-ops
-    (202
+    (209
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 2))
-    (240
+    (234
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2 4))
+    (248
       (operation nonce-test (displaced 6 4 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 5))
-    (326
+    (251
+      (operation nonce-test (displaced 6 4 resp 2) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+        (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 4 4))
+    (335
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (1 0))
-  (comment "4 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "6 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 y3-1 text) (a a-0 name))
@@ -8224,27 +9201,37 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 264)
-  (parent 171)
-  (seen 203 242 327)
+  (label 274)
+  (parent 177)
+  (seen 210 249 314 331 336)
   (seen-ops
-    (203
+    (210
       (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 2 5))
-    (242
+    (249
       (operation nonce-test (displaced 7 4 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 5 6))
-    (327
+    (314
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2 4 5))
+    (331
+      (operation nonce-test (displaced 7 4 resp 2) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+        (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 4 4 5))
+    (336
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 5 6)))
   (unrealized (1 0))
-  (comment "4 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "6 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 y3-1 text) (a name))
@@ -8271,13 +9258,14 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 265)
-  (parent 171)
-  (seen 204)
+  (label 275)
+  (parent 177)
+  (seen 211)
   (seen-ops
-    (204 (operation generalization deleted (2 0))
+    (211 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8303,12 +9291,13 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x1 y3 (pubk a)))))
-  (label 266)
-  (parent 173)
-  (seen 232)
+  (label 276)
+  (parent 179)
+  (seen 238)
   (seen-ops
-    (232 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
+    (238 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8334,12 +9323,13 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 267)
-  (parent 174)
-  (seen 175)
+  (label 277)
+  (parent 180)
+  (seen 181)
   (seen-ops
-    (175 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
+    (181 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8368,13 +9358,14 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 268)
-  (parent 177)
-  (seen 267)
+  (label 278)
+  (parent 183)
+  (seen 277)
   (seen-ops
-    (267 (operation generalization deleted (2 0))
+    (277 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8403,48 +9394,14 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 269)
-  (parent 178)
-  (seen 307)
+  (label 279)
+  (parent 184)
+  (seen 315)
   (seen-ops
-    (307 (operation generalization deleted (2 0))
+    (315 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
-  (comment "1 in cohort - 0 not yet seen"))
-
-(defskeleton wonthull2
-  (vars (x3 x1 y3 y3-0 text) (a name))
-  (defstrand init 2 (x1 x1) (x2 x3) (x3 x3) (x4 x3) (a a))
-  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
-  (defstrand resp 2 (y1 x3) (y2 x3) (y3 y3) (a a))
-  (defstrand resp 2 (y1 x3) (y2 x3) (y3 y3-0) (a a))
-  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x1) (a a))
-  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
-  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((0 0) (4 0)) ((0 0) (5 0))
-    ((1 1) (0 1)) ((2 1) (0 1)) ((3 1) (1 0)) ((4 1) (1 0))
-    ((5 1) (1 0)))
-  (non-orig (privk a))
-  (uniq-orig x3)
-  (operation nonce-test (contracted (x1-0 x3) (a-0 a)) x3 (1 0)
-    (enc "okay" x3 x3 (pubk a)) (enc "okay" x1 x3 (pubk a))
-    (enc "okay" y3-0 x3 (pubk a)) (enc x3 x3 (pubk a))
-    (enc x1 x3 (pubk a)))
-  (strand-map 0 1 2 3 4 5)
-  (traces
-    ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
-      (recv (enc "okay" x3 x3 (pubk a))))
-    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a))))
-    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
-    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a))))
-    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
-    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 270)
-  (parent 183)
-  (seen 136)
-  (seen-ops
-    (136 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 4 5)))
-  (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8473,13 +9430,50 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 271)
-  (parent 183)
-  (seen 137)
+  (label 280)
+  (parent 190)
+  (seen 140)
   (seen-ops
-    (137 (operation generalization deleted (2 0))
+    (140 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
+  (comment "1 in cohort - 0 not yet seen"))
+
+(defskeleton wonthull2
+  (vars (x3 x1 y3 y3-0 text) (a name))
+  (defstrand init 2 (x1 x1) (x2 x3) (x3 x3) (x4 x3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 y3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 y3-0) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x1) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
+  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((0 0) (4 0)) ((0 0) (5 0))
+    ((1 1) (0 1)) ((2 1) (0 1)) ((3 1) (1 0)) ((4 1) (1 0))
+    ((5 1) (1 0)))
+  (non-orig (privk a))
+  (uniq-orig x3)
+  (operation nonce-test (contracted (x1-0 x3) (a-0 a)) x3 (1 0)
+    (enc "okay" x3 x3 (pubk a)) (enc "okay" x1 x3 (pubk a))
+    (enc "okay" y3-0 x3 (pubk a)) (enc x3 x3 (pubk a))
+    (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
+  (traces
+    ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
+      (recv (enc "okay" x3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
+  (label 281)
+  (parent 190)
+  (seen 139)
+  (seen-ops
+    (139 (operation generalization deleted (2 0))
+      (strand-map 0 1 3 4 5)))
+  (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8504,12 +9498,13 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 272)
-  (parent 186)
-  (seen 205)
+  (label 282)
+  (parent 193)
+  (seen 212)
   (seen-ops
-    (205 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (212 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8537,22 +9532,32 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 273)
-  (parent 186)
-  (seen 189 297)
+  (label 283)
+  (parent 193)
+  (seen 196 234 251 307)
   (seen-ops
-    (189
+    (196
       (operation nonce-test (displaced 6 3 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 3))
-    (297
+    (234
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 2 3 4))
+    (251
+      (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+        (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 4 2))
+    (307
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (1 0))
-  (comment "4 in cohort - 2 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "6 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 y3-1 text) (a a-0 name))
@@ -8579,27 +9584,37 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 274)
-  (parent 186)
-  (seen 207 281 332)
+  (label 284)
+  (parent 193)
+  (seen 214 234 251 291 341)
   (seen-ops
-    (207
+    (214
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 2))
-    (281
+    (234
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 2 3 4))
+    (251
+      (operation nonce-test (displaced 6 3 resp 2) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+        (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 4 3))
+    (291
       (operation nonce-test (displaced 6 3 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 5))
-    (332
+    (341
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (1 0))
-  (comment "4 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "6 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 y3-1 text) (a a-0 name))
@@ -8628,22 +9643,32 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 275)
-  (parent 187)
-  (seen 192 300)
+  (label 285)
+  (parent 194)
+  (seen 199 310 314 331)
   (seen-ops
-    (192
+    (199
       (operation nonce-test (displaced 7 3 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 3 5))
-    (300
+    (310
       (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-      (strand-map 0 1 2 3 4 5 6)))
+      (strand-map 0 1 2 3 4 5 6))
+    (314
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 2 3 4 5))
+    (331
+      (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+        (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 4 2 5)))
   (unrealized (1 0))
-  (comment "4 in cohort - 2 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "6 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 y3-1 text) (a name))
@@ -8670,13 +9695,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 276)
-  (parent 187)
-  (seen 209)
+  (label 286)
+  (parent 194)
+  (seen 216)
   (seen-ops
-    (209 (operation generalization deleted (2 0))
+    (216 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8706,32 +9732,47 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-2 x1 (pubk a)))))
-  (label 277)
-  (parent 187)
-  (seen 194 210 332 335)
+  (label 287)
+  (parent 194)
+  (seen 201 217 224 251 267 341 344)
   (seen-ops
-    (194
+    (201
       (operation nonce-test (displaced 7 3 resp 2) x1 (1 0)
         (enc "okay" y3-2 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 3 5))
-    (210
+    (217
       (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 5 2))
-    (332
+    (224
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 2 3 4 4))
+    (251
+      (operation nonce-test (displaced 7 4 resp 2) x1 (1 0)
+        (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+        (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 2 3 4 4))
+    (267
+      (operation nonce-test (displaced 7 3 resp 2) x1 (1 0)
+        (enc "okay" y3-1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
+        (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 4 3 3))
+    (341
       (operation nonce-test (displaced 7 4 resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 5 6))
-    (335
+    (344
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" y3-1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 5 6)))
   (unrealized (1 0))
-  (comment "6 in cohort - 2 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "9 in cohort - 2 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 y3-1 text) (a a-0 name))
@@ -8760,27 +9801,37 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 278)
-  (parent 188)
-  (seen 211 286 336)
+  (label 288)
+  (parent 195)
+  (seen 218 295 314 331 345)
   (seen-ops
-    (211
+    (218
       (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 2 5))
-    (286
+    (295
       (operation nonce-test (displaced 7 3 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 5 6))
-    (336
+    (314
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 2 3 4 5))
+    (331
+      (operation nonce-test (displaced 7 3 resp 2) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+        (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 4 3 5))
+    (345
       (operation nonce-test (added-strand resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
       (strand-map 0 1 2 3 4 5 6)))
   (unrealized (1 0))
-  (comment "4 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "6 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 y3-1 text) (a name))
@@ -8807,13 +9858,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 279)
-  (parent 188)
-  (seen 212)
+  (label 289)
+  (parent 195)
+  (seen 219)
   (seen-ops
-    (212 (operation generalization deleted (2 0))
+    (219 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8840,12 +9892,14 @@
       (send (enc "okay" y3-0 y3-0 (pubk a))))
     ((recv (enc y3-0 y3-0 (pubk a)))
       (send (enc "okay" y3-1 y3-0 (pubk a)))))
-  (label 280)
-  (parent 189)
-  (seen 219)
+  (label 290)
+  (parent 196)
+  (seen 225)
   (seen-ops
-    (219 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (225 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps
+    ((0 1) ((x1 y3-0) (x3 x3) (a a) (x1-0 y3-0) (x3-0 y3-0) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8877,17 +9931,29 @@
       (send (enc "okay" y3-1 y3-0 (pubk a))))
     ((recv (enc y3-0 x3 (pubk a)))
       (send (enc "okay" y3-2 y3-0 (pubk a)))))
-  (label 281)
-  (parent 189)
-  (seen 220)
+  (label 291)
+  (parent 196)
+  (seen 186 226 234)
   (seen-ops
-    (220
+    (186
       (operation nonce-test (displaced 6 2 resp 2) y3-0 (1 0)
         (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
         (enc "okay" y3-2 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
-        (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 2 3 4 2)))
+        (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 2 3 2 2))
+    (226
+      (operation nonce-test (displaced 6 2 resp 2) y3-0 (1 0)
+        (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
+        (enc "okay" y3-2 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
+        (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 2 3 4 2))
+    (234
+      (operation nonce-test (contracted (x3 y3-0) (a-0 a)) y3-0 (1 0)
+        (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
+        (enc "okay" y3-2 y3-0 (pubk a)) (enc y3-0 y3-0 (pubk a)))
+      (strand-map 0 1 2 3 4 4)))
   (unrealized (1 0))
-  (comment "2 in cohort - 1 not yet seen"))
+  (maps
+    ((0 1) ((x1 y3-0) (x3 x3) (a a) (x1-0 y3-0) (x3-0 y3-0) (a-0 a-0))))
+  (comment "4 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 y3 y3-0 y3-1 text) (a name))
@@ -8913,12 +9979,14 @@
       (send (enc "okay" y3-0 y3-0 (pubk a))))
     ((recv (enc y3-0 x3 (pubk a)))
       (send (enc "okay" y3-1 y3-0 (pubk a)))))
-  (label 282)
-  (parent 191)
-  (seen 221)
+  (label 292)
+  (parent 198)
+  (seen 227)
   (seen-ops
-    (221 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (227 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps
+    ((0 1) ((x1 y3-0) (x3 x3) (a a) (x1-0 y3-0) (x3-0 y3-0) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8949,13 +10017,15 @@
       (send (enc "okay" y3-1 y3-0 (pubk a))))
     ((recv (enc y3-0 y3-0 (pubk a)))
       (send (enc "okay" y3-0 y3-0 (pubk a)))))
-  (label 283)
-  (parent 192)
-  (seen 222)
+  (label 293)
+  (parent 199)
+  (seen 228)
   (seen-ops
-    (222 (operation generalization deleted (2 0))
+    (228 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps
+    ((0 1) ((x1 y3-0) (x3 x3) (a a) (x1-0 y3-0) (x3-0 y3-0) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -8990,54 +10060,29 @@
       (send (enc "okay" y3-0 y3-0 (pubk a))))
     ((recv (enc y3-0 x3 (pubk a)))
       (send (enc "okay" y3-2 y3-0 (pubk a)))))
-  (label 284)
-  (parent 192)
-  (seen 223)
+  (label 294)
+  (parent 199)
+  (seen 229 244 314)
   (seen-ops
-    (223
+    (229
       (operation nonce-test (displaced 7 2 resp 2) y3-0 (1 0)
         (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
         (enc "okay" y3-2 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
-        (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 2 3 4 5 2)))
+        (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 2 3 4 5 2))
+    (244
+      (operation nonce-test (displaced 7 2 resp 2) y3-0 (1 0)
+        (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
+        (enc "okay" y3-2 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
+        (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 2 3 2 4 2))
+    (314
+      (operation nonce-test (contracted (x3 y3-0) (a-0 a)) y3-0 (1 0)
+        (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
+        (enc "okay" y3-2 y3-0 (pubk a)) (enc y3-0 y3-0 (pubk a)))
+      (strand-map 0 1 2 3 4 5 4)))
   (unrealized (1 0))
-  (comment "2 in cohort - 1 not yet seen"))
-
-(defskeleton wonthull2
-  (vars (x3 y3 y3-0 y3-1 y3-2 text) (a name))
-  (defstrand init 2 (x1 y3-0) (x2 x3) (x3 y3-0) (x4 y3-0) (a a))
-  (defstrand resp 2 (y1 y3-0) (y2 x3) (y3 x3) (a a))
-  (defstrand resp 2 (y1 y3-0) (y2 x3) (y3 y3) (a a))
-  (defstrand resp 2 (y1 y3-0) (y2 y3-0) (y3 y3-0) (a a))
-  (defstrand resp 2 (y1 y3-0) (y2 y3-0) (y3 y3-1) (a a))
-  (defstrand resp 2 (y1 y3-0) (y2 x3) (y3 y3-2) (a a))
-  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((0 0) (4 0)) ((0 0) (5 0))
-    ((1 1) (0 1)) ((2 1) (0 1)) ((3 1) (0 1)) ((4 1) (1 0))
-    ((5 1) (1 0)))
-  (non-orig (privk a))
-  (uniq-orig y3-0)
-  (operation nonce-test (contracted (a-0 a)) y3-0 (1 0)
-    (enc "okay" y3-1 y3-0 (pubk a)) (enc "okay" y3-2 y3-0 (pubk a))
-    (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
-  (strand-map 0 1 2 3 4 5)
-  (traces
-    ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
-      (recv (enc "okay" y3-0 y3-0 (pubk a))))
-    ((recv (enc y3-0 x3 (pubk a))) (send (enc "okay" x3 y3-0 (pubk a))))
-    ((recv (enc y3-0 x3 (pubk a))) (send (enc "okay" y3 y3-0 (pubk a))))
-    ((recv (enc y3-0 y3-0 (pubk a)))
-      (send (enc "okay" y3-0 y3-0 (pubk a))))
-    ((recv (enc y3-0 y3-0 (pubk a)))
-      (send (enc "okay" y3-1 y3-0 (pubk a))))
-    ((recv (enc y3-0 x3 (pubk a)))
-      (send (enc "okay" y3-2 y3-0 (pubk a)))))
-  (label 285)
-  (parent 194)
-  (seen 224)
-  (seen-ops
-    (224 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 4 5)))
-  (realized)
-  (comment "1 in cohort - 0 not yet seen"))
+  (maps
+    ((0 1) ((x1 y3-0) (x3 x3) (a a) (x1-0 y3-0) (x3-0 y3-0) (a-0 a-0))))
+  (comment "4 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 y3 y3-0 y3-1 y3-2 text) (a a-0 name))
@@ -9071,17 +10116,68 @@
       (send (enc "okay" y3-2 y3-0 (pubk a))))
     ((recv (enc y3-0 x3 (pubk a)))
       (send (enc "okay" y3-0 y3-0 (pubk a)))))
-  (label 286)
-  (parent 194)
-  (seen 225)
+  (label 295)
+  (parent 201)
+  (seen 231 244 314)
   (seen-ops
-    (225
+    (231
       (operation nonce-test (displaced 7 2 resp 2) y3-0 (1 0)
         (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
         (enc "okay" y3-2 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
-        (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 2 3 4 2 5)))
+        (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 2 3 4 2 5))
+    (244
+      (operation nonce-test (displaced 7 2 resp 2) y3-0 (1 0)
+        (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
+        (enc "okay" y3-2 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))
+        (enc y3-0 y3-0 (pubk a))) (strand-map 0 1 2 3 2 2 4))
+    (314
+      (operation nonce-test (contracted (x3 y3-0) (a-0 a)) y3-0 (1 0)
+        (enc "okay" y3-0 y3-0 (pubk a)) (enc "okay" y3-1 y3-0 (pubk a))
+        (enc "okay" y3-2 y3-0 (pubk a)) (enc y3-0 y3-0 (pubk a)))
+      (strand-map 0 1 2 3 4 4 5)))
   (unrealized (1 0))
-  (comment "2 in cohort - 1 not yet seen"))
+  (maps
+    ((0 1) ((x1 y3-0) (x3 x3) (a a) (x1-0 y3-0) (x3-0 y3-0) (a-0 a-0))))
+  (comment "4 in cohort - 1 not yet seen"))
+
+(defskeleton wonthull2
+  (vars (x3 y3 y3-0 y3-1 y3-2 text) (a name))
+  (defstrand init 2 (x1 y3-0) (x2 x3) (x3 y3-0) (x4 y3-0) (a a))
+  (defstrand resp 2 (y1 y3-0) (y2 x3) (y3 x3) (a a))
+  (defstrand resp 2 (y1 y3-0) (y2 x3) (y3 y3) (a a))
+  (defstrand resp 2 (y1 y3-0) (y2 y3-0) (y3 y3-0) (a a))
+  (defstrand resp 2 (y1 y3-0) (y2 y3-0) (y3 y3-1) (a a))
+  (defstrand resp 2 (y1 y3-0) (y2 x3) (y3 y3-2) (a a))
+  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((0 0) (4 0)) ((0 0) (5 0))
+    ((1 1) (0 1)) ((2 1) (0 1)) ((3 1) (0 1)) ((4 1) (1 0))
+    ((5 1) (1 0)))
+  (non-orig (privk a))
+  (uniq-orig y3-0)
+  (operation nonce-test (contracted (a-0 a)) y3-0 (1 0)
+    (enc "okay" y3-1 y3-0 (pubk a)) (enc "okay" y3-2 y3-0 (pubk a))
+    (enc y3-0 x3 (pubk a)) (enc y3-0 y3-0 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
+  (traces
+    ((send (cat (enc y3-0 y3-0 (pubk a)) (enc y3-0 x3 (pubk a))))
+      (recv (enc "okay" y3-0 y3-0 (pubk a))))
+    ((recv (enc y3-0 x3 (pubk a))) (send (enc "okay" x3 y3-0 (pubk a))))
+    ((recv (enc y3-0 x3 (pubk a))) (send (enc "okay" y3 y3-0 (pubk a))))
+    ((recv (enc y3-0 y3-0 (pubk a)))
+      (send (enc "okay" y3-0 y3-0 (pubk a))))
+    ((recv (enc y3-0 y3-0 (pubk a)))
+      (send (enc "okay" y3-1 y3-0 (pubk a))))
+    ((recv (enc y3-0 x3 (pubk a)))
+      (send (enc "okay" y3-2 y3-0 (pubk a)))))
+  (label 296)
+  (parent 201)
+  (seen 230)
+  (seen-ops
+    (230 (operation generalization deleted (2 0))
+      (strand-map 0 1 3 4 5)))
+  (realized)
+  (maps
+    ((0 1) ((x1 y3-0) (x3 x3) (a a) (x1-0 y3-0) (x3-0 y3-0) (a-0 a))))
+  (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 y3 y3-0 y3-1 text) (a name))
@@ -9111,13 +10207,15 @@
       (send (enc "okay" y3-1 y3-0 (pubk a))))
     ((recv (enc y3-0 x3 (pubk a)))
       (send (enc "okay" y3-0 y3-0 (pubk a)))))
-  (label 287)
-  (parent 195)
-  (seen 226)
+  (label 297)
+  (parent 202)
+  (seen 232)
   (seen-ops
-    (226 (operation generalization deleted (2 0))
+    (232 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps
+    ((0 1) ((x1 y3-0) (x3 x3) (a a) (x1-0 y3-0) (x3-0 y3-0) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9145,13 +10243,14 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a)))))
-  (label 288)
-  (parent 197)
-  (seen 296)
+  (label 298)
+  (parent 204)
+  (seen 306)
   (seen-ops
-    (296 (operation generalization deleted (2 0))
+    (306 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9181,17 +10280,28 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-2 y3 (pubk a)))))
-  (label 289)
-  (parent 197)
-  (seen 178)
+  (label 299)
+  (parent 204)
+  (seen 184 244 314)
   (seen-ops
-    (178
+    (184
       (operation nonce-test (displaced 7 3 resp 2) y3 (1 0)
         (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-2 y3 (pubk a))
         (enc "okay" y3-1 y3 (pubk a)) (enc y3 x3 (pubk a))
-        (enc y3 y3 (pubk a))) (strand-map 0 1 2 3 3 4 5)))
+        (enc y3 y3 (pubk a))) (strand-map 0 1 2 3 3 4 5))
+    (244
+      (operation nonce-test (displaced 7 3 resp 2) y3 (1 0)
+        (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
+        (enc "okay" y3-2 y3 (pubk a)) (enc y3 x3 (pubk a))
+        (enc y3 y3 (pubk a))) (strand-map 0 1 2 3 3 4 3))
+    (314
+      (operation nonce-test (contracted (x3 y3) (a-0 a)) y3 (1 0)
+        (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
+        (enc "okay" y3-2 y3 (pubk a)) (enc y3 y3 (pubk a)))
+      (strand-map 0 1 2 3 4 5 4)))
   (unrealized (1 0))
-  (comment "2 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
+  (comment "4 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 y3 y3-0 y3-1 text) (a name))
@@ -9215,12 +10325,13 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a)))))
-  (label 290)
-  (parent 199)
-  (seen 175)
+  (label 300)
+  (parent 206)
+  (seen 181)
   (seen-ops
-    (175 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
+    (181 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9248,51 +10359,28 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-2 y3 (pubk a)))))
-  (label 291)
-  (parent 199)
-  (seen 174)
+  (label 301)
+  (parent 206)
+  (seen 180 186 234)
   (seen-ops
-    (174
+    (180
       (operation nonce-test (displaced 6 3 resp 2) y3 (1 0)
         (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-2 y3 (pubk a))
         (enc "okay" y3-1 y3 (pubk a)) (enc y3 x3 (pubk a))
-        (enc y3 y3 (pubk a))) (strand-map 0 1 2 3 3 4)))
+        (enc y3 y3 (pubk a))) (strand-map 0 1 2 3 3 4))
+    (186
+      (operation nonce-test (displaced 6 3 resp 2) y3 (1 0)
+        (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
+        (enc "okay" y3-2 y3 (pubk a)) (enc y3 x3 (pubk a))
+        (enc y3 y3 (pubk a))) (strand-map 0 1 2 3 3 3))
+    (234
+      (operation nonce-test (contracted (x3 y3) (a-0 a)) y3 (1 0)
+        (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
+        (enc "okay" y3-2 y3 (pubk a)) (enc y3 y3 (pubk a)))
+      (strand-map 0 1 2 3 4 4)))
   (unrealized (1 0))
-  (comment "2 in cohort - 1 not yet seen"))
-
-(defskeleton wonthull2
-  (vars (x3 y3 y3-0 y3-1 y3-2 text) (a name))
-  (defstrand init 2 (x1 y3) (x2 x3) (x3 y3) (x4 y3) (a a))
-  (defstrand resp 2 (y1 y3) (y2 x3) (y3 x3) (a a))
-  (defstrand resp 2 (y1 y3) (y2 x3) (y3 y3) (a a))
-  (defstrand resp 2 (y1 y3) (y2 y3) (y3 y3-0) (a a))
-  (defstrand resp 2 (y1 y3) (y2 y3) (y3 y3-1) (a a))
-  (defstrand resp 2 (y1 y3) (y2 x3) (y3 y3-2) (a a))
-  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((0 0) (4 0)) ((0 0) (5 0))
-    ((1 1) (0 1)) ((2 1) (0 1)) ((3 1) (0 1)) ((4 1) (1 0))
-    ((5 1) (1 0)))
-  (non-orig (privk a))
-  (uniq-orig y3)
-  (operation nonce-test (contracted (a-0 a)) y3 (1 0)
-    (enc "okay" y3-1 y3 (pubk a)) (enc "okay" y3-2 y3 (pubk a))
-    (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
-  (strand-map 0 1 2 3 4 5)
-  (traces
-    ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
-      (recv (enc "okay" y3 y3 (pubk a))))
-    ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x3 y3 (pubk a))))
-    ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
-    ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
-    ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a))))
-    ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-2 y3 (pubk a)))))
-  (label 292)
-  (parent 200)
-  (seen 179)
-  (seen-ops
-    (179 (operation generalization deleted (3 0))
-      (strand-map 0 1 2 4 5)))
-  (realized)
-  (comment "1 in cohort - 0 not yet seen"))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
+  (comment "4 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 y3 y3-0 y3-1 y3-2 text) (a a-0 name))
@@ -9321,17 +10409,63 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-2 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a)))))
-  (label 293)
-  (parent 200)
-  (seen 177)
+  (label 302)
+  (parent 207)
+  (seen 183 244 314)
   (seen-ops
-    (177
+    (183
       (operation nonce-test (displaced 7 3 resp 2) y3 (1 0)
         (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-2 y3 (pubk a))
         (enc "okay" y3-1 y3 (pubk a)) (enc y3 x3 (pubk a))
-        (enc y3 y3 (pubk a))) (strand-map 0 1 2 3 3 4 5)))
+        (enc y3 y3 (pubk a))) (strand-map 0 1 2 3 3 4 5))
+    (244
+      (operation nonce-test (displaced 7 3 resp 2) y3 (1 0)
+        (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
+        (enc "okay" y3-2 y3 (pubk a)) (enc y3 x3 (pubk a))
+        (enc y3 y3 (pubk a))) (strand-map 0 1 2 3 3 3 4))
+    (314
+      (operation nonce-test (contracted (x3 y3) (a-0 a)) y3 (1 0)
+        (enc "okay" y3 y3 (pubk a)) (enc "okay" y3-1 y3 (pubk a))
+        (enc "okay" y3-2 y3 (pubk a)) (enc y3 y3 (pubk a)))
+      (strand-map 0 1 2 3 4 4 5)))
   (unrealized (1 0))
-  (comment "2 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a-0))))
+  (comment "4 in cohort - 1 not yet seen"))
+
+(defskeleton wonthull2
+  (vars (x3 y3 y3-0 y3-1 y3-2 text) (a name))
+  (defstrand init 2 (x1 y3) (x2 x3) (x3 y3) (x4 y3) (a a))
+  (defstrand resp 2 (y1 y3) (y2 x3) (y3 x3) (a a))
+  (defstrand resp 2 (y1 y3) (y2 x3) (y3 y3) (a a))
+  (defstrand resp 2 (y1 y3) (y2 y3) (y3 y3-0) (a a))
+  (defstrand resp 2 (y1 y3) (y2 y3) (y3 y3-1) (a a))
+  (defstrand resp 2 (y1 y3) (y2 x3) (y3 y3-2) (a a))
+  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((0 0) (4 0)) ((0 0) (5 0))
+    ((1 1) (0 1)) ((2 1) (0 1)) ((3 1) (0 1)) ((4 1) (1 0))
+    ((5 1) (1 0)))
+  (non-orig (privk a))
+  (uniq-orig y3)
+  (operation nonce-test (contracted (a-0 a)) y3 (1 0)
+    (enc "okay" y3-1 y3 (pubk a)) (enc "okay" y3-2 y3 (pubk a))
+    (enc y3 x3 (pubk a)) (enc y3 y3 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
+  (traces
+    ((send (cat (enc y3 y3 (pubk a)) (enc y3 x3 (pubk a))))
+      (recv (enc "okay" y3 y3 (pubk a))))
+    ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x3 y3 (pubk a))))
+    ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
+    ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
+    ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a))))
+    ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-2 y3 (pubk a)))))
+  (label 303)
+  (parent 207)
+  (seen 185)
+  (seen-ops
+    (185 (operation generalization deleted (3 0))
+      (strand-map 0 1 2 4 5)))
+  (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
+  (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 y3 y3-0 y3-1 text) (a name))
@@ -9355,12 +10489,13 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a)))))
-  (label 294)
-  (parent 202)
-  (seen 244)
+  (label 304)
+  (parent 209)
+  (seen 253)
   (seen-ops
-    (244 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
+    (253 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9388,13 +10523,14 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a)))))
-  (label 295)
-  (parent 203)
-  (seen 294)
+  (label 305)
+  (parent 210)
+  (seen 304)
   (seen-ops
-    (294 (operation generalization deleted (2 0))
+    (304 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9419,12 +10555,13 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 296)
-  (parent 206)
-  (seen 219)
+  (label 306)
+  (parent 213)
+  (seen 225)
   (seen-ops
-    (219 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (225 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9452,17 +10589,28 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 297)
-  (parent 206)
-  (seen 220)
+  (label 307)
+  (parent 213)
+  (seen 186 226 234)
   (seen-ops
-    (220
+    (186
+      (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2 2))
+    (226
       (operation nonce-test (displaced 6 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2 4)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2 4))
+    (234
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc "okay" y3-1 x1 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 4 4)))
   (unrealized (1 0))
-  (comment "2 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "4 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 text) (a name))
@@ -9486,12 +10634,13 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a)))))
-  (label 298)
-  (parent 207)
-  (seen 221)
+  (label 308)
+  (parent 214)
+  (seen 227)
   (seen-ops
-    (221 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (227 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9519,13 +10668,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 299)
-  (parent 208)
-  (seen 222)
+  (label 309)
+  (parent 215)
+  (seen 228)
   (seen-ops
-    (222 (operation generalization deleted (2 0))
+    (228 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9555,51 +10705,28 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 300)
-  (parent 208)
-  (seen 223)
+  (label 310)
+  (parent 215)
+  (seen 229 244 314)
   (seen-ops
-    (223
+    (229
       (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2 4 5)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2 4 5))
+    (244
+      (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2 4 2))
+    (314
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc "okay" y3-1 x1 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 4 5 4)))
   (unrealized (1 0))
-  (comment "2 in cohort - 1 not yet seen"))
-
-(defskeleton wonthull2
-  (vars (x3 x1 y3 y3-0 y3-1 text) (a name))
-  (defstrand init 2 (x1 x1) (x2 x3) (x3 x1) (x4 x1) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x3) (y3 x3) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x1) (y3 y3) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x1) (y3 x1) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x1) (y3 y3-0) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x3) (y3 y3-1) (a a))
-  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((0 0) (4 0)) ((0 0) (5 0))
-    ((1 1) (0 1)) ((2 1) (0 1)) ((3 1) (0 1)) ((4 1) (1 0))
-    ((5 1) (1 0)))
-  (non-orig (privk a))
-  (uniq-orig x1)
-  (operation nonce-test (contracted (a-0 a)) x1 (1 0)
-    (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
-    (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
-  (strand-map 0 1 2 3 4 5)
-  (traces
-    ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
-      (recv (enc "okay" x1 x1 (pubk a))))
-    ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
-    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
-    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
-    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
-    ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 301)
-  (parent 210)
-  (seen 224)
-  (seen-ops
-    (224 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 4 5)))
-  (realized)
-  (comment "1 in cohort - 0 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "4 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 y3-1 text) (a a-0 name))
@@ -9628,17 +10755,63 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 302)
-  (parent 210)
-  (seen 225)
+  (label 311)
+  (parent 217)
+  (seen 231 244 314)
   (seen-ops
-    (225
+    (231
       (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc "okay" y3-0 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2 4 5)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2 4 5))
+    (244
+      (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 2 2 4))
+    (314
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc "okay" y3-1 x1 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 4 4 5)))
   (unrealized (1 0))
-  (comment "2 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "4 in cohort - 1 not yet seen"))
+
+(defskeleton wonthull2
+  (vars (x3 x1 y3 y3-0 y3-1 text) (a name))
+  (defstrand init 2 (x1 x1) (x2 x3) (x3 x1) (x4 x1) (a a))
+  (defstrand resp 2 (y1 x1) (y2 x3) (y3 x3) (a a))
+  (defstrand resp 2 (y1 x1) (y2 x1) (y3 y3) (a a))
+  (defstrand resp 2 (y1 x1) (y2 x1) (y3 x1) (a a))
+  (defstrand resp 2 (y1 x1) (y2 x1) (y3 y3-0) (a a))
+  (defstrand resp 2 (y1 x1) (y2 x3) (y3 y3-1) (a a))
+  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((0 0) (4 0)) ((0 0) (5 0))
+    ((1 1) (0 1)) ((2 1) (0 1)) ((3 1) (0 1)) ((4 1) (1 0))
+    ((5 1) (1 0)))
+  (non-orig (privk a))
+  (uniq-orig x1)
+  (operation nonce-test (contracted (a-0 a)) x1 (1 0)
+    (enc "okay" y3-0 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+    (enc x1 x3 (pubk a)) (enc x1 x1 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
+  (traces
+    ((send (cat (enc x1 x1 (pubk a)) (enc x1 x3 (pubk a))))
+      (recv (enc "okay" x1 x1 (pubk a))))
+    ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
+    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
+    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
+    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
+    ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
+  (label 312)
+  (parent 217)
+  (seen 230)
+  (seen-ops
+    (230 (operation generalization deleted (2 0))
+      (strand-map 0 1 3 4 5)))
+  (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
+  (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 text) (a name))
@@ -9665,63 +10838,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 303)
-  (parent 211)
-  (seen 226)
+  (label 313)
+  (parent 218)
+  (seen 232)
   (seen-ops
-    (226 (operation generalization deleted (2 0))
+    (232 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
-  (comment "1 in cohort - 0 not yet seen"))
-
-(defskeleton wonthull2
-  (vars (x1 y3 text) (a name))
-  (defstrand init 2 (x1 x1) (x2 x1) (x3 x1) (x4 x1) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x1) (y3 x1) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x1) (y3 y3) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x1) (y3 x1) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x1) (y3 x1) (a a))
-  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((0 0) (4 0)) ((1 1) (0 1))
-    ((2 1) (1 0)) ((3 1) (0 1)) ((4 1) (1 0)))
-  (non-orig (privk a))
-  (uniq-orig x1)
-  (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x1 (1 0)
-    (enc "okay" x1 x1 (pubk a)) (enc "okay" y3 x1 (pubk a))
-    (enc x1 x1 (pubk a)))
-  (strand-map 0 1 2 3 4)
-  (traces
-    ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
-      (recv (enc "okay" x1 x1 (pubk a))))
-    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
-    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3 x1 (pubk a))))
-    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
-    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 304)
-  (parent 214)
-  (realized)
-  (comment "1 in cohort - 1 not yet seen"))
-
-(defskeleton wonthull2
-  (vars (x1 text) (a name))
-  (defstrand init 2 (x1 x1) (x2 x1) (x3 x1) (x4 x1) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x1) (y3 x1) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x1) (y3 x1) (a a))
-  (precedes ((0 0) (2 0)) ((1 1) (0 1)) ((2 1) (1 0)))
-  (non-orig (privk a))
-  (uniq-orig x1)
-  (operation generalization deleted (2 0))
-  (strand-map 0 1 3)
-  (traces
-    ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
-      (recv (enc "okay" x1 x1 (pubk a))))
-    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
-    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 305)
-  (parent 216)
-  (seen 68)
-  (seen-ops
-    (68 (operation generalization deleted (2 0)) (strand-map 0 1)))
-  (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9749,13 +10873,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 306)
-  (parent 217)
-  (seen 304)
+  (label 314)
+  (parent 223)
+  (seen 243)
   (seen-ops
-    (304 (operation generalization deleted (2 0))
+    (243 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x1) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9781,12 +10906,13 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a)))))
-  (label 307)
-  (parent 220)
-  (seen 221)
+  (label 315)
+  (parent 226)
+  (seen 227)
   (seen-ops
-    (221 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
+    (227 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9815,13 +10941,14 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a)))))
-  (label 308)
-  (parent 223)
-  (seen 307)
+  (label 316)
+  (parent 229)
+  (seen 315)
   (seen-ops
-    (307 (operation generalization deleted (2 0))
+    (315 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9850,13 +10977,14 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a)))))
-  (label 309)
-  (parent 225)
-  (seen 267)
+  (label 317)
+  (parent 231)
+  (seen 277)
   (seen-ops
-    (267 (operation generalization deleted (2 0))
+    (277 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9885,13 +11013,14 @@
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x1 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" x1 y3 (pubk a)))))
-  (label 310)
-  (parent 233)
-  (seen 266)
+  (label 318)
+  (parent 239)
+  (seen 276)
   (seen-ops
-    (266 (operation generalization deleted (3 0))
+    (276 (operation generalization deleted (3 0))
       (strand-map 0 1 2 4 5)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 x1) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9922,13 +11051,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 311)
-  (parent 238)
-  (seen 269)
+  (label 319)
+  (parent 246)
+  (seen 279)
   (seen-ops
-    (269 (operation generalization deleted (2 0))
+    (279 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5 6)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9957,13 +11087,14 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 312)
-  (parent 240)
-  (seen 267)
+  (label 320)
+  (parent 248)
+  (seen 277)
   (seen-ops
-    (267 (operation generalization deleted (2 0))
+    (277 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -9994,13 +11125,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 313)
-  (parent 242)
-  (seen 268)
+  (label 321)
+  (parent 249)
+  (seen 278)
   (seen-ops
-    (268 (operation generalization deleted (2 0))
+    (278 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5 6)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -10021,215 +11153,185 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 314)
-  (parent 243)
-  (seen 245)
-  (seen-ops
-    (245 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
-  (realized)
-  (comment "1 in cohort - 0 not yet seen"))
-
-(defskeleton wonthull2
-  (vars (x3 x1 text) (a name))
-  (defstrand init 2 (x1 x1) (x2 x3) (x3 x3) (x4 x3) (a a))
-  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
-  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x1) (a a))
-  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x1) (a a))
-  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((1 1) (0 1)) ((2 1) (0 1))
-    ((3 1) (1 0)))
-  (non-orig (privk a))
-  (uniq-orig x3)
-  (operation generalization deleted (2 0))
-  (strand-map 0 1 3 4)
-  (traces
-    ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
-      (recv (enc "okay" x3 x3 (pubk a))))
-    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a))))
-    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
-    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
-  (label 315)
-  (parent 248)
-  (seen 134)
-  (seen-ops
-    (134 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
-  (realized)
-  (comment "1 in cohort - 0 not yet seen"))
-
-(defskeleton wonthull2
-  (vars (x3 x1 text) (a name))
-  (defstrand init 2 (x1 x1) (x2 x3) (x3 x3) (x4 x1) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x3) (y3 x3) (a a))
-  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x1) (a a))
-  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x1) (a a))
-  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((1 1) (0 1)) ((2 1) (0 1))
-    ((3 1) (1 0)))
-  (non-orig (privk a))
-  (uniq-orig x3)
-  (operation generalization deleted (2 0))
-  (strand-map 0 1 3 4)
-  (traces
-    ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
-      (recv (enc "okay" x3 x1 (pubk a))))
-    ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
-    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
-    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
-  (label 316)
-  (parent 249)
-  (seen 135)
-  (seen-ops
-    (135 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
-  (realized)
-  (comment "1 in cohort - 0 not yet seen"))
-
-(defskeleton wonthull2
-  (vars (x3 x1 y3 text) (a name))
-  (defstrand init 2 (x1 x1) (x2 x3) (x3 x3) (x4 x3) (a a))
-  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
-  (defstrand resp 2 (y1 x3) (y2 x3) (y3 y3) (a a))
-  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x1) (a a))
-  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x1) (a a))
-  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
-  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((0 0) (4 0)) ((0 0) (5 0))
-    ((1 1) (0 1)) ((2 1) (1 0)) ((3 1) (0 1)) ((4 1) (1 0))
-    ((5 1) (1 0)))
-  (non-orig (privk a))
-  (uniq-orig x3)
-  (operation nonce-test (contracted (x1-0 x3) (a-0 a)) x3 (1 0)
-    (enc "okay" x3 x3 (pubk a)) (enc "okay" x1 x3 (pubk a))
-    (enc "okay" y3 x3 (pubk a)) (enc x3 x3 (pubk a))
-    (enc x1 x3 (pubk a)))
-  (strand-map 0 1 2 3 4 5)
-  (traces
-    ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
-      (recv (enc "okay" x3 x3 (pubk a))))
-    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a))))
-    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
-    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
-    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
-    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 317)
-  (parent 250)
-  (realized)
-  (comment "1 in cohort - 1 not yet seen"))
-
-(defskeleton wonthull2
-  (vars (x3 x1 y3 text) (a name))
-  (defstrand init 2 (x1 x1) (x2 x3) (x3 x3) (x4 x1) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x3) (y3 x3) (a a))
-  (defstrand resp 2 (y1 x3) (y2 x3) (y3 y3) (a a))
-  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x1) (a a))
-  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x1) (a a))
-  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
-  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((0 0) (4 0)) ((0 0) (5 0))
-    ((1 1) (0 1)) ((2 1) (1 0)) ((3 1) (0 1)) ((4 1) (1 0))
-    ((5 1) (1 0)))
-  (non-orig (privk a))
-  (uniq-orig x3)
-  (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x3 (1 0)
-    (enc "okay" x3 x3 (pubk a)) (enc "okay" x1 x3 (pubk a))
-    (enc "okay" y3 x3 (pubk a)) (enc x3 x3 (pubk a))
-    (enc x1 x3 (pubk a)))
-  (strand-map 0 1 2 3 4 5)
-  (traces
-    ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
-      (recv (enc "okay" x3 x1 (pubk a))))
-    ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
-    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
-    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
-    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
-    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 318)
-  (parent 250)
-  (realized)
-  (comment "1 in cohort - 1 not yet seen"))
-
-(defskeleton wonthull2
-  (vars (x3 x1 text) (a name))
-  (defstrand init 2 (x1 x1) (x2 x3) (x3 x3) (x4 x1) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x3) (y3 x3) (a a))
-  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x1) (a a))
-  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
-  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((1 1) (0 1)) ((2 1) (0 1))
-    ((3 1) (1 0)))
-  (non-orig (privk a))
-  (uniq-orig x3)
-  (operation generalization deleted (2 0))
-  (strand-map 0 1 3 4)
-  (traces
-    ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
-      (recv (enc "okay" x3 x1 (pubk a))))
-    ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
-    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
-    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 319)
-  (parent 251)
-  (seen 139)
-  (seen-ops
-    (139 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
-  (realized)
-  (comment "1 in cohort - 0 not yet seen"))
-
-(defskeleton wonthull2
-  (vars (x3 x1 text) (a name))
-  (defstrand init 2 (x1 x1) (x2 x3) (x3 x3) (x4 x3) (a a))
-  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
-  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x1) (a a))
-  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
-  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((1 1) (0 1)) ((2 1) (0 1))
-    ((3 1) (1 0)))
-  (non-orig (privk a))
-  (uniq-orig x3)
-  (operation generalization deleted (2 0))
-  (strand-map 0 1 3 4)
-  (traces
-    ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
-      (recv (enc "okay" x3 x3 (pubk a))))
-    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a))))
-    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
-    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 320)
+  (label 322)
   (parent 252)
+  (seen 254)
+  (seen-ops
+    (254 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
+  (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
+  (comment "1 in cohort - 0 not yet seen"))
+
+(defskeleton wonthull2
+  (vars (x3 x1 text) (a name))
+  (defstrand init 2 (x1 x1) (x2 x3) (x3 x3) (x4 x3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x1) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x1) (a a))
+  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((1 1) (0 1)) ((2 1) (0 1))
+    ((3 1) (1 0)))
+  (non-orig (privk a))
+  (uniq-orig x3)
+  (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4)
+  (traces
+    ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
+      (recv (enc "okay" x3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
+  (label 323)
+  (parent 257)
+  (seen 137)
+  (seen-ops
+    (137 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
+  (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
+  (comment "1 in cohort - 0 not yet seen"))
+
+(defskeleton wonthull2
+  (vars (x3 x1 text) (a name))
+  (defstrand init 2 (x1 x1) (x2 x3) (x3 x3) (x4 x1) (a a))
+  (defstrand resp 2 (y1 x1) (y2 x3) (y3 x3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x1) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x1) (a a))
+  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((1 1) (0 1)) ((2 1) (0 1))
+    ((3 1) (1 0)))
+  (non-orig (privk a))
+  (uniq-orig x3)
+  (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4)
+  (traces
+    ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
+      (recv (enc "okay" x3 x1 (pubk a))))
+    ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a)))))
+  (label 324)
+  (parent 258)
   (seen 138)
   (seen-ops
     (138 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
-  (vars (x3 x1 y3 y3-0 text) (a name))
+  (vars (x3 x1 y3 text) (a name))
   (defstrand init 2 (x1 x1) (x2 x3) (x3 x3) (x4 x3) (a a))
   (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
   (defstrand resp 2 (y1 x3) (y2 x3) (y3 y3) (a a))
   (defstrand resp 2 (y1 x3) (y2 x3) (y3 x1) (a a))
-  (defstrand resp 2 (y1 x3) (y2 x3) (y3 y3-0) (a a))
   (defstrand resp 2 (y1 x3) (y2 x3) (y3 x1) (a a))
   (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
   (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((0 0) (4 0)) ((0 0) (5 0))
-    ((0 0) (6 0)) ((1 1) (0 1)) ((2 1) (0 1)) ((3 1) (0 1))
-    ((4 1) (1 0)) ((5 1) (1 0)) ((6 1) (1 0)))
+    ((1 1) (0 1)) ((2 1) (1 0)) ((3 1) (0 1)) ((4 1) (1 0))
+    ((5 1) (1 0)))
   (non-orig (privk a))
   (uniq-orig x3)
   (operation nonce-test (contracted (x1-0 x3) (a-0 a)) x3 (1 0)
     (enc "okay" x3 x3 (pubk a)) (enc "okay" x1 x3 (pubk a))
-    (enc "okay" y3-0 x3 (pubk a)) (enc x3 x3 (pubk a))
+    (enc "okay" y3 x3 (pubk a)) (enc x3 x3 (pubk a))
     (enc x1 x3 (pubk a)))
-  (strand-map 0 1 2 3 4 5 6)
+  (strand-map 0 1 2 3 4 5)
   (traces
     ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
       (recv (enc "okay" x3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
-    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 321)
-  (parent 255)
-  (seen 317)
-  (seen-ops
-    (317 (operation generalization deleted (2 0))
-      (strand-map 0 1 3 4 5 6)))
+  (label 325)
+  (parent 259)
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton wonthull2
+  (vars (x3 x1 y3 text) (a name))
+  (defstrand init 2 (x1 x1) (x2 x3) (x3 x3) (x4 x1) (a a))
+  (defstrand resp 2 (y1 x1) (y2 x3) (y3 x3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 y3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x1) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x1) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
+  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((0 0) (4 0)) ((0 0) (5 0))
+    ((1 1) (0 1)) ((2 1) (1 0)) ((3 1) (0 1)) ((4 1) (1 0))
+    ((5 1) (1 0)))
+  (non-orig (privk a))
+  (uniq-orig x3)
+  (operation nonce-test (contracted (x1-0 x1) (a-0 a)) x3 (1 0)
+    (enc "okay" x3 x3 (pubk a)) (enc "okay" x1 x3 (pubk a))
+    (enc "okay" y3 x3 (pubk a)) (enc x3 x3 (pubk a))
+    (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3 4 5)
+  (traces
+    ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
+      (recv (enc "okay" x3 x1 (pubk a))))
+    ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
+  (label 326)
+  (parent 259)
+  (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
+  (comment "1 in cohort - 1 not yet seen"))
+
+(defskeleton wonthull2
+  (vars (x3 x1 text) (a name))
+  (defstrand init 2 (x1 x1) (x2 x3) (x3 x3) (x4 x1) (a a))
+  (defstrand resp 2 (y1 x1) (y2 x3) (y3 x3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x1) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
+  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((1 1) (0 1)) ((2 1) (0 1))
+    ((3 1) (1 0)))
+  (non-orig (privk a))
+  (uniq-orig x3)
+  (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4)
+  (traces
+    ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
+      (recv (enc "okay" x3 x1 (pubk a))))
+    ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x3 x1 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
+  (label 327)
+  (parent 260)
+  (seen 142)
+  (seen-ops
+    (142 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
+  (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
+  (comment "1 in cohort - 0 not yet seen"))
+
+(defskeleton wonthull2
+  (vars (x3 x1 text) (a name))
+  (defstrand init 2 (x1 x1) (x2 x3) (x3 x3) (x4 x3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x1) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
+  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((1 1) (0 1)) ((2 1) (0 1))
+    ((3 1) (1 0)))
+  (non-orig (privk a))
+  (uniq-orig x3)
+  (operation generalization deleted (2 0))
+  (strand-map 0 1 3 4)
+  (traces
+    ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
+      (recv (enc "okay" x3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
+  (label 328)
+  (parent 261)
+  (seen 141)
+  (seen-ops
+    (141 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
+  (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -10260,13 +11362,88 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 322)
-  (parent 255)
-  (seen 318)
+  (label 329)
+  (parent 264)
+  (seen 326)
   (seen-ops
-    (318 (operation generalization deleted (2 0))
+    (326 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5 6)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
+  (comment "1 in cohort - 0 not yet seen"))
+
+(defskeleton wonthull2
+  (vars (x3 x1 y3 y3-0 text) (a name))
+  (defstrand init 2 (x1 x1) (x2 x3) (x3 x3) (x4 x3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 y3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x1) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 y3-0) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x1) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
+  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((0 0) (4 0)) ((0 0) (5 0))
+    ((0 0) (6 0)) ((1 1) (0 1)) ((2 1) (0 1)) ((3 1) (0 1))
+    ((4 1) (1 0)) ((5 1) (1 0)) ((6 1) (1 0)))
+  (non-orig (privk a))
+  (uniq-orig x3)
+  (operation nonce-test (contracted (x1-0 x3) (a-0 a)) x3 (1 0)
+    (enc "okay" x3 x3 (pubk a)) (enc "okay" x1 x3 (pubk a))
+    (enc "okay" y3-0 x3 (pubk a)) (enc x3 x3 (pubk a))
+    (enc x1 x3 (pubk a)))
+  (strand-map 0 1 2 3 4 5 6)
+  (traces
+    ((send (cat (enc x1 x3 (pubk a)) (enc x3 x3 (pubk a))))
+      (recv (enc "okay" x3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
+  (label 330)
+  (parent 264)
+  (seen 325)
+  (seen-ops
+    (325 (operation generalization deleted (2 0))
+      (strand-map 0 1 3 4 5 6)))
+  (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
+  (comment "1 in cohort - 0 not yet seen"))
+
+(defskeleton wonthull2
+  (vars (x3 y3 y3-0 text) (a a-0 name))
+  (defstrand init 2 (x1 x3) (x2 x3) (x3 x3) (x4 x3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a-0))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 y3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 y3-0) (a a))
+  (defstrand resp 2 (y1 x3) (y2 x3) (y3 x3) (a a))
+  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((0 0) (4 0)) ((0 0) (5 0))
+    ((1 1) (0 1)) ((2 1) (1 0)) ((3 1) (0 1)) ((4 1) (0 1))
+    ((5 1) (1 0)))
+  (non-orig (privk a))
+  (uniq-orig x3)
+  (operation nonce-test (added-strand resp 2) x3 (1 0)
+    (enc "okay" y3 x3 (pubk a)) (enc x3 x3 (pubk a)))
+  (strand-map 0 1 2 3 4)
+  (traces
+    ((send (cat (enc x3 x3 (pubk a)) (enc x3 x3 (pubk a))))
+      (recv (enc "okay" x3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a-0))) (send (enc "okay" x3 x3 (pubk a-0))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" y3-0 x3 (pubk a))))
+    ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
+  (label 331)
+  (parent 267)
+  (seen 314)
+  (seen-ops
+    (314
+      (operation nonce-test (contracted (a-0 a)) x3 (1 0)
+        (enc "okay" x3 x3 (pubk a)) (enc "okay" y3 x3 (pubk a))
+        (enc x3 x3 (pubk a))) (strand-map 0 1 2 3 4 5)))
+  (unrealized (1 0))
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x3) (x3-0 x3) (a-0 a-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -10296,13 +11473,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 323)
-  (parent 258)
-  (seen 288)
+  (label 332)
+  (parent 268)
+  (seen 298)
   (seen-ops
-    (288 (operation generalization deleted (2 0))
+    (298 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5 6)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -10335,22 +11513,33 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-2 x1 (pubk a)))))
-  (label 324)
-  (parent 258)
-  (seen 238 289)
+  (label 333)
+  (parent 268)
+  (seen 246 299 314 331)
   (seen-ops
-    (238
+    (246
       (operation nonce-test (displaced 8 4 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 4 5 6))
-    (289
+    (299
       (operation nonce-test (displaced 8 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc "okay" y3-2 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5 6 2)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5 6 2))
+    (314
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc "okay" y3-1 x1 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 2 4 5 4))
+    (331
+      (operation nonce-test (displaced 8 4 resp 2) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+        (enc "okay" y3-2 x1 (pubk a)) (enc x1 x3 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 4 5 4)))
   (unrealized (1 0))
-  (comment "3 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "5 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 y3-1 text) (a name))
@@ -10377,13 +11566,14 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 325)
-  (parent 260)
-  (seen 290)
+  (label 334)
+  (parent 270)
+  (seen 300)
   (seen-ops
-    (290 (operation generalization deleted (2 0))
+    (300 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -10413,22 +11603,33 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-2 x1 (pubk a)))))
-  (label 326)
-  (parent 260)
-  (seen 240 291)
+  (label 335)
+  (parent 270)
+  (seen 234 248 251 301)
   (seen-ops
-    (240
+    (234
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc "okay" y3-1 x1 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 2 4 4))
+    (248
       (operation nonce-test (displaced 7 4 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 4 5))
-    (291
+    (251
+      (operation nonce-test (displaced 7 4 resp 2) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+        (enc "okay" y3-2 x1 (pubk a)) (enc x1 x3 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 4 4))
+    (301
       (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc "okay" y3-2 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5 2)))
   (unrealized (1 0))
-  (comment "3 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "5 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 y3-1 y3-2 text) (a a-0 name))
@@ -10460,22 +11661,33 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-2 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 327)
-  (parent 261)
-  (seen 242 293)
+  (label 336)
+  (parent 271)
+  (seen 249 302 314 331)
   (seen-ops
-    (242
+    (249
       (operation nonce-test (displaced 8 4 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 4 5 6))
-    (293
+    (302
       (operation nonce-test (displaced 8 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc "okay" y3-2 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5 2 6)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5 2 6))
+    (314
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc "okay" y3-1 x1 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 3 2 4 4 5))
+    (331
+      (operation nonce-test (displaced 8 4 resp 2) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+        (enc "okay" y3-2 x1 (pubk a)) (enc x1 x3 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 4 4 5)))
   (unrealized (1 0))
-  (comment "3 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "5 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 y3-1 y3-2 text) (a name))
@@ -10504,13 +11716,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-2 x1 (pubk a)))))
-  (label 328)
-  (parent 261)
-  (seen 292)
+  (label 337)
+  (parent 271)
+  (seen 303)
   (seen-ops
-    (292 (operation generalization deleted (2 0))
+    (303 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5 6)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -10538,13 +11751,14 @@
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 329)
-  (parent 263)
-  (seen 294)
+  (label 338)
+  (parent 273)
+  (seen 304)
   (seen-ops
-    (294 (operation generalization deleted (2 0))
+    (304 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -10574,13 +11788,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 330)
-  (parent 264)
-  (seen 295)
+  (label 339)
+  (parent 274)
+  (seen 305)
   (seen-ops
-    (295 (operation generalization deleted (2 0))
+    (305 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5 6)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -10608,13 +11823,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 331)
-  (parent 273)
-  (seen 296)
+  (label 340)
+  (parent 283)
+  (seen 306)
   (seen-ops
-    (296 (operation generalization deleted (2 0))
+    (306 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -10644,22 +11860,33 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-2 x1 (pubk a)))))
-  (label 332)
-  (parent 273)
-  (seen 281 297)
+  (label 341)
+  (parent 283)
+  (seen 234 251 291 307)
   (seen-ops
-    (281
+    (234
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc "okay" y3-1 x1 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 2 3 4 4))
+    (251
+      (operation nonce-test (displaced 7 3 resp 2) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+        (enc "okay" y3-2 x1 (pubk a)) (enc x1 x3 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 3 3))
+    (291
       (operation nonce-test (displaced 7 3 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 3 5))
-    (297
+    (307
       (operation nonce-test (displaced 7 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc "okay" y3-2 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5 2)))
   (unrealized (1 0))
-  (comment "3 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "5 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 y3-1 text) (a name))
@@ -10686,13 +11913,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 333)
-  (parent 274)
-  (seen 298)
+  (label 342)
+  (parent 284)
+  (seen 308)
   (seen-ops
-    (298 (operation generalization deleted (2 0))
+    (308 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -10722,13 +11950,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 334)
-  (parent 275)
-  (seen 299)
+  (label 343)
+  (parent 285)
+  (seen 309)
   (seen-ops
-    (299 (operation generalization deleted (2 0))
+    (309 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5 6)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -10761,22 +11990,33 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-2 x1 (pubk a)))))
-  (label 335)
-  (parent 275)
-  (seen 284 300)
+  (label 344)
+  (parent 285)
+  (seen 294 310 314 331)
   (seen-ops
-    (284
+    (294
       (operation nonce-test (displaced 8 3 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 3 5 6))
-    (300
+    (310
       (operation nonce-test (displaced 8 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc "okay" y3-2 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5 6 2)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5 6 2))
+    (314
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc "okay" y3-1 x1 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 2 3 4 5 4))
+    (331
+      (operation nonce-test (displaced 8 3 resp 2) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+        (enc "okay" y3-2 x1 (pubk a)) (enc x1 x3 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 3 5 3)))
   (unrealized (1 0))
-  (comment "3 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "5 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 y3-1 y3-2 text) (a a-0 name))
@@ -10808,22 +12048,33 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-2 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 336)
-  (parent 277)
-  (seen 286 302)
+  (label 345)
+  (parent 287)
+  (seen 295 311 314 331)
   (seen-ops
-    (286
+    (295
       (operation nonce-test (displaced 8 3 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-2 x1 (pubk a))
         (enc "okay" y3-1 x1 (pubk a)) (enc x1 x3 (pubk a))
         (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 3 5 6))
-    (302
+    (311
       (operation nonce-test (displaced 8 2 resp 2) x1 (1 0)
         (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
         (enc "okay" y3-2 x1 (pubk a)) (enc x1 x3 (pubk a))
-        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5 2 6)))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 5 2 6))
+    (314
+      (operation nonce-test (contracted (x3 x1) (a-0 a)) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-0 x1 (pubk a))
+        (enc "okay" y3-1 x1 (pubk a)) (enc x1 x1 (pubk a)))
+      (strand-map 0 1 2 2 3 4 4 5))
+    (331
+      (operation nonce-test (displaced 8 3 resp 2) x1 (1 0)
+        (enc "okay" x1 x1 (pubk a)) (enc "okay" y3-1 x1 (pubk a))
+        (enc "okay" y3-2 x1 (pubk a)) (enc x1 x3 (pubk a))
+        (enc x1 x1 (pubk a))) (strand-map 0 1 2 3 4 3 3 5)))
   (unrealized (1 0))
-  (comment "3 in cohort - 1 not yet seen"))
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a-0))))
+  (comment "5 in cohort - 1 not yet seen"))
 
 (defskeleton wonthull2
   (vars (x3 x1 y3 y3-0 y3-1 y3-2 text) (a name))
@@ -10852,13 +12103,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-2 x1 (pubk a)))))
-  (label 337)
-  (parent 277)
-  (seen 301)
+  (label 346)
+  (parent 287)
+  (seen 312)
   (seen-ops
-    (301 (operation generalization deleted (2 0))
+    (312 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5 6)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -10888,13 +12140,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 338)
-  (parent 278)
-  (seen 303)
+  (label 347)
+  (parent 288)
+  (seen 313)
   (seen-ops
-    (303 (operation generalization deleted (2 0))
+    (313 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5 6)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -10926,13 +12179,15 @@
       (send (enc "okay" y3-1 y3-0 (pubk a))))
     ((recv (enc y3-0 x3 (pubk a)))
       (send (enc "okay" y3-2 y3-0 (pubk a)))))
-  (label 339)
-  (parent 281)
-  (seen 307)
+  (label 348)
+  (parent 291)
+  (seen 315)
   (seen-ops
-    (307 (operation generalization deleted (2 0))
+    (315 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps
+    ((0 1) ((x1 y3-0) (x3 x3) (a a) (x1-0 y3-0) (x3-0 y3-0) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -10967,13 +12222,15 @@
       (send (enc "okay" y3-0 y3-0 (pubk a))))
     ((recv (enc y3-0 x3 (pubk a)))
       (send (enc "okay" y3-2 y3-0 (pubk a)))))
-  (label 340)
-  (parent 284)
-  (seen 308)
+  (label 349)
+  (parent 294)
+  (seen 316)
   (seen-ops
-    (308 (operation generalization deleted (2 0))
+    (316 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5 6)))
   (realized)
+  (maps
+    ((0 1) ((x1 y3-0) (x3 x3) (a a) (x1-0 y3-0) (x3-0 y3-0) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -11008,13 +12265,15 @@
       (send (enc "okay" y3-2 y3-0 (pubk a))))
     ((recv (enc y3-0 x3 (pubk a)))
       (send (enc "okay" y3-0 y3-0 (pubk a)))))
-  (label 341)
-  (parent 286)
-  (seen 309)
+  (label 350)
+  (parent 295)
+  (seen 317)
   (seen-ops
-    (309 (operation generalization deleted (2 0))
+    (317 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5 6)))
   (realized)
+  (maps
+    ((0 1) ((x1 y3-0) (x3 x3) (a a) (x1-0 y3-0) (x3-0 y3-0) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -11045,13 +12304,14 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-2 y3 (pubk a)))))
-  (label 342)
-  (parent 289)
-  (seen 345)
+  (label 351)
+  (parent 299)
+  (seen 354)
   (seen-ops
-    (345 (operation generalization deleted (2 0))
+    (354 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5 6)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -11080,13 +12340,14 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-0 y3 (pubk a))))
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-2 y3 (pubk a)))))
-  (label 343)
-  (parent 291)
-  (seen 267)
+  (label 352)
+  (parent 301)
+  (seen 277)
   (seen-ops
-    (267 (operation generalization deleted (3 0))
+    (277 (operation generalization deleted (3 0))
       (strand-map 0 1 2 4 5)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -11117,13 +12378,14 @@
     ((recv (enc y3 y3 (pubk a))) (send (enc "okay" y3-1 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3-2 y3 (pubk a))))
     ((recv (enc y3 x3 (pubk a))) (send (enc "okay" y3 y3 (pubk a)))))
-  (label 344)
-  (parent 293)
-  (seen 343)
+  (label 353)
+  (parent 302)
+  (seen 352)
   (seen-ops
-    (343 (operation generalization deleted (2 0))
+    (352 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5 6)))
   (realized)
+  (maps ((0 1) ((x1 y3) (x3 x3) (a a) (x1-0 y3) (x3-0 y3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -11152,13 +12414,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 345)
-  (parent 297)
-  (seen 307)
+  (label 354)
+  (parent 307)
+  (seen 315)
   (seen-ops
-    (307 (operation generalization deleted (2 0))
+    (315 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -11189,13 +12452,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a)))))
-  (label 346)
-  (parent 300)
-  (seen 308)
+  (label 355)
+  (parent 310)
+  (seen 316)
   (seen-ops
-    (308 (operation generalization deleted (2 0))
+    (316 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5 6)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -11226,39 +12490,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 347)
-  (parent 302)
-  (seen 309)
+  (label 356)
+  (parent 311)
+  (seen 317)
   (seen-ops
-    (309 (operation generalization deleted (2 0))
+    (317 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5 6)))
   (realized)
-  (comment "1 in cohort - 0 not yet seen"))
-
-(defskeleton wonthull2
-  (vars (x1 text) (a name))
-  (defstrand init 2 (x1 x1) (x2 x1) (x3 x1) (x4 x1) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x1) (y3 x1) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x1) (y3 x1) (a a))
-  (defstrand resp 2 (y1 x1) (y2 x1) (y3 x1) (a a))
-  (precedes ((0 0) (2 0)) ((0 0) (3 0)) ((1 1) (0 1)) ((2 1) (0 1))
-    ((3 1) (1 0)))
-  (non-orig (privk a))
-  (uniq-orig x1)
-  (operation generalization deleted (2 0))
-  (strand-map 0 1 3 4)
-  (traces
-    ((send (cat (enc x1 x1 (pubk a)) (enc x1 x1 (pubk a))))
-      (recv (enc "okay" x1 x1 (pubk a))))
-    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
-    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
-    ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 348)
-  (parent 304)
-  (seen 305)
-  (seen-ops
-    (305 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
-  (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -11281,12 +12520,13 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 349)
-  (parent 317)
-  (seen 230)
+  (label 357)
+  (parent 325)
+  (seen 236)
   (seen-ops
-    (230 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (236 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 x3) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -11309,12 +12549,13 @@
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x1 x3 (pubk a))))
     ((recv (enc x3 x3 (pubk a))) (send (enc "okay" x3 x3 (pubk a)))))
-  (label 350)
-  (parent 318)
-  (seen 231)
+  (label 358)
+  (parent 326)
+  (seen 237)
   (seen-ops
-    (231 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
+    (237 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x3) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -11348,13 +12589,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-2 x1 (pubk a)))))
-  (label 351)
-  (parent 324)
-  (seen 342)
+  (label 359)
+  (parent 333)
+  (seen 351)
   (seen-ops
-    (342 (operation generalization deleted (2 0))
+    (351 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5 6 7)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -11385,13 +12627,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-0 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-2 x1 (pubk a)))))
-  (label 352)
-  (parent 326)
-  (seen 343)
+  (label 360)
+  (parent 335)
+  (seen 352)
   (seen-ops
-    (343 (operation generalization deleted (2 0))
+    (352 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5 6)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -11425,13 +12668,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-2 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 353)
-  (parent 327)
-  (seen 344)
+  (label 361)
+  (parent 336)
+  (seen 353)
   (seen-ops
-    (344 (operation generalization deleted (2 0))
+    (353 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5 6 7)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -11462,13 +12706,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-2 x1 (pubk a)))))
-  (label 354)
-  (parent 332)
-  (seen 345)
+  (label 362)
+  (parent 341)
+  (seen 354)
   (seen-ops
-    (345 (operation generalization deleted (2 0))
+    (354 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5 6)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -11502,13 +12747,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" x1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-2 x1 (pubk a)))))
-  (label 355)
-  (parent 335)
-  (seen 346)
+  (label 363)
+  (parent 344)
+  (seen 355)
   (seen-ops
-    (346 (operation generalization deleted (2 0))
+    (355 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5 6 7)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton wonthull2
@@ -11542,13 +12788,14 @@
     ((recv (enc x1 x1 (pubk a))) (send (enc "okay" y3-1 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" y3-2 x1 (pubk a))))
     ((recv (enc x1 x3 (pubk a))) (send (enc "okay" x1 x1 (pubk a)))))
-  (label 356)
-  (parent 336)
-  (seen 347)
+  (label 364)
+  (parent 345)
+  (seen 356)
   (seen-ops
-    (347 (operation generalization deleted (2 0))
+    (356 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5 6 7)))
   (realized)
+  (maps ((0 1) ((x1 x1) (x3 x3) (a a) (x1-0 x1) (x3-0 x1) (a-0 a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

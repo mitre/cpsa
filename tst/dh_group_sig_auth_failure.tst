@@ -1,7 +1,7 @@
 (herald "Signed group DH exchange (version with auth failure)"
   (algebra diffie-hellman) (limit 100))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/dh_group_sig_auth_failure.scm")
 (comment "Step count limited to 100")
 
@@ -66,6 +66,10 @@
           (privk a)))))
   (label 0)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((a a) (b b) (x x) (y y) (alpha alpha) (group group)
+        (group-dist group-dist))))
   (origs)
   (ugens (x (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
@@ -99,6 +103,10 @@
   (label 1)
   (parent 0)
   (unrealized (0 2))
+  (maps
+    ((0)
+      ((a a) (b b) (x x) (y y) (alpha alpha) (group group)
+        (group-dist group-dist))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_sig
@@ -139,6 +147,10 @@
   (label 2)
   (parent 1)
   (unrealized (2 0))
+  (maps
+    ((0)
+      ((a a) (b b) (x x) (y (mul y (rec alpha) alpha-0)) (alpha alpha)
+        (group group) (group-dist group-dist))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dh_sig
@@ -297,6 +309,10 @@
           (privk a)))))
   (label 5)
   (unrealized (0 0) (0 1) (0 3))
+  (maps
+    ((0)
+      ((a a) (b b) (y y) (x x) (alpha alpha) (group group)
+        (group-dist group-dist))))
   (origs)
   (ugens (y (0 2)))
   (comment "1 in cohort - 1 not yet seen"))
@@ -330,6 +346,10 @@
   (label 6)
   (parent 5)
   (unrealized (0 1) (0 3))
+  (maps
+    ((0)
+      ((a a) (b b) (y y) (x x) (alpha alpha) (group group)
+        (group-dist group-dist))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_sig
@@ -365,6 +385,10 @@
   (label 7)
   (parent 6)
   (unrealized (0 3) (2 0))
+  (maps
+    ((0)
+      ((a a) (b b) (y y) (x (mul (rec alpha) x alpha-0)) (alpha alpha)
+        (group group) (group-dist group-dist))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dh_sig
@@ -400,6 +424,10 @@
   (label 8)
   (parent 7)
   (unrealized (0 3))
+  (maps
+    ((0)
+      ((a a) (b b) (y y) (x x) (alpha alpha) (group group)
+        (group-dist group-dist))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_sig
@@ -439,6 +467,10 @@
   (label 9)
   (parent 7)
   (unrealized (0 3))
+  (maps
+    ((0)
+      ((a a) (b b) (y y) (x (mul (rec alpha) x alpha-0)) (alpha alpha)
+        (group group) (group-dist group-dist))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_sig

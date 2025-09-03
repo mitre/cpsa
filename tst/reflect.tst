@@ -1,6 +1,6 @@
 (herald reflect)
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/reflect.scm")
 
 (defprotocol reflect basic
@@ -24,6 +24,7 @@
   (traces ((recv (enc b (invk a)))))
   (label 0)
   (unrealized (0 0))
+  (maps ((0) ((a a) (b b))))
   (origs)
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -58,6 +59,7 @@
   (label 2)
   (parent 0)
   (unrealized (1 0))
+  (maps ((0) ((a a) (b b))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton reflect
@@ -96,6 +98,7 @@
   (label 4)
   (parent 2)
   (unrealized (2 0))
+  (maps ((0) ((a a) (b b))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton reflect
@@ -116,6 +119,7 @@
   (label 5)
   (parent 4)
   (realized)
+  (maps ((0) ((a a) (b b))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton reflect
@@ -141,6 +145,7 @@
       (operation encryption-test (added-strand resp 2) (enc a (invk b))
         (3 0)) (strand-map 0 1 2 1)))
   (unrealized (3 0))
+  (maps ((0) ((a a) (b b))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton reflect
@@ -161,6 +166,7 @@
   (seen-ops
     (1 (operation generalization deleted (1 0)) (strand-map 0 2)))
   (realized)
+  (maps ((0) ((a a) (b b))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
@@ -186,6 +192,7 @@
   (traces ((send (enc b (invk a))) (recv (enc a (invk b)))))
   (label 8)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b))))
   (origs)
   (comment "3 in cohort - 3 not yet seen"))
 
@@ -236,6 +243,7 @@
   (label 11)
   (parent 8)
   (unrealized (1 0))
+  (maps ((0) ((a a) (b b))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton reflect
@@ -292,6 +300,7 @@
   (label 14)
   (parent 11)
   (unrealized (2 0))
+  (maps ((0) ((a a) (b b))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton reflect
@@ -310,6 +319,7 @@
   (seen 9)
   (seen-ops (9 (operation generalization deleted (1 0)) (strand-map 0)))
   (realized)
+  (maps ((0) ((a b) (b b))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton reflect
@@ -330,6 +340,7 @@
   (label 16)
   (parent 14)
   (realized)
+  (maps ((0) ((a a) (b b))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton reflect
@@ -355,6 +366,7 @@
       (operation encryption-test (added-strand resp 2) (enc b (invk a))
         (3 0)) (strand-map 0 1 2 1)))
   (unrealized (3 0))
+  (maps ((0) ((a a) (b b))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton reflect
@@ -375,6 +387,7 @@
   (seen-ops
     (10 (operation generalization deleted (1 0)) (strand-map 0 2)))
   (realized)
+  (maps ((0) ((a a) (b b))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
@@ -400,6 +413,7 @@
   (traces ((recv (enc (invk b) (invk a)))))
   (label 19)
   (unrealized (0 0))
+  (maps ((0) ((a a) (b b))))
   (origs)
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -435,6 +449,7 @@
   (label 21)
   (parent 19)
   (unrealized (1 0))
+  (maps ((0) ((a a) (b b))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton reflect
@@ -473,6 +488,7 @@
   (label 23)
   (parent 21)
   (unrealized (2 0))
+  (maps ((0) ((a a) (b (invk b)))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton reflect
@@ -493,6 +509,7 @@
   (label 24)
   (parent 23)
   (realized)
+  (maps ((0) ((a a) (b (invk b)))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton reflect
@@ -518,6 +535,7 @@
       (operation encryption-test (added-strand resp 2) (enc a (invk b))
         (3 0)) (strand-map 0 1 2 1)))
   (unrealized (3 0))
+  (maps ((0) ((a a) (b (invk b)))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton reflect
@@ -538,6 +556,7 @@
   (seen-ops
     (20 (operation generalization deleted (1 0)) (strand-map 0 2)))
   (realized)
+  (maps ((0) ((a a) (b (invk b)))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

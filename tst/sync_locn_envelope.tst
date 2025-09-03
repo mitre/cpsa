@@ -1,7 +1,7 @@
 (herald "Envelope Protocol, location-based version" (check-nonces)
   (bound 30) (limit 6000))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/sync_locn_envelope.scm")
 (comment "Step count limited to 6000")
 (comment "Strand count bounded at 30")
@@ -151,6 +151,10 @@
   (label 0)
   (unrealized (0 0) (1 3))
   (preskeleton)
+  (maps
+    ((0 1)
+      ((v v) (n n) (pcr-id pcr-id) (nonce nonce) (k k) (aik aik)
+        (tpm tpm) (tpmconf tpmconf))))
   (origs (v (1 4)) (n (1 1)))
   (comment "Not a skeleton"))
 
@@ -172,6 +176,10 @@
   (label 1)
   (parent 0)
   (unrealized (1 3))
+  (maps
+    ((0 1)
+      ((v v) (n n) (pcr-id pcr-id) (nonce nonce) (k k) (aik aik)
+        (tpm tpm) (tpmconf tpmconf))))
   (origs (v (1 4)) (n (1 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -202,6 +210,10 @@
   (label 2)
   (parent 1)
   (unrealized (0 0) (2 0))
+  (maps
+    ((0 1)
+      ((v v) (n n) (pcr-id pcr-id) (nonce nonce) (k k) (aik aik)
+        (tpm tpm) (tpmconf tpmconf))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -231,6 +243,10 @@
   (label 3)
   (parent 2)
   (unrealized (0 0) (1 0))
+  (maps
+    ((0 1)
+      ((v v) (n n) (pcr-id pcr-id) (nonce nonce) (k k) (aik aik)
+        (tpm tpm) (tpmconf tpmconf))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -261,6 +277,10 @@
   (label 4)
   (parent 3)
   (unrealized (0 0))
+  (maps
+    ((0 1)
+      ((v v) (n n) (pcr-id pcr-id) (nonce nonce) (k k) (aik aik)
+        (tpm tpm) (tpmconf tpmconf))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -297,6 +317,10 @@
   (label 5)
   (parent 4)
   (unrealized (4 1))
+  (maps
+    ((0 1)
+      ((v v) (n n) (pcr-id pcr-id) (nonce nonce) (k k) (aik aik)
+        (tpm tpm) (tpmconf tpmconf))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -337,6 +361,10 @@
   (label 6)
   (parent 5)
   (unrealized (4 2))
+  (maps
+    ((0 1)
+      ((v v) (n n) (pcr-id pcr-id) (nonce nonce) (k k) (aik aik)
+        (tpm tpm) (tpmconf tpmconf))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
@@ -387,6 +415,10 @@
   (parent 6)
   (unrealized (4 1) (4 2))
   (dead)
+  (maps
+    ((0 1)
+      ((v v) (n n) (pcr-id pcr-id) (nonce nonce) (k k) (aik aik)
+        (tpm tpm-0) (tpmconf tpmconf))))
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -438,6 +470,10 @@
   (label 8)
   (parent 6)
   (unrealized (5 2))
+  (maps
+    ((0 1)
+      ((v v) (n n) (pcr-id pcr-id) (nonce nonce) (k k) (aik aik)
+        (tpm tpm) (tpmconf tpmconf))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
@@ -492,6 +528,10 @@
   (label 9)
   (parent 8)
   (unrealized (5 1))
+  (maps
+    ((0 1)
+      ((v v) (n n) (pcr-id pcr-id) (nonce nonce-0) (k k) (aik aik)
+        (tpm tpm-1) (tpmconf tpmconf))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -549,6 +589,10 @@
   (parent 8)
   (unrealized (6 1))
   (dead)
+  (maps
+    ((0 1)
+      ((v v) (n n) (pcr-id pcr-id) (nonce nonce) (k k) (aik aik)
+        (tpm tpm) (tpmconf tpmconf))))
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -765,6 +809,10 @@
   (label 12)
   (unrealized (0 0) (1 3))
   (preskeleton)
+  (maps
+    ((0 1)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (origs (v (1 4)) (n (1 1)))
   (comment "Not a skeleton"))
 
@@ -794,6 +842,10 @@
   (label 13)
   (parent 12)
   (unrealized (0 0) (1 3))
+  (maps
+    ((0 1)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (origs (v (1 4)) (n (1 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -833,6 +885,10 @@
   (label 14)
   (parent 13)
   (unrealized (0 0) (2 0))
+  (maps
+    ((0 1)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -871,6 +927,10 @@
   (label 15)
   (parent 14)
   (unrealized (0 0) (1 0))
+  (maps
+    ((0 1)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -910,6 +970,10 @@
   (label 16)
   (parent 15)
   (unrealized (0 0))
+  (maps
+    ((0 1)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -961,6 +1025,10 @@
   (label 17)
   (parent 16)
   (unrealized (4 1))
+  (maps
+    ((0 1)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
@@ -1021,6 +1089,10 @@
   (parent 17)
   (unrealized (4 1) (4 2))
   (dead)
+  (maps
+    ((0 1)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm-0) (tpmconf tpmconf))))
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -1083,6 +1155,10 @@
   (label 19)
   (parent 17)
   (unrealized (5 2))
+  (maps
+    ((0 1)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
@@ -1147,6 +1223,10 @@
   (label 20)
   (parent 19)
   (unrealized (5 1))
+  (maps
+    ((0 1)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce-0) (tpm tpm-1) (tpmconf tpmconf))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -1215,6 +1295,10 @@
   (parent 19)
   (unrealized (6 1))
   (dead)
+  (maps
+    ((0 1)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -1442,6 +1526,10 @@
   (label 23)
   (unrealized (0 0) (1 0) (2 3))
   (preskeleton)
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (origs (v (2 4)) (n (2 1)))
   (comment "Not a skeleton"))
 
@@ -1472,6 +1560,10 @@
   (label 24)
   (parent 23)
   (unrealized (0 0) (2 3))
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (origs (v (2 4)) (n (2 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -1512,6 +1604,10 @@
   (label 25)
   (parent 24)
   (unrealized (0 0) (1 0) (3 0))
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -1551,6 +1647,10 @@
   (label 26)
   (parent 25)
   (unrealized (0 0) (1 0) (2 0))
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -1592,6 +1692,10 @@
   (label 27)
   (parent 26)
   (unrealized (0 0) (1 0))
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -1638,6 +1742,10 @@
   (label 28)
   (parent 27)
   (unrealized (0 0) (5 1))
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -1687,6 +1795,10 @@
   (label 29)
   (parent 28)
   (unrealized (0 0) (5 2))
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
@@ -1746,6 +1858,10 @@
   (parent 29)
   (unrealized (0 0) (5 1) (5 2))
   (dead)
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm-0) (tpmconf tpmconf))))
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -1807,6 +1923,10 @@
   (label 31)
   (parent 29)
   (unrealized (0 0) (6 2))
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
@@ -1871,6 +1991,10 @@
   (label 32)
   (parent 31)
   (unrealized (0 0) (6 1))
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce-0) (tpm tpm-1) (tpmconf tpmconf))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -1939,6 +2063,10 @@
   (parent 31)
   (unrealized (0 0) (7 1))
   (dead)
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -2003,6 +2131,10 @@
   (label 34)
   (parent 32)
   (unrealized (0 0))
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce-0) (tpm tpmconf) (tpmconf tpmconf))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2077,6 +2209,10 @@
   (label 35)
   (parent 34)
   (unrealized (7 1))
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce-0) (tpm tpmconf) (tpmconf tpmconf))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2160,6 +2296,10 @@
   (label 36)
   (parent 35)
   (unrealized (8 2))
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce-0) (tpm tpmconf) (tpmconf tpmconf))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2250,6 +2390,10 @@
   (parent 36)
   (unrealized (9 1))
   (dead)
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce-0) (tpm tpmconf) (tpmconf tpmconf))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -2408,6 +2552,10 @@
   (label 38)
   (unrealized (0 0) (1 0) (2 3))
   (preskeleton)
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (origs (v (2 4)) (n (2 1)))
   (comment "Not a skeleton"))
 
@@ -2439,6 +2587,10 @@
   (label 39)
   (parent 38)
   (unrealized (0 0) (2 3))
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (origs (v (2 4)) (n (2 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -2480,6 +2632,10 @@
   (label 40)
   (parent 39)
   (unrealized (0 0) (1 0) (3 0))
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2520,6 +2676,10 @@
   (label 41)
   (parent 40)
   (unrealized (0 0) (1 0) (2 0))
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2562,6 +2722,10 @@
   (label 42)
   (parent 41)
   (unrealized (0 0) (1 0))
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2609,6 +2773,10 @@
   (label 43)
   (parent 42)
   (unrealized (0 0) (5 1))
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2659,6 +2827,10 @@
   (label 44)
   (parent 43)
   (unrealized (0 0) (5 2))
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
@@ -2719,6 +2891,10 @@
   (parent 44)
   (unrealized (0 0) (5 1) (5 2))
   (dead)
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm-0) (tpmconf tpmconf))))
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -2781,6 +2957,10 @@
   (label 46)
   (parent 44)
   (unrealized (0 0) (6 2))
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
@@ -2846,6 +3026,10 @@
   (label 47)
   (parent 46)
   (unrealized (0 0) (6 1))
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce-0) (tpm tpm-1) (tpmconf tpmconf))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2915,6 +3099,10 @@
   (parent 46)
   (unrealized (0 0) (7 1))
   (dead)
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce) (tpm tpm) (tpmconf tpmconf))))
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -2980,6 +3168,10 @@
   (label 49)
   (parent 47)
   (unrealized (0 0))
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce-0) (tpm tpmconf) (tpmconf tpmconf))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -3055,6 +3247,10 @@
   (label 50)
   (parent 49)
   (unrealized (7 1))
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce-0) (tpm tpmconf) (tpmconf tpmconf))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -3139,6 +3335,10 @@
   (label 51)
   (parent 50)
   (unrealized (8 2))
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce-0) (tpm tpmconf) (tpmconf tpmconf))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -3230,6 +3430,10 @@
   (parent 51)
   (unrealized (9 1))
   (dead)
+  (maps
+    ((0 1 2)
+      ((n n) (v v) (k k) (aik aik) (pcr-id pcr-id) (pcr-id-0 pcr-id-0)
+        (nonce nonce-0) (tpm tpmconf) (tpmconf tpmconf))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

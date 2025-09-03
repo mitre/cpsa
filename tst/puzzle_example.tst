@@ -1,6 +1,6 @@
 (herald puzzle_example)
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/puzzle_example.scm")
 
 (defprotocol puzzle basic
@@ -28,6 +28,7 @@
     ((send na) (recv (enc na s (ltk a b))) (send (enc payload s))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (na na) (payload payload) (s s))))
   (origs (na (0 0)) (payload (0 2)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -79,6 +80,7 @@
   (label 2)
   (unrealized (0 1) (1 0))
   (preskeleton)
+  (maps ((0 1) ((a a) (b b) (na na) (payload payload) (s s))))
   (origs (na (0 0)) (payload (0 2)))
   (comment "Not a skeleton"))
 
@@ -94,6 +96,7 @@
   (label 3)
   (parent 2)
   (unrealized (0 1))
+  (maps ((0 1) ((a a) (b b) (na na) (payload payload) (s s))))
   (origs (na (0 0)) (payload (0 2)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -149,6 +152,7 @@
   (label 5)
   (unrealized (2 0))
   (preskeleton)
+  (maps ((0 1 2) ((na na) (payload payload) (a a) (b b) (s s))))
   (origs (s (1 1)) (na (0 0)) (payload (0 2)))
   (comment "Not a skeleton"))
 
@@ -166,6 +170,7 @@
   (parent 5)
   (unrealized (2 0))
   (dead)
+  (maps ((0 1 2) ((na na) (payload payload) (a a) (b b) (s s))))
   (origs (s (1 1)) (na (0 0)) (payload (0 2)))
   (comment "empty cohort"))
 
@@ -201,6 +206,7 @@
   (label 7)
   (unrealized (2 0))
   (preskeleton)
+  (maps ((0 1 2) ((na na) (payload payload) (a a) (b b) (s s))))
   (origs (s (1 1)) (na (0 0)) (payload (0 2)))
   (comment "Not a skeleton"))
 
@@ -218,6 +224,7 @@
   (label 8)
   (parent 7)
   (unrealized (2 0))
+  (maps ((0 1 2) ((na na) (payload payload) (a a) (b b) (s s))))
   (origs (s (1 1)) (na (0 0)) (payload (0 2)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -241,6 +248,7 @@
   (parent 8)
   (unrealized (3 0))
   (dead)
+  (maps ((0 1 2) ((na na) (payload payload) (a a) (b b) (s s))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -270,6 +278,7 @@
     ((recv na) (send (enc na s (ltk a b))) (recv (enc payload s))))
   (label 10)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (payload payload) (s s) (na na))))
   (origs (s (0 1)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -289,6 +298,7 @@
   (label 11)
   (parent 10)
   (unrealized (1 1))
+  (maps ((0) ((a a) (b b) (payload payload) (s s) (na na))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton puzzle
@@ -306,6 +316,7 @@
   (parent 10)
   (unrealized (1 0))
   (dead)
+  (maps ((0) ((a a) (b b) (payload payload) (s s) (na na))))
   (comment "empty cohort"))
 
 (defskeleton puzzle
@@ -356,6 +367,7 @@
   (label 14)
   (unrealized (0 2) (1 0))
   (preskeleton)
+  (maps ((0 1) ((a a) (b b) (payload payload) (s s) (na na))))
   (origs (s (0 1)))
   (comment "Not a skeleton"))
 
@@ -372,6 +384,7 @@
   (parent 14)
   (unrealized (0 2) (1 0))
   (dead)
+  (maps ((0 1) ((a a) (b b) (payload payload) (s s) (na na))))
   (origs (s (0 1)))
   (comment "empty cohort"))
 
@@ -407,6 +420,7 @@
   (label 16)
   (unrealized (2 0))
   (preskeleton)
+  (maps ((0 1 2) ((payload payload) (na na) (a a) (b b) (s s))))
   (origs (s (0 1)) (payload (1 2)))
   (comment "Not a skeleton"))
 
@@ -424,6 +438,7 @@
   (label 17)
   (parent 16)
   (unrealized (2 0))
+  (maps ((0 1 2) ((payload payload) (na na) (a a) (b b) (s s))))
   (origs (s (0 1)) (payload (1 2)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -447,6 +462,7 @@
   (parent 17)
   (unrealized (3 0))
   (dead)
+  (maps ((0 1 2) ((payload payload) (na na) (a a) (b b) (s s))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

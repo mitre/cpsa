@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/kerberos.scm")
 
 (defprotocol kerberos basic
@@ -36,6 +36,7 @@
       (recv (enc t-prime k))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
   (origs)
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -60,6 +61,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 3))
+  (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton kerberos
@@ -83,6 +85,7 @@
   (label 2)
   (parent 0)
   (unrealized (0 3))
+  (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton kerberos
@@ -110,6 +113,7 @@
   (label 3)
   (parent 1)
   (unrealized (2 0))
+  (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton kerberos
@@ -135,6 +139,7 @@
   (parent 1)
   (unrealized (2 0))
   (dead)
+  (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
   (comment "empty cohort"))
 
 (defskeleton kerberos
@@ -162,6 +167,7 @@
   (label 5)
   (parent 2)
   (unrealized (2 0))
+  (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton kerberos
@@ -187,6 +193,7 @@
   (parent 2)
   (unrealized (2 0))
   (dead)
+  (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
   (comment "empty cohort"))
 
 (defskeleton kerberos
@@ -214,6 +221,7 @@
   (label 7)
   (parent 3)
   (unrealized (2 0))
+  (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton kerberos
@@ -248,6 +256,7 @@
   (label 8)
   (parent 3)
   (unrealized (3 1))
+  (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton kerberos
@@ -276,6 +285,7 @@
   (parent 3)
   (unrealized (3 0))
   (dead)
+  (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
   (comment "empty cohort"))
 
 (defskeleton kerberos
@@ -303,6 +313,7 @@
   (label 10)
   (parent 5)
   (unrealized (2 0))
+  (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton kerberos
@@ -337,6 +348,7 @@
   (label 11)
   (parent 5)
   (unrealized (3 1))
+  (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton kerberos
@@ -365,6 +377,7 @@
   (parent 5)
   (unrealized (3 0))
   (dead)
+  (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
   (comment "empty cohort"))
 
 (defskeleton kerberos
@@ -426,6 +439,7 @@
   (label 14)
   (parent 8)
   (unrealized (2 0))
+  (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton kerberos
@@ -458,6 +472,7 @@
   (label 15)
   (parent 8)
   (unrealized (2 0))
+  (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton kerberos
@@ -519,6 +534,7 @@
   (label 17)
   (parent 11)
   (unrealized (2 0))
+  (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton kerberos
@@ -551,6 +567,7 @@
   (label 18)
   (parent 11)
   (unrealized (2 0))
+  (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton kerberos
@@ -720,6 +737,7 @@
       (send (enc t-prime k))))
   (label 23)
   (unrealized (0 0))
+  (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
   (origs)
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -742,6 +760,7 @@
   (label 24)
   (parent 23)
   (unrealized (0 0))
+  (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton kerberos
@@ -763,6 +782,7 @@
   (label 25)
   (parent 23)
   (unrealized (0 0))
+  (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton kerberos
@@ -789,6 +809,7 @@
   (label 26)
   (parent 24)
   (unrealized (2 1))
+  (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton kerberos
@@ -812,6 +833,7 @@
   (parent 24)
   (unrealized (2 0))
   (dead)
+  (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
   (comment "empty cohort"))
 
 (defskeleton kerberos
@@ -838,6 +860,7 @@
   (label 28)
   (parent 25)
   (unrealized (2 1))
+  (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton kerberos
@@ -861,6 +884,7 @@
   (parent 25)
   (unrealized (2 0))
   (dead)
+  (maps ((0) ((a a) (b b) (ks ks) (t t) (t-prime t-prime) (l l) (k k))))
   (comment "empty cohort"))
 
 (defskeleton kerberos

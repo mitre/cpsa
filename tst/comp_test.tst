@@ -1,6 +1,6 @@
 (herald "Main Example")
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/comp_test.scm")
 
 (defprotocol main-ex-src basic
@@ -54,6 +54,7 @@
       (recv (enc "sorry" a b k))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (c c) (i i) (ssn ssn) (k k))))
   (origs (k (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -87,6 +88,7 @@
   (label 1)
   (parent 0)
   (unrealized (1 0))
+  (maps ((0) ((a a) (b b) (c c) (i i) (ssn ssn) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton main-ex-src
@@ -118,6 +120,7 @@
   (parent 0)
   (unrealized (1 0))
   (dead)
+  (maps ((0) ((a a) (b b) (c c) (i i) (ssn ssn) (k k))))
   (comment "empty cohort"))
 
 (defskeleton main-ex-src
@@ -195,6 +198,7 @@
       (recv (enc "data" d k))))
   (label 4)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (c c) (i i) (ssn ssn) (d d) (k k))))
   (origs (k (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -215,6 +219,7 @@
   (label 5)
   (parent 4)
   (unrealized (1 0))
+  (maps ((0) ((a a) (b b) (c c) (i i) (ssn ssn) (d d) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton main-ex-src
@@ -233,6 +238,7 @@
   (parent 4)
   (unrealized (1 0))
   (dead)
+  (maps ((0) ((a a) (b b) (c c) (i i) (ssn ssn) (d d) (k k))))
   (comment "empty cohort"))
 
 (defskeleton main-ex-src
@@ -305,6 +311,7 @@
       (recv (enc "sorry" a b k))))
   (label 8)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (c c) (i i) (ssn ssn) (k k))))
   (origs (k (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -326,6 +333,7 @@
   (label 9)
   (parent 8)
   (unrealized (1 0))
+  (maps ((0) ((a a) (b b) (c c) (i i) (ssn ssn) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton main-ex-tgt
@@ -345,6 +353,7 @@
   (parent 8)
   (unrealized (1 0))
   (dead)
+  (maps ((0) ((a a) (b b) (c c) (i i) (ssn ssn) (k k))))
   (comment "empty cohort"))
 
 (defskeleton main-ex-tgt
@@ -365,6 +374,7 @@
   (label 11)
   (parent 9)
   (unrealized (1 2))
+  (maps ((0) ((a a) (b b) (c c) (i i) (ssn ssn) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton main-ex-tgt
@@ -442,6 +452,7 @@
       (recv (enc "data" d k))))
   (label 13)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (c c) (i i) (ssn ssn) (d d) (k k))))
   (origs (k (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -464,6 +475,7 @@
   (label 14)
   (parent 13)
   (unrealized (1 0))
+  (maps ((0) ((a a) (b b) (c c) (i i) (ssn ssn) (d d) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton main-ex-tgt
@@ -482,6 +494,7 @@
   (parent 13)
   (unrealized (1 0))
   (dead)
+  (maps ((0) ((a a) (b b) (c c) (i i) (ssn ssn) (d d) (k k))))
   (comment "empty cohort"))
 
 (defskeleton main-ex-tgt
@@ -502,6 +515,7 @@
   (label 16)
   (parent 14)
   (unrealized (1 2))
+  (maps ((0) ((a a) (b b) (c c) (i i) (ssn ssn) (d d) (k k))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton main-ex-tgt
@@ -521,6 +535,7 @@
   (label 17)
   (parent 16)
   (unrealized (1 2))
+  (maps ((0) ((a a) (b b) (c c) (i i) (ssn ssn) (d d) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton main-ex-tgt
@@ -576,6 +591,7 @@
   (seen-ops
     (18 (operation generalization separated n-0) (strand-map 0 1 2)))
   (realized)
+  (maps ((0) ((a a) (b b) (c c) (i i) (ssn ssn) (d d) (k k))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
@@ -639,6 +655,7 @@
       (recv (enc "sorry" a b k))))
   (label 20)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (c c) (i i) (ssn ssn) (k k))))
   (origs (k (0 0)))
   (comment "Not closed under rules"))
 
@@ -658,6 +675,7 @@
   (label 21)
   (parent 20)
   (unrealized (1 2))
+  (maps ((0) ((a a) (b b) (c c) (i i) (ssn ssn) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton main-ex-tgt-rule

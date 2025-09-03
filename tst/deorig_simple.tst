@@ -1,6 +1,6 @@
 (herald deorig-simple)
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/deorig_simple.scm")
 
 (defprotocol deorig-simple basic
@@ -28,6 +28,7 @@
   (label 0)
   (unrealized (0 1))
   (dead)
+  (maps ((0) ((k k) (x x))))
   (origs (x (0 0)))
   (comment "empty cohort"))
 

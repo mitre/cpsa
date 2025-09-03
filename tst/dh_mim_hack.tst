@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/dh_mim_hack.scm")
 
 (defprotocol dh_mim basic
@@ -39,6 +39,9 @@
     ((recv gx-0) (send gy) (recv (enc n (enc "dh" gx-0 gy dhkey)))))
   (label 0)
   (unrealized (1 2))
+  (maps
+    ((0 1)
+      ((n n) (gx gx) (gy gy) (dhkey dhkey) (gy-0 gy-0) (gx-0 gx-0))))
   (origs (gy (1 1)) (gx (0 0)) (n (0 2)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -82,6 +85,9 @@
   (label 2)
   (parent 0)
   (unrealized (1 2) (2 0))
+  (maps
+    ((0 1)
+      ((n n) (gx gx) (gy gy) (dhkey dhkey) (gy-0 gy-0) (gx-0 gx-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_mim
@@ -105,6 +111,9 @@
   (label 3)
   (parent 2)
   (unrealized (1 2))
+  (maps
+    ((0 1)
+      ((n n) (gx gx) (gy gy) (dhkey dhkey) (gy-0 gy-0) (gx-0 gx-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_mim
@@ -131,6 +140,9 @@
   (label 4)
   (parent 3)
   (unrealized (4 0))
+  (maps
+    ((0 1)
+      ((n n) (gx gx) (gy gy) (dhkey dhkey) (gy-0 gy-0) (gx-0 gx-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_mim
@@ -159,6 +171,9 @@
   (label 5)
   (parent 4)
   (realized)
+  (maps
+    ((0 1)
+      ((n n) (gx gx) (gy gy) (dhkey dhkey) (gy-0 gy-0) (gx-0 gx-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_mim
@@ -184,6 +199,9 @@
   (label 6)
   (parent 5)
   (realized)
+  (maps
+    ((0 1)
+      ((n n) (gx gx) (gy gy) (dhkey dhkey) (gy-0 gy-0) (gx-0 gx-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dh_mim

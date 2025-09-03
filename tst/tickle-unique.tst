@@ -1,6 +1,6 @@
 (herald tickle-unique)
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/tickle-unique.scm")
 
 (defprotocol tickle basic
@@ -36,6 +36,7 @@
       (recv nb)))
   (label 0)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (nb0 nb0) (nb nb) (na na))))
   (origs (nb (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -97,6 +98,7 @@
       (recv nb)))
   (label 2)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (nb0 nb0) (nb nb) (na na))))
   (origs (nb (0 1)))
   (comment "Not closed under rules"))
 
@@ -114,6 +116,7 @@
   (parent 2)
   (unrealized (0 2))
   (dead)
+  (maps ((0) ((a a) (b b) (nb0 nb0) (nb nb) (na na))))
   (origs (nb0 (0 1)) (nb (0 1)))
   (comment "empty cohort"))
 

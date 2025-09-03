@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/targetterms6.scm")
 
 (defprotocol targetterms6 basic
@@ -32,6 +32,7 @@
           (enc n (enc n (pubk a)) (pubk a))))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (n n))))
   (origs (n (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -53,6 +54,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (n n))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton targetterms6
@@ -75,6 +77,7 @@
   (label 2)
   (parent 1)
   (unrealized (0 1))
+  (maps ((0) ((a a) (n n))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton targetterms6
@@ -99,6 +102,7 @@
   (label 3)
   (parent 2)
   (unrealized (0 1))
+  (maps ((0) ((a a) (n n))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton targetterms6
@@ -126,6 +130,7 @@
   (label 4)
   (parent 3)
   (unrealized (2 1))
+  (maps ((0) ((a a) (n n))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton targetterms6
@@ -180,6 +185,7 @@
   (label 6)
   (parent 4)
   (unrealized (2 1))
+  (maps ((0) ((a a) (n n))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton targetterms6
@@ -212,6 +218,7 @@
   (seen-ops
     (5 (operation generalization deleted (1 0)) (strand-map 0 2 3)))
   (realized)
+  (maps ((0) ((a a) (n n))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton targetterms6
@@ -243,6 +250,7 @@
   (seen-ops
     (5 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps ((0) ((a a) (n n))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

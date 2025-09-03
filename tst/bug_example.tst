@@ -1,6 +1,6 @@
 (herald bug_example (bound 20))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/bug_example.scm")
 (comment "Strand count bounded at 20")
 
@@ -31,6 +31,7 @@
   (traces ((recv (enc y (hash (invk x) y)))))
   (label 0)
   (unrealized (0 0))
+  (maps ((0) ((x x) (y y))))
   (origs)
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -49,6 +50,7 @@
   (label 1)
   (parent 0)
   (unrealized (1 0))
+  (maps ((0) ((x x) (y (invk k2)))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton bug_example
@@ -66,6 +68,7 @@
   (parent 0)
   (unrealized (1 0))
   (dead)
+  (maps ((0) ((x x) (y y))))
   (comment "empty cohort"))
 
 (defskeleton bug_example
@@ -107,6 +110,7 @@
   (label 4)
   (parent 1)
   (unrealized (2 0))
+  (maps ((0) ((x (invk k1)) (y k2))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton bug_example
@@ -127,6 +131,7 @@
   (parent 1)
   (unrealized (2 0))
   (dead)
+  (maps ((0) ((x x) (y (invk k2)))))
   (comment "empty cohort"))
 
 (defskeleton bug_example
@@ -156,6 +161,7 @@
         (enc k2 (hash (invk k1) (invk k2))) (3 0))
       (strand-map 0 1 2 1)))
   (unrealized (3 0))
+  (maps ((0) ((x k1) (y (invk k2)))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton bug_example
@@ -179,6 +185,7 @@
   (parent 4)
   (unrealized (3 0))
   (dead)
+  (maps ((0) ((x (invk k1)) (y k2))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -214,6 +221,7 @@
   (traces ((recv (enc y (hash (invk x) y)))))
   (label 8)
   (unrealized (0 0))
+  (maps ((0) ((x x) (y y))))
   (origs)
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -231,6 +239,7 @@
   (label 9)
   (parent 8)
   (unrealized (1 0))
+  (maps ((0) ((x x) (y y))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton bug_example
@@ -248,6 +257,7 @@
   (parent 8)
   (unrealized (1 0))
   (dead)
+  (maps ((0) ((x x) (y y))))
   (comment "empty cohort"))
 
 (defskeleton bug_example
@@ -288,6 +298,7 @@
   (label 12)
   (parent 9)
   (unrealized (2 0))
+  (maps ((0) ((x (invk k1)) (y y))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton bug_example
@@ -307,6 +318,7 @@
   (parent 9)
   (unrealized (2 0))
   (dead)
+  (maps ((0) ((x x) (y y))))
   (comment "empty cohort"))
 
 (defskeleton bug_example
@@ -335,6 +347,7 @@
       (operation encryption-test (added-strand flip2 2)
         (enc y (hash (invk k1) (invk y))) (3 0)) (strand-map 0 1 2 1)))
   (unrealized (3 0))
+  (maps ((0) ((x k1) (y y))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton bug_example
@@ -358,6 +371,7 @@
   (parent 12)
   (unrealized (3 0))
   (dead)
+  (maps ((0) ((x (invk k1)) (y y))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

@@ -1,7 +1,7 @@
 (herald "Electronic Purchase with Money Order Protocol with Key Hashing"
   (comment "Annotated with trust management formulas"))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/epmo-key-hash.scm")
 
 (defprotocol epmo basic
@@ -90,6 +90,10 @@
         (cat (enc (enc "hash" (cat c nc nb nm price)) (privk b)) nb))))
   (label 0)
   (unrealized (0 1) (0 3))
+  (maps
+    ((0)
+      ((b b) (c c) (m m) (nb nb) (nc nc) (nm nm) (goods goods)
+        (price price))))
   (origs (nc (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -119,6 +123,10 @@
   (label 1)
   (parent 0)
   (unrealized (0 1) (0 3))
+  (maps
+    ((0)
+      ((b b) (c c) (m m) (nb nb) (nc nc) (nm nm) (goods goods)
+        (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo
@@ -147,6 +155,10 @@
   (label 2)
   (parent 1)
   (unrealized (0 3))
+  (maps
+    ((0)
+      ((b b) (c c) (m m) (nb nb) (nc nc) (nm nm) (goods goods)
+        (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo
@@ -180,6 +192,10 @@
   (label 3)
   (parent 2)
   (unrealized (2 0))
+  (maps
+    ((0)
+      ((b b) (c c) (m m) (nb nb) (nc nc) (nm nm) (goods goods)
+        (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo
@@ -256,6 +272,10 @@
   (label 5)
   (parent 3)
   (unrealized (2 0))
+  (maps
+    ((0)
+      ((b b) (c c) (m m) (nb nb) (nc nc) (nm nm) (goods goods)
+        (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo
@@ -299,6 +319,10 @@
   (seen-ops
     (4 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps
+    ((0)
+      ((b b) (c c) (m m) (nb nb) (nc nc) (nm nm) (goods goods)
+        (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
@@ -386,6 +410,7 @@
       (recv (enc (enc "hash" (cat b nb nm)) (privk m)))))
   (label 7)
   (unrealized (0 2))
+  (maps ((0) ((b b) (c c) (m m) (nc nc) (nm nm) (nb nb) (price price))))
   (origs (nb (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -416,6 +441,7 @@
   (label 8)
   (parent 7)
   (unrealized (1 2))
+  (maps ((0) ((b b) (c c) (m m) (nc nc) (nm nm) (nb nb) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo
@@ -444,6 +470,7 @@
   (label 9)
   (parent 8)
   (unrealized (0 0) (1 2))
+  (maps ((0) ((b b) (c c) (m m) (nc nc) (nm nm) (nb nb) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo
@@ -485,6 +512,7 @@
   (label 10)
   (parent 9)
   (unrealized (0 0) (2 3))
+  (maps ((0) ((b b) (c c) (m m) (nc nc) (nm nm) (nb nb) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo
@@ -525,6 +553,7 @@
   (label 11)
   (parent 10)
   (unrealized (0 0) (2 1))
+  (maps ((0) ((b b) (c c) (m m) (nc nc) (nm nm) (nb nb) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo
@@ -570,6 +599,7 @@
   (parent 10)
   (unrealized (0 0) (3 0))
   (dead)
+  (maps ((0) ((b b) (c c) (m m) (nc nc) (nm nm) (nb nb) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo
@@ -610,6 +640,7 @@
   (label 13)
   (parent 11)
   (unrealized (0 0))
+  (maps ((0) ((b b) (c c) (m m) (nc nc) (nm nm) (nb nb) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo
@@ -739,6 +770,10 @@
       (send (enc (enc "hash" (cat b nb nm)) (privk m)))))
   (label 15)
   (unrealized (0 2))
+  (maps
+    ((0)
+      ((b b) (c c) (m m) (nb nb) (nc nc) (nm nm) (goods goods)
+        (price price))))
   (origs (nm (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -766,6 +801,10 @@
   (label 16)
   (parent 15)
   (unrealized (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (c c) (m m) (nb nb) (nc nc) (nm nm) (goods goods)
+        (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo
@@ -797,6 +836,10 @@
   (label 17)
   (parent 16)
   (unrealized (0 2))
+  (maps
+    ((0)
+      ((b b) (c c) (m m) (nb nb) (nc nc) (nm nm) (goods goods)
+        (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo

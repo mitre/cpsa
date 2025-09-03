@@ -1,7 +1,7 @@
 (herald "Diffie-Hellman enhanced Needham-Schroeder-Lowe Protocol"
   (algebra basic))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/dhnsl_hack.scm")
 
 (defprotocol dhnsl basic
@@ -42,6 +42,7 @@
       (send (enc (enc "dh" gz gx dhkey) (pubk b)))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (gx gx) (gy gy) (gz gz) (dhkey dhkey))))
   (origs (gx (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -66,6 +67,7 @@
   (label 1)
   (parent 0)
   (unrealized (1 0))
+  (maps ((0) ((a a) (b b) (gx gx) (gy gy) (gz gz) (dhkey dhkey))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhnsl
@@ -88,6 +90,7 @@
   (label 2)
   (parent 1)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (gx gx) (gy gy) (gz gz) (dhkey dhkey))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhnsl
@@ -117,6 +120,7 @@
   (label 3)
   (parent 1)
   (unrealized (1 0))
+  (maps ((0) ((a a) (b b) (gx gx) (gy gy) (gz gz) (dhkey dhkey))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhnsl
@@ -170,6 +174,7 @@
   (label 5)
   (parent 3)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (gx gx) (gy gy) (gz gz) (dhkey dhkey))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhnsl
@@ -201,6 +206,7 @@
   (seen-ops
     (4 (operation generalization deleted (2 0)) (strand-map 0 1)))
   (realized)
+  (maps ((0) ((a a) (b b) (gx gx) (gy gy) (gz gz) (dhkey dhkey))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
@@ -243,6 +249,7 @@
       (recv (enc (enc "dh" gz gx dhkey) (pubk b)))))
   (label 7)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (gx gx) (gy gy) (gz gz) (dhkey dhkey))))
   (origs (gz (0 1)) (gy (0 1)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -268,6 +275,7 @@
   (label 8)
   (parent 7)
   (unrealized (1 1))
+  (maps ((0) ((a a) (b b) (gx gx) (gy gy) (gz gz) (dhkey dhkey))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhnsl
@@ -286,6 +294,7 @@
   (label 9)
   (parent 7)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (gx gx) (gy gy) (gz gy) (dhkey dhkey))))
   (origs (gy (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -311,6 +320,7 @@
   (label 10)
   (parent 8)
   (unrealized (1 1))
+  (maps ((0) ((a a) (b b) (gx gx) (gy gy) (gz gz) (dhkey dhkey))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhnsl
@@ -342,6 +352,7 @@
   (parent 8)
   (unrealized (1 1))
   (dead)
+  (maps ((0) ((a a) (b b) (gx gx) (gy gy) (gz gz) (dhkey dhkey))))
   (comment "empty cohort"))
 
 (defskeleton dhnsl
@@ -367,6 +378,7 @@
   (label 12)
   (parent 9)
   (unrealized (1 1))
+  (maps ((0) ((a a) (b b) (gx gx) (gy gy) (gz gy) (dhkey dhkey))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhnsl
@@ -417,6 +429,7 @@
   (label 14)
   (parent 12)
   (unrealized (1 1))
+  (maps ((0) ((a a) (b b) (gx gx) (gy gy) (gz gy) (dhkey dhkey))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhnsl
@@ -447,6 +460,7 @@
   (parent 12)
   (unrealized (1 1))
   (dead)
+  (maps ((0) ((a a) (b b) (gx gx) (gy gy) (gz gy) (dhkey dhkey))))
   (comment "empty cohort"))
 
 (defskeleton dhnsl
@@ -474,6 +488,7 @@
   (seen-ops
     (13 (operation generalization separated gy-0) (strand-map 0 1)))
   (realized)
+  (maps ((0) ((a a) (b b) (gx gx) (gy gy) (gz gy) (dhkey dhkey))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

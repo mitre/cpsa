@@ -1,6 +1,6 @@
 (herald "Distributed Authentication Security Service Protocol Variants")
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/dass_simple.scm")
 
 (defprotocol dass-simple basic
@@ -37,6 +37,7 @@
          (enc (enc k (pubk b)) (invk kp)))) (recv (enc "resp" tb k))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (k k) (kp kp) (ta ta) (tb tb))))
   (origs (k (0 0)) (kp (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -61,6 +62,7 @@
   (label 1)
   (parent 0)
   (unrealized (1 0))
+  (maps ((0) ((a a) (b b) (k k) (kp kp) (ta ta) (tb tb))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dass-simple
@@ -81,6 +83,7 @@
   (parent 0)
   (unrealized (1 0))
   (dead)
+  (maps ((0) ((a a) (b b) (k k) (kp kp) (ta ta) (tb tb))))
   (comment "empty cohort"))
 
 (defskeleton dass-simple
@@ -104,6 +107,7 @@
   (label 3)
   (parent 1)
   (unrealized (1 0))
+  (maps ((0) ((a a) (b b) (k k) (kp kp) (ta ta) (tb tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dass-simple
@@ -129,6 +133,7 @@
   (parent 1)
   (unrealized (2 0))
   (dead)
+  (maps ((0) ((a a) (b b) (k k) (kp kp) (ta ta) (tb tb))))
   (comment "empty cohort"))
 
 (defskeleton dass-simple
@@ -191,6 +196,7 @@
          (enc (enc k (pubk b)) (invk kp)))) (recv (enc "resp" tb k))))
   (label 6)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (k k) (kp kp) (ta ta) (tb tb))))
   (origs (k (0 0)) (kp (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -215,6 +221,7 @@
   (label 7)
   (parent 6)
   (unrealized (1 0))
+  (maps ((0) ((a a) (b b) (k k) (kp kp) (ta ta) (tb tb))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dass+
@@ -235,6 +242,7 @@
   (parent 6)
   (unrealized (1 0))
   (dead)
+  (maps ((0) ((a a) (b b) (k k) (kp kp) (ta ta) (tb tb))))
   (comment "empty cohort"))
 
 (defskeleton dass+
@@ -258,6 +266,7 @@
   (label 9)
   (parent 7)
   (unrealized (1 0))
+  (maps ((0) ((a a) (b b) (k k) (kp kp) (ta ta) (tb tb))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dass+
@@ -283,6 +292,7 @@
   (parent 7)
   (unrealized (1 0) (2 0))
   (dead)
+  (maps ((0) ((a a) (b b) (k k) (kp kp) (ta ta) (tb tb))))
   (comment "empty cohort"))
 
 (defskeleton dass+
@@ -305,6 +315,7 @@
   (label 11)
   (parent 9)
   (unrealized (1 0))
+  (maps ((0) ((a a) (b b) (k k) (kp kp) (ta ta) (tb tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dass+
@@ -333,6 +344,7 @@
   (label 12)
   (parent 9)
   (unrealized (1 0))
+  (maps ((0) ((a a) (b b) (k k) (kp kp) (ta ta) (tb tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dass+

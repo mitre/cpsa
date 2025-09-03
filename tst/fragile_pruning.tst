@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/fragile_pruning.scm")
 
 (defprotocol fragile_pruning basic
@@ -34,6 +34,7 @@
       (recv (enc n n1 n2 n3 n k))))
   (label 0)
   (unrealized (0 1) (0 2) (0 3) (0 5))
+  (maps ((0) ((k k) (n n) (n1 n1) (n2 n2) (n3 n3))))
   (origs (n (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -54,6 +55,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 1) (0 2) (0 3) (0 5))
+  (maps ((0) ((k k) (n n) (n1 n1) (n2 n2) (n3 n3))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -74,6 +76,7 @@
   (label 2)
   (parent 1)
   (unrealized (0 2) (0 3) (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 n2) (n3 n3))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -94,6 +97,7 @@
   (label 3)
   (parent 2)
   (unrealized (0 3) (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 n3))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -116,6 +120,7 @@
   (label 4)
   (parent 2)
   (unrealized (0 2) (0 3) (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 n2) (n3 n3))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -136,6 +141,7 @@
   (label 5)
   (parent 3)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -158,6 +164,7 @@
   (label 6)
   (parent 3)
   (unrealized (0 3) (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 n3))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -180,6 +187,7 @@
   (label 7)
   (parent 4)
   (unrealized (0 3) (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 n3))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -202,6 +210,7 @@
   (label 8)
   (parent 4)
   (unrealized (0 3) (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 n3))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -224,6 +233,7 @@
   (label 9)
   (parent 5)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -246,6 +256,7 @@
   (label 10)
   (parent 5)
   (unrealized (2 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -268,6 +279,7 @@
   (label 11)
   (parent 6)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -290,6 +302,7 @@
   (label 12)
   (parent 6)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -312,6 +325,7 @@
   (label 13)
   (parent 7)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -334,6 +348,7 @@
   (label 14)
   (parent 7)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -359,6 +374,7 @@
   (label 15)
   (parent 7)
   (unrealized (0 3) (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 n3))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -381,6 +397,7 @@
   (label 16)
   (parent 8)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -403,6 +420,7 @@
   (label 17)
   (parent 8)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-0))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -428,6 +446,7 @@
   (label 18)
   (parent 8)
   (unrealized (0 3) (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 n3))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -458,6 +477,7 @@
       (operation nonce-test (displaced 4 2 adder 2) n (3 0) (enc n k)
         (enc n new k)) (strand-map 0 1 2 3)))
   (unrealized (3 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -507,6 +527,7 @@
   (label 21)
   (parent 10)
   (unrealized (2 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -532,6 +553,7 @@
   (label 22)
   (parent 11)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -557,6 +579,7 @@
   (label 23)
   (parent 11)
   (unrealized (3 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -582,6 +605,7 @@
   (label 24)
   (parent 12)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -607,6 +631,7 @@
   (label 25)
   (parent 12)
   (unrealized (3 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -632,6 +657,7 @@
   (label 26)
   (parent 13)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -657,6 +683,7 @@
   (label 27)
   (parent 13)
   (unrealized (3 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -682,6 +709,7 @@
   (label 28)
   (parent 14)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -707,6 +735,7 @@
   (label 29)
   (parent 14)
   (unrealized (3 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -732,6 +761,7 @@
   (label 30)
   (parent 15)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -757,6 +787,7 @@
   (label 31)
   (parent 15)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -782,6 +813,7 @@
   (label 32)
   (parent 15)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-1))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -807,6 +839,7 @@
   (label 33)
   (parent 16)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -832,6 +865,7 @@
   (label 34)
   (parent 16)
   (unrealized (3 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -857,6 +891,7 @@
   (label 35)
   (parent 17)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -883,6 +918,7 @@
   (label 36)
   (parent 17)
   (unrealized (3 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-0))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -908,6 +944,7 @@
   (label 37)
   (parent 18)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -933,6 +970,7 @@
   (label 38)
   (parent 18)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-0))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -958,6 +996,7 @@
   (label 39)
   (parent 18)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-1))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -986,6 +1025,7 @@
   (seen-ops
     (20 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1013,6 +1053,7 @@
   (label 41)
   (parent 19)
   (unrealized (3 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1041,6 +1082,7 @@
   (seen-ops
     (20 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1073,6 +1115,7 @@
       (operation nonce-test (displaced 5 3 adder 2) n (4 0) (enc n k)
         (enc n new k)) (strand-map 0 1 2 3 4)))
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1098,6 +1141,7 @@
   (label 44)
   (parent 23)
   (unrealized (3 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1130,6 +1174,7 @@
       (operation nonce-test (displaced 5 2 adder 2) n (3 0) (enc n k)
         (enc n new k) (enc n new-1 k)) (strand-map 0 1 2 3 4)))
   (unrealized (3 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1164,6 +1209,7 @@
       (operation nonce-test (displaced 5 3 adder 2) n (4 0) (enc n k)
         (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 3 4)))
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1219,6 +1265,7 @@
   (label 48)
   (parent 25)
   (unrealized (3 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1251,6 +1298,7 @@
       (operation nonce-test (displaced 5 3 adder 2) n (4 0) (enc n k)
         (enc n new k)) (strand-map 0 1 2 3 4)))
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1276,6 +1324,7 @@
   (label 50)
   (parent 27)
   (unrealized (3 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1308,6 +1357,7 @@
       (operation nonce-test (displaced 5 2 adder 2) n (3 0) (enc n k)
         (enc n new k) (enc n new-1 k)) (strand-map 0 1 2 3 4)))
   (unrealized (3 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1342,6 +1392,7 @@
       (operation nonce-test (displaced 5 3 adder 2) n (4 0) (enc n k)
         (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 3 4)))
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1371,6 +1422,7 @@
     (47 (operation generalization weakened ((2 1) (0 2)))
       (strand-map 0 1 2 3)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1399,6 +1451,7 @@
   (label 54)
   (parent 29)
   (unrealized (3 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1426,6 +1479,7 @@
   (label 55)
   (parent 30)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1453,6 +1507,7 @@
   (label 56)
   (parent 30)
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1481,6 +1536,7 @@
   (label 57)
   (parent 31)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1510,6 +1566,7 @@
   (label 58)
   (parent 31)
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1538,6 +1595,7 @@
   (label 59)
   (parent 32)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1567,6 +1625,7 @@
   (label 60)
   (parent 32)
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-1))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1601,6 +1660,7 @@
       (operation nonce-test (displaced 5 3 adder 2) n (4 0) (enc n k)
         (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 3 4)))
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1656,6 +1716,7 @@
   (label 63)
   (parent 34)
   (unrealized (3 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1691,6 +1752,7 @@
       (operation nonce-test (displaced 5 3 adder 2) n (4 0) (enc n k)
         (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 3 4)))
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-0))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1748,6 +1810,7 @@
   (label 66)
   (parent 36)
   (unrealized (3 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1776,6 +1839,7 @@
   (label 67)
   (parent 37)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1805,6 +1869,7 @@
   (label 68)
   (parent 37)
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1833,6 +1898,7 @@
   (label 69)
   (parent 38)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1863,6 +1929,7 @@
   (label 70)
   (parent 38)
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-0))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1891,6 +1958,7 @@
   (label 71)
   (parent 39)
   (unrealized (0 5))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1921,6 +1989,7 @@
   (label 72)
   (parent 39)
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-1))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1951,6 +2020,7 @@
   (seen-ops
     (42 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -1984,6 +2054,7 @@
       (operation nonce-test (displaced 5 3 adder 2) n (4 0) (enc n k)
         (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 3 4)))
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2019,6 +2090,7 @@
       (operation nonce-test (displaced 6 2 adder 2) n (4 0) (enc n k)
         (enc n new k) (enc n new-2 k)) (strand-map 0 1 2 3 4 5)))
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2047,6 +2119,7 @@
   (seen-ops
     (20 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2075,6 +2148,7 @@
   (label 77)
   (parent 44)
   (unrealized (3 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2105,6 +2179,7 @@
   (seen-ops
     (47 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2135,6 +2210,7 @@
   (label 79)
   (parent 46)
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2165,6 +2241,7 @@
   (seen-ops
     (47 (operation generalization deleted (4 0)) (strand-map 0 1 2 3)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2198,6 +2275,7 @@
       (operation nonce-test (displaced 5 3 adder 2) n (4 0) (enc n k)
         (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 3 4)))
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2233,6 +2311,7 @@
       (operation nonce-test (displaced 6 2 adder 2) n (4 0) (enc n k)
         (enc n new k) (enc n new-2 k)) (strand-map 0 1 2 3 4 5)))
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2261,6 +2340,7 @@
   (seen-ops
     (20 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2289,6 +2369,7 @@
   (label 84)
   (parent 50)
   (unrealized (3 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2319,6 +2400,7 @@
   (seen-ops
     (53 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2349,6 +2431,7 @@
   (label 86)
   (parent 52)
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2379,6 +2462,7 @@
   (seen-ops
     (53 (operation generalization deleted (4 0)) (strand-map 0 1 2 3)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2415,6 +2499,7 @@
       (operation nonce-test (displaced 6 4 adder 2) n (5 0) (enc n k)
         (enc n new k)) (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "4 in cohort - 3 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2443,6 +2528,7 @@
   (label 89)
   (parent 56)
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2476,6 +2562,7 @@
       (operation nonce-test (displaced 5 2 adder 2) n (4 0) (enc n k)
         (enc n new k) (enc n new-1 k)) (strand-map 0 1 2 3 4)))
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "2 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2514,6 +2601,7 @@
       (operation nonce-test (displaced 6 3 adder 2) n (4 0) (enc n k)
         (enc n new k) (enc n new-2 k)) (strand-map 0 1 2 3 4 5)))
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "2 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2550,6 +2638,7 @@
       (operation nonce-test (displaced 6 4 adder 2) n (5 0) (enc n k)
         (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2578,6 +2667,7 @@
   (label 93)
   (parent 58)
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2614,6 +2704,7 @@
         (enc n new k) (enc n new-0 k) (enc n new-2 k))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2650,6 +2741,7 @@
       (operation nonce-test (displaced 6 4 adder 2) n (5 0) (enc n k)
         (enc n new k) (enc n new-1 k)) (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-1))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2678,6 +2770,7 @@
   (label 96)
   (parent 60)
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-1))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2714,6 +2807,7 @@
         (enc n new k) (enc n new-1 k) (enc n new-2 k))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-1))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2744,6 +2838,7 @@
   (seen-ops
     (62 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2774,6 +2869,7 @@
   (label 99)
   (parent 61)
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2804,6 +2900,7 @@
   (seen-ops
     (62 (operation generalization deleted (4 0)) (strand-map 0 1 2 3)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2835,6 +2932,7 @@
   (seen-ops
     (65 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2866,6 +2964,7 @@
   (label 102)
   (parent 64)
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2897,6 +2996,7 @@
   (seen-ops
     (65 (operation generalization deleted (4 0)) (strand-map 0 1 2 3)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2933,6 +3033,7 @@
       (operation nonce-test (displaced 6 4 adder 2) n (5 0) (enc n k)
         (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2961,6 +3062,7 @@
   (label 105)
   (parent 68)
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -2997,6 +3099,7 @@
         (enc n new k) (enc n new-0 k) (enc n new-2 k))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3034,6 +3137,7 @@
       (operation nonce-test (displaced 6 4 adder 2) n (5 0) (enc n k)
         (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-0))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3063,6 +3167,7 @@
   (label 108)
   (parent 70)
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-0))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3100,6 +3205,7 @@
         (enc n new k) (enc n new-0 k) (enc n new-2 k))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3138,6 +3244,7 @@
         (enc n new k) (enc n new-0 k) (enc n new-1 k))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-1))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3199,6 +3306,7 @@
   (label 112)
   (parent 72)
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3229,6 +3337,7 @@
   (seen-ops
     (40 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3259,6 +3368,7 @@
   (label 114)
   (parent 74)
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3289,6 +3399,7 @@
   (seen-ops
     (42 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3323,6 +3434,7 @@
     (80 (operation generalization deleted (3 0))
       (strand-map 0 1 2 4 5)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3353,6 +3465,7 @@
   (seen-ops
     (40 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3383,6 +3496,7 @@
   (label 118)
   (parent 81)
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3413,6 +3527,7 @@
   (seen-ops
     (42 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3447,6 +3562,7 @@
     (87 (operation generalization deleted (3 0))
       (strand-map 0 1 2 4 5)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3482,6 +3598,7 @@
       (operation nonce-test (displaced 6 4 adder 2) n (5 0) (enc n k)
         (enc n new k) (enc n new-1 k)) (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3520,6 +3637,7 @@
       (operation nonce-test (displaced 6 3 adder 2) n (5 0) (enc n k)
         (enc n new k) (enc n new-0 k)) (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "3 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3560,6 +3678,7 @@
       (operation nonce-test (displaced 7 2 adder 2) n (5 0) (enc n k)
         (enc n new k) (enc n new-3 k)) (strand-map 0 1 2 3 4 5 6)))
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "2 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3588,6 +3707,7 @@
   (label 124)
   (parent 89)
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3624,6 +3744,7 @@
         (enc n new k) (enc n new-0 k) (enc n new-2 k))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3660,6 +3781,7 @@
         (enc n new k) (enc n new-1 k) (enc n new-2 k))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3696,6 +3818,7 @@
         (enc n new k) (enc n new-0 k) (enc n new-1 k))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3735,6 +3858,7 @@
         (enc n new k) (enc n new-0 k) (enc n new-3 k))
       (strand-map 0 1 2 3 4 5 6)))
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3765,6 +3889,7 @@
   (seen-ops
     (53 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3795,6 +3920,7 @@
   (label 130)
   (parent 93)
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3831,6 +3957,7 @@
         (enc n new k) (enc n new-0 k) (enc n new-1 k))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-1))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3870,6 +3997,7 @@
         (enc n new k) (enc n new-1 k) (enc n new-3 k))
       (strand-map 0 1 2 3 4 5 6)))
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-1))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3900,6 +4028,7 @@
   (seen-ops
     (47 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-1))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3930,6 +4059,7 @@
   (label 134)
   (parent 96)
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3964,6 +4094,7 @@
     (100 (operation generalization deleted (3 0))
       (strand-map 0 1 2 4 5)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -3999,6 +4130,7 @@
     (103 (operation generalization deleted (3 0))
       (strand-map 0 1 2 4 5)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4035,6 +4167,7 @@
         (enc n new k) (enc n new-0 k) (enc n new-1 k))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4074,6 +4207,7 @@
         (enc n new k) (enc n new-0 k) (enc n new-3 k))
       (strand-map 0 1 2 3 4 5 6)))
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4104,6 +4238,7 @@
   (seen-ops
     (62 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4134,6 +4269,7 @@
   (label 140)
   (parent 105)
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4171,6 +4307,7 @@
         (enc n new k) (enc n new-0 k) (enc n new-1 k))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-0))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4211,6 +4348,7 @@
         (enc n new k) (enc n new-0 k) (enc n new-3 k))
       (strand-map 0 1 2 3 4 5 6)))
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4242,6 +4380,7 @@
   (seen-ops
     (65 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4273,6 +4412,7 @@
   (label 144)
   (parent 108)
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4308,6 +4448,7 @@
     (111 (operation generalization deleted (4 0))
       (strand-map 0 1 2 3 5)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-1))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4342,6 +4483,7 @@
   (label 146)
   (parent 110)
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4377,6 +4519,7 @@
     (111 (operation generalization deleted (5 0))
       (strand-map 0 1 2 3 4)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-1))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4411,6 +4554,7 @@
     (73 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4445,6 +4589,7 @@
     (73 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4481,6 +4626,7 @@
         (enc n new k) (enc n new-0 k) (enc n new-1 k))
       (strand-map 0 1 2 3 4 5)))
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4520,6 +4666,7 @@
         (enc n new k) (enc n new-1 k) (enc n new-3 k))
       (strand-map 0 1 2 3 4 5 6)))
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4559,6 +4706,7 @@
         (enc n new k) (enc n new-0 k) (enc n new-3 k))
       (strand-map 0 1 2 3 4 5 6)))
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4589,6 +4737,7 @@
   (seen-ops
     (76 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4619,6 +4768,7 @@
   (label 154)
   (parent 124)
   (unrealized (4 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4653,6 +4803,7 @@
     (85 (operation generalization deleted (3 0))
       (strand-map 0 1 2 4 5)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4686,6 +4837,7 @@
   (label 156)
   (parent 127)
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4720,6 +4872,7 @@
     (87 (operation generalization deleted (3 0))
       (strand-map 0 1 2 4 5)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4754,6 +4907,7 @@
     (78 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-1))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4787,6 +4941,7 @@
   (label 159)
   (parent 131)
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4821,6 +4976,7 @@
     (80 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-1))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4855,6 +5011,7 @@
     (98 (operation generalization deleted (3 0))
       (strand-map 0 1 2 4 5)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4888,6 +5045,7 @@
   (label 162)
   (parent 137)
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4922,6 +5080,7 @@
     (100 (operation generalization deleted (3 0))
       (strand-map 0 1 2 4 5)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4957,6 +5116,7 @@
     (101 (operation generalization deleted (3 0))
       (strand-map 0 1 2 4 5)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -4991,6 +5151,7 @@
   (label 165)
   (parent 141)
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -5026,6 +5187,7 @@
     (103 (operation generalization deleted (3 0))
       (strand-map 0 1 2 4 5)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -5063,6 +5225,7 @@
     (147 (operation generalization deleted (4 0))
       (strand-map 0 1 2 3 5 6)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-1))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -5097,6 +5260,7 @@
     (113 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -5130,6 +5294,7 @@
   (label 169)
   (parent 150)
   (unrealized (5 0))
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -5164,6 +5329,7 @@
     (115 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -5200,6 +5366,7 @@
     (120 (operation generalization deleted (3 0))
       (strand-map 0 1 2 4 5 6)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -5236,6 +5403,7 @@
     (116 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5 6)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new-1))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -5272,6 +5440,7 @@
     (135 (operation generalization deleted (3 0))
       (strand-map 0 1 2 4 5 6)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -5309,6 +5478,7 @@
     (136 (operation generalization deleted (3 0))
       (strand-map 0 1 2 4 5 6)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new-0) (n3 new-0))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton fragile_pruning
@@ -5345,6 +5515,7 @@
     (148 (operation generalization deleted (2 0))
       (strand-map 0 1 3 4 5 6)))
   (realized)
+  (maps ((0) ((k k) (n n) (n1 new) (n2 new) (n3 new))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

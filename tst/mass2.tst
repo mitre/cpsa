@@ -1,6 +1,6 @@
 (herald mass2 (bound 8))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/mass2.lsp")
 (comment "Strand count bounded at 8")
 
@@ -30,6 +30,7 @@
       (recv (enc n1 (ltk a b)))))
   (label 0)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
   (origs (n1 (0 1)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -51,6 +52,7 @@
   (label 1)
   (parent 0)
   (unrealized (1 1))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton mass2
@@ -95,6 +97,7 @@
   (label 3)
   (parent 1)
   (unrealized (2 1))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton mass2
@@ -167,6 +170,7 @@
   (label 6)
   (parent 3)
   (unrealized (3 1))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton mass2
@@ -249,6 +253,7 @@
   (label 9)
   (parent 6)
   (unrealized (4 1))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton mass2
@@ -341,6 +346,7 @@
   (label 12)
   (parent 9)
   (unrealized (5 1))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton mass2
@@ -443,6 +449,7 @@
   (label 15)
   (parent 12)
   (unrealized (6 1))
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton mass2
@@ -635,4 +642,5 @@
   (parent 15)
   (unrealized (7 1))
   (aborted)
+  (maps ((0) ((a a) (b b) (n1 n1) (n2 n2))))
   (comment "aborted"))

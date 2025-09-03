@@ -1,7 +1,7 @@
 (herald uniq-gen-and-orig-example
   (comment "Non-executable role examples"))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/ugo.scm")
 
 (defprotocol uniq-gen-example basic
@@ -34,6 +34,7 @@
   (label 0)
   (unrealized (0 0))
   (dead)
+  (maps ((0) ((u u) (k k))))
   (origs)
   (comment "empty cohort"))
 
@@ -70,6 +71,7 @@
   (label 1)
   (unrealized (0 0))
   (dead)
+  (maps ((0) ((u u) (k k))))
   (origs)
   (comment "empty cohort"))
 
@@ -105,6 +107,7 @@
   (label 2)
   (unrealized (0 0))
   (dead)
+  (maps ((0) ((u u) (k k))))
   (origs)
   (comment "empty cohort"))
 
@@ -141,6 +144,7 @@
   (label 3)
   (unrealized (0 0))
   (dead)
+  (maps ((0) ((u u) (k k))))
   (origs)
   (comment "empty cohort"))
 
@@ -172,6 +176,7 @@
   (traces ((recv (enc u k)) (send (invk u)) (recv u)))
   (label 4)
   (unrealized (0 0))
+  (maps ((0) ((u u) (k k))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -189,6 +194,7 @@
   (label 5)
   (parent 4)
   (unrealized (0 2))
+  (maps ((0) ((u u) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton uniq-orig-example
@@ -238,6 +244,7 @@
   (traces ((recv (enc u k)) (send (invk u)) (recv u)))
   (label 7)
   (unrealized (0 0))
+  (maps ((0) ((u u) (k k))))
   (origs ((invk u) (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -255,6 +262,7 @@
   (label 8)
   (parent 7)
   (unrealized (0 2))
+  (maps ((0) ((u u) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton uniq-orig-example

@@ -1,6 +1,6 @@
 (herald "Three Party Needham-Schroeder-Lowe Protocol")
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/nsl3.scm")
 
 (defprotocol nsl3 basic
@@ -58,6 +58,10 @@
           (pubk b)))))
   (label 0)
   (unrealized (0 1))
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
+        (nc0 nc0) (nc1 nc1))))
   (origs (na1 (0 0)) (na0 (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -88,6 +92,10 @@
   (label 1)
   (parent 0)
   (unrealized (0 1))
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
+        (nc0 nc0) (nc1 nc1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nsl3
@@ -128,6 +136,10 @@
   (label 2)
   (parent 1)
   (unrealized (0 1))
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
+        (nc0 nc0) (nc1 nc1))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton nsl3
@@ -226,6 +238,10 @@
   (label 4)
   (parent 2)
   (unrealized (0 1))
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
+        (nc0 nc0) (nc1 nc1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nsl3
@@ -280,6 +296,10 @@
   (seen-ops
     (3 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
+        (nc0 nc0) (nc1 nc1))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
@@ -339,6 +359,10 @@
           (pubk b))) (send (enc nc0 (enc nc1 (pubk c)) (pubk c)))))
   (label 6)
   (unrealized (0 2))
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
+        (nc0 nc0) (nc1 nc1))))
   (origs (nb1 (0 1)) (nb0 (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -372,6 +396,10 @@
   (label 7)
   (parent 6)
   (unrealized (0 2))
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
+        (nc0 nc0) (nc1 nc1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nsl3
@@ -415,6 +443,10 @@
   (label 8)
   (parent 7)
   (unrealized (0 2))
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
+        (nc0 nc0) (nc1 nc1))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton nsl3
@@ -519,6 +551,10 @@
   (label 10)
   (parent 8)
   (unrealized (0 2))
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
+        (nc0 nc0) (nc1 nc1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nsl3
@@ -577,6 +613,10 @@
   (seen-ops
     (9 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
+        (nc0 nc0) (nc1 nc1))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")
@@ -636,6 +676,10 @@
       (recv (enc nc0 (enc nc1 (pubk c)) (pubk c)))))
   (label 12)
   (unrealized (0 2))
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
+        (nc0 nc0) (nc1 nc1))))
   (origs (nc1 (0 1)) (nc0 (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -670,6 +714,10 @@
   (label 13)
   (parent 12)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
+        (nc0 nc0) (nc1 nc1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nsl3
@@ -708,6 +756,10 @@
   (label 14)
   (parent 13)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
+        (nc0 nc0) (nc1 nc1))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton nsl3
@@ -748,6 +800,10 @@
   (label 15)
   (parent 14)
   (unrealized (0 2))
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
+        (nc0 nc0) (nc1 nc1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nsl3
@@ -798,6 +854,10 @@
   (label 16)
   (parent 14)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
+        (nc0 nc0) (nc1 nc1))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton nsl3
@@ -842,6 +902,10 @@
   (label 17)
   (parent 15)
   (unrealized (2 2))
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
+        (nc0 nc0) (nc1 nc1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nsl3
@@ -893,6 +957,10 @@
   (label 18)
   (parent 16)
   (unrealized (0 2))
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
+        (nc0 nc0) (nc1 nc1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nsl3
@@ -952,6 +1020,10 @@
   (label 19)
   (parent 16)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
+        (nc0 nc0) (nc1 nc1))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton nsl3
@@ -1053,6 +1125,10 @@
   (label 21)
   (parent 18)
   (unrealized (3 2))
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
+        (nc0 nc0) (nc1 nc1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nsl3
@@ -1113,6 +1189,10 @@
   (label 22)
   (parent 19)
   (unrealized (0 2))
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
+        (nc0 nc0) (nc1 nc1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nsl3
@@ -1173,6 +1253,10 @@
   (label 23)
   (parent 19)
   (unrealized (0 2))
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0-0) (nb1 nb1-0)
+        (nc0 nc0) (nc1 nc1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nsl3
@@ -1227,6 +1311,10 @@
   (seen-ops
     (20 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
+        (nc0 nc0) (nc1 nc1))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton nsl3
@@ -1287,6 +1375,10 @@
   (label 25)
   (parent 22)
   (unrealized (4 2))
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
+        (nc0 nc0) (nc1 nc1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nsl3
@@ -1348,6 +1440,10 @@
   (label 26)
   (parent 23)
   (unrealized (4 2))
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0-0) (nb1 nb1-0)
+        (nc0 nc0) (nc1 nc1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nsl3
@@ -1406,6 +1502,10 @@
   (label 27)
   (parent 25)
   (realized)
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
+        (nc0 nc0) (nc1 nc1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nsl3
@@ -1467,6 +1567,10 @@
   (seen-ops
     (29 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0-0) (nb1 nb1-0)
+        (nc0 nc0) (nc1 nc1))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton nsl3
@@ -1517,6 +1621,10 @@
   (seen-ops
     (20 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps
+    ((0)
+      ((a a) (b b) (c c) (na0 na0) (na1 na1) (nb0 nb0) (nb1 nb1)
+        (nc0 nc0) (nc1 nc1))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

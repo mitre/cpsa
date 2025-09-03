@@ -38,8 +38,9 @@ import CPSA.Channel
 import CPSA.Protocol
 import CPSA.Operation
 
-
 {--
+
+
 
 import System.IO
 import System.IO.Unsafe
@@ -49,6 +50,7 @@ import System.IO.Error (ioeGetErrorString)
 
 z :: Show a => a -> b -> b
 z x y = unsafePerformIO (print x >> hFlush stdout >> return y)
+
 
 zz :: Show a => a -> a
 zz x = z x x
@@ -380,6 +382,11 @@ graphEdges :: [GraphStrand e i] -> [GraphEdge e i]
 graphEdges strands =
     [ (dst, src) | s <- strands, src <- nodes s, dst <- preds src ]
 
+nodeGraphEdges :: [GraphStrand e i] -> [Pair]
+nodeGraphEdges strands =
+    [ (graphNode dst, graphNode src)
+          | s <- strands, src <- nodes s, dst <- preds src ]
+
 data Graph e i
     = Graph { gstrands :: [GraphStrand e i],
               gedges :: [GraphEdge e i] }
@@ -466,6 +473,42 @@ graphAllCloseLoop orderings repeat ((n0, n1) : pairs) =
       inner orderings repeat pairs (p : rest)
           | elem p orderings = inner orderings repeat pairs rest
           | otherwise = inner (p : orderings) True pairs rest
+
+
+nodeGraphCloseAll :: [Pair] -> [Pair]
+nodeGraphCloseAll orderings =
+    nodeGraphAllCloseLoop orderings False orderings
+
+--       if all orderingOK allNodes
+--       then 
+--           nodeGraphAllCloseLoop orderings False orderings
+--       else
+--           z ("missing predecessors for: " ++
+--              (show $ L.nub $ filter (not . orderingOK) allNodes))
+--                 $ nodeGraphAllCloseLoop orderings False orderings
+
+    where      
+      myPreds (s,i) =
+          let pairs = map fst
+                      (filter (\((_,_), (s1,i1)) -> s == s1 && i == i1)
+                       orderings) in
+          if i == 0 then pairs
+          else adjoin (s,i-1) pairs
+               
+      allNodes = union (map fst orderings) (map snd orderings)
+      -- immPreds = [ (n, (myPreds n)) | n <- allNodes ]
+      orderingOK (s,i) = i == 0 || (s,i-1) `elem` myPreds(s,i)
+
+      nodeGraphAllCloseLoop orderings False [] = orderings
+      nodeGraphAllCloseLoop orderings True [] = nodeGraphAllCloseLoop orderings False orderings -- restart loop
+      nodeGraphAllCloseLoop orderings repeat ((n0, n1) : pairs) =
+          inner orderings repeat pairs n1 (myPreds n0)
+                    
+      inner orderings repeat pairs n1 [] =
+          nodeGraphAllCloseLoop orderings repeat pairs
+      inner orderings repeat pairs n1 (n : rest)  
+          | elem (n,n1) orderings = inner orderings repeat pairs n1 rest
+          | otherwise = inner ((n,n1) : orderings) True pairs n1 rest      
 
 -- Shared part of preskeletons
 
@@ -617,8 +660,9 @@ newPreskel gen shared insts orderings non pnon unique
         g = graph trace height insts orderings'
         strands = gstrands g
         edges = gedges g
-        gpOrds = map graphPair $ graphClose $ graphEdges $ strands
-        gpOrdsAll = map graphPair $ graphCloseAll $ graphEdges $ strands
+        -- gpOrds = map graphPair $ graphClose $ graphEdges $ strands
+        gpOrdsAll = nodeGraphCloseAll $ nodeGraphEdges strands
+        gpOrds = filter (not . sameStrands) gpOrdsAll
         orig = map (originationNodes strands) unique'
         ugen = map (generationNodes strands) uniqgen'
         tc = filter pairWellOrdered (graphClose $ graphEdges strands)
@@ -653,9 +697,31 @@ newPreskel gen shared insts orderings non pnon unique
                       pprob = pprob,
                       prob = prob,
                       pov = pov } in
-        if useCheckVars then
-            checkVars k
-        else k
+    if useCheckVars then
+               checkVars k
+           else k
+    where
+      sameStrands ((s0,_),(s1,_)) = s0 == s1 
+
+
+                
+{--    let alt = map graphPair $ graphCloseAll $ graphEdges $ strands in
+    case setMinus gpOrdsAll alt of
+      [] -> (case setMinus alt gpOrdsAll of
+               [] -> k
+               ns -> z ("mismatch alt: " -- ++ (show (L.sort ns))
+                       ) k)
+      ns -> (case setMinus alt gpOrdsAll of
+               [] -> (z ("mismatch gpOrdsAll: " -- ++ (show (L.sort
+                                                -- ns))
+                        )
+                      (z ("alt was: " -- ++ (show (L.sort alt))
+                         ) k))
+               ns -> z ("mismatch both ways: " ++ (show (L.sort ns))) k)
+--}
+
+
+
 {-
           if chkFacts k then k
           else k

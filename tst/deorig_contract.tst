@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/deorig_contract.scm")
 
 (defprotocol deorig-contract basic
@@ -25,6 +25,7 @@
   (traces ((send (enc x1 k)) (send (enc x2 k)) (recv (enc x1 x2 k))))
   (label 0)
   (unrealized (0 2))
+  (maps ((0) ((k k) (x1 x1) (x2 x2))))
   (origs (x2 (0 1)) (x1 (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -43,6 +44,7 @@
   (parent 0)
   (unrealized (0 2))
   (dead)
+  (maps ((0) ((k k) (x1 x1) (x2 x2))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

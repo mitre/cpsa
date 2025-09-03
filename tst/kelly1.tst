@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/kelly1.scm")
 
 (defprotocol kelly1 basic
@@ -47,6 +47,10 @@
       (recv (cat A C (enc policy (pubk S) Ns (privk A))))))
   (label 0)
   (unrealized (0 3))
+  (maps
+    ((0)
+      ((A A) (C C) (S S) (Ns Ns) (request request) (Check Check)
+        (policy policy) (response response))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -78,6 +82,10 @@
   (label 1)
   (parent 0)
   (unrealized (1 2))
+  (maps
+    ((0)
+      ((A A) (C C) (S S) (Ns Ns) (request request) (Check Check)
+        (policy policy) (response response))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton kelly1
@@ -114,6 +122,10 @@
   (label 2)
   (parent 1)
   (unrealized (0 1))
+  (maps
+    ((0)
+      ((A A) (C C) (S S) (Ns Ns) (request request) (Check Check)
+        (policy policy) (response response))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton kelly1

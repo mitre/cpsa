@@ -1,7 +1,7 @@
 (herald "Otway-Rees Protocol"
   (comment "Standard version using variables of sort mesg"))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/or.scm")
 
 (defprotocol or basic
@@ -38,6 +38,7 @@
       (recv (cat m y (enc nb k (ltk b s)))) (send y)))
   (label 0)
   (unrealized (0 2))
+  (maps ((0) ((nb nb) (s s) (a a) (b b) (k k) (m m) (x x) (y y))))
   (origs (nb (0 1)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -61,6 +62,7 @@
   (label 1)
   (parent 0)
   (unrealized (1 0))
+  (maps ((0) ((nb nb) (s s) (a a) (b b) (k k) (m m) (x x) (y y))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton or
@@ -83,6 +85,7 @@
   (label 2)
   (parent 0)
   (unrealized (1 0))
+  (maps ((0) ((nb nb) (s s) (a a) (b b) (k k) (m m) (x x) (y y))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton or
@@ -104,6 +107,7 @@
   (label 3)
   (parent 1)
   (unrealized (1 0))
+  (maps ((0) ((nb nb) (s s) (a a) (b b) (k k) (m m) (x x) (y y))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton or
@@ -130,6 +134,7 @@
       (operation encryption-test (displaced 2 0 resp 2)
         (enc nb-0 m a a (ltk a s)) (1 0)) (strand-map 0 1)))
   (unrealized (1 0))
+  (maps ((0) ((nb nb) (s s) (a a) (b a) (k k) (m m) (x x) (y y))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton or

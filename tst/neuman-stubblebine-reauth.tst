@@ -1,6 +1,6 @@
 (herald neuman-stubblebine-reauth (bound 8))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/neuman-stubblebine-reauth.lsp")
 (comment "Strand count bounded at 8")
 
@@ -50,6 +50,10 @@
       (send (cat rb-prime (enc ra-prime k))) (recv (enc rb-prime k))))
   (label 0)
   (unrealized (0 2) (1 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (origs (rb (0 1)) (rb-prime (1 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -79,6 +83,10 @@
   (label 1)
   (parent 0)
   (unrealized (0 2) (1 2) (2 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -105,6 +113,10 @@
   (label 2)
   (parent 1)
   (unrealized (0 2) (1 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -136,6 +148,10 @@
   (label 3)
   (parent 1)
   (unrealized (0 2) (1 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -169,6 +185,10 @@
   (label 4)
   (parent 2)
   (unrealized (0 2) (3 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -204,6 +224,10 @@
   (label 5)
   (parent 2)
   (unrealized (0 2) (3 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -236,6 +260,10 @@
   (label 6)
   (parent 2)
   (unrealized (0 2) (3 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -265,6 +293,10 @@
   (parent 2)
   (unrealized (0 2) (3 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -303,6 +335,10 @@
   (label 8)
   (parent 3)
   (unrealized (0 2) (4 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -343,6 +379,10 @@
   (label 9)
   (parent 3)
   (unrealized (0 2) (4 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -380,6 +420,10 @@
   (label 10)
   (parent 3)
   (unrealized (0 2) (4 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -414,6 +458,10 @@
   (parent 3)
   (unrealized (0 2) (4 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -447,6 +495,10 @@
   (label 12)
   (parent 4)
   (unrealized (0 2) (3 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -482,6 +534,10 @@
   (label 13)
   (parent 5)
   (unrealized (0 2) (3 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -514,6 +570,10 @@
   (label 14)
   (parent 6)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -553,6 +613,10 @@
   (label 15)
   (parent 8)
   (unrealized (0 2) (4 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -594,6 +658,10 @@
   (label 16)
   (parent 9)
   (unrealized (0 2) (4 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -632,6 +700,10 @@
   (label 17)
   (parent 10)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -672,6 +744,10 @@
   (label 18)
   (parent 12)
   (unrealized (0 2) (4 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -713,6 +789,10 @@
   (label 19)
   (parent 12)
   (unrealized (0 2) (4 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -745,6 +825,10 @@
   (label 20)
   (parent 12)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -783,6 +867,10 @@
   (label 21)
   (parent 12)
   (unrealized (0 2) (4 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -819,6 +907,10 @@
   (parent 12)
   (unrealized (0 2) (4 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -853,6 +945,10 @@
   (label 23)
   (parent 13)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -891,6 +987,10 @@
   (label 24)
   (parent 14)
   (unrealized (4 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -930,6 +1030,10 @@
   (label 25)
   (parent 14)
   (unrealized (4 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1005,6 +1109,10 @@
   (label 27)
   (parent 14)
   (unrealized (4 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1038,6 +1146,10 @@
   (parent 14)
   (unrealized (4 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1082,6 +1194,10 @@
   (label 29)
   (parent 15)
   (unrealized (0 2) (5 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1127,6 +1243,10 @@
   (label 30)
   (parent 15)
   (unrealized (0 2) (5 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1164,6 +1284,10 @@
   (label 31)
   (parent 15)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1206,6 +1330,10 @@
   (label 32)
   (parent 15)
   (unrealized (0 2) (5 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1247,6 +1375,10 @@
   (parent 15)
   (unrealized (0 2) (5 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1286,6 +1418,10 @@
   (label 34)
   (parent 16)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1322,6 +1458,10 @@
   (label 35)
   (parent 17)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1362,6 +1502,10 @@
   (label 36)
   (parent 18)
   (unrealized (0 2) (4 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1402,6 +1546,10 @@
   (label 37)
   (parent 19)
   (unrealized (0 2) (4 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1440,6 +1588,10 @@
   (label 38)
   (parent 20)
   (unrealized (4 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1479,6 +1631,10 @@
   (label 39)
   (parent 20)
   (unrealized (4 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1516,6 +1672,10 @@
   (label 40)
   (parent 20)
   (unrealized (4 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1550,6 +1710,10 @@
   (parent 20)
   (unrealized (4 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1588,6 +1752,10 @@
   (label 42)
   (parent 21)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1628,6 +1796,10 @@
   (label 43)
   (parent 23)
   (unrealized (4 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1669,6 +1841,10 @@
   (label 44)
   (parent 23)
   (unrealized (4 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1748,6 +1924,10 @@
   (label 46)
   (parent 23)
   (unrealized (4 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1784,6 +1964,10 @@
   (parent 23)
   (unrealized (4 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1822,6 +2006,10 @@
   (label 48)
   (parent 24)
   (unrealized (4 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1859,6 +2047,10 @@
   (label 49)
   (parent 25)
   (unrealized (4 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1946,6 +2138,10 @@
   (label 51)
   (parent 29)
   (unrealized (0 2) (5 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -1992,6 +2188,10 @@
   (label 52)
   (parent 30)
   (unrealized (0 2) (5 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -2028,6 +2228,10 @@
   (label 53)
   (parent 31)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -2071,6 +2275,10 @@
   (label 54)
   (parent 32)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -2109,6 +2317,10 @@
   (label 55)
   (parent 34)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -2150,6 +2362,10 @@
   (label 56)
   (parent 35)
   (unrealized (5 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -2192,6 +2408,10 @@
   (label 57)
   (parent 35)
   (unrealized (5 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -2272,6 +2492,10 @@
   (label 59)
   (parent 35)
   (unrealized (5 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -2309,6 +2533,10 @@
   (parent 35)
   (unrealized (5 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -2356,6 +2584,10 @@
   (label 61)
   (parent 36)
   (unrealized (0 2) (5 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -2404,6 +2636,10 @@
   (label 62)
   (parent 36)
   (unrealized (0 2) (5 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -2443,6 +2679,10 @@
   (label 63)
   (parent 36)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -2488,6 +2728,10 @@
   (label 64)
   (parent 36)
   (unrealized (0 2) (5 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -2531,6 +2775,10 @@
   (parent 36)
   (unrealized (0 2) (5 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -2572,6 +2820,10 @@
   (label 66)
   (parent 37)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -2610,6 +2862,10 @@
   (label 67)
   (parent 38)
   (unrealized (4 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -2648,6 +2904,10 @@
   (label 68)
   (parent 39)
   (unrealized (4 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -2734,6 +2994,10 @@
   (label 70)
   (parent 42)
   (unrealized (5 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -2779,6 +3043,10 @@
   (label 71)
   (parent 42)
   (unrealized (5 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -2865,6 +3133,10 @@
   (label 73)
   (parent 42)
   (unrealized (5 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -2905,6 +3177,10 @@
   (parent 42)
   (unrealized (5 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -2945,6 +3221,10 @@
   (label 75)
   (parent 43)
   (unrealized (4 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -2986,6 +3266,10 @@
   (parent 44)
   (unrealized (4 1))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -3074,6 +3358,10 @@
   (label 78)
   (parent 48)
   (unrealized (5 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -3119,6 +3407,10 @@
   (label 79)
   (parent 48)
   (unrealized (5 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -3203,6 +3495,10 @@
   (label 81)
   (parent 48)
   (unrealized (5 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -3244,6 +3540,10 @@
   (parent 48)
   (unrealized (5 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -3336,6 +3636,10 @@
   (label 84)
   (parent 51)
   (unrealized (0 2) (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -3388,6 +3692,10 @@
   (label 85)
   (parent 51)
   (unrealized (0 2) (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -3432,6 +3740,10 @@
   (label 86)
   (parent 51)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -3481,6 +3793,10 @@
   (label 87)
   (parent 51)
   (unrealized (0 2) (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -3528,6 +3844,10 @@
   (parent 51)
   (unrealized (0 2) (6 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -3573,6 +3893,10 @@
   (label 89)
   (parent 52)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -3615,6 +3939,10 @@
   (label 90)
   (parent 53)
   (unrealized (5 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -3658,6 +3986,10 @@
   (label 91)
   (parent 53)
   (unrealized (5 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -3699,6 +4031,10 @@
   (label 92)
   (parent 53)
   (unrealized (5 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -3737,6 +4073,10 @@
   (parent 53)
   (unrealized (5 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -3778,6 +4118,10 @@
   (label 94)
   (parent 54)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -3822,6 +4166,10 @@
   (label 95)
   (parent 55)
   (unrealized (5 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -3867,6 +4215,10 @@
   (label 96)
   (parent 55)
   (unrealized (5 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -3953,6 +4305,10 @@
   (label 98)
   (parent 55)
   (unrealized (5 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -3993,6 +4349,10 @@
   (parent 55)
   (unrealized (5 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -4034,6 +4394,10 @@
   (label 100)
   (parent 56)
   (unrealized (5 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -4075,6 +4439,10 @@
   (label 101)
   (parent 57)
   (unrealized (5 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -4167,6 +4535,10 @@
   (label 103)
   (parent 61)
   (unrealized (0 2) (5 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -4215,6 +4587,10 @@
   (label 104)
   (parent 62)
   (unrealized (0 2) (5 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -4261,6 +4637,10 @@
   (label 105)
   (parent 63)
   (unrealized (5 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -4308,6 +4688,10 @@
   (label 106)
   (parent 63)
   (unrealized (5 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -4353,6 +4737,10 @@
   (label 107)
   (parent 63)
   (unrealized (5 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -4394,6 +4782,10 @@
   (parent 63)
   (unrealized (5 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -4439,6 +4831,10 @@
   (label 109)
   (parent 64)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -4486,6 +4882,10 @@
   (label 110)
   (parent 66)
   (unrealized (5 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -4534,6 +4934,10 @@
   (label 111)
   (parent 66)
   (unrealized (5 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -4627,6 +5031,10 @@
   (label 113)
   (parent 66)
   (unrealized (5 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -4670,6 +5078,10 @@
   (parent 66)
   (unrealized (5 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -4716,6 +5128,10 @@
   (label 115)
   (parent 67)
   (unrealized (5 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -4763,6 +5179,10 @@
   (label 116)
   (parent 67)
   (unrealized (5 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -4807,6 +5227,10 @@
   (label 117)
   (parent 67)
   (unrealized (5 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -4849,6 +5273,10 @@
   (parent 67)
   (unrealized (5 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -4935,6 +5363,10 @@
   (label 120)
   (parent 70)
   (unrealized (5 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "6 in cohort - 6 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -4979,6 +5411,10 @@
   (label 121)
   (parent 71)
   (unrealized (5 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -5075,6 +5511,10 @@
   (label 123)
   (parent 75)
   (unrealized (5 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -5124,6 +5564,10 @@
   (label 124)
   (parent 75)
   (unrealized (5 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -5215,6 +5659,10 @@
   (label 126)
   (parent 75)
   (unrealized (5 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -5259,6 +5707,10 @@
   (parent 75)
   (unrealized (5 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -5303,6 +5755,10 @@
   (label 128)
   (parent 78)
   (unrealized (5 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -5348,6 +5804,10 @@
   (label 129)
   (parent 79)
   (unrealized (5 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -5447,6 +5907,10 @@
   (label 131)
   (parent 84)
   (unrealized (0 2) (6 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -5500,6 +5964,10 @@
   (label 132)
   (parent 85)
   (unrealized (0 2) (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -5543,6 +6011,10 @@
   (label 133)
   (parent 86)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -5593,6 +6065,10 @@
   (label 134)
   (parent 87)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -5637,6 +6113,10 @@
   (label 135)
   (parent 89)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -5679,6 +6159,10 @@
   (label 136)
   (parent 90)
   (unrealized (5 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -5720,6 +6204,10 @@
   (label 137)
   (parent 91)
   (unrealized (5 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -5813,6 +6301,10 @@
   (label 139)
   (parent 94)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -5861,6 +6353,10 @@
   (label 140)
   (parent 94)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -5954,6 +6450,10 @@
   (label 142)
   (parent 94)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -5997,6 +6497,10 @@
   (parent 94)
   (unrealized (6 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -6041,6 +6545,10 @@
   (label 144)
   (parent 95)
   (unrealized (5 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -6084,6 +6592,10 @@
   (label 145)
   (parent 96)
   (unrealized (5 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -6180,6 +6692,10 @@
   (label 147)
   (parent 100)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -6229,6 +6745,10 @@
   (label 148)
   (parent 100)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -6321,6 +6841,10 @@
   (label 150)
   (parent 100)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -6366,6 +6890,10 @@
   (parent 100)
   (unrealized (6 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -6465,6 +6993,10 @@
   (label 153)
   (parent 103)
   (unrealized (0 2) (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -6519,6 +7051,10 @@
   (label 154)
   (parent 103)
   (unrealized (0 2) (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -6566,6 +7102,10 @@
   (label 155)
   (parent 103)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -6617,6 +7157,10 @@
   (label 156)
   (parent 103)
   (unrealized (0 2) (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -6666,6 +7210,10 @@
   (parent 103)
   (unrealized (0 2) (6 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -6714,6 +7262,10 @@
   (label 158)
   (parent 104)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -6760,6 +7312,10 @@
   (label 159)
   (parent 105)
   (unrealized (5 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -6805,6 +7361,10 @@
   (label 160)
   (parent 106)
   (unrealized (5 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -6905,6 +7465,10 @@
   (label 162)
   (parent 109)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -6956,6 +7520,10 @@
   (label 163)
   (parent 109)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -7056,6 +7624,10 @@
   (label 165)
   (parent 109)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -7102,6 +7674,10 @@
   (parent 109)
   (unrealized (6 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -7149,6 +7725,10 @@
   (label 167)
   (parent 110)
   (unrealized (5 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "6 in cohort - 6 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -7196,6 +7776,10 @@
   (parent 111)
   (unrealized (5 1))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -7293,6 +7877,10 @@
   (label 170)
   (parent 115)
   (unrealized (5 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -7339,6 +7927,10 @@
   (label 171)
   (parent 116)
   (unrealized (5 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -7487,6 +8079,10 @@
   (label 174)
   (parent 120)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -7538,6 +8134,10 @@
   (label 175)
   (parent 120)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -7635,6 +8235,10 @@
   (label 177)
   (parent 120)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -7682,6 +8286,10 @@
   (parent 120)
   (unrealized (6 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -7778,6 +8386,10 @@
   (label 180)
   (parent 123)
   (unrealized (5 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -7827,6 +8439,10 @@
   (parent 124)
   (unrealized (5 1))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -7929,6 +8545,10 @@
   (label 183)
   (parent 128)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -7981,6 +8601,10 @@
   (label 184)
   (parent 128)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -8080,6 +8704,10 @@
   (label 186)
   (parent 128)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -8127,6 +8755,10 @@
   (parent 128)
   (unrealized (6 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -8229,6 +8861,10 @@
   (label 191)
   (parent 131)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -8281,6 +8917,10 @@
   (label 194)
   (parent 132)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -8330,6 +8970,10 @@
   (label 195)
   (parent 133)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -8380,6 +9024,10 @@
   (label 196)
   (parent 133)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -8428,6 +9076,10 @@
   (label 197)
   (parent 133)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -8473,6 +9125,10 @@
   (parent 133)
   (unrealized (6 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -8521,6 +9177,10 @@
   (label 199)
   (parent 134)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -8571,6 +9231,10 @@
   (label 200)
   (parent 135)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -8622,6 +9286,10 @@
   (label 201)
   (parent 135)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -8720,6 +9388,10 @@
   (label 203)
   (parent 135)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -8767,6 +9439,10 @@
   (parent 135)
   (unrealized (6 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -8816,6 +9492,10 @@
   (label 205)
   (parent 136)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -8866,6 +9546,10 @@
   (label 206)
   (parent 136)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -8913,6 +9597,10 @@
   (label 207)
   (parent 136)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -8959,6 +9647,10 @@
   (parent 136)
   (unrealized (6 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -9052,6 +9744,10 @@
   (label 210)
   (parent 139)
   (unrealized (6 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "6 in cohort - 6 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -9099,6 +9795,10 @@
   (label 211)
   (parent 140)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -9201,6 +9901,10 @@
   (label 213)
   (parent 144)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -9253,6 +9957,10 @@
   (label 214)
   (parent 144)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -9350,6 +10058,10 @@
   (label 216)
   (parent 144)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -9398,6 +10110,10 @@
   (parent 144)
   (unrealized (6 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -9494,6 +10210,10 @@
   (label 219)
   (parent 147)
   (unrealized (6 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -9543,6 +10263,10 @@
   (label 220)
   (parent 148)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -9647,6 +10371,10 @@
   (label 222)
   (parent 153)
   (unrealized (0 2) (6 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -9701,6 +10429,10 @@
   (label 223)
   (parent 154)
   (unrealized (0 2) (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -9753,6 +10485,10 @@
   (label 224)
   (parent 155)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -9806,6 +10542,10 @@
   (label 225)
   (parent 155)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -9857,6 +10597,10 @@
   (label 226)
   (parent 155)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -9905,6 +10649,10 @@
   (parent 155)
   (unrealized (6 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -9956,6 +10704,10 @@
   (label 228)
   (parent 156)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -10009,6 +10761,10 @@
   (label 229)
   (parent 158)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -10063,6 +10819,10 @@
   (label 230)
   (parent 158)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -10168,6 +10928,10 @@
   (label 232)
   (parent 158)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -10218,6 +10982,10 @@
   (parent 158)
   (unrealized (6 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -10321,6 +11089,10 @@
   (label 235)
   (parent 159)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -10373,6 +11145,10 @@
   (label 236)
   (parent 159)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -10423,6 +11199,10 @@
   (label 237)
   (parent 159)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -10472,6 +11252,10 @@
   (parent 159)
   (unrealized (6 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -10572,6 +11356,10 @@
   (label 240)
   (parent 162)
   (unrealized (6 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "7 in cohort - 7 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -10622,6 +11410,10 @@
   (label 241)
   (parent 163)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -10729,6 +11521,10 @@
   (label 243)
   (parent 167)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -10783,6 +11579,10 @@
   (label 244)
   (parent 167)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -10937,6 +11737,10 @@
   (label 247)
   (parent 167)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -10987,6 +11791,10 @@
   (parent 167)
   (unrealized (6 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -11039,6 +11847,10 @@
   (label 249)
   (parent 170)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -11092,6 +11904,10 @@
   (label 250)
   (parent 170)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -11142,6 +11958,10 @@
   (label 251)
   (parent 170)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -11190,6 +12010,10 @@
   (parent 170)
   (unrealized (6 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -11292,6 +12116,10 @@
   (label 254)
   (parent 174)
   (unrealized (6 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "6 in cohort - 6 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -11343,6 +12171,10 @@
   (label 255)
   (parent 175)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -11450,6 +12282,10 @@
   (label 257)
   (parent 180)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -11505,6 +12341,10 @@
   (label 258)
   (parent 180)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -11610,6 +12450,10 @@
   (label 260)
   (parent 180)
   (unrealized (6 0))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -11660,6 +12504,10 @@
   (parent 180)
   (unrealized (6 0))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -11711,6 +12559,10 @@
   (label 262)
   (parent 183)
   (unrealized (6 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -11763,6 +12615,10 @@
   (label 263)
   (parent 184)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -11867,6 +12723,10 @@
   (label 265)
   (parent 191)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -11918,6 +12778,10 @@
   (label 266)
   (parent 194)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -11967,6 +12831,10 @@
   (label 267)
   (parent 195)
   (unrealized (6 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -12016,6 +12884,10 @@
   (label 268)
   (parent 196)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -12172,6 +13044,10 @@
   (label 275)
   (parent 200)
   (unrealized (6 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "6 in cohort - 6 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -12222,6 +13098,10 @@
   (label 276)
   (parent 201)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -12325,6 +13205,10 @@
   (label 278)
   (parent 205)
   (unrealized (6 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -12375,6 +13259,10 @@
   (label 279)
   (parent 206)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -12634,6 +13522,10 @@
   (label 288)
   (parent 213)
   (unrealized (6 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -12686,6 +13578,10 @@
   (label 289)
   (parent 214)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -12900,6 +13796,10 @@
   (label 299)
   (parent 222)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -12955,6 +13855,10 @@
   (label 302)
   (parent 223)
   (unrealized (0 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -13007,6 +13911,10 @@
   (label 303)
   (parent 224)
   (unrealized (6 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "6 in cohort - 6 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -13059,6 +13967,10 @@
   (label 304)
   (parent 225)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -13225,6 +14137,10 @@
   (label 311)
   (parent 229)
   (unrealized (6 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "7 in cohort - 7 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -13279,6 +14195,10 @@
   (parent 230)
   (unrealized (6 1))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -13389,6 +14309,10 @@
   (label 314)
   (parent 235)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -13441,6 +14365,10 @@
   (label 315)
   (parent 236)
   (unrealized (6 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -13768,6 +14696,10 @@
   (label 325)
   (parent 243)
   (unrealized (6 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "6 in cohort - 6 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -13823,6 +14755,10 @@
   (parent 244)
   (unrealized (6 1))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -13931,6 +14867,10 @@
   (label 328)
   (parent 249)
   (unrealized (6 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -13984,6 +14924,10 @@
   (label 329)
   (parent 250)
   (unrealized (6 1))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -14259,6 +15203,10 @@
   (label 338)
   (parent 257)
   (unrealized (6 2))
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -14315,6 +15263,10 @@
   (parent 258)
   (unrealized (6 1))
   (dead)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "empty cohort"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -15807,6 +16759,10 @@
   (parent 131)
   (unrealized (0 2) (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -15866,6 +16822,10 @@
   (parent 131)
   (unrealized (0 2) (7 1))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -15923,6 +16883,10 @@
   (parent 131)
   (unrealized (0 2) (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -15976,6 +16940,10 @@
   (parent 131)
   (unrealized (0 2) (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb-0))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16030,6 +16998,10 @@
   (parent 199)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16085,6 +17057,10 @@
   (parent 199)
   (unrealized (7 1))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16138,6 +17114,10 @@
   (parent 199)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16187,6 +17167,10 @@
   (parent 199)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16241,6 +17225,10 @@
   (parent 210)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16296,6 +17284,10 @@
   (parent 210)
   (unrealized (7 1))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16348,6 +17340,10 @@
   (parent 210)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16398,6 +17394,10 @@
   (parent 210)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16453,6 +17453,10 @@
   (parent 219)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16509,6 +17513,10 @@
   (parent 219)
   (unrealized (7 1))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16562,6 +17570,10 @@
   (parent 219)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16612,6 +17624,10 @@
   (parent 219)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16673,6 +17689,10 @@
   (parent 222)
   (unrealized (0 2) (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16735,6 +17755,10 @@
   (parent 222)
   (unrealized (0 2) (7 1))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16794,6 +17818,10 @@
   (parent 222)
   (unrealized (0 2) (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16850,6 +17878,10 @@
   (parent 222)
   (unrealized (0 2) (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16908,6 +17940,10 @@
   (parent 228)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -16967,6 +18003,10 @@
   (parent 228)
   (unrealized (7 1))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17024,6 +18064,10 @@
   (parent 228)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17077,6 +18121,10 @@
   (parent 228)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17135,6 +18183,10 @@
   (parent 240)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17194,6 +18246,10 @@
   (parent 240)
   (unrealized (7 1))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17250,6 +18306,10 @@
   (parent 240)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17304,6 +18364,10 @@
   (parent 240)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17362,6 +18426,10 @@
   (parent 254)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17421,6 +18489,10 @@
   (parent 254)
   (unrealized (7 1))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17477,6 +18549,10 @@
   (parent 254)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17530,6 +18606,10 @@
   (parent 254)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17588,6 +18668,10 @@
   (parent 262)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17647,6 +18731,10 @@
   (parent 262)
   (unrealized (7 1))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17703,6 +18791,10 @@
   (parent 262)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17756,6 +18848,10 @@
   (parent 262)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17812,6 +18908,10 @@
   (parent 265)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17869,6 +18969,10 @@
   (parent 265)
   (unrealized (7 1))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17924,6 +19028,10 @@
   (parent 265)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -17975,6 +19083,10 @@
   (parent 265)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18032,6 +19144,10 @@
   (parent 266)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18090,6 +19206,10 @@
   (parent 266)
   (unrealized (7 1))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18146,6 +19266,10 @@
   (parent 266)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18199,6 +19323,10 @@
   (parent 266)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18256,6 +19384,10 @@
   (parent 267)
   (unrealized (7 1))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18312,6 +19444,10 @@
   (parent 267)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18366,6 +19502,10 @@
   (parent 267)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18418,6 +19558,10 @@
   (parent 267)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18475,6 +19619,10 @@
   (parent 275)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18533,6 +19681,10 @@
   (parent 275)
   (unrealized (7 1))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18588,6 +19740,10 @@
   (parent 275)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18641,6 +19797,10 @@
   (parent 275)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18697,6 +19857,10 @@
   (parent 278)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18754,6 +19918,10 @@
   (parent 278)
   (unrealized (7 1))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18808,6 +19976,10 @@
   (parent 278)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18859,6 +20031,10 @@
   (parent 278)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18917,6 +20093,10 @@
   (parent 288)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -18976,6 +20156,10 @@
   (parent 288)
   (unrealized (7 1))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19032,6 +20216,10 @@
   (parent 288)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19085,6 +20273,10 @@
   (parent 288)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19145,6 +20337,10 @@
   (parent 299)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19206,6 +20402,10 @@
   (parent 299)
   (unrealized (7 1))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19265,6 +20465,10 @@
   (parent 299)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19320,6 +20524,10 @@
   (parent 299)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19381,6 +20589,10 @@
   (parent 302)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19443,6 +20655,10 @@
   (parent 302)
   (unrealized (7 1))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19503,6 +20719,10 @@
   (parent 302)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19560,6 +20780,10 @@
   (parent 302)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19621,6 +20845,10 @@
   (parent 303)
   (unrealized (7 1))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19681,6 +20909,10 @@
   (parent 303)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19739,6 +20971,10 @@
   (parent 303)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19795,6 +21031,10 @@
   (parent 303)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19857,6 +21097,10 @@
   (parent 311)
   (unrealized (7 1))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19918,6 +21162,10 @@
   (parent 311)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -19977,6 +21225,10 @@
   (parent 311)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -20034,6 +21286,10 @@
   (parent 311)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -20095,6 +21351,10 @@
   (parent 315)
   (unrealized (7 1))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -20155,6 +21415,10 @@
   (parent 315)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -20213,6 +21477,10 @@
   (parent 315)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -20268,6 +21536,10 @@
   (parent 315)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -20329,6 +21601,10 @@
   (parent 325)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -20391,6 +21667,10 @@
   (parent 325)
   (unrealized (7 1))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -20450,6 +21730,10 @@
   (parent 325)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -20506,6 +21790,10 @@
   (parent 325)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -20566,6 +21854,10 @@
   (parent 328)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -20627,6 +21919,10 @@
   (parent 328)
   (unrealized (7 1))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -20685,6 +21981,10 @@
   (parent 328)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -20740,6 +22040,10 @@
   (parent 328)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -20802,6 +22106,10 @@
   (parent 338)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -20865,6 +22173,10 @@
   (parent 338)
   (unrealized (7 1))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -20925,6 +22237,10 @@
   (parent 338)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))
 
 (defskeleton neuman-stubblebine-reauth
@@ -20982,4 +22298,8 @@
   (parent 338)
   (unrealized (7 0))
   (aborted)
+  (maps
+    ((0 1)
+      ((ra ra) (tb tb) (rb rb) (a a) (b b) (ks ks) (k k)
+        (ra-prime ra-prime) (rb-prime rb-prime) (tb-0 tb))))
   (comment "aborted"))

@@ -5,7 +5,7 @@
   (url "http://www.eecs.umich.edu/acal/swerve/docs/49-1.pdf")
   (bound 15))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/yahalom-6.3.6.scm")
 (comment "Strand count bounded at 15")
 
@@ -44,6 +44,7 @@
       (send (cat blob (enc n-b k)))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k) (blob blob))))
   (origs (n-a (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -66,6 +67,7 @@
   (label 1)
   (parent 0)
   (unrealized (1 0))
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k) (blob blob))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
@@ -130,6 +132,7 @@
       (recv (cat (enc a k (ltk b s)) (enc n-b k)))) ((recv k) (send k)))
   (label 3)
   (unrealized (0 2))
+  (maps ((0 1) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (origs (n-b (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -152,6 +155,7 @@
   (label 4)
   (parent 3)
   (unrealized (0 2) (1 0) (2 0))
+  (maps ((0 1) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton yahalom
@@ -174,6 +178,7 @@
   (parent 4)
   (unrealized (0 2) (1 0))
   (dead)
+  (maps ((0 1) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (comment "empty cohort"))
 
 (defskeleton yahalom
@@ -198,6 +203,7 @@
   (parent 4)
   (unrealized (0 2) (1 0))
   (dead)
+  (maps ((0 1) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -236,6 +242,7 @@
       (recv (cat (enc a k (ltk b s)) (enc n-b k)))))
   (label 7)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (origs (n-b (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -257,6 +264,7 @@
   (label 8)
   (parent 7)
   (unrealized (0 2) (1 0))
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton yahalom
@@ -277,6 +285,7 @@
   (label 9)
   (parent 8)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton yahalom
@@ -299,6 +308,7 @@
   (label 10)
   (parent 8)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton yahalom
@@ -324,6 +334,7 @@
   (label 11)
   (parent 9)
   (unrealized (2 1))
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton yahalom
@@ -346,6 +357,7 @@
   (parent 9)
   (unrealized (0 2) (2 0))
   (dead)
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (comment "empty cohort"))
 
 (defskeleton yahalom
@@ -373,6 +385,7 @@
   (label 13)
   (parent 10)
   (unrealized (3 1))
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
@@ -397,6 +410,7 @@
   (parent 10)
   (unrealized (0 2) (3 0))
   (dead)
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (comment "empty cohort"))
 
 (defskeleton yahalom
@@ -454,6 +468,7 @@
   (label 16)
   (parent 11)
   (unrealized (2 1))
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton yahalom
@@ -490,6 +505,7 @@
         (enc a n-a n-b (ltk b s)) (enc b k n-a n-b (ltk a s))
         (enc b k-0 n-a n-b (ltk a s))) (strand-map 0 1 2 3)))
   (unrealized (2 1))
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton yahalom
@@ -522,6 +538,7 @@
   (label 18)
   (parent 13)
   (unrealized (3 1))
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
@@ -556,6 +573,7 @@
   (label 19)
   (parent 16)
   (unrealized (2 1))
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
@@ -589,6 +607,7 @@
   (parent 16)
   (unrealized (4 0))
   (dead)
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (comment "empty cohort"))
 
 (defskeleton yahalom
@@ -621,6 +640,7 @@
   (seen-ops
     (15 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton yahalom
@@ -657,6 +677,7 @@
   (label 22)
   (parent 17)
   (unrealized (2 1))
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton yahalom
@@ -694,6 +715,7 @@
   (label 23)
   (parent 18)
   (unrealized (3 1))
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton yahalom
@@ -733,6 +755,7 @@
   (parent 19)
   (unrealized (5 0))
   (dead)
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (comment "empty cohort"))
 
 (defskeleton yahalom
@@ -773,6 +796,7 @@
   (label 25)
   (parent 22)
   (unrealized (2 1))
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
@@ -812,6 +836,7 @@
   (parent 22)
   (unrealized (2 1) (5 0))
   (dead)
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (comment "empty cohort"))
 
 (defskeleton yahalom
@@ -853,6 +878,7 @@
   (label 27)
   (parent 23)
   (unrealized (3 1))
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom
@@ -893,6 +919,7 @@
   (parent 23)
   (unrealized (3 1) (6 0))
   (dead)
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (comment "empty cohort"))
 
 (defskeleton yahalom
@@ -936,6 +963,7 @@
   (parent 25)
   (unrealized (2 1) (6 0))
   (dead)
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (comment "empty cohort"))
 
 (defskeleton yahalom
@@ -981,6 +1009,7 @@
   (parent 27)
   (unrealized (3 1) (7 0))
   (dead)
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -1019,6 +1048,7 @@
       (send (cat (enc b k n-a n-b (ltk a s)) (enc a k (ltk b s))))))
   (label 31)
   (unrealized (0 0))
+  (maps ((0) ((a a) (b b) (s s) (n-a n-a) (n-b n-b) (k k))))
   (origs (k (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 

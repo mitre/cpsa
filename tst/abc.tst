@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/abc.scm")
 
 (defprotocol abc basic
@@ -31,6 +31,7 @@
   (traces ((send (enc x k)) (recv (enc x x k))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((x x) (k k))))
   (origs (x (0 0)))
   (comment "3 in cohort - 3 not yet seen"))
 
@@ -49,6 +50,7 @@
   (parent 0)
   (unrealized (1 0))
   (dead)
+  (maps ((0) ((x x) (k k))))
   (comment "empty cohort"))
 
 (defskeleton abc
@@ -66,6 +68,7 @@
   (parent 0)
   (unrealized (1 0))
   (dead)
+  (maps ((0) ((x x) (k k))))
   (comment "empty cohort"))
 
 (defskeleton abc
@@ -83,6 +86,7 @@
   (parent 0)
   (unrealized (1 0))
   (dead)
+  (maps ((0) ((x x) (k k))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

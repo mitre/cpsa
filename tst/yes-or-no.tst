@@ -1,6 +1,6 @@
 (herald yes-or-no)
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/yes-or-no.scm")
 
 (defprotocol yes-or-no basic
@@ -32,6 +32,7 @@
   (traces ((send (enc question y n ans-key)) (recv y)))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((y y) (ans-key ans-key) (n n) (question question))))
   (origs (y (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -87,6 +88,7 @@
   (traces ((send (enc question y n ans-key)) (recv n)))
   (label 2)
   (unrealized (0 1))
+  (maps ((0) ((ans-key ans-key) (n n) (y y) (question question))))
   (origs (n (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -144,6 +146,7 @@
   (label 4)
   (unrealized (1 0))
   (preskeleton)
+  (maps ((0 1) ((y y) (ans-key ans-key) (n n) (question question))))
   (origs (y (0 0)))
   (comment "Not a skeleton"))
 
@@ -159,6 +162,7 @@
   (label 5)
   (parent 4)
   (unrealized (1 0))
+  (maps ((0 1) ((y y) (ans-key ans-key) (n n) (question question))))
   (origs (y (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -217,6 +221,7 @@
   (label 7)
   (unrealized (1 0))
   (preskeleton)
+  (maps ((0 1) ((n n) (ans-key ans-key) (y y) (question question))))
   (origs (n (0 0)))
   (comment "Not a skeleton"))
 
@@ -232,6 +237,7 @@
   (label 8)
   (parent 7)
   (unrealized (1 0))
+  (maps ((0 1) ((n n) (ans-key ans-key) (y y) (question question))))
   (origs (n (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 

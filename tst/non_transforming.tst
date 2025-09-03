@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/non_transforming.scm")
 
 (defprotocol non_transforming basic
@@ -33,6 +33,7 @@
     ((send (enc a d (pubk B0)))) ((send (enc c b (pubk B1)))))
   (label 0)
   (unrealized (0 0) (0 1))
+  (maps ((0 1 2) ((a a) (b b) (c c) (d d) (B B) (B0 B0) (B1 B1))))
   (origs (c (2 0)) (d (1 0)) (a (1 0)) (b (2 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -50,6 +51,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 0) (0 1))
+  (maps ((0 1 1) ((a a) (b d) (c a) (d d) (B B) (B0 B0) (B1 B0))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton non_transforming
@@ -70,6 +72,7 @@
   (label 2)
   (parent 0)
   (unrealized (0 0) (0 1))
+  (maps ((0 1 2) ((a a) (b b) (c c) (d d) (B B) (B0 B0) (B1 B1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton non_transforming
@@ -89,6 +92,7 @@
   (label 3)
   (parent 1)
   (unrealized (0 0) (0 1))
+  (maps ((0 1 1) ((a a) (b d) (c a) (d d) (B B) (B0 B0) (B1 B0))))
   (origs (a (1 0)) (d (1 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -110,6 +114,7 @@
   (label 4)
   (parent 2)
   (unrealized (0 1))
+  (maps ((0 1 2) ((a a) (b b) (c c) (d d) (B B0) (B0 B0) (B1 B1))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton non_transforming
@@ -129,6 +134,7 @@
   (label 5)
   (parent 3)
   (unrealized (0 1))
+  (maps ((0 1 1) ((a a) (b d) (c a) (d d) (B B0) (B0 B0) (B1 B0))))
   (origs (a (1 0)) (d (1 0)))
   (comment "3 in cohort - 3 not yet seen"))
 
@@ -153,6 +159,7 @@
   (label 6)
   (parent 4)
   (unrealized (0 1))
+  (maps ((0 1 2) ((a a) (b b) (c c) (d d) (B B0) (B0 B0) (B1 B1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton non_transforming
@@ -175,6 +182,7 @@
   (label 7)
   (parent 4)
   (unrealized (0 1))
+  (maps ((0 1 2) ((a a) (b c) (c c) (d d) (B B0) (B0 B0) (B1 B1))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton non_transforming

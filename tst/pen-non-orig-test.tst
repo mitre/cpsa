@@ -1,6 +1,6 @@
 (herald "pen-non-orig test")
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/pen-non-orig-test.scm")
 
 (defprotocol pennonorigtest basic
@@ -25,6 +25,7 @@
   (traces ((recv (cat userid pwd))))
   (label 0)
   (unrealized (0 0))
+  (maps ((0) ((pwd pwd) (userid userid))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -69,6 +70,7 @@
   (traces ((recv (cat userid pwd))) ((recv pwd) (send pwd)))
   (label 2)
   (unrealized (0 0) (1 0))
+  (maps ((0 1) ((pwd pwd) (userid userid))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -86,6 +88,7 @@
   (label 3)
   (parent 2)
   (unrealized (0 0))
+  (maps ((0 1) ((pwd pwd) (userid userid))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton pennonorigtest

@@ -1,6 +1,6 @@
 (herald chan-unilateral)
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/chan-unilateral.scm")
 
 (defprotocol unilateral basic
@@ -83,6 +83,7 @@
   (traces ((send ch n) (recv n)))
   (label 2)
   (unrealized (0 1))
+  (maps ((0) ((ch ch) (n n))))
   (origs (n (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -129,6 +130,7 @@
   (traces ((send ch n) (recv n)))
   (label 4)
   (unrealized (0 1))
+  (maps ((0) ((ch ch) (n n))))
   (origs (n (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -174,6 +176,7 @@
   (traces ((recv ch n) (send n)))
   (label 6)
   (unrealized (0 0))
+  (maps ((0) ((n n) (ch ch))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -219,6 +222,7 @@
   (traces ((recv ch n) (send n)))
   (label 8)
   (unrealized (0 0))
+  (maps ((0) ((n n) (ch ch))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -265,6 +269,7 @@
   (traces ((recv ch n) (send n)))
   (label 10)
   (unrealized (0 0))
+  (maps ((0) ((n n) (ch ch))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -312,6 +317,7 @@
   (traces ((recv ch n) (send n)))
   (label 12)
   (unrealized (0 0))
+  (maps ((0) ((n n) (ch ch))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 

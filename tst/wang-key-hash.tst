@@ -1,6 +1,6 @@
 (herald "Wang's Fair Exchange Protocol" (bound 10))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/wang-key-hash.scm")
 (comment "Strand count bounded at 10")
 
@@ -526,6 +526,7 @@
   (label 0)
   (unrealized (1 0))
   (preskeleton)
+  (maps ((0 1) ((b b) (t t) (m m) (r r) (k k) (a a))))
   (origs (m (0 0)) (k (0 0)))
   (comment "Not a skeleton"))
 
@@ -558,6 +559,7 @@
   (label 1)
   (parent 0)
   (unrealized (1 0))
+  (maps ((0 1) ((b b) (t t) (m m) (r r) (k k) (a a))))
   (origs (m (0 0)) (k (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -593,6 +595,7 @@
   (label 2)
   (parent 1)
   (unrealized (2 0))
+  (maps ((0 1) ((b b) (t t) (m m) (r r) (k k) (a a))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton wang
@@ -641,6 +644,7 @@
   (label 3)
   (parent 2)
   (realized)
+  (maps ((2 0) ((b b) (t t) (m m) (r r) (k k) (a a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wang
@@ -748,6 +752,7 @@
   (label 4)
   (parent 2)
   (realized)
+  (maps ((0 1) ((b b) (t t) (m m) (r r) (k k) (a a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton wang
@@ -1423,6 +1428,7 @@
   (label 7)
   (unrealized (1 0))
   (preskeleton)
+  (maps ((0 1) ((b b) (t t) (m m) (r r) (k k) (a a))))
   (origs (m (0 0)) (k (0 0)))
   (comment "Not a skeleton"))
 
@@ -1455,6 +1461,7 @@
   (label 8)
   (parent 7)
   (unrealized (1 0))
+  (maps ((0 1) ((b b) (t t) (m m) (r r) (k k) (a a))))
   (origs (m (0 0)) (k (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -2146,6 +2153,7 @@
           (privk "sign" b))) (send (cat k r))))
   (label 11)
   (unrealized (0 1))
+  (maps ((0) ((b b) (t t) (m m) (r r) (k k) (a a))))
   (origs)
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -2865,6 +2873,7 @@
           (privk "sign" b)))))
   (label 14)
   (unrealized (0 2))
+  (maps ((0) ((b b) (t t) (m m) (r r) (k k) (a a))))
   (origs)
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -3600,6 +3609,7 @@
           (privk "sign" b)))))
   (label 17)
   (unrealized (0 1) (0 3))
+  (maps ((0) ((b b) (t t) (m m) (r r) (k k) (a a))))
   (origs)
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -4342,6 +4352,7 @@
           (privk "sign" b))) (recv (cat k r))))
   (label 20)
   (unrealized (0 0))
+  (maps ((0) ((a a) (t t) (m m) (r r) (k k) (b b))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -4996,6 +5007,7 @@
             (privk "sign" b)))) (recv (cat k r))))
   (label 22)
   (unrealized (0 0))
+  (maps ((0) ((a a) (t t) (m m) (r r) (k k) (b b))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -5650,6 +5662,7 @@
           (privk "sign" t)))))
   (label 24)
   (unrealized (0 0) (0 3))
+  (maps ((0) ((a a) (t t) (b b) (e1 e1) (e2 e2) (x x))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -5779,6 +5792,15 @@
   (label 25)
   (parent 24)
   (unrealized (0 3))
+  (maps
+    ((0)
+      ((a a) (t t) (b b) (e1 (enc m k))
+        (e2
+          (enc "keytag"
+            (enc "h"
+              (cat "h" a b t (enc "h" (cat "h" (enc m k)))
+                (enc "h" (cat "h" k)))) k r (pubk "encr" t)))
+        (x (enc "h" (cat "h" k))))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton wang
@@ -6885,6 +6907,7 @@
           (privk "sign" t)))))
   (label 30)
   (unrealized (0 0))
+  (maps ((0) ((a a) (b b) (t t) (y y) (x x))))
   (origs)
   (comment "3 in cohort - 3 not yet seen"))
 
@@ -7537,6 +7560,7 @@
           (privk "sign" t)))))
   (label 34)
   (unrealized (0 0))
+  (maps ((0) ((y y) (x x) (a a) (b b) (t t))))
   (origs)
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -8185,6 +8209,7 @@
           (privk "sign" t)))))
   (label 37)
   (unrealized (0 0) (0 1))
+  (maps ((0) ((a a) (b b) (t t) (r r) (k k) (y y))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -8269,6 +8294,10 @@
   (label 38)
   (parent 37)
   (unrealized (0 1))
+  (maps
+    ((0)
+      ((a a) (b b) (t t) (r r) (k k)
+        (y (enc "h" (cat "h" (enc m k)))))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton wang
@@ -9190,6 +9219,7 @@
           (privk "sign" t)))))
   (label 43)
   (unrealized (0 0) (0 1))
+  (maps ((0) ((a a) (b b) (t t) (r r) (k k) (y y))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -9274,6 +9304,10 @@
   (label 44)
   (parent 43)
   (unrealized (0 1))
+  (maps
+    ((0)
+      ((a a) (b b) (t t) (r r) (k k)
+        (y (enc "h" (cat "h" (enc m k)))))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton wang

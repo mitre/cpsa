@@ -12,12 +12,13 @@
 # ./cpsagraphall
 
 CPSAFLAGS="+RTS -M512m -N -RTS"
+CPSADIFF=
 TST=${1:-tst}
 
 # Analyze the results of a CPSA run.
 analyze () {
     echo cpsa4diff "$1.tst" "$1.txt"
-    cabal run cpsa4diff -v0 -- "$1.tst" "$1.txt"
+    cabal run cpsa4diff -v0 -- ${CPSADIFF} "$1.tst" "$1.txt"
     echo cpsa4graph -o "$1.xhtml" "$1.txt"
     cabal run cpsa4graph -v0 -- -o "$1.xhtml" "$1.txt"
     echo cpsa4shapes -o "${1}_shapes.txt" "$1.txt"

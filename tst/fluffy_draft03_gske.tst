@@ -3,7 +3,7 @@
   (comment
     "Based on the Internet-Draft: https://www.ietf.org/archive/id/draft-hardjono-ace-fluffy-03.txt"))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/fluffy_draft03_gske.scm")
 
 (defprotocol fluffy basic
@@ -40,6 +40,7 @@
       (recv (cat "resp" b (enc s g nb gk (ltk s b))))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((b b) (s s) (nb nb) (gk gk) (g g))))
   (origs (nb (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -134,6 +135,7 @@
       (send (cat "deliver" a (enc s g na gk (ltk s a))))))
   (label 3)
   (unrealized (0 0) (0 2))
+  (maps ((0) ((a a) (b b) (s s) (nb nb) (na na) (gk gk) (g g))))
   (origs)
   (ugens (gk (0 1)))
   (comment "2 in cohort - 2 not yet seen"))
@@ -158,6 +160,7 @@
   (label 4)
   (parent 3)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (s s) (nb nb) (na na) (gk gk) (g g))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton fluffy
@@ -180,6 +183,7 @@
   (label 5)
   (parent 3)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (s s) (nb nb) (na na) (gk gk) (g g))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton fluffy
@@ -376,6 +380,7 @@
       (recv (cat "deliver" a (enc s g na gk (ltk s a))))))
   (label 12)
   (unrealized (0 1))
+  (maps ((0) ((a a) (s s) (na na) (gk gk) (g g))))
   (origs (na (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -481,6 +486,7 @@
       (recv (cat "resp" b (enc s g nb gk (ltk s b))))))
   (label 15)
   (unrealized (0 1))
+  (maps ((0) ((b b) (s s) (nb nb) (gk gk) (g g))))
   (origs (nb (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -561,6 +567,7 @@
       (send (cat "deliver" a (enc s g na gk (ltk s a))))))
   (label 17)
   (unrealized (0 0) (0 2))
+  (maps ((0) ((a a) (b b) (s s) (nb nb) (na na) (gk gk) (g g))))
   (origs)
   (ugens (gk (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
@@ -585,6 +592,7 @@
   (label 18)
   (parent 17)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (s s) (nb nb) (na na) (gk gk) (g g))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton fluffy-rule
@@ -664,6 +672,7 @@
       (recv (cat "deliver" a (enc s g na gk (ltk s a))))))
   (label 20)
   (unrealized (0 1))
+  (maps ((0) ((a a) (s s) (na na) (gk gk) (g g))))
   (origs (na (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 

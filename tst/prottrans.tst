@@ -1,6 +1,6 @@
 (herald "Protocol Transformations With Rules")
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/prottrans.scm")
 
 (defprotocol ns basic
@@ -27,6 +27,7 @@
   (traces ((send (enc na a b)) (recv (enc na nb a)) (send (enc nb b))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (na na) (nb nb))))
   (origs (na (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -45,6 +46,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (na na) (nb nb))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton ns
@@ -93,6 +95,7 @@
   (traces ((recv (enc na a b)) (send (enc na nb a)) (recv (enc nb b))))
   (label 3)
   (unrealized (0 2))
+  (maps ((0) ((a a) (nb nb) (b b) (na na))))
   (origs (nb (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -149,6 +152,7 @@
   (traces ((send (enc n k)) (recv n)))
   (label 5)
   (unrealized (0 1))
+  (maps ((0) ((k k) (n n))))
   (origs (n (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -221,6 +225,7 @@
   (traces ((recv (enc na a b)) (send (enc na nb a)) (recv (enc nb b))))
   (label 7)
   (unrealized (0 2))
+  (maps ((0) ((a a) (nb nb) (b b) (na na))))
   (origs (nb (0 1)))
   (comment "Not closed under rules"))
 
@@ -239,6 +244,7 @@
   (label 8)
   (parent 7)
   (unrealized (1 1))
+  (maps ((0) ((a a) (nb nb) (b b) (na na))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton ns-with-rule
@@ -280,6 +286,7 @@
   (seen-ops
     (9 (operation generalization deleted (1 0)) (strand-map 0 2)))
   (realized)
+  (maps ((0) ((a a) (nb nb) (b b) (na na))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

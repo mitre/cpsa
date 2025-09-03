@@ -2,7 +2,7 @@
   (bound 12) (limit 5000)
   (comment "This version includes account numbers in exchanges"))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/epmo_acctnum.lsp")
 (comment "Step count limited to 5000")
 
@@ -102,6 +102,10 @@
       (send (enc (enc "hash" b m nb nm (pubk hash)) (privk m)))))
   (label 0)
   (unrealized (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (origs (nm (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -131,6 +135,10 @@
   (label 1)
   (parent 0)
   (unrealized (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -165,6 +173,10 @@
   (label 2)
   (parent 1)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -199,6 +211,10 @@
   (label 3)
   (parent 2)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -243,6 +259,10 @@
   (label 4)
   (parent 2)
   (unrealized (0 0) (0 2) (1 0) (3 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -276,6 +296,10 @@
   (label 5)
   (parent 3)
   (unrealized (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -315,6 +339,10 @@
   (label 6)
   (parent 3)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -358,6 +386,10 @@
   (label 7)
   (parent 4)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -442,6 +474,10 @@
   (label 9)
   (parent 6)
   (unrealized (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -485,6 +521,10 @@
   (label 10)
   (parent 7)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -530,6 +570,10 @@
   (label 11)
   (parent 7)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -587,6 +631,10 @@
       (operation nonce-test (displaced 5 2 customer 3) nm (4 0)
         (enc nc nm m price (pubk c))) (strand-map 0 1 2 3 3)))
   (unrealized (0 0) (0 2) (1 0) (4 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -635,6 +683,10 @@
   (seen-ops
     (8 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -677,6 +729,10 @@
   (label 14)
   (parent 10)
   (unrealized (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -723,6 +779,10 @@
   (label 15)
   (parent 10)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -767,6 +827,10 @@
   (label 16)
   (parent 11)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -819,6 +883,10 @@
   (label 17)
   (parent 11)
   (unrealized (0 0) (0 2) (1 0) (4 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -872,6 +940,10 @@
   (label 18)
   (parent 11)
   (unrealized (0 0) (0 2) (1 0) (3 3))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -923,6 +995,10 @@
   (seen-ops
     (8 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -969,6 +1045,10 @@
   (label 20)
   (parent 15)
   (unrealized (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -1010,6 +1090,10 @@
   (label 21)
   (parent 16)
   (unrealized (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -1056,6 +1140,10 @@
   (label 22)
   (parent 16)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -1115,6 +1203,10 @@
         (enc c nc nb-1 acctnum-0 price (pubk b-0)))
       (strand-map 0 1 2 3 3)))
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -1167,6 +1259,10 @@
   (label 24)
   (parent 18)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -1227,6 +1323,10 @@
   (label 25)
   (parent 18)
   (unrealized (0 0) (0 2) (1 0) (4 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -1282,6 +1382,10 @@
   (seen-ops
     (13 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -1332,6 +1436,10 @@
   (seen-ops
     (8 (operation generalization deleted (2 0)) (strand-map 0 1 3)))
   (realized)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -1378,6 +1486,10 @@
   (label 28)
   (parent 22)
   (unrealized (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -1430,6 +1542,10 @@
   (label 29)
   (parent 24)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -1491,6 +1607,10 @@
   (label 30)
   (parent 24)
   (unrealized (0 0) (0 2) (1 0) (4 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -1550,6 +1670,10 @@
   (label 31)
   (parent 24)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -1609,6 +1733,10 @@
   (label 32)
   (parent 25)
   (unrealized (0 0) (0 2) (1 0) (4 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -1664,6 +1792,10 @@
   (seen-ops
     (13 (operation generalization deleted (2 0)) (strand-map 0 1 3 4)))
   (realized)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -1714,6 +1846,10 @@
   (parent 29)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -1768,6 +1904,10 @@
   (label 35)
   (parent 29)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -1826,6 +1966,10 @@
   (label 36)
   (parent 30)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -1888,6 +2032,10 @@
       (operation nonce-test (displaced 5 4 merchant 2) nc (0 0)
         (enc c nc goods-0 (pubk m))) (strand-map 0 1 2 3 4)))
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -1960,6 +2108,10 @@
       (operation nonce-test (displaced 6 3 customer 3) nb-0 (5 0)
         (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5)))
   (unrealized (0 0) (0 2) (1 0) (5 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -2019,6 +2171,10 @@
   (label 39)
   (parent 32)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -2087,6 +2243,10 @@
         (enc c nc nb-0 acctnum-0 price (pubk b-0)))
       (strand-map 0 1 2 3 2)))
   (unrealized (0 0) (0 2) (1 0) (4 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -2155,6 +2315,10 @@
   (label 41)
   (parent 32)
   (unrealized (0 0) (0 2) (1 0) (4 0) (5 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -2210,6 +2374,10 @@
   (parent 35)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -2272,6 +2440,10 @@
   (label 43)
   (parent 36)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -2348,6 +2520,10 @@
       (operation nonce-test (displaced 6 3 customer 3) nb-0 (5 0)
         (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 4)))
   (unrealized (0 0) (0 2) (1 0) (5 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -2416,6 +2592,10 @@
   (label 45)
   (parent 36)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -2471,6 +2651,10 @@
   (parent 37)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -2531,6 +2715,10 @@
   (label 47)
   (parent 37)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -2590,6 +2778,10 @@
   (label 48)
   (parent 39)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -2659,6 +2851,10 @@
   (label 49)
   (parent 39)
   (unrealized (0 0) (0 2) (1 0) (5 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -2726,6 +2922,10 @@
   (label 50)
   (parent 39)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -2793,6 +2993,10 @@
   (label 51)
   (parent 41)
   (unrealized (0 0) (0 2) (1 0) (4 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -2852,6 +3056,10 @@
   (parent 43)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -2915,6 +3123,10 @@
   (label 53)
   (parent 43)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -2987,6 +3199,10 @@
       (operation nonce-test (displaced 6 5 merchant 2) nc (0 0)
         (enc c nc goods-0 (pubk m))) (strand-map 0 1 2 3 4 5)))
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -3068,6 +3284,10 @@
       (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
         (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 4)))
   (unrealized (0 0) (0 2) (1 0) (6 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -3128,6 +3348,10 @@
   (parent 47)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -3191,6 +3415,10 @@
   (label 57)
   (parent 47)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc price-0) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -3248,6 +3476,10 @@
   (parent 48)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -3310,6 +3542,10 @@
   (label 59)
   (parent 48)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -3376,6 +3612,10 @@
   (label 60)
   (parent 49)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -3446,6 +3686,10 @@
       (operation nonce-test (displaced 6 5 merchant 2) nc (0 0)
         (enc c nc goods-0 (pubk m))) (strand-map 0 1 2 3 4 5)))
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -3525,6 +3769,10 @@
       (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
         (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 6)))
   (unrealized (0 0) (0 2) (1 0) (6 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -3594,6 +3842,10 @@
   (label 63)
   (parent 51)
   (unrealized (0 0) (0 2) (1 0) (4 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -3662,6 +3914,10 @@
   (label 64)
   (parent 51)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -3731,6 +3987,10 @@
   (label 65)
   (parent 51)
   (unrealized (0 0) (0 2) (1 0) (4 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -3812,6 +4072,10 @@
       (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
         (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 5)))
   (unrealized (0 0) (0 2) (1 0) (4 0) (6 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -3876,6 +4140,10 @@
   (parent 53)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -3940,6 +4208,10 @@
   (parent 54)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -4008,6 +4280,10 @@
   (label 69)
   (parent 54)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -4073,6 +4349,10 @@
   (parent 57)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc price-0) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -4136,6 +4416,10 @@
   (parent 59)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -4206,6 +4490,10 @@
   (label 72)
   (parent 60)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -4289,6 +4577,10 @@
       (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
         (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 5)))
   (unrealized (0 0) (0 2) (1 0) (6 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -4364,6 +4656,10 @@
   (label 74)
   (parent 60)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -4427,6 +4723,10 @@
   (parent 61)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -4494,6 +4794,10 @@
   (label 76)
   (parent 61)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -4562,6 +4866,10 @@
   (label 77)
   (parent 63)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -4631,6 +4939,10 @@
   (label 78)
   (parent 63)
   (unrealized (0 0) (0 2) (1 0) (4 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -4707,6 +5019,10 @@
   (label 79)
   (parent 63)
   (unrealized (0 0) (0 2) (1 0) (4 0) (6 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -4777,6 +5093,10 @@
   (label 80)
   (parent 64)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -4855,6 +5175,10 @@
   (label 81)
   (parent 64)
   (unrealized (0 0) (0 2) (1 0) (6 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -4930,6 +5254,10 @@
   (label 82)
   (parent 64)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -4999,6 +5327,10 @@
   (label 83)
   (parent 65)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -5081,6 +5413,10 @@
       (operation nonce-test (displaced 7 3 customer 3) nb-0 (6 0)
         (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 5)))
   (unrealized (0 0) (0 2) (1 0) (4 0) (6 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -5150,6 +5486,10 @@
   (parent 69)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -5221,6 +5561,10 @@
   (label 86)
   (parent 69)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc price-0) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -5288,6 +5632,10 @@
   (parent 72)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -5358,6 +5706,10 @@
   (label 88)
   (parent 72)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -5437,6 +5789,10 @@
       (operation nonce-test (displaced 7 6 merchant 2) nc (0 0)
         (enc c nc goods-0 (pubk m))) (strand-map 0 1 2 3 4 5 6)))
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -5526,6 +5882,10 @@
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
         (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 6 5)))
   (unrealized (0 0) (0 2) (1 0) (7 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -5593,6 +5953,10 @@
   (parent 76)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -5663,6 +6027,10 @@
   (label 92)
   (parent 76)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc price-0) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -5732,6 +6100,10 @@
   (label 93)
   (parent 77)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -5809,6 +6181,10 @@
   (label 94)
   (parent 77)
   (unrealized (0 0) (0 2) (1 0) (6 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -5884,6 +6260,10 @@
   (label 95)
   (parent 77)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -5953,6 +6333,10 @@
   (label 96)
   (parent 78)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -6030,6 +6414,10 @@
   (label 97)
   (parent 78)
   (unrealized (0 0) (0 2) (1 0) (4 0) (6 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -6113,6 +6501,10 @@
         (enc c nc nb-1 acctnum-0 price (pubk b-0)))
       (strand-map 0 1 2 3 4 5 5)))
   (unrealized (0 0) (0 2) (1 0) (4 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -6180,6 +6572,10 @@
   (parent 80)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -6250,6 +6646,10 @@
   (label 100)
   (parent 80)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -6324,6 +6724,10 @@
   (label 101)
   (parent 81)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -6403,6 +6807,10 @@
       (operation nonce-test (displaced 7 6 merchant 2) nc (0 0)
         (enc c nc goods-0 (pubk m))) (strand-map 0 1 2 3 4 5 6)))
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -6492,6 +6900,10 @@
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
         (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 6 7)))
   (unrealized (0 0) (0 2) (1 0) (7 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -6562,6 +6974,10 @@
   (label 104)
   (parent 83)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -6640,6 +7056,10 @@
   (label 105)
   (parent 83)
   (unrealized (0 0) (0 2) (1 0) (6 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -6715,6 +7135,10 @@
   (label 106)
   (parent 83)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -6788,6 +7212,10 @@
   (parent 86)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc price-0) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -6859,6 +7287,10 @@
   (parent 88)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -6930,6 +7362,10 @@
   (parent 89)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -7006,6 +7442,10 @@
   (label 110)
   (parent 89)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -7078,6 +7518,10 @@
   (parent 92)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc price-0) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -7145,6 +7589,10 @@
   (parent 93)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -7215,6 +7663,10 @@
   (label 113)
   (parent 93)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -7288,6 +7740,10 @@
   (label 114)
   (parent 94)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -7367,6 +7823,10 @@
       (operation nonce-test (displaced 7 6 merchant 2) nc (0 0)
         (enc c nc goods-0 (pubk m))) (strand-map 0 1 2 3 4 5 6)))
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -7455,6 +7915,10 @@
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
         (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 6 7)))
   (unrealized (0 0) (0 2) (1 0) (7 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -7524,6 +7988,10 @@
   (label 117)
   (parent 96)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -7601,6 +8069,10 @@
   (label 118)
   (parent 96)
   (unrealized (0 0) (0 2) (1 0) (6 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -7676,6 +8148,10 @@
   (label 119)
   (parent 96)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -7760,6 +8236,10 @@
         (enc c nc nb-1 acctnum-0 price (pubk b-0)))
       (strand-map 0 1 2 3 4 5 5)))
   (unrealized (0 0) (0 2) (1 0) (4 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -7831,6 +8311,10 @@
   (parent 100)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -7909,6 +8393,10 @@
   (label 122)
   (parent 101)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -8001,6 +8489,10 @@
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
         (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 6 6)))
   (unrealized (0 0) (0 2) (1 0) (7 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -8085,6 +8577,10 @@
   (label 124)
   (parent 101)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -8156,6 +8652,10 @@
   (parent 102)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -8231,6 +8731,10 @@
   (label 126)
   (parent 102)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -8298,6 +8802,10 @@
   (parent 104)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -8368,6 +8876,10 @@
   (label 128)
   (parent 104)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -8442,6 +8954,10 @@
   (label 129)
   (parent 105)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -8521,6 +9037,10 @@
       (operation nonce-test (displaced 7 6 merchant 2) nc (0 0)
         (enc c nc goods-0 (pubk m))) (strand-map 0 1 2 3 4 5 6)))
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -8610,6 +9130,10 @@
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
         (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 6 7)))
   (unrealized (0 0) (0 2) (1 0) (7 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -8687,6 +9211,10 @@
   (parent 110)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -8766,6 +9294,10 @@
   (label 133)
   (parent 110)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc price-0) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -8837,6 +9369,10 @@
   (parent 113)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -8915,6 +9451,10 @@
   (label 135)
   (parent 114)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -9007,6 +9547,10 @@
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
         (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 6 6)))
   (unrealized (0 0) (0 2) (1 0) (7 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -9091,6 +9635,10 @@
   (label 137)
   (parent 114)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -9162,6 +9710,10 @@
   (parent 115)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -9237,6 +9789,10 @@
   (label 139)
   (parent 115)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -9304,6 +9860,10 @@
   (parent 117)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -9374,6 +9934,10 @@
   (label 141)
   (parent 117)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -9447,6 +10011,10 @@
   (label 142)
   (parent 118)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -9526,6 +10094,10 @@
       (operation nonce-test (displaced 7 6 merchant 2) nc (0 0)
         (enc c nc goods-0 (pubk m))) (strand-map 0 1 2 3 4 5 6)))
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -9614,6 +10186,10 @@
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
         (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 6 7)))
   (unrealized (0 0) (0 2) (1 0) (7 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -9688,6 +10264,10 @@
   (parent 122)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -9766,6 +10346,10 @@
   (label 146)
   (parent 122)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -9855,6 +10439,10 @@
       (operation nonce-test (displaced 8 7 merchant 2) nc (0 0)
         (enc c nc goods-0 (pubk m))) (strand-map 0 1 2 3 4 5 6 7)))
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -9953,6 +10541,10 @@
       (operation nonce-test (displaced 9 3 customer 3) nb-0 (8 0)
         (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 6 7 6)))
   (unrealized (0 0) (0 2) (1 0) (8 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -10029,6 +10621,10 @@
   (parent 126)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -10107,6 +10703,10 @@
   (label 150)
   (parent 126)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc price-0) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -10178,6 +10778,10 @@
   (parent 128)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -10256,6 +10860,10 @@
   (label 152)
   (parent 129)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -10348,6 +10956,10 @@
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
         (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 6 6)))
   (unrealized (0 0) (0 2) (1 0) (7 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -10432,6 +11044,10 @@
   (label 154)
   (parent 129)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -10503,6 +11119,10 @@
   (parent 130)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -10578,6 +11198,10 @@
   (label 156)
   (parent 130)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -10659,6 +11283,10 @@
   (parent 133)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc price-0) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -10733,6 +11361,10 @@
   (parent 135)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -10810,6 +11442,10 @@
   (label 159)
   (parent 135)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -10898,6 +11534,10 @@
       (operation nonce-test (displaced 8 7 merchant 2) nc (0 0)
         (enc c nc goods-0 (pubk m))) (strand-map 0 1 2 3 4 5 6 7)))
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -10995,6 +11635,10 @@
       (operation nonce-test (displaced 9 3 customer 3) nb-0 (8 0)
         (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 6 7 6)))
   (unrealized (0 0) (0 2) (1 0) (8 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -11070,6 +11714,10 @@
   (parent 139)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -11148,6 +11796,10 @@
   (label 163)
   (parent 139)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc price-0) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -11219,6 +11871,10 @@
   (parent 141)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -11297,6 +11953,10 @@
   (label 165)
   (parent 142)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -11389,6 +12049,10 @@
       (operation nonce-test (displaced 8 3 customer 3) nb-0 (7 0)
         (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 6 6)))
   (unrealized (0 0) (0 2) (1 0) (7 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -11473,6 +12137,10 @@
   (label 167)
   (parent 142)
   (unrealized (0 0) (0 2) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -11544,6 +12212,10 @@
   (parent 143)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -11619,6 +12291,10 @@
   (label 169)
   (parent 143)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -11697,6 +12373,10 @@
   (parent 146)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -11776,6 +12456,10 @@
   (parent 147)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -11859,6 +12543,10 @@
   (label 172)
   (parent 147)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -11939,6 +12627,10 @@
   (parent 150)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc price-0) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -12013,6 +12705,10 @@
   (parent 152)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -12091,6 +12787,10 @@
   (label 175)
   (parent 152)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -12180,6 +12880,10 @@
       (operation nonce-test (displaced 8 7 merchant 2) nc (0 0)
         (enc c nc goods-0 (pubk m))) (strand-map 0 1 2 3 4 5 6 7)))
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -12278,6 +12982,10 @@
       (operation nonce-test (displaced 9 3 customer 3) nb-0 (8 0)
         (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 6 7 6)))
   (unrealized (0 0) (0 2) (1 0) (8 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -12354,6 +13062,10 @@
   (parent 156)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -12432,6 +13144,10 @@
   (label 179)
   (parent 156)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc price-0) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -12510,6 +13226,10 @@
   (parent 159)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -12589,6 +13309,10 @@
   (parent 160)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -12672,6 +13396,10 @@
   (label 182)
   (parent 160)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -12752,6 +13480,10 @@
   (parent 163)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc price-0) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -12826,6 +13558,10 @@
   (parent 165)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -12903,6 +13639,10 @@
   (label 185)
   (parent 165)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -12991,6 +13731,10 @@
       (operation nonce-test (displaced 8 7 merchant 2) nc (0 0)
         (enc c nc goods-0 (pubk m))) (strand-map 0 1 2 3 4 5 6 7)))
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -13088,6 +13832,10 @@
       (operation nonce-test (displaced 9 3 customer 3) nb-0 (8 0)
         (enc nc nb-0 m price (pubk c))) (strand-map 0 1 2 3 4 5 6 7 6)))
   (unrealized (0 0) (0 2) (1 0) (8 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -13163,6 +13911,10 @@
   (parent 169)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -13241,6 +13993,10 @@
   (label 189)
   (parent 169)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc price-0) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -13325,6 +14081,10 @@
   (parent 172)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -13411,6 +14171,10 @@
   (label 191)
   (parent 172)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc price-0) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -13489,6 +14253,10 @@
   (parent 175)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -13568,6 +14336,10 @@
   (parent 176)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -13651,6 +14423,10 @@
   (label 194)
   (parent 176)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -13731,6 +14507,10 @@
   (parent 179)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc price-0) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -13815,6 +14595,10 @@
   (parent 182)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -13901,6 +14685,10 @@
   (label 197)
   (parent 182)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc price-0) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -13979,6 +14767,10 @@
   (parent 185)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -14058,6 +14850,10 @@
   (parent 186)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -14141,6 +14937,10 @@
   (label 200)
   (parent 186)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -14221,6 +15021,10 @@
   (parent 189)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc price-0) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -14310,6 +15114,10 @@
   (parent 191)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc price-0) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -14394,6 +15202,10 @@
   (parent 194)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -14480,6 +15292,10 @@
   (label 204)
   (parent 194)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc price-0) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -14568,6 +15384,10 @@
   (parent 197)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc price-0) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -14652,6 +15472,10 @@
   (parent 200)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc nc) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -14738,6 +15562,10 @@
   (label 207)
   (parent 200)
   (unrealized (0 0) (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc price-0) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -14827,6 +15655,10 @@
   (parent 204)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc price-0) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (defskeleton epmo_acctnum
@@ -14915,6 +15747,10 @@
   (parent 207)
   (unrealized (0 2))
   (dead)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nc price-0) (nb nb) (hash hash)
+        (goods goods) (price price))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -15014,6 +15850,10 @@
       (recv (enc (enc "hash" b m nb nm (pubk hash)) (privk m)))))
   (label 210)
   (unrealized (0 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (origs (nb (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -15046,6 +15886,10 @@
   (label 211)
   (parent 210)
   (unrealized (1 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -15076,6 +15920,10 @@
   (label 212)
   (parent 211)
   (unrealized (0 0) (1 2))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -15118,6 +15966,10 @@
   (label 213)
   (parent 212)
   (unrealized (0 0) (2 1) (2 3))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -15160,6 +16012,10 @@
   (label 214)
   (parent 213)
   (unrealized (0 0) (1 0) (2 3))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -15202,6 +16058,10 @@
   (label 215)
   (parent 214)
   (unrealized (0 0) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -15243,6 +16103,10 @@
   (label 216)
   (parent 215)
   (unrealized (0 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -15290,6 +16154,10 @@
   (label 217)
   (parent 215)
   (unrealized (0 0) (1 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -15331,6 +16199,10 @@
   (label 218)
   (parent 216)
   (unrealized (0 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -15377,6 +16249,10 @@
   (label 219)
   (parent 217)
   (unrealized (0 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -15472,6 +16348,10 @@
   (label 221)
   (parent 218)
   (unrealized (0 0) (3 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -15518,6 +16398,10 @@
   (label 222)
   (parent 219)
   (unrealized (0 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -15567,6 +16451,10 @@
   (label 223)
   (parent 221)
   (unrealized (0 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -15616,6 +16504,10 @@
   (seen-ops
     (220 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -15670,6 +16562,10 @@
   (label 225)
   (parent 222)
   (unrealized (0 0) (4 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -15723,6 +16619,10 @@
   (seen-ops
     (220 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -15773,6 +16673,10 @@
   (label 227)
   (parent 223)
   (unrealized (0 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -15837,6 +16741,10 @@
       (operation nonce-test (displaced 5 2 customer 3) nm (4 0)
         (enc nc nm m price (pubk c))) (strand-map 0 1 2 3 3)))
   (unrealized (0 0) (4 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -15890,6 +16798,10 @@
   (label 229)
   (parent 225)
   (unrealized (0 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -15943,6 +16855,10 @@
   (seen-ops
     (220 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -16003,6 +16919,10 @@
   (label 231)
   (parent 227)
   (unrealized (0 0) (4 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -16060,6 +16980,10 @@
   (seen-ops
     (226 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -16115,6 +17039,10 @@
   (label 233)
   (parent 229)
   (unrealized (0 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -16184,6 +17112,10 @@
       (operation nonce-test (displaced 6 2 customer 3) nm (5 0)
         (enc nc nm m price (pubk c))) (strand-map 0 1 2 3 4 4)))
   (unrealized (0 0) (5 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nm) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -16251,6 +17183,10 @@
         (enc c nc nb-1 acctnum-0 price (pubk b)))
       (strand-map 0 1 2 3 3)))
   (unrealized (0 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -16309,6 +17245,10 @@
   (seen-ops
     (230 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -16373,6 +17313,10 @@
   (label 237)
   (parent 233)
   (unrealized (0 0) (5 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton epmo_acctnum
@@ -16444,6 +17388,10 @@
         (enc c nc nb-1 acctnum-0 price (pubk b)))
       (strand-map 0 1 2 3 4 4)))
   (unrealized (0 0))
+  (maps
+    ((0)
+      ((b b) (m m) (c c) (nm nb-0) (nb nb) (nc nc) (hash hash)
+        (acctnum acctnum) (price price))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

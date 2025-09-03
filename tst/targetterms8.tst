@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/targetterms8.scm")
 
 (defprotocol targetterms8 basic
@@ -25,6 +25,7 @@
   (traces ((send (enc n1 (enc a n2 k) k)) (recv (enc a n1 k))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (n1 n1) (n2 n2) (k k))))
   (origs (n1 (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -40,6 +41,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (n1 n2) (n2 n2) (k k))))
   (origs (n2 (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -88,6 +90,7 @@
   (traces ((send (enc n1 (enc a n1 k) k)) (recv (enc a n1 k))))
   (label 3)
   (unrealized (0 1))
+  (maps ((0) ((a a) (n1 n1) (k k))))
   (origs (n1 (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 

@@ -1,6 +1,6 @@
 (herald "Envelope Protocol With Channels" (bound 15))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/chan-envelope.scm")
 (comment "Strand count bounded at 15")
 
@@ -72,6 +72,7 @@
   (label 0)
   (unrealized (0 0) (1 2))
   (preskeleton)
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (origs (v (1 3)) (n (1 0)))
   (comment "Not a skeleton"))
 
@@ -90,6 +91,7 @@
   (label 1)
   (parent 0)
   (unrealized (1 2))
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (origs (v (1 3)) (n (1 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -115,6 +117,7 @@
   (label 2)
   (parent 1)
   (unrealized (0 0) (2 0))
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -139,6 +142,7 @@
   (label 3)
   (parent 2)
   (unrealized (0 0))
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -169,6 +173,7 @@
   (label 4)
   (parent 3)
   (unrealized (3 1) (3 2))
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -200,6 +205,7 @@
   (label 5)
   (parent 4)
   (unrealized (3 2))
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
@@ -236,6 +242,7 @@
   (label 6)
   (parent 5)
   (unrealized (4 1))
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
@@ -273,6 +280,7 @@
   (parent 5)
   (unrealized (4 0) (4 1))
   (dead)
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -312,6 +320,7 @@
   (parent 6)
   (unrealized (5 0) (5 1))
   (dead)
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -351,6 +360,7 @@
   (label 9)
   (parent 6)
   (unrealized (5 0) (5 1))
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -390,6 +400,7 @@
   (label 10)
   (parent 9)
   (unrealized (5 1))
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -507,6 +518,7 @@
   (label 12)
   (unrealized (0 0) (1 2))
   (preskeleton)
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (origs (v (1 3)) (n (1 0)))
   (comment "Not a skeleton"))
 
@@ -527,6 +539,7 @@
   (label 13)
   (parent 12)
   (unrealized (0 0) (1 2))
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (origs (v (1 3)) (n (1 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -554,6 +567,7 @@
   (label 14)
   (parent 13)
   (unrealized (0 0) (2 0))
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -580,6 +594,7 @@
   (label 15)
   (parent 14)
   (unrealized (0 0))
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -613,6 +628,7 @@
   (label 16)
   (parent 15)
   (unrealized (3 1))
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
@@ -651,6 +667,7 @@
   (label 17)
   (parent 16)
   (unrealized (4 1))
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
@@ -690,6 +707,7 @@
   (parent 16)
   (unrealized (4 0) (4 1))
   (dead)
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -731,6 +749,7 @@
   (parent 17)
   (unrealized (5 0) (5 1))
   (dead)
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -772,6 +791,7 @@
   (label 20)
   (parent 17)
   (unrealized (5 0) (5 1))
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -813,6 +833,7 @@
   (label 21)
   (parent 20)
   (unrealized (5 1))
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -934,6 +955,7 @@
   (label 23)
   (unrealized (0 0) (1 0) (2 2))
   (preskeleton)
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (origs (v (2 3)) (n (2 0)))
   (comment "Not a skeleton"))
 
@@ -956,6 +978,7 @@
   (label 24)
   (parent 23)
   (unrealized (0 0) (2 2))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (origs (v (2 3)) (n (2 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -985,6 +1008,7 @@
   (label 25)
   (parent 24)
   (unrealized (0 0) (1 0) (3 0))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -1013,6 +1037,7 @@
   (label 26)
   (parent 25)
   (unrealized (0 0) (1 0))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -1048,6 +1073,7 @@
   (label 27)
   (parent 26)
   (unrealized (0 0) (4 1) (4 2))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -1084,6 +1110,7 @@
   (label 28)
   (parent 27)
   (unrealized (0 0) (4 2))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
@@ -1124,6 +1151,7 @@
   (label 29)
   (parent 28)
   (unrealized (0 0) (5 1))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
@@ -1165,6 +1193,7 @@
   (parent 28)
   (unrealized (0 0) (5 0) (5 1))
   (dead)
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -1208,6 +1237,7 @@
   (parent 29)
   (unrealized (0 0) (6 0) (6 1))
   (dead)
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -1251,6 +1281,7 @@
   (label 32)
   (parent 29)
   (unrealized (0 0) (6 0) (6 1))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -1294,6 +1325,7 @@
   (label 33)
   (parent 32)
   (unrealized (0 0) (6 1))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -1340,6 +1372,7 @@
   (label 34)
   (parent 33)
   (unrealized (0 0))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -1391,6 +1424,7 @@
   (label 35)
   (parent 34)
   (unrealized (8 1))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
@@ -1446,6 +1480,7 @@
   (label 36)
   (parent 35)
   (unrealized (9 1))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton envelope
@@ -1502,6 +1537,7 @@
   (parent 35)
   (unrealized (9 0) (9 1))
   (dead)
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -1561,6 +1597,7 @@
   (parent 36)
   (unrealized (10 0) (10 1))
   (dead)
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -1678,6 +1715,7 @@
   (label 40)
   (parent 36)
   (unrealized (10 0) (10 1))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -1738,6 +1776,7 @@
   (label 41)
   (parent 40)
   (unrealized (10 1))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
@@ -1943,6 +1982,7 @@
   (label 44)
   (unrealized (0 0) (1 2))
   (preskeleton)
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (origs (v (1 3)) (n (1 0)))
   (comment "Not a skeleton"))
 
@@ -1961,6 +2001,7 @@
   (label 45)
   (parent 44)
   (unrealized (1 2))
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (origs (v (1 3)) (n (1 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -1986,6 +2027,7 @@
   (label 46)
   (parent 45)
   (unrealized (0 0) (2 0))
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2010,6 +2052,7 @@
   (label 47)
   (parent 46)
   (unrealized (0 0))
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2040,6 +2083,7 @@
   (label 48)
   (parent 47)
   (unrealized (3 1) (3 2))
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2071,6 +2115,7 @@
   (label 49)
   (parent 48)
   (unrealized (3 2))
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
@@ -2107,6 +2152,7 @@
   (label 50)
   (parent 49)
   (unrealized (4 1))
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2144,6 +2190,7 @@
   (parent 49)
   (unrealized (4 0) (4 1))
   (dead)
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -2183,6 +2230,7 @@
   (label 52)
   (parent 50)
   (unrealized (5 0) (5 1))
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2222,6 +2270,7 @@
   (label 53)
   (parent 52)
   (unrealized (5 1))
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2348,6 +2397,7 @@
   (label 55)
   (unrealized (0 0) (1 2))
   (preskeleton)
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (origs (v (1 3)) (n (1 0)))
   (comment "Not a skeleton"))
 
@@ -2368,6 +2418,7 @@
   (label 56)
   (parent 55)
   (unrealized (0 0) (1 2))
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (origs (v (1 3)) (n (1 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -2395,6 +2446,7 @@
   (label 57)
   (parent 56)
   (unrealized (0 0) (2 0))
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2421,6 +2473,7 @@
   (label 58)
   (parent 57)
   (unrealized (0 0))
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2454,6 +2507,7 @@
   (label 59)
   (parent 58)
   (unrealized (3 1))
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
@@ -2492,6 +2546,7 @@
   (label 60)
   (parent 59)
   (unrealized (4 1))
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2531,6 +2586,7 @@
   (parent 59)
   (unrealized (4 0) (4 1))
   (dead)
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -2572,6 +2628,7 @@
   (label 62)
   (parent 60)
   (unrealized (5 0) (5 1))
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2613,6 +2670,7 @@
   (label 63)
   (parent 62)
   (unrealized (5 1))
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2743,6 +2801,7 @@
   (label 65)
   (unrealized (0 0) (1 0) (2 2))
   (preskeleton)
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (origs (v (2 3)) (n (2 0)))
   (comment "Not a skeleton"))
 
@@ -2765,6 +2824,7 @@
   (label 66)
   (parent 65)
   (unrealized (0 0) (2 2))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (origs (v (2 3)) (n (2 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -2794,6 +2854,7 @@
   (label 67)
   (parent 66)
   (unrealized (0 0) (1 0) (3 0))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2822,6 +2883,7 @@
   (label 68)
   (parent 67)
   (unrealized (0 0) (1 0))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2857,6 +2919,7 @@
   (label 69)
   (parent 68)
   (unrealized (0 0) (4 1) (4 2))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2893,6 +2956,7 @@
   (label 70)
   (parent 69)
   (unrealized (0 0) (4 2))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
@@ -2933,6 +2997,7 @@
   (label 71)
   (parent 70)
   (unrealized (0 0) (5 1))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -2974,6 +3039,7 @@
   (parent 70)
   (unrealized (0 0) (5 0) (5 1))
   (dead)
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -3017,6 +3083,7 @@
   (label 73)
   (parent 71)
   (unrealized (0 0) (6 0) (6 1))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -3060,6 +3127,7 @@
   (label 74)
   (parent 73)
   (unrealized (0 0) (6 1))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -3106,6 +3174,7 @@
   (label 75)
   (parent 74)
   (unrealized (0 0))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -3157,6 +3226,7 @@
   (label 76)
   (parent 75)
   (unrealized (8 1))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
@@ -3212,6 +3282,7 @@
   (label 77)
   (parent 76)
   (unrealized (9 1))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -3268,6 +3339,7 @@
   (parent 76)
   (unrealized (9 0) (9 1))
   (dead)
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -3328,6 +3400,7 @@
   (label 79)
   (parent 77)
   (unrealized (10 0) (10 1))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -3388,6 +3461,7 @@
   (label 80)
   (parent 79)
   (unrealized (10 1))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -3540,6 +3614,7 @@
   (label 82)
   (unrealized (0 0) (1 2))
   (preskeleton)
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (origs (v (1 3)) (n (1 0)))
   (comment "Not a skeleton"))
 
@@ -3558,6 +3633,7 @@
   (label 83)
   (parent 82)
   (unrealized (1 2))
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (origs (v (1 3)) (n (1 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -3583,6 +3659,7 @@
   (label 84)
   (parent 83)
   (unrealized (0 0) (2 0))
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -3607,6 +3684,7 @@
   (label 85)
   (parent 84)
   (unrealized (0 0))
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -3637,6 +3715,7 @@
   (label 86)
   (parent 85)
   (unrealized (3 1) (3 2))
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -3668,6 +3747,7 @@
   (label 87)
   (parent 86)
   (unrealized (3 2))
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
@@ -3704,6 +3784,7 @@
   (label 88)
   (parent 87)
   (unrealized (4 1))
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -3741,6 +3822,7 @@
   (parent 87)
   (unrealized (4 0) (4 1))
   (dead)
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -3780,6 +3862,7 @@
   (label 90)
   (parent 88)
   (unrealized (5 0) (5 1))
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -3819,6 +3902,7 @@
   (label 91)
   (parent 90)
   (unrealized (5 1))
+  (maps ((0 1) ((v v) (n n) (esk esk) (k k) (aik aik))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -3953,6 +4037,7 @@
   (label 93)
   (unrealized (0 0) (1 2))
   (preskeleton)
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (origs (v (1 3)) (n (1 0)))
   (comment "Not a skeleton"))
 
@@ -3973,6 +4058,7 @@
   (label 94)
   (parent 93)
   (unrealized (0 0) (1 2))
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (origs (v (1 3)) (n (1 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -4000,6 +4086,7 @@
   (label 95)
   (parent 94)
   (unrealized (0 0) (2 0))
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -4026,6 +4113,7 @@
   (label 96)
   (parent 95)
   (unrealized (0 0))
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -4059,6 +4147,7 @@
   (label 97)
   (parent 96)
   (unrealized (3 1))
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
@@ -4097,6 +4186,7 @@
   (label 98)
   (parent 97)
   (unrealized (4 1))
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -4136,6 +4226,7 @@
   (parent 97)
   (unrealized (4 0) (4 1))
   (dead)
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -4177,6 +4268,7 @@
   (label 100)
   (parent 98)
   (unrealized (5 0) (5 1))
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -4218,6 +4310,7 @@
   (label 101)
   (parent 100)
   (unrealized (5 1))
+  (maps ((0 1) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -4356,6 +4449,7 @@
   (label 103)
   (unrealized (0 0) (1 0) (2 2))
   (preskeleton)
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (origs (v (2 3)) (n (2 0)))
   (comment "Not a skeleton"))
 
@@ -4378,6 +4472,7 @@
   (label 104)
   (parent 103)
   (unrealized (0 0) (2 2))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (origs (v (2 3)) (n (2 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -4407,6 +4502,7 @@
   (label 105)
   (parent 104)
   (unrealized (0 0) (1 0) (3 0))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -4435,6 +4531,7 @@
   (label 106)
   (parent 105)
   (unrealized (0 0) (1 0))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -4470,6 +4567,7 @@
   (label 107)
   (parent 106)
   (unrealized (0 0) (4 1) (4 2))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -4506,6 +4604,7 @@
   (label 108)
   (parent 107)
   (unrealized (0 0) (4 2))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
@@ -4546,6 +4645,7 @@
   (label 109)
   (parent 108)
   (unrealized (0 0) (5 1))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -4587,6 +4687,7 @@
   (parent 108)
   (unrealized (0 0) (5 0) (5 1))
   (dead)
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -4630,6 +4731,7 @@
   (label 111)
   (parent 109)
   (unrealized (0 0) (6 0) (6 1))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -4673,6 +4775,7 @@
   (label 112)
   (parent 111)
   (unrealized (0 0) (6 1))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -4719,6 +4822,7 @@
   (label 113)
   (parent 112)
   (unrealized (0 0))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -4770,6 +4874,7 @@
   (label 114)
   (parent 113)
   (unrealized (8 1))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton envelope
@@ -4825,6 +4930,7 @@
   (label 115)
   (parent 114)
   (unrealized (9 1))
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton envelope
@@ -4881,6 +4987,7 @@
   (parent 114)
   (unrealized (9 0) (9 1))
   (dead)
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "empty cohort"))
 
 (defskeleton envelope
@@ -4942,6 +5049,7 @@
   (parent 115)
   (unrealized (10 0) (10 1))
   (dead)
+  (maps ((0 1 2) ((n n) (v v) (k k) (aik aik) (esk esk))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

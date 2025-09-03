@@ -1,6 +1,6 @@
 (herald "Woo-Lam Protocol")
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/woolam.scm")
 
 (defprotocol woolam basic
@@ -37,6 +37,7 @@
       (recv (enc a n (ltk b s)))))
   (label 0)
   (unrealized (0 2) (0 4))
+  (maps ((0) ((a a) (s s) (b b) (n n))))
   (origs (n (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -58,6 +59,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 4))
+  (maps ((0) ((a a) (s s) (b b) (n n))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton woolam
@@ -81,6 +83,7 @@
   (label 2)
   (parent 1)
   (unrealized (2 0))
+  (maps ((0) ((a a) (s s) (b b) (n n))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton woolam
@@ -142,6 +145,7 @@
       (recv (enc n (ltk b s)))))
   (label 4)
   (unrealized (0 4))
+  (maps ((0) ((a a) (s s) (b b) (n n) (m m))))
   (origs (n (0 1)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -184,6 +188,7 @@
   (label 6)
   (parent 4)
   (unrealized (1 0))
+  (maps ((0) ((a a) (s s) (b b) (n n) (m m))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton woolam-msg
@@ -205,6 +210,7 @@
   (label 7)
   (parent 6)
   (unrealized (0 2))
+  (maps ((0) ((a a) (s s) (b b) (n n) (m (enc n (ltk a s))))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton woolam-msg
@@ -279,6 +285,7 @@
   (label 10)
   (parent 7)
   (unrealized (2 0))
+  (maps ((0) ((a a) (s s) (b b) (n n) (m (enc n (ltk a s))))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton woolam-msg
@@ -345,6 +352,7 @@
       (recv (enc a n (ltk b s)))))
   (label 12)
   (unrealized (0 4))
+  (maps ((0) ((a a) (s s) (b b) (n n) (m m))))
   (origs (n (0 1)))
   (comment "3 in cohort - 3 not yet seen"))
 
@@ -406,6 +414,7 @@
   (label 15)
   (parent 12)
   (unrealized (1 0))
+  (maps ((0) ((a a) (s s) (b b) (n n) (m m))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton woolam-msg1
@@ -427,6 +436,7 @@
   (label 16)
   (parent 15)
   (unrealized (0 2))
+  (maps ((0) ((a a) (s s) (b b) (n n) (m (enc n (ltk a s))))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton woolam-msg1
@@ -450,6 +460,7 @@
   (label 17)
   (parent 15)
   (unrealized (2 2))
+  (maps ((0) ((a a) (s s) (b b) (n n) (m m))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton woolam-msg1

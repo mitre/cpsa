@@ -1,6 +1,6 @@
 (herald dhca (algebra basic) (bound 12))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/dh-ca_hack.scm")
 
 (defprotocol dhca basic
@@ -49,6 +49,7 @@
       (send (enc "check" n (enc "dh" gx h dhkey)))))
   (label 0)
   (unrealized (0 0) (0 2))
+  (maps ((0) ((gx gx) (h h) (dhkey dhkey) (a a) (b b) (ca ca) (n n))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -72,6 +73,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 2))
+  (maps ((0) ((gx gx) (h h) (dhkey dhkey) (a a) (b b) (ca ca) (n n))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhca
@@ -95,6 +97,7 @@
   (label 2)
   (parent 1)
   (unrealized (0 2))
+  (maps ((0) ((gx gx) (h gx) (dhkey dhkey) (a a) (b a) (ca ca) (n n))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhca
@@ -118,6 +121,7 @@
   (label 3)
   (parent 1)
   (unrealized (0 2))
+  (maps ((0) ((gx gx) (h h) (dhkey dhkey) (a a) (b b) (ca ca) (n n))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhca
@@ -148,6 +152,7 @@
   (label 4)
   (parent 2)
   (unrealized (2 0) (2 1))
+  (maps ((0) ((gx gx) (h gx) (dhkey dhkey) (a a) (b a) (ca ca) (n n))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhca
@@ -174,6 +179,7 @@
   (parent 2)
   (unrealized (2 0))
   (dead)
+  (maps ((0) ((gx gx) (h gx) (dhkey dhkey) (a a) (b a) (ca ca) (n n))))
   (comment "empty cohort"))
 
 (defskeleton dhca
@@ -204,6 +210,7 @@
   (label 6)
   (parent 3)
   (unrealized (3 0) (3 1))
+  (maps ((0) ((gx gx) (h h) (dhkey dhkey) (a a) (b b) (ca ca) (n n))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhca
@@ -230,6 +237,7 @@
   (parent 3)
   (unrealized (3 0))
   (dead)
+  (maps ((0) ((gx gx) (h h) (dhkey dhkey) (a a) (b b) (ca ca) (n n))))
   (comment "empty cohort"))
 
 (defskeleton dhca
@@ -259,6 +267,7 @@
   (label 8)
   (parent 4)
   (unrealized (2 1))
+  (maps ((0) ((gx gx) (h gx) (dhkey dhkey) (a a) (b a) (ca ca) (n n))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhca
@@ -291,6 +300,7 @@
   (label 9)
   (parent 4)
   (unrealized (2 1))
+  (maps ((0) ((gx gx) (h gx) (dhkey dhkey) (a a) (b a) (ca ca) (n n))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhca
@@ -321,6 +331,7 @@
   (label 10)
   (parent 6)
   (unrealized (3 1))
+  (maps ((0) ((gx gx) (h gx) (dhkey dhkey) (a a) (b b) (ca ca) (n n))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhca
@@ -349,6 +360,7 @@
   (label 11)
   (parent 6)
   (unrealized (3 1))
+  (maps ((0) ((gx gx) (h h) (dhkey dhkey) (a a) (b b) (ca ca) (n n))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhca
@@ -380,6 +392,7 @@
   (label 12)
   (parent 6)
   (unrealized (3 1))
+  (maps ((0) ((gx gx) (h h) (dhkey dhkey) (a a) (b b) (ca ca) (n n))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton dhca
@@ -916,6 +929,7 @@
       (recv (enc "check" n (enc "dh" h gy dhkey)))))
   (label 28)
   (unrealized (0 0) (0 1) (0 3))
+  (maps ((0) ((n n) (gy gy) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
   (origs (n (0 2)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -940,6 +954,7 @@
   (label 29)
   (parent 28)
   (unrealized (0 1) (0 3))
+  (maps ((0) ((n n) (gy gy) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhca
@@ -963,6 +978,7 @@
   (label 30)
   (parent 29)
   (unrealized (0 3))
+  (maps ((0) ((n n) (gy gy) (h gy) (dhkey dhkey) (a b) (b b) (ca ca))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhca
@@ -987,6 +1003,7 @@
   (label 31)
   (parent 29)
   (unrealized (0 3))
+  (maps ((0) ((n n) (gy gy) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhca
@@ -1018,6 +1035,7 @@
   (label 32)
   (parent 30)
   (unrealized (2 0) (2 2))
+  (maps ((0) ((n n) (gy gy) (h gy) (dhkey dhkey) (a b) (b b) (ca ca))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhca
@@ -1044,6 +1062,7 @@
   (parent 30)
   (unrealized (2 0))
   (dead)
+  (maps ((0) ((n n) (gy gy) (h gy) (dhkey dhkey) (a b) (b b) (ca ca))))
   (comment "empty cohort"))
 
 (defskeleton dhca
@@ -1076,6 +1095,7 @@
   (label 34)
   (parent 31)
   (unrealized (3 0) (3 2))
+  (maps ((0) ((n n) (gy gy) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhca
@@ -1103,6 +1123,7 @@
   (parent 31)
   (unrealized (3 0))
   (dead)
+  (maps ((0) ((n n) (gy gy) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
   (comment "empty cohort"))
 
 (defskeleton dhca
@@ -1132,6 +1153,7 @@
   (label 36)
   (parent 32)
   (unrealized (2 2))
+  (maps ((0) ((n n) (gy gy) (h gy) (dhkey dhkey) (a b) (b b) (ca ca))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhca
@@ -1165,6 +1187,7 @@
   (label 37)
   (parent 32)
   (unrealized (2 2))
+  (maps ((0) ((n n) (gy gy) (h gy) (dhkey dhkey) (a b) (b b) (ca ca))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhca
@@ -1196,6 +1219,7 @@
   (label 38)
   (parent 34)
   (unrealized (3 2))
+  (maps ((0) ((n n) (gy gy) (h gy) (dhkey dhkey) (a a) (b b) (ca ca))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhca
@@ -1227,6 +1251,7 @@
   (label 39)
   (parent 34)
   (unrealized (3 2))
+  (maps ((0) ((n n) (gy gy) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhca
@@ -1262,6 +1287,7 @@
   (label 40)
   (parent 34)
   (unrealized (3 2))
+  (maps ((0) ((n n) (gy gy) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton dhca
@@ -1826,6 +1852,7 @@
   (label 56)
   (unrealized (0 0) (0 1) (0 3) (1 0))
   (preskeleton)
+  (maps ((0 1) ((n n) (gy gy) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
   (origs (n (0 2)))
   (comment "Not a skeleton"))
 
@@ -1846,6 +1873,7 @@
   (label 57)
   (parent 56)
   (unrealized (0 0) (0 1) (0 3) (1 0))
+  (maps ((0 1) ((n n) (gy gy) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
   (origs (n (0 2)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -1877,6 +1905,7 @@
   (label 58)
   (parent 57)
   (unrealized (0 0) (0 1) (0 3) (1 0) (2 0) (2 2))
+  (maps ((0 1) ((n n) (gy gy) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhca
@@ -1901,6 +1930,7 @@
   (label 59)
   (parent 57)
   (unrealized (0 0) (0 1) (0 3) (2 0))
+  (maps ((0 1) ((n n) (gy gy) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhca
@@ -1933,6 +1963,7 @@
   (label 60)
   (parent 58)
   (unrealized (0 0) (0 1) (0 3) (1 0) (2 2))
+  (maps ((0 1) ((n n) (gy gy) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhca
@@ -1960,6 +1991,7 @@
   (parent 59)
   (unrealized (0 0) (0 1) (0 3))
   (dead)
+  (maps ((0 1) ((n n) (gy gy) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
   (comment "empty cohort"))
 
 (defskeleton dhca
@@ -1986,6 +2018,7 @@
   (label 62)
   (parent 59)
   (unrealized (0 0) (0 1) (0 3))
+  (maps ((0 1) ((n n) (gy gy) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhca
@@ -2016,6 +2049,7 @@
   (label 63)
   (parent 60)
   (unrealized (0 0) (0 1) (0 3) (1 0))
+  (maps ((0 1) ((n n) (gy h) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhca
@@ -2050,6 +2084,7 @@
   (label 64)
   (parent 60)
   (unrealized (0 0) (0 1) (0 3) (1 0))
+  (maps ((0 1) ((n n) (gy gy) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhca
@@ -2079,6 +2114,7 @@
   (parent 62)
   (unrealized (0 1) (0 3))
   (dead)
+  (maps ((0 1) ((n n) (gy gy) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
   (comment "empty cohort"))
 
 (defskeleton dhca
@@ -2112,6 +2148,7 @@
   (parent 63)
   (unrealized (0 0) (0 1) (0 3) (4 0))
   (dead)
+  (maps ((0 1) ((n n) (gy h) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
   (comment "empty cohort"))
 
 (defskeleton dhca
@@ -2149,6 +2186,7 @@
   (parent 64)
   (unrealized (0 0) (0 1) (0 3) (5 0))
   (dead)
+  (maps ((0 1) ((n n) (gy gy) (h h) (dhkey dhkey) (a a) (b b) (ca ca))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -2206,6 +2244,8 @@
   (label 68)
   (unrealized (0 0) (0 2) (1 0) (1 1) (1 3))
   (preskeleton)
+  (maps
+    ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
   (origs (n (1 2)))
   (comment "Not a skeleton"))
 
@@ -2230,6 +2270,8 @@
   (label 69)
   (parent 68)
   (unrealized (0 0) (1 0) (1 1) (1 3))
+  (maps
+    ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
   (origs (n (1 2)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -2259,6 +2301,8 @@
   (label 70)
   (parent 69)
   (unrealized (0 0) (1 1) (1 3))
+  (maps
+    ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhca
@@ -2287,6 +2331,8 @@
   (label 71)
   (parent 70)
   (unrealized (0 0) (1 3))
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhca
@@ -2316,6 +2362,8 @@
   (label 72)
   (parent 70)
   (unrealized (0 0) (1 3))
+  (maps
+    ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhca
@@ -2344,6 +2392,8 @@
   (label 73)
   (parent 71)
   (unrealized (0 0))
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhca
@@ -2380,6 +2430,8 @@
   (label 74)
   (parent 71)
   (unrealized (0 0) (3 0) (3 2))
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhca
@@ -2411,6 +2463,8 @@
   (parent 71)
   (unrealized (0 0) (3 0))
   (dead)
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "empty cohort"))
 
 (defskeleton dhca
@@ -2440,6 +2494,8 @@
   (label 76)
   (parent 72)
   (unrealized (0 0))
+  (maps
+    ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhca
@@ -2478,6 +2534,8 @@
   (label 77)
   (parent 72)
   (unrealized (0 0) (4 0) (4 2))
+  (maps
+    ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhca
@@ -2510,6 +2568,8 @@
   (parent 72)
   (unrealized (0 0) (4 0))
   (dead)
+  (maps
+    ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
   (comment "empty cohort"))
 
 (defskeleton dhca
@@ -2608,6 +2668,8 @@
   (label 81)
   (parent 74)
   (unrealized (0 0) (3 2))
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhca
@@ -2647,6 +2709,8 @@
   (label 82)
   (parent 74)
   (unrealized (0 0) (3 2))
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhca
@@ -2680,6 +2744,8 @@
   (seen-ops
     (79 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton dhca
@@ -2784,6 +2850,8 @@
   (label 86)
   (parent 77)
   (unrealized (0 0) (4 2))
+  (maps
+    ((0 1) ((a a) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhca
@@ -2820,6 +2888,8 @@
   (label 87)
   (parent 77)
   (unrealized (0 0) (4 2))
+  (maps
+    ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhca
@@ -2860,6 +2930,8 @@
   (label 88)
   (parent 77)
   (unrealized (0 0) (4 2))
+  (maps
+    ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton dhca
@@ -2895,6 +2967,8 @@
   (label 89)
   (parent 81)
   (unrealized (0 0))
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton dhca
@@ -2932,6 +3006,8 @@
   (label 90)
   (parent 81)
   (unrealized (0 0))
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhca
@@ -2969,6 +3045,8 @@
   (label 91)
   (parent 82)
   (unrealized (0 0))
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhca
@@ -3012,6 +3090,8 @@
       (operation encryption-test (displaced 5 4 ca 1)
         (enc gy b (privk ca-0)) (0 0)) (strand-map 0 1 2 3 4)))
   (unrealized (0 0))
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton dhca
@@ -3052,6 +3132,8 @@
   (label 93)
   (parent 82)
   (unrealized (0 0))
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton dhca
@@ -3088,6 +3170,8 @@
   (label 94)
   (parent 86)
   (unrealized (0 0))
+  (maps
+    ((0 1) ((a a) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhca
@@ -3129,6 +3213,8 @@
       (operation encryption-test (displaced 5 2 ca 1)
         (enc gy a (privk ca)) (0 0)) (strand-map 0 1 2 3 4)))
   (unrealized (0 0))
+  (maps
+    ((0 1) ((a a) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton dhca
@@ -3167,6 +3253,8 @@
   (label 96)
   (parent 86)
   (unrealized (0 0))
+  (maps
+    ((0 1) ((a a) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton dhca
@@ -3203,6 +3291,8 @@
   (label 97)
   (parent 87)
   (unrealized (0 0))
+  (maps
+    ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton dhca
@@ -3244,6 +3334,8 @@
       (operation encryption-test (displaced 5 2 ca 1)
         (enc gx a (privk ca)) (0 0)) (strand-map 0 1 2 3 4)))
   (unrealized (0 0))
+  (maps
+    ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gx) (n n) (dhkey dhkey))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton dhca
@@ -3282,6 +3374,8 @@
   (label 99)
   (parent 87)
   (unrealized (0 0))
+  (maps
+    ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton dhca
@@ -3321,6 +3415,8 @@
   (label 100)
   (parent 88)
   (unrealized (0 0))
+  (maps
+    ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gx) (n n) (dhkey dhkey))))
   (comment "4 in cohort - 4 not yet seen"))
 
 (defskeleton dhca
@@ -3365,6 +3461,8 @@
       (operation encryption-test (displaced 6 2 ca 1)
         (enc gx a-0 (privk ca)) (0 0)) (strand-map 0 1 2 3 4 5)))
   (unrealized (0 0))
+  (maps
+    ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
   (comment "4 in cohort - 3 not yet seen"))
 
 (defskeleton dhca
@@ -3410,6 +3508,8 @@
       (operation encryption-test (displaced 6 5 ca 1)
         (enc gx a-0 (privk ca-0)) (0 0)) (strand-map 0 1 2 3 4 5)))
   (unrealized (0 0))
+  (maps
+    ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gx) (n n) (dhkey dhkey))))
   (comment "4 in cohort - 3 not yet seen"))
 
 (defskeleton dhca
@@ -3452,6 +3552,8 @@
   (label 103)
   (parent 88)
   (unrealized (0 0))
+  (maps
+    ((0 1) ((a a) (b b) (ca ca) (gx gx) (gy gy) (n n) (dhkey dhkey))))
   (comment "5 in cohort - 5 not yet seen"))
 
 (defskeleton dhca
@@ -3607,6 +3709,8 @@
   (label 107)
   (parent 90)
   (realized)
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhca
@@ -3974,6 +4078,8 @@
   (label 116)
   (parent 93)
   (realized)
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhca
@@ -4058,6 +4164,8 @@
   (seen-ops
     (104 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton dhca
@@ -4301,6 +4409,8 @@
     (106 (operation generalization deleted (3 0))
       (strand-map 0 1 2 4 5)))
   (realized)
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton dhca
@@ -4341,6 +4451,8 @@
   (label 125)
   (parent 96)
   (realized)
+  (maps
+    ((0 1) ((a b-0) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhca
@@ -4419,6 +4531,8 @@
   (label 127)
   (parent 97)
   (realized)
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhca
@@ -4658,6 +4772,8 @@
   (label 133)
   (parent 99)
   (realized)
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhca
@@ -4699,6 +4815,8 @@
   (label 134)
   (parent 99)
   (realized)
+  (maps
+    ((0 1) ((a b-0) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhca
@@ -4825,6 +4943,8 @@
     (109 (operation generalization deleted (3 0))
       (strand-map 0 1 2 4 5)))
   (realized)
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gx) (gy gx) (n n) (dhkey dhkey))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton dhca
@@ -5121,6 +5241,8 @@
     (112 (operation generalization deleted (3 0))
       (strand-map 0 1 2 4 5)))
   (realized)
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gx) (gy gx) (n n) (dhkey dhkey))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton dhca
@@ -5255,6 +5377,8 @@
     (115 (operation generalization deleted (3 0))
       (strand-map 0 1 2 4 5 6)))
   (realized)
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton dhca
@@ -5338,6 +5462,8 @@
   (label 149)
   (parent 103)
   (realized)
+  (maps
+    ((0 1) ((a b-0) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhca
@@ -5424,6 +5550,8 @@
     (105 (operation generalization weakened ((4 0) (1 3)))
       (strand-map 0 1 2 3 4)))
   (realized)
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton dhca
@@ -5465,6 +5593,8 @@
     (111 (operation generalization weakened ((5 0) (1 3)))
       (strand-map 0 1 2 3 4 5)))
   (realized)
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton dhca
@@ -5508,6 +5638,8 @@
     (122 (operation generalization weakened ((5 0) (1 3)))
       (strand-map 0 1 2 3 4 5)))
   (realized)
+  (maps
+    ((0 1) ((a b-0) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton dhca
@@ -5543,6 +5675,8 @@
   (label 154)
   (parent 127)
   (realized)
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhca
@@ -5580,6 +5714,8 @@
   (label 155)
   (parent 133)
   (realized)
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton dhca
@@ -5624,6 +5760,8 @@
     (131 (operation generalization weakened ((5 0) (1 3)))
       (strand-map 0 1 2 3 4 5)))
   (realized)
+  (maps
+    ((0 1) ((a b-0) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton dhca
@@ -5668,6 +5806,8 @@
     (139 (operation generalization weakened ((6 0) (1 3)))
       (strand-map 0 1 2 3 4 5 6)))
   (realized)
+  (maps
+    ((0 1) ((a b-0) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton dhca
@@ -5707,6 +5847,8 @@
     (109 (operation generalization separated b-0)
       (strand-map 0 1 2 3 4)))
   (realized)
+  (maps
+    ((0 1) ((a b) (b b) (ca ca) (gx gy) (gy gy) (n n) (dhkey dhkey))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton dhca

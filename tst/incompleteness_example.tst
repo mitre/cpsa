@@ -1,7 +1,7 @@
 (herald incompleteness-example
   (comment "Shows a shape not found by CPSA"))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/incompleteness_example.scm")
 
 (defprotocol incompleteness-example basic
@@ -28,6 +28,7 @@
   (label 0)
   (unrealized (0 1))
   (dead)
+  (maps ((0) ((k k) (n n))))
   (origs (n (0 0)))
   (comment "empty cohort"))
 

@@ -1,6 +1,6 @@
 (herald "Kerberos PK init")
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/pkinit.scm")
 
 (defprotocol pkinit basic
@@ -38,6 +38,10 @@
           (enc ak n1 tk t k)))))
   (label 0)
   (unrealized (0 1))
+  (maps
+    ((0)
+      ((c c) (as as) (t t) (n2 n2) (n1 n1) (tc tc) (tk tk) (tgt tgt)
+        (k k) (ak ak))))
   (origs (n2 (0 0)) (n1 (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 

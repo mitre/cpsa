@@ -1,7 +1,7 @@
 (herald "Privacy Certificate Authority" (bound 15)
   (comment "Generation of an Attestation Identity Certificate"))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/pca.scm")
 (comment "Strand count bounded at 15")
 
@@ -36,6 +36,7 @@
   (traces ((recv (enc ki a t (invk kp)))))
   (label 0)
   (unrealized (0 0))
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -54,6 +55,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 0) (1 0))
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton pca
@@ -75,6 +77,7 @@
   (label 2)
   (parent 1)
   (unrealized (0 0) (1 0))
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton pca
@@ -95,6 +98,7 @@
   (label 3)
   (parent 2)
   (unrealized (0 0))
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton pca
@@ -118,6 +122,7 @@
   (label 4)
   (parent 2)
   (unrealized (0 0))
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton pca
@@ -140,6 +145,7 @@
   (label 5)
   (parent 3)
   (unrealized (2 1))
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton pca
@@ -169,6 +175,7 @@
       (operation encryption-test (displaced 4 2 tpm 1)
         (enc t ke-0 (invk km-0)) (3 0)) (strand-map 0 1 2 1)))
   (unrealized (0 0) (3 0))
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton pca
@@ -194,6 +201,7 @@
   (label 7)
   (parent 4)
   (unrealized (3 1))
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton pca
@@ -226,6 +234,7 @@
       (operation encryption-test (displaced 5 3 tpm 1)
         (enc t ke-1 (invk km-1)) (4 0)) (strand-map 0 1 2 3 1)))
   (unrealized (0 0) (4 0))
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton pca
@@ -277,6 +286,7 @@
   (label 10)
   (parent 5)
   (unrealized (2 1) (3 0))
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton pca
@@ -333,6 +343,7 @@
   (label 12)
   (parent 7)
   (unrealized (3 1) (4 0))
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton pca
@@ -362,6 +373,7 @@
   (seen-ops
     (9 (operation generalization deleted (1 0)) (strand-map 0 2 3)))
   (realized)
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton pca
@@ -391,6 +403,7 @@
   (label 14)
   (parent 10)
   (unrealized (2 1))
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton pca
@@ -423,6 +436,7 @@
   (seen-ops
     (11 (operation generalization deleted (1 0)) (strand-map 0 2 3 4)))
   (realized)
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton pca
@@ -452,6 +466,7 @@
   (label 16)
   (parent 12)
   (realized)
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton pca
@@ -483,6 +498,7 @@
   (label 17)
   (parent 12)
   (unrealized (3 1))
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton pca
@@ -515,6 +531,7 @@
   (seen-ops
     (11 (operation generalization deleted (1 0)) (strand-map 0 2 3 4)))
   (realized)
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton pca
@@ -544,6 +561,7 @@
   (label 19)
   (parent 14)
   (realized)
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton pca
@@ -581,6 +599,7 @@
       (operation encryption-test (displaced 6 4 tpm 1)
         (enc t ke-1 (invk km-1)) (5 0)) (strand-map 0 1 2 3 4 3)))
   (unrealized (2 1) (5 0))
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton pca
@@ -608,6 +627,7 @@
   (seen-ops
     (9 (operation generalization deleted (1 0)) (strand-map 0 2 3)))
   (realized)
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton pca
@@ -639,6 +659,7 @@
   (label 22)
   (parent 17)
   (realized)
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton pca
@@ -670,6 +691,7 @@
   (label 23)
   (parent 17)
   (realized)
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton pca
@@ -712,6 +734,7 @@
       (operation encryption-test (displaced 7 5 tpm 1)
         (enc t ke-1 (invk km-2)) (6 0)) (strand-map 0 1 2 3 4 5 4)))
   (unrealized (3 1) (6 0))
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton pca
@@ -739,6 +762,7 @@
   (seen-ops
     (9 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton pca
@@ -769,6 +793,7 @@
   (seen-ops
     (11 (operation generalization deleted (1 0)) (strand-map 0 2 3 4)))
   (realized)
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton pca
@@ -799,6 +824,7 @@
   (seen-ops
     (11 (operation generalization deleted (4 0)) (strand-map 0 1 2 3)))
   (realized)
+  (maps ((0) ((ki ki) (kp kp) (t t) (a a))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

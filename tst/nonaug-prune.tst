@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/nonaug-prune.scm")
 
 (defprotocol nonaug-prune basic
@@ -35,6 +35,7 @@
     ((send (enc n B B k)) (send (enc n A k)) (recv (enc n A A A k))))
   (label 0)
   (unrealized (0 0) (1 0) (2 2))
+  (maps ((0 1 2) ((n n) (A A) (B B) (k k))))
   (origs (n (2 0)))
   (comment "4 in cohort - 4 not yet seen"))
 
@@ -57,6 +58,7 @@
       (operation nonce-test (added-strand trans2 2) n (1 2) (enc n B k)
         (enc n B B k)) (strand-map 0 1)))
   (unrealized (0 0) (1 2))
+  (maps ((0 0 1) ((n n) (A B) (B B) (k k))))
   (comment "3 in cohort - 2 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -76,6 +78,7 @@
   (label 2)
   (parent 0)
   (unrealized (0 0) (1 0))
+  (maps ((0 1 2) ((n n) (A B) (B B) (k k))))
   (origs (n (2 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -98,6 +101,7 @@
   (label 3)
   (parent 0)
   (unrealized (0 0) (1 0) (2 2) (3 1))
+  (maps ((0 1 2) ((n n) (A B) (B B) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -117,6 +121,7 @@
   (label 4)
   (parent 0)
   (unrealized (0 0) (1 0))
+  (maps ((0 1 2) ((n n) (A A) (B B) (k k))))
   (origs (n (2 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -139,6 +144,7 @@
   (label 5)
   (parent 0)
   (unrealized (0 0) (1 0) (3 0))
+  (maps ((0 1 2) ((n n) (A A) (B B) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -158,6 +164,7 @@
   (label 6)
   (parent 1)
   (unrealized (0 0) (1 2) (2 1))
+  (maps ((0 0 1) ((n n) (A B) (B B) (k k))))
   (origs (n (1 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -176,6 +183,7 @@
   (label 7)
   (parent 1)
   (unrealized (0 0))
+  (maps ((0 0 1) ((n n) (A B) (B B) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -194,6 +202,7 @@
   (label 8)
   (parent 2)
   (unrealized (0 0))
+  (maps ((0 1 2) ((n n) (A B) (B B) (k k))))
   (origs (n (2 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -216,6 +225,7 @@
   (label 9)
   (parent 3)
   (unrealized (0 0) (1 0) (2 2))
+  (maps ((0 1 2) ((n n) (A B) (B B) (k k))))
   (comment "3 in cohort - 3 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -234,6 +244,7 @@
   (label 10)
   (parent 4)
   (unrealized (0 0))
+  (maps ((0 1 2) ((n n) (A A) (B B) (k k))))
   (origs (n (2 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -255,6 +266,7 @@
   (label 11)
   (parent 5)
   (unrealized (0 0) (1 0))
+  (maps ((0 1 2) ((n n) (A A) (B B) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -278,6 +290,7 @@
       (operation nonce-test (added-strand trans2 2) n (1 2) (enc n B k)
         (enc n n C k) (enc n B B k)) (strand-map 0 1 2)))
   (unrealized (0 0) (1 2))
+  (maps ((0 0 1) ((n n) (A B) (B B) (k k))))
   (origs (n (1 0)))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -346,6 +359,7 @@
       (operation nonce-test (displaced 5 2 orig 2) n (4 1)
         (enc n B B k)) (strand-map 0 1 2 3 3)))
   (unrealized (0 0) (1 0) (2 2) (4 1))
+  (maps ((0 1 2) ((n n) (A B) (B B) (k k))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -368,6 +382,7 @@
   (label 16)
   (parent 9)
   (unrealized (0 0) (1 0))
+  (maps ((0 1 2) ((n n) (A B) (B B) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -392,6 +407,7 @@
   (label 17)
   (parent 9)
   (unrealized (0 0) (1 0) (4 0))
+  (maps ((0 1 2) ((n n) (A B) (B B) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -415,6 +431,7 @@
       (operation nonce-test (contracted (B A)) n (0 0) (enc n A k)
         (enc n A A k)) (strand-map 0 1 2)))
   (unrealized (0 0))
+  (maps ((0 1 2) ((n n) (A A) (B B) (k k))))
   (origs (n (2 0)))
   (comment "3 in cohort - 2 not yet seen"))
 
@@ -436,6 +453,7 @@
   (label 19)
   (parent 11)
   (unrealized (0 0))
+  (maps ((0 1 2) ((n n) (A A) (B B) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -463,6 +481,7 @@
       (operation nonce-test (displaced 4 1 orig 2) n (3 1)
         (enc n B B k)) (strand-map 0 1 2 2)))
   (unrealized (0 0) (1 2) (3 1))
+  (maps ((0 0 1) ((n n) (A B) (B B) (k k))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -483,6 +502,7 @@
   (label 21)
   (parent 12)
   (unrealized (0 0))
+  (maps ((0 0 1) ((n n) (A B) (B B) (k k))))
   (origs (n (1 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -505,6 +525,7 @@
   (label 22)
   (parent 16)
   (unrealized (0 0))
+  (maps ((0 1 2) ((n n) (A B) (B B) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -528,6 +549,7 @@
   (label 23)
   (parent 17)
   (unrealized (0 0) (1 0))
+  (maps ((0 1 2) ((n n) (A B) (B B) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -547,6 +569,7 @@
   (label 24)
   (parent 18)
   (unrealized (0 0))
+  (maps ((0 1 2) ((n n) (A A) (B B) (k k))))
   (origs (n (2 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -570,6 +593,7 @@
   (label 25)
   (parent 18)
   (unrealized (0 0) (3 0))
+  (maps ((0 1 2) ((n n) (A A) (B B) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -595,6 +619,7 @@
       (operation nonce-test (displaced 4 1 trans2 2) n (0 0) (enc n A k)
         (enc n B B k)) (strand-map 0 1 2 3)))
   (unrealized (0 0))
+  (maps ((0 1 2) ((n n) (A A) (B B) (k k))))
   (comment "4 in cohort - 3 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -617,6 +642,7 @@
   (seen-ops
     (13 (operation generalization deleted (2 0)) (strand-map 0 1)))
   (realized)
+  (maps ((0 0 1) ((n n) (A B) (B B) (k k))))
   (origs (n (1 0)))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -642,6 +668,7 @@
   (seen-ops
     (14 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps ((0 1 2) ((n n) (A B) (B B) (k k))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -665,6 +692,7 @@
   (label 29)
   (parent 23)
   (unrealized (0 0))
+  (maps ((0 1 2) ((n n) (A B) (B B) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -688,6 +716,7 @@
     (14 (operation generalization weakened ((1 1) (0 0)))
       (strand-map 0 1 2)))
   (realized)
+  (maps ((0 1 2) ((n n) (A A) (B A) (k k))))
   (origs (n (2 0)))
   (comment "1 in cohort - 0 not yet seen"))
 
@@ -709,6 +738,7 @@
   (label 31)
   (parent 25)
   (unrealized (0 0))
+  (maps ((0 1 2) ((n n) (A A) (B B) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -753,6 +783,7 @@
   (label 33)
   (parent 26)
   (unrealized (0 0))
+  (maps ((0 1 2) ((n n) (A A) (B B) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -777,6 +808,7 @@
   (label 34)
   (parent 26)
   (unrealized (0 0) (4 0))
+  (maps ((0 1 2) ((n n) (A A) (B B) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -803,6 +835,7 @@
   (seen-ops
     (32 (operation generalization deleted (3 0)) (strand-map 0 1 2 4)))
   (realized)
+  (maps ((0 1 2) ((n n) (A B) (B B) (k k))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -827,6 +860,7 @@
   (seen-ops
     (14 (operation generalization deleted (3 0)) (strand-map 0 1 2)))
   (realized)
+  (maps ((0 1 2) ((n n) (A A) (B A) (k k))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -852,6 +886,7 @@
     (32 (operation generalization weakened ((3 1) (0 0)))
       (strand-map 0 1 2 3)))
   (realized)
+  (maps ((0 1 2) ((n n) (A A) (B A) (k k))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -875,6 +910,7 @@
   (label 38)
   (parent 34)
   (unrealized (0 0))
+  (maps ((0 1 2) ((n n) (A A) (B B) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton nonaug-prune
@@ -902,6 +938,7 @@
   (seen-ops
     (32 (operation generalization deleted (4 0)) (strand-map 0 1 2 3)))
   (realized)
+  (maps ((0 1 2) ((n n) (A A) (B A) (k k))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

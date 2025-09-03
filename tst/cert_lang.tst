@@ -1,6 +1,6 @@
 (herald cert-lang)
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/cert_lang.scm")
 
 (defprotocol cert-uni basic
@@ -53,6 +53,10 @@
       (send ch-r (enc "challenge" chal pk)) (recv ch-r chal)))
   (label 0)
   (unrealized (0 0))
+  (maps
+    ((0)
+      ((ca ca) (chal chal) (ch-ca ch-ca) (ch-r ch-r) (subj subj) (pk pk)
+        (serial serial))))
   (origs (chal (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -77,6 +81,10 @@
   (label 1)
   (parent 0)
   (unrealized (0 2))
+  (maps
+    ((0)
+      ((ca ca) (chal chal) (ch-ca ch-ca) (ch-r ch-r) (subj subj) (pk pk)
+        (serial serial))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton cert-uni

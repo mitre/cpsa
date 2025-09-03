@@ -2,7 +2,7 @@
   (comment "First skeleton should have a shape,"
     "second should be dead."))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/neq_test.scm")
 
 (defprotocol neq-test basic
@@ -27,6 +27,7 @@
   (traces ((send (cat n1 (enc n1 n2 k))) (recv n2)))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((n1 n1) (n2 n2) (k k))))
   (origs (n2 (0 0)) (n1 (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -71,6 +72,7 @@
   (label 2)
   (unrealized (0 1))
   (dead)
+  (maps ((0) ((n1 n1) (n2 n2) (k k))))
   (origs (n2 (0 0)) (n1 (0 0)))
   (comment "empty cohort"))
 

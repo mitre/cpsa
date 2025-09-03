@@ -1,4 +1,4 @@
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/weird.scm")
 
 (defprotocol weird basic
@@ -45,6 +45,7 @@
   (traces ((send k)) ((recv (enc a k))))
   (label 1)
   (unrealized (1 0))
+  (maps ((0 1) ((k k) (a a))))
   (origs (k (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -78,6 +79,7 @@
   (label 3)
   (parent 1)
   (realized)
+  (maps ((0 1) ((k k) (a a))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton weird
@@ -144,6 +146,7 @@
   (label 6)
   (realized)
   (dead)
+  (maps ((0 1) ((k k) (a a))))
   (origs)
   (ugens (k (1 0)) (k (0 0)))
   (comment "Input cannot be made into a skeleton--nothing to do"))
@@ -168,6 +171,7 @@
   (label 7)
   (unrealized (1 0))
   (preskeleton)
+  (maps ((0 1) ((k k) (a a))))
   (origs)
   (ugens (k (0 0)))
   (comment "Not a skeleton"))

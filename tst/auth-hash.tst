@@ -1,6 +1,6 @@
 (herald auth-hash)
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/auth-hash.scm")
 
 (defprotocol auth-hash basic
@@ -28,6 +28,7 @@
   (traces ((recv ch (hash n)) (recv ch n)))
   (label 0)
   (unrealized (0 0) (0 1))
+  (maps ((0) ((ch ch) (n n))))
   (origs)
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -44,6 +45,7 @@
   (label 1)
   (parent 0)
   (unrealized (0 1))
+  (maps ((0) ((ch ch) (n n))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton auth-hash

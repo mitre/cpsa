@@ -1,6 +1,6 @@
 (herald timestamping-service)
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/timestamping.scm")
 
 (defprotocol timestamping-service basic
@@ -57,6 +57,10 @@
       (recv (enc n alice h alice_1 h_1 t_1 l (privk trent)))))
   (label 0)
   (unrealized (0 1))
+  (maps
+    ((0)
+      ((trent trent) (alice alice) (alice_1 alice_1) (n n) (h h)
+        (h_1 h_1) (t_1 t_1) (l l))))
   (origs)
   (comment "2 in cohort - 2 not yet seen"))
 
@@ -95,6 +99,10 @@
   (label 1)
   (parent 0)
   (unrealized (1 0))
+  (maps
+    ((0)
+      ((trent trent) (alice alice) (alice_1 alice_1) (n n) (h h)
+        (h_1 h_1) (t_1 t_1) (l (hash alice_1 h_1 t_1 l_1)))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton timestamping-service
@@ -124,6 +132,10 @@
   (label 2)
   (parent 0)
   (unrealized (0 1) (1 0))
+  (maps
+    ((0)
+      ((trent trent) (alice alice) (alice_1 alice_1) (n n) (h h)
+        (h_1 h_1) (t_1 t_1) (l (hash alice_1 h_1 t_1 l_1)))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton timestamping-service
@@ -209,6 +221,18 @@
   (label 3)
   (parent 1)
   (unrealized (2 0))
+  (maps
+    ((0)
+      ((trent trent) (alice alice) (alice_1 alice_1) (n n) (h h)
+        (h_1 h_1)
+        (t_1
+          (enc n-0 alice_1 h_1 alice_1-0 h_1-0 t_1
+            (hash alice_1-0 h_1-0 t_1 l_1) (privk trent)))
+        (l
+          (hash alice_1 h_1
+            (enc n-0 alice_1 h_1 alice_1-0 h_1-0 t_1
+              (hash alice_1-0 h_1-0 t_1 l_1) (privk trent))
+            (hash alice_1-0 h_1-0 t_1 l_1))))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton timestamping-service
@@ -240,6 +264,10 @@
   (label 4)
   (parent 2)
   (unrealized (0 1))
+  (maps
+    ((0)
+      ((trent trent) (alice alice) (alice_1 alice_1) (n n) (h h)
+        (h_1 h_1) (t_1 t_1) (l (hash alice_1 h_1 t_1 l_1)))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton timestamping-service
@@ -411,6 +439,10 @@
   (label 6)
   (parent 4)
   (unrealized (3 0))
+  (maps
+    ((0)
+      ((trent trent) (alice alice) (alice_1 alice_1) (n n) (h h)
+        (h_1 h_1) (t_1 t_1) (l (hash alice_1 h_1 t_1 l_1)))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton timestamping-service
@@ -569,6 +601,10 @@
   (seen-ops
     (7 (operation generalization deleted (1 0)) (strand-map 0 2 3 4)))
   (realized)
+  (maps
+    ((0)
+      ((trent trent) (alice alice) (alice_1 alice_1) (n n) (h h)
+        (h_1 h_1) (t_1 t_1) (l (hash alice_1 h_1 t_1 l_1)))))
   (comment "1 in cohort - 0 not yet seen"))
 
 (comment "Nothing left to do")

@@ -1,7 +1,7 @@
 (herald "Station-to-station protocol:  Weakened version" (bound 20)
   (algebra diffie-hellman))
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/sts_non_role.scm")
 (comment "Strand count bounded at 20")
 
@@ -49,6 +49,7 @@
           (exp (gen) (mul x y))))))
   (label 0)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (x x) (y y))))
   (origs)
   (ugens (x (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
@@ -83,6 +84,7 @@
   (label 1)
   (parent 0)
   (unrealized (1 1))
+  (maps ((0) ((a a) (b b) (x x-0) (y x))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton station-weak
@@ -150,6 +152,7 @@
   (label 3)
   (parent 1)
   (unrealized (2 0))
+  (maps ((0) ((a a) (b b) (x x-0) (y x))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton station-weak
@@ -188,6 +191,7 @@
   (parent 3)
   (unrealized (3 0))
   (dead)
+  (maps ((0) ((a a) (b b) (x x-0) (y x))))
   (comment "empty cohort"))
 
 (defskeleton station-weak
@@ -226,6 +230,7 @@
   (parent 3)
   (unrealized (3 0))
   (dead)
+  (maps ((0) ((a a) (b b) (x x-0) (y x))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -274,6 +279,7 @@
           (exp (gen) (mul x y))))))
   (label 6)
   (unrealized (0 2))
+  (maps ((0) ((a a) (b b) (x x) (y y))))
   (origs)
   (ugens (y (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
@@ -308,6 +314,7 @@
   (label 7)
   (parent 6)
   (unrealized (1 1))
+  (maps ((0) ((a a) (b b) (x x) (y y))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton station-weak
@@ -379,6 +386,7 @@
   (label 9)
   (parent 7)
   (unrealized (2 0))
+  (maps ((0) ((a a) (b b) (x x) (y y))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton station-weak
@@ -417,6 +425,7 @@
   (parent 9)
   (unrealized (3 0))
   (dead)
+  (maps ((0) ((a a) (b b) (x x) (y y))))
   (comment "empty cohort"))
 
 (defskeleton station-weak
@@ -455,6 +464,7 @@
   (parent 9)
   (unrealized (3 0))
   (dead)
+  (maps ((0) ((a a) (b b) (x x) (y y))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -506,6 +516,7 @@
   (label 12)
   (unrealized (0 1) (1 0))
   (preskeleton)
+  (maps ((0 1) ((a a) (b b) (x x) (y y))))
   (origs)
   (ugens (x (0 0)))
   (comment "Not a skeleton"))
@@ -530,6 +541,7 @@
   (label 13)
   (parent 12)
   (unrealized (0 1))
+  (maps ((0 1) ((a a) (b b) (x x) (y y))))
   (origs)
   (ugens (x (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
@@ -566,6 +578,7 @@
   (label 14)
   (parent 13)
   (unrealized (1 0) (2 1))
+  (maps ((0 1) ((a a) (b b) (x x-0) (y x))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton station-weak
@@ -597,6 +610,7 @@
   (label 15)
   (parent 13)
   (unrealized (1 0))
+  (maps ((0 1) ((a a) (b b) (x x) (y y))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton station-weak
@@ -635,6 +649,7 @@
   (label 16)
   (parent 14)
   (unrealized (1 0) (3 0))
+  (maps ((0 1) ((a a) (b b) (x x-0) (y x))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton station-weak
@@ -669,6 +684,7 @@
   (parent 15)
   (unrealized (3 0))
   (dead)
+  (maps ((0 1) ((a a) (b b) (x x) (y y))))
   (comment "empty cohort"))
 
 (defskeleton station-weak
@@ -703,6 +719,7 @@
   (parent 15)
   (unrealized (3 0))
   (dead)
+  (maps ((0 1) ((a a) (b b) (x x) (y y))))
   (comment "empty cohort"))
 
 (defskeleton station-weak
@@ -743,6 +760,7 @@
   (parent 16)
   (unrealized (1 0) (4 0))
   (dead)
+  (maps ((0 1) ((a a) (b b) (x x-0) (y x))))
   (comment "empty cohort"))
 
 (defskeleton station-weak
@@ -783,6 +801,7 @@
   (parent 16)
   (unrealized (1 0) (4 0))
   (dead)
+  (maps ((0 1) ((a a) (b b) (x x-0) (y x))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -834,6 +853,7 @@
   (label 21)
   (unrealized (0 1) (1 0))
   (preskeleton)
+  (maps ((0 1) ((a a) (b b) (x x) (eta eta))))
   (origs)
   (ugens (x (0 0)))
   (comment "Not a skeleton"))
@@ -858,6 +878,7 @@
   (label 22)
   (parent 21)
   (unrealized (0 1))
+  (maps ((0 1) ((a a) (b b) (x x) (eta eta))))
   (origs)
   (ugens (x (0 0)))
   (comment "2 in cohort - 2 not yet seen"))
@@ -982,6 +1003,7 @@
   (label 25)
   (unrealized (0 2) (1 0))
   (preskeleton)
+  (maps ((0 1) ((a a) (b b) (y y) (chi chi))))
   (origs)
   (ugens (y (0 1)))
   (comment "Not a skeleton"))
@@ -1006,6 +1028,7 @@
   (label 26)
   (parent 25)
   (unrealized (0 2))
+  (maps ((0 1) ((a a) (b b) (y y) (chi chi))))
   (origs)
   (ugens (y (0 1)))
   (comment "2 in cohort - 2 not yet seen"))
@@ -1137,6 +1160,7 @@
           (exp (gen) (mul x y)))) (send (privk b))))
   (label 29)
   (unrealized (1 2))
+  (maps ((0 1) ((a a) (b b) (x x) (y y) (a-0 a-0))))
   (origs ((privk b) (1 3)) ((privk a) (0 3)))
   (ugens (x (0 0)) (y (1 1)))
   (comment "2 in cohort - 2 not yet seen"))
@@ -1210,6 +1234,7 @@
   (label 31)
   (parent 29)
   (unrealized (2 0))
+  (maps ((0 1) ((a a) (b b) (x x) (y y) (a-0 a-0))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton station-weak
@@ -1248,6 +1273,7 @@
   (parent 31)
   (unrealized (3 0))
   (dead)
+  (maps ((0 1) ((a a) (b b) (x x) (y y) (a-0 a-0))))
   (comment "empty cohort"))
 
 (defskeleton station-weak
@@ -1286,6 +1312,7 @@
   (parent 31)
   (unrealized (3 0))
   (dead)
+  (maps ((0 1) ((a a) (b b) (x x) (y y) (a-0 a-0))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -1347,6 +1374,7 @@
   (label 34)
   (unrealized (1 2) (2 0))
   (preskeleton)
+  (maps ((0 1 2) ((a a) (b b) (x x) (y y) (a-0 a-0))))
   (origs ((privk b) (1 3)) ((privk a) (0 3)))
   (ugens (x (0 0)) (y (1 1)))
   (comment "Not a skeleton"))
@@ -1380,6 +1408,7 @@
   (label 35)
   (parent 34)
   (unrealized (1 2) (2 0))
+  (maps ((0 1 2) ((a a) (b b) (x x) (y y) (a-0 a-0))))
   (origs ((privk b) (1 3)) ((privk a) (0 3)))
   (ugens (x (0 0)) (y (1 1)))
   (comment "2 in cohort - 2 not yet seen"))
@@ -1419,6 +1448,7 @@
   (parent 35)
   (unrealized (1 2) (3 0))
   (dead)
+  (maps ((0 1 2) ((a a) (b b) (x x) (y y) (a-0 a-0))))
   (comment "empty cohort"))
 
 (defskeleton station-weak
@@ -1456,6 +1486,7 @@
   (parent 35)
   (unrealized (1 2) (3 0))
   (dead)
+  (maps ((0 1 2) ((a a) (b b) (x x) (y y) (a-0 a-0))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")

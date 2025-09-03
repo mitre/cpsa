@@ -1,6 +1,6 @@
 (herald uniq-at)
 
-(comment "CPSA 4.4.6")
+(comment "CPSA 4.4.7")
 (comment "All input read from tst/uniq-at.scm")
 
 (defprotocol yahalom-plus-uniq-at basic
@@ -44,6 +44,8 @@
       (recv (enc n-b k))) ((recv k) (send k)))
   (label 0)
   (unrealized (0 2) (0 4))
+  (maps
+    ((0 1) ((a a) (b b) (c c) (n-b n-b) (k k) (n-a n-a) (rest rest))))
   (origs (n-b (0 1)))
   (comment "Not closed under rules"))
 
@@ -63,6 +65,8 @@
   (label 1)
   (parent 0)
   (unrealized (0 2) (0 4))
+  (maps
+    ((0 1) ((a a) (b b) (c c) (n-b n-b) (k k) (n-a n-a) (rest rest))))
   (origs (n-b (0 1)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -89,6 +93,8 @@
   (label 2)
   (parent 1)
   (unrealized (0 4) (1 0) (2 0))
+  (maps
+    ((0 1) ((a a) (b b) (c c) (n-b n-b) (k k) (n-a n-a) (rest rest))))
   (comment "2 in cohort - 2 not yet seen"))
 
 (defskeleton yahalom-plus-uniq-at
@@ -114,6 +120,8 @@
   (parent 2)
   (unrealized (0 4) (1 0))
   (dead)
+  (maps
+    ((0 1) ((a a) (b b) (c c) (n-b n-b) (k k) (n-a n-a) (rest rest))))
   (comment "empty cohort"))
 
 (defskeleton yahalom-plus-uniq-at
@@ -141,6 +149,8 @@
   (parent 2)
   (unrealized (0 4) (1 0))
   (dead)
+  (maps
+    ((0 1) ((a a) (b b) (c c) (n-b n-b) (k k) (n-a n-a) (rest rest))))
   (comment "empty cohort"))
 
 (comment "Nothing left to do")
@@ -183,6 +193,7 @@
       (send (enc n-b k))))
   (label 5)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (c c) (n-a n-a) (n-b n-b) (k k))))
   (origs (n-a (0 0)))
   (comment "Not closed under rules"))
 
@@ -199,6 +210,7 @@
   (label 6)
   (parent 5)
   (unrealized (0 1))
+  (maps ((0) ((a a) (b b) (c c) (n-a n-a) (n-b n-b) (k k))))
   (origs (n-a (0 0)))
   (comment "1 in cohort - 1 not yet seen"))
 
@@ -222,6 +234,7 @@
   (label 7)
   (parent 6)
   (unrealized (1 0))
+  (maps ((0) ((a a) (b b) (c c) (n-a n-a) (n-b n-b) (k k))))
   (comment "1 in cohort - 1 not yet seen"))
 
 (defskeleton yahalom-plus-uniq-at
