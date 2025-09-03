@@ -557,23 +557,23 @@ mgs cohort =
         ans
     recordMap (k, phi) = updateStrandMap phi k
 
-dropThinnable :: [(Preskel, [Sid])] -> [(Preskel, [Sid])]
-dropThinnable cohort =
-  filter (not . thinnable . fst) cohort
+-- dropThinnable :: [(Preskel, [Sid])] -> [(Preskel, [Sid])]
+-- dropThinnable cohort =
+--   filter (not . thinnable . fst) cohort
 
-dropNonInjectives :: [(Preskel, [Sid])] -> [(Preskel, [Sid])]
-dropNonInjectives cohort = 
-  filter (isInjective . snd) cohort
-  where 
-    isInjective phi = L.nub phi == phi
+-- dropNonInjectives :: [(Preskel, [Sid])] -> [(Preskel, [Sid])]
+-- dropNonInjectives cohort = 
+--   filter (isInjective . snd) cohort
+--   where 
+--     isInjective phi = L.nub phi == phi
 
-splitInjectives :: [(Preskel, [Sid])] -> ([(Preskel, [Sid])], [(Preskel, [Sid])])
-splitInjectives cohort = 
-  let injectives = filter (isInjective . snd) cohort in
-  let noninjectives = filter (not . isInjective . snd) cohort in
-  (injectives, noninjectives)
-  where 
-    isInjective phi = L.nub phi == phi
+-- splitInjectives :: [(Preskel, [Sid])] -> ([(Preskel, [Sid])], [(Preskel, [Sid])])
+-- splitInjectives cohort = 
+--   let injectives = filter (isInjective . snd) cohort in
+--   let noninjectives = filter (not . isInjective . snd) cohort in
+--   (injectives, noninjectives)
+--   where 
+--     isInjective phi = L.nub phi == phi
 
 -- Given two permutations p and p', with ranges r and r', this
 -- function returns the list of permutations p'' such that
