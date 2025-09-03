@@ -277,7 +277,8 @@ displayRest k ctx rest =
                   (displayOptional "rule" (L.sort (map (S ()) (krules k)))
                    (displayOperation k ctx
                     (displayStrandMap k
-                     (displayOptional "traces" traces rest))))))))))))))))))
+                     (displayThinnable k
+                      (displayOptional "traces" traces rest)))))))))))))))))))
     where
       priorities = map displayPriority (kpriority k)
       traces = map (L () . displayTrace ctx . trace) (insts k)
@@ -412,3 +413,10 @@ displayStrandMap k rest =
     case getStrandMap $ operation k of
       [] -> rest
       sm -> L () (S () "strand-map" : map (N ()) sm) : rest
+
+displayThinnable :: Preskel -> [SExpr ()] -> [SExpr ()]
+displayThinnable k rest =
+    if thinnable k then
+      L () (S () "thinnable" : []) : rest
+    else
+      rest

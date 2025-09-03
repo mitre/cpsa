@@ -11,7 +11,7 @@ module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     firstSkeleton, Preskel, gen, protocol, kgoals, insts, orderings,
     pov, knon, kpnon, kunique, kuniqgen, kabsent, kprecur, kgenSt,
     kconf, kauth, kfacts, korig, kugen, kpriority, kcomment, nstrands,
-    kvars, kfvars, strandids, kterms, kchans, uniqOrig, uniqGen,
+    kvars, kfvars, strandids, thinnable, kterms, kchans, uniqOrig, uniqGen,
     preskelWellFormed, confCm, authCm,
     showPreskelSelectively, showPreskelUnselectively,
     verbosePreskelWellFormed, Strand, inst, sid, nodes,
@@ -518,6 +518,7 @@ data Preskel = Preskel
       pov :: Maybe Preskel,     -- Point of view, the
                                 -- original problem statement.
       strandids :: ![Sid],
+      thinnable :: Bool,        -- PDR added
       tc :: [Pair],             -- Transitive closure of orderings
                                 -- Used only during generalization
       kgist :: Gist,            -- Gist for iso checking
@@ -648,6 +649,7 @@ newPreskel gen shared insts orderings non pnon unique
                       tc = map graphPair tc,
                       kgist = gg,
                       strandids = nats (length insts),
+                      thinnable = False, -- PDR added
                       operation = oper,
                       krules = rules,
                       pprob = pprob,
@@ -1801,16 +1803,18 @@ thinStrands prs ps (s:ss) =
 thinStrandPairs :: PRS -> [(Sid, Sid)] -> Sid -> [Sid] -> [Sid] -> [PRS]
 thinStrandPairs prs ps _ ss [] =
   thinStrands prs ps ss
-thinStrandPairs prs ps s ss (s':ss') =
+thinStrandPairs prs@(k', k, n, map, phi) ps s ss (s':ss') =
   case thinStrand prs s s' of
     -- Try next pair, there was no match
     Nothing -> thinStrandPairs prs ps s ss ss'
     -- Try next pair, there was a match so save this pair
     Just [] -> thinStrandPairs prs ((s, s'):ps) s ss ss'
-    Just prss ->                -- Success at single strand thinning
-      do
-        prs <- prss
-        thin prs                -- Restart from the beginning
+    -- If thinning succeeded, mark k as thinnable and abort
+    Just _ -> reduce (k', k {thinnable = True}, n, map, phi)
+    -- Just prss ->                -- Success at single strand thinning
+    --   do
+    --     prs <- prss
+    --     thin prs                -- Restart from the beginning
 
 -- Try thinning s with s'.  If there was no match, return Nothing,
 -- else return Just the list of results.
@@ -1863,13 +1867,15 @@ thinTwo (s, s') ps =
 -- Try all multistrand pairings until one succeeds.
 thinMany :: PRS -> [[(Sid, Sid)]] -> [PRS]
 thinMany prs [] = reduce prs
-thinMany prs (ps:mps) =
+thinMany prs@(k', k, n, maps, phi) (ps:mps) =
     case thinManyStrands prs ps of
       [] -> thinMany prs mps
-      prss ->                           -- Success
-        do
-          prs <- prss
-          thin prs
+      -- PDR: On success, mark k as thinnable and abort early
+      _ -> reduce (k', k {thinnable = True}, n, maps, phi)
+      -- prss ->                           -- Success
+      --   do
+      --     prs <- prss
+      --     thin prs
 
 thinManyStrands :: PRS -> [(Sid, Sid)] -> [PRS]
 thinManyStrands prs ps =

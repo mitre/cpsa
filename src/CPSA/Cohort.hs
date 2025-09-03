@@ -456,6 +456,8 @@ findTest mode k u a =
 testNode :: Mode -> Preskel -> [Term] -> Set ChMsg -> Set Term ->
             Set Term -> Node -> ChMsg -> [Preskel]
 testNode mode k u cms ts a n cm =
+  if thinnable k then []
+  else
   loop $ potentialCriticalMessages mode u ts a $ cmTerm cm
   where
     loop [] = error (
@@ -535,14 +537,14 @@ mgs :: [(Preskel, [Sid])] -> [Preskel]
 mgs cohort =
   -- Version to keep non-injective cohort members
   -- But not to use them in the most general calculation
-  --let (inj, ninj) = splitInjectives cohort in 
-  --reverse $ map recordMap $ ninj ++ loop inj []
+  -- let (inj, ninj) = splitInjectives cohort in 
+  -- reverse $ map recordMap $ ninj ++ loop inj []
 
   -- Version to drop non-injective cohort members
-  reverse $ map recordMap $ loop (dropNonInjectives cohort) []
+  -- reverse $ map recordMap $ loop (dropNonInjectives cohort) []
 
   -- Original version
-  --reverse $ map recordMap $ loop cohort []
+  reverse $ map recordMap $ loop cohort []
   where
     loop [] acc = acc
     loop (kphi : cohort) acc
@@ -555,19 +557,23 @@ mgs cohort =
         ans
     recordMap (k, phi) = updateStrandMap phi k
 
+dropThinnable :: [(Preskel, [Sid])] -> [(Preskel, [Sid])]
+dropThinnable cohort =
+  filter (not . thinnable . fst) cohort
+
 dropNonInjectives :: [(Preskel, [Sid])] -> [(Preskel, [Sid])]
 dropNonInjectives cohort = 
   filter (isInjective . snd) cohort
   where 
     isInjective phi = L.nub phi == phi
 
--- splitInjectives :: [(Preskel, [Sid])] -> ([(Preskel, [Sid])], [(Preskel, [Sid])])
--- splitInjectives cohort = 
---   let injectives = filter (isInjective . snd) cohort in
---   let noninjectives = filter (not . isInjective . snd) cohort in
---   (injectives, noninjectives)
---   where 
---     isInjective phi = L.nub phi == phi
+splitInjectives :: [(Preskel, [Sid])] -> ([(Preskel, [Sid])], [(Preskel, [Sid])])
+splitInjectives cohort = 
+  let injectives = filter (isInjective . snd) cohort in
+  let noninjectives = filter (not . isInjective . snd) cohort in
+  (injectives, noninjectives)
+  where 
+    isInjective phi = L.nub phi == phi
 
 -- Given two permutations p and p', with ranges r and r', this
 -- function returns the list of permutations p'' such that
