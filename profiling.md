@@ -10,6 +10,14 @@ Enable profiling locally with
 
 Now, when you `make` a .txt from a .scm or .lsp, a `cpsa4.prof` file should be created.
 
+### Debugging
+
+If the above doesn't work, try running
+
+`cabal update`
+
+to update the local package list.
+
 
 ## Profiteur Visualization
 
