@@ -33,10 +33,9 @@ async function executeFile(uri?: vscode.Uri) {
         file_path = editor.document.fileName;
     }
 
-    const parsed = path.parse(file_path); // file info
-    const source = parsed.base; // filename only
+    const parsed = path.parse(file_path);
+    const source = parsed.base;
 
-    // output files
     const out_txt = parsed.name + '.txt';
     const out_xhtml = parsed.name + '.xhtml';
     const out_shapes = parsed.name + '_shapes.txt';
@@ -45,16 +44,11 @@ async function executeFile(uri?: vscode.Uri) {
     const config = vscode.workspace.getConfiguration('CPSA.build');
     const compilerVersion = config.get<string>('compilerVersion');
 
-    let cpsa_paths = cpsa4_paths; // default to CPSA4
+    let cpsa_paths = cpsa4_paths;
     if (compilerVersion === 'cpsa3') cpsa_paths = cpsa3_paths;
 
-    let ghcMemLimitMegabytes = config.get<number>('ghcMemLimitMegabytes') || 512;
-    const rtsOpts = [
-        '+RTS',
-        '-N',
-        `-M ${ghcMemLimitMegabytes}m`,
-        '-RTS'
-    ];
+    const ghcMemLimitMegabytes = config.get<number>('ghcMemLimitMegabytes') || 512;
+    const rtsOpts = ['+RTS', '-N', `-M ${ghcMemLimitMegabytes}m`, '-RTS'];
 
     // Run cpsa -> .txt
     const txt_task = new vscode.Task(
@@ -65,7 +59,12 @@ async function executeFile(uri?: vscode.Uri) {
         new vscode.ProcessExecution(cpsa_paths.cpsa, [...rtsOpts, '-o', out_txt, source], { cwd: parsed.dir }),
         '$cpsabuild_txt'
     );
-    await wait_for_task(txt_task);
+
+    const txtExitCode = await wait_for_task_exit_code(txt_task);
+    if (txtExitCode !== 0) {
+        vscode.window.showErrorMessage(`${cpsa_paths.cpsa} failed with exit code ${txtExitCode}. Aborting remaining tasks.`);
+        return; // Stop here, do not run the rest
+    }
 
     // Run cpsagraph -> .xhtml
     const xhtml_task = new vscode.Task(
@@ -76,7 +75,7 @@ async function executeFile(uri?: vscode.Uri) {
         new vscode.ProcessExecution(cpsa_paths.cpsagraph, ['-o', out_xhtml, out_txt], { cwd: parsed.dir }),
         '$cpsabuild_xhtml'
     );
-    await wait_for_task(xhtml_task);
+    await wait_for_task_exit_code(xhtml_task);
 
     // Run cpsashapes -> _shapes.txt
     const shapes_task = new vscode.Task(
@@ -87,7 +86,7 @@ async function executeFile(uri?: vscode.Uri) {
         new vscode.ProcessExecution(cpsa_paths.cpsashapes, ['-o', out_shapes, out_txt], { cwd: parsed.dir }),
         '$cpsabuild_shapes'
     );
-    await wait_for_task(shapes_task);
+    await wait_for_task_exit_code(shapes_task);
 
     // Run cpsagraph -> _shapes.xhtml
     const shapes_xhtml_task = new vscode.Task(
@@ -98,21 +97,22 @@ async function executeFile(uri?: vscode.Uri) {
         new vscode.ProcessExecution(cpsa_paths.cpsagraph, ['-o', out_shapes_xhtml, out_shapes], { cwd: parsed.dir }),
         '$cpsabuild_shapes_xhtml'
     );
-    await wait_for_task(shapes_xhtml_task);
+    await wait_for_task_exit_code(shapes_xhtml_task);
 }
 
-async function wait_for_task(task: vscode.Task) {
+async function wait_for_task_exit_code(task: vscode.Task): Promise<number> {
     const execution = await vscode.tasks.executeTask(task);
 
-    return new Promise<void>(resolve => {
-        const disposable = vscode.tasks.onDidEndTask(e => {
+    return new Promise<number>(resolve => {
+        const disposable = vscode.tasks.onDidEndTaskProcess(e => {
             if (e.execution === execution) {
                 disposable.dispose();
-                resolve();
+                resolve(e.exitCode ?? 1); // default 1 if undefined
             }
         });
     });
 }
+
 
 // This method is called when the extension is deactivated.
 export function deactivate() {}
