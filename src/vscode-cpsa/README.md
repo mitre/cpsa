@@ -23,7 +23,7 @@ supported.  VSCode needs to be able to call the `cpsa`, `cpsagraph`, and
 `cpsashapes` binaries. For CPSA 4, these are named `cpsa4`, `cpsa4graph`,
 and `cpsa4shapes`, respectively.
 The extension needs to be configured for which CPSA version you have
-installed. Version 3 is the default. First
+installed. Version 4 is the default. First
 [go to the Settings menu](https://code.visualstudio.com/docs/getstarted/settings#_settings-editor)
 and then select Extensions -> CPSA to find the "Build: Compiler Version"
 setting.
