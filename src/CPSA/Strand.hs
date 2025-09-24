@@ -454,10 +454,13 @@ graphClose orderings =
           | otherwise = inner (p : orderings) True pairs rest
       sameStrands (n0, n1) = strand n0 == strand n1
 
+
 -- Compute the transitive closure including same strand
 -- pairs.
 -- This routine returns pairs that are not well ordered.
 -- Deal with it!
+
+{-- 
 graphCloseAll :: [GraphEdge e i] -> [GraphEdge e i]
 graphCloseAll orderings =
     graphAllCloseLoop orderings False orderings
@@ -474,6 +477,7 @@ graphAllCloseLoop orderings repeat ((n0, n1) : pairs) =
           | elem p orderings = inner orderings repeat pairs rest
           | otherwise = inner (p : orderings) True pairs rest
 
+--}
 
 nodeGraphCloseAll :: [Pair] -> [Pair]
 nodeGraphCloseAll orderings =
@@ -500,11 +504,12 @@ nodeGraphCloseAll orderings =
       -- orderingOK (s,i) = i == 0 || (s,i-1) `elem` myPreds(s,i)
 
       nodeGraphAllCloseLoop orderings False [] = orderings
-      nodeGraphAllCloseLoop orderings True [] = nodeGraphAllCloseLoop orderings False orderings -- restart loop
+      nodeGraphAllCloseLoop orderings True [] =
+          nodeGraphAllCloseLoop orderings False orderings -- restart loop
       nodeGraphAllCloseLoop orderings repeat ((n0, n1) : pairs) =
           inner orderings repeat pairs n1 (myPreds n0)
                     
-      inner orderings repeat pairs n1 [] =
+      inner orderings repeat pairs _ [] =
           nodeGraphAllCloseLoop orderings repeat pairs
       inner orderings repeat pairs n1 (n : rest)  
           | elem (n,n1) orderings = inner orderings repeat pairs n1 rest
