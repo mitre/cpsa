@@ -21,7 +21,17 @@ From a user's perspective:
 - Until version 1.0.0, no compatibility guarantees are made. Versions
   before 1.0.0 are considered experimental.
 
-## Unreleased
+## 0.5.12 - 2025-09-17
+
+Only run the first command, if there is an error don't exeucute the rest
+
+## 0.5.1 - 2025-09-17
+
+Able to run files in subdirectories
+
+## 0.5.0 - 2025-09-17
+
+Defaults to CPSA4 
 
 ## 0.4.0 - 2022-04-25
 

@@ -4,11 +4,6 @@ import * as vscode from 'vscode';
 // This method is called when the extension is activated.
 export function activate(context: vscode.ExtensionContext) {
 
-    // The command has been defined in the package.json file.
-    // Now the implementation of the command is set up with
-    // registerCommand.
-    // The commandId parameter must match the command field in
-    // package.json.
     let disposable = vscode.commands.registerCommand(
         'vscode-cpsa.execCPSACurrentFile',
         uri => executeFile(uri)
@@ -28,141 +23,96 @@ const cpsa4_paths = {
     'cpsagraph': 'cpsa4graph'
 };
 
-// Run CPSA on a specific source file to generate the `.txt`, `.xhtml` and
-// `_shapes.txt` output files, just like the conventional CPSA Makefile
-// would create.
-// This function is set up to be triggered by the
-// `vscode-cpsa.execCPSACurrentFile` command.
-//
-// This works by creating ephemeral `Task`s, and immediately running them
-// with `vscode.tasks.executeTask()`. Normally an extension informs VSCode
-// about build tasks using the `TaskProvider` interface, but that is not
-// ideal for the CPSA use case where each source file is usually
-// self-contained and there is not really a central build system or source
-// heirarchy like most languages.
 async function executeFile(uri?: vscode.Uri) {
     let file_path = '';
-    if (uri !== undefined) {
+    if (uri) {
         file_path = uri.fsPath;
-    }
-    else {
+    } else {
         const editor = vscode.window.activeTextEditor;
-        if (editor === undefined) {
-            return;
-        }
+        if (!editor) return;
         file_path = editor.document.fileName;
     }
 
-    // Split the file path to remove the file extension of the source
-    // file.
-    let parsed = path.parse(file_path);
-    let source = parsed.base;
-    // Generate the output file names by adding conventional suffixes.
-    let out_txt = parsed.name + '.txt';
-    let out_xhtml = parsed.name + '.xhtml';
-    let out_shapes = parsed.name + '_shapes.txt';
-    let out_shapes_xhtml = parsed.name + '_shapes.xhtml';
+    const parsed = path.parse(file_path);
+    const source = parsed.base;
 
-    let config = vscode.workspace.getConfiguration('CPSA.build');
-    let compilerVersion = config.get('compilerVersion');
+    const out_txt = parsed.name + '.txt';
+    const out_xhtml = parsed.name + '.xhtml';
+    const out_shapes = parsed.name + '_shapes.txt';
+    const out_shapes_xhtml = parsed.name + '_shapes.xhtml';
 
-    let cpsa_paths = undefined;
-    switch (compilerVersion) {
-        case 'cpsa3':
-            cpsa_paths = cpsa3_paths;
-            break;
-        case 'cpsa4':
-            cpsa_paths = cpsa4_paths;
-            break;
-        default:
-            // Default to CPSA 3 paths.
-            // TODO print a warning
-            cpsa_paths = cpsa3_paths;
-            break;
-    }
+    const config = vscode.workspace.getConfiguration('CPSA.build');
+    const compilerVersion = config.get<string>('compilerVersion');
 
-    let ghcMemLimitMegabytes = config.get('ghcMemLimitMegabytes');
+    let cpsa_paths = cpsa4_paths;
+    if (compilerVersion === 'cpsa3') cpsa_paths = cpsa3_paths;
 
-    if (ghcMemLimitMegabytes === undefined) {
-        ghcMemLimitMegabytes = 512;
-    }
+    const ghcMemLimitMegabytes = config.get<number>('ghcMemLimitMegabytes') || 512;
+    const rtsOpts = ['+RTS', '-N', `-M ${ghcMemLimitMegabytes}m`, '-RTS'];
 
-    // https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/runtime_control.html#setting-rts-options-on-the-command-line
-    let rtsOpts = [
-        '+RTS',
-
-        // enable multithreading with auto-detected thread count
-        // https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/using-concurrent.html#rts-flag--N
-        '-N',
-
-        // limit GHC runtime heap size
-        // https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/runtime_control.html#rts-flag--M%20%E2%9F%A8size%E2%9F%A9
-        `-M ${ghcMemLimitMegabytes}m`,
-
-        '-RTS'
-    ];
-
-    let txt_task = new vscode.Task(
-        {'type': 'cpsabuild_txt'},
+    // Run cpsa -> .txt
+    const txt_task = new vscode.Task(
+        { type: 'cpsabuild_txt' },
         vscode.TaskScope.Workspace,
-        // User-visible name of this Task
         `${cpsa_paths.cpsa} on current file`,
         'cpsabuild_txt',
-        new vscode.ProcessExecution(cpsa_paths.cpsa, [...rtsOpts, '-o', out_txt, source]),
-        // Refers to a Problem Matcher defined in `package.json`
+        new vscode.ProcessExecution(cpsa_paths.cpsa, [...rtsOpts, '-o', out_txt, source], { cwd: parsed.dir }),
         '$cpsabuild_txt'
     );
-    await wait_for_task(txt_task);
 
-    let xhtml_task = new vscode.Task(
-        {'type': 'cpsabuild_xhtml'},
+    const txtExitCode = await wait_for_task_exit_code(txt_task);
+    if (txtExitCode !== 0) {
+        vscode.window.showErrorMessage(`${cpsa_paths.cpsa} failed with exit code ${txtExitCode}. Aborting remaining tasks.`);
+        return; // Stop here, do not run the rest
+    }
+
+    // Run cpsagraph -> .xhtml
+    const xhtml_task = new vscode.Task(
+        { type: 'cpsabuild_xhtml' },
         vscode.TaskScope.Workspace,
-        // User-visible name of this Task
         `${cpsa_paths.cpsagraph} on generated .txt`,
         'cpsabuild_xhtml',
-        new vscode.ProcessExecution(cpsa_paths.cpsagraph, ['-o', out_xhtml, out_txt]),
-        // Refers to a Problem Matcher defined in `package.json`
+        new vscode.ProcessExecution(cpsa_paths.cpsagraph, ['-o', out_xhtml, out_txt], { cwd: parsed.dir }),
         '$cpsabuild_xhtml'
     );
-    await wait_for_task(xhtml_task);
+    await wait_for_task_exit_code(xhtml_task);
 
-    let shapes_task = new vscode.Task(
-        {'type': 'cpsabuild_shapes'},
+    // Run cpsashapes -> _shapes.txt
+    const shapes_task = new vscode.Task(
+        { type: 'cpsabuild_shapes' },
         vscode.TaskScope.Workspace,
-        // User-visible name of this Task
         `${cpsa_paths.cpsashapes} on generated .txt`,
         'cpsabuild_shapes',
-        new vscode.ProcessExecution(cpsa_paths.cpsashapes, ['-o', out_shapes, out_txt]),
-        // Refers to a Problem Matcher defined in `package.json`
+        new vscode.ProcessExecution(cpsa_paths.cpsashapes, ['-o', out_shapes, out_txt], { cwd: parsed.dir }),
         '$cpsabuild_shapes'
     );
-    await wait_for_task(shapes_task);
+    await wait_for_task_exit_code(shapes_task);
 
-    let shapes_xhtml_task = new vscode.Task(
-        {'type': 'cpsabuild_shapes_xhtml'},
+    // Run cpsagraph -> _shapes.xhtml
+    const shapes_xhtml_task = new vscode.Task(
+        { type: 'cpsabuild_shapes_xhtml' },
         vscode.TaskScope.Workspace,
-        // User-visible name of this Task
         `${cpsa_paths.cpsagraph} on generated _shapes.txt`,
         'cpsabuild_shapes_xhtml',
-        new vscode.ProcessExecution(cpsa_paths.cpsagraph, ['-o', out_shapes_xhtml, out_shapes]),
-        // Refers to a Problem Matcher defined in `package.json`
+        new vscode.ProcessExecution(cpsa_paths.cpsagraph, ['-o', out_shapes_xhtml, out_shapes], { cwd: parsed.dir }),
         '$cpsabuild_shapes_xhtml'
     );
-    await wait_for_task(shapes_xhtml_task);
+    await wait_for_task_exit_code(shapes_xhtml_task);
 }
 
-async function wait_for_task(task: vscode.Task) {
+async function wait_for_task_exit_code(task: vscode.Task): Promise<number> {
     const execution = await vscode.tasks.executeTask(task);
 
-    return new Promise<void>(resolve => {
-        let disposable = vscode.tasks.onDidEndTask(e => {
+    return new Promise<number>(resolve => {
+        const disposable = vscode.tasks.onDidEndTaskProcess(e => {
             if (e.execution === execution) {
                 disposable.dispose();
-                resolve();
+                resolve(e.exitCode ?? 1); // default 1 if undefined
             }
         });
     });
 }
+
 
 // This method is called when the extension is deactivated.
 export function deactivate() {}
