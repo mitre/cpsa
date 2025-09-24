@@ -495,9 +495,9 @@ nodeGraphCloseAll orderings =
           if i == 0 then pairs
           else adjoin (s,i-1) pairs
                
-      allNodes = union (map fst orderings) (map snd orderings)
+      -- allNodes = union (map fst orderings) (map snd orderings)
       -- immPreds = [ (n, (myPreds n)) | n <- allNodes ]
-      orderingOK (s,i) = i == 0 || (s,i-1) `elem` myPreds(s,i)
+      -- orderingOK (s,i) = i == 0 || (s,i-1) `elem` myPreds(s,i)
 
       nodeGraphAllCloseLoop orderings False [] = orderings
       nodeGraphAllCloseLoop orderings True [] = nodeGraphAllCloseLoop orderings False orderings -- restart loop
