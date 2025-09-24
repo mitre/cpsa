@@ -176,7 +176,7 @@ Extra-Source-Files:
   tst/locn_envelope.scm tst/missing_contraction.scm tst/neq_test.scm
   tst/neuman-stubblebine.scm tst/no_contraction.scm
   tst/non_transforming.scm tst/nonaug-prune.scm tst/ns-l.scm
-  tst/ns-rebinding.scm tst/ns.scm tst/nsl3.scm tst/nslsk.scm
+  tst/ns-rebinding.scm tst/ns-unrebinding.scm tst/ns.scm tst/nsl3.scm tst/nslsk.scm
   tst/open-closed-multiloc.scm tst/open-closed-tag.scm
   tst/open-closed.scm tst/or.scm tst/ordered.scm tst/orderedvar.scm
   tst/pca.scm tst/pen-non-orig-test.scm tst/pfs-via-pubkey.scm
@@ -247,7 +247,7 @@ Extra-Source-Files:
   tst/neq_test.tst tst/neuman-stubblebine-reauth-tagged.tst
   tst/neuman-stubblebine-reauth.tst tst/neuman-stubblebine.tst
   tst/no_contraction.tst tst/non_transforming.tst tst/nonaug-prune.tst
-  tst/ns-l.tst tst/ns-rebinding.tst tst/ns.tst tst/nsl3.tst
+  tst/ns-l.tst tst/ns-rebinding.tst tst/ns-unrebinding.tst tst/ns.tst tst/nsl3.tst
   tst/nslsk.tst tst/open-closed-multiloc.tst tst/open-closed-tag.tst
   tst/open-closed.tst tst/or.tst tst/ordered.tst tst/orderedvar.tst
   tst/pca.tst tst/pen-non-orig-test.tst tst/pfs-via-pubkey.tst
