@@ -1,0 +1,12 @@
+#! /bin/sh
+
+# Run CPSA's semantic diff on all test output.
+
+PROG=cpsa4diff
+
+for i in *.txt
+do
+  o=`basename $i .txt`.svg
+  echo $PROG `basename $i .txt`.txt `basename $i .txt`.tst
+  $PROG `basename $i .txt`.txt `basename $i .txt`.tst
+done
