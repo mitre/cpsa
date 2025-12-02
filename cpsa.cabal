@@ -262,7 +262,7 @@ Extra-Source-Files:
   tst/subatomic-open-closed.tst tst/sync_locn_envelope.tst
   tst/targetterms1.tst tst/targetterms2.tst tst/targetterms6.tst
   tst/targetterms8.tst tst/thisthat.tst tst/tickle-unique.tst
-  tst/timestamping.tst tst/tmp-yahalom.tst tst/trust-anchor.tst
+  tst/timestamping.tst tst/trust-anchor.tst
   tst/ugen-at.tst tst/ugo.tst tst/uncarried_keys.tst
   tst/unilateral.tst tst/uniq-at.tst tst/uniq-gen-test.tst tst/uo.tst
   tst/wang-hash.tst tst/wang-key-hash.tst tst/weird.tst

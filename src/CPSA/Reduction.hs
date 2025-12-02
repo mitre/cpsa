@@ -632,11 +632,17 @@ reportSatisfies k =
       goalGEs -> map f goalGEs
     where
       f (_, []) = error "reportSatisfies:  How did goalCounterExamples give nil?"
+      {- f (g, ge : _) = 
+          L () (S () "no" :
+                map (displayForm
+                 (ctx $ (uvars g) ++ (evars g) ++ (kvars k)))
+                 (unSatReport k g ge) ++
+                (displayEnv (ctx $ uvars g) (ctx $ kvars k) (snd ge))) -}
       f (g, ge : _) = 
           L () (S () "no" :
-                (displayForm
-                 (ctx $ (uvars g) ++ (evars g) ++ (kvars k))
-                 (unSatReport k g ge)) :
+                map (displayForm
+                 (ctx $ (uvars g) ++ (evars g) ++ (kvars k)))
+                 (unSatReport k g ge) ++
                 (displayEnv (ctx $ uvars g) (ctx $ kvars k) (snd ge)))
       ctx ts = addToContext emptyContext ts
       evars g = concatMap fst $ consq g

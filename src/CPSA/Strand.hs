@@ -3266,26 +3266,29 @@ conjoinEbvs (a: as) ebvs k ge =
       ge' <- satisfy a ebvs k ge  -- checkSem             
       conjoinEbvs as ebvs k ge'
 
--- Suppose a gen-env pair ge that satisfies the antecedent of a goal,
--- but does not extend to satisfy any of the disjuncts on the
--- conclusion.  We would like to know, for at least one disjunct of
--- the conclusion, say the first, an atomic formula in that disjunct
--- that cannot be satisfied.  unSatReport reports that.
+-- Suppose a gen-env pair ge satisfies the antecedent of a goal,
+-- but does not extend to satisfy any of the disjuncts in the
+-- conclusion.  We would like to know, which atomic facts in the 
+-- conclusion cannot be satisfied.  unSatReport reports them.
 
-unSatReport :: Preskel -> Goal -> (Gen, Env) -> AForm
+unSatReport :: Preskel -> Goal -> (Gen, Env) -> [AForm]
 unSatReport k g ge =
     case varAtomLists of
-      [] -> AFact "false" []
-      (ebvs,as) : _ -> iter ebvs as ge
+      [] -> [AFact "false" []]
+      eas -> loop eas 
 
     where
       varAtomLists = consq g
 
+      -- Do iter on each of the (ebvs,as) pairs
+      loop ((ebvs,as) : eas) = iter ebvs as ge ++ loop eas 
+      loop [] = []
+
       -- doesn't happen if e is a counterexample
-      iter _ [] _ = AFact "true" []
+      iter _ [] _ = []--AFact "true" []
       iter ebvs (a : as) ge =
           case satisfy a ebvs k ge of
-            [] -> a
+            [] -> a : iter ebvs as ge
             ge' : _ -> iter ebvs as ge'
 
 -- Extends an environment (a variable assignment) according to the
