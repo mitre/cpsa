@@ -1,3 +1,13 @@
+2026-02-27 Paul D. Rowe <prowe@mitre.org>
+	* src/CPSA/Strand.hs (rewrite): Fixed a bug that failed to check
+	nullary rules after the success of a unary rule.
+
+2025-12-01 Paul D. Rowe <prowe@mitre.org>
+
+	* src/CPSA/{Strand.hs,Reduction.hs} (unSatReport): Modified how
+        to report unsatisfiability of goals to list all predicates that are
+	not satisfiable.
+
 2025-05-05  Joshua D. Guttman  <guttman@mitre.org>
 
 	* cpsa.cabal (Version): Tagged as version 4.4.6. Removed an
@@ -10,7 +20,7 @@
 2025-05-02  John D. Ramsdell  <ramsdell@mitre.org>
 
 	* src/cpsa/RoleCoq/Main.hs (emit): Updated Roletran to use rocq
-	9.0.0. 
+	9.0.0.
 
 2024-07-17  Joshua D. Guttman  <guttman@mitre.org>
 
@@ -23,7 +33,7 @@
 
 	* cpsa.cabal (Version): Tagged as version 4.4.4.  This version has
 	important bug fixes especially for the Diffie-Hellman "absence"
-	computation.  
+	computation.
 
 2023-10-23  John D. Ramsdell  <ramsdell@mitre.org>
 

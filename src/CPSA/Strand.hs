@@ -4416,7 +4416,9 @@ rewrite k =
               case rewriteUnary k of
                   Unsat    -> Just []
                   Unch     -> Nothing
-                  Found k' -> Just [k']
+                  Found k' -> if checkNullary k' -- was Just [k']
+                              then Just [k']
+                              else Just []
           else
               Just []
 

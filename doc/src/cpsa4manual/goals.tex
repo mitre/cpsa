@@ -112,7 +112,7 @@ examples and examine the output while reading this chapter.
      (and (p "init" z0 3)
       (p "init" "n1" z0 n1) (p "init" "b" z0 b)
       (non (privk b)) (uniq n1))
-     (exists ((z1 node))
+     (exists ((z1 strd))
       (and (p "resp" z1 2) (p "resp" "b" z1 b))))))
 
 (defskeleton ns            ; Point of view skeleton
@@ -567,7 +567,7 @@ follows instead:
     (implies
      (and (strand init z0 3 (n1 n1) (b b))
       (non (privk b)) (uniq n1))
-     (exists ((z1 node))
+     (exists ((z1 strd))
       (strand resp z1 2 (b b)))))).
 \end{verbatim}
 \end{quote}
