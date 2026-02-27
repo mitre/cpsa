@@ -1,6 +1,6 @@
 (herald commitment)
 
-(comment "CPSA 4.4.7")
+(comment "CPSA 4.4.8")
 (comment "All input read from tst/commitment.scm")
 
 (defprotocol commit basic

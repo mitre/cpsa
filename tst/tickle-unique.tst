@@ -1,6 +1,6 @@
 (herald tickle-unique)
 
-(comment "CPSA 4.4.7")
+(comment "CPSA 4.4.8")
 (comment "All input read from tst/tickle-unique.scm")
 
 (defprotocol tickle basic

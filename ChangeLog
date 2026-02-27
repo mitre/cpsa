@@ -1,11 +1,12 @@
 2026-02-27 Paul D. Rowe <prowe@mitre.org>
+
 	* src/CPSA/Strand.hs (rewrite): Fixed a bug that failed to check
 	nullary rules after the success of a unary rule.
 
 2025-12-01 Paul D. Rowe <prowe@mitre.org>
 
 	* src/CPSA/{Strand.hs,Reduction.hs} (unSatReport): Modified how
-        to report unsatisfiability of goals to list all predicates that are
+    to report unsatisfiability of goals to list all predicates that are
 	not satisfiable.
 
 2025-05-05  Joshua D. Guttman  <guttman@mitre.org>

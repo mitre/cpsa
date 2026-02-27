@@ -1,6 +1,6 @@
 (herald ordered)
 
-(comment "CPSA 4.4.7")
+(comment "CPSA 4.4.8")
 (comment "All input read from tst/ordered.scm")
 
 (defprotocol ordered basic

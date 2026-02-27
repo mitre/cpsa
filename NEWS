@@ -1,5 +1,18 @@
 CPSA NEWS -- history of user-visible changes.
 
+* Changes in version 4.4.8
+
+** Altered how unsatisfied goals are reported when using defgoal queries.
+   Previously, only the first predicate found not to be satisfied was
+   reported. Now all predicates that are not satisfied are reported.
+
+** Fixed a bug in rule application. Previously, nullary rules (with
+   empty right hand side) were not checked for applicability again
+   after a unary rule (single disjunct on the right hand side)
+   succeeded. This could lead to shapes being reported that had
+   unsatisfiable facts. The code now tries to apply nullary rules
+   after any other rule succeeds.
+
 * Changes in version 4.4.7
 
 ** Improved error messages for users specifying

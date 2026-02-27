@@ -95,10 +95,10 @@ b$) and function symbols; the three function symbols used in this
 protocol are encryption, pairing, and the ``key of'' function.
 
 $\enc{m}{k}$ denotes the encryption of message $m$ under encryption
-key $k$.  In {cpsa}, encryption operators are always regarded as
+key $k$.  In {\cpsa}, encryption operators are always regarded as
 offering authenticated encryption, meaning that a participant without
 access to an encryption key is overwhelmingly unlikely to generate a
-message that can be successfully descrypted.  This property is
+message that can be successfully decrypted.  This property is
 primarily relevant in symmetric (secret-key) kinds of encryption.
 
 Terms in a pair are represented in comma-separated lists.  And $K_a$
@@ -112,7 +112,7 @@ simple values.
 \index{skeleton}
 \index{instance}
 In addition to a description of the protocol, {\cpsa} expects the
-description of a what we call a \emph{skeleton}---a partial protocol
+description of what we call a \emph{skeleton}---a partial protocol
 execution.  A skeleton is made up of \emph{instances} of the roles, that is,
 viewpoints of honest parties, along with what values are associated with the
 variables in those viewpoints.  These viewpoints may be partial, but they
@@ -319,7 +319,7 @@ included in the cohort calculated with the parent as an input.
 displayed in black, but may also be displayed in other colors.  Blue
 numbers represent \emph{realized} skeletons, that is, skeletons that
 may represent an actual execution.\footnote{Note that while realized
-  skeletons already represent complete executions, \cpsa does further
+  skeletons already represent complete executions, {\cpsa} does further
   analysis once a realized skeleton is reached in order to
   \emph{generalize} that skeleton as much as possible.  A skeleton
   that is both realized and cannot be further generalized is a
