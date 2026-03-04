@@ -173,9 +173,9 @@ of atomic formulas.  The free variables that occur in the antecedent
 are universally quantified.  The conclusion is a disjunction of
 existentially quantified conjunctions of atomic formulas.
 
-Alternately, a \texttt{defskeleton} can be augmentend with a
-\texttt{goal}, which may specify one or more geometric
-formulas to check.
+% Alternately, a \texttt{defskeleton} can be augmentend with a
+% \texttt{goal}, which may specify one or more geometric
+% formulas to check. 
 
 When the tool is run, a \texttt{defgoal} is converted to a
 \texttt{defskeleton} that represents as narrowly as possible the
@@ -274,7 +274,7 @@ if the skeleton contains the structure specified by
 
 The antecedent in Figure~\ref{fig:ns init} contains two origination
 assertions.  The formula \texttt{(non (privk b))} is extracted as
-\texttt{(privk b)}.  A skeleton~$k$ satisfies the formula if
+\texttt{(non-orig (privk b))}.  A skeleton~$k$ satisfies the formula if
 \texttt{b} maps to a message algebra term~$t$ in~$k$ such that~$k$
 assumes that~$t$ is non-originating.  The unique origination formula for
 \texttt{n1} is similarly extracted.
@@ -288,7 +288,7 @@ security goal.
 
 The \texttt{prec} predicate is used to assert a node precedes another
 node.  The conclusion in Figure~\ref{fig:ns init} with \texttt{(prec
-  z1 1 z0 2)} added is satisfied by the shape using the mapping
+  z1 2 z0 2)} added is satisfied by the shape using the mapping
 $\mbox{\tt z0}\mapsto0$ and $\mbox{\tt z1}\mapsto1$.
 
 The \texttt{uniq-at} predicate is used to assert not only that an atom
@@ -330,9 +330,10 @@ internally to {\cpsa}.
 \fi
 
 Recall that our aim in analyzing a protocol is to find out what
-security goals are true in all of its possible executions.  We are
-interested in runs of {\cpsa} that show that when every shape
-satisfies a goal, it is true in every execution.
+security goals are true in all of its possible executions. When every
+shape of a {\cpsa} run satisfies the goal specified in a
+\texttt{defgoal} query, then that goal is satisfied in every
+execution. 
 
 When {\cpsa} performs a shape analysis, every shape it generates
 refines the input skeleton.  Skeleton refinement is defined
@@ -420,7 +421,7 @@ conclusion.  The reason the shape does not satisfy the goal is because
 the mapping \texttt{(b b)} maps the initiator's \texttt{b} parameter
 to \texttt{b}, not \texttt{b-0} as is required to model the shape.
 
-Galvin Lowe identified this authentication failure in
+Gavin Lowe identified this authentication failure in
 Needham-Schroeder and provided a fix.  In the Needham-Schroeder-Lowe
 Protocol, the name \texttt{b} is included within the encryption in second
 message of both roles.  With this modification, the shape found by
@@ -446,20 +447,25 @@ Needham-Schroeder-Lowe achieves this authentication goal.
 \caption{Needham-Schroeder Secrecy Goal}\label{fig:ns secrecy}
 \end{figure}
 
-Figure~\ref{fig:ns secrecy} contains an analysis of Needham-Schroeder
-from the point of view of a complete run of the initiator under the
+Figure~\ref{fig:ns secrecy} contains a goal of Needham-Schroeder from
+the point of view of a complete run of the initiator under the
 assumption that the responder's and its peer's private keys are
 uncompromised and the nonce~\texttt{n1} it generates uniquely
-originates.  Futhermore, the point of view asserts that the nonce is
-leaked using a listener.
+originates.  Furthermore, the antecedent of the goal assumes that the
+nonce is leaked using a listener (represented by the empty string
+\texttt{""}).
 \begin{quote}
 \begin{verbatim}
 (p "" z1 1) (p "" "x" z1 n1)    ; Listener
 \end{verbatim}
 \end{quote}
-
-{\cpsa} finds no shapes, so Needham-Schroeder achieves this secrecy
-goal and does not leak~\texttt{n1}.
+The conclusion of the goal is \texttt{false}, a predicate that is
+satisfied by no executions. Essentially, this goal is saying that any
+shape found by the analysis is evidence that the nonce can leak, and
+therefore a counterexample to the secrecy goal. This is because any
+shape found will satisfy the antecedent, but not the conclusion of
+this goal. In this case, {\cpsa} finds no shapes, so Needham-Schroeder
+achieves this secrecy goal and does not leak~\texttt{n1}.
 
 \section{The Rest of the Story}\label{sec:whole story}
 
@@ -474,8 +480,8 @@ from the first sentence.
 
 It is wise to ensure that the antecedent in every sentence is
 identical.  When {\cpsa} performs satisfaction-checking on
-sentence~$\Phi$, it only determines if each shape it finds is
-satisfied.  If the point of view skeleton is not the characteristic
+sentence~$\Phi$, it only determines if each shape 
+satisfies~$\Phi$.  If the point of view skeleton is not the characteristic
 skeleton of the antecedent of~$\Phi$, the fact that all skeletons
 satisfy~$\Phi$ cannot be used to conclude that~$\Phi$ is true in all
 executions of the protocol.
@@ -619,7 +625,7 @@ $ ghci Make.hs
 \end{quote}
 When using GNU make, type ``\texttt{make goals\_sas.text}''.  The
 resulting shape analysis sentence is displayed in Figure~\ref{fig:ns
-  sas}.
+  sas}. 
 
 \begin{figure}\small
 \begin{verbatim}
@@ -658,7 +664,7 @@ not contain these abbreviations.
 
 \section{Rules}\label{sec: rules}
 
-Support for rules was introduced in version 3.6.0 of {\cpsa}.
+%Support for rules was introduced in version 3.6.0 of {\cpsa}.
 
 Each protocol includes a small collection of rules.  A rule is a
 sentence in the goal language presented in
@@ -674,7 +680,7 @@ protocol are defined.  The syntax of a rule follows.
 A rule is an axiom added to a protocol.  {\cpsa} uses the axiom as a
 rewrite rule to derive zero or more new skeletons from a skeleton
 produced during a step.  An example of a protocol with a rule is in
-Figure~\ref{fig:doorsep} on Page~\pageref{fig:doorsep}.
+Figure~\ref{fig:doorsep} on page~\pageref{fig:doorsep}.
 
 The trust rule states that when CPSA finds a person strand of length
 at least one, and the inverse of it's \texttt{p} parameter is
@@ -710,8 +716,8 @@ which the two names are known to differ.  To enforce this constraint, add
 \begin{center}
   \verb|(facts (neq a b))|
 \end{center}
-to the point of view skeleton.  CPSA contains a rule governing
-\texttt{neq} rule stating essentially:
+to the point of view skeleton.  CPSA generates a default rule stating
+essentially that \texttt{neq} can never apply to two equal terms:
 
 %below, eliminates skeletons that
 %violate the constraint.
@@ -972,8 +978,8 @@ Negated equality assertions may also appear in the conclusions of
 user-defined rules, or anywhere else that an atomic formula may
 appear.
 
-A good number of additional rules are generated to implement {\cpsa}
-4's model of state (see Section~\ref{sec:channels:state:state},
+A good number of additional rules are generated to implement {\cpsa}'s
+model of state (see Section~\ref{sec:channels:state:state},
 esp. Figs.~\ref{fig:leads:to}--\ref{fig:derived:state:rules} and
 pp.~\pageref{state:gen:rules:start}--\pageref{state:gen:rules:end}).
 
@@ -1062,9 +1068,9 @@ within the trace declaration within a role.  These are:
 \end{description}
 %
 All of these trace annotations will cause similar rules to be
-generated.  However, when Zappa compiles role definitions to Rust
-code, they are compiled to have different operational effects.  Trace
-annotations do not add to the height of the trace.  They simply
+generated.  % However, when Zappa compiles role definitions to Rust
+% code, they are compiled to have different operational effects.
+Trace annotations do not add to the height of the trace.  They simply
 express constraints on what happens in the ``real'' events around
 them.
 
@@ -1149,7 +1155,7 @@ This example will be \emph{sound} in the sense that the authentication
 property ensures that $A$ really did say (i.e.~guarantee) $\phi$ in
 any execution in which $B$ relies on the claim.  The soundness of rely
 statements may be checked by analyzing the protocol with the rely
-statements are omitted, and querying them as goal statements under the
+statements omitted, and querying them as goal statements under the
 relevant non-compromise assumptions.  We will now assume that this
 soundness checking has been done, and that any relevant non-compromise
 assumptions are made in the protocol definition.

@@ -182,7 +182,7 @@ In the second version, we use the slower mechanism, and introduce each
 individual channel property in a declaration in the \verb|defskeleton|
 query forms.  From the latter we learn a kind of
 \emph{session-independence\/}:  The security properties of a
-particular session of the protocol depend only in the channels that
+particular session of the protocol depend only on the channels that
 should be used in that protocol session, and the messages cannot leak
 from one session to undermine the security goals of another session.
 
@@ -198,7 +198,7 @@ protocol by incorporating cryptographic mechanisms to ensure the
 channel properties are met.  In the original Yahalom protocol (see
 e.g.~\cite{Paulson97c}), the channels are implemented via symmetric
 cryptography.  If the initiator and responder each share an
-uncompromised long term key with the server, then an authenticated
+uncompromised long-term key with the server, then an authenticated
 encryption mode certainly satisfies the channel properties.  However,
 other mechanisms are also possible, e.g.~asymmetric primitives or,
 indeed, TLS.
@@ -330,8 +330,8 @@ One might, however, doubt whether there is much benefit to the
 \texttt{(auth ch1)} stipulation, since the adversary can still arrange
 for messages from legitimate responders to be delivered repeatedly.
 
-We can infer from this analysis that symmetric authenticated
-encryption long term key shared between the key server and each client
+We can infer from this analysis that a symmetric authenticated
+long-term encryption key shared between the key server and each client
 is a good way to implement the channels \verb|ch2| and \verb|ch3|,
 since the key server relies on their confidentiality property and the
 clients rely on their authentication property.
@@ -399,8 +399,9 @@ same pattern.
 
 {\cpsa} models situations in which regular principals control devices
 with state registers or storage locations---we will henceforth use the
-term \emph{location} for all such pieces of memory---that allow long
-term storage and coordination among different local protocol sessions.%
+term \emph{location} for all such pieces of memory---that allow
+long-term storage and coordination among different local protocol
+sessions.%
 %
 \footnote{Allowing the Dolev-Yao adversary to have devices does not
   strengthen its powers, as it can already remember unbounded numbers
@@ -637,7 +638,7 @@ $\preceq$ is a (weak) partial order.
   \item[Scissors rule:]  The scissors rule follows by two applications
   of the discrete-after axiom.  Specifically, since $n\leadsto m_1$
   implies $n\prec m_1$, we can apply the discrete-after axiom to infer
-  that $m_0\preceq m_1$.  Symmetrically, observing thay
+  that $m_0\preceq m_1$.  Symmetrically, observing that
   $n\leadsto m_0$ implies $n\prec m_0$, we can again apply the
   discrete-after axiom to infer that $m_1\preceq m_0$.
 
@@ -716,15 +717,15 @@ followed by a message term, just like a channel \verb|send| or
 \ttindex{stor}
 
 
-Observe that the \verb|stor| event immediately follows a \verb|load|
-event, and this is in fact always the case.  Since together they
-represent a transition that consumes an old value that will no longer
-be available after the the transition, the \verb|stor| event always
-follows a paired \verb|load| event.  Together, they form a \emph{state
-  segment}.  However, state segments may be longer than a single pair
-of events.
+% Observe that the \verb|stor| event immediately follows a \verb|load|
+% event, and this is in fact always the case.  Since together they
+% represent a transition that consumes an old value that will no longer
+% be available after the the transition, the \verb|stor| event always
+% follows a paired \verb|load| event.  Together, they form a \emph{state
+%   segment}.  However, state segments may be longer than a single pair
+% of events.
 
-In general, a state segment consists of one or more \verb|load|
+In general, a state segment consists of zero or more \verb|load|
 events followed by zero or more \verb|stor| events, subject to the
 requirements that:
 %
@@ -732,9 +733,9 @@ requirements that:
   \item no two \verb|load| events in this state segment load from the
   same location;
   \item no two \verb|stor| events in this state segment store into the
-  same location;
-  \item each \verb|stor| event stores into a location from which a
-  value was \verb|load|ed in this state segment.
+  same location.
+  % \item each \verb|stor| event stores into a location from which a
+  % value was \verb|load|ed in this state segment.
 \end{enumerate}
 %
 A particular state segment is a \emph{transition for} a location
@@ -743,19 +744,19 @@ It is a \emph{(pure) observation for} $\ell$ iff there is a
 \verb|load| from $\ell$ but no \verb|stor| into $\ell$ in this state
 segment.
 
-We use state segments of length greater than two to represent events
-that involve multiple locations.  If a transition for location
-$\ell_1$ depends on the value present in $\ell_2$, then a state
-segment can load $v_1$ and $v_2$ from $\ell_1$ and $\ell_2$
-(resp.)~and then store a new value dependent on $v_1,v_2$ into
-$\ell_1$.  In this case, the state segment is a transition for
-$\ell_1$ but a pure observation for $\ell_2$.  If instead new values
-are stored into both $\ell_1$ and $\ell_2$, then the state segment is
-a transition for both.  In other cases, a state segment loads from
-both $\ell_1$ and $\ell_2$, but instead of storing back to either of
-them, it simply uses those values to control future message
-transmissions and receptions.  In the latter cases, the state segment
-is a pure observation for both $\ell_1$ and $\ell_2$.
+State segments of length greater than two necessarily represent events
+that involve multiple locations (given the constraints above).  If a
+transition for location $\ell_1$ depends on the value present in
+$\ell_2$, then a state segment can load $v_2$ from $\ell_2$ and then
+store a new value dependent on $v_2$ into $\ell_1$.  In this case, the
+state segment is a transition for $\ell_1$ but a pure observation for
+$\ell_2$.  If instead new values are stored into both $\ell_1$ and
+$\ell_2$, then the state segment is a transition for both.  In other
+cases, a state segment loads from both $\ell_1$ and $\ell_2$, but
+instead of storing back to either of them, it simply uses those values
+to control future message transmissions and receptions.  In the latter
+cases, the state segment is a pure observation for both $\ell_1$ and
+$\ell_2$.
 
 \paragraph{Rules for protocols with
   state.}  \label{state:gen:rules:start} {\cpsa} generates three types

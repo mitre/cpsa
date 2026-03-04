@@ -61,10 +61,11 @@ An analysis that doesn't terminate does not necessarily represent an
 insecure protocol, it may just indicate a protocol where a more clever
 analysis is required than {\cpsa}'s automated one.
 
-\subsection{Tweaking the search}
+\subsection{Configuring the search}
 There are cases in which the default {\cpsa} analysis does not
 terminate, but a non-default analysis would terminate.  The tool has
-several settings that influence the search but can be tweaked:
+several default settings that influence the search but can be
+configured:
 
 \begin{itemize}
 \index{try-old-strands option}
@@ -80,7 +81,8 @@ several settings that influence the search but can be tweaked:
   \texttt{try-old-strands} options.  The latter will prioritize the
   leftmost strands over the rightmost, while the former will
   prioritize the bottom-most unrealized node in the strand rather than
-  the topmost.
+  the topmost. These can be used individually or jointly, yielding
+  three extra non-default search strategies.
 
 \index{check-nonces option}
 \index{options!check-nonces}
@@ -173,9 +175,10 @@ to the tool maintainers.
 \item \textbf{``Close of unopened list''}.  Your input has an erroneous
   close-paren.
 
-\item \textbf{``Disallowed bare exponent''}.  See Section~\ref{sec:dh}.
-  The tool requires that within roles and skeletons, exponents occur only
-  inside an exponentiation function.
+\item \textbf{``Disallowed bare exponent''}.  See
+  Section~\ref{sec:dh}.  The tool requires that within roles and
+  skeletons, any exponent occurring outside an exponentiation
+  function must be of sort \texttt{rndx}.
 
 \item \textbf{``Domain does not match range''}.  This error message
   occurs when {\cpsa} is trying to understand the variable assignment
@@ -186,13 +189,13 @@ to the tool maintainers.
   then including \texttt{(a t)} in a defstrand will produce this
   error.
 
-\item \textbf{``Duplicate role [...] in protocol [...]''}.  Fairly
-  self-explanatory: the roles in a protocol must have distinct names.
-  This error occurs if you have two protocols with the same name.
+\item \textbf{``Duplicate role [...] in protocol [...]''}.  The roles
+  in a protocol must have distinct names.  This error occurs if you
+  have two protocols with the same name.
 
-\item \textbf{``Duplicate variable declaration for [...]''}.  Fairly
-  self-explanatory: within any \texttt{vars} statement, any symbol may
-  be used for a variable name, but each variable name can be declared only once.
+\item \textbf{``Duplicate variable declaration for [...]''}.  Within
+  any \texttt{vars} statement, any symbol may be used for a variable
+  name, but each variable name can be declared only once.
 
 \item \textbf{``End of input in string''}.  You included a quote-delimited
   string but didn't close it before the end of the input file.
@@ -220,17 +223,24 @@ to the tool maintainers.
   the \texttt{uniq-orig}, \texttt{uniq-gen}, and \texttt{non-orig} ones,
   are expected to be used on atomic terms rather than compound ones.
 
-\item \textbf{``Expecting terms in algebra [...]''}.  The tool
-  actually expects to know the message algebra to use up front, before
-  it begins parsing.  The algebra is the basic one by default, or you
-  may specify through a command-line argument or a herald to use the
-  Diffie-Hellman algebra.  Each \texttt{defprotocol} in the input
-  specifies an algebra to use, and this error occurs when that algebra
-  doesn't match the one {\cpsa} is prepared to parse.  To resolve:
-  check that you aren't requesting the wrong algebra, and check that
-  you have properly spelled the name of the algebra in your
-  \texttt{defprotocol}.
+\item \textbf{``Expecting terms in algebra [...]''}. This is a
+  historical artifact resulting from the fact that the algebra has two
+  names. If you specify one name as a runtime parameter (or in the
+  herald) that is different from the name used in the
+  \texttt{defprotocol} form, this error will result.
 
+\item \textbf{``Expts must first be received, rndxs first
+    sent''}. If the first occurrence of a variables of the
+  \texttt{expt} sort is in a transmission, it could resolve to any
+  multiplication of exponents and so is underspecified. When receiving
+  an exponent, there is no way to ensure it was not chosen to be some
+  multiplication of other exponents, so we can assume its sort is
+  \texttt{rndx}. Hence the rule described by the error. 
+% \item \textbf{``Role not well formed: variable [...] not
+%     obtained''}.  Variables of the %$\scap{base}$ or
+%   $\scap{expr}$ sort must be ``obtained'' when used in roles, meaning
+%   that the first occurrence must be in a reception.
+  
 \item \textbf{``Identifier [...] unknown''}.  This is a relatively common
   user-caused error that occurs when you try to use a variable not declared
   in your \texttt{vars} declaration.
@@ -293,22 +303,24 @@ to the tool maintainers.
   that is other than one of these, this is the error message you will
   see.
 
-\item \textbf{``Malformed pair -- nodes in same strand''}.  In a \texttt{defskeleton}
-  you are prohibited from specifying orderings between nodes in the same strand.
+\item \textbf{``Malformed pair -- nodes in same strand''}.  In a
+  \texttt{defskeleton} you are prohibited from specifying orderings
+  between nodes in the same strand.
 
   This is not the case for \texttt{leadsto} relationships.
 
 \item \textbf{``No strands''}.  Your \texttt{defskeleton} did not include
   any strands at all; it must include at least one.
 
-\item \textbf{``Node occurs in more than one role predicate''}.  Node variables
-  in a goal must occur within a role position predicate, but should not occur within
-  more than one within their defined scope.
+\item \textbf{``Node occurs in more than one role predicate''}.  Node
+  variables in a goal must occur within a role position predicate, but
+  should not occur within more than one within their defined scope.
 
-\item \textbf{``Priority declaration disallowed on [...]''}.  Prioritization
-  has no effect except on events that need an explanation.  If you try to
-  change the default priority of a send or state initialization event, this
-  is assumed to be a mistake and the tool produces this error.
+\item \textbf{``Priority declaration disallowed on [...]''}.
+  Prioritization has no effect except on events that need an
+  explanation.  If you try to change the default priority of a
+  \texttt{send} or \texttt{stor} event, this is assumed to be a
+  mistake and the tool produces this error.
 
 \item \textbf{``Protocol [...] unknown''}.  This error occurs when you
   have a \texttt{defskeleton} or \texttt{defgoal} with a protocol name
@@ -325,53 +337,60 @@ to the tool maintainers.
   match the role of the role position predicate the variable occurs
   in.
 
-\item \textbf{``Role not well formed: role trace is a prefix of a listener''}.  {\cpsa}
-  disallows the use of roles that begin with the reception of some
-  message followed by the transmission of that same message, because
-  there is an ambiguity as to whether an instance is a listener or an
-  instance of a protocol role.  This should not be a problem because
-  beginning a role in this manner is quite unusual, but if it is
-  necessary to you to do so we recommend the reception be paired with
-  a tag constant such as \texttt{(cat "regular role" [...])}.
+\item \textbf{``Role not well formed: role trace is a prefix of a
+    listener''}.  {\cpsa} disallows the use of roles that begin with
+  the reception of some message followed by the transmission of that
+  same message, because there is an ambiguity as to whether an
+  instance is a listener or an instance of a protocol role.  This
+  should not be a problem because beginning a role in this manner is
+  quite unusual, but if it is necessary for you to do so we recommend
+  the reception be paired with a tag constant such as \texttt{(cat
+    "regular role" [...])}.
 
-\item \textbf{``Role not well formed: non-orig [...] carried''}.  The \texttt{non-orig}
-  declaration specifies that a certain atomic value not be carried
-  (see Section~\ref{sec:secrecy_assumptions}).  You have made such a declaration but a
-  plain (full-height) instance of your role violates the rule.
+\item \textbf{``Role not well formed: non-orig [...] carried''}.  The
+  \texttt{non-orig} declaration specifies that a certain atomic value
+  not be carried (see Section~\ref{sec:secrecy_assumptions}).  You
+  have made such a declaration but a plain (full-height) instance of
+  your role violates the rule.
 
-  \item \textbf{``Role not well formed: uniq-orig [...] doesn't
-    originate''}.  The \texttt{uniq-orig} declaration states not only
-  that the declared value originates on a regular strand uniquely (see
-  Section~\ref{sec:secrecy_assumptions}), but also states that the
-  apparent origination point is the unique origination point of that
-  value.  As such, you may only use the \texttt{uniq-orig} declaration
-  on a value that does originate somewhere.  If you declare a value
-  \texttt{uniq-orig} on a role but it does not originate on that role,
-  you get this error.
+\item \textbf{``Role not well formed: uniq-orig/uniq-gen [...] doesn't
+    originate/generate''}. The \texttt{uniq-orig} declaration in a
+  role requires the declared value to originate, i.e., its first
+  carried occurrence is in a transmission. The role probably has an
+  earlier carried reception of the value. Similarly \texttt{uniq-gen}
+  requires the first occurrence (whether carried or not) to be in a
+  transmission. See Section~\ref{sec:secrecy_assumptions} for an
+  explanation of ``carried.''
+  % The \texttt{uniq-orig} declaration states not only that the
+  % declared value originates on a regular strand uniquely (see
+  % Section~\ref{sec:secrecy_assumptions}), but also states that the
+  % apparent origination point is the unique origination point of that
+  % value.  As such, you may only use the \texttt{uniq-orig}
+  % declaration on a value that does originate somewhere.  If you
+  % declare a value \texttt{uniq-orig} on a role but it does not
+  % originate on that role, you get this error. Similarly for
+  % \texttt{uniq-gen}
 
 \item \textbf{``Role not well formed: variable [...] not acquired''}.
   Variables of the $\scap{mesg}$ sort must be ``acquired'' when used
   in roles.  This means that the first occurrence of the variable must
   be a \emph{carried} occurrence in a reception event.  See
-  Section~\ref{sec:secrecy_assumptions} fr an explanation of
-  ``carried.''
+Section~\ref{sec:secrecy_assumptions} for an explanation of
+``carried.''
 
-  \item \textbf{``Role not well formed: variable [...] not
-    obtained''}.  Variables of the %$\scap{base}$ or
-  $\scap{expr}$ sort must be ``obtained'' when used in roles, meaning
-  that the first occurrence must be in a reception.
 
 \item \textbf{``[Role / Skeleton] not well formed: inequality
-  conditions violated''}.  A \texttt{neq} declaration is false where
+    conditions violated''}.  A \texttt{neq} declaration is false where
   it is first declared: in a role or skeleton definition.
 
-\item \textbf{``[Role / Skeleton] not well formed: lt declarations form a cycle''}.  The
-  \texttt{lt} declarations present in a role or in a skeleton are already violated in
-  the role or skeleton definition.
+\item \textbf{``[Role / Skeleton] not well formed: lt declarations
+    form a cycle''}.  The \texttt{lt} declarations present in a role
+  or in a skeleton are already violated in the role or skeleton
+  definition.
 
-\item \textbf{``[Role / Skeleton] not well formed: subsort requirements violated''}.  The
-  \texttt{subsort} declarations present in the role or skeleton being defined are already
-  violated.
+\item \textbf{``[Role / Skeleton] not well formed: subsort
+    requirements violated''}.  The \texttt{subsort} declarations
+  present in the role or skeleton being defined are already violated.
 
 \item \textbf{``Skeleton not well formed: a variable in [...] is not in some trace''}.
   A \texttt{defskeleton} causes this error when a variable used in a declaration
@@ -392,26 +411,26 @@ to the tool maintainers.
   In {\cpsa}, an ordering must be such that the earlier node has an outgoing type, so
   for instance an ordering directly between two reception events is disallowed.
 
-  \item \textbf{``Skeleton not well formed: uniq-orig [...] doesn't
-    originate''}.  The \texttt{uniq-orig} declaration states not only
-  that the declared value originates on a regular strand uniquely (see
-  Section~\ref{sec:secrecy_assumptions}), but also states that the
-  apparent origination point is the unique origination point of that
-  value.  As such, you may only use the \texttt{uniq-orig} declaration
-  on a value that does originate somewhere.  If you declare a value
-  \texttt{uniq-orig} on a skeleton but it does not originate in the
-  skeleton, you get this error.
+% \item \textbf{``Skeleton not well formed: uniq-orig [...] doesn't
+%     originate''}.  The \texttt{uniq-orig} declaration states not only
+%   that the declared value originates on a regular strand uniquely (see
+%   Section~\ref{sec:secrecy_assumptions}), but also states that the
+%   apparent origination point is the unique origination point of that
+%   value.  As such, you may only use the \texttt{uniq-orig} declaration
+%   on a value that does originate somewhere.  If you declare a value
+%   \texttt{uniq-orig} on a skeleton but it does not originate in the
+%   skeleton, you get this error.
 
-  Similarly, \textbf{``...: uniq-gen [...] doesn't generate''}
-  represents a detected error in that \texttt{uniq-gen} states that
-  not only does the given value generate (see
-  Section~\ref{sec:secrecy_assumptions}) uniquely, but that its apparent
-  generation point is that generation point.  As such, a generation
-  point is expected.
+%   Similarly, \textbf{``...: uniq-gen [...] doesn't generate''}
+%   represents a detected error in that \texttt{uniq-gen} states that
+%   not only does the given value generate (see
+%   Section~\ref{sec:secrecy_assumptions}) uniquely, but that its apparent
+%   generation point is that generation point.  As such, a generation
+%   point is expected.
 
 \item \textbf{``Sort [...] not recognized''}.  You attempted to declare a variable
-  to be of a sort not present in the algebra.  Check to ensure that if you are using
-  Diffie-Hellman-related sorts that you are using the \texttt{diffie-hellman} algebra.
+  to be of a sort not present in the algebra. There is likely a typo
+  in one of the sorts.
 
 \item \textbf{``Terms in [role/skeleton] not well formed''}.  This error occurs
   when you have constructed a term using a function symbol that
@@ -421,8 +440,8 @@ to the tool maintainers.
   well-formed.  To resolve: double-check your variable declarations and
   your use of function symbols.
 
-  This may also occur if you use the \texttt{node} sort in a role or skeleton; that
-  sort should only be used in a goal declaration.
+  % This may also occur if you use the \texttt{node} sort in a role or skeleton; that
+  % sort should only be used in a goal declaration.
 
 \item \textbf{``Too many locations in declaration''}.  You have a
   native declaration that appears to include two or more
@@ -440,7 +459,7 @@ to the tool maintainers.
   tool rejects for this reason.
 
 \item \textbf{``Unexpected end of input in list''}.  One of the most frequent
-  user errors - you didn't include close parens for all your S-expressions.
+  user errors---you didn't include close parens for all your S-expressions.
 
 \end{itemize}
 

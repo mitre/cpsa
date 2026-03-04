@@ -317,17 +317,17 @@ included in the cohort calculated with the parent as an input.
 
 \index{search tree}\index{search tree!colors} Numbers are normally
 displayed in black, but may also be displayed in other colors.  Blue
-numbers represent \emph{realized} skeletons, that is, skeletons that
-may represent an actual execution.\footnote{Note that while realized
-  skeletons already represent complete executions, {\cpsa} does further
-  analysis once a realized skeleton is reached in order to
-  \emph{generalize} that skeleton as much as possible.  A skeleton
-  that is both realized and cannot be further generalized is a
-  \index{shape}\emph{shape}.  See page \pageref{anchor:generalization}
-  for more detail on generalization.}  Red numbers represent
-\emph{dead} skeletons, that is, skeletons that represent partial
-executions that are not part of any actual execution -- in other
-words, impossible scenarios.
+numbers represent \emph{shapes}, that is, skeletons that represent a
+minimal execution.\footnote{Note that sometimes {\cpsa} encounters a
+  \emph{realized} skeleton representing an actual execution before a
+  shape. It does further analysis once a realized skeleton is reached
+  in order to \emph{generalize} that skeleton as much as possible to
+  obtain a minimal execution (i.e., a shape).  Realized skeletons that
+  are not shapes are displayed in gray. See page
+  \pageref{anchor:generalization} for more detail on generalization.}
+Red numbers represent \emph{dead} skeletons, that is, skeletons that
+represent partial executions that are not part of any actual
+execution---in other words, impossible scenarios.
 
 \index{skeleton!realized}\index{skeleton!dead} Numbers may occur in
 the tree more than once, because it is possible that {\cpsa} will
@@ -458,7 +458,7 @@ which is why the arrow is not solid.  As for how the responder could
 receive the proper value, note that we only assumed $SK_a$ and $SK_b$
 are secure, but we did not assume $SK_{b_0}$ was secure.  It would have
 been hard to do so, since $b0$ is a value we know nothing about from
-the initiator's point of view. The initiator's transmission of
+the responder's point of view. The initiator's transmission of
 $\enc{n2}{K_{b_0}}$ thus does not protect $n2$ from decryption, so an
 attacker could have created the responder's received message by
 encrypting $n2$ under $K_b$.
@@ -671,9 +671,9 @@ leak.
 \label{fig:blanchet skel 13}
 \end{figure}
 
-The \texttt{blanchet.scm} file also contains a second protocol with
-the name \texttt{blanchet-corrected} in which the flaw that allows $d$
-to be learned in the responder's point of view is eliminated.
+The \texttt{blanchet.scm} file also contains a second protocol named
+\texttt{blanchet-corrected} in which the flaw that allows $d$ to be
+learned in the responder's point of view is eliminated.
 
 \begin{exercise}
   Modify the Blanchet protocol to add a role that is identical to the

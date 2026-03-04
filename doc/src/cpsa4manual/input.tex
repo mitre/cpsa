@@ -42,7 +42,7 @@ macro is used.  So for instance \texttt{(refuse a b c d e)} would be
 replaced by
 
 \begin{verbatim}
-(enc "quote" (extend "refuse" (extend a b)) (env c d) e)
+(enc "quote" (extend "refuse" (extend a b)) (enc c d) e)
 \end{verbatim}
 
 \noindent
@@ -246,8 +246,8 @@ algbera messages in the input syntax.
 $\mbox{id}\mid(\sym{pubk}\mbox{ id})
 \mid(\sym{privk}\mbox{ id})
 \mid(\sym{invk}\mbox{ id})$
-\\ &$\mid$&$(\sym{pubk}\mbox{ id}\mbox{ string})
-\mid(\sym{privk}\mbox{ id}\mbox{ string})$
+\\ &$\mid$&$(\sym{pubk}\mbox{ string}\mbox{ id})
+\mid(\sym{privk}\mbox{ string}\mbox{ id})$
 \\ &$\mid$&$(\sym{ltk}\mbox{ id id})\mid\mbox{string}\mid(\sym{cat}\mbox{ term+})$
 \\ &$\mid$&$(\sym{enc}\mbox{ term+ term})\mid(\sym{hash}\mbox{ term+})$
 \\ &$\mid$&$(\mbox{id term+})$
@@ -380,12 +380,12 @@ constants, respectively.
 $\mbox{id}\mid(\sym{pubk}\mbox{ id})
 \mid(\sym{privk}\mbox{ id})
 \mid(\sym{invk}\mbox{ id})$
-\\ &$\mid$&$(\sym{pubk}\mbox{ id}\mbox{ string})
-\mid(\sym{privk}\mbox{ id}\mbox{ string})$
+\\ &$\mid$&$(\sym{pubk}\mbox{ string}\mbox{ id})
+\mid(\sym{privk}\mbox{ string}\mbox{ id})$
 \\ &$\mid$&$(\sym{ltk}\mbox{ id id})\mid\mbox{string}\mid(\sym{cat}\mbox{ term+})$
 \\ &$\mid$&$(\sym{enc}\mbox{ term+ term})\mid(\sym{hash}\mbox{ term+})$
 \\ &$\mid$&$(\sym{exp}\mbox{ term term })\mid(\sym{gen})\mid(\sym{mul}\mbox{ term term})$
-\\ &$\mid$&$(\sym{rec}\mbox{ term})\mid (\mbox{id term+})$
+\\ &$\mid$&$(\sym{rec}\mbox{ term})\mid(\sym{one})\mid (\mbox{id term+})$
 \end{tabular}}
 \caption{{\cpsa} Diffie-Hellman Algebra Syntax}\label{tab:dh_term}
 \end{table}
@@ -484,7 +484,8 @@ The following command-line options are defined for the {\cpsa} program:
   field (see Section~\ref{sec:kerberos2}) is displayed only for the
   first time that skeleton is found.  Other instances are not
   annotated with an operation field but instead simply link to the
-  isomorphic skeleton.
+  isomorphic skeleton. This usage is largely unnecessary due to the
+  presence of the seen-ops field. 
 \index{options!check-nonces} \index{check-nonces option}
 \item `c' (``check-nonces'') -- check nonces first.  Normally, the
   tool will consider the largest possible critical term when attempting
@@ -517,12 +518,15 @@ The following command-line options are defined for the {\cpsa} program:
   the question: what are all the ways in which this goal may not be
   satisfied?
 \index{options!algebra} \index{algebra} \index{Diffie-Hellman!algebra}
-\item `a' (``algebra'') -- sets the algebra to use for the input.  The
-  analysis tool expects to run with a single algebra for an entire
-  session.  By default the tool uses the \texttt{basic} algebra; an
-  input file using the Diffie-Hellman algebra will cause an error
-  unless you specify the \texttt{diffie-hellman} algebra via this
-  option.
+\item `a' (``algebra'') -- sets the algebra to use for the
+  input. Since the basic and diffie-hellman algebras have now been
+  joined into a single algebra, this option should be considered
+  deprecated. 
+  % The analysis tool expects to run with a single algebra for an
+  % entire session.  By default the tool uses the \texttt{basic}
+  % algebra; an input file using the Diffie-Hellman algebra will cause
+  % an error unless you specify the \texttt{diffie-hellman} algebra
+  % via this option.
   Usage: \texttt{-a STRING} or \texttt{--algebra=STRING}.
 \index{options!show-algebras}
 \item `s' (``show-algebras'') -- causes the tool to print a list of the

@@ -39,10 +39,9 @@ the ``create'' role.  The derivation roles are determined by the
 message model; one matches each derivability rule in the algebra used.
 The create role consists of a one-event strand in which certain basic
 values may be transmitted.  This always includes all constants (such
-as tag constants or the generator $g$ in the Diffie-Hellman algebra),
-and also includes all values of basic sorts: the sorts other than
-$\scap{mesg}$ in the basic algebra, and those sorts plus the
-$\scap{rndx}$ sort in the Diffie-Hellman algebra.
+as tag constants or the Diffie-Hellman generator $g$), and also
+includes all values of basic sorts: $\scap{data, text, name, skey,
+  akey, rndx}$.
 
 \section{Secrecy assumptions}
 \label{sec:secrecy_assumptions}
@@ -129,12 +128,12 @@ cause surprises if the key could surface unexpectedly in other
 strands.  See Chapter~\ref{chap:channels:state} to understand how to
 store values explicitly, when that is desired.
 
-In fact, because ``generation'' covers a wider set of occurrences than
-``origination,'' when a value $v$ originates on a strand, declaring
-$v$ \texttt{uniq-gen} is actually stronger than declaring it
-\texttt{uniq-orig}.  The \texttt{uniq-gen} declaration prohibits
-unexplained key usage, as opposed to the \texttt{uniq-orig}
-declaration that permits it.  
+% In fact, because ``generation'' covers a wider set of occurrences than
+% ``origination,'' when a value $v$ originates on a strand, declaring
+% $v$ \texttt{uniq-gen} is actually stronger than declaring it
+% \texttt{uniq-orig}.  The \texttt{uniq-gen} declaration prohibits
+% unexplained key usage, as opposed to the \texttt{uniq-orig}
+% declaration that permits it.  
 
 \begin{exercise}
 Experiment with variants of your favorite simple protocol in which you
@@ -233,8 +232,8 @@ participant's point of view.
 When a single-strand authentication query gives some information about
 other local sessions, but we would like also to know whether
 additional conclusions follow if we assume unique origination or
-non-origination for values in those local sessions, then we can would
-use multiple \texttt{defstrand}s.
+non-origination for values in those local sessions, then we would use
+multiple \texttt{defstrand}s.
 
 The bindings (aka ``maplets'') in a strand declaration are pairs
 \texttt{(p v)} where \texttt{p} is a parameter of the role being

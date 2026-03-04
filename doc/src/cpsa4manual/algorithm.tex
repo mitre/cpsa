@@ -62,7 +62,7 @@ Section~\ref{sec:secrecy_assumptions} for detail).
 
 In addition, the attacker observes all of the transmissions made in a
 skeleton.  The attacker is also capable of manipulating messages in
-certain specific ways -- these are the derivations present in
+certain specific ways---these are the derivations present in
 Table~\ref{tab:basic_algebra_signature}.
 
 When a reception message can be constructed by the attacker from the
@@ -88,7 +88,7 @@ always interprets an encryption operator as guaranteeing authenticity,
 unless the key is compromised.
 
 Only certain kinds of sub-values may be of interest as critical terms,
-specifically, those which are \emph{carried} \index{carried subterm}.
+specifically, those which are \emph{carried}\index{carried subterm}.
 The notion of a carried sub-term can be defined recursively: a term
 carries itself, a pair carries either of its components, and an
 encryption carries its plaintext.
@@ -118,7 +118,7 @@ The four strategies are:
 
 \end{itemize}
 
-When examining a skeleton and one of its children in full {\cpsa}
+When examining a skeleton and one of its children in a full {\cpsa}
 analysis it is often simple to determine which sort of strategy was
 used.  If a child has one more strand than its parent then it was
 produced by either augmentation (if the extra strand is a role
@@ -131,7 +131,7 @@ map of terms.
 
 \section{Flawed Kerberos, revisited}
 \label{sec:kerberos2}
-In Section~\ref{sec:kerberos}, we worked through an example -- a
+In Section~\ref{sec:kerberos}, we worked through an example---a
 flawed version of the Kerberos protocol.  The first attempt at
 modeling the protocol was flawed in a way that would prevent the tool
 from discovering the attack against the protocol.
@@ -173,7 +173,7 @@ augmentation.  The full operation field in Item 2 is:
 
 The first argument to the operation field is the general type of
 operation performed.  Typically this will be one of the following
-three possibilities:
+four possibilities:
 
 \begin{itemize}
 \item \texttt{encryption-test} indicates that the critical term at the
@@ -193,7 +193,7 @@ is an instance of \texttt{keyserv} and is of length 2.  The third
 argument is the criticial term; here it was \texttt{(enc k n (ltk a s))},
 the portion of the server's message intended for the initiator.  The
 last argument is a node, normally the test node, so in this case, the
-\texttt{(0 1)} refers to strand 0, node 1 -- the second node of the
+\texttt{(0 1)} refers to strand 0, node 1---the second node of the
 initiator strand in Item 1.
 
 Returning to our example, Item 2's critical term is the encryption

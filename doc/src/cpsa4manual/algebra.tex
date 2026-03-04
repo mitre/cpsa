@@ -1,27 +1,24 @@
 \chapter{Algebra Features of CPSA}
 \label{ch:algebra}
 
-\index{Diffie-Hellman!algebra}
-The {\cpsa} distribution comes equipped with two cryptographic
-alegbras, the \texttt{basic} cryptoalgebra and the
-\texttt{diffie-hellman} cryptoalgebra.  The Diffie-Hellman algebra is
-a pure extension of the basic algebra, so a user may always use the
-Diffie-Hellman algebra to access all algebraic features.  However, the
-performance of the tool is superior when using the basic algebra, so
-users are advised to choose the basic algebra whenever they are not
-making use of Diffie-Hellman features.
+\index{Diffie-Hellman!algebra} The {\cpsa} distribution comes equipped
+with one cryptographic algebra. For reasons of backwards compatibility
+it has two names: the \texttt{basic} cryptoalgebra and the
+\texttt{diffie-hellman} cryptoalgebra. Previous versions of {\cpsa}
+had separate implementations, but since the Diffie-Hellman algebra was
+a pure extension of the basic algebra, we have merged them back into
+one. Thus, the Diffie-Hellman features are always available, even when
+the user specifies the basic algebra.
 
-In Chapter~\ref{ch:basic}, we introduced the basic cryptoalgebra,
-along with the \texttt{data, text, name, skey,} and \texttt{akey}
-sorts, and the \texttt{pubk, privk, invk, enc,} and \texttt{cat}
-function symbols.  In addition to these, the basic cryptoalgebra
-contains the sorts \ttindex{tag} \texttt{tag} and \texttt{mesg}, and
-the \texttt{ltk} and \texttt{hash} function symbols, and string
-constants.
-
-The Diffie-Hellman cryptoalgebra introduces two further sorts,
-\texttt{rndx} and \texttt{expt}, and six new function symbols,
-\texttt{bltk, exp, rec, mul, gen,} and \texttt{one}.
+In Chapter~\ref{ch:basic}, we introduced basic components of the
+cryptoalgebra such as the \texttt{data, text, name, skey,} and
+\texttt{akey} sorts, and the \texttt{pubk, privk, invk, enc,} and
+\texttt{cat} function symbols.  In addition to these, there are the
+sorts \ttindex{tag} \texttt{tag} and \texttt{mesg}, and the
+\texttt{ltk}, \texttt{bltk}, and \texttt{hash} function symbols, and
+string constants. To represent Diffie-Hellman values we include two
+further sorts, \texttt{rndx} and \texttt{expt}, and five new function
+symbols, \texttt{exp, rec, mul, gen,} and \texttt{one}.
 
 At one time variables of sort \texttt{base} were also permitted, but a
 variable \texttt{b} of sort \texttt{base} has the same meaning as a
@@ -315,17 +312,19 @@ which each party can calcuate from their own private value and their
 partner's public value.  For instance, Alice can calculate $g^{ab}
 \equiv (g^b)^a \bmod p$.
 
-Version 3 of {\cpsa} introduces the Diffie-Hellman algebra, which
-allows for analysis of protocols that incorporate Diffie-Hellman
-techniques.  The Diffie-Hellman algebra includes all the function
-symbols and sorts available in the basic algebra, plus two additional
-sorts of variable, namely the two sorts \texttt{rndx} and
-\texttt{expt} for exponents such as $x$.
+The cryptoalgebra for {\cpsa} includes features to represent values
+that allow for analysis of protocols that incorporate Diffie-Hellman
+techniques.  Whether the user asks for the basic algebra or the
+Diffie-Hellman algebra, the result is the same: They get an algebra
+that includes all the function symbols and sorts available in the
+original basic algebra, plus two additional sorts of variable, namely
+the two sorts \texttt{rndx} and \texttt{expt} for exponents such as
+$x$.
 %   
 %   , for
 %   exponentiated values such as $g^x$.
 %   
-The Diffie-Hellman specific functions symbols are as follows:
+The Diffie-Hellman specific function symbols are as follows:
 
 \begin{itemize}
 \item \texttt{exp} represents exponentation.  For example, $h^x$ is
@@ -345,7 +344,11 @@ $g^x$, while \texttt{(exp gen x)} would represent ${gen}^x$ where
 ${gen}$ is expected to be a variable.  Similarly, \texttt{(mul (one)
   x)} represents $1 \cdot x$ while \texttt{(mul one x)} would
 represent $one \cdot x$ where the tool expects $one$ to be an exponent
-variable.
+variable. (In fact, using \texttt{(exp gen x)} would result in an
+error message since {\cpsa} does not allow variables of the same sort
+\texttt{base} as \texttt{(gen)}. But \texttt{(mul one x)} would
+produce no error because \texttt{one} can be the name of an
+\texttt{expt} variable.)
 
 \item \texttt{rec} represents the multiplicative inverse in the group
   of exponents.  So for instance \texttt{(exp (exp (gen) x) (rec x)) =
@@ -486,7 +489,7 @@ method.
 \label{sec:other_algebra}
 
 \subsection{Hashing}
-\index{hash functions} \ttindex{hash} The {\cpsa} basic cryptoalgebra
+\index{hash functions} \ttindex{hash} The {\cpsa} cryptoalgebra
 includes a \texttt{hash} function symbol that can be used to represent
 the use of a hash function.  The function takes a single input, but
 \texttt{(hash t1 t2 ... tn)} is interpreted as shorthand for
@@ -507,10 +510,10 @@ the use of a hash function.  The function takes a single input, but
 protocols make use of magic numbers or string constants to
 disambiguate the purpose of various messages that occur during the
 protocol.  {\cpsa} includes constant strings in the basic
-cryptoalgebra.  Such constants always appear as quoted strings,
-e.g. \texttt{"foo"}.  These strings do not need to be declared in a
-\texttt{vars} statement because they are not variables.  Tags are
-messages, so that a variable of
+cryptoalgebra.  Such constants, which we often call \emph{tags},
+always appear as quoted strings, e.g. \texttt{"foo"}.  These strings
+do not need to be declared in a \texttt{vars} statement because they
+are not variables.  Tags are messages, so that a variable of
 \verb|mesg| sort may be instantiated by a tag.
 
 %   The sort of
@@ -554,24 +557,24 @@ are, in the function symbol, presented in a distinguished order.
 
 In other words, {\cpsa} regards \texttt{(ltk a b)} and \texttt{(ltk b
   a)} as distinct from each other; in fact, they are only considered
-equal when $a = b$.
-
-The \texttt{bltk} function symbol is available in {\cpsa} in \emph{the
-  Diffie-Hellman algebra only},\footnote{This choice may seem odd; it
-  was made for performance reasons.  The presence of \texttt{bltk} or
-  of Diffie-Hellman elements complicates some basic algebraic
-  operations.  The \texttt{basic} cryptoalgebra is provided for
-  optimized performance when analyzing protocols that do not include
-  these features.} and regards the two names as equivalent in order.
-In the Kerberos example discussed in Section~\ref{sec:kerberos}, we
-noted that the server's name $s$ always appears second in our
-\texttt{ltk} expressions.  This is fine if participants never can act
-as both client and server, but if a participant can act as both, the
-use of \texttt{ltk} implies that the participant maintains a strict
-separation between the keys they share with other servers when acting
-as a client (in which their own name appears first), and keys they
-share with clients when acting as a server (in which their own name
-appears second).
+equal when $a = b$. The \texttt{bltk} function
+symbol % is available in {\cpsa} in \emph{the
+  % Diffie-Hellman algebra only},\footnote{This choice may seem odd; it
+  % was made for performance reasons.  The presence of \texttt{bltk} or
+  % of Diffie-Hellman elements complicates some basic algebraic
+  % operations.  The \texttt{basic} cryptoalgebra is provided for
+  % optimized performance when analyzing protocols that do not include
+  % these features.} and 
+regards the two orders of names as equivalent. That is, \texttt{(bltk
+  a b) = (bltk b a)}.  In the Kerberos example discussed in
+Section~\ref{sec:kerberos}, we noted that the server's name $s$ always
+appears second in our \texttt{ltk} expressions.  This is fine if
+participants never can act as both client and server, but if a
+participant can act as both, the use of \texttt{ltk} implies that the
+participant maintains a strict separation between the keys they share
+with other servers when acting as a client (in which their own name
+appears first), and keys they share with clients when acting as a
+server (in which their own name appears second).
 
 The use of \texttt{bltk} implies that participants can act as both
 servers and clients, and that they only share one key with other
@@ -588,8 +591,8 @@ uni-directional ones.
 \begin{exercise}
 \label{ex:bltk_kerb}
 Make a version of the flawed Kerberos input file \texttt{kerb.scm}
-that uses bi-directional long-term keys instead.  Remember to switch
-the algebra to Diffie-Hellman!  What differences do you observe?
+that uses bi-directional long-term keys instead.  What differences do
+you observe?
 \end{exercise}
 
 \index{examples!Yahalom!with bi-directional keys}
