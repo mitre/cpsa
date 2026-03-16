@@ -73,7 +73,7 @@ loadSExpr _ _ _ _ (L _ (S _ "deflemma" : S pos flag : _ : _ : _)) =
 loadSExpr _ _ _ (ps, ks) (L _ (S _ "comment" : _)) = return (ps, ks)
 loadSExpr _ _ _ (ps, ks) (L _ (S _ "herald" : _)) = return (ps, ks)
 loadSExpr _ _ _ _ x = fail (shows (annotation x) "Malformed input")
-    
+
 -- load a protocol
 
 loadProt :: MonadFail m => Sig -> String -> Gen -> Pos ->
