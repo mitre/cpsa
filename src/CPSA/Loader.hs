@@ -59,17 +59,21 @@ loadSExpr _ _ _ (ps, ks) (L pos (S _ "defgoal" : xs)) =
     do
       k <- findGoal pos ps xs
       return (ps, k : ks)
-loadSExpr sig _ g (ps, ks) (L pos (S _ "deflemma" : S _ "check" : lname : name : xs)) =
-    do
-      k <- findGoal pos ps (name : xs)
-      p <- findProt sig g pos ps lname name xs
-      return (p : ps, k : ks)
-loadSExpr sig _ g (ps, ks) (L pos (S _ "deflemma" : S _ "no-check" : lname : name : xs)) =
-    do
-      p <- findProt sig g pos ps lname name xs
-      return (p : ps, ks)
-loadSExpr _ _ _ _ (L _ (S _ "deflemma" : S pos flag : _ : _ : _)) =
-  fail (shows pos $ "lemma flag \"" ++ flag ++ "\" unknown. Must be \"check\" or \"no-check\"")
+loadSExpr sig _ g (ps, ks) (L pos (S _ "deflemma" : S _ flag : lname : name : xs)) =
+    case (lemmaCheck flag, lemmaUse flag) of
+        (True, True) -> do
+          k <- findGoal pos ps (name : xs)
+          p <- findProt sig g pos ps lname name xs
+          return (p : ps, k : ks)
+        (True, False) -> do
+          k <- findGoal pos ps (name : xs)
+          return (ps, k : ks)
+        (False, True) -> do
+          p <- findProt sig g pos ps lname name xs
+          return (p : ps, ks)
+        (False, False) ->
+          fail (shows pos $ "lemma flag \"" ++ flag ++ "\" unknown. Must be " ++ 
+                "\"no-check\", \"check\", or \"check-only\"")  
 loadSExpr _ _ _ (ps, ks) (L _ (S _ "comment" : _)) = return (ps, ks)
 loadSExpr _ _ _ (ps, ks) (L _ (S _ "herald" : _)) = return (ps, ks)
 loadSExpr _ _ _ _ x = fail (shows (annotation x) "Malformed input")
@@ -1340,3 +1344,19 @@ addRule sig g pos p lname xs =
   do
     (_, r) <- loadRule sig p g pos (lname : xs)
     return p { userrules = r : userrules p }
+
+lemmaCheck :: String -> Bool
+lemmaCheck flag =
+  do
+    case flag of
+      "check" -> True
+      "check-only" -> True
+      _ -> False
+
+lemmaUse :: String -> Bool
+lemmaUse flag =
+  do
+    case flag of
+      "check" -> True
+      "no-check" -> True
+      _ -> False
