@@ -59,35 +59,21 @@ loadSExpr _ _ _ (ps, ks) (L pos (S _ "defgoal" : xs)) =
     do
       k <- findGoal pos ps xs
       return (ps, k : ks)
-loadSExpr sig _ g (ps, ks) (L pos (S _ "deflemma" : S _ "check" : lname : name : xs)) = 
-    do 
+loadSExpr sig _ g (ps, ks) (L pos (S _ "deflemma" : S _ "check" : lname : name : xs)) =
+    do
       k <- findGoal pos ps (name : xs)
       p <- findProt sig g pos ps lname name xs
       return (p : ps, k : ks)
-loadSExpr sig _ g (ps, ks) (L pos (S _ "deflemma" : S _ "no-check" : lname : name : xs)) = 
-    do 
-      p <- findProt sig g pos ps lname name xs 
+loadSExpr sig _ g (ps, ks) (L pos (S _ "deflemma" : S _ "no-check" : lname : name : xs)) =
+    do
+      p <- findProt sig g pos ps lname name xs
       return (p : ps, ks)
 loadSExpr _ _ _ _ (L _ (S _ "deflemma" : S pos flag : _ : _ : _)) =
-  fail (shows pos $ "lemma flag \"" ++ flag ++ "\" unknown. Must be \"check\" or \"no-check\"")      
+  fail (shows pos $ "lemma flag \"" ++ flag ++ "\" unknown. Must be \"check\" or \"no-check\"")
 loadSExpr _ _ _ (ps, ks) (L _ (S _ "comment" : _)) = return (ps, ks)
 loadSExpr _ _ _ (ps, ks) (L _ (S _ "herald" : _)) = return (ps, ks)
 loadSExpr _ _ _ _ x = fail (shows (annotation x) "Malformed input")
-
-findProt :: MonadFail m => Sig -> Gen -> Pos -> [Prot] -> SExpr Pos -> SExpr Pos -> [SExpr Pos] -> m Prot
-findProt sig g pos ps lname (S _ name) xs = 
-  case L.find (\p -> name == pname p) ps of
-      Nothing -> fail (shows pos $ "Protocol " ++ name ++ " unknown")
-      Just p -> addRule sig g pos p lname xs  
-findProt _ _ pos _ _ _ _ = fail (shows pos "Malformed lemma")
-
-addRule :: MonadFail m => Sig -> Gen -> Pos -> Prot -> SExpr Pos -> [SExpr Pos] -> m Prot
-addRule sig g pos p lname xs = 
-  do 
-    (_, r) <- loadRule sig p g pos (lname : xs)
-    return p { userrules = r : userrules p }
-
-
+    
 -- load a protocol
 
 loadProt :: MonadFail m => Sig -> String -> Gen -> Pos ->
@@ -1339,3 +1325,18 @@ loadGoals sig pos prot g (x : xs) =
     (g, goal, _) <- loadSentence sig RoleSpec pos prot g x
     (g, goals) <- loadGoals sig pos prot g xs
     return (g, goal : goals)
+
+-- Used for loading lemmas as goals to be checked
+findProt :: MonadFail m => Sig -> Gen -> Pos -> [Prot] -> SExpr Pos ->
+            SExpr Pos -> [SExpr Pos] -> m Prot
+findProt sig g pos ps lname (S _ name) xs =
+  case L.find (\p -> name == pname p) ps of
+      Nothing -> fail (shows pos $ "Protocol " ++ name ++ " unknown")
+      Just p -> addRule sig g pos p lname xs
+findProt _ _ pos _ _ _ _ = fail (shows pos "Malformed lemma")
+
+addRule :: MonadFail m => Sig -> Gen -> Pos -> Prot -> SExpr Pos -> [SExpr Pos] -> m Prot
+addRule sig g pos p lname xs =
+  do
+    (_, r) <- loadRule sig p g pos (lname : xs)
+    return p { userrules = r : userrules p }
