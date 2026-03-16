@@ -23,3 +23,4 @@ doc/src/*.ilg
 doc/src/*.ind
 *.DS_Store
 .vscode
+hie.yaml

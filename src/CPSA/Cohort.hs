@@ -266,7 +266,7 @@ solved ct pos eks escape k n subst absent =
       vs = addSendingBefore S.empty v
       ts = termsInNodes k vs     -- Outbound non-conf predecessors
       (a, _) = avoid k
-      encs = S.fold f S.empty escape'
+      encs = S.foldr f S.empty escape'
       f (CM _) ts = ts
       f (TM t) ts = S.insert t ts
 
@@ -680,7 +680,7 @@ targetTerms ct escape =
     else
        S.difference targetTermsWithEscapeSet escape
     where
-      targetTermsWithEscapeSet = S.fold f (S.singleton ct) escape
+      targetTermsWithEscapeSet = S.foldr f (S.singleton ct) escape
       f (CM t) ts =
           foldl (flip S.insert) ts
                 (concatMap (cmtAncestors t) (cmtCarriedPlaces ct t))
@@ -763,7 +763,7 @@ addListeners k ct pos eks n t escape cause =
 
 escapeKeys :: [Term] -> Set CMT -> Set Term
 escapeKeys eks escape =
-    S.fold f es escape
+    S.foldr f es escape
     where
       f (TM e) s = maybe s (flip S.insert s) (decryptionKey e)
       f (CM _) s = s

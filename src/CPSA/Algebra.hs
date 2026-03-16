@@ -965,7 +965,7 @@ indicator avoid t@(F Base _) =
     isRndx _ = False
     extrRndx (G t) = t
     extrRndx _ = error ("Algebra.hs: extrRndx called on a non-exponent")
-    indicatorBasis = S.fold mul M.empty numAvoid
+    indicatorBasis = S.foldr mul M.empty numAvoid
 indicator _ t = error ("Algebra.hs: indicator called on a non-base " ++ show t)
 
 escapeSet :: Set Term -> Set Term -> Term -> Maybe (Set Term)
