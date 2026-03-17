@@ -19,7 +19,7 @@ module CPSA.Protocol (Event (..), evtCm, evtTerm, evtChan, evtMap, evt,
     aFormOrder, aFreeVars, instantiateAForm, instantiateConj, Rule (..),
     Prot, mkProt, pname, alg, pgen, psig, roles, checkForDivergenceInStoreSegments,
     nullaryrules, unaryrules, generalrules, rules, userrules, generatedrules,
-    listenerRole, varsAllAtoms, pcomment) where
+    listenerRole, varsAllAtoms, pcomment, RuleKind (..), classifyRule) where
 
 import qualified Data.List as L
 import qualified Data.Maybe as M

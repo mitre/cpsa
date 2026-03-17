@@ -1403,33 +1403,40 @@ Compared to a \texttt{defgoal}, a \texttt{deflemma} has two extra
 arguments that come at the beginning. The first is a flag that signals
 to {\cpsa} whether or not it should include a query for the lemma in
 order to validate that it is satisfied. There are three valid values:
-\texttt{no-check}, \texttt{check-only}, and \texttt{check}. The second
+\texttt{rule}, \texttt{goal}, and \texttt{both}. The second
 is a name that will be used as the rule name when the lemma is used as
 a rule.
 
-When a lemma uses the \texttt{no-check} flag, {\cpsa} will update the
+When a lemma uses the \texttt{rule} flag, {\cpsa} will update the
 protocol identified in the lemma to include the specified formula as a
 rule. As a result, all subsequent queries for that protocol will
 include the lemma as a rule. {\cpsa} will not generate a query for the
-lemma. The result is the same as if the formula had been added as a
-\texttt{defrule} to the protocol (but only for subsequent queries).
+lemma. The result is the same as if a copy of the protocol with the
+same name had been added in this location with an extra
+\texttt{defrule} added to it (hence only subsequent queries would use
+the rule).
 
-The \texttt{check-only} flag signals {\cpsa} to treat the lemma as if
+The \texttt{goal} flag signals {\cpsa} to treat the lemma as if
 it were a \texttt{defgoal}. A query will be added to the analysis, but
-it will not be included as a rule in any subsequent queries.
+it will not be included as a rule in any subsequent queries. The
+skeletons in the analysis contain a comment indicating the name of the
+lemma the analysis is associated with.
 
-When the \texttt{check} flag is used, the behavior is first to treat
+When the \texttt{both} flag is used, the behavior is first to treat
 the lemma as a goal, and then as a rule. {\cpsa} will first create a
 query for the lemma against the specified protocol before updating the
-protocol to include the lemma as a rule. Since {\cpsa} updates the
-protocol for subsequent queries at load time, it cannot know in
-advance whether the lemma is satisfied or not. That means that
+protocol to include the lemma as a rule for subsequent queries.
+
+Since {\cpsa} updates the protocol with a rule at load time, it cannot
+know in advance whether the lemma is satisfied or not. That means that
 subsequent queries will use the lemma as a rule, \emph{even if the
-  query for the lemma shows that the lemma is not satisfied}!
-Nevertheless, when the \texttt{check} flag is used for a lemma that is
-not satisfied, since a query for the formula is generated as a goal,
-the output will contain \texttt{(satisfies (no ...))} as evidence that
-some goal was not satisfied.
+  query for the lemma shows that the lemma is not satisfied}! For this
+reason, the added rule contains a comment to indicate whether or not
+an associated query has been added to check its validity. When the
+\texttt{both} flag is used for a lemma that is not satisfied, since a
+query for the formula is generated as a goal, the output will contain
+\texttt{(satisfies (no ...))} as evidence that some goal was not
+satisfied.
 
 
 

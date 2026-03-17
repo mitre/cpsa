@@ -62,18 +62,18 @@ loadSExpr _ _ _ (ps, ks) (L pos (S _ "defgoal" : xs)) =
 loadSExpr sig _ g (ps, ks) (L pos (S _ "deflemma" : S _ flag : lname : name : xs)) =
     case (lemmaCheck flag, lemmaUse flag) of
         (True, True) -> do
-          k <- findGoal pos ps (name : xs)
-          p <- findProt sig g pos ps lname name xs
+          k <- findGoal pos ps (name : (xs ++ [(L pos [S pos "comment", S pos "Lemma:", lname])]))
+          p <- findProt sig g pos ps lname name xs True
           return (p : ps, k : ks)
         (True, False) -> do
-          k <- findGoal pos ps (name : xs)
+          k <- findGoal pos ps (name : (xs ++ [(L pos [S pos "comment", S pos "Lemma:", lname])]))
           return (ps, k : ks)
         (False, True) -> do
-          p <- findProt sig g pos ps lname name xs
+          p <- findProt sig g pos ps lname name xs False
           return (p : ps, ks)
         (False, False) ->
           fail (shows pos $ "lemma flag \"" ++ flag ++ "\" unknown. Must be " ++ 
-                "\"no-check\", \"check\", or \"check-only\"")  
+                "\"goal\", \"rule\", or \"both\"")  
 loadSExpr _ _ _ (ps, ks) (L _ (S _ "comment" : _)) = return (ps, ks)
 loadSExpr _ _ _ (ps, ks) (L _ (S _ "herald" : _)) = return (ps, ks)
 loadSExpr _ _ _ _ x = fail (shows (annotation x) "Malformed input")
@@ -1332,31 +1332,39 @@ loadGoals sig pos prot g (x : xs) =
 
 -- Used for loading lemmas as goals to be checked
 findProt :: MonadFail m => Sig -> Gen -> Pos -> [Prot] -> SExpr Pos ->
-            SExpr Pos -> [SExpr Pos] -> m Prot
-findProt sig g pos ps lname (S _ name) xs =
+            SExpr Pos -> [SExpr Pos] -> Bool -> m Prot
+findProt sig g pos ps lname (S _ name) xs checked =
   case L.find (\p -> name == pname p) ps of
       Nothing -> fail (shows pos $ "Protocol " ++ name ++ " unknown")
-      Just p -> addRule sig g pos p lname xs
-findProt _ _ pos _ _ _ _ = fail (shows pos "Malformed lemma")
+      Just p -> addRule sig g pos p lname xs checked
+findProt _ _ pos _ _ _ _ _ = fail (shows pos "Malformed lemma")
 
-addRule :: MonadFail m => Sig -> Gen -> Pos -> Prot -> SExpr Pos -> [SExpr Pos] -> m Prot
-addRule sig g pos p lname xs =
+-- Boolean adds comment saying the rule is checked
+addRule :: MonadFail m => Sig -> Gen -> Pos -> Prot -> SExpr Pos -> [SExpr Pos] -> Bool -> m Prot
+addRule sig g pos p lname xs checked =
   do
     (_, r) <- loadRule sig p g pos (lname : xs)
-    return p { userrules = r : userrules p }
-
+    let r1 = if checked 
+             then r { rlcomment = S () "(comment Lemma has associated query)" : rlcomment r }
+             else r { rlcomment = S () "(comment Lemma not checked)" : rlcomment r }
+    let p1 = p { userrules = r1 : userrules p }
+    case classifyRule r1 of
+           NullaryRule -> return p1 { nullaryrules = r1 : nullaryrules p1}
+           UnaryRule   -> return p1 { unaryrules = r1 : unaryrules p1 }
+           GeneralRule -> return p1 { generalrules = r1 : generalrules p1 }
+    
 lemmaCheck :: String -> Bool
 lemmaCheck flag =
   do
     case flag of
-      "check" -> True
-      "check-only" -> True
+      "both" -> True
+      "goal" -> True
       _ -> False
 
 lemmaUse :: String -> Bool
 lemmaUse flag =
   do
     case flag of
-      "check" -> True
-      "no-check" -> True
+      "both" -> True
+      "rule" -> True
       _ -> False
