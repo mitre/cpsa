@@ -1,3 +1,17 @@
+2026-03-27 Paul D. Rowe <prowe@mitre.org>
+   * src/CPSA/Signature.hs (defaultSig): Added dev as a default
+   atomic sort. Also added locn and chan to be valid sorts in 
+   the message algebra that can appear in messages.
+
+   * src/CPSA/Algebra.hs (isLocn): Changed what can appear as the 
+   first argument to load and stor events. In addition to a variable
+   of sort locn, CPSA now accepts terms of the form (cat d l) for d
+   a variable of sort dev and l a variable of sort locn. (User defined
+   pairing operators are also accepted in place of cat.)
+
+   * src/CPSA/Loader.hs (loadRole): Changed how role variables 
+   are computed when new (dev, locn) pairs are used for state events.
+
 2026-03-16 Paul D. Rowe <prowe@mitre.org>
 
 	* src/CPSA/Loader.hs (loadSExpr): Added a deflemma as a new
