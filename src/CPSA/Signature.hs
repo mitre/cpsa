@@ -49,7 +49,7 @@ findOper sym (_ : opers) = findOper sym opers
 -- specially.  The same is true for "mesg".
 defaultSig :: Sig
 defaultSig = Sig {
-  atoms = ["text", "data", "skey", "akey"],
+  atoms = ["text", "data", "skey", "akey", "dev"],
   akeys = ["akey"],
   opers = [Enc("enc"), Hash("hash")]
   }

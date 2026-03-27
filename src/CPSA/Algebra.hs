@@ -546,6 +546,7 @@ isChan _ = False
 -- Is term a location variable
 isLocn :: Term -> Bool
 isLocn (F Locn [I _]) = True
+isLocn (F (Tupl _) [F (Data "dev") [I _], F Locn [I _]]) = True
 isLocn _ = False
 
 -- Note that isVar of (D _) is false.
@@ -620,6 +621,10 @@ termWellFormed xts t@(I x) =
     extendVarEnv xts x t        -- Mesg variable
 termWellFormed xts t@(F (Data _) [I x]) =
     extendVarEnv xts x t        -- Data variable
+termWellFormed xts t@(F Locn [I x]) =
+    extendVarEnv xts x t        -- Locn variable can also be a term. Why not?
+termWellFormed xts t@(F Chan [I x]) =
+    extendVarEnv xts x t        -- Chan variable can also be a term. Why not?
 termWellFormed xts (F (Data "skey") [F Ltk [I x, I y]]) =
                                 -- Long term shared symmetric key
     foldM termWellFormed xts [F Name [I x], F Name [I y]]
