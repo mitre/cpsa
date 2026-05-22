@@ -134,10 +134,10 @@ neqRules sig g =
      ["indx", "strd", "mesg"]
 
 constRule :: Sig -> Gen -> (Gen, [Rule])
-constRule sig g = 
+constRule sig g =
     let (g1, v1) = newVar sig g "v1" "mesg" in
     let (g2, v2) = newVar sig g1 "v2" "mesg" in
-    let (g3, m) = newVar sig g2 "m" "mesg" in 
+    let (g3, m) = newVar sig g2 "m" "mesg" in
     let (g4, r) = (ruleOfClauses sig g3 "constRl"
          [v1,v2,m]
          [(AFact "const" [v1, m]), (AFact "const" [v2,m])]
