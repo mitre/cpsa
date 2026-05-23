@@ -544,6 +544,7 @@ varSym _ = False
 isChan :: Term -> Bool
 isChan (F _ _) = True
 isChan (C _) = True
+isChan (I _) = True
 isChan _ = False
 
 isChanSort :: Term -> Bool
@@ -552,10 +553,9 @@ isChanSort _ = False
 
 -- Is term a location variable
 isLocn :: Term -> Bool
---isLocn (F Locn [I _]) = True
---isLocn (F (Tupl _) [F (Data "dev") [I _], F Locn [I _]]) = True
 isLocn (F _ _) = True
 isLocn (C _) = True
+isLocn (I _) = True
 isLocn _ = False
 
 isLocnSort :: Term -> Bool
