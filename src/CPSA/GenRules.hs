@@ -133,7 +133,7 @@ neqRules sig g =
      (g,[])
      ["indx", "strd", "mesg"]
 
-constRule :: Sig -> Gen -> (Gen, [Rule])
+{- constRule :: Sig -> Gen -> (Gen, [Rule])
 constRule sig g =
     let (g1, v1) = newVar sig g "v1" "mesg" in
     let (g2, v2) = newVar sig g1 "v2" "mesg" in
@@ -142,7 +142,7 @@ constRule sig g =
          [v1,v2,m]
          [(AFact "const" [v1, m]), (AFact "const" [v2,m])]
          [([],[Equals v1 v2])]) in
-    (g4, [r])
+    (g4, [r])-}
 
 transRls :: Sig -> Gen -> Role -> [(Int,Int)] -> (Gen, [Rule])
 transRls sig g rl =

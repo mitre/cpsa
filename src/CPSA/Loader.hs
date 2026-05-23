@@ -712,8 +712,8 @@ initRules sig g prot prs =
     -- let (g'', trans) = transRules g' in
     let anyState = any (\(rl,_) -> hasLocn rl) prs in
     do
-      let (g1, const) = constRule sig g
-      let (g',neqs) = neqRules sig g1
+      --let (g1, const) = constRule sig g
+      let (g',neqs) = neqRules sig g
       let (g,fixedStateRls) =
               if anyState
               then foldr (\f (g,rules) -> let (g',r) = f g in
@@ -738,7 +738,8 @@ initRules sig g prot prs =
       (g,gsRls) <- iterPreRules initPreRulesGensts sig g prot prs
 
       return (g,
-               neqs ++ const ++ fixedStateRls ++ fcRls ++
+               neqs ++ -- const ++ 
+                    fixedStateRls ++ fcRls ++
                     asRls ++ trRls ++ csRls ++ gsRls,
                rlRls ++ grRls ++ cqRls)
 
