@@ -543,6 +543,7 @@ varSym _ = False
 -- Is term a channel variable
 isChan :: Term -> Bool
 isChan (F _ _) = True
+isChan (G _) = True
 isChan (C _) = True
 isChan (I _) = True
 isChan _ = False
@@ -554,6 +555,7 @@ isChanSort _ = False
 -- Is term a location variable
 isLocn :: Term -> Bool
 isLocn (F _ _) = True
+isLocn (G _) = True
 isLocn (C _) = True
 isLocn (I _) = True
 isLocn _ = False

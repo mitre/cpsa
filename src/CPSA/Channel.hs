@@ -6,7 +6,7 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-module CPSA.Channel (CHType (..), ChMsg (..), cmTerm, cmTerms, cmMap, cmChan,
+module CPSA.Channel (ChType (..), ChMsg (..), cmTerm, cmTerms, cmMap, cmChan,
                      cmMatch, cmMatchRename, cmUnify, cmtSubstitute,
                      cmFoldCarriedTerms,
                      CMT (..),
@@ -24,14 +24,14 @@ import CPSA.Algebra
 -- A channel message is either a plain message or a channel and a
 -- message.
 
-data CHType
+data ChType
   = Chan
   | Locn
   deriving (Show, Eq, Ord)
 
 data ChMsg
   = Plain !Term                 -- Plain message
-  | ChMsg !CHType !Term !Term   -- Channel and a message
+  | ChMsg !ChType !Term !Term   -- Channel and a message
   deriving (Show, Eq, Ord)
 
 -- Get channel message term
