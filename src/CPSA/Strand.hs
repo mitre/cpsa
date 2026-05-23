@@ -905,7 +905,7 @@ preskelWellFormed k =
       uniqgenCheck t = any (constituentModInv t) terms
       absentCheck (x, y) = varSubset [x, y] vs && x /= y
       genStCheck t = foldVars f True t
-      chanCheck c = elem c vs
+      chanCheck c = all ((flip elem) vs) (addVars [] c) --elem c vs --
 
 -- Do notation friendly preskeleton well formed check.
 wellFormedPreskel :: MonadFail m => Preskel -> m Preskel
@@ -960,13 +960,13 @@ verbosePreskelWellFormed k =
           failwith (showString "gen-st " $ showst t " not carried")
                        $ any (carriedBy t) terms
       confCheck c =
-        failwith (showString "confidential channel "
+        failwith (showString "some variable in confidential channel "
                   $ showst c " not in some strand")
-                 $ elem c (kvars k)
+                 $ all ((flip elem) (kvars k)) (addVars [] c)--all ((flip elem) (kvars k)) (termVars c)--elem c (kvars k)
       authCheck c =
-        failwith (showString "authenticated channel "
+        failwith (showString "some variable in authenticated channel "
                   $ showst c " not in some strand")
-                 $ elem c (kvars k)
+                 $ all ((flip elem) (kvars k)) (addVars [] c)--elem c (kvars k)
 
 failwith :: MonadFail m => String -> Bool -> m ()
 failwith msg test =
@@ -2444,6 +2444,8 @@ validateEnv k k' mapping (gen,env) =
           all (flip elem (kunique k')) (map (instantiate env) (kunique k)) &&
           all (flip elem (kuniqgen k')) (map (instantiate env) (kuniqgen k)) &&
           all (flip elem (kabsent k')) (map (instantiatePair env) (kabsent k)) &&
+          all (flip elem (kauth k')) (map (instantiate env) (kauth k)) &&
+          all (flip elem (kconf k')) (map (instantiate env) (kconf k)) &&
           -- all (flip elem (kprecur k')) (map (permuteNode mapping) (kprecur k)) &&
           all (flip elem (kgenSt k')) (map (instantiate env) (kgenSt k)) &&
           validateEnvOrig k k' mapping env &&

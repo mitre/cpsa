@@ -164,8 +164,8 @@ loadRole sig gen pos (S _ name :
       u <- loadBaseTerms sig vars (assoc "uniq-orig" rest)
       g <- loadBaseTerms sig vars (assoc "uniq-gen" rest)
       b <- mapM (loadAbsent sig vars) (assoc "absent" rest)
-      d <- loadBaseTerms sig vars (assoc "conf" rest)
-      h <- loadBaseTerms sig vars (assoc "auth" rest)
+      d <- loadTerms sig vars (assoc "conf" rest)
+      h <- loadTerms sig vars (assoc "auth" rest)
       cs <- loadCritSecs (assoc "critical-sections" rest)
       let genstates = (assoc "gen-st" rest)
       let facts = (assoc "facts" rest)
@@ -1191,8 +1191,8 @@ loadRest sig pos vars p gen gs insts orderings
       ug <- loadBaseTerms sig vars ug
       ab <- mapM (loadAbsent sig vars) ab
       pr <- mapM (loadNode heights) pr
-      cn <- loadBaseTerms sig vars cn
-      au <- loadBaseTerms sig vars au
+      cn <- loadTerms sig vars cn
+      au <- loadTerms sig vars au
       fs <- mapM (loadFact sig heights vars) fs
       lds <- loadOrderings heights leads
       genSts <- loadTerms sig vars genSts
