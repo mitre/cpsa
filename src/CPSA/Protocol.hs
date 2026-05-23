@@ -123,11 +123,11 @@ outbnd _ = Nothing
 
 
 evtIsLoad :: Event -> Bool
-evtIsLoad (In (ChMsg ch _))  = isLocn ch
+evtIsLoad (In (ChMsg Locn _ _))  = True -- isLocn ch
 evtIsLoad _ = False
 
 evtIsStor :: Event -> Bool
-evtIsStor (Out (ChMsg ch _))  = isLocn ch
+evtIsStor (Out (ChMsg Locn _ _))  = True -- isLocn ch
 evtIsStor _ = False
               
 evtIsState :: Event -> Bool
@@ -480,39 +480,39 @@ data AgreeData = Disagree
                | FullStore
 
 divergeAgreeStore :: Event -> AgreeData
-divergeAgreeStore (Out (ChMsg ch2 _))
-    | isLocn ch2 = FullStore
+divergeAgreeStore (Out (ChMsg ct _ _))
+    | ct == Locn = FullStore
     | otherwise = HalfStore
 
 divergeAgreeStore _ = HalfStore
 
 divergeAgreeOutChan :: Event -> AgreeData
-divergeAgreeOutChan (Out (ChMsg ch2 _))
-    | isLocn ch2 = HalfStore
+divergeAgreeOutChan (Out (ChMsg ct _ _))
+    | ct == Locn = HalfStore
     | otherwise = NonStore
 
 divergeAgreeOutChan _ = Disagree
 
 divergeAgreeOutPlain :: Event -> AgreeData
-divergeAgreeOutPlain (Out (ChMsg ch2 _))
-    | isLocn ch2 = HalfStore
+divergeAgreeOutPlain (Out (ChMsg ct _ _))
+    | ct == Locn = HalfStore
     | otherwise = Disagree
 
 divergeAgreeOutPlain (Out (Plain _)) = NonStore
 divergeAgreeOutPlain _               = Disagree
 
 divergeAgreeInChan :: Event -> AgreeData
-divergeAgreeInChan (Out (ChMsg ch2 _))
-    | isLocn ch2 = HalfStore
+divergeAgreeInChan (Out (ChMsg ct _ _))
+    | ct == Locn = HalfStore
     | otherwise = Disagree
 
 divergeAgreeInChan (Out (Plain _)) = Disagree
-divergeAgreeInChan (In (ChMsg _ _)) = NonStore
+divergeAgreeInChan (In (ChMsg _ _ _)) = NonStore
 divergeAgreeInChan _ = Disagree
 
 divergeAgreeInPlain :: Event -> AgreeData
-divergeAgreeInPlain (Out (ChMsg ch2 _))
-    | isLocn ch2 = HalfStore
+divergeAgreeInPlain (Out (ChMsg ct _ _))
+    | ct == Locn = HalfStore
     | otherwise = Disagree
                   
 divergeAgreeInPlain (In (Plain _)) = NonStore
@@ -521,12 +521,12 @@ divergeAgreeInPlain _ = Disagree
 -- 
 
 divergeEventsAgree :: Event -> Event -> AgreeData
-divergeEventsAgree (Out (ChMsg ch1 _))
-    | isLocn ch1  = divergeAgreeStore
+divergeEventsAgree (Out (ChMsg ct _ _))
+    | ct == Locn  = divergeAgreeStore
     | otherwise = divergeAgreeOutChan
 
 divergeEventsAgree (Out _)              = divergeAgreeOutPlain
-divergeEventsAgree (In (ChMsg _ _))     = divergeAgreeInChan
+divergeEventsAgree (In (ChMsg _ _ _))   = divergeAgreeInChan
 divergeEventsAgree (In _)               = divergeAgreeInPlain
 
 -- By a varTrail, we mean a list of terms without repetitions

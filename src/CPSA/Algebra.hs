@@ -85,7 +85,9 @@ module CPSA.Algebra (name, alias,
     isAtom,
     isStrdVar,
     isChan,
+    isChanSort,
     isLocn,
+    isLocnSort,
     isIndxVar,
     isIndxConst,
     intOfIndex,
@@ -540,14 +542,25 @@ varSym _ = False
 
 -- Is term a channel variable
 isChan :: Term -> Bool
-isChan (F Chan [I _]) = True
+isChan (F _ _) = True
+isChan (C _) = True
 isChan _ = False
+
+isChanSort :: Term -> Bool
+isChanSort (F Chan _) = True
+isChanSort _ = False
 
 -- Is term a location variable
 isLocn :: Term -> Bool
-isLocn (F Locn [I _]) = True
-isLocn (F (Tupl _) [F (Data "dev") [I _], F Locn [I _]]) = True
+--isLocn (F Locn [I _]) = True
+--isLocn (F (Tupl _) [F (Data "dev") [I _], F Locn [I _]]) = True
+isLocn (F _ _) = True
+isLocn (C _) = True
 isLocn _ = False
+
+isLocnSort :: Term -> Bool
+isLocnSort (F Locn _) = True
+isLocnSort _ = False
 
 -- Note that isVar of (D _) is false.
 isStrdVar :: Term -> Bool

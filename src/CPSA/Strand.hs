@@ -317,7 +317,7 @@ listenerTerm inst =
           cm <- inbnd (trace inst !! 0) -- Get first term in trace
           case cm of
             Plain t -> Just t
-            ChMsg _ _ -> Nothing
+            ChMsg _ _ _ -> Nothing
       _ -> Nothing              -- Not a listener strand
 
 -- Graphs
@@ -1091,21 +1091,16 @@ roleGenCheck k =
 
 -- Channel functions
 confCm :: Preskel -> ChMsg -> Bool
-confCm k e =
-  case cmChan e of
-    Just ch -> elem ch (kconf k) || isLocn ch
-    Nothing -> False
+confCm k (ChMsg ct ch _) =
+  elem ch (kconf k) || ct == Locn
+confCm _ (Plain _) = False
 
 authCm :: Preskel -> ChMsg -> Bool
-authCm k e =
-  case cmChan e of
-    Just ch -> elem ch (kauth k) ||
-               (isLocn ch &&
-                (let t = (cmTerm e) in
-                 elem t (kgenSt k) ||
-                 (isLocnMsg t &&
-                  elem (locnMsgPayload t) (kgenSt k))))
-    Nothing -> False
+authCm k (ChMsg ct ch t) =
+  elem ch (kauth k) ||
+          (ct == Locn && (elem t (kgenSt k) ||
+            isLocnMsg t && elem (locnMsgPayload t) (kgenSt k)))
+authCm _ (Plain _) = False
 
 -- Isomorphism Check
 
@@ -3009,8 +3004,8 @@ instAssocs i =
 -- For each variable, generate candidates by generating a fresh
 -- variable for subsets of the locations associated with the variable.
 separateVariable :: Preskel -> [(Term, Location)] -> Term -> [Candidate]
-separateVariable _ _ t | isChan t = [] -- Ignore channels
-separateVariable _ _ t | isLocn t = [] -- Ignore locations
+separateVariable _ _ t | isChanSort t = [] -- Ignore channels
+separateVariable _ _ t | isLocnSort t = [] -- Ignore locations
 -- Ignore group elements because of bugs in the algebra module
 separateVariable _ _ t | isExpr t = []
 separateVariable k ps t =
@@ -3630,7 +3625,7 @@ gcomponent t t' k (g, e) =
 
 isStateChMsg :: ChMsg -> Bool
 isStateChMsg (Plain _) = False
-isStateChMsg (ChMsg c _) = isLocn c
+isStateChMsg (ChMsg ct _ _) = ct == Locn
 
 nodeIsStateNode :: Preskel -> Node -> Bool
 nodeIsStateNode k p =
@@ -3678,12 +3673,12 @@ chMsgMatch chmsg chmsg' k e =
                  case m == m' of
                    True -> [e]
                    False -> nullSem k e
-             ChMsg _ _ -> nullSem k e)
-      ChMsg c m ->
+             ChMsg _ _ _ -> nullSem k e)
+      ChMsg ct c m ->
           (case chmsg' of
              Plain _ -> nullSem k e
-             ChMsg c' m' ->
-                 case c == c' && m == m' of
+             ChMsg ct' c' m' ->
+                 case ct == ct' && c == c' && m == m' of
                    True -> [e]
                    False -> nullSem k e)
 
@@ -3741,9 +3736,8 @@ nodeLocn (s,i) k =
     case dirChMsgOfNode (s,i) k of
       Nothing -> []
       Just (_, Plain _) -> []
-      Just (_, ChMsg c _)
-        | isLocn c -> [c]
-        | otherwise -> []
+      Just (_, ChMsg Chan _ _) -> []
+      Just (_, ChMsg Locn c _) -> [c]
 
 glocnSem :: NodeTerm -> Preskel -> (Gen,Env) -> [(Term,(Gen,Env))]
 glocnSem n k (g, e) =
@@ -4360,10 +4354,11 @@ urcommpair rule n n' k (g, e) =
                          Just (Send, _) -> None
                          Just (Recv, chmsg') ->
                              (case (chmsg, chmsg') of
-                                (Plain _, ChMsg _ _) -> None
-                                (ChMsg _ _, Plain _) -> None
+                                (Plain _, ChMsg _ _ _) -> None
+                                (ChMsg _ _ _, Plain _) -> None
                                 (Plain m, Plain m')  -> ureq rule m m' k (g, e)
-                                (ChMsg c m, ChMsg c' m') ->
+                                (ChMsg ct c m, ChMsg ct' c' m') ->
+                                    if ct /= ct' then None else
                                     case ureq rule c c' k (g, e) of
                                       None -> None
                                       Failing st -> Failing st
@@ -5086,10 +5081,11 @@ rcommpair name n n' k (g, e) =
                          Just (Send, _) -> []
                          Just (Recv, chmsg') ->
                              (case (chmsg, chmsg') of
-                                (Plain _, ChMsg _ _) -> []
-                                (ChMsg _ _, Plain _) -> []
+                                (Plain _, ChMsg _ _ _) -> []
+                                (ChMsg _ _ _, Plain _) -> []
                                 (Plain m, Plain m')  -> req name m m' k (g, e)
-                                (ChMsg c m, ChMsg c' m') ->
+                                (ChMsg ct c m, ChMsg ct' c' m') ->
+                                    if ct /= ct' then [] else
                                     do
                                       (k, (g,e)) <- req name c c' k (g, e)
                                       (k, (g,e)) <- req name m m' k (g, e)

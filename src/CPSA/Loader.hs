@@ -378,15 +378,15 @@ balancedStores c =
 
 locnsUnique :: Trace -> Bool
 locnsUnique [] = True
-locnsUnique ((In (ChMsg ch _)) : c') =
-    if isLocn ch
+locnsUnique ((In (ChMsg ct ch _)) : c') =
+    if ct == Locn
     then
         checkLoads c' [ch]
     else
         locnsUnique c'
     where
-      checkLoads ((In (ChMsg ch _)) : c') seen =
-          if isLocn ch
+      checkLoads ((In (ChMsg ct ch _)) : c') seen =
+          if ct == Locn
           then 
               not (ch `elem` seen) &&
               checkLoads c' (ch : seen)
@@ -394,14 +394,14 @@ locnsUnique ((In (ChMsg ch _)) : c') =
               locnsUnique c'
       checkLoads c' _ = locnsUnique c'
                         
-locnsUnique ((Out (ChMsg ch _)) : c') =
-    if isLocn ch
+locnsUnique ((Out (ChMsg ct ch _)) : c') =
+    if ct == Locn
     then
         checkStores c' [ch]
     else locnsUnique c'
     where
-      checkStores ((Out (ChMsg ch _)) : c') seen =
-          if isLocn ch
+      checkStores ((Out (ChMsg ct ch _)) : c') seen =
+          if ct == Locn
           then 
               not (ch `elem` seen) &&
               checkStores c' (ch : seen)
@@ -441,11 +441,11 @@ transitionIndices c =
     reverse $ loop [] 0 c
     where
       loop so_far _ [] = so_far
-      loop so_far i ((Out (ChMsg ch _)) : c')
-           | isLocn ch              = loop ((i,i) : so_far) (i+1) c'
+      loop so_far i ((Out (ChMsg ct _ _)) : c')
+           | ct == Locn              = loop ((i,i) : so_far) (i+1) c'
            | otherwise              = loop so_far (i+1) c'
-      loop so_far i ((In (ChMsg ch _)) : c')
-           | isLocn ch              =
+      loop so_far i ((In (ChMsg ct ch _)) : c')
+           | ct == Locn              =
                case subseqSend (i+1) ch c' of
                  Just j             -> loop ((i,j) : so_far) (i+1) c'
                  Nothing            -> loop so_far (i+1) c'
@@ -453,11 +453,11 @@ transitionIndices c =
       loop so_far i (_ : c')        = loop so_far (i+1) c'
 
       subseqSend _ _ []             = Nothing
-      subseqSend j ch ((In (ChMsg _ _)) : c')
+      subseqSend j ch ((In (ChMsg _ _ _)) : c')
                                     = subseqSend (j+1) ch c'
-      subseqSend j ch ((Out (ChMsg ch' _)) : c')
+      subseqSend j ch ((Out (ChMsg ct ch' _)) : c')
           | ch == ch'               = Just j
-          | isLocn ch'              = subseqSend (j+1) ch c'
+          | ct == Locn              = subseqSend (j+1) ch c'
           | otherwise               = Nothing
       subseqSend _ _ (_ : _)        = Nothing
 
@@ -482,12 +482,12 @@ stateSegments c =
       
       findSegments soFar _ [] = soFar
                                 
-      findSegments soFar i (In (ChMsg ch _) : c)
-          | isLocn ch           = findLower soFar i (i+1) c          
+      findSegments soFar i (In (ChMsg ct _ _) : c)
+          | ct == Locn          = findLower soFar i (i+1) c
           | otherwise           = findSegments soFar (i+1) c
 
-      findSegments soFar i ((Out (ChMsg ch _)) : c)
-          | isLocn ch           = findUpper soFar i (i+1) c           
+      findSegments soFar i ((Out (ChMsg ct _ _)) : c)
+          | ct == Locn          = findUpper soFar i (i+1) c
           | otherwise           = findSegments soFar (i+1) c
 
       findSegments soFar i (_ : c) =
@@ -495,8 +495,8 @@ stateSegments c =
 
       findLower soFar i j [] = (i,j-1) : soFar
                                
-      findLower soFar i j (In (ChMsg ch _) : c')
-          | isLocn ch           = findLower soFar i (j+1) c'
+      findLower soFar i j (In (ChMsg ct _ _) : c')
+          | ct == Locn           = findLower soFar i (j+1) c'
           | otherwise           = findSegments ((i,j-1) : soFar) (j+1) c'
                                   
       findLower soFar i j (In _ : c') = findSegments ((i,j-1) : soFar) (j+1) c'
@@ -505,8 +505,8 @@ stateSegments c =
 
       findUpper soFar i j [] = (i,j-1) : soFar
 
-      findUpper soFar i j (Out (ChMsg ch _) : c')
-          | isLocn ch           = findUpper soFar i (j+1) c'
+      findUpper soFar i j (Out (ChMsg ct _ _) : c')
+          | ct == Locn           = findUpper soFar i (j+1) c'
           | otherwise           = findSegments ((i,j-1) : soFar) (j+1) c'
                                   
       findUpper soFar i j (Out _ : c') = findSegments ((i,j-1) : soFar) (j+1) c'
@@ -611,7 +611,8 @@ notListenerPrefix _ = True
 -- Are there any locations used in the role?
 hasLocn :: Role -> Bool
 hasLocn rl =
-  any isLocn (tchans (rtrace rl))
+  any evtIsLoad (rtrace rl)
+  --any isLocn (tchans (rtrace rl))
 
 initPreRuleCS :: MonadFail m => Sig -> Gen -> Prot -> Role -> PreRules -> m (Gen, [Rule])
 initPreRuleCS sig gen _ rl pr =
@@ -846,7 +847,7 @@ badGroupMemberOccurrences vars events =
       checkGroupVar (Out _) v = isRndx v
       -- See IMPORTANT note above
       checkGroupVar (In (Plain _)) v = not (isRndx v) || True
-      checkGroupVar (In (ChMsg c _)) v = not (isRndx v) || isLocn c || True
+      checkGroupVar (In (ChMsg ct _ _)) v = not (isRndx v) || ct == Locn || True
 
       loop _ [] _ = Nothing
       loop gvs (e : evts) i =
@@ -907,12 +908,12 @@ loadTrace sig name gen vars xs =
             ch <- loadChan sig vars ch
             t <- loadTerm sig vars -- True
                  False t
-            loadTraceLoop gen newVars uniqs pr ((In $ ChMsg ch t) : events) rest
+            loadTraceLoop gen newVars uniqs pr ((In $ ChMsg Chan ch t) : events) rest
       loadTraceLoop gen newVars uniqs pr events ((L _ [S _ "send", ch, t]) : rest) =
           do
             ch <- loadChan sig vars ch
             t <- loadTerm sig vars True t
-            loadTraceLoop gen newVars uniqs pr ((Out $ ChMsg ch t) : events) rest
+            loadTraceLoop gen newVars uniqs pr ((Out $ ChMsg Chan ch t) : events) rest
       loadTraceLoop gen newVars uniqs pr events ((L _ [S pos "load", ch, t]) : rest) =
           do
             ch <- loadLocn sig vars ch
@@ -920,7 +921,7 @@ loadTrace sig name gen vars xs =
                  False t
             (gen, pt, pt_t) <- loadLocnTerm sig gen (S pos "pt") (S pos "pval") t
             loadTraceLoop gen (pt : newVars) uniqs pr
-                              ((In $ ChMsg ch pt_t) : events) rest
+                              ((In $ ChMsg Locn ch pt_t) : events) rest
 
       loadTraceLoop gen newVars uniqs pr events ((L _ [S pos "stor", ch, t]) : rest) =
           do
@@ -928,7 +929,7 @@ loadTrace sig name gen vars xs =
             t <- loadTerm sig vars True t
             (gen, pt, pt_t) <- loadLocnTerm sig gen (S pos "pt") (S pos "pval") t
             loadTraceLoop gen (pt : newVars) (pt : uniqs) pr
-                              ((Out $ ChMsg ch pt_t) : events) rest
+                              ((Out $ ChMsg Locn ch pt_t) : events) rest
 
       loadTraceLoop gen newVars uniqs pr events ((L _ [S pos "rely", form]) : rest) =
           case events of

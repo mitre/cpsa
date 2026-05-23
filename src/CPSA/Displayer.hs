@@ -214,14 +214,14 @@ displayTrace ctx trace =
     where
       displayDt (In (Plain t)) =
         L () [S () "recv", displayTerm ctx t]
-      displayDt (In (ChMsg ch t)) =
-          case isLocn ch of
+      displayDt (In (ChMsg ct ch t)) =
+          case ct == Locn of
             True ->  L () [S () "load", displayTerm ctx ch, displayTerm ctx t]
             False -> L () [S () "recv", displayTerm ctx ch, displayTerm ctx t]
       displayDt (Out (Plain t)) =
         L () [S () "send", displayTerm ctx t]
-      displayDt (Out (ChMsg ch t)) =
-          case isLocn ch of
+      displayDt (Out (ChMsg ct ch t)) =
+          case ct == Locn of
             True ->  L () [S () "stor", displayTerm ctx ch, displayTerm ctx t]
             False -> L () [S () "send", displayTerm ctx ch, displayTerm ctx t]
 
@@ -231,14 +231,14 @@ displayTraceNoPt ctx trace =
     where
       displayDt (In (Plain t)) =
         L () [S () "recv", displayTerm ctx t]
-      displayDt (In (ChMsg ch t)) =
-          case isLocn ch of
+      displayDt (In (ChMsg ct ch t)) =
+          case ct == Locn of
             True ->  L () [S () "load", displayTerm ctx ch, displayTermNoPt ctx t]
             False -> L () [S () "recv", displayTerm ctx ch, displayTerm ctx t]
       displayDt (Out (Plain t)) =
         L () [S () "send", displayTerm ctx t]
-      displayDt (Out (ChMsg ch t)) =
-          case isLocn ch of
+      displayDt (Out (ChMsg ct ch t)) =
+          case ct == Locn of
             True ->  L () [S () "stor", displayTerm ctx ch, displayTermNoPt ctx t]
             False -> L () [S () "send", displayTerm ctx ch, displayTerm ctx t]
 
@@ -402,7 +402,7 @@ displayOpCmts ctx ts =
 
 displayCmt :: Context -> CMT -> SExpr ()
 displayCmt ctx (CM (Plain t)) = displayTerm ctx t
-displayCmt ctx (CM (ChMsg ch t)) =
+displayCmt ctx (CM (ChMsg _ ch t)) =
   L () [S () "ch-msg", displayTerm ctx ch, displayTerm ctx t]
 displayCmt ctx (TM t) = displayTerm ctx t
 

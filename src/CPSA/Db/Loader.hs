@@ -87,7 +87,7 @@ loadEvt sig vars (L _ [S _ "recv", ch, t]) =
     do
       ch <- loadChan sig vars ch
       t <- loadTerm sig vars False t
-      return (In $ ChMsg ch t)
+      return (In $ ChMsg Chan ch t)
 loadEvt sig vars (L _ [S _ "send", t]) =
     do
       t <- loadTerm sig vars False t
@@ -96,17 +96,17 @@ loadEvt sig vars (L _ [S _ "send", ch, t]) =
     do
       ch <- loadChan sig vars ch
       t <- loadTerm sig vars False t
-      return (Out $ ChMsg ch t)
+      return (Out $ ChMsg Chan ch t)
 loadEvt sig vars (L _ [S _ "load", ch, t]) =
     do
       ch <- loadLocn sig vars ch
       t <- loadTerm sig vars False t
-      return (In $ ChMsg ch t)
+      return (In $ ChMsg Locn ch t)
 loadEvt sig vars (L _ [S _ "stor", ch, t]) =
     do
       ch <- loadLocn sig vars ch
       t <- loadTerm sig vars False t
-      return (Out $ ChMsg ch t)
+      return (Out $ ChMsg Locn ch t)
 loadEvt _ _ (L pos [S _ dir, _]) =
     fail (shows pos $ "Unrecognized direction " ++ dir)
 loadEvt _ _ x = fail (shows (annotation x) "Malformed event")

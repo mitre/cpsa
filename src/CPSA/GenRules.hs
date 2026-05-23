@@ -173,13 +173,13 @@ lastRecvOrFirstSendInCS rl start end =
     case drop start $ rtrace rl -- zero-based, so this retains the
                                 -- start node
     of
-      (In (ChMsg ch _) : c)
-          | start <= end && isLocn ch  -> loopLeft start c
+      (In (ChMsg ct _ _) : c)
+          | start <= end && ct == Locn -> loopLeft start c
           | otherwise                  -> error ("lastRecvOrFirstSendInCS:  Huh? " ++
                                                  (rname rl) ++ " at " ++ (show start) ++
                                                  " should be a state event")
-      (Out (ChMsg ch _) : _)
-          | start <= end && isLocn ch  -> Right start
+      (Out (ChMsg ct _ _) : _)
+          | start <= end && ct == Locn  -> Right start
           | otherwise                  -> error ("lastRecvOrFirstSendInCS:  Huh? " ++
                                                  (rname rl) ++ " at " ++ (show start) ++
                                                " should be a state event")
@@ -188,8 +188,8 @@ lastRecvOrFirstSendInCS rl start end =
                   " should be a state event")
     where -- i points to the index of a node that was definitely a
           -- load 
-      loopLeft i ((In (ChMsg ch _)) : c)
-          | i <= end && isLocn ch       = loopLeft (i+1) c
+      loopLeft i ((In (ChMsg ct _ _)) : c)
+          | i <= end && ct == Locn      = loopLeft (i+1) c
           | otherwise                   = Left i
       loopLeft i _                      = Left i   
     

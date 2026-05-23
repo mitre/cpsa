@@ -6,7 +6,7 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-module CPSA.Channel (ChMsg (..), cmTerm, cmTerms, cmMap, cmChan,
+module CPSA.Channel (CHType (..), ChMsg (..), cmTerm, cmTerms, cmMap, cmChan,
                      cmMatch, cmMatchRename, cmUnify, cmtSubstitute,
                      cmFoldCarriedTerms,
                      CMT (..),
@@ -24,47 +24,54 @@ import CPSA.Algebra
 -- A channel message is either a plain message or a channel and a
 -- message.
 
+data CHType
+  = Chan
+  | Locn
+  deriving (Show, Eq, Ord)
+
 data ChMsg
   = Plain !Term                 -- Plain message
-  | ChMsg !Term !Term           -- Channel and a message
+  | ChMsg !CHType !Term !Term   -- Channel and a message
   deriving (Show, Eq, Ord)
 
 -- Get channel message term
 cmTerm :: ChMsg -> Term
 cmTerm (Plain t) = t
-cmTerm (ChMsg _ t) = t
+cmTerm (ChMsg _ _ t) = t
 
 -- Get terms in channel message as a list
 cmTerms :: ChMsg -> [Term]
 cmTerms (Plain t) = [t]
-cmTerms (ChMsg ch t) = [ch, t]
+cmTerms (ChMsg _ ch t) = [ch, t]
 
 -- Get channel message channel
 cmChan :: ChMsg -> Maybe Term
 cmChan (Plain _) = Nothing
-cmChan (ChMsg ch _) = Just ch
+cmChan (ChMsg _ ch _) = Just ch
 
 -- Map term and the channel if its there in channel message
 cmMap :: (Term -> Term) -> ChMsg -> ChMsg
 cmMap f (Plain  t) = Plain $ f t
-cmMap f (ChMsg ch t) = ChMsg (f ch) (f t)
+cmMap f (ChMsg ct ch t) = ChMsg ct (f ch) (f t)
 
 -- Matching
 
 cmMatch :: ChMsg -> ChMsg -> (Gen, Env) -> [(Gen, Env)]
 cmMatch (Plain t) (Plain t') ge =
   match t t' ge
-cmMatch (ChMsg ch t) (ChMsg ch' t') ge =
-  do
-    ge <- match ch ch' ge
-    match t t' ge
+cmMatch (ChMsg ct ch t) (ChMsg ct' ch' t') ge
+  | ct /= ct' = []
+  | otherwise = do
+      ge <- match ch ch' ge
+      match t t' ge
 cmMatch _ _ _ = []
 
 -- Match insisting on renamings
 cmMatchRename :: ChMsg -> ChMsg -> (Gen, Env) -> [(Gen, Env)]
 cmMatchRename (Plain t) (Plain t') ge =
     matchRename t t' ge
-cmMatchRename (ChMsg ch t) (ChMsg ch' t') ge =
+cmMatchRename (ChMsg ct ch t) (ChMsg ct' ch' t') ge =
+  if ct /= ct' then [] else
     do
       ge <- matchRename ch ch' ge
       matchRename t t' ge
@@ -75,17 +82,18 @@ cmMatchRename _ _ _ = []
 cmUnify :: ChMsg -> ChMsg -> (Gen, Subst) -> [(Gen, Subst)]
 cmUnify (Plain t) (Plain t') gs =
   unify t t' gs
-cmUnify (ChMsg ch t) (ChMsg ch' t') gs =
-  do
-    gs <- unify ch ch' gs
-    unify t t' gs
+cmUnify (ChMsg ct ch t) (ChMsg ct' ch' t') gs =
+  if ct /= ct' then [] else
+    do
+      gs <- unify ch ch' gs
+      unify t t' gs
 cmUnify _ _ _ = []
 
 cmSubstitute :: Subst -> ChMsg -> ChMsg
 cmSubstitute subst t = cmMap (substitute subst) t
 
 cmFoldCarriedTerms :: (a -> CMT -> a) -> a -> ChMsg -> a
-cmFoldCarriedTerms f acc cm@(ChMsg _ t) =
+cmFoldCarriedTerms f acc cm@(ChMsg _ _ t) =
   foldCarriedTerms g (f acc (CM cm)) t
   where
     g acc t = f acc (TM t)
@@ -124,7 +132,7 @@ cmtTerm (TM t) = t
 cmtCarriedPlaces :: CMT -> ChMsg -> [Place]
 cmtCarriedPlaces (TM ct) (Plain t) =
   map (prefix 0) (carriedPlaces ct t)
-cmtCarriedPlaces (TM ct) (ChMsg _ t) =
+cmtCarriedPlaces (TM ct) (ChMsg _ _ t) =
   map (prefix 1) (carriedPlaces ct t)
 cmtCarriedPlaces (CM ct) cm
   | ct == cm = [Place []]
@@ -137,7 +145,7 @@ cmtAncestors :: ChMsg -> Place -> [CMT]
 cmtAncestors _ (Place []) = []
 cmtAncestors cm@(Plain t) (Place (0 : path)) =
   CM cm : map TM (ancestors t (Place path))
-cmtAncestors cm@(ChMsg _ t) (Place (1 : path)) =
+cmtAncestors cm@(ChMsg _ _ t) (Place (1 : path)) =
   CM cm : map TM (ancestors t (Place path))
 cmtAncestors _ _ = error "Channel.cmtAncestors: Bad path to term"
 

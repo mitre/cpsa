@@ -758,7 +758,7 @@ addListeners k ct pos eks n t escape cause =
            (k', n', phi, subst) <- addListener k n cause t',
            maybeSolved ct pos eks escape k' n' subst (kabsent k) ]
     where
-      f (ChMsg _ _) _ = True
+      f (ChMsg _ _ _) _ = True
       f (Plain t) t' = t /= t'
 
 escapeKeys :: [Term] -> Set CMT -> Set Term

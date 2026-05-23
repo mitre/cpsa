@@ -455,7 +455,7 @@ loadAlgTerm :: MonadFail m => Sig -> [Term] -> SExpr Pos -> m Term
 loadAlgTerm sig ts x =
   do
     t <- loadTerm sig ts False x
-    case isStrdVar t || isIndxVar t || isIndxConst t || isChan t || isLocn t of
+    case isStrdVar t || isIndxVar t || isIndxConst t of -- || isChan t || isLocn t of
       True -> fail (shows (annotation x) "Expecting an algebra term")
       False -> return t
 -- Load a term and make sure it does not have sort strd, or indx
