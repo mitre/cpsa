@@ -1,4 +1,19 @@
 CPSA NEWS -- history of user-visible changes.
+* Changes in version 4.4.9
+
+** Added top-level deflemma form. In addition to defskeleton and defgoal,
+   a user may now also include a deflemma. Each deflemma has a name
+   and a field to indicate whether it should be used as a goal, as a
+   rule for subsequent queries, or both. The manual has been updated
+   to document the usage.
+
+** Changed the way channels and locations work. Previously the channel
+   and location positions of events were required to be variables of
+   sort chan or locn. Now they may be any message term. Additionally,
+   the chan and locn sorts are now considered part of the message
+   algebra and hence can be included in protocol messages outside of
+   those specified locations. The manual has been updated to document
+   this feature and new examples have been added to the test suite.
 
 * Changes in version 4.4.8
 
