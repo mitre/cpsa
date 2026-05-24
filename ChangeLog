@@ -1,19 +1,24 @@
+2026-05-24 Paul D. Rowe <prowe@mitre.org>
+	* doc/cpsa4manual.pdf: Document new features in manual
+
+	* cpsa.cabal (Version): Tagged as version 4.4.9
+
 2026-05-23 Paul D. Rowe <prowe@mitre.org>
-   * src/CPSA/Signature.hs (defaultSig): Added dev as a default
-   atomic sort. Also added locn and chan to be valid sorts in 
-   the message algebra that can appear in messages.
+	* src/CPSA/Signature.hs (defaultSig): Added dev as a default
+	atomic sort. Also added locn and chan to be valid sorts in the
+	message algebra that can appear in messages.
 
-   * src/CPSA/Channel.hs (ChMsg, ChType, ...): Changed the structure
-   of ChMsg to include an argument indicating if it is a channel or
-   location. 
+	* src/CPSA/Channel.hs (ChMsg, ChType, ...): Changed the structure
+	of ChMsg to include an argument indicating if it is a channel or
+	location.
 
-   * src/CPSA/Algebra.hs (isChan, isLocn, ...): Allowed the channel 
-   and location positions of events to be any message term. 
+	* src/CPSA/Algebra.hs (isChan, isLocn, ...): Allowed the channel
+	and location positions of events to be any message term.
 
-   * src/CPSA/{Algebra.hs,Channel.hs,Cohort.hs,Db/Loader.hs,
-   Displayer.hs,GenRules.hs,LoadFormulas.hs,Loader.hs,Protocol.hs,
-   Strand.hs} (ChMsg): Threaded necessary changes to ChMsg data type
-   through all functions.
+	* src/CPSA/{Algebra.hs,Channel.hs,Cohort.hs,Db/Loader.hs,
+	Displayer.hs,GenRules.hs,LoadFormulas.hs,Loader.hs,Protocol.hs,
+	Strand.hs}: Threaded necessary changes to ChMsg data type through
+	all functions and fixed resulting incompatibilities.
 
 2026-03-16 Paul D. Rowe <prowe@mitre.org>
 

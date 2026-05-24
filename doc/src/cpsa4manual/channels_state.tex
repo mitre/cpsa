@@ -161,6 +161,13 @@ to add the instance of the assumption \emph{every time} it adds an
 instance of that role.  Since it is a much stronger assumption, it
 yields less precise analyses.
 
+Starting with {\cpsa} version 4.4.9, when a \verb|send| or \verb|recv|
+event has two arguments, the first channel argument can be any algebra
+term, not just a variable of the \verb|chan| sort. If a variable of
+sort \verb|mesg| is used, that variable must be acquired (i.e. its
+first occurrence in the role must be in a carried position of an
+inbound event). 
+
 \subsection{Yahalom with Channels}
 \label{sec:channels:state:ch:yahalom}
 
@@ -393,6 +400,17 @@ impossible, which might then never be displayed.
 
 The analysis from the initiator's point of view can then follow the
 same pattern.
+
+\paragraph{Message terms as channels.} The test suite has a version of
+the above channel-based description of Yahalom
+(\texttt{tst/chan-mesg.scm}) in which, instead of using arbitrary
+channel variables to name the channels, they are given names such as
+\verb|(cat a b)| to indicate is a channel intended to go from \verb|a|
+to \verb|b|. The user should be aware that if channel \verb|(cat a b)|
+is marked as authentic, then when \verb|b| receives a message on that
+channel, the sending party will necessarily agree with the values
+\verb|a| and \verb|b| whether or not those names appear in the message
+payload.
 
 \section{State}
 \label{sec:channels:state:state}
@@ -627,7 +645,7 @@ can't eat your cake at $n_1$ and have it too at $m$, at least not if
 $m$ follows $n_1$.
 
 Again, their concrete form may be found in the output of {\cpsa}
-specifications using state, such as~\texttt{examples/open-closed.tst}.
+specifications using state, such as~\texttt{tst/open-closed.tst}.
 
 \paragraph{Why these rules are consequences.}  Each of these rules is
 easily justified from the discrete-after and discrete-before rules,
@@ -710,9 +728,18 @@ it stores back the ``open'' value.  These events might be implemented
 by a sensor and an actuator in a real device.  Finally, it confirms
 success by sending the hash of the open request.
 
-A \verb|load| or \verb|stor| event always contains a location variable
-followed by a message term, just like a channel \verb|send| or
-\verb|recv| (Section~\ref{sec:channels:state:ch}).
+Starting with {\cpsa} version 4.4.9, a \verb|load| or \verb|stor|
+event may be followed by any pair of message terms. The first acts as
+a name for the location, just like a channel \verb|send| or
+\verb|recv| (Section~\ref{sec:channels:state:ch}). A particularly
+useful structure for a channel name is \verb|(cat d l)| where \verb|d|
+is a variable of sort \verb|dev| and \verb|l| is a variable of sort
+\verb|locn|. This can help to represent natural assumptions about
+stateful devices such as the fact that no role will update one
+location on one device and another location on another in the same
+transaction. If the locations can be viewed as fixed addresses on a
+device then one can even use \verb|(cat d "l")| with a constant to
+represent the location. 
 \ttindex{load}
 \ttindex{stor}
 
