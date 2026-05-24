@@ -161,16 +161,19 @@ Extra-Source-Files:
   tst/blanchet-strandmax.tst tst/blanchet.scm tst/blanchet.tst
   tst/bug_example.scm tst/bug_example.tst tst/cert_lang.scm
   tst/cert_lang.tst tst/chan-envelope.scm tst/chan-envelope.tst
-  tst/chan-perrig-song.scm tst/chan-perrig-song.tst
-  tst/chan-unilateral.scm tst/chan-unilateral.tst
-  tst/chan-yahalom-role-decl.scm tst/chan-yahalom-role-decl.tst
-  tst/chan-yahalom.scm tst/chan-yahalom.tst tst/commitment.scm
-  tst/commitment.tst tst/comp_test.scm tst/comp_test.tst
-  tst/completeness-test.scm tst/completeness-test.tst tst/crushing.scm
-  tst/crushing.tst tst/dass_simple.scm tst/dass_simple.tst
-  tst/denning-sacco.scm tst/denning-sacco.tst tst/deorig_contract.scm
+  tst/chan-mesg.scm tst/chan-mesg.tst tst/chan-perrig-song.scm
+  tst/chan-perrig-song.tst tst/chan-unilateral.scm
+  tst/chan-unilateral.tst tst/chan-yahalom-role-decl.scm
+  tst/chan-yahalom-role-decl.tst tst/chan-yahalom.scm
+  tst/chan-yahalom.tst tst/commitment.scm tst/commitment.tst
+  tst/comp_test.scm tst/comp_test.tst tst/completeness-test.scm
+  tst/completeness-test.tst tst/crushing.scm tst/crushing.tst
+  tst/dass_simple.scm tst/dass_simple.tst tst/denning-sacco.scm
+  tst/denning-sacco.tst tst/deorig_contract.scm
   tst/deorig_contract.tst tst/deorig_mesg.scm tst/deorig_mesg.tst
-  tst/deorig_simple.scm tst/deorig_simple.tst tst/dh_encrypt_hack.scm
+  tst/deorig_simple.scm tst/deorig_simple.tst
+  tst/dev-subatomic-open-closed.scm tst/dev-subatomic-open-closed.tst
+  tst/devlocn.scm tst/devlocn.tst tst/dh_encrypt_hack.scm
   tst/dh_encrypt_hack.tst tst/dh_group_sig_auth_failure.scm
   tst/dh_group_sig_auth_failure.tst tst/dh_group_sig.scm
   tst/dh_group_sig.tst tst/DH_hack.scm tst/DH_hack.tst
@@ -193,8 +196,9 @@ Extra-Source-Files:
   tst/incompleteness_example.tst tst/isoreject-corrected.scm
   tst/isoreject-corrected.tst tst/isoreject.scm tst/isoreject.tst
   tst/kelly1.scm tst/kelly1.tst tst/kerberos.scm tst/kerberos.tst
-  tst/locn_envelope.scm tst/locn_envelope.tst tst/mass.lsp
-  tst/mass.tst tst/mass2.lsp tst/mass2.tst tst/missing_contraction.scm
+  tst/lemmas.scm tst/lemmas.tst tst/locn_envelope.scm
+  tst/locn_envelope.tst tst/mass.lsp tst/mass.tst tst/mass2.lsp
+  tst/mass2.tst tst/missing_contraction.scm
   tst/missing_contraction.tst tst/neq_test.scm tst/neq_test.tst
   tst/neuman-stubblebine-reauth.lsp tst/neuman-stubblebine-reauth.tst
   tst/neuman-stubblebine.scm tst/neuman-stubblebine.tst
