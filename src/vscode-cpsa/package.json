@@ -150,5 +150,8 @@
         "mocha": "^10.2.0",
         "typescript": "^5.1.6",
         "@vscode/test-electron": "^2.3.3"
+    },
+    "overrides": {
+        "serialize-javascript": "7.0.5"
     }
 }
