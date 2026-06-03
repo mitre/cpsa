@@ -11,7 +11,6 @@
         "Programming Languages"
     ],
     "activationEvents": [
-        "onLanguage:cpsa",
         "workspaceContains:cpsa4.mk",
         "onCommand:vscode-cpsa.execCPSA4CurrentFile"
     ],
