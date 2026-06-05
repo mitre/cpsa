@@ -1191,7 +1191,7 @@ baseRndx (F Base [F Exp [F Genr [], G g]])
     loop [] (M.assocs g)
     where
       loop acc [] = Just acc
-      loop _ ((_, (Expt, _)) : _) = Nothing
+      loop _ ((_, (Expt, _)) : _) = Nothing -- PDR: why not loop without accumulating?
       loop acc ((id, (Rndx, _)) : maplets) =
         loop (baseBuild g id : acc) maplets
 baseRndx _ = Nothing
@@ -2743,7 +2743,7 @@ loadExpr sig vars True x = loadExpr sig vars False x
 loadOne :: MonadFail m => LoadFunction m
 loadOne _ _ _ False [] =
     return $ G M.empty
-loadOne _ pos _ True _ = fail (shows pos "Disallowed bare exponent")
+loadOne _ pos _ True _ = fail (shows pos "Disallowed bare expt")
 loadOne _ pos _ _ _ = fail (shows pos "Malformed one")
 
 loadRec :: MonadFail m => LoadFunction m
@@ -2751,7 +2751,7 @@ loadRec sig _ vars False [x] =
     do
       t <- loadExpr sig vars False x
       return $ G $ invert t
-loadRec _ pos _ True _ = fail (shows pos "Disallowed bare exponent")
+loadRec _ pos _ True _ = fail (shows pos "Disallowed bare expt")
 loadRec _ pos _ _ _ = fail (shows pos "Malformed rec")
 
 loadMul :: MonadFail m => LoadFunction m
@@ -2764,7 +2764,7 @@ loadMul sig _ vars False xs =
           do
             t <- loadExpr sig vars False x
             return $ mul t acc
-loadMul _ pos _ True _ = fail (shows pos "Disallowed bare exponent")
+loadMul _ pos _ True _ = fail (shows pos "Disallowed bare expt")
 
 loadCat :: MonadFail m => LoadFunction m
 loadCat sig _ vars strict (l : ls) =
