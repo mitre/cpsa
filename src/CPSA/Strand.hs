@@ -198,6 +198,16 @@ generalizeOnlyByDeletion = False -- True
 generalizeDeleteOnlyListeners :: Bool
 generalizeDeleteOnlyListeners = False -- True
 
+-- EXPERIMENT (global shape subsumption).  When True, switch to the
+-- alternate shape-finding path: generalization is restricted to listener
+-- deletion only (this flag forces both generalizeOnlyByDeletion and
+-- generalizeDeleteOnlyListeners behavior), and the driver (Reduction.hs)
+-- collects the realized leaves and computes shapes by a global homomorphism
+-- subsumption pass.  When False (default), behavior is exactly as before.
+-- See NOTES-global-shapes.md.
+useGlobalShapes :: Bool
+useGlobalShapes = False
+
 -- Instances and Strand Identifiers
 
 -- An Instance is an instance of a role, in the sense that each
@@ -2539,7 +2549,7 @@ separateVariablesLimit = 1024
 generalize :: Preskel -> [Candidate]
 generalize k =
     deleteNodes k' ++
-    if generalizeOnlyByDeletion then []
+    if generalizeOnlyByDeletion || useGlobalShapes then []
     else 
         (forgetAssumption k' ++
          weakenOrderings k' ++
@@ -2604,7 +2614,7 @@ delete node n in k
 
 deleteNodes :: Preskel -> [Candidate]
 deleteNodes k =
-    if generalizeDeleteOnlyListeners
+    if generalizeDeleteOnlyListeners || useGlobalShapes
     -- if true, only listeners are
     -- candidates for node deletion.
     -- Recommended *only* to crank down

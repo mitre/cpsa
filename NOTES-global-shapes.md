@@ -165,3 +165,37 @@ untouched.
 Build the branch with `cabal build exe:cpsa4 --allow-newer`; compare flag-on vs
 flag-off (or vs stock 4.4.9) per file with `cpsa4diff`. The `perftst` tool (with
 staged stock references) can drive the suite-wide comparison.
+
+## Stage 0 results (flag ON: listener-only generalization, NO subsumption yet)
+
+Shape counts (count of `(shape)` markers) vs stock 4.4.9:
+
+| protocol | stock | flag-ON | delta | cpsa4diff |
+|----------|-------|---------|-------|-----------|
+| ns       | 10    | 11      | +1    | DIFFER |
+| yahalom  | 2     | 8       | +6    | DIFFER |
+| envelope | 10    | 10      | 0     | MATCH  |
+| blanchet | 8     | 8       | 0     | MATCH  |
+| woolam   | 12    | 12      | 0     | MATCH  |
+| nsl3     | 3     | 8       | +5    | DIFFER |
+
+(NOTE: count `(shape)` markers, NOT `(defskeleton` — the latter counts every
+skeleton in the derivation tree, not the shapes.)
+
+Observations:
+- flag-ON OVER-reports shapes, as expected: with generalization restricted to
+  listener deletion and no subsumption yet, the forward search reports extra,
+  more-specific realized leaves as shapes that stock merges via generalization.
+- envelope/blanchet/woolam already MATCH: forward search + listener deletion
+  alone gives the right shapes there.
+- ns/yahalom/nsl3 over-report; the Stage 2 global subsumption pass (which only
+  removes subsumed leaves) is exactly what should merge these down.
+
+### Stage 3 validation note
+Because flag-ON over-reports, subsumption (removal-only) is the right tool. After
+Stage 2, compare flag-ON shapes to stock. `cpsa4diff` (isomorphism-based) should
+suffice IF the true shapes appear isomorphically among the leaves and the extras
+are strictly more specific. If instead the surviving flag-ON shapes are strictly
+more-specific specializations of stock shapes (homomorphism-related, not iso),
+a homomorphism-based equivalence is needed. Determine which at Stage 3 (start
+with yahalom: stock 2 vs flag-ON 8).
