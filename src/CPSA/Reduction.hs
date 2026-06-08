@@ -268,6 +268,105 @@ shapeSummary cands =
       maxLabels = [ l | (l, _, _) <- maxs ]
       verdicts = shapeVerdicts maxs cands
 
+-- Emit the global-subsumption summary from the accumulated candidates, on the
+-- global path only.  Used at the clean end of a problem AND at the two abort
+-- points (strand bound / step limit) so that an aborted run still gets a
+-- subsumption pass over the candidates found so far (otherwise its raw,
+-- un-subsumed candidates would all survive as shapes).
+emitShapeSummary :: Options -> Handle -> IORef [ShapeCand] -> IO ()
+emitShapeSummary p h sref =
+    if optGlobalShapes p
+      then do { cands <- readIORef sref; wrt p h (shapeSummary (reverse cands)) }
+      else return ()
+
+-- Phase 4.3: in-process rewrite of the finished output FILE -----------
+-- Run at BOTH run-termination points -- the clean end (solve []) and the
+-- abort end (dump []), since the latter exits the process via `abort` and
+-- never returns to Main.  On the global path with file output, apply the
+-- verdicts the search emitted as (comment "global-subsumption" ...) forms:
+-- rewrite each subsumed shape's (shape) to (seen S)(seen-ops (S (subsumption
+-- m))) and drop the verdict comments.  Same result as a cpsa4subsume run but
+-- reusing the cheap in-search verdicts.  stdout/pipes keep the comments and
+-- rely on cpsa4subsume.
+finishGlobalShapes :: Options -> IO ()
+finishGlobalShapes p =
+    case (optGlobalShapes p, optFile p) of
+      (True, Just path) -> applyGlobalSubsumption (optMargin p) path
+      _ -> return ()
+
+applyGlobalSubsumption :: Int -> FilePath -> IO ()
+applyGlobalSubsumption margin path =
+    do
+      rh <- openFile path ReadMode
+      ph <- posHandle path rh
+      sexprs <- readAllSExprs ph    -- strict: fully read before reopening
+      hClose rh
+      let verds = collectVerdicts sexprs
+          out = [ rewriteSubsumed verds (strip s)
+                | s <- sexprs, not (isSubsumptionComment s) ]
+      wh <- openFile path WriteMode
+      mapM_ (writeLnSExpr wh margin) out
+      hClose wh
+
+-- Read every S-expression from a handle (strict in IO so the file may be
+-- reopened for writing afterward).
+readAllSExprs :: PosHandle -> IO [SExpr Pos]
+readAllSExprs p =
+    do
+      x <- gentlyReadSExpr p
+      case x of
+        Nothing -> return []
+        Just s -> do { rest <- readAllSExprs p; return (s : rest) }
+
+-- A (comment "global-subsumption" ...) verdict form.
+isSubsumptionComment :: SExpr a -> Bool
+isSubsumptionComment (L _ (S _ "comment" : Q _ "global-subsumption" : _)) = True
+isSubsumptionComment _ = False
+
+-- Verdicts (subsumedLabel, (subsumerLabel, strandMap)) parsed from the
+-- (subsumed L by M (subsumption m...)) entries of the verdict comments.
+collectVerdicts :: [SExpr a] -> [(Int, (Int, [Int]))]
+collectVerdicts sexprs =
+    [ (lc, (lm, [ n | N _ n <- ms ]))
+    | L _ (S _ "comment" : Q _ "global-subsumption" : rest) <- sexprs
+    , L _ (S _ "subsumed" : N _ lc : S _ "by" : N _ lm :
+           L _ (S _ "subsumption" : ms) : _) <- rest ]
+
+-- Rewrite a subsumed shape's (shape) marker; pass everything else through.
+rewriteSubsumed :: [(Int, (Int, [Int]))] -> SExpr () -> SExpr ()
+rewriteSubsumed verds s@(L () (S () "defskeleton" : rest))
+    | any isShapeForm rest =
+        case labelOf s >>= flip lookup verds of
+          Just (lm, m) -> L () (S () "defskeleton" : concatMap (repl lm m) rest)
+          Nothing -> s
+    where
+      repl lm m e
+          | isShapeForm e =
+              [ L () [S () "seen", N () lm],
+                L () [S () "seen-ops",
+                      L () [N () lm, L () (S () "subsumption" : map (N ()) m)]] ]
+          | otherwise = [e]
+rewriteSubsumed _ s = s
+
+isShapeForm :: SExpr a -> Bool
+isShapeForm (L _ (S _ "shape" : _)) = True
+isShapeForm _ = False
+
+labelOf :: SExpr a -> Maybe Int
+labelOf (L _ (_ : rest)) =
+    case [ n | L _ [S _ "label", N _ n] <- rest ] of
+      (n : _) -> Just n
+      [] -> Nothing
+labelOf _ = Nothing
+
+-- Strip position annotations so rewritten () nodes and untouched nodes share
+-- a type.
+strip :: SExpr a -> SExpr ()
+strip (S _ s)  = S () s
+strip (Q _ s)  = Q () s
+strip (N _ n)  = N () n
+strip (L _ xs) = L () (map strip xs)
+
 -- Contains the result of applying the cohort reduction rule.  The
 -- ReductStable case reports a shape
 
@@ -300,8 +399,10 @@ parMap = map
 -- Entry point for analysis
 -- n is the step count
 solve :: Options -> Handle -> [Preskel] -> Int -> IO ()
-solve _ h [] _ =                -- Done
-    hClose h
+solve p h [] _ =                -- Done
+    do
+      hClose h
+      finishGlobalShapes p      -- Phase 4.3 rewrite at the clean run end
 solve p h (k : ks) n =
     do
       wrt p h (displayProt (protocol k)) -- show protocol
@@ -386,18 +487,16 @@ breadth :: Options -> Handle -> IORef [ShapeCand] -> [Preskel] -> Int -> Int -> 
 breadth p h sref ks _ n _ [] [] =       -- Empty todo list and toobig list
     do
       wrt p h (comment "Nothing left to do")
-      -- EXPERIMENT (global shapes): on the global path, reduce the collected
-      -- shape candidates to the maximal shapes and emit the subsumption
-      -- summary comment.  (On the generalization path nothing was collected.)
-      if optGlobalShapes p
-        then do
-               cands <- readIORef sref
-               wrt p h (shapeSummary (reverse cands))
-        else return ()
+      -- EXPERIMENT (global shapes): reduce the collected shape candidates to
+      -- the maximal shapes and emit the subsumption summary comment.
+      emitShapeSummary p h sref
       solve p h ks n            -- Solve next problem
-breadth p h _sref _ _ _ _ [] toobig = -- Empty todo list and non-null toobig list
+breadth p h sref _ _ _ _ [] toobig = -- Empty todo list and non-null toobig list
     do
       wrt p h (comment "Strand bound exceeded--aborting run")
+      -- EXPERIMENT (global shapes): subsume the candidates found so far before
+      -- aborting, so they are not all emitted raw.
+      emitShapeSummary p h sref
       dump p h (reverse toobig)  "Strand bound exceeded"
 breadth p h sref ks m n seen todo toobig =
     step p h sref ks m seen n void [] toobig (parMap (branch p seen) todo)
@@ -407,10 +506,13 @@ step :: Options -> Handle -> IORef [ShapeCand] -> [Preskel] -> Int -> Seen -> In
         Seen -> [LPreskel] -> [LPreskel] -> [Reduct t g s e] -> IO ()
 step p h sref ks m oseen n seen todo toobig [] = -- Empty reducts
     breadth p h sref ks m n (merge seen oseen) (reverse todo) toobig
-step p h _sref _ m _ n _ todo toobig reducts
+step p h sref _ m _ n _ todo toobig reducts
     | n > m =                   -- Check step count
         do
           wrt p h (comment "Step limit exceeded--aborting run")
+          -- EXPERIMENT (global shapes): subsume the candidates found so far
+          -- before aborting, so they are not all emitted raw.
+          emitShapeSummary p h sref
           dump p h (mktodo reducts todo toobig) "Step limit exceeded"
 step p h sref ks m oseen n seen todo toobig (Reduct lk _ _  _  : reducts)
     | nstrands (content lk) >= optBound p = -- Check strand count
@@ -613,9 +715,10 @@ children p (n, todo) k =        -- Label a preskeleton here
 
 -- Print partial results in a form that works with analysis tools
 dump :: Options -> Handle -> [LPreskel] -> String -> IO ()
-dump _ h [] msg =
+dump p h [] msg =
     do
       hClose h
+      finishGlobalShapes p      -- Phase 4.3 rewrite before aborting the run
       abort msg
 dump p h (lk : lks) msg =
     do

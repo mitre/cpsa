@@ -48,6 +48,13 @@
   timeout), ERR=0 (all rewritten files parse).
   Follow-up: switch global-path marker to (shape candidate) when graph tooling
   updated (TODO at ReductStable site).
+- 4.3 follow-up: subsumption now also runs on ABORTED runs.  dump/abort exits
+  the process, so applyGlobalSubsumption was moved into Reduction
+  (finishGlobalShapes) and is called at both solve[] (clean) and dump[] (abort);
+  emitShapeSummary added to the two abort clauses.  Fixed dy.lsp (266 -> 2,
+  ISOMORPHIC to stock).
+- .lsp suite: 7/7 new path == corrected stock (ISOMORPHIC).
+- Stock byte-identity re-confirmed after 4.2/4.3/abort: 127/127.
 - 4.4 DEFERRED.  Then plan step 6 (full regression: .scm then .lsp).
 - Full detail appended to NOTES-global-shapes.md (2026-06-07 section).
 

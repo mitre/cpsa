@@ -1020,6 +1020,37 @@ ReductStable accumulation site in Reduction.hs).
   (both 6), where the post-processor reference had it as an unparseable timeout.
   Outputs in /tmp/val43.
 
+## Phase 4.3 follow-up — subsumption on ABORTED runs (bug found + fixed)
+Testing the .lsp suite surfaced a bug: on an aborted run (strand/step limit)
+the 4.3 file rewrite never ran, so all raw candidates survived un-subsumed
+(dy.lsp: 266 shapes vs stock 2).  Root cause: `dump` ends the run by calling
+`abort` (which exits the process), so control never returned to Main's
+post-`solve` rewrite call.
+Fixes (Reduction.hs):
+- `emitShapeSummary` is now also called at the two abort points -- breadth's
+  strand-bound clause and step's step-limit clause -- so the candidates found
+  before the abort still get a subsumption pass (those clauses now use `sref`,
+  formerly `_sref`).
+- `applyGlobalSubsumption` was MOVED from Main.hs into Reduction.hs and wrapped
+  as `finishGlobalShapes :: Options -> IO ()` (no-op unless global path + file
+  output).  It is invoked at BOTH run-termination points: `solve []` (clean
+  end) and `dump []` (abort end, before `abort`).  Main.go no longer calls it.
+Result: dy.lsp -o now yields 2 shapes, ISOMORPHIC to corrected stock, even
+though the run still aborts (exit 1 -- analysis incomplete but partial shapes
+correctly subsumed).  General gain: any strand/step-limit abort on the new path
+now emits a properly-subsumed shape set instead of raw candidates.
+
+### .lsp suite validation (7 files)
+new path vs corrected stock (`--generalize --no-deorig`): 7/7 ISOMORPHIC
+(dy, epmo_acctnum, mass, mass2, neuman-stubblebine-reauth,
+wide-mouth-frog-scyther, wide-mouth-frog).  Golden B (`--generalize`, deorig on)
+== Golden A on all 7 (deorig shape-neutral here).  dy/mass/mass2/etc. abort on
+the step limit on all paths (rc=1) but subsume correctly.
+
+### Stock regression re-confirmed after 4.2/4.3/abort changes
+`--generalize --no-deorig` over all 127 .scm: IDENTICAL=127, BYTEDIFF=0.  The
+new-path machinery does not perturb the stock path.
+
 ## Current build/flag state
 Default binary = NEW path (`optGlobalShapes=True`, `optDeorig=True`).  Stock via
 `--generalize --no-deorig`; Golden B config via `--generalize`.  No rebuild

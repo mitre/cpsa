@@ -155,20 +155,11 @@ go name origin files herald opts sexprs =
               case optTryYoungNodesFirst opts of
                 True -> writeComment h m "Younger nodes tried first"
                 False -> return ()
-              -- Analyze
+              -- Analyze.  The Phase 4.3 in-process subsumption rewrite of the
+              -- output file is performed inside solve/dump (Reduction.hs) at
+              -- both the clean and aborted run-termination points, so it is
+              -- not invoked here.
               solve opts h preskels 0
-              -- EXPERIMENT (global shapes), Phase 4.3: when writing to a file
-              -- on the global path, apply the in-search subsumption verdicts
-              -- (the global-subsumption comments emitted during the run),
-              -- rewriting each subsumed shape's (shape) to
-              -- (seen S)(seen-ops (S (subsumption m))) and dropping the verdict
-              -- comments.  This yields the same corrected file as cpsa4subsume
-              -- but reuses the cheap in-search verdicts.  stdout/pipes keep the
-              -- comments and rely on cpsa4subsume.
-              case (optGlobalShapes opts, optFile opts) of
-                (True, Just path) ->
-                    applyGlobalSubsumption (optMargin opts) path
-                _ -> return ()
 
 -- Just pretty the expanded macros
 prettyPrint :: Options -> [SExpr a] -> IO ()
@@ -417,85 +408,3 @@ assoc :: String -> [SExpr a] -> [SExpr a]
 assoc key alist =
     concat [ rest | L _ (S _ head : rest) <- alist, key == head ]
 
--- EXPERIMENT (global shapes), Phase 4.3 ------------------------------------
--- Rewrite a finished output FILE in place using the subsumption verdicts the
--- search emitted as (comment "global-subsumption" ...) forms.  For every
--- subsumed shape, replace its (shape) marker with
---   (seen S) (seen-ops (S (subsumption m)))
--- where S is the maximal shape that subsumes it and m the strand map, then
--- drop the verdict comments.  The result matches a cpsa4subsume run but reuses
--- the cheap in-search verdicts instead of recomputing homomorphisms.  Only
--- invoked for file output on the global path; stdout/pipes keep the comments
--- and rely on cpsa4subsume.
-applyGlobalSubsumption :: Int -> FilePath -> IO ()
-applyGlobalSubsumption margin path =
-    do
-      rh <- openFile path ReadMode
-      ph <- posHandle path rh
-      sexprs <- readAllSExprs ph    -- strict: fully read before reopening
-      hClose rh
-      let verds = collectVerdicts sexprs
-          out = [ rewriteSubsumed verds (strip s)
-                | s <- sexprs, not (isSubsumptionComment s) ]
-      wh <- openFile path WriteMode
-      mapM_ (writeLnSExpr wh margin) out
-      hClose wh
-
--- Read every S-expression from a handle (strict in IO so the file may be
--- reopened for writing afterward).
-readAllSExprs :: PosHandle -> IO [SExpr Pos]
-readAllSExprs p =
-    do
-      x <- gentlyReadSExpr p
-      case x of
-        Nothing -> return []
-        Just s -> do { rest <- readAllSExprs p; return (s : rest) }
-
--- A (comment "global-subsumption" ...) verdict form.
-isSubsumptionComment :: SExpr a -> Bool
-isSubsumptionComment (L _ (S _ "comment" : Q _ "global-subsumption" : _)) = True
-isSubsumptionComment _ = False
-
--- Verdicts (subsumedLabel, (subsumerLabel, strandMap)) parsed from the
--- (subsumed L by M (subsumption m...)) entries of the verdict comments.
-collectVerdicts :: [SExpr a] -> [(Int, (Int, [Int]))]
-collectVerdicts sexprs =
-    [ (lc, (lm, [ n | N _ n <- ms ]))
-    | L _ (S _ "comment" : Q _ "global-subsumption" : rest) <- sexprs
-    , L _ (S _ "subsumed" : N _ lc : S _ "by" : N _ lm :
-           L _ (S _ "subsumption" : ms) : _) <- rest ]
-
--- Rewrite a subsumed shape's (shape) marker; pass everything else through.
-rewriteSubsumed :: [(Int, (Int, [Int]))] -> SExpr () -> SExpr ()
-rewriteSubsumed verds s@(L () (S () "defskeleton" : rest))
-    | any isShapeForm rest =
-        case labelOf s >>= flip lookup verds of
-          Just (lm, m) -> L () (S () "defskeleton" : concatMap (repl lm m) rest)
-          Nothing -> s
-    where
-      repl lm m e
-          | isShapeForm e =
-              [ L () [S () "seen", N () lm],
-                L () [S () "seen-ops",
-                      L () [N () lm, L () (S () "subsumption" : map (N ()) m)]] ]
-          | otherwise = [e]
-rewriteSubsumed _ s = s
-
-isShapeForm :: SExpr a -> Bool
-isShapeForm (L _ (S _ "shape" : _)) = True
-isShapeForm _ = False
-
-labelOf :: SExpr a -> Maybe Int
-labelOf (L _ (_ : rest)) =
-    case [ n | L _ [S _ "label", N _ n] <- rest ] of
-      (n : _) -> Just n
-      [] -> Nothing
-labelOf _ = Nothing
-
--- Strip position annotations so rewritten () nodes and untouched nodes share
--- a type.
-strip :: SExpr a -> SExpr ()
-strip (S _ s)  = S () s
-strip (Q _ s)  = Q () s
-strip (N _ n)  = N () n
-strip (L _ xs) = L () (map strip xs)
