@@ -13,6 +13,8 @@ module CPSA.Reduction (solve) where
 
 import System.IO
 import Control.Parallel
+import Data.IORef (IORef, newIORef, readIORef, modifyIORef')
+import Data.Maybe (isJust)
 import qualified Data.List as L
 import CPSA.Lib.Utilities
 import CPSA.Lib.SExpr
@@ -124,7 +126,8 @@ type IPreskel = (Preskel, Int)
 
 stronglyIsomorphic :: Preskel -> Preskel -> [Sid]
 stronglyIsomorphic k1 k2 =
-    loop $ findIsomorphisms (gist k1) (gist k2)
+    loop $ findIsomorphisms (gist k1) (gist k2) (prob k1) (prob k2)
+    -- loop $ findIsomorphisms (gist k1) (gist k2)
     where
       loop [] = []
       loop ((_, _, sm) : maps) =
@@ -193,6 +196,78 @@ void = Seen []
 merge :: Seen -> Seen -> Seen
 merge (Seen xs) (Seen ys) = Seen (xs ++ ys)
 
+-- EXPERIMENT (global shapes): in-search shape subsumption -------------
+--
+-- On the global-shapes path, generalization is restricted to listener
+-- deletion, so every realized leaf is reported as a (shape) candidate --
+-- an over-report.  We collect these candidates per problem (a ShapeCand
+-- is its label, skeleton, and pov->strand map prob) in an IORef threaded
+-- through the search, then at end of problem reduce them to the maximal
+-- shapes by pov-respecting homomorphism subsumption, recording for each
+-- subsumed candidate which maximal shape subsumes it.  This is the
+-- in-process, incremental equivalent of the cpsa4subsume post-processor,
+-- but it compares each candidate only against the (small) maximal set
+-- rather than all pairs.
+
+type ShapeCand = (Int, Preskel, [Sid])    -- (label, skeleton, prob)
+
+-- A verdict for one subsumed shape: (subsumed label, subsumer label,
+-- homomorphism strand map from the subsumer's strands into the subsumed
+-- shape's strands -- the orientation cpsa4subsume records in seen-ops).
+type ShapeVerdict = (Int, Int, [Sid])
+
+-- True when skeleton ksub (with prob psub) subsumes kobj (with prob pobj),
+-- i.e. there is a pov-respecting homomorphism ksub -> kobj.
+subsumesK :: Preskel -> [Sid] -> Preskel -> [Sid] -> Bool
+subsumesK ksub psub kobj pobj = isJust (homomorphismMapWith psub pobj ksub kobj)
+
+-- Pass 1: the maximal (surviving) shapes -- an antichain under
+-- subsumption.  Insert candidates one at a time: drop the newcomer if some
+-- incumbent subsumes it; otherwise evict any incumbents it subsumes and
+-- keep it.  The search has already removed pov-isomorphic duplicates, so
+-- subsumption between any two distinct candidates is strict (no ties), and
+-- the result is independent of insertion order.
+maximalShapes :: [ShapeCand] -> [ShapeCand]
+maximalShapes = foldl insert []
+    where
+      insert maxs c@(_, kc, pc)
+          | any (\(_, ks, ps) -> subsumesK ks ps kc pc) maxs = maxs
+          | otherwise = c : filter keep maxs
+          where
+            keep (_, ks, ps) = not (subsumesK kc pc ks ps)
+
+-- Pass 2: for each candidate that is not maximal, find a maximal shape
+-- that subsumes it and record the direct verdict.  By transitivity some
+-- maximal shape always subsumes it, so this never comes up empty; pointing
+-- at a maximal shape (with a direct map) avoids subsumed-points-to-subsumed
+-- chains.
+shapeVerdicts :: [ShapeCand] -> [ShapeCand] -> [ShapeVerdict]
+shapeVerdicts maxs cands =
+    [ (lc, lm, m)
+    | (lc, kc, pc) <- cands, lc `notElem` maxLabels
+    , (lm, m) <- take 1 [ (lm, mp)
+                        | (lm, ks, ps) <- maxs
+                        , Just mp <- [homomorphismMapWith ps pc ks kc] ] ]
+    where
+      maxLabels = [ l | (l, _, _) <- maxs ]
+
+-- Build the end-of-problem subsumption summary comment: the surviving
+-- (maximal) shape labels, and for each subsumed shape its subsumer and the
+-- witnessing strand map.  Phase 4.3 will consume these to rewrite (shape)
+-- markers; for now they are informational and cross-checked against
+-- cpsa4subsume.
+shapeSummary :: [ShapeCand] -> SExpr ()
+shapeSummary cands =
+    L () (S () "comment" : Q () "global-subsumption" :
+          L () (S () "shapes" : map (N ()) maxLabels) :
+          [ L () [S () "subsumed", N () lc, S () "by", N () lm,
+                  L () (S () "subsumption" : map (N ()) m)]
+          | (lc, lm, m) <- verdicts ])
+    where
+      maxs = maximalShapes cands
+      maxLabels = [ l | (l, _, _) <- maxs ]
+      verdicts = shapeVerdicts maxs cands
+
 -- Contains the result of applying the cohort reduction rule.  The
 -- ReductStable case reports a shape
 
@@ -230,6 +305,10 @@ solve _ h [] _ =                -- Done
 solve p h (k : ks) n =
     do
       wrt p h (displayProt (protocol k)) -- show protocol
+      -- EXPERIMENT (global shapes): fresh per-problem shape-candidate
+      -- accumulator, threaded through the search and consumed at end of
+      -- problem in breadth's terminal clause.
+      sref <- newIORef []
       case firstSkeleton k of
         [] ->                  -- Input cannot be made into a skeleton
             do
@@ -240,7 +319,7 @@ solve p h (k : ks) n =
         [k'] ->
             if isomorphic (gist k) (gist k') then -- Input was a skeleton
                 let lk' = LPreskel k' n 0 Nothing in
-                begin p h ks (n + optLimit p) (n + 1)
+                begin p h sref ks (n + optLimit p) (n + 1)
                          (hist (k', n)) lk'
             else                -- Input was not a skeleton
                 do
@@ -248,45 +327,45 @@ solve p h (k : ks) n =
                   wrt p h (commentPreskel lk [] (unrealized k) Ordinary
                            Preskeleton "Not a skeleton")
                   let lk' = withParent k' (n + 1) lk
-                  begin p h ks (n + optLimit p) (n + 2)
+                  begin p h sref ks (n + optLimit p) (n + 2)
                            (hist (k', n + 1)) lk'
         _ -> error "Main.solve: can't handle more than one skeleton"
 
 -- Begin by applying rules as much as possible.
-begin :: Options -> Handle -> [Preskel] -> Int -> Int -> Seen ->
+begin :: Options -> Handle -> IORef [ShapeCand] -> [Preskel] -> Int -> Int -> Seen ->
          LPreskel -> IO ()
-begin p h ks m n seen lk =
+begin p h sref ks m n seen lk =
   let k = content lk in
   case rewrite k of
-    Nothing -> search p h ks m n seen [lk] []
+    Nothing -> search p h sref ks m n seen [lk] []
     Just kids ->
       do
         wrt p h (commentPreskel lk [] (unrealized k) Ordinary
                   Nada "Not closed under rules")
         let (n', seen', todo', _) =
               foldl (next lk) (n, seen, [], []) kids
-        search p h ks m n' seen' (reverse todo') []
+        search p h sref ks m n' seen' (reverse todo') []
 
 -- Apply collapse until all possibilities are exhausted.
-search :: Options -> Handle -> [Preskel] -> Int -> Int -> Seen ->
+search :: Options -> Handle -> IORef [ShapeCand] -> [Preskel] -> Int -> Int -> Seen ->
             [LPreskel] -> [LPreskel] -> IO ()
-search p h ks m n seen [] done =
-    mode p h ks m n seen (reverse done)
-search p h ks m n seen (lk:todo) done =
+search p h sref ks m n seen [] done =
+    mode p h sref ks m n seen (reverse done)
+search p h sref ks m n seen (lk:todo) done =
     do
       let kids = concatMap simplify (collapse $ content lk)
       let (n', seen', todo', _) =
               foldl (next lk) (n, seen, todo, []) kids
-      search p h ks m n' seen' todo' (lk:done)
+      search p h sref ks m n' seen' todo' (lk:done)
 
 -- Select reduction mode, noIsoChk or normal
-mode :: Options -> Handle -> [Preskel] -> Int -> Int -> Seen ->
+mode :: Options -> Handle -> IORef [ShapeCand] -> [Preskel] -> Int -> Int -> Seen ->
         [LPreskel] -> IO ()
-mode p h ks m n seen todo =
+mode p h sref ks m n seen todo =
     if optNoIsoChk p then
-        fast p h ks m n todo     -- Peform no isomorphism checks
+        fast p h sref ks m n todo     -- Peform no isomorphism checks
     else
-        breadth p h ks m n seen todo []
+        breadth p h sref ks m n seen todo []
 
 -- The main loop is implemented using breadth and step.  Tail calls
 -- are used to ensure they do not add to the control stack.
@@ -302,53 +381,70 @@ mode p h ks m n seen todo =
 -- seen holds the gists of seen skeletons
 -- todo holds unreduced skeletons
 -- toobig holds skeletons that have exceed the strand bound.
-breadth :: Options -> Handle -> [Preskel] -> Int -> Int -> Seen ->
+breadth :: Options -> Handle -> IORef [ShapeCand] -> [Preskel] -> Int -> Int -> Seen ->
            [LPreskel] -> [LPreskel] -> IO ()
-breadth p h ks _ n _ [] [] =       -- Empty todo list and toobig list
+breadth p h sref ks _ n _ [] [] =       -- Empty todo list and toobig list
     do
       wrt p h (comment "Nothing left to do")
+      -- EXPERIMENT (global shapes): on the global path, reduce the collected
+      -- shape candidates to the maximal shapes and emit the subsumption
+      -- summary comment.  (On the generalization path nothing was collected.)
+      if optGlobalShapes p
+        then do
+               cands <- readIORef sref
+               wrt p h (shapeSummary (reverse cands))
+        else return ()
       solve p h ks n            -- Solve next problem
-breadth p h _ _ _ _ [] toobig = -- Empty todo list and non-null toobig list
+breadth p h _sref _ _ _ _ [] toobig = -- Empty todo list and non-null toobig list
     do
       wrt p h (comment "Strand bound exceeded--aborting run")
       dump p h (reverse toobig)  "Strand bound exceeded"
-breadth p h ks m n seen todo toobig =
-    step p h ks m seen n void [] toobig (parMap (branch p seen) todo)
+breadth p h sref ks m n seen todo toobig =
+    step p h sref ks m seen n void [] toobig (parMap (branch p seen) todo)
 
 -- Function step handles one skeleton in one level of the tree.
-step :: Options -> Handle -> [Preskel] -> Int -> Seen -> Int ->
+step :: Options -> Handle -> IORef [ShapeCand] -> [Preskel] -> Int -> Seen -> Int ->
         Seen -> [LPreskel] -> [LPreskel] -> [Reduct t g s e] -> IO ()
-step p h ks m oseen n seen todo toobig [] = -- Empty reducts
-    breadth p h ks m n (merge seen oseen) (reverse todo) toobig
-step p h _ m _ n _ todo toobig reducts
+step p h sref ks m oseen n seen todo toobig [] = -- Empty reducts
+    breadth p h sref ks m n (merge seen oseen) (reverse todo) toobig
+step p h _sref _ m _ n _ todo toobig reducts
     | n > m =                   -- Check step count
         do
           wrt p h (comment "Step limit exceeded--aborting run")
           dump p h (mktodo reducts todo toobig) "Step limit exceeded"
-step p h ks m oseen n seen todo toobig (Reduct lk _ _  _  : reducts)
+step p h sref ks m oseen n seen todo toobig (Reduct lk _ _  _  : reducts)
     | nstrands (content lk) >= optBound p = -- Check strand count
-        step p h ks m oseen n seen todo (lk : toobig) reducts
-step p h ks m oseen n seen todo toobig (ReductStable lk : reducts) =
+        step p h sref ks m oseen n seen todo (lk : toobig) reducts
+step p h sref ks m oseen n seen todo toobig (ReductStable lk : reducts) =
     case recall (content lk) seen of
       Just (_, _) ->
       --           z ("seen", label lk) $
-          step p h ks m oseen n seen todo toobig reducts
+          step p h sref ks m oseen n seen todo toobig reducts
       Nothing ->
           do
+            -- EXPERIMENT (global shapes): on the global path this realized
+            -- leaf is a shape *candidate*; record it for end-of-problem
+            -- subsumption.  Both paths still emit (shape) for now so the
+            -- graph tooling keeps working; once that tooling is updated,
+            -- change the global-path marker emitted here to (shape candidate).
+            if optGlobalShapes p
+              then modifyIORef' sref
+                     ((label lk, content lk, prob (content lk)) :)
+              else return ()
             wrt p h (commentPreskel lk [] [] Shape Nada "")
       -- z ("unseen", label lk) $
-            step p h ks m oseen n seen todo toobig reducts
+            step p h sref ks m oseen n seen todo toobig reducts
 
-step p h ks m oseen n seen todo toobig (Genlz lk size kids dups : reducts)
+step p h sref ks m oseen n seen todo toobig (Genlz lk size kids dups : reducts)
     | dieOnGeneralization =
         do
           let ns = unrealized (content lk)
           wrt p h (commentPreskel lk [] ns Ordinary Dead "died of generalization")
-          step p h ks m oseen n seen todo toobig reducts
+          step p h sref ks m oseen n seen todo toobig reducts
     | otherwise =
-      step p h ks m oseen n seen todo toobig (Reduct lk size kids dups : reducts)
+      step p h sref ks m oseen n seen todo toobig (Reduct lk size kids dups : reducts)
 
-step p h ks m oseen n seen todo toobig (Reduct lk size kids dups : reducts)
+step p h sref ks m oseen n seen todo toobig (Reduct lk size kids dups : reducts)
     | optGoalsSat p &&
       goalsPresent lk &&
       noCounterExamples lk = -- Stop if goals satisfied mode?
@@ -356,7 +452,7 @@ step p h ks m oseen n seen todo toobig (Reduct lk size kids dups : reducts)
           let ns = unrealized (content lk)
           let shape = if null ns then Shape else Fringe
           wrt p h (commentPreskel lk [] ns shape SatisfiesAll "satisfies all")
-          step p h ks m oseen n seen todo toobig reducts
+          step p h sref ks m oseen n seen todo toobig reducts
     | size <= 0 =               -- Interpret empty reducts
         do
           let ns = unrealized (content lk)
@@ -365,12 +461,12 @@ step p h ks m oseen n seen todo toobig (Reduct lk size kids dups : reducts)
               --               True -> wrt p h (commentPreskel lk [] ns Shape Nada "")
               --               False  ->
           wrt p h (commentPreskel lk [] ns Ordinary Dead "empty cohort")
-          step p h ks m oseen n seen todo toobig reducts
+          step p h sref ks m oseen n seen todo toobig reducts
     | optDepth p > 0 && depth lk >= optDepth p =
         do
           let ns = unrealized (content lk)
           wrt p h (commentPreskel lk [] ns Fringe Nada "")
-          step p h ks m oseen n seen todo toobig reducts
+          step p h sref ks m oseen n seen todo toobig reducts
     | otherwise =
         do
           let (n', seen', todo', dups') =
@@ -380,7 +476,7 @@ step p h ks m oseen n seen todo toobig (Reduct lk size kids dups : reducts)
           let msg = shows size $ showString " in cohort - " $
                          shows u " not yet seen"
           wrt p h (commentPreskel lk (reverse dups') ns Ordinary Nada msg)
-          step p h ks m oseen n' seen' todo' toobig reducts
+          step p h sref ks m oseen n' seen' todo' toobig reducts
 
 -- Expands one branch in the derivation tree.
 branch :: Options -> Seen -> LPreskel -> Reduct t g s e
@@ -403,7 +499,10 @@ mkMode p =
     Mode { noGeneralization = optNoIsoChk p,
            nonceFirstOrder = optCheckNoncesFirst p,
            visitOldStrandsFirst = optTryOldStrandsFirst p,
-           reverseNodeOrder = optTryYoungNodesFirst p}
+           reverseNodeOrder = optTryYoungNodesFirst p,
+           -- EXPERIMENT (global shapes): runtime flags, formerly compile-time.
+           globalShapes = optGlobalShapes p,
+           deorig = optDeorig p}
 
 -- The Seen skeleton's label with the duplicate skeleton
 type SeenSkel = (Int, Preskel)
@@ -476,22 +575,22 @@ next p (n, seen, todo, dups) k =
             lk = withParent k n p -- Label a preskeleton here
 
 -- This function reduces without checking for isomorphisms
-fast :: Options -> Handle -> [Preskel] -> Int -> Int -> [LPreskel] -> IO ()
-fast p h ks _ n [] =            -- Empty todo list
+fast :: Options -> Handle -> IORef [ShapeCand] -> [Preskel] -> Int -> Int -> [LPreskel] -> IO ()
+fast p h _sref ks _ n [] =            -- Empty todo list
     do
       wrt p h (comment "Nothing left to do")
       solve p h ks n
-fast p h _ m n todo
+fast p h _sref _ m n todo
     | n > m =                   -- Check step count
         do
           wrt p h (comment "Step limit exceeded--aborting run")
           dump p h todo "Step limit exceeded"
-fast p h _ _ _ todo@(lk : _)
+fast p h _sref _ _ _ todo@(lk : _)
     | nstrands (content lk) >= optBound p = -- Check strand count
         do
           wrt p h (comment "Strand bound exceeded--aborting run")
           dump p h todo "Strand bound exceeded"
-fast p h ks m n (lk : todo) =
+fast p h _sref ks m n (lk : todo) =
     do
       let ns = unrealized (content lk)
       let red = reduce (mkMode p) (content lk)
@@ -506,7 +605,7 @@ fast p h ks m n (lk : todo) =
                      Gnl _ -> Ordinary)
       wrt p h (commentPreskel lk [] ns shape Nada msg)
       let (n', todo') = foldl (children lk) (n, []) ks'
-      fast p h ks m n' (todo ++ reverse todo')
+      fast p h _sref ks m n' (todo ++ reverse todo')
 
 children :: LPreskel -> (Int, [LPreskel]) -> Preskel -> (Int, [LPreskel])
 children p (n, todo) k =        -- Label a preskeleton here

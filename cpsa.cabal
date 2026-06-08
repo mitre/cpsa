@@ -290,6 +290,41 @@ Executable cpsa4
     CPSA.Displayer CPSA.Cohort CPSA.Operation
     CPSA.Lib.Expand CPSA.Reduction CPSA.Signature
 
+-- EXPERIMENT (global shape subsumption): post-processor that rewrites
+-- subsumed shapes from a listener-deletion-only run into seen-children.
+Executable cpsa4subsume
+  Main-Is:              CPSA/Subsume/Main.hs
+  Default-Language:     Haskell2010
+  Build-Depends:        base >= 4.13 && < 5, containers >= 0.8 && < 0.9,
+    parallel >= 3.3.0 && < 3.4, deepseq >= 1.4.8 && < 1.5
+  GHC-Options:
+    -Wall -fno-warn-name-shadowing -fwarn-unused-imports -threaded -rtsopts
+  Hs-Source-Dirs:       src
+  Other-Modules:
+    Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.ReturnFail CPSA.Lib.Pretty
+    CPSA.Lib.SExpr CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Options
+    CPSA.Algebra CPSA.Protocol CPSA.Strand CPSA.Characteristic
+    CPSA.Channel CPSA.LoadFormulas CPSA.GenRules CPSA.Loader
+    CPSA.Displayer CPSA.Cohort CPSA.Operation
+    CPSA.Lib.Expand CPSA.Reduction CPSA.Signature
+
+-- EXPERIMENT (global shape subsumption): shape-set isomorphism comparator.
+Executable cpsa4cmp
+  Main-Is:              CPSA/Cmp/Main.hs
+  Default-Language:     Haskell2010
+  Build-Depends:        base >= 4.13 && < 5, containers >= 0.8 && < 0.9,
+    parallel >= 3.3.0 && < 3.4, deepseq >= 1.4.8 && < 1.5
+  GHC-Options:
+    -Wall -fno-warn-name-shadowing -fwarn-unused-imports -threaded -rtsopts
+  Hs-Source-Dirs:       src
+  Other-Modules:
+    Paths_cpsa CPSA.Lib.Utilities CPSA.Lib.ReturnFail CPSA.Lib.Pretty
+    CPSA.Lib.SExpr CPSA.Lib.Printer CPSA.Lib.Entry CPSA.Options
+    CPSA.Algebra CPSA.Protocol CPSA.Strand CPSA.Characteristic
+    CPSA.Channel CPSA.LoadFormulas CPSA.GenRules CPSA.Loader
+    CPSA.Displayer CPSA.Cohort CPSA.Operation
+    CPSA.Lib.Expand CPSA.Reduction CPSA.Signature
+
 Executable cpsa4sas
   Main-Is:              CPSA/SAS/Main.hs
   Default-Language:     Haskell2010
