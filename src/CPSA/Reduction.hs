@@ -602,7 +602,7 @@ mkMode p =
            nonceFirstOrder = optCheckNoncesFirst p,
            visitOldStrandsFirst = optTryOldStrandsFirst p,
            reverseNodeOrder = optTryYoungNodesFirst p,
-           -- EXPERIMENT (global shapes): runtime flags, formerly compile-time.
+           -- homcheck: runtime flags, formerly compile-time.
            globalShapes = optGlobalShapes p,
            deorig = optDeorig p}
 
