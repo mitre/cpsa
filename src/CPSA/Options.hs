@@ -17,6 +17,12 @@ data Options = Options {
       optTryOldStrandsFirst :: Bool, -- True when visiting old strands first
       optTryYoungNodesFirst :: Bool, -- True when visiting young nodes first
       optGoalsSat :: Bool , -- True when goals satisfied stops tree expansion
+      -- EXPERIMENT (global shapes): runtime selection of the shape-finding
+      -- path, replacing the former compile-time flags.  Both default True
+      -- (the new path); CLI flags turn each off independently.
+      optGlobalShapes :: Bool,  -- True => generalization restricted to listener
+                                -- deletion + global homomorphism subsumption
+      optDeorig :: Bool,        -- True => deorigination augmentation fix on
       optLimit :: Int,          -- Step count limit
       optBound :: Int,          -- Strand cound bound
       optDepth :: Int,          -- Tree depth bound
@@ -34,6 +40,8 @@ defaultOptions = Options {
   optTryOldStrandsFirst = False,
   optTryYoungNodesFirst = False,
   optGoalsSat = False,
+  optGlobalShapes = True,       -- EXPERIMENT (global shapes): new path default
+  optDeorig = True,             -- EXPERIMENT (global shapes): deorig on default
   optLimit = 2000,
   optBound = 12,
   optDepth = 0,                 -- Infinite
