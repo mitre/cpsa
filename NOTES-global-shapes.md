@@ -1137,11 +1137,27 @@ Default binary = NEW path (`optGlobalShapes=True`, `optDeorig=True`).  Stock via
 `--generalize --no-deorig`; Golden B config via `--generalize`.  No rebuild
 needed to switch (runtime flags).
 
+## (shape candidate) marker (DONE)
+On the global path a realized leaf is now emitted as `(shape candidate)` rather
+than `(shape)`; the generalization path still emits `(shape)` (byte-identical to
+stock).  Implementation (Reduction.hs): new `Kind` ctor `Candidate` with
+`addKindKey Candidate = addKeyValues "shape" [S () "candidate"]` and
+`isFringe Candidate = True`; the stable-reduct emit (both the breadth/step site
+and the fast site) branches on `optGlobalShapes`; the `satisfies` key fires for
+`Candidate` too.  After subsumption the SURVIVING candidates are promoted back
+to plain `(shape)` and subsumed ones become `(seen ...)`, in BOTH the in-process
+4.3 rewrite (`rewriteSubsumed`, new `promote`) and `cpsa4subsume`
+(`emit`/`promoteShape`).  So `(shape candidate)` is the transient pre-subsumption
+marker; a finished `-o` file (or a cpsa4subsume pipe) is form-identical to a
+generalization-path result.  All downstream tools recognise `(shape candidate)`
+via the existing `isShapeForm` (matches `(shape : _)`).  Verified: stock
+byte-identical; new-path vs Golden A unchanged (cpsa4cmp is marker-agnostic).
+
 ## NEXT
-- Phase 4.3 DONE for file output.  Remaining 4.3 follow-up: switch the
-  global-path shape marker to `(shape candidate)` once graph tooling is updated
-  (TODO comment at the ReductStable site in Reduction.hs).
-- Phase 4.4 (deferred): deorig generation-gating for timestamping/wonthull2.
+- Phase 4.4 (deferred): deorig generation-gating -- NOTE this is now largely
+  MOOT: the cyclic-unification fix made timestamping/wonthull complete, so the
+  generation explosion that motivated 4.4 is gone.  Revisit only if a new
+  protocol shows runaway generation.
 - Comprehensive regression (plan step 6): full suite .scm then .lsp.
 - Helper scripts: /tmp/gen_golden.sh, /tmp/gen_newpath.sh, /tmp/cmp_golden.sh,
   /tmp/validate_41.sh, /tmp/validate_42.sh, /tmp/gen_val43.sh.  Subplan in

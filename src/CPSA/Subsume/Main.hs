@@ -120,8 +120,18 @@ emit verdict s
     | isShapeDefskel s =
         case labelOf s >>= \lbl -> lookup lbl verdict of
           Just (Just (sl, m)) -> rewriteShape (strip s) sl m
-          _                   -> strip s
+          -- Surviving (maximal) shape: promote a (shape candidate) marker to
+          -- a plain (shape).
+          _                   -> promoteShape (strip s)
     | otherwise = strip s
+
+-- Normalize a surviving shape's (shape candidate) marker (from the
+-- global-shapes path) to a plain (shape).
+promoteShape :: SExpr () -> SExpr ()
+promoteShape (L () elems) = L () (map f elems)
+    where f e | isShapeForm e = L () [S () "shape"]
+              | otherwise = e
+promoteShape s = s
 
 -- Replace the (shape) marker of a defskeleton with a seen/seen-ops pair
 -- recording the subsuming shape sl and the homomorphism strand map m.

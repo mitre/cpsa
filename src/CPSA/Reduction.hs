@@ -338,7 +338,8 @@ rewriteSubsumed verds s@(L () (S () "defskeleton" : rest))
     | any isShapeForm rest =
         case labelOf s >>= flip lookup verds of
           Just (lm, m) -> L () (S () "defskeleton" : concatMap (repl lm m) rest)
-          Nothing -> s
+          -- Surviving (maximal) candidate: promote (shape candidate) to (shape).
+          Nothing -> L () (S () "defskeleton" : map promote rest)
     where
       repl lm m e
           | isShapeForm e =
@@ -346,6 +347,8 @@ rewriteSubsumed verds s@(L () (S () "defskeleton" : rest))
                 L () [S () "seen-ops",
                       L () [N () lm, L () (S () "subsumption" : map (N ()) m)]] ]
           | otherwise = [e]
+      promote e | isShapeForm e = L () [S () "shape"]
+                | otherwise = e
 rewriteSubsumed _ s = s
 
 isShapeForm :: SExpr a -> Bool
@@ -526,14 +529,14 @@ step p h sref ks m oseen n seen todo toobig (ReductStable lk : reducts) =
           do
             -- EXPERIMENT (global shapes): on the global path this realized
             -- leaf is a shape *candidate*; record it for end-of-problem
-            -- subsumption.  Both paths still emit (shape) for now so the
-            -- graph tooling keeps working; once that tooling is updated,
-            -- change the global-path marker emitted here to (shape candidate).
+            -- subsumption and mark it (shape candidate).  On the generalization
+            -- path it is a genuine (shape).
             if optGlobalShapes p
               then modifyIORef' sref
                      ((label lk, content lk, prob (content lk)) :)
               else return ()
-            wrt p h (commentPreskel lk [] [] Shape Nada "")
+            wrt p h (commentPreskel lk [] []
+                     (if optGlobalShapes p then Candidate else Shape) Nada "")
       -- z ("unseen", label lk) $
             step p h sref ks m oseen n seen todo toobig reducts
 
@@ -702,7 +705,9 @@ fast p h _sref ks m n (lk : todo) =
                    Gnl kids -> (length kids, kids))
       let msg = show len ++ " in cohort"
       let shape = (case red of
-                     Stable -> Shape
+                     -- EXPERIMENT (global shapes): (shape candidate) on the
+                     -- global path, (shape) otherwise.
+                     Stable -> if optGlobalShapes p then Candidate else Shape
                      Crt _ -> Ordinary
                      Gnl _ -> Ordinary)
       wrt p h (commentPreskel lk [] ns shape Nada msg)
@@ -744,7 +749,8 @@ commentPreskel lk seen unrealized kind anno msg =
                      (map displaySeen sortedSeen) $
     addKeyValues realizedToken (map displayNode $ L.sort unrealized) $
     addKindKey kind $ addAnnoKey anno $
-    condAddKeyValues "satisfies" (kind == Shape && (not $ null $ kgoals k))
+    condAddKeyValues "satisfies"
+                     ((kind == Shape || kind == Candidate) && (not $ null $ kgoals k))
     (reportSatisfies k) $
     -- Structure preserving maps
     -- Added for cpsasas program
@@ -788,6 +794,11 @@ maybeAddVKeyValues key f (Just x) rest =
 data Kind
     = Ordinary
     | Shape
+    -- EXPERIMENT (global shapes): a realized leaf on the global-shapes path,
+    -- before subsumption.  Emitted as (shape candidate) and treated as a
+    -- fringe; cpsa4subsume / the in-process rewrite turn the surviving ones
+    -- back into shapes.
+    | Candidate
     | Fringe
     | Aborted
       deriving (Eq, Show)
@@ -795,12 +806,14 @@ data Kind
 addKindKey :: Kind -> [SExpr ()] -> [SExpr ()]
 addKindKey Ordinary xs = xs
 addKindKey Shape xs = addKeyValues "shape" [] xs
+addKindKey Candidate xs = addKeyValues "shape" [S () "candidate"] xs
 addKindKey Fringe xs = addKeyValues "fringe" [] xs
 addKindKey Aborted xs = addKeyValues "aborted" [] xs
 
 isFringe :: Kind -> Bool
 isFringe Ordinary = False
 isFringe Shape = True
+isFringe Candidate = True
 isFringe Fringe = True
 isFringe Aborted = False
 
