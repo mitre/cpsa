@@ -817,7 +817,12 @@ merely homomorphism-related).
 - **wonthull2: divergence both ways.**  The protocol is explicitly a known
   incompleteness example involving deorigination; flag-ON and stock each find 2
   shapes the other does not.  Needs its own study.
-- **dh-ca_hack: under-report (−1).**  The concerning direction: a real shape is
+- **dh-ca_hack: under-report (−1).**  [RESOLVED 2026-06-07 -- see "dh-ca_hack
+  RESOLVED" below: this was NOT an under-report.  Stock OVER-reports (70);
+  cpsa4subsume collapses the stock output to 69 too, isomorphic to the new
+  path.  The extra stock shape survives only because variable separation hits
+  its 1024 cap.  The new path's 69 is correct.]  Original (superseded) reading:
+  The concerning direction: a real shape is
   missing.  Either (a) an `homomorphismExists` **false positive** wrongly subsumed
   a 6-strand leaf (possible DH-algebra gap in `skelToConj` and/or `validateEnv`),
   or (b) a reachability gap.  Since all 69 flag-ON shapes are valid stock shapes
@@ -1050,6 +1055,82 @@ the step limit on all paths (rc=1) but subsume correctly.
 ### Stock regression re-confirmed after 4.2/4.3/abort changes
 `--generalize --no-deorig` over all 127 .scm: IDENTICAL=127, BYTEDIFF=0.  The
 new-path machinery does not perturb the stock path.
+
+## Full-suite 3-config comparison (both / gen / none)
+Ran every .scm in three configs and compared pairwise with cpsa4cmp:
+  both = --generalize --no-deorig (old cpsa)
+  gen  = --generalize            (old + deorig)
+  none = default                 (new subsumption path + deorig)
+120/127 files: all three complete and ISOMORPHIC.  Only 7 non-trivial rows
+(both/gen/none shape counts; differences as cfg:label):
+- deorig completeness gains (gen==none, both misses one): deorig_simple (1/2/2),
+  incompleteness_example (1/2/2), wonthull (2/3/3), wonthull3 (4/5/5).
+- ns-rebinding (7/7/8): none keeps a shape BOTH generalization configs drop
+  (variable separation loses it); subsumption MORE complete.
+- dh-ca_hack (70/70/69): see resolution below.
+- timestamping (2 / 0-timeout / 0-timeout): gen and none time out (deorig
+  generation explosion, deferred Phase 4.4); only `both` completes.
+No .scm aborted on a strand/step limit at its herald bound; the only incomplete
+runs in the whole suite are timestamping's two deorig timeouts.  (wonthull2.scm
+herald set to bound 14 so deorig completes.)  Table: /tmp/exp_all/table.md.
+
+### dh-ca_hack RESOLVED (was logged above as a "concerning under-report")
+Earlier notes flagged flag-ON's 69 vs stock 70 as possibly dropping a real
+shape.  Resolved: it is the OPPOSITE -- generalization OVER-reports.  Running
+cpsa4subsume on the generalization outputs collapses BOTH of them 70 -> 69, and
+all three 69-sets (subsumed-both, subsumed-gen, new-path none) are mutually
+ISOMORPHIC.  The extra stock shape (label 159 in this run) is homomorphically
+subsumed by another shape; it survives stock only because variable separation
+hits its 1024-subset cap and cannot merge it, whereas homomorphism subsumption
+can.  So on dh-ca_hack the new path's 69 is the CORRECT (more general) answer,
+not an under-report.  This is a second case (with ns-rebinding) where global
+subsumption is strictly better than local generalization.
+
+## Deorigination: cyclic-unification bug (timestamping) FIXED
+The deorig generation explosion on timestamping (and any protocol with carried
+mesg vars) turned out to be a genuine ALGEBRA bug, not a deorig-design flaw.
+
+Root cause (found by bisection, full marker trace):
+- The hang is a single non-terminating `Algebra.unify`.  `unify` ends with
+  `chaseMap`, which fully resolves the substitution range via the RECURSIVE
+  `substChase`.  The occurs-check in `unifyTerms` (`| occurs x t`) chases only
+  SHALLOWLY, so it admits a TRANSITIVE cycle (x := f y while y := g x already in
+  the subst).  `chaseMap` then loops forever resolving the cycle.
+- Deorigination is the first thing that unifies a received message-sort variable
+  with the critical term, which is exactly what can close such a transitive
+  cycle.  Stock unification never creates one, so stock never hits it.
+- Manifestation chain: the looping `unify` is inside `cmtUnify` in `deoriginate`;
+  earlier it looked like the hang was in carriedOnlyWithin / augment, but those
+  were never actually reached -- control never returned from `cmtUnify`.
+
+Fix (Algebra.hs):
+- New `acyclicSubst :: Subst -> Bool`: memoized three-colour DFS over the
+  variable-dependency graph (key x -> the var Ids in the bound term).  Ids are
+  collected by a plain recursive walk over every Term constructor (I/D/X vars +
+  group var keys); do NOT use `foldVars`, which ERRORS on key-component forms
+  like `(Invk (akey x))`/`(pubk x)` that occur in substitution ranges.
+- `unify` now checks `acyclicSubst s` after `unifyChase` builds the substitution
+  but BEFORE `chaseMap`; cyclic results fail cleanly (return []) instead of
+  hanging.  This fires only on cyclic substitutions, which stock never produces,
+  so flag-OFF stays byte-for-byte identical.
+- `deoriginate` reverted to the clean cowt-based form (no mesg-var guard, no
+  per-candidate acyclic guard); the unify-level fix handles it.
+
+Validation:
+- timestamping: 0s, 2 shapes, ISOMORPHIC to stock (was a >400s timeout).
+- wonthull family + wonthull4 (mesg-var variant): 3 / 6 / 5 / 6, gains intact.
+- STOCK byte-identity (`--generalize --no-deorig`, 127 .scm): IDENTICAL=126,
+  FAIL=0 (the only diffs are wonthull2's intentional bound-14 herald and
+  wonthull4 which has no golden ref).  Earlier this run FAILED=7 because the
+  first `acyclicSubst` used `foldVars` and crashed; the recursive Id walk fixed
+  it.  Wall time unchanged (~61s) -- the per-unify acyclic check is not a
+  measurable slowdown.
+- NEW path vs Golden A (full .scm suite): SAME(iso)=121, DIFF=6, ERR=0.  The 6
+  are exactly the 4 deorig gains + ns-rebinding/dh-ca_hack var-sep.  timestamping
+  is now in the 121 ISOMORPHIC.  This effectively resolves the deferred Phase 4.4
+  generation-explosion concern -- timestamping was its motivating case.
+- Test suite additions: tst/wonthull2.scm herald set to bound 14 (so the deorig
+  search completes); tst/wonthull4.scm (user-added mesg-var deorig case).
 
 ## Current build/flag state
 Default binary = NEW path (`optGlobalShapes=True`, `optDeorig=True`).  Stock via

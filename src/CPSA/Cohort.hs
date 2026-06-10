@@ -718,7 +718,11 @@ deoriginate ct escape past subst
           In inT <- past,
           sub <- S.toList (cmFoldCarriedTerms (flip S.insert) S.empty inT),
           s  <- cmtUnify sub ct subst,        -- receive the critical term
-          s' <- fold ct escape inT s ]        -- pull it within the escape set
+                                              -- (cyclic unifications now fail
+                                              -- cleanly in Algebra.unify)
+          -- Re-establish carried-only-within over the whole past via the
+          -- stock cowt engine (guarded + nubSnd-deduped + fixpoint).
+          s' <- cowt ct escape past [s] ]
 -- end EXPERIMENT (wonthull2 deorigination) ---------------------------
 
 -- Terms considered for binding with the carried terms in an outbound

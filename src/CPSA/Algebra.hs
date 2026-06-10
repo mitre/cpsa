@@ -93,6 +93,7 @@ module CPSA.Algebra (name, alias,
     intOfIndex,
     termsWellFormed,
     occursIn,
+    acyclicSubst,
     foldVars,
     foldCarriedTerms,
     carriedBy,
@@ -733,6 +734,48 @@ occursIn t t' | isVar t =
   subterm (I $ varId t) t'
 occursIn t _ =
   error $ "Algebra.occursIn: Bad variable " ++ show t
+
+-- True when a substitution is acyclic: fully resolving any variable
+-- terminates.  The unifier's occurs-check (unifyTerms) uses a SHALLOW chase
+-- and so admits transitive cycles such as x := f y while y := g x already
+-- sits in the substitution; applying such a substitution builds an infinite
+-- term that hangs every structural traversal (e.g. carriedOnlyWithin).  This
+-- is a chase-deep cycle check over the variable-dependency graph (key x ->
+-- the variables occurring in the bound term).  Used to reject cyclic
+-- substitutions that deorigination can produce by unifying a received
+-- message-sort variable with the critical term.
+acyclicSubst :: Subst -> Bool
+acyclicSubst (Subst m) =
+    case foldl visit (Just S.empty) (M.keys m) of
+      Just _  -> True
+      Nothing -> False
+    where
+      -- Memoized three-colour DFS: `done` is the set proven acyclic (never
+      -- re-explored, so this is O(V+E) rather than exponential on shared
+      -- DAGs); `onstack` is the current path (a back-edge to it is a cycle).
+      visit Nothing _ = Nothing
+      visit (Just done) x = dfs done S.empty x
+      dfs done onstack x
+          | S.member x done    = Just done
+          | S.member x onstack = Nothing
+          | otherwise =
+              case M.lookup x m of
+                Nothing -> Just (S.insert x done)
+                Just t  ->
+                    fmap (S.insert x) $
+                    foldl (step (S.insert x onstack)) (Just done) (idsOf t)
+      step _ Nothing _ = Nothing
+      step onstack (Just done) y = dfs done onstack y
+      -- All variable Ids occurring in a term, collected by a plain recursive
+      -- walk that handles every Term form (foldVars rejects key-component
+      -- forms such as (Invk (akey x)) that occur in substitution ranges).
+      idsOf t = vids t []
+      vids (I x) acc = x : acc
+      vids (D x) acc = x : acc
+      vids (X x) acc = x : acc
+      vids (G g) acc = M.keys g ++ acc
+      vids (F _ ts) acc = foldr vids acc ts
+      vids _ acc = acc                 -- C, Z, Y carry no variables
 
 subterm :: Term -> Term -> Bool
 subterm t t' | t == t' =
@@ -1651,7 +1694,14 @@ unify :: Term -> Term -> GenSubst -> [GenSubst]
 unify t t' (g, s) =
     do
       (g, s) <- unifyChase t t' (g, s)
-      return (g, chaseMap s)
+      -- The occurs-check in unifyTerms chases only shallowly, so it can admit
+      -- a TRANSITIVE cycle (x := f y while y := g x already in the subst).
+      -- chaseMap below fully resolves the range and would then loop forever.
+      -- Reject cyclic results here (they never arise in stock unification, so
+      -- this leaves all existing behaviour unchanged; it makes the cyclic
+      -- unifications that deorigination can attempt fail cleanly instead of
+      -- hanging).
+      if acyclicSubst s then return (g, chaseMap s) else []
 
 -- unify :: Term -> Term -> (Gen, Subst) -> [(Gen, Subst)]
 -- unify t t' (g, s)
