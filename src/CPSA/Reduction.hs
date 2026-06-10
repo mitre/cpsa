@@ -127,7 +127,6 @@ type IPreskel = (Preskel, Int)
 stronglyIsomorphic :: Preskel -> Preskel -> [Sid]
 stronglyIsomorphic k1 k2 =
     loop $ findIsomorphisms (gist k1) (gist k2) (prob k1) (prob k2)
-    -- loop $ findIsomorphisms (gist k1) (gist k2)
     where
       loop [] = []
       loop ((_, _, sm) : maps) =
@@ -218,8 +217,8 @@ type ShapeVerdict = (Int, Int, [Sid])
 
 -- True when skeleton ksub (with prob psub) subsumes kobj (with prob pobj),
 -- i.e. there is a pov-respecting homomorphism ksub -> kobj.
-subsumesK :: Preskel -> [Sid] -> Preskel -> [Sid] -> Bool
-subsumesK ksub psub kobj pobj = isJust (homomorphismMapWith psub pobj ksub kobj)
+povHomExists :: Preskel -> [Sid] -> Preskel -> [Sid] -> Bool
+povHomExists ksub psub kobj pobj = isJust (homomorphismMapWith psub pobj ksub kobj)
 
 -- Pass 1: the maximal (surviving) shapes -- an antichain under
 -- subsumption.  Insert candidates one at a time: drop the newcomer if some
@@ -227,14 +226,14 @@ subsumesK ksub psub kobj pobj = isJust (homomorphismMapWith psub pobj ksub kobj)
 -- keep it.  The search has already removed pov-isomorphic duplicates, so
 -- subsumption between any two distinct candidates is strict (no ties), and
 -- the result is independent of insertion order.
-maximalShapes :: [ShapeCand] -> [ShapeCand]
-maximalShapes = foldl insert []
+minimalCandidates :: [ShapeCand] -> [ShapeCand]
+minimalCandidates = foldl insert []
     where
-      insert maxs c@(_, kc, pc)
-          | any (\(_, ks, ps) -> subsumesK ks ps kc pc) maxs = maxs
-          | otherwise = c : filter keep maxs
+      insert mins c@(_, kc, pc)
+          | any (\(_, ks, ps) -> povHomExists ks ps kc pc) mins = mins
+          | otherwise = c : filter keep mins
           where
-            keep (_, ks, ps) = not (subsumesK kc pc ks ps)
+            keep (_, ks, ps) = not (povHomExists kc pc ks ps)
 
 -- Pass 2: for each candidate that is not maximal, find a maximal shape
 -- that subsumes it and record the direct verdict.  By transitivity some
@@ -242,14 +241,14 @@ maximalShapes = foldl insert []
 -- at a maximal shape (with a direct map) avoids subsumed-points-to-subsumed
 -- chains.
 shapeVerdicts :: [ShapeCand] -> [ShapeCand] -> [ShapeVerdict]
-shapeVerdicts maxs cands =
+shapeVerdicts mins cands =
     [ (lc, lm, m)
     | (lc, kc, pc) <- cands, lc `notElem` maxLabels
     , (lm, m) <- take 1 [ (lm, mp)
-                        | (lm, ks, ps) <- maxs
+                        | (lm, ks, ps) <- mins
                         , Just mp <- [homomorphismMapWith ps pc ks kc] ] ]
     where
-      maxLabels = [ l | (l, _, _) <- maxs ]
+      maxLabels = [ l | (l, _, _) <- mins ]
 
 -- Build the end-of-problem subsumption summary comment: the surviving
 -- (maximal) shape labels, and for each subsumed shape its subsumer and the
@@ -264,9 +263,9 @@ shapeSummary cands =
                   L () (S () "subsumption" : map (N ()) m)]
           | (lc, lm, m) <- verdicts ])
     where
-      maxs = maximalShapes cands
-      maxLabels = [ l | (l, _, _) <- maxs ]
-      verdicts = shapeVerdicts maxs cands
+      mins = minimalCandidates cands
+      maxLabels = [ l | (l, _, _) <- mins ]
+      verdicts = shapeVerdicts mins cands
 
 -- Emit the global-subsumption summary from the accumulated candidates, on the
 -- global path only.  Used at the clean end of a problem AND at the two abort
@@ -276,7 +275,9 @@ shapeSummary cands =
 emitShapeSummary :: Options -> Handle -> IORef [ShapeCand] -> IO ()
 emitShapeSummary p h sref =
     if optGlobalShapes p
-      then do { cands <- readIORef sref; wrt p h (shapeSummary (reverse cands)) }
+      then do 
+        cands <- readIORef sref
+        wrt p h (shapeSummary (reverse cands))
       else return ()
 
 -- Phase 4.3: in-process rewrite of the finished output FILE -----------
@@ -290,19 +291,19 @@ emitShapeSummary p h sref =
 -- rely on cpsa4subsume.
 finishGlobalShapes :: Options -> IO ()
 finishGlobalShapes p =
-    case (optGlobalShapes p, optFile p) of
-      (True, Just path) -> applyGlobalSubsumption (optMargin p) path
+    case (optGlobalShapes p, optFile p) of -- TODO: rename optGlobalShapes
+      (True, Just path) -> applyGlobalHomCheck (optMargin p) path
       _ -> return ()
 
-applyGlobalSubsumption :: Int -> FilePath -> IO ()
-applyGlobalSubsumption margin path =
+applyGlobalHomCheck :: Int -> FilePath -> IO ()
+applyGlobalHomCheck margin path =
     do
       rh <- openFile path ReadMode
       ph <- posHandle path rh
       sexprs <- readAllSExprs ph    -- strict: fully read before reopening
       hClose rh
       let verds = collectVerdicts sexprs
-          out = [ rewriteSubsumed verds (strip s)
+          out = [ rewriteCovered verds (strip s)
                 | s <- sexprs, not (isSubsumptionComment s) ]
       wh <- openFile path WriteMode
       mapM_ (writeLnSExpr wh margin) out
@@ -319,6 +320,7 @@ readAllSExprs p =
         Just s -> do { rest <- readAllSExprs p; return (s : rest) }
 
 -- A (comment "global-subsumption" ...) verdict form.
+-- TODO: rename isSubsumptionComment everywhere
 isSubsumptionComment :: SExpr a -> Bool
 isSubsumptionComment (L _ (S _ "comment" : Q _ "global-subsumption" : _)) = True
 isSubsumptionComment _ = False
@@ -333,12 +335,16 @@ collectVerdicts sexprs =
            L _ (S _ "subsumption" : ms) : _) <- rest ]
 
 -- Rewrite a subsumed shape's (shape) marker; pass everything else through.
-rewriteSubsumed :: [(Int, (Int, [Int]))] -> SExpr () -> SExpr ()
-rewriteSubsumed verds s@(L () (S () "defskeleton" : rest))
+rewriteCovered :: [(Int, (Int, [Int]))] -> SExpr () -> SExpr ()
+rewriteCovered verds s@(L () (S () "defskeleton" : rest))
     | any isShapeForm rest =
+        -- TODO: If it's a shape rewrite (shape candidate) to (shape)
         case labelOf s >>= flip lookup verds of
           Just (lm, m) -> L () (S () "defskeleton" : concatMap (repl lm m) rest)
-          Nothing -> s
+          Nothing -> 
+            case labelOf s >>= (flip lookup $ map snd verds) of
+              Just _ -> L () (S () "defskeleton" : concatMap shapify rest)
+              Nothing -> s
     where
       repl lm m e
           | isShapeForm e =
@@ -346,7 +352,11 @@ rewriteSubsumed verds s@(L () (S () "defskeleton" : rest))
                 L () [S () "seen-ops",
                       L () [N () lm, L () (S () "subsumption" : map (N ()) m)]] ]
           | otherwise = [e]
-rewriteSubsumed _ s = s
+      shapify e 
+          | isShapeForm e = 
+              [ L () [ S () "shape" ] ]
+          | otherwise = [e]
+rewriteCovered _ s = s
 
 isShapeForm :: SExpr a -> Bool
 isShapeForm (L _ (S _ "shape" : _)) = True
@@ -464,7 +474,7 @@ mode :: Options -> Handle -> IORef [ShapeCand] -> [Preskel] -> Int -> Int -> See
         [LPreskel] -> IO ()
 mode p h sref ks m n seen todo =
     if optNoIsoChk p then
-        fast p h sref ks m n todo     -- Peform no isomorphism checks
+        fast p h ks m n todo     -- Peform no isomorphism checks, nor hom checks
     else
         breadth p h sref ks m n seen todo []
 
@@ -530,13 +540,16 @@ step p h sref ks m oseen n seen todo toobig (ReductStable lk : reducts) =
             -- graph tooling keeps working; once that tooling is updated,
             -- change the global-path marker emitted here to (shape candidate).
             if optGlobalShapes p
-              then modifyIORef' sref
+              then do 
+                modifyIORef' sref
                      ((label lk, content lk, prob (content lk)) :)
-              else return ()
-            wrt p h (commentPreskel lk [] [] Shape Nada "")
+                wrt p h (commentPreskel lk [] [] Candidate Nada "")
+              else 
+                wrt p h (commentPreskel lk [] [] Shape Nada "")
       -- z ("unseen", label lk) $
             step p h sref ks m oseen n seen todo toobig reducts
 
+-- TODO: remove died of generalization flag and branch here. This is what homcheck does differently
 step p h sref ks m oseen n seen todo toobig (Genlz lk size kids dups : reducts)
     | dieOnGeneralization =
         do
@@ -677,22 +690,22 @@ next p (n, seen, todo, dups) k =
             lk = withParent k n p -- Label a preskeleton here
 
 -- This function reduces without checking for isomorphisms
-fast :: Options -> Handle -> IORef [ShapeCand] -> [Preskel] -> Int -> Int -> [LPreskel] -> IO ()
-fast p h _sref ks _ n [] =            -- Empty todo list
+fast :: Options -> Handle -> [Preskel] -> Int -> Int -> [LPreskel] -> IO ()
+fast p h ks _ n [] =            -- Empty todo list
     do
       wrt p h (comment "Nothing left to do")
       solve p h ks n
-fast p h _sref _ m n todo
+fast p h _ m n todo
     | n > m =                   -- Check step count
         do
           wrt p h (comment "Step limit exceeded--aborting run")
           dump p h todo "Step limit exceeded"
-fast p h _sref _ _ _ todo@(lk : _)
+fast p h _ _ _ todo@(lk : _)
     | nstrands (content lk) >= optBound p = -- Check strand count
         do
           wrt p h (comment "Strand bound exceeded--aborting run")
           dump p h todo "Strand bound exceeded"
-fast p h _sref ks m n (lk : todo) =
+fast p h ks m n (lk : todo) =
     do
       let ns = unrealized (content lk)
       let red = reduce (mkMode p) (content lk)
@@ -707,7 +720,7 @@ fast p h _sref ks m n (lk : todo) =
                      Gnl _ -> Ordinary)
       wrt p h (commentPreskel lk [] ns shape Nada msg)
       let (n', todo') = foldl (children lk) (n, []) ks'
-      fast p h _sref ks m n' (todo ++ reverse todo')
+      fast p h ks m n' (todo ++ reverse todo')
 
 children :: LPreskel -> (Int, [LPreskel]) -> Preskel -> (Int, [LPreskel])
 children p (n, todo) k =        -- Label a preskeleton here
@@ -788,6 +801,7 @@ maybeAddVKeyValues key f (Just x) rest =
 data Kind
     = Ordinary
     | Shape
+    | Candidate
     | Fringe
     | Aborted
       deriving (Eq, Show)
@@ -795,12 +809,14 @@ data Kind
 addKindKey :: Kind -> [SExpr ()] -> [SExpr ()]
 addKindKey Ordinary xs = xs
 addKindKey Shape xs = addKeyValues "shape" [] xs
+addKindKey Candidate xs = addKeyValues "shape" [S () "candidate"] xs
 addKindKey Fringe xs = addKeyValues "fringe" [] xs
 addKindKey Aborted xs = addKeyValues "aborted" [] xs
 
 isFringe :: Kind -> Bool
 isFringe Ordinary = False
 isFringe Shape = True
+isFringe Candidate = True
 isFringe Fringe = True
 isFringe Aborted = False
 
