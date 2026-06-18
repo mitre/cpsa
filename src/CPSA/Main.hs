@@ -155,10 +155,7 @@ go name origin files herald opts sexprs =
               case optTryYoungNodesFirst opts of
                 True -> writeComment h m "Younger nodes tried first"
                 False -> return ()
-              -- Analyze.  The Phase 4.3 in-process subsumption rewrite of the
-              -- output file is performed inside solve/dump (Reduction.hs) at
-              -- both the clean and aborted run-termination points, so it is
-              -- not invoked here.
+              -- Analyze
               solve opts h preskels 0
 
 -- Just pretty the expanded macros
@@ -186,9 +183,8 @@ data Flag
     | TryOldStrandsFirst        -- Try old strands first
     | TryYoungNodesFirst        -- Try young nodes first
     | GoalsSat                  -- Stop when goals are satisfied
-    | Generalize                -- EXPERIMENT (global shapes): use full
-                                -- generalization instead of the new path
-    | NoDeorig                  -- EXPERIMENT (global shapes): disable deorig
+    | Generalize                -- use generalization instead of global shapes
+    | NoDeorig                  -- disable deorigination
     | Algebra String            -- Algebra
     | Algebras                  -- Show algebras
     | Help                      -- Help
@@ -218,12 +214,10 @@ options =
       "try younger nodes first",
       Option ['g'] ["goals-sat"] (NoArg GoalsSat)
       "Stop when goals are satisfied",
-      -- EXPERIMENT (global shapes): the new path (global-shapes + deorig) is
-      -- the default; these long-only flags turn each component off.
       Option [] ["generalize"] (NoArg Generalize)
-      "use full generalization instead of global-shape subsumption",
+      "use generalization instead of global shape check",
       Option [] ["no-deorig"] (NoArg NoDeorig)
-      "disable the deorigination augmentation fix",
+      "disable the deorigination augmentation fix (known to introduce incompleteness)",
       Option ['a'] ["algebra"]  (ReqArg Algebra "STRING")
       ("algebra (default " ++ defaultAlgebra ++ ")"),
       Option ['s'] ["show-algebras"] (NoArg Algebras)  "show algebras",
@@ -283,7 +277,6 @@ interp algs opts flags =
           loop flags $ opts { optTryYoungNodesFirst = True }
       loop (GoalsSat : flags) opts =
           loop flags $ opts { optGoalsSat = True }
-      -- EXPERIMENT (global shapes): turn off the new-path components.
       loop (Generalize : flags) opts =
           loop flags $ opts { optGlobalShapes = False }
       loop (NoDeorig : flags) opts =
@@ -407,4 +400,3 @@ getSig (Just x) =
 assoc :: String -> [SExpr a] -> [SExpr a]
 assoc key alist =
     concat [ rest | L _ (S _ head : rest) <- alist, key == head ]
-

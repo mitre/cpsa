@@ -127,7 +127,6 @@ type IPreskel = (Preskel, Int)
 stronglyIsomorphic :: Preskel -> Preskel -> [Sid]
 stronglyIsomorphic k1 k2 =
     loop $ findIsomorphisms (gist k1) (gist k2) (prob k1) (prob k2)
-    -- loop $ findIsomorphisms (gist k1) (gist k2)
     where
       loop [] = []
       loop ((_, _, sm) : maps) =
@@ -196,37 +195,30 @@ void = Seen []
 merge :: Seen -> Seen -> Seen
 merge (Seen xs) (Seen ys) = Seen (xs ++ ys)
 
--- EXPERIMENT (global shapes): in-search shape subsumption -------------
---
--- On the global-shapes path, generalization is restricted to listener
--- deletion, so every realized leaf is reported as a (shape) candidate --
--- an over-report.  We collect these candidates per problem (a ShapeCand
--- is its label, skeleton, and pov->strand map prob) in an IORef threaded
--- through the search, then at end of problem reduce them to the maximal
--- shapes by pov-respecting homomorphism subsumption, recording for each
--- subsumed candidate which maximal shape subsumes it.  This is the
--- in-process, incremental equivalent of the cpsa4subsume post-processor,
--- but it compares each candidate only against the (small) maximal set
--- rather than all pairs.
+-- On the global shapes path, generalization is restricted to listener
+-- deletion, so every realized leaf is reported as a (shape candidate).
+-- We collect these candidates per problem in an IORef threaded
+-- through the search. A ShapeCand is a triple of (label, skeleton,
+--  pov->strand map prob). At end of problem reduce them to the real
+-- shapes by pov-respecting homomorphism checking, recording the results
+-- in a shape summary comment.
 
 type ShapeCand = (Int, Preskel, [Sid])    -- (label, skeleton, prob)
 
--- A verdict for one subsumed shape: (subsumed label, subsumer label,
--- homomorphism strand map from the subsumer's strands into the subsumed
--- shape's strands -- the orientation cpsa4subsume records in seen-ops).
+-- A verdict for one false shape candidate: 
+-- (target label, source label, strand map from source to target).
 type ShapeVerdict = (Int, Int, [Sid])
 
--- True when skeleton ksub (with prob psub) subsumes kobj (with prob pobj),
--- i.e. there is a pov-respecting homomorphism ksub -> kobj.
+-- True when there is a pov-respecting homomorphism ksrc -> ktgt.
 subsumesK :: Preskel -> [Sid] -> Preskel -> [Sid] -> Bool
-subsumesK ksub psub kobj pobj = isJust (homomorphismMapWith psub pobj ksub kobj)
+subsumesK ksrc psrc ktgt ptgt = isJust (homomorphismMapWith psrc ptgt ksrc ktgt)
 
--- Pass 1: the maximal (surviving) shapes -- an antichain under
--- subsumption.  Insert candidates one at a time: drop the newcomer if some
--- incumbent subsumes it; otherwise evict any incumbents it subsumes and
--- keep it.  The search has already removed pov-isomorphic duplicates, so
--- subsumption between any two distinct candidates is strict (no ties), and
--- the result is independent of insertion order.
+-- Pass 1: Determine the shapes.
+-- Insert candidates one at a time: drop the newcomer if some
+-- incumbent has a homomorphism to it; otherwise evict any incumbents it
+-- has a homomorphism to, and keep it. The search has already removed
+-- pov-isomorphic duplicates, so any homomorphism is strict (no isomorphisms)
+-- and the result is independent of insertion order.
 maximalShapes :: [ShapeCand] -> [ShapeCand]
 maximalShapes = foldl insert []
     where
@@ -236,11 +228,10 @@ maximalShapes = foldl insert []
           where
             keep (_, ks, ps) = not (subsumesK kc pc ks ps)
 
--- Pass 2: for each candidate that is not maximal, find a maximal shape
--- that subsumes it and record the direct verdict.  By transitivity some
--- maximal shape always subsumes it, so this never comes up empty; pointing
--- at a maximal shape (with a direct map) avoids subsumed-points-to-subsumed
--- chains.
+-- Pass 2: Find shapes covering false candidates. 
+-- For each candidate that is not a shape, find a shape with a homomorphism
+-- to it and record the direct verdict. By transitivity some shape always 
+-- covers it, so this is never empty for non-shape candidates.
 shapeVerdicts :: [ShapeCand] -> [ShapeCand] -> [ShapeVerdict]
 shapeVerdicts maxs cands =
     [ (lc, lm, m)
@@ -251,59 +242,54 @@ shapeVerdicts maxs cands =
     where
       maxLabels = [ l | (l, _, _) <- maxs ]
 
--- Build the end-of-problem subsumption summary comment: the surviving
--- (maximal) shape labels, and for each subsumed shape its subsumer and the
--- witnessing strand map.  Phase 4.3 will consume these to rewrite (shape)
--- markers; for now they are informational and cross-checked against
--- cpsa4subsume.
+-- Build the end-of-problem shape summary comment: the surviving
+-- shape labels, and for each eliminated candidate, the shape that elimnated it
+-- together with the witnessing strand map. These comments guide the file rewrite
+-- once all queries are completed.
 shapeSummary :: [ShapeCand] -> SExpr ()
 shapeSummary cands =
-    L () (S () "comment" : Q () "global-subsumption" :
+    L () (S () "comment" : Q () "shape-summary" :
           L () (S () "shapes" : map (N ()) maxLabels) :
-          [ L () [S () "subsumed", N () lc, S () "by", N () lm,
-                  L () (S () "subsumption" : map (N ()) m)]
+          [ L () [S () "homomorphism", N () lc, S () "from", N () lm,
+                  L () (S () "strand-map" : map (N ()) m)]
           | (lc, lm, m) <- verdicts ])
     where
       maxs = maximalShapes cands
       maxLabels = [ l | (l, _, _) <- maxs ]
       verdicts = shapeVerdicts maxs cands
 
--- Emit the global-subsumption summary from the accumulated candidates, on the
--- global path only.  Used at the clean end of a problem AND at the two abort
+-- Emit the global shape summary from the accumulated candidates, on the
+-- global path only. Used at the clean end of a problem AND at the two abort
 -- points (strand bound / step limit) so that an aborted run still gets a
--- subsumption pass over the candidates found so far (otherwise its raw,
--- un-subsumed candidates would all survive as shapes).
+-- homomorphism check over the candidates found so far.
 emitShapeSummary :: Options -> Handle -> IORef [ShapeCand] -> IO ()
 emitShapeSummary p h sref =
     if optGlobalShapes p
       then do { cands <- readIORef sref; wrt p h (shapeSummary (reverse cands)) }
       else return ()
 
--- Phase 4.3: in-process rewrite of the finished output FILE -----------
--- Run at BOTH run-termination points -- the clean end (solve []) and the
--- abort end (dump []), since the latter exits the process via `abort` and
--- never returns to Main.  On the global path with file output, apply the
--- verdicts the search emitted as (comment "global-subsumption" ...) forms:
--- rewrite each subsumed shape's (shape) to (seen S)(seen-ops (S (subsumption
--- m))) and drop the verdict comments.  Same result as a cpsa4subsume run but
--- reusing the cheap in-search verdicts.  stdout/pipes keep the comments and
--- rely on cpsa4subsume.
+-- Rewrite of the finished output file.
+-- Called at both the clean termination point (solve []) and the
+-- abort termination points (dump []). On the global path with file output, apply the
+-- verdicts recorded in the shape summary comments:
+-- rewrite each non-shape's (shape candidate) to (seen S) (seen-ops (S (homomorphism-check
+-- m))) and drop the shape summary comments. stdout/pipes keep the comments.
 finishGlobalShapes :: Options -> IO ()
 finishGlobalShapes p =
     case (optGlobalShapes p, optFile p) of
-      (True, Just path) -> applyGlobalSubsumption (optMargin p) path
+      (True, Just path) -> globalShapeCheck (optMargin p) path
       _ -> return ()
 
-applyGlobalSubsumption :: Int -> FilePath -> IO ()
-applyGlobalSubsumption margin path =
+globalShapeCheck :: Int -> FilePath -> IO ()
+globalShapeCheck margin path =
     do
       rh <- openFile path ReadMode
       ph <- posHandle path rh
       sexprs <- readAllSExprs ph    -- strict: fully read before reopening
       hClose rh
       let verds = collectVerdicts sexprs
-          out = [ rewriteSubsumed verds (strip s)
-                | s <- sexprs, not (isSubsumptionComment s) ]
+          out = [ rewriteCovered verds (strip s)
+                | s <- sexprs, not (isShapeSummary s) ]
       wh <- openFile path WriteMode
       mapM_ (writeLnSExpr wh margin) out
       hClose wh
@@ -318,23 +304,23 @@ readAllSExprs p =
         Nothing -> return []
         Just s -> do { rest <- readAllSExprs p; return (s : rest) }
 
--- A (comment "global-subsumption" ...) verdict form.
-isSubsumptionComment :: SExpr a -> Bool
-isSubsumptionComment (L _ (S _ "comment" : Q _ "global-subsumption" : _)) = True
-isSubsumptionComment _ = False
+-- A shape summary comment.
+isShapeSummary :: SExpr a -> Bool
+isShapeSummary (L _ (S _ "comment" : Q _ "shape-summary" : _)) = True
+isShapeSummary _ = False
 
--- Verdicts (subsumedLabel, (subsumerLabel, strandMap)) parsed from the
--- (subsumed L by M (subsumption m...)) entries of the verdict comments.
+-- Verdicts (targetLabel, (sourceLabel, strandMap)) parsed from the
+-- (homomorphism L from M (strand-map m...)) entries of the shape summary comments.
 collectVerdicts :: [SExpr a] -> [(Int, (Int, [Int]))]
 collectVerdicts sexprs =
     [ (lc, (lm, [ n | N _ n <- ms ]))
-    | L _ (S _ "comment" : Q _ "global-subsumption" : rest) <- sexprs
-    , L _ (S _ "subsumed" : N _ lc : S _ "by" : N _ lm :
-           L _ (S _ "subsumption" : ms) : _) <- rest ]
+    | L _ (S _ "comment" : Q _ "shape-summary" : rest) <- sexprs
+    , L _ (S _ "homomorphism" : N _ lc : S _ "from" : N _ lm :
+           L _ (S _ "strand-map" : ms) : _) <- rest ]
 
--- Rewrite a subsumed shape's (shape) marker; pass everything else through.
-rewriteSubsumed :: [(Int, (Int, [Int]))] -> SExpr () -> SExpr ()
-rewriteSubsumed verds s@(L () (S () "defskeleton" : rest))
+-- Rewrite a covered shape's (shape candidate) marker; pass everything else through.
+rewriteCovered :: [(Int, (Int, [Int]))] -> SExpr () -> SExpr ()
+rewriteCovered verds s@(L () (S () "defskeleton" : rest))
     | any isShapeForm rest =
         case labelOf s >>= flip lookup verds of
           Just (lm, m) -> L () (S () "defskeleton" : concatMap (repl lm m) rest)
@@ -345,11 +331,11 @@ rewriteSubsumed verds s@(L () (S () "defskeleton" : rest))
           | isShapeForm e =
               [ L () [S () "seen", N () lm],
                 L () [S () "seen-ops",
-                      L () [N () lm, L () (S () "subsumption" : map (N ()) m)]] ]
+                      L () [N () lm, L () (S () "homomorphism-check" : map (N ()) m)]] ]
           | otherwise = [e]
       promote e | isShapeForm e = L () [S () "shape"]
                 | otherwise = e
-rewriteSubsumed _ s = s
+rewriteCovered _ s = s
 
 isShapeForm :: SExpr a -> Bool
 isShapeForm (L _ (S _ "shape" : _)) = True
@@ -362,8 +348,6 @@ labelOf (L _ (_ : rest)) =
       [] -> Nothing
 labelOf _ = Nothing
 
--- Strip position annotations so rewritten () nodes and untouched nodes share
--- a type.
 strip :: SExpr a -> SExpr ()
 strip (S _ s)  = S () s
 strip (Q _ s)  = Q () s
@@ -405,13 +389,11 @@ solve :: Options -> Handle -> [Preskel] -> Int -> IO ()
 solve p h [] _ =                -- Done
     do
       hClose h
-      finishGlobalShapes p      -- Phase 4.3 rewrite at the clean run end
+      finishGlobalShapes p      -- rewrite at the end of a clean run
 solve p h (k : ks) n =
     do
       wrt p h (displayProt (protocol k)) -- show protocol
-      -- EXPERIMENT (global shapes): fresh per-problem shape-candidate
-      -- accumulator, threaded through the search and consumed at end of
-      -- problem in breadth's terminal clause.
+      -- A shape-candidate accumulator, fresh per-problem, threaded through the search.
       sref <- newIORef []
       case firstSkeleton k of
         [] ->                  -- Input cannot be made into a skeleton
@@ -467,7 +449,7 @@ mode :: Options -> Handle -> IORef [ShapeCand] -> [Preskel] -> Int -> Int -> See
         [LPreskel] -> IO ()
 mode p h sref ks m n seen todo =
     if optNoIsoChk p then
-        fast p h sref ks m n todo     -- Peform no isomorphism checks
+        fast p h ks m n todo     -- Peform no isomorphism or homomorphism checks 
     else
         breadth p h sref ks m n seen todo []
 
@@ -490,15 +472,15 @@ breadth :: Options -> Handle -> IORef [ShapeCand] -> [Preskel] -> Int -> Int -> 
 breadth p h sref ks _ n _ [] [] =       -- Empty todo list and toobig list
     do
       wrt p h (comment "Nothing left to do")
-      -- EXPERIMENT (global shapes): reduce the collected shape candidates to
-      -- the maximal shapes and emit the subsumption summary comment.
+      -- Write shape summary to file on successful problem terminations
+      -- without re-writing skeletons yet.
       emitShapeSummary p h sref
       solve p h ks n            -- Solve next problem
 breadth p h sref _ _ _ _ [] toobig = -- Empty todo list and non-null toobig list
     do
       wrt p h (comment "Strand bound exceeded--aborting run")
-      -- EXPERIMENT (global shapes): subsume the candidates found so far before
-      -- aborting, so they are not all emitted raw.
+      -- Write shape summary to file on when strand bound is exceeded
+      -- without re-writing skeletons yet.
       emitShapeSummary p h sref
       dump p h (reverse toobig)  "Strand bound exceeded"
 breadth p h sref ks m n seen todo toobig =
@@ -513,8 +495,8 @@ step p h sref _ m _ n _ todo toobig reducts
     | n > m =                   -- Check step count
         do
           wrt p h (comment "Step limit exceeded--aborting run")
-          -- EXPERIMENT (global shapes): subsume the candidates found so far
-          -- before aborting, so they are not all emitted raw.
+          -- Write shape summary to file when step limit is exceeded
+          -- without re-writing skeletons yet.
           emitShapeSummary p h sref
           dump p h (mktodo reducts todo toobig) "Step limit exceeded"
 step p h sref ks m oseen n seen todo toobig (Reduct lk _ _  _  : reducts)
@@ -527,10 +509,9 @@ step p h sref ks m oseen n seen todo toobig (ReductStable lk : reducts) =
           step p h sref ks m oseen n seen todo toobig reducts
       Nothing ->
           do
-            -- EXPERIMENT (global shapes): on the global path this realized
-            -- leaf is a shape *candidate*; record it for end-of-problem
-            -- subsumption and mark it (shape candidate).  On the generalization
-            -- path it is a genuine (shape).
+            -- Search has found a realized skeleton.
+            -- With global shapes enabled it is a shape candidate, so update
+            -- the shape candidate list.
             if optGlobalShapes p
               then modifyIORef' sref
                      ((label lk, content lk, prob (content lk)) :)
@@ -605,7 +586,6 @@ mkMode p =
            nonceFirstOrder = optCheckNoncesFirst p,
            visitOldStrandsFirst = optTryOldStrandsFirst p,
            reverseNodeOrder = optTryYoungNodesFirst p,
-           -- EXPERIMENT (global shapes): runtime flags, formerly compile-time.
            globalShapes = optGlobalShapes p,
            deorig = optDeorig p}
 
@@ -680,22 +660,22 @@ next p (n, seen, todo, dups) k =
             lk = withParent k n p -- Label a preskeleton here
 
 -- This function reduces without checking for isomorphisms
-fast :: Options -> Handle -> IORef [ShapeCand] -> [Preskel] -> Int -> Int -> [LPreskel] -> IO ()
-fast p h _sref ks _ n [] =            -- Empty todo list
+fast :: Options -> Handle -> [Preskel] -> Int -> Int -> [LPreskel] -> IO ()
+fast p h ks _ n [] =            -- Empty todo list
     do
       wrt p h (comment "Nothing left to do")
       solve p h ks n
-fast p h _sref _ m n todo
+fast p h _ m n todo
     | n > m =                   -- Check step count
         do
           wrt p h (comment "Step limit exceeded--aborting run")
           dump p h todo "Step limit exceeded"
-fast p h _sref _ _ _ todo@(lk : _)
+fast p h _ _ _ todo@(lk : _)
     | nstrands (content lk) >= optBound p = -- Check strand count
         do
           wrt p h (comment "Strand bound exceeded--aborting run")
           dump p h todo "Strand bound exceeded"
-fast p h _sref ks m n (lk : todo) =
+fast p h ks m n (lk : todo) =
     do
       let ns = unrealized (content lk)
       let red = reduce (mkMode p) (content lk)
@@ -705,14 +685,12 @@ fast p h _sref ks m n (lk : todo) =
                    Gnl kids -> (length kids, kids))
       let msg = show len ++ " in cohort"
       let shape = (case red of
-                     -- EXPERIMENT (global shapes): (shape candidate) on the
-                     -- global path, (shape) otherwise.
-                     Stable -> if optGlobalShapes p then Candidate else Shape
+                     Stable -> Shape
                      Crt _ -> Ordinary
                      Gnl _ -> Ordinary)
       wrt p h (commentPreskel lk [] ns shape Nada msg)
       let (n', todo') = foldl (children lk) (n, []) ks'
-      fast p h _sref ks m n' (todo ++ reverse todo')
+      fast p h ks m n' (todo ++ reverse todo')
 
 children :: LPreskel -> (Int, [LPreskel]) -> Preskel -> (Int, [LPreskel])
 children p (n, todo) k =        -- Label a preskeleton here
@@ -723,7 +701,7 @@ dump :: Options -> Handle -> [LPreskel] -> String -> IO ()
 dump p h [] msg =
     do
       hClose h
-      finishGlobalShapes p      -- Phase 4.3 rewrite before aborting the run
+      finishGlobalShapes p      -- Rewrite shape candidates before aborting the run
       abort msg
 dump p h (lk : lks) msg =
     do
@@ -794,10 +772,6 @@ maybeAddVKeyValues key f (Just x) rest =
 data Kind
     = Ordinary
     | Shape
-    -- EXPERIMENT (global shapes): a realized leaf on the global-shapes path,
-    -- before subsumption.  Emitted as (shape candidate) and treated as a
-    -- fringe; cpsa4subsume / the in-process rewrite turn the surviving ones
-    -- back into shapes.
     | Candidate
     | Fringe
     | Aborted

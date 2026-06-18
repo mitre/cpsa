@@ -290,10 +290,8 @@ Executable cpsa4
     CPSA.Displayer CPSA.Cohort CPSA.Operation
     CPSA.Lib.Expand CPSA.Reduction CPSA.Signature
 
--- EXPERIMENT (global shape subsumption): post-processor that rewrites
--- subsumed shapes from a listener-deletion-only run into seen-children.
-Executable cpsa4subsume
-  Main-Is:              CPSA/Subsume/Main.hs
+Executable cpsa4hom
+  Main-Is:              CPSA/Hom/Main.hs
   Default-Language:     Haskell2010
   Build-Depends:        base >= 4.13 && < 5, containers >= 0.8 && < 0.9,
     parallel >= 3.3.0 && < 3.4, deepseq >= 1.4.8 && < 1.5
@@ -308,7 +306,6 @@ Executable cpsa4subsume
     CPSA.Displayer CPSA.Cohort CPSA.Operation
     CPSA.Lib.Expand CPSA.Reduction CPSA.Signature
 
--- EXPERIMENT (global shape subsumption): shape-set isomorphism comparator.
 Executable cpsa4cmp
   Main-Is:              CPSA/Cmp/Main.hs
   Default-Language:     Haskell2010

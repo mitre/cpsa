@@ -736,14 +736,10 @@ occursIn t _ =
   error $ "Algebra.occursIn: Bad variable " ++ show t
 
 -- True when a substitution is acyclic: fully resolving any variable
--- terminates.  The unifier's occurs-check (unifyTerms) uses a SHALLOW chase
--- and so admits transitive cycles such as x := f y while y := g x already
--- sits in the substitution; applying such a substitution builds an infinite
--- term that hangs every structural traversal (e.g. carriedOnlyWithin).  This
--- is a chase-deep cycle check over the variable-dependency graph (key x ->
--- the variables occurring in the bound term).  Used to reject cyclic
--- substitutions that deorigination can produce by unifying a received
--- message-sort variable with the critical term.
+-- terminates. The unifier's occurs-check (unifyTerms) uses a shallow chase
+-- and so admits transitive cycles. This is a deep chase cycle check
+-- used to reject cyclic substitutions that deorigination can produce
+-- by unifying a received message-sort variable with the critical term.
 acyclicSubst :: Subst -> Bool
 acyclicSubst (Subst m) =
     case foldl visit (Just S.empty) (M.keys m) of
@@ -1695,12 +1691,7 @@ unify t t' (g, s) =
     do
       (g, s) <- unifyChase t t' (g, s)
       -- The occurs-check in unifyTerms chases only shallowly, so it can admit
-      -- a TRANSITIVE cycle (x := f y while y := g x already in the subst).
-      -- chaseMap below fully resolves the range and would then loop forever.
-      -- Reject cyclic results here (they never arise in stock unification, so
-      -- this leaves all existing behaviour unchanged; it makes the cyclic
-      -- unifications that deorigination can attempt fail cleanly instead of
-      -- hanging).
+      -- a transitive cycle. Guard chaseMap with the deep check acyclicSubst.
       if acyclicSubst s then return (g, chaseMap s) else []
 
 -- unify :: Term -> Term -> (Gen, Subst) -> [(Gen, Subst)]

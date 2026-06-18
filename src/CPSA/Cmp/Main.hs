@@ -1,36 +1,10 @@
--- Compare the SHAPE SETS of two CPSA output files up to pov-respecting
--- isomorphism, PER PROBLEM, reporting the witnessing shape pairing.
+-- Compare shapes problem by problem bewteen two files.
+
+-- Copyright (c) 2026, The MITRE Corporation
 --
--- EXPERIMENT (global shape subsumption) validation tool.
---
--- cpsa4diff compares two runs S-expression by S-expression and stops at
--- the first textual difference.  That is useless for validating the
--- global-shapes experiment, because the flag-ON derivation tree
--- deliberately differs from stock.  What we want to know is whether the
--- *set of shapes* is the same.
---
--- This tool loads the shape skeletons from each file (every defskeleton
--- carrying a (shape) marker, with its defprotocol) into real Preskels via
--- the standard Loader, then checks, WITHIN EACH PROBLEM, that the two
--- shape collections are equal as multisets under POINT-OF-VIEW-respecting
--- skeleton isomorphism (probIsomorphicWith): two shapes are "the same"
--- only if isomorphic via a strand permutation that respects their
--- pov->strand maps.  A protocol can have shapes that are bare-isomorphic
--- yet pov-distinct; those must NOT be merged.  The pov maps are recovered
--- from each shape's (maps ...) field, which the loader ignores.
---
--- Work is done PER PROBLEM (like cpsa4subsume): each file is split at its
--- defprotocol boundaries (cpsa4 reprints the protocol once per problem),
--- and problem i of the first file is compared against problem i of the
--- second.  We ASSUME the two files analyze the same problems in the same
--- order; if the problem counts differ, or a matched pair's protocol names
--- differ, the tool fails loudly rather than silently skipping.
---
--- For each problem the tool prints the witnessing pairing: every
--- "iso: L_i <-> L_j" match (by skeleton label) and any shape left
--- unmatched on either side.  Because probIsomorphicWith is symmetric, a
--- single direction per candidate pair suffices.  Exit status is 0 iff
--- every problem matches one-for-one.
+-- This program is free software: you cna redistribute it and/or
+-- modify it under the terms of the BSD License as published by the
+-- University of California.
 
 module Main (main) where
 
@@ -44,14 +18,11 @@ import CPSA.Signature (defaultSig)
 import CPSA.Loader (loadSExprs)
 import CPSA.Strand (Preskel, nstrands, probIsomorphicWith)
 
--- A shape: its skeleton label (if any), its Preskel, and its pov->strand
--- map (prob, parsed from (maps)).
 data Shape = Shape
     { shapeLabel :: Maybe Int
     , shapeK     :: Preskel
     , shapeProb  :: [Int] }
 
--- A problem: the protocol name it analyzes and its shapes.
 data Problem = Problem String [Shape]
 
 main :: IO ()
@@ -70,7 +41,7 @@ main =
               hPutStrLn stderr "usage: cpsa4cmp FILE1 FILE2"
               exitFailure
 
--- Load a file's problems.  Drop any leading material before the first
+-- Load a file's problems. Drop any leading material before the first
 -- defprotocol, then split into per-problem chunks and load each.
 loadProblems :: String -> IO [Problem]
 loadProblems fn =
@@ -93,7 +64,7 @@ loadProblem chunk =
                    | (s, k) <- zip shapeSExprs ks ]
       return (Problem (nameOf dp) shapes)
 
--- Compare two runs problem by problem.  Fail loudly if the problem
+-- Compare two runs problem by problem. Fail loudly if the problem
 -- counts differ; otherwise compare matched pairs in order.
 compareRuns :: String -> String -> [Problem] -> [Problem] -> IO Bool
 compareRuns f1 f2 ps1 ps2
@@ -113,7 +84,7 @@ compareRuns f1 f2 ps1 ps2
                            else "MISMATCH"))
           return ok
 
--- Compare one problem's shapes.  Print the witnessing pairing and the
+-- Compare one problem's shapes. Print the witnessing pairing and the
 -- leftovers; the pair matches iff nothing is left over (and the protocol
 -- names agree).
 comparePair :: Int -> Problem -> Problem -> IO Bool
@@ -136,7 +107,7 @@ comparePair i (Problem nm1 ss1) (Problem nm2 ss2) =
       lbl s = maybe "?" show (shapeLabel s)
 
 -- Greedy one-to-one matching of two shape lists under pov-respecting
--- isomorphism.  Returns the matched pairs and the unmatched remainders
+-- isomorphism. Returns the matched pairs and the unmatched remainders
 -- of each side.
 matchShapes :: [Shape] -> [Shape] -> ([(Shape, Shape)], [Shape], [Shape])
 matchShapes [] bs = ([], [], bs)
@@ -154,7 +125,7 @@ extract a (b : bs)
     | iso a b   = Just (b, bs)
     | otherwise = fmap (\(x, xs) -> (x, b : xs)) (extract a bs)
 
--- Pov-respecting isomorphism.  Equal-length pov maps are required
+-- Pov-respecting isomorphism. Equal-length pov maps are required
 -- (probIsomorphicWith indexes by pov strand); within one problem all
 -- shapes share the pov so this always holds, but the guard keeps the
 -- tool safe if mismatched shapes are ever compared.
@@ -162,8 +133,6 @@ iso :: Shape -> Shape -> Bool
 iso a b =
     length (shapeProb a) == length (shapeProb b) &&
     probIsomorphicWith (shapeProb a) (shapeProb b) (shapeK a) (shapeK b)
-
--- Recognizers and field extractors (shared with cpsa4subsume) ---------
 
 isDefprotocol :: SExpr a -> Bool
 isDefprotocol (L _ (S _ "defprotocol" : _)) = True
@@ -181,6 +150,7 @@ isShapeDefskel :: SExpr a -> Bool
 isShapeDefskel (L _ (S _ "defskeleton" : rest)) = any isShapeForm rest
 isShapeDefskel _ = False
 
+-- Matches both (shape) and (shape candidate)
 isShapeForm :: SExpr a -> Bool
 isShapeForm (L _ (S _ "shape" : _)) = True
 isShapeForm _ = False
@@ -203,8 +173,7 @@ labelOf (L _ (_ : rest)) =
       []      -> Nothing
 labelOf _ = Nothing
 
--- The pov->strand map (prob) from a shape's (maps ...) field.  Every map
--- entry carries the same strand list, so the first entry suffices.  An
+-- The pov->strand map (prob) from a shape's (maps ...) field. An
 -- empty/absent (maps) means the skeleton is the pov; prob is the identity.
 probOf :: SExpr a -> Preskel -> [Int]
 probOf (L _ (_ : rest)) k =

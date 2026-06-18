@@ -125,11 +125,6 @@ useThinningDuringGeneralization = False -- True
 omitGeneralization :: Bool
 omitGeneralization = False -- True
 
--- EXPERIMENT (global shapes): deorigination (wonthull2 completeness fix) and
--- global-shape generalization are now RUNTIME flags carried in Mode
--- (deorig, globalShapes), set from Options.  See transformingNode and
--- Strand.generalize.
-
 -- This check is just a sanity check and is normally left off.
 usePovCheck :: Bool
 usePovCheck = True -- False
@@ -300,8 +295,6 @@ data Mode = Mode
       nonceFirstOrder :: Bool,
       visitOldStrandsFirst :: Bool,
       reverseNodeOrder :: Bool,
-      -- EXPERIMENT (global shapes): runtime flags, formerly the compile-time
-      -- constants useGlobalShapes (Strand.hs) and useDeorigination (here).
       globalShapes :: Bool,     -- generalization = listener deletion only
       deorig :: Bool }          -- deorigination augmentation fix on
     deriving Show
@@ -361,8 +354,7 @@ reduceNoTest :: Mode -> Preskel -> ReduceRes
 reduceNoTest mode k =
   if omitGeneralization || noGeneralization mode then Stable
   else
-      -- EXPERIMENT (global shapes): globalShapes flag threaded to maximize.
-      (case maximize (globalShapes mode) k of --filterSame k (maximize k) of
+      (case maximize (globalShapes mode) k of
           [] -> Stable
           ks -> Gnl ks)
     {- case [k] --   simplify (k { operation = AppliedRules (strandids k),
@@ -397,7 +389,7 @@ filterSame :: Preskel -> [Preskel] -> [Preskel]
 filterSame k ks =
   filter f ks
   where
-    f k' = not $ probIsomorphic k k' -- isomorphic (gist k) (gist k')
+    f k' = not $ probIsomorphic k k'
 
 prioritizeVertices :: Preskel -> [Vertex] -> [Vertex]
 prioritizeVertices k vs =
@@ -516,10 +508,8 @@ isAncestorInSet set source position =
 -- Solve critical message at position pos at node n.
 -- ct = t @ pos
 -- t  = msg(k, n)
--- EXPERIMENT (global shapes): deorig threaded through to augmentations.
 solveNode :: Bool -> Preskel -> Set Term -> CMT -> Place -> [Term] -> Node ->
              ChMsg -> Set CMT -> [Preskel]
--- solveNode _ _ _ _ _ _ _ = []
 solveNode deorig k a ct pos eks n t escape =
     mgs $ cons ++ augs ++ lsns ++ dhs
     where
@@ -530,7 +520,6 @@ solveNode deorig k a ct pos eks n t escape =
       cause = Cause (dir eks) n ct escape
 
 -- Authenticated channel message is the critical value
--- EXPERIMENT (global shapes): deorig threaded through to augmentations.
 chanSolveNode :: Bool -> Preskel -> Node -> ChMsg -> [Preskel]
 chanSolveNode deorig k n ct =
   mgs $ augmentations deorig k t pos eks n escape cause
@@ -635,7 +624,7 @@ dir _ = Encryption
 
 -- Augmentations
 
--- EXPERIMENT (global shapes): deorig threaded through to transformingNode.
+-- deorig threaded through to transformingNode.
 augmentations :: Bool -> Preskel -> CMT -> Place -> [Term] -> Node ->
                  Set CMT -> Cause -> [(Preskel, [Sid])]
 augmentations deorig k ct pos eks n escape cause =
@@ -668,8 +657,6 @@ cloneRoleVars gen role =
             (gen'', env') : _ -> grow ts gen'' env'
             [] -> error "Cohort.grow: Internal error"
 
--- EXPERIMENT (global shapes): deorig is the runtime deorigination flag,
--- threaded from solveNode/chanSolveNode (Mode field deorig).
 transformingNode :: Bool -> CMT -> Set CMT -> [CMT] -> Role ->
                     (Gen, Subst) -> [((Gen, Subst), Instance)]
 transformingNode deorig ct escape targets role subst =
@@ -684,19 +671,19 @@ transformingNode deorig ct escape targets role subst =
           where
             substs = carriedBindings targets t subst
             substs' = cowt ct escape past substs
-            -- DEORIGINATION (wonthull2 fix), gated by the deorig flag:
-            -- when on, also offer the receive-instead-of-originate
-            -- alternatives; when off, this is exactly stock (substs').
+            -- DEORIGINATION (fixes wonthull family):
+            -- when deorig flag ison, also offer the receive-instead-of-originate
+            -- alternatives; when off, just use substs'.
             substs'' = if deorig
                        then concatMap (deoriginate ct escape past) substs'
                        else substs'
             acc' = maybeAug ct escape role ht substs'' acc t
 
 -- True when the critical term is already carried somewhere in some past
--- reception (regardless of the escape set) under the substitution.  When
--- it is, no deorigination is needed.  Deorigination matters only when
+-- reception (regardless of the escape set) under the substitution. When
+-- it is, no deorigination is needed. Deorigination matters only when
 -- the critical term is absent from every reception, so the strand would
--- otherwise ORIGINATE it (the wonthull2 send-only-variable case).
+-- otherwise originate it.
 receivedAtAll :: CMT -> Trace -> (Gen, Subst) -> Bool
 receivedAtAll ct past (_, subst) =
     any rcv [ inT | In inT <- past ]
@@ -707,23 +694,17 @@ receivedAtAll ct past (_, subst) =
 -- Keep the originating substitution and, when the critical term is not
 -- received anywhere, also offer alternatives that bind a received
 -- subterm to the critical term and fold it within the escape set
--- (generating the missing reception).  Unlike the earlier attempt this
--- does NOT replace the originating candidate: both flow on to mgs.
+-- (generating the missing reception).
 deoriginate :: CMT -> Set CMT -> Trace -> (Gen, Subst) -> [(Gen, Subst)]
 deoriginate ct escape past subst
     | receivedAtAll ct past subst = [subst]   -- already received; nothing to add
     | otherwise =
-        subst :                               -- KEEP the originating option
+        subst :                               -- keep the originating option
         [ s' |
           In inT <- past,
           sub <- S.toList (cmFoldCarriedTerms (flip S.insert) S.empty inT),
           s  <- cmtUnify sub ct subst,        -- receive the critical term
-                                              -- (cyclic unifications now fail
-                                              -- cleanly in Algebra.unify)
-          -- Re-establish carried-only-within over the whole past via the
-          -- stock cowt engine (guarded + nubSnd-deduped + fixpoint).
-          s' <- cowt ct escape past [s] ]
--- end EXPERIMENT (wonthull2 deorigination) ---------------------------
+          s' <- cowt ct escape past [s] ]     -- pull it within the escape set
 
 -- Terms considered for binding with the carried terms in an outbound
 -- term.
@@ -881,7 +862,6 @@ maximize k =
 
 --}
 
--- EXPERIMENT (global shapes): globalShapes threaded to generalize.
 maximize :: Bool -> Preskel -> [Preskel]
 maximize globalShapes k =
     iter $ -- factorIsomorphicPreskels $
@@ -912,7 +892,6 @@ specialization k k' mapping
           k'' <- toSkeleton useThinningDuringGeneralization k'
           -- (showSome k'' k'') inside *realized* to debug
           case (realized k'') &&  (not (probIsomorphic k k'')) &&
-          -- case (realized k'') &&  (not (isomorphic (gist k) (gist k''))) &&
                (refines k'' (pov k'') (prob k'')) &&
                (refines k (Just k'') mapping) of
             True -> [k''] -- maybeOK $
