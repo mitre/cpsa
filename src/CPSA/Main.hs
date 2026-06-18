@@ -183,6 +183,8 @@ data Flag
     | TryOldStrandsFirst        -- Try old strands first
     | TryYoungNodesFirst        -- Try young nodes first
     | GoalsSat                  -- Stop when goals are satisfied
+    | Generalize                -- use generalization instead of global shapes
+    | NoDeorig                  -- disable deorigination
     | Algebra String            -- Algebra
     | Algebras                  -- Show algebras
     | Help                      -- Help
@@ -212,6 +214,10 @@ options =
       "try younger nodes first",
       Option ['g'] ["goals-sat"] (NoArg GoalsSat)
       "Stop when goals are satisfied",
+      Option [] ["generalize"] (NoArg Generalize)
+      "use generalization instead of global shape check",
+      Option [] ["no-deorig"] (NoArg NoDeorig)
+      "disable the deorigination augmentation fix (known to introduce incompleteness)",
       Option ['a'] ["algebra"]  (ReqArg Algebra "STRING")
       ("algebra (default " ++ defaultAlgebra ++ ")"),
       Option ['s'] ["show-algebras"] (NoArg Algebras)  "show algebras",
@@ -271,6 +277,10 @@ interp algs opts flags =
           loop flags $ opts { optTryYoungNodesFirst = True }
       loop (GoalsSat : flags) opts =
           loop flags $ opts { optGoalsSat = True }
+      loop (Generalize : flags) opts =
+          loop flags $ opts { optGlobalShapes = False }
+      loop (NoDeorig : flags) opts =
+          loop flags $ opts { optDeorig = False }
       loop (Algebra name : flags) opts
           | elem name algs = loop flags $ opts { optAlg = name }
           | otherwise =

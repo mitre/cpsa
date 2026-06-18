@@ -17,6 +17,8 @@ data Options = Options {
       optTryOldStrandsFirst :: Bool, -- True when visiting old strands first
       optTryYoungNodesFirst :: Bool, -- True when visiting young nodes first
       optGoalsSat :: Bool , -- True when goals satisfied stops tree expansion
+      optGlobalShapes :: Bool,  -- True when doing global shape check
+      optDeorig :: Bool,        -- True when deorigination augmentation fix on
       optLimit :: Int,          -- Step count limit
       optBound :: Int,          -- Strand cound bound
       optDepth :: Int,          -- Tree depth bound
@@ -34,6 +36,8 @@ defaultOptions = Options {
   optTryOldStrandsFirst = False,
   optTryYoungNodesFirst = False,
   optGoalsSat = False,
+  optGlobalShapes = True,
+  optDeorig = True,
   optLimit = 2000,
   optBound = 12,
   optDepth = 0,                 -- Infinite

@@ -93,6 +93,7 @@ module CPSA.Algebra (name, alias,
     intOfIndex,
     termsWellFormed,
     occursIn,
+    acyclicSubst,
     foldVars,
     foldCarriedTerms,
     carriedBy,
@@ -733,6 +734,44 @@ occursIn t t' | isVar t =
   subterm (I $ varId t) t'
 occursIn t _ =
   error $ "Algebra.occursIn: Bad variable " ++ show t
+
+-- True when a substitution is acyclic: fully resolving any variable
+-- terminates. The unifier's occurs-check (unifyTerms) uses a shallow chase
+-- and so admits transitive cycles. This is a deep chase cycle check
+-- used to reject cyclic substitutions that deorigination can produce
+-- by unifying a received message-sort variable with the critical term.
+acyclicSubst :: Subst -> Bool
+acyclicSubst (Subst m) =
+    case foldl visit (Just S.empty) (M.keys m) of
+      Just _  -> True
+      Nothing -> False
+    where
+      -- Memoized three-colour DFS: `done` is the set proven acyclic (never
+      -- re-explored, so this is O(V+E) rather than exponential on shared
+      -- DAGs); `onstack` is the current path (a back-edge to it is a cycle).
+      visit Nothing _ = Nothing
+      visit (Just done) x = dfs done S.empty x
+      dfs done onstack x
+          | S.member x done    = Just done
+          | S.member x onstack = Nothing
+          | otherwise =
+              case M.lookup x m of
+                Nothing -> Just (S.insert x done)
+                Just t  ->
+                    fmap (S.insert x) $
+                    foldl (step (S.insert x onstack)) (Just done) (idsOf t)
+      step _ Nothing _ = Nothing
+      step onstack (Just done) y = dfs done onstack y
+      -- All variable Ids occurring in a term, collected by a plain recursive
+      -- walk that handles every Term form (foldVars rejects key-component
+      -- forms such as (Invk (akey x)) that occur in substitution ranges).
+      idsOf t = vids t []
+      vids (I x) acc = x : acc
+      vids (D x) acc = x : acc
+      vids (X x) acc = x : acc
+      vids (G g) acc = M.keys g ++ acc
+      vids (F _ ts) acc = foldr vids acc ts
+      vids _ acc = acc                 -- C, Z, Y carry no variables
 
 subterm :: Term -> Term -> Bool
 subterm t t' | t == t' =
@@ -1651,7 +1690,9 @@ unify :: Term -> Term -> GenSubst -> [GenSubst]
 unify t t' (g, s) =
     do
       (g, s) <- unifyChase t t' (g, s)
-      return (g, chaseMap s)
+      -- The occurs-check in unifyTerms chases only shallowly, so it can admit
+      -- a transitive cycle. Guard chaseMap with the deep check acyclicSubst.
+      if acyclicSubst s then return (g, chaseMap s) else []
 
 -- unify :: Term -> Term -> (Gen, Subst) -> [(Gen, Subst)]
 -- unify t t' (g, s)

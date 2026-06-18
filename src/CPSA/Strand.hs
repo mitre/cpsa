@@ -16,14 +16,17 @@ module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     showPreskelSelectively, showPreskelUnselectively,
     verbosePreskelWellFormed, Strand, inst, sid, nodes,
     Vertex, strand, pos, preds, event, graphNode, strands, vertex,
-    Gist, gist, isomorphic, factorIsomorphicPreskels, findIsomorphisms, 
+    Gist, gist, isomorphic, probIsomorphic, probIsomorphicWith,
+    factorIsomorphicPreskels, findIsomorphisms,
     contract, augment,
     inheritRnon, inheritRpnon, inheritRunique, inheritRuniqgen, inheritRabsent,
     inheritRconf, inheritRauth, addListener, addBaseListener, addAbsence,
     updateStrandMap,
     operation, krules, pprob, prob, homomorphism, toSkeleton, generalize,
     collapse, goalCounterExamples, unSatReport, FTerm (..), Fact (..), simplify, rewrite,
-    localSignal, rewriteUnaryOneOnce, nodePairsOfSkel, applyLeadsTo) where
+    localSignal, rewriteUnaryOneOnce, nodePairsOfSkel, applyLeadsTo,
+    skelToConj, homomorphismExists, homomorphismMap, homomorphismMapWith)
+    where
 
 import Control.Monad
 import Control.Parallel
@@ -1236,11 +1239,11 @@ isomorphic g g' =
     sameSkyline g g' &&
     any (tryPerm g g') (permutations g g')
 
-findIsomorphisms :: Gist -> Gist -> [((Gen, Env), (Gen, Env), [Sid])]
-findIsomorphisms g g' =
+findIsomorphisms :: Gist -> Gist -> [Sid] -> [Sid] -> [((Gen, Env), (Gen, Env), [Sid])]
+findIsomorphisms g g' pr pr' =
     if sameSkyline g g'
     then
-        filter (tryPerm g g') $ permutations g g'
+        filter (tryPermProb g g' pr pr') $ permutations g g'
     else
         [] 
 
@@ -1259,16 +1262,19 @@ sameSkyline g g' =
     nfacts g == nfacts g' &&
     nfvars g == nfvars g'
 
--- For thinning.  Ensure point-of-view is preserved.
+-- Ensure point-of-view is preserved on all isomorphisms.
 probIsomorphic :: Preskel -> Preskel -> Bool
-probIsomorphic k k' =
+probIsomorphic k k' = probIsomorphicWith (prob k) (prob k') k k'
+
+-- Unwrapped propIsomorphic. Needed for cpsa4hom when reading in skeletons
+-- that don't have prob maps populated.
+probIsomorphicWith :: [Sid] -> [Sid] -> Preskel -> Preskel -> Bool
+probIsomorphicWith pr pr' k k' =
     sameSkyline g g' &&
     any (tryPermProb g g' pr pr') (permutations g g')
     where
       g = gist k
       g' = gist k'
-      pr = prob k
-      pr' = prob k'
 
 -- Extend a permutation while extending a substitution
 -- Extend by matching later strands first
@@ -2536,11 +2542,13 @@ addIdentity k = (k, strandids k)
 separateVariablesLimit :: Int
 separateVariablesLimit = 1024
 
-generalize :: Preskel -> [Candidate]
-generalize k =
-    deleteNodes k' ++
-    if generalizeOnlyByDeletion then []
-    else 
+-- Generalization is restricted to listener deletion only when
+-- globalShapes flag is True.
+generalize :: Bool -> Preskel -> [Candidate]
+generalize globalShapes k =
+    deleteNodes globalShapes k' ++
+    if generalizeOnlyByDeletion || globalShapes then []
+    else
         (forgetAssumption k' ++
          weakenOrderings k' ++
          (if useVariableSeparation
@@ -2602,9 +2610,10 @@ delete node n in k
 6. update prob upon instance deletion
 -}
 
-deleteNodes :: Preskel -> [Candidate]
-deleteNodes k =
-    if generalizeDeleteOnlyListeners
+-- Delete only listeners when the globalShapes flag is True.
+deleteNodes :: Bool -> Preskel -> [Candidate]
+deleteNodes globalShapes k =
+    if generalizeDeleteOnlyListeners || globalShapes
     -- if true, only listeners are
     -- candidates for node deletion.
     -- Recommended *only* to crank down
@@ -3114,7 +3123,8 @@ collapseStrands k s s' =
                      (0, 0), strandids k, emptySubst) subst
       prs <- compress True prs s s'
       prs@(_, _, _, sm, _) <- skeletonize useThinningDuringCollapsing prs
-      return $ updateStrandMap sm $ skel prs
+      -- Use withCoreFacts to drop facts derived before collapsing.
+      return $ withCoreFacts $ updateStrandMap sm $ skel prs
 
 -- Facts
 
@@ -3350,6 +3360,214 @@ nodePairsOfSkel k =
       tupleOfMaybeList (Just [v1, v2, v3, v4]) = Just ((v1, v2), (v3, v4))
       tupleOfMaybeList (Just _) = Nothing
       tupleOfMaybeList Nothing = Nothing
+
+-- ===================================================================
+-- Core idea behind homomorphisms used in global shape checking.
+--
+-- Checking the existence of a homomorphism from k to k' is equivalent to 
+-- checking if k' satisfies the characteristic formula of k. Thus, we
+-- can compute the characteristic formula, and then leverage the existing
+-- rule infrastructure to check satisfaction. We can filter out any 
+-- non-strand-injective homomorphisms.
+--
+-- Strand representation. A skeleton refers to its strands by integer
+-- Sid, but an AForm refers to a strand by a *term* of sort "strd". We
+-- mint one fresh strd variable per strand, so the strands form the
+-- variable *domain* of a homomorphism (rather than fixed constants,
+-- which would force an identity map). The returned [Term] is indexed
+-- by Sid: (strandVars !! s) is the variable standing for strand s.
+--
+-- Message variables are taken from the skeleton as-is: they are
+-- already the right pattern variables for matching against a target.
+--
+-- Deliberate omissions:
+--   * kabsent (absence) and kprecur (precursors) are not emitted -- no
+--     AForm constructor exists for them and SAS omits absent as well;
+--     absence is enforced structurally by the term algebra during
+--     matching.
+--   * Injectivity of the strand map is not expressed here, but we 
+--     can easily filter for them in the caller.
+-- ===================================================================
+skelToConj :: Gen -> Preskel -> (Gen, [Term], [AForm])
+skelToConj g k =
+    (g', sv, conj)
+    where
+      -- One fresh strd variable per strand, indexed by Sid.
+      (g', sv) = freshStrdVars g (nstrands k)
+
+      -- Convert a skeleton node (Sid, position) into an AForm NodeTerm
+      -- (strandVariable, indexTerm). indxOfInt builds an "indx" term.
+      nodeTerm :: Node -> NodeTerm
+      nodeTerm (s, i) = (sv !! s, indxOfInt i)
+
+      conj =
+          lengthForms ++ paramForms ++ precForms ++
+          nonForms ++ pnonForms ++
+          uniqForms ++ ugenForms ++
+          genStForms ++ leadsToForms ++
+          confForms ++ authForms ++ factForms
+
+      -- Role length: one Length per strand.
+      lengthForms =
+          [ Length (role inst) (sv !! s) (indxOfInt (height inst))
+          | (s, inst) <- zip [0 ..] (insts k) ]
+
+      -- Parameter values: for each strand, each role variable bound in
+      -- the instance (excluding point variables) becomes a Param. The
+      -- third field is the "first-height", the length of the smallest
+      -- role-trace prefix containing the variable. firstOccurs is
+      -- 0-based, so the parser's convention is firstOccurs + 1.
+      paramForms =
+          [ Param r v (i + 1) (sv !! s) t
+          | (s, inst) <- zip [0 ..] (insts k)
+          , let r = role inst
+          , (v, t) <- reify (rvars r) (env inst)
+          , notPt v
+          , Just i <- [firstOccurs v r] ]
+
+      -- Node orderings (precedes).
+      precForms = [ Prec (nodeTerm n) (nodeTerm n') | (n, n') <- orderings k ]
+
+      -- Non-originating and penetrator-non-originating atoms (drop
+      -- point variables, as the displayer does).
+      nonForms  = [ Non t  | t <- knon k,  notPt t ]
+      pnonForms = [ Pnon t | t <- kpnon k, notPt t ]
+
+      -- Uniquely-originating atoms. korig pairs each unique atom with
+      -- the node at which it originates: no node -> Uniq (declared
+      -- unique but origin unconstrained); one or more nodes -> a UniqAt
+      -- per origination node (but there only be one).
+      uniqForms = concatMap f (korig k)
+        where f (t, ns) | not (notPt t) = []
+                        | null ns       = [Uniq t]
+                        | otherwise     = [ UniqAt t (nodeTerm n) | n <- ns ]
+
+      -- Uniquely-generated atoms, analogous to uniqForms via kugen.
+      ugenForms = concatMap f (kugen k)
+        where f (t, ns) | null ns   = [Ugen t]
+                        | otherwise = [ UgenAt t (nodeTerm n) | n <- ns ]
+
+      -- Generated-state assumptions.
+      genStForms = [ GenStV t | t <- kgenSt k ]
+
+      -- Leads-to (state transition) relations. nodePairsOfSkel
+      -- computes the relevant node pairs from the skeleton.
+      leadsToForms = [ LeadsTo (nodeTerm n) (nodeTerm n')
+                     | (n, n') <- nodePairsOfSkel k ]
+
+      -- Channel confidentiality / authentication assumptions.
+      confForms = [ Conf t | t <- kconf k ]
+      authForms = [ Auth t | t <- kauth k ]
+
+      -- Facts. The internal "trans" fact is skipped (the displayer
+      -- skips it too). A fact argument may reference a strand (FSid),
+      -- which we map to that strand's variable; ordinary terms (FTerm)
+      -- pass through unchanged.
+      factForms = [ AFact name (map ftermTerm fts)
+                  | Fact name fts <- kfacts k, name /= "trans" ]
+        where ftermTerm (FSid s)  = sv !! s
+              ftermTerm (FTerm t) = t
+
+-- Mint n fresh variables of sort "strd", returned in index order, so
+-- that the result's k-th element is the variable standing for strand k.
+freshStrdVars :: Gen -> Int -> (Gen, [Term])
+freshStrdVars g n = go g n
+  where
+    go g0 0 = (g0, [])
+    go g0 m =
+        let (g1, v)  = newVarDefault g0 "z" "strd"
+            (g2, vs) = go g1 (m - 1)
+        in (g2, v : vs)
+
+-- ===================================================================
+-- homomorphismExists x y decides whether there is a strand-injective
+-- homomorphism from x to y that respects the point of view (pov). It
+-- is the engine of the global shape check: in the leaves of the
+-- search, y is NOT a shape when some other (non-isomorphic) leaf x maps
+-- homomorphically into it because then x is strictly more general.
+--
+-- Design: "search, then validate".
+--   * Search. skelToConj turns x into a conjunction phi over fresh
+--     strand variables; povSeed pins the pov-image strands; conjoin
+--     (the satisfaction engine) searches assignments for the remaining
+--     (augmented) strands and binds x's message variables, exactly as
+--     rule/goal antecedents are matched. Each solution env proposes a
+--     strand map x -> y (recovered by strdLookup on the strand vars).
+--   * Validate. A proposed map is kept only if it is injective on
+--     strands and if the existing, complete homomorphism validator 
+--     (homomorphism, which checks origination, orderings, absence, etc.
+--     via validateEnv) confirms it.
+-- ===================================================================
+
+-- Seed environment that pins x's pov-image strands onto y's, given the
+-- explicit pov->strand maps probX (for x) and probY (for y). prob is
+-- indexed by pov-strand: (probX !! s) is x's image of pov-strand s,
+-- (probY !! s) is y's. For each s we bind x's strand variable for
+-- (probX !! s) to y's concrete strand (probY !! s). If the lengths
+-- differ the two skeletons share no pov and are never compared, so we
+-- return no seed.
+povSeedWith :: Gen -> [Term] -> [Sid] -> [Sid] -> [(Gen, Env)]
+povSeedWith g sv probX probY
+    | length probX /= length probY = []
+    | otherwise =
+        foldM bind (g, emptyEnv) (zip probX probY)
+    where
+      bind ge (sx, sy) = strdMatch (sv !! sx) sy ge
+
+homomorphismExists :: Preskel -> Preskel -> Bool
+homomorphismExists x y = M.isJust (homomorphismMap x y)
+
+-- Field-based homomorphism map: read the pov->strand maps from the
+-- skeletons' prob fields. (Skeletons reloaded from cpsa output may not
+-- carry prob; in that case use homomorphismMapWith with probs recovered
+-- from the output's (maps ...) field.)
+homomorphismMap :: Preskel -> Preskel -> Maybe [Sid]
+homomorphismMap x y = homomorphismMapWith (prob x) (prob y) x y
+
+-- Unwrapped version of homomorphismMap: the result m has m !! s = the y-strand 
+-- that x-strand s maps to. Nothing means no such homomorphism.  
+-- probX and probY are the pov->strand maps for x and
+-- y. Search-then-validate; keeps the first validated map.
+homomorphismMapWith :: [Sid] -> [Sid] -> Preskel -> Preskel -> Maybe [Sid]
+homomorphismMapWith probX probY x y
+    | not prefilter = Nothing
+    | otherwise = M.listToMaybe (M.mapMaybe viable results)
+    where
+      -- Cheap necessary conditions, checked before any conjoin.
+      prefilter =
+          nstrands x <= nstrands y &&
+          length probX == length probY -- &&
+          --all dominated (L.nub rolesX)
+      -- PDR: Role names are only suggestions.          
+      -- rolesX = map (rname . role) (insts x)
+      -- rolesY = map (rname . role) (insts y)
+      -- dominated r = count r rolesX <= count r rolesY
+      -- count r = length . filter (== r)
+
+      -- Search: x as a conjunction over fresh strand vars, pov-seeded,
+      -- matched against y. gmerge keeps freshly created variables clear
+      -- of both skeletons' variable spaces.
+      g0            = gmerge (gen x) (gen y)
+      (g1, sv, phi) = skelToConj g0 x
+      seeds         = povSeedWith g1 sv probX probY
+      results       = concatMap (conjoin phi y) seeds
+
+      -- Validate one proposed solution. Recover the strand map m
+      -- (m !! s is the y-strand that x-strand s maps to), require every
+      -- strand be mapped and the map be injective, then confirm with the
+      -- complete homomorphism validator. Return the map if valid.
+      viable (_, env)
+          | any M.isNothing m = Nothing
+          | not (injective m') = Nothing
+          | null (homomorphism x y m') = Nothing
+          | otherwise = Just m'
+          where
+            m  = map (strdLookup env . (sv !!)) (strandids x)
+            m' = M.catMaybes m
+
+-- A list is injective (as a map's value list) iff it has no duplicates.
+injective :: Eq a => [a] -> Bool
+injective xs = length (L.nub xs) == length xs
 
 glengthExtendEnv :: Role -> Term -> Sid -> Int -> Instance -> (Gen,Env) -> [(Gen,Env)]
 glengthExtendEnv r z s h inst (g, e)
@@ -3841,7 +4059,7 @@ parFactor eqRel as =
 -- Computed in parallel via the pars in parFactor.
 
 factorIsomorphic :: [Preskel] -> [Preskel]
-factorIsomorphic = parFactor (\k1 k2 -> isomorphic (gist k1) (gist k2))
+factorIsomorphic = parFactor (\k1 k2 -> probIsomorphic k1 k2)
                    
 {--     let result = parFactor
                  (\k1 k2 -> isomorphic (gist k1) (gist k2))
@@ -3853,7 +4071,7 @@ factorIsomorphic = parFactor (\k1 k2 -> isomorphic (gist k1) (gist k2))
 mergeIsomorphic :: [Preskel] -> [Preskel] -> [Preskel]
 mergeIsomorphic =
     mergeEqRel
-    (\k1 k2 -> isomorphic (gist k1) (gist k2))
+    (\k1 k2 -> probIsomorphic k1 k2)
 
 factorIsomorphicPreskels :: [Preskel] -> [Preskel]
 factorIsomorphicPreskels = factorIsomorphic
