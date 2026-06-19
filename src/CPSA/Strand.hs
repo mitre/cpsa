@@ -16,8 +16,9 @@ module CPSA.Strand (Instance, mkInstance, bldInstance, mkListener,
     showPreskelSelectively, showPreskelUnselectively,
     verbosePreskelWellFormed, Strand, inst, sid, nodes,
     Vertex, strand, pos, preds, event, graphNode, strands, vertex,
+    SkelAction (..), solvingAction,
     Gist, gist, isomorphic, probIsomorphic, probIsomorphicWith,
-    factorIsomorphicPreskels, findIsomorphisms,
+    factorIsomorphicPreskels, findIsomorphisms, involutions,
     contract, augment,
     inheritRnon, inheritRpnon, inheritRunique, inheritRuniqgen, inheritRabsent,
     inheritRconf, inheritRauth, addListener, addBaseListener, addAbsence,
@@ -587,6 +588,12 @@ type Strand = GraphStrand Event Instance
 type Vertex = GraphNode Event Instance
 
 type Edge = GraphEdge Event Instance
+
+data SkelAction
+    = ReduceOnly
+    | ThinReduce
+    | AutomorphismReduce
+    deriving Eq
 
 updateStrandMap :: [Sid] -> Preskel -> Preskel
 updateStrandMap sm k =
@@ -1673,12 +1680,16 @@ soothePreskel k =
 -- This is the starting point of the Preskeleton Reduction System
 
 skeletonize :: Bool -> PRS -> [PRS]
-skeletonize thin prs =
+skeletonize thin =
+  skeletonizeWith (if thin then ThinReduce else ReduceOnly)
+
+skeletonizeWith :: SkelAction -> PRS -> [PRS]
+skeletonizeWith action prs =
   do
     prs' <- enforceAbsence prs
     case origGenChecks prs' of
       True -> []
-      False -> enrich thin prs'
+      False -> enrich action prs'
 
 -- Compute the substitutions that satisfy the absence assumptions and
 -- apply them to the skeleton.
@@ -1733,7 +1744,7 @@ hull thin prs =
     loop (korig (skel prs) ++ kugen (skel prs))
     where
       -- No uniques originate on more than one strand
-      loop [] = enrich thin prs
+      loop [] = enrich (if thin then ThinReduce else ReduceOnly) prs
       -- Found a pair that needs hulling
       loop ((_, (s, _) : (s', _) : _) : _) =
         do
@@ -1747,13 +1758,13 @@ hull thin prs =
 
 -- Adds orderings so that a skeleton respects origination.
 
-enrich :: Bool -> PRS -> [PRS]
+enrich :: SkelAction -> PRS -> [PRS]
 enrich _ prs | origGenChecks prs = []
-enrich thin (k0, k, n, phi, hsubst) =
+enrich action (k0, k, n, phi, hsubst) =
     let o = foldl (addUniqOrigOrderings k) (orderings k) (kunique k) in
     let o' = foldl (addUniqGenOrderings k) o (kuniqgen k) in
     if length o' == length (orderings k) then
-        maybeThin thin (k0, k, n, phi, hsubst) -- Nothing to add
+        finishSkeletonize action (k0, k, n, phi, hsubst) -- Nothing to add
     else
         do
           let k' =
@@ -1779,12 +1790,13 @@ enrich thin (k0, k, n, phi, hsubst) =
                   (prob k)
                   (pov k)
           k'' <- wellFormedPreskel k'
-          maybeThin thin (k0, k'', n, phi, hsubst)
+          finishSkeletonize action (k0, k'', n, phi, hsubst)
 
-maybeThin :: Bool -> PRS -> [PRS]
-maybeThin _ prs | usePruning = prune prs
-maybeThin True prs = thin prs
-maybeThin False prs = reduce prs
+finishSkeletonize :: SkelAction -> PRS -> [PRS]
+finishSkeletonize _ prs | usePruning = prune prs
+finishSkeletonize ThinReduce prs = thin prs
+finishSkeletonize AutomorphismReduce prs = thinAutomorphisms prs
+finishSkeletonize ReduceOnly prs = reduce prs
 
 origNode :: Preskel -> Term -> Maybe Node
 origNode k t =
@@ -1949,6 +1961,43 @@ thinManyStrands prs ps =
            prs'' <- compressMany prs (swap ps),
            probIsomorphic (skel prs') (skel prs'')]
 
+-- Automorphism-based thinning
+
+involutions :: Preskel -> [[Sid]]
+involutions k =
+  [ sm | (_, _, sm) <- findIsomorphisms (gist k) (gist k) (prob k) (prob k),
+         not (identity sm),
+         involution sm ]
+  where
+    identity sm = and $ zipWith (==) sm (strandids k)
+    involution sm =
+      length sm == nstrands k &&
+      all (\s -> sm !! (sm !! s) == s) (strandids k)
+
+thinAutomorphisms :: PRS -> [PRS]
+thinAutomorphisms prs =
+  do
+    prs <- reduce prs
+    tryInvolutions prs (involutions $ skel prs)
+
+tryInvolutions :: PRS -> [[Sid]] -> [PRS]
+tryInvolutions prs [] = [prs]
+tryInvolutions prs (sm:sms) =
+  case deleteInvolution prs sm of
+    [] -> tryInvolutions prs sms
+    prss ->
+      do
+        prs <- prss
+        thinAutomorphisms prs
+
+deleteInvolution :: PRS -> [Sid] -> [PRS]
+deleteInvolution prs sm =
+  compressMany prs pairs
+  where
+    pairs = [ (s, s') | s <- strandids (skel prs),
+                        let s' = sm !! s,
+                        s < s' ]
+
 compressMany :: PRS -> [(Sid, Sid)] -> [PRS]
 compressMany prs [] = [prs]
 compressMany prs ((s, s'):ps) =
@@ -2092,6 +2141,11 @@ type Ans = (Preskel, Node, [Sid], Subst)
 ans :: PRS -> Ans
 ans (_, k, n, phi, subst) = (k, n, phi, subst)
 
+solvingAction :: Bool -> SkelAction
+solvingAction True = AutomorphismReduce
+solvingAction False =
+  if useThinningWhileSolving then ThinReduce else ReduceOnly
+
 -- Homomorphism Filter
 
 homomorphismFilter :: PRS -> [Ans]
@@ -2127,35 +2181,36 @@ toSkeleton thin k =
 
 -- Contraction
 
-contract :: Preskel -> Node -> Cause -> (Gen, Subst) -> [Ans]
-contract k n cause subst =
+contract :: SkelAction -> Preskel -> Node -> Cause -> (Gen, Subst) -> [Ans]
+contract action k n cause subst =
     do
       prs <- ksubst (k, k { operation = Contracted [] emptySubst cause,
                             krules = [] },
                      n, strandids k, emptySubst) subst
-      prs' <- skeletonize useThinningWhileSolving prs
+      prs' <- skeletonizeWith action prs
       homomorphismFilter prs'
 
 -- Regular Augmentation
 
 -- First argument determines if displacement is used.
-augment :: Preskel -> Node -> Cause -> Role ->
+augment :: SkelAction -> Preskel -> Node -> Cause -> Role ->
            (Gen, Subst) -> Instance -> [Ans]
-augment k0 n cause role subst inst =
+augment action k0 n cause role subst inst =
     do
-      prs <- augmentAndDisplace k0 n cause role subst inst
+      prs <- augmentAndDisplace action k0 n cause role subst inst
       homomorphismFilter prs
 
 -- Apply a substitution, and then augment and displace.  Augmentations
 -- add an instance and one ordered pair.  Displacements add an ordered
 -- pair and may add nodes.
 
-augmentAndDisplace :: Preskel -> Node -> Cause -> Role ->
+augmentAndDisplace :: SkelAction -> Preskel -> Node -> Cause -> Role ->
                       (Gen, Subst) -> Instance -> [PRS]
-augmentAndDisplace k0 n cause role subst inst =
+augmentAndDisplace action k0 n cause role subst inst =
     do
       prs <- substAndAugment k0 n cause role subst inst
-      augDisplace prs ++ skeletonize useThinningWhileSolving prs
+      augDisplace action prs ++
+        skeletonizeWith action prs
 
 -- Apply the substitution and apply augmentation operator.
 substAndAugment :: Preskel -> Node -> Cause -> Role ->
@@ -2235,23 +2290,23 @@ inheritRabsent i =
       f (_, _, pos) = pos < height i
 
 -- Add all displacements
-augDisplace :: PRS -> [PRS]
-augDisplace prs =
+augDisplace :: SkelAction -> PRS -> [PRS]
+augDisplace action prs =
     do
       let s = nstrands (skel prs) - 1
       s' <- nats s
-      augDisplaceStrands prs s s'
+      augDisplaceStrands action prs s s'
 
 -- Try to displace with strand s'
-augDisplaceStrands :: PRS -> Sid -> Sid -> [PRS]
-augDisplaceStrands (k0, k, n, phi, hsubst) s s' =
+augDisplaceStrands :: SkelAction -> PRS -> Sid -> Sid -> [PRS]
+augDisplaceStrands action (k0, k, n, phi, hsubst) s s' =
     do
       (s, s', subst) <- unifyStrands k s s'
       let op = addedToDisplaced (operation k) s s'
       prs <- ksubst (k0, k { operation = op, krules = [] },
                      n, phi, hsubst) subst
       prs <- compress True prs s s'
-      skeletonize useThinningWhileSolving prs
+      skeletonizeWith action prs
 
 -- See if two strands unify.  They can be of differing heights.  The
 -- second strand returned may be longer.
@@ -2287,11 +2342,11 @@ addedToDisplaced _ _ _ = error "Strand.addedToDisplaced: Bad operation"
 
 -- Listener Augmentation
 
-addListener :: Preskel -> Node -> Cause -> Term -> [Ans]
-addListener k n cause t =
+addListener :: SkelAction -> Preskel -> Node -> Cause -> Term -> [Ans]
+addListener action k n cause t =
     do
       k'' <- wellFormedPreskel k'
-      prs <- skeletonize useThinningWhileSolving
+      prs <- skeletonizeWith action
              (k, k'', n, strandids k, emptySubst)
       homomorphismFilter prs
     where
@@ -2307,20 +2362,20 @@ addListener k n cause t =
 -- Base Listener Augmentation.  Like listener augmentation but adds a
 -- base precursor and a precur assertion.
 
-addBaseListener :: Preskel -> Node -> Cause -> Term -> [Ans]
-addBaseListener k n cause t =
+addBaseListener :: SkelAction -> Preskel -> Node -> Cause -> Term -> [Ans]
+addBaseListener action k n cause t =
     case baseRndx t of
       Just ts ->
         do
           x <- ts
-          addListener k n cause x
-      _ -> formerAddBaseListener k n cause t
+          addListener action k n cause x
+      _ -> formerAddBaseListener action k n cause t
 
-formerAddBaseListener :: Preskel -> Node -> Cause -> Term -> [Ans]
-formerAddBaseListener k n cause t =
+formerAddBaseListener :: SkelAction -> Preskel -> Node -> Cause -> Term -> [Ans]
+formerAddBaseListener action k n cause t =
     do
       k'' <- wellFormedPreskel k'
-      prs <- skeletonize useThinningWhileSolving
+      prs <- skeletonizeWith action
              (k, k'', n, strandids k, emptySubst)
       homomorphismFilter prs
     where
@@ -2336,11 +2391,11 @@ formerAddBaseListener k n cause t =
       precur' = (length (insts k), 0) : kprecur k
 
 -- addAbsence
-addAbsence :: Preskel -> Node -> Cause -> Term -> Term -> [Ans]
-addAbsence k n cause x t =
+addAbsence :: SkelAction -> Preskel -> Node -> Cause -> Term -> Term -> [Ans]
+addAbsence action k n cause x t =
     do
       k'' <- wellFormedPreskel k'
-      prs <- skeletonize useThinningWhileSolving
+      prs <- skeletonizeWith action
              (k, k'', n, strandids k, emptySubst)
       homomorphismFilter prs
     where                       -- New cause should be added!

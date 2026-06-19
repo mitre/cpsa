@@ -587,7 +587,9 @@ mkMode p =
            visitOldStrandsFirst = optTryOldStrandsFirst p,
            reverseNodeOrder = optTryYoungNodesFirst p,
            globalShapes = optGlobalShapes p,
-           deorig = optDeorig p}
+           deorig = optDeorig p,
+           useAutomorphisms = optUseAutomorphisms p,
+           automorphismEscapes = optAutomorphismEscapes p}
 
 -- The Seen skeleton's label with the duplicate skeleton
 type SeenSkel = (Int, Preskel)

@@ -19,6 +19,8 @@ data Options = Options {
       optGoalsSat :: Bool , -- True when goals satisfied stops tree expansion
       optGlobalShapes :: Bool,  -- True when doing global shape check
       optDeorig :: Bool,        -- True when deorigination augmentation fix on
+      optUseAutomorphisms :: Bool, -- True when replacing thinning with automorphism deletion
+      optAutomorphismEscapes :: Bool, -- True when using involutions to enlarge escape checks
       optLimit :: Int,          -- Step count limit
       optBound :: Int,          -- Strand cound bound
       optDepth :: Int,          -- Tree depth bound
@@ -38,6 +40,8 @@ defaultOptions = Options {
   optGoalsSat = False,
   optGlobalShapes = True,
   optDeorig = True,
+  optUseAutomorphisms = False,
+  optAutomorphismEscapes = False,
   optLimit = 2000,
   optBound = 12,
   optDepth = 0,                 -- Infinite

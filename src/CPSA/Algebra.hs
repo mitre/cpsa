@@ -154,6 +154,7 @@ module CPSA.Algebra (name, alias,
     strandBoundEnv,
     renamerAndNewVars,
     envIdentityOnVars,
+    envMatchIdentityOnVars,
     envStrandsWithin, 
     reify,
     matchRename,
@@ -1814,6 +1815,13 @@ envOfParamVarPairs ((p,v) : rest) =
 envIdentityOnVars :: [Term] -> Env
 envIdentityOnVars vars =
     envOfParamVarPairs $ L.zip vars vars
+
+envMatchIdentityOnVars :: [Term] -> Env
+envMatchIdentityOnVars vars =
+    envOfParamVarPairs $ map identityPair vars
+    where
+      identityPair (F _ [t@(I _)]) = (t, t)
+      identityPair v = (v, v)
 
 envStrandsWithin :: Env -> [Int] -> Bool
 envStrandsWithin (Env (_, r)) strands =

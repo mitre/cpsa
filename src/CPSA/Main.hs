@@ -155,6 +155,12 @@ go name origin files herald opts sexprs =
               case optTryYoungNodesFirst opts of
                 True -> writeComment h m "Younger nodes tried first"
                 False -> return ()
+              case optUseAutomorphisms opts of
+                True -> writeComment h m "Automorphism deletion enabled"
+                False -> return ()
+              case optAutomorphismEscapes opts of
+                True -> writeComment h m "Automorphism escape checks enabled"
+                False -> return ()
               -- Analyze
               solve opts h preskels 0
 
@@ -185,6 +191,8 @@ data Flag
     | GoalsSat                  -- Stop when goals are satisfied
     | Generalize                -- use generalization instead of global shapes
     | NoDeorig                  -- disable deorigination
+    | UseAutomorphisms          -- replace thinning with automorphism deletion
+    | AutomorphismEscapes       -- use involutions to enlarge escape checks
     | Algebra String            -- Algebra
     | Algebras                  -- Show algebras
     | Help                      -- Help
@@ -218,6 +226,10 @@ options =
       "use generalization instead of global shape check",
       Option [] ["no-deorig"] (NoArg NoDeorig)
       "disable the deorigination augmentation fix (known to introduce incompleteness)",
+      Option [] ["automorphisms"] (NoArg UseAutomorphisms)
+      "replace thinning with involutive automorphism deletion",
+      Option [] ["automorphism-escapes"] (NoArg AutomorphismEscapes)
+      "use involutions to enlarge escape checks",
       Option ['a'] ["algebra"]  (ReqArg Algebra "STRING")
       ("algebra (default " ++ defaultAlgebra ++ ")"),
       Option ['s'] ["show-algebras"] (NoArg Algebras)  "show algebras",
@@ -281,6 +293,10 @@ interp algs opts flags =
           loop flags $ opts { optGlobalShapes = False }
       loop (NoDeorig : flags) opts =
           loop flags $ opts { optDeorig = False }
+      loop (UseAutomorphisms : flags) opts =
+          loop flags $ opts { optUseAutomorphisms = True }
+      loop (AutomorphismEscapes : flags) opts =
+          loop flags $ opts { optAutomorphismEscapes = True }
       loop (Algebra name : flags) opts
           | elem name algs = loop flags $ opts { optAlg = name }
           | otherwise =
