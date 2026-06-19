@@ -312,44 +312,29 @@ data Mode = Mode
       automorphismEscapes :: Bool }
     deriving Show
 
-data InvolutionInfo
-    = InvolutionInfo
-      { involutionMap :: [Sid],
-        firstFreeVars :: Set Term,
-        secondFreeVars :: Set Term }
-    deriving Show
-
 data InvolutionContext
     = InvolutionContext
       { contextVars :: Set Term,
-        involutionInfos :: [InvolutionInfo] }
+        contextFreeVars :: Set Term }
     deriving Show
 
 emptyInvolutionContext :: InvolutionContext
 emptyInvolutionContext =
-    InvolutionContext { contextVars = S.empty, involutionInfos = [] }
+    InvolutionContext { contextVars = S.empty, contextFreeVars = S.empty }
 
 involutionContext :: Mode -> Preskel -> InvolutionContext
 involutionContext mode k
     | automorphismEscapes mode =
         InvolutionContext
         { contextVars = traceVars k (strandids k),
-          involutionInfos = map (involutionInfo k) (involutions k) }
+          contextFreeVars = povExternalVars k }
     | otherwise = emptyInvolutionContext
 
-involutionInfo :: Preskel -> [Sid] -> InvolutionInfo
-involutionInfo k sm =
-    InvolutionInfo
-    { involutionMap = sm,
-      firstFreeVars = freeVars firstVars secondVars fixedVars,
-      secondFreeVars = freeVars secondVars firstVars fixedVars }
-    where
-      firstSide = [s | s <- strandids k, s < sm !! s]
-      secondSide = map (sm !!) firstSide
-      fixedSide = [s | s <- strandids k, s == sm !! s]
-      firstVars = traceVars k firstSide
-      secondVars = traceVars k secondSide
-      fixedVars = traceVars k fixedSide
+povExternalVars :: Preskel -> Set Term
+povExternalVars k =
+    case pov k of
+      Nothing -> S.empty
+      Just _ -> traceVars k (strandids k) `S.difference` traceVars k (prob k)
 
 traceVars :: Preskel -> [Sid] -> Set Term
 traceVars k ss =
@@ -359,10 +344,6 @@ traceVars k ss =
       evt <- trace (insts k !! s),
       t <- cmTerms (evtCm evt),
       v <- sortedVarsIn t ]
-
-freeVars :: Set Term -> Set Term -> Set Term -> Set Term
-freeVars side opposite fixed =
-    side `S.difference` S.union opposite fixed
 
 cohortAction :: Mode -> InvolutionContext -> SkelAction
 cohortAction mode _ictx
@@ -578,11 +559,24 @@ carriedOnlyWithinExpanded escapeMember target source =
 -- source at position that is in the set.
 isAncestorInSet :: Set CMT -> ChMsg -> Place -> Bool
 isAncestorInSet set source position =
-    any (flip S.member set) (cmtAncestors source position)
+    any (flip S.member set) (cmtAncestorsAt source position)
 
 isAncestorInExpandedSet :: (CMT -> Bool) -> ChMsg -> Place -> Bool
 isAncestorInExpandedSet escapeMember source position =
-    any escapeMember (cmtAncestors source position)
+    any escapeMember (cmtAncestorsAt source position)
+
+cmtAncestorsAt :: ChMsg -> Place -> [CMT]
+cmtAncestorsAt source position
+    | cmtPlaceValid source position = cmtAncestors source position
+    | otherwise = []
+
+cmtPlaceValid :: ChMsg -> Place -> Bool
+cmtPlaceValid _ (Place []) = True
+cmtPlaceValid (Plain t) (Place (0 : path)) =
+    placeValid t (Place path)
+cmtPlaceValid (ChMsg _ _ t) (Place (1 : path)) =
+    placeValid t (Place path)
+cmtPlaceValid _ _ = False
 
 cmtMatchRename :: CMT -> CMT -> (Gen, Env) -> [(Gen, Env)]
 cmtMatchRename (TM t) (TM t') ge = matchRename t t' ge
@@ -590,18 +584,15 @@ cmtMatchRename (CM cm) (CM cm') ge = cmMatchRename cm cm' ge
 cmtMatchRename _ _ _ = []
 
 expandedEscapeMember :: Gen -> InvolutionContext -> Subst -> Set CMT -> CMT -> Bool
-expandedEscapeMember gen (InvolutionContext vars infos) subst escape cmt =
-    S.member cmt escape || any infoMember infos
+expandedEscapeMember gen (InvolutionContext vars freeVars) subst escape cmt =
+    S.member cmt escape || any (renamedByFreeVars gen freeVars' cmt) escapeList
     where
       escapeList = S.toList escape
       parentVars = substVars vars
-      infoMember info =
-          sideMember (firstFreeVars info) || sideMember (secondFreeVars info)
-      sideMember vars =
-          any (\template -> renamedByFreeVars gen (substVars vars) template cmt) escapeList
+      freeVars' = substVars freeVars
       substVars vars =
           S.filter isVar (S.map (substitute subst) vars)
-      renamedByFreeVars gen freeVars template cmt =
+      renamedByFreeVars gen freeVars cmt template =
           not (S.null (templateVars `S.intersection` freeVars)) &&
           any freshRename (cmtMatchRename template cmt (gen, envMatchIdentityOnVars fixedVars))
           where
@@ -651,6 +642,47 @@ chanSolveNode mode ictx k n ct =
 filterProgress :: Preskel -> [(Preskel, [Sid])] -> [(Preskel, [Sid])]
 filterProgress k =
   filter (\(k', _) -> not $ probIsomorphic k k')
+
+filterSolvedAfterRules :: InvolutionContext -> CMT -> Place -> [Term] -> Set CMT ->
+                          Node -> Subst -> [(Term, Term)] -> (Preskel, [Sid]) ->
+                          [(Preskel, [Sid])]
+filterSolvedAfterRules ictx ct pos eks escape n subst absent kphi@(k, _) =
+    [ kphi | postRuleSolved ]
+    where
+      postRuleSolved
+          | S.null (contextFreeVars ictx) = True
+          -- Revisit: this keeps the raw candidate if any simplified
+          -- branch lacks valid provenance for the old test
+          -- node/place.  That avoids rejecting on stale coordinates,
+          -- but it can miss filtering until simplification can carry
+          -- occurrence maps.
+          | any (not . validCandidate) candidates = True
+          | otherwise = any candidateSolved candidates
+      candidates
+          = simplify k
+      validCandidate k' =
+          nodePlaceValid k' n pos
+      candidateSolved k' =
+          validCandidate k' &&
+          maybeSolved ictx ct pos eks escape k' n subst absent
+
+-- Temporary conservative guard for the experimental post-rule solved
+-- check.  The original test node/place is provenance from the raw
+-- candidate.  Simplification can delete, merge, or rewrite that
+-- occurrence.  Until simplification returns an occurrence map, do not
+-- translate stale places by guessing; only run the post-rule solved
+-- check when the old coordinates still name a valid carried position.
+nodePlaceValid :: Preskel -> Node -> Place -> Bool
+nodePlaceValid k (s, i) pos =
+    s >= 0 &&
+    s < length (strands k) &&
+    i >= 0 &&
+    i < length ns &&
+    cmtPlaceValid (evtCm (event v)) pos
+    where
+      strand = strands k !! s
+      ns = nodes strand
+      v = ns !! i
 
 -- Filter out all but the skeletons with the most general homomorphisms.
 
@@ -703,12 +735,13 @@ perms alist range (s:domain) =
 contractions :: InvolutionContext -> SkelAction -> Preskel -> CMT -> Place -> [Term] -> Node -> ChMsg ->
                 Set CMT -> Cause -> [(Preskel, [Sid])]
 contractions ictx action k ct pos eks n t escape cause =
-    [ (k', phi) |
+    [ kphi' |
            let anc = cmtAncestors t pos,
            subst <- solve escape anc (gen k, emptySubst) ++
                     constSolve (gen k, emptySubst) ct,
            (k', n, phi, subst') <- contract action k n cause subst,
-           maybeSolved ictx ct pos eks escape k' n subst' (kabsent k) ]
+           maybeSolved ictx ct pos eks escape k' n subst' (kabsent k),
+           kphi' <- filterSolvedAfterRules ictx ct pos eks escape n subst' (kabsent k) (k', phi) ]
 
 constSolve :: (Gen, Subst) -> CMT -> [(Gen, Subst)]
 constSolve subst ct =
@@ -758,12 +791,13 @@ augmentations ictx deorig action k ct pos eks n escape cause =
 roleAugs :: InvolutionContext -> Bool -> SkelAction -> Preskel -> CMT -> Place -> [Term] -> Node -> Set CMT ->
             Cause -> [CMT] -> Role -> [(Preskel, [Sid])]
 roleAugs ictx deorig action k ct pos eks n escape cause targets role =
-    [ (k', phi) |
+    [ kphi' |
            (subst', inst) <-
                transformingNode deorig ct escape targets role subst,
            (k', n', phi, subst'') <-
                augment action k n cause role subst' inst,
-           maybeSolved ictx ct pos eks escape k' n' subst'' (kabsent k)]
+           maybeSolved ictx ct pos eks escape k' n' subst'' (kabsent k),
+           kphi' <- filterSolvedAfterRules ictx ct pos eks escape n' subst'' (kabsent k) (k', phi)]
     where
       subst = cloneRoleVars (gen k) role
 
@@ -910,10 +944,11 @@ maybeAug ct escape role ht substs acc t =
 addListeners :: InvolutionContext -> SkelAction -> Preskel -> CMT -> Place -> [Term] -> Node -> ChMsg ->
                 Set CMT -> Cause -> [(Preskel, [Sid])]
 addListeners ictx action k ct pos eks n t escape cause =
-    [ (k', phi) |
+    [ kphi' |
            t' <- filter (f t) (S.toList (escapeKeys eks escape)),
            (k', n', phi, subst) <- addListener action k n cause t',
-           maybeSolved ictx ct pos eks escape k' n' subst (kabsent k) ]
+           maybeSolved ictx ct pos eks escape k' n' subst (kabsent k),
+           kphi' <- filterSolvedAfterRules ictx ct pos eks escape n' subst (kabsent k) (k', phi) ]
     where
       f (ChMsg _ _ _) _ = True
       f (Plain t) t' = t /= t'
@@ -941,9 +976,10 @@ baseDHSubcohort :: InvolutionContext -> SkelAction -> Preskel -> CMT -> Place ->
 baseDHSubcohort ictx action k ct pos eks n escape cause
   | elem n (kprecur k) = []
   | otherwise =
-    [ (k', phi) |
+    [ kphi' |
       (k', n', phi, subst) <- addBaseListener action k n cause (cmtTerm ct),
-      maybeSolved ictx ct pos eks escape k' n' subst (kabsent k)]
+      maybeSolved ictx ct pos eks escape k' n' subst (kabsent k),
+      kphi' <- filterSolvedAfterRules ictx ct pos eks escape n' subst (kabsent k) (k', phi)]
 
 exprDHSubcohort :: InvolutionContext -> SkelAction -> Preskel -> Set Term ->
                   CMT -> Place -> [Term] -> Node ->
@@ -955,12 +991,14 @@ exprDHSubcohort ictx action k a ct pos eks n escape cause =
     case S.member x a of
       False -> []
       True ->
-        [ (k', phi) |
+        [ kphi' |
           (k', n', phi, subst) <- addAbsence action k n cause x (cmtTerm ct),
-          maybeSolved ictx ct pos eks escape k' n' subst (kabsent k) ] ++
-        [ (k', phi) |
+          maybeSolved ictx ct pos eks escape k' n' subst (kabsent k),
+          kphi' <- filterSolvedAfterRules ictx ct pos eks escape n' subst (kabsent k) (k', phi) ] ++
+        [ kphi' |
           (k', n', phi, subst) <- addListener action k n cause x,
-          maybeSolved ictx ct pos eks escape k' n' subst (kabsent k) ]
+          maybeSolved ictx ct pos eks escape k' n' subst (kabsent k),
+          kphi' <- filterSolvedAfterRules ictx ct pos eks escape n' subst (kabsent k) (k', phi) ]
 
 -- Maximize a realized skeleton if possible.  Do not consider
 -- generalizations that fail to satisfy the rules of the skeleton's

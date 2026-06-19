@@ -123,6 +123,7 @@ module CPSA.Algebra (name, alias,
     places,
     carriedPlaces,
     carriedRelPlaces,
+    placeValid,
     replace,
     ancestors,
     placeIsPrefixOf,
@@ -1118,6 +1119,21 @@ carriedRelPlaces target source avoid =
       f paths path (F (Enc _) [t, _]) =
           f paths (0 : path) t
       f paths _ _ = paths
+
+-- Does a place name a subterm within a term?  This mirrors the paths
+-- accepted by ancestors.  The G case is intentionally odd-looking:
+-- ancestors treats a one-step path into a group term as naming the
+-- group term because carried group variables do not have ordinary
+-- function-argument paths.
+placeValid :: Term -> Place -> Bool
+placeValid source (Place ints) =
+    loop ints source
+    where
+      loop [] _ = True
+      loop (i : path) (F _ u) =
+          i >= 0 && i < length u && loop path (u !! i)
+      loop [_] (G _) = True
+      loop _ _ = False
 
 -- Replace a variable within a term at a given place.
 replace :: Term -> Place -> Term -> Term
