@@ -123,6 +123,7 @@ module CPSA.Algebra (name, alias,
     places,
     carriedPlaces,
     carriedRelPlaces,
+    placeValid,
     replace,
     ancestors,
     placeIsPrefixOf,
@@ -154,6 +155,7 @@ module CPSA.Algebra (name, alias,
     strandBoundEnv,
     renamerAndNewVars,
     envIdentityOnVars,
+    envMatchIdentityOnVars,
     envStrandsWithin, 
     reify,
     matchRename,
@@ -1118,6 +1120,21 @@ carriedRelPlaces target source avoid =
           f paths (0 : path) t
       f paths _ _ = paths
 
+-- Does a place name a subterm within a term?  This mirrors the paths
+-- accepted by ancestors.  The G case is intentionally odd-looking:
+-- ancestors treats a one-step path into a group term as naming the
+-- group term because carried group variables do not have ordinary
+-- function-argument paths.
+placeValid :: Term -> Place -> Bool
+placeValid source (Place ints) =
+    loop ints source
+    where
+      loop [] _ = True
+      loop (i : path) (F _ u) =
+          i >= 0 && i < length u && loop path (u !! i)
+      loop [_] (G _) = True
+      loop _ _ = False
+
 -- Replace a variable within a term at a given place.
 replace :: Term -> Place -> Term -> Term
 replace var (Place ints) source =
@@ -1230,7 +1247,7 @@ baseRndx (F Base [F Exp [F Genr [], G g]])
     loop [] (M.assocs g)
     where
       loop acc [] = Just acc
-      loop _ ((_, (Expt, _)) : _) = Nothing
+      loop _ ((_, (Expt, _)) : _) = Nothing -- PDR: why not loop without accumulating?
       loop acc ((id, (Rndx, _)) : maplets) =
         loop (baseBuild g id : acc) maplets
 baseRndx _ = Nothing
@@ -1814,6 +1831,13 @@ envOfParamVarPairs ((p,v) : rest) =
 envIdentityOnVars :: [Term] -> Env
 envIdentityOnVars vars =
     envOfParamVarPairs $ L.zip vars vars
+
+envMatchIdentityOnVars :: [Term] -> Env
+envMatchIdentityOnVars vars =
+    envOfParamVarPairs $ map identityPair vars
+    where
+      identityPair (F _ [t@(I _)]) = (t, t)
+      identityPair v = (v, v)
 
 envStrandsWithin :: Env -> [Int] -> Bool
 envStrandsWithin (Env (_, r)) strands =
@@ -2784,7 +2808,7 @@ loadExpr sig vars True x = loadExpr sig vars False x
 loadOne :: MonadFail m => LoadFunction m
 loadOne _ _ _ False [] =
     return $ G M.empty
-loadOne _ pos _ True _ = fail (shows pos "Disallowed bare exponent")
+loadOne _ pos _ True _ = fail (shows pos "Disallowed bare expt")
 loadOne _ pos _ _ _ = fail (shows pos "Malformed one")
 
 loadRec :: MonadFail m => LoadFunction m
@@ -2792,7 +2816,7 @@ loadRec sig _ vars False [x] =
     do
       t <- loadExpr sig vars False x
       return $ G $ invert t
-loadRec _ pos _ True _ = fail (shows pos "Disallowed bare exponent")
+loadRec _ pos _ True _ = fail (shows pos "Disallowed bare expt")
 loadRec _ pos _ _ _ = fail (shows pos "Malformed rec")
 
 loadMul :: MonadFail m => LoadFunction m
@@ -2805,7 +2829,7 @@ loadMul sig _ vars False xs =
           do
             t <- loadExpr sig vars False x
             return $ mul t acc
-loadMul _ pos _ True _ = fail (shows pos "Disallowed bare exponent")
+loadMul _ pos _ True _ = fail (shows pos "Disallowed bare expt")
 
 loadCat :: MonadFail m => LoadFunction m
 loadCat sig _ vars strict (l : ls) =

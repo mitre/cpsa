@@ -32,8 +32,11 @@ type Pair = (Node, Node)
 -- Data structure for tracking the causes for the creation of
 -- preskeletons.
 
+-- The last field records the variables treated as free (escapable to
+-- any term) under the broadened escape-set policy, for display
+-- purposes only -- membership decisions never consult it directly.
 data Cause
-    = Cause Direction Node CMT (Set CMT)
+    = Cause Direction Node CMT (Set CMT) (Set Term)
     deriving Show
 
 data Direction = Encryption | Nonce | Channel deriving Show

@@ -19,6 +19,9 @@ data Options = Options {
       optGoalsSat :: Bool , -- True when goals satisfied stops tree expansion
       optGlobalShapes :: Bool,  -- True when doing global shape check
       optDeorig :: Bool,        -- True when deorigination augmentation fix on
+      optSmallEscapeSets :: Bool, -- True when using the original, narrower
+                                   -- escape-set check instead of treating
+                                   -- variables outside the pov as free
       optLimit :: Int,          -- Step count limit
       optBound :: Int,          -- Strand cound bound
       optDepth :: Int,          -- Tree depth bound
@@ -38,6 +41,7 @@ defaultOptions = Options {
   optGoalsSat = False,
   optGlobalShapes = True,
   optDeorig = True,
+  optSmallEscapeSets = False,
   optLimit = 2000,
   optBound = 12,
   optDepth = 0,                 -- Infinite

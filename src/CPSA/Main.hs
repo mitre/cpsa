@@ -155,6 +155,9 @@ go name origin files herald opts sexprs =
               case optTryYoungNodesFirst opts of
                 True -> writeComment h m "Younger nodes tried first"
                 False -> return ()
+              case optSmallEscapeSets opts of
+                True -> writeComment h m "Small (original) escape sets in use"
+                False -> return ()
               -- Analyze
               solve opts h preskels 0
 
@@ -185,6 +188,7 @@ data Flag
     | GoalsSat                  -- Stop when goals are satisfied
     | Generalize                -- use generalization instead of global shapes
     | NoDeorig                  -- disable deorigination
+    | SmallEscapeSets           -- use the original, narrower escape-set check
     | Algebra String            -- Algebra
     | Algebras                  -- Show algebras
     | Help                      -- Help
@@ -218,6 +222,8 @@ options =
       "use generalization instead of global shape check",
       Option [] ["no-deorig"] (NoArg NoDeorig)
       "disable the deorigination augmentation fix (known to introduce incompleteness)",
+      Option [] ["small-escape-sets"] (NoArg SmallEscapeSets)
+      "use the original, narrower escape-set check instead of treating every variable outside the pov as free (also re-enables end-of-step thinning)",
       Option ['a'] ["algebra"]  (ReqArg Algebra "STRING")
       ("algebra (default " ++ defaultAlgebra ++ ")"),
       Option ['s'] ["show-algebras"] (NoArg Algebras)  "show algebras",
@@ -281,6 +287,8 @@ interp algs opts flags =
           loop flags $ opts { optGlobalShapes = False }
       loop (NoDeorig : flags) opts =
           loop flags $ opts { optDeorig = False }
+      loop (SmallEscapeSets : flags) opts =
+          loop flags $ opts { optSmallEscapeSets = True }
       loop (Algebra name : flags) opts
           | elem name algs = loop flags $ opts { optAlg = name }
           | otherwise =

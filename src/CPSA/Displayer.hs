@@ -19,6 +19,7 @@ import CPSA.Channel
 import CPSA.Protocol
 import CPSA.Operation
 import CPSA.Strand
+import CPSA.Cohort (povExternalVars)
 
 {--
 import System.IO.Unsafe
@@ -371,13 +372,20 @@ displayOperation k ctx rest =
           L () (S () "operation" : S () "collapsed" : desc) : rest
       AppliedRules _ ->  L () (S () "operation" : [(S () "applied-rules")]) : rest
     where
-      displayCause op (Cause dir node critical escape) =
+      displayCause op (Cause dir node critical escape free) =
           L () (S () "operation" :
                 displayDirection dir :
                 op :
                 displayOpCmt ctx critical :
                 displayNode node :
-                displayOpCmts ctx (S.toList escape)) : rest
+                displayOpCmts ctx stillFree (S.toList escape)) : rest
+          where
+            -- A variable free at the time the cause was recorded may
+            -- since have been unified (via a later contraction) with
+            -- a variable that is actually in this skeleton's own pov
+            -- image; such a variable is no longer free, so re-check
+            -- against k's current pov image before marking it.
+            stillFree = free `S.intersection` povExternalVars k
       displayDirection Encryption = S () "encryption-test"
       displayDirection Nonce = S () "nonce-test"
       displayDirection Channel = S () "channel-test"
@@ -394,11 +402,31 @@ displayOperation k ctx rest =
 displayOpCmt :: Context -> CMT -> SExpr ()
 displayOpCmt ctx cm = displayCmt (addToContext ctx $ cmtTerms cm) cm
 
-displayOpCmts :: Context -> [CMT] -> [SExpr ()]
-displayOpCmts ctx ts =
-  map (displayCmt $ addToContext ctx ts') (L.sort ts)
+-- Display the escape set, marking occurrences of free variables (under
+-- the broadened escape-set policy) with a name/* suffix in place,
+-- since their actual escape set is no longer just this literal entry.
+-- Free variables that don't occur in any displayed entry are omitted.
+displayOpCmts :: Context -> S.Set Term -> [CMT] -> [SExpr ()]
+displayOpCmts ctx free ts =
+  map (markFreeVars freeNames . displayCmt ctx') (L.sort ts)
   where
     ts' = concatMap cmtTerms ts
+    ctx' = addToContext ctx ts'
+    occurringFree = free `S.intersection` S.fromList (concatMap sortedVarsIn ts')
+    freeNames = S.map (freeVarName ctx') occurringFree
+
+freeVarName :: Context -> Term -> String
+freeVarName ctx v =
+  case displayTerm ctx v of
+    S () name -> name
+    _ -> error "Displayer.freeVarName: free variable did not render as a symbol"
+
+markFreeVars :: S.Set String -> SExpr () -> SExpr ()
+markFreeVars free (S () s)
+  | S.member s free = S () (s ++ "/*")
+  | otherwise = S () s
+markFreeVars free (L () xs) = L () (map (markFreeVars free) xs)
+markFreeVars _ sexpr = sexpr
 
 displayCmt :: Context -> CMT -> SExpr ()
 displayCmt ctx (CM (Plain t)) = displayTerm ctx t

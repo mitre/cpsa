@@ -6,7 +6,8 @@
 -- modify it under the terms of the BSD License as published by the
 -- University of California.
 
-module CPSA.Cohort (Mode(..), ReduceRes(..), reduce, unrealized) where
+module CPSA.Cohort (Mode(..), ReduceRes(..), reduce, unrealized,
+                    povExternalVars) where
 
 import qualified Data.Set as S
 import Data.Set (Set)
@@ -236,37 +237,48 @@ avoid k =
 -- k      = k'
 -- n      = v
 -- subst  = sigma
-solved :: CMT -> Place -> [Term] -> Set CMT ->
+solved :: EscapeContext -> CMT -> Place -> [Term] -> Set CMT ->
           Preskel -> Node -> Subst -> [(Term, Term)] -> Bool
-solved ct pos eks escape k n subst absent =
+solved ectx ct pos eks escape k n subst absent =
     -- Condition 1
-    isAncestorInSet escape' t pos ||
+    c1 ||
     -- Condition 1a, needed for DH according to Moses
-    derivable a (excludeConf k escape') (cmtTerm ct') ||
+    c1a ||
     -- Condition 2
-    any (not . carriedOnlyWithin ct' escape') (S.toList $ cmsInNodes vs) ||
+    c2 ||
     -- Condition 3
-    not (varsAllAtoms (protocol k)) && not (S.null targetTermsDiff) ||
+    c3 ||
     -- Condition 4
-    any (maybe False (derivable a ts) . decryptionKey) (S.toList encs) ||
+    c4 ||
     -- Condition 5
     -- Bug fix: apply subst to eks
-    any (derivable a ts) (map (substitute subst) eks) ||
+    c5 ||
     -- Condition 6
-    derivable a ts (cmtTerm ct') ||
+    c6 ||
     -- Condition 7: hack?
-    length (kabsent k) > length absent
+    c7
     where
+      c1 = isAncestorInExpandedSet escapeMember t pos
+      c1a = derivable a (excludeConf k escape') (cmtTerm ct')
+      c2 = any (not . carriedOnlyWithinExpanded escapeMember ct') (S.toList $ cmsInNodes vs)
+      c3 = not (varsAllAtoms (protocol k)) && not (S.null targetTermsDiff)
+      c4 = any (maybe False (derivable a ts) . decryptionKey) (S.toList encs)
+      c5 = any (derivable a ts) (map (substitute subst) eks)
+      c6 = derivable a ts (cmtTerm ct')
+      c7 = length (kabsent k) > length absent
       v = vertex k n            -- Look up vertex in k
       t = evtCm (event v)       -- Term at v
       ct' = cmtSubstitute subst ct -- Mapped critical term
       escape' = S.map (cmtSubstitute subst) escape
       mappedTargetTerms = S.map (cmtSubstitute subst) (targetTerms ct escape)
-      targetTermsDiff = S.difference (targetTerms ct' escape') mappedTargetTerms
+      targetTermsDiff =
+          S.filter (not . escapeMember)
+                   (S.difference (targetTerms ct' escape') mappedTargetTerms)
       vs = addSendingBefore S.empty v
       ts = termsInNodes k vs     -- Outbound non-conf predecessors
       (a, _) = avoid k
       encs = S.foldr f S.empty escape'
+      escapeMember = expandedEscapeMember (gen k) ectx subst escape'
       f (CM _) ts = ts
       f (TM t) ts = S.insert t ts
 
@@ -277,11 +289,11 @@ povCheck k =
       Nothing -> True
       Just k0 -> not (null (homomorphism k0 k (prob k)))
 
-maybeSolved :: CMT -> Place -> [Term] -> Set CMT ->
+maybeSolved :: EscapeContext -> CMT -> Place -> [Term] -> Set CMT ->
                Preskel -> Node -> Subst -> [(Term, Term)] -> Bool
-maybeSolved ct pos eks escape k n subst absent =
+maybeSolved ectx ct pos eks escape k n subst absent =
     not useSolvedFilter
-            || solved ct pos eks escape k n subst absent
+            || solved ectx ct pos eks escape k n subst absent
                && (not usePovCheck || povCheck k)
                           -- ||
                           --  (z ("povCheck failed " ++
@@ -296,8 +308,51 @@ data Mode = Mode
       visitOldStrandsFirst :: Bool,
       reverseNodeOrder :: Bool,
       globalShapes :: Bool,     -- generalization = listener deletion only
-      deorig :: Bool }          -- deorigination augmentation fix on
+      deorig :: Bool,           -- deorigination augmentation fix on
+      smallEscapeSets :: Bool } -- True => use the original, narrower
+                                -- escape-set check instead of treating
+                                -- variables outside the pov as free
     deriving Show
+
+data EscapeContext
+    = EscapeContext
+      { contextVars :: Set Term,
+        contextFreeVars :: Set Term }
+    deriving Show
+
+emptyEscapeContext :: EscapeContext
+emptyEscapeContext =
+    EscapeContext { contextVars = S.empty, contextFreeVars = S.empty }
+
+escapeContext :: Mode -> Preskel -> EscapeContext
+escapeContext mode k
+    | smallEscapeSets mode = emptyEscapeContext
+    | otherwise =
+        EscapeContext
+        { contextVars = traceVars k (strandids k),
+          contextFreeVars = povExternalVars k }
+
+povExternalVars :: Preskel -> Set Term
+povExternalVars k =
+    case pov k of
+      Nothing -> S.empty
+      Just _ -> traceVars k (strandids k) `S.difference` traceVars k (prob k)
+
+traceVars :: Preskel -> [Sid] -> Set Term
+traceVars k ss =
+    S.fromList
+    [ v
+    | s <- ss,
+      evt <- trace (insts k !! s),
+      t <- cmTerms (evtCm evt),
+      v <- sortedVarsIn t ]
+
+-- Whether the end-of-cohort-step thinning pass should run.  Disabled
+-- whenever the broadened (default) escape-set check is active, since
+-- that check supersedes thinning's role of pruning redundant strands;
+-- otherwise follows the usual compile-time switch.
+cohortThin :: Mode -> Bool
+cohortThin mode = smallEscapeSets mode && useThinningWhileSolving
 
 excludeConf :: Preskel -> Set CMT -> Set Term
 excludeConf k cm =
@@ -374,7 +429,7 @@ reduceNoTest mode k =
 
 reduce :: Mode -> Preskel -> ReduceRes
 reduce mode k =
-    case findTest mode k u a of
+    case findTest mode ectx k u a of
       Nothing -> reduceNoTest mode k
       Just ks ->                -- normal cohort for selected unrealized node
         Crt (filterSame
@@ -383,6 +438,7 @@ reduce mode k =
                 [] ks)))
     where
       (a, u) = avoid k
+      ectx = escapeContext mode k
 
 -- Filter out skeletons in ks that are isomorphic to k.
 filterSame :: Preskel -> [Preskel] -> [Preskel]
@@ -424,8 +480,8 @@ nodeVisitOrder mode s =
         reverse $ nodes s       -- Visit latest nodes first
 
 -- Look for a test node in a strand
-findTest :: Mode -> Preskel -> [Term] -> Set Term -> Maybe [Preskel]
-findTest mode k u a =
+findTest :: Mode -> EscapeContext -> Preskel -> [Term] -> Set Term -> Maybe [Preskel]
+findTest mode ectx k u a =
     loop (prioritizeVertices k $ nodeOrder mode k)
     where
       loop [] = Nothing
@@ -441,13 +497,13 @@ findTest mode k u a =
                   | authCm k t ->
                       -- If channel message is authenticated
                       -- the channel message is a critical value
-                      Just $ chanSolveNode (deorig mode) k (graphNode n) t
+                      Just $ chanSolveNode mode ectx k (graphNode n) t
                   | buildable ts' a' (cmTerm t) ->
                       -- If derivable, node is realized
                       loop nodes
                   | otherwise ->
                       -- A term is a critical value
-                      Just $ testNode mode k u cms ts' a' (graphNode n) t
+                      Just $ testNode mode ectx k u cms ts' a' (graphNode n) t
               where
                 ns = addSendingBefore S.empty n
                 ts = termsInNodes k ns    -- Public messages
@@ -455,9 +511,9 @@ findTest mode k u a =
                 cms = confsInNodes k ns
 
 -- Look for a critical term that makes this node a test node.
-testNode :: Mode -> Preskel -> [Term] -> Set ChMsg -> Set Term ->
+testNode :: Mode -> EscapeContext -> Preskel -> [Term] -> Set ChMsg -> Set Term ->
             Set Term -> Node -> ChMsg -> [Preskel]
-testNode mode k u cms ts a n cm =
+testNode mode ectx k u cms ts a n cm =
   loop $ potentialCriticalMessages mode u ts a $ cmTerm cm
   where
     loop [] = error (
@@ -471,7 +527,7 @@ testNode mode k u cms ts a n cm =
             places [] = loop cts  -- Find position at which
             places (p : ps)       -- ct has escaped
               | isAncestorInSet escape cm p = places ps
-              | otherwise = solveNode (deorig mode) k a (TM ct) p eks n cm escape
+              | otherwise = solveNode mode ectx k a (TM ct) p eks n cm escape
             escape = S.union    -- The escape set has type CMT
                      (S.map TM esc)
                      (S.map CM (S.filter (carriedBy ct . cmTerm) cms))
@@ -499,36 +555,138 @@ carriedOnlyWithin :: CMT -> Set CMT -> ChMsg -> Bool
 carriedOnlyWithin target escape source =
     all (isAncestorInSet escape source) (cmtCarriedPlaces target source)
 
+carriedOnlyWithinExpanded :: (CMT -> Bool) -> CMT -> ChMsg -> Bool
+carriedOnlyWithinExpanded escapeMember target source =
+    all (isAncestorInExpandedSet escapeMember source) (cmtCarriedPlaces target source)
+
 -- isAncestorInSet set source position is true if there is one ancestor of
 -- source at position that is in the set.
 isAncestorInSet :: Set CMT -> ChMsg -> Place -> Bool
 isAncestorInSet set source position =
-    any (flip S.member set) (cmtAncestors source position)
+    any (flip S.member set) (cmtAncestorsAt source position)
+
+isAncestorInExpandedSet :: (CMT -> Bool) -> ChMsg -> Place -> Bool
+isAncestorInExpandedSet escapeMember source position =
+    any escapeMember (cmtAncestorsAt source position)
+
+cmtAncestorsAt :: ChMsg -> Place -> [CMT]
+cmtAncestorsAt source position
+    | cmtPlaceValid source position = cmtAncestors source position
+    | otherwise = []
+
+cmtPlaceValid :: ChMsg -> Place -> Bool
+cmtPlaceValid _ (Place []) = True
+cmtPlaceValid (Plain t) (Place (0 : path)) =
+    placeValid t (Place path)
+cmtPlaceValid (ChMsg _ _ t) (Place (1 : path)) =
+    placeValid t (Place path)
+cmtPlaceValid _ _ = False
+
+cmtMatchRename :: CMT -> CMT -> (Gen, Env) -> [(Gen, Env)]
+cmtMatchRename (TM t) (TM t') ge = matchRename t t' ge
+cmtMatchRename (CM cm) (CM cm') ge = cmMatchRename cm cm' ge
+cmtMatchRename _ _ _ = []
+
+expandedEscapeMember :: Gen -> EscapeContext -> Subst -> Set CMT -> CMT -> Bool
+expandedEscapeMember gen (EscapeContext vars freeVars) subst escape cmt =
+    S.member cmt escape || any (renamedByFreeVars gen freeVars' cmt) escapeList
+    where
+      escapeList = S.toList escape
+      parentVars = substVars vars
+      freeVars' = substVars freeVars
+      substVars vars =
+          S.filter isVar (S.map (substitute subst) vars)
+      renamedByFreeVars gen freeVars cmt template =
+          not (S.null (templateVars `S.intersection` freeVars)) &&
+          any freshRename (cmtMatchRename template cmt (gen, envMatchIdentityOnVars fixedVars))
+          where
+            templateVars = cmtVars template
+            freeTemplateVars = templateVars `S.intersection` freeVars
+            fixedVars = S.toList (templateVars `S.difference` freeTemplateVars)
+            freshRename (_, env) =
+                all (freshImage env) (S.toList freeTemplateVars)
+            freshImage env v =
+                let v' = instantiate env v in
+                v' == v || S.notMember v' parentVars
+
+cmtVars :: CMT -> Set Term
+cmtVars cmt =
+    S.fromList [v | t <- cmtTerms cmt, v <- sortedVarsIn t]
 
 -- Solve critical message at position pos at node n.
 -- ct = t @ pos
 -- t  = msg(k, n)
-solveNode :: Bool -> Preskel -> Set Term -> CMT -> Place -> [Term] -> Node ->
+solveNode :: Mode -> EscapeContext -> Preskel -> Set Term -> CMT -> Place -> [Term] -> Node ->
              ChMsg -> Set CMT -> [Preskel]
-solveNode deorig k a ct pos eks n t escape =
-    mgs $ cons ++ augs ++ lsns ++ dhs
+solveNode mode ectx k a ct pos eks n t escape =
+    mgs $ filterProgress k $ cons ++ augs ++ lsns ++ dhs
     where
-      cons = contractions k ct pos eks n t escape cause
-      augs = augmentations deorig k ct pos eks n escape cause
-      lsns = addListeners k ct pos eks n t escape cause
-      dhs = theDHSubcohort k a ct pos eks n escape cause
-      cause = Cause (dir eks) n ct escape
+      thin = cohortThin mode
+      cons = contractions ectx thin k ct pos eks n t escape cause
+      augs = augmentations ectx (deorig mode) thin k ct pos eks n escape cause
+      lsns = addListeners ectx thin k ct pos eks n t escape cause
+      dhs = theDHSubcohort ectx thin k a ct pos eks n escape cause
+      cause = Cause (dir eks) n ct escape (contextFreeVars ectx)
 
 -- Authenticated channel message is the critical value
-chanSolveNode :: Bool -> Preskel -> Node -> ChMsg -> [Preskel]
-chanSolveNode deorig k n ct =
-  mgs $ augmentations deorig k t pos eks n escape cause
+chanSolveNode :: Mode -> EscapeContext -> Preskel -> Node -> ChMsg -> [Preskel]
+chanSolveNode mode ectx k n ct =
+  mgs $ filterProgress k $
+    augmentations ectx (deorig mode) (cohortThin mode) k t pos eks n escape cause
   where
     t = CM ct
     pos = Place []
     eks = []
     escape = S.empty
-    cause = Cause Channel n t escape
+    cause = Cause Channel n t escape (contextFreeVars ectx)
+
+-- Remove candidates that made no progress before checking which
+-- candidates are most general.  Otherwise a parent-isomorphic child
+-- can eliminate a genuine child in mgs, and then be discarded later.
+filterProgress :: Preskel -> [(Preskel, [Sid])] -> [(Preskel, [Sid])]
+filterProgress k =
+  filter (\(k', _) -> not $ probIsomorphic k k')
+
+filterSolvedAfterRules :: EscapeContext -> CMT -> Place -> [Term] -> Set CMT ->
+                          Node -> Subst -> [(Term, Term)] -> (Preskel, [Sid]) ->
+                          [(Preskel, [Sid])]
+filterSolvedAfterRules ectx ct pos eks escape n subst absent kphi@(k, _) =
+    [ kphi | postRuleSolved ]
+    where
+      postRuleSolved
+          | S.null (contextFreeVars ectx) = True
+          -- Revisit: this keeps the raw candidate if any simplified
+          -- branch lacks valid provenance for the old test
+          -- node/place.  That avoids rejecting on stale coordinates,
+          -- but it can miss filtering until simplification can carry
+          -- occurrence maps.
+          | any (not . validCandidate) candidates = True
+          | otherwise = any candidateSolved candidates
+      candidates
+          = simplify k
+      validCandidate k' =
+          nodePlaceValid k' n pos
+      candidateSolved k' =
+          validCandidate k' &&
+          maybeSolved ectx ct pos eks escape k' n subst absent
+
+-- Temporary conservative guard for the experimental post-rule solved
+-- check.  The original test node/place is provenance from the raw
+-- candidate.  Simplification can delete, merge, or rewrite that
+-- occurrence.  Until simplification returns an occurrence map, do not
+-- translate stale places by guessing; only run the post-rule solved
+-- check when the old coordinates still name a valid carried position.
+nodePlaceValid :: Preskel -> Node -> Place -> Bool
+nodePlaceValid k (s, i) pos =
+    s >= 0 &&
+    s < length (strands k) &&
+    i >= 0 &&
+    i < length ns &&
+    cmtPlaceValid (evtCm (event v)) pos
+    where
+      strand = strands k !! s
+      ns = nodes strand
+      v = ns !! i
 
 -- Filter out all but the skeletons with the most general homomorphisms.
 
@@ -578,15 +736,16 @@ perms alist range (s:domain) =
 -- Contractions
 
 -- Contract the critical message at the given position.
-contractions :: Preskel -> CMT -> Place -> [Term] -> Node -> ChMsg ->
+contractions :: EscapeContext -> Bool -> Preskel -> CMT -> Place -> [Term] -> Node -> ChMsg ->
                 Set CMT -> Cause -> [(Preskel, [Sid])]
-contractions k ct pos eks n t escape cause =
-    [ (k', phi) |
+contractions ectx thin k ct pos eks n t escape cause =
+    [ kphi' |
            let anc = cmtAncestors t pos,
            subst <- solve escape anc (gen k, emptySubst) ++
                     constSolve (gen k, emptySubst) ct,
-           (k', n, phi, subst') <- contract k n cause subst,
-           maybeSolved ct pos eks escape k' n subst' (kabsent k) ]
+           (k', n, phi, subst') <- contract thin k n cause subst,
+           maybeSolved ectx ct pos eks escape k' n subst' (kabsent k),
+           kphi' <- filterSolvedAfterRules ectx ct pos eks escape n subst' (kabsent k) (k', phi) ]
 
 constSolve :: (Gen, Subst) -> CMT -> [(Gen, Subst)]
 constSolve subst ct =
@@ -625,23 +784,24 @@ dir _ = Encryption
 -- Augmentations
 
 -- deorig threaded through to transformingNode.
-augmentations :: Bool -> Preskel -> CMT -> Place -> [Term] -> Node ->
+augmentations :: EscapeContext -> Bool -> Bool -> Preskel -> CMT -> Place -> [Term] -> Node ->
                  Set CMT -> Cause -> [(Preskel, [Sid])]
-augmentations deorig k ct pos eks n escape cause =
+augmentations ectx deorig thin k ct pos eks n escape cause =
     [ k' | r <- roles (protocol k),
-           k' <- roleAugs deorig k ct pos eks n escape cause targets r ]
+           k' <- roleAugs ectx deorig thin k ct pos eks n escape cause targets r ]
     where
       targets = S.toList (targetTerms ct escape)
 
-roleAugs :: Bool -> Preskel -> CMT -> Place -> [Term] -> Node -> Set CMT ->
+roleAugs :: EscapeContext -> Bool -> Bool -> Preskel -> CMT -> Place -> [Term] -> Node -> Set CMT ->
             Cause -> [CMT] -> Role -> [(Preskel, [Sid])]
-roleAugs deorig k ct pos eks n escape cause targets role =
-    [ (k', phi) |
+roleAugs ectx deorig thin k ct pos eks n escape cause targets role =
+    [ kphi' |
            (subst', inst) <-
                transformingNode deorig ct escape targets role subst,
            (k', n', phi, subst'') <-
-               augment k n cause role subst' inst,
-           maybeSolved ct pos eks escape k' n' subst'' (kabsent k)]
+               augment thin k n cause role subst' inst,
+           maybeSolved ectx ct pos eks escape k' n' subst'' (kabsent k),
+           kphi' <- filterSolvedAfterRules ectx ct pos eks escape n' subst'' (kabsent k) (k', phi)]
     where
       subst = cloneRoleVars (gen k) role
 
@@ -785,13 +945,14 @@ maybeAug ct escape role ht substs acc t =
 
 -- Listener augmentations
 
-addListeners :: Preskel -> CMT -> Place -> [Term] -> Node -> ChMsg ->
+addListeners :: EscapeContext -> Bool -> Preskel -> CMT -> Place -> [Term] -> Node -> ChMsg ->
                 Set CMT -> Cause -> [(Preskel, [Sid])]
-addListeners k ct pos eks n t escape cause =
-    [ (k', phi) |
+addListeners ectx thin k ct pos eks n t escape cause =
+    [ kphi' |
            t' <- filter (f t) (S.toList (escapeKeys eks escape)),
-           (k', n', phi, subst) <- addListener k n cause t',
-           maybeSolved ct pos eks escape k' n' subst (kabsent k) ]
+           (k', n', phi, subst) <- addListener thin k n cause t',
+           maybeSolved ectx ct pos eks escape k' n' subst (kabsent k),
+           kphi' <- filterSolvedAfterRules ectx ct pos eks escape n' subst (kabsent k) (k', phi) ]
     where
       f (ChMsg _ _ _) _ = True
       f (Plain t) t' = t /= t'
@@ -806,39 +967,42 @@ escapeKeys eks escape =
 
 -- DH Subcohort
 
-theDHSubcohort :: Preskel -> Set Term ->
+theDHSubcohort :: EscapeContext -> Bool -> Preskel -> Set Term ->
                   CMT -> Place -> [Term] -> Node ->
                   Set CMT -> Cause -> [(Preskel, [Sid])]
-theDHSubcohort k a ct pos eks n escape cause
-  | isBase (cmtTerm ct) = baseDHSubcohort k ct pos eks n escape cause
-  | isExpr (cmtTerm ct) = exprDHSubcohort k a ct pos eks n escape cause
+theDHSubcohort ectx thin k a ct pos eks n escape cause
+  | isBase (cmtTerm ct) = baseDHSubcohort ectx thin k ct pos eks n escape cause
+  | isExpr (cmtTerm ct) = exprDHSubcohort ectx thin k a ct pos eks n escape cause
   | otherwise = []
 
-baseDHSubcohort :: Preskel -> CMT -> Place -> [Term] ->
+baseDHSubcohort :: EscapeContext -> Bool -> Preskel -> CMT -> Place -> [Term] ->
                    Node -> Set CMT -> Cause -> [(Preskel, [Sid])]
-baseDHSubcohort k ct pos eks n escape cause
+baseDHSubcohort ectx thin k ct pos eks n escape cause
   | elem n (kprecur k) = []
   | otherwise =
-    [ (k', phi) |
-      (k', n', phi, subst) <- addBaseListener k n cause (cmtTerm ct),
-      maybeSolved ct pos eks escape k' n' subst (kabsent k)]
+    [ kphi' |
+      (k', n', phi, subst) <- addBaseListener thin k n cause (cmtTerm ct),
+      maybeSolved ectx ct pos eks escape k' n' subst (kabsent k),
+      kphi' <- filterSolvedAfterRules ectx ct pos eks escape n' subst (kabsent k) (k', phi)]
 
-exprDHSubcohort :: Preskel -> Set Term ->
+exprDHSubcohort :: EscapeContext -> Bool -> Preskel -> Set Term ->
                   CMT -> Place -> [Term] -> Node ->
                   Set CMT -> Cause -> [(Preskel, [Sid])]
-exprDHSubcohort _ _ ct _ _ _ _ _ | isRndx (cmtTerm ct) = []
-exprDHSubcohort k a ct pos eks n escape cause =
+exprDHSubcohort _ _ _ _ ct _ _ _ _ _ | isRndx (cmtTerm ct) = []
+exprDHSubcohort ectx thin k a ct pos eks n escape cause =
   do
     x <- exprVars (cmtTerm ct)
     case S.member x a of
       False -> []
       True ->
-        [ (k', phi) |
-          (k', n', phi, subst) <- addAbsence k n cause x (cmtTerm ct),
-          maybeSolved ct pos eks escape k' n' subst (kabsent k) ] ++
-        [ (k', phi) |
-          (k', n', phi, subst) <- addListener k n cause x,
-          maybeSolved ct pos eks escape k' n' subst (kabsent k) ]
+        [ kphi' |
+          (k', n', phi, subst) <- addAbsence thin k n cause x (cmtTerm ct),
+          maybeSolved ectx ct pos eks escape k' n' subst (kabsent k),
+          kphi' <- filterSolvedAfterRules ectx ct pos eks escape n' subst (kabsent k) (k', phi) ] ++
+        [ kphi' |
+          (k', n', phi, subst) <- addListener thin k n cause x,
+          maybeSolved ectx ct pos eks escape k' n' subst (kabsent k),
+          kphi' <- filterSolvedAfterRules ectx ct pos eks escape n' subst (kabsent k) (k', phi) ]
 
 -- Maximize a realized skeleton if possible.  Do not consider
 -- generalizations that fail to satisfy the rules of the skeleton's
