@@ -12,7 +12,7 @@ From Stdlib Require Import FunInd Nat Bool DecBool.
 Require Import Monad Proc.
 (** printing <- #←# *)
 
-Notation var := nat (only parsing).
+Abbreviation var := nat (only parsing).
 
 (** Symmetric keys *)
 

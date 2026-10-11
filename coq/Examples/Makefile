@@ -5,7 +5,7 @@ DOC	?= gallinahtml
 
 # File $(PROJ) contains the list of source files.
 # See "man coq_makefile" for its format.
-PROJ	= _CoqProject
+PROJ	= _RocqProject
 
 # Generated makefile
 COQMK	= coq.mk
@@ -15,7 +15,7 @@ all:	$(COQMK)
 	$(MAKE) -f $(COQMK) $(DOC)
 
 $(COQMK): $(PROJ)
-	coq_makefile -o $(COQMK) -f $(PROJ)
+	$(COQBIN)rocq makefile -o $(COQMK) -f $(PROJ)
 
 $(PROJ):
 	@echo make $@

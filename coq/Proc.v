@@ -12,7 +12,7 @@ From Stdlib Require Export String List.
 
 (** A procedure variable is a nat *)
 
-Notation pvar := nat (only parsing).
+Abbreviation pvar := nat (only parsing).
 
 (** Types *)
 
