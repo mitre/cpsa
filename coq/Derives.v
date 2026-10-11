@@ -62,6 +62,8 @@ Inductive synth (pub: alg -> Prop): alg -> Prop :=
 #[global]
 Hint Constructors synth : core.
 
+Scheme All for synth.
+
 (* analyze pub t when t can be analyzed using the terms in pub. *)
 Inductive analyze (pub: list alg): alg -> Prop :=
 | Analyze_mem: forall x: alg, In x pub -> analyze pub x

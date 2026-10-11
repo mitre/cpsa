@@ -1,4 +1,4 @@
--R .. Roletran
+-R .. Roletran --no-rocq-package-warning
 Nsl.v
 Nsl_role.v
 Nsl_proof.v
