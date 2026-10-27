@@ -7,4 +7,7 @@
 coq.mk
 .coq.mk.d
 coq.mk.conf
+rocq.mk
+.rocq.mk.d
+rocq.mk.conf
 html

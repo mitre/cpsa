@@ -315,9 +315,9 @@ Inductive view_proc (cs: store) (p: proc): Prop :=
 | View_proc: view_proc cs p.
 
 Lemma comp_init:
-    exists (cs: store) (is: list decl) (ss: list stmt),
-      comp init_role cs (mkProc is ss) /\
-      view_proc cs (mkProc is ss).
+    exists (cs: store) (isx: list decl) (ss: list stmt),
+      comp init_role cs (mkProc isx ss) /\
+      view_proc cs (mkProc isx ss).
 Proof.
   eexists; eexists; eexists; split.
   - eapply Comp; eauto; run_comp.
@@ -326,9 +326,9 @@ Proof.
 Qed.
 
 Lemma comp_resp:
-    exists (cs: store) (is: list decl) (ss: list stmt),
-      comp resp_role cs (mkProc is ss) /\
-      view_proc cs (mkProc is ss).
+    exists (cs: store) (isx: list decl) (ss: list stmt),
+      comp resp_role cs (mkProc isx ss) /\
+      view_proc cs (mkProc isx ss).
 Proof.
   eexists; eexists; eexists; split.
   - eapply Comp; eauto; run_comp.
